@@ -120,8 +120,8 @@ NO EXPLANATIONS.
         new_content = chat.send(messages)
         if new_content.startswith('```\n'):
             new_content = new_content[4:]
-        if new_content.endswith('```\n'):
-            new_content = new_content[:-4]
+        if new_content.endswith('```'):
+            new_content = new_content[:-3]
         fname.write_text(new_content)
 
 chat = Chat()
@@ -133,7 +133,10 @@ chat.file(dname / 'index.html')
 chat.file(dname / 'chat.css')
 chat.file(dname / 'chat.js')
 
-chat.request('Change ALL the speaker icons to speech bubble icons.')
+chat.request('''
+Right now the speaker icons come after the text in each speech bubble.
+Move all the speaker icons so they come before the text.
+''')
 
 chat.plan()
 
