@@ -31,8 +31,16 @@ class Chat:
     def request(self, prompt):
         self.request_prompt = prompt
 
+    def quoted_file(self, fname):
+        prompt = '\n'
+        prompt += fname.name
+        prompt += '\n```\n'
+        prompt += fname.read_text()
+        prompt += '\n```\n'
+        return prompt
+
     def plan(self):
-        prompt = '''
+        self.plan_prompt = '''
 Briefly describe all the code changes needed to complete the user request.
 Think carefully about the code and the request!
 Just describe ALL the changes needed to complete the request.
@@ -44,14 +52,11 @@ Just briefly describe the changes.
 
 Request:
 '''
+        prompt = self.plan_prompt
         prompt += self.request_prompt + '\n###\n'
 
         for fname in self.fnames:
-            prompt += '\n'
-            prompt += fname.name
-            prompt += '\n```\n'
-            prompt += fname.read_text()
-            prompt += '\n```\n'
+            prompt += self.quoted_file(fname)
 
         ###
         #print(self.system_prompt)
@@ -93,8 +98,14 @@ Request:
             self.update_file(fname)
 
     def update_file(self, fname):
-        messages = list(self.messages)
-        messages.append(
+        prompt = self.plan_prompt
+        prompt += self.request_prompt + '\n###\n'
+        prompt += self.quoted_file(fname)
+
+        messages = [
+            dict(role = 'system', content = self.system_prompt),
+            dict(role = 'user', content = prompt),
+            dict(role = 'assistant', content = self.plan),
             dict(role = 'user',
                  content = f'''
 Make the requested changes to {fname.name} and output the changed code.
@@ -102,8 +113,15 @@ MAKE NO OTHER CHANGES!
 JUST OUTPUT CODE.
 NO EXPLANATIONS.
 '''
-            ))
+            )
+        ]
+        dump(messages)
+
         new_content = chat.send(messages)
+        if new_content.startswith('```\n'):
+            new_content = new_content[4:]
+        if new_content.endswith('```\n'):
+            new_content = new_content[:-4]
         fname.write_text(new_content)
 
 chat = Chat()
