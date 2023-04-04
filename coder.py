@@ -24,7 +24,7 @@ MAKE NO OTHER CHANGES!
 Do not provide explanations!
 '''
 
-class Chat:
+class Coder:
     fnames = []
     def system(self, prompt):
         self.system_prompt = prompt
@@ -82,7 +82,9 @@ class Chat:
     def update_file(self, fname):
         prompt = self.prompt
         prompt += f'''
-Output the updated version of {fname.name}
+Output the new {fname.name} which includes all the requested changes.
+MAKE NO OTHER CHANGES.
+Just output {fname.name}.
 '''
 
         messages = [
@@ -90,7 +92,7 @@ Output the updated version of {fname.name}
             dict(role = 'user', content = prompt),
         ]
 
-        content = chat.send(messages)
+        content = self.send(messages)
         if content.strip() == 'NONE':
             return
 
@@ -103,23 +105,22 @@ Output the updated version of {fname.name}
             lines = lines[:-1]
         fname.write_text('\n'.join(lines))
 
-chat = Chat()
+coder = Coder()
 
-chat.system(prompt_webdev)
+coder.system(prompt_webdev)
 
 dname = Path('../easy-chat')
-chat.file(dname / 'index.html')
-chat.file(dname / 'chat.css')
-chat.file(dname / 'chat.js')
+coder.file(dname / 'index.html')
+coder.file(dname / 'chat.css')
+coder.file(dname / 'chat.js')
 
-#for fname in chat.fnames:
-#    print(chat.quoted_file(fname))
+#for fname in coder.fnames:
+#    print(coder.quoted_file(fname))
 #sys.exit()
 
-chat.request('''
-Right now the speaker icons come after the text in each speech bubble.
-Move all the speaker icons so they come before the text.
+coder.request('''
+Make the speaker icons red.
 ''')
 
-chat.setup()
-chat.update_files()
+coder.setup()
+coder.update_files()
