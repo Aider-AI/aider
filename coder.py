@@ -112,12 +112,16 @@ Make the requested changes to {fname.name} and output the changed code.
 MAKE NO OTHER CHANGES!
 JUST OUTPUT CODE.
 NO EXPLANATIONS.
+IF NO CHANGES ARE NEEDED, JUST OUTPUT: NONE
 '''
             )
         ]
         dump(messages)
 
         new_content = chat.send(messages)
+        if new_content.strip() == 'NONE':
+            return
+
         if new_content.startswith('```\n'):
             new_content = new_content[4:]
         if new_content.endswith('```'):
@@ -134,10 +138,12 @@ chat.file(dname / 'chat.css')
 chat.file(dname / 'chat.js')
 
 chat.request('''
-Right now the speaker icons come after the text in each speech bubble.
-Move all the speaker icons so they come before the text.
+Every time I click on the speaker, it adds ANOTHER speaker icon.
+Clicking the icon should just speak the text, it should not add additional speaker icons.
+Fix this bug.
 ''')
 
 chat.plan()
+input()
 
 chat.update_files()
