@@ -18,8 +18,10 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 prompt_webdev = '''
 I want you to act as a web development expert.
-You are to carefully study the provided code and follow the user instructions.
-Be detail oriented, explicit and thorough in following user instructions.
+I want you to answer only with code.
+Make the requested change to the provided code and output the changed code.
+MAKE NO OTHER CHANGES!
+Do not provide explanations!
 '''
 
 class Chat:
@@ -39,36 +41,15 @@ class Chat:
         prompt += '\n```\n'
         return prompt
 
-    def plan(self):
-        self.plan_prompt = '''
-Briefly describe all the code changes needed to complete the user request.
-Think carefully about the code and the request!
-Just describe ALL the changes needed to complete the request.
-Just describe the changes, don't output code for them.
-Be thorough. Describe ALL the changes needed to complete the request.
-Only describe changes related to the request.
-Don't output the changed code!
-Just briefly describe the changes.
-
-Request:
-'''
-        prompt = self.plan_prompt
-        prompt += self.request_prompt + '\n###\n'
-
+    def setup(self):
+        prompt = ''
         for fname in self.fnames:
             prompt += self.quoted_file(fname)
 
-        ###
-        #print(self.system_prompt)
-        #print(prompt)
-        #sys.exit()
+        prompt += '\n###\n'
+        prompt += self.request_prompt
 
-        self.messages = [
-            dict(role = 'system', content = self.system_prompt),
-            dict(role = 'user', content = prompt),
-        ]
-        self.plan = self.send(self.messages)
-        self.messages.append(dict(role = 'assistant', content = self.plan))
+        self.prompt = prompt
 
     def send(self, messages):
         completion = openai.ChatCompletion.create(
@@ -94,39 +75,33 @@ Request:
         return resp
 
     def update_files(self):
+        random.shuffle(self.fnames)
         for fname in self.fnames:
             self.update_file(fname)
 
     def update_file(self, fname):
-        prompt = self.plan_prompt
-        prompt += self.request_prompt + '\n###\n'
-        prompt += self.quoted_file(fname)
+        prompt = self.prompt
+        prompt += f'''
+Output the updated version of {fname.name}
+'''
 
         messages = [
             dict(role = 'system', content = self.system_prompt),
             dict(role = 'user', content = prompt),
-            dict(role = 'assistant', content = self.plan),
-            dict(role = 'user',
-                 content = f'''
-Make the requested changes to {fname.name} and output the changed code.
-MAKE NO OTHER CHANGES!
-JUST OUTPUT CODE.
-NO EXPLANATIONS.
-IF NO CHANGES ARE NEEDED, JUST OUTPUT: NONE
-'''
-            )
         ]
-        dump(messages)
 
-        new_content = chat.send(messages)
-        if new_content.strip() == 'NONE':
+        content = chat.send(messages)
+        if content.strip() == 'NONE':
             return
 
-        if new_content.startswith('```\n'):
-            new_content = new_content[4:]
-        if new_content.endswith('```'):
-            new_content = new_content[:-3]
-        fname.write_text(new_content)
+        lines = content.splitlines()
+        if lines[0].startswith(fname.name):
+            lines = lines[1:]
+        if lines[0].startswith('```'):
+            lines = lines[1:]
+        if lines[-1].startswith('```'):
+            lines = lines[:-1]
+        fname.write_text('\n'.join(lines))
 
 chat = Chat()
 
@@ -137,13 +112,14 @@ chat.file(dname / 'index.html')
 chat.file(dname / 'chat.css')
 chat.file(dname / 'chat.js')
 
+#for fname in chat.fnames:
+#    print(chat.quoted_file(fname))
+#sys.exit()
+
 chat.request('''
-Every time I click on the speaker, it adds ANOTHER speaker icon.
-Clicking the icon should just speak the text, it should not add additional speaker icons.
-Fix this bug.
+Right now the speaker icons come after the text in each speech bubble.
+Move all the speaker icons so they come before the text.
 ''')
 
-chat.plan()
-input()
-
+chat.setup()
 chat.update_files()
