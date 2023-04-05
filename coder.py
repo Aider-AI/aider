@@ -23,7 +23,7 @@ Make all the requested changes to the provided code and output the changed code.
 MAKE NO OTHER CHANGES!
 Do not provide explanations!
 
-For each file that has changes, output it like this:
+For each file, output it like this:
 
 filename.ext
 ```
@@ -106,7 +106,6 @@ class Coder:
 
     def update_files(self, content):
         for fname in self.fnames:
-            dump(fname)
             self.update_file(fname, content)
 
     def update_file(self, fname, content):
@@ -114,9 +113,10 @@ class Coder:
         end = '\n```'
 
         if start not in content:
-            print(f'No content for {fname}')
+            print(f'{fname} no updates')
             return
 
+        print(f'{fname} updated')
         content = content.split(start)[1]
         content = content.split(end)[0]
 
@@ -127,8 +127,8 @@ coder = Coder()
 coder.system(prompt_webdev)
 
 dname = Path('../easy-chat')
-coder.file(dname / 'index.html')
-coder.file(dname / 'chat.css')
+#coder.file(dname / 'chat.css')
+#coder.file(dname / 'index.html')
 coder.file(dname / 'chat.js')
 
 #for fname in coder.fnames:
@@ -136,7 +136,9 @@ coder.file(dname / 'chat.js')
 #sys.exit()
 
 coder.request('''
-Refactor the css and remove any redundant or useless code.
+Improve the code quality of the js.
+Remove dead or useless code.
+Refactor to reduce repetitiveness.
 ''')
 
 coder.run()
