@@ -19,9 +19,33 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 prompt_webdev = '''
 I want you to act as a web development expert.
 I want you to answer only with code.
-Make the requested change to the provided code and output the changed code.
+Make all the requested changes to the provided code and output the changed code.
 MAKE NO OTHER CHANGES!
 Do not provide explanations!
+
+For each file that has changes, output it like this:
+
+filename.ext
+```
+... file content ...
+```
+'''
+
+prompt_comments = '''
+I want you to act as a web development expert.
+I want you to answer only with comments in the code.
+Whatever the user requests, add comments in the code showing how to make the requested change and explaining why it will work.
+Just add comments to the code.
+Output the new version of the code with added comments.
+Embed lots of comments in the code explaining how and where to make changes.
+MAKE NO OTHER CHANGES!
+
+For each file, output like this:
+
+filename.ext
+```
+... file content ...
+```
 '''
 
 class Coder:
@@ -41,7 +65,7 @@ class Coder:
         prompt += '\n```\n'
         return prompt
 
-    def setup(self):
+    def run(self):
         prompt = ''
         for fname in self.fnames:
             prompt += self.quoted_file(fname)
@@ -49,7 +73,13 @@ class Coder:
         prompt += '\n###\n'
         prompt += self.request_prompt
 
-        self.prompt = prompt
+        messages = [
+            dict(role = 'system', content = self.system_prompt),
+            dict(role = 'user', content = prompt),
+        ]
+
+        content = self.send(messages)
+        self.update_files(content)
 
     def send(self, messages):
         completion = openai.ChatCompletion.create(
@@ -74,36 +104,23 @@ class Coder:
         resp = ''.join(resp)
         return resp
 
-    def update_files(self):
-        random.shuffle(self.fnames)
+    def update_files(self, content):
         for fname in self.fnames:
-            self.update_file(fname)
+            dump(fname)
+            self.update_file(fname, content)
 
-    def update_file(self, fname):
-        prompt = self.prompt
-        prompt += f'''
-Output the new {fname.name} which includes all the requested changes.
-MAKE NO OTHER CHANGES.
-Just output {fname.name}.
-'''
+    def update_file(self, fname, content):
+        start = f'{fname.name}\n```\n'
+        end = '\n```'
 
-        messages = [
-            dict(role = 'system', content = self.system_prompt),
-            dict(role = 'user', content = prompt),
-        ]
-
-        content = self.send(messages)
-        if content.strip() == 'NONE':
+        if start not in content:
+            print(f'No content for {fname}')
             return
 
-        lines = content.splitlines()
-        if lines[0].startswith(fname.name):
-            lines = lines[1:]
-        if lines[0].startswith('```'):
-            lines = lines[1:]
-        if lines[-1].startswith('```'):
-            lines = lines[:-1]
-        fname.write_text('\n'.join(lines))
+        content = content.split(start)[1]
+        content = content.split(end)[0]
+
+        fname.write_text(content)
 
 coder = Coder()
 
@@ -119,8 +136,7 @@ coder.file(dname / 'chat.js')
 #sys.exit()
 
 coder.request('''
-Make the speaker icons red.
+Refactor the css and remove any redundant or useless code.
 ''')
 
-coder.setup()
-coder.update_files()
+coder.run()
