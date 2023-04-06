@@ -101,6 +101,33 @@ class Coder:
         self.update_files(resp)
 
 
+    def run_edit(self):
+        prompt = ''
+        for fname in self.fnames:
+            prompt += self.quoted_file(fname)
+
+        completion = openai.Edit.create(
+            model="code-davinci-edit-001",
+            instruction= prompt,
+            input=prompt,
+            #max_tokens=2048,
+            temperature=0,
+        )
+        dump(completion)
+        resp = []
+        for chunk in completion:
+            try:
+                text = chunk.choices[0].text
+                resp.append(text)
+            except AttributeError:
+                continue
+            sys.stdout.write(text)
+            sys.stdout.flush()
+
+        resp = ''.join(resp)
+        self.update_files(resp)
+
+
 
     def run(self):
         prompt = ''
@@ -167,8 +194,8 @@ coder.system(prompt_webdev)
 
 dname = Path('../easy-chat')
 #coder.file(dname / 'chat.css')
-#coder.file(dname / 'index.html')
-coder.file(dname / 'chat.js')
+coder.file(dname / 'index.html')
+#coder.file(dname / 'chat.js')
 
 #for fname in coder.fnames:
 #    print(coder.quoted_file(fname))
