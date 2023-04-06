@@ -131,11 +131,11 @@ class Coder:
 
     def run(self):
         prompt = ''
+        prompt += self.request_prompt
+        prompt += '\n###\n'
+
         for fname in self.fnames:
             prompt += self.quoted_file(fname)
-
-        prompt += '\n###\n'
-        prompt += self.request_prompt
 
         messages = [
             dict(role = 'system', content = self.system_prompt),
