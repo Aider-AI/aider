@@ -65,6 +65,43 @@ class Coder:
         prompt += '\n```\n'
         return prompt
 
+    def run_davinci(self):
+        prompt = ''
+        prompt += 'Original code:\n\n'
+
+        for fname in self.fnames:
+            prompt += self.quoted_file(fname)
+
+        prompt += '\n###\n'
+
+        prompt += self.request_prompt
+
+        prompt += '\n###\n'
+
+        prompt += 'Modified code including those changes:\n\n'
+
+        completion = openai.Completion.create(
+            model="text-davinci-003",
+            prompt= prompt,
+            max_tokens=2048,
+            temperature=0,
+            stream = True,
+        )
+        resp = []
+        for chunk in completion:
+            try:
+                text = chunk.choices[0].text
+                resp.append(text)
+            except AttributeError:
+                continue
+            sys.stdout.write(text)
+            sys.stdout.flush()
+
+        resp = ''.join(resp)
+        self.update_files(resp)
+
+
+
     def run(self):
         prompt = ''
         for fname in self.fnames:
@@ -84,6 +121,7 @@ class Coder:
     def send(self, messages):
         completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
+            #model="gpt-4",
             messages=messages,
             temperature=0,
             stream = True,
@@ -122,6 +160,7 @@ class Coder:
 
         fname.write_text(content)
 
+
 coder = Coder()
 
 coder.system(prompt_webdev)
@@ -137,6 +176,7 @@ coder.file(dname / 'chat.js')
 
 coder.request('''
 Improve the code quality of the js.
+Add or improve code comments.
 Remove dead or useless code.
 Refactor to reduce repetitiveness.
 ''')
