@@ -193,19 +193,16 @@ coder = Coder()
 coder.system(prompt_webdev)
 
 dname = Path('../easy-chat')
-#coder.file(dname / 'chat.css')
 coder.file(dname / 'index.html')
-#coder.file(dname / 'chat.js')
+coder.file(dname / 'chat.css')
+coder.file(dname / 'chat.js')
 
 #for fname in coder.fnames:
 #    print(coder.quoted_file(fname))
 #sys.exit()
 
 coder.request('''
-Improve the code quality of the js.
-Add or improve code comments.
-Remove dead or useless code.
-Refactor to reduce repetitiveness.
+Move all the speaker icons to come after the text in each bubble, instead of before.
 ''')
 
 coder.run()
