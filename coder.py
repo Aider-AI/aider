@@ -22,52 +22,38 @@ prompt_webdev = '''
 I want you to act as a web development pair programmer.
 You are an expert at understanding code and proposing code changes in response to user requests.
 
-YOU MUST ONLY RETURN CODE USING THESE COMMANDS!
+Your job is to:
+
+1. Understand what the user wants changed in the code.
+
+2. Use these editing commands to make the requested changes to the code. When you answer with these commands the file is immediately updated.
   - BEFORE/AFTER
-  - DELETE
-  - APPEND
-  - PREPEND
+  - REVERT
+
+3. Listen to feedback from the user on the changes. If the user doesn't like your changes, use REVERT to undo them!
+
+4. Continue to use the editing commands to try and achieve the user's needs.
+
+DON'T OUTPUT CODE BLOCKS EXCEPT BY USING THE EDITING COMMANDS.
+
+* Here is how the editing commands work:
 
 ** This is how to replace lines from a file with a new set of lines.
 
 BEFORE path/to/filename.ext
 ```
-... a series of lines from ...
-... the original file ...
-... completely unchanged ...
-... use as few lines as possible ...
+... unchanged lines from the original file ...
+... don't include a lot of extra lines which won't change! ...
+... NEVER INCLUDE AN ENTIRE FILE! ...
 ```
 AFTER
 ```
-... all occurances of the before lines ...
-... will get replaced with the after lines ...
+... new lines to replace them with ...
 ```
 
-** This is how to remove lines from a file:
+** This is how you can undo all the changes you made to a file, and restore it to the original state:
 
-DELETE path/to/filename.ext
-```
-... a series of sequential entire lines from ...
-... the original file ...
-... completely unchanged ...
-... that will be deleted ...
-```
-
-** This is how to append lines onto the end of a file:
-
-APPEND path/to/filename.ext
-```
-... lines to add ...
-... at the end of the file ...
-```
-
-** This is how to insert lines at the start of a file:
-
-PREPEND path/to/filename.ext
-```
-... lines to add ...
-... at the start of the file ...
-```
+REVERT path/to/filename.ext
 
 Study the provided code and then ask the user how they want you to change it.
 Ask any questions you need to fully understand the user's request.
@@ -203,25 +189,41 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
         sys.stdout.flush()
         inp = input()
 
+        prompt = ''
+        prompt += inp
+        prompt += '\n###\n'
+        prompt += 'Here is the content of the files. DO NOT OUTPUT CODE USING THIS FORMAT\n'
+        prompt += self.get_files_message()
+
         messages = [
             dict(role = 'system', content = self.system_prompt),
-            dict(role = 'user', content = 'Here is the content of the files. DO NOT OUTPUT CODE USING THIS FORMAT\n' + self.get_files_message()),
-            dict(role = 'user', content = inp),
+            dict(role = 'user', content = prompt),
         ]
         file_msg_no = 1
 
         content = self.send(messages)
 
         while True:
+            messages.append(
+                dict(
+                    role = 'assistant',
+                    content = content,
+                )
+            )
+
             print()
-            if self.update_files(content):
+            try:
+                if self.update_files(content):
+                    print()
+            except Exception as err:
+                print(err)
                 print()
 
             sys.stdout.write('> ')
             sys.stdout.flush()
             inp = input()
 
-            if self.files_modified():
+            if False and self.files_modified():
                 for fname in self.fnames:
                     self.add_file(fname)
 
@@ -244,6 +246,8 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
 
 
     def send(self, messages):
+        dump(messages)
+
         completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             #model="gpt-4",
@@ -267,7 +271,7 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
     quotes = '```'
 
     def parse_op(self, lines):
-        if lines[1] != self.quotes or lines[-1] != self.quotes:
+        if lines[1].rstrip() != self.quotes or lines[-1].rstrip() != self.quotes:
             raise ValueError(lines)
 
         pieces = lines[0].split()
@@ -287,8 +291,13 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
     def update_files(self, content):
 
         lines = content.splitlines()
-        line_nums = [i for i, j in enumerate(lines) if j == self.quotes]
-        pairs = [(line_nums[i], line_nums[i+1]) for i in range(0, len(line_nums), 2)]
+        line_nums = [i for i, j in enumerate(lines) if j.rstrip() == self.quotes]
+        try:
+            pairs = [(line_nums[i], line_nums[i+1]) for i in range(0, len(line_nums), 2)]
+        except Exception:
+            dump(content)
+            dump(lines)
+            raise
 
         ops = [
             lines[start-1:end+1]
