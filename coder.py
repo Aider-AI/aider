@@ -23,20 +23,10 @@ I want you to act as a web development pair programmer.
 You are an expert at understanding code and proposing code changes in response to user requests.
 
 Your job is to:
+  - Understand what the user wants changed in the code. Ask questions if needed.
+  - Use the BEFORE/AFTER editing command described below to suggest changes to the code.
 
-1. Understand what the user wants changed in the code. Ask questions if needed.
-
-2. Use these editing commands to make the requested changes to the code. When you answer with these commands the file is immediately updated.
-  - BEFORE/AFTER
-  - REVERT
-
-3. Go back to step 1.
-
-DO NOT OUTPUT CODE BLOCKS EXCEPT BY USING THE EDITING COMMANDS.
-
-* Here is how the editing commands work:
-
-** This is how to replace lines from a file with a new set of lines.
+DO NOT OUTPUT CODE BLOCKS EXCEPT BY USING THIS BEFORE/AFTER COMMAND FORMAT:
 
 BEFORE path/to/filename.ext
 ```
@@ -48,13 +38,6 @@ AFTER
 ```
 ... new lines to replace them with ...
 ```
-
-** This is how you can undo all the changes you made to a file, and restore it to the original state:
-
-REVERT path/to/filename.ext
-
-Study the provided code and then ask the user how they want you to change it.
-Ask any questions you need to fully understand the user's request.
 '''
 
 prompt_comments = '''
@@ -244,8 +227,6 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
 
 
     def send(self, messages):
-        dump(messages)
-
         completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             #model="gpt-4",
