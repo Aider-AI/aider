@@ -102,11 +102,19 @@ def find_index(list1, list2):
     return -1
 
 class Coder:
-    fnames = []
+    fnames = dict()
+
     def system(self, prompt):
         self.system_prompt = prompt
-    def file(self, fname):
-        self.fnames.append(str(fname))
+
+    def add_file(self, fname):
+        self.fnames[fname] = Path(fname).stat().st_mtime
+
+    def files_modified(self):
+        for fname,mtime in self.fnames.items():
+            if Path(fname).stat().st_mtime != mtime:
+                return True
+
     def request(self, prompt):
         self.request_prompt = prompt
 
@@ -181,25 +189,35 @@ class Coder:
         self.update_files(resp)
 
 
-
-    def run(self):
+    def get_files_message(self):
         prompt = ''
-
-        #prompt += self.request_prompt
-        #prompt += '\n###\n'
-
         for fname in self.fnames:
             prompt += self.quoted_file(fname)
+        return prompt
+
+    def run(self):
 
         messages = [
             dict(role = 'system', content = self.system_prompt),
-            dict(role = 'user', content = prompt),
+            dict(role = 'user', content = self.get_files_message()),
         ]
+        file_msg_no = 1
 
         while True:
             content = self.send(messages)
             self.update_files(content)
             inp = input()
+            if self.files_modified():
+                print('Updating ChatGPT with current file contents')
+                messages[file_msg_no] = dict(role = 'user', content = '<<outdated list of the files and their content -- removed>>')
+                messages.append(
+                    dict(
+                        role = 'user',
+                        content = 'The files have been updated. Here is the current content of the files. Take note! Base future changes on this update!\n' + self.get_files_message(),
+                    )
+                )
+                file_msg_no = len(messages)-1
+
             message = dict(role = 'user', content = inp)
             messages.append(message)
 
@@ -287,6 +305,7 @@ class Coder:
         if after_cmd != 'AFTER':
             raise ValueError(after_cmd)
         if fname not in self.fnames:
+            dump(self.fnames)
             raise ValueError(fname)
 
         fname = Path(fname)
@@ -315,9 +334,9 @@ coder = Coder()
 coder.system(prompt_webdev)
 
 for fname in sys.argv[1:]:
-    coder.file(Path(fname))
+    coder.add_file(fname)
 
-coder.update_files(Path('tmp.commands').read_text()) ; sys.exit()
+#coder.update_files(Path('tmp.commands').read_text()) ; sys.exit()
 
 coder.run()
 
