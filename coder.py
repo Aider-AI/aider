@@ -21,7 +21,6 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 prompt_webdev = '''
 I want you to act as a web development pair programmer.
 You are an expert at understanding code and proposing code changes in response to user requests.
-Study the provided code and then change it according to the user's requests.
 
 Ask any questions you need to fully understand the user's request.
 
@@ -73,6 +72,7 @@ PREPEND filename.ext
 ... at the start of the file ...
 ```
 
+Study the provided code and then ask the user how they want you to change it.
 '''
 
 prompt_comments = '''
@@ -174,6 +174,8 @@ class Coder:
 
 
     def run(self):
+        prompt = ''
+
         #prompt += self.request_prompt
         #prompt += '\n###\n'
 
