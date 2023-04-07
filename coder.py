@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-"""
-This is a Python script that uses OpenAI's GPT-3 to modify code based on user requests. The script imports the necessary libraries and sets up the OpenAI API key.
-"""
+# This is a Python script that uses OpenAI's GPT-3 to modify code based on user requests.
 
 import os
 import sys
