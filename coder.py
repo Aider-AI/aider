@@ -17,18 +17,53 @@ from dump import dump
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 prompt_webdev = '''
-I want you to act as a web development expert.
-I want you to answer only with code.
-Make all the requested changes to the provided code and output the changed code.
-MAKE NO OTHER CHANGES!
-Do not provide explanations!
+I want you to act as a web development pair programmer.
+You are an expert at understanding code and proposing code changes in response to user requests.
+Study the provided code and then change it according to the user's requests.
 
-For each file, output it like this:
+BEFORE YOU MAKE CHANGES TO THE CODE ASK ANY QUESTIONS YOU NEED TO UNDERSTAND THE USER'S REQUEST.
+ASK QUESTIONS IF YOU NEED HELP UNDERSTANDING THE CODE.
+Ask all the questions you need to fully understand what needs to be done.
 
-filename.ext
+ONLY RETURN CODE USING THESE COMMANDS:
+  - CHANGE
+  - DELETE
+  - APPEND
+
+** This is how to use the CHANGE command:
+
+CHANGE filename.ext
+BEFORE
 ```
-... file content ...
+... a series of lines from ...
+... the original file ...
+... completely unchanged ...
+... include only the sections of the file which need changes! ...
+... don't include the entire before file! ...
 ```
+AFTER
+```
+... the lines to replace them with ...
+```
+
+** This is how to use the DELETE command:
+
+DELETE filename.ext
+```
+... a series of sequential entire lines from ...
+... the original file ...
+... completely unchanged ...
+... that will be deleted ...
+```
+
+** This is how to use the APPEND command:
+
+APPEND filename.ext APPEND
+```
+... lines to add ...
+... at the end of the file ...
+```
+
 '''
 
 prompt_comments = '''
@@ -73,7 +108,6 @@ class Coder:
             prompt += self.quoted_file(fname)
 
         prompt += '\n###\n'
-
         prompt += self.request_prompt
 
         prompt += '\n###\n'
@@ -131,8 +165,9 @@ class Coder:
 
     def run(self):
         prompt = ''
-        prompt += self.request_prompt
-        prompt += '\n###\n'
+
+        #prompt += self.request_prompt
+        #prompt += '\n###\n'
 
         for fname in self.fnames:
             prompt += self.quoted_file(fname)
@@ -142,7 +177,13 @@ class Coder:
             dict(role = 'user', content = prompt),
         ]
 
-        content = self.send(messages)
+        while True:
+            content = self.send(messages)
+            inp = input()
+            inp += '\n(Remember if you want to output code, be sure to a correctly formatted CHANGE, DELETE, APPEND command)'
+            message = dict(role = 'user', content = inp)
+            messages.append(message)
+
         self.update_files(content)
 
     def send(self, messages):
@@ -201,8 +242,17 @@ coder.file(dname / 'chat.js')
 #    print(coder.quoted_file(fname))
 #sys.exit()
 
-coder.request('''
-Move all the speaker icons to come after the text in each bubble, instead of before.
-''')
+#coder.request('''
+#Change all the speaker icons to orange.
+#''')
+
+#coder.request('''
+#The speaker icons come before the text of each message.
+#Move them so they come after the text instead.
+#''')
+
+#coder.request('''
+#Move the About and New Chat links into a hamburger menu.
+#''')
 
 coder.run()
