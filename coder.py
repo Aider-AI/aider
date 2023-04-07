@@ -22,11 +22,7 @@ prompt_webdev = '''
 I want you to act as a web development pair programmer.
 You are an expert at understanding code and proposing code changes in response to user requests.
 
-Ask any questions you need to fully understand the user's request.
-
-DO NOT REPLACE ENTIRE FILES!
-
-YOU MUST ONLY RETURN CODE USING THESE COMMANDS:
+YOU MUST ONLY RETURN CODE USING THESE COMMANDS!
   - BEFORE/AFTER
   - DELETE
   - APPEND
@@ -39,8 +35,7 @@ BEFORE path/to/filename.ext
 ... a series of lines from ...
 ... the original file ...
 ... completely unchanged ...
-... include ONLY the sections of the file which need changes! ...
-... DO NOT USE THIS TO REPLACE AN ENTIRE FILES CONTENTS ...
+... use as few lines as possible ...
 ```
 AFTER
 ```
@@ -75,6 +70,7 @@ PREPEND path/to/filename.ext
 ```
 
 Study the provided code and then ask the user how they want you to change it.
+Ask any questions you need to fully understand the user's request.
 '''
 
 prompt_comments = '''
@@ -195,31 +191,56 @@ class Coder:
             prompt += self.quoted_file(fname)
         return prompt
 
+    change_notice = '''
+TAKE NOTE!
+The contents of the files have been updated!
+USE THESE FILES NOW.
+MAKE ANY CHANGES BASED OFF THESE FILES!
+'''
     def run(self):
+
+        sys.stdout.write('> ')
+        sys.stdout.flush()
+        inp = input()
 
         messages = [
             dict(role = 'system', content = self.system_prompt),
-            dict(role = 'user', content = self.get_files_message()),
+            dict(role = 'user', content = 'Here is the content of the files. DO NOT OUTPUT CODE USING THIS FORMAT\n' + self.get_files_message()),
+            dict(role = 'user', content = inp),
         ]
         file_msg_no = 1
 
+        content = self.send(messages)
+
         while True:
-            content = self.send(messages)
-            self.update_files(content)
+            print()
+            if self.update_files(content):
+                print()
+
+            sys.stdout.write('> ')
+            sys.stdout.flush()
             inp = input()
+
             if self.files_modified():
-                print('Updating ChatGPT with current file contents')
+                for fname in self.fnames:
+                    self.add_file(fname)
+
+                print('Files have changed, informing ChatGPT.')
+                print()
+
                 messages[file_msg_no] = dict(role = 'user', content = '<<outdated list of the files and their content -- removed>>')
                 messages.append(
                     dict(
                         role = 'user',
-                        content = 'The files have been updated. Here is the current content of the files. Take note! Base future changes on this update!\n' + self.get_files_message(),
+                        content = self.change_notice + self.get_files_message(),
                     )
                 )
                 file_msg_no = len(messages)-1
 
             message = dict(role = 'user', content = inp)
             messages.append(message)
+            content = self.send(messages)
+
 
 
     def send(self, messages):
@@ -239,9 +260,6 @@ class Coder:
                 continue
             sys.stdout.write(text)
             sys.stdout.flush()
-
-        print()
-        print('='*40)
 
         resp = ''.join(resp)
         return resp
@@ -276,6 +294,9 @@ class Coder:
             lines[start-1:end+1]
             for start,end in pairs
         ]
+        if not ops:
+            return
+
         ops.reverse()
         while ops:
             op = ops.pop()
@@ -287,6 +308,9 @@ class Coder:
             if cmd == 'APPEND':
                 self.do_append(cmd, fname, op_lines)
                 continue
+            raise ValueError(op)
+
+        return True
 
     def do_append(self, cmd, fname, op_lines):
         if fname not in self.fnames:
@@ -299,6 +323,8 @@ class Coder:
         content += '\n'.join(op_lines)
         content += '\n'
         fname.write_text(content)
+
+        print('Applied APPEND', fname)
 
     def do_before(self, cmd, fname, op_lines, after_op):
         after_cmd,after_fname,after_lines = self.parse_op(after_op)
@@ -324,6 +350,7 @@ class Coder:
         new_content = '\n'.join(new_content) + '\n'
 
         fname.write_text(new_content)
+        print('Applied CHANGE', fname)
 
 
 
@@ -352,7 +379,7 @@ coder.run()
 '''
 Change all the speaker icons to orange.
 
-The speaker icons come before the text of each message. Move them so they come after the text instead.
+Currently the speaker icons come before the text of each message. Move them so they come after the text instead.
 
 Move the About and New Chat links into a hamburger menu.
 '''
