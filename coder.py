@@ -25,15 +25,14 @@ You are an expert at understanding code and proposing code changes in response t
 Ask any questions you need to fully understand the user's request.
 
 YOU MUST ONLY RETURN CODE USING THESE COMMANDS:
-  - CHANGE
+  - BEFORE/AFTER
   - DELETE
   - APPEND
   - PREPEND
 
 ** This is how to use the CHANGE command:
 
-CHANGE filename.ext
-BEFORE
+BEFORE path/to/filename.ext
 ```
 ... a series of lines from ...
 ... the original file ...
@@ -48,7 +47,7 @@ AFTER
 
 ** This is how to use the DELETE command:
 
-DELETE filename.ext
+DELETE path/to/filename.ext
 ```
 ... a series of sequential entire lines from ...
 ... the original file ...
@@ -58,7 +57,7 @@ DELETE filename.ext
 
 ** This is how to use the APPEND command:
 
-APPEND filename.ext
+APPEND path/to/filename.ext
 ```
 ... lines to add ...
 ... at the end of the file ...
@@ -66,7 +65,7 @@ APPEND filename.ext
 
 ** This is how to use the PREPEND command:
 
-PREPEND filename.ext
+PREPEND path/to/filename.ext
 ```
 ... lines to add ...
 ... at the start of the file ...
@@ -86,7 +85,7 @@ MAKE NO OTHER CHANGES!
 
 For each file, output like this:
 
-filename.ext
+path/to/filename.ext
 ```
 ... file content ...
 ```
@@ -97,15 +96,15 @@ class Coder:
     def system(self, prompt):
         self.system_prompt = prompt
     def file(self, fname):
-        self.fnames.append(fname)
+        self.fnames.append(str(fname))
     def request(self, prompt):
         self.request_prompt = prompt
 
     def quoted_file(self, fname):
         prompt = '\n'
-        prompt += fname.name
+        prompt += fname
         prompt += '\n```\n'
-        prompt += fname.read_text()
+        prompt += Path(fname).read_text()
         prompt += '\n```\n'
         return prompt
 
@@ -189,7 +188,7 @@ class Coder:
 
         while True:
             content = self.send(messages)
-            #self.update_files(content)
+            self.update_files(content)
             inp = input()
             message = dict(role = 'user', content = inp)
             messages.append(message)
@@ -219,26 +218,84 @@ class Coder:
         resp = ''.join(resp)
         return resp
 
+    quotes = '```'
+
+    def parse_op(self, lines):
+        if lines[1] != self.quotes or lines[-1] != self.quotes:
+            raise ValueError(lines)
+
+        pieces = lines[0].split()
+        cmd = pieces[0]
+        if cmd not in ('BEFORE', 'AFTER'):
+            raise ValueError(cmd)
+
+        if len(pieces) > 1:
+            fname = pieces[1]
+        else:
+            if cmd != 'AFTER':
+                raise ValueError
+            fname = None
+
+        return cmd, fname, lines[2:-1]
+
     def update_files(self, content):
-        for fname in self.fnames:
-            self.update_file(fname, content)
 
-    def update_file(self, fname, content):
-        start = f'{fname.name}\n```\n'
-        end = '\n```'
+        lines = content.splitlines()
+        line_nums = [i for i, j in enumerate(lines) if j == self.quotes]
+        pairs = [(line_nums[i], line_nums[i+1]) for i in range(0, len(line_nums), 2)]
 
-        if start not in content:
-            print(f'{fname} no updates')
-            return
+        ops = [
+            lines[start-1:end+1]
+            for start,end in pairs
+        ]
+        ops.reverse()
+        while ops:
+            op = ops.pop()
+            cmd,fname,op_lines = self.parse_op(op)
+            if cmd == 'BEFORE':
+                after_op = ops.pop()
+                self.do_before(cmd, fname, op_lines, after_op)
 
-        print(f'{fname} updated')
-        content = content.split(start)[1]
-        content = content.split(end)[0]
+    def do_before(self, cmd, fname, op_lines, after_op):
+        after_cmd,after_fname,after_lines = self.parse_op(after_op)
+        if after_cmd != 'AFTER':
+            raise ValueError(after_cmd)
+        if fname not in self.fnames:
+            raise ValueError(fname)
 
+        fname = Path(fname)
+
+        content = fname.read_text()
+        before = '\n'.join(op_lines)
+        after = '\n'.join(after_lines)
+        if before not in content:
+            raise ValueError(before)
+
+        content = content.replace(before, after)
         fname.write_text(content)
 
 
+
+
+
 coder = Coder()
+coder.file('../easy-chat/chat.css')
+coder.update_files('''
+BEFORE ../easy-chat/chat.css
+```
+.chat-box .fa-volume-up {
+    color: #4CAF50;
+}
+```
+
+AFTER
+```
+.chat-box .fa-volume-up {
+    color: orange;
+}
+```
+''')
+sys.exit()
 
 coder.system(prompt_webdev)
 
