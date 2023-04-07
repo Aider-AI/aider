@@ -23,9 +23,7 @@ I want you to act as a web development pair programmer.
 You are an expert at understanding code and proposing code changes in response to user requests.
 Study the provided code and then change it according to the user's requests.
 
-BEFORE YOU MAKE CHANGES TO THE CODE ASK ANY QUESTIONS YOU NEED TO UNDERSTAND THE USER'S REQUEST.
-ASK THE USER QUESTIONS IF YOU NEED HELP UNDERSTANDING THE CODE.
-Ask all the questions you need to fully understand what needs to be done.
+Ask any questions you need to fully understand the user's request.
 
 YOU MUST ONLY RETURN CODE USING THESE COMMANDS:
   - CHANGE
@@ -132,13 +130,14 @@ class Coder:
             temperature=0,
             stream = True,
         )
-        resp = []
+        resp = ''
         for chunk in completion:
             try:
                 text = chunk.choices[0].text
-                resp.append(text)
+                resp += text
             except AttributeError:
                 continue
+
             sys.stdout.write(text)
             sys.stdout.flush()
 
@@ -175,8 +174,6 @@ class Coder:
 
 
     def run(self):
-        prompt = ''
-
         #prompt += self.request_prompt
         #prompt += '\n###\n'
 
@@ -190,12 +187,11 @@ class Coder:
 
         while True:
             content = self.send(messages)
+            #self.update_files(content)
             inp = input()
-            #inp += '\n(Remember if you want to output code, be sure to a correctly formatted CHANGE, DELETE, APPEND command)'
             message = dict(role = 'user', content = inp)
             messages.append(message)
 
-        self.update_files(content)
 
     def send(self, messages):
         completion = openai.ChatCompletion.create(
@@ -244,7 +240,11 @@ coder = Coder()
 
 coder.system(prompt_webdev)
 
-coder.file(Path('coder.py'))
+for fname in sys.argv[1:]:
+    coder.file(Path(fname))
+
+coder.run()
+
 
 #dname = Path('../easy-chat')
 #coder.file(dname / 'index.html')
@@ -255,17 +255,10 @@ coder.file(Path('coder.py'))
 #    print(coder.quoted_file(fname))
 #sys.exit()
 
-#coder.request('''
-#Change all the speaker icons to orange.
-#''')
+'''
+Change all the speaker icons to orange.
 
-#coder.request('''
-#The speaker icons come before the text of each message.
-#Move them so they come after the text instead.
-#''')
+The speaker icons come before the text of each message. Move them so they come after the text instead.
 
-#coder.request('''
-#Move the About and New Chat links into a hamburger menu.
-#''')
-
-coder.run()
+Move the About and New Chat links into a hamburger menu.
+'''
