@@ -1,15 +1,7 @@
 #!/usr/bin/env python
 
 """
-This is a Python script that uses OpenAI's GPT-3 to modify code based on user requests. The script imports the necessary libraries and sets up the OpenAI API key. It then defines a Coder class that contains methods for sending requests to the OpenAI API and updating files based on the API's responses.
-
-The Coder class has several methods, including system, file, request, quoted_file, run_davinci, run_edit, run, send, update_files, and update_file. These methods are used to interact with the OpenAI API and modify code based on user requests.
-
-The script begins by defining a prompt for ChatGPT that explains its role. It then creates an instance of the Coder class and sets the system prompt to the prompt defined earlier.
-
-The script then calls the run method of the Coder class, which prompts the user for input and sends that input to the OpenAI API. The API responds with modified code, which is then used to update the coder.py file.
-
-Overall, this script is a powerful tool for modifying code based on user requests using OpenAI's GPT-3 API.
+This is a Python script that uses OpenAI's GPT-3 to modify code based on user requests. The script imports the necessary libraries and sets up the OpenAI API key.
 """
 
 import os
