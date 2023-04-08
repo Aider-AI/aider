@@ -39,7 +39,7 @@ AFTER
 ... new lines to replace them with ...
 ```
 
-Don't forget the ``` delimiters!
+ALWAYS USE THE ``` DELIMITERS!
 '''
 
 prompt_comments = '''
@@ -166,11 +166,18 @@ The contents of the files have been updated!
 USE THESE FILES NOW.
 MAKE ANY CHANGES BASED OFF THESE FILES!
 '''
-    def run(self):
+    def get_input(self):
 
+        print()
+        print('='*60)
         sys.stdout.write('> ')
         sys.stdout.flush()
         inp = input()
+        print()
+        return inp
+
+    def run(self):
+        inp = self.get_input()
 
         prompt = ''
         prompt += inp
@@ -202,9 +209,7 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
                 print(err)
                 print()
 
-            sys.stdout.write('> ')
-            sys.stdout.flush()
-            inp = input()
+            inp = self.get_input()
 
             if False and self.files_modified():
                 for fname in self.fnames:
