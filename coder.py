@@ -26,17 +26,19 @@ Your job is to:
   - Understand what the user wants. Ask questions if needed.
   - Suggest changes to the code.
 
-ONLY SUGGEST CODE CHANGES BY USING THIS EXACT BEFORE/AFTER COMMAND FORMAT:
+FOR EACH CHANGE TO THE CODE, DESCRIBE IT USING THIS FORMAT:
 
 path/to/filename.ext
-```BEFORE
-... unchanged lines from the original file ...
-... only include lines around needed changes! ...
-... NEVER INCLUDE AN ENTIRE FILE! ...
-```
-```AFTER
-... new lines to replace them with ...
-```
+<<<<<<< ORIGINAL
+a chunk of the original file
+that needs to be changed
+=======
+new lines to replace
+the original chunk
+>>>>>>> UPDATED
+
+NEVER REPLY WITH AN ENTIRE FILE!
+ONLY USE THE ABOVE ORIGINAL/UPDATED FORMAT TO DESCRIBE CODE CHANGES!
 '''
 
 prompt_comments = '''
@@ -152,7 +154,7 @@ class Coder:
 
 
     def get_files_message(self):
-        prompt = ''
+        prompt = 'Here are the files. NEVER USE THIS FORMAT FOR OUTPUT!\n'
         for fname in self.fnames:
             prompt += self.quoted_file(fname)
         return prompt
@@ -197,7 +199,7 @@ The ``` delimiters are very important!
         prompt = ''
         prompt += inp
         prompt += '\n###\n'
-        prompt += 'Here is the content of the files. DO NOT OUTPUT CODE USING THIS FORMAT\n'
+        prompt += 'Here is the content of the files. DO NOT OUTPUT CODE USING THIS FORMAT!!\n'
         prompt += self.get_files_message()
 
         messages = [
@@ -249,6 +251,8 @@ The ``` delimiters are very important!
 
 
     def send(self, messages):
+        dump(messages)
+
         completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             #model="gpt-4",
@@ -373,7 +377,7 @@ coder.system(prompt_webdev)
 for fname in sys.argv[1:]:
     coder.add_file(fname)
 
-#coder.update_files(Path('tmp.commands').read_text()) ; sys.exit()
+coder.update_files(Path('tmp.commands').read_text()) ; sys.exit()
 
 coder.run()
 
