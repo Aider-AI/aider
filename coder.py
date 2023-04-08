@@ -302,7 +302,7 @@ Just the content of the file!
             dict(role = 'system', content = sys_prompt),
             dict(role = 'user', content = prompt),
         ]
-        res = self.send(messages, show_progress = len(content))
+        res = self.send(messages, show_progress = len(content) + len(edit))
 
         res = res.splitlines()
         if res[0].strip == str(fname):
