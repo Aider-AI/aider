@@ -8,6 +8,7 @@ import copy
 import random
 import json
 import re
+import readline
 
 from pathlib import Path
 from collections import defaultdict
@@ -16,6 +17,12 @@ import os
 import openai
 
 from dump import dump
+
+history_file = '.coder.history'
+try:
+    readline.read_history_file(history_file)
+except FileNotFoundError:
+    pass
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -40,7 +47,7 @@ the original chunk
 >>>>>>> UPDATED
 
 NEVER REPLY WITH AN ENTIRE FILE!
-ONLY USE THE ABOVE ORIGINAL/UPDATED FORMAT TO DESCRIBE CODE CHANGES!
+ONLY USE THIS ORIGINAL/UPDATED FORMAT TO DESCRIBE CODE CHANGES!
 '''
 
 prompt_comments = '''
@@ -155,8 +162,8 @@ class Coder:
         self.update_files(resp)
 
 
-    def get_files_message(self):
-        prompt = 'Here is the current content of the files. NEVER OUTPUT ENTIRE FILES! NEVER OUTPUT IN THIS FORMAT!\n'
+    def get_files_content(self):
+        prompt = 'Here is the content of the files. NEVER OUTPUT ENTIRE FILES! NEVER OUTPUT IN THIS FORMAT!\n'
         for fname in self.fnames:
             prompt += self.quoted_file(fname)
         return prompt
@@ -171,54 +178,30 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
 
         print()
         print('='*60)
-        sys.stdout.write('> ')
-        sys.stdout.flush()
-        inp = input()
+        inp = input('> ')
         print()
 
-        if inp == 'fix':
-            inp = '''
-It looks like you are trying to specify code changes. Repeat your previous message, but use the exact BEFORE/AFTER command format, like this:
+        #readline.add_history(inp)
+        readline.write_history_file(history_file)
 
-BEFORE path/to/filename.ext
-```
-... unchanged lines from the original file ...
-... only include lines around needed changes! ...
-... NEVER INCLUDE AN ENTIRE FILE! ...
-```
-AFTER
-```
-... new lines to replace them with ...
-```
-
-The ``` delimiters are very important!
-'''
         return inp
 
     def run(self):
-        inp = self.get_input()
-
-        prompt = ''
-        prompt += inp
-        prompt += '\n###\n'
-        prompt += 'Here is the content of the files. DO NOT OUTPUT CODE USING THIS FORMAT!!\n'
-        prompt += self.get_files_message()
-
         messages = [
             dict(role = 'system', content = self.system_prompt),
-            dict(role = 'user', content = prompt),
         ]
-        file_msg_no = 1
-
-        content = self.send(messages)
 
         while True:
-            messages.append(
-                dict(
-                    role = 'assistant',
-                    content = content,
-                )
-            )
+            inp = self.get_input()
+            if len(messages) == 1:
+                inp += '\n' + self.get_files_content()
+
+            message = dict(role = 'user', content = inp)
+            messages.append(message)
+
+            content = self.send(messages)
+            message = dict(role = 'assistant', content = content)
+            messages.append(message)
 
             print()
             try:
@@ -228,32 +211,9 @@ The ``` delimiters are very important!
                 print(err)
                 print()
 
-            inp = self.get_input()
-
-            if False and self.files_modified():
-                for fname in self.fnames:
-                    self.add_file(fname)
-
-                print('Files have changed, informing ChatGPT.')
-                print()
-
-                messages[file_msg_no] = dict(role = 'user', content = '<<outdated list of the files and their content -- removed>>')
-                messages.append(
-                    dict(
-                        role = 'user',
-                        content = self.change_notice + self.get_files_message(),
-                    )
-                )
-                file_msg_no = len(messages)-1
-
-            message = dict(role = 'user', content = inp)
-            messages.append(message)
-            content = self.send(messages)
-
-
-
     def send(self, messages):
-        #dump(messages)
+        for msg in messages:
+            dump(msg)
 
         completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
