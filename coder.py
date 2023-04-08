@@ -156,7 +156,7 @@ class Coder:
 
 
     def get_files_message(self):
-        prompt = 'Here are the files. NEVER USE THIS FORMAT FOR OUTPUT!\n'
+        prompt = 'Here is the current content of the files. NEVER OUTPUT ENTIRE FILES! NEVER OUTPUT IN THIS FORMAT!\n'
         for fname in self.fnames:
             prompt += self.quoted_file(fname)
         return prompt
@@ -281,9 +281,9 @@ The ``` delimiters are very important!
     def update_files(self, content):
         for match in self.pattern.finditer(content):
             path, original, updated = match.groups()
-            self.do_before_after(path, original, updated)
+            self.do_replace(path, original, updated)
 
-    def do_before_after(self, fname, before, after):
+    def do_replace(self, fname, before, after):
         fname = Path(fname)
         content = fname.read_text().splitlines()
         before = [l.strip() for l in before.splitlines()]
