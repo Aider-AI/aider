@@ -9,6 +9,7 @@ import random
 import json
 import re
 import readline
+from tqdm import tqdm
 
 from pathlib import Path
 from collections import defaultdict
@@ -211,9 +212,9 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
                 print(err)
                 print()
 
-    def send(self, messages):
-        for msg in messages:
-            dump(msg)
+    def send(self, messages, show_progress = 0):
+        #for msg in messages:
+        #    dump(msg)
 
         completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
@@ -223,14 +224,21 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
             stream = True,
         )
         resp = []
+
+        if show_progress:
+            pbar = tqdm(total = show_progress)
+
         for chunk in completion:
             try:
                 text = chunk.choices[0].delta.content
                 resp.append(text)
             except AttributeError:
                 continue
-            sys.stdout.write(text)
-            sys.stdout.flush()
+            if show_progress:
+                pbar.update(len(text))
+            else:
+                sys.stdout.write(text)
+                sys.stdout.flush()
 
         resp = ''.join(resp)
         return resp
@@ -294,7 +302,8 @@ Just the content of the file!
             dict(role = 'system', content = sys_prompt),
             dict(role = 'user', content = prompt),
         ]
-        res = self.send(messages)
+        res = self.send(messages, show_progress = len(content))
+
         res = res.splitlines()
         if res[0].strip == str(fname):
             res = res[1:]
