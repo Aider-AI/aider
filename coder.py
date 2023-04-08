@@ -47,7 +47,6 @@ new lines to replace
 the original chunk
 >>>>>>> UPDATED
 
-NEVER REPLY WITH AN ENTIRE FILE!
 ONLY USE THIS ORIGINAL/UPDATED FORMAT TO DESCRIBE CODE CHANGES!
 '''
 
@@ -164,9 +163,10 @@ class Coder:
 
 
     def get_files_content(self):
-        prompt = 'Here is the content of the files. NEVER OUTPUT ENTIRE FILES! NEVER OUTPUT IN THIS FORMAT!\n'
+        prompt = ''
         for fname in self.fnames:
             prompt += self.quoted_file(fname)
+        prompt += '\n\nRemember, NEVER REPLY WITH WHOLE FILES LIKE THIS. ONLY TELL ME CODE CHANGES USING ORIGINAL/UPDATED EDIT COMMANDS!\n'
         return prompt
 
     change_notice = '''
@@ -192,10 +192,19 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
             dict(role = 'system', content = self.system_prompt),
         ]
 
+        did_edits = False
         while True:
             inp = self.get_input()
+
+            if did_edits:
+                files_prefix = 'I made your suggested changes, here are the updated files:'
+            else:
+                files_prefix = 'Here are the files:'
+            files_prefix += '\n\n'
+
+
             messages += [
-                dict(role = 'user', content = self.get_files_content()),
+                dict(role = 'user', content = files_prefix + self.get_files_content()),
                 dict(role = 'assistant', content = "Ok."),
                 dict(role = 'user', content = inp),
             ]
@@ -208,16 +217,18 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
             messages.append(dict(role = 'assistant', content = content))
 
             print()
+            print()
             try:
-                if self.update_files(content):
+                did_edits = self.update_files(content)
+                if did_edits:
                     print()
             except Exception as err:
                 print(err)
                 print()
 
     def send(self, messages, show_progress = 0):
-        for msg in messages:
-            dump(msg)
+        #for msg in messages:
+        #    dump(msg)
 
         completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
@@ -243,6 +254,10 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
                 sys.stdout.write(text)
                 sys.stdout.flush()
 
+        if show_progress:
+            pbar.update(show_progress)
+            pbar.close()
+
         resp = ''.join(resp)
         return resp
 
@@ -250,12 +265,17 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
     pattern = re.compile(r'^(\S+)\n<<<<<<< ORIGINAL\n(.+?)\n=======\n(.+?)\n>>>>>>> UPDATED$', re.MULTILINE | re.DOTALL)
 
     def update_files(self, content):
+        did_edits = False
+
         for match in self.pattern.finditer(content):
+            did_edits = True
             path, original, updated = match.groups()
             if self.do_replace(path, original, updated):
                 continue
             edit = match.group()
             self.do_gpt_powered_replace(path, edit)
+
+        return did_edits
 
     def do_replace(self, fname, before_text, after_text):
         fname = Path(fname)
@@ -273,11 +293,11 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
         new_content = '\n'.join(new_content) + '\n'
 
         fname.write_text(new_content)
-        print('Applied CHANGE', fname)
+        print('Applied edit to', fname)
         return True
 
     def do_gpt_powered_replace(self, fname, edit):
-        print(f'Could not find ORIGINAL block in {fname}, asking GPT to make the edit...')
+        print(f'Asking GPT to apply ambiguous edit to {fname}...')
         fname = Path(fname)
         content = fname.read_text()
         prompt = f'''
@@ -305,7 +325,7 @@ Just the content of the file!
             dict(role = 'system', content = sys_prompt),
             dict(role = 'user', content = prompt),
         ]
-        res = self.send(messages, show_progress = len(content) + len(edit))
+        res = self.send(messages, show_progress = len(content) + len(edit)/2)
 
         res = res.splitlines()
         if res[0].strip == str(fname):
