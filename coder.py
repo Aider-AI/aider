@@ -23,23 +23,20 @@ I want you to act as a web development pair programmer.
 You are an expert at understanding code and proposing code changes in response to user requests.
 
 Your job is to:
-  - Understand what the user wants changed in the code. Ask questions if needed.
-  - Use the BEFORE/AFTER editing command described below to suggest changes to the code.
+  - Understand what the user wants. Ask questions if needed.
+  - Suggest changes to the code.
 
-DO NOT OUTPUT CODE BLOCKS EXCEPT BY USING THIS BEFORE/AFTER COMMAND FORMAT:
+ONLY SUGGEST CODE CHANGES BY USING THIS EXACT BEFORE/AFTER COMMAND FORMAT:
 
-BEFORE path/to/filename.ext
-```
+path/to/filename.ext
+```BEFORE
 ... unchanged lines from the original file ...
 ... only include lines around needed changes! ...
 ... NEVER INCLUDE AN ENTIRE FILE! ...
 ```
-AFTER
-```
+```AFTER
 ... new lines to replace them with ...
 ```
-
-ALWAYS USE THE ``` DELIMITERS!
 '''
 
 prompt_comments = '''
@@ -174,6 +171,24 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
         sys.stdout.flush()
         inp = input()
         print()
+
+        if inp == 'fix':
+            inp = '''
+It looks like you are trying to specify code changes. Repeat your previous message, but use the exact BEFORE/AFTER command format, like this:
+
+BEFORE path/to/filename.ext
+```
+... unchanged lines from the original file ...
+... only include lines around needed changes! ...
+... NEVER INCLUDE AN ENTIRE FILE! ...
+```
+AFTER
+```
+... new lines to replace them with ...
+```
+
+The ``` delimiters are very important!
+'''
         return inp
 
     def run(self):
