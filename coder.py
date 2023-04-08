@@ -281,45 +281,89 @@ The ``` delimiters are very important!
     def update_files(self, content):
         for match in self.pattern.finditer(content):
             path, original, updated = match.groups()
-            self.do_replace(path, original, updated)
+            if self.do_replace(path, original, updated):
+                continue
+            edit = match.group()
+            self.do_gpt_powered_replace(path, edit)
 
-    def do_replace(self, fname, before, after):
+    def do_replace(self, fname, before_text, after_text):
         fname = Path(fname)
         content = fname.read_text().splitlines()
-        before = [l.strip() for l in before.splitlines()]
+        before_lines = [l.strip() for l in before_text.splitlines()]
         stripped_content = [l.strip() for l in content]
-        where = find_index(stripped_content, before)
+        where = find_index(stripped_content, before_lines)
 
         if where < 0:
-            raise ValueError(before)
+            return
 
         new_content = content[:where]
-        new_content += after.splitlines()
-        new_content += content[where+len(before):]
+        new_content += after_text.splitlines()
+        new_content += content[where+len(before_lines):]
         new_content = '\n'.join(new_content) + '\n'
 
         fname.write_text(new_content)
         print('Applied CHANGE', fname)
+        return True
+
+    def do_gpt_powered_replace(self, fname, edit):
+        print(f'Could not find CURRENT block in {fname}, asking GPT to make the edit...')
+        fname = Path(fname)
+        content = fname.read_text()
+        prompt = f'''
+Apply this change:
+
+{edit}
+
+To this file:
+
+{fname}
+```
+{content}
+```
+'''
+        sys_prompt = '''
+You are an expert code editor.
+Perform the requested edit.
+Output ONLY the new version of the file.
+Do not output explanations!
+Do not wrap the output in ``` delimiters.
+Just the content of the file!
+'''
+
+        messages = [
+            dict(role = 'system', content = sys_prompt),
+            dict(role = 'user', content = prompt),
+        ]
+        res = self.send(messages)
+
+        fname.write_text(res)
+
+
+def test_do_gpt_powered_replace(coder):
+    fname = Path('../easy-chat/index.html')
+    edit = '''
+../easy-chat/index.html
+<<<<<<< ORIGINAL
+<p class="user"><span class="fa fa-volume-up" onclick="speak(this.parentNode)"></span><span>Hello!</span></p>
+<p class="assistant"><span class="fa fa-volume-up" onclick="speak(this.parentNode)"></span><span>How</span> <span>can</span> <span>I</span> <span>help</span>
+    <span>you?</span></p>
+=======
+<p class="user"><span>Hello!</span><span class="fa fa-volume-up" onclick="speak(this.parentNode)"></span></p>
+<p class="assistant"><span>How</span> <span>can</span> <span>I</span> <span>help</span><span>you?</span><span class="fa fa-volume-up" onclick="speak(this.parentNode)"></span></p>
+>>>>>>> UPDATED
+'''
+    coder.do_gpt_powered_replace(fname, edit)
 
 coder = Coder()
+#test_do_gpt_powered_replace(coder) ; sys.exit()
 
 coder.system(prompt_webdev)
-
 for fname in sys.argv[1:]:
     coder.add_file(fname)
 
 #coder.update_files(Path('tmp.commands').read_text()) ; sys.exit()
 
 coder.run()
-
-#dname = Path('../easy-chat')
-#coder.file(dname / 'index.html')
-#coder.file(dname / 'chat.css')
-#coder.file(dname / 'chat.js')
-
-#for fname in coder.fnames:
-#    print(coder.quoted_file(fname))
-#sys.exit()
 
 '''
 Change all the speaker icons to orange.
