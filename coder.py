@@ -28,7 +28,7 @@ except FileNotFoundError:
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 prompt_webdev = '''
-I want you to act as a web development pair programmer.
+I want you to act as an expert software engineer and pair programmer.
 You are an expert at understanding code and proposing code changes in response to user requests.
 
 Your job is to:
