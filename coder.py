@@ -194,15 +194,18 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
 
         while True:
             inp = self.get_input()
-            if len(messages) == 1:
-                inp += '\n' + self.get_files_content()
-
-            message = dict(role = 'user', content = inp)
-            messages.append(message)
+            messages += [
+                dict(role = 'user', content = self.get_files_content()),
+                dict(role = 'assistant', content = "Ok."),
+                dict(role = 'user', content = inp),
+            ]
 
             content = self.send(messages)
-            message = dict(role = 'assistant', content = content)
-            messages.append(message)
+            user_msg = messages.pop()
+            messages.pop()
+            messages.pop()
+            messages.append(user_msg)
+            messages.append(dict(role = 'assistant', content = content))
 
             print()
             try:
@@ -213,8 +216,8 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
                 print()
 
     def send(self, messages, show_progress = 0):
-        #for msg in messages:
-        #    dump(msg)
+        for msg in messages:
+            dump(msg)
 
         completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
