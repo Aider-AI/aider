@@ -237,10 +237,28 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
             temperature=0,
             stream = True,
         )
-        resp = []
 
         if show_progress:
-            pbar = tqdm(total = show_progress)
+            return self.show_send_progress(completion)
+        else:
+            return self.show_send_output(completion)
+
+    def show_send_progress(self, completion):
+        resp = []
+        pbar = tqdm(total = show_progress)
+        for chunk in completion:
+            try:
+                text = chunk.choices[0].delta.content
+                resp.append(text)
+            except AttributeError:
+                continue
+
+            pbar.update(len(text))
+        resp = ''.join(resp)
+        return resp
+
+    def show_send_output(self, completion):
+        resp = []
 
         for chunk in completion:
             try:
@@ -248,15 +266,9 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
                 resp.append(text)
             except AttributeError:
                 continue
-            if show_progress:
-                pbar.update(len(text))
-            else:
-                sys.stdout.write(text)
-                sys.stdout.flush()
 
-        if show_progress:
-            pbar.update(show_progress)
-            pbar.close()
+            sys.stdout.write(text)
+            sys.stdout.flush()
 
         resp = ''.join(resp)
         return resp
