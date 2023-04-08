@@ -239,11 +239,11 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
         )
 
         if show_progress:
-            return self.show_send_progress(completion)
+            return self.show_send_progress(completion, show_progress)
         else:
             return self.show_send_output(completion)
 
-    def show_send_progress(self, completion):
+    def show_send_progress(self, completion, show_progress):
         resp = []
         pbar = tqdm(total = show_progress)
         for chunk in completion:
