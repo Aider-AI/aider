@@ -306,7 +306,7 @@ The ``` delimiters are very important!
         return True
 
     def do_gpt_powered_replace(self, fname, edit):
-        print(f'Could not find CURRENT block in {fname}, asking GPT to make the edit...')
+        print(f'Could not find ORIGINAL block in {fname}, asking GPT to make the edit...')
         fname = Path(fname)
         content = fname.read_text()
         prompt = f'''
@@ -335,7 +335,15 @@ Just the content of the file!
             dict(role = 'user', content = prompt),
         ]
         res = self.send(messages)
+        res = res.splitlines()
+        if res[0].strip == str(fname):
+            res = res[1:]
+        if res[0].strip() == '```' and res[-1].strip() == '```':
+            res = res[1:-1]
 
+        res = '\n'.join(res)
+        if res[-1] != '\n':
+            res += '\n'
         fname.write_text(res)
 
 
