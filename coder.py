@@ -7,6 +7,7 @@ import sys
 import copy
 import random
 import json
+import re
 
 from pathlib import Path
 from collections import defaultdict
@@ -30,7 +31,8 @@ FOR EACH CHANGE TO THE CODE, DESCRIBE IT USING THIS FORMAT:
 
 path/to/filename.ext
 <<<<<<< ORIGINAL
-a chunk of the original file
+a chunk of the **exact** lines
+from the original file
 that needs to be changed
 =======
 new lines to replace
@@ -251,7 +253,7 @@ The ``` delimiters are very important!
 
 
     def send(self, messages):
-        dump(messages)
+        #dump(messages)
 
         completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
@@ -273,85 +275,18 @@ The ``` delimiters are very important!
         resp = ''.join(resp)
         return resp
 
-    quotes = '```'
 
-    def parse_op(self, lines):
-        if lines[1].rstrip() != self.quotes or lines[-1].rstrip() != self.quotes:
-            raise ValueError(lines)
-
-        pieces = lines[0].split()
-        cmd = pieces[0]
-        if cmd not in ('BEFORE', 'AFTER', 'APPEND'):
-            raise ValueError(cmd)
-
-        if len(pieces) > 1:
-            fname = pieces[1]
-        else:
-            if cmd != 'AFTER':
-                raise ValueError
-            fname = None
-
-        return cmd, fname, lines[2:-1]
+    pattern = re.compile(r'^(\S+)\n<<<<<<< ORIGINAL\n(.+?)\n=======\n(.+?)\n>>>>>>> UPDATED$', re.MULTILINE | re.DOTALL)
 
     def update_files(self, content):
+        for match in self.pattern.finditer(content):
+            path, original, updated = match.groups()
+            self.do_before_after(path, original, updated)
 
-        lines = content.splitlines()
-        line_nums = [i for i, j in enumerate(lines) if j.rstrip() == self.quotes]
-        try:
-            pairs = [(line_nums[i], line_nums[i+1]) for i in range(0, len(line_nums), 2)]
-        except Exception:
-            dump(content)
-            dump(lines)
-            raise
-
-        ops = [
-            lines[start-1:end+1]
-            for start,end in pairs
-        ]
-        if not ops:
-            return
-
-        ops.reverse()
-        while ops:
-            op = ops.pop()
-            cmd,fname,op_lines = self.parse_op(op)
-            if cmd == 'BEFORE':
-                after_op = ops.pop()
-                self.do_before(cmd, fname, op_lines, after_op)
-                continue
-            if cmd == 'APPEND':
-                self.do_append(cmd, fname, op_lines)
-                continue
-            raise ValueError(op)
-
-        return True
-
-    def do_append(self, cmd, fname, op_lines):
-        if fname not in self.fnames:
-            raise ValueError(fname)
-
+    def do_before_after(self, fname, before, after):
         fname = Path(fname)
-        content = fname.read_text()
-        if content[-1] != '\n':
-            content += '\n'
-        content += '\n'.join(op_lines)
-        content += '\n'
-        fname.write_text(content)
-
-        print('Applied APPEND', fname)
-
-    def do_before(self, cmd, fname, op_lines, after_op):
-        after_cmd,after_fname,after_lines = self.parse_op(after_op)
-        if after_cmd != 'AFTER':
-            raise ValueError(after_cmd)
-        if fname not in self.fnames:
-            dump(self.fnames)
-            raise ValueError(fname)
-
-        fname = Path(fname)
-
         content = fname.read_text().splitlines()
-        before = [l.strip() for l in op_lines]
+        before = [l.strip() for l in before.splitlines()]
         stripped_content = [l.strip() for l in content]
         where = find_index(stripped_content, before)
 
@@ -359,16 +294,12 @@ The ``` delimiters are very important!
             raise ValueError(before)
 
         new_content = content[:where]
-        new_content += after_lines
+        new_content += after.splitlines()
         new_content += content[where+len(before):]
         new_content = '\n'.join(new_content) + '\n'
 
         fname.write_text(new_content)
         print('Applied CHANGE', fname)
-
-
-
-
 
 coder = Coder()
 
@@ -377,7 +308,7 @@ coder.system(prompt_webdev)
 for fname in sys.argv[1:]:
     coder.add_file(fname)
 
-coder.update_files(Path('tmp.commands').read_text()) ; sys.exit()
+#coder.update_files(Path('tmp.commands').read_text()) ; sys.exit()
 
 coder.run()
 
