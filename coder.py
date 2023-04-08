@@ -265,7 +265,6 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
 
         in_diff = False
         diff_lines = []
-        lexer = None
 
         def print_lines():
             if not diff_lines:
@@ -292,30 +291,19 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
                 if check == '>>>>>>> UPDATED':
                     print_lines()
                     in_diff = False
-                    lexer = None
                     diff_lines = []
 
                 if check == '=======':
-                    if len(diff_lines) >= 3:
-                        print_lines()
-                        diff_lines = []
-
+                    print_lines()
+                    diff_lines = []
                     print(line)
                 elif in_diff:
-                    if lexer is None:
-                        diff_lines.append(line)
-                        if len(diff_lines) >= 3:
-                            print_lines()
-                            diff_lines = []
-                    else:
-                        code = highlight(line, lexer, formatter)
-                        print(code, end='')
+                    diff_lines.append(line)
                 else:
                     print(line)
 
                 if line.strip() == '<<<<<<< ORIGINAL':
                     in_diff = True
-                    lexer = None
                     diff_lines = []
 
         if partial_line:
