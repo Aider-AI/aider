@@ -31,13 +31,15 @@ DO NOT OUTPUT CODE BLOCKS EXCEPT BY USING THIS BEFORE/AFTER COMMAND FORMAT:
 BEFORE path/to/filename.ext
 ```
 ... unchanged lines from the original file ...
-... don't include a lot of extra lines which won't change! ...
+... only include lines around needed changes! ...
 ... NEVER INCLUDE AN ENTIRE FILE! ...
 ```
 AFTER
 ```
 ... new lines to replace them with ...
 ```
+
+Don't forget the ``` delimiters!
 '''
 
 prompt_comments = '''
