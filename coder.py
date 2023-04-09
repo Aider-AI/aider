@@ -65,7 +65,6 @@ print(2+2)
 
 To add new code, anchor it by including 2-3 lines in the ORIGINAL and UPDATED portions of the diff.
 Don't just output the ENTIRE file. Turn it into an edit.
-
 '''
 
 prompt_comments = '''
@@ -423,14 +422,16 @@ To this file:
 ```
 {content}
 ```
+
+ONLY OUTPUT {fname} !!!
 '''
         sys_prompt = '''
 You are an expert code editor.
 Perform the requested edit.
 Output ONLY the new version of the file.
+Just that one file.
 Do not output explanations!
 Do not wrap the output in ``` delimiters.
-Just the content of the file!
 '''
 
         messages = [
