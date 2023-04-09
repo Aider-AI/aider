@@ -252,8 +252,8 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
                 traceback.print_exc()
 
     def send(self, messages, show_progress = 0):
-        for msg in messages:
-            dump(msg)
+        #for msg in messages:
+        #    dump(msg)
 
         completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
@@ -437,8 +437,6 @@ Just the content of the file!
             dict(role = 'user', content = prompt),
         ]
         res = self.send(messages, show_progress = len(content) + len(edit)/2)
-        dump(repr(res))
-
         res = self.strip_quoted_wrapping(res, fname)
         fname.write_text(res)
 
