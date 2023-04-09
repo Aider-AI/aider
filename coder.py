@@ -266,7 +266,7 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
         if show_progress:
             return self.show_send_progress(completion, show_progress)
         else:
-            return self.show_send_output_plain(completion)
+            return self.show_send_output_color(completion)
 
     def show_send_progress(self, completion, show_progress):
         resp = []
@@ -359,6 +359,7 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
                     in_diff = True
                     diff_lines = []
 
+        print_lines()
         if partial_line:
             print(partial_line)
 
