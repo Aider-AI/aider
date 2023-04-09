@@ -315,7 +315,7 @@ class Coder:
             res = res[1:-1]
 
         res = '\n'.join(res)
-        if res[-1] != '\n':
+        if res and res[-1] != '\n':
             res += '\n'
 
         return res
