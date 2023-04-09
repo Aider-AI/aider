@@ -16,16 +16,17 @@ new lines to replace
 the original chunk
 >>>>>>> UPDATED
 
-Here is an example for how to just ADD lines to a file, without altering existing lines.
-This anchors the location of the new code in the file by including 2-3 lines from the.
+Here is an example for how to JUST add lines to a file, without altering any existing lines.
+This anchors the location of the new code in the file by including a few lines from the original file.
 
 foo.py
 <<<<<<< ORIGINAL
-def foo(a):
-    return a+a
+    result = cam.cnt()
+    return result
 =======
-def foo(a):
-    return a+a
+    result = cam.cnt()
+    return result
+
 def bar(b):
     return b*b*b
 >>>>>>> UPDATED
