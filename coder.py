@@ -67,7 +67,6 @@ class Coder:
         prompt = ''
         for fname in self.fnames:
             prompt += self.quoted_file(fname)
-        prompt += prompts.files_content_suffix
         return prompt
 
     def get_input(self):
@@ -98,23 +97,26 @@ class Coder:
                 return
 
             if did_edits:
-                files_prefix = prompts.files_content_prefix_edited
+                files_content = prompts.files_content_prefix_edited
             else:
-                files_prefix = prompts.files_content_prefix_plain
+                files_content = prompts.files_content_prefix_plain
 
-            files_prefix += '\n\n'
+            files_content += self.get_files_content()
+            files_content += prompts.files_content_suffix
 
             messages += [
-                dict(role = 'user', content = files_prefix + self.get_files_content()),
+                dict(role = 'user', content = files_content),
                 dict(role = 'assistant', content = "Ok."),
-                dict(role = 'user', content = inp),
+                dict(role = 'user', content = inp + prompts.user_suffix),
             ]
 
             content = self.send(messages)
-            user_msg = messages.pop()
-            messages.pop()
-            messages.pop()
-            messages.append(user_msg)
+            messages.pop() # user msg
+            messages.pop() # assistant Ok.
+            messages.pop() # user files content
+
+            # put back the user message without prompts.user_suffix
+            messages.append(dict(role = 'user', content = inp))
             messages.append(dict(role = 'assistant', content = content))
 
             print()
@@ -129,8 +131,8 @@ class Coder:
                 traceback.print_exc()
 
     def send(self, messages, show_progress = 0):
-        #for msg in messages:
-        #    dump(msg)
+        for msg in messages:
+            dump(msg)
 
         completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
