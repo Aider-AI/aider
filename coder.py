@@ -251,7 +251,7 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
         if show_progress:
             return self.show_send_progress(completion, show_progress)
         else:
-            return self.show_send_output(completion)
+            return self.show_send_output_plain(completion)
 
     def show_send_progress(self, completion, show_progress):
         resp = []
@@ -271,7 +271,32 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
         resp = ''.join(resp)
         return resp
 
-    def show_send_output(self, completion):
+    def show_send_output_plain(self, completion):
+        resp = []
+
+        in_diff = False
+        diff_lines = []
+
+        def print_lines():
+            if not diff_lines:
+                return
+            code = '\n'.join(diff_lines)
+            lexer = lexers.guess_lexer(code)
+            code = highlight(code, lexer, formatter)
+            print(code, end='')
+
+        partial_line = ''
+        for chunk in completion:
+            try:
+                text = chunk.choices[0].delta.content
+                resp.append(text)
+            except AttributeError:
+                continue
+
+            sys.stdout.write(text)
+            sys.stdout.flush()
+
+    def show_send_output_color(self, completion):
         resp = []
 
         in_diff = False
