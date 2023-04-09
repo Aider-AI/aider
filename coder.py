@@ -9,6 +9,8 @@ import random
 import json
 import re
 import readline
+import traceback
+
 from tqdm import tqdm
 
 from pathlib import Path
@@ -42,16 +44,28 @@ FOR EACH CHANGE TO THE CODE, DESCRIBE IT USING THIS FORMAT:
 
 path/to/filename.ext
 <<<<<<< ORIGINAL
-a chunk of the **exact** lines
-from the current file that needs to be changed
-MUST BE THE EXACT LINES FROM THE CURRENT FILE
+original lines
+to search for
 =======
 new lines to replace
 the original chunk
 >>>>>>> UPDATED
 
 ONLY USE THIS ORIGINAL/UPDATED FORMAT TO DESCRIBE CODE CHANGES!
-DO NOT USE ``` DELIMITERS!
+
+Example:
+
+foo.py
+<<<<<<< ORIGINAL
+print(1+1)
+=======
+print(2+2)
+>>>>>>> UPDATED
+
+
+To add new code, anchor it by including 2-3 lines in the ORIGINAL and UPDATED portions of the diff.
+Don't just output the ENTIRE file. Turn it into an edit.
+
 '''
 
 prompt_comments = '''
@@ -229,12 +243,13 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
             print()
             print()
             try:
-                did_edits = self.update_files(content)
+                did_edits = self.update_files(content, inp)
                 if did_edits:
                     print()
             except Exception as err:
                 print(err)
                 print()
+                traceback.print_exc()
 
     def send(self, messages, show_progress = 0):
         for msg in messages:
@@ -296,6 +311,8 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
             sys.stdout.write(text)
             sys.stdout.flush()
 
+        return ''.join(resp)
+
     def show_send_output_color(self, completion):
         resp = []
 
@@ -348,9 +365,9 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
         return ''.join(resp)
 
 
-    pattern = re.compile(r'^(\S+)\n<<<<<<< ORIGINAL\n(.+?)\n=======\n(.+?)\n>>>>>>> UPDATED$', re.MULTILINE | re.DOTALL)
+    pattern = re.compile(r'^(\S+)\n<<<<<<< ORIGINAL\n(.*?)\n=======\n(.*?)\n>>>>>>> UPDATED$', re.MULTILINE | re.DOTALL)
 
-    def update_files(self, content):
+    def update_files(self, content, inp):
         did_edits = False
 
         for match in self.pattern.finditer(content):
@@ -359,13 +376,13 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
             if self.do_replace(path, original, updated):
                 continue
             edit = match.group()
-            self.do_gpt_powered_replace(path, edit)
+            self.do_gpt_powered_replace(path, edit, inp)
 
         return did_edits
 
     def do_replace(self, fname, before_text, after_text):
         before_text = self.strip_quoted_wrapping(before_text, fname)
-        dump(repr(before_text))
+        after_text = self.strip_quoted_wrapping(after_text, fname)
 
         fname = Path(fname)
         content = fname.read_text().splitlines()
@@ -385,13 +402,17 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
         print('Applied edit to', fname)
         return True
 
-    def do_gpt_powered_replace(self, fname, edit):
+    def do_gpt_powered_replace(self, fname, edit, request):
         print(f'Asking GPT to apply ambiguous edit to {fname}...')
         print(repr(edit))
         fname = Path(fname)
         content = fname.read_text()
         prompt = f'''
-Apply this change:
+To complete this request:
+
+{request}
+
+You need to apply this change:
 
 {edit}
 
@@ -422,6 +443,9 @@ Just the content of the file!
         fname.write_text(res)
 
     def strip_quoted_wrapping(self, res, fname=None):
+        if not res:
+            return res
+
         res = res.splitlines()
 
         if fname and res[0].strip().endswith(Path(fname).name):
