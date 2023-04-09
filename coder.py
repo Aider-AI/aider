@@ -183,15 +183,14 @@ class Coder:
         prompt = ''
         for fname in self.fnames:
             prompt += self.quoted_file(fname)
-        prompt += '\n\nRemember, NEVER REPLY WITH WHOLE FILES LIKE THIS. ONLY TELL ME CODE CHANGES USING ORIGINAL/UPDATED EDIT COMMANDS!\n'
+        prompt += ''''
+
+YOU CAN ONLY EDIT THESE FILES.
+NEVER REPLY WITH WHOLE FILES LIKE THIS!
+ONLY TELL ME CODE CHANGES USING ORIGINAL/UPDATED EDIT COMMANDS!
+'''
         return prompt
 
-    change_notice = '''
-TAKE NOTE!
-The contents of the files have been updated!
-USE THESE FILES NOW.
-MAKE ANY CHANGES BASED OFF THESE FILES!
-'''
     def get_input(self):
 
         print()
@@ -224,7 +223,6 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
             else:
                 files_prefix = 'Here are the files:'
             files_prefix += '\n\n'
-
 
             messages += [
                 dict(role = 'user', content = files_prefix + self.get_files_content()),
@@ -404,7 +402,7 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
 
     def do_gpt_powered_replace(self, fname, edit, request):
         print(f'Asking GPT to apply ambiguous edit to {fname}...')
-        print(repr(edit))
+
         fname = Path(fname)
         content = fname.read_text()
         prompt = f'''
