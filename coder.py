@@ -35,22 +35,23 @@ I want you to act as an expert software engineer and pair programmer.
 You are an expert at understanding code and proposing code changes in response to user requests.
 
 Your job is to:
-  - Understand what the user wants. Ask questions if needed.
-  - Suggest changes to the code.
+  - Understand what the user wants. Ask questions if needed!
+  - Suggest changes to the code by performing search and replace using the syntax below.
 
 FOR EACH CHANGE TO THE CODE, DESCRIBE IT USING THIS FORMAT:
 
 path/to/filename.ext
 <<<<<<< ORIGINAL
 a chunk of the **exact** lines
-from the original file
-that needs to be changed
+from the current file that needs to be changed
+MUST BE THE EXACT LINES FROM THE CURRENT FILE
 =======
 new lines to replace
 the original chunk
 >>>>>>> UPDATED
 
 ONLY USE THIS ORIGINAL/UPDATED FORMAT TO DESCRIBE CODE CHANGES!
+DO NOT USE ``` DELIMITERS!
 '''
 
 prompt_comments = '''
@@ -236,8 +237,8 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
                 print()
 
     def send(self, messages, show_progress = 0):
-        #for msg in messages:
-        #    dump(msg)
+        for msg in messages:
+            dump(msg)
 
         completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
@@ -338,6 +339,9 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
         return did_edits
 
     def do_replace(self, fname, before_text, after_text):
+        before_text = self.strip_quoted_wrapping(before_text, fname)
+        dump(repr(before_text))
+
         fname = Path(fname)
         content = fname.read_text().splitlines()
         before_lines = [l.strip() for l in before_text.splitlines()]
@@ -358,6 +362,7 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
 
     def do_gpt_powered_replace(self, fname, edit):
         print(f'Asking GPT to apply ambiguous edit to {fname}...')
+        print(repr(edit))
         fname = Path(fname)
         content = fname.read_text()
         prompt = f'''
@@ -386,17 +391,25 @@ Just the content of the file!
             dict(role = 'user', content = prompt),
         ]
         res = self.send(messages, show_progress = len(content) + len(edit)/2)
+        dump(repr(res))
 
+        res = self.strip_quoted_wrapping(res, fname)
+        fname.write_text(res)
+
+    def strip_quoted_wrapping(self, res, fname=None):
         res = res.splitlines()
-        if res[0].strip == str(fname):
+
+        if fname and res[0].strip().endswith(Path(fname).name):
             res = res[1:]
-        if res[0].strip() == '```' and res[-1].strip() == '```':
+
+        if res[0].startswith('```') and res[-1].startswith('```'):
             res = res[1:-1]
 
         res = '\n'.join(res)
         if res[-1] != '\n':
             res += '\n'
-        fname.write_text(res)
+
+        return res
 
 
 def test_do_gpt_powered_replace(coder):
