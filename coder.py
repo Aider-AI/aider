@@ -182,7 +182,11 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
 
         print()
         print('='*60)
-        inp = input('> ')
+        try:
+            inp = input('> ')
+        except EOFError:
+            return
+
         print()
 
         #readline.add_history(inp)
@@ -198,6 +202,8 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
         did_edits = False
         while True:
             inp = self.get_input()
+            if inp is None:
+                return
 
             if did_edits:
                 files_prefix = 'I made your suggested changes, here are the updated files:'
@@ -257,6 +263,10 @@ MAKE ANY CHANGES BASED OFF THESE FILES!
                 continue
 
             pbar.update(len(text))
+
+        pbar.update(show_progress)
+        pbar.close()
+
         resp = ''.join(resp)
         return resp
 
