@@ -73,10 +73,12 @@ class Coder:
 
         print()
         print('='*60)
-        try:
-            inp = input('> ')
-        except EOFError:
-            return
+        inp = ''
+        while not inp.strip():
+            try:
+                inp = input('> ')
+            except EOFError:
+                return
 
         print()
 

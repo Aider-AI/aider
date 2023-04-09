@@ -17,7 +17,7 @@ the original chunk
 >>>>>>> UPDATED
 
 Here is an example for how to JUST add lines to a file, without altering any existing lines.
-This anchors the location of the new code in the file by including a few lines from the original file.
+This anchors the location of the new code in the file by including a few DISTINCTIVE lines from the original file.
 
 foo.py
 <<<<<<< ORIGINAL
@@ -38,16 +38,13 @@ files_content_prefix_edited = 'I made your suggested changes, here are the updat
 
 files_content_prefix_plain = 'Here are the files:\n\n'
 
-files_content_suffix = '''
-
-YOU CAN ONLY EDIT THESE FILES.
-NEVER REPLY WITH WHOLE FILES LIKE THIS!
-'''
+files_content_suffix = ''
 
 user_suffix = '''
 
+YOU CAN ONLY EDIT THE FILES I PROVIDED ABOVE!
 NEVER INCLUDE AN ENTIRE FILE IN YOUR REPLY!
-ONLY TELL ME CODE CHANGES BY USING ORIGINAL/UPDATED EDIT COMMANDS!
+TO SPECIFY CODE CHANGES YOU MUST USE THE ORIGINAL/UPDATED EDIT COMMANDS!
 '''
 
 ### EDITOR
