@@ -109,8 +109,8 @@ class Coder:
             messages += [
                 dict(role = 'user', content = files_content),
                 dict(role = 'assistant', content = "Ok."),
-                dict(role = 'user', content = inp + prompts.user_suffix),
-                dict(role = 'system', content = 'ONLY RETURN CODE USING THE ORIGINAL/UPDATED FORMAT!'),
+                dict(role = 'user', content = inp),
+                dict(role = 'system', content = 'REMEMBER, ONLY RETURN CODE USING THE ORIGINAL/UPDATED FORMAT!'),
             ]
 
             content = self.send(messages)
@@ -134,9 +134,16 @@ class Coder:
                 print()
                 traceback.print_exc()
 
-    def send(self, messages, show_progress = 0):
+    def show_messages(self, messages):
         for msg in messages:
-            dump(msg)
+            print()
+            print('-' * 50)
+            role = msg['role'].upper()
+            content = msg['content']
+            print(f'{role}: {content.strip()}')
+
+    def send(self, messages, show_progress = 0):
+        self.show_messages(messages)
 
         completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",

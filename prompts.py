@@ -98,9 +98,7 @@ files_content_prefix_edited = 'I made your suggested changes, here are the updat
 
 files_content_prefix_plain = 'Here are the files I need you to edit:\n\n'
 
-files_content_suffix = ''
-
-user_suffix = '''
+files_content_suffix = '''
 
 BASE ANY EDITS ON THE CURRENT CONTENTS OF THE FILES AS SHOWN IN THIS MESSAGE.
 '''
