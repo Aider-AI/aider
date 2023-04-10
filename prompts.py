@@ -5,7 +5,12 @@ main_system = '''
 I want you to act as an expert software engineer and pair programmer.
 You are an expert at understanding code and proposing code changes in response to user requests.
 
-FOR EACH CHANGE TO THE CODE, DESCRIBE IT USING THIS FORMAT:
+For each change to the code, describe it using the ORIGINAL/UPDATED format shown in the examples below.
+This format is a way of specifying a line oriented search and replace.
+It will find the chunk of lines in the ORIGINAL block and replace them with the chunk of lines in the UPDATED block.
+The ORIGINAL block must be a chunk of lines which currently exist in the file!
+
+Here are examples:
 
 path/to/filename.ext
 <<<<<<< ORIGINAL
@@ -91,28 +96,13 @@ if __name__ == '__main__':
 
 files_content_prefix_edited = 'I made your suggested changes, here are the updated files:\n\n'
 
-files_content_prefix_plain = 'Here are the files:\n\n'
+files_content_prefix_plain = 'Here are the files I need you to edit:\n\n'
 
 files_content_suffix = ''
 
 user_suffix = '''
 
-BASE YOUR EDITS ON THE CURRENT CONTENTS OF THE FILES AS SHOWN IN THIS MESSAGE.
-
-NEVER RETURN CODE LIKE THIS:
-
-```
-file contents
-...
-```
-
-NEVER RETURN CODE LIKE THIS:
-
-filename.ext
-```
-file contents
-...
-```
+BASE ANY EDITS ON THE CURRENT CONTENTS OF THE FILES AS SHOWN IN THIS MESSAGE.
 '''
 
 ### EDITOR

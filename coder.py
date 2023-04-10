@@ -110,9 +110,11 @@ class Coder:
                 dict(role = 'user', content = files_content),
                 dict(role = 'assistant', content = "Ok."),
                 dict(role = 'user', content = inp + prompts.user_suffix),
+                dict(role = 'system', content = 'ONLY RETURN CODE USING THE ORIGINAL/UPDATED FORMAT!'),
             ]
 
             content = self.send(messages)
+            messages.pop() # system
             messages.pop() # user msg
             messages.pop() # assistant Ok.
             messages.pop() # user files content
