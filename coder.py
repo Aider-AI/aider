@@ -110,7 +110,7 @@ class Coder:
                 dict(role = 'user', content = files_content),
                 dict(role = 'assistant', content = "Ok."),
                 dict(role = 'user', content = inp),
-                dict(role = 'system', content = 'REMEMBER, ONLY RETURN CODE USING THE ORIGINAL/UPDATED FORMAT!'),
+                #dict(role = 'system', content = prompts.system_reminder),
             ]
 
             content = self.send(messages)

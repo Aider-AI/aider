@@ -92,6 +92,8 @@ if __name__ == '__main__':
 >>>>>>> UPDATED
 '''
 
+system_reminder = 'REMEMBER, ONLY RETURN CODE USING THE ORIGINAL/UPDATED FORMAT!'
+
 ### FILES
 
 files_content_prefix_edited = 'I made your suggested changes, here are the updated files:\n\n'
