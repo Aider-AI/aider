@@ -159,8 +159,9 @@ class Coder:
 
             files_messages = self.get_files_messages(True)
 
-            edited_message = 'You need to edit these files: '
+            edited_message = '<redacted>ORIGINAL/UPDATED formatted changes: '
             edited_message += ', '.join(edited)
+            edited_message += '</redacted>'
             cur_messages.pop()
             cur_messages += [
                 dict(role = 'assistant', content = edited_message),
@@ -224,6 +225,8 @@ class Coder:
 
         partial_line = ''
         for chunk in completion:
+            if chunk.choices[0].finish_reason:
+                dump(chunk.choices[0].finish_reason)
             try:
                 text = chunk.choices[0].delta.content
                 resp += text
@@ -291,7 +294,7 @@ class Coder:
         return ''.join(resp)
 
 
-    pattern = re.compile(r'^(\S+)\n<<<<<<< ORIGINAL\n(.*?)\n=======\n(.*?)\n>>>>>>> UPDATED$', re.MULTILINE | re.DOTALL)
+    pattern = re.compile(r'^(\S+)\s+<<<<<<< ORIGINAL\n(.*?)\n=======\n(.*?)\n>>>>>>> UPDATED$', re.MULTILINE | re.DOTALL)
 
     def update_files(self, content, inp):
 
