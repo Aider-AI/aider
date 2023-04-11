@@ -164,7 +164,7 @@ class Coder:
             edited_message += '</redacted>'
             cur_messages.pop()
             cur_messages += [
-                dict(role = 'assistant', content = edited_message),
+                dict(role = 'user', content = edited_message),
             ]
             done_messages += cur_messages
             cur_messages = []

@@ -33,6 +33,9 @@ example.py
 =======
 # Function to multiply two numbers using the standard algorithm
 >>>>>>> UPDATED
+
+Be selective!
+Only return the parts of the code which need changes!
 '''
 
 returned_code = '''
