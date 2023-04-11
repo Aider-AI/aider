@@ -140,6 +140,8 @@ class Coder:
                 ]
                 content = self.send(messages)
 
+            dump(repr(content))
+
             cur_messages += [
                 dict(role = 'assistant', content = content),
             ]
@@ -172,16 +174,16 @@ class Coder:
 
 
 
-    def show_messages(self, messages, title= None):
-        if title:
-            print(title.upper(), '*' * 50)
+    def show_messages(self, messages, title):
+        print(title.upper(), '*' * 50)
 
         for msg in messages:
             print()
             print('-' * 50)
             role = msg['role'].upper()
-            content = msg['content']
-            print(f'{role}: {content.strip()}')
+            content = msg['content'].splitlines()
+            for line in content:
+                print(role, line)
 
     def send(self, messages, show_progress = 0):
         #self.show_messages(messages, "all")
@@ -294,7 +296,7 @@ class Coder:
         return ''.join(resp)
 
 
-    pattern = re.compile(r'^(\S+)\s+<<<<<<< ORIGINAL\n(.*?)\n=======\n(.*?)\n>>>>>>> UPDATED$', re.MULTILINE | re.DOTALL)
+    pattern = re.compile(r'(\S+)\s+<<<<<<< ORIGINAL\n(.*?)\n=======\n(.*\n?)>>>>>>> UPDATED$', re.MULTILINE | re.DOTALL)
 
     def update_files(self, content, inp):
 
@@ -375,5 +377,7 @@ for fname in sys.argv[1:]:
     coder.add_file(fname)
 
 #coder.update_files(Path('tmp.commands').read_text()) ; sys.exit()
+content = 'new.py\n<<<<<<< ORIGINAL\n# Removed the nth_prime endpoint\n=======\n>>>>>>> UPDATED'
+coder.update_files(content, 'remove the prime comment'); sys.exit()
 
 coder.run()
