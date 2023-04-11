@@ -140,8 +140,6 @@ class Coder:
                 ]
                 content = self.send(messages)
 
-            dump(repr(content))
-
             cur_messages += [
                 dict(role = 'assistant', content = content),
             ]
@@ -227,7 +225,7 @@ class Coder:
 
         partial_line = ''
         for chunk in completion:
-            if chunk.choices[0].finish_reason:
+            if chunk.choices[0].finish_reason not in (None, 'stop'):
                 dump(chunk.choices[0].finish_reason)
             try:
                 text = chunk.choices[0].delta.content
@@ -375,9 +373,5 @@ coder = Coder()
 
 for fname in sys.argv[1:]:
     coder.add_file(fname)
-
-#coder.update_files(Path('tmp.commands').read_text()) ; sys.exit()
-content = 'new.py\n<<<<<<< ORIGINAL\n# Removed the nth_prime endpoint\n=======\n>>>>>>> UPDATED'
-coder.update_files(content, 'remove the prime comment'); sys.exit()
 
 coder.run()
