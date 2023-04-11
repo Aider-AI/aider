@@ -74,16 +74,55 @@ class Coder:
         print()
         print('='*60)
         inp = ''
+        num_control_c = 0
         while not inp.strip():
             try:
                 inp = input('> ')
             except EOFError:
                 return
+            except KeyboardInterrupt:
+                num_control_c += 1
+                print()
+                if num_control_c >= 2:
+                    return
+                print('^C again to quit')
 
         print()
 
         #readline.add_history(inp)
         readline.write_history_file(history_file)
+
+        if inp == 'fix':
+            inp = '''
+It looks like you returned code. Try again using ORIGINAL/UPDATED format.
+
+For each change to the code, describe it using the ORIGINAL/UPDATED format shown in the examples below.
+
+First line is the full filename, including path
+Next line is exactly: <<<<<<< ORIGINAL
+Followed by a chunk of lines from the original file which need to change
+Next line is exactly: =======
+Followed by the new lines to replace the original chunk
+Last line is exactly: >>>>>>> UPDATED
+
+Here are examples:
+
+path/to/filename.ext
+<<<<<<< ORIGINAL
+original lines
+to search for
+=======
+new lines to replace
+the original chunk
+>>>>>>> UPDATED
+
+example.py
+<<<<<<< ORIGINAL
+# Function to multiply two numbers
+=======
+# Function to multiply two numbers using the standard algorithm
+>>>>>>> UPDATED
+'''
 
         return inp
 
@@ -181,14 +220,6 @@ class Coder:
 
         in_diff = False
         diff_lines = []
-
-        def print_lines():
-            if not diff_lines:
-                return
-            code = '\n'.join(diff_lines)
-            lexer = lexers.guess_lexer(code)
-            code = highlight(code, lexer, formatter)
-            print(code, end='')
 
         partial_line = ''
         for chunk in completion:
