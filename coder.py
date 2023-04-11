@@ -133,6 +133,17 @@ class Coder:
             )
             content = self.send(messages)
 
+            if '```' in content:
+                messages += [
+                    dict(role = 'assistant', content = content),
+                    dict(role = 'system', content = prompts.returned_code),
+                ]
+                content = self.send(messages)
+
+            cur_messages += [
+                dict(role = 'assistant', content = content),
+            ]
+
             print()
             print()
             try:
@@ -144,15 +155,13 @@ class Coder:
                 edited = None
 
             if not edited:
-                cur_messages += [
-                    dict(role = 'assistant', content = content),
-                ]
                 continue
 
             files_messages = self.get_files_messages(True)
 
             edited_message = 'You need to edit these files: '
             edited_message += ', '.join(edited)
+            cur_messages.pop()
             cur_messages += [
                 dict(role = 'assistant', content = edited_message),
             ]
@@ -187,7 +196,7 @@ class Coder:
         if show_progress:
             return self.show_send_progress(completion, show_progress)
         else:
-            return self.show_send_output_color(completion)
+            return self.show_send_output_plain(completion)
 
     def show_send_progress(self, completion, show_progress):
         resp = []
@@ -208,7 +217,7 @@ class Coder:
         return resp
 
     def show_send_output_plain(self, completion):
-        resp = []
+        resp = ''
 
         in_diff = False
         diff_lines = []
@@ -217,14 +226,17 @@ class Coder:
         for chunk in completion:
             try:
                 text = chunk.choices[0].delta.content
-                resp.append(text)
+                resp += text
             except AttributeError:
                 continue
 
             sys.stdout.write(text)
             sys.stdout.flush()
 
-        return ''.join(resp)
+            if '```' in resp:
+                return resp
+
+        return resp
 
     def show_send_output_color(self, completion):
         resp = []

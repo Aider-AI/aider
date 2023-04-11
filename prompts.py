@@ -33,6 +33,37 @@ example.py
 >>>>>>> UPDATED
 '''
 
+returned_code = '''
+It looks like you tried to return code. Don't do that!
+
+Only return code using the specific ORIGINAL/UPDATED format shown in the examples below.
+
+First line is the full filename, including path
+Next line is exactly: <<<<<<< ORIGINAL
+Followed by a chunk of lines from the original file which need to change
+Next line is exactly: =======
+Followed by the new lines to replace the original chunk
+Last line is exactly: >>>>>>> UPDATED
+
+Here are examples:
+
+path/to/filename.ext
+<<<<<<< ORIGINAL
+original lines
+to search for
+=======
+new lines to replace
+the original chunk
+>>>>>>> UPDATED
+
+example.py
+<<<<<<< ORIGINAL
+# Function to multiply two numbers
+=======
+# Function to multiply two numbers using the standard algorithm
+>>>>>>> UPDATED
+'''
+
 system_reminder = 'REMEMBER, ONLY RETURN CODE USING THE ORIGINAL/UPDATED FORMAT!'
 
 ### FILES
