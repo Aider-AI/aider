@@ -89,91 +89,83 @@ class Coder:
 
         print()
 
-        #readline.add_history(inp)
         readline.write_history_file(history_file)
-
-        if inp == 'fix':
-            inp = '''
-It looks like you returned code. Try again using ORIGINAL/UPDATED format.
-
-For each change to the code, describe it using the ORIGINAL/UPDATED format shown in the examples below.
-
-First line is the full filename, including path
-Next line is exactly: <<<<<<< ORIGINAL
-Followed by a chunk of lines from the original file which need to change
-Next line is exactly: =======
-Followed by the new lines to replace the original chunk
-Last line is exactly: >>>>>>> UPDATED
-
-Here are examples:
-
-path/to/filename.ext
-<<<<<<< ORIGINAL
-original lines
-to search for
-=======
-new lines to replace
-the original chunk
->>>>>>> UPDATED
-
-example.py
-<<<<<<< ORIGINAL
-# Function to multiply two numbers
-=======
-# Function to multiply two numbers using the standard algorithm
->>>>>>> UPDATED
-'''
-
         return inp
 
+    def get_files_messages(self, did_edits):
+        if did_edits:
+            files_content = prompts.files_content_prefix_edited
+        else:
+            files_content = prompts.files_content_prefix_plain
+
+        files_content += self.get_files_content()
+        files_content += prompts.files_content_suffix
+
+        files_messages = [
+            dict(role = 'user', content = files_content),
+            dict(role = 'assistant', content = "Ok."),
+        ]
+        return files_messages
+
     def run(self):
-        messages = [
+        done_messages = [
             dict(role = 'system', content = prompts.main_system),
         ]
+        cur_messages = []
 
-        did_edits = False
+        files_messages = self.get_files_messages(False)
         while True:
             inp = self.get_input()
             if inp is None:
                 return
 
-            if did_edits:
-                files_content = prompts.files_content_prefix_edited
-            else:
-                files_content = prompts.files_content_prefix_plain
-
-            files_content += self.get_files_content()
-            files_content += prompts.files_content_suffix
-
-            messages += [
-                dict(role = 'user', content = files_content),
-                dict(role = 'assistant', content = "Ok."),
+            cur_messages += [
                 dict(role = 'user', content = inp),
-                #dict(role = 'system', content = prompts.system_reminder),
             ]
 
-            content = self.send(messages)
-            messages.pop() # system
-            messages.pop() # user msg
-            messages.pop() # assistant Ok.
-            messages.pop() # user files content
+            self.show_messages(done_messages, "done")
+            self.show_messages(cur_messages, "cur")
 
-            # put back the user message without prompts.user_suffix
-            messages.append(dict(role = 'user', content = inp))
-            messages.append(dict(role = 'assistant', content = content))
+            messages = (
+                done_messages
+                + files_messages
+                + cur_messages
+            )
+            content = self.send(messages)
 
             print()
             print()
             try:
-                did_edits = self.update_files(content, inp)
-                if did_edits:
-                    print()
+                edited = self.update_files(content, inp)
             except Exception as err:
                 print(err)
                 print()
                 traceback.print_exc()
+                edited = None
 
-    def show_messages(self, messages):
+            if not edited:
+                cur_messages += [
+                    dict(role = 'assistant', content = content),
+                ]
+                continue
+
+            files_messages = self.get_files_messages(True)
+
+            edited_message = 'You need to edit these files: '
+            edited_message += ', '.join(edited)
+            cur_messages += [
+                dict(role = 'assistant', content = edited_message),
+            ]
+            done_messages += cur_messages
+            cur_messages = []
+
+
+
+
+    def show_messages(self, messages, title= None):
+        if title:
+            print(title.upper(), '*' * 50)
+
         for msg in messages:
             print()
             print('-' * 50)
@@ -182,7 +174,7 @@ example.py
             print(f'{role}: {content.strip()}')
 
     def send(self, messages, show_progress = 0):
-        self.show_messages(messages)
+        #self.show_messages(messages, "all")
 
         completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
@@ -290,17 +282,17 @@ example.py
     pattern = re.compile(r'^(\S+)\n<<<<<<< ORIGINAL\n(.*?)\n=======\n(.*?)\n>>>>>>> UPDATED$', re.MULTILINE | re.DOTALL)
 
     def update_files(self, content, inp):
-        did_edits = False
 
+        edited = set()
         for match in self.pattern.finditer(content):
-            did_edits = True
             path, original, updated = match.groups()
+            edited.add(path)
             if self.do_replace(path, original, updated):
                 continue
             edit = match.group()
             self.do_gpt_powered_replace(path, edit, inp)
 
-        return did_edits
+        return edited
 
     def do_replace(self, fname, before_text, after_text):
         before_text = self.strip_quoted_wrapping(before_text, fname)
