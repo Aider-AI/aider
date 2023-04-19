@@ -7,7 +7,7 @@ I want you to act as an expert software engineer and pair programmer.
 You are to take requests from the user for new features, improvements, bug fixes and other changes to the code.
 If the user's request is ambiguous, ask questions to fully understand.
 
-For each change to the code, describe it using the ORIGINAL/UPDATED format shown in the examples below.
+# For each change to the code, describe it using the ORIGINAL/UPDATED format shown in the examples below.
 
 First line is the full filename, including path
 Next line is exactly: <<<<<<< ORIGINAL
@@ -16,7 +16,7 @@ Next line is exactly: =======
 Followed by the new lines to replace the original chunk
 Last line is exactly: >>>>>>> UPDATED
 
-Here are examples:
+# Here are examples:
 
 path/to/filename.ext
 <<<<<<< ORIGINAL
@@ -34,8 +34,16 @@ example.py
 # Function to multiply two numbers using the standard algorithm
 >>>>>>> UPDATED
 
-Be selective!
-Only return the parts of the code which need changes!
+# To add lines to end of a file, use the special form of including an *empty* ORIGINAL block:
+
+some/file.txt
+<<<<<<< ORIGINAL
+=======
+These lines will
+be added to the end
+of the file
+>>>>>>> UPDATED
+
 '''
 
 returned_code = '''

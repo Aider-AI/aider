@@ -294,7 +294,7 @@ class Coder:
         return ''.join(resp)
 
 
-    pattern = re.compile(r'(\S+)\s+<<<<<<< ORIGINAL\n(.*?)\n=======\n(.*\n?)>>>>>>> UPDATED$', re.MULTILINE | re.DOTALL)
+    pattern = re.compile(r'(\S+)\s+<<<<<<< ORIGINAL\n(.*?)\n=======\n(.*?\n?)>>>>>>> UPDATED', re.MULTILINE | re.DOTALL)
 
     def update_files(self, content, inp):
 
