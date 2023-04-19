@@ -33,17 +33,6 @@ example.py
 =======
 # Function to multiply two numbers using the standard algorithm
 >>>>>>> UPDATED
-
-# To add lines to end of a file, use the special form of including an *empty* ORIGINAL block:
-
-some/file.txt
-<<<<<<< ORIGINAL
-=======
-These lines will
-be added to the end
-of the file
->>>>>>> UPDATED
-
 '''
 
 returned_code = '''
