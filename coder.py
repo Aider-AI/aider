@@ -133,7 +133,8 @@ class Coder:
             )
             content = self.send(messages)
 
-            if '```' in content:
+            # disabled
+            if False and '```' in content:
                 messages += [
                     dict(role = 'assistant', content = content),
                     dict(role = 'system', content = prompts.returned_code),
@@ -187,8 +188,8 @@ class Coder:
         #self.show_messages(messages, "all")
 
         completion = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            #model="gpt-4",
+            #model="gpt-3.5-turbo",
+            model="gpt-4",
             messages=messages,
             temperature=0,
             stream = True,
@@ -236,7 +237,8 @@ class Coder:
             sys.stdout.write(text)
             sys.stdout.flush()
 
-            if '```' in resp:
+            # disabled
+            if False and '```' in resp:
                 return resp
 
         return resp
