@@ -163,10 +163,10 @@ class Coder:
             edited_message = '<redacted>ORIGINAL/UPDATED formatted changes: '
             edited_message += ', '.join(edited)
             edited_message += '</redacted>'
-            cur_messages.pop()
-            cur_messages += [
-                dict(role = 'user', content = edited_message),
-            ]
+            #cur_messages.pop()
+            #cur_messages += [
+            #    dict(role = 'user', content = edited_message),
+            #]
             done_messages += cur_messages
             cur_messages = []
 
@@ -184,12 +184,12 @@ class Coder:
             for line in content:
                 print(role, line)
 
-    def send(self, messages, show_progress = 0):
+    def send(self, messages, show_progress = 0, model="gpt-4"):
         #self.show_messages(messages, "all")
 
         completion = openai.ChatCompletion.create(
             #model="gpt-3.5-turbo",
-            model="gpt-4",
+            model=model,
             messages=messages,
             temperature=0,
             stream = True,
@@ -334,7 +334,8 @@ class Coder:
         return True
 
     def do_gpt_powered_replace(self, fname, edit, request):
-        print(f'Asking GPT to apply ambiguous edit to {fname}...')
+        model = 'gpt-3.5-turbo'
+        print(f'Asking {model} to apply ambiguous edit to {fname}...')
 
         fname = Path(fname)
         content = fname.read_text()
@@ -349,7 +350,7 @@ class Coder:
             dict(role = 'system', content = prompts.editor_system),
             dict(role = 'user', content = prompt),
         ]
-        res = self.send(messages, show_progress = len(content) + len(edit)/2)
+        res = self.send(messages, show_progress = len(content) + len(edit)/2, model=model)
         res = self.strip_quoted_wrapping(res, fname)
         fname.write_text(res)
 
