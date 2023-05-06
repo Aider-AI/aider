@@ -296,13 +296,14 @@ class Coder:
         return ''.join(resp)
 
 
-    pattern = re.compile(r'(\S+)\s+<<<<<<< ORIGINAL\n(.*?)\n=======\n(.*?\n?)>>>>>>> UPDATED', re.MULTILINE | re.DOTALL)
+    pattern = re.compile(r'(\S+)\s+(```)?<<<<<<< ORIGINAL\n(.*?\n?)=======\n(.*?\n?)>>>>>>> UPDATED', re.MULTILINE | re.DOTALL)
 
     def update_files(self, content, inp):
 
         edited = set()
         for match in self.pattern.finditer(content):
-            path, original, updated = match.groups()
+            path, _, original, updated = match.groups()
+
             edited.add(path)
             if self.do_replace(path, original, updated):
                 continue
@@ -317,17 +318,22 @@ class Coder:
 
         fname = Path(fname)
         content = fname.read_text().splitlines()
-        before_lines = [l.strip() for l in before_text.splitlines()]
-        stripped_content = [l.strip() for l in content]
-        where = find_index(stripped_content, before_lines)
 
-        if where < 0:
-            return
+        if not before_text and not content:
+            # first populating an empty file
+            new_content = after_text
+        else:
+            before_lines = [l.strip() for l in before_text.splitlines()]
+            stripped_content = [l.strip() for l in content]
+            where = find_index(stripped_content, before_lines)
 
-        new_content = content[:where]
-        new_content += after_text.splitlines()
-        new_content += content[where+len(before_lines):]
-        new_content = '\n'.join(new_content) + '\n'
+            if where < 0:
+                return
+
+            new_content = content[:where]
+            new_content += after_text.splitlines()
+            new_content += content[where+len(before_lines):]
+            new_content = '\n'.join(new_content) + '\n'
 
         fname.write_text(new_content)
         print('Applied edit to', fname)

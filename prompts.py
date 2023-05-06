@@ -28,6 +28,7 @@ some/dir/names/example.py
 >>>>>>> UPDATED
 
 Be sure to include the correct path and filename for each edit, exactly as specified by the user.
+Don't use ``` to demarcate code blocks!
 LEADING WHITESPACE IS IMPORTANT IN ALL CODE!
 NEVER RETURN THE ENTIRE SOURCE FILE. ONLY RETURN CODE IN ORIGINAL/UPDATED FORMAT CHANGES!
 '''
