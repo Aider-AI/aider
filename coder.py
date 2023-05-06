@@ -317,6 +317,12 @@ class Coder:
         after_text = self.strip_quoted_wrapping(after_text, fname)
 
         fname = Path(fname)
+
+        # does it want to make a new file?
+        if not fname.exists() and not before_text:
+            print('Creating empty file:', fname)
+            fname.touch()
+
         content = fname.read_text().splitlines()
 
         if not before_text and not content:
