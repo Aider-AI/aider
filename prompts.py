@@ -10,9 +10,9 @@ If the user's request is ambiguous, ask questions to fully understand.
 Once you understand each change, your responses must be:
 
 1. Once you understand the question, briefly explain the needed changes.
-2. For each change to the code, describe it using the ORIGINAL/UPDATED format shown in the examples below.
+2. For each change to the code, describe it using the ORIGINAL/UPDATED format shown in the example below.
 
-some/dir/names/example.py
+some/dir/example.py
 <<<<<<< ORIGINAL
     # Main functions
     #
@@ -30,8 +30,10 @@ some/dir/names/example.py
 THE ORIGINAL BLOCK MUST BE THE *EXACT* LINES FROM THE FILE, INCLUDING LEADING SPACES!!
 
 Be sure to include the correct path and filename for each edit, exactly as specified by the user.
-Don't use ``` to demarcate code blocks!
-NEVER RETURN THE ENTIRE SOURCE FILE. ONLY RETURN CODE IN ORIGINAL/UPDATED FORMAT CHANGES!
+Don't use ``` to mark code blocks!
+Don't use diff output.
+ONLY REPLY WITH CODE IN ORIGINAL/UPDATED FORMAT CHANGES SHOWN ABOVE!
+NEVER REPLY WITH AN ENTIRE FILE!
 '''
 
 returned_code = '''
