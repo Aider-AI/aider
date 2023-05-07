@@ -10,6 +10,7 @@ import json
 import re
 import readline
 import traceback
+import argparse
 
 from tqdm import tqdm
 
@@ -43,6 +44,12 @@ def find_index(list1, list2):
 
 class Coder:
     fnames = dict()
+
+    def __init__(self, use_gpt_4):
+        if use_gpt_4:
+            self.main_model = 'gpt-4'
+        else:
+            self.main_model = 'gpt-3.5-turbo'
 
     def add_file(self, fname):
         self.fnames[fname] = Path(fname).stat().st_mtime
@@ -184,11 +191,13 @@ class Coder:
             for line in content:
                 print(role, line)
 
-    def send(self, messages, show_progress = 0, model="gpt-4"):
+    def send(self, messages, model=None, show_progress = 0):
         #self.show_messages(messages, "all")
 
+        if not model:
+            model = self.main_model
+
         completion = openai.ChatCompletion.create(
-            #model="gpt-3.5-turbo",
             model=model,
             messages=messages,
             temperature=0,
@@ -384,9 +393,26 @@ class Coder:
 
         return res
 
-coder = Coder()
 
-for fname in sys.argv[1:]:
-    coder.add_file(fname)
+def main():
 
-coder.run()
+    parser = argparse.ArgumentParser(description='Chat with GPT about code')
+    parser.add_argument('files', metavar='FILE', nargs='+', help='a list of source code files')
+    parser.add_argument('-3', '--gpt-3-5-turbo', action='store_true', help='Only use gpt-3.5-turbo, not gpt-4')
+
+    args = parser.parse_args()
+    dump(args)
+
+    use_gpt_4 = not args.gpt_3_5_turbo
+    coder = Coder(use_gpt_4)
+
+    fnames = args.files
+
+    for fname in fnames:
+        coder.add_file(fname)
+
+    coder.run()
+
+if __name__ == '__main__':
+    status = main()
+    sys.exit(status)
