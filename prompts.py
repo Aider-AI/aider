@@ -14,22 +14,23 @@ Once you understand each change, your responses must be:
 
 some/dir/names/example.py
 <<<<<<< ORIGINAL
-# Main functions
-#
+    # Main functions
+    #
     # Function to multiply two numbers
     def mul(a,b)
        """
 =======
-# Main functions
-#
+    # Main functions are below.
+    # Add new ones in this section
     # Function to multiply two numbers using the standard algorithm
-    def mul(a,b)
-       """
+    def mul(a,b):
+       """Multiplies 2 numbers"""
 >>>>>>> UPDATED
+
+THE ORIGINAL BLOCK MUST BE THE *EXACT* LINES FROM THE FILE, INCLUDING LEADING SPACES!!
 
 Be sure to include the correct path and filename for each edit, exactly as specified by the user.
 Don't use ``` to demarcate code blocks!
-LEADING WHITESPACE IS IMPORTANT IN ALL CODE!
 NEVER RETURN THE ENTIRE SOURCE FILE. ONLY RETURN CODE IN ORIGINAL/UPDATED FORMAT CHANGES!
 '''
 
