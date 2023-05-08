@@ -268,7 +268,7 @@ class Coder:
         return resp
 
     pattern = re.compile(
-        r"(\S+)\s+(```)?<<<<<<< ORIGINAL\n(.*?\n?)=======\n(.*?\n?)>>>>>>> UPDATED",
+        r"(\S+)\s+(```\s*)?<<<<<<< ORIGINAL\n(.*?\n?)=======\n(.*?\n?)>>>>>>> UPDATED",
         re.MULTILINE | re.DOTALL,
     )
 
