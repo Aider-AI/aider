@@ -179,6 +179,8 @@ class Coder:
         if interrupted:
             content += "\n^C KeyboardInterrupt"
 
+        Path("tmp.last-edit.md").write_text(content)
+
         self.cur_messages += [
             dict(role="assistant", content=content),
         ]
@@ -204,7 +206,7 @@ class Coder:
             dict(role="user", content=prompts.files_content_gpt_edits),
             dict(role="assistant", content="Ok."),
         ]
-        self.commit(self.cur_messages)
+        # self.commit(self.cur_messages)
         self.cur_messages = []
         return True
 
@@ -299,14 +301,14 @@ class Coder:
         self.console.print(md)
 
     pattern = re.compile(
-        r"(^```\S*\s*)?^((?:[a-zA-Z]:\\|/)?(?:[\w\s.-]+[\\/])*\w+\.\w+)\s+(^```\S*\s*)?^<<<<<<< ORIGINAL\n(.*?\n?)^=======\n(.*?)^>>>>>>> UPDATED",  # noqa: E501
+        r"(^```\S*\s*)?^((?:[a-zA-Z]:\\|/)?(?:[\w\s.-]+[\\/])*\w+(\.\w+)?)\s+(^```\S*\s*)?^<<<<<<< ORIGINAL\n(.*?\n?)^=======\n(.*?)^>>>>>>> UPDATED",  # noqa: E501
         re.MULTILINE | re.DOTALL,
     )
 
     def update_files(self, content, inp):
         edited = set()
         for match in self.pattern.finditer(content):
-            _, path, _, original, updated = match.groups()
+            _, path, _, _, original, updated = match.groups()
 
             if path not in self.fnames:
                 if not Path(path).exists():
