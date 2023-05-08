@@ -61,14 +61,6 @@ class Coder:
         else:
             self.console = Console(force_terminal=True, no_color=True)
 
-    def files_modified(self):
-        for fname, mtime in self.fnames.items():
-            if Path(fname).stat().st_mtime != mtime:
-                return True
-
-    def request(self, prompt):
-        self.request_prompt = prompt
-
     def quoted_file(self, fname):
         prompt = "\n"
         prompt += fname
