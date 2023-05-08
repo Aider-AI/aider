@@ -17,7 +17,7 @@ from tqdm import tqdm
 from pathlib import Path
 
 import os
-import pygit2
+import git
 import openai
 
 from dump import dump
@@ -405,37 +405,27 @@ class Coder:
         return res
 
     def commit(self, message_history, prefix=None):
-        repo_paths = set(pygit2.discover_repository(fname) for fname in self.fnames)
+        repo_paths = set(
+            git.Repo(fname, search_parent_directories=True).git_dir
+            for fname in self.fnames
+        )
 
         if len(repo_paths) > 1:
             repo_paths = " ".join(repo_paths)
             raise ValueError(f"Files must all be in one git repo, not: {repo_paths}")
 
-        repo = pygit2.Repository(repo_paths.pop())
-
-        """
-        index = repo.index
-        index.read()
-        for patch in index.diff_to_workdir():
-            print(patch.text)
-        """
-
-        patches = repo.diff("HEAD")
-        if not len(patches):
+        repo = git.Repo(repo_paths.pop())
+        if not repo.is_dirty():
             return
+
+        diffs = "# Diffs:\n"
+        diffs += repo.git.diff("HEAD")
 
         context = ""
         if message_history:
             context += "# Context:\n"
             for msg in message_history:
                 context += msg["role"].upper() + ": " + msg["content"] + "\n"
-
-        diffs = "# Diffs:\n"
-        for diff in patches:
-            dump(dir(diff))
-            dump(diff.delta.new_file.path)
-            diffs += diff.text
-            diffs += "\n\n"
 
         if not diffs:
             return
@@ -453,7 +443,7 @@ class Coder:
             silent=True,
         )
 
-        commit_message = commit_message.strip()
+        commit_message = commit_message.strip().strip('"').strip()
 
         if interrupted:
             raise KeyboardInterrupt
