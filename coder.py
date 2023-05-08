@@ -387,10 +387,11 @@ def main():
         help="Only use gpt-3.5-turbo, not gpt-4",
     )
     parser.add_argument(
-        "-c",
-        "--colorize",
-        action="store_true",
-        help="Enable colorized output of GPT responses",
+        "--no-color",
+        action="store_false",
+        dest="colorize",
+        default=True,
+        help="Disable colorized output of GPT responses",
     )
 
     args = parser.parse_args()
