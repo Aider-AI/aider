@@ -203,6 +203,7 @@ class Coder:
             dict(role="user", content=prompts.files_content_gpt_edits),
             dict(role="assistant", content="Ok."),
         ]
+        self.commit(self.cur_messages)
         self.cur_messages = []
         return True
 
@@ -401,6 +402,12 @@ class Coder:
 
         return res
 
+    def commit(self, message_history):
+        # _messages = [
+        #    dict(role="system", content=prompts.commit_system),
+        # ]
+        pass
+
 
 def main():
     parser = argparse.ArgumentParser(description="Chat with GPT about code")
@@ -425,6 +432,11 @@ def main():
         metavar="FILE",
         help="Apply the changes from the given file instead of running the chat",
     )
+    parser.add_argument(
+        "--commit",
+        action="store_true",
+        help="Commit dirty changes to the files",
+    )
 
     args = parser.parse_args()
 
@@ -433,12 +445,17 @@ def main():
     pretty = args.pretty
 
     coder = Coder(use_gpt_4, fnames, pretty)
+    if args.commit:
+        coder.commit("")
+        return
+
     if args.apply:
         with open(args.apply, "r") as f:
             content = f.read()
         coder.update_files(content, inp="")
-    else:
-        coder.run()
+        return
+
+    coder.run()
 
 
 if __name__ == "__main__":

@@ -102,3 +102,10 @@ To this file:
 
 ONLY OUTPUT {fname} !!!
 """
+
+# COMMIT
+commit_system = """You are an expert software engineer.
+Review the provided diffs which are about to be committed to a git repo.
+Generate a 1 line, 1-2 sentence commit message.
+Reply with JUST the commit message, without comments, questions, etc.
+"""
