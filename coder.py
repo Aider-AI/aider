@@ -110,31 +110,21 @@ class Coder:
             return True
         return False
 
-    def set_files_messages(self, did_edits=None):
-        if did_edits:
-            print("Reloading files...")
-
-        if did_edits == "gpt":
-            files_content = prompts.files_content_prefix_gpt_edits
-        elif did_edits == "local":
-            files_content = prompts.files_content_prefix_local_edits
-        else:
-            files_content = prompts.files_content_prefix_initial
-
+    def get_files_messages(self):
+        files_content = prompts.files_content_prefix
         files_content += self.get_files_content()
         files_content += prompts.files_content_suffix
 
-        self.files_messages = [
+        files_messages = [
             dict(role="user", content=files_content),
             dict(role="assistant", content="Ok."),
         ]
 
-        return True
+        return files_messages
 
     def run(self):
         self.done_messages = []
         self.cur_messages = []
-        self.set_files_messages()
 
         while True:
             inp = self.get_input()
@@ -143,8 +133,11 @@ class Coder:
 
             if self.check_for_local_edits():
                 # files changed, move cur messages back behind the files messages
-                self.set_files_messages("local")
                 self.done_messages += self.cur_messages
+                self.done_messages += [
+                    dict(role="user", content=prompts.files_content_local_edits),
+                    dict(role="assistant", content="Ok."),
+                ]
                 self.cur_messages = []
 
             self.cur_messages += [
@@ -159,7 +152,7 @@ class Coder:
                 dict(role="system", content=prompts.main_system),
             ]
             messages += self.done_messages
-            messages += self.files_messages
+            messages += self.get_files_messages()
             messages += self.cur_messages
 
             self.show_messages(messages, "all")
@@ -184,8 +177,11 @@ class Coder:
                 continue
 
             self.check_for_local_edits(True)
-            self.set_files_messages("gpt")
             self.done_messages += self.cur_messages
+            self.done_messages += [
+                dict(role="user", content=prompts.files_content_gpt_edits),
+                dict(role="assistant", content="Ok."),
+            ]
             self.cur_messages = []
 
     def show_messages(self, messages, title):
