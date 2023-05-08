@@ -206,7 +206,7 @@ class Coder:
             dict(role="user", content=prompts.files_content_gpt_edits),
             dict(role="assistant", content="Ok."),
         ]
-        # self.commit(self.cur_messages)
+        self.commit(self.cur_messages)
         self.cur_messages = []
         return True
 
@@ -406,7 +406,7 @@ class Coder:
 
         return res
 
-    def commit(self, message_history, prefix=None):
+    def commit(self, message_history, prefix=None, ask=False):
         repo_paths = set(
             git.Repo(fname, search_parent_directories=True).git_dir
             for fname in self.fnames
@@ -421,7 +421,20 @@ class Coder:
             return
 
         diffs = "# Diffs:\n"
-        diffs += repo.git.diff("HEAD")
+        dirty_fnames = []
+        for fname in self.fnames:
+            relative_fname = os.path.relpath(fname, repo.working_tree_dir)
+            these_diffs = repo.git.diff("HEAD", relative_fname)
+            if these_diffs:
+                dirty_fnames.append(fname)
+                diffs += these_diffs + "\n"
+
+        if not dirty_fnames:
+            return
+
+        self.console.print("[red]Files have uncommitted changes:")
+        for fname in dirty_fnames:
+            self.console.print(f"[red]  {fname}")
 
         context = ""
         if message_history:
@@ -429,15 +442,12 @@ class Coder:
             for msg in message_history:
                 context += msg["role"].upper() + ": " + msg["content"] + "\n"
 
-        if not diffs:
-            return
-
         messages = [
             dict(role="system", content=prompts.commit_system),
             dict(role="user", content=context + diffs),
         ]
 
-        self.show_messages(messages, "commit")
+        # self.show_messages(messages, "commit")
 
         commit_message, interrupted = self.send(
             messages,
@@ -453,7 +463,14 @@ class Coder:
         if prefix:
             commit_message = prefix + commit_message
 
-        print(commit_message)
+        self.console.print(f"[red]\nCommit message: {commit_message}\n")
+
+        if ask:
+            res = Confirm.ask("[red]Commit?")
+
+            if not res:
+                self.console.print("[red]Skipped commmit.")
+                return
 
 
 def main():
@@ -493,7 +510,7 @@ def main():
 
     coder = Coder(use_gpt_4, fnames, pretty)
     if args.commit:
-        coder.commit("")
+        coder.commit("", ask=True)
         return
 
     if args.apply:
