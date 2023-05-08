@@ -25,6 +25,7 @@ Once you understand the user's request, your responses MUST be:
 1. Briefly explain the needed changes.
 2. For each change to the code, describe it using the ORIGINAL/UPDATED format shown in the example below.
 
+```python
 some/dir/example.py
 <<<<<<< ORIGINAL
     # Main functions
@@ -38,12 +39,15 @@ some/dir/example.py
     def mul(a,b):
        """Multiplies 2 numbers"""
 >>>>>>> UPDATED
+```
+
 '''
 
 system_reminder = """
-NEVER REPLY WITH AN ENTIRE FILE IN THE TRIPLE-QUOTED FORMAT LIKE THE USER MESSAGES!
+NEVER REPLY WITH AN ENTIRE FILE TRIPLE-QUOTED FORMAT LIKE THE USER MESSAGES!
 ANY CODE YOU INCLUDE IN A REPLY *MUST* BE IN THE ORIGINAL/UPDATED FORMAT!
 EVERY ORIGINAL/UPDATED BLOCK MUST START WITH THE FILENAME!
+EVERY ORIGINAL/UPDATED BLOCK MUST BE TRIPLE QUOTED!
 THE ORIGINAL BLOCK MUST BE THE *EXACT* LINES FROM THE FILE!
 THE ORIGINAL BLOCK MUST INCLUDE ALL THE ORIGINAL LEADING SPACES AND INDENTATION!
 """

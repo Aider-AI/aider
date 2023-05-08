@@ -9,6 +9,10 @@ import re
 import readline
 import traceback
 import argparse
+from rich.console import Console
+from rich.text import Text
+from rich.live import Live
+from rich.markdown import Markdown
 
 from tqdm import tqdm
 
@@ -56,6 +60,8 @@ class Coder:
 
         self.check_for_local_edits(True)
 
+        self.console = Console()
+
     def files_modified(self):
         for fname, mtime in self.fnames.items():
             if Path(fname).stat().st_mtime != mtime:
@@ -79,8 +85,7 @@ class Coder:
         return prompt
 
     def get_input(self):
-        print()
-        print("=" * 60)
+        self.console.rule()
         inp = ""
         num_control_c = 0
         while not inp.strip():
@@ -90,10 +95,10 @@ class Coder:
                 return
             except KeyboardInterrupt:
                 num_control_c += 1
-                print()
+                self.console.print()
                 if num_control_c >= 2:
                     return
-                print("^C again to quit")
+                self.console.print("[bold red]^C again to quit")
 
         print()
 
@@ -160,7 +165,7 @@ class Coder:
             messages += self.get_files_messages()
             messages += self.cur_messages
 
-            self.show_messages(messages, "all")
+            # self.show_messages(messages, "all")
 
             content = self.send(messages)
 
@@ -216,7 +221,7 @@ class Coder:
         if show_progress:
             return self.show_send_progress(completion, show_progress)
         else:
-            return self.show_send_output_plain(completion)
+            return self.show_send_output_color(completion)
 
     def show_send_progress(self, completion, show_progress):
         resp = []
@@ -255,63 +260,29 @@ class Coder:
             sys.stdout.write(text)
             sys.stdout.flush()
 
-            # disabled
-            if False and "```" in resp:
-                return resp
-
         return resp
 
     def show_send_output_color(self, completion):
-        resp = []
+        resp = ""
 
         in_diff = False
         diff_lines = []
 
-        def print_lines():
-            if not diff_lines:
-                return
-            code = "\n".join(diff_lines)
-            lexer = lexers.guess_lexer(code)
-            code = highlight(code, lexer, formatter)
-            print(code, end="")
-
         partial_line = ""
-        for chunk in completion:
-            try:
-                text = chunk.choices[0].delta.content
-                resp.append(text)
-            except AttributeError:
-                continue
+        with Live(vertical_overflow="scroll") as live:
+            for chunk in completion:
+                if chunk.choices[0].finish_reason not in (None, "stop"):
+                    dump(chunk.choices[0].finish_reason)
+                try:
+                    text = chunk.choices[0].delta.content
+                    resp += text
+                except AttributeError:
+                    continue
 
-            lines = partial_line + text
-            lines = lines.split("\n")
-            partial_line = lines.pop()
+                md = Markdown(resp, style="blue", code_theme="default")
+                live.update(md)
 
-            for line in lines:
-                check = line.rstrip()
-                if check == ">>>>>>> UPDATED":
-                    print_lines()
-                    in_diff = False
-                    diff_lines = []
-
-                if check == "=======":
-                    print_lines()
-                    diff_lines = []
-                    print(line)
-                elif in_diff:
-                    diff_lines.append(line)
-                else:
-                    print(line)
-
-                if line.strip() == "<<<<<<< ORIGINAL":
-                    in_diff = True
-                    diff_lines = []
-
-        print_lines()
-        if partial_line:
-            print(partial_line)
-
-        return "".join(resp)
+        return resp
 
     pattern = re.compile(
         r"(\S+)\s+(```)?<<<<<<< ORIGINAL\n(.*?\n?)=======\n(.*?\n?)>>>>>>> UPDATED",
@@ -361,7 +332,7 @@ class Coder:
             new_content = "\n".join(new_content) + "\n"
 
         fname.write_text(new_content)
-        print("Applied edit to", fname)
+        self.console.print("Applied edit to", fname)
         return True
 
     def do_gpt_powered_replace(self, fname, edit, request):
