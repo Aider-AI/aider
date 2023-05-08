@@ -397,7 +397,7 @@ def main():
 
     use_gpt_4 = not args.gpt_3_5_turbo
     fnames = args.files
-    colorize = args.color
+    colorize = args.colorize
 
     coder = Coder(use_gpt_4, fnames, colorize)
     coder.run()
