@@ -6,6 +6,7 @@ import readline
 import traceback
 import argparse
 from rich.console import Console
+from colorama import Fore, Style
 from rich.live import Live
 from rich.text import Text
 from rich.markdown import Markdown
@@ -52,7 +53,7 @@ class Coder:
 
         self.check_for_local_edits(True)
 
-        self.console = Console(record=True)
+        self.console = Console()
         self.colorize = colorize
 
     def files_modified(self):
@@ -81,6 +82,7 @@ class Coder:
         self.console.rule()
         inp = ""
         num_control_c = 0
+        print(Fore.GREEN, end="\r")
         while not inp.strip():
             try:
                 inp = input("> ")
@@ -94,8 +96,7 @@ class Coder:
                 self.console.print("[bold red]^C again to quit")
 
         ###
-        self.console.print(f"[green]> {inp.strip()}")
-        self.console.print()
+        print(Style.RESET_ALL)
 
         readline.write_history_file(history_file)
         return inp
@@ -130,9 +131,6 @@ class Coder:
         self.cur_messages = []
 
         while True:
-            html = self.console.export_html()
-            Path("tmp.html").write_text(html)
-
             inp = self.get_input()
             if inp is None:
                 return
