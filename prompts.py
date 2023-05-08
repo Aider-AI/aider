@@ -1,4 +1,3 @@
-
 ### MAIN
 
 main_system = '''
@@ -36,39 +35,45 @@ ONLY REPLY WITH CODE IN ORIGINAL/UPDATED FORMAT CHANGES SHOWN ABOVE!
 NEVER REPLY WITH AN ENTIRE FILE!
 '''
 
-returned_code = '''
+returned_code = """
 It looks like you tried to return a code block. Don't do that!
 
 Only return code using the specific ORIGINAL/UPDATED format.
 Be selective!
 Only return the parts of the code which need changes!
-'''
+"""
 
-system_reminder = 'REMEMBER, ONLY RETURN CODE USING THE ORIGINAL/UPDATED FORMAT!'
+system_reminder = "REMEMBER, ONLY RETURN CODE USING THE ORIGINAL/UPDATED FORMAT!"
 
 ### FILES
 
-files_content_prefix_edited = 'I made your suggested changes, here are the updated files:\n\n'
+files_content_prefix_gpt_edits = (
+    "I made your suggested changes, here are the updated files:\n\n"
+)
 
-files_content_prefix_plain = 'Here are the files:\n\n'
+files_content_prefix_local_edits = (
+    "I made some changes to the files, here are the updated files:\n\n"
+)
 
-files_content_suffix = '''
+files_content_prefix_initial = "Here are the files:\n\n"
+
+files_content_suffix = """
 
 BASE ANY EDITS ON THE CURRENT CONTENTS OF THE FILES AS SHOWN IN THIS MESSAGE.
-'''
+"""
 
 ### EDITOR
 
-editor_system = '''
+editor_system = """
 You are an expert code editor.
 Perform the requested edit.
 Output ONLY the new version of the file.
 Just that one file.
 Do not output explanations!
 Do not wrap the output in ``` delimiters.
-'''
+"""
 
-editor_user = '''
+editor_user = """
 To complete this request:
 
 {request}
@@ -85,4 +90,4 @@ To this file:
 ```
 
 ONLY OUTPUT {fname} !!!
-'''
+"""

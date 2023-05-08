@@ -45,14 +45,16 @@ class Coder:
     fnames = dict()
     last_modified = 0
 
-    def __init__(self, use_gpt_4):
+    def __init__(self, use_gpt_4, files):
         if use_gpt_4:
             self.main_model = "gpt-4"
         else:
             self.main_model = "gpt-3.5-turbo"
 
-    def add_file(self, fname):
-        self.fnames[fname] = Path(fname).stat().st_mtime
+        for fname in files:
+            self.fnames[fname] = Path(fname).stat().st_mtime
+
+        self.check_for_local_edits(True)
 
     def files_modified(self):
         for fname, mtime in self.fnames.items():
@@ -98,19 +100,26 @@ class Coder:
         readline.write_history_file(history_file)
         return inp
 
-    def set_files_messages(self, did_edits=False):
+    def check_for_local_edits(self, init=False):
         last_modified = max(Path(fname).stat().st_mtime for fname in self.fnames)
-        if last_modified <= self.last_modified:
-            return
-        did_edits = self.last_modified > 0
-
+        since = last_modified - self.last_modified
         self.last_modified = last_modified
-        print("Reloading files...")
+        if init:
+            return
+        if since > 0:
+            return True
+        return False
 
+    def set_files_messages(self, did_edits=None):
         if did_edits:
-            files_content = prompts.files_content_prefix_edited
+            print("Reloading files...")
+
+        if did_edits == "gpt":
+            files_content = prompts.files_content_prefix_gpt_edits
+        elif did_edits == "local":
+            files_content = prompts.files_content_prefix_local_edits
         else:
-            files_content = prompts.files_content_prefix_plain
+            files_content = prompts.files_content_prefix_initial
 
         files_content += self.get_files_content()
         files_content += prompts.files_content_suffix
@@ -132,8 +141,9 @@ class Coder:
             if inp is None:
                 return
 
-            if self.set_files_messages():
+            if self.check_for_local_edits():
                 # files changed, move cur messages back behind the files messages
+                self.set_files_messages("local")
                 self.done_messages += self.cur_messages
                 self.cur_messages = []
 
@@ -173,7 +183,8 @@ class Coder:
             if not edited:
                 continue
 
-            self.set_files_messages(True)
+            self.check_for_local_edits(True)
+            self.set_files_messages("gpt")
             self.done_messages += self.cur_messages
             self.cur_messages = []
 
@@ -409,13 +420,9 @@ def main():
     args = parser.parse_args()
 
     use_gpt_4 = not args.gpt_3_5_turbo
-    coder = Coder(use_gpt_4)
-
     fnames = args.files
 
-    for fname in fnames:
-        coder.add_file(fname)
-
+    coder = Coder(use_gpt_4, fnames)
     coder.run()
 
 
