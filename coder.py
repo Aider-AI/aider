@@ -77,31 +77,6 @@ class Coder:
             prompt += self.quoted_file(fname)
         return prompt
 
-    def set_files_messages(self):
-
-        last_modified = max(Path(fname).stat().st_mtime for fname in self.fnames)
-        if last_modified <= self.last_modified:
-            return
-        did_edits = (self.last_modified > 0)
-
-        self.last_modified = last_modified
-        print('Reloading files...')
-
-        if did_edits:
-            files_content = prompts.files_content_prefix_edited
-        else:
-            files_content = prompts.files_content_prefix_plain
-
-        files_content += self.get_files_content()
-        files_content += prompts.files_content_suffix
-
-        self.files_messages = [
-            dict(role = 'user', content = files_content),
-            dict(role = 'assistant', content = "Ok."),
-        ]
-
-        return True
-
     def get_input(self):
 
         print()
@@ -125,7 +100,16 @@ class Coder:
         readline.write_history_file(history_file)
         return inp
 
-    def get_files_messages(self, did_edits):
+    def set_files_messages(self, did_edits = False):
+
+        last_modified = max(Path(fname).stat().st_mtime for fname in self.fnames)
+        if last_modified <= self.last_modified:
+            return
+        did_edits = (self.last_modified > 0)
+
+        self.last_modified = last_modified
+        print('Reloading files...')
+
         if did_edits:
             files_content = prompts.files_content_prefix_edited
         else:
@@ -134,11 +118,12 @@ class Coder:
         files_content += self.get_files_content()
         files_content += prompts.files_content_suffix
 
-        files_messages = [
+        self.files_messages = [
             dict(role = 'user', content = files_content),
             dict(role = 'assistant', content = "Ok."),
         ]
-        return files_messages
+
+        return True
 
     def run(self):
         self.done_messages = []
@@ -191,8 +176,8 @@ class Coder:
             if not edited:
                 continue
 
+            self.set_files_messages(True)
             self.done_messages += self.cur_messages
-            self.files_messages = self.get_files_messages(True)
             self.cur_messages = []
 
     def show_messages(self, messages, title):
@@ -416,7 +401,6 @@ def main():
     parser.add_argument('-3', '--gpt-3-5-turbo', action='store_true', help='Only use gpt-3.5-turbo, not gpt-4')
 
     args = parser.parse_args()
-    dump(args)
 
     use_gpt_4 = not args.gpt_3_5_turbo
     coder = Coder(use_gpt_4)

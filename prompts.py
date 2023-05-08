@@ -50,7 +50,7 @@ system_reminder = 'REMEMBER, ONLY RETURN CODE USING THE ORIGINAL/UPDATED FORMAT!
 
 files_content_prefix_edited = 'I made your suggested changes, here are the updated files:\n\n'
 
-files_content_prefix_plain = 'Here are the files I need you to edit:\n\n'
+files_content_prefix_plain = 'Here are the files:\n\n'
 
 files_content_suffix = '''
 
