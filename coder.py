@@ -1,24 +1,17 @@
 #!/usr/bin/env python
 
-import os
 import sys
-import copy
-import random
-import json
 import re
 import readline
 import traceback
 import argparse
 from rich.console import Console
-from rich.text import Text
 from rich.live import Live
 from rich.markdown import Markdown
 
 from tqdm import tqdm
 
 from pathlib import Path
-from collections import defaultdict
-from pygments import highlight, lexers, formatters
 
 import os
 import openai
@@ -32,8 +25,6 @@ try:
     readline.read_history_file(history_file)
 except FileNotFoundError:
     pass
-
-formatter = formatters.TerminalFormatter()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -244,10 +235,6 @@ class Coder:
     def show_send_output_plain(self, completion):
         resp = ""
 
-        in_diff = False
-        diff_lines = []
-
-        partial_line = ""
         for chunk in completion:
             if chunk.choices[0].finish_reason not in (None, "stop"):
                 dump(chunk.choices[0].finish_reason)
@@ -265,10 +252,6 @@ class Coder:
     def show_send_output_color(self, completion):
         resp = ""
 
-        in_diff = False
-        diff_lines = []
-
-        partial_line = ""
         with Live(vertical_overflow="scroll") as live:
             for chunk in completion:
                 if chunk.choices[0].finish_reason not in (None, "stop"):
@@ -319,8 +302,8 @@ class Coder:
             # first populating an empty file
             new_content = after_text
         else:
-            before_lines = [l.strip() for l in before_text.splitlines()]
-            stripped_content = [l.strip() for l in content]
+            before_lines = [line.strip() for line in before_text.splitlines()]
+            stripped_content = [line.strip() for line in content]
             where = find_index(stripped_content, before_lines)
 
             if where < 0:
