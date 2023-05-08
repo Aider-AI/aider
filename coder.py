@@ -113,11 +113,11 @@ class Coder:
     def get_files_messages(self):
         files_content = prompts.files_content_prefix
         files_content += self.get_files_content()
-        files_content += prompts.files_content_suffix
 
         files_messages = [
             dict(role="user", content=files_content),
             dict(role="assistant", content="Ok."),
+            dict(role="system", content=prompts.files_content_suffix),
         ]
 
         return files_messages
