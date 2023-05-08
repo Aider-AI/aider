@@ -354,7 +354,7 @@ class Coder:
             new_content = "\n".join(new_content) + "\n"
 
         fname.write_text(new_content)
-        self.console.print(f"Applied edit to {fname}")
+        self.console.print(f"[red]Applied edit to {fname}")
         return True
 
     def do_gpt_powered_replace(self, fname, edit, request):
