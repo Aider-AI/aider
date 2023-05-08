@@ -117,7 +117,10 @@ class Coder:
         files_messages = [
             dict(role="user", content=files_content),
             dict(role="assistant", content="Ok."),
-            dict(role="system", content=prompts.files_content_suffix),
+            dict(
+                role="system",
+                content=prompts.files_content_suffix + prompts.system_reminder,
+            ),
         ]
 
         return files_messages
@@ -149,7 +152,9 @@ class Coder:
             # self.show_messages(self.cur_messages, "cur")
 
             messages = [
-                dict(role="system", content=prompts.main_system),
+                dict(
+                    role="system", content=prompts.main_system + prompts.system_reminder
+                ),
             ]
             messages += self.done_messages
             messages += self.get_files_messages()

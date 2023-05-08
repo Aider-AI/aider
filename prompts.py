@@ -40,6 +40,15 @@ some/dir/example.py
 >>>>>>> UPDATED
 '''
 
+system_reminder = """
+NEVER REPLY WITH AN ENTIRE FILE IN THE TRIPLE-QUOTED FORMAT LIKE THE USER MESSAGES!
+ANY CODE YOU INCLUDE IN A REPLY *MUST* BE IN THE ORIGINAL/UPDATED FORMAT!
+EVERY ORIGINAL/UPDATED BLOCK MUST START WITH THE FILENAME!
+THE ORIGINAL BLOCK MUST BE THE *EXACT* LINES FROM THE FILE!
+THE ORIGINAL BLOCK MUST INCLUDE ALL THE ORIGINAL LEADING SPACES AND INDENTATION!
+"""
+
+
 returned_code = """
 It looks like you tried to return a code block. Don't do that!
 
@@ -47,8 +56,6 @@ Only return code using the specific ORIGINAL/UPDATED format.
 Be selective!
 Only return the parts of the code which need changes!
 """
-
-system_reminder = "REMEMBER, ONLY RETURN CODE USING THE ORIGINAL/UPDATED FORMAT!"
 
 ### FILES
 
@@ -58,14 +65,7 @@ files_content_local_edits = "I made some changes to the files myself."
 
 files_content_prefix = "Here is the current content of the files:\n\n"
 
-files_content_suffix = """BASE ANY EDITS ON THE CURRENT CONTENTS OF THE FILES AS SHOWN IN THE USER'S LAST MESSAGE.
-NEVER REPLY WITH AN ENTIRE FILE IN THE TRIPLE-QUOTED FORMAT LIKE THAT!
-ANY CODE YOU INCLUDE IN A REPLY MUST BE IN THE ORIGINAL/UPDATED FORMAT!
-THE ORIGINAL BLOCK MUST BE THE *EXACT* LINES FROM THE FILE!
-INCLUDE ALL THE LEADING SPACES!!
-Be sure to include the correct path and filename for each edit, exactly as specified by the user.
-DO NOT REPLY WITH diff OUTPUT!
-"""
+files_content_suffix = """Base any edits on the current contents of the files as shown in the user's last message."""
 
 
 ### EDITOR
