@@ -61,33 +61,3 @@ files_content_suffix = """
 
 BASE ANY EDITS ON THE CURRENT CONTENTS OF THE FILES AS SHOWN IN THIS MESSAGE.
 """
-
-### EDITOR
-
-editor_system = """
-You are an expert code editor.
-Perform the requested edit.
-Output ONLY the new version of the file.
-Just that one file.
-Do not output explanations!
-Do not wrap the output in ``` delimiters.
-"""
-
-editor_user = """
-To complete this request:
-
-{request}
-
-You need to apply this change:
-
-{edit}
-
-To this file:
-
-{fname}
-```
-{content}
-```
-
-ONLY OUTPUT {fname} !!!
-"""
