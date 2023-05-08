@@ -7,6 +7,7 @@ import traceback
 import argparse
 from rich.console import Console
 from rich.live import Live
+from rich.text import Text
 from rich.markdown import Markdown
 
 from tqdm import tqdm
@@ -51,7 +52,7 @@ class Coder:
 
         self.check_for_local_edits(True)
 
-        self.console = Console()
+        self.console = Console(record=True)
 
     def files_modified(self):
         for fname, mtime in self.fnames.items():
@@ -91,7 +92,9 @@ class Coder:
                     return
                 self.console.print("[bold red]^C again to quit")
 
-        print()
+        ###
+        self.console.print(f"[green]> {inp.strip()}")
+        self.console.print()
 
         readline.write_history_file(history_file)
         return inp
@@ -126,6 +129,9 @@ class Coder:
         self.cur_messages = []
 
         while True:
+            html = self.console.export_html()
+            Path("tmp.html").write_text(html)
+
             inp = self.get_input()
             if inp is None:
                 return
@@ -164,8 +170,8 @@ class Coder:
                 dict(role="assistant", content=content),
             ]
 
-            print()
-            print()
+            self.console.print()
+
             try:
                 edited = self.update_files(content, inp)
             except Exception as err:
@@ -265,6 +271,12 @@ class Coder:
                 md = Markdown(resp, style="blue", code_theme="default")
                 live.update(md)
 
+            live.update(Text(""))
+            live.stop()
+
+        md = Markdown(resp, style="blue", code_theme="default")
+        self.console.print(md)
+
         return resp
 
     pattern = re.compile(
@@ -315,7 +327,7 @@ class Coder:
             new_content = "\n".join(new_content) + "\n"
 
         fname.write_text(new_content)
-        self.console.print("Applied edit to", fname)
+        self.console.print(f"Applied edit to {fname}")
         return True
 
     def do_gpt_powered_replace(self, fname, edit, request):
