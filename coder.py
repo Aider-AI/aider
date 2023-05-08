@@ -41,7 +41,7 @@ class Coder:
     fnames = dict()
     last_modified = 0
 
-    def __init__(self, use_gpt_4, files):
+    def __init__(self, use_gpt_4, files, colorize):
         if use_gpt_4:
             self.main_model = "gpt-4"
         else:
@@ -53,6 +53,7 @@ class Coder:
         self.check_for_local_edits(True)
 
         self.console = Console(record=True)
+        self.colorize = colorize
 
     def files_modified(self):
         for fname, mtime in self.fnames.items():
@@ -217,8 +218,10 @@ class Coder:
 
         if show_progress:
             return self.show_send_progress(completion, show_progress)
-        else:
+        elif self.colorize:
             return self.show_send_output_color(completion)
+        else:
+            return self.show_send_output_plain(completion)
 
     def show_send_progress(self, completion, show_progress):
         resp = []
@@ -383,13 +386,20 @@ def main():
         action="store_true",
         help="Only use gpt-3.5-turbo, not gpt-4",
     )
+    parser.add_argument(
+        "-c",
+        "--colorize",
+        action="store_true",
+        help="Enable colorized output of GPT responses",
+    )
 
     args = parser.parse_args()
 
     use_gpt_4 = not args.gpt_3_5_turbo
     fnames = args.files
+    colorize = args.color
 
-    coder = Coder(use_gpt_4, fnames)
+    coder = Coder(use_gpt_4, fnames, colorize)
     coder.run()
 
 
