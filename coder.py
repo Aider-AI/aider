@@ -303,14 +303,14 @@ class Coder:
         self.console.print(md)
 
     pattern = re.compile(
-        r"(\S+)\s+(```\s*)?<<<<<<< ORIGINAL\n(.*?\n?)=======\n(.*?\n?)>>>>>>> UPDATED",
+        r"(^```\S*\s*)?^((?:[a-zA-Z]:\\|/)?(?:[\w\s.-]+[\\/])*\w+\.\w+)\s+(^```\S*\s*)?^<<<<<<< ORIGINAL\n(.*?\n?)^=======\n(.*?\n?)*^>>>>>>> UPDATED",  # noqa: E501
         re.MULTILINE | re.DOTALL,
     )
 
     def update_files(self, content, inp):
         edited = set()
         for match in self.pattern.finditer(content):
-            path, _, original, updated = match.groups()
+            _, path, _, original, updated = match.groups()
 
             edited.add(path)
             if self.do_replace(path, original, updated):
