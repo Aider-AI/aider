@@ -42,7 +42,7 @@ class Coder:
     fnames = dict()
     last_modified = 0
 
-    def __init__(self, use_gpt_4, files, colorize):
+    def __init__(self, use_gpt_4, files, pretty):
         if use_gpt_4:
             self.main_model = "gpt-4"
         else:
@@ -53,8 +53,12 @@ class Coder:
 
         self.check_for_local_edits(True)
 
-        self.console = Console()
-        self.colorize = colorize
+        self.pretty = pretty
+
+        if pretty:
+            self.console = Console()
+        else:
+            self.console = Console(force_terminal=True, no_color=True)
 
     def files_modified(self):
         for fname, mtime in self.fnames.items():
@@ -79,10 +83,18 @@ class Coder:
         return prompt
 
     def get_input(self):
-        self.console.rule()
+        if self.pretty:
+            self.console.rule()
+        else:
+            print()
+
         inp = ""
         num_control_c = 0
-        print(Fore.GREEN, end="\r")
+        if self.pretty:
+            print(Fore.GREEN, end="\r")
+        else:
+            print()
+
         while not inp.strip():
             try:
                 inp = input("> ")
@@ -96,7 +108,10 @@ class Coder:
                 self.console.print("[bold red]^C again to quit")
 
         ###
-        print(Style.RESET_ALL)
+        if self.pretty:
+            print(Style.RESET_ALL)
+        else:
+            print()
 
         readline.write_history_file(history_file)
         return inp
@@ -216,7 +231,7 @@ class Coder:
 
         if show_progress:
             return self.show_send_progress(completion, show_progress)
-        elif self.colorize:
+        elif self.pretty:
             return self.show_send_output_color(completion)
         else:
             return self.show_send_output_plain(completion)
@@ -385,20 +400,20 @@ def main():
         help="Only use gpt-3.5-turbo, not gpt-4",
     )
     parser.add_argument(
-        "--no-color",
+        "--no-pretty",
         action="store_false",
-        dest="colorize",
+        dest="pretty",
         default=True,
-        help="Disable colorized output of GPT responses",
+        help="Disable prettyd output of GPT responses",
     )
 
     args = parser.parse_args()
 
     use_gpt_4 = not args.gpt_3_5_turbo
     fnames = args.files
-    colorize = args.colorize
+    pretty = args.pretty
 
-    coder = Coder(use_gpt_4, fnames, colorize)
+    coder = Coder(use_gpt_4, fnames, pretty)
     coder.run()
 
 
