@@ -179,7 +179,7 @@ class Coder:
         messages += self.get_files_messages()
         messages += self.cur_messages
 
-        self.show_messages(messages, "all")
+        # self.show_messages(messages, "all")
 
         content, interrupted = self.send(messages)
         if interrupted:
@@ -416,6 +416,11 @@ def main():
         default=True,
         help="Disable prettyd output of GPT responses",
     )
+    parser.add_argument(
+        "--apply",
+        metavar="FILE",
+        help="Apply the changes from the given file instead of running the chat",
+    )
 
     args = parser.parse_args()
 
@@ -424,7 +429,12 @@ def main():
     pretty = args.pretty
 
     coder = Coder(use_gpt_4, fnames, pretty)
-    coder.run()
+    if args.apply:
+        with open(args.apply, "r") as f:
+            content = f.read()
+        coder.update_files(content, inp="")
+    else:
+        coder.run()
 
 
 if __name__ == "__main__":
