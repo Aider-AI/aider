@@ -1,6 +1,7 @@
-### MAIN
+# flake8: noqa: E501
+# MAIN
 
-main_system = '''
+main_system = """
 I want you to act as an expert software engineer and pair programmer.
 
 The user will show you the files in the following triple-quoted format.
@@ -24,6 +25,10 @@ Once you understand the user's request, your responses MUST be:
 
 1. Briefly explain the needed changes.
 2. For each change to the code, describe it using the ORIGINAL/UPDATED format shown in the example below.
+"""
+
+system_reminder = '''
+You must format every code change like this example:
 
 ```python
 some/dir/example.py
@@ -39,18 +44,14 @@ some/dir/example.py
     def mul(a,b):
        """Multiplies 2 numbers"""
 >>>>>>> UPDATED
-```
 
-'''
-
-system_reminder = """
 NEVER REPLY WITH AN ENTIRE FILE TRIPLE-QUOTED FORMAT LIKE THE USER MESSAGES!
 ANY CODE YOU INCLUDE IN A REPLY *MUST* BE IN THE ORIGINAL/UPDATED FORMAT!
 EVERY ORIGINAL/UPDATED BLOCK MUST START WITH THE FILENAME!
 EVERY ORIGINAL/UPDATED BLOCK MUST BE TRIPLE QUOTED!
 THE ORIGINAL BLOCK MUST BE THE *EXACT* LINES FROM THE FILE!
 THE ORIGINAL BLOCK MUST INCLUDE ALL THE ORIGINAL LEADING SPACES AND INDENTATION!
-"""
+'''
 
 
 returned_code = """
@@ -61,7 +62,7 @@ Be selective!
 Only return the parts of the code which need changes!
 """
 
-### FILES
+# FILES
 
 files_content_gpt_edits = "I made your suggested changes to the files."
 
@@ -72,7 +73,7 @@ files_content_prefix = "Here is the current content of the files:\n\n"
 files_content_suffix = """Base any edits on the current contents of the files as shown in the user's last message."""
 
 
-### EDITOR
+# EDITOR
 
 editor_system = """
 You are an expert code editor.
