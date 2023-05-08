@@ -6,6 +6,7 @@ import readline
 import traceback
 import argparse
 from rich.console import Console
+from rich.prompt import Confirm
 from colorama import Fore, Style
 from rich.live import Live
 from rich.text import Text
@@ -311,6 +312,17 @@ class Coder:
         edited = set()
         for match in self.pattern.finditer(content):
             _, path, _, original, updated = match.groups()
+
+            if path not in self.fnames:
+                if not Path(path).exists():
+                    question = f"[red bold]Allow creation of new file {path}?"
+                else:
+                    question = f"[red bold]Allow edits to {path} which was not previously provided?"
+                if not Confirm.ask(question, console=self.console):
+                    self.console.print(f"[red]Skipping edit to {path}")
+                    continue
+
+                self.fnames[path] = 0
 
             edited.add(path)
             if self.do_replace(path, original, updated):
