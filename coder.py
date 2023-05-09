@@ -26,12 +26,16 @@ from dump import dump
 
 import prompts
 
-history_file = ".coder.history"
-try:
-    readline.read_history_file(history_file)
-except FileNotFoundError:
-    pass
+class Coder:
+    history_file = ".coder.history"
 
+    def __init__(self, main_model, files, pretty):
+        # ...
+        try:
+            readline.read_history_file(self.history_file)
+        except FileNotFoundError:
+            pass
+        # ...
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
@@ -164,7 +168,7 @@ class Coder:
         else:
             print()
 
-        readline.write_history_file(history_file)
+        readline.write_history_file(self.history_file)
         return inp
 
     def get_last_modified(self):
