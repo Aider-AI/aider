@@ -141,18 +141,29 @@ class Coder:
             print()
 
         inp = ""
+        multiline_input = False
         if self.pretty:
             print(Fore.GREEN, end="\r")
         else:
             print()
 
-        while not inp.strip():
+        while True:
             try:
-                inp = input("> ")
+                line = input("> ")
             except EOFError:
                 return
 
-        ###
+            if line.strip() == "{" and not multiline_input:
+                multiline_input = True
+                continue
+            elif line.strip() == "}" and multiline_input:
+                break
+            elif multiline_input:
+                inp += line + "\n"
+            else:
+                inp = line
+                break
+
         if self.pretty:
             print(Style.RESET_ALL)
         else:
@@ -160,7 +171,6 @@ class Coder:
 
         readline.write_history_file(history_file)
         return inp
-
     def check_for_local_edits(self, init=False):
         last_modified = max(Path(fname).stat().st_mtime for fname in self.fnames)
         since = last_modified - self.last_modified
