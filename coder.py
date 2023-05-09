@@ -70,6 +70,9 @@ class Coder:
             self.fnames[str(fname)] = fname.stat().st_mtime
 
         self.set_repo()
+        if not self.repo:
+            self.console.print("[red bold]Therefore, can not automatically commit edits as they happen.")
+
         self.check_for_local_edits(True)
         self.pretty = pretty
 
@@ -81,16 +84,18 @@ class Coder:
         num_repos = len(set(repo_paths))
 
         if num_repos == 0:
-            self.console.print("[red bold]Files are not in a git repo, can't commit edits to allow easy undo.")
+            self.console.print("[red bold]Files are not in a git repo.")
             return
         if num_repos > 1:
-            self.console.print("[red bold]Files are in different git repos, can't commit edits to allow easy undo")
+            self.console.print("[red bold]Files are in different git repos.")
             return
+
+        repo = git.Repo(repo_paths.pop())
 
         new_files = []
         for fname in self.fnames:
-            relative_fname = os.path.relpath(fname, self.repo.working_tree_dir)
-            if relative_fname not in self.repo.untracked_files:
+            relative_fname = os.path.relpath(fname, repo.working_tree_dir)
+            if relative_fname not in repo.untracked_files:
                 continue
             new_files.append(relative_fname)
 
@@ -99,15 +104,16 @@ class Coder:
             question = f"[red bold]Add the following new files to the git repo? {new_files_str}"
             if Confirm.ask(question, console=self.console):
                 for relative_fname in new_files:
-                    self.repo.git.add(relative_fname)
+                    repo.git.add(relative_fname)
                     self.console.print(f"[red]Added {relative_fname} to the git repo")
                 commit_message = f"Initial commit: Added new files to the git repo."
-                self.repo.git.commit("-m", commit_message, "--no-verify")
+                repo.git.commit("-m", commit_message, "--no-verify")
                 self.console.print(f"[green bold]Committed new files with message: {commit_message}")
             else:
-                self.console.print(f"[red]Skipped adding new files to the git repo")
+                self.console.print(f"[red]Skipped adding new files to the git repo.")
+                return
 
-        self.repo = git.Repo(repo_paths.pop())
+        self.repo = repo
 
     def quoted_file(self, fname):
         prompt = "\n"
@@ -513,8 +519,8 @@ class Coder:
             dict(role="user", content=context + diffs),
         ]
 
-        if history:
-            self.show_messages(messages, "commit")
+        #if history:
+        #    self.show_messages(messages, "commit")
 
         commit_message, interrupted = self.send(
             messages,
