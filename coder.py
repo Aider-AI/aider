@@ -578,7 +578,7 @@ def main():
     pretty = args.pretty
 
     coder = Coder(use_gpt_4, fnames, pretty)
-    coder.commit(ask=not args.commit, prefix="Initial commit: Added new files. ")
+    coder.commit(ask=not args.commit, prefix="WIP: ")
 
     if args.apply:
         with open(args.apply, "r") as f:
