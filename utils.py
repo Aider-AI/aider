@@ -55,6 +55,16 @@ def quoted_file(fname):
 
 
 def strip_quoted_wrapping(res, fname=None):
+    """
+    Given an input string which may have extra "wrapping" around it, remove the wrapping.
+    For example:
+
+    filename.ext
+    ```
+    We just want this content
+    Not the filename and triple quotes
+    ```
+    """
     if not res:
         return res
 
