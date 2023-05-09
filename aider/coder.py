@@ -130,12 +130,17 @@ class Coder:
         files_content = prompts.files_content_prefix
         files_content += self.get_files_content()
 
+        all_content = files_content
+
         if self.repo is not None:
             tracked_files = set(self.repo.git.ls_files().splitlines())
             files_listing = "\n".join(tracked_files)
-            files_content += f"\n\nFiles in the repo:\n{files_listing}\n"
+            repo_content = prompts.repo_content_prefix
+            repo_content += files_listing
 
-        all_content = files_content
+            all_content = repo_content + '\n' + files_content
+
+
         files_messages = [
             dict(role="user", content=all_content),
             dict(role="assistant", content="Ok."),
