@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 from tqdm import tqdm
 
 from pathlib import Path
-from utils import replace_most_similar_chunk
+import utils
 
 import os
 import git
@@ -418,11 +418,14 @@ class Coder:
 
         content = fname.read_text()
 
-        if not before_text and not content:
-            # first populating an empty file
-            new_content = after_text
+        if not before_text:
+            if content:
+                new_content = content + after_text
+            else:
+                # first populating an empty file
+                new_content = after_text
         else:
-            new_content = replace_most_similar_chunk(content, before_text, after_text)
+            new_content = utils.replace_most_similar_chunk(content, before_text, after_text)
             if not new_content:
                 self.console.print(f"[red]Failed to apply edit to {fname}")
                 return

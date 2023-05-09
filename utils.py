@@ -1,6 +1,7 @@
 import math
 
 from difflib import SequenceMatcher
+from pathlib import Path
 
 # from dump import dump
 
@@ -41,3 +42,22 @@ def replace_most_similar_chunk(whole, part, replace):
     )
     modified_whole = "\n".join(modified_whole)
     return modified_whole
+
+
+def strip_quoted_wrapping(res, fname=None):
+    if not res:
+        return res
+
+    res = res.splitlines()
+
+    if fname and res[0].strip().endswith(Path(fname).name):
+        res = res[1:]
+
+    if res[0].startswith("```") and res[-1].startswith("```"):
+        res = res[1:-1]
+
+    res = "\n".join(res)
+    if res and res[-1] != "\n":
+        res += "\n"
+
+    return res
