@@ -95,7 +95,8 @@ class Coder:
         new_files = []
         for fname in self.fnames:
             relative_fname = os.path.relpath(fname, repo.working_tree_dir)
-            if relative_fname not in repo.untracked_files:
+            tracked_files = set(repo.git.ls_files().splitlines())
+            if relative_fname not in tracked_files and relative_fname not in repo.untracked_files:
                 continue
             new_files.append(relative_fname)
 
