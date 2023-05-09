@@ -19,7 +19,7 @@ def main():
         "--history-file",
         metavar="HISTORY_FILE",
         default=os.environ.get("CODER_HISTORY_FILE", ".coder.history"),
-        help="Specify the history file (default: .coder.history)",
+        help="Specify the history file (default: .coder.history, env: CODER_HISTORY_FILE)",
     )
     parser.add_argument(
         "--model",
@@ -45,7 +45,7 @@ def main():
         "--no-pretty",
         action="store_false",
         dest="pretty",
-        help="Disable prettyd output of GPT responses",
+        help="Disable prettyd output of GPT responses (env: CODER_PRETTY)",
         default=bool(int(os.environ.get(env_prefix + "PRETTY", 1))),
     )
     parser.add_argument(
@@ -56,7 +56,7 @@ def main():
     parser.add_argument(
         "--commit-dirty",
         action="store_true",
-        help="Commit dirty files without confirmation (env: CODER_COMMIT_DIRTY)",
+        help="Commit dirty files without confirmation (default: False, env: CODER_COMMIT_DIRTY)",
         default=bool(int(os.environ.get(env_prefix + "COMMIT_DIRTY", 0))),
     )
     args = parser.parse_args()
