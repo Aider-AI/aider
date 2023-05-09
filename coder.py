@@ -54,7 +54,7 @@ class Coder:
         for fname in files:
             fname = Path(fname)
             if not fname.exists():
-            self.console.print(f"[red]Creating {fname}")
+                self.console.print(f"[red]Creating {fname}")
                 fname.touch()
             else:
                 self.console.print(f"[red]Loading {fname}")
@@ -110,7 +110,7 @@ class Coder:
                 )
             else:
                 self.console.print(
-                    f"[red bold]Skipped adding new files to the git repo."
+                    "[red bold]Skipped adding new files to the git repo."
                 )
                 return
 
