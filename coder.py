@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 import sys
 import re
 import readline
@@ -12,6 +11,7 @@ from colorama import Fore, Style
 from rich.live import Live
 from rich.text import Text
 from rich.markdown import Markdown
+from dotenv import load_dotenv
 
 from tqdm import tqdm
 
@@ -565,9 +565,6 @@ class Coder:
         self.console.print(f"[green]{commit_hash} {commit_message}")
         return commit_hash, commit_message
 
-
-import os
-from dotenv import load_dotenv
 
 def main():
     load_dotenv()
