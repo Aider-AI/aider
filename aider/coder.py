@@ -384,8 +384,9 @@ class Coder:
             self.last_modified = self.get_last_modified()
             return
 
-        if self.show_diffs:
+        if self.show_diffs or ask:
             self.console.print(Text(diffs))
+
         diffs = "# Diffs:\n" + diffs
 
         # for fname in dirty_fnames:
