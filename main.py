@@ -56,7 +56,7 @@ def main():
     parser.add_argument(
         "--commit-dirty",
         action="store_true",
-        help="Commit dirty files without confirmation",
+        help="Commit dirty files without confirmation (env: CODER_COMMIT_DIRTY)",
         default=bool(int(os.environ.get(env_prefix + "COMMIT_DIRTY", 0))),
     )
     args = parser.parse_args()
