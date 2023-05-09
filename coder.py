@@ -174,7 +174,7 @@ class Coder:
         messages += self.get_files_messages()
         messages += self.cur_messages
 
-        # self.show_messages(messages, "all")
+        self.show_messages(messages, "all")
 
         content, interrupted = self.send(messages)
         if interrupted:
@@ -201,13 +201,24 @@ class Coder:
         if not edited:
             return True
 
+        res = self.commit(history=self.cur_messages)
+        if res:
+            commit_hash,commit_message = res
+
+            saved_message = prompts.files_content_gpt_edits.format(
+                hash = commit_hash,
+                message = commit_message,
+            )
+        else:
+            self.console.print('[red bold]Edits failed to change the files?')
+            saved_message = prompts.files_content_gpt_no_edits
+
         self.check_for_local_edits(True)
         self.done_messages += self.cur_messages
         self.done_messages += [
-            dict(role="user", content=prompts.files_content_gpt_edits),
+            dict(role="user", content=saved_message),
             dict(role="assistant", content="Ok."),
         ]
-        self.commit(history=self.cur_messages)
         self.cur_messages = []
         return True
 
@@ -486,7 +497,7 @@ class Coder:
         commit_result = repo.git.commit("-m", commit_message, "--no-verify")
         commit_hash = repo.head.commit.hexsha[:7]
         self.console.print(f"[green]{commit_hash} {commit_message}")
-        return commit_hash
+        return commit_hash, commit_message
 
 
 def main():
