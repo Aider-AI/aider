@@ -9,7 +9,7 @@ from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.history import FileHistory
 from rich.console import Console
 from rich.prompt import Confirm, Prompt
-from colorama import Fore, Style
+from colorama import Style
 from rich.live import Live
 from rich.text import Text
 from rich.markdown import Markdown
@@ -46,17 +46,14 @@ class FileContentCompleter(Completer):
                 if word.startswith(last_word):
                     yield Completion(word, start_position=-len(last_word))
 
+
 class Coder:
     fnames = dict()
     last_modified = 0
     repo = None
+
     def __init__(self, main_model, files, pretty, history_file=".coder.history"):
         self.history_file = history_file
-        try:
-            #readline.read_history_file(self.history_file)
-            pass
-        except FileNotFoundError:
-            pass
 
         if pretty:
             self.console = Console()
@@ -150,18 +147,19 @@ class Coder:
 
         inp = ""
         multiline_input = False
-        if self.pretty:
-            print(Fore.GREEN, end="\r")
-        else:
-            print()
 
         while True:
             try:
                 completer_instance = FileContentCompleter(self.fnames)
                 if multiline_input:
-                    line = prompt(". ", completer=completer_instance, history=FileHistory(self.history_file))
+                    show = ". "
                 else:
-                    line = prompt("> ", completer=completer_instance, history=FileHistory(self.history_file))
+                    show = "> "
+                line = prompt(
+                    show,
+                    completer=completer_instance,
+                    history=FileHistory(self.history_file),
+                )
             except EOFError:
                 return
             if line.strip() == "{" and not multiline_input:
@@ -175,12 +173,7 @@ class Coder:
                 inp = line
                 break
 
-        if self.pretty:
-            print(Style.RESET_ALL)
-        else:
-            print()
-
-        #readline.write_history_file(self.history_file)
+        print()
         return inp
 
     def get_last_modified(self):
