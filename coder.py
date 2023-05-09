@@ -483,7 +483,7 @@ class Coder:
         repo.git.add(*relative_dirty_fnames)
         commit_result = repo.git.commit("-m", commit_message, "--no-verify")
         commit_hash = repo.head.commit.hexsha[:7]
-        self.console.print(f"[green]Commit successful. Short hash: {commit_hash}")
+        self.console.print(f"[green]{commit_hash} {commit_message}")
         return commit_hash
 
 
