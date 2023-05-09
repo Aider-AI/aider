@@ -15,8 +15,8 @@ Each change is automatically committed to git with a sensible commit message.
 * Aider can make coordinated code changes across multiple source files at once.
 * Aider will notice if you edit the files outside the chat:
   * It will ask if you'd like to commit these out-of-band changes.
-  * It will make GPT aware of the updated file content.
-  * You can bounce back and forth between your aider chat and your editor, to fluidly collaborate with GPT.
+  * It will import the new file contents into the chat.
+  * You can bounce back and forth between your aider chat and your editor, to fluidly collaborate with aider.
 * Live, colorized, human friendly output.
 * Readline style chat input history, with autocompletion of tokens found in the source files being discussed (via `prompt_toolkit`)
 
@@ -40,12 +40,12 @@ You can also use additional command-line options to customize the behavior of th
 ## Tips
 
 * Large changes are best performed as a sequence of bite sized steps. Same as if you were undertaking them yourself.
-* If your code is throwing an error, paste it into aider with the stack trace and let GPT fix the bug.
-* GPT-4 knows about a lot of standard tools and libraries, but may get some of the fine details wrong about APIs. You can paste doc snippets into the chat with the `{}` multiline syntax described below.
 * Use Control-C to safely interrupt GPT if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply with more information or direction.
-* Provide a multiline chat message by entering `{` alone on the first line. End the multiline message with `}` alone on the last line.
-* Aider will notice if you ask it to discuss files with uncommitted changes and offer to commit them before proceeding.
-* GPT can only see the content of the files you specify, but it also gets a list of all the files in the repo. It may ask to see additional files if it feels that's needed for your requests. Relaunch with the additional files on the command line.
+* Enter a multiline chat message by entering `{` alone on the first line. End the multiline message with `}` alone on the last line.
+* If your code is throwing an error, paste the error message and stack trace into aider as a multiline `{}` message and let GPT fix the bug.
+* GPT-4 knows about a lot of standard tools and libraries, but may get some of the fine details wrong about APIs and function arguments. You can paste doc snippets into the chat with the `{}` multiline syntax.
+* Aider will notice if you launch it on files with uncommitted changes and offer to commit them before proceeding.
+* Aider can only see the content of the files you specify, but it also gets a list of all the files in the repo. It may ask to see additional files if it feels that's needed for your requests. Relaunch with the additional files on the command line.
 
 ## Limitations
 
