@@ -40,11 +40,8 @@ class Coder:
     last_modified = 0
     repo = None
 
-    def __init__(self, use_gpt_4, files, pretty):
-        if use_gpt_4:
-            self.main_model = "gpt-4"
-        else:
-            self.main_model = "gpt-3.5-turbo"
+    def __init__(self, main_model, files, pretty):
+        self.main_model = main_model
 
         if pretty:
             self.console = Console()
@@ -578,28 +575,27 @@ def main():
     parser.add_argument(
         "--model",
         metavar="MODEL",
-        default="gpt-3.5-turbo",
-        help="Specify the model to use (default: gpt-3.5-turbo)",
+        default="gpt-4",
+        help="Specify the model to use for the main chat (default: gpt-4)",
     )
     parser.add_argument(
         "-3",
         action="store_const",
         dest="model",
         const="gpt-3.5-turbo",
-        help="Use gpt-3.5-turbo model",
+        help="Use gpt-3.5-turbo model for the main chat",
     )
     parser.add_argument(
         "-4",
         action="store_const",
         dest="model",
         const="gpt-4",
-        help="Use gpt-4 model",
+        help="Use gpt-4 model for the main chat",
     )
     parser.add_argument(
         "--no-pretty",
         action="store_false",
         dest="pretty",
-        default=True,
         help="Disable prettyd output of GPT responses",
         default=not bool(int(os.environ.get(env_prefix + "PRETTY", 1)))
     )
@@ -616,12 +612,11 @@ def main():
     )
     args = parser.parse_args()
 
-    use_gpt_4 = not args.gpt_3_5_turbo
     fnames = args.files
     pretty = args.pretty
 
-    coder = Coder(use_gpt_4, fnames, pretty)
-    coder.commit(ask=not args.commit, prefix="WIP: ")
+    coder = Coder(args.model, fnames, pretty)
+    coder.commit(ask=not args.commit_dirty, prefix="WIP: ")
 
     if args.apply:
         with open(args.apply, "r") as f:
