@@ -25,9 +25,12 @@ class FileContentCompleter(Completer):
                     yield Completion(word, start_position=-len(last_word))
 
 
+from rich.console import Console
 import sys
 import time
 import random
+
+console = Console()
 
 def get_input(history_file, fnames):
     if not sys.stdin.isatty():
@@ -35,7 +38,7 @@ def get_input(history_file, fnames):
         print("> ", end="")
         for char in input_line:
             print(char, end="", flush=True)
-            time.sleep(random.uniform(0.05, 0.2))
+            time.sleep(random.uniform(0.05, 0.1))
         print()
         print()
         return input_line
