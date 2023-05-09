@@ -26,25 +26,20 @@ from dump import dump
 
 import prompts
 
-class Coder:
-    history_file = ".coder.history"
-
-    def __init__(self, main_model, files, pretty):
-        # ...
-        try:
-            readline.read_history_file(self.history_file)
-        except FileNotFoundError:
-            pass
-        # ...
 openai.api_key = os.getenv("OPENAI_API_KEY")
-
 
 class Coder:
     fnames = dict()
     last_modified = 0
     repo = None
+    history_file = ".coder.history"
 
     def __init__(self, main_model, files, pretty):
+        try:
+            readline.read_history_file(self.history_file)
+        except FileNotFoundError:
+            pass
+
         self.main_model = main_model
 
         if pretty:
