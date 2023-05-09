@@ -378,8 +378,6 @@ class Coder:
 
             edited.add(path)
             self.do_replace(path, original, updated)
-            # edit = match.group()
-            # self.do_gpt_powered_replace(path, edit, inp)
 
         return edited
 
