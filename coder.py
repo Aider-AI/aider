@@ -389,13 +389,13 @@ class Coder:
         fname = Path(fname)
 
         # does it want to make a new file?
-        if not fname.exists() and not before_text:
+        if not fname.exists() and not before_text.strip():
             print("Creating empty file:", fname)
             fname.touch()
 
         content = fname.read_text()
 
-        if not before_text:
+        if not before_text.strip():
             if content:
                 new_content = content + after_text
             else:
