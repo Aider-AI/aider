@@ -280,7 +280,7 @@ class Coder:
             for line in content:
                 print(role, line)
 
-    def send(self, messages, model=None, progress_bar_expected=0, silent=False):
+    def send(self, messages, model=None, silent=False):
         # self.show_messages(messages, "all")
 
         if not model:
@@ -305,9 +305,7 @@ class Coder:
 
         interrupted = False
         try:
-            if progress_bar_expected:
-                self.show_send_progress(completion, progress_bar_expected)
-            elif self.pretty and not silent:
+            if self.pretty and not silent:
                 self.show_send_output_color(completion)
             else:
                 self.show_send_output_plain(completion, silent)
@@ -315,21 +313,6 @@ class Coder:
             interrupted = True
 
         return self.resp, interrupted
-
-    def show_send_progress(self, completion, progress_bar_expected):
-        self.resp = ""
-        pbar = tqdm(total=progress_bar_expected)
-        for chunk in completion:
-            try:
-                text = chunk.choices[0].delta.content
-                self.resp += text
-            except AttributeError:
-                continue
-
-            pbar.update(len(text))
-
-        pbar.update(progress_bar_expected)
-        pbar.close()
 
     def show_send_output_plain(self, completion, silent):
         self.resp = ""
