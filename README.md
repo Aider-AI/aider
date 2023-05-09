@@ -37,9 +37,11 @@ Replace `<file1>`, `<file2>`, etc., with the paths to the source code files you 
 
 You can also use additional command-line options to customize the behavior of the tool. For more information, run `aider --help`. Many defaults can be set with `.env` or environment variables, see the help output.
 
-## Input tips
+## Tips
 
-* Use Control-C to safely interrupt GPT if it isn't providing a useful response.
+* Large changes are best performed as a sequence of bite sized steps. Same as if you were undertaking them yourself.
+* GPT-4 knows about a lot of standard tools and libraries, but may get some of the fine details wrong about APIs. You can paste doc snippets into the chat with the `{}` multiline syntax described below.
+* Use Control-C to safely interrupt GPT if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply with more information or direction.
 * Provide a multiline chat message by entering `{` alone on the first line. End the multiline message with `}` alone on the last line.
 * Aider will notice if you ask it to discuss files with uncommitted changes and offer to commit them before proceeding.
 
