@@ -551,9 +551,8 @@ class Coder:
             self.console.print(f"[red]Suggested commit message:\n{commit_message}\n")
 
             res = Prompt.ask(
-                "[red]Commit before the chat proceeds? \[y/n/commit message]"
+                "[red]Commit before the chat proceeds? \[y/n/commit message]"  # noqa: W605
             ).strip()
-
             if res.lower() in ["n", "no"]:
                 self.console.print("[red]Skipped commmit.")
                 return
