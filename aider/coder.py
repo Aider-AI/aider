@@ -64,10 +64,13 @@ class Coder:
         self.pretty = pretty
 
     def set_repo(self):
-        repo_paths = list(
-            git.Repo(fname, search_parent_directories=True).git_dir
-            for fname in self.fnames
-        )
+        repo_paths = []
+        for fname in self.fnames:
+            try:
+                repo_path = git.Repo(fname, search_parent_directories=True).git_dir
+                repo_paths.append(repo_path)
+            except git.exc.InvalidGitRepositoryError:
+                pass
         num_repos = len(set(repo_paths))
 
         if num_repos == 0:
