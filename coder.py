@@ -38,12 +38,14 @@ class Coder:
         except FileNotFoundError:
             pass
 
-        self.main_model = main_model
-
         if pretty:
             self.console = Console()
         else:
             self.console = Console(force_terminal=True, no_color=True)
+
+        self.main_model = main_model
+        if main_model == 'gpt-3.5-turbo':
+            self.console.print(f'[red bold]This tool will almost certainly fail to work with {main_model}')
 
         for fname in files:
             fname = Path(fname)
@@ -289,22 +291,23 @@ class Coder:
         import time
         from openai.error import RateLimitError
 
-        while True:
-            try:
-                completion = openai.ChatCompletion.create(
-                    model=model,
-                    messages=messages,
-                    temperature=0,
-                    stream=True,
-                )
-                break
-            except RateLimitError as e:
-                retry_after = e.retry_after
-                print(f"Rate limit exceeded. Retrying in {retry_after} seconds.")
-                time.sleep(retry_after)
-
+        self.resp = ""
         interrupted = False
         try:
+            while True:
+                try:
+                    completion = openai.ChatCompletion.create(
+                        model=model,
+                        messages=messages,
+                        temperature=0,
+                        stream=True,
+                    )
+                    break
+                except RateLimitError as e:
+                    retry_after = e.retry_after
+                    print(f"Rate limit exceeded. Retrying in {retry_after} seconds.")
+                    time.sleep(retry_after)
+
             if self.pretty and not silent:
                 self.show_send_output_color(completion)
             else:
@@ -315,8 +318,6 @@ class Coder:
         return self.resp, interrupted
 
     def show_send_output_plain(self, completion, silent):
-        self.resp = ""
-
         for chunk in completion:
             if chunk.choices[0].finish_reason not in (None, "stop"):
                 dump(chunk.choices[0].finish_reason)
@@ -331,8 +332,6 @@ class Coder:
                 sys.stdout.flush()
 
     def show_send_output_color(self, completion):
-        self.resp = ""
-
         with Live(vertical_overflow="scroll") as live:
             for chunk in completion:
                 if chunk.choices[0].finish_reason not in (None, "stop"):
@@ -463,7 +462,7 @@ class Coder:
         commit_message = commit_message.strip().strip('"').strip()
 
         if interrupted:
-            raise KeyboardInterrupt
+            commit_message = 'Saving dirty files before chat'
 
         if prefix:
             commit_message = prefix + commit_message
