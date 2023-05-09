@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+
 import sys
 import re
 import traceback
@@ -62,6 +63,7 @@ class Coder:
 
         self.pretty = pretty
         self.show_diffs = show_diffs
+
     def set_repo(self):
         repo_paths = []
         for fname in self.fnames:
@@ -93,7 +95,7 @@ class Coder:
             self.console.print(f"[red bold]Files not tracked in {repo.git_dir}:")
             for fn in new_files:
                 self.console.print(f"[red bold]  {fn}")
-            if Confirm.ask("[bold red]Add them?", console=self.console, default='y'):
+            if Confirm.ask("[bold red]Add them?", console=self.console, default="y"):
                 for relative_fname in new_files:
                     repo.git.add(relative_fname)
                     self.console.print(
@@ -330,7 +332,7 @@ class Coder:
                     question = f"[red bold]Allow creation of new file {path}?"
                 else:
                     question = f"[red bold]Allow edits to {path} which was not previously provided?"
-                if not Confirm.ask(question, console=self.console, default='y'):
+                if not Confirm.ask(question, console=self.console, default="y"):
                     self.console.print(f"[red]Skipping edit to {path}")
                     continue
 
@@ -415,7 +417,7 @@ class Coder:
             res = Prompt.ask(
                 "[red]Commit before the chat proceeds? \[y/n/commit message]",  # noqa: W605
                 console=self.console,
-                default='y',
+                default="y",
             ).strip()
             self.console.print()
 
