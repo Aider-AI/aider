@@ -57,4 +57,4 @@ For GPT-4 that is 8k tokens.
 It helps to be selective about which of your source files you give to aider.
 It can also help to refactor your code into more, smaller files.
 Aider can help with such refactorings if you start them before the files hit the context window limit.
-If you have access to gpt-4-32k, I would be curious to hear you experiences using it with aider.
+If you have access to gpt-4-32k, I would be curious to hear how it works with aider.
