@@ -18,6 +18,7 @@ from rich.markdown import Markdown
 from tqdm import tqdm
 
 from pathlib import Path
+from findblock import find_block
 
 import os
 import git
@@ -34,13 +35,6 @@ except FileNotFoundError:
     pass
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
-
-
-def find_index(list1, list2):
-    for i in range(len(list1)):
-        if list1[i : i + len(list2)] == list2:
-            return i
-    return -1
 
 
 class Coder:
@@ -271,7 +265,7 @@ class Coder:
                 message=commit_message,
             )
         else:
-            self.console.print("[red bold]Edits failed to change the files?")
+            self.console.print("[red bold]No changes found in tracked files.")
             saved_message = prompts.files_content_gpt_no_edits
 
         self.check_for_local_edits(True)
@@ -429,9 +423,8 @@ class Coder:
             # first populating an empty file
             new_content = after_text
         else:
-            before_lines = [line.strip() for line in before_text.splitlines()]
-            stripped_content = [line.strip() for line in content]
-            where = find_index(stripped_content, before_lines)
+            before_lines = before_text.splitlines()
+            where = find_block(content, before_lines)
 
             if where < 0:
                 return
