@@ -1,7 +1,7 @@
 # Aider
 
 Aider is a command-line tool that allows you to chat with GPT-4 about your code.
-It can make changes, improvements, and bug fixes to your code.
+It can make changes, improvements, and bug fixes to your code on your local.
 Each change is automatically committed to git with a sensible commit message.
 
 [![asciicast](https://asciinema.org/a/eVfXYU9CwiKHeic1dKJ17w4DT.svg)](https://asciinema.org/a/eVfXYU9CwiKHeic1dKJ17w4DT)
@@ -11,14 +11,17 @@ Each change is automatically committed to git with a sensible commit message.
 * Chat with GPT about your code by specifying a set of source files to discuss.
 * Request changes, improvements, and bug fixes to your code.
 * Aider will apply the edits suggested by GPT.
-* Aider will automatically commit each change to a git repo with a sensible commit message, providing safety, change history and easy undo with normal git tools.
-* Aider can make coordinated code changes across multiple source files.
-* Aider will notice if you edit the files outside the chat, ask you if you'd like to commit the new changes and will make GPT aware of the updated file content. You can bounce back and forth between your aider chat and your editor, to fluidly collaborate with GPT.
+* Aider will automatically commit each change to a git repo with a sensible commit message to provide safety, change history and easy undo with normal git tools.
+* Aider can make coordinated code changes across multiple source files at once.
+* Aider will notice if you edit the files outside the chat:
+  * It will ask if you'd like to commit these out-of-band changes.
+  * It will make GPT aware of the updated file content.
+  * You can bounce back and forth between your aider chat and your editor, to fluidly collaborate with GPT.
 * Live, colorized, human friendly output.
 * Readline style chat input history, with autocompletion of tokens found in source files being discussed (via `prompt_toolkit`)
 * Use Control-C to safely interrupt GPT if it isn't providing a useful response.
-* Provide a multiline chat message by entering `{` alone on a line. End the message with `}` alone on a line.
-* Aider will notice if asked to discuss files with uncommitted changes and offer to commit them before proceeding.
+* Provide a multiline chat message by entering `{` alone on the first line. End the multiline message with `}` alone on the last line.
+* Aider will notice if you ask it to discuss files with uncommitted changes and offer to commit them before proceeding.
 
 ## Installation
 
