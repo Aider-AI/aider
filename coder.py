@@ -103,7 +103,7 @@ class Coder:
                     self.console.print(
                         f"[red bold]Added {relative_fname} to the git repo"
                     )
-                commit_message = f"Initial commit: Added new files to the git repo."
+                commit_message = "Initial commit: Added new files to the git repo."
                 repo.git.commit("-m", commit_message, "--no-verify")
                 self.console.print(
                     f"[green bold]Committed new files with message: {commit_message}"
@@ -564,7 +564,7 @@ class Coder:
         repo.git.add(*relative_dirty_fnames)
 
         full_commit_message = commit_message + "\n\n" + context
-        commit_result = repo.git.commit("-m", full_commit_message, "--no-verify")
+        repo.git.commit("-m", full_commit_message, "--no-verify")
         commit_hash = repo.head.commit.hexsha[:7]
         self.console.print(f"[green bold]{commit_hash} {commit_message}")
         return commit_hash, commit_message
