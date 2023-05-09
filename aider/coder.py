@@ -14,16 +14,14 @@ from rich.markdown import Markdown
 
 from pathlib import Path
 
-from getinput import get_input
-import utils
-
 import os
 import git
 import openai
 
-from dump import dump
-
-import prompts
+from aider.dump import dump
+from aider.getinput import get_input
+from aider import utils
+from aider import prompts
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -433,10 +431,3 @@ class Coder:
         self.last_modified = self.get_last_modified()
 
         return commit_hash, commit_message
-
-
-if __name__ == "__main__":
-    from main import main
-
-    status = main()
-    sys.exit(status)
