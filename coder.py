@@ -44,8 +44,10 @@ class Coder:
             self.console = Console(force_terminal=True, no_color=True)
 
         self.main_model = main_model
-        if main_model == 'gpt-3.5-turbo':
-            self.console.print(f'[red bold]This tool will almost certainly fail to work with {main_model}')
+        if main_model == "gpt-3.5-turbo":
+            self.console.print(
+                f"[red bold]This tool will almost certainly fail to work with {main_model}"
+            )
 
         for fname in files:
             fname = Path(fname)
@@ -60,7 +62,7 @@ class Coder:
         self.set_repo()
         if not self.repo:
             self.console.print(
-                "[red bold]Will not automatically commit edits as they happen."
+                "[red bold]No suitable git repo, will not automatically commit edits."
             )
 
         self.pretty = pretty
@@ -98,8 +100,10 @@ class Coder:
                     self.console.print(
                         f"[red bold]Added {relative_fname} to the git repo"
                     )
-                show_files = ', '.join(new_files)
-                commit_message = f"Initial commit: Added new files to the git repo: {show_files}"
+                show_files = ", ".join(new_files)
+                commit_message = (
+                    f"Initial commit: Added new files to the git repo: {show_files}"
+                )
                 repo.git.commit("-m", commit_message, "--no-verify")
                 self.console.print(
                     f"[green bold]Committed new files with message: {commit_message}"
@@ -462,7 +466,7 @@ class Coder:
         commit_message = commit_message.strip().strip('"').strip()
 
         if interrupted:
-            commit_message = 'Saving dirty files before chat'
+            commit_message = "Saving dirty files before chat"
 
         if prefix:
             commit_message = prefix + commit_message
