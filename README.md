@@ -3,6 +3,13 @@
 Aider is a command-line tool that allows you to chat with GPT about your code.
 It can make changes, improvements, and bug fixes to your code with the assistance of GPT.
 
+## Features
+
+* Chat with GPT about your code
+* Make changes, improvements, and bug fixes to your code
+* Automatically commit changes to a Git repository
+* Colorized output for better readability
+* Supports multiple source code files
 ## Installation
 
 1. Clone the repository.
