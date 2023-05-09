@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 from tqdm import tqdm
 
 from pathlib import Path
-from findblock import replace_most_similar_chunk
+from utils import replace_most_similar_chunk
 
 import os
 import git
