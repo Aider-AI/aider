@@ -101,8 +101,11 @@ class Coder:
 
         if new_files:
             new_files_str = '\n  '.join(new_files)
-            question = f"[red bold]These files are not tracked in the repo:\n  {new_files_str}\nAdd them?"
-            if Confirm.ask(question, console=self.console):
+            self.console.print(f"[red bold]\nFiles not tracked in {repo.git_dir}:")
+            for fn in new_files:
+                self.console.print(f'[red bold]    {fn}')
+
+            if Confirm.ask('[bold red]Add them?', console=self.console):
                 for relative_fname in new_files:
                     repo.git.add(relative_fname)
                     self.console.print(f"[red]Added {relative_fname} to the git repo")
@@ -228,7 +231,7 @@ class Coder:
         messages += self.get_files_messages()
         messages += self.cur_messages
 
-        self.show_messages(messages, "all")
+        #self.show_messages(messages, "all")
 
         content, interrupted = self.send(messages)
         if interrupted:
@@ -501,7 +504,8 @@ class Coder:
         if not dirty_fnames:
             return
 
-        self.console.print(Text(diffs))
+        if ask:
+            self.console.print(Text(diffs))
 
         diffs = "# Diffs:\n" + diffs
 
@@ -536,10 +540,10 @@ class Coder:
         if prefix:
             commit_message = prefix + commit_message
 
-        self.console.print("[red]Files have uncommitted changes.\n")
-        self.console.print(f"[red]Suggested commit message:\n{commit_message}\n")
-
         if ask:
+            self.console.print("[red]Files have uncommitted changes.\n")
+            self.console.print(f"[red]Suggested commit message:\n{commit_message}\n")
+
             res = Prompt.ask(
                 "[red]Commit before the chat proceeds? \[y/n/commit message]"
             ).strip()
