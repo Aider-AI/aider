@@ -548,7 +548,8 @@ class Coder:
             self.console.print(f"[red]Suggested commit message:\n{commit_message}\n")
 
             res = Prompt.ask(
-                "[red]Commit before the chat proceeds? \[y/n/commit message]"  # noqa: W605
+                "[red]Commit before the chat proceeds? \[y/n/commit message]",  # noqa: W605
+                console=self.console,
             ).strip()
             if res.lower() in ["n", "no"]:
                 self.console.print("[red]Skipped commmit.")
@@ -561,7 +562,7 @@ class Coder:
         full_commit_message = commit_message + "\n\n" + context
         repo.git.commit("-m", full_commit_message, "--no-verify")
         commit_hash = repo.head.commit.hexsha[:7]
-        self.console.print(f"[green bold]{commit_hash} {commit_message}")
+        self.console.print(f"[green]{commit_hash} {commit_message}")
         return commit_hash, commit_message
 
 
@@ -597,7 +598,7 @@ def main():
         action="store_false",
         dest="pretty",
         help="Disable prettyd output of GPT responses",
-        default=not bool(int(os.environ.get(env_prefix + "PRETTY", 1)))
+        default=bool(int(os.environ.get(env_prefix + "PRETTY", 1)))
     )
     parser.add_argument(
         "--apply",
