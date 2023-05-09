@@ -52,6 +52,7 @@ def quoted_file(fname):
     prompt += "\n```\n"
     return prompt
 
+
 def strip_quoted_wrapping(res, fname=None):
     if not res:
         return res

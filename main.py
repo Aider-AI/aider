@@ -1,9 +1,9 @@
 import os
 import sys
 import argparse
-from pathlib import Path
 from dotenv import load_dotenv
 from coder import Coder
+
 
 def main():
     load_dotenv()
@@ -19,7 +19,7 @@ def main():
         "--history-file",
         metavar="HISTORY_FILE",
         default=os.environ.get("CODER_HISTORY_FILE", ".coder.history"),
-        help="Specify the history file (default: .coder.history or value from CODER_HISTORY_FILE environment variable)",
+        help="Specify the history file (default: .coder.history)",
     )
     parser.add_argument(
         "--model",
@@ -74,6 +74,7 @@ def main():
         return
 
     coder.run()
+
 
 if __name__ == "__main__":
     status = main()
