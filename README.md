@@ -8,9 +8,9 @@ Each change is automatically committed to git with a sensible commit message.
 
 ## Features
 
-* Chat with GPT about your code by launching aider with set of source files to discuss.
+* Chat with GPT-4 about your code by launching aider with set of source files to discuss.
 * Request changes, improvements, and bug fixes to your code.
-* Aider will apply the edits suggested by GPT.
+* Aider will apply the edits suggested by GPT-4.
 * Aider will automatically commit each change to git with a sensible commit message to provide safety, change history and easy undo with normal git tools.
 * Aider can make coordinated code changes across multiple source files at once.
 * Aider will notice if you edit the files outside the chat:
@@ -40,9 +40,9 @@ You can also use additional command-line options to customize the behavior of th
 ## Tips
 
 * Large changes are best performed as a sequence of bite sized steps. Same as if you were undertaking them yourself.
-* Use Control-C to safely interrupt GPT if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply with more information or direction.
+* Use Control-C to safely interrupt aider if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply with more information or direction.
 * Enter a multiline chat message by entering `{` alone on the first line. End the multiline message with `}` alone on the last line.
-* If your code is throwing an error, paste the error message and stack trace into aider as a multiline `{}` message and let GPT fix the bug.
+* If your code is throwing an error, paste the error message and stack trace into aider as a multiline `{}` message and let aider fix the bug.
 * GPT-4 knows about a lot of standard tools and libraries, but may get some of the fine details wrong about APIs and function arguments. You can paste doc snippets into the chat with the `{}` multiline syntax.
 * Aider will notice if you launch it on files with uncommitted changes and offer to commit them before proceeding.
 * Aider can only see the content of the files you specify, but it also gets a list of all the files in the repo. It may ask to see additional files if it feels that's needed for your requests. Relaunch with the additional files on the command line.
