@@ -95,6 +95,9 @@ class Coder:
             if Confirm.ask(question, console=self.console):
                 self.repo.git.add(relative_fname)
                 self.console.print(f"[red]Added {fname} to the git repo")
+                commit_message = f"Initial commit: Added {fname} to the git repo."
+                self.repo.git.commit("-m", commit_message, "--no-verify")
+                self.console.print(f"[green bold]Committed {fname} with message: {commit_message}")
             else:
                 self.console.print(f"[red]Skipped adding {fname} to the git repo")
 
