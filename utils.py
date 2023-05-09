@@ -70,3 +70,30 @@ def strip_quoted_wrapping(res, fname=None):
         res += "\n"
 
     return res
+def do_replace(fname, before_text, after_text):
+    before_text = strip_quoted_wrapping(before_text, fname)
+    after_text = strip_quoted_wrapping(after_text, fname)
+    fname = Path(fname)
+
+    # does it want to make a new file?
+    if not fname.exists() and not before_text.strip():
+        print("Creating empty file:", fname)
+        fname.touch()
+
+    content = fname.read_text()
+
+    if not before_text.strip():
+        if content:
+            new_content = content + after_text
+        else:
+            # first populating an empty file
+            new_content = after_text
+    else:
+        new_content = replace_most_similar_chunk(
+            content, before_text, after_text
+        )
+        if not new_content:
+            return
+
+    fname.write_text(new_content)
+    return True
