@@ -94,11 +94,9 @@ class Coder:
                 new_files.append(relative_fname)
 
         if new_files:
-            new_files_str = "\n  ".join(new_files)
-            self.console.print(f"[red bold]\nFiles not tracked in {repo.git_dir}:")
+            self.console.print(f"[red bold]Files not tracked in {repo.git_dir}:")
             for fn in new_files:
-                self.console.print(f"[red bold]    {fn}")
-
+                self.console.print(f"[red bold]  {fn}")
             if Confirm.ask("[bold red]Add them?", console=self.console):
                 for relative_fname in new_files:
                     repo.git.add(relative_fname)
