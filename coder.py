@@ -6,6 +6,7 @@ import re
 import traceback
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import Completer, Completion
+from prompt_toolkit.history import FileHistory
 from rich.console import Console
 from rich.prompt import Confirm, Prompt
 from colorama import Fore, Style
