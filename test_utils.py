@@ -20,5 +20,23 @@ class TestUtils(unittest.TestCase):
         result = replace_most_similar_chunk(whole, part, replace)
         self.assertEqual(result, expected_output)
 
+    def test_strip_quoted_wrapping(self):
+        input_text = "filename.ext\n```\nWe just want this content\nNot the filename and triple quotes\n```"
+        expected_output = "We just want this content\nNot the filename and triple quotes\n"
+        result = strip_quoted_wrapping(input_text, "filename.ext")
+        self.assertEqual(result, expected_output)
+
+    def test_strip_quoted_wrapping_no_filename(self):
+        input_text = "```\nWe just want this content\nNot the triple quotes\n```"
+        expected_output = "We just want this content\nNot the triple quotes\n"
+        result = strip_quoted_wrapping(input_text)
+        self.assertEqual(result, expected_output)
+
+    def test_strip_quoted_wrapping_no_wrapping(self):
+        input_text = "We just want this content\nNot the triple quotes\n"
+        expected_output = "We just want this content\nNot the triple quotes\n"
+        result = strip_quoted_wrapping(input_text)
+        self.assertEqual(result, expected_output)
+
 if __name__ == "__main__":
     unittest.main()
