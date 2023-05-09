@@ -35,12 +35,12 @@ console = Console()
 def get_input(history_file, fnames):
     if not sys.stdin.isatty():
         input_line = input()
-        print("> ", end="")
+        console.print("> ", end="", style="green")
         for char in input_line:
-            print(char, end="", flush=True)
+            console.print(char, end="", style="green", flush=True)
             time.sleep(random.uniform(0.05, 0.1))
-        print()
-        print()
+        console.print()
+        console.print()
         return input_line
     inp = ""
     multiline_input = False
