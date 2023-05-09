@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+
 import sys
 import re
 import readline
@@ -33,6 +34,7 @@ except FileNotFoundError:
     pass
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
 
 def find_index(list1, list2):
     for i in range(len(list1)):
@@ -205,14 +207,14 @@ class Coder:
 
         res = self.commit(history=self.cur_messages)
         if res:
-            commit_hash,commit_message = res
+            commit_hash, commit_message = res
 
             saved_message = prompts.files_content_gpt_edits.format(
-                hash = commit_hash,
-                message = commit_message,
+                hash=commit_hash,
+                message=commit_message,
             )
         else:
-            self.console.print('[red bold]Edits failed to change the files?')
+            self.console.print("[red bold]Edits failed to change the files?")
             saved_message = prompts.files_content_gpt_no_edits
 
         self.check_for_local_edits(True)
@@ -444,7 +446,7 @@ class Coder:
         if not repo.is_dirty():
             return
 
-        diffs = ''
+        diffs = ""
         dirty_fnames = []
         relative_dirty_fnames = []
         for fname in self.fnames:
@@ -462,7 +464,7 @@ class Coder:
 
         diffs = "# Diffs:\n" + diffs
 
-        #for fname in dirty_fnames:
+        # for fname in dirty_fnames:
         #    self.console.print(f"[red]  {fname}")
 
         context = ""
@@ -497,12 +499,14 @@ class Coder:
         self.console.print(f"[red]Suggested commit message:\n{commit_message}\n")
 
         if ask:
-            res = Prompt.ask("[red]Commit before the chat proceeds? \[y/n/commit message]").strip()
+            res = Prompt.ask(
+                "[red]Commit before the chat proceeds? \[y/n/commit message]"
+            ).strip()
 
-            if res.lower() in ['n', 'no']:
+            if res.lower() in ["n", "no"]:
                 self.console.print("[red]Skipped commmit.")
                 return
-            if res.lower() not in ['y', 'yes']:
+            if res.lower() not in ["y", "yes"]:
                 commit_message = res
 
         repo.git.add(*relative_dirty_fnames)
