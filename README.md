@@ -2,6 +2,7 @@
 
 Aider is a command-line tool that allows you to chat with GPT about your code.
 It can make changes, improvements, and bug fixes to your code with the assistance of GPT.
+Each change is automatically committed to git with a sensible commit message.
 
 ## Features
 
@@ -12,12 +13,14 @@ It can make changes, improvements, and bug fixes to your code with the assistanc
 * Live, colorized, human friendly output
 * Can make coordinated changes across multiple source files
 * Readline style chat input history, with autocompletion of tokens found in source files being discussed
+* Use Control-C to safely interrupt GPT if it isn't providing a useful response
+* Aider will notice if asked to discuss files with uncommitted changes and offer to commit them before proceeding
 
 ## Installation
 
 1. Clone the repository.
 2. Install the required packages using `pip install -r requirements.txt`.
-3. Set up your OpenAI API key as an environment variable `OPENAI_API_KEY`.
+3. Set up your OpenAI API key as an environment variable `OPENAI_API_KEY` or by including it in a `.env` file.
 
 ## Usage
 
