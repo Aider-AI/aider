@@ -574,14 +574,12 @@ def main():
     parser = argparse.ArgumentParser(description="Chat with GPT about code")
     parser.add_argument(
         "files", metavar="FILE", nargs="+", help="a list of source code files",
-        default=os.environ.get(env_prefix + "FILES", "").split()
     )
     parser.add_argument(
         "-3",
         "--gpt-3-5-turbo",
         action="store_true",
         help="Only use gpt-3.5-turbo, not gpt-4",
-        default=bool(os.environ.get(env_prefix + "GPT_3_5_TURBO", False))
     )
     parser.add_argument(
         "--no-pretty",
@@ -589,19 +587,18 @@ def main():
         dest="pretty",
         default=True,
         help="Disable prettyd output of GPT responses",
-        default=bool(os.environ.get(env_prefix + "NO_PRETTY", True))
+        default=not bool(int(os.environ.get(env_prefix + "PRETTY", 1)))
     )
     parser.add_argument(
         "--apply",
         metavar="FILE",
         help="Apply the changes from the given file instead of running the chat",
-        default=os.environ.get(env_prefix + "APPLY", None)
     )
     parser.add_argument(
-        "--commit",
+        "--commit-dirty",
         action="store_true",
         help="Commit dirty files without confirmation",
-        default=bool(os.environ.get(env_prefix + "COMMIT", False))
+        default=bool(int(os.environ.get(env_prefix + "COMMIT_DIRTY", 0)))
     )
     args = parser.parse_args()
 
