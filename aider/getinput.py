@@ -37,6 +37,7 @@ def get_input(history_file, fnames):
             print(char, end="", flush=True)
             time.sleep(random.uniform(0.05, 0.2))
         print()
+        print()
         return input_line
     inp = ""
     multiline_input = False
