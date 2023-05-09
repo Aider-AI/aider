@@ -1,9 +1,9 @@
+import re
 from prompt_toolkit.styles import Style
 
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.history import FileHistory
-
 
 class FileContentCompleter(Completer):
     def __init__(self, fnames):
@@ -19,7 +19,7 @@ class FileContentCompleter(Completer):
         for fname in self.fnames:
             with open(fname, "r") as f:
                 content = f.read()
-            import re
+
             for word in re.split(r'\W+', content):
                 if word.startswith(last_word):
                     yield Completion(word, start_position=-len(last_word))
