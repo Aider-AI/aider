@@ -62,16 +62,18 @@ class Coder:
         for fname in files:
             fname = Path(fname)
             if not fname.exists():
-                self.console.print(f'[red]Creating {fname}')
+                self.console.print(f"[red]Creating {fname}")
                 fname.touch()
             else:
-                self.console.print(f'[red]Loading {fname}')
+                self.console.print(f"[red]Loading {fname}")
 
             self.fnames[str(fname)] = fname.stat().st_mtime
 
         self.set_repo()
         if not self.repo:
-            self.console.print("[red bold]Therefore, can not automatically commit edits as they happen.")
+            self.console.print(
+                "[red bold]Therefore, can not automatically commit edits as they happen."
+            )
 
         self.check_for_local_edits(True)
         self.pretty = pretty
@@ -100,18 +102,20 @@ class Coder:
                 new_files.append(relative_fname)
 
         if new_files:
-            new_files_str = '\n  '.join(new_files)
+            new_files_str = "\n  ".join(new_files)
             self.console.print(f"[red bold]\nFiles not tracked in {repo.git_dir}:")
             for fn in new_files:
-                self.console.print(f'[red bold]    {fn}')
+                self.console.print(f"[red bold]    {fn}")
 
-            if Confirm.ask('[bold red]Add them?', console=self.console):
+            if Confirm.ask("[bold red]Add them?", console=self.console):
                 for relative_fname in new_files:
                     repo.git.add(relative_fname)
                     self.console.print(f"[red]Added {relative_fname} to the git repo")
                 commit_message = f"Initial commit: Added new files to the git repo."
                 repo.git.commit("-m", commit_message, "--no-verify")
-                self.console.print(f"[green bold]Committed new files with message: {commit_message}")
+                self.console.print(
+                    f"[green bold]Committed new files with message: {commit_message}"
+                )
             else:
                 self.console.print(f"[red]Skipped adding new files to the git repo.")
                 return
@@ -231,7 +235,7 @@ class Coder:
         messages += self.get_files_messages()
         messages += self.cur_messages
 
-        #self.show_messages(messages, "all")
+        # self.show_messages(messages, "all")
 
         content, interrupted = self.send(messages)
         if interrupted:
@@ -523,7 +527,7 @@ class Coder:
             dict(role="user", content=context + diffs),
         ]
 
-        #if history:
+        # if history:
         #    self.show_messages(messages, "commit")
 
         commit_message, interrupted = self.send(
@@ -555,7 +559,9 @@ class Coder:
                 commit_message = res
 
         repo.git.add(*relative_dirty_fnames)
-        commit_result = repo.git.commit("-m", commit_message, "--no-verify")
+
+        full_commit_message = commit_message + "\n\n" + context
+        commit_result = repo.git.commit("-m", full_commit_message, "--no-verify")
         commit_hash = repo.head.commit.hexsha[:7]
         self.console.print(f"[green bold]{commit_hash} {commit_message}")
         return commit_hash, commit_message
