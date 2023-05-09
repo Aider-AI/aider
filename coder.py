@@ -6,7 +6,6 @@ import re
 import readline
 import traceback
 import argparse
-from openai.error import RateLimitError
 from rich.console import Console
 from rich.prompt import Confirm, Prompt
 from colorama import Fore, Style
