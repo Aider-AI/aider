@@ -149,7 +149,10 @@ class Coder:
 
         while True:
             try:
-                line = input("> ")
+                if multiline_input:
+                    line = input(". ")
+                else:
+                    line = input("> ")
             except EOFError:
                 return
 
