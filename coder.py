@@ -68,7 +68,20 @@ class Coder:
 
             self.fnames[str(fname)] = fname.stat().st_mtime
 
+        self.set_repo()
         self.check_for_local_edits(True)
+
+    def set_repo(self):
+        repo_paths = set(
+            git.Repo(fname, search_parent_directories=True).git_dir
+            for fname in self.fnames
+        )
+
+        if len(repo_paths) > 1:
+            repo_paths = " ".join(repo_paths)
+            raise ValueError(f"Files must all be in one git repo, not: {repo_paths}")
+
+        self.repo = git.Repo(repo_paths.pop())
 
         self.pretty = pretty
 
