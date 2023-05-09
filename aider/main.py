@@ -2,8 +2,7 @@ import os
 import sys
 import argparse
 from dotenv import load_dotenv
-from aider.coder import Coder
-
+from .coder import Coder
 
 def main():
     load_dotenv()
