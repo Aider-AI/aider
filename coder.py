@@ -515,13 +515,13 @@ class Coder:
             self.console.print(f"[red]Suggested commit message:\n{commit_message}\n")
 
             res = Prompt.ask(
-                "[red]Commit before the chat proceeds? \[y/n/commit message]",  # noqa: W605
+                "[red]Commit before the chat proceeds? \[Y/n/commit message]",  # noqa: W605
                 console=self.console,
             ).strip()
             if res.lower() in ["n", "no"]:
                 self.console.print("[red]Skipped commmit.")
                 return
-            if res.lower() not in ["y", "yes"]:
+            if res.lower() not in ["y", "yes"] and res:
                 commit_message = res
 
         repo.git.add(*relative_dirty_fnames)
