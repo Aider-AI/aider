@@ -142,11 +142,6 @@ class Coder:
         return prompt
 
     def get_input(self):
-        if self.pretty:
-            self.console.rule()
-        else:
-            print()
-
         inp = ""
         multiline_input = False
 
@@ -216,6 +211,11 @@ class Coder:
                 self.console.print("[bold red]^C again to quit")
 
     def run_loop(self):
+        if self.pretty:
+            self.console.rule()
+        else:
+            print()
+
         inp = self.get_input()
         if inp is None:
             return
