@@ -511,8 +511,7 @@ class Coder:
         if not dirty_fnames:
             return
 
-        if ask:
-            self.console.print(Text(diffs))
+        self.console.print(Text(diffs))
 
         diffs = "# Diffs:\n" + diffs
 
