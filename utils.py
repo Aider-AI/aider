@@ -3,10 +3,10 @@ import math
 from difflib import SequenceMatcher
 from pathlib import Path
 
-#from dump import dump
+# from dump import dump
+
 
 def replace_most_similar_chunk(whole, part, replace):
-
     similarity_thresh = 0.8
 
     max_similarity = 0
@@ -41,7 +41,7 @@ def replace_most_similar_chunk(whole, part, replace):
         + replace_lines
         + whole_lines[most_similar_chunk_end:]
     )
-    modified_whole = "\n".join(modified_whole)
+    modified_whole = "\n".join(modified_whole) + "\n"
     return modified_whole
 
 
@@ -81,6 +81,8 @@ def strip_quoted_wrapping(res, fname=None):
         res += "\n"
 
     return res
+
+
 def do_replace(fname, before_text, after_text):
     before_text = strip_quoted_wrapping(before_text, fname)
     after_text = strip_quoted_wrapping(after_text, fname)
@@ -99,9 +101,7 @@ def do_replace(fname, before_text, after_text):
             # first populating an empty file
             new_content = after_text
     else:
-        new_content = replace_most_similar_chunk(
-            content, before_text, after_text
-        )
+        new_content = replace_most_similar_chunk(content, before_text, after_text)
         if not new_content:
             return
 
