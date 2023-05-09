@@ -160,7 +160,7 @@ class Coder:
         else:
             print()
 
-        readline.write_history_file(self.history_file)
+        #readline.write_history_file(self.history_file)
         return inp
 
     def get_last_modified(self):
