@@ -407,9 +407,8 @@ class Coder:
         return edited
 
     def do_replace(self, fname, before_text, after_text):
-        before_text = self.strip_quoted_wrapping(before_text, fname)
-        after_text = self.strip_quoted_wrapping(after_text, fname)
-
+        before_text = utils.strip_quoted_wrapping(before_text, fname)
+        after_text = utils.strip_quoted_wrapping(after_text, fname)
         fname = Path(fname)
 
         # does it want to make a new file?
@@ -431,24 +430,6 @@ class Coder:
         fname.write_text(new_content)
         self.console.print(f"[red]Applied edit to {fname}")
         return True
-
-    def strip_quoted_wrapping(self, res, fname=None):
-        if not res:
-            return res
-
-        res = res.splitlines()
-
-        if fname and res[0].strip().endswith(Path(fname).name):
-            res = res[1:]
-
-        if res[0].startswith("```") and res[-1].startswith("```"):
-            res = res[1:-1]
-
-        res = "\n".join(res)
-        if res and res[-1] != "\n":
-            res += "\n"
-
-        return res
 
     def commit(self, history=None, prefix=None, ask=False):
         repo = self.repo
