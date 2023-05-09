@@ -96,13 +96,12 @@ class Coder:
         for fname in self.fnames:
             relative_fname = os.path.relpath(fname, repo.working_tree_dir)
             tracked_files = set(repo.git.ls_files().splitlines())
-            if relative_fname not in tracked_files and relative_fname not in repo.untracked_files:
-                continue
-            new_files.append(relative_fname)
+            if relative_fname not in tracked_files:
+                new_files.append(relative_fname)
 
         if new_files:
-            new_files_str = ', '.join(new_files)
-            question = f"[red bold]Add the following new files to the git repo? {new_files_str}"
+            new_files_str = '\n  '.join(new_files)
+            question = f"[red bold]These files are not tracked in the repo:\n  {new_files_str}\nAdd them?"
             if Confirm.ask(question, console=self.console):
                 for relative_fname in new_files:
                     repo.git.add(relative_fname)
