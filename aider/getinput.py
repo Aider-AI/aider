@@ -25,7 +25,11 @@ class FileContentCompleter(Completer):
                     yield Completion(word, start_position=-len(last_word))
 
 
+import sys
+
 def get_input(history_file, fnames):
+    if not sys.stdin.isatty():
+        return input()
     inp = ""
     multiline_input = False
 
