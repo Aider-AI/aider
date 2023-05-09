@@ -87,7 +87,16 @@ class Coder:
             self.console.print("[red bold]Files are in different git repos, can't commit edits to allow easy undo")
             return
 
-        # todo: need to check if files are added to the repo, and add if not
+        for fname in self.fnames:
+            relative_fname = os.path.relpath(fname, self.repo.working_tree_dir)
+            if relative_fname not in self.repo.untracked_files:
+                continue
+            question = f"[red bold]Add {fname} to the git repo?"
+            if Confirm.ask(question, console=self.console):
+                self.repo.git.add(relative_fname)
+                self.console.print(f"[red]Added {fname} to the git repo")
+            else:
+                self.console.print(f"[red]Skipped adding {fname} to the git repo")
 
         self.repo = git.Repo(repo_paths.pop())
 
