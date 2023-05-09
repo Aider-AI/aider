@@ -19,7 +19,8 @@ class FileContentCompleter(Completer):
         for fname in self.fnames:
             with open(fname, "r") as f:
                 content = f.read()
-            for word in content.split():
+            import re
+            for word in re.split(r'\W+', content):
                 if word.startswith(last_word):
                     yield Completion(word, start_position=-len(last_word))
 
