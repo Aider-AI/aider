@@ -77,7 +77,6 @@ def do_replace(fname, before_text, after_text):
 
     # does it want to make a new file?
     if not fname.exists() and not before_text.strip():
-        print("Creating empty file:", fname)
         fname.touch()
 
     content = fname.read_text()
