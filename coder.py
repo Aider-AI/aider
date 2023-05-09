@@ -53,17 +53,24 @@ class Coder:
         else:
             self.main_model = "gpt-3.5-turbo"
 
-        for fname in files:
-            self.fnames[fname] = Path(fname).stat().st_mtime
-
-        self.check_for_local_edits(True)
-
-        self.pretty = pretty
-
         if pretty:
             self.console = Console()
         else:
             self.console = Console(force_terminal=True, no_color=True)
+
+        for fname in files:
+            fname = Path(fname)
+            if not fname.exists():
+                self.console.print(f'[red]Creating {fname}')
+                fname.touch()
+            else:
+                self.console.print(f'[red]Loading {fname}')
+
+            self.fnames[str(fname)] = fname.stat().st_mtime
+
+        self.check_for_local_edits(True)
+
+        self.pretty = pretty
 
     def quoted_file(self, fname):
         prompt = "\n"
