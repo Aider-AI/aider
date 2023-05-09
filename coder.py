@@ -434,9 +434,10 @@ class Coder:
         if not dirty_fnames:
             return
 
-        self.console.print("[red]Files have uncommitted changes:")
-        for fname in dirty_fnames:
-            self.console.print(f"[red]  {fname}")
+        self.console.print(Text(diffs))
+
+        #for fname in dirty_fnames:
+        #    self.console.print(f"[red]  {fname}")
 
         context = ""
         if message_history:
@@ -465,10 +466,11 @@ class Coder:
         if prefix:
             commit_message = prefix + commit_message
 
-        self.console.print(f"[red]\nCommit message: {commit_message}\n")
+        self.console.print("[red]Files have uncommitted changes.")
+        self.console.print(f"[red]Commit message: {commit_message}\n")
 
         if ask:
-            res = Confirm.ask("[red]Commit?")
+            res = Confirm.ask("[red]Commit before starting the chat?")
 
             if not res:
                 self.console.print("[red]Skipped commmit.")
@@ -511,14 +513,13 @@ def main():
     )
 
     args = parser.parse_args()
-    dump(args)
 
     use_gpt_4 = not args.gpt_3_5_turbo
     fnames = args.files
     pretty = args.pretty
 
     coder = Coder(use_gpt_4, fnames, pretty)
-    coder.commit("", ask=args.commit)
+    coder.commit("", ask=not args.commit)
 
     if args.apply:
         with open(args.apply, "r") as f:
