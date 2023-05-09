@@ -18,7 +18,7 @@ from rich.markdown import Markdown
 from tqdm import tqdm
 
 from pathlib import Path
-from findblock import find_block
+from findblock import replace_most_similar_chunk
 
 import os
 import git
@@ -104,14 +104,18 @@ class Coder:
             if Confirm.ask("[bold red]Add them?", console=self.console):
                 for relative_fname in new_files:
                     repo.git.add(relative_fname)
-                    self.console.print(f"[red bold]Added {relative_fname} to the git repo")
+                    self.console.print(
+                        f"[red bold]Added {relative_fname} to the git repo"
+                    )
                 commit_message = f"Initial commit: Added new files to the git repo."
                 repo.git.commit("-m", commit_message, "--no-verify")
                 self.console.print(
                     f"[green bold]Committed new files with message: {commit_message}"
                 )
             else:
-                self.console.print(f"[red bold]Skipped adding new files to the git repo.")
+                self.console.print(
+                    f"[red bold]Skipped adding new files to the git repo."
+                )
                 return
 
         self.repo = repo
@@ -417,22 +421,13 @@ class Coder:
             print("Creating empty file:", fname)
             fname.touch()
 
-        content = fname.read_text().splitlines()
+        content = fname.read_text()
 
         if not before_text and not content:
             # first populating an empty file
             new_content = after_text
         else:
-            before_lines = before_text.splitlines()
-            where = find_block(content, before_lines)
-
-            if where < 0:
-                return
-
-            new_content = content[:where]
-            new_content += after_text.splitlines()
-            new_content += content[where + len(before_lines) :]
-            new_content = "\n".join(new_content) + "\n"
+            new_content = replace_most_similar_chunk(content, before_text, after_text)
 
         fname.write_text(new_content)
         self.console.print(f"[red]Applied edit to {fname}")
