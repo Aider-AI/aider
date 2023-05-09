@@ -518,6 +518,8 @@ class Coder:
                 "[red]Commit before the chat proceeds? \[Y/n/commit message]",  # noqa: W605
                 console=self.console,
             ).strip()
+            self.console.print()
+
             if res.lower() in ["n", "no"]:
                 self.console.print("[red]Skipped commmit.")
                 return
