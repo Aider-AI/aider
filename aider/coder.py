@@ -80,7 +80,8 @@ class Coder:
             self.console.print("[red bold]Files are in different git repos.")
             return
 
-        repo = git.Repo(repo_paths.pop())
+        # https://github.com/gitpython-developers/GitPython/issues/427
+        repo = git.Repo(repo_paths.pop(), odbt=git.GitDB)
 
         new_files = []
         for fname in self.fnames:
