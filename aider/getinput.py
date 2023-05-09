@@ -26,10 +26,18 @@ class FileContentCompleter(Completer):
 
 
 import sys
+import time
+import random
 
 def get_input(history_file, fnames):
     if not sys.stdin.isatty():
-        return input()
+        input_line = input()
+        print("> ", end="")
+        for char in input_line:
+            print(char, end="", flush=True)
+            time.sleep(random.uniform(0.05, 0.2))
+        print()
+        return input_line
     inp = ""
     multiline_input = False
 
