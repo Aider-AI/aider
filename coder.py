@@ -6,7 +6,7 @@ import readline
 import traceback
 import argparse
 from rich.console import Console
-from rich.prompt import Confirm
+from rich.prompt import Confirm, Prompt
 from colorama import Fore, Style
 from rich.live import Live
 from rich.text import Text
@@ -420,7 +420,7 @@ class Coder:
         if not repo.is_dirty():
             return
 
-        diffs = "# Diffs:\n"
+        diffs = ''
         dirty_fnames = []
         relative_dirty_fnames = []
         for fname in self.fnames:
@@ -435,6 +435,8 @@ class Coder:
             return
 
         self.console.print(Text(diffs))
+
+        diffs = "# Diffs:\n" + diffs
 
         #for fname in dirty_fnames:
         #    self.console.print(f"[red]  {fname}")
@@ -466,15 +468,17 @@ class Coder:
         if prefix:
             commit_message = prefix + commit_message
 
-        self.console.print("[red]Files have uncommitted changes.")
-        self.console.print(f"[red]Commit message: {commit_message}\n")
+        self.console.print("[red]Files have uncommitted changes.\n")
+        self.console.print(f"[red]Suggested commit message:\n{commit_message}\n")
 
         if ask:
-            res = Confirm.ask("[red]Commit before the chat proceeds?")
+            res = Prompt.ask("[red]Commit before the chat proceeds? \[y/n/commit message]").strip()
 
-            if not res:
+            if res.lower() in ['n', 'no']:
                 self.console.print("[red]Skipped commmit.")
                 return
+            if res.lower() not in ['y', 'yes']:
+                commit_message = res
 
         repo.git.add(*relative_dirty_fnames)
         commit_result = repo.git.commit("-m", commit_message, "--no-verify")
