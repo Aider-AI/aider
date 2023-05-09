@@ -5,6 +5,12 @@ from prompt_toolkit import prompt
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.history import FileHistory
 
+from rich.console import Console
+import sys
+import time
+import random
+
+
 class FileContentCompleter(Completer):
     def __init__(self, fnames):
         self.fnames = fnames
@@ -20,28 +26,29 @@ class FileContentCompleter(Completer):
             with open(fname, "r") as f:
                 content = f.read()
 
-            for word in re.split(r'\W+', content):
+            for word in re.split(r"\W+", content):
                 if word.startswith(last_word):
                     yield Completion(word, start_position=-len(last_word))
 
 
-from rich.console import Console
-import sys
-import time
-import random
+def canned_input():
+    console = Console()
 
-console = Console()
+    input_line = input()
+
+    console.print("> ", end="", style="green")
+    for char in input_line:
+        console.print(char, end="", style="green")
+        time.sleep(random.uniform(0.01, 0.15))
+    console.print()
+    console.print()
+    return input_line
+
 
 def get_input(history_file, fnames):
     if not sys.stdin.isatty():
-        input_line = input()
-        console.print("> ", end="", style="green")
-        for char in input_line:
-            console.print(char, end="", style="green", flush=True)
-            time.sleep(random.uniform(0.05, 0.1))
-        console.print()
-        console.print()
-        return input_line
+        return canned_input()
+
     inp = ""
     multiline_input = False
 
@@ -54,15 +61,12 @@ def get_input(history_file, fnames):
         else:
             show = "> "
 
-        try:
-            line = prompt(
-                show,
-                completer=completer_instance,
-                history=FileHistory(history_file),
-                style=style,
-            )
-        except EOFError:
-            return
+        line = prompt(
+            show,
+            completer=completer_instance,
+            history=FileHistory(history_file),
+            style=style,
+        )
         if line.strip() == "{" and not multiline_input:
             multiline_input = True
             continue

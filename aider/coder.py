@@ -164,6 +164,8 @@ class Coder:
                 if self.num_control_c >= 2:
                     break
                 self.console.print("[bold red]^C again to quit")
+            except EOFError:
+                return
 
     def run_loop(self):
         if self.pretty:
@@ -335,6 +337,8 @@ class Coder:
         edited = set()
         for match in self.pattern.finditer(content):
             _, path, _, _, original, updated = match.groups()
+
+            path = path.strip()
 
             if path not in self.fnames:
                 if not Path(path).exists():
