@@ -566,9 +566,12 @@ class Coder:
         return commit_hash, commit_message
 
 
-def main():
-    env_prefix = "CODER_"
+import os
+from dotenv import load_dotenv
 
+def main():
+    load_dotenv()
+    env_prefix = "CODER_"
     parser = argparse.ArgumentParser(description="Chat with GPT about code")
     parser.add_argument(
         "files", metavar="FILE", nargs="+", help="a list of source code files",
