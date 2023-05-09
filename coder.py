@@ -94,7 +94,7 @@ class Coder:
                     self.console.print(
                         f"[red bold]Added {relative_fname} to the git repo"
                     )
-                commit_message = "Initial commit: Added new files to the git repo."
+                commit_message = f"Initial commit: Added new files to the git repo: {', '.join(new_files)}"
                 repo.git.commit("-m", commit_message, "--no-verify")
                 self.console.print(
                     f"[green bold]Committed new files with message: {commit_message}"
