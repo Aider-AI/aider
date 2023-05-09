@@ -29,7 +29,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 class Coder:
-    fnames = dict()
+    fnames = set()
     last_modified = 0
     repo = None
 
@@ -55,7 +55,7 @@ class Coder:
             else:
                 self.console.print(f"[red]Loading {fname}")
 
-            self.fnames[str(fname)] = fname.stat().st_mtime
+            self.fnames.add(str(fname))
 
         self.set_repo()
         if not self.repo:
@@ -333,7 +333,7 @@ class Coder:
                     self.console.print(f"[red]Skipping edit to {path}")
                     continue
 
-                self.fnames[path] = 0
+                self.fnames.add(path)
 
             edited.add(path)
             if utils.do_replace(path, original, updated):
