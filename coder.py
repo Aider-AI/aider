@@ -422,11 +422,13 @@ class Coder:
 
         diffs = "# Diffs:\n"
         dirty_fnames = []
+        relative_dirty_fnames = []
         for fname in self.fnames:
             relative_fname = os.path.relpath(fname, repo.working_tree_dir)
             these_diffs = repo.git.diff("HEAD", relative_fname)
             if these_diffs:
                 dirty_fnames.append(fname)
+                relative_dirty_fnames.append(relative_fname)
                 diffs += these_diffs + "\n"
 
         if not dirty_fnames:
@@ -471,6 +473,10 @@ class Coder:
             if not res:
                 self.console.print("[red]Skipped commmit.")
                 return
+            else:
+                repo.git.add(*relative_dirty_fnames)
+                repo.git.commit("-m", commit_message)
+                self.console.print("[green]Commit successful.")
 
 
 def main():
