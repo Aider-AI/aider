@@ -377,7 +377,10 @@ class Coder:
                 self.fnames[path] = 0
 
             edited.add(path)
-            self.do_replace(path, original, updated)
+            if self.do_replace(path, original, updated):
+                self.console.print(f"[red]Applied edit to {fname}")
+            else:
+                self.console.print(f"[red]Failed to apply edit to {fname}")
 
         return edited
 
@@ -404,11 +407,9 @@ class Coder:
                 content, before_text, after_text
             )
             if not new_content:
-                self.console.print(f"[red]Failed to apply edit to {fname}")
                 return
 
         fname.write_text(new_content)
-        self.console.print(f"[red]Applied edit to {fname}")
         return True
 
     def commit(self, history=None, prefix=None, ask=False):
