@@ -239,12 +239,22 @@ class Coder:
         if not model:
             model = self.main_model
 
-        completion = openai.ChatCompletion.create(
-            model=model,
-            messages=messages,
-            temperature=0,
-            stream=True,
-        )
+        import time
+        from openai.error import RateLimitError
+
+        while True:
+            try:
+                completion = openai.ChatCompletion.create(
+                    model=model,
+                    messages=messages,
+                    temperature=0,
+                    stream=True,
+                )
+                break
+            except RateLimitError as e:
+                retry_after = e.retry_after
+                print(f"Rate limit exceeded. Retrying in {retry_after} seconds.")
+                time.sleep(retry_after)
 
         interrupted = False
         try:
