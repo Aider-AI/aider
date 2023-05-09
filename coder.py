@@ -426,7 +426,11 @@ class Coder:
         relative_dirty_fnames = []
         for fname in self.fnames:
             relative_fname = os.path.relpath(fname, repo.working_tree_dir)
-            these_diffs = repo.git.diff("HEAD", relative_fname)
+            if self.pretty:
+                these_diffs = repo.git.diff("HEAD", "--color", relative_fname)
+            else:
+                these_diffs = repo.git.diff("HEAD", relative_fname)
+
             if these_diffs:
                 dirty_fnames.append(fname)
                 relative_dirty_fnames.append(relative_fname)
