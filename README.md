@@ -40,6 +40,7 @@ You can also use additional command-line options to customize the behavior of th
 ## Tips
 
 * Large changes are best performed as a sequence of bite sized steps. Same as if you were undertaking them yourself.
+* If your code is throwing an error, paste it into aider with the stack trace and let GPT fix the bug.
 * GPT-4 knows about a lot of standard tools and libraries, but may get some of the fine details wrong about APIs. You can paste doc snippets into the chat with the `{}` multiline syntax described below.
 * Use Control-C to safely interrupt GPT if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply with more information or direction.
 * Provide a multiline chat message by entering `{` alone on the first line. End the multiline message with `}` alone on the last line.
