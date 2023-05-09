@@ -453,16 +453,7 @@ class Coder:
         return res
 
     def commit(self, history=None, prefix=None, ask=False):
-        repo_paths = set(
-            git.Repo(fname, search_parent_directories=True).git_dir
-            for fname in self.fnames
-        )
-
-        if len(repo_paths) > 1:
-            repo_paths = " ".join(repo_paths)
-            raise ValueError(f"Files must all be in one git repo, not: {repo_paths}")
-
-        repo = git.Repo(repo_paths.pop())
+        repo = self.repo
         if not repo.is_dirty():
             return
 
