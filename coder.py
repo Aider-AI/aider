@@ -432,32 +432,6 @@ class Coder:
         self.console.print(f"[red]Applied edit to {fname}")
         return True
 
-    def do_gpt_powered_replace(self, fname, edit, request):
-        model = "gpt-3.5-turbo"
-        print(f"Asking {model} to apply ambiguous edit to {fname}...")
-
-        fname = Path(fname)
-        content = fname.read_text()
-        prompt = prompts.editor_user.format(
-            request=request,
-            edit=edit,
-            fname=fname,
-            content=content,
-        )
-
-        messages = [
-            dict(role="system", content=prompts.editor_system),
-            dict(role="user", content=prompt),
-        ]
-        res, interrupted = self.send(
-            messages, progress_bar_expected=len(content) + len(edit) / 2, model=model
-        )
-        if interrupted:
-            return
-
-        res = self.strip_quoted_wrapping(res, fname)
-        fname.write_text(res)
-
     def strip_quoted_wrapping(self, res, fname=None):
         if not res:
             return res
