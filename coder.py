@@ -111,20 +111,11 @@ class Coder:
 
         self.repo = repo
 
-    def quoted_file(self, fname):
-        prompt = "\n"
-        prompt += fname
-        prompt += "\n```\n"
-        prompt += Path(fname).read_text()
-        prompt += "\n```\n"
-        return prompt
-
     def get_files_content(self):
         prompt = ""
         for fname in self.fnames:
-            prompt += self.quoted_file(fname)
+            prompt += utils.quoted_file(fname)
         return prompt
-
     def get_input(self):
         if self.pretty:
             self.console.rule()

@@ -44,6 +44,14 @@ def replace_most_similar_chunk(whole, part, replace):
     return modified_whole
 
 
+def quoted_file(fname):
+    prompt = "\n"
+    prompt += fname
+    prompt += "\n```\n"
+    prompt += Path(fname).read_text()
+    prompt += "\n```\n"
+    return prompt
+
 def strip_quoted_wrapping(res, fname=None):
     if not res:
         return res
