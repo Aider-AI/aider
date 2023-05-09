@@ -4,10 +4,6 @@
 import sys
 import re
 import traceback
-from prompt_toolkit import prompt
-from prompt_toolkit.completion import Completer, Completion
-from prompt_toolkit.history import FileHistory
-from prompt_toolkit.styles import Style
 
 from rich.console import Console
 from rich.prompt import Confirm, Prompt
@@ -17,6 +13,8 @@ from rich.text import Text
 from rich.markdown import Markdown
 
 from pathlib import Path
+
+from getinput import get_input
 import utils
 
 import os
@@ -28,25 +26,6 @@ from dump import dump
 import prompts
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
-
-
-class FileContentCompleter(Completer):
-    def __init__(self, fnames):
-        self.fnames = fnames
-
-    def get_completions(self, document, complete_event):
-        text = document.text_before_cursor
-        words = text.split()
-        if not words:
-            return
-
-        last_word = words[-1]
-        for fname in self.fnames:
-            with open(fname, "r") as f:
-                content = f.read()
-            for word in content.split():
-                if word.startswith(last_word):
-                    yield Completion(word, start_position=-len(last_word))
 
 
 class Coder:
@@ -180,7 +159,7 @@ class Coder:
         else:
             print()
 
-        inp = utils.get_input(self.history_file, self.fnames)
+        inp = get_input(self.history_file, self.fnames)
         if inp is None:
             return
 
