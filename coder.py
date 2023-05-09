@@ -470,7 +470,7 @@ class Coder:
         self.console.print(f"[red]Commit message: {commit_message}\n")
 
         if ask:
-            res = Confirm.ask("[red]Commit before starting the chat?")
+            res = Confirm.ask("[red]Commit before the chat proceeds?")
 
             if not res:
                 self.console.print("[red]Skipped commmit.")
