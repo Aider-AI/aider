@@ -34,7 +34,8 @@ class Coder:
     def __init__(self, main_model, files, pretty, history_file=".coder.history"):
         self.history_file = history_file
         try:
-            readline.read_history_file(self.history_file)
+            #readline.read_history_file(self.history_file)
+            pass
         except FileNotFoundError:
             pass
 
@@ -135,14 +136,14 @@ class Coder:
         else:
             print()
 
-while True:
-    try:
-        if multiline_input:
-            line = prompt(". ")
-        else:
-            line = prompt("> ")
-    except EOFError:
-        return
+        while True:
+            try:
+                if multiline_input:
+                    line = prompt(". ")
+                else:
+                    line = prompt("> ")
+            except EOFError:
+                return
             if line.strip() == "{" and not multiline_input:
                 multiline_input = True
                 continue
