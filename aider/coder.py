@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 import sys
 import re
 import traceback
@@ -127,11 +126,18 @@ class Coder:
         return max(Path(fname).stat().st_mtime for fname in self.fnames)
 
     def get_files_messages(self):
+
         files_content = prompts.files_content_prefix
         files_content += self.get_files_content()
 
+        if self.repo is not None:
+            tracked_files = set(self.repo.git.ls_files().splitlines())
+            files_listing = "\n".join(tracked_files)
+            files_content += f"\n\nFiles in the repo:\n{files_listing}\n"
+
+        all_content = files_content
         files_messages = [
-            dict(role="user", content=files_content),
+            dict(role="user", content=all_content),
             dict(role="assistant", content="Ok."),
             dict(
                 role="system",
