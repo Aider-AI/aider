@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 import sys
 import re
 import readline
@@ -174,6 +173,7 @@ class Coder:
 
         readline.write_history_file(history_file)
         return inp
+
     def check_for_local_edits(self, init=False):
         last_modified = max(Path(fname).stat().st_mtime for fname in self.fnames)
         since = last_modified - self.last_modified
