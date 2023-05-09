@@ -3,11 +3,12 @@ import math
 from difflib import SequenceMatcher
 from pathlib import Path
 
-# from dump import dump
-
+#from dump import dump
 
 def replace_most_similar_chunk(whole, part, replace):
+
     similarity_thresh = 0.8
+
     max_similarity = 0
     most_similar_chunk_start = -1
     most_similar_chunk_end = -1
