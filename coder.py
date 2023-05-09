@@ -159,6 +159,7 @@ class Coder:
                     show,
                     completer=completer_instance,
                     history=FileHistory(self.history_file),
+                    style="fg:green",
                 )
             except EOFError:
                 return
