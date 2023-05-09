@@ -401,10 +401,9 @@ class Coder:
                 self.fnames[path] = 0
 
             edited.add(path)
-            if self.do_replace(path, original, updated):
-                continue
-            edit = match.group()
-            self.do_gpt_powered_replace(path, edit, inp)
+            self.do_replace(path, original, updated)
+            # edit = match.group()
+            # self.do_gpt_powered_replace(path, edit, inp)
 
         return edited
 
@@ -427,6 +426,7 @@ class Coder:
         else:
             new_content = replace_most_similar_chunk(content, before_text, after_text)
             if not new_content:
+                self.console.print(f"[red]Failed to apply edit to {fname}")
                 return
 
         fname.write_text(new_content)
