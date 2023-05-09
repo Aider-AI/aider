@@ -159,9 +159,9 @@ class Coder:
             try:
                 completer_instance = FileContentCompleter(self.fnames)
                 if multiline_input:
-                    line = prompt(". ", completer=completer_instance)
+                    line = prompt(". ", completer=completer_instance, history=FileHistory(self.history_file))
                 else:
-                    line = prompt("> ", completer=completer_instance)
+                    line = prompt("> ", completer=completer_instance, history=FileHistory(self.history_file))
             except EOFError:
                 return
             if line.strip() == "{" and not multiline_input:
