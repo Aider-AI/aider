@@ -32,9 +32,9 @@ class Coder:
     fnames = dict()
     last_modified = 0
     repo = None
-    history_file = ".coder.history"
 
-    def __init__(self, main_model, files, pretty):
+    def __init__(self, main_model, files, pretty, history_file=".coder.history"):
+        self.history_file = history_file
         try:
             readline.read_history_file(self.history_file)
         except FileNotFoundError:
@@ -573,6 +573,12 @@ def main():
         help="a list of source code files",
     )
     parser.add_argument(
+        "--history-file",
+        metavar="HISTORY_FILE",
+        default=os.environ.get("CODER_HISTORY_FILE", ".coder.history"),
+        help="Specify the history file (default: .coder.history or value from CODER_HISTORY_FILE environment variable)",
+    )
+    parser.add_argument(
         "--model",
         metavar="MODEL",
         default="gpt-4",
@@ -615,7 +621,7 @@ def main():
     fnames = args.files
     pretty = args.pretty
 
-    coder = Coder(args.model, fnames, pretty)
+    coder = Coder(args.model, fnames, pretty, args.history_file)
     coder.commit(ask=not args.commit_dirty, prefix="WIP: ")
 
     if args.apply:
