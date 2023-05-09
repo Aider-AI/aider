@@ -156,10 +156,11 @@ class Coder:
 
         while True:
             try:
-                if multiline_input:
-                    line = prompt(". ")
-                else:
-                    line = prompt("> ")
+            completer_instance = FileContentCompleter(self.fnames)
+            if multiline_input:
+                line = prompt(". ", completer=completer_instance)
+            else:
+                line = prompt("> ", completer=completer_instance)
             except EOFError:
                 return
             if line.strip() == "{" and not multiline_input:
