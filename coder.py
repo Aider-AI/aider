@@ -473,10 +473,12 @@ class Coder:
             if not res:
                 self.console.print("[red]Skipped commmit.")
                 return
-            else:
-                repo.git.add(*relative_dirty_fnames)
-                repo.git.commit("-m", commit_message)
-                self.console.print("[green]Commit successful.")
+
+        repo.git.add(*relative_dirty_fnames)
+        commit_result = repo.git.commit("-m", commit_message, "--no-verify")
+        commit_hash = repo.head.commit.hexsha[:7]
+        self.console.print(f"[green]Commit successful. Short hash: {commit_hash}")
+        return commit_hash
 
 
 def main():
@@ -505,7 +507,7 @@ def main():
     parser.add_argument(
         "--commit",
         action="store_true",
-        help="Commit dirty changes to the files",
+        help="Commit dirty files without confirmation",
     )
 
     args = parser.parse_args()
@@ -515,9 +517,7 @@ def main():
     pretty = args.pretty
 
     coder = Coder(use_gpt_4, fnames, pretty)
-    if args.commit:
-        coder.commit("", ask=True)
-        return
+    coder.commit("", ask=args.commit)
 
     if args.apply:
         with open(args.apply, "r") as f:
