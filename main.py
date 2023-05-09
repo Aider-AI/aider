@@ -45,7 +45,7 @@ def main():
         "--no-pretty",
         action="store_false",
         dest="pretty",
-        help="Disable pretty output of GPT responses ($CODER_PRETTY)",
+        help=f"Disable pretty output of GPT responses (${{{env_prefix}}}PRETTY)",
         default=bool(int(os.environ.get(f"{env_prefix}PRETTY", 1))),
     )
     parser.add_argument(
@@ -56,7 +56,7 @@ def main():
     parser.add_argument(
         "--commit-dirty",
         action="store_true",
-        help="Commit dirty files without confirmation (default: False, $CODER_COMMIT_DIRTY)",
+        help=f"Commit dirty files without confirmation (default: False, ${{{env_prefix}}}COMMIT_DIRTY)",
         default=bool(int(os.environ.get(f"{env_prefix}COMMIT_DIRTY", 0))),
     )
     args = parser.parse_args()
