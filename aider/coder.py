@@ -31,7 +31,7 @@ class Coder:
     last_modified = 0
     repo = None
 
-    def __init__(self, main_model, files, pretty, history_file=".coder.history"):
+    def __init__(self, main_model, files, pretty, history_file):
         self.history_file = history_file
 
         if pretty:
