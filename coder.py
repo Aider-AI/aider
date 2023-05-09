@@ -155,12 +155,11 @@ class Coder:
                     show = ". "
                 else:
                     show = "> "
-                line = prompt(
-                    show,
-                    completer=completer_instance,
-                    history=FileHistory(self.history_file),
-                    style="fg:green",
-                )
+    line = prompt(
+        show,
+        completer=completer_instance,
+        history=FileHistory(self.history_file),
+    )
             except EOFError:
                 return
             if line.strip() == "{" and not multiline_input:
