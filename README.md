@@ -11,6 +11,7 @@ Each change is automatically committed to git with a sensible commit message.
 * Aider will apply the edits suggested by GPT.
 * Aider will automatically commit each change to a git repo with a sensible commit message, providing safety, edit history and easy undo with normal git tools.
 * Aider can make coordinated code changes across multiple source files.
+* Aider will notice if you edit the files outside the chat, ask you if you'd like to commit the new changes and make GPT aware of the updated file content. You can bounce back and forth between your aider chat and your editor, to fluidly collaborate with GPT.
 * Live, colorized, human friendly output.
 * Readline style chat input history, with autocompletion of tokens found in source files being discussed (via `prompt_toolkit`)
 * Use Control-C to safely interrupt GPT if it isn't providing a useful response.
@@ -36,11 +37,13 @@ You can also use additional command-line options to customize the behavior of th
 
 ## Limitations
 
-Aider basically requires GPT-4 for the main chat functions.
+Aider basically requires GPT-4.
 You can invoke it with `aider -3` to try using gpt-3.5-turbo, but it will almost certainly fail to function correctly.
 GPT-3.5 is unable to follow directions and generate code changes in a stable, parsable format.
 
 Aider also can only edit code that can fit in the context window.
 For GPT-4 that is 8k tokens.
+It helps to be selective about which of your source files you give to aider.
+It can also help to refactor your code into more, smaller files.
+Aider can help with such refactorings if you start them before the files hit the context window limit.
 If you have access to gpt-4-32k, I would be curious to hear you experiences using it with aider.
-
