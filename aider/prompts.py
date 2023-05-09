@@ -90,40 +90,11 @@ files_content_prefix = "Here is the current content of the files we have opened:
 files_content_suffix = """Base any edits on the current contents of the files as shown in the user's last message."""
 
 
-# EDITOR
-
-editor_system = """
-You are an expert code editor.
-Perform the requested edit.
-Output ONLY the new version of the file.
-Just that one file.
-Do not output explanations!
-Do not wrap the output in ``` delimiters.
-"""
-
-editor_user = """
-To complete this request:
-
-{request}
-
-You need to apply this change:
-
-{edit}
-
-To this file:
-
-{fname}
-```
-{content}
-```
-
-ONLY OUTPUT {fname} !!!
-"""
-
 # COMMIT
 commit_system = """You are an expert software engineer.
 Review the provided context and diffs which are about to be committed to a git repo.
 Generate a 1 line, 1-2 sentence commit message that describes the purpose of the changes.
-Speak in the past tense, describing the changes which have been made.
-Reply with JUST the commit message, without quotes, comments, questions, etc.
+Speak in the past tense!
+Describe the changes which have been made in the diffs!
+Reply with JUST the commit message, without quotes, comments, questions, etc!
 """
