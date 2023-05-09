@@ -511,6 +511,7 @@ def main():
     )
 
     args = parser.parse_args()
+    dump(args)
 
     use_gpt_4 = not args.gpt_3_5_turbo
     fnames = args.files
