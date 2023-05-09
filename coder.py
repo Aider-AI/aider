@@ -46,6 +46,7 @@ def find_index(list1, list2):
 class Coder:
     fnames = dict()
     last_modified = 0
+    repo = None
 
     def __init__(self, use_gpt_4, files, pretty):
         if use_gpt_4:
@@ -70,20 +71,25 @@ class Coder:
 
         self.set_repo()
         self.check_for_local_edits(True)
+        self.pretty = pretty
 
     def set_repo(self):
-        repo_paths = set(
+        repo_paths = list(
             git.Repo(fname, search_parent_directories=True).git_dir
             for fname in self.fnames
         )
+        num_repos = len(set(repo_paths))
 
-        if len(repo_paths) > 1:
-            repo_paths = " ".join(repo_paths)
-            raise ValueError(f"Files must all be in one git repo, not: {repo_paths}")
+        if num_repos == 0:
+            self.console.print("[red bold]Files are not in a git repo, can't commit edits to allow easy undo.")
+            return
+        if num_repos > 1:
+            self.console.print("[red bold]Files are in different git repos, can't commit edits to allow easy undo")
+            return
+
+        # todo: need to check if files are added to the repo, and add if not
 
         self.repo = git.Repo(repo_paths.pop())
-
-        self.pretty = pretty
 
     def quoted_file(self, fname):
         prompt = "\n"
