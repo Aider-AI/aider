@@ -3,8 +3,8 @@
 
 import sys
 import re
-import readline
 import traceback
+from prompt_toolkit import prompt
 from rich.console import Console
 from rich.prompt import Confirm, Prompt
 from colorama import Fore, Style
@@ -135,15 +135,14 @@ class Coder:
         else:
             print()
 
-        while True:
-            try:
-                if multiline_input:
-                    line = input(". ")
-                else:
-                    line = input("> ")
-            except EOFError:
-                return
-
+while True:
+    try:
+        if multiline_input:
+            line = prompt(". ")
+        else:
+            line = prompt("> ")
+    except EOFError:
+        return
             if line.strip() == "{" and not multiline_input:
                 multiline_input = True
                 continue
