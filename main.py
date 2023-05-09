@@ -20,7 +20,7 @@ def main():
     parser.add_argument(
         "--history-file",
         metavar="HISTORY_FILE",
-        default=os.environ.get(f"{env_prefix}HISTORY_FILE", ".coder.history"),
+        default=os.environ.get(f"{env_prefix}HISTORY_FILE", ".aider.history"),
         help=f"Specify the history file (default: .aider.history, ${env_prefix}HISTORY_FILE)",
     )
     parser.add_argument(
