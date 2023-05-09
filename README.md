@@ -11,17 +11,14 @@ Each change is automatically committed to git with a sensible commit message.
 * Chat with GPT about your code by specifying a set of source files to discuss.
 * Request changes, improvements, and bug fixes to your code.
 * Aider will apply the edits suggested by GPT.
-* Aider will automatically commit each change to a git repo with a sensible commit message to provide safety, change history and easy undo with normal git tools.
+* Aider will automatically commit each change to git with a sensible commit message to provide safety, change history and easy undo with normal git tools.
 * Aider can make coordinated code changes across multiple source files at once.
 * Aider will notice if you edit the files outside the chat:
   * It will ask if you'd like to commit these out-of-band changes.
   * It will make GPT aware of the updated file content.
   * You can bounce back and forth between your aider chat and your editor, to fluidly collaborate with GPT.
 * Live, colorized, human friendly output.
-* Readline style chat input history, with autocompletion of tokens found in source files being discussed (via `prompt_toolkit`)
-* Use Control-C to safely interrupt GPT if it isn't providing a useful response.
-* Provide a multiline chat message by entering `{` alone on the first line. End the multiline message with `}` alone on the last line.
-* Aider will notice if you ask it to discuss files with uncommitted changes and offer to commit them before proceeding.
+* Readline style chat input history, with autocompletion of tokens found in the source files being discussed (via `prompt_toolkit`)
 
 ## Installation
 
@@ -39,6 +36,12 @@ aider <file1> <file2> ...
 Replace `<file1>`, `<file2>`, etc., with the paths to the source code files you want to work on.
 
 You can also use additional command-line options to customize the behavior of the tool. For more information, run `aider --help`. Many defaults can be set with `.env` or environment variables, see the help output.
+
+## Input tips
+
+* Use Control-C to safely interrupt GPT if it isn't providing a useful response.
+* Provide a multiline chat message by entering `{` alone on the first line. End the multiline message with `}` alone on the last line.
+* Aider will notice if you ask it to discuss files with uncommitted changes and offer to commit them before proceeding.
 
 ## Limitations
 
