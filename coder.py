@@ -7,9 +7,11 @@ import traceback
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.history import FileHistory
+from prompt_toolkit.styles import Style
+
 from rich.console import Console
 from rich.prompt import Confirm, Prompt
-from colorama import Style
+
 from rich.live import Live
 from rich.text import Text
 from rich.markdown import Markdown
@@ -148,18 +150,22 @@ class Coder:
         inp = ""
         multiline_input = False
 
+        style = Style.from_dict({'': 'green'})
+
         while True:
+            completer_instance = FileContentCompleter(self.fnames)
+            if multiline_input:
+                show = ". "
+            else:
+                show = "> "
+
             try:
-                completer_instance = FileContentCompleter(self.fnames)
-                if multiline_input:
-                    show = ". "
-                else:
-                    show = "> "
-    line = prompt(
-        show,
-        completer=completer_instance,
-        history=FileHistory(self.history_file),
-    )
+                line = prompt(
+                    show,
+                    completer=completer_instance,
+                    history=FileHistory(self.history_file),
+                    style=style,
+                )
             except EOFError:
                 return
             if line.strip() == "{" and not multiline_input:
@@ -208,9 +214,6 @@ class Coder:
                 if self.num_control_c >= 2:
                     break
                 self.console.print("[bold red]^C again to quit")
-
-        if self.pretty:
-            print(Style.RESET_ALL)
 
     def run_loop(self):
         inp = self.get_input()
