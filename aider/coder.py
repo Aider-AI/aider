@@ -195,7 +195,7 @@ class Coder:
         if interrupted:
             content += "\n^C KeyboardInterrupt"
 
-        Path("tmp.last-edit.md").write_text(content)
+        Path(".aider.last.md").write_text(content)
 
         self.cur_messages += [
             dict(role="assistant", content=content),
