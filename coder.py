@@ -5,6 +5,7 @@ import sys
 import re
 import traceback
 from prompt_toolkit import prompt
+from prompt_toolkit.completion import Completer, Completion
 from rich.console import Console
 from rich.prompt import Confirm, Prompt
 from colorama import Fore, Style
@@ -26,11 +27,28 @@ import prompts
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
+class FileContentCompleter(Completer):
+    def __init__(self, fnames):
+        self.fnames = fnames
+
+    def get_completions(self, document, complete_event):
+        text = document.text_before_cursor
+        words = text.split()
+        if not words:
+            return
+
+        last_word = words[-1]
+        for fname in self.fnames:
+            with open(fname, "r") as f:
+                content = f.read()
+            for word in content.split():
+                if word.startswith(last_word):
+                    yield Completion(word, start_position=-len(last_word))
+
 class Coder:
     fnames = dict()
     last_modified = 0
     repo = None
-
     def __init__(self, main_model, files, pretty, history_file=".coder.history"):
         self.history_file = history_file
         try:
