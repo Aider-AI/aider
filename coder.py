@@ -428,6 +428,8 @@ class Coder:
             new_content = after_text
         else:
             new_content = replace_most_similar_chunk(content, before_text, after_text)
+            if not new_content:
+                return
 
         fname.write_text(new_content)
         self.console.print(f"[red]Applied edit to {fname}")
