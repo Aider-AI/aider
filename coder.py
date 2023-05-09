@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+
 import sys
 import re
 import readline
@@ -10,8 +11,6 @@ from colorama import Fore, Style
 from rich.live import Live
 from rich.text import Text
 from rich.markdown import Markdown
-
-from tqdm import tqdm
 
 from pathlib import Path
 import utils
@@ -25,6 +24,8 @@ from dump import dump
 import prompts
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
+
 class Coder:
     fnames = dict()
     last_modified = 0
@@ -113,6 +114,7 @@ class Coder:
         for fname in self.fnames:
             prompt += utils.quoted_file(fname)
         return prompt
+
     def get_input(self):
         if self.pretty:
             self.console.rule()
@@ -396,7 +398,9 @@ class Coder:
                 # first populating an empty file
                 new_content = after_text
         else:
-            new_content = utils.replace_most_similar_chunk(content, before_text, after_text)
+            new_content = utils.replace_most_similar_chunk(
+                content, before_text, after_text
+            )
             if not new_content:
                 self.console.print(f"[red]Failed to apply edit to {fname}")
                 return
@@ -495,5 +499,6 @@ class Coder:
 
 if __name__ == "__main__":
     from main import main
+
     status = main()
     sys.exit(status)
