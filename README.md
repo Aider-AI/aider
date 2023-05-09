@@ -44,6 +44,7 @@ You can also use additional command-line options to customize the behavior of th
 * Use Control-C to safely interrupt GPT if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply with more information or direction.
 * Provide a multiline chat message by entering `{` alone on the first line. End the multiline message with `}` alone on the last line.
 * Aider will notice if you ask it to discuss files with uncommitted changes and offer to commit them before proceeding.
+* GPT can only see the content of the files you specify, but it also gets a list of all the files in the repo. It may ask to see additional files if it feels that's needed for your requests. Relaunch with the additional files on the command line.
 
 ## Limitations
 
