@@ -141,42 +141,6 @@ class Coder:
             prompt += utils.quoted_file(fname)
         return prompt
 
-    def get_input(self):
-        inp = ""
-        multiline_input = False
-
-        style = Style.from_dict({'': 'green'})
-
-        while True:
-            completer_instance = FileContentCompleter(self.fnames)
-            if multiline_input:
-                show = ". "
-            else:
-                show = "> "
-
-            try:
-                line = prompt(
-                    show,
-                    completer=completer_instance,
-                    history=FileHistory(self.history_file),
-                    style=style,
-                )
-            except EOFError:
-                return
-            if line.strip() == "{" and not multiline_input:
-                multiline_input = True
-                continue
-            elif line.strip() == "}" and multiline_input:
-                break
-            elif multiline_input:
-                inp += line + "\n"
-            else:
-                inp = line
-                break
-
-        print()
-        return inp
-
     def get_last_modified(self):
         return max(Path(fname).stat().st_mtime for fname in self.fnames)
 
@@ -216,7 +180,7 @@ class Coder:
         else:
             print()
 
-        inp = self.get_input()
+        inp = utils.get_input(self.history_file, self.fnames)
         if inp is None:
             return
 

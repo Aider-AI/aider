@@ -107,3 +107,38 @@ def do_replace(fname, before_text, after_text):
 
     fname.write_text(new_content)
     return True
+def get_input(history_file, fnames):
+    inp = ""
+    multiline_input = False
+
+    style = Style.from_dict({'': 'green'})
+
+    while True:
+        completer_instance = FileContentCompleter(fnames)
+        if multiline_input:
+            show = ". "
+        else:
+            show = "> "
+
+        try:
+            line = prompt(
+                show,
+                completer=completer_instance,
+                history=FileHistory(history_file),
+                style=style,
+            )
+        except EOFError:
+            return
+        if line.strip() == "{" and not multiline_input:
+            multiline_input = True
+            continue
+        elif line.strip() == "}" and multiline_input:
+            break
+        elif multiline_input:
+            inp += line + "\n"
+        else:
+            inp = line
+            break
+
+    print()
+    return inp
