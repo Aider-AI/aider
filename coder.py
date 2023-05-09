@@ -576,10 +576,24 @@ def main():
         "files", metavar="FILE", nargs="+", help="a list of source code files",
     )
     parser.add_argument(
+        "--model",
+        metavar="MODEL",
+        default="gpt-3.5-turbo",
+        help="Specify the model to use (default: gpt-3.5-turbo)",
+    )
+    parser.add_argument(
         "-3",
-        "--gpt-3-5-turbo",
-        action="store_true",
-        help="Only use gpt-3.5-turbo, not gpt-4",
+        action="store_const",
+        dest="model",
+        const="gpt-3.5-turbo",
+        help="Use gpt-3.5-turbo model",
+    )
+    parser.add_argument(
+        "-4",
+        action="store_const",
+        dest="model",
+        const="gpt-4",
+        help="Use gpt-4 model",
     )
     parser.add_argument(
         "--no-pretty",
