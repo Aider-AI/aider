@@ -72,7 +72,7 @@ class Coder:
         self.set_repo()
         if not self.repo:
             self.console.print(
-                "[red bold]Therefore, can not automatically commit edits as they happen."
+                "[red bold]Will not automatically commit edits as they happen."
             )
 
         self.check_for_local_edits(True)
@@ -110,14 +110,14 @@ class Coder:
             if Confirm.ask("[bold red]Add them?", console=self.console):
                 for relative_fname in new_files:
                     repo.git.add(relative_fname)
-                    self.console.print(f"[red]Added {relative_fname} to the git repo")
+                    self.console.print(f"[red bold]Added {relative_fname} to the git repo")
                 commit_message = f"Initial commit: Added new files to the git repo."
                 repo.git.commit("-m", commit_message, "--no-verify")
                 self.console.print(
                     f"[green bold]Committed new files with message: {commit_message}"
                 )
             else:
-                self.console.print(f"[red]Skipped adding new files to the git repo.")
+                self.console.print(f"[red bold]Skipped adding new files to the git repo.")
                 return
 
         self.repo = repo
@@ -491,6 +491,9 @@ class Coder:
 
     def commit(self, history=None, prefix=None, ask=False):
         repo = self.repo
+        if not repo:
+            return
+
         if not repo.is_dirty():
             return
 
