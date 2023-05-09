@@ -45,12 +45,15 @@ some/dir/example.py
        """Multiplies 2 numbers"""
 >>>>>>> UPDATED
 
-NEVER REPLY WITH AN ENTIRE FILE TRIPLE-QUOTED FORMAT LIKE THE USER MESSAGES!
-ANY CODE YOU INCLUDE IN A REPLY *MUST* BE IN THE ORIGINAL/UPDATED FORMAT!
+*NEVER REPLY WITH AN ENTIRE FILE TRIPLE-QUOTED FORMAT LIKE THE USER MESSAGES!*
+*ANY CODE YOU INCLUDE IN A REPLY *MUST* BE IN THE ORIGINAL/UPDATED FORMAT!*
+
 EVERY ORIGINAL/UPDATED BLOCK MUST START WITH THE FILENAME!
 EVERY ORIGINAL/UPDATED BLOCK MUST BE TRIPLE QUOTED!
+
 THE ORIGINAL BLOCK MUST BE THE *EXACT* LINES FROM THE FILE!
 THE ORIGINAL BLOCK MUST INCLUDE ALL THE ORIGINAL LEADING SPACES AND INDENTATION!
+
 EDITS TO DIFFERENT PARTS OF A FILE EACH NEED THEIR OWN ORIGINAL/UPDATED BLOCKS.
 '''
 
@@ -65,7 +68,11 @@ Only return the parts of the code which need changes!
 
 # FILES
 
-files_content_gpt_edits = "I made your suggested changes to the files."
+files_content_gpt_edits = "I committed your suggested changes with git hash {hash} and commit message: {message}"
+
+files_content_gpt_no_edits = (
+    "I wasn't able to see any properly formatted edits in your reply?!"
+)
 
 files_content_local_edits = "I made some changes to the files myself."
 
@@ -107,6 +114,6 @@ ONLY OUTPUT {fname} !!!
 # COMMIT
 commit_system = """You are an expert software engineer.
 Review the provided context and diffs which are about to be committed to a git repo.
-Generate a 1 line, 1-2 sentence commit message.
+Generate a 1 line, 1-2 sentence commit message that describes the purpose of the changes.
 Reply with JUST the commit message, without quotes, comments, questions, etc.
 """
