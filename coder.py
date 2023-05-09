@@ -271,7 +271,6 @@ class Coder:
             self.console.print("[red bold]No changes found in tracked files.")
             saved_message = prompts.files_content_gpt_no_edits
 
-        self.check_for_local_edits(True)
         self.done_messages += self.cur_messages
         self.done_messages += [
             dict(role="user", content=saved_message),
@@ -569,7 +568,10 @@ def main():
     env_prefix = "CODER_"
     parser = argparse.ArgumentParser(description="Chat with GPT about code")
     parser.add_argument(
-        "files", metavar="FILE", nargs="+", help="a list of source code files",
+        "files",
+        metavar="FILE",
+        nargs="+",
+        help="a list of source code files",
     )
     parser.add_argument(
         "--model",
@@ -596,7 +598,7 @@ def main():
         action="store_false",
         dest="pretty",
         help="Disable prettyd output of GPT responses",
-        default=bool(int(os.environ.get(env_prefix + "PRETTY", 1)))
+        default=bool(int(os.environ.get(env_prefix + "PRETTY", 1))),
     )
     parser.add_argument(
         "--apply",
@@ -607,7 +609,7 @@ def main():
         "--commit-dirty",
         action="store_true",
         help="Commit dirty files without confirmation",
-        default=bool(int(os.environ.get(env_prefix + "COMMIT_DIRTY", 0)))
+        default=bool(int(os.environ.get(env_prefix + "COMMIT_DIRTY", 0))),
     )
     args = parser.parse_args()
 
