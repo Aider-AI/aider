@@ -87,19 +87,25 @@ class Coder:
             self.console.print("[red bold]Files are in different git repos, can't commit edits to allow easy undo")
             return
 
+        new_files = []
         for fname in self.fnames:
             relative_fname = os.path.relpath(fname, self.repo.working_tree_dir)
             if relative_fname not in self.repo.untracked_files:
                 continue
-            question = f"[red bold]Add {fname} to the git repo?"
+            new_files.append(relative_fname)
+
+        if new_files:
+            new_files_str = ', '.join(new_files)
+            question = f"[red bold]Add the following new files to the git repo? {new_files_str}"
             if Confirm.ask(question, console=self.console):
-                self.repo.git.add(relative_fname)
-                self.console.print(f"[red]Added {fname} to the git repo")
-                commit_message = f"Initial commit: Added {fname} to the git repo."
+                for relative_fname in new_files:
+                    self.repo.git.add(relative_fname)
+                    self.console.print(f"[red]Added {relative_fname} to the git repo")
+                commit_message = f"Initial commit: Added new files to the git repo."
                 self.repo.git.commit("-m", commit_message, "--no-verify")
-                self.console.print(f"[green bold]Committed {fname} with message: {commit_message}")
+                self.console.print(f"[green bold]Committed new files with message: {commit_message}")
             else:
-                self.console.print(f"[red]Skipped adding {fname} to the git repo")
+                self.console.print(f"[red]Skipped adding new files to the git repo")
 
         self.repo = git.Repo(repo_paths.pop())
 
