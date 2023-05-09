@@ -7,8 +7,10 @@ from coder import Coder
 
 def main():
     load_dotenv()
-    env_prefix = "CODER_"
-    parser = argparse.ArgumentParser(description="Chat with GPT about code")
+    env_prefix = "AIDER_"
+    parser = argparse.ArgumentParser(
+        description="aider - chat with GPT about your code"
+    )
     parser.add_argument(
         "files",
         metavar="FILE",
@@ -19,7 +21,7 @@ def main():
         "--history-file",
         metavar="HISTORY_FILE",
         default=os.environ.get(f"{env_prefix}HISTORY_FILE", ".coder.history"),
-        help="Specify the history file (default: .coder.history, ${env_prefix}HISTORY_FILE)",
+        help=f"Specify the history file (default: .aider.history, ${env_prefix}HISTORY_FILE)",
     )
     parser.add_argument(
         "--model",
@@ -32,20 +34,13 @@ def main():
         action="store_const",
         dest="model",
         const="gpt-3.5-turbo",
-        help="Use gpt-3.5-turbo model for the main chat",
-    )
-    parser.add_argument(
-        "-4",
-        action="store_const",
-        dest="model",
-        const="gpt-4",
-        help="Use gpt-4 model for the main chat",
+        help="Use gpt-3.5-turbo model for the main chat (basically won't work)",
     )
     parser.add_argument(
         "--no-pretty",
         action="store_false",
         dest="pretty",
-        help=f"Disable pretty output of GPT responses (${{{env_prefix}}}PRETTY)",
+        help=f"Disable pretty, colorized output (${env_prefix}PRETTY)",
         default=bool(int(os.environ.get(f"{env_prefix}PRETTY", 1))),
     )
     parser.add_argument(
@@ -56,7 +51,7 @@ def main():
     parser.add_argument(
         "--commit-dirty",
         action="store_true",
-        help=f"Commit dirty files without confirmation (default: False, ${{{env_prefix}}}COMMIT_DIRTY)",
+        help=f"On launch, commit dirty files w/o confirmation (default: False, ${env_prefix}COMMIT_DIRTY)",  # noqa: E501
         default=bool(int(os.environ.get(f"{env_prefix}COMMIT_DIRTY", 0))),
     )
     args = parser.parse_args()
