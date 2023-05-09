@@ -4,6 +4,7 @@ import argparse
 from dotenv import load_dotenv
 from aider.coder import Coder
 
+
 def main():
     load_dotenv()
     env_prefix = "AIDER_"
@@ -64,7 +65,7 @@ def main():
     pretty = args.pretty
 
     coder = Coder(args.model, fnames, pretty, args.history_file, args.show_diffs)
-    coder.commit(ask=not args.commit_dirty, prefix="WIP: ")
+    coder.commit(ask=not args.commit_dirty, prefix="wip: ")
 
     if args.apply:
         with open(args.apply, "r") as f:

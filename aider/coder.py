@@ -126,7 +126,6 @@ class Coder:
         return max(Path(fname).stat().st_mtime for fname in self.fnames)
 
     def get_files_messages(self):
-
         files_content = prompts.files_content_prefix
         files_content += self.get_files_content()
 
@@ -138,8 +137,7 @@ class Coder:
             repo_content = prompts.repo_content_prefix
             repo_content += files_listing
 
-            all_content = repo_content + '\n\n' + files_content
-
+            all_content = repo_content + "\n\n" + files_content
 
         files_messages = [
             dict(role="user", content=all_content),
@@ -201,7 +199,7 @@ class Coder:
         messages += self.get_files_messages()
         messages += self.cur_messages
 
-        #self.show_messages(messages, "all")
+        # self.show_messages(messages, "all")
 
         content, interrupted = self.send(messages)
         if interrupted:
@@ -228,7 +226,7 @@ class Coder:
         if not edited:
             return True
 
-        res = self.commit(history=self.cur_messages)
+        res = self.commit(history=self.cur_messages, prefix="aider: ")
         if res:
             commit_hash, commit_message = res
 
