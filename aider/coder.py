@@ -31,7 +31,7 @@ class Coder:
     last_modified = 0
     repo = None
 
-    def __init__(self, main_model, files, pretty, history_file):
+    def __init__(self, main_model, files, pretty, history_file, show_diffs):
         self.history_file = history_file
 
         if pretty:
@@ -62,7 +62,7 @@ class Coder:
             )
 
         self.pretty = pretty
-
+        self.show_diffs = show_diffs
     def set_repo(self):
         repo_paths = []
         for fname in self.fnames:
@@ -372,8 +372,8 @@ class Coder:
             self.last_modified = self.get_last_modified()
             return
 
-        self.console.print(Text(diffs))
-
+        if self.show_diffs:
+            self.console.print(Text(diffs))
         diffs = "# Diffs:\n" + diffs
 
         # for fname in dirty_fnames:

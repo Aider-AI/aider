@@ -53,12 +53,17 @@ def main():
         help=f"On launch, commit dirty files w/o confirmation (default: False, ${env_prefix}COMMIT_DIRTY)",  # noqa: E501
         default=bool(int(os.environ.get(f"{env_prefix}COMMIT_DIRTY", 0))),
     )
+    parser.add_argument(
+        "--show-diffs",
+        action="store_true",
+        help=f"Show diffs when committing changes (default: False, ${env_prefix}SHOW_DIFFS)",
+        default=bool(int(os.environ.get(f"{env_prefix}SHOW_DIFFS", 0))),
+    )
     args = parser.parse_args()
-
     fnames = args.files
     pretty = args.pretty
 
-    coder = Coder(args.model, fnames, pretty, args.history_file)
+    coder = Coder(args.model, fnames, pretty, args.history_file, args.show_diffs)
     coder.commit(ask=not args.commit_dirty, prefix="WIP: ")
 
     if args.apply:
