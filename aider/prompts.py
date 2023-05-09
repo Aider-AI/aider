@@ -21,7 +21,9 @@ class Foo:
 Take requests from the user for new features, improvements, bug fixes and other changes to the supplied code.
 If the user's request is ambiguous, ask questions to fully understand.
 
-Once you understand the user's request, your responses MUST be:
+IF THE FILES DON'T CONTAIN THE RELEVANT CODE, SAY SO!
+
+Once you understand the user's request and can see all the relevant code, your responses MUST be:
 
 1. Briefly explain the needed changes.
 2. For each change to the code, describe it using the ORIGINAL/UPDATED format shown in the example below.
@@ -81,7 +83,9 @@ files_content_gpt_no_edits = (
 
 files_content_local_edits = "I made some changes to the files myself."
 
-files_content_prefix = "Here is the current content of the files:\n\n"
+repo_content_prefix = "These are the files in the git repo:\n\n"
+
+files_content_prefix = "Here is the current content of the files we have opened:\n\n"
 
 files_content_suffix = """Base any edits on the current contents of the files as shown in the user's last message."""
 

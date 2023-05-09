@@ -138,7 +138,7 @@ class Coder:
             repo_content = prompts.repo_content_prefix
             repo_content += files_listing
 
-            all_content = repo_content + '\n' + files_content
+            all_content = repo_content + '\n\n' + files_content
 
 
         files_messages = [
@@ -201,7 +201,7 @@ class Coder:
         messages += self.get_files_messages()
         messages += self.cur_messages
 
-        # self.show_messages(messages, "all")
+        #self.show_messages(messages, "all")
 
         content, interrupted = self.send(messages)
         if interrupted:
