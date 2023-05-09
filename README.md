@@ -1,6 +1,7 @@
 # Aider
 
-Aider is a command-line tool that allows you to chat with GPT about your code. It helps you to make changes, improvements, and bug fixes to your code with the assistance of GPT.
+Aider is a command-line tool that allows you to chat with GPT about your code.
+It can make changes, improvements, and bug fixes to your code with the assistance of GPT.
 
 ## Installation
 
@@ -13,7 +14,7 @@ Aider is a command-line tool that allows you to chat with GPT about your code. I
 Run the Aider tool by executing the following command:
 
 ```
-python -m aider.main <file1> <file2> ...
+aider <file1> <file2> ...
 ```
 
 Replace `<file1>`, `<file2>`, etc., with the paths to the source code files you want to work on.
