@@ -14,7 +14,6 @@ from rich.markdown import Markdown
 
 from pathlib import Path
 
-import os
 import git
 import openai
 
@@ -105,7 +104,7 @@ class Coder:
             self.console.print(f"[red]Files not tracked in {repo.git_dir}:")
             for fn in new_files:
                 self.console.print(f"[red]  {fn}")
-            if Confirm.ask("[bold]Add them?", console=self.console, default="y"):
+            if Confirm.ask("[red bold]Add them?", console=self.console, default="y"):
                 for relative_fname in new_files:
                     repo.git.add(relative_fname)
                     self.console.print(f"[red]Added {relative_fname} to the git repo")
@@ -362,7 +361,13 @@ class Coder:
                     self.console.print(f"[red]Skipping edit to {path}")
                     continue
 
-                self.fnames.add(os.path.abspath(path))
+                Path(full_path).touch()
+                self.fnames.add(full_path)
+
+                if self.repo and Confirm.ask(
+                    f"[red]Add {path} to git?", console=self.console, default="y"
+                ):
+                    self.repo.git.add(full_path)
 
             edited.add(path)
             if utils.do_replace(full_path, original, updated):
