@@ -57,8 +57,8 @@ GPT-3.5 is unable to consistently follow directions to generate concise code edi
 
 Aider can only edit code that fits in the GPT context window.
 For GPT-4 that is 8k tokens.
-It helps to be selective about which of your source files you discuss with aider at once.
+It helps to be selective about which of your source files you discuss with aider at the same time.
 It can also help to refactor your code into more, smaller files.
-Aider can help with perform such refactorings, if you start before the files get too large.
+Aider can help perform such refactorings, if you start before the files get too large.
 
 If you have access to gpt-4-32k, I would be curious to hear how it works with aider.
