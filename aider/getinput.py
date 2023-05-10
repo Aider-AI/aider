@@ -1,6 +1,7 @@
 import os
-import re
-
+from pygments import highlight
+from pygments.lexers import guess_lexer_for_filename
+from pygments.token import Token
 from prompt_toolkit.styles import Style
 
 from prompt_toolkit import prompt
@@ -21,8 +22,11 @@ class FileContentCompleter(Completer):
         for fname in fnames:
             with open(fname, "r") as f:
                 content = f.read()
-            self.words.update(re.split(r"\W+", content))
-
+            lexer = guess_lexer_for_filename(fname, content)
+            tokens = list(lexer.get_tokens(content))
+            self.words.update(
+                token[1] for token in tokens if token[0] in Token.Name
+            )
     def get_completions(self, document, complete_event):
         text = document.text_before_cursor
         words = text.split()
