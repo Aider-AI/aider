@@ -1,4 +1,7 @@
+import os
 import re
+from pathlib import Path
+
 from prompt_toolkit.styles import Style
 
 from prompt_toolkit import prompt
@@ -45,11 +48,15 @@ def canned_input(show_prompt):
     return input_line
 
 
-import os
 
 def get_input(history_file, fnames):
-    common_prefix = os.path.commonprefix(fnames)
-    short_fnames = [fname.replace(common_prefix, '', 1) for fname in fnames]
+    fnames = list(fnames)
+    if len(fnames) > 1:
+        common_prefix = os.path.commonprefix(fnames)
+        short_fnames = [fname.replace(common_prefix, '', 1) for fname in fnames]
+    else:
+        short_fnames = [Path(fnames[0]).name]
+
     show = ' '.join(short_fnames)
     show += "\n> "
 
