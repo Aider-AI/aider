@@ -27,7 +27,11 @@ class Commands:
 
 class FileContentCompleter(Completer):
     def __init__(self, fnames):
-        self.fnames = fnames
+        self.words = []
+        for fname in fnames:
+            with open(fname, "r") as f:
+                content = f.read()
+            self.words.extend(re.split(r'\W+', content))
 
     def get_completions(self, document, complete_event):
         text = document.text_before_cursor
@@ -36,14 +40,9 @@ class FileContentCompleter(Completer):
             return
 
         last_word = words[-1]
-        for fname in self.fnames:
-            with open(fname, "r") as f:
-                content = f.read()
-
-            for word in re.split(r'\W+', content):
-                if word.startswith(last_word):
-                    yield Completion(word, start_position=-len(last_word))
-
+        for word in self.words:
+            if word.startswith(last_word):
+                yield Completion(word, start_position=-len(last_word))
 
 def canned_input(show_prompt):
     console = Console()
