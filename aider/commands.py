@@ -156,12 +156,11 @@ class Commands:
     def cmd_ls(self, args):
         "List files and show their chat status"
 
-        self.console.print("* denotes files included in the chat\n")
         files = self.coder.get_active_files()
 
         for file in files:
             abs_file_path = os.path.abspath(os.path.join(self.coder.root, file))
             if abs_file_path in self.coder.fnames:
-                self.console.print(f"* {file}")
+                self.console.print(f"[red]{file} (in chat)")
             else:
-                self.console.print(f"  {file}")
+                self.console.print(f"[red]{file}")
