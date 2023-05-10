@@ -27,7 +27,9 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 class Coder:
-    fnames = set()
+    fnames = dict()
+    relative_to_fname = dict()
+
     last_modified = 0
     repo = None
 
@@ -60,10 +62,17 @@ class Coder:
             self.console.print(
                 "[red bold]No suitable git repo, will not automatically commit edits."
             )
+            self.find_common_root()
+
+        self.set_relative_fnames()
 
         self.pretty = pretty
         self.show_diffs = show_diffs
 
+    def set_relative_fnames(self):
+        for fname in self.fnames:
+            rel_fname = os.path.relpath(fname, self.root)
+            self.relative_to_fname[rel_fname] = fname
     def find_common_root(self):
         common_prefix = os.path.commonprefix(list(self.fnames))
         self.root = os.path.dirname(common_prefix)
@@ -81,10 +90,9 @@ class Coder:
 
         if num_repos == 0:
             self.console.print("[red bold]Files are not in a git repo.")
+            return
         if num_repos > 1:
             self.console.print("[red bold]Files are in different git repos.")
-        if num_repos != 1:
-            self.find_common_root()
             return
 
         # https://github.com/gitpython-developers/GitPython/issues/427
