@@ -502,7 +502,7 @@ class Coder:
         "Remove files from the chat"
 
         for word in args.split():
-            matched_files = [file for file in self.fnames if word in file]
+            matched_files = [file for file in self.fnames if word in os.path.relpath(file, self.root)]
             for matched_file in matched_files:
                 relative_fname = os.path.relpath(matched_file, self.root)
                 self.fnames.remove(matched_file)
