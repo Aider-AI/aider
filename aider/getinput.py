@@ -12,6 +12,12 @@ import sys
 import time
 import random
 
+class Commands:
+    def help(self):
+        print('help')
+    def ls(self):
+        print('ls')
+
 
 class FileContentCompleter(Completer):
     def __init__(self, fnames):
