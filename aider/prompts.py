@@ -47,6 +47,8 @@ some/dir/example.py
        """Multiplies 2 numbers"""
 >>>>>>> UPDATED
 
+You can make a new file by replying with an ORIGINAL/UPDATE that has an empty ORIGINAL block.
+
 *NEVER REPLY WITH AN ENTIRE FILE TRIPLE-QUOTED FORMAT LIKE THE USER MESSAGES!*
 *ANY CODE YOU INCLUDE IN A REPLY *MUST* BE IN THE ORIGINAL/UPDATED FORMAT!*
 
