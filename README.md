@@ -8,13 +8,14 @@ Each change is automatically committed to git with a sensible commit message.
 
 ## Features
 
-* Chat with GPT-4 about your code by launching aider with set of source files to discuss.
+* Chat with GPT-4 about your code by launching aider with set of source files to discuss and edit together.
 * Request changes, improvements, and bug fixes to your code.
 * Aider will apply the edits suggested by GPT-4.
-* Aider will automatically commit each change to git with a sensible commit message to provide safety, change history and easy undo with normal git tools.
-* Aider can make coordinated code changes across multiple source files at once.
-* Aider will notice if you edit the files outside the chat:
-  * It will ask if you'd like to commit these out-of-band changes.
+* Aider will automatically commit each changeset to git with a sensible commit message. These frequent, automatic commits provide a safety net. It's easy to use standard git workflows to undo or abandon a series of changes which don't pan out.
+* Aider can review multiple source files at once and make coordinated code changes across all of them in a single changeset/commit.
+* You can also edit the files in your editor while chatting with aider.
+  * It will notice if you edit the files outside the chat.
+  * It will help you commit these out-of-band changes if you'd like.
   * It will import the new file contents into the chat.
   * You can bounce back and forth between your aider chat and your editor, to fluidly collaborate with aider.
 * Live, colorized, human friendly output.
@@ -51,7 +52,7 @@ You can also use additional command-line options to customize the behavior of th
 
 Aider basically requires GPT-4.
 You can invoke it with `aider -3` to try using gpt-3.5-turbo, but it will almost certainly fail to function correctly.
-GPT-3.5 is unable to follow directions and generate code changes in a stable, parsable format.
+GPT-3.5 is unable to consistently follow directions to generate code edits in a stable, parsable format.
 
 Aider also can only edit code that can fit in the context window.
 For GPT-4 that is 8k tokens.
