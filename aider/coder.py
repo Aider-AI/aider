@@ -7,10 +7,10 @@ import traceback
 
 from rich.console import Console
 from rich.prompt import Confirm, Prompt
-
 from rich.live import Live
 from rich.text import Text
 from rich.markdown import Markdown
+from rich.syntax import Syntax
 
 from pathlib import Path
 
@@ -530,8 +530,11 @@ class Coder:
             return
 
         diff = self.repo.git.diff(f"{self.last_aider_commit_hash}~1", self.last_aider_commit_hash)
-        self.console.print(Text(diff))
-
+        if self.pretty:
+            syntax_diff = Syntax(diff, "diff", theme="monokai", line_numbers=False)
+            self.console.print(syntax_diff)
+        else:
+            self.console.print(Text(diff))
     def cmd_add(self, args):
         "Add matching files to the chat"
 
