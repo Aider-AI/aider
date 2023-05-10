@@ -31,6 +31,7 @@ class Coder:
 
     last_modified = 0
     repo = None
+    last_aider_commit_hash = None
 
     def __init__(self, main_model, files, pretty, history_file, show_diffs):
         self.history_file = history_file
@@ -245,6 +246,7 @@ class Coder:
         res = self.commit(history=self.cur_messages, prefix="aider: ")
         if res:
             commit_hash, commit_message = res
+            self.last_aider_commit_hash = commit_hash
 
             saved_message = prompts.files_content_gpt_edits.format(
                 hash=commit_hash,
@@ -483,6 +485,9 @@ class Coder:
             files = self.fnames
 
         return files
+
+    def cmd_undo(self, args):
+        "Undo the last git commit if it was done by aider"
 
     def cmd_add(self, args):
         "Add matching files to the chat"
