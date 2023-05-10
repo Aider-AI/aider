@@ -40,7 +40,7 @@ class FileContentCompleter(Completer):
 
         last_word = words[-1]
         for word in self.words:
-            if word.startswith(last_word):
+            if word.lower().startswith(last_word.lower()):
                 yield Completion(word, start_position=-len(last_word))
 
 def canned_input(show_prompt):
