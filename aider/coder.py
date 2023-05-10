@@ -75,13 +75,16 @@ class Coder:
 
         if num_repos == 0:
             self.console.print("[red bold]Files are not in a git repo.")
-            return
         if num_repos > 1:
             self.console.print("[red bold]Files are in different git repos.")
+        if num_repos != 1:
+            self.find_common_root()
             return
 
         # https://github.com/gitpython-developers/GitPython/issues/427
         repo = git.Repo(repo_paths.pop(), odbt=git.GitDB)
+
+        self.root = repo.working_tree_dir
 
         new_files = []
         for fname in self.fnames:
