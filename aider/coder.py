@@ -42,7 +42,7 @@ class Coder:
             self.console = Console(force_terminal=True, no_color=True)
 
         self.commands = Commands(self.console, self)
-
+        self.commands.add("diff", self.cmd_diff, "Display the diff of the last aider commit")
         self.main_model = main_model
         if main_model == "gpt-3.5-turbo":
             self.console.print(
@@ -543,6 +543,19 @@ class Coder:
                 relative_fname = os.path.relpath(matched_file, self.root)
                 self.fnames.remove(matched_file)
                 self.console.print(f"[red]Removed {relative_fname} from the chat")
+
+    def cmd_diff(self, args):
+        "Display the diff of the last aider commit"
+        if not self.repo:
+            self.console.print("[red]No git repository found.")
+            return
+
+        if not self.last_aider_commit_hash:
+            self.console.print("[red]No previous aider commit found.")
+            return
+
+        diff = self.repo.git.diff(f"{self.last_aider_commit_hash}~1", self.last_aider_commit_hash)
+        self.console.print(Text(diff))
 
     def cmd_ls(self, args):
         "List files and show their chat status"
