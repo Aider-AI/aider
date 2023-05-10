@@ -56,7 +56,9 @@ def get_input(history_file, fnames):
     else:
         short_fnames = [os.path.basename(fnames[0])]
     show = ' '.join(short_fnames)
-    show += "\n> "
+    if len(show) > 10:
+        show += "\n"
+    show += "> "
 
     if not sys.stdin.isatty():
         return canned_input(show_prompt)
