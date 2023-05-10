@@ -362,8 +362,9 @@ class Coder:
 
                 self.fnames.add(path)
 
-            edited.add(path)
-            if utils.do_replace(path, original, updated):
+            full_path = os.path.join(self.root, path)
+            edited.add(full_path)
+            if utils.do_replace(full_path, original, updated):
                 self.console.print(f"[red]Applied edit to {path}")
             else:
                 self.console.print(f"[red]Failed to apply edit to {path}")
