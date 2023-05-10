@@ -3,9 +3,11 @@ class Commands:
         self.console = console
 
     def cmd_help(self, args):
-        print("help")
+        "Show help about all commands"
+        pass
 
     def cmd_ls(self, args):
+        "List files and show their chat status"
         print("ls")
 
     def get_commands(self):
