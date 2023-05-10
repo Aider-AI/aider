@@ -10,9 +10,9 @@ class Commands:
             cmd_method = getattr(self, cmd_method_name, None)
             if cmd_method:
                 description = cmd_method.__doc__
-                self.console.print(f"{cmd}: {description}")
+                self.console.print(f"{cmd} {description}")
             else:
-                self.console.print(f"{cmd}: No description available.")
+                self.console.print(f"{cmd} No description available.")
     def cmd_ls(self, args):
         "List files and show their chat status"
         print("ls")
@@ -45,7 +45,6 @@ class Commands:
         matching_commands = [cmd for cmd in all_commands if cmd.startswith(first_word)]
 
         if len(matching_commands) == 1:
-            self.console.print("[green]run", matching_commands[0])
             self.do_run(matching_commands[0][1:], rest_inp)
         elif len(matching_commands) > 1:
             self.console.print("[red]Ambiguous command:", ", ".join(matching_commands))
