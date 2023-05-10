@@ -488,7 +488,7 @@ class Coder:
         "Add files to the chat"
 
         files = self.get_active_files()
-        for word in args:
+        for word in args.split():
             matched_files = [file for file in files if word in file]
             for matched_file in matched_files:
                 abs_file_path = os.path.abspath(os.path.join(self.root, matched_file))
