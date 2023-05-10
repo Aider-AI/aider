@@ -55,7 +55,7 @@ class Coder:
             else:
                 self.console.print(f"[red]Loading {fname}")
 
-            self.fnames.add(str(fname))
+            self.fnames.add(os.path.abspath(str(fname)))
 
         self.set_repo()
         if not self.repo:
@@ -349,7 +349,7 @@ class Coder:
 
             path = path.strip()
 
-            full_path = os.path.join(self.root, path)
+            full_path = os.path.abspath(os.path.join(self.root, path))
 
             if full_path not in self.fnames:
                 if not Path(full_path).exists():
@@ -362,7 +362,7 @@ class Coder:
                     self.console.print(f"[red]Skipping edit to {path}")
                     continue
 
-                self.fnames.add(path)
+                self.fnames.add(os.path.abspath(path))
 
             edited.add(path)
             if utils.do_replace(full_path, original, updated):
