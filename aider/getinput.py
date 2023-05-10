@@ -18,6 +18,12 @@ class Commands:
     def cmd_ls(self):
         print('ls')
 
+    def get_commands(self):
+        commands = []
+        for attr in dir(self):
+            if attr.startswith("cmd_"):
+                commands.append(attr[4:])
+        return commands
 
 class FileContentCompleter(Completer):
     def __init__(self, fnames):
