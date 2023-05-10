@@ -31,12 +31,12 @@ class FileContentCompleter(Completer):
                     yield Completion(word, start_position=-len(last_word))
 
 
-def canned_input():
+def canned_input(show_prompt):
     console = Console()
 
     input_line = input()
 
-    console.print("> ", end="", style="green")
+    console.print(show_prompt, end="", style="green")
     for char in input_line:
         console.print(char, end="", style="green")
         time.sleep(random.uniform(0.01, 0.15))
@@ -46,8 +46,11 @@ def canned_input():
 
 
 def get_input(history_file, fnames):
+    show = ' '.join(fnames)
+    show += "\n> "
+
     if not sys.stdin.isatty():
-        return canned_input()
+        return canned_input(show_prompt)
 
     inp = ""
     multiline_input = False
@@ -58,8 +61,6 @@ def get_input(history_file, fnames):
         completer_instance = FileContentCompleter(fnames)
         if multiline_input:
             show = ". "
-        else:
-            show = "> "
 
         line = prompt(
             show,
