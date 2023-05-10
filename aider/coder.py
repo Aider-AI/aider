@@ -485,7 +485,7 @@ class Coder:
         return files
 
     def cmd_add(self, args):
-        "Add files to the chat"
+        "Add matching files to the chat"
 
         files = self.get_active_files()
         for word in args.split():
@@ -499,7 +499,7 @@ class Coder:
                     self.console.print(f"[red]{matched_file} is already in the chat")
 
     def cmd_drop(self, args):
-        "Remove files from the chat"
+        "Remove matching files from the chat"
 
         for word in args.split():
             matched_files = [file for file in self.fnames if word in os.path.relpath(file, self.root)]
