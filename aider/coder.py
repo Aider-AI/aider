@@ -446,7 +446,7 @@ class Coder:
         full_commit_message = commit_message + "\n\n" + context
         repo.git.commit("-m", full_commit_message, "--no-verify")
         commit_hash = repo.head.commit.hexsha[:7]
-        self.console.print(f"[green]{commit_hash} {commit_message}")
+        self.console.print(f"[red]{commit_hash} {commit_message}")
 
         self.last_modified = self.get_last_modified()
 
