@@ -179,8 +179,6 @@ class Coder:
             print()
 
         inp = get_input(self.history_file, self.fnames)
-        if inp is None:
-            return
 
         self.num_control_c = 0
 
@@ -194,6 +192,9 @@ class Coder:
                 dict(role="assistant", content="Ok."),
             ]
             self.cur_messages = []
+
+        if not inp:
+            return
 
         self.cur_messages += [
             dict(role="user", content=inp),
