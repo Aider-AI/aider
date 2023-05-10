@@ -14,5 +14,17 @@ class Commands:
         return commands
 
     def run(self, inp, console):
-        console.print('[red]', inp)
         words = inp.strip().split()
+        if not words:
+            return
+
+        first_word = words[0]
+        all_commands = self.get_commands()
+        matching_commands = [cmd for cmd in all_commands if cmd.startswith(first_word)]
+
+        if len(matching_commands) == 1:
+            console.print('[green]run', matching_commands[0])
+        elif len(matching_commands) > 1:
+            console.print('[yellow]Partial matches:', ', '.join(matching_commands))
+        else:
+            console.print('[red]Error: Command not found')
