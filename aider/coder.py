@@ -493,10 +493,9 @@ class Coder:
             return
 
         last_commit = self.repo.head.commit
-        if not last_commit.message.startswith("aider:"):
-            self.console.print("[red]The last commit was not made by Aider.")
+        if not last_commit.message.startswith("aider:") or last_commit.hexsha[:7] != self.last_aider_commit_hash:
+            self.console.print("[red]The last commit was not made by Aider or the commit hash does not match.")
             return
-
         self.repo.git.reset("--hard", "HEAD~1")
         self.console.print(f"[red]Undid the last commit: {last_commit.message.strip()}")
     def cmd_add(self, args):
