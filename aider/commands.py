@@ -1,25 +1,23 @@
 class Commands:
-    def __init__(self, console):
+    def __init__(self, console, obj):
         self.console = console
+        self.obj = obj
 
-    def cmd_help(self, args):
+    def help(self):
         "Show help about all commands"
         commands = self.get_commands()
         for cmd in commands:
             cmd_method_name = f"cmd_{cmd[1:]}"
-            cmd_method = getattr(self, cmd_method_name, None)
+            cmd_method = getattr(self.obj, cmd_method_name, None)
             if cmd_method:
                 description = cmd_method.__doc__
                 self.console.print(f"{cmd} {description}")
             else:
                 self.console.print(f"{cmd} No description available.")
-    def cmd_ls(self, args):
-        "List files and show their chat status"
-        print("ls")
 
     def get_commands(self):
-        commands = []
-        for attr in dir(self):
+        commands = ["/help"]
+        for attr in dir(self.obj):
             if attr.startswith("cmd_"):
                 commands.append("/" + attr[4:])
 
@@ -27,7 +25,7 @@ class Commands:
 
     def do_run(self, cmd_name, args):
         cmd_method_name = f"cmd_{cmd_name}"
-        cmd_method = getattr(self, cmd_method_name, None)
+        cmd_method = getattr(self.obj, cmd_method_name, None)
         if cmd_method:
             cmd_method(args)
         else:
@@ -45,7 +43,10 @@ class Commands:
         matching_commands = [cmd for cmd in all_commands if cmd.startswith(first_word)]
 
         if len(matching_commands) == 1:
-            self.do_run(matching_commands[0][1:], rest_inp)
+            if matching_commands[0] == "/help":
+                self.help()
+            else:
+                self.do_run(matching_commands[0][1:], rest_inp)
         elif len(matching_commands) > 1:
             self.console.print("[red]Ambiguous command:", ", ".join(matching_commands))
         else:

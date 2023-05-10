@@ -40,7 +40,7 @@ class Coder:
         else:
             self.console = Console(force_terminal=True, no_color=True)
 
-        self.commands = Commands(self.console)
+        self.commands = Commands(self.console, self)
 
         self.main_model = main_model
         if main_model == "gpt-3.5-turbo":
@@ -475,3 +475,7 @@ class Coder:
         self.last_modified = self.get_last_modified()
 
         return commit_hash, commit_message
+
+    def cmd_ls(self, args):
+        "List files and show their chat status"
+        print("ls")
