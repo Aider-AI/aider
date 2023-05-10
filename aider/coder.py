@@ -498,6 +498,16 @@ class Coder:
                 else:
                     self.console.print(f"[red]{matched_file} is already in the chat")
 
+    def cmd_drop(self, args):
+        "Remove files from the chat"
+
+        for word in args.split():
+            matched_files = [file for file in self.fnames if word in file]
+            for matched_file in matched_files:
+                relative_fname = os.path.relpath(matched_file, self.root)
+                self.fnames.remove(matched_file)
+                self.console.print(f"[red]Removed {relative_fname} from the chat")
+
     def cmd_ls(self, args):
         "List files and show their chat status"
 
