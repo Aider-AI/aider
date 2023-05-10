@@ -21,6 +21,15 @@ Each change is automatically committed to git with a sensible commit message.
 * Live, colorized, human friendly output.
 * Readline style chat input history, with autocompletion of tokens found in the source files being discussed (via `prompt_toolkit`)
 
+## Commands
+
+Aider supports the following commands:
+
+* `/add <file>`: Add files to the chat.
+* `/drop <file>`: Remove files from the chat.
+* `/ls`: List files and show their chat status.
+
+To use a command, simply type it in the chat input followed by any required arguments.
 ## Installation
 
 1. Install the package: `pip install git+https://github.com/paul-gauthier/aider.git`
