@@ -53,12 +53,12 @@ You can also use additional command-line options to customize the behavior of th
 
 Aider basically requires GPT-4.
 You can invoke it with `aider -3` to try using gpt-3.5-turbo, but it will almost certainly fail to function correctly.
-GPT-3.5 is unable to consistently follow directions to generate code edits in a stable, parsable format.
+GPT-3.5 is unable to consistently follow directions to generate concise code edits in a stable, parsable format.
 
-Aider also can only edit code that can fit in the context window.
+Aider can only edit code that fits in the GPT context window.
 For GPT-4 that is 8k tokens.
-It helps to be selective about which of your source files you give to aider.
+It helps to be selective about which of your source files you discuss with aider at once.
 It can also help to refactor your code into more, smaller files.
-Aider can help with such refactorings if you start them before the files hit the context window limit.
+Aider can help with perform such refactorings, if you start before the files get too large.
 
 If you have access to gpt-4-32k, I would be curious to hear how it works with aider.
