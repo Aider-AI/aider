@@ -543,6 +543,8 @@ class Coder:
         files = self.get_active_files()
         for word in args.split():
             matched_files = [file for file in files if word in file]
+            if not matched_files:
+                self.console.print(f"[red]No files matched '{word}'")
             for matched_file in matched_files:
                 abs_file_path = os.path.abspath(os.path.join(self.root, matched_file))
                 if abs_file_path not in self.fnames:
@@ -556,6 +558,8 @@ class Coder:
 
         for word in args.split():
             matched_files = [file for file in self.fnames if word in os.path.relpath(file, self.root)]
+            if not matched_files:
+                self.console.print(f"[red]No files matched '{word}'")
             for matched_file in matched_files:
                 relative_fname = os.path.relpath(matched_file, self.root)
                 self.fnames.remove(matched_file)
