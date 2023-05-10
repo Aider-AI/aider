@@ -488,7 +488,15 @@ class Coder:
         "Add files to the chat"
 
         files = self.get_active_files()
-
+        for word in args:
+            matched_files = [file for file in files if word in file]
+            for matched_file in matched_files:
+                abs_file_path = os.path.abspath(os.path.join(self.root, matched_file))
+                if abs_file_path not in self.fnames:
+                    self.fnames.add(abs_file_path)
+                    self.console.print(f"[red]Added {matched_file} to the chat")
+                else:
+                    self.console.print(f"[red]{matched_file} is already in the chat")
 
     def cmd_ls(self, args):
         "List files and show their chat status"
