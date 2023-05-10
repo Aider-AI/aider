@@ -22,24 +22,33 @@ class Commands:
         commands = []
         for attr in dir(self):
             if attr.startswith("cmd_"):
-                commands.append(attr[4:])
+                commands.append('/' + attr[4:])
+
         return commands
 
 class FileContentCompleter(Completer):
-    def __init__(self, fnames):
+    def __init__(self, fnames, commands):
+        self.commands = commands
+
         self.words = set()
         for fname in fnames:
             with open(fname, "r") as f:
                 content = f.read()
             self.words.update(re.split(r'\W+', content))
+
     def get_completions(self, document, complete_event):
         text = document.text_before_cursor
         words = text.split()
         if not words:
             return
 
+        if text[0] == '/' and len(words) == 1:
+            candidates = self.commands.get_commands()
+        else:
+            candidates = self.words
+
         last_word = words[-1]
-        for word in self.words:
+        for word in candidates:
             if word.lower().startswith(last_word.lower()):
                 yield Completion(word, start_position=-len(last_word))
 
@@ -79,7 +88,7 @@ def get_input(history_file, fnames):
     style = Style.from_dict({"": "green"})
 
     while True:
-        completer_instance = FileContentCompleter(fnames)
+        completer_instance = FileContentCompleter(fnames, Commands())
         if multiline_input:
             show = ". "
 
