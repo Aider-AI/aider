@@ -442,7 +442,9 @@ class Coder:
         commit_message = commit_message.strip().strip('"').strip()
 
         if interrupted:
-            commit_message = "Saving dirty files before chat"
+            self.console.print("[red]Unable to get commit message from gpt-3.5-turbo. Use /commit to try again.\n")
+            return
+
 
         if prefix:
             commit_message = prefix + commit_message
