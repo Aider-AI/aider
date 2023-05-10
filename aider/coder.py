@@ -476,14 +476,29 @@ class Coder:
 
         return commit_hash, commit_message
 
+    def get_active_files(self):
+        if self.repo:
+            files = sorted(self.repo.git.ls_files().splitlines())
+        else:
+            files = self.fnames
+
+        return files
+
+    def cmd_add(self, args):
+        "Add files to the chat"
+
+        files = self.get_active_files()
+
+
     def cmd_ls(self, args):
         "List files and show their chat status"
 
-        if self.repo:
-            tracked_files = set(self.repo.git.ls_files().splitlines())
-            for file in tracked_files:
-                abs_file_path = os.path.abspath(os.path.join(self.root, file))
-                if abs_file_path in self.fnames:
-                    print(f"{file} (in chat)")
-                else:
-                    print(file)
+        self.console.print(f"* denotes files included in the chat\n")
+        files = self.get_active_files()
+
+        for file in files:
+            abs_file_path = os.path.abspath(os.path.join(self.root, file))
+            if abs_file_path in self.fnames:
+                self.console.print(f"* {file}")
+            else:
+                self.console.print(f"  {file}")
