@@ -58,7 +58,9 @@ def get_input(history_file, fnames, commands):
 
     fnames = list(fnames)
     if len(fnames) > 1:
-        common_prefix = os.path.commonprefix(fnames)
+        common_prefix = os.path.commonpath(fnames)
+        if not common_prefix.endswith(os.path.sep):
+            common_prefix += os.path.sep
         short_fnames = [fname.replace(common_prefix, "", 1) for fname in fnames]
     else:
         short_fnames = [os.path.basename(fnames[0])]
