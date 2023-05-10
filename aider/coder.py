@@ -63,6 +63,13 @@ class Coder:
         self.pretty = pretty
         self.show_diffs = show_diffs
 
+    def find_common_root(self):
+        import os
+
+        common_prefix = os.path.commonprefix(list(self.fnames))
+        self.root = os.path.dirname(common_prefix)
+        self.console.print(f"[red]Common root directory: {self.root}")
+
     def set_repo(self):
         repo_paths = []
         for fname in self.fnames:
