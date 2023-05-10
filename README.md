@@ -25,10 +25,10 @@ Each change is automatically committed to git with a sensible commit message.
 
 Aider supports the following commands:
 
+* `/help`: Show help about all commands.
 * `/add <file>`: Add files to the chat.
 * `/drop <file>`: Remove files from the chat.
 * `/ls`: List files and show their chat status.
-
 To use a command, simply type it in the chat input followed by any required arguments.
 ## Installation
 
