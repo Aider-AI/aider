@@ -47,7 +47,6 @@ You can also use additional command-line options to customize the behavior of th
 * GPT-4 knows about a lot of standard tools and libraries, but may get some of the fine details wrong about APIs and function arguments. You can paste doc snippets into the chat with the  multiline `{}` syntax.
 * Aider will notice if you launch it on files with uncommitted changes and offer to commit them before proceeding.
 * Aider can only see the content of the files you specify, but it also gets a list of all the files in the repo. It may ask to see additional files if it feels that's needed for your requests. Relaunch with the additional files on the command line. Use the up-arrow to re-issue your request from the chat input history.
-* Aider will sometimes ask to create new files, which requires your confirmation. If you know it will need to make a new file, you can help by naming it on the command line. This will make an empty file, lets you pick the filename and gets the confirmation out of the way up front.
 
 ## Limitations
 
