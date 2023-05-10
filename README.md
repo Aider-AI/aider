@@ -11,7 +11,7 @@ Each change is automatically committed to git with a sensible commit message.
 * Chat with GPT-4 about your code by launching aider with set of source files to discuss and edit together.
 * Request changes, improvements, and bug fixes to your code.
 * Aider will apply the edits suggested by GPT-4.
-* Aider will automatically commit each changeset to git with a sensible commit message. These frequent, automatic commits provide a safety net. It's easy to use standard git workflows to undo or abandon a series of changes which don't pan out.
+* Aider will automatically commit each changeset to git with a sensible commit message. These frequent, automatic commits provide a safety net. It's easy to use standard git workflows to either adopt or undo/abandon a series of changes..
 * Aider can review multiple source files at once and make coordinated code changes across all of them in a single changeset/commit.
 * You can also edit the files in your editor while chatting with aider.
   * It will notice if you edit the files outside the chat.
