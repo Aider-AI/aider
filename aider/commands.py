@@ -1,5 +1,7 @@
 
 class Commands:
+    def __init__(self, console):
+        self.console = console
     def cmd_help(self, args):
         print('help')
     def cmd_ls(self, args):
