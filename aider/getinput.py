@@ -1,6 +1,5 @@
 import os
 import re
-from pathlib import Path
 
 from prompt_toolkit.styles import Style
 
