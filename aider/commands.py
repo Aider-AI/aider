@@ -4,8 +4,15 @@ class Commands:
 
     def cmd_help(self, args):
         "Show help about all commands"
-        pass
-
+        commands = self.get_commands()
+        for cmd in commands:
+            cmd_method_name = f"cmd_{cmd[1:]}"
+            cmd_method = getattr(self, cmd_method_name, None)
+            if cmd_method:
+                description = cmd_method.__doc__
+                self.console.print(f"{cmd}: {description}")
+            else:
+                self.console.print(f"{cmd}: No description available.")
     def cmd_ls(self, args):
         "List files and show their chat status"
         print("ls")
