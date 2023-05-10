@@ -27,12 +27,11 @@ class Commands:
 
 class FileContentCompleter(Completer):
     def __init__(self, fnames):
-        self.words = []
+        self.words = set()
         for fname in fnames:
             with open(fname, "r") as f:
                 content = f.read()
-            self.words.extend(re.split(r'\W+', content))
-
+            self.words.update(re.split(r'\W+', content))
     def get_completions(self, document, complete_event):
         text = document.text_before_cursor
         words = text.split()
