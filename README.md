@@ -1,7 +1,7 @@
 # Aider
 
 Aider is a command-line tool that allows you to chat with GPT-4 about your code.
-It can make changes, improvements, and bug fixes to your code in your local git repo.
+It can make changes, improvements, and bug fixes to the code in your local git repo.
 Each change is automatically committed to git with a sensible commit message.
 
 [![asciicast](https://asciinema.org/a/Ol6alHMmm4ZrVcOfXkMveS7eQ.svg)](https://asciinema.org/a/Ol6alHMmm4ZrVcOfXkMveS7eQ)
@@ -14,10 +14,10 @@ Each change is automatically committed to git with a sensible commit message.
 * Aider will automatically commit each changeset to git with a sensible commit message. These frequent, automatic commits provide a safety net. It's easy to use standard git workflows to either adopt or undo/abandon a series of changes..
 * Aider can review multiple source files at once and make coordinated code changes across all of them in a single changeset/commit.
 * You can also edit the files in your editor while chatting with aider.
-  * It will notice if you edit the files outside the chat.
+  * Aider will notice if you edit the files outside the chat.
   * It will help you commit these out-of-band changes if you'd like.
   * It will import the new file contents into the chat.
-  * You can bounce back and forth between your aider chat and your editor, to fluidly collaborate with aider.
+  * You can bounce back and forth between the aider chat and your editor, to fluidly collaborate.
 * Live, colorized, human friendly output.
 * Readline style chat input history, with autocompletion of tokens found in the source files being discussed (via `prompt_toolkit`)
 
