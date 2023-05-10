@@ -1,4 +1,5 @@
 import os
+from rich.text import Text
 
 
 class Commands:
@@ -43,21 +44,19 @@ class Commands:
         rest_inp = inp[len(words[0]) :]
 
         all_commands = self.get_commands()
-        matching_commands = [
-            cmd for cmd in all_commands if cmd.startswith(first_word)
-        ]
+        matching_commands = [cmd for cmd in all_commands if cmd.startswith(first_word)]
         if len(matching_commands) == 1:
             if matching_commands[0] == "/help":
                 self.help()
             else:
                 self.do_run(matching_commands[0][1:], rest_inp)
         elif len(matching_commands) > 1:
-            self.console.print(f"[red]Ambiguous command: {', '.join(matching_commands)}")
+            self.console.print("[red]Ambiguous command: ', '.join(matching_commands)}")
         else:
             self.console.print(f"[red]Error: {first_word} is not a valid command.")
 
     def cmd_commit(self, args):
-        "Commit outstanding changes to the chat files. Aider will provide a commit message if yo u don't."
+        "Commit edits to chat files made outside the chat (commit message optional)"
 
         if not self.coder.repo:
             self.console.print("[red]No git repository found.")
@@ -157,7 +156,7 @@ class Commands:
     def cmd_ls(self, args):
         "List files and show their chat status"
 
-        self.console.print(f"* denotes files included in the chat\n")
+        self.console.print("* denotes files included in the chat\n")
         files = self.coder.get_active_files()
 
         for file in files:
