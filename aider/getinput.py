@@ -55,8 +55,7 @@ def get_input(history_file, fnames):
         common_prefix = os.path.commonprefix(fnames)
         short_fnames = [fname.replace(common_prefix, '', 1) for fname in fnames]
     else:
-        short_fnames = [Path(fnames[0]).name]
-
+        short_fnames = [os.path.basename(fnames[0])]
     show = ' '.join(short_fnames)
     show += "\n> "
 
