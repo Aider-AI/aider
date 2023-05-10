@@ -27,7 +27,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 class Coder:
-    fnames = dict()
+    fnames = set()
     relative_to_fname = dict()
 
     last_modified = 0
