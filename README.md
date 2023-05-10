@@ -4,7 +4,7 @@ Aider is a command-line tool that allows you to chat with GPT-4 about your code.
 It can make changes, improvements, and bug fixes to your code in your local git repo.
 Each change is automatically committed to git with a sensible commit message.
 
-[![asciicast](https://asciinema.org/a/uiDJcksXTuHbrmpHiKJUWIBVU.svg)](https://asciinema.org/a/uiDJcksXTuHbrmpHiKJUWIBVU)
+[![asciicast](https://asciinema.org/a/Ol6alHMmm4ZrVcOfXkMveS7eQ.svg)](https://asciinema.org/a/Ol6alHMmm4ZrVcOfXkMveS7eQ)
 
 ## Features
 
@@ -44,7 +44,7 @@ You can also use additional command-line options to customize the behavior of th
 * Use Control-C to safely interrupt aider if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply with more information or direction.
 * Enter a multiline chat message by entering `{` alone on the first line. End the multiline message with `}` alone on the last line.
 * If your code is throwing an error, paste the error message and stack trace into aider as a multiline `{}` message and let aider fix the bug.
-* GPT-4 knows about a lot of standard tools and libraries, but may get some of the fine details wrong about APIs and function arguments. You can paste doc snippets into the chat with the `{}` multiline syntax.
+* GPT-4 knows about a lot of standard tools and libraries, but may get some of the fine details wrong about APIs and function arguments. You can paste doc snippets into the chat with the  multiline `{}` syntax.
 * Aider will notice if you launch it on files with uncommitted changes and offer to commit them before proceeding.
 * Aider can only see the content of the files you specify, but it also gets a list of all the files in the repo. It may ask to see additional files if it feels that's needed for your requests. Relaunch with the additional files on the command line.
 * Aider will sometimes ask to create new files, which requires your confirmation. If you know it will need to make a new file, you can help by naming it on the command line. This will make an empty file, lets you pick the filename and gets the confirmation out of the way up front.
@@ -60,4 +60,5 @@ For GPT-4 that is 8k tokens.
 It helps to be selective about which of your source files you give to aider.
 It can also help to refactor your code into more, smaller files.
 Aider can help with such refactorings if you start them before the files hit the context window limit.
+
 If you have access to gpt-4-32k, I would be curious to hear how it works with aider.
