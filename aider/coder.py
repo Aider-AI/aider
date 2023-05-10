@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import sys
 import re
 import traceback
@@ -64,8 +65,6 @@ class Coder:
         self.show_diffs = show_diffs
 
     def find_common_root(self):
-        import os
-
         common_prefix = os.path.commonprefix(list(self.fnames))
         self.root = os.path.dirname(common_prefix)
         self.console.print(f"[red]Common root directory: {self.root}")
