@@ -1,8 +1,8 @@
 
 class Commands:
-    def cmd_help(self):
+    def cmd_help(self, args):
         print('help')
-    def cmd_ls(self):
+    def cmd_ls(self, args):
         print('ls')
 
     def get_commands(self):
@@ -14,8 +14,12 @@ class Commands:
         return commands
 
     def do_run(self, cmd_name, args):
-        pass
-
+        cmd_method_name = f"cmd_{cmd_name}"
+        cmd_method = getattr(self, cmd_method_name, None)
+        if cmd_method:
+            cmd_method(args)
+        else:
+            print(f"Error: Command {cmd_name} not found.")
     def run(self, inp, console):
         words = inp.strip().split()
         if not words:
