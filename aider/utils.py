@@ -3,7 +3,7 @@ import math
 from difflib import SequenceMatcher
 from pathlib import Path
 
-# from dump import dump
+# from aider.dump import dump
 
 
 def replace_most_similar_chunk(whole, part, replace):
@@ -22,7 +22,7 @@ def replace_most_similar_chunk(whole, part, replace):
 
     for length in range(min_len, max_len):
         for i in range(len(whole_lines) - length + 1):
-            chunk = whole_lines[i : i + length + 1]
+            chunk = whole_lines[i : i + length]
             chunk = "\n".join(chunk)
 
             similarity = SequenceMatcher(None, chunk, part).ratio()
@@ -30,7 +30,7 @@ def replace_most_similar_chunk(whole, part, replace):
             if similarity > max_similarity and similarity:
                 max_similarity = similarity
                 most_similar_chunk_start = i
-                most_similar_chunk_end = i + length + 1
+                most_similar_chunk_end = i + length
 
     if max_similarity < similarity_thresh:
         return
@@ -42,6 +42,7 @@ def replace_most_similar_chunk(whole, part, replace):
         + whole_lines[most_similar_chunk_end:]
     )
     modified_whole = "\n".join(modified_whole) + "\n"
+
     return modified_whole
 
 
