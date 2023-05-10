@@ -69,7 +69,7 @@ class Coder:
         self.show_diffs = show_diffs
 
     def find_common_root(self):
-        common_prefix = os.path.commonprefix(list(self.fnames))
+        common_prefix = os.path.commonpath(list(self.fnames))
         self.root = os.path.dirname(common_prefix)
         self.console.print(f"[red]Common root directory: {self.root}")
 
