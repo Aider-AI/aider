@@ -28,7 +28,6 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 class Coder:
     fnames = set()
-    commands = Commands()
 
     last_modified = 0
     repo = None
@@ -40,6 +39,8 @@ class Coder:
             self.console = Console()
         else:
             self.console = Console(force_terminal=True, no_color=True)
+
+        self.commands = Commands(self.console)
 
         self.main_model = main_model
         if main_model == "gpt-3.5-turbo":
@@ -184,7 +185,7 @@ class Coder:
         inp = get_input(self.history_file, self.fnames, self.commands)
 
         if inp.startswith("/"):
-            self.commands.run(inp, self.console)
+            self.commands.run(inp)
             return
 
         self.num_control_c = 0
