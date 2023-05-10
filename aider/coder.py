@@ -64,15 +64,9 @@ class Coder:
             )
             self.find_common_root()
 
-        self.set_relative_fnames()
-
         self.pretty = pretty
         self.show_diffs = show_diffs
 
-    def set_relative_fnames(self):
-        for fname in self.fnames:
-            rel_fname = os.path.relpath(fname, self.root)
-            self.relative_to_fname[rel_fname] = fname
     def find_common_root(self):
         common_prefix = os.path.commonprefix(list(self.fnames))
         self.root = os.path.dirname(common_prefix)
