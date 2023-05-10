@@ -6,7 +6,7 @@ from prompt_toolkit.styles import Style
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.history import FileHistory
-from prompt_toolkit.completion import CompleteStyle
+from prompt_toolkit.shortcuts import CompleteStyle
 from rich.console import Console
 import sys
 import time
@@ -86,7 +86,7 @@ def get_input(history_file, fnames, commands):
             history=FileHistory(history_file),
             style=style,
             reserve_space_for_menu=4,
-            #complete_style=CompleteStyle.MULTI_COLUMN,
+            complete_style=CompleteStyle.MULTI_COLUMN,
         )
         if line.strip() == "{" and not multiline_input:
             multiline_input = True
