@@ -478,4 +478,12 @@ class Coder:
 
     def cmd_ls(self, args):
         "List files and show their chat status"
-        print("ls")
+
+        if self.repo:
+            tracked_files = set(self.repo.git.ls_files().splitlines())
+            for file in tracked_files:
+                abs_file_path = os.path.abspath(os.path.join(self.root, file))
+                if abs_file_path in self.fnames:
+                    print(f"{file} (in chat)")
+                else:
+                    print(file)
