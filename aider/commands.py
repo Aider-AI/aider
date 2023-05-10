@@ -77,7 +77,7 @@ class Commands:
             self.coder.repo.git.add(
                 *[
                     os.path.relpath(fname, self.coder.repo.working_tree_dir)
-                    for fname in self.coder.fnames
+                    for fname in self.coder.abs_fnames
                 ]
             )
             self.coder.repo.git.commit("-m", commit_message, "--no-verify")
@@ -128,7 +128,7 @@ class Commands:
     def cmd_add(self, args):
         "Add matching files to the chat"
 
-        files = self.coder.get_active_files()
+        files = self.coder.get_all_relative_files()
         for word in args.split():
             matched_files = [file for file in files if word in file]
             if not matched_files:
@@ -137,22 +137,19 @@ class Commands:
                 abs_file_path = os.path.abspath(
                     os.path.join(self.coder.root, matched_file)
                 )
-                if abs_file_path not in self.coder.fnames:
-                    self.coder.fnames.add(abs_file_path)
+                if abs_file_path not in self.coder.abs_fnames:
+                    self.coder.abs_fnames.add(abs_file_path)
                     self.console.print(f"[red]Added {matched_file} to the chat")
                 else:
                     self.console.print(f"[red]{matched_file} is already in the chat")
 
     def completions_add(self):
-        return self.coder.get_active_files()
+        res = set(self.coder.get_all_relative_files())
+        res = res - set(self.coder.get_inchat_relative_files())
+        return res
 
     def completions_drop(self):
-        active_files = self.coder.get_active_files()
-        return [
-            os.path.relpath(file, self.coder.root)
-            for file in self.coder.fnames
-            if file in active_files
-        ]
+        return self.coder.get_inchat_relative_files()
 
     def cmd_drop(self, args):
         "Remove matching files from the chat"
@@ -160,26 +157,27 @@ class Commands:
         for word in args.split():
             matched_files = [
                 file
-                for file in self.coder.fnames
+                for file in self.coder.abs_fnames
                 if word in os.path.relpath(file, self.coder.root)
             ]
             if not matched_files:
                 self.console.print(f"[red]No files matched '{word}'")
             for matched_file in matched_files:
                 relative_fname = os.path.relpath(matched_file, self.coder.root)
-                self.coder.fnames.remove(matched_file)
+                self.coder.abs_fnames.remove(matched_file)
                 self.console.print(f"[red]Removed {relative_fname} from the chat")
+
     def cmd_ls(self, args):
         "List files and show their chat status"
 
-        files = self.coder.get_active_files()
+        files = self.coder.get_all_relative_files()
 
         self.console.print("[red]Files in chat:\n")
 
         other_files = []
         for file in files:
             abs_file_path = os.path.abspath(os.path.join(self.coder.root, file))
-            if abs_file_path in self.coder.fnames:
+            if abs_file_path in self.coder.abs_fnames:
                 self.console.print(f"[red]  {file}")
             else:
                 other_files.append(file)

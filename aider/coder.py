@@ -25,7 +25,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 class Coder:
-    fnames = set()
+    abs_fnames = set()
 
     last_modified = 0
     repo = None
@@ -54,7 +54,7 @@ class Coder:
             else:
                 self.console.print(f"[red]Loading {fname}")
 
-            self.fnames.add(os.path.abspath(str(fname)))
+            self.abs_fnames.add(os.path.abspath(str(fname)))
 
         self.set_repo()
         if not self.repo:
@@ -67,13 +67,13 @@ class Coder:
         self.show_diffs = show_diffs
 
     def find_common_root(self):
-        common_prefix = os.path.commonpath(list(self.fnames))
+        common_prefix = os.path.commonpath(list(self.abs_fnames))
         self.root = os.path.dirname(common_prefix)
         self.console.print(f"[red]Common root directory: {self.root}")
 
     def set_repo(self):
         repo_paths = []
-        for fname in self.fnames:
+        for fname in self.abs_fnames:
             try:
                 repo_path = git.Repo(fname, search_parent_directories=True).git_dir
                 repo_paths.append(repo_path)
@@ -94,7 +94,7 @@ class Coder:
         self.root = repo.working_tree_dir
 
         new_files = []
-        for fname in self.fnames:
+        for fname in self.abs_fnames:
             relative_fname = os.path.relpath(fname, repo.working_tree_dir)
             tracked_files = set(repo.git.ls_files().splitlines())
             if relative_fname not in tracked_files:
@@ -124,13 +124,13 @@ class Coder:
 
     def get_files_content(self):
         prompt = ""
-        for fname in self.fnames:
+        for fname in self.abs_fnames:
             relative_fname = os.path.relpath(fname, self.root)
             prompt += utils.quoted_file(fname, relative_fname)
         return prompt
 
     def get_last_modified(self):
-        return max(Path(fname).stat().st_mtime for fname in self.fnames)
+        return max(Path(fname).stat().st_mtime for fname in self.abs_fnames)
 
     def get_files_messages(self):
         files_content = prompts.files_content_prefix
@@ -180,7 +180,7 @@ class Coder:
         else:
             print()
 
-        inp = get_input(self.history_file, self.fnames, self.commands)
+        inp = get_input(self.history_file, self.abs_fnames, self.commands)
 
         if inp.startswith("/"):
             self.commands.run(inp)
@@ -355,7 +355,7 @@ class Coder:
 
             full_path = os.path.abspath(os.path.join(self.root, path))
 
-            if full_path not in self.fnames:
+            if full_path not in self.abs_fnames:
                 if not Path(full_path).exists():
                     question = f"[red]Allow creation of new file {path}?"
                 else:
@@ -367,7 +367,7 @@ class Coder:
                     continue
 
                 Path(full_path).touch()
-                self.fnames.add(full_path)
+                self.abs_fnames.add(full_path)
 
                 if self.repo and Confirm.ask(
                     f"[red]Add {path} to git?", console=self.console, default="y"
@@ -393,7 +393,7 @@ class Coder:
         diffs = ""
         dirty_fnames = []
         relative_dirty_fnames = []
-        for fname in self.fnames:
+        for fname in self.abs_fnames:
             relative_fname = os.path.relpath(fname, repo.working_tree_dir)
             if self.pretty:
                 these_diffs = repo.git.diff("HEAD", "--color", relative_fname)
@@ -478,10 +478,14 @@ class Coder:
 
         return commit_hash, commit_message
 
-    def get_active_files(self):
-        if self.repo:
-            files = sorted(self.repo.git.ls_files().splitlines())
-        else:
-            files = self.fnames
+    def get_inchat_relative_files(self):
+        files = [os.path.relpath(fname, self.root) for fname in self.abs_fnames]
+        return sorted(set(files))
 
-        return files
+    def get_all_relative_files(self):
+        if self.repo:
+            files = self.repo.git.ls_files().splitlines()
+        else:
+            files = self.get_inchat_relative_files()
+
+        return sorted(set(files))
