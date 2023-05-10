@@ -21,13 +21,14 @@ from aider.dump import dump
 from aider.getinput import get_input
 from aider import utils
 from aider import prompts
+from aider.commands import Commands
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 class Coder:
     fnames = set()
-    relative_to_fname = dict()
+    commands = Commands()
 
     last_modified = 0
     repo = None
@@ -180,7 +181,11 @@ class Coder:
         else:
             print()
 
-        inp = get_input(self.history_file, self.fnames)
+        inp = get_input(self.history_file, self.fnames, self.commands)
+
+        if inp.startswith("/"):
+            self.commands.run(inp, self.console)
+            return
 
         self.num_control_c = 0
 

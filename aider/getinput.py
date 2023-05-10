@@ -12,19 +12,6 @@ import sys
 import time
 import random
 
-class Commands:
-    def cmd_help(self):
-        print('help')
-    def cmd_ls(self):
-        print('ls')
-
-    def get_commands(self):
-        commands = []
-        for attr in dir(self):
-            if attr.startswith("cmd_"):
-                commands.append('/' + attr[4:])
-
-        return commands
 
 class FileContentCompleter(Completer):
     def __init__(self, fnames, commands):
@@ -34,7 +21,7 @@ class FileContentCompleter(Completer):
         for fname in fnames:
             with open(fname, "r") as f:
                 content = f.read()
-            self.words.update(re.split(r'\W+', content))
+            self.words.update(re.split(r"\W+", content))
 
     def get_completions(self, document, complete_event):
         text = document.text_before_cursor
@@ -42,7 +29,7 @@ class FileContentCompleter(Completer):
         if not words:
             return
 
-        if text[0] == '/' and len(words) == 1:
+        if text[0] == "/" and len(words) == 1:
             candidates = self.commands.get_commands()
         else:
             candidates = self.words
@@ -51,6 +38,7 @@ class FileContentCompleter(Completer):
         for word in candidates:
             if word.lower().startswith(last_word.lower()):
                 yield Completion(word, start_position=-len(last_word))
+
 
 def canned_input(show_prompt):
     console = Console()
@@ -66,21 +54,20 @@ def canned_input(show_prompt):
     return input_line
 
 
-
-def get_input(history_file, fnames):
+def get_input(history_file, fnames, commands):
     fnames = list(fnames)
     if len(fnames) > 1:
         common_prefix = os.path.commonprefix(fnames)
-        short_fnames = [fname.replace(common_prefix, '', 1) for fname in fnames]
+        short_fnames = [fname.replace(common_prefix, "", 1) for fname in fnames]
     else:
         short_fnames = [os.path.basename(fnames[0])]
-    show = ' '.join(short_fnames)
+    show = " ".join(short_fnames)
     if len(show) > 10:
         show += "\n"
     show += "> "
 
     if not sys.stdin.isatty():
-        return canned_input(show_prompt)
+        return canned_input(show)
 
     inp = ""
     multiline_input = False
@@ -88,7 +75,7 @@ def get_input(history_file, fnames):
     style = Style.from_dict({"": "green"})
 
     while True:
-        completer_instance = FileContentCompleter(fnames, Commands())
+        completer_instance = FileContentCompleter(fnames, commands)
         if multiline_input:
             show = ". "
 
