@@ -13,9 +13,9 @@ import time
 import random
 
 class Commands:
-    def help(self):
+    def cmd_help(self):
         print('help')
-    def ls(self):
+    def cmd_ls(self):
         print('ls')
 
 
