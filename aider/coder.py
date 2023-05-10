@@ -529,12 +529,14 @@ class Coder:
             self.console.print("[red]No previous aider commit found.")
             return
 
-        diff = self.repo.git.diff(f"{self.last_aider_commit_hash}~1", self.last_aider_commit_hash)
+        commits = f"{self.last_aider_commit_hash}~1"
         if self.pretty:
-            syntax_diff = Syntax(diff, "diff", theme="monokai", line_numbers=False)
-            self.console.print(syntax_diff)
+            diff = self.repo.git.diff(commits, "--color", self.last_aider_commit_hash)
         else:
-            self.console.print(Text(diff))
+            diff = self.repo.git.diff(commits, self.last_aider_commit_hash)
+
+        self.console.print(Text(diff))
+
     def cmd_add(self, args):
         "Add matching files to the chat"
 
