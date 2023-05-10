@@ -1,5 +1,4 @@
 import os
-from pygments import highlight
 from pygments.lexers import guess_lexer_for_filename
 from pygments.token import Token
 from prompt_toolkit.styles import Style
@@ -24,17 +23,19 @@ class FileContentCompleter(Completer):
                 content = f.read()
             lexer = guess_lexer_for_filename(fname, content)
             tokens = list(lexer.get_tokens(content))
-            self.words.update(
-                token[1] for token in tokens if token[0] in Token.Name
-            )
+            self.words.update(token[1] for token in tokens if token[0] in Token.Name)
+
     def get_completions(self, document, complete_event):
         text = document.text_before_cursor
         words = text.split()
         if not words:
             return
 
-        if text[0] == "/" and len(words) == 1:
-            candidates = self.commands.get_commands()
+        if text[0] == "/":
+            if len(words) == 1 and not text[-1].isspace():
+                candidates = self.commands.get_commands()
+            else:
+                candidates = self.commands.get_command_completions(words[0][1:])
         else:
             candidates = self.words
 
@@ -59,7 +60,6 @@ def canned_input(show_prompt):
 
 
 def get_input(history_file, fnames, commands):
-
     fnames = list(fnames)
     if len(fnames) > 1:
         common_prefix = os.path.commonpath(fnames)

@@ -36,12 +36,11 @@ class Commands:
             self.console.print(f"Error: Command {cmd_name} not found.")
 
     def get_command_completions(self, cmd_name):
-        cmd_completions_method_name = f"cmd_{cmd_name}_completions"
+        cmd_completions_method_name = f"completions_{cmd_name}"
         cmd_completions_method = getattr(self, cmd_completions_method_name, None)
         if cmd_completions_method:
-            return cmd_completions_method()
-        else:
-            return None
+            return set(cmd_completions_method())
+
     def run(self, inp):
         words = inp.strip().split()
         if not words:
@@ -144,7 +143,7 @@ class Commands:
                 else:
                     self.console.print(f"[red]{matched_file} is already in the chat")
 
-    def cmd_add_completions(self):
+    def completions_add(self):
         return self.coder.get_active_files()
 
     def cmd_drop(self, args):
