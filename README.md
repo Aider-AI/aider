@@ -48,6 +48,7 @@ Aider supports the following commands from within the chat:
 * `/commit [message]`: Commit outstanding changes to the chat files. Aider will provide a commit message if you don't.
 * `/undo`: Undo the last git commit if it was done by aider.
 * `/diff`: Display the diff of the last aider commit.
+
 To use a command, simply type it in the chat input followed by any required arguments.
 
 ## Tips
