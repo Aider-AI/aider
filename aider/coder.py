@@ -91,27 +91,23 @@ class Coder:
                 new_files.append(relative_fname)
 
         if new_files:
-            self.console.print(f"[red bold]Files not tracked in {repo.git_dir}:")
+            self.console.print(f"[red]Files not tracked in {repo.git_dir}:")
             for fn in new_files:
-                self.console.print(f"[red bold]  {fn}")
-            if Confirm.ask("[bold red]Add them?", console=self.console, default="y"):
+                self.console.print(f"[red]  {fn}")
+            if Confirm.ask("[bold]Add them?", console=self.console, default="y"):
                 for relative_fname in new_files:
                     repo.git.add(relative_fname)
-                    self.console.print(
-                        f"[red bold]Added {relative_fname} to the git repo"
-                    )
+                    self.console.print(f"[red]Added {relative_fname} to the git repo")
                 show_files = ", ".join(new_files)
                 commit_message = (
                     f"Initial commit: Added new files to the git repo: {show_files}"
                 )
                 repo.git.commit("-m", commit_message, "--no-verify")
                 self.console.print(
-                    f"[green bold]Committed new files with message: {commit_message}"
+                    f"[red]Committed new files with message: {commit_message}"
                 )
             else:
-                self.console.print(
-                    "[red bold]Skipped adding new files to the git repo."
-                )
+                self.console.print("[red]Skipped adding new files to the git repo.")
                 return
 
         self.repo = repo
@@ -280,9 +276,9 @@ class Coder:
                         stream=True,
                     )
                     break
-                except RateLimitError as e:
-                    retry_after = e.retry_after
-                    print(f"Rate limit exceeded. Retrying in {retry_after} seconds.")
+                except RateLimitError:
+                    retry_after = 1
+                    # print(f"Rate limit exceeded. Retrying in {retry_after} seconds.")
                     time.sleep(retry_after)
 
             if self.pretty and not silent:
@@ -342,9 +338,11 @@ class Coder:
 
             if path not in self.fnames:
                 if not Path(path).exists():
-                    question = f"[red bold]Allow creation of new file {path}?"
+                    question = f"[red]Allow creation of new file {path}?"
                 else:
-                    question = f"[red bold]Allow edits to {path} which was not previously provided?"
+                    question = (
+                        f"[red]Allow edits to {path} which was not previously provided?"
+                    )
                 if not Confirm.ask(question, console=self.console, default="y"):
                     self.console.print(f"[red]Skipping edit to {path}")
                     continue
