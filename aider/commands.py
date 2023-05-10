@@ -146,6 +146,14 @@ class Commands:
     def completions_add(self):
         return self.coder.get_active_files()
 
+    def completions_drop(self):
+        active_files = self.coder.get_active_files()
+        return [
+            os.path.relpath(file, self.coder.root)
+            for file in self.coder.fnames
+            if file in active_files
+        ]
+
     def cmd_drop(self, args):
         "Remove matching files from the chat"
 
@@ -161,7 +169,6 @@ class Commands:
                 relative_fname = os.path.relpath(matched_file, self.coder.root)
                 self.coder.fnames.remove(matched_file)
                 self.console.print(f"[red]Removed {relative_fname} from the chat")
-
     def cmd_ls(self, args):
         "List files and show their chat status"
 
