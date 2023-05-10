@@ -158,9 +158,20 @@ class Commands:
 
         files = self.coder.get_active_files()
 
+        self.console.print("[red]Files in chat:\n")
+
+        other_files = []
         for file in files:
             abs_file_path = os.path.abspath(os.path.join(self.coder.root, file))
             if abs_file_path in self.coder.fnames:
-                self.console.print(f"[red]{file} (in chat)")
+                self.console.print(f"[red]  {file}")
             else:
-                self.console.print(f"[red]{file}")
+                other_files.append(file)
+
+        if not other_files:
+            return
+
+        self.console.print("\n[red]Other repo files:\n")
+
+        for file in other_files:
+            self.console.print(f"[red]  {file}")
