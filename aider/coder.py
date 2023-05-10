@@ -488,7 +488,17 @@ class Coder:
 
     def cmd_undo(self, args):
         "Undo the last git commit if it was done by aider"
+        if not self.repo:
+            self.console.print("[red]No git repository found.")
+            return
 
+        last_commit = self.repo.head.commit
+        if not last_commit.message.startswith("aider:"):
+            self.console.print("[red]The last commit was not made by Aider.")
+            return
+
+        self.repo.git.reset("--hard", "HEAD~1")
+        self.console.print(f"[red]Undid the last commit: {last_commit.message.strip()}")
     def cmd_add(self, args):
         "Add matching files to the chat"
 
