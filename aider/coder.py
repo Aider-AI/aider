@@ -322,11 +322,11 @@ class Coder:
                 md = Markdown(self.resp, style="blue", code_theme="default")
                 live.update(md)
 
-            live.update(Text(""))
-            live.stop()
+            # live.update(Text(""))
+            # live.stop()
 
-        md = Markdown(self.resp, style="blue", code_theme="default")
-        self.console.print(md)
+        # md = Markdown(self.resp, style="blue", code_theme="default")
+        # self.console.print(md)
 
     pattern = re.compile(
         r"(^```\S*\s*)?^((?:[a-zA-Z]:\\|/)?(?:[\w\s.-]+[\\/])*\w+(\.[\w\s.-]+)*)\s+(^```\S*\s*)?^<<<<<<< ORIGINAL\n(.*?\n?)^=======\n(.*?)^>>>>>>> UPDATED",  # noqa: E501
