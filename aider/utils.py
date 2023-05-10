@@ -45,9 +45,9 @@ def replace_most_similar_chunk(whole, part, replace):
     return modified_whole
 
 
-def quoted_file(fname):
+def quoted_file(fname, display_fname):
     prompt = "\n"
-    prompt += fname
+    prompt += display_fname
     prompt += "\n```\n"
     prompt += Path(fname).read_text()
     prompt += "\n```\n"

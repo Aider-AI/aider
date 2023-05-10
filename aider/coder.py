@@ -132,7 +132,8 @@ class Coder:
     def get_files_content(self):
         prompt = ""
         for fname in self.fnames:
-            prompt += utils.quoted_file(fname)
+            relative_fname = os.path.relpath(fname, self.root)
+            prompt += utils.quoted_file(fname, relative_fname)
         return prompt
 
     def get_last_modified(self):
