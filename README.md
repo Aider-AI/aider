@@ -45,7 +45,9 @@ Aider supports the following commands from within the chat:
 * `/add <file>`: Add matching files to the chat.
 * `/drop <file>`: Remove matching files from the chat.
 * `/ls`: List files and show their chat status.
-
+* `/commit [message]`: Commit outstanding changes to the chat files. Aider will provide a commit message if you don't.
+* `/undo`: Undo the last git commit if it was done by aider.
+* `/diff`: Display the diff of the last aider commit.
 To use a command, simply type it in the chat input followed by any required arguments.
 
 ## Tips
