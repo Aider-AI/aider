@@ -10,8 +10,6 @@ from rich.prompt import Confirm, Prompt
 from rich.live import Live
 from rich.text import Text
 from rich.markdown import Markdown
-from rich.syntax import Syntax
-
 from pathlib import Path
 
 import git
