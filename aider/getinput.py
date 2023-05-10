@@ -45,8 +45,12 @@ def canned_input(show_prompt):
     return input_line
 
 
+import os
+
 def get_input(history_file, fnames):
-    show = ' '.join(fnames)
+    common_prefix = os.path.commonprefix(fnames)
+    short_fnames = [fname.replace(common_prefix, '', 1) for fname in fnames]
+    show = ' '.join(short_fnames)
     show += "\n> "
 
     if not sys.stdin.isatty():
