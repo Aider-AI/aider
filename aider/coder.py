@@ -385,7 +385,7 @@ class Coder:
 
         return edited
 
-    def commit(self, history=None, prefix=None, ask=False):
+    def commit(self, history=None, prefix=None, ask=False, message=None):
         repo = self.repo
         if not repo:
             return
@@ -487,7 +487,8 @@ class Coder:
         return files
 
     def cmd_commit(self, args):
-        "Commit outstanding changes to the chat files with a sensible commit message"
+        "Commit outstanding changes to the chat files. Aider will provide a commit message if yo u don't."
+
         if not self.repo:
             self.console.print("[red]No git repository found.")
             return
@@ -497,13 +498,15 @@ class Coder:
             return
 
         commit_message = args.strip()
-        if not commit_message:
-            commit_message = "aider: Manual commit of outstanding changes"
+        if commit_message:
+            self.repo.git.add(*[os.path.relpath(fname, self.repo.working_tree_dir) for fname in self.fnames])
+            self.repo.git.commit("-m", commit_message, "--no-verify")
+            commit_hash = self.repo.head.commit.hexsha[:7]
+            self.console.print(f"[red]{commit_hash} {commit_message}")
+            return
 
-        self.repo.git.add(*[os.path.relpath(fname, self.repo.working_tree_dir) for fname in self.fnames])
-        self.repo.git.commit("-m", commit_message, "--no-verify")
-        commit_hash = self.repo.head.commit.hexsha[:7]
-        self.console.print(f"[red]{commit_hash} {commit_message}")
+        self.commit()
+
     def cmd_undo(self, args):
         "Undo the last git commit if it was done by aider"
         if not self.repo:
