@@ -486,6 +486,24 @@ class Coder:
 
         return files
 
+    def cmd_commit(self, args):
+        "Commit outstanding changes to the chat files with a sensible commit message"
+        if not self.repo:
+            self.console.print("[red]No git repository found.")
+            return
+
+        if not self.repo.is_dirty():
+            self.console.print("[red]No changes to commit.")
+            return
+
+        commit_message = args.strip()
+        if not commit_message:
+            commit_message = "aider: Manual commit of outstanding changes"
+
+        self.repo.git.add(*[os.path.relpath(fname, self.repo.working_tree_dir) for fname in self.fnames])
+        self.repo.git.commit("-m", commit_message, "--no-verify")
+        commit_hash = self.repo.head.commit.hexsha[:7]
+        self.console.print(f"[red]{commit_hash} {commit_message}")
     def cmd_undo(self, args):
         "Undo the last git commit if it was done by aider"
         if not self.repo:
@@ -494,10 +512,11 @@ class Coder:
 
         last_commit = self.repo.head.commit
         if not last_commit.message.startswith("aider:") or last_commit.hexsha[:7] != self.last_aider_commit_hash:
-            self.console.print("[red]The last commit was not made by Aider or the commit hash does not match.")
+            self.console.print("[red]The last commit was not made by aider in this chat session.")
             return
         self.repo.git.reset("--hard", "HEAD~1")
         self.console.print(f"[red]Undid the last commit: {last_commit.message.strip()}")
+
     def cmd_add(self, args):
         "Add matching files to the chat"
 
