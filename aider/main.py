@@ -21,7 +21,7 @@ def main():
         "--history-file",
         metavar="HISTORY_FILE",
         default=os.environ.get(f"{env_prefix}HISTORY_FILE", ".aider.history"),
-        help=f"Specify the history file (default: .aider.history, ${env_prefix}HISTORY_FILE)",
+        help=f"Specify the chat input history file (default: .aider.history, ${env_prefix}HISTORY_FILE)",
     )
     parser.add_argument(
         "--model",
@@ -46,13 +46,7 @@ def main():
     parser.add_argument(
         "--apply",
         metavar="FILE",
-        help="Apply the changes from the given file instead of running the chat",
-    )
-    parser.add_argument(
-        "--commit-dirty",
-        action="store_true",
-        help=f"On launch, commit dirty files w/o confirmation (default: False, ${env_prefix}COMMIT_DIRTY)",  # noqa: E501
-        default=bool(int(os.environ.get(f"{env_prefix}COMMIT_DIRTY", 0))),
+        help="Apply the changes from the given file instead of running the chat (debug)",
     )
     parser.add_argument(
         "--show-diffs",
@@ -65,7 +59,7 @@ def main():
     pretty = args.pretty
 
     coder = Coder(args.model, fnames, pretty, args.history_file, args.show_diffs)
-    coder.commit(ask=not args.commit_dirty, prefix="wip: ")
+    coder.commit(ask=True, prefix="wip: ")
 
     if args.apply:
         with open(args.apply, "r") as f:
