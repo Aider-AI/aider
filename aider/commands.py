@@ -161,6 +161,8 @@ class Commands:
                     matched_files = [word]
                     if self.coder.repo is not None:
                         self.coder.repo.git.add(os.path.join(self.coder.root, word))
+                        commit_message = f"aider: Created and added {word} to git."
+                        self.coder.repo.git.commit("-m", commit_message, "--no-verify")
                 else:
                     self.console.print(f"[red]No files matched '{word}'")
             for matched_file in matched_files:
