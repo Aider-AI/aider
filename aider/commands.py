@@ -1,5 +1,6 @@
 import os
 from rich.text import Text
+from rich.prompt import Confirm
 from prompt_toolkit.completion import Completion
 from aider import prompts
 
@@ -149,7 +150,13 @@ class Commands:
         for word in args.split():
             matched_files = [file for file in files if word in file]
             if not matched_files:
-                self.console.print(f"[red]No files matched '{word}'")
+                create_file = Confirm.ask(f"No files matched '{word}'. Do you want to create the file?")
+                if create_file:
+                    with open(os.path.join(self.coder.root, word), 'w') as new_file:
+                        pass
+                    matched_files = [word]
+                else:
+                    self.console.print(f"[red]No files matched '{word}'")
             for matched_file in matched_files:
                 abs_file_path = os.path.abspath(
                     os.path.join(self.coder.root, matched_file)
@@ -185,6 +192,7 @@ class Commands:
             ]
             if not matched_files:
                 self.console.print(f"[red]No files matched '{word}'")
+
             for matched_file in matched_files:
                 relative_fname = os.path.relpath(matched_file, self.coder.root)
                 self.coder.abs_fnames.remove(matched_file)
