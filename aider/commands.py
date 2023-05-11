@@ -67,6 +67,7 @@ class Commands:
 
     def cmd_commit(self, args):
         "Commit edits to chat session files made outside the chat (commit message optional)"
+        dump(args)
 
         if not self.coder.repo:
             self.console.print("[red]No git repository found.")
