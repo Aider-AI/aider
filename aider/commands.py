@@ -28,6 +28,13 @@ class Commands:
 
         return commands
 
+    def get_command_completions(self, cmd_name, partial):
+        cmd_completions_method_name = f"completions_{cmd_name}"
+        cmd_completions_method = getattr(self, cmd_completions_method_name, None)
+        if cmd_completions_method:
+            for completion in cmd_completions_method(partial):
+                yield completion
+
     def do_run(self, cmd_name, args):
         cmd_method_name = f"cmd_{cmd_name}"
         cmd_method = getattr(self, cmd_method_name, None)
@@ -35,13 +42,6 @@ class Commands:
             cmd_method(args)
         else:
             self.console.print(f"Error: Command {cmd_name} not found.")
-
-    def get_command_completions(self, cmd_name, partial):
-        cmd_completions_method_name = f"completions_{cmd_name}"
-        cmd_completions_method = getattr(self, cmd_completions_method_name, None)
-        if cmd_completions_method:
-            for completion in cmd_completions_method(partial):
-                yield completion
 
     def run(self, inp):
         words = inp.strip().split()
@@ -57,7 +57,7 @@ class Commands:
             if matching_commands[0] == "/help":
                 self.help()
             else:
-                self.do_run(matching_commands[0][1:], rest_inp)
+                return self.do_run(matching_commands[0][1:], rest_inp)
         elif len(matching_commands) > 1:
             self.console.print("[red]Ambiguous command: ', '.join(matching_commands)}")
         else:
