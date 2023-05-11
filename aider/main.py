@@ -50,9 +50,10 @@ def main():
     )
     parser.add_argument(
         "--no-auto-commits",
-        action="store_true",
-        help=f"Do not automatically commit changes (default: False, ${env_prefix}NO_AUTO_COMMITS)",
-        default=bool(int(os.environ.get(f"{env_prefix}NO_AUTO_COMMITS", 0))),
+        action="store_false",
+        dest="auto_commits",
+        help=f"Do not automatically commit changes (default: True, ${env_prefix}AUTO_COMMITS)",
+        default=bool(int(os.environ.get(f"{env_prefix}AUTO_COMMITS", 1))),
     )
     parser.add_argument(
         "--show-diffs",
