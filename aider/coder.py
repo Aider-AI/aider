@@ -18,7 +18,7 @@ from pathlib import Path
 import git
 import openai
 
-from aider.dump import dump
+# from aider.dump import dump
 from aider.getinput import get_input
 from aider import utils
 from aider import prompts
@@ -294,7 +294,6 @@ class Coder:
             if word in addable_rel_fnames:
                 mentioned_rel_fnames.add(word)
 
-        dump(mentioned_rel_fnames)
         if not mentioned_rel_fnames:
             return
 
