@@ -166,7 +166,7 @@ class Commands:
             matched_files = [
                 file
                 for file in self.coder.abs_fnames
-                if word in os.path.relpath(file, self.coder.root)
+                if word.lower() in os.path.relpath(file, self.coder.root).lower()
             ]
             if not matched_files:
                 self.console.print(f"[red]No files matched '{word}'")

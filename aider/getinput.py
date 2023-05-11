@@ -70,8 +70,11 @@ def get_input(history_file, fnames, commands):
         if not common_prefix.endswith(os.path.sep):
             common_prefix += os.path.sep
         short_fnames = [fname.replace(common_prefix, "", 1) for fname in fnames]
-    else:
+    elif len(fnames):
         short_fnames = [os.path.basename(fnames[0])]
+    else:
+        short_fnames = []
+
     show = " ".join(short_fnames)
     if len(show) > 10:
         show += "\n"
