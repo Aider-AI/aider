@@ -59,6 +59,8 @@ class Coder:
         self.show_diffs = show_diffs
 
     def find_common_root(self):
+        if not self.abs_fnames:
+            self.root = os.getcwd()
         common_prefix = os.path.commonpath(list(self.abs_fnames))
         self.root = os.path.dirname(common_prefix)
         self.console.print(f"[bright_black]Common root directory: {self.root}")
