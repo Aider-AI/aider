@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+
 import os
 import sys
 import re
@@ -112,9 +113,7 @@ class Coder:
             self.console.print(f"[bright_black]Files not tracked in {repo.git_dir}:")
             for fn in new_files:
                 self.console.print(f"[bright_black]  {fn}")
-            if Confirm.ask(
-                "[bright_black]Add them?", console=self.console, default="y"
-            ):
+            if Confirm.ask("[bright_black]Add them?", console=self.console, default="y"):
                 for relative_fname in new_files:
                     repo.git.add(relative_fname)
                     self.console.print(
@@ -347,12 +346,12 @@ class Coder:
         # Optional: Matches the start of a code block (e.g., ```python) and any following whitespace
         r"(^```\S*\s*)?"
         # Matches the file path
-        r"^((?:[a-zA-Z]:\\|/)?(?:[\w\s.-]+[\\/])*(?:\w+|\.\w+)(\.[\w\s.-]+)*)"
+        r"^(\S*)\s*"
         # Optional: Matches the end of a code block (e.g., ```) and any following whitespace
-        r"\s+(^```\S*\s*)?"
+        r"(^```\S*\s*)?"
         # Matches the start of the ORIGINAL section and captures its content
         r"^<<<<<<< ORIGINAL\n(.*?\n?)"
-        # Matches the separator between ORIGINAL and UPDATED sections and captures the UPDATED content
+        # Matches sep between ORIGINAL and UPDATED sections, captures UPDATED content
         r"^=======\n(.*?)"
         # Matches the end of the UPDATED section
         r"^>>>>>>> UPDATED",
@@ -362,7 +361,8 @@ class Coder:
     def update_files(self, content, inp):
         edited = set()
         for match in self.pattern.finditer(content):
-            _, path, _, _, original, updated = match.groups()
+            dump(match.groups())
+            _, path, _, original, updated = match.groups()
 
             path = path.strip()
 
@@ -370,7 +370,9 @@ class Coder:
 
             if full_path not in self.abs_fnames:
                 if not Path(full_path).exists():
-                    question = f"[bright_black]Allow creation of new file {path}?"  # noqa: E501
+                    question = (
+                        f"[bright_black]Allow creation of new file {path}?"  # noqa: E501
+                    )
                 else:
                     question = f"[bright_black]Allow edits to {path} which was not previously provided?"  # noqa: E501
                 if not Confirm.ask(question, console=self.console, default="y"):
@@ -454,7 +456,8 @@ class Coder:
 
         if interrupted:
             self.console.print(
-                "[red]Unable to get commit message from gpt-3.5-turbo. Use /commit to try again.\n"
+                "[red]Unable to get commit message from gpt-3.5-turbo. Use /commit to try"
+                " again.\n"
             )
             return
 
