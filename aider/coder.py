@@ -52,9 +52,7 @@ class Coder:
         self.set_repo(fnames)
 
         if not self.repo:
-            self.console.print(
-                "[red]No suitable git repo, will not automatically commit edits."
-            )
+            self.console.print("[red]No suitable git repo, will not automatically commit edits.")
             self.find_common_root()
 
         self.pretty = pretty
@@ -116,13 +114,9 @@ class Coder:
             if Confirm.ask("[bright_black]Add them?", console=self.console, default="y"):
                 for relative_fname in new_files:
                     repo.git.add(relative_fname)
-                    self.console.print(
-                        f"[bright_black]Added {relative_fname} to the git repo"
-                    )
+                    self.console.print(f"[bright_black]Added {relative_fname} to the git repo")
                 show_files = ", ".join(new_files)
-                commit_message = (
-                    f"Initial commit: Added new files to the git repo: {show_files}"
-                )
+                commit_message = f"Initial commit: Added new files to the git repo: {show_files}"
                 repo.git.commit("-m", commit_message, "--no-verify")
                 self.console.print(
                     f"[bright_black]Committed new files with message: {commit_message}"
@@ -299,48 +293,36 @@ class Coder:
                     # print(f"Rate limit exceeded. Retrying in {retry_after} seconds.")
                     time.sleep(retry_after)
 
-            if self.pretty and not silent:
-                self.show_send_output_color(completion)
-            else:
-                self.show_send_output_plain(completion, silent)
+            self.show_send_output(completion, silent)
         except KeyboardInterrupt:
             interrupted = True
 
         return self.resp, interrupted
 
-    def show_send_output_plain(self, completion, silent):
+    def show_send_output(self, completion, silent):
+        if self.pretty:
+            live = Live(vertical_overflow="scroll")
+            live.start()
+
         for chunk in completion:
             if chunk.choices[0].finish_reason not in (None, "stop"):
-                dump(chunk.choices[0].finish_reason)
+                assert False, "Exceeded context window!"
+
             try:
                 text = chunk.choices[0].delta.content
                 self.resp += text
             except AttributeError:
                 continue
 
-            if not silent:
+            if self.pretty:
+                md = Markdown(self.resp, style="blue", code_theme="default")
+                live.update(md)
+            else:
                 sys.stdout.write(text)
                 sys.stdout.flush()
 
-    def show_send_output_color(self, completion):
-        with Live(vertical_overflow="scroll") as live:
-            for chunk in completion:
-                if chunk.choices[0].finish_reason not in (None, "stop"):
-                    assert False, "Exceeded context window!"
-                try:
-                    text = chunk.choices[0].delta.content
-                    self.resp += text
-                except AttributeError:
-                    continue
-
-                md = Markdown(self.resp, style="blue", code_theme="default")
-                live.update(md)
-
-            # live.update(Text(""))
-            # live.stop()
-
-        # md = Markdown(self.resp, style="blue", code_theme="default")
-        # self.console.print(md)
+        if self.pretty:
+            live.stop()
 
     pattern = re.compile(
         # Optional: Matches the start of a code block (e.g., ```python) and any following whitespace
@@ -370,9 +352,7 @@ class Coder:
 
             if full_path not in self.abs_fnames:
                 if not Path(full_path).exists():
-                    question = (
-                        f"[bright_black]Allow creation of new file {path}?"  # noqa: E501
-                    )
+                    question = f"[bright_black]Allow creation of new file {path}?"  # noqa: E501
                 else:
                     question = f"[bright_black]Allow edits to {path} which was not previously provided?"  # noqa: E501
                 if not Confirm.ask(question, console=self.console, default="y"):
@@ -456,8 +436,7 @@ class Coder:
 
         if interrupted:
             self.console.print(
-                "[red]Unable to get commit message from gpt-3.5-turbo. Use /commit to try"
-                " again.\n"
+                "[red]Unable to get commit message from gpt-3.5-turbo. Use /commit to try again.\n"
             )
             return
 
@@ -468,9 +447,7 @@ class Coder:
             self.last_modified = self.get_last_modified()
 
             self.console.print("[bright_black]Files have uncommitted changes.\n")
-            self.console.print(
-                f"[bright_black]Suggested commit message:\n{commit_message}\n"
-            )
+            self.console.print(f"[bright_black]Suggested commit message:\n{commit_message}\n")
 
             res = Prompt.ask(
                 "[bright_black]Commit before the chat proceeds? \[y/n/commit message]",  # noqa: W605 E501
