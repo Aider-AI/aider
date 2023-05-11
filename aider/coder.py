@@ -30,7 +30,6 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 class Coder:
     abs_fnames = set()
 
-    last_modified = 0
     repo = None
     last_aider_commit_hash = None
 
@@ -138,11 +137,6 @@ class Coder:
             prompt += utils.quoted_file(fname, relative_fname)
         return prompt
 
-    def get_last_modified(self):
-        if self.abs_fnames:
-            return max(Path(fname).stat().st_mtime for fname in self.abs_fnames)
-        return 0
-
     def get_files_messages(self):
         files_content = prompts.files_content_prefix
         files_content += self.get_files_content()
@@ -198,8 +192,8 @@ class Coder:
 
         self.num_control_c = 0
 
-        if self.last_modified < self.get_last_modified():
-            self.commit(ask=True)
+        if self.repo and self.repo.is_dirty():
+            self.commit(ask=True, which="repo_files")
 
             # files changed, move cur messages back behind the files messages
             self.done_messages += self.cur_messages
@@ -461,10 +455,6 @@ class Coder:
 
             diffs += these_diffs + "\n"
 
-        if not dirty_fnames:
-            self.last_modified = self.get_last_modified()
-            return
-
         if self.show_diffs or ask:
             self.console.print(Text(diffs))
 
@@ -505,8 +495,6 @@ class Coder:
             commit_message = prefix + commit_message
 
         if ask:
-            self.last_modified = self.get_last_modified()
-
             self.console.print("[bright_black]Files have uncommitted changes.\n")
             self.console.print(f"[bright_black]Suggested commit message:\n{commit_message}\n")
 
@@ -529,8 +517,6 @@ class Coder:
         repo.git.commit("-m", full_commit_message, "--no-verify")
         commit_hash = repo.head.commit.hexsha[:7]
         self.console.print(f"[bright_black]{commit_hash} {commit_message}")
-
-        self.last_modified = self.get_last_modified()
 
         return commit_hash, commit_message
 
