@@ -336,9 +336,11 @@ class Coder:
         return self.resp, interrupted
 
     def show_send_output(self, completion, silent):
-        if self.pretty:
+        if self.pretty and not silent:
             live = Live(vertical_overflow="scroll")
             live.start()
+        else:
+            live = None
 
         for chunk in completion:
             if chunk.choices[0].finish_reason not in (None, "stop"):
@@ -350,6 +352,9 @@ class Coder:
             except AttributeError:
                 continue
 
+            if silent:
+                continue
+
             if self.pretty:
                 md = Markdown(self.resp, style="blue", code_theme="default")
                 live.update(md)
@@ -357,7 +362,7 @@ class Coder:
                 sys.stdout.write(text)
                 sys.stdout.flush()
 
-        if self.pretty:
+        if live:
             live.stop()
 
     pattern = re.compile(
