@@ -2,7 +2,7 @@ import os
 from pygments.lexers import guess_lexer_for_filename
 from pygments.token import Token
 from prompt_toolkit.styles import Style
-
+from pygments.util import ClassNotFound
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.history import FileHistory
