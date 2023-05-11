@@ -194,7 +194,7 @@ class Coder:
 
         is_commit_command = (inp and inp.startswith('/commit'))
 
-        if self.repo and self.repo.is_dirty() not is_commit_command:
+        if self.repo and self.repo.is_dirty() and not is_commit_command:
             self.commit(ask=True, which="repo_files")
 
             # files changed, move cur messages back behind the files messages
