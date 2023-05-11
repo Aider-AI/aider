@@ -35,6 +35,7 @@ class Coder:
 
     def __init__(self, main_model, fnames, pretty, history_file, show_diffs, auto_commits):
         self.history_file = history_file
+        self.auto_commits = auto_commits
 
         if pretty:
             self.console = Console()
