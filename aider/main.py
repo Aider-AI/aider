@@ -52,7 +52,7 @@ def main():
         "--no-auto-commits",
         action="store_false",
         dest="auto_commits",
-        help=f"Do not automatically commit changes (default: True, ${env_prefix}AUTO_COMMITS)",
+        help=f"Disable auto commit of changes (${env_prefix}AUTO_COMMITS)",
         default=bool(int(os.environ.get(f"{env_prefix}AUTO_COMMITS", 1))),
     )
     parser.add_argument(
