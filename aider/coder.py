@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 import os
 import sys
 import re
@@ -52,7 +51,9 @@ class Coder:
         self.set_repo(fnames)
 
         if not self.repo:
-            self.console.print("[red]No suitable git repo, will not automatically commit edits.")
+            self.console.print(
+                "[red]No suitable git repo, will not automatically commit edits."
+            )
             self.find_common_root()
 
         self.pretty = pretty
@@ -111,12 +112,18 @@ class Coder:
             self.console.print(f"[bright_black]Files not tracked in {repo.git_dir}:")
             for fn in new_files:
                 self.console.print(f"[bright_black]  {fn}")
-            if Confirm.ask("[bright_black]Add them?", console=self.console, default="y"):
+            if Confirm.ask(
+                "[bright_black]Add them?", console=self.console, default="y"
+            ):
                 for relative_fname in new_files:
                     repo.git.add(relative_fname)
-                    self.console.print(f"[bright_black]Added {relative_fname} to the git repo")
+                    self.console.print(
+                        f"[bright_black]Added {relative_fname} to the git repo"
+                    )
                 show_files = ", ".join(new_files)
-                commit_message = f"Initial commit: Added new files to the git repo: {show_files}"
+                commit_message = (
+                    f"Initial commit: Added new files to the git repo: {show_files}"
+                )
                 repo.git.commit("-m", commit_message, "--no-verify")
                 self.console.print(
                     f"[bright_black]Committed new files with message: {commit_message}"
@@ -352,11 +359,9 @@ class Coder:
 
             if full_path not in self.abs_fnames:
                 if not Path(full_path).exists():
-                    question = f"[bright_black]Allow creation of new file {path}?"
+                    question = f"[bright_black]Allow creation of new file {path}?"  # noqa: E501
                 else:
-                    question = (
-                        f"[bright_black]Allow edits to {path} which was not previously provided?"
-                    )
+                    question = f"[bright_black]Allow edits to {path} which was not previously provided?"  # noqa: E501
                 if not Confirm.ask(question, console=self.console, default="y"):
                     self.console.print(f"[red]Skipping edit to {path}")
                     continue
@@ -449,10 +454,12 @@ class Coder:
             self.last_modified = self.get_last_modified()
 
             self.console.print("[bright_black]Files have uncommitted changes.\n")
-            self.console.print(f"[bright_black]Suggested commit message:\n{commit_message}\n")
+            self.console.print(
+                f"[bright_black]Suggested commit message:\n{commit_message}\n"
+            )
 
             res = Prompt.ask(
-                "[bright_black]Commit before the chat proceeds? \[y/n/commit message]",  # noqa: W605
+                "[bright_black]Commit before the chat proceeds? \[y/n/commit message]",  # noqa: W605 E501
                 console=self.console,
                 default="y",
             ).strip()
