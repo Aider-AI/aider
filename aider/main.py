@@ -14,8 +14,8 @@ def main():
     parser.add_argument(
         "files",
         metavar="FILE",
-        nargs="+",
-        help="a list of source code files",
+        nargs="*",
+        help="a list of source code files (optional)",
     )
     parser.add_argument(
         "--history-file",
