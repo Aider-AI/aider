@@ -438,8 +438,10 @@ class Coder:
         if which == "repo_files":
             all_files = [os.path.join(self.root, f) for f in self.get_all_relative_files()]
             dirty_fnames, relative_dirty_fnames = get_dirty_files(all_files)
-        else:
+        elif which == "chat_files":
             dirty_fnames, relative_dirty_fnames = get_dirty_files(self.abs_fnames)
+        else:
+            raise ValueError(f"Invalid value for 'which': {which}")
         repo = self.repo
         if not repo:
             return
