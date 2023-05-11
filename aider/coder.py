@@ -493,7 +493,10 @@ class Coder:
             commit_message = prefix + commit_message
 
         if ask:
-            self.console.print("[bright_black]Files have uncommitted changes.\n")
+            if which == "repo_files":
+                self.console.print("[bright_black]Git repo has uncommitted changes.\n")
+            else:
+                self.console.print("[bright_black]Files have uncommitted changes.\n")
             self.console.print(f"[bright_black]Suggested commit message:\n{commit_message}\n")
 
             res = Prompt.ask(
