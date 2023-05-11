@@ -101,3 +101,8 @@ The commit message MUST be in the past tense.
 It must describe the changes *which have been made* in the diffs!
 Reply with JUST the commit message, without quotes, comments, questions, etc!
 """
+
+# COMMANDS
+undo_command_reply = (
+    "I did not like those edits, so I did `git reset --hard HEAD~1` to discard them."
+)

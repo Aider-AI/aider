@@ -107,7 +107,9 @@ class Commands:
             return
         self.coder.repo.git.reset("--hard", "HEAD~1")
         self.console.print(
-            f"[red]{last_commit.message.strip()}\nThe above commit {self.coder.last_aider_commit_hash} was reset and removed from git.\n"
+            f"[red]{last_commit.message.strip()}\n"
+            f"The above commit {self.coder.last_aider_commit_hash} "
+            "was reset and removed from git.\n"
         )
 
         return prompts.undo_command_reply
