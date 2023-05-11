@@ -102,7 +102,7 @@ class Coder:
         self.root = repo.working_tree_dir
 
         new_files = []
-        for fname in abs_fnames:
+        for fname in self.abs_fnames:
             fname = fname.resolve()
             self.abs_fnames.add(str(fname))
 
