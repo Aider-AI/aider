@@ -1,6 +1,7 @@
 import os
 from rich.text import Text
 from prompt_toolkit.completion import Completion
+from aider import prompts
 
 
 class Commands:
@@ -106,10 +107,10 @@ class Commands:
             return
         self.coder.repo.git.reset("--hard", "HEAD~1")
         self.console.print(
-            f"[red]Undid the last commit: {last_commit.message.strip()}\n"
+            f"[red]{last_commit.message.strip()}\nThe above commit {self.coder.last_aider_commit_hash} was reset and removed from git.\n"
         )
 
-        return "I did not like those edits, so I did `git reset --hard HEAD~1` to discard them."
+        return prompts.undo_command_reply
 
     def cmd_diff(self, args):
         "Display the diff of the last aider commit"
