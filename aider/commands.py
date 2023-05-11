@@ -102,7 +102,9 @@ class Commands:
             not last_commit.message.startswith("aider:")
             or last_commit.hexsha[:7] != self.coder.last_aider_commit_hash
         ):
-            self.console.print("[red]The last commit was not made by aider in this chat session.")
+            self.console.print(
+                "[red]The last commit was not made by aider in this chat session."
+            )
             return
         self.coder.repo.git.reset("--hard", "HEAD~1")
         self.console.print(
@@ -125,7 +127,9 @@ class Commands:
 
         commits = f"{self.coder.last_aider_commit_hash}~1"
         if self.coder.pretty:
-            diff = self.coder.repo.git.diff(commits, "--color", self.coder.last_aider_commit_hash)
+            diff = self.coder.repo.git.diff(
+                commits, "--color", self.coder.last_aider_commit_hash
+            )
         else:
             diff = self.coder.repo.git.diff(commits, self.coder.last_aider_commit_hash)
 
@@ -145,6 +149,7 @@ class Commands:
         files = self.coder.get_all_relative_files()
         for word in args.split():
             matched_files = [file for file in files if word in file]
+
         if not matched_files:
             if self.coder.repo is not None:
                 create_file = Confirm.ask(
@@ -156,26 +161,31 @@ class Commands:
                     f"[bright_black]No files matched '{word}'. Do you want to create the file?"
                 )
 
-                if create_file:
-                    with open(os.path.join(self.coder.root, word), "w"):
-                        pass
-                    matched_files = [word]
-                    if self.coder.repo is not None:
-                        self.coder.repo.git.add(os.path.join(self.coder.root, word))
-                        commit_message = f"aider: Created and added {word} to git."
-                        self.coder.repo.git.commit("-m", commit_message, "--no-verify")
-                else:
-                    self.console.print(f"[red]No files matched '{word}'")
-            for matched_file in matched_files:
-                abs_file_path = os.path.abspath(os.path.join(self.coder.root, matched_file))
-                if abs_file_path not in self.coder.abs_fnames:
-                    self.coder.abs_fnames.add(abs_file_path)
-                    self.console.print(f"[bright_black]Added {matched_file} to the chat")
-                    added_fnames.append(matched_file)
-                else:
-                    self.console.print(f"[red]{matched_file} is already in the chat")
+            if create_file:
+                with open(os.path.join(self.coder.root, word), "w"):
+                    pass
+                matched_files = [word]
+                if self.coder.repo is not None:
+                    self.coder.repo.git.add(os.path.join(self.coder.root, word))
+                    commit_message = f"aider: Created and added {word} to git."
+                    self.coder.repo.git.commit("-m", commit_message, "--no-verify")
+            else:
+                self.console.print(f"[red]No files matched '{word}'")
+
+        for matched_file in matched_files:
+            abs_file_path = os.path.abspath(os.path.join(self.coder.root, matched_file))
+            if abs_file_path not in self.coder.abs_fnames:
+                self.coder.abs_fnames.add(abs_file_path)
+                self.console.print(f"[bright_black]Added {matched_file} to the chat")
+                added_fnames.append(matched_file)
+            else:
+                self.console.print(f"[red]{matched_file} is already in the chat")
 
         if not added_fnames:
+            return
+
+        # only reply if there's been some chatting since the last edit
+        if not self.coder.cur_messages:
             return
 
         reply = prompts.added_files.format(fnames=", ".join(added_fnames))
@@ -203,7 +213,9 @@ class Commands:
             for matched_file in matched_files:
                 relative_fname = os.path.relpath(matched_file, self.coder.root)
                 self.coder.abs_fnames.remove(matched_file)
-                self.console.print(f"[bright_black]Removed {relative_fname} from the chat")
+                self.console.print(
+                    f"[bright_black]Removed {relative_fname} from the chat"
+                )
 
     def cmd_ls(self, args):
         "List files and show their chat status"
