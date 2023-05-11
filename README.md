@@ -71,7 +71,7 @@ To use a command, simply type it in the chat input followed by any required argu
 * Enter a multiline chat message by entering `{` alone on the first line. End the multiline message with `}` alone on the last line.
 * If your code is throwing an error, paste the error message and stack trace into aider as a multiline `{}` message and let aider fix the bug.
 * GPT-4 knows about a lot of standard tools and libraries, but may get some of the fine details wrong about APIs and function arguments. You can paste doc snippets into the chat with the  multiline `{}` syntax.
-* Aider will notice if you launch it on files with uncommitted changes and offer to commit them before proceeding.
+* Aider will notice if you launch it on a git repo with uncommitted changes and offer to commit them before proceeding.
 * Aider can only see the content of the files you specify, but it also gets a list of all the files in the repo. It may ask to see additional files if it feels that's needed for your requests.
 
 ## Limitations
