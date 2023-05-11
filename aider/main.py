@@ -26,8 +26,8 @@ def main():
     parser.add_argument(
         "--model",
         metavar="MODEL",
-        default="gpt-4",
-        help="Specify the model to use for the main chat (default: gpt-4)",
+        default=os.environ.get(f"{env_prefix}MODEL", "gpt-4"),
+        help=f"Specify the model to use for the main chat (default: gpt-4, ${env_prefix}MODEL)",
     )
     parser.add_argument(
         "-3",
