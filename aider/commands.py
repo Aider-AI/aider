@@ -67,6 +67,7 @@ class Commands:
 
     def cmd_commit(self, args):
         "Commit edits to chat session files made outside the chat (commit message optional)"
+        from aider.dump import dump
         dump(args)
 
         if not self.coder.repo:
