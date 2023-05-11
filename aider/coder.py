@@ -18,7 +18,7 @@ from pathlib import Path
 import git
 import openai
 
-from aider.dump import dump
+#from aider.dump import dump
 from aider.getinput import get_input
 from aider import utils
 from aider import prompts
@@ -443,8 +443,6 @@ class Coder:
             dirty_fnames, relative_dirty_fnames = get_dirty_files(self.abs_fnames)
         else:
             raise ValueError(f"Invalid value for 'which': {which}")
-
-        dump(dirty_fnames)
 
         diffs = ""
         for (abs_fname,relative_fname) in zip(dirty_fnames, relative_dirty_fnames):
