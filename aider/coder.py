@@ -18,7 +18,7 @@ from pathlib import Path
 import git
 import openai
 
-# from aider.dump import dump
+from aider.dump import dump
 from aider.getinput import get_input
 from aider import utils
 from aider import prompts
@@ -450,20 +450,16 @@ class Coder:
         else:
             raise ValueError(f"Invalid value for 'which': {which}")
 
+        dump(dirty_fnames)
+
         diffs = ""
-        dirty_fnames = []
-        relative_dirty_fnames = []
-        for fname in self.abs_fnames:
-            relative_fname = os.path.relpath(fname, repo.working_tree_dir)
+        for (abs_fname,relative_fname) in zip(dirty_fnames, relative_dirty_fnames):
             if self.pretty:
                 these_diffs = repo.git.diff("HEAD", "--color", relative_fname)
             else:
                 these_diffs = repo.git.diff("HEAD", relative_fname)
 
-            if these_diffs:
-                dirty_fnames.append(fname)
-                relative_dirty_fnames.append(relative_fname)
-                diffs += these_diffs + "\n"
+            diffs += these_diffs + "\n"
 
         if not dirty_fnames:
             self.last_modified = self.get_last_modified()

@@ -73,23 +73,11 @@ class Commands:
             return
 
         if not self.coder.repo.is_dirty():
-            self.console.print("[red]No changes to commit.")
+            self.console.print("[red]No more changes to commit.")
             return
 
         commit_message = args.strip()
-        if commit_message:
-            self.coder.repo.git.add(
-                *[
-                    os.path.relpath(fname, self.coder.repo.working_tree_dir)
-                    for fname in self.coder.abs_fnames
-                ]
-            )
-            self.coder.repo.git.commit("-m", commit_message, "--no-verify")
-            commit_hash = self.coder.repo.head.commit.hexsha[:7]
-            self.console.print(f"[bright_black]{commit_hash} {commit_message}")
-            return
-
-        self.coder.commit()
+        self.coder.commit(message = commit_message, which="repo_files")
 
     def cmd_undo(self, args):
         "Undo the last git commit if it was done by aider"

@@ -59,7 +59,7 @@ def main():
     pretty = args.pretty
 
     coder = Coder(args.model, fnames, pretty, args.history_file, args.show_diffs)
-    coder.commit(ask=True, prefix="wip: ")
+    coder.commit(ask=True, prefix="wip: ", which="repo_files")
 
     if args.apply:
         with open(args.apply, "r") as f:
