@@ -66,7 +66,7 @@ class Commands:
             self.console.print(f"[red]Error: {first_word} is not a valid command.")
 
     def cmd_commit(self, args):
-        "Commit edits to chat files made outside the chat (commit message optional)"
+        "Commit edits to chat session files made outside the chat (commit message optional)"
 
         if not self.coder.repo:
             self.console.print("[red]No git repository found.")
@@ -102,9 +102,7 @@ class Commands:
             not last_commit.message.startswith("aider:")
             or last_commit.hexsha[:7] != self.coder.last_aider_commit_hash
         ):
-            self.console.print(
-                "[red]The last commit was not made by aider in this chat session."
-            )
+            self.console.print("[red]The last commit was not made by aider in this chat session.")
             return
         self.coder.repo.git.reset("--hard", "HEAD~1")
         self.console.print(
@@ -127,9 +125,7 @@ class Commands:
 
         commits = f"{self.coder.last_aider_commit_hash}~1"
         if self.coder.pretty:
-            diff = self.coder.repo.git.diff(
-                commits, "--color", self.coder.last_aider_commit_hash
-            )
+            diff = self.coder.repo.git.diff(commits, "--color", self.coder.last_aider_commit_hash)
         else:
             diff = self.coder.repo.git.diff(commits, self.coder.last_aider_commit_hash)
 
@@ -143,7 +139,7 @@ class Commands:
                 yield Completion(fname, start_position=-len(partial))
 
     def cmd_add(self, args):
-        "Add matching files to the chat"
+        "Add matching files to the chat session"
 
         added_fnames = []
         files = self.coder.get_all_relative_files()
@@ -199,7 +195,7 @@ class Commands:
                 yield Completion(fname, start_position=-len(partial))
 
     def cmd_drop(self, args):
-        "Remove matching files from the chat"
+        "Remove matching files from the chat session"
 
         for word in args.split():
             matched_files = [
@@ -213,12 +209,10 @@ class Commands:
             for matched_file in matched_files:
                 relative_fname = os.path.relpath(matched_file, self.coder.root)
                 self.coder.abs_fnames.remove(matched_file)
-                self.console.print(
-                    f"[bright_black]Removed {relative_fname} from the chat"
-                )
+                self.console.print(f"[bright_black]Removed {relative_fname} from the chat")
 
     def cmd_ls(self, args):
-        "List files and show their chat status"
+        "List all known files and those included in the chat session"
 
         files = self.coder.get_all_relative_files()
 

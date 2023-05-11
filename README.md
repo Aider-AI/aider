@@ -1,8 +1,8 @@
 # Aider
 
 Aider is a command-line tool that allows you to chat with GPT-4 about your code.
-It can make changes, improvements, and bug fixes to the code in your local git repo.
-Each change is automatically committed to git with a sensible commit message.
+Aider will directly edit your source files as directed by the GPT-4 chat, and commit those changes to your local git repo.
+Each change is automatically committed to git with a sensible commit message, making it easy and safe for aider to help you code.
 
 [![asciicast](https://asciinema.org/a/eDDqO3PlqH4lUBBXnLlMG7l2x.svg)](https://asciinema.org/a/eDDqO3PlqH4lUBBXnLlMG7l2x)
 
@@ -10,16 +10,17 @@ Each change is automatically committed to git with a sensible commit message.
 
 * Chat with GPT-4 about your code by launching aider with set of source files to discuss and edit together.
 * Request changes, improvements, and bug fixes to your code.
-* Aider will apply the edits suggested by GPT-4.
-* Aider will automatically commit each changeset to git with a sensible commit message. These frequent, automatic commits provide a safety net. It's easy to use standard git workflows to either adopt or undo/abandon a series of changes.
+* Aider will apply the edits suggested by GPT-4 directly to your source files.
+* Aider will automatically commit each changeset to your local git repo with a sensible commit message. These frequent, automatic commits provide a safety net. It's easy to undo aider's changes or use standard git workflows to manage longer sequences of changes.
 * Aider can review multiple source files at once and make coordinated code changes across all of them in a single changeset/commit.
+* Aider knows about all the files in your repo, so it can ask for permission to review whichever files seem relevant to your requests.
 * You can also edit the files in your editor while chatting with aider.
   * Aider will notice if you edit the files outside the chat.
   * It will help you commit these out-of-band changes, if you'd like.
-  * It will import the new file contents into the chat.
+  * It will bring the updated file contents into the chat.
   * You can bounce back and forth between the aider chat and your editor, to fluidly collaborate.
 * Live, colorized, human friendly output.
-* Readline style chat input history, with autocompletion of tokens found in the source files being discussed (via `prompt_toolkit`)
+* Readline style chat input history, with autocompletion of code tokens found in the source files being discussed (via `prompt_toolkit` and `pygments` lexers)
 
 ## Installation
 
@@ -28,13 +29,17 @@ Each change is automatically committed to git with a sensible commit message.
 
 ## Usage
 
-Run the Aider tool by executing the following command:
+Run the aider tool by executing the following command:
 
 ```
 aider <file1> <file2> ...
 ```
 
-Replace `<file1>`, `<file2>`, etc., with the paths to the source code files you want to work on.
+Replace `<file1>`, `<file2>`, etc., with the paths to the source code files you want to work on. These files will be added to the chat session.
+
+You can also just launch `aider` anywhere in a git repo without naming files on the command line.
+It will discover all the files in the repo.
+You can then add and remove individual files in the chat session with the `/add` and `/drop` chat commands described below.
 
 You can also use additional command-line options to customize the behavior of the tool. The following options are available, along with their corresponding environment variable overrides:
 
@@ -46,14 +51,14 @@ You can also use additional command-line options to customize the behavior of th
 
 For more information, run `aider --help`.
 
-## Commands
+## Chat commands
 
 Aider supports the following commands from within the chat:
 
-* `/add <file>`: Add matching files to the chat.
-* `/drop <file>`: Remove matching files from the chat.
-* `/ls`: List files and show their chat status.
-* `/commit [message]`: Commit outstanding changes to the chat files. Aider will provide a commit message if you don't.
+* `/add <file>`: Add matching files to the chat session.
+* `/drop <file>`: Remove matching files from the chat session.
+* `/ls`: List all known files and those included in the chat session.
+* `/commit [message]`: Commit outstanding changes to the chat session files. Aider will provide a commit message if you don't.
 * `/undo`: Undo the last git commit if it was done by aider.
 * `/diff`: Display the diff of the last aider commit.
 
