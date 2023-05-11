@@ -127,6 +127,13 @@ class Commands:
 
         self.console.print(Text(diff))
 
+    def completions_add(self, partial):
+        files = set(self.coder.get_all_relative_files())
+        files = files - set(self.coder.get_inchat_relative_files())
+        for fname in files:
+            if partial.lower() in fname.lower():
+                yield Completion(fname, start_position=-len(partial))
+
     def cmd_add(self, args):
         "Add matching files to the chat"
 
@@ -144,13 +151,6 @@ class Commands:
                     self.console.print(f"[red]Added {matched_file} to the chat")
                 else:
                     self.console.print(f"[red]{matched_file} is already in the chat")
-
-    def completions_add(self, partial):
-        files = set(self.coder.get_all_relative_files())
-        files = files - set(self.coder.get_inchat_relative_files())
-        for fname in files:
-            if partial.lower() in fname.lower():
-                yield Completion(fname, start_position=-len(partial))
 
     def completions_drop(self, partial):
         files = self.coder.get_inchat_relative_files()
