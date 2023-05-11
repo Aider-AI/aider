@@ -65,6 +65,9 @@ class Coder:
         self.console.print(f"[red]Common root directory: {self.root}")
 
     def set_repo(self, cmd_line_fnames):
+        if not cmd_line_fnames:
+            cmd_line_fnames = ["."]
+
         abs_fnames = [Path(fn).resolve() for fn in cmd_line_fnames]
 
         repo_paths = []
