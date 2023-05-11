@@ -344,7 +344,18 @@ class Coder:
         # self.console.print(md)
 
     pattern = re.compile(
-        r"(^```\S*\s*)?^((?:[a-zA-Z]:\\|/)?(?:[\w\s.-]+[\\/])*\w+(\.[\w\s.-]+)*)\s+(^```\S*\s*)?^<<<<<<< ORIGINAL\n(.*?\n?)^=======\n(.*?)^>>>>>>> UPDATED",  # noqa: E501
+        # Optional: Matches the start of a code block (e.g., ```python) and any following whitespace
+        r"(^```\S*\s*)?"
+        # Matches the file path
+        r"^((?:[a-zA-Z]:\\|/)?(?:[\w\s.-]+[\\/])*\w+(\.[\w\s.-]+)*)"
+        # Optional: Matches the end of a code block (e.g., ```) and any following whitespace
+        r"\s+(^```\S*\s*)?"
+        # Matches the start of the ORIGINAL section and captures its content
+        r"^<<<<<<< ORIGINAL\n(.*?\n?)"
+        # Matches the separator between ORIGINAL and UPDATED sections and captures the UPDATED content
+        r"^=======\n(.*?)"
+        # Matches the end of the UPDATED section
+        r"^>>>>>>> UPDATED",
         re.MULTILINE | re.DOTALL,
     )
 
