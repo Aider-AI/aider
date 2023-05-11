@@ -7,6 +7,9 @@ from pathlib import Path
 
 
 def replace_most_similar_chunk(whole, part, replace):
+    if part in whole:
+        return whole.replace(part, replace)
+
     similarity_thresh = 0.8
 
     max_similarity = 0
