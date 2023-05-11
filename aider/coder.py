@@ -79,6 +79,14 @@ class Coder:
                 repo_paths.append(repo_path)
             except git.exc.InvalidGitRepositoryError:
                 pass
+
+            if fname.is_dir():
+                continue
+            self.console.print(f"[bright_black]Loading {fname}")
+
+            fname = fname.resolve()
+            self.abs_fnames.add(str(fname))
+
         num_repos = len(set(repo_paths))
 
         if num_repos == 0:
@@ -95,10 +103,6 @@ class Coder:
 
         new_files = []
         for fname in abs_fnames:
-            if fname.is_dir():
-                continue
-            self.console.print(f"[bright_black]Loading {fname}")
-
             fname = fname.resolve()
             self.abs_fnames.add(str(fname))
 
