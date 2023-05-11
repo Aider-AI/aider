@@ -4,6 +4,8 @@ import os
 import sys
 import re
 import traceback
+import time
+from openai.error import RateLimitError
 
 from rich.console import Console
 from rich.prompt import Confirm, Prompt
@@ -265,25 +267,9 @@ class Coder:
         self.cur_messages = []
         return True
 
-    def show_messages(self, messages, title):
-        print(title.upper(), "*" * 50)
-
-        for msg in messages:
-            print()
-            print("-" * 50)
-            role = msg["role"].upper()
-            content = msg["content"].splitlines()
-            for line in content:
-                print(role, line)
-
     def send(self, messages, model=None, silent=False):
-        # self.show_messages(messages, "all")
-
         if not model:
             model = self.main_model
-
-        import time
-        from openai.error import RateLimitError
 
         self.resp = ""
         interrupted = False
