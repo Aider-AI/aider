@@ -183,8 +183,9 @@ class Coder:
         inp = get_input(self.history_file, self.abs_fnames, self.commands)
 
         if inp.startswith("/"):
-            self.commands.run(inp)
-            return
+            inp = self.commands.run(inp)
+            if not inp:
+                return
 
         self.num_control_c = 0
 

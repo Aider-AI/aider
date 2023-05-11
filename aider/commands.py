@@ -39,7 +39,7 @@ class Commands:
         cmd_method_name = f"cmd_{cmd_name}"
         cmd_method = getattr(self, cmd_method_name, None)
         if cmd_method:
-            cmd_method(args)
+            return cmd_method(args)
         else:
             self.console.print(f"Error: Command {cmd_name} not found.")
 
@@ -105,7 +105,11 @@ class Commands:
             )
             return
         self.coder.repo.git.reset("--hard", "HEAD~1")
-        self.console.print(f"[red]Undid the last commit: {last_commit.message.strip()}")
+        self.console.print(
+            f"[red]Undid the last commit: {last_commit.message.strip()}\n"
+        )
+
+        return "I did not like those edits, so I did `git reset --hard HEAD~1` to discard them."
 
     def cmd_diff(self, args):
         "Display the diff of the last aider commit"
