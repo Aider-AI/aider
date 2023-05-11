@@ -38,13 +38,13 @@ Replace `<file1>`, `<file2>`, etc., with the paths to the source code files you 
 
 You can also use additional command-line options to customize the behavior of the tool. The following options are available, along with their corresponding environment variable overrides:
 
-- `--history-file HISTORY_FILE`: Specify the history file (default: .aider.history). Override with the environment variable `AIDER_HISTORY_FILE`.
+- `--history-file HISTORY_FILE`: Specify the chat input history file (default: .aider.history). Override with the environment variable `AIDER_HISTORY_FILE`.
 - `--model MODEL`: Specify the model to use for the main chat (default: gpt-4). Override with the environment variable `AIDER_MODEL`.
 - `-3`: Use gpt-3.5-turbo model for the main chat (basically won't work). No environment variable override.
 - `--no-pretty`: Disable pretty, colorized output. Override with the environment variable `AIDER_PRETTY` (default: 1 for enabled, 0 for disabled).
-- `--apply FILE`: Apply the changes from the given file instead of running the chat. No environment variable override.
 - `--show-diffs`: Show diffs when committing changes (default: False). Override with the environment variable `AIDER_SHOW_DIFFS` (default: 0 for False, 1 for True).
-For more information, run `aider --help`. Many defaults can be set with `.env` or environment variables, see the help output.
+
+For more information, run `aider --help`.
 
 ## Commands
 
