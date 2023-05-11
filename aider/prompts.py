@@ -45,7 +45,7 @@ some/dir/example.py
        """Multiplies 2 numbers"""
 >>>>>>> UPDATED
 
-If need to see the contents of a file from the git repo, ask the user!
+If need to see the contents of a file from the git repo, tell the user the file names you need!
 Don't edit a listed file without looking at the contents first!
 
 You can make a new file by replying with an ORIGINAL/UPDATE that has an empty ORIGINAL block.
@@ -78,11 +78,11 @@ Only return the parts of the code which need changes!
 
 # FILES
 
-files_content_gpt_edits = "I committed your suggested changes with git hash {hash} and commit message: {message}"
-
-files_content_gpt_no_edits = (
-    "I wasn't able to see any properly formatted edits in your reply?!"
+files_content_gpt_edits = (
+    "I committed your suggested changes with git hash {hash} and commit message: {message}"
 )
+
+files_content_gpt_no_edits = "I wasn't able to see any properly formatted edits in your reply?!"
 
 files_content_local_edits = "I made some changes to the files myself."
 
@@ -90,7 +90,9 @@ repo_content_prefix = "These are the files in the git repo:\n\n"
 
 files_content_prefix = "Here is the current content of the files we have opened:\n\n"
 
-files_content_suffix = """Base any edits on the current contents of the files as shown in the user's last message."""
+files_content_suffix = (
+    """Base any edits on the current contents of the files as shown in the user's last message."""
+)
 
 
 # COMMIT

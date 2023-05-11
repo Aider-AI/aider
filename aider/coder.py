@@ -175,7 +175,10 @@ class Coder:
 
         while True:
             try:
-                self.run_loop()
+                new_user_message = self.run_loop()
+                while new_user_message:
+                    new_user_message = self.send_new_user_message(new_user_message)
+
             except KeyboardInterrupt:
                 self.num_control_c += 1
                 if self.num_control_c >= 2:
@@ -191,11 +194,6 @@ class Coder:
             print()
 
         inp = get_input(self.history_file, self.abs_fnames, self.commands)
-
-        if inp.startswith("/"):
-            inp = self.commands.run(inp)
-            if not inp:
-                return
 
         self.num_control_c = 0
 
@@ -213,6 +211,12 @@ class Coder:
         if not inp:
             return
 
+        if inp.startswith("/"):
+            return self.commands.run(inp)
+
+        return self.send_new_user_message(inp)
+
+    def send_new_user_message(self, inp):
         self.cur_messages += [
             dict(role="user", content=inp),
         ]
@@ -224,7 +228,7 @@ class Coder:
         messages += self.get_files_messages()
         messages += self.cur_messages
 
-        # utils.show_messages(messages, "all")
+        utils.show_messages(messages, "all")
 
         content, interrupted = self.send(messages)
         if interrupted:
@@ -238,7 +242,7 @@ class Coder:
 
         self.console.print()
         if interrupted:
-            return True
+            return
 
         try:
             edited = self.update_files(content, inp)
@@ -248,8 +252,12 @@ class Coder:
             traceback.print_exc()
             edited = None
 
+        add_rel_files_message = self.check_for_file_mentions(content)
+        if add_rel_files_message:
+            return add_rel_files_message
+
         if not edited:
-            return True
+            return
 
         res = self.commit(history=self.cur_messages, prefix="aider: ")
         if res:
@@ -270,7 +278,36 @@ class Coder:
             dict(role="assistant", content="Ok."),
         ]
         self.cur_messages = []
-        return True
+        return
+
+    def check_for_file_mentions(self, content):
+        words = set(word for word in content.split())
+        for quote in ['"', "'", "`"]:
+            words = set(word.strip(quote) for word in words)
+
+        addable_rel_fnames = set(self.get_all_relative_files()) - set(
+            self.get_inchat_relative_files()
+        )
+
+        mentioned_rel_fnames = set()
+        for word in words:
+            if word in addable_rel_fnames:
+                mentioned_rel_fnames.add(word)
+
+        dump(mentioned_rel_fnames)
+        if not mentioned_rel_fnames:
+            return
+
+        for rel_fname in mentioned_rel_fnames:
+            self.console.print(f"[bright_black]{rel_fname}")
+        ok = Confirm.ask("[bright_black]Add these files?", console=self.console, default="y")
+        if not ok:
+            return
+
+        for rel_fname in mentioned_rel_fnames:
+            self.abs_fnames.add(os.path.abspath(os.path.join(self.root, rel_fname)))
+
+        return prompts.added_files.format(fnames=", ".join(mentioned_rel_fnames))
 
     def send(self, messages, model=None, silent=False):
         if not model:
@@ -343,7 +380,6 @@ class Coder:
     def update_files(self, content, inp):
         edited = set()
         for match in self.pattern.finditer(content):
-            dump(match.groups())
             _, path, _, original, updated = match.groups()
 
             path = path.strip()
