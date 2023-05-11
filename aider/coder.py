@@ -482,7 +482,10 @@ class Coder:
             self.console.print(Text(diffs))
 
         context = self.get_context_from_history(history)
-        commit_message = self.get_commit_message(diffs, context)
+        if message:
+            commit_message = message
+        else:
+            commit_message = self.get_commit_message(diffs, context)
 
         if prefix:
             commit_message = prefix + commit_message
