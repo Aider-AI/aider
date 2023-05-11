@@ -151,10 +151,10 @@ class Commands:
             matched_files = [file for file in files if word in file]
             if not matched_files:
                 if self.coder.repo is not None:
-                    create_file = Confirm.ask(f"No files matched '{word}'. Do you want to create the file and add it to git?")
+                    create_file = Confirm.ask(f"[red]No files matched '{word}'. Do you want to create the file and add it to git?")
                 else:
-                    create_file = Confirm.ask(f"No files matched '{word}'. Do you want to create the file?")
-                
+                    create_file = Confirm.ask(f"[red]No files matched '{word}'. Do you want to create the file?")
+
                 if create_file:
                     with open(os.path.join(self.coder.root, word), 'w') as new_file:
                         pass
