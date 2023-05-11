@@ -160,7 +160,7 @@ class Commands:
                     )
 
                 if create_file:
-                    with open(os.path.join(self.coder.root, word), "w") as new_file:
+                    with open(os.path.join(self.coder.root, word), "w"):
                         pass
                     matched_files = [word]
                     if self.coder.repo is not None:
