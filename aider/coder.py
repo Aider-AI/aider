@@ -419,6 +419,13 @@ class Coder:
         return edited
 
     def commit(self, history=None, prefix=None, ask=False, message=None, which="chat_files"):
+        repo = self.repo
+        if not repo:
+            return
+
+        if not repo.is_dirty():
+            return
+
         def get_dirty_files(file_list):
             dirty_files = []
             relative_dirty_files = []
@@ -442,12 +449,6 @@ class Coder:
             dirty_fnames, relative_dirty_fnames = get_dirty_files(self.abs_fnames)
         else:
             raise ValueError(f"Invalid value for 'which': {which}")
-        repo = self.repo
-        if not repo:
-            return
-
-        if not repo.is_dirty():
-            return
 
         diffs = ""
         dirty_fnames = []
