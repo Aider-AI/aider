@@ -86,7 +86,7 @@ class Commands:
             )
             self.coder.repo.git.commit("-m", commit_message, "--no-verify")
             commit_hash = self.coder.repo.head.commit.hexsha[:7]
-            self.console.print(f"[red]{commit_hash} {commit_message}")
+            self.console.print(f"[bright_black]{commit_hash} {commit_message}")
             return
 
         self.coder.commit()
@@ -108,7 +108,7 @@ class Commands:
             return
         self.coder.repo.git.reset("--hard", "HEAD~1")
         self.console.print(
-            f"[red]{last_commit.message.strip()}\n"
+            f"[bright_black]{last_commit.message.strip()}\n"
             f"The above commit {self.coder.last_aider_commit_hash} "
             "was reset and removed from git.\n"
         )
@@ -151,12 +151,16 @@ class Commands:
             matched_files = [file for file in files if word in file]
             if not matched_files:
                 if self.coder.repo is not None:
-                    create_file = Confirm.ask(f"[red]No files matched '{word}'. Do you want to create the file and add it to git?")
+                    create_file = Confirm.ask(
+                        f"[bright_black]No files matched '{word}'. Do you want to create the file and add it to git?"
+                    )
                 else:
-                    create_file = Confirm.ask(f"[red]No files matched '{word}'. Do you want to create the file?")
+                    create_file = Confirm.ask(
+                        f"[bright_black]No files matched '{word}'. Do you want to create the file?"
+                    )
 
                 if create_file:
-                    with open(os.path.join(self.coder.root, word), 'w') as new_file:
+                    with open(os.path.join(self.coder.root, word), "w") as new_file:
                         pass
                     matched_files = [word]
                     if self.coder.repo is not None:
@@ -171,7 +175,9 @@ class Commands:
                 )
                 if abs_file_path not in self.coder.abs_fnames:
                     self.coder.abs_fnames.add(abs_file_path)
-                    self.console.print(f"[red]Added {matched_file} to the chat")
+                    self.console.print(
+                        f"[bright_black]Added {matched_file} to the chat"
+                    )
                     added_fnames.append(matched_file)
                 else:
                     self.console.print(f"[red]{matched_file} is already in the chat")
@@ -204,7 +210,9 @@ class Commands:
             for matched_file in matched_files:
                 relative_fname = os.path.relpath(matched_file, self.coder.root)
                 self.coder.abs_fnames.remove(matched_file)
-                self.console.print(f"[red]Removed {relative_fname} from the chat")
+                self.console.print(
+                    f"[bright_black]Removed {relative_fname} from the chat"
+                )
 
     def cmd_ls(self, args):
         "List files and show their chat status"
@@ -221,11 +229,11 @@ class Commands:
                 other_files.append(file)
 
         if chat_files:
-            self.console.print("[red]Files in chat:\n")
+            self.console.print("[bright_black]Files in chat:\n")
         for file in chat_files:
-            self.console.print(f"[red]  {file}")
+            self.console.print(f"[bright_black]  {file}")
 
         if other_files:
-            self.console.print("\n[red]Repo files not in the chat:\n")
+            self.console.print("\n[bright_black]Repo files not in the chat:\n")
         for file in other_files:
-            self.console.print(f"[red]  {file}")
+            self.console.print(f"[bright_black]  {file}")

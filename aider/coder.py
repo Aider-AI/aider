@@ -45,14 +45,14 @@ class Coder:
         self.main_model = main_model
         if main_model == "gpt-3.5-turbo":
             self.console.print(
-                f"[red bold]This tool will almost certainly fail to work with {main_model}"
+                f"[red]This tool will almost certainly fail to work with {main_model}"
             )
 
         self.set_repo(fnames)
 
         if not self.repo:
             self.console.print(
-                "[red bold]No suitable git repo, will not automatically commit edits."
+                "[red]No suitable git repo, will not automatically commit edits."
             )
             self.find_common_root()
 
@@ -62,7 +62,7 @@ class Coder:
     def find_common_root(self):
         common_prefix = os.path.commonpath(list(self.abs_fnames))
         self.root = os.path.dirname(common_prefix)
-        self.console.print(f"[red]Common root directory: {self.root}")
+        self.console.print(f"[bright_black]Common root directory: {self.root}")
 
     def set_repo(self, cmd_line_fnames):
         if not cmd_line_fnames:
@@ -73,7 +73,7 @@ class Coder:
         repo_paths = []
         for fname in abs_fnames:
             if not fname.exists():
-                self.console.print(f"[red]Creating {fname}")
+                self.console.print(f"[bright_black]Creating {fname}")
                 fname.touch()
             try:
                 repo_path = git.Repo(fname, search_parent_directories=True).git_dir
@@ -83,10 +83,10 @@ class Coder:
         num_repos = len(set(repo_paths))
 
         if num_repos == 0:
-            self.console.print("[red bold]Files are not in a git repo.")
+            self.console.print("[red]Files are not in a git repo.")
             return
         if num_repos > 1:
-            self.console.print("[red bold]Files are in different git repos.")
+            self.console.print("[red]Files are in different git repos.")
             return
 
         # https://github.com/gitpython-developers/GitPython/issues/427
@@ -98,7 +98,7 @@ class Coder:
         for fname in abs_fnames:
             if fname.is_dir():
                 continue
-            self.console.print(f"[red]Loading {fname}")
+            self.console.print(f"[bright_black]Loading {fname}")
 
             fname = fname.resolve()
             self.abs_fnames.add(str(fname))
@@ -109,20 +109,24 @@ class Coder:
                 new_files.append(relative_fname)
 
         if new_files:
-            self.console.print(f"[red]Files not tracked in {repo.git_dir}:")
+            self.console.print(f"[bright_black]Files not tracked in {repo.git_dir}:")
             for fn in new_files:
-                self.console.print(f"[red]  {fn}")
-            if Confirm.ask("[red bold]Add them?", console=self.console, default="y"):
+                self.console.print(f"[bright_black]  {fn}")
+            if Confirm.ask(
+                "[bright_black]Add them?", console=self.console, default="y"
+            ):
                 for relative_fname in new_files:
                     repo.git.add(relative_fname)
-                    self.console.print(f"[red]Added {relative_fname} to the git repo")
+                    self.console.print(
+                        f"[bright_black]Added {relative_fname} to the git repo"
+                    )
                 show_files = ", ".join(new_files)
                 commit_message = (
                     f"Initial commit: Added new files to the git repo: {show_files}"
                 )
                 repo.git.commit("-m", commit_message, "--no-verify")
                 self.console.print(
-                    f"[red]Committed new files with message: {commit_message}"
+                    f"[bright_black]Committed new files with message: {commit_message}"
                 )
             else:
                 self.console.print("[red]Skipped adding new files to the git repo.")
@@ -183,7 +187,7 @@ class Coder:
                 self.num_control_c += 1
                 if self.num_control_c >= 2:
                     break
-                self.console.print("[bold red]^C again to quit")
+                self.console.print("[red]^C again to quit")
             except EOFError:
                 return
 
@@ -264,7 +268,7 @@ class Coder:
                 message=commit_message,
             )
         else:
-            self.console.print("[red bold]No changes found in tracked files.")
+            self.console.print("[red]Warning: no changes found in tracked files.")
             saved_message = prompts.files_content_gpt_no_edits
 
         self.done_messages += self.cur_messages
@@ -355,11 +359,9 @@ class Coder:
 
             if full_path not in self.abs_fnames:
                 if not Path(full_path).exists():
-                    question = f"[red]Allow creation of new file {path}?"
+                    question = f"[bright_black]Allow creation of new file {path}?"
                 else:
-                    question = (
-                        f"[red]Allow edits to {path} which was not previously provided?"
-                    )
+                    question = f"[bright_black]Allow edits to {path} which was not previously provided?"
                 if not Confirm.ask(question, console=self.console, default="y"):
                     self.console.print(f"[red]Skipping edit to {path}")
                     continue
@@ -368,13 +370,15 @@ class Coder:
                 self.abs_fnames.add(full_path)
 
                 if self.repo and Confirm.ask(
-                    f"[red]Add {path} to git?", console=self.console, default="y"
+                    f"[bright_black]Add {path} to git?",
+                    console=self.console,
+                    default="y",
                 ):
                     self.repo.git.add(full_path)
 
             edited.add(path)
             if utils.do_replace(full_path, original, updated):
-                self.console.print(f"[red]Applied edit to {path}")
+                self.console.print(f"[bright_black]Applied edit to {path}")
             else:
                 self.console.print(f"[red]Failed to apply edit to {path}")
 
@@ -449,11 +453,13 @@ class Coder:
         if ask:
             self.last_modified = self.get_last_modified()
 
-            self.console.print("[red]Files have uncommitted changes.\n")
-            self.console.print(f"[red]Suggested commit message:\n{commit_message}\n")
+            self.console.print("[bright_black]Files have uncommitted changes.\n")
+            self.console.print(
+                f"[bright_black]Suggested commit message:\n{commit_message}\n"
+            )
 
             res = Prompt.ask(
-                "[red]Commit before the chat proceeds? \[y/n/commit message]",  # noqa: W605
+                "[bright_black]Commit before the chat proceeds? \[y/n/commit message]",  # noqa: W605
                 console=self.console,
                 default="y",
             ).strip()
@@ -470,7 +476,7 @@ class Coder:
         full_commit_message = commit_message + "\n\n" + context
         repo.git.commit("-m", full_commit_message, "--no-verify")
         commit_hash = repo.head.commit.hexsha[:7]
-        self.console.print(f"[red]{commit_hash} {commit_message}")
+        self.console.print(f"[bright_black]{commit_hash} {commit_message}")
 
         self.last_modified = self.get_last_modified()
 
