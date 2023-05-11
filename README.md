@@ -43,7 +43,6 @@ You can also use additional command-line options to customize the behavior of th
 - `-3`: Use gpt-3.5-turbo model for the main chat (basically won't work). No environment variable override.
 - `--no-pretty`: Disable pretty, colorized output. Override with the environment variable `AIDER_PRETTY` (default: 1 for enabled, 0 for disabled).
 - `--apply FILE`: Apply the changes from the given file instead of running the chat. No environment variable override.
-- `--commit-dirty`: On launch, commit dirty files without confirmation (default: False). Override with the environment variable `AIDER_COMMIT_DIRTY` (default: 0 for False, 1 for True).
 - `--show-diffs`: Show diffs when committing changes (default: False). Override with the environment variable `AIDER_SHOW_DIFFS` (default: 0 for False, 1 for True).
 For more information, run `aider --help`. Many defaults can be set with `.env` or environment variables, see the help output.
 
