@@ -454,7 +454,7 @@ class Coder:
         if not repo.is_dirty():
             return
 
-        def get_dirty_files(file_list):
+        def get_dirty_files_and_diffs(file_list):
             diffs = ""
             relative_dirty_files = []
             for fname in file_list:
@@ -472,9 +472,9 @@ class Coder:
 
         if which == "repo_files":
             all_files = [os.path.join(self.root, f) for f in self.get_all_relative_files()]
-            relative_dirty_fnames,diffs = get_dirty_files(all_files)
+            relative_dirty_fnames,diffs = get_dirty_files_and_diffs(all_files)
         elif which == "chat_files":
-            relative_dirty_fnames,diffs = get_dirty_files(self.abs_fnames)
+            relative_dirty_fnames,diffs = get_dirty_files_and_diffs(self.abs_fnames)
         else:
             raise ValueError(f"Invalid value for 'which': {which}")
 
