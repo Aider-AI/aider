@@ -21,7 +21,10 @@ class FileContentCompleter(Completer):
         for fname in fnames:
             with open(fname, "r") as f:
                 content = f.read()
-            lexer = guess_lexer_for_filename(fname, content)
+            try:
+                lexer = guess_lexer_for_filename(fname, content)
+            except ClassNotFound:
+                continue
             tokens = list(lexer.get_tokens(content))
             self.words.update(token[1] for token in tokens if token[0] in Token.Name)
 
