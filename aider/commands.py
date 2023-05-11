@@ -1,5 +1,6 @@
 import os
 from rich.text import Text
+from prompt_toolkit.completion import Completion
 
 
 class Commands:
@@ -35,11 +36,12 @@ class Commands:
         else:
             self.console.print(f"Error: Command {cmd_name} not found.")
 
-    def get_command_completions(self, cmd_name):
+    def get_command_completions(self, cmd_name, partial):
         cmd_completions_method_name = f"completions_{cmd_name}"
         cmd_completions_method = getattr(self, cmd_completions_method_name, None)
         if cmd_completions_method:
-            return set(cmd_completions_method())
+            for completion in cmd_completions_method(partial):
+                yield completion
 
     def run(self, inp):
         words = inp.strip().split()
@@ -143,13 +145,19 @@ class Commands:
                 else:
                     self.console.print(f"[red]{matched_file} is already in the chat")
 
-    def completions_add(self):
-        res = set(self.coder.get_all_relative_files())
-        res = res - set(self.coder.get_inchat_relative_files())
-        return res
+    def completions_add(self, partial):
+        files = set(self.coder.get_all_relative_files())
+        files = files - set(self.coder.get_inchat_relative_files())
+        for fname in files:
+            if partial.lower() in fname.lower():
+                yield Completion(fname, start_position=-len(partial))
 
-    def completions_drop(self):
-        return self.coder.get_inchat_relative_files()
+    def completions_drop(self, partial):
+        files = self.coder.get_inchat_relative_files()
+
+        for fname in files:
+            if partial.lower() in fname.lower():
+                yield Completion(fname, start_position=-len(partial))
 
     def cmd_drop(self, args):
         "Remove matching files from the chat"

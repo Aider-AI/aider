@@ -35,7 +35,11 @@ class FileContentCompleter(Completer):
             if len(words) == 1 and not text[-1].isspace():
                 candidates = self.commands.get_commands()
             else:
-                candidates = self.commands.get_command_completions(words[0][1:])
+                for completion in self.commands.get_command_completions(
+                    words[0][1:], words[-1]
+                ):
+                    yield completion
+                return
         else:
             candidates = self.words
 
