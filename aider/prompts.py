@@ -106,3 +106,8 @@ Reply with JUST the commit message, without quotes, comments, questions, etc!
 undo_command_reply = (
     "I did not like those edits, so I did `git reset --hard HEAD~1` to discard them."
 )
+
+added_files = """Here is the content of more files:
+
+{quoted_fnames}
+"""

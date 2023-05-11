@@ -122,9 +122,12 @@ class Coder:
 
         self.repo = repo
 
-    def get_files_content(self):
+    def get_files_content(self, fnames=None):
+        if not fnames:
+            fnames = self.abs_fnames
+
         prompt = ""
-        for fname in self.abs_fnames:
+        for fname in fnames:
             relative_fname = os.path.relpath(fname, self.root)
             prompt += utils.quoted_file(fname, relative_fname)
         return prompt

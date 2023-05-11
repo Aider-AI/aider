@@ -144,6 +144,7 @@ class Commands:
     def cmd_add(self, args):
         "Add matching files to the chat"
 
+        added_fnames = []
         files = self.coder.get_all_relative_files()
         for word in args.split():
             matched_files = [file for file in files if word in file]
@@ -156,8 +157,21 @@ class Commands:
                 if abs_file_path not in self.coder.abs_fnames:
                     self.coder.abs_fnames.add(abs_file_path)
                     self.console.print(f"[red]Added {matched_file} to the chat")
+                    added_fnames.append(matched_file)
                 else:
                     self.console.print(f"[red]{matched_file} is already in the chat")
+
+        if not added_fnames:
+            return
+
+        quoted_fnames = self.coder.get_files_content(added_fnames)
+        reply = prompts.added_files.format(quoted_fnames=quoted_fnames)
+
+        from aider.dump import dump
+
+        dump(reply)
+
+        return reply
 
     def completions_drop(self, partial):
         files = self.coder.get_inchat_relative_files()
