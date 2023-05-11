@@ -465,7 +465,8 @@ class Coder:
             for fname in file_list:
                 relative_fname = os.path.relpath(fname, repo.working_tree_dir)
                 if self.pretty:
-    if len(repo.heads) > 0:
+    current_branch_commit_count = len(list(repo.iter_commits(repo.active_branch)))
+    if current_branch_commit_count > 0:
         these_diffs = repo.git.diff("HEAD", "--color", "--", relative_fname)
     else:
         these_diffs = ""
