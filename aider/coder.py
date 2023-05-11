@@ -418,7 +418,28 @@ class Coder:
 
         return edited
 
-    def commit(self, history=None, prefix=None, ask=False, message=None):
+    def commit(self, history=None, prefix=None, ask=False, message=None, which="chat_files"):
+        def get_dirty_files(file_list):
+            dirty_files = []
+            relative_dirty_files = []
+            for fname in file_list:
+                relative_fname = os.path.relpath(fname, repo.working_tree_dir)
+                if self.pretty:
+                    these_diffs = repo.git.diff("HEAD", "--color", relative_fname)
+                else:
+                    these_diffs = repo.git.diff("HEAD", relative_fname)
+
+                if these_diffs:
+                    dirty_files.append(fname)
+                    relative_dirty_files.append(relative_fname)
+
+            return dirty_files, relative_dirty_files
+
+        if which == "repo_files":
+            all_files = [os.path.join(self.root, f) for f in self.get_all_relative_files()]
+            dirty_fnames, relative_dirty_fnames = get_dirty_files(all_files)
+        else:
+            dirty_fnames, relative_dirty_fnames = get_dirty_files(self.abs_fnames)
         repo = self.repo
         if not repo:
             return
