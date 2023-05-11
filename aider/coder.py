@@ -347,7 +347,7 @@ class Coder:
         # Optional: Matches the start of a code block (e.g., ```python) and any following whitespace
         r"(^```\S*\s*)?"
         # Matches the file path
-        r"^((?:[a-zA-Z]:\\|/)?(?:[\w\s.-]+[\\/])*\w+(\.[\w\s.-]+)*)"
+        r"^((?:[a-zA-Z]:\\|/)?(?:[\w\s.-]+[\\/])*(?:\w+|\.\w+)(\.[\w\s.-]+)*)"
         # Optional: Matches the end of a code block (e.g., ```) and any following whitespace
         r"\s+(^```\S*\s*)?"
         # Matches the start of the ORIGINAL section and captures its content
