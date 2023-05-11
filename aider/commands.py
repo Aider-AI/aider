@@ -164,13 +164,7 @@ class Commands:
         if not added_fnames:
             return
 
-        quoted_fnames = self.coder.get_files_content(added_fnames)
-        reply = prompts.added_files.format(quoted_fnames=quoted_fnames)
-
-        from aider.dump import dump
-
-        dump(reply)
-
+        reply = prompts.added_files.format(fnames=", ".join(added_fnames))
         return reply
 
     def completions_drop(self, partial):

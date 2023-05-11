@@ -113,7 +113,7 @@ def do_replace(fname, before_text, after_text):
     return True
 
 
-def show_messages(self, messages, title):
+def show_messages(messages, title):
     print(title.upper(), "*" * 50)
 
     for msg in messages:
