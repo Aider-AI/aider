@@ -465,7 +465,10 @@ class Coder:
             for fname in file_list:
                 relative_fname = os.path.relpath(fname, repo.working_tree_dir)
                 if self.pretty:
-                    these_diffs = repo.git.diff("HEAD", "--color", relative_fname)
+    if len(repo.heads) > 0:
+        these_diffs = repo.git.diff("HEAD", "--color", "--", relative_fname)
+    else:
+        these_diffs = ""
                 else:
                     these_diffs = repo.git.diff("HEAD", relative_fname)
 
