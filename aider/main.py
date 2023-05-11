@@ -65,7 +65,7 @@ def main():
     fnames = args.files
     pretty = args.pretty
 
-    coder = Coder(args.model, fnames, pretty, args.history_file, args.show_diffs)
+    coder = Coder(args.model, fnames, pretty, args.history_file, args.show_diffs, args.auto_commits)
     coder.commit(ask=True, prefix="wip: ", which="repo_files")
 
     if args.apply:

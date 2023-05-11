@@ -33,7 +33,7 @@ class Coder:
     repo = None
     last_aider_commit_hash = None
 
-    def __init__(self, main_model, fnames, pretty, history_file, show_diffs):
+    def __init__(self, main_model, fnames, pretty, history_file, show_diffs, auto_commits):
         self.history_file = history_file
 
         if pretty:
