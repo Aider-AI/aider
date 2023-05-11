@@ -103,9 +103,6 @@ class Coder:
 
         new_files = []
         for fname in self.abs_fnames:
-            fname = fname.resolve()
-            self.abs_fnames.add(str(fname))
-
             relative_fname = os.path.relpath(fname, repo.working_tree_dir)
             tracked_files = set(repo.git.ls_files().splitlines())
             if relative_fname not in tracked_files:
