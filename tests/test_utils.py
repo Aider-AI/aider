@@ -1,3 +1,5 @@
+# flake8: noqa: E501
+
 import unittest
 from aider import utils
 
@@ -115,6 +117,41 @@ oops!
         with self.assertRaises(ValueError) as cm:
             list(utils.find_original_update_blocks(edit))
         self.assertIn("filename", str(cm.exception))
+
+    def test_find_original_update_blocks_no_final_newline(self):
+        edit = """
+aider/coder.py
+<<<<<<< ORIGINAL
+            self.console.print("[red]^C again to quit")
+=======
+            self.io.tool_error("^C again to quit")
+>>>>>>> UPDATED
+
+aider/coder.py
+<<<<<<< ORIGINAL
+            self.io.tool_error("Malformed ORIGINAL/UPDATE blocks, retrying...")
+            self.io.tool_error(err)
+=======
+            self.io.tool_error("Malformed ORIGINAL/UPDATE blocks, retrying...")
+            self.io.tool_error(str(err))
+>>>>>>> UPDATED
+
+aider/coder.py
+<<<<<<< ORIGINAL
+            self.console.print("[red]Unable to get commit message from gpt-3.5-turbo. Use /commit to try again.\n")
+=======
+            self.io.tool_error("Unable to get commit message from gpt-3.5-turbo. Use /commit to try again.")
+>>>>>>> UPDATED
+
+aider/coder.py
+<<<<<<< ORIGINAL
+            self.console.print("[red]Skipped commmit.")
+=======
+            self.io.tool_error("Skipped commmit.")
+>>>>>>> UPDATED"""
+
+        # Should not raise a ValueError
+        list(utils.find_original_update_blocks(edit))
 
 
 if __name__ == "__main__":

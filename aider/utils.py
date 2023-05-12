@@ -129,22 +129,6 @@ def show_messages(messages, title):
             print(role, line)
 
 
-pattern = re.compile(
-    # Optional: Matches the start of a code block (e.g., ```python) and any following whitespace
-    r"(^```\S*\s*)?"
-    # Matches the file path
-    r"^(\S+)\s*"
-    # Optional: Matches the end of a code block (e.g., ```) and any following whitespace
-    r"(^```\S*\s*)?"
-    # Matches the start of the ORIGINAL section and captures its content
-    r"^<<<<<<< ORIGINAL\n(.*?\n?)"
-    # Matches sep between ORIGINAL and UPDATED sections, captures UPDATED content
-    r"^=======\n(.*?)"
-    # Matches the end of the UPDATED section
-    r"^>>>>>>> UPDATED",
-    re.MULTILINE | re.DOTALL,
-)
-
 ORIGINAL = "<<<<<<< ORIGINAL"
 DIVIDER = "======="
 UPDATED = ">>>>>>> UPDATED"
@@ -155,6 +139,10 @@ split_re = re.compile(r"^((?:" + separators + r")[ ]*\n)", re.MULTILINE | re.DOT
 
 
 def find_original_update_blocks(content):
+    # make sure we end with a newline, otherwise the regex will miss <<UPD on the last line
+    if not content.endswith("\n"):
+        content = content + "\n"
+
     pieces = re.split(split_re, content)
 
     pieces.reverse()
