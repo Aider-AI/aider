@@ -29,14 +29,6 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 class Coder:
     abs_fnames = set()
-
-    def confirm_ask(self, question, default=None):
-        return Confirm.ask(question, console=self.console, default=default)
-
-    def prompt_ask(self, question, default=None):
-        return Prompt.ask(question, console=self.console, default=default)
-        return Confirm.ask(question, console=self.console, default=default)
-
     repo = None
     last_aider_commit_hash = None
 
@@ -554,3 +546,13 @@ class Coder:
             files = self.get_inchat_relative_files()
 
         return sorted(set(files))
+
+    def confirm_ask(self, question, default=None):
+        if self.yes:
+            return True
+        return Confirm.ask(question, console=self.console, default=default)
+
+    def prompt_ask(self, question, default=None):
+        if self.yes:
+            return True
+        return Prompt.ask(question, console=self.console, default=default)
