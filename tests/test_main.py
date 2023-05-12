@@ -23,3 +23,15 @@ class TestMain(TestCase):
                 main(['foo.txt'])
                 sys.stdin = save_stdin
                 self.assertTrue(os.path.exists('foo.txt'))
+
+    import subprocess
+
+    def test_main_with_empty_git_dir_new_file(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            os.chdir(temp_dir)
+            subprocess.run(["git", "init"])
+            with open(os.devnull, 'r') as dev_null:
+                save_stdin = sys.stdin
+                sys.stdin = dev_null
+                main(['foo.txt'])
+                sys.stdin = save_stdin
