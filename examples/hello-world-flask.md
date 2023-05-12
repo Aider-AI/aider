@@ -12,7 +12,7 @@
 
 ---
 
-#### make a flask app with a /hello endpoint that returns hello world  
+#### > make a flask app with a /hello endpoint that returns hello world  
 
 Ok, here are the changes:
 
