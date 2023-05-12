@@ -78,7 +78,7 @@ class Coder:
         for fname in abs_fnames:
             if not fname.exists():
                 self.console.print(f"[bright_black]Creating {fname}")
-                fname.touch()
+                fname.touch(parents=True)
             try:
                 repo_path = git.Repo(fname, search_parent_directories=True).git_dir
                 repo_paths.append(repo_path)
