@@ -145,9 +145,21 @@ pattern = re.compile(
     re.MULTILINE | re.DOTALL,
 )
 
+ORIGINAL = "<<<<<<< ORIGINAL"
+DIVIDER = "======="
+UPDATED = ">>>>>>> UPDATED"
+
+separators = "|".join([ORIGINAL, DIVIDER, UPDATED])
+
+split_re = re.compile(r"^(" + separators + r")\s*\n")
+
 
 def find_original_update_blocks(content):
     for match in pattern.finditer(content):
         _, path, _, original, updated = match.groups()
         path = path.strip()
         yield path, original, updated
+
+
+def test_find_original_update_blocks():
+    pass
