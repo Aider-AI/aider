@@ -6,7 +6,7 @@ from pygments.util import ClassNotFound
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.history import FileHistory
-from prompt_toolkit.shortcuts import CompleteStyle, confirm
+from prompt_toolkit.shortcuts import CompleteStyle
 from rich.console import Console
 import sys
 import time
@@ -120,10 +120,10 @@ def get_input(history_file, fnames, commands):
 def confirm_ask(question, default=None, yes=False):
     if yes:
         return True
-    return confirm(question, default=default)
+    return prompt(question + " ", default=default)
 
 
 def prompt_ask(question, default=None, yes=False):
     if yes:
         return True
-    return prompt(question, default=default)
+    return prompt(question + " ", default=default)

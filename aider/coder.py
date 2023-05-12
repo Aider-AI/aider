@@ -16,7 +16,7 @@ import git
 import openai
 
 # from aider.dump import dump
-from aider.getinput import get_input
+from aider import getinput
 from aider import utils
 from aider import prompts
 from aider.commands import Commands
@@ -65,7 +65,7 @@ class Coder:
         else:
             self.root = os.getcwd()
 
-        self.console.print(f"[bright_black]Common root directory: {self.root}")
+        self.console.print(f"Common root directory: {self.root}")
 
     def set_repo(self, cmd_line_fnames):
         if not cmd_line_fnames:
@@ -76,7 +76,7 @@ class Coder:
         repo_paths = []
         for fname in abs_fnames:
             if not fname.exists():
-                self.console.print(f"[bright_black]Creating {fname}")
+                self.console.print(f"Creating {fname}")
                 fname.parent.mkdir(parents=True, exist_ok=True)
                 fname.touch()
             try:
@@ -87,7 +87,7 @@ class Coder:
 
             if fname.is_dir():
                 continue
-            self.console.print(f"[bright_black]Loading {fname}")
+            self.console.print(f"Loading {fname}")
 
             fname = fname.resolve()
             self.abs_fnames.add(str(fname))
@@ -114,19 +114,17 @@ class Coder:
                 new_files.append(relative_fname)
 
         if new_files:
-            self.console.print(f"[bright_black]Files not tracked in {repo.git_dir}:")
+            self.console.print(f"Files not tracked in {repo.git_dir}:")
             for fn in new_files:
-                self.console.print(f"[bright_black]  {fn}")
-            if self.confirm_ask("[bright_black]Add them?", default="y"):
+                self.console.print(f"  {fn}")
+            if getinput.confirm_ask("Add them?", default="y"):
                 for relative_fname in new_files:
                     repo.git.add(relative_fname)
-                    self.console.print(f"[bright_black]Added {relative_fname} to the git repo")
+                    self.console.print(f"Added {relative_fname} to the git repo")
                 show_files = ", ".join(new_files)
                 commit_message = f"Initial commit: Added new files to the git repo: {show_files}"
                 repo.git.commit("-m", commit_message, "--no-verify")
-                self.console.print(
-                    f"[bright_black]Committed new files with message: {commit_message}"
-                )
+                self.console.print(f"Committed new files with message: {commit_message}")
             else:
                 self.console.print("[red]Skipped adding new files to the git repo.")
                 return
@@ -205,7 +203,7 @@ class Coder:
         else:
             print()
 
-        inp = get_input(self.history_file, self.abs_fnames, self.commands)
+        inp = getinput.get_input(self.history_file, self.abs_fnames, self.commands)
 
         self.num_control_c = 0
 
@@ -321,9 +319,9 @@ class Coder:
             return
 
         for rel_fname in mentioned_rel_fnames:
-            self.console.print(f"[bright_black]{rel_fname}")
+            self.console.print(f"{rel_fname}")
 
-        if not self.confirm_ask("[bright_black]Add {path} to git?", default="y"):
+        if not getinput.confirm_ask("Add {path} to git?", default="y"):
             return
 
         for rel_fname in mentioned_rel_fnames:
@@ -400,10 +398,12 @@ class Coder:
 
             if full_path not in self.abs_fnames:
                 if not Path(full_path).exists():
-                    question = f"[bright_black]Allow creation of new file {path}?"  # noqa: E501
+                    question = f"Allow creation of new file {path}?"  # noqa: E501
                 else:
-                    question = f"[bright_black]Allow edits to {path} which was not previously provided?"  # noqa: E501
-                if not self.confirm_ask(question, default="y"):
+                    question = (
+                        f"Allow edits to {path} which was not previously provided?"  # noqa: E501
+                    )
+                if not getinput.confirm_ask(question, default="y"):
                     self.console.print(f"[red]Skipping edit to {path}")
                     continue
 
@@ -411,15 +411,15 @@ class Coder:
                 Path(full_path).touch()
                 self.abs_fnames.add(full_path)
 
-                if self.repo and self.confirm_ask(
-                    f"[bright_black]Add {path} to git?",
+                if self.repo and getinput.confirm_ask(
+                    f"Add {path} to git?",
                     default="y",
                 ):
                     self.repo.git.add(full_path)
 
             edited.add(path)
             if utils.do_replace(full_path, original, updated):
-                self.console.print(f"[bright_black]Applied edit to {path}")
+                self.console.print(f"Applied edit to {path}")
             else:
                 self.console.print(f"[red]Failed to apply edit to {path}")
 
@@ -512,14 +512,14 @@ class Coder:
 
         if ask:
             if which == "repo_files":
-                self.console.print("[bright_black]Git repo has uncommitted changes.\n")
+                self.console.print("Git repo has uncommitted changes.\n")
             else:
-                self.console.print("[bright_black]Files have uncommitted changes.\n")
-            self.console.print(f"[bright_black]Suggested commit message:\n{commit_message}\n")
+                self.console.print("Files have uncommitted changes.\n")
+            self.console.print(f"Suggested commit message:\n{commit_message}\n")
 
-            res = self.prompt_ask(
-                Text("Commit before the chat proceeds? [y/n/commit message]", style="bright_black"),
-                default="y",
+            res = getinput.prompt_ask(
+                "Commit before the chat proceeds [y/n/commit message]?",
+                default=commit_message,
             ).strip()
             self.last_asked_for_commit_time = self.get_last_modified()
 
@@ -536,7 +536,7 @@ class Coder:
         full_commit_message = commit_message + "\n\n" + context
         repo.git.commit("-m", full_commit_message, "--no-verify")
         commit_hash = repo.head.commit.hexsha[:7]
-        self.console.print(f"[bright_black]{commit_hash} {commit_message}")
+        self.console.print(f"{commit_hash} {commit_message}")
 
         return commit_hash, commit_message
 

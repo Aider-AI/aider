@@ -77,7 +77,7 @@ class Commands:
             return
 
         commit_message = args.strip()
-        self.coder.commit(message = commit_message, which="repo_files")
+        self.coder.commit(message=commit_message, which="repo_files")
 
     def cmd_undo(self, args):
         "Undo the last git commit if it was done by aider"
@@ -94,7 +94,7 @@ class Commands:
             return
         self.coder.repo.git.reset("--hard", "HEAD~1")
         self.console.print(
-            f"[bright_black]{last_commit.message.strip()}\n"
+            f"{last_commit.message.strip()}\n"
             f"The above commit {self.coder.last_aider_commit_hash} "
             "was reset and removed from git.\n"
         )
@@ -137,12 +137,11 @@ class Commands:
         if not matched_files:
             if self.coder.repo is not None:
                 create_file = Confirm.ask(
-                    f"[bright_black]No files matched '{word}'. "
-                    "Do you want to create the file and add it to git?",
+                    f"No files matched '{word}'. Do you want to create the file and add it to git?",
                 )
             else:
                 create_file = Confirm.ask(
-                    f"[bright_black]No files matched '{word}'. Do you want to create the file?"
+                    f"No files matched '{word}'. Do you want to create the file?"
                 )
 
             if create_file:
@@ -160,7 +159,7 @@ class Commands:
             abs_file_path = os.path.abspath(os.path.join(self.coder.root, matched_file))
             if abs_file_path not in self.coder.abs_fnames:
                 self.coder.abs_fnames.add(abs_file_path)
-                self.console.print(f"[bright_black]Added {matched_file} to the chat")
+                self.console.print(f"Added {matched_file} to the chat")
                 added_fnames.append(matched_file)
             else:
                 self.console.print(f"[red]{matched_file} is already in the chat")
@@ -197,7 +196,7 @@ class Commands:
             for matched_file in matched_files:
                 relative_fname = os.path.relpath(matched_file, self.coder.root)
                 self.coder.abs_fnames.remove(matched_file)
-                self.console.print(f"[bright_black]Removed {relative_fname} from the chat")
+                self.console.print(f"Removed {relative_fname} from the chat")
 
     def cmd_ls(self, args):
         "List all known files and those included in the chat session"
@@ -214,11 +213,11 @@ class Commands:
                 other_files.append(file)
 
         if chat_files:
-            self.console.print("[bright_black]Files in chat:\n")
+            self.console.print("Files in chat:\n")
         for file in chat_files:
-            self.console.print(f"[bright_black]  {file}")
+            self.console.print(f"  {file}")
 
         if other_files:
-            self.console.print("\n[bright_black]Repo files not in the chat:\n")
+            self.console.print("\nRepo files not in the chat:\n")
         for file in other_files:
-            self.console.print(f"[bright_black]  {file}")
+            self.console.print(f"  {file}")
