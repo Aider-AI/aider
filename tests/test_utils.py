@@ -1,5 +1,5 @@
 import unittest
-from aider.utils import replace_most_similar_chunk, strip_quoted_wrapping
+from aider import utils
 
 
 class TestUtils(unittest.TestCase):
@@ -9,7 +9,7 @@ class TestUtils(unittest.TestCase):
         replace = "This is a replaced text."
         expected_output = "This is a replaced text..\nAnother line of text.\nYet another line.\n"
 
-        result = replace_most_similar_chunk(whole, part, replace)
+        result = utils.replace_most_similar_chunk(whole, part, replace)
         self.assertEqual(result, expected_output)
 
     def test_replace_most_similar_chunk_not_perfect_match(self):
@@ -18,7 +18,7 @@ class TestUtils(unittest.TestCase):
         replace = "This is a replaced text.\nModified line of text."
         expected_output = "This is a replaced text.\nModified line of text.\nYet another line."
 
-        result = replace_most_similar_chunk(whole, part, replace)
+        result = utils.replace_most_similar_chunk(whole, part, replace)
         self.assertEqual(result, expected_output)
 
     def test_strip_quoted_wrapping(self):
@@ -26,20 +26,39 @@ class TestUtils(unittest.TestCase):
             "filename.ext\n```\nWe just want this content\nNot the filename and triple quotes\n```"
         )
         expected_output = "We just want this content\nNot the filename and triple quotes\n"
-        result = strip_quoted_wrapping(input_text, "filename.ext")
+        result = utils.strip_quoted_wrapping(input_text, "filename.ext")
         self.assertEqual(result, expected_output)
 
     def test_strip_quoted_wrapping_no_filename(self):
         input_text = "```\nWe just want this content\nNot the triple quotes\n```"
         expected_output = "We just want this content\nNot the triple quotes\n"
-        result = strip_quoted_wrapping(input_text)
+        result = utils.strip_quoted_wrapping(input_text)
         self.assertEqual(result, expected_output)
 
     def test_strip_quoted_wrapping_no_wrapping(self):
         input_text = "We just want this content\nNot the triple quotes\n"
         expected_output = "We just want this content\nNot the triple quotes\n"
-        result = strip_quoted_wrapping(input_text)
+        result = utils.strip_quoted_wrapping(input_text)
         self.assertEqual(result, expected_output)
+
+    def test_find_original_update_blocks(self):
+        edit = """
+Here's the change:
+
+```text
+foo.txt
+<<<<<<< ORIGINAL
+Two
+=======
+Tooooo
+>>>>>>> UPDATED
+```
+
+Hope you like it!
+"""
+
+        edits = list(utils.find_original_update_blocks(edit))
+        self.assertEqual(edits, [("foo.txt", "Two\n", "Tooooo\n")])
 
 
 if __name__ == "__main__":

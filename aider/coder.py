@@ -248,6 +248,12 @@ class Coder:
 
         try:
             edited = self.update_files(content, inp)
+        except ValueError as err:
+            err = err.args[0]
+            self.console.print("[red]Malformed ORIGINAL/UPDATE blocks, retrying...")
+            self.console.print("[red]", Text(err))
+            return err
+
         except Exception as err:
             print(err)
             print()
@@ -373,8 +379,11 @@ class Coder:
                 live.stop()
 
     def update_files(self, content, inp):
+        # might raise ValueError for malformed ORIG/UPD blocks
+        edits = list(utils.find_original_update_blocks(content))
+
         edited = set()
-        for path, original, updated in utils.find_original_update_blocks(content):
+        for path, original, updated in edits:
             full_path = os.path.abspath(os.path.join(self.root, path))
 
             if full_path not in self.abs_fnames:

@@ -151,15 +151,73 @@ UPDATED = ">>>>>>> UPDATED"
 
 separators = "|".join([ORIGINAL, DIVIDER, UPDATED])
 
-split_re = re.compile(r"^(" + separators + r")\s*\n")
+split_re = re.compile(r"^((?:" + separators + r")[ ]*\n)", re.MULTILINE | re.DOTALL)
 
 
 def find_original_update_blocks(content):
-    for match in pattern.finditer(content):
-        _, path, _, original, updated = match.groups()
-        path = path.strip()
-        yield path, original, updated
+    pieces = re.split(split_re, content)
+
+    pieces.reverse()
+    processed = []
+
+    try:
+        while pieces:
+            cur = pieces.pop()
+
+            if cur in (DIVIDER, UPDATED):
+                processed.append(cur)
+                raise ValueError(f"Unexpected {cur}")
+
+            if cur.strip() != ORIGINAL:
+                processed.append(cur)
+                continue
+
+            processed.append(cur)  # original_marker
+
+            filename = processed[-2].splitlines()[-1]
+            if not len(filename) or "`" in filename:
+                raise ValueError(f"Bad/missing filename: {filename}")
+
+            original_text = pieces.pop()
+            processed.append(original_text)
+
+            divider_marker = pieces.pop()
+            processed.append(divider_marker)
+            if divider_marker.strip() != DIVIDER:
+                raise ValueError(f"Expected {DIVIDER}")
+
+            updated_text = pieces.pop()
+
+            updated_marker = pieces.pop()
+            if updated_marker.strip() != UPDATED:
+                raise ValueError(f"Expected {UPDATED}")
+
+            yield filename, original_text, updated_text
+    except ValueError as e:
+        processed = "".join(processed)
+        err = e.args[0]
+        raise ValueError(f"{processed}\n^^^ {err}")
+    except IndexError:
+        processed = "".join(processed)
+        raise ValueError(f"{processed}\n^^^ Incomplete ORIGINAL/UPDATED block.")
+    except Exception:
+        processed = "".join(processed)
+        raise ValueError(f"{processed}\n^^^ Error parsing ORIGINAL/UPDATED block.")
 
 
-def test_find_original_update_blocks():
-    pass
+edit = """
+Here's the change:
+
+```text
+foo.txt
+<<<<<<< ORIGINAL
+Two
+=======
+Tooooo
+>>>>>>> UPDATED
+```
+
+Hope you like it!
+"""
+if __name__ == "__main__":
+    print(list(find_original_update_blocks(edit)))
