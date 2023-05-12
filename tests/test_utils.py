@@ -76,8 +76,26 @@ oops!
 """
 
         with self.assertRaises(ValueError) as cm:
-            utils.find_original_update_blocks(edit)
+            list(utils.find_original_update_blocks(edit))
         self.assertIn("Incomplete", str(cm.exception))
+
+    def test_find_original_update_blocks_missing_filename(self):
+        edit = """
+Here's the change:
+
+```text
+<<<<<<< ORIGINAL
+Two
+=======
+Tooooo
+
+
+oops!
+"""
+
+        with self.assertRaises(ValueError) as cm:
+            list(utils.find_original_update_blocks(edit))
+        self.assertIn("filename", str(cm.exception))
 
 
 if __name__ == "__main__":
