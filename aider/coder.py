@@ -402,7 +402,7 @@ class Coder:
                         f"Allow edits to {path} which was not previously provided?"  # noqa: E501
                     )
                 if not self.io.confirm_ask(question):
-                    self.console.print(f"[red]Skipping edit to {path}")
+                    self.io.tool_error(f"Skipping edit to {path}")
                     continue
 
                 Path(full_path).parent.mkdir(parents=True, exist_ok=True)
@@ -416,7 +416,7 @@ class Coder:
             if utils.do_replace(full_path, original, updated):
                 self.console.print(f"Applied edit to {path}")
             else:
-                self.console.print(f"[red]Failed to apply edit to {path}")
+                self.io.tool_error(f"Failed to apply edit to {path}")
 
         return edited
 
