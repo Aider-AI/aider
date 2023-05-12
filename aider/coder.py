@@ -408,6 +408,7 @@ class Coder:
                     self.console.print(f"[red]Skipping edit to {path}")
                     continue
 
+                Path(full_path).parent.mkdir(parents=True, exist_ok=True)
                 Path(full_path).touch()
                 self.abs_fnames.add(full_path)
 
