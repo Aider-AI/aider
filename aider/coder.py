@@ -105,7 +105,7 @@ class Coder:
 
         new_files = []
         for fname in self.abs_fnames:
-            relative_fname = os.path.relpath(fname, repo.working_tree_dir)
+            relative_fname = self.get_rel_fname(fname)
             tracked_files = set(repo.git.ls_files().splitlines())
             if relative_fname not in tracked_files:
                 new_files.append(relative_fname)
@@ -134,7 +134,7 @@ class Coder:
 
         prompt = ""
         for fname in fnames:
-            relative_fname = os.path.relpath(fname, self.root)
+            relative_fname = self.get_rel_fname(fname)
             prompt += utils.quoted_file(fname, relative_fname)
         return prompt
 
@@ -461,7 +461,7 @@ class Coder:
             diffs = ""
             relative_dirty_files = []
             for fname in file_list:
-                relative_fname = os.path.relpath(fname, repo.working_tree_dir)
+                relative_fname = self.get_rel_fname(fname)
                 relative_dirty_files.append(relative_fname)
 
                 try:
@@ -533,8 +533,11 @@ class Coder:
 
         return commit_hash, commit_message
 
+    def get_rel_fname(self, abs_fname):
+        return self.get_rel_fname(fname)
+
     def get_inchat_relative_files(self):
-        files = [os.path.relpath(fname, self.root) for fname in self.abs_fnames]
+        files = [self.get_rel_fname(fname) for fname in self.abs_fnames]
         return sorted(set(files))
 
     def get_all_relative_files(self):
