@@ -1,7 +1,7 @@
 import os
 import sys
 import tempfile
-from contextlib import redirect_stdout
+from contextlib import redirect_stdin
 from unittest import TestCase
 from aider.main import main
 
