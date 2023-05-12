@@ -60,6 +60,25 @@ Hope you like it!
         edits = list(utils.find_original_update_blocks(edit))
         self.assertEqual(edits, [("foo.txt", "Two\n", "Tooooo\n")])
 
+    def test_find_original_update_blocks_unclosed(self):
+        edit = """
+Here's the change:
+
+```text
+foo.txt
+<<<<<<< ORIGINAL
+Two
+=======
+Tooooo
+
+
+oops!
+"""
+
+        with self.assertRaises(ValueError) as cm:
+            utils.find_original_update_blocks(edit)
+        self.assertIn("Incomplete", str(cm.exception))
+
 
 if __name__ == "__main__":
     unittest.main()
