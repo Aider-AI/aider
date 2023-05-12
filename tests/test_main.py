@@ -5,9 +5,20 @@ from unittest import TestCase
 from aider.main import main
 
 class TestMain(TestCase):
-    def test_main_with_dev_null(self):
+    def test_main_with_empty_dir_no_files_on_command(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             os.chdir(temp_dir)
-    with open(os.devnull, 'r') as dev_null:
-        sys.stdin.close()
-        main()
+            with open(os.devnull, 'r') as dev_null:
+                save_stdin = sys.stdin
+                sys.stdin = dev_null
+                main()
+                sys.stdin = save_stdin
+
+    def test_main_with_empty_dir_new_file(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            os.chdir(temp_dir)
+            with open(os.devnull, 'r') as dev_null:
+                save_stdin = sys.stdin
+                sys.stdin = dev_null
+                main(['foo.txt'])
+                sys.stdin = save_stdin
