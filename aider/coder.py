@@ -33,7 +33,7 @@ class Coder:
     repo = None
     last_aider_commit_hash = None
 
-    def __init__(self, main_model, fnames, pretty, history_file, show_diffs, auto_commits):
+    def __init__(self, main_model, fnames, pretty, history_file, show_diffs, auto_commits, yes):
         self.history_file = history_file
         self.auto_commits = auto_commits
 
@@ -57,6 +57,7 @@ class Coder:
 
         self.pretty = pretty
         self.show_diffs = show_diffs
+        self.yes = yes
 
     def find_common_root(self):
         if self.abs_fnames:

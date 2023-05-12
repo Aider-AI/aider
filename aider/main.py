@@ -62,11 +62,16 @@ def main(argv=[]):
         help=f"Show diffs when committing changes (default: False, ${env_prefix}SHOW_DIFFS)",
         default=bool(int(os.environ.get(f"{env_prefix}SHOW_DIFFS", 0))),
     )
+    parser.add_argument(
+        "--yes",
+        action="store_true",
+        help="Always say yes to every confirmation",
+    )
     args = parser.parse_args(argv)
     fnames = args.files
     pretty = args.pretty
 
-    coder = Coder(args.model, fnames, pretty, args.history_file, args.show_diffs, args.auto_commits)
+    coder = Coder(args.model, fnames, pretty, args.history_file, args.show_diffs, args.auto_commits, args.yes)
     coder.commit(ask=True, prefix="wip: ", which="repo_files")
 
     if args.apply:
