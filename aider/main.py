@@ -28,6 +28,15 @@ def main(args=None):
         ),
     )
     parser.add_argument(
+        "--chat-history-file",
+        metavar="CHAT_HISTORY_FILE",
+        default=os.environ.get(f"{env_prefix}CHAT_HISTORY_FILE", ".aider.chat.history.md"),
+        help=(
+            "Specify the chat history file (default: .aider.chat.history.md,"
+            f" ${env_prefix}CHAT_HISTORY_FILE)"
+        ),
+    )
+    parser.add_argument(
         "--model",
         metavar="MODEL",
         default=os.environ.get(f"{env_prefix}MODEL", "gpt-4"),
