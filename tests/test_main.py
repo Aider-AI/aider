@@ -9,6 +9,6 @@ class TestMain(TestCase):
     def test_main_with_dev_null(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             os.chdir(temp_dir)
-            with open(os.devnull, 'w') as dev_null:
-                with redirect_stdout(dev_null):
+    with open(os.devnull, 'r') as dev_null:
+        with redirect_stdin(dev_null):
                     main()
