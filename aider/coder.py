@@ -46,14 +46,12 @@ class Coder:
         self.commands = Commands(self.console, self)
         self.main_model = main_model
         if main_model == "gpt-3.5-turbo":
-            self.console.print(
-                f"[red]This tool will almost certainly fail to work with {main_model}"
-            )
+            self.io.tool_error(f"This tool will almost certainly fail to work with {main_model}")
 
         self.set_repo(fnames)
 
         if not self.repo:
-            self.console.print("[red]No suitable git repo, will not automatically commit edits.")
+            self.io.tool_error("No suitable git repo, will not automatically commit edits.")
             self.find_common_root()
 
         self.pretty = pretty
@@ -96,10 +94,10 @@ class Coder:
         num_repos = len(set(repo_paths))
 
         if num_repos == 0:
-            self.console.print("[red]Files are not in a git repo.")
+            self.io.tool_error("Files are not in a git repo.")
             return
         if num_repos > 1:
-            self.console.print("[red]Files are in different git repos.")
+            self.io.tool_error("Files are in different git repos.")
             return
 
         # https://github.com/gitpython-developers/GitPython/issues/427
@@ -127,7 +125,7 @@ class Coder:
                 repo.git.commit("-m", commit_message, "--no-verify")
                 self.console.print(f"Committed new files with message: {commit_message}")
             else:
-                self.console.print("[red]Skipped adding new files to the git repo.")
+                self.io.tool_error("Skipped adding new files to the git repo.")
                 return
 
         self.repo = repo
@@ -261,8 +259,8 @@ class Coder:
             edited = self.update_files(content, inp)
         except ValueError as err:
             err = err.args[0]
-            self.console.print("[red]Malformed ORIGINAL/UPDATE blocks, retrying...")
-            self.console.print("[red]", Text(err))
+            self.io.tool_error("Malformed ORIGINAL/UPDATE blocks, retrying...")
+            self.io.tool_error(Text(err))
             return err
 
         except Exception as err:
@@ -291,7 +289,7 @@ class Coder:
                 message=commit_message,
             )
         else:
-            self.console.print("[red]Warning: no changes found in tracked files.")
+            self.io.tool_error("Warning: no changes found in tracked files.")
             saved_message = prompts.files_content_gpt_no_edits
 
         self.done_messages += self.cur_messages
