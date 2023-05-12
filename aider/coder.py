@@ -508,7 +508,7 @@ class Coder:
             self.console.print(f"[bright_black]Suggested commit message:\n{commit_message}\n")
 
             res = self.prompt_ask(
-                "[bright_black]Commit before the chat proceeds? \[y/n/commit message]",  # noqa: W605 E501
+                Text("Commit before the chat proceeds? [y/n/commit message]", style="bright_black"),
                 default="y",
             ).strip()
             self.last_asked_for_commit_time = self.get_last_modified()
