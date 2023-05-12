@@ -3,6 +3,7 @@ import sys
 import argparse
 from dotenv import load_dotenv
 from aider.coder import Coder
+from rich.console import Console
 
 
 def main(args=None):
@@ -87,6 +88,8 @@ def main(args=None):
         return
 
     coder.run()
+    console = Console()
+    console.clear()
 
 
 if __name__ == "__main__":
