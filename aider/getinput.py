@@ -61,10 +61,6 @@ class InputOutput:
         else:
             self.console = Console(force_terminal=True, no_color=True)
 
-    def tool_error(self, message):
-        message = Text(message)
-        self.console.print('[red]', message)
-
     def canned_input(self, show_prompt):
         console = Console()
 
@@ -130,6 +126,8 @@ class InputOutput:
         print()
         return inp
 
+    ## OUTPUT
+
     def confirm_ask(self, question, default="y"):
         if self.yes:
             return True
@@ -139,3 +137,11 @@ class InputOutput:
         if self.yes:
             return True
         return prompt(question + " ", default=default)
+
+    def tool_error(self, message):
+        message = Text(message)
+        self.console.print(message, style="red")
+
+    def tool(self, *messages):
+        messages = list(map(Text, messages))
+        self.console.print(*messages)
