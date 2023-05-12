@@ -29,7 +29,7 @@ class TestMain(TestCase):
     def test_main_with_empty_git_dir_new_file(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             os.chdir(temp_dir)
-            subprocess.run(["git", "init"])
+            subprocess.run(["git", "init"], cwd=temp_dir)
             with open(os.devnull, "r") as dev_null:
                 save_stdin = sys.stdin
                 sys.stdin = dev_null
