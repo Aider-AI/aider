@@ -117,7 +117,8 @@ class Commands:
         else:
             diff = self.coder.repo.git.diff(commits, self.coder.last_aider_commit_hash)
 
-        self.io.tool(Text(diff))
+        # don't use io.tool() because we don't want to log or further colorize
+        print(diff)
 
     def completions_add(self, partial):
         files = set(self.coder.get_all_relative_files())
