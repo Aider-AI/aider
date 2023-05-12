@@ -44,7 +44,10 @@ def replace_most_similar_chunk(whole, part, replace):
         + replace_lines
         + whole_lines[most_similar_chunk_end:]
     )
-    modified_whole = "\n".join(modified_whole) + "\n"
+    modified_whole = "\n".join(modified_whole)
+
+    if whole.endswith("\n"):
+        modified_whole += "\n"
 
     return modified_whole
 
