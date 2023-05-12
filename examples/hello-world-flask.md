@@ -1,7 +1,7 @@
 
-# Aider chat started at 2023-05-12 15:36:52
+# Aider chat started at 2023-05-12 15:39:30
 
-_This tool will almost certainly fail to work with gpt-3.5-turbo_  
+_Aider doesn't work well with gpt-3.5-turbo. Use gpt-4 for best results._  
 _Creating app.py_  
 _Loading app.py_  
 _Files not tracked in .git:_  
@@ -18,6 +18,7 @@ Ok, here are the changes:
 ```python
 app.py
 <<<<<<< ORIGINAL
+
 =======
 from flask import Flask
 
@@ -29,10 +30,8 @@ def hello():
 >>>>>>> UPDATED
 ```
 
-This code creates a Flask app and adds a `/hello` endpoint that returns "Hello, World!" when accessed.
-
 _Applied edit to app.py_  
-_1fd7777 aider: Added a /hello endpoint that returns "Hello, World!" when accessed._  
+_a6700bf aider: Added /hello endpoint that returns "Hello, World!" to app.py._  
 
 ---
 #### >  add an endpoint like /add/3/5 which returns the sum of the 2 numbers  
@@ -42,6 +41,13 @@ Ok, here are the changes:
 ```python
 app.py
 <<<<<<< ORIGINAL
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/hello')
+def hello():
+    return 'Hello, World!'
 =======
 from flask import Flask
 
@@ -57,10 +63,8 @@ def add(a, b):
 >>>>>>> UPDATED
 ```
 
-This code adds a new endpoint `/add/<int:a>/<int:b>` that takes two integers as parameters and returns their sum when accessed. For example, `/add/3/5` would return `8`.
-
 _Applied edit to app.py_  
-_3183d4d aider: Added an endpoint `/add/<int:a>/<int:b>` that takes two integers as parameters and returns their sum when accessed._  
+_1c7b865 aider: Added an endpoint to return the sum of two numbers._  
 
 ---
 #### >  add /fibonacci/X  
@@ -70,6 +74,17 @@ Sure, here are the changes:
 ```python
 app.py
 <<<<<<< ORIGINAL
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/hello')
+def hello():
+    return 'Hello, World!'
+
+@app.route('/add/<int:a>/<int:b>')
+def add(a, b):
+    return str(a + b)
 =======
 from flask import Flask
 
@@ -99,10 +114,8 @@ def fibonacci(n):
 >>>>>>> UPDATED
 ```
 
-This code adds a new endpoint `/fibonacci/<int:n>` that takes an integer `n` as a parameter and returns the first `n` numbers of the Fibonacci sequence when accessed. For example, `/fibonacci/5` would return `0, 1, 1, 2, 3`. If `n` is less than or equal to 0, the function returns "Invalid input".
-
 _Applied edit to app.py_  
-_a2ba23f aider: Added endpoint `/fibonacci/<int:n>` that returns the first `n` numbers of the Fibonacci sequence._  
+_fc5f0b7 aider: Added a fibonacci endpoint to the Flask app._  
 
 ---
 #### >  remove the hello endpoint  
@@ -162,7 +175,5 @@ def fibonacci(n):
 >>>>>>> UPDATED
 ```
 
-This code removes the `/hello` endpoint from the Flask app.
-
 _Applied edit to app.py_  
-_9440da2 aider: Removed the `/hello` endpoint from the Flask app._  
+_2718d22 aider: Removed the hello endpoint._  
