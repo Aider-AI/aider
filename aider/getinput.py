@@ -135,15 +135,19 @@ class InputOutput:
 
         prefix = "####"
         hist = inp.splitlines()
-        hist = f"\n{prefix} ".join(hist)
+        hist = f"  \n{prefix} ".join(hist)
 
         hist = f"""---
 {prefix} {hist}"""
-        self.append_chat_history(hist)
+        self.append_chat_history(hist, True)
 
         return inp
 
     # OUTPUT
+
+    def ai_output(self, content):
+        hist = '\n' + content.strip() + '\n\n'
+        self.append_chat_history(hist, False)
 
     def confirm_ask(self, question, default="y"):
         if self.yes:
@@ -152,7 +156,7 @@ class InputOutput:
             res = prompt(question + " ", default=default)
 
         hist = f"*{question.strip()} {res}*"
-        self.append_chat_history(hist)
+        self.append_chat_history(hist, True)
 
         if not res:
             return
@@ -166,7 +170,7 @@ class InputOutput:
     def tool_error(self, message):
         if message.strip():
             hist = f"*{message.strip()}*"
-            self.append_chat_history(hist)
+            self.append_chat_history(hist, True)
 
         message = Text(message)
         self.console.print(message, style="red")
@@ -175,13 +179,16 @@ class InputOutput:
         if messages:
             hist = " ".join(messages)
             hist = f"*{hist.strip()}*"
-            self.append_chat_history(hist)
+            self.append_chat_history(hist, True)
 
         messages = list(map(Text, messages))
         self.console.print(*messages)
 
-    def append_chat_history(self, text, linebreak=True):
+    def append_chat_history(self, text, linebreak):
         if linebreak:
+            text = text.rstrip()
             text = text + "  \n"
+        if not text.endswith('\n'):
+            text += '\n'
         with self.chat_history_file.open("a") as f:
             f.write(text)

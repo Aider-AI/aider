@@ -346,6 +346,7 @@ class Coder:
         except KeyboardInterrupt:
             interrupted = True
 
+        self.io.ai_output(self.resp)
         return self.resp, interrupted
 
     def show_send_output(self, completion, silent):
