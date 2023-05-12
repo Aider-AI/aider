@@ -66,7 +66,7 @@ class InputOutput:
             self.console = Console(force_terminal=True, no_color=True)
 
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.append_chat_history(f'\n# New session started at {current_time}', False)
+        self.append_chat_history(f'\n# Aider chat started at {current_time}\n\n')
 
     def canned_input(self, show_prompt):
         console = Console()
@@ -103,8 +103,8 @@ class InputOutput:
             show += "\n"
         show += "> "
 
-        if not sys.stdin.isatty():
-            return self.canned_input(show)
+        #if not sys.stdin.isatty():
+        #    return self.canned_input(show)
 
         inp = ""
         multiline_input = False
@@ -137,7 +137,7 @@ class InputOutput:
 
         print()
 
-        prefix = "####"
+        prefix = "#### > "
         if inp:
             hist = inp.splitlines()
         else:
@@ -145,9 +145,10 @@ class InputOutput:
 
         hist = f"  \n{prefix} ".join(hist)
 
-        hist = f"""---
+        hist = f"""
+---
 {prefix} {hist}"""
-        self.append_chat_history(hist, True)
+        self.append_chat_history(hist, linebreak=True)
 
         return inp
 
@@ -155,7 +156,7 @@ class InputOutput:
 
     def ai_output(self, content):
         hist = '\n' + content.strip() + '\n\n'
-        self.append_chat_history(hist, False)
+        self.append_chat_history(hist)
 
     def confirm_ask(self, question, default="y"):
         if self.yes:
@@ -163,8 +164,8 @@ class InputOutput:
         else:
             res = prompt(question + " ", default=default)
 
-        hist = f"_{question.strip()} {res.strip()}_"
-        self.append_chat_history(hist, True)
+        hist = f"{question.strip()} {res.strip()}"
+        self.append_chat_history(hist, linebreak=True, italics=True)
 
         if not res or not res.strip():
             return
@@ -176,15 +177,15 @@ class InputOutput:
         else:
             res = prompt(question + " ", default=default)
 
-        hist = f"_{question.strip()} {res.strip()}_"
-        self.append_chat_history(hist, True)
+        hist = f"{question.strip()} {res.strip()}"
+        self.append_chat_history(hist, linebreak=True, italics=True)
 
         return res
 
     def tool_error(self, message):
         if message.strip():
-            hist = f"_{message.strip()}_"
-            self.append_chat_history(hist, True)
+            hist = f"{message.strip()}"
+            self.append_chat_history(hist, linebreak=True, italics=True)
 
         message = Text(message)
         self.console.print(message, style="red")
@@ -192,13 +193,16 @@ class InputOutput:
     def tool(self, *messages):
         if messages:
             hist = " ".join(messages)
-            hist = f"_{hist.strip()}_"
-            self.append_chat_history(hist, True)
+            hist = f"{hist.strip()}"
+            self.append_chat_history(hist, linebreak=True, italics=True)
 
         messages = list(map(Text, messages))
         self.console.print(*messages)
 
-    def append_chat_history(self, text, linebreak):
+    def append_chat_history(self, text, linebreak=False, italics=False):
+        if italics:
+            text = text.strip()
+            text = f'_{text}_'
         if linebreak:
             text = text.rstrip()
             text = text + "  \n"

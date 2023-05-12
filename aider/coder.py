@@ -113,7 +113,7 @@ class Coder:
         if new_files:
             self.io.tool(f"Files not tracked in {repo.git_dir}:")
             for fn in new_files:
-                self.io.tool(f"  {fn}")
+                self.io.tool(f" - {fn}")
             if self.io.confirm_ask("Add them?"):
                 for relative_fname in new_files:
                     repo.git.add(relative_fname)
