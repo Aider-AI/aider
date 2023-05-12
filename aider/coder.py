@@ -33,6 +33,10 @@ class Coder:
     def confirm_ask(self, question, default=None):
         return Confirm.ask(question, console=self.console, default=default)
 
+    def prompt_ask(self, question, default=None):
+        return Prompt.ask(question, console=self.console, default=default)
+        return Confirm.ask(question, console=self.console, default=default)
+
     repo = None
     last_aider_commit_hash = None
 
@@ -517,7 +521,7 @@ class Coder:
                 self.console.print("[bright_black]Files have uncommitted changes.\n")
             self.console.print(f"[bright_black]Suggested commit message:\n{commit_message}\n")
 
-            res = Prompt.ask(
+            res = self.prompt_ask(
                 "[bright_black]Commit before the chat proceeds? \[y/n/commit message]",  # noqa: W605 E501
                 console=self.console,
                 default="y",
