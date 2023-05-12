@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from aider.coder import Coder
 
 
-def main():
+def main(argv):
     load_dotenv()
     env_prefix = "AIDER_"
     parser = argparse.ArgumentParser(
@@ -61,7 +61,7 @@ def main():
         help=f"Show diffs when committing changes (default: False, ${env_prefix}SHOW_DIFFS)",
         default=bool(int(os.environ.get(f"{env_prefix}SHOW_DIFFS", 0))),
     )
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     fnames = args.files
     pretty = args.pretty
 
@@ -78,5 +78,5 @@ def main():
 
 
 if __name__ == "__main__":
-    status = main()
+    status = main(sys.argv[1:])
     sys.exit(status)
