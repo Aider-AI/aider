@@ -68,14 +68,14 @@ class Coder:
         if not cmd_line_fnames:
             cmd_line_fnames = ["."]
 
-        abs_fnames = [Path(fn).resolve() for fn in cmd_line_fnames]
-
         repo_paths = []
-        for fname in abs_fnames:
+        for fname in cmd_line_fnames:
+            fname = Path(fname)
             if not fname.exists():
                 self.io.tool(f"Creating {fname}")
                 fname.parent.mkdir(parents=True, exist_ok=True)
                 fname.touch()
+
             try:
                 repo_path = git.Repo(fname, search_parent_directories=True).git_dir
                 repo_paths.append(repo_path)
@@ -111,7 +111,9 @@ class Coder:
                 new_files.append(relative_fname)
 
         if new_files:
-            self.io.tool(f"Files not tracked in {repo.git_dir}:")
+            rel_repo_dir = os.path.relpath(repo.git_dir, os.getcwd())
+
+            self.io.tool(f"Files not tracked in {rel_repo_dir}:")
             for fn in new_files:
                 self.io.tool(f" - {fn}")
             if self.io.confirm_ask("Add them?"):
@@ -533,8 +535,8 @@ class Coder:
 
         return commit_hash, commit_message
 
-    def get_rel_fname(self, abs_fname):
-        return self.get_rel_fname(fname)
+    def get_rel_fname(self, fname):
+        return os.path.relpath(fname, self.root)
 
     def get_inchat_relative_files(self):
         files = [self.get_rel_fname(fname) for fname in self.abs_fnames]
