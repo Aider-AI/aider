@@ -29,6 +29,7 @@ class Coder:
     abs_fnames = None
     repo = None
     last_aider_commit_hash = None
+    last_asked_for_commit_time = 0
 
     def __init__(self, main_model, fnames, pretty, history_file, show_diffs, auto_commits, yes):
         self.abs_fnames = set()
@@ -187,6 +188,17 @@ class Coder:
             except EOFError:
                 return
 
+    def should_commit(self, is_commit_command):
+        if not self.repo:
+            return
+        if not self.repo.is_dirty():
+            return
+        if is_commit_command:
+            return
+        if self.last_asked_for_commit_time >= self.get_last_modified():
+            return
+        return True
+
     def run_loop(self):
         if self.pretty:
             self.console.rule()
@@ -199,7 +211,7 @@ class Coder:
 
         is_commit_command = inp and inp.startswith("/commit")
 
-        if self.repo and self.repo.is_dirty() and not is_commit_command:
+        if self.should_commit(is_commit_command):
             self.commit(ask=True, which="repo_files")
 
             # files changed, move cur messages back behind the files messages
@@ -499,6 +511,8 @@ class Coder:
                 "[bright_black]Commit before the chat proceeds? \[y/n/commit message]",  # noqa: W605 E501
                 default="y",
             ).strip()
+            self.last_asked_for_commit_time = self.get_last_modified()
+
             self.console.print()
 
             if res.lower() in ["n", "no"]:
@@ -527,6 +541,17 @@ class Coder:
             files = self.get_inchat_relative_files()
 
         return sorted(set(files))
+
+    def get_all_abs_files(self):
+        files = self.get_all_relative_files()
+        files = [os.path.abspath(os.path.join(self.root, path)) for path in files]
+        return files
+
+    def get_last_modified(self):
+        files = self.get_all_abs_files()
+        if not files:
+            return 0
+        return max(Path(path).stat().st_mtime for path in files)
 
     def confirm_ask(self, question, default=None):
         if self.yes:
