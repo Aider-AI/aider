@@ -5,12 +5,10 @@ from dotenv import load_dotenv
 from aider.coder import Coder
 
 
-def main(argv):
+def main(argv=[]):
     load_dotenv()
     env_prefix = "AIDER_"
-    parser = argparse.ArgumentParser(
-        description="aider - chat with GPT about your code"
-    )
+    parser = argparse.ArgumentParser(description="aider - chat with GPT about your code")
     parser.add_argument(
         "files",
         metavar="FILE",
@@ -21,7 +19,10 @@ def main(argv):
         "--history-file",
         metavar="HISTORY_FILE",
         default=os.environ.get(f"{env_prefix}HISTORY_FILE", ".aider.history"),
-        help=f"Specify the chat input history file (default: .aider.history, ${env_prefix}HISTORY_FILE)",
+        help=(
+            "Specify the chat input history file (default: .aider.history,"
+            f" ${env_prefix}HISTORY_FILE)"
+        ),
     )
     parser.add_argument(
         "--model",
