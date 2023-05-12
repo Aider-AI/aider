@@ -32,7 +32,7 @@ class Coder:
     def __init__(self, main_model, fnames, pretty, history_file, show_diffs, auto_commits, yes):
         self.abs_fnames = set()
 
-        self.input = getinput.Input(yes)
+        self.io = getinput.InputOutput(pretty, yes)
 
         self.history_file = history_file
         self.auto_commits = auto_commits
@@ -115,7 +115,7 @@ class Coder:
             self.console.print(f"Files not tracked in {repo.git_dir}:")
             for fn in new_files:
                 self.console.print(f"  {fn}")
-            if self.input.confirm_ask("Add them?"):
+            if self.io.confirm_ask("Add them?"):
                 for relative_fname in new_files:
                     repo.git.add(relative_fname)
                     self.console.print(f"Added {relative_fname} to the git repo")
@@ -201,7 +201,7 @@ class Coder:
         else:
             print()
 
-        inp = self.input.get_input(self.history_file, self.abs_fnames, self.commands)
+        inp = self.io.get_input(self.history_file, self.abs_fnames, self.commands)
 
         self.num_control_c = 0
 
@@ -319,7 +319,7 @@ class Coder:
         for rel_fname in mentioned_rel_fnames:
             self.console.print(f"{rel_fname}")
 
-        if not self.input.confirm_ask("Add {path} to git?"):
+        if not self.io.confirm_ask("Add {path} to git?"):
             return
 
         for rel_fname in mentioned_rel_fnames:
@@ -401,7 +401,7 @@ class Coder:
                     question = (
                         f"Allow edits to {path} which was not previously provided?"  # noqa: E501
                     )
-                if not self.input.confirm_ask(question):
+                if not self.io.confirm_ask(question):
                     self.console.print(f"[red]Skipping edit to {path}")
                     continue
 
@@ -409,7 +409,7 @@ class Coder:
                 Path(full_path).touch()
                 self.abs_fnames.add(full_path)
 
-                if self.repo and self.input.confirm_ask(f"Add {path} to git?"):
+                if self.repo and self.io.confirm_ask(f"Add {path} to git?"):
                     self.repo.git.add(full_path)
 
             edited.add(path)
@@ -512,7 +512,7 @@ class Coder:
                 self.console.print("Files have uncommitted changes.\n")
             self.console.print(f"Suggested commit message:\n{commit_message}\n")
 
-            res = self.input.prompt_ask(
+            res = self.io.prompt_ask(
                 "Commit before the chat proceeds [y/n/commit message]?",
                 default=commit_message,
             ).strip()

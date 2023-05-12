@@ -8,6 +8,7 @@ from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.shortcuts import CompleteStyle
 from rich.console import Console
+from rich.text import Text
 import sys
 import time
 import random
@@ -50,9 +51,19 @@ class FileContentCompleter(Completer):
                 yield Completion(word, start_position=-len(last_word))
 
 
-class Input:
-    def __init__(self, yes):
+class InputOutput:
+    def __init__(self, pretty, yes):
+        self.pretty = pretty
         self.yes = yes
+
+        if pretty:
+            self.console = Console()
+        else:
+            self.console = Console(force_terminal=True, no_color=True)
+
+    def tool_error(self, message):
+        message = Text(message)
+        self.console.print('[red]', message)
 
     def canned_input(self, show_prompt):
         console = Console()
