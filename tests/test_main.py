@@ -22,3 +22,4 @@ class TestMain(TestCase):
                 sys.stdin = dev_null
                 main(['foo.txt'])
                 sys.stdin = save_stdin
+                self.assertTrue(os.path.exists('foo.txt'))
