@@ -491,7 +491,8 @@ class Coder:
             raise ValueError(f"Invalid value for 'which': {which}")
 
         if self.show_diffs or ask:
-            self.io.tool(diffs)
+            # don't use io.tool() because we don't want to log or further colorize
+            print(diffs)
 
         context = self.get_context_from_history(history)
         if message:

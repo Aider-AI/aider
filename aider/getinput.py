@@ -66,7 +66,7 @@ class InputOutput:
             self.console = Console(force_terminal=True, no_color=True)
 
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.append_chat_history(f'# New session started at {current_time}', False)
+        self.append_chat_history(f'\n# New session started at {current_time}', False)
 
     def canned_input(self, show_prompt):
         console = Console()
@@ -138,7 +138,11 @@ class InputOutput:
         print()
 
         prefix = "####"
-        hist = inp.splitlines()
+        if inp:
+            hist = inp.splitlines()
+        else:
+            hist = ['<blank>']
+
         hist = f"  \n{prefix} ".join(hist)
 
         hist = f"""---
@@ -159,21 +163,27 @@ class InputOutput:
         else:
             res = prompt(question + " ", default=default)
 
-        hist = f"*{question.strip()} {res}*"
+        hist = f"_{question.strip()} {res.strip()}_"
         self.append_chat_history(hist, True)
 
-        if not res:
+        if not res or not res.strip():
             return
-        return res.lower().startswith("y")
+        return res.strip().lower().startswith("y")
 
     def prompt_ask(self, question, default=None):
         if self.yes:
-            return True
-        return prompt(question + " ", default=default)
+            res = 'yes'
+        else:
+            res = prompt(question + " ", default=default)
+
+        hist = f"_{question.strip()} {res.strip()}_"
+        self.append_chat_history(hist, True)
+
+        return res
 
     def tool_error(self, message):
         if message.strip():
-            hist = f"*{message.strip()}*"
+            hist = f"_{message.strip()}_"
             self.append_chat_history(hist, True)
 
         message = Text(message)
@@ -182,7 +192,7 @@ class InputOutput:
     def tool(self, *messages):
         if messages:
             hist = " ".join(messages)
-            hist = f"*{hist.strip()}*"
+            hist = f"_{hist.strip()}_"
             self.append_chat_history(hist, True)
 
         messages = list(map(Text, messages))

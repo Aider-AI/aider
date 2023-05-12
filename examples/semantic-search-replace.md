@@ -77,7 +77,7 @@ aider/coder.py
 
 Please note that I couldn't find the `self.io.tool_error()` method in the provided code. You may need to create this method in the appropriate class or provide the correct method name to replace the `self.console.print()` calls.
 
-_Applied edit to aider/coder.py_  
+*Applied edit to aider/coder.py*  
 *Applied edit to aider/coder.py*  
 *Applied edit to aider/coder.py*  
 *Applied edit to aider/coder.py*  
