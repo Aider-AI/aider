@@ -1,3 +1,5 @@
+# Aider performing semantic search & replace
+
 > Aider did a nice job of "semantic search and replace" here. 
 > Notice that it isn't replacing exact strings.
 > It's dealing with various formatting and semantic differences in the calls that it is updating.
