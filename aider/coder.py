@@ -28,11 +28,13 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 class Coder:
-    abs_fnames = set()
+    abs_fnames = None
     repo = None
     last_aider_commit_hash = None
 
     def __init__(self, main_model, fnames, pretty, history_file, show_diffs, auto_commits, yes):
+        self.abs_fnames = set()
+
         self.yes = yes
         self.history_file = history_file
         self.auto_commits = auto_commits
