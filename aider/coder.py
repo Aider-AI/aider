@@ -44,7 +44,7 @@ class Coder:
         self.commands = Commands(self.io, self)
         self.main_model = main_model
         if main_model == "gpt-3.5-turbo":
-            self.io.tool_error(f"This tool will almost certainly fail to work with {main_model}")
+            self.io.tool_error(f"Aider doesn't work well with {main_model}, use gpt-4 for best results.")
 
         self.set_repo(fnames)
 
@@ -84,7 +84,8 @@ class Coder:
 
             if fname.is_dir():
                 continue
-            self.io.tool(f"Loading {fname}")
+
+            self.io.tool(f"Added {fname} to the chat")
 
             fname = fname.resolve()
             self.abs_fnames.add(str(fname))
@@ -121,9 +122,10 @@ class Coder:
                     repo.git.add(relative_fname)
                     self.io.tool(f"Added {relative_fname} to the git repo")
                 show_files = ", ".join(new_files)
-                commit_message = f"Initial commit: Added new files to the git repo: {show_files}"
+                commit_message = f"Added new files to the git repo: {show_files}"
                 repo.git.commit("-m", commit_message, "--no-verify")
-                self.io.tool(f"Committed new files with message: {commit_message}")
+                commit_hash = repo.head.commit.hexsha[:7]
+                self.io.tool(f"{commit_hash} {commit_message}")
             else:
                 self.io.tool_error("Skipped adding new files to the git repo.")
                 return
