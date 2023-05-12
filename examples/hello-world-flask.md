@@ -1,14 +1,6 @@
 
 # Aider creating a simple flask app
 
-_Creating app.py_  
-_Added app.py to the chat_  
-_Files not tracked in .git:_  
-_- app.py_  
-_Add them? yes_  
-_Added app.py to the git repo_  
-_b15e255 Added new files to the git repo: app.py_  
-
 ---
 #### >  make a flask app with a /hello endpoint that returns hello world  
 
