@@ -1,5 +1,5 @@
 
-# Aider chat started at 2023-05-12 15:21:04
+# Aider chat started at 2023-05-12 15:21:36
 
 *This tool will almost certainly fail to work with gpt-3.5-turbo*  
 *Creating /Users/gauthier/tmp/flask/app.py*  
@@ -11,7 +11,7 @@
 *Committed new files with message: Initial commit: Added new files to the git repo: app.py*  
 
 ---
-#### make a flask app with a /hello endpoint that returns hello world  
+#### >  make a flask app with a /hello endpoint that returns hello world  
 
 Ok, here are the changes:
 
@@ -31,4 +31,4 @@ def hello():
 ```
 
 *Applied edit to app.py*  
-*c4a9643 aider: Added /hello endpoint that returns "Hello, World!" to app.py.*  
+*44be789 aider: Added /hello endpoint that returns "Hello, World!" to app.py.*  
