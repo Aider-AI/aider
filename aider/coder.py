@@ -8,7 +8,6 @@ from openai.error import RateLimitError
 
 from rich.console import Console
 from rich.live import Live
-from rich.text import Text
 from rich.markdown import Markdown
 from pathlib import Path
 
@@ -260,7 +259,7 @@ class Coder:
         except ValueError as err:
             err = err.args[0]
             self.io.tool_error("Malformed ORIGINAL/UPDATE blocks, retrying...")
-            self.io.tool_error(Text(err))
+            self.io.tool_error(err)
             return err
 
         except Exception as err:
@@ -495,7 +494,7 @@ class Coder:
             raise ValueError(f"Invalid value for 'which': {which}")
 
         if self.show_diffs or ask:
-            self.console.print(Text(diffs))
+            self.console.print(diffs)
 
         context = self.get_context_from_history(history)
         if message:
