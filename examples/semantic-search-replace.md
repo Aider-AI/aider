@@ -8,7 +8,7 @@
 
 #### coder.py> replace all the self.console.print() calls that contain [red] with calls to self.io.tool_error() with [red] removed from the string
 
-```
+```python
 aider/coder.py
 <<<<<<< ORIGINAL
             self.console.print(
