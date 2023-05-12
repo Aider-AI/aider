@@ -13,6 +13,7 @@ import sys
 import time
 import random
 from pathlib import Path
+from datetime import datetime
 
 
 class FileContentCompleter(Completer):
@@ -64,7 +65,8 @@ class InputOutput:
         else:
             self.console = Console(force_terminal=True, no_color=True)
 
-        self.append_chat_history('# New session started', False)
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.append_chat_history(f'# New session started at {current_time}', False)
 
     def canned_input(self, show_prompt):
         console = Console()
