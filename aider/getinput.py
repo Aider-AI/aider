@@ -50,80 +50,81 @@ class FileContentCompleter(Completer):
                 yield Completion(word, start_position=-len(last_word))
 
 
-def canned_input(show_prompt):
-    console = Console()
+class Input:
+    def __init__(self, yes):
+        self.yes = yes
 
-    input_line = input()
+    def canned_input(self, show_prompt):
+        console = Console()
 
-    console.print(show_prompt, end="", style="green")
-    for char in input_line:
-        console.print(char, end="", style="green")
-        time.sleep(random.uniform(0.01, 0.15))
-    console.print()
-    console.print()
-    return input_line
+        input_line = input()
 
+        console.print(show_prompt, end="", style="green")
+        for char in input_line:
+            console.print(char, end="", style="green")
+            time.sleep(random.uniform(0.01, 0.15))
+        console.print()
+        console.print()
+        return input_line
 
-def get_input(history_file, fnames, commands):
-    fnames = list(fnames)
-    if len(fnames) > 1:
-        common_prefix = os.path.commonpath(fnames)
-        if not common_prefix.endswith(os.path.sep):
-            common_prefix += os.path.sep
-        short_fnames = [fname.replace(common_prefix, "", 1) for fname in fnames]
-    elif len(fnames):
-        short_fnames = [os.path.basename(fnames[0])]
-    else:
-        short_fnames = []
-
-    show = " ".join(short_fnames)
-    if len(show) > 10:
-        show += "\n"
-    show += "> "
-
-    if not sys.stdin.isatty():
-        return canned_input(show)
-
-    inp = ""
-    multiline_input = False
-
-    style = Style.from_dict({"": "green"})
-
-    while True:
-        completer_instance = FileContentCompleter(fnames, commands)
-        if multiline_input:
-            show = ". "
-
-        line = prompt(
-            show,
-            completer=completer_instance,
-            history=FileHistory(history_file),
-            style=style,
-            reserve_space_for_menu=4,
-            complete_style=CompleteStyle.MULTI_COLUMN,
-        )
-        if line.strip() == "{" and not multiline_input:
-            multiline_input = True
-            continue
-        elif line.strip() == "}" and multiline_input:
-            break
-        elif multiline_input:
-            inp += line + "\n"
+    def get_input(self, history_file, fnames, commands):
+        fnames = list(fnames)
+        if len(fnames) > 1:
+            common_prefix = os.path.commonpath(fnames)
+            if not common_prefix.endswith(os.path.sep):
+                common_prefix += os.path.sep
+            short_fnames = [fname.replace(common_prefix, "", 1) for fname in fnames]
+        elif len(fnames):
+            short_fnames = [os.path.basename(fnames[0])]
         else:
-            inp = line
-            break
+            short_fnames = []
 
-    print()
-    return inp
+        show = " ".join(short_fnames)
+        if len(show) > 10:
+            show += "\n"
+        show += "> "
 
+        if not sys.stdin.isatty():
+            return self.canned_input(show)
 
-def confirm_ask(question, default=None, yes=False):
-    if yes:
-        return True
-    return prompt(question + " ", default=default)
+        inp = ""
+        multiline_input = False
 
+        style = Style.from_dict({"": "green"})
 
-def prompt_ask(question, default=None, yes=False):
-    if yes:
-        return True
-    return prompt(question + " ", default=default)
+        while True:
+            completer_instance = FileContentCompleter(fnames, commands)
+            if multiline_input:
+                show = ". "
+
+            line = prompt(
+                show,
+                completer=completer_instance,
+                history=FileHistory(history_file),
+                style=style,
+                reserve_space_for_menu=4,
+                complete_style=CompleteStyle.MULTI_COLUMN,
+            )
+            if line.strip() == "{" and not multiline_input:
+                multiline_input = True
+                continue
+            elif line.strip() == "}" and multiline_input:
+                break
+            elif multiline_input:
+                inp += line + "\n"
+            else:
+                inp = line
+                break
+
+        print()
+        return inp
+
+    def confirm_ask(self, question, default="y"):
+        if self.yes:
+            return True
+        return prompt(question + " ", default=default)
+
+    def prompt_ask(self, question, default=None):
+        if self.yes:
+            return True
+        return prompt(question + " ", default=default)
