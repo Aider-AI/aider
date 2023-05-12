@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 
-
 import os
 import sys
-import re
 import traceback
 import time
 from openai.error import RateLimitError
@@ -374,29 +372,9 @@ class Coder:
             if live:
                 live.stop()
 
-    pattern = re.compile(
-        # Optional: Matches the start of a code block (e.g., ```python) and any following whitespace
-        r"(^```\S*\s*)?"
-        # Matches the file path
-        r"^(\S*)\s*"
-        # Optional: Matches the end of a code block (e.g., ```) and any following whitespace
-        r"(^```\S*\s*)?"
-        # Matches the start of the ORIGINAL section and captures its content
-        r"^<<<<<<< ORIGINAL\n(.*?\n?)"
-        # Matches sep between ORIGINAL and UPDATED sections, captures UPDATED content
-        r"^=======\n(.*?)"
-        # Matches the end of the UPDATED section
-        r"^>>>>>>> UPDATED",
-        re.MULTILINE | re.DOTALL,
-    )
-
     def update_files(self, content, inp):
         edited = set()
-        for match in self.pattern.finditer(content):
-            _, path, _, original, updated = match.groups()
-
-            path = path.strip()
-
+        for path, original, updated in utils.find_original_update_blocks(content):
             full_path = os.path.abspath(os.path.join(self.root, path))
 
             if full_path not in self.abs_fnames:

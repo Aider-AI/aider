@@ -1,3 +1,4 @@
+import re
 import math
 
 from difflib import SequenceMatcher
@@ -126,3 +127,27 @@ def show_messages(messages, title):
         content = msg["content"].splitlines()
         for line in content:
             print(role, line)
+
+
+pattern = re.compile(
+    # Optional: Matches the start of a code block (e.g., ```python) and any following whitespace
+    r"(^```\S*\s*)?"
+    # Matches the file path
+    r"^(\S+)\s*"
+    # Optional: Matches the end of a code block (e.g., ```) and any following whitespace
+    r"(^```\S*\s*)?"
+    # Matches the start of the ORIGINAL section and captures its content
+    r"^<<<<<<< ORIGINAL\n(.*?\n?)"
+    # Matches sep between ORIGINAL and UPDATED sections, captures UPDATED content
+    r"^=======\n(.*?)"
+    # Matches the end of the UPDATED section
+    r"^>>>>>>> UPDATED",
+    re.MULTILINE | re.DOTALL,
+)
+
+
+def find_original_update_blocks(content):
+    for match in pattern.finditer(content):
+        _, path, _, original, updated = match.groups()
+        path = path.strip()
+        yield path, original, updated
