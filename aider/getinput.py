@@ -14,6 +14,7 @@ import time
 import random
 from pathlib import Path
 
+
 class FileContentCompleter(Completer):
     def __init__(self, fnames, commands):
         self.commands = commands
@@ -56,7 +57,7 @@ class InputOutput:
         self.pretty = pretty
         self.yes = yes
         self.input_history_file = input_history_file
-        self.chat_history_file = chat_history_file
+        self.chat_history_file = Path(chat_history_file)
 
         if pretty:
             self.console = Console()
@@ -131,14 +132,31 @@ class InputOutput:
                 break
 
         print()
+
+        prefix = '####'
+        hist = inp.splitlines()
+        hist = f'\n{prefix} '.join(hist)
+
+        hist = f'''---
+{prefix} {hist}'''
+        self.append_chat_history(hist)
+
         return inp
 
     ## OUTPUT
 
     def confirm_ask(self, question, default="y"):
         if self.yes:
-            return True
-        return prompt(question + " ", default=default)
+            res = 'yes'
+        else:
+            res = prompt(question + " ", default=default)
+
+        hist = f'*{question.strip()} {res}*'
+        self.append_chat_history(hist)
+
+        if not res:
+            return
+        return res.lower().startswith('y')
 
     def prompt_ask(self, question, default=None):
         if self.yes:
@@ -146,9 +164,24 @@ class InputOutput:
         return prompt(question + " ", default=default)
 
     def tool_error(self, message):
+        if message.strip():
+            hist = f'*{message.strip()}*'
+            self.append_chat_history(hist)
+
         message = Text(message)
         self.console.print(message, style="red")
 
     def tool(self, *messages):
+        if messages:
+            hist = ' '.join(messages)
+            hist = f'*{hist.strip()}*'
+            self.append_chat_history(hist)
+
         messages = list(map(Text, messages))
         self.console.print(*messages)
+
+    def append_chat_history(self, text):
+        if not text.endswith('\n\n'):
+            text = text + '\n\n'
+        with self.chat_history_file.open("a") as f:
+            f.write(text)
