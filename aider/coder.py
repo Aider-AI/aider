@@ -30,7 +30,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 class Coder:
     abs_fnames = set()
 
-    def confirm_ask(self, question, default="y"):
+    def confirm_ask(self, question, default=None):
         return Confirm.ask(question, console=self.console, default=default)
 
     repo = None
@@ -120,7 +120,7 @@ class Coder:
             self.console.print(f"[bright_black]Files not tracked in {repo.git_dir}:")
             for fn in new_files:
                 self.console.print(f"[bright_black]  {fn}")
-            if self.confirm_ask("[bright_black]Add them?"):
+            if self.confirm_ask("[bright_black]Add them?", default="y"):
                 for relative_fname in new_files:
                     repo.git.add(relative_fname)
                     self.console.print(f"[bright_black]Added {relative_fname} to the git repo")
@@ -308,7 +308,7 @@ class Coder:
 
         for rel_fname in mentioned_rel_fnames:
             self.console.print(f"[bright_black]{rel_fname}")
-            if self.confirm_ask("[bright_black]Add {path} to git?"):
+            if self.confirm_ask("[bright_black]Add {path} to git?", default="y"):
         if not ok:
             return
 
@@ -404,16 +404,15 @@ class Coder:
                     question = f"[bright_black]Allow creation of new file {path}?"  # noqa: E501
                 else:
                     question = f"[bright_black]Allow edits to {path} which was not previously provided?"  # noqa: E501
-                if not Confirm.ask(question, console=self.console, default="y"):
+                if not self.confirm_ask(question, default="y"):
                     self.console.print(f"[red]Skipping edit to {path}")
                     continue
 
                 Path(full_path).touch()
                 self.abs_fnames.add(full_path)
 
-                if self.repo and Confirm.ask(
+                if self.repo and self.confirm_ask(
                     f"[bright_black]Add {path} to git?",
-                    console=self.console,
                     default="y",
                 ):
                     self.repo.git.add(full_path)
