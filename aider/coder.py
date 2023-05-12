@@ -464,17 +464,22 @@ class Coder:
             relative_dirty_files = []
             for fname in file_list:
                 relative_fname = os.path.relpath(fname, repo.working_tree_dir)
+                relative_dirty_files.append(relative_fname)
+
+                try:
+                    current_branch_commit_count = len(list(repo.iter_commits(repo.active_branch)))
+                except git.exc.GitCommandError:
+                    current_branch_commit_count = None
+
+                if not current_branch_commit_count:
+                    continue
+
                 if self.pretty:
-    current_branch_commit_count = len(list(repo.iter_commits(repo.active_branch)))
-    if current_branch_commit_count > 0:
-        these_diffs = repo.git.diff("HEAD", "--color", "--", relative_fname)
-    else:
-        these_diffs = ""
+                    these_diffs = repo.git.diff("HEAD", "--color", "--", relative_fname)
                 else:
                     these_diffs = repo.git.diff("HEAD", relative_fname)
 
                 if these_diffs:
-                    relative_dirty_files.append(relative_fname)
                     diffs += these_diffs + "\n"
 
             return relative_dirty_files, diffs
