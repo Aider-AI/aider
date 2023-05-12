@@ -18,7 +18,7 @@ from pathlib import Path
 import git
 import openai
 
-#from aider.dump import dump
+# from aider.dump import dump
 from aider.getinput import get_input
 from aider import utils
 from aider import prompts
@@ -33,6 +33,7 @@ class Coder:
     last_aider_commit_hash = None
 
     def __init__(self, main_model, fnames, pretty, history_file, show_diffs, auto_commits, yes):
+        self.yes = yes
         self.history_file = history_file
         self.auto_commits = auto_commits
 
@@ -56,7 +57,6 @@ class Coder:
 
         self.pretty = pretty
         self.show_diffs = show_diffs
-        self.yes = yes
 
     def find_common_root(self):
         if self.abs_fnames:
@@ -197,7 +197,7 @@ class Coder:
 
         self.num_control_c = 0
 
-        is_commit_command = (inp and inp.startswith('/commit'))
+        is_commit_command = inp and inp.startswith("/commit")
 
         if self.repo and self.repo.is_dirty() and not is_commit_command:
             self.commit(ask=True, which="repo_files")
@@ -304,8 +304,8 @@ class Coder:
 
         for rel_fname in mentioned_rel_fnames:
             self.console.print(f"[bright_black]{rel_fname}")
-            if self.confirm_ask("[bright_black]Add {path} to git?", default="y"):
-        if not ok:
+
+        if not self.confirm_ask("[bright_black]Add {path} to git?", default="y"):
             return
 
         for rel_fname in mentioned_rel_fnames:
@@ -488,9 +488,9 @@ class Coder:
 
         if which == "repo_files":
             all_files = [os.path.join(self.root, f) for f in self.get_all_relative_files()]
-            relative_dirty_fnames,diffs = get_dirty_files_and_diffs(all_files)
+            relative_dirty_fnames, diffs = get_dirty_files_and_diffs(all_files)
         elif which == "chat_files":
-            relative_dirty_fnames,diffs = get_dirty_files_and_diffs(self.abs_fnames)
+            relative_dirty_fnames, diffs = get_dirty_files_and_diffs(self.abs_fnames)
         else:
             raise ValueError(f"Invalid value for 'which': {which}")
 
