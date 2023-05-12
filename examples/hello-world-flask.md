@@ -1,14 +1,13 @@
 
-# New session started at 2023-05-12 15:17:30
-
-_This tool will almost certainly fail to work with gpt-3.5-turbo_  
-_Creating /Users/gauthier/tmp/flask/app.py_  
-_Loading /Users/gauthier/tmp/flask/app.py_  
-_Files not tracked in /Users/gauthier/tmp/flask/.git:_  
-_- app.py_  
-_Add them? yes_  
-_Added app.py to the git repo_  
-_Committed new files with message: Initial commit: Added new files to the git repo: app.py_  
+# New session started at 2023-05-12 15:18:51
+*This tool will almost certainly fail to work with gpt-3.5-turbo*  
+*Creating /Users/gauthier/tmp/flask/app.py*  
+*Loading /Users/gauthier/tmp/flask/app.py*  
+*Files not tracked in /Users/gauthier/tmp/flask/.git:*  
+*- app.py*  
+*Add them? yes*  
+*Added app.py to the git repo*  
+*Committed new files with message: Initial commit: Added new files to the git repo: app.py*  
 ---
 #### make a flask app with a /hello endpoint that returns hello world  
 
@@ -30,5 +29,5 @@ def hello():
 
 This code creates a Flask app and adds a `/hello` endpoint that returns "Hello, World!" when accessed.
 
-_Applied edit to app.py_  
-_8f7db45 aider: Added a /hello endpoint that returns "Hello, World!" when accessed._  
+*Applied edit to app.py*  
+*af1bf66 aider: Added a /hello endpoint that returns "Hello, World!" when accessed.*  
