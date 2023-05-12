@@ -29,12 +29,11 @@ class Coder:
     last_aider_commit_hash = None
     last_asked_for_commit_time = 0
 
-    def __init__(self, main_model, fnames, pretty, history_file, show_diffs, auto_commits, yes):
+    def __init__(self, main_model, fnames, pretty, show_diffs, auto_commits, io):
         self.abs_fnames = set()
 
-        self.io = getinput.InputOutput(pretty, yes)
+        self.io = io
 
-        self.history_file = history_file
         self.auto_commits = auto_commits
 
         if pretty:
@@ -196,7 +195,7 @@ class Coder:
         return True
 
     def run_loop(self):
-        inp = self.io.get_input(self.history_file, self.abs_fnames, self.commands)
+        inp = self.io.get_input(self.abs_fnames, self.commands)
 
         self.num_control_c = 0
 

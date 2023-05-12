@@ -3,7 +3,7 @@ import sys
 import argparse
 from dotenv import load_dotenv
 from aider.coder import Coder
-
+from aider.getinput import InputOutput
 
 def main(args=None):
     if args is None:
@@ -75,8 +75,10 @@ def main(args=None):
     fnames = args.files
     pretty = args.pretty
 
+    io = InputOutput(args.pretty, args.yes, args.history_file)
+
     coder = Coder(
-        args.model, fnames, pretty, args.history_file, args.show_diffs, args.auto_commits, args.yes
+        args.model, fnames, pretty, args.show_diffs, args.auto_commits, io,
     )
     coder.commit(ask=True, prefix="wip: ", which="repo_files")
 
