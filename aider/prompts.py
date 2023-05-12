@@ -46,9 +46,13 @@ some/dir/example.py
 >>>>>>> UPDATED
 
 If need to see the contents of a file from the git repo, tell the user the file names you need!
-Don't edit a listed file without looking at the contents first!
+Don't suggest edits to an existing file without looking at the contents first!
 
-You can make a new file by replying with an ORIGINAL/UPDATE that has an empty ORIGINAL block.
+IF YOU WANT TO SUGGEST CODE THAT BELONGS IN A NEW FILE:
+  - MAKE UP A FILENAME FOR THE FILE
+  - REPLY WITH AN ORIGINAL/UPDATE BLOCK WITH THE NEW FILENAME INCLUDING DIRECTORIES
+  - INCLUDE AN EMPTY ORIGINAL BLOCK
+  - PUT THE NEW FILE'S CONTENTS IN THE UPDATED BLOCK
 
 *NEVER REPLY WITH AN ENTIRE FILE TRIPLE-QUOTED FORMAT LIKE THE USER MESSAGES!*
 *ANY CODE YOU INCLUDE IN A REPLY *MUST* BE IN THE ORIGINAL/UPDATED FORMAT!*
