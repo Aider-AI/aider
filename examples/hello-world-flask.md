@@ -1,5 +1,5 @@
 
-# Aider chat started at 2023-05-12 15:45:16
+# Aider creating a simple flask app
 
 _Creating app.py_  
 _Added app.py to the chat_  
