@@ -180,7 +180,7 @@ class Coder:
                 self.num_control_c += 1
                 if self.num_control_c >= 2:
                     break
-                self.console.print("[red]^C again to quit")
+                self.io.tool_error("^C again to quit")
             except EOFError:
                 return
 
@@ -259,7 +259,7 @@ class Coder:
         except ValueError as err:
             err = err.args[0]
             self.io.tool_error("Malformed ORIGINAL/UPDATE blocks, retrying...")
-            self.io.tool_error(err)
+            self.io.tool_error(str(err))
             return err
 
         except Exception as err:
@@ -446,7 +446,7 @@ class Coder:
 
         if interrupted:
             self.console.print(
-                "[red]Unable to get commit message from gpt-3.5-turbo. Use /commit to try again.\n"
+            self.io.tool_error("Unable to get commit message from gpt-3.5-turbo. Use /commit to try again.")
             )
             return
 
@@ -521,7 +521,7 @@ class Coder:
             self.console.print()
 
             if res.lower() in ["n", "no"]:
-                self.console.print("[red]Skipped commmit.")
+                self.io.tool_error("Skipped commmit.")
                 return
             if res.lower() not in ["y", "yes"] and res:
                 commit_message = res
