@@ -261,6 +261,9 @@ class Coder:
         if not edited:
             return
 
+        if not self.auto_commits:
+            return
+
         res = self.commit(history=self.cur_messages, prefix="aider: ")
         if res:
             commit_hash, commit_message = res
