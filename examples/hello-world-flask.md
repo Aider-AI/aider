@@ -1,7 +1,6 @@
 
 # Aider creating a simple flask app
 
----
 #### >  make a flask app with a /hello endpoint that returns hello world  
 
 To create a Flask app with a `/hello` endpoint that returns "Hello, World!", we need to install Flask, import it, create an app instance, and define a route for the `/hello` endpoint. Here's how to update the `app.py` file:
