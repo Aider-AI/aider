@@ -6,7 +6,7 @@ from pygments.util import ClassNotFound
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.history import FileHistory
-from prompt_toolkit.shortcuts import CompleteStyle
+from prompt_toolkit.shortcuts import CompleteStyle, confirm
 from rich.console import Console
 import sys
 import time
@@ -38,9 +38,7 @@ class FileContentCompleter(Completer):
             if len(words) == 1 and not text[-1].isspace():
                 candidates = self.commands.get_commands()
             else:
-                for completion in self.commands.get_command_completions(
-                    words[0][1:], words[-1]
-                ):
+                for completion in self.commands.get_command_completions(words[0][1:], words[-1]):
                     yield completion
                 return
         else:
@@ -117,3 +115,15 @@ def get_input(history_file, fnames, commands):
 
     print()
     return inp
+
+
+def confirm_ask(question, default=None, yes=False):
+    if yes:
+        return True
+    return confirm(question, default=default)
+
+
+def prompt_ask(question, default=None, yes=False):
+    if yes:
+        return True
+    return prompt(question, default=default)

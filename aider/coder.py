@@ -7,7 +7,6 @@ import time
 from openai.error import RateLimitError
 
 from rich.console import Console
-from rich.prompt import Confirm, Prompt
 from rich.live import Live
 from rich.text import Text
 from rich.markdown import Markdown
@@ -563,13 +562,3 @@ class Coder:
         if not files:
             return 0
         return max(Path(path).stat().st_mtime for path in files)
-
-    def confirm_ask(self, question, default=None):
-        if self.yes:
-            return True
-        return Confirm.ask(question, console=self.console, default=default)
-
-    def prompt_ask(self, question, default=None):
-        if self.yes:
-            return True
-        return Prompt.ask(question, console=self.console, default=default)
