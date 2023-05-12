@@ -30,6 +30,9 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 class Coder:
     abs_fnames = set()
 
+    def confirm_ask(self, question, default="y"):
+        return Confirm.ask(question, console=self.console, default=default)
+
     repo = None
     last_aider_commit_hash = None
 
@@ -117,7 +120,7 @@ class Coder:
             self.console.print(f"[bright_black]Files not tracked in {repo.git_dir}:")
             for fn in new_files:
                 self.console.print(f"[bright_black]  {fn}")
-            if Confirm.ask("[bright_black]Add them?", console=self.console, default="y"):
+            if self.confirm_ask("[bright_black]Add them?"):
                 for relative_fname in new_files:
                     repo.git.add(relative_fname)
                     self.console.print(f"[bright_black]Added {relative_fname} to the git repo")
@@ -305,7 +308,7 @@ class Coder:
 
         for rel_fname in mentioned_rel_fnames:
             self.console.print(f"[bright_black]{rel_fname}")
-        ok = Confirm.ask("[bright_black]Add these files?", console=self.console, default="y")
+            if self.confirm_ask("[bright_black]Add {path} to git?"):
         if not ok:
             return
 
