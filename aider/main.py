@@ -89,7 +89,7 @@ def main(args=None):
 
     coder.run()
     console = Console()
-    console.clear()
+    console.reset()
 
 
 if __name__ == "__main__":
