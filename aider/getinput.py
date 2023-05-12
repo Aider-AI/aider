@@ -133,30 +133,30 @@ class InputOutput:
 
         print()
 
-        prefix = '####'
+        prefix = "####"
         hist = inp.splitlines()
-        hist = f'\n{prefix} '.join(hist)
+        hist = f"\n{prefix} ".join(hist)
 
-        hist = f'''---
-{prefix} {hist}'''
+        hist = f"""---
+{prefix} {hist}"""
         self.append_chat_history(hist)
 
         return inp
 
-    ## OUTPUT
+    # OUTPUT
 
     def confirm_ask(self, question, default="y"):
         if self.yes:
-            res = 'yes'
+            res = "yes"
         else:
             res = prompt(question + " ", default=default)
 
-        hist = f'*{question.strip()} {res}*'
+        hist = f"*{question.strip()} {res}*"
         self.append_chat_history(hist)
 
         if not res:
             return
-        return res.lower().startswith('y')
+        return res.lower().startswith("y")
 
     def prompt_ask(self, question, default=None):
         if self.yes:
@@ -165,7 +165,7 @@ class InputOutput:
 
     def tool_error(self, message):
         if message.strip():
-            hist = f'*{message.strip()}*'
+            hist = f"*{message.strip()}*"
             self.append_chat_history(hist)
 
         message = Text(message)
@@ -173,15 +173,15 @@ class InputOutput:
 
     def tool(self, *messages):
         if messages:
-            hist = ' '.join(messages)
-            hist = f'*{hist.strip()}*'
+            hist = " ".join(messages)
+            hist = f"*{hist.strip()}*"
             self.append_chat_history(hist)
 
         messages = list(map(Text, messages))
         self.console.print(*messages)
 
-    def append_chat_history(self, text):
-        if not text.endswith('\n\n'):
-            text = text + '\n\n'
+    def append_chat_history(self, text, linebreak=True):
+        if linebreak:
+            text = text + "  \n"
         with self.chat_history_file.open("a") as f:
             f.write(text)
