@@ -60,6 +60,25 @@ Hope you like it!
         edits = list(utils.find_original_update_blocks(edit))
         self.assertEqual(edits, [("foo.txt", "Two\n", "Tooooo\n")])
 
+    def test_find_original_update_blocks_quote_below_filename(self):
+        edit = """
+Here's the change:
+
+foo.txt
+```text
+<<<<<<< ORIGINAL
+Two
+=======
+Tooooo
+>>>>>>> UPDATED
+```
+
+Hope you like it!
+"""
+
+        edits = list(utils.find_original_update_blocks(edit))
+        self.assertEqual(edits, [("foo.txt", "Two\n", "Tooooo\n")])
+
     def test_find_original_update_blocks_unclosed(self):
         edit = """
 Here's the change:
