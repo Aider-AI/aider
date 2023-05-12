@@ -64,6 +64,8 @@ class InputOutput:
         else:
             self.console = Console(force_terminal=True, no_color=True)
 
+        self.append_chat_history('# New session started', False)
+
     def canned_input(self, show_prompt):
         console = Console()
 
