@@ -205,7 +205,8 @@ def find_original_update_blocks(content):
         raise ValueError(f"{processed}\n^^^ Error parsing ORIGINAL/UPDATED block.")
 
 
-edit = """
+if __name__ == "__main__":
+    edit = """
 Here's the change:
 
 ```text
@@ -219,5 +220,4 @@ Tooooo
 
 Hope you like it!
 """
-if __name__ == "__main__":
     print(list(find_original_update_blocks(edit)))
