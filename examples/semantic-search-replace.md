@@ -19,7 +19,7 @@ aider/coder.py
 >>>>>>> UPDATED
 ```
 
-```
+```python
 aider/coder.py
 <<<<<<< ORIGINAL
             self.console.print("[red]No suitable git repo, will not automatically commit edits.")
@@ -28,7 +28,7 @@ aider/coder.py
 >>>>>>> UPDATED
 ```
 
-```
+```python
 aider/coder.py
 <<<<<<< ORIGINAL
             self.console.print("[red]Files are not in a git repo.")
@@ -37,7 +37,7 @@ aider/coder.py
 >>>>>>> UPDATED
 ```
 
-```
+```python
 aider/coder.py
 <<<<<<< ORIGINAL
             self.console.print("[red]Files are in different git repos.")
@@ -46,7 +46,7 @@ aider/coder.py
 >>>>>>> UPDATED
 ```
 
-```
+```python
 aider/coder.py
 <<<<<<< ORIGINAL
                 self.console.print("[red]Skipped adding new files to the git repo.")
@@ -55,7 +55,7 @@ aider/coder.py
 >>>>>>> UPDATED
 ```
 
-```
+```python
 aider/coder.py
 <<<<<<< ORIGINAL
             self.console.print("[red]Warning: no changes found in tracked files.")
@@ -64,7 +64,7 @@ aider/coder.py
 >>>>>>> UPDATED
 ```
 
-```
+```python
 aider/coder.py
 <<<<<<< ORIGINAL
             self.console.print("[red]Malformed ORIGINAL/UPDATE blocks, retrying...")
