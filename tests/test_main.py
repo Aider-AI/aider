@@ -13,7 +13,7 @@ class TestMain(TestCase):
             with open(os.devnull, "r") as dev_null:
                 save_stdin = sys.stdin
                 sys.stdin = dev_null
-                main()
+                main([])
                 sys.stdin = save_stdin
 
     def test_main_with_empty_dir_new_file(self):

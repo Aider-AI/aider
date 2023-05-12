@@ -6,7 +6,7 @@ from aider.coder import Coder
 
 
 def main(args=None):
-    if not args:
+    if args is None:
         args = sys.argv[1:]
 
     load_dotenv()
