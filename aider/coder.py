@@ -196,11 +196,6 @@ class Coder:
         return True
 
     def run_loop(self):
-        if self.pretty:
-            self.console.rule()
-        else:
-            print()
-
         inp = self.io.get_input(self.history_file, self.abs_fnames, self.commands)
 
         self.num_control_c = 0

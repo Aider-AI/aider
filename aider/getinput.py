@@ -75,6 +75,11 @@ class InputOutput:
         return input_line
 
     def get_input(self, history_file, fnames, commands):
+        if self.pretty:
+            self.console.rule()
+        else:
+            print()
+
         fnames = list(fnames)
         if len(fnames) > 1:
             common_prefix = os.path.commonpath(fnames)
