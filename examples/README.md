@@ -1,6 +1,7 @@
-# Aider Examples
+# Aider example chat transcripts
 
-This repository contains two examples demonstrating the capabilities of Aider. Below is a brief description of each example and a link to their respective markdown files.
+This repository contains chat transcripts that show how Aider can generate and edit code.
+Below is a brief description of each example and a link to their respective markdown files.
 
 1. **Hello World Flask App**: This example demonstrates how to create a simple Flask app with various endpoints, such as adding two numbers and calculating the Fibonacci sequence. [View the example here](examples/hello-world-flask.md).
 
