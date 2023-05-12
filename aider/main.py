@@ -19,12 +19,12 @@ def main(args=None):
         help="a list of source code files (optional)",
     )
     parser.add_argument(
-        "--history-file",
-        metavar="HISTORY_FILE",
-        default=os.environ.get(f"{env_prefix}HISTORY_FILE", ".aider.history"),
+        "--input-history-file",
+        metavar="INPUT_HISTORY_FILE",
+        default=os.environ.get(f"{env_prefix}INPUT_HISTORY_FILE", ".aider.input.history"),
         help=(
-            "Specify the chat input history file (default: .aider.history,"
-            f" ${env_prefix}HISTORY_FILE)"
+            "Specify the chat input history file (default: .aider.input.history,"
+            f" ${env_prefix}INPUT_HISTORY_FILE)"
         ),
     )
     parser.add_argument(
