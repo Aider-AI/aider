@@ -343,34 +343,36 @@ class Coder:
         return self.resp, interrupted
 
     def show_send_output(self, completion, silent):
+        live = None
         if self.pretty and not silent:
             live = Live(vertical_overflow="scroll")
-            live.start()
-        else:
-            live = None
 
-        for chunk in completion:
-            if chunk.choices[0].finish_reason not in (None, "stop"):
-                assert False, "Exceeded context window!"
+        try:
+            if live:
+                live.start()
 
-            try:
-                text = chunk.choices[0].delta.content
-                self.resp += text
-            except AttributeError:
-                continue
+            for chunk in completion:
+                if chunk.choices[0].finish_reason not in (None, "stop"):
+                    assert False, "Exceeded context window!"
 
-            if silent:
-                continue
+                try:
+                    text = chunk.choices[0].delta.content
+                    self.resp += text
+                except AttributeError:
+                    continue
 
-            if self.pretty:
-                md = Markdown(self.resp, style="blue", code_theme="default")
-                live.update(md)
-            else:
-                sys.stdout.write(text)
-                sys.stdout.flush()
+                if silent:
+                    continue
 
-        if live:
-            live.stop()
+                if self.pretty:
+                    md = Markdown(self.resp, style="blue", code_theme="default")
+                    live.update(md)
+                else:
+                    sys.stdout.write(text)
+                    sys.stdout.flush()
+        finally:
+            if live:
+                live.stop()
 
     pattern = re.compile(
         # Optional: Matches the start of a code block (e.g., ```python) and any following whitespace
@@ -517,7 +519,6 @@ class Coder:
 
             res = self.prompt_ask(
                 "[bright_black]Commit before the chat proceeds? \[y/n/commit message]",  # noqa: W605 E501
-                console=self.console,
                 default="y",
             ).strip()
             self.console.print()
