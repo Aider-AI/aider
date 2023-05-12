@@ -6,8 +6,8 @@ from aider import prompts
 
 
 class Commands:
-    def __init__(self, console, coder):
-        self.console = console
+    def __init__(self, io, coder):
+        self.io = io
         self.coder = coder
 
     def help(self):
@@ -18,9 +18,9 @@ class Commands:
             cmd_method = getattr(self, cmd_method_name, None)
             if cmd_method:
                 description = cmd_method.__doc__
-                self.console.print(f"{cmd} {description}")
+                self.io.tool(f"{cmd} {description}")
             else:
-                self.console.print(f"{cmd} No description available.")
+                self.io.tool(f"{cmd} No description available.")
 
     def get_commands(self):
         commands = ["/help"]
@@ -43,7 +43,7 @@ class Commands:
         if cmd_method:
             return cmd_method(args)
         else:
-            self.console.print(f"Error: Command {cmd_name} not found.")
+            self.io.tool(f"Error: Command {cmd_name} not found.")
 
     def run(self, inp):
         words = inp.strip().split()
@@ -61,19 +61,19 @@ class Commands:
             else:
                 return self.do_run(matching_commands[0][1:], rest_inp)
         elif len(matching_commands) > 1:
-            self.console.print("[red]Ambiguous command: ', '.join(matching_commands)}")
+            self.io.tool_error("Ambiguous command: ', '.join(matching_commands)}")
         else:
-            self.console.print(f"[red]Error: {first_word} is not a valid command.")
+            self.io.tool_error(f"Error: {first_word} is not a valid command.")
 
     def cmd_commit(self, args):
         "Commit edits to chat session files made outside the chat (commit message optional)"
 
         if not self.coder.repo:
-            self.console.print("[red]No git repository found.")
+            self.io.tool_error("No git repository found.")
             return
 
         if not self.coder.repo.is_dirty():
-            self.console.print("[red]No more changes to commit.")
+            self.io.tool_error("No more changes to commit.")
             return
 
         commit_message = args.strip()
@@ -82,7 +82,7 @@ class Commands:
     def cmd_undo(self, args):
         "Undo the last git commit if it was done by aider"
         if not self.coder.repo:
-            self.console.print("[red]No git repository found.")
+            self.io.tool_error("No git repository found.")
             return
 
         last_commit = self.coder.repo.head.commit
@@ -90,10 +90,10 @@ class Commands:
             not last_commit.message.startswith("aider:")
             or last_commit.hexsha[:7] != self.coder.last_aider_commit_hash
         ):
-            self.console.print("[red]The last commit was not made by aider in this chat session.")
+            self.io.tool_error("The last commit was not made by aider in this chat session.")
             return
         self.coder.repo.git.reset("--hard", "HEAD~1")
-        self.console.print(
+        self.io.tool(
             f"{last_commit.message.strip()}\n"
             f"The above commit {self.coder.last_aider_commit_hash} "
             "was reset and removed from git.\n"
@@ -104,11 +104,11 @@ class Commands:
     def cmd_diff(self, args):
         "Display the diff of the last aider commit"
         if not self.coder.repo:
-            self.console.print("[red]No git repository found.")
+            self.io.tool_error("No git repository found.")
             return
 
         if not self.coder.last_aider_commit_hash:
-            self.console.print("[red]No previous aider commit found.")
+            self.io.tool_error("No previous aider commit found.")
             return
 
         commits = f"{self.coder.last_aider_commit_hash}~1"
@@ -117,7 +117,7 @@ class Commands:
         else:
             diff = self.coder.repo.git.diff(commits, self.coder.last_aider_commit_hash)
 
-        self.console.print(Text(diff))
+        self.io.tool(Text(diff))
 
     def completions_add(self, partial):
         files = set(self.coder.get_all_relative_files())
@@ -153,16 +153,16 @@ class Commands:
                     commit_message = f"aider: Created and added {word} to git."
                     self.coder.repo.git.commit("-m", commit_message, "--no-verify")
             else:
-                self.console.print(f"[red]No files matched '{word}'")
+                self.io.tool_error(f"No files matched '{word}'")
 
         for matched_file in matched_files:
             abs_file_path = os.path.abspath(os.path.join(self.coder.root, matched_file))
             if abs_file_path not in self.coder.abs_fnames:
                 self.coder.abs_fnames.add(abs_file_path)
-                self.console.print(f"Added {matched_file} to the chat")
+                self.io.tool(f"Added {matched_file} to the chat")
                 added_fnames.append(matched_file)
             else:
-                self.console.print(f"[red]{matched_file} is already in the chat")
+                self.io.tool_error(f"{matched_file} is already in the chat")
 
         if not added_fnames:
             return
@@ -191,12 +191,12 @@ class Commands:
                 if word.lower() in os.path.relpath(file, self.coder.root).lower()
             ]
             if not matched_files:
-                self.console.print(f"[red]No files matched '{word}'")
+                self.io.tool_error(f"No files matched '{word}'")
 
             for matched_file in matched_files:
                 relative_fname = os.path.relpath(matched_file, self.coder.root)
                 self.coder.abs_fnames.remove(matched_file)
-                self.console.print(f"Removed {relative_fname} from the chat")
+                self.io.tool(f"Removed {relative_fname} from the chat")
 
     def cmd_ls(self, args):
         "List all known files and those included in the chat session"
@@ -213,11 +213,11 @@ class Commands:
                 other_files.append(file)
 
         if chat_files:
-            self.console.print("Files in chat:\n")
+            self.io.tool("Files in chat:\n")
         for file in chat_files:
-            self.console.print(f"  {file}")
+            self.io.tool(f"  {file}")
 
         if other_files:
-            self.console.print("\nRepo files not in the chat:\n")
+            self.io.tool("\nRepo files not in the chat:\n")
         for file in other_files:
-            self.console.print(f"  {file}")
+            self.io.tool(f"  {file}")

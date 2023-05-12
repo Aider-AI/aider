@@ -42,7 +42,7 @@ class Coder:
         else:
             self.console = Console(force_terminal=True, no_color=True)
 
-        self.commands = Commands(self.console, self)
+        self.commands = Commands(self.io, self)
         self.main_model = main_model
         if main_model == "gpt-3.5-turbo":
             self.io.tool_error(f"This tool will almost certainly fail to work with {main_model}")
