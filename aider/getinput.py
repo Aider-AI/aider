@@ -52,10 +52,10 @@ class FileContentCompleter(Completer):
 
 
 class InputOutput:
-    def __init__(self, pretty, yes, history_file):
+    def __init__(self, pretty, yes, input_history_file):
         self.pretty = pretty
         self.yes = yes
-        self.history_file = history_file
+        self.input_history_file = input_history_file
 
         if pretty:
             self.console = Console()
@@ -113,7 +113,7 @@ class InputOutput:
             line = prompt(
                 show,
                 completer=completer_instance,
-                history=FileHistory(self.history_file),
+                history=FileHistory(self.input_history_file),
                 style=style,
                 reserve_space_for_menu=4,
                 complete_style=CompleteStyle.MULTI_COLUMN,
