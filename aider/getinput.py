@@ -12,7 +12,7 @@ from rich.text import Text
 import sys
 import time
 import random
-
+from pathlib import Path
 
 class FileContentCompleter(Completer):
     def __init__(self, fnames, commands):
@@ -52,10 +52,11 @@ class FileContentCompleter(Completer):
 
 
 class InputOutput:
-    def __init__(self, pretty, yes, input_history_file):
+    def __init__(self, pretty, yes, input_history_file, chat_history_file):
         self.pretty = pretty
         self.yes = yes
         self.input_history_file = input_history_file
+        self.chat_history_file = chat_history_file
 
         if pretty:
             self.console = Console()
