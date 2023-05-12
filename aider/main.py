@@ -5,7 +5,10 @@ from dotenv import load_dotenv
 from aider.coder import Coder
 
 
-def main(argv=[]):
+def main(args=None):
+    if not args:
+        args = sys.argv[1:]
+
     load_dotenv()
     env_prefix = "AIDER_"
     parser = argparse.ArgumentParser(description="aider - chat with GPT about your code")
@@ -66,12 +69,15 @@ def main(argv=[]):
         "--yes",
         action="store_true",
         help="Always say yes to every confirmation",
+        default=False,
     )
-    args = parser.parse_args(argv)
+    args = parser.parse_args(args)
     fnames = args.files
     pretty = args.pretty
 
-    coder = Coder(args.model, fnames, pretty, args.history_file, args.show_diffs, args.auto_commits, args.yes)
+    coder = Coder(
+        args.model, fnames, pretty, args.history_file, args.show_diffs, args.auto_commits, args.yes
+    )
     coder.commit(ask=True, prefix="wip: ", which="repo_files")
 
     if args.apply:
@@ -84,5 +90,5 @@ def main(argv=[]):
 
 
 if __name__ == "__main__":
-    status = main(sys.argv[1:])
+    status = main()
     sys.exit(status)
