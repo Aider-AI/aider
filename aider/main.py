@@ -5,9 +5,13 @@ from dotenv import load_dotenv
 from aider.coder import Coder
 from aider.getinput import InputOutput
 
-def main(args=None):
+def main(args=None, input=None, output=None):
     if args is None:
         args = sys.argv[1:]
+    if input is None:
+        input = sys.stdin
+    if output is None:
+        output = sys.stdout
 
     load_dotenv()
     env_prefix = "AIDER_"
