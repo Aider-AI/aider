@@ -14,6 +14,8 @@ Based on the file list provided, it seems like this repository contains a collec
 
 _Added animation/03-dropdown-menu/README.md to the chat_
 
+---
+
 Yes, I see the content of the `animation/03-dropdown-menu/README.md` file. It describes an exercise to add animation to a dropdown menu, creating a bounce illusion when the dropdown expands close to its final end state. The desired outcome is shown in a GIF file, and the hints provided suggest using the `transform-origin` property and adding an intermediate step to the keyframe at-rule to achieve the bounce effect.
 
 Is there any specific change or improvement you would like me to make to this file or any other file in the repository?
