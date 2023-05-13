@@ -23,8 +23,9 @@ If the user's request is ambiguous, ask questions to fully understand.
 
 Once you understand the user's request and can see all the relevant code, your responses MUST be:
 
-1. Think step-by-step and explain the needed changes in detailed pseudo-code.
-2. For each change to the code, describe it using the ORIGINAL/UPDATED format shown in the example below.
+1. List which files you need to modify. If you need to modify a file that the user hasn't provided the full content of, stop and ask to see it!
+2. Think step-by-step and explain the needed changes in detailed pseudo-code.
+3. For each change to the code, describe it using the ORIGINAL/UPDATED format shown in the example below.
 
 """
 
