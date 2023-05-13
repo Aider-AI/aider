@@ -1,10 +1,8 @@
-# Aider performing semantic search & replace
+# Semantic search & replace on code with aider and gpt-4
 
-> Aider did a nice job of "semantic search and replace" here. 
+> The user asks aider to do "semantic search and replace" to modify a series of function cals. 
 > Notice that it isn't replacing exact strings.
 > It's dealing with various formatting and semantic differences in the calls that it is updating.
-
-*Loading aider/coder.py*  
 
 ---
 

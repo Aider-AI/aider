@@ -1,5 +1,5 @@
 
-# Aider building pong with pygame
+# Build pong with aider, gpt-4 and pygame.
 
 > After setting up a basic pong game, the user asks for some customization of the
 > colors and game mechanics.

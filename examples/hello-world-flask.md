@@ -1,5 +1,7 @@
 
-# Aider creating a simple flask app
+# Create a simple flask app with aider and gpt-4
+
+> The user asks aider to make a simple flask app with various endpoints.
 
 #### >  make a flask app with a /hello endpoint that returns hello world  
 
