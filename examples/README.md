@@ -17,11 +17,11 @@ Responses from GPT-4 are in a plain font, and often include colorized code block
 
 In the `aider` output, you will see the tool:
 
-  - adding certain source files to the chat (sometimes at the suggestion of GPT-4, always with user permission).
-  - applying the edits proposed by GPT-4 to the source files.
-  - committing those changes to git with a senisble commit message.
+  - Adding certain source files to the chat (sometimes at the suggestion of GPT-4, always with user permission).
+  - Applying the edits proposed by GPT-4 to the source files.
+  - Committing those changes to git with a senisble commit message.
 
-## Examples
+## Example chat transcripts
 
 There are a varity of example coding chat sessions included,
 accomplishing both greenfield generation of new code as well as simple and complex edits to larger codebases:
