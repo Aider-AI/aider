@@ -54,7 +54,9 @@ class FileContentCompleter(Completer):
 
 
 class InputOutput:
-    def __init__(self, pretty, yes, input_history_file, chat_history_file):
+    def __init__(self, pretty, yes, input_history_file, chat_history_file, input=None, output=None):
+        self.input = input
+        self.output = output
         self.pretty = pretty
         self.yes = yes
         self.input_history_file = input_history_file
@@ -123,6 +125,8 @@ class InputOutput:
                 style=style,
                 reserve_space_for_menu=4,
                 complete_style=CompleteStyle.MULTI_COLUMN,
+                input=self.input,
+                output=self.output,
             )
             if line.strip() == "{" and not multiline_input:
                 multiline_input = True

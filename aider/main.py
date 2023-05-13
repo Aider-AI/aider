@@ -88,7 +88,7 @@ def main(args=None, input=None, output=None):
     fnames = args.files
     pretty = args.pretty
 
-    io = InputOutput(args.pretty, args.yes, args.input_history_file, args.chat_history_file)
+    io = InputOutput(args.pretty, args.yes, args.input_history_file, args.chat_history_file, input=input, output=output)
 
     coder = Coder(
         args.model, fnames, pretty, args.show_diffs, args.auto_commits, io,
