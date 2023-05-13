@@ -1,4 +1,4 @@
-# Semantic search & replace on code with aider and gpt-4
+# Semantic search & replace code with aider and gpt-4
 
 > The user asks aider to do "semantic search and replace" to modify a series of function cals. 
 > Notice that it isn't replacing exact strings.
