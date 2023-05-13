@@ -30,11 +30,15 @@ To make the changes suggested in the `animation/03-dropdown-menu/README.md`, I n
 2. `animation/03-dropdown-menu/script.js`
 
 Please provide the contents of these files so I can suggest the necessary changes.
+
 ---
+
 > animation/03-dropdown-menu/style.css  
 > animation/03-dropdown-menu/script.js  
 > Add these files to the chat? y  
+
 ---
+
 Apologies for the oversight. I see the content of the `animation/03-dropdown-menu/style.css` and `animation/03-dropdown-menu/script.js` files now. I will suggest the necessary changes to add the bounce animation to the dropdown menu.
 
 ```css
