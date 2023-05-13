@@ -3,6 +3,7 @@
 Below are some example transcripts that show how you can chat with
 the `aider` command line tool
 to generate and edit code with GPT-4.
+
 In the transcripts, you will see `aider`:
 
   - Adding certain source files to the chat (sometimes at the suggestion of GPT-4, always with user permission).
