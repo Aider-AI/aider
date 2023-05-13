@@ -1,6 +1,6 @@
 # aider
 
-Aider is a command-line tool that allows you to chat with GPT-4 about your code.
+`aider` is a command-line tool that allows you to chat with GPT-4 about your code.
 Ask GPT for features, improvements, or bug fixes and `aider` will directly apply the changes to your source files.
 Each change is automatically committed to git with a sensible commit message.
 
