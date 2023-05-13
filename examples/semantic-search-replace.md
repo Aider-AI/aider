@@ -1,6 +1,6 @@
 # Semantic search & replace code with aider and gpt-4
 
-> The user asks aider to modify a series of function calls. 
+> In this chat transcript, the user asks aider to modify a series of function calls. 
 >
 > Notice that it isn't replacing exact strings.
 > Aider deals with various formatting and semantic differences in the calls that it is updating.

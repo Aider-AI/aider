@@ -1,7 +1,7 @@
 
 # Complete a css exercise with aider and GPT-4
 
-> The user asks aider about the CSS Exercises repo https://github.com/TheOdinProject/css-exercises/tree/main and completes an animation exercise.
+> In this chat transcript, the user asks aider about the CSS Exercises repo https://github.com/TheOdinProject/css-exercises/tree/main and completes an animation exercise.
 
 ---
 #### >  what is this repo?  
