@@ -298,8 +298,13 @@ class Coder:
 
     def check_for_file_mentions(self, content):
         words = set(word for word in content.split())
-        for quote in ['"', "'", "`"]:
-            words = set(word.strip(quote) for word in words)
+
+        # drop sentence punctuation from the end
+        words = set(word.rstrip(',.!;') for word in words)
+
+        # strip away all kinds of quotes
+        quotes = ''.join(['"', "'", "`"])
+        words = set(word.strip(quotes) for word in words)
 
         addable_rel_fnames = set(self.get_all_relative_files()) - set(
             self.get_inchat_relative_files()
