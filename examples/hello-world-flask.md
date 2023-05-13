@@ -28,7 +28,7 @@ if __name__ == '__main__':
 Make sure to install Flask in your project environment using `pip install flask` before running the app.
 
 _Applied edit to app.py_  
-_414c394 aider: Added a `/hello` endpoint that returns "Hello, World!" to the Flask app._  
+_Commit 414c394 aider: Added a `/hello` endpoint that returns "Hello, World!" to the Flask app._  
 
 ---
 #### >  add an endpoint like /add/3/5 which returns the sum of the 2 numbers  
@@ -55,7 +55,7 @@ def hello():
 Now, when you visit `/add/3/5`, it will return the sum of the two numbers, which is `8`.
 
 _Applied edit to app.py_  
-_0872c51 aider: Added an endpoint `/add/<int:num1>/<int:num2>` that returns the sum of the two numbers._  
+_Commit 0872c51 aider: Added an endpoint `/add/<int:num1>/<int:num2>` that returns the sum of the two numbers._  
 
 ---
 #### >  add /fibonacci/X  
@@ -95,7 +95,7 @@ def hello():
 Now, when you visit `/fibonacci/X`, it will return the Xth number in the Fibonacci sequence. For example, `/fibonacci/5` will return `3`.
 
 _Applied edit to app.py_  
-_163fba8 aider: Added a `/fibonacci/X` endpoint that returns the Xth number in the Fibonacci sequence._  
+_Commit 163fba8 aider: Added a `/fibonacci/X` endpoint that returns the Xth number in the Fibonacci sequence._  
 
 ---
 #### >  remove the hello endpoint  
@@ -115,4 +115,4 @@ def hello():
 Now, the `/hello` endpoint has been removed from the Flask app.
 
 _Applied edit to app.py_  
-_eab6620 aider: Removed the `/hello` endpoint from the Flask app._  
+_Commit eab6620 aider: Removed the `/hello` endpoint from the Flask app._  
