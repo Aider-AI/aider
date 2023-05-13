@@ -100,13 +100,13 @@ tests/test_main.py
 
 These changes will replace the usage of `/dev/null` with `prompt_toolkit`'s input mocking functions.
 
+---
+
 > Applied edit to tests/test_main.py  
 > Applied edit to tests/test_main.py  
 > Applied edit to tests/test_main.py  
 > Applied edit to tests/test_main.py  
 > Commit c177e29 aider: Replaced usage of /dev/null with prompt_toolkit's input mocking functions in tests.  
-
----
 
 > Git repo has uncommitted changes.  
 > Suggested commit message:
