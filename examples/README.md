@@ -11,4 +11,5 @@ Here are some example transcripts that show how you can chat with aider to gener
 * [**Complex Multi-file Change with Debugging**](complex-change.md): This example demonstrates a complex code change involving multiple source files and debugging with the help of aider.
 
 * [**Semantic Search & Replace**](semantic-search-replace.md): This example showcases aider's ability to perform semantic search and replace operations in code, dealing with various formatting and semantic differences in the function calls that it updates.
+* [**CSS Exercise: Animation Dropdown Menu**](css-exercises.md): This example demonstrates how to complete a CSS exercise involving adding animation to a dropdown menu, creating a bounce illusion when the dropdown expands close to its final end state.
 
