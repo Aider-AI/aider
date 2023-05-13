@@ -10,7 +10,6 @@ Aider's initial changes don't work, and the user provides error messages and doc
 ## Chat transcript
 
 > aider-repo$ aider
-
 > Added tests/test_main.py to the chat  
 > Added aider/getinput.py to the chat  
 
