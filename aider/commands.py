@@ -90,11 +90,13 @@ class Commands:
             return
 
         local_head = self.coder.repo.git.rev_parse("HEAD")
-        remote_head = self.coder.repo.git.rev_parse("origin/HEAD")
+        has_origin = any(remote.name == "origin" for remote in self.coder.repo.remotes)
 
-        if local_head == remote_head:
-            self.io.tool_error("The last commit has already been pushed to the origin. Undoing is not possible.")
-            return
+        if has_origin:
+            remote_head = self.coder.repo.git.rev_parse("origin/HEAD")
+            if local_head == remote_head:
+                self.io.tool_error("The last commit has already been pushed to the origin. Undoing is not possible.")
+                return
 
         last_commit = self.coder.repo.head.commit
         if (
