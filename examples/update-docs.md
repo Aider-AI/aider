@@ -2,6 +2,12 @@
 
 > In this chat transcript, the user asks aider to automatically update the Usage docs based on the latest version of the main() function in the code.
 
+## Chat transcript
+
+> aider-repo$ aider ./README.md aider/main.py  
+> Added README.md to the chat  
+> Added aider/main.py to the chat  
+
 #### >  the cmd line args in main() have been updated. update the readme to accurately describe them.  
 
 ```markdown
@@ -26,5 +32,5 @@ README.md
 >>>>>>> UPDATED
 ```
 
-_Applied edit to README.md_  
-_Commit 024f45e aider: Updated command line arguments in main() and updated README.md to accurately describe them._  
+> Applied edit to README.md  
+> Commit 024f45e aider: Updated command line arguments in main() and updated README.md to accurately describe them.  
