@@ -8,7 +8,7 @@ In this chat transcript, the user asks aider to make a simple flask app with var
 > hello-world-flask$ aider app.py  
 > Creating app.py  
 > Added app.py to the chat  
----
+
 #### >  make a flask app with a /hello endpoint that returns hello world  
 
 To create a Flask app with a `/hello` endpoint that returns "Hello, World!", we need to install Flask, import it, create an app instance, and define a route for the `/hello` endpoint. Here's how to update the `app.py` file:
