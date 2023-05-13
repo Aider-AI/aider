@@ -410,8 +410,10 @@ class Coder:
 
                 self.abs_fnames.add(full_path)
 
-                # TODO: check if it's already in the repo
-                if self.repo and self.io.confirm_ask(f"Add {path} to git?"):
+                # Check if the file is already in the repo
+                tracked_files = set(self.repo.git.ls_files().splitlines())
+                relative_fname = self.get_rel_fname(full_path)
+                if relative_fname not in tracked_files and self.repo and self.io.confirm_ask(f"Add {path} to git?"):
                     self.repo.git.add(full_path)
 
             edited.add(path)
