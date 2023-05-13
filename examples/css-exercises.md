@@ -13,8 +13,8 @@ Based on the file list provided, it seems like this repository contains a collec
 #### >  /add animation/03-dropdown-menu/README.md
 
 ```diff
-- Added animation/03-dropdown-menu/README.md to the chat
-- Added animation/03-dropdown-menu/README.md to the chat
++ Added animation/03-dropdown-menu/README.md to the chat
++ Added animation/03-dropdown-menu/README.md to the chat
 ```
 
 
