@@ -1,4 +1,4 @@
-# Examples of using `aider` chat to code with GPT-4
+# Example chats using `aider` to code with GPT-4
 
 Below are some example chat transcripts that show how you can chat with
 the `aider` command line tool
@@ -6,14 +6,14 @@ to generate and edit code with GPT-4.
 
 There are a few things worth taking note of:
 
-  - `aider` will add certain source files to the chat session. Once added, these files are available for review and editing by GPT-4. Sometimes the files are added directly from the command line. Other times GPT-4 requests to see other files in the repo, and they are added after the user approves.
-  - Code edits proposed by GPT-4 are automatically applied to the source files by `aider`.
+  - `aider` will add certain source files to the chat session. Once added, these files are available for review and editing by GPT-4. Sometimes the files were added by the user directly from the command line or using the in-chat `/add` command. Other times GPT-4 requests to see other files in the repo, and they are added after the user approves.
+  - Code edits that GPT-4 suggests are automatically applied to the source files by `aider`.
   - After applying the edits, `aider` will commit them to git with a senisble commit message.
 
 ## Example chat transcripts
 
 There are a varity of example coding chat sessions included,
-accomplishing both greenfield generation of new code as well as simple and complex edits to larger codebases:
+accomplishing both greenfield generation of new code as well as simple and more complex edits to larger codebases:
 
 * [Hello World Flask App](hello-world-flask.md): This example demonstrates how to create a simple Flask app with various endpoints, such as adding two numbers and calculating the Fibonacci sequence.
 
