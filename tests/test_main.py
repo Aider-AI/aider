@@ -1,4 +1,5 @@
 import os
+import sys
 import tempfile
 from unittest import TestCase
 from aider.main import main
