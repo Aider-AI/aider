@@ -125,8 +125,8 @@ class InputOutput:
                 style=style,
                 reserve_space_for_menu=4,
                 complete_style=CompleteStyle.MULTI_COLUMN,
-                input=self.input,
-                output=self.output,
+            stdin=self.input,
+            stdout=self.output,
             )
             if line.strip() == "{" and not multiline_input:
                 multiline_input = True
