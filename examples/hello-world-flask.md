@@ -2,8 +2,12 @@
 # Create a simple flask app with aider and gpt-4
 
 > In this chat transcript, the user asks aider to make a simple flask app with various endpoints.
----
+## Chat transcript
 
+> pong$ aider app.py
+> Creating app.py
+> Added app.py to the chat  
+---
 #### >  make a flask app with a /hello endpoint that returns hello world  
 
 To create a Flask app with a `/hello` endpoint that returns "Hello, World!", we need to install Flask, import it, create an app instance, and define a route for the `/hello` endpoint. Here's how to update the `app.py` file:
@@ -28,8 +32,8 @@ if __name__ == '__main__':
 
 Make sure to install Flask in your project environment using `pip install flask` before running the app.
 
-_Applied edit to app.py_  
-_Commit 414c394 aider: Added a `/hello` endpoint that returns "Hello, World!" to the Flask app._  
+> Applied edit to app.py  
+> Commit 414c394 aider: Added a `/hello` endpoint that returns "Hello, World!" to the Flask app.  
 
 ---
 #### >  add an endpoint like /add/3/5 which returns the sum of the 2 numbers  
@@ -55,8 +59,8 @@ def hello():
 
 Now, when you visit `/add/3/5`, it will return the sum of the two numbers, which is `8`.
 
-_Applied edit to app.py_  
-_Commit 0872c51 aider: Added an endpoint `/add/<int:num1>/<int:num2>` that returns the sum of the two numbers._  
+> Applied edit to app.py  
+> Commit 0872c51 aider: Added an endpoint `/add/<int:num1>/<int:num2>` that returns the sum of the two numbers.  
 
 ---
 #### >  add /fibonacci/X  
@@ -95,8 +99,8 @@ def hello():
 
 Now, when you visit `/fibonacci/X`, it will return the Xth number in the Fibonacci sequence. For example, `/fibonacci/5` will return `3`.
 
-_Applied edit to app.py_  
-_Commit 163fba8 aider: Added a `/fibonacci/X` endpoint that returns the Xth number in the Fibonacci sequence._  
+> Applied edit to app.py  
+> Commit 163fba8 aider: Added a `/fibonacci/X` endpoint that returns the Xth number in the Fibonacci sequence.  
 
 ---
 #### >  remove the hello endpoint  
@@ -115,5 +119,5 @@ def hello():
 
 Now, the `/hello` endpoint has been removed from the Flask app.
 
-_Applied edit to app.py_  
-_Commit eab6620 aider: Removed the `/hello` endpoint from the Flask app._  
+> Applied edit to app.py  
+> Commit eab6620 aider: Removed the `/hello` endpoint from the Flask app.  
