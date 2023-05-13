@@ -7,7 +7,7 @@ After setting up a basic game, the user asks for some customization of the color
 ## Chat transcript
 
 > pong$ aider  
----
+
 #### >  can you make a simple game of pong with pygame?  
 
 Sure, I can help you create a simple Pong game using Pygame. First, let's break down the steps needed to create the game:
