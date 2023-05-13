@@ -14,6 +14,8 @@ Based on the file list provided, it seems like this repository contains a collec
 
 ```diff
 + Added animation/03-dropdown-menu/README.md to the chat
+```
+```diff
 + Added animation/03-dropdown-menu/README.md to the chat
 ```
 
