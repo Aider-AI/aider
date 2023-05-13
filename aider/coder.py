@@ -512,10 +512,11 @@ class Coder:
 
         if ask:
             if which == "repo_files":
-                self.io.tool("Git repo has uncommitted changes.\n")
+                self.io.tool("Git repo has uncommitted changes.")
             else:
-                self.io.tool("Files have uncommitted changes.\n")
-            self.io.tool(f"Suggested commit message:\n{commit_message}\n")
+                self.io.tool("Files have uncommitted changes.")
+            self.io.tool(f"Suggested commit message:")
+            self.io.tool(commit_message)
 
             res = self.io.prompt_ask(
                 "Commit before the chat proceeds [y/n/commit message]?",
