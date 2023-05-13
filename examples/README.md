@@ -26,8 +26,9 @@ print()
 =======
 print("Hello world!")
 >>>>>>> UPDATED
+```
 
-```## Example chat transcripts
+## Example chat transcripts
 
 There are a varity of example coding chat sessions included,
 accomplishing both greenfield generation of new code as well as simple and complex edits to larger codebases:
