@@ -1,28 +1,27 @@
 # Aider
 
 Aider is a command-line tool that allows you to chat with GPT-4 about your code.
-Ask GPT for features, improvements, and bug fixes and aider will directly apply the changes to your source files.
+Ask GPT for features, improvements, or bug fixes and aider will directly apply the changes to your source files.
 Each change is automatically committed to git with a sensible commit message.
 
 ## Example chat transcripts
 
-Here are some example transcripts that show how you can chat with aider to generate and edit code with GPT-4:
+Here are some example transcripts that show how you can chat with aider to generate and edit code with GPT-4. 
 
 * [**Hello World Flask App**](examples/hello-world-flask.md): This example demonstrates how to create a simple Flask app with various endpoints, such as adding two numbers and calculating the Fibonacci sequence.
 
-* [**2048 Game Modification**](examples/2048-game.md): This example demonstrates how to explore and modify an open-source 2048 game codebase, including adding randomness to the scoring system.
+* [**2048 Game Modification**](examples/2048-game.md): This example demonstrates how to explore and modify an open-source javascript 2048 game codebase, including adding randomness to the scoring system.
 
 * [**Pong Game with Pygame**](examples/pong.md): This example demonstrates how to create a simple Pong game using the Pygame library, with customizations for paddle size and color, and ball speed adjustments.
 
 * [**Complex Multi-file Change with Debugging**](examples/complex-change.md): This example demonstrates a complex code change involving multiple source files and debugging with the help of aider.
 
-* [**Semantic Search & Replace**](examples/semantic-search-replace.md): This example showcases aider's ability to perform semantic search and replace operations in code, dealing with various formatting and semantic differences in the function calls that it updates.
-* [**CSS Exercise: Animation Dropdown Menu**](examples/css-exercises.md): This example demonstrates how to complete a CSS exercise involving adding animation to a dropdown menu, creating a bounce illusion when the dropdown expands close to its final end state.
+Find more chat transcripts on the (examples page)[examples/README.md].
 
 ## Features
 
 * Chat with GPT-4 about your code by launching aider from the command line with set of source files to discuss and edit together.
-* Request new features, changes, improvements, and bug fixes to your code. Ask for new test cases, updated documentation or code refactors.
+* Request new features, changes, improvements, or bug fixes to your code. Ask for new test cases, updated documentation or code refactors.
 * Aider will apply the edits suggested by GPT-4 directly to your source files.
 * Aider will automatically commit each changeset to your local git repo with a sensible commit message. These frequent, automatic commits provide a safety net. It's easy to undo aider's changes or use standard git workflows to manage longer sequences of changes.
 * Aider can review multiple source files at once and make coordinated code changes across all of them in a single changeset/commit.
