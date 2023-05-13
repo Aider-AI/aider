@@ -23,7 +23,7 @@ Sure, I can help you create a simple Pong game using Pygame. First, let's break 
 9. Check for scoring and update the score.
 10. Display the score on the screen.
 
-Now, let's start with the code. I'll provide you with the code changes in the ORIGINAL/UPDATED format. Since we are creating a new file, I'll name it `pong_game.py`.
+Now, let's start with the code. I'll provide you with the code changes in an *EDIT BLOCK*. Since we are creating a new file, I'll name it `pong_game.py`.
 
 ```python
 pong_game.py
@@ -71,7 +71,7 @@ This is the basic structure of the game. Now, let's add the Paddle and Ball clas
 ---
 #### >  go ahead  
 
-Now, let's add the Paddle and Ball classes, handle user input, update the ball position, draw the objects, and handle scoring. I'll provide the code changes in the ORIGINAL/UPDATED format.
+Now, let's add the Paddle and Ball classes, handle user input, update the ball position, draw the objects, and handle scoring. I'll provide the code changes in an *EDIT BLOCK*.
 
 ```python
 pong_game.py
