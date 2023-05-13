@@ -10,24 +10,6 @@ There are a few things worth taking note of:
   - Code edits proposed by GPT-4 are automatically applied to the source files by `aider`.
   - After applying the edits, `aider` will commit them to git with a senisble commit message.
 
-## Transcript formatting
-
-> Output from the aider tool is shown in a blockquote like this.
-
-#### > The user's chat messages are bold and shown on a prompt line like this. They contain they user's change requests, clarifications, etc.
-
-Responses from GPT-4 are in a plain font like this, and often include colorized code blocks that specify edits to the code.
-Here's a sample edit that switches from printing a blank line to printing "hello world" in the file `hello.py`:
-
-```python
-hello.py
-<<<<<<< ORIGINAL
-print()
-=======
-print("Hello world!")
->>>>>>> UPDATED
-```
-
 ## Example chat transcripts
 
 There are a varity of example coding chat sessions included,
@@ -47,3 +29,20 @@ accomplishing both greenfield generation of new code as well as simple and compl
 
 * [Automatically Update Docs](update-docs.md): This example demonstrates how to use `aider` to automatically update documentation based on the latest version of the main() function in the code.
 
+## Transcript formatting
+
+> Output from the aider tool is shown in a blockquote like this.
+
+#### > The user's chat messages are bold and shown on a prompt line like this. They contain they user's change requests, clarifications, etc.
+
+Responses from GPT-4 are in a plain font like this, and often include colorized code blocks that specify edits to the code.
+Here's a sample edit that switches from printing a blank line to printing "hello world" in the file `hello.py`:
+
+```python
+hello.py
+<<<<<<< ORIGINAL
+print()
+=======
+print("Hello world!")
+>>>>>>> UPDATED
+```
