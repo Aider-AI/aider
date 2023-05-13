@@ -25,12 +25,12 @@ Once you understand the user's request and can see all the relevant code, your r
 
 1. List which files you need to modify. If you need to modify a file that the user hasn't provided the full content of, stop and ask to see it!
 2. Think step-by-step and explain the needed changes in detailed pseudo-code.
-3. For each change to the code, describe it using the ORIGINAL/UPDATED format shown in the example below.
+3. For each change to the code, describe it using an *EDIT BLOCK* as shown in the example below.
 
 """
 
 system_reminder = '''
-You must format every code change like this example:
+You must format every code change using an *EDIT BLOCK* like this example:
 
 ```python
 some/dir/example.py
@@ -48,39 +48,27 @@ some/dir/example.py
 >>>>>>> UPDATED
 
 IF YOU WANT TO SUGGEST CODE THAT BELONGS IN A NEW FILE:
-  - MAKE UP A FILENAME FOR THE FILE, INCLUDING THE CORRECT DIRECTORY NAME
-  - REPLY WITH AN ORIGINAL/UPDATE BLOCK WITH THE NEW FILENAME INCLUDING DIRECTORIES
+  - MAKE UP A GOOD FILE PATH FOR THE FILE, INCLUDING DIRECTORY NAME
+  - REPLY USING AN *EDIT BLOCK* WITH THE NEW FILE PATH
   - INCLUDE AN EMPTY ORIGINAL BLOCK
   - PUT THE NEW FILE'S CONTENTS IN THE UPDATED BLOCK
 
-*NEVER REPLY WITH AN ENTIRE FILE TRIPLE-QUOTED FORMAT LIKE THE USER MESSAGES!*
-*ANY CODE YOU INCLUDE IN A REPLY *MUST* BE IN THE ORIGINAL/UPDATED FORMAT!*
+*NEVER REPLY WITH AN ENTIRE FILE LIKE IN THE USER MESSAGES!*
+ANY CODE YOU INCLUDE IN A REPLY *MUST* BE AN *EDIT BLOCK*!
 
-EVERY ORIGINAL/UPDATED BLOCK MUST START WITH THE FILENAME!
-EVERY ORIGINAL/UPDATED BLOCK MUST BE TRIPLE QUOTED!
-AFTER THE OPENING TRIPLE-QUOTE, INDICATE THE LANGUAGE OF THE CODE.
+EVERY *EDIT BLOCK* MUST BE FENCED WITH TRIPLE BACKTICKS WITH THE CORRECT CODE LANGUAGE INDICATOR.
+EVERY *EDIT BLOCK* MUST START WITH THE FILE PATH!
 
 THE ORIGINAL BLOCK MUST BE AN EXACT SEQUENCE OF LINES FROM THE FILE:
   - NEVER OMIT LINES!
   - INCLUDE ALL THE ORIGINAL LEADING SPACES AND INDENTATION!
 
-EDITS TO DIFFERENT PARTS OF A FILE EACH NEED THEIR OWN ORIGINAL/UPDATED BLOCKS.
-EVEN NEARBY PARTS NEED THEIR OWN ORIGINAL/UPDATED BLOCKS.
-
-INCLUDE THE FILE PATH ALONE AS THE FIRST LINE OF THE BLOCK.
-Don't prefix it with "In" or follow it with ":".
+EDITS TO DIFFERENT PARTS OF A FILE EACH PART NEEDS THEIR OWN DISTINCT *EDIT BLOCK*.
+EVEN NEARBY PARTS EACH NEED THEIR OWN DISTINCT EDIT BLOCKS.
 
 If the request requires many changes, stop to ask the user for confirmation and feedback often!
 '''
 
-
-returned_code = """
-It looks like you tried to return a code block. Don't do that!
-
-Only return code using the specific ORIGINAL/UPDATED format.
-Be selective!
-Only return the parts of the code which need changes!
-"""
 
 # FILES
 

@@ -35,8 +35,8 @@ accomplishing both greenfield generation of new code as well as simple and more 
 
 #### > The user's chat messages are bold and shown on a prompt line like this. They contain they user's change requests, clarifications, etc.
 
-Responses from GPT-4 are in a plain font like this, and often include colorized code blocks that specify edits to the code.
-Here's a sample edit that switches from printing a blank line to printing "hello world" in the file `hello.py`:
+Responses from GPT-4 are in a plain font like this, and often include colorized "edit blocks" that specify edits to the code.
+Here's a sample edit block that switches from printing a blank line to printing "hello world" in the file `hello.py`:
 
 ```python
 hello.py
