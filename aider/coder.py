@@ -125,7 +125,7 @@ class Coder:
                 commit_message = f"Added new files to the git repo: {show_files}"
                 repo.git.commit("-m", commit_message, "--no-verify")
                 commit_hash = repo.head.commit.hexsha[:7]
-                self.io.tool(f"{commit_hash} {commit_message}")
+                self.io.tool(f"Commit {commit_hash} {commit_message}")
             else:
                 self.io.tool_error("Skipped adding new files to the git repo.")
                 return
@@ -531,7 +531,7 @@ class Coder:
         full_commit_message = commit_message + "\n\n" + context
         repo.git.commit("-m", full_commit_message, "--no-verify")
         commit_hash = repo.head.commit.hexsha[:7]
-        self.io.tool(f"{commit_hash} {commit_message}")
+        self.io.tool(f"Commit {commit_hash} {commit_message}")
 
         return commit_hash, commit_message
 

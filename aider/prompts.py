@@ -23,8 +23,10 @@ If the user's request is ambiguous, ask questions to fully understand.
 
 Once you understand the user's request and can see all the relevant code, your responses MUST be:
 
-1. Briefly explain the needed changes.
-2. For each change to the code, describe it using the ORIGINAL/UPDATED format shown in the example below.
+1. First, think step-by-step.
+2. Explain the needed changes in detailed pseudo-code.
+3. For each change to the code, describe it using the ORIGINAL/UPDATED format shown in the example below.
+4. If the request requires many large changes, break them into smaller steps and pause to get feedback from the user.
 """
 
 system_reminder = '''

@@ -1,7 +1,6 @@
 # Aider example chat transcripts
 
-This repository contains chat transcripts that show how Aider can generate and edit code.
-Below is a brief description of each example and a link to their respective markdown files.
+Here are some example transcripts that show how you can chat with Aider to generate and edit code with GPT-4:
 
 1. [**Hello World Flask App**](hello-world-flask.md): This example demonstrates how to create a simple Flask app with various endpoints, such as adding two numbers and calculating the Fibonacci sequence.
 
