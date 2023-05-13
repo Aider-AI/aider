@@ -93,7 +93,12 @@ class Commands:
         has_origin = any(remote.name == "origin" for remote in self.coder.repo.remotes)
 
         if has_origin:
-            remote_head = self.coder.repo.git.rev_parse("origin/HEAD")
+            current_branch = self.coder.repo.active_branch.name
+            try:
+                remote_head = self.coder.repo.git.rev_parse(f"origin/{current_branch}")
+            except git.exc.GitCommandError:
+                self.io.tool_error(f"Error: Unable to get the remote 'origin/{current_branch}'.")
+                return
             if local_head == remote_head:
                 self.io.tool_error("The last commit has already been pushed to the origin. Undoing is not possible.")
                 return
