@@ -5,7 +5,7 @@ In this chat transcript, the user asks aider about the CSS Exercises repo https:
 
 ## Chat transcript
 
-> $ aider
+> css-exercises$ aider
 
 #### >  what is this repo?  
 
