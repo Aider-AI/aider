@@ -240,6 +240,7 @@ class Coder:
 
         content, interrupted = self.send(messages)
         if interrupted:
+            self.io.tool_error("\n\n^C KeyboardInterrupt")
             content += "\n^C KeyboardInterrupt"
 
         self.cur_messages += [
