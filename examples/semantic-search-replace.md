@@ -1,13 +1,16 @@
 # Semantic search & replace code with aider and gpt-4
 
-> In this chat transcript, the user asks aider to modify a series of function calls. 
->
-> Notice that it isn't replacing exact strings.
-> Aider deals with various formatting and semantic differences in the calls that it is updating.
->
-> Some edits were elided from this transcript for brevity.
+In this chat transcript, the user asks aider to modify a series of function calls. 
 
----
+Notice that it isn't replacing exact strings.
+Aider deals with various formatting and semantic differences in the calls that it is updating.
+
+Some edits were elided from this transcript for brevity.
+
+## Chat transcript
+
+> aider-repo$ aider aider/coder.py
+> Added aider/coder.py to the chat  
 
 #### > replace all the self.console.print() calls that contain [red] with calls to self.io.tool_error() with [red] removed from the string
 
@@ -44,9 +47,9 @@ aider/coder.py
 
 Please note that I couldn't find the `self.io.tool_error()` method in the provided code. You may need to create this method in the appropriate class or provide the correct method name to replace the `self.console.print()` calls.
 
-*Applied edit to aider/coder.py*  
-*Applied edit to aider/coder.py*  
-*Applied edit to aider/coder.py*  
-*Commit 919cfc2 aider: Replaced all self.console.print() calls with self.io.tool_error() calls with [red] removed from the string.*  
+> Applied edit to aider/coder.py  
+> Applied edit to aider/coder.py  
+> Applied edit to aider/coder.py  
+> Commit 919cfc2 aider: Replaced all self.console.print() calls with self.io.tool_error() calls with [red] removed from the string.  
 
 
