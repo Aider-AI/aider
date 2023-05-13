@@ -89,6 +89,13 @@ class Commands:
             self.io.tool_error("The repository has uncommitted changes. Please commit or stash them before undoing.")
             return
 
+        local_head = self.coder.repo.git.rev_parse("HEAD")
+        remote_head = self.coder.repo.git.rev_parse("origin/HEAD")
+
+        if local_head == remote_head:
+            self.io.tool_error("The last commit has already been pushed to the origin. Undoing is not possible.")
+            return
+
         last_commit = self.coder.repo.head.commit
         if (
             not last_commit.message.startswith("aider:")
