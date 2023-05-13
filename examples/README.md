@@ -14,3 +14,5 @@ Here are some example transcripts that show how you can chat with aider to gener
 
 * [**CSS Exercise: Animation Dropdown Menu**](css-exercises.md): This example demonstrates how to complete a CSS exercise involving adding animation to a dropdown menu, creating a bounce illusion when the dropdown expands close to its final end state.
 
+* [**Automatically Update Docs with Aider and GPT-4**](update-docs.md): This example demonstrates how to use aider to automatically update documentation based on the latest version of the main() function in the code.
+
