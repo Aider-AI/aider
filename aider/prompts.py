@@ -93,11 +93,12 @@ files_content_local_edits = "I made some changes to the files myself."
 
 repo_content_prefix = "These are the files in the git repo:\n\n"
 
-files_content_prefix = "Here is the content of the files you are allowed to edit:\n\n"
+files_content_prefix = (
+    "These are the *ONLY* files you can propose changes to (ask if you need to see others):\n\n"
+)
 
 files_content_suffix = (
-    """Base any edits on the current contents of the files as shown in the user's last message.
-If you need to edit other files, ask first!"""
+    """Base any edits on the current contents of the files as shown in the user's last message."""
 )
 
 
