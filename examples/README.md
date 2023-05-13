@@ -5,14 +5,6 @@ the `aider` command line tool
 to generate and edit code with GPT-4.
 Some things to note in the transcripts:
 
-## Transcript formatting
-
-#### > The user's chat messages are bold and shown on a prompt line. They contain they user's change requests, clarifications, etc.
-
-> Output from the aider tool is shown in a blockquote
-
-Responses from GPT-4 are in a plain font, and often include colorized code blocks that specify edits to the code.
-
 ## Things to notice
 
 In the `aider` output, you will see the tool:
@@ -39,4 +31,12 @@ accomplishing both greenfield generation of new code as well as simple and compl
 * [CSS Exercise: Animation Dropdown Menu](css-exercises.md): This example demonstrates how to complete a CSS exercise involving adding animation to a dropdown menu, creating a bounce illusion when the dropdown expands close to its final end state.
 
 * [Automatically Update Docs](update-docs.md): This example demonstrates how to use `aider` to automatically update documentation based on the latest version of the main() function in the code.
+
+## Transcript formatting
+
+#### > The user's chat messages are bold and shown on a prompt line. They contain they user's change requests, clarifications, etc.
+
+> Output from the aider tool is shown in a blockquote
+
+Responses from GPT-4 are in a plain font, and often include colorized code blocks that specify edits to the code.
 
