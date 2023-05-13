@@ -85,6 +85,10 @@ class Commands:
             self.io.tool_error("No git repository found.")
             return
 
+        if self.coder.repo.is_dirty():
+            self.io.tool_error("The repository has uncommitted changes. Please commit or stash them before undoing.")
+            return
+
         last_commit = self.coder.repo.head.commit
         if (
             not last_commit.message.startswith("aider:")
