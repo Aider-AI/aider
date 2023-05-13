@@ -1,7 +1,7 @@
 # Using aider chat to code with GPT-4
 
 Below are some example transcripts that show how you can chat with
-the aider command line tool
+the `aider` command line tool
 to generate and edit code with GPT-4.
 Some things to note in the transcripts:
 
