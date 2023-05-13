@@ -16,7 +16,7 @@ Here are some example transcripts that show how you can chat with aider to gener
 
 * [**Complex Multi-file Change with Debugging**](examples/complex-change.md): This example demonstrates a complex code change involving multiple source files and debugging with the help of aider.
 
-Find more chat transcripts on the [examples page](examples/README.md).
+You can find more chat transcripts on the [examples page](examples/README.md).
 
 ## Features
 
