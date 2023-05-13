@@ -1,8 +1,8 @@
 # Semantic search & replace code with aider and gpt-4
 
-> The user asks aider to do "semantic search and replace" to modify a series of function cals. 
+> The user asks aider to modify a series of function cals. 
 > Notice that it isn't replacing exact strings.
-> It's dealing with various formatting and semantic differences in the calls that it is updating.
+> Aider deals with various formatting and semantic differences in the calls that it is updating.
 
 ---
 
