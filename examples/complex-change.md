@@ -14,7 +14,7 @@ Some things to notice:
 > Added tests/test_main.py to the chat  
 > Added aider/getinput.py to the chat  
 
-#### >  instead of using /dev/null to send no output in the main tests, can we use the prompt_toolkit input mocking functions?  
+#### >  instead of using /dev/null to send no input in the main tests, can we use the prompt_toolkit input mocking functions?  
 
 Yes, we can use the `prompt_toolkit.input` module to mock the input in the tests. Here's how to modify the `tests/test_main.py` file:
 
