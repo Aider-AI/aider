@@ -4,7 +4,7 @@ Here are some example transcripts that show how you can chat with Aider to gener
 
 1. [**Hello World Flask App**](hello-world-flask.md): This example demonstrates how to create a simple Flask app with various endpoints, such as adding two numbers and calculating the Fibonacci sequence.
 
-2. [**Semantic Search & Replace**](semantic-search-replace.md): This example showcases Aider's ability to perform semantic search and replace operations in code, dealing with various formatting and semantic differences in the calls that it updates.
+2. [**Semantic Search & Replace**](semantic-search-replace.md): This example showcases Aider's ability to perform semantic search and replace operations in code, dealing with various formatting and semantic differences in the function calls that it updates.
 
 3. [**2048 Game Modification**](2048-game.md): This example demonstrates how to explore and modify the open-source 2048 game codebase, including adding randomness to the scoring system.
 
