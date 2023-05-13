@@ -170,7 +170,7 @@ class InputOutput:
             res = prompt(question + " ", default=default)
 
         hist = f"{question.strip()} {res.strip()}"
-        self.append_chat_history(hist, linebreak=True, italics=True)
+        self.append_chat_history(hist, linebreak=True, blockquote=True)
 
         if not res or not res.strip():
             return
@@ -183,14 +183,14 @@ class InputOutput:
             res = prompt(question + " ", default=default)
 
         hist = f"{question.strip()} {res.strip()}"
-        self.append_chat_history(hist, linebreak=True, italics=True)
+        self.append_chat_history(hist, linebreak=True, blockquote=True)
 
         return res
 
     def tool_error(self, message):
         if message.strip():
             hist = f"{message.strip()}"
-            self.append_chat_history(hist, linebreak=True, italics=True)
+            self.append_chat_history(hist, linebreak=True, blockquote=True)
 
         message = Text(message)
         self.console.print(message, style="red")
@@ -199,15 +199,15 @@ class InputOutput:
         if messages:
             hist = " ".join(messages)
             hist = f"{hist.strip()}"
-            self.append_chat_history(hist, linebreak=True, italics=True)
+            self.append_chat_history(hist, linebreak=True, blockquote=True)
 
         messages = list(map(Text, messages))
         self.console.print(*messages)
 
-    def append_chat_history(self, text, linebreak=False, italics=False):
-        if italics:
+    def append_chat_history(self, text, linebreak=False, blockquote=False):
+        if blockquote:
             text = text.strip()
-            text = f'_{text}_'
+            text = '> ' + text
         if linebreak:
             text = text.rstrip()
             text = text + "  \n"
