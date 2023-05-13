@@ -315,7 +315,7 @@ class Coder:
         for rel_fname in mentioned_rel_fnames:
             self.io.tool(f"{rel_fname}")
 
-        if not self.io.confirm_ask("Add {path} to git?"):
+        if not self.io.confirm_ask(f"Add these files to the chat?"):
             return
 
         for rel_fname in mentioned_rel_fnames:
@@ -404,10 +404,13 @@ class Coder:
                     self.io.tool_error(f"Skipping edit to {path}")
                     continue
 
-                Path(full_path).parent.mkdir(parents=True, exist_ok=True)
-                Path(full_path).touch()
+                if not Path(full_path).exists():
+                    Path(full_path).parent.mkdir(parents=True, exist_ok=True)
+                    Path(full_path).touch()
+
                 self.abs_fnames.add(full_path)
 
+                # TODO: check if it's already in the repo
                 if self.repo and self.io.confirm_ask(f"Add {path} to git?"):
                     self.repo.git.add(full_path)
 

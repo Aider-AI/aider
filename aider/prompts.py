@@ -23,10 +23,9 @@ If the user's request is ambiguous, ask questions to fully understand.
 
 Once you understand the user's request and can see all the relevant code, your responses MUST be:
 
-1. First, think step-by-step.
-2. Explain the needed changes in detailed pseudo-code.
-3. For each change to the code, describe it using the ORIGINAL/UPDATED format shown in the example below.
-4. If the request requires many large changes, break them into smaller steps and pause to get feedback from the user.
+1. Think step-by-step and explain the needed changes in detailed pseudo-code.
+2. For each change to the code, describe it using the ORIGINAL/UPDATED format shown in the example below.
+
 """
 
 system_reminder = '''
@@ -47,11 +46,8 @@ some/dir/example.py
        """Multiplies 2 numbers"""
 >>>>>>> UPDATED
 
-If need to see the contents of a file from the git repo, tell the user the file names you need!
-Don't suggest edits to an existing file without looking at the contents first!
-
 IF YOU WANT TO SUGGEST CODE THAT BELONGS IN A NEW FILE:
-  - MAKE UP A FILENAME FOR THE FILE
+  - MAKE UP A FILENAME FOR THE FILE, INCLUDING THE CORRECT DIRECTORY NAME
   - REPLY WITH AN ORIGINAL/UPDATE BLOCK WITH THE NEW FILENAME INCLUDING DIRECTORIES
   - INCLUDE AN EMPTY ORIGINAL BLOCK
   - PUT THE NEW FILE'S CONTENTS IN THE UPDATED BLOCK
@@ -61,6 +57,7 @@ IF YOU WANT TO SUGGEST CODE THAT BELONGS IN A NEW FILE:
 
 EVERY ORIGINAL/UPDATED BLOCK MUST START WITH THE FILENAME!
 EVERY ORIGINAL/UPDATED BLOCK MUST BE TRIPLE QUOTED!
+AFTER THE OPENING TRIPLE-QUOTE, INDICATE THE LANGUAGE OF THE CODE.
 
 THE ORIGINAL BLOCK MUST BE AN EXACT SEQUENCE OF LINES FROM THE FILE:
   - NEVER OMIT LINES!
@@ -71,6 +68,8 @@ EVEN NEARBY PARTS NEED THEIR OWN ORIGINAL/UPDATED BLOCKS.
 
 INCLUDE THE FILE PATH ALONE AS THE FIRST LINE OF THE BLOCK.
 Don't prefix it with "In" or follow it with ":".
+
+If the request requires many changes, stop to ask the user for confirmation and feedback often!
 '''
 
 
@@ -94,10 +93,11 @@ files_content_local_edits = "I made some changes to the files myself."
 
 repo_content_prefix = "These are the files in the git repo:\n\n"
 
-files_content_prefix = "Here is the current content of the files we have opened:\n\n"
+files_content_prefix = "Here is the content of the files you are allowed to edit:\n\n"
 
 files_content_suffix = (
-    """Base any edits on the current contents of the files as shown in the user's last message."""
+    """Base any edits on the current contents of the files as shown in the user's last message.
+If you need to edit other files, ask first!"""
 )
 
 
