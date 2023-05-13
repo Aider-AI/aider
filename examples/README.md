@@ -5,8 +5,6 @@ the `aider` command line tool
 to generate and edit code with GPT-4.
 Some things to note in the transcripts:
 
-## Things to notice
-
 In the `aider` output, you will see the tool:
 
   - Adding certain source files to the chat (sometimes at the suggestion of GPT-4, always with user permission).
