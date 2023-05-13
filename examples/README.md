@@ -1,6 +1,19 @@
 # Aider example chat transcripts
 
-Here are some example transcripts that show how you can chat with aider to generate and edit code with GPT-4:
+Below are some example transcripts that show how you can chat with
+the aider command line tool
+to generate and edit code with GPT-4.
+Some things to note in the transcripts:
+
+  - **The user's chat messages are bold**, showing the requests and directions they are giving in the conversation.
+  - The respponses from GPT-4 are in a plain font, and often include colorized code blocks that specify edits to the code.
+  - _Output from the aider tool is shown in italics_. You will see that it is:
+      - Adding certain source files to the chat (with user permission)
+      - Applying the edits proposed by GPT-4 to the source files.
+      - Committing those changes to git with a senisble commit message.
+
+Here is a varity of example coding chat sessions,
+accomplishing both greenfield generation of new code as well as simple and complex edits to larger codebases:
 
 * [Hello World Flask App](hello-world-flask.md): This example demonstrates how to create a simple Flask app with various endpoints, such as adding two numbers and calculating the Fibonacci sequence.
 
