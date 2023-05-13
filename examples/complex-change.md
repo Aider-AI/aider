@@ -1,7 +1,7 @@
 
 # A complex multi-file change, with debugging
 
-> Here is a chat transcript of a fairly complex change.
+> This is a chat transcript of a fairly complex change.
 >
 > The user is trying to update tests to use an input mock provided by prompt_toolkit. This requires changes to multiple source files.
 >
@@ -104,9 +104,9 @@ _Applied edit to tests/test_main.py_
 _Commit c177e29 aider: Replaced usage of /dev/null with prompt_toolkit's input mocking functions in tests._  
 
 ---
-#### >  /add aider/main.py  
-
 > The user adds the main.py file to the chat. Also, the user made a small edit with their editor, outside the chat, and added a missing "import sys". Aider notices and helps commit this change.
+
+#### >  /add aider/main.py  
 
 _Git repo has uncommitted changes._  
 _Suggested commit message:
@@ -298,20 +298,6 @@ _Commit ac92cca aider: Replaced `prompt()` with `PromptSession()` to correctly p
 ---
 #### >  try using create_input(StringIO('')) in the tests  
 
-# Aider chat started at 2023-05-13 07:51:19
-
-_Added tests/test_main.py to the chat_  
-_Added aider/main.py to the chat_  
-_Added aider/getinput.py to the chat_  
-
-# Aider chat started at 2023-05-13 07:52:22
-
-_Added tests/test_main.py to the chat_  
-_Added aider/main.py to the chat_  
-_Added aider/getinput.py to the chat_  
-
----
-#### >  try using create_input(StringIO('')) in the tests  
 
 I understand that you want to use `create_input(StringIO(''))` in the tests. However, I need more information about which test cases you want to apply this change to and how you want to use it. Please provide more details or examples.
 
