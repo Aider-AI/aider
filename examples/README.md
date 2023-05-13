@@ -5,17 +5,23 @@ the `aider` command line tool
 to generate and edit code with GPT-4.
 Some things to note in the transcripts:
 
+## Transcript formatting
+
 #### > The user's chat messages are bold and shown on a prompt line. They contain they user's change requests, clarifications, etc.
 
 > Output from the aider tool is shown in a blockquote
 
 Responses from GPT-4 are in a plain font, and often include colorized code blocks that specify edits to the code.
 
+## Things to notice
+
 In the `aider` output, you will see it:
 
   - Adding certain source files to the chat (sometimes at the suggestion of GPT-4, always with user permission).
   - Applying the edits proposed by GPT-4 to the source files.
   - Committing those changes to git with a senisble commit message.
+
+## Examples
 
 There are a varity of example coding chat sessions included,
 accomplishing both greenfield generation of new code as well as simple and complex edits to larger codebases:
