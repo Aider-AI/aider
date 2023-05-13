@@ -1,4 +1,4 @@
-# Using `aider` chat to code with GPT-4
+# Examples of using `aider` chat to code with GPT-4
 
 Below are some example chat transcripts that show how you can chat with
 the `aider` command line tool
