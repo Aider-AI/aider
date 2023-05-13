@@ -450,9 +450,7 @@ class Coder:
         commit_message = commit_message.strip().strip('"').strip()
 
         if interrupted:
-            self.io.tool(
             self.io.tool_error("Unable to get commit message from gpt-3.5-turbo. Use /commit to try again.")
-            )
             return
 
         return commit_message
