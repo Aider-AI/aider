@@ -84,6 +84,6 @@ Please note that I couldn't find the `self.io.tool_error()` method in the provid
 *Applied edit to aider/coder.py*  
 *Applied edit to aider/coder.py*  
 *Applied edit to aider/coder.py*  
-*919cfc2 aider: Replaced all self.console.print() calls with self.io.tool_error() calls with [red] removed from the string.*  
+*Commit 919cfc2 aider: Replaced all self.console.print() calls with self.io.tool_error() calls with [red] removed from the string.*  
 
 
