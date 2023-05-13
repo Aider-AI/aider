@@ -3,7 +3,7 @@ from pygments.lexers import guess_lexer_for_filename
 from pygments.token import Token
 from prompt_toolkit.styles import Style
 from pygments.util import ClassNotFound
-from prompt_toolkit import prompt
+from prompt_toolkit.shortcuts import PromptSession
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.shortcuts import CompleteStyle
@@ -118,16 +118,17 @@ class InputOutput:
             if multiline_input:
                 show = ". "
 
-            line = prompt(
-                show,
+            session = PromptSession(
+                message=show,
                 completer=completer_instance,
                 history=FileHistory(self.input_history_file),
                 style=style,
                 reserve_space_for_menu=4,
                 complete_style=CompleteStyle.MULTI_COLUMN,
-            stdin=self.input,
-            stdout=self.output,
+                input=self.input,
+                output=self.output,
             )
+            line = session.prompt()
             if line.strip() == "{" and not multiline_input:
                 multiline_input = True
                 continue
