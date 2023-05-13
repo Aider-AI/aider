@@ -1,11 +1,11 @@
 
 # Create a simple flask app with aider and gpt-4
 
-> In this chat transcript, the user asks aider to make a simple flask app with various endpoints.
+In this chat transcript, the user asks aider to make a simple flask app with various endpoints.
 ## Chat transcript
 
-> pong$ aider app.py
-> Creating app.py
+> hello-world-flask$ aider app.py  
+> Creating app.py  
 > Added app.py to the chat  
 ---
 #### >  make a flask app with a /hello endpoint that returns hello world  
