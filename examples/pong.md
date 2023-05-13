@@ -1,9 +1,12 @@
 
 # Build pong with aider, gpt-4 and pygame.
 
-> In this chat transcript, the user asks aider to make a pong game using pygame.
-> After setting up a basic game, the user asks for some customization of the colors and game mechanics.
+In this chat transcript, the user asks aider to make a pong game using pygame.
+After setting up a basic game, the user asks for some customization of the colors and game mechanics.
 
+## Chat transcript
+
+> pong$ aider  
 ---
 #### >  can you make a simple game of pong with pygame?  
 
@@ -60,10 +63,10 @@ sys.exit()
 
 This is the basic structure of the game. Now, let's add the Paddle and Ball classes, handle user input, update the ball position, draw the objects, and handle scoring. I'll provide the code changes in the next message.
 
-_Allow creation of new file pong_game.py? y_  
-_Add pong_game.py to git? y_  
-_Applied edit to pong_game.py_  
-_Commit 14799cb aider: Added basic Pygame initialization and game loop structure to `pong_game.py`._  
+> Allow creation of new file pong_game.py? y  
+> Add pong_game.py to git? y  
+> Applied edit to pong_game.py  
+> Commit 14799cb aider: Added basic Pygame initialization and game loop structure to `pong_game.py`.  
 
 ---
 #### >  go ahead  
@@ -212,9 +215,9 @@ while running:
 
 Now, you should have a simple Pong game using Pygame. You can further improve the game by adding a scoring system and displaying the score on the screen.
 
-_Applied edit to pong_game.py_  
-_Applied edit to pong_game.py_  
-_Commit b20bcee aider: Added Paddle and Ball classes, handled user input, updated ball position, drew objects, and handled scoring._  
+> Applied edit to pong_game.py  
+> Applied edit to pong_game.py  
+> Commit b20bcee aider: Added Paddle and Ball classes, handled user input, updated ball position, drew objects, and handled scoring.  
 
 ---
 #### >  nice, it works. but the ball moves way too fast.  
@@ -234,8 +237,8 @@ pong_game.py
 
 This change will reduce the ball's speed by half. You can adjust the values further if you want the ball to move even slower.
 
-_Applied edit to pong_game.py_  
-_Commit f4ceed4 aider: Reduced ball speed by half._  
+> Applied edit to pong_game.py  
+> Commit f4ceed4 aider: Reduced ball speed by half.  
 
 ---
 #### >  can you make the paddles a bit bigger? and make one paddle red and one blue?  
@@ -273,9 +276,9 @@ left_paddle.image.fill(left_paddle.color)
 
 With these changes, the paddles will be larger, and the left paddle will be red while the right paddle will be blue.
 
-_Applied edit to pong_game.py_  
-_Applied edit to pong_game.py_  
-_Commit 2c645c9 aider: Changed paddle size and color, and set left paddle to red._  
+> Applied edit to pong_game.py  
+> Applied edit to pong_game.py  
+> Commit 2c645c9 aider: Changed paddle size and color, and set left paddle to red.  
 
 ---
 #### >  each time the ball bounces off the paddle, can you make it go 10% faster?  
@@ -298,6 +301,6 @@ pong_game.py
 
 With this change, the ball's speed will increase by 10% in both the x and y directions each time it bounces off a paddle.
 
-_Applied edit to pong_game.py_  
-_Commit 693faf4 aider: Increased ball speed by 10% in both x and y directions each time it bounces off a paddle._  
+> Applied edit to pong_game.py  
+> Commit 693faf4 aider: Increased ball speed by 10% in both x and y directions each time it bounces off a paddle.  
 
