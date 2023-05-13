@@ -5,13 +5,10 @@ from dotenv import load_dotenv
 from aider.coder import Coder
 from aider.getinput import InputOutput
 
+
 def main(args=None, input=None, output=None):
     if args is None:
         args = sys.argv[1:]
-    if input is None:
-        input = sys.stdin
-    if output is None:
-        output = sys.stdout
 
     load_dotenv()
     env_prefix = "AIDER_"
@@ -88,10 +85,22 @@ def main(args=None, input=None, output=None):
     fnames = args.files
     pretty = args.pretty
 
-    io = InputOutput(args.pretty, args.yes, args.input_history_file, args.chat_history_file, input=input, output=output)
+    io = InputOutput(
+        args.pretty,
+        args.yes,
+        args.input_history_file,
+        args.chat_history_file,
+        input=input,
+        output=output,
+    )
 
     coder = Coder(
-        args.model, fnames, pretty, args.show_diffs, args.auto_commits, io,
+        args.model,
+        fnames,
+        pretty,
+        args.show_diffs,
+        args.auto_commits,
+        io,
     )
     coder.commit(ask=True, prefix="wip: ", which="repo_files")
 
