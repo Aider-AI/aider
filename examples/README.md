@@ -4,11 +4,11 @@ Below are some example transcripts that show how you can chat with
 the `aider` command line tool
 to generate and edit code with GPT-4.
 
-In the transcripts, you will see `aider`:
+There are a few things worth taking note of:
 
-  - Adding certain source files to the chat (sometimes at the suggestion of GPT-4, always with user permission).
-  - Applying the edits proposed by GPT-4 to the source files.
-  - Committing those changes to git with a senisble commit message.
+  - `aider` will add certain source files to the chat session. Once added, these files are available for review and editing by GPT-4. Sometimes the files are added directly from the command line. Other times GPT-4 requests to see them, and they are added after the user approves.
+  - It will automatically apply code edits proposed by GPT-4 to the source files.
+  - After applying the edits, `aider` will commit them to git with a senisble commit message.
 
 ## Example chat transcripts
 
