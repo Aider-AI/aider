@@ -1,4 +1,4 @@
-# Automatically update docs with aider and GPT-4
+# Automatically update docs with aider and gpt-4
 
 > The user asks aider to automatically update the Usage docs based on the latest version of the main() function in the code.
 

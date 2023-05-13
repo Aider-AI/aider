@@ -48,7 +48,7 @@ def main(args=None, input=None, output=None):
         action="store_const",
         dest="model",
         const="gpt-3.5-turbo",
-        help="Use gpt-3.5-turbo model for the main chat (basically won't work)",
+        help="Use gpt-3.5-turbo model for the main chat (not advised)",
     )
     parser.add_argument(
         "--no-pretty",
