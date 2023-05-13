@@ -7,9 +7,9 @@ Some things to note in the transcripts:
 
 #### > The user's chat messages are bold and shown on a prompt line. They contain they user's change requests, clarifications, etc.
 
-Responses from GPT-4 are in a plain font, and often include colorized code blocks that specify edits to the code.
-
 > Output from the aider tool is shown in a blockquote
+
+Responses from GPT-4 are in a plain font, and often include colorized code blocks that specify edits to the code.
 
 In the `aider` output, you will see it:
 
