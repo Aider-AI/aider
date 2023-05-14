@@ -1,33 +1,27 @@
-# Example chats using `aider` to code with GPT-4
+# What's it like to code with gpt-4?
 
-Below are some example chat transcripts that show how you can chat with
-the `aider` command line tool
-to generate and edit code with GPT-4.
+Below are some chat transcripts showing what it's like to code with the help of GPT-4. They were recorded using the `aider` command line tool.
+In the chats, you'll see a varity of coding tasks like generating new code, editing existing code, debugging, exploring unfamiliar code, etc. It's worth noting that:
 
-There are a few things worth taking note of:
+  - Each time GPT-4 suggests a code change, `aider` automatically applies it to the source files.
+  - After applying edits, `aider` commits them to git with a senisble commit message.
+  - `aider` will note whenever a source file is added to the chat session. Once added, these files are available for review and editing by GPT-4. The user adds files either via the command line or the in-chat `/add` command. Sometimes GPT-4 asks to see specific files, and `aider` adds them to the chat after the user approves.
 
-  - `aider` will note when source files are added to the chat session. Once added, these files are available for review and editing by GPT-4. Files can be added from the command line, or in-chat with the `/add` command. Sometimes GPT-4 requests to see specific files, and `aider` adds them after the user approves.
-  - Code edits that GPT-4 suggests are automatically applied to the source files by `aider`.
-  - After applying the edits, `aider` will commit them to git with a senisble commit message.
+## Chat transcripts of coding sessions with gpt-4
 
-## Example chat transcripts
+* [Hello World Flask App](hello-world-flask.md): Creating a simple Flask app with various endpoints, such as adding two numbers and calculating the Fibonacci sequence.
 
-There are a varity of example coding chat sessions included,
-accomplishing both greenfield generation of new code as well as simple and more complex edits to larger codebases:
+* [Pong Game with Pygame](pong.md): Creating a simple Pong game using the Pygame library, with customizations for paddle size and color, and ball speed adjustments.
 
-* [Hello World Flask App](hello-world-flask.md): This example demonstrates how to create a simple Flask app with various endpoints, such as adding two numbers and calculating the Fibonacci sequence.
+* [2048 Game Modification](2048-game.md): Exploring and modifying an open-source javascript 2048 game codebase, including adding randomness to the scoring system.
 
-* [2048 Game Modification](2048-game.md): This example demonstrates how to explore and modify an open-source javascript 2048 game codebase, including adding randomness to the scoring system.
+* [Complex Multi-file Change with Debugging](complex-change.md): A complex code change involving multiple source files and debugging.
 
-* [Pong Game with Pygame](pong.md): This example demonstrates how to create a simple Pong game using the Pygame library, with customizations for paddle size and color, and ball speed adjustments.
+* [Semantic Search & Replace](semantic-search-replace.md): Updating a collection of function calls, which requires dealing with various formatting and semantic differences in the various function call sites.
 
-* [Complex Multi-file Change with Debugging](complex-change.md): This example demonstrates a complex code change involving multiple source files and debugging with the help of `aider`.
+* [CSS Exercise: Animation Dropdown Menu](css-exercises.md): A small CSS exercise involving adding animation to a dropdown menu.
 
-* [Semantic Search & Replace](semantic-search-replace.md): This example showcases `aider` performing semantic search and replace operations in code, dealing with various formatting and semantic differences in the function calls that it updates.
-
-* [CSS Exercise: Animation Dropdown Menu](css-exercises.md): This example demonstrates how to complete a CSS exercise involving adding animation to a dropdown menu, creating a bounce illusion when the dropdown expands close to its final end state.
-
-* [Automatically Update Docs](update-docs.md): This example demonstrates how to use `aider` to automatically update documentation based on the latest version of the main() function in the code.
+* [Automatically Update Docs](update-docs.md): Automatically updating documentation based on the latest version of the main() function in the code.
 
 ## Transcript formatting
 
@@ -36,13 +30,13 @@ accomplishing both greenfield generation of new code as well as simple and more 
 #### > The user's chat messages are bold and shown on a prompt line like this. They contain they user's change requests, clarifications, etc.
 
 Responses from GPT-4 are in a plain font like this, and often include colorized "edit blocks" that specify edits to the code.
-Here's a sample edit block that switches from printing a blank line to printing "hello world" in the file `hello.py`:
+Here's a sample edit block that switches from printing "hello" to "goodbye":
 
 ```python
 hello.py
 <<<<<<< ORIGINAL
-print()
+print("hello")
 =======
-print("Hello world!")
+print("goodbye")
 >>>>>>> UPDATED
 ```
