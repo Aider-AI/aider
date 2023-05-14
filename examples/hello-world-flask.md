@@ -6,7 +6,7 @@ In this chat transcript, the user asks aider to make a simple flask app with var
 ## Chat transcript
 
 > hello-world-flask$ aider app.py  
-> Creating app.py  
+> Creating empty file app.py  
 > Added app.py to the chat  
 
 #### >  make a flask app with a /hello endpoint that returns hello world  

@@ -73,7 +73,7 @@ class Coder:
         for fname in cmd_line_fnames:
             fname = Path(fname)
             if not fname.exists():
-                self.io.tool(f"Creating {fname}")
+                self.io.tool(f"Creating empty file {fname}")
                 fname.parent.mkdir(parents=True, exist_ok=True)
                 fname.touch()
 
