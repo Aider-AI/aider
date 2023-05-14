@@ -2,7 +2,7 @@
 
 `aider` is a command-line tool that allows you to chat with GPT-4 about your code.
 Ask GPT for features, improvements, or bug fixes and `aider` will directly apply the suggested changes to your source files.
-Each change is automatically committed to git with a sensible commit message.
+Each change is automatically committed to git with a descriptive commit message.
 
 ## Example chat transcripts
 
@@ -23,7 +23,7 @@ You can find more chat transcripts on the [examples page](examples/README.md).
 * Chat with GPT-4 about your code by launching `aider` from the command line with set of source files to discuss and edit together.
 * Request new features, changes, improvements, or bug fixes to your code. Ask for new test cases, updated documentation or code refactors.
 * `aider` will apply the edits suggested by GPT-4 directly to your source files.
-* `aider` will automatically commit each changeset to your local git repo with a sensible commit message. These frequent, automatic commits provide a safety net. It's easy to undo `aider` changes or use standard git workflows to manage longer sequences of changes.
+* `aider` will automatically commit each changeset to your local git repo with a descriptive commit message. These frequent, automatic commits provide a safety net. It's easy to undo `aider` changes or use standard git workflows to manage longer sequences of changes.
 * `aider` can review multiple source files at once and make coordinated code changes across all of them in a single changeset/commit.
 * `aider` knows about all the files in your repo, so it can ask for permission to review whichever files seem relevant to your requests.
 * You can also edit the files in your editor while chatting with `aider`.
