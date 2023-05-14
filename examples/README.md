@@ -6,7 +6,7 @@ to generate and edit code with GPT-4.
 
 There are a few things worth taking note of:
 
-  - `aider` will add certain source files to the chat session. Once added, these files are available for review and editing by GPT-4. Sometimes the files were added by the user directly from the command line or using the in-chat `/add` command. Other times GPT-4 requests to see other files in the repo, and they are added after the user approves.
+  - `aider` will note when source files are added to the chat session. Once added, these files are available for review and editing by GPT-4. Files can be added from the command line, or in-chat with the `/add` command. Sometimes GPT-4 requests to see specific files, and `aider` adds them after the user approves.
   - Code edits that GPT-4 suggests are automatically applied to the source files by `aider`.
   - After applying the edits, `aider` will commit them to git with a senisble commit message.
 
