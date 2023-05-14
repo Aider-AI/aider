@@ -255,19 +255,9 @@ class Coder:
         if interrupted:
             return
 
-        try:
-            edited = self.update_files(content, inp)
-        except ValueError as err:
-            err = err.args[0]
-            self.io.tool_error("Malformed ORIGINAL/UPDATE blocks, retrying...")
-            self.io.tool_error(str(err))
+        edited, err = self.apply_updates(content, inp)
+        if err:
             return err
-
-        except Exception as err:
-            print(err)
-            print()
-            traceback.print_exc()
-            edited = None
 
         if edited and self.auto_commits:
             self.auto_commit()
@@ -579,3 +569,19 @@ class Coder:
         if not files:
             return 0
         return max(Path(path).stat().st_mtime for path in files)
+
+    def apply_updates(self, content, inp):
+        try:
+            edited = self.update_files(content, inp)
+            return edited, None
+        except ValueError as err:
+            err = err.args[0]
+            self.io.tool_error("Malformed ORIGINAL/UPDATE blocks, retrying...")
+            self.io.tool_error(str(err))
+            return None, err
+
+        except Exception as err:
+            print(err)
+            print()
+            traceback.print_exc()
+            return None, err
