@@ -113,7 +113,9 @@ def do_replace(fname, before_text, after_text, dry_run=False):
         if not new_content:
             return
 
-    fname.write_text(new_content)
+    if not dry_run:
+        fname.write_text(new_content)
+
     return True
 
 
