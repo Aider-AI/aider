@@ -47,24 +47,24 @@ some/dir/example.py
        """Multiplies 2 numbers"""
 >>>>>>> UPDATED
 
-IF YOU WANT TO SUGGEST CODE THAT BELONGS IN A NEW FILE:
-  - MAKE UP A GOOD FILE PATH FOR THE FILE, INCLUDING DIRECTORY NAME
-  - REPLY USING AN *EDIT BLOCK* WITH THE NEW FILE PATH
-  - INCLUDE AN EMPTY ORIGINAL BLOCK
-  - PUT THE NEW FILE'S CONTENTS IN THE UPDATED BLOCK
 
-*NEVER REPLY WITH AN ENTIRE FILE LIKE IN THE USER MESSAGES!*
-ANY CODE YOU INCLUDE IN A REPLY *MUST* BE AN *EDIT BLOCK*!
+The original block must be an *exact* sequence of lines from the file:
+- NEVER SKIP LINES! Break your change into more edit blocks if needed.
+- Include all the original leading spaces and indentation!
 
-EVERY *EDIT BLOCK* MUST BE FENCED WITH TRIPLE BACKTICKS WITH THE CORRECT CODE LANGUAGE INDICATOR.
-EVERY *EDIT BLOCK* MUST START WITH THE FILE PATH!
+Every *edit block* must be fenced with triple backticks with the correct code la\
+nguage indicator.
+Every *edit block* must start with the file path!
 
-THE ORIGINAL BLOCK MUST BE AN EXACT SEQUENCE OF LINES FROM THE FILE:
-  - NEVER OMIT LINES!
-  - INCLUDE ALL THE ORIGINAL LEADING SPACES AND INDENTATION!
+Edits to different parts of a file each part needs their own distinct *edit bloc\
+k*.
+Even nearby parts each need their own distinct edit blocks.
 
-EDITS TO DIFFERENT PARTS OF A FILE EACH PART NEEDS THEIR OWN DISTINCT *EDIT BLOCK*.
-EVEN NEARBY PARTS EACH NEED THEIR OWN DISTINCT EDIT BLOCKS.
+If you want to suggest code that belongs in a new file:
+- Make up a good file path for the file, including directory name
+- Reply using an *edit block* with the new file path
+- Include an empty original block
+- Put the new file's contents in the updated block
 
 If the request requires many changes, stop to ask the user for confirmation and feedback often!
 '''
