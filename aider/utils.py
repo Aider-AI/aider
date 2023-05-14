@@ -7,9 +7,62 @@ from pathlib import Path
 # from aider.dump import dump
 
 
+def try_dotdotdots(whole, part, replace):
+    """
+    See if the edit block has ... lines.
+    If not, return none.
+
+    If yes, try and do a perfect edit with the ... chunks.
+    If there's a mismatch or otherwise imperfect edit, raise ValueError.
+
+    If perfect edit succeeds, return the updated whole.
+    """
+
+    dots_re = re.compile(r"(^\s*\.\.\.\n)", re.MULTILINE | re.DOTALL)
+
+    part_pieces = re.split(dots_re, part)
+    replace_pieces = re.split(dots_re, replace)
+
+    if len(part_pieces) != len(replace_pieces):
+        raise ValueError("Unpaired ... in edit block")
+
+    if len(part_pieces) == 1:
+        # no dots in this edit block, just return None
+        return
+
+    # Compare odd strings in part_pieces and replace_pieces
+    all_dots_match = all(part_pieces[i] == replace_pieces[i] for i in range(1, len(part_pieces), 2))
+
+    if not all_dots_match:
+        raise ValueError("Unmatched ... in edit block")
+
+    part_pieces = [part_pieces[i] for i in range(0, len(part_pieces), 2)]
+    replace_pieces = [replace_pieces[i] for i in range(0, len(replace_pieces), 2)]
+
+    pairs = zip(part_pieces, replace_pieces)
+    for part, replace in pairs:
+        if not part and not replace:
+            continue
+
+        if part not in whole:
+            raise ValueError("No perfect matching chunk in edit block with ...")
+
+        whole = whole.replace(part, replace)
+
+    return whole
+
+
 def replace_most_similar_chunk(whole, part, replace):
     if part in whole:
         return whole.replace(part, replace)
+
+    try:
+        res = try_dotdotdots(whole, part, replace)
+    except ValueError:
+        return
+
+    if res:
+        return res
 
     similarity_thresh = 0.8
 
