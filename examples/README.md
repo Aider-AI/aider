@@ -5,7 +5,7 @@ In the chats, you'll see a varity of coding tasks like generating new code, edit
 
   - Each time GPT-4 suggests a code change, `aider` automatically applies it to the source files.
   - After applying the edits, `aider` commits them to git with a senisble commit message.
-  - `aider` notes each source file that is added to the chat session. Once added, these files are available for review and editing by GPT-4. The user adds files either via the command line or the in-chat `/add` command. Sometimes GPT-4 asks to see specific files, so `aider` asks the user for permission to add them to the chat.
+  - `aider` notes each time a source file is added to the chat session. Once added, these files are available for review and editing by GPT-4. The user adds files either via the command line or the in-chat `/add` command. If GPT-4 asks to see specific files, `aider` asks the user for permission to add them to the chat.
 
 ## Chat transcripts of coding sessions with GPT-4
 
