@@ -1,10 +1,10 @@
 # Automatically update docs with aider and gpt-4
 
-> In this chat transcript, the user asks aider to automatically update the Usage docs based on the latest version of the main() function in the code.
+> In this chat transcript, the user asks to automatically update the Usage docs based on the latest version of the main() function in the code.
 
 ## Chat transcript
 
-> aider-repo$ aider ./README.md aider/main.py  
+> $ aider ./README.md aider/main.py  
 > Added README.md to the chat  
 > Added aider/main.py to the chat  
 

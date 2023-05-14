@@ -1,15 +1,15 @@
 # Semantic search & replace code with aider and gpt-4
 
-In this chat transcript, the user asks aider to modify a series of function calls. 
+In this chat transcript, the user asks to modify a series of function calls. 
 
 Notice that it isn't replacing exact strings.
-Aider deals with various formatting and semantic differences in the calls that it is updating.
+Making the change requires dealing with various formatting and semantic differences in the calls that it is updating.
 
 Some edits were elided from this transcript for brevity.
 
 ## Chat transcript
 
-> aider-repo$ aider aider/coder.py  
+> $ aider aider/coder.py  
 > Added aider/coder.py to the chat  
 
 #### > replace all the self.console.print() calls that contain [red] with calls to self.io.tool_error() with [red] removed from the string
