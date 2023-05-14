@@ -44,6 +44,12 @@ def try_dotdotdots(whole, part, replace):
         if not part and not replace:
             continue
 
+        if not part and replace:
+            if not whole.endswith("\n"):
+                whole += "\n"
+            whole += replace
+            continue
+
         if part not in whole:
             raise ValueError("No perfect matching chunk in edit block with ...")
 
