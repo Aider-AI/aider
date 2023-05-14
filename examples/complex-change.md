@@ -109,9 +109,9 @@ These changes will replace the usage of `/dev/null` with `prompt_toolkit`'s inpu
 ---
 
 > Git repo has uncommitted changes.  
-> Suggested commit message:
-Added import statement for sys module in test_main.py.  
-> Commit before the chat proceeds [y/n/commit message]? Added import statement for sys module in test_main.py.  
+> Suggested commit message:  
+> Added import statement for sys module in test_main.py.  
+> Commit before the chat proceeds [y/n/commit message]? y
 > Commit 6724fcd Added import statement for sys module in test_main.py.  
 
 ---
@@ -243,7 +243,7 @@ I apologize for the confusion earlier. It seems that the `prompt_toolkit.prompt(
 
 First, import the necessary classes and functions from `prompt_tool
 
-> ^C KeyboardInterrupt_
+> ^C KeyboardInterrupt  
 
 ---
 #### >  class prompt_toolkit.shortcuts.PromptSession(message: AnyFormattedText = '', *, multiline: FilterOrBool = False, wrap_lines: FilterOrBool = True, is_password: FilterOrBool = False, vi_mode: bool = False, editing_mode: EditingMode = <EditingMode.EMACS: 'EMACS'>, complete_while_typing: FilterOrBool = True, validate_while_typing: FilterOrBool = True, enable_history_search: FilterOrBool = False, search_ignore_case: FilterOrBool = False, lexer: Lexer | None = None, enable_system_prompt: FilterOrBool = False, enable_suspend: FilterOrBool = False, enable_open_in_editor: FilterOrBool = False, validator: Validator | None = None, completer: Completer | None = None, complete_in_thread: bool = False, reserve_space_for_menu: int = 8, complete_style: CompleteStyle = <CompleteStyle.COLUMN: 'COLUMN'>, auto_suggest: AutoSuggest | None = None, style: BaseStyle | None = None, style_transformation: StyleTransformation | None = None, swap_light_and_dark_colors: FilterOrBool = False, color_depth: ColorDepth | None = None, cursor: AnyCursorShapeConfig = None, include_default_pygments_style: FilterOrBool = True, history: History | None = None, clipboard: Clipboard | None = None, prompt_continuation: PromptContinuationText | None = None, rprompt: AnyFormattedText = None, bottom_toolbar: AnyFormattedText = None, mouse_support: FilterOrBool = False, input_processors: list[Processor] | None = None, placeholder: AnyFormattedText | None = None, key_bindings: KeyBindingsBase | None = None, erase_when_done: bool = False, tempfile_suffix: str | Callable[[], str] | None = '.txt', tempfile: str | Callable[[], str] | None = None, refresh_interval: float = 0, input: Input | None = None, output: Output | None = None)  
