@@ -1,7 +1,7 @@
-# What's it like to code with GPT-4?
+# What's it like to code with GPT-4 and aider?
 
-Below are some chat transcripts showing what it's like to code with the help of GPT-4. They were recorded using the [aider command line tool](https://github.com/paul-gauthier/aider).
-In the chats, you'll see a varity of coding tasks like generating new code, editing existing code, debugging, exploring unfamiliar code, etc. It's worth noting that:
+Below are some chat transcripts showing what it's like to code with the help of GPT-4 using the [aider command line tool](https://github.com/paul-gauthier/aider).
+In the chats, you'll see a varity of coding tasks like generating new code, editing existing code, debugging, exploring unfamiliar code, etc. To better understand the chat transcripts, it's worth noting that:
 
   - Each time GPT-4 suggests a code change, `aider` automatically applies it to the source files.
   - After applying the edits, `aider` commits them to git with a descriptive commit message.
