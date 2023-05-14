@@ -91,7 +91,7 @@ def strip_quoted_wrapping(res, fname=None):
     return res
 
 
-def do_replace(fname, before_text, after_text):
+def do_replace(fname, before_text, after_text, dry_run=False):
     before_text = strip_quoted_wrapping(before_text, fname)
     after_text = strip_quoted_wrapping(after_text, fname)
     fname = Path(fname)

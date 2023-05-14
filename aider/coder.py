@@ -429,7 +429,7 @@ class Coder:
                         self.repo.git.add(full_path)
 
             edited.add(path)
-            if utils.do_replace(full_path, original, updated):
+            if utils.do_replace(full_path, original, updated, self.dry_run):
                 self.io.tool(f"Applied edit to {path}")
             else:
                 self.io.tool_error(f"Failed to apply edit to {path}")
