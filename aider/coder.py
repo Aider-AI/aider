@@ -255,9 +255,9 @@ class Coder:
         if interrupted:
             return
 
-        edited, err = self.apply_updates(content, inp)
-        if err:
-            return err
+        edited, edit_error = self.apply_updates(content, inp)
+        if edit_error:
+            return edit_error
 
         if edited and self.auto_commits:
             self.auto_commit()
