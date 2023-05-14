@@ -102,7 +102,8 @@ def main(args=None, input=None, output=None):
         args.auto_commits,
         io,
     )
-    coder.commit(ask=True, prefix="wip: ", which="repo_files")
+    if args.auto_commits:
+        coder.commit(ask=True, prefix="wip: ", which="repo_files")
 
     if args.apply:
         with open(args.apply, "r") as f:

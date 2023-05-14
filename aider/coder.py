@@ -15,7 +15,6 @@ import git
 import openai
 
 # from aider.dump import dump
-from aider import getinput
 from aider import utils
 from aider import prompts
 from aider.commands import Commands
@@ -44,7 +43,9 @@ class Coder:
         self.commands = Commands(self.io, self)
         self.main_model = main_model
         if main_model == "gpt-3.5-turbo":
-            self.io.tool_error(f"Aider doesn't work well with {main_model}, use gpt-4 for best results.")
+            self.io.tool_error(
+                f"Aider doesn't work well with {main_model}, use gpt-4 for best results."
+            )
 
         self.set_repo(fnames)
 
@@ -187,7 +188,11 @@ class Coder:
             except EOFError:
                 return
 
-    def should_commit(self, is_commit_command):
+    def should_auto_commit(self, inp):
+        is_commit_command = inp and inp.startswith("/commit")
+
+        if not self.auto_commits:
+            return
         if not self.repo:
             return
         if not self.repo.is_dirty():
@@ -203,9 +208,7 @@ class Coder:
 
         self.num_control_c = 0
 
-        is_commit_command = inp and inp.startswith("/commit")
-
-        if self.should_commit(is_commit_command):
+        if self.should_auto_commit(inp):
             self.commit(ask=True, which="repo_files")
 
             # files changed, move cur messages back behind the files messages
@@ -299,10 +302,10 @@ class Coder:
         words = set(word for word in content.split())
 
         # drop sentence punctuation from the end
-        words = set(word.rstrip(',.!;') for word in words)
+        words = set(word.rstrip(",.!;") for word in words)
 
         # strip away all kinds of quotes
-        quotes = ''.join(['"', "'", "`"])
+        quotes = "".join(['"', "'", "`"])
         words = set(word.strip(quotes) for word in words)
 
         addable_rel_fnames = set(self.get_all_relative_files()) - set(
@@ -318,9 +321,9 @@ class Coder:
             return
 
         for rel_fname in mentioned_rel_fnames:
-            self.io.tool(f"{rel_fname}")
+            self.io.tool(rel_fname)
 
-        if not self.io.confirm_ask(f"Add these files to the chat?"):
+        if not self.io.confirm_ask("Add these files to the chat?"):
             return
 
         for rel_fname in mentioned_rel_fnames:
@@ -419,7 +422,9 @@ class Coder:
                 if self.repo:
                     tracked_files = set(self.repo.git.ls_files().splitlines())
                     relative_fname = self.get_rel_fname(full_path)
-                    if relative_fname not in tracked_files and self.io.confirm_ask(f"Add {path} to git?"):
+                    if relative_fname not in tracked_files and self.io.confirm_ask(
+                        f"Add {path} to git?"
+                    ):
                         self.repo.git.add(full_path)
 
             edited.add(path)
@@ -455,7 +460,9 @@ class Coder:
         commit_message = commit_message.strip().strip('"').strip()
 
         if interrupted:
-            self.io.tool_error("Unable to get commit message from gpt-3.5-turbo. Use /commit to try again.")
+            self.io.tool_error(
+                "Unable to get commit message from gpt-3.5-turbo. Use /commit to try again."
+            )
             return
 
         return commit_message
