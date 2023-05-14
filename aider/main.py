@@ -70,6 +70,12 @@ def main(args=None, input=None, output=None):
         default=bool(int(os.environ.get(f"{env_prefix}AUTO_COMMITS", 1))),
     )
     parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Perform a dry run without applying changes (default: False)",
+        default=False,
+    )
+    parser.add_argument(
         "--show-diffs",
         action="store_true",
         help=f"Show diffs when committing changes (default: False, ${env_prefix}SHOW_DIFFS)",
@@ -101,6 +107,7 @@ def main(args=None, input=None, output=None):
         args.show_diffs,
         args.auto_commits,
         io,
+        args.dry_run,
     )
     if args.auto_commits:
         coder.commit(ask=True, prefix="wip: ", which="repo_files")

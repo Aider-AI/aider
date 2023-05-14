@@ -28,12 +28,13 @@ class Coder:
     last_aider_commit_hash = None
     last_asked_for_commit_time = 0
 
-    def __init__(self, main_model, fnames, pretty, show_diffs, auto_commits, io):
+    def __init__(self, main_model, fnames, pretty, show_diffs, auto_commits, io, dry_run):
         self.abs_fnames = set()
 
         self.io = io
 
         self.auto_commits = auto_commits
+        self.dry_run = dry_run
 
         if pretty:
             self.console = Console()
