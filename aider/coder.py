@@ -265,16 +265,14 @@ class Coder:
             traceback.print_exc()
             edited = None
 
+        if edited and self.auto_commits:
+            self.auto_commit()
+
         add_rel_files_message = self.check_for_file_mentions(content)
         if add_rel_files_message:
             return add_rel_files_message
 
-        if not edited:
-            return
-
-        if not self.auto_commits:
-            return
-
+    def auto_commit(self):
         res = self.commit(history=self.cur_messages, prefix="aider: ")
         if res:
             commit_hash, commit_message = res
@@ -285,6 +283,7 @@ class Coder:
                 message=commit_message,
             )
         else:
+            # TODO: if not self.repo then the files_content_gpt_no_edits isn't appropriate
             self.io.tool_error("Warning: no changes found in tracked files.")
             saved_message = prompts.files_content_gpt_no_edits
 
