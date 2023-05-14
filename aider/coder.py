@@ -430,7 +430,10 @@ class Coder:
 
             edited.add(path)
             if utils.do_replace(full_path, original, updated, self.dry_run):
-                self.io.tool(f"Applied edit to {path}")
+                if self.dry_run:
+                    self.io.tool(f"Dry run, did not apply edit to {path}")
+                else:
+                    self.io.tool(f"Applied edit to {path}")
             else:
                 self.io.tool_error(f"Failed to apply edit to {path}")
 
