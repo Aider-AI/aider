@@ -1,4 +1,4 @@
-# GPT-4 powered coding in your terminal.
+# aider: GPT-4 powered coding in your terminal
 
 `aider` is a command-line tool that allows you to chat with GPT-4 about your code.
 Ask GPT for features, improvements, or bug fixes and `aider` will directly apply the changes to your source files.
