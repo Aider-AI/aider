@@ -12,7 +12,7 @@ Here are some example transcripts that show how you can chat with `aider` to gen
 
 * [Pong Game with Pygame](examples/pong.md): Creating a simple Pong game using the Pygame library, with customizations for paddle size and color, and ball speed adjustments.
 
-* [2048 Game Modification](examples/2048-game.md): Exploring and modifying an open-source javascript 2048 game codebase, including adding randomness to the scoring system.
+* [2048 Game Modification](examples/2048-game.md): Exploring and modifying an open-source javascript repo for the 2048 game, including adding randomness to the scoring system.
 
 * [Complex Multi-file Change with Debugging](examples/complex-change.md): A complex code change involving multiple source files and debugging.
 

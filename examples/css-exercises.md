@@ -1,11 +1,11 @@
 
 # Complete a css exercise with aider and GPT-4
 
-In this chat transcript, the user asks aider about the CSS Exercises repo https://github.com/TheOdinProject/css-exercises/tree/main and completes an animation exercise.
+In this chat transcript, the user asks about the CSS Exercises repo https://github.com/TheOdinProject/css-exercises/tree/main and completes an animation exercise.
 
 ## Chat transcript
 
-> css-exercises$ aider
+> $ aider
 #### >  what is this repo?  
 
 Based on the file list provided, it seems like this repository contains a collection of CSS and HTML exercises, solutions, and examples. The exercises cover various topics such as Flexbox, Grid, Animation, Foundations, and Margin & Padding. The repository also includes images and other assets used in the exercises.

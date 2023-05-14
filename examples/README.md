@@ -1,11 +1,11 @@
-# What's it like to code with gpt-4?
+# What's it like to code with GPT-4?
 
 Below are some chat transcripts showing what it's like to code with the help of GPT-4. They were recorded using the [aider command line tool](https://github.com/paul-gauthier/aider).
 In the chats, you'll see a varity of coding tasks like generating new code, editing existing code, debugging, exploring unfamiliar code, etc. It's worth noting that:
 
   - Each time GPT-4 suggests a code change, `aider` automatically applies it to the source files.
-  - After applying edits, `aider` commits them to git with a senisble commit message.
-  - `aider` will note whenever a source file is added to the chat session. Once added, these files are available for review and editing by GPT-4. The user adds files either via the command line or the in-chat `/add` command. Sometimes GPT-4 asks to see specific files, and `aider` adds them to the chat after the user approves.
+  - After applying the edits, `aider` commits them to git with a senisble commit message.
+  - `aider` notes each source source file that is added to the chat session. Once added, these files are available for review and editing by GPT-4. The user adds files either via the command line or the in-chat `/add` command. Sometimes GPT-4 asks to see specific files, and `aider` asks the user to approve adding them to the chat.
 
 ## Chat transcripts of coding sessions with gpt-4
 
@@ -13,7 +13,7 @@ In the chats, you'll see a varity of coding tasks like generating new code, edit
 
 * [Pong Game with Pygame](pong.md): Creating a simple Pong game using the Pygame library, with customizations for paddle size and color, and ball speed adjustments.
 
-* [2048 Game Modification](2048-game.md): Exploring and modifying an open-source javascript 2048 game codebase, including adding randomness to the scoring system.
+* [2048 Game Modification](2048-game.md): Exploring and modifying an open-source javascript repo for the 2048 game, including adding randomness to the scoring system.
 
 * [Complex Multi-file Change with Debugging](complex-change.md): A complex code change involving multiple source files and debugging.
 
@@ -21,7 +21,7 @@ In the chats, you'll see a varity of coding tasks like generating new code, edit
 
 * [CSS Exercise: Animation Dropdown Menu](css-exercises.md): A small CSS exercise involving adding animation to a dropdown menu.
 
-* [Automatically Update Docs](update-docs.md): Automatically updating documentation based on the latest version of the main() function in the code.
+* [Automatically Update Docs](update-docs.md): Automatically updating documentation based on the latest version of the main() function.
 
 ## Transcript formatting
 
