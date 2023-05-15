@@ -1,6 +1,3 @@
----
-layout: chat-transcript
----
 
 # Complete a css exercise with aider and GPT-4
 
