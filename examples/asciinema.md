@@ -3,6 +3,8 @@
 
 The user needs to make some tedious edits to the escape sequences in an `asciinema` screencast file.
 
+## Chat transcript
+
 > $ aider hello.cast  
 > Added hello.cast to the chat  
 
