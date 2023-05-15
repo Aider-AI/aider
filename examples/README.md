@@ -17,6 +17,8 @@ In the chats, you'll see a varity of coding tasks like generating new code, edit
 
 * [**Automatically Update Docs**](update-docs.md): Automatically updating documentation based on the latest version of the main() function.
 
+* [**Editing an Asciinema Cast File**](asciinema.md): Editing escape sequences in an `asciinema` screencast file using aider and GPT-4.
+
 ## What's happening in these chats?
 
 To better understand the chat transcripts, it's worth knowing that:
