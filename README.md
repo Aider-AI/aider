@@ -4,25 +4,7 @@
 Ask GPT for features, improvements, or bug fixes and `aider` will directly apply the suggested changes to your source files.
 Each change is automatically committed to git with a descriptive commit message.
 
-> macbook$ aider ./hello.py  
-> Added hello.py to the chat  
-
-#### >  change from printing hello to goodbye  
-
-Here's how to update the `hello.py` file:
-
-```python
-hello.py
-<<<<<<< ORIGINAL
-print("hello")
-=======
-print("goodbye")
->>>>>>> UPDATED
-```
-
-> Applied edit to hello.py  
-> Commit d0f91a0 aider: Changed hello.py to print "goodbye".  
-
+![aider screenshot](screenshot.png)
 
 ## Example chat transcripts
 
