@@ -11,19 +11,19 @@ To better understand the chat transcripts, it's worth knowing that:
 
 ## Chat transcripts of coding sessions with GPT-4
 
-* [Hello World Flask App](hello-world-flask.md): Creating a simple Flask app with various endpoints, such as adding two numbers and calculating the Fibonacci sequence.
+* [**Hello World Flask App**](hello-world-flask.md): Creating a simple Flask app with various endpoints, such as adding two numbers and calculating the Fibonacci sequence.
 
-* [Pong Game with Pygame](pong.md): Creating a simple Pong game using the Pygame library, with customizations for paddle size and color, and ball speed adjustments.
+* [**Pong Game with Pygame**](pong.md): Creating a simple Pong game using the Pygame library, with customizations for paddle size and color, and ball speed adjustments.
 
-* [2048 Game Modification](2048-game.md): Exploring and modifying an open-source javascript repo for the 2048 game, including adding randomness to the scoring system.
+* [**2048 Game Modification**](2048-game.md): Exploring and modifying an open-source javascript repo for the 2048 game, including adding randomness to the scoring system.
 
-* [Complex Multi-file Change with Debugging](complex-change.md): A complex code change involving multiple source files and debugging.
+* [**Complex Multi-file Change with Debugging**](complex-change.md): A complex code change involving multiple source files and debugging.
 
-* [Semantic Search & Replace](semantic-search-replace.md): Updating a collection of function calls, which requires dealing with various formatting and semantic differences in the various function call sites.
+* [**Semantic Search & Replace**](semantic-search-replace.md): Updating a collection of function calls, which requires dealing with various formatting and semantic differences in the various function call sites.
 
-* [CSS Exercise: Animation Dropdown Menu](css-exercises.md): A small CSS exercise involving adding animation to a dropdown menu.
+* [**CSS Exercise: Animation Dropdown Menu**](css-exercises.md): A small CSS exercise involving adding animation to a dropdown menu.
 
-* [Automatically Update Docs](update-docs.md): Automatically updating documentation based on the latest version of the main() function.
+* [**Automatically Update Docs**](update-docs.md): Automatically updating documentation based on the latest version of the main() function.
 
 ## Transcript formatting
 
