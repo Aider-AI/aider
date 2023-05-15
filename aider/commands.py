@@ -130,6 +130,7 @@ class Commands:
             return
 
         commits = f"{self.coder.last_aider_commit_hash}~1"
+        diff = self.coder.get_diffs(commits, self.coder.last_aider_commit_hash)
         if self.coder.pretty:
             diff = self.coder.repo.git.diff(commits, "--color", self.coder.last_aider_commit_hash)
         else:
