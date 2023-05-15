@@ -461,14 +461,11 @@ class Coder:
 
         return commit_message
 
-    def get_diffs(self, *final_args):
-        args = ["HEAD"]
+    def get_diffs(self, *args):
         if self.pretty:
-            args += ["--color"]
-        args += final_args
+            args = ["--color"] + list(args)
 
         diffs = self.repo.git.diff(*args)
-
         return diffs
 
     def commit(self, history=None, prefix=None, ask=False, message=None, which="chat_files"):
@@ -496,7 +493,7 @@ class Coder:
                 if not current_branch_commit_count:
                     continue
 
-                these_diffs = self.get_diffs("--", relative_fname)
+                these_diffs = self.get_diffs("HEAD", "--", relative_fname)
 
                 if these_diffs:
                     diffs += these_diffs + "\n"
