@@ -469,7 +469,14 @@ class Coder:
         if not repo.is_dirty():
             return
 
-        def get_dirty_files_and_diffs(file_list):
+        def get_diffs(self, relative_fname):
+            if self.pretty:
+                these_diffs = self.repo.git.diff("HEAD", "--color", "--", relative_fname)
+            else:
+                these_diffs = self.repo.git.diff("HEAD", relative_fname)
+            return these_diffs
+
+        def get_dirty_files_and_diffs(self, file_list):
             diffs = ""
             relative_dirty_files = []
             for fname in file_list:
@@ -477,17 +484,14 @@ class Coder:
                 relative_dirty_files.append(relative_fname)
 
                 try:
-                    current_branch_commit_count = len(list(repo.iter_commits(repo.active_branch)))
+                    current_branch_commit_count = len(list(self.repo.iter_commits(self.repo.active_branch)))
                 except git.exc.GitCommandError:
                     current_branch_commit_count = None
 
                 if not current_branch_commit_count:
                     continue
 
-                if self.pretty:
-                    these_diffs = repo.git.diff("HEAD", "--color", "--", relative_fname)
-                else:
-                    these_diffs = repo.git.diff("HEAD", relative_fname)
+                these_diffs = self.get_diffs(relative_fname)
 
                 if these_diffs:
                     diffs += these_diffs + "\n"
