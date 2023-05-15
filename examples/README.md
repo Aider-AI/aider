@@ -1,6 +1,6 @@
 # What's it like to code with GPT-4 and aider?
 
-Below are some chat transcripts showing what it's like to code with the help of GPT-4 using the [aider command line tool](https://github.com/paul-gauthier/aider).
+Below are some chat transcripts showing what it's like to code with the help of GPT-4 using the `aider` command-line chat tool.
 In the chats, you'll see a varity of coding tasks like generating new code, editing existing code, debugging, exploring unfamiliar code, etc.
 
 * [**Hello World Flask App**](hello-world-flask.md): Creating a simple Flask app with various endpoints, such as adding two numbers and calculating the Fibonacci sequence.
