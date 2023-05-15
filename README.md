@@ -4,9 +4,23 @@
 Ask GPT for features, improvements, or bug fixes and `aider` will directly apply the suggested changes to your source files.
 Each change is automatically committed to git with a descriptive commit message.
 
-![aider screenshot](screenshot.png)
-
 ## Example chat transcripts
+
+> Added hello.py to the chat  
+
+#### >  change hello to goodbye  
+
+```python
+hello.py
+<<<<<<< ORIGINAL
+print("hello")
+=======
+print("goodbye")
+>>>>>>> UPDATED
+```
+
+> Applied edit to hello.py  
+> Commit d0f91a0 aider: Changed hello.py to print "goodbye".  
 
 Here are some example transcripts that show how you can chat with `aider` to generate and edit code with GPT-4. 
 
