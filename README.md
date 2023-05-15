@@ -4,6 +4,8 @@
 Ask GPT for features, improvements, or bug fixes and `aider` will directly apply the suggested changes to your source files.
 Each change is automatically committed to git with a descriptive commit message.
 
+![aider screenshot](screenshot.png)
+
 ## Example chat transcripts
 
 Here are some example transcripts that show how you can chat with `aider` to generate and edit code with GPT-4. 
