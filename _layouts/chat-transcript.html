@@ -1,5 +1,13 @@
 {% extends "default.html" %}
 
+{% block styleoverride %}
+<style>
+  blockquote {
+    background-color: yellow;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 {{ content }}
 {% endblock %}
