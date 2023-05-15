@@ -1,0 +1,17 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+@media screen and (max-width: 23em){
+  .btn{
+    display:block;
+    width:100%;
+    padding:0.75rem;
+    font-size:0.9rem;
+  }
+  .btn+.btn{
+    margin-top:1rem;
+    margin-left:0;
+  }
+}
