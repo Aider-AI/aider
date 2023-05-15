@@ -8,7 +8,6 @@ The user needs to make some tedious edits to the escape sequences in an `asciine
 > $ aider hello.cast  
 > Added hello.cast to the chat  
 
----
 #### >  when the "hello.py> " prompt is displayed, it's including some escape codes to add a few blank lines below the prompt and then bringing the cursor back up. remove all that. just show the prompt followed by a space and leave the cursor showing right after that.  
 
 ```python
