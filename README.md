@@ -7,7 +7,7 @@ Each change is automatically committed to git with a descriptive commit message.
 > macbook$ aider ./hello.py  
 > Added hello.py to the chat  
 
-#### >  change hello to goodbye  
+#### >  change from printing hello to goodbye  
 
 Here's how to update the `hello.py` file:
 
