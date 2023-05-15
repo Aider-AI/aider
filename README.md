@@ -4,7 +4,7 @@
 Ask GPT for features, improvements, or bug fixes and `aider` will directly apply the suggested changes to your source files.
 Each change is automatically committed to git with a descriptive commit message.
 
-![aider screenshot](screenshot.png)
+![aider screenshot](screenshot.gif)
 
 ## Example chat transcripts
 
