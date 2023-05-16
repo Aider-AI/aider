@@ -1,10 +1,10 @@
 
 # A complex multi-file change, with debugging
 
-This is a chat transcript of a fairly complex code change. The user is trying to update tests to use an input mock provided by prompt_toolkit. This requires changes to multiple source files.
+This is a chat transcript of a fairly complex code change. The user is trying to update tests to use an input mock provided by `prompt_toolkit`. This requires changes to multiple source files.
 
 Some things to notice:
-  - The initial changes don't work, so the user provides error messages and doc snippets to collaboratively debug and solve the problem.
+  - The initial changes don't work, so the user provides error messages and snippets from the `prompt_toolkit` docs to collaboratively debug and solve the problem.
   - The user edits a file outside the chat using their editor. `aider` notices these out-of-band changes and offers to commit them.
   - At one point the user hits `^C` to interrupt the GPT-4 response, since it's not a useful response. The user gives clarifications and gets a better result on the next reply.
 
