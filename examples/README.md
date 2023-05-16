@@ -25,7 +25,7 @@ To better understand the chat transcripts, it's worth knowing that:
 
   - Each time GPT-4 suggests a code change, `aider` automatically applies it to the source files.
   - After applying the edits, `aider` commits them to git with a descriptive commit message.
-  - `aider` notes each time a source file is added to the chat session. Once added, these files are available for review and editing by GPT-4. The user adds files either via the command line or the in-chat `/add` command. If GPT-4 asks to see specific files, `aider` asks the user for permission to add them to the chat.
+  - GPT-4 can only see and edit files which have been "added to the chat session". The user adds files either via the command line or the in-chat `/add` command. If GPT-4 asks to see specific files, `aider` asks the user for permission to add them to the chat. The transcripts contain notifications from `aider` whenever a file is added or dropped from the session.
 
 ## Transcript formatting
 
