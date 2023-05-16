@@ -22,7 +22,7 @@ assets/css/style.css
 > ^C again to quit  
 
 
-#### >  make all the edits to the embedded <style> tag in the html  
+#### >  make all the edits to the embedded style tag in the html  
 
 ```html
 index.html
@@ -67,7 +67,7 @@ index.html
 > Commit 6898a1d Changed border color and width of blockquote in index.html.  
 
 
-#### >  make the blockquote font color the same as the <p> color  
+#### >  make the blockquote font color the same as the p color  
 > Git repo has uncommitted changes.  
 > Commit before the chat proceeds [y/n/commit message]? Added note about missing method and incorrect method calls in index.html.  
 > Commit 2d31f5b Added note about missing method and incorrect method calls in index.html.  
@@ -177,7 +177,7 @@ index.html
 > Commit dd7dcb6 aider: Added padding inside the border of the blockquote.  
 
 
-#### >  can we add a label "aider" along the top of the blockquote box only using <style>  
+#### >  can we add a label "aider" along the top of the blockquote box only using style
 
 ```html
 index.html
@@ -215,7 +215,7 @@ index.html
 ```
 
 > Applied edit to index.html  
-> Commit 0b0e332 aider: Added label "aider" to the top of the blockquote box using <style>.  
+> Commit 0b0e332 aider: Added label "aider" to the top of the blockquote box using style.  
 
 
 #### >  add more padding on the top of the box and bring the label into the box so it doesn't intersect the border  
