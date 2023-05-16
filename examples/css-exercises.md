@@ -7,13 +7,13 @@ In this chat transcript, the user asks about the CSS Exercises repo https://gith
 
 > $ aider
 
-#### >  what is this repo?  
+#### what is this repo?  
 
 Based on the file list provided, it seems like this repository contains a collection of CSS and HTML exercises, solutions, and examples. The exercises cover various topics such as Flexbox, Grid, Animation, Foundations, and Margin & Padding. The repository also includes images and other assets used in the exercises.
 
 
 ---
-#### >  /add animation/03-dropdown-menu/README.md
+#### /add animation/03-dropdown-menu/README.md
 
 > Added animation/03-dropdown-menu/README.md to the chat  
 
@@ -23,7 +23,7 @@ Is there any specific change or improvement you would like me to make to this fi
 
 
 ---
-#### >  can you make the changes suggested in the readme?  
+#### can you make the changes suggested in the readme?  
 
 To make the changes suggested in the `animation/03-dropdown-menu/README.md`, I need to see the contents of the following files:
 
@@ -75,7 +75,7 @@ These changes add the bounce animation to the dropdown menu by creating a new ke
 > Commit bb3a813 aider: Added bounce animation to dropdown menu.  
 
 ---
-#### >  that worked!  
+#### that worked!  
 
 I'm glad the changes worked for you! If you have any more requests or need assistance with other parts of the code, feel free to ask. I'm here to help!
 

@@ -8,7 +8,7 @@ In this chat transcript, the user asks to automatically update the Usage docs ba
 > Added README.md to the chat  
 > Added aider/main.py to the chat  
 
-#### >  the cmd line args in main() have been updated. update the readme to accurately describe them.  
+#### the cmd line args in main() have been updated. update the readme to accurately describe them.  
 
 ```markdown
 README.md

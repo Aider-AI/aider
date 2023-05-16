@@ -12,7 +12,7 @@ Some edits were elided from this transcript for brevity.
 > $ aider aider/coder.py  
 > Added aider/coder.py to the chat  
 
-#### > replace all the self.console.print() calls that contain [red] with calls to self.io.tool_error() with [red] removed from the string
+#### replace all the self.console.print() calls that contain [red] with calls to self.io.tool_error() with [red] removed from the string
 
 ```python
 aider/coder.py
