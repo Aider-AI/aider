@@ -1,7 +1,7 @@
 
 # A complex multi-file change, with debugging
 
-This is a chat transcript of a fairly complex code change. The user is trying to update tests to use an input mock provided by prompt_toolkit. This requires changes to multiple source files.
+This is a chat transcript of a fairly complex code change. The user is trying to update tests to use an input mock provided by `prompt_toolkit`. This requires changes to multiple source files.
 
 Some things to notice:
   - The initial changes don't work, so the user provides error messages and doc snippets to collaboratively debug and solve the problem.
