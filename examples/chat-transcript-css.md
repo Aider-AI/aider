@@ -1,7 +1,7 @@
 
 # Improve css styling of chat transcripts
 
-> $ aider index.html assets/css/style.css
+> $ aider index.html assets/css/style.css  
 > Added index.html to the chat  
 > Added assets/css/style.css to the chat  
 
