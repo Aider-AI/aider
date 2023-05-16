@@ -16,6 +16,7 @@ assets/css/style.css
 .main-content blockquote{
   padding: 0 1rem;
   margin
+```
 
 > ^C KeyboardInterrupt  
 > ^C again to quit  
@@ -75,6 +76,7 @@ index.html
 assets/css/style.css
 <<<<<<< ORIGINAL
 .main-content blockquote{padding:0 1rem;margin-left:0;color:#819198;border-left
+```
 
 > ^C KeyboardInterrupt  
 
