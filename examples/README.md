@@ -31,9 +31,9 @@ To better understand the chat transcripts, it's worth knowing that:
 
 > This is output from the aider tool.
 
-#### > These are messages written by the user.
+#### > These are chat messages written by the user.
 
-Responses from GPT-4 are in a plain font like this, and often include colorized "edit blocks" that specify edits to the code.
+Chat responses from GPT-4 are in a plain font like this, and often include colorized "edit blocks" that specify edits to the code.
 Here's a sample edit block that switches from printing "hello" to "goodbye":
 
 ```python
