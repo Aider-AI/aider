@@ -29,9 +29,9 @@ To better understand the chat transcripts, it's worth knowing that:
 
 ## Transcript formatting
 
-> Output from the aider tool is shown in a blockquote like this.
+> This is output from the aider tool.
 
-#### > The user's chat messages are shown on a prompt line like this. They contain they user's change requests, clarifications, etc.
+#### > These are messages written by the user.
 
 Responses from GPT-4 are in a plain font like this, and often include colorized "edit blocks" that specify edits to the code.
 Here's a sample edit block that switches from printing "hello" to "goodbye":
