@@ -36,7 +36,6 @@ Make sure to install Flask in your project environment using `pip install flask`
 > Applied edit to app.py  
 > Commit 414c394 aider: Added a `/hello` endpoint that returns "Hello, World!" to the Flask app.  
 
----
 #### add an endpoint like /add/3/5 which returns the sum of the 2 numbers  
 
 To add an endpoint like `/add/3/5` that returns the sum of the two numbers, you can create a new route with two URL parameters. Update the `app.py` file as follows:
@@ -63,7 +62,6 @@ Now, when you visit `/add/3/5`, it will return the sum of the two numbers, which
 > Applied edit to app.py  
 > Commit 0872c51 aider: Added an endpoint `/add/<int:num1>/<int:num2>` that returns the sum of the two numbers.  
 
----
 #### add /fibonacci/X  
 
 To add a `/fibonacci/X` endpoint that returns the Xth number in the Fibonacci sequence, you can create a new route with a URL parameter for X and a function to calculate the Fibonacci number. Update the `app.py` file as follows:
@@ -103,7 +101,6 @@ Now, when you visit `/fibonacci/X`, it will return the Xth number in the Fibonac
 > Applied edit to app.py  
 > Commit 163fba8 aider: Added a `/fibonacci/X` endpoint that returns the Xth number in the Fibonacci sequence.  
 
----
 #### remove the hello endpoint  
 
 To remove the `/hello` endpoint, you can simply delete the corresponding route and function in the `app.py` file. Here's the update:
