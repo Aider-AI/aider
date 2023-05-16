@@ -61,7 +61,7 @@ index.html
 > Commit e7a5cb5 aider: Added rounded border to all sides of the boxquote.  
 
 
-#### >  <blank>  
+#### >  (blank)  
 > Git repo has uncommitted changes.  
 > Commit before the chat proceeds [y/n/commit message]? Changed border color and width of blockquote in index.html.  
 > Commit 6898a1d Changed border color and width of blockquote in index.html.  
@@ -121,7 +121,7 @@ index.html
 > Commit 8645217 aider: Changed blockquote font color to match <p> color in index.html.  
 
 
-#### >  <blank>  
+#### >  (blank)  
 > Git repo has uncommitted changes.  
 > Commit before the chat proceeds [y/n/commit message]? Removed color and button styles from blockquote in index.html.  
 > Commit f8d4782 Removed color and button styles from blockquote in index.html.  
@@ -271,7 +271,7 @@ index.html
 > Commit eee902e aider: Added more padding on the top of the box and brought the label into the box so it doesn't intersect the border.  
 
 
-#### >  <blank>  
+#### >  (blank)  
 > Git repo has uncommitted changes.  
 > Commit before the chat proceeds [y/n/commit message]? Changed padding and added margin to main-content blockquote.  
 > Commit c9128d1 Changed padding and added margin to main-content blockquote.  
@@ -392,7 +392,7 @@ index.html
 > Commit 292eda3 aider: Styled the "aider" label on the blockquote as a "tab" that docks onto the top of the box.  
 
 
-#### >  <blank>  
+#### >  (blank)  
 > Git repo has uncommitted changes.  
 > Commit before the chat proceeds [y/n/commit message]? Changed padding and positioning of a CSS element and updated its border.  
 > Commit 01fda51 Changed padding and positioning of a CSS element and updated its border.  
