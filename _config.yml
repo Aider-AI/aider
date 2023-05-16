@@ -5,9 +5,10 @@ defaults:
       path: "examples"
       type: "pages"
     values:
-      description: "This is a custom description for the examples section."
+      description: "examples desc"
   - scope:
-      path: "index.md" # or "index.html" if your home page is an HTML file
+      path: "README.md"
       type: "pages"
     values:
-      description: "This is a custom description for the home page."
+      description: "home desc"
+      
