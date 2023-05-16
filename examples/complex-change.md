@@ -110,7 +110,7 @@ These changes will replace the usage of `/dev/null` with `prompt_toolkit`'s inpu
 > Git repo has uncommitted changes.  
 > Suggested commit message:  
 > Added import statement for sys module in test_main.py.  
-> Commit before the chat proceeds [y/n/commit message]? y
+> Commit before the chat proceeds [y/n/commit message]? y  
 > Commit 6724fcd Added import statement for sys module in test_main.py.  
 
 
