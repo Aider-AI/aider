@@ -329,7 +329,7 @@ index.html
 > Applied edit to index.html  
 > Commit a26c135 aider: Changed blockquote colors to shades of blue based on the blue in the header gradient.  
 
-#### >  can you style the "aider" label on the blockquote as a "tab" that docks onto the top of the box? only edit the style in index.html  
+#### >  can you style the "aider" label on the blockquote as a "tab" that docks onto the top of the box?
 
 ```html
 index.html
