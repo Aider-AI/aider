@@ -6,3 +6,8 @@ defaults:
       type: "pages"
     values:
       description: "This is a custom description for the examples section."
+  - scope:
+      path: "index.md" # or "index.html" if your home page is an HTML file
+      type: "pages"
+    values:
+      description: "This is a custom description for the home page."
