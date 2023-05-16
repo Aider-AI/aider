@@ -1,1 +1,8 @@
 theme: jekyll-theme-cayman
+
+defaults:
+  - scope:
+      path: "examples"
+      type: "pages"
+    values:
+      description: "This is a custom description for the examples section."
