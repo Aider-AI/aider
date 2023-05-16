@@ -2,13 +2,12 @@ theme: jekyll-theme-cayman
 
 defaults:
   - scope:
-      path: "examples"
-      type: "pages"
-    values:
-      description: "examples desc"
-  - scope:
       path: "README.md"
       type: "pages"
     values:
-      description: "home desc"
-      
+      description: "aider"
+  - scope:
+      path: "examples"
+      type: "pages"
+    values:
+      description: "aider is GPT-4 powered coding in your terminal"
