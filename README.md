@@ -10,15 +10,15 @@ Each change is automatically committed to git with a descriptive commit message.
 
 Here are some example transcripts that show how you can chat with `aider` to generate and edit code with GPT-4. 
 
-* [**Hello World Flask App**](examples/hello-world-flask.md): Creating a simple Flask app with various endpoints, such as adding two numbers and calculating the Fibonacci sequence.
+* [**Hello World Flask App**](https://aider.chat/examples/hello-world-flask.html): Creating a simple Flask app with various endpoints, such as adding two numbers and calculating the Fibonacci sequence.
 
-* [**Pong Game with Pygame**](examples/pong.md): Creating a simple Pong game using the Pygame library, with customizations for paddle size and color, and ball speed adjustments.
+* [**Pong Game with Pygame**](https://aider.chat/examples/pong.html): Creating a simple Pong game using the Pygame library, with customizations for paddle size and color, and ball speed adjustments.
 
-* [**2048 Game Modification**](examples/2048-game.md): Exploring and modifying an open-source javascript repo for the 2048 game, including adding randomness to the scoring system.
+* [**2048 Game Modification**](https://aider.chat/examples/2048-game.html): Exploring and modifying an open-source javascript repo for the 2048 game, including adding randomness to the scoring system.
 
-* [**Complex Multi-file Change with Debugging**](examples/complex-change.md): A complex code change involving multiple source files and debugging.
+* [**Complex Multi-file Change with Debugging**](https://aider.chat/examples/complex-change.html): A complex code change involving multiple source files and debugging.
 
-You can find more chat transcripts on the [examples page](examples/README.md).
+You can find more chat transcripts on the [examples page](https://aider.chat/examples/).
 
 ## Features
 
