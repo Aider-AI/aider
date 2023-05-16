@@ -18,13 +18,8 @@
     <a id="skip-to-content" href="#content">Skip to the content.</a>
 
     <header class="page-header" role="banner">
-      {% if page.url == site.baseurl | append: '/' %}
-      <h1 class="project-name">aider</h1>
-      <h2 class="project-tagline">aider is GPT-4 powered coding in your terminal</h2>
-      {% else %}
       <h1 class="project-name">{{ page.title | default: site.title | default: site.github.repository_name }}</h1>
       <h2 class="project-tagline">{{ page.description | default: site.description | default: site.github.project_tagline }}</h2>
-      {% endif %}
       <a href="{{ site.baseurl }}/" class="btn">Home</a>
       <a href="{{ site.baseurl }}/examples/" class="btn">Examples</a>
       {% if site.github.is_project_page %}
