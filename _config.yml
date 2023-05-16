@@ -1,1 +1,8 @@
 theme: jekyll-theme-cayman
+
+defaults:
+  - scope:
+      path: "README.md"
+      type: "pages"
+    values:
+      description: "Command-line chat tool for coding with GPT-4"
