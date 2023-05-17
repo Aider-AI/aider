@@ -50,10 +50,10 @@ def try_dotdotdots(whole, part, replace):
             whole += replace
             continue
 
-        if part not in whole:
-            raise ValueError("No perfect matching chunk in edit block with ...")
+        if whole.count(part) != 1:
+            raise ValueError("No perfect matching chunk in edit block with ... or part appears more than once")
 
-        whole = whole.replace(part, replace)
+        whole = whole.replace(part, replace, 1)
 
     return whole
 
