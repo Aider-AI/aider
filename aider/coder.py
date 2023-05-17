@@ -45,7 +45,7 @@ class Coder:
         self.main_model = main_model
         if main_model == "gpt-3.5-turbo":
             self.io.tool_error(
-                f"Aider doesn't work well with {main_model}, use gpt-4 for best results."
+                f"aider doesn't work well with {main_model}, use gpt-4 for best results."
             )
 
         self.set_repo(fnames)
