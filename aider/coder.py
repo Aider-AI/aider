@@ -50,7 +50,9 @@ class Coder:
 
         self.set_repo(fnames)
 
-        if not self.repo:
+        if self.repo:
+            self.io.tool("Using git repo:", self.root)
+        else:
             self.io.tool_error("No suitable git repo, will not automatically commit edits.")
             self.find_common_root()
 
