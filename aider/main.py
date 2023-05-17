@@ -100,7 +100,7 @@ def main(args=None, input=None, output=None):
         output=output,
     )
 
-    io.tool(*sys.argv)
+    io.tool(*sys.argv, log_only=True)
 
     coder = Coder(
         args.model,
