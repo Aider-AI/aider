@@ -69,19 +69,6 @@ class InputOutput:
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
 
-    def canned_input(self, show_prompt):
-        console = Console()
-
-        input_line = input()
-
-        console.print(show_prompt, end="", style="green")
-        for char in input_line:
-            console.print(char, end="", style="green")
-            time.sleep(random.uniform(0.01, 0.15))
-        console.print()
-        console.print()
-        return input_line
-
     def get_input(self, fnames, commands):
         if self.pretty:
             self.console.rule()
@@ -103,9 +90,6 @@ class InputOutput:
         if len(show) > 10:
             show += "\n"
         show += "> "
-
-        # if not sys.stdin.isatty():
-        #    return self.canned_input(show)
 
         inp = ""
         multiline_input = False
