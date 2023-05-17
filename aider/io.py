@@ -193,14 +193,15 @@ class InputOutput:
         message = Text(message)
         self.console.print(message, style="red")
 
-    def tool(self, *messages):
+    def tool(self, *messages, log_only=False):
         if messages:
             hist = " ".join(messages)
             hist = f"{hist.strip()}"
             self.append_chat_history(hist, linebreak=True, blockquote=True)
 
-        messages = list(map(Text, messages))
-        self.console.print(*messages)
+        if not log_only:
+            messages = list(map(Text, messages))
+            self.console.print(*messages)
 
     def append_chat_history(self, text, linebreak=False, blockquote=False):
         if blockquote:
