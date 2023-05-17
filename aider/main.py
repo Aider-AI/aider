@@ -100,6 +100,8 @@ def main(args=None, input=None, output=None):
         output=output,
     )
 
+    io.tool(*sys.argv)
+
     coder = Coder(
         args.model,
         fnames,
