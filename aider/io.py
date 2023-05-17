@@ -141,7 +141,7 @@ class InputOutput:
 
         print()
 
-        prefix = "#### > "
+        prefix = "####"
         if inp:
             hist = inp.splitlines()
         else:
@@ -150,7 +150,6 @@ class InputOutput:
         hist = f"  \n{prefix} ".join(hist)
 
         hist = f"""
----
 {prefix} {hist}"""
         self.append_chat_history(hist, linebreak=True)
 
