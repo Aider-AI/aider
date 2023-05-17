@@ -3,7 +3,7 @@ import sys
 import argparse
 from dotenv import load_dotenv
 from aider.coder import Coder
-from aider.getinput import InputOutput
+from aider.io import InputOutput
 
 
 def main(args=None, input=None, output=None):

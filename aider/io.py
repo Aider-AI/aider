@@ -9,7 +9,6 @@ from prompt_toolkit.history import FileHistory
 from prompt_toolkit.shortcuts import CompleteStyle
 from rich.console import Console
 from rich.text import Text
-import sys
 import time
 import random
 from pathlib import Path
@@ -68,7 +67,7 @@ class InputOutput:
             self.console = Console(force_terminal=True, no_color=True)
 
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.append_chat_history(f'\n# Aider chat started at {current_time}\n\n')
+        self.append_chat_history(f"\n# Aider chat started at {current_time}\n\n")
 
     def canned_input(self, show_prompt):
         console = Console()
@@ -105,7 +104,7 @@ class InputOutput:
             show += "\n"
         show += "> "
 
-        #if not sys.stdin.isatty():
+        # if not sys.stdin.isatty():
         #    return self.canned_input(show)
 
         inp = ""
@@ -146,7 +145,7 @@ class InputOutput:
         if inp:
             hist = inp.splitlines()
         else:
-            hist = ['<blank>']
+            hist = ["<blank>"]
 
         hist = f"  \n{prefix} ".join(hist)
 
@@ -160,7 +159,7 @@ class InputOutput:
     # OUTPUT
 
     def ai_output(self, content):
-        hist = '\n' + content.strip() + '\n\n'
+        hist = "\n" + content.strip() + "\n\n"
         self.append_chat_history(hist)
 
     def confirm_ask(self, question, default="y"):
@@ -178,7 +177,7 @@ class InputOutput:
 
     def prompt_ask(self, question, default=None):
         if self.yes:
-            res = 'yes'
+            res = "yes"
         else:
             res = prompt(question + " ", default=default)
 
@@ -207,11 +206,11 @@ class InputOutput:
     def append_chat_history(self, text, linebreak=False, blockquote=False):
         if blockquote:
             text = text.strip()
-            text = '> ' + text
+            text = "> " + text
         if linebreak:
             text = text.rstrip()
             text = text + "  \n"
-        if not text.endswith('\n'):
-            text += '\n'
+        if not text.endswith("\n"):
+            text += "\n"
         with self.chat_history_file.open("a") as f:
             f.write(text)
