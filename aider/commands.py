@@ -227,7 +227,7 @@ class Commands:
                 self.io.tool(f"Removed {relative_fname} from the chat")
 
     def cmd_run(self, args):
-        "Run the supplied command in a subprocess and combine stdout and stderr into a single string"
+        "Run a shell command and optionally add the output to the chat"
         try:
             parsed_args = shlex.split(args)
             result = subprocess.run(
