@@ -9,8 +9,6 @@ from prompt_toolkit.history import FileHistory
 from prompt_toolkit.shortcuts import CompleteStyle
 from rich.console import Console
 from rich.text import Text
-import time
-import random
 from pathlib import Path
 from datetime import datetime
 
