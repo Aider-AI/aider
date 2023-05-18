@@ -228,7 +228,7 @@ class Coder:
         if not inp:
             return
 
-        if inp.startswith("/"):
+        if self.commands.is_command(inp):
             return self.commands.run(inp)
 
         return self.send_new_user_message(inp)

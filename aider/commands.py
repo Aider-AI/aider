@@ -10,6 +10,10 @@ class Commands:
         self.io = io
         self.coder = coder
 
+    def is_command(self, inp):
+        if inp[0] == '/':
+            return True
+
     def help(self):
         "Show help about all commands"
         commands = self.get_commands()
