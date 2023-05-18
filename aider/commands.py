@@ -1,5 +1,4 @@
 import os
-from rich.text import Text
 from rich.prompt import Confirm
 from prompt_toolkit.completion import Completion
 from aider import prompts
