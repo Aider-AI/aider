@@ -86,7 +86,10 @@ class Commands:
             return
 
         if self.coder.repo.is_dirty():
-            self.io.tool_error("The repository has uncommitted changes. Please commit or stash them before undoing.")
+            self.io.tool_error(
+                "The repository has uncommitted changes. Please commit or stash them before"
+                " undoing."
+            )
             return
 
         local_head = self.coder.repo.git.rev_parse("HEAD")
@@ -100,7 +103,10 @@ class Commands:
                 self.io.tool_error(f"Error: Unable to get the remote 'origin/{current_branch}'.")
                 return
             if local_head == remote_head:
-                self.io.tool_error("The last commit has already been pushed to the origin. Undoing is not possible.")
+                self.io.tool_error(
+                    "The last commit has already been pushed to the origin. Undoing is not"
+                    " possible."
+                )
                 return
 
         last_commit = self.coder.repo.head.commit
