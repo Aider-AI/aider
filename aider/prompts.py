@@ -105,3 +105,13 @@ undo_command_reply = (
 )
 
 added_files = "Please note that I shared content of these additional files: {fnames}"
+
+
+run_output = """I ran this command:
+
+{command}
+
+Which produced this output:
+
+{output}
+"""

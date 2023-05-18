@@ -13,7 +13,7 @@ class Commands:
         self.coder = coder
 
     def is_command(self, inp):
-        if inp[0] == '/':
+        if inp[0] == "/":
             return True
 
     def help(self):
@@ -230,11 +230,24 @@ class Commands:
         "Run the supplied command in a subprocess and combine stdout and stderr into a single string"
         try:
             parsed_args = shlex.split(args)
-            result = subprocess.run(parsed_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+            result = subprocess.run(
+                parsed_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
+            )
             combined_output = result.stdout
-            print(combined_output)
         except Exception as e:
             self.io.tool_error(f"Error running command: {e}")
+
+        print(combined_output)
+
+        ok = Confirm.ask("Add the output to the chat?", default="y")
+        if not ok:
+            return
+
+        msg = prompts.run_output.format(
+            command=args,
+            output=combined_output,
+        )
+        return msg
 
     def cmd_ls(self, args):
         "List all known files and those included in the chat session"
