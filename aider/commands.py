@@ -230,8 +230,8 @@ class Commands:
 229         "Run the supplied command in a subprocess and combine stdout and stderr into a single string"
 230         try:
 231             parsed_args = shlex.split(args)
-232             result = subprocess.run(parsed_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-232             combined_output = result.stdout + result.stderr
+232             result = subprocess.run(parsed_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+233             combined_output = result.stdout
 233             print(combined_output)
 234         except Exception as e:
 235             self.io.tool_error(f"Error running command: {e}")
