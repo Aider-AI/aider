@@ -235,11 +235,11 @@ class Commands:
             print(combined_output)
         except Exception as e:
             self.io.tool_error(f"Error running command: {e}")
-236 
-237     def cmd_ls(self, args):
-238         "List all known files and those included in the chat session"
-239 
-240         files = self.coder.get_all_relative_files()
+
+    def cmd_ls(self, args):
+        "List all known files and those included in the chat session"
+
+        files = self.coder.get_all_relative_files()
 
         other_files = []
         chat_files = []
