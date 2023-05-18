@@ -1,5 +1,6 @@
-import os
-import git
+  1 import os
+  2 import git
+  3 import subprocess
 from rich.prompt import Confirm
 from prompt_toolkit.completion import Completion
 from aider import prompts
@@ -224,10 +225,19 @@ class Commands:
                 self.coder.abs_fnames.remove(matched_file)
                 self.io.tool(f"Removed {relative_fname} from the chat")
 
-    def cmd_ls(self, args):
-        "List all known files and those included in the chat session"
-
-        files = self.coder.get_all_relative_files()
+228     def cmd_run(self, args):
+229         "Run the supplied command in a subprocess and combine stdout and stderr into a single string"
+230         try:
+231             result = subprocess.run(args.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+232             combined_output = result.stdout + result.stderr
+233             print(combined_output)
+234         except Exception as e:
+235             self.io.tool_error(f"Error running command: {e}")
+236 
+237     def cmd_ls(self, args):
+238         "List all known files and those included in the chat session"
+239 
+240         files = self.coder.get_all_relative_files()
 
         other_files = []
         chat_files = []
