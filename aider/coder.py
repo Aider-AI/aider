@@ -193,14 +193,14 @@ class Coder:
 
     def should_auto_commit(self, inp):
         is_commit_command = inp and inp.startswith("/commit")
+        if is_commit_command:
+            return
 
         if not self.auto_commits:
             return
         if not self.repo:
             return
         if not self.repo.is_dirty():
-            return
-        if is_commit_command:
             return
         if self.last_asked_for_commit_time >= self.get_last_modified():
             return
