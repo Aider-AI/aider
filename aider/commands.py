@@ -1,7 +1,7 @@
-  1 import os
-  2 import git
-  3 import subprocess
-  4 import shlex
+import os
+import git
+import subprocess
+import shlex
 from rich.prompt import Confirm
 from prompt_toolkit.completion import Completion
 from aider import prompts
