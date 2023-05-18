@@ -226,15 +226,15 @@ class Commands:
                 self.coder.abs_fnames.remove(matched_file)
                 self.io.tool(f"Removed {relative_fname} from the chat")
 
-228     def cmd_run(self, args):
-229         "Run the supplied command in a subprocess and combine stdout and stderr into a single string"
-230         try:
-231             parsed_args = shlex.split(args)
-232             result = subprocess.run(parsed_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-233             combined_output = result.stdout
-233             print(combined_output)
-234         except Exception as e:
-235             self.io.tool_error(f"Error running command: {e}")
+    def cmd_run(self, args):
+        "Run the supplied command in a subprocess and combine stdout and stderr into a single string"
+        try:
+            parsed_args = shlex.split(args)
+            result = subprocess.run(parsed_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+            combined_output = result.stdout
+            print(combined_output)
+        except Exception as e:
+            self.io.tool_error(f"Error running command: {e}")
 236 
 237     def cmd_ls(self, args):
 238         "List all known files and those included in the chat session"
