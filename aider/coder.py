@@ -222,7 +222,8 @@ class Coder:
             ]
             self.cur_messages = []
 
-            self.io.tool("Use up-arrow to retry previous command:", inp)
+            if inp.strip():
+                self.io.tool("Use up-arrow to retry previous command:", inp)
             return
 
         if not inp:
