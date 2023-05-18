@@ -51,7 +51,8 @@ class Coder:
         self.set_repo(fnames)
 
         if self.repo:
-            self.io.tool("Using git repo:", self.repo.git_dir)
+            rel_repo_dir = os.path.relpath(self.repo.git_dir, os.getcwd())
+            self.io.tool("Using git repo:", rel_repo_dir)
         else:
             self.io.tool_error("No suitable git repo, will not automatically commit edits.")
             self.find_common_root()
@@ -108,8 +109,6 @@ class Coder:
 
         self.root = repo.working_tree_dir
 
-        rel_repo_dir = os.path.relpath(self.repo.git_dir, os.getcwd())
-        self.io.tool("Using git repo:", rel_repo_dir)
         new_files = []
         for fname in self.abs_fnames:
             relative_fname = self.get_rel_fname(fname)
