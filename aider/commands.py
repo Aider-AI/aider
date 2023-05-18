@@ -1,6 +1,7 @@
   1 import os
   2 import git
   3 import subprocess
+  4 import shlex
 from rich.prompt import Confirm
 from prompt_toolkit.completion import Completion
 from aider import prompts
@@ -228,7 +229,8 @@ class Commands:
 228     def cmd_run(self, args):
 229         "Run the supplied command in a subprocess and combine stdout and stderr into a single string"
 230         try:
-231             result = subprocess.run(args.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+231             parsed_args = shlex.split(args)
+232             result = subprocess.run(parsed_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 232             combined_output = result.stdout + result.stderr
 233             print(combined_output)
 234         except Exception as e:
