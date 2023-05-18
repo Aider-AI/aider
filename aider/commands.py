@@ -1,4 +1,5 @@
 import os
+import git
 from rich.prompt import Confirm
 from prompt_toolkit.completion import Completion
 from aider import prompts
