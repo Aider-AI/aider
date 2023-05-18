@@ -114,14 +114,17 @@ def replace_most_similar_chunk(whole, part, replace):
     return modified_whole
 
 
-def quoted_file(fname, display_fname):
+def quoted_file(fname, display_fname, number=False):
     prompt = "\n"
     prompt += display_fname
     prompt += "\n```\n"
     file_content = Path(fname).read_text()
     lines = file_content.splitlines()
     for i, line in enumerate(lines, start=1):
-        prompt += f"{i:3d} {line}\n"
+        if number:
+            prompt += f"{i:4d} "
+        prompt += line + "\n"
+
     prompt += "```\n"
     return prompt
 
