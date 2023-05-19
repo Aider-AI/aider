@@ -15,7 +15,7 @@ class TestCommands(TestCase):
             coder = Coder(io)
             commands = Commands(io, coder)
 
-            commands.cmd_add(['foo.txt', 'bar.txt'])
+            commands.cmd_add('foo.txt bar.txt')
 
             self.assertTrue(os.path.exists('foo.txt'))
             self.assertTrue(os.path.exists('bar.txt'))
