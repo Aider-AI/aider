@@ -97,7 +97,7 @@ def main(args=None, input=None, output=None):
         default=False,
     )
     parser.add_argument(
-        "--verbose",
+        "-v", "--verbose",
         action="store_true",
         help="Enable verbose output",
         default=False,
