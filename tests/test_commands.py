@@ -11,7 +11,7 @@ class TestCommands(TestCase):
             original_cwd = os.getcwd()
             os.chdir(tmpdir)
 
-            io = InputOutput()
+            io = InputOutput(pretty=True, yes=True)
             coder = Coder(io)
             commands = Commands(io, coder)
 
