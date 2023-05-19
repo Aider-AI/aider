@@ -241,7 +241,7 @@ class Commands:
 
         print(combined_output)
 
-        ok = Confirm.ask("Add the output to the chat?", default="y")
+        ok = self.io.confirm_ask("Add the output to the chat?", default="y")
         if not ok:
             return
 
