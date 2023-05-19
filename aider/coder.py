@@ -18,6 +18,7 @@ import openai
 from aider import utils
 from aider import prompts
 from aider.commands import Commands
+from aider.ctags import get_tags_map
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
