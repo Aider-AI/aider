@@ -16,8 +16,8 @@ class TestCommands(TestCase):
             coder = MagicMock()
             commands = Commands(io, coder)
 
-            # Call the cmd_add method with 'foo.txt' and 'bar.txt'
-            commands.cmd_add(["foo.txt", "bar.txt"])
+            # Call the cmd_add method with 'foo.txt' and 'bar.txt' as a single string
+            commands.cmd_add("foo.txt bar.txt")
 
             # Check if both files have been created in the temporary directory
             self.assertTrue(os.path.exists("foo.txt"))
