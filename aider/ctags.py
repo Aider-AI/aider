@@ -8,7 +8,7 @@ def print_tags_info():
             kind = tag.get("kind", "N/A")
             name = tag.get("name", "N/A")
             signature = tag.get("signature", "N/A")
-            print(f"Scope: {scope}, Kind: {kind}, Name: {name}, Signature: {signature}")
+            print(scope, kind, name, signature)
 
 if __name__ == "__main__":
     print_tags_info()
