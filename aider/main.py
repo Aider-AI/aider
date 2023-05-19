@@ -96,6 +96,12 @@ def main(args=None, input=None, output=None):
         help="Always say yes to every confirmation",
         default=False,
     )
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Enable verbose output",
+        default=False,
+    )
     args = parser.parse_args(args)
 
     io = InputOutput(
@@ -118,6 +124,7 @@ def main(args=None, input=None, output=None):
         auto_commits=args.auto_commits,
         dry_run=args.dry_run,
         use_ctags=args.ctags,
+        verbose=args.verbose,
     )
     if args.auto_commits:
         coder.commit(ask=True, prefix="wip: ", which="repo_files")

@@ -39,7 +39,9 @@ class Coder:
         auto_commits=True,
         dry_run=False,
         use_ctags=False,
+        verbose=False,
     ):
+        self.verbose = verbose
         self.use_ctags = use_ctags
         self.abs_fnames = set()
         self.cur_messages = []
