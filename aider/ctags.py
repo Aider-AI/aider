@@ -1,6 +1,7 @@
 import os
 import json
 import sys
+import subprocess
 
 # from aider.dump import dump
 
@@ -21,8 +22,6 @@ def print_tags_info(filename):
             indent += tab
         last = tag
 
-
-import subprocess
 
 def get_tags(filename):
     cmd = ["ctags", "--fields=+S", "--output-format=json", filename]
