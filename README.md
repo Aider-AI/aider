@@ -39,7 +39,7 @@ You can find more chat transcripts on the [examples page](https://aider.chat/exa
 ## Installation
 
 1. Install the package:
-    * From Github: `pip install git+https://github.com/paul-gauthier/aider.git`
+    * From GitHub: `pip install git+https://github.com/paul-gauthier/aider.git`
     * From your local copy of the repo in develop mode to pick up local edits immediately: `pip install -e .` 
 2. Set up your OpenAI API key as an environment variable `OPENAI_API_KEY` or by including it in a `.env` file.
 
