@@ -163,14 +163,14 @@ class Commands:
 
             if not matched_files:
                 if self.coder.repo is not None:
-                    create_file = Confirm.ask(
+                    create_file = self.io.confirm_ask(
                         (
                             f"No files matched '{word}'. Do you want to create the file and add it"
                             " to git?"
                         ),
                     )
                 else:
-                    create_file = Confirm.ask(
+                    create_file = self.io.confirm_ask(
                         f"No files matched '{word}'. Do you want to create the file?"
                     )
 
