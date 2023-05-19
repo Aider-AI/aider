@@ -2,19 +2,17 @@ import os
 import json
 import sys
 
-from aider.dump import dump
+# from aider.dump import dump
+
 
 def print_tags_info(filename):
     tags = sorted(get_tags(filename))
 
     last = [None] * len(tags[0])
-    tab = ' '
+    tab = " "
     for tag in tags:
         tag = list(tag)
-        common_prefix = [
-            tag_i for tag_i,last_i in zip(tag,last)
-            if tag_i == last_i
-        ]
+        common_prefix = [tag_i for tag_i, last_i in zip(tag, last) if tag_i == last_i]
         num_common = len(common_prefix)
         indent = tab * num_common
         rest = tag[num_common:]
@@ -36,12 +34,14 @@ def get_tags(filename):
 
             last = name
             if signature:
-                last += ' ' + signature
+                last += " " + signature
 
             path = os.path.relpath(path, os.getcwd())
             path_components = path.split(os.sep)
 
-            res = []
+            res = [pc + os.sep for pc in path_components[:-1]]
+            res.append(path_components[-1])
+
             if scope:
                 res.append(scope)
             res += [kind, last]
