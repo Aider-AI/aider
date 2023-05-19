@@ -88,8 +88,6 @@ def main(args=None, input=None, output=None):
         default=False,
     )
     args = parser.parse_args(args)
-    fnames = args.files
-    pretty = args.pretty
 
     io = InputOutput(
         args.pretty,
@@ -103,13 +101,13 @@ def main(args=None, input=None, output=None):
     io.tool(*sys.argv, log_only=True)
 
     coder = Coder(
-        args.model,
-        fnames,
-        pretty,
-        args.show_diffs,
-        args.auto_commits,
         io,
-        args.dry_run,
+        main_model=args.model,
+        fnames=args.files,
+        pretty=args.pretty,
+        show_diffs=args.show_diffs,
+        auto_commits=args.auto_commits,
+        dry_run=args.dry_run,
     )
     if args.auto_commits:
         coder.commit(ask=True, prefix="wip: ", which="repo_files")

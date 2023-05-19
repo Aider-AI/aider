@@ -28,14 +28,21 @@ class Coder:
     last_aider_commit_hash = None
     last_asked_for_commit_time = 0
 
-    def __init__(self, main_model, fnames, pretty, show_diffs, auto_commits, io, dry_run):
+    def __init__(
+        self,
+        io,
+        main_model="gpt-4",
+        fnames=None,
+        pretty=True,
+        show_diffs=False,
+        auto_commits=True,
+        dry_run=False,
+    ):
         self.abs_fnames = set()
-
-        self.io = io
-
         self.cur_messages = []
         self.done_messages = []
 
+        self.io = io
         self.auto_commits = auto_commits
         self.dry_run = dry_run
 
