@@ -33,6 +33,9 @@ class Coder:
 
         self.io = io
 
+        self.cur_messages = []
+        self.done_messages = []
+
         self.auto_commits = auto_commits
         self.dry_run = dry_run
 
