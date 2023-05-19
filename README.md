@@ -38,7 +38,9 @@ You can find more chat transcripts on the [examples page](https://aider.chat/exa
 
 ## Installation
 
-1. Install the package: `pip install git+https://github.com/paul-gauthier/aider.git`
+1. Install the package:
+    * From Github: `pip install git+https://github.com/paul-gauthier/aider.git`
+    * Or, from local source: `pip3 install -e ./` (executed from root of repository)
 2. Set up your OpenAI API key as an environment variable `OPENAI_API_KEY` or by including it in a `.env` file.
 
 ## Usage
@@ -104,3 +106,4 @@ You might consider refactoring your code into more, smaller files (which is usua
 You can use `aider` to help perform such refactorings, if you start before the files get too large.
 
 If you have access to gpt-4-32k, I would be curious to hear how it works with aider.
+
