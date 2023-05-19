@@ -63,10 +63,10 @@ def get_tags(filename, root_dname):
     output = subprocess.check_output(cmd).decode("utf-8")
     output = output.splitlines()
 
-    if not output:
-        yield split_path(filename, root_dname)
-
     tags = []
+    if not output:
+        tags.append(split_path(filename, root_dname))
+
     for line in output:
         tag = json.loads(line)
         path = tag.get("path")
