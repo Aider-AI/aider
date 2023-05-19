@@ -186,12 +186,11 @@ def do_replace(fname, before_text, after_text, dry_run=False):
     return True
 
 
-def show_messages(messages, title):
-    print(title.upper(), "*" * 50)
+def show_messages(messages, title=None):
+    if title:
+        print(title.upper(), "*" * 50)
 
     for msg in messages:
-        print()
-        print("-" * 50)
         role = msg["role"].upper()
         content = msg["content"].splitlines()
         for line in content:
