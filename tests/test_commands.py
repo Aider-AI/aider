@@ -10,6 +10,8 @@ from aider.coder import Coder
 class TestCommands(unittest.TestCase):
     def test_cmd_add(self):
         with tempfile.TemporaryDirectory() as tmpdir:
+            os.chdir(tmpdir)
+
             io = IO(pretty=False, yes=True)
             coder = Coder(
                 main_model="gpt-3.5-turbo",

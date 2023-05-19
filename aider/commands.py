@@ -156,18 +156,18 @@ class Commands:
     def cmd_add(self, args):
         "Add matching files to the chat session"
 
-        from aider.dump import dump
-
         added_fnames = []
         files = self.coder.get_all_relative_files()
         for word in args.split():
             matched_files = [file for file in files if word in file]
 
-            dump(word, matched_files)
             if not matched_files:
                 if self.coder.repo is not None:
                     create_file = Confirm.ask(
-                        f"No files matched '{word}'. Do you want to create the file and add it to git?",
+                        (
+                            f"No files matched '{word}'. Do you want to create the file and add it"
+                            " to git?"
+                        ),
                     )
                 else:
                     create_file = Confirm.ask(
