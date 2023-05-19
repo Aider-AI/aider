@@ -12,6 +12,8 @@ def get_tags_map(filenames, root_dname=None):
 
     tags = []
     for filename in filenames:
+        if filename.endswith(".md"):
+            continue
         tags += get_tags(filename, root_dname)
     if not tags:
         return
@@ -39,7 +41,7 @@ def split_path(path, root_dname):
     path = os.path.relpath(path, root_dname)
     path_components = path.split(os.sep)
     res = [pc + os.sep for pc in path_components[:-1]]
-    res.append(path_components[-1])
+    res.append(path_components[-1] + ":")
     return res
 
 
@@ -62,7 +64,7 @@ def get_tags(filename, root_dname):
         if signature:
             last += " " + signature
 
-        res = split_path(path)
+        res = split_path(path, root_dname)
         if scope:
             res.append(scope)
         res += [kind, last]
