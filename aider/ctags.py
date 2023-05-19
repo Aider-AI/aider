@@ -25,8 +25,12 @@ def get_tags_map(filenames, root_dname=None):
     tab = " "
     for tag in tags:
         tag = list(tag)
-        common_prefix = [tag_i for tag_i, last_i in zip(tag, last) if tag_i == last_i]
-        num_common = len(common_prefix)
+
+        for i in range(len(last)):
+            if last[i] != tag[i]:
+                break
+
+        num_common = i
         indent = tab * num_common
         rest = tag[num_common:]
         for item in rest:
