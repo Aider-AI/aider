@@ -39,6 +39,7 @@ def get_tags(filename):
                 last += ' ' + signature
 
             path = os.path.relpath(path, os.getcwd())
+            path_components = path.split(os.sep)
 
             res = []
             if scope:
