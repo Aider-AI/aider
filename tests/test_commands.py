@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from unittest.mock import MagicMock
 from aider.commands import Commands
-from aider.io import IO
+from aider.io import InputOutput as IO
 from aider.coder import Coder
 
 class TestCommands(unittest.TestCase):
