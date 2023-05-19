@@ -50,11 +50,12 @@ def split_path(path, root_dname):
 
 
 def get_tags(filename, root_dname):
-    yield split_path(filename, root_dname)
-
     cmd = ["ctags", "--fields=+S", "--output-format=json", filename]
     output = subprocess.check_output(cmd).decode("utf-8")
     output = output.splitlines()
+
+    if not output:
+        yield split_path(filename, root_dname)
 
     for line in output:
         tag = json.loads(line)

@@ -79,10 +79,13 @@ files_content_gpt_no_edits = "I wasn't able to see any properly formatted edits 
 
 files_content_local_edits = "I made some changes to the files myself."
 
-repo_content_prefix = "Here is a map showing all the other files and key content:\n\n"
-
 files_content_prefix = (
-    "You can propose changes to *only* these files (ask if you need to see others):\n\n"
+    "You can propose changes to *only* these files (ask before editing others):\n\n"
+)
+
+repo_content_prefix = (
+    "Here is a map showing all the {other}files and ctags content. You *must* ask with the full"
+    " path of the file before suggesting edits to these files:\n\n"
 )
 
 files_content_suffix = (

@@ -5,6 +5,7 @@ from unittest.mock import MagicMock
 from aider.commands import Commands
 from aider.io import InputOutput
 
+
 class TestCommands(TestCase):
     def test_cmd_add(self):
         # Create a temporary directory and change the current working directory
@@ -13,7 +14,9 @@ class TestCommands(TestCase):
 
             # Initialize the Commands and InputOutput objects
             io = InputOutput(pretty=False, yes=True)
-            coder = MagicMock()
+            from aider.coder import Coder
+
+            coder = Coder(io)
             commands = Commands(io, coder)
 
             # Call the cmd_add method with 'foo.txt' and 'bar.txt' as a single string

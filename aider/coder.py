@@ -159,17 +159,28 @@ class Coder:
         return prompt
 
     def get_files_messages(self):
-        files_content = prompts.files_content_prefix
-        files_content += self.get_files_content()
-
-        all_content = files_content
+        all_content = ""
+        if self.abs_fnames:
+            files_content = prompts.files_content_prefix
+            files_content += self.get_files_content()
+            all_content += files_content
 
         if self.repo is not None:
-            files_listing = get_tags_map(self.get_all_abs_files())
-            repo_content = prompts.repo_content_prefix
-            repo_content += files_listing
+            other_files = set(self.get_all_abs_files()) - set(self.abs_fnames)
+            if other_files:
+                files_listing = get_tags_map(other_files)
+                if self.abs_fnames:
+                    other = "other "
+                else:
+                    other = ""
 
-            all_content = repo_content + "\n\n" + files_content
+                repo_content = prompts.repo_content_prefix.format(other=other)
+                repo_content += files_listing
+
+                if all_content:
+                    all_content += "\n\n"
+
+                all_content += repo_content
 
         files_messages = [
             dict(role="user", content=all_content),
@@ -180,7 +191,7 @@ class Coder:
             ),
         ]
 
-        # utils.show_messages(files_messages, "FILES")
+        utils.show_messages(files_messages, "FILES")
         return files_messages
 
     def run(self):
