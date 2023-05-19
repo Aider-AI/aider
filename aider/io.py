@@ -51,13 +51,16 @@ class FileContentCompleter(Completer):
 
 
 class InputOutput:
-    def __init__(self, pretty, yes, input_history_file, chat_history_file, input=None, output=None):
+    def __init__(self, pretty, yes, input_history_file=None, chat_history_file=None, input=None, output=None):
         self.input = input
         self.output = output
         self.pretty = pretty
         self.yes = yes
         self.input_history_file = input_history_file
-        self.chat_history_file = Path(chat_history_file)
+        if chat_history_file is not None:
+            self.chat_history_file = Path(chat_history_file)
+        else:
+            self.chat_history_file = None
 
         if pretty:
             self.console = Console()
@@ -99,16 +102,18 @@ class InputOutput:
             if multiline_input:
                 show = ". "
 
-            session = PromptSession(
-                message=show,
-                completer=completer_instance,
-                history=FileHistory(self.input_history_file),
-                style=style,
-                reserve_space_for_menu=4,
-                complete_style=CompleteStyle.MULTI_COLUMN,
-                input=self.input,
-                output=self.output,
-            )
+        session_kwargs = {
+            "message": show,
+            "completer": completer_instance,
+            "style": style,
+            "reserve_space_for_menu": 4,
+            "complete_style": CompleteStyle.MULTI_COLUMN,
+            "input": self.input,
+            "output": self.output,
+        }
+        if self.input_history_file is not None:
+            session_kwargs["history"] = FileHistory(self.input_history_file)
+        session = PromptSession(**session_kwargs)
             line = session.prompt()
             if line.strip() == "{" and not multiline_input:
                 multiline_input = True
@@ -194,5 +199,6 @@ class InputOutput:
             text = text + "  \n"
         if not text.endswith("\n"):
             text += "\n"
-        with self.chat_history_file.open("a") as f:
-            f.write(text)
+        if self.chat_history_file is not None:
+            with self.chat_history_file.open("a") as f:
+                f.write(text)
