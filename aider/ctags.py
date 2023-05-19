@@ -3,14 +3,19 @@ import json
 import sys
 import subprocess
 
-from aider.dump import dump
+# from aider.dump import dump
 
 
-def print_tags_info(filename):
-    tags = sorted(get_tags(filename))
+def get_tags_map(filenames):
+    tags = []
+    for filename in filenames:
+        tags += get_tags(filename)
     if not tags:
         return
 
+    tags = sorted(tags)
+
+    output = ""
     last = [None] * len(tags[0])
     tab = " "
     for tag in tags:
@@ -20,9 +25,11 @@ def print_tags_info(filename):
         indent = tab * num_common
         rest = tag[num_common:]
         for item in rest:
-            print(indent + item)
+            output += indent + item + "\n"
             indent += tab
         last = tag
+
+    return output
 
 
 def split_path(path):
@@ -61,5 +68,5 @@ def get_tags(filename):
 
 
 if __name__ == "__main__":
-    for filename in sys.argv[1:]:
-        print_tags_info(filename)
+    res = get_tags_map(sys.argv[1:])
+    print(res)
