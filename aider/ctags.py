@@ -3,6 +3,9 @@ import json
 import sys
 import subprocess
 
+# Global cache for tags
+TAGS_CACHE = {}
+
 # from aider.dump import dump
 
 
@@ -50,6 +53,12 @@ def split_path(path, root_dname):
 
 
 def get_tags(filename, root_dname):
+    # Check if the file is in the cache and if the modification time has not changed
+    file_mtime = os.path.getmtime(filename)
+    cache_key = (filename, root_dname)
+    if cache_key in TAGS_CACHE and TAGS_CACHE[cache_key]["mtime"] == file_mtime:
+        return TAGS_CACHE[cache_key]["tags"]
+
     cmd = ["ctags", "--fields=+S", "--output-format=json", filename]
     output = subprocess.check_output(cmd).decode("utf-8")
     output = output.splitlines()
@@ -57,6 +66,7 @@ def get_tags(filename, root_dname):
     if not output:
         yield split_path(filename, root_dname)
 
+    tags = []
     for line in output:
         tag = json.loads(line)
         path = tag.get("path")
@@ -73,8 +83,12 @@ def get_tags(filename, root_dname):
         if scope:
             res.append(scope)
         res += [kind, last]
+        tags.append(res)
 
-        yield res
+    # Update the cache
+    TAGS_CACHE[cache_key] = {"mtime": file_mtime, "tags": tags}
+
+    return tags
 
 
 if __name__ == "__main__":
