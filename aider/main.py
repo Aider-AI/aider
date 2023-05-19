@@ -84,7 +84,10 @@ def main(args=None, input=None, output=None):
     parser.add_argument(
         "--ctags",
         action="store_true",
-        help=f"Use ctags for file listing (default: False, ${env_prefix}CTAGS)",
+        help=(
+            "Add ctags to the chat to help GPT understand the codebase (default: False,"
+            f" ${env_prefix}CTAGS)"
+        ),
         default=bool(int(os.environ.get(f"{env_prefix}CTAGS", 0))),
     )
     parser.add_argument(
