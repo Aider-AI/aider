@@ -477,6 +477,10 @@ class Coder:
         return context
 
     def get_commit_message(self, diffs, context):
+        if len(diffs) >= 4 * 1024 * 4:
+            self.io.tool_error("Diff is too large for gpt-3.5-turbo to generate a commit message.")
+            return
+
         diffs = "# Diffs:\n" + diffs
 
         messages = [
@@ -484,11 +488,15 @@ class Coder:
             dict(role="user", content=context + diffs),
         ]
 
-        commit_message, interrupted = self.send(
-            messages,
-            model="gpt-3.5-turbo",
-            silent=True,
-        )
+        try:
+            commit_message, interrupted = self.send(
+                messages,
+                model="gpt-3.5-turbo",
+                silent=True,
+            )
+        except openai.error.InvalidRequestError:
+            self.io.tool_error("Failed to generate commit message using gpt-3.5-turbo due to an invalid request.")
+            return
 
         commit_message = commit_message.strip().strip('"').strip()
 
