@@ -38,7 +38,9 @@ class Coder:
         show_diffs=False,
         auto_commits=True,
         dry_run=False,
+        use_ctags=False,
     ):
+        self.use_ctags = use_ctags
         self.abs_fnames = set()
         self.cur_messages = []
         self.done_messages = []

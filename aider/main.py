@@ -82,6 +82,12 @@ def main(args=None, input=None, output=None):
         default=bool(int(os.environ.get(f"{env_prefix}SHOW_DIFFS", 0))),
     )
     parser.add_argument(
+        "--ctags",
+        action="store_true",
+        help=f"Use ctags for file listing (default: False, ${env_prefix}CTAGS)",
+        default=bool(int(os.environ.get(f"{env_prefix}CTAGS", 0))),
+    )
+    parser.add_argument(
         "--yes",
         action="store_true",
         help="Always say yes to every confirmation",
@@ -108,6 +114,7 @@ def main(args=None, input=None, output=None):
         show_diffs=args.show_diffs,
         auto_commits=args.auto_commits,
         dry_run=args.dry_run,
+        use_ctags=args.ctags,
     )
     if args.auto_commits:
         coder.commit(ask=True, prefix="wip: ", which="repo_files")
