@@ -3,11 +3,13 @@ import json
 import sys
 import subprocess
 
-# from aider.dump import dump
+from aider.dump import dump
 
 
 def print_tags_info(filename):
     tags = sorted(get_tags(filename))
+    if not tags:
+        return
 
     last = [None] * len(tags[0])
     tab = " "
@@ -23,32 +25,39 @@ def print_tags_info(filename):
         last = tag
 
 
+def split_path(path):
+    path = os.path.relpath(path, os.getcwd())
+    path_components = path.split(os.sep)
+    res = [pc + os.sep for pc in path_components[:-1]]
+    res.append(path_components[-1])
+    return res
+
+
 def get_tags(filename):
+    yield split_path(filename)
+
     cmd = ["ctags", "--fields=+S", "--output-format=json", filename]
     output = subprocess.check_output(cmd).decode("utf-8")
-    for line in output.splitlines():
+    output = output.splitlines()
+
+    for line in output:
         tag = json.loads(line)
-            path = tag.get("path")
-            scope = tag.get("scope")
-            kind = tag.get("kind")
-            name = tag.get("name")
-            signature = tag.get("signature")
+        path = tag.get("path")
+        scope = tag.get("scope")
+        kind = tag.get("kind")
+        name = tag.get("name")
+        signature = tag.get("signature")
 
-            last = name
-            if signature:
-                last += " " + signature
+        last = name
+        if signature:
+            last += " " + signature
 
-            path = os.path.relpath(path, os.getcwd())
-            path_components = path.split(os.sep)
+        res = split_path(path)
+        if scope:
+            res.append(scope)
+        res += [kind, last]
 
-            res = [pc + os.sep for pc in path_components[:-1]]
-            res.append(path_components[-1])
-
-            if scope:
-                res.append(scope)
-            res += [kind, last]
-
-            yield res
+        yield res
 
 
 if __name__ == "__main__":
