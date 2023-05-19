@@ -156,40 +156,43 @@ class Commands:
     def cmd_add(self, args):
         "Add matching files to the chat session"
 
+        from aider.dump import dump
+
         added_fnames = []
         files = self.coder.get_all_relative_files()
         for word in args.split():
             matched_files = [file for file in files if word in file]
 
-        if not matched_files:
-            if self.coder.repo is not None:
-                create_file = Confirm.ask(
-                    f"No files matched '{word}'. Do you want to create the file and add it to git?",
-                )
-            else:
-                create_file = Confirm.ask(
-                    f"No files matched '{word}'. Do you want to create the file?"
-                )
-
-            if create_file:
-                with open(os.path.join(self.coder.root, word), "w"):
-                    pass
-                matched_files = [word]
+            dump(word, matched_files)
+            if not matched_files:
                 if self.coder.repo is not None:
-                    self.coder.repo.git.add(os.path.join(self.coder.root, word))
-                    commit_message = f"aider: Created and added {word} to git."
-                    self.coder.repo.git.commit("-m", commit_message, "--no-verify")
-            else:
-                self.io.tool_error(f"No files matched '{word}'")
+                    create_file = Confirm.ask(
+                        f"No files matched '{word}'. Do you want to create the file and add it to git?",
+                    )
+                else:
+                    create_file = Confirm.ask(
+                        f"No files matched '{word}'. Do you want to create the file?"
+                    )
 
-        for matched_file in matched_files:
-            abs_file_path = os.path.abspath(os.path.join(self.coder.root, matched_file))
-            if abs_file_path not in self.coder.abs_fnames:
-                self.coder.abs_fnames.add(abs_file_path)
-                self.io.tool(f"Added {matched_file} to the chat")
-                added_fnames.append(matched_file)
-            else:
-                self.io.tool_error(f"{matched_file} is already in the chat")
+                if create_file:
+                    with open(os.path.join(self.coder.root, word), "w"):
+                        pass
+                    matched_files = [word]
+                    if self.coder.repo is not None:
+                        self.coder.repo.git.add(os.path.join(self.coder.root, word))
+                        commit_message = f"aider: Created and added {word} to git."
+                        self.coder.repo.git.commit("-m", commit_message, "--no-verify")
+                else:
+                    self.io.tool_error(f"No files matched '{word}'")
+
+            for matched_file in matched_files:
+                abs_file_path = os.path.abspath(os.path.join(self.coder.root, matched_file))
+                if abs_file_path not in self.coder.abs_fnames:
+                    self.coder.abs_fnames.add(abs_file_path)
+                    self.io.tool(f"Added {matched_file} to the chat")
+                    added_fnames.append(matched_file)
+                else:
+                    self.io.tool_error(f"{matched_file} is already in the chat")
 
         if not added_fnames:
             return
