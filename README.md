@@ -63,6 +63,7 @@ You can also use additional command-line options to customize the behavior of th
 - `--chat-history-file CHAT_HISTORY_FILE`: Specify the chat history file (default: .aider.chat.history.md). Override the default with the environment variable `AIDER_CHAT_HISTORY_FILE`.
 - `--model MODEL`: Specify the model to use for the main chat (default: gpt-4). Override the default with the environment variable `AIDER_MODEL`.
 - `-3`: Use gpt-3.5-turbo model for the main chat (not advised). No environment variable override.
+- `--ctags`: Add ctags to the chat to help GPT understand the codebase (default: False, `AIDER_CTAGS`). Override the default with the environment variable `AIDER_CTAGS`.
 - `--no-pretty`: Disable pretty, colorized output. Override the default with the environment variable `AIDER_PRETTY` (default: 1 for enabled, 0 for disabled).
 - `--no-auto-commits`: Disable auto commit of changes. Override the default with the environment variable `AIDER_AUTO_COMMITS` (default: 1 for enabled, 0 for disabled).
 - `--show-diffs`: Show diffs when committing changes (default: False). Override the default with the environment variable `AIDER_SHOW_DIFFS` (default: 0 for False, 1 for True).
