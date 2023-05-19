@@ -22,10 +22,13 @@ def print_tags_info(filename):
         last = tag
 
 
+import subprocess
+
 def get_tags(filename):
-    with open(filename, "r") as tags_file:
-        for line in tags_file:
-            tag = json.loads(line)
+    cmd = ["ctags", "--fields=+S", "--output-format=json", filename]
+    output = subprocess.check_output(cmd).decode("utf-8")
+    for line in output.splitlines():
+        tag = json.loads(line)
             path = tag.get("path")
             scope = tag.get("scope")
             kind = tag.get("kind")
