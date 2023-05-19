@@ -9,7 +9,7 @@ from aider.coder import Coder
 class TestCommands(unittest.TestCase):
     def test_cmd_add(self):
         with tempfile.TemporaryDirectory() as tmpdir:
-            io = IO(pretty=False, yes=True, input_history_file=None, chat_history_file=None)
+            io = IO(pretty=False, yes=True, input_history_file="", chat_history_file="")
             coder = Coder(root=tmpdir)
             commands = Commands(io, coder)
 
