@@ -102,19 +102,21 @@ class InputOutput:
             if multiline_input:
                 show = ". "
 
-        session_kwargs = {
-            "message": show,
-            "completer": completer_instance,
-            "style": style,
-            "reserve_space_for_menu": 4,
-            "complete_style": CompleteStyle.MULTI_COLUMN,
-            "input": self.input,
-            "output": self.output,
-        }
-        if self.input_history_file is not None:
-            session_kwargs["history"] = FileHistory(self.input_history_file)
-        session = PromptSession(**session_kwargs)
-        line = session.prompt()
+            session_kwargs = {
+                "message": show,
+                "completer": completer_instance,
+                "style": style,
+                "reserve_space_for_menu": 4,
+                "complete_style": CompleteStyle.MULTI_COLUMN,
+                "input": self.input,
+                "output": self.output,
+            }
+            if self.input_history_file is not None:
+                session_kwargs["history"] = FileHistory(self.input_history_file)
+
+            session = PromptSession(**session_kwargs)
+            line = session.prompt()
+
             if line.strip() == "{" and not multiline_input:
                 multiline_input = True
                 continue
