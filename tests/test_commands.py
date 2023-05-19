@@ -10,7 +10,7 @@ class TestCommands(unittest.TestCase):
     def test_cmd_add(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             io = IO(pretty=False, yes=True)
-            coder = Coder(root=tmpdir)
+            coder = Coder(main_model="gpt-3.5-turbo", fnames=[], pretty=False, show_diffs=False, auto_commits=False, io=io, dry_run=False)
             commands = Commands(io, coder)
 
             # Mock the Confirm.ask method to return True for creating files
