@@ -180,7 +180,7 @@ class Coder:
             ),
         ]
 
-        utils.show_messages(files_messages, "FILES")
+        # utils.show_messages(files_messages, "FILES")
         return files_messages
 
     def run(self):
