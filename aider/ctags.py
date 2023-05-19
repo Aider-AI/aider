@@ -6,10 +6,13 @@ import subprocess
 # from aider.dump import dump
 
 
-def get_tags_map(filenames):
+def get_tags_map(filenames, root_dname=None):
+    if not root_dname:
+        root_dname = os.getcwd()
+
     tags = []
     for filename in filenames:
-        tags += get_tags(filename)
+        tags += get_tags(filename, root_dname)
     if not tags:
         return
 
@@ -32,16 +35,16 @@ def get_tags_map(filenames):
     return output
 
 
-def split_path(path):
-    path = os.path.relpath(path, os.getcwd())
+def split_path(path, root_dname):
+    path = os.path.relpath(path, root_dname)
     path_components = path.split(os.sep)
     res = [pc + os.sep for pc in path_components[:-1]]
     res.append(path_components[-1])
     return res
 
 
-def get_tags(filename):
-    yield split_path(filename)
+def get_tags(filename, root_dname):
+    yield split_path(filename, root_dname)
 
     cmd = ["ctags", "--fields=+S", "--output-format=json", filename]
     output = subprocess.check_output(cmd).decode("utf-8")

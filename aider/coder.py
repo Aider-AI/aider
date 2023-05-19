@@ -164,8 +164,7 @@ class Coder:
         all_content = files_content
 
         if self.repo is not None:
-            tracked_files = set(self.repo.git.ls_files().splitlines())
-            files_listing = "\n".join(tracked_files)
+            files_listing = get_tags_map(self.get_all_abs_files())
             repo_content = prompts.repo_content_prefix
             repo_content += files_listing
 
@@ -180,6 +179,7 @@ class Coder:
             ),
         ]
 
+        utils.show_messages(messages, "FILES")
         return files_messages
 
     def run(self):
