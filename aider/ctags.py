@@ -4,19 +4,28 @@ import sys
 
 def print_tags_info(filename):
     last = None
+    last_prefix = None
     tags = sorted(get_tags(filename))
 
     for tag in tags:
         if last is None:
             show = tag
+            prefix = None
         else:
             show = []
+            prefix = []
+            stop = False
             for lst, tg in zip(last, tag):
-                if lst == tg:
+                if lst == tg and not stop:
+                    prefix.append(lst)
                     show.append("")
                 else:
+                    stop = True
                     show.append(tg)
 
+        if prefix != last_prefix:
+            print(prefix)
+            last_prefix = prefix
         if not show[-1]:
             show = show[:-1]
         show = "\t".join(show)
