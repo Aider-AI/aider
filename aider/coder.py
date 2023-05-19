@@ -279,7 +279,7 @@ class Coder:
         messages += self.get_files_messages()
         messages += self.cur_messages
 
-        utils.show_messages(messages, "all")
+        # utils.show_messages(messages, "all")
 
         content, interrupted = self.send(messages)
         if interrupted:
