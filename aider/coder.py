@@ -171,7 +171,7 @@ class Coder:
 
         if self.repo is not None:
             other_files = set(self.get_all_abs_files()) - set(self.abs_fnames)
-            if other_files:
+            if other_files and len(other_files) < 100:
                 if self.use_ctags:
                     files_listing = get_tags_map(other_files)
                     ctags_msg = " with selected ctags content"
@@ -498,7 +498,9 @@ class Coder:
                 silent=True,
             )
         except openai.error.InvalidRequestError:
-            self.io.tool_error("Failed to generate commit message using gpt-3.5-turbo due to an invalid request.")
+            self.io.tool_error(
+                "Failed to generate commit message using gpt-3.5-turbo due to an invalid request."
+            )
             return
 
         commit_message = commit_message.strip().strip('"').strip()
