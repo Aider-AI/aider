@@ -114,7 +114,7 @@ class InputOutput:
         if self.input_history_file is not None:
             session_kwargs["history"] = FileHistory(self.input_history_file)
         session = PromptSession(**session_kwargs)
-            line = session.prompt()
+        line = session.prompt()
             if line.strip() == "{" and not multiline_input:
                 multiline_input = True
                 continue
