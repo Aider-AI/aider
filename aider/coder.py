@@ -185,13 +185,12 @@ class Coder:
         files_messages = [
             dict(role="user", content=all_content),
             dict(role="assistant", content="Ok."),
-            dict(
-                role="system",
-                content=prompts.files_content_suffix + prompts.system_reminder,
-            ),
         ]
+        if self.abs_fnames:
+            files_messages += [
+                dict(role="system", content=prompts.system_reminder),
+            ]
 
-        utils.show_messages(files_messages, "FILES")
         return files_messages
 
     def run(self):
@@ -269,7 +268,7 @@ class Coder:
         messages += self.get_files_messages()
         messages += self.cur_messages
 
-        # utils.show_messages(messages, "all")
+        utils.show_messages(messages, "all")
 
         content, interrupted = self.send(messages)
         if interrupted:

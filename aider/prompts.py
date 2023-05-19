@@ -31,6 +31,8 @@ Once you understand the user's request and can see all the relevant code, your r
 """
 
 system_reminder = '''
+Base any edits on the current contents of the files as shown in the user's last message.
+
 You MUST format EVERY code change using an *edit block* like this example:
 
 ```python
@@ -84,12 +86,8 @@ files_content_prefix = (
 )
 
 repo_content_prefix = (
-    "Here is a map showing all the {other}files and ctags content. You *must* ask with the full"
-    " path of the file before suggesting edits to these files:\n\n"
-)
-
-files_content_suffix = (
-    """Base any edits on the current contents of the files as shown in the user's last message."""
+    "Here is a map showing all the {other}files and selected ctags content. You *must* ask with the"
+    " full path of the file before suggesting edits to these files:\n\n"
 )
 
 
