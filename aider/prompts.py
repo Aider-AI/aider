@@ -86,7 +86,7 @@ files_content_prefix = (
 )
 
 repo_content_prefix = (
-    "Here is a map showing all the {other}files and selected ctags content. You *must* ask with the"
+    "Here is a map showing all the {other}files{ctags_msg}. You *must* ask with the"
     " full path of the file before suggesting edits to these files:\n\n"
 )
 

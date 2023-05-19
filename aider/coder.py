@@ -170,13 +170,22 @@ class Coder:
         if self.repo is not None:
             other_files = set(self.get_all_abs_files()) - set(self.abs_fnames)
             if other_files:
-                files_listing = get_tags_map(other_files)
+                if self.use_ctags:
+                    files_listing = get_tags_map(other_files)
+                    ctags_msg = " with selected ctags content"
+                else:
+                    files_listing = "\n".join(self.get_rel_fname(ofn) for ofn in other_files)
+                    ctags_msg = ""
+
                 if self.abs_fnames:
                     other = "other "
                 else:
                     other = ""
 
-                repo_content = prompts.repo_content_prefix.format(other=other)
+                repo_content = prompts.repo_content_prefix.format(
+                    other=other,
+                    ctags_msg=ctags_msg,
+                )
                 repo_content += files_listing
 
                 if all_content:
