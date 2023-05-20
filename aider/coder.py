@@ -176,7 +176,9 @@ class Coder:
                     files_listing = get_tags_map(other_files)
                     ctags_msg = " with selected ctags content"
                 else:
-                    files_listing = "\n".join(self.get_rel_fname(ofn) for ofn in other_files)
+                    files_listing = "\n".join(
+                        self.get_rel_fname(ofn) for ofn in sorted(other_files)
+                    )
                     ctags_msg = ""
 
                 if self.abs_fnames:
