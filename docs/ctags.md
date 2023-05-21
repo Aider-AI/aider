@@ -30,8 +30,8 @@ in Foo with the prints, and it also needs to understand how the
 logging system works.
 
 A simple solution is to send the **entire codebase** to GPT along with
-every change request. Now GPT has all the context! But even moderately
-sized repos won't all fit in the 8K GPT-4 context window. An
+each change request. Now GPT has all the context! But even moderately
+sized repos won't fit in the 8k-token GPT-4 context window. An
 improvement is to be selective, and hand pick which files from the
 repo to send. For the example above, you could send the file that
 contains Foo and the file that contains the logging subsystem.
