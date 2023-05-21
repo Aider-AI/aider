@@ -80,11 +80,11 @@ relevant files for the task at hand.
 Under the hood, `aider` uses
 [universal ctags](https://github.com/universal-ctags/ctags)
 to build the
-map. Universal ctags can scan source code in a large variety of
+map. Universal ctags can scan source code written in a large variety of
 languages, and extract data about all the symbols defined in each
 file.
 
-For example, here is the `ctags --fields=+S --output-format=json` output for the `main.py` mapped above:
+For example, here is the `ctags --fields=+S --output-format=json` output for the `main.py` file mapped above:
 
 ```json
 {
@@ -104,14 +104,14 @@ For example, here is the `ctags --fields=+S --output-format=json` output for the
 }
 ```
 
-The map is built using the `name`, `path`, `scope`, `kind` and
-`signature` data from `ctags`. The map is formatted is a sorted,
+The repo map is built using the `name`, `path`, `scope`, `kind` and
+`signature` data from `ctags`. The map is formatted as a sorted,
 hierarchical tree to efficiently convey the data to GPT-4 using a
 minimal number of tokens.
 
-## Trying it out
+## Try it out
 
-To use the repo map feature with `aider`:
+To use this experimental repo map feature with `aider`:
 
   - Install [universal ctags](https://github.com/universal-ctags/ctags).
   - Run `aider` with the `--ctags` option.
