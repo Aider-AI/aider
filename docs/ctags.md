@@ -2,7 +2,7 @@
 # Using ctags to help GPT-4 understand an entire repo
 
 GPT-4 is great at coding, but it's hard to work with it to make
-modifications inside a larger code base.
+modifications inside a large code base.
 GPT can't really understand and navigate more code than can fit
 in its context window.
 And many
