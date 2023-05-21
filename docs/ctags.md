@@ -75,7 +75,7 @@ Mapping out the repo like this provides some benefits:
 Of course, for large repositories, even their map might be too large
 for the context window.  However, this mapping approach opens up the
 ability to collaborate with GPT-4 on larger codebases than previous
-methods.  It also reduces the need for manually curating which files to
+methods.  It also reduces the need to manually curate which files to
 add to the chat context, empowering GPT to autonomously identify
 relevant files for the task at hand.
 
