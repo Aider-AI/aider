@@ -113,6 +113,25 @@ The repo map is built using the `name`, `path`, `scope`, `kind` and
 hierarchical tree to efficiently convey the data to GPT-4 using a
 minimal number of tokens.
 
+## Example chat transcript
+
+This
+[chat transcript](https://aider.chat/examples/add-test.html)
+shows GPT-4 creating a black box test case, **without being given
+access to the source code of the function being tested or any of the
+other code in the repo.**
+
+Instead, GPT is operating entirely off 
+the repo map.
+Using only the meta-data in the map, GPT is able to:
+
+  - Find the function signature of the `cmd_add()` function which the user wants a test case for.
+  - Determine that it is a method of the `Command` class, so the test case will need to instantiate an instance to conduct the test.
+  - Identify that creating a `Command` instance requires passing in `InputOutput` and `Coder` instances.
+  - Figure out the arguments required to instantiate the `InputOuput` instance.
+  - The `Coder` class looks complex enough that it decides to use a `MagickMock`
+
+
 ## Try it out
 
 To use this experimental repo map feature:

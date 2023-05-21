@@ -1,9 +1,10 @@
 
 # Create a "black box" test case
 
-This transcript shows GPT-4 creating a black box test case, without being given
-access to the source code of the function being tested or *any* of the
-other code in the repo.
+This transcript shows GPT-4 creating a black box test case,
+**without being given
+access to the source code of the function being tested or any of the
+other code in the repo.**
 
 Instead, GPT is operating entirely off a
 [ctags based repo map](https://aider.chat/docs/ctags.html)
