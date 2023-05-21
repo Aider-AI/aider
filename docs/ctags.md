@@ -6,7 +6,7 @@ code in larger code bases.
 Many common
 types of code changes require knowledge and context from multiple files
 scattered throughout a large repo. 
-This is a challenge for GPT-4, which can only consider the 8k-tokens
+This is a challenge for GPT-4, which can only consider 8k-tokens
 worth of code which can fit in its context window.
 
 To address this issue, `aider` has
@@ -34,7 +34,7 @@ system works.
 
 A simple solution is to send the **entire codebase** to GPT along with
 each change request. Now GPT has all the context! But even moderately
-sized repos won't fit in the 8k-token GPT-4 context window. An
+sized repos won't fit in the 8k-token context window. An
 improved approach is to be selective, and hand pick which files from the
 repo to send. For the example above, you could send the file that
 contains Foo and the file that contains the logging subsystem.
