@@ -40,7 +40,7 @@ This works pretty well, and is how `aider` previously worked. You
 manually specify which files to "add to the chat".
 
 But it's not ideal to have to manually identify and curate the right
-subset of the code base to add to the chat. It can get complicated, as
+set of files to add to the chat. It can get complicated, as
 some changes will need context from many files. You may still overrun
 the context window if individual files are very large.
 
