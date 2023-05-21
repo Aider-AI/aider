@@ -1,8 +1,8 @@
 
 # Enhancing GPT-4's understanding of repos using ctags
 
-While GPT-4 excels at coding tasks, it struggles with making
-modifications within large code bases.
+While GPT-4 excels at coding tasks, it struggles with modifying
+code in larger code bases.
 Many common
 types of code changes require knowledge and context from multiple files
 scattered throughout a large repo. 
