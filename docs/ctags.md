@@ -49,8 +49,8 @@ The latest version of `aider` sends a **repo map** to GPT along with
 each change request. The map contains a list of all the files in the
 repo, along with the symbols which are defined in each file. Callables
 like functions and methods also include their signatures. Here's a
-piece of the map for the aider repo, just for
-[main.py](https://github.com/paul-gauthier/aider/blob/main/aider/main.py):
+piece of the map for the aider repo, just for the
+[main.py](https://github.com/paul-gauthier/aider/blob/main/aider/main.py) file:
 
 ```
 aider/
@@ -70,7 +70,7 @@ Mapping out the repo like this provides some benefits:
 Of course, for large repositories, even their map might be too large
 for the context window.  However, this mapping approach opens up the
 ability to collaborate with GPT-4 on larger codebases than previous
-methods.  It also minimizes the need for manual curation of files to
+methods.  It also reduces the need for manual curation of files to
 add to the chat context, empowering GPT to autonomously identify
 relevant files for the task at hand.
 
@@ -110,7 +110,7 @@ minimal number of tokens.
 
 ## Try it out
 
-To use this experimental repo map feature with `aider`:
+To use this experimental repo map feature:
 
   - Install [universal ctags](https://github.com/universal-ctags/ctags).
   - Run `aider` with the `--ctags` option.
