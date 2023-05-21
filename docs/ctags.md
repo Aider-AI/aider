@@ -65,7 +65,7 @@ aider/
 
 Mapping out the repo like this provides some benefits:
 
-  - GPT can see the variables, classes, methods and function signatures from everywhere in the repo. This alone may give it enough context to solve many tasks. For example, it can probably figure out how to use the API exported from a module just using the class, method and argument names in the map.
+  - GPT can see the variables, classes, methods and function signatures from everywhere in the repo. This alone may give it enough context to solve many tasks. For example, it can probably figure out how to use the API exported from a module based on the class, method and argument names shown in the map.
   - If it needs to see more code, GPT use the map to figure out by itself which files it needs to look at. GPT then asks to see these files, and `aider` will automatically add them to the chat context (with user approval).
 
 Of course, large repos will probably have maps that are too large for
