@@ -1,9 +1,9 @@
 
-* Using ctags to help GPT-4 understand an entire repo
+# Using ctags to help GPT-4 understand an entire repo
 
 Coding with GPT-4 against large code bases has been difficult. It's hard for GPT to understand a large codebase well enough to make many common types of code changes that need knowledge and context from multiple files. A new feature of `aider` uses `ctags` to give GPT a map of the repo so it can better understand and navigate larger repos.
 
-** The problem of code context
+## The problem of code context
 
 GPT-4 is great at "self contained" coding tasks, like writing or modifying a pure function with no external dependencies. These work great because you send GPT a self-contained question ("write a Fibonacci function") and it can create new code from whole cloth. Or you can send it an existing function implementation and ask for self contained changes ("rewrite the loop using list comprehensions"). These require no context beyond the code being discussed.
 
@@ -15,7 +15,7 @@ This works well, and is how `aider` previously worked. You manually choose which
 
 But it's not ideal to have to manually identify and curate the right subset of the code base for each change request. It can get complicated, as some requests need context from many files. You may still overrun the context window.
 
-** Using a repo map as context
+## Using a repo map as context
 
 The latest version of `aider` sends a "map" of the repo to GPT. The map contains a list of all the files in the repo, along with the symbols which are defined in each file. Callables like functions and methods also include their signature. Here's a piece of the map for [main.py](https://github.com/paul-gauthier/aider/blob/main/aider/main.py) from the `aider` repo:
 
@@ -35,7 +35,7 @@ Mapping out the entire repo like this provides a number of benefits:
 
 Of course, large repos will have maps that are too large for the context window. But this mapping approach makes it possible to collaborate with GPT-4 on larger code bases than was possible before. And it reduces the need to manually curate which files need to be added to the chat for context.
 
-** Using ctags to make the map
+## Using ctags to make the map
 
 Under the hood, `aider` uses the [universal ctags](https://github.com/universal-ctags/ctags) tool to build the map. Universal ctags can scan source code in a large variety of languages, and extract data about all the symbols defined in each file.
 
