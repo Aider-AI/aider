@@ -1,5 +1,5 @@
 
-# Enhancing GPT-4's understanding of repos using ctags
+# Improving GPT-4's codebase understanding with ctags
 
 While GPT-4 excels at coding tasks, it struggles with modifying
 code in larger code bases.
