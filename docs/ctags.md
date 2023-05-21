@@ -18,7 +18,7 @@ larger repositories.
 
 GPT-4 is great at "self contained" coding tasks, like writing or
 modifying a pure function with no external dependencies. These work
-great because you can send GPT a self-contained request ("write a
+well because you can send GPT a self-contained request ("write a
 Fibonacci function") and it can create new code from whole cloth. Or
 you can send it an existing function implementation and ask for self
 contained changes ("rewrite the loop using list
@@ -26,10 +26,11 @@ comprehensions"). These require no context beyond the code being
 discussed.
 
 Most real code is not pure and self-contained. And many common code
-changes require you to understand many parts of a repo.  If you want
-GPT to "switch all the print statements in Foo to use the logging
-system", it needs to see the code in the Foo class with the prints,
-and it also needs to understand how the logging system works.
+changes require you to understand related code from many parts of a
+repo.  If you want GPT to "switch all the print statements in Foo to
+use the logging system", it needs to see the code in the Foo class
+with the prints, and it also needs to understand how the logging
+system works.
 
 A simple solution is to send the **entire codebase** to GPT along with
 each change request. Now GPT has all the context! But even moderately
