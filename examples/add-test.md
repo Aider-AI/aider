@@ -1,4 +1,31 @@
-> /Users/gauthier/Projects/aider/.venv/bin/aider tests/test_commands.py  
+
+# Create a "black box" test
+
+This transcript shows GPT-4 creating a black box test case, without being given
+access to the source code of the function being tested or *any* of the
+code in the repo.
+
+Instead, GPT is operating entirely off a
+[ctags based repo map](https://aider.chat/docs/ctags.html)
+which provides details on all the symbols and function signatures in the repo.
+Using only the meta-data in the map, GPT is able to:
+
+  - Find the `cmd_add()` function signature
+  - Determine that it is a method of the `Command` class, so will need to instantiate an instance to conduct the test.
+  - Determine that creating a `Command` instance requires passing in `InputOutput` and `Coder` instances.
+  - Determines the arguments requited to instantiate the `InputOuput` instance.
+
+The signature of `cmd_add()` doesn't have types, so GPT incorrectly guesses
+that it wants a `list` of files. The user uses the `/run` command to
+run the new unit test, and gets an error based on this misunderstanding.
+
+GPT reviews the error message and fixes the call to `cmd_add()` to pass
+a string with a space-separated list of filenames instead.
+The test then passes on the next `/run`.
+
+## Chat transcript
+
+> $ aider tests/test_commands.py  
 > Creating empty file tests/test_commands.py  
 > Added tests/test_commands.py to the chat  
 > Files not tracked in .git:  
@@ -99,7 +126,7 @@ This test will ensure that the `cmd_add` method creates the specified files in t
 > ============================== 1 failed in 0.34s ===============================  
 > ```  
 >
-> Add the output to the chat? [y/n] (y):  
+> Add the output to the chat? [y/n] (y): y  
 
 It seems that the `cmd_add` method in `aider/commands.py` is expecting a string as input, but in the test, we are passing a list. I will update the test to pass a string instead of a list.
 
