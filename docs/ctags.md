@@ -1,7 +1,7 @@
 
 # Using ctags to help GPT-4 understand an entire repo
 
-Coding with GPT-4 against large code bases has been difficult. It's hard for GPT to understand a large codebase well enough to make many common types of code changes that need knowledge and context from multiple files. A new feature of `aider` uses `ctags` to give GPT a map of the repo so it can better understand and navigate larger repos.
+Coding with GPT-4 against large code bases has been difficult. It's hard for GPT to understand a large codebase well enough to make many common types of code changes that need knowledge and context from multiple files. A new feature of `aider` uses `ctags` to give GPT a map, so that it can better understand and navigate larger repos.
 
 ## The problem of code context
 
@@ -9,7 +9,13 @@ GPT-4 is great at "self contained" coding tasks, like writing or modifying a pur
 
 Most real code is not pure and self-contained. To understand and modify such code, you need to understand the rest of the repo and relevant external libraries. If you ask GPT to "switch all the print statements in Foo to use the logging system", it needs to see the code with the prints and also needs to understand how the logging system works.
 
-A simple solution is to send the entire codebase to GPT along with every change request. Now GPT has all the context! But even moderately sized projects won't all fit in the 8K GPT-4 context window. An improvement is to be selective, and hand pick which parts of the repo to send with each request. For the example above, you could send the source file that contains Foo and the file that contains the logging subsystem.
+A simple solution is to send the **entire codebase** to GPT along with
+every change request. Now GPT has all the context! But even moderately
+sized projects won't all fit in the 8K GPT-4 context window. An
+improvement is to be selective, and hand pick which parts of the repo
+to send. For the example above, you could send the
+source file that contains Foo and the file that contains the logging
+subsystem.
 
 This works well, and is how `aider` previously worked. You manually choose which files to "add to the chat".
 
@@ -37,13 +43,15 @@ Of course, large repos will have maps that are too large for the context window.
 
 ## Using ctags to make the map
 
-Under the hood, `aider` uses the [universal ctags](https://github.com/universal-ctags/ctags) tool to build the map. Universal ctags can scan source code in a large variety of languages, and extract data about all the symbols defined in each file.
+Under the hood, `aider` uses [universal
+ctags](https://github.com/universal-ctags/ctags) to build the
+map. Universal ctags can scan source code in a large variety of
+languages, and extract data about all the symbols defined in each
+file.
 
-For example, here is the `ctags` output for the `main.py` mapped above:
+For example, here is the `ctags --fields=+S --output-format=json` output for the `main.py` mapped above:
 
 ```json
-$ ctags --fields=+S --output-format=json aider/main.py | jq
-
 {
   "_type": "tag",
   "name": "main",
