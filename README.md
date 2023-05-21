@@ -29,6 +29,7 @@ You can find more chat transcripts on the [examples page](https://aider.chat/exa
 * `aider` will apply the edits suggested by GPT-4 directly to your source files.
 * `aider` will automatically commit each changeset to your local git repo with a descriptive commit message. These frequent, automatic commits provide a safety net. It's easy to undo `aider` changes or use standard git workflows to manage longer sequences of changes.
 * `aider` can review multiple source files at once and make coordinated code changes across all of them in a single changeset/commit.
+* `aider` constructs a concise [ctags based repo map](https://aider.chat/docs/ctags.html) and passes it to GPT-4 to enhance its ability to understand and navigate larger code bases.
 * `aider` knows about all the files in your repo, so it can ask for permission to review whichever files seem relevant to your requests.
 * You can also edit the files in your editor while chatting with `aider`.
   * `aider` will notice if you edit the files outside the chat.
