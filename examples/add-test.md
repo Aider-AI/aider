@@ -3,6 +3,7 @@
 > Added tests/test_commands.py to the chat  
 > Files not tracked in .git:  
 > - tests/test_commands.py  
+>  
 > Add them? y  
 > Added tests/test_commands.py to the git repo  
 > Commit b9cea2c Added new files to the git repo: tests/test_commands.py  
@@ -52,7 +53,7 @@ This test will ensure that the `cmd_add` method creates the specified files in t
 
 #### /run pytest tests/test_commands.py
 
->   
+> ```  
 > ============================= test session starts ==============================  
 > platform darwin -- Python 3.11.3, pytest-7.3.1, pluggy-1.0.0  
 > rootdir: /Users/gauthier/Projects/aider  
@@ -96,7 +97,7 @@ This test will ensure that the `cmd_add` method creates the specified files in t
 > =========================== short test summary info ============================  
 > FAILED tests/test_commands.py::TestCommands::test_cmd_add - AttributeError: '...  
 > ============================== 1 failed in 0.34s ===============================  
->  
+> ```  
 >
 > Add the output to the chat? [y/n] (y):  
 
