@@ -129,7 +129,7 @@ Using only the meta-data in the map, GPT is able to:
   - Determine that it is a method of the `Command` class, so the test case will need to instantiate an instance to conduct the test.
   - Identify that creating a `Command` instance requires passing in `InputOutput` and `Coder` instances.
   - Figure out the arguments required to instantiate the `InputOuput` instance.
-  - The `Coder` class looks complex enough that it decides to use a `MagickMock`
+  - Decide that the `Coder` class looks complex enough to use a `MagickMock`.
 
 
 ## Try it out
