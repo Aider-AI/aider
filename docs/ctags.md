@@ -8,7 +8,7 @@ in its context window.
 And many
 common types of code changes will need knowledge and context from
 multiple files strewn about the repo.
-A new feature of `aider` uses `ctags` to give GPT a
+A new experimental feature of `aider` uses `ctags` to give GPT a
 **repo map**, so that it can better understand and navigate larger repos.
 
 ## The problem: code context
@@ -76,8 +76,9 @@ to the chat.
 
 ## Using ctags to make the map
 
-Under the hood, `aider` uses [universal
-ctags](https://github.com/universal-ctags/ctags) to build the
+Under the hood, `aider` uses
+[universal ctags](https://github.com/universal-ctags/ctags)
+to build the
 map. Universal ctags can scan source code in a large variety of
 languages, and extract data about all the symbols defined in each
 file.
@@ -106,3 +107,11 @@ The map is built using the `name`, `path`, `scope`, `kind` and
 `signature` data from `ctags`. The map is formatted is a sorted,
 hierarchical tree to efficiently convey the data to GPT-4 using a
 minimal number of tokens.
+
+## Trying it out
+
+To use the repo map feature with `aider`:
+
+  - Install [universal ctags](https://github.com/universal-ctags/ctags).
+  - Run `aider` with the `--ctags` option.
+  
