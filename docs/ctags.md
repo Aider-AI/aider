@@ -1,32 +1,61 @@
 
 # Using ctags to help GPT-4 understand an entire repo
 
-Coding with GPT-4 against large code bases has been difficult. It's hard for GPT to understand a large codebase well enough to make many common types of code changes that need knowledge and context from multiple files. A new feature of `aider` uses `ctags` to give GPT a map, so that it can better understand and navigate larger repos.
+GPT-4 is great at coding, but it's hard to work with it to make
+modifications inside a larger code base.
+GPT can't really understand and navigate more code than can fit
+in its context window.
+And many
+common types of code changes will need knowledge and context from
+multiple files strewn about the repo.
+A new feature of `aider` uses `ctags` to give GPT a
+**repo map**, so that it can better understand and navigate larger repos.
 
-## The problem of code context
+## The problem: code context
 
-GPT-4 is great at "self contained" coding tasks, like writing or modifying a pure function with no external dependencies. These work great because you send GPT a self-contained question ("write a Fibonacci function") and it can create new code from whole cloth. Or you can send it an existing function implementation and ask for self contained changes ("rewrite the loop using list comprehensions"). These require no context beyond the code being discussed.
+GPT-4 is great at "self contained" coding tasks, like writing or
+modifying a pure function with no external dependencies. These work
+great because you can send GPT a self-contained request ("write a
+Fibonacci function") and it can create new code from whole cloth. Or
+you can send it an existing function implementation and ask for self
+contained changes ("rewrite the loop using list
+comprehensions"). These require no context beyond the code being
+discussed.
 
-Most real code is not pure and self-contained. To understand and modify such code, you need to understand the rest of the repo and relevant external libraries. If you ask GPT to "switch all the print statements in Foo to use the logging system", it needs to see the code with the prints and also needs to understand how the logging system works.
+Most real code is not pure and self-contained. And many common code
+changes require you to understand many parts of the repo and relevant
+external libraries. If you want GPT to "switch all the print
+statements in Foo to use the logging system", it needs to see the code
+in Foo with the prints, and it also needs to understand how the
+logging system works.
 
 A simple solution is to send the **entire codebase** to GPT along with
 every change request. Now GPT has all the context! But even moderately
-sized projects won't all fit in the 8K GPT-4 context window. An
-improvement is to be selective, and hand pick which parts of the repo
-to send. For the example above, you could send the
-source file that contains Foo and the file that contains the logging
-subsystem.
+sized repos won't all fit in the 8K GPT-4 context window. An
+improvement is to be selective, and hand pick which files from the
+repo to send. For the example above, you could send the file that
+contains Foo and the file that contains the logging subsystem.
 
-This works well, and is how `aider` previously worked. You manually choose which files to "add to the chat".
+This works pretty well, and is how `aider` previously worked. You
+manually specify which files to "add to the chat".
 
-But it's not ideal to have to manually identify and curate the right subset of the code base for each change request. It can get complicated, as some requests need context from many files. You may still overrun the context window.
+But it's not ideal to have to manually identify and curate the right
+subset of the code base to add to the chat. It can get complicated, as
+some changes will need context from many files. You may still overrun
+the context window if individual files are very large.
 
-## Using a repo map as context
+## Using a repo map to provide context
 
-The latest version of `aider` sends a "map" of the repo to GPT. The map contains a list of all the files in the repo, along with the symbols which are defined in each file. Callables like functions and methods also include their signature. Here's a piece of the map for [main.py](https://github.com/paul-gauthier/aider/blob/main/aider/main.py) from the `aider` repo:
+The latest version of `aider` sends a **repo map** to GPT along with
+each change request. The map contains a list of all the files in the
+repo, along with the symbols which are defined in each file. Callables
+like functions and methods also include their signatures. Here's a
+piece of the map for the aider repo, just for
+[main.py](https://github.com/paul-gauthier/aider/blob/main/aider/main.py):
 
 ```
 aider/
+   ...
    main.py:
       function
         main (args=None, input=None, output=None)
@@ -34,12 +63,16 @@ aider/
         status
 ```
 
-Mapping out the entire repo like this provides a number of benefits:
+Mapping out the repo like this provides some benefits:
 
-  - GPT can see the variables, classes, methods and function signatures from everywhere in the repo. This alone may give it enough context to solve many tasks. For example, it can probably figure out how to use the API exported from a module from this map.
-  - If it needs to see more code, GPT use the map to figure out which files it needs to look at. It can ask to see these files, and `aider` will automatically add them to the chat context (with user approval).
+  - GPT can see the variables, classes, methods and function signatures from everywhere in the repo. This alone may give it enough context to solve many tasks. For example, it can probably figure out how to use the API exported from a module just using the class, method and argument names in the map.
+  - If it needs to see more code, GPT use the map to figure out by itself which files it needs to look at. GPT then asks to see these files, and `aider` will automatically add them to the chat context (with user approval).
 
-Of course, large repos will have maps that are too large for the context window. But this mapping approach makes it possible to collaborate with GPT-4 on larger code bases than was possible before. And it reduces the need to manually curate which files need to be added to the chat for context.
+Of course, large repos will probably have maps that are too large for
+the context window. But this mapping approach makes enables
+collaboration with GPT-4 on larger code bases than was possible
+before. And it reduces the need to manually curate which files to add
+to the chat.
 
 ## Using ctags to make the map
 
@@ -69,4 +102,7 @@ For example, here is the `ctags --fields=+S --output-format=json` output for the
 }
 ```
 
-Aider uses the `name`, `path`, `scope`, `kind` and `signature` data to create the map. It sorts and reformats the map into a hierarchical representation to efficiently convey the data using a minimal number of tokens.
+The map is built using the `name`, `path`, `scope`, `kind` and
+`signature` data from `ctags`. The map is formatted is a sorted,
+hierarchical tree to efficiently convey the data to GPT-4 using a
+minimal number of tokens.
