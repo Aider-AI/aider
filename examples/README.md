@@ -17,7 +17,7 @@ In the chats, you'll see a varity of coding tasks like generating new code, edit
 
 * [**Automatically Update Docs**](update-docs.md): Automatically updating documentation based on the latest version of the main() function.
 
-* [**Create Black Box Test**](add-test.md): Creating a "black box" test case without access to the source code, using only a [ctags based repo map](https://aider.chat/docs/ctags.html).
+* [**Create Black Box Test**](add-test.md): Creating a "black box" test case without access to the source of the method being tested, using only a [ctags based repo map](https://aider.chat/docs/ctags.html).
 
 * [**Editing an Asciinema Cast File**](asciinema.md): Editing escape sequences in an `asciinema` screencast file.
 
