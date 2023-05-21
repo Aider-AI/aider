@@ -22,11 +22,10 @@ comprehensions"). These require no context beyond the code being
 discussed.
 
 Most real code is not pure and self-contained. And many common code
-changes require you to understand many parts of the repo and relevant
-external libraries. If you want GPT to "switch all the print
-statements in Foo to use the logging system", it needs to see the code
-in Foo with the prints, and it also needs to understand how the
-logging system works.
+changes require you to understand many parts of a repo.  If you want
+GPT to "switch all the print statements in Foo to use the logging
+system", it needs to see the code in the Foo class with the prints,
+and it also needs to understand how the logging system works.
 
 A simple solution is to send the **entire codebase** to GPT along with
 each change request. Now GPT has all the context! But even moderately
@@ -41,7 +40,8 @@ manually specify which files to "add to the chat".
 But it's not ideal to have to manually identify and curate the right
 set of files to add to the chat. It can get complicated, as
 some changes will need context from many files. And you might still overrun
-the context window if individual files are very large.
+the context window if you need to add too many files for context,
+many of which aren't going to end up with modifications.
 
 ## Using a repo map to provide context
 
