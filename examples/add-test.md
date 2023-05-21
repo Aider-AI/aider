@@ -17,9 +17,9 @@ Using only the meta-data in the map, GPT is able to:
   - Figure out the arguments required to instantiate the `InputOuput` instance.
   - Decide that the `Coder` class looks complex enough to use a `MagickMock`.
 
-The signature of `cmd_add()` doesn't have types, so GPT makes a
-reasonable but incorrect guess that it wants a `list` of files. The
-user uses the `/run` command to run the new unit test, which throws an
+The `cmd_add()` method is defined without type annotations, so GPT makes a
+reasonable but incorrect guess that it accepts a `list` of files. The
+user invokes the `/run` command to run the new unit test, which throws an
 error based on this misunderstanding.
 
 GPT reviews the error message and fixes the call to `cmd_add()` to
