@@ -68,11 +68,14 @@ Mapping out the repo like this provides some benefits:
   - GPT can see the variables, classes, methods and function signatures from everywhere in the repo. This alone may give it enough context to solve many tasks. For example, it can probably figure out how to use the API exported from a module based on the details shown in the map.
   - If it needs to see more code, GPT can use the map to figure out by itself which files it needs to look at. GPT will then ask to see these specific files, and `aider` will automatically add them to the chat context (with user approval).
 
-Of course, large repos will probably have maps that are too large for
-the context window. But this mapping approach makes enables
-collaboration with GPT-4 on larger code bases than was possible
-before. And it reduces the need to manually curate which files to add
-to the chat.
+Of course, for large repos even their map might be too large for
+the context window.
+But this mapping approach enables
+collaboration with GPT-4 on larger code bases
+than was previously possible.
+And it reduces the need to manually curate which files to add
+to the chat, giving GPT itself more ability to identify which files
+are relevant to the task at hand.
 
 ## Using ctags to make the map
 
