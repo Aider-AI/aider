@@ -17,6 +17,8 @@ In the chats, you'll see a varity of coding tasks like generating new code, edit
 
 * [**Automatically Update Docs**](update-docs.md): Automatically updating documentation based on the latest version of the main() function.
 
+* [**Add Test Example**](add-test.md): Creating a "black box" test case for the `cmd_add()` function without access to the source code, using a ctags-based repo map.
+
 * [**Editing an Asciinema Cast File**](asciinema.md): Editing escape sequences in an `asciinema` screencast file.
 
 ## What's happening in these chats?
