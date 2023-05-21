@@ -69,7 +69,7 @@ aider/
 
 Mapping out the repo like this provides some benefits:
 
-  - GPT can see the variables, classes, methods and function signatures from everywhere in the repo. This alone may give it enough context to solve many tasks. For example, it can probably figure out how to use the API exported from a module based on the details shown in the map.
+  - GPT can see variables, classes, methods and function signatures from everywhere in the repo. This alone may give it enough context to solve many tasks. For example, it can probably figure out how to use the API exported from a module based on the details shown in the map.
   - If it needs to see more code, GPT can use the map to figure out by itself which files it needs to look at. GPT will then ask to see these specific files, and `aider` will automatically add them to the chat context (with user approval).
 
 Of course, for large repositories, even their map might be too large
@@ -109,8 +109,10 @@ For example, here is the `ctags --fields=+S --output-format=json` output for the
 ```
 
 The repo map is built using the `name`, `path`, `scope`, `kind` and
-`signature` data from `ctags`. The map is formatted as a sorted,
-hierarchical tree to efficiently convey the data to GPT-4 using a
+`signature` data from `ctags`.
+Rather then sending that chatty json data to GPT, `aider`
+formats the map as a sorted,
+hierarchical tree. This efficiently conveys the map data to GPT-4 using a
 minimal number of tokens.
 
 ## Example chat transcript
