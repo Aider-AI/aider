@@ -26,7 +26,7 @@ comprehensions"). These require no context beyond the code being
 discussed.
 
 Most real code is not pure and self-contained. And many common code
-changes require you to understand related code from many parts of a
+changes require you to understand related code from many different files in a
 repo.  If you want GPT to "switch all the print statements in Foo to
 use the logging system", it needs to see the code in the Foo class
 with the prints, and it also needs to understand how the logging
