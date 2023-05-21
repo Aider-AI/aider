@@ -1,7 +1,14 @@
 
 # Enhancing GPT-4's understanding of entire repos using ctags
 
-While GPT-4 excels at coding tasks, it struggles with making modifications within large code bases. Its limited context window prevents it from understanding and navigating code beyond its capacity. Many common code changes require knowledge and context from multiple files scattered throughout the repo. To address this issue, `aider` introduces an experimental feature that utilizes `ctags` to provide GPT with a **repo map**, enabling it to better comprehend and navigate larger repositories.
+While GPT-4 excels at coding tasks, it struggles with making
+modifications within large code bases. Its limited context window
+prevents it from understanding code beyond its capacity. Many common
+code changes require knowledge and context from multiple files
+scattered throughout a large repo. To address this issue, `aider` has
+introduced an experimental feature that utilizes `ctags` to provide
+GPT with a **repo map**, enabling it to better comprehend and navigate
+larger repositories.
 
 ## The problem: code context
 
