@@ -1,19 +1,20 @@
 
-# Create a "black box" test
+# Create a "black box" test case
 
 This transcript shows GPT-4 creating a black box test case, without being given
 access to the source code of the function being tested or *any* of the
-code in the repo.
+other code in the repo.
 
 Instead, GPT is operating entirely off a
 [ctags based repo map](https://aider.chat/docs/ctags.html)
 which provides details on all the symbols and function signatures in the repo.
 Using only the meta-data in the map, GPT is able to:
 
-  - Find the `cmd_add()` function signature
-  - Determine that it is a method of the `Command` class, so will need to instantiate an instance to conduct the test.
-  - Determine that creating a `Command` instance requires passing in `InputOutput` and `Coder` instances.
-  - Determines the arguments requited to instantiate the `InputOuput` instance.
+  - Find the function signature of the `cmd_add()` function which the user wants a test case for.
+  - Determine that it is a method of the `Command` class, so the test case will need to instantiate an instance to conduct the test.
+  - Identify that creating a `Command` instance requires passing in `InputOutput` and `Coder` instances.
+  - Figure out the arguments required to instantiate the `InputOuput` instance.
+  - The `Coder` class looks complex enough that it decides to use a `MagickMock`
 
 The signature of `cmd_add()` doesn't have types, so GPT incorrectly guesses
 that it wants a `list` of files. The user uses the `/run` command to
