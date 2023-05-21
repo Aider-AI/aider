@@ -18,7 +18,7 @@ Here are some example transcripts that show how you can chat with `aider` to gen
 
 * [**Complex Multi-file Change with Debugging**](https://aider.chat/examples/complex-change.html): A complex code change involving multiple source files and debugging.
 
-* [**Create Black Box Test**](add-test.md): Creating a "black box" test case without access to the source of the method being tested, using only a [ctags based repo map](https://aider.chat/docs/ctags.html).
+* [**Create a Black Box Test Case**](add-test.md): Creating a "black box" test case without access to the source of the method being tested, using only a [ctags based repo map](https://aider.chat/docs/ctags.html).
 
 You can find more chat transcripts on the [examples page](https://aider.chat/examples/).
 

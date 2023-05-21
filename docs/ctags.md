@@ -54,7 +54,7 @@ The latest version of `aider` sends a **repo map** to GPT along with
 each change request. The map contains a list of all the files in the
 repo, along with the symbols which are defined in each file. Callables
 like functions and methods also include their signatures. Here's a
-piece of the map for the aider repo, just for the
+piece of the map of the aider repo, just mapping the
 [main.py](https://github.com/paul-gauthier/aider/blob/main/aider/main.py) file:
 
 ```
