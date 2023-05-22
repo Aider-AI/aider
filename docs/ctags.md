@@ -43,15 +43,16 @@ with the prints, and it also needs to understand how the project's BarLog
 logging system works.
 
 A simple solution is to **send the entire codebase** to GPT along with
-each change request. Now GPT has all the context! But even moderately
-sized repos won't fit in the 8k-token context window.
+each change request. Now GPT has all the context! But this won't work
+for even moderately
+sized repos that won't fit in the 8k-token context window.
 
 An
 improved approach is to be selective, and **hand pick which files to send**.
 For the example above, you could send the file that
-contains Foo and the file that contains the logging subsystem.
-This works pretty well, and is how `aider` previously worked. You
-manually specify which files to "add to the chat".
+contains Foo and the file that contains the BarLog logging subsystem.
+This works pretty well, and is supported by `aider`: you
+can manually specify which files to "add to the chat".
 
 But it's not ideal to have to manually identify the right
 set of files to add to the chat. 
