@@ -7,14 +7,15 @@ like generating brand new code or modifying a pure function without dependencies
 But it's difficult to use GPT-4 to modify or extend
 a complex pre-existing codebase, which has many dependencies
 between different parts of the system.
-To modify such code, GPT needs to understand all of these dependencies.
-And depending on the assigned coding task, it may not be obvious
-how to even determine which parts of the codebase are relevent to solving the task.
-Further, assuming we can identify all the needed context, we must
+To modify such code, GPT needs to understand these dependencies and APIs
+which interconnect all the subsystems.
+Depending on the assigned coding task, it may not be obvious
+how to determine which parts of the codebase are relevent to solving the task.
+Even assuming we can identify all the needed context, we must
 ensure that it fits within GPT-4's 8k-token
 context window.
 
-To address this issue, `aider` has
+To address these issues, `aider` has
 a new experimental feature that utilizes `ctags` to provide
 GPT with a **concise map of your whole git repository** including
 all declared variables and functions with call signatures.
