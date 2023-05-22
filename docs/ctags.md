@@ -138,6 +138,7 @@ Using only the meta-data in the map, GPT is able to:
 
 To use this experimental repo map feature:
 
+  - Install [aider](https://github.com/paul-gauthier/aider#installation).
   - Install [universal ctags](https://github.com/universal-ctags/ctags).
-  - Run `aider` with the `--ctags` option.
+  - Run `aider` with the `--ctags` option inside your repo.
   
