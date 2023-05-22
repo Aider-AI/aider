@@ -112,9 +112,9 @@ For example, here is the `ctags --fields=+S --output-format=json` output for the
 
 The repo map is built using the `name`, `path`, `scope`, `kind` and
 `signature` data from `ctags`.
-Rather then sending that chatty json data to GPT, `aider`
+Rather then sending the data to GPT in that chatty json format, `aider`
 formats the map as a sorted,
-hierarchical tree. This is a format that is easy to understand and which efficiently conveys the map data to GPT-4 using a
+hierarchical tree. This is a format that GPT can easily understand and which efficiently conveys the map data to GPT-4 using a
 minimal number of tokens.
 
 ## Example chat transcript
