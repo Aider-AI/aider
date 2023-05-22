@@ -6,8 +6,8 @@ code in larger code bases.
 Many common
 types of code changes require knowledge and context from multiple files
 scattered throughout a large repo. 
-This is a challenge for GPT-4, which can only consider 8k-tokens
-worth of code which can fit in its context window.
+This is a challenge for GPT-4, which can only fit 8k-tokens
+worth of code in its context window.
 
 To address this issue, `aider` has
 introduced an experimental feature that utilizes `ctags` to provide
