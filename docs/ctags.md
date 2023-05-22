@@ -13,8 +13,8 @@ To address this issue, `aider` has
 a new experimental feature that utilizes `ctags` to provide
 GPT with a **concise map of the whole repository** including
 all declared variables and functions with call signatures.
-This *repo map* enables GPT to better comprehend and navigate
-all the code in larger repos.
+This *repo map* enables GPT to better comprehend, navigate
+and edit the code in larger repos.
 
 ## The problem: code context
 
