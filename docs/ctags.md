@@ -96,7 +96,7 @@ relevant files for the task at hand.
 Under the hood, `aider` uses
 [universal ctags](https://github.com/universal-ctags/ctags)
 to build the
-map. Universal ctags can scan source code written in a large variety of
+map. Universal ctags can scan source code written in many
 languages, and extract data about all the symbols defined in each
 file.
 
