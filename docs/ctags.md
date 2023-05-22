@@ -8,9 +8,9 @@ a complex pre-existing codebase, which has many dependencies
 between different parts of the system.
 To modify such code, GPT needs to understand all of these dependencies.
 And depending on the assigned coding task, it may not be obvious
-how to even determine which parts of the repo are relevent to the task.
-Further, assuming we can identify the correct context, it still
-needs to fit within GPT-4's 8k-token
+how to even determine which parts of the codebase are relevent to solving the task.
+Further, assuming we can identify all the needed context, we must
+ensure that it fits within GPT-4's 8k-token
 context window.
 
 To address this issue, `aider` has
