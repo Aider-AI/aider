@@ -72,7 +72,7 @@ class Commands:
             self.io.tool_error(f"Error: {first_word} is not a valid command.")
 
     def cmd_commit(self, args):
-        "Commit edits to chat session files made outside the chat (commit message optional)"
+        "Commit edits to the repo made outside the chat (commit message optional)"
 
         if not self.coder.repo:
             self.io.tool_error("No git repository found.")

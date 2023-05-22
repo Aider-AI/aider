@@ -81,7 +81,7 @@ For more information, run `aider --help`.
 * `/add <file>`: Add matching files to the chat session.
 * `/drop <file>`: Remove matching files from the chat session.
 * `/ls`: List all known files and those included in the chat session.
-* `/commit [message]`: Commit outstanding changes to the chat session files. Use this to commit edits you made outside the chat, with your editor or git commands. aider will provide a commit message if you don't.
+* `/commit [message]`: Commit outstanding changes to the repo. Use this to commit edits you made outside the chat, with your editor or git commands. aider will provide a commit message if you don't.
 * `/undo`: Undo the last git commit if it was done by aider.
 * `/diff`: Display the diff of the last aider commit.
 * `/run <command>`: Run a shell command and optionally add the output to the chat.
