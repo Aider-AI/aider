@@ -136,14 +136,7 @@ other code in the repo.**
 
 Instead, GPT is operating solely off 
 the repo map.
-Using only the meta-data in the map, GPT is able to:
-
-  - Find the function signature of the `cmd_add()` function which the user wants a test case for.
-  - Determine that it is a method of the `Command` class, so the test case will need to instantiate an instance to conduct the test.
-  - Identify that creating a `Command` instance requires passing in `InputOutput` and `Coder` instances.
-  - Figure out the arguments required to instantiate the `InputOuput` instance.
-  - Decide that the `Coder` class looks complex enough to use a `MagickMock`.
-
+Using only the meta-data in the map, GPT is able to figure out how to call the method to be tested, as well as how to instantiate multiple class objects that are required to prepare for the test.
 
 GPT makes one reasonable mistake writing the first version of the test, but is
 able to quickly fix the issue after being shown the `pytest` error output.
