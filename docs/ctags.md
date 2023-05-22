@@ -35,8 +35,8 @@ system works.
 A simple solution is to send the **entire codebase** to GPT along with
 each change request. Now GPT has all the context! But even moderately
 sized repos won't fit in the 8k-token context window. An
-improved approach is to be selective, and hand pick which files from the
-repo to send. For the example above, you could send the file that
+improved approach is to be selective, and **hand pick which files to send**.
+For the example above, you could send the file that
 contains Foo and the file that contains the logging subsystem.
 
 This works pretty well, and is how `aider` previously worked. You
