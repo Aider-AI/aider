@@ -132,10 +132,9 @@ This
 [chat transcript](https://aider.chat/examples/add-test.html)
 shows GPT-4 creating a black box test case, **without being given
 access to the source code of the function being tested or any of the
-other code in the repo.**
-
-Instead, GPT is operating solely off 
+other code in the repo.** Instead, GPT is operating solely off 
 the repo map.
+
 Using only the meta-data in the map, GPT is able to figure out how to call the method to be tested, as well as how to instantiate multiple class objects that are required to prepare for the test.
 
 GPT makes one reasonable mistake writing the first version of the test, but is
