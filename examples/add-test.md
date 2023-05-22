@@ -9,7 +9,7 @@ other code in the repo.**
 Instead, GPT is operating entirely off a
 [ctags based repo map](https://aider.chat/docs/ctags.html)
 which provides details on all the symbols and function signatures in the repo.
-Using only the meta-data in the map, GPT is able to:
+Using only the meta-data in the map, GPT is able to figure out how to call the method to be tested, as well as how to instantiate multiple class objects that are required to prepare for the test:
 
   - Find the function signature of the `cmd_add()` function which the user wants a test case for.
   - Determine that it is a method of the `Command` class, so the test case will need to instantiate an instance to conduct the test.
