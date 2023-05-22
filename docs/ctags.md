@@ -30,35 +30,34 @@ class objects that are required to prepare for the test.
 
 GPT-4 is great at "self contained" coding tasks, like writing or
 modifying a pure function with no external dependencies. These work
-well because you can send GPT a self-contained request ("write a
-Fibonacci function") and it can create new code from whole cloth. Or
-you can send it an existing function implementation and ask for self-contained
-changes ("rewrite the loop using list
-comprehensions"). These require no context beyond the code being
-discussed.
+well because you can send GPT a self-contained request like "write a
+Fibonacci function" or "rewrite the loop using list
+comprehensions". These changes require no context beyond the code
+being discussed.
 
-Most real code is not pure and self-contained. And many common code
-changes require you to understand related code from many different files in a
-repo.  If you want GPT to "switch all the print statements in Foo to
-use the logging system", it needs to see the code in the Foo class
-with the prints, and it also needs to understand how the project's logging
-system works.
+Most real code is not pure and self-contained, it is intertwined with
+code from many different files in a repo.
+If you ask GPT to "switch all the print statements in class Foo to
+use the BarLog logging system", it needs to see the code in the Foo class
+with the prints, and it also needs to understand how the project's BarLog
+logging system works.
 
 A simple solution is to **send the entire codebase** to GPT along with
 each change request. Now GPT has all the context! But even moderately
-sized repos won't fit in the 8k-token context window. An
+sized repos won't fit in the 8k-token context window.
+
+An
 improved approach is to be selective, and **hand pick which files to send**.
 For the example above, you could send the file that
 contains Foo and the file that contains the logging subsystem.
-
 This works pretty well, and is how `aider` previously worked. You
 manually specify which files to "add to the chat".
 
-But it's not ideal to have to manually identify and curate the right
-set of files to add to the chat. It can get complicated, as
-some changes will need context from many files. And you might still overrun
-the context window if you need to add too many files for context,
-many of which aren't going to end up being modified.
+But it's not ideal to have to manually identify the right
+set of files to add to the chat. 
+Some changes may need context from many files.
+And you might still overrun
+the context window if you need to add many files for context.
 
 ## Using a repo map to provide context
 
