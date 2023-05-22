@@ -22,8 +22,8 @@ GPT-4 is great at "self contained" coding tasks, like writing or
 modifying a pure function with no external dependencies. These work
 well because you can send GPT a self-contained request ("write a
 Fibonacci function") and it can create new code from whole cloth. Or
-you can send it an existing function implementation and ask for self
-contained changes ("rewrite the loop using list
+you can send it an existing function implementation and ask for self-contained
+changes ("rewrite the loop using list
 comprehensions"). These require no context beyond the code being
 discussed.
 
