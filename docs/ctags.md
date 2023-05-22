@@ -21,7 +21,7 @@ To get a sense of how effective this can be, this
 shows GPT-4 creating a black box test case, **without being given
 access to the source code of the function being tested or any of the
 other code in the repo.**
-Using only the meta-data in the map, GPT is able to figure out how to
+Using only the meta-data in the repo map, GPT is able to figure out how to
 call the method to be tested, as well as how to instantiate multiple
 class objects that are required to prepare for the test.
 
