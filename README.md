@@ -31,7 +31,7 @@ You can find more chat transcripts on the [examples page](https://aider.chat/exa
 * `aider` can review multiple source files at once and make coordinated code changes across all of them in a single changeset/commit.
 * `aider` constructs a concise [ctags based repo map](https://aider.chat/docs/ctags.html) and passes it to GPT-4 to enhance its ability to understand and navigate larger code bases.
 * `aider` knows about all the files in your repo, so it can ask for permission to review whichever files seem relevant to your requests.
-* You can also edit the files in your editor while chatting with `aider`.
+* You can also edit the files using your editor while chatting with `aider`.
   * `aider` will notice if you edit the files outside the chat.
   * It will help you commit these out-of-band changes, if you'd like.
   * It will bring the updated file contents into the chat.
