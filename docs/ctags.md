@@ -32,7 +32,7 @@ use the logging system", it needs to see the code in the Foo class
 with the prints, and it also needs to understand how the logging
 system works.
 
-A simple solution is to send the **entire codebase** to GPT along with
+A simple solution is to **send the entire codebase** to GPT along with
 each change request. Now GPT has all the context! But even moderately
 sized repos won't fit in the 8k-token context window. An
 improved approach is to be selective, and **hand pick which files to send**.
