@@ -123,7 +123,7 @@ shows GPT-4 creating a black box test case, **without being given
 access to the source code of the function being tested or any of the
 other code in the repo.**
 
-Instead, GPT is operating entirely off 
+Instead, GPT is operating solely off 
 the repo map.
 Using only the meta-data in the map, GPT is able to:
 
