@@ -3,6 +3,7 @@
 
 GPT-4 is extremely useful for "self-contained" coding tasks,
 like generating brand new code or modifying a pure function without dependencies.
+
 But it's difficult to use GPT-4 to modify or extend
 a complex pre-existing codebase, which has many dependencies
 between different parts of the system.
