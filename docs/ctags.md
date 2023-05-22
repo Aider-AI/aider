@@ -46,7 +46,7 @@ But it's not ideal to have to manually identify and curate the right
 set of files to add to the chat. It can get complicated, as
 some changes will need context from many files. And you might still overrun
 the context window if you need to add too many files for context,
-many of which aren't going to end up with modifications.
+many of which aren't going to end up being modified.
 
 ## Using a repo map to provide context
 
