@@ -22,8 +22,8 @@ GPT-4 is great at "self contained" coding tasks, like writing or
 modifying a pure function with no external dependencies. These work
 well because you can send GPT a self-contained request ("write a
 Fibonacci function") and it can create new code from whole cloth. Or
-you can send it an existing function implementation and ask for self
-contained changes ("rewrite the loop using list
+you can send it an existing function implementation and ask for self-contained
+changes ("rewrite the loop using list
 comprehensions"). These require no context beyond the code being
 discussed.
 
@@ -31,7 +31,7 @@ Most real code is not pure and self-contained. And many common code
 changes require you to understand related code from many different files in a
 repo.  If you want GPT to "switch all the print statements in Foo to
 use the logging system", it needs to see the code in the Foo class
-with the prints, and it also needs to understand how the logging
+with the prints, and it also needs to understand how the project's logging
 system works.
 
 A simple solution is to **send the entire codebase** to GPT along with
@@ -71,7 +71,7 @@ aider/
 
 Mapping out the repo like this provides some benefits:
 
-  - GPT can see variables, classes, methods and function signatures from everywhere in the repo. This alone may give it enough context to solve many tasks. For example, it can probably figure out how to use the API exported from a module based on the details shown in the map.
+  - GPT can see variables, classes, methods and function signatures from everywhere in the repo. This alone may give it enough context to solve many tasks. For example, it can probably figure out how to use the API exported from a module just based on the details shown in the map.
   - If it needs to see more code, GPT can use the map to figure out by itself which files it needs to look at. GPT will then ask to see these specific files, and `aider` will automatically add them to the chat context (with user approval).
 
 Of course, for large repositories, even just their map might be too large
@@ -112,9 +112,9 @@ For example, here is the `ctags --fields=+S --output-format=json` output for the
 
 The repo map is built using the `name`, `path`, `scope`, `kind` and
 `signature` data from `ctags`.
-Rather then sending that chatty json data to GPT, `aider`
+Rather then sending the data to GPT in that chatty json format, `aider`
 formats the map as a sorted,
-hierarchical tree. This is a format that is easy to understand and which efficiently conveys the map data to GPT-4 using a
+hierarchical tree. This is a format that GPT can easily understand and which efficiently conveys the map data using a
 minimal number of tokens.
 
 ## Example chat transcript
@@ -136,7 +136,7 @@ Using only the meta-data in the map, GPT is able to:
   - Decide that the `Coder` class looks complex enough to use a `MagickMock`.
 
 
-It makes one reasonable mistake in the first version of the test, but is
+GPT makes one reasonable mistake writing the first version of the test, but is
 able to quickly fix the issue after being shown the `pytest` error output.
 
 ## Try it out
