@@ -10,7 +10,7 @@ descriptive commit message.
 
 ## Example chat transcripts
 
-Here are some example transcripts that show how you can chat with `aider` to generate and edit code with GPT-4. 
+Here are some example transcripts that show how you can chat with `aider` to write and edit code with GPT-4. 
 
 * [**Hello World Flask App**](https://aider.chat/examples/hello-world-flask.html): Creating a simple Flask app with various endpoints, such as adding two numbers and calculating the Fibonacci sequence.
 
