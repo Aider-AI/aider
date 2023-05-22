@@ -11,8 +11,8 @@ worth of code in its context window.
 
 To address this issue, `aider` has
 a new experimental feature that utilizes `ctags` to provide
-GPT with a **repo map**, enabling it to better comprehend and navigate
-larger repositories.
+GPT with a **map of the whole repository**, enabling it to better comprehend and navigate
+larger repos.
 
 ## The problem: code context
 
