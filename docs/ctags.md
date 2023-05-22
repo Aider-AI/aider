@@ -11,10 +11,16 @@ worth of code in its context window.
 
 To address this issue, `aider` has
 a new experimental feature that utilizes `ctags` to provide
-GPT with a **concise map of the whole repository** including
+GPT with a **concise map of your whole git repository** including
 all declared variables and functions with call signatures.
 This *repo map* enables GPT to better comprehend, navigate
 and edit the code in larger repos.
+
+To get a sense of how effective this can be, this
+[chat transcript](https://aider.chat/examples/add-test.html)
+shows GPT-4 creating a black box test case, **without being given
+access to the source code of the function being tested or any of the
+other code in the repo.**
 
 ## The problem: code context
 
