@@ -134,6 +134,9 @@ Using only the meta-data in the map, GPT is able to:
   - Decide that the `Coder` class looks complex enough to use a `MagickMock`.
 
 
+It makes one reasonable mistake in the first version of the test, but is
+able to quickly fix the issue after being shown the `pytest` error output.
+
 ## Try it out
 
 To use this experimental repo map feature:
