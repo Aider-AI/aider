@@ -2,13 +2,15 @@
 # Improving GPT-4's codebase understanding with ctags
 
 GPT-4 is extremely useful for "self-contained" coding tasks,
-like generating new code or modifying a pure function without dependencies.
-But it's difficult to use GPT-4 to modify code with dependencies
-that are scattered across many files of a codebase.
-To modify such code, GPT needs to see all of these dependencies.
+like generating brand new code or modifying a pure function without dependencies.
+But it's difficult to use GPT-4 to modify or extend
+a complex pre-existing codebase, which has many dependencies
+between different parts of the system.
+To modify such code, GPT needs to understand all of these dependencies.
 And depending on the assigned coding task, it may not be obvious
-how to even determine which parts of the repo are relevent a priori.
-Further, all of this context needs to fit within GPT-4's 8k-token
+how to even determine which parts of the repo are relevent to the task.
+Further, assuming we can identify the correct context, it still
+needs to fit within GPT-4's 8k-token
 context window.
 
 To address this issue, `aider` has
