@@ -93,6 +93,7 @@ To use a command, simply type it in the chat input followed by any required argu
 
 * Large changes are best performed as a sequence of bite sized steps. Same as if you were undertaking them by yourself.
 * Use Control-C to safely interrupt `aider` if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply with more information or direction.
+* Use the `/run` command to run tests, linters, etc and show the output to GPT so it can fix any issues.
 * Enter a multiline chat message by entering `{` alone on the first line. End the multiline message with `}` alone on the last line.
 * If your code is throwing an error, paste the error message and stack trace into `aider` as a multiline `{}` message and let `aider` fix the bug.
 * GPT-4 knows about a lot of standard tools and libraries, but may get some of the fine details wrong about APIs and function arguments. You can paste doc snippets into the chat with the  multiline `{}` syntax.
