@@ -84,6 +84,8 @@ For more information, run `aider --help`.
 * `/commit [message]`: Commit outstanding changes to the chat session files. Use this to commit edits you made outside the chat, with your editor or git commands. aider will provide a commit message if you don't.
 * `/undo`: Undo the last git commit if it was done by aider.
 * `/diff`: Display the diff of the last aider commit.
+* `/run <command>`: Run a shell command and optionally add the output to the chat.
+* `/help`: Show help about all commands.
 
 To use a command, simply type it in the chat input followed by any required arguments.
 
