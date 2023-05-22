@@ -112,7 +112,7 @@ The repo map is built using the `name`, `path`, `scope`, `kind` and
 `signature` data from `ctags`.
 Rather then sending that chatty json data to GPT, `aider`
 formats the map as a sorted,
-hierarchical tree. This efficiently conveys the map data to GPT-4 using a
+hierarchical tree. This is a format that is easy to understand and which efficiently conveys the map data to GPT-4 using a
 minimal number of tokens.
 
 ## Example chat transcript
