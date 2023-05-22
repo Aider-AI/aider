@@ -14,9 +14,7 @@ Here are some example transcripts that show how you can chat with `aider` to gen
 
 * [**Hello World Flask App**](https://aider.chat/examples/hello-world-flask.html): Creating a simple Flask app with various endpoints, such as adding two numbers and calculating the Fibonacci sequence.
 
-* [**Pong Game with Pygame**](https://aider.chat/examples/pong.html): Creating a simple Pong game using the Pygame library, with customizations for paddle size and color, and ball speed adjustments.
-
-* [**2048 Game Modification**](https://aider.chat/examples/2048-game.html): Exploring and modifying an open-source javascript repo for the 2048 game, including adding randomness to the scoring system.
+* [**Javascript Game Modification**](https://aider.chat/examples/2048-game.html): Exploring and modifying an open-source javascript repo for the 2048 game, including adding randomness to the scoring system.
 
 * [**Complex Multi-file Change with Debugging**](https://aider.chat/examples/complex-change.html): A complex code change involving multiple source files and debugging.
 
