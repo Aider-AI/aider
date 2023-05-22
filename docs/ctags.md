@@ -71,18 +71,41 @@ the context window if you need to add many files for context.
 The latest version of `aider` sends a **repo map** to GPT along with
 each change request. The map contains a list of all the files in the
 repo, along with the symbols which are defined in each file. Callables
-like functions and methods also include their signatures. Here's a
-piece of the map of the aider repo, just mapping the
-[main.py](https://github.com/paul-gauthier/aider/blob/main/aider/main.py) file:
+like functions and methods also include their signatures.
+
+Here's a
+sample of the map of the aider repo, just showing the maps of
+[main.py](https://github.com/paul-gauthier/aider/blob/main/aider/main.py)
+and
+[utils.py](https://github.com/paul-gauthier/aider/blob/main/aider/utils.py)
+:
 
 ```
 aider/
    ...
    main.py:
       function
-        main (args=None, input=None, output=None)
+         main (args=None, input=None, output=None)
       variable
-        status
+         status
+   ...
+   utils.py:
+      function
+         do_replace (fname, before_text, after_text, dry_run=False)
+         find_original_update_blocks (content)
+         quoted_file (fname, display_fname, number=False)
+         replace_most_similar_chunk (whole, part, replace)
+         show_messages (messages, title=None)
+         strip_quoted_wrapping (res, fname=None)
+         try_dotdotdots (whole, part, replace)
+      variable
+         DIVIDER
+         ORIGINAL
+         UPDATED
+         edit
+         separators
+         split_re
+   ...
 ```
 
 Mapping out the repo like this provides some benefits:
