@@ -10,7 +10,7 @@ This is a challenge for GPT-4, which can only fit 8k-tokens
 worth of code in its context window.
 
 To address this issue, `aider` has
-introduced an experimental feature that utilizes `ctags` to provide
+a new experimental feature that utilizes `ctags` to provide
 GPT with a **repo map**, enabling it to better comprehend and navigate
 larger repositories.
 
