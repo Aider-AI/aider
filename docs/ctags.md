@@ -185,14 +185,14 @@ better with even larger repositories which have large maps:
 
 Some possible approaches to reducing the amount of map data are:
 
-  - Distill the global map further, to prioritize important symbols and discard "internal" or otherwise less globally relevant identifiers.
+  - Distill the global map, to prioritize important symbols and discard "internal" or otherwise less globally relevant identifiers. Possibly enlist `gpt-3.5-turbo` to perform this distillation in a flexible and language agnostic way.
   - Provide a mechanism for GPT to start with a distilled subset of the global map, and let it ask to see more detail about subtrees or keywords that it feels are relevant to the current coding task.
-  - Attempt to analyize the natural language coding task given by the user and predict which subset of the repo map is relevant. Possibly by analysis of prior coding chats within the specific repo. Work on certain files or types of features may require certain somewhat predictable context from elsewhere in the repo.
+  - Attempt to analyize the natural language coding task given by the user and predict which subset of the repo map is relevant. Possibly by analysis of prior coding chats within the specific repo. Work on certain files or types of features may require certain somewhat predictable context from elsewhere in the repo. Vector search against the chat history, repo map or codebase may help here.
 
 One key goal is to prefer solutions which are language agnostic or
-which can be easily deployed against many popular code languages.
+which can be easily deployed against most popular code languages.
 The `ctypes` solution has this benefit, since it comes pre-built
-with tooling for most populare languages.
+with tooling for most popular languages.
 I suspect that Language Server Protocol might be another
 relevant tool to solve these "code context" problems.
 
