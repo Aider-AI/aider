@@ -19,7 +19,8 @@ Here are some example transcripts that show how you can chat with `aider` to wri
 
 * [**Complex Multi-file Change with Debugging**](https://aider.chat/examples/complex-change.html): GPT makes a complex code change that is coordinated across multiple source files, and resolves bugs by reviewing error output and doc snippets.
 
-* [**Create a Black Box Test Case**](https://aider.chat/examples/add-test.html): GPT creates a "black box" test case without access to the source of the method being tested, using only a [high level map of the repository based on ctags](https://aider.chat/docs/ctags.html).
+* [**Create a Black Box Test Case**](https://aider.chat/examples/add-test.html): GPT creates a "black box" test case without access to the source of the method being tested, using only a
+[high level map of the repository based on ctags](https://aider.chat/docs/ctags.html).
 
 You can find more chat transcripts on the [examples page](https://aider.chat/examples/).
 

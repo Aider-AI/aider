@@ -7,7 +7,7 @@ access to the source code of the function being tested or any of the
 other code in the repo.**
 
 Instead, GPT is operating entirely off a
-[ctags based repo map](https://aider.chat/docs/ctags.html)
+[high level map of the repository based on ctags](https://aider.chat/docs/ctags.html),
 which provides details on all the symbols and function signatures in the repo.
 Using only the meta-data in the map, GPT is able to figure out how to call the method to be tested, as well as how to instantiate multiple class objects that are required to prepare for the test.
 
