@@ -176,10 +176,11 @@ able to quickly fix the issue after being shown the `pytest` error output.
 
 ## Future work
 
-Just as it was inefficient to send "the whole codebase" to GPT with
-every request, there are probably better approaches than sending
-"the whole repo map" with every request.
-Sending a subset of the repo map would help `aider` work
+Just as send "the whole codebase to GPT with every request"
+is not an efficient solution to this problem,
+there are probably better approaches than
+"send the whole repo map with every request".
+Sending an appropriate subset of the repo map would help `aider` work
 better with even larger repositories which have large maps:
 
 Some possible approaches to reducing the amount of map data are:
