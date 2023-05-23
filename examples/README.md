@@ -3,13 +3,13 @@
 Below are some chat transcripts showing what it's like to code with the help of GPT-4 using the `aider` command-line chat tool.
 In the chats, you'll see a varity of coding tasks like generating new code, editing existing code, debugging, exploring unfamiliar code, etc.
 
-* [**Hello World Flask App**](hello-world-flask.md): Creating a simple Flask app with various endpoints, such as adding two numbers and calculating the Fibonacci sequence.
+* [**Hello World Flask App**](https://aider.chat/examples/hello-world-flask.html): Start from scratch and have GPT create a simple Flask app with various endpoints, such as adding two numbers and calculating the Fibonacci sequence.
 
-* [**Javascript Game Modification**](https://aider.chat/examples/2048-game.html): Exploring and modifying an open-source javascript repo for the 2048 game, including adding randomness to the scoring system.
+* [**Javascript Game Modification**](https://aider.chat/examples/2048-game.html): Dive into an existing open-source repo, and get GPT's help to understand it and make modifications.
 
-* [**Complex Multi-file Change with Debugging**](complex-change.md): A complex code change involving multiple source files and debugging.
+* [**Complex Multi-file Change with Debugging**](https://aider.chat/examples/complex-change.html): GPT makes a complex code change that is coordinated across multiple source files, and resolves bugs by reviewing error output and doc snippets.
 
-* [**Create a Black Box Test Case**](add-test.md): Creating a "black box" test case without access to the source of the method being tested, using only a [ctags based repo map](https://aider.chat/docs/ctags.html).
+* [**Create a Black Box Test Case**](https://aider.chat/examples/add-test.html): GPT creates a "black box" test case without access to the source of the method being tested, using only a [high level map of the repository based on ctags](https://aider.chat/docs/ctags.html).
 
 * [**Semantic Search & Replace**](semantic-search-replace.md): Updating a collection of function calls, which requires dealing with various formatting and semantic differences in the various function call sites.
 

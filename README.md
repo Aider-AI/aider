@@ -13,11 +13,11 @@ commit message.
 
 Here are some example transcripts that show how you can chat with `aider` to write and edit code with GPT-4. 
 
-* [**Hello World Flask App**](https://aider.chat/examples/hello-world-flask.html): Creating a simple Flask app with various endpoints, such as adding two numbers and calculating the Fibonacci sequence.
+* [**Hello World Flask App**](https://aider.chat/examples/hello-world-flask.html): Start from scratch and have GPT create a simple Flask app with various endpoints, such as adding two numbers and calculating the Fibonacci sequence.
 
-* [**Javascript Game Modification**](https://aider.chat/examples/2048-game.html): Exploring and modifying an open-source javascript repo for the 2048 game, including adding randomness to the scoring system.
+* [**Javascript Game Modification**](https://aider.chat/examples/2048-game.html): Dive into an existing open-source repo, and get GPT's help to understand it and make modifications.
 
-* [**Complex Multi-file Change with Debugging**](https://aider.chat/examples/complex-change.html): A complex code change involving multiple source files and debugging.
+* [**Complex Multi-file Change with Debugging**](https://aider.chat/examples/complex-change.html): GPT makes a complex code change that is coordinated across multiple source files, and resolves bugs by reviewing error output and doc snippets.
 
 * [**Create a Black Box Test Case**](https://aider.chat/examples/add-test.html): GPT creates a "black box" test case without access to the source of the method being tested, using only a [high level map of the repository based on ctags](https://aider.chat/docs/ctags.html).
 
