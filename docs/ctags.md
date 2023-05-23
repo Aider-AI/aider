@@ -14,16 +14,17 @@ when we ask it to accomplish a coding task. Specifically, we need to:
 
   - Help GPT understand the overall codebase, so that it
 can decifer the meaning of code with complex dependencies and generate
-new code that respects existing abstractions.
+new code that respects and utilizes existing abstractions.
   - Convey all of this "code context" to GPT in an
 efficient manner that fits within the 8k-token context window.
 
-To address these issues, `aider` has
-a new experimental feature that utilizes `ctags` to provide
-GPT with a **concise map of your whole git repository** that includes
+To address these issues, `aider` now 
+sends GPT a **concise map of your whole git repository**.
+that includes
 all declared variables and functions with call signatures.
-This *repo map* enables GPT to better comprehend, navigate
-and edit the code in larger repos.
+This *repo map* is built using `ctags`
+and enables GPT to better comprehend, navigate
+and edit code in larger repos.
 
 To get a sense of how effective this can be, this
 [chat transcript](https://aider.chat/examples/add-test.html)
