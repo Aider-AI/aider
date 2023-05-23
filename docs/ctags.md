@@ -193,7 +193,7 @@ One key goal is to prefer solutions which are language agnostic or
 which can be easily deployed against most popular code languages.
 The `ctypes` solution has this benefit, since it comes pre-built
 with tooling for most popular languages.
-I suspect that Language Server Protocol might be another
+I suspect that Language Server Protocol servers might be another
 relevant tool to solve these "code context" problems.
 
 ## Try it out
