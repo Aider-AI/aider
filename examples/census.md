@@ -4,7 +4,7 @@
 Inspired by
 [Ethan Mollick's recent blog article about ChatGPT plugins](https://www.oneusefulthing.org/p/it-is-starting-to-get-strange),
 I used `aider` and GPT-4 to do data analysis of some US Census data.
-I had GPT-4 tell me how to download census data, suggest some hypotheses to test and then write the code to do all that, including a summary and plot of the results.
+I had GPT-4 tell me how to download census data, suggest some hypotheses to test and then write the code to test one and provide a summary and plot of the results.
 
 ## Chat transcript
 
