@@ -95,6 +95,9 @@ aider/
          status
    ...
    io.py:
+      class
+         FileContentCompleter
+         InputOutput
       FileContentCompleter
          member
             __init__ (self, fnames, commands)
@@ -193,7 +196,6 @@ One key goal is to prefer solutions which are language agnostic or
 which can be easily deployed against most popular code languages.
 The `ctags` solution has this benefit, since it comes pre-built
 with tooling for most popular languages.
-
 I suspect that Language Server Protocol might be an even
 better tool than `ctags` for this problem.
 But it is more cumbersome to deploy for a broad
