@@ -59,7 +59,7 @@ def get_tags(filename, root_dname):
     if cache_key in TAGS_CACHE and TAGS_CACHE[cache_key]["mtime"] == file_mtime:
         return TAGS_CACHE[cache_key]["tags"]
 
-    cmd = ["ctags", "--fields=+S", "--output-format=json", filename]
+    cmd = ["ctags", "--fields=+S", "--extras=-F", "--output-format=json", filename]
     output = subprocess.check_output(cmd).decode("utf-8")
     output = output.splitlines()
 
