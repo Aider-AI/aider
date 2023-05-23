@@ -125,9 +125,8 @@ Save this code in a new file named `getdata.py`. Remember to replace `'your_api_
 > Add new_file/getdata.py to git? y  
 > Applied edit to new_file/getdata.py  
 > Commit afcb9d1 aider: Added `getdata.py` file with download script.  
-> ^C again to quit  
 
-#### add my api key: 4ae31ed2a0f0dd62609e51cd95b00587d8e7774f  
+#### add my api key: 4ae31ed2a0f0dd62609e51cd95deadbeefe7774f  
 
 I will update the API key in the file.
 
@@ -136,7 +135,7 @@ new_file/getdata.py
 <<<<<<< ORIGINAL
 api_key = 'your_api_key'
 =======
-api_key = '4ae31ed2a0f0dd62609e51cd95b00587d8e7774f'
+api_key = '4ae31ed2a0f0dd62609e51cd95deadbeefe7774f'
 >>>>>>> UPDATED
 ```
 
