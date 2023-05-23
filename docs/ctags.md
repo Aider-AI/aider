@@ -8,8 +8,8 @@ But it's difficult to use GPT-4 to modify or extend
 a large, complex pre-existing codebase.
 To modify such code, GPT needs to understand the dependencies and APIs
 which interconnect all of its subsystems.
-Depending on the coding task, it may not be obvious
-how to determine which parts of the codebase are relevent to solving the task.
+Depending on the coding task, it may be hard
+ to determine which parts of the codebase are relevent to solving the task.
 Even assuming we can identify all the needed context, we must
 ensure that it fits within GPT-4's 8k-token
 context window.
