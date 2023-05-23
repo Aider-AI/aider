@@ -2,7 +2,8 @@
 # Improving GPT-4's codebase understanding with ctags
 
 GPT-4 is extremely useful for "self-contained" coding tasks,
-like generating brand new code or modifying a pure function without dependencies.
+like generating brand new code or modifying a pure function
+that has no dependencies.
 
 But it's difficult to use GPT-4 to modify or extend
 a large, complex pre-existing codebase.
@@ -37,35 +38,38 @@ class objects that are required to prepare for the test.
 ## The problem: code context
 
 GPT-4 is great at "self contained" coding tasks, like writing or
-modifying a pure function with no external dependencies. These work
-well because you can send GPT a self-contained request like "write a
+modifying a pure function with no external dependencies.
+GPT can easily handle requests like "write a
 Fibonacci function" or "rewrite the loop using list
-comprehensions". These changes require no context beyond the code
+comprehensions", because they require no context beyond the code
 being discussed.
 
 Most real code is not pure and self-contained, it is intertwined with
-code from many different files in a repo.
+and depends on code from many different files in a repo.
 If you ask GPT to "switch all the print statements in class Foo to
 use the BarLog logging system", it needs to see the code in the Foo class
-with the prints, and it also needs to understand how the project's BarLog
-logging system works.
+with the prints, and it also needs to understand the project's BarLog
+subsystem.
 
 A simple solution is to **send the entire codebase** to GPT along with
 each change request. Now GPT has all the context! But this won't work
 for even moderately
-sized repos that won't fit in the 8k-token context window.
+sized repos, because they won't fit into the 8k-token context window.
 
-A better approach is to be selective, and **hand pick which files to send**.
+A better approach is to be selective,
+and **hand pick which files to send**.
 For the example above, you could send the file that
-contains Foo and the file that contains the BarLog logging subsystem.
-This works pretty well, and is supported by `aider`: you
+contains the Foo class
+and the file that contains the BarLog logging subsystem.
+This works pretty well, and is supported by `aider` -- you
 can manually specify which files to "add to the chat".
 
 But it's not ideal to have to manually identify the right
-set of files to add to the chat. 
-Some changes may need context from many files.
-And you might still overrun
-the context window if you need to add many files for context.
+set of files to add to the chat.
+And sending whole files is a bulky way to send code context,
+wasting the precious 8k context window.
+You may quickly run out of context window if you need to
+send many files worth of context.
 
 ## Using a repo map to provide context
 
@@ -113,7 +117,7 @@ Mapping out the repo like this provides some benefits:
   - GPT can see variables, classes, methods and function signatures from everywhere in the repo. This alone may give it enough context to solve many tasks. For example, it can probably figure out how to use the API exported from a module just based on the details shown in the map.
   - If it needs to see more code, GPT can use the map to figure out by itself which files it needs to look at. GPT will then ask to see these specific files, and `aider` will automatically add them to the chat context (with user approval).
 
-Of course, for large repositories, even just their map might be too large
+Of course, for large repositories even just the map might be too large
 for the context window.  However, this mapping approach opens up the
 ability to collaborate with GPT-4 on larger codebases than previous
 methods.  It also reduces the need to manually curate which files to
@@ -149,10 +153,11 @@ For example, here is the `ctags --fields=+S --output-format=json` output for the
 }
 ```
 
-The repo map is built using this `ctags` data.
-Rather then sending the data to GPT using verbose json, `aider`
-formats the map as a sorted,
-hierarchical tree. This is a format that GPT can easily understand and which efficiently conveys the map data using a
+The repo map is built using this type of `ctags` data,
+formatting into the space
+efficient hierarchical tree format shown above.
+This is a format that GPT can easily understand
+and which conveys the map data using a
 minimal number of tokens.
 
 ## Example chat transcript
@@ -168,6 +173,27 @@ Using only the meta-data in the map, GPT is able to figure out how to call the m
 
 GPT makes one reasonable mistake writing the first version of the test, but is
 able to quickly fix the issue after being shown the `pytest` error output.
+
+## Future work
+
+Just as it was inefficient to send "the whole codebase" to GPT with
+every request, there are probably better approaches than sending
+"the whole repo map" with every request.
+Sending a subset of the repo map would help `aider` work
+better with even larger repositories which have large maps:
+
+Some possible approaches to reducing the amount of map data are:
+
+  - Distill the global map further, to prioritize important symbols and discard "internal" or otherwise less globally relevant identifiers.
+  - Provide a mechanism for GPT to start with a distilled subset of the global map, and let it ask to see more detail about subtrees or keywords that it feels are relevant to the current coding task.
+  - Attempt to analyize the natural language coding task given by the user and predict which subset of the repo map is relevant. Possibly by analysis of prior coding chats within the specific repo. Work on certain files or types of features may require certain somewhat predictable context from elsewhere in the repo.
+
+One key goal is to prefer solutions which are language agnostic or
+which can be easily deployed against many popular code languages.
+The `ctypes` solution has this benefit, since it comes pre-built
+with tooling for most populare languages.
+I suspect that Language Server Protocol might be another
+relevant tool to solve these "code context" problems.
 
 ## Try it out
 
