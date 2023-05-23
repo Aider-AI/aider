@@ -187,7 +187,7 @@ class Coder:
             repo_content += files_listing
 
             if all_content:
-                all_content += "\n\n"
+                all_content += "\n"
 
             all_content += repo_content
 

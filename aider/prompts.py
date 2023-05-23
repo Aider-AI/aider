@@ -54,7 +54,7 @@ files_content_gpt_no_edits = "I didn't see any properly formatted edits in your 
 
 files_content_local_edits = "I edited the files myself."
 
-files_content_prefix = "Propose changes to *only* these files (ask before editing others):\n\n"
+files_content_prefix = "Propose changes to *only* these files (ask before editing others):\n"
 
 repo_content_prefix = (
     "Here is a map of all the {other}files{ctags_msg}. You *must* ask with the"
