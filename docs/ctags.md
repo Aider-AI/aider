@@ -176,7 +176,7 @@ able to quickly fix the issue after being shown the `pytest` error output.
 
 ## Future work
 
-Just as send "the whole codebase to GPT with every request"
+Just as "send the whole codebase to GPT with every request"
 is not an efficient solution to this problem,
 there are probably better approaches than
 "send the whole repo map with every request".
