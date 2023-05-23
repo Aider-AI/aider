@@ -52,8 +52,7 @@ each change request. Now GPT has all the context! But this won't work
 for even moderately
 sized repos that won't fit in the 8k-token context window.
 
-An
-improved approach is to be selective, and **hand pick which files to send**.
+A better approach is to be selective, and **hand pick which files to send**.
 For the example above, you could send the file that
 contains Foo and the file that contains the BarLog logging subsystem.
 This works pretty well, and is supported by `aider`: you
