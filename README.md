@@ -22,6 +22,8 @@ Here are some example transcripts that show how you can chat with `aider` to wri
 * [**Create a Black Box Test Case**](https://aider.chat/examples/add-test.html): GPT creates a "black box" test case without access to the source of the method being tested, using only a
 [high level map of the repository based on ctags](https://aider.chat/docs/ctags.html).
 
+* [**Download, analyze and plot US Census data**](https://aider.chat/examples/census.html): GPT-4 downloads census data, suggests some hypotheses to test, tests one and then summarizes and plots a graph of the results.
+
 You can find more chat transcripts on the [examples page](https://aider.chat/examples/).
 
 ## Features
