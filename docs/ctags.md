@@ -19,7 +19,7 @@ new code that respects and utilizes existing abstractions.
 efficient manner that fits within the 8k-token context window.
 
 To address these issues, `aider` now 
-sends GPT a **concise map of your whole git repository**.
+sends GPT a **concise map of your whole git repository**
 that includes
 all declared variables and functions with call signatures.
 This *repo map* is built using `ctags`
