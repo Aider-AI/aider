@@ -25,7 +25,7 @@ def get_tags_map(filenames, root_dname=None):
 
     output = ""
     last = [None] * len(tags[0])
-    tab = " "
+    tab = "\t"
     for tag in tags:
         tag = list(tag)
 
