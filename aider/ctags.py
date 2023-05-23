@@ -15,7 +15,7 @@ def get_tags_map(filenames, root_dname=None):
 
     tags = []
     for filename in filenames:
-        if filename.endswith(".md"):
+        if filename.endswith(".md") or filename.endswith(".json"):
             continue
         tags += get_tags(filename, root_dname)
     if not tags:
