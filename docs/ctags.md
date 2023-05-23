@@ -158,7 +158,7 @@ For example, here is the `ctags --fields=+S --output-format=json` output for the
 ```
 
 The repo map is built using this type of `ctags` data,
-formatting into the space
+formatted into the space
 efficient hierarchical tree format shown above.
 This is a format that GPT can easily understand
 and which conveys the map data using a
