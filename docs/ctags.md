@@ -10,7 +10,7 @@ a large, complex pre-existing codebase.
 To modify such code, GPT needs to understand the dependencies and APIs
 which interconnect all of its subsystems.
 Somehow we need to provide this "code context" to GPT
-when we ask it to accomplish some coding task. Specifically, we need to:
+when we ask it to accomplish a coding task. Specifically, we need to:
 
   - Help GPT understand the overall codebase, so that it
 can decifer the meaning of code with complex dependencies and generate
@@ -181,7 +181,7 @@ is not an efficient solution to this problem,
 there are probably better approaches than
 "send the whole repo map with every request".
 Sending an appropriate subset of the repo map would help `aider` work
-better with even larger repositories which have large maps:
+better with even larger repositories which have large maps.
 
 Some possible approaches to reducing the amount of map data are:
 
@@ -194,7 +194,7 @@ which can be easily deployed against most popular code languages.
 The `ctypes` solution has this benefit, since it comes pre-built
 with tooling for most popular languages.
 I suspect that Language Server Protocol servers might be another
-relevant tool to solve these "code context" problems.
+relevant tool to help solve these "code context" problems.
 
 ## Try it out
 
