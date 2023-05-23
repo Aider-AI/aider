@@ -4,8 +4,8 @@
 code with GPT-4 in the terminal.  You can ask GPT to help you start
 a new project, or to edit and improve your existing code.  `aider` is
 especially useful for working with code in a git repo,
-as it will automatically commit each code change with a descriptive commit
-message.
+as it will automatically commit GPT's code changes
+with a descriptive commit message.
 
 ![aider screenshot](screenshot.gif)
 
@@ -33,7 +33,6 @@ You can find more chat transcripts on the [examples page](https://aider.chat/exa
 * `aider` gives GPT a
 [map of your entire git repo](https://aider.chat/docs/ctags.html),
 so it can ask for permission to review whichever files seem relevant to your requests.
-
 * You can also edit the files using your editor while chatting with `aider`.
   * `aider` will notice if you edit the files outside the chat.
   * It will help you commit these out-of-band changes, if you'd like.
