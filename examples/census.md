@@ -7,7 +7,7 @@ I had GPT-4 tell me how to download census data, suggest some hypotheses to test
 
 ## Chat transcript
 
-> $ aider
+> $ aider  
 > Using git repo: .git  
 
 #### what is a good basic us census dataset to analyze for interesting patterns?  
