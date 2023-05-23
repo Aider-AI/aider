@@ -11,7 +11,7 @@ In the chats, you'll see a varity of coding tasks like generating new code, edit
 
 * [**Create a Black Box Test Case**](https://aider.chat/examples/add-test.html): GPT creates a "black box" test case without access to the source of the method being tested, using only a [high level map of the repository based on ctags](https://aider.chat/docs/ctags.html).
 
-* [**Download, analyze and plot US Census data**](https://aider.chat/examples/census.html): GPT-4 downloads download census data, suggests some hypotheses to test and then writes all the code to summarize and plot a graph of the results.
+* [**Download, analyze and plot US Census data**](https://aider.chat/examples/census.html): GPT-4 downloads census data, suggests some hypotheses to test and then summarizes and plot a graph of the results.
 
 * [**Semantic Search & Replace**](semantic-search-replace.md): Updating a collection of function calls, which requires dealing with various formatting and semantic differences in the various function call sites.
 
