@@ -171,10 +171,10 @@ class Coder:
 
         if self.repo is not None:
             other_files = set(self.get_all_abs_files()) - set(self.abs_fnames)
-            if other_files and len(other_files) < 1000:
+            if other_files:
                 if self.use_ctags:
                     files_listing = get_tags_map(other_files)
-                    ctags_msg = " with selected ctags content"
+                    ctags_msg = " with selected ctags info"
                 else:
                     files_listing = "\n".join(
                         self.get_rel_fname(ofn) for ofn in sorted(other_files)
@@ -191,6 +191,10 @@ class Coder:
                     ctags_msg=ctags_msg,
                 )
                 repo_content += files_listing
+
+                from .dump import dump
+
+                dump(len(repo_content))
 
                 if all_content:
                     all_content += "\n\n"
@@ -276,8 +280,9 @@ class Coder:
             dict(role="user", content=inp),
         ]
 
+        main_sys = prompts.main_system + "\n" + prompts.system_reminder
         messages = [
-            dict(role="system", content=prompts.main_system + prompts.system_reminder),
+            dict(role="system", content=main_sys),
         ]
         messages += self.done_messages
         messages += self.get_files_messages()
