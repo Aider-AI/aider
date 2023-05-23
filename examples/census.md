@@ -2,7 +2,7 @@
 # Download, analyze and plot US Census data
 
 Inspired by
-(Ethan Mollick's recent blog article about ChatGPT plugins)[https://www.oneusefulthing.org/p/it-is-starting-to-get-strange],
+[Ethan Mollick's recent blog article about ChatGPT plugins](https://www.oneusefulthing.org/p/it-is-starting-to-get-strange),
 I used `aider` and GPT-4 to do data analysis of some US Census data.
 I had GPT-4 tell me how to download census data, suggest some hypotheses to test and then write all the code to do all that and summarize and plot a graph of the results.
 
