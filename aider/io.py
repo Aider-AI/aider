@@ -51,7 +51,7 @@ class FileContentCompleter(Completer):
 
 
 class InputOutput:
-    def __init__(self, pretty, yes, input_history_file=None, chat_history_file=None, input=None, output=None):
+    def __init__(self, pretty=True, yes=False, input_history_file=None, chat_history_file=None, input=None, output=None):
         self.input = input
         self.output = output
         self.pretty = pretty
