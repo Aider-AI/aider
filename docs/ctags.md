@@ -8,15 +8,18 @@ But it's difficult to use GPT-4 to modify or extend
 a large, complex pre-existing codebase.
 To modify such code, GPT needs to understand the dependencies and APIs
 which interconnect all of its subsystems.
-Depending on the coding task, it may be hard
- to determine which parts of the codebase are relevent to solving the task.
-Even assuming we can identify all the needed context, we must
-ensure that it fits within GPT-4's 8k-token
-context window.
+Somehow we need to provide this "code context" to GPT
+when we ask it to accomplish some coding task. Specifically, we need to:
+
+  - Help GPT understand the overall codebase, so that it
+can decifer the meaning of code with complex dependencies and generate
+new code that respects existing abstractions.
+  - Convey all of this "code context" to GPT in an
+efficient manner that fits within the 8k-token context window.
 
 To address these issues, `aider` has
 a new experimental feature that utilizes `ctags` to provide
-GPT with a **concise map of your whole git repository** including
+GPT with a **concise map of your whole git repository** that includes
 all declared variables and functions with call signatures.
 This *repo map* enables GPT to better comprehend, navigate
 and edit the code in larger repos.
@@ -75,7 +78,7 @@ Here's a
 sample of the map of the aider repo, just showing the maps of
 [main.py](https://github.com/paul-gauthier/aider/blob/main/aider/main.py)
 and
-[utils.py](https://github.com/paul-gauthier/aider/blob/main/aider/utils.py)
+[io.py](https://github.com/paul-gauthier/aider/blob/main/aider/io.py)
 :
 
 ```
@@ -87,22 +90,21 @@ aider/
       variable
          status
    ...
-   utils.py:
-      function
-         do_replace (fname, before_text, after_text, dry_run=False)
-         find_original_update_blocks (content)
-         quoted_file (fname, display_fname, number=False)
-         replace_most_similar_chunk (whole, part, replace)
-         show_messages (messages, title=None)
-         strip_quoted_wrapping (res, fname=None)
-         try_dotdotdots (whole, part, replace)
-      variable
-         DIVIDER
-         ORIGINAL
-         UPDATED
-         edit
-         separators
-         split_re
+   io.py:
+      FileContentCompleter
+         member
+            __init__ (self, fnames, commands)
+            get_completions (self, document, complete_event)
+      InputOutput
+         member
+            __init__ (self, pretty, yes, input_history_file=None, chat_history_file=None, input=None, output=None)
+            ai_output (self, content)
+            append_chat_history (self, text, linebreak=False, blockquote=False)
+            confirm_ask (self, question, default="y")
+            get_input (self, fnames, commands)
+            prompt_ask (self, question, default=None)
+            tool (self, *messages, log_only=False)
+            tool_error (self, message)
    ...
 ```
 
