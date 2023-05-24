@@ -24,6 +24,10 @@ def get_tags_map(filenames, root_dname=None):
     if not tags:
         return
 
+    return to_tree(tags)
+
+
+def to_tree(tags):
     tags = sorted(tags)
 
     output = ""
@@ -49,7 +53,11 @@ def get_tags_map(filenames, root_dname=None):
 
 def split_path(path, root_dname):
     path = os.path.relpath(path, root_dname)
-    path_components = path.split(os.sep)
+    return fname_to_components(path, True)
+
+
+def fname_to_components(fname, with_colon):
+    path_components = os.path.split(fname)
     res = [pc + os.sep for pc in path_components[:-1]]
     res.append(path_components[-1] + ":")
     return res
@@ -141,8 +149,13 @@ class RepoMap:
             return files_listing, ctags_msg
 
     def get_simple_files_map(self, other_files):
-        files_listing = "\n".join(self.get_rel_fname(ofn) for ofn in sorted(other_files))
-        return files_listing
+        fnames = []
+        for fname in other_files:
+            fname = self.get_rel_fname(fname)
+            fname = fname_to_components(fname, False)
+            fnames.append(fname)
+
+        return to_tree(fnames)
 
     def token_count(self, string):
         return len(self.tokenizer.encode(string))
