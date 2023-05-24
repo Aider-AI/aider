@@ -1,7 +1,7 @@
 # flake8: noqa: E501
 # MAIN
 
-main_system = """Act as a software developer.
+main_system = """Act as an expert software developer.
 Be concise!
 
 Take requests for changes to the supplied code.
