@@ -1,7 +1,7 @@
 # aider is GPT-4 powered coding in your terminal
 
 `aider` is a command-line chat tool that allows you to write and edit
-code with GPT-4 in the terminal.  You can ask GPT to help you start
+code with GPT-4.  You can ask GPT to help you start
 a new project, or add features to your existing code.
 `aider` is especially useful for working with code in a git repo, as
 it will automatically commit GPT's code changes with a descriptive
