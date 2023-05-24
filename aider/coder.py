@@ -171,24 +171,11 @@ class Coder:
             files_content += self.get_files_content()
             all_content += files_content
 
-        res = self.choose_files_listing()
-        if res:
-            files_listing, ctags_msg = res
-
-            if self.abs_fnames:
-                other = "other "
-            else:
-                other = ""
-
-            repo_content = prompts.repo_content_prefix.format(
-                other=other,
-                ctags_msg=ctags_msg,
-            )
-            repo_content += files_listing
-
+        other_files = set(self.get_all_abs_files()) - set(self.abs_fnames)
+        repo_content = self.get_map(self.abs_fnames, other_files)
+        if repo_content:
             if all_content:
                 all_content += "\n"
-
             all_content += repo_content
 
         files_messages = [
@@ -202,14 +189,31 @@ class Coder:
 
         return files_messages
 
-    def choose_files_listing(self):
+    def get_map(self, chat_files, other_files):
+        res = self.choose_files_listing(other_files)
+        if res:
+            files_listing, ctags_msg = res
+
+            if chat_files:
+                other = "other "
+            else:
+                other = ""
+
+            repo_content = prompts.repo_content_prefix.format(
+                other=other,
+                ctags_msg=ctags_msg,
+            )
+            repo_content += files_listing
+
+        return repo_content
+
+    def choose_files_listing(self, other_files):
         # 1/4 of gpt-4's context window
         max_map_tokens = 2048
 
         if not self.repo:
             return
 
-        other_files = set(self.get_all_abs_files()) - set(self.abs_fnames)
         if not other_files:
             return
 
