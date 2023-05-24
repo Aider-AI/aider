@@ -4,7 +4,9 @@
 Inspired by
 [Ethan Mollick's recent blog article about ChatGPT plugins](https://www.oneusefulthing.org/p/it-is-starting-to-get-strange),
 I used `aider` and GPT-4 to do data analysis of some US Census data.
-I had GPT-4 tell me how to download census data, suggest some hypotheses to test and then write the code to test one and provide a summary and plot of the results.
+I ask GPT-4 how to download census data and to suggest some
+hypotheses to test. I asked it to write the code to get the data, test one of the
+hypotheses and provide a summary and plot of the results.
 
 ## Chat transcript
 
@@ -238,12 +240,12 @@ After applying these changes, the code will print a summary table showing the co
 
 
 #### /run python3 new_file/getdata.py  
-> Add the output to the chat? y  
->
 >```
 >Summary Table:
 Correlation between population density and housing prices: 0.16020298445808737
 >```
+>  
+> Add the output to the chat? y
 
 Great! The script seems to be working as expected. The correlation between population density and housing prices is 0.1602. If you need any further assistance or modifications to the code, please let me know.
 
