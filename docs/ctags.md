@@ -71,7 +71,7 @@ And sending whole files is a bulky way to send code context,
 wasting the precious 8k context window.
 GPT doesn't need to see the entire implementation of BarLog,
 it just needs to understand it well enough to use it. 
-You may quickly run out of context window if you need to
+You may quickly run out of context window if you
 send many files worth of code just to convey context.
 
 ## Using a repo map to provide context
