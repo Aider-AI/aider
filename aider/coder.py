@@ -213,9 +213,6 @@ class Coder:
         # 1/4 of gpt-4's context window
         max_map_tokens = 2048
 
-        if not self.repo:
-            return
-
         if not other_files:
             return
 
