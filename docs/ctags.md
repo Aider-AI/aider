@@ -69,8 +69,10 @@ But it's not ideal to have to manually identify the right
 set of files to add to the chat.
 And sending whole files is a bulky way to send code context,
 wasting the precious 8k context window.
+GPT doesn't need to see the entire implementation of BarLog,
+it just needs to understand it well enough to use it. 
 You may quickly run out of context window if you need to
-send many files worth of context.
+send many files worth of code just to convey context.
 
 ## Using a repo map to provide context
 
