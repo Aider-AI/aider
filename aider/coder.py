@@ -191,19 +191,21 @@ class Coder:
 
     def get_map(self, chat_files, other_files):
         res = self.choose_files_listing(other_files)
-        if res:
-            files_listing, ctags_msg = res
+        if not res:
+            return
 
-            if chat_files:
-                other = "other "
-            else:
-                other = ""
+        files_listing, ctags_msg = res
 
-            repo_content = prompts.repo_content_prefix.format(
-                other=other,
-                ctags_msg=ctags_msg,
-            )
-            repo_content += files_listing
+        if chat_files:
+            other = "other "
+        else:
+            other = ""
+
+        repo_content = prompts.repo_content_prefix.format(
+            other=other,
+            ctags_msg=ctags_msg,
+        )
+        repo_content += files_listing
 
         return repo_content
 
