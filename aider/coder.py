@@ -172,7 +172,7 @@ class Coder:
             all_content += files_content
 
         other_files = set(self.get_all_abs_files()) - set(self.abs_fnames)
-        repo_content = self.get_map(self.abs_fnames, other_files)
+        repo_content = self.get_repo_map(self.abs_fnames, other_files)
         if repo_content:
             if all_content:
                 all_content += "\n"
@@ -189,7 +189,7 @@ class Coder:
 
         return files_messages
 
-    def get_map(self, chat_files, other_files):
+    def get_repo_map(self, chat_files, other_files):
         res = self.choose_files_listing(other_files)
         if not res:
             return
