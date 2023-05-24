@@ -242,7 +242,7 @@ After applying these changes, the code will print a summary table showing the co
 #### /run python3 new_file/getdata.py  
 >```  
 >Summary Table:  
-Correlation between population density and housing prices: 0.16020298445808737  
+>Correlation between population density and housing prices: 0.16020298445808737  
 >```  
 >  
 > Add the output to the chat? y
