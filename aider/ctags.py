@@ -59,7 +59,10 @@ def split_path(path, root_dname):
 def fname_to_components(fname, with_colon):
     path_components = os.path.split(fname)
     res = [pc + os.sep for pc in path_components[:-1]]
-    res.append(path_components[-1] + ":")
+    if with_colon:
+        res.append(path_components[-1] + ":")
+    else:
+        res.append(path_components[-1])
     return res
 
 
