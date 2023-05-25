@@ -363,9 +363,10 @@ class Coder:
                         stream=True,
                     )
                     break
-                except RateLimitError:
+                except RateLimitError as err:
                     retry_after = 1
-                    # print(f"Rate limit exceeded. Retrying in {retry_after} seconds.")
+                    self.io.tool_error(f"RateLimitError: {err}")
+                    self.io.tool_error(f"Retry in {retry_after} seconds.")
                     time.sleep(retry_after)
 
             self.show_send_output(completion, silent)
