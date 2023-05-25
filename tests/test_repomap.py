@@ -75,8 +75,9 @@ def my_function(arg1, arg2):
             other_files = [os.path.join(temp_dir, file) for file in test_files]
             result = repo_map.get_tags_map(other_files)
 
-            # Check if the result contains the expected tags map without ctags
-            self.assertIn("test_file_without_ctags.py:", result)
+            # Check if the result contains each specific file in the expected tags map without ctags
+            for file in test_files:
+                self.assertIn(f"{os.path.splitext(file)[0]}:", result)
 
 if __name__ == "__main__":
     unittest.main()
