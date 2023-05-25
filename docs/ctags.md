@@ -8,7 +8,7 @@ that has no dependencies.
 But it's difficult to use GPT-4 to modify or extend
 a large, complex pre-existing codebase.
 To modify such code, GPT needs to understand the dependencies and APIs
-which interconnect all of its subsystems.
+which interconnect its subsystems.
 Somehow we need to provide this "code context" to GPT
 when we ask it to accomplish a coding task. Specifically, we need to:
 
@@ -63,7 +63,7 @@ For the example above, you could send the file that
 contains the Foo class
 and the file that contains the BarLog logging subsystem.
 This works pretty well, and is supported by `aider` -- you
-can manually specify which files to "add to the chat".
+can manually specify which files to "add to the chat" you are having with GPT.
 
 But it's not ideal to have to manually identify the right
 set of files to add to the chat.
