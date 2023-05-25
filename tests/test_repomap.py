@@ -1,4 +1,5 @@
 import os
+import tempfile
 import unittest
 from aider.repomap import RepoMap
 
