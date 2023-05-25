@@ -56,22 +56,23 @@ def my_function(arg1, arg2):
 
     def test_get_tags_map_without_ctags(self):
         # Create a temporary directory with a sample Python file containing identifiers
-        test_file = "test_file_without_ctags.py"
-        file_content = """\
-class MyClass:
-    def my_method(self, arg1, arg2):
-        return arg1 + arg2
-
-def my_function(arg1, arg2):
-    return arg1 * arg2
-"""
+        test_files = [
+            "test_file_without_ctags.py",
+            "test_file1.txt",
+            "test_file2.md",
+            "test_file3.json",
+            "test_file4.html",
+            "test_file5.css",
+            "test_file6.js",
+        ]
 
         with tempfile.TemporaryDirectory() as temp_dir:
-            with open(os.path.join(temp_dir, test_file), "w") as f:
-                f.write(file_content)
+            for file in test_files:
+                with open(os.path.join(temp_dir, file), "w") as f:
+                    f.write("")
 
             repo_map = RepoMap(use_ctags=False, root=temp_dir)
-            other_files = [os.path.join(temp_dir, test_file)]
+            other_files = [os.path.join(temp_dir, file) for file in test_files]
             result = repo_map.get_tags_map(other_files)
 
             # Check if the result contains the expected tags map without ctags
