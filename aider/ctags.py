@@ -12,21 +12,6 @@ TAGS_CACHE = {}
 # from aider.dump import dump
 
 
-def get_tags_map(filenames, root_dname=None):
-    if not root_dname:
-        root_dname = os.getcwd()
-
-    tags = []
-    for filename in filenames:
-        if filename.endswith(".md") or filename.endswith(".json"):
-            continue
-        tags += get_tags(filename, root_dname)
-    if not tags:
-        return
-
-    return to_tree(tags)
-
-
 def to_tree(tags):
     tags = sorted(tags)
 
@@ -51,11 +36,6 @@ def to_tree(tags):
     return output
 
 
-def split_path(path, root_dname):
-    path = os.path.relpath(path, root_dname)
-    return fname_to_components(path, True)
-
-
 def fname_to_components(fname, with_colon):
     path_components = fname.split(os.sep)
     res = [pc + os.sep for pc in path_components[:-1]]
@@ -66,49 +46,11 @@ def fname_to_components(fname, with_colon):
     return res
 
 
-def get_tags(filename, root_dname):
-    # Check if the file is in the cache and if the modification time has not changed
-    file_mtime = os.path.getmtime(filename)
-    cache_key = (filename, root_dname)
-    if cache_key in TAGS_CACHE and TAGS_CACHE[cache_key]["mtime"] == file_mtime:
-        return TAGS_CACHE[cache_key]["tags"]
-
-    cmd = ["ctags", "--fields=+S", "--extras=-F", "--output-format=json", filename]
-    output = subprocess.check_output(cmd).decode("utf-8")
-    output = output.splitlines()
-
-    tags = []
-    if not output:
-        tags.append(split_path(filename, root_dname))
-
-    for line in output:
-        tag = json.loads(line)
-        path = tag.get("path")
-        scope = tag.get("scope")
-        kind = tag.get("kind")
-        name = tag.get("name")
-        signature = tag.get("signature")
-
-        last = name
-        if signature:
-            last += " " + signature
-
-        res = split_path(path, root_dname)
-        if scope:
-            res.append(scope)
-        res += [kind, last]
-        tags.append(res)
-
-    # Update the cache
-    TAGS_CACHE[cache_key] = {"mtime": file_mtime, "tags": tags}
-
-    return tags
-
-
 class RepoMap:
-    use_ctags = False
+    def __init__(self, use_ctags=True, root=None, main_model="gpt-4"):
+        if not root:
+            root = os.getcwd()
 
-    def __init__(self, use_ctags, root, main_model):
         self.use_ctags = use_ctags
         self.tokenizer = tiktoken.encoding_for_model(main_model)
         self.root = root
@@ -141,7 +83,7 @@ class RepoMap:
             return
 
         if self.use_ctags:
-            files_listing = get_tags_map(other_files)
+            files_listing = self.get_tags_map(other_files)
             if self.token_count(files_listing) < max_map_tokens:
                 ctags_msg = " with selected ctags info"
                 return files_listing, ctags_msg
@@ -166,7 +108,61 @@ class RepoMap:
     def get_rel_fname(self, fname):
         return os.path.relpath(fname, self.root)
 
+    def get_tags_map(self, filenames):
+        tags = []
+        for filename in filenames:
+            if filename.endswith(".md") or filename.endswith(".json"):
+                continue
+            tags += self.get_tags(filename)
+        if not tags:
+            return
+
+        return to_tree(tags)
+
+    def split_path(self, path):
+        path = os.path.relpath(path, self.root)
+        return fname_to_components(path, True)
+
+    def get_tags(self, filename):
+        # Check if the file is in the cache and if the modification time has not changed
+        file_mtime = os.path.getmtime(filename)
+        cache_key = filename
+        if cache_key in TAGS_CACHE and TAGS_CACHE[cache_key]["mtime"] == file_mtime:
+            return TAGS_CACHE[cache_key]["tags"]
+
+        cmd = ["ctags", "--fields=+S", "--extras=-F", "--output-format=json", filename]
+        output = subprocess.check_output(cmd).decode("utf-8")
+        output = output.splitlines()
+
+        tags = []
+        if not output:
+            tags.append(self.split_path(filename))
+
+        for line in output:
+            tag = json.loads(line)
+            path = tag.get("path")
+            scope = tag.get("scope")
+            kind = tag.get("kind")
+            name = tag.get("name")
+            signature = tag.get("signature")
+
+            last = name
+            if signature:
+                last += " " + signature
+
+            res = self.split_path(path)
+            if scope:
+                res.append(scope)
+            res += [kind, last]
+            tags.append(res)
+
+        # Update the cache
+        TAGS_CACHE[cache_key] = {"mtime": file_mtime, "tags": tags}
+
+        return tags
+
 
 if __name__ == "__main__":
-    res = get_tags_map(sys.argv[1:])
+    rm = RepoMap()
+    res = rm.get_tags_map(sys.argv[1:])
     print(res)
