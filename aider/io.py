@@ -1,8 +1,5 @@
 import os
-from pygments.lexers import guess_lexer_for_filename
-from pygments.token import Token
 from prompt_toolkit.styles import Style
-from pygments.util import ClassNotFound
 from prompt_toolkit.shortcuts import PromptSession, prompt
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.history import FileHistory
@@ -12,6 +9,8 @@ from rich.text import Text
 from pathlib import Path
 from datetime import datetime
 
+from aider import utils
+
 
 class FileContentCompleter(Completer):
     def __init__(self, fnames, commands):
@@ -19,14 +18,7 @@ class FileContentCompleter(Completer):
 
         self.words = set()
         for fname in fnames:
-            with open(fname, "r") as f:
-                content = f.read()
-            try:
-                lexer = guess_lexer_for_filename(fname, content)
-            except ClassNotFound:
-                continue
-            tokens = list(lexer.get_tokens(content))
-            self.words.update(token[1] for token in tokens if token[0] in Token.Name)
+            self.words.update(utils.get_name_identifiers(fname))
 
     def get_completions(self, document, complete_event):
         text = document.text_before_cursor
@@ -51,7 +43,15 @@ class FileContentCompleter(Completer):
 
 
 class InputOutput:
-    def __init__(self, pretty=True, yes=False, input_history_file=None, chat_history_file=None, input=None, output=None):
+    def __init__(
+        self,
+        pretty=True,
+        yes=False,
+        input_history_file=None,
+        chat_history_file=None,
+        input=None,
+        output=None,
+    ):
         self.input = input
         self.output = output
         self.pretty = pretty
