@@ -28,5 +28,31 @@ class TestRepoMap(unittest.TestCase):
             self.assertNotIn("test_file3.md:", result)
             self.assertNotIn("test_file4.json:", result)
 
+    def test_get_tags_map_with_identifiers(self):
+        # Create a temporary directory with a sample Python file containing identifiers
+        test_file = "test_file_with_identifiers.py"
+        file_content = """\
+class MyClass:
+    def my_method(self, arg1, arg2):
+        return arg1 + arg2
+
+def my_function(arg1, arg2):
+    return arg1 * arg2
+"""
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            with open(os.path.join(temp_dir, test_file), "w") as f:
+                f.write(file_content)
+
+            repo_map = RepoMap(root=temp_dir)
+            other_files = [os.path.join(temp_dir, test_file)]
+            result = repo_map.get_tags_map(other_files)
+
+            # Check if the result contains the expected tags map with identifiers
+            self.assertIn("test_file_with_identifiers.py:", result)
+            self.assertIn("MyClass", result)
+            self.assertIn("my_method", result)
+            self.assertIn("my_function", result)
+
 if __name__ == "__main__":
     unittest.main()
