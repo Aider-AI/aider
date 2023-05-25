@@ -3,7 +3,8 @@
 `aider` is a command-line chat tool that allows you to write and edit
 code with GPT-4.  You can ask GPT to help you start
 a new project, or add features to your existing code.
-`aider` is especially suited for working with code in a git repo, as it has features for committing, diffing and undoing changes proposed by GPT. 
+`aider` is well suited for working with code in a git repo,
+as it makes it easy to commit, diff and undo changes proposed by GPT. 
 
 ![aider screenshot](screenshot.gif)
 
