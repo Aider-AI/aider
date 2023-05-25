@@ -266,7 +266,7 @@ def find_original_update_blocks(content):
         raise ValueError(f"{processed}\n^^^ Error parsing ORIGINAL/UPDATED block.")
 
 
-def get_name_identifiers(fname):
+def get_name_identifiers(fname, uniq=True):
     with open(fname, "r") as f:
         content = f.read()
     try:
@@ -274,7 +274,10 @@ def get_name_identifiers(fname):
     except ClassNotFound:
         return list()
     tokens = list(lexer.get_tokens(content))
-    return set(token[1] for token in tokens if token[0] in Token.Name)
+    res = [token[1] for token in tokens if token[0] in Token.Name]
+    if uniq:
+        res = set(res)
+    return res
 
 
 if __name__ == "__main__":

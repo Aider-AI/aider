@@ -182,7 +182,7 @@ def find_py_files(directory):
     return py_files
 
 
-if __name__ == "__main__":
+def call_map():
     import random
     import graphviz
 
@@ -201,7 +201,7 @@ if __name__ == "__main__":
     # print(res)
 
     defines = defaultdict(set)
-    references = defaultdict(set)
+    references = defaultdict(list)
 
     root = os.path.commonpath(fnames)
 
@@ -217,25 +217,33 @@ if __name__ == "__main__":
             defines[ident].add(show_fname)
             # dump("def", fname, ident)
 
-        idents = utils.get_name_identifiers(fname)
+        idents = utils.get_name_identifiers(fname, uniq=False)
         for ident in idents:
             # dump("ref", fname, ident)
-            references[ident].add(show_fname)
+            references[ident].append(show_fname)
+
+    for ident,fname in defines.items():
+        dump(fname, ident)
 
     idents = set(defines.keys()).intersection(set(references.keys()))
 
-    dot = graphviz.Digraph()
+    dot = graphviz.Graph()
 
+    labels = defaultdict(list)
     edges = defaultdict(float)
     for ident in idents:
         defs = defines[ident]
         num_defs = len(defs)
+        if num_defs > 1:
+            continue
 
         for refs in references[ident]:
             for defs in defines[ident]:
                 if refs == defs:
                     continue
-                edges[(refs, defs)] += 1 / num_defs
+                name = tuple(sorted([refs, defs]))
+                edges[name] += 1 / num_defs
+                labels[name].append(ident)
 
     import networkx as nx
 
@@ -247,24 +255,38 @@ if __name__ == "__main__":
 
     ranked = nx.pagerank(G, weight="weight")
 
+    # drop low weight edges for plotting
+    edges_to_remove = [(node1, node2) for node1, node2, data in G.edges(data=True) if data['weight'] < 1]
+    G.remove_edges_from(edges_to_remove)
+    # Remove isolated nodes (nodes with no edges)
+    dump(G.nodes())
+    G.remove_nodes_from(list(nx.isolates(G)))
+    dump(G.nodes())
+
     max_rank = max(ranked.values())
     min_rank = min(ranked.values())
-    for fname, rank in ranked.items():
+    for fname in G.nodes():
+        fname = str(fname)
+        rank = ranked[fname]
         pen = 10 * (rank - min_rank) / (max_rank - min_rank) + 1
         dot.node(fname, penwidth=str(pen))
 
     max_w = max(edges.values())
-    for edge, weight in edges.items():
-        refs, defs = edge
+    for refs,defs,data in G.edges(data=True):
+        weight = data['weight']
 
         r = random.randint(0, 255)
         g = random.randint(0, 255)
         b = random.randint(0, 255)
         color = f"#{r:02x}{g:02x}{b:02x}80"
         weight = weight * 10 / max_w
-        # weight = max(weight, 1)
-        if weight >= 1:
-            dot.edge(refs, defs, penwidth=str(weight), color=color)
+        dot.edge(refs, defs, penwidth=str(weight), color=color)
+
+        name = tuple(sorted([refs, defs]))
+        print()
+        print(name)
+        for ident in sorted(labels[name]):
+            print('\t', ident)
         # print(f"{refs} -{weight}-> {defs}")
 
     top_rank = sorted([(rank, node) for (node, rank) in ranked.items()], reverse=True)
@@ -273,3 +295,6 @@ if __name__ == "__main__":
         print(f"{node} rank: {rank}")
 
     dot.render("tmp", format="pdf", view=True)
+
+if __name__ == "__main__":
+    call_map()
