@@ -1,6 +1,8 @@
 
 # Improving GPT-4's codebase understanding with ctags
 
+![robot flowchat](../assets/robot-flowchart.webp)
+
 GPT-4 is extremely useful for "self-contained" coding tasks,
 like generating brand new code or modifying a pure function
 that has no dependencies.
