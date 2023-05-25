@@ -208,7 +208,7 @@ Some possible approaches to reducing the amount of map data are:
 One key goal is to prefer solutions which are language agnostic or
 which can be easily deployed against most popular code languages.
 The `ctags` solution has this benefit, since it comes pre-built
-with tooling for most popular languages.
+with support for most popular languages.
 I suspect that Language Server Protocol might be an even
 better tool than `ctags` for this problem.
 But it is more cumbersome to deploy for a broad
