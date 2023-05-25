@@ -3,13 +3,14 @@ import json
 import sys
 import subprocess
 import tiktoken
+from collections import defaultdict
 
-from aider import prompts
+from aider import prompts, utils
 
 # Global cache for tags
 TAGS_CACHE = {}
 
-# from aider.dump import dump
+from aider.dump import dump
 
 
 def to_tree(tags):
@@ -170,6 +171,46 @@ class RepoMap:
 
 
 if __name__ == "__main__":
+    fnames = sys.argv[1:]
+
     rm = RepoMap()
-    res = rm.get_tags_map(sys.argv[1:])
-    print(res)
+    # res = rm.get_tags_map(fnames)
+    # print(res)
+
+    defines = defaultdict(set)
+    references = defaultdict(set)
+
+    for fname in fnames:
+        data = rm.run_ctags(fname)
+
+        for tag in data:
+            ident = tag["name"]
+            defines[ident].add(fname)
+            dump("def", fname, ident)
+
+        idents = utils.get_name_identifiers(fname)
+        for ident in idents:
+            dump("ref", fname, ident)
+            references[ident].add(fname)
+
+    idents = set(defines.keys()).intersection(set(references.keys()))
+
+    import graphviz
+
+    dot = graphviz.Digraph()
+    for fname in fnames:
+        dot.node(fname)
+
+    for ident in idents:
+        dump(ident)
+        for refs in references[ident]:
+            defs = defines[ident]
+            if len(defs) != 1:
+                continue
+            defs = list(defs)[0]
+            if refs == defs:
+                continue
+            dot.edge(refs, defs, label=ident)
+            print(f"{refs} -{ident}-> {defs}")
+
+    dot.render("tmp", format="png", view=True)
