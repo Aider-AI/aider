@@ -207,7 +207,6 @@ if __name__ == "__main__":
 
     show_fnames = set()
     for fname in fnames:
-        dump(fname)
         show_fname = os.path.relpath(fname, root)
         show_fnames.add(show_fname)
 
@@ -226,33 +225,51 @@ if __name__ == "__main__":
     idents = set(defines.keys()).intersection(set(references.keys()))
 
     dot = graphviz.Digraph()
-    for fname in show_fnames:
-        dot.node(fname)
 
-    edges = defaultdict(int)
+    edges = defaultdict(float)
     for ident in idents:
         defs = defines[ident]
-        if len(defs) > 1:
-            dump(ident, len(defs), defs)
-            continue
+        num_defs = len(defs)
 
         for refs in references[ident]:
             for defs in defines[ident]:
                 if refs == defs:
                     continue
-                edges[(refs, defs)] += 1
+                edges[(refs, defs)] += 1 / num_defs
 
-    max_w = max(edges.values())
+    import networkx as nx
+
+    G = nx.Graph()
 
     for edge, weight in edges.items():
         refs, defs = edge
+        G.add_edge(refs, defs, weight=weight)
+
+    ranked = nx.pagerank(G, weight="weight")
+
+    max_rank = max(ranked.values())
+    min_rank = min(ranked.values())
+    for fname, rank in ranked.items():
+        pen = 10 * (rank - min_rank) / (max_rank - min_rank) + 1
+        dot.node(fname, penwidth=str(pen))
+
+    max_w = max(edges.values())
+    for edge, weight in edges.items():
+        refs, defs = edge
+
         r = random.randint(0, 255)
         g = random.randint(0, 255)
         b = random.randint(0, 255)
         color = f"#{r:02x}{g:02x}{b:02x}80"
         weight = weight * 10 / max_w
         # weight = max(weight, 1)
-        dot.edge(refs, defs, penwidth=str(weight), color=color)
+        if weight >= 1:
+            dot.edge(refs, defs, penwidth=str(weight), color=color)
         # print(f"{refs} -{weight}-> {defs}")
+
+    top_rank = sorted([(rank, node) for (node, rank) in ranked.items()], reverse=True)
+    # Print the PageRank of each node
+    for rank, node in top_rank:
+        print(f"{node} rank: {rank}")
 
     dot.render("tmp", format="pdf", view=True)
