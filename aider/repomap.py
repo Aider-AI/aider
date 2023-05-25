@@ -171,6 +171,9 @@ class RepoMap:
 
 
 if __name__ == "__main__":
+    import random
+    import graphviz
+
     fnames = sys.argv[1:]
 
     rm = RepoMap()
@@ -180,29 +183,33 @@ if __name__ == "__main__":
     defines = defaultdict(set)
     references = defaultdict(set)
 
+    root = os.path.commonpath(fnames)
+
+    show_fnames = set()
     for fname in fnames:
+        show_fname = os.path.relpath(fname, root)
+        show_fnames.add(show_fname)
+
         data = rm.run_ctags(fname)
 
         for tag in data:
             ident = tag["name"]
-            defines[ident].add(fname)
-            dump("def", fname, ident)
+            defines[ident].add(show_fname)
+            # dump("def", fname, ident)
 
         idents = utils.get_name_identifiers(fname)
         for ident in idents:
-            dump("ref", fname, ident)
-            references[ident].add(fname)
+            # dump("ref", fname, ident)
+            references[ident].add(show_fname)
 
     idents = set(defines.keys()).intersection(set(references.keys()))
 
-    import graphviz
-
     dot = graphviz.Digraph()
-    for fname in fnames:
+    for fname in show_fnames:
         dot.node(fname)
 
+    edges = defaultdict(int)
     for ident in idents:
-        dump(ident)
         for refs in references[ident]:
             defs = defines[ident]
             if len(defs) != 1:
@@ -210,7 +217,19 @@ if __name__ == "__main__":
             defs = list(defs)[0]
             if refs == defs:
                 continue
-            dot.edge(refs, defs, label=ident)
-            print(f"{refs} -{ident}-> {defs}")
+            edges[(refs, defs)] += 1
 
-    dot.render("tmp", format="png", view=True)
+    max_w = max(edges.values())
+
+    for edge, weight in edges.items():
+        refs, defs = edge
+        r = random.randint(0, 255)
+        g = random.randint(0, 255)
+        b = random.randint(0, 255)
+        color = f"#{r:02x}{g:02x}{b:02x}80"
+        weight = weight * 10 / max_w
+        weight = max(weight, 1)
+        dot.edge(refs, defs, penwidth=str(weight), color=color)
+        # print(f"{refs} -{weight}-> {defs}")
+
+    dot.render("tmp", format="pdf", view=True)
