@@ -77,7 +77,7 @@ def my_function(arg1, arg2):
 
             # Check if the result contains each specific file in the expected tags map without ctags
             for file in test_files:
-                self.assertIn(f"{os.path.splitext(file)[0]}:", result)
+                self.assertIn(f"{os.path.splitext(file)[0]}.{os.path.splitext(file)[1][1:]}:", result)
 
 if __name__ == "__main__":
     unittest.main()
