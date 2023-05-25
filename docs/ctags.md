@@ -22,7 +22,7 @@ To address these issues, `aider` now
 sends GPT a **concise map of your whole git repository**
 that includes
 all declared variables and functions with call signatures.
-This *repo map* is built using `ctags`
+This *repo map* is built automatically using `ctags`
 and enables GPT to better comprehend, navigate
 and edit code in larger repos.
 
