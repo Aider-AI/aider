@@ -139,7 +139,14 @@ map. Universal ctags can scan source code written in many
 languages, and extract data about all the symbols defined in each
 file.
 
-For example, here is the `ctags --fields=+S --output-format=json` output for the `main.py` file mapped above:
+Historically, ctags were generated and indexed by IDEs or code editors 
+to make it easier for a human to search and navigate a
+codebase, find the implementation of functions, etc.
+We're going to use ctags to help GPT navigate and understand the codebase.
+
+Here is the type of output you get when you run ctags on source code. Specifically,
+this is the
+`ctags --fields=+S --output-format=json` output for the `main.py` file mapped above:
 
 ```json
 {
@@ -160,8 +167,8 @@ For example, here is the `ctags --fields=+S --output-format=json` output for the
 ```
 
 The repo map is built using this type of `ctags` data,
-formatted into the space
-efficient hierarchical tree format shown above.
+but formatted into the space
+efficient hierarchical tree format shown earlier.
 This is a format that GPT can easily understand
 and which conveys the map data using a
 minimal number of tokens.
