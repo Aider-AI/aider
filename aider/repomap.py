@@ -210,14 +210,16 @@ if __name__ == "__main__":
 
     edges = defaultdict(int)
     for ident in idents:
+        defs = defines[ident]
+        if len(defs) > 1:
+            dump(ident, len(defs), defs)
+            continue
+
         for refs in references[ident]:
-            defs = defines[ident]
-            if len(defs) != 1:
-                continue
-            defs = list(defs)[0]
-            if refs == defs:
-                continue
-            edges[(refs, defs)] += 1
+            for defs in defines[ident]:
+                if refs == defs:
+                    continue
+                edges[(refs, defs)] += 1
 
     max_w = max(edges.values())
 
@@ -228,7 +230,7 @@ if __name__ == "__main__":
         b = random.randint(0, 255)
         color = f"#{r:02x}{g:02x}{b:02x}80"
         weight = weight * 10 / max_w
-        weight = max(weight, 1)
+        # weight = max(weight, 1)
         dot.edge(refs, defs, penwidth=str(weight), color=color)
         # print(f"{refs} -{weight}-> {defs}")
 
