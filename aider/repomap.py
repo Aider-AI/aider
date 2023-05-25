@@ -112,6 +112,7 @@ class RepoMap:
         tags = []
         for filename in filenames:
             if filename.endswith(".md") or filename.endswith(".json"):
+                tags.append(self.split_path(filename))
                 continue
             tags += self.get_tags(filename)
         if not tags:
