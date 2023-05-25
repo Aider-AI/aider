@@ -142,7 +142,7 @@ file.
 Historically, ctags were generated and indexed by IDEs or code editors 
 to make it easier for a human to search and navigate a
 codebase, find the implementation of functions, etc.
-We're going to use ctags to help GPT navigate and understand the codebase.
+Instead, we're going to use ctags to help GPT navigate and understand the codebase.
 
 Here is the type of output you get when you run ctags on source code. Specifically,
 this is the
