@@ -6,11 +6,11 @@ import tiktoken
 from collections import defaultdict
 
 from aider import prompts, utils
+from aider.dump import dump
+
 
 # Global cache for tags
 TAGS_CACHE = {}
-
-from aider.dump import dump
 
 
 def to_tree(tags):
@@ -170,11 +170,31 @@ class RepoMap:
         return tags
 
 
+def find_py_files(directory):
+    if not os.path.isdir(directory):
+        return [directory]
+
+    py_files = []
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            if file.endswith(".py"):
+                py_files.append(os.path.join(root, file))
+    return py_files
+
+
 if __name__ == "__main__":
     import random
     import graphviz
 
     fnames = sys.argv[1:]
+
+    """
+    fnames = []
+    for dname in sys.argv[1:]:
+        fnames += find_py_files(dname)
+
+    fnames = sorted(fnames)
+    """
 
     rm = RepoMap()
     # res = rm.get_tags_map(fnames)
@@ -187,6 +207,7 @@ if __name__ == "__main__":
 
     show_fnames = set()
     for fname in fnames:
+        dump(fname)
         show_fname = os.path.relpath(fname, root)
         show_fnames.add(show_fname)
 
