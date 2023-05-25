@@ -124,23 +124,32 @@ class RepoMap:
         path = os.path.relpath(path, self.root)
         return fname_to_components(path, True)
 
-    def get_tags(self, filename):
+    def run_ctags(self, filename):
         # Check if the file is in the cache and if the modification time has not changed
         file_mtime = os.path.getmtime(filename)
         cache_key = filename
         if cache_key in TAGS_CACHE and TAGS_CACHE[cache_key]["mtime"] == file_mtime:
-            return TAGS_CACHE[cache_key]["tags"]
+            return TAGS_CACHE[cache_key]["data"]
 
         cmd = ["ctags", "--fields=+S", "--extras=-F", "--output-format=json", filename]
         output = subprocess.check_output(cmd).decode("utf-8")
         output = output.splitlines()
 
+        data = [json.loads(line) for line in output]
+
+        # Update the cache
+        TAGS_CACHE[cache_key] = {"mtime": file_mtime, "data": data}
+        return data
+
+    def get_tags(self, filename):
+        data = self.run_ctags(filename)
+
         tags = []
-        if not output:
+
+        if not data:
             tags.append(self.split_path(filename))
 
-        for line in output:
-            tag = json.loads(line)
+        for tag in data:
             path = tag.get("path")
             scope = tag.get("scope")
             kind = tag.get("kind")
@@ -156,9 +165,6 @@ class RepoMap:
                 res.append(scope)
             res += [kind, last]
             tags.append(res)
-
-        # Update the cache
-        TAGS_CACHE[cache_key] = {"mtime": file_mtime, "tags": tags}
 
         return tags
 
