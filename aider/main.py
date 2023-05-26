@@ -41,7 +41,10 @@ def main(args=None, input=None, output=None):
         "--config",
         is_config_file=True,
         metavar="CONFIG_FILE",
-        help="Specify the config file (default: search for .aider.conf.yml in git root or home directory)",
+        help=(
+            "Specify the config file (default: search for .aider.conf.yml in git root or home"
+            " directory)"
+        ),
     )
 
     parser.add_argument(
@@ -50,8 +53,12 @@ def main(args=None, input=None, output=None):
         nargs="*",
         help="a list of source code files (optional)",
     )
-    default_input_history_file = os.path.join(git_root, ".aider.input.history") if git_root else ".aider.input.history"
-    default_chat_history_file = os.path.join(git_root, ".aider.chat.history.md") if git_root else ".aider.chat.history.md"
+    default_input_history_file = (
+        os.path.join(git_root, ".aider.input.history") if git_root else ".aider.input.history"
+    )
+    default_chat_history_file = (
+        os.path.join(git_root, ".aider.chat.history.md") if git_root else ".aider.chat.history.md"
+    )
 
     parser.add_argument(
         "--input-history-file",
@@ -102,14 +109,14 @@ def main(args=None, input=None, output=None):
         help="Apply the changes from the given file instead of running the chat (debug)",
     )
     parser.add_argument(
-        "--auto-commit",
+        "--auto-commits",
         action="store_true",
         default=True,
         help="Enable auto commit of changes (default: True)",
     )
 
     parser.add_argument(
-        "--no-auto-commit",
+        "--no-auto-commits",
         action="store_false",
         dest="auto_commit",
         env_var=f"{env_prefix}AUTO_COMMIT",
