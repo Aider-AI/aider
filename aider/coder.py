@@ -168,7 +168,10 @@ class Coder:
         if self.abs_fnames:
             files_content = prompts.files_content_prefix
             files_content += self.get_files_content()
-            all_content += files_content
+        else:
+            files_content = prompts.files_no_full_files
+
+        all_content += files_content
 
         other_files = set(self.get_all_abs_files()) - set(self.abs_fnames)
         repo_content = self.repo_map.get_repo_map(self.abs_fnames, other_files)

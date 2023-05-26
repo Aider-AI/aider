@@ -122,6 +122,7 @@ class RepoMap:
 
     def split_path(self, path):
         path = os.path.relpath(path, self.root)
+        return [path]
         return fname_to_components(path, True)
 
     def get_tags(self, filename):
