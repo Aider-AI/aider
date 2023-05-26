@@ -23,27 +23,21 @@ def main(args=None, input=None, output=None):
         metavar="INPUT_HISTORY_FILE",
         env_var=f"{env_prefix}INPUT_HISTORY_FILE",
         default=".aider.input.history",
-        help=(
-            "Specify the chat input history file (default: .aider.input.history,"
-            f" ${env_prefix}INPUT_HISTORY_FILE)"
-        ),
+        help="Specify the chat input history file (default: .aider.input.history)",
     )
     parser.add_argument(
         "--chat-history-file",
         metavar="CHAT_HISTORY_FILE",
         env_var=f"{env_prefix}CHAT_HISTORY_FILE",
         default=".aider.chat.history.md",
-        help=(
-            "Specify the chat history file (default: .aider.chat.history.md,"
-            f" ${env_prefix}CHAT_HISTORY_FILE)"
-        ),
+        help="Specify the chat history file (default: .aider.chat.history.md)",
     )
     parser.add_argument(
         "--model",
         metavar="MODEL",
         env_var=f"{env_prefix}MODEL",
         default="gpt-4",
-        help=f"Specify the model to use for the main chat (default: gpt-4, ${env_prefix}MODEL)",
+        help="Specify the model to use for the main chat (default: gpt-4)",
     )
     parser.add_argument(
         "-3",
@@ -57,7 +51,7 @@ def main(args=None, input=None, output=None):
         action="store_false",
         dest="pretty",
         env_var=f"{env_prefix}PRETTY",
-        help=f"Disable pretty, colorized output (${env_prefix}PRETTY)",
+        help="Disable pretty, colorized output",
         default=True,
     )
     parser.add_argument(
@@ -70,7 +64,7 @@ def main(args=None, input=None, output=None):
         action="store_false",
         dest="auto_commits",
         env_var=f"{env_prefix}AUTO_COMMITS",
-        help=f"Disable auto commit of changes (${env_prefix}AUTO_COMMITS)",
+        help="Disable auto commit of changes",
         default=True,
     )
     parser.add_argument(
@@ -83,17 +77,14 @@ def main(args=None, input=None, output=None):
         "--show-diffs",
         action="store_true",
         env_var=f"{env_prefix}SHOW_DIFFS",
-        help=f"Show diffs when committing changes (default: False, ${env_prefix}SHOW_DIFFS)",
+        help="Show diffs when committing changes (default: False)",
         default=False,
     )
     parser.add_argument(
         "--ctags",
         action="store_true",
         env_var=f"{env_prefix}CTAGS",
-        help=(
-            "Add ctags to the chat to help GPT understand the codebase (default: False,"
-            f" ${env_prefix}CTAGS)"
-        ),
+        help="Add ctags to the chat to help GPT understand the codebase (default: False)",
         default=False,
     )
     parser.add_argument(
