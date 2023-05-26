@@ -207,7 +207,7 @@ class Coder:
                 self.num_control_c += 1
                 if self.num_control_c >= 2:
                     break
-                self.io.tool_error("^C again to quit")
+                self.io.tool_error("^C again or /exit to quit")
             except EOFError:
                 return
 
