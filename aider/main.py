@@ -102,12 +102,18 @@ def main(args=None, input=None, output=None):
         help="Apply the changes from the given file instead of running the chat (debug)",
     )
     parser.add_argument(
-        "--no-auto-commits",
-        action="store_false",
-        dest="auto_commits",
-        env_var=f"{env_prefix}AUTO_COMMITS",
-        help="Disable auto commit of changes",
+        "--auto-commit",
+        action="store_true",
         default=True,
+        help="Enable auto commit of changes (default: True)",
+    )
+
+    parser.add_argument(
+        "--no-auto-commit",
+        action="store_false",
+        dest="auto_commit",
+        env_var=f"{env_prefix}AUTO_COMMIT",
+        help="Disable auto commit of changes",
     )
     parser.add_argument(
         "--dry-run",
