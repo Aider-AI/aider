@@ -40,8 +40,8 @@ Using only the meta-data in the repo map, GPT is able to figure out how to
 call the method to be tested, as well as how to instantiate multiple
 class objects that are required to prepare for the test.
 
-To code with GPT-4 using the techniques discussed in this
-article:
+To code with GPT-4 using the techniques discussed here:
+
 
   - Install [aider](https://github.com/paul-gauthier/aider#installation).
   - Install [universal ctags](https://github.com/universal-ctags/ctags).
