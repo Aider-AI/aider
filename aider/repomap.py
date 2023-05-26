@@ -122,8 +122,7 @@ class RepoMap:
 
     def split_path(self, path):
         path = os.path.relpath(path, self.root)
-        return [path]
-        return fname_to_components(path, True)
+        return [path + ":"]
 
     def get_tags(self, filename):
         # Check if the file is in the cache and if the modification time has not changed
