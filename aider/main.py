@@ -20,16 +20,18 @@ def main(args=None, input=None, output=None):
     except git.InvalidGitRepositoryError:
         return None
 
+default_config_files = [
+    os.path.expanduser("~/.aider.conf.yml"),
+]
+
 git_root = get_git_root()
 if git_root:
-    default_config_file = os.path.join(git_root, ".aider.conf.yml")
-else:
-    default_config_file = os.path.expanduser("~/.aider.conf.yml")
+    default_config_files.insert(0, os.path.join(git_root, ".aider.conf.yml"))
 
 parser = configargparse.ArgumentParser(
     description="aider - chat with GPT about your code",
     add_config_file_help=True,
-    default_config_files=[default_config_file],
+    default_config_files=default_config_files,
 )
     parser.add_argument(
         "files",
