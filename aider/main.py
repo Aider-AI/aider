@@ -33,6 +33,15 @@ def main(args=None, input=None, output=None):
         description="aider - chat with GPT about your code",
         add_config_file_help=True,
         default_config_files=default_config_files,
+        config_file_parser_class=configargparse.YAMLConfigFileParser,
+    )
+
+    parser.add_argument(
+        "-c",
+        "--config",
+        is_config_file=True,
+        metavar="CONFIG_FILE",
+        help="Specify the config file (default: search for .aider.conf.yml in git root or home directory)",
     )
 
     parser.add_argument(
