@@ -1,6 +1,5 @@
-import os
 import sys
-import argparse
+import configargparse
 from dotenv import load_dotenv
 from aider.coder import Coder
 from aider.io import InputOutput
@@ -12,7 +11,7 @@ def main(args=None, input=None, output=None):
 
     load_dotenv()
     env_prefix = "AIDER_"
-    parser = argparse.ArgumentParser(description="aider - chat with GPT about your code")
+    parser = configargparse.ArgumentParser(description="aider - chat with GPT about your code")
     parser.add_argument(
         "files",
         metavar="FILE",
@@ -22,7 +21,8 @@ def main(args=None, input=None, output=None):
     parser.add_argument(
         "--input-history-file",
         metavar="INPUT_HISTORY_FILE",
-        default=os.environ.get(f"{env_prefix}INPUT_HISTORY_FILE", ".aider.input.history"),
+        env_var=f"{env_prefix}INPUT_HISTORY_FILE",
+        default=".aider.input.history",
         help=(
             "Specify the chat input history file (default: .aider.input.history,"
             f" ${env_prefix}INPUT_HISTORY_FILE)"
@@ -31,7 +31,8 @@ def main(args=None, input=None, output=None):
     parser.add_argument(
         "--chat-history-file",
         metavar="CHAT_HISTORY_FILE",
-        default=os.environ.get(f"{env_prefix}CHAT_HISTORY_FILE", ".aider.chat.history.md"),
+        env_var=f"{env_prefix}CHAT_HISTORY_FILE",
+        default=".aider.chat.history.md",
         help=(
             "Specify the chat history file (default: .aider.chat.history.md,"
             f" ${env_prefix}CHAT_HISTORY_FILE)"
@@ -40,7 +41,8 @@ def main(args=None, input=None, output=None):
     parser.add_argument(
         "--model",
         metavar="MODEL",
-        default=os.environ.get(f"{env_prefix}MODEL", "gpt-4"),
+        env_var=f"{env_prefix}MODEL",
+        default="gpt-4",
         help=f"Specify the model to use for the main chat (default: gpt-4, ${env_prefix}MODEL)",
     )
     parser.add_argument(
@@ -54,8 +56,9 @@ def main(args=None, input=None, output=None):
         "--no-pretty",
         action="store_false",
         dest="pretty",
+        env_var=f"{env_prefix}PRETTY",
         help=f"Disable pretty, colorized output (${env_prefix}PRETTY)",
-        default=bool(int(os.environ.get(f"{env_prefix}PRETTY", 1))),
+        default=True,
     )
     parser.add_argument(
         "--apply",
@@ -66,8 +69,9 @@ def main(args=None, input=None, output=None):
         "--no-auto-commits",
         action="store_false",
         dest="auto_commits",
+        env_var=f"{env_prefix}AUTO_COMMITS",
         help=f"Disable auto commit of changes (${env_prefix}AUTO_COMMITS)",
-        default=bool(int(os.environ.get(f"{env_prefix}AUTO_COMMITS", 1))),
+        default=True,
     )
     parser.add_argument(
         "--dry-run",
@@ -78,17 +82,19 @@ def main(args=None, input=None, output=None):
     parser.add_argument(
         "--show-diffs",
         action="store_true",
+        env_var=f"{env_prefix}SHOW_DIFFS",
         help=f"Show diffs when committing changes (default: False, ${env_prefix}SHOW_DIFFS)",
-        default=bool(int(os.environ.get(f"{env_prefix}SHOW_DIFFS", 0))),
+        default=False,
     )
     parser.add_argument(
         "--ctags",
         action="store_true",
+        env_var=f"{env_prefix}CTAGS",
         help=(
             "Add ctags to the chat to help GPT understand the codebase (default: False,"
             f" ${env_prefix}CTAGS)"
         ),
-        default=bool(int(os.environ.get(f"{env_prefix}CTAGS", 0))),
+        default=False,
     )
     parser.add_argument(
         "--yes",
@@ -97,7 +103,8 @@ def main(args=None, input=None, output=None):
         default=False,
     )
     parser.add_argument(
-        "-v", "--verbose",
+        "-v",
+        "--verbose",
         action="store_true",
         help="Enable verbose output",
         default=False,
