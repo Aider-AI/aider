@@ -68,19 +68,40 @@ You can also just launch `aider` anywhere in a git repo without naming files on 
 It will discover all the files in the repo.
 You can then add and remove individual files in the chat session with the `/add` and `/drop` chat commands described below.
 
-You can also use additional command-line options to customize the behavior of the tool. The following options are available, along with their corresponding environment variable overrides:
+You can also use additional command-line options, environment variables or configuration file
+to set many options:
 
-- `--input-history-file INPUT_HISTORY_FILE`: Specify the chat input history file (default: .aider.input.history). Override the default with the environment variable `AIDER_INPUT_HISTORY_FILE`.
-- `--chat-history-file CHAT_HISTORY_FILE`: Specify the chat history file (default: .aider.chat.history.md). Override the default with the environment variable `AIDER_CHAT_HISTORY_FILE`.
-- `--model MODEL`: Specify the model to use for the main chat (default: gpt-4). Override the default with the environment variable `AIDER_MODEL`.
-- `-3`: Use gpt-3.5-turbo model for the main chat (not advised). No environment variable override.
-- `--ctags`: Add ctags to the chat to help GPT understand the codebase (default: False, `AIDER_CTAGS`). Requires [universal ctags](https://github.com/universal-ctags/ctags). Override the default with the environment variable `AIDER_CTAGS`.
-- `--no-pretty`: Disable pretty, colorized output. Override the default with the environment variable `AIDER_PRETTY` (default: 1 for enabled, 0 for disabled).
-- `--no-auto-commits`: Disable auto commit of changes. Override the default with the environment variable `AIDER_AUTO_COMMITS` (default: 1 for enabled, 0 for disabled).
-- `--show-diffs`: Show diffs when committing changes (default: False). Override the default with the environment variable `AIDER_SHOW_DIFFS` (default: 0 for False, 1 for True).
-- `--yes`: Always say yes to every confirmation (default: False).
+```
+  -h, --help            show this help message and exit
+  --input-history-file INPUT_HISTORY_FILE
+                        Specify the chat input history file (default:
+                        .aider.input.history) [env var:
+                        AIDER_INPUT_HISTORY_FILE]
+  --chat-history-file CHAT_HISTORY_FILE
+                        Specify the chat history file (default:
+                        .aider.chat.history.md) [env var:
+                        AIDER_CHAT_HISTORY_FILE]
+  --model MODEL         Specify the model to use for the main chat (default:
+                        gpt-4) [env var: AIDER_MODEL]
+  -3                    Use gpt-3.5-turbo model for the main chat (not
+                        advised)
+  --no-pretty           Disable pretty, colorized output [env var:
+                        AIDER_PRETTY]
+  --apply FILE          Apply the changes from the given file instead of
+                        running the chat (debug)
+  --no-auto-commits     Disable auto commit of changes [env var:
+                        AIDER_AUTO_COMMITS]
+  --dry-run             Perform a dry run without applying changes (default:
+                        False)
+  --show-diffs          Show diffs when committing changes (default: False)
+                        [env var: AIDER_SHOW_DIFFS]
+  --ctags [CTAGS]       Add ctags to the chat to help GPT understand the
+                        codebase (default: check for ctags executable) [env
+                        var: AIDER_CTAGS]
+  --yes                 Always say yes to every confirmation
+  -v, --verbose         Enable verbose output
 
-For more information, run `aider --help`.
+```
 
 ## Chat commands
 
