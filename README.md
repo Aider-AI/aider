@@ -73,34 +73,34 @@ to set many options:
 
 ```
   -h, --help            show this help message and exit
+  -c CONFIG_FILE, --config CONFIG_FILE
+                        Specify the config file (default: search for
+                        .aider.conf.yml in git root or home directory)
   --input-history-file INPUT_HISTORY_FILE
                         Specify the chat input history file (default:
-                        .aider.input.history) [env var:
-                        AIDER_INPUT_HISTORY_FILE]
+                        .aider.input.history) [env var: AIDER_INPUT_HISTORY_FILE]
   --chat-history-file CHAT_HISTORY_FILE
                         Specify the chat history file (default:
-                        .aider.chat.history.md) [env var:
-                        AIDER_CHAT_HISTORY_FILE]
-  --model MODEL         Specify the model to use for the main chat (default:
-                        gpt-4) [env var: AIDER_MODEL]
-  -3                    Use gpt-3.5-turbo model for the main chat (not
-                        advised)
-  --no-pretty           Disable pretty, colorized output [env var:
+                        .aider.chat.history.md) [env var: AIDER_CHAT_HISTORY_FILE]
+  --model MODEL         Specify the model to use for the main chat (default: gpt-4)
+                        [env var: AIDER_MODEL]
+  -3                    Use gpt-3.5-turbo model for the main chat (not advised)
+  --pretty              Enable pretty, colorized output (default: True) [env var:
                         AIDER_PRETTY]
-  --apply FILE          Apply the changes from the given file instead of
-                        running the chat (debug)
-  --no-auto-commits     Disable auto commit of changes [env var:
-                        AIDER_AUTO_COMMITS]
-  --dry-run             Perform a dry run without applying changes (default:
-                        False)
-  --show-diffs          Show diffs when committing changes (default: False)
-                        [env var: AIDER_SHOW_DIFFS]
-  --ctags [CTAGS]       Add ctags to the chat to help GPT understand the
-                        codebase (default: check for ctags executable) [env
-                        var: AIDER_CTAGS]
+  --no-pretty           Disable pretty, colorized output
+  --apply FILE          Apply the changes from the given file instead of running
+                        the chat (debug)
+  --auto-commits        Enable auto commit of changes (default: True) [env var:
+                        AIDER_AUTO_COMMIT]
+  --no-auto-commits     Disable auto commit of changes
+  --dry-run             Perform a dry run without applying changes (default: False)
+  --show-diffs          Show diffs when committing changes (default: False) [env
+                        var: AIDER_SHOW_DIFFS]
+  --ctags [CTAGS]       Add ctags to the chat to help GPT understand the codebase
+                        (default: check for ctags executable) [env var:
+                        AIDER_CTAGS]
   --yes                 Always say yes to every confirmation
   -v, --verbose         Enable verbose output
-
 ```
 
 ## Chat commands

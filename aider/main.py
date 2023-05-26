@@ -100,7 +100,6 @@ def main(args=None, input=None, output=None):
         "--no-pretty",
         action="store_false",
         dest="pretty",
-        env_var=f"{env_prefix}PRETTY",
         help="Disable pretty, colorized output",
     )
     parser.add_argument(
@@ -111,6 +110,7 @@ def main(args=None, input=None, output=None):
     parser.add_argument(
         "--auto-commits",
         action="store_true",
+        env_var=f"{env_prefix}AUTO_COMMIT",
         default=True,
         help="Enable auto commit of changes (default: True)",
     )
@@ -119,7 +119,6 @@ def main(args=None, input=None, output=None):
         "--no-auto-commits",
         action="store_false",
         dest="auto_commit",
-        env_var=f"{env_prefix}AUTO_COMMIT",
         help="Disable auto commit of changes",
     )
     parser.add_argument(
