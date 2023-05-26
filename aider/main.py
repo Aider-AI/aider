@@ -13,20 +13,21 @@ def main(args=None, input=None, output=None):
 
     load_dotenv()
     env_prefix = "AIDER_"
+
     def get_git_root():
-    try:
-        repo = git.Repo(search_parent_directories=True)
-        return repo.working_tree_dir
-    except git.InvalidGitRepositoryError:
-        return None
+        try:
+            repo = git.Repo(search_parent_directories=True)
+            return repo.working_tree_dir
+        except git.InvalidGitRepositoryError:
+            return None
 
-default_config_files = [
-    os.path.expanduser("~/.aider.conf.yml"),
-]
+    default_config_files = [
+        os.path.expanduser("~/.aider.conf.yml"),
+    ]
 
-git_root = get_git_root()
-if git_root:
-    default_config_files.insert(0, os.path.join(git_root, ".aider.conf.yml"))
+    git_root = get_git_root()
+    if git_root:
+        default_config_files.insert(0, os.path.join(git_root, ".aider.conf.yml"))
 
 parser = configargparse.ArgumentParser(
     description="aider - chat with GPT about your code",
