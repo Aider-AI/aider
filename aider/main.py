@@ -82,12 +82,18 @@ def main(args=None, input=None, output=None):
         help="Use gpt-3.5-turbo model for the main chat (not advised)",
     )
     parser.add_argument(
+        "--pretty",
+        action="store_true",
+        default=True,
+        help="Enable pretty, colorized output (default: True)",
+    )
+
+    parser.add_argument(
         "--no-pretty",
         action="store_false",
         dest="pretty",
         env_var=f"{env_prefix}PRETTY",
         help="Disable pretty, colorized output",
-        default=True,
     )
     parser.add_argument(
         "--apply",
