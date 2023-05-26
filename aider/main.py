@@ -84,6 +84,7 @@ def main(args=None, input=None, output=None):
     parser.add_argument(
         "--pretty",
         action="store_true",
+        env_var=f"{env_prefix}PRETTY",
         default=True,
         help="Enable pretty, colorized output (default: True)",
     )
