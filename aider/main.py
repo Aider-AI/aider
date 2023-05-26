@@ -41,19 +41,22 @@ def main(args=None, input=None, output=None):
         nargs="*",
         help="a list of source code files (optional)",
     )
+    default_input_history_file = os.path.join(git_root, ".aider.input.history") if git_root else ".aider.input.history"
+    default_chat_history_file = os.path.join(git_root, ".aider.chat.history.md") if git_root else ".aider.chat.history.md"
+
     parser.add_argument(
         "--input-history-file",
         metavar="INPUT_HISTORY_FILE",
         env_var=f"{env_prefix}INPUT_HISTORY_FILE",
-        default=".aider.input.history",
-        help="Specify the chat input history file (default: .aider.input.history)",
+        default=default_input_history_file,
+        help=f"Specify the chat input history file (default: {default_input_history_file})",
     )
     parser.add_argument(
         "--chat-history-file",
         metavar="CHAT_HISTORY_FILE",
         env_var=f"{env_prefix}CHAT_HISTORY_FILE",
-        default=".aider.chat.history.md",
-        help="Specify the chat history file (default: .aider.chat.history.md)",
+        default=default_chat_history_file,
+        help=f"Specify the chat history file (default: {default_chat_history_file})",
     )
     parser.add_argument(
         "--model",
