@@ -45,7 +45,7 @@ article:
 
   - Install [aider](https://github.com/paul-gauthier/aider#installation).
   - Install [universal ctags](https://github.com/universal-ctags/ctags).
-  - Run `aider` with the `--ctags` option inside your repo.
+  - Run `aider --ctags` inside your repo.
 
 ## The problem: code context
 
@@ -230,5 +230,5 @@ To use this experimental repo map feature:
 
   - Install [aider](https://github.com/paul-gauthier/aider#installation).
   - Install [universal ctags](https://github.com/universal-ctags/ctags).
-  - Run `aider` with the `--ctags` option inside your repo.
+  - Run `aider --ctags` inside your repo.
   
