@@ -50,15 +50,17 @@ def fname_to_components(fname, with_colon):
 class RepoMap:
     ctags_cmd = ["ctags", "--fields=+S", "--extras=-F", "--output-format=json"]
 
-    def __init__(self, use_ctags=True, root=None, main_model="gpt-4"):
-        if not self.check_for_ctags():
-            use_ctags = False
+    def __init__(self, use_ctags=None, root=None, main_model="gpt-4"):
         if not root:
             root = os.getcwd()
-
-        self.use_ctags = use_ctags
-        self.tokenizer = tiktoken.encoding_for_model(main_model)
         self.root = root
+
+        if use_ctags is None:
+            self.use_ctags = self.check_for_ctags()
+        else:
+            self.use_ctags = use_ctags
+
+        self.tokenizer = tiktoken.encoding_for_model(main_model)
 
     def get_repo_map(self, chat_files, other_files):
         res = self.choose_files_listing(other_files)
@@ -164,6 +166,7 @@ class RepoMap:
 
         # Update the cache
         TAGS_CACHE[cache_key] = {"mtime": file_mtime, "tags": tags}
+        return tags
 
     def check_for_ctags(self):
         try:
@@ -175,6 +178,7 @@ class RepoMap:
         except Exception:
             return False
         return True
+
 
 if __name__ == "__main__":
     rm = RepoMap()
