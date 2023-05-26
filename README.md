@@ -33,10 +33,10 @@ You can find more chat transcripts on the [examples page](https://aider.chat/exa
 * `aider` will apply the edits suggested by GPT-4 directly to your source files.
 * `aider` will automatically commit each changeset to your local git repo with a descriptive commit message. These frequent, automatic commits provide a safety net. It's easy to undo `aider` changes or use standard git workflows to manage longer sequences of changes.
 * `aider` can review multiple source files at once and make coordinated code changes across all of them in a single changeset/commit.
-* `aider` gives GPT a
+* `aider` can give GPT a
 [map of your entire git repo](https://aider.chat/docs/ctags.html),
-so it can ask for permission to review whichever files seem relevant to your requests.
-* You can also edit the files using your editor while chatting with `aider`.
+which helps it understand and modify large codebases.
+* You can edit the files by hand using your editor while chatting with `aider`.
   * `aider` will notice if you edit the files outside the chat.
   * It will help you commit these out-of-band changes, if you'd like.
   * It will bring the updated file contents into the chat.
@@ -49,7 +49,10 @@ so it can ask for permission to review whichever files seem relevant to your req
 1. Install the package:
     * From GitHub: `pip install git+https://github.com/paul-gauthier/aider.git`
     * From your local copy of the repo in develop mode to pick up local edits immediately: `pip install -e .` 
+
 2. Set up your OpenAI API key as an environment variable `OPENAI_API_KEY` or by including it in a `.env` file.
+
+3. Optionally, install [universal ctags](https://github.com/universal-ctags/ctags). This is helpful if you plan to work with repositories with more than a handful of files.  This allows `aider --ctags` to build a [map of your entire git repo](https://aider.chat/docs/ctags.html) and share it with GPT to help it better understand and modify large codebases.
 
 ## Usage
 
