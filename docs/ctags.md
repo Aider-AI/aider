@@ -40,10 +40,12 @@ Using only the meta-data in the repo map, GPT is able to figure out how to
 call the method to be tested, as well as how to instantiate multiple
 class objects that are required to prepare for the test.
 
-To use the techniques discussed in this
-article to code with GPT-4,
-[download the open source `aider` command-line chat tool from github](https://github.com/paul-gauthier/aider) and run it with `--ctags`.
+To code with GPT-4 using the techniques discussed in this
+article:
 
+  - Install [aider](https://github.com/paul-gauthier/aider#installation).
+  - Install [universal ctags](https://github.com/universal-ctags/ctags).
+  - Run `aider` with the `--ctags` option inside your repo.
 
 ## The problem: code context
 
