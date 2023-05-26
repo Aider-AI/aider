@@ -1,3 +1,4 @@
+import sys
 import os
 import git
 import subprocess
@@ -29,7 +30,7 @@ class Commands:
                 self.io.tool(f"{cmd} No description available.")
 
     def get_commands(self):
-        commands = ["/help"]
+        commands = ["/help", "/exit"]
         for attr in dir(self):
             if attr.startswith("cmd_"):
                 commands.append("/" + attr[4:])
@@ -68,6 +69,8 @@ class Commands:
                 return self.do_run(matching_commands[0][1:], rest_inp)
         elif len(matching_commands) > 1:
             self.io.tool_error("Ambiguous command: ', '.join(matching_commands)}")
+        elif first_word == "/exit":
+            self.cmd_exit()
         else:
             self.io.tool_error(f"Error: {first_word} is not a valid command.")
 
@@ -250,6 +253,10 @@ class Commands:
             output=combined_output,
         )
         return msg
+
+    def cmd_exit(self):
+        "Exit the application"
+        sys.exit()
 
     def cmd_ls(self, args):
         "List all known files and those included in the chat session"
