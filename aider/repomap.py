@@ -3,6 +3,7 @@ import json
 import sys
 import subprocess
 import tiktoken
+import tempfile
 
 from aider import prompts
 
@@ -50,6 +51,8 @@ class RepoMap:
     ctags_cmd = ["ctags", "--fields=+S", "--extras=-F", "--output-format=json"]
 
     def __init__(self, use_ctags=True, root=None, main_model="gpt-4"):
+        if not self.check_for_ctags():
+            use_ctags = False
         if not root:
             root = os.getcwd()
 
@@ -162,10 +165,19 @@ class RepoMap:
         # Update the cache
         TAGS_CACHE[cache_key] = {"mtime": file_mtime, "tags": tags}
 
-        return tags
-
+    def check_for_ctags(self):
+        try:
+            with tempfile.TemporaryDirectory() as tempdir:
+                hello_py = os.path.join(tempdir, "hello.py")
+                with open(hello_py, "w") as f:
+                    f.write("def hello():\n    print('Hello, world!')\n")
+                self.get_tags(hello_py)
+        except Exception:
+            return False
+        return True
 
 if __name__ == "__main__":
     rm = RepoMap()
     res = rm.get_tags_map(sys.argv[1:])
+    print(res)
     print(res)
