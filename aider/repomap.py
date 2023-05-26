@@ -47,6 +47,8 @@ def fname_to_components(fname, with_colon):
 
 
 class RepoMap:
+    ctags_cmd = ["ctags", "--fields=+S", "--extras=-F", "--output-format=json"]
+
     def __init__(self, use_ctags=True, root=None, main_model="gpt-4"):
         if not root:
             root = os.getcwd()
@@ -131,7 +133,7 @@ class RepoMap:
         if cache_key in TAGS_CACHE and TAGS_CACHE[cache_key]["mtime"] == file_mtime:
             return TAGS_CACHE[cache_key]["tags"]
 
-        cmd = ["ctags", "--fields=+S", "--extras=-F", "--output-format=json", filename]
+        cmd = self.ctags_cmd + [filename]
         output = subprocess.check_output(cmd).decode("utf-8")
         output = output.splitlines()
 
