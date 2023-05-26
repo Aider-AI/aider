@@ -105,10 +105,12 @@ def main(args=None, input=None, output=None):
     )
     parser.add_argument(
         "--ctags",
-        action="store_true",
+        type=lambda x: (str(x).lower() == 'true'),
+        nargs='?',
+        const=True,
+        default=None,
         env_var=f"{env_prefix}CTAGS",
-        help="Add ctags to the chat to help GPT understand the codebase (default: False)",
-        default=False,
+        help="Add ctags to the chat to help GPT understand the codebase (default: None)",
     )
     parser.add_argument(
         "--yes",
