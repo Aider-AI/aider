@@ -14,11 +14,12 @@ from datetime import datetime
 
 
 class FileContentCompleter(Completer):
-    def __init__(self, fnames, commands):
+    def __init__(self, root, rel_fnames, commands):
         self.commands = commands
 
         self.words = set()
-        for fname in fnames:
+        for rel_fname in rel_fnames:
+            fname = os.path.join(root, rel_fname)
             with open(fname, "r") as f:
                 content = f.read()
             try:
@@ -70,24 +71,14 @@ class InputOutput:
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
 
-    def get_input(self, fnames, commands):
+    def get_input(self, root, rel_fnames, commands):
         if self.pretty:
             self.console.rule()
         else:
             print()
 
-        fnames = list(fnames)
-        if len(fnames) > 1:
-            common_prefix = os.path.commonpath(fnames)
-            if not common_prefix.endswith(os.path.sep):
-                common_prefix += os.path.sep
-            short_fnames = [fname.replace(common_prefix, "", 1) for fname in fnames]
-        elif len(fnames):
-            short_fnames = [os.path.basename(fnames[0])]
-        else:
-            short_fnames = []
-
-        show = " ".join(short_fnames)
+        rel_fnames = list(rel_fnames)
+        show = " ".join(rel_fnames)
         if len(show) > 10:
             show += "\n"
         show += "> "
@@ -98,7 +89,7 @@ class InputOutput:
         style = Style.from_dict({"": "green"})
 
         while True:
-            completer_instance = FileContentCompleter(fnames, commands)
+            completer_instance = FileContentCompleter(root, rel_fnames, commands)
             if multiline_input:
                 show = ". "
 
