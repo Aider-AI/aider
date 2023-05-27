@@ -37,7 +37,7 @@ class TestCoder(unittest.TestCase):
 
         # Mock the git repo
         mock_repo = MagicMock()
-        mock_repo.git.ls_files.return_value = "path/to/file1.txt\npath/to/file2.py"
+        mock_repo.git.ls_files.return_value = "./file1.txt\n./file2.py"
         coder.repo = mock_repo
 
         # Call the check_for_file_mentions method
