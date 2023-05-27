@@ -37,6 +37,7 @@ class Coder:
         pretty=True,
         show_diffs=False,
         auto_commits=True,
+        dirty_commits=True,
         dry_run=False,
         use_ctags=False,
         verbose=False,
@@ -48,6 +49,7 @@ class Coder:
 
         self.io = io
         self.auto_commits = auto_commits
+        self.dirty_commits = dirty_commits
         self.dry_run = dry_run
 
         if pretty:

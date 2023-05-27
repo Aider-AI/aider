@@ -123,6 +123,12 @@ def main(args=None, input=None, output=None):
         help="Disable auto commit of changes",
     )
     parser.add_argument(
+        "--no-dirty-commits",
+        action="store_false",
+        dest="dirty_commits",
+        help="Disable dirty commit of changes",
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Perform a dry run without applying changes (default: False)",
@@ -187,6 +193,7 @@ def main(args=None, input=None, output=None):
         pretty=args.pretty,
         show_diffs=args.show_diffs,
         auto_commits=args.auto_commits,
+        dirty_commits=args.dirty_commits,
         dry_run=args.dry_run,
         use_ctags=args.ctags,
         verbose=args.verbose,
