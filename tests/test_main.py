@@ -24,17 +24,8 @@ class TestMain(TestCase):
             pipe_input = create_input(StringIO(""))
             with unittest.mock.patch("aider.main.Coder") as MockCoder:
                 main(["--no-auto-commits"], input=pipe_input, output=DummyOutput())
-                MockCoder.assert_called_with(
-                    unittest.mock.ANY,
-                    main_model=unittest.mock.ANY,
-                    fnames=unittest.mock.ANY,
-                    pretty=unittest.mock.ANY,
-                    show_diffs=unittest.mock.ANY,
-                    auto_commits=False,
-                    dry_run=unittest.mock.ANY,
-                    use_ctags=unittest.mock.ANY,
-                    verbose=unittest.mock.ANY,
-                )
+                _, kwargs = MockCoder.call_args
+                assert kwargs["auto_commits"] is False
             pipe_input.close()
 
     def test_main_with_empty_dir_new_file(self):
