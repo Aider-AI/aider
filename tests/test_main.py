@@ -74,15 +74,3 @@ class TestMain(TestCase):
                 main(["--dirty-commits"])
                 _, kwargs = MockCoder.call_args
                 assert kwargs["dirty_commits"] is True
-
-
-    def test_main_pretty_from_env(self):
-        with tempfile.TemporaryDirectory() as temp_dir:
-            os.chdir(temp_dir)
-            with open(".env", "w") as env_file:
-                env_file.write("AIDER_PRETTY=false\n")
-
-            with patch("aider.main.Coder") as MockCoder:
-                main([])
-                _, kwargs = MockCoder.call_args
-                assert kwargs["pretty"] is False

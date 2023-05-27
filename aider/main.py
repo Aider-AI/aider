@@ -20,8 +20,6 @@ def main(args=None, input=None, output=None):
 
     git_root = get_git_root()
 
-    env_prefix = "AIDER_"
-
     default_config_files = [
         os.path.expanduser("~/.aider.conf.yml"),
     ]
@@ -33,6 +31,7 @@ def main(args=None, input=None, output=None):
         add_config_file_help=True,
         default_config_files=default_config_files,
         config_file_parser_class=configargparse.YAMLConfigFileParser,
+        auto_env_var_prefix="AIDER_",
     )
 
     parser.add_argument(
@@ -62,21 +61,18 @@ def main(args=None, input=None, output=None):
     parser.add_argument(
         "--input-history-file",
         metavar="INPUT_HISTORY_FILE",
-        env_var=f"{env_prefix}INPUT_HISTORY_FILE",
         default=default_input_history_file,
         help=f"Specify the chat input history file (default: {default_input_history_file})",
     )
     parser.add_argument(
         "--chat-history-file",
         metavar="CHAT_HISTORY_FILE",
-        env_var=f"{env_prefix}CHAT_HISTORY_FILE",
         default=default_chat_history_file,
         help=f"Specify the chat history file (default: {default_chat_history_file})",
     )
     parser.add_argument(
         "--model",
         metavar="MODEL",
-        env_var=f"{env_prefix}MODEL",
         default="gpt-4",
         help="Specify the model to use for the main chat (default: gpt-4)",
     )
@@ -90,7 +86,6 @@ def main(args=None, input=None, output=None):
     parser.add_argument(
         "--pretty",
         action="store_true",
-        env_var=f"{env_prefix}PRETTY",
         default=True,
         help="Enable pretty, colorized output (default: True)",
     )
@@ -108,7 +103,6 @@ def main(args=None, input=None, output=None):
     parser.add_argument(
         "--auto-commits",
         action="store_true",
-        env_var=f"{env_prefix}AUTO_COMMIT",
         dest="auto_commits",
         default=True,
         help="Enable auto commit of changes (default: True)",
@@ -121,18 +115,17 @@ def main(args=None, input=None, output=None):
         help="Disable auto commit of changes",
     )
     parser.add_argument(
-        "--no-dirty-commits",
-        action="store_false",
-        dest="dirty_commits",
-        help="Disable dirty commit of changes",
-    )
-    parser.add_argument(
         "--dirty-commits",
         action="store_true",
         dest="dirty_commits",
         help="Enable dirty commit of changes",
-        env_var=f"{env_prefix}DIRTY_COMMIT",
         default=True,
+    )
+    parser.add_argument(
+        "--no-dirty-commits",
+        action="store_false",
+        dest="dirty_commits",
+        help="Disable dirty commit of changes",
     )
     parser.add_argument(
         "--dry-run",
@@ -143,7 +136,6 @@ def main(args=None, input=None, output=None):
     parser.add_argument(
         "--show-diffs",
         action="store_true",
-        env_var=f"{env_prefix}SHOW_DIFFS",
         help="Show diffs when committing changes (default: False)",
         default=False,
     )
@@ -153,7 +145,6 @@ def main(args=None, input=None, output=None):
         nargs="?",
         const=True,
         default=None,
-        env_var=f"{env_prefix}CTAGS",
         help=(
             "Add ctags to the chat to help GPT understand the codebase (default: check for ctags"
             " executable)"
