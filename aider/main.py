@@ -190,7 +190,7 @@ def main(args=None, input=None, output=None):
     io.tool(*sys.argv, log_only=True)
 
     if not args.openai_api_key:
-        io.tool_error("No OpenAI API key provided. Use --openai-api-key or env OPENAI_API_KEY,")
+        io.tool_error("No OpenAI API key provided. Use --openai-api-key or env OPENAI_API_KEY.")
         return 1
 
     coder = Coder(
