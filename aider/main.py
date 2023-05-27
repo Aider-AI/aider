@@ -19,13 +19,17 @@ def main(args=None, input=None, output=None):
     if args is None:
         args = sys.argv[1:]
 
-    load_dotenv()
+    git_root = get_git_root()
+
+    if git_root:
+        load_dotenv(os.path.join(git_root, ".env"))
+    else:
+        load_dotenv()
     env_prefix = "AIDER_"
 
     default_config_files = [
         os.path.expanduser("~/.aider.conf.yml"),
     ]
-    git_root = get_git_root()
     if git_root:
         default_config_files.insert(0, os.path.join(git_root, ".aider.conf.yml"))
 
