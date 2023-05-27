@@ -216,6 +216,7 @@ def main(args=None, input=None, output=None):
         coder.update_files(content, inp="")
         return
 
+    io.tool("Use /help to see in-chat commands.")
     coder.run()
 
 
