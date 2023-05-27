@@ -50,7 +50,7 @@ which helps it understand and modify large codebases.
     * From GitHub: `pip install git+https://github.com/paul-gauthier/aider.git`
     * From your local copy of the repo in develop mode to pick up local edits immediately: `pip install -e .` 
 
-2. Set up your OpenAI API key as an environment variable `OPENAI_API_KEY` or by including it in a `.env` file.
+2. Set up your OpenAI API key as an environment variable `OPENAI_API_KEY` or by including it in an `.aider.config.yml` file (see `aider --help`).
 
 3. Optionally, install [universal ctags](https://github.com/universal-ctags/ctags). This is helpful if you plan to work with repositories with more than a handful of files.  This allows `aider --ctags` to build a [map of your entire git repo](https://aider.chat/docs/ctags.html) and share it with GPT to help it better understand and modify large codebases.
 
@@ -72,36 +72,28 @@ You can also use additional command-line options, environment variables or confi
 to set many options:
 
 ```
-  -h, --help            show this help message and exit
   -c CONFIG_FILE, --config CONFIG_FILE
-                        Specify the config file (default: search for .aider.conf.yml in git
-                        root or home directory)
+                        Specify the config file (default: search for .aider.conf.yml in git root or home directory)
   --input-history-file INPUT_HISTORY_FILE
-                        Specify the chat input history file (default: .aider.input.history)
-                        [env var: AIDER_INPUT_HISTORY_FILE]
+                        Specify the chat input history file (default: .aider.input.history) [env var: AIDER_INPUT_HISTORY_FILE]
   --chat-history-file CHAT_HISTORY_FILE
-                        Specify the chat history file (default: .aider.chat.history.md) [env
-                        var: AIDER_CHAT_HISTORY_FILE]
-  --model MODEL         Specify the model to use for the main chat (default: gpt-4) [env var:
-                        AIDER_MODEL]
+                        Specify the chat history file (default: .aider.chat.history.md) [env var: AIDER_CHAT_HISTORY_FILE]
+  --model MODEL         Specify the model to use for the main chat (default: gpt-4) [env var: AIDER_MODEL]
   -3                    Use gpt-3.5-turbo model for the main chat (not advised)
-  --pretty              Enable pretty, colorized output (default: True) [env var:
-                        AIDER_PRETTY]
-  --no-pretty           Disable pretty, colorized output
-  --apply FILE          Apply the changes from the given file instead of running the chat
-                        (debug)
-  --auto-commits        Enable auto commit of changes (default: True) [env var:
-                        AIDER_AUTO_COMMIT]
-  --no-auto-commits     Disable auto commit of changes
-  --no-dirty-commits    Disable dirty commit of changes
-  --dirty-commits       Enable dirty commit of changes [env var: AIDER_DIRTY_COMMIT]
-  --dry-run             Perform a dry run without applying changes (default: False)
-  --show-diffs          Show diffs when committing changes (default: False) [env var:
-                        AIDER_SHOW_DIFFS]
-  --ctags [CTAGS]       Add ctags to the chat to help GPT understand the codebase (default:
-                        check for ctags executable) [env var: AIDER_CTAGS]
-  --yes                 Always say yes to every confirmation
-  -v, --verbose         Enable verbose output
+  --pretty              Enable pretty, colorized output (default: True) [env var: AIDER_PRETTY]
+  --no-pretty           Disable pretty, colorized output [env var: AIDER_NO_PRETTY]
+  --apply FILE          Apply the changes from the given file instead of running the chat (debug) [env var: AIDER_APPLY]
+  --auto-commits        Enable auto commit of changes (default: True) [env var: AIDER_AUTO_COMMITS]
+  --no-auto-commits     Disable auto commit of changes [env var: AIDER_NO_AUTO_COMMITS]
+  --dirty-commits       Enable dirty commit of changes [env var: AIDER_DIRTY_COMMITS]
+  --no-dirty-commits    Disable dirty commit of changes [env var: AIDER_NO_DIRTY_COMMITS]
+  --openai-api-key OPENAI_API_KEY
+                        Specify the OpenAI API key [env var: OPENAI_API_KEY]
+  --dry-run             Perform a dry run without applying changes (default: False) [env var: AIDER_DRY_RUN]
+  --show-diffs          Show diffs when committing changes (default: False) [env var: AIDER_SHOW_DIFFS]
+  --ctags [CTAGS]       Add ctags to the chat to help GPT understand the codebase (default: check for ctags executable) [env var: AIDER_CTAGS]
+  --yes                 Always say yes to every confirmation [env var: AIDER_YES]
+  -v, --verbose         Enable verbose output [env var: AIDER_VERBOSE]
 ```
 
 ## Chat commands
