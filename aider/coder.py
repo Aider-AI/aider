@@ -344,9 +344,10 @@ class Coder:
         )
 
         mentioned_rel_fnames = set()
-        for word in words:
-            if word in addable_rel_fnames:
-                mentioned_rel_fnames.add(word)
+        for rel_fname in addable_rel_fnames:
+            fname = os.path.basename(rel_fname)
+            if fname in words or rel_fname in words:
+                mentioned_rel_fnames.add(rel_fname)
 
         if not mentioned_rel_fnames:
             return
