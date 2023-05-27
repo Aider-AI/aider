@@ -74,7 +74,7 @@ Reply with JUST the commit message, without quotes, comments, questions, etc!
 # COMMANDS
 undo_command_reply = "I did `git reset --hard HEAD~1` to discard the last edits."
 
-added_files = "I added the content of these additional files: {fnames}"
+added_files = "I added these *read-write* files: {fnames}"
 
 
 run_output = """I ran this command:
