@@ -12,12 +12,21 @@ from rich.text import Text
 from pathlib import Path
 from datetime import datetime
 
+from collections import defaultdict
+
 
 class FileContentCompleter(Completer):
     def __init__(self, root, rel_fnames, addable_rel_fnames, commands):
         self.commands = commands
         self.addable_rel_fnames = addable_rel_fnames
         self.rel_fnames = rel_fnames
+
+        fname_to_rel_fnames = defaultdict(list)
+        for rel_fname in addable_rel_fnames:
+            fname = os.path.basename(rel_fname)
+            if fname != rel_fname:
+                fname_to_rel_fnames[fname].append(rel_fname)
+        self.fname_to_rel_fnames = fname_to_rel_fnames
 
         self.words = set()
         for rel_fname in addable_rel_fnames:
@@ -51,11 +60,17 @@ class FileContentCompleter(Completer):
                 return
         else:
             candidates = self.words
+            candidates.update(set(self.fname_to_rel_fnames))
 
         last_word = words[-1]
         for word in candidates:
             if word.lower().startswith(last_word.lower()):
-                yield Completion(word, start_position=-len(last_word))
+                rel_fnames = self.fname_to_rel_fnames.get(word, [])
+                if rel_fnames:
+                    for rel_fname in rel_fnames:
+                        yield Completion(rel_fname, start_position=-len(last_word))
+                else:
+                    yield Completion(word, start_position=-len(last_word))
 
 
 class InputOutput:
