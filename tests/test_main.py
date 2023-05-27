@@ -10,6 +10,9 @@ from prompt_toolkit.output import DummyOutput
 
 
 class TestMain(TestCase):
+    def setUp(self):
+        os.environ["OPENAI_API_KEY"] = "deadbeef"
+
     def test_main_with_empty_dir_no_files_on_command(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             os.chdir(temp_dir)
