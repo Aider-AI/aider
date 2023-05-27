@@ -289,8 +289,8 @@ def call_map():
     for fname in G.nodes():
         fname = str(fname)
         rank = ranked[fname]
-        pen = 10 * (rank - min_rank) / (max_rank - min_rank) + 1
-        dot.node(fname, penwidth=str(pen))
+        size = 10 * (rank - min_rank) / (max_rank - min_rank) + 1
+        dot.node(fname, penwidth=str(size), width=str(size), height=str(size))
 
     max_w = max(edges.values())
     for refs, defs, data in G.edges(data=True):
