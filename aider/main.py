@@ -129,6 +129,12 @@ def main(args=None, input=None, output=None):
         help="Disable dirty commit of changes",
     )
     parser.add_argument(
+        "--dirty-commits",
+        action="store_true",
+        dest="dirty_commits",
+        help="Enable dirty commit of changes",
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Perform a dry run without applying changes (default: False)",
