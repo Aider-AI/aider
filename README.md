@@ -7,7 +7,7 @@ a new project, or add features to your existing code.
 as it has features to easily
 commit, diff and undo changes proposed by GPT. 
 
-![aider screenshot](screenshot.gif)
+![aider screenshot](assets/screenshot.gif)
 
 ## Example chat transcripts
 
