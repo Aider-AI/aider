@@ -82,7 +82,11 @@ class InputOutput:
         chat_history_file=None,
         input=None,
         output=None,
+        tool_color="green",
+        tool_error_color="red",
     ):
+        self.tool_color = tool_color
+        self.tool_error_color = tool_error_color
         self.input = input
         self.output = output
         self.pretty = pretty
@@ -116,7 +120,7 @@ class InputOutput:
         inp = ""
         multiline_input = False
 
-        style = Style.from_dict({"": "green"})
+        style = Style.from_dict({"": self.tool_color})
 
         while True:
             completer_instance = FileContentCompleter(
@@ -203,7 +207,7 @@ class InputOutput:
             self.append_chat_history(hist, linebreak=True, blockquote=True)
 
         message = Text(message)
-        self.console.print(message, style="red")
+        self.console.print(message, style=self.tool_error_color)
 
     def tool(self, *messages, log_only=False):
         if messages:
