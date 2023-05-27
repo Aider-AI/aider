@@ -20,6 +20,9 @@ from aider import prompts
 from aider.commands import Commands
 from aider.repomap import RepoMap
 
+class MissingAPIKeyError(ValueError):
+    pass
+
 class Coder:
     abs_fnames = None
     repo = None
@@ -43,7 +46,8 @@ class Coder:
         if openai_api_key:
             openai.api_key = openai_api_key
         else:
-            openai.api_key = os.getenv("OPENAI_API_KEY")
+            raise MissingAPIKeyError('No OpenAI API key provided.')
+
         self.verbose = verbose
         self.abs_fnames = set()
         self.cur_messages = []

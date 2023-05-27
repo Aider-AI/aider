@@ -131,6 +131,7 @@ def main(args=None, input=None, output=None):
         "--openai-api-key",
         metavar="OPENAI_API_KEY",
         help="Specify the OpenAI API key",
+        env_var="OPENAI_API_KEY",
     )
     parser.add_argument(
         "--dry-run",
