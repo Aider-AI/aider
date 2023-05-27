@@ -82,7 +82,7 @@ class InputOutput:
         chat_history_file=None,
         input=None,
         output=None,
-        user_input_color="green",
+        user_input_color="blue",
         tool_output_color=None,
         tool_error_color="red",
     ):
@@ -109,7 +109,8 @@ class InputOutput:
 
     def get_input(self, root, rel_fnames, addable_rel_fnames, commands):
         if self.pretty:
-            self.console.rule()
+            style = dict(style=self.user_input_color) if self.user_input_color else dict()
+            self.console.rule(**style)
         else:
             print()
 
