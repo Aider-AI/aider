@@ -43,6 +43,17 @@ class TestMain(TestCase):
                 _, kwargs = MockCoder.call_args
                 assert kwargs["auto_commits"] is False
 
+    def test_main_pretty_from_env(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            os.chdir(temp_dir)
+            with open(".env", "w") as env_file:
+                env_file.write("AIDER_PRETTY=false\n")
+
+            with patch("aider.main.Coder") as MockCoder:
+                main([])
+                _, kwargs = MockCoder.call_args
+                assert kwargs["pretty"] is False
+
             with patch("aider.main.Coder") as MockCoder:
                 main(["--auto-commits"])
                 _, kwargs = MockCoder.call_args
