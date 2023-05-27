@@ -2,7 +2,6 @@ import os
 import tempfile
 import unittest
 from unittest import TestCase
-from unittest.mock import MagicMock
 from aider.main import main
 import subprocess
 from prompt_toolkit.input import create_input
@@ -16,16 +15,6 @@ class TestMain(TestCase):
             os.chdir(temp_dir)
             pipe_input = create_input(StringIO(""))
             main([], input=pipe_input, output=DummyOutput())
-            pipe_input.close()
-
-    def test_main_with_no_auto_commits(self):
-        with tempfile.TemporaryDirectory() as temp_dir:
-            os.chdir(temp_dir)
-            pipe_input = create_input(StringIO(""))
-            with unittest.mock.patch("aider.main.Coder") as MockCoder:
-                main(["--no-auto-commits"], input=pipe_input, output=DummyOutput())
-                _, kwargs = MockCoder.call_args
-                assert kwargs["auto_commits"] is False
             pipe_input.close()
 
     def test_main_with_empty_dir_new_file(self):
@@ -44,3 +33,11 @@ class TestMain(TestCase):
             main(["--yes", "foo.txt"], input=pipe_input, output=DummyOutput())
             pipe_input.close()
             self.assertTrue(os.path.exists("foo.txt"))
+
+    def test_main_with_no_auto_commits(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            os.chdir(temp_dir)
+            with unittest.mock.patch("aider.main.Coder") as MockCoder:
+                main(["--no-auto-commits"])
+                _, kwargs = MockCoder.call_args
+                assert kwargs["auto_commits"] is False
