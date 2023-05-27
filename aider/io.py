@@ -83,11 +83,11 @@ class InputOutput:
         input=None,
         output=None,
         user_color="green",
-        tool_color=None,
+        tool_output_color=None,
         tool_error_color="red",
     ):
         self.user_color = user_color
-        self.tool_color = tool_color
+        self.tool_output_color = tool_output_color
         self.tool_error_color = tool_error_color
         self.input = input
         self.output = output
@@ -225,7 +225,7 @@ class InputOutput:
 
         if not log_only:
             messages = list(map(Text, messages))
-            style = dict(style=self.tool_color) if self.tool_color else dict()
+            style = dict(style=self.tool_output_color) if self.tool_output_color else dict()
             self.console.print(*messages, **style)
 
     def append_chat_history(self, text, linebreak=False, blockquote=False):
