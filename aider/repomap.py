@@ -5,6 +5,7 @@ import subprocess
 import tiktoken
 import tempfile
 from collections import defaultdict, Counter
+import networkx as nx
 
 from aider import prompts, utils
 from aider.dump import dump
@@ -263,8 +264,6 @@ def call_map():
                 edges[name] += num_refs / num_defs
                 labels[name].append(ident)
 
-    import networkx as nx
-
     G = nx.DiGraph()
 
     for edge, weight in edges.items():
@@ -273,6 +272,11 @@ def call_map():
 
     ranked = nx.pagerank(G, weight="weight")
 
+    top_10_nodes = sorted(ranked, key=ranked.get, reverse=True)[:10]
+    nodes_to_remove = [node for node in G.nodes if node not in top_10_nodes]
+    G.remove_nodes_from(nodes_to_remove)
+
+    '''
     # drop low weight edges for plotting
     edges_to_remove = [
         (node1, node2) for node1, node2, data in G.edges(data=True) if data["weight"] < 1
@@ -280,6 +284,7 @@ def call_map():
     G.remove_edges_from(edges_to_remove)
     # Remove isolated nodes (nodes with no edges)
     G.remove_nodes_from(list(nx.isolates(G)))
+    '''
 
     max_rank = max(ranked.values())
     min_rank = min(ranked.values())
