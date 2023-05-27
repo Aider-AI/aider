@@ -2,7 +2,6 @@ import os
 import sys
 import git
 import configargparse
-from dotenv import load_dotenv
 from aider.coder import Coder
 from aider.io import InputOutput
 
@@ -21,10 +20,6 @@ def main(args=None, input=None, output=None):
 
     git_root = get_git_root()
 
-    if git_root:
-        load_dotenv(os.path.join(git_root, ".env"))
-    else:
-        load_dotenv()
     env_prefix = "AIDER_"
 
     default_config_files = [
@@ -99,7 +94,6 @@ def main(args=None, input=None, output=None):
         default=True,
         help="Enable pretty, colorized output (default: True)",
     )
-
     parser.add_argument(
         "--no-pretty",
         action="store_false",
@@ -193,7 +187,7 @@ def main(args=None, input=None, output=None):
         show = parser.format_values()
         io.tool(show)
         io.tool("Option settings:")
-        for arg, val in vars(args).items():
+        for arg, val in sorted(vars(args).items()):
             io.tool(f"  - {arg}: {val}")
 
     io.tool(*sys.argv, log_only=True)
