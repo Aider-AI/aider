@@ -128,6 +128,11 @@ def main(args=None, input=None, output=None):
         help="Disable dirty commit of changes",
     )
     parser.add_argument(
+        "--openai-api-key",
+        metavar="OPENAI_API_KEY",
+        help="Specify the OpenAI API key",
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Perform a dry run without applying changes (default: False)",
@@ -194,6 +199,7 @@ def main(args=None, input=None, output=None):
         dry_run=args.dry_run,
         use_ctags=args.ctags,
         verbose=args.verbose,
+        openai_api_key=args.openai_api_key,
     )
     if args.dirty_commits:
         coder.commit(ask=True, prefix="wip: ", which="repo_files")

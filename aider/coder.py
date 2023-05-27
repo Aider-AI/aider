@@ -20,9 +20,6 @@ from aider import prompts
 from aider.commands import Commands
 from aider.repomap import RepoMap
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
-
 class Coder:
     abs_fnames = None
     repo = None
@@ -41,7 +38,12 @@ class Coder:
         dry_run=False,
         use_ctags=False,
         verbose=False,
+        openai_api_key=None,
     ):
+        if openai_api_key:
+            openai.api_key = openai_api_key
+        else:
+            openai.api_key = os.getenv("OPENAI_API_KEY")
         self.verbose = verbose
         self.abs_fnames = set()
         self.cur_messages = []
