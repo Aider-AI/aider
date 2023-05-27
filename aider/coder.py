@@ -237,7 +237,8 @@ class Coder:
         return True
 
     def run_loop(self):
-        inp = self.io.get_input(self.abs_fnames, self.commands)
+        rel_fnames = [os.path.relpath(fname, self.root) for fname in self.abs_fnames]
+        inp = self.io.get_input(self.root, rel_fnames, self.commands)
 
         self.num_control_c = 0
 
