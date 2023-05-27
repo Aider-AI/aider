@@ -1,7 +1,7 @@
 import os
 import tempfile
-import unittest
 from unittest import TestCase
+from unittest.mock import patch
 from aider.main import main
 import subprocess
 from prompt_toolkit.input import create_input
@@ -34,10 +34,32 @@ class TestMain(TestCase):
             pipe_input.close()
             self.assertTrue(os.path.exists("foo.txt"))
 
-    def test_main_with_no_auto_commits(self):
+    def test_main_args(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             os.chdir(temp_dir)
-            with unittest.mock.patch("aider.main.Coder") as MockCoder:
+
+            with patch("aider.main.Coder") as MockCoder:
                 main(["--no-auto-commits"])
                 _, kwargs = MockCoder.call_args
                 assert kwargs["auto_commits"] is False
+
+            with patch("aider.main.Coder") as MockCoder:
+                main(["--auto-commits"])
+                _, kwargs = MockCoder.call_args
+                assert kwargs["auto_commits"] is True
+
+            with patch("aider.main.Coder") as MockCoder:
+                main([])
+                _, kwargs = MockCoder.call_args
+                assert kwargs["auto_commits"] is True
+                assert kwargs["pretty"] is True
+
+            with patch("aider.main.Coder") as MockCoder:
+                main(["--no-pretty"])
+                _, kwargs = MockCoder.call_args
+                assert kwargs["pretty"] is False
+
+            with patch("aider.main.Coder") as MockCoder:
+                main(["--pretty"])
+                _, kwargs = MockCoder.call_args
+                assert kwargs["pretty"] is True
