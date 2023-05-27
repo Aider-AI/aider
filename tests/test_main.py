@@ -32,6 +32,8 @@ class TestMain(TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             os.chdir(temp_dir)
             subprocess.run(["git", "init"], cwd=temp_dir)
+            subprocess.run(["git", "config", "user.email", "dummy@example.com"], cwd=temp_dir)
+            subprocess.run(["git", "config", "user.name", "Dummy User"], cwd=temp_dir)
             pipe_input = create_input(StringIO(""))
             main(["--yes", "foo.txt"], input=pipe_input, output=DummyOutput())
             pipe_input.close()
