@@ -1,7 +1,7 @@
 import os
 import tempfile
 import unittest
-from unittest import TestCase
+from unittest import TestCase, MagicMock
 from aider.main import main
 import subprocess
 from prompt_toolkit.input import create_input
@@ -35,7 +35,7 @@ class TestMain(TestCase):
             self.assertTrue(os.path.exists("foo.txt"))
 
     def test_main_no_auto_commits(self):
-        with unittest.mock.patch("aider.main.Coder") as MockCoder:
+        with MagicMock() as MockCoder:
             with tempfile.TemporaryDirectory() as temp_dir:
                 os.chdir(temp_dir)
                 subprocess.run(["git", "init"], cwd=temp_dir)
