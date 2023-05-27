@@ -14,11 +14,18 @@ from datetime import datetime
 
 
 class FileContentCompleter(Completer):
-    def __init__(self, root, rel_fnames, commands):
+    def __init__(self, root, rel_fnames, addable_rel_fnames, commands):
         self.commands = commands
+        self.addable_rel_fnames = addable_rel_fnames
+        self.rel_fnames = rel_fnames
 
         self.words = set()
+        for rel_fname in addable_rel_fnames:
+            self.words.add(rel_fname)
+
         for rel_fname in rel_fnames:
+            self.words.add(rel_fname)
+
             fname = os.path.join(root, rel_fname)
             with open(fname, "r") as f:
                 content = f.read()
@@ -52,7 +59,15 @@ class FileContentCompleter(Completer):
 
 
 class InputOutput:
-    def __init__(self, pretty=True, yes=False, input_history_file=None, chat_history_file=None, input=None, output=None):
+    def __init__(
+        self,
+        pretty=True,
+        yes=False,
+        input_history_file=None,
+        chat_history_file=None,
+        input=None,
+        output=None,
+    ):
         self.input = input
         self.output = output
         self.pretty = pretty
@@ -71,7 +86,7 @@ class InputOutput:
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
 
-    def get_input(self, root, rel_fnames, commands):
+    def get_input(self, root, rel_fnames, addable_rel_fnames, commands):
         if self.pretty:
             self.console.rule()
         else:
@@ -89,7 +104,9 @@ class InputOutput:
         style = Style.from_dict({"": "green"})
 
         while True:
-            completer_instance = FileContentCompleter(root, rel_fnames, commands)
+            completer_instance = FileContentCompleter(
+                root, rel_fnames, addable_rel_fnames, commands
+            )
             if multiline_input:
                 show = ". "
 

@@ -237,8 +237,12 @@ class Coder:
         return True
 
     def run_loop(self):
-        rel_fnames = self.get_inchat_relative_files()
-        inp = self.io.get_input(self.root, rel_fnames, self.commands)
+        inp = self.io.get_input(
+            self.root,
+            self.get_inchat_relative_files(),
+            self.get_addable_relative_files(),
+            self.commands,
+        )
 
         self.num_control_c = 0
 
@@ -340,9 +344,7 @@ class Coder:
         quotes = "".join(['"', "'", "`"])
         words = set(word.strip(quotes) for word in words)
 
-        addable_rel_fnames = set(self.get_all_relative_files()) - set(
-            self.get_inchat_relative_files()
-        )
+        addable_rel_fnames = self.get_addable_relative_files()
 
         mentioned_rel_fnames = set()
         fname_to_rel_fnames = {}
@@ -638,6 +640,9 @@ class Coder:
         if not files:
             return 0
         return max(Path(path).stat().st_mtime for path in files)
+
+    def get_addable_relative_files(self):
+        return set(self.get_all_relative_files()) - set(self.get_inchat_relative_files())
 
     def apply_updates(self, content, inp):
         try:
