@@ -1,7 +1,8 @@
 import os
 import tempfile
 import unittest
-from unittest import TestCase, MagicMock
+from unittest import TestCase
+from unittest.mock import MagicMock
 from aider.main import main
 import subprocess
 from prompt_toolkit.input import create_input
