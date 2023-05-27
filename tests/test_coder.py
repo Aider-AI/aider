@@ -9,14 +9,12 @@ class TestCoder(unittest.TestCase):
         mock_io.get_input.return_value = "Please check file1.txt and file2.py"
         mock_io.confirm_ask.return_value = True
 
-        # Initialize the Coder object with the mocked IO
-        coder = Coder(io=mock_io, openai_api_key="fake_key")
+        # Mock the git repo
+        mock_repo = MagicMock()
+        mock_repo.git.ls_files.return_value = "file1.txt\nfile2.py"
 
-        # Add sample files to the Coder object
-        coder.abs_fnames = {
-            "/path/to/repo/file1.txt",
-            "/path/to/repo/file2.py",
-        }
+        # Initialize the Coder object with the mocked IO and mocked repo
+        coder = Coder(io=mock_io, openai_api_key="fake_key", repo=mock_repo)
         coder.root = "/path/to/repo"
 
         # Call the check_for_file_mentions method
