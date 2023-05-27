@@ -1,5 +1,6 @@
 import os
 import tempfile
+import unittest
 from unittest import TestCase
 from aider.main import main
 import subprocess
