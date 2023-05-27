@@ -352,8 +352,12 @@ class Coder:
             fname_to_rel_fnames[fname].append(rel_fname)
 
         for fname, rel_fnames in fname_to_rel_fnames.items():
-            if len(rel_fnames) == 1 and (fname in words or rel_fnames[0] in words):
+            if len(rel_fnames) == 1 and fname in words:
                 mentioned_rel_fnames.add(rel_fnames[0])
+            else:
+                for rel_fname in rel_fnames:
+                    if rel_fname in words:
+                        mentioned_rel_fnames.add(rel_fname)
 
         if not mentioned_rel_fnames:
             return

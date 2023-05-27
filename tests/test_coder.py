@@ -8,8 +8,6 @@ class TestCoder(unittest.TestCase):
     def test_check_for_file_mentions(self):
         # Mock the IO object
         mock_io = MagicMock()
-        mock_io.get_input.return_value = "Please check file1.txt and file2.py"
-        mock_io.confirm_ask.return_value = True
 
         # Initialize the Coder object with the mocked IO and mocked repo
         coder = Coder(io=mock_io, openai_api_key="fake_key")
@@ -29,8 +27,6 @@ class TestCoder(unittest.TestCase):
     def test_check_for_filename_mentions_of_longer_paths(self):
         # Mock the IO object
         mock_io = MagicMock()
-        mock_io.get_input.return_value = "Please check file1.txt and file2.py"
-        mock_io.confirm_ask.return_value = True
 
         # Initialize the Coder object with the mocked IO and mocked repo
         coder = Coder(io=mock_io, openai_api_key="fake_key")
@@ -46,6 +42,23 @@ class TestCoder(unittest.TestCase):
         # Check if coder.abs_fnames contains both files
         expected_files = {os.path.abspath("file1.txt"), os.path.abspath("file2.py")}
         self.assertEqual(coder.abs_fnames, expected_files)
+
+    def test_check_for_ambiguous_filename_mentions_of_longer_paths(self):
+        # Mock the IO object
+        mock_io = MagicMock()
+
+        # Initialize the Coder object with the mocked IO and mocked repo
+        coder = Coder(io=mock_io, openai_api_key="fake_key")
+
+        # Mock the git repo
+        mock_repo = MagicMock()
+        mock_repo.git.ls_files.return_value = "./file1.txt\n./other/file1.txt"
+        coder.repo = mock_repo
+
+        # Call the check_for_file_mentions method
+        coder.check_for_file_mentions("Please check file1.txt!")
+
+        self.assertEqual(coder.abs_fnames, set())
 
 
 if __name__ == "__main__":
