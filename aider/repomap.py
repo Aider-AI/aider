@@ -244,7 +244,7 @@ def call_map():
 
     idents = set(defines.keys()).intersection(set(references.keys()))
 
-    dot = graphviz.Graph()
+    dot = graphviz.Digraph(graph_attr={'ratio': '.5'})
 
     labels = defaultdict(list)
     edges = defaultdict(float)
