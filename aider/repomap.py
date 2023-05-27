@@ -294,7 +294,8 @@ def call_map():
         size = (rank - min_rank) / (max_rank - min_rank)
         pen = max(10 * size, 1)
         size = 3 * size
-        dot.node(fname, penwidth=str(pen), width=str(size), height=str(size))
+        fontsize = str(10 * size)
+        dot.node(fname, penwidth=str(pen), width=str(size), height=str(size), fontsize=fontsize)
 
     max_w = max(edges.values())
     for refs, defs, data in G.edges(data=True):
