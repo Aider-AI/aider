@@ -1,7 +1,6 @@
 import os
 import tempfile
 from unittest import TestCase
-from unittest.mock import MagicMock
 from aider.commands import Commands
 from aider.io import InputOutput
 
@@ -16,7 +15,7 @@ class TestCommands(TestCase):
             io = InputOutput(pretty=False, yes=True)
             from aider.coder import Coder
 
-            coder = Coder(io)
+            coder = Coder(io, openai_api_key="deadbeef")
             commands = Commands(io, coder)
 
             # Call the cmd_add method with 'foo.txt' and 'bar.txt' as a single string
