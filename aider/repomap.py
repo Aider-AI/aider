@@ -309,7 +309,7 @@ def call_map():
         label = labels[(refs, defs)]
         label = sorted(label, reverse=True)
         label = " ".join(ident for cnt, ident in label[:5])
-        dot.edge(refs, defs, penwidth=str(weight), color=color, label=label)
+        dot.edge(refs, defs, penwidth=str(weight), color=color, label=label, fontcolor=color)
 
     top_rank = sorted([(rank, node) for (node, rank) in ranked.items()], reverse=True)
     # Print the PageRank of each node
