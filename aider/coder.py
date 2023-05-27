@@ -218,7 +218,7 @@ class Coder:
         if is_commit_command:
             return
 
-        if not self.auto_commits:
+        if not self.dirty_commits:
             return
         if not self.repo:
             return

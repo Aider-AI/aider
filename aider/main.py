@@ -133,6 +133,8 @@ def main(args=None, input=None, output=None):
         action="store_true",
         dest="dirty_commits",
         help="Enable dirty commit of changes",
+        env_var=f"{env_prefix}DIRTY_COMMIT",
+        default=True,
     )
     parser.add_argument(
         "--dry-run",
@@ -204,7 +206,7 @@ def main(args=None, input=None, output=None):
         use_ctags=args.ctags,
         verbose=args.verbose,
     )
-    if args.auto_commits:
+    if args.dirty_commits:
         coder.commit(ask=True, prefix="wip: ", which="repo_files")
 
     if args.apply:
