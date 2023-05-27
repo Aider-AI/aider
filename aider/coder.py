@@ -20,8 +20,10 @@ from aider import prompts
 from aider.commands import Commands
 from aider.repomap import RepoMap
 
+
 class MissingAPIKeyError(ValueError):
     pass
+
 
 class Coder:
     abs_fnames = None
@@ -46,7 +48,7 @@ class Coder:
         if openai_api_key:
             openai.api_key = openai_api_key
         else:
-            raise MissingAPIKeyError('No OpenAI API key provided.')
+            raise MissingAPIKeyError("No OpenAI API key provided.")
 
         self.verbose = verbose
         self.abs_fnames = set()
@@ -259,6 +261,8 @@ class Coder:
 
         if self.commands.is_command(inp):
             return self.commands.run(inp)
+
+        self.check_for_file_mentions(inp)
 
         return self.send_new_user_message(inp)
 
