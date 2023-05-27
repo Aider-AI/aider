@@ -18,6 +18,25 @@ class TestMain(TestCase):
             main([], input=pipe_input, output=DummyOutput())
             pipe_input.close()
 
+    def test_main_with_no_auto_commits(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            os.chdir(temp_dir)
+            pipe_input = create_input(StringIO(""))
+            with unittest.mock.patch("aider.main.Coder") as MockCoder:
+                main(["--no-auto-commits"], input=pipe_input, output=DummyOutput())
+                MockCoder.assert_called_with(
+                    unittest.mock.ANY,
+                    main_model=unittest.mock.ANY,
+                    fnames=unittest.mock.ANY,
+                    pretty=unittest.mock.ANY,
+                    show_diffs=unittest.mock.ANY,
+                    auto_commits=False,
+                    dry_run=unittest.mock.ANY,
+                    use_ctags=unittest.mock.ANY,
+                    verbose=unittest.mock.ANY,
+                )
+            pipe_input.close()
+
     def test_main_with_empty_dir_new_file(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             os.chdir(temp_dir)
