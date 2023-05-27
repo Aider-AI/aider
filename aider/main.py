@@ -208,7 +208,7 @@ def main(args=None, input=None, output=None):
     )
 
     if args.dirty_commits:
-        coder.commit(ask=True, prefix="wip: ", which="repo_files")
+        coder.commit(ask=True, which="repo_files")
 
     if args.apply:
         with open(args.apply, "r") as f:
