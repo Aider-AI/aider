@@ -4,7 +4,7 @@ import sys
 import subprocess
 import tiktoken
 import tempfile
-from collections import defaultdict
+from collections import defaultdict, Counter
 
 from aider import prompts, utils
 from aider.dump import dump
@@ -241,9 +241,6 @@ def call_map():
             # dump("ref", fname, ident)
             references[ident].append(show_fname)
 
-    for ident, fname in defines.items():
-        dump(fname, ident)
-
     idents = set(defines.keys()).intersection(set(references.keys()))
 
     dot = graphviz.Graph()
@@ -253,20 +250,22 @@ def call_map():
     for ident in idents:
         defs = defines[ident]
         num_defs = len(defs)
-        if num_defs > 1:
-            continue
+        # if num_defs > 1:
+        #    continue
 
-        for refs in references[ident]:
-            for defs in defines[ident]:
-                if refs == defs:
+        for referencer, num_refs in Counter(references[ident]).items():
+            dump(referencer, ident, num_refs)
+            for definer in defines[ident]:
+                if referencer == definer:
                     continue
-                name = tuple(sorted([refs, defs]))
-                edges[name] += 1 / num_defs
+                # tuple(sorted([referencer, definer]))
+                name = referencer, definer
+                edges[name] += num_refs / num_defs
                 labels[name].append(ident)
 
     import networkx as nx
 
-    G = nx.Graph()
+    G = nx.DiGraph()
 
     for edge, weight in edges.items():
         refs, defs = edge
@@ -280,9 +279,7 @@ def call_map():
     ]
     G.remove_edges_from(edges_to_remove)
     # Remove isolated nodes (nodes with no edges)
-    dump(G.nodes())
     G.remove_nodes_from(list(nx.isolates(G)))
-    dump(G.nodes())
 
     max_rank = max(ranked.values())
     min_rank = min(ranked.values())
