@@ -82,11 +82,11 @@ class InputOutput:
         chat_history_file=None,
         input=None,
         output=None,
-        user_color="green",
+        user_input_color="green",
         tool_output_color=None,
         tool_error_color="red",
     ):
-        self.user_color = user_color
+        self.user_input_color = user_input_color
         self.tool_output_color = tool_output_color
         self.tool_error_color = tool_error_color
         self.input = input
@@ -122,8 +122,8 @@ class InputOutput:
         inp = ""
         multiline_input = False
 
-        if self.user_color:
-            style = Style.from_dict({"": self.user_color})
+        if self.user_input_color:
+            style = Style.from_dict({"": self.user_input_color})
         else:
             style = None
 
