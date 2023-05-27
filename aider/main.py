@@ -111,6 +111,7 @@ def main(args=None, input=None, output=None):
         "--auto-commits",
         action="store_true",
         env_var=f"{env_prefix}AUTO_COMMIT",
+        dest="auto_commits",
         default=True,
         help="Enable auto commit of changes (default: True)",
     )
@@ -118,7 +119,7 @@ def main(args=None, input=None, output=None):
     parser.add_argument(
         "--no-auto-commits",
         action="store_false",
-        dest="auto_commit",
+        dest="auto_commits",
         help="Disable auto commit of changes",
     )
     parser.add_argument(
@@ -169,6 +170,13 @@ def main(args=None, input=None, output=None):
         input=input,
         output=output,
     )
+
+    if args.verbose:
+        show = parser.format_values()
+        io.tool(show)
+        io.tool("Option settings:")
+        for arg, val in vars(args).items():
+            io.tool(f"  - {arg}: {val}")
 
     io.tool(*sys.argv, log_only=True)
 
