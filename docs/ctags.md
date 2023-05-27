@@ -1,5 +1,7 @@
 
-# Improving GPT-4's codebase understanding with ctags
+# Improving GPT-4's codebase understanding with a map
+
+![robot flowchat](../assets/robot-flowchart.png)
 
 GPT-4 is extremely useful for "self-contained" coding tasks,
 like generating brand new code or modifying a pure function
@@ -8,7 +10,7 @@ that has no dependencies.
 But it's difficult to use GPT-4 to modify or extend
 a large, complex pre-existing codebase.
 To modify such code, GPT needs to understand the dependencies and APIs
-which interconnect all of its subsystems.
+which interconnect its subsystems.
 Somehow we need to provide this "code context" to GPT
 when we ask it to accomplish a coding task. Specifically, we need to:
 
@@ -22,8 +24,11 @@ To address these issues, `aider` now
 sends GPT a **concise map of your whole git repository**
 that includes
 all declared variables and functions with call signatures.
-This *repo map* is built using `ctags`
-and enables GPT to better comprehend, navigate
+This *repo map* is built automatically using `ctags`, which
+extracts symbol definitions from source files. Historically,
+ctags were generated and indexed by IDEs and editors to
+help humans search and navigate large codebases.
+Instead, we're going to use ctags to help GPT better comprehend, navigate
 and edit code in larger repos.
 
 To get a sense of how effective this can be, this
@@ -35,6 +40,12 @@ Using only the meta-data in the repo map, GPT is able to figure out how to
 call the method to be tested, as well as how to instantiate multiple
 class objects that are required to prepare for the test.
 
+To code with GPT-4 using the techniques discussed here:
+
+
+  - Install [aider](https://github.com/paul-gauthier/aider#installation).
+  - Install [universal ctags](https://github.com/universal-ctags/ctags).
+  - Run `aider --ctags` inside your repo.
 
 ## The problem: code context
 
@@ -63,7 +74,7 @@ For the example above, you could send the file that
 contains the Foo class
 and the file that contains the BarLog logging subsystem.
 This works pretty well, and is supported by `aider` -- you
-can manually specify which files to "add to the chat".
+can manually specify which files to "add to the chat" you are having with GPT.
 
 But it's not ideal to have to manually identify the right
 set of files to add to the chat.
@@ -139,7 +150,14 @@ map. Universal ctags can scan source code written in many
 languages, and extract data about all the symbols defined in each
 file.
 
-For example, here is the `ctags --fields=+S --output-format=json` output for the `main.py` file mapped above:
+Historically, ctags were generated and indexed by IDEs or code editors 
+to make it easier for a human to search and navigate a
+codebase, find the implementation of functions, etc.
+Instead, we're going to use ctags to help GPT navigate and understand the codebase.
+
+Here is the type of output you get when you run ctags on source code. Specifically,
+this is the
+`ctags --fields=+S --output-format=json` output for the `main.py` file mapped above:
 
 ```json
 {
@@ -160,8 +178,8 @@ For example, here is the `ctags --fields=+S --output-format=json` output for the
 ```
 
 The repo map is built using this type of `ctags` data,
-formatted into the space
-efficient hierarchical tree format shown above.
+but formatted into the space
+efficient hierarchical tree format shown earlier.
 This is a format that GPT can easily understand
 and which conveys the map data using a
 minimal number of tokens.
@@ -198,7 +216,7 @@ Some possible approaches to reducing the amount of map data are:
 One key goal is to prefer solutions which are language agnostic or
 which can be easily deployed against most popular code languages.
 The `ctags` solution has this benefit, since it comes pre-built
-with tooling for most popular languages.
+with support for most popular languages.
 I suspect that Language Server Protocol might be an even
 better tool than `ctags` for this problem.
 But it is more cumbersome to deploy for a broad
@@ -212,5 +230,5 @@ To use this experimental repo map feature:
 
   - Install [aider](https://github.com/paul-gauthier/aider#installation).
   - Install [universal ctags](https://github.com/universal-ctags/ctags).
-  - Run `aider` with the `--ctags` option inside your repo.
+  - Run `aider --ctags` inside your repo.
   

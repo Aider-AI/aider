@@ -1,8 +1,8 @@
+import sys
 import os
 import git
 import subprocess
 import shlex
-from rich.prompt import Confirm
 from prompt_toolkit.completion import Completion
 from aider import prompts
 
@@ -16,20 +16,8 @@ class Commands:
         if inp[0] == "/":
             return True
 
-    def help(self):
-        "Show help about all commands"
-        commands = self.get_commands()
-        for cmd in commands:
-            cmd_method_name = f"cmd_{cmd[1:]}"
-            cmd_method = getattr(self, cmd_method_name, None)
-            if cmd_method:
-                description = cmd_method.__doc__
-                self.io.tool(f"{cmd} {description}")
-            else:
-                self.io.tool(f"{cmd} No description available.")
-
     def get_commands(self):
-        commands = ["/help"]
+        commands = []
         for attr in dir(self):
             if attr.startswith("cmd_"):
                 commands.append("/" + attr[4:])
@@ -62,14 +50,14 @@ class Commands:
         all_commands = self.get_commands()
         matching_commands = [cmd for cmd in all_commands if cmd.startswith(first_word)]
         if len(matching_commands) == 1:
-            if matching_commands[0] == "/help":
-                self.help()
-            else:
-                return self.do_run(matching_commands[0][1:], rest_inp)
+            return self.do_run(matching_commands[0][1:], rest_inp)
         elif len(matching_commands) > 1:
-            self.io.tool_error("Ambiguous command: ', '.join(matching_commands)}")
+            self.io.tool_error(f"Ambiguous command: {', '.join(matching_commands)}")
         else:
             self.io.tool_error(f"Error: {first_word} is not a valid command.")
+
+    # any method called cmd_xxx becomes a command automatically.
+    # each one must take an args param.
 
     def cmd_commit(self, args):
         "Commit edits to the repo made outside the chat (commit message optional)"
@@ -251,6 +239,10 @@ class Commands:
         )
         return msg
 
+    def cmd_exit(self, args):
+        "Exit the application"
+        sys.exit()
+
     def cmd_ls(self, args):
         "List all known files and those included in the chat session"
 
@@ -274,3 +266,15 @@ class Commands:
             self.io.tool("\nRepo files not in the chat:\n")
         for file in other_files:
             self.io.tool(f"  {file}")
+
+    def cmd_help(self, args):
+        "Show help about all commands"
+        commands = sorted(self.get_commands())
+        for cmd in commands:
+            cmd_method_name = f"cmd_{cmd[1:]}"
+            cmd_method = getattr(self, cmd_method_name, None)
+            if cmd_method:
+                description = cmd_method.__doc__
+                self.io.tool(f"{cmd} {description}")
+            else:
+                self.io.tool(f"{cmd} No description available.")
