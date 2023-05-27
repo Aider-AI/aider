@@ -96,6 +96,21 @@ def main(args=None, input=None, output=None):
         help="Disable pretty, colorized output",
     )
     parser.add_argument(
+        "--user-input-color",
+        default="green",
+        help="Set the color for user input (default: green)",
+    )
+    parser.add_argument(
+        "--tool-output-color",
+        default=None,
+        help="Set the color for tool output (default: None)",
+    )
+    parser.add_argument(
+        "--tool-error-color",
+        default="red",
+        help="Set the color for tool error messages (default: red)",
+    )
+    parser.add_argument(
         "--apply",
         metavar="FILE",
         help="Apply the changes from the given file instead of running the chat (debug)",
@@ -178,6 +193,9 @@ def main(args=None, input=None, output=None):
         args.chat_history_file,
         input=input,
         output=output,
+        user_input_color=args.user_input_color,
+        tool_output_color=args.tool_output_color,
+        tool_error_color=args.tool_error_color,
     )
 
     if args.verbose:
