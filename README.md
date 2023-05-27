@@ -113,7 +113,7 @@ To use a command, simply type it in the chat input followed by any required argu
 
 ## Tips
 
-* Large changes are best performed as a sequence of thoughtful bite sized steps, where you plan out the approach and overall design. Don't ask GPT to "build a castle". Instead, think about the architecture you want and then ask it to "build a foundation", "erect some walls", "run the wiring", etc.
+* Large changes are best performed as a sequence of thoughtful bite sized steps, where you plan out the approach and overall design. Don't ask GPT to "build a castle". Instead, think about the architecture you want and then ask it to "build a foundation", "erect the walls", "run the wiring", etc.
 * Use Control-C to safely interrupt `aider` if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply with more information or direction.
 * Use the `/run` command to run tests, linters, etc and show the output to GPT so it can fix any issues.
 * Enter a multiline chat message by entering `{` alone on the first line. End the multiline message with `}` alone on the last line.
