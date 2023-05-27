@@ -217,7 +217,7 @@ class InputOutput:
         style = dict(style=self.tool_error_color) if self.tool_error_color else dict()
         self.console.print(message, **style)
 
-    def tool(self, *messages, log_only=False):
+    def tool_output(self, *messages, log_only=False):
         if messages:
             hist = " ".join(messages)
             hist = f"{hist.strip()}"

@@ -182,12 +182,12 @@ def main(args=None, input=None, output=None):
 
     if args.verbose:
         show = parser.format_values()
-        io.tool(show)
-        io.tool("Option settings:")
+        io.tool_output(show)
+        io.tool_output("Option settings:")
         for arg, val in sorted(vars(args).items()):
-            io.tool(f"  - {arg}: {val}")
+            io.tool_output(f"  - {arg}: {val}")
 
-    io.tool(*sys.argv, log_only=True)
+    io.tool_output(*sys.argv, log_only=True)
 
     if not args.openai_api_key:
         io.tool_error("No OpenAI API key provided. Use --openai-api-key or env OPENAI_API_KEY.")
@@ -216,7 +216,7 @@ def main(args=None, input=None, output=None):
         coder.update_files(content, inp="")
         return
 
-    io.tool("Use /help to see in-chat commands.")
+    io.tool_output("Use /help to see in-chat commands.")
     coder.run()
 
 

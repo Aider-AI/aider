@@ -37,7 +37,7 @@ class Commands:
         if cmd_method:
             return cmd_method(args)
         else:
-            self.io.tool(f"Error: Command {cmd_name} not found.")
+            self.io.tool_output(f"Error: Command {cmd_name} not found.")
 
     def run(self, inp):
         words = inp.strip().split()
@@ -110,7 +110,7 @@ class Commands:
             self.io.tool_error("The last commit was not made by aider in this chat session.")
             return
         self.coder.repo.git.reset("--hard", "HEAD~1")
-        self.io.tool(
+        self.io.tool_output(
             f"{last_commit.message.strip()}\n"
             f"The above commit {self.coder.last_aider_commit_hash} "
             "was reset and removed from git.\n"
@@ -131,7 +131,7 @@ class Commands:
         commits = f"{self.coder.last_aider_commit_hash}~1"
         diff = self.coder.get_diffs(commits, self.coder.last_aider_commit_hash)
 
-        # don't use io.tool() because we don't want to log or further colorize
+        # don't use io.tool_output() because we don't want to log or further colorize
         print(diff)
 
     def completions_add(self, partial):
@@ -177,7 +177,7 @@ class Commands:
                 abs_file_path = os.path.abspath(os.path.join(self.coder.root, matched_file))
                 if abs_file_path not in self.coder.abs_fnames:
                     self.coder.abs_fnames.add(abs_file_path)
-                    self.io.tool(f"Added {matched_file} to the chat")
+                    self.io.tool_output(f"Added {matched_file} to the chat")
                     added_fnames.append(matched_file)
                 else:
                     self.io.tool_error(f"{matched_file} is already in the chat")
@@ -214,7 +214,7 @@ class Commands:
             for matched_file in matched_files:
                 relative_fname = os.path.relpath(matched_file, self.coder.root)
                 self.coder.abs_fnames.remove(matched_file)
-                self.io.tool(f"Removed {relative_fname} from the chat")
+                self.io.tool_output(f"Removed {relative_fname} from the chat")
 
     def cmd_run(self, args):
         "Run a shell command and optionally add the output to the chat"
@@ -258,14 +258,14 @@ class Commands:
                 other_files.append(file)
 
         if chat_files:
-            self.io.tool("Files in chat:\n")
+            self.io.tool_output("Files in chat:\n")
         for file in chat_files:
-            self.io.tool(f"  {file}")
+            self.io.tool_output(f"  {file}")
 
         if other_files:
-            self.io.tool("\nRepo files not in the chat:\n")
+            self.io.tool_output("\nRepo files not in the chat:\n")
         for file in other_files:
-            self.io.tool(f"  {file}")
+            self.io.tool_output(f"  {file}")
 
     def cmd_help(self, args):
         "Show help about all commands"
@@ -275,6 +275,6 @@ class Commands:
             cmd_method = getattr(self, cmd_method_name, None)
             if cmd_method:
                 description = cmd_method.__doc__
-                self.io.tool(f"{cmd} {description}")
+                self.io.tool_output(f"{cmd} {description}")
             else:
-                self.io.tool(f"{cmd} No description available.")
+                self.io.tool_output(f"{cmd} No description available.")
