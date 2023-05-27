@@ -31,4 +31,4 @@ jobs:
 
     - name: Run tests excluding test_get_tags_map_with_identifiers
       run: |
-        python -m unittest discover -k 'not test_get_tags_map_with_identifiers'
+        python -c "import unittest; loader = unittest.TestLoader(); suite = loader.discover('.'); suite_filtered = unittest.TestSuite([t for t in suite if 'test_get_tags_map_with_identifiers' not in str(t)]); unittest.TextTestRunner().run(suite_filtered)"
