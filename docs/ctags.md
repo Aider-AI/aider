@@ -1,5 +1,5 @@
 
-# Improving GPT-4's codebase understanding with a map
+# Improving GPT-4's codebase understanding with ctags
 
 ![robot flowchat](../assets/robot-flowchart.png)
 
