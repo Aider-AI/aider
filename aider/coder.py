@@ -237,7 +237,7 @@ class Coder:
         return True
 
     def run_loop(self):
-        rel_fnames = [os.path.relpath(fname, self.root) for fname in self.abs_fnames]
+        rel_fnames = self.get_inchat_relative_files()
         inp = self.io.get_input(self.root, rel_fnames, self.commands)
 
         self.num_control_c = 0
