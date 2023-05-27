@@ -255,7 +255,6 @@ def call_map():
             continue
 
         for referencer, num_refs in Counter(references[ident]).items():
-            dump(referencer, ident, num_refs)
             for definer in defines[ident]:
                 if referencer == definer:
                     continue
@@ -272,7 +271,7 @@ def call_map():
 
     ranked = nx.pagerank(G, weight="weight")
 
-    top_10_nodes = sorted(ranked, key=ranked.get, reverse=True)[:10]
+    top_10_nodes = sorted(ranked, key=ranked.get, reverse=True)[:20]
     nodes_to_remove = [node for node in G.nodes if node not in top_10_nodes]
     G.remove_nodes_from(nodes_to_remove)
 
@@ -294,16 +293,18 @@ def call_map():
         size = (rank - min_rank) / (max_rank - min_rank)
         pen = max(10 * size, 1)
         size = 2 * size
-        fontsize = str(10 * size)
-        dot.node(fname, penwidth=str(pen), width=str(size), height=str(size), fontsize=fontsize)
+        fontsize = max(10 * size, 14)
+        dot.node(
+            fname, penwidth=str(pen), width=str(size), height=str(size), fontsize=str(fontsize)
+        )
 
     max_w = max(edges.values())
     for refs, defs, data in G.edges(data=True):
         weight = data["weight"]
 
-        r = random.randint(0, 255)
-        g = random.randint(0, 255)
-        b = random.randint(0, 255)
+        r = random.randint(0, 128)
+        g = random.randint(0, 128)
+        b = random.randint(0, 128)
         color = f"#{r:02x}{g:02x}{b:02x}80"
         weight = weight * 10 / max_w
         label = labels[(refs, defs)]
