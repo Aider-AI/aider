@@ -82,9 +82,11 @@ class InputOutput:
         chat_history_file=None,
         input=None,
         output=None,
-        tool_color="green",
+        user_color="green",
+        tool_color=None,
         tool_error_color="red",
     ):
+        self.user_color = user_color
         self.tool_color = tool_color
         self.tool_error_color = tool_error_color
         self.input = input
@@ -120,7 +122,10 @@ class InputOutput:
         inp = ""
         multiline_input = False
 
-        style = Style.from_dict({"": self.tool_color})
+        if self.user_color:
+            style = Style.from_dict({"": self.user_color})
+        else:
+            style = None
 
         while True:
             completer_instance = FileContentCompleter(
@@ -132,12 +137,14 @@ class InputOutput:
             session_kwargs = {
                 "message": show,
                 "completer": completer_instance,
-                "style": style,
                 "reserve_space_for_menu": 4,
                 "complete_style": CompleteStyle.MULTI_COLUMN,
                 "input": self.input,
                 "output": self.output,
             }
+            if style:
+                session_kwargs["style"] = style
+
             if self.input_history_file is not None:
                 session_kwargs["history"] = FileHistory(self.input_history_file)
 
@@ -207,7 +214,8 @@ class InputOutput:
             self.append_chat_history(hist, linebreak=True, blockquote=True)
 
         message = Text(message)
-        self.console.print(message, style=self.tool_error_color)
+        style = dict(style=self.tool_error_color) if self.tool_error_color else dict()
+        self.console.print(message, **style)
 
     def tool(self, *messages, log_only=False):
         if messages:
@@ -217,7 +225,8 @@ class InputOutput:
 
         if not log_only:
             messages = list(map(Text, messages))
-            self.console.print(*messages)
+            style = dict(style=self.tool_color) if self.tool_color else dict()
+            self.console.print(*messages, **style)
 
     def append_chat_history(self, text, linebreak=False, blockquote=False):
         if blockquote:
