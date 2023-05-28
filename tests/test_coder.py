@@ -76,5 +76,38 @@ class TestCoder(unittest.TestCase):
         # Assert that the returned message is the expected one
         self.assertEqual(result, "a good commit message")
 
+    def test_get_commit_message_strip_quotes(self):
+        # Mock the IO object
+        mock_io = MagicMock()
+
+        # Initialize the Coder object with the mocked IO and mocked repo
+        coder = Coder(io=mock_io, openai_api_key="fake_key")
+
+        # Mock the send method to return a tuple with a message and False
+        coder.send = MagicMock(return_value=('"a good commit message"', False))
+
+        # Call the get_commit_message method with dummy diff and context
+        result = coder.get_commit_message("dummy diff", "dummy context")
+
+        # Assert that the returned message is the expected one
+        self.assertEqual(result, "a good commit message")
+
+    def test_get_commit_message_no_strip_unmatched_quotes(self):
+        # Mock the IO object
+        mock_io = MagicMock()
+
+        # Initialize the Coder object with the mocked IO and mocked repo
+        coder = Coder(io=mock_io, openai_api_key="fake_key")
+
+        # Mock the send method to return a tuple with a message and False
+        coder.send = MagicMock(return_value=('a good "commit message"', False))
+
+        # Call the get_commit_message method with dummy diff and context
+        result = coder.get_commit_message("dummy diff", "dummy context")
+
+        # Assert that the returned message is the expected one
+        self.assertEqual(result, 'a good "commit message"')
+
+
 if __name__ == "__main__":
     unittest.main()

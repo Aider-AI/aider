@@ -516,7 +516,9 @@ class Coder:
             )
             return
 
-        commit_message = commit_message.strip().strip('"').strip()
+        commit_message = commit_message.strip()
+        if commit_message and commit_message[0] == '"' and commit_message[-1] == '"':
+            commit_message = commit_message[1:-1].strip()
 
         if interrupted:
             self.io.tool_error(
