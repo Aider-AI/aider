@@ -1,4 +1,5 @@
 import os
+import os.path
 from pygments.lexers import guess_lexer_for_filename
 from pygments.token import Token
 from prompt_toolkit.styles import Style
@@ -86,9 +87,13 @@ class InputOutput:
         tool_output_color=None,
         tool_error_color="red",
     ):
-        self.user_input_color = user_input_color
-        self.tool_output_color = tool_output_color
-        self.tool_error_color = tool_error_color
+        no_color = os.environ.get("NO_COLOR")
+        if no_color is not None and no_color != "":
+            pretty = False
+
+        self.user_input_color = user_input_color if pretty else None
+        self.tool_output_color = tool_output_color if pretty else None
+        self.tool_error_color = tool_error_color if pretty else None
         self.input = input
         self.output = output
         self.pretty = pretty
@@ -99,10 +104,7 @@ class InputOutput:
         else:
             self.chat_history_file = None
 
-        if pretty:
-            self.console = Console()
-        else:
-            self.console = Console(force_terminal=True, no_color=True)
+        self.console = Console(force_terminal=not pretty, no_color=not pretty)
 
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
