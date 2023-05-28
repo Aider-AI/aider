@@ -73,9 +73,12 @@ aider <file1> <file2> ...
 
 Replace `<file1>`, `<file2>`, etc., with the paths to the source code files you want to work on. These files will be added to the chat session.
 
-You can also just launch `aider` anywhere in a git repo without naming files on the command line.
-It will discover all the files in the repo.
-You can then add and remove individual files in the chat session with the `/add` and `/drop` chat commands described below.
+You can also just launch `aider` anywhere in a git repo without naming
+files on the command line.  It will discover all the files in the
+repo.  You can then add and remove individual files in the chat
+session with the `/add` and `/drop` chat commands described below.
+If you or GPT mention one of the repo's filenames in the conversation,
+`aider` will ask if you'd like to add it to the chat.
 
 You can also use additional command-line options, environment variables or configuration file
 to set many options:
