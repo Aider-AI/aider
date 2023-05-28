@@ -227,17 +227,14 @@ class Commands:
         except Exception as e:
             self.io.tool_error(f"Error running command: {e}")
 
-        print(combined_output)
-
-        ok = self.io.confirm_ask("Add the output to the chat?", default="y")
-        if not ok:
-            return
-
-        msg = prompts.run_output.format(
-            command=args,
-            output=combined_output,
-        )
-        return msg
+        if self.io.confirm_ask("Add the output to the chat?", default="y"):
+            msg = prompts.run_output.format(
+                command=args,
+                output=combined_output,
+            )
+            self.io.tool_output(msg, log_only=False)
+        else:
+            print(combined_output)
 
     def cmd_exit(self, args):
         "Exit the application"
