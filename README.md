@@ -29,6 +29,7 @@ You can find more chat transcripts on the [examples page](https://aider.chat/exa
 ## Features
 
 * Chat with GPT-4 about your code by launching `aider` from the command line with set of source files to discuss and edit together.
+* If you or GPT talk about a filename that's part of the git repo, `aider` will ask if you'd like to add it to the chat. This lets GPT see and edit the file's contents, in addition to the files you name on the command line. See also the in-chat `/add` and `/drop` commands described below.
 * Request new features, changes, improvements, or bug fixes to your code. Ask for new test cases, updated documentation or code refactors.
 * `aider` will apply the edits suggested by GPT-4 directly to your source files.
 * `aider` will automatically commit each changeset to your local git repo with a descriptive commit message. These frequent, automatic commits provide a safety net. It's easy to undo `aider` changes or use standard git workflows to manage longer sequences of changes.
