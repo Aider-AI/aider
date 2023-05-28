@@ -9,8 +9,6 @@ commit, diff and undo changes proposed by GPT.
 
 ![aider screenshot](assets/screenshot.gif)
 
-## Table of contents
-
 - [Example chat transcripts](#example-chat-transcripts)
 - [Features](#features)
 - [Installation](#installation)
