@@ -13,9 +13,21 @@ commit, diff and undo changes proposed by GPT.
 
 Here are some example transcripts that show how you can chat with `aider` to write and edit code with GPT-4. 
 
+## Table of Contents
+
+- [Example chat transcripts](#example-chat-transcripts)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Chat commands](#chat-commands)
+- [Tips](#tips)
+- [Limitations](#limitations)
+
+## Example chat transcripts
+
 * [**Hello World Flask App**](https://aider.chat/examples/hello-world-flask.html): Start from scratch and have GPT create a simple Flask app with various endpoints, such as adding two numbers and calculating the Fibonacci sequence.
 
-* [**Javascript Game Modification**](https://aider.chat/examples/2048-game.html): Dive into an existing open-source repo, and get GPT's help to understand it and make modifications.
+* [**Javascript Game Modification**](https://aider.chat/examples/2048-game.html): Dive
 
 * [**Complex Multi-file Change with Debugging**](https://aider.chat/examples/complex-change.html): GPT makes a complex code change that is coordinated across multiple source files, and resolves bugs by reviewing error output and doc snippets.
 
