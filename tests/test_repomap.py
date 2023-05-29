@@ -65,7 +65,7 @@ def my_function(arg1, arg2):
 
     def test_check_for_ctags_success(self):
         with patch("subprocess.run") as mock_run:
-            mock_run.return_value = CompletedProcess(args=["ctags", "--version"], returncode=0, stdout='''{
+            mock_run.return_value = CompletedProcess(args=["ctags", "--version"], returncode=0, stdout=b'''{
   "_type": "tag",
   "name": "status",
   "path": "aider/main.py",

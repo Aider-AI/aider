@@ -141,6 +141,7 @@ class RepoMap:
         cmd = self.ctags_cmd + [filename]
         output = subprocess.check_output(cmd).decode("utf-8")
         output = output.splitlines()
+        print('output', output)
 
         tags = []
         if not output:
@@ -175,7 +176,8 @@ class RepoMap:
                 with open(hello_py, "w") as f:
                     f.write("def hello():\n    print('Hello, world!')\n")
                 self.get_tags(hello_py)
-        except Exception:
+        except Exception as err:
+            print(err)
             return False
         return True
 
