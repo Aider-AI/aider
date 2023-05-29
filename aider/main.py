@@ -1,8 +1,9 @@
 import os
 import sys
-import git
+
 import configargparse
-from dotenv import load_dotenv
+import git
+
 from aider.coder import Coder
 from aider.io import InputOutput
 
@@ -19,13 +20,11 @@ def main(args=None, input=None, output=None):
     if args is None:
         args = sys.argv[1:]
 
-    load_dotenv()
-    env_prefix = "AIDER_"
+    git_root = get_git_root()
 
     default_config_files = [
         os.path.expanduser("~/.aider.conf.yml"),
     ]
-    git_root = get_git_root()
     if git_root:
         default_config_files.insert(0, os.path.join(git_root, ".aider.conf.yml"))
 
@@ -34,6 +33,7 @@ def main(args=None, input=None, output=None):
         add_config_file_help=True,
         default_config_files=default_config_files,
         config_file_parser_class=configargparse.YAMLConfigFileParser,
+        auto_env_var_prefix="AIDER_",
     )
 
     parser.add_argument(
@@ -63,21 +63,18 @@ def main(args=None, input=None, output=None):
     parser.add_argument(
         "--input-history-file",
         metavar="INPUT_HISTORY_FILE",
-        env_var=f"{env_prefix}INPUT_HISTORY_FILE",
         default=default_input_history_file,
         help=f"Specify the chat input history file (default: {default_input_history_file})",
     )
     parser.add_argument(
         "--chat-history-file",
         metavar="CHAT_HISTORY_FILE",
-        env_var=f"{env_prefix}CHAT_HISTORY_FILE",
         default=default_chat_history_file,
         help=f"Specify the chat history file (default: {default_chat_history_file})",
     )
     parser.add_argument(
         "--model",
         metavar="MODEL",
-        env_var=f"{env_prefix}MODEL",
         default="gpt-4",
         help="Specify the model to use for the main chat (default: gpt-4)",
     )
@@ -91,16 +88,29 @@ def main(args=None, input=None, output=None):
     parser.add_argument(
         "--pretty",
         action="store_true",
-        env_var=f"{env_prefix}PRETTY",
         default=True,
         help="Enable pretty, colorized output (default: True)",
     )
-
     parser.add_argument(
         "--no-pretty",
         action="store_false",
         dest="pretty",
         help="Disable pretty, colorized output",
+    )
+    parser.add_argument(
+        "--user-input-color",
+        default="green",
+        help="Set the color for user input (default: green)",
+    )
+    parser.add_argument(
+        "--tool-output-color",
+        default=None,
+        help="Set the color for tool output (default: None)",
+    )
+    parser.add_argument(
+        "--tool-error-color",
+        default="red",
+        help="Set the color for tool error messages (default: red)",
     )
     parser.add_argument(
         "--apply",
@@ -110,7 +120,7 @@ def main(args=None, input=None, output=None):
     parser.add_argument(
         "--auto-commits",
         action="store_true",
-        env_var=f"{env_prefix}AUTO_COMMIT",
+        dest="auto_commits",
         default=True,
         help="Enable auto commit of changes (default: True)",
     )
@@ -118,8 +128,27 @@ def main(args=None, input=None, output=None):
     parser.add_argument(
         "--no-auto-commits",
         action="store_false",
-        dest="auto_commit",
+        dest="auto_commits",
         help="Disable auto commit of changes",
+    )
+    parser.add_argument(
+        "--dirty-commits",
+        action="store_true",
+        dest="dirty_commits",
+        help="Enable dirty commit of changes",
+        default=True,
+    )
+    parser.add_argument(
+        "--no-dirty-commits",
+        action="store_false",
+        dest="dirty_commits",
+        help="Disable dirty commit of changes",
+    )
+    parser.add_argument(
+        "--openai-api-key",
+        metavar="OPENAI_API_KEY",
+        help="Specify the OpenAI API key",
+        env_var="OPENAI_API_KEY",
     )
     parser.add_argument(
         "--dry-run",
@@ -130,7 +159,6 @@ def main(args=None, input=None, output=None):
     parser.add_argument(
         "--show-diffs",
         action="store_true",
-        env_var=f"{env_prefix}SHOW_DIFFS",
         help="Show diffs when committing changes (default: False)",
         default=False,
     )
@@ -140,7 +168,6 @@ def main(args=None, input=None, output=None):
         nargs="?",
         const=True,
         default=None,
-        env_var=f"{env_prefix}CTAGS",
         help=(
             "Add ctags to the chat to help GPT understand the codebase (default: check for ctags"
             " executable)"
@@ -168,9 +195,23 @@ def main(args=None, input=None, output=None):
         args.chat_history_file,
         input=input,
         output=output,
+        user_input_color=args.user_input_color,
+        tool_output_color=args.tool_output_color,
+        tool_error_color=args.tool_error_color,
     )
 
-    io.tool(*sys.argv, log_only=True)
+    if args.verbose:
+        show = parser.format_values()
+        io.tool_output(show)
+        io.tool_output("Option settings:")
+        for arg, val in sorted(vars(args).items()):
+            io.tool_output(f"  - {arg}: {val}")
+
+    io.tool_output(*sys.argv, log_only=True)
+
+    if not args.openai_api_key:
+        io.tool_error("No OpenAI API key provided. Use --openai-api-key or env OPENAI_API_KEY.")
+        return 1
 
     coder = Coder(
         io,
@@ -179,12 +220,15 @@ def main(args=None, input=None, output=None):
         pretty=args.pretty,
         show_diffs=args.show_diffs,
         auto_commits=args.auto_commits,
+        dirty_commits=args.dirty_commits,
         dry_run=args.dry_run,
         use_ctags=args.ctags,
         verbose=args.verbose,
+        openai_api_key=args.openai_api_key,
     )
-    if args.auto_commits:
-        coder.commit(ask=True, prefix="wip: ", which="repo_files")
+
+    if args.dirty_commits:
+        coder.commit(ask=True, which="repo_files")
 
     if args.apply:
         with open(args.apply, "r") as f:
@@ -192,6 +236,7 @@ def main(args=None, input=None, output=None):
         coder.update_files(content, inp="")
         return
 
+    io.tool_output("Use /help to see in-chat commands.")
     coder.run()
 
 

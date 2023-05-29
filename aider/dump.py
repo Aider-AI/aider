@@ -1,5 +1,5 @@
-import traceback
 import json
+import traceback
 
 
 def cvt(s):

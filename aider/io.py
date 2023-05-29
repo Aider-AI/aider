@@ -1,24 +1,49 @@
 import os
-from prompt_toolkit.styles import Style
-from prompt_toolkit.shortcuts import PromptSession, prompt
+from collections import defaultdict
+from datetime import datetime
+from pathlib import Path
+
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.history import FileHistory
-from prompt_toolkit.shortcuts import CompleteStyle
+from prompt_toolkit.shortcuts import CompleteStyle, PromptSession, prompt
+from prompt_toolkit.styles import Style
+from pygments.lexers import guess_lexer_for_filename
+from pygments.token import Token
+from pygments.util import ClassNotFound
 from rich.console import Console
 from rich.text import Text
-from pathlib import Path
-from datetime import datetime
-
-from aider import utils
 
 
 class FileContentCompleter(Completer):
-    def __init__(self, fnames, commands):
+    def __init__(self, root, rel_fnames, addable_rel_fnames, commands):
         self.commands = commands
+        self.addable_rel_fnames = addable_rel_fnames
+        self.rel_fnames = rel_fnames
+
+        fname_to_rel_fnames = defaultdict(list)
+        for rel_fname in addable_rel_fnames:
+            fname = os.path.basename(rel_fname)
+            if fname != rel_fname:
+                fname_to_rel_fnames[fname].append(rel_fname)
+        self.fname_to_rel_fnames = fname_to_rel_fnames
 
         self.words = set()
-        for fname in fnames:
-            self.words.update(utils.get_name_identifiers(fname))
+
+        for rel_fname in addable_rel_fnames:
+            self.words.add(rel_fname)
+
+        for rel_fname in rel_fnames:
+            self.words.add(rel_fname)
+
+            fname = os.path.join(root, rel_fname)
+            with open(fname, "r") as f:
+                content = f.read()
+            try:
+                lexer = guess_lexer_for_filename(fname, content)
+            except ClassNotFound:
+                continue
+            tokens = list(lexer.get_tokens(content))
+            self.words.update(token[1] for token in tokens if token[0] in Token.Name)
 
     def get_completions(self, document, complete_event):
         text = document.text_before_cursor
@@ -35,11 +60,17 @@ class FileContentCompleter(Completer):
                 return
         else:
             candidates = self.words
+            candidates.update(set(self.fname_to_rel_fnames))
 
         last_word = words[-1]
         for word in candidates:
             if word.lower().startswith(last_word.lower()):
-                yield Completion(word, start_position=-len(last_word))
+                rel_fnames = self.fname_to_rel_fnames.get(word, [])
+                if rel_fnames:
+                    for rel_fname in rel_fnames:
+                        yield Completion(rel_fname, start_position=-len(last_word))
+                else:
+                    yield Completion(word, start_position=-len(last_word))
 
 
 class InputOutput:
@@ -51,7 +82,18 @@ class InputOutput:
         chat_history_file=None,
         input=None,
         output=None,
+        user_input_color="blue",
+        tool_output_color=None,
+        tool_error_color="red",
     ):
+        no_color = os.environ.get("NO_COLOR")
+        if no_color is not None and no_color != "":
+            pretty = False
+
+        self.user_input_color = user_input_color if pretty else None
+        self.tool_output_color = tool_output_color if pretty else None
+        self.tool_error_color = tool_error_color if pretty else None
+
         self.input = input
         self.output = output
         self.pretty = pretty
@@ -65,29 +107,20 @@ class InputOutput:
         if pretty:
             self.console = Console()
         else:
-            self.console = Console(force_terminal=True, no_color=True)
+            self.console = Console(no_color=True)
 
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
 
-    def get_input(self, fnames, commands):
+    def get_input(self, root, rel_fnames, addable_rel_fnames, commands):
         if self.pretty:
-            self.console.rule()
+            style = dict(style=self.user_input_color) if self.user_input_color else dict()
+            self.console.rule(**style)
         else:
             print()
 
-        fnames = list(fnames)
-        if len(fnames) > 1:
-            common_prefix = os.path.commonpath(fnames)
-            if not common_prefix.endswith(os.path.sep):
-                common_prefix += os.path.sep
-            short_fnames = [fname.replace(common_prefix, "", 1) for fname in fnames]
-        elif len(fnames):
-            short_fnames = [os.path.basename(fnames[0])]
-        else:
-            short_fnames = []
-
-        show = " ".join(short_fnames)
+        rel_fnames = list(rel_fnames)
+        show = " ".join(rel_fnames)
         if len(show) > 10:
             show += "\n"
         show += "> "
@@ -95,22 +128,29 @@ class InputOutput:
         inp = ""
         multiline_input = False
 
-        style = Style.from_dict({"": "green"})
+        if self.user_input_color:
+            style = Style.from_dict({"": self.user_input_color})
+        else:
+            style = None
 
         while True:
-            completer_instance = FileContentCompleter(fnames, commands)
+            completer_instance = FileContentCompleter(
+                root, rel_fnames, addable_rel_fnames, commands
+            )
             if multiline_input:
                 show = ". "
 
             session_kwargs = {
                 "message": show,
                 "completer": completer_instance,
-                "style": style,
                 "reserve_space_for_menu": 4,
                 "complete_style": CompleteStyle.MULTI_COLUMN,
                 "input": self.input,
                 "output": self.output,
             }
+            if style:
+                session_kwargs["style"] = style
+
             if self.input_history_file is not None:
                 session_kwargs["history"] = FileHistory(self.input_history_file)
 
@@ -180,9 +220,10 @@ class InputOutput:
             self.append_chat_history(hist, linebreak=True, blockquote=True)
 
         message = Text(message)
-        self.console.print(message, style="red")
+        style = dict(style=self.tool_error_color) if self.tool_error_color else dict()
+        self.console.print(message, **style)
 
-    def tool(self, *messages, log_only=False):
+    def tool_output(self, *messages, log_only=False):
         if messages:
             hist = " ".join(messages)
             hist = f"{hist.strip()}"
@@ -190,7 +231,8 @@ class InputOutput:
 
         if not log_only:
             messages = list(map(Text, messages))
-            self.console.print(*messages)
+            style = dict(style=self.tool_output_color) if self.tool_output_color else dict()
+            self.console.print(*messages, **style)
 
     def append_chat_history(self, text, linebreak=False, blockquote=False):
         if blockquote:

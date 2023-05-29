@@ -2,12 +2,20 @@
 
 `aider` is a command-line chat tool that allows you to write and edit
 code with GPT-4.  You can ask GPT to help you start
-a new project, or add features to your existing code.
-`aider` is well suited for working with code in a git repo,
-as it has features to easily
-commit, diff and undo changes proposed by GPT. 
+a new project, or modify code in your existing git repo.
+Aider has features to 
+[help GPT understand and modify larger codebases](https://aider.chat/docs/ctags.html)
+and aider makes it easy to git commit, diff & undo changes proposed by GPT. 
 
-![aider screenshot](screenshot.gif)
+![aider screenshot](assets/screenshot.gif)
+
+- [Example chat transcripts](#example-chat-transcripts)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [In chat commands](#in-chat-commands)
+- [Tips](#tips)
+- [Limitations](#limitations)
 
 ## Example chat transcripts
 
@@ -22,13 +30,14 @@ Here are some example transcripts that show how you can chat with `aider` to wri
 * [**Create a Black Box Test Case**](https://aider.chat/examples/add-test.html): GPT creates a "black box" test case without access to the source of the method being tested, using only a
 [high level map of the repository based on ctags](https://aider.chat/docs/ctags.html).
 
-* [**Download, analyze and plot US Census data**](https://aider.chat/examples/census.html): GPT-4 downloads census data, suggests some hypotheses to test, tests one and then summarizes and plots a graph of the results.
+* [**Honor the NO_COLOR env var**](https://aider.chat/examples/no-color.html): The user pastes the NO_COLOR spec from no-color.org into the chat, and GPT-4 modifies the application to conform.
 
 You can find more chat transcripts on the [examples page](https://aider.chat/examples/).
 
 ## Features
 
-* Chat with GPT-4 about your code by launching `aider` from the command line with set of source files to discuss and edit together.
+* Chat with GPT-4 about your code by launching `aider` from the command line with set of source files to discuss and edit together. GPT can see and edit the content of those files.
+* If you or GPT mention other filenames that are part of the git repo, `aider` will ask if you'd like to add them to the chat. See also the in-chat `/add` and `/drop` commands described below, which are other ways to manage which files are part of the chat context.
 * Request new features, changes, improvements, or bug fixes to your code. Ask for new test cases, updated documentation or code refactors.
 * `aider` will apply the edits suggested by GPT-4 directly to your source files.
 * `aider` will automatically commit each changeset to your local git repo with a descriptive commit message. These frequent, automatic commits provide a safety net. It's easy to undo `aider` changes or use standard git workflows to manage longer sequences of changes.
@@ -50,7 +59,7 @@ which helps it understand and modify large codebases.
     * From GitHub: `pip install git+https://github.com/paul-gauthier/aider.git`
     * From your local copy of the repo in develop mode to pick up local edits immediately: `pip install -e .` 
 
-2. Set up your OpenAI API key as an environment variable `OPENAI_API_KEY` or by including it in a `.env` file.
+2. Set up your OpenAI API key as an environment variable `OPENAI_API_KEY` or by including it in an `.aider.config.yml` file (see `aider --help`).
 
 3. Optionally, install [universal ctags](https://github.com/universal-ctags/ctags). This is helpful if you plan to work with repositories with more than a handful of files.  This allows `aider --ctags` to build a [map of your entire git repo](https://aider.chat/docs/ctags.html) and share it with GPT to help it better understand and modify large codebases.
 
@@ -64,46 +73,42 @@ aider <file1> <file2> ...
 
 Replace `<file1>`, `<file2>`, etc., with the paths to the source code files you want to work on. These files will be added to the chat session.
 
-You can also just launch `aider` anywhere in a git repo without naming files on the command line.
-It will discover all the files in the repo.
-You can then add and remove individual files in the chat session with the `/add` and `/drop` chat commands described below.
+You can also just launch `aider` anywhere in a git repo without naming
+files on the command line.  It will discover all the files in the
+repo.  You can then add and remove individual files in the chat
+session with the `/add` and `/drop` chat commands described below.
+If you or GPT mention one of the repo's filenames in the conversation,
+`aider` will ask if you'd like to add it to the chat.
 
 You can also use additional command-line options, environment variables or configuration file
 to set many options:
 
 ```
-  -h, --help            show this help message and exit
   -c CONFIG_FILE, --config CONFIG_FILE
-                        Specify the config file (default: search for
-                        .aider.conf.yml in git root or home directory)
+                        Specify the config file (default: search for .aider.conf.yml in git root or home directory)
   --input-history-file INPUT_HISTORY_FILE
-                        Specify the chat input history file (default:
-                        .aider.input.history) [env var: AIDER_INPUT_HISTORY_FILE]
+                        Specify the chat input history file (default: .aider.input.history) [env var: AIDER_INPUT_HISTORY_FILE]
   --chat-history-file CHAT_HISTORY_FILE
-                        Specify the chat history file (default:
-                        .aider.chat.history.md) [env var: AIDER_CHAT_HISTORY_FILE]
-  --model MODEL         Specify the model to use for the main chat (default: gpt-4)
-                        [env var: AIDER_MODEL]
+                        Specify the chat history file (default: .aider.chat.history.md) [env var: AIDER_CHAT_HISTORY_FILE]
+  --model MODEL         Specify the model to use for the main chat (default: gpt-4) [env var: AIDER_MODEL]
   -3                    Use gpt-3.5-turbo model for the main chat (not advised)
-  --pretty              Enable pretty, colorized output (default: True) [env var:
-                        AIDER_PRETTY]
-  --no-pretty           Disable pretty, colorized output
-  --apply FILE          Apply the changes from the given file instead of running
-                        the chat (debug)
-  --auto-commits        Enable auto commit of changes (default: True) [env var:
-                        AIDER_AUTO_COMMIT]
-  --no-auto-commits     Disable auto commit of changes
-  --dry-run             Perform a dry run without applying changes (default: False)
-  --show-diffs          Show diffs when committing changes (default: False) [env
-                        var: AIDER_SHOW_DIFFS]
-  --ctags [CTAGS]       Add ctags to the chat to help GPT understand the codebase
-                        (default: check for ctags executable) [env var:
-                        AIDER_CTAGS]
-  --yes                 Always say yes to every confirmation
-  -v, --verbose         Enable verbose output
+  --pretty              Enable pretty, colorized output (default: True) [env var: AIDER_PRETTY]
+  --no-pretty           Disable pretty, colorized output [env var: AIDER_NO_PRETTY]
+  --apply FILE          Apply the changes from the given file instead of running the chat (debug) [env var: AIDER_APPLY]
+  --auto-commits        Enable auto commit of changes (default: True) [env var: AIDER_AUTO_COMMITS]
+  --no-auto-commits     Disable auto commit of changes [env var: AIDER_NO_AUTO_COMMITS]
+  --dirty-commits       Enable dirty commit of changes [env var: AIDER_DIRTY_COMMITS]
+  --no-dirty-commits    Disable dirty commit of changes [env var: AIDER_NO_DIRTY_COMMITS]
+  --openai-api-key OPENAI_API_KEY
+                        Specify the OpenAI API key [env var: OPENAI_API_KEY]
+  --dry-run             Perform a dry run without applying changes (default: False) [env var: AIDER_DRY_RUN]
+  --show-diffs          Show diffs when committing changes (default: False) [env var: AIDER_SHOW_DIFFS]
+  --ctags [CTAGS]       Add ctags to the chat to help GPT understand the codebase (default: check for ctags executable) [env var: AIDER_CTAGS]
+  --yes                 Always say yes to every confirmation [env var: AIDER_YES]
+  -v, --verbose         Enable verbose output [env var: AIDER_VERBOSE]
 ```
 
-## Chat commands
+## In chat commands
 
 `aider` supports the following commands from within the chat:
 
@@ -120,7 +125,7 @@ To use a command, simply type it in the chat input followed by any required argu
 
 ## Tips
 
-* Large changes are best performed as a sequence of bite sized steps. Same as if you were undertaking them by yourself.
+* Large changes are best performed as a sequence of thoughtful bite sized steps, where you plan out the approach and overall design. Don't ask GPT to "build a house" all in one go. Instead, think about the architecture you want and then ask it to "build a foundation", "erect the walls", "run the wiring", etc.
 * Use Control-C to safely interrupt `aider` if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply with more information or direction.
 * Use the `/run` command to run tests, linters, etc and show the output to GPT so it can fix any issues.
 * Enter a multiline chat message by entering `{` alone on the first line. End the multiline message with `}` alone on the last line.

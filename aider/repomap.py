@@ -1,15 +1,14 @@
-import os
 import json
-import sys
+import os
 import subprocess
-import tiktoken
+import sys
 import tempfile
-from collections import defaultdict, Counter
+from collections import Counter, defaultdict
+
 import networkx as nx
+import tiktoken
 
 from aider import prompts, utils
-from aider.dump import dump
-
 
 # Global cache for tags
 TAGS_CACHE = {}
@@ -203,6 +202,7 @@ def find_py_files(directory):
 
 def call_map():
     import random
+
     import graphviz
 
     fnames = sys.argv[1:]
@@ -322,3 +322,4 @@ def call_map():
 
 if __name__ == "__main__":
     call_map()
+    # print(rm.get_tags_map(sys.argv[1:]))

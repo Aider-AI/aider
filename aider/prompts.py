@@ -8,7 +8,7 @@ Take requests for changes to the supplied code.
 If the request is ambiguous, ask questions.
 
 Once you understand the request you MUST:
-1. List the files you need to modify. If they are *read-only* ask the user to make them *read-write* using the file's full path name.
+1. List the files you need to modify. Do not suggest changes to *read-only* files. You *MUST* ask the user to make them *read-write* using the file's full path name. End your reply and wait for their approval.
 2. Think step-by-step and explain the needed changes.
 3. Describe each change with an *edit block* per the example below.
 """
@@ -74,7 +74,7 @@ Reply with JUST the commit message, without quotes, comments, questions, etc!
 # COMMANDS
 undo_command_reply = "I did `git reset --hard HEAD~1` to discard the last edits."
 
-added_files = "I added the content of these additional files: {fnames}"
+added_files = "I added these *read-write* files: {fnames}"
 
 
 run_output = """I ran this command:

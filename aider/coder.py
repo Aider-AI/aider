@@ -2,25 +2,25 @@
 
 import os
 import sys
-import traceback
 import time
-from openai.error import RateLimitError
-
-from rich.console import Console
-from rich.live import Live
-from rich.markdown import Markdown
+import traceback
 from pathlib import Path
 
 import git
 import openai
+from openai.error import RateLimitError
+from rich.console import Console
+from rich.live import Live
+from rich.markdown import Markdown
 
 # from aider.dump import dump
-from aider import utils
-from aider import prompts
+from aider import prompts, utils
 from aider.commands import Commands
 from aider.repomap import RepoMap
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+
+class MissingAPIKeyError(ValueError):
+    pass
 
 
 class Coder:
@@ -37,10 +37,17 @@ class Coder:
         pretty=True,
         show_diffs=False,
         auto_commits=True,
+        dirty_commits=True,
         dry_run=False,
         use_ctags=False,
         verbose=False,
+        openai_api_key=None,
     ):
+        if openai_api_key:
+            openai.api_key = openai_api_key
+        else:
+            raise MissingAPIKeyError("No OpenAI API key provided.")
+
         self.verbose = verbose
         self.abs_fnames = set()
         self.cur_messages = []
@@ -48,6 +55,7 @@ class Coder:
 
         self.io = io
         self.auto_commits = auto_commits
+        self.dirty_commits = dirty_commits
         self.dry_run = dry_run
 
         if pretty:
@@ -66,7 +74,7 @@ class Coder:
 
         if self.repo:
             rel_repo_dir = os.path.relpath(self.repo.git_dir, os.getcwd())
-            self.io.tool("Using git repo:", rel_repo_dir)
+            self.io.tool_output("Using git repo:", rel_repo_dir)
         else:
             self.io.tool_error("No suitable git repo, will not automatically commit edits.")
             self.find_common_root()
@@ -83,7 +91,7 @@ class Coder:
         else:
             self.root = os.getcwd()
 
-        self.io.tool(f"Common root directory: {self.root}")
+        self.io.tool_output(f"Common root directory: {self.root}")
 
     def set_repo(self, cmd_line_fnames):
         if not cmd_line_fnames:
@@ -93,7 +101,7 @@ class Coder:
         for fname in cmd_line_fnames:
             fname = Path(fname)
             if not fname.exists():
-                self.io.tool(f"Creating empty file {fname}")
+                self.io.tool_output(f"Creating empty file {fname}")
                 fname.parent.mkdir(parents=True, exist_ok=True)
                 fname.touch()
 
@@ -106,7 +114,7 @@ class Coder:
             if fname.is_dir():
                 continue
 
-            self.io.tool(f"Added {fname} to the chat")
+            self.io.tool_output(f"Added {fname} to the chat")
 
             fname = fname.resolve()
             self.abs_fnames.add(str(fname))
@@ -135,18 +143,18 @@ class Coder:
         if new_files:
             rel_repo_dir = os.path.relpath(repo.git_dir, os.getcwd())
 
-            self.io.tool(f"Files not tracked in {rel_repo_dir}:")
+            self.io.tool_output(f"Files not tracked in {rel_repo_dir}:")
             for fn in new_files:
-                self.io.tool(f" - {fn}")
+                self.io.tool_output(f" - {fn}")
             if self.io.confirm_ask("Add them?"):
                 for relative_fname in new_files:
                     repo.git.add(relative_fname)
-                    self.io.tool(f"Added {relative_fname} to the git repo")
+                    self.io.tool_output(f"Added {relative_fname} to the git repo")
                 show_files = ", ".join(new_files)
                 commit_message = f"Added new files to the git repo: {show_files}"
                 repo.git.commit("-m", commit_message, "--no-verify")
                 commit_hash = repo.head.commit.hexsha[:7]
-                self.io.tool(f"Commit {commit_hash} {commit_message}")
+                self.io.tool_output(f"Commit {commit_hash} {commit_message}")
             else:
                 self.io.tool_error("Skipped adding new files to the git repo.")
                 return
@@ -216,7 +224,7 @@ class Coder:
         if is_commit_command:
             return
 
-        if not self.auto_commits:
+        if not self.dirty_commits:
             return
         if not self.repo:
             return
@@ -227,7 +235,12 @@ class Coder:
         return True
 
     def run_loop(self):
-        inp = self.io.get_input(self.abs_fnames, self.commands)
+        inp = self.io.get_input(
+            self.root,
+            self.get_inchat_relative_files(),
+            self.get_addable_relative_files(),
+            self.commands,
+        )
 
         self.num_control_c = 0
 
@@ -243,7 +256,7 @@ class Coder:
             self.cur_messages = []
 
             if inp.strip():
-                self.io.tool("Use up-arrow to retry previous command:", inp)
+                self.io.tool_output("Use up-arrow to retry previous command:", inp)
             return
 
         if not inp:
@@ -251,6 +264,8 @@ class Coder:
 
         if self.commands.is_command(inp):
             return self.commands.run(inp)
+
+        self.check_for_file_mentions(inp)
 
         return self.send_new_user_message(inp)
 
@@ -279,7 +294,7 @@ class Coder:
             dict(role="assistant", content=content),
         ]
 
-        self.io.tool()
+        self.io.tool_output()
         if interrupted:
             return
 
@@ -327,20 +342,29 @@ class Coder:
         quotes = "".join(['"', "'", "`"])
         words = set(word.strip(quotes) for word in words)
 
-        addable_rel_fnames = set(self.get_all_relative_files()) - set(
-            self.get_inchat_relative_files()
-        )
+        addable_rel_fnames = self.get_addable_relative_files()
 
         mentioned_rel_fnames = set()
-        for word in words:
-            if word in addable_rel_fnames:
-                mentioned_rel_fnames.add(word)
+        fname_to_rel_fnames = {}
+        for rel_fname in addable_rel_fnames:
+            fname = os.path.basename(rel_fname)
+            if fname not in fname_to_rel_fnames:
+                fname_to_rel_fnames[fname] = []
+            fname_to_rel_fnames[fname].append(rel_fname)
+
+        for fname, rel_fnames in fname_to_rel_fnames.items():
+            if len(rel_fnames) == 1 and fname in words:
+                mentioned_rel_fnames.add(rel_fnames[0])
+            else:
+                for rel_fname in rel_fnames:
+                    if rel_fname in words:
+                        mentioned_rel_fnames.add(rel_fname)
 
         if not mentioned_rel_fnames:
             return
 
         for rel_fname in mentioned_rel_fnames:
-            self.io.tool(rel_fname)
+            self.io.tool_output(rel_fname)
 
         if not self.io.confirm_ask("Add these files to the chat?"):
             return
@@ -450,9 +474,9 @@ class Coder:
             edited.add(path)
             if utils.do_replace(full_path, original, updated, self.dry_run):
                 if self.dry_run:
-                    self.io.tool(f"Dry run, did not apply edit to {path}")
+                    self.io.tool_output(f"Dry run, did not apply edit to {path}")
                 else:
-                    self.io.tool(f"Applied edit to {path}")
+                    self.io.tool_output(f"Applied edit to {path}")
             else:
                 self.io.tool_error(f"Failed to apply edit to {path}")
 
@@ -490,7 +514,9 @@ class Coder:
             )
             return
 
-        commit_message = commit_message.strip().strip('"').strip()
+        commit_message = commit_message.strip()
+        if commit_message and commit_message[0] == '"' and commit_message[-1] == '"':
+            commit_message = commit_message[1:-1].strip()
 
         if interrupted:
             self.io.tool_error(
@@ -548,7 +574,7 @@ class Coder:
             raise ValueError(f"Invalid value for 'which': {which}")
 
         if self.show_diffs or ask:
-            # don't use io.tool() because we don't want to log or further colorize
+            # don't use io.tool_output() because we don't want to log or further colorize
             print(diffs)
 
         context = self.get_context_from_history(history)
@@ -562,9 +588,9 @@ class Coder:
 
         if ask:
             if which == "repo_files":
-                self.io.tool("Git repo has uncommitted changes.")
+                self.io.tool_output("Git repo has uncommitted changes.")
             else:
-                self.io.tool("Files have uncommitted changes.")
+                self.io.tool_output("Files have uncommitted changes.")
 
             res = self.io.prompt_ask(
                 "Commit before the chat proceeds [y/n/commit message]?",
@@ -572,7 +598,7 @@ class Coder:
             ).strip()
             self.last_asked_for_commit_time = self.get_last_modified()
 
-            self.io.tool()
+            self.io.tool_output()
 
             if res.lower() in ["n", "no"]:
                 self.io.tool_error("Skipped commmit.")
@@ -585,7 +611,7 @@ class Coder:
         full_commit_message = commit_message + "\n\n" + context
         repo.git.commit("-m", full_commit_message, "--no-verify")
         commit_hash = repo.head.commit.hexsha[:7]
-        self.io.tool(f"Commit {commit_hash} {commit_message}")
+        self.io.tool_output(f"Commit {commit_hash} {commit_message}")
 
         return commit_hash, commit_message
 
@@ -614,6 +640,9 @@ class Coder:
         if not files:
             return 0
         return max(Path(path).stat().st_mtime for path in files)
+
+    def get_addable_relative_files(self):
+        return set(self.get_all_relative_files()) - set(self.get_inchat_relative_files())
 
     def apply_updates(self, content, inp):
         try:
