@@ -1,6 +1,5 @@
-import re
 import math
-
+import re
 from difflib import SequenceMatcher
 from pathlib import Path
 

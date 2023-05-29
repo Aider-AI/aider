@@ -1,7 +1,9 @@
 import os
 import sys
-import git
+
 import configargparse
+import git
+
 from aider.coder import Coder
 from aider.io import InputOutput
 

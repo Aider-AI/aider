@@ -2,21 +2,19 @@
 
 import os
 import sys
-import traceback
 import time
-from openai.error import RateLimitError
-
-from rich.console import Console
-from rich.live import Live
-from rich.markdown import Markdown
+import traceback
 from pathlib import Path
 
 import git
 import openai
+from openai.error import RateLimitError
+from rich.console import Console
+from rich.live import Live
+from rich.markdown import Markdown
 
 # from aider.dump import dump
-from aider import utils
-from aider import prompts
+from aider import prompts, utils
 from aider.commands import Commands
 from aider.repomap import RepoMap
 

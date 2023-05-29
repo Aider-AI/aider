@@ -1,19 +1,18 @@
 import os
 import os.path
-from pygments.lexers import guess_lexer_for_filename
-from pygments.token import Token
-from prompt_toolkit.styles import Style
-from pygments.util import ClassNotFound
-from prompt_toolkit.shortcuts import PromptSession, prompt
+from collections import defaultdict
+from datetime import datetime
+from pathlib import Path
+
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.history import FileHistory
-from prompt_toolkit.shortcuts import CompleteStyle
+from prompt_toolkit.shortcuts import CompleteStyle, PromptSession, prompt
+from prompt_toolkit.styles import Style
+from pygments.lexers import guess_lexer_for_filename
+from pygments.token import Token
+from pygments.util import ClassNotFound
 from rich.console import Console
 from rich.text import Text
-from pathlib import Path
-from datetime import datetime
-
-from collections import defaultdict
 
 
 class FileContentCompleter(Completer):

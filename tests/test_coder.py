@@ -1,6 +1,7 @@
 import os
 import unittest
 from unittest.mock import MagicMock
+
 from aider.coder import Coder
 
 

@@ -1,6 +1,7 @@
 # flake8: noqa: E501
 
 import unittest
+
 from aider import utils
 
 

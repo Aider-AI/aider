@@ -1,13 +1,15 @@
 import os
-import tempfile
-import subprocess
 import shutil
+import subprocess
+import tempfile
+from io import StringIO
 from unittest import TestCase
 from unittest.mock import patch
-from aider.main import main
+
 from prompt_toolkit.input import create_input
-from io import StringIO
 from prompt_toolkit.output import DummyOutput
+
+from aider.main import main
 
 
 class TestMain(TestCase):

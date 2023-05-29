@@ -1,10 +1,11 @@
 import os
+import shutil
 import tempfile
 from unittest import TestCase
+
 from aider.commands import Commands
 from aider.io import InputOutput
 
-import shutil
 
 class TestCommands(TestCase):
     def setUp(self):

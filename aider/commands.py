@@ -1,9 +1,11 @@
-import sys
 import os
-import git
-import subprocess
 import shlex
+import subprocess
+import sys
+
+import git
 from prompt_toolkit.completion import Completion
+
 from aider import prompts
 
 
