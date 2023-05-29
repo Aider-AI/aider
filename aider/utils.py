@@ -280,8 +280,9 @@ def get_name_identifiers(fname, uniq=True):
         lexer = guess_lexer_for_filename(fname, content)
     except ClassNotFound:
         return list()
-    tokens = list(lexer.get_tokens(content))
-    res = [token[1] for token in tokens if token[0] in Token.Name]
+    # lexer.get_tokens_unprocessed() returns (char position in file, token type, token string)
+    tokens = list(lexer.get_tokens_unprocessed(content))
+    res = [token[2] for token in tokens if token[1] in Token.Name]
     if uniq:
         res = set(res)
     return res
