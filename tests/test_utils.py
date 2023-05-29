@@ -195,8 +195,9 @@ tests/test_repomap.py
 
 These changes replace the `subprocess.run` patches with `subprocess.check_output` patches in both `test_check_for_ctags_failure` and `test_check_for_ctags_success` tests.
 """
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValueError) as cm:
             list(utils.find_original_update_blocks(edit))
+        self.assertIn("missing filename", str(cm.exception))
 
 
 if __name__ == "__main__":
