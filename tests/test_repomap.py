@@ -62,6 +62,13 @@ def my_function(arg1, arg2):
             result = repo_map.check_for_ctags()
             self.assertFalse(result)
 
+    def test_check_for_ctags_success(self):
+        with patch("subprocess.run") as mock_run:
+            mock_run.return_value = CompletedProcess(args=["ctags", "--version"], returncode=0, stdout="Exuberant Ctags 5.8")
+            repo_map = RepoMap(use_ctags=True)
+            result = repo_map.check_for_ctags()
+            self.assertTrue(result)
+
     def test_get_tags_map_without_ctags(self):
         # Create a temporary directory with a sample Python file containing identifiers
         test_files = [
