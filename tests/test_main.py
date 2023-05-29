@@ -82,8 +82,10 @@ class TestMain(TestCase):
                 assert kwargs["dirty_commits"] is True
 
     def test_main_with_ctags_mocked_failure(self):
-        with patch("subprocess.run", side_effect=subprocess.CalledProcessError(1, "ctags")):
-            with patch("aider.main.Coder") as MockCoder:
-                main(["--ctags"])
-                _, kwargs = MockCoder.call_args
-                assert kwargs["use_ctags"] is False
+        with tempfile.TemporaryDirectory() as temp_dir:
+            os.chdir(temp_dir)
+            with patch("subprocess.run", side_effect=subprocess.CalledProcessError(1, "ctags")):
+                with patch("aider.main.Coder") as MockCoder:
+                    main(["--ctags"])
+                    _, kwargs = MockCoder.call_args
+                    assert kwargs["use_ctags"] is False
