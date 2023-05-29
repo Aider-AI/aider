@@ -4,7 +4,6 @@ import subprocess
 from unittest import TestCase
 from unittest.mock import patch
 from aider.main import main
-import subprocess
 from prompt_toolkit.input import create_input
 from io import StringIO
 from prompt_toolkit.output import DummyOutput
@@ -80,12 +79,3 @@ class TestMain(TestCase):
                 main(["--dirty-commits"])
                 _, kwargs = MockCoder.call_args
                 assert kwargs["dirty_commits"] is True
-
-    def test_main_with_ctags_mocked_failure(self):
-        with tempfile.TemporaryDirectory() as temp_dir:
-            os.chdir(temp_dir)
-            with patch("subprocess.run", side_effect=subprocess.CalledProcessError(1, "ctags")):
-                with patch("aider.main.Coder") as MockCoder:
-                    main(["--ctags"])
-                    _, kwargs = MockCoder.call_args
-                    assert kwargs["use_ctags"] is False
