@@ -3,6 +3,7 @@ import tempfile
 import unittest
 from aider.repomap import RepoMap
 from unittest.mock import patch
+from subprocess import CompletedProcess
 
 class TestRepoMap(unittest.TestCase):
     def test_get_tags_map(self):
