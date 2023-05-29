@@ -154,6 +154,50 @@ aider/coder.py
         # Should not raise a ValueError
         list(utils.find_original_update_blocks(edit))
 
+    def test_false_incomplete_edit_block(self):
+        edit = """
+No problem! Here are the changes to patch `subprocess.check_output` instead of `subprocess.run` in both tests:
+
+```python
+tests/test_repomap.py
+<<<<<<< ORIGINAL
+    def test_check_for_ctags_failure(self):
+        with patch("subprocess.run") as mock_run:
+            mock_run.side_effect = Exception("ctags not found")
+=======
+    def test_check_for_ctags_failure(self):
+        with patch("subprocess.check_output") as mock_check_output:
+            mock_check_output.side_effect = Exception("ctags not found")
+>>>>>>> UPDATED
+
+<<<<<<< ORIGINAL
+    def test_check_for_ctags_success(self):
+        with patch("subprocess.run") as mock_run:
+            mock_run.return_value = CompletedProcess(args=["ctags", "--version"], returncode=0, stdout='''{
+  "_type": "tag",
+  "name": "status",
+  "path": "aider/main.py",
+  "pattern": "/^    status = main()$/",
+  "kind": "variable"
+}''')
+=======
+    def test_check_for_ctags_success(self):
+        with patch("subprocess.check_output") as mock_check_output:
+            mock_check_output.return_value = '''{
+  "_type": "tag",
+  "name": "status",
+  "path": "aider/main.py",
+  "pattern": "/^    status = main()$/",
+  "kind": "variable"
+}'''
+>>>>>>> UPDATED
+```
+
+These changes replace the `subprocess.run` patches with `subprocess.check_output` patches in both `test_check_for_ctags_failure` and `test_check_for_ctags_success` tests.
+"""
+        # Should not raise a ValueError
+        list(utils.find_original_update_blocks(edit))
+
 
 if __name__ == "__main__":
     unittest.main()
