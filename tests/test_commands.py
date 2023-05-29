@@ -4,10 +4,10 @@ from unittest import TestCase
 from aider.commands import Commands
 from aider.io import InputOutput
 
-
 class TestCommands(TestCase):
     def test_cmd_add(self):
-        # Create a temporary directory and change the current working directory
+        original_cwd = os.getcwd()
+
         with tempfile.TemporaryDirectory() as tmpdir:
             os.chdir(tmpdir)
 
@@ -24,3 +24,6 @@ class TestCommands(TestCase):
             # Check if both files have been created in the temporary directory
             self.assertTrue(os.path.exists("foo.txt"))
             self.assertTrue(os.path.exists("bar.txt"))
+
+        # The working directory is automatically restored after the context manager exits
+        assert os.getcwd() == original_cwd
