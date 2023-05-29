@@ -68,9 +68,11 @@ class FileContentCompleter(Completer):
                 rel_fnames = self.fname_to_rel_fnames.get(word, [])
                 if rel_fnames:
                     for rel_fname in rel_fnames:
-                        yield Completion(rel_fname, start_position=-len(last_word))
+                        yield Completion(
+                            f"`{rel_fname}`", start_position=-len(last_word), display=rel_fname
+                        )
                 else:
-                    yield Completion(word, start_position=-len(last_word))
+                    yield Completion(f"`{word}`", start_position=-len(last_word), display=word)
 
 
 class InputOutput:
