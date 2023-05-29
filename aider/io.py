@@ -5,6 +5,7 @@ from datetime import datetime
 from pathlib import Path
 
 from prompt_toolkit.completion import Completer, Completion
+from prompt_toolkit.lexers import PygmentsLexer
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.shortcuts import CompleteStyle, PromptSession, prompt
 from prompt_toolkit.styles import Style
@@ -148,7 +149,7 @@ class InputOutput:
                 "complete_style": CompleteStyle.MULTI_COLUMN,
                 "input": self.input,
                 "output": self.output,
-                "lexer": MarkdownLexer(),
+                "lexer": PygmentsLexer(MarkdownLexer),
             }
             if style:
                 session_kwargs["style"] = style
