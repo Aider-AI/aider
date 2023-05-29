@@ -131,7 +131,7 @@ class InputOutput:
         multiline_input = False
 
         if self.user_input_color:
-            style = Style.from_dict({"": self.user_input_color})
+            style = Style.from_dict({"": self.user_input_color, "pygments.literal.string": "underline"})
         else:
             style = None
 
