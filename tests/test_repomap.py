@@ -55,6 +55,15 @@ def my_function(arg1, arg2):
             self.assertIn("my_method", result)
             self.assertIn("my_function", result)
 
+    from unittest.mock import patch
+
+    def test_check_for_ctags_failure(self):
+        with patch("subprocess.run") as mock_run:
+            mock_run.side_effect = Exception("ctags not found")
+            repo_map = RepoMap(use_ctags=True)
+            result = repo_map.check_for_ctags()
+            self.assertFalse(result)
+
     def test_get_tags_map_without_ctags(self):
         # Create a temporary directory with a sample Python file containing identifiers
         test_files = [
