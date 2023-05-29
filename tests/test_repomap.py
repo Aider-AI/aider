@@ -2,7 +2,7 @@ import os
 import tempfile
 import unittest
 from aider.repomap import RepoMap
-
+from unittest.mock import patch
 
 class TestRepoMap(unittest.TestCase):
     def test_get_tags_map(self):
@@ -54,8 +54,6 @@ def my_function(arg1, arg2):
             self.assertIn("MyClass", result)
             self.assertIn("my_method", result)
             self.assertIn("my_function", result)
-
-    from unittest.mock import patch
 
     def test_check_for_ctags_failure(self):
         with patch("subprocess.run") as mock_run:
