@@ -230,13 +230,15 @@ def find_original_update_blocks(content):
             processed.append(cur)  # original_marker
 
             filename = processed[-2].splitlines()[-1].strip()
-    try:
-        if not len(filename) or "`" in filename:
-            filename = processed[-2].splitlines()[-2].strip()
-            if not len(filename) or "`" in filename:
+            try:
+                if not len(filename) or "`" in filename:
+                    filename = processed[-2].splitlines()[-2].strip()
+                    if not len(filename) or "`" in filename:
+                        raise ValueError(
+                            f"Bad/missing filename. It should go right above {ORIGINAL}"
+                        )
+            except IndexError:
                 raise ValueError(f"Bad/missing filename. It should go right above {ORIGINAL}")
-    except IndexError:
-        raise ValueError(f"Bad/missing filename. It should go right above {ORIGINAL}")
 
             original_text = pieces.pop()
             processed.append(original_text)
@@ -247,8 +249,10 @@ def find_original_update_blocks(content):
                 raise ValueError(f"Expected {DIVIDER}")
 
             updated_text = pieces.pop()
+            processed.append(updated_text)
 
             updated_marker = pieces.pop()
+            processed.append(updated_marker)
             if updated_marker.strip() != UPDATED:
                 raise ValueError(f"Expected {UPDATED}")
 
