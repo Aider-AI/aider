@@ -4,26 +4,29 @@ from unittest import TestCase
 from aider.commands import Commands
 from aider.io import InputOutput
 
+import shutil
+
 class TestCommands(TestCase):
+    def setUp(self):
+        self.original_cwd = os.getcwd()
+        self.tempdir = tempfile.mkdtemp()
+        os.chdir(self.tempdir)
+
+    def tearDown(self):
+        os.chdir(self.original_cwd)
+        shutil.rmtree(self.tempdir)
+
     def test_cmd_add(self):
-        original_cwd = os.getcwd()
+        # Initialize the Commands and InputOutput objects
+        io = InputOutput(pretty=False, yes=True)
+        from aider.coder import Coder
 
-        with tempfile.TemporaryDirectory() as tmpdir:
-            os.chdir(tmpdir)
+        coder = Coder(io, openai_api_key="deadbeef")
+        commands = Commands(io, coder)
 
-            # Initialize the Commands and InputOutput objects
-            io = InputOutput(pretty=False, yes=True)
-            from aider.coder import Coder
+        # Call the cmd_add method with 'foo.txt' and 'bar.txt' as a single string
+        commands.cmd_add("foo.txt bar.txt")
 
-            coder = Coder(io, openai_api_key="deadbeef")
-            commands = Commands(io, coder)
-
-            # Call the cmd_add method with 'foo.txt' and 'bar.txt' as a single string
-            commands.cmd_add("foo.txt bar.txt")
-
-            # Check if both files have been created in the temporary directory
-            self.assertTrue(os.path.exists("foo.txt"))
-            self.assertTrue(os.path.exists("bar.txt"))
-
-        # The working directory is automatically restored after the context manager exits
-        assert os.getcwd() == original_cwd
+        # Check if both files have been created in the temporary directory
+        self.assertTrue(os.path.exists("foo.txt"))
+        self.assertTrue(os.path.exists("bar.txt"))
