@@ -154,7 +154,7 @@ aider/coder.py
         # Should not raise a ValueError
         list(utils.find_original_update_blocks(edit))
 
-    def test_false_incomplete_edit_block(self):
+    def test_incomplete_edit_block_missing_filename(self):
         edit = """
 No problem! Here are the changes to patch `subprocess.check_output` instead of `subprocess.run` in both tests:
 
@@ -195,8 +195,8 @@ tests/test_repomap.py
 
 These changes replace the `subprocess.run` patches with `subprocess.check_output` patches in both `test_check_for_ctags_failure` and `test_check_for_ctags_success` tests.
 """
-        # Should not raise a ValueError
-        list(utils.find_original_update_blocks(edit))
+        with self.assertRaises(ValueError):
+            list(utils.find_original_update_blocks(edit))
 
 
 if __name__ == "__main__":
