@@ -8,7 +8,7 @@ from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.shortcuts import CompleteStyle, PromptSession, prompt
 from prompt_toolkit.styles import Style
-from pygments.lexers import guess_lexer_for_filename
+from pygments.lexers import guess_lexer_for_filename, MarkdownLexer
 from pygments.token import Token
 from pygments.util import ClassNotFound
 from rich.console import Console
@@ -148,6 +148,7 @@ class InputOutput:
                 "complete_style": CompleteStyle.MULTI_COLUMN,
                 "input": self.input,
                 "output": self.output,
+                "lexer": MarkdownLexer(),
             }
             if style:
                 session_kwargs["style"] = style
