@@ -215,6 +215,9 @@ def find_original_update_blocks(content):
     pieces.reverse()
     processed = []
 
+    # Keep using the same filename in cases where GPT produces an edit block
+    # without a filename.
+    current_filename = None
     try:
         while pieces:
             cur = pieces.pop()
@@ -233,12 +236,20 @@ def find_original_update_blocks(content):
             try:
                 if not len(filename) or "`" in filename:
                     filename = processed[-2].splitlines()[-2].strip()
-                    if not len(filename) or "`" in filename:
+                if not len(filename) or "`" in filename:
+                    if current_filename:
+                        filename = current_filename
+                    else:
                         raise ValueError(
                             f"Bad/missing filename. It should go right above {ORIGINAL}"
                         )
             except IndexError:
-                raise ValueError(f"Bad/missing filename. It should go right above {ORIGINAL}")
+                if current_filename:
+                    filename = current_filename
+                else:
+                    raise ValueError(f"Bad/missing filename. It should go right above {ORIGINAL}")
+
+            current_filename = filename
 
             original_text = pieces.pop()
             processed.append(original_text)
