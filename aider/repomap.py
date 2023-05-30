@@ -3,6 +3,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import json
 from collections import Counter, defaultdict
 
 import networkx as nx
@@ -52,6 +53,7 @@ def fname_to_components(fname, with_colon):
 
 class RepoMap:
     ctags_cmd = ["ctags", "--fields=+S", "--extras=-F", "--output-format=json"]
+    IDENT_CACHE_FILE = ".aider.ident.cache"
     TAGS_CACHE = None
     IDENT_CACHE = None
 
@@ -61,7 +63,7 @@ class RepoMap:
         self.root = root
 
         self.TAGS_CACHE = dict()
-        self.IDENT_CACHE = dict()
+        self.load_ident_cache()
 
         if use_ctags is None:
             self.use_ctags = self.check_for_ctags()
@@ -205,16 +207,6 @@ class RepoMap:
         except Exception:
             return False
         return True
-
-import json
-
-class RepoMap:
-    # ...
-    IDENT_CACHE_FILE = ".aider.ident.cache"
-
-    def __init__(self, use_ctags=None, root=None, main_model="gpt-4"):
-        # ...
-        self.load_ident_cache()
 
     def load_ident_cache(self):
         if os.path.exists(self.IDENT_CACHE_FILE):
