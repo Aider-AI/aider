@@ -145,13 +145,6 @@ def main(args=None, input=None, output=None):
         help="Disable dirty commit of changes",
     )
     parser.add_argument(
-        "--completions-height",
-        type=int,
-        default=10,
-        metavar="COMPLETIONS_HEIGHT",
-        help="Set the height of the completions displayed in the terminal (default: 10)",
-    )
-    parser.add_argument(
         "--openai-api-key",
         metavar="OPENAI_API_KEY",
         help="Specify the OpenAI API key",
