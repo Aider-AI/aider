@@ -8,7 +8,6 @@ import tiktoken
 
 from aider import prompts
 
-
 # from aider.dump import dump
 
 
@@ -46,14 +45,16 @@ def fname_to_components(fname, with_colon):
     return res
 
 
-    class RepoMap:
-        ctags_cmd = ["ctags", "--fields=+S", "--extras=-F", "--output-format=json"]
-        TAGS_CACHE = {}
+class RepoMap:
+    ctags_cmd = ["ctags", "--fields=+S", "--extras=-F", "--output-format=json"]
+    TAGS_CACHE = None
 
-        def __init__(self, use_ctags=None, root=None, main_model="gpt-4"):
+    def __init__(self, use_ctags=None, root=None, main_model="gpt-4"):
         if not root:
             root = os.getcwd()
         self.root = root
+
+        self.TAGS_CACHE = dict()
 
         if use_ctags is None:
             self.use_ctags = self.check_for_ctags()
@@ -135,8 +136,8 @@ def fname_to_components(fname, with_colon):
         # Check if the file is in the cache and if the modification time has not changed
         file_mtime = os.path.getmtime(filename)
         cache_key = filename
-        if cache_key in TAGS_CACHE and TAGS_CACHE[cache_key]["mtime"] == file_mtime:
-            return TAGS_CACHE[cache_key]["tags"]
+        if cache_key in self.TAGS_CACHE and self.TAGS_CACHE[cache_key]["mtime"] == file_mtime:
+            return self.TAGS_CACHE[cache_key]["tags"]
 
         cmd = self.ctags_cmd + [filename]
         output = subprocess.check_output(cmd).decode("utf-8")
@@ -165,7 +166,7 @@ def fname_to_components(fname, with_colon):
             tags.append(res)
 
         # Update the cache
-        TAGS_CACHE[cache_key] = {"mtime": file_mtime, "tags": tags}
+        self.TAGS_CACHE[cache_key] = {"mtime": file_mtime, "tags": tags}
         return tags
 
     def check_for_ctags(self):
