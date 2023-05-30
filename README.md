@@ -7,7 +7,7 @@ Aider has features to
 [help GPT understand and modify larger codebases](https://aider.chat/docs/ctags.html)
 and aider makes it easy to git commit, diff & undo changes proposed by GPT. 
 
-![aider screenshot](assets/screenshot.gif)
+![aider screencast](assets/screencast.svg)
 
 - [Example chat transcripts](#example-chat-transcripts)
 - [Features](#features)
