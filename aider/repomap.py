@@ -13,7 +13,7 @@ from pygments.util import ClassNotFound
 
 from aider import prompts
 
-# from aider.dump import dump
+# from .dump import dump
 
 
 def to_tree(tags):
@@ -129,7 +129,7 @@ class RepoMap:
             if filename.endswith(".md") or filename.endswith(".json"):
                 tags.append(self.split_path(filename))
                 continue
-            tags += self.get_tags(filename)
+            tags += self.get_tags(filename, filenames)
         if not tags:
             return
 
@@ -156,7 +156,15 @@ class RepoMap:
         self.TAGS_CACHE[cache_key] = {"mtime": file_mtime, "data": data}
         return data
 
-    def get_tags(self, filename):
+    def get_tags(self, filename, files=None):
+        if not files:
+            files = set()
+
+        external_references = set()
+        other_files = files - set([filename])
+        for other_file in other_files:
+            external_references.update(self.get_name_identifiers(other_file))
+
         data = self.run_ctags(filename)
 
         tags = []
@@ -170,6 +178,9 @@ class RepoMap:
             kind = tag.get("kind")
             name = tag.get("name")
             signature = tag.get("signature")
+
+            if name not in external_references:
+                continue
 
             last = name
             if signature:
@@ -201,8 +212,13 @@ class RepoMap:
                 cached = set(cached)
             return cached
 
-        with open(fname, "r") as f:
-            content = f.read()
+        try:
+            with open(fname, "r") as f:
+                content = f.read()
+        except UnicodeDecodeError:
+            self.IDENT_CACHE[fname] = list()
+            return list()
+
         try:
             lexer = guess_lexer_for_filename(fname, content)
         except ClassNotFound:
