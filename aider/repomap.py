@@ -207,34 +207,30 @@ class RepoMap:
         return True
 
     def get_name_identifiers(self, fname, uniq=True):
-        cached = self.IDENT_CACHE.get(fname)
-        if cached is not None:
-            if uniq:
-                cached = set(cached)
-            return cached
+        idents = self.IDENT_CACHE.get(fname)
+        if idents is None:
+            idents = self.get_name_identifiers_uncached(fname)
+            self.IDENT_CACHE[fname] = idents
 
+        if uniq:
+            idents = set(idents)
+        return idents
+
+    def get_name_identifiers_uncached(self, fname):
         try:
             with open(fname, "r") as f:
                 content = f.read()
         except UnicodeDecodeError:
-            self.IDENT_CACHE[fname] = list()
             return list()
 
         try:
             lexer = guess_lexer_for_filename(fname, content)
         except ClassNotFound:
-            self.IDENT_CACHE[fname] = list()
             return list()
 
         # lexer.get_tokens_unprocessed() returns (char position in file, token type, token string)
         tokens = list(lexer.get_tokens_unprocessed(content))
         res = [token[2] for token in tokens if token[1] in Token.Name]
-
-        self.IDENT_CACHE[fname] = res
-
-        if uniq:
-            res = set(res)
-
         return res
 
 
@@ -257,13 +253,11 @@ def call_map():
 
     fnames = sys.argv[1:]
 
-    """
     fnames = []
     for dname in sys.argv[1:]:
         fnames += find_py_files(dname)
 
     fnames = sorted(fnames)
-    """
 
     rm = RepoMap()
 
@@ -276,7 +270,10 @@ def call_map():
     root = os.path.commonpath(fnames)
 
     show_fnames = set()
-    for fname in fnames:
+    for fname in sorted(fnames):
+        from .dump import dump
+
+        dump(fname)
         show_fname = os.path.relpath(fname, root)
         show_fnames.add(show_fname)
 
