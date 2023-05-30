@@ -99,7 +99,8 @@ class RepoMap:
 
         if self.use_ctags:
             files_listing = self.get_tags_map(other_files)
-            if self.token_count(files_listing) < max_map_tokens:
+            tokens = self.token_count(files_listing)
+            if tokens < max_map_tokens:
                 ctags_msg = " with selected ctags info"
                 return files_listing, ctags_msg
 
