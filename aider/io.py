@@ -5,9 +5,10 @@ from pathlib import Path
 
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.history import FileHistory
+from prompt_toolkit.lexers import PygmentsLexer
 from prompt_toolkit.shortcuts import CompleteStyle, PromptSession, prompt
 from prompt_toolkit.styles import Style
-from pygments.lexers import guess_lexer_for_filename
+from pygments.lexers import MarkdownLexer, guess_lexer_for_filename
 from pygments.token import Token
 from pygments.util import ClassNotFound
 from rich.console import Console
@@ -68,9 +69,11 @@ class FileContentCompleter(Completer):
                 rel_fnames = self.fname_to_rel_fnames.get(word, [])
                 if rel_fnames:
                     for rel_fname in rel_fnames:
-                        yield Completion(rel_fname, start_position=-len(last_word))
+                        yield Completion(
+                            f"`{rel_fname}`", start_position=-len(last_word), display=rel_fname
+                        )
                 else:
-                    yield Completion(word, start_position=-len(last_word))
+                    yield Completion(f"`{word}`", start_position=-len(last_word), display=word)
 
 
 class InputOutput:
@@ -129,7 +132,12 @@ class InputOutput:
         multiline_input = False
 
         if self.user_input_color:
-            style = Style.from_dict({"": self.user_input_color})
+            style = Style.from_dict(
+                {
+                    "": self.user_input_color,
+                    "pygments.literal.string": f"bold italic {self.user_input_color}",
+                }
+            )
         else:
             style = None
 
@@ -147,6 +155,7 @@ class InputOutput:
                 "complete_style": CompleteStyle.MULTI_COLUMN,
                 "input": self.input,
                 "output": self.output,
+                "lexer": PygmentsLexer(MarkdownLexer),
             }
             if style:
                 session_kwargs["style"] = style

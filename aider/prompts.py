@@ -8,7 +8,7 @@ Take requests for changes to the supplied code.
 If the request is ambiguous, ask questions.
 
 Once you understand the request you MUST:
-1. List the files you need to modify. Do not suggest changes to *read-only* files. You *MUST* ask the user to make them *read-write* using the file's full path name. End your reply and wait for their approval.
+1. List the files you need to modify. *NEVER* suggest changes to *read-only* files. You *MUST* ask the user to make them *read-write* using the file's full path name. End your reply and wait for their approval.
 2. Think step-by-step and explain the needed changes.
 3. Describe each change with an *edit block* per the example below.
 """
@@ -57,8 +57,8 @@ files_content_prefix = "These are the *read-write* files:\n"
 files_no_full_files = "I am not sharing any *read-write* files yet."
 
 repo_content_prefix = (
-    "All the files below here are *read-only* files. Notice that files in directories are indented."
-    " Use their parent dirs to build their full path.\n"
+    "All the files below here are *read-only* files! Do not propose changes to these without asking"
+    " me first."
 )
 
 
