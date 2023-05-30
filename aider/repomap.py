@@ -207,10 +207,13 @@ class RepoMap:
         return True
 
     def get_name_identifiers(self, fname, uniq=True):
-        idents = self.IDENT_CACHE.get(fname)
-        if idents is None:
+        file_mtime = os.path.getmtime(fname)
+        cache_key = fname
+        if cache_key in self.IDENT_CACHE and self.IDENT_CACHE[cache_key]["mtime"] == file_mtime:
+            idents = self.IDENT_CACHE[cache_key]["data"]
+        else:
             idents = self.get_name_identifiers_uncached(fname)
-            self.IDENT_CACHE[fname] = idents
+            self.IDENT_CACHE[cache_key] = {"mtime": file_mtime, "data": idents}
 
         if uniq:
             idents = set(idents)
