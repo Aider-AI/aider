@@ -3,10 +3,6 @@ import re
 from difflib import SequenceMatcher
 from pathlib import Path
 
-from pygments.lexers import guess_lexer_for_filename
-from pygments.token import Token
-from pygments.util import ClassNotFound
-
 # from aider.dump import dump
 
 
@@ -282,21 +278,6 @@ def find_original_update_blocks(content):
     except Exception:
         processed = "".join(processed)
         raise ValueError(f"{processed}\n^^^ Error parsing ORIGINAL/UPDATED block.")
-
-
-def get_name_identifiers(fname, uniq=True):
-    with open(fname, "r") as f:
-        content = f.read()
-    try:
-        lexer = guess_lexer_for_filename(fname, content)
-    except ClassNotFound:
-        return list()
-    # lexer.get_tokens_unprocessed() returns (char position in file, token type, token string)
-    tokens = list(lexer.get_tokens_unprocessed(content))
-    res = [token[2] for token in tokens if token[1] in Token.Name]
-    if uniq:
-        res = set(res)
-    return res
 
 
 if __name__ == "__main__":

@@ -7,8 +7,11 @@ from collections import Counter, defaultdict
 
 import networkx as nx
 import tiktoken
+from pygments.lexers import guess_lexer_for_filename
+from pygments.token import Token
+from pygments.util import ClassNotFound
 
-from aider import prompts, utils
+from aider import prompts
 
 # from aider.dump import dump
 
@@ -50,6 +53,7 @@ def fname_to_components(fname, with_colon):
 class RepoMap:
     ctags_cmd = ["ctags", "--fields=+S", "--extras=-F", "--output-format=json"]
     TAGS_CACHE = None
+    IDENT_CACHE = None
 
     def __init__(self, use_ctags=None, root=None, main_model="gpt-4"):
         if not root:
@@ -57,6 +61,7 @@ class RepoMap:
         self.root = root
 
         self.TAGS_CACHE = dict()
+        self.IDENT_CACHE = dict()
 
         if use_ctags is None:
             self.use_ctags = self.check_for_ctags()
@@ -189,6 +194,32 @@ class RepoMap:
             return False
         return True
 
+    def get_name_identifiers(self, fname, uniq=True):
+        cached = self.IDENT_CACHE.get(fname)
+        if cached is not None:
+            if uniq:
+                cached = set(cached)
+            return cached
+
+        with open(fname, "r") as f:
+            content = f.read()
+        try:
+            lexer = guess_lexer_for_filename(fname, content)
+        except ClassNotFound:
+            self.IDENT_CACHE[fname] = list()
+            return list()
+
+        # lexer.get_tokens_unprocessed() returns (char position in file, token type, token string)
+        tokens = list(lexer.get_tokens_unprocessed(content))
+        res = [token[2] for token in tokens if token[1] in Token.Name]
+
+        self.IDENT_CACHE[fname] = res
+
+        if uniq:
+            res = set(res)
+
+        return res
+
 
 def find_py_files(directory):
     if not os.path.isdir(directory):
@@ -239,7 +270,7 @@ def call_map():
             defines[ident].add(show_fname)
             # dump("def", fname, ident)
 
-        idents = utils.get_name_identifiers(fname, uniq=False)
+        idents = rm.get_name_identifiers(fname, uniq=False)
         for ident in idents:
             # dump("ref", fname, ident)
             references[ident].append(show_fname)
