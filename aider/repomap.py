@@ -53,11 +53,23 @@ def fname_to_components(fname, with_colon):
 
 class RepoMap:
     ctags_cmd = ["ctags", "--fields=+S", "--extras=-F", "--output-format=json"]
-    IDENT_CACHE_FILE = ".aider.ident.cache"
+    TAGS_CACHE_FILE = ".aider.tags.cache"
+
+    def load_tags_cache(self):
+        if os.path.exists(self.TAGS_CACHE_FILE):
+            with open(self.TAGS_CACHE_FILE, "r") as f:
+                self.TAGS_CACHE = json.load(f)
+        else:
+            self.TAGS_CACHE = dict()
+
+    def save_tags_cache(self):
+        with open(self.TAGS_CACHE_FILE, "w") as f:
+            json.dump(self.TAGS_CACHE, f)
     TAGS_CACHE = None
     IDENT_CACHE = None
 
     def __init__(self, use_ctags=None, root=None, main_model="gpt-4"):
+        self.load_tags_cache()
         if not root:
             root = os.getcwd()
         self.root = root
@@ -157,6 +169,7 @@ class RepoMap:
 
         # Update the cache
         self.TAGS_CACHE[cache_key] = {"mtime": file_mtime, "data": data}
+        self.save_tags_cache()
         return data
 
     def get_tags(self, filename, files=None):
