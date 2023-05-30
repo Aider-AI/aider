@@ -206,6 +206,27 @@ class RepoMap:
             return False
         return True
 
+import json
+
+class RepoMap:
+    # ...
+    IDENT_CACHE_FILE = ".aider.ident.cache"
+
+    def __init__(self, use_ctags=None, root=None, main_model="gpt-4"):
+        # ...
+        self.load_ident_cache()
+
+    def load_ident_cache(self):
+        if os.path.exists(self.IDENT_CACHE_FILE):
+            with open(self.IDENT_CACHE_FILE, "r") as f:
+                self.IDENT_CACHE = json.load(f)
+        else:
+            self.IDENT_CACHE = dict()
+
+    def save_ident_cache(self):
+        with open(self.IDENT_CACHE_FILE, "w") as f:
+            json.dump(self.IDENT_CACHE, f)
+
     def get_name_identifiers(self, fname, uniq=True):
         file_mtime = os.path.getmtime(fname)
         cache_key = fname
@@ -214,6 +235,7 @@ class RepoMap:
         else:
             idents = self.get_name_identifiers_uncached(fname)
             self.IDENT_CACHE[cache_key] = {"mtime": file_mtime, "data": idents}
+            self.save_ident_cache()
 
         if uniq:
             idents = set(idents)
