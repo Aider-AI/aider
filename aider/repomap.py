@@ -8,8 +8,6 @@ import tiktoken
 
 from aider import prompts
 
-# Global cache for tags
-TAGS_CACHE = {}
 
 # from aider.dump import dump
 
@@ -48,10 +46,11 @@ def fname_to_components(fname, with_colon):
     return res
 
 
-class RepoMap:
-    ctags_cmd = ["ctags", "--fields=+S", "--extras=-F", "--output-format=json"]
+    class RepoMap:
+        ctags_cmd = ["ctags", "--fields=+S", "--extras=-F", "--output-format=json"]
+        TAGS_CACHE = {}
 
-    def __init__(self, use_ctags=None, root=None, main_model="gpt-4"):
+        def __init__(self, use_ctags=None, root=None, main_model="gpt-4"):
         if not root:
             root = os.getcwd()
         self.root = root
