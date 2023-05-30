@@ -88,9 +88,7 @@ class InputOutput:
         user_input_color="blue",
         tool_output_color=None,
         tool_error_color="red",
-        completions_height=10,
     ):
-        self.completions_height = completions_height
         no_color = os.environ.get("NO_COLOR")
         if no_color is not None and no_color != "":
             pretty = False
