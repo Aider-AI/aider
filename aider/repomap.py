@@ -312,31 +312,20 @@ def call_map():
 
     idents = set(defines.keys()).intersection(set(references.keys()))
 
-    dot = graphviz.Digraph(graph_attr={"ratio": ".5"})
+    G = nx.MultiDiGraph()
 
-    labels = defaultdict(list)
-    edges = defaultdict(float)
     for ident in idents:
-        defs = defines[ident]
-        num_defs = len(defs)
+        definers = defines[ident]
+        num_defs = len(definers)
         if num_defs > 3:
             continue
 
         for referencer, num_refs in Counter(references[ident]).items():
-            for definer in defines[ident]:
+            for definer in definers:
                 if referencer == definer:
                     continue
-                # tuple(sorted([referencer, definer]))
-                name = referencer, definer
-                edges[name] += num_refs
-                labels[name].append((num_refs, ident))
-
-    G = nx.DiGraph()
-
-    for edge, weight in edges.items():
-        refs, defs = edge
-        G.add_edge(refs, defs, weight=weight)
-        G.add_edge(defs, refs, weight=weight)
+                weight = num_refs / num_defs
+                G.add_edge(referencer, definer, weight=num_refs, label=ident)
 
     # personalization = dict()
     # personalization["utils.py"] = 1.0
@@ -364,6 +353,8 @@ def call_map():
     G.remove_nodes_from(list(nx.isolates(G)))
     """
 
+    dot = graphviz.Digraph(graph_attr={"ratio": ".5"})
+
     max_rank = max(ranked.values())
     min_rank = min(ranked.values())
     for fname in G.nodes():
@@ -377,19 +368,16 @@ def call_map():
             fname, penwidth=str(pen), width=str(size), height=str(size), fontsize=str(fontsize)
         )
 
-    max_w = max(edges.values())
     for refs, defs, data in G.edges(data=True):
         weight = data["weight"]
+        label = data["label"]
 
         r = random.randint(0, 128)
         g = random.randint(0, 128)
         b = random.randint(0, 128)
         color = f"#{r:02x}{g:02x}{b:02x}80"
-        weight = weight * 10 / max_w
-        label = labels[(refs, defs)]
-        label = sorted(label, reverse=True)
-        label = " ".join(ident for cnt, ident in label[:5])
-        dot.edge(refs, defs, penwidth=str(weight), color=color, label=label, fontcolor=color)
+        weight = weight * 2
+        dot.edge(refs, defs, penwidth=str(weight), color=color, fontcolor=color, label=label)
 
     top_rank = sorted([(rank, node) for (node, rank) in ranked.items()], reverse=True)
     # Print the PageRank of each node
