@@ -9,6 +9,7 @@ It also has features that [help GPT understand and modify larger codebases](http
 ![aider screencast](assets/screencast.svg)
 
 - [Example chat transcripts](#example-chat-transcripts)
+- [Getting started](#getting-started)
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -32,6 +33,18 @@ Here are some example transcripts that show how you can chat with `aider` to wri
 * [**Honor the NO_COLOR env var**](https://aider.chat/examples/no-color.html): The user pastes the NO_COLOR spec from no-color.org into the chat, and GPT-4 modifies the application to conform.
 
 You can find more chat transcripts on the [examples page](https://aider.chat/examples/).
+
+## Getting started
+
+```
+$ pip install git+https://github.com/paul-gauthier/aider.git
+$ aider filename.py
+
+Added filename.py to the chat
+Using git repo: .git
+
+filename.py> switch the fibonacci function from recursion to iteration
+```
 
 ## Features
 
