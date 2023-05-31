@@ -33,6 +33,18 @@ Here are some example transcripts that show how you can chat with `aider` to wri
 
 You can find more chat transcripts on the [examples page](https://aider.chat/examples/).
 
+## Getting started
+
+```
+$ pip install git+https://github.com/paul-gauthier/aider.git
+$ aider filename.py
+
+Added filename.py to the chat
+Using git repo: .git
+
+filename.py> switch the fibonacci function from recursion to iteration
+```
+
 ## Features
 
 * Chat with GPT-4 about your code by launching `aider` from the command line with set of source files to discuss and edit together. GPT can see and edit the content of those files.
