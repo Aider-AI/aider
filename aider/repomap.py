@@ -14,7 +14,7 @@ from pygments.util import ClassNotFound
 
 from aider import prompts
 
-from .dump import dump
+from .dump import dump  # noqa: F402
 
 
 def to_tree(tags):
@@ -289,8 +289,6 @@ def call_map():
 
     show_fnames = set()
     for fname in sorted(fnames):
-        from .dump import dump
-
         dump(fname)
         show_fname = os.path.relpath(fname, root)
         show_fnames.add(show_fname)
