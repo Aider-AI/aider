@@ -287,11 +287,15 @@ def call_map():
 
     root = os.path.commonpath(fnames)
 
+    personalization = dict()
+
     show_fnames = set()
     for fname in sorted(fnames):
-        dump(fname)
         show_fname = os.path.relpath(fname, root)
         show_fnames.add(show_fname)
+
+        if ".venv" not in show_fname:
+            personalization[show_fname] = 1.0
 
         data = rm.run_ctags(fname)
 
@@ -332,11 +336,21 @@ def call_map():
         refs, defs = edge
         G.add_edge(refs, defs, weight=weight)
 
-    ranked = nx.pagerank(G, weight="weight")
+    personalization = dict()
+    personalization["repomap.py"] = 1.0
 
-    top_10_nodes = sorted(ranked, key=ranked.get, reverse=True)[:20]
+    ranked = nx.pagerank(
+        G,
+        weight="weight",
+        personalization=personalization,
+        dangling=personalization,
+    )
+
+    N = 20
+    top_10_nodes = sorted(ranked, key=ranked.get, reverse=True)[:N]
     nodes_to_remove = [node for node in G.nodes if node not in top_10_nodes]
     G.remove_nodes_from(nodes_to_remove)
+    dump(G)
 
     """
     # drop low weight edges for plotting
@@ -377,7 +391,7 @@ def call_map():
 
     top_rank = sorted([(rank, node) for (node, rank) in ranked.items()], reverse=True)
     # Print the PageRank of each node
-    for rank, node in top_rank:
+    for rank, node in top_rank[:N]:
         print(f"{node} rank: {rank}")
 
     dot.render("tmp", format="pdf", view=True)
