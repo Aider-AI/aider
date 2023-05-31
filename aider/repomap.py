@@ -3,7 +3,6 @@ import os
 import subprocess
 import sys
 import tempfile
-import json
 from collections import Counter, defaultdict
 
 import networkx as nx
@@ -14,7 +13,7 @@ from pygments.util import ClassNotFound
 
 from aider import prompts
 
-# from .dump import dump
+from .dump import dump
 
 
 def to_tree(tags):
@@ -53,7 +52,8 @@ def fname_to_components(fname, with_colon):
 
 class RepoMap:
     ctags_cmd = ["ctags", "--fields=+S", "--extras=-F", "--output-format=json"]
-    TAGS_CACHE_FILE = ".aider.tags.cache"
+    IDENT_CACHE_FILE = ".aider.ident.cache.json"
+    TAGS_CACHE_FILE = ".aider.tags.cache.json"
 
     def load_tags_cache(self):
         if os.path.exists(self.TAGS_CACHE_FILE):
@@ -65,17 +65,14 @@ class RepoMap:
     def save_tags_cache(self):
         with open(self.TAGS_CACHE_FILE, "w") as f:
             json.dump(self.TAGS_CACHE, f)
-    TAGS_CACHE = None
-    IDENT_CACHE = None
 
     def __init__(self, use_ctags=None, root=None, main_model="gpt-4"):
-        self.load_tags_cache()
         if not root:
             root = os.getcwd()
         self.root = root
 
-        self.TAGS_CACHE = dict()
         self.load_ident_cache()
+        self.load_tags_cache()
 
         if use_ctags is None:
             self.use_ctags = self.check_for_ctags()
