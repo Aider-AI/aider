@@ -9,6 +9,7 @@ It also has features that [help GPT understand and modify larger codebases](http
 ![aider screencast](assets/screencast.svg)
 
 - [Example chat transcripts](#example-chat-transcripts)
+- [Getting started](#getting-started)
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
