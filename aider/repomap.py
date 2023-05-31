@@ -291,6 +291,7 @@ def call_map():
 
     show_fnames = set()
     for fname in sorted(fnames):
+        dump(fname)
         show_fname = os.path.relpath(fname, root)
         show_fnames.add(show_fname)
 
@@ -327,7 +328,7 @@ def call_map():
                     continue
                 # tuple(sorted([referencer, definer]))
                 name = referencer, definer
-                edges[name] += num_refs / num_defs
+                edges[name] += num_refs
                 labels[name].append((num_refs, ident))
 
     G = nx.DiGraph()
@@ -337,8 +338,8 @@ def call_map():
         G.add_edge(refs, defs, weight=weight)
         G.add_edge(defs, refs, weight=weight)
 
-    personalization = dict()
-    personalization["repomap.py"] = 1.0
+    # personalization = dict()
+    # personalization["utils.py"] = 1.0
 
     ranked = nx.pagerank(
         G,
