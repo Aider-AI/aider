@@ -3,7 +3,7 @@
 `aider` is a command-line chat tool that allows you to write and edit
 code with GPT-4.  You can ask GPT to help you start
 a new project, or modify code in your existing git repo.
-Aider makes it easy to git commit, diff & undo changes proposed by GPT. 
+Aider makes it easy to git commit, diff & undo changes proposed by GPT without copy/pasting. 
 It also has features that [help GPT understand and modify larger codebases](https://aider.chat/docs/ctags.html).
 
 ![aider screencast](assets/screencast.svg)
@@ -58,7 +58,7 @@ which helps it understand and modify large codebases.
     * From GitHub: `pip install git+https://github.com/paul-gauthier/aider.git`
     * From your local copy of the repo in develop mode to pick up local edits immediately: `pip install -e .` 
 
-2. Set up your OpenAI API key as an environment variable `OPENAI_API_KEY` or by including it in an `.aider.config.yml` file (see `aider --help`).
+2. Set up your OpenAI API key as an environment variable `OPENAI_API_KEY` or by including `openai-api-key: sk-` in an `.aider.config.yml` file (see `aider --help`).
 
 3. Optionally, install [universal ctags](https://github.com/universal-ctags/ctags). This is helpful if you plan to work with repositories with more than a handful of files.  This allows `aider --ctags` to build a [map of your entire git repo](https://aider.chat/docs/ctags.html) and share it with GPT to help it better understand and modify large codebases.
 
