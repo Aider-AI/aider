@@ -1,4 +1,4 @@
-import json
+import shelve
 import os
 import subprocess
 import sys
@@ -52,19 +52,19 @@ def fname_to_components(fname, with_colon):
 
 class RepoMap:
     ctags_cmd = ["ctags", "--fields=+S", "--extras=-F", "--output-format=json"]
-    IDENT_CACHE_FILE = ".aider.ident.cache.json"
-    TAGS_CACHE_FILE = ".aider.tags.cache.json"
+    IDENT_CACHE_FILE = ".aider.ident.cache"
+    TAGS_CACHE_FILE = ".aider.tags.cache"
 
     def load_tags_cache(self):
         if os.path.exists(self.TAGS_CACHE_FILE):
-            with open(self.TAGS_CACHE_FILE, "r") as f:
-                self.TAGS_CACHE = json.load(f)
+            with shelve.open(self.TAGS_CACHE_FILE) as db:
+                self.TAGS_CACHE = dict(db)
         else:
             self.TAGS_CACHE = dict()
 
     def save_tags_cache(self):
-        with open(self.TAGS_CACHE_FILE, "w") as f:
-            json.dump(self.TAGS_CACHE, f)
+        with shelve.open(self.TAGS_CACHE_FILE) as db:
+            db.update(self.TAGS_CACHE)
 
     def __init__(self, use_ctags=None, root=None, main_model="gpt-4"):
         if not root:
@@ -220,14 +220,14 @@ class RepoMap:
 
     def load_ident_cache(self):
         if os.path.exists(self.IDENT_CACHE_FILE):
-            with open(self.IDENT_CACHE_FILE, "r") as f:
-                self.IDENT_CACHE = json.load(f)
+            with shelve.open(self.IDENT_CACHE_FILE) as db:
+                self.IDENT_CACHE = dict(db)
         else:
             self.IDENT_CACHE = dict()
 
     def save_ident_cache(self):
-        with open(self.IDENT_CACHE_FILE, "w") as f:
-            json.dump(self.IDENT_CACHE, f)
+        with shelve.open(self.IDENT_CACHE_FILE) as db:
+            db.update(self.IDENT_CACHE)
 
     def get_name_identifiers(self, fname, uniq=True):
         file_mtime = os.path.getmtime(fname)
