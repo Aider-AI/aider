@@ -335,6 +335,7 @@ def call_map():
     for edge, weight in edges.items():
         refs, defs = edge
         G.add_edge(refs, defs, weight=weight)
+        G.add_edge(defs, refs, weight=weight)
 
     personalization = dict()
     personalization["repomap.py"] = 1.0
@@ -392,7 +393,7 @@ def call_map():
     top_rank = sorted([(rank, node) for (node, rank) in ranked.items()], reverse=True)
     # Print the PageRank of each node
     for rank, node in top_rank[:N]:
-        print(f"{node} rank: {rank}")
+        print(f"{rank:.03f} {node}")
 
     dot.render("tmp", format="pdf", view=True)
 
