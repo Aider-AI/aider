@@ -1,11 +1,19 @@
 import os
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from aider.coder import Coder
 
 
 class TestCoder(unittest.TestCase):
+    def setUp(self):
+        self.patcher = patch("aider.coder.Coder.check_model_availability")
+        self.mock_check = self.patcher.start()
+        self.mock_check.return_value = True
+
+    def tearDown(self):
+        self.patcher.stop()
+
     def test_check_for_file_mentions(self):
         # Mock the IO object
         mock_io = MagicMock()
