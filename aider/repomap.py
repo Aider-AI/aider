@@ -342,7 +342,7 @@ def call_map():
                 if referencer == definer:
                     continue
                 weight = num_refs / num_defs
-                G.add_edge(referencer, definer, weight=num_refs, label=ident)
+                G.add_edge(referencer, definer, weight=num_refs, ident=ident)
 
     # personalization = dict()
     # personalization["utils.py"] = 1.0
@@ -354,10 +354,23 @@ def call_map():
         dangling=personalization,
     )
 
-    inbound_weights = {}
-    for node in G.nodes:
-        inbound_weights[node] = sum(data["weight"] for _, _, data in G.in_edges(node, data=True))
-        dump(node, inbound_weights[node])
+    # distribute the rank from each source node, across all of its out edges
+    ranked_definitions = defaultdict(float)
+    for src in G.nodes:
+        src_rank = ranked[src]
+        total_weight = sum(data["weight"] for _src, _dst, data in G.out_edges(src, data=True))
+        dump(src, src_rank, total_weight)
+        for src, dst, data in G.out_edges(src, data=True):
+            data["rank"] = data["weight"] / total_weight * src_rank
+            ident = data["ident"]
+            ranked_definitions[(dst, ident)] += data["rank"]
+
+    ranked_definitions = sorted(ranked_definitions.items(), reverse=True, key=lambda x: x[1])
+    for (fname, ident), rank in ranked_definitions:
+        print(f"{rank:.03f} {fname} {ident}")
+
+    return
+    #############
 
     N = 20
     top_10_nodes = sorted(ranked, key=ranked.get, reverse=True)[:N]
@@ -391,7 +404,7 @@ def call_map():
 
     for refs, defs, data in G.edges(data=True):
         weight = data["weight"]
-        label = data["label"]
+        label = data["ident"]
 
         color = get_random_color()
         weight = weight
@@ -402,7 +415,7 @@ def call_map():
     for rank, node in top_rank[:N]:
         print(f"{rank:.03f} {node}")
 
-    dot.render("tmp", format="pdf", view=True)
+    # dot.render("tmp", format="pdf", view=True)
 
 
 if __name__ == "__main__":
