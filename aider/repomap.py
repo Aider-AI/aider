@@ -358,9 +358,9 @@ def call_map():
     ranked_definitions = defaultdict(float)
     for src in G.nodes:
         src_rank = ranked[src]
-        total_weight = sum(data["weight"] for _src, _dst, data in G.out_edges(src, data=True))
+        total_weight = sum(data["weight"] for _src, _dst, data in G.in_edges(src, data=True))
         dump(src, src_rank, total_weight)
-        for src, dst, data in G.out_edges(src, data=True):
+        for src, dst, data in G.in_edges(src, data=True):
             data["rank"] = data["weight"] / total_weight * src_rank
             ident = data["ident"]
             ranked_definitions[(dst, ident)] += data["rank"]
