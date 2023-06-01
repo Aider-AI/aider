@@ -8,14 +8,27 @@ It also has features that [help GPT understand and modify larger codebases](http
 
 ![aider screencast](assets/screencast.svg)
 
-- [Example chat transcripts](#example-chat-transcripts)
 - [Getting started](#getting-started)
+- [Example chat transcripts](#example-chat-transcripts)
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
 - [In chat commands](#in-chat-commands)
 - [Tips](#tips)
 - [Limitations](#limitations)
+
+## Getting started
+
+```
+$ pip install git+https://github.com/paul-gauthier/aider.git
+$ export OPENAI_API_KEY=sk-...
+$ aider filename.py
+
+Added filename.py to the chat
+Using git repo: .git
+
+filename.py> switch the fibonacci function from recursion to iteration
+```
 
 ## Example chat transcripts
 
@@ -30,21 +43,7 @@ Here are some example transcripts that show how you can chat with `aider` to wri
 * [**Create a Black Box Test Case**](https://aider.chat/examples/add-test.html): GPT creates a "black box" test case without access to the source of the method being tested, using only a
 [high level map of the repository based on ctags](https://aider.chat/docs/ctags.html).
 
-* [**Honor the NO_COLOR env var**](https://aider.chat/examples/no-color.html): The user pastes the NO_COLOR spec from no-color.org into the chat, and GPT-4 modifies the application to conform.
-
 You can find more chat transcripts on the [examples page](https://aider.chat/examples/).
-
-## Getting started
-
-```
-$ pip install git+https://github.com/paul-gauthier/aider.git
-$ aider filename.py
-
-Added filename.py to the chat
-Using git repo: .git
-
-filename.py> switch the fibonacci function from recursion to iteration
-```
 
 ## Features
 
