@@ -2,7 +2,8 @@ import colorsys
 import json
 import os
 import random
-import shelve
+
+# import shelve
 import subprocess
 import sys
 import tempfile
@@ -211,16 +212,18 @@ class RepoMap:
         return True
 
     def load_tags_cache(self):
-        self.TAGS_CACHE = shelve.open(self.TAGS_CACHE_FILE)
+        self.TAGS_CACHE = dict()  # shelve.open(self.TAGS_CACHE_FILE)
 
     def save_tags_cache(self):
-        self.TAGS_CACHE.sync()
+        # self.TAGS_CACHE.sync()
+        pass
 
     def load_ident_cache(self):
-        self.IDENT_CACHE = shelve.open(self.IDENT_CACHE_FILE)
+        self.IDENT_CACHE = dict()  # shelve.open(self.IDENT_CACHE_FILE)
 
     def save_ident_cache(self):
-        self.IDENT_CACHE.sync()
+        # self.IDENT_CACHE.sync()
+        pass
 
     def get_name_identifiers(self, fname, uniq=True):
         file_mtime = os.path.getmtime(fname)
@@ -267,9 +270,11 @@ def find_py_files(directory):
 
 
 def get_random_color():
-    hue = random.randint(0, 255)
-    r, g, b = [int(x * 255) for x in colorsys.hsv_to_rgb(hue, 255, 64)]
-    return f"#{r:02x}{g:02x}{b:02x}80"
+    hue = random.random()
+    r, g, b = [int(x * 255) for x in colorsys.hsv_to_rgb(hue, 1, 0.75)]
+    res = f"#{r:02x}{g:02x}{b:02x}"
+    dump(hue, res)
+    return res
 
 
 def call_map():
@@ -377,10 +382,11 @@ def call_map():
     for refs, defs, data in G.edges(data=True):
         weight = data["weight"]
         label = data["label"]
+        dump(refs, defs, data)
 
-    color = get_random_color()
-    weight = weight * 2
-    dot.edge(refs, defs, penwidth=str(weight), color=color, fontcolor=color, label=label)
+        color = get_random_color()
+        weight = weight * 2
+        dot.edge(refs, defs, penwidth=str(weight), color=color, fontcolor=color, label=label)
 
     top_rank = sorted([(rank, node) for (node, rank) in ranked.items()], reverse=True)
     # Print the PageRank of each node
