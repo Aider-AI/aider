@@ -333,8 +333,8 @@ def call_map():
     for ident in idents:
         definers = defines[ident]
         num_defs = len(definers)
-        if num_defs > 3:
-            continue
+        # if num_defs > 3:
+        #    continue
 
         for referencer, num_refs in Counter(references[ident]).items():
             for definer in definers:
@@ -352,6 +352,10 @@ def call_map():
         personalization=personalization,
         dangling=personalization,
     )
+
+    for node in G.nodes:
+        # todo: sum up the weight of every inbound edge to node
+        pass
 
     N = 20
     top_10_nodes = sorted(ranked, key=ranked.get, reverse=True)[:N]
@@ -390,7 +394,7 @@ def call_map():
         dump(refs, defs, data)
 
         color = get_random_color()
-        weight = weight * 2
+        weight = weight
         dot.edge(refs, defs, penwidth=str(weight), color=color, fontcolor=color, label=label)
 
     top_rank = sorted([(rank, node) for (node, rank) in ranked.items()], reverse=True)
