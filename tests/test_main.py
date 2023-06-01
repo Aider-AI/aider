@@ -13,11 +13,17 @@ from aider.main import main
 
 
 class TestMain(TestCase):
+    from unittest.mock import MagicMock
+
     def setUp(self):
         os.environ["OPENAI_API_KEY"] = "deadbeef"
         self.original_cwd = os.getcwd()
         self.tempdir = tempfile.mkdtemp()
         os.chdir(self.tempdir)
+
+        with patch("aider.coder.Coder.check_for_model_availability") as mock_check:
+            mock_check.return_value = True
+            self.mock_check = mock_check
 
     def tearDown(self):
         os.chdir(self.original_cwd)
