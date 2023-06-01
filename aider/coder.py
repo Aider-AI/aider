@@ -29,6 +29,12 @@ class Coder:
     last_aider_commit_hash = None
     last_asked_for_commit_time = 0
 
+    def check_model_availability(self, main_model):
+        available_models = openai.Model.list()
+        model_ids = [model.id for model in available_models['data']]
+        if main_model not in model_ids:
+            raise ValueError(f"Model {main_model} is not available. Please choose from the available models: {model_ids}")
+
     def __init__(
         self,
         io,
@@ -64,6 +70,7 @@ class Coder:
             self.console = Console(force_terminal=True, no_color=True)
 
         self.commands = Commands(self.io, self)
+        self.check_model_availability(main_model)
         self.main_model = main_model
         if main_model == "gpt-3.5-turbo":
             self.io.tool_error(
