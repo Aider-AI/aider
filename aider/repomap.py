@@ -361,12 +361,12 @@ def call_map():
 
     # distribute the rank from each source node, across all of its out edges
     ranked_definitions = defaultdict(float)
-    for dst in G.nodes:
-        dst_rank = ranked[dst]
-        total_weight = sum(data["weight"] for _src, _dst, data in G.in_edges(dst, data=True))
-        dump(dst, dst_rank, total_weight)
-        for _src, _dst, data in G.in_edges(dst, data=True):
-            data["rank"] = dst_rank * data["weight"] / total_weight
+    for src in G.nodes:
+        src_rank = ranked[src]
+        total_weight = sum(data["weight"] for _src, _dst, data in G.out_edges(src, data=True))
+        dump(src, src_rank, total_weight)
+        for _src, dst, data in G.out_edges(src, data=True):
+            data["rank"] = src_rank * data["weight"] / total_weight
             ident = data["ident"]
             ranked_definitions[(dst, ident)] += data["rank"]
 
