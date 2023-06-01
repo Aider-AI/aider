@@ -354,14 +354,19 @@ def call_map():
         dangling=personalization,
     )
 
+    top_rank = sorted([(rank, node) for (node, rank) in ranked.items()], reverse=True)
+    # Print the PageRank of each node
+    for rank, node in top_rank:
+        print(f"{rank:.03f} {node}")
+
     # distribute the rank from each source node, across all of its out edges
     ranked_definitions = defaultdict(float)
-    for src in G.nodes:
-        src_rank = ranked[src]
-        total_weight = sum(data["weight"] for _src, _dst, data in G.in_edges(src, data=True))
-        dump(src, src_rank, total_weight)
-        for src, dst, data in G.in_edges(src, data=True):
-            data["rank"] = data["weight"] / total_weight * src_rank
+    for dst in G.nodes:
+        dst_rank = ranked[dst]
+        total_weight = sum(data["weight"] for _src, _dst, data in G.in_edges(dst, data=True))
+        dump(dst, dst_rank, total_weight)
+        for _src, _dst, data in G.in_edges(dst, data=True):
+            data["rank"] = data["weight"] / total_weight * dst_rank
             ident = data["ident"]
             ranked_definitions[(dst, ident)] += data["rank"]
 
