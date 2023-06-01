@@ -280,7 +280,6 @@ def get_random_color():
     hue = random.random()
     r, g, b = [int(x * 255) for x in colorsys.hsv_to_rgb(hue, 1, 0.75)]
     res = f"#{r:02x}{g:02x}{b:02x}"
-    dump(hue, res)
     return res
 
 
@@ -358,12 +357,12 @@ def call_map():
     inbound_weights = {}
     for node in G.nodes:
         inbound_weights[node] = sum(data["weight"] for _, _, data in G.in_edges(node, data=True))
+        dump(node, inbound_weights[node])
 
     N = 20
     top_10_nodes = sorted(ranked, key=ranked.get, reverse=True)[:N]
     nodes_to_remove = [node for node in G.nodes if node not in top_10_nodes]
     G.remove_nodes_from(nodes_to_remove)
-    dump(G)
 
     """
     # drop low weight edges for plotting
@@ -393,7 +392,6 @@ def call_map():
     for refs, defs, data in G.edges(data=True):
         weight = data["weight"]
         label = data["label"]
-        dump(refs, defs, data)
 
         color = get_random_color()
         weight = weight
