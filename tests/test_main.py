@@ -13,26 +13,23 @@ from aider.main import main
 
 
 class TestMain(TestCase):
-    from unittest.mock import MagicMock
-
     def setUp(self):
         os.environ["OPENAI_API_KEY"] = "deadbeef"
         self.original_cwd = os.getcwd()
         self.tempdir = tempfile.mkdtemp()
         os.chdir(self.tempdir)
 
-        self.mock_check = MagicMock(return_value=True)
-        with patch("aider.main.Coder.check_model_availability", new=self.mock_check):
-            super().setUp()
-
     def tearDown(self):
         os.chdir(self.original_cwd)
         shutil.rmtree(self.tempdir)
 
     def test_main_with_empty_dir_no_files_on_command(self):
-        pipe_input = create_input(StringIO(""))
-        main([], input=pipe_input, output=DummyOutput())
-        pipe_input.close()
+        with patch("aider.main.Coder.check_model_availability") as mock_check:
+            mock_check.return_value = True
+
+            pipe_input = create_input(StringIO(""))
+            main([], input=pipe_input, output=DummyOutput())
+            pipe_input.close()
 
     def test_main_with_empty_dir_new_file(self):
         pipe_input = create_input(StringIO(""))
