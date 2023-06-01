@@ -366,7 +366,7 @@ def call_map():
         total_weight = sum(data["weight"] for _src, _dst, data in G.in_edges(dst, data=True))
         dump(dst, dst_rank, total_weight)
         for _src, _dst, data in G.in_edges(dst, data=True):
-            data["rank"] = data["weight"] / total_weight * dst_rank
+            data["rank"] = dst_rank * data["weight"] / total_weight
             ident = data["ident"]
             ranked_definitions[(dst, ident)] += data["rank"]
 
