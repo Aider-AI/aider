@@ -22,12 +22,12 @@ It also has features that [help GPT understand and modify larger codebases](http
 ```
 $ pip install git+https://github.com/paul-gauthier/aider.git
 $ export OPENAI_API_KEY=sk-...
-$ aider filename.py
+$ aider myapp.py
 
-Added filename.py to the chat
+Added myapp.py to the chat
 Using git repo: .git
 
-filename.py> switch the fibonacci function from recursion to iteration
+myapp.py> change the fibonacci function from recursion to iteration
 ```
 
 ## Example chat transcripts
