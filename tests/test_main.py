@@ -21,9 +21,8 @@ class TestMain(TestCase):
         self.tempdir = tempfile.mkdtemp()
         os.chdir(self.tempdir)
 
-    with patch("aider.coder.Coder.check_model_availability") as mock_check:
+    with patch("aider.main.Coder.check_model_availability") as mock_check:
         mock_check.return_value = True
-        self.mock_check = mock_check
 
     def tearDown(self):
         os.chdir(self.original_cwd)
