@@ -1,5 +1,7 @@
+import colorsys
 import json
 import os
+import random
 import shelve
 import subprocess
 import sys
@@ -264,9 +266,13 @@ def find_py_files(directory):
     return py_files
 
 
-def call_map():
-    import random
+def get_random_color():
+    hue = random.randint(0, 255)
+    r, g, b = [int(x * 255) for x in colorsys.hsv_to_rgb(hue, 255, 64)]
+    return f"#{r:02x}{g:02x}{b:02x}80"
 
+
+def call_map():
     import graphviz
 
     fnames = sys.argv[1:]
@@ -372,12 +378,9 @@ def call_map():
         weight = data["weight"]
         label = data["label"]
 
-        r = random.randint(0, 128)
-        g = random.randint(0, 128)
-        b = random.randint(0, 128)
-        color = f"#{r:02x}{g:02x}{b:02x}80"
-        weight = weight * 2
-        dot.edge(refs, defs, penwidth=str(weight), color=color, fontcolor=color, label=label)
+    color = get_random_color()
+    weight = weight * 2
+    dot.edge(refs, defs, penwidth=str(weight), color=color, fontcolor=color, label=label)
 
     top_rank = sorted([(rank, node) for (node, rank) in ranked.items()], reverse=True)
     # Print the PageRank of each node
