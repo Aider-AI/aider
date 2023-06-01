@@ -59,7 +59,9 @@ class RepoMap:
     IDENT_CACHE_FILE = ".aider.ident.cache"
     TAGS_CACHE_FILE = ".aider.tags.cache"
 
-    def __init__(self, use_ctags=None, root=None, main_model="gpt-4"):
+    def __init__(self, use_ctags=None, root=None, main_model="gpt-4", io=None):
+        self.io = io
+
         if not root:
             root = os.getcwd()
         self.root = root
@@ -103,14 +105,17 @@ class RepoMap:
 
         if self.use_ctags:
             files_listing = self.get_tags_map(other_files)
-            tokens = self.token_count(files_listing)
-            if tokens < max_map_tokens:
+            num_tokens = self.token_count(files_listing)
+            self.io.tool_output(f"ctags map: {num_tokens/1024:.1f} k-tokens")
+            if num_tokens < max_map_tokens:
                 ctags_msg = " with selected ctags info"
                 return files_listing, ctags_msg
 
         files_listing = self.get_simple_files_map(other_files)
         ctags_msg = ""
-        if self.token_count(files_listing) < max_map_tokens:
+        num_tokens = self.token_count(files_listing)
+        self.io.tool_output(f"simple map: {num_tokens/1024:.1f} k-tokens")
+        if num_tokens < max_map_tokens:
             return files_listing, ctags_msg
 
     def get_simple_files_map(self, other_files):
