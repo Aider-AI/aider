@@ -355,9 +355,9 @@ def call_map():
         dangling=personalization,
     )
 
+    inbound_weights = {}
     for node in G.nodes:
-        # todo: sum up the weight of every inbound edge to node
-        pass
+        inbound_weights[node] = sum(data["weight"] for _, _, data in G.in_edges(node, data=True))
 
     N = 20
     top_10_nodes = sorted(ranked, key=ranked.get, reverse=True)[:N]
