@@ -29,6 +29,11 @@ class Coder:
     last_aider_commit_hash = None
     last_asked_for_commit_time = 0
 
+    def check_model_availability(self, main_model):
+        available_models = openai.Model.list()
+        model_ids = [model.id for model in available_models["data"]]
+        return main_model in model_ids
+
     def __init__(
         self,
         io,
@@ -64,10 +69,16 @@ class Coder:
             self.console = Console(force_terminal=True, no_color=True)
 
         self.commands = Commands(self.io, self)
+        if not self.check_model_availability(main_model):
+            self.io.tool_error(
+                f"Your openai key does not support {main_model}, using gpt-3.5-turbo."
+            )
+            main_model = "gpt-3.5-turbo"
+
         self.main_model = main_model
         if main_model == "gpt-3.5-turbo":
             self.io.tool_error(
-                f"aider doesn't work well with {main_model}, use gpt-4 for best results."
+                f"Aider doesn't work well with {main_model}, use gpt-4 for best results."
             )
 
         self.set_repo(fnames)

@@ -18,10 +18,14 @@ class TestMain(TestCase):
         self.original_cwd = os.getcwd()
         self.tempdir = tempfile.mkdtemp()
         os.chdir(self.tempdir)
+        self.patcher = patch("aider.main.Coder.check_model_availability")
+        self.mock_check = self.patcher.start()
+        self.mock_check.return_value = True
 
     def tearDown(self):
         os.chdir(self.original_cwd)
         shutil.rmtree(self.tempdir)
+        self.patcher.stop()
 
     def test_main_with_empty_dir_no_files_on_command(self):
         pipe_input = create_input(StringIO(""))
