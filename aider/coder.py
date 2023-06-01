@@ -93,7 +93,12 @@ class Coder:
         self.pretty = pretty
         self.show_diffs = show_diffs
 
-        self.repo_map = RepoMap(use_ctags, self.root, self.main_model)
+        if self.verbose:
+            rm_io = io
+        else:
+            rm_io = None
+
+        self.repo_map = RepoMap(use_ctags, self.root, self.main_model, rm_io)
 
     def find_common_root(self):
         if self.abs_fnames:
