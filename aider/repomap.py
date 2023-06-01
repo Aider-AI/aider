@@ -95,7 +95,8 @@ class RepoMap:
         if self.use_ctags:
             files_listing = self.get_tags_map(other_files)
             num_tokens = self.token_count(files_listing)
-            self.io.tool_output(f"ctags map: {num_tokens/1024:.1f} k-tokens")
+            if self.io:
+                self.io.tool_output(f"ctags map: {num_tokens/1024:.1f} k-tokens")
             if num_tokens < max_map_tokens:
                 ctags_msg = " with selected ctags info"
                 return files_listing, ctags_msg
@@ -103,7 +104,8 @@ class RepoMap:
         files_listing = self.get_simple_files_map(other_files)
         ctags_msg = ""
         num_tokens = self.token_count(files_listing)
-        self.io.tool_output(f"simple map: {num_tokens/1024:.1f} k-tokens")
+        if self.io:
+            self.io.tool_output(f"simple map: {num_tokens/1024:.1f} k-tokens")
         if num_tokens < max_map_tokens:
             return files_listing, ctags_msg
 
