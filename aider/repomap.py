@@ -59,6 +59,9 @@ class RepoMap:
     IDENT_CACHE_FILE = ".aider.ident.cache"
     TAGS_CACHE_FILE = ".aider.tags.cache"
 
+    # 1/4 of gpt-4's context window
+    max_map_tokens = 1024
+
     def __init__(self, use_ctags=None, root=None, main_model="gpt-4", io=None):
         self.io = io
 
@@ -77,7 +80,7 @@ class RepoMap:
         self.tokenizer = tiktoken.encoding_for_model(main_model)
 
     def get_repo_map(self, chat_files, other_files):
-        res = self.choose_files_listing(other_files)
+        res = self.choose_files_listing(chat_files, other_files)
         if not res:
             return
 
@@ -96,28 +99,24 @@ class RepoMap:
 
         return repo_content
 
-    def choose_files_listing(self, other_files):
-        # 1/4 of gpt-4's context window
-        max_map_tokens = 2048 * 4
-
+    def choose_files_listing(self, chat_files, other_files):
         if not other_files:
             return
 
         if self.use_ctags:
-            files_listing = self.get_tags_map(other_files)
+            files_listing = self.get_ranked_tags_map(chat_files, other_files)
             num_tokens = self.token_count(files_listing)
             if self.io:
                 self.io.tool_output(f"ctags map: {num_tokens/1024:.1f} k-tokens")
-            if num_tokens < max_map_tokens:
-                ctags_msg = " with selected ctags info"
-                return files_listing, ctags_msg
+            ctags_msg = " with selected ctags info"
+            return files_listing, ctags_msg
 
         files_listing = self.get_simple_files_map(other_files)
         ctags_msg = ""
         num_tokens = self.token_count(files_listing)
         if self.io:
             self.io.tool_output(f"simple map: {num_tokens/1024:.1f} k-tokens")
-        if num_tokens < max_map_tokens:
+        if num_tokens < self.max_map_tokens:
             return files_listing, ctags_msg
 
     def get_simple_files_map(self, other_files):
@@ -273,13 +272,13 @@ class RepoMap:
         show_fnames = set()
         for fname in sorted(fnames):
             dump(fname)
-            show_fname = os.path.relpath(fname, root)
+            show_fname = os.path.relpath(fname, self.root)
             show_fnames.add(show_fname)
 
             if ".venv" not in show_fname:
                 personalization[show_fname] = 1.0
 
-            data = rm.run_ctags(fname)
+            data = self.run_ctags(fname)
 
             for tag in data:
                 ident = tag["name"]
@@ -303,7 +302,7 @@ class RepoMap:
                 definitions[key].add(tuple(res))
                 # definitions[key].add((show_fname,))
 
-            idents = rm.get_name_identifiers(fname, uniq=False)
+            idents = self.get_name_identifiers(fname, uniq=False)
             for ident in idents:
                 # dump("ref", fname, ident)
                 references[ident].append(show_fname)
@@ -388,10 +387,7 @@ class RepoMap:
 
         return ranked_tags
 
-    def get_ranked_tags_map(self, fnames):
-        # 1/4 of gpt-4's context window
-        max_map_tokens = 2048
-
+    def get_ranked_tags_map(self, _chat_files, fnames):
         ranked_tags = self.get_ranked_tags(fnames)
         num_tags = len(ranked_tags)
 
@@ -403,8 +399,9 @@ class RepoMap:
             middle = (lower_bound + upper_bound) // 2
             tree = to_tree(ranked_tags[:middle])
             num_tokens = self.token_count(tree)
+            dump(middle, num_tokens)
 
-            if num_tokens < max_map_tokens:
+            if num_tokens < self.max_map_tokens:
                 best_tree = tree
                 lower_bound = middle + 1
             else:
