@@ -133,18 +133,6 @@ class RepoMap:
     def get_rel_fname(self, fname):
         return os.path.relpath(fname, self.root)
 
-    def get_tags_map(self, filenames):
-        tags = []
-        for filename in filenames:
-            if filename.endswith(".md") or filename.endswith(".json"):
-                tags.append(self.split_path(filename))
-                continue
-            tags += self.get_tags(filename, filenames)
-        if not tags:
-            return
-
-        return to_tree(tags)
-
     def split_path(self, path):
         path = os.path.relpath(path, self.root)
         return [path + ":"]
@@ -167,51 +155,13 @@ class RepoMap:
         self.save_tags_cache()
         return data
 
-    def get_tags(self, filename, files=None):
-        if not files:
-            files = set()
-
-        external_references = set()
-        other_files = files - set([filename])
-        for other_file in other_files:
-            external_references.update(self.get_name_identifiers(other_file))
-
-        data = self.run_ctags(filename)
-
-        tags = []
-
-        if not data:
-            tags.append(self.split_path(filename))
-
-        for tag in data:
-            path = tag.get("path")
-            scope = tag.get("scope")
-            kind = tag.get("kind")
-            name = tag.get("name")
-            signature = tag.get("signature")
-
-            if name not in external_references:
-                continue
-
-            last = name
-            if signature:
-                last += " " + signature
-
-            res = self.split_path(path)
-            if scope:
-                res.append(scope)
-            res += [kind, last]
-            tags.append(res)
-
-        return tags
-
     def check_for_ctags(self):
         try:
             with tempfile.TemporaryDirectory() as tempdir:
                 hello_py = os.path.join(tempdir, "hello.py")
                 with open(hello_py, "w") as f:
                     f.write("def hello():\n    print('Hello, world!')\n")
-                self.get_tags(hello_py)
+                self.run_ctags(hello_py)
         except Exception:
             return False
         return True
@@ -268,7 +218,7 @@ class RepoMap:
 
         personalization = dict()
 
-        fnames = chat_fnames + other_fnames
+        fnames = set(chat_fnames).union(set(other_fnames))
 
         show_fnames = set()
         for fname in sorted(fnames):
