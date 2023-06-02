@@ -2,13 +2,13 @@ import colorsys
 import json
 import os
 import random
-
-# import shelve
 import subprocess
 import sys
 import tempfile
 from collections import Counter, defaultdict
 
+# import shelve
+import graphviz
 import networkx as nx
 import tiktoken
 from pygments.lexers import guess_lexer_for_filename
@@ -263,6 +263,140 @@ class RepoMap:
         res = [token[2] for token in tokens if token[1] in Token.Name]
         return res
 
+    def get_ranked_tags(self, fnames):
+        defines = defaultdict(set)
+        references = defaultdict(list)
+        definitions = defaultdict(set)
+
+        personalization = dict()
+
+        show_fnames = set()
+        for fname in sorted(fnames):
+            dump(fname)
+            show_fname = os.path.relpath(fname, root)
+            show_fnames.add(show_fname)
+
+            if ".venv" not in show_fname:
+                personalization[show_fname] = 1.0
+
+            data = rm.run_ctags(fname)
+
+            for tag in data:
+                ident = tag["name"]
+                defines[ident].add(show_fname)
+
+                scope = tag.get("scope")
+                kind = tag.get("kind")
+                name = tag.get("name")
+                signature = tag.get("signature")
+
+                last = name
+                if signature:
+                    last += " " + signature
+
+                res = [show_fname]
+                if scope:
+                    res.append(scope)
+                res += [kind, last]
+
+                key = (show_fname, ident)
+                definitions[key].add(tuple(res))
+                # definitions[key].add((show_fname,))
+
+            idents = rm.get_name_identifiers(fname, uniq=False)
+            for ident in idents:
+                # dump("ref", fname, ident)
+                references[ident].append(show_fname)
+
+        idents = set(defines.keys()).intersection(set(references.keys()))
+
+        G = nx.MultiDiGraph()
+
+        for ident in idents:
+            definers = defines[ident]
+            for referencer, num_refs in Counter(references[ident]).items():
+                for definer in definers:
+                    if referencer == definer:
+                        continue
+                    G.add_edge(referencer, definer, weight=num_refs, ident=ident)
+
+        # personalization = dict()
+        # personalization["utils.py"] = 1.0
+
+        ranked = nx.pagerank(
+            G,
+            weight="weight",
+            # personalization=personalization,
+            # dangling=personalization,
+        )
+
+        top_rank = sorted([(rank, node) for (node, rank) in ranked.items()], reverse=True)
+        # Print the PageRank of each node
+        for rank, node in top_rank:
+            print(f"{rank:.03f} {node}")
+
+        # distribute the rank from each source node, across all of its out edges
+        ranked_definitions = defaultdict(float)
+        for src in G.nodes:
+            src_rank = ranked[src]
+            total_weight = sum(data["weight"] for _src, _dst, data in G.out_edges(src, data=True))
+            dump(src, src_rank, total_weight)
+            for _src, dst, data in G.out_edges(src, data=True):
+                data["rank"] = src_rank * data["weight"] / total_weight
+                ident = data["ident"]
+                ranked_definitions[(dst, ident)] += data["rank"]
+
+        clusters = dict()
+        for fname in set(show_fnames):
+            clusters[fname] = graphviz.Digraph(f"cluster_{fname}")
+            clusters[fname].attr(label=fname, style="filled")
+            clusters[fname].node(f"invis_{fname}", style="invis", width="0", label="")
+
+        ranked_tags = []
+        ranked_definitions = sorted(ranked_definitions.items(), reverse=True, key=lambda x: x[1])
+        for (fname, ident), rank in ranked_definitions:
+            print(f"{rank:.03f} {fname} {ident}")
+            sz = str(rank * 25)
+            font_sz = rank * 500
+            font_sz = str(max(10, font_sz))
+            clusters[fname].node(
+                str((fname, ident)), label=ident, width=sz, height=sz, fontsize=font_sz
+            )
+
+            ranked_tags += list(definitions.get((fname, ident), []))
+
+        draw_graph = False
+
+        if draw_graph:
+            dot = graphviz.Digraph(graph_attr={"ratio": ".5"})
+
+            for cluster in clusters.values():
+                dot.subgraph(cluster)
+
+            for src, dst, data in G.edges(data=True):
+                frm = f"invis_{src}"
+                ident = data["ident"]
+                to = str((dst, ident))
+
+                dot.edge(
+                    frm,
+                    to,
+                    # penwidth=str(weight), color=color, fontcolor=color, label=label,
+                )
+
+            dot.render("tmp", format="pdf", view=True)
+
+        return ranked_tags
+
+    def get_ranked_tags_map(self, fnames):
+        ranked_tags = self.get_ranked_tags(fnames)
+
+        N = 100
+        ranked_tags = ranked_tags[:N]
+        tree = to_tree(ranked_tags)
+
+        return tree
+
 
 def find_py_files(directory):
     if not os.path.isdir(directory):
@@ -283,9 +417,7 @@ def get_random_color():
     return res
 
 
-def call_map():
-    import graphviz
-
+if __name__ == "__main__":
     fnames = sys.argv[1:]
 
     fnames = []
@@ -294,145 +426,9 @@ def call_map():
 
     fnames = sorted(fnames)
 
-    rm = RepoMap()
-
-    # res = rm.get_tags_map(fnames)
-    # print(res)
-
-    defines = defaultdict(set)
-    references = defaultdict(list)
-    definitions = defaultdict(set)
-
     root = os.path.commonpath(fnames)
 
-    personalization = dict()
-
-    show_fnames = set()
-    for fname in sorted(fnames):
-        dump(fname)
-        show_fname = os.path.relpath(fname, root)
-        show_fnames.add(show_fname)
-
-        if ".venv" not in show_fname:
-            personalization[show_fname] = 1.0
-
-        data = rm.run_ctags(fname)
-
-        for tag in data:
-            ident = tag["name"]
-            defines[ident].add(show_fname)
-
-            scope = tag.get("scope")
-            kind = tag.get("kind")
-            name = tag.get("name")
-            signature = tag.get("signature")
-
-            last = name
-            if signature:
-                last += " " + signature
-
-            res = [show_fname]
-            if scope:
-                res.append(scope)
-            res += [kind, last]
-
-            key = (show_fname, ident)
-            definitions[key].add(tuple(res))
-            # definitions[key].add((show_fname,))
-
-        idents = rm.get_name_identifiers(fname, uniq=False)
-        for ident in idents:
-            # dump("ref", fname, ident)
-            references[ident].append(show_fname)
-
-    idents = set(defines.keys()).intersection(set(references.keys()))
-
-    G = nx.MultiDiGraph()
-
-    for ident in idents:
-        definers = defines[ident]
-        num_defs = len(definers)
-        # if num_defs > 3:
-        #    continue
-
-        for referencer, num_refs in Counter(references[ident]).items():
-            for definer in definers:
-                if referencer == definer:
-                    continue
-                G.add_edge(referencer, definer, weight=num_refs, ident=ident)
-
-    # personalization = dict()
-    # personalization["utils.py"] = 1.0
-
-    ranked = nx.pagerank(
-        G,
-        weight="weight",
-        # personalization=personalization,
-        # dangling=personalization,
-    )
-
-    top_rank = sorted([(rank, node) for (node, rank) in ranked.items()], reverse=True)
-    # Print the PageRank of each node
-    for rank, node in top_rank:
-        print(f"{rank:.03f} {node}")
-
-    # distribute the rank from each source node, across all of its out edges
-    ranked_definitions = defaultdict(float)
-    for src in G.nodes:
-        src_rank = ranked[src]
-        total_weight = sum(data["weight"] for _src, _dst, data in G.out_edges(src, data=True))
-        dump(src, src_rank, total_weight)
-        for _src, dst, data in G.out_edges(src, data=True):
-            data["rank"] = src_rank * data["weight"] / total_weight
-            ident = data["ident"]
-            ranked_definitions[(dst, ident)] += data["rank"]
-
-    dot = graphviz.Digraph(graph_attr={"ratio": ".5"})
-
-    clusters = dict()
-    for fname in set(show_fnames):
-        clusters[fname] = graphviz.Digraph(f"cluster_{fname}")
-        clusters[fname].attr(label=fname, style="filled")
-        clusters[fname].node(f"invis_{fname}", style="invis", width="0", label="")
-
-    ranked_tags = []
-    ranked_definitions = sorted(ranked_definitions.items(), reverse=True, key=lambda x: x[1])
-    for (fname, ident), rank in ranked_definitions:
-        print(f"{rank:.03f} {fname} {ident}")
-        sz = str(rank * 25)
-        font_sz = rank * 500
-        font_sz = str(max(10, font_sz))
-        clusters[fname].node(
-            str((fname, ident)), label=ident, width=sz, height=sz, fontsize=font_sz
-        )
-
-        ranked_tags += list(definitions.get((fname, ident), []))
-
-    N = 100
-    ranked_tags = ranked_tags[:N]
-    tree = to_tree(ranked_tags)
-    print(tree)
-    dump(len(tree))
-
-    for cluster in clusters.values():
-        dot.subgraph(cluster)
-
-    for src, dst, data in G.edges(data=True):
-        frm = f"invis_{src}"
-        ident = data["ident"]
-        to = str((dst, ident))
-
-        dot.edge(
-            frm,
-            to,
-            # penwidth=str(weight), color=color, fontcolor=color, label=label,
-        )
-
-    ###
-    # dot.render("tmp", format="pdf", view=True)
-    return
-
-
-if __name__ == "__main__":
-    call_map()
-    # print(rm.get_tags_map(sys.argv[1:]))
+    rm = RepoMap(root=root)
+    repo_map = rm.get_ranked_tags_map(fnames)
+    print(repo_map)
+    print(len(repo_map))
