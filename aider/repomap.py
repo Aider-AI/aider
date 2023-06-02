@@ -395,12 +395,22 @@ class RepoMap:
         ranked_tags = self.get_ranked_tags(fnames)
         num_tags = len(ranked_tags)
 
-        for i in range(num_tags, 0, -1):
-            tree = to_tree(ranked_tags[:i])
+        lower_bound = 0
+        upper_bound = num_tags
+        best_tree = None
+
+        while lower_bound <= upper_bound:
+            middle = (lower_bound + upper_bound) // 2
+            tree = to_tree(ranked_tags[:middle])
             num_tokens = self.token_count(tree)
-            dump(i, num_tokens)
+
             if num_tokens < max_map_tokens:
-                return tree
+                best_tree = tree
+                lower_bound = middle + 1
+            else:
+                upper_bound = middle - 1
+
+        return best_tree
 
 
 def find_py_files(directory):
