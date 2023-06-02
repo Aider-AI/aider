@@ -370,10 +370,37 @@ def call_map():
             ident = data["ident"]
             ranked_definitions[(dst, ident)] += data["rank"]
 
+    dot = graphviz.Digraph(graph_attr={"ratio": ".5"})
+
+    clusters = dict()
+    for fname in set(show_fnames):
+        clusters[fname] = graphviz.Digraph(f"cluster_{fname}")
+        clusters[fname].attr(label=fname, style="filled")
+        clusters[fname].node(f"invis_{fname}", style="invis", width="0", label="")
+
+    for fname, ident in set(ranked_definitions.keys()):
+        clusters[fname].node(str((fname, ident)), label=ident)
+
+    for src, dst, data in G.edges(data=True):
+        frm = f"invis_{src}"
+        ident = data["ident"]
+        to = str((dst, ident))
+
+        dot.edge(
+            frm,
+            to,
+            # penwidth=str(weight), color=color, fontcolor=color, label=label,
+        )
+
+    for cluster in clusters.values():
+        dump(cluster)
+        dot.subgraph(cluster)
+
     ranked_definitions = sorted(ranked_definitions.items(), reverse=True, key=lambda x: x[1])
     for (fname, ident), rank in ranked_definitions:
         print(f"{rank:.03f} {fname} {ident}")
 
+    dot.render("tmp", format="pdf", view=True)
     return
     #############
 
