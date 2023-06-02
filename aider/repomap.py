@@ -60,7 +60,7 @@ class RepoMap:
     TAGS_CACHE_FILE = ".aider.tags.cache"
 
     # 1/4 of gpt-4's context window
-    max_map_tokens = 1024
+    max_map_tokens = 512
 
     def __init__(self, use_ctags=None, root=None, main_model="gpt-4", io=None):
         self.io = io
