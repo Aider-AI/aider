@@ -389,13 +389,18 @@ class RepoMap:
         return ranked_tags
 
     def get_ranked_tags_map(self, fnames):
+        # 1/4 of gpt-4's context window
+        max_map_tokens = 2048
+
         ranked_tags = self.get_ranked_tags(fnames)
+        num_tags = len(ranked_tags)
 
-        N = 100
-        ranked_tags = ranked_tags[:N]
-        tree = to_tree(ranked_tags)
-
-        return tree
+        for i in range(num_tags, 0, -1):
+            tree = to_tree(ranked_tags[:i])
+            num_tokens = self.token_count(tree)
+            dump(i, num_tokens)
+            if num_tokens < max_map_tokens:
+                return tree
 
 
 def find_py_files(directory):
@@ -430,5 +435,6 @@ if __name__ == "__main__":
 
     rm = RepoMap(root=root)
     repo_map = rm.get_ranked_tags_map(fnames)
+
+    dump(len(repo_map))
     print(repo_map)
-    print(len(repo_map))
