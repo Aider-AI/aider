@@ -6,9 +6,10 @@ import subprocess
 import sys
 import tempfile
 from collections import Counter, defaultdict
-from diskcache import Cache
+
 import networkx as nx
 import tiktoken
+from diskcache import Cache
 from pygments.lexers import guess_lexer_for_filename
 from pygments.token import Token
 from pygments.util import ClassNotFound
@@ -169,13 +170,13 @@ class RepoMap:
         self.TAGS_CACHE = Cache(self.TAGS_CACHE_DIR)
 
     def save_tags_cache(self):
-        self.TAGS_CACHE.close()
+        pass
 
     def load_ident_cache(self):
         self.IDENT_CACHE = Cache(self.IDENT_CACHE_DIR)
 
     def save_ident_cache(self):
-        self.IDENT_CACHE.close()
+        pass
 
     def get_name_identifiers(self, fname, uniq=True):
         file_mtime = os.path.getmtime(fname)
