@@ -350,8 +350,8 @@ def call_map():
     ranked = nx.pagerank(
         G,
         weight="weight",
-        personalization=personalization,
-        dangling=personalization,
+        # personalization=personalization,
+        # dangling=personalization,
     )
 
     top_rank = sorted([(rank, node) for (node, rank) in ranked.items()], reverse=True)
