@@ -58,7 +58,7 @@ files_no_full_files = "I am not sharing any *read-write* files yet."
 
 repo_content_prefix = (
     "All the files below here are *read-only* files! Do not propose changes to these without asking"
-    " me first."
+    " me first.\n"
 )
 
 
