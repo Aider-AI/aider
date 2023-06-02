@@ -6,8 +6,7 @@ import subprocess
 import sys
 import tempfile
 from collections import Counter, defaultdict
-
-# import shelve
+from diskcache import Cache
 import networkx as nx
 import tiktoken
 from pygments.lexers import guess_lexer_for_filename
@@ -55,8 +54,8 @@ def fname_to_components(fname, with_colon):
 
 class RepoMap:
     ctags_cmd = ["ctags", "--fields=+S", "--extras=-F", "--output-format=json"]
-    IDENT_CACHE_FILE = ".aider.ident.cache"
-    TAGS_CACHE_FILE = ".aider.tags.cache"
+    IDENT_CACHE_DIR = ".aider.ident.cache"
+    TAGS_CACHE_DIR = ".aider.tags.cache"
 
     # 1/4 of gpt-4's context window
     max_map_tokens = 512
@@ -167,18 +166,16 @@ class RepoMap:
         return True
 
     def load_tags_cache(self):
-        self.TAGS_CACHE = dict()  # shelve.open(self.TAGS_CACHE_FILE)
+        self.TAGS_CACHE = Cache(self.TAGS_CACHE_DIR)
 
     def save_tags_cache(self):
-        # self.TAGS_CACHE.sync()
-        pass
+        self.TAGS_CACHE.close()
 
     def load_ident_cache(self):
-        self.IDENT_CACHE = dict()  # shelve.open(self.IDENT_CACHE_FILE)
+        self.IDENT_CACHE = Cache(self.IDENT_CACHE_DIR)
 
     def save_ident_cache(self):
-        # self.IDENT_CACHE.sync()
-        pass
+        self.IDENT_CACHE.close()
 
     def get_name_identifiers(self, fname, uniq=True):
         file_mtime = os.path.getmtime(fname)
