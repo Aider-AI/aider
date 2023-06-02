@@ -98,7 +98,7 @@ class RepoMap:
 
     def choose_files_listing(self, other_files):
         # 1/4 of gpt-4's context window
-        max_map_tokens = 2048
+        max_map_tokens = 2048 * 4
 
         if not other_files:
             return
@@ -301,6 +301,7 @@ def call_map():
 
     defines = defaultdict(set)
     references = defaultdict(list)
+    definitions = defaultdict(set)
 
     root = os.path.commonpath(fnames)
 
@@ -320,7 +321,24 @@ def call_map():
         for tag in data:
             ident = tag["name"]
             defines[ident].add(show_fname)
-            # dump("def", fname, ident)
+
+            scope = tag.get("scope")
+            kind = tag.get("kind")
+            name = tag.get("name")
+            signature = tag.get("signature")
+
+            last = name
+            if signature:
+                last += " " + signature
+
+            res = [show_fname]
+            if scope:
+                res.append(scope)
+            res += [kind, last]
+
+            key = (show_fname, ident)
+            definitions[key].add(tuple(res))
+            # definitions[key].add((show_fname,))
 
         idents = rm.get_name_identifiers(fname, uniq=False)
         for ident in idents:
@@ -341,7 +359,6 @@ def call_map():
             for definer in definers:
                 if referencer == definer:
                     continue
-                weight = num_refs / num_defs
                 G.add_edge(referencer, definer, weight=num_refs, ident=ident)
 
     # personalization = dict()
@@ -378,8 +395,27 @@ def call_map():
         clusters[fname].attr(label=fname, style="filled")
         clusters[fname].node(f"invis_{fname}", style="invis", width="0", label="")
 
-    for fname, ident in set(ranked_definitions.keys()):
-        clusters[fname].node(str((fname, ident)), label=ident)
+    ranked_tags = []
+    ranked_definitions = sorted(ranked_definitions.items(), reverse=True, key=lambda x: x[1])
+    for (fname, ident), rank in ranked_definitions:
+        print(f"{rank:.03f} {fname} {ident}")
+        sz = str(rank * 25)
+        font_sz = rank * 500
+        font_sz = str(max(10, font_sz))
+        clusters[fname].node(
+            str((fname, ident)), label=ident, width=sz, height=sz, fontsize=font_sz
+        )
+
+        ranked_tags += list(definitions.get((fname, ident), []))
+
+    N = 100
+    ranked_tags = ranked_tags[:N]
+    tree = to_tree(ranked_tags)
+    print(tree)
+    dump(len(tree))
+
+    for cluster in clusters.values():
+        dot.subgraph(cluster)
 
     for src, dst, data in G.edges(data=True):
         frm = f"invis_{src}"
@@ -392,62 +428,9 @@ def call_map():
             # penwidth=str(weight), color=color, fontcolor=color, label=label,
         )
 
-    for cluster in clusters.values():
-        dump(cluster)
-        dot.subgraph(cluster)
-
-    ranked_definitions = sorted(ranked_definitions.items(), reverse=True, key=lambda x: x[1])
-    for (fname, ident), rank in ranked_definitions:
-        print(f"{rank:.03f} {fname} {ident}")
-
-    dot.render("tmp", format="pdf", view=True)
-    return
-    #############
-
-    N = 20
-    top_10_nodes = sorted(ranked, key=ranked.get, reverse=True)[:N]
-    nodes_to_remove = [node for node in G.nodes if node not in top_10_nodes]
-    G.remove_nodes_from(nodes_to_remove)
-
-    """
-    # drop low weight edges for plotting
-    edges_to_remove = [
-        (node1, node2) for node1, node2, data in G.edges(data=True) if data["weight"] < 1
-    ]
-    G.remove_edges_from(edges_to_remove)
-    # Remove isolated nodes (nodes with no edges)
-    G.remove_nodes_from(list(nx.isolates(G)))
-    """
-
-    dot = graphviz.Digraph(graph_attr={"ratio": ".5"})
-
-    max_rank = max(ranked.values())
-    min_rank = min(ranked.values())
-    for fname in G.nodes():
-        fname = str(fname)
-        rank = ranked[fname]
-        size = (rank - min_rank) / (max_rank - min_rank)
-        pen = max(10 * size, 1)
-        size = 2 * size
-        fontsize = max(10 * size, 14)
-        dot.node(
-            fname, penwidth=str(pen), width=str(size), height=str(size), fontsize=str(fontsize)
-        )
-
-    for refs, defs, data in G.edges(data=True):
-        weight = data["weight"]
-        label = data["ident"]
-
-        color = get_random_color()
-        weight = weight
-        dot.edge(refs, defs, penwidth=str(weight), color=color, fontcolor=color, label=label)
-
-    top_rank = sorted([(rank, node) for (node, rank) in ranked.items()], reverse=True)
-    # Print the PageRank of each node
-    for rank, node in top_rank[:N]:
-        print(f"{rank:.03f} {node}")
-
+    ###
     # dot.render("tmp", format="pdf", view=True)
+    return
 
 
 if __name__ == "__main__":
