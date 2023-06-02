@@ -219,21 +219,21 @@ class RepoMap:
         personalization = dict()
 
         fnames = set(chat_fnames).union(set(other_fnames))
+        chat_rel_fnames = set()
 
-        show_fnames = set()
         for fname in sorted(fnames):
             dump(fname)
-            show_fname = os.path.relpath(fname, self.root)
-            show_fnames.add(show_fname)
+            rel_fname = os.path.relpath(fname, self.root)
 
-            if ".venv" not in show_fname:
-                personalization[show_fname] = 1.0
+            if fname in chat_fnames:
+                personalization[rel_fname] = 1.0
+                chat_rel_fnames.add(rel_fname)
 
             data = self.run_ctags(fname)
 
             for tag in data:
                 ident = tag["name"]
-                defines[ident].add(show_fname)
+                defines[ident].add(rel_fname)
 
                 scope = tag.get("scope")
                 kind = tag.get("kind")
@@ -244,19 +244,19 @@ class RepoMap:
                 if signature:
                     last += " " + signature
 
-                res = [show_fname]
+                res = [rel_fname]
                 if scope:
                     res.append(scope)
                 res += [kind, last]
 
-                key = (show_fname, ident)
+                key = (rel_fname, ident)
                 definitions[key].add(tuple(res))
-                # definitions[key].add((show_fname,))
+                # definitions[key].add((rel_fname,))
 
             idents = self.get_name_identifiers(fname, uniq=False)
             for ident in idents:
                 # dump("ref", fname, ident)
-                references[ident].append(show_fname)
+                references[ident].append(rel_fname)
 
         idents = set(defines.keys()).intersection(set(references.keys()))
 
@@ -270,15 +270,12 @@ class RepoMap:
                         continue
                     G.add_edge(referencer, definer, weight=num_refs, ident=ident)
 
-        # personalization = dict()
-        # personalization["utils.py"] = 1.0
+        if personalization:
+            pers_args = dict(personalization=personalization, dangling=personalization)
+        else:
+            pers_args = dict()
 
-        ranked = nx.pagerank(
-            G,
-            weight="weight",
-            # personalization=personalization,
-            # dangling=personalization,
-        )
+        ranked = nx.pagerank(G, weight="weight", **pers_args)
 
         top_rank = sorted([(rank, node) for (node, rank) in ranked.items()], reverse=True)
         # Print the PageRank of each node
@@ -300,6 +297,8 @@ class RepoMap:
         ranked_definitions = sorted(ranked_definitions.items(), reverse=True, key=lambda x: x[1])
         for (fname, ident), rank in ranked_definitions:
             print(f"{rank:.03f} {fname} {ident}")
+            if fname in chat_rel_fnames:
+                continue
             ranked_tags += list(definitions.get((fname, ident), []))
 
         return ranked_tags
