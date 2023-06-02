@@ -8,7 +8,6 @@ import tempfile
 from collections import Counter, defaultdict
 
 # import shelve
-import graphviz
 import networkx as nx
 import tiktoken
 from pygments.lexers import guess_lexer_for_filename
@@ -347,47 +346,11 @@ class RepoMap:
                 ident = data["ident"]
                 ranked_definitions[(dst, ident)] += data["rank"]
 
-        draw_graph = False
-
-        if draw_graph:
-            clusters = dict()
-            for fname in set(show_fnames):
-                clusters[fname] = graphviz.Digraph(f"cluster_{fname}")
-                clusters[fname].attr(label=fname, style="filled")
-                clusters[fname].node(f"invis_{fname}", style="invis", width="0", label="")
-
         ranked_tags = []
         ranked_definitions = sorted(ranked_definitions.items(), reverse=True, key=lambda x: x[1])
         for (fname, ident), rank in ranked_definitions:
             print(f"{rank:.03f} {fname} {ident}")
             ranked_tags += list(definitions.get((fname, ident), []))
-
-            if draw_graph:
-                sz = str(rank * 25)
-                font_sz = rank * 500
-                font_sz = str(max(10, font_sz))
-                clusters[fname].node(
-                    str((fname, ident)), label=ident, width=sz, height=sz, fontsize=font_sz
-                )
-
-        if draw_graph:
-            dot = graphviz.Digraph(graph_attr={"ratio": ".5"})
-
-            for cluster in clusters.values():
-                dot.subgraph(cluster)
-
-            for src, dst, data in G.edges(data=True):
-                frm = f"invis_{src}"
-                ident = data["ident"]
-                to = str((dst, ident))
-
-                dot.edge(
-                    frm,
-                    to,
-                    # penwidth=str(weight), color=color, fontcolor=color, label=label,
-                )
-
-            dot.render("tmp", format="pdf", view=True)
 
         return ranked_tags
 
