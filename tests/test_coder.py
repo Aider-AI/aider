@@ -118,5 +118,23 @@ class TestCoder(unittest.TestCase):
         self.assertEqual(result, 'a good "commit message"')
 
 
+    @patch("aider.coder.openai.ChatCompletion.create")
+    @patch("aider.coder.time.sleep")
+    def test_send_with_retries_rate_limit_error(self, mock_sleep, mock_chat_completion_create):
+        # Mock the IO object
+        mock_io = MagicMock()
+
+        # Initialize the Coder object with the mocked IO and mocked repo
+        coder = Coder(io=mock_io, openai_api_key="fake_key")
+
+        # Set up the mock to raise RateLimitError on the first call and return None on the second call
+        mock_chat_completion_create.side_effect = [openai.error.RateLimitError("Rate limit exceeded"), None]
+
+        # Call the send_with_retries method
+        coder.send_with_retries("model", ["message"])
+
+        # Assert that time.sleep was called once
+        mock_sleep.assert_called_once()
+
 if __name__ == "__main__":
     unittest.main()
