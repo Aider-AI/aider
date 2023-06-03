@@ -8,6 +8,7 @@ from pathlib import Path
 
 import git
 import openai
+import requests
 from openai.error import RateLimitError
 from rich.console import Console
 from rich.live import Live
@@ -407,10 +408,13 @@ class Coder:
                     )
                     break
                 except RateLimitError as err:
-                    retry_after = 1
                     self.io.tool_error(f"RateLimitError: {err}")
-                    self.io.tool_error(f"Retry in {retry_after} seconds.")
-                    time.sleep(retry_after)
+                except requests.exceptions.ConnectionError as err:
+                    self.io.tool_error(f"ConnectionError: {err}")
+
+                retry_after = 1
+                self.io.tool_error(f"Retry in {retry_after} seconds.")
+                time.sleep(retry_after)
 
             self.show_send_output(completion, silent)
         except KeyboardInterrupt:
