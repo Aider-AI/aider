@@ -277,7 +277,10 @@ class RepoMap:
         else:
             pers_args = dict()
 
-        ranked = nx.pagerank(G, weight="weight", **pers_args)
+        try:
+            ranked = nx.pagerank(G, weight="weight", **pers_args)
+        except ZeroDivisionError:
+            return []
 
         # top_rank = sorted([(rank, node) for (node, rank) in ranked.items()], reverse=True)
         # Print the PageRank of each node
