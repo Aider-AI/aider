@@ -3,9 +3,9 @@
 import os
 import sys
 import traceback
-import backoff
 from pathlib import Path
 
+import backoff
 import git
 import openai
 import requests
@@ -395,7 +395,7 @@ class Coder:
         backoff.expo,
         (RateLimitError, requests.exceptions.ConnectionError),
         max_tries=5,
-        on_backoff=lambda details: self.io.tool_error(f"Retry in {details['wait']} seconds."),
+        on_backoff=lambda details: print(f"Retry in {details['wait']} seconds."),
     )
     def send_with_retries(self, model, messages):
         return openai.ChatCompletion.create(
