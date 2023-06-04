@@ -58,9 +58,6 @@ class RepoMap:
     IDENT_CACHE_DIR = ".aider.ident.cache"
     TAGS_CACHE_DIR = ".aider.tags.cache"
 
-    # 1/4 of gpt-4's context window
-    max_map_tokens = 512
-
     def __init__(self, map_tokens=1024, root=None, main_model="gpt-4", io=None):
         self.io = io
 
@@ -71,7 +68,11 @@ class RepoMap:
         self.load_ident_cache()
         self.load_tags_cache()
 
-        self.map_tokens = map_tokens
+        self.max_map_tokens = map_tokens
+        if map_tokens > 0:
+            self.has_ctags = self.check_for_ctags()
+        else:
+            self.has_ctags = False
 
         self.tokenizer = tiktoken.encoding_for_model(main_model)
 
@@ -96,10 +97,13 @@ class RepoMap:
         return repo_content
 
     def choose_files_listing(self, chat_files, other_files):
+        if self.max_map_tokens <= 0:
+            return
+
         if not other_files:
             return
 
-        if self.use_ctags:
+        if self.has_ctags:
             files_listing = self.get_ranked_tags_map(chat_files, other_files)
             num_tokens = self.token_count(files_listing)
             if self.io:

@@ -63,6 +63,8 @@ class Coder:
         self.auto_commits = auto_commits
         self.dirty_commits = dirty_commits
         self.dry_run = dry_run
+        self.pretty = pretty
+        self.show_diffs = show_diffs
 
         if pretty:
             self.console = Console()
@@ -86,20 +88,20 @@ class Coder:
 
         if self.repo:
             rel_repo_dir = os.path.relpath(self.repo.git_dir, os.getcwd())
-            self.io.tool_output("Using git repo:", rel_repo_dir)
+            capabilities_msg = f"Using git repo {rel_repo_dir}, "
         else:
-            self.io.tool_error("No suitable git repo, will not automatically commit edits.")
+            capabilities_msg = "Not using git, "
             self.find_common_root()
 
-        self.pretty = pretty
-        self.show_diffs = show_diffs
-
-        if self.verbose:
-            rm_io = io
-        else:
-            rm_io = None
-
+        rm_io = io if self.verbose else None
         self.repo_map = RepoMap(map_tokens, self.root, self.main_model, rm_io)
+
+        if self.repo_map.has_ctags:
+            capabilities_msg += "using ctags."
+        else:
+            capabilities_msg += "not using ctags."
+
+        self.io.tool_output(capabilities_msg)
 
     def find_common_root(self):
         if self.abs_fnames:
