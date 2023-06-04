@@ -228,7 +228,7 @@ def main(args=None, input=None, output=None):
     if args.apply:
         with open(args.apply, "r") as f:
             content = f.read()
-        coder.update_files(content, inp="")
+        coder.apply_updates(content)
         return
 
     io.tool_output("Use /help to see in-chat commands.")
