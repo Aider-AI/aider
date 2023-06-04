@@ -72,7 +72,7 @@ which helps it understand and modify large codebases.
 
 2. Set up your OpenAI API key as an environment variable `OPENAI_API_KEY` or by including `openai-api-key: sk-...` in an `.aider.config.yml` file (see `aider --help`).
 
-3. Optionally, install [universal ctags](https://github.com/universal-ctags/ctags). This is helpful if you plan to work with repositories with more than a handful of files.  This allows `aider --ctags` to build a [map of your entire git repo](https://aider.chat/docs/ctags.html) and share it with GPT to help it better understand and modify large codebases.
+3. Optionally, install [universal ctags](https://github.com/universal-ctags/ctags). This is helpful if you plan to work with repositories with more than a handful of files.  This allows `aider` to build a [map of your entire git repo](https://aider.chat/docs/ctags.html) and share it with GPT to help it better understand and modify large codebases.
 
 ## Usage
 
@@ -114,7 +114,8 @@ to set many options:
                         Specify the OpenAI API key [env var: OPENAI_API_KEY]
   --dry-run             Perform a dry run without applying changes (default: False) [env var: AIDER_DRY_RUN]
   --show-diffs          Show diffs when committing changes (default: False) [env var: AIDER_SHOW_DIFFS]
-  --ctags [CTAGS]       Add ctags to the chat to help GPT understand the codebase (default: check for ctags executable) [env var: AIDER_CTAGS]
+  --map-tokens MAP_TOKENS
+                        Max number of tokens to use for repo map, use 0 to disable (default: 1024) [env var: AIDER_MAP_TOKENS]
   --yes                 Always say yes to every confirmation [env var: AIDER_YES]
   -v, --verbose         Enable verbose output [env var: AIDER_VERBOSE]
 ```

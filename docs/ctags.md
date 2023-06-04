@@ -45,7 +45,7 @@ To code with GPT-4 using the techniques discussed here:
 
   - Install [aider](https://github.com/paul-gauthier/aider#installation).
   - Install [universal ctags](https://github.com/universal-ctags/ctags).
-  - Run `aider --ctags` inside your repo.
+  - Run `aider` inside your repo, and it should say "using ctags".
 
 ## The problem: code context
 
@@ -230,5 +230,5 @@ To use this experimental repo map feature:
 
   - Install [aider](https://github.com/paul-gauthier/aider#installation).
   - Install [universal ctags](https://github.com/universal-ctags/ctags).
-  - Run `aider --ctags` inside your repo.
+  - Run `aider` inside your repo, and it should say "using ctags".
   
