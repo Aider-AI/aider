@@ -69,6 +69,7 @@ print(my_function(3, 4))
             self.assertIn("MyClass", result)
             self.assertIn("my_method", result)
             self.assertIn("my_function", result)
+
     def test_check_for_ctags_failure(self):
         with patch("subprocess.run") as mock_run:
             mock_run.side_effect = Exception("ctags not found")
