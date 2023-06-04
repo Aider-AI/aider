@@ -163,15 +163,10 @@ def main(args=None, input=None, output=None):
         default=False,
     )
     parser.add_argument(
-        "--ctags",
-        type=lambda x: (str(x).lower() == "true"),
-        nargs="?",
-        const=True,
-        default=None,
-        help=(
-            "Add ctags to the chat to help GPT understand the codebase (default: check for ctags"
-            " executable)"
-        ),
+        "--map-tokens",
+        type=int,
+        default=1024,
+        help="Number of tokens to map for code understanding (default: 1024)",
     )
     parser.add_argument(
         "--yes",
