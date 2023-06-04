@@ -61,7 +61,7 @@ class RepoMap:
     # 1/4 of gpt-4's context window
     max_map_tokens = 512
 
-    def __init__(self, use_ctags=None, root=None, main_model="gpt-4", io=None):
+    def __init__(self, map_tokens=1024, root=None, main_model="gpt-4", io=None):
         self.io = io
 
         if not root:
@@ -71,10 +71,7 @@ class RepoMap:
         self.load_ident_cache()
         self.load_tags_cache()
 
-        if use_ctags is None:
-            self.use_ctags = self.check_for_ctags()
-        else:
-            self.use_ctags = use_ctags
+        self.map_tokens = map_tokens
 
         self.tokenizer = tiktoken.encoding_for_model(main_model)
 
