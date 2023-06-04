@@ -217,7 +217,7 @@ def main(args=None, input=None, output=None):
         auto_commits=args.auto_commits,
         dirty_commits=args.dirty_commits,
         dry_run=args.dry_run,
-        use_ctags=args.ctags,
+        map_tokens=args.map_tokens,
         verbose=args.verbose,
         openai_api_key=args.openai_api_key,
     )
