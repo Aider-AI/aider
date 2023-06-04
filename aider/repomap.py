@@ -306,8 +306,19 @@ class RepoMap:
                 continue
             ranked_tags += list(definitions.get((fname, ident), []))
 
+        rel_other_fnames_without_tags = set(
+            os.path.relpath(fname, self.root) for fname in other_fnames
+        )
+
+        fnames_already_included = set(rt[0] for rt in ranked_tags)
+
         top_rank = sorted([(rank, node) for (node, rank) in ranked.items()], reverse=True)
         for rank, fname in top_rank:
+            rel_other_fnames_without_tags.remove(fname)
+            if fname not in fnames_already_included:
+                ranked_tags.append((fname,))
+
+        for fname in rel_other_fnames_without_tags:
             ranked_tags.append((fname,))
 
         return ranked_tags
