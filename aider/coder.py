@@ -329,7 +329,7 @@ class Coder:
         if interrupted:
             return
 
-        edited, edit_error = self.apply_updates(content, inp)
+        edited, edit_error = self.apply_updates(content)
         if edit_error:
             return edit_error
 
@@ -468,7 +468,7 @@ class Coder:
             if live:
                 live.stop()
 
-    def update_files(self, content, inp):
+    def update_files(self, content):
         # might raise ValueError for malformed ORIG/UPD blocks
         edits = list(utils.find_original_update_blocks(content))
 
@@ -675,9 +675,9 @@ class Coder:
     def get_addable_relative_files(self):
         return set(self.get_all_relative_files()) - set(self.get_inchat_relative_files())
 
-    def apply_updates(self, content, inp):
+    def apply_updates(self, content):
         try:
-            edited = self.update_files(content, inp)
+            edited = self.update_files(content)
             return edited, None
         except ValueError as err:
             err = err.args[0]
