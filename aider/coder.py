@@ -110,6 +110,9 @@ class Coder:
             if self.repo_map.has_ctags:
                 self.io.tool_output("Using ctags to build repo-map.")
 
+        for fname in self.get_inchat_relative_files():
+            self.io.tool_output(f"Added {fname} to the chat.")
+
     def find_common_root(self):
         if self.abs_fnames:
             common_prefix = os.path.commonpath(list(self.abs_fnames))
@@ -137,8 +140,6 @@ class Coder:
 
             if fname.is_dir():
                 continue
-
-            self.io.tool_output(f"Added {fname} to the chat.")
 
             fname = fname.resolve()
             self.abs_fnames.add(str(fname))
@@ -313,17 +314,20 @@ class Coder:
             self.io.tool_error("\n\n^C KeyboardInterrupt")
             content += "\n^C KeyboardInterrupt"
 
-        self.cur_messages += [
-            dict(role="assistant", content=content),
-        ]
-
         self.io.tool_output()
         if interrupted:
+            self.cur_messages += [dict(role="assistant", content=content)]
             return
 
         edited, edit_error = self.apply_updates(content)
         if edit_error:
             return edit_error
+
+        if self.main_model == "gpt=4" or (self.main_model == "gpt-3.5-turbo" and not edited):
+            # Don't add assistant messages to the history if they contain "edits"
+            # Because those edits are actually fully copies of the file!
+            # That wastes too much context window.
+            self.cur_messages += [dict(role="assistant", content=content)]
 
         if edited and self.auto_commits:
             self.auto_commit()
