@@ -14,8 +14,6 @@ from pygments.lexers import guess_lexer_for_filename
 from pygments.token import Token
 from pygments.util import ClassNotFound
 
-from aider import prompts
-
 from .dump import dump  # noqa: F402
 
 
@@ -61,7 +59,9 @@ class RepoMap:
     IDENT_CACHE_DIR = ".aider.ident.cache"
     TAGS_CACHE_DIR = ".aider.tags.cache"
 
-    def __init__(self, map_tokens=1024, root=None, main_model="gpt-4", io=None):
+    def __init__(
+        self, map_tokens=1024, root=None, main_model="gpt-4", io=None, repo_content_prefix=None
+    ):
         self.io = io
 
         if not root:
@@ -78,6 +78,7 @@ class RepoMap:
             self.has_ctags = False
 
         self.tokenizer = tiktoken.encoding_for_model(main_model)
+        self.repo_content_prefix = repo_content_prefix
 
     def get_repo_map(self, chat_files, other_files):
         res = self.choose_files_listing(chat_files, other_files)
@@ -91,10 +92,14 @@ class RepoMap:
         else:
             other = ""
 
-        repo_content = prompts.repo_content_prefix.format(
-            other=other,
-            ctags_msg=ctags_msg,
-        )
+        if self.repo_content_prefix:
+            repo_content = self.repo_content_prefix.format(
+                other=other,
+                ctags_msg=ctags_msg,
+            )
+        else:
+            repo_content = ""
+
         repo_content += files_listing
 
         return repo_content

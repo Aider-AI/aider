@@ -83,6 +83,9 @@ class Coder:
             self.io.tool_error(
                 f"Aider doesn't work well with {main_model}, use gpt-4 for best results."
             )
+            self.gpt_prompts = prompts.GPT35()
+        else:
+            self.gpt_prompts = prompts.GPT4()
 
         self.set_repo(fnames)
 
@@ -94,7 +97,13 @@ class Coder:
             self.find_common_root()
 
         rm_io = io if self.verbose else None
-        self.repo_map = RepoMap(map_tokens, self.root, self.main_model, rm_io)
+        self.repo_map = RepoMap(
+            map_tokens,
+            self.root,
+            self.main_model,
+            rm_io,
+            self.gpt_prompts.repo_content_prefix,
+        )
 
         if self.repo_map.has_ctags:
             capabilities_msg += "using ctags."
@@ -193,10 +202,10 @@ class Coder:
     def get_files_messages(self):
         all_content = ""
         if self.abs_fnames:
-            files_content = prompts.files_content_prefix
+            files_content = self.gpt_prompts.files_content_prefix
             files_content += self.get_files_content()
         else:
-            files_content = prompts.files_no_full_files
+            files_content = self.gpt_prompts.files_no_full_files
 
         all_content += files_content
 
@@ -213,7 +222,7 @@ class Coder:
         ]
         if self.abs_fnames:
             files_messages += [
-                dict(role="system", content=prompts.system_reminder),
+                dict(role="system", content=self.gpt_prompts.system_reminder),
             ]
 
         return files_messages
@@ -269,7 +278,7 @@ class Coder:
             # files changed, move cur messages back behind the files messages
             self.done_messages += self.cur_messages
             self.done_messages += [
-                dict(role="user", content=prompts.files_content_local_edits),
+                dict(role="user", content=self.gpt_prompts.files_content_local_edits),
                 dict(role="assistant", content="Ok."),
             ]
             self.cur_messages = []
@@ -293,7 +302,7 @@ class Coder:
             dict(role="user", content=inp),
         ]
 
-        main_sys = prompts.main_system + "\n" + prompts.system_reminder
+        main_sys = self.gpt_prompts.main_system + "\n" + self.gpt_prompts.system_reminder
         messages = [
             dict(role="system", content=main_sys),
         ]
@@ -334,14 +343,14 @@ class Coder:
             commit_hash, commit_message = res
             self.last_aider_commit_hash = commit_hash
 
-            saved_message = prompts.files_content_gpt_edits.format(
+            saved_message = self.gpt_prompts.files_content_gpt_edits.format(
                 hash=commit_hash,
                 message=commit_message,
             )
         else:
             # TODO: if not self.repo then the files_content_gpt_no_edits isn't appropriate
             self.io.tool_error("Warning: no changes found in tracked files.")
-            saved_message = prompts.files_content_gpt_no_edits
+            saved_message = self.gpt_prompts.files_content_gpt_no_edits
 
         self.done_messages += self.cur_messages
         self.done_messages += [
