@@ -221,7 +221,7 @@ class RepoMap:
         chat_rel_fnames = set()
 
         for fname in sorted(fnames):
-            dump(fname)
+            # dump(fname)
             rel_fname = os.path.relpath(fname, self.root)
 
             if fname in chat_fnames:
@@ -276,17 +276,17 @@ class RepoMap:
 
         ranked = nx.pagerank(G, weight="weight", **pers_args)
 
-        top_rank = sorted([(rank, node) for (node, rank) in ranked.items()], reverse=True)
+        # top_rank = sorted([(rank, node) for (node, rank) in ranked.items()], reverse=True)
         # Print the PageRank of each node
-        for rank, node in top_rank:
-            print(f"{rank:.03f} {node}")
+        # for rank, node in top_rank:
+        #    print(f"{rank:.03f} {node}")
 
         # distribute the rank from each source node, across all of its out edges
         ranked_definitions = defaultdict(float)
         for src in G.nodes:
             src_rank = ranked[src]
             total_weight = sum(data["weight"] for _src, _dst, data in G.out_edges(src, data=True))
-            dump(src, src_rank, total_weight)
+            # dump(src, src_rank, total_weight)
             for _src, dst, data in G.out_edges(src, data=True):
                 data["rank"] = src_rank * data["weight"] / total_weight
                 ident = data["ident"]
@@ -295,7 +295,7 @@ class RepoMap:
         ranked_tags = []
         ranked_definitions = sorted(ranked_definitions.items(), reverse=True, key=lambda x: x[1])
         for (fname, ident), rank in ranked_definitions:
-            print(f"{rank:.03f} {fname} {ident}")
+            # print(f"{rank:.03f} {fname} {ident}")
             if fname in chat_rel_fnames:
                 continue
             ranked_tags += list(definitions.get((fname, ident), []))
@@ -317,7 +317,7 @@ class RepoMap:
             middle = (lower_bound + upper_bound) // 2
             tree = to_tree(ranked_tags[:middle])
             num_tokens = self.token_count(tree)
-            dump(middle, num_tokens)
+            # dump(middle, num_tokens)
 
             if num_tokens < self.max_map_tokens:
                 best_tree = tree
