@@ -73,7 +73,8 @@ Once you understand the request you MUST:
 2. Output a new copy of each file which needs code changes.
 """
 
-    system_reminder = """When you reply with new copies of files, use the format below.
+    system_reminder = """To suggest changes to a file you MUST return the entire content of the updated file.
+You MUST use this format:
 
 exact/path/to/filename.js
 ```javascript
