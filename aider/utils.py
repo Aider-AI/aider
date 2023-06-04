@@ -99,7 +99,11 @@ def replace_most_similar_chunk(whole, part, replace):
     if max_similarity < similarity_thresh:
         return
 
-    replace_lines = replace.splitlines() + [""]
+    if replace:
+        replace_lines = replace.splitlines() + [""]
+    else:
+        replace_lines = []
+
     modified_whole = (
         whole_lines[:most_similar_chunk_start]
         + replace_lines
