@@ -53,6 +53,9 @@ print(obj.my_method(1, 2))
 print(my_function(3, 4))
 """
 
+        test_file3 = "test_file_pass.py"
+        file_content3 = "pass"
+
         with tempfile.TemporaryDirectory() as temp_dir:
             with open(os.path.join(temp_dir, test_file1), "w") as f:
                 f.write(file_content1)
@@ -60,8 +63,15 @@ print(my_function(3, 4))
             with open(os.path.join(temp_dir, test_file2), "w") as f:
                 f.write(file_content2)
 
+            with open(os.path.join(temp_dir, test_file3), "w") as f:
+                f.write(file_content3)
+
             repo_map = RepoMap(root=temp_dir)
-            other_files = [os.path.join(temp_dir, test_file1), os.path.join(temp_dir, test_file2)]
+            other_files = [
+                os.path.join(temp_dir, test_file1),
+                os.path.join(temp_dir, test_file2),
+                os.path.join(temp_dir, test_file3),
+            ]
             result = repo_map.get_repo_map([], other_files)
 
             # Check if the result contains the expected tags map with identifiers
@@ -69,6 +79,7 @@ print(my_function(3, 4))
             self.assertIn("MyClass", result)
             self.assertIn("my_method", result)
             self.assertIn("my_function", result)
+            self.assertIn("test_file_pass.py", result)
 
     def test_check_for_ctags_failure(self):
         with patch("subprocess.run") as mock_run:
