@@ -73,9 +73,6 @@ class Coder:
 
         self.commands = Commands(self.io, self)
         if not self.check_model_availability(main_model):
-            self.io.tool_error(
-                f"Your openai key does not support {main_model}, using gpt-3.5-turbo."
-            )
             main_model = "gpt-3.5-turbo"
 
         self.main_model = main_model
@@ -95,9 +92,9 @@ class Coder:
 
         if self.repo:
             rel_repo_dir = os.path.relpath(self.repo.git_dir, os.getcwd())
-            capabilities_msg = f"Using git repo {rel_repo_dir}, "
+            self.io.tool_output(f"Using git repo: {rel_repo_dir}")
         else:
-            capabilities_msg = "Not using git, "
+            self.io.tool_output("Not using git.")
             self.find_common_root()
 
         rm_io = io if self.verbose else None
@@ -109,12 +106,9 @@ class Coder:
             self.gpt_prompts.repo_content_prefix,
         )
 
-        if self.repo_map.has_ctags:
-            capabilities_msg += "using ctags."
-        else:
-            capabilities_msg += "not using ctags."
-
-        self.io.tool_output(capabilities_msg)
+        if main_model != "gpt-3.5-turbo":
+            if self.repo_map.has_ctags:
+                self.io.tool_output("Using ctags to build repo-map.")
 
     def find_common_root(self):
         if self.abs_fnames:
@@ -122,8 +116,6 @@ class Coder:
             self.root = os.path.dirname(common_prefix)
         else:
             self.root = os.getcwd()
-
-        self.io.tool_output(f"Common root directory: {self.root}")
 
     def set_repo(self, cmd_line_fnames):
         if not cmd_line_fnames:
@@ -154,7 +146,6 @@ class Coder:
         num_repos = len(set(repo_paths))
 
         if num_repos == 0:
-            self.io.tool_error("Files are not in a git repo.")
             return
         if num_repos > 1:
             self.io.tool_error("Files are in different git repos.")
