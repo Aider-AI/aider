@@ -45,7 +45,7 @@ class Coder:
         auto_commits=True,
         dirty_commits=True,
         dry_run=False,
-        use_ctags=False,
+        map_tokens=1024,
         verbose=False,
         openai_api_key=None,
     ):
@@ -99,7 +99,7 @@ class Coder:
         else:
             rm_io = None
 
-        self.repo_map = RepoMap(use_ctags, self.root, self.main_model, rm_io)
+        self.repo_map = RepoMap(map_tokens, self.root, self.main_model, rm_io)
 
     def find_common_root(self):
         if self.abs_fnames:
