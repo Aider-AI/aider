@@ -125,7 +125,7 @@ class Coder:
                 fname.touch()
 
             try:
-                repo_path = git.Repo(fname, search_parent_directories=True).git_dir
+                repo_path = git.Repo(fname, search_parent_directories=True).working_dir
                 repo_paths.append(repo_path)
             except git.exc.InvalidGitRepositoryError:
                 pass
