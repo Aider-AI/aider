@@ -108,11 +108,12 @@ class RepoMap:
 
         if self.has_ctags:
             files_listing = self.get_ranked_tags_map(chat_files, other_files)
-            num_tokens = self.token_count(files_listing)
-            if self.io:
-                self.io.tool_output(f"ctags map: {num_tokens/1024:.1f} k-tokens")
-            ctags_msg = " with selected ctags info"
-            return files_listing, ctags_msg
+            if files_listing:
+                num_tokens = self.token_count(files_listing)
+                if self.io:
+                    self.io.tool_output(f"ctags map: {num_tokens/1024:.1f} k-tokens")
+                ctags_msg = " with selected ctags info"
+                return files_listing, ctags_msg
 
         files_listing = self.get_simple_files_map(other_files)
         ctags_msg = ""
