@@ -18,7 +18,7 @@ from aider import prompts, utils
 from aider.commands import Commands
 from aider.repomap import RepoMap
 
-from .dump import dump
+# from .dump import dump
 
 
 class MissingAPIKeyError(ValueError):
@@ -470,8 +470,44 @@ class Coder:
                 live.stop()
 
     def update_files_gpt35(self, content):
-        dump(content)
-        pass
+        edited = set()
+        chat_files = self.get_inchat_relative_files()
+        if not chat_files:
+            return
+
+        lines = content.splitlines()
+        fname = None
+        new_lines = []
+        for i, line in enumerate(lines):
+            if line.startswith("```"):
+                if fname:
+                    # ending an existing block
+                    full_path = os.path.abspath(os.path.join(self.root, fname))
+                    new_lines = "\n".join(new_lines) + "\n"
+                    Path(full_path).write_text(new_lines)
+
+                    edited.add(fname)
+
+                    fname = None
+                    new_lines = []
+                    continue
+
+                # starting a new block
+                if i == 0:
+                    raise ValueError("No filename provided before ``` block")
+
+                fname = lines[i - 1].strip()
+                if fname not in chat_files:
+                    show_chat_files = " ".join(chat_files)
+                    raise ValueError(f"{fname} is not one of: {show_chat_files}")
+
+            elif fname:
+                new_lines.append(line)
+
+        if fname:
+            raise ValueError("Started a ``` block without closing it")
+
+        return edited
 
     def update_files_gpt4(self, content):
         # might raise ValueError for malformed ORIG/UPD blocks
