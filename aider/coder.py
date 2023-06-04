@@ -133,7 +133,7 @@ class Coder:
             if fname.is_dir():
                 continue
 
-            self.io.tool_output(f"Added {fname} to the chat")
+            self.io.tool_output(f"Added {fname} to the chat.")
 
             fname = fname.resolve()
             self.abs_fnames.add(str(fname))
