@@ -121,8 +121,8 @@ class TestCoder(unittest.TestCase):
         self.assertEqual(result, 'a good "commit message"')
 
     @patch("aider.coder.openai.ChatCompletion.create")
-    @patch("aider.coder.time.sleep")
-    def test_send_with_retries_rate_limit_error(self, mock_sleep, mock_chat_completion_create):
+    @patch("builtins.print")
+    def test_send_with_retries_rate_limit_error(self, mock_print, mock_chat_completion_create):
         # Mock the IO object
         mock_io = MagicMock()
 
@@ -139,12 +139,12 @@ class TestCoder(unittest.TestCase):
         # Call the send_with_retries method
         coder.send_with_retries("model", ["message"])
 
-        # Assert that time.sleep was called once
-        mock_sleep.assert_called_once()
+        # Assert that print was called once
+        mock_print.assert_called_once()
 
     @patch("aider.coder.openai.ChatCompletion.create")
-    @patch("aider.coder.time.sleep")
-    def test_send_with_retries_connection_error(self, mock_sleep, mock_chat_completion_create):
+    @patch("builtins.print")
+    def test_send_with_retries_connection_error(self, mock_print, mock_chat_completion_create):
         # Mock the IO object
         mock_io = MagicMock()
 
@@ -161,8 +161,8 @@ class TestCoder(unittest.TestCase):
         # Call the send_with_retries method
         coder.send_with_retries("model", ["message"])
 
-        # Assert that time.sleep was called once
-        mock_sleep.assert_called_once()
+        # Assert that print was called once
+        mock_print.assert_called_once()
 
 
 if __name__ == "__main__":

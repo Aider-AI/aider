@@ -2,10 +2,10 @@
 
 import os
 import sys
-import time
 import traceback
 from pathlib import Path
 
+import backoff
 import git
 import openai
 import requests
@@ -393,23 +393,19 @@ class Coder:
 
         return prompts.added_files.format(fnames=", ".join(mentioned_rel_fnames))
 
+    @backoff.on_exception(
+        backoff.expo,
+        (RateLimitError, requests.exceptions.ConnectionError),
+        max_tries=5,
+        on_backoff=lambda details: print(f"Retry in {details['wait']} seconds."),
+    )
     def send_with_retries(self, model, messages):
-        while True:
-            try:
-                return openai.ChatCompletion.create(
-                    model=model,
-                    messages=messages,
-                    temperature=0,
-                    stream=True,
-                )
-            except RateLimitError as err:
-                self.io.tool_error(f"RateLimitError: {err}")
-            except requests.exceptions.ConnectionError as err:
-                self.io.tool_error(f"ConnectionError: {err}")
-
-            retry_after = 1
-            self.io.tool_error(f"Retry in {retry_after} seconds.")
-            time.sleep(retry_after)
+        return openai.ChatCompletion.create(
+            model=model,
+            messages=messages,
+            temperature=0,
+            stream=True,
+        )
 
     def send(self, messages, model=None, silent=False):
         if not model:
