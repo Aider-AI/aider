@@ -64,7 +64,6 @@ class Coder:
         self.dirty_commits = dirty_commits
         self.dry_run = dry_run
         self.pretty = pretty
-        self.show_diffs = show_diffs
 
         if pretty:
             self.console = Console()
@@ -80,12 +79,16 @@ class Coder:
 
         self.main_model = main_model
         if main_model == "gpt-3.5-turbo":
-            self.io.tool_error(
-                f"Aider doesn't work well with {main_model}, use gpt-4 for best results."
+            self.io.tool_output(
+                f"Using {main_model}, so showing diffs and disabling ctags/repo-maps",
             )
             self.gpt_prompts = prompts.GPT35()
+            map_tokens = 0
+            show_diffs = True
         else:
             self.gpt_prompts = prompts.GPT4()
+
+        self.show_diffs = show_diffs
 
         self.set_repo(fnames)
 
