@@ -81,7 +81,7 @@ class Coder:
         self.main_model = main_model
         if main_model == "gpt-3.5-turbo":
             self.io.tool_output(
-                f"Using {main_model}, so showing diffs and disabling ctags/repo-maps",
+                f"Using {main_model}: showing diffs and disabling ctags/repo-maps.",
             )
             self.gpt_prompts = prompts.GPT35()
             map_tokens = 0
