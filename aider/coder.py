@@ -14,10 +14,11 @@ from rich.console import Console
 from rich.live import Live
 from rich.markdown import Markdown
 
-# from aider.dump import dump
 from aider import prompts, utils
 from aider.commands import Commands
 from aider.repomap import RepoMap
+
+from .dump import dump
 
 
 class MissingAPIKeyError(ValueError):
@@ -468,7 +469,11 @@ class Coder:
             if live:
                 live.stop()
 
-    def update_files(self, content):
+    def update_files_gpt35(self, content):
+        dump(content)
+        pass
+
+    def update_files_gpt4(self, content):
         # might raise ValueError for malformed ORIG/UPD blocks
         edits = list(utils.find_original_update_blocks(content))
 
@@ -676,8 +681,15 @@ class Coder:
         return set(self.get_all_relative_files()) - set(self.get_inchat_relative_files())
 
     def apply_updates(self, content):
+        if self.main_model == "gpt-4":
+            method = self.update_files_gpt4
+        elif self.main_model == "gpt-3.5-turbo":
+            method = self.update_files_gpt35
+        else:
+            raise ValueError(f"apply_updates() doesn't support {self.main_model}")
+
         try:
-            edited = self.update_files(content)
+            edited = method(content)
             return edited, None
         except ValueError as err:
             err = err.args[0]
