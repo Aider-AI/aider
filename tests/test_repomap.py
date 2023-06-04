@@ -34,8 +34,8 @@ class TestRepoMap(unittest.TestCase):
 
     def test_get_repo_map_with_identifiers(self):
         # Create a temporary directory with a sample Python file containing identifiers
-        test_file = "test_file_with_identifiers.py"
-        file_content = """\
+        test_file1 = "test_file_with_identifiers.py"
+        file_content1 = """\
 class MyClass:
     def my_method(self, arg1, arg2):
         return arg1 + arg2
@@ -44,12 +44,24 @@ def my_function(arg1, arg2):
     return arg1 * arg2
 """
 
+        test_file2 = "test_file_import.py"
+        file_content2 = """\
+from test_file_with_identifiers import MyClass
+
+obj = MyClass()
+print(obj.my_method(1, 2))
+print(my_function(3, 4))
+"""
+
         with tempfile.TemporaryDirectory() as temp_dir:
-            with open(os.path.join(temp_dir, test_file), "w") as f:
-                f.write(file_content)
+            with open(os.path.join(temp_dir, test_file1), "w") as f:
+                f.write(file_content1)
+
+            with open(os.path.join(temp_dir, test_file2), "w") as f:
+                f.write(file_content2)
 
             repo_map = RepoMap(root=temp_dir)
-            other_files = [os.path.join(temp_dir, test_file)]
+            other_files = [os.path.join(temp_dir, test_file1), os.path.join(temp_dir, test_file2)]
             result = repo_map.get_repo_map([], other_files)
 
             # Check if the result contains the expected tags map with identifiers
@@ -57,7 +69,6 @@ def my_function(arg1, arg2):
             self.assertIn("MyClass", result)
             self.assertIn("my_method", result)
             self.assertIn("my_function", result)
-
     def test_check_for_ctags_failure(self):
         with patch("subprocess.run") as mock_run:
             mock_run.side_effect = Exception("ctags not found")
