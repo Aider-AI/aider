@@ -14,10 +14,10 @@ Once you understand the request you MUST:
 
 system_reminder = """When you reply with new copies of files, use the format below.
 
-exact/path/to/filename.py
-```python
-file content goes in the
-triple backticked fenced block
+exact/path/to/filename.js
+```javascript
+// file content goes in the
+// triple backticked fenced block
 ```
 """
 
