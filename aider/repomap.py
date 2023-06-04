@@ -31,11 +31,15 @@ def to_tree(tags):
     for tag in tags:
         tag = list(tag)
 
-        for i in range(len(last)):
+        for i in range(len(last) + 1):
+            if i == len(last):
+                break
             if last[i] != tag[i]:
                 break
 
         num_common = i
+        dump(repr(tag), num_common)
+
         indent = tab * num_common
         rest = tag[num_common:]
         for item in rest:
@@ -283,11 +287,6 @@ class RepoMap:
         except ZeroDivisionError:
             return []
 
-        # top_rank = sorted([(rank, node) for (node, rank) in ranked.items()], reverse=True)
-        # Print the PageRank of each node
-        # for rank, node in top_rank:
-        #    print(f"{rank:.03f} {node}")
-
         # distribute the rank from each source node, across all of its out edges
         ranked_definitions = defaultdict(float)
         for src in G.nodes:
@@ -306,6 +305,10 @@ class RepoMap:
             if fname in chat_rel_fnames:
                 continue
             ranked_tags += list(definitions.get((fname, ident), []))
+
+        top_rank = sorted([(rank, node) for (node, rank) in ranked.items()], reverse=True)
+        for rank, fname in top_rank:
+            ranked_tags.append((fname,))
 
         return ranked_tags
 
