@@ -8,6 +8,7 @@ from pathlib import Path
 
 import git
 import openai
+import requests
 from openai.error import RateLimitError
 from rich.console import Console
 from rich.live import Live
@@ -390,6 +391,24 @@ class Coder:
 
         return prompts.added_files.format(fnames=", ".join(mentioned_rel_fnames))
 
+    def send_with_retries(self, model, messages):
+        while True:
+            try:
+                return openai.ChatCompletion.create(
+                    model=model,
+                    messages=messages,
+                    temperature=0,
+                    stream=True,
+                )
+            except RateLimitError as err:
+                self.io.tool_error(f"RateLimitError: {err}")
+            except requests.exceptions.ConnectionError as err:
+                self.io.tool_error(f"ConnectionError: {err}")
+
+            retry_after = 1
+            self.io.tool_error(f"Retry in {retry_after} seconds.")
+            time.sleep(retry_after)
+
     def send(self, messages, model=None, silent=False):
         if not model:
             model = self.main_model
@@ -397,21 +416,7 @@ class Coder:
         self.resp = ""
         interrupted = False
         try:
-            while True:
-                try:
-                    completion = openai.ChatCompletion.create(
-                        model=model,
-                        messages=messages,
-                        temperature=0,
-                        stream=True,
-                    )
-                    break
-                except RateLimitError as err:
-                    retry_after = 1
-                    self.io.tool_error(f"RateLimitError: {err}")
-                    self.io.tool_error(f"Retry in {retry_after} seconds.")
-                    time.sleep(retry_after)
-
+            completion = self.send_with_retries(model, messages)
             self.show_send_output(completion, silent)
         except KeyboardInterrupt:
             interrupted = True
