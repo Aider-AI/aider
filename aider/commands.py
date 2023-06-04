@@ -118,7 +118,8 @@ class Commands:
             "was reset and removed from git.\n"
         )
 
-        return prompts.undo_command_reply
+        if self.coder.main_model != "gpt-3.5-turbo":
+            return prompts.undo_command_reply
 
     def cmd_diff(self, args):
         "Display the diff of the last aider commit"

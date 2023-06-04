@@ -70,7 +70,7 @@ If the request is ambiguous, ask questions.
 
 Once you understand the request you MUST:
 1. Think step-by-step and *briefly* explain the needed code changes.
-2. Output a new copy of each file which needs code changes.
+2. If changes are needed, output a copy of each file that needs changes.
 """
 
     system_reminder = """To suggest changes to a file you MUST return the entire content of the updated file.
@@ -84,6 +84,7 @@ exact/path/to/filename.js
 """
 
     files_content_prefix = "Here is the current content of the files:\n"
+    files_no_full_files = "I am not sharing any files yet."
 
 
 # COMMIT

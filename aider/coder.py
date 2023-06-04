@@ -298,7 +298,10 @@ class Coder:
             dict(role="user", content=inp),
         ]
 
-        main_sys = self.gpt_prompts.main_system + "\n" + self.gpt_prompts.system_reminder
+        main_sys = self.gpt_prompts.main_system
+        if self.main_model == "gpt-4":
+            main_sys += "\n" + self.gpt_prompts.system_reminder
+
         messages = [
             dict(role="system", content=main_sys),
         ]
