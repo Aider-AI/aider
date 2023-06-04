@@ -20,6 +20,9 @@ from .dump import dump  # noqa: F402
 
 
 def to_tree(tags):
+    if not tags:
+        return ""
+
     tags = sorted(tags)
 
     output = ""
