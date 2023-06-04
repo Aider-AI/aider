@@ -166,7 +166,7 @@ def main(args=None, input=None, output=None):
         "--map-tokens",
         type=int,
         default=1024,
-        help="Number of tokens to map for code understanding (default: 1024)",
+        help="Max number of tokens to use for repo map, use 0 to disable (default: 1024)",
     )
     parser.add_argument(
         "--yes",
