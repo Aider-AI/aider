@@ -72,7 +72,6 @@ class Coder:
         else:
             self.console = Console(force_terminal=True, no_color=True)
 
-        self.commands = Commands(self.io, self)
         if not self.check_model_availability(main_model):
             main_model = Models.GPT35.value
 
@@ -88,6 +87,8 @@ class Coder:
             self.gpt_prompts = prompts.GPT4()
 
         self.show_diffs = show_diffs
+
+        self.commands = Commands(self.io, self)
 
         self.set_repo(fnames)
 

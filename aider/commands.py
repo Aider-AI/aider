@@ -4,6 +4,7 @@ import subprocess
 import sys
 
 import git
+import tiktoken
 from prompt_toolkit.completion import Completion
 
 from aider import prompts
@@ -14,6 +15,7 @@ class Commands:
     def __init__(self, io, coder):
         self.io = io
         self.coder = coder
+        self.tokenizer = tiktoken.encoding_for_model(coder.main_model)
 
     def is_command(self, inp):
         if inp[0] == "/":
@@ -75,6 +77,13 @@ class Commands:
 
         commit_message = args.strip()
         self.coder.commit(message=commit_message, which="repo_files")
+
+    def cmd_clear(self, args):
+        "Clear the chat history and drop all files from the chat context"
+
+        self.coder.abs_fnames = set()
+        self.coder.done_messages = []
+        self.coder.cur_messages = []
 
     def cmd_undo(self, args):
         "Undo the last git commit if it was done by aider"
