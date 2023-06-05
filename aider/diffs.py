@@ -17,12 +17,36 @@ def main():
     with open(file_updated, "r") as f:
         lines_updated = f.readlines()
 
-    unified_diff = difflib.unified_diff(lines_orig, lines_updated, fromfile=file_orig, tofile=file_updated)
-    for line in unified_diff:
-        print(line, end="")
+    for i in range(len(file_updated)):
+        diff_partial_update(lines_orig, lines_updated[:i])
+        input()
+
+
+def diff_partial_update(lines_orig, lines_updated):
+    """
+    Given only the first part of an updated file, show the diff while
+    ignoring the block of "deleted" lines that are past the end of the
+    partially complete update.
+    """
+
+    last_non_deleted = find_last_non_deleted(lines_orig, lines_updated)
+    dump(last_non_deleted)
+    if last_non_deleted is None:
+        return ""
+
+    lines_orig = lines_orig[:last_non_deleted]
+
+    diff = difflib.unified_diff(lines_orig, lines_updated)
+    # unified_diff = list(unified_diff)[2:]
+
+    diff = "".join(diff)
+
+    print(diff)
+
+    return diff
+
 
 def find_last_non_deleted(lines_orig, lines_updated):
-
     diff = list(difflib.ndiff(lines_orig, lines_updated))
 
     num_orig = 0
@@ -35,13 +59,13 @@ def find_last_non_deleted(lines_orig, lines_updated):
             num_orig += 1
             last_non_deleted_orig = num_orig
         elif code == "-":
-            # line only in file_orig
+            # line only in orig
             num_orig += 1
         elif code == "+":
-            # line only in file_updated
+            # line only in updated
             pass
 
-    dump(last_non_deleted_orig)
+    return last_non_deleted_orig
 
 
 if __name__ == "__main__":
