@@ -60,9 +60,10 @@ def fname_to_components(fname, with_colon):
 
 
 class RepoMap:
+    CACHE_VERSION = 1
     ctags_cmd = ["ctags", "--fields=+S", "--extras=-F", "--output-format=json"]
-    IDENT_CACHE_DIR = ".aider.ident.cache"
-    TAGS_CACHE_DIR = ".aider.tags.cache"
+    IDENT_CACHE_DIR = f".aider.ident.cache.v{CACHE_VERSION}"
+    TAGS_CACHE_DIR = f".aider.tags.cache.v{CACHE_VERSION}"
 
     def __init__(self, map_tokens=1024, root=None, main_model="gpt-4", io=None):
         self.io = io
