@@ -1,3 +1,4 @@
+import json
 import os
 import shlex
 import subprocess
@@ -7,7 +8,7 @@ import git
 import tiktoken
 from prompt_toolkit.completion import Completion
 
-from aider import prompts
+from aider import prompts, utils
 from aider.utils import Models
 
 
@@ -84,6 +85,58 @@ class Commands:
         self.coder.abs_fnames = set()
         self.coder.done_messages = []
         self.coder.cur_messages = []
+
+    def cmd_tokens(self, args):
+        "Report on the number of tokens used by the current chat context"
+
+        res = []
+
+        # system messages
+        msgs = [
+            dict(role="system", content=self.coder.gpt_prompts.main_system),
+            dict(role="system", content=self.coder.gpt_prompts.system_reminder),
+        ]
+        tokens = len(self.tokenizer.encode(json.dumps(msgs)))
+        res.append((tokens, "system messages"))
+
+        # chat history
+        msgs = self.coder.done_messages + self.coder.cur_messages
+        if msgs:
+            msgs = [dict(role="dummy", content=msg) for msg in msgs]
+            msgs = json.dumps(msgs)
+            tokens = len(self.tokenizer.encode(msgs))
+            res.append((tokens, "chat history"))
+
+        # repo map
+        other_files = set(self.coder.get_all_abs_files()) - set(self.coder.abs_fnames)
+        repo_content = self.coder.repo_map.get_repo_map(self.coder.abs_fnames, other_files)
+        if repo_content:
+            tokens = len(self.tokenizer.encode(repo_content))
+            res.append((tokens, "repository map"))
+
+        # files
+        for fname in self.coder.abs_fnames:
+            relative_fname = self.coder.get_rel_fname(fname)
+            quoted = utils.quoted_file(fname, relative_fname)
+            tokens = len(self.tokenizer.encode(quoted))
+            res.append((tokens, relative_fname))
+
+        print("Context window usage, in k-tokens:")
+        print()
+
+        total = 0
+        for tk, msg in res:
+            tk /= 1024
+            total += tk
+            print(f"{tk:6.3f} {msg}")
+
+        print()
+        print(f"{total:6.3f} total")
+
+        limit = 8 if self.coder.main_model == Models.GPT4.value else 4
+        remaining = limit - total
+        print(f"{remaining:6.3f} remaining")
+        print(f"{limit:6.3f} max context window")
 
     def cmd_undo(self, args):
         "Undo the last git commit if it was done by aider"
