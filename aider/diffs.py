@@ -17,6 +17,12 @@ def main():
     with open(file_updated, "r") as f:
         lines_updated = f.readlines()
 
+    unified_diff = difflib.unified_diff(lines_orig, lines_updated, fromfile=file_orig, tofile=file_updated)
+    for line in unified_diff:
+        print(line, end="")
+
+def find_last_non_deleted(lines_orig, lines_updated):
+
     diff = list(difflib.ndiff(lines_orig, lines_updated))
 
     num_orig = 0
