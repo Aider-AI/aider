@@ -15,7 +15,7 @@ from rich.console import Console
 from rich.text import Text
 
 
-class FileContentCompleter(Completer):
+class AutoCompleter(Completer):
     def __init__(self, root, rel_fnames, addable_rel_fnames, commands):
         self.commands = commands
         self.addable_rel_fnames = addable_rel_fnames
@@ -142,9 +142,7 @@ class InputOutput:
             style = None
 
         while True:
-            completer_instance = FileContentCompleter(
-                root, rel_fnames, addable_rel_fnames, commands
-            )
+            completer_instance = AutoCompleter(root, rel_fnames, addable_rel_fnames, commands)
             if multiline_input:
                 show = ". "
 
