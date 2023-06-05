@@ -36,7 +36,6 @@ def to_tree(tags):
                 break
 
         num_common = i
-        dump(repr(tag), num_common)
 
         indent = tab * num_common
         rest = tag[num_common:]
