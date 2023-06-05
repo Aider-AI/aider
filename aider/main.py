@@ -123,27 +123,27 @@ def main(args=None, input=None, output=None):
         action="store_true",
         dest="auto_commits",
         default=True,
-        help="Enable auto commit of changes (default: True)",
+        help="Enable auto commit of GPT changes (default: True)",
     )
 
     parser.add_argument(
         "--no-auto-commits",
         action="store_false",
         dest="auto_commits",
-        help="Disable auto commit of changes",
+        help="Disable auto commit of GPT changes",
     )
     parser.add_argument(
         "--dirty-commits",
         action="store_true",
         dest="dirty_commits",
-        help="Enable dirty commit of changes",
+        help="Enable commits when repo is found dirty",
         default=True,
     )
     parser.add_argument(
         "--no-dirty-commits",
         action="store_false",
         dest="dirty_commits",
-        help="Disable dirty commit of changes",
+        help="Disable commits when repo is found dirty",
     )
     parser.add_argument(
         "--openai-api-key",
