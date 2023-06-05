@@ -7,6 +7,7 @@ import git
 from prompt_toolkit.completion import Completion
 
 from aider import prompts
+from aider.utils import Models
 
 
 class Commands:
@@ -118,7 +119,7 @@ class Commands:
             "was reset and removed from git.\n"
         )
 
-        if self.coder.main_model != "gpt-3.5-turbo":
+        if self.coder.main_model != Models.GPT35.value:
             return prompts.undo_command_reply
 
     def cmd_diff(self, args):

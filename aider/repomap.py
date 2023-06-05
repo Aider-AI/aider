@@ -14,6 +14,8 @@ from pygments.lexers import guess_lexer_for_filename
 from pygments.token import Token
 from pygments.util import ClassNotFound
 
+from aider.utils import Models
+
 from .dump import dump  # noqa: F402
 
 
@@ -64,7 +66,12 @@ class RepoMap:
     TAGS_CACHE_DIR = f".aider.tags.cache.v{CACHE_VERSION}"
 
     def __init__(
-        self, map_tokens=1024, root=None, main_model="gpt-4", io=None, repo_content_prefix=None
+        self,
+        map_tokens=1024,
+        root=None,
+        main_model=Models.GPT4.value,
+        io=None,
+        repo_content_prefix=None,
     ):
         self.io = io
 

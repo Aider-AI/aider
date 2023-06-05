@@ -6,6 +6,7 @@ import git
 
 from aider.coder import Coder
 from aider.io import InputOutput
+from aider.utils import Models
 
 
 def get_git_root():
@@ -75,15 +76,15 @@ def main(args=None, input=None, output=None):
     parser.add_argument(
         "--model",
         metavar="MODEL",
-        default="gpt-4",
-        help="Specify the model to use for the main chat (default: gpt-4)",
+        default=Models.GPT4.value,
+        help=f"Specify the model to use for the main chat (default: {Models.GPT4.value})",
     )
     parser.add_argument(
         "-3",
         action="store_const",
         dest="model",
-        const="gpt-3.5-turbo",
-        help="Use gpt-3.5-turbo model for the main chat (not advised)",
+        const=Models.GPT35.value,
+        help=f"Use {Models.GPT35.value} model for the main chat (not advised)",
     )
     parser.add_argument(
         "--pretty",

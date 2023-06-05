@@ -17,6 +17,7 @@ from rich.markdown import Markdown
 from aider import prompts, utils
 from aider.commands import Commands
 from aider.repomap import RepoMap
+from aider.utils import Models
 
 # from .dump import dump
 
@@ -39,7 +40,7 @@ class Coder:
     def __init__(
         self,
         io,
-        main_model="gpt-4",
+        main_model=Models.GPT4.value,
         fnames=None,
         pretty=True,
         show_diffs=False,
@@ -73,10 +74,10 @@ class Coder:
 
         self.commands = Commands(self.io, self)
         if not self.check_model_availability(main_model):
-            main_model = "gpt-3.5-turbo"
+            main_model = Models.GPT35.value
 
         self.main_model = main_model
-        if main_model == "gpt-3.5-turbo":
+        if main_model == Models.GPT35.value:
             self.io.tool_output(
                 f"Using {main_model}: showing diffs and disabling ctags/repo-maps.",
             )
@@ -106,7 +107,7 @@ class Coder:
             self.gpt_prompts.repo_content_prefix,
         )
 
-        if main_model != "gpt-3.5-turbo":
+        if main_model != Models.GPT35.value:
             if self.repo_map.has_ctags:
                 self.io.tool_output("Using ctags to build repo-map.")
 
@@ -299,7 +300,7 @@ class Coder:
         ]
 
         main_sys = self.gpt_prompts.main_system
-        if self.main_model == "gpt-4":
+        if self.main_model == Models.GPT4.value:
             main_sys += "\n" + self.gpt_prompts.system_reminder
 
         messages = [
@@ -326,7 +327,7 @@ class Coder:
         if edit_error:
             return edit_error
 
-        if self.main_model == "gpt=4" or (self.main_model == "gpt-3.5-turbo" and not edited):
+        if self.main_model == "gpt=4" or (self.main_model == Models.GPT35.value and not edited):
             # Don't add assistant messages to the history if they contain "edits"
             # Because those edits are actually fully copies of the file!
             # That wastes too much context window.
@@ -562,7 +563,9 @@ class Coder:
 
     def get_commit_message(self, diffs, context):
         if len(diffs) >= 4 * 1024 * 4:
-            self.io.tool_error("Diff is too large for gpt-3.5-turbo to generate a commit message.")
+            self.io.tool_error(
+                f"Diff is too large for {Models.GPT35.value} to generate a commit message."
+            )
             return
 
         diffs = "# Diffs:\n" + diffs
@@ -575,12 +578,13 @@ class Coder:
         try:
             commit_message, interrupted = self.send(
                 messages,
-                model="gpt-3.5-turbo",
+                model=Models.GPT35.value,
                 silent=True,
             )
         except openai.error.InvalidRequestError:
             self.io.tool_error(
-                "Failed to generate commit message using gpt-3.5-turbo due to an invalid request."
+                f"Failed to generate commit message using {Models.GPT35.value} due to an invalid"
+                " request."
             )
             return
 
@@ -590,7 +594,7 @@ class Coder:
 
         if interrupted:
             self.io.tool_error(
-                "Unable to get commit message from gpt-3.5-turbo. Use /commit to try again."
+                f"Unable to get commit message from {Models.GPT35.value}. Use /commit to try again."
             )
             return
 
@@ -715,9 +719,9 @@ class Coder:
         return set(self.get_all_relative_files()) - set(self.get_inchat_relative_files())
 
     def apply_updates(self, content):
-        if self.main_model == "gpt-4":
+        if self.main_model == Models.GPT4.value:
             method = self.update_files_gpt4
-        elif self.main_model == "gpt-3.5-turbo":
+        elif self.main_model == Models.GPT35.value:
             method = self.update_files_gpt35
         else:
             raise ValueError(f"apply_updates() doesn't support {self.main_model}")
