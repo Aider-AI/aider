@@ -27,3 +27,4 @@ configargparse
 PyYAML
 backoff==2.2.1
 networkx==3.1
+diskcache==5.6.1
