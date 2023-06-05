@@ -55,6 +55,7 @@ class AutoCompleter(Completer):
         if text[0] == "/":
             if len(words) == 1 and not text[-1].isspace():
                 candidates = self.commands.get_commands()
+                candidates = [(cmd, cmd) for cmd in candidates]
             else:
                 for completion in self.commands.get_command_completions(words[0][1:], words[-1]):
                     yield completion
@@ -62,18 +63,21 @@ class AutoCompleter(Completer):
         else:
             candidates = self.words
             candidates.update(set(self.fname_to_rel_fnames))
+            candidates = [(word, f"`{word}`") for word in candidates]
 
         last_word = words[-1]
-        for word in candidates:
-            if word.lower().startswith(last_word.lower()):
-                rel_fnames = self.fname_to_rel_fnames.get(word, [])
+        for word_match, word_insert in candidates:
+            if word_match.lower().startswith(last_word.lower()):
+                rel_fnames = self.fname_to_rel_fnames.get(word_match, [])
                 if rel_fnames:
                     for rel_fname in rel_fnames:
                         yield Completion(
                             f"`{rel_fname}`", start_position=-len(last_word), display=rel_fname
                         )
                 else:
-                    yield Completion(f"`{word}`", start_position=-len(last_word), display=word)
+                    yield Completion(
+                        word_insert, start_position=-len(last_word), display=word_match
+                    )
 
 
 class InputOutput:
