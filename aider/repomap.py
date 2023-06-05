@@ -58,9 +58,10 @@ def fname_to_components(fname, with_colon):
 
 
 class RepoMap:
+    CACHE_VERSION = 1
     ctags_cmd = ["ctags", "--fields=+S", "--extras=-F", "--output-format=json"]
-    IDENT_CACHE_DIR = ".aider.ident.cache"
-    TAGS_CACHE_DIR = ".aider.tags.cache"
+    IDENT_CACHE_DIR = f".aider.ident.cache.v{CACHE_VERSION}"
+    TAGS_CACHE_DIR = f".aider.tags.cache.v{CACHE_VERSION}"
 
     def __init__(
         self, map_tokens=1024, root=None, main_model="gpt-4", io=None, repo_content_prefix=None
@@ -318,7 +319,8 @@ class RepoMap:
 
         top_rank = sorted([(rank, node) for (node, rank) in ranked.items()], reverse=True)
         for rank, fname in top_rank:
-            rel_other_fnames_without_tags.remove(fname)
+            if fname in rel_other_fnames_without_tags:
+                rel_other_fnames_without_tags.remove(fname)
             if fname not in fnames_already_included:
                 ranked_tags.append((fname,))
 
