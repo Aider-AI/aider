@@ -314,7 +314,8 @@ class RepoMap:
 
         top_rank = sorted([(rank, node) for (node, rank) in ranked.items()], reverse=True)
         for rank, fname in top_rank:
-            rel_other_fnames_without_tags.remove(fname)
+            if fname in rel_other_fnames_without_tags:
+                rel_other_fnames_without_tags.remove(fname)
             if fname not in fnames_already_included:
                 ranked_tags.append((fname,))
 
