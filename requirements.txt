@@ -26,3 +26,4 @@ tiktoken==0.4.0
 configargparse
 PyYAML
 backoff==2.2.1
+networkx==3.1
