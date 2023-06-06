@@ -247,7 +247,7 @@ class Coder:
             except EOFError:
                 return
 
-    def should_auto_commit(self, inp):
+    def should_dirty_commit(self, inp):
         is_commit_command = inp and inp.startswith("/commit")
         if is_commit_command:
             return
@@ -272,7 +272,7 @@ class Coder:
 
         self.num_control_c = 0
 
-        if self.should_auto_commit(inp):
+        if self.should_dirty_commit(inp):
             self.commit(ask=True, which="repo_files")
 
             # files changed, move cur messages back behind the files messages
