@@ -478,7 +478,7 @@ class Coder:
                     show_resp = self.resp
                     if self.main_model == Models.GPT35:
                         try:
-                            show_resp = self.update_files_gpt35(self.resp, just_diffs=True)
+                            show_resp = self.update_files_gpt35(self.resp, mode="diff")
                         except ValueError:
                             pass
                     md = Markdown(show_resp, style="blue", code_theme="default")
@@ -490,11 +490,11 @@ class Coder:
             if live:
                 live.stop()
 
-    def update_files_gpt35(self, content, just_diffs=False):
+    def update_files_gpt35(self, content, mode="update"):
         edited = set()
         chat_files = self.get_inchat_relative_files()
         if not chat_files:
-            if just_diffs:
+            if mode == "diff":
                 return content
             return
 
@@ -508,7 +508,7 @@ class Coder:
                     # ending an existing block
                     full_path = os.path.abspath(os.path.join(self.root, fname))
 
-                    if just_diffs:
+                    if mode == "diff":
                         with open(full_path, "r") as f:
                             orig_lines = f.readlines()
 
@@ -544,12 +544,12 @@ class Coder:
             else:
                 output.append(line)
 
-        if just_diffs:
+        if mode == "diff":
             if fname:
                 # ending an existing block
                 full_path = os.path.abspath(os.path.join(self.root, fname))
 
-                if just_diffs:
+                if mode == "diff":
                     with open(full_path, "r") as f:
                         orig_lines = f.readlines()
 
