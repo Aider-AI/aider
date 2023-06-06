@@ -85,7 +85,10 @@ class Coder:
         self.main_model = main_model
         if main_model == Models.GPT35:
             self.io.tool_output(
-                f"Using {main_model.value}: showing diffs and disabling ctags/repo-maps.",
+                (
+                    f"Using {main_model.value} (experimental): showing diffs and disabling"
+                    " ctags/repo-maps."
+                ),
             )
             self.gpt_prompts = prompts.GPT35()
             show_diffs = True
