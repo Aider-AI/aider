@@ -36,7 +36,7 @@ class Coder:
     def check_model_availability(self, main_model):
         available_models = openai.Model.list()
         model_ids = [model.id for model in available_models["data"]]
-        return main_model in model_ids
+        return main_model.value in model_ids
 
     def __init__(
         self,
