@@ -474,10 +474,12 @@ class Coder:
                     continue
 
                 if self.pretty:
+                    show_resp = self.resp
                     if self.main_model == Models.GPT35:
-                        show_resp = self.update_files_gpt35(self.resp, just_diffs=True)
-                    else:
-                        show_resp = self.resp
+                        try:
+                            show_resp = self.update_files_gpt35(self.resp, just_diffs=True)
+                        except ValueError:
+                            pass
                     md = Markdown(show_resp, style="blue", code_theme="default")
                     live.update(md)
                 else:
@@ -530,8 +532,11 @@ class Coder:
 
                 fname = lines[i - 1].strip()
                 if fname not in chat_files:
-                    show_chat_files = " ".join(chat_files)
-                    raise ValueError(f"{fname} is not one of: {show_chat_files}")
+                    if len(chat_files) == 1:
+                        fname = list(chat_files)[0]
+                    else:
+                        show_chat_files = " ".join(chat_files)
+                        raise ValueError(f"{fname} is not one of: {show_chat_files}")
 
             elif fname:
                 new_lines.append(line)
