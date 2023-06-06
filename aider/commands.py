@@ -109,10 +109,11 @@ class Commands:
 
         # repo map
         other_files = set(self.coder.get_all_abs_files()) - set(self.coder.abs_fnames)
-        repo_content = self.coder.repo_map.get_repo_map(self.coder.abs_fnames, other_files)
-        if repo_content:
-            tokens = len(self.tokenizer.encode(repo_content))
-            res.append((tokens, "repository map"))
+        if self.coder.repo_map:
+            repo_content = self.coder.repo_map.get_repo_map(self.coder.abs_fnames, other_files)
+            if repo_content:
+                tokens = len(self.tokenizer.encode(repo_content))
+                res.append((tokens, "repository map"))
 
         # files
         for fname in self.coder.abs_fnames:
