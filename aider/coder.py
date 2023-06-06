@@ -267,6 +267,15 @@ class Coder:
             return
         return True
 
+    def move_back_cur_messages(self, message):
+        self.done_messages += self.cur_messages
+        if message:
+            self.done_messages += [
+                dict(role="user", content=message),
+                dict(role="assistant", content="Ok."),
+            ]
+        self.cur_messages = []
+
     def run_loop(self):
         inp = self.io.get_input(
             self.root,
@@ -281,12 +290,7 @@ class Coder:
             self.commit(ask=True, which="repo_files")
 
             # files changed, move cur messages back behind the files messages
-            self.done_messages += self.cur_messages
-            self.done_messages += [
-                dict(role="user", content=self.gpt_prompts.files_content_local_edits),
-                dict(role="assistant", content="Ok."),
-            ]
-            self.cur_messages = []
+            self.move_back_cur_messages(self.gpt_prompts.files_content_local_edits)
 
             if inp.strip():
                 self.io.tool_output("Use up-arrow to retry previous command:", inp)
@@ -315,8 +319,7 @@ class Coder:
             dict(role="system", content=main_sys),
         ]
 
-        if self.main_model == Models.GPT4:
-            messages += self.done_messages
+        messages += self.done_messages
 
         messages += self.get_files_messages()
         messages += self.cur_messages
@@ -348,8 +351,12 @@ class Coder:
                 dict(role="assistant", content=self.gpt_prompts.redacted_edit_message)
             ]
 
-        if edited and self.auto_commits:
-            self.auto_commit()
+        if edited:
+            if self.auto_commits:
+                saved_message = self.auto_commit()
+            else:
+                saved_message = None
+            self.move_back_cur_messages(saved_message)
 
         add_rel_files_message = self.check_for_file_mentions(content)
         if add_rel_files_message:
@@ -370,13 +377,7 @@ class Coder:
             self.io.tool_error("Warning: no changes found in tracked files.")
             saved_message = self.gpt_prompts.files_content_gpt_no_edits
 
-        self.done_messages += self.cur_messages
-        self.done_messages += [
-            dict(role="user", content=saved_message),
-            dict(role="assistant", content="Ok."),
-        ]
-        self.cur_messages = []
-        return
+        return saved_message
 
     def check_for_file_mentions(self, content):
         words = set(word for word in content.split())
