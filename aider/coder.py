@@ -501,10 +501,9 @@ class Coder:
                             orig_lines,
                             new_lines,
                         ).splitlines()
-                        # dump(show_diff)
                         output += show_diff
                     else:
-                        new_lines = "\n".join(new_lines) + "\n"
+                        new_lines = "".join(new_lines)
                         Path(full_path).write_text(new_lines)
                         edited.add(fname)
 

@@ -44,7 +44,7 @@ def diff_partial_update(lines_orig, lines_updated):
     # unified_diff = list(unified_diff)[2:]
     # dump(repr(list(diff)))
 
-    diff = "".join(diff) + "\n"
+    diff = "".join(diff)
 
     diff = "```diff\n" + diff + "```\n"
 
