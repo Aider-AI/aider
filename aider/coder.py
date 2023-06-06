@@ -31,6 +31,7 @@ class Coder:
     repo = None
     last_aider_commit_hash = None
     last_asked_for_commit_time = 0
+    repo_map = None
 
     def check_model_availability(self, main_model):
         available_models = openai.Model.list()
@@ -73,7 +74,7 @@ class Coder:
             self.console = Console(force_terminal=True, no_color=True)
 
         main_model = Models(main_model)
-        if not self.check_model_availability(main_model):
+        if main_model != Models.GPT35 and not self.check_model_availability(main_model):
             main_model = Models.GPT35
 
         self.main_model = main_model
@@ -82,7 +83,6 @@ class Coder:
                 f"Using {main_model.value}: showing diffs and disabling ctags/repo-maps.",
             )
             self.gpt_prompts = prompts.GPT35()
-            map_tokens = 0
             show_diffs = True
         else:
             self.gpt_prompts = prompts.GPT4()
@@ -100,16 +100,16 @@ class Coder:
             self.io.tool_output("Not using git.")
             self.find_common_root()
 
-        rm_io = io if self.verbose else None
-        self.repo_map = RepoMap(
-            map_tokens,
-            self.root,
-            self.main_model,
-            rm_io,
-            self.gpt_prompts.repo_content_prefix,
-        )
+        if main_model == Models.GPT4:
+            rm_io = io if self.verbose else None
+            self.repo_map = RepoMap(
+                map_tokens,
+                self.root,
+                self.main_model,
+                rm_io,
+                self.gpt_prompts.repo_content_prefix,
+            )
 
-        if main_model != Models.GPT35:
             if self.repo_map.has_ctags:
                 self.io.tool_output("Using ctags to build repo-map.")
 
@@ -209,11 +209,12 @@ class Coder:
         all_content += files_content
 
         other_files = set(self.get_all_abs_files()) - set(self.abs_fnames)
-        repo_content = self.repo_map.get_repo_map(self.abs_fnames, other_files)
-        if repo_content:
-            if all_content:
-                all_content += "\n"
-            all_content += repo_content
+        if self.repo_map:
+            repo_content = self.repo_map.get_repo_map(self.abs_fnames, other_files)
+            if repo_content:
+                if all_content:
+                    all_content += "\n"
+                all_content += repo_content
 
         files_messages = [
             dict(role="user", content=all_content),
