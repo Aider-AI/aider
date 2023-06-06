@@ -1,7 +1,7 @@
 import difflib
 import sys
 
-from .dump import dump
+from .dump import dump  # noqa: F401
 
 
 def main():
@@ -18,7 +18,8 @@ def main():
         lines_updated = f.readlines()
 
     for i in range(len(file_updated)):
-        diff_partial_update(lines_orig, lines_updated[:i])
+        res = diff_partial_update(lines_orig, lines_updated[:i])
+        print(res)
         input()
 
 
@@ -29,8 +30,11 @@ def diff_partial_update(lines_orig, lines_updated):
     partially complete update.
     """
 
+    # dump(lines_orig)
+    # dump(lines_updated)
+
     last_non_deleted = find_last_non_deleted(lines_orig, lines_updated)
-    dump(last_non_deleted)
+    # dump(last_non_deleted)
     if last_non_deleted is None:
         return ""
 
@@ -38,10 +42,13 @@ def diff_partial_update(lines_orig, lines_updated):
 
     diff = difflib.unified_diff(lines_orig, lines_updated)
     # unified_diff = list(unified_diff)[2:]
+    # dump(repr(list(diff)))
 
-    diff = "".join(diff)
+    diff = "".join(diff) + "\n"
 
-    print(diff)
+    diff = "```diff\n" + diff + "```\n"
+
+    # print(diff)
 
     return diff
 
