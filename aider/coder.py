@@ -72,13 +72,14 @@ class Coder:
         else:
             self.console = Console(force_terminal=True, no_color=True)
 
+        main_model = Models(main_model)
         if not self.check_model_availability(main_model):
-            main_model = Models.GPT35.value
+            main_model = Models.GPT35
 
         self.main_model = main_model
-        if main_model == Models.GPT35.value:
+        if main_model == Models.GPT35:
             self.io.tool_output(
-                f"Using {main_model}: showing diffs and disabling ctags/repo-maps.",
+                f"Using {main_model.value}: showing diffs and disabling ctags/repo-maps.",
             )
             self.gpt_prompts = prompts.GPT35()
             map_tokens = 0
@@ -108,7 +109,7 @@ class Coder:
             self.gpt_prompts.repo_content_prefix,
         )
 
-        if main_model != Models.GPT35.value:
+        if main_model != Models.GPT35:
             if self.repo_map.has_ctags:
                 self.io.tool_output("Using ctags to build repo-map.")
 
@@ -301,7 +302,7 @@ class Coder:
         ]
 
         main_sys = self.gpt_prompts.main_system
-        if self.main_model == Models.GPT4.value:
+        if self.main_model == Models.GPT4:
             main_sys += "\n" + self.gpt_prompts.system_reminder
 
         messages = [
@@ -328,7 +329,7 @@ class Coder:
         if edit_error:
             return edit_error
 
-        if self.main_model == "gpt=4" or (self.main_model == Models.GPT35.value and not edited):
+        if self.main_model == Models.GPT4 or (self.main_model == Models.GPT35 and not edited):
             # Don't add assistant messages to the history if they contain "edits"
             # Because those edits are actually fully copies of the file!
             # That wastes too much context window.
@@ -422,7 +423,7 @@ class Coder:
 
     def send(self, messages, model=None, silent=False):
         if not model:
-            model = self.main_model
+            model = self.main_model.value
 
         self.resp = ""
         interrupted = False
@@ -720,12 +721,12 @@ class Coder:
         return set(self.get_all_relative_files()) - set(self.get_inchat_relative_files())
 
     def apply_updates(self, content):
-        if self.main_model == Models.GPT4.value:
+        if self.main_model == Models.GPT4:
             method = self.update_files_gpt4
-        elif self.main_model == Models.GPT35.value:
+        elif self.main_model == Models.GPT35:
             method = self.update_files_gpt35
         else:
-            raise ValueError(f"apply_updates() doesn't support {self.main_model}")
+            raise ValueError(f"apply_updates() doesn't support {self.main_model.value}")
 
         try:
             edited = method(content)

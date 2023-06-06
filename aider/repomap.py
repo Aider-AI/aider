@@ -69,7 +69,7 @@ class RepoMap:
         self,
         map_tokens=1024,
         root=None,
-        main_model=Models.GPT4.value,
+        main_model=Models.GPT4,
         io=None,
         repo_content_prefix=None,
     ):
@@ -88,7 +88,7 @@ class RepoMap:
         else:
             self.has_ctags = False
 
-        self.tokenizer = tiktoken.encoding_for_model(main_model)
+        self.tokenizer = tiktoken.encoding_for_model(main_model.value)
         self.repo_content_prefix = repo_content_prefix
 
     def get_repo_map(self, chat_files, other_files):
