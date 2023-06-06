@@ -1,17 +1,17 @@
 # aider is GPT powered coding in your terminal
 
 `aider` is a command-line chat tool that allows you to write and edit
-code with GPT-4 or GPT-3.5-turbo.  You can ask GPT to help you start
+code with gpt-4 or gpt-3.5-turbo.  You can ask GPT to help you start
 a new project, or modify code in your existing git repo.
 Aider makes it easy to git commit, diff & undo changes proposed by GPT without copy/pasting. 
-It also has features that [help GPT understand and modify larger codebases](https://aider.chat/docs/ctags.html).
+It also has features that [help GPT-4 understand and modify larger codebases](https://aider.chat/docs/ctags.html).
 
 ![aider screencast](assets/screencast.svg)
 
 - [Getting started](#getting-started)
 - [Example chat transcripts](#example-chat-transcripts)
 - [Features](#features)
-- [GPT-4 vs GPT-3.5-turbo](#gpt-4-vs-gpt-3.5-turbo)
+- [GPT-4 vs GPT-3.5](#gpt-4-vs-gpt-3.5)
 - [Installation](#installation)
 - [Usage](#usage)
 - [In chat commands](#in-chat-commands)
@@ -48,31 +48,28 @@ You can find more chat transcripts on the [examples page](https://aider.chat/exa
 
 ## Features
 
-* Chat with GPT-4 about your code by launching `aider` from the command line with set of source files to discuss and edit together. Aider lets GPT see and edit the content of those files.
+* Chat with GPT about your code by launching `aider` from the command line with set of source files to discuss and edit together. Aider lets GPT see and edit the content of those files.
 * Request new features, changes, improvements, or bug fixes to your code. Ask for new test cases, updated documentation or code refactors.
-* Aider will apply the edits suggested by GPT-4 directly to your source files.
+* Aider will apply the edits suggested by GPT directly to your source files.
 * Aider will automatically commit each changeset to your local git repo with a descriptive commit message. These frequent, automatic commits provide a safety net. It's easy to undo `aider` changes or use standard git workflows to manage longer sequences of changes.
 * Aider can review multiple source files at once and make coordinated code changes across all of them in a single changeset/commit.
-* Aider can give GPT-4 a
+* Aider can give *GPT-4* a
 [map of your entire git repo](https://aider.chat/docs/ctags.html),
 which helps it understand and modify large codebases.
 * You can also edit files by hand using your editor while chatting with `aider`. Aider will notice these out-of-band edits and ask if you'd like to commit them. This lets you bounce back and forth between the `aider` chat and your editor, to fluidly collaborate.
 
-## GPT-4 vs GPT-3.5-turbo
+## GPT-4 vs GPT-3.5
 
 You need an
 [OpenAI API key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key)
 to use aider.
-Aider supports `gpt-4` and has new, experimental support for `gpt-3.5-turbo`.
+Aider supports the `gpt-4` model and has new, experimental support for `gpt-3.5-turbo`.
 
-You will get better results with `gpt-4`, for a few reasons:
+You will get better results with GPT-4, for a few reasons:
 
-  - GPT-3.5 isn't able to reliably follow instructions to generate "diff style" edits to files. So to make an edit, it has to return a whole new copy of the code that includes any changes. This uses up a lot of the already small `gpt-3.5-turbo` context window.
-  - GPT-4 has a much larger context window and is able to reliably
-generate "diff style" edits to files. This allows you to edit much larger files when using aider with `gpt-4`.
-  - GPT-4's larger context window also allows aider to send a
-[concise map of your repository](https://aider.chat/docs/ctags.html).
-This helps GPT-4 successfully make bigger, more complex changes inside larger pre-existing codebases.
+  - GPT-3.5 isn't able to reliably follow instructions to output "diff style" edits to files. So to make an edit, it has to return a whole new copy of the code that includes any changes. This uses up a lot of the already small GPT-3.5 context window.
+  - GPT-4 has a much larger context window and is able to reliably generate "diff style" edits to files. This allows you to edit much larger files when using aider with GPT-4.
+  - GPT-4's larger context window also allows aider to include a [concise map of your repository](https://aider.chat/docs/ctags.html) with each of your change requests. This helps GPT-4 successfully make bigger, more complex changes inside larger pre-existing codebases.
 
 ## Installation
 
@@ -82,7 +79,7 @@ This helps GPT-4 successfully make bigger, more complex changes inside larger pr
 
 2. Set up your OpenAI API key as an environment variable `OPENAI_API_KEY` or by including `openai-api-key: sk-...` in an `.aider.config.yml` file (see `aider --help`).
 
-3. Optionally, install [universal ctags](https://github.com/universal-ctags/ctags). This is helpful if you plan to work with repositories with more than a handful of files.  This allows `aider` to build a [map of your entire git repo](https://aider.chat/docs/ctags.html) and share it with GPT to help it better understand and modify large codebases.
+3. Optionally, install [universal ctags](https://github.com/universal-ctags/ctags). This is helpful if you plan to use aider and GPT-4 with repositories that have more than a handful of files.  This allows `aider` to build a [map of your entire git repo](https://aider.chat/docs/ctags.html) and share it with GPT to help it better understand and modify large codebases.
 
 ## Usage
 
@@ -130,9 +127,9 @@ to set many options. See `aider --help` for details.
 
 You can only use `aider` to edit code that fits in the GPT context window.
 For GPT-4 that is 8k tokens, and for GPT-3.5 that is 4k tokens.
-It helps to be selective about how many source files you discuss with `aider` at one time.
+Aider lets you manage the context window by
+being selective about how many source files you discuss with `aider` at one time.
 You might consider refactoring your code into more, smaller files (which is usually a good idea anyway).
 You can use `aider` to help perform such refactorings, if you start before the files get too large.
 
 If you have access to gpt-4-32k, I would be curious to hear how it works with aider.
-
