@@ -124,7 +124,7 @@ to set many options. See `aider --help` for details.
 * GPT can only see the content of the files you specifically "add to the chat". Aider also sends GPT-4 a [map of your entire git repo](https://aider.chat/docs/ctags.html). So GPT may ask to see additional files if it feels that's needed for your requests.
 * I also shared some more [GPT coding tips on Hacker News](https://news.ycombinator.com/item?id=36211879).
 
-## Testimonials
+## Kind words
 
 * "aider ... has easily quadrupled my coding productivity." -- [SOLAR_FIELDS](https://news.ycombinator.com/item?id=36212100)
 * "What an amazing tool. It's incredible." -- [valyagolev](https://github.com/paul-gauthier/aider/issues/6#issue-1722897858)
