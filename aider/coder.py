@@ -309,7 +309,10 @@ class Coder:
         messages = [
             dict(role="system", content=main_sys),
         ]
-        messages += self.done_messages
+
+        if self.main_model == Models.GPT4:
+            messages += self.done_messages
+
         messages += self.get_files_messages()
         messages += self.cur_messages
 
@@ -335,6 +338,10 @@ class Coder:
             # Because those edits are actually fully copies of the file!
             # That wastes too much context window.
             self.cur_messages += [dict(role="assistant", content=content)]
+        else:
+            self.cur_messages += [
+                dict(role="assistant", content=self.gpt_prompts.redacted_edit_message)
+            ]
 
         if edited and self.auto_commits:
             self.auto_commit()

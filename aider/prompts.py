@@ -86,6 +86,8 @@ exact/path/to/filename.js
     files_content_prefix = "Here is the current content of the files:\n"
     files_no_full_files = "I am not sharing any files yet."
 
+    redacted_edit_message = "No changes are needed."
+
 
 # COMMIT
 commit_system = """You are an expert software engineer.
