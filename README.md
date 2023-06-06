@@ -11,7 +11,7 @@ It also has features that [help GPT-4 understand and modify larger codebases](ht
 - [Getting started](#getting-started)
 - [Example chat transcripts](#example-chat-transcripts)
 - [Features](#features)
-- [GPT-4 vs GPT-3.5](#gpt-4-vs-gpt-3.5)
+- [GPT-4 vs GPT-3.5](#gpt-4-vs-gpt-35)
 - [Installation](#installation)
 - [Usage](#usage)
 - [In chat commands](#in-chat-commands)
