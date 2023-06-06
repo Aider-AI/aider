@@ -14,7 +14,7 @@ It also has features that [help GPT-4 understand and modify larger codebases](ht
 - [GPT-4 vs GPT-3.5](#gpt-4-vs-gpt-35)
 - [Installation](#installation)
 - [Usage](#usage)
-- [In chat commands](#in-chat-commands)
+- [In-chat commands](#in-chat-commands)
 - [Tips](#tips)
 - [Limitations](#limitations)
 
@@ -51,12 +51,12 @@ You can find more chat transcripts on the [examples page](https://aider.chat/exa
 * Chat with GPT about your code by launching `aider` from the command line with set of source files to discuss and edit together. Aider lets GPT see and edit the content of those files.
 * Request new features, changes, improvements, or bug fixes to your code. Ask for new test cases, updated documentation or code refactors.
 * Aider will apply the edits suggested by GPT directly to your source files.
-* Aider will automatically commit each changeset to your local git repo with a descriptive commit message. These frequent, automatic commits provide a safety net. It's easy to undo `aider` changes or use standard git workflows to manage longer sequences of changes.
-* Aider can review multiple source files at once and make coordinated code changes across all of them in a single changeset/commit.
+* Aider will automatically commit each changeset to your local git repo with a descriptive commit message. These frequent, automatic commits provide a safety net. It's easy to undo changes or use standard git workflows to manage longer sequences of changes.
+* Aider can review multiple source files at once so GPT can make coordinated code changes across all of them in a single changeset/commit.
 * Aider can give *GPT-4* a
 [map of your entire git repo](https://aider.chat/docs/ctags.html),
 which helps it understand and modify large codebases.
-* You can also edit files by hand using your editor while chatting with `aider`. Aider will notice these out-of-band edits and ask if you'd like to commit them. This lets you bounce back and forth between the `aider` chat and your editor, to fluidly collaborate.
+* You can also edit files by hand using your editor while chatting with `aider`. Aider will notice these out-of-band edits and ask if you'd like to commit them. This lets you bounce back and forth between the `aider` chat and your editor, to collaboratively code with GPT.
 
 ## GPT-4 vs GPT-3.5
 
@@ -114,7 +114,7 @@ to set many options. See `aider --help` for details.
 
 ## Tips
 
-* Large changes are best performed as a sequence of thoughtful bite sized steps, where you plan out the approach and overall design. Don't ask GPT to "build a house" all in one go. Instead, think about the architecture you want and then ask it to "build a foundation", "erect the walls", "run the wiring", etc.
+* Large changes are best performed as a sequence of thoughtful bite sized steps, where you plan out the approach and overall design. Walk GPT through changes like you might with a junior dev. Ask for a refactor to prepare, then ask for the actual change. Spend the time to ask for code quality/structure improvements.
 * Use Control-C to safely interrupt `aider` if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply with more information or direction.
 * Use the `/run` command to run tests, linters, etc and show the output to GPT so it can fix any issues.
 * Enter a multiline chat message by entering `{` alone on the first line. End the multiline message with `}` alone on the last line.
