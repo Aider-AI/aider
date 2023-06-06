@@ -63,8 +63,13 @@ class Coder:
         self.done_messages = []
 
         self.io = io
+
+        if not auto_commits:
+            dirty_commits = False
+
         self.auto_commits = auto_commits
         self.dirty_commits = dirty_commits
+
         self.dry_run = dry_run
         self.pretty = pretty
 

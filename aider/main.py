@@ -130,7 +130,7 @@ def main(args=None, input=None, output=None):
         "--no-auto-commits",
         action="store_false",
         dest="auto_commits",
-        help="Disable auto commit of GPT changes",
+        help="Disable auto commit of GPT changes (implies --no-dirty-commits)",
     )
     parser.add_argument(
         "--dirty-commits",
