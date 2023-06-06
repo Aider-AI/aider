@@ -115,13 +115,13 @@ to set many options. See `aider --help` for details.
 ## Tips
 
 * Large changes are best performed as a sequence of thoughtful bite sized steps, where you plan out the approach and overall design. Walk GPT through changes like you might with a junior dev. Ask for a refactor to prepare, then ask for the actual change. Spend the time to ask for code quality/structure improvements.
-* Use Control-C to safely interrupt `aider` if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply with more information or direction.
+* Use Control-C to safely interrupt `aider` if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply to GPT with more information or direction.
 * Use the `/run` command to run tests, linters, etc and show the output to GPT so it can fix any issues.
 * Enter a multiline chat message by entering `{` alone on the first line. End the multiline message with `}` alone on the last line.
-* If your code is throwing an error, paste the error message and stack trace into `aider` as a multiline `{}` message and let `aider` fix the bug.
-* GPT-4 knows about a lot of standard tools and libraries, but may get some of the fine details wrong about APIs and function arguments. You can paste doc snippets into the chat with the  multiline `{}` syntax.
+* If your code is throwing an error, share the error output with GPT using `/run` or by pasting it into the chat. Let GPT figure out and fix the bug.
+* GPT knows about a lot of standard tools and libraries, but may get some of the fine details wrong about APIs and function arguments. You can paste doc snippets into the chat to resolve these issues.
 * `aider` will notice if you launch it on a git repo with uncommitted changes and offer to commit them before proceeding.
-* `aider` can only see the content of the files you specify, but it also gets a list of all the files in the repo. It may ask to see additional files if it feels that's needed for your requests.
+* GPT can only see the content of the files you specify. Aider also sends GPT-4 a [map of your entire git repo](https://aider.chat/docs/ctags.html). So GPT may ask to see additional files if it feels that's needed for your requests.
 
 ## Limitations
 
