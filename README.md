@@ -122,6 +122,7 @@ to set many options. See `aider --help` for details.
 * GPT knows about a lot of standard tools and libraries, but may get some of the fine details wrong about APIs and function arguments. You can paste doc snippets into the chat to resolve these issues.
 * `aider` will notice if you launch it on a git repo with uncommitted changes and offer to commit them before proceeding.
 * GPT can only see the content of the files you specifically "add to the chat". Aider also sends GPT-4 a [map of your entire git repo](https://aider.chat/docs/ctags.html). So GPT may ask to see additional files if it feels that's needed for your requests.
+* I also shared some [more GPT coding tips on Hacker News](https://news.ycombinator.com/item?id=36211879).
 
 ## Limitations
 
