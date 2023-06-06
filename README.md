@@ -1,7 +1,7 @@
-# aider is GPT-4 powered coding in your terminal
+# aider is GPT powered coding in your terminal
 
 `aider` is a command-line chat tool that allows you to write and edit
-code with GPT-4.  You can ask GPT to help you start
+code with GPT-4 or GPT-3.5-turbo.  You can ask GPT to help you start
 a new project, or modify code in your existing git repo.
 Aider makes it easy to git commit, diff & undo changes proposed by GPT without copy/pasting. 
 It also has features that [help GPT understand and modify larger codebases](https://aider.chat/docs/ctags.html).
@@ -11,6 +11,7 @@ It also has features that [help GPT understand and modify larger codebases](http
 - [Getting started](#getting-started)
 - [Example chat transcripts](#example-chat-transcripts)
 - [Features](#features)
+- [GPT-4 vs GPT-3.5-turbo](#gpt-4-vs-gpt-3.5-turbo)
 - [Installation](#installation)
 - [Usage](#usage)
 - [In chat commands](#in-chat-commands)
@@ -24,8 +25,8 @@ $ pip install git+https://github.com/paul-gauthier/aider.git
 $ export OPENAI_API_KEY=sk-...
 $ aider myapp.py
 
-Added myapp.py to the chat
 Using git repo: .git
+Added myapp.py to the chat.
 
 myapp.py> change the fibonacci function from recursion to iteration
 ```
@@ -47,22 +48,31 @@ You can find more chat transcripts on the [examples page](https://aider.chat/exa
 
 ## Features
 
-* Chat with GPT-4 about your code by launching `aider` from the command line with set of source files to discuss and edit together. GPT can see and edit the content of those files.
-* If you or GPT mention other filenames that are part of the git repo, `aider` will ask if you'd like to add them to the chat. See also the in-chat `/add` and `/drop` commands described below, which are other ways to manage which files are part of the chat context.
+* Chat with GPT-4 about your code by launching `aider` from the command line with set of source files to discuss and edit together. Aider lets GPT see and edit the content of those files.
 * Request new features, changes, improvements, or bug fixes to your code. Ask for new test cases, updated documentation or code refactors.
-* `aider` will apply the edits suggested by GPT-4 directly to your source files.
-* `aider` will automatically commit each changeset to your local git repo with a descriptive commit message. These frequent, automatic commits provide a safety net. It's easy to undo `aider` changes or use standard git workflows to manage longer sequences of changes.
-* `aider` can review multiple source files at once and make coordinated code changes across all of them in a single changeset/commit.
-* `aider` can give GPT a
+* Aider will apply the edits suggested by GPT-4 directly to your source files.
+* Aider will automatically commit each changeset to your local git repo with a descriptive commit message. These frequent, automatic commits provide a safety net. It's easy to undo `aider` changes or use standard git workflows to manage longer sequences of changes.
+* Aider can review multiple source files at once and make coordinated code changes across all of them in a single changeset/commit.
+* Aider can give GPT-4 a
 [map of your entire git repo](https://aider.chat/docs/ctags.html),
 which helps it understand and modify large codebases.
-* You can edit the files by hand using your editor while chatting with `aider`.
-  * `aider` will notice if you edit the files outside the chat.
-  * It will help you commit these out-of-band changes, if you'd like.
-  * It will bring the updated file contents into the chat.
-  * You can bounce back and forth between the `aider` chat and your editor, to fluidly collaborate.
-* Live, colorized, human friendly output.
-* Readline style chat input history, with autocompletion of code tokens found in the source files being discussed (via `prompt_toolkit` and `pygments` lexers)
+* You can also edit files by hand using your editor while chatting with `aider`. Aider will notice these out-of-band edits and ask if you'd like to commit them. This lets you bounce back and forth between the `aider` chat and your editor, to fluidly collaborate.
+
+## GPT-4 vs GPT-3.5-turbo
+
+You need an
+[OpenAI API key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key)
+to use aider.
+Aider supports `gpt-4` and has new, experimental support for `gpt-3.5-turbo`.
+
+You will get better results with `gpt-4`, for a few reasons:
+
+  - GPT-3.5 isn't able to reliably follow instructions to generate "diff style" edits to files. So to make an edit, it has to return a whole new copy of the code that includes any changes. This uses up a lot of the already small `gpt-3.5-turbo` context window.
+  - GPT-4 has a much larger context window and is able to reliably
+generate "diff style" edits to files. This allows you to edit much larger files when using aider with `gpt-4`.
+  - GPT-4's larger context window also allows aider to send a
+[concise map of your repository](https://aider.chat/docs/ctags.html).
+This helps GPT-4 successfully make bigger, more complex changes inside larger pre-existing codebases.
 
 ## Installation
 
@@ -92,48 +102,18 @@ If you or GPT mention one of the repo's filenames in the conversation,
 `aider` will ask if you'd like to add it to the chat.
 
 You can also use additional command-line options, environment variables or configuration file
-to set many options:
+to set many options. See `aider --help` for details.
 
-```
-  -c CONFIG_FILE, --config CONFIG_FILE
-                        Specify the config file (default: search for .aider.conf.yml in git root or home directory)
-  --input-history-file INPUT_HISTORY_FILE
-                        Specify the chat input history file (default: .aider.input.history) [env var: AIDER_INPUT_HISTORY_FILE]
-  --chat-history-file CHAT_HISTORY_FILE
-                        Specify the chat history file (default: .aider.chat.history.md) [env var: AIDER_CHAT_HISTORY_FILE]
-  --model MODEL         Specify the model to use for the main chat (default: gpt-4) [env var: AIDER_MODEL]
-  -3                    Use gpt-3.5-turbo model for the main chat (not advised)
-  --pretty              Enable pretty, colorized output (default: True) [env var: AIDER_PRETTY]
-  --no-pretty           Disable pretty, colorized output [env var: AIDER_NO_PRETTY]
-  --apply FILE          Apply the changes from the given file instead of running the chat (debug) [env var: AIDER_APPLY]
-  --auto-commits        Enable auto commit of changes (default: True) [env var: AIDER_AUTO_COMMITS]
-  --no-auto-commits     Disable auto commit of changes [env var: AIDER_NO_AUTO_COMMITS]
-  --dirty-commits       Enable dirty commit of changes [env var: AIDER_DIRTY_COMMITS]
-  --no-dirty-commits    Disable dirty commit of changes [env var: AIDER_NO_DIRTY_COMMITS]
-  --openai-api-key OPENAI_API_KEY
-                        Specify the OpenAI API key [env var: OPENAI_API_KEY]
-  --dry-run             Perform a dry run without applying changes (default: False) [env var: AIDER_DRY_RUN]
-  --show-diffs          Show diffs when committing changes (default: False) [env var: AIDER_SHOW_DIFFS]
-  --map-tokens MAP_TOKENS
-                        Max number of tokens to use for repo map, use 0 to disable (default: 1024) [env var: AIDER_MAP_TOKENS]
-  --yes                 Always say yes to every confirmation [env var: AIDER_YES]
-  -v, --verbose         Enable verbose output [env var: AIDER_VERBOSE]
-```
+## In-chat commands
 
-## In chat commands
-
-`aider` supports the following commands from within the chat:
+`aider` supports commands from within the chat, which all start with `/`. Here are some of the most useful in-chat commands:
 
 * `/add <file>`: Add matching files to the chat session.
 * `/drop <file>`: Remove matching files from the chat session.
-* `/ls`: List all known files and those included in the chat session.
-* `/commit [message]`: Commit outstanding changes to the repo. Use this to commit edits you made outside the chat, with your editor or git commands. aider will provide a commit message if you don't.
 * `/undo`: Undo the last git commit if it was done by aider.
 * `/diff`: Display the diff of the last aider commit.
 * `/run <command>`: Run a shell command and optionally add the output to the chat.
 * `/help`: Show help about all commands.
-
-To use a command, simply type it in the chat input followed by any required arguments.
 
 ## Tips
 
