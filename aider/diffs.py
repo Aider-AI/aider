@@ -23,6 +23,16 @@ def main():
         input()
 
 
+def create_progress_bar(percentage):
+    block = "█"
+    empty = "░"
+    total_blocks = 40
+    filled_blocks = int(total_blocks * percentage // 100)
+    empty_blocks = total_blocks - filled_blocks
+    bar = block * filled_blocks + empty * empty_blocks
+    return bar
+
+
 def diff_partial_update(lines_orig, lines_updated, final=False):
     """
     Given only the first part of an updated file, show the diff while
@@ -38,22 +48,31 @@ def diff_partial_update(lines_orig, lines_updated, final=False):
     if last_non_deleted is None:
         return ""
 
+    num_orig_lines = len(lines_orig)
+    pct = last_non_deleted * 100 / num_orig_lines
+    bar = create_progress_bar(pct)
+    bar = f"! {last_non_deleted:3d} / {num_orig_lines:3d} lines [{bar}] {pct:3.0f}%\n\n"
+
     lines_orig = lines_orig[:last_non_deleted]
 
     if not final:
-        lines_updated = lines_updated[:-1] + ["\n"]
+        lines_updated = lines_updated[:-1] + ["...\n"]
 
     diff = difflib.unified_diff(lines_orig, lines_updated)
-    # unified_diff = list(unified_diff)[2:]
-    # dump(repr(list(diff)))
+
+    diff = list(diff)[2:]
 
     diff = "".join(diff)
 
-    diff = "```diff\n" + diff + "```\n"
+    show = "```diff\n"
+    if not final:
+        show += bar
+
+    show += diff + "```\n"
 
     # print(diff)
 
-    return diff
+    return show
 
 
 def find_last_non_deleted(lines_orig, lines_updated):
