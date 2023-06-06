@@ -500,6 +500,7 @@ class Coder:
                         show_diff = diffs.diff_partial_update(
                             orig_lines,
                             new_lines,
+                            final=True,
                         ).splitlines()
                         output += show_diff
                     else:

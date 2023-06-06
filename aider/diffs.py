@@ -23,7 +23,7 @@ def main():
         input()
 
 
-def diff_partial_update(lines_orig, lines_updated):
+def diff_partial_update(lines_orig, lines_updated, final=False):
     """
     Given only the first part of an updated file, show the diff while
     ignoring the block of "deleted" lines that are past the end of the
@@ -39,6 +39,9 @@ def diff_partial_update(lines_orig, lines_updated):
         return ""
 
     lines_orig = lines_orig[:last_non_deleted]
+
+    if not final:
+        lines_updated = lines_updated[:-1] + ["\n"]
 
     diff = difflib.unified_diff(lines_orig, lines_updated)
     # unified_diff = list(unified_diff)[2:]
