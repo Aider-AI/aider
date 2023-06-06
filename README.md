@@ -128,12 +128,8 @@ to set many options. See `aider --help` for details.
 
 ## Limitations
 
-You probably need GPT-4 api access to use `aider`.
-You can invoke it with `aider -3` to try using gpt-3.5-turbo, but it will almost certainly fail to function correctly.
-GPT-3.5 is unable to consistently follow directions to generate concise code edits in a stable, parsable format.
-
 You can only use `aider` to edit code that fits in the GPT context window.
-For GPT-4 that is 8k tokens.
+For GPT-4 that is 8k tokens, and for GPT-3.5 that is 4k tokens.
 It helps to be selective about how many source files you discuss with `aider` at one time.
 You might consider refactoring your code into more, smaller files (which is usually a good idea anyway).
 You can use `aider` to help perform such refactorings, if you start before the files get too large.
