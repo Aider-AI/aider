@@ -65,7 +65,7 @@ You need an
 to use aider.
 Aider supports the `gpt-4` model and has new, experimental support for `gpt-3.5-turbo`.
 
-You will get better results with GPT-4, for a few reasons:
+You will probably get better results with GPT-4, for a few reasons:
 
   - GPT-3.5 isn't able to reliably follow instructions to output "diff style" edits to files. So to make an edit, it has to return a whole new copy of the code that includes any changes. This uses up a lot of the already small GPT-3.5 context window.
   - GPT-4 has a much larger context window and is able to reliably generate "diff style" edits to files. This allows you to edit much larger files when using aider with GPT-4.
