@@ -8,8 +8,7 @@ import git
 import tiktoken
 from prompt_toolkit.completion import Completion
 
-from aider import prompts, utils
-from aider.utils import Models
+from aider import models, prompts, utils
 
 
 class Commands:
@@ -134,7 +133,7 @@ class Commands:
         print()
         print(f"{total:6.3f} total")
 
-        limit = 8 if self.coder.main_model == Models.GPT4 else 4
+        limit = 8 if self.coder.main_model == models.GPT4 else 4
         remaining = limit - total
         print(f"{remaining:6.3f} remaining")
         print(f"{limit:6.3f} max context window")
@@ -182,7 +181,7 @@ class Commands:
             "was reset and removed from git.\n"
         )
 
-        if self.coder.main_model != Models.GPT35:
+        if self.coder.main_model != models.GPT35:
             return prompts.undo_command_reply
 
     def cmd_diff(self, args):

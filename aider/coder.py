@@ -14,10 +14,9 @@ from rich.console import Console
 from rich.live import Live
 from rich.markdown import Markdown
 
-from aider import diffs, prompts, utils
+from aider import diffs, models, prompts, utils
 from aider.commands import Commands
 from aider.repomap import RepoMap
-from aider.utils import Models
 
 from .dump import dump  # noqa: F401
 
@@ -41,7 +40,7 @@ class Coder:
     def __init__(
         self,
         io,
-        main_model=Models.GPT4.value,
+        main_model=models.GPT4.value,
         fnames=None,
         pretty=True,
         show_diffs=False,
@@ -78,12 +77,12 @@ class Coder:
         else:
             self.console = Console(force_terminal=True, no_color=True)
 
-        main_model = Models(main_model)
-        if main_model != Models.GPT35 and not self.check_model_availability(main_model):
-            main_model = Models.GPT35
+        main_model = models.get_model(main_model)
+        if main_model != models.GPT35 and not self.check_model_availability(main_model):
+            main_model = models.GPT35
 
         self.main_model = main_model
-        if main_model == Models.GPT35:
+        if main_model == models.GPT35:
             self.io.tool_output(
                 f"Using {main_model.value} (experimental): disabling ctags/repo-maps.",
             )
@@ -104,7 +103,7 @@ class Coder:
             self.io.tool_output("Not using git.")
             self.find_common_root()
 
-        if main_model == Models.GPT4:
+        if main_model == models.GPT4:
             rm_io = io if self.verbose else None
             self.repo_map = RepoMap(
                 map_tokens,
@@ -311,7 +310,7 @@ class Coder:
         ]
 
         main_sys = self.gpt_prompts.main_system
-        if self.main_model == Models.GPT4:
+        if self.main_model == models.GPT4:
             main_sys += "\n" + self.gpt_prompts.system_reminder
 
         messages = [
@@ -340,7 +339,7 @@ class Coder:
         if edit_error:
             return edit_error
 
-        if self.main_model == Models.GPT4 or (self.main_model == Models.GPT35 and not edited):
+        if self.main_model == models.GPT4 or (self.main_model == models.GPT35 and not edited):
             # Don't add assistant messages to the history if they contain "edits"
             # Because those edits are actually fully copies of the file!
             # That wastes too much context window.
@@ -475,7 +474,7 @@ class Coder:
 
                 if self.pretty:
                     show_resp = self.resp
-                    if self.main_model == Models.GPT35:
+                    if self.main_model == models.GPT35:
                         try:
                             show_resp = self.update_files_gpt35(self.resp, mode="diff")
                         except ValueError:
@@ -621,7 +620,7 @@ class Coder:
     def get_commit_message(self, diffs, context):
         if len(diffs) >= 4 * 1024 * 4:
             self.io.tool_error(
-                f"Diff is too large for {Models.GPT35.value} to generate a commit message."
+                f"Diff is too large for {models.GPT35.value} to generate a commit message."
             )
             return
 
@@ -635,12 +634,12 @@ class Coder:
         try:
             commit_message, interrupted = self.send(
                 messages,
-                model=Models.GPT35.value,
+                model=models.GPT35.value,
                 silent=True,
             )
         except openai.error.InvalidRequestError:
             self.io.tool_error(
-                f"Failed to generate commit message using {Models.GPT35.value} due to an invalid"
+                f"Failed to generate commit message using {models.GPT35.value} due to an invalid"
                 " request."
             )
             return
@@ -651,7 +650,7 @@ class Coder:
 
         if interrupted:
             self.io.tool_error(
-                f"Unable to get commit message from {Models.GPT35.value}. Use /commit to try again."
+                f"Unable to get commit message from {models.GPT35.value}. Use /commit to try again."
             )
             return
 
@@ -776,9 +775,9 @@ class Coder:
         return set(self.get_all_relative_files()) - set(self.get_inchat_relative_files())
 
     def apply_updates(self, content):
-        if self.main_model == Models.GPT4:
+        if self.main_model == models.GPT4:
             method = self.update_files_gpt4
-        elif self.main_model == Models.GPT35:
+        elif self.main_model == models.GPT35:
             method = self.update_files_gpt35
         else:
             raise ValueError(f"apply_updates() doesn't support {self.main_model.value}")

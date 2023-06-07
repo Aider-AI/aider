@@ -4,9 +4,9 @@ import sys
 import configargparse
 import git
 
+from aider import models
 from aider.coder import Coder
 from aider.io import InputOutput
-from aider.utils import Models
 
 
 def get_git_root():
@@ -76,15 +76,15 @@ def main(args=None, input=None, output=None):
     parser.add_argument(
         "--model",
         metavar="MODEL",
-        default=Models.GPT4.value,
-        help=f"Specify the model to use for the main chat (default: {Models.GPT4.value})",
+        default=models.GPT4.value,
+        help=f"Specify the model to use for the main chat (default: {models.GPT4.value})",
     )
     parser.add_argument(
         "-3",
         action="store_const",
         dest="model",
-        const=Models.GPT35.value,
-        help=f"Use {Models.GPT35.value} model for the main chat (not advised)",
+        const=models.GPT35.value,
+        help=f"Use {models.GPT35.value} model for the main chat (not advised)",
     )
     parser.add_argument(
         "--pretty",

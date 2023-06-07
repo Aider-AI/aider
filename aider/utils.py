@@ -1,15 +1,9 @@
 import math
 import re
 from difflib import SequenceMatcher
-from enum import Enum
 from pathlib import Path
 
 # from aider.dump import dump
-
-
-class Models(Enum):
-    GPT4 = "gpt-4"
-    GPT35 = "gpt-3.5-turbo"
 
 
 def try_dotdotdots(whole, part, replace):
