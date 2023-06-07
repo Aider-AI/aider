@@ -20,7 +20,7 @@ It also has features that [help GPT-4 understand and modify larger codebases](ht
 
 ## Getting started
 
-```bash
+```
 $ pip install git+https://github.com/paul-gauthier/aider.git
 $ export OPENAI_API_KEY=your-key-goes-here
 $ aider myapp.py
