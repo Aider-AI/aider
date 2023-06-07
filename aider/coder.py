@@ -106,7 +106,7 @@ class Coder:
             self.io.tool_output("Not using git.")
             self.find_common_root()
 
-        if main_model == models.GPT4:
+        if main_model != models.GPT35:
             rm_io = io if self.verbose else None
             self.repo_map = RepoMap(
                 map_tokens,
@@ -313,7 +313,7 @@ class Coder:
         ]
 
         main_sys = self.gpt_prompts.main_system
-        if self.main_model == models.GPT4:
+        if self.main_model != models.GPT35:
             main_sys += "\n" + self.gpt_prompts.system_reminder
 
         messages = [
@@ -342,7 +342,7 @@ class Coder:
         if edit_error:
             return edit_error
 
-        if self.main_model == models.GPT4 or (self.main_model == models.GPT35 and not edited):
+        if self.main_model != models.GPT35 or not edited:
             # Don't add assistant messages to the history if they contain "edits"
             # Because those edits are actually fully copies of the file!
             # That wastes too much context window.
@@ -778,7 +778,7 @@ class Coder:
         return set(self.get_all_relative_files()) - set(self.get_inchat_relative_files())
 
     def apply_updates(self, content):
-        if self.main_model == models.GPT4:
+        if self.main_model in (models.GPT4, models.GPT4_32k):
             method = self.update_files_gpt4
         elif self.main_model == models.GPT35:
             method = self.update_files_gpt35
