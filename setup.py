@@ -4,7 +4,7 @@ with open("requirements.txt") as f:
     requirements = f.read().splitlines()
 
 setup(
-    name="aider",
+    name="aider-chat",
     version="0.5.0",
     packages=find_packages(),
     install_requires=requirements,
