@@ -384,16 +384,18 @@ def get_random_color():
 if __name__ == "__main__":
     fnames = sys.argv[1:]
 
-    fnames = []
+    chat_fnames = []
+    other_fnames = []
     for dname in sys.argv[1:]:
-        fnames += find_py_files(dname)
+        if ".venv" in dname:
+            other_fnames += find_py_files(dname)
+        else:
+            chat_fnames += find_py_files(dname)
 
-    fnames = sorted(fnames)
-
-    root = os.path.commonpath(fnames)
+    root = os.path.commonpath(chat_fnames)
 
     rm = RepoMap(root=root)
-    repo_map = rm.get_ranked_tags_map(fnames)
+    repo_map = rm.get_ranked_tags_map(chat_fnames, other_fnames)
 
     dump(len(repo_map))
     print(repo_map)
