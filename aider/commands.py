@@ -121,22 +121,24 @@ class Commands:
             tokens = len(self.tokenizer.encode(quoted))
             res.append((tokens, relative_fname))
 
-        print("Context window usage, in k-tokens:")
+        print("Context window usage, in tokens:")
         print()
+
+        def fmt(v):
+            return format(int(v), ",").rjust(6)
 
         total = 0
         for tk, msg in res:
-            tk /= 1024
             total += tk
-            print(f"{tk:6.3f} {msg}")
+            print(f"{fmt(tk)} {msg}")
 
         print()
-        print(f"{total:6.3f} total")
+        print(f"{fmt(total)} total")
 
-        limit = 8 if self.coder.main_model == models.GPT4 else 4
+        limit = self.coder.main_model.max_context_tokens
         remaining = limit - total
-        print(f"{remaining:6.3f} remaining")
-        print(f"{limit:6.3f} max context window")
+        print(f"{fmt(remaining)} remaining")
+        print(f"{fmt(limit)} max context window")
 
     def cmd_undo(self, args):
         "Undo the last git commit if it was done by aider"
