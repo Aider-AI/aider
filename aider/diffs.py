@@ -58,7 +58,7 @@ def diff_partial_update(lines_orig, lines_updated, final=False):
     if not final:
         lines_updated = lines_updated[:-1] + ["...\n"]
 
-    diff = difflib.unified_diff(lines_orig, lines_updated)
+    diff = difflib.unified_diff(lines_orig, lines_updated, n=5)
 
     diff = list(diff)[2:]
 
