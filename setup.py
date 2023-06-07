@@ -5,7 +5,7 @@ with open("requirements.txt") as f:
 
 setup(
     name="aider",
-    version="0.4.0",
+    version="0.5.0",
     packages=find_packages(),
     install_requires=requirements,
     entry_points={
