@@ -64,9 +64,9 @@ Aider supports the `gpt-4` model and has new, experimental support for `gpt-3.5-
 You will probably get better results with GPT-4, because of its larger context window and
 greater competance at coding.
 
-With GPT-3.5, aider has to send it the code to modify and asks it to return
-a full copy of the modified code.
-Both the original and edited copy of the code count towards the 4k token context window limit.
+To function with GPT-3.5, aider needs to send it the original code
+and ask it to a full copy of the modified code.
+Both the original and modified copies of the code count towards the 4k token context window limit.
 In practice, this means you can only edit files about 2k tokens (8k bytes) in size.
 
 Aider also disables the
