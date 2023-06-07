@@ -20,9 +20,9 @@ It also has features that [help GPT-4 understand and modify larger codebases](ht
 
 ## Getting started
 
-```
+```bash
 $ pip install git+https://github.com/paul-gauthier/aider.git
-$ export OPENAI_API_KEY=sk-...
+$ export OPENAI_API_KEY=your-key-goes-here
 $ aider myapp.py
 
 Using git repo: .git
@@ -60,7 +60,7 @@ which helps it understand and modify large codebases.
 
 ## GPT-4 vs GPT-3.5
 
-Aider supports the `gpt-4` model and has new, experimental support for `gpt-3.5-turbo`.
+Aider supports the `gpt-4` model and has new, experimental support for `gpt-3.5-turbo` and `gpt-4-32k`.
 You will probably get better results with GPT-4, because of its larger context window and
 greater competance at coding.
 
