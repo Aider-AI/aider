@@ -78,8 +78,11 @@ class Coder:
             self.console = Console(force_terminal=True, no_color=True)
 
         main_model = models.get_model(main_model)
-        if main_model != models.GPT35 and not self.check_model_availability(main_model):
-            main_model = models.GPT35
+        if main_model != models.GPT35:
+            if not self.check_model_availability(main_model):
+                if main_model != models.GPT4:
+                    self.io.tool_error(f"API key does not support {main_model.name}.")
+                main_model = models.GPT35
 
         self.main_model = main_model
         if main_model == models.GPT35:
