@@ -60,16 +60,18 @@ which helps it understand and modify large codebases.
 
 ## GPT-4 vs GPT-3.5
 
-You need an
-[OpenAI API key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key)
-to use aider.
 Aider supports the `gpt-4` model and has new, experimental support for `gpt-3.5-turbo`.
+You will probably get better results with GPT-4, because of its larger context window and
+greater competance at coding.
 
-You will probably get better results with GPT-4, for a few reasons:
+With GPT-3.5, aider has to send it the code to modify and asks it to return
+a full copy of the modified code.
+Both the original and edited copy of the code count towards the 4k token context window limit.
+In practice, this means you can only edit files about 2k tokens (8k bytes) in size.
 
-  - GPT-3.5 isn't able to reliably follow instructions to output "diff style" edits to files. So to make an edit, it has to return a whole new copy of the code that includes any changes. This uses up a lot of the already small GPT-3.5 context window.
-  - GPT-4 has a much larger context window and is able to reliably generate "diff style" edits to files. This allows you to edit much larger files when using aider with GPT-4.
-  - GPT-4's larger context window also allows aider to include a [concise map of your repository](https://aider.chat/docs/ctags.html) with each of your change requests. This helps GPT-4 successfully make bigger, more complex changes inside larger pre-existing codebases.
+Aider also disables the
+[repository map feature](https://aider.chat/docs/ctags.html)
+with GPT-3.5, again because of the smaller context window.
 
 ## Installation
 
