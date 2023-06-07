@@ -67,7 +67,7 @@ greater competance at coding.
 To function with GPT-3.5, aider needs to send it the original code
 and ask it to a full copy of the modified code.
 Both the original and modified copies of the code count towards the 4k token context window limit.
-In practice, this means you can only edit files about 2k tokens (8k bytes) in size.
+In practice, this means you can only edit files that are smaller than about 2k tokens (8k bytes).
 
 Aider also disables the
 [repository map feature](https://aider.chat/docs/ctags.html)
