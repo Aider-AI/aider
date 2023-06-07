@@ -76,15 +76,15 @@ def main(args=None, input=None, output=None):
     parser.add_argument(
         "--model",
         metavar="MODEL",
-        default=models.GPT4.value,
-        help=f"Specify the model to use for the main chat (default: {models.GPT4.value})",
+        default=models.GPT4.name,
+        help=f"Specify the model to use for the main chat (default: {models.GPT4.name})",
     )
     parser.add_argument(
         "-3",
         action="store_const",
         dest="model",
-        const=models.GPT35.value,
-        help=f"Use {models.GPT35.value} model for the main chat (not advised)",
+        const=models.GPT35.name,
+        help=f"Use {models.GPT35.name} model for the main chat (not advised)",
     )
     parser.add_argument(
         "--pretty",

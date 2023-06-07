@@ -35,12 +35,12 @@ class Coder:
     def check_model_availability(self, main_model):
         available_models = openai.Model.list()
         model_ids = [model.id for model in available_models["data"]]
-        return main_model.value in model_ids
+        return main_model.name in model_ids
 
     def __init__(
         self,
         io,
-        main_model=models.GPT4.value,
+        main_model=models.GPT4.name,
         fnames=None,
         pretty=True,
         show_diffs=False,
@@ -84,7 +84,7 @@ class Coder:
         self.main_model = main_model
         if main_model == models.GPT35:
             self.io.tool_output(
-                f"Using {main_model.value} (experimental): disabling ctags/repo-maps.",
+                f"Using {main_model.name} (experimental): disabling ctags/repo-maps.",
             )
             self.gpt_prompts = prompts.GPT35()
         else:
@@ -435,7 +435,7 @@ class Coder:
 
     def send(self, messages, model=None, silent=False):
         if not model:
-            model = self.main_model.value
+            model = self.main_model.name
 
         self.resp = ""
         interrupted = False
@@ -620,7 +620,7 @@ class Coder:
     def get_commit_message(self, diffs, context):
         if len(diffs) >= 4 * 1024 * 4:
             self.io.tool_error(
-                f"Diff is too large for {models.GPT35.value} to generate a commit message."
+                f"Diff is too large for {models.GPT35.name} to generate a commit message."
             )
             return
 
@@ -634,12 +634,12 @@ class Coder:
         try:
             commit_message, interrupted = self.send(
                 messages,
-                model=models.GPT35.value,
+                model=models.GPT35.name,
                 silent=True,
             )
         except openai.error.InvalidRequestError:
             self.io.tool_error(
-                f"Failed to generate commit message using {models.GPT35.value} due to an invalid"
+                f"Failed to generate commit message using {models.GPT35.name} due to an invalid"
                 " request."
             )
             return
@@ -650,7 +650,7 @@ class Coder:
 
         if interrupted:
             self.io.tool_error(
-                f"Unable to get commit message from {models.GPT35.value}. Use /commit to try again."
+                f"Unable to get commit message from {models.GPT35.name}. Use /commit to try again."
             )
             return
 
@@ -780,7 +780,7 @@ class Coder:
         elif self.main_model == models.GPT35:
             method = self.update_files_gpt35
         else:
-            raise ValueError(f"apply_updates() doesn't support {self.main_model.value}")
+            raise ValueError(f"apply_updates() doesn't support {self.main_model.name}")
 
         try:
             edited = method(content)

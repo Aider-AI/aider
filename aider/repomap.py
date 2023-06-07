@@ -88,7 +88,7 @@ class RepoMap:
         else:
             self.has_ctags = False
 
-        self.tokenizer = tiktoken.encoding_for_model(main_model.value)
+        self.tokenizer = tiktoken.encoding_for_model(main_model.name)
         self.repo_content_prefix = repo_content_prefix
 
     def get_repo_map(self, chat_files, other_files):
