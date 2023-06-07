@@ -3,6 +3,9 @@ from setuptools import find_packages, setup
 with open("requirements.txt") as f:
     requirements = f.read().splitlines()
 
+with open("README.md", "r", encoding="utf-8") as f:
+    long_description = f.read()
+
 setup(
     name="aider-chat",
     version="0.5.0",
@@ -13,4 +16,6 @@ setup(
             "aider = aider.main:main",
         ],
     },
+    long_description=long_description,
+    long_description_content_type="text/markdown",
 )
