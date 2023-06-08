@@ -5,4 +5,4 @@ defaults:
       path: "README.md"
       type: "pages"
     values:
-      description: "A command-line chat tool for coding with GPT-4"
+      description: "A command-line chat tool for coding with GPT"
