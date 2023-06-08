@@ -11,8 +11,8 @@ with open("README.md", "r", encoding="utf-8") as f:
     long_description = re.sub(r"\n- \[.*\]\(#.*\)", "", long_description)
 
 setup(
-    name="aider-chat-2",
-    version="0.0.1",
+    name="aider-chat",
+    version="0.5.0",
     packages=find_packages(),
     include_package_data=True,
     install_requires=requirements,
