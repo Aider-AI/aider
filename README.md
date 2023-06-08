@@ -21,7 +21,7 @@ It also has features that [help GPT-4 understand and modify larger codebases](ht
 ## Getting started
 
 ```
-$ pip install git+https://github.com/paul-gauthier/aider.git
+$ pip install aider-chat
 $ export OPENAI_API_KEY=your-key-goes-here
 $ aider myapp.py
 
@@ -77,10 +77,13 @@ with GPT-3.5, again because of the smaller context window.
 ## Installation
 
 1. Install the package:
-    * From GitHub: `pip install git+https://github.com/paul-gauthier/aider.git`
-    * From your local copy of the repo in develop mode to pick up local edits immediately: `pip install -e .` 
+    * PyPI: `pip install aider-chat`
+    * GitHub: `pip install git+https://github.com/paul-gauthier/aider.git`
+    * Local clone: `pip install -e .` 
 
-2. Set up your OpenAI API key as an environment variable `OPENAI_API_KEY` or by including `openai-api-key: sk-...` in an `.aider.config.yml` file (see `aider --help`).
+2. Set up your OpenAI API key:
+    * As an environment variable: `export OPENAI_API_KEY=sk-...`
+    * Or, by including `openai-api-key: sk-...` in an `.aider.config.yml` file
 
 3. Optionally, install [universal ctags](https://github.com/universal-ctags/ctags). This is helpful if you plan to use aider and GPT-4 with repositories that have more than a handful of files.  This allows aider to build a [map of your entire git repo](https://aider.chat/docs/ctags.html) and share it with GPT to help it better understand and modify large codebases.
 
