@@ -12,7 +12,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 setup(
     name="aider-chat",
-    version="0.5.2",
+    version="0.5.3",
     packages=find_packages(),
     install_requires=requirements,
     entry_points={
