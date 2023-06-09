@@ -170,11 +170,8 @@ def do_replace(fname, before_text, after_text, dry_run=False):
     content = fname.read_text()
 
     if not before_text.strip():
-        if content:
-            new_content = content + after_text
-        else:
-            # first populating an empty file
-            new_content = after_text
+        # append to existing file, or start a new file
+        new_content = content + after_text
     else:
         new_content = replace_most_similar_chunk(content, before_text, after_text)
         if not new_content:
