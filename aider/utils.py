@@ -60,7 +60,31 @@ def try_dotdotdots(whole, part, replace):
 
 
 def replace_part_with_missing_leading_whitespace(whole, part, replace):
-    pass
+    whole_lines = whole.splitlines()
+    part_lines = part.splitlines()
+    replace_lines = replace.splitlines()
+
+    for i in range(len(whole_lines) - len(part_lines) + 1):
+        leading_whitespace = ""
+        for j, c in enumerate(whole_lines[i]):
+            if c == part_lines[0][0]:
+                leading_whitespace = whole_lines[i][:j]
+                break
+
+        if not leading_whitespace:
+            continue
+
+        matched = all(
+            whole_lines[i + k].startswith(leading_whitespace + part_lines[k])
+            for k in range(len(part_lines))
+        )
+
+        if matched:
+            for k in range(len(part_lines)):
+                whole_lines[i + k] = leading_whitespace + replace_lines[k]
+            return "\n".join(whole_lines)
+
+    return None
 
 
 def replace_most_similar_chunk(whole, part, replace):
