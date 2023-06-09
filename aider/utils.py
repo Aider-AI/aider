@@ -64,6 +64,12 @@ def replace_part_with_missing_leading_whitespace(whole, part, replace):
     part_lines = part.splitlines()
     replace_lines = replace.splitlines()
 
+    # If all lines in the part start with whitespace, then honor it.
+    # But GPT often outdents the part and replace blocks completely,
+    # thereby discarding the actual leading whitespace in the file.
+    if all(pline[0].isspace() for pline in part_lines):
+        return
+
     for i in range(len(whole_lines) - len(part_lines) + 1):
         leading_whitespace = ""
         for j, c in enumerate(whole_lines[i]):
