@@ -53,9 +53,7 @@ You can find more chat transcripts on the [examples page](https://aider.chat/exa
 * Aider will apply the edits suggested by GPT directly to your source files.
 * Aider will automatically commit each changeset to your local git repo with a descriptive commit message. These frequent, automatic commits provide a safety net. It's easy to undo changes or use standard git workflows to manage longer sequences of changes.
 * You can use aider with multiple source files at once, so GPT can make coordinated code changes across all of them in a single changeset/commit.
-* Aider can give *GPT-4* a
-[map of your entire git repo](https://aider.chat/docs/ctags.html),
-which helps it understand and modify large codebases.
+* Aider can [give *GPT-4* a map of your entire git repo](https://aider.chat/docs/ctags.html), which helps it understand and modify large codebases.
 * You can also edit files by hand using your editor while chatting with aider. Aider will notice these out-of-band edits and ask if you'd like to commit them. This lets you bounce back and forth between the aider chat and your editor, to collaboratively code with GPT.
 
 ## GPT-4 vs GPT-3.5
