@@ -59,9 +59,17 @@ def try_dotdotdots(whole, part, replace):
     return whole
 
 
+def replace_part_with_missing_leading_whitespace(whole, part, replace):
+    pass
+
+
 def replace_most_similar_chunk(whole, part, replace):
     if part in whole:
         return whole.replace(part, replace)
+
+    res = replace_part_with_missing_leading_whitespace(whole, part, replace)
+    if res:
+        return res
 
     try:
         res = try_dotdotdots(whole, part, replace)
