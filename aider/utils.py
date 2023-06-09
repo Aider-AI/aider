@@ -80,9 +80,9 @@ def replace_part_with_missing_leading_whitespace(whole, part, replace):
         )
 
         if matched:
-            for k in range(len(part_lines)):
-                whole_lines[i + k] = leading_whitespace + replace_lines[k]
-            return "\n".join(whole_lines)
+            replace_lines = [leading_whitespace + rline for rline in replace_lines]
+            whole_lines = whole_lines[:i] + replace_lines + whole_lines[i + len(part_lines) :]
+            return "\n".join(whole_lines) + "\n"
 
     return None
 
