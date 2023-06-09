@@ -3,7 +3,7 @@ import re
 from difflib import SequenceMatcher
 from pathlib import Path
 
-# from aider.dump import dump
+from .dump import dump  # noqa: F401
 
 
 def try_dotdotdots(whole, part, replace):
@@ -96,12 +96,12 @@ def replace_part_with_missing_leading_whitespace(whole, part, replace):
 
 
 def replace_most_similar_chunk(whole, part, replace):
-    if part in whole:
-        return whole.replace(part, replace)
-
     res = replace_part_with_missing_leading_whitespace(whole, part, replace)
     if res:
         return res
+
+    if part in whole:
+        return whole.replace(part, replace)
 
     try:
         res = try_dotdotdots(whole, part, replace)
