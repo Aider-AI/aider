@@ -154,8 +154,8 @@ def main(args=None, input=None, output=None):
     parser.add_argument(
         "--openai-api-base",
         metavar="OPENAI_API_BASE",
-        default="https://api.openai.com/v1/chat/completions",
-        help="Specify the OpenAI API base endpoint (default: https://api.openai.com/v1/chat/completions)",
+        default="https://api.openai.com/v1",
+        help="Specify the OpenAI API base endpoint (default: https://api.openai.com/v1)",
     )
     parser.add_argument(
         "--dry-run",
