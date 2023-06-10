@@ -77,7 +77,7 @@ def replace_part_with_missing_leading_whitespace(whole, part, replace):
                 leading_whitespace = whole_lines[i][:j]
                 break
 
-        if not leading_whitespace:
+        if not leading_whitespace or not all(c.isspace() for c in leading_whitespace):
             continue
 
         matched = all(
