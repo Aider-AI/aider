@@ -152,6 +152,12 @@ def main(args=None, input=None, output=None):
         env_var="OPENAI_API_KEY",
     )
     parser.add_argument(
+        "--openai-api-base",
+        metavar="OPENAI_API_BASE",
+        default="https://api.openai.com/v1",
+        help="Specify the OpenAI API base endpoint (default: https://api.openai.com/v1)",
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Perform a dry run without applying changes (default: False)",
@@ -221,6 +227,7 @@ def main(args=None, input=None, output=None):
         map_tokens=args.map_tokens,
         verbose=args.verbose,
         openai_api_key=args.openai_api_key,
+        openai_api_base=args.openai_api_base,
     )
 
     if args.dirty_commits:
