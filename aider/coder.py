@@ -50,11 +50,12 @@ class Coder:
         map_tokens=1024,
         verbose=False,
         openai_api_key=None,
+        openai_api_base=None,
     ):
         if not openai_api_key:
             raise MissingAPIKeyError("No OpenAI API key provided.")
         openai.api_key = openai_api_key
-        openai.api_base = args.openai_api_base
+        openai.api_base = openai_api_base
 
         self.verbose = verbose
         self.abs_fnames = set()

@@ -227,6 +227,7 @@ def main(args=None, input=None, output=None):
         map_tokens=args.map_tokens,
         verbose=args.verbose,
         openai_api_key=args.openai_api_key,
+        openai_api_base=args.openai_api_base,
     )
 
     if args.dirty_commits:
