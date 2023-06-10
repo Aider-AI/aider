@@ -717,6 +717,9 @@ class Coder:
         else:
             commit_message = self.get_commit_message(diffs, context)
 
+        if not commit_message:
+            commit_message = "work in progress"
+
         if prefix:
             commit_message = prefix + commit_message
 
