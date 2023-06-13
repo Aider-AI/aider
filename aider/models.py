@@ -28,7 +28,7 @@ GPT35 = Model_GPT35()
 class Model_GPT35_16k:
     name = "gpt-3.5-turbo-16k"
     max_context_tokens = 16 * 1024
-    edit_format = "whole"
+    edit_format = "diff"
 
 
 GPT35_16k = Model_GPT35_16k()

@@ -318,7 +318,7 @@ class Coder:
         ]
 
         main_sys = self.gpt_prompts.main_system
-        if self.main_model in models.GPT4_models:
+        if self.main_model in models.GPT4_models + [models.GPT35_16k]:
             main_sys += "\n" + self.gpt_prompts.system_reminder
 
         messages = [
