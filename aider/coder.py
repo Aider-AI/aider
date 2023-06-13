@@ -90,6 +90,10 @@ class Coder:
             self.io.tool_output(
                 f"Using {main_model.name} (experimental): disabling ctags/repo-maps.",
             )
+
+        self.edit_format = self.main_model.edit_format
+
+        if self.edit_format == "whole":
             self.gpt_prompts = prompts.GPT35()
         else:
             self.gpt_prompts = prompts.GPT4()
@@ -343,8 +347,9 @@ class Coder:
         if edit_error:
             return edit_error
 
-        if self.main_model in models.GPT4_models or not edited:
-            # Don't add 3.5 assistant messages to the history if they contain "edits"
+        if not (self.edit_format == "whole" and edited):
+            # Don't add assistant messages to the history if they contain "edits"
+            # from the "whole" edit format.
             # Because those edits are actually fully copies of the file!
             # That wastes too much context window.
             self.cur_messages += [dict(role="assistant", content=content)]
@@ -478,7 +483,7 @@ class Coder:
 
                 if self.pretty:
                     show_resp = self.resp
-                    if self.main_model in models.GPT35_models:
+                    if self.edit_format == "whole":
                         try:
                             show_resp = self.update_files_gpt35(self.resp, mode="diff")
                         except ValueError:
@@ -782,9 +787,9 @@ class Coder:
         return set(self.get_all_relative_files()) - set(self.get_inchat_relative_files())
 
     def apply_updates(self, content):
-        if self.main_model in models.GPT4_models:
+        if self.edit_format == "diff":
             method = self.update_files_gpt4
-        elif self.main_model in models.GPT35_models:
+        elif self.edit_format == "whole":
             method = self.update_files_gpt35
         else:
             raise ValueError(f"apply_updates() doesn't support {self.main_model.name}")
