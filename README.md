@@ -58,24 +58,28 @@ You can find more chat transcripts on the [examples page](https://aider.chat/exa
 
 ## GPT-4 vs GPT-3.5
 
-Aider now supports the brand new `gpt-3.5-turbo-16k` model.
-To use it, pull the latest build from GitHub and run `aider -3`.
-For now, aider just treats it like 3.5 with a bigger context window
-(repo maps are disabled and it does not try and use a diff based output format).
+Aider supports `gpt-4`, `gpt-3.5-turbo`, `gpt-4-32k`
+and the the brand new `gpt-3.5-turbo-16k` model.
+You will probably get the best results with GPT-4, because of its large context window and
+greater competance at code editing.
 
-Aider supports `gpt-4`, `gpt-3.5-turbo` and `gpt-4-32k`.
-You will probably get better results with GPT-4, because of its larger context window and
-greater competance at coding.
-
-To function with GPT-3.5, aider needs to send it the original code
+The GPT-3.5 models are less able to follow instructions for
+returning code edits in a diff-like format.
+So aider needs to send GPT-3.5 the original code
 and ask it to return a full copy of the modified code.
-Both the original and modified copies of the code count towards the 4k token context window limit.
-In practice, this means you can only use GPT-3.5 to edit files that are
+Both the original and modified copies of the code count towards the context window token limit.
+In practice, this means you can only use `gpt-3.5-turbo` to edit files that are
 smaller than about 2k tokens (8k bytes).
+The new `gpt-3.5-turbo-16k` model should be able to edit code up to 8k tokens (32k bytes).
 
 Aider also disables the
 [repository map feature](https://aider.chat/docs/ctags.html)
-with GPT-3.5, again because of the smaller context window.
+when used with either of GPT-3.5 models.
+
+Evaluation is needed to determine if `gpt-3.5-turbo-16k` can
+reliably return edits in a diff-like format and make use of a repo map.
+For now, aider just treats it like a the original `gpt-3.5-turbo` with a larger
+context window.
 
 ## Installation
 
