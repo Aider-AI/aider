@@ -72,9 +72,10 @@ In practice, this means you can only use `gpt-3.5-turbo` to edit files that are
 smaller than about 2k tokens (8k bytes).
 The new `gpt-3.5-turbo-16k` model should be able to edit code up to 8k tokens (32k bytes).
 
-Aider also disables the
+Aider disables the
 [repository map feature](https://aider.chat/docs/ctags.html)
 when used with either of GPT-3.5 models.
+The `gpt-3.5-turbo` context window is too small to include a repo map.
 
 Evaluation is needed to determine if `gpt-3.5-turbo-16k` can
 reliably return edits in a diff-like format and make use of a repo map.
