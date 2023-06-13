@@ -58,7 +58,12 @@ You can find more chat transcripts on the [examples page](https://aider.chat/exa
 
 ## GPT-4 vs GPT-3.5
 
-Aider supports the `gpt-4` model and has new, experimental support for `gpt-3.5-turbo` and `gpt-4-32k`.
+Aider now supports the brand new `gpt-3.5-turbo-16k` model.
+You'll need to pull the latest build from GitHub for that to work.
+For now, it just treats it like 3.5 with a bigger context window
+(repo maps are disabled and it does not try and use a diff based output format).
+
+Aider supports `gpt-4`, `gpt-3.5-turbo` and `gpt-4-32k`.
 You will probably get better results with GPT-4, because of its larger context window and
 greater competance at coding.
 
