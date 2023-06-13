@@ -27,15 +27,14 @@ class Model_GPT35_16k:
     max_context_tokens = 16 * 1024
 
 
-GPT35 = Model_GPT35_16k()
+GPT35_16k = Model_GPT35_16k()
+
+GPT35_models = [GPT35, GPT35_16k]
+GPT4_models = [GPT4, GPT4_32k]
 
 
 def get_model(name):
-    models = [
-        GPT4_32k,
-        GPT4,
-        GPT35,
-    ]
+    models = GPT35_models + GPT4_models
 
     for model in models:
         if model.name == name:

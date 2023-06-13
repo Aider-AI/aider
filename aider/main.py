@@ -83,7 +83,7 @@ def main(args=None, input=None, output=None):
         "-3",
         action="store_const",
         dest="model",
-        const=models.GPT35.name,
+        const=models.GPT35_16k.name,
         help=f"Use {models.GPT35.name} model for the main chat (not advised)",
     )
     parser.add_argument(

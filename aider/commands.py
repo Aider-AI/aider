@@ -183,7 +183,7 @@ class Commands:
             "was reset and removed from git.\n"
         )
 
-        if self.coder.main_model != models.GPT35:
+        if self.coder.main_model in models.GPT4_models:
             return prompts.undo_command_reply
 
     def cmd_diff(self, args):

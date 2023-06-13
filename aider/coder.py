@@ -79,14 +79,14 @@ class Coder:
             self.console = Console(force_terminal=True, no_color=True)
 
         main_model = models.get_model(main_model)
-        if main_model != models.GPT35:
+        if main_model not in models.GPT35_models:
             if not self.check_model_availability(main_model):
                 if main_model != models.GPT4:
                     self.io.tool_error(f"API key does not support {main_model.name}.")
-                main_model = models.GPT35
+                main_model = models.GPT35_16k
 
         self.main_model = main_model
-        if main_model == models.GPT35:
+        if main_model in models.GPT35_models:
             self.io.tool_output(
                 f"Using {main_model.name} (experimental): disabling ctags/repo-maps.",
             )
@@ -107,7 +107,7 @@ class Coder:
             self.io.tool_output("Not using git.")
             self.find_common_root()
 
-        if main_model != models.GPT35:
+        if main_model in models.GPT4_models:
             rm_io = io if self.verbose else None
             self.repo_map = RepoMap(
                 map_tokens,
@@ -314,7 +314,7 @@ class Coder:
         ]
 
         main_sys = self.gpt_prompts.main_system
-        if self.main_model != models.GPT35:
+        if self.main_model in models.GPT4_models:
             main_sys += "\n" + self.gpt_prompts.system_reminder
 
         messages = [
@@ -343,8 +343,8 @@ class Coder:
         if edit_error:
             return edit_error
 
-        if self.main_model != models.GPT35 or not edited:
-            # Don't add assistant messages to the history if they contain "edits"
+        if self.main_model in models.GPT4_models or not edited:
+            # Don't add 3.5 assistant messages to the history if they contain "edits"
             # Because those edits are actually fully copies of the file!
             # That wastes too much context window.
             self.cur_messages += [dict(role="assistant", content=content)]
@@ -478,7 +478,7 @@ class Coder:
 
                 if self.pretty:
                     show_resp = self.resp
-                    if self.main_model == models.GPT35:
+                    if self.main_model in models.GPT35_models:
                         try:
                             show_resp = self.update_files_gpt35(self.resp, mode="diff")
                         except ValueError:
@@ -782,9 +782,9 @@ class Coder:
         return set(self.get_all_relative_files()) - set(self.get_inchat_relative_files())
 
     def apply_updates(self, content):
-        if self.main_model in (models.GPT4, models.GPT4_32k):
+        if self.main_model in models.GPT4_models:
             method = self.update_files_gpt4
-        elif self.main_model == models.GPT35:
+        elif self.main_model in models.GPT35_models:
             method = self.update_files_gpt35
         else:
             raise ValueError(f"apply_updates() doesn't support {self.main_model.name}")
