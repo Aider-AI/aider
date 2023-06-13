@@ -22,6 +22,14 @@ class Model_GPT35:
 GPT35 = Model_GPT35()
 
 
+class Model_GPT35_16k:
+    name = "gpt-3.5-turbo-16k"
+    max_context_tokens = 16 * 1024
+
+
+GPT35 = Model_GPT35_16k()
+
+
 def get_model(name):
     models = [
         GPT4_32k,
