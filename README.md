@@ -72,7 +72,7 @@ The GPT-3.5 models are limited to editing somewhat smaller codebases.
 They are less able to follow instructions for
 returning code edits in a compact format,
 so aider has
-and ask GPT-3.5 to return a full copy of any code that needs to be edited.
+to ask GPT-3.5 to return a full copy of any code that needs to be edited.
 This rapidly uses up the context window.
 In practice, this means you can only use `gpt-3.5-turbo` to edit files that are
 smaller than about 2k tokens (8k bytes).
