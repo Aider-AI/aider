@@ -79,7 +79,7 @@ Aider disables the
 [repository map feature](https://aider.chat/docs/ctags.html)
 when used with either of the GPT-3.5 models.
 The `gpt-3.5-turbo` context window is too small to include a repo map.
-Evaluation is needed to see if `gpt-3.5-turbo-16k` can make use of a repo map.
+Evaluation is needed to determine if `gpt-3.5-turbo-16k` can make use of a repo map.
 
 To use `gpt-3.5-turbo-16k`, install from GitHub per the instructions below and launch with `aider -3`.
 For now, aider just treats `gpt-3.5-turbo-16k` like the original `gpt-3.5-turbo` with a larger
