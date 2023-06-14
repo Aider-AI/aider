@@ -166,7 +166,7 @@ class RepoMap:
             return self.TAGS_CACHE[cache_key]["data"]
 
         cmd = self.ctags_cmd + [filename]
-        output = subprocess.check_output(cmd).decode("utf-8")
+        output = subprocess.check_output(cmd, stderr=subprocess.PIPE).decode("utf-8")
         output = output.splitlines()
 
         data = [json.loads(line) for line in output]
