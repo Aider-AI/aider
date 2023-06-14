@@ -117,8 +117,12 @@ class Coder:
                 self.gpt_prompts.repo_content_prefix,
             )
 
-            if self.repo_map.has_ctags:
-                self.io.tool_output("Using ctags to build repo-map.")
+            if self.repo_map.use_ctags:
+                self.io.tool_output("Using universal-ctags to build repo-map.")
+            elif not self.repo_map.has_ctags and map_tokens > 0:
+                self.io.tool_output("Can't find universal-ctags, using basic repo-map.")
+            else:
+                self.io.tool_output("Not using repo map.")
 
         for fname in self.get_inchat_relative_files():
             self.io.tool_output(f"Added {fname} to the chat.")
