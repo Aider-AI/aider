@@ -1,7 +1,7 @@
 # aider is GPT powered coding in your terminal
 
 `aider` is a command-line chat tool that allows you to write and edit
-code with gpt-4 or gpt-3.5-turbo.  You can ask GPT to help you start
+code with OpenAI's GPT models.  You can ask GPT to help you start
 a new project, or modify code in your existing git repo.
 Aider makes it easy to git commit, diff & undo changes proposed by GPT without copy/pasting. 
 It also has features that [help GPT-4 understand and modify larger codebases](https://aider.chat/docs/ctags.html).
@@ -60,17 +60,20 @@ You can find more chat transcripts on the [examples page](https://aider.chat/exa
 
 Aider supports
 `gpt-4`,
-`gpt-4-32k`
-`gpt-3.5-turbo`,
+`gpt-4-32k`,
+`gpt-3.5-turbo`
 and the the brand new `gpt-3.5-turbo-16k` model.
-You will probably get the best results with GPT-4, because of its large context window and
-greater competance at code editing.
+You will probably get the best results with GPT-4,
+because of its large context window and
+greater competance at coding
+which will allow you to edit larger codebases.
 
-The GPT-3.5 models are less able to follow instructions for
-returning code edits in a diff-like format.
-So aider needs to send GPT-3.5 the original code
-and ask it to return a full copy of the modified code.
-Both the original and modified copies of the code count towards the context window token limit.
+The GPT-3.5 models are limited to editing somewhat smaller codebases.
+They are less able to follow instructions for
+returning code edits in a compact format,
+so aider has
+and ask GPT-3.5 to return a full copy of any code that needs to be edited.
+This rapidly uses up the context window.
 In practice, this means you can only use `gpt-3.5-turbo` to edit files that are
 smaller than about 2k tokens (8k bytes).
 The new `gpt-3.5-turbo-16k` model should be able to edit code up to 8k tokens (32k bytes).
