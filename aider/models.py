@@ -27,4 +27,15 @@ def get_model(name):
         if model.name == name:
             return model
 
-    raise ValueError(f"Unsupported model: {name}")
+    tokens = 0
+
+    model = Model(name, tokens)
+
+    if name.startswith("gpt-4-"):
+        GPT4_models.append(model)
+    elif name.startswith("gpt-3.5-"):
+        GPT35_models.append(model)
+    else:
+        raise ValueError(f"Unsupported model: {name}")
+
+    return model
