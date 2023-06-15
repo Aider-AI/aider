@@ -13,6 +13,11 @@ class Model:
 
         self.max_context_tokens = tokens * 1024
 
+        if self.is_gpt4() or self.is_gpt35():
+            return
+
+        raise ValueError(f"Unsupported model: {name}")
+
     def is_gpt4(self):
         return self.name.startswith("gpt-4")
 
@@ -26,12 +31,3 @@ class Model:
 GPT4 = Model("gpt-4", 8)
 GPT35 = Model("gpt-3.5-turbo")
 GPT35_16k = Model("gpt-3.5-turbo-16k")
-
-
-def get_model(name):
-    model = Model(name)
-
-    if model.is_gpt4() or model.is_gpt35():
-        return model
-
-    raise ValueError(f"Unsupported model: {name}")
