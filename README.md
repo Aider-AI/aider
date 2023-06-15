@@ -16,7 +16,6 @@ It also has features that [help GPT-4 understand and modify larger codebases](ht
 - [Usage](#usage)
 - [In-chat commands](#in-chat-commands)
 - [Tips](#tips)
-- [Limitations](#limitations)
 
 ## Getting started
 
@@ -149,13 +148,3 @@ Aider supports commands from within the chat, which all start with `/`. Here are
 * "What an amazing tool. It's incredible." -- [valyagolev](https://github.com/paul-gauthier/aider/issues/6#issue-1722897858)
 * "It was WAY faster than I would be getting off the ground and making the first few working versions." -- [Daniel Feldman](https://twitter.com/d_feldman/status/1662295077387923456)
 
-## Limitations
-
-You can only use aider to edit code that fits in the GPT context window.
-For GPT-4 that is 8k tokens, and for GPT-3.5 that is 4k tokens.
-Aider lets you manage the context window by
-being selective about how many source files you discuss with aider at one time.
-You might consider refactoring your code into more, smaller files (which is usually a good idea anyway).
-You can use aider to help perform such refactorings, if you start before the files get too large.
-
-If you have access to gpt-4-32k, I would be curious to hear how it works with aider.
