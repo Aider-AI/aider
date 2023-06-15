@@ -84,7 +84,7 @@ def main(args=None, input=None, output=None):
         action="store_const",
         dest="model",
         const=models.GPT35_16k.name,
-        help=f"Use {models.GPT35.name} model for the main chat (not advised)",
+        help=f"Use {models.GPT35_16k.name} model for the main chat (gpt-4 is better)",
     )
     parser.add_argument(
         "--pretty",
