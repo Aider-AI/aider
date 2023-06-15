@@ -20,6 +20,8 @@ GPT35_16k = Model("gpt-3.5-turbo-16k", 16)
 GPT35_models = [GPT35, GPT35_16k]
 
 
+import re
+
 def get_model(name):
     models = GPT35_models + GPT4_models
 
@@ -27,7 +29,8 @@ def get_model(name):
         if model.name == name:
             return model
 
-    tokens = 0
+    match = re.search(r'-([0-9]+)k', name)
+    tokens = int(match.group(1)) if match else 0
 
     model = Model(name, tokens)
 
