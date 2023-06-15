@@ -58,35 +58,34 @@ You can find more chat transcripts on the [examples page](https://aider.chat/exa
 
 ## GPT-4 vs GPT-3.5
 
-Aider supports
-`gpt-4`,
-`gpt-4-32k`,
-`gpt-3.5-turbo`
-and the the brand new `gpt-3.5-turbo-16k` model.
-You will probably get the best results with GPT-4,
-because of its large context window and
-greater competance at coding
-which will allow you to edit larger codebases.
+Aider supports all of OpenAI's chat models, including
+the the brand new `gpt-3.5-turbo-16k` model. 
+To use `gpt-3.5-turbo-16k`, install from GitHub per the instructions below and launch with `aider -3`.
 
-The GPT-3.5 models are limited to editing somewhat smaller codebases.
-They are less able to follow instructions for
-returning code edits in a compact format,
-so aider has
+You will probably get the best results with one of the GPT-4 models,
+because of their large context windows,
+adherance to system prompt instructions and
+greater competance at coding tasks.
+The GPT-4 models are also able to use a
+[repository map](https://aider.chat/docs/ctags.html)
+to improve their ability to make changes in larger codebases.
+
+The GPT-3.5 models are supported more experimentally
+and are limited to editing somewhat smaller codebases.
+They are less able to follow instructions and
+aren't able to return code edits in a compact format.
+So aider has
 to ask GPT-3.5 to return a full copy of any code that needs to be edited.
-This rapidly uses up the context window.
+This rapidly uses up tokens and can hit the limits of the context window.
 In practice, this means you can only use `gpt-3.5-turbo` to edit files that are
 smaller than about 2k tokens (8k bytes).
 The new `gpt-3.5-turbo-16k` model should be able to edit code up to 8k tokens (32k bytes).
 
 Aider disables the
 [repository map feature](https://aider.chat/docs/ctags.html)
-when used with either of the GPT-3.5 models.
+when used with GPT-3.5 models.
 The `gpt-3.5-turbo` context window is too small to include a repo map.
-Evaluation is needed to determine if `gpt-3.5-turbo-16k` can make use of a repo map.
-
-To use `gpt-3.5-turbo-16k`, install from GitHub per the instructions below and launch with `aider -3`.
-For now, aider just treats `gpt-3.5-turbo-16k` like the original `gpt-3.5-turbo` with a larger
-context window. 
+Evaluation is still needed to determine if `gpt-3.5-turbo-16k` can make use of a repo map.
 
 ## Installation
 
