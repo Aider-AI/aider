@@ -82,18 +82,19 @@ class Coder:
         if not main_model.is_always_available():
             if not self.check_model_availability(main_model):
                 if main_model != models.GPT4:
-                    self.io.tool_error(f"API key does not support {main_model.name}.")
+                    self.io.tool_error(
+                        f"API key does not support {main_model.name}, falling back to"
+                        f" {models.GPT35_16k.name}"
+                    )
                 main_model = models.GPT35_16k
 
         self.main_model = main_model
         if main_model.is_gpt35():
-            self.io.tool_output(
-                f"Using {main_model.name} (experimental): disabling ctags/repo-maps.",
-            )
             self.gpt_prompts = prompts.GPT35()
         else:
-            self.io.tool_output(f"Using {main_model.name}.")
             self.gpt_prompts = prompts.GPT4()
+
+        self.io.tool_output(f"Model: {main_model.name}")
 
         self.show_diffs = show_diffs
 
@@ -103,9 +104,9 @@ class Coder:
 
         if self.repo:
             rel_repo_dir = os.path.relpath(self.repo.git_dir, os.getcwd())
-            self.io.tool_output(f"Using git repo: {rel_repo_dir}")
+            self.io.tool_output(f"Git repo: {rel_repo_dir}")
         else:
-            self.io.tool_output("Not using git.")
+            self.io.tool_output("Git repo: none")
             self.find_common_root()
 
         if main_model.is_gpt4():
@@ -119,11 +120,15 @@ class Coder:
             )
 
             if self.repo_map.use_ctags:
-                self.io.tool_output("Using universal-ctags to build repo-map.")
+                self.io.tool_output(f"Repo-map: universal-ctags using {map_tokens} tokens")
             elif not self.repo_map.has_ctags and map_tokens > 0:
-                self.io.tool_output("Can't find universal-ctags, using basic repo-map.")
+                self.io.tool_output(
+                    f"Repo-map: basic using {map_tokens} tokens (universal-ctags not found)"
+                )
             else:
-                self.io.tool_output("Not using repo map.")
+                self.io.tool_output("Repo-map: disabled because map_tokens == 0")
+        else:
+            self.io.tool_output("Repo-map: disabled for gpt-3.5")
 
         for fname in self.get_inchat_relative_files():
             self.io.tool_output(f"Added {fname} to the chat.")
