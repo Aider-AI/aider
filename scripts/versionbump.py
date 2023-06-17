@@ -20,12 +20,13 @@ def main():
 
     current_version = re.search(r'__version__ = "(.+?)"', content).group(1)
     if new_version <= version.parse(current_version):
-        raise ValueError("New version must be greater than the current version")
+        raise ValueError(f"New version {new_version} must be greater than the current version {current_version}")
 
     updated_content = re.sub(r'__version__ = ".+?"', f'__version__ = "{new_version}"', content)
 
     if dry_run:
-        print("Updating aider/__init__.py with new version")
+        print("Updating aider/__init__.py with new version:")
+        print(updated_content)
     else:
         with open("aider/__init__.py", "w") as f:
             f.write(updated_content)
