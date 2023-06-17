@@ -25,11 +25,11 @@ def main():
     with open("aider/__init__.py", "w") as f:
         f.write(updated_content)
 
-    subprocess.run(["git", "add", "aider/__init__.py"])
-    subprocess.run(["git", "commit", "-m", f"version bump to {new_version}"])
-    subprocess.run(["git", "tag", f"v{new_version}"])
-    subprocess.run(["git", "push", "origin"])
-    subprocess.run(["git", "push", "origin", f"v{new_version}"])
+    subprocess.run(["git", "add", "aider/__init__.py"], check=True)
+    subprocess.run(["git", "commit", "-m", f"version bump to {new_version}"], check=True)
+    subprocess.run(["git", "tag", f"v{new_version}"], check=True)
+    subprocess.run(["git", "push", "origin"], check=True)
+    subprocess.run(["git", "push", "origin", f"v{new_version}"], check=True)
 
 if __name__ == "__main__":
     main()
