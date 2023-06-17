@@ -4,7 +4,7 @@ import sys
 import configargparse
 import git
 
-from aider import models
+from aider import models, __version__
 from aider.coder import Coder
 from aider.io import InputOutput
 
@@ -35,6 +35,7 @@ def main(args=None, input=None, output=None):
         default_config_files=default_config_files,
         config_file_parser_class=configargparse.YAMLConfigFileParser,
         auto_env_var_prefix="AIDER_",
+        version=__version__,
     )
 
     parser.add_argument(
