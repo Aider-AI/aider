@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 with open("requirements.txt") as f:
     requirements = f.read().splitlines()
 
-import re
+from aider import __version__
 
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
@@ -12,7 +12,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 setup(
     name="aider-chat",
-    version="0.6.2",
+    version=__version__,
     packages=find_packages(),
     include_package_data=True,
     install_requires=requirements,
