@@ -30,7 +30,7 @@ def main(args=None, input=None, output=None):
         default_config_files.insert(0, os.path.join(git_root, ".aider.conf.yml"))
 
     parser = configargparse.ArgumentParser(
-        description="aider - chat with GPT about your code",
+        description="aider is GPT powered coding in your terminal",
         add_config_file_help=True,
         default_config_files=default_config_files,
         config_file_parser_class=configargparse.YAMLConfigFileParser,
