@@ -35,7 +35,10 @@ def main(args=None, input=None, output=None):
         default_config_files=default_config_files,
         config_file_parser_class=configargparse.YAMLConfigFileParser,
         auto_env_var_prefix="AIDER_",
-        version=__version__,
+    )
+
+    parser.add_argument(
+        "-v", "--version", action="version", version=f"%(prog)s {__version__}", help="Show the version number and exit"
     )
 
     parser.add_argument(
