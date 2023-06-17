@@ -13,7 +13,7 @@ def main():
 
     new_version_str = args.new_version
     if not re.match(r'^\d+\.\d+\.\d+$', new_version_str):
-        raise ValueError("Invalid version format, must be x.y.z")
+        raise ValueError(f"Invalid version format, must be x.y.z: {new_version_str}")
 
     new_version = version.parse(new_version_str)
 
