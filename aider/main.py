@@ -38,7 +38,7 @@ def main(args=None, input=None, output=None):
     )
 
     parser.add_argument(
-        "-v", "--version", action="version", version=f"%(prog)s {__version__}", help="Show the version number and exit"
+        "--version", action="version", version=f"%(prog)s {__version__}", help="Show the version number and exit"
     )
 
     parser.add_argument(
