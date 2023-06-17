@@ -11,9 +11,11 @@ def main():
     args = parser.parse_args()
     dry_run = args.dry_run
 
-    new_version = version.parse(args.new_version)
-    if not isinstance(new_version, version.Version):
-        raise ValueError("Invalid version format")
+    new_version_str = args.new_version
+    if not re.match(r'^\d+\.\d+\.\d+$', new_version_str):
+        raise ValueError("Invalid version format, must be x.y.z")
+
+    new_version = version.parse(new_version_str)
 
     with open("aider/__init__.py", "r") as f:
         content = f.read()
