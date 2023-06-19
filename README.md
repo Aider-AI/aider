@@ -59,7 +59,6 @@ You can find more chat transcripts on the [examples page](https://aider.chat/exa
 
 Aider supports all of OpenAI's chat models, including
 the the brand new `gpt-3.5-turbo-16k` model. 
-To use `gpt-3.5-turbo-16k`, install from GitHub per the instructions below and launch with `aider -3`.
 
 You will probably get the best results with one of the GPT-4 models,
 because of their large context windows,
