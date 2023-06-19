@@ -51,6 +51,7 @@ class Coder:
         verbose=False,
         openai_api_key=None,
         openai_api_base=None,
+        assistant_output_color="blue",
     ):
         if not openai_api_key:
             raise MissingAPIKeyError("No OpenAI API key provided.")
@@ -69,6 +70,7 @@ class Coder:
 
         self.auto_commits = auto_commits
         self.dirty_commits = dirty_commits
+        self.assistant_output_color = assistant_output_color
 
         self.dry_run = dry_run
         self.pretty = pretty
@@ -493,7 +495,9 @@ class Coder:
                             show_resp = self.update_files_gpt35(self.resp, mode="diff")
                         except ValueError:
                             pass
-                    md = Markdown(show_resp, style="blue", code_theme="default")
+                    md = Markdown(
+                        show_resp, style=self.assistant_output_color, code_theme="default"
+                    )
                     live.update(md)
                 else:
                     sys.stdout.write(text)

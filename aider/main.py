@@ -4,7 +4,7 @@ import sys
 import configargparse
 import git
 
-from aider import models, __version__
+from aider import __version__, models
 from aider.coder import Coder
 from aider.io import InputOutput
 
@@ -38,7 +38,10 @@ def main(args=None, input=None, output=None):
     )
 
     parser.add_argument(
-        "--version", action="version", version=f"%(prog)s {__version__}", help="Show the version number and exit"
+        "--version",
+        action="version",
+        version=f"%(prog)s {__version__}",
+        help="Show the version number and exit",
     )
 
     parser.add_argument(
@@ -116,6 +119,11 @@ def main(args=None, input=None, output=None):
         "--tool-error-color",
         default="red",
         help="Set the color for tool error messages (default: red)",
+    )
+    parser.add_argument(
+        "--assistant-output-color",
+        default="blue",
+        help="Set the color for assistant output (default: blue)",
     )
     parser.add_argument(
         "--apply",
@@ -232,6 +240,7 @@ def main(args=None, input=None, output=None):
         verbose=args.verbose,
         openai_api_key=args.openai_api_key,
         openai_api_base=args.openai_api_base,
+        assistant_output_color=args.assistant_output_color,
     )
 
     if args.dirty_commits:
