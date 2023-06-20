@@ -14,7 +14,7 @@ from rich.console import Console
 from rich.live import Live
 from rich.markdown import Markdown
 
-from aider import diffs, editors, models, prompts, utils
+from aider import diffs, models, prompts, utils
 from aider.commands import Commands
 from aider.repomap import RepoMap
 
@@ -31,6 +31,17 @@ class Coder:
     last_aider_commit_hash = None
     last_asked_for_commit_time = 0
     repo_map = None
+
+    @classmethod
+    def create(self, edit_format, *args, **kwargs):
+        from . import EditBlockCoder, WholeFileCoder
+
+        if edit_format == "whole":
+            return EditBlockCoder(*args, **kwargs)
+        elif edit_format == "diff":
+            return WholeFileCoder(*args, **kwargs)
+        else:
+            raise ValueError(f"Unknown edit format {edit_format}")
 
     def check_model_availability(self, main_model):
         available_models = openai.Model.list()
@@ -92,15 +103,6 @@ class Coder:
 
         self.main_model = main_model
         self.edit_format = self.main_model.edit_format
-
-        if self.edit_format == "whole":
-            self.gpt_prompts = editors.WholeFilePrompts()
-        elif self.edit_format == "diff":
-            self.gpt_prompts = editors.EditBlockPrompts()
-        else:
-            raise ValueError(
-                f"Model {main_model} requesting unknown edit format {self.edit_format}"
-            )
 
         self.io.tool_output(f"Model: {main_model.name}")
 

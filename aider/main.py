@@ -227,7 +227,8 @@ def main(args=None, input=None, output=None):
         io.tool_error("No OpenAI API key provided. Use --openai-api-key or env OPENAI_API_KEY.")
         return 1
 
-    coder = Coder(
+    coder = Coder.create(
+        "diff",
         io,
         main_model=args.model,
         fnames=args.files,
