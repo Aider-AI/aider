@@ -14,7 +14,7 @@ from rich.console import Console
 from rich.live import Live
 from rich.markdown import Markdown
 
-from aider import diffs, models, prompts, utils
+from aider import diffs, editors, models, prompts, utils
 from aider.commands import Commands
 from aider.repomap import RepoMap
 
@@ -94,9 +94,13 @@ class Coder:
         self.edit_format = self.main_model.edit_format
 
         if self.edit_format == "whole":
-            self.gpt_prompts = prompts.GPT35()
+            self.gpt_prompts = editors.WholeFilePrompts()
+        elif self.edit_format == "diff":
+            self.gpt_prompts = editors.EditBlockPrompts()
         else:
-            self.gpt_prompts = prompts.GPT4()
+            raise ValueError(
+                f"Model {main_model} requesting unknown edit format {self.edit_format}"
+            )
 
         self.io.tool_output(f"Model: {main_model.name}")
 
