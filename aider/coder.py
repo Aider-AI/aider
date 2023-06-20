@@ -113,7 +113,7 @@ class Coder:
             self.io.tool_output("Git repo: none")
             self.find_common_root()
 
-        if main_model.is_gpt4():
+        if main_model.use_repo_map:
             rm_io = io if self.verbose else None
             self.repo_map = RepoMap(
                 map_tokens,
@@ -328,7 +328,7 @@ class Coder:
         ]
 
         main_sys = self.gpt_prompts.main_system
-        if self.main_model.is_gpt4():
+        if self.main_model.use_repo_map:
             main_sys += "\n" + self.gpt_prompts.system_reminder
 
         messages = [

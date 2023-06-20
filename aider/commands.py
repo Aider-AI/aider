@@ -183,7 +183,7 @@ class Commands:
             "was reset and removed from git.\n"
         )
 
-        if self.coder.main_model.is_gpt4():
+        if self.coder.main_model.send_undo_reply:
             return prompts.undo_command_reply
 
     def cmd_diff(self, args):

@@ -3,6 +3,8 @@ import re
 
 class Model:
     always_available = False
+    use_repo_map = False
+    send_undo_reply = False
 
     def __init__(self, name, tokens=None):
         self.name = name
@@ -17,6 +19,8 @@ class Model:
 
         if self.is_gpt4():
             self.edit_format = "diff"
+            self.use_repo_map = True
+            self.send_undo_reply = True
             return
 
         if self.is_gpt35():
