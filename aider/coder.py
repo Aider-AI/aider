@@ -81,7 +81,7 @@ class Coder:
             self.console = Console(force_terminal=True, no_color=True)
 
         main_model = models.Model(main_model)
-        if not main_model.is_always_available():
+        if not main_model.always_available:
             if not self.check_model_availability(main_model):
                 if main_model != models.GPT4:
                     self.io.tool_error(

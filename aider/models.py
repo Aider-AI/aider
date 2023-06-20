@@ -2,6 +2,8 @@ import re
 
 
 class Model:
+    always_available = False
+
     def __init__(self, name, tokens=None):
         self.name = name
         if tokens is None:
@@ -19,6 +21,7 @@ class Model:
 
         if self.is_gpt35():
             self.edit_format = "whole"
+            self.always_available = True
             return
 
         raise ValueError(f"Unsupported model: {name}")
@@ -28,9 +31,6 @@ class Model:
 
     def is_gpt35(self):
         return self.name.startswith("gpt-3.5-turbo")
-
-    def is_always_available(self):
-        return self.is_gpt35()
 
 
 GPT4 = Model("gpt-4", 8)
