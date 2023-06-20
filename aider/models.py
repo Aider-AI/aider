@@ -1,47 +1,38 @@
-class Model_GPT4_32k:
-    name = "gpt-4-32k"
-    max_context_tokens = 32 * 1024
-    edit_format = "diff"
+import re
 
 
-GPT4_32k = Model_GPT4_32k()
+class Model:
+    def __init__(self, name, tokens=None):
+        self.name = name
+        if tokens is None:
+            match = re.search(r"-([0-9]+)k", name)
+
+            default_tokens = 8
+
+            tokens = int(match.group(1)) if match else default_tokens
+
+        self.max_context_tokens = tokens * 1024
+
+        if self.is_gpt4():
+            self.edit_format = "diff"
+            return
+
+        if self.is_gpt35():
+            self.edit_format = "whole"
+            return
+
+        raise ValueError(f"Unsupported model: {name}")
+
+    def is_gpt4(self):
+        return self.name.startswith("gpt-4")
+
+    def is_gpt35(self):
+        return self.name.startswith("gpt-3.5-turbo")
+
+    def is_always_available(self):
+        return self.is_gpt35()
 
 
-class Model_GPT4:
-    name = "gpt-4"
-    max_context_tokens = 8 * 1024
-    edit_format = "diff"
-
-
-GPT4 = Model_GPT4()
-
-
-class Model_GPT35:
-    name = "gpt-3.5-turbo"
-    max_context_tokens = 4 * 1024
-    edit_format = "whole"
-
-
-GPT35 = Model_GPT35()
-
-
-class Model_GPT35_16k:
-    name = "gpt-3.5-turbo-16k"
-    max_context_tokens = 16 * 1024
-    edit_format = "diff"
-
-
-GPT35_16k = Model_GPT35_16k()
-
-GPT35_models = [GPT35, GPT35_16k]
-GPT4_models = [GPT4, GPT4_32k]
-
-
-def get_model(name):
-    models = GPT35_models + GPT4_models
-
-    for model in models:
-        if model.name == name:
-            return model
-
-    raise ValueError(f"Unsupported model: {name}")
+GPT4 = Model("gpt-4", 8)
+GPT35 = Model("gpt-3.5-turbo")
+GPT35_16k = Model("gpt-3.5-turbo-16k")

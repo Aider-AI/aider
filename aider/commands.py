@@ -8,7 +8,7 @@ import git
 import tiktoken
 from prompt_toolkit.completion import Completion
 
-from aider import models, prompts, utils
+from aider import prompts, utils
 
 
 class Commands:
@@ -183,7 +183,7 @@ class Commands:
             "was reset and removed from git.\n"
         )
 
-        if self.coder.main_model in models.GPT4_models:
+        if self.coder.main_model.is_gpt4():
             return prompts.undo_command_reply
 
     def cmd_diff(self, args):

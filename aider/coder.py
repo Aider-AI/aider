@@ -51,6 +51,7 @@ class Coder:
         verbose=False,
         openai_api_key=None,
         openai_api_base=None,
+        assistant_output_color="blue",
     ):
         if not openai_api_key:
             raise MissingAPIKeyError("No OpenAI API key provided.")
@@ -69,6 +70,7 @@ class Coder:
 
         self.auto_commits = auto_commits
         self.dirty_commits = dirty_commits
+        self.assistant_output_color = assistant_output_color
 
         self.dry_run = dry_run
         self.pretty = pretty
@@ -78,25 +80,25 @@ class Coder:
         else:
             self.console = Console(force_terminal=True, no_color=True)
 
-        main_model = models.get_model(main_model)
-        if main_model not in models.GPT35_models:
+        main_model = models.Model(main_model)
+        if not main_model.is_always_available():
             if not self.check_model_availability(main_model):
                 if main_model != models.GPT4:
-                    self.io.tool_error(f"API key does not support {main_model.name}.")
+                    self.io.tool_error(
+                        f"API key does not support {main_model.name}, falling back to"
+                        f" {models.GPT35_16k.name}"
+                    )
                 main_model = models.GPT35_16k
 
         self.main_model = main_model
-        if main_model in models.GPT35_models:
-            self.io.tool_output(
-                f"Using {main_model.name} (experimental): disabling ctags/repo-maps.",
-            )
-
         self.edit_format = self.main_model.edit_format
 
         if self.edit_format == "whole":
             self.gpt_prompts = prompts.GPT35()
         else:
             self.gpt_prompts = prompts.GPT4()
+
+        self.io.tool_output(f"Model: {main_model.name}")
 
         self.show_diffs = show_diffs
 
@@ -106,12 +108,12 @@ class Coder:
 
         if self.repo:
             rel_repo_dir = os.path.relpath(self.repo.git_dir, os.getcwd())
-            self.io.tool_output(f"Using git repo: {rel_repo_dir}")
+            self.io.tool_output(f"Git repo: {rel_repo_dir}")
         else:
-            self.io.tool_output("Not using git.")
+            self.io.tool_output("Git repo: none")
             self.find_common_root()
 
-        if main_model in models.GPT4_models:
+        if main_model.is_gpt4():
             rm_io = io if self.verbose else None
             self.repo_map = RepoMap(
                 map_tokens,
@@ -121,8 +123,16 @@ class Coder:
                 self.gpt_prompts.repo_content_prefix,
             )
 
-            if self.repo_map.has_ctags:
-                self.io.tool_output("Using ctags to build repo-map.")
+            if self.repo_map.use_ctags:
+                self.io.tool_output(f"Repo-map: universal-ctags using {map_tokens} tokens")
+            elif not self.repo_map.has_ctags and map_tokens > 0:
+                self.io.tool_output(
+                    f"Repo-map: basic using {map_tokens} tokens (universal-ctags not found)"
+                )
+            else:
+                self.io.tool_output("Repo-map: disabled because map_tokens == 0")
+        else:
+            self.io.tool_output("Repo-map: disabled for gpt-3.5")
 
         for fname in self.get_inchat_relative_files():
             self.io.tool_output(f"Added {fname} to the chat.")
@@ -318,7 +328,7 @@ class Coder:
         ]
 
         main_sys = self.gpt_prompts.main_system
-        if self.main_model in models.GPT4_models + [models.GPT35_16k]:
+        if self.main_model.is_gpt4():
             main_sys += "\n" + self.gpt_prompts.system_reminder
 
         messages = [
@@ -488,7 +498,9 @@ class Coder:
                             show_resp = self.update_files_gpt35(self.resp, mode="diff")
                         except ValueError:
                             pass
-                    md = Markdown(show_resp, style="blue", code_theme="default")
+                    md = Markdown(
+                        show_resp, style=self.assistant_output_color, code_theme="default"
+                    )
                     live.update(md)
                 else:
                     sys.stdout.write(text)

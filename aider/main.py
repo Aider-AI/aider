@@ -4,7 +4,7 @@ import sys
 import configargparse
 import git
 
-from aider import models
+from aider import __version__, models
 from aider.coder import Coder
 from aider.io import InputOutput
 
@@ -30,11 +30,18 @@ def main(args=None, input=None, output=None):
         default_config_files.insert(0, os.path.join(git_root, ".aider.conf.yml"))
 
     parser = configargparse.ArgumentParser(
-        description="aider - chat with GPT about your code",
+        description="aider is GPT powered coding in your terminal",
         add_config_file_help=True,
         default_config_files=default_config_files,
         config_file_parser_class=configargparse.YAMLConfigFileParser,
         auto_env_var_prefix="AIDER_",
+    )
+
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {__version__}",
+        help="Show the version number and exit",
     )
 
     parser.add_argument(
@@ -84,7 +91,7 @@ def main(args=None, input=None, output=None):
         action="store_const",
         dest="model",
         const=models.GPT35_16k.name,
-        help=f"Use {models.GPT35.name} model for the main chat (not advised)",
+        help=f"Use {models.GPT35_16k.name} model for the main chat (gpt-4 is better)",
     )
     parser.add_argument(
         "--pretty",
@@ -112,6 +119,11 @@ def main(args=None, input=None, output=None):
         "--tool-error-color",
         default="red",
         help="Set the color for tool error messages (default: red)",
+    )
+    parser.add_argument(
+        "--assistant-output-color",
+        default="blue",
+        help="Set the color for assistant output (default: blue)",
     )
     parser.add_argument(
         "--apply",
@@ -228,6 +240,7 @@ def main(args=None, input=None, output=None):
         verbose=args.verbose,
         openai_api_key=args.openai_api_key,
         openai_api_base=args.openai_api_base,
+        assistant_output_color=args.assistant_output_color,
     )
 
     if args.dirty_commits:

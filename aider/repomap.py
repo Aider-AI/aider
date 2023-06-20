@@ -83,10 +83,12 @@ class RepoMap:
         self.load_tags_cache()
 
         self.max_map_tokens = map_tokens
-        if map_tokens > 0:
-            self.has_ctags = self.check_for_ctags()
+        self.has_ctags = self.check_for_ctags()
+
+        if map_tokens > 0 and self.has_ctags:
+            self.use_ctags = True
         else:
-            self.has_ctags = False
+            self.use_ctags = False
 
         self.tokenizer = tiktoken.encoding_for_model(main_model.name)
         self.repo_content_prefix = repo_content_prefix
@@ -122,7 +124,7 @@ class RepoMap:
         if not other_files:
             return
 
-        if self.has_ctags:
+        if self.use_ctags:
             files_listing = self.get_ranked_tags_map(chat_files, other_files)
             if files_listing:
                 num_tokens = self.token_count(files_listing)
@@ -166,7 +168,7 @@ class RepoMap:
             return self.TAGS_CACHE[cache_key]["data"]
 
         cmd = self.ctags_cmd + [filename]
-        output = subprocess.check_output(cmd).decode("utf-8")
+        output = subprocess.check_output(cmd, stderr=subprocess.PIPE).decode("utf-8")
         output = output.splitlines()
 
         data = [json.loads(line) for line in output]
