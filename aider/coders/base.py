@@ -18,7 +18,7 @@ from aider import diffs, editors, models, prompts, utils
 from aider.commands import Commands
 from aider.repomap import RepoMap
 
-from .dump import dump  # noqa: F401
+from ..dump import dump  # noqa: F401
 
 
 class MissingAPIKeyError(ValueError):

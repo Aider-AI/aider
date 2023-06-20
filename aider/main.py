@@ -5,7 +5,7 @@ import configargparse
 import git
 
 from aider import __version__, models
-from aider.coder import Coder
+from aider.coders import Coder
 from aider.io import InputOutput
 
 
