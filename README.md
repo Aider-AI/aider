@@ -11,9 +11,9 @@ It also has features that [help GPT-4 understand and modify larger codebases](ht
 - [Getting started](#getting-started)
 - [Example chat transcripts](#example-chat-transcripts)
 - [Features](#features)
-- [GPT-4 vs GPT-3.5](#gpt-4-vs-gpt-35)
 - [Installation](#installation)
 - [Usage](#usage)
+- [GPT-4 vs GPT-3.5](#gpt-4-vs-gpt-35)
 - [In-chat commands](#in-chat-commands)
 - [Tips](#tips)
 
@@ -55,6 +55,56 @@ You can find more chat transcripts on the [examples page](https://aider.chat/exa
 * Aider can [give *GPT-4* a map of your entire git repo](https://aider.chat/docs/ctags.html), which helps it understand and modify large codebases.
 * You can also edit files by hand using your editor while chatting with aider. Aider will notice these out-of-band edits and ask if you'd like to commit them. This lets you bounce back and forth between the aider chat and your editor, to collaboratively code with GPT.
 
+
+## Installation
+
+1. Install the package:
+  * PyPI: `pip install aider-chat`
+  * GitHub: `pip install git+https://github.com/paul-gauthier/aider.git`
+  * Local clone: `pip install -e .` 
+
+2. Set up your OpenAI API key:
+  * As an environment variable: `export OPENAI_API_KEY=sk-...`
+  * Or, by including `openai-api-key: sk-...` in an `.aider.config.yml` file
+
+3. Optionally, install [universal ctags](https://github.com/universal-ctags/ctags). This is helpful if you plan to use aider and GPT-4 with repositories that have more than a handful of files.  This allows aider to build a [map of your entire git repo](https://aider.chat/docs/ctags.html) and share it with GPT to help it better understand and modify large codebases.
+
+## Usage
+
+Run the `aider` tool by executing the following command:
+
+```
+aider <file1> <file2> ...
+```
+
+Replace `<file1>`, `<file2>`, etc., with the paths to the source code files you want to work on.
+These files will be "added to the chat session", so that GPT can see their contents and edit them according to your instructions.
+
+You can also just launch `aider` anywhere in a git repo without naming
+files on the command line.  It will discover all the files in the
+repo.  You can then add and remove individual files in the chat
+session with the `/add` and `/drop` chat commands described below.
+If you or GPT mention one of the repo's filenames in the conversation,
+aider will ask if you'd like to add it to the chat.
+
+Aider will work best if you think about which files need to be edited to make your change and add them to the chat.
+Aider has some ability to help GPT figure out which files to edit all by itself, but the most effective approach is to explicitly add the needed files to the chat yourself.
+
+Aider also has many
+additional command-line options, environment variables or configuration file
+to set many options. See `aider --help` for details.
+
+## In-chat commands
+
+Aider supports commands from within the chat, which all start with `/`. Here are some of the most useful in-chat commands:
+
+* `/add <file>`: Add matching files to the chat session.
+* `/drop <file>`: Remove matching files from the chat session.
+* `/undo`: Undo the last git commit if it was done by aider.
+* `/diff`: Display the diff of the last aider commit.
+* `/run <command>`: Run a shell command and optionally add the output to the chat.
+* `/help`: Show help about all commands.
+
 ## GPT-4 vs GPT-3.5
 
 Aider supports all of OpenAI's chat models, including
@@ -84,50 +134,6 @@ Aider disables the
 when used with GPT-3.5 models.
 The `gpt-3.5-turbo` context window is too small to include a repo map.
 Evaluation is still needed to determine if `gpt-3.5-turbo-16k` can make use of a repo map.
-
-## Installation
-
-1. Install the package:
-  * PyPI: `pip install aider-chat`
-  * GitHub: `pip install git+https://github.com/paul-gauthier/aider.git`
-  * Local clone: `pip install -e .` 
-
-2. Set up your OpenAI API key:
-  * As an environment variable: `export OPENAI_API_KEY=sk-...`
-  * Or, by including `openai-api-key: sk-...` in an `.aider.config.yml` file
-
-3. Optionally, install [universal ctags](https://github.com/universal-ctags/ctags). This is helpful if you plan to use aider and GPT-4 with repositories that have more than a handful of files.  This allows aider to build a [map of your entire git repo](https://aider.chat/docs/ctags.html) and share it with GPT to help it better understand and modify large codebases.
-
-## Usage
-
-Run the `aider` tool by executing the following command:
-
-```
-aider <file1> <file2> ...
-```
-
-Replace `<file1>`, `<file2>`, etc., with the paths to the source code files you want to work on. These files will be added to the chat session.
-
-You can also just launch `aider` anywhere in a git repo without naming
-files on the command line.  It will discover all the files in the
-repo.  You can then add and remove individual files in the chat
-session with the `/add` and `/drop` chat commands described below.
-If you or GPT mention one of the repo's filenames in the conversation,
-aider will ask if you'd like to add it to the chat.
-
-You can also use additional command-line options, environment variables or configuration file
-to set many options. See `aider --help` for details.
-
-## In-chat commands
-
-Aider supports commands from within the chat, which all start with `/`. Here are some of the most useful in-chat commands:
-
-* `/add <file>`: Add matching files to the chat session.
-* `/drop <file>`: Remove matching files from the chat session.
-* `/undo`: Undo the last git commit if it was done by aider.
-* `/diff`: Display the diff of the last aider commit.
-* `/run <command>`: Run a shell command and optionally add the output to the chat.
-* `/help`: Show help about all commands.
 
 ## Tips
 
