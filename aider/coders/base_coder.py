@@ -34,7 +34,13 @@ class Coder:
 
     @classmethod
     def create(
-        self, main_model, io, openai_api_key, openai_api_base="https://api.openai.com/v1", **kwargs
+        self,
+        main_model,
+        edit_format,
+        io,
+        openai_api_key,
+        openai_api_base="https://api.openai.com/v1",
+        **kwargs,
     ):
         from . import EditBlockCoder, WholeFileCoder
 
@@ -50,9 +56,12 @@ class Coder:
                     )
                 main_model = models.GPT35_16k
 
-        if main_model.edit_format == "diff":
+        if edit_format is None:
+            edit_format = main_model.edit_format
+
+        if edit_format == "diff":
             return EditBlockCoder(main_model, io, **kwargs)
-        elif main_model.edit_format == "whole":
+        elif edit_format == "whole":
             return WholeFileCoder(main_model, io, **kwargs)
         else:
             raise ValueError(f"{main_model} has unknown edit format {main_model.edit_format}")

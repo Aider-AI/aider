@@ -94,6 +94,12 @@ def main(args=None, input=None, output=None):
         help=f"Use {models.GPT35_16k.name} model for the main chat (gpt-4 is better)",
     )
     parser.add_argument(
+        "--edit-format",
+        metavar="EDIT_FORMAT",
+        default=None,
+        help="Specify what edit format GPT should use (default depends on model)",
+    )
+    parser.add_argument(
         "--pretty",
         action="store_true",
         default=True,
@@ -231,6 +237,7 @@ def main(args=None, input=None, output=None):
 
     coder = Coder.create(
         main_model,
+        args.edit_format,
         io,
         args.openai_api_key,
         args.openai_api_base,
