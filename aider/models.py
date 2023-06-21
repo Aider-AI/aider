@@ -1,19 +1,31 @@
 import re
 
+known_tokens = {
+    "gpt-3.5-turbo": 4,
+    "gpt-4": 8,
+}
+
 
 class Model:
     always_available = False
     use_repo_map = False
     send_undo_reply = False
 
-    def __init__(self, name, tokens=None):
+    def __init__(self, name):
         self.name = name
+
+        tokens = None
+
+        match = re.search(r"-([0-9]+)k", name)
+        if match:
+            tokens = int(match.group(1))
+        else:
+            for m, t in known_tokens.items():
+                if name.startswith(m):
+                    tokens = t
+
         if tokens is None:
-            match = re.search(r"-([0-9]+)k", name)
-
-            default_tokens = 8
-
-            tokens = int(match.group(1)) if match else default_tokens
+            raise ValueError(f"Unknown context window size for model: {name}")
 
         self.max_context_tokens = tokens * 1024
 
@@ -40,6 +52,6 @@ class Model:
         return self.name
 
 
-GPT4 = Model("gpt-4", 8)
+GPT4 = Model("gpt-4")
 GPT35 = Model("gpt-3.5-turbo")
 GPT35_16k = Model("gpt-3.5-turbo-16k")
