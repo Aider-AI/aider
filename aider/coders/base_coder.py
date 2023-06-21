@@ -357,8 +357,11 @@ class Coder:
 
         try:
             content, interrupted = self.send(messages)
-        except ExhaustedContextWindow as err:
-            self.io.tool_error(str(err))
+        except ExhaustedContextWindow:
+            self.io.tool_error("Exhausted context window!")
+            self.io.tool_error(" - Use /tokens to see token usage.")
+            self.io.tool_error(" - Use /drop to remove unneeded files from the chat session.")
+            self.io.tool_error(" - Use /clear to clear chat history.")
             return
 
         if interrupted:
@@ -502,10 +505,7 @@ class Coder:
             for chunk in completion:
                 dump(chunk)
                 if chunk.choices[0].finish_reason == "length":
-                    raise ExhaustedContextWindow(
-                        "Exhausted context window. Try /clear to clear chat history, or /drop to"
-                        " remove unneeded files from the chat session."
-                    )
+                    raise ExhaustedContextWindow()
 
                 try:
                     func = chunk.choices[0].delta.function_call
