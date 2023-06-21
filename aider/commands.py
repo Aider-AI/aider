@@ -95,7 +95,7 @@ class Commands:
             dict(role="system", content=self.coder.gpt_prompts.system_reminder),
         ]
         tokens = len(self.tokenizer.encode(json.dumps(msgs)))
-        res.append((tokens, "system messages"))
+        res.append((tokens, "system messages", ""))
 
         # chat history
         msgs = self.coder.done_messages + self.coder.cur_messages
@@ -103,7 +103,7 @@ class Commands:
             msgs = [dict(role="dummy", content=msg) for msg in msgs]
             msgs = json.dumps(msgs)
             tokens = len(self.tokenizer.encode(msgs))
-            res.append((tokens, "chat history"))
+            res.append((tokens, "chat history", "use /clear to clear"))
 
         # repo map
         other_files = set(self.coder.get_all_abs_files()) - set(self.coder.abs_fnames)
@@ -111,14 +111,14 @@ class Commands:
             repo_content = self.coder.repo_map.get_repo_map(self.coder.abs_fnames, other_files)
             if repo_content:
                 tokens = len(self.tokenizer.encode(repo_content))
-                res.append((tokens, "repository map"))
+                res.append((tokens, "repository map", "use --map-tokens to resize"))
 
         # files
         for fname in self.coder.abs_fnames:
             relative_fname = self.coder.get_rel_fname(fname)
             quoted = utils.quoted_file(fname, relative_fname)
             tokens = len(self.tokenizer.encode(quoted))
-            res.append((tokens, relative_fname))
+            res.append((tokens, f"{relative_fname}", "use /drop to drop from chat"))
 
         print("Context window usage, in tokens:")
         print()
@@ -126,10 +126,13 @@ class Commands:
         def fmt(v):
             return format(int(v), ",").rjust(6)
 
+        col_width = max(len(row[1]) for row in res)
+
         total = 0
-        for tk, msg in res:
+        for tk, msg, tip in res:
             total += tk
-            print(f"{fmt(tk)} {msg}")
+            msg = msg.ljust(col_width)
+            print(f"{fmt(tk)} {msg} {tip}")
 
         print()
         print(f"{fmt(total)} total")
