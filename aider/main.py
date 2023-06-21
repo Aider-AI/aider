@@ -227,10 +227,14 @@ def main(args=None, input=None, output=None):
         io.tool_error("No OpenAI API key provided. Use --openai-api-key or env OPENAI_API_KEY.")
         return 1
 
+    main_model = models.Model(args.model)
+
     coder = Coder.create(
-        "diff",
+        main_model,
         io,
-        main_model=args.model,
+        args.openai_api_key,
+        args.openai_api_base,
+        ##
         fnames=args.files,
         pretty=args.pretty,
         show_diffs=args.show_diffs,
@@ -239,8 +243,6 @@ def main(args=None, input=None, output=None):
         dry_run=args.dry_run,
         map_tokens=args.map_tokens,
         verbose=args.verbose,
-        openai_api_key=args.openai_api_key,
-        openai_api_base=args.openai_api_base,
         assistant_output_color=args.assistant_output_color,
     )
 
