@@ -444,12 +444,77 @@ class Coder:
         on_backoff=lambda details: print(f"Retry in {details['wait']} seconds."),
     )
     def send_with_retries(self, model, messages):
-        return openai.ChatCompletion.create(
+        _functions = [
+            dict(
+                name="replace_lines",
+                description="replace a block of contiguous lines with a new set of lines",
+                parameters=dict(
+                    type="object",
+                    required=["file_path", "original_lines", "updated_lines"],
+                    properties=dict(
+                        file_path=dict(
+                            type="string",
+                            description="path of file to edit",
+                        ),
+                        original_lines=dict(
+                            type="string",
+                            description=(
+                                "block of contiguous lines from the file (including newlines)"
+                            ),
+                        ),
+                        updated_lines=dict(
+                            type="string",
+                            description=(
+                                "block of contiguous lines from the file (including newlines)"
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        ]
+        functions = [
+            dict(
+                name="write_file",
+                description="create or update a file",
+                parameters=dict(
+                    type="object",
+                    required=["explanation", "file_path", "file_content"],
+                    properties=dict(
+                        explanation=dict(
+                            type="string",
+                            description=(
+                                "Explanation of the changes to be made to the code (markdown"
+                                " format)"
+                            ),
+                        ),
+                        file_path=dict(
+                            type="string",
+                            description="Path of file to write",
+                        ),
+                        file_content=dict(
+                            type="string",
+                            description="Content to write to the file",
+                        ),
+                    ),
+                ),
+            ),
+        ]
+        dump(functions)
+
+        res = openai.ChatCompletion.create(
             model=model,
             messages=messages,
             temperature=0,
-            stream=True,
+            stream=False,
+            functions=functions,
         )
+        dump(res)
+        msg = res.choices[0].message
+        dump(msg)
+        print(msg.content)
+        print(msg.function_call.arguments)
+        sys.exit()
+        return res
 
     def send(self, messages, model=None, silent=False):
         if not model:
@@ -482,10 +547,17 @@ class Coder:
                     assert False, "Exceeded context window!"
 
                 try:
-                    text = chunk.choices[0].delta.content
-                    self.resp += text
+                    func = chunk.choices[0].delta.function_call
+                    dump(func)
                 except AttributeError:
-                    continue
+                    pass
+
+                try:
+                    text = chunk.choices[0].delta.content
+                    if text:
+                        self.resp += text
+                except AttributeError:
+                    pass
 
                 if silent:
                     continue
