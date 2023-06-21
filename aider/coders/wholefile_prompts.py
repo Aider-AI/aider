@@ -1,6 +1,6 @@
 # flake8: noqa: E501
 
-from .base import EditorPrompts
+from .prompts_base import EditorPrompts
 
 
 class WholeFilePrompts(EditorPrompts):

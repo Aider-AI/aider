@@ -3,8 +3,8 @@ from pathlib import Path
 
 from aider import diffs
 
-from ..editors import WholeFilePrompts
 from .base import Coder
+from .wholefile_prompts import WholeFilePrompts
 
 
 class WholeFileCoder(Coder):
