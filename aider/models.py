@@ -36,6 +36,9 @@ class Model:
     def is_gpt35(self):
         return self.name.startswith("gpt-3.5-turbo")
 
+    def __str__(self):
+        return self.name
+
 
 GPT4 = Model("gpt-4", 8)
 GPT35 = Model("gpt-3.5-turbo")

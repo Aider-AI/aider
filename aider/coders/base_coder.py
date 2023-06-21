@@ -42,7 +42,7 @@ class Coder:
         openai_api_base="https://api.openai.com/v1",
         **kwargs,
     ):
-        from . import EditBlockCoder, WholeFileCoder
+        from . import EditBlockCoder, FunctionCoder, WholeFileCoder
 
         openai.api_key = openai_api_key
         openai.api_base = openai_api_base
@@ -63,8 +63,10 @@ class Coder:
             return EditBlockCoder(main_model, io, **kwargs)
         elif edit_format == "whole":
             return WholeFileCoder(main_model, io, **kwargs)
+        elif edit_format == "func":
+            return FunctionCoder(main_model, io, **kwargs)
         else:
-            raise ValueError(f"{main_model} has unknown edit format {main_model.edit_format}")
+            raise ValueError(f"Unknown edit format {edit_format}")
 
     def __init__(
         self,
