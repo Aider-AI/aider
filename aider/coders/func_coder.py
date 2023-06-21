@@ -8,6 +8,33 @@ from .func_prompts import FunctionPrompts
 
 
 class FunctionCoder(Coder):
+    functions = [
+        dict(
+            name="write_file",
+            description="create or update a file",
+            parameters=dict(
+                type="object",
+                required=["explanation", "file_path", "file_content"],
+                properties=dict(
+                    explanation=dict(
+                        type="string",
+                        description=(
+                            "Explanation of the changes to be made to the code (markdown format)"
+                        ),
+                    ),
+                    file_path=dict(
+                        type="string",
+                        description="Path of file to write",
+                    ),
+                    file_content=dict(
+                        type="string",
+                        description="Content to write to the file",
+                    ),
+                ),
+            ),
+        ),
+    ]
+
     def __init__(self, *args, **kwargs):
         self.gpt_prompts = FunctionPrompts()
         super().__init__(*args, **kwargs)
