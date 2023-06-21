@@ -33,7 +33,9 @@ class Coder:
     repo_map = None
 
     @classmethod
-    def create(self, main_model, io, openai_api_key, openai_api_base, **kwargs):
+    def create(
+        self, main_model, io, openai_api_key, openai_api_base="https://api.openai.com/v1", **kwargs
+    ):
         from . import EditBlockCoder, WholeFileCoder
 
         openai.api_key = openai_api_key
