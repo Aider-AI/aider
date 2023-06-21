@@ -2,7 +2,7 @@
 
 import unittest
 
-from aider.coders import editblock
+from aider.coders import editblock_coder as eb
 
 
 class TestUtils(unittest.TestCase):
@@ -12,7 +12,7 @@ class TestUtils(unittest.TestCase):
         replace = "This is a replaced text."
         expected_output = "This is a replaced text..\nAnother line of text.\nYet another line.\n"
 
-        result = editblock.replace_most_similar_chunk(whole, part, replace)
+        result = eb.replace_most_similar_chunk(whole, part, replace)
         self.assertEqual(result, expected_output)
 
     def test_replace_most_similar_chunk_not_perfect_match(self):
@@ -21,7 +21,7 @@ class TestUtils(unittest.TestCase):
         replace = "This is a replaced text.\nModified line of text."
         expected_output = "This is a replaced text.\nModified line of text.\nYet another line."
 
-        result = editblock.replace_most_similar_chunk(whole, part, replace)
+        result = eb.replace_most_similar_chunk(whole, part, replace)
         self.assertEqual(result, expected_output)
 
     def test_strip_quoted_wrapping(self):
@@ -29,19 +29,19 @@ class TestUtils(unittest.TestCase):
             "filename.ext\n```\nWe just want this content\nNot the filename and triple quotes\n```"
         )
         expected_output = "We just want this content\nNot the filename and triple quotes\n"
-        result = editblock.strip_quoted_wrapping(input_text, "filename.ext")
+        result = eb.strip_quoted_wrapping(input_text, "filename.ext")
         self.assertEqual(result, expected_output)
 
     def test_strip_quoted_wrapping_no_filename(self):
         input_text = "```\nWe just want this content\nNot the triple quotes\n```"
         expected_output = "We just want this content\nNot the triple quotes\n"
-        result = editblock.strip_quoted_wrapping(input_text)
+        result = eb.strip_quoted_wrapping(input_text)
         self.assertEqual(result, expected_output)
 
     def test_strip_quoted_wrapping_no_wrapping(self):
         input_text = "We just want this content\nNot the triple quotes\n"
         expected_output = "We just want this content\nNot the triple quotes\n"
-        result = editblock.strip_quoted_wrapping(input_text)
+        result = eb.strip_quoted_wrapping(input_text)
         self.assertEqual(result, expected_output)
 
     def test_find_original_update_blocks(self):
@@ -60,7 +60,7 @@ Tooooo
 Hope you like it!
 """
 
-        edits = list(editblock.find_original_update_blocks(edit))
+        edits = list(eb.find_original_update_blocks(edit))
         self.assertEqual(edits, [("foo.txt", "Two\n", "Tooooo\n")])
 
     def test_find_original_update_blocks_quote_below_filename(self):
@@ -79,7 +79,7 @@ Tooooo
 Hope you like it!
 """
 
-        edits = list(editblock.find_original_update_blocks(edit))
+        edits = list(eb.find_original_update_blocks(edit))
         self.assertEqual(edits, [("foo.txt", "Two\n", "Tooooo\n")])
 
     def test_find_original_update_blocks_unclosed(self):
@@ -98,7 +98,7 @@ oops!
 """
 
         with self.assertRaises(ValueError) as cm:
-            list(editblock.find_original_update_blocks(edit))
+            list(eb.find_original_update_blocks(edit))
         self.assertIn("Incomplete", str(cm.exception))
 
     def test_find_original_update_blocks_missing_filename(self):
@@ -116,7 +116,7 @@ oops!
 """
 
         with self.assertRaises(ValueError) as cm:
-            list(editblock.find_original_update_blocks(edit))
+            list(eb.find_original_update_blocks(edit))
         self.assertIn("filename", str(cm.exception))
 
     def test_find_original_update_blocks_no_final_newline(self):
@@ -152,7 +152,7 @@ aider/coder.py
 >>>>>>> UPDATED"""
 
         # Should not raise a ValueError
-        list(editblock.find_original_update_blocks(edit))
+        list(eb.find_original_update_blocks(edit))
 
     def test_incomplete_edit_block_missing_filename(self):
         edit = """
@@ -195,7 +195,7 @@ tests/test_repomap.py
 
 These changes replace the `subprocess.run` patches with `subprocess.check_output` patches in both `test_check_for_ctags_failure` and `test_check_for_ctags_success` tests.
 """
-        edit_blocks = list(editblock.find_original_update_blocks(edit))
+        edit_blocks = list(eb.find_original_update_blocks(edit))
         self.assertEqual(len(edit_blocks), 2)  # 2 edits
         self.assertEqual(edit_blocks[0][0], "tests/test_repomap.py")
         self.assertEqual(edit_blocks[1][0], "tests/test_repomap.py")
@@ -206,7 +206,7 @@ These changes replace the `subprocess.run` patches with `subprocess.check_output
         replace = "new_line1\nnew_line2"
         expected_output = "    new_line1\n    new_line2\n    line3\n"
 
-        result = editblock.replace_part_with_missing_leading_whitespace(whole, part, replace)
+        result = eb.replace_part_with_missing_leading_whitespace(whole, part, replace)
         self.assertEqual(result, expected_output)
 
 

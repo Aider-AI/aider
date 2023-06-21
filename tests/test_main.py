@@ -18,7 +18,7 @@ class TestMain(TestCase):
         self.original_cwd = os.getcwd()
         self.tempdir = tempfile.mkdtemp()
         os.chdir(self.tempdir)
-        self.patcher = patch("aider.coders.base.check_model_availability")
+        self.patcher = patch("aider.coders.base_coder.check_model_availability")
         self.mock_check = self.patcher.start()
         self.mock_check.return_value = True
 

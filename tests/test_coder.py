@@ -11,7 +11,7 @@ from aider.coders import Coder
 
 class TestCoder(unittest.TestCase):
     def setUp(self):
-        self.patcher = patch("aider.coders.base.check_model_availability")
+        self.patcher = patch("aider.coders.base_coder.check_model_availability")
         self.mock_check = self.patcher.start()
         self.mock_check.return_value = True
 
@@ -121,7 +121,7 @@ class TestCoder(unittest.TestCase):
         # Assert that the returned message is the expected one
         self.assertEqual(result, 'a good "commit message"')
 
-    @patch("aider.coders.base.openai.ChatCompletion.create")
+    @patch("aider.coders.base_coder.openai.ChatCompletion.create")
     @patch("builtins.print")
     def test_send_with_retries_rate_limit_error(self, mock_print, mock_chat_completion_create):
         # Mock the IO object
@@ -143,7 +143,7 @@ class TestCoder(unittest.TestCase):
         # Assert that print was called once
         mock_print.assert_called_once()
 
-    @patch("aider.coders.base.openai.ChatCompletion.create")
+    @patch("aider.coders.base_coder.openai.ChatCompletion.create")
     @patch("builtins.print")
     def test_send_with_retries_connection_error(self, mock_print, mock_chat_completion_create):
         # Mock the IO object

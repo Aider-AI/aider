@@ -3,7 +3,7 @@ from pathlib import Path
 
 from aider import diffs
 
-from .base import Coder
+from .base_coder import Coder
 from .wholefile_prompts import WholeFilePrompts
 
 

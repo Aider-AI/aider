@@ -4,7 +4,7 @@ import re
 from difflib import SequenceMatcher
 from pathlib import Path
 
-from .base import Coder
+from .base_coder import Coder
 from .editblock_prompts import EditBlockPrompts
 
 
