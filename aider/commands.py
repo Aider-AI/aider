@@ -79,9 +79,8 @@ class Commands:
         self.coder.commit(message=commit_message, which="repo_files")
 
     def cmd_clear(self, args):
-        "Clear the chat history and drop all files from the chat context"
+        "Clear the chat history"
 
-        self.coder.abs_fnames = set()
         self.coder.done_messages = []
         self.coder.cur_messages = []
 
