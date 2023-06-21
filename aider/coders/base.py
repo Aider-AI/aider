@@ -37,7 +37,6 @@ class Coder:
         from . import EditBlockCoder, WholeFileCoder
 
         if edit_format == "diff":
-            dump("here")
             return EditBlockCoder(*args, **kwargs)
         elif edit_format == "whole":
             return WholeFileCoder(*args, **kwargs)
