@@ -355,7 +355,12 @@ class Coder:
         if self.verbose:
             utils.show_messages(messages)
 
-        content, interrupted = self.send(messages)
+        try:
+            content, interrupted = self.send(messages)
+        except ExhaustedContextWindow as err:
+            self.io.tool_error(str(err))
+            return
+
         if interrupted:
             self.io.tool_error("\n\n^C KeyboardInterrupt")
             content += "\n^C KeyboardInterrupt"
