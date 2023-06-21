@@ -25,6 +25,10 @@ class MissingAPIKeyError(ValueError):
     pass
 
 
+class ExhaustedContextWindow(Exception):
+    pass
+
+
 class Coder:
     abs_fnames = None
     repo = None
@@ -450,7 +454,7 @@ class Coder:
             temperature=0,
             stream=True,
         )
-        if self.functions:
+        if hasattr(self, "functions"):
             kwargs["functions"] = self.functions
 
         res = openai.ChatCompletion.create(**kwargs)
@@ -492,8 +496,11 @@ class Coder:
 
             for chunk in completion:
                 dump(chunk)
-                if chunk.choices[0].finish_reason not in (None, "stop", "function_call"):
-                    assert False, "Exceeded context window!"
+                if chunk.choices[0].finish_reason == "length":
+                    raise ExhaustedContextWindow(
+                        "Exhausted context window. Try /clear to clear chat history, or /drop to"
+                        " remove unneeded files from the chat session."
+                    )
 
                 try:
                     func = chunk.choices[0].delta.function_call
