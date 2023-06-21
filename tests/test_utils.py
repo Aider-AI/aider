@@ -2,7 +2,7 @@
 
 import unittest
 
-from aider import utils
+import aider.coders.editblock as utils
 
 
 class TestUtils(unittest.TestCase):
