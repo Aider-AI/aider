@@ -720,7 +720,6 @@ class Coder:
     def apply_updates(self):
         try:
             edited = self.update_files()
-            return edited, None
         except ValueError as err:
             err = err.args[0]
             self.io.tool_error("Malformed response, retrying...")
@@ -732,6 +731,11 @@ class Coder:
             print()
             traceback.print_exc()
             return None, err
+
+        if edited:
+            for path in sorted(edited):
+                self.io.tool_output(f"Applied edit to {path}")
+        return edited, None
 
     def parse_partial_args(self):
         # dump(self.partial_response_function_call)

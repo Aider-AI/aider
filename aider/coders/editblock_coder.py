@@ -52,12 +52,8 @@ class EditBlockCoder(Coder):
                     ):
                         self.repo.git.add(full_path)
 
-            edited.add(path)
             if do_replace(full_path, original, updated, self.dry_run):
-                if self.dry_run:
-                    self.io.tool_output(f"Dry run, did not apply edit to {path}")
-                else:
-                    self.io.tool_output(f"Applied edit to {path}")
+                edited.add(path)
             else:
                 self.io.tool_error(f"Failed to apply edit to {path}")
 

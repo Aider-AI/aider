@@ -54,9 +54,10 @@ class WholeFileCoder(Coder):
                         ).splitlines()
                         output += show_diff
                     else:
-                        new_lines = "".join(new_lines)
-                        Path(full_path).write_text(new_lines)
                         edited.add(fname)
+                        if not self.dry_run:
+                            new_lines = "".join(new_lines)
+                            Path(full_path).write_text(new_lines)
 
                     fname = None
                     new_lines = []

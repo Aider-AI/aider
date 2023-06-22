@@ -111,18 +111,24 @@ class FunctionCoder(Coder):
 
         files = args.get("files", [])
 
+        chat_files = self.get_inchat_relative_files()
+
         edited = set()
         for file_upd in files:
             path = file_upd.get("path")
             if not path:
                 raise ValueError(f"Missing path: {file_upd}")
 
+            if path not in chat_files:
+                raise ValueError(f"File {path} not in chat session.")
+
             content = file_upd.get("content")
             if not content:
                 raise ValueError(f"Missing content: {file_upd}")
 
-            full_path = os.path.abspath(os.path.join(self.root, path))
-            Path(full_path).write_text(content)
             edited.add(path)
+            if not self.dry_run:
+                full_path = os.path.abspath(os.path.join(self.root, path))
+                Path(full_path).write_text(content)
 
         return edited

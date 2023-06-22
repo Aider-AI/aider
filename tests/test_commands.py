@@ -23,7 +23,7 @@ class TestCommands(TestCase):
         io = InputOutput(pretty=False, yes=True)
         from aider.coders import Coder
 
-        coder = Coder.create(models.GPT35, io, openai_api_key="deadbeef")
+        coder = Coder.create(models.GPT35, None, io, openai_api_key="deadbeef")
         commands = Commands(io, coder)
 
         # Call the cmd_add method with 'foo.txt' and 'bar.txt' as a single string
