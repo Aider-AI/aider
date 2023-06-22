@@ -2,7 +2,7 @@ import os
 
 from aider import diffs
 
-from ..dump import dump
+from ..dump import dump  # noqa: F401
 from .base_coder import Coder
 from .func_prompts import FunctionPrompts
 
@@ -11,10 +11,10 @@ class FunctionCoder(Coder):
     functions = [
         dict(
             name="write_file",
-            description="create or update a file",
+            description="create or update one or more files",
             parameters=dict(
                 type="object",
-                required=["explanation", "files_to_update"],
+                required=["explanation", "files"],
                 properties=dict(
                     explanation=dict(
                         type="string",
@@ -23,17 +23,17 @@ class FunctionCoder(Coder):
                             " tense, markdown format)"
                         ),
                     ),
-                    files_to_update=dict(
+                    files=dict(
                         type="array",
                         items=dict(
                             type="object",
-                            required=["file_path", "file_content"],
+                            required=["path", "content"],
                             properties=dict(
-                                file_path=dict(
+                                path=dict(
                                     type="string",
                                     description="Path of file to write",
                                 ),
-                                file_content=dict(
+                                content=dict(
                                     type="string",
                                     description="Content to write to the file",
                                 ),
@@ -59,32 +59,28 @@ class FunctionCoder(Coder):
 
     def modify_incremental_response(self):
         args = self.parse_partial_args()
-        dump(args)
+
         if not args:
             return
 
-        path = args.get("file_path")
         explanation = args.get("explanation")
-        content = args.get("file_content")
+        files = args.get("files", [])
 
         res = ""
-
         if explanation:
-            res += f"{explanation}\n"
+            res += f"{explanation}\n\n"
 
-        if not path:
-            return res
+        for file_upd in files:
+            path = file_upd.get("path")
+            if not path:
+                continue
+            content = file_upd.get("content")
+            if not content:
+                continue
 
-        if path:
-            if res:
-                res += "\n"
+            res += path + ":\n"
+            res += self.live_diffs(path, content)
 
-            res += path + "\n"
-
-        if not content:
-            return res
-
-        res += self.live_diffs(path, content)
         return res
 
     def live_diffs(self, fname, content):

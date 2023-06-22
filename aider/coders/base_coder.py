@@ -729,7 +729,7 @@ class Coder:
             return None, err
 
     def parse_partial_args(self):
-        dump(self.partial_response_function_call)
+        # dump(self.partial_response_function_call)
 
         data = self.partial_response_function_call.get("arguments")
         if not data:
