@@ -36,7 +36,7 @@ class Model:
             return
 
         if self.is_gpt35():
-            self.edit_format = "whole"
+            self.edit_format = "whole-func"
             self.always_available = True
             return
 
