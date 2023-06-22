@@ -134,7 +134,10 @@ The `gpt-3.5-turbo` context window is too small to include a repo map.
 Evaluation is still needed to determine if `gpt-3.5-turbo-16k` can make use of a repo map.
 
 In practice, this means you can use aider to edit a set of source files
-that total up to these sizes:
+that total up to the sizes below.
+You can (and should) add just the specific set of files to the chat
+that are relevant to the change you are requesting.
+This minimizes your use of the context window, as well as costs.
 
 | model             | edit format | context size | max file size | max file size |
 | ----------------- | -- | --     | -----| -- |
