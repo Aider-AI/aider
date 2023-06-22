@@ -13,9 +13,9 @@ It also has features that [help GPT-4 understand and modify larger codebases](ht
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
-- [GPT-4 vs GPT-3.5](#gpt-4-vs-gpt-35)
 - [In-chat commands](#in-chat-commands)
 - [Tips](#tips)
+- [GPT-4 vs GPT-3.5](#gpt-4-vs-gpt-35)
 
 ## Getting started
 
@@ -105,6 +105,21 @@ Aider supports commands from within the chat, which all start with `/`. Here are
 * `/run <command>`: Run a shell command and optionally add the output to the chat.
 * `/help`: Show help about all commands.
 
+
+## Tips
+
+* Think about which files need to be edited to make your change and add them to the chat.
+Aider has some ability to help GPT figure out which files to edit all by itself, but the most effective approach is to explicitly add the needed files to the chat yourself. 
+* Large changes are best performed as a sequence of thoughtful bite sized steps, where you plan out the approach and overall design. Walk GPT through changes like you might with a junior dev. Ask for a refactor to prepare, then ask for the actual change. Spend the time to ask for code quality/structure improvements.
+* Use Control-C to safely interrupt GPT if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply to GPT with more information or direction.
+* Use the `/run` command to run tests, linters, etc and show the output to GPT so it can fix any issues.
+* Enter a multiline chat message by entering `{` alone on the first line. End the multiline message with `}` alone on the last line.
+* If your code is throwing an error, share the error output with GPT using `/run` or by pasting it into the chat. Let GPT figure out and fix the bug.
+* GPT knows about a lot of standard tools and libraries, but may get some of the fine details wrong about APIs and function arguments. You can paste doc snippets into the chat to resolve these issues.
+* Aider will notice if you launch it on a git repo with uncommitted changes and offer to commit them before proceeding.
+* GPT can only see the content of the files you specifically "add to the chat". Aider also sends GPT-4 a [map of your entire git repo](https://aider.chat/docs/ctags.html). So GPT may ask to see additional files if it feels that's needed for your requests.
+* I also shared some general [GPT coding tips on Hacker News](https://news.ycombinator.com/item?id=36211879).
+
 ## GPT-4 vs GPT-3.5
 
 Aider supports all of OpenAI's chat models, including
@@ -145,21 +160,6 @@ This minimizes your use of the context window, as well as costs.
 | gpt-3.5-turbo-16k | 16k tokens | whole file | 8k tokens | ~32k bytes | no |
 | gpt-4             |  8k tokens | diffs | 8k tokens | ~32k bytes | yes | 
 | gpt-4-32k         | 32k tokens | diffs | 32k tokens  | ~128k bytes | yes |
-
-
-## Tips
-
-* Think about which files need to be edited to make your change and add them to the chat.
-Aider has some ability to help GPT figure out which files to edit all by itself, but the most effective approach is to explicitly add the needed files to the chat yourself. 
-* Large changes are best performed as a sequence of thoughtful bite sized steps, where you plan out the approach and overall design. Walk GPT through changes like you might with a junior dev. Ask for a refactor to prepare, then ask for the actual change. Spend the time to ask for code quality/structure improvements.
-* Use Control-C to safely interrupt GPT if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply to GPT with more information or direction.
-* Use the `/run` command to run tests, linters, etc and show the output to GPT so it can fix any issues.
-* Enter a multiline chat message by entering `{` alone on the first line. End the multiline message with `}` alone on the last line.
-* If your code is throwing an error, share the error output with GPT using `/run` or by pasting it into the chat. Let GPT figure out and fix the bug.
-* GPT knows about a lot of standard tools and libraries, but may get some of the fine details wrong about APIs and function arguments. You can paste doc snippets into the chat to resolve these issues.
-* Aider will notice if you launch it on a git repo with uncommitted changes and offer to commit them before proceeding.
-* GPT can only see the content of the files you specifically "add to the chat". Aider also sends GPT-4 a [map of your entire git repo](https://aider.chat/docs/ctags.html). So GPT may ask to see additional files if it feels that's needed for your requests.
-* I also shared some general [GPT coding tips on Hacker News](https://news.ycombinator.com/item?id=36211879).
 
 ## Kind words from users
 
