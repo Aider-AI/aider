@@ -114,16 +114,17 @@ You will probably get the best results with one of the GPT-4 models,
 because of their large context windows,
 adherance to system prompt instructions and
 greater competance at coding tasks.
-The GPT-4 models are also able to use a
+The GPT-4 models are able to structure code edits as simple "diffs"
+and use a
 [repository map](https://aider.chat/docs/ctags.html)
 to improve their ability to make changes in larger codebases.
 
 The GPT-3.5 models are supported more experimentally
 and are limited to editing somewhat smaller codebases.
 They are less able to follow instructions and
-aren't able to return code edits in a compact format.
+aren't able to return code edits in a compact "diff" format.
 So aider has
-to ask GPT-3.5 to return a full copy of any code that needs to be edited.
+to ask GPT-3.5 to return a new copy of the "whole file" with edits included.
 This rapidly uses up tokens and can hit the limits of the context window.
 
 Aider disables the
