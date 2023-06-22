@@ -1,9 +1,9 @@
 # flake8: noqa: E501
 
-from .prompts_base import EditorPrompts
+from .prompts_base import CoderPrompts
 
 
-class EditBlockPrompts(EditorPrompts):
+class EditBlockPrompts(CoderPrompts):
     main_system = """Act as an expert software developer.
 Be concise!
 

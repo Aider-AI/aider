@@ -1,4 +1,4 @@
-class EditorPrompts:
+class CoderPrompts:
     files_content_gpt_edits = "I committed the changes with git hash {hash} & commit msg: {message}"
 
     files_content_gpt_no_edits = "I didn't see any properly formatted edits in your reply?!"

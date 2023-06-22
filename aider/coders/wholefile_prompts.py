@@ -1,9 +1,9 @@
 # flake8: noqa: E501
 
-from .prompts_base import EditorPrompts
+from .prompts_base import CoderPrompts
 
 
-class WholeFilePrompts(EditorPrompts):
+class WholeFilePrompts(CoderPrompts):
     main_system = """Act as an expert software developer.
 Take requests for changes to the supplied code.
 If the request is ambiguous, ask questions.
