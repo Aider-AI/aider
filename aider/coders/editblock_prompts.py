@@ -1,6 +1,6 @@
 # flake8: noqa: E501
 
-from .prompts_base import CoderPrompts
+from .base_prompts import CoderPrompts
 
 
 class EditBlockPrompts(CoderPrompts):
