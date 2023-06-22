@@ -2,6 +2,7 @@ import os
 
 from aider import diffs
 
+from ..dump import dump
 from .base_coder import Coder
 from .func_prompts import FunctionPrompts
 
@@ -13,19 +14,21 @@ class FunctionCoder(Coder):
             description="create or update a file",
             parameters=dict(
                 type="object",
+                required=["explanation", "files_to_update"],
                 properties=dict(
-                    items=dict(
+                    explanation=dict(
+                        type="string",
+                        description=(
+                            "Explanation of the changes to be made to the code (future tense,"
+                            " markdown format)"
+                        ),
+                    ),
+                    files_to_update=dict(
                         type="array",
                         items=dict(
                             type="object",
-                            required=["explanation", "file_path", "file_content"],
+                            required=["file_path", "file_content"],
                             properties=dict(
-                                explanation=dict(
-                                    type="string",
-                                    description=(
-                                        "Explanation of the changes to be made to the code (markdown format)"
-                                    ),
-                                ),
                                 file_path=dict(
                                     type="string",
                                     description="Path of file to write",
@@ -56,6 +59,7 @@ class FunctionCoder(Coder):
 
     def modify_incremental_response(self):
         args = self.parse_partial_args()
+        dump(args)
         if not args:
             return
 
