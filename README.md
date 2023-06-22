@@ -141,10 +141,10 @@ This minimizes your use of the context window, as well as costs.
 
 | Model             | Context<br>Size | Edit<br>Format | Max<br>File Size | Max<br>File Size | Repo<br>Map? |
 | ----------------- | -- | --     | -----| -- | -- |
-| gpt-3.5-turbo     |  4k tokens | whole file | 2k tokens | 8k bytes | no |
-| gpt-3.5-turbo-16k | 16k tokens | whole file | 8k tokens | 32k bytes | no |
-| gpt-4             |  8k tokens | diffs | 8k tokens | 32k bytes | yes | 
-| gpt-4-32k         | 32k tokens | diffs | 32k tokens  | 128k bytes | yes |
+| gpt-3.5-turbo     |  4k tokens | whole file | 2k tokens | ~8k bytes | no |
+| gpt-3.5-turbo-16k | 16k tokens | whole file | 8k tokens | ~32k bytes | no |
+| gpt-4             |  8k tokens | diffs | 8k tokens | ~32k bytes | yes | 
+| gpt-4-32k         | 32k tokens | diffs | 32k tokens  | ~128k bytes | yes |
 
 
 ## Tips
