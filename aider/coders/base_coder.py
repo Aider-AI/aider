@@ -406,7 +406,6 @@ class Coder:
                 message=commit_message,
             )
         else:
-            # TODO: if not self.repo then the files_content_gpt_no_edits isn't appropriate
             self.io.tool_error("Warning: no changes found in tracked files.")
             saved_message = self.gpt_prompts.files_content_gpt_no_edits
 
