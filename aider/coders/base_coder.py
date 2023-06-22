@@ -722,7 +722,7 @@ class Coder:
             return edited, None
         except ValueError as err:
             err = err.args[0]
-            self.io.tool_error("Malformed ORIGINAL/UPDATE blocks, retrying...")
+            self.io.tool_error("Malformed response, retrying...")
             self.io.tool_error(str(err))
             return None, err
 
