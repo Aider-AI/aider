@@ -741,12 +741,17 @@ class Coder:
             pass
 
         try:
-            return json.loads(data + "}")
+            return json.loads(data + "]}")
         except JSONDecodeError:
             pass
 
         try:
-            return json.loads(data + '"}')
+            return json.loads(data + "}]}")
+        except JSONDecodeError:
+            pass
+
+        try:
+            return json.loads(data + '"}]}')
         except JSONDecodeError:
             pass
 
