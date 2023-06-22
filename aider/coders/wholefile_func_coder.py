@@ -5,10 +5,10 @@ from aider import diffs
 
 from ..dump import dump  # noqa: F401
 from .base_coder import Coder
-from .func_prompts import FunctionPrompts
+from .wholefile_func_prompts import WholeFileFunctionPrompts
 
 
-class FunctionCoder(Coder):
+class WholeFileFunctionCoder(Coder):
     functions = [
         dict(
             name="write_file",
@@ -47,7 +47,7 @@ class FunctionCoder(Coder):
     ]
 
     def __init__(self, *args, **kwargs):
-        self.gpt_prompts = FunctionPrompts()
+        self.gpt_prompts = WholeFileFunctionPrompts()
         super().__init__(*args, **kwargs)
 
     def update_cur_messages(self, content, edited):

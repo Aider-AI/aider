@@ -3,7 +3,7 @@
 from .prompts_base import EditorPrompts
 
 
-class FunctionPrompts(EditorPrompts):
+class WholeFileFunctionPrompts(EditorPrompts):
     main_system = """Act as an expert software developer.
 Take requests for changes to the supplied code.
 If the request is ambiguous, ask questions.
@@ -21,6 +21,7 @@ NEVER return code outside the `write_file` function.
 
     redacted_edit_message = "No changes are needed."
 
+    # TODO: make this optional, since this Coder doesn't use it
     repo_content_prefix = (
         "Below here are summaries of other files! Do not propose changes to these *read-only*"
         " files without asking me first.\n"
