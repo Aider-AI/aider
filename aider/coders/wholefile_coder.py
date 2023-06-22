@@ -21,10 +21,11 @@ class WholeFileCoder(Coder):
             self.cur_messages += [dict(role="assistant", content=content)]
 
     def modify_incremental_response(self, final):
-        resp = self.partial_response_content
-        return self.update_files(resp, mode="diff")
+        return self.update_files(mode="diff")
 
-    def update_files(self, content, mode="update"):
+    def update_files(self, mode="update"):
+        content = self.partial_response_content
+
         edited = set()
         chat_files = self.get_inchat_relative_files()
         if not chat_files:

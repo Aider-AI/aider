@@ -16,7 +16,9 @@ class EditBlockCoder(Coder):
     def update_cur_messages(self, content, edited):
         self.cur_messages += [dict(role="assistant", content=content)]
 
-    def update_files(self, content):
+    def update_files(self):
+        content = self.partial_response_content
+
         # might raise ValueError for malformed ORIG/UPD blocks
         edits = list(find_original_update_blocks(content))
 

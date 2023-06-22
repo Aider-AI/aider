@@ -377,7 +377,7 @@ class Coder:
             self.cur_messages += [dict(role="assistant", content=content)]
             return
 
-        edited, edit_error = self.apply_updates(content)
+        edited, edit_error = self.apply_updates()
         if edit_error:
             return edit_error
 
@@ -544,7 +544,7 @@ class Coder:
         md = Markdown(show_resp, style=self.assistant_output_color, code_theme="default")
         live.update(md)
 
-    def modify_incremental_response(self):
+    def modify_incremental_response(self, final):
         return self.partial_response_content
 
     def get_context_from_history(self, history):
@@ -716,9 +716,9 @@ class Coder:
     def get_addable_relative_files(self):
         return set(self.get_all_relative_files()) - set(self.get_inchat_relative_files())
 
-    def apply_updates(self, content):
+    def apply_updates(self):
         try:
-            edited = self.update_files(content)
+            edited = self.update_files()
             return edited, None
         except ValueError as err:
             err = err.args[0]
