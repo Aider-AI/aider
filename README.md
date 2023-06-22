@@ -139,7 +139,7 @@ You can (and should) add just the specific set of files to the chat
 that are relevant to the change you are requesting.
 This minimizes your use of the context window, as well as costs.
 
-| model             | context size | edit format | max file size | max file size | repo map? |
+| model             | context<br>size | edit<br>format | max file<br>size | max file<br>size | repo map? |
 | ----------------- | -- | --     | -----| -- | -- |
 | gpt-3.5-turbo     |  4k tokens | whole file | 2k tokens | 8k bytes | no |
 | gpt-3.5-turbo-16k | 16k tokens | whole file | 8k tokens | 32k bytes | no |
