@@ -487,8 +487,15 @@ class Coder:
             interrupted = True
 
         if not silent:
-            # TODO: self.partial_response_function_call
-            self.io.ai_output(self.partial_response_content)
+            # TODO...
+            if self.partial_response_content:
+                self.io.ai_output(self.partial_response_content)
+            elif self.partial_response_function_call:
+                args = self.parse_partial_args()
+                if args:
+                    explanation = args.get("explanation")
+                    if explanation:
+                        self.io.ai_output(explanation)
 
         return interrupted
 
