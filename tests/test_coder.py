@@ -96,8 +96,12 @@ class TestCoder(unittest.TestCase):
         # Initialize the Coder object with the mocked IO and mocked repo
         coder = Coder.create(models.GPT4, None, mock_io, openai_api_key="fake_key")
 
-        # Mock the send method to return a tuple with a message and False
-        coder.send = MagicMock(return_value=('"a good commit message"', False))
+        # Mock the send method to set partial_response_content and return False
+        def mock_send(*args, **kwargs):
+            coder.partial_response_content = "a good commit message"
+            return False
+
+        coder.send = MagicMock(side_effect=mock_send)
 
         # Call the get_commit_message method with dummy diff and context
         result = coder.get_commit_message("dummy diff", "dummy context")
