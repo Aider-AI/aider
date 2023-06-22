@@ -114,20 +114,18 @@ You will probably get the best results with one of the GPT-4 models,
 because of their large context windows,
 adherance to system prompt instructions and
 greater competance at coding tasks.
-The GPT-4 models are also able to use a
+The GPT-4 models are able to structure code edits as simple "diffs"
+and use a
 [repository map](https://aider.chat/docs/ctags.html)
 to improve their ability to make changes in larger codebases.
 
 The GPT-3.5 models are supported more experimentally
 and are limited to editing somewhat smaller codebases.
 They are less able to follow instructions and
-aren't able to return code edits in a compact format.
+aren't able to return code edits in a compact "diff" format.
 So aider has
-to ask GPT-3.5 to return a full copy of any code that needs to be edited.
+to ask GPT-3.5 to return a new copy of the "whole file" with edits included.
 This rapidly uses up tokens and can hit the limits of the context window.
-In practice, this means you can only use `gpt-3.5-turbo` to edit files that are
-smaller than about 2k tokens (8k bytes).
-The new `gpt-3.5-turbo-16k` model should be able to edit code up to 8k tokens (32k bytes).
 
 Aider disables the
 [repository map feature](https://aider.chat/docs/ctags.html)
@@ -135,8 +133,24 @@ when used with GPT-3.5 models.
 The `gpt-3.5-turbo` context window is too small to include a repo map.
 Evaluation is still needed to determine if `gpt-3.5-turbo-16k` can make use of a repo map.
 
+In practice, this means you can use aider to edit a set of source files
+that total up to the sizes below.
+You can (and should) add just the specific set of files to the chat
+that are relevant to the change you are requesting.
+This minimizes your use of the context window, as well as costs.
+
+| model             | context size | edit format | max file size | max file size |
+| ----------------- | -- | --     | -----| -- |
+| gpt-3.5-turbo     |  4k tokens | whole file | 2k tokens | 8k bytes |
+| gpt-3.5-turbo-16k | 16k tokens | whole file | 8k tokens | 32k bytes |
+| gpt-4             |  8k tokens | diffs | 8k tokens | 32k bytes |
+| gpt-4-32k         | 32k tokens | diffs | 32k tokens  | 128k bytes |
+
+
 ## Tips
 
+* Think about which files need to be edited to make your change and add them to the chat.
+Aider has some ability to help GPT figure out which files to edit all by itself, but the most effective approach is to explicitly add the needed files to the chat yourself. 
 * Large changes are best performed as a sequence of thoughtful bite sized steps, where you plan out the approach and overall design. Walk GPT through changes like you might with a junior dev. Ask for a refactor to prepare, then ask for the actual change. Spend the time to ask for code quality/structure improvements.
 * Use Control-C to safely interrupt GPT if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply to GPT with more information or direction.
 * Use the `/run` command to run tests, linters, etc and show the output to GPT so it can fix any issues.
