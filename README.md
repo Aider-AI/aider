@@ -139,12 +139,12 @@ You can (and should) add just the specific set of files to the chat
 that are relevant to the change you are requesting.
 This minimizes your use of the context window, as well as costs.
 
-| model             | edit format | context size | max file size | max file size |
+| model             | context size | edit format | max file size | max file size |
 | ----------------- | -- | --     | -----| -- |
-| gpt-3.5-turbo     | whole file | 4k tokens | 2k tokens | 8k bytes |
-| gpt-3.5-turbo-16k | whole file | 16k tokens | 8k tokens | 32k bytes |
-| gpt-4             | diffs | 8k tokens | 8k tokens | 32k bytes |
-| gpt-4-32k         | diffs | 32k tokens | 32k tokens  | 128k bytes |
+| gpt-3.5-turbo     |  4k tokens | whole file | 2k tokens | 8k bytes |
+| gpt-3.5-turbo-16k | 16k tokens | whole file | 8k tokens | 32k bytes |
+| gpt-4             |  8k tokens | diffs | 8k tokens | 32k bytes |
+| gpt-4-32k         | 32k tokens | diffs | 32k tokens  | 128k bytes |
 
 
 ## Tips
