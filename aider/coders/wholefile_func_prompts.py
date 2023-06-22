@@ -21,8 +21,4 @@ NEVER return code outside the `write_file` function.
 
     redacted_edit_message = "No changes are needed."
 
-    # TODO: make this optional, since this Coder doesn't use it
-    repo_content_prefix = (
-        "Below here are summaries of other files! Do not propose changes to these *read-only*"
-        " files without asking me first.\n"
-    )
+    repo_content_prefix = None
