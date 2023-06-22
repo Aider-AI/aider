@@ -23,7 +23,7 @@ class TestCoder(unittest.TestCase):
         mock_io = MagicMock()
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(main_model=models.GPT4, io=mock_io, openai_api_key="fake_key")
+        coder = Coder.create(models.GPT4, None, mock_io, openai_api_key="fake_key")
 
         # Mock the git repo
         mock_repo = MagicMock()
@@ -42,7 +42,7 @@ class TestCoder(unittest.TestCase):
         mock_io = MagicMock()
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(main_model=models.GPT4, io=mock_io, openai_api_key="fake_key")
+        coder = Coder.create(models.GPT4, None, mock_io, openai_api_key="fake_key")
 
         # Mock the git repo
         mock_repo = MagicMock()
@@ -61,7 +61,7 @@ class TestCoder(unittest.TestCase):
         mock_io = MagicMock()
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(main_model=models.GPT4, io=mock_io, openai_api_key="fake_key")
+        coder = Coder.create(models.GPT4, None, mock_io, openai_api_key="fake_key")
 
         # Mock the git repo
         mock_repo = MagicMock()
@@ -78,7 +78,7 @@ class TestCoder(unittest.TestCase):
         mock_io = MagicMock()
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(main_model=models.GPT4, io=mock_io, openai_api_key="fake_key")
+        coder = Coder.create(models.GPT4, None, mock_io, openai_api_key="fake_key")
 
         # Mock the send method to return a tuple with a message and False
         coder.send = MagicMock(return_value=("a good commit message", False))
@@ -94,7 +94,7 @@ class TestCoder(unittest.TestCase):
         mock_io = MagicMock()
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(main_model=models.GPT4, io=mock_io, openai_api_key="fake_key")
+        coder = Coder.create(models.GPT4, None, mock_io, openai_api_key="fake_key")
 
         # Mock the send method to return a tuple with a message and False
         coder.send = MagicMock(return_value=('"a good commit message"', False))
@@ -110,7 +110,7 @@ class TestCoder(unittest.TestCase):
         mock_io = MagicMock()
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(main_model=models.GPT4, io=mock_io, openai_api_key="fake_key")
+        coder = Coder.create(models.GPT4, None, mock_io, openai_api_key="fake_key")
 
         # Mock the send method to return a tuple with a message and False
         coder.send = MagicMock(return_value=('a good "commit message"', False))
@@ -128,7 +128,7 @@ class TestCoder(unittest.TestCase):
         mock_io = MagicMock()
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(main_model=models.GPT4, io=mock_io, openai_api_key="fake_key")
+        coder = Coder.create(models.GPT4, None, mock_io, openai_api_key="fake_key")
 
         # Set up the mock to raise RateLimitError on
         # the first call and return None on the second call
@@ -150,7 +150,7 @@ class TestCoder(unittest.TestCase):
         mock_io = MagicMock()
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(main_model=models.GPT4, io=mock_io, openai_api_key="fake_key")
+        coder = Coder.create(models.GPT4, None, mock_io, openai_api_key="fake_key")
 
         # Set up the mock to raise ConnectionError on the first call
         # and return None on the second call
