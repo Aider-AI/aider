@@ -57,7 +57,7 @@ class FunctionCoder(Coder):
         else:
             self.cur_messages += [dict(role="assistant", content=content)]
 
-    def modify_incremental_response(self):
+    def modify_incremental_response(self, final=False):
         args = self.parse_partial_args()
 
         if not args:
@@ -70,7 +70,7 @@ class FunctionCoder(Coder):
         if explanation:
             res += f"{explanation}\n\n"
 
-        for file_upd in files:
+        for i, file_upd in enumerate(files):
             path = file_upd.get("path")
             if not path:
                 continue
@@ -79,11 +79,13 @@ class FunctionCoder(Coder):
                 continue
 
             res += path + ":\n"
-            res += self.live_diffs(path, content)
+
+            this_final = (i < len(files) - 1) or final
+            res += self.live_diffs(path, content, this_final)
 
         return res
 
-    def live_diffs(self, fname, content):
+    def live_diffs(self, fname, content, final):
         lines = content.splitlines(keepends=True)
 
         # ending an existing block
@@ -95,7 +97,7 @@ class FunctionCoder(Coder):
         show_diff = diffs.diff_partial_update(
             orig_lines,
             lines,
-            final=True,
+            final,
         ).splitlines()
 
         return "\n".join(show_diff)

@@ -527,18 +527,22 @@ class Coder:
                     continue
 
                 if self.pretty:
-                    show_resp = self.modify_incremental_response()
-                    if show_resp:
-                        md = Markdown(
-                            show_resp, style=self.assistant_output_color, code_theme="default"
-                        )
-                        live.update(md)
+                    self.live_incremental_response(live, False)
                 else:
                     sys.stdout.write(text)
                     sys.stdout.flush()
         finally:
+            self.live_incremental_response(live, True)
             if live:
                 live.stop()
+
+    def live_incremental_response(self, live, final):
+        show_resp = self.modify_incremental_response(final)
+        if not show_resp:
+            return
+
+        md = Markdown(show_resp, style=self.assistant_output_color, code_theme="default")
+        live.update(md)
 
     def modify_incremental_response(self):
         return self.partial_response_content

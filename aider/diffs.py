@@ -43,12 +43,17 @@ def diff_partial_update(lines_orig, lines_updated, final=False):
     # dump(lines_orig)
     # dump(lines_updated)
 
-    last_non_deleted = find_last_non_deleted(lines_orig, lines_updated)
+    num_orig_lines = len(lines_orig)
+
+    if final:
+        last_non_deleted = num_orig_lines
+    else:
+        last_non_deleted = find_last_non_deleted(lines_orig, lines_updated)
+
     # dump(last_non_deleted)
     if last_non_deleted is None:
         return ""
 
-    num_orig_lines = len(lines_orig)
     pct = last_non_deleted * 100 / num_orig_lines
     bar = create_progress_bar(pct)
     bar = f"! {last_non_deleted:3d} / {num_orig_lines:3d} lines [{bar}] {pct:3.0f}%\n\n"
@@ -63,12 +68,14 @@ def diff_partial_update(lines_orig, lines_updated, final=False):
     diff = list(diff)[2:]
 
     diff = "".join(diff)
+    if not diff.endswith("\n"):
+        diff += "\n"
 
     show = "```diff\n"
     if not final:
         show += bar
 
-    show += diff + "```\n"
+    show += diff + "```\n\n"
 
     # print(diff)
 
