@@ -1,3 +1,4 @@
+import json
 import os
 from pathlib import Path
 
@@ -48,6 +49,15 @@ class FunctionCoder(Coder):
             self.cur_messages += [dict(role="assistant", content=content)]
 
     def modify_incremental_response(self):
+        args = self.parse_partial_args()
+        if not args:
+            return
+        args = json.dumps(args, indent=4)
+        return f"""
+```js
+{args}
+```
+"""
         resp = self.partial_response_content
         return self.update_files(resp, mode="diff")
 

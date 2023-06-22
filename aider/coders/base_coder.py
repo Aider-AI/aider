@@ -513,11 +513,6 @@ class Coder:
                             self.partial_response_function_call[k] += v
                         else:
                             self.partial_response_function_call[k] = v
-                    # dump(self.partial_response_function_call)
-                    args = self.partial_response_function_call.get("arguments")
-                    args = parse_partial_args(args)
-                    dump(args)
-
                 except AttributeError:
                     pass
 
@@ -533,10 +528,11 @@ class Coder:
 
                 if self.pretty:
                     show_resp = self.modify_incremental_response()
-                    md = Markdown(
-                        show_resp, style=self.assistant_output_color, code_theme="default"
-                    )
-                    live.update(md)
+                    if show_resp:
+                        md = Markdown(
+                            show_resp, style=self.assistant_output_color, code_theme="default"
+                        )
+                        live.update(md)
                 else:
                     sys.stdout.write(text)
                     sys.stdout.flush()
@@ -732,25 +728,29 @@ class Coder:
             traceback.print_exc()
             return None, err
 
+    def parse_partial_args(self):
+        # dump(self.partial_response_function_call)
+        data = self.partial_response_function_call.get("arguments")
+        if not data:
+            return
+
+        try:
+            return json.loads(data)
+        except JSONDecodeError:
+            pass
+
+        try:
+            return json.loads(data + "}")
+        except JSONDecodeError:
+            pass
+
+        try:
+            return json.loads(data + '"}')
+        except JSONDecodeError:
+            pass
+
 
 def check_model_availability(main_model):
     available_models = openai.Model.list()
     model_ids = [model.id for model in available_models["data"]]
     return main_model.name in model_ids
-
-
-def parse_partial_args(data):
-    try:
-        return json.loads(data)
-    except JSONDecodeError:
-        pass
-
-    try:
-        return json.loads(data + "}")
-    except JSONDecodeError:
-        pass
-
-    try:
-        return json.loads(data + '"}')
-    except JSONDecodeError:
-        pass
