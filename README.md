@@ -135,12 +135,12 @@ Evaluation is still needed to determine if `gpt-3.5-turbo-16k` can make use of a
 In practice, this means you can use aider to edit a set of source files
 that total up to these sizes:
 
-| model             | context size | max file size | max file size |
-| ----------------- | --     | -----| -- |
-| gpt-3.5-turbo     | 4k tokens | 2k tokens | 8k bytes |
-| gpt-3.5-turbo-16k | 16k tokens | 8k tokens | 32k bytes |
-| gpt-4             | 8k tokens | 8k tokens | 32k bytes |
-| gpt-4-32k         | 32k tokens | 32k tokens  | 128k bytes |
+| model             | edit format | context size | max file size | max file size |
+| ----------------- | -- | --     | -----| -- |
+| gpt-3.5-turbo     | whole file | 4k tokens | 2k tokens | 8k bytes |
+| gpt-3.5-turbo-16k | whole file | 16k tokens | 8k tokens | 32k bytes |
+| gpt-4             | diffs | 8k tokens | 8k tokens | 32k bytes |
+| gpt-4-32k         | diffs | 32k tokens | 32k tokens  | 128k bytes |
 
 
 ## Tips
