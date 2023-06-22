@@ -717,7 +717,9 @@ class Coder:
     def get_addable_relative_files(self):
         return set(self.get_all_relative_files()) - set(self.get_inchat_relative_files())
 
-    def allowed_to_edit(self, path):
+    def allowed_to_edit(self, path, write_content=None):
+        # TODO: respect --dry-run
+
         full_path = os.path.abspath(os.path.join(self.root, path))
 
         if full_path in self.abs_fnames:
@@ -731,7 +733,7 @@ class Coder:
             self.io.tool_error(f"Skipping edit to {path}")
             return
 
-        if not Path(full_path).exists():
+        if not Path(full_path).exists() and not self.dry_run:
             Path(full_path).parent.mkdir(parents=True, exist_ok=True)
             Path(full_path).touch()
 
@@ -742,7 +744,11 @@ class Coder:
             tracked_files = set(self.repo.git.ls_files().splitlines())
             relative_fname = self.get_rel_fname(full_path)
             if relative_fname not in tracked_files and self.io.confirm_ask(f"Add {path} to git?"):
-                self.repo.git.add(full_path)
+                if not self.dry_run:
+                    self.repo.git.add(full_path)
+
+        if not self.dry_run and write_content:
+            Path(full_path).write_text(write_content)
 
         return full_path
 
@@ -763,7 +769,11 @@ class Coder:
 
         if edited:
             for path in sorted(edited):
-                self.io.tool_output(f"Applied edit to {path}")
+                if self.dry_run:
+                    self.io.tool_output(f"Did not apply edit to {path} (--dry-run)")
+                else:
+                    self.io.tool_output(f"Applied edit to {path}")
+
         return edited, None
 
     def parse_partial_args(self):
