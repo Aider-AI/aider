@@ -125,15 +125,23 @@ aren't able to return code edits in a compact format.
 So aider has
 to ask GPT-3.5 to return a full copy of any code that needs to be edited.
 This rapidly uses up tokens and can hit the limits of the context window.
-In practice, this means you can only use `gpt-3.5-turbo` to edit files that are
-smaller than about 2k tokens (8k bytes).
-The new `gpt-3.5-turbo-16k` model should be able to edit code up to 8k tokens (32k bytes).
 
 Aider disables the
 [repository map feature](https://aider.chat/docs/ctags.html)
 when used with GPT-3.5 models.
 The `gpt-3.5-turbo` context window is too small to include a repo map.
 Evaluation is still needed to determine if `gpt-3.5-turbo-16k` can make use of a repo map.
+
+In practice, this means you can use aider to edit a set of source files
+that total up to these sizes:
+
+| model             | context size | max file size | max file size |
+| ----------------- | --     | -----| -- |
+| gpt-3.5-turbo     | 4k tokens | 2k tokens | 8k bytes |
+| gpt-3.5-turbo-16k | 16k tokens | 8k tokens | 32k bytes |
+| gpt-4             | 8k tokens | 8k tokens | 32k bytes |
+| gpt-4-32k         | 32k tokens | 32k tokens  | 128k bytes |
+
 
 ## Tips
 
