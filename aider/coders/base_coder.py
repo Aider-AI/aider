@@ -37,6 +37,7 @@ class Coder:
     last_aider_commit_hash = None
     last_asked_for_commit_time = 0
     repo_map = None
+    functions = None
 
     @classmethod
     def create(
@@ -358,7 +359,7 @@ class Coder:
             utils.show_messages(messages)
 
         try:
-            interrupted = self.send(messages)
+            interrupted = self.send(messages, functions=self.functions)
         except ExhaustedContextWindow:
             self.io.tool_error("Exhausted context window!")
             self.io.tool_error(" - Use /tokens to see token usage.")
@@ -459,20 +460,20 @@ class Coder:
         max_tries=5,
         on_backoff=lambda details: print(f"Retry in {details['wait']} seconds."),
     )
-    def send_with_retries(self, model, messages):
+    def send_with_retries(self, model, messages, functions):
         kwargs = dict(
             model=model,
             messages=messages,
             temperature=0,
             stream=True,
         )
-        if hasattr(self, "functions"):
+        if functions is not None:
             kwargs["functions"] = self.functions
 
         res = openai.ChatCompletion.create(**kwargs)
         return res
 
-    def send(self, messages, model=None, silent=False):
+    def send(self, messages, model=None, silent=False, functions=None):
         if not model:
             model = self.main_model.name
 
@@ -481,7 +482,7 @@ class Coder:
 
         interrupted = False
         try:
-            completion = self.send_with_retries(model, messages)
+            completion = self.send_with_retries(model, messages, functions)
             self.show_send_output(completion, silent)
         except KeyboardInterrupt:
             interrupted = True
