@@ -19,8 +19,8 @@ class FunctionCoder(Coder):
                     explanation=dict(
                         type="string",
                         description=(
-                            "Explanation of the changes to be made to the code (future tense,"
-                            " markdown format)"
+                            "Step by step plan for the changes to be made to the code (future"
+                            " tense, markdown format)"
                         ),
                     ),
                     files_to_update=dict(
