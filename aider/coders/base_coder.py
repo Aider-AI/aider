@@ -491,6 +491,7 @@ class Coder:
             if self.partial_response_content:
                 self.io.ai_output(self.partial_response_content)
             elif self.partial_response_function_call:
+                # TODO: push this into subclasses
                 args = self.parse_partial_args()
                 if args:
                     explanation = args.get("explanation")
@@ -724,8 +725,6 @@ class Coder:
         return set(self.get_all_relative_files()) - set(self.get_inchat_relative_files())
 
     def allowed_to_edit(self, path, write_content=None):
-        # TODO: respect --dry-run
-
         full_path = os.path.abspath(os.path.join(self.root, path))
 
         if full_path in self.abs_fnames:
