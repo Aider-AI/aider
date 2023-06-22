@@ -138,7 +138,7 @@ class TestCoder(unittest.TestCase):
         ]
 
         # Call the send_with_retries method
-        coder.send_with_retries("model", ["message"])
+        coder.send_with_retries("model", ["message"], None)
 
         # Assert that print was called once
         mock_print.assert_called_once()
@@ -160,7 +160,7 @@ class TestCoder(unittest.TestCase):
         ]
 
         # Call the send_with_retries method
-        coder.send_with_retries("model", ["message"])
+        coder.send_with_retries("model", ["message"], None)
 
         # Assert that print was called once
         mock_print.assert_called_once()
