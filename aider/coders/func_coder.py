@@ -1,6 +1,4 @@
-import json
 import os
-from pathlib import Path
 
 from aider import diffs
 
@@ -52,87 +50,47 @@ class FunctionCoder(Coder):
         args = self.parse_partial_args()
         if not args:
             return
-        args = json.dumps(args, indent=4)
-        return f"""
-```js
-{args}
-```
-"""
-        resp = self.partial_response_content
-        return self.update_files(resp, mode="diff")
 
-    def update_files(self, content, mode="update"):
-        edited = set()
-        chat_files = self.get_inchat_relative_files()
-        if not chat_files:
-            if mode == "diff":
-                return content
-            return
+        path = args.get("file_path")
+        explanation = args.get("explanation")
+        content = args.get("file_content")
 
-        output = []
+        res = ""
+
+        if explanation:
+            res += f"{explanation}\n"
+
+        if not path:
+            return res
+
+        if path:
+            if res:
+                res += "\n"
+
+            res += path + "\n"
+
+        if not content:
+            return res
+
+        res += self.live_diffs(path, content)
+        return res
+
+    def live_diffs(self, fname, content):
         lines = content.splitlines(keepends=True)
-        fname = None
-        new_lines = []
-        for i, line in enumerate(lines):
-            if line.startswith("```"):
-                if fname:
-                    # ending an existing block
-                    full_path = os.path.abspath(os.path.join(self.root, fname))
 
-                    if mode == "diff":
-                        with open(full_path, "r") as f:
-                            orig_lines = f.readlines()
+        # ending an existing block
+        full_path = os.path.abspath(os.path.join(self.root, fname))
 
-                        show_diff = diffs.diff_partial_update(
-                            orig_lines,
-                            new_lines,
-                            final=True,
-                        ).splitlines()
-                        output += show_diff
-                    else:
-                        new_lines = "".join(new_lines)
-                        Path(full_path).write_text(new_lines)
-                        edited.add(fname)
+        with open(full_path, "r") as f:
+            orig_lines = f.readlines()
 
-                    fname = None
-                    new_lines = []
-                    continue
+        show_diff = diffs.diff_partial_update(
+            orig_lines,
+            lines,
+            final=True,
+        ).splitlines()
 
-                # starting a new block
-                if i == 0:
-                    raise ValueError("No filename provided before ``` block")
+        return "\n".join(show_diff)
 
-                fname = lines[i - 1].strip()
-                if fname not in chat_files:
-                    if len(chat_files) == 1:
-                        fname = list(chat_files)[0]
-                    else:
-                        show_chat_files = " ".join(chat_files)
-                        raise ValueError(f"{fname} is not one of: {show_chat_files}")
-
-            elif fname:
-                new_lines.append(line)
-            else:
-                output.append(line)
-
-        if mode == "diff":
-            if fname:
-                # ending an existing block
-                full_path = os.path.abspath(os.path.join(self.root, fname))
-
-                if mode == "diff":
-                    with open(full_path, "r") as f:
-                        orig_lines = f.readlines()
-
-                    show_diff = diffs.diff_partial_update(
-                        orig_lines,
-                        new_lines,
-                    ).splitlines()
-                    output += show_diff
-
-            return "\n".join(output)
-
-        if fname:
-            raise ValueError("Started a ``` block without closing it")
-
-        return edited
+    def update_files(self, content):
+        pass
