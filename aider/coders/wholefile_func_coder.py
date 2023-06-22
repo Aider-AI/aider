@@ -78,8 +78,6 @@ class WholeFileFunctionCoder(Coder):
             if not content:
                 continue
 
-            res += path + ":\n"
-
             this_final = (i < len(files) - 1) or final
             res += self.live_diffs(path, content, this_final)
 
@@ -98,6 +96,7 @@ class WholeFileFunctionCoder(Coder):
             orig_lines,
             lines,
             final,
+            fname=fname,
         ).splitlines()
 
         return "\n".join(show_diff)

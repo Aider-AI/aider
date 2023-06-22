@@ -33,7 +33,7 @@ def create_progress_bar(percentage):
     return bar
 
 
-def diff_partial_update(lines_orig, lines_updated, final=False):
+def diff_partial_update(lines_orig, lines_updated, final=False, fname=None):
     """
     Given only the first part of an updated file, show the diff while
     ignoring the block of "deleted" lines that are past the end of the
@@ -72,6 +72,8 @@ def diff_partial_update(lines_orig, lines_updated, final=False):
         diff += "\n"
 
     show = "```diff\n"
+    if fname:
+        show += f"@@ {fname}\n"
     if not final:
         show += bar
 
