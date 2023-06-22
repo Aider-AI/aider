@@ -532,8 +532,8 @@ class Coder:
                     sys.stdout.write(text)
                     sys.stdout.flush()
         finally:
-            self.live_incremental_response(live, True)
             if live:
+                self.live_incremental_response(live, True)
                 live.stop()
 
     def live_incremental_response(self, live, final):
