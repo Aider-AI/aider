@@ -727,6 +727,8 @@ class Coder:
         full_path = os.path.abspath(os.path.join(self.root, path))
 
         if full_path in self.abs_fnames:
+            if not self.dry_run and write_content:
+                Path(full_path).write_text(write_content)
             return full_path
 
         if not Path(full_path).exists():
