@@ -139,7 +139,7 @@ class Coder:
             self.io.tool_output("Git repo: none")
             self.find_common_root()
 
-        if main_model.use_repo_map:
+        if main_model.use_repo_map and self.repo:
             rm_io = io if self.verbose else None
             self.repo_map = RepoMap(
                 map_tokens,
