@@ -93,6 +93,7 @@ class Coder:
         self.abs_fnames = set()
         self.cur_messages = []
         self.done_messages = []
+        self.num_control_c = 0
 
         self.io = io
 
@@ -263,17 +264,19 @@ class Coder:
 
         return files_messages
 
-    def run(self):
-        self.done_messages = []
-        self.cur_messages = []
-
-        self.num_control_c = 0
-
+    def run(self, with_message=None):
         while True:
             try:
-                new_user_message = self.run_loop()
+                if with_message:
+                    new_user_message = with_message
+                else:
+                    new_user_message = self.run_loop()
+
                 while new_user_message:
                     new_user_message = self.send_new_user_message(new_user_message)
+
+                if with_message:
+                    return
 
             except KeyboardInterrupt:
                 self.num_control_c += 1
