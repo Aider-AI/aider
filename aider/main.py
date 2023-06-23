@@ -208,7 +208,7 @@ def main(args=None, input=None, output=None):
     )
     parser.add_argument(
         "--command",
-        "-c",
+        "--cmd",
         metavar="COMMAND",
         help="Specify the command to pass to coder.run()",
     )
