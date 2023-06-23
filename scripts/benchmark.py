@@ -23,11 +23,12 @@ def create_temp_repo(dirname, tempdir):
             shutil.copy2(s, d)
 
     add_files = []
-    for root, _, files in os.walk(tempdir):
-        for file in files:
-            if "test" not in file:
-                rel_path = os.path.relpath(os.path.join(root, file), tempdir)
-                add_files.append(rel_path)
+    for file in os.listdir(tempdir):
+        dump(file)
+        full_path = os.path.join(tempdir, file)
+
+        if "test" not in file and os.path.isfile(full_path):
+            add_files.append(file)
 
     """
     # Create a new git repo in tempdir
@@ -57,7 +58,7 @@ def main(tempdir):
 
     fnames = create_temp_repo(dirname, tempdir)
     tempdir = Path(tempdir)
-    fnames = [tempdir / fn for fn in fnames]
+    fnames = [str(tempdir / fn) for fn in fnames]
 
     io = InputOutput(
         pretty=True,
@@ -66,6 +67,8 @@ def main(tempdir):
 
     main_model = models.Model("gpt-3.5-turbo")
 
+    dump(fnames)
+
     coder = Coder.create(
         main_model,
         None,
@@ -73,10 +76,16 @@ def main(tempdir):
         os.environ["OPENAI_API_KEY"],
         fnames=fnames,
         verbose=True,
-        git=False,
+        use_git=False,
     )
 
-    coder.run(with_message="follow the instructions in the .md file")
+    instructions = (tempdir / "docs/instructions.md").read_text()
+
+    instructions += (
+        "\n\n=====\n\nModify these files according to the above instructions: " + " ".join(fnames)
+    )
+
+    coder.run(with_message=instructions)
 
 
 if __name__ == "__main__":
