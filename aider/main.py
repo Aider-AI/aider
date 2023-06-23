@@ -210,7 +210,7 @@ def main(args=None, input=None, output=None):
         "--command",
         "--cmd",
         metavar="COMMAND",
-        help="Specify the command to pass to coder.run()",
+        help="Specify a single command to give to GPT (disables chat mode)",
     )
     args = parser.parse_args(args)
 
