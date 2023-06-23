@@ -168,10 +168,12 @@ class InputOutput:
             session = PromptSession(**session_kwargs)
             line = session.prompt()
 
-            if line.strip() == "{" and not multiline_input:
+            if line and line[0] == "{" and not multiline_input:
                 multiline_input = True
+                inp += line[1:] + "\n"
                 continue
-            elif line.strip() == "}" and multiline_input:
+            elif line and line[-1] == "}" and multiline_input:
+                inp += line[:-1] + "\n"
                 break
             elif multiline_input:
                 inp += line + "\n"
