@@ -146,9 +146,13 @@ def run_tests():
 
     for test_file in test_files:
         dump(test_file)
-        result = subprocess.run(["pytest", test_file], capture_output=True, text=True, timeout=60)
-        print(result.stdout)
-        print(result.stderr)
+        try:
+            result = subprocess.run(["pytest", test_file], capture_output=True, text=True, timeout=60)
+            print(result.stdout)
+            print(result.stderr)
+        except subprocess.TimeoutExpired:
+            all_tests_passed = False
+            print(f"Test {test_file} timed out")
 
         if result.returncode != 0:
             all_tests_passed = False
