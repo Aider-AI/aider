@@ -120,11 +120,13 @@ class Commands:
             tokens = len(self.tokenizer.encode(quoted))
             res.append((tokens, f"{relative_fname}", "use /drop to drop from chat"))
 
-        print("Context window usage, in tokens:")
+        print("Approximate context window usage, in tokens:")
         print()
 
+        width = 8
+
         def fmt(v):
-            return format(int(v), ",").rjust(6)
+            return format(int(v), ",").rjust(width)
 
         col_width = max(len(row[1]) for row in res)
 
@@ -134,13 +136,16 @@ class Commands:
             msg = msg.ljust(col_width)
             print(f"{fmt(tk)} {msg} {tip}")
 
-        print()
-        print(f"{fmt(total)} total")
+        print("=" * width)
+        print(f"{fmt(total)} tokens total")
 
         limit = self.coder.main_model.max_context_tokens
         remaining = limit - total
-        print(f"{fmt(remaining)} remaining")
-        print(f"{fmt(limit)} max context window")
+        if remaining > 0:
+            print(f"{fmt(remaining)} tokens remaining in context window")
+        else:
+            print(f"{fmt(remaining)} tokens remaining, window exhausted!")
+        print(f"{fmt(limit)} tokens max context window size")
 
     def cmd_undo(self, args):
         "Undo the last git commit if it was done by aider"

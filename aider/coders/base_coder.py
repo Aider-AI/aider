@@ -371,8 +371,9 @@ class Coder:
                 exhausted = True
 
         if exhausted:
-            self.io.tool_error("The chat session is larger than the context window!")
-            self.io.tool_error(" - Use /tokens to see token usage.")
+            self.io.tool_error("The chat session is larger than the context window!\n")
+            self.commands.cmd_tokens("")
+            self.io.tool_error("\nTo reduce token usage:")
             self.io.tool_error(" - Use /drop to remove unneeded files from the chat session.")
             self.io.tool_error(" - Use /clear to clear chat history.")
             return
