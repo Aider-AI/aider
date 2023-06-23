@@ -206,6 +206,12 @@ def main(args=None, input=None, output=None):
         help="Enable verbose output",
         default=False,
     )
+    parser.add_argument(
+        "--command",
+        "-c",
+        metavar="COMMAND",
+        help="Specify the command to pass to coder.run()",
+    )
     args = parser.parse_args(args)
 
     io = InputOutput(
@@ -263,7 +269,10 @@ def main(args=None, input=None, output=None):
         return
 
     io.tool_output("Use /help to see in-chat commands.")
-    coder.run()
+    if args.command:
+        coder.run(with_message=args.command)
+    else:
+        coder.run()
 
 
 if __name__ == "__main__":
