@@ -90,6 +90,7 @@ class Coder:
         verbose=False,
         assistant_output_color="blue",
         stream=True,
+        use_git=True,
     ):
         self.verbose = verbose
         self.abs_fnames = set()
@@ -123,7 +124,8 @@ class Coder:
 
         self.commands = Commands(self.io, self)
 
-        self.set_repo(fnames)
+        if use_git:
+            self.set_repo(fnames)
 
         if self.repo:
             rel_repo_dir = os.path.relpath(self.repo.git_dir, os.getcwd())

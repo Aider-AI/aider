@@ -119,6 +119,13 @@ def main(args=None, input=None, output=None):
         help="Disable streaming responses",
     )
     parser.add_argument(
+        "--no-git",
+        action="store_false",
+        dest="git",
+        default=True,
+        help="Do not look for a git repo",
+    )
+    parser.add_argument(
         "--user-input-color",
         default="green",
         help="Set the color for user input (default: green)",
@@ -265,6 +272,7 @@ def main(args=None, input=None, output=None):
         verbose=args.verbose,
         assistant_output_color=args.assistant_output_color,
         stream=args.stream,
+        use_git=args.git,
     )
 
     if args.dirty_commits:
