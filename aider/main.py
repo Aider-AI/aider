@@ -112,6 +112,13 @@ def main(args=None, input=None, output=None):
         help="Disable pretty, colorized output",
     )
     parser.add_argument(
+        "--no-stream",
+        action="store_false",
+        dest="stream",
+        default=True,
+        help="Disable streaming responses",
+    )
+    parser.add_argument(
         "--user-input-color",
         default="green",
         help="Set the color for user input (default: green)",
@@ -257,6 +264,7 @@ def main(args=None, input=None, output=None):
         map_tokens=args.map_tokens,
         verbose=args.verbose,
         assistant_output_color=args.assistant_output_color,
+        stream=args.stream,
     )
 
     if args.dirty_commits:
@@ -270,6 +278,7 @@ def main(args=None, input=None, output=None):
 
     io.tool_output("Use /help to see in-chat commands.")
     if args.command:
+        io.tool_output()
         coder.run(with_message=args.command)
     else:
         coder.run()

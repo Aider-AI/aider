@@ -88,6 +88,7 @@ class Coder:
         map_tokens=1024,
         verbose=False,
         assistant_output_color="blue",
+        stream=True,
     ):
         self.verbose = verbose
         self.abs_fnames = set()
@@ -96,6 +97,7 @@ class Coder:
         self.num_control_c = 0
 
         self.io = io
+        self.stream = stream
 
         if not auto_commits:
             dirty_commits = False
@@ -475,7 +477,7 @@ class Coder:
             model=model,
             messages=messages,
             temperature=0,
-            stream=True,
+            stream=self.stream,
         )
         if functions is not None:
             kwargs["functions"] = self.functions
@@ -493,7 +495,10 @@ class Coder:
         interrupted = False
         try:
             completion = self.send_with_retries(model, messages, functions)
-            self.show_send_output(completion, silent)
+            if self.stream:
+                self.show_send_output_stream(completion, silent)
+            else:
+                self.show_send_output(completion, silent)
         except KeyboardInterrupt:
             interrupted = True
 
@@ -511,6 +516,24 @@ class Coder:
         return interrupted
 
     def show_send_output(self, completion, silent):
+        try:
+            self.partial_response_function_call = completion.choices[0].function_call
+        except AttributeError:
+            pass
+
+        try:
+            self.partial_response_content = completion.choices[0].message.content
+        except AttributeError:
+            pass
+
+        show_resp = self.render_incremental_response(True)
+        if self.pretty:
+            md = Markdown(show_resp, style=self.assistant_output_color, code_theme="default")
+            self.io.console.print(md)
+        else:
+            print(show_resp)
+
+    def show_send_output_stream(self, completion, silent):
         live = None
         if self.pretty and not silent:
             live = Live(vertical_overflow="scroll")
