@@ -20,24 +20,30 @@ def main():
 
     cwd = os.getcwd()
 
-    total_tests = 0
+    test_dnames = list(os.listdir(dirname))
+
+    total_tests = len(test_dnames)
+    completed_tests = 0
     passed_tests = 0
+
     total_cost = 0
-    for testname in os.listdir(dirname):
+
+    for testname in test_dnames:
         dump(testname)
         results = run_test(dirname / testname)
         os.chdir(cwd)
 
         if results:
-            total_tests += 1
+            completed_tests += 1
             passed = results["tests_passed"]
             if passed:
                 passed_tests += 1
 
-            dump(passed_tests, total_tests)
+            dump(passed_tests, completed_tests, total_tests)
 
             total_cost += results["cost"]
             dump(total_cost)
+            print()
 
         ###
         # input('next?')
