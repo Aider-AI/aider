@@ -20,7 +20,7 @@ class WholeFileCoder(Coder):
         else:
             self.cur_messages += [dict(role="assistant", content=content)]
 
-    def modify_incremental_response(self, final):
+    def render_incremental_response(self, final):
         return self.update_files(mode="diff")
 
     def update_files(self, mode="update"):

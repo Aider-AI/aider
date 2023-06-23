@@ -544,14 +544,14 @@ class Coder:
                 live.stop()
 
     def live_incremental_response(self, live, final):
-        show_resp = self.modify_incremental_response(final)
+        show_resp = self.render_incremental_response(final)
         if not show_resp:
             return
 
         md = Markdown(show_resp, style=self.assistant_output_color, code_theme="default")
         live.update(md)
 
-    def modify_incremental_response(self, final):
+    def render_incremental_response(self, final):
         return self.partial_response_content
 
     def get_context_from_history(self, history):
