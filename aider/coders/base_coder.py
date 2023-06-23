@@ -427,7 +427,8 @@ class Coder:
                 message=commit_message,
             )
         else:
-            self.io.tool_error("Warning: no changes found in tracked files.")
+            if self.repo:
+                self.io.tool_error("Warning: no changes found in tracked files.")
             saved_message = self.gpt_prompts.files_content_gpt_no_edits
 
         return saved_message
