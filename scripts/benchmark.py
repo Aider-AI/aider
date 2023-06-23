@@ -28,7 +28,7 @@ def create_temp_repo(dirname, tempdir):
     for root, _, files in os.walk(tempdir):
         for file in files:
             if "test" not in file:
-                repo.git.add(os.path.join(root, file))
+                repo.git.add(os.path.relpath(os.path.join(root, file), tempdir))
 
     # Commit with message "initial"
     repo.git.commit(m="initial")
