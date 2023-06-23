@@ -55,6 +55,9 @@ class Coder:
         openai.api_key = openai_api_key
         openai.api_base = openai_api_base
 
+        if not main_model:
+            main_model = models.GPT35_16k
+
         if not main_model.always_available:
             if not check_model_availability(main_model):
                 if main_model != models.GPT4:
