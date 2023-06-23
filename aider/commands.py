@@ -277,6 +277,10 @@ class Commands:
     def cmd_drop(self, args):
         "Remove matching files from the chat session"
 
+        if not args.strip():
+            self.io.tool_output("Dropping all files from the chat session.")
+            self.coder.abs_fnames = []
+
         for word in args.split():
             matched_files = [
                 file
