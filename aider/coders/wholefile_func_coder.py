@@ -58,6 +58,9 @@ class WholeFileFunctionCoder(Coder):
             self.cur_messages += [dict(role="assistant", content=content)]
 
     def render_incremental_response(self, final=False):
+        if self.partial_response_content:
+            return self.partial_response_content
+
         args = self.parse_partial_args()
 
         if not args:
