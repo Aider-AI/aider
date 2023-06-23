@@ -15,6 +15,8 @@ from aider.io import InputOutput
 def main():
     parser = argparse.ArgumentParser(description='Aider Benchmark')
     parser.add_argument('dirname', type=str, help='Directory name')
+    parser.add_argument('--model', '-m', type=str, help='Model name')
+    parser.add_argument('--edit-format', '-e', type=str, help='Edit format')
     args = parser.parse_args()
 
     dirname = Path(args.dirname)
@@ -31,7 +33,7 @@ def main():
 
     for testname in test_dnames:
         dump(testname)
-        results = run_test(dirname / testname)
+        results = run_test(dirname / testname, args.model, args.edit_format)
         os.chdir(cwd)
 
         if results:
@@ -50,7 +52,7 @@ def main():
         # input('next?')
 
 
-def run_test(testdir):
+def run_test(testdir, model_name, edit_format):
     if not os.path.isdir(testdir):
         print("Not a dir:", testdir)
         return
@@ -87,8 +89,8 @@ def run_test(testdir):
         yes=False,
     )
 
-    main_model = models.Model("gpt-3.5-turbo")
-    edit_format = main_model.edit_format
+    main_model = models.Model(model_name)
+    edit_format = edit_format or main_model.edit_format
 
     coder = Coder.create(
         main_model,
