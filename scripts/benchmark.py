@@ -11,9 +11,7 @@ def create_temp_repo(dirname, tempdir):
     for item in os.listdir(dirname):
         s = os.path.join(dirname, item)
         d = os.path.join(tempdir, item)
-        if os.path.isdir(s):
-            shutil.copytree(s, d, False, None)
-        else:
+        if os.path.isfile(s):
             shutil.copy2(s, d)
 
     # Copy .docs subdir to tempdir as 'docs'
@@ -47,4 +45,5 @@ def main(tempdir):
 if __name__ == "__main__":
     # with TemporaryDirectory() as tempdir:
     tempdir = "tmp.benchmark"
+    os.mkdir(tempdir)
     main(tempdir)
