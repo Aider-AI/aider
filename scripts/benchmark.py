@@ -85,6 +85,21 @@ def main(tempdir):
 
     coder.run(with_message=instructions)
 
+    run_tests()
+
+import subprocess
+
+def run_tests():
+    test_files = [file for file in os.listdir() if "test" in file and file.endswith(".py")]
+    all_tests_passed = True
+
+    for test_file in test_files:
+        result = subprocess.run(["python", test_file], capture_output=True, text=True)
+        if result.returncode != 0:
+            all_tests_passed = False
+            print(f"Test {test_file} failed with the following output:\n{result.stderr}")
+
+    return all_tests_passed
 
 if __name__ == "__main__":
     # with TemporaryDirectory() as tempdir:
