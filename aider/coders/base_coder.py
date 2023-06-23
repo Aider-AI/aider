@@ -361,10 +361,17 @@ class Coder:
         if self.verbose:
             utils.show_messages(messages)
 
+        exhausted = False
         try:
             interrupted = self.send(messages, functions=self.functions)
         except ExhaustedContextWindow:
-            self.io.tool_error("Exhausted context window!")
+            exhausted = True
+        except openai.error.InvalidRequestError as err:
+            if "maximum context length" in str(err):
+                exhausted = True
+
+        if exhausted:
+            self.io.tool_error("The chat session is larger than the context window!")
             self.io.tool_error(" - Use /tokens to see token usage.")
             self.io.tool_error(" - Use /drop to remove unneeded files from the chat session.")
             self.io.tool_error(" - Use /clear to clear chat history.")
