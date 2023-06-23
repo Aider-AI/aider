@@ -392,6 +392,7 @@ class Coder:
 
         if interrupted:
             self.io.tool_error("\n\n^C KeyboardInterrupt")
+            self.num_control_c += 1
             content += "\n^C KeyboardInterrupt"
 
         self.io.tool_output()
