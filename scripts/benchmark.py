@@ -146,7 +146,7 @@ def run_tests():
 
     for test_file in test_files:
         dump(test_file)
-        result = subprocess.run(["pytest", test_file], capture_output=True, text=True)
+        result = subprocess.run(["pytest", test_file], capture_output=True, text=True, timeout=60)
         print(result.stdout)
         print(result.stderr)
 
