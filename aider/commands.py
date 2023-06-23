@@ -120,8 +120,8 @@ class Commands:
             tokens = len(self.tokenizer.encode(quoted))
             res.append((tokens, f"{relative_fname}", "use /drop to drop from chat"))
 
-        print("Approximate context window usage, in tokens:")
-        print()
+        self.io.tool_output("Approximate context window usage, in tokens:")
+        self.io.tool_output()
 
         width = 8
 
@@ -134,18 +134,18 @@ class Commands:
         for tk, msg, tip in res:
             total += tk
             msg = msg.ljust(col_width)
-            print(f"{fmt(tk)} {msg} {tip}")
+            self.io.tool_output(f"{fmt(tk)} {msg} {tip}")
 
-        print("=" * width)
-        print(f"{fmt(total)} tokens total")
+        self.io.tool_output("=" * width)
+        self.io.tool_output(f"{fmt(total)} tokens total")
 
         limit = self.coder.main_model.max_context_tokens
         remaining = limit - total
         if remaining > 0:
-            print(f"{fmt(remaining)} tokens remaining in context window")
+            self.io.tool_output(f"{fmt(remaining)} tokens remaining in context window")
         else:
-            print(f"{fmt(remaining)} tokens remaining, window exhausted!")
-        print(f"{fmt(limit)} tokens max context window size")
+            self.io.tool_output(f"{fmt(remaining)} tokens remaining, window exhausted!")
+        self.io.tool_output(f"{fmt(limit)} tokens max context window size")
 
     def cmd_undo(self, args):
         "Undo the last git commit if it was done by aider"
@@ -302,7 +302,7 @@ class Commands:
         except Exception as e:
             self.io.tool_error(f"Error running command: {e}")
 
-        print(combined_output)
+        self.io.tool_output(combined_output)
 
         if self.io.confirm_ask("Add the output to the chat?", default="y"):
             for line in combined_output.splitlines():
