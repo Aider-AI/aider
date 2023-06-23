@@ -220,7 +220,7 @@ These changes replace the `subprocess.run` patches with `subprocess.check_output
         replace = "new_line1\nnew_line2"
         expected_output = None
 
-        result = utils.replace_part_with_missing_leading_whitespace(whole, part, replace)
+        result = eb.replace_part_with_missing_leading_whitespace(whole, part, replace)
         self.assertEqual(result, expected_output)
 
 
