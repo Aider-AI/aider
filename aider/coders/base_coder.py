@@ -38,6 +38,7 @@ class Coder:
     last_asked_for_commit_time = 0
     repo_map = None
     functions = None
+    total_cost = 0.0
 
     @classmethod
     def create(
@@ -526,12 +527,22 @@ class Coder:
         except AttributeError:
             pass
 
+        prompt_tokens = completion.usage.prompt_tokens
+        completion_tokens = completion.usage.completion_tokens
+
+        tokens = f"{prompt_tokens} prompt tokens, {completion_tokens} completion tokens"
+        if self.main_model.prompt_price:
+            cost = prompt_tokens * self.main_model.prompt_price / 1000
+            cost += completion_tokens * self.main_model.completion_price / 1000
+            tokens += f", ${cost:.6f} cost"
+            self.total_cost += cost
+
         show_resp = self.render_incremental_response(True)
         if self.pretty:
-            md = Markdown(show_resp, style=self.assistant_output_color, code_theme="default")
-            self.io.console.print(md)
-        else:
-            print(show_resp)
+            show_resp = Markdown(show_resp, style=self.assistant_output_color, code_theme="default")
+
+        self.io.console.print(show_resp)
+        self.io.console.print(tokens)
 
     def show_send_output_stream(self, completion, silent):
         live = None

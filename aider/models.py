@@ -11,6 +11,9 @@ class Model:
     use_repo_map = False
     send_undo_reply = False
 
+    prompt_price = None
+    completion_price = None
+
     def __init__(self, name):
         self.name = name
 
@@ -33,11 +36,27 @@ class Model:
             self.edit_format = "diff"
             self.use_repo_map = True
             self.send_undo_reply = True
+
+            if tokens == 8:
+                self.prompt_price = 0.03
+                self.completion_price = 0.06
+            elif tokens == 32:
+                self.prompt_price = 0.06
+                self.completion_price = 0.12
+
             return
 
         if self.is_gpt35():
             self.edit_format = "whole-func"
             self.always_available = True
+
+            if tokens == 4:
+                self.prompt_price = 0.0015
+                self.completion_price = 0.002
+            elif tokens == 16:
+                self.prompt_price = 0.003
+                self.completion_price = 0.004
+
             return
 
         raise ValueError(f"Unsupported model: {name}")
