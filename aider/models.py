@@ -47,7 +47,7 @@ class Model:
             return
 
         if self.is_gpt35():
-            self.edit_format = "whole-func"
+            self.edit_format = "whole"
             self.always_available = True
 
             if tokens == 4:
