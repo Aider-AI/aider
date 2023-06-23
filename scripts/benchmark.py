@@ -4,6 +4,7 @@ import subprocess
 import sys
 from json.decoder import JSONDecodeError
 from pathlib import Path
+import argparse
 
 from aider import models
 from aider.coders import Coder
@@ -12,11 +13,11 @@ from aider.io import InputOutput
 
 
 def main():
-    if len(sys.argv) != 2:
-        print("Usage: python benchmark.py <dirname>")
-        sys.exit(1)
+    parser = argparse.ArgumentParser(description='Aider Benchmark')
+    parser.add_argument('dirname', type=str, help='Directory name')
+    args = parser.parse_args()
 
-    dirname = Path(sys.argv[1])
+    dirname = Path(args.dirname)
 
     cwd = os.getcwd()
 
