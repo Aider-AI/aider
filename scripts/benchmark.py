@@ -1,5 +1,6 @@
 import os
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -85,9 +86,10 @@ def main(tempdir):
 
     coder.run(with_message=instructions)
 
-    run_tests()
+    passed = run_tests()
 
-import subprocess
+    dump(passed)
+
 
 def run_tests():
     test_files = [file for file in os.listdir() if "test" in file and file.endswith(".py")]
@@ -100,6 +102,7 @@ def run_tests():
             print(f"Test {test_file} failed with the following output:\n{result.stderr}")
 
     return all_tests_passed
+
 
 if __name__ == "__main__":
     # with TemporaryDirectory() as tempdir:
