@@ -1,10 +1,10 @@
+import argparse
 import json
 import os
 import subprocess
-import sys
+import time
 from json.decoder import JSONDecodeError
 from pathlib import Path
-import argparse
 
 from aider import models
 from aider.coders import Coder
@@ -13,17 +13,17 @@ from aider.io import InputOutput
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Aider Benchmark')
-    parser.add_argument('dirname', type=str, help='Directory name')
-    parser.add_argument('--model', '-m', type=str, help='Model name')
-    parser.add_argument('--edit-format', '-e', type=str, help='Edit format')
+    parser = argparse.ArgumentParser(description="Aider Benchmark")
+    parser.add_argument("dirname", type=str, help="Directory name")
+    parser.add_argument("--model", "-m", type=str, help="Model name")
+    parser.add_argument("--edit-format", "-e", type=str, help="Edit format")
     args = parser.parse_args()
 
     dirname = Path(args.dirname)
 
     cwd = os.getcwd()
 
-    test_dnames = list(os.listdir(dirname))
+    test_dnames = sorted(os.listdir(dirname))
 
     total_tests = len(test_dnames)
     completed_tests = 0
@@ -44,8 +44,15 @@ def main():
 
             dump(passed_tests, completed_tests, total_tests)
 
+            pass_rate = 100 * passed_tests / completed_tests
+            dump(pass_rate)
+
             total_cost += results["cost"]
             dump(total_cost)
+
+            projected_cost = total_cost * total_tests / completed_tests
+            dump(projected_cost)
+
             print()
 
         ###
@@ -92,6 +99,9 @@ def run_test(testdir, model_name, edit_format):
     main_model = models.Model(model_name)
     edit_format = edit_format or main_model.edit_format
 
+    dump(main_model)
+    dump(edit_format)
+
     coder = Coder.create(
         main_model,
         edit_format,
@@ -103,7 +113,9 @@ def run_test(testdir, model_name, edit_format):
         stream=False,
     )
 
+    start = time.time()
     coder.run(with_message=instructions)
+    dur = time.time() - start
 
     if coder.num_control_c:
         raise KeyboardInterrupt
@@ -116,6 +128,7 @@ def run_test(testdir, model_name, edit_format):
         edit_format=edit_format,
         tests_passed=passed,
         cost=coder.total_cost,
+        duration=dur,
     )
     dump(results)
 
