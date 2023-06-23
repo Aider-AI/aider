@@ -24,8 +24,10 @@ def create_temp_repo(dirname, tempdir):
     # Create a new git repo in tempdir
     repo = Repo.init(tempdir)
 
-    # Add all copied files to the repo
-    repo.git.add(A=True)
+    # Add all copied files to the repo, excluding those with 'test' in the filename
+    for item in os.listdir(tempdir):
+        if "test" not in item:
+            repo.git.add(item)
 
     # Commit with message "initial"
     repo.git.commit(m="initial")
