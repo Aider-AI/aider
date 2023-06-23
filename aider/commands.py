@@ -144,7 +144,7 @@ class Commands:
         if remaining > 0:
             self.io.tool_output(f"{fmt(remaining)} tokens remaining in context window")
         else:
-            self.io.tool_output(f"{fmt(remaining)} tokens remaining, window exhausted!")
+            self.io.tool_error(f"{fmt(remaining)} tokens remaining, window exhausted!")
         self.io.tool_output(f"{fmt(limit)} tokens max context window size")
 
     def cmd_undo(self, args):
