@@ -346,7 +346,7 @@ class Coder:
         ]
 
         main_sys = self.gpt_prompts.main_system
-        if self.main_model.max_context_tokens > 4*1024:
+        if self.main_model.max_context_tokens > 4 * 1024:
             main_sys += "\n" + self.gpt_prompts.system_reminder
 
         messages = [
@@ -388,7 +388,7 @@ class Coder:
         self.update_cur_messages(content, edited)
 
         if edited:
-            if self.auto_commits:
+            if self.auto_commits and not self.dry_run:
                 saved_message = self.auto_commit()
             else:
                 saved_message = None
