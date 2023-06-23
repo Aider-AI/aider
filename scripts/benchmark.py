@@ -1,3 +1,4 @@
+import json
 import os
 import shutil
 import subprocess
@@ -41,21 +42,45 @@ def main():
         print("Usage: python benchmark.py <dirname>")
         sys.exit(1)
 
-    dirname = sys.argv[1]
+    dirname = Path(sys.argv[1])
 
-    # with TemporaryDirectory() as tempdir:
-    tempdir = "tmp.benchmark"
-    os.mkdir(tempdir)
+    cwd = os.getcwd()
 
-    run_test(dirname, tempdir)
+    total_tests = 0
+    passed_tests = 0
+    for testname in os.listdir(dirname):
+        dump(testname)
+        results = run_test(dirname / testname)
+        os.chdir(cwd)
+
+        if results:
+            total_tests += 1
+            passed = results["tests_passed"]
+            if passed:
+                passed_tests += 1
+
+            dump(passed_tests, total_tests)
 
 
-def run_test(dirname, tempdir):
-    fnames = copy_exercise(dirname, tempdir)
-    os.chdir(tempdir)
+def run_test(testdir):
+    if not os.path.isdir(testdir):
+        print("Not a dir:", testdir)
+        return
 
-    instructions = Path("docs/instructions.md").read_text()
+    os.chdir(testdir)
 
+    started_fname = Path(".aider.started")
+    if started_fname.exists():
+        print(f"{testdir}/{started_fname} exists, skipping")
+        return
+    started_fname.touch()
+
+    fnames = []
+    for fname in os.listdir("."):
+        if "test" not in fname and os.path.isfile(fname) and fname[0] != ".":
+            fnames.append(fname)
+
+    instructions = Path(".docs/instructions.md").read_text()
     instructions += (
         "\n\n=====\n\nModify these files according to the above instructions: " + " ".join(fnames)
     )
@@ -66,10 +91,11 @@ def run_test(dirname, tempdir):
     )
 
     main_model = models.Model("gpt-3.5-turbo")
+    edit_format = main_model.edit_format
 
     coder = Coder.create(
         main_model,
-        None,
+        edit_format,
         io,
         os.environ["OPENAI_API_KEY"],
         fnames=fnames,
@@ -82,7 +108,17 @@ def run_test(dirname, tempdir):
 
     passed = run_tests()
 
-    dump(passed)
+    results = dict(
+        model=main_model.name,
+        edit_format=edit_format,
+        tests_passed=passed,
+        cost=coder.total_cost,
+    )
+    dump(results)
+
+    Path(".aider.results.json").write_text(json.dumps(results, indent=4))
+
+    return results
 
 
 def run_tests():
