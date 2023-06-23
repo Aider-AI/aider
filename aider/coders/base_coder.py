@@ -346,7 +346,7 @@ class Coder:
         ]
 
         main_sys = self.gpt_prompts.main_system
-        if self.main_model.use_repo_map:
+        if self.main_model.max_context_tokens > 4*1024:
             main_sys += "\n" + self.gpt_prompts.system_reminder
 
         messages = [
