@@ -129,6 +129,8 @@ class Coder:
 
         if use_git:
             self.set_repo(fnames)
+        else:
+            self.abs_fnames = [str(Path(fname).resolve()) for fname in fnames]
 
         if self.repo:
             rel_repo_dir = os.path.relpath(self.repo.git_dir, os.getcwd())
