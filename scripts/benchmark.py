@@ -57,16 +57,13 @@ def main(tempdir):
     dirname = sys.argv[1]
 
     fnames = create_temp_repo(dirname, tempdir)
+    os.chdir(tempdir)
 
-    tempdir = Path(tempdir)
-
-    instructions = (tempdir / "docs/instructions.md").read_text()
+    instructions = Path("docs/instructions.md").read_text()
 
     instructions += (
         "\n\n=====\n\nModify these files according to the above instructions: " + " ".join(fnames)
     )
-
-    fnames = [str(tempdir / fn) for fn in fnames]
 
     io = InputOutput(
         pretty=True,
@@ -74,8 +71,6 @@ def main(tempdir):
     )
 
     main_model = models.Model("gpt-3.5-turbo")
-
-    dump(fnames)
 
     coder = Coder.create(
         main_model,
