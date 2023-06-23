@@ -73,7 +73,8 @@ def diff_partial_update(lines_orig, lines_updated, final=False, fname=None):
 
     show = "```diff\n"
     if fname:
-        show += f"@@ {fname}\n"
+        show += f"--- {fname} original\n"
+        show += f"+++ {fname} updated\n"
     if not final:
         show += bar
 
