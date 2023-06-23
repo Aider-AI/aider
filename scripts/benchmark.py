@@ -57,7 +57,15 @@ def main(tempdir):
     dirname = sys.argv[1]
 
     fnames = create_temp_repo(dirname, tempdir)
+
     tempdir = Path(tempdir)
+
+    instructions = (tempdir / "docs/instructions.md").read_text()
+
+    instructions += (
+        "\n\n=====\n\nModify these files according to the above instructions: " + " ".join(fnames)
+    )
+
     fnames = [str(tempdir / fn) for fn in fnames]
 
     io = InputOutput(
@@ -75,14 +83,9 @@ def main(tempdir):
         io,
         os.environ["OPENAI_API_KEY"],
         fnames=fnames,
-        verbose=True,
+        # verbose=True,
         use_git=False,
-    )
-
-    instructions = (tempdir / "docs/instructions.md").read_text()
-
-    instructions += (
-        "\n\n=====\n\nModify these files according to the above instructions: " + " ".join(fnames)
+        stream=False,
     )
 
     coder.run(with_message=instructions)
