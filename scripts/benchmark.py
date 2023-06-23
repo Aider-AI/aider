@@ -9,13 +9,10 @@ from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 
-# from git import Repo
-
-
 # from tempfile import TemporaryDirectory
 
 
-def create_temp_repo(dirname, tempdir):
+def copy_exercise(dirname, tempdir):
     # Copy all files from dirname to tempdir
     for item in os.listdir(dirname):
         s = os.path.join(dirname, item)
@@ -31,17 +28,6 @@ def create_temp_repo(dirname, tempdir):
         if "test" not in file and os.path.isfile(full_path):
             add_files.append(file)
 
-    """
-    # Create a new git repo in tempdir
-    repo = Repo.init(tempdir)
-
-    for rel_path in add_files:
-        repo.git.add(rel_path)
-
-    # Commit with message "initial"
-    repo.git.commit(m="initial")
-    """
-
     # Copy .docs subdir to tempdir as 'docs'
     docs_src = os.path.join(dirname, ".docs")
     docs_dst = os.path.join(tempdir, "docs")
@@ -50,14 +36,22 @@ def create_temp_repo(dirname, tempdir):
     return add_files
 
 
-def main(tempdir):
+def main():
     if len(sys.argv) != 2:
         print("Usage: python benchmark.py <dirname>")
         sys.exit(1)
 
     dirname = sys.argv[1]
 
-    fnames = create_temp_repo(dirname, tempdir)
+    # with TemporaryDirectory() as tempdir:
+    tempdir = "tmp.benchmark"
+    os.mkdir(tempdir)
+
+    run_test(dirname, tempdir)
+
+
+def run_test(dirname, tempdir):
+    fnames = copy_exercise(dirname, tempdir)
     os.chdir(tempdir)
 
     instructions = Path("docs/instructions.md").read_text()
@@ -105,7 +99,4 @@ def run_tests():
 
 
 if __name__ == "__main__":
-    # with TemporaryDirectory() as tempdir:
-    tempdir = "tmp.benchmark"
-    os.mkdir(tempdir)
-    main(tempdir)
+    main()
