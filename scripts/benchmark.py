@@ -60,8 +60,9 @@ def run_test(testdir):
 
     started_fname = Path(".aider.started")
     if started_fname.exists():
-        print(f"{testdir}/{started_fname} exists, skipping")
-        return
+        # print(f"{testdir}/{started_fname} exists, skipping")
+        # return
+        pass
     started_fname.touch()
 
     fnames = []
