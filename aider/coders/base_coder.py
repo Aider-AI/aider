@@ -535,6 +535,8 @@ class Coder:
         return interrupted
 
     def show_send_output(self, completion, silent):
+        show_func_err = None
+        show_content_err = None
         try:
             self.partial_response_function_call = completion.choices[0].message.function_call
         except AttributeError as func_err:
@@ -545,7 +547,7 @@ class Coder:
         except AttributeError as content_err:
             show_content_err = content_err
 
-        if not self.partial_response_function_call and not self.partial_response_content:
+        if show_func_err and show_content_err:
             self.io.tool_error(show_func_err)
             self.io.tool_error(show_content_err)
             raise Exception("No data found in openai response!")
