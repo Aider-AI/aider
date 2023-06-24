@@ -64,6 +64,7 @@ def main():
     total_tests = len(test_dnames)
     completed_tests = 0
     passed_tests = [0] * args.retries
+    duration = 0
 
     total_cost = 0
 
@@ -90,8 +91,18 @@ def main():
             total_cost += results["cost"]
             dump(total_cost)
 
-            projected_cost = total_cost * total_tests / completed_tests
+            avg_cost = total_cost / completed_tests
+            dump(avg_cost)
+
+            projected_cost = avg_cost * total_tests
             dump(projected_cost)
+
+            duration += results["duration"]
+            avg_duration = duration / completed_tests
+            dump(avg_duration)
+
+            min_left = (total_tests - completed_tests) * avg_duration / 60
+            dump(min_left)
 
             print()
 
@@ -177,7 +188,7 @@ def run_test(testdir, model_name, edit_format, retries):
             break
 
         errors = errors.splitlines()
-        errors = errors[:25]
+        errors = errors[:50]
         errors = "\n".join(errors)
         instructions = errors
         instructions += "\n\nFix the code to resolve the test failures above."
