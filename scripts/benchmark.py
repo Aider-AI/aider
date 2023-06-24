@@ -175,7 +175,10 @@ def run_test(testdir, model_name, edit_format, retries, no_test):
         use_git=False,
         stream=False,
         pretty=False,
+        # verbose=True,
     )
+
+    coder_timeout = 120
 
     dur = 0
     test_outcomes = []
@@ -194,12 +197,12 @@ def run_test(testdir, model_name, edit_format, retries, no_test):
         stop_event = threading.Event()
         coder_thread = threading.Thread(target=run_coder, args=(stop_event,))
         coder_thread.start()
-        coder_thread.join(120)  # seconds timeout
+        coder_thread.join(coder_timeout)  # seconds timeout
 
         if coder_thread.is_alive():
             stop_event.set()
             coder_thread.join()  # Wait for the thread to exit gracefully
-            print("coder.run took longer than 60 seconds and was stopped.")
+            print(f"coder.run took longer than {coder_timeout} seconds and was stopped.")
             # Handle the case when the coder.run call takes longer than 60 seconds
             # You can raise an exception or handle it accordingly
             # raise Exception("coder.run took longer than 60 seconds")
@@ -221,6 +224,7 @@ def run_test(testdir, model_name, edit_format, retries, no_test):
             break
 
         errors = errors.splitlines()
+        print(errors[-1])
         errors = errors[:50]
         errors = "\n".join(errors)
         instructions = errors
@@ -260,7 +264,7 @@ def run_tests(history_fname):
             )
             if result.returncode != 0:
                 all_tests_passed = False
-                print(f"Test {test_file} failed with the following output:\n{result.stderr}")
+                print(f"Test {test_file} failed")
 
             res = result.stdout
 
@@ -268,7 +272,6 @@ def run_tests(history_fname):
             all_tests_passed = False
             res = f"Test {test_file} timed out after {timeout} seconds."
 
-        print(res)
         with history_fname.open("a") as fh:
             fh.write(f"```\n{res}\n```")
 
