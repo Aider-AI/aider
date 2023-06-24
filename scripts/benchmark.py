@@ -149,10 +149,10 @@ def run_test(testdir, model_name, edit_format, retries, no_test):
         if "test" not in fname and os.path.isfile(fname) and fname[0] != ".":
             fnames.append(fname)
 
-    filelist = " ".join(fnames)
+    file_list = " ".join(fnames)
     instructions = Path(".docs/instructions.md").read_text()
     instructions += "\n\n=====\n\nModify these files according to the above instructions: "
-    instructions += filelist
+    instructions += file_list
 
     io = InputOutput(
         pretty=True,
@@ -228,7 +228,9 @@ def run_test(testdir, model_name, edit_format, retries, no_test):
         errors = errors[:50]
         errors = "\n".join(errors)
         instructions = errors
-        instructions += "\n\nFix the code to resolve the test failures above."
+        instructions += (
+            "\n\n####\n\nFix the code in {file_list} to resolve the test failures above."
+        )
 
     results = dict(
         testdir=str(testdir),
