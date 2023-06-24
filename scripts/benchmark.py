@@ -94,6 +94,7 @@ def run_test(testdir, model_name, edit_format):
     io = InputOutput(
         pretty=True,
         yes=False,
+        chat_history_file=".aider.chat.history.md",
     )
 
     main_model = models.Model(model_name)
