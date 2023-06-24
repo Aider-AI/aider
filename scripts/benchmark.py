@@ -5,6 +5,7 @@ import os
 import shutil
 import subprocess
 import time
+import threading
 from json.decoder import JSONDecodeError
 from pathlib import Path
 
@@ -172,8 +173,19 @@ def run_test(testdir, model_name, edit_format, retries):
     dur = 0
     test_outcomes = []
     for i in range(retries):
+        def run_coder():
+            coder.run(with_message=instructions)
+
         start = time.time()
-        coder.run(with_message=instructions)
+        coder_thread = threading.Thread(target=run_coder)
+        coder_thread.start()
+        coder_thread.join(60)  # 60 seconds timeout
+
+        if coder_thread.is_alive():
+            # Handle the case when the coder.run call takes longer than 60 seconds
+            # You can raise an exception or handle it accordingly
+            raise Exception("coder.run took longer than 60 seconds")
+
         dur += time.time() - start
 
         if coder.num_control_c:
