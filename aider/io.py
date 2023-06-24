@@ -14,6 +14,8 @@ from pygments.util import ClassNotFound
 from rich.console import Console
 from rich.text import Text
 
+from .dump import dump  # noqa: F401
+
 
 class AutoCompleter(Completer):
     def __init__(self, root, rel_fnames, addable_rel_fnames, commands):
@@ -105,6 +107,7 @@ class InputOutput:
         self.output = output
         self.pretty = pretty
         self.yes = yes
+
         self.input_history_file = input_history_file
         if chat_history_file is not None:
             self.chat_history_file = Path(chat_history_file)
@@ -205,8 +208,10 @@ class InputOutput:
         self.append_chat_history(hist)
 
     def confirm_ask(self, question, default="y"):
-        if self.yes:
+        if self.yes is True:
             res = "yes"
+        elif self.yes is False:
+            res = "no"
         else:
             res = prompt(question + " ", default=default)
 
@@ -218,8 +223,10 @@ class InputOutput:
         return res.strip().lower().startswith("y")
 
     def prompt_ask(self, question, default=None):
-        if self.yes:
+        if self.yes is True:
             res = "yes"
+        elif self.yes is False:
+            res = "no"
         else:
             res = prompt(question + " ", default=default)
 

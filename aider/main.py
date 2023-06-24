@@ -211,7 +211,7 @@ def main(args=None, input=None, output=None):
         "--yes",
         action="store_true",
         help="Always say yes to every confirmation",
-        default=False,
+        default=None,
     )
     parser.add_argument(
         "-v",
