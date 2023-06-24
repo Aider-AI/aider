@@ -36,6 +36,12 @@ def main():
         help="Do not run tests",
     )
     parser.add_argument(
+        "--verbose",
+        "-v",
+        action="store_true",
+        help="Verbose output",
+    )
+    parser.add_argument(
         "--retries",
         "-r",
         type=int,
@@ -80,7 +86,12 @@ def main():
 
         dump(testname)
         results = run_test(
-            dirname / testname, args.model, args.edit_format, args.retries, args.no_test
+            dirname / testname,
+            args.model,
+            args.edit_format,
+            args.retries,
+            args.no_test,
+            args.verbose,
         )
         os.chdir(cwd)
 
@@ -120,7 +131,7 @@ def main():
         print(dirname / testname)
 
 
-def run_test(testdir, model_name, edit_format, retries, no_test):
+def run_test(testdir, model_name, edit_format, retries, no_test, verbose):
     if not os.path.isdir(testdir):
         print("Not a dir:", testdir)
         return
@@ -175,7 +186,7 @@ def run_test(testdir, model_name, edit_format, retries, no_test):
         use_git=False,
         stream=False,
         pretty=False,
-        # verbose=True,
+        verbose=verbose,
     )
 
     coder_timeout = 120
