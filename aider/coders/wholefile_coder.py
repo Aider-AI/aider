@@ -32,8 +32,6 @@ class WholeFileCoder(Coder):
         output = []
         lines = content.splitlines(keepends=True)
 
-        allowed_to_edit = False
-
         fname = None
         new_lines = []
         for i, line in enumerate(lines):
@@ -53,7 +51,7 @@ class WholeFileCoder(Coder):
                         ).splitlines()
                         output += show_diff
                     else:
-                        if allowed_to_edit:
+                        if self.allowed_to_edit(fname):
                             edited.add(fname)
                             if not self.dry_run:
                                 new_lines = "".join(new_lines)
@@ -72,13 +70,6 @@ class WholeFileCoder(Coder):
                         raise ValueError("No filename provided before ``` block")
                 else:
                     fname = lines[i - 1].strip()
-
-                if mode == "update":
-                    if self.allowed_to_edit(fname):
-                        allowed_to_edit = True
-                    else:
-                        allowed_to_edit = False
-
             elif fname:
                 new_lines.append(line)
             else:
@@ -101,7 +92,7 @@ class WholeFileCoder(Coder):
 
             return "\n".join(output)
 
-        if fname and allowed_to_edit:
+        if fname and self.allowed_to_edit(fname):
             edited.add(fname)
             if not self.dry_run:
                 new_lines = "".join(new_lines)
