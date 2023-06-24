@@ -186,7 +186,7 @@ def run_test(testdir, model_name, edit_format, retries):
         stop_event = threading.Event()
         coder_thread = threading.Thread(target=run_coder, args=(stop_event,))
         coder_thread.start()
-        coder_thread.join(60)  # 60 seconds timeout
+        coder_thread.join(120)  # seconds timeout
 
         if coder_thread.is_alive():
             stop_event.set()
