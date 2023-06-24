@@ -538,7 +538,8 @@ class Coder:
         return interrupted
 
     def show_send_output(self, completion, silent):
-        # dump(completion)
+        if self.verbose:
+            print(completion)
 
         show_func_err = None
         show_content_err = None
