@@ -63,7 +63,7 @@ def main():
 
     total_tests = len(test_dnames)
     completed_tests = 0
-    passed_tests = 0
+    passed_tests = [0] * args.retries
 
     total_cost = 0
 
@@ -79,12 +79,13 @@ def main():
             completed_tests += 1
             passed = results["tests_outcomes"][-1]
             if passed:
-                passed_tests += 1
+                for i in range(len(results["tests_outcomes"]) - 1, args.retries):
+                    passed_tests[i] += 1
 
-            dump(passed_tests, completed_tests, total_tests)
-
-            pass_rate = 100 * passed_tests / completed_tests
-            dump(pass_rate)
+            dump(completed_tests, total_tests)
+            for i in range(args.retries):
+                pass_rate = 100 * passed_tests[i] / completed_tests
+                dump(i, pass_rate)
 
             total_cost += results["cost"]
             dump(total_cost)
@@ -96,6 +97,8 @@ def main():
 
         ###
         # input('next?')
+
+        print(dirname / testname)
 
 
 def run_test(testdir, model_name, edit_format, retries):
@@ -150,7 +153,6 @@ def run_test(testdir, model_name, edit_format, retries):
         io,
         os.environ["OPENAI_API_KEY"],
         fnames=fnames,
-        # verbose=True,
         use_git=False,
         stream=False,
         pretty=False,
@@ -174,6 +176,9 @@ def run_test(testdir, model_name, edit_format, retries):
             test_outcomes.append(True)
             break
 
+        errors = errors.splitlines()
+        errors = errors[:25]
+        errors = "\n".join(errors)
         instructions = errors
         instructions += "\n\nFix the code to resolve the test failures above."
 

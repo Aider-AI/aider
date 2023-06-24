@@ -73,6 +73,7 @@ class WholeFileCoder(Coder):
                         fname = list(chat_files)[0]
                     else:
                         show_chat_files = " ".join(chat_files)
+                        # TODO: adopt the new allowed_to_edit()
                         raise ValueError(f"{fname} is not one of: {show_chat_files}")
 
             elif fname:
@@ -97,7 +98,9 @@ class WholeFileCoder(Coder):
 
             return "\n".join(output)
 
-        if fname:
-            raise ValueError("Started a ``` block without closing it")
+        # TODO: take the file even it wasn't closed properly?
+        #
+        # if fname:
+        #    raise ValueError("Started a ``` block without closing it")
 
         return edited
