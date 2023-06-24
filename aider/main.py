@@ -221,8 +221,9 @@ def main(args=None, input=None, output=None):
         default=False,
     )
     parser.add_argument(
-        "--command",
-        "--cmd",
+        "--message",
+        "--msg",
+        "-m",
         metavar="COMMAND",
         help="Specify a single command to give to GPT (disables chat mode)",
     )
@@ -285,9 +286,9 @@ def main(args=None, input=None, output=None):
         return
 
     io.tool_output("Use /help to see in-chat commands.")
-    if args.command:
+    if args.message:
         io.tool_output()
-        coder.run(with_message=args.command)
+        coder.run(with_message=args.message)
     else:
         coder.run()
 
