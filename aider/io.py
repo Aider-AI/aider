@@ -182,7 +182,10 @@ class InputOutput:
                 break
 
         print()
+        self.user_input(inp)
+        return inp
 
+    def user_input(self, inp):
         prefix = "####"
         if inp:
             hist = inp.splitlines()
@@ -194,8 +197,6 @@ class InputOutput:
         hist = f"""
 {prefix} {hist}"""
         self.append_chat_history(hist, linebreak=True)
-
-        return inp
 
     # OUTPUT
 

@@ -279,6 +279,7 @@ class Coder:
             try:
                 if with_message:
                     new_user_message = with_message
+                    self.io.user_input(with_message)
                 else:
                     new_user_message = self.run_loop()
 
