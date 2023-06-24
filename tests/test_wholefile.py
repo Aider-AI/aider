@@ -7,6 +7,12 @@ from aider.coders.wholefile_coder import WholeFileCoder
 from aider.io import InputOutput
 
 class TestWholeFileCoder(unittest.TestCase):
+    def setUp(self):
+        self.original_cwd = os.getcwd()
+
+    def tearDown(self):
+        os.chdir(self.original_cwd)
+
     def test_update_files(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             # Create a sample file in the temporary directory
@@ -15,7 +21,7 @@ class TestWholeFileCoder(unittest.TestCase):
                 f.write("Original content\n")
 
             # Initialize WholeFileCoder with the temporary directory
-            io = InputOutput()
+            io = InputOutput(yes=yes)
             coder = WholeFileCoder(root=temp_dir, io=io)
 
             # Set the partial response content with the updated content
