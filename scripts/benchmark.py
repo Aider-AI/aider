@@ -4,8 +4,8 @@ import json
 import os
 import shutil
 import subprocess
-import time
 import threading
+import time
 from json.decoder import JSONDecodeError
 from pathlib import Path
 
@@ -29,6 +29,11 @@ def main():
         "-c",
         action="store_true",
         help="Discard the current testdir and make a clean copy",
+    )
+    parser.add_argument(
+        "--no-test",
+        action="store_true",
+        help="Do not run tests",
     )
     parser.add_argument(
         "--retries",
@@ -74,7 +79,9 @@ def main():
             continue
 
         dump(testname)
-        results = run_test(dirname / testname, args.model, args.edit_format, args.retries)
+        results = run_test(
+            dirname / testname, args.model, args.edit_format, args.retries, args.no_test
+        )
         os.chdir(cwd)
 
         if results:
@@ -113,7 +120,7 @@ def main():
         print(dirname / testname)
 
 
-def run_test(testdir, model_name, edit_format, retries):
+def run_test(testdir, model_name, edit_format, retries, no_test):
     if not os.path.isdir(testdir):
         print("Not a dir:", testdir)
         return
@@ -173,6 +180,7 @@ def run_test(testdir, model_name, edit_format, retries):
     dur = 0
     test_outcomes = []
     for i in range(retries):
+
         def run_coder(stop_event):
             try:
                 coder.run(with_message=instructions)
@@ -200,6 +208,9 @@ def run_test(testdir, model_name, edit_format, retries):
 
         if coder.num_control_c:
             raise KeyboardInterrupt
+
+        if no_test:
+            return
 
         errors = run_tests(history_fname)
 
