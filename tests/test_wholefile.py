@@ -1,10 +1,11 @@
 import os
-from pathlib import Path
 import tempfile
 import unittest
 
+from aider import models
 from aider.coders.wholefile_coder import WholeFileCoder
 from aider.io import InputOutput
+
 
 class TestWholeFileCoder(unittest.TestCase):
     def setUp(self):
@@ -15,14 +16,16 @@ class TestWholeFileCoder(unittest.TestCase):
 
     def test_update_files(self):
         with tempfile.TemporaryDirectory() as temp_dir:
+            os.chdir(temp_dir)
+
             # Create a sample file in the temporary directory
-            sample_file = os.path.join(temp_dir, "sample.txt")
+            sample_file = "sample.txt"
             with open(sample_file, "w") as f:
                 f.write("Original content\n")
 
             # Initialize WholeFileCoder with the temporary directory
-            io = InputOutput(yes=yes)
-            coder = WholeFileCoder(root=temp_dir, io=io)
+            io = InputOutput(yes=True)
+            coder = WholeFileCoder(main_model=models.GPT35, io=io, fnames=[sample_file])
 
             # Set the partial response content with the updated content
             coder.partial_response_content = f"{sample_file}\n```\nUpdated content\n```"
@@ -37,6 +40,7 @@ class TestWholeFileCoder(unittest.TestCase):
             with open(sample_file, "r") as f:
                 updated_content = f.read()
             self.assertEqual(updated_content, "Updated content\n")
+
 
 if __name__ == "__main__":
     unittest.main()
