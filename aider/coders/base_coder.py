@@ -373,6 +373,7 @@ class Coder:
             utils.show_messages(messages)
 
         exhausted = False
+        interrupted = False
         try:
             interrupted = self.send(messages, functions=self.functions)
         except ExhaustedContextWindow:
@@ -389,7 +390,13 @@ class Coder:
             self.io.tool_error(" - Use /clear to clear chat history.")
             return
 
-        content = self.partial_response_content
+        if self.partial_response_function_call:
+            args = self.parse_partial_args()
+            content = args["explanation"]
+        elif self.partial_response_content:
+            content = self.partial_response_content
+        else:
+            content = ""
 
         if interrupted:
             self.io.tool_error("\n\n^C KeyboardInterrupt")
@@ -405,6 +412,7 @@ class Coder:
         if edit_error:
             return edit_error
 
+        # TODO: this shouldn't use content, should use self.partial_....
         self.update_cur_messages(content, edited)
 
         if edited:
@@ -528,14 +536,19 @@ class Coder:
 
     def show_send_output(self, completion, silent):
         try:
-            self.partial_response_function_call = completion.choices[0].function_call
-        except AttributeError:
-            pass
+            self.partial_response_function_call = completion.choices[0].message.function_call
+        except AttributeError as func_err:
+            show_func_err = func_err
 
         try:
             self.partial_response_content = completion.choices[0].message.content
-        except AttributeError:
-            pass
+        except AttributeError as content_err:
+            show_content_err = content_err
+
+        if not self.partial_response_function_call and not self.partial_response_content:
+            self.io.tool_error(show_func_err)
+            self.io.tool_error(show_content_err)
+            raise Exception("No data found in openai response!")
 
         prompt_tokens = completion.usage.prompt_tokens
         completion_tokens = completion.usage.completion_tokens
