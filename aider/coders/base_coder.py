@@ -833,20 +833,37 @@ class Coder:
 
         return full_path
 
+    apply_update_errors = 0
+
     def apply_updates(self):
+        max_apply_update_errors = 2
+
         try:
             edited = self.update_files()
         except ValueError as err:
             err = err.args[0]
-            self.io.tool_error("Malformed response, retrying...")
-            self.io.tool_error(str(err))
-            return None, err
+            self.apply_update_errors += 1
+            if self.apply_update_errors < max_apply_update_errors:
+                self.io.tool_error(f"Malformed response #{self.apply_update_errors}, retrying...")
+                self.io.tool_error(str(err))
+                return None, err
+            else:
+                self.io.tool_error(f"Malformed response #{self.apply_update_errors}, aborting.")
+                return False, None
 
         except Exception as err:
             print(err)
             print()
             traceback.print_exc()
-            return None, err
+            self.apply_update_errors += 1
+            if self.apply_update_errors < max_apply_update_errors:
+                self.io.tool_error(f"Update exception #{self.apply_update_errors}, retrying...")
+                return None, err
+            else:
+                self.io.tool_error(f"Update exception #{self.apply_update_errors}, aborting")
+                return False, None
+
+        self.apply_update_errors = 0
 
         if edited:
             for path in sorted(edited):
