@@ -2,6 +2,7 @@ from pathlib import Path
 
 from aider import diffs
 
+from ..dump import dump  # noqa: F401
 from .base_coder import Coder
 from .wholefile_prompts import WholeFilePrompts
 
@@ -34,8 +35,9 @@ class WholeFileCoder(Coder):
         fname = None
         new_lines = []
         for i, line in enumerate(lines):
+            dump(repr(fname), repr(line), repr(new_lines))
             if line.startswith("```"):
-                if fname:
+                if fname is not None:
                     # ending an existing block
                     full_path = (Path(self.root) / fname).absolute()
 
@@ -59,22 +61,23 @@ class WholeFileCoder(Coder):
                     new_lines = []
                     continue
 
-                # starting a new block
-                if i == 0:
+                # fname==None ... starting a new block
+                if i > 0:
+                    fname = lines[i - 1].strip()
+                if not fname:  # blank line? or ``` was on first line i==0
                     if len(chat_files) == 1:
                         fname = chat_files[0]
                     else:
                         # TODO: sense which file it is by diff size
                         raise ValueError("No filename provided before ``` block")
-                else:
-                    fname = lines[i - 1].strip()
-            elif fname:
+
+            elif fname is not None:
                 new_lines.append(line)
             else:
                 output.append(line)
 
         if mode == "diff":
-            if fname:
+            if fname is not None:
                 # ending an existing block
                 full_path = (Path(self.root) / fname).absolute()
 
@@ -89,10 +92,12 @@ class WholeFileCoder(Coder):
 
             return "\n".join(output)
 
-        if fname and self.allowed_to_edit(fname):
-            edited.add(fname)
-            if not self.dry_run:
-                new_lines = "".join(new_lines)
-                Path(full_path).write_text(new_lines)
+        if fname:
+            full_path = self.allowed_to_edit(fname)
+            if full_path:
+                edited.add(fname)
+                if not self.dry_run:
+                    new_lines = "".join(new_lines)
+                    Path(full_path).write_text(new_lines)
 
         return edited
