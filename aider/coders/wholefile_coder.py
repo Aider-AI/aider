@@ -35,6 +35,7 @@ class WholeFileCoder(Coder):
 
         output = []
         lines = content.splitlines(keepends=True)
+
         fname = None
         new_lines = []
         for i, line in enumerate(lines):
@@ -65,16 +66,16 @@ class WholeFileCoder(Coder):
 
                 # starting a new block
                 if i == 0:
-                    raise ValueError("No filename provided before ``` block")
-
-                fname = lines[i - 1].strip()
-                if fname not in chat_files:
                     if len(chat_files) == 1:
-                        fname = list(chat_files)[0]
+                        fname = chat_files[0]
                     else:
-                        show_chat_files = " ".join(chat_files)
-                        # TODO: adopt the new allowed_to_edit()
-                        raise ValueError(f"{fname} is not one of: {show_chat_files}")
+                        # TODO: sense which file it is by diff size
+                        raise ValueError("No filename provided before ``` block")
+                else:
+                    fname = lines[i - 1].strip()
+
+                if mode == "update" and not self.allowed_to_edit(fname):
+                    raise ValueError(f"{fname} is not one of: {show_chat_files}")
 
             elif fname:
                 new_lines.append(line)
