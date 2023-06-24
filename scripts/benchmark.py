@@ -15,8 +15,10 @@ from aider.io import InputOutput
 def main():
     parser = argparse.ArgumentParser(description="Aider Benchmark")
     parser.add_argument("dirname", type=str, help="Directory name")
-    parser.add_argument("--model", "-m", type=str, help="Model name")
+    parser.add_argument("--model", "-m", type=str, help="Model name", default="gpt-3.5-turbo")
     parser.add_argument("--edit-format", "-e", type=str, help="Edit format")
+    parser.add_argument("--keyword", "-k", type=str, help="Only run tests that contain keyword")
+
     args = parser.parse_args()
 
     dirname = Path(args.dirname)
@@ -32,6 +34,9 @@ def main():
     total_cost = 0
 
     for testname in test_dnames:
+        if args.keyword and args.keyword not in testname:
+            continue
+
         dump(testname)
         results = run_test(dirname / testname, args.model, args.edit_format)
         os.chdir(cwd)
@@ -66,6 +71,8 @@ def run_test(testdir, model_name, edit_format):
 
     os.chdir(testdir)
 
+    history_fname = Path(".aider.chat.history.md")
+
     results_fname = Path(".aider.results.json")
     if results_fname.exists():
         try:
@@ -94,7 +101,7 @@ def run_test(testdir, model_name, edit_format):
     io = InputOutput(
         pretty=True,
         yes=False,
-        chat_history_file=".aider.chat.history.md",
+        chat_history_file=history_fname,
     )
 
     main_model = models.Model(model_name)
@@ -121,7 +128,7 @@ def run_test(testdir, model_name, edit_format):
     if coder.num_control_c:
         raise KeyboardInterrupt
 
-    passed = run_tests()
+    passed = run_tests(history_fname)
 
     results = dict(
         testdir=str(testdir),
@@ -139,7 +146,7 @@ def run_test(testdir, model_name, edit_format):
     return results
 
 
-def run_tests():
+def run_tests(history_fname):
     test_files = [file for file in os.listdir() if file.endswith("_test.py")]
     assert len(test_files)
 
@@ -149,18 +156,25 @@ def run_tests():
         dump(test_file)
         try:
             result = subprocess.run(
-                ["pytest", test_file], capture_output=True, text=True, timeout=60
+                ["pytest", test_file],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                timeout=60,
             )
-            print(result.stdout)
-            print(result.stderr)
+            if result.returncode != 0:
+                all_tests_passed = False
+                print(f"Test {test_file} failed with the following output:\n{result.stderr}")
+
+            res = result.stdout
+
         except subprocess.TimeoutExpired:
             all_tests_passed = False
-            print(f"Test {test_file} timed out")
-            continue
+            res = f"Test {test_file} timed out"
 
-        if result.returncode != 0:
-            all_tests_passed = False
-            print(f"Test {test_file} failed with the following output:\n{result.stderr}")
+        print(res)
+        with history_fname.open("a") as fh:
+            fh.write(f"```\n{res}\n```")
 
     return all_tests_passed
 
