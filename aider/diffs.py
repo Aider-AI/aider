@@ -54,7 +54,10 @@ def diff_partial_update(lines_orig, lines_updated, final=False, fname=None):
     if last_non_deleted is None:
         return ""
 
-    pct = last_non_deleted * 100 / num_orig_lines
+    if num_orig_lines:
+        pct = last_non_deleted * 100 / num_orig_lines
+    else:
+        pct = 50
     bar = create_progress_bar(pct)
     bar = f"! {last_non_deleted:3d} / {num_orig_lines:3d} lines [{bar}] {pct:3.0f}%\n\n"
 
