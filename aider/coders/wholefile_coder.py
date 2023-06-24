@@ -93,7 +93,7 @@ class WholeFileCoder(Coder):
                 full_path = (Path(self.root) / fname).absolute()
 
                 if mode == "diff" and full_path.exists():
-                    orig_lines = full_path.read_text.splitlines()
+                    orig_lines = full_path.read_text().splitlines()
 
                     show_diff = diffs.diff_partial_update(
                         orig_lines,
