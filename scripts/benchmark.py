@@ -29,6 +29,13 @@ def main():
         action="store_true",
         help="Discard the current testdir and make a clean copy",
     )
+    parser.add_argument(
+        "--retries",
+        "-r",
+        type=int,
+        help="Number of retries for running tests",
+        default=2,
+    )
 
     args = parser.parse_args()
 
@@ -65,7 +72,7 @@ def main():
             continue
 
         dump(testname)
-        results = run_test(dirname / testname, args.model, args.edit_format)
+        results = run_test(dirname / testname, args.model, args.edit_format, args.retries)
         os.chdir(cwd)
 
         if results:
@@ -91,7 +98,7 @@ def main():
         # input('next?')
 
 
-def run_test(testdir, model_name, edit_format):
+def run_test(testdir, model_name, edit_format, retries):
     if not os.path.isdir(testdir):
         print("Not a dir:", testdir)
         return
@@ -150,7 +157,7 @@ def run_test(testdir, model_name, edit_format):
 
     dur = 0
     test_outcomes = []
-    for i in range(3):
+    for i in range(retries):
         start = time.time()
         coder.run(with_message=instructions)
         dur += time.time() - start
