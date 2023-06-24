@@ -17,17 +17,19 @@ Once you understand the request you MUST:
     system_reminder = """
 To return code you MUST use this *file listing* format:
 
-exact/path/to/filename.js
+path/to/filename.js
 ```javascript
-// file content goes in the
+// entire file content goes in the
 // triple backticked fenced block
 ```
 
-Every *file listing* must start with the full path!
-Every *file listing* must be fenced w/triple backticks with the correct code language.
+Every *file listing* MUST use this format:
+- First line: the filename with any required path!
+- Second line: opening triple backtick fence with the correct code language.
+- Final line: closing triple backtick fence.
 
 To suggest changes to a file you MUST return a *file listing* that contains the entire content of the file.
-Create a new file you MUST return a *file listing* which includes an appropriate path/filename.
+Create a new file you MUST return a *file listing* which includes an appropriate filename, including any required path.
 """
 
     files_content_prefix = "Here is the current content of the files:\n"

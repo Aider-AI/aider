@@ -116,6 +116,11 @@ def main():
             projected_cost = avg_cost * total_tests
             dump(projected_cost)
 
+            print(
+                f"Cost: ${avg_cost:.4f} average, ${total_cost:.2f} total,"
+                f" ${projected_cost:.2f} projected"
+            )
+
             duration += results["duration"]
             avg_duration = duration / completed_tests
             dump(avg_duration)
