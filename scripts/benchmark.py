@@ -70,7 +70,7 @@ def main():
 
         if results:
             completed_tests += 1
-            passed = results["tests_passed"]
+            passed = results["tests_outcomes"][-1]
             if passed:
                 passed_tests += 1
 
@@ -148,20 +148,33 @@ def run_test(testdir, model_name, edit_format):
         stream=False,
     )
 
-    start = time.time()
-    coder.run(with_message=instructions)
-    dur = time.time() - start
+    dur = 0
+    test_outcomes = []
+    for i in range(3):
+        start = time.time()
+        coder.run(with_message=instructions)
+        dur += time.time() - start
 
-    if coder.num_control_c:
-        raise KeyboardInterrupt
+        if coder.num_control_c:
+            raise KeyboardInterrupt
 
-    passed = run_tests(history_fname)
+        errors = run_tests(history_fname)
+
+        if errors:
+            test_outcomes.append(False)
+        else:
+            test_outcomes.append(True)
+            break
+
+        instructions = errors
+        filelist = " ".join(fnames)
+        instructions += f"\n\nFix the code in {filelist} to resolve the errors above."
 
     results = dict(
         testdir=str(testdir),
         model=main_model.name,
         edit_format=edit_format,
-        tests_passed=passed,
+        tests_outcomes=test_outcomes,
         cost=coder.total_cost,
         duration=dur,
     )
@@ -178,7 +191,7 @@ def run_tests(history_fname):
     assert len(test_files)
 
     all_tests_passed = True
-
+    timeout = 60
     for test_file in test_files:
         dump(test_file)
         try:
@@ -187,7 +200,7 @@ def run_tests(history_fname):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 text=True,
-                timeout=60,
+                timeout=timeout,
             )
             if result.returncode != 0:
                 all_tests_passed = False
@@ -197,13 +210,14 @@ def run_tests(history_fname):
 
         except subprocess.TimeoutExpired:
             all_tests_passed = False
-            res = f"Test {test_file} timed out"
+            res = f"Test {test_file} timed out after {timeout} seconds."
 
         print(res)
         with history_fname.open("a") as fh:
             fh.write(f"```\n{res}\n```")
 
-    return all_tests_passed
+        if not all_tests_passed:
+            return res
 
 
 if __name__ == "__main__":
