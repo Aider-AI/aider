@@ -225,7 +225,7 @@ def main(args=None, input=None, output=None):
         "--msg",
         "-m",
         metavar="COMMAND",
-        help="Specify a single command to give to GPT (disables chat mode)",
+        help="Specify a single message to send GPT, process reply then exit (disables chat mode)",
     )
     args = parser.parse_args(args)
 
