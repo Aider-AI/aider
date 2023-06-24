@@ -1,6 +1,8 @@
 import argparse
+import datetime
 import json
 import os
+import shutil
 import subprocess
 import time
 from json.decoder import JSONDecodeError
@@ -11,6 +13,9 @@ from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 
+ORIGINAL_DNAME = Path("tmp.benchmark/practice")
+assert ORIGINAL_DNAME.exists()
+
 
 def main():
     parser = argparse.ArgumentParser(description="Aider Benchmark")
@@ -18,10 +23,32 @@ def main():
     parser.add_argument("--model", "-m", type=str, help="Model name", default="gpt-3.5-turbo")
     parser.add_argument("--edit-format", "-e", type=str, help="Edit format")
     parser.add_argument("--keyword", "-k", type=str, help="Only run tests that contain keyword")
+    parser.add_argument(
+        "--clean",
+        "-c",
+        action="store_true",
+        help="Discard the current testdir and make a clean copy",
+    )
 
     args = parser.parse_args()
 
     dirname = Path(args.dirname)
+
+    if args.clean and dirname.exists():
+        print("Cleaning up and replacing", dirname)
+        dir_files = set(fn.name for fn in dirname.glob("*"))
+        original_files = set(fn.name for fn in ORIGINAL_DNAME.glob("*"))
+        if dir_files != original_files:
+            print("ERROR: will not delete dir that does not look like original tests", dirname)
+            return
+
+        now = datetime.datetime.now()
+        now = now.strftime("%Y-%m-%d-%H-%M-%S-")
+        dest = dirname.parent / "OLD" / (now + dirname.name)
+        dirname.rename(dest)
+
+    if not dirname.exists():
+        shutil.copytree(ORIGINAL_DNAME, dirname)
 
     cwd = os.getcwd()
 
