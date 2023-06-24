@@ -158,7 +158,7 @@ class Coder:
             else:
                 self.io.tool_output("Repo-map: disabled because map_tokens == 0")
         else:
-            self.io.tool_output("Repo-map: disabled for gpt-3.5")
+            self.io.tool_output("Repo-map: disabled")
 
         for fname in self.get_inchat_relative_files():
             self.io.tool_output(f"Added {fname} to the chat.")
