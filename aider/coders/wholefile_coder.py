@@ -28,13 +28,11 @@ class WholeFileCoder(Coder):
 
         edited = set()
         chat_files = self.get_inchat_relative_files()
-        if not chat_files:
-            if mode == "diff":
-                return content
-            return
 
         output = []
         lines = content.splitlines(keepends=True)
+
+        allowed_to_edit = False
 
         fname = None
         new_lines = []
@@ -55,10 +53,11 @@ class WholeFileCoder(Coder):
                         ).splitlines()
                         output += show_diff
                     else:
-                        edited.add(fname)
-                        if not self.dry_run:
-                            new_lines = "".join(new_lines)
-                            Path(full_path).write_text(new_lines)
+                        if allowed_to_edit:
+                            edited.add(fname)
+                            if not self.dry_run:
+                                new_lines = "".join(new_lines)
+                                Path(full_path).write_text(new_lines)
 
                     fname = None
                     new_lines = []
@@ -74,8 +73,11 @@ class WholeFileCoder(Coder):
                 else:
                     fname = lines[i - 1].strip()
 
-                if mode == "update" and not self.allowed_to_edit(fname):
-                    raise ValueError(f"{fname} is not one of: {show_chat_files}")
+                if mode == "update":
+                    if self.allowed_to_edit(fname):
+                        allowed_to_edit = True
+                    else:
+                        allowed_to_edit = False
 
             elif fname:
                 new_lines.append(line)

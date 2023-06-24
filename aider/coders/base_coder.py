@@ -95,6 +95,9 @@ class Coder:
         stream=True,
         use_git=True,
     ):
+        if not fnames:
+            fnames = []
+
         self.verbose = verbose
         self.abs_fnames = set()
         self.cur_messages = []

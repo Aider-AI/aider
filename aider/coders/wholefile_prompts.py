@@ -14,14 +14,20 @@ Once you understand the request you MUST:
 3. If changes are needed, output a copy of each file that needs changes.
 """
 
-    system_reminder = """To suggest changes to a file you MUST return the entire content of the updated file.
-You MUST use this format:
+    system_reminder = """
+To return code you MUST use this *file listing* format:
 
 exact/path/to/filename.js
 ```javascript
 // file content goes in the
 // triple backticked fenced block
 ```
+
+Every *file listing* must start with the full path!
+Every *file listing* must be fenced w/triple backticks with the correct code language.
+
+To suggest changes to a file you MUST return a *file listing* that contains the entire content of the file.
+Create a new file you MUST return a *file listing* which includes an appropriate path/filename.
 """
 
     files_content_prefix = "Here is the current content of the files:\n"
