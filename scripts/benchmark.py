@@ -167,7 +167,10 @@ def run_test(testdir, model_name, edit_format, retries, no_test, verbose):
 
     file_list = " ".join(fnames)
     instructions = Path(".docs/instructions.md").read_text()
-    instructions += "\n\n=====\n\nModify these files according to the above instructions: "
+    instructions += (
+        "\n\n=====\n\nModify these files according to the above instructions. Only use standard"
+        " python libraries, don't suggest installing any packages.\n"
+    )
     instructions += file_list
 
     io = InputOutput(
