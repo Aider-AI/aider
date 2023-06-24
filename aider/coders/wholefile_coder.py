@@ -32,13 +32,15 @@ class WholeFileCoder(Coder):
         output = []
         lines = content.splitlines(keepends=True)
 
+        saw_fname = None
         fname = None
         new_lines = []
         for i, line in enumerate(lines):
-            dump(repr(fname), repr(line), repr(new_lines))
             if line.startswith("```"):
                 if fname is not None:
                     # ending an existing block
+                    saw_fname = None
+
                     full_path = (Path(self.root) / fname).absolute()
 
                     if mode == "diff" and full_path.exists():
@@ -65,15 +67,24 @@ class WholeFileCoder(Coder):
                 if i > 0:
                     fname = lines[i - 1].strip()
                 if not fname:  # blank line? or ``` was on first line i==0
-                    if len(chat_files) == 1:
+                    if saw_fname:
+                        fname = saw_fname
+                    elif len(chat_files) == 1:
                         fname = chat_files[0]
                     else:
                         # TODO: sense which file it is by diff size
-                        raise ValueError("No filename provided before ``` block")
+                        raise ValueError("No filename provided before ``` in file listing")
 
             elif fname is not None:
                 new_lines.append(line)
             else:
+                for word in line.strip().split():
+                    word = word.rstrip(".:,;!")
+                    for chat_file in chat_files:
+                        quoted_chat_file = f"`{chat_file}`"
+                        if word == quoted_chat_file:
+                            saw_fname = chat_file
+
                 output.append(line)
 
         if mode == "diff":
