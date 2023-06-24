@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 from aider import diffs
@@ -38,11 +37,10 @@ class WholeFileCoder(Coder):
             if line.startswith("```"):
                 if fname:
                     # ending an existing block
-                    full_path = os.path.abspath(os.path.join(self.root, fname))
+                    full_path = (Path(self.root) / fname).absolute()
 
-                    if mode == "diff":
-                        with open(full_path, "r") as f:
-                            orig_lines = f.readlines()
+                    if mode == "diff" and full_path.exists():
+                        orig_lines = full_path.readlines()
 
                         show_diff = diffs.diff_partial_update(
                             orig_lines,
@@ -55,7 +53,7 @@ class WholeFileCoder(Coder):
                             edited.add(fname)
                             if not self.dry_run:
                                 new_lines = "".join(new_lines)
-                                Path(full_path).write_text(new_lines)
+                                full_path.write_text(new_lines)
 
                     fname = None
                     new_lines = []
@@ -78,11 +76,10 @@ class WholeFileCoder(Coder):
         if mode == "diff":
             if fname:
                 # ending an existing block
-                full_path = os.path.abspath(os.path.join(self.root, fname))
+                full_path = (Path(self.root) / fname).absolute()
 
-                if mode == "diff":
-                    with open(full_path, "r") as f:
-                        orig_lines = f.readlines()
+                if mode == "diff" and full_path.exists():
+                    orig_lines = full_path.readlines()
 
                     show_diff = diffs.diff_partial_update(
                         orig_lines,
