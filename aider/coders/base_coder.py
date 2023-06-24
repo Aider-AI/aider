@@ -392,7 +392,10 @@ class Coder:
 
         if self.partial_response_function_call:
             args = self.parse_partial_args()
-            content = args["explanation"]
+            if args:
+                content = args["explanation"]
+            else:
+                content = ""
         elif self.partial_response_content:
             content = self.partial_response_content
         else:
@@ -535,6 +538,8 @@ class Coder:
         return interrupted
 
     def show_send_output(self, completion, silent):
+        # dump(completion)
+
         show_func_err = None
         show_content_err = None
         try:
