@@ -101,9 +101,10 @@ class WholeFileCoder(Coder):
 
             return "\n".join(output)
 
-        # TODO: take the file even it wasn't closed properly?
-        #
-        # if fname:
-        #    raise ValueError("Started a ``` block without closing it")
+        if fname and allowed_to_edit:
+            edited.add(fname)
+            if not self.dry_run:
+                new_lines = "".join(new_lines)
+                Path(full_path).write_text(new_lines)
 
         return edited
