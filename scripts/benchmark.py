@@ -121,7 +121,7 @@ def main():
 
             all_results.append(results)
             if not args.stats_only:
-                summarize_results(all_results, total_tests)
+                summarize_results(dirname, all_results, total_tests)
     else:
         run_test_threaded = lox.thread(args.threads)(run_test)
         for testname in test_dnames:
@@ -140,10 +140,10 @@ def main():
         print()
         print()
         print()
-    summarize_results(all_results, total_tests)
+    summarize_results(dirname, all_results, total_tests)
 
 
-def summarize_results(all_results, total_tests=None):
+def summarize_results(dirname, all_results, total_tests=None):
     if not total_tests:
         total_tests = len(all_results)
 
@@ -175,6 +175,7 @@ def summarize_results(all_results, total_tests=None):
 
     console = Console(style="green", highlight=False)
     console.rule()
+    console.print(dirname)
 
     console.print(f"{completed_tests} test-cases")
     for key, val in variants.items():
