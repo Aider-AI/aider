@@ -11,7 +11,7 @@ import backoff
 import git
 import openai
 import requests
-from openai.error import RateLimitError, ServiceUnavailableError
+from openai.error import APIError, RateLimitError, ServiceUnavailableError
 from rich.console import Console
 from rich.live import Live
 from rich.markdown import Markdown
@@ -494,7 +494,7 @@ class Coder:
 
     @backoff.on_exception(
         backoff.expo,
-        (ServiceUnavailableError, RateLimitError, requests.exceptions.ConnectionError),
+        (APIError, ServiceUnavailableError, RateLimitError, requests.exceptions.ConnectionError),
         max_tries=5,
         on_backoff=lambda details: print(f"Retry in {details['wait']} seconds."),
     )
