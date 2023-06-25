@@ -184,7 +184,6 @@ def summarize_results(dirname, all_results, total_tests=None):
             val = results.get(key)
             variants[key].add(val)
 
-    dump(completed_tests)
     if not completed_tests:
         return
 
