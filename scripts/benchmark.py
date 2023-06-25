@@ -72,13 +72,7 @@ def main():
 
     test_dnames = sorted(os.listdir(dirname))
 
-    total_tests = len(test_dnames)
-    completed_tests = 0
-    passed_tests = [0] * args.retries
-    duration = 0
-
-    total_cost = 0
-
+    all_results = []
     for testname in test_dnames:
         if args.keyword and args.keyword not in testname:
             continue
@@ -94,17 +88,33 @@ def main():
         )
         os.chdir(cwd)
 
+        all_results.append(results)
+        summarize_results(all_results)
+
+
+def summarize_results(all_results, total_tests=None):
+    if not total_tests:
+        total_tests = len(all_results)
+
+    completed_tests = 0
+    retries = max(len(results["tests_outcomes"]) for results in all_results if results)
+
+    passed_tests = [0] * retries
+    duration = 0
+    total_cost = 0
+
+    for results in all_results:
         if not results:
             continue
 
         completed_tests += 1
         passed = results["tests_outcomes"][-1]
         if passed:
-            for i in range(len(results["tests_outcomes"]) - 1, args.retries):
+            for i in range(len(results["tests_outcomes"]) - 1, retries):
                 passed_tests[i] += 1
 
         dump(completed_tests, total_tests)
-        for i in range(args.retries):
+        for i in range(retries):
             pass_rate = 100 * passed_tests[i] / completed_tests
             dump(i, pass_rate)
 
@@ -130,11 +140,6 @@ def main():
         dump(min_left)
 
         print()
-
-    ###
-    # input('next?')
-
-    print(dirname / testname)
 
 
 def run_test(testdir, model_name, edit_format, retries, no_test, verbose):
@@ -230,6 +235,7 @@ def run_test(testdir, model_name, edit_format, retries, no_test, verbose):
 
     results = dict(
         testdir=str(testdir),
+        testcase=testdir.name,
         model=main_model.name,
         edit_format=edit_format,
         tests_outcomes=test_outcomes,
