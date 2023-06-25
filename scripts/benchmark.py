@@ -2,11 +2,14 @@ import argparse
 import datetime
 import json
 import os
+import random
 import shutil
 import subprocess
 import time
 from json.decoder import JSONDecodeError
 from pathlib import Path
+
+import lox
 
 from aider import models
 from aider.coders import Coder
@@ -47,6 +50,13 @@ def main():
         help="Number of retries for running tests",
         default=2,
     )
+    parser.add_argument(
+        "--threads",
+        "-t",
+        type=int,
+        help="Number of threads to run in parallel",
+        default=1,
+    )
 
     args = parser.parse_args()
 
@@ -72,18 +82,36 @@ def main():
     if args.keyword:
         test_dnames = [dn for dn in test_dnames if args.keyword in dn]
 
-    all_results = []
-    for testname in test_dnames:
-        results = run_test(
-            dirname / testname,
-            args.model,
-            args.edit_format,
-            args.retries,
-            args.no_test,
-            args.verbose,
-        )
+    if args.threads == 1:
+        all_results = []
+        for testname in test_dnames:
+            results = run_test(
+                dirname / testname,
+                args.model,
+                args.edit_format,
+                args.retries,
+                args.no_test,
+                args.verbose,
+            )
 
-        all_results.append(results)
+            all_results.append(results)
+            summarize_results(all_results)
+    else:
+        random.shuffle(test_dnames)
+        run_test_threaded = lox.thread(args.threads)(run_test)
+        for testname in test_dnames:
+            run_test_threaded.scatter(
+                dirname / testname,
+                args.model,
+                args.edit_format,
+                args.retries,
+                args.no_test,
+                args.verbose,
+            )
+        all_results = run_test_threaded.gather(tqdm=True)
+        print()
+        print()
+        print()
         summarize_results(all_results)
 
 
