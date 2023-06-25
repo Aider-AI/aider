@@ -134,9 +134,10 @@ def main():
             )
         all_results = run_test_threaded.gather(tqdm=True)
 
-    print()
-    print()
-    print()
+    if not args.stats_only:
+        print()
+        print()
+        print()
     summarize_results(all_results, total_tests)
 
 
@@ -186,7 +187,8 @@ def summarize_results(all_results, total_tests=None):
 
 
 def run_test(testdir, model_name, edit_format, retries, no_test, verbose, stats_only):
-    dump(testdir)
+    if not stats_only:
+        dump(testdir)
 
     if not os.path.isdir(testdir):
         print("Not a dir:", testdir)
