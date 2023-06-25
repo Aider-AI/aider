@@ -14,8 +14,8 @@ Once you understand the request you MUST:
 3. If changes are needed, output a copy of each file that needs changes.
 """
 
-    system_reminder = """
-To return code you MUST use this *file listing* format:
+    system_reminder = """To suggest changes to a file you MUST return the entire content of the updated file.
+You MUST use this *file listing* format:
 
 path/to/filename.js
 ```javascript
