@@ -10,6 +10,7 @@ from json.decoder import JSONDecodeError
 from pathlib import Path
 
 import lox
+from rich.console import Console
 
 from aider import models
 from aider.coders import Coder
@@ -18,6 +19,9 @@ from aider.io import InputOutput
 
 ORIGINAL_DNAME = Path("tmp.benchmark/practice")
 assert ORIGINAL_DNAME.exists()
+
+
+console = Console(style="green", highlight=False)
 
 
 def main():
@@ -57,6 +61,13 @@ def main():
         help="Number of threads to run in parallel",
         default=1,
     )
+    parser.add_argument(
+        "--num-tests",
+        "-n",
+        type=int,
+        help="Number of tests to run",
+        default=-1,
+    )
 
     args = parser.parse_args()
 
@@ -79,8 +90,14 @@ def main():
         shutil.copytree(ORIGINAL_DNAME, dirname)
 
     test_dnames = sorted(os.listdir(dirname))
+    total_tests = len(test_dnames)
+
     if args.keyword:
         test_dnames = [dn for dn in test_dnames if args.keyword in dn]
+
+    random.shuffle(test_dnames)
+    if args.num_tests > 0:
+        test_dnames = test_dnames[: args.num_tests]
 
     if args.threads == 1:
         all_results = []
@@ -95,9 +112,8 @@ def main():
             )
 
             all_results.append(results)
-            summarize_results(all_results)
+            summarize_results(all_results, total_tests)
     else:
-        random.shuffle(test_dnames)
         run_test_threaded = lox.thread(args.threads)(run_test)
         for testname in test_dnames:
             run_test_threaded.scatter(
@@ -113,7 +129,7 @@ def main():
     print()
     print()
     print()
-    summarize_results(all_results)
+    summarize_results(all_results, total_tests)
 
 
 def summarize_results(all_results, total_tests=None):
@@ -140,22 +156,25 @@ def summarize_results(all_results, total_tests=None):
         total_cost += results["cost"]
         duration += results["duration"]
 
-    print()
-    print(f"{completed_tests} test-cases")
+    console.rule()
+
+    console.print(f"{completed_tests} test-cases")
     for i in range(retries):
         pass_rate = 100 * passed_tests[i] / completed_tests
-        print(f"{pass_rate:.1f}% correct after try {i}")
+        console.print(f"{pass_rate:.1f}% correct after try {i}")
 
     avg_duration = duration / completed_tests
-    print(f"{avg_duration:.1f} sec/test-case")
+    console.print(f"{avg_duration:.1f} sec/test-case")
 
     avg_cost = total_cost / completed_tests
 
     projected_cost = avg_cost * total_tests
 
-    print(
+    console.print(
         f"Cost: ${avg_cost:.4f} average, ${total_cost:.2f} total, ${projected_cost:.2f} projected"
     )
+
+    console.rule()
 
 
 def run_test(testdir, model_name, edit_format, retries, no_test, verbose):
