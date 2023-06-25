@@ -148,7 +148,10 @@ def summarize_results(dirname, all_results, total_tests=None):
         total_tests = len(all_results)
 
     completed_tests = 0
-    retries = max(len(results["tests_outcomes"]) for results in all_results if results)
+    try:
+        retries = max(len(results["tests_outcomes"]) for results in all_results if results)
+    except ValueError:
+        retries = 0
 
     passed_tests = [0] * retries
     duration = 0
@@ -173,10 +176,12 @@ def summarize_results(dirname, all_results, total_tests=None):
             if key in results:
                 variants[key].add(results[key])
 
+    dump(completed_tests)
+    if not completed_tests:
+        return
+
     console = Console(highlight=False)
-    console.rule()
-    console.print(dirname)
-    console.print()
+    console.rule(title=str(dirname))
 
     console.print(f"test-cases: {completed_tests}")
     for key, val in variants.items():
@@ -194,14 +199,15 @@ def summarize_results(dirname, all_results, total_tests=None):
 
     console.print()
     avg_duration = duration / completed_tests
-    console.print(f"{avg_duration:.1f} sec/test-case")
+    console.print(f"duration: {avg_duration:.1f} sec/test-case")
 
     avg_cost = total_cost / completed_tests
 
     projected_cost = avg_cost * total_tests
 
     console.print(
-        f"costs: ${avg_cost:.4f} average, ${total_cost:.2f} total, ${projected_cost:.2f} projected"
+        f"costs: ${avg_cost:.4f}/test-case, ${total_cost:.2f} total,"
+        f" ${projected_cost:.2f} projected"
     )
 
     console.rule()
