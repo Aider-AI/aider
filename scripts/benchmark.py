@@ -94,45 +94,47 @@ def main():
         )
         os.chdir(cwd)
 
-        if results:
-            completed_tests += 1
-            passed = results["tests_outcomes"][-1]
-            if passed:
-                for i in range(len(results["tests_outcomes"]) - 1, args.retries):
-                    passed_tests[i] += 1
+        if not results:
+            continue
 
-            dump(completed_tests, total_tests)
-            for i in range(args.retries):
-                pass_rate = 100 * passed_tests[i] / completed_tests
-                dump(i, pass_rate)
+        completed_tests += 1
+        passed = results["tests_outcomes"][-1]
+        if passed:
+            for i in range(len(results["tests_outcomes"]) - 1, args.retries):
+                passed_tests[i] += 1
 
-            total_cost += results["cost"]
-            dump(total_cost)
+        dump(completed_tests, total_tests)
+        for i in range(args.retries):
+            pass_rate = 100 * passed_tests[i] / completed_tests
+            dump(i, pass_rate)
 
-            avg_cost = total_cost / completed_tests
-            dump(avg_cost)
+        total_cost += results["cost"]
+        dump(total_cost)
 
-            projected_cost = avg_cost * total_tests
-            dump(projected_cost)
+        avg_cost = total_cost / completed_tests
+        dump(avg_cost)
 
-            print(
-                f"Cost: ${avg_cost:.4f} average, ${total_cost:.2f} total,"
-                f" ${projected_cost:.2f} projected"
-            )
+        projected_cost = avg_cost * total_tests
+        dump(projected_cost)
 
-            duration += results["duration"]
-            avg_duration = duration / completed_tests
-            dump(avg_duration)
+        print(
+            f"Cost: ${avg_cost:.4f} average, ${total_cost:.2f} total,"
+            f" ${projected_cost:.2f} projected"
+        )
 
-            min_left = (total_tests - completed_tests) * avg_duration / 60
-            dump(min_left)
+        duration += results["duration"]
+        avg_duration = duration / completed_tests
+        dump(avg_duration)
 
-            print()
+        min_left = (total_tests - completed_tests) * avg_duration / 60
+        dump(min_left)
 
-        ###
-        # input('next?')
+        print()
 
-        print(dirname / testname)
+    ###
+    # input('next?')
+
+    print(dirname / testname)
 
 
 def run_test(testdir, model_name, edit_format, retries, no_test, verbose):
