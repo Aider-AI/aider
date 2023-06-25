@@ -173,14 +173,19 @@ def summarize_results(dirname, all_results, total_tests=None):
             if key in results:
                 variants[key].add(results[key])
 
-    console = Console(style="green", highlight=False)
+    console = Console(highlight=False)
     console.rule()
     console.print(dirname)
+    console.print()
 
-    console.print(f"{completed_tests} test-cases")
+    console.print(f"test-cases: {completed_tests}")
     for key, val in variants.items():
+        if len(val) > 1:
+            style = "red"
+        else:
+            style = None
         val = ", ".join(val)
-        console.print(f"{key}: {val}")
+        console.print(f"{key}: {val}", style=style)
 
     console.print()
     for i in range(retries):
@@ -196,7 +201,7 @@ def summarize_results(dirname, all_results, total_tests=None):
     projected_cost = avg_cost * total_tests
 
     console.print(
-        f"Cost: ${avg_cost:.4f} average, ${total_cost:.2f} total, ${projected_cost:.2f} projected"
+        f"costs: ${avg_cost:.4f} average, ${total_cost:.2f} total, ${projected_cost:.2f} projected"
     )
 
     console.rule()
