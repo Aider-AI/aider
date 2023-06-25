@@ -6,6 +6,7 @@ import random
 import shutil
 import subprocess
 import time
+from collections import defaultdict
 from json.decoder import JSONDecodeError
 from pathlib import Path
 
@@ -152,6 +153,8 @@ def summarize_results(all_results, total_tests=None):
     duration = 0
     total_cost = 0
 
+    variants = defaultdict(set)
+
     for results in all_results:
         if not results:
             continue
@@ -165,13 +168,23 @@ def summarize_results(all_results, total_tests=None):
         total_cost += results["cost"]
         duration += results["duration"]
 
+        for key in "model edit_format".split():
+            if key in results:
+                variants[key].add(results[key])
+
     console.rule()
 
     console.print(f"{completed_tests} test-cases")
+    for key, val in variants.items():
+        val = ", ".join(val)
+        console.print(f"{key}: {val}")
+
+    console.print()
     for i in range(retries):
         pass_rate = 100 * passed_tests[i] / completed_tests
         console.print(f"{pass_rate:.1f}% correct after try {i}")
 
+    console.print()
     avg_duration = duration / completed_tests
     console.print(f"{avg_duration:.1f} sec/test-case")
 
