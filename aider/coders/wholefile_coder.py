@@ -66,7 +66,7 @@ class WholeFileCoder(Coder):
                 # fname==None ... starting a new block
                 if i > 0:
                     fname = lines[i - 1].strip()
-                    path_to = "/path/to/"
+                    path_to = "path/to/"
                     # gpt-3.5 will sometimes crib /path/to from the one-shot example
                     if fname.startswith(path_to) and fname not in chat_files:
                         fname = fname[len(path_to) :]
