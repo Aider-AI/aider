@@ -109,10 +109,11 @@ def main():
                 args.verbose,
             )
         all_results = run_test_threaded.gather(tqdm=True)
-        print()
-        print()
-        print()
-        summarize_results(all_results)
+
+    print()
+    print()
+    print()
+    summarize_results(all_results)
 
 
 def summarize_results(all_results, total_tests=None):
@@ -136,33 +137,25 @@ def summarize_results(all_results, total_tests=None):
             for i in range(len(results["tests_outcomes"]) - 1, retries):
                 passed_tests[i] += 1
 
-        dump(completed_tests, total_tests)
-        for i in range(retries):
-            pass_rate = 100 * passed_tests[i] / completed_tests
-            dump(i, pass_rate)
-
         total_cost += results["cost"]
-        dump(total_cost)
-
-        avg_cost = total_cost / completed_tests
-        dump(avg_cost)
-
-        projected_cost = avg_cost * total_tests
-        dump(projected_cost)
-
-        print(
-            f"Cost: ${avg_cost:.4f} average, ${total_cost:.2f} total,"
-            f" ${projected_cost:.2f} projected"
-        )
-
         duration += results["duration"]
-        avg_duration = duration / completed_tests
-        dump(avg_duration)
 
-        min_left = (total_tests - completed_tests) * avg_duration / 60
-        dump(min_left)
+    print()
+    print(f"{completed_tests} test-cases")
+    for i in range(retries):
+        pass_rate = 100 * passed_tests[i] / completed_tests
+        print(f"{pass_rate:.1f}% correct after try {i}")
 
-        print()
+    avg_duration = duration / completed_tests
+    print(f"{avg_duration:.1f} sec/test-case")
+
+    avg_cost = total_cost / completed_tests
+
+    projected_cost = avg_cost * total_tests
+
+    print(
+        f"Cost: ${avg_cost:.4f} average, ${total_cost:.2f} total, ${projected_cost:.2f} projected"
+    )
 
 
 def run_test(testdir, model_name, edit_format, retries, no_test, verbose):
