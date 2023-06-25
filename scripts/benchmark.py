@@ -68,8 +68,6 @@ def main():
     if not dirname.exists():
         shutil.copytree(ORIGINAL_DNAME, dirname)
 
-    cwd = os.getcwd()
-
     test_dnames = sorted(os.listdir(dirname))
 
     all_results = []
@@ -86,7 +84,6 @@ def main():
             args.no_test,
             args.verbose,
         )
-        os.chdir(cwd)
 
         all_results.append(results)
         summarize_results(all_results)
@@ -147,32 +144,25 @@ def run_test(testdir, model_name, edit_format, retries, no_test, verbose):
         print("Not a dir:", testdir)
         return
 
-    os.chdir(testdir)
+    testdir = Path(testdir)
 
-    history_fname = Path(".aider.chat.history.md")
+    history_fname = testdir / ".aider.chat.history.md"
 
-    results_fname = Path(".aider.results.json")
+    results_fname = testdir / ".aider.results.json"
     if results_fname.exists():
         try:
             return json.loads(results_fname.read_text())
         except JSONDecodeError:
-            print(f"{testdir}/{results_fname} failed to parse, skipping")
+            print(f"{results_fname} failed to parse, skipping")
             return
 
-    started_fname = Path(".aider.started")
-    if started_fname.exists():
-        # print(f"{testdir}/{started_fname} exists, skipping")
-        # return
-        pass
-    started_fname.touch()
-
     fnames = []
-    for fname in os.listdir("."):
-        if "test" not in fname and os.path.isfile(fname) and fname[0] != ".":
+    for fname in testdir.glob("*"):
+        if "test" not in fname.name and fname.is_file() and fname.name[0] != ".":
             fnames.append(fname)
 
-    file_list = " ".join(fnames)
-    instructions = Path(".docs/instructions.md").read_text()
+    file_list = " ".join(fname.name for fname in fnames)
+    instructions = (testdir / ".docs/instructions.md").read_text()
     instructions += (
         "\n\n=====\n\nModify these files according to the above instructions. Only use standard"
         " python libraries, don't suggest installing any packages.\n"
@@ -190,6 +180,7 @@ def run_test(testdir, model_name, edit_format, retries, no_test, verbose):
 
     dump(main_model)
     dump(edit_format)
+    dump(fnames)
 
     coder = Coder.create(
         main_model,
@@ -216,7 +207,7 @@ def run_test(testdir, model_name, edit_format, retries, no_test, verbose):
         if no_test:
             return
 
-        errors = run_tests(history_fname)
+        errors = run_pytests(testdir, history_fname)
 
         if errors:
             test_outcomes.append(False)
@@ -245,13 +236,12 @@ def run_test(testdir, model_name, edit_format, retries, no_test, verbose):
     dump(results)
 
     results_fname.write_text(json.dumps(results, indent=4))
-    started_fname.unlink()
 
     return results
 
 
-def run_tests(history_fname):
-    test_files = [file for file in os.listdir() if file.endswith("_test.py")]
+def run_pytests(testdir, history_fname):
+    test_files = [file for file in testdir.glob("*") if file.name.endswith("_test.py")]
     assert len(test_files)
 
     all_tests_passed = True
