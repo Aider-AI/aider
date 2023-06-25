@@ -189,6 +189,11 @@ def run_test(testdir, model_name, edit_format, retries, no_test, verbose):
         if "test" not in fname.name and fname.is_file() and fname.name[0] != ".":
             fnames.append(fname)
 
+            # restore the original file, in case we interrupted a prev run
+            # after it had saved changes
+            original_fname = ORIGINAL_DNAME / testdir.name / fname.name
+            shutil.copy(original_fname, fname)
+
     file_list = " ".join(fname.name for fname in fnames)
     instructions = (testdir / ".docs/instructions.md").read_text()
     instructions += (
