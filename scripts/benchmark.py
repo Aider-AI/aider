@@ -69,13 +69,11 @@ def main():
         shutil.copytree(ORIGINAL_DNAME, dirname)
 
     test_dnames = sorted(os.listdir(dirname))
+    if args.keyword:
+        test_dnames = [dn for dn in test_dnames if args.keyword in dn]
 
     all_results = []
     for testname in test_dnames:
-        if args.keyword and args.keyword not in testname:
-            continue
-
-        dump(testname)
         results = run_test(
             dirname / testname,
             args.model,
@@ -140,6 +138,8 @@ def summarize_results(all_results, total_tests=None):
 
 
 def run_test(testdir, model_name, edit_format, retries, no_test, verbose):
+    dump(testdir)
+
     if not os.path.isdir(testdir):
         print("Not a dir:", testdir)
         return
