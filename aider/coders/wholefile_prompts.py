@@ -14,19 +14,19 @@ Once you understand the request you MUST:
 3. If changes are needed, output a copy of each file that needs changes.
 """
 
-    system_reminder = """
-To return code you MUST use this *file listing* format:
+    system_reminder = """To return code you MUST use this *file listing* format:
 
 path/to/filename.js
-```javascript
+{fence}javascript
 // entire file content goes in the
 // triple backticked fenced block
-```
+{fence}
 
 Every *file listing* MUST use this format:
 - First line: the filename with any required path!
-- Second line: opening triple backtick fence with the correct code language.
-- Final line: closing triple backtick fence.
+- Second line: opening {num_ticks} backtick fence with the correct code language.
+- Final line: closing {num_ticks} backtick fence.
+{num_ticks_explanation}
 
 To suggest changes to a file you MUST return a *file listing* that contains the entire content of the file.
 Create a new file you MUST return a *file listing* which includes an appropriate filename, including any required path.

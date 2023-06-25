@@ -273,7 +273,7 @@ class Coder:
         ]
         if self.abs_fnames:
             files_messages += [
-                dict(role="system", content=self.gpt_prompts.system_reminder),
+                dict(role="system", content=self.fmt_system_reminder()),
             ]
 
         return files_messages
@@ -355,6 +355,25 @@ class Coder:
 
         return self.send_new_user_message(inp)
 
+    num_ticks = 4
+
+    def fmt_system_reminder(self):
+        prompt = self.gpt_prompts.system_reminder
+        num_ticks = self.num_ticks
+
+        explain = f"""
+You *MUST* use {num_ticks} backticks, because some files contain {num_ticks-1} backticks already!"""
+
+        fence = "`" * num_ticks
+
+        prompt = prompt.format(
+            num_ticks=num_ticks,
+            fence=fence,
+            num_ticks_explanation=explain,
+        )
+
+        return prompt
+
     def send_new_user_message(self, inp):
         self.cur_messages += [
             dict(role="user", content=inp),
@@ -362,7 +381,7 @@ class Coder:
 
         main_sys = self.gpt_prompts.main_system
         if self.main_model.max_context_tokens > 4 * 1024:
-            main_sys += "\n" + self.gpt_prompts.system_reminder
+            main_sys += "\n" + self.fmt_system_reminder()
 
         messages = [
             dict(role="system", content=main_sys),
