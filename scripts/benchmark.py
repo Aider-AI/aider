@@ -48,6 +48,12 @@ def main():
         help="Verbose output",
     )
     parser.add_argument(
+        "--stats-only",
+        "-s",
+        action="store_true",
+        help="Do not run tests, just collect stats on completed tests",
+    )
+    parser.add_argument(
         "--retries",
         "-r",
         type=int,
@@ -109,10 +115,12 @@ def main():
                 args.retries,
                 args.no_test,
                 args.verbose,
+                args.stats_only,
             )
 
             all_results.append(results)
-            summarize_results(all_results, total_tests)
+            if not args.stats_only:
+                summarize_results(all_results, total_tests)
     else:
         run_test_threaded = lox.thread(args.threads)(run_test)
         for testname in test_dnames:
@@ -177,7 +185,7 @@ def summarize_results(all_results, total_tests=None):
     console.rule()
 
 
-def run_test(testdir, model_name, edit_format, retries, no_test, verbose):
+def run_test(testdir, model_name, edit_format, retries, no_test, verbose, stats_only):
     dump(testdir)
 
     if not os.path.isdir(testdir):
@@ -191,10 +199,14 @@ def run_test(testdir, model_name, edit_format, retries, no_test, verbose):
     results_fname = testdir / ".aider.results.json"
     if results_fname.exists():
         try:
-            return json.loads(results_fname.read_text())
+            res = json.loads(results_fname.read_text())
+            return res
         except JSONDecodeError:
             print(f"{results_fname} failed to parse, skipping")
             return
+
+    if stats_only:
+        return
 
     fnames = []
     for fname in testdir.glob("*"):
