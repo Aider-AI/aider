@@ -18,11 +18,11 @@ from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 
-ORIGINAL_DNAME = Path("tmp.benchmark/practice")
-assert ORIGINAL_DNAME.exists()
+BENCHMARK_DNAME = Path("tmp.benchmark/.")
+assert BENCHMARK_DNAME.exists() and BENCHMARK_DNAME.is_dir()
 
-
-console = Console(style="green", highlight=False)
+ORIGINAL_DNAME = BENCHMARK_DNAME / "practice/."
+assert ORIGINAL_DNAME.exists() and ORIGINAL_DNAME.is_dir()
 
 
 def main():
@@ -132,6 +132,7 @@ def main():
                 args.retries,
                 args.no_test,
                 args.verbose,
+                args.stats_only,
             )
         all_results = run_test_threaded.gather(tqdm=True)
 
@@ -172,6 +173,7 @@ def summarize_results(all_results, total_tests=None):
             if key in results:
                 variants[key].add(results[key])
 
+    console = Console(style="green", highlight=False)
     console.rule()
 
     console.print(f"{completed_tests} test-cases")
@@ -252,7 +254,8 @@ def run_test(testdir, model_name, edit_format, retries, no_test, verbose, stats_
 
     dump(main_model)
     dump(edit_format)
-    dump(fnames)
+    show_fnames = ",".join(map(str, fnames))
+    print("fnames:", show_fnames)
 
     coder = Coder.create(
         main_model,
