@@ -28,7 +28,7 @@ assert BENCHMARK_DNAME.exists() and BENCHMARK_DNAME.is_dir()
 ORIGINAL_DNAME = BENCHMARK_DNAME / "practice/."
 assert ORIGINAL_DNAME.exists() and ORIGINAL_DNAME.is_dir()
 
-app = typer.Typer()
+app = typer.Typer(add_completion=False)
 
 
 @app.command()
