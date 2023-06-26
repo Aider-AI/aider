@@ -66,10 +66,11 @@ class WholeFileCoder(Coder):
                 # fname==None ... starting a new block
                 if i > 0:
                     fname = lines[i - 1].strip()
-                    path_to = "path/to/"
-                    # gpt-3.5 will sometimes crib /path/to from the one-shot example
-                    if fname.startswith(path_to) and fname not in chat_files:
-                        fname = fname[len(path_to) :]
+                    # Did gpt prepend a bogus dir? It especially likes to
+                    # include the path/to prefix from the one-shot example in
+                    # the prompt.
+                    if fname and fname not in chat_files and Path(fname).name in chat_files:
+                        fname = Path(fname).name
                 if not fname:  # blank line? or ``` was on first line i==0
                     if saw_fname:
                         fname = saw_fname
