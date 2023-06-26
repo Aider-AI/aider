@@ -34,7 +34,6 @@ def create_progress_bar(percentage):
 
 
 def assert_newlines(lines):
-    dump(lines)
     if not lines:
         return
     for line in lines[:-1]:
