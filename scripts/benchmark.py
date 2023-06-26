@@ -14,8 +14,8 @@ from pathlib import Path
 
 import git
 import lox
-from rich.console import Console
 import typer
+from rich.console import Console
 
 from aider import models
 from aider.coders import Coder
@@ -36,11 +36,17 @@ def main(
     dirname: str = typer.Argument(..., help="Directory name"),
     model: str = typer.Option("gpt-3.5-turbo", "--model", "-m", help="Model name"),
     edit_format: str = typer.Option(None, "--edit-format", "-e", help="Edit format"),
-    keyword: str = typer.Option(None, "--keyword", "-k", help="Only run tests that contain keyword"),
-    clean: bool = typer.Option(False, "--clean", "-c", help="Discard the current testdir and make a clean copy"),
+    keyword: str = typer.Option(
+        None, "--keyword", "-k", help="Only run tests that contain keyword"
+    ),
+    clean: bool = typer.Option(
+        False, "--clean", "-c", help="Discard the current testdir and make a clean copy"
+    ),
     no_test: bool = typer.Option(False, "--no-test", help="Do not run tests"),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Verbose output"),
-    stats_only: bool = typer.Option(False, "--stats-only", "-s", help="Do not run tests, just collect stats on completed tests"),
+    stats_only: bool = typer.Option(
+        False, "--stats-only", "-s", help="Do not run tests, just collect stats on completed tests"
+    ),
     retries: int = typer.Option(2, "--retries", "-r", help="Number of retries for running tests"),
     threads: int = typer.Option(1, "--threads", "-t", help="Number of threads to run in parallel"),
     num_tests: int = typer.Option(-1, "--num-tests", "-n", help="Number of tests to run"),
@@ -56,7 +62,7 @@ def main(
         dirname = BENCHMARK_DNAME / dirname
 
     now = datetime.datetime.now()
-    now = now.strftime("%Y-%m-%d-%H-%M-%S--")
+    now = now.strftime("%Y-%m-%d-%H-%M--")
 
     if not dirname.exists():
         if not re.match(r"\d\d\d\d-\d\d-\d\d-", str(dirname)):
