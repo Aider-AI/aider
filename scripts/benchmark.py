@@ -255,12 +255,18 @@ def run_test(testdir, model_name, edit_format, retries, no_test, verbose, stats_
             shutil.copy(original_fname, fname)
 
     file_list = " ".join(fname.name for fname in fnames)
-    instructions = (testdir / ".docs/instructions.md").read_text()
-    instructions += (
-        "\n\n=====\n\nModify these files according to the above instructions. Only use standard"
-        " python libraries, don't suggest installing any packages.\n"
-    )
-    instructions += file_list
+    intro = testdir / ".docs/introduction.md"
+    if intro.exists():
+        instructions = intro.read_text() + "\n\n"
+    else:
+        instructions = ""
+    instructions += (testdir / ".docs/instructions.md").read_text()
+    instructions += f"""
+=====
+Use the above instructions to modify the supplied files: {file_list}
+Use the existing function or class stubs as the entrypoint.
+Only use standard python libraries, don't suggest installing any packages.
+"""
 
     io = InputOutput(
         pretty=True,
