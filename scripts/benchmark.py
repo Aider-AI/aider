@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import argparse
 import datetime
 import json
@@ -107,7 +109,10 @@ def main():
             print("ERROR: will not delete dir that does not look like original tests", dirname)
             return
 
-        dest = dirname.parent / "OLD" / (now + dirname.name)
+        dest = dirname.parent / "OLD" / dirname.name
+        if dest.exists():
+            dest = dirname.parent / "OLD" / (now + dirname.name)
+
         dirname.rename(dest)
 
     if not dirname.exists():
