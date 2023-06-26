@@ -10,6 +10,7 @@ from collections import defaultdict
 from json.decoder import JSONDecodeError
 from pathlib import Path
 
+import git
 import lox
 from rich.console import Console
 
@@ -26,6 +27,11 @@ assert ORIGINAL_DNAME.exists() and ORIGINAL_DNAME.is_dir()
 
 
 def main():
+    repo = git.Repo(search_parent_directories=True)
+    commit_hash = repo.head.object.hexsha[:7]
+    if repo.is_dirty():
+        commit_hash += "-dirty"
+
     parser = argparse.ArgumentParser(description="Aider Benchmark")
     parser.add_argument("dirname", type=str, help="Directory name")
     parser.add_argument("--model", "-m", type=str, help="Model name", default="gpt-3.5-turbo")
@@ -117,6 +123,7 @@ def main():
                 args.no_test,
                 args.verbose,
                 args.stats_only,
+                commit_hash,
             )
 
             all_results.append(results)
@@ -133,6 +140,7 @@ def main():
                 args.no_test,
                 args.verbose,
                 args.stats_only,
+                commit_hash,
             )
         all_results = run_test_threaded.gather(tqdm=True)
 
@@ -172,11 +180,10 @@ def summarize_results(dirname, all_results, total_tests=None):
         total_cost += results["cost"]
         duration += results["duration"]
 
-        for key in "model edit_format".split():
-            if key in results:
-                variants[key].add(results[key])
+        for key in "model edit_format commit_hash".split():
+            val = results.get(key)
+            variants[key].add(val)
 
-    dump(completed_tests)
     if not completed_tests:
         return
 
@@ -189,7 +196,7 @@ def summarize_results(dirname, all_results, total_tests=None):
             style = "red"
         else:
             style = None
-        val = ", ".join(val)
+        val = ", ".join(map(str, val))
         console.print(f"{key}: {val}", style=style)
 
     console.print()
@@ -213,7 +220,7 @@ def summarize_results(dirname, all_results, total_tests=None):
     console.rule()
 
 
-def run_test(testdir, model_name, edit_format, retries, no_test, verbose, stats_only):
+def run_test(testdir, model_name, edit_format, retries, no_test, verbose, stats_only, commit_hash):
     if not stats_only:
         dump(testdir)
 
@@ -248,12 +255,18 @@ def run_test(testdir, model_name, edit_format, retries, no_test, verbose, stats_
             shutil.copy(original_fname, fname)
 
     file_list = " ".join(fname.name for fname in fnames)
-    instructions = (testdir / ".docs/instructions.md").read_text()
-    instructions += (
-        "\n\n=====\n\nModify these files according to the above instructions. Only use standard"
-        " python libraries, don't suggest installing any packages.\n"
-    )
-    instructions += file_list
+    intro = testdir / ".docs/introduction.md"
+    if intro.exists():
+        instructions = intro.read_text() + "\n\n"
+    else:
+        instructions = ""
+    instructions += (testdir / ".docs/instructions.md").read_text()
+    instructions += f"""
+=====
+Use the above instructions to modify the supplied files: {file_list}
+Keep and implement the existing function or class stubs, they will be called from unit tests.
+Only use standard python libraries, don't suggest installing any packages.
+"""
 
     io = InputOutput(
         pretty=True,
@@ -319,6 +332,7 @@ def run_test(testdir, model_name, edit_format, retries, no_test, verbose, stats_
         tests_outcomes=test_outcomes,
         cost=coder.total_cost,
         duration=dur,
+        commit_hash=commit_hash,
     )
     dump(results)
 

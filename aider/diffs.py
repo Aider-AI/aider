@@ -33,6 +33,13 @@ def create_progress_bar(percentage):
     return bar
 
 
+def assert_newlines(lines):
+    if not lines:
+        return
+    for line in lines:
+        assert line and line[-1] == "\n", line
+
+
 def diff_partial_update(lines_orig, lines_updated, final=False, fname=None):
     """
     Given only the first part of an updated file, show the diff while
@@ -42,6 +49,9 @@ def diff_partial_update(lines_orig, lines_updated, final=False, fname=None):
 
     # dump(lines_orig)
     # dump(lines_updated)
+
+    assert_newlines(lines_orig)
+    assert_newlines(lines_orig)
 
     num_orig_lines = len(lines_orig)
 
