@@ -209,7 +209,10 @@ def summarize_results(dirname, all_results, total_tests=None):
     remaining_seconds = (total_tests - completed_tests) * avg_duration
     remaining_minutes, remaining_seconds = divmod(remaining_seconds, 60)
 
-    console.print(f"duration: {avg_duration:.1f} sec/test-case, {remaining_minutes:.0f}:{remaining_seconds:02.0f} remaining")
+    console.print(
+        f"duration: {avg_duration:.1f} sec/test-case,"
+        f" {remaining_minutes:2.0f}:{remaining_seconds:02.0f} remaining"
+    )
 
     avg_cost = total_cost / completed_tests
 
@@ -324,7 +327,7 @@ Only use standard python libraries, don't suggest installing any packages.
         errors = "\n".join(errors)
         instructions = errors
         instructions += (
-            "\n\n####\n\nFix the code in {file_list} to resolve the test failures above."
+            f"\n\n####\n\nFix the code in {file_list} to resolve the test failures above."
         )
 
     results = dict(
