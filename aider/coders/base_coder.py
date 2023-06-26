@@ -366,8 +366,15 @@ You *MUST* use {num_ticks} backticks, because some files contain {num_ticks-1} b
 
         fence = "`" * num_ticks
 
+        number_mapping = {
+            3: "triple",
+            4: "quadruple",
+            5: "quintuple",
+        }
+        num_ticks_name = number_mapping.get(num_ticks, str(num_ticks))
+
         prompt = prompt.format(
-            num_ticks=num_ticks,
+            num_ticks=num_ticks_name,
             fence=fence,
             num_ticks_explanation=explain,
         )
