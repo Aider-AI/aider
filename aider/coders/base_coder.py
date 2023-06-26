@@ -246,7 +246,7 @@ class Coder:
         prompt = ""
         for fname in fnames:
             relative_fname = self.get_rel_fname(fname)
-            prompt += utils.quoted_file(fname, relative_fname, fence_ticks=self.get_fence_ticks())
+            prompt += utils.quoted_file(fname, relative_fname, fence=self.fence)
         return prompt
 
     def get_files_messages(self):
@@ -355,31 +355,18 @@ class Coder:
 
         return self.send_new_user_message(inp)
 
-    num_ticks = 4
+    fences = [
+        ("```", "```"),
+        ("<source>", "</source>"),
+        ("<code>", "</code>"),
+        ("<pre>", "</pre>"),
+    ]
 
-    def get_fence_ticks(self):
-        return "`" * self.num_ticks
+    fence = fences[3]
 
     def fmt_system_reminder(self):
         prompt = self.gpt_prompts.system_reminder
-        num_ticks = self.num_ticks
-
-        explain = f"""
-You *MUST* use {num_ticks} backticks, because some files contain {num_ticks-1} backticks already!"""
-
-        number_mapping = {
-            3: "triple",
-            # 4: "quadruple",
-            # 5: "quintuple",
-        }
-        num_ticks_name = number_mapping.get(num_ticks, str(num_ticks))
-
-        prompt = prompt.format(
-            num_ticks=num_ticks_name,
-            fence=self.get_fence_ticks(),
-            num_ticks_explanation=explain,
-        )
-
+        prompt = prompt.format(fence=self.fence)
         return prompt
 
     def send_new_user_message(self, inp):

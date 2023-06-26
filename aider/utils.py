@@ -3,10 +3,11 @@ from pathlib import Path
 from .dump import dump  # noqa: F401
 
 
-def quoted_file(fname, display_fname, fence_ticks="```", number=False):
+def quoted_file(fname, display_fname, fence=("```", "```"), number=False):
     prompt = "\n"
     prompt += display_fname
-    prompt += f"\n{fence_ticks}\n"
+    prompt += f"\n{fence[0]}\n"
+
     file_content = Path(fname).read_text()
     lines = file_content.splitlines()
     for i, line in enumerate(lines, start=1):
@@ -14,7 +15,7 @@ def quoted_file(fname, display_fname, fence_ticks="```", number=False):
             prompt += f"{i:4d} "
         prompt += line + "\n"
 
-    prompt += f"{fence_ticks}\n"
+    prompt += f"{fence[1]}\n"
     return prompt
 
 

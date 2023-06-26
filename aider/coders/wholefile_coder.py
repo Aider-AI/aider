@@ -36,7 +36,7 @@ class WholeFileCoder(Coder):
         fname = None
         new_lines = []
         for i, line in enumerate(lines):
-            if line.startswith(self.get_fence_ticks()):
+            if line.startswith(self.fence[0]) or line.startswith(self.fence[1]):
                 if fname is not None:
                     # ending an existing block
                     saw_fname = None
@@ -79,7 +79,7 @@ class WholeFileCoder(Coder):
                     else:
                         # TODO: sense which file it is by diff size
                         raise ValueError(
-                            f"No filename provided before {self.get_fence_ticks()} in file listing"
+                            f"No filename provided before {self.fence[0]} in file listing"
                         )
 
             elif fname is not None:

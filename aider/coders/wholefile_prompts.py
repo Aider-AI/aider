@@ -18,16 +18,16 @@ Once you understand the request you MUST:
 You MUST use this *file listing* format:
 
 path/to/filename.js
-{fence}javascript
-// entire file content goes in the
-// {num_ticks} backtick fenced block
-{fence}
+{fence[0]}
+// entire file content ...
+// ... goes in between
+{fence[1]}
 
 Every *file listing* MUST use this format:
 - First line: the filename with any originally provided path
-- Second line: opening {num_ticks} backtick fence with the correct code language.
-- Final line: closing {num_ticks} backtick fence.
-{num_ticks_explanation}
+- Second line: opening {fence[0]}
+- ... entire content of the file ...
+- Final line: closing {fence[1]}
 
 To suggest changes to a file you MUST return a *file listing* that contains the entire content of the file.
 Create a new file you MUST return a *file listing* which includes an appropriate filename, including any appropriate path.
