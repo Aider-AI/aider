@@ -42,6 +42,34 @@ class TestWholeFileCoder(unittest.TestCase):
                 updated_content = f.read()
             self.assertEqual(updated_content, "Updated content\n")
 
+    def test_update_files_bogus_path_prefix(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            os.chdir(temp_dir)
+
+            # Create a sample file in the temporary directory
+            sample_file = "sample.txt"
+            with open(sample_file, "w") as f:
+                f.write("Original content\n")
+
+            # Initialize WholeFileCoder with the temporary directory
+            io = InputOutput(yes=True)
+            coder = WholeFileCoder(main_model=models.GPT35, io=io, fnames=[sample_file])
+
+            # Set the partial response content with the updated content
+            # With path/to/ prepended onto the filename
+            coder.partial_response_content = f"path/to/{sample_file}\n```\nUpdated content\n```"
+
+            # Call update_files method
+            edited_files = coder.update_files()
+
+            # Check if the sample file was updated
+            self.assertIn("sample.txt", edited_files)
+
+            # Check if the content of the sample file was updated
+            with open(sample_file, "r") as f:
+                updated_content = f.read()
+            self.assertEqual(updated_content, "Updated content\n")
+
     def test_update_files_not_in_chat(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             os.chdir(temp_dir)
