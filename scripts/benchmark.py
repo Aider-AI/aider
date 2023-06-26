@@ -180,7 +180,7 @@ def summarize_results(dirname, all_results, total_tests=None):
         total_cost += results["cost"]
         duration += results["duration"]
 
-        for key in "model edit_format commit_hash".split():
+        for key in "model edit_format commit_hash num_error_outputs num_user_asks".split():
             val = results.get(key)
             variants[key].add(val)
 
@@ -339,6 +339,8 @@ Only use standard python libraries, don't suggest installing any packages.
         cost=coder.total_cost,
         duration=dur,
         commit_hash=commit_hash,
+        num_error_outputs=io.num_error_outputs,
+        num_user_asks=io.num_user_asks,
     )
     dump(results)
 

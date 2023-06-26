@@ -83,6 +83,9 @@ class AutoCompleter(Completer):
 
 
 class InputOutput:
+    num_error_outputs = 0
+    num_user_asks = 0
+
     def __init__(
         self,
         pretty=True,
@@ -208,6 +211,8 @@ class InputOutput:
         self.append_chat_history(hist)
 
     def confirm_ask(self, question, default="y"):
+        self.num_user_asks += 1
+
         if self.yes is True:
             res = "yes"
         elif self.yes is False:
@@ -217,12 +222,16 @@ class InputOutput:
 
         hist = f"{question.strip()} {res.strip()}"
         self.append_chat_history(hist, linebreak=True, blockquote=True)
+        if self.yes in (True, False):
+            self.tool_output(hist)
 
         if not res or not res.strip():
             return
         return res.strip().lower().startswith("y")
 
     def prompt_ask(self, question, default=None):
+        self.num_user_asks += 1
+
         if self.yes is True:
             res = "yes"
         elif self.yes is False:
@@ -232,10 +241,14 @@ class InputOutput:
 
         hist = f"{question.strip()} {res.strip()}"
         self.append_chat_history(hist, linebreak=True, blockquote=True)
+        if self.yes in (True, False):
+            self.tool_output(hist)
 
         return res
 
     def tool_error(self, message):
+        self.num_error_outputs += 1
+
         if message.strip():
             hist = f"{message.strip()}"
             self.append_chat_history(hist, linebreak=True, blockquote=True)
