@@ -246,7 +246,7 @@ class Coder:
         prompt = ""
         for fname in fnames:
             relative_fname = self.get_rel_fname(fname)
-            prompt += utils.quoted_file(fname, relative_fname)
+            prompt += utils.quoted_file(fname, relative_fname, fence_ticks=self.get_fence_ticks())
         return prompt
 
     def get_files_messages(self):
@@ -355,7 +355,7 @@ class Coder:
 
         return self.send_new_user_message(inp)
 
-    num_ticks = 5
+    num_ticks = 4
 
     def get_fence_ticks(self):
         return "`" * self.num_ticks
