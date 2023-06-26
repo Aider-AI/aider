@@ -119,7 +119,6 @@ def main():
         shutil.copytree(ORIGINAL_DNAME, dirname)
 
     test_dnames = sorted(os.listdir(dirname))
-    total_tests = len(test_dnames)
 
     if args.keyword:
         test_dnames = [dn for dn in test_dnames if args.keyword in dn]
@@ -144,7 +143,7 @@ def main():
 
             all_results.append(results)
             if not args.stats_only:
-                summarize_results(dirname, all_results, total_tests)
+                summarize_results(dirname)
     else:
         run_test_threaded = lox.thread(args.threads)(run_test)
         for testname in test_dnames:
@@ -164,12 +163,13 @@ def main():
         print()
         print()
         print()
-    summarize_results(dirname, all_results, total_tests)
+    summarize_results(dirname)
 
 
-def summarize_results(dirname, all_results, total_tests=None):
-    if not total_tests:
-        total_tests = len(all_results)
+def summarize_results(dirname):
+    dirname = Path(dirname)
+    total_tests = len(list(dirname.glob("*")))
+    all_results = [json.loads(fname.read_text()) for fname in dirname.glob("*/.aider.results.json")]
 
     completed_tests = 0
     try:
