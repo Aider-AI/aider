@@ -206,7 +206,9 @@ def summarize_results(dirname, all_results, total_tests=None):
 
     console.print()
     avg_duration = duration / completed_tests
-    console.print(f"duration: {avg_duration:.1f} sec/test-case")
+    remaining = (total_tests - completed_tests) * avg_duration
+
+    console.print(f"duration: {avg_duration:.1f} sec/test-case, {remaining:.0f} sec remaining")
 
     avg_cost = total_cost / completed_tests
 
