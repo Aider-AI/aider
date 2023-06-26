@@ -355,7 +355,10 @@ class Coder:
 
         return self.send_new_user_message(inp)
 
-    num_ticks = 4
+    num_ticks = 5
+
+    def get_fence_ticks(self):
+        return "`" * self.num_ticks
 
     def fmt_system_reminder(self):
         prompt = self.gpt_prompts.system_reminder
@@ -364,18 +367,16 @@ class Coder:
         explain = f"""
 You *MUST* use {num_ticks} backticks, because some files contain {num_ticks-1} backticks already!"""
 
-        self.fence_ticks = "`" * num_ticks
-
         number_mapping = {
             3: "triple",
-            4: "quadruple",
-            5: "quintuple",
+            # 4: "quadruple",
+            # 5: "quintuple",
         }
         num_ticks_name = number_mapping.get(num_ticks, str(num_ticks))
 
         prompt = prompt.format(
             num_ticks=num_ticks_name,
-            fence=self.fence_ticks,
+            fence=self.get_fence_ticks(),
             num_ticks_explanation=explain,
         )
 
