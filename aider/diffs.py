@@ -47,8 +47,8 @@ def diff_partial_update(lines_orig, lines_updated, final=False, fname=None):
     partially complete update.
     """
 
-    dump(lines_orig)
-    dump(lines_updated)
+    # dump(lines_orig)
+    # dump(lines_updated)
 
     assert_newlines(lines_orig)
     assert_newlines(lines_orig)
@@ -100,7 +100,6 @@ def diff_partial_update(lines_orig, lines_updated, final=False, fname=None):
 
     # print(diff)
 
-    dump(repr(show))
     return show
 
 

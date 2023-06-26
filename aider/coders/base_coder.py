@@ -31,6 +31,10 @@ class ExhaustedContextWindow(Exception):
     pass
 
 
+def wrap_fence(name):
+    return f"<{name}>", f"</{name}>"
+
+
 class Coder:
     abs_fnames = None
     repo = None
@@ -39,16 +43,6 @@ class Coder:
     repo_map = None
     functions = None
     total_cost = 0.0
-
-    fences = [
-        ("```", "```"),
-        ("<source>", "</source>"),
-        ("<code>", "</code>"),
-        ("<pre>", "</pre>"),
-        ("<codeblock>", "</codeblock>"),
-        ("<sourcecode>", "</sourcecode>"),
-    ]
-    fence = fences[0]
 
     @classmethod
     def create(
@@ -249,6 +243,17 @@ class Coder:
 
         self.repo = repo
 
+    # fences are obfuscated so aider can modify this file!
+    fences = [
+        ("``" + "`", "``" + "`"),
+        wrap_fence("source"),
+        wrap_fence("code"),
+        wrap_fence("pre"),
+        wrap_fence("codeblock"),
+        wrap_fence("sourcecode"),
+    ]
+    fence = fences[0]
+
     def choose_fence(self):
         all_content = ""
         for fname in self.abs_fnames:
@@ -256,14 +261,12 @@ class Coder:
 
         all_content = all_content.splitlines()
 
+        good = False
         for fence_open, fence_close in self.fences:
+            if fence_open in all_content or fence_close in all_content:
+                continue
             good = True
-            for line in all_content:
-                if line.startswith(fence_open) or line.startswith(fence_close):
-                    good = False
-                    break
-            if good:
-                break
+            break
 
         if good:
             self.fence = (fence_open, fence_close)
