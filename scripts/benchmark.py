@@ -3,6 +3,7 @@ import datetime
 import json
 import os
 import random
+import re
 import shutil
 import subprocess
 import time
@@ -86,6 +87,18 @@ def main():
 
     dirname = Path(args.dirname)
 
+    if len(dirname.parts) == 1:
+        dirname = BENCHMARK_DNAME / dirname
+
+    now = datetime.datetime.now()
+    now = now.strftime("%Y-%m-%d-%H-%M-%S-")
+
+    if not dirname.exists():
+        if not re.match(r"\d\d\d\d-\d\d-\d\d-", str(dirname)):
+            dirname = dirname.parent / (now + dirname.name)
+
+    dump(dirname)
+
     if args.clean and dirname.exists():
         print("Cleaning up and replacing", dirname)
         dir_files = set(fn.name for fn in dirname.glob("*"))
@@ -94,8 +107,6 @@ def main():
             print("ERROR: will not delete dir that does not look like original tests", dirname)
             return
 
-        now = datetime.datetime.now()
-        now = now.strftime("%Y-%m-%d-%H-%M-%S-")
         dest = dirname.parent / "OLD" / (now + dirname.name)
         dirname.rename(dest)
 
