@@ -264,7 +264,7 @@ def run_test(testdir, model_name, edit_format, retries, no_test, verbose, stats_
     instructions += f"""
 =====
 Use the above instructions to modify the supplied files: {file_list}
-Use the existing function or class stubs as the entrypoint.
+Keep and implement the existing function or class stubs, they will be called from unit tests.
 Only use standard python libraries, don't suggest installing any packages.
 """
 
