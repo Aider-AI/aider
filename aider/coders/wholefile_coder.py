@@ -36,7 +36,7 @@ class WholeFileCoder(Coder):
         fname = None
         new_lines = []
         for i, line in enumerate(lines):
-            if line.startswith("```"):
+            if line.startswith(self.fence_ticks):
                 if fname is not None:
                     # ending an existing block
                     saw_fname = None
@@ -77,7 +77,9 @@ class WholeFileCoder(Coder):
                         fname = chat_files[0]
                     else:
                         # TODO: sense which file it is by diff size
-                        raise ValueError("No filename provided before ``` in file listing")
+                        raise ValueError(
+                            f"No filename provided before {self.fence_ticks} in file listing"
+                        )
 
             elif fname is not None:
                 new_lines.append(line)

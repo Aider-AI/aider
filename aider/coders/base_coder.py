@@ -364,7 +364,7 @@ class Coder:
         explain = f"""
 You *MUST* use {num_ticks} backticks, because some files contain {num_ticks-1} backticks already!"""
 
-        fence = "`" * num_ticks
+        self.fence_ticks = "`" * num_ticks
 
         number_mapping = {
             3: "triple",
@@ -375,7 +375,7 @@ You *MUST* use {num_ticks} backticks, because some files contain {num_ticks-1} b
 
         prompt = prompt.format(
             num_ticks=num_ticks_name,
-            fence=fence,
+            fence=self.fence_ticks,
             num_ticks_explanation=explain,
         )
 
