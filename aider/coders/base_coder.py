@@ -40,6 +40,16 @@ class Coder:
     functions = None
     total_cost = 0.0
 
+    fences = [
+        ("```", "```"),
+        ("<source>", "</source>"),
+        ("<code>", "</code>"),
+        ("<pre>", "</pre>"),
+        ("<codeblock>", "</codeblock>"),
+        ("<sourcecode>", "</sourcecode>"),
+    ]
+    fence = fences[0]
+
     @classmethod
     def create(
         self,
@@ -239,6 +249,33 @@ class Coder:
 
         self.repo = repo
 
+    def choose_fence(self):
+        all_content = ""
+        for fname in self.abs_fnames:
+            all_content += Path(fname).read_text() + "\n"
+
+        all_content = all_content.splitlines()
+
+        for fence_open, fence_close in self.fences:
+            good = True
+            for line in all_content:
+                if line.startswith(fence_open) or line.startswith(fence_close):
+                    good = False
+                    break
+            if good:
+                break
+
+        if good:
+            self.fence = (fence_open, fence_close)
+        else:
+            self.fence = self.fences[0]
+            self.io.tool_error(
+                "Unable to find a fencing strategy! Falling back to:"
+                " {self.fence[0]}...{self.fence[1]}"
+            )
+
+        return
+
     def get_files_content(self, fnames=None):
         if not fnames:
             fnames = self.abs_fnames
@@ -355,21 +392,14 @@ class Coder:
 
         return self.send_new_user_message(inp)
 
-    fences = [
-        ("```", "```"),
-        ("<source>", "</source>"),
-        ("<code>", "</code>"),
-        ("<pre>", "</pre>"),
-    ]
-
-    fence = fences[3]
-
     def fmt_system_reminder(self):
         prompt = self.gpt_prompts.system_reminder
         prompt = prompt.format(fence=self.fence)
         return prompt
 
     def send_new_user_message(self, inp):
+        self.choose_fence()
+
         self.cur_messages += [
             dict(role="user", content=inp),
         ]
