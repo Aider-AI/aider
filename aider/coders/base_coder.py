@@ -245,8 +245,8 @@ class Coder:
 
     # fences are obfuscated so aider can modify this file!
     fences = [
-        wrap_fence("source"),
         ("``" + "`", "``" + "`"),
+        wrap_fence("source"),
         wrap_fence("code"),
         wrap_fence("pre"),
         wrap_fence("codeblock"),
