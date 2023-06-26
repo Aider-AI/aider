@@ -57,6 +57,15 @@ class WholeFileFunctionCoder(Coder):
         else:
             self.cur_messages += [dict(role="assistant", content=content)]
 
+    def get_context_from_history(self, history):
+        context = ""
+        if history:
+            context += "# Context:\n"
+            for msg in history:
+                if msg["role"] == "user":
+                    context += msg["role"].upper() + ": " + msg["content"] + "\n"
+        return context
+
     def render_incremental_response(self, final=False):
         if self.partial_response_content:
             return self.partial_response_content
