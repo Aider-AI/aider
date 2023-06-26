@@ -80,22 +80,23 @@ def diff_partial_update(lines_orig, lines_updated, final=False, fname=None):
 
     diff = list(diff)[2:]
 
-    # TODO find the longest string of ` that start a line
-    max_backticks = max(len(line) - len(line.lstrip("`")) for line in diff.splitlines())
-    extra_backticks = "`" * (max_backticks + 1)
-
     diff = "".join(diff)
     if not diff.endswith("\n"):
         diff += "\n"
 
-    show = f"{extra_backticks}diff\n"
+    for i in range(3, 10):
+        backticks = "`" * i
+        if backticks not in diff:
+            break
+
+    show = f"{backticks}diff\n"
     if fname:
         show += f"--- {fname} original\n"
         show += f"+++ {fname} updated\n"
     if not final:
         show += bar
 
-    show += diff + f"{extra_backticks}\n\n"
+    show += diff + f"{backticks}\n\n"
 
     # print(diff)
 
