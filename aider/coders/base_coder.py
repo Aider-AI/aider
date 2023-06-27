@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import hashlib
 import json
 import os
 import sys
@@ -43,6 +44,7 @@ class Coder:
     repo_map = None
     functions = None
     total_cost = 0.0
+    chat_completion_call_hashes = []
 
     @classmethod
     def create(
@@ -554,6 +556,10 @@ class Coder:
         )
         if functions is not None:
             kwargs["functions"] = self.functions
+
+        # Generate SHA1 hash of kwargs and append it to chat_completion_call_hashes
+        hash_object = hashlib.sha1(json.dumps(kwargs, sort_keys=True).encode())
+        self.chat_completion_call_hashes.append(hash_object.hexdigest())
 
         res = openai.ChatCompletion.create(**kwargs)
         return res
