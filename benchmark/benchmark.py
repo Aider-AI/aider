@@ -97,6 +97,9 @@ def main(
     if num_tests > 0:
         test_dnames = test_dnames[:num_tests]
 
+    if not stats_only:
+        build_docker()
+
     if threads == 1:
         all_results = []
         for testname in test_dnames:
@@ -107,13 +110,11 @@ def main(
                 retries,
                 no_unit_tests,
                 verbose,
-                stats_only,
                 commit_hash,
             )
 
             all_results.append(results)
-            if not stats_only:
-                summarize_results(dirname)
+            summarize_results(dirname)
     else:
         run_test_threaded = lox.thread(threads)(run_test)
         for testname in test_dnames:
@@ -124,7 +125,6 @@ def main(
                 retries,
                 no_unit_tests,
                 verbose,
-                stats_only,
                 commit_hash,
             )
         all_results = run_test_threaded.gather(tqdm=True)
@@ -219,12 +219,7 @@ def summarize_results(dirname):
     console.rule()
 
 
-def run_test(
-    testdir, model_name, edit_format, retries, no_unit_tests, verbose, stats_only, commit_hash
-):
-    if not stats_only:
-        dump(testdir)
-
+def run_test(testdir, model_name, edit_format, retries, no_unit_tests, verbose, commit_hash):
     if not os.path.isdir(testdir):
         print("Not a dir:", testdir)
         return
@@ -241,9 +236,6 @@ def run_test(
         except JSONDecodeError:
             print(f"{results_fname} failed to parse, skipping")
             return
-
-    if stats_only:
-        return
 
     fnames = []
     for fname in testdir.glob("*"):
@@ -397,9 +389,12 @@ def build_docker():
     command = [
         "docker",
         "build",
+        "--quiet",
         "-t",
         "benchmark",
-        "benchmark/",
+        "-f",
+        "benchmark/Dockerfile",
+        "/dev/null",
     ]
     print(" ".join(command))
 
