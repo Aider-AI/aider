@@ -317,9 +317,14 @@ Only use standard python libraries, don't suggest installing any packages.
         errors = errors[:50]
         errors = "\n".join(errors)
         instructions = errors
-        instructions += (
-            f"\n\n####\n\nFix the code in {file_list} to resolve the test failures above."
-        )
+        instructions += f"""
+
+####
+
+See the testing errors above.
+The tests are correct.
+Fix the code in {file_list} to resolve the errors.
+"""
 
     results = dict(
         testdir=str(testdir),
