@@ -22,6 +22,8 @@ from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 
+DOCKER_IMAGE = "aider-pytest"
+
 BENCHMARK_DNAME = Path("tmp.benchmark/.")
 assert BENCHMARK_DNAME.exists() and BENCHMARK_DNAME.is_dir()
 
@@ -70,6 +72,12 @@ def main(
 
     dump(dirname)
 
+    if stats_only:
+        summarize_results(dirname)
+        return
+
+    build_docker()
+
     if clean and dirname.exists():
         print("Cleaning up and replacing", dirname)
         dir_files = set(fn.name for fn in dirname.glob("*"))
@@ -96,9 +104,6 @@ def main(
     random.shuffle(test_dnames)
     if num_tests > 0:
         test_dnames = test_dnames[:num_tests]
-
-    if not stats_only:
-        build_docker()
 
     if threads == 1:
         all_results = []
@@ -129,10 +134,9 @@ def main(
             )
         all_results = run_test_threaded.gather(tqdm=True)
 
-    if not stats_only:
-        print()
-        print()
-        print()
+    print()
+    print()
+    print()
     summarize_results(dirname)
 
 
@@ -353,7 +357,7 @@ def run_unit_tests(testdir, history_fname):
             "--interactive=false",
             "-v",
             f"{test_file.parent.absolute()}:/app",
-            "benchmark",
+            DOCKER_IMAGE,
             "bash",
             "-c",
             f"pip install pytest && pytest /app/{test_file.name}",
@@ -386,11 +390,10 @@ def run_unit_tests(testdir, history_fname):
 
 
 def build_docker():
-    image_name = "benchmark"
-    check_command = ["docker", "images", "-q", image_name]
+    check_command = ["docker", "images", "-q", DOCKER_IMAGE]
     check_result = subprocess.run(check_command, stdout=subprocess.PIPE, text=True)
     if check_result.stdout.strip():
-        print(f"Docker image '{image_name}' already exists, skipping build.")
+        print(f"Docker image '{DOCKER_IMAGE}' already exists, skipping build.")
         return
 
     command = [
@@ -398,7 +401,7 @@ def build_docker():
         "build",
         "--quiet",
         "-t",
-        image_name,
+        DOCKER_IMAGE,
         "-f",
         "benchmark/Dockerfile",
         "/dev/null",
