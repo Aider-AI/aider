@@ -42,8 +42,9 @@ def main(
         None, "--keyword", "-k", help="Only run tests that contain keyword"
     ),
     clean: bool = typer.Option(
-        False, "--clean", "-c", help="Discard the current testdir and make a clean copy"
+        False, "--clean", "-c", help="Discard the existing testdir and make a clean copy"
     ),
+    make_new: bool = typer.Option(False, "--new", "-n", help="Make a new dated testdir"),
     no_unit_tests: bool = typer.Option(False, "--no-unit-tests", help="Do not run unit tests"),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Verbose output"),
     stats_only: bool = typer.Option(
@@ -61,18 +62,21 @@ def main(
     dirname = Path(dirname)
 
     if len(dirname.parts) == 1:
-        dirname = BENCHMARK_DNAME / dirname
+        priors = list(BENCHMARK_DNAME.glob(f"*--{dirname}"))
+        if len(priors):
+            if not make_new:
+                print(f"Prior runs of {dirname} exist, use --new or name one explicitly")
+                print()
+                for prior in priors:
+                    print(prior)
+                return
 
-    if clean and not dirname.exists():
-        print(f"--clean requires that {dirname} exists")
-        return
-
-    now = datetime.datetime.now()
-    now = now.strftime("%Y-%m-%d-%H-%M--")
-
-    if not dirname.exists():
         if not re.match(r"\d\d\d\d-\d\d-\d\d-", str(dirname)):
-            dirname = dirname.parent / (now + dirname.name)
+            now = datetime.datetime.now()
+            now = now.strftime("%Y-%m-%d-%H-%M-%S--")
+            dirname = now + dirname.name
+
+        dirname = BENCHMARK_DNAME / dirname
 
     dump(dirname)
 
