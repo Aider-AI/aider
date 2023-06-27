@@ -80,7 +80,8 @@ def main(
 
         dest = dirname.parent / "OLD" / dirname.name
         if dest.exists():
-            dest = dirname.parent / "OLD" / (now + dirname.name)
+            old_now = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+            dest = dirname.parent / "OLD" / (old_now + dirname.name)
 
         dirname.rename(dest)
 
@@ -351,9 +352,25 @@ def run_unit_tests(testdir, history_fname):
     timeout = 60
     for test_file in test_files:
         dump(test_file)
+
+        command = [
+            "docker",
+            "run",
+            "-it",
+            "--rm",
+            "--interactive=false",
+            "-v",
+            f"{test_file.parent.absolute()}:/app",
+            "benchmark",
+            "bash",
+            "-c",
+            f"pip install pytest && pytest /app/{test_file.name}",
+        ]
+        print(" ".join(command))
+
         try:
             result = subprocess.run(
-                ["docker", "run", "--rm", "-v", f"{test_file}:/app/{test_file.name}", "python:3.8", "python", f"/app/{test_file.name}"],
+                command,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 text=True,
