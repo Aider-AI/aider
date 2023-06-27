@@ -393,5 +393,31 @@ def run_unit_tests(testdir, history_fname):
             return res
 
 
+def build_docker():
+    command = [
+        "docker",
+        "build",
+        "-t",
+        "benchmark",
+        "benchmark/",
+    ]
+    print(" ".join(command))
+
+    try:
+        result = subprocess.run(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+        )
+        res = result.stdout
+        print(res)
+
+    except subprocess.CalledProcessError as e:
+        res = f"Failed to build Docker image: {e.output}"
+
+    return res
+
+
 if __name__ == "__main__":
     app()
