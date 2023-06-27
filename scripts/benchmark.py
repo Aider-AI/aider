@@ -353,7 +353,7 @@ def run_unit_tests(testdir, history_fname):
         dump(test_file)
         try:
             result = subprocess.run(
-                ["python", test_file],
+                ["docker", "run", "--rm", "-v", f"{test_file}:/app/{test_file.name}", "python:3.8", "python", f"/app/{test_file.name}"],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 text=True,
