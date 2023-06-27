@@ -44,7 +44,6 @@ class Coder:
     repo_map = None
     functions = None
     total_cost = 0.0
-    chat_completion_call_hashes = []
 
     @classmethod
     def create(
@@ -103,6 +102,8 @@ class Coder:
     ):
         if not fnames:
             fnames = []
+
+        self.chat_completion_call_hashes = []
 
         self.verbose = verbose
         self.abs_fnames = set()
