@@ -65,7 +65,7 @@ def main(
         priors = list(BENCHMARK_DNAME.glob(f"*--{dirname}"))
         if len(priors) == 1 and stats_only:
             dirname = priors[0].name
-            print(f'Using pre-existing {dirname}')
+            print(f"Using pre-existing {dirname}")
         elif len(priors):
             if not make_new:
                 print(f"Prior runs of {dirname} exist, use --new or name one explicitly")
@@ -348,6 +348,8 @@ Fix the code in {file_list} to resolve the errors.
         commit_hash=commit_hash,
         num_error_outputs=io.num_error_outputs,
         num_user_asks=io.num_user_asks,
+        chat_completion_call_hashes=coder.chat_completion_call_hashes,
+        chat_completion_response_hashes=coder.chat_completion_response_hashes,
     )
     dump(results)
 
@@ -376,7 +378,7 @@ def run_unit_tests(testdir, history_fname):
             DOCKER_IMAGE,
             "bash",
             "-c",
-            f"pip install pytest && pytest /app/{test_file.name}",
+            f"pytest /app/{test_file.name}",
         ]
         print(" ".join(command))
 

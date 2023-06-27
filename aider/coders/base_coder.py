@@ -104,6 +104,7 @@ class Coder:
             fnames = []
 
         self.chat_completion_call_hashes = []
+        self.chat_completion_response_hashes = []
 
         self.verbose = verbose
         self.abs_fnames = set()
@@ -610,6 +611,13 @@ class Coder:
             self.partial_response_content = completion.choices[0].message.content
         except AttributeError as content_err:
             show_content_err = content_err
+
+        resp_hash = dict(
+            function_call=self.partial_response_function_call,
+            content=self.partial_response_content,
+        )
+        resp_hash = hashlib.sha1(json.dumps(resp_hash, sort_keys=True).encode())
+        self.chat_completion_response_hashes.append(resp_hash.hexdigest())
 
         if show_func_err and show_content_err:
             self.io.tool_error(show_func_err)
