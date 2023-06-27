@@ -63,7 +63,10 @@ def main(
 
     if len(dirname.parts) == 1:
         priors = list(BENCHMARK_DNAME.glob(f"*--{dirname}"))
-        if len(priors):
+        if len(priors) == 1 and stats_only:
+            dirname = priors[0].name
+            print(f'Using pre-existing {dirname}')
+        elif len(priors):
             if not make_new:
                 print(f"Prior runs of {dirname} exist, use --new or name one explicitly")
                 print()
