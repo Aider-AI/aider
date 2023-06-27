@@ -42,7 +42,7 @@ def main(
     clean: bool = typer.Option(
         False, "--clean", "-c", help="Discard the current testdir and make a clean copy"
     ),
-    no_test: bool = typer.Option(False, "--no-test", help="Do not run tests"),
+    no_unit_tests: bool = typer.Option(False, "--no-unit-tests", help="Do not run unit tests"),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Verbose output"),
     stats_only: bool = typer.Option(
         False, "--stats-only", "-s", help="Do not run tests, just collect stats on completed tests"
@@ -104,7 +104,7 @@ def main(
                 model,
                 edit_format,
                 retries,
-                no_test,
+                no_unit_tests,
                 verbose,
                 stats_only,
                 commit_hash,
@@ -121,7 +121,7 @@ def main(
                 model,
                 edit_format,
                 retries,
-                no_test,
+                no_unit_tests,
                 verbose,
                 stats_only,
                 commit_hash,
@@ -218,7 +218,9 @@ def summarize_results(dirname):
     console.rule()
 
 
-def run_test(testdir, model_name, edit_format, retries, no_test, verbose, stats_only, commit_hash):
+def run_test(
+    testdir, model_name, edit_format, retries, no_unit_tests, verbose, stats_only, commit_hash
+):
     if not stats_only:
         dump(testdir)
 
@@ -302,10 +304,10 @@ Only use standard python libraries, don't suggest installing any packages.
         if coder.num_control_c:
             raise KeyboardInterrupt
 
-        if no_test:
+        if no_unit_tests:
             return
 
-        errors = run_pytests(testdir, history_fname)
+        errors = run_unit_tests(testdir, history_fname)
 
         if errors:
             test_outcomes.append(False)
@@ -341,7 +343,7 @@ Only use standard python libraries, don't suggest installing any packages.
     return results
 
 
-def run_pytests(testdir, history_fname):
+def run_unit_tests(testdir, history_fname):
     test_files = [file for file in testdir.glob("*") if file.name.endswith("_test.py")]
     assert len(test_files)
 
@@ -351,7 +353,7 @@ def run_pytests(testdir, history_fname):
         dump(test_file)
         try:
             result = subprocess.run(
-                ["pytest", test_file],
+                ["python", test_file],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 text=True,
