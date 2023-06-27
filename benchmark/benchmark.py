@@ -63,6 +63,10 @@ def main(
     if len(dirname.parts) == 1:
         dirname = BENCHMARK_DNAME / dirname
 
+    if clean and not dirname.exists():
+        print(f"--clean requires that {dirname} exists")
+        return
+
     now = datetime.datetime.now()
     now = now.strftime("%Y-%m-%d-%H-%M--")
 
