@@ -386,12 +386,19 @@ def run_unit_tests(testdir, history_fname):
 
 
 def build_docker():
+    image_name = "benchmark"
+    check_command = ["docker", "images", "-q", image_name]
+    check_result = subprocess.run(check_command, stdout=subprocess.PIPE, text=True)
+    if check_result.stdout.strip():
+        print(f"Docker image '{image_name}' already exists, skipping build.")
+        return
+
     command = [
         "docker",
         "build",
         "--quiet",
         "-t",
-        "benchmark",
+        image_name,
         "-f",
         "benchmark/Dockerfile",
         "/dev/null",
