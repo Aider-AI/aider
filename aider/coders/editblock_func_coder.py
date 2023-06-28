@@ -36,14 +36,20 @@ class EditBlockFunctionCoder(Coder):
                                     description="Path of file to edit",
                                 ),
                                 original_lines=dict(
-                                    type="string",
+                                    type="array",
+                                    items=dict(
+                                        type="string",
+                                    ),
                                     description=(
                                         "Lines from the original file, including all"
                                         " whitespace, newlines, without skipping any lines"
                                     ),
                                 ),
                                 updated_lines=dict(
-                                    type="string",
+                                    type="array",
+                                    items=dict(
+                                        type="string",
+                                    ),
                                     description="New content to replace the `original_lines` with",
                                 ),
                             ),
