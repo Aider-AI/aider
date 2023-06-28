@@ -411,7 +411,6 @@ def run_unit_tests(testdir, history_fname):
 
 
 def cleanup_test_output(output):
-    dump(output)
     # remove timing info, to avoid randomizing the response to GPT
     res = re.sub(
         r"^Ran \d+ tests in \d+\.\d+s$",
