@@ -48,7 +48,7 @@ def main(
     no_unit_tests: bool = typer.Option(False, "--no-unit-tests", help="Do not run unit tests"),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Verbose output"),
     stats_only: bool = typer.Option(
-        False, "--stats-only", "-s", help="Do not run tests, just collect stats on completed tests"
+        False, "--stats", "-s", help="Do not run tests, just collect stats on completed tests"
     ),
     tries: int = typer.Option(2, "--tries", "-r", help="Number of tries for running tests"),
     threads: int = typer.Option(1, "--threads", "-t", help="Number of threads to run in parallel"),
