@@ -22,8 +22,6 @@ from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 
-DOCKER_IMAGE = "aider-pytest"
-
 BENCHMARK_DNAME = Path("tmp.benchmark/.")
 
 ORIGINAL_DNAME = BENCHMARK_DNAME / "practice/."
@@ -87,8 +85,6 @@ def main(
     if stats_only:
         summarize_results(dirname)
         return
-
-    build_docker()
 
     if clean and dirname.exists():
         print("Cleaning up and replacing", dirname)
@@ -380,10 +376,10 @@ def run_unit_tests(testdir, history_fname):
             "--interactive=false",
             "-v",
             f"{test_file.parent.absolute()}:/app",
-            DOCKER_IMAGE,
+            "python:3.8-slim",
             "bash",
             "-c",
-            f"python -m unittest {test_file.name}",
+            f"cd /app && python -m unittest {test_file.name}",
         ]
         print(" ".join(command))
 
@@ -413,6 +409,7 @@ def run_unit_tests(testdir, history_fname):
 
 
 def cleanup_test_output(output):
+    dump(output)
     # remove timing info, to avoid randomizing the response to GPT
     res = re.sub(
         r"^Ran \d+ tests in \d+\.\d+s$",
@@ -432,45 +429,6 @@ def cleanup_test_output(output):
         res,
         flags=re.MULTILINE,
     )
-    return res
-
-
-def build_docker():
-    check_command = ["docker", "images", "-q", DOCKER_IMAGE]
-    check_result = subprocess.run(check_command, stdout=subprocess.PIPE, text=True)
-    if check_result.stdout.strip():
-        print(f"Docker image '{DOCKER_IMAGE}' already exists, skipping build.")
-        return
-
-    command = [
-        "docker",
-        "build",
-        "--quiet",
-        "-t",
-        DOCKER_IMAGE,
-        "-f",
-        "benchmark/Dockerfile",
-        "/dev/null",
-    ]
-    print(" ".join(command))
-
-    try:
-        result = subprocess.run(
-            command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-        )
-        res = result.stdout
-        print(res)
-
-    except subprocess.CalledProcessError as e:
-        res = f"Failed to build Docker image: {e.output}"
-        raise e
-
-    if result.returncode != 0:
-        raise Exception("Unable to build docker image")
-
     return res
 
 
