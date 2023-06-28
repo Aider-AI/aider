@@ -443,6 +443,10 @@ def build_docker():
 
     except subprocess.CalledProcessError as e:
         res = f"Failed to build Docker image: {e.output}"
+        raise e
+
+    if result.returncode != 0:
+        raise Exception("Unable to build docker image")
 
     return res
 
