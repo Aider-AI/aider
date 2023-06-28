@@ -64,6 +64,20 @@ class EditBlockFunctionCoder(Coder):
         self.gpt_prompts = EditBlockFunctionPrompts()
         super().__init__(*args, **kwargs)
 
+    def update_cur_messages(self, content, edited):
+        if self.partial_response_content:
+            self.cur_messages += [dict(role="assistant", content=self.partial_response_content)]
+        if self.partial_response_function_call:
+            self.cur_messages += [
+                dict(
+                    role="assistant",
+                    content=None,
+                    function_call=self.partial_response_function_call,
+                )
+            ]
+
+        dump(self.cur_messages)
+
     def render_incremental_response(self, final=False):
         if self.partial_response_content:
             return self.partial_response_content
@@ -87,8 +101,8 @@ class EditBlockFunctionCoder(Coder):
         edited = set()
         for edit in edits:
             path = get_arg(edit, "path")
-            original = get_arg(edit, "original_lines")
-            updated = get_arg(edit, "updated_lines")
+            original = "\n".join(get_arg(edit, "original_lines")) + "\n"
+            updated = "\n".join(get_arg(edit, "updated_lines")) + "\n"
 
             full_path = self.allowed_to_edit(path)
             if not full_path:

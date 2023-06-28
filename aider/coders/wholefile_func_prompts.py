@@ -23,3 +23,5 @@ NEVER return code outside the `write_file` function.
 
     # TODO: should this be present for using this with gpt-4?
     repo_content_prefix = None
+
+    # TODO: fix the chat history, except we can't keep the whole file

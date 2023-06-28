@@ -419,8 +419,8 @@ class Coder:
         ]
 
         main_sys = self.gpt_prompts.main_system
-        if self.main_model.max_context_tokens > 4 * 1024:
-            main_sys += "\n" + self.fmt_system_reminder()
+        # if self.main_model.max_context_tokens > 4 * 1024:
+        main_sys += "\n" + self.fmt_system_reminder()
 
         messages = [
             dict(role="system", content=main_sys),
@@ -481,10 +481,13 @@ class Coder:
         self.update_cur_messages(content, edited)
 
         if edited:
-            if self.auto_commits and not self.dry_run:
+            if self.repo and self.auto_commits and not self.dry_run:
                 saved_message = self.auto_commit()
+            elif hasattr(self.gpt_prompts, "files_content_gpt_edits_no_repo"):
+                saved_message = self.gpt_prompts.files_content_gpt_edits_no_repo
             else:
                 saved_message = None
+
             self.move_back_cur_messages(saved_message)
 
         add_rel_files_message = self.check_for_file_mentions(content)
