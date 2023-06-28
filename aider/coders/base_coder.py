@@ -13,7 +13,7 @@ import git
 import openai
 import requests
 from openai.error import APIError, RateLimitError, ServiceUnavailableError
-from rich.console import Console
+from rich.console import Console, Text
 from rich.live import Live
 from rich.markdown import Markdown
 
@@ -491,6 +491,9 @@ class Coder:
         if add_rel_files_message:
             return add_rel_files_message
 
+    def update_cur_messages(self, content, edited):
+        self.cur_messages += [dict(role="assistant", content=content)]
+
     def auto_commit(self):
         res = self.commit(history=self.cur_messages, prefix="aider: ")
         if res:
@@ -646,6 +649,8 @@ class Coder:
         show_resp = self.render_incremental_response(True)
         if self.pretty:
             show_resp = Markdown(show_resp, style=self.assistant_output_color, code_theme="default")
+        else:
+            show_resp = Text(show_resp)
 
         self.io.console.print(show_resp)
         self.io.console.print(tokens)

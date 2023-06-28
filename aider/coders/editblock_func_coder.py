@@ -1,9 +1,11 @@
+import json
 import os
 
 from aider import diffs
 
 from ..dump import dump  # noqa: F401
 from .base_coder import Coder
+from .editblock_coder import do_replace
 from .editblock_func_prompts import EditBlockFunctionPrompts
 
 
@@ -56,92 +58,44 @@ class EditBlockFunctionCoder(Coder):
         self.gpt_prompts = EditBlockFunctionPrompts()
         super().__init__(*args, **kwargs)
 
-    def update_cur_messages(self, content, edited):
-        if edited:
-            self.cur_messages += [
-                dict(role="assistant", content=self.gpt_prompts.redacted_edit_message)
-            ]
-        else:
-            self.cur_messages += [dict(role="assistant", content=content)]
-
-    def get_context_from_history(self, history):
-        context = ""
-        if history:
-            context += "# Context:\n"
-            for msg in history:
-                if msg["role"] == "user":
-                    context += msg["role"].upper() + ": " + msg["content"] + "\n"
-        return context
-
     def render_incremental_response(self, final=False):
         if self.partial_response_content:
             return self.partial_response_content
 
         args = self.parse_partial_args()
-
-        if not args:
-            return
-
-        explanation = args.get("explanation")
-        files = args.get("files", [])
-
-        res = ""
-        if explanation:
-            res += f"{explanation}\n\n"
-
-        for i, file_upd in enumerate(files):
-            path = file_upd.get("path")
-            if not path:
-                continue
-            content = file_upd.get("content")
-            if not content:
-                continue
-
-            this_final = (i < len(files) - 1) or final
-            res += self.live_diffs(path, content, this_final)
-
-        return res
-
-    def live_diffs(self, fname, content, final):
-        lines = content.splitlines(keepends=True)
-
-        # ending an existing block
-        full_path = os.path.abspath(os.path.join(self.root, fname))
-
-        with open(full_path, "r") as f:
-            orig_lines = f.readlines()
-
-        show_diff = diffs.diff_partial_update(
-            orig_lines,
-            lines,
-            final,
-            fname=fname,
-        ).splitlines()
-
-        return "\n".join(show_diff)
+        res = json.dumps(args, indent=4)
+        return "```\n" + res + "\n```\n"
 
     def update_files(self):
         name = self.partial_response_function_call.get("name")
+
         if name and name != "replace_lines":
-            raise ValueError(f'Unknown function_call name="{name}", use name="write_file"')
+            raise ValueError(f'Unknown function_call name="{name}", use name="replace_lines"')
 
         args = self.parse_partial_args()
         if not args:
             return
 
-        files = args.get("files", [])
+        edits = args.get("edits", [])
 
         edited = set()
-        for file_upd in files:
-            path = file_upd.get("path")
-            if not path:
-                raise ValueError(f"Missing path parameter: {file_upd}")
+        for edit in edits:
+            path = get_arg(edit, "path")
+            original = get_arg(edit, "original_lines")
+            updated = get_arg(edit, "updated_lines")
 
-            content = file_upd.get("content")
-            if not content:
-                raise ValueError(f"Missing content parameter: {file_upd}")
-
-            if self.allowed_to_edit(path, content):
+            full_path = self.allowed_to_edit(path)
+            if not full_path:
+                continue
+            if do_replace(full_path, original, updated, self.dry_run):
                 edited.add(path)
+                continue
+            self.io.tool_error(f"Failed to apply edit to {path}")
 
         return edited
+
+
+def get_arg(edit, arg):
+    if arg not in edit:
+        raise ValueError(f"Missing `{arg}` parameter: {edit}")
+    return edit[arg]
