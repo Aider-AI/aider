@@ -394,7 +394,8 @@ def run_unit_tests(testdir, history_fname):
                 all_tests_passed = False
                 print(f"Test {test_file} failed")
 
-            res = result.stdout
+            # remove timing info, to avoid randomizing the response to GPT
+            res = re.sub(r" in \d+\.\d+s", " in 1.0s", result.stdout)
 
         except subprocess.TimeoutExpired:
             all_tests_passed = False
