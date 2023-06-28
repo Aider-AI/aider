@@ -348,8 +348,12 @@ Fix the code in {file_list} to resolve the errors.
         commit_hash=commit_hash,
         num_error_outputs=io.num_error_outputs,
         num_user_asks=io.num_user_asks,
-        chat_completion_call_hashes=coder.chat_completion_call_hashes,
-        chat_completion_response_hashes=coder.chat_completion_response_hashes,
+        chat_hashes=list(
+            zip(
+                coder.chat_completion_call_hashes,
+                coder.chat_completion_response_hashes,
+            )
+        ),
     )
     dump(results)
 
