@@ -50,7 +50,7 @@ def main(
     stats_only: bool = typer.Option(
         False, "--stats-only", "-s", help="Do not run tests, just collect stats on completed tests"
     ),
-    retries: int = typer.Option(2, "--retries", "-r", help="Number of retries for running tests"),
+    tries: int = typer.Option(2, "--tries", "-r", help="Number of tries for running tests"),
     threads: int = typer.Option(1, "--threads", "-t", help="Number of threads to run in parallel"),
     num_tests: int = typer.Option(-1, "--num-tests", "-n", help="Number of tests to run"),
 ):
@@ -123,7 +123,7 @@ def main(
                 dirname / testname,
                 model,
                 edit_format,
-                retries,
+                tries,
                 no_unit_tests,
                 verbose,
                 commit_hash,
@@ -138,7 +138,7 @@ def main(
                 dirname / testname,
                 model,
                 edit_format,
-                retries,
+                tries,
                 no_unit_tests,
                 verbose,
                 commit_hash,
@@ -158,11 +158,11 @@ def summarize_results(dirname):
 
     completed_tests = 0
     try:
-        retries = max(len(results["tests_outcomes"]) for results in all_results if results)
+        tries = max(len(results["tests_outcomes"]) for results in all_results if results)
     except ValueError:
-        retries = 0
+        tries = 0
 
-    passed_tests = [0] * retries
+    passed_tests = [0] * tries
     duration = 0
     total_cost = 0
     total_error_outputs = 0
@@ -177,7 +177,7 @@ def summarize_results(dirname):
         completed_tests += 1
         passed = results["tests_outcomes"][-1]
         if passed:
-            for i in range(len(results["tests_outcomes"]) - 1, retries):
+            for i in range(len(results["tests_outcomes"]) - 1, tries):
                 passed_tests[i] += 1
 
         total_cost += results["cost"]
@@ -208,7 +208,7 @@ def summarize_results(dirname):
     print("num_user_asks:", total_user_asks)
 
     console.print()
-    for i in range(retries):
+    for i in range(tries):
         pass_rate = 100 * passed_tests[i] / completed_tests
         console.print(f"{pass_rate:.1f}% correct after try {i}")
 
@@ -234,7 +234,7 @@ def summarize_results(dirname):
     console.rule()
 
 
-def run_test(testdir, model_name, edit_format, retries, no_unit_tests, verbose, commit_hash):
+def run_test(testdir, model_name, edit_format, tries, no_unit_tests, verbose, commit_hash):
     if not os.path.isdir(testdir):
         print("Not a dir:", testdir)
         return
@@ -304,7 +304,7 @@ Only use standard python libraries, don't suggest installing any packages.
 
     dur = 0
     test_outcomes = []
-    for i in range(retries):
+    for i in range(tries):
         start = time.time()
         coder.run(with_message=instructions)
         dur += time.time() - start
