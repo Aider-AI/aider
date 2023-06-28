@@ -382,7 +382,7 @@ def run_unit_tests(testdir, history_fname):
             DOCKER_IMAGE,
             "bash",
             "-c",
-            f"pytest /app/{test_file.name}",
+            f"python -m unittest {test_file.name}",
         ]
         print(" ".join(command))
 
@@ -398,8 +398,7 @@ def run_unit_tests(testdir, history_fname):
                 all_tests_passed = False
                 print(f"Test {test_file} failed")
 
-            # remove timing info, to avoid randomizing the response to GPT
-            res = re.sub(r" in \d+\.\d+s", " in 1.0s", result.stdout)
+            res = cleanup_test_output(result.stdout)
 
         except subprocess.TimeoutExpired:
             all_tests_passed = False
@@ -410,6 +409,17 @@ def run_unit_tests(testdir, history_fname):
 
         if not all_tests_passed:
             return res
+
+
+def cleanup_test_output(output):
+    # remove timing info, to avoid randomizing the response to GPT
+    res = re.sub(
+        r"^Ran \d+ tests in \d+\.\d+s$",
+        "",
+        output,
+        flags=re.MULTILINE,
+    )
+    return res
 
 
 def build_docker():
