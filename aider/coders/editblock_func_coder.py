@@ -26,29 +26,23 @@ class EditBlockFunctionCoder(Coder):
                     edits=dict(
                         type="array",
                         items=dict(
-                            parameters=dict(
-                                type="object",
-                                required=["path", "original_lines", "updated_lines"],
-                                properties=dict(
-                                    path=dict(
-                                        type="string",
-                                        description="Path of file to edit",
+                            type="object",
+                            required=["path", "original_lines", "updated_lines"],
+                            properties=dict(
+                                path=dict(
+                                    type="string",
+                                    description="Path of file to edit",
+                                ),
+                                original_lines=dict(
+                                    type="string",
+                                    description=(
+                                        "Lines from the original file, including all"
+                                        " whitespace, newlines, without skipping any lines"
                                     ),
-                                    original_lines=dict(
-                                        type="string",
-                                        description=(
-                                            (
-                                                "Lines from the original file, including all"
-                                                " whitespace, newlines, without skipping any lines"
-                                            ),
-                                        ),
-                                    ),
-                                    updated_lines=dict(
-                                        type="string",
-                                        description=(
-                                            "New content to replace the `original_lines` with"
-                                        ),
-                                    ),
+                                ),
+                                updated_lines=dict(
+                                    type="string",
+                                    description="New content to replace the `original_lines` with",
                                 ),
                             ),
                         ),
