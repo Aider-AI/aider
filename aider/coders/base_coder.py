@@ -569,8 +569,6 @@ class Coder:
         if functions is not None:
             kwargs["functions"] = self.functions
 
-        dump(kwargs)
-
         # Generate SHA1 hash of kwargs and append it to chat_completion_call_hashes
         hash_object = hashlib.sha1(json.dumps(kwargs, sort_keys=True).encode())
         self.chat_completion_call_hashes.append(hash_object.hexdigest())
@@ -604,7 +602,7 @@ class Coder:
                 if args:
                     explanation = args.get("explanation")
                     if explanation:
-                        self.io.ai_output(explanation)
+                        self.io.ai_output(json.dumps(args, indent=4))
 
         return interrupted
 
@@ -939,7 +937,7 @@ class Coder:
             self.apply_update_errors += 1
             if self.apply_update_errors < max_apply_update_errors:
                 self.io.tool_error(f"Update exception #{self.apply_update_errors}, retrying...")
-                return None, err
+                return None, str(err)
             else:
                 self.io.tool_error(f"Update exception #{self.apply_update_errors}, aborting")
                 return False, None

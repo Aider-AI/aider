@@ -64,7 +64,7 @@ class EditBlockFunctionCoder(Coder):
 
         args = self.parse_partial_args()
         res = json.dumps(args, indent=4)
-        return "```\n" + res + "\n```\n"
+        return res
 
     def update_files(self):
         name = self.partial_response_function_call.get("name")
