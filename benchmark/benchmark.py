@@ -86,6 +86,8 @@ def main(
         summarize_results(dirname)
         return
 
+    check_docker()
+
     if clean and dirname.exists():
         print("Cleaning up and replacing", dirname)
         dir_files = set(fn.name for fn in dirname.glob("*"))
@@ -430,6 +432,20 @@ def cleanup_test_output(output):
         flags=re.MULTILINE,
     )
     return res
+
+
+def check_docker():
+    command = [
+        "docker",
+        "run",
+        "-it",
+        "--rm",
+        "--interactive=false",
+        "python:3.8-slim",
+        "/bin/true",
+    ]
+    result = subprocess.run(command, stdout=subprocess.PIPE, text=True)
+    assert not result.returncode, "Can't run: " + " ".join(command)
 
 
 if __name__ == "__main__":
