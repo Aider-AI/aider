@@ -25,10 +25,8 @@ from aider.io import InputOutput
 DOCKER_IMAGE = "aider-pytest"
 
 BENCHMARK_DNAME = Path("tmp.benchmark/.")
-assert BENCHMARK_DNAME.exists() and BENCHMARK_DNAME.is_dir()
 
 ORIGINAL_DNAME = BENCHMARK_DNAME / "practice/."
-assert ORIGINAL_DNAME.exists() and ORIGINAL_DNAME.is_dir()
 
 app = typer.Typer(add_completion=False, pretty_exceptions_enable=False)
 
@@ -54,6 +52,9 @@ def main(
     threads: int = typer.Option(1, "--threads", "-t", help="Number of threads to run in parallel"),
     num_tests: int = typer.Option(-1, "--num-tests", "-n", help="Number of tests to run"),
 ):
+    assert BENCHMARK_DNAME.exists() and BENCHMARK_DNAME.is_dir()
+    assert ORIGINAL_DNAME.exists() and ORIGINAL_DNAME.is_dir()
+
     repo = git.Repo(search_parent_directories=True)
     commit_hash = repo.head.object.hexsha[:7]
     if repo.is_dirty():
@@ -417,6 +418,18 @@ def cleanup_test_output(output):
         r"^Ran \d+ tests in \d+\.\d+s$",
         "",
         output,
+        flags=re.MULTILINE,
+    )
+    res = re.sub(
+        r"^====*$",
+        "====",
+        res,
+        flags=re.MULTILINE,
+    )
+    res = re.sub(
+        r"^----*$",
+        "----",
+        res,
         flags=re.MULTILINE,
     )
     return res
