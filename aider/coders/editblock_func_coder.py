@@ -1,7 +1,4 @@
 import json
-import os
-
-from aider import diffs
 
 from ..dump import dump  # noqa: F401
 from .base_coder import Coder
@@ -42,7 +39,7 @@ class EditBlockFunctionCoder(Coder):
                                     ),
                                     description=(
                                         "Lines from the original file, including all"
-                                        " whitespace, newlines, without skipping any lines"
+                                        " whitespace, without skipping any lines"
                                     ),
                                 ),
                                 updated_lines=dict(
@@ -75,8 +72,6 @@ class EditBlockFunctionCoder(Coder):
                     function_call=self.partial_response_function_call,
                 )
             ]
-
-        dump(self.cur_messages)
 
     def render_incremental_response(self, final=False):
         if self.partial_response_content:
