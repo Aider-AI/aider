@@ -30,7 +30,7 @@ class EditBlockFunctionCoder(Coder):
                                 type="object",
                                 required=["path", "original_lines", "updated_lines"],
                                 properties=dict(
-                                    file_path=dict(
+                                    path=dict(
                                         type="string",
                                         description="Path of file to edit",
                                     ),
@@ -38,7 +38,7 @@ class EditBlockFunctionCoder(Coder):
                                         type="string",
                                         description=(
                                             (
-                                                "Portion of the original file, including all"
+                                                "Lines from the original file, including all"
                                                 " whitespace, newlines, without skipping any lines"
                                             ),
                                         ),
