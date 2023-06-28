@@ -55,7 +55,12 @@ class Coder:
         openai_api_base="https://api.openai.com/v1",
         **kwargs,
     ):
-        from . import EditBlockCoder, WholeFileCoder, WholeFileFunctionCoder
+        from . import (
+            EditBlockCoder,
+            EditBlockFunctionCoder,
+            WholeFileCoder,
+            WholeFileFunctionCoder,
+        )
 
         openai.api_key = openai_api_key
         openai.api_base = openai_api_base
@@ -81,6 +86,8 @@ class Coder:
             return WholeFileCoder(main_model, io, **kwargs)
         elif edit_format == "whole-func":
             return WholeFileFunctionCoder(main_model, io, **kwargs)
+        elif edit_format == "diff-func":
+            return EditBlockFunctionCoder(main_model, io, **kwargs)
         else:
             raise ValueError(f"Unknown edit format {edit_format}")
 
@@ -558,6 +565,8 @@ class Coder:
         )
         if functions is not None:
             kwargs["functions"] = self.functions
+
+        dump(kwargs)
 
         # Generate SHA1 hash of kwargs and append it to chat_completion_call_hashes
         hash_object = hashlib.sha1(json.dumps(kwargs, sort_keys=True).encode())

@@ -21,4 +21,5 @@ NEVER return code outside the `write_file` function.
 
     redacted_edit_message = "No changes are needed."
 
+    # TODO: should this be present for using this with gpt-4?
     repo_content_prefix = None
