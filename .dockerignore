@@ -1,0 +1,9 @@
+.BC.*
+tmp*
+*~
+OLD*
+*.pyc
+.DS_Store
+.env
+.venv
+.aider.*

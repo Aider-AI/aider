@@ -23,9 +23,9 @@ from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 
-BENCHMARK_DNAME = Path("tmp.benchmark/.")
+BENCHMARK_DNAME = Path("/benchmarks")
 
-ORIGINAL_DNAME = BENCHMARK_DNAME / "practice/."
+ORIGINAL_DNAME = BENCHMARK_DNAME / "exercism-python"
 
 app = typer.Typer(add_completion=False, pretty_exceptions_enable=False)
 
@@ -52,8 +52,8 @@ def main(
     threads: int = typer.Option(1, "--threads", "-t", help="Number of threads to run in parallel"),
     num_tests: int = typer.Option(-1, "--num-tests", "-n", help="Number of tests to run"),
 ):
-    assert BENCHMARK_DNAME.exists() and BENCHMARK_DNAME.is_dir()
-    assert ORIGINAL_DNAME.exists() and ORIGINAL_DNAME.is_dir()
+    assert BENCHMARK_DNAME.exists() and BENCHMARK_DNAME.is_dir(), BENCHMARK_DNAME
+    assert ORIGINAL_DNAME.exists() and ORIGINAL_DNAME.is_dir(), ORIGINAL_DNAME
 
     repo = git.Repo(search_parent_directories=True)
     commit_hash = repo.head.object.hexsha[:7]
