@@ -38,8 +38,8 @@ class EditBlockFunctionCoder(Coder):
                                         type="string",
                                     ),
                                     description=(
-                                        "Some lines from the original file, including all"
-                                        " whitespace, without skipping any lines"
+                                        "A unique stretch of lines from the original file,"
+                                        " including all whitespace, without skipping any lines"
                                     ),
                                 ),
                                 updated_lines=dict(
@@ -64,7 +64,7 @@ class EditBlockFunctionCoder(Coder):
             original_lines = dict(
                 type="string",
                 description=(
-                    "Some lines from the original file, including all"
+                    "A unique stretch of lines from the original file, including all"
                     " whitespace and newlines, without skipping any lines"
                 ),
             )
