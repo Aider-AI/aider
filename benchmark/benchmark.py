@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 
 import datetime
-import io
 import json
 import os
 import random
 import re
 import shutil
+import subprocess
 import time
-import unittest
 from collections import defaultdict
 from json.decoder import JSONDecodeError
 from pathlib import Path
@@ -356,24 +355,35 @@ def run_test(
 
 
 def run_unit_tests(testdir, history_fname):
-    suite = unittest.defaultTestLoader.discover(
+    command = [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
         str(testdir),
-        pattern="*_test.py",
-        top_level_dir=str(testdir),
+        "-t",
+        str(testdir),
+        "-p",
+        "*_test.py",
+    ]
+    print(" ".join(command))
+
+    result = subprocess.run(
+        command,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
     )
 
-    stream = io.StringIO()
-    runner = unittest.TextTestRunner(stream=stream)
-    result = runner.run(suite)
-
-    res = stream.getvalue()
-    print(res)
+    res = result.stdout
+    res = cleanup_test_output(res)
 
     with history_fname.open("a") as fh:
         fh.write(f"```\n{res}\n```")
 
-    if not result.wasSuccessful():
-        print(f"Tests in {testdir} failed")
+    if result.returncode != 0:
+        print(f"Tests failed: {testdir}")
         return res
 
 
