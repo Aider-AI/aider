@@ -19,7 +19,7 @@ def quoted_file(fname, display_fname, fence=("```", "```"), number=False):
     return prompt
 
 
-def show_messages(messages, title=None):
+def show_messages(messages, title=None, functions=None):
     if title:
         print(title.upper(), "*" * 50)
 
@@ -32,3 +32,6 @@ def show_messages(messages, title=None):
         content = msg.get("function_call")
         if content:
             print(role, content)
+
+    if functions:
+        dump(functions)

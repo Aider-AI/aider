@@ -38,7 +38,7 @@ class EditBlockFunctionCoder(Coder):
                                         type="string",
                                     ),
                                     description=(
-                                        "Lines from the original file, including all"
+                                        "Some lines from the original file, including all"
                                         " whitespace, without skipping any lines"
                                     ),
                                 ),
@@ -57,7 +57,29 @@ class EditBlockFunctionCoder(Coder):
         ),
     ]
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, code_format, *args, **kwargs):
+        self.code_format = code_format
+
+        if code_format == "string":
+            original_lines = dict(
+                type="string",
+                description=(
+                    "Some lines from the original file, including all"
+                    " whitespace and newlines, without skipping any lines"
+                ),
+            )
+            updated_lines = dict(
+                type="string",
+                description="New content to replace the `original_lines` with",
+            )
+
+            self.functions[0]["parameters"]["properties"]["edits"]["items"]["properties"][
+                "original_lines"
+            ] = original_lines
+            self.functions[0]["parameters"]["properties"]["edits"]["items"]["properties"][
+                "updated_lines"
+            ] = updated_lines
+
         self.gpt_prompts = EditBlockFunctionPrompts()
         super().__init__(*args, **kwargs)
 
@@ -96,8 +118,17 @@ class EditBlockFunctionCoder(Coder):
         edited = set()
         for edit in edits:
             path = get_arg(edit, "path")
-            original = "\n".join(get_arg(edit, "original_lines")) + "\n"
-            updated = "\n".join(get_arg(edit, "updated_lines")) + "\n"
+            original = get_arg(edit, "original_lines")
+            updated = get_arg(edit, "updated_lines")
+
+            if self.code_format == "list":
+                original = "\n".join(original)
+                updated = "\n".join(updated)
+
+            if original and not original.endswith("\n"):
+                original += "\n"
+            if updated and not updated.endswith("\n"):
+                updated += "\n"
 
             full_path = self.allowed_to_edit(path)
             if not full_path:
