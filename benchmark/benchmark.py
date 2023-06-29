@@ -41,6 +41,7 @@ def main(
     clean: bool = typer.Option(
         False, "--clean", "-c", help="Discard the existing testdir and make a clean copy"
     ),
+    cont: bool = typer.Option(False, "--cont", help="Continue the (single) matching testdir"),
     make_new: bool = typer.Option(False, "--new", "-n", help="Make a new dated testdir"),
     no_unit_tests: bool = typer.Option(False, "--no-unit-tests", help="Do not run unit tests"),
     no_aider: bool = typer.Option(False, "--no-aider", help="Do not run aider"),
@@ -52,9 +53,6 @@ def main(
     threads: int = typer.Option(1, "--threads", "-t", help="Number of threads to run in parallel"),
     num_tests: int = typer.Option(-1, "--num-tests", "-n", help="Number of tests to run"),
 ):
-    assert BENCHMARK_DNAME.exists() and BENCHMARK_DNAME.is_dir(), BENCHMARK_DNAME
-    assert ORIGINAL_DNAME.exists() and ORIGINAL_DNAME.is_dir(), ORIGINAL_DNAME
-
     repo = git.Repo(search_parent_directories=True)
     commit_hash = repo.head.object.hexsha[:7]
     if repo.is_dirty():
@@ -64,7 +62,7 @@ def main(
 
     if len(dirname.parts) == 1:
         priors = list(BENCHMARK_DNAME.glob(f"*--{dirname}"))
-        if len(priors) == 1 and stats_only:
+        if len(priors) == 1 and (stats_only or cont):
             dirname = priors[0].name
             print(f"Using pre-existing {dirname}")
         elif len(priors):
@@ -87,6 +85,9 @@ def main(
     if stats_only:
         summarize_results(dirname)
         return
+
+    assert BENCHMARK_DNAME.exists() and BENCHMARK_DNAME.is_dir(), BENCHMARK_DNAME
+    assert ORIGINAL_DNAME.exists() and ORIGINAL_DNAME.is_dir(), ORIGINAL_DNAME
 
     if clean and dirname.exists():
         print("Cleaning up and replacing", dirname)
