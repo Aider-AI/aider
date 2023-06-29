@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 
 import datetime
+import io
 import json
 import os
 import random
 import re
 import shutil
-import subprocess
-import sys
 import time
+import unittest
 from collections import defaultdict
 from json.decoder import JSONDecodeError
 from pathlib import Path
@@ -88,8 +88,6 @@ def main(
     if stats_only:
         summarize_results(dirname)
         return
-
-    check_docker()
 
     if clean and dirname.exists():
         print("Cleaning up and replacing", dirname)
@@ -323,11 +321,7 @@ def run_test(
         if no_unit_tests:
             break
 
-        try:
-            errors = run_unit_tests(testdir, history_fname)
-        except subprocess.TimeoutExpired:
-            errors = f"Tests in {testdir} timed out!"
-            timeout = True
+        errors = run_unit_tests(testdir, history_fname)
 
         if errors:
             test_outcomes.append(False)
@@ -369,44 +363,24 @@ def run_test(
 
 
 def run_unit_tests(testdir, history_fname):
-    test_files = [file for file in testdir.glob("*") if file.name.endswith("_test.py")]
-    assert len(test_files)
+    suite = unittest.defaultTestLoader.discover(
+        str(testdir),
+        pattern="*_test.py",
+        top_level_dir=str(testdir),
+    )
 
-    timeout = 60
-    for test_file in test_files:
-        dump(test_file)
+    stream = io.StringIO()
+    runner = unittest.TextTestRunner(stream=stream)
+    result = runner.run(suite)
 
-        command = [
-            "docker",
-            "run",
-            "-it",
-            "--rm",
-            "--interactive=false",
-            "-v",
-            f"{test_file.parent.absolute()}:/app",
-            "python:3.8-slim",
-            "bash",
-            "-c",
-            f"cd /app && python -m unittest {test_file.name}",
-        ]
-        print(" ".join(command))
+    res = stream.getvalue()
 
-        result = subprocess.run(
-            command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-            timeout=timeout,
-        )
+    with history_fname.open("a") as fh:
+        fh.write(f"```\n{res}\n```")
 
-        res = cleanup_test_output(result.stdout)
-
-        with history_fname.open("a") as fh:
-            fh.write(f"```\n{res}\n```")
-
-        if result.returncode != 0:
-            print(f"Test {test_file} failed")
-            return res
+    if not result.wasSuccessful():
+        print(f"Tests in {testdir} failed")
+        return res
 
 
 def cleanup_test_output(output):
@@ -430,22 +404,6 @@ def cleanup_test_output(output):
         flags=re.MULTILINE,
     )
     return res
-
-
-def check_docker():
-    command = [
-        "docker",
-        "run",
-        "-it",
-        "--rm",
-        "--interactive=false",
-        "python:3.8-slim",
-        "/bin/true",
-    ]
-    result = subprocess.run(command, stdout=subprocess.PIPE, text=True)
-    if result.returncode:
-        print("Can't run: " + " ".join(command))
-        sys.exit(-1)
 
 
 if __name__ == "__main__":
