@@ -6,5 +6,6 @@ docker run \
        -v `pwd`/tmp.benchmarks/.:/benchmarks \
        -e OPENAI_API_KEY=$OPENAI_API_KEY \
        -e HISTFILE=/aider/.bash_history \
+       -e AIDER_DOCKER=1 \
        aider-benchmark \
        bash

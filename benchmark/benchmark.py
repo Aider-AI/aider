@@ -86,6 +86,10 @@ def main(
         summarize_results(dirname)
         return
 
+    if "AIDER_DOCKER" not in os.environ:
+        print("Warning: benchmarking runs unvetted code from GPT, run in a docker container")
+        return
+
     assert BENCHMARK_DNAME.exists() and BENCHMARK_DNAME.is_dir(), BENCHMARK_DNAME
     assert ORIGINAL_DNAME.exists() and ORIGINAL_DNAME.is_dir(), ORIGINAL_DNAME
 
