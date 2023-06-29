@@ -218,7 +218,7 @@ def summarize_results(dirname):
     print("num_user_asks:", total_user_asks)
 
     style = "red" if num_exhausted_context_windows else None
-    print("num_exhausted_context_windows", num_exhausted_context_windows, style=style)
+    console.print("num_exhausted_context_windows", num_exhausted_context_windows, style=style)
 
     style = "red" if total_test_timeouts else None
     console.print("test_timeouts:", total_test_timeouts, style=style)
