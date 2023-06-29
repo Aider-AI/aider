@@ -7,6 +7,7 @@ import random
 import re
 import shutil
 import subprocess
+import sys
 import time
 from collections import defaultdict
 from json.decoder import JSONDecodeError
@@ -43,6 +44,7 @@ def main(
     ),
     make_new: bool = typer.Option(False, "--new", "-n", help="Make a new dated testdir"),
     no_unit_tests: bool = typer.Option(False, "--no-unit-tests", help="Do not run unit tests"),
+    no_aider: bool = typer.Option(False, "--no-aider", help="Do not run aider"),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Verbose output"),
     stats_only: bool = typer.Option(
         False, "--stats", "-s", help="Do not run tests, just collect stats on completed tests"
@@ -125,6 +127,7 @@ def main(
                 edit_format,
                 tries,
                 no_unit_tests,
+                no_aider,
                 verbose,
                 commit_hash,
             )
@@ -140,6 +143,7 @@ def main(
                 edit_format,
                 tries,
                 no_unit_tests,
+                no_aider,
                 verbose,
                 commit_hash,
             )
@@ -234,7 +238,9 @@ def summarize_results(dirname):
     console.rule()
 
 
-def run_test(testdir, model_name, edit_format, tries, no_unit_tests, verbose, commit_hash):
+def run_test(
+    testdir, model_name, edit_format, tries, no_unit_tests, no_aider, verbose, commit_hash
+):
     if not os.path.isdir(testdir):
         print("Not a dir:", testdir)
         return
@@ -301,7 +307,8 @@ def run_test(testdir, model_name, edit_format, tries, no_unit_tests, verbose, co
     test_outcomes = []
     for i in range(tries):
         start = time.time()
-        coder.run(with_message=instructions)
+        if not no_aider:
+            coder.run(with_message=instructions)
         dur += time.time() - start
 
         if coder.num_control_c:
@@ -433,7 +440,9 @@ def check_docker():
         "/bin/true",
     ]
     result = subprocess.run(command, stdout=subprocess.PIPE, text=True)
-    assert not result.returncode, "Can't run: " + " ".join(command)
+    if result.returncode:
+        print("Can't run: " + " ".join(command))
+        sys.exit(-1)
 
 
 if __name__ == "__main__":
