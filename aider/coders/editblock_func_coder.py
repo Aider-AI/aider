@@ -121,8 +121,10 @@ class EditBlockFunctionCoder(Coder):
             original = get_arg(edit, "original_lines")
             updated = get_arg(edit, "updated_lines")
 
-            if self.code_format == "list":
+            # gpt-3.5 returns lists even when instructed to return a string!
+            if self.code_format == "list" or type(original) == list:
                 original = "\n".join(original)
+            if self.code_format == "list" or type(updated) == list:
                 updated = "\n".join(updated)
 
             if original and not original.endswith("\n"):
