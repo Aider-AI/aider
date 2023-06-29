@@ -171,6 +171,7 @@ def summarize_results(dirname):
     total_cost = 0
     total_error_outputs = 0
     total_user_asks = 0
+    total_timeouts = 0
 
     variants = defaultdict(set)
 
@@ -186,6 +187,8 @@ def summarize_results(dirname):
 
         total_cost += results["cost"]
         duration += results["duration"]
+        if results["timeout"]:
+            total_timeouts += 1
 
         total_error_outputs += results.get("num_error_outputs", 0)
         total_user_asks += results.get("num_user_asks", 0)
@@ -210,6 +213,7 @@ def summarize_results(dirname):
         console.print(f"{key}: {val}", style=style)
     print("num_error_outputs:", total_error_outputs)
     print("num_user_asks:", total_user_asks)
+    print("test_timeouts:", total_timeouts)
 
     console.print()
     for i in range(tries):
@@ -314,10 +318,16 @@ def run_test(
         if coder.num_control_c:
             raise KeyboardInterrupt
 
-        if no_unit_tests:
-            return
+        timeout = False
 
-        errors = run_unit_tests(testdir, history_fname)
+        if no_unit_tests:
+            break
+
+        try:
+            errors = run_unit_tests(testdir, history_fname)
+        except subprocess.TimeoutExpired:
+            errors = f"Tests in {testdir} timed out!"
+            timeout = True
 
         if errors:
             test_outcomes.append(False)
@@ -340,6 +350,7 @@ def run_test(
         tests_outcomes=test_outcomes,
         cost=coder.total_cost,
         duration=dur,
+        timeout=timeout,
         commit_hash=commit_hash,
         num_error_outputs=io.num_error_outputs,
         num_user_asks=io.num_user_asks,
@@ -361,7 +372,6 @@ def run_unit_tests(testdir, history_fname):
     test_files = [file for file in testdir.glob("*") if file.name.endswith("_test.py")]
     assert len(test_files)
 
-    all_tests_passed = True
     timeout = 60
     for test_file in test_files:
         dump(test_file)
@@ -381,28 +391,21 @@ def run_unit_tests(testdir, history_fname):
         ]
         print(" ".join(command))
 
-        try:
-            result = subprocess.run(
-                command,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                text=True,
-                timeout=timeout,
-            )
-            if result.returncode != 0:
-                all_tests_passed = False
-                print(f"Test {test_file} failed")
+        result = subprocess.run(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            timeout=timeout,
+        )
 
-            res = cleanup_test_output(result.stdout)
-
-        except subprocess.TimeoutExpired:
-            all_tests_passed = False
-            res = f"Test {test_file} timed out after {timeout} seconds."
+        res = cleanup_test_output(result.stdout)
 
         with history_fname.open("a") as fh:
             fh.write(f"```\n{res}\n```")
 
-        if not all_tests_passed:
+        if result.returncode != 0:
+            print(f"Test {test_file} failed")
             return res
 
 
