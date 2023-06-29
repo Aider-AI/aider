@@ -168,6 +168,7 @@ def summarize_results(dirname):
     total_cost = 0
     total_error_outputs = 0
     total_user_asks = 0
+    total_test_timeouts = 0
 
     variants = defaultdict(set)
 
@@ -183,6 +184,7 @@ def summarize_results(dirname):
 
         total_cost += results["cost"]
         duration += results["duration"]
+        total_test_timeouts += results.get("test_timeouts", 0)
 
         total_error_outputs += results.get("num_error_outputs", 0)
         total_user_asks += results.get("num_user_asks", 0)
@@ -207,6 +209,9 @@ def summarize_results(dirname):
         console.print(f"{key}: {val}", style=style)
     print("num_error_outputs:", total_error_outputs)
     print("num_user_asks:", total_user_asks)
+
+    style = "red" if total_test_timeouts else None
+    console.print("test_timeouts:", total_test_timeouts, style=style)
 
     console.print()
     for i in range(tries):
@@ -300,6 +305,8 @@ def run_test(
         verbose=verbose,
     )
 
+    timeouts = 0
+
     dur = 0
     test_outcomes = []
     for i in range(tries):
@@ -314,7 +321,11 @@ def run_test(
         if no_unit_tests:
             break
 
-        errors = run_unit_tests(testdir, history_fname)
+        try:
+            errors = run_unit_tests(testdir, history_fname)
+        except subprocess.TimeoutExpired:
+            errors = "Tests timed out!"
+            timeouts += 1
 
         if errors:
             test_outcomes.append(False)
@@ -337,6 +348,7 @@ def run_test(
         tests_outcomes=test_outcomes,
         cost=coder.total_cost,
         duration=dur,
+        test_timeouts=timeouts,
         commit_hash=commit_hash,
         num_error_outputs=io.num_error_outputs,
         num_user_asks=io.num_user_asks,
@@ -370,21 +382,18 @@ def run_unit_tests(testdir, history_fname):
     print(" ".join(command))
 
     timeout = 60
-    try:
-        result = subprocess.run(
-            command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-            timeout=timeout,
-        )
-    except subprocess.TimeoutExpired:
-        success = False
-        res = f"Tests timed out after {timeout} secs!"
-    else:
-        success = result.returncode == 0
-        res = result.stdout
-        res = cleanup_test_output(res)
+
+    result = subprocess.run(
+        command,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        timeout=timeout,
+    )
+
+    success = result.returncode == 0
+    res = result.stdout
+    res = cleanup_test_output(res)
 
     with history_fname.open("a") as fh:
         fh.write(f"```\n{res}\n```")
