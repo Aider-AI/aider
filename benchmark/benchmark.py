@@ -14,6 +14,7 @@ from pathlib import Path
 
 import git
 import lox
+import prompts
 import typer
 from rich.console import Console
 
@@ -268,12 +269,7 @@ def run_test(testdir, model_name, edit_format, tries, no_unit_tests, verbose, co
     else:
         instructions = ""
     instructions += (testdir / ".docs/instructions.md").read_text()
-    instructions += f"""
-=====
-Use the above instructions to modify the supplied files: {file_list}
-Keep and implement the existing function or class stubs, they will be called from unit tests.
-Only use standard python libraries, don't suggest installing any packages.
-"""
+    instructions += prompts.instructions_addendum.format(file_list=file_list)
 
     io = InputOutput(
         pretty=True,
@@ -327,14 +323,7 @@ Only use standard python libraries, don't suggest installing any packages.
         errors = errors[:50]
         errors = "\n".join(errors)
         instructions = errors
-        instructions += f"""
-
-####
-
-See the testing errors above.
-The tests are correct.
-Fix the code in {file_list} to resolve the errors.
-"""
+        instructions += prompts.test_failures.format(file_list=file_list)
 
     results = dict(
         testdir=str(testdir),
