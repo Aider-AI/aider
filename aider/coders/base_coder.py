@@ -44,6 +44,7 @@ class Coder:
     repo_map = None
     functions = None
     total_cost = 0.0
+    num_exhausted_context_windows = 0
 
     @classmethod
     def create(
@@ -447,6 +448,7 @@ class Coder:
                 exhausted = True
 
         if exhausted:
+            self.num_exhausted_context_windows += 1
             self.io.tool_error("The chat session is larger than the context window!\n")
             self.commands.cmd_tokens("")
             self.io.tool_error("\nTo reduce token usage:")

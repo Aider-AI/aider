@@ -174,6 +174,7 @@ def summarize_results(dirname):
     total_error_outputs = 0
     total_user_asks = 0
     total_test_timeouts = 0
+    num_exhausted_context_windows = 0
 
     variants = defaultdict(set)
 
@@ -193,6 +194,7 @@ def summarize_results(dirname):
 
         total_error_outputs += results.get("num_error_outputs", 0)
         total_user_asks += results.get("num_user_asks", 0)
+        num_exhausted_context_windows += results.get("num_exhausted_context_windows", 0)
 
         for key in "model edit_format commit_hash".split():
             val = results.get(key)
@@ -214,6 +216,9 @@ def summarize_results(dirname):
         console.print(f"{key}: {val}", style=style)
     print("num_error_outputs:", total_error_outputs)
     print("num_user_asks:", total_user_asks)
+
+    style = "red" if num_exhausted_context_windows else None
+    print("num_exhausted_context_windows", num_exhausted_context_windows, style=style)
 
     style = "red" if total_test_timeouts else None
     console.print("test_timeouts:", total_test_timeouts, style=style)
@@ -352,6 +357,7 @@ def run_test(
         commit_hash=commit_hash,
         num_error_outputs=io.num_error_outputs,
         num_user_asks=io.num_user_asks,
+        num_exhausted_context_windows=coder.num_exhausted_context_windows,
         chat_hashes=list(
             zip(
                 coder.chat_completion_call_hashes,
