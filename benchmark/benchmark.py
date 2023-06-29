@@ -169,7 +169,6 @@ def summarize_results(dirname):
     total_cost = 0
     total_error_outputs = 0
     total_user_asks = 0
-    total_timeouts = 0
 
     variants = defaultdict(set)
 
@@ -185,8 +184,6 @@ def summarize_results(dirname):
 
         total_cost += results["cost"]
         duration += results["duration"]
-        if results["timeout"]:
-            total_timeouts += 1
 
         total_error_outputs += results.get("num_error_outputs", 0)
         total_user_asks += results.get("num_user_asks", 0)
@@ -211,7 +208,6 @@ def summarize_results(dirname):
         console.print(f"{key}: {val}", style=style)
     print("num_error_outputs:", total_error_outputs)
     print("num_user_asks:", total_user_asks)
-    print("test_timeouts:", total_timeouts)
 
     console.print()
     for i in range(tries):
@@ -316,8 +312,6 @@ def run_test(
         if coder.num_control_c:
             raise KeyboardInterrupt
 
-        timeout = False
-
         if no_unit_tests:
             break
 
@@ -344,7 +338,6 @@ def run_test(
         tests_outcomes=test_outcomes,
         cost=coder.total_cost,
         duration=dur,
-        timeout=timeout,
         commit_hash=commit_hash,
         num_error_outputs=io.num_error_outputs,
         num_user_asks=io.num_user_asks,
