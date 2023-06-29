@@ -87,6 +87,8 @@ class Coder:
         elif edit_format == "whole-func":
             return WholeFileFunctionCoder(main_model, io, **kwargs)
         elif edit_format == "diff-func":
+            return EditBlockFunctionCoder("list", main_model, io, **kwargs)
+        elif edit_format == "diff-func-string":
             return EditBlockFunctionCoder("string", main_model, io, **kwargs)
         else:
             raise ValueError(f"Unknown edit format {edit_format}")
