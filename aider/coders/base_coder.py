@@ -655,7 +655,7 @@ class Coder:
         if self.pretty:
             show_resp = Markdown(show_resp, style=self.assistant_output_color, code_theme="default")
         else:
-            show_resp = Text(show_resp)
+            show_resp = Text(show_resp or "<no response>")
 
         self.io.console.print(show_resp)
         self.io.console.print(tokens)
