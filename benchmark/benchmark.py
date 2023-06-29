@@ -374,6 +374,7 @@ def run_unit_tests(testdir, history_fname):
     result = runner.run(suite)
 
     res = stream.getvalue()
+    print(res)
 
     with history_fname.open("a") as fh:
         fh.write(f"```\n{res}\n```")
