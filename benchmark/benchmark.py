@@ -374,23 +374,18 @@ def run_unit_tests(testdir, history_fname):
         ]
         print(" ".join(command))
 
-        try:
-            result = subprocess.run(
-                command,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                text=True,
-                timeout=timeout,
-            )
-            if result.returncode != 0:
+        with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True) as proc:
+            try:
+                stdout, _ = proc.communicate(timeout=timeout)
+                if proc.returncode != 0:
+                    all_tests_passed = False
+                    print(f"Test {test_file} failed")
+                res = cleanup_test_output(stdout)
+            except subprocess.TimeoutExpired:
+                proc.kill()
+                proc.wait()
                 all_tests_passed = False
-                print(f"Test {test_file} failed")
-
-            res = cleanup_test_output(result.stdout)
-
-        except subprocess.TimeoutExpired:
-            all_tests_passed = False
-            res = f"Test {test_file} timed out after {timeout} seconds."
+                res = f"Test {test_file} timed out after {timeout} seconds."
 
         with history_fname.open("a") as fh:
             fh.write(f"```\n{res}\n```")
