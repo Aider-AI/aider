@@ -1,8 +1,8 @@
 
 # GPT code editing benchmarks
 
-Aider is a command line GPT chat tool that lets you ask for features, changes and
-improvements to code in your local git repo.
+Aider is a command line chat tool that lets you ask GPT for features, changes and
+improvements to code in your local git repos.
 I spend a lot of time trying to make aider better at this sort of chat driven AI code editing,
 so that user chat requests are more likely to result in effective changes to their codebase.
 
@@ -103,7 +103,7 @@ without seeing their error output.
 It's worth noting that GPT never gets to see the source code of the unit tests.
 Just the error output from failed tests.
 
-## Editing formats
+## Edit formats
 
 I benchmarked 4 different edit formats,
 described below along with a sample of the response GPT might provide to the user request
