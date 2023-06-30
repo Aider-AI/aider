@@ -48,7 +48,7 @@ You wouldn't expect a good result if you asked a junior developer to
 implement a new feature by hand typing `diff -c` formatted updates to the current code.
 I had hoped that the new function calling API would enable more reliable use of
 structured output formats, but it does not appear to be a panacea
-for code editing.
+when working with source code.
 
 More details on the benchmark, edit formats and results are discussed below.
 
