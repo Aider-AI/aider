@@ -70,7 +70,7 @@ The goal is to read the instructions, implement the provided functions/class ske
 and pass all the unit tests. The benchmark measures what percentage of
 the 133 exercises are completed successfully, with all the associated unit tests passing.
 
-To run the test, aider sends GPT the Exercism instructions followed by:
+To complete an exercise, aider sends GPT the Exercism instructions followed by:
 
 ```
 Use the above instructions to modify the supplied files: {file_list}
@@ -90,7 +90,7 @@ Fix the code in {file_list} to resolve the errors.
 
 GPT gets this second chance to fix the implementation because
 many of the unit tests check for specifics that are not
-clearly called out in the instructions.
+called out in the instructions.
 For example, many tests want to see
 [specific phrases in ValueErrors](https://github.com/exercism/python/blob/f6caa44faa8fb7d0de9a54ddb5c6183e027429c6/exercises/practice/queen-attack/queen_attack_test.py#L31)
 raised by
@@ -190,7 +190,7 @@ format requests original/updated edits to be returned using the function call AP
 }       
 ```
 
-## ChatGPT function calls
+## GPT-3.5 hallucinates function calls?
 
 GPT-3.5 was very prone to ignoring the JSON Schema that specified valid functions,
 and would often return a completely invalid `function_call` fragment with `name="python"`.
