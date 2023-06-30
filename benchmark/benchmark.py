@@ -50,6 +50,8 @@ def show_stats(dirnames):
 
         if row.model == "gpt-3.5-turbo":
             row.model = "gpt-3.5-turbo-0613"
+        if row.edit_format == "diff-func-string":
+            row.edit_format = "diff-func"
 
         if row.completed_tests < 133:
             print(f"Warning: {row.dir_name} is incomplete: {row.completed_tests}")
@@ -69,12 +71,15 @@ def show_stats(dirnames):
     # df_grouped1 = df.groupby(["model", "edit_format"])["pass_rate_1"].mean()
     df_grouped2 = df.groupby(["model", "edit_format"])["pass_rate_2"].mean()
 
-    dump(df_grouped2.unstack())
-
     plt.rcParams["hatch.linewidth"] = 0.5
     plt.rcParams["hatch.color"] = "#444444"
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+    from matplotlib import rc
+
+    rc("font", **{"family": "sans-serif", "sans-serif": ["Helvetica"], "size": 18})
+
+    fig, ax = plt.subplots(figsize=(12, 8))
+    ax.grid(axis="y", zorder=0, lw=0.2)
     """
     colors = ["#007BFF", "#89CFF0", "#008000", "#32CD32"]
     df_grouped2.unstack().plot(
@@ -85,8 +90,7 @@ def show_stats(dirnames):
     """
     df = df_grouped2.unstack()
     num_models, num_formats = df.shape
-    dump(num_models)
-    dump(num_formats)
+
     pos = np.array(range(num_models))
     width = 0.8 / num_formats
 
@@ -94,20 +98,33 @@ def show_stats(dirnames):
     models = df.index
 
     for i, fmt in enumerate(formats):
-        dump(df[fmt])
         color = "#b3e6a8" if "diff" in fmt else "#b3d1e6"
         hatch = "///" if "func" in fmt else ""
-        ax.bar(pos + i * width, df[fmt], width * 0.95, label=fmt, color=color, hatch=hatch)
+        rects = ax.bar(
+            pos + i * width,
+            df[fmt],
+            width * 0.95,
+            label=fmt,
+            color=color,
+            hatch=hatch,
+            zorder=3,
+        )
+        ax.bar_label(rects, padding=2, labels=[f"{v:.0f}%" for v in df[fmt]], size=12)
 
     ax.set_xticks([p + 1.5 * width for p in pos])
-    ax.set_xticklabels(models)
+    ax.set_xticklabels(models, rotation=45)
 
     ax.set_ylabel("Percent of passed unittests")
     # ax.set_xlabel("Model")
     ax.set_title("Code editing success rate by model & edit format")
-    ax.legend(title="Edit Format")
-
+    ax.legend(
+        title="Edit Format",
+        loc="upper left",
+        # bbox_to_anchor=(0.95, 0.95),
+    )
+    ax.set_ylim(top=100)
     plt.tight_layout()
+    plt.savefig("tmp.svg")
     imgcat(fig)
 
     # df.to_csv("tmp.benchmarks.csv")
