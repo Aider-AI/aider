@@ -20,6 +20,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import prompts
 import typer
+from imgcat import imgcat
 from rich.console import Console
 
 from aider import models
@@ -35,14 +36,21 @@ app = typer.Typer(add_completion=False, pretty_exceptions_enable=False)
 
 
 def show_stats(dirnames):
-    rows = []
+    raw_rows = []
     for dirname in dirnames:
         row = summarize_results(dirname)
+        raw_rows.append(row)
+
+    rows = []
+    for row in raw_rows:
         if not row:
             continue
 
         if row.model == "gpt-3.5-turbo":
             row.model = "gpt-3.5-turbo-0613"
+
+        if row.completed_tests < 133:
+            print(f"Warning: {row.dir_name} is incomplete: {row.completed_tests}")
 
         rows.append(vars(row))
 
@@ -50,8 +58,6 @@ def show_stats(dirnames):
     df.sort_values(by=["model", "edit_format"], inplace=True)
 
     df_grouped = df.groupby(["model", "edit_format"])["pass_rate_1"].mean()
-    dump(df_grouped)
-    dump(df_grouped.unstack())
     fig, ax = plt.subplots(figsize=(10, 6))
     df_grouped.unstack().plot(kind="barh", ax=ax)
 
@@ -59,7 +65,8 @@ def show_stats(dirnames):
     ax.set_ylabel("Model")
     ax.set_title("Pass Rate 1 for each Model/Edit Format")
     ax.legend(title="Edit Format")
-    plt.show()
+
+    imgcat(fig)
 
     # df.to_csv("tmp.benchmarks.csv")
 
