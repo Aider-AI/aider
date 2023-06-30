@@ -65,15 +65,15 @@ def show_stats(dirnames):
     df = pd.DataFrame.from_records(rows)
     df.sort_values(by=["model", "edit_format"], inplace=True)
 
-    df_grouped1 = df.groupby(["model", "edit_format"])["pass_rate_1"].mean()
+    # df_grouped1 = df.groupby(["model", "edit_format"])["pass_rate_1"].mean()
     df_grouped2 = df.groupby(["model", "edit_format"])["pass_rate_2"].mean()
 
     fig, ax = plt.subplots(figsize=(10, 6))
     df_grouped2.unstack().plot(kind="barh", ax=ax)
 
-    ax.set_xlabel("Pass Rate 1")
+    ax.set_xlabel("Percent of passed unittests")
     ax.set_ylabel("Model")
-    ax.set_title("Pass Rate 1 for each Model/Edit Format")
+    ax.set_title("Code editing success rate by model & edit format")
     ax.legend(title="Edit Format")
 
     imgcat(fig)
