@@ -8,7 +8,7 @@ so that user chat requests are more likely to result in effective changes to the
 
 Improving code editing involves tweaking and experimenting with 
 the "edit format" that aider uses.
-The edit format specifies how GPT should format code edits in its replies,
+The edit format is a part of the system prompt that specifies how GPT should format code edits in its replies,
 and can range from simply "return an updated copy of the whole file" to
 "use the 
 [function calling API](https://openai.com/blog/function-calling-and-other-api-updates)
