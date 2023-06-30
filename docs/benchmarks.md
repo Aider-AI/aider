@@ -1,7 +1,7 @@
 
 # GPT code editing benchmarks
 
-Aider is a command line chat tool that lets you ask GPT for features, changes and
+Aider is an open source command line chat tool that lets you ask GPT for features, changes and
 improvements to code in your local git repos.
 I spend a lot of time trying to make aider better at this sort of chat driven AI code editing,
 so that user chat requests are more likely to result in effective changes to their codebase.
