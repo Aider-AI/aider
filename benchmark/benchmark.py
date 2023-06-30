@@ -76,6 +76,7 @@ def show_stats(dirnames):
     ax.set_title("Code editing success rate by model & edit format")
     ax.legend(title="Edit Format")
 
+    plt.tight_layout()
     imgcat(fig)
 
     # df.to_csv("tmp.benchmarks.csv")
