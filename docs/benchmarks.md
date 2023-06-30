@@ -35,10 +35,10 @@ I ran the benchmark
 on almost all the ChatGPT models, using a variety of edit formats.
 This produced some interesting observations:
 
-  - Asking GPT to just return an updated copy of the whole file in a normal fenced code block is by far the most reliable edit format. This is true across all gpt-3.5 and gpt-4 models. Keeping the output format dead simple seems to leave GPT with more brain power to devote to the actual coding task. GPT is also less likely to mangle this simple output format.
+  - Asking GPT to just return an updated copy of the whole file in a normal fenced code block is by far the most reliable edit format. This is true across all GPT-3.5 and GPT-4 models. Keeping the output format dead simple seems to leave GPT with more brain power to devote to the actual coding task. GPT is also less likely to mangle this simple output format.
   - Using the new function calling API is worse than the above whole file method, for all models. GPT writes worse code and frequently mangles this output format, even though OpenAI introduced the function calling API to make structured output formatting more reliable. This was a big surprise.
   - The new June (`0613`) versions of `gpt-3.5-turbo` are worse at code editing than the older Feb (`0301`) version. This was unexpected.
-  - The gpt-4 models are much better at code editing than the gpt-3.5 models. This was expected.
+  - The GPT-4 models are much better at code editing than the GPT-3.5 models. This was expected.
 
 These results agree with an intuition that I've been
 developing about how to prompt GPT for complex tasks like coding.
@@ -71,7 +71,8 @@ The goal is to read the instructions, implement the provided functions/class ske
 and pass all the unit tests. The benchmark measures what percentage of
 the 133 exercises are completed successfully, with all the associated unit tests passing.
 
-To complete an exercise, aider sends GPT the Exercism instructions followed by:
+To complete an exercise, aider sends GPT the Exercism instructions
+and initial contents of the implementation file, followed by:
 
 ```
 Use the above instructions to modify the supplied files: {file_list}
@@ -89,7 +90,9 @@ The tests are correct.
 Fix the code in {file_list} to resolve the errors.
 ```
 
-GPT gets this second chance to fix the implementation because
+Editing the implementation in response to test failures is
+another excellent chance to assess how well GPT can perform code editing.
+This second chance is also important because
 many of the unit tests check for specifics that are not
 called out in the instructions.
 For example, many tests want to see
@@ -113,7 +116,9 @@ described below along with a sample of the response GPT might provide to the use
 
 The
 [whole](https://github.com/paul-gauthier/aider/blob/main/aider/coders/wholefile_prompts.py)
-format asks GPT to just return the entire source file with any changes, formatted with normal markdown triple-backtick fences, inlined with the rest of its response text. This is how ChatGPT returns code snippets during normal chats.
+format asks GPT to just return the entire source file with any changes, formatted with normal markdown triple-backtick fences, inlined with the rest of its response text.
+
+This format is very similar to how ChatGPT returns code snippets during normal chats, except with the addition of a filename right before the opening triple backticks.
 
 ````
 Here is the updated copy of your file demo.py:
@@ -164,7 +169,8 @@ The [whole-func](https://github.com/paul-gauthier/aider/blob/main/aider/coders/w
 
 The
 [diff-func](https://github.com/paul-gauthier/aider/blob/main/aider/coders/editblock_func_coder.py)
-format requests original/updated edits to be returned using the function call API.
+format requests a list of possibly multiple 
+original/updated edits to be returned using the function call API.
 
 ```
 {
@@ -197,7 +203,7 @@ and would often return a completely invalid `function_call` fragment with `"name
 
 The `arguments` attribute is supposed to be a set of key/value pairs
 with the arguments to the function specified in the `name` field.
-Instead, gpt-3.5 frequently just stuffed the entire python
+Instead, GPT-3.5 frequently just stuffed the entire python
 program into that field.
 
 It feels like it might be getting confused by fine tuning that was done for ChatGPT plugins?
@@ -236,10 +242,10 @@ contribute to a large variance in the benchmark results.
 ## Conclusions
 
 Based on these benchmarking results, aider will continue to use
-`whole` for gpt-3.5 and `diff` for gpt-4.
-While `gpt-4` gets slightly better results with the `whole` edit format,
+`whole` for GPT-3.5 and `diff` for GPT-4.
+While GPT-4 gets slightly better results with the `whole` edit format,
 it significantly increases costs and latency compared to `diff`.
-Since `gpt-4` is already costly and slow, this seems like an acceptable
+Since GPT-4 is already costly and slow, this seems like an acceptable
 tradeoff.
 
 
