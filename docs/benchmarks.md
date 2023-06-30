@@ -35,7 +35,7 @@ I ran the benchmark
 on almost all the ChatGPT models, using a variety of edit formats.
 This produced some interesting observations:
 
-  - Asking GPT to just return an updated copy of the whole file as a fenced code block within it's normal markdown response is by far the most reliable way to have it edit code. This is true across all gpt-3.5 and gpt-4 models. Keeping the output format dead simple seems to leave GPT with more brain power to devote to the actual coding task. GPT is also less likely to mangle this simple output format.
+  - Asking GPT to just return an updated copy of the whole file in a normal fenced code block is by far the most reliable way to have it edit code. This is true across all gpt-3.5 and gpt-4 models. Keeping the output format dead simple seems to leave GPT with more brain power to devote to the actual coding task. GPT is also less likely to mangle this simple output format.
   - Using the new function calling API is worse than returning whole files in markdown. GPT writes worse code and frequently mangles the output format, even though OpenAI introduced the function calling API to make structured output formatting more reliable. This was a big surprise.
   - The new June (`0613`) versions of `gpt-3.5-turbo` are worse at code editing than the older Feb (`0301`) version. This was unexpected.
   - The gpt-4 models are much better at code editing than the gpt-3.5 models. This was expected.
