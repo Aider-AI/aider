@@ -42,7 +42,7 @@ This produced some interesting observations:
 
 These results agree with an intuition that I've been
 developing about how to prompt GPT for complex tasks like coding.
-You want to minimize the "cognitive load" of formatting the response, so that
+You want to minimize the "cognitive overhead" of formatting the response, so that
 GPT can focus on the task at hand.
 You wouldn't expect a good result if you asked a junior developer to
 implement a new feature by hand typing `diff -c` formatted updates to the current code.
