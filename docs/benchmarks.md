@@ -73,7 +73,9 @@ the 133 exercises are completed successfully, with all the associated unit tests
 To run the test, aider sends GPT the Exercism instructions followed by:
 
 ```
-Use the above instructions to modify the supplied files: {file_list}. Keep and implement the existing function or class stubs, they will be called from unit tests. Only use standard python libraries, don't suggest installing any packages.
+Use the above instructions to modify the supplied files: {file_list}
+Keep and implement the existing function or class stubs, they will be called from unit tests.
+Only use standard python libraries, don't suggest installing any packages.
 ```
 
 Aider updates the implementation file based on GPT's reply and runs the unit tests.
