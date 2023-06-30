@@ -14,11 +14,13 @@ and can range from simply "return the whole file with edits" to
 [function calling API](https://openai.com/blog/function-calling-and-other-api-updates)
 to specify a bunch of specific diffs".
 
+Having a reliable way for GPT to read/modify/write source files is critical to
+efficiently coding with GPT within an existing codebase.
+
 To measure the impact of changes to the edit format,
 I created a code editing benchmark based on the
 [Exercism python](https://github.com/exercism/python)
 coding exercises.
-
 The benchmark measures how well aider & GPT can turn
 a human coding request into
 actual runnable code saved into files that passes unit tests.
@@ -27,11 +29,9 @@ of not just how well GPT can write code, but also how well it
 can package up and format these code changes
 so that aider can save the edits to the
 local source files.
-Having a reliable way for GPT to read/modify/write source files is critical to
-efficiently coding with GPT within an existing codebase.
 
 I ran the benchmark
-across many different versions of the ChatGPT models using a variey of different edit formats.
+on almost all the ChatGPT models using different edit formats.
 This produced some interesting observations:
 
   - Asking GPT to just return an updated copy of the whole file as a fenced code block within it's normal markdown response is by far the most reliable way to have it edit code. This is true across all gpt-3.5 and gpt-4 models. Keeping the output format dead simple seems to leave GPT with more brain power to devote to the actual coding task. GPT is also less likely to mangle this simple output format.
