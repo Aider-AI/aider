@@ -7,7 +7,7 @@ I spend a lot of time trying to make aider better at this sort of chat driven AI
 so that user chat requests are more likely to result in effective changes to their codebase.
 
 Improving code editing involves tweaking and experimenting with 
-the "edit format" part of the system prompt that aider uses.
+the "edit format" that aider uses.
 The edit format specifies how GPT should format code edits in its reply,
 and can range from simply "return an updated copy of the whole file" to
 "use the 
