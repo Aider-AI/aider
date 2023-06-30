@@ -225,7 +225,7 @@ Benchmarking against 133 exercises provides some robustness all by itself, since
 we are measuring the performance across many exercises.
 
 But to get a sense of how much the API variance impacts the benchmark outcomes,
-I ran the all 133 exercises 10 times each
+I ran all 133 exercises 10 times each
 against `gpt-3.5-turbo-0613` with the `whole` edit format.
 You'll see one set of error bars in the graph, which demark
 the range of results across those 10 runs.
