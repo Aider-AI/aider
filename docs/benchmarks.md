@@ -72,7 +72,9 @@ the 133 exercises are completed successfully, with all the associated unit tests
 
 To run the test, aider sends GPT the Exercism instructions followed by:
 
-*Use the above instructions to modify the supplied files: {file_list}. Keep and implement the existing function or class stubs, they will be called from unit tests. Only use standard python libraries, don't suggest installing any packages.*
+```
+Use the above instructions to modify the supplied files: {file_list}. Keep and implement the existing function or class stubs, they will be called from unit tests. Only use standard python libraries, don't suggest installing any packages.
+```
 
 Aider updates the implementation file based on GPT's reply and runs the unit tests.
 If they all pass, we are done. If some tests fail, aider sends
@@ -115,8 +117,8 @@ described below along with a sample of the response GPT might provide to the use
 ### whole
 
 The
-[whole](https://github.com/paul-gauthier/aider/blob/main/aider/coders/wholefile_prompts.py#L17)
-format asks GPT to just return the entire source file with any changes, formatted with normal markdown triple-backtick fences, inlined with the rest of its response text. This is how ChatGPT is used to return small code snippets during normal chats.
+[whole](https://github.com/paul-gauthier/aider/blob/main/aider/coders/wholefile_prompts.py)
+format asks GPT to just return the entire source file with any changes, formatted with normal markdown triple-backtick fences, inlined with the rest of its response text. This is how ChatGPT returns code snippets during normal chats.
 
 ````
 Here is the updated copy of your file demo.py:
@@ -165,8 +167,9 @@ The [whole-func](https://github.com/paul-gauthier/aider/blob/main/aider/coders/w
 
 ### diff-func
 
-The [diff-func](https://github.com/paul-gauthier/aider/blob/main/aider/coders/editblock_func_co
-der.py) format requests original/updated edits to be returned using the function call API.
+The
+[diff-func](https://github.com/paul-gauthier/aider/blob/main/aider/coders/editblock_func_coder.py)
+format requests original/updated edits to be returned using the function call API.
 
 ```
 {
