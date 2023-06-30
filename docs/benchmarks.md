@@ -214,7 +214,7 @@ It feels like it is getting confused with training done for ChatGPT plugins?
 The OpenAI chat APIs are not deterministic, even at `temperature=0`.
 The same identical request will produce multiple distinct responses,
 usually on the order of 3-6 different variations. This feels
-like they are load balancing across a number of different
+like they are load balancing across a number of slightly different
 instances of the model.
 
 For some exercises, some of this variable responses pass the unit tests and other
