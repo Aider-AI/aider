@@ -215,16 +215,16 @@ usually on the order of 3-6 different variations. This feels
 like they are load balancing across a number of different
 instances of the model.
 
-For some exercises, some responses pass the unit tests and other
-responses don't.
+For some exercises, some of this variable responses pass the unit tests and other
+responses do not.
 
 Given that, it would be ideal to run all 133 exercises many times for each
-model + edit format combination and report an average performance.
+model/edit-format combination and report an average performance.
 This would average away the effect of the API variance.
 That would also significantly increase the cost of this sort of benchmarking,
 so I didn't do that.
 
-Running 133 test cases provides some robustness all by itself, since
+Benchmarking against 133 exercises provides some robustness all by itself, since
 we are measuring the performance across many exercises.
 
 But to get a sense of how much the API variance impacts the benchmark outcomes,
