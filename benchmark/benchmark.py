@@ -11,6 +11,7 @@ import time
 from collections import defaultdict
 from json.decoder import JSONDecodeError
 from pathlib import Path
+from typing import List
 
 import git
 import lox
