@@ -59,6 +59,7 @@ class Coder:
         from . import (
             EditBlockCoder,
             EditBlockFunctionCoder,
+            SingleWholeFileFunctionCoder,
             WholeFileCoder,
             WholeFileFunctionCoder,
         )
@@ -87,6 +88,8 @@ class Coder:
             return WholeFileCoder(main_model, io, **kwargs)
         elif edit_format == "whole-func":
             return WholeFileFunctionCoder(main_model, io, **kwargs)
+        elif edit_format == "single-whole-func":
+            return SingleWholeFileFunctionCoder(main_model, io, **kwargs)
         elif edit_format == "diff-func":
             return EditBlockFunctionCoder("list", main_model, io, **kwargs)
         elif edit_format == "diff-func-string":
