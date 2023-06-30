@@ -76,7 +76,7 @@ def show_stats(dirnames):
     df = pd.DataFrame.from_records(rows)
     df.sort_values(by=["model", "edit_format"], inplace=True)
 
-    df_grouped1 = df.groupby(["model", "edit_format"])["pass_rate_1"].mean()
+    # df_grouped1 = df.groupby(["model", "edit_format"])["pass_rate_1"].mean()
     df_grouped2 = df.groupby(["model", "edit_format"])["pass_rate_2"].mean()
 
     plt.rcParams["hatch.linewidth"] = 0.5
@@ -97,7 +97,7 @@ def show_stats(dirnames):
     )
     """
     zorder = 1
-    for grouped in (df_grouped2, df_grouped1):
+    for grouped in (df_grouped2,):  # df_grouped1
         zorder += 1
         df = grouped.unstack()
         num_models, num_formats = df.shape

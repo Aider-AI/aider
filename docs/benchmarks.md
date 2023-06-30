@@ -9,7 +9,7 @@ so that user chat requests are more likely to result in effective changes to the
 Improving code editing involves tweaking and experimenting with 
 the "edit format" part of the system prompt that aider uses.
 The edit format specifies how GPT should format code edits in its reply,
-and can range from simply "return the whole file with edits" to
+and can range from simply "return an updated copy of the whole file" to
 "use the 
 [function calling API](https://openai.com/blog/function-calling-and-other-api-updates)
 to specify a bunch of specific diffs".
@@ -26,12 +26,13 @@ a human coding request into
 actual runnable code saved into files that passes unit tests.
 This is an end-to-end assessment
 of not just how well GPT can write code, but also how well it
-can package up and format these code changes
+can *edit existing code* and
+*package up these code changes*
 so that aider can save the edits to the
 local source files.
 
 I ran the benchmark
-on almost all the ChatGPT models using different edit formats.
+on almost all the ChatGPT models, using a variety of edit formats.
 This produced some interesting observations:
 
   - Asking GPT to just return an updated copy of the whole file as a fenced code block within it's normal markdown response is by far the most reliable way to have it edit code. This is true across all gpt-3.5 and gpt-4 models. Keeping the output format dead simple seems to leave GPT with more brain power to devote to the actual coding task. GPT is also less likely to mangle this simple output format.
@@ -101,14 +102,6 @@ without seeing their error output.
 
 It's worth noting that GPT never gets to see the source code of the unit tests.
 Just the error output from failed tests.
-
-If you look closely at the bar graph of results, you'll see each column is divided
-in two by a small horizontal line. That line marks the percentage of
-exercises that fully passed their tests on the first try, without
-any need to show GPT test error output.
-Again, no human could ever pass 100% of the tests in one try, because
-the unit tests are overly specific about arbitrary things like error
-message text.
 
 ## Editing formats
 
