@@ -1,6 +1,8 @@
 
 # Code editing benchmarks
 
+![benchmark results](../assets/benchmarks.svg)
+
 Aider is a command line GPT chat tool that lets you ask for features, changes and
 improvements to code in your local git repo.
 I spend a lot of time trying to make aider better at this sort of chat driven AI code editing,
