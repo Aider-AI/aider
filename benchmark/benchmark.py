@@ -30,9 +30,34 @@ ORIGINAL_DNAME = BENCHMARK_DNAME / "exercism-python"
 app = typer.Typer(add_completion=False, pretty_exceptions_enable=False)
 
 
+def resolve_dirname(dirname, use_single_prior, make_new):
+    if len(dirname.parts) > 1:
+        return dirname
+
+    priors = list(BENCHMARK_DNAME.glob(f"*--{dirname}"))
+    if len(priors) == 1 and use_single_prior:
+        dirname = priors[0].name
+        print(f"Using pre-existing {dirname}")
+    elif len(priors):
+        if not make_new:
+            print(f"Prior runs of {dirname} exist, use --new or name one explicitly")
+            print()
+            for prior in priors:
+                print(prior)
+            return
+
+    if not re.match(r"\d\d\d\d-\d\d-\d\d-", str(dirname)):
+        now = datetime.datetime.now()
+        now = now.strftime("%Y-%m-%d-%H-%M-%S--")
+        dirname = now + dirname.name
+
+    dirname = BENCHMARK_DNAME / dirname
+    return dirname
+
+
 @app.command()
 def main(
-    dirname: List[str] = typer.Argument(..., help="Directory names"),
+    dirnames: List[str] = typer.Argument(..., help="Directory names"),
     model: str = typer.Option("gpt-3.5-turbo", "--model", "-m", help="Model name"),
     edit_format: str = typer.Option(None, "--edit-format", "-e", help="Edit format"),
     keyword: str = typer.Option(
@@ -58,33 +83,25 @@ def main(
     if repo.is_dirty():
         commit_hash += "-dirty"
 
-    dirname = Path(dirname)
+    if len(dirnames) > 1 and not stats_only:
+        print("Only provide 1 dirname unless running with --stats")
+        return 1
 
-    if len(dirname.parts) == 1:
-        priors = list(BENCHMARK_DNAME.glob(f"*--{dirname}"))
-        if len(priors) == 1 and (stats_only or cont):
-            dirname = priors[0].name
-            print(f"Using pre-existing {dirname}")
-        elif len(priors):
-            if not make_new:
-                print(f"Prior runs of {dirname} exist, use --new or name one explicitly")
-                print()
-                for prior in priors:
-                    print(prior)
-                return
-
-        if not re.match(r"\d\d\d\d-\d\d-\d\d-", str(dirname)):
-            now = datetime.datetime.now()
-            now = now.strftime("%Y-%m-%d-%H-%M-%S--")
-            dirname = now + dirname.name
-
-        dirname = BENCHMARK_DNAME / dirname
-
-    dump(dirname)
+    updated_dirnames = []
+    for dirname in dirnames:
+        dirname = Path(dirname)
+        dirname = resolve_dirname(dirname, stats_only or cont, make_new)
+        if not dirname:
+            return 1
+        updated_dirnames.append(dirname)
 
     if stats_only:
-        summarize_results(dirname)
+        for dirname in updated_dirnames:
+            summarize_results(dirname)
         return
+
+    assert len(updated_dirnames) == 1, updated_dirnames
+    dirname = updated_dirnames[0]
 
     if "AIDER_DOCKER" not in os.environ:
         print("Warning: benchmarking runs unvetted code from GPT, run in a docker container")
