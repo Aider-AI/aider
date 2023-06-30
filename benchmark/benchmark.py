@@ -11,10 +11,12 @@ import time
 from collections import defaultdict
 from json.decoder import JSONDecodeError
 from pathlib import Path
+from types import SimpleNamespace
 from typing import List
 
 import git
 import lox
+import pandas as pd
 import prompts
 import typer
 from rich.console import Console
@@ -29,6 +31,19 @@ BENCHMARK_DNAME = Path(os.environ["AIDER_BENCHMARK_DIR"])
 ORIGINAL_DNAME = BENCHMARK_DNAME / "exercism-python"
 
 app = typer.Typer(add_completion=False, pretty_exceptions_enable=False)
+
+
+def show_stats(dirnames):
+    rows = []
+    for dirname in dirnames:
+        row = summarize_results(dirname)
+        rows.append(vars(row))
+
+    df = pd.DataFrame.from_records(rows)
+
+    print(df)
+
+    df.to_csv("tmp.benchmark.csv")
 
 
 def resolve_dirname(dirname, use_single_prior, make_new):
@@ -97,9 +112,7 @@ def main(
         updated_dirnames.append(dirname)
 
     if stats_only:
-        for dirname in updated_dirnames:
-            summarize_results(dirname)
-        return
+        return show_stats(updated_dirnames)
 
     assert len(updated_dirnames) == 1, updated_dirnames
     dirname = updated_dirnames[0]
@@ -176,23 +189,27 @@ def main(
 
 
 def summarize_results(dirname):
+    res = SimpleNamespace()
     dirname = Path(dirname)
-    total_tests = len(list(dirname.glob("*")))
+    res.total_tests = len(list(dirname.glob("*")))
     all_results = [json.loads(fname.read_text()) for fname in dirname.glob("*/.aider.results.json")]
 
-    completed_tests = 0
     try:
         tries = max(len(results["tests_outcomes"]) for results in all_results if results)
     except ValueError:
         tries = 0
 
+    res.dir_name = str(dirname)
+
     passed_tests = [0] * tries
-    duration = 0
-    total_cost = 0
-    total_error_outputs = 0
-    total_user_asks = 0
-    total_test_timeouts = 0
-    num_exhausted_context_windows = 0
+
+    res.completed_tests = 0
+    res.duration = 0
+    res.cost = 0
+    res.error_outputs = 0
+    res.user_asks = 0
+    res.test_timeouts = 0
+    res.exhausted_context_windows = 0
 
     variants = defaultdict(set)
 
@@ -200,67 +217,72 @@ def summarize_results(dirname):
         if not results:
             continue
 
-        completed_tests += 1
+        res.completed_tests += 1
         passed = results["tests_outcomes"][-1]
         if passed:
             for i in range(len(results["tests_outcomes"]) - 1, tries):
                 passed_tests[i] += 1
 
-        total_cost += results["cost"]
-        duration += results["duration"]
-        total_test_timeouts += results.get("test_timeouts", 0)
+        res.cost += results["cost"]
+        res.duration += results["duration"]
+        res.test_timeouts += results.get("test_timeouts", 0)
 
-        total_error_outputs += results.get("num_error_outputs", 0)
-        total_user_asks += results.get("num_user_asks", 0)
-        num_exhausted_context_windows += results.get("num_exhausted_context_windows", 0)
+        res.error_outputs += results.get("num_error_outputs", 0)
+        res.user_asks += results.get("num_user_asks", 0)
+        res.exhausted_context_windows += results.get("num_exhausted_context_windows", 0)
 
         for key in "model edit_format commit_hash".split():
             val = results.get(key)
             variants[key].add(val)
 
-    if not completed_tests:
+    if not res.completed_tests:
         return
 
     console = Console(highlight=False)
     console.rule(title=str(dirname))
 
-    console.print(f"test-cases: {completed_tests}")
+    console.print(f"test-cases: {res.completed_tests}")
     for key, val in variants.items():
         if len(val) > 1:
             style = "red"
         else:
             style = None
         val = ", ".join(map(str, val))
+        setattr(res, key, val)
         console.print(f"{key}: {val}", style=style)
-    print("num_error_outputs:", total_error_outputs)
-    print("num_user_asks:", total_user_asks)
+    print("num_error_outputs:", res.error_outputs)
+    print("num_user_asks:", res.user_asks)
 
-    style = "red" if num_exhausted_context_windows else None
-    console.print("num_exhausted_context_windows", num_exhausted_context_windows, style=style)
+    style = "red" if res.exhausted_context_windows else None
+    console.print("num_exhausted_context_windows", res.exhausted_context_windows, style=style)
 
-    style = "red" if total_test_timeouts else None
-    console.print("test_timeouts:", total_test_timeouts, style=style)
+    style = "red" if res.test_timeouts else None
+    console.print("test_timeouts:", res.test_timeouts, style=style)
 
     console.print()
     for i in range(tries):
-        pass_rate = 100 * passed_tests[i] / completed_tests
+        pass_rate = 100 * passed_tests[i] / res.completed_tests
         console.print(f"{pass_rate:.1f}% correct after try {i}")
+        setattr(res, f"pass_rate_{i+1}", pass_rate)
 
     console.print()
-    avg_duration = duration / completed_tests
+    res.avg_duration = res.duration / res.completed_tests
 
-    console.print(f"duration: {avg_duration:.1f} sec/test-case")
+    console.print(f"duration: {res.avg_duration:.1f} sec/test-case")
 
-    avg_cost = total_cost / completed_tests
+    res.avg_cost = res.cost / res.completed_tests
 
-    projected_cost = avg_cost * total_tests
+    projected_cost = res.avg_cost * res.total_tests
 
     console.print(
-        f"costs: ${avg_cost:.4f}/test-case, ${total_cost:.2f} total,"
+        f"costs: ${res.avg_cost:.4f}/test-case, ${res.cost:.2f} total,"
         f" ${projected_cost:.2f} projected"
     )
 
     console.rule()
+
+    # print(json.dumps(vars(res), indent=4, sort_keys=True))
+    return res
 
 
 def run_test(
