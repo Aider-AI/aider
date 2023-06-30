@@ -53,6 +53,9 @@ def show_stats(dirnames):
         if row.edit_format == "diff-func-string":
             row.edit_format = "diff-func"
 
+        if "repeat" in row.dir_name:
+            row.edit_format = "-".join(row.dir_name.split("-")[-2:])
+
         if row.completed_tests < 133:
             print(f"Warning: {row.dir_name} is incomplete: {row.completed_tests}")
 
@@ -68,7 +71,7 @@ def show_stats(dirnames):
     df = pd.DataFrame.from_records(rows)
     df.sort_values(by=["model", "edit_format"], inplace=True)
 
-    # df_grouped1 = df.groupby(["model", "edit_format"])["pass_rate_1"].mean()
+    df_grouped1 = df.groupby(["model", "edit_format"])["pass_rate_1"].mean()
     df_grouped2 = df.groupby(["model", "edit_format"])["pass_rate_2"].mean()
 
     plt.rcParams["hatch.linewidth"] = 0.5
@@ -88,28 +91,40 @@ def show_stats(dirnames):
         color= colors,
     )
     """
-    df = df_grouped2.unstack()
-    num_models, num_formats = df.shape
+    zorder = 1
+    for grouped in (df_grouped2, df_grouped1):
+        zorder += 1
+        df = grouped.unstack()
+        num_models, num_formats = df.shape
 
-    pos = np.array(range(num_models))
-    width = 0.8 / num_formats
+        pos = np.array(range(num_models))
+        width = 0.8 / num_formats
 
-    formats = df.columns
-    models = df.index
+        formats = df.columns
+        models = df.index
 
-    for i, fmt in enumerate(formats):
-        color = "#b3e6a8" if "diff" in fmt else "#b3d1e6"
-        hatch = "///" if "func" in fmt else ""
-        rects = ax.bar(
-            pos + i * width,
-            df[fmt],
-            width * 0.95,
-            label=fmt,
-            color=color,
-            hatch=hatch,
-            zorder=3,
-        )
-        ax.bar_label(rects, padding=2, labels=[f"{v:.0f}%" for v in df[fmt]], size=12)
+        for i, fmt in enumerate(formats):
+            if zorder:
+                edge = dict(
+                    edgecolor="#444444",
+                    linewidth=0.25,
+                )
+            if zorder == 2:
+                edge["label"] = fmt
+
+            color = "#b3e6a8" if "diff" in fmt else "#b3d1e6"
+            hatch = "///" if "func" in fmt else ""
+            rects = ax.bar(
+                pos + i * width,
+                df[fmt],
+                width * 0.90,
+                color=color,
+                hatch=hatch,
+                zorder=zorder,
+                **edge,
+            )
+            if zorder == 2:
+                ax.bar_label(rects, padding=2, labels=[f"{v:.0f}%" for v in df[fmt]], size=12)
 
     ax.set_xticks([p + 1.5 * width for p in pos])
     ax.set_xticklabels(models, rotation=45)
