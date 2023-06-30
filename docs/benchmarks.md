@@ -13,7 +13,7 @@ coding exercises
 to measure the impact of changes to aider.
 I am especially interested in assessing changes to the "edit format", which is:
 
-  - The *system prompt* that aider sends along with user requests, which specifies how GPT should format the code edits in its reply (as json data, fenced markdown, function_calls, etc). 
+  - The *system prompt* that aider sends along with user requests, which specifies how GPT should format the code edits in its reply (as json data, fenced markdown, functions, etc). 
   - The *editing backend* in aider which processes code edits found in GPT replies and applies
 them to the local source files. This includes the not uncommon case where GPT ignores the system prompt and returns poorly formatted replies.
 
@@ -32,7 +32,7 @@ across many different ChatGPT models using a variey of different edit formats.
 This produced somem interesting observations, some of which were surprising:
 
   - Asking GPT to just return the whole file (including changes) as a fenced code block within it's normal markdown response is by far the most reliable way to have it edit code. This is true across all gpt-3.5 and gpt-4 models. Keeping the output format dead simple seems to leave GPT with more brain power to devote to the actual coding task. It is also less likely to mangle this simple output format.
-  - Using the new `function_call` API is worse than returning whole files in markdown. GPT writes worse code and frequently mangles the output format, even though OpenAI introduced the `function_call` API to make structured output formatting more reliable. This was a big surprise.
+  - Using the new `function` API is worse than returning whole files in markdown. GPT writes worse code and frequently mangles the output format, even though OpenAI introduced the `function` API to make structured output formatting more reliable. This was a big surprise.
   - The new June (`0613`) versions of `gpt-3.5-turbo` are worse at code editing than the older Feb (`0301`) version. This was unexpected.
   - The gpt-4 models are much better at code editing than the gpt-3.5 models. This was expected, based on my hands on experience using aider to edit code with both models.
 
@@ -42,7 +42,7 @@ You want to minimize the "cognitive load" of formatting the response, so that
 GPT can focus on the task at hand.
 You wouldn't expect a good result if you asked a junior developer to
 implement a new feature by hand typing `diff -c` syntax diffs against the current code.
-I had hoped that the new `function_call` API would enable more reliable use of
+I had hoped that the new `function` API would enable more reliable use of
 structured output formats, but it does not appear to be a panacea
 for the code editing task.
 
@@ -101,21 +101,140 @@ Again, no human could ever pass 100% of the tests in one try, because
 the unit tests are overly specific about arbitrary things like error
 message text.
 
-# Editing formats
+## Editing formats
 
-I benchmarked 4 different edit formats:
+I benchmarked 4 different edit formats,
+described below along with a sample of the response GPT might provide to the user request
+"Change the print from hello to goodbye".
 
-  - [whole](https://github.com/paul-gauthier/aider/blob/main/aider/coders/wholefile_prompts.py#L17) which asks GPT to just return the entire source file with any changes, formatted with normal markdown triple-backtick fences, inlined with the rest of its response text. This is how ChatGPT is used to return small code snippets during normal chats.
-  - [diff](https://github.com/paul-gauthier/aider/blob/main/aider/coders/editblock_prompts.py) which asks GPT to return edits in a simple diff format. Each edit is a block of original and updated code, where GPT provides some original lines from the file and then a new replacement set of lines.
-  - [whole-func](https://github.com/paul-gauthier/aider/blob/main/aider/coders/wholefile_func_coder.py) which requests whole files to be returned using the function call API.
-  - [diff-func](https://github.com/paul-gauthier/aider/blob/main/aider/coders/editblock_func_coder.py) which requests original/updated edits to be returned using the function call API.
+### whole
+
+The
+[whole](https://github.com/paul-gauthier/aider/blob/main/aider/coders/wholefile_prompts.py#L17)
+format asks GPT to just return the entire source file with any changes, formatted with normal markdown triple-backtick fences, inlined with the rest of its response text. This is how ChatGPT is used to return small code snippets during normal chats.
+
+````
+Here is the updated copy of your file demo.py:
+
+demo.py
+```python
+def main():
+    print("goodbye")
+```
+````
+
+### diff
+
+The [diff](https://github.com/paul-gauthier/aider/blob/main/aider/coders/editblock_prompts.py)
+format asks GPT to return edits in a simple diff format.
+Each edit is a block of original and updated code, where GPT provides some original lines from the file and then a new replacement set of lines.
+
+````
+Here are the changes you requested to demo.py:
+
+```python
+demo.py
+<<<<<<< ORIGINAL
+    print("hello")
+=======
+    print("goodbye")
+>>>>>>> UPDATED
+```
+````
+
+### whole-func
+
+The [whole-func](https://github.com/paul-gauthier/aider/blob/main/aider/coders/wholefile_func_coder.py) format requests whole files to be returned using the function call API.
 
 
-# ChatGPT function calls
+```
+{
+    "explanation": "Changed hello to goodbye.",
+    "files": [
+        {
+            "path": "demo.py",
+            "content": "def main():\n    print(\"goodbye\")\n"
+        }
+}
+```
 
-# Limitations
+### diff-func
 
-# Conclusions
+The [diff-func](https://github.com/paul-gauthier/aider/blob/main/aider/coders/editblock_func_co
+der.py) format requests original/updated edits to be returned using the function call API.
 
-Aider uses `whole` for gpt-3.5 and `diff` for gpt-4.
+```
+{
+    "explanation": "Changed hello to goodbye.",
+    "edits": [
+        {
+            "path": "demo.py",
+            "original_lines": [
+                "    print(\"hello\")"
+            ],
+            "updated_lines": [
+                "    print(\"goodbye\")"
+            ],
+        }
+    ]
+}       
+```
+
+## ChatGPT function calls
+
+GPT-3.5 was very prone to ignoring the JSON Schema that specified valid functions,
+and would often return a completely invalid `function_call` fragment with `name="python"`.
+
+```
+        "function_call": {
+          "name": "python",
+          "arguments": "def main():\n    print(\"hello\")\n"
+        },
+```
+
+The `arguments` attribute is supposed to be a set of key/value pairs
+with the arguments to the function specified in the `name` field.
+Instead, gpt-3.5 frequently just stuffed the entire python
+program into that field.
+
+It feels like it is getting confused with training done for ChatGPT plugins?
+
+## Limitations
+
+The OpenAI chat APIs are not deterministic, even at `temperature=0`.
+The same identical request will produce multiple distinct responses,
+usually on the order of 3-6 different variations. This feels
+like they are load balancing across a number of different
+instances of the model.
+
+For some exercises, some responses pass the unit tests and other
+responses don't.
+
+Given that, it would be ideal to run all 133 exercises many times for each
+model + edit format combination and report an average performance.
+This would average away the effect of the API variance.
+That would also significantly increase the cost of this sort of benchmarking,
+so I didn't do that.
+
+Running 133 test cases provides some robustness all by itself, since
+we are measuring the performance across many exercises.
+
+But to get a sense of how much the API variance impacts the benchmark outcomes,
+I ran the `gpt-3.5-turbo-0613 + whole` experiment 10 times.
+You'll see one set of error bars in the graph, which demark
+the range of results across those 10 runs.
+
+The OpenAI API variance doesn't seem to
+contribute to a large variance in the benchmark results.
+
+## Conclusions
+
+Based on these benchmarking results, aider will continue to usea
+`whole` for gpt-3.5 and `diff` for gpt-4.
+While `gpt-4` gets slightly better results with the `whole` edit format,
+it significantly increases costs and latency compared to `diff`.
+Since `gpt-4` is already costly and slow, this seems like an acceptable
+tradeoff.
+
+
 

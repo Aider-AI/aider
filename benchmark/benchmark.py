@@ -42,6 +42,7 @@ def show_stats(dirnames):
         row = summarize_results(dirname)
         raw_rows.append(row)
 
+    repeats = []
     seen = dict()
     rows = []
     for row in raw_rows:
@@ -53,11 +54,12 @@ def show_stats(dirnames):
         if row.edit_format == "diff-func-string":
             row.edit_format = "diff-func"
 
-        if "repeat" in row.dir_name:
-            row.edit_format = "-".join(row.dir_name.split("-")[-2:])
-
         if row.completed_tests < 133:
             print(f"Warning: {row.dir_name} is incomplete: {row.completed_tests}")
+
+        if "repeat" in row.dir_name:
+            repeats.append(vars(row))
+            continue
 
         kind = (row.model, row.edit_format)
         if kind in seen:
@@ -65,8 +67,11 @@ def show_stats(dirnames):
             dump(seen[kind])
             return
         seen[kind] = row.dir_name
-
         rows.append(vars(row))
+
+    repeats = pd.DataFrame.from_records(repeats)
+    repeat_max = repeats["pass_rate_2"].max()
+    repeat_min = repeats["pass_rate_2"].min()
 
     df = pd.DataFrame.from_records(rows)
     df.sort_values(by=["model", "edit_format"], inplace=True)
@@ -117,19 +122,23 @@ def show_stats(dirnames):
             rects = ax.bar(
                 pos + i * width,
                 df[fmt],
-                width * 0.90,
+                width * 0.95,
                 color=color,
                 hatch=hatch,
                 zorder=zorder,
                 **edge,
             )
             if zorder == 2:
-                ax.bar_label(rects, padding=2, labels=[f"{v:.0f}%" for v in df[fmt]], size=12)
+                ax.bar_label(rects, padding=8, labels=[f"{v:.0f}%" for v in df[fmt]], size=11)
+
+    lo = 44 - repeat_min
+    hi = repeat_max - 44
+    ax.errorbar(1.4, 44, yerr=[[lo], [hi]], fmt="none", zorder=5, capsize=5)
 
     ax.set_xticks([p + 1.5 * width for p in pos])
     ax.set_xticklabels(models, rotation=45)
 
-    ax.set_ylabel("Percent of passed unittests")
+    ax.set_ylabel("Percent of exercises with\nall unittests passing")
     # ax.set_xlabel("Model")
     ax.set_title("Code editing success rate by model & edit format")
     ax.legend(
