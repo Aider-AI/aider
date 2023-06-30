@@ -37,17 +37,17 @@ This produced some interesting observations:
   - Asking GPT to just return an updated copy of the whole file as a fenced code block within it's normal markdown response is by far the most reliable way to have it edit code. This is true across all gpt-3.5 and gpt-4 models. Keeping the output format dead simple seems to leave GPT with more brain power to devote to the actual coding task. GPT is also less likely to mangle this simple output format.
   - Using the new function calling API is worse than returning whole files in markdown. GPT writes worse code and frequently mangles the output format, even though OpenAI introduced the function calling API to make structured output formatting more reliable. This was a big surprise.
   - The new June (`0613`) versions of `gpt-3.5-turbo` are worse at code editing than the older Feb (`0301`) version. This was unexpected.
-  - The gpt-4 models are much better at code editing than the gpt-3.5 models. This was expected, based on my hands on experience using aider to edit code with both models.
+  - The gpt-4 models are much better at code editing than the gpt-3.5 models. This was expected.
 
-These results agree with a key intuition that I've been
+These results agree with an intuition that I've been
 developing about how to prompt GPT for complex tasks like coding.
 You want to minimize the "cognitive load" of formatting the response, so that
 GPT can focus on the task at hand.
 You wouldn't expect a good result if you asked a junior developer to
-implement a new feature by hand typing `diff -c` syntax diffs against the current code.
+implement a new feature by hand typing diffs against the current code in `diff -c` format.
 I had hoped that the new function calling API would enable more reliable use of
 structured output formats, but it does not appear to be a panacea
-for the code editing task.
+for code editing.
 
 More details on the benchmark, edit formats and results are discussed below.
 
@@ -63,26 +63,26 @@ their python coding skills.
 Each exercise has:
 
   - Some brief instructions, in a markdown file.
-  - The implementation file, which is a python file with a bare function or class that needs to be coded up.
+  - A python implementation file, with a bare function or class that needs to be coded up.
   - Unit tests, contained in another python file.
 
-The goal is to read the instructions, implement the functions/classes provided
+The goal is to read the instructions, implement the provided functions/class skeletons
 and pass all the unit tests. The benchmark measures what percentage of
 the 133 exercises are completed successfully, with all the associated unit tests passing.
 
 To run the test, aider sends GPT the Exercism instructions followed by:
 
-> Use the above instructions to modify the supplied files: {file_list}
-> Keep and implement the existing function or class stubs, they will be called from unit tests.
-> Only use standard python libraries, don't suggest installing any packages.
+*Use the above instructions to modify the supplied files: {file_list}. Keep and implement the existing function or class stubs, they will be called from unit tests. Only use standard python libraries, don't suggest installing any packages.*
 
 Aider updates the implementation file based on GPT's reply and runs the unit tests.
 If they all pass, we are done. If some tests fail, aider sends
 the first 50 lines of test error output as a second message in the chat followed by:
 
-> See the testing errors above.
-> The tests are correct.
-> Fix the code in {file_list} to resolve the errors.
+```
+See the testing errors above.
+The tests are correct.
+Fix the code in {file_list} to resolve the errors.
+```
 
 GPT gets this second chance to fix the implementation because
 many of the unit tests check for specifics that are not
