@@ -56,8 +56,8 @@ More details on the benchmark, edit formats and results are discussed below.
 
 ## The benchmark
 
-The benchmark uses the 133
-[practice exercises from the Exercism python repository](https://github.com/exercism/python/tree/main/exercises/practice).
+The benchmark uses 
+[133 practice exercises from the Exercism python repository](https://github.com/exercism/python/tree/main/exercises/practice).
 They were designed for people to learn and practice
 their python coding skills.
 
@@ -186,7 +186,7 @@ format requests original/updated edits to be returned using the function call AP
 ## GPT-3.5 hallucinates function calls?
 
 GPT-3.5 was very prone to ignoring the JSON Schema that specified valid functions,
-and would often return a completely invalid `function_call` fragment with `name="python"`.
+and would often return a completely invalid `function_call` fragment with `"name": "python"`.
 
 ```
         "function_call": {
@@ -200,7 +200,7 @@ with the arguments to the function specified in the `name` field.
 Instead, gpt-3.5 frequently just stuffed the entire python
 program into that field.
 
-It feels like it is getting confused with training done for ChatGPT plugins?
+It feels like it might be getting confused by fine tuning that was done for ChatGPT plugins?
 
 ## Limitations
 
@@ -211,8 +211,9 @@ like they are load balancing across a number of slightly different
 instances of the model.
 
 For some exercises, some of these variable responses pass the unit tests while
-other variants do not. Whether the exercises passes is therefore
-a bit random, depending on which variant OpenAI returns.
+other variants do not. Results for exercises like this which are
+"on the bubble" 
+are therefore a bit random, depending on which variant OpenAI returns.
 
 Given that, it would be ideal to run all 133 exercises many times for each
 model/edit-format combination and report an average performance.
@@ -224,7 +225,8 @@ Benchmarking against 133 exercises provides some robustness all by itself, since
 we are measuring the performance across many exercises.
 
 But to get a sense of how much the API variance impacts the benchmark outcomes,
-I ran the `gpt-3.5-turbo-0613 / whole` experiment 10 times.
+I ran the all 133 exercises 10 times each
+against `gpt-3.5-turbo-0613` with the `whole` edit format.
 You'll see one set of error bars in the graph, which demark
 the range of results across those 10 runs.
 
