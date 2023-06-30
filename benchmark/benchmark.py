@@ -32,7 +32,7 @@ app = typer.Typer(add_completion=False, pretty_exceptions_enable=False)
 
 @app.command()
 def main(
-    dirname: str = typer.Argument(..., help="Directory name"),
+    dirname: List[str] = typer.Argument(..., help="Directory names"),
     model: str = typer.Option("gpt-3.5-turbo", "--model", "-m", help="Model name"),
     edit_format: str = typer.Option(None, "--edit-format", "-e", help="Edit format"),
     keyword: str = typer.Option(
