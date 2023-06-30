@@ -15,7 +15,7 @@ and can range from simply "return an updated copy of the whole file" to
 to specify a bunch of specific diffs".
 
 Having a reliable way for GPT to read/modify/write source files is critical to
-using GPT to code within an existing codebase.
+using GPT to edit code within an existing codebase.
 
 To measure the impact of changes to the edit format,
 I created a code editing benchmark based on the
