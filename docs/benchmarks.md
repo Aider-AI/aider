@@ -45,7 +45,7 @@ developing about how to prompt GPT for complex tasks like coding.
 You want to minimize the "cognitive load" of formatting the response, so that
 GPT can focus on the task at hand.
 You wouldn't expect a good result if you asked a junior developer to
-implement a new feature by hand typing diffs against the current code in `diff -c` format.
+implement a new feature by hand typing `diffs -c` updates to the current code.
 I had hoped that the new function calling API would enable more reliable use of
 structured output formats, but it does not appear to be a panacea
 for code editing.
