@@ -217,20 +217,21 @@ usually on the order of 3-6 different variations. This feels
 like they are load balancing across a number of slightly different
 instances of the model.
 
-For some exercises, some of this variable responses pass the unit tests and other
-responses do not.
+For some exercises, some of these variable responses pass the unit tests while
+other variants do not. Whether the exercises passes is therefore
+a bit random, depending on which variant OpenAI returns.
 
 Given that, it would be ideal to run all 133 exercises many times for each
 model/edit-format combination and report an average performance.
 This would average away the effect of the API variance.
-That would also significantly increase the cost of this sort of benchmarking,
+It would also significantly increase the cost of this sort of benchmarking,
 so I didn't do that.
 
 Benchmarking against 133 exercises provides some robustness all by itself, since
 we are measuring the performance across many exercises.
 
 But to get a sense of how much the API variance impacts the benchmark outcomes,
-I ran the `gpt-3.5-turbo-0613 + whole` experiment 10 times.
+I ran the `gpt-3.5-turbo-0613 / whole` experiment 10 times.
 You'll see one set of error bars in the graph, which demark
 the range of results across those 10 runs.
 
@@ -239,12 +240,11 @@ contribute to a large variance in the benchmark results.
 
 ## Conclusions
 
-Based on these benchmarking results, aider will continue to usea
+Based on these benchmarking results, aider will continue to use
 `whole` for gpt-3.5 and `diff` for gpt-4.
 While `gpt-4` gets slightly better results with the `whole` edit format,
 it significantly increases costs and latency compared to `diff`.
 Since `gpt-4` is already costly and slow, this seems like an acceptable
 tradeoff.
-
 
 
