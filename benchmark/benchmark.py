@@ -84,9 +84,9 @@ def show_stats(dirnames):
 
     from matplotlib import rc
 
-    rc("font", **{"family": "sans-serif", "sans-serif": ["Helvetica"], "size": 18})
+    rc("font", **{"family": "sans-serif", "sans-serif": ["Helvetica"], "size": 22})
 
-    fig, ax = plt.subplots(figsize=(12, 8))
+    fig, ax = plt.subplots(figsize=(12, 10))
     ax.grid(axis="y", zorder=0, lw=0.2)
     """
     colors = ["#007BFF", "#89CFF0", "#008000", "#32CD32"]
