@@ -298,6 +298,8 @@ def main(
     print()
     summarize_results(dirname)
 
+    return 0
+
 
 def summarize_results(dirname):
     res = SimpleNamespace()
