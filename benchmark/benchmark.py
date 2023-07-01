@@ -99,10 +99,10 @@ def show_stats(dirnames):
         models = df.index
 
         for i, fmt in enumerate(formats):
-            if zorder:
+            if zorder > 1:
                 edge = dict(
                     edgecolor="#eeeeee",
-                    linewidth=0.25,
+                    linewidth=2,
                 )
             else:
                 edge = dict()
@@ -135,15 +135,31 @@ def show_stats(dirnames):
     ax.set_xticks([p + 1.5 * width for p in pos])
     ax.set_xticklabels(models, rotation=45)
 
+    ax.annotate(
+        "First coding\nattempt",
+        xy=(2.9, 50),
+        xytext=(2.25, 88),
+        horizontalalignment="center",
+        arrowprops={"arrowstyle": "->", "connectionstyle": "arc3,rad=0.3"},
+    )
+    ax.annotate(
+        "Second attempt,\nafter seeing\nunittest errors",
+        xy=(3.1, 68),
+        xytext=(4.25, 80),
+        horizontalalignment="center",
+        arrowprops={"arrowstyle": "->", "connectionstyle": "arc3,rad=0.3"},
+    )
+
     ax.set_ylabel("Percent of exercises with\nall unittests passing")
     # ax.set_xlabel("Model")
-    ax.set_title("Code editing success rate by model & edit format")
+    ax.set_title("Code Editing Success")
     ax.legend(
         title="Edit Format",
         loc="upper left",
         # bbox_to_anchor=(0.95, 0.95),
     )
     ax.set_ylim(top=100)
+
     plt.tight_layout()
     plt.savefig("tmp.svg")
     imgcat(fig)
