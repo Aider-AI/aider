@@ -3,13 +3,15 @@
 
 ![benchmark results](../assets/benchmarks.svg)
 
-Aider is an open source command line chat tool that lets you ask GPT for features, changes and
-improvements to code in your local git repos.
+Aider is an open source command line chat tool that lets you ask GPT to edit
+code in your local git repos.
+You can use aider to ask GPT to add features, write tests or make other changes and
+improvements to your code.
 
-Having a reliable way for GPT to read/modify/write source files is critical to
-using GPT to edit code within an existing codebase.
+Having a reliable way for GPT to read/modify/write
+local source code files is a critical component of this functionality.
 Making code editing more reliable often
-involves tweaking and experimenting with 
+involves changing and experimenting with 
 the "edit format" that aider uses.
 The edit format is a key part of the system prompt,
 specifying how GPT should format code edits in its replies.
@@ -30,11 +32,11 @@ actual runnable code saved into files that pass unit tests.
 This is an end-to-end assessment
 of not just how well GPT can write code, but also how well it
 can *edit existing code* and
-*package up these code changes*
+*package up those code changes*
 so that aider can save the edits to the
 local source files.
 
-I ran the code editing benchmark
+I ran this code editing benchmark
 on almost all the ChatGPT models, using a variety of edit formats.
 This produced some interesting results:
 
@@ -47,8 +49,9 @@ The quantitative benchmark results agree with an intuition that I've been
 developing about how to prompt GPT for complex tasks like coding.
 You want to minimize the "cognitive overhead" of formatting the response, so that
 GPT can focus on the task at hand.
-For example, you wouldn't expect a good result if you asked a junior developer to
-implement a new feature by hand typing `diff -c` formatted updates to the current code.
+As an analogy, you wouldn't expect a good result if you asked a junior developer to
+implement a new feature by hand typing the required code
+changes as `diff -c` formatted updates.
 
 Using more complex output formats seem to cause two problems:
 
@@ -66,7 +69,7 @@ More details on the benchmark, edit formats and results are discussed below.
 
 The benchmark uses 
 [133 practice exercises from the Exercism python repository](https://github.com/exercism/python/tree/main/exercises/practice).
-They were designed for people to learn python and practice
+These exercises were designed for people to learn python and practice
 their coding skills.
 
 Each exercise has:
@@ -77,7 +80,7 @@ Each exercise has:
 
 The goal is for GPT to read the instructions, implement the provided functions/class skeletons
 and pass all the unit tests. The benchmark measures what percentage of
-the 133 exercises are completed successfully, which means all the associated unit tests passed.
+the 133 exercises are completed successfully, causing all the associated unit tests to pass.
 
 To complete an exercise, aider sends GPT
 the initial contents of the implementation file,
@@ -92,10 +95,10 @@ Only use standard python libraries, don't suggest installing any packages.
 
 Aider updates the implementation file based on GPT's reply and runs the unit tests.
 If they all pass, we are done. If some tests fail, aider sends
-a second message with the test error output.
+GPT a second message with the test error output.
 It only sends the first 50 lines of test errors, to avoid exhausting the context
 window of the smaller models.
-It also includes this final instruction:
+Aider also includes this final instruction:
 
 ```
 See the testing errors above.
@@ -134,7 +137,7 @@ format asks GPT to return an updated copy of the entire file, including any chan
 The file should be
 formatted with normal markdown triple-backtick fences, inlined with the rest of its response text.
 
-This format is very similar to how ChatGPT returns code snippets during normal chats, except with the addition of a filename right before the opening triple backticks.
+This format is very similar to how ChatGPT returns code snippets during normal chats, except with the addition of a filename right before the opening triple-backticks.
 
 ````
 Here is the updated copy of your file demo.py:
@@ -212,7 +215,7 @@ original/updated style edits to be returned using the function call API.
 ## GPT-3.5 hallucinates function calls
 
 GPT-3.5 is prone to ignoring the JSON Schema that specifies valid functions,
-and often returns a completely novel and syntactically
+and often returns a completely novel and semantically
 invalid `function_call` fragment with `"name": "python"`.
 
 ```
@@ -257,8 +260,8 @@ are therefore a bit random, depending on which variant OpenAI returns.
 Given that, it would be ideal to run all 133 exercises many times for each
 model/edit-format combination and report an average performance.
 This would average away the effect of the API variance.
-It would also significantly increase the cost of this sort of benchmarking,
-so I didn't do that.
+It would also significantly increase the cost of this sort of benchmarking.
+So I didn't do that.
 
 Benchmarking against 133 exercises provides some robustness all by itself, since
 we are measuring the performance across many exercises.
@@ -266,8 +269,8 @@ we are measuring the performance across many exercises.
 But to get a sense of how much the API variance impacts the benchmark outcomes,
 I ran all 133 exercises 10 times each
 against `gpt-3.5-turbo-0613` with the `whole` edit format.
-You'll see one set of error bars in the graph, which demark
-the range of results across those 10 runs.
+You'll see one set of error bars in the graph, which show
+the range of results from those 10 runs.
 
 The OpenAI API randomness doesn't seem to
 cause a large variance in the benchmark results.
