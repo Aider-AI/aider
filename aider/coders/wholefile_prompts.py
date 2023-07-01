@@ -37,3 +37,6 @@ Create a new file you MUST return a *file listing* which includes an appropriate
     files_no_full_files = "I am not sharing any files yet."
 
     redacted_edit_message = "No changes are needed."
+
+    # this coder is not able to handle repo content
+    repo_content_prefix = None
