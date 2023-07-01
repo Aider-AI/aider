@@ -40,7 +40,7 @@ on almost all the ChatGPT models, using a variety of edit formats.
 The results were quite interesting:
 
   - Asking GPT to return an updated copy of the whole file in a standard markdown fenced code block proved to be the most reliable and effective edit format across all GPT-3.5 and GPT-4 models. The results from this `whole` edit format are shown in solid blue in the graph.
-  - Using the new function calling API performed worse than the above whole file method for all models. GPT-3.5 especially produced inferior code and frequently mangled this output format. This was surprising, as the functions API was introduced to enhance the reliability of structured outputs. The results from these `func` edit methods are shown as green and blue patterned bars in the graph.
+  - Using the new function calling API performed worse than the above whole file method for all models. GPT-3.5 especially produced inferior code and frequently mangled this output format. This was surprising, as the functions API was introduced to enhance the reliability of structured outputs. The results from these `func` edit methods are shown as patterned bars in the graph (both green and blue).
   - As expected, the GPT-4 models outperformed the GPT-3.5 models in code editing.
 
 The quantitative benchmark results align with my developing intuition
