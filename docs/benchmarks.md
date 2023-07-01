@@ -55,9 +55,7 @@ Using more complex output formats seems to introduce two issues:
   - It makes GPT write worse code. Keeping the output format simple appears to allow GPT to devote more attention to the actual coding task.
   - It reduces GPT's adherence to the output format, making it more challenging for tools like aider to accurately identify and apply the edits GPT is attempting to make.
 
-I expected the new function calling API to make
-structured output formats more reliable.
-I was planning to adopt it in aider for both GPT-3.5 and GPT-4.
+I was planning to start using a function call based edit format in aider for both GPT-3.5 and GPT-4.
 But given these benchmarking results, I won't be adopting the functions API
 at this time.
 
