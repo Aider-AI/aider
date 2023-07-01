@@ -111,14 +111,16 @@ def show_stats(dirnames):
         for i, fmt in enumerate(formats):
             if zorder:
                 edge = dict(
-                    edgecolor="#444444",
+                    edgecolor="#eeeeee",
                     linewidth=0.25,
                 )
+            else:
+                edge = dict()
             if zorder == 2:
                 edge["label"] = fmt
 
             color = "#b3e6a8" if "diff" in fmt else "#b3d1e6"
-            hatch = "///" if "func" in fmt else ""
+            hatch = "**" if "func" in fmt else ""
             rects = ax.bar(
                 pos + i * width,
                 df[fmt],
