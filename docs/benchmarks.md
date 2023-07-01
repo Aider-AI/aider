@@ -238,7 +238,7 @@ You'll see one set of error bars in the graph, which demark
 the range of results across those 10 runs.
 
 The OpenAI API variance doesn't seem to
-contribute to a large variance in the benchmark results.
+cause a large variance in the benchmark results.
 
 ## Conclusions
 
