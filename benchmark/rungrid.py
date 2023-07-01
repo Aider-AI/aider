@@ -22,7 +22,7 @@ def main():
     for model in models:
         for edit_format in edit_formats:
             # dump(model, edit_format)
-            dirname = f"/benchmarks/{model}-{edit_format}"
+            dirname = f"/benchmarks/rungrid-{model}-{edit_format}"
             dump(dirname)
 
             benchmark_main(
