@@ -40,7 +40,7 @@ This produced some interesting observations:
   - The new June (`0613`) versions of `gpt-3.5-turbo` are worse at code editing than the older Feb (`0301`) version. This was unexpected.
   - The GPT-4 models are much better at code editing than the GPT-3.5 models. This was expected.
 
-These results agree with an intuition that I've been
+The quantitative benchmark results agree with an intuition that I've been
 developing about how to prompt GPT for complex tasks like coding.
 You want to minimize the "cognitive overhead" of formatting the response, so that
 GPT can focus on the task at hand.
