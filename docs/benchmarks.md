@@ -17,7 +17,7 @@ The edit format is a key part of the system prompt,
 specifying how GPT should format code edits in its replies.
 Different edit formats can range in
 complexity from something simple like "return an updated copy of the whole file" to
-a much more sophisticaled format 
+a much more sophisticated format 
 that uses the
 [function calling API](https://openai.com/blog/function-calling-and-other-api-updates)
 to specify a series of specific diffs
@@ -40,7 +40,7 @@ I ran this code editing benchmark
 on almost all the ChatGPT models, using a variety of edit formats.
 This produced some interesting results:
 
-  - Asking GPT to just return an updated copy of the whole file in a normal fenced code block is by far the most reliable edit format. This is true across all GPT-3.5 and GPT-4 models.
+  - Asking GPT to just return an updated copy of the whole file in a normal fenced code block is by far the most reliable and effective edit format. This is true across all GPT-3.5 and GPT-4 models.
   - Using the new function calling API is worse than the above whole file method, for all models. GPT writes worse code and frequently mangles this output format, even though OpenAI introduced the function calling API to make structured output formatting more reliable. This was a big surprise.
   - The new June (`0613`) versions of `gpt-3.5-turbo` are worse at code editing than the older February (`0301`) version. This was unexpected.
   - The GPT-4 models are much better at code editing than the GPT-3.5 models, as expected.
@@ -53,7 +53,7 @@ As an analogy, you wouldn't expect a good result if you asked a junior developer
 implement a new feature by hand typing the required code
 changes as `diff -c` formatted updates.
 
-Using more complex output formats seem to cause two problems:
+Using more complex output formats seems to cause two problems:
 
   - It makes GPT write worse code. Keeping the output format simple seems to leave GPT with more attention to devote to the actual coding task.
   - It makes GPT less likely to adhere to the output format.
@@ -106,21 +106,33 @@ The tests are correct.
 Fix the code in <implementation file> to resolve the errors.
 ```
 
-Editing the implementation in response to test failures is
-another way that this benchmark measures how well GPT can perform code editing.
-This second chance is also important because
-many of the unit tests check for specifics that are not
-called out in the instructions.
-For example, many tests want to see
-[specific phrases in ValueErrors](https://github.com/exercism/python/blob/f6caa44faa8fb7d0de9a54ddb5c6183e027429c6/exercises/practice/queen-attack/queen_attack_test.py#L31)
-raised by
-the implementation.
-There's no way for a human or an AI
-to pass these unit tests
-without seeing their error output.
+Requiring GPT to fix its first implementation in response to test failures
+is another way in which this benchmark stresses code editing skill.
+This second chance is also important because it
+gives a chance for GPT to adjust if the
+instructions were imprecise with respect to the
+specific requirements of the unit tests.
+Many of the exercises have multiple paragraphs of instructions,
+and most human coders would likely fail some tests on their
+first try.
 
 It's worth noting that GPT never gets to see the source code of the unit tests.
 Just the error output from failed tests.
+
+In summary, passing an exercise means GPT was able to:
+
+  - understand the instructions,
+  - write the required code (possibly after reviewing test error output),
+  - package up all of this code and edits into the correct format so that aider can process and save it to the implementation file.
+
+Conversely, failing an exercise only requires a breakdown in one of those steps.
+In practice, GPT fails at different steps in different exercises.
+Sometimes it just writes the wrong code.
+Other times, the code looks okay, but it can't format the edits in a way that confirms to the edit format so the code isn't saved properly.
+
+It's worth keeping in mind that changing the edit format often affects both aspects of GPT's performance on the exercises.
+Complex edit formats make it write worse code *and* make it less successful at formatting the edits correctly.
+
 
 ## Edit formats
 
