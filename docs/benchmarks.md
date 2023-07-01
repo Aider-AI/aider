@@ -1,12 +1,17 @@
 
 # GPT code editing benchmarks
 
+![benchmark results](../assets/benchmarks.svg)
+
 Aider is an open source command line chat tool that lets you ask GPT for features, changes and
 improvements to code in your local git repos.
 I spend a lot of time trying to make aider better at this sort of chat driven AI code editing,
 so that user chat requests are more likely to result in effective changes to their codebase.
 
-Improving code editing involves tweaking and experimenting with 
+Having a reliable way for GPT to read/modify/write source files is critical to
+using GPT to edit code within an existing codebase.
+Making GPT code editing reliable often
+involves tweaking and experimenting with 
 the "edit format" that aider uses.
 The edit format specifies how GPT should format code edits in its replies,
 and can range from simply "return an updated copy of the whole file" to
@@ -14,15 +19,12 @@ and can range from simply "return an updated copy of the whole file" to
 [function calling API](https://openai.com/blog/function-calling-and-other-api-updates)
 to specify a bunch of specific diffs".
 
-Having a reliable way for GPT to read/modify/write source files is critical to
-using GPT to edit code within an existing codebase.
-
 To measure the impact of changes to the edit format,
 I created a code editing benchmark based on the
 [Exercism python](https://github.com/exercism/python)
 coding exercises.
 The benchmark measures how well aider & GPT can turn
-a human coding request into
+a natural language coding request into
 actual runnable code saved into files that passes unit tests.
 This is an end-to-end assessment
 of not just how well GPT can write code, but also how well it
@@ -31,7 +33,7 @@ can *edit existing code* and
 so that aider can save the edits to the
 local source files.
 
-I ran the benchmark
+I ran the code editing benchmark
 on almost all the ChatGPT models, using a variety of edit formats.
 This produced some interesting observations:
 
@@ -52,7 +54,6 @@ when working with source code.
 
 More details on the benchmark, edit formats and results are discussed below.
 
-![benchmark results](../assets/benchmarks.svg)
 
 ## The benchmark
 
