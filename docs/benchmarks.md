@@ -46,9 +46,9 @@ The results were quite interesting:
 The quantitative benchmark results align with my intuitions
 about prompting GPT for complex tasks like coding. It's beneficial to
 minimize the "cognitive overhead" of formatting the response, allowing
-GPT to concentrate on the task at hand. As an analogy, asking a junior
+GPT to concentrate on the task at hand. As an analogy, imagine asking a junior
 developer to implement a new feature by manually typing the required
-code changes as `diff -c` formatted edits wouldn't generate a good result.
+code changes as `diff -c` formatted edits. You wouldn't expect a good result.
 
 Using more complex output formats seems to introduce two issues:
 
