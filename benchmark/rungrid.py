@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
+import subprocess
 import sys
 
-from aider.dump import dump
-from benchmark import main as benchmark_main
+from aider.dump import dump  # noqa: F401
 
 
 def main():
@@ -22,16 +22,22 @@ def main():
     for model in models:
         for edit_format in edit_formats:
             # dump(model, edit_format)
-            dirname = f"/benchmarks/rungrid-{model}-{edit_format}"
-            dump(dirname)
+            dirname = f"rungrid-{model}-{edit_format}"
 
-            benchmark_main(
-                dirnames=[dirname],
-                model=model,
-                edit_format=edit_format,
-                threads=10,
-                cont=True,
-            )
+            cmd = [
+                "./benchmark/benchmark.py",
+                dirname,
+                "--model",
+                model,
+                "--edit-format",
+                edit_format,
+                "--threads",
+                "10",
+                "--cont",
+            ]
+            print(" ".join(cmd))
+
+            subprocess.run(cmd, check=True)
 
 
 if __name__ == "__main__":
