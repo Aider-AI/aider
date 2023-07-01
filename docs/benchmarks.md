@@ -9,19 +9,25 @@ You can use aider to ask GPT to add features, write tests or make other changes 
 improvements to your code.
 
 The ability for GPT to reliably edit local source files is
-crucial for this functionality. Enhancing the reliability of code
+crucial for this functionality.
+Improving the reliability of code
 editing often involves modifying and experimenting with the "edit
 format" used by aider. The edit format is a critical component of the
 system prompt, dictating how GPT should structure code edits in its
-responses. Edit formats can vary in complexity, from a simple "return
-an updated copy of the whole file" to a more sophisticated format that
-employs [OpenAI's new function calling
-API](https://openai.com/blog/function-calling-and-other-api-updates)
-to specify a series of specific diffs.
+responses.
 
-To measure the impact of changes to the edit format, I developed a
+Aider currently uses simple text based editing formats, but
+[OpenAI's new function calling
+API](https://openai.com/blog/function-calling-and-other-api-updates)
+looked like a promising way to construct a more structured editing format.
+Before making such a big change, I wanted to make
+sure I had a quantitative way to assess the impact on
+the reliability of code editing.
+
+I developed a
 benchmark based on the [Exercism
-python](https://github.com/exercism/python) coding exercises. This
+python](https://github.com/exercism/python) coding exercises.
+This
 benchmark evaluates how effectively aider and GPT can translate a
 natural language coding request into actual runnable code saved into
 files that pass unit tests. It's an end-to-end evaluation of not just
@@ -33,9 +39,9 @@ I ran this code editing benchmark
 on almost all the ChatGPT models, using a variety of edit formats.
 The results were quite interesting:
 
-  - Asking GPT to return an updated copy of the whole file in a standard markdown fenced code block proved to be the most reliable and effective edit format across all GPT-3.5 and GPT-4 models.
-  - The new function calling API performed worse than the above whole file method for all models. GPT produced inferior code and frequently mangled this output format, despite the function calling API's introduction to enhance the reliability of structured outputs. This was unexpected.
-  - As anticipated, the GPT-4 models outperformed the GPT-3.5 models in code editing.
+  - Asking GPT to return an updated copy of the whole file in a standard markdown fenced code block proved to be the most reliable and effective edit format across all GPT-3.5 and GPT-4 models. The results from this `whole` edit format are shown in solid blue in the graph.
+  - Using the new function calling API performed worse than the above whole file method for all models. GPT-3.5 especially produced inferior code and frequently mangled this output format. This was surprising, as the functions API was introduced to enhance the reliability of structured outputs. The results from these `func` edit methods are shown as green and blue patterned bars in the graph.
+  - As expected, the GPT-4 models outperformed the GPT-3.5 models in code editing.
 
 The quantitative benchmark results align with my developing intuition
 about prompting GPT for complex tasks like coding. It's beneficial to
@@ -51,8 +57,8 @@ Using more complex output formats seems to introduce two issues:
 
 I expected the new function calling API to make
 structured output formats more reliable.
-I was planning to adopt it in aider for both GPT-3.4 and GPT-4.
-But given these benchmarking results, I won't be adopting the functions api
+I was planning to adopt it in aider for both GPT-3.5 and GPT-4.
+But given these benchmarking results, I won't be adopting the functions API
 at this time.
 
 More details on the benchmark, edit formats and results are discussed below.
