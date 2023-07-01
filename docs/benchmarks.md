@@ -56,11 +56,13 @@ changes as `diff -c` formatted edits.
 Using more complex output formats seems to cause two problems:
 
   - It makes GPT write worse code. Keeping the output format simple seems to leave GPT with more attention to devote to the actual coding task.
-  - It makes GPT less likely to adhere to the output format. This makes it harder for tooling to correctly identify and apply the edits it is trying to make. 
+  - It makes GPT less likely to adhere to the output format. This makes it harder for tooling like aider to correctly identify and apply the edits GPT is trying to make. 
 
 I had hoped that the new function calling API would enable more reliable use of
-structured output formats, but it does not appear to be a panacea
-when working with source code.
+structured output formats, and expected to switch aider to using it
+for both GPT-3.5 and GPT-4.
+But given these benchmarking results, I won't be adopting the functions api
+at this time.
 
 More details on the benchmark, edit formats and results are discussed below.
 
@@ -116,8 +118,10 @@ Many of the exercises have multiple paragraphs of instructions,
 and most human coders would likely fail some tests on their
 first try.
 
-It's worth noting that GPT never gets to see the source code of the unit tests.
+It's worth noting that GPT never gets to see the source code of the unit tests
+during the benchmarking.
 Just the error output from failed tests.
+Of course, all of this code was probably part of its original training data!
 
 In summary, passing an exercise means GPT was able to:
 
@@ -261,7 +265,7 @@ Instead, GPT-3.5 frequently just stuffs an entire python
 file into that field.
 
 It feels like it might be getting confused by fine tuning that was done
-for the ChatGPT coder interpreter plugin?
+for the ChatGPT code interpreter plugin?
 
 ## Randomness
 
