@@ -18,8 +18,8 @@ specifying how GPT should format code edits in its replies.
 Different edit formats can range in
 complexity from something simple like "return an updated copy of the whole file" to
 a much more sophisticated format 
-that uses the
-[function calling API](https://openai.com/blog/function-calling-and-other-api-updates)
+that uses
+[OpenAI's new function calling API](https://openai.com/blog/function-calling-and-other-api-updates)
 to specify a series of specific diffs
 
 To measure the impact of changes to the edit format,
@@ -130,7 +130,7 @@ Sometimes it just writes the wrong code.
 Other times, 
 it fails to format the code edits in a way that conforms to the edit format so the code isn't saved properly.
 
-It's worth keeping in mind that changing the edit format often affects both aspects of GPT's performance on the exercises.
+It's worth keeping in mind that changing the edit format often affects both aspects of GPT's performance.
 Complex edit formats often make it write worse code *and* make it less successful at formatting the edits correctly.
 
 
@@ -169,13 +169,6 @@ in a simple diff format.
 Each edit is a fenced code block that
 specifies the filename and a chunk of ORIGINAL and UPDATED code.
 GPT provides some original lines from the file and then a new updated set of lines.
-
-While GPT-3.5 is sometimes able to generate this `diff` edit format,
-it often uses it in a pathological way.
-It puts the *entire* original source file in the ORIGINAL block
-and the entire updated file in the UPDATED block.
-This is strictly worse than just using the `whole` edit format,
-since GPT is sending 2 full copies of the file.
 
 ````
 Here are the changes you requested to demo.py:
@@ -231,10 +224,28 @@ original/updated style edits to be returned using the function call API.
 }       
 ```
 
-## GPT-3.5 hallucinates function calls
+## GPT-3.5 struggles with complex edit formats
 
-GPT-3.5 is prone to ignoring the JSON Schema that specifies valid functions,
-and often returns a completely novel and semantically
+While GPT-3.5 is able to pass some exercises using
+edit formats other than the `whole` format,
+it really struggles with the rest of the formats.
+
+### Pathlogical use of `diff`
+
+While GPT-3.5 is sometimes able to
+correctly generate the `diff` edit format,
+it often uses it in a pathological way.
+
+It places the *entire* original source file in the ORIGINAL block
+and the entire updated file in the UPDATED block.
+This is strictly worse than just using the `whole` edit format,
+since GPT is sending 2 full copies of the file.
+
+### Hallucinating function calls
+
+When using the functions API
+GPT-3.5 is prone to ignoring the JSON Schema that specifies valid functions.
+It often returns a completely novel and semantically
 invalid `function_call` fragment with `"name": "python"`.
 
 ```
@@ -249,7 +260,8 @@ with the arguments to the function specified in the `name` field.
 Instead, GPT-3.5 frequently just stuffs an entire python
 file into that field.
 
-It feels like it might be getting confused by fine tuning that was done for ChatGPT plugins?
+It feels like it might be getting confused by fine tuning that was done
+for the ChatGPT coder interpreter plugin?
 
 ## Randomness
 
@@ -260,7 +272,7 @@ when sending test error output to GPT
 it removes the wall-clock timing information that
 is normally included by the `unittest` module.
 
-The benchmarking harness also logs sha hashes of the
+The benchmarking harness also logs sha hashes of
 all the OpenAI API requests and replies.
 This makes it possible to
 detect randomness or nondeterminism
