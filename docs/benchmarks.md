@@ -74,7 +74,7 @@ their coding skills.
 
 Each exercise has:
 
-  - Some instructions about the exercise, in a markdown file.
+  - Some instructions for the exercise, in markdown files.
   - Stub code for the implementation in a python file, specifying the functions/classes that need to be implemented.
   - Unit tests in a seperate python file.
 

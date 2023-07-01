@@ -42,8 +42,6 @@ def show_stats(dirnames):
         row = summarize_results(dirname)
         raw_rows.append(row)
 
-    return
-
     repeats = []
     seen = dict()
     rows = []
@@ -70,10 +68,6 @@ def show_stats(dirnames):
             return
         seen[kind] = row.dir_name
         rows.append(vars(row))
-
-    repeats = pd.DataFrame.from_records(repeats)
-    repeat_max = repeats["pass_rate_2"].max()
-    repeat_min = repeats["pass_rate_2"].min()
 
     df = pd.DataFrame.from_records(rows)
     df.sort_values(by=["model", "edit_format"], inplace=True)
@@ -135,9 +129,14 @@ def show_stats(dirnames):
             if zorder == 2:
                 ax.bar_label(rects, padding=8, labels=[f"{v:.0f}%" for v in df[fmt]], size=11)
 
-    lo = 44 - repeat_min
-    hi = repeat_max - 44
-    ax.errorbar(1.4, 44, yerr=[[lo], [hi]], fmt="none", zorder=5, capsize=5)
+    if repeats:
+        repeats = pd.DataFrame.from_records(repeats)
+        repeat_max = repeats["pass_rate_2"].max()
+        repeat_min = repeats["pass_rate_2"].min()
+
+        lo = 44 - repeat_min
+        hi = repeat_max - 44
+        ax.errorbar(1.4, 44, yerr=[[lo], [hi]], fmt="none", zorder=5, capsize=5)
 
     ax.set_xticks([p + 1.5 * width for p in pos])
     ax.set_xticklabels(models, rotation=45)
@@ -428,11 +427,8 @@ def run_test(
             shutil.copy(original_fname, fname)
 
     file_list = " ".join(fname.name for fname in fnames)
-    intro = testdir / ".docs/introduction.md"
-    if intro.exists():
-        instructions = intro.read_text() + "\n\n"
-    else:
-        instructions = ""
+
+    instructions = ""
 
     introduction = testdir / ".docs/introduction.md"
     if introduction.exists():
