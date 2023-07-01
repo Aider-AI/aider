@@ -91,7 +91,7 @@ Fix the code in {file_list} to resolve the errors.
 ```
 
 Editing the implementation in response to test failures is
-another excellent chance to assess how well GPT can perform code editing.
+another way that this benchmark measures how well GPT can perform code editing.
 This second chance is also important because
 many of the unit tests check for specifics that are not
 called out in the instructions.
