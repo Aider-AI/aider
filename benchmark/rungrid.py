@@ -26,6 +26,10 @@ def main():
             if "-func" in edit_format and "-03" in model:
                 continue
 
+            if (model, edit_format) == ("gpt-3.5-turbo-16k-0613", "whole-func"):
+                # sublist reliably hangs the API?
+                continue
+
             dirname = f"rungrid-{model}-{edit_format}"
 
             cmd = [
