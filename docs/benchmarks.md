@@ -8,58 +8,50 @@ code in your local git repos.
 You can use aider to ask GPT to add features, write tests or make other changes and
 improvements to your code.
 
-Having a reliable way for GPT to edit
-local source code files is critical to providing this functionality.
-Making code editing more reliable often
-involves changing and experimenting with 
-the "edit format" that aider uses.
-The edit format is a key part of the system prompt,
-specifying how GPT should format code edits in its replies.
-Different edit formats can range in
-complexity from something simple like "return an updated copy of the whole file" to
-a much more sophisticated format 
-that uses
-[OpenAI's new function calling API](https://openai.com/blog/function-calling-and-other-api-updates)
-to specify a series of specific diffs
+The ability for GPT to reliably edit local source files is
+crucial for this functionality. Enhancing the reliability of code
+editing often involves modifying and experimenting with the "edit
+format" used by aider. The edit format is a critical component of the
+system prompt, dictating how GPT should structure code edits in its
+responses. Edit formats can vary in complexity, from a simple "return
+an updated copy of the whole file" to a more sophisticated format that
+employs [OpenAI's new function calling
+API](https://openai.com/blog/function-calling-and-other-api-updates)
+to specify a series of specific diffs.
 
-To measure the impact of changes to the edit format,
-I created a benchmark based on the
-[Exercism python](https://github.com/exercism/python)
-coding exercises.
-This benchmark measures how well aider & GPT can turn
-a natural language coding request into
-actual runnable code saved into files that pass unit tests.
-This is an end-to-end assessment
-of not just how well GPT can write code, but also how well it
-can *edit existing code* and
-*package up those code changes*
-so that aider can save the edits to the
-local source files.
+To measure the impact of changes to the edit format, I developed a
+benchmark based on the [Exercism
+python](https://github.com/exercism/python) coding exercises. This
+benchmark evaluates how effectively aider and GPT can translate a
+natural language coding request into actual runnable code saved into
+files that pass unit tests. It's an end-to-end evaluation of not just
+GPT's code writing ability, but also its capacity to *edit existing
+code* and *package those code changes* so that aider can save the
+edits to the local source files.
 
 I ran this code editing benchmark
 on almost all the ChatGPT models, using a variety of edit formats.
-This produced some interesting results:
+The results were quite interesting:
 
-  - Asking GPT to return an updated copy of the whole file in a normal markdown fenced code block is by far the most reliable and effective edit format. This is true across all GPT-3.5 and GPT-4 models.
-  - Using the new function calling API is worse than the above whole file method, for all models. GPT writes worse code and frequently mangles this output format, even though the function calling API was introduced to make structured outputs more reliable. This was a big surprise.
-  - The GPT-4 models are much better at code editing than the GPT-3.5 models, as expected.
+  - Asking GPT to return an updated copy of the whole file in a standard markdown fenced code block proved to be the most reliable and effective edit format across all GPT-3.5 and GPT-4 models.
+  - The new function calling API performed worse than the above whole file method for all models. GPT produced inferior code and frequently mangled this output format, despite the function calling API's introduction to enhance the reliability of structured outputs. This was unexpected.
+  - As anticipated, the GPT-4 models outperformed the GPT-3.5 models in code editing.
 
-The overall quantitative benchmark results agree with an intuition that I've been
-developing about how to prompt GPT for complex tasks like coding.
-You want to minimize the "cognitive overhead" of formatting the response, so that
-GPT can focus on the task at hand.
-As an analogy, you wouldn't expect a good result if you asked a junior developer to
-implement a new feature by hand typing the required code
-changes as `diff -c` formatted edits.
+The quantitative benchmark results align with my developing intuition
+about prompting GPT for complex tasks like coding. It's beneficial to
+minimize the "cognitive overhead" of formatting the response, allowing
+GPT to concentrate on the task at hand. As an analogy, asking a junior
+developer to implement a new feature by manually typing the required
+code changes as `diff -c` formatted edits wouldn't generate a good result.
 
-Using more complex output formats seems to cause two problems:
+Using more complex output formats seems to introduce two issues:
 
-  - It makes GPT write worse code. Keeping the output format simple seems to leave GPT with more attention to devote to the actual coding task.
-  - It makes GPT less likely to adhere to the output format. This makes it harder for tooling like aider to correctly identify and apply the edits GPT is trying to make. 
+  - It makes GPT write worse code. Keeping the output format simple appears to allow GPT to devote more attention to the actual coding task.
+  - It reduces GPT's adherence to the output format, making it more challenging for tools like aider to accurately identify and apply the edits GPT is attempting to make.
 
-I had hoped that the new function calling API would enable more reliable use of
-structured output formats, and expected to switch aider to using it
-for both GPT-3.5 and GPT-4.
+I expected the new function calling API to make
+structured output formats more reliable.
+I was planning to adopt it in aider for both GPT-3.4 and GPT-4.
 But given these benchmarking results, I won't be adopting the functions api
 at this time.
 
@@ -70,12 +62,13 @@ More details on the benchmark, edit formats and results are discussed below.
 
 The benchmark uses 
 [133 practice exercises from the Exercism python repository](https://github.com/exercism/python/tree/main/exercises/practice).
-These exercises were designed for people to learn python and practice
+These
+exercises were designed to help individuals learn Python and hone
 their coding skills.
 
-Each exercise has:
+Each exercise includes:
 
-  - Some instructions for the exercise, in markdown files.
+  - Instructions for the exercise, provided in markdown files.
   - Stub code for the implementation in a python file, specifying the functions/classes that need to be implemented.
   - Unit tests in a seperate python file.
 
@@ -94,12 +87,12 @@ Keep and implement the existing function or class stubs, they will be called fro
 Only use standard python libraries, don't suggest installing any packages.
 ```
 
-Aider updates the implementation file based on GPT's reply and runs the unit tests.
-If they all pass, we are done. If some tests fail, aider sends
-GPT a second message with the test error output.
-It only sends the first 50 lines of test errors, to avoid exhausting the context
-window of the smaller models.
-Aider also includes this final instruction:
+Aider updates the implementation file based on GPT's reply and runs
+the unit tests. If all tests pass, the exercise is considered
+complete. If some tests fail, Aider sends GPT a second message with
+the test error output. It only sends the first 50 lines of test errors
+to avoid exceeding the context window of the smaller models. Aider
+also includes this final instruction:
 
 ```
 See the testing errors above.
@@ -117,24 +110,26 @@ Many of the exercises have multiple paragraphs of instructions,
 and most human coders would likely fail some tests on their
 first try.
 
-It's worth noting that GPT never gets to see the source code of the unit tests
-during the benchmarking.
-Just the error output from failed tests.
-Of course, all of this code was probably part of its original training data!
+It's worth noting that GPT never gets to see the source code of the
+unit tests during the benchmarking. It only sees the error output from
+failed tests. Of course, all of this code was probably part of its
+original training data!
 
 In summary, passing an exercise means GPT was able to:
 
-  - write the required code (possibly after reviewing test error output),
-  - correctly package up all of this code into the edit format so that aider can process and save it to the implementation file.
+  - Write the required code (possibly after reviewing test error output),
+  - Correctly package all of this code into the edit format so that Aider can process and save it to the implementation file.
 
-Conversely, failing an exercise only requires a breakdown in one of those steps.
-In practice, GPT fails at different steps in different exercises.
-Sometimes it just writes the wrong code.
-Other times, 
-it fails to format the code edits in a way that conforms to the edit format so the code isn't saved properly.
+Conversely, failing an exercise only requires a breakdown in one of
+those steps. In practice, GPT fails at different steps in different
+exercises. Sometimes it simply writes the wrong code. Other times, it
+fails to format the code edits in a way that conforms to the edit
+format, resulting in the code not being saved correctly.
 
-It's worth keeping in mind that changing the edit format often affects both aspects of GPT's performance.
-Complex edit formats often make it write worse code *and* make it less successful at formatting the edits correctly.
+It's worth keeping in mind that changing the edit format often affects
+both aspects of GPT's performance.
+Complex edit formats often lead to poorer code *and* make it less
+successful at formatting the edits correctly.
 
 
 ## Edit formats
@@ -229,20 +224,17 @@ original/updated style edits to be returned using the function call API.
 
 ## GPT-3.5 struggles with complex edit formats
 
-While GPT-3.5 is able to pass some exercises using
-edit formats other than the `whole` format,
-it really struggles with the rest of the formats.
+While GPT-3.5 can pass some exercises using edit formats other than
+the `whole` format, it struggles with the rest of the
+formats.
 
 ### Pathlogical use of `diff`
 
-While GPT-3.5 is sometimes able to
-correctly generate the `diff` edit format,
-it often uses it in a pathological way.
-
-It places the *entire* original source file in the ORIGINAL block
-and the entire updated file in the UPDATED block.
-This is strictly worse than just using the `whole` edit format,
-since GPT is sending 2 full copies of the file.
+While GPT-3.5 can sometimes correctly generate the `diff` edit format,
+it often uses it in a pathological manner. It places the *entire*
+original source file in the ORIGINAL block and the entire updated file
+in the UPDATED block. This is strictly worse than just using the
+`whole` edit format, as GPT is sending 2 full copies of the file.
 
 ### Hallucinating function calls
 
@@ -263,35 +255,34 @@ with the arguments to the function specified in the `name` field.
 Instead, GPT-3.5 frequently just stuffs an entire python
 file into that field.
 
-It feels like it might be getting confused by fine tuning that was done
-for the ChatGPT code interpreter plugin?
+It seems like it might be getting confused by fine-tuning that was
+done for the ChatGPT code interpreter plugin?
+
 
 ## Randomness
 
 The benchmark attempts to be deterministic, always sending identical
 requests for each exercise on repeated runs.
 As part of this effort,
-when sending test error output to GPT
+when sending test error output to GPT,
 it removes the wall-clock timing information that
 is normally included by the `unittest` module.
 
-The benchmarking harness also logs sha hashes of
+The benchmarking harness also logs SHA hashes of
 all the OpenAI API requests and replies.
 This makes it possible to
 detect randomness or nondeterminism
 in the bechmarking process.
 
-It turns out that the OpenAI chat APIs are not deterministic, even at `temperature=0`.
-The same identical request will produce multiple distinct responses,
-usually on the order of 3-6 different variations. This feels
-like OpenAI may be
-load balancing their API
-across a number of slightly different
-instances of the model.
+It turns out that the OpenAI chat APIs are not deterministic, even at
+`temperature=0`.  The same identical request will produce multiple
+distinct responses, usually less than 5-10 variations.  This suggests
+that OpenAI may be load balancing their API across a number of
+slightly different instances of the model?
 
 For some exercises, some of these variable responses pass the unit tests while
-other variants do not. Results for exercises like this which are
-"on the bubble" 
+other variants do not. Results for exercises like this, which are
+"on the bubble",
 are therefore a bit random, depending on which variant OpenAI returns.
 
 Given that, it would be ideal to run all 133 exercises many times for each
@@ -310,7 +301,7 @@ You'll see one set of error bars in the graph, which show
 the range of results from those 10 runs.
 
 The OpenAI API randomness doesn't seem to
-cause a large variance in the benchmark results.
+cause a large variance in the overall benchmark results.
 
 ## Conclusions
 
