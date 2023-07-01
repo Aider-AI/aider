@@ -51,12 +51,12 @@ You want to minimize the "cognitive overhead" of formatting the response, so tha
 GPT can focus on the task at hand.
 As an analogy, you wouldn't expect a good result if you asked a junior developer to
 implement a new feature by hand typing the required code
-changes as `diff -c` formatted updates.
+changes as `diff -c` formatted edits.
 
 Using more complex output formats seems to cause two problems:
 
   - It makes GPT write worse code. Keeping the output format simple seems to leave GPT with more attention to devote to the actual coding task.
-  - It makes GPT less likely to adhere to the output format. This makes it harder to correctly identify and apply the edits it is trying to make. 
+  - It makes GPT less likely to adhere to the output format. This makes it harder for tooling to correctly identify and apply the edits it is trying to make. 
 
 I had hoped that the new function calling API would enable more reliable use of
 structured output formats, but it does not appear to be a panacea
@@ -121,17 +121,17 @@ Just the error output from failed tests.
 
 In summary, passing an exercise means GPT was able to:
 
-  - understand the instructions,
   - write the required code (possibly after reviewing test error output),
-  - package up all of this code and edits into the correct format so that aider can process and save it to the implementation file.
+  - correctly package up all of this code into the edit format so that aider can process and save it to the implementation file.
 
 Conversely, failing an exercise only requires a breakdown in one of those steps.
 In practice, GPT fails at different steps in different exercises.
 Sometimes it just writes the wrong code.
-Other times, the code looks okay, but it can't format the edits in a way that confirms to the edit format so the code isn't saved properly.
+Other times, 
+it fails to format the code edits in a way that conforms to the edit format so the code isn't saved properly.
 
 It's worth keeping in mind that changing the edit format often affects both aspects of GPT's performance on the exercises.
-Complex edit formats make it write worse code *and* make it less successful at formatting the edits correctly.
+Complex edit formats often make it write worse code *and* make it less successful at formatting the edits correctly.
 
 
 ## Edit formats
@@ -169,6 +169,13 @@ in a simple diff format.
 Each edit is a fenced code block that
 specifies the filename and a chunk of ORIGINAL and UPDATED code.
 GPT provides some original lines from the file and then a new updated set of lines.
+
+While GPT-3.5 is sometimes able to generate this `diff` edit format,
+it often uses it in a pathological way.
+It puts the *entire* original source file in the ORIGINAL block
+and the entire updated file in the UPDATED block.
+This is strictly worse than just using the `whole` edit format,
+since GPT is sending 2 full copies of the file.
 
 ````
 Here are the changes you requested to demo.py:
@@ -246,7 +253,7 @@ It feels like it might be getting confused by fine tuning that was done for Chat
 
 ## Randomness
 
-The benchmark goes to some trouble to be deterministic, always sending identical
+The benchmark attempts to be deterministic, always sending identical
 requests for each exercise on repeated runs.
 As part of this effort,
 when sending test error output to GPT
@@ -254,14 +261,17 @@ it removes the wall-clock timing information that
 is normally included by the `unittest` module.
 
 The benchmarking harness also logs sha hashes of the
-API requests and replies.
-This makes it easy to identify sources of randomness or nondeterminism
+all the OpenAI API requests and replies.
+This makes it possible to
+detect randomness or nondeterminism
 in the bechmarking process.
 
 It turns out that the OpenAI chat APIs are not deterministic, even at `temperature=0`.
 The same identical request will produce multiple distinct responses,
 usually on the order of 3-6 different variations. This feels
-like they are load balancing across a number of slightly different
+like OpenAI may be
+load balancing their API
+across a number of slightly different
 instances of the model.
 
 For some exercises, some of these variable responses pass the unit tests while
