@@ -8,7 +8,7 @@ code in your local git repos.
 You can use aider to ask GPT to add features, write tests or make other changes and
 improvements to your code.
 
-Having a reliable way for GPT to read/modify/write
+Having a reliable way for GPT to edit
 local source code files is a critical component of this functionality.
 Making code editing more reliable often
 involves changing and experimenting with 
