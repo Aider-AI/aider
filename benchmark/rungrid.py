@@ -8,9 +8,11 @@ from aider.dump import dump  # noqa: F401
 
 def main():
     models = [
-        "gpt-3.5-turbo-0301",
-        "gpt-3.5-turbo-0613",
-        "gpt-3.5-turbo-16k-0613",
+        # "gpt-3.5-turbo-0301",
+        # "gpt-3.5-turbo-0613",
+        # "gpt-3.5-turbo-16k-0613",
+        "gpt-4-0314",
+        "gpt-4-0613",
     ]
     edit_formats = [
         "diff",
