@@ -106,7 +106,7 @@ The tests are correct.
 Fix the code in <implementation file> to resolve the errors.
 ```
 
-Editing the implementation in response to test failures is
+Editing the implementation file in response to test failures is
 another way that this benchmark measures how well GPT can perform code editing.
 This second chance is also important because
 many of the unit tests check for specifics that are not
