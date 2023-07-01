@@ -56,7 +56,7 @@ changes as `diff -c` formatted updates.
 Using more complex output formats seem to cause two problems:
 
   - It makes GPT write worse code. Keeping the output format simple seems to leave GPT with more attention to devote to the actual coding task.
-  - It makes GPT less likely to adhere to the output format.
+  - It makes GPT less likely to adhere to the output format. This makes it harder to correctly identify and apply the edits it is trying to make. 
 
 I had hoped that the new function calling API would enable more reliable use of
 structured output formats, but it does not appear to be a panacea
