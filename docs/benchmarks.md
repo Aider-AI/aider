@@ -9,7 +9,7 @@ You can use aider to ask GPT to add features, write tests or make other changes 
 improvements to your code.
 
 Having a reliable way for GPT to edit
-local source code files is a critical component of this functionality.
+local source code files is a critical to providing this functionality.
 Making code editing more reliable often
 involves changing and experimenting with 
 the "edit format" that aider uses.
@@ -40,8 +40,8 @@ I ran this code editing benchmark
 on almost all the ChatGPT models, using a variety of edit formats.
 This produced some interesting results:
 
-  - Asking GPT to just return an updated copy of the whole file in a normal fenced code block is by far the most reliable and effective edit format. This is true across all GPT-3.5 and GPT-4 models.
-  - Using the new function calling API is worse than the above whole file method, for all models. GPT writes worse code and frequently mangles this output format, even though OpenAI introduced the function calling API to make structured output formatting more reliable. This was a big surprise.
+  - Asking GPT to return an updated copy of the whole file in a normal markdown fenced code block is by far the most reliable and effective edit format. This is true across all GPT-3.5 and GPT-4 models.
+  - Using the new function calling API is worse than the above whole file method, for all models. GPT writes worse code and frequently mangles this output format, even though the function calling API was introduced to make structured outputs more reliable. This was a big surprise.
   - The new June (`0613`) versions of `gpt-3.5-turbo` are worse at code editing than the older February (`0301`) version. This was unexpected.
   - The GPT-4 models are much better at code editing than the GPT-3.5 models, as expected.
 
