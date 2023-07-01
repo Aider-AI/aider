@@ -151,7 +151,8 @@ demo.py
 
 ### whole-func
 
-The [whole-func](https://github.com/paul-gauthier/aider/blob/main/aider/coders/wholefile_func_coder.py) format requests whole files to be returned using the function call API.
+The [whole-func](https://github.com/paul-gauthier/aider/blob/main/aider/coders/wholefile_func_coder.py) 
+format requests updated copies of whole files to be returned using the function call API.
 
 
 ```
