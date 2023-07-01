@@ -433,10 +433,15 @@ def run_test(
         instructions = intro.read_text() + "\n\n"
     else:
         instructions = ""
+
+    introduction = testdir / ".docs/introduction.md"
+    if introduction.exists():
+        instructions += introduction.read_text()
     instructions += (testdir / ".docs/instructions.md").read_text()
     instructions_append = testdir / ".docs/instructions.append.md"
     if instructions_append.exists():
         instructions += instructions_append.read_text()
+
     instructions += prompts.instructions_addendum.format(file_list=file_list)
 
     io = InputOutput(
