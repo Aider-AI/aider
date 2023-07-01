@@ -5,27 +5,28 @@
 
 Aider is an open source command line chat tool that lets you ask GPT for features, changes and
 improvements to code in your local git repos.
-I spend a lot of time trying to make aider better at this sort of chat driven AI code editing,
-so that user chat requests are more likely to result in effective changes to their codebase.
 
 Having a reliable way for GPT to read/modify/write source files is critical to
 using GPT to edit code within an existing codebase.
-Making GPT code editing reliable often
+Making code editing more reliable often
 involves tweaking and experimenting with 
 the "edit format" that aider uses.
-The edit format specifies how GPT should format code edits in its replies,
-and can range from simply "return an updated copy of the whole file" to
-"use the 
+The edit format is a key part of the system prompt,
+specifying how GPT should format code edits in its replies.
+Different edit formats can range in
+complexity from something simple like "return an updated copy of the whole file" to
+a much more sophisticaled format 
+that uses the
 [function calling API](https://openai.com/blog/function-calling-and-other-api-updates)
-to specify a bunch of specific diffs".
+to specify a series of specific diffs
 
 To measure the impact of changes to the edit format,
-I created a code editing benchmark based on the
+I created a benchmark based on the
 [Exercism python](https://github.com/exercism/python)
 coding exercises.
-The benchmark measures how well aider & GPT can turn
+This benchmark measures how well aider & GPT can turn
 a natural language coding request into
-actual runnable code saved into files that passes unit tests.
+actual runnable code saved into files that pass unit tests.
 This is an end-to-end assessment
 of not just how well GPT can write code, but also how well it
 can *edit existing code* and
@@ -35,19 +36,25 @@ local source files.
 
 I ran the code editing benchmark
 on almost all the ChatGPT models, using a variety of edit formats.
-This produced some interesting observations:
+This produced some interesting results:
 
-  - Asking GPT to just return an updated copy of the whole file in a normal fenced code block is by far the most reliable edit format. This is true across all GPT-3.5 and GPT-4 models. Keeping the output format dead simple seems to leave GPT with more brain power to devote to the actual coding task. GPT is also less likely to mangle this simple output format.
+  - Asking GPT to just return an updated copy of the whole file in a normal fenced code block is by far the most reliable edit format. This is true across all GPT-3.5 and GPT-4 models.
   - Using the new function calling API is worse than the above whole file method, for all models. GPT writes worse code and frequently mangles this output format, even though OpenAI introduced the function calling API to make structured output formatting more reliable. This was a big surprise.
-  - The new June (`0613`) versions of `gpt-3.5-turbo` are worse at code editing than the older Feb (`0301`) version. This was unexpected.
-  - The GPT-4 models are much better at code editing than the GPT-3.5 models. This was expected.
+  - The new June (`0613`) versions of `gpt-3.5-turbo` are worse at code editing than the older February (`0301`) version. This was unexpected.
+  - The GPT-4 models are much better at code editing than the GPT-3.5 models, as expected.
 
 The quantitative benchmark results agree with an intuition that I've been
 developing about how to prompt GPT for complex tasks like coding.
 You want to minimize the "cognitive overhead" of formatting the response, so that
 GPT can focus on the task at hand.
-You wouldn't expect a good result if you asked a junior developer to
+For example, you wouldn't expect a good result if you asked a junior developer to
 implement a new feature by hand typing `diff -c` formatted updates to the current code.
+
+Using more complex output formats seem to cause two problems:
+
+  - It makes GPT write worse code. Keeping the output format simple seems to leave GPT with more attention to devote to the actual coding task.
+  - It makes GPT less likely to adhere to the output format.
+
 I had hoped that the new function calling API would enable more reliable use of
 structured output formats, but it does not appear to be a panacea
 when working with source code.
@@ -59,36 +66,41 @@ More details on the benchmark, edit formats and results are discussed below.
 
 The benchmark uses 
 [133 practice exercises from the Exercism python repository](https://github.com/exercism/python/tree/main/exercises/practice).
-They were designed for people to learn and practice
-their python coding skills.
+They were designed for people to learn python and practice
+their coding skills.
 
 Each exercise has:
 
-  - Some brief instructions, in a markdown file.
-  - A python implementation file, with a bare function or class that needs to be coded up.
-  - Unit tests, contained in another python file.
+  - Some instructions about the exercise, in a markdown file.
+  - Stub code for the implementation in a python file, specifying the functions/classes that need to be implemented.
+  - Unit tests in a seperate python file.
 
-The goal is to read the instructions, implement the provided functions/class skeletons
+The goal is for GPT to read the instructions, implement the provided functions/class skeletons
 and pass all the unit tests. The benchmark measures what percentage of
-the 133 exercises are completed successfully, with all the associated unit tests passing.
+the 133 exercises are completed successfully, which means all the associated unit tests passed.
 
-To complete an exercise, aider sends GPT the Exercism instructions
-and initial contents of the implementation file, followed by:
+To complete an exercise, aider sends GPT
+the initial contents of the implementation file,
+the Exercism instructions
+and a final instruction:
 
 ```
-Use the above instructions to modify the supplied files: {file_list}
+Use the above instructions to modify the supplied files: <implementation file>
 Keep and implement the existing function or class stubs, they will be called from unit tests.
 Only use standard python libraries, don't suggest installing any packages.
 ```
 
 Aider updates the implementation file based on GPT's reply and runs the unit tests.
 If they all pass, we are done. If some tests fail, aider sends
-the first 50 lines of test error output as a second message in the chat followed by:
+a second message with the test error output.
+It only sends the first 50 lines of test errors, to avoid exhausting the context
+window of the smaller models.
+It also includes this final instruction:
 
 ```
 See the testing errors above.
 The tests are correct.
-Fix the code in {file_list} to resolve the errors.
+Fix the code in <implementation file> to resolve the errors.
 ```
 
 Editing the implementation in response to test failures is
@@ -109,15 +121,18 @@ Just the error output from failed tests.
 
 ## Edit formats
 
-I benchmarked 4 different edit formats,
-described below along with a sample of the response GPT might provide to the user request
-"Change the print from hello to goodbye".
+I benchmarked 4 different edit formats, described below.
+Each description includes a sample response that GPT might provide in response to a user who
+requests:
+"Change the print from hello to goodbye."
 
 ### whole
 
 The
 [whole](https://github.com/paul-gauthier/aider/blob/main/aider/coders/wholefile_prompts.py)
-format asks GPT to just return the entire source file with any changes, formatted with normal markdown triple-backtick fences, inlined with the rest of its response text.
+format asks GPT to return an updated copy of the entire file, including any changes.
+The file should be
+formatted with normal markdown triple-backtick fences, inlined with the rest of its response text.
 
 This format is very similar to how ChatGPT returns code snippets during normal chats, except with the addition of a filename right before the opening triple backticks.
 
@@ -134,8 +149,11 @@ def main():
 ### diff
 
 The [diff](https://github.com/paul-gauthier/aider/blob/main/aider/coders/editblock_prompts.py)
-format asks GPT to return edits in a simple diff format.
-Each edit is a block of original and updated code, where GPT provides some original lines from the file and then a new replacement set of lines.
+format also asks GPT to return edits as part of the normal response text,
+in a simple diff format.
+Each edit is a fenced code block that
+specifies the filename and a chunk of ORIGINAL and UPDATED code.
+GPT provides some original lines from the file and then a new updated set of lines.
 
 ````
 Here are the changes you requested to demo.py:
@@ -171,8 +189,8 @@ format requests updated copies of whole files to be returned using the function 
 
 The
 [diff-func](https://github.com/paul-gauthier/aider/blob/main/aider/coders/editblock_func_coder.py)
-format requests a list of possibly multiple 
-original/updated edits to be returned using the function call API.
+format requests a list of 
+original/updated style edits to be returned using the function call API.
 
 ```
 {
@@ -191,10 +209,11 @@ original/updated edits to be returned using the function call API.
 }       
 ```
 
-## GPT-3.5 hallucinates function calls?
+## GPT-3.5 hallucinates function calls
 
-GPT-3.5 was very prone to ignoring the JSON Schema that specified valid functions,
-and would often return a completely invalid `function_call` fragment with `"name": "python"`.
+GPT-3.5 is prone to ignoring the JSON Schema that specifies valid functions,
+and often returns a completely novel and syntactically
+invalid `function_call` fragment with `"name": "python"`.
 
 ```
         "function_call": {
@@ -205,14 +224,26 @@ and would often return a completely invalid `function_call` fragment with `"name
 
 The `arguments` attribute is supposed to be a set of key/value pairs
 with the arguments to the function specified in the `name` field.
-Instead, GPT-3.5 frequently just stuffed the entire python
-program into that field.
+Instead, GPT-3.5 frequently just stuffs an entire python
+file into that field.
 
 It feels like it might be getting confused by fine tuning that was done for ChatGPT plugins?
 
-## Limitations
+## Randomness
 
-The OpenAI chat APIs are not deterministic, even at `temperature=0`.
+The benchmark goes to some trouble to be deterministic, always sending identical
+requests for each exercise on repeated runs.
+As part of this effort,
+when sending test error output to GPT
+it removes the wall-clock timing information that
+is normally included by the `unittest` module.
+
+The benchmarking harness also logs sha hashes of the
+API requests and replies.
+This makes it easy to identify sources of randomness or nondeterminism
+in the bechmarking process.
+
+It turns out that the OpenAI chat APIs are not deterministic, even at `temperature=0`.
 The same identical request will produce multiple distinct responses,
 usually on the order of 3-6 different variations. This feels
 like they are load balancing across a number of slightly different
@@ -238,16 +269,24 @@ against `gpt-3.5-turbo-0613` with the `whole` edit format.
 You'll see one set of error bars in the graph, which demark
 the range of results across those 10 runs.
 
-The OpenAI API variance doesn't seem to
+The OpenAI API randomness doesn't seem to
 cause a large variance in the benchmark results.
 
 ## Conclusions
 
 Based on these benchmarking results, aider will continue to use
-`whole` for GPT-3.5 and `diff` for GPT-4.
-While GPT-4 gets slightly better results with the `whole` edit format,
+the `whole` edit format for GPT-3.5, and `diff` for GPT-4.
+While GPT-4 gets somewhat better results with the `whole` edit format,
 it significantly increases costs and latency compared to `diff`.
-Since GPT-4 is already costly and slow, this seems like an acceptable
-tradeoff.
+
+The latency of streaming back the entire updated copy of each edited file
+is the real challenge. The GPT-3.5 models are quite responsive, and can
+stream back entire files at an acceptable speed.
+Aider displays a progress bar and
+live diffs of the files as they stream in,
+which helps pass the time.
+
+The GPT-4 models are much slower, and waiting for even small files
+to be completely "retyped" on each request is probably unacceptable.
 
 
