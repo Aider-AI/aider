@@ -610,9 +610,7 @@ class Coder:
                 # TODO: push this into subclasses
                 args = self.parse_partial_args()
                 if args:
-                    explanation = args.get("explanation")
-                    if explanation:
-                        self.io.ai_output(json.dumps(args, indent=4))
+                    self.io.ai_output(json.dumps(args, indent=4))
 
         return interrupted
 

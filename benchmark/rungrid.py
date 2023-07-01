@@ -22,6 +22,10 @@ def main():
     for model in models:
         for edit_format in edit_formats:
             # dump(model, edit_format)
+
+            if "-func" in edit_format and "-03" in model:
+                continue
+
             dirname = f"rungrid-{model}-{edit_format}"
 
             cmd = [
