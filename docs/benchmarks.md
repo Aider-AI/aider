@@ -42,10 +42,9 @@ This produced some interesting results:
 
   - Asking GPT to return an updated copy of the whole file in a normal markdown fenced code block is by far the most reliable and effective edit format. This is true across all GPT-3.5 and GPT-4 models.
   - Using the new function calling API is worse than the above whole file method, for all models. GPT writes worse code and frequently mangles this output format, even though the function calling API was introduced to make structured outputs more reliable. This was a big surprise.
-  - The new June (`0613`) versions of `gpt-3.5-turbo` are worse at code editing than the older February (`0301`) version. This was unexpected.
   - The GPT-4 models are much better at code editing than the GPT-3.5 models, as expected.
 
-The quantitative benchmark results agree with an intuition that I've been
+The overall quantitative benchmark results agree with an intuition that I've been
 developing about how to prompt GPT for complex tasks like coding.
 You want to minimize the "cognitive overhead" of formatting the response, so that
 GPT can focus on the task at hand.
