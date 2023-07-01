@@ -42,6 +42,8 @@ def show_stats(dirnames):
         row = summarize_results(dirname)
         raw_rows.append(row)
 
+    return
+
     repeats = []
     seen = dict()
     rows = []
