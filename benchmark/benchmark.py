@@ -158,7 +158,14 @@ def show_stats(dirnames):
 
     if len(repeats):
         ax.errorbar(
-            1.4, repeat_avg, yerr=[[repeat_lo], [repeat_hi]], fmt="none", zorder=5, capsize=5
+            1.4,
+            repeat_avg,
+            yerr=[[repeat_lo], [repeat_hi]],
+            fmt="none",
+            zorder=5,
+            capsize=2.5,
+            elinewidth=1,
+            markeredgewidth=1,
         )
 
     ax.set_xticks([p + 1.5 * width for p in pos])
