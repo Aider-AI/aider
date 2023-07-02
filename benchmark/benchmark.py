@@ -142,7 +142,7 @@ def show_stats(dirnames):
 
     top = 95
     ax.annotate(
-        "First coding\nattempt",
+        "First attempt,\nbased on\ninstructions",
         xy=(2.9, 51),
         xytext=(2.5, top),
         horizontalalignment="center",
@@ -150,7 +150,7 @@ def show_stats(dirnames):
         arrowprops={"arrowstyle": "->", "connectionstyle": "arc3,rad=0.3"},
     )
     ax.annotate(
-        "Second attempt,\nafter seeing\nunit test errors",
+        "Second attempt,\nbased on\nunit test errors",
         xy=(3.1, 68),
         xytext=(4.25, top),
         horizontalalignment="center",
