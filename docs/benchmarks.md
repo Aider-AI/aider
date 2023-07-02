@@ -120,7 +120,7 @@ the final outcome following the first coding attempt and the second
 attempt that includes the unit test error output.
 Each bar also has a horizontal mark that shows
 the intermediate performance after the first coding attempt,
-without the benefit of second try.
+without the benefit of the second try.
 
 It's worth noting that GPT never gets to see the source code of the
 unit tests during the benchmarking. It only sees the error output from
