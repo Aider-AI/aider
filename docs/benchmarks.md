@@ -35,10 +35,10 @@ I ran the benchmark
 on all the ChatGPT models (except `gpt-4-32k`), using a variety of edit formats.
 The results were interesting:
 
-  - Asking GPT to return an updated copy of the whole file in a standard markdown fenced code block proved to be the most reliable and effective edit format across all GPT-3.5 and GPT-4 models. The results for this `whole` edit format are shown in solid blue in the graph.
-  - Using the new functions API for edits performed worse than the above whole file method, for all the models. GPT-3.5 especially produced inferior code and frequently mangled this output format. This was surprising, as the functions API was introduced to enhance the reliability of structured outputs. The results for these `...-func` edit methods are shown as patterned bars in the graph (both green and blue).
-  - The performance of the new June (`0613`) versions of GPT-3.5 appears to be a bit worse than the February (`0301`) version. This is visible if you look at the "first attempt" markers on the first three solid blue bars and also by comparing the first three solid green `diff` bars.
-  - As expected, the GPT-4 models outperformed the GPT-3.5 models in code editing.
+  - **Plain text edit formats worked best.** Asking GPT to return an updated copy of the whole file in a standard markdown fenced code block proved to be the most reliable and effective edit format across all GPT-3.5 and GPT-4 models. The results for this `whole` edit format are shown in solid blue in the graph.
+  - **Function calls performed worse.** Using the new functions API for edits performed worse than the above whole file method, for all the models. GPT-3.5 especially produced inferior code and frequently mangled this output format. This was surprising, as the functions API was introduced to enhance the reliability of structured outputs. The results for these `...-func` edit methods are shown as patterned bars in the graph (both green and blue).
+  - **The new GPT-3.5 models did worse than the old model.** The performance of the new June (`0613`) versions of GPT-3.5 appears to be a bit worse than the February (`0301`) version. This is visible if you look at the "first attempt" markers on the first three solid blue bars and also by comparing the first three solid green `diff` bars.
+  - **GPT-4 does better than GPT-3.5,** as expected.
 
 The quantitative benchmark results agree with my intuitions
 about prompting GPT for complex tasks like coding. It's beneficial to
