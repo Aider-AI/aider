@@ -24,8 +24,8 @@ Aider currently uses simple text based editing formats, but
 [OpenAI's new function calling
 API](https://openai.com/blog/function-calling-and-other-api-updates)
 looks like a promising way to create more structured edit formats.
-Before making such a big change, I wanted to make
-sure I had a quantitative way to assess the benefits
+Before making such a big change, I wanted
+a quantitative way to assess the benefits
 of function based editing.
 
 With this in mind, I developed a
@@ -70,6 +70,7 @@ Using more complex output formats with GPT seems to introduce two issues:
 I was expecting to start using function call based edits in aider for both GPT-3.5 and GPT-4.
 But given these benchmark results, I won't be adopting the functions API
 at this time.
+I will certainly plan to benchmark functions again with future versions of the models.
 
 More details on the benchmark, edit formats and results are discussed below.
 
@@ -84,9 +85,9 @@ their coding skills.
 
 Each exercise includes:
 
-  - Instructions, provided in markdown files.
-  - Stub python code in an *implementation file*, specifying the functions or classes that need to be implemented.
-  - Unit tests in a separate python file.
+  - [Instructions](https://github.com/exercism/python/blob/main/exercises/practice/anagram/.docs/instructions.md), provided in markdown files.
+  - [Stub python code](https://github.com/exercism/python/blob/main/exercises/practice/anagram/anagram.py) in an *implementation file*, specifying the functions or classes that need to be implemented.
+  - [Unit tests](https://github.com/exercism/python/blob/main/exercises/practice/anagram/anagram_test.py) in a separate python file.
 
 The goal is for GPT to read the instructions, implement the provided function/class skeletons
 and pass all the unit tests. The benchmark measures what percentage of
@@ -152,7 +153,7 @@ format, resulting in the code not being saved correctly.
 
 It's worth keeping in mind that changing the edit format often affects
 both aspects of GPT's performance.
-Complex edit formats often lead to poorer code *and* make it less
+Complex edit formats often lead GPT to write worse code *and* make it less
 successful at formatting the edits correctly.
 
 
@@ -323,7 +324,7 @@ distinct responses, usually less than 5-10 variations.  This suggests
 that OpenAI may be load balancing their API across a number of
 slightly different instances of the model?
 
-For some exercises, some of these variable responses pass the unit tests while
+For certain exercises, some of these variable responses pass the unit tests while
 other variants do not. Results for exercises like this, which are
 "on the bubble",
 are therefore a bit random, depending on which variant OpenAI returns.
