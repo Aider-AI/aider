@@ -114,9 +114,9 @@ def show_stats(dirnames):
 
     from matplotlib import rc
 
-    rc("font", **{"family": "sans-serif", "sans-serif": ["Helvetica"], "size": 22})
+    rc("font", **{"family": "sans-serif", "sans-serif": ["Helvetica"], "size": 16})
 
-    fig, ax = plt.subplots(figsize=(12, 8))
+    fig, ax = plt.subplots(figsize=(9, 6))
     ax.grid(axis="y", zorder=0, lw=0.2)
 
     zorder = 1
@@ -135,7 +135,7 @@ def show_stats(dirnames):
             if zorder > 1:
                 edge = dict(
                     edgecolor="#ffffff",
-                    linewidth=3,
+                    linewidth=2.5,
                 )
             else:
                 edge = dict()
@@ -154,7 +154,7 @@ def show_stats(dirnames):
                 **edge,
             )
             if zorder == 2:
-                ax.bar_label(rects, padding=8, labels=[f"{v:.0f}%" for v in df[fmt]], size=14)
+                ax.bar_label(rects, padding=4, labels=[f"{v:.0f}%" for v in df[fmt]], size=12)
 
     if len(repeats):
         ax.errorbar(
