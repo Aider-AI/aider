@@ -33,9 +33,9 @@ benchmark based on the [Exercism
 python](https://github.com/exercism/python) coding exercises.
 This
 benchmark evaluates how effectively aider and GPT can translate a
-natural language coding request into actual executable code saved into
+natural language coding request into executable code saved into
 files that pass unit tests. It's an end-to-end evaluation of not just
-GPT's code writing ability, but also its capacity to *edit existing code*
+GPT's coding ability, but also its capacity to *edit existing code*
 and *format those code edits* so that aider can save the
 edits to the local source files.
 
@@ -45,20 +45,21 @@ The results were quite interesting:
 
   - Asking GPT to return an updated copy of the whole file in a standard markdown fenced code block proved to be the most reliable and effective edit format across all GPT-3.5 and GPT-4 models. The results for this `whole` edit format are shown in solid blue in the graph.
   - Using the new functions API for edits performed worse than the above whole file method, for all the models. GPT-3.5 especially produced inferior code and frequently mangled this output format. This was surprising, as the functions API was introduced to enhance the reliability of structured outputs. The results from these `...-func` edit methods are shown as patterned bars in the graph (both green and blue).
-  - The performance of the new June (`0613`) versions of GPT-3.5 appears to be a bit worse than the February (`0301`) version. This is visible if you look at the "first coding attempt" markers on the first three blue bars and also by comparing the first three green `diff` bars.
+  - The performance of the new June (`0613`) versions of GPT-3.5 appears to be a bit worse than the February (`0301`) version. This is visible if you look at the "first attempt" markers on the first three solid blue bars and also by comparing the first three solid green `diff` bars.
   - As expected, the GPT-4 models outperformed the GPT-3.5 models in code editing.
 
 The quantitative benchmark results align with my intuitions
 about prompting GPT for complex tasks like coding. It's beneficial to
 minimize the "cognitive overhead" of formatting the response, allowing
 GPT to concentrate on the coding task at hand.
-As an analogy, imagine a slack conversation with a junior developer where
-you ask them to give you the code for some new feature.
-Will they produce better code if you ask them to type out the
+
+As a thought experiment, imagine a slack conversation with a junior developer where
+you ask them to write the code for some new feature in `foo.py`?
+They're going to type the response back to you by hand in the chat.
+Should you ask them to type out the
 code and wrap it in a triple-backtick block?
-Or if you ask them to encode their code edits within a properly escaped and
-syntactically correct
-json data structure?
+Or ask them to hand code their edits into a properly escaped and
+syntactically correct json data structure of some sort?
 
 Using more complex output formats with GPT seems to introduce two issues:
 
