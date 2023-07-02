@@ -235,8 +235,10 @@ The benchmark results have me fairly convinced that the new
 `gpt-3.5-turbo-0613` and `gpt-3.5-16k-0613` models
 are a bit worse at code editing than
 the older `gpt-3.5-turbo-0301` model.
-This is especially visible if you look at just the "first coding attempt"
+This is especially visible in the "first coding attempt"
 portion of each result, before GPT gets a second chance to edit the code.
+Look at the horizontal white line in the middle of the first three blue bars.
+
 Performance with the `whole` edit format was 46% for the
 February model and only 39% for the June models.
 I saw other signs of this degraded performance

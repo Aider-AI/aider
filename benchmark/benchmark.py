@@ -54,6 +54,11 @@ def show_stats(dirnames):
         if row.edit_format == "diff-func-string":
             row.edit_format = "diff-func"
 
+        pieces = row.model.split("-")
+        row.model = "-".join(pieces[:3])
+        if pieces[3:]:
+            row.model += "\n-" + "-".join(pieces[3:])
+
         if row.completed_tests < 133:
             print(f"Warning: {row.dir_name} is incomplete: {row.completed_tests}")
 
@@ -83,7 +88,7 @@ def show_stats(dirnames):
 
     rc("font", **{"family": "sans-serif", "sans-serif": ["Helvetica"], "size": 22})
 
-    fig, ax = plt.subplots(figsize=(12, 10))
+    fig, ax = plt.subplots(figsize=(12, 8))
     ax.grid(axis="y", zorder=0, lw=0.2)
 
     zorder = 1
@@ -121,7 +126,7 @@ def show_stats(dirnames):
                 **edge,
             )
             if zorder == 2:
-                ax.bar_label(rects, padding=8, labels=[f"{v:.0f}%" for v in df[fmt]], size=11)
+                ax.bar_label(rects, padding=8, labels=[f"{v:.0f}%" for v in df[fmt]], size=14)
 
     if repeats:
         repeats = pd.DataFrame.from_records(repeats)
@@ -133,12 +138,12 @@ def show_stats(dirnames):
         ax.errorbar(1.4, 44, yerr=[[lo], [hi]], fmt="none", zorder=5, capsize=5)
 
     ax.set_xticks([p + 1.5 * width for p in pos])
-    ax.set_xticklabels(models, rotation=45)
+    ax.set_xticklabels(models)
 
     ax.annotate(
         "First coding\nattempt",
-        xy=(2.9, 50),
-        xytext=(2.25, 88),
+        xy=(2.9, 51),
+        xytext=(2.25, 85),
         horizontalalignment="center",
         arrowprops={"arrowstyle": "->", "connectionstyle": "arc3,rad=0.3"},
     )
