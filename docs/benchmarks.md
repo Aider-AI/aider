@@ -5,28 +5,20 @@
 
 Aider is an open source command line chat tool that lets you work with GPT to edit
 code in your local git repo.
-You can use aider to have GPT add features, write tests or make other changes to your code.
-
 To do this, aider needs to be able to reliably recognize when GPT wants to edit local files,
-determine which files to modify and what edits to apply.
-This direct read/modify/write integration allows
-users to harness GPT's coding skills without
-needing to repeatedly copy & paste
-code back and forth between their files and a ChatGPT window.
-
-Successful automated
-code editing hinges on the "edit format", which specifies
+determine which files it wants to modify and what changes to save.
+Such automated
+code editing hinges on the "edit format" portion of the system prompt, which specifies
 how GPT should structure code edits in its responses.
-Aider instructs GPT to use a specific
-edit format as part of the system prompt.
+
 
 Aider currently uses simple text based editing formats, but
 [OpenAI's new function calling
 API](https://openai.com/blog/function-calling-and-other-api-updates)
 looks like a promising way to create more structured edit formats.
-Before making such a big change, I wanted
-a quantitative way to assess the benefits
-of function based editing.
+I wanted
+a quantitative way to assess the potential benefits
+of switching aider to function based editing.
 
 With this in mind, I developed a
 benchmark based on the [Exercism
@@ -34,14 +26,15 @@ python](https://github.com/exercism/python) coding exercises.
 This
 benchmark evaluates how effectively aider and GPT can translate a
 natural language coding request into executable code saved into
-files that pass unit tests. It's an end-to-end evaluation of not just
+files that pass unit tests.
+It provides an end-to-end evaluation of not just
 GPT's coding ability, but also its capacity to *edit existing code*
 and *format those code edits* so that aider can save the
 edits to the local source files.
 
-I ran this code editing benchmark
-on all the ChatGPT models except `gpt-4-32k`, using a variety of edit formats.
-The results were quite interesting:
+I ran the benchmark
+on all the ChatGPT models (except `gpt-4-32k`), using a variety of edit formats.
+The results were interesting:
 
   - Asking GPT to return an updated copy of the whole file in a standard markdown fenced code block proved to be the most reliable and effective edit format across all GPT-3.5 and GPT-4 models. The results for this `whole` edit format are shown in solid blue in the graph.
   - Using the new functions API for edits performed worse than the above whole file method, for all the models. GPT-3.5 especially produced inferior code and frequently mangled this output format. This was surprising, as the functions API was introduced to enhance the reliability of structured outputs. The results for these `...-func` edit methods are shown as patterned bars in the graph (both green and blue).
@@ -62,7 +55,7 @@ Or should they type up a properly escaped and
 syntactically correct json data structure
 that contains the text of the new code?
 
-Using more complex output formats with GPT seems to introduce two issues:
+Using more complex output formats with GPT seems to cause two issues:
 
   - It makes GPT write worse code. Keeping the output format simple seems to allow GPT to devote more attention to the actual coding task.
   - It reduces GPT's adherence to the output format, making it more challenging for tools like aider to accurately identify and apply the edits GPT is attempting to make.
