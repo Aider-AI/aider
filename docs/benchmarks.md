@@ -10,18 +10,18 @@ improvements to your code.
 
 The ability for GPT to reliably edit local source files is
 crucial for this functionality.
-Improving the reliability of code
-editing often involves modifying and experimenting with the "edit
-format" used by aider. The edit format is a critical component of the
-system prompt, dictating how GPT should structure code edits in its
+Much of this depends on the "edit format", which is an important component of the
+system prompt.
+The edit format specifies how GPT should structure code edits in its
 responses.
 
 Aider currently uses simple text based editing formats, but
 [OpenAI's new function calling
 API](https://openai.com/blog/function-calling-and-other-api-updates)
-looked like a promising way to construct a more structured editing format.
+look like a promising way to create more structured edit formats.
 Before making such a big change, I wanted to make
-sure I had a quantitative way to assess the impact on
+sure I had a quantitative way to assess
+how function based edit formats would affect
 the reliability of code editing.
 
 I developed a
@@ -40,8 +40,8 @@ on almost all the ChatGPT models, using a variety of edit formats.
 The results were quite interesting:
 
   - Asking GPT to return an updated copy of the whole file in a standard markdown fenced code block proved to be the most reliable and effective edit format across all GPT-3.5 and GPT-4 models. The results from this `whole` edit format are shown in solid blue in the graph.
-  - Using the new function calling API performed worse than the above whole file method for all models. GPT-3.5 especially produced inferior code and frequently mangled this output format. This was surprising, as the functions API was introduced to enhance the reliability of structured outputs. The results from these `...-func` edit methods are shown as patterned bars in the graph (both green and blue).
-  - The performance of the June (`0613`) version of GPT-3.5 appears to be a bit worse than the Feb (`0301`) version. This is visible if you look at the "first coding attempt" markers on the blue bars.
+  - Using the new functions API performed worse than the above whole file method for all models. GPT-3.5 especially produced inferior code and frequently mangled this output format. This was surprising, as the functions API was introduced to enhance the reliability of structured outputs. The results from these `...-func` edit methods are shown as patterned bars in the graph (both green and blue).
+  - The performance of the new June (`0613`) version of GPT-3.5 appears to be a bit worse than the February (`0301`) version. This is visible if you look at the "first coding attempt" markers on the first three blue bars.
   - As expected, the GPT-4 models outperformed the GPT-3.5 models in code editing.
 
 The quantitative benchmark results align with my intuitions
@@ -114,6 +114,14 @@ specific requirements of the unit tests.
 Many of the exercises have multiple paragraphs of instructions,
 and most human coders would likely fail some tests on their
 first try.
+
+The bars in the graph show the percent of exercises that were completed by
+each model and edit format combination. The full bar height represents
+the final outcome following the first coding attempt and the second
+attempt that includes the unit test error output.
+Each bar also has a horizontal mark that shows
+the intermediate performance after the first coding attempt,
+without the benefit of second try.
 
 It's worth noting that GPT never gets to see the source code of the
 unit tests during the benchmarking. It only sees the error output from

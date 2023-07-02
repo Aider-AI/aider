@@ -106,8 +106,8 @@ def show_stats(dirnames):
         for i, fmt in enumerate(formats):
             if zorder > 1:
                 edge = dict(
-                    edgecolor="#eeeeee",
-                    linewidth=2,
+                    edgecolor="#ffffff",
+                    linewidth=3,
                 )
             else:
                 edge = dict()
@@ -148,16 +148,16 @@ def show_stats(dirnames):
         arrowprops={"arrowstyle": "->", "connectionstyle": "arc3,rad=0.3"},
     )
     ax.annotate(
-        "Second attempt,\nafter seeing\nunittest errors",
+        "Second attempt,\nafter seeing\nunit test errors",
         xy=(3.1, 68),
         xytext=(4.25, 80),
         horizontalalignment="center",
         arrowprops={"arrowstyle": "->", "connectionstyle": "arc3,rad=0.3"},
     )
 
-    ax.set_ylabel("Percent of exercises with\nall unittests passing")
+    ax.set_ylabel("Percent of exercises with\nall unit tests passing")
     # ax.set_xlabel("Model")
-    ax.set_title("Code Editing Success")
+    ax.set_title("GPT Code Editing")
     ax.legend(
         title="Edit Format",
         loc="upper left",
