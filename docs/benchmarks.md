@@ -1,7 +1,7 @@
 
-# GPT code editing benchmarks
-
 [![benchmark results](../assets/benchmarks.svg)](https://aider.chat/assets/benchmarks.svg)
+
+# GPT code editing benchmarks
 
 Aider is an open source command line chat tool that lets you work with GPT to edit
 code in your local git repo.
