@@ -182,7 +182,7 @@ def show_stats(dirnames):
         arrowprops={"arrowstyle": "->", "connectionstyle": "arc3,rad=0.3"},
     )
 
-    ax.set_ylabel("Percent of exercises with\nall unit tests passing")
+    ax.set_ylabel("Percent of exercises completed successfully")
     # ax.set_xlabel("Model")
     ax.set_title("GPT Code Editing")
     ax.legend(
