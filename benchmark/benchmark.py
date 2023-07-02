@@ -140,18 +140,21 @@ def show_stats(dirnames):
     ax.set_xticks([p + 1.5 * width for p in pos])
     ax.set_xticklabels(models)
 
+    top = 95
     ax.annotate(
         "First coding\nattempt",
         xy=(2.9, 51),
-        xytext=(2.25, 85),
+        xytext=(2.5, top),
         horizontalalignment="center",
+        verticalalignment="top",
         arrowprops={"arrowstyle": "->", "connectionstyle": "arc3,rad=0.3"},
     )
     ax.annotate(
         "Second attempt,\nafter seeing\nunit test errors",
         xy=(3.1, 68),
-        xytext=(4.25, 80),
+        xytext=(4.25, top),
         horizontalalignment="center",
+        verticalalignment="top",
         arrowprops={"arrowstyle": "->", "connectionstyle": "arc3,rad=0.3"},
     )
 
