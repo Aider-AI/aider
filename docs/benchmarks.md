@@ -7,11 +7,17 @@ Aider is an open source command line chat tool that lets you work with GPT to ed
 code in your local git repo.
 You can use aider to have GPT add features, write tests or make other changes to your code.
 
-The ability for GPT to reliably edit local source files is
-crucial for this functionality, and depends mainly on the "edit format".
-The edit format is an important component of the system prompt,
-which specifies how GPT should structure code edits in its
-responses.
+To do this, aider needs to be able to reliably recognize when GPT wants to edit local files,
+determine which files to modify and what edits to apply.
+Without this direct read/modify/write integration,
+users would need to repeatedly copy/paste
+code back and forth between their files and a ChatGPT window.
+
+Successful automated
+code editing hinges on the "edit format", which specifies
+how GPT should structure code edits in its responses.
+Aider instructs GPT to use a specific
+edit format as part of the system prompt.
 
 Aider currently uses simple text based editing formats, but
 [OpenAI's new function calling
@@ -26,35 +32,40 @@ benchmark based on the [Exercism
 python](https://github.com/exercism/python) coding exercises.
 This
 benchmark evaluates how effectively aider and GPT can translate a
-natural language coding request into actual runnable code saved into
+natural language coding request into actual executable code saved into
 files that pass unit tests. It's an end-to-end evaluation of not just
-GPT's code writing ability, but also its capacity to *edit existing
-code* and *package those code changes* so that aider can save the
+GPT's code writing ability, but also its capacity to *edit existing code*
+and *format those code edits* so that aider can save the
 edits to the local source files.
 
 I ran this code editing benchmark
-on almost all the ChatGPT models, using a variety of edit formats.
+on all the ChatGPT models except `gpt-4-32k`, using a variety of edit formats.
 The results were quite interesting:
 
   - Asking GPT to return an updated copy of the whole file in a standard markdown fenced code block proved to be the most reliable and effective edit format across all GPT-3.5 and GPT-4 models. The results from this `whole` edit format are shown in solid blue in the graph.
-  - Using the new functions API performed worse than the above whole file method for all models. GPT-3.5 especially produced inferior code and frequently mangled this output format. This was surprising, as the functions API was introduced to enhance the reliability of structured outputs. The results from these `...-func` edit methods are shown as patterned bars in the graph (both green and blue).
-  - The performance of the new June (`0613`) version of GPT-3.5 appears to be a bit worse than the February (`0301`) version. This is visible if you look at the "first coding attempt" markers on the first three blue bars.
+  - Using the new functions API for edits performed worse than the above whole file method for all models. GPT-3.5 especially produced inferior code and frequently mangled this output format. This was surprising, as the functions API was introduced to enhance the reliability of structured outputs. The results from these `...-func` edit methods are shown as patterned bars in the graph (both green and blue).
+  - The performance of the new June (`0613`) versions of GPT-3.5 appears to be a bit worse than the February (`0301`) version. This is visible if you look at the "first coding attempt" markers on the first three blue bars and also by comparing the first three green `diff` bars.
   - As expected, the GPT-4 models outperformed the GPT-3.5 models in code editing.
 
 The quantitative benchmark results align with my intuitions
 about prompting GPT for complex tasks like coding. It's beneficial to
 minimize the "cognitive overhead" of formatting the response, allowing
-GPT to concentrate on the task at hand. As an analogy, imagine asking a junior
-developer to implement a new feature by manually typing the required
-code changes as `diff -c` formatted edits. You wouldn't expect a good result.
+GPT to concentrate on the task at hand.
+As an analogy, imagine a slack conversation with a junior developer where
+you ask them to give you the code for some new feature.
+Will they produce better code if you ask them to type out the
+code and wrap it in a triple-backtick block?
+Or if you ask them to encode their code edits within a properly escaped and
+syntactically correct
+json data structure?
 
-Using more complex output formats seems to introduce two issues:
+Using more complex output formats with GPT seems to introduce two issues:
 
-  - It makes GPT write worse code. Keeping the output format simple appears to allow GPT to devote more attention to the actual coding task.
+  - It makes GPT write worse code. Keeping the output format simple seems to allow GPT to devote more attention to the actual coding task.
   - It reduces GPT's adherence to the output format, making it more challenging for tools like aider to accurately identify and apply the edits GPT is attempting to make.
 
-I was planning to start using a function call based edit format in aider for both GPT-3.5 and GPT-4.
-But given these benchmarking results, I won't be adopting the functions API
+I was expecting to start using function call based edits in aider for both GPT-3.5 and GPT-4.
+But given these benchmark results, I won't be adopting the functions API
 at this time.
 
 More details on the benchmark, edit formats and results are discussed below.
