@@ -41,6 +41,7 @@ The results were quite interesting:
 
   - Asking GPT to return an updated copy of the whole file in a standard markdown fenced code block proved to be the most reliable and effective edit format across all GPT-3.5 and GPT-4 models. The results from this `whole` edit format are shown in solid blue in the graph.
   - Using the new function calling API performed worse than the above whole file method for all models. GPT-3.5 especially produced inferior code and frequently mangled this output format. This was surprising, as the functions API was introduced to enhance the reliability of structured outputs. The results from these `...-func` edit methods are shown as patterned bars in the graph (both green and blue).
+  - The performance of the June (`0613`) version of GPT-3.5 appears to be a bit worse than the Feb (`0301`) version. This is visible if you look at the "first coding attempt" markers on the blue bars.
   - As expected, the GPT-4 models outperformed the GPT-3.5 models in code editing.
 
 The quantitative benchmark results align with my intuitions
@@ -226,26 +227,41 @@ original/updated style edits to be returned using the function call API.
 }       
 ```
 
-## GPT-3.5 struggles with complex edit formats
+## GPT-3.5's performance
 
-While GPT-3.5 can pass some exercises using edit formats other than
-the `whole` format, it struggles with the rest of the
-formats.
+### The `0613` models seem worse?
 
-### Pathlogical use of `diff`
+The benchmark results have me fairly convinced that the new
+`gpt-3.5-turbo-0613` and `gpt-3.5-16k-0613` models
+are a bit worse at code editing than
+the older `gpt-3.5-turbo-0301` model.
+This is especially visible if you look at just the "first coding attempt"
+portion of each result, before GPT gets a second chance to edit the code.
+Performance with the `whole` edit format was 46% for the
+February model and only 39% for the June models.
+I saw other signs of this degraded performance
+in earlier versions of the
+benchmark as well.
 
-While GPT-3.5 can sometimes correctly generate the `diff` edit format,
+### Pathological use of `diff`
+
+When GPT-3.5 is able to correctly generate the `diff` edit format,
 it often uses it in a pathological manner. It places the *entire*
 original source file in the ORIGINAL block and the entire updated file
 in the UPDATED block. This is strictly worse than just using the
 `whole` edit format, as GPT is sending 2 full copies of the file.
 
-### Hallucinating function calls
+### Hallucinated function calls
 
-When using the functions API
-GPT-3.5 is prone to ignoring the JSON Schema that specifies valid functions.
+When GPT-3.5 uses the functions API
+it is prone to ignoring the JSON Schema that specifies valid functions.
 It often returns a completely novel and semantically
 invalid `function_call` fragment with `"name": "python"`.
+
+The `arguments` attribute is supposed to be a set of key/value pairs
+with the arguments to the function specified in the `name` field.
+Instead, GPT-3.5 frequently just stuffs an entire python
+file into that field.
 
 ```
         "function_call": {
@@ -254,13 +270,10 @@ invalid `function_call` fragment with `"name": "python"`.
         },
 ```
 
-The `arguments` attribute is supposed to be a set of key/value pairs
-with the arguments to the function specified in the `name` field.
-Instead, GPT-3.5 frequently just stuffs an entire python
-file into that field.
-
 It seems like it might be getting confused by fine-tuning that was
 done for the ChatGPT code interpreter plugin?
+
+
 
 
 ## Randomness
