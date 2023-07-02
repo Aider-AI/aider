@@ -9,8 +9,9 @@ You can use aider to have GPT add features, write tests or make other changes to
 
 To do this, aider needs to be able to reliably recognize when GPT wants to edit local files,
 determine which files to modify and what edits to apply.
-Without this direct read/modify/write integration,
-users would need to repeatedly copy/paste
+This direct read/modify/write integration allows
+users to harness GPT's coding skills without
+needing to repeatedly copy & paste
 code back and forth between their files and a ChatGPT window.
 
 Successful automated
@@ -42,15 +43,15 @@ I ran this code editing benchmark
 on all the ChatGPT models except `gpt-4-32k`, using a variety of edit formats.
 The results were quite interesting:
 
-  - Asking GPT to return an updated copy of the whole file in a standard markdown fenced code block proved to be the most reliable and effective edit format across all GPT-3.5 and GPT-4 models. The results from this `whole` edit format are shown in solid blue in the graph.
-  - Using the new functions API for edits performed worse than the above whole file method for all models. GPT-3.5 especially produced inferior code and frequently mangled this output format. This was surprising, as the functions API was introduced to enhance the reliability of structured outputs. The results from these `...-func` edit methods are shown as patterned bars in the graph (both green and blue).
+  - Asking GPT to return an updated copy of the whole file in a standard markdown fenced code block proved to be the most reliable and effective edit format across all GPT-3.5 and GPT-4 models. The results for this `whole` edit format are shown in solid blue in the graph.
+  - Using the new functions API for edits performed worse than the above whole file method, for all the models. GPT-3.5 especially produced inferior code and frequently mangled this output format. This was surprising, as the functions API was introduced to enhance the reliability of structured outputs. The results from these `...-func` edit methods are shown as patterned bars in the graph (both green and blue).
   - The performance of the new June (`0613`) versions of GPT-3.5 appears to be a bit worse than the February (`0301`) version. This is visible if you look at the "first coding attempt" markers on the first three blue bars and also by comparing the first three green `diff` bars.
   - As expected, the GPT-4 models outperformed the GPT-3.5 models in code editing.
 
 The quantitative benchmark results align with my intuitions
 about prompting GPT for complex tasks like coding. It's beneficial to
 minimize the "cognitive overhead" of formatting the response, allowing
-GPT to concentrate on the task at hand.
+GPT to concentrate on the coding task at hand.
 As an analogy, imagine a slack conversation with a junior developer where
 you ask them to give you the code for some new feature.
 Will they produce better code if you ask them to type out the
@@ -81,15 +82,15 @@ their coding skills.
 
 Each exercise includes:
 
-  - Instructions for the exercise, provided in markdown files.
-  - Stub code for the implementation in a python file, specifying the functions/classes that need to be implemented.
-  - Unit tests in a seperate python file.
+  - Instructions, provided in markdown files.
+  - Stub python code in an *implementation file*, specifying the functions or classes that need to be implemented.
+  - Unit tests in a separate python file.
 
-The goal is for GPT to read the instructions, implement the provided functions/class skeletons
+The goal is for GPT to read the instructions, implement the provided function/class skeletons
 and pass all the unit tests. The benchmark measures what percentage of
 the 133 exercises are completed successfully, causing all the associated unit tests to pass.
 
-To complete an exercise, aider sends GPT
+To start each exercise, aider sends GPT
 the initial contents of the implementation file,
 the Exercism instructions
 and a final instruction:
@@ -104,7 +105,7 @@ Aider updates the implementation file based on GPT's reply and runs
 the unit tests. If all tests pass, the exercise is considered
 complete. If some tests fail, Aider sends GPT a second message with
 the test error output. It only sends the first 50 lines of test errors
-to avoid exceeding the context window of the smaller models. Aider
+to try and avoid exceeding the context window of the smaller models. Aider
 also includes this final instruction:
 
 ```
@@ -116,7 +117,7 @@ Fix the code in <implementation file> to resolve the errors.
 Requiring GPT to fix its first implementation in response to test failures
 is another way in which this benchmark stresses code editing skill.
 This second chance is also important because it
-gives a chance for GPT to adjust if the
+gives GPT a chance to adjust if the
 instructions were imprecise with respect to the
 specific requirements of the unit tests.
 Many of the exercises have multiple paragraphs of instructions,
@@ -139,7 +140,7 @@ original training data!
 In summary, passing an exercise means GPT was able to:
 
   - Write the required code (possibly after reviewing test error output),
-  - Correctly package all of this code into the edit format so that Aider can process and save it to the implementation file.
+  - Correctly package all of the code edits into the edit format so that Aider can process and save it to the implementation file.
 
 Conversely, failing an exercise only requires a breakdown in one of
 those steps. In practice, GPT fails at different steps in different
@@ -156,7 +157,7 @@ successful at formatting the edits correctly.
 ## Edit formats
 
 I benchmarked 4 different edit formats, described below.
-Each description includes a sample response that GPT might provide in response to a user who
+Each description includes a sample response that GPT might provide to a user who
 requests:
 "Change the print from hello to goodbye."
 
@@ -272,7 +273,7 @@ When GPT-3.5 is able to correctly generate the `diff` edit format,
 it often uses it in a pathological manner. It places the *entire*
 original source file in the ORIGINAL block and the entire updated file
 in the UPDATED block. This is strictly worse than just using the
-`whole` edit format, as GPT is sending 2 full copies of the file.
+`whole` edit format, as GPT is sending two full copies of the file.
 
 ### Hallucinated function calls
 
@@ -308,7 +309,7 @@ when sending test error output to GPT,
 it removes the wall-clock timing information that
 is normally included by the `unittest` module.
 
-The benchmarking harness also logs SHA hashes of
+The benchmark harness also logs SHA hashes of
 all the OpenAI API requests and replies.
 This makes it possible to
 detect randomness or nondeterminism
@@ -331,7 +332,7 @@ This would average away the effect of the API variance.
 It would also significantly increase the cost of this sort of benchmarking.
 So I didn't do that.
 
-Benchmarking against 133 exercises provides some robustness all by itself, since
+Benchmarking against 133 exercises already provides some robustness, since
 we are measuring the performance across many exercises.
 
 But to get a sense of how much the API variance impacts the benchmark outcomes,
@@ -345,5 +346,5 @@ cause a large variance in the overall benchmark results.
 
 ## Conclusions
 
-Based on these benchmarking results, aider will continue to use
+Based on these benchmark results, aider will continue to use
 the `whole` edit format for GPT-3.5, and `diff` for GPT-4.
