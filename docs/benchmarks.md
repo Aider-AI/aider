@@ -348,3 +348,16 @@ cause a large variance in the overall benchmark results.
 
 Based on these benchmark results, aider will continue to use
 the `whole` edit format for GPT-3.5, and `diff` for GPT-4.
+
+GPT-4 gets comparable results with the `diff` and `whole` edit formats,
+but using `whole` significantly increases costs and latency compared to `diff`.
+
+The latency of streaming back the entire updated copy of each edited file
+is the real challenge. The GPT-3.5 models are quite responsive, and can
+stream back entire files at reasonable speed.
+Aider displays a progress bar and
+live diffs of the files as they stream in,
+which helps pass the time.
+
+The GPT-4 models are much slower, and waiting for even small files
+to be completely "retyped" on each request is probably unacceptable.
