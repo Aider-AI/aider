@@ -16,9 +16,10 @@ Aider currently uses simple text based editing formats, but
 [OpenAI's new function calling
 API](https://openai.com/blog/function-calling-and-other-api-updates)
 looks like a promising way to create more structured edit formats.
+After implementing a couple of function based edit formats,
 I wanted
-a quantitative way to assess the potential benefits
-of switching aider to function based editing.
+to measure the potential benefits
+of switching aider to use them by default.
 
 With this in mind, I developed a
 benchmark based on the [Exercism
