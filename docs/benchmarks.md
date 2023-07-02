@@ -23,7 +23,7 @@ Before making such a big change, I wanted to make
 sure I had a quantitative way to assess the benefits
 of function based editing.
 
-I developed a
+With this in mind, I developed a
 benchmark based on the [Exercism
 python](https://github.com/exercism/python) coding exercises.
 This
