@@ -3,16 +3,14 @@
 
 ![benchmark results](../assets/benchmarks.svg)
 
-Aider is an open source command line chat tool that lets you ask GPT to edit
-code in your local git repos.
-You can use aider to ask GPT to add features, write tests or make other changes and
-improvements to your code.
+Aider is an open source command line chat tool that lets you work with GPT to edit
+code in your local git repo.
+You can use aider to have GPT add features, write tests or make other changes to your code.
 
 The ability for GPT to reliably edit local source files is
-crucial for this functionality.
-Much of this depends on the "edit format", which is an important component of the
-system prompt.
-The edit format specifies how GPT should structure code edits in its
+crucial for this functionality, and depends mainly on the "edit format".
+The edit format is an important component of the system prompt,
+which specifies how GPT should structure code edits in its
 responses.
 
 Aider currently uses simple text based editing formats, but
@@ -242,12 +240,17 @@ The benchmark results have me fairly convinced that the new
 `gpt-3.5-turbo-0613` and `gpt-3.5-16k-0613` models
 are a bit worse at code editing than
 the older `gpt-3.5-turbo-0301` model.
-This is especially visible in the "first coding attempt"
+
+This is visible in the "first coding attempt"
 portion of each result, before GPT gets a second chance to edit the code.
 Look at the horizontal white line in the middle of the first three blue bars.
-
 Performance with the `whole` edit format was 46% for the
 February model and only 39% for the June models.
+
+But also note how much the solid green `diff` bars
+degrade between the February and June GPT-3.5 models.
+They drop from 30% down to about 19%.
+
 I saw other signs of this degraded performance
 in earlier versions of the
 benchmark as well.
