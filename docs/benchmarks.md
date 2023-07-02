@@ -7,11 +7,10 @@ code in your local git repo.
 To do this, aider needs to be able to reliably recognize when GPT wants to edit local files,
 determine which files it wants to modify and what changes to save.
 Such automated
-code editing hinges on the "edit format" portion of the system prompt, which specifies
-how GPT should structure code edits in its responses.
+code editing hinges on using the system prompt
+to tell GPT how to structure code edits in its responses.
 
-
-Aider currently uses simple text based editing formats, but
+Aider currently asks GPT to use simple text based "edit formats", but
 [OpenAI's new function calling
 API](https://openai.com/blog/function-calling-and-other-api-updates)
 looks like a promising way to create more structured edit formats.
