@@ -44,7 +44,7 @@ on all the ChatGPT models except `gpt-4-32k`, using a variety of edit formats.
 The results were quite interesting:
 
   - Asking GPT to return an updated copy of the whole file in a standard markdown fenced code block proved to be the most reliable and effective edit format across all GPT-3.5 and GPT-4 models. The results for this `whole` edit format are shown in solid blue in the graph.
-  - Using the new functions API for edits performed worse than the above whole file method, for all the models. GPT-3.5 especially produced inferior code and frequently mangled this output format. This was surprising, as the functions API was introduced to enhance the reliability of structured outputs. The results from these `...-func` edit methods are shown as patterned bars in the graph (both green and blue).
+  - Using the new functions API for edits performed worse than the above whole file method, for all the models. GPT-3.5 especially produced inferior code and frequently mangled this output format. This was surprising, as the functions API was introduced to enhance the reliability of structured outputs. The results for these `...-func` edit methods are shown as patterned bars in the graph (both green and blue).
   - The performance of the new June (`0613`) versions of GPT-3.5 appears to be a bit worse than the February (`0301`) version. This is visible if you look at the "first attempt" markers on the first three solid blue bars and also by comparing the first three solid green `diff` bars.
   - As expected, the GPT-4 models outperformed the GPT-3.5 models in code editing.
 
@@ -54,12 +54,13 @@ minimize the "cognitive overhead" of formatting the response, allowing
 GPT to concentrate on the coding task at hand.
 
 As a thought experiment, imagine a slack conversation with a junior developer where
-you ask them to write the code for some new feature in `foo.py`?
+you ask them to write the code to add some new feature to your app.
 They're going to type the response back to you by hand in the chat.
-Should you ask them to type out the
-code and wrap it in a triple-backtick block?
-Or ask them to hand code their edits into a properly escaped and
-syntactically correct json data structure of some sort?
+Should they type out the
+code and wrap it in a normal markdown code block?
+Or should they type up a properly escaped and
+syntactically correct json data structure
+that contains the text of the new code?
 
 Using more complex output formats with GPT seems to introduce two issues:
 
