@@ -105,7 +105,7 @@ Only use standard python libraries, don't suggest installing any packages.
 
 Aider updates the implementation file based on GPT's reply and runs
 the unit tests. If all tests pass, the exercise is considered
-complete. If some tests fail, Aider sends GPT a second message with
+complete. If some tests fail, aider sends GPT a second message with
 the test error output. It only sends the first 50 lines of test errors
 to try and avoid exceeding the context window of the smaller models. Aider
 also includes this final instruction:
@@ -119,7 +119,7 @@ Fix the code in <implementation file> to resolve the errors.
 Requiring GPT to fix its first implementation in response to test failures
 is another way in which this benchmark stresses code editing skill.
 This second chance is also important because it
-gives GPT a chance to adjust if the
+gives GPT the opportunity to adjust if the
 instructions were imprecise with respect to the
 specific requirements of the unit tests.
 Many of the exercises have multiple paragraphs of instructions,
@@ -135,14 +135,14 @@ the intermediate performance after the first coding attempt,
 without the benefit of the second try.
 
 It's worth noting that GPT never gets to see the source code of the
-unit tests during the benchmarking. It only sees the error output from
+unit tests during the benchmark. It only sees the error output from
 failed tests. Of course, all of this code was probably part of its
 original training data!
 
 In summary, passing an exercise means GPT was able to:
 
   - Write the required code (possibly after reviewing test error output),
-  - Correctly package all of the code edits into the edit format so that Aider can process and save it to the implementation file.
+  - Correctly package all of the code edits into the edit format so that aider can process and save it to the implementation file.
 
 Conversely, failing an exercise only requires a breakdown in one of
 those steps. In practice, GPT fails at different steps in different
