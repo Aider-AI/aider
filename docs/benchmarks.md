@@ -42,7 +42,7 @@ The results were interesting:
   - The performance of the new June (`0613`) versions of GPT-3.5 appears to be a bit worse than the February (`0301`) version. This is visible if you look at the "first attempt" markers on the first three solid blue bars and also by comparing the first three solid green `diff` bars.
   - As expected, the GPT-4 models outperformed the GPT-3.5 models in code editing.
 
-The quantitative benchmark results align with my intuitions
+The quantitative benchmark results agree with my intuitions
 about prompting GPT for complex tasks like coding. It's beneficial to
 minimize the "cognitive overhead" of formatting the response, allowing
 GPT to concentrate on the coding task at hand.
