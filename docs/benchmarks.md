@@ -129,11 +129,10 @@ first try.
 
 The bars in the graph show the percent of exercises that were completed by
 each model and edit format combination. The full bar height represents
-the final outcome following the first coding attempt and the second
-attempt that includes the unit test error output.
+the final outcome following both coding attempts.
 Each bar also has a horizontal mark that shows
 the intermediate performance after the first coding attempt,
-without the benefit of the second try.
+without the benefit of the second try that includes the test error output.
 
 It's worth noting that GPT never gets to see the source code of the
 unit tests during the benchmark. It only sees the error output from
@@ -256,7 +255,7 @@ The benchmark results have me fairly convinced that the new
 are a bit worse at code editing than
 the older `gpt-3.5-turbo-0301` model.
 
-This is visible in the "first coding attempt"
+This is visible in the "first attempt"
 portion of each result, before GPT gets a second chance to edit the code.
 Look at the horizontal white line in the middle of the first three blue bars.
 Performance with the `whole` edit format was 46% for the
@@ -352,11 +351,12 @@ cause a large variance in the overall benchmark results.
 Based on these benchmark results, aider will continue to use
 the `whole` edit format for GPT-3.5, and `diff` for GPT-4.
 
-GPT-4 gets comparable results with the `diff` and `whole` edit formats,
+GPT-4 gets comparable results with the `whole` and `diff` edit formats,
 but using `whole` significantly increases costs and latency compared to `diff`.
 
 The latency of streaming back the entire updated copy of each edited file
-is the real challenge. The GPT-3.5 models are quite responsive, and can
+is a real challenge with the `whole` format.
+The GPT-3.5 models are quite responsive, and can
 stream back entire files at reasonable speed.
 Aider displays a progress bar and
 live diffs of the files as they stream in,
