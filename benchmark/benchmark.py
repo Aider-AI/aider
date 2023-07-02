@@ -143,7 +143,7 @@ def show_stats(dirnames):
                 edge["label"] = fmt
 
             color = "#b3e6a8" if "diff" in fmt else "#b3d1e6"
-            hatch = "//" if "func" in fmt else ""
+            hatch = "////" if "func" in fmt else ""
             rects = ax.bar(
                 pos + i * width,
                 df[fmt],
