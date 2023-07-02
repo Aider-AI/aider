@@ -18,11 +18,10 @@ responses.
 Aider currently uses simple text based editing formats, but
 [OpenAI's new function calling
 API](https://openai.com/blog/function-calling-and-other-api-updates)
-look like a promising way to create more structured edit formats.
+looks like a promising way to create more structured edit formats.
 Before making such a big change, I wanted to make
-sure I had a quantitative way to assess
-how function based edit formats would affect
-the reliability of code editing.
+sure I had a quantitative way to assess the benefits
+of function based editing.
 
 I developed a
 benchmark based on the [Exercism
