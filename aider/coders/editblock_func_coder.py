@@ -1,7 +1,5 @@
 import json
 
-from jsonschema import Draft7Validator
-
 from ..dump import dump  # noqa: F401
 from .base_coder import Coder
 from .editblock_coder import do_replace
@@ -81,8 +79,6 @@ class EditBlockFunctionCoder(Coder):
             self.functions[0]["parameters"]["properties"]["edits"]["items"]["properties"][
                 "updated_lines"
             ] = updated_lines
-
-        Draft7Validator.check_schema(self.functions[0])
 
         self.gpt_prompts = EditBlockFunctionPrompts()
         super().__init__(*args, **kwargs)

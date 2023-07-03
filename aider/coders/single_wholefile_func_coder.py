@@ -1,7 +1,5 @@
 import os
 
-from jsonschema import Draft7Validator
-
 from aider import diffs
 
 from ..dump import dump  # noqa: F401
@@ -35,8 +33,6 @@ class SingleWholeFileFunctionCoder(Coder):
     ]
 
     def __init__(self, *args, **kwargs):
-        Draft7Validator.check_schema(self.functions[0])
-
         self.gpt_prompts = SingleWholeFileFunctionPrompts()
         super().__init__(*args, **kwargs)
 

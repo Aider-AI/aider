@@ -12,6 +12,7 @@ import backoff
 import git
 import openai
 import requests
+from jsonschema import Draft7Validator
 from openai.error import APIError, RateLimitError, ServiceUnavailableError, Timeout
 from rich.console import Console, Text
 from rich.live import Live
@@ -186,6 +187,15 @@ class Coder:
 
         for fname in self.get_inchat_relative_files():
             self.io.tool_output(f"Added {fname} to the chat.")
+
+        # validate the functions jsonschema
+        if hasattr(self, "functions"):
+            for function in self.functions:
+                Draft7Validator.check_schema(function)
+
+            if self.verbose:
+                self.io.tool_output("JSON Schema:")
+                self.io.tool_output(json.dumps(self.functions, indent=4))
 
     def find_common_root(self):
         if len(self.abs_fnames) == 1:
