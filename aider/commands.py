@@ -279,7 +279,7 @@ class Commands:
 
         if not args.strip():
             self.io.tool_output("Dropping all files from the chat session.")
-            self.coder.abs_fnames = []
+            self.coder.abs_fnames = set()
 
         for word in args.split():
             matched_files = [
