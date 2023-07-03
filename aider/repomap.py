@@ -65,6 +65,8 @@ class RepoMap:
     IDENT_CACHE_DIR = f".aider.ident.cache.v{CACHE_VERSION}"
     TAGS_CACHE_DIR = f".aider.tags.cache.v{CACHE_VERSION}"
 
+    ctags_disabled_reason = "ctags not initialized"
+
     def __init__(
         self,
         map_tokens=1024,
@@ -180,13 +182,32 @@ class RepoMap:
 
     def check_for_ctags(self):
         try:
+            executable = self.ctags_cmd[0]
+            cmd = [executable, "--version"]
+            output = subprocess.check_output(cmd, stderr=subprocess.PIPE).decode("utf-8")
+            output = output.lower()
+
+            cmd = " ".join(cmd)
+
+            if "universal ctags" not in output:
+                self.ctags_disabled_reason = f"{cmd} does not claim to be universal ctags"
+                return
+            if "+json" not in output:
+                self.ctags_disabled_reason = f"{cmd} does not list +json support"
+                return
+
             with tempfile.TemporaryDirectory() as tempdir:
                 hello_py = os.path.join(tempdir, "hello.py")
                 with open(hello_py, "w") as f:
                     f.write("def hello():\n    print('Hello, world!')\n")
                 self.run_ctags(hello_py)
-        except Exception:
-            return False
+        except FileNotFoundError:
+            self.ctags_disabled_reason = f"{executable} executable not found"
+            return
+        except Exception as err:
+            self.ctags_disabled_reason = f"error running universal-ctags: {err}"
+            return
+
         return True
 
     def load_tags_cache(self):
