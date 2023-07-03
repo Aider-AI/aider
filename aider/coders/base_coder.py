@@ -189,7 +189,7 @@ class Coder:
             self.io.tool_output(f"Added {fname} to the chat.")
 
         # validate the functions jsonschema
-        if hasattr(self, "functions"):
+        if self.functions:
             for function in self.functions:
                 Draft7Validator.check_schema(function)
 
