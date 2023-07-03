@@ -88,20 +88,26 @@ print(my_function(3, 4))
             result = repo_map.check_for_ctags()
             self.assertFalse(result)
 
-    def test_check_for_ctags_success(self):
-        with patch("subprocess.run") as mock_run:
-            mock_run.return_value = CompletedProcess(
+from unittest.mock import patch, MagicMock
+from subprocess import CompletedProcess
+
+def test_check_for_ctags_success(self):
+    with patch("subprocess.run") as mock_run:
+        mock_run.side_effect = [
+            CompletedProcess(
                 args=["ctags", "--version"],
                 returncode=0,
-                stdout=(
-                    b'{"_type": "tag", "name": "status", "path": "aider/main.py", "pattern": "/^   '
-                    b' status = main()$/", "kind": "variable"}'
-                ),
-            )
-            repo_map = RepoMap()
-            result = repo_map.check_for_ctags()
-            self.assertTrue(result)
-
+                stdout=b"Universal Ctags 0.0.0(f25b4bb7)",
+            ),
+            CompletedProcess(
+                args=["ctags", "-R"],
+                returncode=0,
+                stdout=b"",
+            ),
+        ]
+        repo_map = RepoMap()
+        result = repo_map.check_for_ctags()
+        self.assertTrue(result)
     def test_get_repo_map_without_ctags(self):
         # Create a temporary directory with a sample Python file containing identifiers
         test_files = [
