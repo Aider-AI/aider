@@ -39,8 +39,11 @@ class AutoCompleter(Completer):
             self.words.add(rel_fname)
 
             fname = os.path.join(root, rel_fname)
-            with open(fname, "r") as f:
-                content = f.read()
+            try:
+                with open(fname, "r") as f:
+                    content = f.read()
+            except FileNotFoundError:
+                continue
             try:
                 lexer = guess_lexer_for_filename(fname, content)
             except ClassNotFound:
