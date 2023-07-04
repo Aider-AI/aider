@@ -16,7 +16,7 @@ In detail, GPT is able to use the repo map to:
   - Find the function signature of the `cmd_add()` function which the user wants a test case for.
   - Determine that it is a method of the `Command` class, so the test case will need to instantiate an instance to conduct the test.
   - Identify that creating a `Command` instance requires passing in `InputOutput` and `Coder` instances.
-  - Figure out the arguments required to instantiate the `InputOuput` instance.
+  - Figure out the arguments required to instantiate the `InputOutput` instance.
   - Decide that the `Coder` class looks complex enough to use a `MagickMock`.
 
 The `cmd_add()` method is defined without type annotations, so GPT makes a
