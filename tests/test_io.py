@@ -2,7 +2,7 @@ import os
 import unittest
 from unittest.mock import patch
 
-from aider.io import InputOutput
+from aider.io import InputOutput, AutoCompleter
 
 
 class TestInputOutput(unittest.TestCase):
@@ -10,6 +10,14 @@ class TestInputOutput(unittest.TestCase):
         with patch.dict(os.environ, {"NO_COLOR": "1"}):
             io = InputOutput()
             self.assertFalse(io.pretty)
+
+    def test_autocompleter_with_non_existent_file(self):
+        root = ""
+        rel_fnames = ["non_existent_file"]
+        addable_rel_fnames = []
+        commands = None
+        autocompleter = AutoCompleter(root, rel_fnames, addable_rel_fnames, commands)
+        self.assertEqual(autocompleter.words, set())
 
 
 if __name__ == "__main__":
