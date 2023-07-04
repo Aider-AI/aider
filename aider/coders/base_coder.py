@@ -317,6 +317,11 @@ class Coder:
             prompt += utils.quoted_file(fname, relative_fname, fence=self.fence)
         return prompt
 
+    def recheck_abs_fnames(self):
+        self.abs_fnames = set(
+            fname for fname in self.abs_fnames if Path(fname).exists() and Path(fname).is_file()
+        )
+
     def get_files_messages(self):
         all_content = ""
         if self.abs_fnames:
@@ -444,6 +449,9 @@ class Coder:
         ]
 
         messages += self.done_messages
+
+        # notice if files disappear
+        self.recheck_abs_fnames()
 
         messages += self.get_files_messages()
         messages += self.cur_messages
