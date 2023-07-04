@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
@@ -26,12 +26,8 @@ jobs:
 
     - name: Install universal ctags
       run: |
-        if [[ "${{ runner.os }}" == "Windows" ]]; then
-          choco install universal-ctags
-        else
-          sudo apt-get update
-          sudo apt-get install -y universal-ctags
-        fi
+        sudo apt-get update
+        sudo apt-get install -y universal-ctags
 
     - name: Install dependencies
       run: |
