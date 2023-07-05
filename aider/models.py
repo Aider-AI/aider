@@ -1,11 +1,3 @@
-import re
-
-known_tokens = {
-    "gpt-3.5-turbo": 4,
-    "gpt-4": 8,
-}
-
-
 class Model:
     always_available = False
     use_repo_map = False
@@ -14,18 +6,9 @@ class Model:
     prompt_price = None
     completion_price = None
 
-    def __init__(self, name):
+    def __init__(self, name, tokens, edit_format):
         self.name = name
-
-        tokens = None
-
-        match = re.search(r"-([0-9]+)k", name)
-        if match:
-            tokens = int(match.group(1))
-        else:
-            for m, t in known_tokens.items():
-                if name.startswith(m):
-                    tokens = t
+        self.edit_format = edit_format
 
         if tokens is None:
             raise ValueError(f"Unknown context window size for model: {name}")
@@ -33,7 +16,6 @@ class Model:
         self.max_context_tokens = tokens * 1024
 
         if self.is_gpt4():
-            self.edit_format = "diff"
             self.use_repo_map = True
             self.send_undo_reply = True
 
@@ -47,7 +29,6 @@ class Model:
             return
 
         if self.is_gpt35():
-            self.edit_format = "whole"
             self.always_available = True
 
             if tokens == 4:
@@ -59,7 +40,7 @@ class Model:
 
             return
 
-        raise ValueError(f"Unsupported model: {name}")
+        return
 
     def is_gpt4(self):
         return self.name.startswith("gpt-4")
@@ -71,6 +52,17 @@ class Model:
         return self.name
 
 
-GPT4 = Model("gpt-4")
-GPT35 = Model("gpt-3.5-turbo")
-GPT35_16k = Model("gpt-3.5-turbo-16k")
+GPT4 = Model("gpt-4", 8, "diff")
+GPT35 = Model("gpt-3.5-turbo", 4, "whole")
+GPT35_16k = Model("gpt-3.5-turbo-16k", 4, "whole")
+
+
+def get_model(name):
+    if name == GPT4.name:
+        return GPT4
+    elif name == GPT35.name:
+        return GPT35
+    elif name == GPT35_16k:
+        return GPT35_16k
+
+    raise ValueError(f"No such model: {name}")

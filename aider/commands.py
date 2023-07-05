@@ -6,16 +6,25 @@ import sys
 
 import git
 import tiktoken
+import transformers
 from prompt_toolkit.completion import Completion
+from transformers import LlamaTokenizer
 
 from aider import prompts, utils
+from aider.tokenziers import OPENAI, LLAMA
 
 
 class Commands:
     def __init__(self, io, coder):
         self.io = io
         self.coder = coder
-        self.tokenizer = tiktoken.encoding_for_model(coder.main_model.name)
+
+        if coder.tokenizer == OPENAI:
+            self.tokenizer = tiktoken.encoding_for_model(coder.main_model.name)
+        elif coder.tokenizer == LLAMA:
+            self.tokenizer = transformers.LlamaTokenizer
+        else:
+            raise ValueError(f"No such tokenizer found for {coder.tokenizer}")
 
     def is_command(self, inp):
         if inp[0] == "/":

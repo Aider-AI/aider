@@ -7,6 +7,7 @@ import git
 from aider import __version__, models
 from aider.coders import Coder
 from aider.io import InputOutput
+from aider.tokenziers import OPENAI
 
 
 def get_git_root():
@@ -92,6 +93,20 @@ def main(args=None, input=None, output=None):
         dest="model",
         const=models.GPT35_16k.name,
         help=f"Use {models.GPT35_16k.name} model for the main chat (gpt-4 is better)",
+    )
+    parser.add_argument(
+        "--model-tokens",
+        metavar="MODEL_TOKENS",
+        dest="model_tokens",
+        default=None,
+        help=f"Specify the the number of tokens to use with the model. Meant for use with local models.",
+    )
+    parser.add_argument(
+        "--tokenizer",
+        metavar="TOKENIZER",
+        dest="tokenizer",
+        default=OPENAI,
+        help=f"Specify the the number of tokens to use with the model. Meant for use with local models.",
     )
     parser.add_argument(
         "--edit-format",
@@ -259,7 +274,13 @@ def main(args=None, input=None, output=None):
         io.tool_error("No OpenAI API key provided. Use --openai-api-key or env OPENAI_API_KEY.")
         return 1
 
-    main_model = models.Model(args.model)
+    try:
+        main_model = models.get_model(args.model)
+    except:
+        if not args.model_tokens:
+            io.tool_error("Model tokens must be specified if using a local model")
+            return 1
+        main_model = models.Model(args.model, 2, "whole")
 
     coder = Coder.create(
         main_model,
@@ -280,6 +301,7 @@ def main(args=None, input=None, output=None):
         code_theme=args.code_theme,
         stream=args.stream,
         use_git=args.git,
+        tokenizer=args.tokenizer,
     )
 
     if args.dirty_commits:

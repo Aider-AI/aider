@@ -23,6 +23,7 @@ from aider.commands import Commands
 from aider.repomap import RepoMap
 
 from ..dump import dump  # noqa: F401
+from ..tokenziers import OPENAI
 
 
 class MissingAPIKeyError(ValueError):
@@ -114,6 +115,7 @@ class Coder:
         code_theme="default",
         stream=True,
         use_git=True,
+        tokenizer=OPENAI,
     ):
         if not fnames:
             fnames = []
@@ -151,6 +153,8 @@ class Coder:
         self.io.tool_output(f"Model: {main_model.name}")
 
         self.show_diffs = show_diffs
+
+        self.tokenizer = tokenizer
 
         self.commands = Commands(self.io, self)
 
