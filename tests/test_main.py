@@ -23,7 +23,7 @@ class TestMain(TestCase):
 
     def tearDown(self):
         os.chdir(self.original_cwd)
-        shutil.rmtree(self.tempdir)
+        shutil.rmtree(self.tempdir, ignore_errors=True)
         self.patcher.stop()
 
     def test_main_with_empty_dir_no_files_on_command(self):
