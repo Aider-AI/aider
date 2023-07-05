@@ -111,6 +111,7 @@ class Coder:
         map_tokens=1024,
         verbose=False,
         assistant_output_color="blue",
+        code_theme="default",
         stream=True,
         use_git=True,
     ):
@@ -135,6 +136,7 @@ class Coder:
         self.auto_commits = auto_commits
         self.dirty_commits = dirty_commits
         self.assistant_output_color = assistant_output_color
+        self.code_theme = code_theme
 
         self.dry_run = dry_run
         self.pretty = pretty
@@ -679,7 +681,7 @@ class Coder:
 
         show_resp = self.render_incremental_response(True)
         if self.pretty:
-            show_resp = Markdown(show_resp, style=self.assistant_output_color, code_theme="default")
+            show_resp = Markdown(show_resp, style=self.assistant_output_color, code_theme=self.code_theme)
         else:
             show_resp = Text(show_resp or "<no response>")
 
@@ -735,7 +737,7 @@ class Coder:
         if not show_resp:
             return
 
-        md = Markdown(show_resp, style=self.assistant_output_color, code_theme="default")
+        md = Markdown(show_resp, style=self.assistant_output_color, code_theme=self.code_theme)
         live.update(md)
 
     def render_incremental_response(self, final):
