@@ -37,7 +37,7 @@ class TestMain(TestCase):
         subprocess.run(["git", "init"])
         subprocess.run(["git", "config", "user.email", "dummy@example.com"])
         subprocess.run(["git", "config", "user.name", "Dummy User"])
-        main(["--yes", "foo.txt"], input=DummyInput(), output=DummyOutput())
+        main(["--verbose", "--yes", "foo.txt"], input=DummyInput(), output=DummyOutput())
         self.assertTrue(os.path.exists("foo.txt"))
 
     def test_main_args(self):

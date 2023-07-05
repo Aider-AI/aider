@@ -244,10 +244,18 @@ class Coder:
         self.repo = git.Repo(repo_paths.pop(), odbt=git.GitDB)
 
         self.root = self.repo.working_tree_dir
+        if self.verbose:
+            dump(self.repo)
+            dump(self.root)
+            dump(os.getcwd())
 
         new_files = []
         for fname in self.abs_fnames:
             relative_fname = self.get_rel_fname(fname)
+            if self.verbose:
+                dump(fname)
+                dump(relative_fname)
+
             tracked_files = set(self.get_tracked_files())
             if relative_fname not in tracked_files:
                 new_files.append(relative_fname)
