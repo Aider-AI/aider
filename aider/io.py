@@ -111,7 +111,11 @@ class InputOutput:
 
         self.input = input
         self.output = output
+
         self.pretty = pretty
+        if self.output:
+            self.pretty = False
+
         self.yes = yes
 
         self.input_history_file = input_history_file
