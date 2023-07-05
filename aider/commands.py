@@ -3,6 +3,7 @@ import os
 import shlex
 import subprocess
 import sys
+from pathlib import Path
 
 import git
 import tiktoken
@@ -238,8 +239,8 @@ class Commands:
                     )
 
                 if create_file:
-                    with open(os.path.join(self.coder.root, word), "w"):
-                        pass
+                    (Path(self.coder.root) / word).touch()
+
                     matched_files = [word]
                     if self.coder.repo is not None:
                         self.coder.repo.git.add(os.path.join(self.coder.root, word))
