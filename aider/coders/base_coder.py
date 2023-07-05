@@ -23,7 +23,7 @@ from aider.commands import Commands
 from aider.repomap import RepoMap
 
 from ..dump import dump  # noqa: F401
-from ..tokenziers import OPENAI
+from ..tokenizers import OPENAI
 
 
 class MissingAPIKeyError(ValueError):

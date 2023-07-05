@@ -7,7 +7,7 @@ import git
 from aider import __version__, models
 from aider.coders import Coder
 from aider.io import InputOutput
-from aider.tokenziers import OPENAI
+from aider.tokenizers import OPENAI
 
 
 def get_git_root():

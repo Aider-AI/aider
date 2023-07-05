@@ -11,7 +11,7 @@ from prompt_toolkit.completion import Completion
 from transformers import LlamaTokenizer
 
 from aider import prompts, utils
-from aider.tokenziers import OPENAI, LLAMA
+from aider.tokenizers import OPENAI, LLAMA
 
 
 class Commands:
