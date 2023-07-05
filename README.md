@@ -79,7 +79,7 @@ Run the `aider` tool by executing the following command:
 aider <file1> <file2> ...
 ```
 
-If your pip install did not place an `aider` executable on your path, you can invoke aider like this:
+If your pip install did not place the `aider` executable on your path, you can invoke aider like this:
 
 ```
 python -m aider.main <file1> <file2>
