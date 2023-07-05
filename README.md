@@ -59,13 +59,15 @@ You can find more chat transcripts on the [examples page](https://aider.chat/exa
 ## Installation
 
 1. Install the package:
-  * PyPI: `pip install aider-chat`
-  * GitHub: `pip install git+https://github.com/paul-gauthier/aider.git`
-  * Local clone: `pip install -e .` 
+  * PyPI: `python -m pip install aider-chat`
+  * GitHub: `python -m pip install git+https://github.com/paul-gauthier/aider.git`
+  * Local clone: `python -m pip install -e .` 
 
 2. Set up your OpenAI API key:
-  * As an environment variable: `export OPENAI_API_KEY=sk-...`
-  * Or, by including `openai-api-key: sk-...` in an `.aider.config.yml` file
+  * As an environment variable:
+    * `export OPENAI_API_KEY=sk-...` on Linux or Mac
+    * `setx OPENAI_API_KEY sk-...` in Windows PowerShell
+  * Or include `openai-api-key: sk-...` in an `.aider.config.yml` file in your current directory or at the root of your git repo, alongside the `.git` dir.
 
 3. Optionally, install [universal ctags](https://github.com/universal-ctags/ctags). This is helpful if you plan to use aider and GPT-4 with repositories that have more than a handful of files.  This allows aider to build a [map of your entire git repo](https://aider.chat/docs/ctags.html) and share it with GPT to help it better understand and modify large codebases.
   * The `ctags` command needs to be on your shell path so that it will run by default when aider invokes `ctags ...`.
