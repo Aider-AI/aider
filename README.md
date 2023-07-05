@@ -79,6 +79,12 @@ Run the `aider` tool by executing the following command:
 aider <file1> <file2> ...
 ```
 
+If your pip install did not place an `aider` executable on your path, you can invoke aider like this:
+
+```
+python -m aider.main <file1> <file2>
+```
+
 Replace `<file1>`, `<file2>`, etc., with the paths to the source code files you want to work on.
 These files will be "added to the chat session", so that GPT can see their contents and edit them according to your instructions.
 
