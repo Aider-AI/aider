@@ -14,11 +14,6 @@ from aider.main import main
 class TestMain(TestCase):
     def setUp(self):
         os.environ["OPENAI_API_KEY"] = "deadbeef"
-
-        # Force this so that GitHub Actions windows tests don't barf on rich.Console().rule()
-        # https://github.com/Textualize/rich/issues/2411
-        os.environ["PYTHONIOENCODING"] = "utf-8"
-
         self.original_cwd = os.getcwd()
         self.tempdir = tempfile.mkdtemp()
         os.chdir(self.tempdir)
