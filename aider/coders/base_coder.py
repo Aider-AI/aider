@@ -951,7 +951,7 @@ class Coder:
         # convert to appropriate os.sep, since git always normalizes to /
         files = set(self.repo.git.ls_files().splitlines())
         if os.sep == "/":
-            return
+            return files
         return set(path.replace("/", os.sep) for path in files)
 
     apply_update_errors = 0
