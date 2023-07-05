@@ -144,7 +144,7 @@ class Coder:
         if pretty:
             self.console = Console()
         else:
-            self.console = Console(force_terminal=True, no_color=True)
+            self.console = Console(force_terminal=False, no_color=True)
 
         self.main_model = main_model
 
