@@ -1,4 +1,4 @@
-name: Python Tests
+name: Ubuntu Python Tests
 
 on:
   push:
