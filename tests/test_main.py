@@ -34,9 +34,6 @@ class TestMain(TestCase):
         self.assertTrue(os.path.exists("foo.txt"))
 
     def test_main_with_empty_git_dir_new_file(self):
-        tempdir = tempfile.mkdtemp()
-        os.chdir(tempdir)
-
         subprocess.run(["git", "init"])
         subprocess.run(["git", "config", "user.email", "dummy@example.com"])
         subprocess.run(["git", "config", "user.name", "Dummy User"])
