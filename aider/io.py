@@ -124,7 +124,7 @@ class InputOutput:
         else:
             self.chat_history_file = None
 
-        if pretty and not self.output:
+        if pretty:
             self.console = Console()
         else:
             self.console = Console(force_terminal=False, no_color=True)
