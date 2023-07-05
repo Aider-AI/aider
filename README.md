@@ -58,7 +58,7 @@ You can find more chat transcripts on the [examples page](https://aider.chat/exa
 
 ## Installation
 
-1. Install the package:
+1. Install the package with pip:
   * PyPI: `python -m pip install aider-chat`
   * GitHub: `python -m pip install git+https://github.com/paul-gauthier/aider.git`
   * Local clone: `python -m pip install -e .` 
