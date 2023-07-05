@@ -5,7 +5,7 @@ import tempfile
 from unittest import TestCase
 from unittest.mock import patch
 
-from prompt_toolkit.input import create_pipe_input
+from prompt_toolkit.input import DummyInput
 from prompt_toolkit.output import DummyOutput
 
 from aider.main import main
@@ -27,75 +27,53 @@ class TestMain(TestCase):
         self.patcher.stop()
 
     def test_main_with_empty_dir_no_files_on_command(self):
-        with create_pipe_input() as pipe_input:
-            pipe_input.send_text("/exit\n")
-            try:
-                main([], input=pipe_input, output=DummyOutput())
-            except SystemExit:
-                pass
+        main([], input=DummyInput(), output=DummyOutput())
 
     def test_main_with_empty_dir_new_file(self):
-        with create_pipe_input() as pipe_input:
-            pipe_input.send_text("/exit\n")
-            try:
-                main(["foo.txt"], input=pipe_input, output=DummyOutput())
-            except SystemExit:
-                pass
+        main(["foo.txt"], input=DummyInput(), output=DummyOutput())
         self.assertTrue(os.path.exists("foo.txt"))
 
     def test_main_with_empty_git_dir_new_file(self):
         subprocess.run(["git", "init"])
         subprocess.run(["git", "config", "user.email", "dummy@example.com"])
         subprocess.run(["git", "config", "user.name", "Dummy User"])
-        with create_pipe_input() as pipe_input:
-            pipe_input.send_text("/exit\n")
-            try:
-                main(["--yes", "foo.txt"], input=pipe_input, output=DummyOutput())
-            except SystemExit:
-                pass
+        main(["--yes", "foo.txt"], input=DummyInput(), output=DummyOutput())
         self.assertTrue(os.path.exists("foo.txt"))
 
     def test_main_args(self):
         with patch("aider.main.Coder.create") as MockCoder:
-            with create_pipe_input() as pipe_input:
-                main(["--no-auto-commits"], input=pipe_input)
+            main(["--no-auto-commits"], input=DummyInput())
             _, kwargs = MockCoder.call_args
             assert kwargs["auto_commits"] is False
 
         with patch("aider.main.Coder.create") as MockCoder:
-            with create_pipe_input() as pipe_input:
-                main(["--auto-commits"], input=pipe_input)
+            main(["--auto-commits"], input=DummyInput())
             _, kwargs = MockCoder.call_args
             assert kwargs["auto_commits"] is True
 
         with patch("aider.main.Coder.create") as MockCoder:
-            with create_pipe_input() as pipe_input:
-                main([], input=pipe_input)
+            main([], input=DummyInput())
             _, kwargs = MockCoder.call_args
             assert kwargs["dirty_commits"] is True
             assert kwargs["auto_commits"] is True
             assert kwargs["pretty"] is True
 
         with patch("aider.main.Coder.create") as MockCoder:
-            with create_pipe_input() as pipe_input:
-                main(["--no-pretty"], input=pipe_input)
+            main(["--no-pretty"], input=DummyInput())
             _, kwargs = MockCoder.call_args
             assert kwargs["pretty"] is False
 
         with patch("aider.main.Coder.create") as MockCoder:
-            with create_pipe_input() as pipe_input:
-                main(["--pretty"], input=pipe_input)
+            main(["--pretty"], input=DummyInput())
             _, kwargs = MockCoder.call_args
             assert kwargs["pretty"] is True
 
         with patch("aider.main.Coder.create") as MockCoder:
-            with create_pipe_input() as pipe_input:
-                main(["--no-dirty-commits"], input=pipe_input)
+            main(["--no-dirty-commits"], input=DummyInput())
             _, kwargs = MockCoder.call_args
             assert kwargs["dirty_commits"] is False
 
         with patch("aider.main.Coder.create") as MockCoder:
-            with create_pipe_input() as pipe_input:
-                main(["--dirty-commits"], input=pipe_input)
+            main(["--dirty-commits"], input=DummyInput())
             _, kwargs = MockCoder.call_args
             assert kwargs["dirty_commits"] is True
