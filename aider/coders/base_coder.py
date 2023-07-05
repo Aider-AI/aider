@@ -955,10 +955,8 @@ class Coder:
     def get_tracked_files(self):
         # convert to appropriate os.sep, since git always normalizes to /
         files = set(self.repo.git.ls_files().splitlines())
-        # return files
-        if os.sep == "/":
-            return files
-        return set(path.replace("/", os.sep) for path in files)
+        res = set(str(Path(PurePosixPath(path))) for path in files)
+        return res
 
     apply_update_errors = 0
 

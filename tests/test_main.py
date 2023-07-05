@@ -55,7 +55,7 @@ class TestMain(TestCase):
         # This will throw a git error on windows if get_tracked_files doesn't
         # properly convert git/posix/paths to git\posix\paths.
         # Because aider will try and `git add` a file that's already in the repo.
-        main(["--yes", "--verbose", str(fname)], input=DummyInput(), output=DummyOutput())
+        main(["--yes", str(fname)], input=DummyInput(), output=DummyOutput())
 
     def test_main_args(self):
         with patch("aider.main.Coder.create") as MockCoder:
