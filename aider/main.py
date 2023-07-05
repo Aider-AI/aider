@@ -146,6 +146,14 @@ def main(args=None, input=None, output=None):
         help="Set the color for assistant output (default: blue)",
     )
     parser.add_argument(
+        "--code-theme",
+        default="default",
+        help=(
+            "Set the markdown code theme (default: default, other options include monokai,"
+            " solarized-dark, solarized-light)"
+        ),
+    )
+    parser.add_argument(
         "--apply",
         metavar="FILE",
         help="Apply the changes from the given file instead of running the chat (debug)",
@@ -277,6 +285,7 @@ def main(args=None, input=None, output=None):
         map_tokens=args.map_tokens,
         verbose=args.verbose,
         assistant_output_color=args.assistant_output_color,
+        code_theme=args.code_theme,
         stream=args.stream,
         use_git=args.git,
     )
