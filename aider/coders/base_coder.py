@@ -208,6 +208,8 @@ class Coder:
         else:
             self.root = os.getcwd()
 
+        self.root = os.path.abspath(self.root)
+
     def set_repo(self, cmd_line_fnames):
         if not cmd_line_fnames:
             cmd_line_fnames = ["."]
@@ -224,6 +226,7 @@ class Coder:
 
             try:
                 repo_path = git.Repo(fname, search_parent_directories=True).working_dir
+                repo_path = os.path.abspath(repo_path)
                 repo_paths.append(repo_path)
             except git.exc.InvalidGitRepositoryError:
                 pass
@@ -244,7 +247,7 @@ class Coder:
         # https://github.com/gitpython-developers/GitPython/issues/427
         self.repo = git.Repo(repo_paths.pop(), odbt=git.GitDB)
 
-        self.root = self.repo.working_tree_dir
+        self.root = os.path.abspath(self.repo.working_tree_dir)
         if self.verbose:
             dump(self.repo)
             dump(self.root)
