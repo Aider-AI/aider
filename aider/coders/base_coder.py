@@ -111,6 +111,7 @@ class Coder:
         map_tokens=1024,
         verbose=False,
         assistant_output_color="blue",
+        code_theme="default",
         stream=True,
         use_git=True,
     ):
@@ -135,6 +136,7 @@ class Coder:
         self.auto_commits = auto_commits
         self.dirty_commits = dirty_commits
         self.assistant_output_color = assistant_output_color
+        self.code_theme = code_theme
 
         self.dry_run = dry_run
         self.pretty = pretty
@@ -239,37 +241,35 @@ class Coder:
             return
 
         # https://github.com/gitpython-developers/GitPython/issues/427
-        repo = git.Repo(repo_paths.pop(), odbt=git.GitDB)
+        self.repo = git.Repo(repo_paths.pop(), odbt=git.GitDB)
 
-        self.root = repo.working_tree_dir
+        self.root = self.repo.working_tree_dir
 
         new_files = []
         for fname in self.abs_fnames:
             relative_fname = self.get_rel_fname(fname)
-            tracked_files = set(repo.git.ls_files().splitlines())
+            tracked_files = set(self.get_tracked_files())
             if relative_fname not in tracked_files:
                 new_files.append(relative_fname)
 
         if new_files:
-            rel_repo_dir = os.path.relpath(repo.git_dir, os.getcwd())
+            rel_repo_dir = os.path.relpath(self.repo.git_dir, os.getcwd())
 
             self.io.tool_output(f"Files not tracked in {rel_repo_dir}:")
             for fn in new_files:
                 self.io.tool_output(f" - {fn}")
             if self.io.confirm_ask("Add them?"):
                 for relative_fname in new_files:
-                    repo.git.add(relative_fname)
+                    self.repo.git.add(relative_fname)
                     self.io.tool_output(f"Added {relative_fname} to the git repo")
                 show_files = ", ".join(new_files)
                 commit_message = f"Added new files to the git repo: {show_files}"
-                repo.git.commit("-m", commit_message, "--no-verify")
-                commit_hash = repo.head.commit.hexsha[:7]
+                self.repo.git.commit("-m", commit_message, "--no-verify")
+                commit_hash = self.repo.head.commit.hexsha[:7]
                 self.io.tool_output(f"Commit {commit_hash} {commit_message}")
             else:
                 self.io.tool_error("Skipped adding new files to the git repo.")
                 return
-
-        self.repo = repo
 
     # fences are obfuscated so aider can modify this file!
     fences = [
@@ -679,7 +679,9 @@ class Coder:
 
         show_resp = self.render_incremental_response(True)
         if self.pretty:
-            show_resp = Markdown(show_resp, style=self.assistant_output_color, code_theme="default")
+            show_resp = Markdown(
+                show_resp, style=self.assistant_output_color, code_theme=self.code_theme
+            )
         else:
             show_resp = Text(show_resp or "<no response>")
 
@@ -735,7 +737,7 @@ class Coder:
         if not show_resp:
             return
 
-        md = Markdown(show_resp, style=self.assistant_output_color, code_theme="default")
+        md = Markdown(show_resp, style=self.assistant_output_color, code_theme=self.code_theme)
         live.update(md)
 
     def render_incremental_response(self, final):
@@ -890,7 +892,7 @@ class Coder:
 
     def get_all_relative_files(self):
         if self.repo:
-            files = self.repo.git.ls_files().splitlines()
+            files = self.get_tracked_files()
         else:
             files = self.get_inchat_relative_files()
 
@@ -934,7 +936,7 @@ class Coder:
 
         # Check if the file is already in the repo
         if self.repo:
-            tracked_files = set(self.repo.git.ls_files().splitlines())
+            tracked_files = set(self.get_tracked_files())
             relative_fname = self.get_rel_fname(full_path)
             if relative_fname not in tracked_files and self.io.confirm_ask(f"Add {path} to git?"):
                 if not self.dry_run:
@@ -944,6 +946,13 @@ class Coder:
             Path(full_path).write_text(write_content)
 
         return full_path
+
+    def get_tracked_files(self):
+        # convert to appropriate os.sep, since git always normalizes to /
+        files = set(self.repo.git.ls_files().splitlines())
+        if os.sep == "/":
+            return
+        return set(path.replace("/", os.sep) for path in files)
 
     apply_update_errors = 0
 
