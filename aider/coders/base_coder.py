@@ -220,6 +220,8 @@ class Coder:
                 fname.parent.mkdir(parents=True, exist_ok=True)
                 fname.touch()
 
+            fname = fname.resolve()
+
             try:
                 repo_path = git.Repo(fname, search_parent_directories=True).working_dir
                 repo_paths.append(repo_path)
@@ -229,7 +231,6 @@ class Coder:
             if fname.is_dir():
                 continue
 
-            fname = fname.resolve()
             self.abs_fnames.add(str(fname))
 
         num_repos = len(set(repo_paths))
