@@ -107,7 +107,7 @@ def main(args=None, input=None, output=None):
         metavar="TOKENIZER",
         dest="tokenizer",
         default=OPENAI,
-        help=f"Specify the the number of tokens to use with the model. Meant for use with local models.",
+        help=f"Specify the the number of tokens to use with the model (only applicable when using local models).",
     )
     parser.add_argument(
         "--edit-format",
