@@ -8,7 +8,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        python-version: ["3.11"]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
 
     steps:
     - name: Check out repository
@@ -19,6 +19,10 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    - name: Install universal ctags
+      run: |
+        choco install universal-ctags
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -26,4 +30,4 @@ jobs:
 
     - name: Run tests
       run: |
-        python -m unittest discover -s tests -k test_main_with_empty_git_dir_new_file -v
+        python -m unittest discover -s tests
