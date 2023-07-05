@@ -99,7 +99,8 @@ def main(args=None, input=None, output=None):
         metavar="MODEL_TOKENS",
         dest="model_tokens",
         default=None,
-        help=f"Specify the the number of tokens to use with the model. Meant for use with local models.",
+        help=f"Specify the number of tokens to use with the model (only applicable when using local models). This "
+             f"value will be multiplied by 1024 to determine the actual token count.",
     )
     parser.add_argument(
         "--tokenizer",
