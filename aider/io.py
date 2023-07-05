@@ -120,10 +120,10 @@ class InputOutput:
         else:
             self.chat_history_file = None
 
-        if pretty:
+        if pretty and not self.output:
             self.console = Console()
         else:
-            self.console = Console(no_color=True)
+            self.console = Console(force_terminal=True, no_color=True)
 
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
