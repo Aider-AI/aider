@@ -3,13 +3,13 @@ import os
 import shlex
 import subprocess
 import sys
+import glob
 
 import git
 import tiktoken
 from prompt_toolkit.completion import Completion
 
 from aider import prompts, utils
-
 
 class Commands:
     def __init__(self, io, coder):
