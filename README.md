@@ -152,6 +152,9 @@ So aider has
 to ask GPT-3.5 to return a new copy of the "whole file" with edits included.
 This rapidly uses up tokens and can hit the limits of the context window.
 
+For more detailed information and a quantitative comparison, here are
+[code editing benchmark results for GPT-3.5 and GPT-4](https://aider.chat/docs/benchmarks.html).
+
 Aider disables the
 [repository map feature](https://aider.chat/docs/ctags.html)
 when used with GPT-3.5 models.
