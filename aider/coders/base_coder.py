@@ -167,13 +167,13 @@ class Coder:
             self.find_common_root()
 
         if main_model.use_repo_map and self.repo and self.gpt_prompts.repo_content_prefix:
-            rm_io = io if self.verbose else None
             self.repo_map = RepoMap(
                 map_tokens,
                 self.root,
                 self.main_model,
-                rm_io,
+                io,
                 self.gpt_prompts.repo_content_prefix,
+                self.verbose,
             )
 
             if self.repo_map.use_ctags:
