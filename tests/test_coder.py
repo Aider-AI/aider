@@ -265,17 +265,22 @@ class TestCoder(unittest.TestCase):
         self.assertNotEqual(coder.fence[0], "```")
 
     def test_run_with_file_utf_unicode_error(self):
+        "make sure that we honor InputOutput(encoding) and don't just assume utf-8"
         # Create a few temporary files
         _, file1 = tempfile.mkstemp()
         _, file2 = tempfile.mkstemp()
 
         files = [file1, file2]
 
-        encoding = 'latin-1'
+        encoding = "utf-16"
 
         # Initialize the Coder object with the mocked IO and mocked repo
         coder = Coder.create(
-            models.GPT4, None, io=InputOutput(encoding=encoding), openai_api_key="fake_key", fnames=files
+            models.GPT4,
+            None,
+            io=InputOutput(encoding=encoding),
+            openai_api_key="fake_key",
+            fnames=files,
         )
 
         def mock_send(*args, **kwargs):
@@ -288,7 +293,7 @@ class TestCoder(unittest.TestCase):
         coder.run(with_message="hi")
         self.assertEqual(len(coder.abs_fnames), 2)
 
-        some_content_which_will_error_if_read_with_encoding_utf8 = 'ÅÍÎÏ'.encode('utf-16')
+        some_content_which_will_error_if_read_with_encoding_utf8 = "ÅÍÎÏ".encode(encoding)
         with open(file1, "wb") as f:
             f.write(some_content_which_will_error_if_read_with_encoding_utf8)
 
