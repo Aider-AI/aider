@@ -299,8 +299,9 @@ def main(args=None, input=None, output=None):
         coder.commit(ask=True, which="repo_files")
 
     if args.apply:
-        with open(args.apply, "r") as f:
-            content = f.read()
+        content = io.read_text(args.apply)
+        if content is None:
+            return
         coder.apply_updates(content)
         return
 
