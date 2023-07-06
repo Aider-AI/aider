@@ -66,7 +66,7 @@ class WholeFileCoder(Coder):
                             edited.add(fname)
                             if not self.dry_run:
                                 new_lines = "".join(new_lines)
-                                full_path.write_text(new_lines)
+                                self.io.write_text(full_path, new_lines)
 
                     fname = None
                     new_lines = []
@@ -125,6 +125,6 @@ class WholeFileCoder(Coder):
                 edited.add(fname)
                 if not self.dry_run:
                     new_lines = "".join(new_lines)
-                    Path(full_path).write_text(new_lines)
+                    self.io.write_text(full_path, new_lines)
 
         return edited

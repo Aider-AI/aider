@@ -137,14 +137,14 @@ class InputOutput:
 
     def read_text(self, filename):
         try:
-            with open(filename, "r", encoding=self.encoding) as f:
+            with open(str(filename), "r", encoding=self.encoding) as f:
                 return f.read()
         except (FileNotFoundError, UnicodeError) as e:
             self.tool_error(f"{filename}: {e}")
             return
 
     def write_text(self, filename, content):
-        with open(filename, "w", encoding=self.encoding) as f:
+        with open(str(filename), "w", encoding=self.encoding) as f:
             f.write(content)
 
     def get_input(self, root, rel_fnames, addable_rel_fnames, commands):

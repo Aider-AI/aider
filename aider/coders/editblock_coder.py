@@ -27,7 +27,10 @@ class EditBlockCoder(Coder):
             if not full_path:
                 continue
             content = self.io.read_text(full_path)
-            if do_replace(full_path, content, original, updated, self.dry_run):
+            content = do_replace(full_path, content, original, updated)
+            if content:
+                if not self.dry_run:
+                    self.io.write_text(full_path, content)
                 edited.add(path)
                 continue
             self.io.tool_error(f"Failed to apply edit to {path}")
@@ -212,7 +215,7 @@ def strip_quoted_wrapping(res, fname=None):
     return res
 
 
-def do_replace(fname, content, before_text, after_text, dry_run=False):
+def do_replace(fname, content, before_text, after_text):
     before_text = strip_quoted_wrapping(before_text, fname)
     after_text = strip_quoted_wrapping(after_text, fname)
     fname = Path(fname)
@@ -230,13 +233,8 @@ def do_replace(fname, content, before_text, after_text, dry_run=False):
         new_content = content + after_text
     else:
         new_content = replace_most_similar_chunk(content, before_text, after_text)
-        if not new_content:
-            return
 
-    if not dry_run:
-        fname.write_text(new_content)
-
-    return True
+    return new_content
 
 
 ORIGINAL = "<<<<<<< ORIGINAL"

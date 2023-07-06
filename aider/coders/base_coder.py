@@ -924,7 +924,7 @@ class Coder:
 
         if full_path in self.abs_fnames:
             if not self.dry_run and write_content:
-                Path(full_path).write_text(write_content)
+                self.io.write_text(full_path, write_content)
             return full_path
 
         if not Path(full_path).exists():
@@ -950,7 +950,7 @@ class Coder:
                     self.repo.git.add(full_path)
 
         if not self.dry_run and write_content:
-            Path(full_path).write_text(write_content)
+            self.io.write_text(full_path, write_content)
 
         return full_path
 
