@@ -134,7 +134,7 @@ class InputOutput:
 
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
-    
+
     def read_text(self, filename):
         try:
             with open(filename, "r", encoding=self.encoding) as f:
@@ -144,12 +144,8 @@ class InputOutput:
             return
 
     def write_text(self, filename, content):
-        try:
-            with open(filename, "w", encoding=self.encoding) as f:
-                f.write(content)
-        except (FileNotFoundError, UnicodeError) as e:
-            self.tool_error(f"{filename}: {e}")
-            return
+        with open(filename, "w", encoding=self.encoding) as f:
+            f.write(content)
 
     def get_input(self, root, rel_fnames, addable_rel_fnames, commands):
         if self.pretty:
