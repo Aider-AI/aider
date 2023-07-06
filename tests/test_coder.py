@@ -209,6 +209,22 @@ class TestCoder(unittest.TestCase):
         coder.run(with_message="hi")
         self.assertEqual(len(coder.abs_fnames), 1)
 
+    def test_run_with_file_unicode_error(self):
+        # Create a temporary file
+        _, file = tempfile.mkstemp()
 
-if __name__ == "__main__":
-    unittest.main()
+        # Write some non-UTF8 text into the file
+        with open(file, "wb") as f:
+            f.write(b"\x80abc")
+
+        # Initialize the Coder object with the temporary file
+        coder = Coder.create(
+            models.GPT4, None, io=InputOutput(), openai_api_key="fake_key", fnames=[file]
+        )
+
+        # Expect a UnicodeDecodeError to be raised when the run method is called
+        with self.assertRaises(UnicodeDecodeError):
+            coder.run(with_message="hi")
+
+    if __name__ == "__main__":
+        unittest.main()
