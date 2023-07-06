@@ -1,3 +1,4 @@
+import codecs
 import os
 import shutil
 import tempfile
@@ -33,7 +34,6 @@ class TestCommands(TestCase):
         self.assertTrue(os.path.exists("foo.txt"))
         self.assertTrue(os.path.exists("bar.txt"))
 
-    import codecs
     def test_cmd_add_bad_encoding(self):
         # Initialize the Commands and InputOutput objects
         io = InputOutput(pretty=False, yes=True)
@@ -43,8 +43,8 @@ class TestCommands(TestCase):
         commands = Commands(io, coder)
 
         # Create a new file foo.bad which will fail to decode as utf-8
-        with codecs.open('foo.bad', 'w', encoding='iso-8859-15') as f:
-            f.write('ÆØÅ')  # Characters not present in utf-8
+        with codecs.open("foo.bad", "w", encoding="iso-8859-15") as f:
+            f.write("ÆØÅ")  # Characters not present in utf-8
 
         commands.cmd_add("foo.bad")
 
