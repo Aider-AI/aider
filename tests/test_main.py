@@ -2,6 +2,7 @@ import os
 import shutil
 import subprocess
 import tempfile
+from pathlib import Path
 from unittest import TestCase
 from unittest.mock import patch
 
@@ -37,8 +38,24 @@ class TestMain(TestCase):
         subprocess.run(["git", "init"])
         subprocess.run(["git", "config", "user.email", "dummy@example.com"])
         subprocess.run(["git", "config", "user.name", "Dummy User"])
-        main(["--verbose", "--yes", "foo.txt"], input=DummyInput(), output=DummyOutput())
+        main(["--yes", "foo.txt"], input=DummyInput(), output=DummyOutput())
         self.assertTrue(os.path.exists("foo.txt"))
+
+    def test_main_with_empty_git_dir_new_subdir_file(self):
+        subprocess.run(["git", "init"])
+        subprocess.run(["git", "config", "user.email", "dummy@example.com"])
+        subprocess.run(["git", "config", "user.name", "Dummy User"])
+        subdir = Path("subdir")
+        subdir.mkdir()
+        fname = subdir / "foo.txt"
+        fname.touch()
+        subprocess.run(["git", "add", str(subdir)])
+        subprocess.run(["git", "commit", "-m", "added"])
+
+        # This will throw a git error on windows if get_tracked_files doesn't
+        # properly convert git/posix/paths to git\posix\paths.
+        # Because aider will try and `git add` a file that's already in the repo.
+        main(["--yes", str(fname)], input=DummyInput(), output=DummyOutput())
 
     def test_main_args(self):
         with patch("aider.main.Coder.create") as MockCoder:

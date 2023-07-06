@@ -6,7 +6,7 @@ import os
 import sys
 import traceback
 from json.decoder import JSONDecodeError
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 import backoff
 import git
@@ -248,17 +248,10 @@ class Coder:
         self.repo = git.Repo(repo_paths.pop(), odbt=git.GitDB)
 
         self.root = os.path.abspath(self.repo.working_tree_dir)
-        if self.verbose:
-            dump(self.repo)
-            dump(self.root)
-            dump(os.getcwd())
 
         new_files = []
         for fname in self.abs_fnames:
             relative_fname = self.get_rel_fname(fname)
-            if self.verbose:
-                dump(fname)
-                dump(relative_fname)
 
             tracked_files = set(self.get_tracked_files())
             if relative_fname not in tracked_files:
@@ -575,10 +568,6 @@ class Coder:
         for fname, rel_fnames in fname_to_rel_fnames.items():
             if len(rel_fnames) == 1 and fname in words:
                 mentioned_rel_fnames.add(rel_fnames[0])
-            else:
-                for rel_fname in rel_fnames:
-                    if rel_fname in words:
-                        mentioned_rel_fnames.add(rel_fname)
 
         if not mentioned_rel_fnames:
             return
@@ -962,9 +951,8 @@ class Coder:
     def get_tracked_files(self):
         # convert to appropriate os.sep, since git always normalizes to /
         files = set(self.repo.git.ls_files().splitlines())
-        if os.sep == "/":
-            return files
-        return set(path.replace("/", os.sep) for path in files)
+        res = set(str(Path(PurePosixPath(path))) for path in files)
+        return res
 
     apply_update_errors = 0
 
