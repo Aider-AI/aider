@@ -210,21 +210,34 @@ class TestCoder(unittest.TestCase):
         self.assertEqual(len(coder.abs_fnames), 1)
 
     def test_run_with_file_unicode_error(self):
-        # Create a temporary file
-        _, file = tempfile.mkstemp()
+        # Create a few temporary files
+        _, file1 = tempfile.mkstemp()
+        _, file2 = tempfile.mkstemp()
 
-        # Write some non-UTF8 text into the file
-        with open(file, "wb") as f:
-            f.write(b"\x80abc")
+        files = [file1, file2]
 
-        # Initialize the Coder object with the temporary file
+        # Initialize the Coder object with the mocked IO and mocked repo
         coder = Coder.create(
-            models.GPT4, None, io=InputOutput(), openai_api_key="fake_key", fnames=[file]
+            models.GPT4, None, io=InputOutput(), openai_api_key="fake_key", fnames=files
         )
 
-        # Expect a UnicodeDecodeError to be raised when the run method is called
-        with self.assertRaises(UnicodeDecodeError):
-            coder.run(with_message="hi")
+        def mock_send(*args, **kwargs):
+            coder.partial_response_content = "ok"
+            coder.partial_response_function_call = dict()
+
+        coder.send = MagicMock(side_effect=mock_send)
+
+        # Call the run method with a message
+        coder.run(with_message="hi")
+        self.assertEqual(len(coder.abs_fnames), 2)
+
+        # Write some non-UTF8 text into the file
+        with open(file1, "wb") as f:
+            f.write(b"\x80abc")
+
+        # Call the run method again with a message
+        coder.run(with_message="hi")
+        self.assertEqual(len(coder.abs_fnames), 1)
 
     if __name__ == "__main__":
         unittest.main()
