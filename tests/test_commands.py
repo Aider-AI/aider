@@ -18,7 +18,7 @@ class TestCommands(TestCase):
         os.chdir(self.original_cwd)
         shutil.rmtree(self.tempdir)
 
-    def test_cmd_add(self):
+    def test_cmd_add_with_glob_patterns(self):
         # Initialize the Commands and InputOutput objects
         io = InputOutput(pretty=False, yes=True)
         from aider.coders import Coder
@@ -26,9 +26,20 @@ class TestCommands(TestCase):
         coder = Coder.create(models.GPT35, None, io, openai_api_key="deadbeef")
         commands = Commands(io, coder)
 
-        # Call the cmd_add method with 'foo.txt' and 'bar.txt' as a single string
-        commands.cmd_add("foo.txt bar.txt")
+        # Create some test files
+        with open("test1.py", "w") as f:
+            f.write("print('test1')")
+        with open("test2.py", "w") as f:
+            f.write("print('test2')")
+        with open("test.txt", "w") as f:
+            f.write("test")
 
-        # Check if both files have been created in the temporary directory
-        self.assertTrue(os.path.exists("foo.txt"))
-        self.assertTrue(os.path.exists("bar.txt"))
+        # Call the cmd_add method with a glob pattern
+        commands.cmd_add("*.py")
+
+        # Check if the Python files have been added to the chat session
+        self.assertIn(os.path.abspath("test1.py"), coder.abs_fnames)
+        self.assertIn(os.path.abspath("test2.py"), coder.abs_fnames)
+
+        # Check if the text file has not been added to the chat session
+        self.assertNotIn(os.path.abspath("test.txt"), coder.abs_fnames)
