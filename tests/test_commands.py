@@ -57,3 +57,21 @@ class TestCommands(TestCase):
 
         # Check if no files have been added to the chat session
         self.assertEqual(len(coder.abs_fnames), 0)
+
+    def test_cmd_drop_with_glob_patterns(self):
+        # Initialize the Commands and InputOutput objects
+        io = InputOutput(pretty=False, yes=True)
+        from aider.coders import Coder
+
+        coder = Coder.create(models.GPT35, None, io, openai_api_key="deadbeef")
+        commands = Commands(io, coder)
+
+        # Add some files to the chat session
+        commands.cmd_add("*.py")
+
+        # Call the cmd_drop method with a glob pattern
+        commands.cmd_drop("*.py")
+
+        # Check if the Python files have been removed from the chat session
+        self.assertNotIn(os.path.abspath("test1.py"), coder.abs_fnames)
+        self.assertNotIn(os.path.abspath("test2.py"), coder.abs_fnames)
