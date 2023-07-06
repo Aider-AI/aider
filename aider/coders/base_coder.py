@@ -287,10 +287,20 @@ class Coder:
     ]
     fence = fences[0]
 
+    def get_abs_fnames_content(self):
+        for fname in list(self.abs_fnames):
+            content = self.io.read_text(fname)
+            if content is None:
+                relative_fname = self.get_rel_fname(fname)
+                self.tool_error(f"Dropping {relative_fname} from the chat.")
+                self.abs_fnames.remove(fname)
+            else:
+                yield fname, content
+
     def choose_fence(self):
         all_content = ""
-        for fname in self.abs_fnames:
-            all_content += Path(fname).read_text() + "\n"
+        for _fname, content in self.get_abs_fnames_content():
+            all_content += content + "\n"
 
         all_content = all_content.splitlines()
 
@@ -317,9 +327,14 @@ class Coder:
             fnames = self.abs_fnames
 
         prompt = ""
-        for fname in fnames:
+        for fname, content in self.get_abs_fnames_content():
             relative_fname = self.get_rel_fname(fname)
-            prompt += utils.quoted_file(fname, relative_fname, fence=self.fence)
+            prompt = "\n"
+            prompt += relative_fname
+            prompt += f"\n{self.fence[0]}\n"
+            prompt += content
+            prompt += f"{self.fence[1]}\n"
+
         return prompt
 
     def recheck_abs_fnames(self):
