@@ -264,5 +264,38 @@ class TestCoder(unittest.TestCase):
 
         self.assertNotEqual(coder.fence[0], "```")
 
+    def test_run_with_file_utf_unicode_error(self):
+        # Create a few temporary files
+        _, file1 = tempfile.mkstemp()
+        _, file2 = tempfile.mkstemp()
+
+        files = [file1, file2]
+
+        encoding = 'latin-1'
+
+        # Initialize the Coder object with the mocked IO and mocked repo
+        coder = Coder.create(
+            models.GPT4, None, io=InputOutput(encoding=encoding), openai_api_key="fake_key", fnames=files
+        )
+
+        def mock_send(*args, **kwargs):
+            coder.partial_response_content = "ok"
+            coder.partial_response_function_call = dict()
+
+        coder.send = MagicMock(side_effect=mock_send)
+
+        # Call the run method with a message
+        coder.run(with_message="hi")
+        self.assertEqual(len(coder.abs_fnames), 2)
+
+        some_content_which_will_error_if_read_with_encoding_utf8 = 'ÅÍÎÏ'.encode('utf-16')
+        with open(file1, "wb") as f:
+            f.write(some_content_which_will_error_if_read_with_encoding_utf8)
+
+        coder.run(with_message="hi")
+
+        # both files should still be here
+        self.assertEqual(len(coder.abs_fnames), 2)
+
     if __name__ == "__main__":
         unittest.main()
