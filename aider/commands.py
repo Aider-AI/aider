@@ -9,7 +9,7 @@ import git
 import tiktoken
 from prompt_toolkit.completion import Completion
 
-from aider import prompts, utils
+from aider import prompts
 
 
 class Commands:
@@ -117,8 +117,10 @@ class Commands:
         # files
         for fname in self.coder.abs_fnames:
             relative_fname = self.coder.get_rel_fname(fname)
-            quoted = utils.quoted_file(fname, relative_fname)
-            tokens = len(self.tokenizer.encode(quoted))
+            content = self.io.read_text(fname)
+            # approximate
+            content = "```\n" + content + "```\n"
+            tokens = len(self.tokenizer.encode(content))
             res.append((tokens, f"{relative_fname}", "use /drop to drop from chat"))
 
         self.io.tool_output("Approximate context window usage, in tokens:")
