@@ -1,6 +1,6 @@
 # Release history
 
-### next release
+### Next release
 
 - [Benchmark comparing code editing in GPT-3.5 and GPT-4](https://aider.chat/docs/benchmarks.html)
 - Improved Windows support:
