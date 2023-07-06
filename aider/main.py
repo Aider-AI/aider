@@ -186,6 +186,11 @@ def main(args=None, input=None, output=None):
         help="Disable commits when repo is found dirty",
     )
     parser.add_argument(
+        "--encoding",
+        default="utf-8",
+        help="Specify the encoding to use when reading files (default: utf-8)",
+    )
+    parser.add_argument(
         "--openai-api-key",
         metavar="OPENAI_API_KEY",
         help="Specify the OpenAI API key",
