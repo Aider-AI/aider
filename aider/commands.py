@@ -119,7 +119,7 @@ class Commands:
             relative_fname = self.coder.get_rel_fname(fname)
             content = self.io.read_text(fname)
             # approximate
-            content = "```\n" + content + "```\n"
+            content = f"{relative_fname}\n```\n" + content + "```\n"
             tokens = len(self.tokenizer.encode(content))
             res.append((tokens, f"{relative_fname}", "use /drop to drop from chat"))
 
