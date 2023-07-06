@@ -341,6 +341,10 @@ class Commands:
             else:
                 other_files.append(file)
 
+        if not chat_files and not other_files:
+            self.io.tool_output("\nNo files in chat or git repo.")
+            return
+
         if chat_files:
             self.io.tool_output("Files in chat:\n")
         for file in chat_files:
