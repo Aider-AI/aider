@@ -32,3 +32,20 @@ class TestCommands(TestCase):
         # Check if both files have been created in the temporary directory
         self.assertTrue(os.path.exists("foo.txt"))
         self.assertTrue(os.path.exists("bar.txt"))
+
+    import codecs
+    def test_cmd_add_bad_encoding(self):
+        # Initialize the Commands and InputOutput objects
+        io = InputOutput(pretty=False, yes=True)
+        from aider.coders import Coder
+
+        coder = Coder.create(models.GPT35, None, io, openai_api_key="deadbeef")
+        commands = Commands(io, coder)
+
+        # Create a new file foo.bad which will fail to decode as utf-8
+        with codecs.open('foo.bad', 'w', encoding='iso-8859-15') as f:
+            f.write('ÆØÅ')  # Characters not present in utf-8
+
+        commands.cmd_add("foo.bad")
+
+        self.assertEqual(coder.abs_fnames, set())
