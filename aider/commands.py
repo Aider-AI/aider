@@ -288,7 +288,7 @@ class Commands:
             matched_files = [
                 file
                 for file in self.coder.abs_fnames
-                if any(glob.fnmatch.fnmatch(os.path.relpath(file, self.coder.root), word) for file in self.coder.abs_fnames)
+                if glob.fnmatch.fnmatch(os.path.basename(file), word)
             ]
             if not matched_files:
                 self.io.tool_error(f"No files matched '{word}'")
