@@ -202,8 +202,11 @@ class TestCoder(unittest.TestCase):
         coder.run(with_message="hi")
         self.assertEqual(len(coder.abs_fnames), 2)
 
-        # Delete one of the files
-        os.remove(file1)
+        # move the file
+        # os.remove() causes PermErr on Windows!
+        # PermissionError: [WinError 32] The process cannot access the file because
+        # it is being used by another process
+        os.rename(file1, file1 + ".renamed")
 
         # Call the run method again with a message
         coder.run(with_message="hi")
