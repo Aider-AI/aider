@@ -49,3 +49,14 @@ class TestCommands(TestCase):
         commands.cmd_add("foo.bad")
 
         self.assertEqual(coder.abs_fnames, set())
+
+    def test_cmd_tokens(self):
+        # Initialize the Commands and InputOutput objects
+        io = InputOutput(pretty=False, yes=True)
+        from aider.coders import Coder
+
+        coder = Coder.create(models.GPT35, None, io, openai_api_key="deadbeef")
+        commands = Commands(io, coder)
+
+        commands.cmd_add("foo.txt bar.txt")
+        commands.cmd_tokens("")
