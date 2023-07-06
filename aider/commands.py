@@ -1,15 +1,16 @@
+import glob
 import json
 import os
 import shlex
 import subprocess
 import sys
-import glob
 
 import git
 import tiktoken
 from prompt_toolkit.completion import Completion
 
 from aider import prompts, utils
+
 
 class Commands:
     def __init__(self, io, coder):
@@ -216,14 +217,12 @@ class Commands:
             if partial.lower() in fname.lower():
                 yield Completion(fname, start_position=-len(partial))
 
-    import glob
-
     def cmd_add(self, args):
         "Add matching files to the chat session using glob patterns"
 
         added_fnames = []
-        for pattern in args.split():
-            matched_files = glob.glob(pattern, recursive=True)
+        for word in args.split():
+            matched_files = glob.glob(word, recursive=True)
 
             if not matched_files:
                 if self.coder.repo is not None:
