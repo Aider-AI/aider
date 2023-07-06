@@ -225,28 +225,31 @@ class Commands:
             matched_files = glob.glob(word, recursive=True)
 
             if not matched_files:
-                if self.coder.repo is not None:
-                    create_file = self.io.confirm_ask(
-                        (
-                            f"No files matched '{word}'. Do you want to create the file and add it"
-                            " to git?"
-                        ),
-                    )
+                if any(char in word for char in "*?[]"):
+                    self.io.tool_error(f"No files matched '{word}' and it contains glob characters")
                 else:
-                    create_file = self.io.confirm_ask(
-                        f"No files matched '{word}'. Do you want to create the file?"
-                    )
-
-                if create_file:
-                    with open(os.path.join(self.coder.root, word), "w"):
-                        pass
-                    matched_files = [word]
                     if self.coder.repo is not None:
-                        self.coder.repo.git.add(os.path.join(self.coder.root, word))
-                        commit_message = f"aider: Created and added {word} to git."
-                        self.coder.repo.git.commit("-m", commit_message, "--no-verify")
-                else:
-                    self.io.tool_error(f"No files matched '{word}'")
+                        create_file = self.io.confirm_ask(
+                            (
+                                f"No files matched '{word}'. Do you want to create the file and add it"
+                                " to git?"
+                            ),
+                        )
+                    else:
+                        create_file = self.io.confirm_ask(
+                            f"No files matched '{word}'. Do you want to create the file?"
+                        )
+
+                    if create_file:
+                        with open(os.path.join(self.coder.root, word), "w"):
+                            pass
+                        matched_files = [word]
+                        if self.coder.repo is not None:
+                            self.coder.repo.git.add(os.path.join(self.coder.root, word))
+                            commit_message = f"aider: Created and added {word} to git."
+                            self.coder.repo.git.commit("-m", commit_message, "--no-verify")
+                    else:
+                        self.io.tool_error(f"No files matched '{word}'")
 
             for matched_file in matched_files:
                 abs_file_path = os.path.abspath(os.path.join(self.coder.root, matched_file))
