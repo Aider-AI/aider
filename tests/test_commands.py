@@ -66,12 +66,17 @@ class TestCommands(TestCase):
         coder = Coder.create(models.GPT35, None, io, openai_api_key="deadbeef")
         commands = Commands(io, coder)
 
+        with open("test1.py", "w") as f:
+            f.write("print('test1')")
+        with open("test2.py", "w") as f:
+            f.write("print('test2')")
+
         # Add some files to the chat session
         commands.cmd_add("*.py")
 
         # Call the cmd_drop method with a glob pattern
-        commands.cmd_drop("*.py")
+        commands.cmd_drop("*2.py")
 
         # Check if the Python files have been removed from the chat session
-        self.assertNotIn(os.path.abspath("test1.py"), coder.abs_fnames)
+        self.assertIn(os.path.abspath("test1.py"), coder.abs_fnames)
         self.assertNotIn(os.path.abspath("test2.py"), coder.abs_fnames)
