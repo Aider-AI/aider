@@ -3,6 +3,7 @@ import os
 import shutil
 import tempfile
 from unittest import TestCase
+import io
 
 from aider import models
 from aider.commands import Commands
@@ -59,4 +60,16 @@ class TestCommands(TestCase):
         commands = Commands(io, coder)
 
         commands.cmd_add("foo.txt bar.txt")
+
+        # Redirect the standard output to an instance of io.StringIO
+        stdout = io.StringIO()
+        sys.stdout = stdout
+
         commands.cmd_tokens("")
+
+        # Reset the standard output
+        sys.stdout = sys.__stdout__
+
+        # Get the console output
+        console_output = stdout.getvalue()
+        print(console_output)
