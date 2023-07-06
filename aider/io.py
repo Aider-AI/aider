@@ -127,6 +127,7 @@ class InputOutput:
             self.chat_history_file = None
 
         self.encoding = encoding
+        self.dry_run = dry_run
 
         if pretty:
             self.console = Console()
