@@ -271,7 +271,7 @@ new
         # Call the run method with a message
         coder.run(with_message="hi")
 
-        content = open(file1, encoding="utf-8").read()
+        content = Path(file1).read_text(encoding="utf-8")
         self.assertEqual(content, "one\nnew\nthree\n")
 
     def test_full_edit_dry_run(self):
@@ -314,7 +314,7 @@ new
         # Call the run method with a message
         coder.run(with_message="hi")
 
-        content = open(file1, encoding="utf-8").read()
+        content = Path(file1).read_text(encoding="utf-8")
         self.assertEqual(content, orig_content)
 
 

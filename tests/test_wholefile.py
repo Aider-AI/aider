@@ -240,7 +240,7 @@ Do this:
         # Call the run method with a message
         coder.run(with_message="hi")
 
-        content = open(file1, encoding="utf-8").read()
+        content = Path(file1).read_text(encoding="utf-8")
 
         # check for one trailing newline
         self.assertEqual(content, new_content + "\n")
