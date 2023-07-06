@@ -216,13 +216,14 @@ class Commands:
             if partial.lower() in fname.lower():
                 yield Completion(fname, start_position=-len(partial))
 
+    import glob
+
     def cmd_add(self, args):
-        "Add matching files to the chat session"
+        "Add matching files to the chat session using glob patterns"
 
         added_fnames = []
-        files = self.coder.get_all_relative_files()
-        for word in args.split():
-            matched_files = [file for file in files if word in file]
+        for pattern in args.split():
+            matched_files = glob.glob(pattern, recursive=True)
 
             if not matched_files:
                 if self.coder.repo is not None:
