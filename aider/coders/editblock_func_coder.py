@@ -135,7 +135,8 @@ class EditBlockFunctionCoder(Coder):
             full_path = self.allowed_to_edit(path)
             if not full_path:
                 continue
-            if do_replace(full_path, original, updated, self.dry_run):
+            content = self.io.read_text(full_path)
+            if do_replace(full_path, content, original, updated, self.dry_run):
                 edited.add(path)
                 continue
             self.io.tool_error(f"Failed to apply edit to {path}")

@@ -26,12 +26,40 @@ class EditBlockCoder(Coder):
             full_path = self.allowed_to_edit(path)
             if not full_path:
                 continue
-            if do_replace(full_path, original, updated, self.dry_run):
+            content = self.io.read_text(full_path)
+            if do_replace(full_path, content, original, updated, self.dry_run):
                 edited.add(path)
                 continue
             self.io.tool_error(f"Failed to apply edit to {path}")
 
         return edited
+
+
+def do_replace(fname, content, before_text, after_text, dry_run=False):
+    before_text = strip_quoted_wrapping(before_text, fname)
+    after_text = strip_quoted_wrapping(after_text, fname)
+    fname = Path(fname)
+
+    # does it want to make a new file?
+    if not fname.exists() and not before_text.strip():
+        fname.touch()
+        content = ""
+
+    if content is None:
+        return
+
+    if not before_text.strip():
+        # append to existing file, or start a new file
+        new_content = content + after_text
+    else:
+        new_content = replace_most_similar_chunk(content, before_text, after_text)
+        if not new_content:
+            return
+
+    if not dry_run:
+        fname.write_text(new_content)
+
+    return True
 
 
 def try_dotdotdots(whole, part, replace):
@@ -209,31 +237,6 @@ def strip_quoted_wrapping(res, fname=None):
         res += "\n"
 
     return res
-
-
-def do_replace(fname, before_text, after_text, dry_run=False):
-    before_text = strip_quoted_wrapping(before_text, fname)
-    after_text = strip_quoted_wrapping(after_text, fname)
-    fname = Path(fname)
-
-    # does it want to make a new file?
-    if not fname.exists() and not before_text.strip():
-        fname.touch()
-
-    content = fname.read_text()
-
-    if not before_text.strip():
-        # append to existing file, or start a new file
-        new_content = content + after_text
-    else:
-        new_content = replace_most_similar_chunk(content, before_text, after_text)
-        if not new_content:
-            return
-
-    if not dry_run:
-        fname.write_text(new_content)
-
-    return True
 
 
 ORIGINAL = "<<<<<<< ORIGINAL"
