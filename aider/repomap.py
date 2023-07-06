@@ -74,8 +74,10 @@ class RepoMap:
         main_model=models.GPT4,
         io=None,
         repo_content_prefix=None,
+        verbose=False,
     ):
         self.io = io
+        self.verbose = verbose
 
         if not root:
             root = os.getcwd()
@@ -130,7 +132,7 @@ class RepoMap:
             files_listing = self.get_ranked_tags_map(chat_files, other_files)
             if files_listing:
                 num_tokens = self.token_count(files_listing)
-                if self.io:
+                if self.verbose:
                     self.io.tool_output(f"ctags map: {num_tokens/1024:.1f} k-tokens")
                 ctags_msg = " with selected ctags info"
                 return files_listing, ctags_msg
@@ -138,7 +140,7 @@ class RepoMap:
         files_listing = self.get_simple_files_map(other_files)
         ctags_msg = ""
         num_tokens = self.token_count(files_listing)
-        if self.io:
+        if self.verbose:
             self.io.tool_output(f"simple map: {num_tokens/1024:.1f} k-tokens")
         if num_tokens < self.max_map_tokens:
             return files_listing, ctags_msg
@@ -198,7 +200,7 @@ class RepoMap:
 
             with tempfile.TemporaryDirectory() as tempdir:
                 hello_py = os.path.join(tempdir, "hello.py")
-                with open(hello_py, "w") as f:
+                with open(hello_py, "w", encoding="utf-8") as f:
                     f.write("def hello():\n    print('Hello, world!')\n")
                 self.run_ctags(hello_py)
         except FileNotFoundError:
@@ -237,10 +239,8 @@ class RepoMap:
         return idents
 
     def get_name_identifiers_uncached(self, fname):
-        try:
-            with open(fname, "r") as f:
-                content = f.read()
-        except UnicodeDecodeError:
+        content = self.io.read_text(fname)
+        if content is None:
             return list()
 
         try:

@@ -3,12 +3,13 @@ import os
 import shlex
 import subprocess
 import sys
+from pathlib import Path
 
 import git
 import tiktoken
 from prompt_toolkit.completion import Completion
 
-from aider import prompts, utils
+from aider import prompts
 
 
 class Commands:
@@ -116,8 +117,10 @@ class Commands:
         # files
         for fname in self.coder.abs_fnames:
             relative_fname = self.coder.get_rel_fname(fname)
-            quoted = utils.quoted_file(fname, relative_fname)
-            tokens = len(self.tokenizer.encode(quoted))
+            content = self.io.read_text(fname)
+            # approximate
+            content = f"{relative_fname}\n```\n" + content + "```\n"
+            tokens = len(self.tokenizer.encode(content))
             res.append((tokens, f"{relative_fname}", "use /drop to drop from chat"))
 
         self.io.tool_output("Approximate context window usage, in tokens:")
@@ -238,8 +241,8 @@ class Commands:
                     )
 
                 if create_file:
-                    with open(os.path.join(self.coder.root, word), "w"):
-                        pass
+                    (Path(self.coder.root) / word).touch()
+
                     matched_files = [word]
                     if self.coder.repo is not None:
                         self.coder.repo.git.add(os.path.join(self.coder.root, word))
@@ -251,9 +254,11 @@ class Commands:
             for matched_file in matched_files:
                 abs_file_path = os.path.abspath(os.path.join(self.coder.root, matched_file))
                 if abs_file_path not in self.coder.abs_fnames:
-                    self.coder.abs_fnames.add(abs_file_path)
-                    self.io.tool_output(f"Added {matched_file} to the chat")
-                    added_fnames.append(matched_file)
+                    content = self.io.read_text(abs_file_path)
+                    if content is not None:
+                        self.coder.abs_fnames.add(abs_file_path)
+                        self.io.tool_output(f"Added {matched_file} to the chat")
+                        added_fnames.append(matched_file)
                 else:
                     self.io.tool_error(f"{matched_file} is already in the chat")
 

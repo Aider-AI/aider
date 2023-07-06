@@ -53,7 +53,7 @@ class WholeFileCoder(Coder):
                     full_path = (Path(self.root) / fname).absolute()
 
                     if mode == "diff" and full_path.exists():
-                        orig_lines = full_path.read_text().splitlines(keepends=True)
+                        orig_lines = self.io.read_text(full_path).splitlines(keepends=True)
 
                         show_diff = diffs.diff_partial_update(
                             orig_lines,
@@ -64,9 +64,8 @@ class WholeFileCoder(Coder):
                     else:
                         if self.allowed_to_edit(fname):
                             edited.add(fname)
-                            if not self.dry_run:
-                                new_lines = "".join(new_lines)
-                                full_path.write_text(new_lines)
+                            new_lines = "".join(new_lines)
+                            self.io.write_text(full_path, new_lines)
 
                     fname = None
                     new_lines = []
@@ -109,7 +108,7 @@ class WholeFileCoder(Coder):
                 full_path = (Path(self.root) / fname).absolute()
 
                 if mode == "diff" and full_path.exists():
-                    orig_lines = full_path.read_text().splitlines(keepends=True)
+                    orig_lines = self.io.read_text(full_path).splitlines(keepends=True)
 
                     show_diff = diffs.diff_partial_update(
                         orig_lines,
@@ -123,8 +122,7 @@ class WholeFileCoder(Coder):
             full_path = self.allowed_to_edit(fname)
             if full_path:
                 edited.add(fname)
-                if not self.dry_run:
-                    new_lines = "".join(new_lines)
-                    Path(full_path).write_text(new_lines)
+                new_lines = "".join(new_lines)
+                self.io.write_text(full_path, new_lines)
 
         return edited
