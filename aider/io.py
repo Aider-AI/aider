@@ -101,6 +101,7 @@ class InputOutput:
         tool_output_color=None,
         tool_error_color="red",
         encoding="utf-8",
+        dry_run=False,
     ):
         no_color = os.environ.get("NO_COLOR")
         if no_color is not None and no_color != "":
@@ -144,6 +145,8 @@ class InputOutput:
             return
 
     def write_text(self, filename, content):
+        if self.dry_run:
+            return
         with open(str(filename), "w", encoding=self.encoding) as f:
             f.write(content)
 

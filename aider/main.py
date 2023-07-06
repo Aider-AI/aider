@@ -252,6 +252,7 @@ def main(args=None, input=None, output=None):
         user_input_color=args.user_input_color,
         tool_output_color=args.tool_output_color,
         tool_error_color=args.tool_error_color,
+        dry_run=args.dry_run,
     )
 
     if args.verbose:
