@@ -290,7 +290,7 @@ class Coder:
     def get_abs_fnames_content(self):
         for fname in list(self.abs_fnames):
             content = self.io.read_text(fname)
-            dump(fname, content)
+
             if content is None:
                 relative_fname = self.get_rel_fname(fname)
                 self.io.tool_error(f"Dropping {relative_fname} from the chat.")
@@ -302,8 +302,6 @@ class Coder:
         all_content = ""
         for _fname, content in self.get_abs_fnames_content():
             all_content += content + "\n"
-
-        all_content = all_content.splitlines()
 
         good = False
         for fence_open, fence_close in self.fences:
