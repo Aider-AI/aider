@@ -11,11 +11,11 @@
   - Fixed bugs related to path separators in Windows
   - Added a CI step to run all tests on Windows
 - Improved handling of Unicode encoding/decoding
-  - Explicitly read/write text files with utf-8 encoding by default (mainly affects Windows)
+  - Explicitly read/write text files with utf-8 encoding by default (mainly benefits Windows)
   - Added `--encoding` switch to specify another encoding
   - Gracefully handle decoding errors
 - Added `--code-theme` switch to control the pygments styling of code blocks (by @kwmiebach)
-- Better status messages explaining the reason ctags is disabled
+- Better status messages explaining the reason when ctags is disabled
 
 ### v0.7.2:
 
