@@ -238,7 +238,7 @@ These changes replace the `subprocess.run` patches with `subprocess.check_output
         result = eb.replace_part_with_missing_leading_whitespace(whole, part, replace)
         self.assertEqual(result, expected_output)
 
-    def test_choose_fence(self):
+    def test_full_edit(self):
         # Create a few temporary files
         _, file1 = tempfile.mkstemp()
 
@@ -273,6 +273,49 @@ new
 
         content = open(file1, encoding="utf-8").read()
         self.assertEqual(content, "one\nnew\nthree\n")
+
+    def test_full_edit_dry_run(self):
+        # Create a few temporary files
+        _, file1 = tempfile.mkstemp()
+
+        orig_content = "one\ntwo\nthree\n"
+
+        with open(file1, "w", encoding="utf-8") as f:
+            f.write(orig_content)
+
+        files = [file1]
+
+        # Initialize the Coder object with the mocked IO and mocked repo
+        coder = Coder.create(
+            models.GPT4,
+            "diff",
+            io=InputOutput(dry_run=True),
+            openai_api_key="fake_key",
+            fnames=files,
+            dry_run=True,
+        )
+
+        def mock_send(*args, **kwargs):
+            coder.partial_response_content = f"""
+Do this:
+
+{Path(file1).name}
+<<<<<<< ORIGINAL
+two
+=======
+new
+>>>>>>> UPDATED
+
+"""
+            coder.partial_response_function_call = dict()
+
+        coder.send = MagicMock(side_effect=mock_send)
+
+        # Call the run method with a message
+        coder.run(with_message="hi")
+
+        content = open(file1, encoding="utf-8").read()
+        self.assertEqual(content, orig_content)
 
 
 if __name__ == "__main__":
