@@ -1,4 +1,5 @@
 import os
+import tempfile
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -7,6 +8,8 @@ import requests
 
 from aider import models
 from aider.coders import Coder
+from aider.dump import dump  # noqa: F401
+from aider.io import InputOutput
 
 
 class TestCoder(unittest.TestCase):
@@ -176,6 +179,35 @@ class TestCoder(unittest.TestCase):
 
         # Assert that print was called once
         mock_print.assert_called_once()
+
+    def test_run_with_file_deletion(self):
+        # Create a few temporary files
+        _, file1 = tempfile.mkstemp()
+        _, file2 = tempfile.mkstemp()
+
+        files = [file1, file2]
+
+        # Initialize the Coder object with the mocked IO and mocked repo
+        coder = Coder.create(
+            models.GPT4, None, io=InputOutput(), openai_api_key="fake_key", fnames=files
+        )
+
+        def mock_send(*args, **kwargs):
+            coder.partial_response_content = "ok"
+            coder.partial_response_function_call = dict()
+
+        coder.send = MagicMock(side_effect=mock_send)
+
+        # Call the run method with a message
+        coder.run(with_message="hi")
+        self.assertEqual(len(coder.abs_fnames), 2)
+
+        # Delete one of the files
+        os.remove(file1)
+
+        # Call the run method again with a message
+        coder.run(with_message="hi")
+        self.assertEqual(len(coder.abs_fnames), 1)
 
 
 if __name__ == "__main__":

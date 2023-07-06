@@ -141,7 +141,10 @@ class InputOutput:
         try:
             with open(str(filename), "r", encoding=self.encoding) as f:
                 return f.read()
-        except (FileNotFoundError, UnicodeError) as e:
+        except FileNotFoundError:
+            self.tool_error(f"{filename}: file not found error")
+            return
+        except UnicodeError as e:
             self.tool_error(f"{filename}: {e}")
             return
 

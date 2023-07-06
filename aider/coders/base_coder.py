@@ -290,9 +290,10 @@ class Coder:
     def get_abs_fnames_content(self):
         for fname in list(self.abs_fnames):
             content = self.io.read_text(fname)
+            dump(fname, content)
             if content is None:
                 relative_fname = self.get_rel_fname(fname)
-                self.tool_error(f"Dropping {relative_fname} from the chat.")
+                self.io.tool_error(f"Dropping {relative_fname} from the chat.")
                 self.abs_fnames.remove(fname)
             else:
                 yield fname, content
