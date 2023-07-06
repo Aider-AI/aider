@@ -1,12 +1,15 @@
 import codecs
 import os
 import shutil
+import sys
 import tempfile
+from io import StringIO
 from unittest import TestCase
-import io
 
 from aider import models
+from aider.coders import Coder
 from aider.commands import Commands
+from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 
 
@@ -54,7 +57,6 @@ class TestCommands(TestCase):
     def test_cmd_tokens(self):
         # Initialize the Commands and InputOutput objects
         io = InputOutput(pretty=False, yes=True)
-        from aider.coders import Coder
 
         coder = Coder.create(models.GPT35, None, io, openai_api_key="deadbeef")
         commands = Commands(io, coder)
@@ -62,7 +64,7 @@ class TestCommands(TestCase):
         commands.cmd_add("foo.txt bar.txt")
 
         # Redirect the standard output to an instance of io.StringIO
-        stdout = io.StringIO()
+        stdout = StringIO()
         sys.stdout = stdout
 
         commands.cmd_tokens("")
@@ -72,4 +74,6 @@ class TestCommands(TestCase):
 
         # Get the console output
         console_output = stdout.getvalue()
-        print(console_output)
+
+        self.assertIn("foo.txt", console_output)
+        self.assertIn("bar.txt", console_output)
