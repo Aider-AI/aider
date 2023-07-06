@@ -1,6 +1,7 @@
 import os
 import tempfile
 import unittest
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import openai
@@ -182,8 +183,14 @@ class TestCoder(unittest.TestCase):
 
     def test_run_with_file_deletion(self):
         # Create a few temporary files
-        _, file1 = tempfile.mkstemp()
-        _, file2 = tempfile.mkstemp()
+
+        tempdir = Path(tempfile.mkdtemp())
+
+        file1 = tempdir / "file1.txt"
+        file2 = tempdir / "file2.txt"
+
+        file1.touch()
+        file2.touch()
 
         files = [file1, file2]
 
@@ -202,7 +209,7 @@ class TestCoder(unittest.TestCase):
         coder.run(with_message="hi")
         self.assertEqual(len(coder.abs_fnames), 2)
 
-        os.remove(file1)
+        file1.unlink()
 
         # Call the run method again with a message
         coder.run(with_message="hi")
