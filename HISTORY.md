@@ -1,5 +1,19 @@
 # Release history
 
+### Next release
+
+- [Benchmark comparing code editing in GPT-3.5 and GPT-4](https://aider.chat/docs/benchmarks.html)
+- Improved Windows support:
+  - Fixed bugs related to path separators in Windows
+  - Added a CI step to run all tests on Windows
+- Improved handling of Unicode encoding/decoding
+  - Explicitly read/write text files with utf-8 encoding by default (mainly affects Windows)
+  - Added `--encoding` switch to specify another encoding
+  - Gracefully handle decoding errors
+- Glob wildcards are now supported in `/add` and `/drop` commands
+- Added `--code-theme` switch to control the pygments styling of code blocks (by @kwmiebach)
+- Better status messages explaining the reason ctags is disabled
+
 ### v0.7.2:
 
 - Fixed a bug to allow aider to edit files that contain triple backtick fences.
