@@ -923,7 +923,7 @@ class Coder:
         full_path = os.path.abspath(os.path.join(self.root, path))
 
         if full_path in self.abs_fnames:
-            if not self.dry_run and write_content:
+            if write_content:
                 self.io.write_text(full_path, write_content)
             return full_path
 
@@ -949,7 +949,7 @@ class Coder:
                 if not self.dry_run:
                     self.repo.git.add(full_path)
 
-        if not self.dry_run and write_content:
+        if write_content:
             self.io.write_text(full_path, write_content)
 
         return full_path
