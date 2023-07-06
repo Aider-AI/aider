@@ -252,9 +252,11 @@ class Commands:
             for matched_file in matched_files:
                 abs_file_path = os.path.abspath(os.path.join(self.coder.root, matched_file))
                 if abs_file_path not in self.coder.abs_fnames:
-                    self.coder.abs_fnames.add(abs_file_path)
-                    self.io.tool_output(f"Added {matched_file} to the chat")
-                    added_fnames.append(matched_file)
+                    content = self.io.read_text(abs_file_path)
+                    if content is not None:
+                        self.coder.abs_fnames.add(abs_file_path)
+                        self.io.tool_output(f"Added {matched_file} to the chat")
+                        added_fnames.append(matched_file)
                 else:
                     self.io.tool_error(f"{matched_file} is already in the chat")
 
