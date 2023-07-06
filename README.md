@@ -18,7 +18,7 @@ It also has features that [help GPT-4 understand and modify larger codebases](ht
 - [GPT-4 vs GPT-3.5](#gpt-4-vs-gpt-35)
 
 ## Getting started
-[![Open In Colab](https://colab.research.google.com/drive/1J9XynhrCqekPL5PR6olHP6eE--rnnjS9?usp=sharing)
+[Open In Colab](https://colab.research.google.com/drive/1J9XynhrCqekPL5PR6olHP6eE--rnnjS9?usp=sharing)
 ```
 $ pip install aider-chat
 $ export OPENAI_API_KEY=your-key-goes-here
