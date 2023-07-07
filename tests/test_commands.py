@@ -100,6 +100,7 @@ class TestCommands(TestCase):
 
         self.assertEqual(len(coder.abs_fnames), 2)
 
+        dump(coder.abs_fnames)
         # Call the cmd_drop method with a glob pattern
         commands.cmd_drop("*2.py")
 
