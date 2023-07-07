@@ -240,7 +240,7 @@ original/updated style edits to be returned using the function call API.
 
 ## GPT-3.5's performance
 
-### The `0613` models seem worse?
+### The `gpt-3.5-turbo-0613` models seem worse?
 
 The benchmark results have me fairly convinced that the new
 `gpt-3.5-turbo-0613` and `gpt-3.5-16k-0613` models
