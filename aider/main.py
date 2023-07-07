@@ -260,7 +260,7 @@ def main(args=None, input=None, output=None):
         dry_run=args.dry_run,
     )
 
-    if not git_root:
+    if not git_root and args.git:
         if io.confirm_ask("No git repo found, create one to track GPT's changes (recommended)?"):
             git.Repo.init(os.getcwd())
             io.tool_output("Git repository created in the current working directory.")
