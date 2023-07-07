@@ -100,13 +100,12 @@ class TestCommands(TestCase):
 
         self.assertEqual(len(coder.abs_fnames), 2)
 
-        dump(coder.abs_fnames)
         # Call the cmd_drop method with a glob pattern
         commands.cmd_drop("*2.py")
 
         # Check if the Python files have been removed from the chat session
-        self.assertIn(os.path.abspath("test1.py"), coder.abs_fnames)
-        self.assertNotIn(os.path.abspath("test2.py"), coder.abs_fnames)
+        self.assertIn(str(Path("test1.py").resolve()), coder.abs_fnames)
+        self.assertNotIn(str(Path("test2.py").resolve()), coder.abs_fnames)
 
     def test_cmd_add_bad_encoding(self):
         # Initialize the Commands and InputOutput objects
