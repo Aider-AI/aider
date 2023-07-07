@@ -260,6 +260,11 @@ def main(args=None, input=None, output=None):
         dry_run=args.dry_run,
     )
 
+    if not git_root:
+        if io.ask_confirm("Create git repo (recommended)?"):
+            git.Repo.init(os.getcwd())
+            io.tool_output("Git repository created in the current working directory.")
+
     if args.verbose:
         show = parser.format_values()
         io.tool_output(show)
