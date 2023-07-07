@@ -328,7 +328,7 @@ class Coder:
         prompt = ""
         for fname, content in self.get_abs_fnames_content():
             relative_fname = self.get_rel_fname(fname)
-            prompt = "\n"
+            prompt += "\n"
             prompt += relative_fname
             prompt += f"\n{self.fence[0]}\n"
             prompt += content
