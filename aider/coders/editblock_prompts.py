@@ -29,6 +29,7 @@ some/dir/example.py
     # Function to add
     def add(a,b):
 >>>>>>> UPDATED
+```
 
 Every *edit block* must be fenced w/triple backticks with the correct code language.
 Every *edit block* must start with the full path! *NEVER* propose edit blocks for *read-only* files.
