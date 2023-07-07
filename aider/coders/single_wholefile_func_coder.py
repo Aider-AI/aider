@@ -90,8 +90,11 @@ class SingleWholeFileFunctionCoder(Coder):
         # ending an existing block
         full_path = os.path.abspath(os.path.join(self.root, fname))
 
-        with open(full_path, "r") as f:
-            orig_lines = f.readlines()
+        content = self.io.read_text(full_path)
+        if content is None:
+            orig_lines = []
+        else:
+            orig_lines = content.splitlines()
 
         show_diff = diffs.diff_partial_update(
             orig_lines,

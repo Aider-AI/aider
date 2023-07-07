@@ -186,6 +186,11 @@ def main(args=None, input=None, output=None):
         help="Disable commits when repo is found dirty",
     )
     parser.add_argument(
+        "--encoding",
+        default="utf-8",
+        help="Specify the encoding to use when reading files (default: utf-8)",
+    )
+    parser.add_argument(
         "--openai-api-key",
         metavar="OPENAI_API_KEY",
         help="Specify the OpenAI API key",
@@ -247,6 +252,7 @@ def main(args=None, input=None, output=None):
         user_input_color=args.user_input_color,
         tool_output_color=args.tool_output_color,
         tool_error_color=args.tool_error_color,
+        dry_run=args.dry_run,
     )
 
     if args.verbose:
@@ -294,8 +300,9 @@ def main(args=None, input=None, output=None):
         coder.commit(ask=True, which="repo_files")
 
     if args.apply:
-        with open(args.apply, "r") as f:
-            content = f.read()
+        content = io.read_text(args.apply)
+        if content is None:
+            return
         coder.apply_updates(content)
         return
 

@@ -100,6 +100,8 @@ class InputOutput:
         user_input_color="blue",
         tool_output_color=None,
         tool_error_color="red",
+        encoding="utf-8",
+        dry_run=False,
     ):
         no_color = os.environ.get("NO_COLOR")
         if no_color is not None and no_color != "":
@@ -124,6 +126,9 @@ class InputOutput:
         else:
             self.chat_history_file = None
 
+        self.encoding = encoding
+        self.dry_run = dry_run
+
         if pretty:
             self.console = Console()
         else:
@@ -131,6 +136,23 @@ class InputOutput:
 
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
+
+    def read_text(self, filename):
+        try:
+            with open(str(filename), "r", encoding=self.encoding) as f:
+                return f.read()
+        except FileNotFoundError:
+            self.tool_error(f"{filename}: file not found error")
+            return
+        except UnicodeError as e:
+            self.tool_error(f"{filename}: {e}")
+            return
+
+    def write_text(self, filename, content):
+        if self.dry_run:
+            return
+        with open(str(filename), "w", encoding=self.encoding) as f:
+            f.write(content)
 
     def get_input(self, root, rel_fnames, addable_rel_fnames, commands):
         if self.pretty:
