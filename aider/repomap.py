@@ -173,9 +173,15 @@ class RepoMap:
 
         cmd = self.ctags_cmd + [filename]
         output = subprocess.check_output(cmd, stderr=subprocess.PIPE).decode("utf-8")
-        output = output.splitlines()
+        output_lines = output.splitlines()
 
-        data = [json.loads(line) for line in output]
+        data = []
+        for line in output_lines:
+            try:
+                data.append(json.loads(line))
+            except json.decoder.JSONDecodeError as err:
+                self.io.tool_error(f"Error parsing ctags output: {err}")
+                self.io.tool_error(repr(line))
 
         # Update the cache
         self.TAGS_CACHE[cache_key] = {"mtime": file_mtime, "data": data}
