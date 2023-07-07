@@ -11,6 +11,8 @@ from prompt_toolkit.completion import Completion
 
 from aider import prompts
 
+from .dump import dump  # noqa: F401
+
 
 class Commands:
     def __init__(self, io, coder):
@@ -233,36 +235,26 @@ class Commands:
         "Add matching files to the chat session using glob patterns"
 
         added_fnames = []
+        git_added = []
+        git_files = self.coder.get_tracked_files()
+
         for word in args.split():
             matched_files = self.glob_filtered_to_repo(word)
 
             if not matched_files:
                 if any(char in word for char in "*?[]"):
-                    self.io.tool_error(f"No files matched '{word}' and it contains glob characters")
-                else:
-                    if self.coder.repo is not None:
-                        create_file = self.io.confirm_ask(
-                            (
-                                f"No files matched '{word}'. Do you want to create the file and add"
-                                " it to git?"
-                            ),
-                        )
-                    else:
-                        create_file = self.io.confirm_ask(
-                            f"No files matched '{word}'. Do you want to create the file?"
-                        )
-
-                    if create_file:
-                        (Path(self.coder.root) / word).touch()
-                        matched_files = [word]
-                        if self.coder.repo is not None:
-                            self.coder.repo.git.add(os.path.join(self.coder.root, word))
-                            commit_message = f"aider: Created and added {word} to git."
-                            self.coder.repo.git.commit("-m", commit_message, "--no-verify")
-                    else:
-                        self.io.tool_error(f"No files matched '{word}'")
+                    self.io.tool_error(f"No files matched pattern: {word}")
+                elif self.io.confirm_ask(
+                    f"No files matched '{word}'. Do you want to create the file?"
+                ):
+                    (Path(self.coder.root) / word).touch()
+                    matched_files = [word]
 
             for matched_file in matched_files:
+                if self.coder.repo and matched_file not in git_files:
+                    self.coder.repo.git.add(os.path.join(self.coder.root, matched_file))
+                    git_added.append(matched_file)
+
                 abs_file_path = os.path.abspath(os.path.join(self.coder.root, matched_file))
                 if abs_file_path not in self.coder.abs_fnames:
                     content = self.io.read_text(abs_file_path)
@@ -272,6 +264,13 @@ class Commands:
                         added_fnames.append(matched_file)
                 else:
                     self.io.tool_error(f"{matched_file} is already in the chat")
+
+        if self.coder.repo and git_added:
+            git_added = " ".join(git_added)
+            commit_message = f"aider: Created {git_added}"
+            self.coder.repo.git.commit("-m", commit_message, "--no-verify")
+            commit_hash = self.coder.repo.head.commit.hexsha[:7]
+            self.io.tool_output(f"Commit {commit_hash} {commit_message}")
 
         if not added_fnames:
             return
