@@ -307,9 +307,8 @@ class Commands:
                 self.io.tool_error(f"No files matched '{word}'")
 
             for matched_file in matched_files:
-                relative_fname = os.path.relpath(matched_file, self.coder.root)
-                self.coder.abs_fnames.remove(matched_file)
-                self.io.tool_output(f"Removed {relative_fname} from the chat")
+                self.coder.abs_fnames.remove(str(Path(matched_file).resolve()))
+                self.io.tool_output(f"Removed {matched_file} from the chat")
 
     def cmd_run(self, args):
         "Run a shell command and optionally add the output to the chat"
