@@ -60,7 +60,10 @@ class Commands:
         if len(matching_commands) == 1:
             return self.do_run(matching_commands[0][1:], rest_inp)
         elif len(matching_commands) > 1:
-            self.io.tool_error(f"Ambiguous command: {', '.join(matching_commands)}")
+            if self.io.api:
+                return f"Ambiguous command: {', '.join(matching_commands)}"
+            else:
+                self.io.tool_error(f"Ambiguous command: {', '.join(matching_commands)}")
         else:
             self.io.tool_error(f"Error: {first_word} is not a valid command.")
 
@@ -71,12 +74,18 @@ class Commands:
         "Commit edits to the repo made outside the chat (commit message optional)"
 
         if not self.coder.repo:
-            self.io.tool_error("No git repository found.")
-            return
+            if self.io.api:
+                return "No git repository found."
+            else:
+                self.io.tool_error("No git repository found.")
+                return
 
         if not self.coder.repo.is_dirty():
-            self.io.tool_error("No more changes to commit.")
-            return
+            if self.io.api:
+                return "No more changes to commit."
+            else:
+                self.io.tool_error("No more changes to commit.")
+                return
 
         commit_message = args.strip()
         self.coder.commit(message=commit_message, which="repo_files")
@@ -244,15 +253,24 @@ class Commands:
 
             if not matched_files:
                 if any(char in word for char in "*?[]"):
-                    self.io.tool_error(f"No files to add matching pattern: {word}")
+                    if self.io.api:
+                        return f"No files to add matching pattern: {word}"
+                    else:
+                        self.io.tool_error(f"No files to add matching pattern: {word}")
                 else:
-                    if Path(word).exists():
-                        matched_files = [word]
-                    elif self.io.confirm_ask(
-                        f"No files matched '{word}'. Do you want to create the file?"
-                    ):
-                        (Path(self.coder.root) / word).touch()
-                        matched_files = [word]
+                    if self.io.api:
+                        if Path(word).exists():
+                            matched_files = [word]
+                        else:
+                            return f"No files matched '{word}'. Do you want to create the file?"
+                    else:
+                        if Path(word).exists():
+                            matched_files = [word]
+                        elif self.io.confirm_ask(
+                            f"No files matched '{word}'. Do you want to create the file?"
+                        ):
+                            (Path(self.coder.root) / word).touch()
+                            matched_files = [word]
 
             for matched_file in matched_files:
                 if self.coder.repo and matched_file not in git_files:
@@ -264,17 +282,27 @@ class Commands:
                     content = self.io.read_text(abs_file_path)
                     if content is not None:
                         self.coder.abs_fnames.add(abs_file_path)
-                        self.io.tool_output(f"Added {matched_file} to the chat")
+                        if self.io.api:
+                            return f"Added {matched_file} to the chat"
+                        else:
+                            self.io.tool_output(f"Added {matched_file} to the chat")
+
                         added_fnames.append(matched_file)
                 else:
-                    self.io.tool_error(f"{matched_file} is already in the chat")
+                    if self.io.api:
+                        return f"{matched_file} is already in the chat"
+                    else:
+                        self.io.tool_error(f"{matched_file} is already in the chat")
 
         if self.coder.repo and git_added:
             git_added = " ".join(git_added)
             commit_message = f"aider: Added {git_added}"
             self.coder.repo.git.commit("-m", commit_message, "--no-verify")
             commit_hash = self.coder.repo.head.commit.hexsha[:7]
-            self.io.tool_output(f"Commit {commit_hash} {commit_message}")
+            if self.io.api:
+                return f"Commit {commit_hash} {commit_message}"
+            else:
+                self.io.tool_output(f"Commit {commit_hash} {commit_message}")
 
         if not added_fnames:
             return
@@ -297,18 +325,27 @@ class Commands:
         "Remove matching files from the chat session"
 
         if not args.strip():
-            self.io.tool_output("Dropping all files from the chat session.")
+            if self.io.api:
+                return "Dropping all files from the chat session."
+            else:
+                self.io.tool_output("Dropping all files from the chat session.")
             self.coder.abs_fnames = set()
 
         for word in args.split():
             matched_files = self.glob_filtered_to_repo(word)
 
             if not matched_files:
-                self.io.tool_error(f"No files matched '{word}'")
+                if self.io.api:
+                    return f"No files matched '{word}'"
+                else:
+                    self.io.tool_error(f"No files matched '{word}'")
 
             for matched_file in matched_files:
                 self.coder.abs_fnames.remove(str(Path(matched_file).resolve()))
-                self.io.tool_output(f"Removed {matched_file} from the chat")
+                if self.io.api:
+                    return f"Removed {matched_file} from the chat"
+                else:
+                    self.io.tool_output(f"Removed {matched_file} from the chat")
 
     def cmd_run(self, args):
         "Run a shell command and optionally add the output to the chat"
@@ -319,11 +356,15 @@ class Commands:
             )
             combined_output = result.stdout
         except Exception as e:
-            self.io.tool_error(f"Error running command: {e}")
+            if self.io.api:
+                return f"Error running command: {e}"
+            else:
+                self.io.tool_error(f"Error running command: {e}")
 
         self.io.tool_output(combined_output)
-
-        if self.io.confirm_ask("Add the output to the chat?", default="y"):
+        if self.io.api:
+            return "Add the output to the chat?"
+        elif self.io.confirm_ask("Add the output to the chat?", default="y"):
             for line in combined_output.splitlines():
                 self.io.tool_output(line, log_only=True)
 

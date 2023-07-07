@@ -21,6 +21,7 @@ from rich.markdown import Markdown
 from aider import models, prompts, utils
 from aider.commands import Commands
 from aider.repomap import RepoMap
+from aider.api import API, app
 
 from ..dump import dump  # noqa: F401
 
@@ -189,6 +190,7 @@ class Coder:
             self.io.tool_output("Repo-map: disabled")
 
         for fname in self.get_inchat_relative_files():
+
             self.io.tool_output(f"Added {fname} to the chat.")
 
         # validate the functions jsonschema
@@ -199,6 +201,14 @@ class Coder:
             if self.verbose:
                 self.io.tool_output("JSON Schema:")
                 self.io.tool_output(json.dumps(self.functions, indent=4))
+
+        api_instance = API(io, self)
+
+        # Add the instance to the Flask application's configuration
+        app.config['api_instance'] = api_instance
+
+        print("API is starting...")
+        app.run(port=5000)
 
     def find_common_root(self):
         if len(self.abs_fnames) == 1:

@@ -202,6 +202,11 @@ def main(args=None, input=None, output=None):
         env_var="OPENAI_API_KEY",
     )
     parser.add_argument(
+        "--api",
+        action="store_true",
+        help="Enable API mode",
+    )
+    parser.add_argument(
         "--openai-api-base",
         metavar="OPENAI_API_BASE",
         default="https://api.openai.com/v1",
@@ -258,6 +263,7 @@ def main(args=None, input=None, output=None):
         tool_output_color=args.tool_output_color,
         tool_error_color=args.tool_error_color,
         dry_run=args.dry_run,
+        api=args.api,
     )
 
     if not git_root and args.git:
@@ -324,6 +330,8 @@ def main(args=None, input=None, output=None):
         return
 
     io.tool_output("Use /help to see in-chat commands.")
+    if args.api:
+        io.tool_output("Running in API mode.")
     if args.message:
         io.tool_output()
         coder.run(with_message=args.message)

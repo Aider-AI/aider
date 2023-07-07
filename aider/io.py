@@ -102,6 +102,7 @@ class InputOutput:
         tool_error_color="red",
         encoding="utf-8",
         dry_run=False,
+        api=False,
     ):
         no_color = os.environ.get("NO_COLOR")
         if no_color is not None and no_color != "":
@@ -128,7 +129,7 @@ class InputOutput:
 
         self.encoding = encoding
         self.dry_run = dry_run
-
+        self.api = api
         if pretty:
             self.console = Console()
         else:
