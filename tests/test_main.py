@@ -9,6 +9,7 @@ from unittest.mock import patch
 from prompt_toolkit.input import DummyInput
 from prompt_toolkit.output import DummyOutput
 
+from aider.dump import dump  # noqa: F401
 from aider.main import main
 
 
@@ -40,6 +41,23 @@ class TestMain(TestCase):
         subprocess.run(["git", "config", "user.name", "Dummy User"])
         main(["--yes", "foo.txt"], input=DummyInput(), output=DummyOutput())
         self.assertTrue(os.path.exists("foo.txt"))
+
+    def test_main_with_git_config_yml(self):
+        subprocess.run(["git", "init"])
+        subprocess.run(["git", "config", "user.email", "dummy@example.com"])
+        subprocess.run(["git", "config", "user.name", "Dummy User"])
+
+        Path(".aider.conf.yml").write_text("no-auto-commits: true\n")
+        with patch("aider.main.Coder.create") as MockCoder:
+            main([], input=DummyInput(), output=DummyOutput())
+            _, kwargs = MockCoder.call_args
+            assert kwargs["auto_commits"] is False
+
+        Path(".aider.conf.yml").write_text("auto-commits: true\n")
+        with patch("aider.main.Coder.create") as MockCoder:
+            main([], input=DummyInput(), output=DummyOutput())
+            _, kwargs = MockCoder.call_args
+            assert kwargs["auto_commits"] is True
 
     def test_main_with_empty_git_dir_new_subdir_file(self):
         subprocess.run(["git", "init"])

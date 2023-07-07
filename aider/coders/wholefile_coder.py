@@ -30,7 +30,10 @@ class WholeFileCoder(Coder):
         return context
 
     def render_incremental_response(self, final):
-        return self.update_files(mode="diff")
+        try:
+            return self.update_files(mode="diff")
+        except ValueError:
+            return self.partial_response_content
 
     def update_files(self, mode="update"):
         content = self.partial_response_content

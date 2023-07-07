@@ -27,6 +27,31 @@ class TestWholeFileCoder(unittest.TestCase):
 
         self.patcher.stop()
 
+    def test_no_files(self):
+        # Initialize WholeFileCoder with the temporary directory
+        io = InputOutput(yes=True)
+
+        coder = WholeFileCoder(main_model=models.GPT35, io=io, fnames=[])
+        coder.partial_response_content = (
+            'To print "Hello, World!" in most programming languages, you can use the following'
+            ' code:\n\n```python\nprint("Hello, World!")\n```\n\nThis code will output "Hello,'
+            ' World!" to the console.'
+        )
+
+        # This is throwing ValueError!
+        coder.render_incremental_response(True)
+
+    def test_no_files_new_file_should_ask(self):
+        io = InputOutput(yes=False)  # <- yes=FALSE
+        coder = WholeFileCoder(main_model=models.GPT35, io=io, fnames=[])
+        coder.partial_response_content = (
+            'To print "Hello, World!" in most programming languages, you can use the following'
+            ' code:\n\nfoo.js\n```python\nprint("Hello, World!")\n```\n\nThis code will output'
+            ' "Hello, World!" to the console.'
+        )
+        coder.update_files()
+        self.assertFalse(Path("foo.js").exists())
+
     def test_update_files(self):
         # Create a sample file in the temporary directory
         sample_file = "sample.txt"
