@@ -4,6 +4,7 @@ import shutil
 import sys
 import tempfile
 from io import StringIO
+from pathlib import Path
 from unittest import TestCase
 
 from aider import models
@@ -86,13 +87,18 @@ class TestCommands(TestCase):
         coder = Coder.create(models.GPT35, None, io, openai_api_key="deadbeef")
         commands = Commands(io, coder)
 
-        with open("test1.py", "w") as f:
-            f.write("print('test1')")
-        with open("test2.py", "w") as f:
-            f.write("print('test2')")
+        subdir = Path("subdir")
+        subdir.mkdir()
+        (subdir / "subtest1.py").touch()
+        (subdir / "subtest2.py").touch()
+
+        Path("test1.py").touch()
+        Path("test2.py").touch()
 
         # Add some files to the chat session
         commands.cmd_add("*.py")
+
+        self.assertEqual(len(coder.abs_fnames), 2)
 
         # Call the cmd_drop method with a glob pattern
         commands.cmd_drop("*2.py")

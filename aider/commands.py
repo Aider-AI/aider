@@ -1,4 +1,3 @@
-import glob
 import json
 import os
 import shlex
@@ -220,12 +219,22 @@ class Commands:
             if partial.lower() in fname.lower():
                 yield Completion(fname, start_position=-len(partial))
 
+    def glob_filtered_to_repo(self, pattern):
+        matched_files = Path(self.coder.root).glob(pattern)
+
+        # if repo, filter against it
+        if self.coder.repo:
+            git_files = self.coder.get_tracked_files()
+            matched_files = [fn for fn in matched_files if str(fn) in git_files]
+
+        return list(map(str, matched_files))
+
     def cmd_add(self, args):
         "Add matching files to the chat session using glob patterns"
 
         added_fnames = []
         for word in args.split():
-            matched_files = glob.glob(word, recursive=True)
+            matched_files = self.glob_filtered_to_repo(word)
 
             if not matched_files:
                 if any(char in word for char in "*?[]"):
@@ -289,11 +298,8 @@ class Commands:
             self.coder.abs_fnames = set()
 
         for word in args.split():
-            matched_files = [
-                file
-                for file in self.coder.abs_fnames
-                if glob.fnmatch.fnmatch(os.path.basename(file), word)
-            ]
+            matched_files = self.glob_filtered_to_repo(word)
+
             if not matched_files:
                 self.io.tool_error(f"No files matched '{word}'")
 
