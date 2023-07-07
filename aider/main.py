@@ -1,5 +1,6 @@
 import os
 import sys
+from pathlib import Path
 
 import configargparse
 import git
@@ -23,11 +24,15 @@ def main(args=None, input=None, output=None):
 
     git_root = get_git_root()
 
-    default_config_files = [
-        os.path.expanduser("~/.aider.conf.yml"),
-    ]
+    conf_fname = Path(".aider.conf.yml")
+
+    default_config_files = [conf_fname.resolve()]  # CWD
     if git_root:
-        default_config_files.insert(0, os.path.join(git_root, ".aider.conf.yml"))
+        git_conf = Path(git_root) / conf_fname  # git root
+        if git_conf not in default_config_files:
+            default_config_files.append(git_conf)
+    default_config_files.append(Path.home() / conf_fname)  # homedir
+    default_config_files = list(map(str, default_config_files))
 
     parser = configargparse.ArgumentParser(
         description="aider is GPT powered coding in your terminal",
@@ -50,8 +55,8 @@ def main(args=None, input=None, output=None):
         is_config_file=True,
         metavar="CONFIG_FILE",
         help=(
-            "Specify the config file (default: search for .aider.conf.yml in git root or home"
-            " directory)"
+            "Specify the config file (default: search for .aider.conf.yml in git root, cwd"
+            " or home directory)"
         ),
     )
 
