@@ -16,7 +16,7 @@ It also has features that [help GPT-4 understand and modify larger codebases](ht
 - [In-chat commands](#in-chat-commands)
 - [Tips](#tips)
 - [GPT-4 vs GPT-3.5](#gpt-4-vs-gpt-35)
-- [FAQ](docs/faq.md)
+- [FAQ](https://aider.chat/docs/faq.html)
 
 ## Getting started
 
@@ -70,7 +70,7 @@ You can find more chat transcripts on the [examples page](https://aider.chat/exa
     * `setx OPENAI_API_KEY sk-...` in Windows PowerShell
   * Or include `openai-api-key: sk-...` in an `.aider.conf.yml` file in your home directory or at the root of your git repo, alongside the `.git` dir.
 
-3. Optionally, install [universal ctags](https://github.com/universal-ctags/ctags). This is helpful if you plan to use aider and GPT-4 with repositories that have more than a handful of files.  This allows aider to build a [map of your entire git repo](https://aider.chat/docs/ctags.html) and share it with GPT to help it better understand and modify large codebases. See the [FAQ entry about ctags](docs/faq.md#how-do-i-get-ctags-working) for more info.
+3. Optionally, install [universal ctags](https://github.com/universal-ctags/ctags). This is helpful if you plan to use aider and GPT-4 with repositories that have more than a handful of files.  This allows aider to build a [map of your entire git repo](https://aider.chat/docs/ctags.html) and share it with GPT to help it better understand and modify large codebases. See the [FAQ entry about ctags](https://aider.chat/docs/faq.html#how-do-i-get-ctags-working) for more info.
 
 ## Usage
 
