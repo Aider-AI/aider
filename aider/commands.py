@@ -223,6 +223,7 @@ class Commands:
 
     def glob_filtered_to_repo(self, pattern):
         matched_files = Path(self.coder.root).glob(pattern)
+        matched_files = [fn.relative_to(self.coder.root) for fn in matched_files]
 
         # if repo, filter against it
         if self.coder.repo:
@@ -243,12 +244,15 @@ class Commands:
 
             if not matched_files:
                 if any(char in word for char in "*?[]"):
-                    self.io.tool_error(f"No files matched pattern: {word}")
-                elif self.io.confirm_ask(
-                    f"No files matched '{word}'. Do you want to create the file?"
-                ):
-                    (Path(self.coder.root) / word).touch()
-                    matched_files = [word]
+                    self.io.tool_error(f"No files to add matching pattern: {word}")
+                else:
+                    if Path(word).exists():
+                        matched_files = [word]
+                    elif self.io.confirm_ask(
+                        f"No files matched '{word}'. Do you want to create the file?"
+                    ):
+                        (Path(self.coder.root) / word).touch()
+                        matched_files = [word]
 
             for matched_file in matched_files:
                 if self.coder.repo and matched_file not in git_files:
@@ -267,7 +271,7 @@ class Commands:
 
         if self.coder.repo and git_added:
             git_added = " ".join(git_added)
-            commit_message = f"aider: Created {git_added}"
+            commit_message = f"aider: Added {git_added}"
             self.coder.repo.git.commit("-m", commit_message, "--no-verify")
             commit_hash = self.coder.repo.head.commit.hexsha[:7]
             self.io.tool_output(f"Commit {commit_hash} {commit_message}")
