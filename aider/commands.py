@@ -255,17 +255,20 @@ class Commands:
                         matched_files = [word]
 
             for matched_file in matched_files:
+                abs_file_path = str((Path(self.coder.root) / matched_file).resolve())
+
                 if self.coder.repo and matched_file not in git_files:
-                    self.coder.repo.git.add(os.path.join(self.coder.root, matched_file))
+                    self.coder.repo.git.add(abs_file_path)
                     git_added.append(matched_file)
 
-                abs_file_path = str((Path(self.coder.root) / matched_file).resolve())
                 if abs_file_path not in self.coder.abs_fnames:
                     content = self.io.read_text(abs_file_path)
                     if content is not None:
                         self.coder.abs_fnames.add(abs_file_path)
                         self.io.tool_output(f"Added {matched_file} to the chat")
                         added_fnames.append(matched_file)
+                    else:
+                        self.io.tool_error(f"Unable to read {matched_file}")
                 else:
                     self.io.tool_error(f"{matched_file} is already in the chat")
 
@@ -307,8 +310,10 @@ class Commands:
                 self.io.tool_error(f"No files matched '{word}'")
 
             for matched_file in matched_files:
-                self.coder.abs_fnames.remove(str(Path(matched_file).resolve()))
-                self.io.tool_output(f"Removed {matched_file} from the chat")
+                abs_fname = str(Path(matched_file).resolve())
+                if abs_fname in self.coder.abs_fnames:
+                    self.coder.abs_fnames.remove(abs_fname)
+                    self.io.tool_output(f"Removed {matched_file} from the chat")
 
     def cmd_run(self, args):
         "Run a shell command and optionally add the output to the chat"

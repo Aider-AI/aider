@@ -59,11 +59,11 @@ class TestCommands(TestCase):
         commands.cmd_add("*.py")
 
         # Check if the Python files have been added to the chat session
-        self.assertIn(os.path.abspath("test1.py"), coder.abs_fnames)
-        self.assertIn(os.path.abspath("test2.py"), coder.abs_fnames)
+        self.assertIn(str(Path("test1.py").resolve()), coder.abs_fnames)
+        self.assertIn(str(Path("test2.py").resolve()), coder.abs_fnames)
 
         # Check if the text file has not been added to the chat session
-        self.assertNotIn(os.path.abspath("test.txt"), coder.abs_fnames)
+        self.assertNotIn(str(Path("test.txt").resolve()), coder.abs_fnames)
 
     def test_cmd_add_no_match(self):
         # Initialize the Commands and InputOutput objects
@@ -103,7 +103,6 @@ class TestCommands(TestCase):
         # Call the cmd_drop method with a glob pattern
         commands.cmd_drop("*2.py")
 
-        # Check if the Python files have been removed from the chat session
         self.assertIn(str(Path("test1.py").resolve()), coder.abs_fnames)
         self.assertNotIn(str(Path("test2.py").resolve()), coder.abs_fnames)
 
