@@ -261,7 +261,7 @@ def main(args=None, input=None, output=None):
     )
 
     if not git_root:
-        if io.ask_confirm("Create git repo (recommended)?"):
+        if io.confirm_ask("No git repo found, create one to track GPT's changes (recommended)?"):
             git.Repo.init(os.getcwd())
             io.tool_output("Git repository created in the current working directory.")
 
