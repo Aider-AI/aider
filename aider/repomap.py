@@ -61,7 +61,13 @@ def fname_to_components(fname, with_colon):
 
 class RepoMap:
     CACHE_VERSION = 1
-    ctags_cmd = ["ctags", "--fields=+S", "--extras=-F", "--output-format=json"]
+    ctags_cmd = [
+        "ctags",
+        "--fields=+S",
+        "--extras=-F",
+        "--output-format=json",
+        "--output-encoding=utf-8",
+    ]
     IDENT_CACHE_DIR = f".aider.ident.cache.v{CACHE_VERSION}"
     TAGS_CACHE_DIR = f".aider.tags.cache.v{CACHE_VERSION}"
 
@@ -171,7 +177,10 @@ class RepoMap:
         if cache_key in self.TAGS_CACHE and self.TAGS_CACHE[cache_key]["mtime"] == file_mtime:
             return self.TAGS_CACHE[cache_key]["data"]
 
-        cmd = self.ctags_cmd + [filename]
+        cmd = self.ctags_cmd + [
+            f"--input-encoding={self.io.encoding}",
+            filename,
+        ]
         output = subprocess.check_output(cmd, stderr=subprocess.PIPE).decode("utf-8")
         output_lines = output.splitlines()
 

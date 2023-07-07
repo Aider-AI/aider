@@ -1,4 +1,3 @@
-import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -38,7 +37,15 @@ class TestCoder(unittest.TestCase):
         coder.check_for_file_mentions("Please check file1.txt and file2.py")
 
         # Check if coder.abs_fnames contains both files
-        expected_files = {os.path.abspath("file1.txt"), os.path.abspath("file2.py")}
+        expected_files = set(
+            map(
+                str,
+                [
+                    Path(coder.root) / "file1.txt",
+                    Path(coder.root) / "file2.py",
+                ],
+            )
+        )
         self.assertEqual(coder.abs_fnames, expected_files)
 
     def test_check_for_filename_mentions_of_longer_paths(self):
@@ -50,14 +57,22 @@ class TestCoder(unittest.TestCase):
 
         # Mock the git repo
         mock_repo = MagicMock()
-        mock_repo.git.ls_files.return_value = "./file1.txt\n./file2.py"
+        mock_repo.git.ls_files.return_value = "file1.txt\nfile2.py"
         coder.repo = mock_repo
 
         # Call the check_for_file_mentions method
         coder.check_for_file_mentions("Please check file1.txt and file2.py")
 
         # Check if coder.abs_fnames contains both files
-        expected_files = {os.path.abspath("file1.txt"), os.path.abspath("file2.py")}
+        expected_files = set(
+            map(
+                str,
+                [
+                    Path(coder.root) / "file1.txt",
+                    Path(coder.root) / "file2.py",
+                ],
+            )
+        )
         self.assertEqual(coder.abs_fnames, expected_files)
 
     def test_check_for_ambiguous_filename_mentions_of_longer_paths(self):
