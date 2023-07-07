@@ -56,22 +56,11 @@ class WholeFileCoder(Coder):
                     full_path = (Path(self.root) / fname).absolute()
 
                     if mode == "diff":
-                        if full_path.exists():
-                            orig_lines = self.io.read_text(full_path).splitlines(keepends=True)
-
-                            show_diff = diffs.diff_partial_update(
-                                orig_lines,
-                                new_lines,
-                                final=True,
-                            ).splitlines()
-                            output += show_diff
-                        else:
-                            output += ["```"] + new_lines + ["```"]
-                    else:
-                        if self.allowed_to_edit(fname):
-                            edited.add(fname)
-                            new_lines = "".join(new_lines)
-                            self.io.write_text(full_path, new_lines)
+                        output += self.do_live_diff(full_path, new_lines)
+                    elif self.allowed_to_edit(fname):
+                        edited.add(fname)
+                        new_lines = "".join(new_lines)
+                        self.io.write_text(full_path, new_lines)
 
                     fname = None
                     new_lines = []
@@ -112,18 +101,7 @@ class WholeFileCoder(Coder):
             if fname is not None:
                 # ending an existing block
                 full_path = (Path(self.root) / fname).absolute()
-
-                if full_path.exists():
-                    orig_lines = self.io.read_text(full_path).splitlines(keepends=True)
-
-                    show_diff = diffs.diff_partial_update(
-                        orig_lines,
-                        new_lines,
-                    ).splitlines()
-                    output += show_diff
-                else:
-                    output += ["```"] + new_lines + ["```"]
-
+                output += self.do_live_diff(full_path, new_lines)
             return "\n".join(output)
 
         if fname:
@@ -134,3 +112,18 @@ class WholeFileCoder(Coder):
                 self.io.write_text(full_path, new_lines)
 
         return edited
+
+    def do_live_diff(self, full_path, new_lines):
+        if full_path.exists():
+            orig_lines = self.io.read_text(full_path).splitlines(keepends=True)
+
+            show_diff = diffs.diff_partial_update(
+                orig_lines,
+                new_lines,
+                final=True,
+            ).splitlines()
+            output = show_diff
+        else:
+            output = ["```"] + new_lines + ["```"]
+
+        return output
