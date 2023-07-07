@@ -259,7 +259,7 @@ class Commands:
                     self.coder.repo.git.add(os.path.join(self.coder.root, matched_file))
                     git_added.append(matched_file)
 
-                abs_file_path = os.path.abspath(os.path.join(self.coder.root, matched_file))
+                abs_file_path = str((Path(self.coder.root) / matched_file).resolve())
                 if abs_file_path not in self.coder.abs_fnames:
                     content = self.io.read_text(abs_file_path)
                     if content is not None:
