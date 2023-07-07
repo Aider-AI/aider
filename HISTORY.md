@@ -2,6 +2,7 @@
 
 ### Next release
 
+- Ask to create a git repo if none found, to better track GPT's code changes
 - Glob wildcards are now supported in `/add` and `/drop` commands
 
 ### v0.8.0
