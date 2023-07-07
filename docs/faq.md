@@ -19,9 +19,8 @@ you can use `--openai-api-base` to connect to a different API endpoint.
 Here is are some
 [GitHub issues which may contain relevant information](https://github.com/paul-gauthier/aider/issues?q=is%3Aissue+%22openai-api-base%22+).
 
-This looks like a relevant tool to serve many local models via a compatible API:
-
-https://github.com/go-skynet/LocalAI
+[LocalAI](https://github.com/go-skynet/LocalAI)
+looks like a relevant tool to serve many local models via a compatible API:
 
 
 ## Can I change the system prompts that aider uses?
