@@ -262,7 +262,12 @@ def main(args=None, input=None, output=None):
 
     if not git_root and args.git:
         if io.confirm_ask("No git repo found, create one to track GPT's changes (recommended)?"):
-            git.Repo.init(os.getcwd())
+            repo = git.Repo.init(os.getcwd())
+            with repo.config_writer() as git_config:
+                if not git_config.has_option("user", "name"):
+                    git_config.set_value("user", "name", "Example Name")
+                if not git_config.has_option("user", "email"):
+                    git_config.set_value("user", "email", "example.email@example.com")
             io.tool_output("Git repository created in the current working directory.")
 
     if args.verbose:
