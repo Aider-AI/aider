@@ -954,6 +954,8 @@ class Coder:
         return full_path
 
     def get_tracked_files(self):
+        if not self.repo:
+            return []
         # convert to appropriate os.sep, since git always normalizes to /
         files = set(self.repo.git.ls_files().splitlines())
         res = set(str(Path(PurePosixPath(path))) for path in files)
