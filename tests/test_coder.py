@@ -48,6 +48,26 @@ class TestCoder(unittest.TestCase):
         )
         self.assertEqual(coder.abs_fnames, expected_files)
 
+    def test_get_files_content(self):
+        tempdir = Path(tempfile.mkdtemp())
+
+        file1 = tempdir / "file1.txt"
+        file2 = tempdir / "file2.txt"
+
+        file1.touch()
+        file2.touch()
+
+        files = [file1, file2]
+
+        # Initialize the Coder object with the mocked IO and mocked repo
+        coder = Coder.create(
+            models.GPT4, None, io=InputOutput(), openai_api_key="fake_key", fnames=files
+        )
+
+        content = coder.get_files_content().splitlines()
+        self.assertIn("file1.txt", content)
+        self.assertIn("file2.txt", content)
+
     def test_check_for_filename_mentions_of_longer_paths(self):
         # Mock the IO object
         mock_io = MagicMock()
