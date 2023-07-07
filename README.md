@@ -16,6 +16,7 @@ It also has features that [help GPT-4 understand and modify larger codebases](ht
 - [In-chat commands](#in-chat-commands)
 - [Tips](#tips)
 - [GPT-4 vs GPT-3.5](#gpt-4-vs-gpt-35)
+- [FAQ](docs/faq.md)
 
 ## Getting started
 
