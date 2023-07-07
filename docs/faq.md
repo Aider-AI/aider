@@ -4,7 +4,7 @@
 ## Can I use aider with other LLMs, local LLMs, etc?
 
 Aider does not officially support use with LLMs other than OpenAI's gpt-3.5-turbo and gpt-4
-and there variations.
+and their variants.
 
 It generally requires some model-specific tuning to get prompts and
 editing formats working well. For example, GPT-3.5 and GPT-4 use very
@@ -12,17 +12,17 @@ different prompts and editing formats in aider right now.
 Adopting new LLMs will probably require a similar effort to tailor the
 prompting and edit formats.
 
-That said, aider does provide some features to experiment with other models,
-as long as you can make them accessible via an OpenAI compatible API.
+That said, aider does provide some features to experiment with other models.
+If you can make the model accessible via an OpenAI compatible API,
+you can use `--openai-api-base` to connect to a different API endpoint.
 
-You can use `--openai-api-base` to connect to a different API endpoint.
+Here is are some
+[GitHub issues which may contain relevant information](https://github.com/paul-gauthier/aider/issues?q=is%3Aissue+%22openai-api-base%22+).
 
 This looks like a relevant tool to serve many local models via a compatible API:
 
 https://github.com/go-skynet/LocalAI
 
-Here is are some
-[GitHub issues which may be relevant](https://github.com/paul-gauthier/aider/issues?q=is%3Aissue+%22openai-api-base%22+).
 
 ## Can I change the system prompts that aider uses?
 
@@ -43,7 +43,7 @@ https://aider.chat/docs/benchmarks.html
 ## Can I run aider in Google Colab?
 
 User [imabutahersiddik](https://github.com/imabutahersiddik)
-has provided has contributed this
+has provided this
 [Colab notebook](https://colab.research.google.com/drive/1J9XynhrCqekPL5PR6olHP6eE--rnnjS9?usp=sharing).
 
 
@@ -54,7 +54,6 @@ First, be aware that ctags is completely optional and not required to use aider.
 If you wish to use ctags, you should consult the
 [universal ctags repo](https://github.com/universal-ctags/ctags)
 for official instructions on how to install it in your environment.
-
 You may be able to install a compatible version using these commands:
 
 * Mac: `brew install universal-ctags`
