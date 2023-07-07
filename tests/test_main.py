@@ -29,10 +29,10 @@ class TestMain(TestCase):
         self.patcher.stop()
 
     def test_main_with_empty_dir_no_files_on_command(self):
-        main([], input=DummyInput(), output=DummyOutput())
+        main(["--no-git"], input=DummyInput(), output=DummyOutput())
 
     def test_main_with_empty_dir_new_file(self):
-        main(["foo.txt"], input=DummyInput(), output=DummyOutput())
+        main(["foo.txt", "--yes"], input=DummyInput(), output=DummyOutput())
         self.assertTrue(os.path.exists("foo.txt"))
 
     def test_main_with_empty_git_dir_new_file(self):
@@ -77,7 +77,9 @@ class TestMain(TestCase):
 
     def test_main_args(self):
         with patch("aider.main.Coder.create") as MockCoder:
-            main(["--no-auto-commits"], input=DummyInput())
+            # --yes will just ok the git repo without blocking on input
+            # following calls to main will see the new repo already
+            main(["--no-auto-commits", "--yes"], input=DummyInput())
             _, kwargs = MockCoder.call_args
             assert kwargs["auto_commits"] is False
 
