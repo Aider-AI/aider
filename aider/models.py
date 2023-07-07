@@ -40,6 +40,7 @@ class Model:
             if tokens == 8:
                 self.prompt_price = 0.03
                 self.completion_price = 0.06
+                self.always_available = True
             elif tokens == 32:
                 self.prompt_price = 0.06
                 self.completion_price = 0.12
