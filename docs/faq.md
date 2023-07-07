@@ -35,10 +35,10 @@ different specific coder implementations.
 While it's not yet documented how to add new coder subsystems, you may be able
 to modify an existing implementation or use it as a template to add another.
 
-If you're thinking about experimenting with system prompts this
-document might be useful background:
-
-https://aider.chat/docs/benchmarks.html
+If you're thinking about experimenting with system prompts
+this document about
+[benchmarking GPT-3.5 and GPT-4 on code editing](https://aider.chat/docs/benchmarks.html)
+might be useful background.
 
 ## Can I run aider in Google Colab?
 
