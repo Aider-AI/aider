@@ -260,6 +260,7 @@ def main(args=None, input=None, output=None):
     if args.dark_mode:
         args.user_input_color = "#32FF32"
         args.tool_output_color = "#ffffff"
+        args.tool_error_color = "#FF3333"
         args.assistant_output_color = "#00FFFF"
         args.code_theme = "monokai"
 
