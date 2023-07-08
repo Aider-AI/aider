@@ -1,5 +1,4 @@
 import json
-import os
 import shlex
 import subprocess
 import sys
@@ -350,7 +349,7 @@ class Commands:
         other_files = []
         chat_files = []
         for file in files:
-            abs_file_path = os.path.abspath(os.path.join(self.coder.root, file))
+            abs_file_path = self.coder.abs_root_path(file)
             if abs_file_path in self.coder.abs_fnames:
                 chat_files.append(file)
             else:

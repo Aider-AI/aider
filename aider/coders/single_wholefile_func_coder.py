@@ -1,5 +1,3 @@
-import os
-
 from aider import diffs
 
 from ..dump import dump  # noqa: F401
@@ -88,7 +86,7 @@ class SingleWholeFileFunctionCoder(Coder):
         lines = content.splitlines(keepends=True)
 
         # ending an existing block
-        full_path = os.path.abspath(os.path.join(self.root, fname))
+        full_path = self.abs_root_path(fname)
 
         content = self.io.read_text(full_path)
         if content is None:
