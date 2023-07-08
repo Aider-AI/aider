@@ -352,7 +352,7 @@ class TestCoder(unittest.TestCase):
         coder = Coder.create(models.GPT4, None, mock_io, openai_api_key="fake_key")
 
         # Set up the mock to raise InvalidRequestError
-        mock_chat_completion_create.side_effect = openai.error.InvalidRequestError("Invalid request")
+        mock_chat_completion_create.side_effect = openai.error.InvalidRequestError("Invalid request", "param")
 
         # Call the run method and assert that InvalidRequestError is raised
         with self.assertRaises(openai.error.InvalidRequestError):
