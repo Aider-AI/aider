@@ -1,5 +1,9 @@
 # Release history
 
+### Next release
+
+- Added `--dark-mode` to select colors suitable for a dark terminal background
+
 ### v0.8.2
 
 - Disabled general availability of gpt-4 (it's rolling out, not 100% available yet)
