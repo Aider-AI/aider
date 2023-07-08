@@ -121,6 +121,12 @@ def main(args=None, input=None, output=None):
         default=False,
     )
     output_group.add_argument(
+        "--light-mode",
+        action="store_true",
+        help="Use colors suitable for a light terminal background (default: False)",
+        default=False,
+    )
+    output_group.add_argument(
         "--pretty",
         action="store_true",
         default=True,
@@ -141,8 +147,8 @@ def main(args=None, input=None, output=None):
     )
     output_group.add_argument(
         "--user-input-color",
-        default="green",
-        help="Set the color for user input (default: green)",
+        default="#00cc00",
+        help="Set the color for user input (default: #00cc00)",
     )
     output_group.add_argument(
         "--tool-output-color",
@@ -151,13 +157,13 @@ def main(args=None, input=None, output=None):
     )
     output_group.add_argument(
         "--tool-error-color",
-        default="red",
+        default="#FF2222",
         help="Set the color for tool error messages (default: red)",
     )
     output_group.add_argument(
         "--assistant-output-color",
-        default="blue",
-        help="Set the color for assistant output (default: blue)",
+        default="#0088ff",
+        help="Set the color for assistant output (default: #0088ff)",
     )
     output_group.add_argument(
         "--code-theme",
@@ -259,10 +265,15 @@ def main(args=None, input=None, output=None):
 
     if args.dark_mode:
         args.user_input_color = "#32FF32"
-        args.tool_output_color = "#ffffff"
         args.tool_error_color = "#FF3333"
         args.assistant_output_color = "#00FFFF"
         args.code_theme = "monokai"
+
+    if args.light_mode:
+        args.user_input_color = "green"
+        args.tool_error_color = "red"
+        args.assistant_output_color = "blue"
+        args.code_theme = "default"
 
     io = InputOutput(
         args.pretty,
