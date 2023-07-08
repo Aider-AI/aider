@@ -485,6 +485,8 @@ class Coder:
         except openai.error.InvalidRequestError as err:
             if "maximum context length" in str(err):
                 exhausted = True
+            else:
+                raise err
 
         if exhausted:
             self.num_exhausted_context_windows += 1
