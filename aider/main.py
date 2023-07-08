@@ -42,7 +42,7 @@ def main(args=None, input=None, output=None):
         auto_env_var_prefix="AIDER_",
     )
 
-    general_group = parser.add_argument_group('General')
+    general_group = parser.add_argument_group("General")
     general_group.add_argument(
         "--version",
         action="version",
@@ -66,7 +66,7 @@ def main(args=None, input=None, output=None):
         help="a list of source code files (optional)",
     )
 
-    history_group = parser.add_argument_group('History Files')
+    history_group = parser.add_argument_group("History Files")
     default_input_history_file = (
         os.path.join(git_root, ".aider.input.history") if git_root else ".aider.input.history"
     )
@@ -86,7 +86,7 @@ def main(args=None, input=None, output=None):
         help=f"Specify the chat history file (default: {default_chat_history_file})",
     )
 
-    model_group = parser.add_argument_group('Model Settings')
+    model_group = parser.add_argument_group("Model Settings")
     model_group.add_argument(
         "--model",
         metavar="MODEL",
@@ -106,8 +106,14 @@ def main(args=None, input=None, output=None):
         default=None,
         help="Specify what edit format GPT should use (default depends on model)",
     )
+    model_group.add_argument(
+        "--map-tokens",
+        type=int,
+        default=1024,
+        help="Max number of tokens to use for repo map, use 0 to disable (default: 1024)",
+    )
 
-    output_group = parser.add_argument_group('Output Settings')
+    output_group = parser.add_argument_group("Output Settings")
     output_group.add_argument(
         "--pretty",
         action="store_true",
@@ -155,8 +161,14 @@ def main(args=None, input=None, output=None):
             " solarized-dark, solarized-light)"
         ),
     )
+    output_group.add_argument(
+        "--show-diffs",
+        action="store_true",
+        help="Show diffs when committing changes (default: False)",
+        default=False,
+    )
 
-    git_group = parser.add_argument_group('Git Settings')
+    git_group = parser.add_argument_group("Git Settings")
     git_group.add_argument(
         "--no-git",
         action="store_false",
@@ -190,8 +202,14 @@ def main(args=None, input=None, output=None):
         dest="dirty_commits",
         help="Disable commits when repo is found dirty",
     )
+    git_group.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Perform a dry run without modifying files (default: False)",
+        default=False,
+    )
 
-    openai_group = parser.add_argument_group('OpenAI Settings')
+    openai_group = parser.add_argument_group("OpenAI Settings")
     openai_group.add_argument(
         "--openai-api-key",
         metavar="OPENAI_API_KEY",
@@ -205,29 +223,11 @@ def main(args=None, input=None, output=None):
         help="Specify the OpenAI API base endpoint (default: https://api.openai.com/v1)",
     )
 
-    other_group = parser.add_argument_group('Other Settings')
+    other_group = parser.add_argument_group("Other Settings")
     other_group.add_argument(
         "--apply",
         metavar="FILE",
         help="Apply the changes from the given file instead of running the chat (debug)",
-    )
-    other_group.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Perform a dry run without applying changes (default: False)",
-        default=False,
-    )
-    other_group.add_argument(
-        "--show-diffs",
-        action="store_true",
-        help="Show diffs when committing changes (default: False)",
-        default=False,
-    )
-    other_group.add_argument(
-        "--map-tokens",
-        type=int,
-        default=1024,
-        help="Max number of tokens to use for repo map, use 0 to disable (default: 1024)",
     )
     other_group.add_argument(
         "--yes",
