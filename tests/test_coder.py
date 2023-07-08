@@ -343,5 +343,20 @@ class TestCoder(unittest.TestCase):
         # both files should still be here
         self.assertEqual(len(coder.abs_fnames), 2)
 
+    @patch("aider.coders.base_coder.openai.ChatCompletion.create")
+    def test_run_with_invalid_request_error(self, mock_chat_completion_create):
+        # Mock the IO object
+        mock_io = MagicMock()
+
+        # Initialize the Coder object with the mocked IO and mocked repo
+        coder = Coder.create(models.GPT4, None, mock_io, openai_api_key="fake_key")
+
+        # Set up the mock to raise InvalidRequestError
+        mock_chat_completion_create.side_effect = openai.error.InvalidRequestError("Invalid request")
+
+        # Call the run method and assert that InvalidRequestError is raised
+        with self.assertRaises(openai.error.InvalidRequestError):
+            coder.run(with_message="hi")
+
     if __name__ == "__main__":
         unittest.main()
