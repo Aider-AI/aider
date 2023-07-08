@@ -761,9 +761,8 @@ class Coder:
     def get_context_from_history(self, history):
         context = ""
         if history:
-            context += "# Context:\n"
             for msg in history:
-                context += msg["role"].upper() + ": " + msg["content"] + "\n"
+                context += "\n" + msg["role"].upper() + ": " + msg["content"] + "\n"
         return context
 
     def get_commit_message(self, diffs, context):
@@ -891,7 +890,7 @@ class Coder:
 
         repo.git.add(*relative_dirty_fnames)
 
-        full_commit_message = commit_message + "\n\n" + context
+        full_commit_message = commit_message + "\n\n# Aider chat conversation:\n\n" + context
         repo.git.commit("-m", full_commit_message, "--no-verify")
         commit_hash = repo.head.commit.hexsha[:7]
         self.io.tool_output(f"Commit {commit_hash} {commit_message}")
