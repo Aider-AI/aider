@@ -208,7 +208,14 @@ class Coder:
         else:
             self.root = os.getcwd()
 
-        self.root = os.path.abspath(self.root)
+        self.root = utils.safe_abs_path(self.root)
+
+    def add_rel_fname(self, rel_fname):
+        self.abs_fnames.add(self.abs_root_path(rel_fname))
+
+    def abs_root_path(self, path):
+        res = Path(self.root) / path
+        return utils.safe_abs_path(res)
 
     def set_repo(self, cmd_line_fnames):
         if not cmd_line_fnames:
@@ -226,7 +233,7 @@ class Coder:
 
             try:
                 repo_path = git.Repo(fname, search_parent_directories=True).working_dir
-                repo_path = os.path.abspath(repo_path)
+                repo_path = utils.safe_abs_path(repo_path)
                 repo_paths.append(repo_path)
             except git.exc.InvalidGitRepositoryError:
                 pass
@@ -247,7 +254,7 @@ class Coder:
         # https://github.com/gitpython-developers/GitPython/issues/427
         self.repo = git.Repo(repo_paths.pop(), odbt=git.GitDB)
 
-        self.root = os.path.abspath(self.repo.working_tree_dir)
+        self.root = utils.safe_abs_path(self.repo.working_tree_dir)
 
         new_files = []
         for fname in self.abs_fnames:
@@ -584,7 +591,7 @@ class Coder:
             return
 
         for rel_fname in mentioned_rel_fnames:
-            self.abs_fnames.add(os.path.abspath(os.path.join(self.root, rel_fname)))
+            self.add_rel_fname(rel_fname)
 
         return prompts.added_files.format(fnames=", ".join(mentioned_rel_fnames))
 
@@ -906,7 +913,7 @@ class Coder:
 
     def get_all_abs_files(self):
         files = self.get_all_relative_files()
-        files = [os.path.abspath(os.path.join(self.root, path)) for path in files]
+        files = [self.abs_root_path(path) for path in files]
         return files
 
     def get_last_modified(self):
@@ -919,7 +926,7 @@ class Coder:
         return set(self.get_all_relative_files()) - set(self.get_inchat_relative_files())
 
     def allowed_to_edit(self, path, write_content=None):
-        full_path = os.path.abspath(os.path.join(self.root, path))
+        full_path = self.abs_root_path(path)
 
         if full_path in self.abs_fnames:
             if write_content:
