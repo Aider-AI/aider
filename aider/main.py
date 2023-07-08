@@ -207,6 +207,11 @@ def main(args=None, input=None, output=None):
 
     other_group = parser.add_argument_group('Other Settings')
     other_group.add_argument(
+        "--apply",
+        metavar="FILE",
+        help="Apply the changes from the given file instead of running the chat (debug)",
+    )
+    other_group.add_argument(
         "--dry-run",
         action="store_true",
         help="Perform a dry run without applying changes (default: False)",
