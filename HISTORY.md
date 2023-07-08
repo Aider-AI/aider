@@ -1,5 +1,9 @@
 # Release history
 
+### v0.8.2
+
+- Disabled general availability of gpt-4 (it's rolling out, not 100% available yet)
+
 ### v0.8.1
 
 - Ask to create a git repo if none found, to better track GPT's code changes
