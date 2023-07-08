@@ -42,7 +42,14 @@ def main(args=None, input=None, output=None):
         auto_env_var_prefix="AIDER_",
     )
 
+    ##########
     general_group = parser.add_argument_group("General")
+    general_group.add_argument(
+        "files",
+        metavar="FILE",
+        nargs="*",
+        help="a list of source code files (optional)",
+    )
     general_group.add_argument(
         "--version",
         action="version",
@@ -59,33 +66,23 @@ def main(args=None, input=None, output=None):
             " or home directory)"
         ),
     )
-    general_group.add_argument(
-        "files",
-        metavar="FILE",
-        nargs="*",
-        help="a list of source code files (optional)",
+
+    ##########
+    openai_group = parser.add_argument_group("OpenAI Settings")
+    openai_group.add_argument(
+        "--openai-api-key",
+        metavar="OPENAI_API_KEY",
+        help="Specify the OpenAI API key",
+        env_var="OPENAI_API_KEY",
+    )
+    openai_group.add_argument(
+        "--openai-api-base",
+        metavar="OPENAI_API_BASE",
+        default="https://api.openai.com/v1",
+        help="Specify the OpenAI API base endpoint (default: https://api.openai.com/v1)",
     )
 
-    history_group = parser.add_argument_group("History Files")
-    default_input_history_file = (
-        os.path.join(git_root, ".aider.input.history") if git_root else ".aider.input.history"
-    )
-    default_chat_history_file = (
-        os.path.join(git_root, ".aider.chat.history.md") if git_root else ".aider.chat.history.md"
-    )
-    history_group.add_argument(
-        "--input-history-file",
-        metavar="INPUT_HISTORY_FILE",
-        default=default_input_history_file,
-        help=f"Specify the chat input history file (default: {default_input_history_file})",
-    )
-    history_group.add_argument(
-        "--chat-history-file",
-        metavar="CHAT_HISTORY_FILE",
-        default=default_chat_history_file,
-        help=f"Specify the chat history file (default: {default_chat_history_file})",
-    )
-
+    ##########
     model_group = parser.add_argument_group("Model Settings")
     model_group.add_argument(
         "--model",
@@ -113,6 +110,28 @@ def main(args=None, input=None, output=None):
         help="Max number of tokens to use for repo map, use 0 to disable (default: 1024)",
     )
 
+    ##########
+    history_group = parser.add_argument_group("History Files")
+    default_input_history_file = (
+        os.path.join(git_root, ".aider.input.history") if git_root else ".aider.input.history"
+    )
+    default_chat_history_file = (
+        os.path.join(git_root, ".aider.chat.history.md") if git_root else ".aider.chat.history.md"
+    )
+    history_group.add_argument(
+        "--input-history-file",
+        metavar="INPUT_HISTORY_FILE",
+        default=default_input_history_file,
+        help=f"Specify the chat input history file (default: {default_input_history_file})",
+    )
+    history_group.add_argument(
+        "--chat-history-file",
+        metavar="CHAT_HISTORY_FILE",
+        default=default_chat_history_file,
+        help=f"Specify the chat history file (default: {default_chat_history_file})",
+    )
+
+    ##########
     output_group = parser.add_argument_group("Output Settings")
     output_group.add_argument(
         "--dark-mode",
@@ -180,6 +199,7 @@ def main(args=None, input=None, output=None):
         default=False,
     )
 
+    ##########
     git_group = parser.add_argument_group("Git Settings")
     git_group.add_argument(
         "--no-git",
@@ -221,20 +241,7 @@ def main(args=None, input=None, output=None):
         default=False,
     )
 
-    openai_group = parser.add_argument_group("OpenAI Settings")
-    openai_group.add_argument(
-        "--openai-api-key",
-        metavar="OPENAI_API_KEY",
-        help="Specify the OpenAI API key",
-        env_var="OPENAI_API_KEY",
-    )
-    openai_group.add_argument(
-        "--openai-api-base",
-        metavar="OPENAI_API_BASE",
-        default="https://api.openai.com/v1",
-        help="Specify the OpenAI API base endpoint (default: https://api.openai.com/v1)",
-    )
-
+    ##########
     other_group = parser.add_argument_group("Other Settings")
     other_group.add_argument(
         "--apply",
