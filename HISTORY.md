@@ -1,9 +1,16 @@
 # Release history
 
-### Next release
+### v0.8.1
 
 - Ask to create a git repo if none found, to better track GPT's code changes
 - Glob wildcards are now supported in `/add` and `/drop` commands
+- Pass `--encoding` into ctags, require it to return `utf-8`
+- More robust handling of filepaths, to avoid 8.3 windows filenames
+- Added [FAQ](https://aider.chat/docs/faq.html)
+- Marked GPT-4 as generally available
+- Bugfix for live diffs of whole coder with missing filenames
+- Bugfix for chats with multiple files
+- Bugfix in editblock coder prompt
 
 ### v0.8.0
 
