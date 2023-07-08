@@ -115,6 +115,12 @@ def main(args=None, input=None, output=None):
 
     output_group = parser.add_argument_group("Output Settings")
     output_group.add_argument(
+        "--dark-mode",
+        action="store_true",
+        help="Use colors suitable for a dark terminal background (default: False)",
+        default=False,
+    )
+    output_group.add_argument(
         "--pretty",
         action="store_true",
         default=True,
@@ -250,6 +256,12 @@ def main(args=None, input=None, output=None):
         help="Specify a single message to send GPT, process reply then exit (disables chat mode)",
     )
     args = parser.parse_args(args)
+
+    if args.dark_mode:
+        args.user_input_color = "#32FF32"
+        args.tool_output_color = "#ffffff"
+        args.assistant_output_color = "#00FFFF"
+        args.code_theme = "monokai"
 
     io = InputOutput(
         args.pretty,
