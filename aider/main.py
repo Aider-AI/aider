@@ -43,59 +43,40 @@ def main(args=None, input=None, output=None):
     )
 
     ##########
-    general_group = parser.add_argument_group("General")
-    general_group.add_argument(
+    core_group = parser.add_argument_group("Main")
+    core_group.add_argument(
         "files",
         metavar="FILE",
         nargs="*",
-        help="a list of source code files (optional)",
+        help="a list of source code files to edit with GPT (optional)",
     )
-    general_group.add_argument(
-        "--version",
-        action="version",
-        version=f"%(prog)s {__version__}",
-        help="Show the version number and exit",
-    )
-    general_group.add_argument(
-        "-c",
-        "--config",
-        is_config_file=True,
-        metavar="CONFIG_FILE",
-        help=(
-            "Specify the config file (default: search for .aider.conf.yml in git root, cwd"
-            " or home directory)"
-        ),
-    )
-
-    ##########
-    openai_group = parser.add_argument_group("OpenAI Settings")
-    openai_group.add_argument(
+    core_group.add_argument(
         "--openai-api-key",
         metavar="OPENAI_API_KEY",
         help="Specify the OpenAI API key",
         env_var="OPENAI_API_KEY",
     )
-    openai_group.add_argument(
-        "--openai-api-base",
-        metavar="OPENAI_API_BASE",
-        default="https://api.openai.com/v1",
-        help="Specify the OpenAI API base endpoint (default: https://api.openai.com/v1)",
-    )
-
-    ##########
-    model_group = parser.add_argument_group("Model Settings")
-    model_group.add_argument(
+    core_group.add_argument(
         "--model",
         metavar="MODEL",
         default=models.GPT4.name,
         help=f"Specify the model to use for the main chat (default: {models.GPT4.name})",
     )
-    model_group.add_argument(
+    core_group.add_argument(
         "-3",
         action="store_const",
         dest="model",
         const=models.GPT35_16k.name,
         help=f"Use {models.GPT35_16k.name} model for the main chat (gpt-4 is better)",
+    )
+
+    ##########
+    model_group = parser.add_argument_group("Advanced Model Settings")
+    model_group.add_argument(
+        "--openai-api-base",
+        metavar="OPENAI_API_BASE",
+        default="https://api.openai.com/v1",
+        help="Specify the OpenAI API base endpoint (default: https://api.openai.com/v1)",
     )
     model_group.add_argument(
         "--edit-format",
@@ -244,6 +225,12 @@ def main(args=None, input=None, output=None):
     ##########
     other_group = parser.add_argument_group("Other Settings")
     other_group.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {__version__}",
+        help="Show the version number and exit",
+    )
+    other_group.add_argument(
         "--apply",
         metavar="FILE",
         help="Apply the changes from the given file instead of running the chat (debug)",
@@ -268,6 +255,17 @@ def main(args=None, input=None, output=None):
         metavar="COMMAND",
         help="Specify a single message to send GPT, process reply then exit (disables chat mode)",
     )
+    other_group.add_argument(
+        "-c",
+        "--config",
+        is_config_file=True,
+        metavar="CONFIG_FILE",
+        help=(
+            "Specify the config file (default: search for .aider.conf.yml in git root, cwd"
+            " or home directory)"
+        ),
+    )
+
     args = parser.parse_args(args)
 
     if args.dark_mode:
