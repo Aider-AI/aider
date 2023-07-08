@@ -254,7 +254,7 @@ class Commands:
                         matched_files = [word]
 
             for matched_file in matched_files:
-                abs_file_path = str((Path(self.coder.root) / matched_file).resolve())
+                abs_file_path = self.coder.abs_root_path(matched_file)
 
                 if self.coder.repo and matched_file not in git_files:
                     self.coder.repo.git.add(abs_file_path)
