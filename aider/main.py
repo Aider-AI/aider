@@ -42,14 +42,14 @@ def main(args=None, input=None, output=None):
         auto_env_var_prefix="AIDER_",
     )
 
-    parser.add_argument(
+    general_group = parser.add_argument_group('General')
+    general_group.add_argument(
         "--version",
         action="version",
         version=f"%(prog)s {__version__}",
         help="Show the version number and exit",
     )
-
-    parser.add_argument(
+    general_group.add_argument(
         "-c",
         "--config",
         is_config_file=True,
@@ -59,98 +59,95 @@ def main(args=None, input=None, output=None):
             " or home directory)"
         ),
     )
-
-    parser.add_argument(
+    general_group.add_argument(
         "files",
         metavar="FILE",
         nargs="*",
         help="a list of source code files (optional)",
     )
+
+    history_group = parser.add_argument_group('History Files')
     default_input_history_file = (
         os.path.join(git_root, ".aider.input.history") if git_root else ".aider.input.history"
     )
     default_chat_history_file = (
         os.path.join(git_root, ".aider.chat.history.md") if git_root else ".aider.chat.history.md"
     )
-
-    parser.add_argument(
+    history_group.add_argument(
         "--input-history-file",
         metavar="INPUT_HISTORY_FILE",
         default=default_input_history_file,
         help=f"Specify the chat input history file (default: {default_input_history_file})",
     )
-    parser.add_argument(
+    history_group.add_argument(
         "--chat-history-file",
         metavar="CHAT_HISTORY_FILE",
         default=default_chat_history_file,
         help=f"Specify the chat history file (default: {default_chat_history_file})",
     )
-    parser.add_argument(
+
+    model_group = parser.add_argument_group('Model Settings')
+    model_group.add_argument(
         "--model",
         metavar="MODEL",
         default=models.GPT4.name,
         help=f"Specify the model to use for the main chat (default: {models.GPT4.name})",
     )
-    parser.add_argument(
+    model_group.add_argument(
         "-3",
         action="store_const",
         dest="model",
         const=models.GPT35_16k.name,
         help=f"Use {models.GPT35_16k.name} model for the main chat (gpt-4 is better)",
     )
-    parser.add_argument(
+    model_group.add_argument(
         "--edit-format",
         metavar="EDIT_FORMAT",
         default=None,
         help="Specify what edit format GPT should use (default depends on model)",
     )
-    parser.add_argument(
+
+    output_group = parser.add_argument_group('Output Settings')
+    output_group.add_argument(
         "--pretty",
         action="store_true",
         default=True,
         help="Enable pretty, colorized output (default: True)",
     )
-    parser.add_argument(
+    output_group.add_argument(
         "--no-pretty",
         action="store_false",
         dest="pretty",
         help="Disable pretty, colorized output",
     )
-    parser.add_argument(
+    output_group.add_argument(
         "--no-stream",
         action="store_false",
         dest="stream",
         default=True,
         help="Disable streaming responses",
     )
-    parser.add_argument(
-        "--no-git",
-        action="store_false",
-        dest="git",
-        default=True,
-        help="Do not look for a git repo",
-    )
-    parser.add_argument(
+    output_group.add_argument(
         "--user-input-color",
         default="green",
         help="Set the color for user input (default: green)",
     )
-    parser.add_argument(
+    output_group.add_argument(
         "--tool-output-color",
         default=None,
         help="Set the color for tool output (default: None)",
     )
-    parser.add_argument(
+    output_group.add_argument(
         "--tool-error-color",
         default="red",
         help="Set the color for tool error messages (default: red)",
     )
-    parser.add_argument(
+    output_group.add_argument(
         "--assistant-output-color",
         default="blue",
         help="Set the color for assistant output (default: blue)",
     )
-    parser.add_argument(
+    output_group.add_argument(
         "--code-theme",
         default="default",
         help=(
@@ -158,87 +155,89 @@ def main(args=None, input=None, output=None):
             " solarized-dark, solarized-light)"
         ),
     )
-    parser.add_argument(
-        "--apply",
-        metavar="FILE",
-        help="Apply the changes from the given file instead of running the chat (debug)",
+
+    git_group = parser.add_argument_group('Git Settings')
+    git_group.add_argument(
+        "--no-git",
+        action="store_false",
+        dest="git",
+        default=True,
+        help="Do not look for a git repo",
     )
-    parser.add_argument(
+    git_group.add_argument(
         "--auto-commits",
         action="store_true",
         dest="auto_commits",
         default=True,
         help="Enable auto commit of GPT changes (default: True)",
     )
-
-    parser.add_argument(
+    git_group.add_argument(
         "--no-auto-commits",
         action="store_false",
         dest="auto_commits",
         help="Disable auto commit of GPT changes (implies --no-dirty-commits)",
     )
-    parser.add_argument(
+    git_group.add_argument(
         "--dirty-commits",
         action="store_true",
         dest="dirty_commits",
         help="Enable commits when repo is found dirty",
         default=True,
     )
-    parser.add_argument(
+    git_group.add_argument(
         "--no-dirty-commits",
         action="store_false",
         dest="dirty_commits",
         help="Disable commits when repo is found dirty",
     )
-    parser.add_argument(
-        "--encoding",
-        default="utf-8",
-        help="Specify the encoding to use when reading files (default: utf-8)",
-    )
-    parser.add_argument(
+
+    openai_group = parser.add_argument_group('OpenAI Settings')
+    openai_group.add_argument(
         "--openai-api-key",
         metavar="OPENAI_API_KEY",
         help="Specify the OpenAI API key",
         env_var="OPENAI_API_KEY",
     )
-    parser.add_argument(
+    openai_group.add_argument(
         "--openai-api-base",
         metavar="OPENAI_API_BASE",
         default="https://api.openai.com/v1",
         help="Specify the OpenAI API base endpoint (default: https://api.openai.com/v1)",
     )
-    parser.add_argument(
+
+    other_group = parser.add_argument_group('Other Settings')
+    other_group.add_argument(
         "--dry-run",
         action="store_true",
         help="Perform a dry run without applying changes (default: False)",
         default=False,
     )
-    parser.add_argument(
+    other_group.add_argument(
         "--show-diffs",
         action="store_true",
         help="Show diffs when committing changes (default: False)",
         default=False,
     )
-    parser.add_argument(
+    other_group.add_argument(
         "--map-tokens",
         type=int,
         default=1024,
         help="Max number of tokens to use for repo map, use 0 to disable (default: 1024)",
     )
-    parser.add_argument(
+    other_group.add_argument(
         "--yes",
         action="store_true",
         help="Always say yes to every confirmation",
         default=None,
     )
-    parser.add_argument(
+    other_group.add_argument(
         "-v",
         "--verbose",
         action="store_true",
         help="Enable verbose output",
         default=False,
     )
-    parser.add_argument(
+    other_group.add_argument(
         "--message",
         "--msg",
         "-m",
