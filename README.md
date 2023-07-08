@@ -133,38 +133,29 @@ Aider has some ability to help GPT figure out which files to edit all by itself,
 
 ## GPT-4 vs GPT-3.5
 
-Aider supports all of OpenAI's chat models, including
-the the brand new `gpt-3.5-turbo-16k` model. 
-
-You will probably get the best results with one of the GPT-4 models,
-because of their large context windows,
-adherance to system prompt instructions and
-greater competance at coding tasks.
-The GPT-4 models are able to structure code edits as simple "diffs"
+Aider supports all of OpenAI's chat models,
+but you will probably get the best results with one of the GPT-4 models.
+They have large context windows, better coding skills and
+they generally obey the instructions in the system prompt.
+GPT-4 is able to structure code edits as simple "diffs"
 and use a
 [repository map](https://aider.chat/docs/ctags.html)
-to improve their ability to make changes in larger codebases.
+to improve its ability to make changes in larger codebases.
 
-The GPT-3.5 models are supported more experimentally
-and are limited to editing somewhat smaller codebases.
-They are less able to follow instructions and
-aren't able to return code edits in a compact "diff" format.
-So aider has
-to ask GPT-3.5 to return a new copy of the "whole file" with edits included.
-This rapidly uses up tokens and can hit the limits of the context window.
-
-For more detailed information and a quantitative comparison, here are
-[code editing benchmark results for GPT-3.5 and GPT-4](https://aider.chat/docs/benchmarks.html).
-
+GPT-3.5 is supported more experimentally
+and is limited to editing somewhat smaller codebases.
+It is less able to follow instructions and
+can't reliably return code edits as "diffs".
 Aider disables the
-[repository map feature](https://aider.chat/docs/ctags.html)
-when used with GPT-3.5 models.
-The `gpt-3.5-turbo` context window is too small to include a repo map.
-Evaluation is still needed to determine if `gpt-3.5-turbo-16k` can make use of a repo map.
+repository map
+when using GPT-3.5.
+
+For a detailed and quantitative comparison, please see the
+[code editing benchmark results for GPT-3.5 and GPT-4](https://aider.chat/docs/benchmarks.html).
 
 In practice, this means you can use aider to edit a set of source files
 that total up to the sizes below.
-You can (and should) add just the specific set of files to the chat
+Just add the specific set of files to the chat
 that are relevant to the change you are requesting.
 This minimizes your use of the context window, as well as costs.
 
