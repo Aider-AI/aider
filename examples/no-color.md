@@ -10,7 +10,8 @@ set, so the tool conforms to the specification.
 
 The user then asks for a test case, which GPT adds as well.
 
-## Chat transcript
+<div class="chat-transcript" markdown="1">
+
 > $ aider  
 > Using git repo: .git  
 > Use /help to see in-chat commands.  
@@ -154,3 +155,6 @@ This test function checks if the `pretty` attribute of the `InputOutput` class i
 > ============================== 25 passed in 1.41s ==============================
 >  
 > Add the output to the chat? y
+
+
+</div>

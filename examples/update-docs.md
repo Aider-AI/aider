@@ -2,7 +2,7 @@
 
 In this chat transcript, the user asks to automatically update the Usage docs based on the latest version of the main() function in the code.
 
-## Chat transcript
+<div class="chat-transcript" markdown="1">
 
 > $ aider ./README.md aider/main.py  
 > Added README.md to the chat  
@@ -34,3 +34,5 @@ README.md
 
 > Applied edit to README.md  
 > Commit 024f45e aider: Updated command line arguments in main() and updated README.md to accurately describe them.  
+
+</div>

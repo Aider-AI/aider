@@ -8,7 +8,7 @@ Some things to notice:
   - The user edits a file outside the chat using their editor. `aider` notices these out-of-band changes and offers to commit them.
   - At one point the user hits `^C` to interrupt the GPT-4 response, since it's not a useful response. The user gives clarifications and gets a better result on the next reply.
 
-## Chat transcript
+<div class="chat-transcript" markdown="1">
 
 > $ aider tests/test_main.py aider/getinput.py  
 > Added tests/test_main.py to the chat  
@@ -349,3 +349,5 @@ These changes will replace the usage of `create_pipe_input()` with `create_input
 
 I'm glad the changes worked for you! If you have any more requests or need further assistance, feel free to ask.
 
+
+</div>

@@ -28,7 +28,7 @@ GPT reviews the error message and fixes the call to `cmd_add()` to
 correctly pass a `str` with a space-separated list of filenames
 instead.  The test then passes on the next `/run`.
 
-## Chat transcript
+<div class="chat-transcript" markdown="1">
 
 > $ aider tests/test_commands.py  
 > Creating empty file tests/test_commands.py  
@@ -169,3 +169,5 @@ pytest tests/test_commands.py
 >   
 > ============================== 1 passed in 0.38s ===============================  
 > ```  
+
+</div>

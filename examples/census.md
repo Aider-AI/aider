@@ -8,7 +8,7 @@ I asked GPT-4 how to download census data and to suggest some
 hypotheses to test. I asked it to write the code to get the data, test one of the
 hypotheses and provide a summary and plot of the results.
 
-## Chat transcript
+<div class="chat-transcript" markdown="1">
 
 > $ aider  
 > Using git repo: .git  
@@ -298,5 +298,8 @@ This will create a scatter plot of population density and housing prices, which 
 > Applied edit to new_file/getdata.py  
 > Applied edit to new_file/getdata.py  
 > Commit 9ff3666 aider: Added scatter plot of population density and housing prices to visualize correlation.  
+
+
+</div>
 
 ![aider screenshot](../assets/figure.png)

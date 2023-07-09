@@ -3,7 +3,7 @@
 
 In this chat transcript, the user asks to make a simple flask app with various endpoints.
 
-## Chat transcript
+<div class="chat-transcript" markdown="1">
 
 > $ aider app.py  
 > Creating empty file app.py  
@@ -119,3 +119,6 @@ Now, the `/hello` endpoint has been removed from the Flask app.
 
 > Applied edit to app.py  
 > Commit eab6620 aider: Removed the `/hello` endpoint from the Flask app.  
+
+
+</div>

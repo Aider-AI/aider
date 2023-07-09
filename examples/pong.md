@@ -4,7 +4,7 @@
 In this chat transcript, the user asks to make a pong game using pygame.
 After setting up a basic game, the user asks for some customization of the colors and game mechanics.
 
-## Chat transcript
+<div class="chat-transcript" markdown="1">
 
 > $ aider  
 
@@ -300,3 +300,5 @@ With this change, the ball's speed will increase by 10% in both the x and y dire
 > Applied edit to pong_game.py  
 > Commit 693faf4 aider: Increased ball speed by 10% in both x and y directions each time it bounces off a paddle.  
 
+
+</div>

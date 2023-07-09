@@ -3,7 +3,7 @@
 
 The user needs to make some tedious edits to the escape sequences in an `asciinema` screencast file.
 
-## Chat transcript
+<div class="chat-transcript" markdown="1">
 
 > $ aider hello.cast  
 > Added hello.cast to the chat  
@@ -23,3 +23,4 @@ hello.cast
 > Commit a3fa4d2 aider: Removed escape codes to display prompt and cursor correctly.  
 
 
+</div>

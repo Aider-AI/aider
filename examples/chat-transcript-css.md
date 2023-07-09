@@ -1,6 +1,8 @@
 
 # Improve css styling of chat transcripts
 
+<div class="chat-transcript" markdown="1">
+
 > $ aider index.html assets/css/style.css  
 > Added index.html to the chat  
 > Added assets/css/style.css to the chat  
@@ -446,4 +448,6 @@ index.html
 
 > Applied edit to index.html  
 > Commit 6a8cd27 aider: Added box around h4 element.  
-> ^C again to quit  
+
+
+</div>

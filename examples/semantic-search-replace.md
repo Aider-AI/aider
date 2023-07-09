@@ -7,7 +7,7 @@ Making the change requires dealing with various formatting and semantic differen
 
 Some edits were elided from this transcript for brevity.
 
-## Chat transcript
+<div class="chat-transcript" markdown="1">
 
 > $ aider aider/coder.py  
 > Added aider/coder.py to the chat  
@@ -53,3 +53,4 @@ Please note that I couldn't find the `self.io.tool_error()` method in the provid
 > Commit 919cfc2 aider: Replaced all self.console.print() calls with self.io.tool_error() calls with [red] removed from the string.  
 
 
+</div>
