@@ -59,7 +59,7 @@
     color: #ffffff;
 }
 .chat-transcript::before {
-    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="90" height="25"><circle cx="10" cy="15" r="10" fill="red"/><circle cx="40" cy="15" r="10" fill="yellow"/><circle cx="70" cy="15" r="10" fill="green"/></svg>');
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="90" height="25"><circle cx="10" cy="15" r="9" fill="red"/><circle cx="37" cy="15" r="9" fill="yellow"/><circle cx="64" cy="15" r="9" fill="green"/></svg>');
     display: block;
     margin-bottom: 0;
     position: relative;
