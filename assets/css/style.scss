@@ -45,3 +45,57 @@
   margin-top: 0;
   margin-left: 0.75rem;
 }
+
+.chat-transcript {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #000;
+    color: #0f0;
+    padding: 3em 1em 1em 1em; /* Increased top padding */
+    border-radius: 5px;
+}
+
+.chat-transcript blockquote {
+    padding: 0;
+    margin-left: 0;
+    color: #819198;
+    border-left: none
+}
+
+.chat-transcript blockquote>:first-child {
+    margin-top: 0
+}
+
+.chat-transcript blockquote>:last-child {
+    margin-bottom: 0
+}
+
+
+.chat-transcript {
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.chat-transcript p {
+    color: #00FFFF;
+}
+
+.chat-transcript h4 {
+    color: #32FF32;
+    border-top: 1px solid #32FF32;
+    padding-top: 10px;
+}
+
+.chat-transcript h4::before {
+    content: '> ';
+}
+
+.chat-transcript blockquote p {
+    color: #ffffff;
+}
+.chat-transcript::before {
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="90" height="25"><circle cx="10" cy="15" r="10" fill="red"/><circle cx="40" cy="15" r="10" fill="yellow"/><circle cx="70" cy="15" r="10" fill="green"/></svg>');
+    display: block;
+    margin-bottom: 0;
+    position: relative;
+    top: -2em;
+}
