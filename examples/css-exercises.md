@@ -5,6 +5,8 @@ In this chat transcript, the user asks about the open source [CSS Exercises repo
 
 ## Chat transcript
 
+<div class="chat-transcript" markdown="1">
+
 > $ aider
 
 #### what is this repo?  
@@ -76,3 +78,4 @@ I'm glad the changes worked for you! If you have any more requests or need assis
 
 > ^C again to quit
 
+</div>
