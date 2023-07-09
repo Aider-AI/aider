@@ -35,6 +35,8 @@ To better understand the chat transcripts, it's worth knowing that:
 
 ## Transcript formatting
 
+<div class="chat-transcript" markdown="1">
+
 > This is output from the aider tool.
 
 #### These are chat messages written by the user.
@@ -50,3 +52,5 @@ print("hello")
 print("goodbye")
 >>>>>>> UPDATED
 ```
+
+</div>
