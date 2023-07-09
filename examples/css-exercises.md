@@ -5,6 +5,7 @@ In this chat transcript, the user asks about the open source [CSS Exercises repo
 
 ## Chat transcript
 
+<div class="transcript">
 > $ aider
 
 #### what is this repo?  
@@ -75,3 +76,4 @@ These changes add the bounce animation to the dropdown menu by creating a new ke
 I'm glad the changes worked for you! If you have any more requests or need assistance with other parts of the code, feel free to ask. I'm here to help!
 
 > ^C again to quit  
+</div>
