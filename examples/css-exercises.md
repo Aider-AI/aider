@@ -5,10 +5,6 @@ In this chat transcript, the user asks about the open source [CSS Exercises repo
 
 ## Chat transcript
 
-{% raw %}
-<div class="transcript">
-{% endraw %}
-
 > $ aider
 
 #### what is this repo?  
@@ -80,6 +76,3 @@ I'm glad the changes worked for you! If you have any more requests or need assis
 
 > ^C again to quit
 
-{% raw %}
-</div>
-{% endraw %}
