@@ -1,5 +1,4 @@
 import json
-import os
 import shlex
 import subprocess
 import sys
@@ -266,7 +265,6 @@ class Commands:
                 else:
                     expanded_files.append(matched_file)
 
-            dump(expanded_files)
             for matched_file in expanded_files:
                 abs_file_path = self.coder.abs_root_path(matched_file)
 
@@ -396,9 +394,7 @@ class Commands:
                 self.io.tool_output(f"{cmd} No description available.")
 
 
-from pathlib import Path
-
 def expand_subdir(file_path):
-    for file in Path(file_path).rglob('*'):
+    for file in Path(file_path).rglob("*"):
         if file.is_file():
             yield str(file)
