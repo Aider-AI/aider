@@ -1,4 +1,5 @@
 import json
+import os
 import shlex
 import subprocess
 import sys
@@ -246,14 +247,27 @@ class Commands:
                     self.io.tool_error(f"No files to add matching pattern: {word}")
                 else:
                     if Path(word).exists():
-                        matched_files = [word]
+                        if Path(word).is_file():
+                            matched_files = [word]
+                        elif Path(word).is_dir():
+                            matched_files = expand_subdir(word)
+                        else:
+                            self.io.tool_error(f"Can not add unknown file type: {word}")
                     elif self.io.confirm_ask(
                         f"No files matched '{word}'. Do you want to create the file?"
                     ):
                         (Path(self.coder.root) / word).touch()
                         matched_files = [word]
 
+            expanded_files = []
             for matched_file in matched_files:
+                if Path(matched_file).is_dir():
+                    expanded_files += expand_subdir(matched_file)
+                else:
+                    expanded_files.append(matched_file)
+
+            dump(expanded_files)
+            for matched_file in expanded_files:
                 abs_file_path = self.coder.abs_root_path(matched_file)
 
                 if self.coder.repo and matched_file not in git_files:
@@ -380,3 +394,9 @@ class Commands:
                 self.io.tool_output(f"{cmd} {description}")
             else:
                 self.io.tool_output(f"{cmd} No description available.")
+
+
+def expand_subdir(file_path):
+    for root, dirs, files in os.walk(file_path):
+        for fname in files:
+            yield fname
