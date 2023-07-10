@@ -133,8 +133,10 @@ Aider has some ability to help GPT figure out which files to edit all by itself,
 
 ## GPT-4 vs GPT-3.5
 
-Aider supports all of OpenAI's chat models,
-but you will probably get the best results with one of the GPT-4 models.
+Aider supports all of OpenAI's chat models.
+You can choose a model with the `--model` command line argument.
+
+You will probably get the best results with one of the GPT-4 models.
 They have large context windows, better coding skills and
 they generally obey the instructions in the system prompt.
 GPT-4 is able to structure code edits as simple "diffs"
