@@ -221,15 +221,18 @@ class Commands:
                 yield Completion(fname, start_position=-len(partial))
 
     def glob_filtered_to_repo(self, pattern):
-        matched_files = Path(self.coder.root).glob(pattern)
-        matched_files = [fn.relative_to(self.coder.root) for fn in matched_files]
+        raw_matched_files = Path(self.coder.root).glob(pattern)
+        matched_files = []
+        for fn in raw_matched_files:
+            matched_files += expand_subdir(fn.relative_to(self.coder.root))
 
         # if repo, filter against it
         if self.coder.repo:
             git_files = self.coder.get_tracked_files()
             matched_files = [fn for fn in matched_files if str(fn) in git_files]
 
-        return list(map(str, matched_files))
+        res = list(map(str, matched_files))
+        return res
 
     def cmd_add(self, args):
         "Add matching files to the chat session using glob patterns"
@@ -238,7 +241,7 @@ class Commands:
         git_added = []
         git_files = self.coder.get_tracked_files()
 
-        expanded_files = set()
+        all_matched_files = set()
         for word in args.split():
             matched_files = self.glob_filtered_to_repo(word)
 
@@ -254,13 +257,9 @@ class Commands:
                         (Path(self.coder.root) / word).touch()
                         matched_files = [word]
 
-            for matched_file in matched_files:
-                if Path(matched_file).is_dir():
-                    expanded_files.update(expand_subdir(matched_file))
-                else:
-                    expanded_files.add(matched_file)
+            all_matched_files.update(matched_files)
 
-        for matched_file in expanded_files:
+        for matched_file in all_matched_files:
             abs_file_path = self.coder.abs_root_path(matched_file)
 
             if self.coder.repo and matched_file not in git_files:
@@ -390,6 +389,11 @@ class Commands:
 
 
 def expand_subdir(file_path):
-    for file in Path(file_path).rglob("*"):
+    file_path = Path(file_path)
+    if file_path.is_file():
+        yield file_path
+        return
+
+    for file in file_path.rglob("*"):
         if file.is_file():
             yield str(file)
