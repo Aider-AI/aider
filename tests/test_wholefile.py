@@ -231,6 +231,39 @@ after b
         self.assertEqual(fname_a.read_text(), "after a\n")
         self.assertEqual(fname_b.read_text(), "after b\n")
 
+    def test_update_named_file_but_extra_unnamed_code_block(self):
+        sample_file = "hello.py"
+        new_content = "new\ncontent\ngoes\nhere\n"
+
+        with open(sample_file, "w") as f:
+            f.write("Original content\n")
+
+        # Initialize WholeFileCoder with the temporary directory
+        io = InputOutput(yes=True)
+        coder = WholeFileCoder(main_model=models.GPT35, io=io, fnames=[sample_file])
+
+        # Set the partial response content with the updated content
+        coder.partial_response_content = (
+            f"Here's the modified `{sample_file}` file that implements the `accumulate`"
+            f" function as per the given instructions:\n\n```\n{new_content}```\n\nThis"
+            " implementation uses a list comprehension to apply the `operation` function to"
+            " each element of the `collection` and returns the resulting list.\n"
+            "Run it like this:\n\n"
+            "```\npython hello.py\n```\n\n"
+        )
+        print(coder.partial_response_content)
+
+        # Call update_files method
+        edited_files = coder.update_files()
+
+        # Check if the sample file was updated
+        self.assertIn(sample_file, edited_files)
+
+        # Check if the content of the sample file was updated
+        with open(sample_file, "r") as f:
+            updated_content = f.read()
+        self.assertEqual(updated_content, new_content)
+
     def test_full_edit(self):
         # Create a few temporary files
         _, file1 = tempfile.mkstemp()
