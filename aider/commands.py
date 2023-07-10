@@ -396,7 +396,9 @@ class Commands:
                 self.io.tool_output(f"{cmd} No description available.")
 
 
+from pathlib import Path
+
 def expand_subdir(file_path):
-    for root, dirs, files in os.walk(file_path):
-        for fname in files:
-            yield fname
+    for file in Path(file_path).rglob('*'):
+        if file.is_file():
+            yield str(file)
