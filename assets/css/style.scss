@@ -37,8 +37,7 @@
 
 
 .chat-transcript {
-    padding-left: 30px;
-    padding-right: 30px;
+    padding-top: 15px;
 }
 
 .chat-transcript li,
@@ -60,9 +59,9 @@
     color: #ffffff;
 }
 .chat-transcript::before {
-    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="90" height="25"><circle cx="7" cy="15" r="7" fill="red"/><circle cx="27" cy="15" r="7" fill="yellow"/><circle cx="47" cy="15" r="7" fill="green"/></svg>');
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="90" height="25"><circle cx="7" cy="15" r="7" fill="%23f92672"/><circle cx="27" cy="15" r="7" fill="%23f4bf75"/><circle cx="47" cy="15" r="7" fill="%23a6e22e"/></svg>');
     display: block;
     margin-bottom: 0;
     position: relative;
-    top: -2em;
+    top: -5px;
 }
