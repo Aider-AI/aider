@@ -89,17 +89,21 @@ class TestCommands(TestCase):
 
         # Create a directory and add files to it
         os.mkdir("test_dir")
+        os.mkdir("test_dir/another_dir")
         with open("test_dir/test_file1.txt", "w") as f:
             f.write("Test file 1")
         with open("test_dir/test_file2.txt", "w") as f:
             f.write("Test file 2")
+        with open("test_dir/another_dir/test_file.txt", "w") as f:
+            f.write("Test file 3")
 
         # Call the cmd_add method with a directory
-        commands.cmd_add("test_dir")
+        commands.cmd_add("test_dir test_dir/test_file2.txt")
 
         # Check if the files have been added to the chat session
         self.assertIn(str(Path("test_dir/test_file1.txt").resolve()), coder.abs_fnames)
         self.assertIn(str(Path("test_dir/test_file2.txt").resolve()), coder.abs_fnames)
+        self.assertIn(str(Path("test_dir/another_dir/test_file.txt").resolve()), coder.abs_fnames)
 
     def test_cmd_drop_with_glob_patterns(self):
         # Initialize the Commands and InputOutput objects

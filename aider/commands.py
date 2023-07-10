@@ -238,6 +238,7 @@ class Commands:
         git_added = []
         git_files = self.coder.get_tracked_files()
 
+        expanded_files = set()
         for word in args.split():
             matched_files = self.glob_filtered_to_repo(word)
 
@@ -246,42 +247,36 @@ class Commands:
                     self.io.tool_error(f"No files to add matching pattern: {word}")
                 else:
                     if Path(word).exists():
-                        if Path(word).is_file():
-                            matched_files = [word]
-                        elif Path(word).is_dir():
-                            matched_files = expand_subdir(word)
-                        else:
-                            self.io.tool_error(f"Can not add unknown file type: {word}")
+                        matched_files = [word]
                     elif self.io.confirm_ask(
                         f"No files matched '{word}'. Do you want to create the file?"
                     ):
                         (Path(self.coder.root) / word).touch()
                         matched_files = [word]
 
-            expanded_files = []
             for matched_file in matched_files:
                 if Path(matched_file).is_dir():
-                    expanded_files += expand_subdir(matched_file)
+                    expanded_files.update(expand_subdir(matched_file))
                 else:
-                    expanded_files.append(matched_file)
+                    expanded_files.add(matched_file)
 
-            for matched_file in expanded_files:
-                abs_file_path = self.coder.abs_root_path(matched_file)
+        for matched_file in expanded_files:
+            abs_file_path = self.coder.abs_root_path(matched_file)
 
-                if self.coder.repo and matched_file not in git_files:
-                    self.coder.repo.git.add(abs_file_path)
-                    git_added.append(matched_file)
+            if self.coder.repo and matched_file not in git_files:
+                self.coder.repo.git.add(abs_file_path)
+                git_added.append(matched_file)
 
-                if abs_file_path not in self.coder.abs_fnames:
-                    content = self.io.read_text(abs_file_path)
-                    if content is not None:
-                        self.coder.abs_fnames.add(abs_file_path)
-                        self.io.tool_output(f"Added {matched_file} to the chat")
-                        added_fnames.append(matched_file)
-                    else:
-                        self.io.tool_error(f"Unable to read {matched_file}")
+            if abs_file_path not in self.coder.abs_fnames:
+                content = self.io.read_text(abs_file_path)
+                if content is not None:
+                    self.coder.abs_fnames.add(abs_file_path)
+                    self.io.tool_output(f"Added {matched_file} to the chat")
+                    added_fnames.append(matched_file)
                 else:
-                    self.io.tool_error(f"{matched_file} is already in the chat")
+                    self.io.tool_error(f"Unable to read {matched_file}")
+            else:
+                self.io.tool_error(f"{matched_file} is already in the chat")
 
         if self.coder.repo and git_added:
             git_added = " ".join(git_added)
