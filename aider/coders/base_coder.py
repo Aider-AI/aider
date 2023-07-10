@@ -606,7 +606,7 @@ class Coder:
             RateLimitError,
             requests.exceptions.ConnectionError,
         ),
-        max_tries=5,
+        max_tries=10,
         on_backoff=lambda details: print(f"Retry in {details['wait']} seconds."),
     )
     def send_with_retries(self, model, messages, functions):
