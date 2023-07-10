@@ -79,6 +79,39 @@ class TestCommands(TestCase):
         # Check if no files have been added to the chat session
         self.assertEqual(len(coder.abs_fnames), 0)
 
+    def test_cmd_add_drop_directory(self):
+        # Initialize the Commands and InputOutput objects
+        io = InputOutput(pretty=False, yes=True)
+        from aider.coders import Coder
+
+        coder = Coder.create(models.GPT35, None, io, openai_api_key="deadbeef")
+        commands = Commands(io, coder)
+
+        # Create a directory and add files to it
+        os.mkdir("test_dir")
+        os.mkdir("test_dir/another_dir")
+        with open("test_dir/test_file1.txt", "w") as f:
+            f.write("Test file 1")
+        with open("test_dir/test_file2.txt", "w") as f:
+            f.write("Test file 2")
+        with open("test_dir/another_dir/test_file.txt", "w") as f:
+            f.write("Test file 3")
+
+        # Call the cmd_add method with a directory
+        commands.cmd_add("test_dir test_dir/test_file2.txt")
+
+        # Check if the files have been added to the chat session
+        self.assertIn(str(Path("test_dir/test_file1.txt").resolve()), coder.abs_fnames)
+        self.assertIn(str(Path("test_dir/test_file2.txt").resolve()), coder.abs_fnames)
+        self.assertIn(str(Path("test_dir/another_dir/test_file.txt").resolve()), coder.abs_fnames)
+
+        commands.cmd_drop("test_dir/another_dir")
+        self.assertIn(str(Path("test_dir/test_file1.txt").resolve()), coder.abs_fnames)
+        self.assertIn(str(Path("test_dir/test_file2.txt").resolve()), coder.abs_fnames)
+        self.assertNotIn(
+            str(Path("test_dir/another_dir/test_file.txt").resolve()), coder.abs_fnames
+        )
+
     def test_cmd_drop_with_glob_patterns(self):
         # Initialize the Commands and InputOutput objects
         io = InputOutput(pretty=False, yes=True)
