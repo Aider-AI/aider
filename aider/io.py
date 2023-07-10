@@ -18,10 +18,11 @@ from .dump import dump  # noqa: F401
 
 
 class AutoCompleter(Completer):
-    def __init__(self, root, rel_fnames, addable_rel_fnames, commands):
+    def __init__(self, root, rel_fnames, addable_rel_fnames, commands, encoding):
         self.commands = commands
         self.addable_rel_fnames = addable_rel_fnames
         self.rel_fnames = rel_fnames
+        self.encoding = encoding
 
         fname_to_rel_fnames = defaultdict(list)
         for rel_fname in addable_rel_fnames:
@@ -38,9 +39,9 @@ class AutoCompleter(Completer):
         for rel_fname in rel_fnames:
             self.words.add(rel_fname)
 
-            fname = os.path.join(root, rel_fname)
+            fname = Path(root) / rel_fname
             try:
-                with open(fname, "r") as f:
+                with open(fname, "r", encoding=self.encoding) as f:
                     content = f.read()
             except FileNotFoundError:
                 continue
@@ -181,7 +182,9 @@ class InputOutput:
             style = None
 
         while True:
-            completer_instance = AutoCompleter(root, rel_fnames, addable_rel_fnames, commands)
+            completer_instance = AutoCompleter(
+                root, rel_fnames, addable_rel_fnames, commands, self.encoding
+            )
             if multiline_input:
                 show = ". "
 
@@ -307,5 +310,5 @@ class InputOutput:
         if not text.endswith("\n"):
             text += "\n"
         if self.chat_history_file is not None:
-            with self.chat_history_file.open("a") as f:
+            with self.chat_history_file.open("a", encoding=self.encoding) as f:
                 f.write(text)
