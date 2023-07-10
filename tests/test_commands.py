@@ -79,6 +79,21 @@ class TestCommands(TestCase):
         # Check if no files have been added to the chat session
         self.assertEqual(len(coder.abs_fnames), 0)
 
+    def test_cmd_add_directory(self):
+        # Initialize the Commands and InputOutput objects
+        io = InputOutput(pretty=False, yes=True)
+        from aider.coders import Coder
+
+        coder = Coder.create(models.GPT35, None, io, openai_api_key="deadbeef")
+        commands = Commands(io, coder)
+
+        # Create a directory
+        os.mkdir("test_dir")
+
+        # Call the cmd_add method with a directory
+        with self.assertRaises(IsADirectoryError):
+            commands.cmd_add("test_dir")
+
     def test_cmd_drop_with_glob_patterns(self):
         # Initialize the Commands and InputOutput objects
         io = InputOutput(pretty=False, yes=True)
