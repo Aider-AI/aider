@@ -105,6 +105,9 @@ class TestCommands(TestCase):
         self.assertIn(str(Path("test_dir/test_file2.txt").resolve()), coder.abs_fnames)
         self.assertIn(str(Path("test_dir/another_dir/test_file.txt").resolve()), coder.abs_fnames)
 
+        commands.cmd_drop("test_dir")
+        self.assertEqual(len(coder.abs_fnames), 0)
+
     def test_cmd_drop_with_glob_patterns(self):
         # Initialize the Commands and InputOutput objects
         io = InputOutput(pretty=False, yes=True)
