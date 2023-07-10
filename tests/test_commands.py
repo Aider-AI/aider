@@ -79,7 +79,7 @@ class TestCommands(TestCase):
         # Check if no files have been added to the chat session
         self.assertEqual(len(coder.abs_fnames), 0)
 
-    def test_cmd_add_directory(self):
+    def test_cmd_add_drop_directory(self):
         # Initialize the Commands and InputOutput objects
         io = InputOutput(pretty=False, yes=True)
         from aider.coders import Coder
@@ -105,8 +105,12 @@ class TestCommands(TestCase):
         self.assertIn(str(Path("test_dir/test_file2.txt").resolve()), coder.abs_fnames)
         self.assertIn(str(Path("test_dir/another_dir/test_file.txt").resolve()), coder.abs_fnames)
 
-        commands.cmd_drop("test_dir")
-        self.assertEqual(len(coder.abs_fnames), 0)
+        commands.cmd_drop("test_dir/another_dir")
+        self.assertIn(str(Path("test_dir/test_file1.txt").resolve()), coder.abs_fnames)
+        self.assertIn(str(Path("test_dir/test_file2.txt").resolve()), coder.abs_fnames)
+        self.assertNotIn(
+            str(Path("test_dir/another_dir/test_file.txt").resolve()), coder.abs_fnames
+        )
 
     def test_cmd_drop_with_glob_patterns(self):
         # Initialize the Commands and InputOutput objects
