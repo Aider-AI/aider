@@ -266,16 +266,16 @@ class Commands:
                 self.coder.repo.git.add(abs_file_path)
                 git_added.append(matched_file)
 
-            if abs_file_path not in self.coder.abs_fnames:
+            if abs_file_path in self.coder.abs_fnames:
+                self.io.tool_error(f"{matched_file} is already in the chat")
+            else:
                 content = self.io.read_text(abs_file_path)
-                if content is not None:
+                if content is None:
+                    self.io.tool_error(f"Unable to read {matched_file}")
+                else:
                     self.coder.abs_fnames.add(abs_file_path)
                     self.io.tool_output(f"Added {matched_file} to the chat")
                     added_fnames.append(matched_file)
-                else:
-                    self.io.tool_error(f"Unable to read {matched_file}")
-            else:
-                self.io.tool_error(f"{matched_file} is already in the chat")
 
         if self.coder.repo and git_added:
             git_added = " ".join(git_added)
