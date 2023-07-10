@@ -16,7 +16,7 @@ class TestInputOutput(unittest.TestCase):
         rel_fnames = ["non_existent_file.txt"]
         addable_rel_fnames = []
         commands = None
-        autocompleter = AutoCompleter(root, rel_fnames, addable_rel_fnames, commands)
+        autocompleter = AutoCompleter(root, rel_fnames, addable_rel_fnames, commands, "utf-8")
         self.assertEqual(autocompleter.words, set(rel_fnames))
 
 
