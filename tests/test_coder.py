@@ -360,5 +360,24 @@ class TestCoder(unittest.TestCase):
         with self.assertRaises(openai.error.InvalidRequestError):
             coder.run(with_message="hi")
 
+    def test_get_tracked_files(self):
+        # Create a temporary directory
+        tempdir = Path(tempfile.mkdtemp())
+
+        # Initialize a git repository in the temporary directory
+        repo = git.Repo.init(tempdir)
+
+        # Create three empty files and add them to the git repository
+        filenames = ["README.md", "doc/fänny_dirname/README.md", "doc/systemüberblick.md"]
+        for filename in filenames:
+            (tempdir / filename).touch()
+            repo.git.add(filename)
+
+        # Create a Coder object on the temporary directory
+        coder = Coder.create(models.GPT4, None, io=InputOutput(), openai_api_key="fake_key", root=tempdir)
+
+        # Assert that coder.get_tracked_files() returns the three filenames
+        self.assertEqual(set(coder.get_tracked_files()), set(filenames))
+
     if __name__ == "__main__":
         unittest.main()
