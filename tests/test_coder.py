@@ -378,7 +378,11 @@ class TestCoder(unittest.TestCase):
 
         # Create a Coder object on the temporary directory
         coder = Coder.create(
-            models.GPT4, None, io=InputOutput(), openai_api_key="fake_key", root=tempdir
+            models.GPT4,
+            None,
+            io=InputOutput(),
+            openai_api_key="fake_key",
+            fnames=[str(tempdir / filenames[0])],
         )
 
         # Assert that coder.get_tracked_files() returns the three filenames
