@@ -30,7 +30,7 @@ class TestCoder(unittest.TestCase):
 
         # Mock the git repo
         mock_repo = MagicMock()
-        mock_repo.git.ls_files.return_value = "file1.txt\nfile2.py"
+        mock_repo.git.execute.return_value = "file1.txt\nfile2.py"
         coder.repo = mock_repo
 
         # Call the check_for_file_mentions method
@@ -77,7 +77,7 @@ class TestCoder(unittest.TestCase):
 
         # Mock the git repo
         mock_repo = MagicMock()
-        mock_repo.git.ls_files.return_value = "file1.txt\nfile2.py"
+        mock_repo.git.execute.return_value = "file1.txt\nfile2.py"
         coder.repo = mock_repo
 
         # Call the check_for_file_mentions method
@@ -104,7 +104,7 @@ class TestCoder(unittest.TestCase):
 
         # Mock the git repo
         mock_repo = MagicMock()
-        mock_repo.git.ls_files.return_value = "file1.txt\nother/file1.txt"
+        mock_repo.git.execute.return_value = "file1.txt\nother/file1.txt"
         coder.repo = mock_repo
 
         # Call the check_for_file_mentions method
@@ -352,7 +352,9 @@ class TestCoder(unittest.TestCase):
         coder = Coder.create(models.GPT4, None, mock_io, openai_api_key="fake_key")
 
         # Set up the mock to raise InvalidRequestError
-        mock_chat_completion_create.side_effect = openai.error.InvalidRequestError("Invalid request", "param")
+        mock_chat_completion_create.side_effect = openai.error.InvalidRequestError(
+            "Invalid request", "param"
+        )
 
         # Call the run method and assert that InvalidRequestError is raised
         with self.assertRaises(openai.error.InvalidRequestError):
