@@ -46,7 +46,7 @@ class Commands:
         else:
             self.io.tool_output(f"Error: Command {cmd_name} not found.")
 
-    def run(self, inp):
+    def matching_commands(self, inp):
         words = inp.strip().split()
         if not words:
             return
@@ -56,12 +56,19 @@ class Commands:
 
         all_commands = self.get_commands()
         matching_commands = [cmd for cmd in all_commands if cmd.startswith(first_word)]
+        return matching_commands, first_word, rest_inp
+
+    def run(self, inp):
+        res = self.matching_commands(inp)
+        if res is None:
+            return
+        matching_commands, first_word, rest_inp = res
         if len(matching_commands) == 1:
             return self.do_run(matching_commands[0][1:], rest_inp)
         elif len(matching_commands) > 1:
             self.io.tool_error(f"Ambiguous command: {', '.join(matching_commands)}")
         else:
-            self.io.tool_error(f"Error: {first_word} is not a valid command.")
+            self.io.tool_error(f"Invalid command: {first_word}")
 
     # any method called cmd_xxx becomes a command automatically.
     # each one must take an args param.

@@ -402,9 +402,13 @@ class Coder:
                 return
 
     def should_dirty_commit(self, inp):
-        is_commit_command = inp and inp.startswith("/commit")
-        if is_commit_command:
-            return
+        cmds = self.commands.matching_commands(inp)
+        if cmds:
+            matching_commands, _, _ = cmds
+            if len(matching_commands) == 1:
+                cmd = matching_commands[0]
+                if cmd in ("/exit", "/commit"):
+                    return
 
         if not self.dirty_commits:
             return
@@ -436,6 +440,7 @@ class Coder:
         self.num_control_c = 0
 
         if self.should_dirty_commit(inp):
+            self.io.tool_output("Git repo has uncommitted changes, preparing commit...")
             self.commit(ask=True, which="repo_files")
 
             # files changed, move cur messages back behind the files messages
