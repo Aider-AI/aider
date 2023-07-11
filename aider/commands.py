@@ -221,7 +221,8 @@ class Commands:
                 yield Completion(fname, start_position=-len(partial))
 
     def glob_filtered_to_repo(self, pattern):
-        raw_matched_files = Path(self.coder.root).glob(pattern)
+        raw_matched_files = list(Path(self.coder.root).glob(pattern))
+
         matched_files = []
         for fn in raw_matched_files:
             matched_files += expand_subdir(fn.relative_to(self.coder.root))
@@ -250,7 +251,10 @@ class Commands:
                     self.io.tool_error(f"No files to add matching pattern: {word}")
                 else:
                     if Path(word).exists():
-                        matched_files = [word]
+                        if Path(word).is_file():
+                            matched_files = [word]
+                        else:
+                            self.io.tool_error(f"Unable to add: {word}")
                     elif self.io.confirm_ask(
                         f"No files matched '{word}'. Do you want to create the file?"
                     ):
