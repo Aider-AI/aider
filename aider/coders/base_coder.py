@@ -5,6 +5,7 @@ import json
 import os
 import sys
 import traceback
+import codecs
 from json.decoder import JSONDecodeError
 from pathlib import Path, PurePosixPath
 
@@ -966,7 +967,20 @@ class Coder:
             return []
         # convert to appropriate os.sep, since git always normalizes to /
         files = set(self.repo.git.ls_files().splitlines())
-        res = set(str(Path(PurePosixPath(path))) for path in files)
+        # decode file names to UTF-8 when git reports them enclosed in quotes, and convert backslashes to os.sep
+        res = set()
+        for path in files:
+            if path[0] == '"' and path[-1] == '"':
+                # Strip quotes, convert escape sequence to characters,
+                # convert to bytes and decode as UTF-8.
+                path = (path[1:-1]
+                           .encode('latin1')
+                           .decode('unicode_escape')
+                           .encode('latin1')
+                           .decode('utf-8')
+                       )
+            res.add(str(Path(PurePosixPath(path))))
+
         return res
 
     apply_update_errors = 0
