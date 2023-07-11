@@ -51,6 +51,8 @@ has provided this
 ## How do I get ctags working?
 
 First, be aware that ctags is completely optional and not required to use aider.
+Aider only attempts to use ctags with GPT-4,
+and currently doesn't use ctags with GPT-3.5. 
 
 If you wish to use ctags, you should consult the
 [universal ctags repo](https://github.com/universal-ctags/ctags)
