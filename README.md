@@ -28,12 +28,12 @@ get started quickly like this:
 ```
 $ pip install aider-chat
 $ export OPENAI_API_KEY=your-key-goes-here
-$ aider myapp.py
+$ aider app.py
 
 Using git repo: .git
 Added myapp.py to the chat.
 
-myapp.py> change the fibonacci function from recursion to iteration
+myapp.py> make a flask app that replies "hello world" on /hello
 ```
 
 ## Example chat transcripts
