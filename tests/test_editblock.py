@@ -248,9 +248,7 @@ These changes replace the `subprocess.run` patches with `subprocess.check_output
         files = [file1]
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(
-            models.GPT4, "diff", io=InputOutput(), openai_api_key="fake_key", fnames=files
-        )
+        coder = Coder.create(models.GPT4, "diff", io=InputOutput(), fnames=files)
 
         def mock_send(*args, **kwargs):
             coder.partial_response_content = f"""
@@ -290,7 +288,6 @@ new
             models.GPT4,
             "diff",
             io=InputOutput(dry_run=True),
-            openai_api_key="fake_key",
             fnames=files,
             dry_run=True,
         )
