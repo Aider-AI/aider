@@ -1,3 +1,4 @@
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -367,12 +368,20 @@ class TestCoder(unittest.TestCase):
         repo = git.Repo.init(tempdir)
 
         # Create three empty files and add them to the git repository
-        filenames = ["README.md", "doc/fänny_dirname/README.md", "doc/systemüberblick.md"]
+        filenames = ["README.md", "fänny.md", "systemüberblick.md", 'file"with"quotes.txt']
+        created_files = []
         for filename in filenames:
             file_path = tempdir / filename
-            file_path.parent.mkdir(parents=True, exist_ok=True)
-            file_path.touch()
-            repo.git.add(str(file_path))
+            try:
+                file_path.touch()
+                repo.git.add(str(file_path))
+                created_files.append(filename)
+            except OSError:
+                # windows won't allow files with quotes, that's ok
+                self.assertIn('"', filename)
+                self.assertEqual(os.name, "nt")
+
+        self.assertTrue(len(created_files) >= 3)
 
         repo.git.commit("-m", "added")
 
@@ -386,7 +395,7 @@ class TestCoder(unittest.TestCase):
         )
 
         # Assert that coder.get_tracked_files() returns the three filenames
-        self.assertEqual(set(coder.get_tracked_files()), set(filenames))
+        self.assertEqual(set(coder.get_tracked_files()), set(created_files))
 
     if __name__ == "__main__":
         unittest.main()
