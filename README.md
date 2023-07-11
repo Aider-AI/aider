@@ -31,9 +31,9 @@ $ export OPENAI_API_KEY=your-key-goes-here
 $ aider app.py
 
 Using git repo: .git
-Added myapp.py to the chat.
+Added app.py to the chat.
 
-myapp.py> make a flask app that replies "hello world" on /hello
+app.py> make a flask app that replies "hello world" on /hello
 ```
 
 ## Example chat transcripts
