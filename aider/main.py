@@ -76,22 +76,27 @@ def main(args=None, input=None, output=None):
     model_group.add_argument(
         "--openai-api-base",
         metavar="OPENAI_API_BASE",
-        help="Specify the OpenAI API base endpoint (default: https://api.openai.com/v1)",
+        help="Specify the openai.api_base (default: https://api.openai.com/v1)",
     )
     model_group.add_argument(
         "--openai-api-type",
         metavar="OPENAI_API_TYPE",
-        help="Specify the OpenAI API type",
+        help="Specify the openai.api_type",
     )
     model_group.add_argument(
         "--openai-api-version",
         metavar="OPENAI_API_VERSION",
-        help="Specify the OpenAI API version",
+        help="Specify the openai.api_version",
     )
     model_group.add_argument(
         "--openai-api-deployment-id",
         metavar="OPENAI_API_DEPLOYMENT_ID",
-        help="Specify the OpenAI API deployment ID",
+        help="Specify the deployment_id arg to be passed to openai.ChatCompletion.create()",
+    )
+    model_group.add_argument(
+        "--openai-api-engine",
+        metavar="OPENAI_API_ENGINE",
+        help="Specify the engine arg to be passed to openai.ChatCompletion.create()",
     )
     model_group.add_argument(
         "--edit-format",
@@ -348,7 +353,7 @@ def main(args=None, input=None, output=None):
     main_model = models.Model(args.model)
 
     openai.api_key = args.openai_api_key
-    for attr in ("base", "type", "version", "deployment_id"):
+    for attr in ("base", "type", "version", "deployment_id", "engine"):
         arg_key = f"openai_api_{attr}"
         val = getattr(args, arg_key)
         if val is not None:
