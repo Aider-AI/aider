@@ -79,6 +79,21 @@ def main(args=None, input=None, output=None):
         help="Specify the OpenAI API base endpoint (default: https://api.openai.com/v1)",
     )
     model_group.add_argument(
+        "--openai-api-type",
+        metavar="OPENAI_API_TYPE",
+        help="Specify the OpenAI API type",
+    )
+    model_group.add_argument(
+        "--openai-api-version",
+        metavar="OPENAI_API_VERSION",
+        help="Specify the OpenAI API version",
+    )
+    model_group.add_argument(
+        "--openai-api-deployment-id",
+        metavar="OPENAI_API_DEPLOYMENT_ID",
+        help="Specify the OpenAI API deployment ID",
+    )
+    model_group.add_argument(
         "--edit-format",
         metavar="EDIT_FORMAT",
         default=None,
@@ -351,6 +366,9 @@ def main(args=None, input=None, output=None):
         code_theme=args.code_theme,
         stream=args.stream,
         use_git=args.git,
+        openai_api_type=args.openai_api_type,
+        openai_api_version=args.openai_api_version,
+        openai_api_deployment_id=args.openai_api_deployment_id,
     )
 
     if args.dirty_commits:
