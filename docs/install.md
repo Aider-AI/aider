@@ -46,7 +46,9 @@ Here are
 
 ## You are done!
 
-The rest of these install steps are completely options.
+See the [usage instructions](/#usage) to start coding with aider.
+
+The rest of the install steps are completely optional.
 
 ## Install universal ctags (optional)
 
