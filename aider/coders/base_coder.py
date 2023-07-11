@@ -971,8 +971,15 @@ class Coder:
         if not self.repo:
             return []
 
-        files = self.repo.git.execute(["git", "-c", "core.quotepath=off", "ls-files"])
-        files = set(files.splitlines())
+        try:
+            commit = self.repo.head.commit
+        except ValueError:
+            return set()
+
+        files = []
+        for blob in commit.tree.traverse():
+            if blob.type == "blob":  # blob is a file
+                files.append(blob.path)
 
         # convert to appropriate os.sep, since git always normalizes to /
         res = set(str(Path(PurePosixPath(path))) for path in files)

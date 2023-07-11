@@ -30,9 +30,9 @@ class TestCoder(unittest.TestCase):
         coder = Coder.create(models.GPT4, None, mock_io, openai_api_key="fake_key")
 
         # Mock the git repo
-        mock_repo = MagicMock()
-        mock_repo.git.execute.return_value = "file1.txt\nfile2.py"
-        coder.repo = mock_repo
+        mock = MagicMock()
+        mock.return_value = set(["file1.txt", "file2.py"])
+        coder.get_tracked_files = mock
 
         # Call the check_for_file_mentions method
         coder.check_for_file_mentions("Please check file1.txt and file2.py")
@@ -76,10 +76,9 @@ class TestCoder(unittest.TestCase):
         # Initialize the Coder object with the mocked IO and mocked repo
         coder = Coder.create(models.GPT4, None, mock_io, openai_api_key="fake_key")
 
-        # Mock the git repo
-        mock_repo = MagicMock()
-        mock_repo.git.execute.return_value = "file1.txt\nfile2.py"
-        coder.repo = mock_repo
+        mock = MagicMock()
+        mock.return_value = set(["file1.txt", "file2.py"])
+        coder.get_tracked_files = mock
 
         # Call the check_for_file_mentions method
         coder.check_for_file_mentions("Please check file1.txt and file2.py")
@@ -103,10 +102,9 @@ class TestCoder(unittest.TestCase):
         # Initialize the Coder object with the mocked IO and mocked repo
         coder = Coder.create(models.GPT4, None, mock_io, openai_api_key="fake_key")
 
-        # Mock the git repo
-        mock_repo = MagicMock()
-        mock_repo.git.execute.return_value = "file1.txt\nother/file1.txt"
-        coder.repo = mock_repo
+        mock = MagicMock()
+        mock.return_value = set(["file1.txt", "other/file1.txt"])
+        coder.get_tracked_files = mock
 
         # Call the check_for_file_mentions method
         coder.check_for_file_mentions("Please check file1.txt!")
@@ -375,6 +373,8 @@ class TestCoder(unittest.TestCase):
             file_path.parent.mkdir(parents=True, exist_ok=True)
             file_path.touch()
             repo.git.add(str(file_path))
+
+        repo.git.commit("-m", "added")
 
         # Create a Coder object on the temporary directory
         coder = Coder.create(
