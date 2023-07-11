@@ -8,6 +8,7 @@ from unittest.mock import MagicMock, patch
 from aider import models
 from aider.coders import Coder
 from aider.coders.wholefile_coder import WholeFileCoder
+from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 
 
@@ -75,6 +76,24 @@ class TestWholeFileCoder(unittest.TestCase):
         with open(sample_file, "r") as f:
             updated_content = f.read()
         self.assertEqual(updated_content, "Updated content\n")
+
+    def test_update_files_live_diff(self):
+        # Create a sample file in the temporary directory
+        sample_file = "sample.txt"
+        with open(sample_file, "w") as f:
+            f.write("\n".join(map(str, range(0, 100))))
+
+        # Initialize WholeFileCoder with the temporary directory
+        io = InputOutput(yes=True)
+        coder = WholeFileCoder(main_model=models.GPT35, io=io, fnames=[sample_file])
+
+        # Set the partial response content with the updated content
+        coder.partial_response_content = f"{sample_file}\n```\n0\n\1\n2\n"
+
+        lines = coder.update_files(mode="diff").splitlines()
+
+        # the live diff should be concise, since we haven't changed anything yet
+        self.assertLess(len(lines), 20)
 
     def test_update_files_with_existing_fence(self):
         # Create a sample file in the temporary directory
