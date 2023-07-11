@@ -1,7 +1,9 @@
 
 # Installing aider
 
-## Install the "aider-chat" package with pip from one of these sources:
+## pip install aider-chat
+
+Install the “aider-chat” package with pip from one of these sources:
 
 * PyPI hosts the released and most stable version:
   * `python -m pip install aider-chat`
@@ -42,6 +44,10 @@ Make sure you have git installed and available on your shell path.
 Here are
 [instructions for installing git in various environments](https://github.com/git-guides/install-git).
 
+## You are done!
+
+The rest of these install steps are completely options.
+
 ## Install universal ctags (optional)
 
 Aider does not require ctags, and will operate just fine without it.
@@ -71,7 +77,7 @@ Some things to be aware of:
 * You need a build which includes the json feature. You can check by running `ctags --version` and looking for `+json` in the `Optional compiled features` list.
 
 
-## Add aider to your editor
+## Add aider to your editor (optional)
 
 [joshuavial](https://github.com/joshuavial) has provided a NeoVim plugin for aider:
 
