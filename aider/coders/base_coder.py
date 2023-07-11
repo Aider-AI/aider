@@ -160,7 +160,7 @@ class Coder:
             self.abs_fnames = set([str(Path(fname).resolve()) for fname in fnames])
 
         if self.repo:
-            rel_repo_dir = os.path.relpath(self.repo.git_dir, os.getcwd())
+            rel_repo_dir = self.get_rel_repo_dir()
             self.io.tool_output(f"Git repo: {rel_repo_dir}")
         else:
             self.io.tool_output("Git repo: none")
@@ -209,6 +209,12 @@ class Coder:
             self.root = os.getcwd()
 
         self.root = utils.safe_abs_path(self.root)
+
+    def get_rel_repo_dir(self):
+        try:
+            return os.path.relpath(self.repo.git_dir, os.getcwd())
+        except ValueError:
+            return self.repo.git_dir
 
     def add_rel_fname(self, rel_fname):
         self.abs_fnames.add(self.abs_root_path(rel_fname))
@@ -265,7 +271,7 @@ class Coder:
                 new_files.append(relative_fname)
 
         if new_files:
-            rel_repo_dir = os.path.relpath(self.repo.git_dir, os.getcwd())
+            rel_repo_dir = self.get_rel_repo_dir()
 
             self.io.tool_output(f"Files not tracked in {rel_repo_dir}:")
             for fn in new_files:
@@ -964,9 +970,20 @@ class Coder:
     def get_tracked_files(self):
         if not self.repo:
             return []
+
+        try:
+            commit = self.repo.head.commit
+        except ValueError:
+            return set()
+
+        files = []
+        for blob in commit.tree.traverse():
+            if blob.type == "blob":  # blob is a file
+                files.append(blob.path)
+
         # convert to appropriate os.sep, since git always normalizes to /
-        files = set(self.repo.git.ls_files().splitlines())
         res = set(str(Path(PurePosixPath(path))) for path in files)
+
         return res
 
     apply_update_errors = 0
