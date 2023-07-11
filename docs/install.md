@@ -1,7 +1,7 @@
 
 # Installing aider
 
-## Install the `aider-chat` package with pip from one of these sources:
+## Install the "aider-chat" package with pip from one of these sources:
 
 * PyPI hosts the released and most stable version:
   * `python -m pip install aider-chat`
@@ -16,21 +16,21 @@ On Windows, you may need to run `py -m pip install ...` to install python packag
 
 You need a
 [paid API key from OpenAI](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key)
-to use aider. Note that this is different than "ChatGPT Plus".
+to use aider. Note that this is different than being a "ChatGPT Plus" subscriber.
 
 You can place your api key in an environment variable:
 
 * `export OPENAI_API_KEY=sk-...` on Linux or Mac
 * `setx OPENAI_API_KEY sk-...` in Windows PowerShell
 
-Or you can create a `.aider.conf.yml` file in your home directory or at the root of your git repo,
-alongside the `.git` dir. Put a line in it like this to specify your api key:
+Or you can create a `.aider.conf.yml` file in your home directory.
+Put a line in it like this to specify your api key:
 
 ```
 openai-api-key: sk-...
 ```
 
-Finally, you could also just provide your key as a command line argument:
+Finally, you can also just provide your key as a command line argument:
 
 ```
 aider --openai-api-key sk-...
@@ -73,9 +73,9 @@ Some things to be aware of:
 
 ## Add aider to your editor
 
-(joshuavial)[https://github.com/joshuavial) has provided a NeoVim plugin for aider:
+[joshuavial](https://github.com/joshuavial) has provided a NeoVim plugin for aider:
 
-* https://github.com/joshuavial/aider.nvim
+* [https://github.com/joshuavial/aider.nvim](https://github.com/joshuavial/aider.nvim)
 
 If you are interested in creating an aider plugin for your favorite editor,
 please let me know by opening a

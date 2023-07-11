@@ -11,11 +11,11 @@ It also has features that [help GPT-4 understand and modify larger codebases](ht
 - [Getting started](#getting-started)
 - [Example chat transcripts](#example-chat-transcripts)
 - [Features](#features)
-- [Installation](#installation)
 - [Usage](#usage)
 - [In-chat commands](#in-chat-commands)
 - [Tips](#tips)
 - [GPT-4 vs GPT-3.5](#gpt-4-vs-gpt-35)
+- [Installation](https://aider.chat/docs/install.html)
 - [FAQ](https://aider.chat/docs/faq.html)
 
 ## Getting started
@@ -165,6 +165,10 @@ This minimizes your use of the context window, as well as costs.
 * "What an amazing tool. It's incredible." -- [valyagolev](https://github.com/paul-gauthier/aider/issues/6#issue-1722897858)
 * "It was WAY faster than I would be getting off the ground and making the first few working versions." -- [Daniel Feldman](https://twitter.com/d_feldman/status/1662295077387923456)
 * "Amazing project, definitely the best AI coding assistant I've used." -- [joshuavial](https://github.com/paul-gauthier/aider/issues/84)
+
+## Installation
+
+See the [installation instructions](https://aider.chat/docs/install.html).
 
 ## FAQ
 
