@@ -3,7 +3,7 @@
 `aider` is a command-line chat tool that allows you to write and edit
 code with OpenAI's GPT models.  You can ask GPT to help you start
 a new project, or modify code in your existing git repo.
-Aider makes it easy to git commit, diff & undo changes proposed by GPT without copy/pasting. 
+Aider makes it easy to git commit, diff & undo changes proposed by GPT without copy/pasting.
 It also has features that [help GPT-4 understand and modify larger codebases](https://aider.chat/docs/ctags.html).
 
 ![aider screencast](assets/screencast.svg)
@@ -33,7 +33,7 @@ myapp.py> change the fibonacci function from recursion to iteration
 
 ## Example chat transcripts
 
-Here are some example transcripts that show how you can chat with `aider` to write and edit code with GPT-4. 
+Here are some example transcripts that show how you can chat with `aider` to write and edit code with GPT-4.
 
 * [**Hello World Flask App**](https://aider.chat/examples/hello-world-flask.html): Start from scratch and have GPT create a simple Flask app with various endpoints, such as adding two numbers and calculating the Fibonacci sequence.
 
@@ -62,7 +62,7 @@ You can find more chat transcripts on the [examples page](https://aider.chat/exa
 1. Install the package with pip:
   * PyPI: `python -m pip install aider-chat`
   * GitHub: `python -m pip install git+https://github.com/paul-gauthier/aider.git`
-  * Local clone: `python -m pip install -e .` 
+  * Local clone: `python -m pip install -e .`
 
 2. Set up your OpenAI API key:
   * As an environment variable:
@@ -120,7 +120,7 @@ Aider supports commands from within the chat, which all start with `/`. Here are
 ## Tips
 
 * Think about which files need to be edited to make your change and add them to the chat.
-Aider has some ability to help GPT figure out which files to edit all by itself, but the most effective approach is to explicitly add the needed files to the chat yourself. 
+Aider has some ability to help GPT figure out which files to edit all by itself, but the most effective approach is to explicitly add the needed files to the chat yourself.
 * Large changes are best performed as a sequence of thoughtful bite sized steps, where you plan out the approach and overall design. Walk GPT through changes like you might with a junior dev. Ask for a refactor to prepare, then ask for the actual change. Spend the time to ask for code quality/structure improvements.
 * Use Control-C to safely interrupt GPT if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply to GPT with more information or direction.
 * Use the `/run` command to run tests, linters, etc and show the output to GPT so it can fix any issues.
@@ -167,7 +167,7 @@ This minimizes your use of the context window, as well as costs.
 | ----------------- | -- | --     | -----| -- | -- |
 | gpt-3.5-turbo     |  4k tokens | whole file | 2k tokens | ~8k bytes | no |
 | gpt-3.5-turbo-16k | 16k tokens | whole file | 8k tokens | ~32k bytes | no |
-| gpt-4             |  8k tokens | diffs | 8k tokens | ~32k bytes | yes | 
+| gpt-4             |  8k tokens | diffs | 8k tokens | ~32k bytes | yes |
 | gpt-4-32k         | 32k tokens | diffs | 32k tokens  | ~128k bytes | yes |
 
 ## Kind words from users
@@ -177,3 +177,7 @@ This minimizes your use of the context window, as well as costs.
 * "What an amazing tool. It's incredible." -- [valyagolev](https://github.com/paul-gauthier/aider/issues/6#issue-1722897858)
 * "It was WAY faster than I would be getting off the ground and making the first few working versions." -- [Daniel Feldman](https://twitter.com/d_feldman/status/1662295077387923456)
 
+
+## FAQ
+
+For more information, see the [FAQ](https://aider.chat/docs/faq.html).
