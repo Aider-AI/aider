@@ -364,8 +364,10 @@ class TestCoder(unittest.TestCase):
         # Create a temporary directory
         tempdir = Path(tempfile.mkdtemp())
 
-        # Initialize a git repository in the temporary directory
+        # Initialize a git repository in the temporary directory and set user name and email
         repo = git.Repo.init(tempdir)
+        repo.config_writer().set_value("user", "name", "Test User").release()
+        repo.config_writer().set_value("user", "email", "testuser@example.com").release()
 
         # Create three empty files and add them to the git repository
         filenames = ["README.md", "subdir/fänny.md", "systemüber/blick.md", 'file"with"quotes.txt']
