@@ -63,11 +63,13 @@ class WholeFileCoder(Coder):
                         edits.append((fname, fname_source, new_lines))
 
                     fname = None
+                    fname_source = None
                     new_lines = []
                     continue
 
                 # fname==None ... starting a new block
                 if i > 0:
+                    fname_source = "block"
                     fname = lines[i - 1].strip()
                     # Did gpt prepend a bogus dir? It especially likes to
                     # include the path/to prefix from the one-shot example in
@@ -77,8 +79,10 @@ class WholeFileCoder(Coder):
                 if not fname:  # blank line? or ``` was on first line i==0
                     if saw_fname:
                         fname = saw_fname
+                        fname_source = "saw"
                     elif len(chat_files) == 1:
                         fname = chat_files[0]
+                        fname_source = "chat"
                     else:
                         # TODO: sense which file it is by diff size
                         raise ValueError(
@@ -108,10 +112,19 @@ class WholeFileCoder(Coder):
             edits.append((fname, fname_source, new_lines))
 
         edited = set()
-        for fname, fname_source, new_lines in edits:
-            new_lines = "".join(new_lines)
-            if self.allowed_to_edit(fname, new_lines):
-                edited.add(fname)
+        # process from most reliable filename, to least reliable
+        for source in ("block", "saw", "chat"):
+            for fname, fname_source, new_lines in edits:
+                if fname_source != source:
+                    continue
+                # if a higher priority source already edited the file, skip
+                if fname in edited:
+                    continue
+
+                # we have a winner
+                new_lines = "".join(new_lines)
+                if self.allowed_to_edit(fname, new_lines):
+                    edited.add(fname)
 
         return edited
 
