@@ -268,7 +268,7 @@ after b
             " implementation uses a list comprehension to apply the `operation` function to"
             " each element of the `collection` and returns the resulting list.\n"
             "Run it like this:\n\n"
-            "```\npython hello.py\n```\n\n"
+            "```\npython {sample_file}\n```\n\n"
         )
 
         # Call update_files method
