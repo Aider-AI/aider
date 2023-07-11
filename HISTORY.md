@@ -4,6 +4,7 @@
 
 - Added `--dark-mode` to select colors suitable for a dark terminal background
 - Reorganized the `--help` output
+- Bugfix and tests around git filenames with unicode characters
 - Bugfix so that aider throws an exception when OpenAI returns InvalidRequest
 - Bugfix/improvement to /add and /drop to recurse selected directories
 - Bugfix for live diff output when using "whole" edit format
