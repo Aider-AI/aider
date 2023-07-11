@@ -38,14 +38,16 @@ class WholeFileCoder(Coder):
     def update_files(self, mode="update"):
         content = self.partial_response_content
 
-        edited = set()
         chat_files = self.get_inchat_relative_files()
 
         output = []
         lines = content.splitlines(keepends=True)
 
+        edits = []
+
         saw_fname = None
         fname = None
+        fname_source = None
         new_lines = []
         for i, line in enumerate(lines):
             if line.startswith(self.fence[0]) or line.startswith(self.fence[1]):
@@ -57,10 +59,8 @@ class WholeFileCoder(Coder):
 
                     if mode == "diff":
                         output += self.do_live_diff(full_path, new_lines)
-                    elif self.allowed_to_edit(fname):
-                        edited.add(fname)
-                        new_lines = "".join(new_lines)
-                        self.io.write_text(full_path, new_lines)
+                    else:
+                        edits.append((fname, fname_source, new_lines))
 
                     fname = None
                     new_lines = []
@@ -105,11 +105,13 @@ class WholeFileCoder(Coder):
             return "\n".join(output)
 
         if fname:
-            full_path = self.allowed_to_edit(fname)
-            if full_path:
+            edits.append((fname, fname_source, new_lines))
+
+        edited = set()
+        for fname, fname_source, new_lines in edits:
+            new_lines = "".join(new_lines)
+            if self.allowed_to_edit(fname, new_lines):
                 edited.add(fname)
-                new_lines = "".join(new_lines)
-                self.io.write_text(full_path, new_lines)
 
         return edited
 
