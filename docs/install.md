@@ -32,7 +32,7 @@ Put a line in it like this to specify your api key:
 openai-api-key: sk-...
 ```
 
-Finally, you can also just provide your key as a command line argument:
+Or you can provide your key as a command line argument:
 
 ```
 aider --openai-api-key sk-...
