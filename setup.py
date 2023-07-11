@@ -10,7 +10,7 @@ from aider import __version__
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
     long_description = re.sub(r"\n!\[.*\]\(.*\)", "", long_description)
-    long_description = re.sub(r"\n- \[.*\]\(#.*\)", "", long_description)
+    long_description = re.sub(r"\n- \[.*\]\(.*\)", "", long_description)
 
 setup(
     name="aider-chat",
