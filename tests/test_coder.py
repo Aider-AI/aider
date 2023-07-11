@@ -371,8 +371,10 @@ class TestCoder(unittest.TestCase):
         # Create three empty files and add them to the git repository
         filenames = ["README.md", "doc/fänny_dirname/README.md", "doc/systemüberblick.md"]
         for filename in filenames:
-            (tempdir / filename).touch()
-            repo.git.add(filename)
+            file_path = tempdir / filename
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            file_path.touch()
+            repo.git.add(str(file_path))
 
         # Create a Coder object on the temporary directory
         coder = Coder.create(
