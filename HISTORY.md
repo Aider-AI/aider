@@ -2,8 +2,9 @@
 
 ### Next release
 
-- Added `--dark-mode` to select colors suitable for a dark terminal background
+- Added `--dark-mode` and `--light-mode` to select colors optimized for screen background
 - Reorganized the `--help` output
+- Bugfix/improvement to whole edit format, may improve coding editing for GPT-3.5
 - Bugfix and tests around git filenames with unicode characters
 - Bugfix so that aider throws an exception when OpenAI returns InvalidRequest
 - Bugfix/improvement to /add and /drop to recurse selected directories

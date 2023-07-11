@@ -8,7 +8,7 @@ and their variants.
 
 It seems to require model-specific tuning to get prompts and
 editing formats working well with a new model. For example, GPT-3.5 and GPT-4 use very
-different prompts and editing formats in aider right now. 
+different prompts and editing formats in aider right now.
 Adopting new LLMs will probably require a similar effort to tailor the
 prompting and edit formats.
 
@@ -46,27 +46,3 @@ might be useful background.
 User [imabutahersiddik](https://github.com/imabutahersiddik)
 has provided this
 [Colab notebook](https://colab.research.google.com/drive/1J9XynhrCqekPL5PR6olHP6eE--rnnjS9?usp=sharing).
-
-
-## How do I get ctags working?
-
-First, be aware that ctags is completely optional and not required to use aider.
-Aider only attempts to use ctags with GPT-4,
-and currently doesn't use ctags with GPT-3.5. 
-
-If you wish to use ctags, you should consult the
-[universal ctags repo](https://github.com/universal-ctags/ctags)
-for official instructions on how to install it in your environment.
-You may be able to install a compatible version using these commands:
-
-* Mac: `brew install universal-ctags`
-* Windows: `choco install universal-ctags`
-* Ubuntu: `sudo apt-get install universal-ctags`
-
-Some things to be aware of:
-
-* The `ctags` command needs to be on your shell path so that it will run by default when aider invokes `ctags ...`.
-* You need a build which includes the json feature. You can check by running `ctags --version` and looking for `+json` in the `Optional compiled features` list.
-
-
-
