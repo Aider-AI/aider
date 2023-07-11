@@ -964,9 +964,13 @@ class Coder:
     def get_tracked_files(self):
         if not self.repo:
             return []
+
+        files = self.repo.git.execute(["git", "-c", "core.quotepath=off", "ls-files"])
+        files = set(files.splitlines())
+
         # convert to appropriate os.sep, since git always normalizes to /
-        files = set(self.repo.git.ls_files().splitlines())
         res = set(str(Path(PurePosixPath(path))) for path in files)
+
         return res
 
     apply_update_errors = 0

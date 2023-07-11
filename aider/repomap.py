@@ -172,7 +172,10 @@ class RepoMap:
 
     def run_ctags(self, filename):
         # Check if the file is in the cache and if the modification time has not changed
-        file_mtime = os.path.getmtime(filename)
+        file_mtime = self.get_mtime(filename)
+        if file_mtime is None:
+            return []
+
         cache_key = filename
         if cache_key in self.TAGS_CACHE and self.TAGS_CACHE[cache_key]["mtime"] == file_mtime:
             return self.TAGS_CACHE[cache_key]["data"]
@@ -239,8 +242,17 @@ class RepoMap:
     def save_ident_cache(self):
         pass
 
+    def get_mtime(self, fname):
+        try:
+            return os.path.getmtime(fname)
+        except FileNotFoundError:
+            self.io.tool_error(f"File not found error: {fname}")
+
     def get_name_identifiers(self, fname, uniq=True):
-        file_mtime = os.path.getmtime(fname)
+        file_mtime = self.get_mtime(fname)
+        if file_mtime is None:
+            return set()
+
         cache_key = fname
         if cache_key in self.IDENT_CACHE and self.IDENT_CACHE[cache_key]["mtime"] == file_mtime:
             idents = self.IDENT_CACHE[cache_key]["data"]
