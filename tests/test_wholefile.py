@@ -251,7 +251,6 @@ after b
             "Run it like this:\n\n"
             "```\npython hello.py\n```\n\n"
         )
-        print(coder.partial_response_content)
 
         # Call update_files method
         edited_files = coder.update_files()
