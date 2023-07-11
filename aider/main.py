@@ -4,6 +4,7 @@ from pathlib import Path
 
 import configargparse
 import git
+import openai
 
 from aider import __version__, models
 from aider.coders import Coder
@@ -75,7 +76,6 @@ def main(args=None, input=None, output=None):
     model_group.add_argument(
         "--openai-api-base",
         metavar="OPENAI_API_BASE",
-        default="https://api.openai.com/v1",
         help="Specify the OpenAI API base endpoint (default: https://api.openai.com/v1)",
     )
     model_group.add_argument(
@@ -347,12 +347,19 @@ def main(args=None, input=None, output=None):
 
     main_model = models.Model(args.model)
 
+    openai.api_key = args.openai_api_key
+    for attr in ("base", "type", "version", "deployment_id"):
+        arg_key = f"openai_api_{attr}"
+        val = getattr(args, arg_key)
+        if val is not None:
+            mod_key = f"api_{attr}"
+            setattr(openai, mod_key, val)
+            io.tool_output(f"Setting openai.{mod_key}={val}")
+
     coder = Coder.create(
         main_model,
         args.edit_format,
         io,
-        args.openai_api_key,
-        args.openai_api_base,
         ##
         fnames=args.files,
         pretty=args.pretty,
@@ -366,9 +373,6 @@ def main(args=None, input=None, output=None):
         code_theme=args.code_theme,
         stream=args.stream,
         use_git=args.git,
-        openai_api_type=args.openai_api_type,
-        openai_api_version=args.openai_api_version,
-        openai_api_deployment_id=args.openai_api_deployment_id,
     )
 
     if args.dirty_commits:
