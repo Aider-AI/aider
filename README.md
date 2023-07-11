@@ -14,7 +14,7 @@ It also has features that [help GPT-4 understand and modify larger codebases](ht
 - [Usage](#usage)
 - [In-chat commands](#in-chat-commands)
 - [Tips](#tips)
-- [GPT-4 vs GPT-3.5](#gpt-4-vs-gpt-35)
+- [GPT-4 vs GPT-3.5](https://aider.chat/docs/faq.html#gpt-4-vs-gpt-35)
 - [Installation](https://aider.chat/docs/install.html)
 - [FAQ](https://aider.chat/docs/faq.html)
 
@@ -119,44 +119,6 @@ Aider has some ability to help GPT figure out which files to edit all by itself,
 * GPT can only see the content of the files you specifically "add to the chat". Aider also sends GPT-4 a [map of your entire git repo](https://aider.chat/docs/ctags.html). So GPT may ask to see additional files if it feels that's needed for your requests.
 * I also shared some general [GPT coding tips on Hacker News](https://news.ycombinator.com/item?id=36211879).
 
-## GPT-4 vs GPT-3.5
-
-Aider supports all of OpenAI's chat models.
-You can choose a model with the `--model` command line argument.
-For a discussion of using other non-OpenAI models, see the
-[FAQ](https://github.com/paul-gauthier/aider/blob/main/docs/faq.md#can-i-use-aider-with-other-llms-local-llms-etc).
-
-You will probably get the best results with one of the GPT-4 models.
-They have large context windows, better coding skills and
-they generally obey the instructions in the system prompt.
-GPT-4 is able to structure code edits as simple "diffs"
-and use a
-[repository map](https://aider.chat/docs/ctags.html)
-to improve its ability to make changes in larger codebases.
-
-GPT-3.5 is supported more experimentally
-and is limited to editing somewhat smaller codebases.
-It is less able to follow instructions and
-can't reliably return code edits as "diffs".
-Aider disables the
-repository map
-when using GPT-3.5.
-
-For a detailed and quantitative comparison, please see the
-[code editing benchmark results for GPT-3.5 and GPT-4](https://aider.chat/docs/benchmarks.html).
-
-In practice, this means you can use aider to edit a set of source files
-that total up to the sizes below.
-Just add the specific set of files to the chat
-that are relevant to the change you are requesting.
-This minimizes your use of the context window, as well as costs.
-
-| Model             | Context<br>Size | Edit<br>Format | Max<br>File Size | Max<br>File Size | Repo<br>Map? |
-| ----------------- | -- | --     | -----| -- | -- |
-| gpt-3.5-turbo     |  4k tokens | whole file | 2k tokens | ~8k bytes | no |
-| gpt-3.5-turbo-16k | 16k tokens | whole file | 8k tokens | ~32k bytes | no |
-| gpt-4             |  8k tokens | diffs | 8k tokens | ~32k bytes | yes |
-| gpt-4-32k         | 32k tokens | diffs | 32k tokens  | ~128k bytes | yes |
 
 ## Kind words from users
 
@@ -165,6 +127,17 @@ This minimizes your use of the context window, as well as costs.
 * "What an amazing tool. It's incredible." -- [valyagolev](https://github.com/paul-gauthier/aider/issues/6#issue-1722897858)
 * "It was WAY faster than I would be getting off the ground and making the first few working versions." -- [Daniel Feldman](https://twitter.com/d_feldman/status/1662295077387923456)
 * "Amazing project, definitely the best AI coding assistant I've used." -- [joshuavial](https://github.com/paul-gauthier/aider/issues/84)
+
+## GPT-4 vs GPT-3.5
+
+Aider supports all of OpenAI's chat models.
+You can choose a model with the `--model` command line argument.
+
+You should probably use GPT-4 if you can. For more details see the
+[FAQ entry that compares GPT-4 vs GPT-3.5](https://aider.chat/docs/faq.html#gpt-4-vs-gpt-35).
+
+For a discussion of using other non-OpenAI models, see the
+[FAQ about other LLMs](https://aider.chat/docs/faq.html#can-i-use-aider-with-other-llms-local-llms-etc).
 
 ## Installation
 
