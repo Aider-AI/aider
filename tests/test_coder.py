@@ -3,6 +3,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+import git
 import openai
 import requests
 
@@ -374,7 +375,9 @@ class TestCoder(unittest.TestCase):
             repo.git.add(filename)
 
         # Create a Coder object on the temporary directory
-        coder = Coder.create(models.GPT4, None, io=InputOutput(), openai_api_key="fake_key", root=tempdir)
+        coder = Coder.create(
+            models.GPT4, None, io=InputOutput(), openai_api_key="fake_key", root=tempdir
+        )
 
         # Assert that coder.get_tracked_files() returns the three filenames
         self.assertEqual(set(coder.get_tracked_files()), set(filenames))
