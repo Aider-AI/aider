@@ -54,6 +54,7 @@ def main():
         r'__version__ = ".+?"', f'__version__ = "{new_version}-dev"', content
     )
 
+    print()
     print("Updating aider/__init__.py with new dev version:")
     print(updated_dev_content)
     if not dry_run:
