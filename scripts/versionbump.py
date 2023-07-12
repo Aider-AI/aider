@@ -71,11 +71,6 @@ def main():
         if not dry_run:
             subprocess.run(cmd, check=True)
 
-    for cmd in git_commands:
-        print(f"Running: {' '.join(cmd)}")
-        if not dry_run:
-            subprocess.run(cmd, check=True)
-
 
 if __name__ == "__main__":
     main()
