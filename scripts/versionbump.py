@@ -23,7 +23,7 @@ def main():
     with open("aider/__init__.py", "r") as f:
         content = f.read()
 
-    current_version = re.search(r'__version__ = "(.+?)"', content).group(1)
+    current_version = re.search(r'__version__ = "(.+?)"', content).group(1).split('-dev')[0]
     if new_version <= version.parse(current_version):
         raise ValueError(
             f"New version {new_version} must be greater than the current version {current_version}"
