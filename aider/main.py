@@ -245,6 +245,12 @@ def main(args=None, input=None, output=None):
     ##########
     other_group = parser.add_argument_group("Other Settings")
     other_group.add_argument(
+        "--show-map",
+        action="store_true",
+        help="Print the repo map and exit",
+        default=False,
+    )
+    other_group.add_argument(
         "--version",
         action="version",
         version=f"%(prog)s {__version__}",
@@ -363,24 +369,29 @@ def main(args=None, input=None, output=None):
             setattr(openai, mod_key, val)
             io.tool_output(f"Setting openai.{mod_key}={val}")
 
-    coder = Coder.create(
-        main_model,
-        args.edit_format,
-        io,
-        ##
-        fnames=args.files,
-        pretty=args.pretty,
-        show_diffs=args.show_diffs,
-        auto_commits=args.auto_commits,
-        dirty_commits=args.dirty_commits,
-        dry_run=args.dry_run,
-        map_tokens=args.map_tokens,
-        verbose=args.verbose,
-        assistant_output_color=args.assistant_output_color,
-        code_theme=args.code_theme,
-        stream=args.stream,
-        use_git=args.git,
-    )
+    if args.show_map:
+        repo_map = RepoMap(map_tokens=args.map_tokens, root=git_root, main_model=main_model, io=io, verbose=args.verbose)
+        print(repo_map)
+        sys.exit(0)
+    else:
+        coder = Coder.create(
+            main_model,
+            args.edit_format,
+            io,
+            ##
+            fnames=args.files,
+            pretty=args.pretty,
+            show_diffs=args.show_diffs,
+            auto_commits=args.auto_commits,
+            dirty_commits=args.dirty_commits,
+            dry_run=args.dry_run,
+            map_tokens=args.map_tokens,
+            verbose=args.verbose,
+            assistant_output_color=args.assistant_output_color,
+            code_theme=args.code_theme,
+            stream=args.stream,
+            use_git=args.git,
+        )
 
     if args.dirty_commits:
         coder.commit(ask=True, which="repo_files")
