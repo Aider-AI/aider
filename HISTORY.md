@@ -3,6 +3,7 @@
 ### Next release
 
 - Added `--dark-mode` and `--light-mode` to select colors optimized for screen background
+- Install docs link to [NeoVim plugin](https://github.com/joshuavial/aider.nvim) by @joshuavial
 - Reorganized the `--help` output
 - Bugfix/improvement to whole edit format, may improve coding editing for GPT-3.5
 - Bugfix and tests around git filenames with unicode characters
