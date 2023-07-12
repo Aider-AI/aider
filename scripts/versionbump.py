@@ -52,6 +52,33 @@ def main():
         else:
             subprocess.run(cmd, check=True)
 
+    updated_dev_content = re.sub(r'__version__ = ".+?"', f'__version__ = "{new_version}-dev"', content)
+
+    if dry_run:
+        print("Updating aider/__init__.py with new dev version:")
+        print(updated_dev_content)
+    else:
+        with open("aider/__init__.py", "w") as f:
+            f.write(updated_dev_content)
+
+    git_commands_dev = [
+        ["git", "add", "aider/__init__.py"],
+        ["git", "commit", "-m", f"set version to {new_version}-dev"],
+        ["git", "push", "origin"],
+    ]
+
+    for cmd in git_commands_dev:
+        if dry_run:
+            print(f"Running: {' '.join(cmd)}")
+        else:
+            subprocess.run(cmd, check=True)
+
+    for cmd in git_commands:
+        if dry_run:
+            print(f"Running: {' '.join(cmd)}")
+        else:
+            subprocess.run(cmd, check=True)
+
 
 if __name__ == "__main__":
     main()
