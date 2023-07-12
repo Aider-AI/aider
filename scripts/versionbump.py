@@ -23,7 +23,7 @@ def main():
     with open("aider/__init__.py", "r") as f:
         content = f.read()
 
-    current_version = re.search(r'__version__ = "(.+?)"', content).group(1).split('-dev')[0]
+    current_version = re.search(r'__version__ = "(.+?)"', content).group(1).split("-dev")[0]
     if new_version <= version.parse(current_version):
         raise ValueError(
             f"New version {new_version} must be greater than the current version {current_version}"
@@ -31,10 +31,9 @@ def main():
 
     updated_content = re.sub(r'__version__ = ".+?"', f'__version__ = "{new_version}"', content)
 
-    if dry_run:
-        print("Updating aider/__init__.py with new version:")
-        print(updated_content)
-    else:
+    print("Updating aider/__init__.py with new version:")
+    print(updated_content)
+    if not dry_run:
         with open("aider/__init__.py", "w") as f:
             f.write(updated_content)
 
@@ -47,17 +46,17 @@ def main():
     ]
 
     for cmd in git_commands:
-        if dry_run:
-            print(f"Running: {' '.join(cmd)}")
-        else:
+        print(f"Running: {' '.join(cmd)}")
+        if not dry_run:
             subprocess.run(cmd, check=True)
 
-    updated_dev_content = re.sub(r'__version__ = ".+?"', f'__version__ = "{new_version}-dev"', content)
+    updated_dev_content = re.sub(
+        r'__version__ = ".+?"', f'__version__ = "{new_version}-dev"', content
+    )
 
-    if dry_run:
-        print("Updating aider/__init__.py with new dev version:")
-        print(updated_dev_content)
-    else:
+    print("Updating aider/__init__.py with new dev version:")
+    print(updated_dev_content)
+    if not dry_run:
         with open("aider/__init__.py", "w") as f:
             f.write(updated_dev_content)
 
@@ -68,15 +67,13 @@ def main():
     ]
 
     for cmd in git_commands_dev:
-        if dry_run:
-            print(f"Running: {' '.join(cmd)}")
-        else:
+        print(f"Running: {' '.join(cmd)}")
+        if not dry_run:
             subprocess.run(cmd, check=True)
 
     for cmd in git_commands:
-        if dry_run:
-            print(f"Running: {' '.join(cmd)}")
-        else:
+        print(f"Running: {' '.join(cmd)}")
+        if not dry_run:
             subprocess.run(cmd, check=True)
 
 
