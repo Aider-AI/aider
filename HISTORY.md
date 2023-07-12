@@ -1,6 +1,6 @@
 # Release history
 
-### Next release
+### v0.8.3
 
 - Added `--dark-mode` and `--light-mode` to select colors optimized for terminal background
 - Install docs link to [NeoVim plugin](https://github.com/joshuavial/aider.nvim) by @joshuavial
