@@ -28,7 +28,7 @@ class TestCoder(unittest.TestCase):
         mock_io = MagicMock()
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(models.GPT4, None, mock_io, openai_api_key="fake_key")
+        coder = Coder.create(models.GPT4, None, mock_io)
 
         # Mock the git repo
         mock = MagicMock()
@@ -62,9 +62,7 @@ class TestCoder(unittest.TestCase):
         files = [file1, file2]
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(
-            models.GPT4, None, io=InputOutput(), openai_api_key="fake_key", fnames=files
-        )
+        coder = Coder.create(models.GPT4, None, io=InputOutput(), fnames=files)
 
         content = coder.get_files_content().splitlines()
         self.assertIn("file1.txt", content)
@@ -75,7 +73,7 @@ class TestCoder(unittest.TestCase):
         mock_io = MagicMock()
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(models.GPT4, None, mock_io, openai_api_key="fake_key")
+        coder = Coder.create(models.GPT4, None, mock_io)
 
         mock = MagicMock()
         mock.return_value = set(["file1.txt", "file2.py"])
@@ -101,7 +99,7 @@ class TestCoder(unittest.TestCase):
         mock_io = MagicMock()
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(models.GPT4, None, mock_io, openai_api_key="fake_key")
+        coder = Coder.create(models.GPT4, None, mock_io)
 
         mock = MagicMock()
         mock.return_value = set(["file1.txt", "other/file1.txt"])
@@ -117,7 +115,7 @@ class TestCoder(unittest.TestCase):
         mock_io = MagicMock()
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(models.GPT4, None, mock_io, openai_api_key="fake_key")
+        coder = Coder.create(models.GPT4, None, mock_io)
 
         # Mock the send method to set partial_response_content and return False
         def mock_send(*args, **kwargs):
@@ -137,7 +135,7 @@ class TestCoder(unittest.TestCase):
         mock_io = MagicMock()
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(models.GPT4, None, mock_io, openai_api_key="fake_key")
+        coder = Coder.create(models.GPT4, None, mock_io)
 
         # Mock the send method to set partial_response_content and return False
         def mock_send(*args, **kwargs):
@@ -157,7 +155,7 @@ class TestCoder(unittest.TestCase):
         mock_io = MagicMock()
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(models.GPT4, None, mock_io, openai_api_key="fake_key")
+        coder = Coder.create(models.GPT4, None, mock_io)
 
         # Mock the send method to set partial_response_content and return False
         def mock_send(*args, **kwargs):
@@ -179,7 +177,7 @@ class TestCoder(unittest.TestCase):
         mock_io = MagicMock()
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(models.GPT4, None, mock_io, openai_api_key="fake_key")
+        coder = Coder.create(models.GPT4, None, mock_io)
 
         # Set up the mock to raise RateLimitError on
         # the first call and return None on the second call
@@ -201,7 +199,7 @@ class TestCoder(unittest.TestCase):
         mock_io = MagicMock()
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(models.GPT4, None, mock_io, openai_api_key="fake_key")
+        coder = Coder.create(models.GPT4, None, mock_io)
 
         # Set up the mock to raise ConnectionError on the first call
         # and return None on the second call
@@ -230,9 +228,7 @@ class TestCoder(unittest.TestCase):
         files = [file1, file2]
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(
-            models.GPT4, None, io=InputOutput(), openai_api_key="fake_key", fnames=files
-        )
+        coder = Coder.create(models.GPT4, None, io=InputOutput(), fnames=files)
 
         def mock_send(*args, **kwargs):
             coder.partial_response_content = "ok"
@@ -258,9 +254,7 @@ class TestCoder(unittest.TestCase):
         files = [file1, file2]
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(
-            models.GPT4, None, io=InputOutput(), openai_api_key="fake_key", fnames=files
-        )
+        coder = Coder.create(models.GPT4, None, io=InputOutput(), fnames=files)
 
         def mock_send(*args, **kwargs):
             coder.partial_response_content = "ok"
@@ -290,9 +284,7 @@ class TestCoder(unittest.TestCase):
         files = [file1]
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(
-            models.GPT4, None, io=InputOutput(), openai_api_key="fake_key", fnames=files
-        )
+        coder = Coder.create(models.GPT4, None, io=InputOutput(), fnames=files)
 
         def mock_send(*args, **kwargs):
             coder.partial_response_content = "ok"
@@ -320,7 +312,6 @@ class TestCoder(unittest.TestCase):
             models.GPT4,
             None,
             io=InputOutput(encoding=encoding),
-            openai_api_key="fake_key",
             fnames=files,
         )
 
@@ -349,7 +340,7 @@ class TestCoder(unittest.TestCase):
         mock_io = MagicMock()
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(models.GPT4, None, mock_io, openai_api_key="fake_key")
+        coder = Coder.create(models.GPT4, None, mock_io)
 
         # Set up the mock to raise InvalidRequestError
         mock_chat_completion_create.side_effect = openai.error.InvalidRequestError(
@@ -393,7 +384,6 @@ class TestCoder(unittest.TestCase):
             models.GPT4,
             None,
             io=InputOutput(),
-            openai_api_key="fake_key",
             fnames=[str(tempdir / filenames[0])],
         )
 

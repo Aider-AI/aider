@@ -29,7 +29,7 @@ class TestCommands(TestCase):
         io = InputOutput(pretty=False, yes=True)
         from aider.coders import Coder
 
-        coder = Coder.create(models.GPT35, None, io, openai_api_key="deadbeef")
+        coder = Coder.create(models.GPT35, None, io)
         commands = Commands(io, coder)
 
         # Call the cmd_add method with 'foo.txt' and 'bar.txt' as a single string
@@ -44,7 +44,7 @@ class TestCommands(TestCase):
         io = InputOutput(pretty=False, yes=True)
         from aider.coders import Coder
 
-        coder = Coder.create(models.GPT35, None, io, openai_api_key="deadbeef")
+        coder = Coder.create(models.GPT35, None, io)
         commands = Commands(io, coder)
 
         # Create some test files
@@ -70,7 +70,7 @@ class TestCommands(TestCase):
         io = InputOutput(pretty=False, yes=True)
         from aider.coders import Coder
 
-        coder = Coder.create(models.GPT35, None, io, openai_api_key="deadbeef")
+        coder = Coder.create(models.GPT35, None, io)
         commands = Commands(io, coder)
 
         # Call the cmd_add method with a non-existent file pattern
@@ -84,7 +84,7 @@ class TestCommands(TestCase):
         io = InputOutput(pretty=False, yes=True)
         from aider.coders import Coder
 
-        coder = Coder.create(models.GPT35, None, io, openai_api_key="deadbeef")
+        coder = Coder.create(models.GPT35, None, io)
         commands = Commands(io, coder)
 
         # Create a directory and add files to it
@@ -117,7 +117,7 @@ class TestCommands(TestCase):
         io = InputOutput(pretty=False, yes=True)
         from aider.coders import Coder
 
-        coder = Coder.create(models.GPT35, None, io, openai_api_key="deadbeef")
+        coder = Coder.create(models.GPT35, None, io)
         commands = Commands(io, coder)
 
         subdir = Path("subdir")
@@ -144,7 +144,7 @@ class TestCommands(TestCase):
         io = InputOutput(pretty=False, yes=True)
         from aider.coders import Coder
 
-        coder = Coder.create(models.GPT35, None, io, openai_api_key="deadbeef")
+        coder = Coder.create(models.GPT35, None, io)
         commands = Commands(io, coder)
 
         # Create a new file foo.bad which will fail to decode as utf-8
@@ -159,7 +159,7 @@ class TestCommands(TestCase):
         # Initialize the Commands and InputOutput objects
         io = InputOutput(pretty=False, yes=True)
 
-        coder = Coder.create(models.GPT35, None, io, openai_api_key="deadbeef")
+        coder = Coder.create(models.GPT35, None, io)
         commands = Commands(io, coder)
 
         commands.cmd_add("foo.txt bar.txt")

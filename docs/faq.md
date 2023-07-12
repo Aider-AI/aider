@@ -50,11 +50,47 @@ Adopting new LLMs will probably require a similar effort to tailor the
 prompting and edit formats.
 
 That said, aider does provide some features to experiment with other models.
+
+### Azure
+
+Aider can be configured to connect to the OpenAI models on Azure.
+Aider supports the configuration changes specified in the
+[official openai python library docs](https://github.com/openai/openai-python#microsoft-azure-endpoints).
+You should be able to run aider with the following arguments to connect to Azure:
+
+```
+$ aider \
+    --openai-api-type azure \
+    --openai-api-key your-key-goes-here \
+    --openai-api-base https://example-endpoint.openai.azure.com \
+    --openai-api-version 2023-05-15 \
+    --openai-api-deployment-id deployment-name \
+    ...
+```
+
+You could also store those values in an `.aider.conf.yml` file in your home directory:
+
+```
+openai-api-type: azure
+openai-api-key: your-key-goes-here
+openai-api-base: https://example-endpoint.openai.azure.com
+openai-api-version: 2023-05-15
+openai-api-deployment-id: deployment-name
+```
+
+See the
+[official Azure documentation on using OpenAI models](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/chatgpt-quickstart?tabs=command-line&pivots=programming-language-python)
+for more information on how to populate the above configuration values.
+
+### Other LLMs
+
 If you can make the model accessible via an OpenAI compatible API,
 you can use `--openai-api-base` to connect to a different API endpoint.
 
 Here are some
 [GitHub issues which may contain relevant information](https://github.com/paul-gauthier/aider/issues?q=is%3Aissue+%22openai-api-base%22+).
+
+### Local LLMs
 
 [LocalAI](https://github.com/go-skynet/LocalAI)
 and

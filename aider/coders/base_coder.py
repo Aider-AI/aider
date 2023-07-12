@@ -53,8 +53,6 @@ class Coder:
         main_model,
         edit_format,
         io,
-        openai_api_key,
-        openai_api_base="https://api.openai.com/v1",
         **kwargs,
     ):
         from . import (
@@ -64,9 +62,6 @@ class Coder:
             WholeFileCoder,
             WholeFileFunctionCoder,
         )
-
-        openai.api_key = openai_api_key
-        openai.api_base = openai_api_base
 
         if not main_model:
             main_model = models.GPT35_16k
@@ -629,6 +624,12 @@ class Coder:
         )
         if functions is not None:
             kwargs["functions"] = self.functions
+
+        # we are abusing the openai object to stash these values
+        if hasattr(openai, "api_deployment_id"):
+            kwargs["deployment_id"] = openai.api_deployment_id
+        if hasattr(openai, "api_engine"):
+            kwargs["engine"] = openai.api_engine
 
         # Generate SHA1 hash of kwargs and append it to chat_completion_call_hashes
         hash_object = hashlib.sha1(json.dumps(kwargs, sort_keys=True).encode())
