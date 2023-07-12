@@ -5,8 +5,6 @@
 
 Aider supports all of OpenAI's chat models.
 You can choose a model with the `--model` command line argument.
-For a discussion of using other non-OpenAI models, see the
-[FAQ](#can-i-use-aider-with-other-llms-local-llms-etc).
 
 You will probably get the best results with one of the GPT-4 models.
 They have large context windows, better coding skills and
