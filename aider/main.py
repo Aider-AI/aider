@@ -293,6 +293,8 @@ def main(args=None, input=None, output=None):
         dry_run=args.dry_run,
     )
 
+    io.tool_output(f"Aider v{__version__}")
+
     if not git_root and args.git:
         if io.confirm_ask("No git repo found, create one to track GPT's changes (recommended)?"):
             repo = git.Repo.init(os.getcwd())
