@@ -1,5 +1,9 @@
 # Release history
 
+### Next release
+
+- Support for the OpenAI models in [Azure](https://aider.chat/docs/faq.html#azure)
+
 ### v0.8.3
 
 - Added `--dark-mode` and `--light-mode` to select colors optimized for terminal background
