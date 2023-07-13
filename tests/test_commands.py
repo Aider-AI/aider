@@ -147,6 +147,8 @@ class TestCommands(TestCase):
         repo.config_writer().set_value("user", "email", "testuser@example.com").release()
 
         the_file = "subdir/down.py"
+        abs_the_file = str(Path(the_file).resolve())
+
         # Create three empty files and add them to the git repository
         filenames = ["up1.py", the_file]
         for filename in filenames:
@@ -165,11 +167,12 @@ class TestCommands(TestCase):
         commands = Commands(io, coder)
 
         dump(list(Path(".").glob("*")))
+        dump(list(Path("..").glob("*")))
 
         # Add some files to the chat session
         commands.cmd_add(the_file)
 
-        self.assertIn(str(Path(the_file).resolve()), coder.abs_fnames)
+        self.assertIn(abs_the_file, coder.abs_fnames)
 
     def test_cmd_add_bad_encoding(self):
         # Initialize the Commands and InputOutput objects
