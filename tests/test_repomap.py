@@ -133,6 +133,8 @@ print(my_function(3, 4))
             for file in test_files:
                 self.assertIn(file, result)
 
+            del repo_map
+
 
 if __name__ == "__main__":
     unittest.main()
