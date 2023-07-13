@@ -78,6 +78,17 @@ Some things to be aware of:
 * The `ctags` command needs to be on your shell path so that it will run by default when aider invokes `ctags ...`.
 * You need a build which includes the json feature. You can check by running `ctags --version` and looking for `+json` in the `Optional compiled features` list.
 
+```bash
+$ ctags --version
+
+Universal Ctags 6.0.0, Copyright (C) 2015-2022 Universal Ctags Team
+Universal Ctags is derived from Exuberant Ctags.
+Exuberant Ctags 5.8, Copyright (C) 1996-2009 Darren Hiebert
+  Compiled: Jun 25 2023, 07:31:18
+  URL: https://ctags.io/
+  Output version: 0.0
+  Optional compiled features: +wildcards, +regex, +gnulib_fnmatch, +gnulib_regex, +iconv, +option-directory, +xpath, +json, +interactive, +yaml, +case-insensitive-filenames, +packcc, +optscript, +pcre2
+```
 
 ## Add aider to your editor (optional)
 
