@@ -228,7 +228,7 @@ class Commands:
                 yield Completion(fname, start_position=-len(partial))
 
     def glob_filtered_to_repo(self, pattern):
-        raw_matched_files = list(Path(self.coder.root).glob(pattern))
+        raw_matched_files = list(Path.cwd().resolve().glob(pattern))
 
         matched_files = []
         for fn in raw_matched_files:

@@ -146,17 +146,16 @@ class TestCommands(TestCase):
         repo.config_writer().set_value("user", "name", "Test User").release()
         repo.config_writer().set_value("user", "email", "testuser@example.com").release()
 
-        the_file = "subdir/down.py"
-        abs_the_file = str(Path(the_file).resolve())
-
         # Create three empty files and add them to the git repository
-        filenames = ["up1.py", the_file]
+        filenames = ["one.py", "subdir/two.py", "anotherdir/three.py"]
         for filename in filenames:
             file_path = Path(filename)
             file_path.parent.mkdir(parents=True, exist_ok=True)
             file_path.touch()
             repo.git.add(str(file_path))
         repo.git.commit("-m", "added")
+
+        filenames = [str(Path(fn).resolve()) for fn in filenames]
 
         ###
 
@@ -166,10 +165,17 @@ class TestCommands(TestCase):
         coder = Coder.create(models.GPT35, None, io)
         commands = Commands(io, coder)
 
-        # Add some files to the chat session
-        commands.cmd_add(the_file)
+        # this should get added
+        commands.cmd_add("anotherdir/three.py")
 
-        self.assertIn(abs_the_file, coder.abs_fnames)
+        # this should add two.py
+        commands.cmd_add("*.py")
+
+        self.assertNotIn(filenames[0], coder.abs_fnames)
+        self.assertIn(filenames[1], coder.abs_fnames)
+        self.assertIn(filenames[2], coder.abs_fnames)
+
+        del coder
 
     def test_cmd_add_bad_encoding(self):
         # Initialize the Commands and InputOutput objects
