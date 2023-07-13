@@ -1,4 +1,5 @@
 theme: jekyll-theme-cayman
+url: "https://aider.chat"
 
 defaults:
   - scope:
