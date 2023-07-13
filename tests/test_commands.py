@@ -7,6 +7,8 @@ from io import StringIO
 from pathlib import Path
 from unittest import TestCase
 
+import git
+
 from aider import models
 from aider.coders import Coder
 from aider.commands import Commands
@@ -138,6 +140,36 @@ class TestCommands(TestCase):
 
         self.assertIn(str(Path("test1.py").resolve()), coder.abs_fnames)
         self.assertNotIn(str(Path("test2.py").resolve()), coder.abs_fnames)
+
+    def test_cmd_add_from_subdir(self):
+        repo = git.Repo.init()
+        repo.config_writer().set_value("user", "name", "Test User").release()
+        repo.config_writer().set_value("user", "email", "testuser@example.com").release()
+
+        the_file = "subdir/down.py"
+        # Create three empty files and add them to the git repository
+        filenames = ["up1.py", the_file]
+        for filename in filenames:
+            file_path = Path(filename)
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            file_path.touch()
+            repo.git.add(str(file_path))
+        repo.git.commit("-m", "added")
+
+        ###
+
+        os.chdir("subdir")
+
+        io = InputOutput(pretty=False, yes=True)
+        coder = Coder.create(models.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        dump(list(Path(".").glob("*")))
+
+        # Add some files to the chat session
+        commands.cmd_add(the_file)
+
+        self.assertIn(str(Path(the_file).resolve()), coder.abs_fnames)
 
     def test_cmd_add_bad_encoding(self):
         # Initialize the Commands and InputOutput objects
