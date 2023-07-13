@@ -6,6 +6,7 @@ import subprocess
 import sys
 import tempfile
 from collections import Counter, defaultdict
+from pathlib import Path
 
 import networkx as nx
 import tiktoken
@@ -231,13 +232,13 @@ class RepoMap:
         return True
 
     def load_tags_cache(self):
-        self.TAGS_CACHE = Cache(self.TAGS_CACHE_DIR)
+        self.TAGS_CACHE = Cache(Path(self.root) / self.TAGS_CACHE_DIR)
 
     def save_tags_cache(self):
         pass
 
     def load_ident_cache(self):
-        self.IDENT_CACHE = Cache(self.IDENT_CACHE_DIR)
+        self.IDENT_CACHE = Cache(Path(self.root) / self.IDENT_CACHE_DIR)
 
     def save_ident_cache(self):
         pass
