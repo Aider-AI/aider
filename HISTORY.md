@@ -3,6 +3,8 @@
 ### Next release
 
 - Support for the OpenAI models in [Azure](https://aider.chat/docs/faq.html#azure)
+- Added `--show-repo-map`
+- Redacted api key from `--verbose` output
 
 ### v0.8.3
 

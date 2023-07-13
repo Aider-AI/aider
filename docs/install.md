@@ -92,9 +92,21 @@ Exuberant Ctags 5.8, Copyright (C) 1996-2009 Darren Hiebert
 
 ## Add aider to your editor (optional)
 
-[joshuavial](https://github.com/joshuavial) has provided a NeoVim plugin for aider:
+[joshuavial](https://github.com/joshuavial) has been working on editor integrations.
 
-* [https://github.com/joshuavial/aider.nvim](https://github.com/joshuavial/aider.nvim)
+### NeoVim
+
+He provided a NeoVim plugin for aider:
+
+[https://github.com/joshuavial/aider.nvim](https://github.com/joshuavial/aider.nvim)
+
+### VS Code
+
+He also confirmed that aider works inside a VS Code terminal window, but
+found that you should
+[run with `--no-pretty` to avoid flickering issues](https://github.com/paul-gauthier/aider/issues/68#issuecomment-1634985231).
+
+### Other editors
 
 If you are interested in creating an aider plugin for your favorite editor,
 please let me know by opening a
