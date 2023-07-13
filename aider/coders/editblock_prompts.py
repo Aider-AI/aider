@@ -18,7 +18,7 @@ Once you understand the request you MUST:
 
     system_reminder = """You MUST format EVERY code change with an *edit block* like this:
 
-```python
+{fence[0]}python
 some/dir/example.py
 <<<<<<< ORIGINAL
     # some comment
@@ -29,9 +29,9 @@ some/dir/example.py
     # Function to add
     def add(a,b):
 >>>>>>> UPDATED
-```
+{fence[1]}
 
-Every *edit block* must be fenced w/triple backticks with the correct code language.
+Every *edit block* must be fenced with {fence[0]}...{fence[1]} with the correct code language.
 Every *edit block* must start with the full path! *NEVER* propose edit blocks for *read-only* files.
 The ORIGINAL section must be an *exact* set of lines from the file:
 - NEVER SKIP LINES!
