@@ -344,6 +344,14 @@ class Coder:
 
         return prompt
 
+    def get_repo_map(self):
+        if not self.repo_map:
+            return
+
+        other_files = set(self.get_all_abs_files()) - set(self.abs_fnames)
+        repo_content = self.repo_map.get_repo_map(self.abs_fnames, other_files)
+        return repo_content
+
     def get_files_messages(self):
         all_content = ""
         if self.abs_fnames:
@@ -354,13 +362,11 @@ class Coder:
 
         all_content += files_content
 
-        other_files = set(self.get_all_abs_files()) - set(self.abs_fnames)
-        if self.repo_map:
-            repo_content = self.repo_map.get_repo_map(self.abs_fnames, other_files)
-            if repo_content:
-                if all_content:
-                    all_content += "\n"
-                all_content += repo_content
+        repo_content = self.get_repo_map()
+        if repo_content:
+            if all_content:
+                all_content += "\n"
+            all_content += repo_content
 
         files_messages = [
             dict(role="user", content=all_content),

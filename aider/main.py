@@ -389,10 +389,9 @@ def main(args=None, input=None, output=None):
     )
 
     if args.show_repo_map:
-        other_files = set(coder.get_all_abs_files()) - set(coder.abs_fnames)
-        if coder.repo_map:
-            repo_content = coder.repo_map.get_repo_map(coder.abs_fnames, other_files)
-            print(repo_content)
+        repo_map = coder.get_repo_map()
+        if repo_map:
+            io.tool_output(repo_map)
         return
 
     if args.dirty_commits:
