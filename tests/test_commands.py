@@ -166,9 +166,6 @@ class TestCommands(TestCase):
         coder = Coder.create(models.GPT35, None, io)
         commands = Commands(io, coder)
 
-        dump(list(Path(".").glob("*")))
-        dump(list(Path("..").glob("*")))
-
         # Add some files to the chat session
         commands.cmd_add(the_file)
 

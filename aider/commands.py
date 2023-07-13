@@ -229,15 +229,12 @@ class Commands:
 
     def glob_filtered_to_repo(self, pattern):
         raw_matched_files = list(Path(self.coder.root).glob(pattern))
-        dump(self.coder.root)
-        dump(raw_matched_files)
 
         matched_files = []
         for fn in raw_matched_files:
             matched_files += expand_subdir(fn)
 
         matched_files = [str(fn.relative_to(self.coder.root)) for fn in matched_files]
-        dump(matched_files)
 
         # if repo, filter against it
         if self.coder.repo:
