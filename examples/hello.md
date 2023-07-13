@@ -2,6 +2,9 @@
 
 Here is the simplest possible "hello world" example of using aider:
 
+<br/>
+<br/>
+<br/>
 <div class="chat-transcript" markdown="1">
 
 #### change hello to goodbye
@@ -23,3 +26,6 @@ print("goodbye")
 > Commit 672ae42 aider: Changed output from "hello" to "goodbye" in hello.py.
 
 </div>
+<br/>
+<br/>
+<br/>
