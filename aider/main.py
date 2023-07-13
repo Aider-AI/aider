@@ -338,12 +338,16 @@ def main(args=None, input=None, output=None):
                     )
             io.tool_output("Git repository created in the current working directory.")
 
+    def scrub_sensitive_info(text):
+        # Replace sensitive information with placeholder
+        return text.replace(args.openai_api_key, '***')
+
     if args.verbose:
-        show = parser.format_values()
+        show = scrub_sensitive_info(parser.format_values())
         io.tool_output(show)
         io.tool_output("Option settings:")
         for arg, val in sorted(vars(args).items()):
-            io.tool_output(f"  - {arg}: {val}")
+            io.tool_output(f"  - {arg}: {scrub_sensitive_info(str(val))}")
 
     io.tool_output(*sys.argv, log_only=True)
 
