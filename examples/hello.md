@@ -19,7 +19,7 @@ print("goodbye")
 >>>>>>> UPDATED
 ```
 
-> Applied edit to hello.py
+> Applied edit to hello.py  
 > Commit 672ae42 aider: Changed output from "hello" to "goodbye" in hello.py.
 
 </div>
