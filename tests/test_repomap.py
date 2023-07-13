@@ -33,6 +33,9 @@ class TestRepoMap(unittest.TestCase):
             self.assertIn("test_file3.md", result)
             self.assertIn("test_file4.json", result)
 
+            # close the open cache files, so Windows won't error
+            del repo_map
+
     def test_get_repo_map_with_identifiers(self):
         # Create a temporary directory with a sample Python file containing identifiers
         test_file1 = "test_file_with_identifiers.py"
@@ -82,6 +85,9 @@ print(my_function(3, 4))
             self.assertIn("my_method", result)
             self.assertIn("my_function", result)
             self.assertIn("test_file_pass.py", result)
+
+            # close the open cache files, so Windows won't error
+            del repo_map
 
     def test_check_for_ctags_failure(self):
         with patch("subprocess.run") as mock_run:
@@ -133,6 +139,7 @@ print(my_function(3, 4))
             for file in test_files:
                 self.assertIn(file, result)
 
+            # close the open cache files, so Windows won't error
             del repo_map
 
 
