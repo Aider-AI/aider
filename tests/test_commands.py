@@ -147,7 +147,7 @@ class TestCommands(TestCase):
         repo.config_writer().set_value("user", "email", "testuser@example.com").release()
 
         # Create three empty files and add them to the git repository
-        filenames = ["one.py", "subdir/two.py", "anotherdir/three.py"]
+        filenames = ["one.py", Path("subdir") / "two.py", Path("anotherdir") / "three.py"]
         for filename in filenames:
             file_path = Path(filename)
             file_path.parent.mkdir(parents=True, exist_ok=True)
@@ -166,7 +166,7 @@ class TestCommands(TestCase):
         commands = Commands(io, coder)
 
         # this should get added
-        commands.cmd_add("anotherdir/three.py")
+        commands.cmd_add(str(Path("anotherdir") / "three.py"))
 
         # this should add two.py
         commands.cmd_add("*.py")
