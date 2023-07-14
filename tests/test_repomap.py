@@ -1,10 +1,11 @@
 import os
-import tempfile
 import unittest
 from unittest.mock import patch
 
 from aider.io import InputOutput
 from aider.repomap import RepoMap
+
+from .utils import IgnorantTemporaryDirectory
 
 
 class TestRepoMap(unittest.TestCase):
@@ -17,7 +18,7 @@ class TestRepoMap(unittest.TestCase):
             "test_file4.json",
         ]
 
-        with tempfile.TemporaryDirectory() as temp_dir:
+        with IgnorantTemporaryDirectory() as temp_dir:
             for file in test_files:
                 with open(os.path.join(temp_dir, file), "w") as f:
                     f.write("")
@@ -60,7 +61,7 @@ print(my_function(3, 4))
         test_file3 = "test_file_pass.py"
         file_content3 = "pass"
 
-        with tempfile.TemporaryDirectory() as temp_dir:
+        with IgnorantTemporaryDirectory() as temp_dir:
             with open(os.path.join(temp_dir, test_file1), "w") as f:
                 f.write(file_content1)
 
@@ -124,7 +125,7 @@ print(my_function(3, 4))
             "test_file6.js",
         ]
 
-        with tempfile.TemporaryDirectory() as temp_dir:
+        with IgnorantTemporaryDirectory() as temp_dir:
             for file in test_files:
                 with open(os.path.join(temp_dir, file), "w") as f:
                     f.write("")
