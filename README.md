@@ -28,12 +28,12 @@ get started quickly like this:
 ```
 $ pip install aider-chat
 $ export OPENAI_API_KEY=your-key-goes-here
-$ aider app.py
+$ aider hello.js
 
 Using git repo: .git
-Added app.py to the chat.
+Added hello.js to the chat.
 
-app.py> make a flask app that replies "hello world" on /hello
+hello.js> write a js app that prints hello world
 ```
 
 ## Example chat transcripts
