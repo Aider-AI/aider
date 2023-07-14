@@ -73,6 +73,15 @@ But you may be able to install a compatible version using these commands:
 * Windows: `choco install universal-ctags`
 * Ubuntu: `sudo apt-get install universal-ctags`
 
+You know aider has found a working ctags if you see this output when you launched aider:
+
+```
+Aider v0.8.3-dev
+Model: gpt-4
+Git repo: .git
+Repo-map: universal-ctags using 1024 tokens <======
+```
+
 Some things to be aware of:
 
 * The `ctags` command needs to be on your shell path so that it will run by default when aider invokes `ctags ...`.
