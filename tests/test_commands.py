@@ -24,7 +24,11 @@ class TestCommands(TestCase):
 
     def tearDown(self):
         os.chdir(self.original_cwd)
-        shutil.rmtree(self.tempdir)
+        try:
+            shutil.rmtree(self.tempdir)
+        except Exception:
+            # Windows won't let us clean up sometimes
+            pass
 
     def test_cmd_add(self):
         # Initialize the Commands and InputOutput objects
@@ -175,7 +179,9 @@ class TestCommands(TestCase):
         self.assertIn(filenames[1], coder.abs_fnames)
         self.assertIn(filenames[2], coder.abs_fnames)
 
+        del commands
         del coder
+        del io
 
     def test_cmd_add_bad_encoding(self):
         # Initialize the Commands and InputOutput objects
