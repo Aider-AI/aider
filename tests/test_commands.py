@@ -26,7 +26,7 @@ class TestCommands(TestCase):
         os.chdir(self.original_cwd)
         try:
             shutil.rmtree(self.tempdir)
-        except Exception:
+        except OSError:
             # Windows won't let us clean up sometimes
             pass
 
