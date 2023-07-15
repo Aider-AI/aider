@@ -19,6 +19,47 @@ def get_git_root():
         return None
 
 
+def setup_git(git_root, io):
+    if git_root:
+        return git_root
+
+    if not io.confirm_ask("No git repo found, create one to track GPT's changes (recommended)?"):
+        return
+
+    repo = git.Repo.init(os.getcwd())
+    global_git_config = git.GitConfigParser([str(Path.home() / ".gitconfig")], read_only=True)
+    with repo.config_writer() as git_config:
+        if not global_git_config.has_option("user", "name"):
+            git_config.set_value("user", "name", "Your Name")
+            io.tool_error('Update git name with: git config --global user.name "Your Name"')
+        if not global_git_config.has_option("user", "email"):
+            git_config.set_value("user", "email", "you@example.com")
+            io.tool_error('Update git email with: git config --global user.email "you@example.com"')
+
+    io.tool_output("Git repository created in the current working directory.")
+    git_root = str(Path.cwd().resolve())
+    return git_root
+
+
+def check_gitignore(git_root, io):
+    pat = ".aider*"
+
+    updated_ignore = None
+    gitignore_file = Path(git_root) / ".gitignore"
+    if gitignore_file.exists():
+        content = gitignore_file.read_text(encoding="utf-8")
+        if pat in content.splitlines():
+            return
+    else:
+        content = ""
+
+    if not io.confirm_ask(f"Add {pat} to .gitignore (recommended)?"):
+        return
+
+    updated_ignore = content + "\n" + pat + "\n"
+    gitignore_file.write_text(updated_ignore, encoding="utf-8")
+
+
 def main(args=None, input=None, output=None):
     if args is None:
         args = sys.argv[1:]
@@ -321,35 +362,11 @@ def main(args=None, input=None, output=None):
 
     io.tool_output(f"Aider v{__version__}")
 
-    if not git_root and args.git:
-        if io.confirm_ask("No git repo found, create one to track GPT's changes (recommended)?"):
-            repo = git.Repo.init(os.getcwd())
-            global_git_config = git.GitConfigParser(
-                [str(Path.home() / ".gitconfig")], read_only=True
-            )
-            with repo.config_writer() as git_config:
-                if not global_git_config.has_option("user", "name"):
-                    git_config.set_value("user", "name", "Your Name")
-                    io.tool_error('Update git name with: git config --global user.name "Your Name"')
-                if not global_git_config.has_option("user", "email"):
-                    git_config.set_value("user", "email", "you@example.com")
-                    io.tool_error(
-                        'Update git email with: git config --global user.email "you@example.com"'
-                    )
-            io.tool_output("Git repository created in the current working directory.")
-            git_root = str(Path.cwd().resolve())
+    if args.git:
+        git_root = setup_git(git_root, io)
 
     if git_root:
-        updated_ignore = None
-        gitignore_file = Path(git_root) / ".gitignore"
-        if gitignore_file.exists():
-            content = gitignore_file.read_text(encoding="utf-8")
-            if ".aider*" not in content.splitlines():
-                updated_ignore = content + "\n.aider.*\n"
-        else:
-            updated_ignore = "aider.*"
-        if updated_ignore and io.confirm_ask("Add .aider* to .gitignore (recommended)?"):
-            gitignore_file.write_text("\n.aider*", encoding="utf-8", append=True)
+        check_gitignore(git_root, io)
 
     def scrub_sensitive_info(text):
         # Replace sensitive information with placeholder
