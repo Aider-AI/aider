@@ -1,6 +1,13 @@
 
 # Frequently asked questions
 
+- [How does aider use git?](#how-does-aider-use-git)
+- [GPT-4 vs GPT-3.5](#gpt-4-vs-gpt-35)
+- [Aider isn't editing my files?](#aider-isnt-editing-my-files)
+- [Can I use aider with other LLMs, local LLMs, etc?](#can-i-use-aider-with-other-llms-local-llms-etc)
+- [Can I change the system prompts that aider uses?](#can-i-change-the-system-prompts-that-aider-uses)
+- [Can I run aider in Google Colab?](#can-i-run-aider-in-google-colab)
+
 ## How does aider use git?
 
 It is recommended that you use aider with code that is part of a git repo.
