@@ -337,6 +337,19 @@ def main(args=None, input=None, output=None):
                         'Update git email with: git config --global user.email "you@example.com"'
                     )
             io.tool_output("Git repository created in the current working directory.")
+            git_root = str(Path.cwd().resolve())
+
+    if git_root:
+        gitignore_file = Path(git_root) / ".gitignore"
+        if gitignore_file.exists():
+            with open(gitignore_file, "r") as file:
+                content = file.read()
+            if ".aider*" not in content:
+                with open(gitignore_file, "a") as file:
+                    file.write("\n.aider*")
+        else:
+            with open(gitignore_file, "w") as file:
+                file.write(".aider*")
 
     def scrub_sensitive_info(text):
         # Replace sensitive information with placeholder
