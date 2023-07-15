@@ -110,6 +110,22 @@ class TestCoder(unittest.TestCase):
 
         self.assertEqual(coder.abs_fnames, set())
 
+    def test_check_for_subdir_mention(self):
+        # Mock the IO object
+        mock_io = MagicMock()
+
+        # Initialize the Coder object with the mocked IO and mocked repo
+        coder = Coder.create(models.GPT4, None, mock_io)
+
+        mock = MagicMock()
+        mock.return_value = set(["other/file1.txt"])
+        coder.get_tracked_files = mock
+
+        # Call the check_for_file_mentions method
+        coder.check_for_file_mentions("Please check `other/file1.txt`")
+
+        self.assertEqual(coder.abs_fnames, set([Path("other/file1.txt").resolve()]))
+
     def test_get_commit_message(self):
         # Mock the IO object
         mock_io = MagicMock()
