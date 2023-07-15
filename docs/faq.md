@@ -6,9 +6,9 @@
 It is recommended that you use aider with code that is part of a git repo.
 This allows aider to maintain the safety of your code. Using git makes it easy to:
 
-  - review the changes GPT made to your code
-  - undo changes that weren't appropriate
-  - manage GPT's changes on a git branch
+  - Review the changes GPT made to your code
+  - Undo changes that weren't appropriate
+  - Manage a series of GPT's changes on a git branch
   - etc
 
 Working without git means that GPT might drastically change your code without an easy way to undo the changes.
@@ -16,19 +16,19 @@ Working without git means that GPT might drastically change your code without an
 Aider tries to provide safety using git in a few ways:
 
   - It asks to create a git repo if you launch it in a directory without one.
-  - Before sending requests to GPT, it checks if the repo is dirty and offers to commit those changes for you. This way, the GPT changes will be applied to a clean repo and won't be intermingled with your own changes.
+  - At launch and before sending requests to GPT, aider checks if the repo is dirty and offers to commit those changes for you. This way, the GPT changes will be applied to a clean repo and won't be intermingled with your own changes.
   - After GPT changes your code, aider commits those changes with a descriptive commit message.
 
 Aider also allows you to use in-chat commands to `/diff` or `/undo` the last change made by GPT.
 To do more complex management of your git history, you should use `git` on the command line outside of aider.
 You can start a branch before using aider to make a sequence of changes.
-Or you can `git reset` a longer series of aider changes that didn't pan out.
+Or you can `git reset` a longer series of aider changes that didn't pan out. Etc.
 
 While it is not recommended, you can disable aider's use of git in a few ways:
 
   - `--no-auto-commits` will stop aider from git committing each of GPT's changes.
   - `--no-dirty-commits` will stop aider from ensuring your repo is clean before sending requests to GPT.
-  - `--no-git` will completely stop aider from using git on your files. You should ensure you are keeping sensible backups of the files you're working with.
+  - `--no-git` will completely stop aider from using git on your files. You should ensure you are keeping sensible backups of the files you are working with.
 
 
 ## GPT-4 vs GPT-3.5
