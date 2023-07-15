@@ -108,7 +108,7 @@ class TestCoder(unittest.TestCase):
         # Call the check_for_file_mentions method
         coder.check_for_file_mentions("Please check file1.txt!")
 
-        self.assertEqual(coder.abs_fnames, set())
+        self.assertEqual(coder.abs_fnames, set([str(Path("file1.txt").resolve())]))
 
     def test_check_for_subdir_mention(self):
         # Mock the IO object
@@ -124,7 +124,7 @@ class TestCoder(unittest.TestCase):
         # Call the check_for_file_mentions method
         coder.check_for_file_mentions("Please check `other/file1.txt`")
 
-        self.assertEqual(coder.abs_fnames, set([Path("other/file1.txt").resolve()]))
+        self.assertEqual(coder.abs_fnames, set([str(Path("other/file1.txt").resolve())]))
 
     def test_get_commit_message(self):
         # Mock the IO object

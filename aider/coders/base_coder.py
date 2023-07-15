@@ -586,6 +586,9 @@ class Coder:
         mentioned_rel_fnames = set()
         fname_to_rel_fnames = {}
         for rel_fname in addable_rel_fnames:
+            if rel_fname in words:
+                mentioned_rel_fnames.add(str(rel_fname))
+
             fname = os.path.basename(rel_fname)
             if fname not in fname_to_rel_fnames:
                 fname_to_rel_fnames[fname] = []
