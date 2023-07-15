@@ -83,6 +83,13 @@ class TestMain(TestCase):
             _, kwargs = MockCoder.call_args
             assert kwargs["auto_commits"] is False
 
+    def test_setup_git(self):
+        with patch("aider.main.git.Repo.init") as MockRepoInit:
+            MockRepoInit.return_value = git.Repo(self.tempdir)
+            git_root = setup_git(None, self.io)
+            self.assertEqual(git_root, self.tempdir)
+            MockRepoInit.assert_called_once_with(self.tempdir)
+
         with patch("aider.main.Coder.create") as MockCoder:
             main(["--auto-commits"], input=DummyInput())
             _, kwargs = MockCoder.call_args
