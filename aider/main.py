@@ -56,8 +56,10 @@ def check_gitignore(git_root, io):
     if not io.confirm_ask(f"Add {pat} to .gitignore (recommended)?"):
         return
 
-    updated_ignore = content + "\n" + pat + "\n"
-    gitignore_file.write_text(updated_ignore, encoding="utf-8")
+    if not content.endswith("\n"):
+        content += "\n"
+    content += pat + "\n"
+    gitignore_file.write_text(content, encoding="utf-8")
 
 
 def main(args=None, input=None, output=None):
