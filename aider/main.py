@@ -340,17 +340,20 @@ def main(args=None, input=None, output=None):
             git_root = str(Path.cwd().resolve())
 
     if git_root:
+        updated_ignore = None
         gitignore_file = Path(git_root) / ".gitignore"
         if gitignore_file.exists():
-            content = gitignore_file.read_text(encoding='utf-8')
-            if ".aider*" not in content:
-                gitignore_file.write_text("\n.aider*", encoding='utf-8', append=True)
+            content = gitignore_file.read_text(encoding="utf-8")
+            if ".aider*" not in content.splitlines():
+                updated_ignore = content + "\n.aider.*\n"
         else:
-            gitignore_file.write_text(".aider*", encoding='utf-8')
+            updated_ignore = "aider.*"
+        if updated_ignore and io.confirm_ask("Add .aider* to .gitignore (recommended)?"):
+            gitignore_file.write_text("\n.aider*", encoding="utf-8", append=True)
 
     def scrub_sensitive_info(text):
         # Replace sensitive information with placeholder
-        return text.replace(args.openai_api_key, '***')
+        return text.replace(args.openai_api_key, "***")
 
     if args.verbose:
         show = scrub_sensitive_info(parser.format_values())
