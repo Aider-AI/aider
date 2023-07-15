@@ -4,6 +4,7 @@
 
 - Support for the OpenAI models in [Azure](https://aider.chat/docs/faq.html#azure)
 - Added `--show-repo-map`
+- Improved output when retrying connections to the OpenAI API
 - Redacted api key from `--verbose` output
 - Bugfix: recognize and add files in subdirectories mentioned by user or GPT
 

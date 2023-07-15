@@ -622,7 +622,9 @@ class Coder:
             requests.exceptions.ConnectionError,
         ),
         max_tries=10,
-        on_backoff=lambda details: print(f"Retry in {details['wait']} seconds."),
+        on_backoff=lambda details: print(
+            f"{details.get('exception','Exception')}\nRetry in {details['wait']:.1f} seconds."
+        ),
     )
     def send_with_retries(self, model, messages, functions):
         kwargs = dict(

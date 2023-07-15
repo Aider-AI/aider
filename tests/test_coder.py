@@ -101,14 +101,21 @@ class TestCoder(unittest.TestCase):
         # Initialize the Coder object with the mocked IO and mocked repo
         coder = Coder.create(models.GPT4, None, mock_io)
 
+        fname = Path("file1.txt")
+        fname.touch()
+
+        other_fname = Path("other") / "file1.txt"
+        other_fname.parent.mkdir(parents=True, exist_ok=True)
+        other_fname.touch()
+
         mock = MagicMock()
-        mock.return_value = set(["file1.txt", "other/file1.txt"])
+        mock.return_value = set([str(fname), str(other_fname)])
         coder.get_tracked_files = mock
 
         # Call the check_for_file_mentions method
-        coder.check_for_file_mentions("Please check file1.txt!")
+        coder.check_for_file_mentions(f"Please check {fname}!")
 
-        self.assertEqual(coder.abs_fnames, set([str(Path("file1.txt").resolve())]))
+        self.assertEqual(coder.abs_fnames, set([str(fname.resolve())]))
 
     def test_check_for_subdir_mention(self):
         # Mock the IO object
@@ -117,14 +124,18 @@ class TestCoder(unittest.TestCase):
         # Initialize the Coder object with the mocked IO and mocked repo
         coder = Coder.create(models.GPT4, None, mock_io)
 
+        fname = Path("other") / "file1.txt"
+        fname.parent.mkdir(parents=True, exist_ok=True)
+        fname.touch()
+
         mock = MagicMock()
-        mock.return_value = set(["other/file1.txt"])
+        mock.return_value = set([str(fname)])
         coder.get_tracked_files = mock
 
         # Call the check_for_file_mentions method
-        coder.check_for_file_mentions("Please check `other/file1.txt`")
+        coder.check_for_file_mentions(f"Please check `{fname}`")
 
-        self.assertEqual(coder.abs_fnames, set([str(Path("other/file1.txt").resolve())]))
+        self.assertEqual(coder.abs_fnames, set([str(fname.resolve())]))
 
     def test_get_commit_message(self):
         # Mock the IO object

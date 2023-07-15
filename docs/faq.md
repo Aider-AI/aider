@@ -1,6 +1,44 @@
 
 # Frequently asked questions
 
+- [How does aider use git?](#how-does-aider-use-git)
+- [GPT-4 vs GPT-3.5](#gpt-4-vs-gpt-35)
+- [Aider isn't editing my files?](#aider-isnt-editing-my-files)
+- [Can I use aider with other LLMs, local LLMs, etc?](#can-i-use-aider-with-other-llms-local-llms-etc)
+- [Can I change the system prompts that aider uses?](#can-i-change-the-system-prompts-that-aider-uses)
+- [Can I run aider in Google Colab?](#can-i-run-aider-in-google-colab)
+
+## How does aider use git?
+
+It is recommended that you use aider with code that is part of a git repo.
+This allows aider to maintain the safety of your code. Using git makes it easy to:
+
+  - Review the changes GPT made to your code
+  - Undo changes that weren't appropriate
+  - Manage a series of GPT's changes on a git branch
+  - etc
+
+Working without git means that GPT might drastically change your code without an easy way to undo the changes.
+
+Aider tries to provide safety using git in a few ways:
+
+  - It asks to create a git repo if you launch it in a directory without one.
+  - When you add a file to the chat, aider asks permission to add it to the git repo if needed.
+  - At launch and before sending requests to GPT, aider checks if the repo is dirty and offers to commit those changes for you. This way, the GPT changes will be applied to a clean repo and won't be intermingled with your own changes.
+  - After GPT changes your code, aider commits those changes with a descriptive commit message.
+
+Aider also allows you to use in-chat commands to `/diff` or `/undo` the last change made by GPT.
+To do more complex management of your git history, you should use `git` on the command line outside of aider.
+You can start a branch before using aider to make a sequence of changes.
+Or you can `git reset` a longer series of aider changes that didn't pan out. Etc.
+
+While it is not recommended, you can disable aider's use of git in a few ways:
+
+  - `--no-auto-commits` will stop aider from git committing each of GPT's changes.
+  - `--no-dirty-commits` will stop aider from ensuring your repo is clean before sending requests to GPT.
+  - `--no-git` will completely stop aider from using git on your files. You should ensure you are keeping sensible backups of the files you are working with.
+
+
 ## GPT-4 vs GPT-3.5
 
 Aider supports all of OpenAI's chat models.
@@ -37,6 +75,32 @@ This minimizes your use of the context window, as well as costs.
 | gpt-3.5-turbo-16k | 16k tokens | whole file | 8k tokens | ~32k bytes | no |
 | gpt-4             |  8k tokens | diffs | 8k tokens | ~32k bytes | yes |
 | gpt-4-32k         | 32k tokens | diffs | 32k tokens  | ~128k bytes | yes |
+
+## Aider isn't editing my files?
+
+This usually happens because GPT is not specifying the edits
+to make in the format that aider expects.
+GPT-3.5 is especially prone to disobeying the system prompt instructions in this manner, but it also happens with GPT-4.
+
+Aider makes every effort to get GPT to conform, and works hard to deal with
+replies that are "almost" correctly formatted.
+If Aider detects an improperly formatted reply, it gives GPT feedback to try again.
+Also, before each release new versions of aider are
+[benchmarked](https://aider.chat/docs/benchmarks.html).
+This helps prevent regressions in the code editing
+performance of GPT that could have been inadvertantly
+introduced.
+
+But sometimes GPT just won't cooperate.
+In these cases, here are some things you might try:
+
+  - Just ask it to try again. Explain the problem with the response if you can. Here is some suggested language which will be familiar to GPT based on its system prompt.
+    - With GPT-3.5, you could say something like "Send me back the new code as a properly formatted **file listing**".
+    - With GPT-4, you could say something like "Format those code changes properly as an **edit block**".
+    - "Don't skip code and replace it with comments, send me back all the code!"
+    - Etc...
+  - Use `/drop` to remove files from the chat session which aren't needed for the task at hand. This will reduce distractions and may help GPT produce properly formatted edits.
+  - Use `/clear` to remove the conversation history, again to help GPT focus.
 
 ## Can I use aider with other LLMs, local LLMs, etc?
 
@@ -96,6 +160,8 @@ Here are some
 and
 [SimpleAI](https://github.com/lhenault/simpleAI)
 look like relevant tools to serve local models via a compatible API:
+
+
 
 
 ## Can I change the system prompts that aider uses?
