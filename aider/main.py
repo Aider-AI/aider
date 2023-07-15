@@ -342,14 +342,11 @@ def main(args=None, input=None, output=None):
     if git_root:
         gitignore_file = Path(git_root) / ".gitignore"
         if gitignore_file.exists():
-            with open(gitignore_file, "r") as file:
-                content = file.read()
+            content = gitignore_file.read_text(encoding='utf-8')
             if ".aider*" not in content:
-                with open(gitignore_file, "a") as file:
-                    file.write("\n.aider*")
+                gitignore_file.write_text("\n.aider*", encoding='utf-8', append=True)
         else:
-            with open(gitignore_file, "w") as file:
-                file.write(".aider*")
+            gitignore_file.write_text(".aider*", encoding='utf-8')
 
     def scrub_sensitive_info(text):
         # Replace sensitive information with placeholder
