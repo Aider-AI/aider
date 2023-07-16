@@ -115,7 +115,7 @@ Aider has some ability to help GPT figure out which files to edit all by itself,
 * Large changes are best performed as a sequence of thoughtful bite sized steps, where you plan out the approach and overall design. Walk GPT through changes like you might with a junior dev. Ask for a refactor to prepare, then ask for the actual change. Spend the time to ask for code quality/structure improvements.
 * Use Control-C to safely interrupt GPT if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply to GPT with more information or direction.
 * Use the `/run` command to run tests, linters, etc and show the output to GPT so it can fix any issues.
-* Use Control+ENTER to enter a multiline chat message. Or enter `{` alone on the first line and end the multiline message with `}` alone on the last line.
+* Use ESC-ENTER to enter a multiline chat message. Or enter `{` alone on the first line and end the multiline message with `}` alone on the last line.
 * If your code is throwing an error, share the error output with GPT using `/run` or by pasting it into the chat. Let GPT figure out and fix the bug.
 * GPT knows about a lot of standard tools and libraries, but may get some of the fine details wrong about APIs and function arguments. You can paste doc snippets into the chat to resolve these issues.
 * [Aider will notice if you launch it on a git repo with uncommitted changes and offer to commit them before proceeding](https://aider.chat/docs/faq.html#how-does-aider-use-git).
