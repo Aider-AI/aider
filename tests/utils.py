@@ -38,9 +38,11 @@ class ChdirTemporaryDirectory(IgnorantTemporaryDirectory):
 class GitTemporaryDirectory(ChdirTemporaryDirectory):
     def __enter__(self):
         res = super().__enter__()
-
-        repo = git.Repo.init()
-        repo.config_writer().set_value("user", "name", "Test User").release()
-        repo.config_writer().set_value("user", "email", "testuser@example.com").release()
-
+        make_repo()
         return res
+
+
+def make_repo():
+    repo = git.Repo.init()
+    repo.config_writer().set_value("user", "name", "Test User").release()
+    repo.config_writer().set_value("user", "email", "testuser@example.com").release()
