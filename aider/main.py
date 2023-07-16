@@ -38,6 +38,7 @@ def setup_git(git_root, io):
 
     io.tool_output("Git repository created in the current working directory.")
     git_root = str(Path.cwd().resolve())
+    check_gitignore(git_root, None)
     return git_root
 
 
@@ -55,7 +56,7 @@ def check_gitignore(git_root, io):
     else:
         content = ""
 
-    if not io.confirm_ask(f"Add {pat} to .gitignore (recommended)?"):
+    if io and not io.confirm_ask(f"Add {pat} to .gitignore (recommended)?"):
         return
 
     if content and not content.endswith("\n"):

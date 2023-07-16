@@ -80,6 +80,10 @@ class TestMain(TestCase):
 
         self.assertTrue(git.Repo(self.tempdir))
 
+        gitignore = Path.cwd() / ".gitignore"
+        self.assertTrue(gitignore.exists())
+        self.assertEqual(".aider*", gitignore.read_text().splitlines()[0])
+
     def test_check_gitignore(self):
         make_repo()
         io = InputOutput(pretty=False, yes=True)
@@ -95,6 +99,17 @@ class TestMain(TestCase):
         gitignore.write_text("one\ntwo\n")
         check_gitignore(cwd, io)
         self.assertEqual("one\ntwo\n.aider*\n", gitignore.read_text())
+
+    def test_main_git_ignore(self):
+        cwd = Path().cwd()
+        self.assertFalse((cwd / ".git").exists())
+        self.assertFalse((cwd / ".gitignore").exists())
+
+        with patch("aider.main.Coder.create"):
+            main(["--yes"], input=DummyInput())
+
+        self.assertTrue((cwd / ".git").exists())
+        self.assertTrue((cwd / ".gitignore").exists())
 
     def test_main_args(self):
         with patch("aider.main.Coder.create") as MockCoder:
