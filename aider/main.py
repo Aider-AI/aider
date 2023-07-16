@@ -42,9 +42,11 @@ def setup_git(git_root, io):
 
 
 def check_gitignore(git_root, io):
+    if not git_root:
+        return
+
     pat = ".aider*"
 
-    updated_ignore = None
     gitignore_file = Path(git_root) / ".gitignore"
     if gitignore_file.exists():
         content = gitignore_file.read_text(encoding="utf-8")
@@ -56,7 +58,7 @@ def check_gitignore(git_root, io):
     if not io.confirm_ask(f"Add {pat} to .gitignore (recommended)?"):
         return
 
-    if not content.endswith("\n"):
+    if content and not content.endswith("\n"):
         content += "\n"
     content += pat + "\n"
     gitignore_file.write_text(content, encoding="utf-8")
@@ -366,8 +368,6 @@ def main(args=None, input=None, output=None):
 
     if args.git:
         git_root = setup_git(git_root, io)
-
-    if git_root:
         check_gitignore(git_root, io)
 
     def scrub_sensitive_info(text):

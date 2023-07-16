@@ -12,7 +12,7 @@ from prompt_toolkit.output import DummyOutput
 
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
-from aider.main import main, setup_git
+from aider.main import check_gitignore, main, setup_git
 from tests.utils import make_repo
 
 
@@ -79,6 +79,22 @@ class TestMain(TestCase):
         self.assertEqual(git_root, Path(self.tempdir).resolve())
 
         self.assertTrue(git.Repo(self.tempdir))
+
+    def test_check_gitignore(self):
+        make_repo()
+        io = InputOutput(pretty=False, yes=True)
+        cwd = Path.cwd()
+        gitignore = cwd / ".gitignore"
+
+        self.assertFalse(gitignore.exists())
+        check_gitignore(cwd, io)
+        self.assertTrue(gitignore.exists())
+
+        self.assertEqual(".aider*", gitignore.read_text().splitlines()[0])
+
+        gitignore.write_text("one\ntwo\n")
+        check_gitignore(cwd, io)
+        self.assertEqual("one\ntwo\n.aider*\n", gitignore.read_text())
 
     def test_main_args(self):
         with patch("aider.main.Coder.create") as MockCoder:
