@@ -78,7 +78,7 @@ This minimizes your use of the context window, as well as costs.
 
 ## Aider isn't editing my files?
 
-Sometimes GPT will reply with some code changes that won't get applied to your local files.
+Sometimes GPT will reply with some code changes that don't get applied to your local files.
 In these cases, aider might say something like "Failed to apply edit to *filename*".
 
 This usually happens because GPT is not specifying the edits
