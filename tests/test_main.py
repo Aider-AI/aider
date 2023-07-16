@@ -6,6 +6,7 @@ from pathlib import Path
 from unittest import TestCase
 from unittest.mock import patch
 
+import git
 from prompt_toolkit.input import DummyInput
 from prompt_toolkit.output import DummyOutput
 
@@ -76,6 +77,8 @@ class TestMain(TestCase):
         git_root = setup_git(None, io)
         git_root = Path(git_root).resolve()
         self.assertEqual(git_root, Path(self.tempdir).resolve())
+
+        self.assertTrue(git.Repo(self.tempdir))
 
     def test_main_args(self):
         with patch("aider.main.Coder.create") as MockCoder:
