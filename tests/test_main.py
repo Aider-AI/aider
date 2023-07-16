@@ -38,16 +38,14 @@ class TestMain(TestCase):
         self.assertTrue(os.path.exists("foo.txt"))
 
     def test_main_with_empty_git_dir_new_file(self):
-        subprocess.run(["git", "init"])
-        subprocess.run(["git", "config", "user.email", "dummy@example.com"])
-        subprocess.run(["git", "config", "user.name", "Dummy User"])
+        from tests.utils import make_repo
+        make_repo()
         main(["--yes", "foo.txt"], input=DummyInput(), output=DummyOutput())
         self.assertTrue(os.path.exists("foo.txt"))
 
     def test_main_with_git_config_yml(self):
-        subprocess.run(["git", "init"])
-        subprocess.run(["git", "config", "user.email", "dummy@example.com"])
-        subprocess.run(["git", "config", "user.name", "Dummy User"])
+        from tests.utils import make_repo
+        make_repo()
 
         Path(".aider.conf.yml").write_text("no-auto-commits: true\n")
         with patch("aider.main.Coder.create") as MockCoder:
@@ -62,9 +60,8 @@ class TestMain(TestCase):
             assert kwargs["auto_commits"] is True
 
     def test_main_with_empty_git_dir_new_subdir_file(self):
-        subprocess.run(["git", "init"])
-        subprocess.run(["git", "config", "user.email", "dummy@example.com"])
-        subprocess.run(["git", "config", "user.name", "Dummy User"])
+        from tests.utils import make_repo
+        make_repo()
         subdir = Path("subdir")
         subdir.mkdir()
         fname = subdir / "foo.txt"
