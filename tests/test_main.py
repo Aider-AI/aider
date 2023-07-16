@@ -6,10 +6,12 @@ from pathlib import Path
 from unittest import TestCase
 from unittest.mock import patch
 
+import git
 from prompt_toolkit.input import DummyInput
 from prompt_toolkit.output import DummyOutput
 
 from aider.dump import dump  # noqa: F401
+from aider.io import InputOutput
 from aider.main import main
 
 
@@ -75,6 +77,14 @@ class TestMain(TestCase):
         # Because aider will try and `git add` a file that's already in the repo.
         main(["--yes", str(fname)], input=DummyInput(), output=DummyOutput())
 
+    def test_setup_git(self):
+        io = InputOutput(pretty=False, yes=True)
+        with patch("aider.main.git.Repo.init") as MockRepoInit:
+            MockRepoInit.return_value = git.Repo(self.tempdir)
+            git_root = setup_git(None, self.io)
+            self.assertEqual(git_root, self.tempdir)
+            MockRepoInit.assert_called_once_with(self.tempdir)
+
     def test_main_args(self):
         with patch("aider.main.Coder.create") as MockCoder:
             # --yes will just ok the git repo without blocking on input
@@ -82,13 +92,6 @@ class TestMain(TestCase):
             main(["--no-auto-commits", "--yes"], input=DummyInput())
             _, kwargs = MockCoder.call_args
             assert kwargs["auto_commits"] is False
-
-    def test_setup_git(self):
-        with patch("aider.main.git.Repo.init") as MockRepoInit:
-            MockRepoInit.return_value = git.Repo(self.tempdir)
-            git_root = setup_git(None, self.io)
-            self.assertEqual(git_root, self.tempdir)
-            MockRepoInit.assert_called_once_with(self.tempdir)
 
         with patch("aider.main.Coder.create") as MockCoder:
             main(["--auto-commits"], input=DummyInput())
