@@ -12,7 +12,8 @@ from prompt_toolkit.output import DummyOutput
 
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
-from aider.main import main
+from aider.main import main, setup_git
+from tests.utils import make_repo
 
 
 class TestMain(TestCase):
@@ -38,18 +39,16 @@ class TestMain(TestCase):
         self.assertTrue(os.path.exists("foo.txt"))
 
     def test_main_with_empty_git_dir_new_file(self):
-        from tests.utils import make_repo
         make_repo()
         main(["--yes", "foo.txt"], input=DummyInput(), output=DummyOutput())
         self.assertTrue(os.path.exists("foo.txt"))
 
     def test_main_with_git_config_yml(self):
-        from tests.utils import make_repo
         make_repo()
 
         Path(".aider.conf.yml").write_text("no-auto-commits: true\n")
         with patch("aider.main.Coder.create") as MockCoder:
-            main([], input=DummyInput(), output=DummyOutput())
+            main(["--yes"], input=DummyInput(), output=DummyOutput())
             _, kwargs = MockCoder.call_args
             assert kwargs["auto_commits"] is False
 
@@ -60,7 +59,6 @@ class TestMain(TestCase):
             assert kwargs["auto_commits"] is True
 
     def test_main_with_empty_git_dir_new_subdir_file(self):
-        from tests.utils import make_repo
         make_repo()
         subdir = Path("subdir")
         subdir.mkdir()
@@ -75,7 +73,7 @@ class TestMain(TestCase):
         main(["--yes", str(fname)], input=DummyInput(), output=DummyOutput())
 
     def test_setup_git(self):
-        io = InputOutput(pretty=False, yes=True)
+        # io = InputOutput(pretty=False, yes=True)
         with patch("aider.main.git.Repo.init") as MockRepoInit:
             MockRepoInit.return_value = git.Repo(self.tempdir)
             git_root = setup_git(None, self.io)
