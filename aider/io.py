@@ -5,6 +5,7 @@ from pathlib import Path
 
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.history import FileHistory
+from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.lexers import PygmentsLexer
 from prompt_toolkit.shortcuts import CompleteStyle, PromptSession, prompt
 from prompt_toolkit.styles import Style
@@ -203,7 +204,13 @@ class InputOutput:
             if self.input_history_file is not None:
                 session_kwargs["history"] = FileHistory(self.input_history_file)
 
-            session = PromptSession(**session_kwargs)
+            kb = KeyBindings()
+
+            @kb.add("escape", "c-m", eager=True)
+            def _(event):
+                event.current_buffer.insert_text("\n")
+
+            session = PromptSession(key_bindings=kb, **session_kwargs)
             line = session.prompt()
 
             if line and line[0] == "{" and not multiline_input:

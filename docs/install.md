@@ -1,6 +1,12 @@
 
 # Installing aider
 
+- [pip install aider-chat](#pip-install-aider-chat)
+- [Provide your OpenAI API key](#provide-your-openai-api-key)
+- [Install git](#install-git)
+- [Install universal ctags (optional)](#install-universal-ctags-optional)
+- [Add aider to your editor (optional)](#add-aider-to-your-editor-optional)
+
 ## pip install aider-chat
 
 Install the “aider-chat” package with pip from one of these sources:
