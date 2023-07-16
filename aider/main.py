@@ -26,7 +26,7 @@ def setup_git(git_root, io):
     if not io.confirm_ask("No git repo found, create one to track GPT's changes (recommended)?"):
         return
 
-    repo = git.Repo.init(os.getcwd())
+    repo = git.Repo.init(Path.cwd())
     global_git_config = git.GitConfigParser([str(Path.home() / ".gitconfig")], read_only=True)
     with repo.config_writer() as git_config:
         if not global_git_config.has_option("user", "name"):
