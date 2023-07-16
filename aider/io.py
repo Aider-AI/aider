@@ -207,7 +207,7 @@ class InputOutput:
 
             kb = KeyBindings()
 
-            @kb.add(Keys.ControlJ, eager=True)
+            @kb.add(Keys.ControlM, eager=True)
             def _(event):
                 event.current_buffer.insert_text('\n')
 
