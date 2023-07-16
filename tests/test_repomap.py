@@ -5,7 +5,7 @@ from unittest.mock import patch
 from aider.io import InputOutput
 from aider.repomap import RepoMap
 
-from .utils import IgnorantTemporaryDirectory
+from tests.utils import IgnorantTemporaryDirectory
 
 
 class TestRepoMap(unittest.TestCase):
