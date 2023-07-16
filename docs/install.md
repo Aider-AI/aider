@@ -75,9 +75,9 @@ You should consult the
 for official instructions on how to install it in your environment.
 But you may be able to install a compatible version using these commands:
 
-* Mac: `brew install universal-ctags`
+* Mac: `brew update && brew install universal-ctags`
 * Windows: `choco install universal-ctags`
-* Ubuntu: `sudo apt-get install universal-ctags`
+* Ubuntu: `sudo apt update && sudo apt install universal-ctags`
 
 You know aider has found a working ctags if you see this output when you launch aider:
 
