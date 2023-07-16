@@ -1,5 +1,9 @@
 # Release history
 
+### GitHub main branch
+
+-
+
 ### v0.9.0
 
 - Support for the OpenAI models in [Azure](https://aider.chat/docs/faq.html#azure)

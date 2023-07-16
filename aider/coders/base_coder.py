@@ -407,8 +407,8 @@ class Coder:
         if cmds:
             matching_commands, _, _ = cmds
             if len(matching_commands) == 1:
-                cmd = matching_commands[0]
-                if cmd in ("/exit", "/commit"):
+                cmd = matching_commands[0][1:]
+                if cmd in "add clear commit diff drop exit help ls tokens".split():
                     return
 
         if not self.dirty_commits:
