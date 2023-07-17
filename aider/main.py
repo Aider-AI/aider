@@ -50,7 +50,7 @@ def check_gitignore(git_root, io, ask=True):
 
     gitignore_file = Path(git_root) / ".gitignore"
     if gitignore_file.exists():
-        content = gitignore_file.read_text(encoding="utf-8")
+        content = io.read_text(gitignore_file)
         if pat in content.splitlines():
             return
     else:
@@ -62,7 +62,7 @@ def check_gitignore(git_root, io, ask=True):
     if content and not content.endswith("\n"):
         content += "\n"
     content += pat + "\n"
-    gitignore_file.write_text(content, encoding="utf-8")
+    io.write_text(gitignore_file, content)
 
     io.tool_output(f"Added {pat} to .gitignore")
 
