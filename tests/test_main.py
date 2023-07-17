@@ -6,11 +6,14 @@ from pathlib import Path
 from unittest import TestCase
 from unittest.mock import patch
 
+import git
 from prompt_toolkit.input import DummyInput
 from prompt_toolkit.output import DummyOutput
 
 from aider.dump import dump  # noqa: F401
-from aider.main import main
+from aider.io import InputOutput
+from aider.main import check_gitignore, main, setup_git
+from tests.utils import make_repo
 
 
 class TestMain(TestCase):
@@ -36,20 +39,16 @@ class TestMain(TestCase):
         self.assertTrue(os.path.exists("foo.txt"))
 
     def test_main_with_empty_git_dir_new_file(self):
-        subprocess.run(["git", "init"])
-        subprocess.run(["git", "config", "user.email", "dummy@example.com"])
-        subprocess.run(["git", "config", "user.name", "Dummy User"])
+        make_repo()
         main(["--yes", "foo.txt"], input=DummyInput(), output=DummyOutput())
         self.assertTrue(os.path.exists("foo.txt"))
 
     def test_main_with_git_config_yml(self):
-        subprocess.run(["git", "init"])
-        subprocess.run(["git", "config", "user.email", "dummy@example.com"])
-        subprocess.run(["git", "config", "user.name", "Dummy User"])
+        make_repo()
 
         Path(".aider.conf.yml").write_text("no-auto-commits: true\n")
         with patch("aider.main.Coder.create") as MockCoder:
-            main([], input=DummyInput(), output=DummyOutput())
+            main(["--yes"], input=DummyInput(), output=DummyOutput())
             _, kwargs = MockCoder.call_args
             assert kwargs["auto_commits"] is False
 
@@ -60,9 +59,7 @@ class TestMain(TestCase):
             assert kwargs["auto_commits"] is True
 
     def test_main_with_empty_git_dir_new_subdir_file(self):
-        subprocess.run(["git", "init"])
-        subprocess.run(["git", "config", "user.email", "dummy@example.com"])
-        subprocess.run(["git", "config", "user.name", "Dummy User"])
+        make_repo()
         subdir = Path("subdir")
         subdir.mkdir()
         fname = subdir / "foo.txt"
@@ -74,6 +71,45 @@ class TestMain(TestCase):
         # properly convert git/posix/paths to git\posix\paths.
         # Because aider will try and `git add` a file that's already in the repo.
         main(["--yes", str(fname)], input=DummyInput(), output=DummyOutput())
+
+    def test_setup_git(self):
+        io = InputOutput(pretty=False, yes=True)
+        git_root = setup_git(None, io)
+        git_root = Path(git_root).resolve()
+        self.assertEqual(git_root, Path(self.tempdir).resolve())
+
+        self.assertTrue(git.Repo(self.tempdir))
+
+        gitignore = Path.cwd() / ".gitignore"
+        self.assertTrue(gitignore.exists())
+        self.assertEqual(".aider*", gitignore.read_text().splitlines()[0])
+
+    def test_check_gitignore(self):
+        make_repo()
+        io = InputOutput(pretty=False, yes=True)
+        cwd = Path.cwd()
+        gitignore = cwd / ".gitignore"
+
+        self.assertFalse(gitignore.exists())
+        check_gitignore(cwd, io)
+        self.assertTrue(gitignore.exists())
+
+        self.assertEqual(".aider*", gitignore.read_text().splitlines()[0])
+
+        gitignore.write_text("one\ntwo\n")
+        check_gitignore(cwd, io)
+        self.assertEqual("one\ntwo\n.aider*\n", gitignore.read_text())
+
+    def test_main_git_ignore(self):
+        cwd = Path().cwd()
+        self.assertFalse((cwd / ".git").exists())
+        self.assertFalse((cwd / ".gitignore").exists())
+
+        with patch("aider.main.Coder.create"):
+            main(["--yes"], input=DummyInput())
+
+        self.assertTrue((cwd / ".git").exists())
+        self.assertTrue((cwd / ".gitignore").exists())
 
     def test_main_args(self):
         with patch("aider.main.Coder.create") as MockCoder:
