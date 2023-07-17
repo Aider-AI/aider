@@ -148,6 +148,7 @@ class InputOutput:
             return
         except UnicodeError as e:
             self.tool_error(f"{filename}: {e}")
+            self.tool_error("Use --encoding to set the unicode encoding.")
             return
 
     def write_text(self, filename, content):
