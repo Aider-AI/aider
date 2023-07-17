@@ -331,6 +331,23 @@ class Commands:
                     self.coder.abs_fnames.remove(abs_fname)
                     self.io.tool_output(f"Removed {matched_file} from the chat")
 
+    def cmd_git(self, args):
+        "Run a git command"
+        combined_output = None
+        try:
+            parsed_args = shlex.split("git " + args)
+            result = subprocess.run(
+                parsed_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
+            )
+            combined_output = result.stdout
+        except Exception as e:
+            self.io.tool_error(f"Error running git command: {e}")
+
+        if combined_output is None:
+            return
+
+        self.io.tool_output(combined_output)
+
     def cmd_run(self, args):
         "Run a shell command and optionally add the output to the chat"
         combined_output = None
