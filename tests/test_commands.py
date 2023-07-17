@@ -1,18 +1,18 @@
 import codecs
 import os
 import shutil
-import sys
 import tempfile
-from io import StringIO
 from pathlib import Path
 from unittest import TestCase
-from tests.utils import GitTemporaryDirectory
+
+import git
 
 from aider import models
 from aider.coders import Coder
 from aider.commands import Commands
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
+from tests.utils import GitTemporaryDirectory
 
 
 class TestCommands(TestCase):
@@ -169,9 +169,10 @@ class TestCommands(TestCase):
             commands = Commands(io, coder)
 
             # Run the cmd_git method with the arguments "commit -a -m msg"
+            commands.cmd_git("add test.txt")
             commands.cmd_git("commit -a -m msg")
 
             # Check if the file has been committed to the repository
             repo = git.Repo(tempdir)
-            files_in_repo = [item.a_path for item in repo.index.diff(None)]
+            files_in_repo = repo.git.ls_files()
             self.assertIn("test.txt", files_in_repo)
