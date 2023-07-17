@@ -1,7 +1,9 @@
 import codecs
 import os
 import shutil
+import sys
 import tempfile
+from io import StringIO
 from pathlib import Path
 from unittest import TestCase
 
@@ -176,3 +178,27 @@ class TestCommands(TestCase):
             repo = git.Repo(tempdir)
             files_in_repo = repo.git.ls_files()
             self.assertIn("test.txt", files_in_repo)
+
+    def test_cmd_tokens(self):
+        # Initialize the Commands and InputOutput objects
+        io = InputOutput(pretty=False, yes=True)
+
+        coder = Coder.create(models.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        commands.cmd_add("foo.txt bar.txt")
+
+        # Redirect the standard output to an instance of io.StringIO
+        stdout = StringIO()
+        sys.stdout = stdout
+
+        commands.cmd_tokens("")
+
+        # Reset the standard output
+        sys.stdout = sys.__stdout__
+
+        # Get the console output
+        console_output = stdout.getvalue()
+
+        self.assertIn("foo.txt", console_output)
+        self.assertIn("bar.txt", console_output)
