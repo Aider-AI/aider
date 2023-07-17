@@ -6,6 +6,7 @@ import tempfile
 from io import StringIO
 from pathlib import Path
 from unittest import TestCase
+from tests.utils import GitTemporaryDirectory
 
 from aider import models
 from aider.coders import Coder
@@ -155,26 +156,22 @@ class TestCommands(TestCase):
 
         self.assertEqual(coder.abs_fnames, set())
 
-    def test_cmd_tokens(self):
+    def test_cmd_git(self):
         # Initialize the Commands and InputOutput objects
         io = InputOutput(pretty=False, yes=True)
 
-        coder = Coder.create(models.GPT35, None, io)
-        commands = Commands(io, coder)
+        with GitTemporaryDirectory() as tempdir:
+            # Create a file in the temporary directory
+            with open(f"{tempdir}/test.txt", "w") as f:
+                f.write("test")
 
-        commands.cmd_add("foo.txt bar.txt")
+            coder = Coder.create(models.GPT35, None, io)
+            commands = Commands(io, coder)
 
-        # Redirect the standard output to an instance of io.StringIO
-        stdout = StringIO()
-        sys.stdout = stdout
+            # Run the cmd_git method with the arguments "commit -a -m msg"
+            commands.cmd_git("commit -a -m msg")
 
-        commands.cmd_tokens("")
-
-        # Reset the standard output
-        sys.stdout = sys.__stdout__
-
-        # Get the console output
-        console_output = stdout.getvalue()
-
-        self.assertIn("foo.txt", console_output)
-        self.assertIn("bar.txt", console_output)
+            # Check if the file has been committed to the repository
+            repo = git.Repo(tempdir)
+            files_in_repo = [item.a_path for item in repo.index.diff(None)]
+            self.assertIn("test.txt", files_in_repo)
