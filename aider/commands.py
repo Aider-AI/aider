@@ -333,6 +333,7 @@ class Commands:
 
     def cmd_run(self, args):
         "Run a shell command and optionally add the output to the chat"
+        combined_output = None
         try:
             parsed_args = shlex.split(args)
             result = subprocess.run(
@@ -341,6 +342,9 @@ class Commands:
             combined_output = result.stdout
         except Exception as e:
             self.io.tool_error(f"Error running command: {e}")
+
+        if combined_output is None:
+            return
 
         self.io.tool_output(combined_output)
 
