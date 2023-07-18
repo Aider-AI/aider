@@ -215,6 +215,26 @@ These changes replace the `subprocess.run` patches with `subprocess.check_output
         self.assertEqual(edit_blocks[0][0], "tests/test_repomap.py")
         self.assertEqual(edit_blocks[1][0], "tests/test_repomap.py")
 
+    def test_replace_part_with_missing_varied_leading_whitespace(self):
+        whole = """
+    line1
+    line2
+        line3
+    line4
+"""
+
+        part = "line2\n    line3\n"
+        replace = "new_line2\n    new_line3\n"
+        expected_output = """
+    line1
+    new_line2
+        new_line3
+    line4
+"""
+
+        result = eb.replace_part_with_missing_leading_whitespace(whole, part, replace)
+        self.assertEqual(result, expected_output)
+
     def test_replace_part_with_missing_leading_whitespace(self):
         whole = "    line1\n    line2\n    line3\n"
         part = "line1\nline2"
