@@ -1,0 +1,3 @@
+#! /usr/bin/bash
+docker run -it -e UID=$(id -u) -e GID=$(id -g) -e OPENAI_API_KEY=${OPENAI_API_KEY} -v $(pwd):/app aider
+
