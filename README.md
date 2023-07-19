@@ -97,6 +97,7 @@ Aider also has many
 additional command-line options, environment variables or configuration file
 to set many options. See `aider --help` for details.
 
+
 ## In-chat commands
 
 Aider supports commands from within the chat, which all start with `/`. Here are some of the most useful in-chat commands:
@@ -107,6 +108,8 @@ Aider supports commands from within the chat, which all start with `/`. Here are
 * `/diff`: Display the diff of the last aider commit.
 * `/run <command>`: Run a shell command and optionally add the output to the chat.
 * `/help`: Show help about all commands.
+
+See the [full command docs](https://aider.chat/docs/commands.html) for more information.
 
 
 ## Tips
