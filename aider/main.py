@@ -342,6 +342,10 @@ def main(args=None, input=None, output=None):
 
     args = parser.parse_args(args)
 
+    if 'VSCODE_GIT_IPC_HANDLE' in os.environ:
+        args.pretty = False
+        print("VSCode terminal detected, pretty output has been disabled.")
+
     if args.dark_mode:
         args.user_input_color = "#32FF32"
         args.tool_error_color = "#FF3333"
