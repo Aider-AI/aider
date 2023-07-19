@@ -33,7 +33,7 @@ some/dir/example.py
 
 Every *edit block* must be fenced with {fence[0]}...{fence[1]} with the correct code language.
 Every *edit block* must start with the full path! *NEVER* propose edit blocks for *read-only* files.
-The ORIGINAL section must be an *exact* set of lines from the file:
+The ORIGINAL section must be an *exact set of sequential lines* from the file:
 - NEVER SKIP LINES!
 - Include all original leading spaces and indentation!
 

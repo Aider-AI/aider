@@ -532,6 +532,7 @@ class Coder:
 
         edited, edit_error = self.apply_updates()
         if edit_error:
+            self.update_cur_messages(content, set())
             return edit_error
 
         # TODO: this shouldn't use content, should use self.partial_....
@@ -1006,7 +1007,7 @@ class Coder:
     apply_update_errors = 0
 
     def apply_updates(self):
-        max_apply_update_errors = 2
+        max_apply_update_errors = 3
 
         try:
             edited = self.update_files()

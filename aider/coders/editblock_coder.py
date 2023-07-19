@@ -32,7 +32,17 @@ class EditBlockCoder(Coder):
                 self.io.write_text(full_path, content)
                 edited.add(path)
                 continue
-            self.io.tool_error(f"Failed to apply edit to {path}")
+            raise ValueError(f"""InvalidEditBlock: edit failed!
+
+{path} does not contain the *exact sequence* of ORIGINAL lines you specified.
+Try again.
+DO NOT skip blank lines, comments, docstrings, etc!
+The ORIGINAL block needs to be EXACTLY the same as the lines in {path} with nothing missing!
+
+{path} does not contain these {len(original.splitlines())} exact lines in a row:
+```
+{original}```
+""")
 
         return edited
 
