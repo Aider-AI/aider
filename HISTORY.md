@@ -2,7 +2,10 @@
 
 ### GitHub main branch
 
--
+- Force `--no-pretty` if aider detects it is running inside a VSCode terminal.
+- Use Meta-ENTER (Esc+ENTER in some environments) to enter multiline chat messages.
+- Create a `.gitignore` with `.aider*` to prevent users from accidentaly adding aider files to git.
+- Added `/git` command to run git from inside aider chats.
 
 ### v0.9.0
 
