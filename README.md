@@ -10,6 +10,7 @@ It also has features that [help GPT-4 understand and modify larger codebases](ht
 
 ![aider screencast](assets/screencast.svg)
 
+- [Discord](https://discord.gg/SqzfE6bw)
 - [Getting started](#getting-started)
 - [Example chat transcripts](#example-chat-transcripts)
 - [Features](#features)
