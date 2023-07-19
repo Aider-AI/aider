@@ -1,6 +1,6 @@
 # Commands
 
-- `/help <command>`: Show help about all commands
+- `/help`: Show help about all commands
 - `/exit`: Exit the application
 
 ## token/context management
