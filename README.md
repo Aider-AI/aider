@@ -8,9 +8,15 @@ Aider makes it easy to
 proposed by GPT without copy/pasting.
 It also has features that [help GPT-4 understand and modify larger codebases](https://aider.chat/docs/ctags.html).
 
-![aider screencast](assets/screencast.svg)
+<p align="center">
+  <img src="assets/screencast.svg" alt="aider screencast">
+</p>
 
-- [Discord](https://discord.gg/SqzfE6bw)
+<p align="center">
+  <a href="https://discord.gg/SqzfE6bw">
+    <img src="https://img.shields.io/discord/308323056592486420?logo=discord" alt="chat on Discord">
+  </a>
+</p>
 - [Getting started](#getting-started)
 - [Example chat transcripts](#example-chat-transcripts)
 - [Features](#features)
