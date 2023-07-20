@@ -12,9 +12,6 @@ class EditBlockCoder(Coder):
         self.gpt_prompts = EditBlockPrompts()
         super().__init__(*args, **kwargs)
 
-    def update_cur_messages(self, content, edited):
-        self.cur_messages += [dict(role="assistant", content=content)]
-
     def update_files(self):
         content = self.partial_response_content
 
