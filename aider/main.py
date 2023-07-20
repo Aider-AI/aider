@@ -9,6 +9,7 @@ import openai
 from aider import __version__, models
 from aider.coders import Coder
 from aider.io import InputOutput
+from aider.versioncheck import check_version
 
 
 def get_git_root():
@@ -369,7 +370,9 @@ def main(args=None, input=None, output=None):
 
     io.tool_output(f"Aider v{__version__}")
 
-    if 'VSCODE_GIT_IPC_HANDLE' in os.environ:
+    check_version(io.tool_error)
+
+    if "VSCODE_GIT_IPC_HANDLE" in os.environ:
         args.pretty = False
         io.tool_output("VSCode terminal detected, pretty output has been disabled.")
 
