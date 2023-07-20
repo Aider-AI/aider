@@ -13,15 +13,7 @@ def check_version(print_cmd):
         latest_version = data["info"]["version"]
         current_version = aider.__version__
 
-        from aider.dump import dump
-        dump(current_version)
-        dump(packaging.version.parse(latest_version))
-        dump(packaging.version.parse(
-            current_version
-        ))
-        if packaging.version.parse(latest_version) <= packaging.version.parse(
-            current_version
-        ):
+        if packaging.version.parse(latest_version) <= packaging.version.parse(current_version):
             return
 
         print_cmd(f"Newer version v{latest_version} is available. To upgrade, run:")
