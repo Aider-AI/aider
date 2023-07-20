@@ -403,7 +403,7 @@ class Coder:
     def keyboard_interrupt(self):
         now = time.time()
 
-        thresh = 3  # seconds
+        thresh = 2  # seconds
         if self.last_keyboard_interrupt and now - self.last_keyboard_interrupt < thresh:
             self.io.tool_error("\n\n^C KeyboardInterrupt")
             sys.exit()
