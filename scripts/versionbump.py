@@ -19,6 +19,7 @@ def main():
         raise ValueError(f"Invalid version format, must be x.y.z: {new_version_str}")
 
     new_version = version.parse(new_version_str)
+    incremented_version = version.Version(f"{new_version.major}.{new_version.minor}.{new_version.micro + 1}")
 
     with open("aider/__init__.py", "r") as f:
         content = f.read()
@@ -51,7 +52,7 @@ def main():
             subprocess.run(cmd, check=True)
 
     updated_dev_content = re.sub(
-        r'__version__ = ".+?"', f'__version__ = "{new_version}-dev"', content
+        r'__version__ = ".+?"', f'__version__ = "{incremented_version}-dev"', content
     )
 
     print()
