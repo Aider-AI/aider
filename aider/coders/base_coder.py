@@ -553,7 +553,16 @@ class Coder:
             return add_rel_files_message
 
     def update_cur_messages(self, content, edited):
-        self.cur_messages += [dict(role="assistant", content=content)]
+        if self.partial_response_content:
+            self.cur_messages += [dict(role="assistant", content=self.partial_response_content)]
+        if self.partial_response_function_call:
+            self.cur_messages += [
+                dict(
+                    role="assistant",
+                    content=None,
+                    function_call=self.partial_response_function_call,
+                )
+            ]
 
     def auto_commit(self):
         res = self.commit(history=self.cur_messages, prefix="aider: ")
