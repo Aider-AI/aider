@@ -14,7 +14,7 @@ It also has features that [help GPT-4 understand and modify larger codebases](ht
 
 <p align="center">
   <a href="https://discord.gg/SqzfE6bw">
-    <img src="https://img.shields.io/discord/308323056592486420?logo=discord" alt="chat on Discord">
+    <img src="https://img.shields.io/badge/Join-Discord-blue.svg"/>
   </a>
 </p>
 - [Getting started](#getting-started)
