@@ -1,6 +1,6 @@
 import sys
 
-import pkg_resources
+import packaging.version
 import requests
 
 import aider
@@ -13,7 +13,7 @@ def check_version(print_cmd):
         latest_version = data["info"]["version"]
         current_version = aider.__version__
 
-        if pkg_resources.parse_version(latest_version) <= pkg_resources.parse_version(
+        if packaging.version.parse(latest_version) <= packaging.version.parse(
             current_version
         ):
             return
