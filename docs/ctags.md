@@ -20,7 +20,7 @@ new code that respects and utilizes existing abstractions.
   - Convey all of this "code context" to GPT in an
 efficient manner that fits within the 8k-token context window.
 
-To address these issues, `aider` now 
+To address these issues, `aider` now
 sends GPT a **concise map of your whole git repository**
 that includes
 all declared variables and functions with call signatures.
@@ -43,9 +43,9 @@ class objects that are required to prepare for the test.
 To code with GPT-4 using the techniques discussed here:
 
 
-  - Install [aider](https://github.com/paul-gauthier/aider#installation).
-  - Install [universal ctags](https://github.com/universal-ctags/ctags).
-  - Run `aider` inside your repo, and it should say "using ctags".
+  - Install [aider](https://aider.chat/docs/install.html).
+  - Install [universal ctags](https://aider.chat/docs/install.html#install-universal-ctags-optional).
+  - Run `aider` inside your repo, and it should say "Repo-map: universal-ctags using 1024 tokens".
 
 ## The problem: code context
 
@@ -81,7 +81,7 @@ set of files to add to the chat.
 And sending whole files is a bulky way to send code context,
 wasting the precious 8k context window.
 GPT doesn't need to see the entire implementation of BarLog,
-it just needs to understand it well enough to use it. 
+it just needs to understand it well enough to use it.
 You may quickly run out of context window if you
 send many files worth of code just to convey context.
 
@@ -150,7 +150,7 @@ map. Universal ctags can scan source code written in many
 languages, and extract data about all the symbols defined in each
 file.
 
-Historically, ctags were generated and indexed by IDEs or code editors 
+Historically, ctags were generated and indexed by IDEs or code editors
 to make it easier for a human to search and navigate a
 codebase, find the implementation of functions, etc.
 Instead, we're going to use ctags to help GPT navigate and understand the codebase.
@@ -190,7 +190,7 @@ This
 [chat transcript](https://aider.chat/examples/add-test.html)
 shows GPT-4 creating a black box test case, **without being given
 access to the source code of the function being tested or any of the
-other code in the repo.** Instead, GPT is operating solely off 
+other code in the repo.** Instead, GPT is operating solely off
 the repo map.
 
 Using only the meta-data in the map, GPT is able to figure out how to call the method to be tested, as well as how to instantiate multiple class objects that are required to prepare for the test.
@@ -228,7 +228,6 @@ specific language(s) of interest.
 
 To use this experimental repo map feature:
 
-  - Install [aider](https://github.com/paul-gauthier/aider#installation).
-  - Install [universal ctags](https://github.com/universal-ctags/ctags).
-  - Run `aider` inside your repo, and it should say "using ctags".
-  
+  - Install [aider](https://aider.chat/docs/install.html).
+  - Install [universal ctags](https://aider.chat/docs/install.html#install-universal-ctags-optional).
+  - Run `aider` inside your repo, and it should say "Repo-map: universal-ctags using 1024 tokens".
