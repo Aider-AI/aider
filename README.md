@@ -17,6 +17,7 @@ It also has features that [help GPT-4 understand and modify larger codebases](ht
     <img src="https://img.shields.io/badge/Join-Discord-blue.svg"/>
   </a>
 </p>
+
 - [Getting started](#getting-started)
 - [Example chat transcripts](#example-chat-transcripts)
 - [Features](#features)
