@@ -532,11 +532,10 @@ class Coder:
 
         edited, edit_error = self.apply_updates()
         if edit_error:
-            self.update_cur_messages(content, set())
+            self.update_cur_messages(set())
             return edit_error
 
-        # TODO: this shouldn't use content, should use self.partial_....
-        self.update_cur_messages(content, edited)
+        self.update_cur_messages(edited)
 
         if edited:
             if self.repo and self.auto_commits and not self.dry_run:
@@ -552,7 +551,7 @@ class Coder:
         if add_rel_files_message:
             return add_rel_files_message
 
-    def update_cur_messages(self, content, edited):
+    def update_cur_messages(self, edited):
         if self.partial_response_content:
             self.cur_messages += [dict(role="assistant", content=self.partial_response_content)]
         if self.partial_response_function_call:

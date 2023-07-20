@@ -47,13 +47,13 @@ class WholeFileFunctionCoder(Coder):
         self.gpt_prompts = WholeFileFunctionPrompts()
         super().__init__(*args, **kwargs)
 
-    def update_cur_messages(self, content, edited):
+    def update_cur_messages(self, edited):
         if edited:
             self.cur_messages += [
                 dict(role="assistant", content=self.gpt_prompts.redacted_edit_message)
             ]
         else:
-            self.cur_messages += [dict(role="assistant", content=content)]
+            self.cur_messages += [dict(role="assistant", content=self.partial_response_content)]
 
     def get_context_from_history(self, history):
         context = ""
