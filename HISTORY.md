@@ -2,10 +2,13 @@
 
 ### GitHub main branch
 
+- Provide GPT with detailed error if it makes a bad edit block, ask for a retry.
 - Force `--no-pretty` if aider detects it is running inside a VSCode terminal.
 - Use Meta-ENTER (Esc+ENTER in some environments) to enter multiline chat messages.
 - Create a `.gitignore` with `.aider*` to prevent users from accidentaly adding aider files to git.
 - Added `/git` command to run git from inside aider chats.
+- [Benchmarked](https://aider.chat/docs/benchmarks.html) at 64.7% for gpt-4/diff (no regression)
+
 
 ### v0.9.0
 
@@ -14,7 +17,7 @@
 - Improved output when retrying connections to the OpenAI API
 - Redacted api key from `--verbose` output
 - Bugfix: recognize and add files in subdirectories mentioned by user or GPT
-- [Benchmarked](https://aider.chat/docs/benchmarks.html) at 53.8% for gpt-3.5-turbo/whole
+- [Benchmarked](https://aider.chat/docs/benchmarks.html) at 53.8% for gpt-3.5-turbo/whole (no regression)
 
 ### v0.8.3
 
