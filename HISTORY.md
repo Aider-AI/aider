@@ -2,6 +2,7 @@
 
 ### GitHub main branch
 
+- Check pypi for newer versions and notify user.
 - Provide GPT with detailed error if it makes a bad edit block, ask for a retry.
 - Force `--no-pretty` if aider detects it is running inside a VSCode terminal.
 - Use Meta-ENTER (Esc+ENTER in some environments) to enter multiline chat messages.
