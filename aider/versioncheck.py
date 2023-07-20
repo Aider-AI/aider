@@ -1,6 +1,8 @@
 import requests
 import pkg_resources
 import aider
+import sys
+from pathlib import Path
 
 from aider.dump import dump
 
@@ -14,7 +16,8 @@ def check_version():
         return
 
     print(f"Running aider version {current_version}, newer version available: {latest_version}")
-    print("To upgrade, run: pip install --upgrade aider-chat")
+    py = Path(sys.executable).name
+    print(f"To upgrade, run: {py} -m pip install --upgrade aider-chat")
 
 if __name__ == "__main__":
     check_version()
