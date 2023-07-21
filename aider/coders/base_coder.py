@@ -17,7 +17,7 @@ from rich.markdown import Markdown
 
 from aider import models, prompts, utils
 from aider.commands import Commands
-from aider.repo import AiderRepo
+from aider.repo import GitRepo
 from aider.repomap import RepoMap
 from aider.sendchat import send_with_retries
 
@@ -159,7 +159,7 @@ class Coder:
 
         if use_git:
             try:
-                self.repo = AiderRepo(self.io, fnames)
+                self.repo = GitRepo(self.io, fnames)
                 self.root = self.repo.root
             except FileNotFoundError:
                 self.repo = None

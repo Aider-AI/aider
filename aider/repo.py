@@ -10,7 +10,7 @@ from aider.sendchat import send_with_retries
 from .dump import dump  # noqa: F401
 
 
-class AiderRepo:
+class GitRepo:
     repo = None
 
     def __init__(self, io, fnames):

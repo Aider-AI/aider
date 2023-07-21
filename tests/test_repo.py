@@ -5,13 +5,10 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import git
-import openai
 
-from aider import models
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
-from aider.repo import AiderRepo
-from tests.utils import GitTemporaryDirectory
+from aider.repo import GitRepo
 
 
 class TestRepo(unittest.TestCase):
@@ -21,12 +18,9 @@ class TestRepo(unittest.TestCase):
         mock_response = MagicMock()
         mock_response.choices = [MagicMock()]
         mock_response.choices[0].message.content = "a good commit message"
-        mock_send.return_value = (
-            None,
-            mock_response
-        )
+        mock_send.return_value = (None, mock_response)
 
-        repo = AiderRepo(InputOutput(), None)
+        repo = GitRepo(InputOutput(), None)
         # Call the get_commit_message method with dummy diff and context
         result = repo.get_commit_message("dummy diff", "dummy context")
 
@@ -39,12 +33,9 @@ class TestRepo(unittest.TestCase):
         mock_response = MagicMock()
         mock_response.choices = [MagicMock()]
         mock_response.choices[0].message.content = '"a good commit message"'
-        mock_send.return_value = (
-            None,
-            mock_response
-        )
+        mock_send.return_value = (None, mock_response)
 
-        repo = AiderRepo(InputOutput(), None)
+        repo = GitRepo(InputOutput(), None)
         # Call the get_commit_message method with dummy diff and context
         result = repo.get_commit_message("dummy diff", "dummy context")
 
@@ -57,18 +48,14 @@ class TestRepo(unittest.TestCase):
         mock_response = MagicMock()
         mock_response.choices = [MagicMock()]
         mock_response.choices[0].message.content = 'a good "commit message"'
-        mock_send.return_value = (
-            None,
-            mock_response
-        )
+        mock_send.return_value = (None, mock_response)
 
-        repo = AiderRepo(InputOutput(), None)
+        repo = GitRepo(InputOutput(), None)
         # Call the get_commit_message method with dummy diff and context
         result = repo.get_commit_message("dummy diff", "dummy context")
 
         # Assert that the returned message is the expected one
         self.assertEqual(result, 'a good "commit message"')
-
 
     def test_get_tracked_files(self):
         # Create a temporary directory
@@ -98,8 +85,7 @@ class TestRepo(unittest.TestCase):
 
         repo.git.commit("-m", "added")
 
-
-        tracked_files = AiderRepo(InputOutput(), [tempdir]).get_tracked_files()
+        tracked_files = GitRepo(InputOutput(), [tempdir]).get_tracked_files()
 
         # On windows, paths will come back \like\this, so normalize them back to Paths
         tracked_files = [Path(fn) for fn in tracked_files]
