@@ -224,7 +224,6 @@ class Coder:
         res = Path(self.root) / path
         return utils.safe_abs_path(res)
 
-    # fences are obfuscated so aider can modify this file!
     fences = [
         ("``" + "`", "``" + "`"),
         wrap_fence("source"),
