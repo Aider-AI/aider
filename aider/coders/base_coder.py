@@ -382,48 +382,6 @@ class Coder:
 
         return self.send_new_user_message(inp)
 
-    def should_dirty_commit(self, inp):
-        cmds = self.commands.matching_commands(inp)
-        if cmds:
-            matching_commands, _, _ = cmds
-            if len(matching_commands) == 1:
-                cmd = matching_commands[0][1:]
-                if cmd in "add clear commit diff drop exit help ls tokens".split():
-                    return
-
-        if self.last_asked_for_commit_time >= self.get_last_modified():
-            return
-        return True
-
-    def dirty_commit(self):
-        if not self.dirty_commits:
-            return
-        if not self.repo:
-            return
-        if not self.repo.is_dirty():
-            return
-
-        self.io.tool_output("Git repo has uncommitted changes.")
-        self.repo.show_diffs(self.pretty)
-        self.last_asked_for_commit_time = self.get_last_modified()
-        res = self.io.prompt_ask(
-            "Commit before the chat proceeds [y/n/commit message]?",
-            default="y",
-        ).strip()
-        if res.lower() in ["n", "no"]:
-            self.io.tool_error("Skipped commmit.")
-            return
-        if res.lower() in ["y", "yes"]:
-            message = None
-        else:
-            message = res.strip()
-
-        self.repo.commit(message=message)
-
-        # files changed, move cur messages back behind the files messages
-        self.move_back_cur_messages(self.gpt_prompts.files_content_local_edits)
-        return True
-
     def fmt_system_reminder(self):
         prompt = self.gpt_prompts.system_reminder
         prompt = prompt.format(fence=self.fence)
@@ -523,30 +481,6 @@ class Coder:
                     function_call=self.partial_response_function_call,
                 )
             ]
-
-    def get_context_from_history(self, history):
-        context = ""
-        if history:
-            for msg in history:
-                context += "\n" + msg["role"].upper() + ": " + msg["content"] + "\n"
-        return context
-
-    def auto_commit(self):
-        context = self.get_context_from_history(self.cur_messages)
-        res = self.repo.commit(context=context, prefix="aider: ")
-        if res:
-            commit_hash, commit_message = res
-            self.last_aider_commit_hash = commit_hash
-
-            saved_message = self.gpt_prompts.files_content_gpt_edits.format(
-                hash=commit_hash,
-                message=commit_message,
-            )
-        else:
-            self.io.tool_output("No changes made to git tracked files.")
-            saved_message = self.gpt_prompts.files_content_gpt_no_edits
-
-        return saved_message
 
     def check_for_file_mentions(self, content):
         words = set(word for word in content.split())
@@ -851,6 +785,74 @@ class Coder:
             return json.loads(data + '"}]}')
         except JSONDecodeError:
             pass
+
+    # commits...
+
+    def get_context_from_history(self, history):
+        context = ""
+        if history:
+            for msg in history:
+                context += "\n" + msg["role"].upper() + ": " + msg["content"] + "\n"
+        return context
+
+    def auto_commit(self):
+        context = self.get_context_from_history(self.cur_messages)
+        res = self.repo.commit(context=context, prefix="aider: ")
+        if res:
+            commit_hash, commit_message = res
+            self.last_aider_commit_hash = commit_hash
+
+            saved_message = self.gpt_prompts.files_content_gpt_edits.format(
+                hash=commit_hash,
+                message=commit_message,
+            )
+        else:
+            self.io.tool_output("No changes made to git tracked files.")
+            saved_message = self.gpt_prompts.files_content_gpt_no_edits
+
+        return saved_message
+
+    def should_dirty_commit(self, inp):
+        cmds = self.commands.matching_commands(inp)
+        if cmds:
+            matching_commands, _, _ = cmds
+            if len(matching_commands) == 1:
+                cmd = matching_commands[0][1:]
+                if cmd in "add clear commit diff drop exit help ls tokens".split():
+                    return
+
+        if self.last_asked_for_commit_time >= self.get_last_modified():
+            return
+        return True
+
+    def dirty_commit(self):
+        if not self.dirty_commits:
+            return
+        if not self.repo:
+            return
+        if not self.repo.is_dirty():
+            return
+
+        self.io.tool_output("Git repo has uncommitted changes.")
+        self.repo.show_diffs(self.pretty)
+        self.last_asked_for_commit_time = self.get_last_modified()
+        res = self.io.prompt_ask(
+            "Commit before the chat proceeds [y/n/commit message]?",
+            default="y",
+        ).strip()
+        if res.lower() in ["n", "no"]:
+            self.io.tool_error("Skipped commmit.")
+            return
+        if res.lower() in ["y", "yes"]:
+            message = None
+        else:
+            message = res.strip()
+
+        self.repo.commit(message=message)
+
+        # files changed, move cur messages back behind the files messages
+        self.move_back_cur_messages(self.gpt_prompts.files_content_local_edits)
+        return True
 
 
 def check_model_availability(main_model):
