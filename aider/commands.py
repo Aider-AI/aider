@@ -216,7 +216,9 @@ class Commands:
 
         commits = f"{self.coder.last_aider_commit_hash}~1"
         diff = self.coder.get_diffs(
-            commits, self.coder.last_aider_commit_hash, pretty=self.coder.pretty
+            self.coder.pretty,
+            commits,
+            self.coder.last_aider_commit_hash,
         )
 
         # don't use io.tool_output() because we don't want to log or further colorize

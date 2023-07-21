@@ -379,12 +379,7 @@ class Coder:
         )
 
         if self.should_dirty_commit(inp):
-            self.io.tool_output("Git repo has uncommitted changes, preparing commit...")
-            self.commit(ask=True, which="repo_files", pretty=self.pretty)
-
-            # files changed, move cur messages back behind the files messages
-            self.move_back_cur_messages(self.gpt_prompts.files_content_local_edits)
-
+            self.dirty_commit()
             if inp.strip():
                 self.io.tool_output("Use up-arrow to retry previous command:", inp)
             return
@@ -398,6 +393,27 @@ class Coder:
         self.check_for_file_mentions(inp)
 
         return self.send_new_user_message(inp)
+
+    def dirty_commit(self):
+        self.io.tool_output("Git repo has uncommitted changes.")
+        self.repo.show_diffs(self.pretty)
+        self.last_asked_for_commit_time = self.get_last_modified()
+        res = self.io.prompt_ask(
+            "Commit before the chat proceeds [y/n/commit message]?",
+            default="y",
+        ).strip()
+        if res.lower() in ["n", "no"]:
+            self.io.tool_error("Skipped commmit.")
+            return
+        if res.lower() in ["y", "yes"]:
+            message = None
+        else:
+            message = res.strip()
+
+        self.commit(message=message)
+
+        # files changed, move cur messages back behind the files messages
+        self.move_back_cur_messages(self.gpt_prompts.files_content_local_edits)
 
     def fmt_system_reminder(self):
         prompt = self.gpt_prompts.system_reminder
@@ -508,7 +524,7 @@ class Coder:
 
     def auto_commit(self):
         context = self.get_context_from_history(self.cur_messages)
-        res = self.commit(context=context, prefix="aider: ", pretty=self.pretty)
+        res = self.commit(context=context, prefix="aider: ")
         if res:
             commit_hash, commit_message = res
             self.last_aider_commit_hash = commit_hash

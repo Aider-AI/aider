@@ -50,7 +50,6 @@ class AiderRepo:
         self.root = utils.safe_abs_path(self.repo.working_tree_dir)
 
     def ___(self, fnames):
-
         # TODO!
 
         self.abs_fnames.add(str(fname))
@@ -81,91 +80,27 @@ class AiderRepo:
             else:
                 self.io.tool_error("Skipped adding new files to the git repo.")
 
-    def commit(
-        self, context=None, prefix=None, ask=False, message=None, which="chat_files", pretty=False
-    ):
-
-        ## TODO!
-
-        repo = self.repo
-        if not repo:
+    def commit(self, context=None, prefix=None, message=None):
+        if not self.repo.is_dirty():
             return
-
-        if not repo.is_dirty():
-            return
-
-        def get_dirty_files_and_diffs(file_list):
-            diffs = ""
-            relative_dirty_files = []
-            for fname in file_list:
-                relative_fname = self.get_rel_fname(fname)
-                relative_dirty_files.append(relative_fname)
-
-                try:
-                    current_branch_commit_count = len(
-                        list(self.repo.iter_commits(self.repo.active_branch))
-                    )
-                except git.exc.GitCommandError:
-                    current_branch_commit_count = None
-
-                if not current_branch_commit_count:
-                    continue
-
-                these_diffs = self.get_diffs(pretty, "HEAD", "--", relative_fname)
-
-                if these_diffs:
-                    diffs += these_diffs + "\n"
-
-            return relative_dirty_files, diffs
-
-        if which == "repo_files":
-            all_files = [os.path.join(self.root, f) for f in self.get_all_relative_files()]
-            relative_dirty_fnames, diffs = get_dirty_files_and_diffs(all_files)
-        elif which == "chat_files":
-            relative_dirty_fnames, diffs = get_dirty_files_and_diffs(self.abs_fnames)
-        else:
-            raise ValueError(f"Invalid value for 'which': {which}")
-
-        if self.show_diffs or ask:
-            # don't use io.tool_output() because we don't want to log or further colorize
-            print(diffs)
 
         if message:
             commit_message = message
         else:
+            diffs = self.get_diffs(False)
             commit_message = self.get_commit_message(diffs, context)
 
         if not commit_message:
-            commit_message = "work in progress"
+            commit_message = "(no commit message provided)"
 
         if prefix:
             commit_message = prefix + commit_message
 
-        if ask:
-            if which == "repo_files":
-                self.io.tool_output("Git repo has uncommitted changes.")
-            else:
-                self.io.tool_output("Files have uncommitted changes.")
+        if context:
+            commit_message = commit_message + "\n\n# Aider chat conversation:\n\n" + context
 
-            res = self.io.prompt_ask(
-                "Commit before the chat proceeds [y/n/commit message]?",
-                default=commit_message,
-            ).strip()
-            self.last_asked_for_commit_time = self.get_last_modified()
-
-            self.io.tool_output()
-
-            if res.lower() in ["n", "no"]:
-                self.io.tool_error("Skipped commmit.")
-                return
-            if res.lower() not in ["y", "yes"] and res:
-                commit_message = res
-
-        repo.git.add(*relative_dirty_fnames)
-
-        full_commit_message = commit_message + "\n\n# Aider chat conversation:\n\n" + context
-        repo.git.commit("-m", full_commit_message, "--no-verify")
-        commit_hash = repo.head.commit.hexsha[:7]
+        self.repo.git.commit("-a", "-m", commit_message, "--no-verify")
+        commit_hash = self.repo.head.commit.hexsha[:7]
         self.io.tool_output(f"Commit {commit_hash} {commit_message}")
 
         return commit_hash, commit_message
@@ -197,7 +132,7 @@ class AiderRepo:
                 functions=None,
                 stream=False,
             )
-            commit_message = completion.choices[0].message.content
+            commit_message = response.choices[0].message.content
         except (AttributeError, openai.error.InvalidRequestError):
             self.io.tool_error(f"Failed to generate commit message using {models.GPT35.name}")
             return
@@ -214,6 +149,18 @@ class AiderRepo:
 
         diffs = self.repo.git.diff(*args)
         return diffs
+
+    def show_diffs(self, pretty):
+        try:
+            current_branch_has_commits = any(self.repo.iter_commits(self.repo.active_branch))
+        except git.exc.GitCommandError:
+            current_branch_has_commits = False
+
+        if not current_branch_has_commits:
+            return
+
+        diffs = self.get_diffs(pretty, "HEAD")
+        print(diffs)
 
     def get_tracked_files(self):
         if not self.repo:
