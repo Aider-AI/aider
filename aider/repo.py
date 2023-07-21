@@ -7,24 +7,23 @@ import openai
 from aider import models, prompts, utils
 from aider.sendchat import send_with_retries
 
+from .dump import dump  # noqa: F401
+
 
 class AiderRepo:
     repo = None
 
-    def __init__(self, io, cmd_line_fnames):
+    def __init__(self, io, fnames):
         self.io = io
 
-        if not cmd_line_fnames:
-            cmd_line_fnames = ["."]
+        if fnames:
+            check_fnames = fnames
+        else:
+            check_fnames = ["."]
 
         repo_paths = []
-        for fname in cmd_line_fnames:
+        for fname in check_fnames:
             fname = Path(fname)
-            if not fname.exists():
-                self.io.tool_output(f"Creating empty file {fname}")
-                fname.parent.mkdir(parents=True, exist_ok=True)
-                fname.touch()
-
             fname = fname.resolve()
 
             try:
@@ -33,9 +32,6 @@ class AiderRepo:
                 repo_paths.append(repo_path)
             except git.exc.InvalidGitRepositoryError:
                 pass
-
-            if fname.is_dir():
-                continue
 
         num_repos = len(set(repo_paths))
 
@@ -49,36 +45,13 @@ class AiderRepo:
         self.repo = git.Repo(repo_paths.pop(), odbt=git.GitDB)
         self.root = utils.safe_abs_path(self.repo.working_tree_dir)
 
-    def ___(self, fnames):
-        # TODO!
-
-        self.abs_fnames.add(str(fname))
-
-        new_files = []
+    def add_new_files(self, fnames):
+        cur_files = [Path(fn).resolve() for fn in self.get_tracked_files()]
         for fname in fnames:
-            relative_fname = self.get_rel_fname(fname)
-
-            tracked_files = set(self.get_tracked_files())
-            if relative_fname not in tracked_files:
-                new_files.append(relative_fname)
-
-        if new_files:
-            rel_repo_dir = self.get_rel_repo_dir()
-
-            self.io.tool_output(f"Files not tracked in {rel_repo_dir}:")
-            for fn in new_files:
-                self.io.tool_output(f" - {fn}")
-            if self.io.confirm_ask("Add them?"):
-                for relative_fname in new_files:
-                    self.repo.git.add(relative_fname)
-                    self.io.tool_output(f"Added {relative_fname} to the git repo")
-                show_files = ", ".join(new_files)
-                commit_message = f"Added new files to the git repo: {show_files}"
-                self.repo.git.commit("-m", commit_message, "--no-verify")
-                commit_hash = self.repo.head.commit.hexsha[:7]
-                self.io.tool_output(f"Commit {commit_hash} {commit_message}")
-            else:
-                self.io.tool_error("Skipped adding new files to the git repo.")
+            if Path(fname).resolve() in cur_files:
+                continue
+            self.io.tool_output(f"Adding {fname} to git")
+            self.repo.git.add(fname)
 
     def commit(self, context=None, prefix=None, message=None):
         if not self.repo.is_dirty():
@@ -88,6 +61,7 @@ class AiderRepo:
             commit_message = message
         else:
             diffs = self.get_diffs(False)
+            dump(diffs)
             commit_message = self.get_commit_message(diffs, context)
 
         if not commit_message:
@@ -96,10 +70,11 @@ class AiderRepo:
         if prefix:
             commit_message = prefix + commit_message
 
+        full_commit_message = commit_message
         if context:
-            commit_message = commit_message + "\n\n# Aider chat conversation:\n\n" + context
+            full_commit_message += "\n\n# Aider chat conversation:\n\n" + context
 
-        self.repo.git.commit("-a", "-m", commit_message, "--no-verify")
+        self.repo.git.commit("-a", "-m", full_commit_message, "--no-verify")
         commit_hash = self.repo.head.commit.hexsha[:7]
         self.io.tool_output(f"Commit {commit_hash} {commit_message}")
 
@@ -120,21 +95,34 @@ class AiderRepo:
 
         diffs = "# Diffs:\n" + diffs
 
+        content = ""
+        if context:
+            content += context + "\n"
+        content += diffs
+
+        dump(content)
+
         messages = [
             dict(role="system", content=prompts.commit_system),
-            dict(role="user", content=context + diffs),
+            dict(role="user", content=content),
         ]
 
-        try:
-            _hash, response = send_with_retries(
-                model=models.GPT35.name,
-                messages=messages,
-                functions=None,
-                stream=False,
-            )
-            commit_message = response.choices[0].message.content
-        except (AttributeError, openai.error.InvalidRequestError):
-            self.io.tool_error(f"Failed to generate commit message using {models.GPT35.name}")
+        commit_message = None
+        for model in [models.GPT35.name, models.GPT35_16k.name]:
+            try:
+                _hash, response = send_with_retries(
+                    model=models.GPT35.name,
+                    messages=messages,
+                    functions=None,
+                    stream=False,
+                )
+                commit_message = response.choices[0].message.content
+                break
+            except (AttributeError, openai.error.InvalidRequestError):
+                pass
+
+        if not commit_message:
+            self.io.tool_error("Failed to generate commit message!")
             return
 
         commit_message = commit_message.strip()
@@ -146,6 +134,8 @@ class AiderRepo:
     def get_diffs(self, pretty, *args):
         if pretty:
             args = ["--color"] + list(args)
+        if not args:
+            args = ["HEAD"]
 
         diffs = self.repo.git.diff(*args)
         return diffs
@@ -156,10 +146,12 @@ class AiderRepo:
         except git.exc.GitCommandError:
             current_branch_has_commits = False
 
-        if not current_branch_has_commits:
-            return
+        dump(current_branch_has_commits)
 
-        diffs = self.get_diffs(pretty, "HEAD")
+        if not current_branch_has_commits:
+            return ""
+
+        diffs = self.get_diffs(pretty)
         print(diffs)
 
     def get_tracked_files(self):
@@ -180,3 +172,6 @@ class AiderRepo:
         res = set(str(Path(PurePosixPath(path))) for path in files)
 
         return res
+
+    def is_dirty(self):
+        return self.repo.is_dirty()

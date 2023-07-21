@@ -148,14 +148,21 @@ class Coder:
 
         self.commands = Commands(self.io, self)
 
+        for fname in fnames:
+            fname = Path(fname)
+            if not fname.exists():
+                self.io.tool_output(f"Creating empty file {fname}")
+                fname.parent.mkdir(parents=True, exist_ok=True)
+                fname.touch()
+
+            self.abs_fnames.add(str(fname.resolve()))
+
         if use_git:
             try:
-                self.repo = AiderRepo(fnames)
+                self.repo = AiderRepo(self.io, fnames)
                 self.root = self.repo.root
             except FileNotFoundError:
                 self.repo = None
-        else:
-            self.abs_fnames = set([str(Path(fname).resolve()) for fname in fnames])
 
         if self.repo:
             rel_repo_dir = self.repo.get_rel_repo_dir()
@@ -188,6 +195,8 @@ class Coder:
 
         for fname in self.get_inchat_relative_files():
             self.io.tool_output(f"Added {fname} to the chat.")
+
+        self.repo.add_new_files(fnames)
 
         # validate the functions jsonschema
         if self.functions:
@@ -351,12 +360,6 @@ class Coder:
                 if cmd in "add clear commit diff drop exit help ls tokens".split():
                     return
 
-        if not self.dirty_commits:
-            return
-        if not self.repo:
-            return
-        if not self.repo.is_dirty():
-            return
         if self.last_asked_for_commit_time >= self.get_last_modified():
             return
         return True
@@ -395,6 +398,13 @@ class Coder:
         return self.send_new_user_message(inp)
 
     def dirty_commit(self):
+        if not self.dirty_commits:
+            return
+        if not self.repo:
+            return
+        if not self.repo.is_dirty():
+            return
+
         self.io.tool_output("Git repo has uncommitted changes.")
         self.repo.show_diffs(self.pretty)
         self.last_asked_for_commit_time = self.get_last_modified()
@@ -410,7 +420,7 @@ class Coder:
         else:
             message = res.strip()
 
-        self.commit(message=message)
+        self.repo.commit(message=message)
 
         # files changed, move cur messages back behind the files messages
         self.move_back_cur_messages(self.gpt_prompts.files_content_local_edits)
@@ -524,7 +534,7 @@ class Coder:
 
     def auto_commit(self):
         context = self.get_context_from_history(self.cur_messages)
-        res = self.commit(context=context, prefix="aider: ")
+        res = self.repo.commit(context=context, prefix="aider: ")
         if res:
             commit_hash, commit_message = res
             self.last_aider_commit_hash = commit_hash

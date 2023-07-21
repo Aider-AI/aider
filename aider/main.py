@@ -440,8 +440,7 @@ def main(args=None, input=None, output=None):
             io.tool_output(repo_map)
         return
 
-    if args.dirty_commits:
-        coder.commit(ask=True, which="repo_files")
+    coder.dirty_commit()
 
     if args.apply:
         content = io.read_text(args.apply)
