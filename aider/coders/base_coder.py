@@ -196,7 +196,8 @@ class Coder:
         for fname in self.get_inchat_relative_files():
             self.io.tool_output(f"Added {fname} to the chat.")
 
-        self.repo.add_new_files(fnames)
+        if self.repo:
+            self.repo.add_new_files(fnames)
 
         # validate the functions jsonschema
         if self.functions:
