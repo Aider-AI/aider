@@ -798,19 +798,17 @@ class Coder:
     def auto_commit(self):
         context = self.get_context_from_history(self.cur_messages)
         res = self.repo.commit(context=context, prefix="aider: ")
-        if res:
+        if not res:
             commit_hash, commit_message = res
             self.last_aider_commit_hash = commit_hash
 
-            saved_message = self.gpt_prompts.files_content_gpt_edits.format(
+            return self.gpt_prompts.files_content_gpt_edits.format(
                 hash=commit_hash,
                 message=commit_message,
             )
-        else:
-            self.io.tool_output("No changes made to git tracked files.")
-            saved_message = self.gpt_prompts.files_content_gpt_no_edits
 
-        return saved_message
+        self.io.tool_output("No changes made to git tracked files.")
+        return self.gpt_prompts.files_content_gpt_no_edits
 
     def should_dirty_commit(self, inp):
         cmds = self.commands.matching_commands(inp)
