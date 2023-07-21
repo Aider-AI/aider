@@ -351,19 +351,6 @@ class Coder:
 
         self.last_keyboard_interrupt = now
 
-    def should_dirty_commit(self, inp):
-        cmds = self.commands.matching_commands(inp)
-        if cmds:
-            matching_commands, _, _ = cmds
-            if len(matching_commands) == 1:
-                cmd = matching_commands[0][1:]
-                if cmd in "add clear commit diff drop exit help ls tokens".split():
-                    return
-
-        if self.last_asked_for_commit_time >= self.get_last_modified():
-            return
-        return True
-
     def move_back_cur_messages(self, message):
         self.done_messages += self.cur_messages
         if message:
@@ -395,6 +382,19 @@ class Coder:
         self.check_for_file_mentions(inp)
 
         return self.send_new_user_message(inp)
+
+    def should_dirty_commit(self, inp):
+        cmds = self.commands.matching_commands(inp)
+        if cmds:
+            matching_commands, _, _ = cmds
+            if len(matching_commands) == 1:
+                cmd = matching_commands[0][1:]
+                if cmd in "add clear commit diff drop exit help ls tokens".split():
+                    return
+
+        if self.last_asked_for_commit_time >= self.get_last_modified():
+            return
+        return True
 
     def dirty_commit(self):
         if not self.dirty_commits:
