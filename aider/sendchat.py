@@ -42,3 +42,16 @@ def send_with_retries(model, messages, functions, stream):
 
     res = openai.ChatCompletion.create(**kwargs)
     return hash_object, res
+
+
+def simple_send_with_retries(model, messages):
+    try:
+        _hash, response = send_with_retries(
+            model=model,
+            messages=messages,
+            functions=None,
+            stream=False,
+        )
+        return response.choices[0].message.content
+    except (AttributeError, openai.error.InvalidRequestError):
+        return

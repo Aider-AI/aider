@@ -2,7 +2,7 @@ import os
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import git
 
@@ -12,13 +12,9 @@ from aider.repo import GitRepo
 
 
 class TestRepo(unittest.TestCase):
-    @patch("aider.repo.send_with_retries")
+    @patch("aider.repo.simple_send_with_retries")
     def test_get_commit_message(self, mock_send):
-        # Set the return value of the mocked function
-        mock_response = MagicMock()
-        mock_response.choices = [MagicMock()]
-        mock_response.choices[0].message.content = "a good commit message"
-        mock_send.return_value = (None, mock_response)
+        mock_send.return_value = "a good commit message"
 
         repo = GitRepo(InputOutput(), None)
         # Call the get_commit_message method with dummy diff and context
@@ -27,13 +23,9 @@ class TestRepo(unittest.TestCase):
         # Assert that the returned message is the expected one
         self.assertEqual(result, "a good commit message")
 
-    @patch("aider.repo.send_with_retries")
+    @patch("aider.repo.simple_send_with_retries")
     def test_get_commit_message_strip_quotes(self, mock_send):
-        # Set the return value of the mocked function
-        mock_response = MagicMock()
-        mock_response.choices = [MagicMock()]
-        mock_response.choices[0].message.content = '"a good commit message"'
-        mock_send.return_value = (None, mock_response)
+        mock_send.return_value = '"a good commit message"'
 
         repo = GitRepo(InputOutput(), None)
         # Call the get_commit_message method with dummy diff and context
@@ -42,13 +34,9 @@ class TestRepo(unittest.TestCase):
         # Assert that the returned message is the expected one
         self.assertEqual(result, "a good commit message")
 
-    @patch("aider.repo.send_with_retries")
+    @patch("aider.repo.simple_send_with_retries")
     def test_get_commit_message_no_strip_unmatched_quotes(self, mock_send):
-        # Set the return value of the mocked function
-        mock_response = MagicMock()
-        mock_response.choices = [MagicMock()]
-        mock_response.choices[0].message.content = 'a good "commit message"'
-        mock_send.return_value = (None, mock_response)
+        mock_send.return_value = 'a good "commit message"'
 
         repo = GitRepo(InputOutput(), None)
         # Call the get_commit_message method with dummy diff and context

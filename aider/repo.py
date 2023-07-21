@@ -2,10 +2,9 @@ import os
 from pathlib import Path, PurePosixPath
 
 import git
-import openai
 
 from aider import models, prompts, utils
-from aider.sendchat import send_with_retries
+from aider.sendchat import simple_send_with_retries
 
 from .dump import dump  # noqa: F401
 
@@ -104,19 +103,10 @@ class GitRepo:
             dict(role="user", content=content),
         ]
 
-        commit_message = None
         for model in [models.GPT35.name, models.GPT35_16k.name]:
-            try:
-                _hash, response = send_with_retries(
-                    model=models.GPT35.name,
-                    messages=messages,
-                    functions=None,
-                    stream=False,
-                )
-                commit_message = response.choices[0].message.content
+            commit_message = simple_send_with_retries(model, messages)
+            if commit_message:
                 break
-            except (AttributeError, openai.error.InvalidRequestError):
-                pass
 
         if not commit_message:
             self.io.tool_error("Failed to generate commit message!")
