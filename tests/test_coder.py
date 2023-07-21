@@ -23,6 +23,29 @@ class TestCoder(unittest.TestCase):
     def tearDown(self):
         self.patcher.stop()
 
+    def test_get_last_modified(self):
+        # Mock the IO object
+        mock_io = MagicMock()
+
+        with GitTemporaryDirectory():
+            repo = git.Repo(Path.cwd())
+            fname = Path("new.txt")
+            fname.touch()
+            repo.git.add(str(fname))
+            repo.git.commit("-m", "new")
+
+            # Initialize the Coder object with the mocked IO and mocked repo
+            coder = Coder.create(models.GPT4, None, mock_io)
+
+            mod = coder.get_last_modified()
+
+            fname.write_text("hi")
+            mod_newer = coder.get_last_modified()
+            self.assertLess(mod, mod_newer)
+
+            fname.unlink()
+            self.assertEqual(coder.get_last_modified(), 0)
+
     def test_should_dirty_commit(self):
         # Mock the IO object
         mock_io = MagicMock()

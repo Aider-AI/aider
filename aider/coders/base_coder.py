@@ -676,10 +676,10 @@ class Coder:
         return files
 
     def get_last_modified(self):
-        files = self.get_all_abs_files()
+        files = [Path(fn) for fn in self.get_all_abs_files() if Path(fn).exists()]
         if not files:
             return 0
-        return max(Path(path).stat().st_mtime for path in files)
+        return max(path.stat().st_mtime for path in files)
 
     def get_addable_relative_files(self):
         return set(self.get_all_relative_files()) - set(self.get_inchat_relative_files())
