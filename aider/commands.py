@@ -215,7 +215,9 @@ class Commands:
             return
 
         commits = f"{self.coder.last_aider_commit_hash}~1"
-        diff = self.coder.get_diffs(commits, self.coder.last_aider_commit_hash)
+        diff = self.coder.get_diffs(
+            commits, self.coder.last_aider_commit_hash, pretty=self.coder.pretty
+        )
 
         # don't use io.tool_output() because we don't want to log or further colorize
         print(diff)
@@ -247,7 +249,7 @@ class Commands:
 
         added_fnames = []
         git_added = []
-        git_files = self.coder.get_tracked_files()
+        git_files = self.coder.get_tracked_files() if self.coder.repo else []
 
         all_matched_files = set()
         for word in args.split():
