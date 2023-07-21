@@ -2,6 +2,7 @@
 
 ### GitHub main branch
 
+- Updated keyboard interrupt logic so that 2 ^C in 2 seconds always forces aider to exit.
 - Check pypi for newer versions and notify user.
 - Provide GPT with detailed error if it makes a bad edit block, ask for a retry.
 - Force `--no-pretty` if aider detects it is running inside a VSCode terminal.

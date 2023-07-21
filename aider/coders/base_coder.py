@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 import sys
+import time
 import traceback
 from json.decoder import JSONDecodeError
 from pathlib import Path, PurePosixPath
@@ -46,6 +47,7 @@ class Coder:
     functions = None
     total_cost = 0.0
     num_exhausted_context_windows = 0
+    last_keyboard_interrupt = None
 
     @classmethod
     def create(
@@ -120,7 +122,6 @@ class Coder:
         self.abs_fnames = set()
         self.cur_messages = []
         self.done_messages = []
-        self.num_control_c = 0
 
         self.io = io
         self.stream = stream
@@ -395,12 +396,21 @@ class Coder:
                     return
 
             except KeyboardInterrupt:
-                self.num_control_c += 1
-                if self.num_control_c >= 2:
-                    break
-                self.io.tool_error("^C again or /exit to quit")
+                self.keyboard_interrupt()
             except EOFError:
                 return
+
+    def keyboard_interrupt(self):
+        now = time.time()
+
+        thresh = 2  # seconds
+        if self.last_keyboard_interrupt and now - self.last_keyboard_interrupt < thresh:
+            self.io.tool_error("\n\n^C KeyboardInterrupt")
+            sys.exit()
+
+        self.io.tool_error("\n\n^C again to exit")
+
+        self.last_keyboard_interrupt = now
 
     def should_dirty_commit(self, inp):
         cmds = self.commands.matching_commands(inp)
@@ -437,8 +447,6 @@ class Coder:
             self.get_addable_relative_files(),
             self.commands,
         )
-
-        self.num_control_c = 0
 
         if self.should_dirty_commit(inp):
             self.io.tool_output("Git repo has uncommitted changes, preparing commit...")
@@ -521,8 +529,6 @@ class Coder:
             content = ""
 
         if interrupted:
-            self.io.tool_error("\n\n^C KeyboardInterrupt")
-            self.num_control_c += 1
             content += "\n^C KeyboardInterrupt"
 
         self.io.tool_output()
@@ -673,6 +679,7 @@ class Coder:
             else:
                 self.show_send_output(completion, silent)
         except KeyboardInterrupt:
+            self.keyboard_interrupt()
             interrupted = True
 
         if not silent:

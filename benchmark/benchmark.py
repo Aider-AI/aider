@@ -531,7 +531,7 @@ def run_test(
             coder.run(with_message=instructions)
         dur += time.time() - start
 
-        if coder.num_control_c:
+        if coder.last_keyboard_interrupt:
             raise KeyboardInterrupt
 
         if no_unit_tests:
