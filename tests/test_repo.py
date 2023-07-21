@@ -79,15 +79,8 @@ class TestRepo(unittest.TestCase):
 
         repo.git.commit("-m", "added")
 
-        # Create a Coder object on the temporary directory
-        coder = Coder.create(
-            models.GPT4,
-            None,
-            io=InputOutput(),
-            fnames=[str(tempdir / filenames[0])],
-        )
 
-        tracked_files = coder.get_tracked_files()
+        tracked_files = AiderRepo(InputOutput(), [tempdir]).get_tracked_files()
 
         # On windows, paths will come back \like\this, so normalize them back to Paths
         tracked_files = [Path(fn) for fn in tracked_files]
