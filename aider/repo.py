@@ -129,6 +129,15 @@ class AiderRepo:
         return commit_message
 
     def get_diffs(self, pretty, *args):
+        try:
+            commits = self.repo.iter_commits(self.repo.active_branch)
+            current_branch_has_commits = any(commits)
+        except git.exc.GitCommandError:
+            current_branch_has_commits = False
+
+        if not current_branch_has_commits:
+            return ""
+
         if pretty:
             args = ["--color"] + list(args)
         if not args:
@@ -138,14 +147,6 @@ class AiderRepo:
         return diffs
 
     def show_diffs(self, pretty):
-        try:
-            current_branch_has_commits = any(self.repo.iter_commits(self.repo.active_branch))
-        except git.exc.GitCommandError:
-            current_branch_has_commits = False
-
-        if not current_branch_has_commits:
-            return ""
-
         diffs = self.get_diffs(pretty)
         print(diffs)
 

@@ -440,8 +440,6 @@ def main(args=None, input=None, output=None):
             io.tool_output(repo_map)
         return
 
-    coder.dirty_commit()
-
     if args.apply:
         content = io.read_text(args.apply)
         if content is None:
@@ -450,6 +448,9 @@ def main(args=None, input=None, output=None):
         return
 
     io.tool_output("Use /help to see in-chat commands, run with --help to see cmd line args")
+
+    coder.dirty_commit()
+
     if args.message:
         io.tool_output()
         coder.run(with_message=args.message)
