@@ -18,9 +18,12 @@ class TestRepo(unittest.TestCase):
     @patch("aider.repo.send_with_retries")
     def test_get_commit_message(self, mock_send):
         # Set the return value of the mocked function
+        mock_response = MagicMock()
+        mock_response.choices = [MagicMock()]
+        mock_response.choices[0].message.content = "a good commit message"
         mock_send.return_value = (
             None,
-            "a good commit message"
+            mock_response
         )
 
         repo = AiderRepo(InputOutput(), None)
