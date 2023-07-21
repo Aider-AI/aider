@@ -17,7 +17,8 @@ from tests.utils import GitTemporaryDirectory
 class TestRepo(unittest.TestCase):
     @patch("aider.sendchat.send_with_retries")
     def test_get_commit_message(self, mock_send):
-        # TODO: make aider.sendchat.send_with_retries return "a good commit message"
+        # Set the return value of the mocked function
+        mock_send.return_value = "a good commit message"
 
         repo = AiderRepo(InputOutput(), None)
         # Call the get_commit_message method with dummy diff and context
