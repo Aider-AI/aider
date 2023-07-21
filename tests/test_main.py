@@ -34,9 +34,8 @@ class TestMain(TestCase):
     def test_main_with_empty_dir_no_files_on_command(self):
         main(["--no-git"], input=DummyInput(), output=DummyOutput())
 
-    @patch("aider.repo.AiderRepo.get_commit_message", return_value="commit message!")
-    def test_main_with_empty_dir_new_file(self, _):
-        main(["foo.txt", "--yes","--no-git"], input=DummyInput(), output=DummyOutput())
+    def test_main_with_empty_dir_new_file(self):
+        main(["foo.txt", "--yes", "--no-git"], input=DummyInput(), output=DummyOutput())
         self.assertTrue(os.path.exists("foo.txt"))
 
     @patch("aider.repo.AiderRepo.get_commit_message", return_value="mock commit message")
