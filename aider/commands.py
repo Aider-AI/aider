@@ -240,7 +240,7 @@ class Commands:
 
         # if repo, filter against it
         if self.coder.repo:
-            git_files = self.coder.get_tracked_files()
+            git_files = self.coder.repo.get_tracked_files()
             matched_files = [fn for fn in matched_files if str(fn) in git_files]
 
         res = list(map(str, matched_files))
@@ -251,7 +251,7 @@ class Commands:
 
         added_fnames = []
         git_added = []
-        git_files = self.coder.get_tracked_files() if self.coder.repo else []
+        git_files = self.coder.repo.get_tracked_files() if self.coder.repo else []
 
         all_matched_files = set()
         for word in args.split():
