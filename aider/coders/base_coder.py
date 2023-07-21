@@ -543,8 +543,7 @@ class Coder:
                 message=commit_message,
             )
         else:
-            if self.repo:
-                self.io.tool_output("No changes made to git tracked files.")
+            self.io.tool_output("No changes made to git tracked files.")
             saved_message = self.gpt_prompts.files_content_gpt_no_edits
 
         return saved_message
