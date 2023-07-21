@@ -381,8 +381,7 @@ class Coder:
             self.commands,
         )
 
-        if self.should_dirty_commit(inp):
-            self.dirty_commit()
+        if self.should_dirty_commit(inp) and self.dirty_commit():
             if inp.strip():
                 self.io.tool_output("Use up-arrow to retry previous command:", inp)
             return
@@ -424,6 +423,7 @@ class Coder:
 
         # files changed, move cur messages back behind the files messages
         self.move_back_cur_messages(self.gpt_prompts.files_content_local_edits)
+        return True
 
     def fmt_system_reminder(self):
         prompt = self.gpt_prompts.system_reminder

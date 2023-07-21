@@ -61,7 +61,6 @@ class AiderRepo:
             commit_message = message
         else:
             diffs = self.get_diffs(False)
-            dump(diffs)
             commit_message = self.get_commit_message(diffs, context)
 
         if not commit_message:
@@ -99,8 +98,6 @@ class AiderRepo:
         if context:
             content += context + "\n"
         content += diffs
-
-        dump(content)
 
         messages = [
             dict(role="system", content=prompts.commit_system),
@@ -145,8 +142,6 @@ class AiderRepo:
             current_branch_has_commits = any(self.repo.iter_commits(self.repo.active_branch))
         except git.exc.GitCommandError:
             current_branch_has_commits = False
-
-        dump(current_branch_has_commits)
 
         if not current_branch_has_commits:
             return ""
