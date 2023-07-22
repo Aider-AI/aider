@@ -31,7 +31,7 @@ def setup_git(git_root, io):
 
     check_gitignore(git_root, io, False)
 
-    repo = git.Repo.init(Path.cwd())
+    repo = git.Repo.init(git_root)
     global_git_config = git.GitConfigParser([str(Path.home() / ".gitconfig")], read_only=True)
     with repo.config_writer() as git_config:
         if not global_git_config.has_option("user", "name"):
@@ -43,7 +43,7 @@ def setup_git(git_root, io):
 
     io.tool_output("Git repository created in the current working directory.")
 
-    return git_root
+    return repo.working_tree_dir
 
 
 def check_gitignore(git_root, io, ask=True):
