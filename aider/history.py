@@ -1,36 +1,11 @@
 import argparse
 import json
 
-import markdown
 import tiktoken
 
 from aider import models, prompts
 from aider.dump import dump  # noqa: F401
 from aider.sendchat import simple_send_with_retries
-
-
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("filename", help="Markdown file to parse")
-    args = parser.parse_args()
-
-    with open(args.filename, "r") as f:
-        text = f.read()
-
-    md = markdown.Markdown()
-    tree = md.parse(text)
-
-    for element in tree.getiterator():
-        if element.tag in ["h1", "h4"] and element.text is not None:
-            print(element.text)
-        elif element.tag == "blockquote":
-            continue
-        else:
-            print(element.text)
-
-
-if __name__ == "__main__":
-    main()
 
 
 class ChatSummary:
@@ -93,3 +68,41 @@ class ChatSummary:
 
         summary = simple_send_with_retries(model=models.GPT35.name, messages=messages)
         dump(summary)
+
+        return [dict(role="user", content=summary)]
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("filename", help="Markdown file to parse")
+    args = parser.parse_args()
+
+    with open(args.filename, "r") as f:
+        text = f.read()
+
+    messages = []
+    assistant = []
+    for line in text.splitlines(keepends=True):
+        if line.startswith("# "):
+            continue
+        if line.startswith(">"):
+            continue
+
+        if line.startswith("#### "):
+            if assistant:
+                assistant = "".join(assistant)
+                messages.append(dict(role="assistant", content=assistant))
+                assistant = []
+
+            messages.append(dict(role="user", content=line[5:]))
+            continue
+
+        assistant.append(line)
+
+    summarizer = ChatSummary(models.GPT35.name)
+    summary = summarizer.summarize(messages[-40:])
+    dump(summary)
+
+
+if __name__ == "__main__":
+    main()
