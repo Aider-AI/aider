@@ -26,6 +26,12 @@ And got this output:
 """
 
 # CHAT HISTORY
-summarize = """
-Summarize the conversation.
+summarize = """*Briefly* summarize this partial conversation about programming.
+Include less detail about older parts and more detail about the most recent messages.
+This is only part of a longer conversation so *DO NOT* conclude the summary with language like "Finally, ...". Because the conversation continues after the summary.
+It's *very important* to include relevant code identifiers, file names, etc since this is a conversation about programming.
+Phrase the summary with the USER in first person, telling the ASSISTANT about the conversation.
+Write *as* the user.
+The user should refer to the assistant as *you*.
+Start the summary with "I asked you...".
 """
