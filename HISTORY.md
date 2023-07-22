@@ -1,14 +1,14 @@
 # Release history
 
-### GitHub main branch
+### v0.10.0
 
-- Updated keyboard interrupt logic so that 2 ^C in 2 seconds always forces aider to exit.
-- Check pypi for newer versions and notify user.
-- Provide GPT with detailed error if it makes a bad edit block, ask for a retry.
-- Force `--no-pretty` if aider detects it is running inside a VSCode terminal.
+- Added `/git` command to run git from inside aider chats.
 - Use Meta-ENTER (Esc+ENTER in some environments) to enter multiline chat messages.
 - Create a `.gitignore` with `.aider*` to prevent users from accidentaly adding aider files to git.
-- Added `/git` command to run git from inside aider chats.
+- Check pypi for newer versions and notify user.
+- Updated keyboard interrupt logic so that 2 ^C in 2 seconds always forces aider to exit.
+- Provide GPT with detailed error if it makes a bad edit block, ask for a retry.
+- Force `--no-pretty` if aider detects it is running inside a VSCode terminal.
 - [Benchmarked](https://aider.chat/docs/benchmarks.html) at 64.7% for gpt-4/diff (no regression)
 
 
