@@ -24,3 +24,8 @@ And got this output:
 
 {output}
 """
+
+# CHAT HISTORY
+summarize = """
+Summarize the conversation.
+"""
