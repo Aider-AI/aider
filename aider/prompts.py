@@ -40,3 +40,5 @@ Write *as* the user.
 The user should refer to the assistant as *you*.
 Start the summary with "I asked you...".
 """
+
+summary_prefix = "I spoke to you previously about a number of things.\n"

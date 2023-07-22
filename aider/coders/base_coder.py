@@ -17,10 +17,10 @@ from rich.markdown import Markdown
 
 from aider import models, prompts, utils
 from aider.commands import Commands
+from aider.history import ChatSummary
 from aider.repo import GitRepo
 from aider.repomap import RepoMap
 from aider.sendchat import send_with_retries
-from aider.history import ChatSummary
 
 from ..dump import dump  # noqa: F401
 
@@ -200,7 +200,7 @@ class Coder:
         if self.repo:
             self.repo.add_new_files(fnames)
 
-        self.summarizer = ChatSummary()
+        self.summarizer = ChatSummary(self.main_model.name)
 
         # validate the functions jsonschema
         if self.functions:

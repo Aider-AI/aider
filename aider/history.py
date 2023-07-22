@@ -15,6 +15,7 @@ class ChatSummary:
 
     def summarize(self, messages):
         num = len(messages)
+        dump(num)
         if num < 2:
             return messages
 
@@ -66,6 +67,8 @@ class ChatSummary:
         ]
 
         summary = simple_send_with_retries(model=models.GPT35.name, messages=messages)
+        summary = prompts.summary_prefix + summary
+        dump(summary)
 
         return [dict(role="user", content=summary)]
 
