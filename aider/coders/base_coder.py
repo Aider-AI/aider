@@ -801,7 +801,7 @@ class Coder:
     def auto_commit(self):
         context = self.get_context_from_history(self.cur_messages)
         res = self.repo.commit(context=context, prefix="aider: ")
-        if not res:
+        if res:
             commit_hash, commit_message = res
             self.last_aider_commit_hash = commit_hash
 
