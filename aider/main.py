@@ -27,6 +27,10 @@ def setup_git(git_root, io):
     if not io.confirm_ask("No git repo found, create one to track GPT's changes (recommended)?"):
         return
 
+    git_root = str(Path.cwd().resolve())
+
+    check_gitignore(git_root, io, False)
+
     repo = git.Repo.init(Path.cwd())
     global_git_config = git.GitConfigParser([str(Path.home() / ".gitconfig")], read_only=True)
     with repo.config_writer() as git_config:
@@ -38,8 +42,7 @@ def setup_git(git_root, io):
             io.tool_error('Update git email with: git config --global user.email "you@example.com"')
 
     io.tool_output("Git repository created in the current working directory.")
-    git_root = str(Path.cwd().resolve())
-    check_gitignore(git_root, io, False)
+
     return git_root
 
 
