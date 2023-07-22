@@ -25,6 +25,7 @@ class ChatSummary:
             sized.append((tokens, msg))
             total += tokens
 
+        dump(total, self.max_tokens)
         if total <= self.max_tokens:
             return messages
 
@@ -37,6 +38,7 @@ class ChatSummary:
         head = messages[:num]
         tail = messages[num:]
 
+        print("=" * 20)
         summary = self.summarize_all(head)
 
         tail_tokens = sum(tokens for tokens, msg in sized[num:])
@@ -59,15 +61,12 @@ class ChatSummary:
             if not content.endswith("\n"):
                 content += "\n"
 
-        dump(content)
-
         messages = [
             dict(role="system", content=prompts.summarize),
             dict(role="user", content=content),
         ]
 
         summary = simple_send_with_retries(model=models.GPT35.name, messages=messages)
-        dump(summary)
 
         return [dict(role="user", content=summary)]
 
@@ -87,14 +86,19 @@ def main():
             continue
         if line.startswith(">"):
             continue
+        if line.startswith("#### /"):
+            continue
 
         if line.startswith("#### "):
             if assistant:
                 assistant = "".join(assistant)
-                messages.append(dict(role="assistant", content=assistant))
+                if assistant.strip():
+                    messages.append(dict(role="assistant", content=assistant))
                 assistant = []
 
-            messages.append(dict(role="user", content=line[5:]))
+            content = line[5:]
+            if content.strip() and content.strip() != "<blank>":
+                messages.append(dict(role="user", content=line[5:]))
             continue
 
         assistant.append(line)
