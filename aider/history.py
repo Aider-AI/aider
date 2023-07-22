@@ -33,7 +33,7 @@ class ChatSummary:
         num = num // 2
 
         # we want the head to end with an assistant msg
-        if messages[num]["role"] == "assistant":
+        while messages[num]["role"] == "assistant" and num < len(messages) - 1:
             num += 1
 
         head = messages[:num]
