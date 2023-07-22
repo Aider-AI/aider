@@ -1,4 +1,6 @@
+import argparse
 import json
+import markdown
 
 import tiktoken
 from prompt_toolkit.completion import Completion
@@ -6,6 +8,28 @@ from prompt_toolkit.completion import Completion
 from aider import prompts
 
 from .dump import dump  # noqa: F401
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("filename", help="Markdown file to parse")
+    args = parser.parse_args()
+
+    with open(args.filename, 'r') as f:
+        text = f.read()
+
+    md = markdown.Markdown()
+    tree = md.parse(text)
+
+    for element in tree.getiterator():
+        if element.tag in ['h1', 'h4'] and element.text is not None:
+            print(element.text)
+        elif element.tag == 'blockquote':
+            continue
+        else:
+            print(element.text)
+
+if __name__ == "__main__":
+    main()
 
 
 class ChatSummary:
