@@ -20,6 +20,7 @@ from aider.commands import Commands
 from aider.repo import GitRepo
 from aider.repomap import RepoMap
 from aider.sendchat import send_with_retries
+from aider.history import ChatSummary
 
 from ..dump import dump  # noqa: F401
 
@@ -199,6 +200,8 @@ class Coder:
         if self.repo:
             self.repo.add_new_files(fnames)
 
+        self.summarizer = ChatSummary()
+
         # validate the functions jsonschema
         if self.functions:
             for function in self.functions:
@@ -353,7 +356,7 @@ class Coder:
 
     def move_back_cur_messages(self, message):
         self.done_messages += self.cur_messages
-        #self.done_messages = summarize_chat_history(self.done_messages)
+        self.done_messages = self.summarizer.summarize(self.done_messages)
 
         if message:
             self.done_messages += [
