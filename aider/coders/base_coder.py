@@ -353,6 +353,8 @@ class Coder:
 
     def move_back_cur_messages(self, message):
         self.done_messages += self.cur_messages
+        self.done_messages = summarize_chat_history(self.done_messages)
+
         if message:
             self.done_messages += [
                 dict(role="user", content=message),
