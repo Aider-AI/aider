@@ -232,7 +232,9 @@ class Commands:
 
         matched_files = []
         for fn in raw_matched_files:
-            matched_files += expand_subdir(fn.relative_to(self.coder.root))
+            matched_files += expand_subdir(fn)
+
+        matched_files = [str(Path(fn).relative_to(self.coder.root)) for fn in matched_files]
 
         # if repo, filter against it
         if self.coder.repo:
@@ -426,6 +428,7 @@ def expand_subdir(file_path):
         yield file_path
         return
 
-    for file in file_path.rglob("*"):
-        if file.is_file():
-            yield str(file)
+    if file_path.is_dir():
+        for file in file_path.rglob("*"):
+            if file.is_file():
+                yield str(file)
