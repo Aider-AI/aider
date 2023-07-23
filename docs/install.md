@@ -56,6 +56,9 @@ See the [usage instructions](/#usage) to start coding with aider.
 
 The rest of the install steps are completely optional.
 
+---
+
+
 ## Install universal ctags (optional)
 
 Aider does not require ctags, and will operate just fine without it.
