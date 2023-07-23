@@ -236,7 +236,9 @@ class Commands:
 
         matched_files = []
         for fn in raw_matched_files:
-            matched_files += expand_subdir(fn.relative_to(self.coder.root))
+            matched_files += expand_subdir(fn)
+
+        matched_files = [str(Path(fn).relative_to(self.coder.root)) for fn in matched_files]
 
         # if repo, filter against it
         if self.coder.repo:
@@ -330,7 +332,7 @@ class Commands:
                 self.io.tool_error(f"No files matched '{word}'")
 
             for matched_file in matched_files:
-                abs_fname = str(Path(matched_file).resolve())
+                abs_fname = self.coder.abs_root_path(matched_file)
                 if abs_fname in self.coder.abs_fnames:
                     self.coder.abs_fnames.remove(abs_fname)
                     self.io.tool_output(f"Removed {matched_file} from the chat")
@@ -430,6 +432,7 @@ def expand_subdir(file_path):
         yield file_path
         return
 
-    for file in file_path.rglob("*"):
-        if file.is_file():
-            yield str(file)
+    if file_path.is_dir():
+        for file in file_path.rglob("*"):
+            if file.is_file():
+                yield str(file)
