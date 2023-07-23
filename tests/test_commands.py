@@ -90,14 +90,14 @@ class TestCommands(TestCase):
         coder = Coder.create(models.GPT35, None, io)
         commands = Commands(io, coder)
 
-        # Create a directory and add files to it
-        os.mkdir("test_dir")
-        os.mkdir("test_dir/another_dir")
-        with open("test_dir/test_file1.txt", "w") as f:
+        # Create a directory and add files to it using pathlib
+        Path("test_dir").mkdir()
+        Path("test_dir/another_dir").mkdir()
+        with open(Path("test_dir/test_file1.txt"), "w") as f:
             f.write("Test file 1")
-        with open("test_dir/test_file2.txt", "w") as f:
+        with open(Path("test_dir/test_file2.txt"), "w") as f:
             f.write("Test file 2")
-        with open("test_dir/another_dir/test_file.txt", "w") as f:
+        with open(Path("test_dir/another_dir/test_file.txt"), "w") as f:
             f.write("Test file 3")
 
         # Call the cmd_add method with a directory
