@@ -127,6 +127,12 @@ class TestCommands(TestCase):
         # it should be there, but was not in v0.10.0
         self.assertIn(abs_fname, coder.abs_fnames)
 
+        # drop it via it's git_root referenced name
+        commands.cmd_drop("test_dir/another_dir/test_file.txt")
+
+        # it should be there, but was not in v0.10.0
+        self.assertNotIn(abs_fname, coder.abs_fnames)
+
     def test_cmd_drop_with_glob_patterns(self):
         # Initialize the Commands and InputOutput objects
         io = InputOutput(pretty=False, yes=True)

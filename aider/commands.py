@@ -328,7 +328,7 @@ class Commands:
                 self.io.tool_error(f"No files matched '{word}'")
 
             for matched_file in matched_files:
-                abs_fname = str(Path(matched_file).resolve())
+                abs_fname = self.coder.abs_root_path(matched_file)
                 if abs_fname in self.coder.abs_fnames:
                     self.coder.abs_fnames.remove(abs_fname)
                     self.io.tool_output(f"Removed {matched_file} from the chat")
