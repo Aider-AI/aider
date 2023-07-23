@@ -25,7 +25,10 @@ class TestCommands(TestCase):
 
     def tearDown(self):
         os.chdir(self.original_cwd)
-        shutil.rmtree(self.tempdir)
+        try:
+            shutil.rmtree(self.tempdir)
+        except OSError:
+            pass  # Ignore errors (Windows)
 
     def test_cmd_add(self):
         # Initialize the Commands and InputOutput objects
@@ -254,7 +257,3 @@ class TestCommands(TestCase):
         self.assertIn(filenames[0], coder.abs_fnames)
         self.assertNotIn(filenames[1], coder.abs_fnames)
         self.assertIn(filenames[2], coder.abs_fnames)
-
-        del commands
-        del coder
-        del io
