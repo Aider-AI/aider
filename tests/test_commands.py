@@ -220,3 +220,41 @@ class TestCommands(TestCase):
 
         self.assertIn("foo.txt", console_output)
         self.assertIn("bar.txt", console_output)
+
+    def test_cmd_add_from_subdir(self):
+        repo = git.Repo.init()
+        repo.config_writer().set_value("user", "name", "Test User").release()
+        repo.config_writer().set_value("user", "email", "testuser@example.com").release()
+
+        # Create three empty files and add them to the git repository
+        filenames = ["one.py", Path("subdir") / "two.py", Path("anotherdir") / "three.py"]
+        for filename in filenames:
+            file_path = Path(filename)
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            file_path.touch()
+            repo.git.add(str(file_path))
+        repo.git.commit("-m", "added")
+
+        filenames = [str(Path(fn).resolve()) for fn in filenames]
+
+        ###
+
+        os.chdir("subdir")
+
+        io = InputOutput(pretty=False, yes=True)
+        coder = Coder.create(models.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # this should get added
+        commands.cmd_add(str(Path("anotherdir") / "three.py"))
+
+        # this should add one.py
+        commands.cmd_add("*.py")
+
+        self.assertIn(filenames[0], coder.abs_fnames)
+        self.assertNotIn(filenames[1], coder.abs_fnames)
+        self.assertIn(filenames[2], coder.abs_fnames)
+
+        del commands
+        del coder
+        del io
