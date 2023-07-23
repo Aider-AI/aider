@@ -1,5 +1,9 @@
 # Release history
 
+### main branch on GitHub
+
+- /add and /drop always use paths relative to the git root
+
 ### v0.10.0
 
 - Added `/git` command to run git from inside aider chats.
