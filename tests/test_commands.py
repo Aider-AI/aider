@@ -84,7 +84,7 @@ class TestCommands(TestCase):
 
     def test_cmd_add_drop_directory(self):
         # Initialize the Commands and InputOutput objects
-        io = InputOutput(pretty=False, yes=True)
+        io = InputOutput(pretty=False, yes=False)
         from aider.coders import Coder
 
         coder = Coder.create(models.GPT35, None, io)
@@ -111,6 +111,21 @@ class TestCommands(TestCase):
         self.assertNotIn(
             str(Path("test_dir/another_dir/test_file.txt").resolve()), coder.abs_fnames
         )
+
+        # Issue #139 /add problems when cwd != git_root
+
+        # remember the proper abs path to this file
+        abs_fname = str(Path("test_dir/another_dir/test_file.txt").resolve())
+
+        # chdir to someplace other than git_root
+        Path("side_dir").mkdir()
+        os.chdir("side_dir")
+
+        # add it via it's git_root referenced name
+        commands.cmd_add("test_dir/another_dir/test_file.txt")
+
+        # it should be there, but was not in v0.10.0
+        self.assertIn(abs_fname, coder.abs_fnames)
 
     def test_cmd_drop_with_glob_patterns(self):
         # Initialize the Commands and InputOutput objects
