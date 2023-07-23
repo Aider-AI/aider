@@ -93,12 +93,9 @@ class TestCommands(TestCase):
         # Create a directory and add files to it using pathlib
         Path("test_dir").mkdir()
         Path("test_dir/another_dir").mkdir()
-        with open(Path("test_dir/test_file1.txt"), "w") as f:
-            f.write("Test file 1")
-        with open(Path("test_dir/test_file2.txt"), "w") as f:
-            f.write("Test file 2")
-        with open(Path("test_dir/another_dir/test_file.txt"), "w") as f:
-            f.write("Test file 3")
+        Path("test_dir/test_file1.txt").write_text("Test file 1")
+        Path("test_dir/test_file2.txt").write_text("Test file 2")
+        Path("test_dir/another_dir/test_file.txt").write_text("Test file 3")
 
         # Call the cmd_add method with a directory
         commands.cmd_add("test_dir test_dir/test_file2.txt")
