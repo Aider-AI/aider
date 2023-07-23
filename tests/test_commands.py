@@ -25,7 +25,10 @@ class TestCommands(TestCase):
 
     def tearDown(self):
         os.chdir(self.original_cwd)
-        shutil.rmtree(self.tempdir)
+        try:
+            shutil.rmtree(self.tempdir)
+        except OSError:
+            pass  # Ignore errors (Windows)
 
     def test_cmd_add(self):
         # Initialize the Commands and InputOutput objects
@@ -84,21 +87,18 @@ class TestCommands(TestCase):
 
     def test_cmd_add_drop_directory(self):
         # Initialize the Commands and InputOutput objects
-        io = InputOutput(pretty=False, yes=True)
+        io = InputOutput(pretty=False, yes=False)
         from aider.coders import Coder
 
         coder = Coder.create(models.GPT35, None, io)
         commands = Commands(io, coder)
 
-        # Create a directory and add files to it
-        os.mkdir("test_dir")
-        os.mkdir("test_dir/another_dir")
-        with open("test_dir/test_file1.txt", "w") as f:
-            f.write("Test file 1")
-        with open("test_dir/test_file2.txt", "w") as f:
-            f.write("Test file 2")
-        with open("test_dir/another_dir/test_file.txt", "w") as f:
-            f.write("Test file 3")
+        # Create a directory and add files to it using pathlib
+        Path("test_dir").mkdir()
+        Path("test_dir/another_dir").mkdir()
+        Path("test_dir/test_file1.txt").write_text("Test file 1")
+        Path("test_dir/test_file2.txt").write_text("Test file 2")
+        Path("test_dir/another_dir/test_file.txt").write_text("Test file 3")
 
         # Call the cmd_add method with a directory
         commands.cmd_add("test_dir test_dir/test_file2.txt")
@@ -114,6 +114,27 @@ class TestCommands(TestCase):
         self.assertNotIn(
             str(Path("test_dir/another_dir/test_file.txt").resolve()), coder.abs_fnames
         )
+
+        # Issue #139 /add problems when cwd != git_root
+
+        # remember the proper abs path to this file
+        abs_fname = str(Path("test_dir/another_dir/test_file.txt").resolve())
+
+        # chdir to someplace other than git_root
+        Path("side_dir").mkdir()
+        os.chdir("side_dir")
+
+        # add it via it's git_root referenced name
+        commands.cmd_add("test_dir/another_dir/test_file.txt")
+
+        # it should be there, but was not in v0.10.0
+        self.assertIn(abs_fname, coder.abs_fnames)
+
+        # drop it via it's git_root referenced name
+        commands.cmd_drop("test_dir/another_dir/test_file.txt")
+
+        # it should be there, but was not in v0.10.0
+        self.assertNotIn(abs_fname, coder.abs_fnames)
 
     def test_cmd_drop_with_glob_patterns(self):
         # Initialize the Commands and InputOutput objects
@@ -202,3 +223,37 @@ class TestCommands(TestCase):
 
         self.assertIn("foo.txt", console_output)
         self.assertIn("bar.txt", console_output)
+
+    def test_cmd_add_from_subdir(self):
+        repo = git.Repo.init()
+        repo.config_writer().set_value("user", "name", "Test User").release()
+        repo.config_writer().set_value("user", "email", "testuser@example.com").release()
+
+        # Create three empty files and add them to the git repository
+        filenames = ["one.py", Path("subdir") / "two.py", Path("anotherdir") / "three.py"]
+        for filename in filenames:
+            file_path = Path(filename)
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            file_path.touch()
+            repo.git.add(str(file_path))
+        repo.git.commit("-m", "added")
+
+        filenames = [str(Path(fn).resolve()) for fn in filenames]
+
+        ###
+
+        os.chdir("subdir")
+
+        io = InputOutput(pretty=False, yes=True)
+        coder = Coder.create(models.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # this should get added
+        commands.cmd_add(str(Path("anotherdir") / "three.py"))
+
+        # this should add one.py
+        commands.cmd_add("*.py")
+
+        self.assertIn(filenames[0], coder.abs_fnames)
+        self.assertNotIn(filenames[1], coder.abs_fnames)
+        self.assertIn(filenames[2], coder.abs_fnames)
