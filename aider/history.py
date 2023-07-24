@@ -57,7 +57,7 @@ class ChatSummary:
 
         summary = self.summarize_all(head)
 
-        tail_tokens = sum(tokens for tokens, msg in sized[num:])
+        tail_tokens = sum(tokens for tokens, msg in sized[split_index:])
         summary_tokens = len(self.tokenizer.encode(json.dumps(summary)))
 
         result = summary + tail
