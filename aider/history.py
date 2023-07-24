@@ -48,6 +48,10 @@ class ChatSummary:
             else:
                 break
 
+        # Ensure the head ends with an assistant message
+        while messages[split_index - 1]["role"] != "assistant" and split_index < len(messages):
+            split_index += 1
+
         head = messages[:split_index]
         tail = messages[split_index:]
 
