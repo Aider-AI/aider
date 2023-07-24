@@ -147,19 +147,18 @@ class GitRepo:
         try:
             commit = self.repo.head.commit
         except ValueError:
-            return set()
+            commit = None
 
         files = []
-        for blob in commit.tree.traverse():
-            if blob.type == "blob":  # blob is a file
-                files.append(blob.path)
+        if commit:
+            for blob in commit.tree.traverse():
+                if blob.type == "blob":  # blob is a file
+                    files.append(blob.path)
 
         # Add staged files
         index = self.repo.index
-        try:
-            staged_files = [item.a_path for item in index.diff("HEAD")]
-        except git.exc.BadName:
-            staged_files = [item.a_path for item in index.diff(None)]
+        staged_files = [item.a_path for item in index.diff(None)]
+        dump(staged_files)
         files.extend(staged_files)
 
         # convert to appropriate os.sep, since git always normalizes to /
