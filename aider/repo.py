@@ -156,7 +156,10 @@ class GitRepo:
 
         # Add staged files
         index = self.repo.index
-        staged_files = [item.a_path for item in index.diff("HEAD")]
+        try:
+            staged_files = [item.a_path for item in index.diff("HEAD")]
+        except git.exc.BadName:
+            staged_files = [item.a_path for item in index.diff(None)]
         files.extend(staged_files)
 
         # convert to appropriate os.sep, since git always normalizes to /
