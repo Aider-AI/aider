@@ -12,10 +12,12 @@ from .dump import dump  # noqa: F401
 class GitRepo:
     repo = None
 
-    def __init__(self, io, fnames):
+    def __init__(self, io, fnames, git_dname):
         self.io = io
 
-        if fnames:
+        if git_dname:
+            check_fnames = [git_dname]
+        elif fnames:
             check_fnames = fnames
         else:
             check_fnames = ["."]
@@ -24,6 +26,9 @@ class GitRepo:
         for fname in check_fnames:
             fname = Path(fname)
             fname = fname.resolve()
+
+            if not fname.exists() and fname.parent.exists():
+                fname = fname.parent
 
             try:
                 repo_path = git.Repo(fname, search_parent_directories=True).working_dir
@@ -48,6 +53,8 @@ class GitRepo:
         cur_files = [Path(fn).resolve() for fn in self.get_tracked_files()]
         for fname in fnames:
             if Path(fname).resolve() in cur_files:
+                continue
+            if not Path(fname).exists():
                 continue
             self.io.tool_output(f"Adding {fname} to git")
             self.repo.git.add(fname)
@@ -147,12 +154,19 @@ class GitRepo:
         try:
             commit = self.repo.head.commit
         except ValueError:
-            return set()
+            commit = None
 
         files = []
-        for blob in commit.tree.traverse():
-            if blob.type == "blob":  # blob is a file
-                files.append(blob.path)
+        if commit:
+            for blob in commit.tree.traverse():
+                if blob.type == "blob":  # blob is a file
+                    files.append(blob.path)
+
+        # Add staged files
+        index = self.repo.index
+        staged_files = [path for path, _ in index.entries.keys()]
+
+        files.extend(staged_files)
 
         # convert to appropriate os.sep, since git always normalizes to /
         res = set(str(Path(PurePosixPath(path))) for path in files)
