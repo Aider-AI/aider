@@ -25,10 +25,7 @@ class TestCommands(TestCase):
 
     def tearDown(self):
         os.chdir(self.original_cwd)
-        try:
-            shutil.rmtree(self.tempdir)
-        except OSError:
-            pass  # Ignore errors (Windows)
+        shutil.rmtree(self.tempdir, ignore_errors=True)
 
     def test_cmd_add(self):
         # Initialize the Commands and InputOutput objects
