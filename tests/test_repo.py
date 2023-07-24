@@ -17,7 +17,7 @@ class TestRepo(unittest.TestCase):
     def test_get_commit_message(self, mock_send):
         mock_send.return_value = "a good commit message"
 
-        repo = GitRepo(InputOutput(), None)
+        repo = GitRepo(InputOutput(), None, None)
         # Call the get_commit_message method with dummy diff and context
         result = repo.get_commit_message("dummy diff", "dummy context")
 
@@ -28,7 +28,7 @@ class TestRepo(unittest.TestCase):
     def test_get_commit_message_strip_quotes(self, mock_send):
         mock_send.return_value = '"a good commit message"'
 
-        repo = GitRepo(InputOutput(), None)
+        repo = GitRepo(InputOutput(), None, None)
         # Call the get_commit_message method with dummy diff and context
         result = repo.get_commit_message("dummy diff", "dummy context")
 
@@ -39,7 +39,7 @@ class TestRepo(unittest.TestCase):
     def test_get_commit_message_no_strip_unmatched_quotes(self, mock_send):
         mock_send.return_value = 'a good "commit message"'
 
-        repo = GitRepo(InputOutput(), None)
+        repo = GitRepo(InputOutput(), None, None)
         # Call the get_commit_message method with dummy diff and context
         result = repo.get_commit_message("dummy diff", "dummy context")
 
@@ -74,7 +74,7 @@ class TestRepo(unittest.TestCase):
 
         repo.git.commit("-m", "added")
 
-        tracked_files = GitRepo(InputOutput(), [tempdir]).get_tracked_files()
+        tracked_files = GitRepo(InputOutput(), [tempdir], None).get_tracked_files()
 
         # On windows, paths will come back \like\this, so normalize them back to Paths
         tracked_files = [Path(fn) for fn in tracked_files]
@@ -92,7 +92,7 @@ class TestRepo(unittest.TestCase):
             fname.touch()
             raw_repo.git.add(str(fname))
 
-            git_repo = GitRepo(InputOutput(), None)
+            git_repo = GitRepo(InputOutput(), None, None)
 
             # better be there
             fnames = git_repo.get_tracked_files()
