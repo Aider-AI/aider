@@ -27,9 +27,7 @@ class ChatSummary:
         return sized
 
     def summarize(self, messages):
-        num = len(messages)
-        dump(num)
-        if num < 2:
+        if len(messages) < 2:
             return messages
 
         sized = self.tokenize(messages)
@@ -37,14 +35,21 @@ class ChatSummary:
         if total <= self.max_tokens:
             return messages
 
-        num = num // 2
+        tail_tokens = 0
+        split_index = len(messages)
+        half_max_tokens = self.max_tokens // 2
 
-        # we want the head to end with an assistant msg
-        while messages[num]["role"] == "assistant" and num < len(messages) - 1:
-            num += 1
+        # Iterate over the messages in reverse order
+        for i in range(len(sized)-1, -1, -1):
+            tokens, _msg = sized[i]
+            if tail_tokens + tokens < half_max_tokens:
+                tail_tokens += tokens
+                split_index = i
+            else:
+                break
 
-        head = messages[:num]
-        tail = messages[num:]
+        head = messages[:split_index]
+        tail = messages[split_index:]
 
         summary = self.summarize_all(head)
 
