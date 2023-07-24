@@ -360,7 +360,9 @@ class Coder:
 
     def move_back_cur_messages(self, message):
         self.done_messages += self.cur_messages
-        self.done_messages = self.summarizer.summarize(self.done_messages)
+        if self.summarizer.too_big(self.done_messages):
+            self.io.tool_output("Summarizing chat history...")
+            self.done_messages = self.summarizer.summarize(self.done_messages)
 
         if message:
             self.done_messages += [

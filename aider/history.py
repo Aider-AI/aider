@@ -13,20 +13,27 @@ class ChatSummary:
         self.tokenizer = tiktoken.encoding_for_model(model)
         self.max_tokens = max_tokens
 
+    def too_big(self, messages):
+        sized = self.tokenize(messages)
+        total = sum(tokens for tokens, _msg in sized)
+        dump(total, self.max_tokens)
+        return total > self.max_tokens
+
+    def tokenize(self, messages):
+        sized = []
+        for msg in messages:
+            tokens = len(self.tokenizer.encode(json.dumps(msg)))
+            sized.append((tokens, msg))
+        return sized
+
     def summarize(self, messages):
         num = len(messages)
         dump(num)
         if num < 2:
             return messages
 
-        total = 0
-        sized = []
-        for msg in messages:
-            tokens = len(self.tokenizer.encode(json.dumps(msg)))
-            sized.append((tokens, msg))
-            total += tokens
-
-        dump(total, self.max_tokens)
+        sized = self.tokenize(messages)
+        total = sum(tokens for tokens, _msg in sized)
         if total <= self.max_tokens:
             return messages
 
