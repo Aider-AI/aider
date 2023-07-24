@@ -154,6 +154,11 @@ class GitRepo:
             if blob.type == "blob":  # blob is a file
                 files.append(blob.path)
 
+        # Add staged files
+        index = self.repo.index
+        staged_files = [item.a_path for item in index.diff("HEAD")]
+        files.extend(staged_files)
+
         # convert to appropriate os.sep, since git always normalizes to /
         res = set(str(Path(PurePosixPath(path))) for path in files)
 
