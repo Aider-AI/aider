@@ -157,8 +157,8 @@ class GitRepo:
 
         # Add staged files
         index = self.repo.index
-        staged_files = [str(Path(PurePosixPath(path))) for path in index.entries.keys()]
-        dump(staged_files)
+        staged_files = [path for path, _ in index.entries.keys()]
+
         files.extend(staged_files)
 
         # convert to appropriate os.sep, since git always normalizes to /

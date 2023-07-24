@@ -2,7 +2,7 @@ import os
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 import git
 
@@ -10,6 +10,7 @@ from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.repo import GitRepo
 from tests.utils import GitTemporaryDirectory
+
 
 class TestRepo(unittest.TestCase):
     @patch("aider.repo.simple_send_with_retries")
@@ -82,35 +83,32 @@ class TestRepo(unittest.TestCase):
         self.assertEqual(set(tracked_files), set(created_files))
 
     def test_get_tracked_files_with_new_staged_file(self):
-        # Mock the IO object
-        mock_io = MagicMock()
-
         with GitTemporaryDirectory():
             # new repo
-            repo = git.Repo()
+            raw_repo = git.Repo()
 
-            # add it, but no commits at all in the repo yet
+            # add it, but no commits at all in the raw_repo yet
             fname = Path("new.txt")
             fname.touch()
-            repo.git.add(str(fname))
+            raw_repo.git.add(str(fname))
 
-            coder = GitRepo(InputOutput(), None)
+            git_repo = GitRepo(InputOutput(), None)
 
             # better be there
-            fnames = coder.get_tracked_files()
+            fnames = git_repo.get_tracked_files()
             self.assertIn(str(fname), fnames)
 
             # commit it, better still be there
-            repo.git.commit("-m", "new")
-            fnames = coder.get_tracked_files()
+            raw_repo.git.commit("-m", "new")
+            fnames = git_repo.get_tracked_files()
             self.assertIn(str(fname), fnames)
 
             # new file, added but not committed
             fname2 = Path("new2.txt")
             fname2.touch()
-            repo.git.add(str(fname2))
+            raw_repo.git.add(str(fname2))
 
             # both should be there
-            fnames = coder.get_tracked_files()
+            fnames = git_repo.get_tracked_files()
             self.assertIn(str(fname), fnames)
             self.assertIn(str(fname2), fnames)
