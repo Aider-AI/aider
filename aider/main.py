@@ -9,15 +9,46 @@ import openai
 from aider import __version__, models
 from aider.coders import Coder
 from aider.io import InputOutput
+from aider.repo import GitRepo
 from aider.versioncheck import check_version
+
+from .dump import dump  # noqa: F402
 
 
 def get_git_root():
+    """Try and guess the git repo, since the conf.yml can be at the repo root"""
     try:
         repo = git.Repo(search_parent_directories=True)
         return repo.working_tree_dir
     except git.InvalidGitRepositoryError:
         return None
+
+
+def guessed_wrong_repo(io, git_root, fnames, git_dname):
+    """After we parse the args, we can determine the real repo. Did we guess wrong?"""
+
+    dump(git_root)
+
+    try:
+        check_repo = Path(GitRepo(io, fnames, git_dname).root).resolve()
+    except FileNotFoundError:
+        return
+
+    dump(check_repo)
+
+    # we had no guess, rely on the "true" repo result
+    if not git_root:
+        return str(check_repo)
+
+    git_root = Path(git_root).resolve()
+    if check_repo == git_root:
+        return
+
+    print("guessed the wrong repo")
+    dump(check_repo)
+    dump(git_root)
+
+    return str(check_repo)
 
 
 def setup_git(git_root, io):
@@ -71,11 +102,14 @@ def check_gitignore(git_root, io, ask=True):
     io.tool_output(f"Added {pat} to .gitignore")
 
 
-def main(args=None, input=None, output=None):
-    if args is None:
-        args = sys.argv[1:]
+def main(argv=None, input=None, output=None, force_git_root=None):
+    if argv is None:
+        argv = sys.argv[1:]
 
-    git_root = get_git_root()
+    if force_git_root:
+        git_root = force_git_root
+    else:
+        git_root = get_git_root()
 
     conf_fname = Path(".aider.conf.yml")
 
@@ -344,7 +378,7 @@ def main(args=None, input=None, output=None):
         ),
     )
 
-    args = parser.parse_args(args)
+    args = parser.parse_args(argv)
 
     if args.dark_mode:
         args.user_input_color = "#32FF32"
@@ -370,6 +404,38 @@ def main(args=None, input=None, output=None):
         tool_error_color=args.tool_error_color,
         dry_run=args.dry_run,
     )
+
+    fnames = args.files
+    if len(args.files) > 1:
+        good = True
+        for fname in args.files:
+            if Path(fname).is_dir():
+                io.tool_error(f"{fname} is a directory, not provided alone.")
+                good = False
+        if not good:
+            io.tool_error(
+                "Provide either a single directory of a git repo, or a list of one or more files."
+            )
+            return 1
+
+    git_dname = None
+    if len(args.files) == 1:
+        if Path(args.files[0]).is_dir():
+            if args.git:
+                git_dname = args.files[0]
+                fnames = []
+            else:
+                io.tool_error(f"{args.files[0]} is a directory, but --no-git selected.")
+                return -1
+
+    # We can't know the git repo for sure until after parsing the args.
+    # If we guessed wrong, reparse because that changes things like
+    # the location of the config.yml and history files.
+    if args.git and not force_git_root:
+        right_repo_root = guessed_wrong_repo(io, git_root, fnames, git_dname)
+        if right_repo_root:
+            print("guessed wrong")
+            return main(argv, input, output, right_repo_root)
 
     io.tool_output(f"Aider v{__version__}")
 
@@ -418,24 +484,29 @@ def main(args=None, input=None, output=None):
             setattr(openai, mod_key, val)
             io.tool_output(f"Setting openai.{mod_key}={val}")
 
-    coder = Coder.create(
-        main_model,
-        args.edit_format,
-        io,
-        ##
-        fnames=args.files,
-        pretty=args.pretty,
-        show_diffs=args.show_diffs,
-        auto_commits=args.auto_commits,
-        dirty_commits=args.dirty_commits,
-        dry_run=args.dry_run,
-        map_tokens=args.map_tokens,
-        verbose=args.verbose,
-        assistant_output_color=args.assistant_output_color,
-        code_theme=args.code_theme,
-        stream=args.stream,
-        use_git=args.git,
-    )
+    try:
+        coder = Coder.create(
+            main_model,
+            args.edit_format,
+            io,
+            ##
+            fnames=fnames,
+            git_dname=git_dname,
+            pretty=args.pretty,
+            show_diffs=args.show_diffs,
+            auto_commits=args.auto_commits,
+            dirty_commits=args.dirty_commits,
+            dry_run=args.dry_run,
+            map_tokens=args.map_tokens,
+            verbose=args.verbose,
+            assistant_output_color=args.assistant_output_color,
+            code_theme=args.code_theme,
+            stream=args.stream,
+            use_git=args.git,
+        )
+    except ValueError as err:
+        io.tool_error(str(err))
+        return
 
     if args.show_repo_map:
         repo_map = coder.get_repo_map()

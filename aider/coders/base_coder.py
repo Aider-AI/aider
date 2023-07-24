@@ -98,6 +98,7 @@ class Coder:
         main_model,
         io,
         fnames=None,
+        git_dname=None,
         pretty=True,
         show_diffs=False,
         auto_commits=True,
@@ -155,11 +156,14 @@ class Coder:
                 fname.parent.mkdir(parents=True, exist_ok=True)
                 fname.touch()
 
+            if not fname.is_file():
+                raise ValueError(f"{fname} is not a file")
+
             self.abs_fnames.add(str(fname.resolve()))
 
         if use_git:
             try:
-                self.repo = GitRepo(self.io, fnames)
+                self.repo = GitRepo(self.io, fnames, git_dname)
                 self.root = self.repo.root
             except FileNotFoundError:
                 self.repo = None
@@ -197,7 +201,7 @@ class Coder:
             self.io.tool_output(f"Added {fname} to the chat.")
 
         if self.repo:
-            self.repo.add_new_files(fnames)
+            self.repo.add_new_files(fname for fname in fnames if not Path(fname).is_dir())
 
         # validate the functions jsonschema
         if self.functions:
