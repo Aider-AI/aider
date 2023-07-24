@@ -405,7 +405,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         dry_run=args.dry_run,
     )
 
-    fnames = args.files
+    fnames = [str(Path(fn).resolve()) for fn in args.files]
     if len(args.files) > 1:
         good = True
         for fname in args.files:
@@ -422,11 +422,11 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     if len(args.files) == 1:
         if Path(args.files[0]).is_dir():
             if args.git:
-                git_dname = args.files[0]
+                git_dname = str(Path(args.files[0]).resolve())
                 fnames = []
             else:
                 io.tool_error(f"{args.files[0]} is a directory, but --no-git selected.")
-                return -1
+                return 1
 
     # We can't know the git repo for sure until after parsing the args.
     # If we guessed wrong, reparse because that changes things like
@@ -506,7 +506,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         )
     except ValueError as err:
         io.tool_error(str(err))
-        return
+        return 1
 
     if args.show_repo_map:
         repo_map = coder.get_repo_map()
