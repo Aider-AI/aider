@@ -1,8 +1,9 @@
 # Release history
 
-### main branch on GitHub
+### v0.10.1
 
 - /add and /drop always use paths relative to the git root
+- Encourage GPT to use language like "add files to the chat" to ask users for permission to edit them.
 
 ### v0.10.0
 
