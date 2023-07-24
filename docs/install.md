@@ -4,6 +4,9 @@
 - [pip install aider-chat](#pip-install-aider-chat)
 - [Provide your OpenAI API key](#provide-your-openai-api-key)
 - [Install git](#install-git)
+
+Optional steps:
+
 - [Install universal ctags (optional)](#install-universal-ctags-optional)
 - [Add aider to your editor (optional)](#add-aider-to-your-editor-optional)
 
@@ -55,6 +58,9 @@ Here are
 See the [usage instructions](/#usage) to start coding with aider.
 
 The rest of the install steps are completely optional.
+
+---
+
 
 ## Install universal ctags (optional)
 
