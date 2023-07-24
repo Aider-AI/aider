@@ -135,7 +135,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         "files",
         metavar="FILE",
         nargs="*",
-        help="a list of source code files to edit with GPT (optional)",
+        help="the directory of a git repo, or a list of files to edit with GPT (optional)",
     )
     core_group.add_argument(
         "--openai-api-key",
