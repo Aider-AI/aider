@@ -1030,12 +1030,19 @@ class Coder:
         try:
             commit = self.repo.head.commit
         except ValueError:
-            return set()
+            commit = None
 
         files = []
-        for blob in commit.tree.traverse():
-            if blob.type == "blob":  # blob is a file
-                files.append(blob.path)
+        if commit:
+            for blob in commit.tree.traverse():
+                if blob.type == "blob":  # blob is a file
+                    files.append(blob.path)
+
+        # Add staged files
+        index = self.repo.index
+        staged_files = [path for path, _ in index.entries.keys()]
+
+        files.extend(staged_files)
 
         # convert to appropriate os.sep, since git always normalizes to /
         res = set(str(Path(PurePosixPath(path))) for path in files)
