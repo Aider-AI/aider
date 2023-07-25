@@ -9,7 +9,7 @@ from aider.sendchat import simple_send_with_retries
 
 
 class ChatSummary:
-    def __init__(self, model=models.GPT35.name, max_tokens=128):
+    def __init__(self, model=models.GPT35.name, max_tokens=1024):
         self.tokenizer = tiktoken.encoding_for_model(model)
         self.max_tokens = max_tokens
 
@@ -27,8 +27,8 @@ class ChatSummary:
         return sized
 
     def summarize(self, messages):
-        if len(messages) < 2:
-            return messages
+        if len(messages) <= 4:
+            return self.summarize_all(messages)
 
         sized = self.tokenize(messages)
         total = sum(tokens for tokens, _msg in sized)
@@ -84,7 +84,6 @@ class ChatSummary:
 
         summary = simple_send_with_retries(model=models.GPT35.name, messages=messages)
         summary = prompts.summary_prefix + summary
-        dump(summary)
 
         return [dict(role="user", content=summary)]
 

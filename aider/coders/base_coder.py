@@ -361,16 +361,6 @@ class Coder:
 
         self.last_keyboard_interrupt = now
 
-    def summarize_end(self):
-        if self.summarizer_thread is None:
-            return
-
-        self.summarizer_thread.join()
-        self.summarizer_thread = None
-
-        self.done_messages = self.summarized_done_messages
-        self.summarized_done_messages = None
-
     def summarize_start(self):
         if not self.summarizer.too_big(self.done_messages):
             return
@@ -385,6 +375,16 @@ class Coder:
         print("working!")
         self.summarized_done_messages = self.summarizer.summarize(self.done_messages)
         print("done!")
+
+    def summarize_end(self):
+        if self.summarizer_thread is None:
+            return
+
+        self.summarizer_thread.join()
+        self.summarizer_thread = None
+
+        self.done_messages = self.summarized_done_messages
+        self.summarized_done_messages = None
 
     def move_back_cur_messages(self, message):
         self.done_messages += self.cur_messages
