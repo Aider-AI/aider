@@ -11,7 +11,7 @@ idna==3.4
 markdown-it-py==2.2.0
 mdurl==0.1.2
 multidict==6.0.4
-openai==0.27.6
+openai==0.27.8
 prompt-toolkit==3.0.38
 Pygments==2.15.1
 requests==2.30.0
