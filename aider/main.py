@@ -12,7 +12,7 @@ from aider.io import InputOutput
 from aider.repo import GitRepo
 from aider.versioncheck import check_version
 
-from .dump import dump  # noqa: F402
+from .dump import dump  # noqa: F401
 
 
 def get_git_root():
@@ -27,14 +27,10 @@ def get_git_root():
 def guessed_wrong_repo(io, git_root, fnames, git_dname):
     """After we parse the args, we can determine the real repo. Did we guess wrong?"""
 
-    dump(git_root)
-
     try:
         check_repo = Path(GitRepo(io, fnames, git_dname).root).resolve()
     except FileNotFoundError:
         return
-
-    dump(check_repo)
 
     # we had no guess, rely on the "true" repo result
     if not git_root:
@@ -43,10 +39,6 @@ def guessed_wrong_repo(io, git_root, fnames, git_dname):
     git_root = Path(git_root).resolve()
     if check_repo == git_root:
         return
-
-    print("guessed the wrong repo")
-    dump(check_repo)
-    dump(git_root)
 
     return str(check_repo)
 
@@ -434,7 +426,6 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     if args.git and not force_git_root:
         right_repo_root = guessed_wrong_repo(io, git_root, fnames, git_dname)
         if right_repo_root:
-            print("guessed wrong")
             return main(argv, input, output, right_repo_root)
 
     io.tool_output(f"Aider v{__version__}")
