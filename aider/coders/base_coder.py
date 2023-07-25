@@ -377,7 +377,9 @@ class Coder:
 
         assert self.summarizer_thread is None
         assert self.summarized_done_messages is None
+        print("launching working")
         self.summarizer_thread = threading.Thread(target=self.summarize_worker)
+        self.summarizer_thread.start()
 
     def summarize_worker(self):
         print("working!")
@@ -385,7 +387,6 @@ class Coder:
         print("done!")
 
     def move_back_cur_messages(self, message):
-        self.summarize_end()
         self.done_messages += self.cur_messages
         self.summarize_start()
 
@@ -439,6 +440,7 @@ class Coder:
             dict(role="system", content=main_sys),
         ]
 
+        self.summarize_end()
         messages += self.done_messages
         messages += self.get_files_messages()
         messages += self.cur_messages
