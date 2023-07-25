@@ -1,11 +1,10 @@
 import re
-from aider.claude.anthropic_model import AnthropicModel
 
 known_tokens = {
-    "gpt-3.5-turbo": 4,
     "gpt-4": 8,
-    "claude2": 100,
-    "claude": 100,
+    "gpt-3.5-turbo": 4,
+    "gpt-3.5-turbo-16k": 16,
+    "claude-2.0": 100,
 }
 
 
@@ -16,6 +15,13 @@ class Sender:
     def send(self, message):
         # implementation of send functionality
         pass
+
+
+class ModelNames:
+    GPT4 = "gpt-4"
+    GPT35 = "gpt-3.5-turbo"
+    GPT35_16k = "gpt-3.5-turbo-16k"
+    CLAUDE = "claude-2.0"
 
 
 class Model:
@@ -72,16 +78,17 @@ class Model:
             elif tokens == 100:
                 self.prompt_price = 0.003
                 self.completion_price = 0.004
-            else:
-                anthropic = AnthropicModel()
-                self.isclaude = anthropic.check_tokens(name)
 
-            if self.isclaude:
-                sender = Sender(self)
-                sender.send("Claude model initialized")
-            return
+        if self.is_claude():
+            self.edit_format = "whole"
+            self.always_available = True
+            sender = Sender(self)
+            sender.send("Claude model initialized")
 
-        raise ValueError(f"Unsupported model: {name}")
+            if tokens == 100:
+                self.prompt_price = 0.00000551
+                self.completion_price = 0.00003268
+                self.is_claude = True
 
     def is_gpt4(self):
         return self.name.startswith("gpt-4")
@@ -90,14 +97,13 @@ class Model:
         return self.name.startswith("gpt-3.5-turbo")
 
     def is_claude(self):
-        return self.name.startswith("claude")
+        return self.name.startswith("claude-2.0")
 
     def __str__(self):
         return self.name
 
 
-GPT4 = Model("gpt-4")
-GPT35 = Model("gpt-3.5-turbo")
-GPT35_16k = Model("gpt-3.5-turbo-16k")
-CLAUDE = Model("claude-instant-1.1")
-CLAUDE2 = Model("claude-2.0")
+Model(ModelNames.GPT4)
+Model(ModelNames.GPT35)
+Model(ModelNames.GPT35_16k)
+Model(ModelNames.CLAUDE)

@@ -1,34 +1,25 @@
-import asyncio
 from enum import Enum
-from pydantic import BaseModel
 from dataclasses import dataclass
 from typing import Literal, List, Dict
 from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT, AsyncAnthropic, APIStatusError
 from aider.claude.check_api_keys import check_api_keys
-from aider.coders.base_coder import Coder
 
 
 api_key = check_api_keys()
 
 
-class AnthropicCoder(Coder):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.chatbot = AnthropicChatBot(api_key)
-
-    def generate_response(self, prompt):
-        return self.chatbot.generate(prompt)
-
-
 class AnthropicChatBot:
-    def __init__(self, api_key):
+    def __init__(self, api_key=None):
         api_key = api_key
-        self.anthropic = Anthropic(api_key)
-        self.anthropic_chat = AsyncAnthropic(api_key)
+        self.anthropic = Anthropic(auth_token=api_key)
+        self.anthropic_chat = AsyncAnthropic(auth_token=api_key)
         self.converter: PromptConverter = PromptConverter()
 
-    def send_with_retries(self, model, prompt, **kwargs):
-        self.generate_prompt(prompt, model, **kwargs)
+    async def create(self, prompt=None, max_tokens_to_sample=None, **kwargs):
+        response = await self.async_stream(
+            prompt=prompt, max_tokens_to_sample=max_tokens_to_sample, **kwargs
+        )
+        return response.completion.message
 
     def is_claude(self, model):
         return model.startswith("claude")
@@ -57,15 +48,15 @@ class AnthropicChatBot:
         **kwargs,
     ):
         if self.is_claude(model=model):
-            if not stream:
-                stream = (True,)
-            if not max_tokens_to_sample:
-                max_tokens_to_sample = 90000
+            stream = (True,)
+            max_tokens_to_sample = 90000
             try:
                 if not prompt:
                     raise ValueError("Prompt cannot be empty")
-                anthropic_message = self.prompt_converter.convert_to_anthropic(prompt)
-                stream = await self.anthropic_chat.completions.create(
+                anthropic_message = self.prompt_converter.convert_to_anthropic(
+                    prompt, max_tokens_to_sample, **kwargs
+                )
+                stream: GeneratorExit = await self.anthropic_chat.completions.create(
                     model=model,
                     prompt=[message for message in anthropic_message],
                     maxtokens_to_sample=90000,

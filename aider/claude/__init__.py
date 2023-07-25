@@ -1,3 +1,4 @@
-from aider.claude import anthropic_coder, check_api_keys, anthropic_model
+from .check_api_keys import check_api_keys
+from .anthropic_coder import AnthropicChatBot
 
-__all__ = ["anthropic_coder", "anthropic_model", "check_api_keys"]
+__all__ = ["check_api_keys", "AnthropicChatBot"]

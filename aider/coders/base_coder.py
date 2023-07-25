@@ -18,10 +18,10 @@ from openai.error import APIError, RateLimitError, ServiceUnavailableError, Time
 from rich.console import Console, Text
 from rich.live import Live
 from rich.markdown import Markdown
-
 from aider import models, prompts, utils
 from aider.commands import Commands
 from aider.repomap import RepoMap
+from claude.anthropic_coder import AnthropicChatBot
 
 from ..dump import dump  # noqa: F401
 
@@ -36,6 +36,13 @@ class ExhaustedContextWindow(Exception):
 
 def wrap_fence(name):
     return f"<{name}>", f"</{name}>"
+
+
+chatbot = AnthropicChatBot()
+
+
+def activate_anthropic_coder():
+    AnthropicCoder(chatbot)
 
 
 class Coder:
@@ -76,6 +83,9 @@ class Coder:
                         f" {models.GPT35_16k.name}"
                     )
                 main_model = models.GPT35_16k
+
+        if main_model == models.CLAUDE:
+            activate_anthropic_coder()
 
         if edit_format is None:
             edit_format = main_model.edit_format
@@ -1124,6 +1134,79 @@ class Coder:
             return json.loads(data + '"}]}')
         except JSONDecodeError:
             pass
+
+
+class AnthropicCoder(Coder):
+    abs_fnames = None
+    repo = None
+    last_aider_commit_hash = None
+    last_asked_for_commit_time = 0
+    repo_map = None
+    functions = None
+    total_cost = 0.0
+    num_exhausted_context_windows = 0
+    last_keyboard_interrupt = None
+
+    @classmethod
+    def create(
+        self,
+        main_model,
+        edit_format,
+        io,
+        **kwargs,
+    ):
+        from . import (
+            EditBlockCoder,
+            EditBlockFunctionCoder,
+            SingleWholeFileFunctionCoder,
+            WholeFileCoder,
+            WholeFileFunctionCoder,
+        )
+
+        main_model = models.CLAUDE(main_model)
+
+        if edit_format is None:
+            edit_format = main_model.edit_format
+
+        if edit_format == "diff":
+            return EditBlockCoder(main_model, io, **kwargs)
+        elif edit_format == "whole":
+            return WholeFileCoder(main_model, io, **kwargs)
+        elif edit_format == "whole-func":
+            return WholeFileFunctionCoder(main_model, io, **kwargs)
+        elif edit_format == "single-whole-func":
+            return SingleWholeFileFunctionCoder(main_model, io, **kwargs)
+        elif edit_format == "diff-func-list":
+            return EditBlockFunctionCoder("list", main_model, io, **kwargs)
+        elif edit_format in ("diff-func", "diff-func-string"):
+            return EditBlockFunctionCoder("string", main_model, io, **kwargs)
+        else:
+            raise ValueError(f"Unknown edit format {edit_format}")
+
+    def __init__(self, chatbot):
+        self.chatbot = chatbot
+
+    def send_with_retries(self, model, messages, functions):
+        kwargs = dict(
+            model=model,
+            messages=messages,
+            temperature=0,
+            stream=self.stream,
+        )
+        if functions is not None:
+            kwargs["functions"] = self.functions
+
+        # we are abusing the openai object to stash these values
+        if hasattr(openai, "api_deployment_id"):
+            kwargs["deployment_id"] = openai.api_deployment_id
+        if hasattr(openai, "api_engine"):
+            kwargs["engine"] = openai.api_engine
+
+        # Generate SHA1 hash of kwargs and append it to chat_completion_call_hashes
+        hash_object = hashlib.sha1(json.dumps(kwargs, sort_keys=True).encode())
+        self.chat_completion_call_hashes.append(hash_object.hexdigest())
+        res = chatbot.async_stream_completion(**kwargs)
+        return res
 
 
 def check_model_availability(main_model):

@@ -12,7 +12,6 @@ from aider.io import InputOutput
 from aider.versioncheck import check_version
 
 
-
 def get_git_root():
     try:
         repo = git.Repo(search_parent_directories=True)
@@ -131,6 +130,13 @@ def main(args=None, input=None, output=None):
         const=models.GPT35_16k.name,
         help=f"Use {models.GPT35_16k.name} model for the main chat (gpt-4 is better)",
     )
+    core_group.add_argument(
+        "-4",
+        action="store_const",
+        dest="model",
+        const="claude-2.0",
+        help=f"Use claude-2.0 model for the main chat. The token limit is 100k",
+    )
 
     ##########
     model_group = parser.add_argument_group("Advanced Model Settings")
@@ -158,6 +164,11 @@ def main(args=None, input=None, output=None):
         "--openai-api-engine",
         metavar="OPENAI_API_ENGINE",
         help="Specify the engine arg to be passed to openai.ChatCompletion.create()",
+    )
+    model_group.add_argument(
+        "--anthropic-api-key",
+        metavar="ANTHROPIC_API_KEY",
+        help="Specify the Anthropic API key",
     )
     model_group.add_argument(
         "--edit-format",
@@ -397,6 +408,8 @@ def main(args=None, input=None, output=None):
         check_gitignore(git_root, io)
 
     def scrub_sensitive_info(text):
+        if not args.openai_api_key:
+            text.replace(args.anthropy_api_key, "***")
         # Replace sensitive information with placeholder
         return text.replace(args.openai_api_key, "***")
 
@@ -409,30 +422,30 @@ def main(args=None, input=None, output=None):
 
     io.tool_output(*sys.argv, log_only=True)
 
-    if not args.openai_api_key:
+    if not args.openai_api_key and not args.anthropic_api_key:
         if os.name == "nt":
             io.tool_error(
-                "No OpenAI API key provided. Use --openai-api-key or setx OPENAI_API_KEY."
+                "No OpenAI API key provided. Use --openai-api-key or --anthropic-api-key or setx OPENAI_API_KEY."
             )
-        else:
-            io.tool_error(
-                "No OpenAI API key provided. Use --openai-api-key or export OPENAI_API_KEY."
-            )
+    else:
+        io.tool_error(
+            "No OpenAI API key provided. Use --openai-api-key or export OPENAI_API_KEY."
+        )
         return 1
 
     main_model = models.Model(args.model)
 
     openai.api_key = args.openai_api_key
+    if not openai.api_key:
+        openai.api_key = args.anthropic_api_key
+
     for attr in ("base", "type", "version", "deployment_id", "engine"):
         if getattr(args, f"openai_api_{attr}") is not None:
             setattr(openai, f"api_{attr}", getattr(args, f"openai_api_{attr}"))
             io.tool_output(
                 f"Setting openai.{attr}={getattr(args, f'openai_api_{attr}')}"
             )
-    anthropic_api_key = args.anthropic_api_key
 
-    if args.anthropic:
-        coder = AnthropicCoder(anthropic_api_key)
     else:
         coder = Coder.create(
             main_model,
