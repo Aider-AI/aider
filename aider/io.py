@@ -2,6 +2,7 @@ import os
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
+from typing import Callable, Optional
 
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.history import FileHistory
@@ -104,6 +105,7 @@ class InputOutput:
         tool_error_color="red",
         encoding="utf-8",
         dry_run=False,
+        on_write : Optional[Callable[[str, str], str]] = None,
     ):
         no_color = os.environ.get("NO_COLOR")
         if no_color is not None and no_color != "":
@@ -130,6 +132,7 @@ class InputOutput:
 
         self.encoding = encoding
         self.dry_run = dry_run
+        self.on_write = on_write
 
         if pretty:
             self.console = Console()
@@ -153,6 +156,9 @@ class InputOutput:
 
     def write_text(self, filename, content):
         if self.dry_run:
+            return
+        if self.on_write is not None:
+            self.on_write(filename, content)
             return
         with open(str(filename), "w", encoding=self.encoding) as f:
             f.write(content)

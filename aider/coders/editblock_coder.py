@@ -2,6 +2,7 @@ import math
 import re
 from difflib import SequenceMatcher
 from pathlib import Path
+from collections import defaultdict
 
 from .base_coder import Coder
 from .editblock_prompts import EditBlockPrompts
@@ -19,12 +20,17 @@ class EditBlockCoder(Coder):
         edits = list(find_original_update_blocks(content))
 
         edited = set()
+        edit_dict = defaultdict(list)
         for path, original, updated in edits:
             full_path = self.allowed_to_edit(path)
             if not full_path:
                 continue
+            edit_dict[(path, full_path)].append((original, updated))
+
+        for (path, full_path), patches in edit_dict.items():
             content = self.io.read_text(full_path)
-            content = do_replace(full_path, content, original, updated)
+            for original, updated in patches:
+                content = do_replace(full_path, content, original, updated)
             if content:
                 self.io.write_text(full_path, content)
                 edited.add(path)
