@@ -12,6 +12,7 @@ from aider.io import InputOutput
 from aider.versioncheck import check_version
 
 
+
 def get_git_root():
     try:
         repo = git.Repo(search_parent_directories=True)
@@ -24,7 +25,9 @@ def setup_git(git_root, io):
     if git_root:
         return git_root
 
-    if not io.confirm_ask("No git repo found, create one to track GPT's changes (recommended)?"):
+    if not io.confirm_ask(
+        "No git repo found, create one to track GPT's changes (recommended)?"
+    ):
         return
 
     git_root = str(Path.cwd().resolve())
@@ -32,14 +35,20 @@ def setup_git(git_root, io):
     check_gitignore(git_root, io, False)
 
     repo = git.Repo.init(git_root)
-    global_git_config = git.GitConfigParser([str(Path.home() / ".gitconfig")], read_only=True)
+    global_git_config = git.GitConfigParser(
+        [str(Path.home() / ".gitconfig")], read_only=True
+    )
     with repo.config_writer() as git_config:
         if not global_git_config.has_option("user", "name"):
             git_config.set_value("user", "name", "Your Name")
-            io.tool_error('Update git name with: git config --global user.name "Your Name"')
+            io.tool_error(
+                'Update git name with: git config --global user.name "Your Name"'
+            )
         if not global_git_config.has_option("user", "email"):
             git_config.set_value("user", "email", "you@example.com")
-            io.tool_error('Update git email with: git config --global user.email "you@example.com"')
+            io.tool_error(
+                'Update git email with: git config --global user.email "you@example.com"'
+            )
 
     io.tool_output("Git repository created in the current working directory.")
 
@@ -166,10 +175,14 @@ def main(args=None, input=None, output=None):
     ##########
     history_group = parser.add_argument_group("History Files")
     default_input_history_file = (
-        os.path.join(git_root, ".aider.input.history") if git_root else ".aider.input.history"
+        os.path.join(git_root, ".aider.input.history")
+        if git_root
+        else ".aider.input.history"
     )
     default_chat_history_file = (
-        os.path.join(git_root, ".aider.chat.history.md") if git_root else ".aider.chat.history.md"
+        os.path.join(git_root, ".aider.chat.history.md")
+        if git_root
+        else ".aider.chat.history.md"
     )
     history_group.add_argument(
         "--input-history-file",
@@ -411,31 +424,34 @@ def main(args=None, input=None, output=None):
 
     openai.api_key = args.openai_api_key
     for attr in ("base", "type", "version", "deployment_id", "engine"):
-        arg_key = f"openai_api_{attr}"
-        val = getattr(args, arg_key)
-        if val is not None:
-            mod_key = f"api_{attr}"
-            setattr(openai, mod_key, val)
-            io.tool_output(f"Setting openai.{mod_key}={val}")
+        if getattr(args, f"openai_api_{attr}") is not None:
+            setattr(openai, f"api_{attr}", getattr(args, f"openai_api_{attr}"))
+            io.tool_output(
+                f"Setting openai.{attr}={getattr(args, f'openai_api_{attr}')}"
+            )
+    anthropic_api_key = args.anthropic_api_key
 
-    coder = Coder.create(
-        main_model,
-        args.edit_format,
-        io,
-        ##
-        fnames=args.files,
-        pretty=args.pretty,
-        show_diffs=args.show_diffs,
-        auto_commits=args.auto_commits,
-        dirty_commits=args.dirty_commits,
-        dry_run=args.dry_run,
-        map_tokens=args.map_tokens,
-        verbose=args.verbose,
-        assistant_output_color=args.assistant_output_color,
-        code_theme=args.code_theme,
-        stream=args.stream,
-        use_git=args.git,
-    )
+    if args.anthropic:
+        coder = AnthropicCoder(anthropic_api_key)
+    else:
+        coder = Coder.create(
+            main_model,
+            args.edit_format,
+            io,
+            ##
+            fnames=args.files,
+            pretty=args.pretty,
+            show_diffs=args.show_diffs,
+            auto_commits=args.auto_commits,
+            dirty_commits=args.dirty_commits,
+            dry_run=args.dry_run,
+            map_tokens=args.map_tokens,
+            verbose=args.verbose,
+            assistant_output_color=args.assistant_output_color,
+            code_theme=args.code_theme,
+            stream=args.stream,
+            use_git=args.git,
+        )
 
     if args.show_repo_map:
         repo_map = coder.get_repo_map()
@@ -453,7 +469,9 @@ def main(args=None, input=None, output=None):
         coder.apply_updates(content)
         return
 
-    io.tool_output("Use /help to see in-chat commands, run with --help to see cmd line args")
+    io.tool_output(
+        "Use /help to see in-chat commands, run with --help to see cmd line args"
+    )
     if args.message:
         io.tool_output()
         coder.run(with_message=args.message)

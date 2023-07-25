@@ -162,7 +162,11 @@ class Coder:
             self.io.tool_output("Git repo: none")
             self.find_common_root()
 
-        if main_model.use_repo_map and self.repo and self.gpt_prompts.repo_content_prefix:
+        if (
+            main_model.use_repo_map
+            and self.repo
+            and self.gpt_prompts.repo_content_prefix
+        ):
             self.repo_map = RepoMap(
                 map_tokens,
                 self.root,
@@ -173,7 +177,9 @@ class Coder:
             )
 
             if self.repo_map.use_ctags:
-                self.io.tool_output(f"Repo-map: universal-ctags using {map_tokens} tokens")
+                self.io.tool_output(
+                    f"Repo-map: universal-ctags using {map_tokens} tokens"
+                )
             elif not self.repo_map.has_ctags and map_tokens > 0:
                 self.io.tool_output(
                     f"Repo-map: basic using {map_tokens} tokens"
@@ -513,7 +519,9 @@ class Coder:
             self.io.tool_error("The chat session is larger than the context window!\n")
             self.commands.cmd_tokens("")
             self.io.tool_error("\nTo reduce token usage:")
-            self.io.tool_error(" - Use /drop to remove unneeded files from the chat session.")
+            self.io.tool_error(
+                " - Use /drop to remove unneeded files from the chat session."
+            )
             self.io.tool_error(" - Use /clear to clear chat history.")
             return
 
@@ -559,7 +567,9 @@ class Coder:
 
     def update_cur_messages(self, edited):
         if self.partial_response_content:
-            self.cur_messages += [dict(role="assistant", content=self.partial_response_content)]
+            self.cur_messages += [
+                dict(role="assistant", content=self.partial_response_content)
+            ]
         if self.partial_response_function_call:
             self.cur_messages += [
                 dict(
@@ -660,7 +670,6 @@ class Coder:
         # Generate SHA1 hash of kwargs and append it to chat_completion_call_hashes
         hash_object = hashlib.sha1(json.dumps(kwargs, sort_keys=True).encode())
         self.chat_completion_call_hashes.append(hash_object.hexdigest())
-
         res = openai.ChatCompletion.create(**kwargs)
         return res
 
@@ -700,7 +709,9 @@ class Coder:
         show_func_err = None
         show_content_err = None
         try:
-            self.partial_response_function_call = completion.choices[0].message.function_call
+            self.partial_response_function_call = completion.choices[
+                0
+            ].message.function_call
         except AttributeError as func_err:
             show_func_err = func_err
 
@@ -791,7 +802,9 @@ class Coder:
         if not show_resp:
             return
 
-        md = Markdown(show_resp, style=self.assistant_output_color, code_theme=self.code_theme)
+        md = Markdown(
+            show_resp, style=self.assistant_output_color, code_theme=self.code_theme
+        )
         live.update(md)
 
     def render_incremental_response(self, final):
@@ -851,7 +864,9 @@ class Coder:
         diffs = self.repo.git.diff(*args)
         return diffs
 
-    def commit(self, history=None, prefix=None, ask=False, message=None, which="chat_files"):
+    def commit(
+        self, history=None, prefix=None, ask=False, message=None, which="chat_files"
+    ):
         repo = self.repo
         if not repo:
             return
@@ -884,7 +899,9 @@ class Coder:
             return relative_dirty_files, diffs
 
         if which == "repo_files":
-            all_files = [os.path.join(self.root, f) for f in self.get_all_relative_files()]
+            all_files = [
+                os.path.join(self.root, f) for f in self.get_all_relative_files()
+            ]
             relative_dirty_fnames, diffs = get_dirty_files_and_diffs(all_files)
         elif which == "chat_files":
             relative_dirty_fnames, diffs = get_dirty_files_and_diffs(self.abs_fnames)
@@ -929,7 +946,9 @@ class Coder:
 
         repo.git.add(*relative_dirty_fnames)
 
-        full_commit_message = commit_message + "\n\n# Aider chat conversation:\n\n" + context
+        full_commit_message = (
+            commit_message + "\n\n# Aider chat conversation:\n\n" + context
+        )
         repo.git.commit("-m", full_commit_message, "--no-verify")
         commit_hash = repo.head.commit.hexsha[:7]
         self.io.tool_output(f"Commit {commit_hash} {commit_message}")
@@ -963,7 +982,9 @@ class Coder:
         return max(path.stat().st_mtime for path in files)
 
     def get_addable_relative_files(self):
-        return set(self.get_all_relative_files()) - set(self.get_inchat_relative_files())
+        return set(self.get_all_relative_files()) - set(
+            self.get_inchat_relative_files()
+        )
 
     def allowed_to_edit(self, path, write_content=None):
         full_path = self.abs_root_path(path)
@@ -991,7 +1012,9 @@ class Coder:
         if self.repo:
             tracked_files = set(self.get_tracked_files())
             relative_fname = self.get_rel_fname(full_path)
-            if relative_fname not in tracked_files and self.io.confirm_ask(f"Add {path} to git?"):
+            if relative_fname not in tracked_files and self.io.confirm_ask(
+                f"Add {path} to git?"
+            ):
                 if not self.dry_run:
                     self.repo.git.add(full_path)
 
@@ -1030,11 +1053,15 @@ class Coder:
             err = err.args[0]
             self.apply_update_errors += 1
             if self.apply_update_errors < max_apply_update_errors:
-                self.io.tool_error(f"Malformed response #{self.apply_update_errors}, retrying...")
+                self.io.tool_error(
+                    f"Malformed response #{self.apply_update_errors}, retrying..."
+                )
                 self.io.tool_error(str(err))
                 return None, err
             else:
-                self.io.tool_error(f"Malformed response #{self.apply_update_errors}, aborting.")
+                self.io.tool_error(
+                    f"Malformed response #{self.apply_update_errors}, aborting."
+                )
                 return False, None
 
         except Exception as err:
@@ -1043,10 +1070,14 @@ class Coder:
             traceback.print_exc()
             self.apply_update_errors += 1
             if self.apply_update_errors < max_apply_update_errors:
-                self.io.tool_error(f"Update exception #{self.apply_update_errors}, retrying...")
+                self.io.tool_error(
+                    f"Update exception #{self.apply_update_errors}, retrying..."
+                )
                 return None, str(err)
             else:
-                self.io.tool_error(f"Update exception #{self.apply_update_errors}, aborting")
+                self.io.tool_error(
+                    f"Update exception #{self.apply_update_errors}, aborting"
+                )
                 return False, None
 
         self.apply_update_errors = 0

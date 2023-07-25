@@ -23,6 +23,12 @@ class TestModels(unittest.TestCase):
         model = Model("gpt-4-32k-2123")
         self.assertEqual(model.max_context_tokens, 32 * 1024)
 
+        model = Model("claude-2")
+        self.assertEqual(model.max_context_tokens, 100 * 1024)
+
+        model = Model("claude-instant-1.1")
+        self.assertEqual(model.max_context_tokens, 100 * 1024)
+
 
 if __name__ == "__main__":
     unittest.main()

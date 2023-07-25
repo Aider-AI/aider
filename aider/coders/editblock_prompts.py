@@ -20,15 +20,9 @@ Once you understand the request you MUST:
 
 {fence[0]}python
 some/dir/example.py
-<<<<<<< ORIGINAL
     # some comment
     # Func to multiply
     def mul(a,b)
-=======
-    # updated comment
-    # Function to add
-    def add(a,b):
->>>>>>> UPDATED
 {fence[1]}
 
 Every *edit block* must be fenced with {fence[0]}...{fence[1]} with the correct code language.
