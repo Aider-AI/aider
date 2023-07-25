@@ -40,7 +40,7 @@ class ChatSummary:
         half_max_tokens = self.max_tokens // 2
 
         # Iterate over the messages in reverse order
-        for i in range(len(sized)-1, -1, -1):
+        for i in range(len(sized) - 1, -1, -1):
             tokens, _msg = sized[i]
             if tail_tokens + tokens < half_max_tokens:
                 tail_tokens += tokens
@@ -49,8 +49,8 @@ class ChatSummary:
                 break
 
         # Ensure the head ends with an assistant message
-        while messages[split_index - 1]["role"] != "assistant" and split_index < len(messages):
-            split_index += 1
+        while messages[split_index - 1]["role"] != "assistant" and split_index > 1:
+            split_index -= 1
 
         head = messages[:split_index]
         tail = messages[split_index:]
