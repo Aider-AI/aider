@@ -1,5 +1,9 @@
 # Release history
 
+### main branch on github
+
+- Stronger GPT-3.5 prompt against skipping/eliding code in replies (51.9% benchmark, no regression)
+
 ### v0.10.1
 
 - /add and /drop always use paths relative to the git root
