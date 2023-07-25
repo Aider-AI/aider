@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 import sys
+import threading
 import time
 import traceback
 from json.decoder import JSONDecodeError
@@ -205,6 +206,8 @@ class Coder:
             self.repo.add_new_files(fname for fname in fnames if not Path(fname).is_dir())
 
         self.summarizer = ChatSummary(self.main_model.name)
+        self.summarizer_thread = None
+        self.summarized_done_messages = None
 
         # validate the functions jsonschema
         if self.functions:
@@ -358,11 +361,33 @@ class Coder:
 
         self.last_keyboard_interrupt = now
 
+    def summarize_end(self):
+        if self.summarizer_thread is None:
+            return
+
+        self.summarizer_thread.join()
+        self.summarizer_thread = None
+
+        self.done_messages = self.summarized_done_messages
+        self.summarized_done_messages = None
+
+    def summarize_start(self):
+        if not self.summarizer.too_big(self.done_messages):
+            return
+
+        assert self.summarizer_thread is None
+        assert self.summarized_done_messages is None
+        self.summarizer_thread = threading.Thread(target=self.summarize_worker)
+
+    def summarize_worker(self):
+        print("working!")
+        self.summarized_done_messages = self.summarizer.summarize(self.done_messages)
+        print("done!")
+
     def move_back_cur_messages(self, message):
+        self.summarize_end()
         self.done_messages += self.cur_messages
-        if self.summarizer.too_big(self.done_messages):
-            self.io.tool_output("Summarizing chat history...")
-            self.done_messages = self.summarizer.summarize(self.done_messages)
+        self.summarize_start()
 
         if message:
             self.done_messages += [
