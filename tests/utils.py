@@ -42,7 +42,11 @@ class GitTemporaryDirectory(ChdirTemporaryDirectory):
         return res
 
 
-def make_repo():
-    repo = git.Repo.init()
+def make_repo(path=None):
+    if not path:
+        path = "."
+    repo = git.Repo.init(path)
     repo.config_writer().set_value("user", "name", "Test User").release()
     repo.config_writer().set_value("user", "email", "testuser@example.com").release()
+
+    return repo

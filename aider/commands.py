@@ -176,10 +176,10 @@ class Commands:
             )
             return
 
-        local_head = self.coder.repo.git.rev_parse("HEAD")
-        current_branch = self.coder.repo.active_branch.name
+        local_head = self.coder.repo.repo.git.rev_parse("HEAD")
+        current_branch = self.coder.repo.repo.active_branch.name
         try:
-            remote_head = self.coder.repo.git.rev_parse(f"origin/{current_branch}")
+            remote_head = self.coder.repo.repo.git.rev_parse(f"origin/{current_branch}")
             has_origin = True
         except git.exc.GitCommandError:
             has_origin = False
@@ -192,14 +192,14 @@ class Commands:
                 )
                 return
 
-        last_commit = self.coder.repo.head.commit
+        last_commit = self.coder.repo.repo.head.commit
         if (
             not last_commit.message.startswith("aider:")
             or last_commit.hexsha[:7] != self.coder.last_aider_commit_hash
         ):
             self.io.tool_error("The last commit was not made by aider in this chat session.")
             return
-        self.coder.repo.git.reset("--hard", "HEAD~1")
+        self.coder.repo.repo.git.reset("--hard", "HEAD~1")
         self.io.tool_output(
             f"{last_commit.message.strip()}\n"
             f"The above commit {self.coder.last_aider_commit_hash} "
@@ -220,7 +220,11 @@ class Commands:
             return
 
         commits = f"{self.coder.last_aider_commit_hash}~1"
-        diff = self.coder.get_diffs(commits, self.coder.last_aider_commit_hash)
+        diff = self.coder.repo.get_diffs(
+            self.coder.pretty,
+            commits,
+            self.coder.last_aider_commit_hash,
+        )
 
         # don't use io.tool_output() because we don't want to log or further colorize
         print(diff)
@@ -243,7 +247,7 @@ class Commands:
 
         # if repo, filter against it
         if self.coder.repo:
-            git_files = self.coder.get_tracked_files()
+            git_files = self.coder.repo.get_tracked_files()
             matched_files = [fn for fn in matched_files if str(fn) in git_files]
 
         res = list(map(str, matched_files))
@@ -254,7 +258,7 @@ class Commands:
 
         added_fnames = []
         git_added = []
-        git_files = self.coder.get_tracked_files()
+        git_files = self.coder.repo.get_tracked_files() if self.coder.repo else []
 
         all_matched_files = set()
         for word in args.split():
@@ -281,7 +285,7 @@ class Commands:
             abs_file_path = self.coder.abs_root_path(matched_file)
 
             if self.coder.repo and matched_file not in git_files:
-                self.coder.repo.git.add(abs_file_path)
+                self.coder.repo.repo.git.add(abs_file_path)
                 git_added.append(matched_file)
 
             if abs_file_path in self.coder.abs_fnames:
@@ -298,8 +302,8 @@ class Commands:
         if self.coder.repo and git_added:
             git_added = " ".join(git_added)
             commit_message = f"aider: Added {git_added}"
-            self.coder.repo.git.commit("-m", commit_message, "--no-verify")
-            commit_hash = self.coder.repo.head.commit.hexsha[:7]
+            self.coder.repo.repo.git.commit("-m", commit_message, "--no-verify")
+            commit_hash = self.coder.repo.repo.head.commit.hexsha[:7]
             self.io.tool_output(f"Commit {commit_hash} {commit_message}")
 
         if not added_fnames:

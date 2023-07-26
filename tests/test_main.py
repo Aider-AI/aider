@@ -35,13 +35,41 @@ class TestMain(TestCase):
         main(["--no-git"], input=DummyInput(), output=DummyOutput())
 
     def test_main_with_empty_dir_new_file(self):
-        main(["foo.txt", "--yes"], input=DummyInput(), output=DummyOutput())
+        main(["foo.txt", "--yes", "--no-git"], input=DummyInput(), output=DummyOutput())
         self.assertTrue(os.path.exists("foo.txt"))
 
-    def test_main_with_empty_git_dir_new_file(self):
+    @patch("aider.repo.GitRepo.get_commit_message", return_value="mock commit message")
+    def test_main_with_empty_git_dir_new_file(self, _):
         make_repo()
         main(["--yes", "foo.txt"], input=DummyInput(), output=DummyOutput())
         self.assertTrue(os.path.exists("foo.txt"))
+
+    @patch("aider.repo.GitRepo.get_commit_message", return_value="mock commit message")
+    def test_main_with_empty_git_dir_new_files(self, _):
+        make_repo()
+        main(["--yes", "foo.txt", "bar.txt"], input=DummyInput(), output=DummyOutput())
+        self.assertTrue(os.path.exists("foo.txt"))
+        self.assertTrue(os.path.exists("bar.txt"))
+
+    def test_main_with_dname_and_fname(self):
+        subdir = Path("subdir")
+        subdir.mkdir()
+        make_repo(str(subdir))
+        res = main(["subdir", "foo.txt"], input=DummyInput(), output=DummyOutput())
+        self.assertNotEqual(res, None)
+
+    @patch("aider.repo.GitRepo.get_commit_message", return_value="mock commit message")
+    def test_main_with_subdir_repo_fnames(self, _):
+        subdir = Path("subdir")
+        subdir.mkdir()
+        make_repo(str(subdir))
+        main(
+            ["--yes", str(subdir / "foo.txt"), str(subdir / "bar.txt")],
+            input=DummyInput(),
+            output=DummyOutput(),
+        )
+        self.assertTrue((subdir / "foo.txt").exists())
+        self.assertTrue((subdir / "bar.txt").exists())
 
     def test_main_with_git_config_yml(self):
         make_repo()
