@@ -142,13 +142,16 @@ class Commands:
         col_width = max(len(row[1]) for row in res)
 
         total = 0
+        total_cost = 0.0
         for tk, msg, tip in res:
             total += tk
+            cost = tk * self.coder.main_model.completion_price
+            total_cost += cost
             msg = msg.ljust(col_width)
-            self.io.tool_output(f"{fmt(tk)} {msg} {tip}")
+            self.io.tool_output(f"{fmt(tk)} {msg} {tip} (cost: ${cost:.2f})")
 
         self.io.tool_output("=" * width)
-        self.io.tool_output(f"{fmt(total)} tokens total")
+        self.io.tool_output(f"{fmt(total)} tokens total (cost: ${total_cost:.2f})")
 
         limit = self.coder.main_model.max_context_tokens
         remaining = limit - total
