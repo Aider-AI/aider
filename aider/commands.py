@@ -145,7 +145,7 @@ class Commands:
         total_cost = 0.0
         for tk, msg, tip in res:
             total += tk
-            cost = tk * self.coder.main_model.completion_price
+            cost = tk * (self.coder.main_model.completion_price / 1000)
             total_cost += cost
             msg = msg.ljust(col_width)
             self.io.tool_output(f"{fmt(tk)} {msg} {tip} (cost: ${cost:.2f})")
