@@ -13,7 +13,7 @@ It also has features that [help GPT-4 understand and modify larger codebases](ht
 </p>
 
 <p align="center">
-  <a href="https://discord.gg/SqzfE6bw">
+  <a href="https://discord.gg/HANckha52">
     <img src="https://img.shields.io/badge/Join-Discord-blue.svg"/>
   </a>
 </p>
