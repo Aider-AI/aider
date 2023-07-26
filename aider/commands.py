@@ -152,8 +152,13 @@ class Commands:
 
         limit = self.coder.main_model.max_context_tokens
         remaining = limit - total
-        if remaining > 0:
+        if remaining > 1024:
             self.io.tool_output(f"{fmt(remaining)} tokens remaining in context window")
+        elif remaining > 0:
+            self.io.tool_error(
+                f"{fmt(remaining)} tokens remaining in context window (use /drop or /clear to make"
+                " space)"
+            )
         else:
             self.io.tool_error(f"{fmt(remaining)} tokens remaining, window exhausted!")
         self.io.tool_output(f"{fmt(limit)} tokens max context window size")
