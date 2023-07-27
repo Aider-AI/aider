@@ -712,11 +712,11 @@ class Coder:
 
         # Check if the file is already in the repo
         if self.repo:
-            tracked_files = set(self.get_tracked_files())
+            tracked_files = set(self.repo.get_tracked_files())
             relative_fname = self.get_rel_fname(full_path)
             if relative_fname not in tracked_files and self.io.confirm_ask(f"Add {path} to git?"):
                 if not self.dry_run:
-                    self.repo.git.add(full_path)
+                    self.repo.repo.git.add(full_path)
 
         if write_content:
             self.io.write_text(full_path, write_content)
