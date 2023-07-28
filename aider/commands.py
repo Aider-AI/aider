@@ -242,7 +242,15 @@ class Commands:
                 yield Completion(fname, start_position=-len(partial))
 
     def glob_filtered_to_repo(self, pattern):
-        raw_matched_files = list(Path(self.coder.root).glob(pattern))
+        # Strip single and double quotes from the pattern
+        pattern = pattern.strip("'\"")
+        path = Path(pattern)
+
+        raw_matched_files = []
+        if path.is_absolute():
+            raw_matched_files = [Path(pattern)]
+        else:
+            raw_matched_files = list(Path(self.coder.root).glob(pattern))
 
         matched_files = []
         for fn in raw_matched_files:
@@ -254,7 +262,6 @@ class Commands:
         if self.coder.repo:
             git_files = self.coder.repo.get_tracked_files()
             matched_files = [fn for fn in matched_files if str(fn) in git_files]
-
         res = list(map(str, matched_files))
         return res
 
@@ -285,7 +292,6 @@ class Commands:
                         matched_files = [word]
 
             all_matched_files.update(matched_files)
-
         for matched_file in all_matched_files:
             abs_file_path = self.coder.abs_root_path(matched_file)
 

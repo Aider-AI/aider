@@ -68,6 +68,36 @@ class TestCommands(TestCase):
         # Check if the text file has not been added to the chat session
         self.assertNotIn(str(Path("test.txt").resolve()), coder.abs_fnames)
 
+    def test_cmd_add_with_abs_glob_patterns(self):
+        # Initialize the Commands and InputOutput objects
+        io = InputOutput(pretty=False, yes=True)
+        from aider.coders import Coder
+
+        coder = Coder.create(models.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # Create some test files
+        with open("test1.py", "w") as f:
+            f.write("print('test1')")
+        with open("test2.py", "w") as f:
+            f.write("print('test2')")
+        with open("test.txt", "w") as f:
+            f.write("test")
+
+        # Get the absolute file paths
+        abs_test1 = str(Path("test1.py").resolve())
+        abs_test2 = str(Path("test2.py").resolve())
+
+        # Call the cmd_add method with absolute file paths (with or without quotes)
+        commands.cmd_add(f"{abs_test1} '{abs_test2}'")
+
+        # Check if the files have been added to the chat session
+        self.assertIn(abs_test1, coder.abs_fnames)
+        self.assertIn(abs_test2, coder.abs_fnames)
+
+        # Check if the text file has not been added to the chat session
+        self.assertNotIn(str(Path("test.txt").resolve()), coder.abs_fnames)
+
     def test_cmd_add_no_match(self):
         # Initialize the Commands and InputOutput objects
         io = InputOutput(pretty=False, yes=True)
@@ -160,6 +190,37 @@ class TestCommands(TestCase):
         self.assertIn(str(Path("test1.py").resolve()), coder.abs_fnames)
         self.assertNotIn(str(Path("test2.py").resolve()), coder.abs_fnames)
 
+    def test_cmd_drop_with_abs_glob_patterns(self):
+        # Initialize the Commands and InputOutput objects
+        io = InputOutput(pretty=False, yes=True)
+        from aider.coders import Coder
+
+        coder = Coder.create(models.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        subdir = Path("subdir")
+        subdir.mkdir()
+        (subdir / "subtest1.py").touch()
+        (subdir / "subtest2.py").touch()
+
+        Path("test1.py").touch()
+        Path("test2.py").touch()
+
+        # Add some files to the chat session
+        commands.cmd_add("*.py")
+
+        self.assertEqual(len(coder.abs_fnames), 2)
+
+        # Call the cmd_drop method with absolute glob patterns (with or without quotes)
+        commands.cmd_drop(
+            f"{str(Path('subdir/subtest*').resolve())} '{str(Path('test2.py').resolve())}'"
+        )
+
+        self.assertIn(str(Path("test1.py").resolve()), coder.abs_fnames)
+        self.assertNotIn(str(Path("test2.py").resolve()), coder.abs_fnames)
+        self.assertNotIn(str(Path("subdir/subtest1.py").resolve()), coder.abs_fnames)
+        self.assertNotIn(str(Path("subdir/subtest2.py").resolve()), coder.abs_fnames)
+
     def test_cmd_add_bad_encoding(self):
         # Initialize the Commands and InputOutput objects
         io = InputOutput(pretty=False, yes=True)
@@ -227,7 +288,11 @@ class TestCommands(TestCase):
         repo.config_writer().set_value("user", "email", "testuser@example.com").release()
 
         # Create three empty files and add them to the git repository
-        filenames = ["one.py", Path("subdir") / "two.py", Path("anotherdir") / "three.py"]
+        filenames = [
+            "one.py",
+            Path("subdir") / "two.py",
+            Path("anotherdir") / "three.py",
+        ]
         for filename in filenames:
             file_path = Path(filename)
             file_path.parent.mkdir(parents=True, exist_ok=True)
@@ -250,6 +315,8 @@ class TestCommands(TestCase):
 
         # this should add one.py
         commands.cmd_add("*.py")
+
+        print("coder.abs_fnames", coder.abs_fnames)
 
         self.assertIn(filenames[0], coder.abs_fnames)
         self.assertNotIn(filenames[1], coder.abs_fnames)
