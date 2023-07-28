@@ -16,7 +16,6 @@ class ChatSummary:
     def too_big(self, messages):
         sized = self.tokenize(messages)
         total = sum(tokens for tokens, _msg in sized)
-        dump(total, self.max_tokens)
         return total > self.max_tokens
 
     def tokenize(self, messages):

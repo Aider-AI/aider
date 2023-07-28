@@ -367,14 +367,16 @@ class Coder:
 
         assert self.summarizer_thread is None
         assert self.summarized_done_messages is None
-        print("launching working")
+        if self.verbose:
+            self.io.tool_output("Starting to summarize chat history.")
+
         self.summarizer_thread = threading.Thread(target=self.summarize_worker)
         self.summarizer_thread.start()
 
     def summarize_worker(self):
-        print("working!")
         self.summarized_done_messages = self.summarizer.summarize(self.done_messages)
-        print("done!")
+        if self.verbose:
+            self.io.tool_output("Finished summarizing chat history.")
 
     def summarize_end(self):
         if self.summarizer_thread is None:
