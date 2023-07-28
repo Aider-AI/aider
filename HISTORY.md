@@ -2,6 +2,7 @@
 
 ### main branch on github
 
+- Automatically summarize chat history to avoid exhausting context window.
 - Stronger GPT-3.5 prompt against skipping/eliding code in replies (51.9% benchmark, no regression)
 
 ### v0.10.1
