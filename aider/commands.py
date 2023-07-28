@@ -262,6 +262,7 @@ class Commands:
         if self.coder.repo:
             git_files = self.coder.repo.get_tracked_files()
             matched_files = [fn for fn in matched_files if str(fn) in git_files]
+
         res = list(map(str, matched_files))
         return res
 
@@ -292,6 +293,7 @@ class Commands:
                         matched_files = [word]
 
             all_matched_files.update(matched_files)
+
         for matched_file in all_matched_files:
             abs_file_path = self.coder.abs_root_path(matched_file)
 

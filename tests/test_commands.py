@@ -288,11 +288,7 @@ class TestCommands(TestCase):
         repo.config_writer().set_value("user", "email", "testuser@example.com").release()
 
         # Create three empty files and add them to the git repository
-        filenames = [
-            "one.py",
-            Path("subdir") / "two.py",
-            Path("anotherdir") / "three.py",
-        ]
+        filenames = ["one.py", Path("subdir") / "two.py", Path("anotherdir") / "three.py"]
         for filename in filenames:
             file_path = Path(filename)
             file_path.parent.mkdir(parents=True, exist_ok=True)
@@ -315,8 +311,6 @@ class TestCommands(TestCase):
 
         # this should add one.py
         commands.cmd_add("*.py")
-
-        print("coder.abs_fnames", coder.abs_fnames)
 
         self.assertIn(filenames[0], coder.abs_fnames)
         self.assertNotIn(filenames[1], coder.abs_fnames)
