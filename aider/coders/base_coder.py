@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 import sys
+import threading
 import time
 import traceback
 from json.decoder import JSONDecodeError
@@ -17,6 +18,7 @@ from rich.markdown import Markdown
 
 from aider import models, prompts, utils
 from aider.commands import Commands
+from aider.history import ChatSummary
 from aider.repo import GitRepo
 from aider.repomap import RepoMap
 from aider.sendchat import send_with_retries
@@ -203,6 +205,10 @@ class Coder:
         if self.repo:
             self.repo.add_new_files(fname for fname in fnames if not Path(fname).is_dir())
 
+        self.summarizer = ChatSummary()
+        self.summarizer_thread = None
+        self.summarized_done_messages = None
+
         # validate the functions jsonschema
         if self.functions:
             for function in self.functions:
@@ -355,8 +361,37 @@ class Coder:
 
         self.last_keyboard_interrupt = now
 
+    def summarize_start(self):
+        if not self.summarizer.too_big(self.done_messages):
+            return
+
+        assert self.summarizer_thread is None
+        assert self.summarized_done_messages is None
+        if self.verbose:
+            self.io.tool_output("Starting to summarize chat history.")
+
+        self.summarizer_thread = threading.Thread(target=self.summarize_worker)
+        self.summarizer_thread.start()
+
+    def summarize_worker(self):
+        self.summarized_done_messages = self.summarizer.summarize(self.done_messages)
+        if self.verbose:
+            self.io.tool_output("Finished summarizing chat history.")
+
+    def summarize_end(self):
+        if self.summarizer_thread is None:
+            return
+
+        self.summarizer_thread.join()
+        self.summarizer_thread = None
+
+        self.done_messages = self.summarized_done_messages
+        self.summarized_done_messages = None
+
     def move_back_cur_messages(self, message):
         self.done_messages += self.cur_messages
+        self.summarize_start()
+
         if message:
             self.done_messages += [
                 dict(role="user", content=message),
@@ -407,6 +442,7 @@ class Coder:
             dict(role="system", content=main_sys),
         ]
 
+        self.summarize_end()
         messages += self.done_messages
         messages += self.get_files_messages()
         messages += self.cur_messages
