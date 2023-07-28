@@ -205,7 +205,7 @@ class Coder:
         if self.repo:
             self.repo.add_new_files(fname for fname in fnames if not Path(fname).is_dir())
 
-        self.summarizer = ChatSummary(self.main_model.name)
+        self.summarizer = ChatSummary()
         self.summarizer_thread = None
         self.summarized_done_messages = None
 
