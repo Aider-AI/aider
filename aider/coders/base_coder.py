@@ -641,7 +641,7 @@ class Coder:
             show_resp = Text(show_resp or "<no response>")
 
         self.io.console.print(show_resp)
-        self.io.console.print(tokens)
+        self.io.tool_output(tokens)
 
     def show_send_output_stream(self, completion):
         live = None
