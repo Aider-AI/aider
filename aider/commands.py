@@ -135,33 +135,38 @@ class Commands:
         self.io.tool_output()
 
         width = 8
+        cost_width = 7
 
         def fmt(v):
             return format(int(v), ",").rjust(width)
 
         col_width = max(len(row[1]) for row in res)
 
+        cost_pad = " " * cost_width
         total = 0
+        total_cost = 0.0
         for tk, msg, tip in res:
             total += tk
+            cost = tk * (self.coder.main_model.prompt_price / 1000)
+            total_cost += cost
             msg = msg.ljust(col_width)
-            self.io.tool_output(f"{fmt(tk)} {msg} {tip}")
+            self.io.tool_output(f"${cost:5.2f} {fmt(tk)} {msg} {tip}")
 
-        self.io.tool_output("=" * width)
-        self.io.tool_output(f"{fmt(total)} tokens total")
+        self.io.tool_output("=" * (width + cost_width + 1))
+        self.io.tool_output(f"${total_cost:5.2f} {fmt(total)} tokens total")
 
         limit = self.coder.main_model.max_context_tokens
         remaining = limit - total
         if remaining > 1024:
-            self.io.tool_output(f"{fmt(remaining)} tokens remaining in context window")
+            self.io.tool_output(f"{cost_pad}{fmt(remaining)} tokens remaining in context window")
         elif remaining > 0:
             self.io.tool_error(
-                f"{fmt(remaining)} tokens remaining in context window (use /drop or /clear to make"
-                " space)"
+                f"{cost_pad}{fmt(remaining)} tokens remaining in context window (use /drop or"
+                " /clear to make space)"
             )
         else:
-            self.io.tool_error(f"{fmt(remaining)} tokens remaining, window exhausted!")
-        self.io.tool_output(f"{fmt(limit)} tokens max context window size")
+            self.io.tool_error(f"{cost_pad}{fmt(remaining)} tokens remaining, window exhausted!")
+        self.io.tool_output(f"{cost_pad}{fmt(limit)} tokens max context window size")
 
     def cmd_undo(self, args):
         "Undo the last git commit if it was done by aider"

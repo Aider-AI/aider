@@ -4,7 +4,13 @@ import json
 import backoff
 import openai
 import requests
-from openai.error import APIError, RateLimitError, ServiceUnavailableError, Timeout
+from openai.error import (
+    APIConnectionError,
+    APIError,
+    RateLimitError,
+    ServiceUnavailableError,
+    Timeout,
+)
 
 
 @backoff.on_exception(
@@ -14,6 +20,7 @@ from openai.error import APIError, RateLimitError, ServiceUnavailableError, Time
         APIError,
         ServiceUnavailableError,
         RateLimitError,
+        APIConnectionError,
         requests.exceptions.ConnectionError,
     ),
     max_tries=10,

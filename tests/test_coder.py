@@ -22,6 +22,37 @@ class TestCoder(unittest.TestCase):
     def tearDown(self):
         self.patcher.stop()
 
+    def test_allowed_to_edit(self):
+        with GitTemporaryDirectory():
+            repo = git.Repo(Path.cwd())
+            fname = Path("foo.txt")
+            fname.touch()
+            repo.git.add(str(fname))
+            repo.git.commit("-m", "init")
+
+            io = InputOutput(yes=True)
+            # Initialize the Coder object with the mocked IO and mocked repo
+            coder = Coder.create(models.GPT4, None, io, fnames=["foo.txt"])
+
+            self.assertTrue(coder.allowed_to_edit("foo.txt"))
+            self.assertTrue(coder.allowed_to_edit("new.txt"))
+
+    def test_allowed_to_edit_no(self):
+        with GitTemporaryDirectory():
+            repo = git.Repo(Path.cwd())
+            fname = Path("foo.txt")
+            fname.touch()
+            repo.git.add(str(fname))
+            repo.git.commit("-m", "init")
+
+            # say NO
+            io = InputOutput(yes=False)
+
+            coder = Coder.create(models.GPT4, None, io, fnames=["foo.txt"])
+
+            self.assertTrue(coder.allowed_to_edit("foo.txt"))
+            self.assertFalse(coder.allowed_to_edit("new.txt"))
+
     def test_get_last_modified(self):
         # Mock the IO object
         mock_io = MagicMock()
