@@ -11,7 +11,7 @@ from openai.error import (
     ServiceUnavailableError,
     Timeout,
 )
-
+from litellm import completion
 
 @backoff.on_exception(
     backoff.expo,
@@ -47,7 +47,8 @@ def send_with_retries(model, messages, functions, stream):
     # Generate SHA1 hash of kwargs and append it to chat_completion_call_hashes
     hash_object = hashlib.sha1(json.dumps(kwargs, sort_keys=True).encode())
 
-    res = openai.ChatCompletion.create(**kwargs)
+    # adding support for gpt3.5, gpt-4, azure, anthropic, cohere
+    res = completion(**kwargs)
     return hash_object, res
 
 
