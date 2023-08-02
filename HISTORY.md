@@ -4,7 +4,7 @@
 
 - Automatically summarize chat history to avoid exhausting context window.
 - More detail on dollar costs when running with `--no-stream`
-- Stronger GPT-3.5 prompt against skipping/eliding code in replies (51.9% benchmark, no regression)
+- Stronger GPT-3.5 prompt against skipping/eliding code in replies (51.9% [benchmark](https://aider.chat/docs/benchmarks.html), no regression)
 - Defend against GPT-3.5 or non-OpenAI models suggesting filenames surrounded by asterisks.
 - Refactored GitRepo code out of the Coder class.
 
