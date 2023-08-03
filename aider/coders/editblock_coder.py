@@ -45,12 +45,19 @@ The ORIGINAL block needs to be EXACTLY the same as the lines in {path} with noth
         return edited
 
 
+def prep(content):
+    if not content.endswith("\n"):
+        content += "\n"
+    lines = content.splitlines(keepends=True)
+    return content, lines
+
+
 def replace_most_similar_chunk(whole, part, replace):
     """Best efforts to find the `part` lines in `whole` and replace them with `replace`"""
 
-    whole_lines = whole.splitlines(keepends=True)
-    part_lines = part.splitlines(keepends=True)
-    replace_lines = replace.splitlines(keepends=True)
+    whole, whole_lines = prep(whole)
+    part, part_lines = prep(part)
+    replace, replace_lines = prep(replace)
 
     # Try for a perfect match
     if part_lines in whole_lines:
