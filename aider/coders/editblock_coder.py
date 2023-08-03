@@ -3,6 +3,7 @@ import re
 from difflib import SequenceMatcher
 from pathlib import Path
 
+from ..dump import dump  # noqa: F401
 from .base_coder import Coder
 from .editblock_prompts import EditBlockPrompts
 
@@ -102,10 +103,27 @@ def replace_part_with_missing_leading_whitespace(whole, part, replace):
     part_lines = part.splitlines()
     replace_lines = replace.splitlines()
 
+    dump(repr(part), repr(replace))
+
+    # GPT often messes up leading whitespace.
+    # It usually does it uniformly across the ORIG and UPD blocks.
+    # Either omitting all leading whitespace, or including only some of it.
+
+    leading = [len(p) - len(p.lstrip()) for p in part_lines if p.strip()] + [
+        len(p) - len(p.lstrip()) for p in replace_lines if p.strip()
+    ]
+
+    # Outdent everything in part and replace by the max fixed amount possible
+    if leading and min(leading):
+        leading = min(leading)
+        part_lines = [p[leading:] if p.strip() else p for p in part_lines]
+        replace_lines = [p[leading:] if p.strip() else p for p in replace_lines]
+
     # If all lines in the part start with whitespace, then honor it.
     # But GPT often outdents the part and replace blocks completely,
     # thereby discarding the actual leading whitespace in the file.
     if all((not pline or pline[0].isspace()) for pline in part_lines):
+        print("bye")
         return
 
     for i in range(len(whole_lines) - len(part_lines) + 1):

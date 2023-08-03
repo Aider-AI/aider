@@ -509,7 +509,8 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         content = io.read_text(args.apply)
         if content is None:
             return
-        coder.apply_updates(content)
+        coder.partial_response_content = content
+        coder.apply_updates()
         return
 
     io.tool_output("Use /help to see in-chat commands, run with --help to see cmd line args")
