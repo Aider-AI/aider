@@ -45,6 +45,35 @@ The ORIGINAL block needs to be EXACTLY the same as the lines in {path} with noth
         return edited
 
 
+def replace_most_similar_chunk(whole, part, replace):
+    """Best efforts to find the `part` lines in `whole` and replace them with `replace`"""
+
+    whole_lines = whole.splitlines(keepends=True)
+    part_lines = part.splitlines(keepends=True)
+    replace_lines = replace.splitlines(keepends=True)
+
+    # Try for a perfect match
+    if part_lines in whole_lines:
+        updated_lines = whole_lines.replace(part_lines, replace_lines)
+        return updated_lines
+
+    # Try being flexible about leading whitespace
+    res = replace_part_with_missing_leading_whitespace(whole_lines, part_lines, replace_lines)
+    if res:
+        return res
+
+    # Try to handle when it elides code with ...
+    try:
+        res = try_dotdotdots(whole, part, replace)
+        if res:
+            return res
+    except ValueError:
+        pass
+
+    # Try fuzzy matching
+    return replace_closest_edit_distance(whole_lines, part, part_lines, replace_lines)
+
+
 def try_dotdotdots(whole, part, replace):
     """
     See if the edit block has ... lines.
@@ -144,33 +173,6 @@ def replace_part_with_missing_leading_whitespace(whole_lines, part_lines, replac
             return "".join(whole_lines)
 
     return None
-
-
-def replace_most_similar_chunk(whole, part, replace):
-    whole_lines = whole.splitlines(keepends=True)
-    part_lines = part.splitlines(keepends=True)
-    replace_lines = replace.splitlines(keepends=True)
-
-    # Try for a perfect match
-    if part_lines in whole_lines:
-        updated_lines = whole_lines.replace(part_lines, replace_lines)
-        return updated_lines
-
-    # Try being flexible about leading whitespace
-    res = replace_part_with_missing_leading_whitespace(whole_lines, part_lines, replace_lines)
-    if res:
-        return res
-
-    # Try to handle when it elides code with ...
-    try:
-        res = try_dotdotdots(whole, part, replace)
-        if res:
-            return res
-    except ValueError:
-        pass
-
-    # Try fuzzy matching
-    return replace_closest_edit_distance(whole_lines, part, part_lines, replace_lines)
 
 
 def replace_closest_edit_distance(whole_lines, part, part_lines, replace_lines):
