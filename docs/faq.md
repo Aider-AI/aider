@@ -116,7 +116,7 @@ GPT-3.5 is just barely able to understand how to modify existing source code fil
 and GPT-4 is quite good at it.
 Getting them working that well was a significant undertaking, involving
 [specific code editing prompts and backends for each model and extensive benchmarking](https://aider.chat/docs/benchmarks.html).
-Adopting new LLMs will probably require a similar effort to tailor the
+Officially supporting new LLMs will probably require a similar effort to tailor the
 prompts and editing backends.
 
 That said, aider does provide some features to experiment with other models.
@@ -126,8 +126,7 @@ can work with GPT-3.5 and GPT-4.
 
 Once we see signs that a *particular* model is capable of code editing,
 it would be reasonable for aider to attempt to officially support such a model.
-Until then, aider will simply maintain experimental support for using alternative models
-as describe below.
+Until then, aider will simply maintain experimental support for using alternative models.
 
 ### OpenAI API compatible LLMs
 
