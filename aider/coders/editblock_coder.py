@@ -119,6 +119,11 @@ def replace_part_with_missing_leading_whitespace(whole, part, replace):
         part_lines = [p[leading:] if p.strip() else p for p in part_lines]
         replace_lines = [p[leading:] if p.strip() else p for p in replace_lines]
 
+    # TODO: this logic needs to be fixed
+    # if the max outdent still leaves space
+    if all((not pline or pline[0].isspace()) for pline in part_lines):
+        return
+
     # can we find an exact match not including the leading whitespace
     for i in range(len(whole_lines) - len(part_lines) + 1):
         leading_whitespace = ""
