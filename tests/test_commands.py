@@ -334,7 +334,6 @@ class TestCommands(TestCase):
         with mock.patch.object(commands.io, "tool_error") as mock_tool_error:
             # Add the file by absolute path and ensure its not added
             absolute_path = os.path.abspath(filepath)
-            print("absolute_path", absolute_path)
             commands.cmd_add(absolute_path)
             mock_tool_error.assert_called_with(f"Unable to add: {absolute_path}")
             self.assertNotIn(absolute_path, coder.abs_fnames)
