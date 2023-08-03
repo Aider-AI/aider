@@ -196,7 +196,7 @@ to modify an existing implementation or use it as a template to add another.
 
 To get started, try looking at and modifying these files.
 
-The wholefile coder is currently used by GPT-3.5 by defauly. You can manually select it with `--edit-format whole`.
+The wholefile coder is currently used by GPT-3.5 by default. You can manually select it with `--edit-format whole`.
 
 - wholefile_coder.py
 - wholefile_prompts.py
