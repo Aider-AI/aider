@@ -232,19 +232,19 @@ These changes replace the `subprocess.run` patches with `subprocess.check_output
     line4
 """
 
-        result = eb.replace_part_with_missing_leading_whitespace(whole, part, replace)
+        result = eb.replace_most_similar_chunk(whole, part, replace)
         self.assertEqual(result, expected_output)
 
-    def test_replace_part_with_missing_leading_whitespace(self):
+    def test_replace_most_similar_chunk(self):
         whole = "    line1\n    line2\n    line3\n"
         part = "line1\nline2"
         replace = "new_line1\nnew_line2"
         expected_output = "    new_line1\n    new_line2\n    line3\n"
 
-        result = eb.replace_part_with_missing_leading_whitespace(whole, part, replace)
+        result = eb.replace_most_similar_chunk(whole, part, replace)
         self.assertEqual(result, expected_output)
 
-    def test_replace_part_with_missing_leading_whitespace_including_blank_lines(self):
+    def test_replace_most_similar_chunk_including_blank_lines(self):
         """
         The part has leading whitespace on all lines, so should be ignored.
         But it has a *blank* line with no whitespace at all, which was causing a
@@ -255,7 +255,7 @@ These changes replace the `subprocess.run` patches with `subprocess.check_output
         replace = "new_line1\nnew_line2"
         expected_output = None
 
-        result = eb.replace_part_with_missing_leading_whitespace(whole, part, replace)
+        result = eb.replace_most_similar_chunk(whole, part, replace)
         self.assertEqual(result, expected_output)
 
     def test_full_edit(self):
