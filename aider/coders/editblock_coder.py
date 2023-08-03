@@ -52,13 +52,7 @@ def prep(content):
     return content, lines
 
 
-def replace_most_similar_chunk(whole, part, replace):
-    """Best efforts to find the `part` lines in `whole` and replace them with `replace`"""
-
-    whole, whole_lines = prep(whole)
-    part, part_lines = prep(part)
-    replace, replace_lines = prep(replace)
-
+def perfect_or_whitespace(whole_lines, part_lines, replace_lines):
     # Try for a perfect match
     if part_lines in whole_lines:
         updated_lines = whole_lines.replace(part_lines, replace_lines)
@@ -69,6 +63,26 @@ def replace_most_similar_chunk(whole, part, replace):
     if res:
         return res
 
+
+def replace_most_similar_chunk(whole, part, replace):
+    """Best efforts to find the `part` lines in `whole` and replace them with `replace`"""
+
+    whole, whole_lines = prep(whole)
+    part, part_lines = prep(part)
+    replace, replace_lines = prep(replace)
+
+    res = perfect_or_whitespace(whole_lines, part_lines, replace_lines)
+    if res:
+        return res
+
+    # drop leading empty line, GPT sometimes adds them spuriously (issue #25)
+    if len(part_lines) > 2 and not part_lines[0].strip():
+        skip_blank_line_part_lines = part_lines[1:]
+        res = perfect_or_whitespace(whole_lines, skip_blank_line_part_lines, replace_lines)
+        if res:
+            dump(repr(res))
+            return res
+
     # Try to handle when it elides code with ...
     try:
         res = try_dotdotdots(whole, part, replace)
@@ -78,7 +92,9 @@ def replace_most_similar_chunk(whole, part, replace):
         pass
 
     # Try fuzzy matching
-    return replace_closest_edit_distance(whole_lines, part, part_lines, replace_lines)
+    res = replace_closest_edit_distance(whole_lines, part, part_lines, replace_lines)
+    if res:
+        return res
 
 
 def try_dotdotdots(whole, part, replace):
@@ -135,51 +151,70 @@ def try_dotdotdots(whole, part, replace):
 
 
 def replace_part_with_missing_leading_whitespace(whole_lines, part_lines, replace_lines):
-    dump(repr(part_lines), repr(replace_lines))
+    dump(whole_lines)
+    dump(repr(whole_lines))
+    dump(repr(part_lines))
+    dump(repr(replace_lines))
 
     # GPT often messes up leading whitespace.
     # It usually does it uniformly across the ORIG and UPD blocks.
     # Either omitting all leading whitespace, or including only some of it.
 
+    # Outdent everything in part_lines and replace_lines by the max fixed amount possible
     leading = [len(p) - len(p.lstrip()) for p in part_lines if p.strip()] + [
         len(p) - len(p.lstrip()) for p in replace_lines if p.strip()
     ]
 
-    # Outdent everything in part_lines and replace_lines by the max fixed amount possible
     if leading and min(leading):
-        leading = min(leading)
-        part_lines = [p[leading:] if p.strip() else p for p in part_lines]
-        replace_lines = [p[leading:] if p.strip() else p for p in replace_lines]
-
-    # TODO: this logic needs to be fixed
-    # if the max outdent still leaves space
-    if all((not pline or pline[0].isspace()) for pline in part_lines):
-        return
+        num_leading = min(leading)
+        part_lines = [p[num_leading:] if p.strip() else p for p in part_lines]
+        replace_lines = [p[num_leading:] if p.strip() else p for p in replace_lines]
 
     # can we find an exact match not including the leading whitespace
-    for i in range(len(whole_lines) - len(part_lines) + 1):
-        leading_whitespace = ""
-        for j, c in enumerate(whole_lines[i]):
-            if c == part_lines[0][0]:
-                leading_whitespace = whole_lines[i][:j]
-                break
+    num_part_lines = len(part_lines)
 
-        if not leading_whitespace or not all(c.isspace() for c in leading_whitespace):
-            continue
+    dump(part_lines)
+    dump(replace_lines)
 
-        matched = all(
-            whole_lines[i + k].startswith(leading_whitespace + part_lines[k])
-            for k in range(len(part_lines))
+    for i in range(len(whole_lines) - num_part_lines + 1):
+        add_leading = match_but_for_leading_whitespace(
+            whole_lines[i : i + num_part_lines], part_lines
         )
 
-        if matched:
-            replace_lines = [
-                leading_whitespace + rline if rline else rline for rline in replace_lines
-            ]
-            whole_lines = whole_lines[:i] + replace_lines + whole_lines[i + len(part_lines) :]
-            return "".join(whole_lines)
+        if add_leading is None:
+            continue
+
+        dump(len(add_leading))
+
+        replace_lines = [add_leading + rline if rline.strip() else rline for rline in replace_lines]
+        whole_lines = whole_lines[:i] + replace_lines + whole_lines[i + num_part_lines :]
+        dump(repr(whole_lines))
+        return "".join(whole_lines)
 
     return None
+
+
+def match_but_for_leading_whitespace(whole_lines, part_lines):
+    dump(whole_lines, part_lines)
+
+    num = len(whole_lines)
+
+    # does the non-whitespace all agree?
+    if not all(whole_lines[i].lstrip() == part_lines[i].lstrip() for i in range(num)):
+        return
+
+    # are they all offset the same?
+    add = set(
+        whole_lines[i][: len(whole_lines[i]) - len(part_lines[i])]
+        for i in range(num)
+        if whole_lines[i].strip()
+    )
+
+    dump(add)
+    if len(add) != 1:
+        return
+
+    return add.pop()
 
 
 def replace_closest_edit_distance(whole_lines, part, part_lines, replace_lines):
