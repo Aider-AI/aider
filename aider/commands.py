@@ -448,6 +448,7 @@ def expand_subdir(file_path):
                 yield str(file)
 
 def parse_file(self, filename):
+        "Parse a files in repo"
         try:
             with open(filename, "r") as source:
                 tree = ast.parse(source.read())
