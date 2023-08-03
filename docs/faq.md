@@ -109,14 +109,40 @@ In these cases, here are some things you might try:
 
 Aider does not officially support use with LLMs other than OpenAI's gpt-3.5-turbo and gpt-4
 and their variants.
+This is because while it's "easy" to connect aider to a new LLM, it's "hard"
+to actually teach new LLMs to *edit* code.
 
-It seems to require model-specific tuning to get prompts and
-editing formats working well with a new model. For example, GPT-3.5 and GPT-4 use very
-different prompts and editing formats in aider right now.
-Adopting new LLMs will probably require a similar effort to tailor the
-prompting and edit formats.
+GPT-3.5 is just barely able to understand how to modify existing source code files,
+and GPT-4 is quite good at it.
+Getting them working that well was a significant undertaking, involving
+[specific code editing prompts and backends for each model and extensive benchmarking](https://aider.chat/docs/benchmarks.html).
+Officially supporting new LLMs will probably require a similar effort to tailor the
+prompts and editing backends.
 
 That said, aider does provide some features to experiment with other models.
+Numerous users have already done experiments with numerous models.
+So far, no one has reported much success in working with them the way aider
+can work with GPT-3.5 and GPT-4.
+
+Once we see signs that a *particular* model is capable of code editing,
+it would be reasonable for aider to attempt to officially support such a model.
+Until then, aider will simply maintain experimental support for using alternative models.
+
+### OpenAI API compatible LLMs
+
+If you can make the model accessible via an OpenAI compatible API,
+you can use `--openai-api-base` to connect to a different API endpoint.
+
+Here are some
+[GitHub issues which may contain relevant information](https://github.com/paul-gauthier/aider/issues?q=is%3Aissue+%22openai-api-base%22+).
+
+### Local LLMs
+
+[LocalAI](https://github.com/go-skynet/LocalAI)
+and
+[SimpleAI](https://github.com/lhenault/simpleAI)
+look like relevant tools to serve local models via a compatible API:
+
 
 ### Azure
 
@@ -149,21 +175,6 @@ See the
 [official Azure documentation on using OpenAI models](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/chatgpt-quickstart?tabs=command-line&pivots=programming-language-python)
 for more information on how to populate the above configuration values.
 
-### Other LLMs
-
-If you can make the model accessible via an OpenAI compatible API,
-you can use `--openai-api-base` to connect to a different API endpoint.
-
-Here are some
-[GitHub issues which may contain relevant information](https://github.com/paul-gauthier/aider/issues?q=is%3Aissue+%22openai-api-base%22+).
-
-### Local LLMs
-
-[LocalAI](https://github.com/go-skynet/LocalAI)
-and
-[SimpleAI](https://github.com/lhenault/simpleAI)
-look like relevant tools to serve local models via a compatible API:
-
 
 
 
@@ -175,13 +186,28 @@ see there's a base coder with base prompts, and then there are
 a number of
 different specific coder implementations.
 
-While it's not yet documented how to add new coder subsystems, you may be able
-to modify an existing implementation or use it as a template to add another.
-
 If you're thinking about experimenting with system prompts
 this document about
 [benchmarking GPT-3.5 and GPT-4 on code editing](https://aider.chat/docs/benchmarks.html)
 might be useful background.
+
+While it's not well documented how to add new coder subsystems, you may be able
+to modify an existing implementation or use it as a template to add another.
+
+To get started, try looking at and modifying these files.
+
+The wholefile coder is currently used by GPT-3.5 by defauly. You can manually select it with `--edit-format whole`.
+
+- wholefile_coder.py
+- wholefile_prompts.py
+
+The editblock coder is currently used by GPT-4 by default. You can manually select it with `--edit-format diff`.
+
+- editblock_coder.py
+- editblock_prompts.py
+
+When experimenting with coder backends, it helps to run aider with `--verbose --no-pretty` so you can see
+all the raw information being sent to/from GPT in the conversation.
 
 ## Can I run aider in Google Colab?
 
