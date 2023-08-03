@@ -248,7 +248,10 @@ class Commands:
 
         raw_matched_files = []
         if path.is_absolute():
-            raw_matched_files = [Path(pattern)]
+            if not path.is_relative_to(self.coder.root):
+                return []
+
+            raw_matched_files = list(Path("/").glob(pattern[1:]))
         else:
             raw_matched_files = list(Path(self.coder.root).glob(pattern))
 
@@ -281,8 +284,9 @@ class Commands:
                 if any(char in word for char in "*?[]"):
                     self.io.tool_error(f"No files to add matching pattern: {word}")
                 else:
-                    if Path(word).exists():
-                        if Path(word).is_file():
+                    path = Path(word.strip("'\""))
+                    if path.exists():
+                        if path.is_file() and path.is_relative_to(self.coder.root):
                             matched_files = [word]
                         else:
                             self.io.tool_error(f"Unable to add: {word}")
