@@ -46,7 +46,7 @@ The ORIGINAL block needs to be EXACTLY the same as the lines in {path} with noth
 
 
 def prep(content):
-    if not content.endswith("\n"):
+    if content and not content.endswith("\n"):
         content += "\n"
     lines = content.splitlines(keepends=True)
     return content, lines
