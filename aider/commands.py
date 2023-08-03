@@ -446,3 +446,58 @@ def expand_subdir(file_path):
         for file in file_path.rglob("*"):
             if file.is_file():
                 yield str(file)
+
+def parse_file(self, filename):
+        try:
+            with open(filename, "r") as source:
+                tree = ast.parse(source.read())
+                return tree.body
+        except:
+            return []
+
+    def handle_classdef(self, classdef, filename):
+        name = classdef.name
+        methods = [f for f in classdef.body if isinstance(f, ast.FunctionDef)]
+        result = ""
+        for m in methods:
+            result += self.handle_funcdef(name, m, filename)
+        return result
+
+    def handle_funcdef(self, classname, funcdef, filename):
+        name = funcdef.name
+        args = [a.arg for a in funcdef.args.args]
+        args = ', '.join(args)
+        result = f"| {filename} | {classname} | {name} | {args} |\n"
+        return result
+
+    def get_languages(self, directory):
+        file_types = set()
+        for path in pathlib.Path(directory).rglob('*'):
+            if path.suffix:
+                file_types.add(path.suffix)
+        return file_types
+
+    def generate_md(self, directory, output_filename):
+        result = f"# Repository Name\n\n## Description\nShort description of the repository.\n\n## Languages Used\n"
+        languages = self.get_languages(directory)
+        for language in languages:
+            result += f"- {language[1:]}\n"
+        result += "\n## Files and Classes\n| **File** | **Class** | **Methods** | **Parameters** |\n| --- | --- | --- | --- |\n"
+
+        for path in pathlib.Path(directory).rglob('*.py'):
+            tree = self.parse_file(path)
+            filename = path.name
+            for node in tree:
+                if isinstance(node, ast.ClassDef):
+                    result += self.handle_classdef(node, filename)
+                elif isinstance(node, ast.FunctionDef):
+                    result += self.handle_funcdef('N/A', node, filename)
+
+        with open(output_filename, "w") as out:
+            out.write(result)
+
+    def cmd_genStructure(self, args):
+        directory = args[0] if args else '.'
+        repo_name = os.path.basename(os.path.normpath(directory))
+        output_file = os.path.join(directory, f"{repo_name}-Structure.md")
+        self.generate_md(directory, output_file)
