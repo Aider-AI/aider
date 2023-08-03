@@ -31,10 +31,10 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(result, expected_output)
 
     def test_replace_most_similar_chunk_not_perfect_match(self):
-        whole = "This is a sample text.\nAnother line of text.\nYet another line."
-        part = "This was a sample text.\nAnother line of txt"
-        replace = "This is a replaced text.\nModified line of text."
-        expected_output = "This is a replaced text.\nModified line of text.\nYet another line."
+        whole = "This is a sample text.\nAnother line of text.\nYet another line.\n"
+        part = "This was a sample text.\nAnother line of txt\n"
+        replace = "This is a replaced text.\nModified line of text.\n"
+        expected_output = "This is a replaced text.\nModified line of text.\nYet another line.\n"
 
         result = eb.replace_most_similar_chunk(whole, part, replace)
         self.assertEqual(result, expected_output)
@@ -237,8 +237,8 @@ These changes replace the `subprocess.run` patches with `subprocess.check_output
 
     def test_replace_part_with_missing_leading_whitespace(self):
         whole = "    line1\n    line2\n    line3\n"
-        part = "line1\nline2"
-        replace = "new_line1\nnew_line2"
+        part = "line1\nline2\n"
+        replace = "new_line1\nnew_line2\n"
         expected_output = "    new_line1\n    new_line2\n    line3\n"
 
         result = eb.replace_most_similar_chunk(whole, part, replace)
@@ -246,8 +246,8 @@ These changes replace the `subprocess.run` patches with `subprocess.check_output
 
     def test_replace_part_with_just_some_missing_leading_whitespace(self):
         whole = "    line1\n    line2\n    line3\n"
-        part = " line1\n     line2"
-        replace = "new_line1\nnew_line2"
+        part = " line1\n     line2\n"
+        replace = "new_line1\nnew_line2\n"
         expected_output = "    new_line1\n        new_line2\n    line3\n"
 
         result = eb.replace_most_similar_chunk(whole, part, replace)
@@ -260,8 +260,8 @@ These changes replace the `subprocess.run` patches with `subprocess.check_output
         bug per issue #25. Test case to repro and confirm fix.
         """
         whole = "    line1\n    line2\n    line3\n"
-        part = "\n  line1\n  line2"
-        replace = "new_line1\nnew_line2"
+        part = "\n  line1\n  line2\n"
+        replace = "new_line1\nnew_line2\n"
         expected_output = None
 
         result = eb.replace_most_similar_chunk(whole, part, replace)

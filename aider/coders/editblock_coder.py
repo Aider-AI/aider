@@ -98,12 +98,8 @@ def try_dotdotdots(whole, part, replace):
     return whole
 
 
-def replace_part_with_missing_leading_whitespace(whole, part, replace):
-    whole_lines = whole.splitlines()
-    part_lines = part.splitlines()
-    replace_lines = replace.splitlines()
-
-    dump(repr(part), repr(replace))
+def replace_part_with_missing_leading_whitespace(whole_lines, part_lines, replace_lines):
+    dump(repr(part_lines), repr(replace_lines))
 
     # GPT often messes up leading whitespace.
     # It usually does it uniformly across the ORIG and UPD blocks.
@@ -113,7 +109,7 @@ def replace_part_with_missing_leading_whitespace(whole, part, replace):
         len(p) - len(p.lstrip()) for p in replace_lines if p.strip()
     ]
 
-    # Outdent everything in part and replace by the max fixed amount possible
+    # Outdent everything in part_lines and replace_lines by the max fixed amount possible
     if leading and min(leading):
         leading = min(leading)
         part_lines = [p[leading:] if p.strip() else p for p in part_lines]
@@ -145,13 +141,17 @@ def replace_part_with_missing_leading_whitespace(whole, part, replace):
                 leading_whitespace + rline if rline else rline for rline in replace_lines
             ]
             whole_lines = whole_lines[:i] + replace_lines + whole_lines[i + len(part_lines) :]
-            return "\n".join(whole_lines) + "\n"
+            return "".join(whole_lines)
 
     return None
 
 
 def replace_most_similar_chunk(whole, part, replace):
-    res = replace_part_with_missing_leading_whitespace(whole, part, replace)
+    whole_lines = whole.splitlines(keepends=True)
+    part_lines = part.splitlines(keepends=True)
+    replace_lines = replace.splitlines(keepends=True)
+
+    res = replace_part_with_missing_leading_whitespace(whole_lines, part_lines, replace_lines)
     if res:
         return res
 
@@ -172,9 +172,6 @@ def replace_most_similar_chunk(whole, part, replace):
     most_similar_chunk_start = -1
     most_similar_chunk_end = -1
 
-    whole_lines = whole.splitlines()
-    part_lines = part.splitlines()
-
     scale = 0.1
     min_len = math.floor(len(part_lines) * (1 - scale))
     max_len = math.ceil(len(part_lines) * (1 + scale))
@@ -182,7 +179,7 @@ def replace_most_similar_chunk(whole, part, replace):
     for length in range(min_len, max_len):
         for i in range(len(whole_lines) - length + 1):
             chunk = whole_lines[i : i + length]
-            chunk = "\n".join(chunk)
+            chunk = "".join(chunk)
 
             similarity = SequenceMatcher(None, chunk, part).ratio()
 
@@ -194,17 +191,12 @@ def replace_most_similar_chunk(whole, part, replace):
     if max_similarity < similarity_thresh:
         return
 
-    replace_lines = replace.splitlines()
-
     modified_whole = (
         whole_lines[:most_similar_chunk_start]
         + replace_lines
         + whole_lines[most_similar_chunk_end:]
     )
-    modified_whole = "\n".join(modified_whole)
-
-    if whole.endswith("\n"):
-        modified_whole += "\n"
+    modified_whole = "".join(modified_whole)
 
     return modified_whole
 
