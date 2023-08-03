@@ -5,7 +5,7 @@ import sys
 import tempfile
 from io import StringIO
 from pathlib import Path
-from unittest import TestCase
+from unittest import TestCase, mock
 
 import git
 
@@ -288,7 +288,11 @@ class TestCommands(TestCase):
         repo.config_writer().set_value("user", "email", "testuser@example.com").release()
 
         # Create three empty files and add them to the git repository
-        filenames = ["one.py", Path("subdir") / "two.py", Path("anotherdir") / "three.py"]
+        filenames = [
+            "one.py",
+            Path("subdir") / "two.py",
+            Path("anotherdir") / "three.py",
+        ]
         for filename in filenames:
             file_path = Path(filename)
             file_path.parent.mkdir(parents=True, exist_ok=True)
@@ -315,3 +319,24 @@ class TestCommands(TestCase):
         self.assertIn(filenames[0], coder.abs_fnames)
         self.assertNotIn(filenames[1], coder.abs_fnames)
         self.assertIn(filenames[2], coder.abs_fnames)
+
+    def test_cmd_add_rejects_outside_paths(self):
+        # Initialize the Commands and InputOutput objects
+        io = InputOutput(pretty=False, yes=True)
+        coder = Coder.create(models.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # Create a file outside the coder.root directory
+        filepath = "../outside.txt"
+        with open(filepath, "w") as f:
+            f.write("Content outside coder.root")
+
+        with mock.patch.object(commands.io, "tool_error") as mock_tool_error:
+            # Add the file by absolute path and ensure its not added
+            absolute_path = os.path.abspath(filepath)
+            commands.cmd_add(absolute_path)
+            mock_tool_error.assert_called_with(f"Unable to add: {absolute_path}")
+            self.assertNotIn(absolute_path, coder.abs_fnames)
+
+        # Clean up the created file
+        os.remove(filepath)
