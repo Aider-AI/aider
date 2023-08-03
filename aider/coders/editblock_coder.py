@@ -119,13 +119,7 @@ def replace_part_with_missing_leading_whitespace(whole, part, replace):
         part_lines = [p[leading:] if p.strip() else p for p in part_lines]
         replace_lines = [p[leading:] if p.strip() else p for p in replace_lines]
 
-    # If all lines in the part start with whitespace, then honor it.
-    # But GPT often outdents the part and replace blocks completely,
-    # thereby discarding the actual leading whitespace in the file.
-    if all((not pline or pline[0].isspace()) for pline in part_lines):
-        print("bye")
-        return
-
+    # can we find an exact match not including the leading whitespace
     for i in range(len(whole_lines) - len(part_lines) + 1):
         leading_whitespace = ""
         for j, c in enumerate(whole_lines[i]):
