@@ -80,7 +80,6 @@ def replace_most_similar_chunk(whole, part, replace):
         skip_blank_line_part_lines = part_lines[1:]
         res = perfect_or_whitespace(whole_lines, skip_blank_line_part_lines, replace_lines)
         if res:
-            dump(repr(res))
             return res
 
     # Try to handle when it elides code with ...
@@ -151,11 +150,6 @@ def try_dotdotdots(whole, part, replace):
 
 
 def replace_part_with_missing_leading_whitespace(whole_lines, part_lines, replace_lines):
-    dump(whole_lines)
-    dump(repr(whole_lines))
-    dump(repr(part_lines))
-    dump(repr(replace_lines))
-
     # GPT often messes up leading whitespace.
     # It usually does it uniformly across the ORIG and UPD blocks.
     # Either omitting all leading whitespace, or including only some of it.
@@ -173,9 +167,6 @@ def replace_part_with_missing_leading_whitespace(whole_lines, part_lines, replac
     # can we find an exact match not including the leading whitespace
     num_part_lines = len(part_lines)
 
-    dump(part_lines)
-    dump(replace_lines)
-
     for i in range(len(whole_lines) - num_part_lines + 1):
         add_leading = match_but_for_leading_whitespace(
             whole_lines[i : i + num_part_lines], part_lines
@@ -184,19 +175,14 @@ def replace_part_with_missing_leading_whitespace(whole_lines, part_lines, replac
         if add_leading is None:
             continue
 
-        dump(len(add_leading))
-
         replace_lines = [add_leading + rline if rline.strip() else rline for rline in replace_lines]
         whole_lines = whole_lines[:i] + replace_lines + whole_lines[i + num_part_lines :]
-        dump(repr(whole_lines))
         return "".join(whole_lines)
 
     return None
 
 
 def match_but_for_leading_whitespace(whole_lines, part_lines):
-    dump(whole_lines, part_lines)
-
     num = len(whole_lines)
 
     # does the non-whitespace all agree?
@@ -210,7 +196,6 @@ def match_but_for_leading_whitespace(whole_lines, part_lines):
         if whole_lines[i].strip()
     )
 
-    dump(add)
     if len(add) != 1:
         return
 
