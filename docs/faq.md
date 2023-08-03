@@ -186,13 +186,28 @@ see there's a base coder with base prompts, and then there are
 a number of
 different specific coder implementations.
 
-While it's not yet documented how to add new coder subsystems, you may be able
-to modify an existing implementation or use it as a template to add another.
-
 If you're thinking about experimenting with system prompts
 this document about
 [benchmarking GPT-3.5 and GPT-4 on code editing](https://aider.chat/docs/benchmarks.html)
 might be useful background.
+
+While it's not well documented how to add new coder subsystems, you may be able
+to modify an existing implementation or use it as a template to add another.
+
+To get started, try looking at and modifying these files.
+
+The wholefile coder is currently used by GPT-3.5 by defauly. You can manually select it with `--edit-format whole`.
+
+- wholefile_coder.py
+- wholefile_prompts.py
+
+The editblock coder is currently used by GPT-4 by default. You can manually select it with `--edit-format diff`.
+
+- editblock_coder.py
+- editblock_prompts.py
+
+When experimenting with coder backends, it helps to run aider with `--verbose --no-pretty` so you can see
+all the raw information being sent to/from GPT in the conversation.
 
 ## Can I run aider in Google Colab?
 
