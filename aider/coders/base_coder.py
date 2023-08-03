@@ -653,6 +653,10 @@ class Coder:
                 live.start()
 
             for chunk in completion:
+                text = ''
+                if len(chunk.choices) == 0:
+                    continue
+
                 if chunk.choices[0].finish_reason == "length":
                     raise ExhaustedContextWindow()
 
