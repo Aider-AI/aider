@@ -23,9 +23,9 @@ class TestUtils(unittest.TestCase):
 
     def test_replace_most_similar_chunk(self):
         whole = "This is a sample text.\nAnother line of text.\nYet another line.\n"
-        part = "This is a sample text"
-        replace = "This is a replaced text."
-        expected_output = "This is a replaced text..\nAnother line of text.\nYet another line.\n"
+        part = "This is a sample text\n"
+        replace = "This is a replaced text.\n"
+        expected_output = "This is a replaced text.\nAnother line of text.\nYet another line.\n"
 
         result = eb.replace_most_similar_chunk(whole, part, replace)
         self.assertEqual(result, expected_output)

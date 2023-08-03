@@ -151,12 +151,13 @@ def replace_most_similar_chunk(whole, part, replace):
     part_lines = part.splitlines(keepends=True)
     replace_lines = replace.splitlines(keepends=True)
 
+    if part_lines in whole_lines:
+        updated_lines = whole_lines.replace(part_lines, replace_lines)
+        return updated_lines
+
     res = replace_part_with_missing_leading_whitespace(whole_lines, part_lines, replace_lines)
     if res:
         return res
-
-    if part in whole:
-        return whole.replace(part, replace)
 
     try:
         res = try_dotdotdots(whole, part, replace)
