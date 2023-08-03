@@ -151,22 +151,29 @@ def replace_most_similar_chunk(whole, part, replace):
     part_lines = part.splitlines(keepends=True)
     replace_lines = replace.splitlines(keepends=True)
 
+    # Try for a perfect match
     if part_lines in whole_lines:
         updated_lines = whole_lines.replace(part_lines, replace_lines)
         return updated_lines
 
+    # Try being flexible about leading whitespace
     res = replace_part_with_missing_leading_whitespace(whole_lines, part_lines, replace_lines)
     if res:
         return res
 
+    # Try to handle when it elides code with ...
     try:
         res = try_dotdotdots(whole, part, replace)
+        if res:
+            return res
     except ValueError:
-        return
+        pass
 
-    if res:
-        return res
+    # Try fuzzy matching
+    return replace_closest_edit_distance(whole_lines, part, part_lines, replace_lines)
 
+
+def replace_closest_edit_distance(whole_lines, part, part_lines, replace_lines):
     similarity_thresh = 0.8
 
     max_similarity = 0
