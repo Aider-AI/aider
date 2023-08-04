@@ -254,3 +254,25 @@ class TestCommands(TestCase):
         self.assertIn(filenames[0], coder.abs_fnames)
         self.assertNotIn(filenames[1], coder.abs_fnames)
         self.assertIn(filenames[2], coder.abs_fnames)
+
+    def test_cmd_commit(self):
+        with GitTemporaryDirectory():
+            fname = "test.txt"
+            with open(fname, "w") as f:
+                f.write("test")
+            repo = git.Repo()
+            repo.git.add(fname)
+            repo.git.commit("-m", "initial")
+
+            io = InputOutput(pretty=False, yes=True)
+            coder = Coder.create(models.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            self.assertFalse(repo.is_dirty())
+            with open(fname, "w") as f:
+                f.write("new")
+            self.assertTrue(repo.is_dirty())
+
+            commit_message = "Test commit message"
+            commands.cmd_commit(commit_message)
+            self.assertFalse(repo.is_dirty())
