@@ -85,7 +85,7 @@ class Commands:
             return
 
         commit_message = args.strip()
-        self.coder.commit(message=commit_message, which="repo_files")
+        self.coder.repo.commit(message=commit_message)
 
     def cmd_clear(self, args):
         "Clear the chat history"
@@ -307,9 +307,7 @@ class Commands:
         if self.coder.repo and git_added:
             git_added = " ".join(git_added)
             commit_message = f"aider: Added {git_added}"
-            self.coder.repo.repo.git.commit("-m", commit_message, "--no-verify")
-            commit_hash = self.coder.repo.repo.head.commit.hexsha[:7]
-            self.io.tool_output(f"Commit {commit_hash} {commit_message}")
+            self.coder.repo.commit(message=commit_message)
 
         if not added_fnames:
             return
