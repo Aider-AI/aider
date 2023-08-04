@@ -118,13 +118,12 @@ Once we see signs that a *particular* model is capable of code editing, it would
 
 There are ongoing discussions about [LLM integrations in the aider discord](https://discord.com/channels/1131200896827654144/1133060780649087048).
 
+Here are some [GitHub issues which may contain relevant information](https://github.com/paul-gauthier/aider/issues?q=is%3Aissue+%23172).
+
 ### OpenAI API compatible LLMs
 
 If you can make the model accessible via an OpenAI compatible API,
 you can use `--openai-api-base` to connect to a different API endpoint.
-
-Here are some
-[GitHub issues which may contain relevant information](https://github.com/paul-gauthier/aider/issues?q=is%3Aissue+%22openai-api-base%22+).
 
 ### Local LLMs
 
