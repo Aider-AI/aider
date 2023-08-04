@@ -1,5 +1,9 @@
 # Release history
 
+### main branch
+
+- Fixed /commit bug from repo refactor, added test coverage
+
 ### v0.11.0
 
 - Automatically summarize chat history to avoid exhausting context window.
