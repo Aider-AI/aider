@@ -107,26 +107,16 @@ In these cases, here are some things you might try:
 
 ## Can I use aider with other LLMs, local LLMs, etc?
 
-Aider does not officially support use with LLMs other than OpenAI's gpt-3.5-turbo and gpt-4
-and their variants.
-This is because while it's "easy" to connect aider to a new LLM, it's "hard"
-to actually teach new LLMs to *edit* code.
+Aider only has experimental support for LLMs other than OpenAI's GPT-3.5 and GPT-4. This is for two reasons:
 
-GPT-3.5 is just barely able to understand how to modify existing source code files,
-and GPT-4 is quite good at it.
-Getting them working that well was a significant undertaking, involving
-[specific code editing prompts and backends for each model and extensive benchmarking](https://aider.chat/docs/benchmarks.html).
-Officially supporting new LLMs will probably require a similar effort to tailor the
-prompts and editing backends.
+- GPT-3.5 is just barely capable of *editing code* to provide aider's interactive "pair programming" style workflow. None of the other models seem to be as capable as GPT-3.5.
+- Just "hooking up" aider to a new model by connecting to its API is almost certainly not enough to get it working in a useful way. Getting aider working well with GPT-3.5 and GPT-4 was a significant undertaking, involving [specific code editing prompts and backends for each model and extensive benchmarking](https://aider.chat/docs/benchmarks.html). Officially supporting each new LLM will probably require a similar effort to tailor the prompts and editing backends.
 
-That said, aider does provide some features to experiment with other models.
-Numerous users have already done experiments with numerous models.
-So far, no one has reported much success in working with them the way aider
-can work with GPT-3.5 and GPT-4.
+That said, aider does provide features to experiment with other models. Numerous users have already done experiments with numerous models. None of these experiments have yet identified other models that look like they are capable of working with aider.
 
-Once we see signs that a *particular* model is capable of code editing,
-it would be reasonable for aider to attempt to officially support such a model.
-Until then, aider will simply maintain experimental support for using alternative models.
+Once we see signs that a *particular* model is capable of code editing, it would be reasonable for aider to attempt to officially support such a model. Until then, aider will simply maintain experimental support for using alternative models.
+
+There are ongoing discussions about [LLM integrations in the aider discord](https://discord.com/channels/1131200896827654144/1133060780649087048).
 
 ### OpenAI API compatible LLMs
 
@@ -141,7 +131,7 @@ Here are some
 [LocalAI](https://github.com/go-skynet/LocalAI)
 and
 [SimpleAI](https://github.com/lhenault/simpleAI)
-look like relevant tools to serve local models via a compatible API:
+look like relevant tools to serve local models via a compatible API.
 
 
 ### Azure
