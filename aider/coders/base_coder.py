@@ -365,8 +365,8 @@ class Coder:
         if not self.summarizer.too_big(self.done_messages):
             return
 
-        assert self.summarizer_thread is None
-        assert self.summarized_done_messages is None
+        self.summarize_end()
+
         if self.verbose:
             self.io.tool_output("Starting to summarize chat history.")
 
