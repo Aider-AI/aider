@@ -62,6 +62,8 @@ class WholeFileCoder(Coder):
                 if i > 0:
                     fname_source = "block"
                     fname = lines[i - 1].strip()
+                    fname = fname.strip("*")  # handle **filename.py**
+
                     # Did gpt prepend a bogus dir? It especially likes to
                     # include the path/to prefix from the one-shot example in
                     # the prompt.

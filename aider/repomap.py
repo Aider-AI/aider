@@ -14,6 +14,7 @@ from diskcache import Cache
 from pygments.lexers import guess_lexer_for_filename
 from pygments.token import Token
 from pygments.util import ClassNotFound
+from tqdm import tqdm
 
 from aider import models
 
@@ -73,6 +74,8 @@ class RepoMap:
     TAGS_CACHE_DIR = f".aider.tags.cache.v{CACHE_VERSION}"
 
     ctags_disabled_reason = "ctags not initialized"
+
+    cache_missing = False
 
     def __init__(
         self,
@@ -232,13 +235,19 @@ class RepoMap:
         return True
 
     def load_tags_cache(self):
-        self.TAGS_CACHE = Cache(Path(self.root) / self.TAGS_CACHE_DIR)
+        path = Path(self.root) / self.TAGS_CACHE_DIR
+        if not path.exists():
+            self.cache_missing = True
+        self.TAGS_CACHE = Cache(path)
 
     def save_tags_cache(self):
         pass
 
     def load_ident_cache(self):
-        self.IDENT_CACHE = Cache(Path(self.root) / self.IDENT_CACHE_DIR)
+        path = Path(self.root) / self.IDENT_CACHE_DIR
+        if not path.exists():
+            self.cache_missing = True
+        self.IDENT_CACHE = Cache(path)
 
     def save_ident_cache(self):
         pass
@@ -291,7 +300,13 @@ class RepoMap:
         fnames = set(chat_fnames).union(set(other_fnames))
         chat_rel_fnames = set()
 
-        for fname in sorted(fnames):
+        fnames = sorted(fnames)
+
+        if self.cache_missing:
+            fnames = tqdm(fnames)
+        self.cache_missing = False
+
+        for fname in fnames:
             # dump(fname)
             rel_fname = os.path.relpath(fname, self.root)
 

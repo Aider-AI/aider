@@ -66,7 +66,7 @@ def main():
 
     git_commands_dev = [
         ["git", "add", "aider/__init__.py"],
-        ["git", "commit", "-m", f"set version to {new_version}-dev"],
+        ["git", "commit", "-m", f"set version to {incremented_version}-dev"],
         ["git", "push", "origin"],
     ]
 
