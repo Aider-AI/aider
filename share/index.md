@@ -38,7 +38,7 @@ print("goodbye")
 
 ## Shared chat transcript
 
-<div class="chat-transcript">
+<div class="chat-transcript" id="shared-transcript">
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -67,7 +67,7 @@ window.onload = function() {
             return line;
         }).join('\n');
         var html = marked.parse(markdown);
-        var divElement = document.querySelector('.chat-transcript');
+        var divElement = document.querySelector('#shared-transcript');
         divElement.innerHTML = html;
     })
     .catch(error => {
