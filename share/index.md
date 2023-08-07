@@ -16,11 +16,11 @@ window.onload = function() {
         return;
     }
     // Check if the URL is a non-raw GitHub gist
-    var gistRegex = /^https:\/\/gist\.github\.com\/[^\/]+\/([a-f0-9]+)$/;
+    var gistRegex = /^https:\/\/gist\.github\.com\/([^\/]+)\/([a-f0-9]+)$/;
     var match = gistRegex.exec(conv);
     if (match) {
         // If it is, convert it into a raw URL
-        conv = 'https://gist.githubusercontent.com/' + match[1] + '/raw';
+        conv = 'https://gist.githubusercontent.com/' + match[1] + '/' + match[2] + '/raw';
     }
     fetch(conv)
     .then(response => response.text())
