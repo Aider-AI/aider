@@ -12,6 +12,9 @@ created using <a href="https://aider.chat">aider</a>.
 window.onload = function() {
     var urlParams = new URLSearchParams(window.location.search);
     var conv = urlParams.get('mdurl');
+    if (!conv) {
+        return;
+    }
     fetch(conv)
     .then(response => response.text())
     .then(markdown => {
