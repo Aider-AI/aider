@@ -22,9 +22,8 @@ with sensible commit messages.
 #### These are chat messages written by the user.
 
 Chat responses from GPT are in a blue font like this,
-and often include colorized "diffs" where GPT is making changes
-to the source code in the repo.
-Here's a sample edit block that switches from printing "hello" to "goodbye":
+and often include colorized "diffs" where GPT is editing code:
+
 
 ```python
 hello.py
