@@ -7,6 +7,7 @@ created using <a href="https://aider.chat">aider</a>.
 <div class="chat-transcript">
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
 window.onload = function() {
     var urlParams = new URLSearchParams(window.location.search);
