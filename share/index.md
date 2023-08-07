@@ -28,6 +28,9 @@ window.onload = function() {
         var html = marked.parse(markdown);
         var divElement = document.querySelector('.chat-transcript');
         divElement.innerHTML = html;
+    })
+    .catch(error => {
+        console.error('Error fetching markdown:', error);
     });
 }
 </script>
