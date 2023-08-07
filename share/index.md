@@ -3,15 +3,8 @@
 
 A user has shared the following transcript of a pair programming chat session
 created using <a href="https://aider.chat">aider</a>.
-
 Aider is a command line tool that lets you pair program with GPT-3.5 or
 GPT-4, to edit code stored in your local git repository.
-You can start a new project or work with an existing repo.
-And you can fluidly switch back and forth between a coding chat where you ask
-GPT to edit the code and your own editor to make changes yourself.
-Aider makes sure edits from you and GPT are committed to the git repo
-with sensible commit messages.
-
 
 ## Transcript format
 
