@@ -1,12 +1,14 @@
 # aider is GPT powered coding in your terminal
 
-`aider` is a command-line chat tool that allows you to write and edit
-code with OpenAI's GPT models.  You can ask GPT to help you start
-a new project, or modify code in your existing git repo.
-Aider makes it easy to
-[git commit, diff & undo changes](https://aider.chat/docs/faq.html#how-does-aider-use-git)
-proposed by GPT without copy/pasting.
-It also has features that [help GPT-4 understand and modify larger codebases](https://aider.chat/docs/ctags.html).
+Aider is a command line tool that lets you pair program with GPT-3.5/GPT-4,
+to edit code stored in your local git repository.
+You can start a new project or work with an existing repo.
+And you can fluidly switch back and forth between a coding chat where you ask
+GPT to edit the code and your own editor to make changes yourself.
+Aider makes sure edits from you and GPT are
+[committed to git](https://aider.chat/docs/faq.html#how-does-aider-use-git)
+with sensible commit messages.
+Aider is unique in that it [works well with pre-existing, larger codebases](https://aider.chat/docs/ctags.html).
 
 <p align="center">
   <img src="assets/screencast.svg" alt="aider screencast">
@@ -43,7 +45,7 @@ $ aider hello.js
 Using git repo: .git
 Added hello.js to the chat.
 
-hello.js> write a js app that prints hello world
+hello.js> write a js script that prints hello world
 ```
 
 ## Example chat transcripts
