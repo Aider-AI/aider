@@ -253,6 +253,7 @@ def main(
     stats_only: bool = typer.Option(
         False, "--stats", "-s", help="Do not run tests, just collect stats on completed tests"
     ),
+    diffs_only: bool = typer.Option(False, "--diffs", help="Just diff the provided stats dirs"),
     tries: int = typer.Option(2, "--tries", "-r", help="Number of tries for running tests"),
     threads: int = typer.Option(1, "--threads", "-t", help="Number of threads to run in parallel"),
     num_tests: int = typer.Option(-1, "--num-tests", "-n", help="Number of tests to run"),
@@ -262,8 +263,8 @@ def main(
     if repo.is_dirty():
         commit_hash += "-dirty"
 
-    if len(dirnames) > 1 and not stats_only:
-        print("Only provide 1 dirname unless running with --stats")
+    if len(dirnames) > 1 and not (stats_only or diffs_only):
+        print("Only provide 1 dirname unless running with --stats or --diffs")
         return 1
 
     updated_dirnames = []
@@ -276,6 +277,9 @@ def main(
 
     if stats_only:
         return show_stats(updated_dirnames)
+
+    if diffs_only:
+        return show_diffs(updated_dirnames)
 
     assert len(updated_dirnames) == 1, updated_dirnames
     dirname = updated_dirnames[0]
@@ -353,11 +357,45 @@ def main(
     return 0
 
 
-def summarize_results(dirname):
-    res = SimpleNamespace()
+def show_diffs(dirnames):
+    dirnames = sorted(dirnames)
+
+    all_results = dict((dirname, load_results(dirname)) for dirname in dirnames)
+    testcases = set()
+    for results in all_results.values():
+        testcases.update(result["testcase"] for result in results)
+
+    testcases = sorted(testcases)
+
+    for testcase in testcases:
+        all_outcomes = []
+        for dirname in dirnames:
+            results = all_results[dirname]
+            result = [r for r in results if r["testcase"] == testcase][0]
+
+            outcomes = tuple(result["tests_outcomes"])
+            all_outcomes.append(outcomes)
+
+        if len(set(all_outcomes)) == 1:
+            continue
+
+        print()
+        print(testcase)
+        for outcome, dirname in zip(all_outcomes, dirnames):
+            print(outcome, f"{dirname}/{testcase}/.aider.chat.history.md")
+
+
+def load_results(dirname):
     dirname = Path(dirname)
-    res.total_tests = len(list(dirname.glob("*")))
     all_results = [json.loads(fname.read_text()) for fname in dirname.glob("*/.aider.results.json")]
+    return all_results
+
+
+def summarize_results(dirname):
+    all_results = load_results(dirname)
+
+    res = SimpleNamespace()
+    res.total_tests = len(list(Path(dirname).glob("*")))
 
     try:
         tries = max(len(results["tests_outcomes"]) for results in all_results if results)
