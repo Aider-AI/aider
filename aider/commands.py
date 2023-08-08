@@ -350,8 +350,9 @@ class Commands:
         combined_output = None
         try:
             parsed_args = shlex.split("git " + args)
+            env = dict(GIT_EDITOR="true", **subprocess.os.environ)
             result = subprocess.run(
-                parsed_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
+                parsed_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, env=env
             )
             combined_output = result.stdout
         except Exception as e:
