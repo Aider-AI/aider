@@ -13,6 +13,19 @@ from tests.utils import GitTemporaryDirectory
 
 
 class TestRepo(unittest.TestCase):
+    def test_diffs_empty_repo(self):
+        with GitTemporaryDirectory():
+            repo = git.Repo()
+            fname = Path("foo.txt")
+            fname.touch()
+
+            repo.git.add(str(fname))
+
+            git_repo = GitRepo(InputOutput(), None, ".")
+            diffs = git_repo.get_diffs(False)
+            self.assertNotEqual(diffs, "")
+            self.assertIsNotNone(diffs)
+
     @patch("aider.repo.simple_send_with_retries")
     def test_get_commit_message(self, mock_send):
         mock_send.return_value = "a good commit message"
