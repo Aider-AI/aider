@@ -126,19 +126,11 @@ class GitRepo:
         return commit_message
 
     def get_diffs(self, pretty, *args):
-        try:
-            commits = self.repo.iter_commits(self.repo.active_branch)
-            current_branch_has_commits = any(commits)
-        except git.exc.GitCommandError:
-            current_branch_has_commits = False
-
-        if not current_branch_has_commits:
-            return ""
+        # we always want diffs of working-dir + index versus repo
+        args = ["--cached"] + list(args)
 
         if pretty:
             args = ["--color"] + list(args)
-        if not args:
-            args = ["HEAD"]
 
         diffs = self.repo.git.diff(*args)
         return diffs
