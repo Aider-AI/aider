@@ -7,6 +7,7 @@
 - Fixed corner case of pending chat history summarization when dirty committing.
 - Fixed corner case of undefined `text` when using `--no-pretty`.
 - Fixed /commit bug from repo refactor, added test coverage.
+- [Benchmarked](https://aider.chat/docs/benchmarks.html) at 53.4% for gpt-3.5/whole (no regression).
 
 ### v0.11.0
 
