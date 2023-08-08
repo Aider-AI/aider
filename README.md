@@ -1,4 +1,4 @@
-# aider is GPT powered coding in your terminal
+# aider is AI pair programming in your terminal
 
 Aider is a command line tool that lets you pair program with GPT-3.5/GPT-4,
 to edit code stored in your local git repository.
