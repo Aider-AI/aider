@@ -2,7 +2,10 @@
 
 ### main branch
 
-- Fixed /commit bug from repo refactor, added test coverage
+- Added a progress bar when initially creating a repo map.
+- Fix corner case of pending chat history summarization when dirty committing.
+- Fix corner case of undefined `text` when using `--no-pretty`.
+- Fixed /commit bug from repo refactor, added test coverage.
 
 ### v0.11.0
 
