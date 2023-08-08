@@ -672,11 +672,11 @@ class Coder:
                     if text:
                         self.partial_response_content += text
                 except AttributeError:
-                    pass
+                    text = None
 
                 if self.pretty:
                     self.live_incremental_response(live, False)
-                else:
+                elif text:
                     sys.stdout.write(text)
                     sys.stdout.flush()
         finally:
