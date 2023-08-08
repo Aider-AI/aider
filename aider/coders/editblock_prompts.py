@@ -44,8 +44,6 @@ If you want to put code in a new file, use an edit block with:
 - A new file path, including dir name if needed
 - An empty ORIGINAL section
 - The new file's contents in the UPDATED section
-
-If a request requires many changes, stop often to ask the user for feedback.
 """
 
     files_content_prefix = "These are the *read-write* files:\n"
