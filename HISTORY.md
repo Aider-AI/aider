@@ -1,10 +1,11 @@
 # Release history
 
-### main branch
+### v0.11.1
 
 - Added a progress bar when initially creating a repo map.
-- Fix corner case of pending chat history summarization when dirty committing.
-- Fix corner case of undefined `text` when using `--no-pretty`.
+- Fixed bad commit message when adding new file to empty repo.
+- Fixed corner case of pending chat history summarization when dirty committing.
+- Fixed corner case of undefined `text` when using `--no-pretty`.
 - Fixed /commit bug from repo refactor, added test coverage.
 
 ### v0.11.0
