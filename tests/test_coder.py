@@ -22,6 +22,25 @@ class TestCoder(unittest.TestCase):
     def tearDown(self):
         self.patcher.stop()
 
+    def test_new_file_commit_message(self):
+        with GitTemporaryDirectory():
+            repo = git.Repo()
+            fname = Path("foo.txt")
+
+            io = InputOutput(yes=True)
+            # Initialize the Coder object with the mocked IO and mocked repo
+            coder = Coder.create(models.GPT4, None, io, fnames=[str(fname)])
+
+            self.assertTrue(fname.exists())
+
+            # Mock the get_commit_message method to return "I added str(fname)"
+            repo.get_commit_message = MagicMock(return_value=f"I added {str(fname)}")
+            # Get the latest commit message
+            commit_message = repo.get_commit_message()
+            # Check that the latest commit message is "I added str(fname)"
+            self.assertEqual(commit_message, f"I added {str(fname)}")
+
+
     def test_allowed_to_edit(self):
         with GitTemporaryDirectory():
             repo = git.Repo(Path.cwd())

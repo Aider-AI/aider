@@ -365,8 +365,8 @@ class Coder:
         if not self.summarizer.too_big(self.done_messages):
             return
 
-        assert self.summarizer_thread is None
-        assert self.summarized_done_messages is None
+        self.summarize_end()
+
         if self.verbose:
             self.io.tool_output("Starting to summarize chat history.")
 
@@ -653,6 +653,9 @@ class Coder:
                 live.start()
 
             for chunk in completion:
+                if len(chunk.choices) == 0:
+                    continue
+
                 if chunk.choices[0].finish_reason == "length":
                     raise ExhaustedContextWindow()
 
@@ -672,11 +675,11 @@ class Coder:
                     if text:
                         self.partial_response_content += text
                 except AttributeError:
-                    pass
+                    text = None
 
                 if self.pretty:
                     self.live_incremental_response(live, False)
-                else:
+                elif text:
                     sys.stdout.write(text)
                     sys.stdout.flush()
         finally:
