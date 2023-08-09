@@ -54,14 +54,26 @@ def prep(content):
 
 def perfect_or_whitespace(whole_lines, part_lines, replace_lines):
     # Try for a perfect match
-    if part_lines in whole_lines:
-        updated_lines = whole_lines.replace(part_lines, replace_lines)
-        return updated_lines
+    res = perfect_replace(whole_lines, part_lines, replace_lines)
+    if res:
+        return res
 
     # Try being flexible about leading whitespace
     res = replace_part_with_missing_leading_whitespace(whole_lines, part_lines, replace_lines)
     if res:
         return res
+
+
+def perfect_replace(whole_lines, part_lines, replace_lines):
+    part_tup = tuple(part_lines)
+    part_len = len(part_lines)
+
+    for i in range(len(whole_lines) - part_len + 1):
+        whole_tup = tuple(whole_lines[i : i + part_len])
+        dump(part_tup, whole_tup)
+        if part_tup == whole_tup:
+            res = whole_lines[:i] + replace_lines + whole_lines[i + part_len :]
+            return "".join(res)
 
 
 def replace_most_similar_chunk(whole, part, replace):
@@ -159,10 +171,15 @@ def replace_part_with_missing_leading_whitespace(whole_lines, part_lines, replac
         len(p) - len(p.lstrip()) for p in replace_lines if p.strip()
     ]
 
+    dump(leading)
+
     if leading and min(leading):
         num_leading = min(leading)
         part_lines = [p[num_leading:] if p.strip() else p for p in part_lines]
         replace_lines = [p[num_leading:] if p.strip() else p for p in replace_lines]
+
+    dump(part_lines)
+    dump(replace_lines)
 
     # can we find an exact match not including the leading whitespace
     num_part_lines = len(part_lines)
@@ -171,6 +188,8 @@ def replace_part_with_missing_leading_whitespace(whole_lines, part_lines, replac
         add_leading = match_but_for_leading_whitespace(
             whole_lines[i : i + num_part_lines], part_lines
         )
+
+        dump(add_leading)
 
         if add_leading is None:
             continue
