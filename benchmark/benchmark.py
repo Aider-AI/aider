@@ -657,7 +657,7 @@ def run_unit_tests(testdir, history_fname):
 
     success = result.returncode == 0
     res = result.stdout
-    res = cleanup_test_output(res)
+    res = cleanup_test_output(res, testdir)
 
     with history_fname.open("a") as fh:
         fh.write(f"```\n{res}\n```")
@@ -667,7 +667,7 @@ def run_unit_tests(testdir, history_fname):
         return res
 
 
-def cleanup_test_output(output):
+def cleanup_test_output(output, testdir):
     # remove timing info, to avoid randomizing the response to GPT
     res = re.sub(
         r"^Ran \d+ tests in \d+\.\d+s$",
@@ -687,6 +687,8 @@ def cleanup_test_output(output):
         res,
         flags=re.MULTILINE,
     )
+
+    res = res.replace(str(testdir), str(testdir.name))
     return res
 
 

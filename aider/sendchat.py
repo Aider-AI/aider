@@ -4,6 +4,7 @@ import json
 import backoff
 import openai
 import requests
+from diskcache import Cache
 from openai.error import (
     APIConnectionError,
     APIError,
@@ -11,6 +12,9 @@ from openai.error import (
     ServiceUnavailableError,
     Timeout,
 )
+
+CACHE_PATH = ".aider.send.cache.v1"
+CACHE = Cache(CACHE_PATH)
 
 
 @backoff.on_exception(
@@ -44,10 +48,22 @@ def send_with_retries(model, messages, functions, stream):
     if hasattr(openai, "api_engine"):
         kwargs["engine"] = openai.api_engine
 
+    key = json.dumps(kwargs, sort_keys=True).encode()
+
     # Generate SHA1 hash of kwargs and append it to chat_completion_call_hashes
-    hash_object = hashlib.sha1(json.dumps(kwargs, sort_keys=True).encode())
+    hash_object = hashlib.sha1(key)
+
+    if not stream and key in CACHE:
+        print("hit", key)
+        return hash_object, CACHE[key]
+
+    print("miss", key)
 
     res = openai.ChatCompletion.create(**kwargs)
+
+    if not stream:
+        CACHE[key] = res
+
     return hash_object, res
 
 
