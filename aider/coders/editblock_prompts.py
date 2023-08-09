@@ -32,10 +32,15 @@ some/dir/example.py
 >>>>>>> UPDATED
 {fence[1]}
 
+A program will parse the edit blocks you generate and replace the ORIGINAL lines with the UPDATED lines.
+So edit blocks must be precise and unambiguous!
+
 Every *edit block* must be fenced with {fence[0]}...{fence[1]} with the correct code language.
 Every *edit block* must start with the full path! *NEVER* propose edit blocks for *read-only* files.
 
+The ORIGINAL section must be an *exact set of sequential lines* from the file!
 NEVER SKIP LINES in the ORIGINAL section!
+NEVER ELIDE LINES AND REPLACE THEM WITH A COMMENT!
 NEVER OMIT ANY WHITESPACE in the ORIGINAL section!
 
 Edits to different parts of a file each need their own *edit block*.

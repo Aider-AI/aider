@@ -13,7 +13,7 @@ from openai.error import (
     Timeout,
 )
 
-CACHE_PATH = ".aider.send.cache.v1"
+CACHE_PATH = "~/.aider.send.cache.v1"
 CACHE = Cache(CACHE_PATH)
 
 
@@ -54,10 +54,7 @@ def send_with_retries(model, messages, functions, stream):
     hash_object = hashlib.sha1(key)
 
     if not stream and key in CACHE:
-        print("hit", key)
         return hash_object, CACHE[key]
-
-    print("miss", key)
 
     res = openai.ChatCompletion.create(**kwargs)
 
