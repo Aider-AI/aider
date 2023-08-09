@@ -25,8 +25,8 @@ class ChatSummary:
             sized.append((tokens, msg))
         return sized
 
-    def summarize(self, messages):
-        if len(messages) <= 4:
+    def summarize(self, messages, depth=0):
+        if len(messages) <= 4 or depth > 5:
             return self.summarize_all(messages)
 
         sized = self.tokenize(messages)
@@ -63,7 +63,7 @@ class ChatSummary:
         if summary_tokens + tail_tokens < self.max_tokens:
             return result
 
-        return self.summarize(result)
+        return self.summarize(result, depth + 1)
 
     def summarize_all(self, messages):
         content = ""
