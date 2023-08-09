@@ -133,6 +133,23 @@ class TestCommands(TestCase):
         # it should be there, but was not in v0.10.0
         self.assertNotIn(abs_fname, coder.abs_fnames)
 
+    def test_cmd_add_from_sub_dir(self):
+        io = InputOutput(pretty=False, yes=False)
+        from aider.coders import Coder
+        coder = Coder.create(models.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        Path("side_dir").mkdir()
+        os.chdir("side_dir")
+
+        # add a file that is in the side_dir
+        with open('temp.txt', 'w'):
+            pass
+
+        commands.cmd_add('temp.txt')
+        tmp_abs_fname = str(Path("temp.txt").resolve())
+        self.assertIn(tmp_abs_fname, coder.abs_fnames)
+
     def test_cmd_drop_with_glob_patterns(self):
         # Initialize the Commands and InputOutput objects
         io = InputOutput(pretty=False, yes=True)

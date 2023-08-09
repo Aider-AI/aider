@@ -1,3 +1,4 @@
+import os
 import json
 import shlex
 import subprocess
@@ -273,16 +274,17 @@ class Commands:
                 if any(char in word for char in "*?[]"):
                     self.io.tool_error(f"No files to add matching pattern: {word}")
                 else:
+                    subdir = os.path.relpath(os.getcwd(), self.coder.root)
                     if Path(word).exists():
                         if Path(word).is_file():
-                            matched_files = [word]
+                            matched_files = [os.path.join(subdir, word)]
                         else:
                             self.io.tool_error(f"Unable to add: {word}")
                     elif self.io.confirm_ask(
                         f"No files matched '{word}'. Do you want to create the file?"
                     ):
-                        (Path(self.coder.root) / word).touch()
-                        matched_files = [word]
+                        (Path(self.coder.root) / subdir / word).touch()
+                        matched_files = [os.path.join(subdir, word)]
 
             all_matched_files.update(matched_files)
 
