@@ -377,7 +377,7 @@ def show_diffs(dirnames):
             result = [r for r in results if r["testcase"] == testcase][0]
 
             outcomes = tuple(result["tests_outcomes"])
-            all_outcomes.append(outcomes)
+            all_outcomes.append(True in outcomes)
 
         if len(set(all_outcomes)) == 1:
             unchanged.add(testcase)
