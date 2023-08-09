@@ -348,12 +348,14 @@ def find_original_update_blocks(content):
                     if current_filename:
                         filename = current_filename
                     else:
-                        raise ValueError(f"Bad/missing filename. It should go right above {HEAD}")
+                        raise ValueError(
+                            f"Bad/missing filename. It should go right above the {HEAD}"
+                        )
             except IndexError:
                 if current_filename:
                     filename = current_filename
                 else:
-                    raise ValueError(f"Bad/missing filename. It should go right above {HEAD}")
+                    raise ValueError(f"Bad/missing filename. It should go right above the {HEAD}")
 
             current_filename = filename
 
