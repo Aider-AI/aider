@@ -239,8 +239,8 @@ def main(
     dirnames: List[str] = typer.Argument(..., help="Directory names"),
     model: str = typer.Option("gpt-3.5-turbo", "--model", "-m", help="Model name"),
     edit_format: str = typer.Option(None, "--edit-format", "-e", help="Edit format"),
-    keyword: str = typer.Option(
-        None, "--keyword", "-k", help="Only run tests that contain keyword"
+    keywords: str = typer.Option(
+        None, "--keywords", "-k", help="Only run tests that contain keywords (comma sep)"
     ),
     clean: bool = typer.Option(
         False, "--clean", "-c", help="Discard the existing testdir and make a clean copy"
@@ -311,8 +311,9 @@ def main(
 
     test_dnames = sorted(os.listdir(dirname))
 
-    if keyword:
-        test_dnames = [dn for dn in test_dnames if keyword in dn]
+    if keywords:
+        keywords = keywords.split(",")
+        test_dnames = [dn for dn in test_dnames for keyword in keywords if keyword in dn]
 
     random.shuffle(test_dnames)
     if num_tests > 0:
@@ -367,6 +368,8 @@ def show_diffs(dirnames):
 
     testcases = sorted(testcases)
 
+    unchanged = set()
+
     for testcase in testcases:
         all_outcomes = []
         for dirname in dirnames:
@@ -377,12 +380,18 @@ def show_diffs(dirnames):
             all_outcomes.append(outcomes)
 
         if len(set(all_outcomes)) == 1:
+            unchanged.add(testcase)
             continue
 
         print()
         print(testcase)
         for outcome, dirname in zip(all_outcomes, dirnames):
             print(outcome, f"{dirname}/{testcase}/.aider.chat.history.md")
+
+    changed = set(testcases) - unchanged
+    print()
+    print("changed:", len(changed), ",".join(sorted(changed)))
+    print("unchanged:", len(unchanged), ",".join(sorted(unchanged)))
 
 
 def load_results(dirname):
