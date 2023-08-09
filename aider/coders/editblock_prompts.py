@@ -36,7 +36,7 @@ Every *edit block* must be fenced with {fence[0]}...{fence[1]} with the correct 
 Every *edit block* must start with the full path! *NEVER* propose edit blocks for *read-only* files.
 The ORIGINAL section must be an *exact set of sequential lines* from the file:
 - NEVER SKIP LINES!
-- Include all original leading spaces and indentation!
+- NEVER SKIP LEADING WHITESPACE FROM LINES!
 
 Edits to different parts of a file each need their own *edit block*.
 
