@@ -32,10 +32,10 @@ class EditBlockCoder(Coder):
                 continue
             raise ValueError(f"""InvalidEditBlock: edit failed!
 
-{path} does not contain the *exact sequence* of ORIGINAL lines you specified.
+{path} does not contain the *exact sequence* of HEAD lines you specified.
 Try again.
 DO NOT skip blank lines, comments, docstrings, etc!
-The ORIGINAL block needs to be EXACTLY the same as the lines in {path} with nothing missing!
+The HEAD block needs to be EXACTLY the same as the lines in {path} with nothing missing!
 
 {path} does not contain these {len(original.splitlines())} exact lines in a row:
 ```
@@ -304,11 +304,11 @@ def do_replace(fname, content, before_text, after_text, fence=None):
     return new_content
 
 
-ORIGINAL = "<<<<<<< ORIGINAL"
+HEAD = "<<<<<<< HEAD"
 DIVIDER = "======="
-UPDATED = ">>>>>>> UPDATED"
+UPDATED = ">>>>>>> updated"
 
-separators = "|".join([ORIGINAL, DIVIDER, UPDATED])
+separators = "|".join([HEAD, DIVIDER, UPDATED])
 
 split_re = re.compile(r"^((?:" + separators + r")[ ]*\n)", re.MULTILINE | re.DOTALL)
 
@@ -334,7 +334,7 @@ def find_original_update_blocks(content):
                 processed.append(cur)
                 raise ValueError(f"Unexpected {cur}")
 
-            if cur.strip() != ORIGINAL:
+            if cur.strip() != HEAD:
                 processed.append(cur)
                 continue
 
@@ -348,14 +348,12 @@ def find_original_update_blocks(content):
                     if current_filename:
                         filename = current_filename
                     else:
-                        raise ValueError(
-                            f"Bad/missing filename. It should go right above {ORIGINAL}"
-                        )
+                        raise ValueError(f"Bad/missing filename. It should go right above {HEAD}")
             except IndexError:
                 if current_filename:
                     filename = current_filename
                 else:
-                    raise ValueError(f"Bad/missing filename. It should go right above {ORIGINAL}")
+                    raise ValueError(f"Bad/missing filename. It should go right above {HEAD}")
 
             current_filename = filename
 
@@ -365,7 +363,7 @@ def find_original_update_blocks(content):
             divider_marker = pieces.pop()
             processed.append(divider_marker)
             if divider_marker.strip() != DIVIDER:
-                raise ValueError(f"Expected {DIVIDER}")
+                raise ValueError(f"Expected `{DIVIDER}` not {divider_marker.strip()}")
 
             updated_text = pieces.pop()
             processed.append(updated_text)
@@ -373,7 +371,7 @@ def find_original_update_blocks(content):
             updated_marker = pieces.pop()
             processed.append(updated_marker)
             if updated_marker.strip() != UPDATED:
-                raise ValueError(f"Expected {UPDATED}")
+                raise ValueError(f"Expected `{UPDATED}` not `{updated_marker.strip()}")
 
             yield filename, original_text, updated_text
     except ValueError as e:
@@ -382,10 +380,10 @@ def find_original_update_blocks(content):
         raise ValueError(f"{processed}\n^^^ {err}")
     except IndexError:
         processed = "".join(processed)
-        raise ValueError(f"{processed}\n^^^ Incomplete ORIGINAL/UPDATED block.")
+        raise ValueError(f"{processed}\n^^^ Incomplete HEAD/updated block.")
     except Exception:
         processed = "".join(processed)
-        raise ValueError(f"{processed}\n^^^ Error parsing ORIGINAL/UPDATED block.")
+        raise ValueError(f"{processed}\n^^^ Error parsing HEAD/updated block.")
 
 
 if __name__ == "__main__":
@@ -394,11 +392,11 @@ Here's the change:
 
 ```text
 foo.txt
-<<<<<<< ORIGINAL
+<<<<<<< HEAD
 Two
 =======
 Tooooo
->>>>>>> UPDATED
+>>>>>>> updated
 ```
 
 Hope you like it!

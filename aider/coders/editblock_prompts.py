@@ -21,7 +21,7 @@ Once you understand the request you MUST:
 
 {fence[0]}python
 some/dir/example.py
-<<<<<<< ORIGINAL
+<<<<<<< HEAD
     # some comment
     # Func to multiply
     def mul(a,b)
@@ -29,26 +29,26 @@ some/dir/example.py
     # updated comment
     # Function to add
     def add(a,b):
->>>>>>> UPDATED
+>>>>>>> updated
 {fence[1]}
 
-A program will parse the edit blocks you generate and replace the ORIGINAL lines with the UPDATED lines.
+A program will parse the edit blocks you generate and replace the HEAD lines with the `updated` lines.
 So edit blocks must be precise and unambiguous!
 
 Every *edit block* must be fenced with {fence[0]}...{fence[1]} with the correct code language.
 Every *edit block* must start with the full path! *NEVER* propose edit blocks for *read-only* files.
 
-The ORIGINAL section must be an *exact set of sequential lines* from the file!
-NEVER SKIP LINES in the ORIGINAL section!
+The HEAD section must be an *exact set of sequential lines* from the file!
+NEVER SKIP LINES in the HEAD section!
 NEVER ELIDE LINES AND REPLACE THEM WITH A COMMENT!
-NEVER OMIT ANY WHITESPACE in the ORIGINAL section!
+NEVER OMIT ANY WHITESPACE in the HEAD section!
 
 Edits to different parts of a file each need their own *edit block*.
 
 If you want to put code in a new file, use an edit block with:
 - A new file path, including dir name if needed
-- An empty ORIGINAL section
-- The new file's contents in the UPDATED section
+- An empty HEAD section
+- The new file's contents in the `updated` section
 """
 
     files_content_prefix = "These are the *read-write* files:\n"
