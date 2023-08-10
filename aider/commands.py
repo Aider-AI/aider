@@ -434,9 +434,11 @@ class Commands:
             else:
                 self.io.tool_output(f"{cmd} No description available.")
 
+    from .voice import record_and_transcribe
+
     def cmd_voice(self, args):
-        "Respond with 'hi gpt'"
-        return 'hi gpt'
+        "Record and transcribe voice input"
+        return record_and_transcribe()
 
 
 def expand_subdir(file_path):
