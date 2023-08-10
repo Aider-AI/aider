@@ -23,7 +23,7 @@ the aider chat session.
 
 <div style="display: inline-block; position: relative; width: 200px; background-color: #f0f0f0; border-radius: 10px; padding: 10px; color: #333; font-family: 'Comic Sans MS', 'Comic Sans', 'Marker Felt', sans-serif;">
 <span style="position: absolute; top: 0; left: 50%; transform: translate(-50%, -100%); width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 10px solid #f0f0f0;"></span>
-“add a factorial endpoint that uses math.factorial”
+“&nbsp;add a factorial endpoint that uses math factorial&nbsp;”
 </div>
 
 #### Add a factorial endpoint that uses math.factorial.  
