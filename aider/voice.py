@@ -31,7 +31,7 @@ def record_and_transcribe():
 
     with sf.SoundFile(filename, mode="x", samplerate=sample_rate, channels=1) as file:
         with sd.InputStream(samplerate=sample_rate, channels=1, callback=callback):
-            input("Press ENTER when done speaking...")
+            input("Recording... Press ENTER when done speaking...")
 
         while not q.empty():
             file.write(q.get())

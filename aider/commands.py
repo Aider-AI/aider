@@ -441,7 +441,10 @@ class Commands:
             return
 
         text = voice.record_and_transcribe()
+        print()
         self.io.user_input(text, log_only=False)
+        print()
+
         return text
 
 
