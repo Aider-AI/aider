@@ -8,11 +8,11 @@ import queue
 import soundfile as sf
 import os
 
-def record_and_transcribe(api_key):
+from .dump import dump
 
-    # Set the sample rate and duration for the recording
-    sample_rate = 16000  # 16kHz
-    duration = 10  # in seconds
+def record_and_transcribe():
+
+    q = queue.Queue()
 
     def callback(indata, frames, time, status):
         """This is called (from a separate thread) for each audio block."""
@@ -23,27 +23,23 @@ def record_and_transcribe(api_key):
 
     filename = tempfile.mktemp(prefix='delme_rec_unlimited_', suffix='.wav', dir='')
 
-    q = queue.Queue()
+    sample_rate = 16000  # 16kHz
 
-    # Make sure the file is opened before recording anything:
     with sf.SoundFile(filename, mode='x', samplerate=sample_rate, channels=1) as file:
         with sd.InputStream(samplerate=sample_rate, channels=1, callback=callback):
-            input('Press enter when done')
+            input('Press ENTER when done speaking...')
 
         while not q.empty():
-            print('.')
             file.write(q.get())
 
-    print('done')
+    with open(filename, 'rb') as fh:
+        transcript = openai.Audio.transcribe("whisper-1", fh)
 
-    # Transcribe the audio using the Whisper API
-    response = openai.Whisper.asr.create(audio_data=recording_bytes)
-
-    # Return the transcription
-    return response['choices'][0]['text']
+    text = transcript['text']
+    return text
 
 if __name__ == "__main__":
     api_key = os.getenv('OPENAI_API_KEY')
     if not api_key:
         raise ValueError("Please set the OPENAI_API_KEY environment variable.")
-    print(record_and_transcribe(api_key))
+    print(record_and_transcribe())
