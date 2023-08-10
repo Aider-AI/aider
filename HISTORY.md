@@ -2,6 +2,7 @@
 
 ### main branch
 
+- Fixed bug where /diff was causing crash
 - Improved prompting for gpt-4, refactor of editblock coder.
 - [Benchmarked](https://aider.chat/docs/benchmarks.html) at 63.2% for gpt-4/diff, no regression.
 
