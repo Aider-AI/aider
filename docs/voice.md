@@ -8,7 +8,13 @@
 
 #### /voice  
 
+<div style="display: inline-block; position: relative; width: 200px; background-color: #f0f0f0; border-radius: 10px; padding: 10px; color: #333; font-family: 'Comic Sans MS', cursive, sans-serif;">
+<span style="position: absolute; top: 100%; left: 50%; transform: translate(-50%, 0); width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 10px solid #f0f0f0;"></span>
+“add a factorial endpoit that uses math factorial”
+</div>
+
 > Recording... Press ENTER when done speaking...  
+
 
 #### Add a factorial endpoint that uses math.factorial.  
 
@@ -16,9 +22,8 @@ To add a factorial endpoint to the Flask application, we need to modify the `app
 
 Here are the steps:
 
-1. Import the `factorial` function from the `math` module at the top of the file.
-2. Add a new route `/fact/<int:x>` to the Flask application.
-3. In the function for this route, call `math.factorial(x)` and return the result as a string.
+1. Add a new route `/fact/<int:x>` to the Flask application.
+2. In the function for this route, call `math.factorial(x)` and return the result as a string.
 
 Here is the *edit block* for these changes:
 
