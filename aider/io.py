@@ -231,6 +231,11 @@ class InputOutput:
         self.user_input(inp)
         return inp
 
+    def add_to_file_history(self, inp):
+        if not self.input_history_file:
+            return
+        FileHistory(self.input_history_file).append_string(inp)
+
     def user_input(self, inp, log_only=True):
         if not log_only:
             style = dict(style=self.user_input_color) if self.user_input_color else dict()

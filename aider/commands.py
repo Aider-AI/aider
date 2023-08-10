@@ -441,6 +441,7 @@ class Commands:
             return
 
         text = voice.record_and_transcribe()
+        self.io.add_to_file_history(text)
         print()
         self.io.user_input(text, log_only=False)
         print()
