@@ -34,3 +34,6 @@ def record_and_transcribe():
 
     # Return the transcription
     return response['choices'][0]['text']
+
+if __name__ == "__main__":
+    print(record_and_transcribe())
