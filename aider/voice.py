@@ -3,7 +3,9 @@ import numpy as np
 import keyboard
 import openai
 import io
-
+import tempfile
+import queue
+import soundfile as sf
 import os
 
 def record_and_transcribe(api_key):
@@ -12,25 +14,27 @@ def record_and_transcribe(api_key):
     sample_rate = 16000  # 16kHz
     duration = 10  # in seconds
 
-    # Create a callback function to stop recording when a key is pressed
-    def on_key_press(e):
-        print("Key pressed, stopping recording...")
-        sd.stop()
+    def callback(indata, frames, time, status):
+        """This is called (from a separate thread) for each audio block."""
+        if status:
+            print(status, file=sys.stderr)
+        q.put(indata.copy())
 
-    # Start the recording
-    print("Recording started, press any key to stop...")
-    # Create an instance of InputStream with the callback
-    stream = sd.InputStream(samplerate=sample_rate, channels=1, callback=on_key_press)
-    stream.start()
-    recording = sd.rec(int(sample_rate * duration), samplerate=sample_rate, channels=1)
 
-    # Wait for a key press
-    keyboard.wait()
+    filename = tempfile.mktemp(prefix='delme_rec_unlimited_', suffix='.wav', dir='')
 
-    # Convert the recording to bytes
-    recording_bytes = io.BytesIO()
-    np.save(recording_bytes, recording, allow_pickle=False)
-    recording_bytes = recording_bytes.getvalue()
+    q = queue.Queue()
+
+    # Make sure the file is opened before recording anything:
+    with sf.SoundFile(filename, mode='x', samplerate=sample_rate, channels=1) as file:
+        with sd.InputStream(samplerate=sample_rate, channels=1, callback=callback):
+            input('Press enter when done')
+
+        while not q.empty():
+            print('.')
+            file.write(q.get())
+
+    print('done')
 
     # Transcribe the audio using the Whisper API
     response = openai.Whisper.asr.create(audio_data=recording_bytes)
