@@ -29,7 +29,7 @@ class TestCoder(unittest.TestCase):
 
             io = InputOutput(yes=True)
             # Initialize the Coder object with the mocked IO and mocked repo
-            coder = Coder.create(models.GPT4, None, io, fnames=[str(fname)])
+            Coder.create(models.GPT4, None, io, fnames=[str(fname)])
 
             self.assertTrue(fname.exists())
 
@@ -39,7 +39,6 @@ class TestCoder(unittest.TestCase):
             commit_message = repo.get_commit_message()
             # Check that the latest commit message is "I added str(fname)"
             self.assertEqual(commit_message, f"I added {str(fname)}")
-
 
     def test_allowed_to_edit(self):
         with GitTemporaryDirectory():
