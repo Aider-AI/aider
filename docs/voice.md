@@ -1,4 +1,22 @@
 
+# Voice-to-code
+
+Aider has experimental support for "voice-to-code",
+allowing you to edit your codebase using spoken words.
+
+You can speak to GPT to have it modify your code according to your
+instructions.
+Use the `/voice` in-chat command to start recording,
+and press `ENTER` when you're done speaking.
+Your voice coding instrucitons will be transcribed
+and sent to GPT, as if you had manually typed them into
+the aider chat session.
+
+<br/>
+<br/>
+<br/>
+<div class="chat-transcript" markdown="1">
+
 > Aider v0.11.2-dev  
 > Model: gpt-4  
 > Git repo: .git  
@@ -8,13 +26,12 @@
 
 #### /voice  
 
+> Recording... Press ENTER when done speaking...  
+
 <div style="display: inline-block; position: relative; width: 200px; background-color: #f0f0f0; border-radius: 10px; padding: 10px; color: #333; font-family: 'Comic Sans MS', cursive, sans-serif;">
 <span style="position: absolute; top: 0; left: 50%; transform: translate(-50%, -100%); width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 10px solid #f0f0f0;"></span>
 “add a factorial endpoit that uses math factorial”
 </div>
-
-> Recording... Press ENTER when done speaking...  
-
 
 #### Add a factorial endpoint that uses math.factorial.  
 
@@ -47,3 +64,8 @@ if __name__ == '__main__':
 
 > Applied edit to app.py  
 > Commit ef9e3e7 aider: Add a factorial endpoint that uses math.factorial.  
+
+</div>
+<br/>
+<br/>
+<br/>
