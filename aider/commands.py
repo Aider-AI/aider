@@ -9,6 +9,7 @@ import tiktoken
 from prompt_toolkit.completion import Completion
 
 from aider import prompts
+from aider.voice import record_and_transcribe
 
 from .dump import dump  # noqa: F401
 
@@ -434,11 +435,11 @@ class Commands:
             else:
                 self.io.tool_output(f"{cmd} No description available.")
 
-    from .voice import record_and_transcribe
-
     def cmd_voice(self, args):
         "Record and transcribe voice input"
-        return record_and_transcribe()
+        text = record_and_transcribe()
+        self.io.tool_output(text)
+        return text
 
 
 def expand_subdir(file_path):
