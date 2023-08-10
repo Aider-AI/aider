@@ -3,10 +3,19 @@ import queue
 import tempfile
 
 import openai
-import sounddevice as sd
+
+try:
+    import sounddevice as sd
+except OSError:
+    sd = None
+
 import soundfile as sf
 
 from .dump import dump  # noqa: F401
+
+
+def is_audio_available():
+    return sd is not None
 
 
 def record_and_transcribe():
