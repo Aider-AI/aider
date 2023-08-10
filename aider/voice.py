@@ -19,7 +19,10 @@ def record_and_transcribe(api_key):
 
     # Start the recording
     print("Recording started, press any key to stop...")
-    recording = sd.rec(int(sample_rate * duration), samplerate=sample_rate, channels=1, callback=on_key_press)
+    # Create an instance of InputStream with the callback
+    stream = sd.InputStream(samplerate=sample_rate, channels=1, callback=on_key_press)
+    stream.start()
+    recording = sd.rec(int(sample_rate * duration), samplerate=sample_rate, channels=1)
 
     # Wait for a key press
     keyboard.wait()
