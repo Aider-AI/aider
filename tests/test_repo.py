@@ -16,15 +16,60 @@ class TestRepo(unittest.TestCase):
     def test_diffs_empty_repo(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
-            fname = Path("foo.txt")
-            fname.touch()
 
+            # Add a change to the index
+            fname = Path("foo.txt")
+            fname.write_text("index\n")
             repo.git.add(str(fname))
+
+            # Make a change in the working dir
+            fname.write_text("workingdir\n")
 
             git_repo = GitRepo(InputOutput(), None, ".")
             diffs = git_repo.get_diffs(False)
-            self.assertNotEqual(diffs, "")
-            self.assertIsNotNone(diffs)
+            self.assertIn("index", diffs)
+            self.assertIn("workingdir", diffs)
+
+    def test_diffs_nonempty_repo(self):
+        with GitTemporaryDirectory():
+            repo = git.Repo()
+            fname = Path("foo.txt")
+            fname.touch()
+            repo.git.add(str(fname))
+
+            fname2 = Path("bar.txt")
+            fname2.touch()
+            repo.git.add(str(fname2))
+
+            repo.git.commit("-m", "initial")
+
+            fname.write_text("index\n")
+            repo.git.add(str(fname))
+
+            fname2.write_text("workingdir\n")
+
+            git_repo = GitRepo(InputOutput(), None, ".")
+            diffs = git_repo.get_diffs(False)
+            self.assertIn("index", diffs)
+            self.assertIn("workingdir", diffs)
+
+    def test_diffs_between_commits(self):
+        with GitTemporaryDirectory():
+            repo = git.Repo()
+            fname = Path("foo.txt")
+
+            fname.write_text("one\n")
+            repo.git.add(str(fname))
+            repo.git.commit("-m", "initial")
+
+            fname.write_text("two\n")
+            repo.git.add(str(fname))
+            repo.git.commit("-m", "second")
+
+            git_repo = GitRepo(InputOutput(), None, ".")
+            diffs = git_repo.get_diffs(False, ["HEAD~1", "HEAD"])
+            dump(diffs)
+            self.assertIn("two", diffs)
 
     @patch("aider.repo.simple_send_with_retries")
     def test_get_commit_message(self, mock_send):
