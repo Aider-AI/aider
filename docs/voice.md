@@ -12,9 +12,6 @@ Your voice coding instrucitons will be transcribed
 and sent to GPT, as if you had manually typed them into
 the aider chat session.
 
-<br/>
-<br/>
-<br/>
 <div class="chat-transcript" markdown="1">
 
 > Aider v0.11.2-dev  
