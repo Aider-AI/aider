@@ -434,6 +434,10 @@ class Commands:
             else:
                 self.io.tool_output(f"{cmd} No description available.")
 
+    def cmd_voice(self, args):
+        "Respond with 'hi gpt'"
+        return 'hi gpt'
+
 
 def expand_subdir(file_path):
     file_path = Path(file_path)
