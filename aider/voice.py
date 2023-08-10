@@ -4,9 +4,9 @@ import keyboard
 import openai
 import io
 
-def record_and_transcribe():
-    # Set your OpenAI API key
-    openai.api_key = 'your-api-key'
+import os
+
+def record_and_transcribe(api_key):
 
     # Set the sample rate and duration for the recording
     sample_rate = 16000  # 16kHz
@@ -36,4 +36,7 @@ def record_and_transcribe():
     return response['choices'][0]['text']
 
 if __name__ == "__main__":
-    print(record_and_transcribe())
+    api_key = os.getenv('OPENAI_API_KEY')
+    if not api_key:
+        raise ValueError("Please set the OPENAI_API_KEY environment variable.")
+    print(record_and_transcribe(api_key))
