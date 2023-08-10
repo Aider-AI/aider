@@ -438,7 +438,7 @@ class Commands:
     def cmd_voice(self, args):
         "Record and transcribe voice input"
         text = record_and_transcribe()
-        self.io.tool_output(text)
+        self.io.user_input(text, log_only=False)
         return text
 
 
