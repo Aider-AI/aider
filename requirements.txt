@@ -31,3 +31,5 @@ diskcache==5.6.1
 numpy==1.24.3
 scipy==1.10.1
 jsonschema==4.17.3
+sounddevice
+keyboard
