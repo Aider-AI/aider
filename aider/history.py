@@ -26,13 +26,14 @@ class ChatSummary:
         return sized
 
     def summarize(self, messages, depth=0):
-        if len(messages) <= 4 or depth > 5:
-            return self.summarize_all(messages)
-
         sized = self.tokenize(messages)
         total = sum(tokens for tokens, _msg in sized)
-        if total <= self.max_tokens:
+        if total <= self.max_tokens and depth == 0:
             return messages
+
+        min_split = 4
+        if len(messages) <= min_split or depth > 3:
+            return self.summarize_all(messages)
 
         tail_tokens = 0
         split_index = len(messages)
@@ -50,6 +51,9 @@ class ChatSummary:
         # Ensure the head ends with an assistant message
         while messages[split_index - 1]["role"] != "assistant" and split_index > 1:
             split_index -= 1
+
+        if split_index <= min_split:
+            return self.summarize_all(messages)
 
         head = messages[:split_index]
         tail = messages[split_index:]
