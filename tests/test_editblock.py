@@ -21,7 +21,8 @@ class TestUtils(unittest.TestCase):
     def tearDown(self):
         self.patcher.stop()
 
-    def test_replace_most_similar_chunk(self):
+    # fuzzy logic disabled v0.11.2-dev
+    def __test_replace_most_similar_chunk(self):
         whole = "This is a sample text.\nAnother line of text.\nYet another line.\n"
         part = "This is a sample text\n"
         replace = "This is a replaced text.\n"
@@ -30,7 +31,8 @@ class TestUtils(unittest.TestCase):
         result = eb.replace_most_similar_chunk(whole, part, replace)
         self.assertEqual(result, expected_output)
 
-    def test_replace_most_similar_chunk_not_perfect_match(self):
+    # fuzzy logic disabled v0.11.2-dev
+    def __test_replace_most_similar_chunk_not_perfect_match(self):
         whole = "This is a sample text.\nAnother line of text.\nYet another line.\n"
         part = "This was a sample text.\nAnother line of txt\n"
         replace = "This is a replaced text.\nModified line of text.\n"
@@ -65,11 +67,11 @@ Here's the change:
 
 ```text
 foo.txt
-<<<<<<< ORIGINAL
+<<<<<<< HEAD
 Two
 =======
 Tooooo
->>>>>>> UPDATED
+>>>>>>> updated
 ```
 
 Hope you like it!
@@ -84,11 +86,11 @@ Here's the change:
 
 foo.txt
 ```text
-<<<<<<< ORIGINAL
+<<<<<<< HEAD
 Two
 =======
 Tooooo
->>>>>>> UPDATED
+>>>>>>> updated
 ```
 
 Hope you like it!
@@ -103,7 +105,7 @@ Here's the change:
 
 ```text
 foo.txt
-<<<<<<< ORIGINAL
+<<<<<<< HEAD
 Two
 =======
 Tooooo
@@ -121,7 +123,7 @@ oops!
 Here's the change:
 
 ```text
-<<<<<<< ORIGINAL
+<<<<<<< HEAD
 Two
 =======
 Tooooo
@@ -137,34 +139,34 @@ oops!
     def test_find_original_update_blocks_no_final_newline(self):
         edit = """
 aider/coder.py
-<<<<<<< ORIGINAL
+<<<<<<< HEAD
             self.console.print("[red]^C again to quit")
 =======
             self.io.tool_error("^C again to quit")
->>>>>>> UPDATED
+>>>>>>> updated
 
 aider/coder.py
-<<<<<<< ORIGINAL
+<<<<<<< HEAD
             self.io.tool_error("Malformed ORIGINAL/UPDATE blocks, retrying...")
             self.io.tool_error(err)
 =======
             self.io.tool_error("Malformed ORIGINAL/UPDATE blocks, retrying...")
             self.io.tool_error(str(err))
->>>>>>> UPDATED
+>>>>>>> updated
 
 aider/coder.py
-<<<<<<< ORIGINAL
+<<<<<<< HEAD
             self.console.print("[red]Unable to get commit message from gpt-3.5-turbo. Use /commit to try again.\n")
 =======
             self.io.tool_error("Unable to get commit message from gpt-3.5-turbo. Use /commit to try again.")
->>>>>>> UPDATED
+>>>>>>> updated
 
 aider/coder.py
-<<<<<<< ORIGINAL
+<<<<<<< HEAD
             self.console.print("[red]Skipped commmit.")
 =======
             self.io.tool_error("Skipped commmit.")
->>>>>>> UPDATED"""
+>>>>>>> updated"""
 
         # Should not raise a ValueError
         list(eb.find_original_update_blocks(edit))
@@ -175,7 +177,7 @@ No problem! Here are the changes to patch `subprocess.check_output` instead of `
 
 ```python
 tests/test_repomap.py
-<<<<<<< ORIGINAL
+<<<<<<< HEAD
     def test_check_for_ctags_failure(self):
         with patch("subprocess.run") as mock_run:
             mock_run.side_effect = Exception("ctags not found")
@@ -183,9 +185,9 @@ tests/test_repomap.py
     def test_check_for_ctags_failure(self):
         with patch("subprocess.check_output") as mock_check_output:
             mock_check_output.side_effect = Exception("ctags not found")
->>>>>>> UPDATED
+>>>>>>> updated
 
-<<<<<<< ORIGINAL
+<<<<<<< HEAD
     def test_check_for_ctags_success(self):
         with patch("subprocess.run") as mock_run:
             mock_run.return_value = CompletedProcess(args=["ctags", "--version"], returncode=0, stdout='''{
@@ -205,7 +207,7 @@ tests/test_repomap.py
   "pattern": "/^    status = main()$/",
   "kind": "variable"
 }'''
->>>>>>> UPDATED
+>>>>>>> updated
 ```
 
 These changes replace the `subprocess.run` patches with `subprocess.check_output` patches in both `test_check_for_ctags_failure` and `test_check_for_ctags_success` tests.
@@ -284,11 +286,11 @@ These changes replace the `subprocess.run` patches with `subprocess.check_output
 Do this:
 
 {Path(file1).name}
-<<<<<<< ORIGINAL
+<<<<<<< HEAD
 two
 =======
 new
->>>>>>> UPDATED
+>>>>>>> updated
 
 """
             coder.partial_response_function_call = dict()
@@ -326,11 +328,11 @@ new
 Do this:
 
 {Path(file1).name}
-<<<<<<< ORIGINAL
+<<<<<<< HEAD
 two
 =======
 new
->>>>>>> UPDATED
+>>>>>>> updated
 
 """
             coder.partial_response_function_call = dict()
