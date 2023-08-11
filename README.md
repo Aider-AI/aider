@@ -28,6 +28,7 @@ Aider is unique in that it [works well with pre-existing, larger codebases](http
 - [Tips](#tips)
 - [GPT-4 vs GPT-3.5](https://aider.chat/docs/faq.html#gpt-4-vs-gpt-35)
 - [Installation](https://aider.chat/docs/install.html)
+- [Voice-to-code](https://aider.chat/docs/voice.html)
 - [FAQ](https://aider.chat/docs/faq.html)
 
 ## Getting started

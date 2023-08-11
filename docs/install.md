@@ -9,6 +9,7 @@ Optional steps:
 
 - [Install universal ctags (optional)](#install-universal-ctags-optional)
 - [Add aider to your editor (optional)](#add-aider-to-your-editor-optional)
+- [Install PortAudio (optional)](#install-portaudio-optional)
 
 ## pip install aider-chat
 
@@ -110,6 +111,18 @@ Exuberant Ctags 5.8, Copyright (C) 1996-2009 Darren Hiebert
   Output version: 0.0
   Optional compiled features: +wildcards, +regex, +gnulib_fnmatch, +gnulib_regex, +iconv, +option-directory, +xpath, +json, +interactive, +yaml, +case-insensitive-filenames, +packcc, +optscript, +pcre2
 ```
+
+## Install PortAudio (optional)
+
+Aider supports [coding with your voice](https://aider.chat/docs/voice.html)
+using the in-chat `/voice` command.
+Aider uses the [PortAudio](http://www.portaudio.com) library to
+capture audio.
+Installing PortAudio is completely optional, but can usually be accomplished like this:
+
+- For Windows, there is no need to install PortAudio.
+- For Mac, do `brew install portaudio`
+- For Linux, do `sudo apt-get install libportaudio2`
 
 ## Add aider to your editor (optional)
 

@@ -1,8 +1,9 @@
 # Release history
 
-### main branch
+### v0.12.0
 
-- Fixed bug where /diff was causing crash
+- [Voice-to-code](https://aider.chat/docs/voice.html) support, which allows you to code with your voice.
+- Fixed bug where /diff was causing crash.
 - Improved prompting for gpt-4, refactor of editblock coder.
 - [Benchmarked](https://aider.chat/docs/benchmarks.html) at 63.2% for gpt-4/diff, no regression.
 
