@@ -46,6 +46,12 @@ class Voice:
         return f"Recording, press ENTER when done... {dur:.1f}sec {bar}"
 
     def record_and_transcribe(self):
+        try:
+            return self.raw_record_and_transcribe()
+        except KeyboardInterrupt:
+            return
+
+    def raw_record_and_transcribe(self):
         self.q = queue.Queue()
 
         filename = tempfile.mktemp(suffix=".wav")
