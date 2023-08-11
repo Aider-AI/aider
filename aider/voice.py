@@ -43,7 +43,7 @@ class Voice:
         else:
             cnt = int(self.pct * 10)
 
-        bar = "█" * cnt + "░" * (num - cnt)
+        bar = "░" * cnt + "█" * (num - cnt)
         bar = bar[:num]
 
         dur = time.time() - self.start_time
