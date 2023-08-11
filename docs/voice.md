@@ -13,7 +13,7 @@ and sent to GPT, as if you had manually typed them into
 the aider chat session.
 
 See the [installation instructions](https://aider.chat/docs/install.html#install-portaudio-optional) for
-instructions on how to enable the `/voice` command.
+information on how to enable the `/voice` command.
 
 <div class="chat-transcript" markdown="1">
 
