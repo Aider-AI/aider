@@ -22,12 +22,13 @@ class Voice:
     min_rms = 1e5
     pct = 0
 
+    threshold = 0.15
+
     def is_audio_available(self):
         return sd is not None
 
     def callback(self, indata, frames, time, status):
         """This is called (from a separate thread) for each audio block."""
-        self.q.put(indata.copy())
         rms = np.sqrt(np.mean(indata**2))
         self.max_rms = max(self.max_rms, rms)
         self.min_rms = min(self.min_rms, rms)
@@ -35,10 +36,14 @@ class Voice:
         rng = self.max_rms - self.min_rms
         if rng > 0.001:
             self.pct = (rms - self.min_rms) / rng
+        else:
+            self.pct = 0.5
+
+        self.q.put(indata.copy())
 
     def get_prompt(self):
         num = 10
-        if np.isnan(self.pct):
+        if np.isnan(self.pct) or self.pct < self.threshold:
             cnt = 0
         else:
             cnt = int(self.pct * 10)
