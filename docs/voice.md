@@ -21,7 +21,7 @@ the aider chat session.
 
 <blockquote>
 <div class="recording-line">
-    <p style="display: inline;">Recording, press ENTER when done... 3.5sec</p>
+    <p style="display: inline;">Recording, press ENTER when done... <span id="timer">0</span>sec</p>
     <div id="progress-bar">
         <div id="progress"></div>
     </div>
@@ -50,6 +50,15 @@ the aider chat session.
         100% { width: 10%; }
     }
 </style>
+
+<script>
+    var counter = 0;
+    var timer = document.getElementById('timer');
+    setInterval(function() {
+        counter = (counter + 1) % 10;
+        timer.textContent = counter;
+    }, 1000);
+</script>
 
 <div style="display: inline-block; position: relative; width: 200px; background-color: #f0f0f0; border-radius: 10px; padding: 10px; color: #333; font-family: 'Comic Sans MS', 'Comic Sans', 'Marker Felt', sans-serif;">
 <span style="position: absolute; top: 0; left: 50%; transform: translate(-50%, -100%); width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 10px solid #f0f0f0;"></span>
