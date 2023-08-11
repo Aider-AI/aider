@@ -69,10 +69,10 @@ class Voice:
 
         self.start_time = time.time()
 
-        with sf.SoundFile(filename, mode="x", samplerate=sample_rate, channels=1) as file:
-            with sd.InputStream(samplerate=sample_rate, channels=1, callback=self.callback):
-                prompt(self.get_prompt, refresh_interval=0.1)
+        with sd.InputStream(samplerate=sample_rate, channels=1, callback=self.callback):
+            prompt(self.get_prompt, refresh_interval=0.1)
 
+        with sf.SoundFile(filename, mode="x", samplerate=sample_rate, channels=1) as file:
             while not self.q.empty():
                 file.write(self.q.get())
 
