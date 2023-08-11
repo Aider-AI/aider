@@ -6,6 +6,12 @@ created using <a href="https://aider.chat">aider</a>.
 Aider is a command line tool that lets you pair program with GPT-3.5 or
 GPT-4, to edit code stored in your local git repository.
 
+
+## Shared chat transcript
+
+<div class="chat-transcript" id="shared-transcript">
+</div>
+
 ## Transcript format
 
 <div class="chat-transcript" markdown="1">
@@ -26,11 +32,6 @@ print("hello")
 print("goodbye")
 >>>>>>> UPDATED
 ```
-</div>
-
-## Shared chat transcript
-
-<div class="chat-transcript" id="shared-transcript">
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -67,3 +68,4 @@ window.onload = function() {
     });
 }
 </script>
+
