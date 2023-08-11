@@ -41,12 +41,12 @@ information on how to enable the `/voice` command.
     #progress-bar {
         width: 100px;
         height: 20px;
-        background-color: #f0f0f0;
+        background-color: #333;
         margin-left: 10px;
     }
     #progress {
         height: 100%;
-        background-color: #333;
+        background-color: #f0f0f0;
         animation: progress 3s infinite;
     }
     @keyframes progress {
