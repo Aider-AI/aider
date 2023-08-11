@@ -37,7 +37,6 @@ the aider chat session.
         width: 100px;
         height: 20px;
         background-color: #f0f0f0;
-        border-radius: 10px;
         margin-left: 10px;
     }
     #progress {
