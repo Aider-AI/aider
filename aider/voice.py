@@ -25,7 +25,7 @@ def record_and_transcribe():
         """This is called (from a separate thread) for each audio block."""
         q.put(indata.copy())
 
-    filename = tempfile.mktemp(prefix="delme_rec_unlimited_", suffix=".wav", dir="")
+    filename = tempfile.mktemp(suffix=".wav")
 
     sample_rate = 16000  # 16kHz
 
