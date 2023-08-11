@@ -56,7 +56,7 @@ window.onload = function() {
     var counter = 0;
     var timer = document.getElementById('timer');
     setInterval(function() {
-        counter = (counter + 0.1) % 10;
+        counter = (counter + 0.1) % 9;
         timer.textContent = counter.toFixed(1);
     }, 100);
 }  
