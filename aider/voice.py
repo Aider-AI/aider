@@ -37,10 +37,14 @@ class Voice:
             self.pct = (rms - self.min_rms) / rng
 
     def get_prompt(self):
+        num = 10
         if np.isnan(self.pct):
-            bar = ""
+            cnt = 0
         else:
-            bar = "█" * int(self.pct * 10)
+            cnt = int(self.pct * 10)
+
+        bar = "█" * cnt + "░" * (num - cnt)
+        bar = bar[:num]
 
         dur = time.time() - self.start_time
         return f"Recording, press ENTER when done... {dur:.1f}sec {bar}"
