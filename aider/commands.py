@@ -444,7 +444,7 @@ class Commands:
 
         text = v.record_and_transcribe()
         if text:
-            self.io.add_to_file_history(text)
+            self.io.add_to_input_history(text)
             print()
             self.io.user_input(text, log_only=False)
             print()

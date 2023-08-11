@@ -231,7 +231,7 @@ class InputOutput:
         self.user_input(inp)
         return inp
 
-    def add_to_file_history(self, inp):
+    def add_to_input_history(self, inp):
         if not self.input_history_file:
             return
         FileHistory(self.input_history_file).append_string(inp)
