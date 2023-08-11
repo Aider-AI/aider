@@ -8,7 +8,7 @@ You can speak to GPT to have it modify your code according to your
 instructions.
 Use the `/voice` in-chat command to start recording,
 and press `ENTER` when you're done speaking.
-Your voice coding instrucitons will be transcribed
+Your voice coding instructions will be transcribed
 and sent to GPT, as if you had manually typed them into
 the aider chat session.
 
