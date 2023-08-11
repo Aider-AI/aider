@@ -52,12 +52,14 @@ the aider chat session.
 </style>
 
 <script>
+window.onload = function() {
     var counter = 0;
     var timer = document.getElementById('timer');
     setInterval(function() {
         counter = (counter + 0.1) % 10;
         timer.textContent = counter.toFixed(1);
     }, 100);
+}  
 </script>
 
 <div style="display: inline-block; position: relative; width: 200px; background-color: #f0f0f0; border-radius: 10px; padding: 10px; color: #333; font-family: 'Comic Sans MS', 'Comic Sans', 'Marker Felt', sans-serif;">
