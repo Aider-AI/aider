@@ -1,15 +1,18 @@
 
 # Voice-to-code with aider
 
-Aider has experimental support for "voice-to-code",
-allowing you to edit your codebase using spoken words.
+Speak with GPT about your code! Request new features, test cases or bug fixes using your voice and let GPT do the work of editing the files in your local git repo. As with all of aider's capabilities, you can use voice-to-code with an existing repo or to start a new project.
 
-You can speak to GPT to have it modify your code according to your
-instructions.
-Use the `/voice` in-chat command to start recording,
+Aider transcribes each voice request and sends it to GPT along with [relevant context about your codebase](https://aider.chat/docs/ctags.html). The transcription accuracy of whisper and aider's code context combine to make "voice-to-code" surprisingly effective.
+
+Voice support fits quite naturally into aider's AI pair programming chat interface. Now you can fluidly switch between voice and text chat where you ask GPT to edit the code and your own editor when it makes more sense for you to drive.
+
+## How to use voice-to-code
+
+Use the in-chat `/voice` command to start recording,
 and press `ENTER` when you're done speaking.
 Your voice coding instructions will be transcribed
-and sent to GPT, as if you had manually typed them into
+and sent to GPT, as if you had  typed them into
 the aider chat session.
 
 See the [installation instructions](https://aider.chat/docs/install.html#install-portaudio-optional) for
@@ -17,10 +20,10 @@ information on how to enable the `/voice` command.
 
 <div class="chat-transcript" markdown="1">
 
-> Aider v0.11.2-dev  
-> Added app.py to the chat.  
+> Aider v0.11.2-dev
+> Added app.py to the chat.
 
-#### /voice  
+#### /voice
 
 <blockquote>
 <div class="recording-line">
@@ -66,7 +69,7 @@ window.onload = function() {
         counter = (counter + 0.1) % 9;
         timer.textContent = counter.toFixed(1);
     }, 100);
-}  
+}
 </script>
 
 <div style="display: inline-block; position: relative; width: 200px; background-color: #f0f0f0; border-radius: 10px; padding: 10px; color: #333; font-family: 'Comic Sans MS', 'Comic Sans', 'Marker Felt', sans-serif;">
@@ -74,9 +77,9 @@ window.onload = function() {
 “&nbsp;add a factorial endpoint that uses math factorial&nbsp;”
 </div>
 
-#### Add a factorial endpoint that uses math.factorial.  
+#### Add a factorial endpoint that uses math.factorial.
 
-To add a factorial endpoint to the Flask application, we need to modify the `app.py` file. 
+To add a factorial endpoint to the Flask application, we need to modify the `app.py` file.
 
 Here are the steps:
 
@@ -103,8 +106,8 @@ if __name__ == '__main__':
 >>>>>>> updated
 ```
 
-> Applied edit to app.py  
-> Commit ef9e3e7 aider: Add a factorial endpoint that uses math.factorial.  
+> Applied edit to app.py
+> Commit ef9e3e7 aider: Add a factorial endpoint that uses math.factorial.
 
 </div>
 <br/>
