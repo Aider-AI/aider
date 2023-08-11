@@ -46,9 +46,12 @@ the aider chat session.
     }
     @keyframes progress {
         0% { width: 10%; }
-        33% { width: 90%; }
-        66% { width: 30%; }
-        100% { width: 90%; }
+        20% { width: 90%; }
+        50% { width: 30%; }
+        60% { width: 90%; }
+        80% { width: 20%; }
+        100% { width: 10%; }
+
     }
 </style>
 
