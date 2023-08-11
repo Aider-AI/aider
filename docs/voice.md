@@ -16,6 +16,7 @@ the aider chat session.
 See the [installation instructions](https://aider.chat/docs/install.html#install-portaudio-optional) for
 information on how to enable the `/voice` command.
 
+<br/>
 <div class="chat-transcript" markdown="1">
 
 > Aider v0.11.2-dev
