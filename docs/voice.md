@@ -20,19 +20,25 @@ the aider chat session.
 #### /voice  
 
 <blockquote>
-<p>Recording, press ENTER when done... 3.5sec 
-<div id="progress-bar">
-    <div id="progress"></div>
+<div class="recording-line">
+    <p style="display: inline;">Recording, press ENTER when done... 3.5sec</p>
+    <div id="progress-bar">
+        <div id="progress"></div>
+    </div>
 </div>
-</p>
 </blockquote>
 
 <style>
+    .recording-line > * {
+        display: inline-block;
+        vertical-align: middle;
+    }
     #progress-bar {
         width: 100px;
         height: 20px;
         background-color: #f0f0f0;
         border-radius: 10px;
+        margin-left: 10px;
     }
     #progress {
         height: 100%;
