@@ -42,12 +42,13 @@ the aider chat session.
     #progress {
         height: 100%;
         background-color: #333;
-        animation: progress 1s infinite;
+        animation: progress 3s infinite;
     }
     @keyframes progress {
         0% { width: 10%; }
-        50% { width: 90%; }
-        100% { width: 10%; }
+        33% { width: 90%; }
+        66% { width: 30%; }
+        100% { width: 90%; }
     }
 </style>
 
