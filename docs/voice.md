@@ -21,7 +21,7 @@ the aider chat session.
 
 <blockquote>
 <div class="recording-line">
-    <p style="display: inline;">Recording, press ENTER when done... <span id="timer">0</span>sec</p>
+    <p style="display: inline;">Recording, press ENTER when done... <span id="timer">3.5</span>sec</p>
     <div id="progress-bar">
         <div id="progress"></div>
     </div>
