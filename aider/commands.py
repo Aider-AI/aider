@@ -436,11 +436,13 @@ class Commands:
 
     def cmd_voice(self, args):
         "Record and transcribe voice input"
-        if not voice.is_audio_available():
+        v = voice.Voice()
+
+        if not v.is_audio_available():
             self.io.tool_error("Unable to import `sounddevice`, is portaudio installed?")
             return
 
-        text = voice.record_and_transcribe()
+        text = v.record_and_transcribe()
         self.io.add_to_file_history(text)
         print()
         self.io.user_input(text, log_only=False)
