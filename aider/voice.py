@@ -21,9 +21,13 @@ def is_audio_available():
 def record_and_transcribe():
     q = queue.Queue()
 
+    import numpy as np
+
     def callback(indata, frames, time, status):
         """This is called (from a separate thread) for each audio block."""
         q.put(indata.copy())
+        rms = np.sqrt(np.mean(indata**2))
+        dump(rms)
 
     filename = tempfile.mktemp(suffix=".wav")
 
