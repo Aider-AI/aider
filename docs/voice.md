@@ -19,7 +19,28 @@ the aider chat session.
 
 #### /voice  
 
-> Recording, press ENTER when done... 3.5sec █████░░░░░
+> Recording, press ENTER when done... 3.5sec 
+<div id="progress-bar">
+    <div id="progress"></div>
+</div>
+<style>
+    #progress-bar {
+        width: 100px;
+        height: 20px;
+        background-color: #f0f0f0;
+        border-radius: 10px;
+    }
+    #progress {
+        height: 100%;
+        background-color: #333;
+        animation: progress 1s infinite;
+    }
+    @keyframes progress {
+        0% { width: 10%; }
+        50% { width: 90%; }
+        100% { width: 10%; }
+    }
+</style>
 
 <div style="display: inline-block; position: relative; width: 200px; background-color: #f0f0f0; border-radius: 10px; padding: 10px; color: #333; font-family: 'Comic Sans MS', 'Comic Sans', 'Marker Felt', sans-serif;">
 <span style="position: absolute; top: 0; left: 50%; transform: translate(-50%, -100%); width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 10px solid #f0f0f0;"></span>
