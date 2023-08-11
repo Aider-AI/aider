@@ -236,6 +236,13 @@ class InputOutput:
             return
         FileHistory(self.input_history_file).append_string(inp)
 
+    def get_input_history(self):
+        if not self.input_history_file:
+            return []
+
+        fh = FileHistory(self.input_history_file)
+        return fh.load_history_strings()
+
     def user_input(self, inp, log_only=True):
         if not log_only:
             style = dict(style=self.user_input_color) if self.user_input_color else dict()

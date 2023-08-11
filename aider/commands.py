@@ -442,7 +442,25 @@ class Commands:
             self.io.tool_error("Unable to import `sounddevice`, is portaudio installed?")
             return
 
-        text = v.record_and_transcribe()
+        history_iter = self.io.get_input_history()
+
+        history = []
+        size = 0
+        for line in history_iter:
+            if line.startswith("/"):
+                continue
+            if line in history:
+                continue
+            if size + len(line) > 1024:
+                break
+            size += len(line)
+            history.append(line)
+
+        history.reverse()
+        history = "\n".join(history)
+        dump(history)
+
+        text = v.record_and_transcribe(history)
         if text:
             self.io.add_to_input_history(text)
             print()

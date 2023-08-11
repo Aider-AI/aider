@@ -54,13 +54,13 @@ class Voice:
         dur = time.time() - self.start_time
         return f"Recording, press ENTER when done... {dur:.1f}sec {bar}"
 
-    def record_and_transcribe(self):
+    def record_and_transcribe(self, history=None):
         try:
-            return self.raw_record_and_transcribe()
+            return self.raw_record_and_transcribe(history)
         except KeyboardInterrupt:
             return
 
-    def raw_record_and_transcribe(self):
+    def raw_record_and_transcribe(self, history):
         self.q = queue.Queue()
 
         filename = tempfile.mktemp(suffix=".wav")
@@ -77,7 +77,7 @@ class Voice:
                 file.write(self.q.get())
 
         with open(filename, "rb") as fh:
-            transcript = openai.Audio.transcribe("whisper-1", fh)
+            transcript = openai.Audio.transcribe("whisper-1", fh, prompt=history)
 
         text = transcript["text"]
         return text
