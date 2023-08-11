@@ -443,10 +443,11 @@ class Commands:
             return
 
         text = v.record_and_transcribe()
-        self.io.add_to_file_history(text)
-        print()
-        self.io.user_input(text, log_only=False)
-        print()
+        if text:
+            self.io.add_to_file_history(text)
+            print()
+            self.io.user_input(text, log_only=False)
+            print()
 
         return text
 
