@@ -1,5 +1,6 @@
 import hashlib
 import json
+import logging
 
 import backoff
 import openai
@@ -13,6 +14,10 @@ from openai.error import (
     ServiceUnavailableError,
     Timeout,
 )
+
+# Set up logging
+logging.basicConfig(filename='chat.log', level=logging.INFO)
+logger = logging.getLogger()
 
 CACHE_PATH = "~/.aider.send.cache.v1"
 CACHE = None
@@ -58,7 +63,16 @@ def send_with_retries(model, messages, functions, stream):
     if not stream and CACHE is not None and key in CACHE:
         return hash_object, CACHE[key]
 
+    # Log the input arguments
+    logger.info(f"Input arguments: {kwargs}")
+
     res = openai.ChatCompletion.create(**kwargs)
+
+    # Log the response
+    if res.choices and res.choices[0].message.content:
+        logger.info(f"Response: {res.choices[0].message.content}")
+    else:
+        logger.error(f"Error: {res}")
 
     if not stream and CACHE is not None:
         CACHE[key] = res
