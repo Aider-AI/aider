@@ -16,7 +16,7 @@ from openai.error import (
 )
 
 # Set up logging
-logging.basicConfig(filename='chat.log', level=logging.INFO)
+logging.basicConfig(filename='~/.aider.chat.log', level=logging.INFO)
 logger = logging.getLogger()
 
 CACHE_PATH = "~/.aider.send.cache.v1"
