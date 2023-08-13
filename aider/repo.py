@@ -56,6 +56,8 @@ class GitRepo:
                 continue
             if not Path(fname).exists():
                 continue
+            if self.repo.ignored(Path(fname).resolve()):
+                continue
             self.io.tool_output(f"Adding {fname} to git")
             self.repo.git.add(fname)
 
