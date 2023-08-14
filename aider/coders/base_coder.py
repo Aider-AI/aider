@@ -901,6 +901,5 @@ class Coder:
 
 def check_model_availability(main_model):
     available_models = openai.Model.list()
-    print(available_models)
     model_ids = [model.id for model in available_models["data"]]
     return main_model.name in model_ids
