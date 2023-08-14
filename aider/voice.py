@@ -54,7 +54,7 @@ class Voice:
         dur = time.time() - self.start_time
         return f"Recording, press ENTER when done... {dur:.1f}sec {bar}"
 
-    def record_and_transcribe(self, history=None):
+    def record_and_transcribe(self, history=None, language=None):
         try:
             return self.raw_record_and_transcribe(history)
         except KeyboardInterrupt:

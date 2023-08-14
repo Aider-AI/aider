@@ -465,7 +465,7 @@ class Commands:
         history = "\n".join(history)
         dump(history)
 
-        text = v.record_and_transcribe(history, self.voice_language)
+        text = v.record_and_transcribe(history, language=self.voice_language)
         if text:
             self.io.add_to_input_history(text)
             print()
