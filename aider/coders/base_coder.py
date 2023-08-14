@@ -112,6 +112,7 @@ class Coder:
         code_theme="default",
         stream=True,
         use_git=True,
+        voice_language=None,
     ):
         if not fnames:
             fnames = []
@@ -149,7 +150,7 @@ class Coder:
 
         self.show_diffs = show_diffs
 
-        self.commands = Commands(self.io, self)
+        self.commands = Commands(self.io, self, voice_language)
 
         for fname in fnames:
             fname = Path(fname)
