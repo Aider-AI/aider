@@ -30,6 +30,7 @@ Aider is unique in that it [works well with pre-existing, larger codebases](http
 - [Installation](https://aider.chat/docs/install.html)
 - [Voice-to-code](https://aider.chat/docs/voice.html)
 - [FAQ](https://aider.chat/docs/faq.html)
+- [Discord](https://discord.gg/Tv2uQnR88V)
 
 ## Getting started
 
