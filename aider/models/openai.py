@@ -1,4 +1,6 @@
+import tiktoken
 import re
+from .model import Model
 
 known_tokens = {
     "gpt-3.5-turbo": 4,
@@ -6,14 +8,7 @@ known_tokens = {
 }
 
 
-class Model:
-    always_available = False
-    use_repo_map = False
-    send_undo_reply = False
-
-    prompt_price = None
-    completion_price = None
-
+class OpenAIModel(Model):
     def __init__(self, name):
         self.name = name
 
@@ -31,6 +26,7 @@ class Model:
             raise ValueError(f"Unknown context window size for model: {name}")
 
         self.max_context_tokens = tokens * 1024
+        self.tokenizer = tiktoken.encoding_for_model(name)
 
         if self.is_gpt4():
             self.edit_format = "diff"
@@ -66,11 +62,3 @@ class Model:
 
     def is_gpt35(self):
         return self.name.startswith("gpt-3.5-turbo")
-
-    def __str__(self):
-        return self.name
-
-
-GPT4 = Model("gpt-4")
-GPT35 = Model("gpt-3.5-turbo")
-GPT35_16k = Model("gpt-3.5-turbo-16k")

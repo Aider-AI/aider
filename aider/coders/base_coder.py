@@ -636,7 +636,7 @@ class Coder:
                 if len(chunk.choices) == 0:
                     continue
 
-                if chunk.choices[0].finish_reason == "length":
+                if hasattr(chunk.choices[0], "finish_reason") and chunk.choices[0].finish_reason == "length":
                     raise ExhaustedContextWindow()
 
                 try:
@@ -901,5 +901,6 @@ class Coder:
 
 def check_model_availability(main_model):
     available_models = openai.Model.list()
+    print(available_models)
     model_ids = [model.id for model in available_models["data"]]
     return main_model.name in model_ids

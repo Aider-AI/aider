@@ -85,7 +85,7 @@ class ChatSummary:
             dict(role="user", content=content),
         ]
 
-        summary = simple_send_with_retries(model=models.GPT35.name, messages=messages)
+        summary = simple_send_with_retries(model=self.model.weak_model, messages=messages)
         summary = prompts.summary_prefix + summary
 
         return [dict(role="user", content=summary)]
