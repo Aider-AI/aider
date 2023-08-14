@@ -148,6 +148,12 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         const=models.GPT35_16k.name,
         help=f"Use {models.GPT35_16k.name} model for the main chat (gpt-4 is better)",
     )
+    core_group.add_argument(
+        "--voice-language",
+        metavar="VOICE_LANGUAGE",
+        default="en",
+        help="Specify the language for voice (default: en)",
+    )
 
     ##########
     model_group = parser.add_argument_group("Advanced Model Settings")
@@ -494,6 +500,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
             code_theme=args.code_theme,
             stream=args.stream,
             use_git=args.git,
+            voice_language=args.voice_language,
         )
     except ValueError as err:
         io.tool_error(str(err))
