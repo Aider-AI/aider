@@ -168,3 +168,4 @@ For more information, see the [FAQ](https://aider.chat/docs/faq.html).
 * *This project is stellar.* -- [funkytaco](https://github.com/paul-gauthier/aider/issues/112#issuecomment-1637429008)
 * *Amazing project, definitely the best AI coding assistant I've used.* -- [joshuavial](https://github.com/paul-gauthier/aider/issues/84)
 * *I am an aider addict. I'm getting so much more work done, but in less time.* -- [dandandan](https://discord.com/channels/1131200896827654144/1131200896827654149/1135913253483069470)
+* *Best agent for actual dev work in existing codebases* [Nick Dobos](https://twitter.com/NickADobos/status/1690408967963652097?s=20)
