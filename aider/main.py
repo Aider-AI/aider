@@ -152,7 +152,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         "--voice-language",
         metavar="VOICE_LANGUAGE",
         default="en",
-        help="Specify the language for voice, use \"auto\" to detect (default: en)",
+        help="Specify the language for voice (default: auto)",
     )
 
     ##########
