@@ -56,7 +56,7 @@ class Voice:
 
     def record_and_transcribe(self, history=None, language=None):
         try:
-            return self.raw_record_and_transcribe(history)
+            return self.raw_record_and_transcribe(history, language)
         except KeyboardInterrupt:
             return
 

@@ -18,8 +18,8 @@ class Commands:
         self.io = io
         self.coder = coder
 
-        if voice_language == 'auto':
-            voice_language=None
+        if voice_language == "auto":
+            voice_language = None
 
         self.voice_language = voice_language
         self.tokenizer = tiktoken.encoding_for_model(coder.main_model.name)
@@ -463,7 +463,6 @@ class Commands:
 
         history.reverse()
         history = "\n".join(history)
-        dump(history)
 
         text = v.record_and_transcribe(history, language=self.voice_language)
         if text:
