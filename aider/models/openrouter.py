@@ -4,9 +4,16 @@ from .model import Model
 
 class OpenRouterModel(Model):
     def __init__(self, name, openai):
+        if name == 'gpt-4':
+            name = 'openai/gpt-4'
+        elif name == 'gpt-3.5-turbo':
+            name = 'openai/gpt-3.5-turbo'
+        elif name == 'gpt-3.5-turbo-16k':
+            name = 'openai/gpt-3.5-turbo-16k'
+
         self.name = name
-        self.edit_format = "diff"
-        self.use_repo_map = True
+        self.edit_format = edit_format_for_model(name)
+        self.use_repo_map = self.edit_format == "diff"
 
         # TODO: figure out proper encodings for non openai models
         self.tokenizer = tiktoken.get_encoding("cl100k_base")
@@ -20,4 +27,11 @@ class OpenRouterModel(Model):
             self.completion_price = float(found.get('pricing').get('completion')) * 1000
 
         else:
-            raise ValueError('invalid openrouter model for {name}')
+            raise ValueError(f'invalid openrouter model: {name}')
+
+
+def edit_format_for_model(name):
+    if any(str in name for str in ['gpt-4', 'claude-2']):
+        return "diff"
+
+    return "whole"

@@ -1,6 +1,6 @@
 import importlib
 
-using_openrouter = False
+saved_openai = None
 
 class Model:
     name = None
@@ -16,22 +16,15 @@ class Model:
     completion_price = None
 
     def __init__(self, name, openai=None):
-        global using_openrouter
+        global saved_openai
         if (openai and "openrouter.ai" in openai.api_base):
-            using_openrouter = True
+            saved_openai = openai
 
         from .openai import OpenAIModel
         from .openrouter import OpenRouterModel
         model = None
-        if using_openrouter:
-            if name == 'gpt-4':
-                name = 'openai/gpt-4'
-            elif name == 'gpt-3.5-turbo':
-                name = 'openai/gpt-3.5-turbo'
-            elif name == 'gpt-3.5.turbo-16k':
-                name = 'openai/gpt-3.5-turbo-16k'
-
-            model = OpenRouterModel(name, openai)
+        if saved_openai:
+            model = OpenRouterModel(name, saved_openai)
         else:
             model = OpenAIModel(name)
 
