@@ -60,7 +60,7 @@ class Voice:
         except KeyboardInterrupt:
             return
 
-    def raw_record_and_transcribe(self, history):
+    def raw_record_and_transcribe(self, history, language):
         self.q = queue.Queue()
 
         filename = tempfile.mktemp(suffix=".wav")
@@ -77,7 +77,7 @@ class Voice:
                 file.write(self.q.get())
 
         with open(filename, "rb") as fh:
-            transcript = openai.Audio.transcribe("whisper-1", fh, prompt=history)
+            transcript = openai.Audio.transcribe("whisper-1", fh, prompt=history, language=language)
 
         text = transcript["text"]
         return text

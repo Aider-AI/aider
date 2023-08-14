@@ -14,9 +14,14 @@ from .dump import dump  # noqa: F401
 
 
 class Commands:
-    def __init__(self, io, coder):
+    def __init__(self, io, coder, voice_language=None):
         self.io = io
         self.coder = coder
+
+        if voice_language == 'auto':
+            voice_language=None
+
+        self.voice_language = voice_language
         self.tokenizer = tiktoken.encoding_for_model(coder.main_model.name)
 
     def is_command(self, inp):
@@ -460,7 +465,7 @@ class Commands:
         history = "\n".join(history)
         dump(history)
 
-        text = v.record_and_transcribe(history)
+        text = v.record_and_transcribe(history, self.voice_language)
         if text:
             self.io.add_to_input_history(text)
             print()
