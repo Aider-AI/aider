@@ -12,6 +12,7 @@ class ChatSummary:
     def __init__(self, model=models.GPT35.name, max_tokens=1024):
         self.tokenizer = tiktoken.encoding_for_model(model)
         self.max_tokens = max_tokens
+        self.model = model
 
     def too_big(self, messages):
         sized = self.tokenize(messages)
