@@ -1,6 +1,8 @@
 import tiktoken
 from .model import Model
 
+cached_model_details = None
+
 
 class OpenRouterModel(Model):
     def __init__(self, name, openai):
@@ -19,8 +21,10 @@ class OpenRouterModel(Model):
         self.tokenizer = tiktoken.get_encoding("cl100k_base")
 
         # TODO cache the model list data to speed up using multiple models
-        available_models = openai.Model.list().data
-        found = next((details for details in available_models if details.get('id') == name), None)
+        global cached_model_details
+        if cached_model_details == None:
+            cached_model_details = openai.Model.list().data
+        found = next((details for details in cached_model_details if details.get('id') == name), None)
 
         if found:
             self.max_context_tokens = int(found.context_length)
