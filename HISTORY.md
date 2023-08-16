@@ -1,5 +1,10 @@
 # Release history
 
+### main branch
+
+- Send chat history as prompt/context for Whisper voice transcription
+- Added `--voice-language` switch to constrain `/voice` to transcribe to a specific language
+
 ### v0.12.0
 
 - [Voice-to-code](https://aider.chat/docs/voice.html) support, which allows you to code with your voice.
