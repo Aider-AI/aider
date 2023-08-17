@@ -13,22 +13,20 @@ class EditBlockCoder(Coder):
         self.gpt_prompts = EditBlockPrompts()
         super().__init__(*args, **kwargs)
 
-    def update_files(self):
+    def get_edits(self):
         content = self.partial_response_content
 
         # might raise ValueError for malformed ORIG/UPD blocks
         edits = list(find_original_update_blocks(content))
 
-        edited = set()
-        for path, original, updated in edits:
-            full_path = self.allowed_to_edit(path)
-            if not full_path:
-                continue
+        return edits
+
+    def apply_edits(self, edits):
+        for path, full_path, original, updated in edits:
             content = self.io.read_text(full_path)
             content = do_replace(full_path, content, original, updated)
             if content:
                 self.io.write_text(full_path, content)
-                edited.add(path)
                 continue
             raise ValueError(f"""InvalidEditBlock: edit failed!
 
@@ -41,8 +39,6 @@ The HEAD block needs to be EXACTLY the same as the lines in {path} with nothing 
 ```
 {original}```
 """)
-
-        return edited
 
 
 def prep(content):

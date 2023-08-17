@@ -728,12 +728,10 @@ class Coder:
     def get_addable_relative_files(self):
         return set(self.get_all_relative_files()) - set(self.get_inchat_relative_files())
 
-    def allowed_to_edit(self, path, write_content=None):
+    def allowed_to_edit(self, path):
         full_path = self.abs_root_path(path)
 
         if full_path in self.abs_fnames:
-            if write_content:
-                self.io.write_text(full_path, write_content)
             return full_path
 
         if not Path(full_path).exists():
@@ -758,18 +756,28 @@ class Coder:
                 if not self.dry_run:
                     self.repo.repo.git.add(full_path)
 
-        if write_content:
-            self.io.write_text(full_path, write_content)
-
         return full_path
 
     apply_update_errors = 0
+
+    def prepare_to_edit(self, edits):
+        res = []
+        for edit in edits:
+            path = edit[0]
+            rest = edit[1:]
+            full_path = self.allowed_to_edit(path)
+            edit = [path, full_path] + list(rest)
+            res.append(edit)
+
+        return res
 
     def apply_updates(self):
         max_apply_update_errors = 3
 
         try:
-            edited = self.update_files()
+            edits = self.get_edits()
+            edits = self.prepare_to_edit(edits)
+            self.apply_edits(edits)
         except ValueError as err:
             err = err.args[0]
             self.apply_update_errors += 1
@@ -795,12 +803,15 @@ class Coder:
 
         self.apply_update_errors = 0
 
-        if edited:
-            for path in sorted(edited):
-                if self.dry_run:
-                    self.io.tool_output(f"Did not apply edit to {path} (--dry-run)")
-                else:
-                    self.io.tool_output(f"Applied edit to {path}")
+        # TODO FIXME: make sure
+        edited = set()
+        for edit in sorted(edits):
+            path = edit[0]
+            edited.add(path)
+            if self.dry_run:
+                self.io.tool_output(f"Did not apply edit to {path} (--dry-run)")
+            else:
+                self.io.tool_output(f"Applied edit to {path}")
 
         return edited, None
 
