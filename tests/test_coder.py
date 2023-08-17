@@ -42,33 +42,47 @@ class TestCoder(unittest.TestCase):
 
     def test_allowed_to_edit(self):
         with GitTemporaryDirectory():
-            repo = git.Repo(Path.cwd())
-            fname = Path("foo.txt")
+            repo = git.Repo()
+
+            fname = Path("added.txt")
             fname.touch()
             repo.git.add(str(fname))
+
+            fname = Path("repo.txt")
+            fname.touch()
+            repo.git.add(str(fname))
+
             repo.git.commit("-m", "init")
 
+            # YES!
             io = InputOutput(yes=True)
-            # Initialize the Coder object with the mocked IO and mocked repo
-            coder = Coder.create(models.GPT4, None, io, fnames=["foo.txt"])
+            coder = Coder.create(models.GPT4, None, io, fnames=["added.txt"])
 
-            self.assertTrue(coder.allowed_to_edit("foo.txt"))
+            self.assertTrue(coder.allowed_to_edit("added.txt"))
+            self.assertTrue(coder.allowed_to_edit("repo.txt"))
             self.assertTrue(coder.allowed_to_edit("new.txt"))
 
     def test_allowed_to_edit_no(self):
         with GitTemporaryDirectory():
-            repo = git.Repo(Path.cwd())
-            fname = Path("foo.txt")
+            repo = git.Repo()
+
+            fname = Path("added.txt")
             fname.touch()
             repo.git.add(str(fname))
+
+            fname = Path("repo.txt")
+            fname.touch()
+            repo.git.add(str(fname))
+
             repo.git.commit("-m", "init")
 
             # say NO
             io = InputOutput(yes=False)
 
-            coder = Coder.create(models.GPT4, None, io, fnames=["foo.txt"])
+            coder = Coder.create(models.GPT4, None, io, fnames=["added.txt"])
 
-            self.assertTrue(coder.allowed_to_edit("foo.txt"))
+            self.assertTrue(coder.allowed_to_edit("added.txt"))
+            self.assertFalse(coder.allowed_to_edit("repo.txt"))
             self.assertFalse(coder.allowed_to_edit("new.txt"))
 
     def test_get_last_modified(self):
