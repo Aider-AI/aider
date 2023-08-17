@@ -50,9 +50,9 @@ class GitRepo:
         self.root = utils.safe_abs_path(self.repo.working_tree_dir)
 
     def add_new_files(self, fnames):
-        cur_files = [Path(fn).resolve() for fn in self.get_tracked_files()]
+        cur_files = [str(Path(fn).resolve()) for fn in self.get_tracked_files()]
         for fname in fnames:
-            if Path(fname).resolve() in cur_files:
+            if str(Path(fname).resolve()) in cur_files:
                 continue
             if not Path(fname).exists():
                 continue
@@ -183,7 +183,10 @@ class GitRepo:
         files.extend(staged_files)
 
         # convert to appropriate os.sep, since git always normalizes to /
-        res = set(str(Path(PurePosixPath(path))) for path in files)
+        res = set(
+            str(Path(PurePosixPath((Path(self.root) / path).relative_to(self.root))))
+            for path in files
+        )
 
         return res
 
