@@ -409,11 +409,6 @@ class Coder:
             self.commands,
         )
 
-        if self.should_dirty_commit(inp) and self.dirty_commit():
-            if inp.strip():
-                self.io.tool_output("Use up-arrow to retry previous command:", inp)
-            return
-
         if not inp:
             return
 
@@ -899,20 +894,6 @@ class Coder:
 
         self.io.tool_output("No changes made to git tracked files.")
         return self.gpt_prompts.files_content_gpt_no_edits
-
-    def should_dirty_commit(self, inp):
-        return
-        cmds = self.commands.matching_commands(inp)
-        if cmds:
-            matching_commands, _, _ = cmds
-            if len(matching_commands) == 1:
-                cmd = matching_commands[0][1:]
-                if cmd in "add clear commit diff drop exit help ls tokens".split():
-                    return
-
-        if self.last_asked_for_commit_time >= self.get_last_modified():
-            return
-        return True
 
     def dirty_commit(self):
         if not self.need_commit_before_edits:
