@@ -801,13 +801,17 @@ class Coder:
 
         return res
 
+    def update_files(self):
+        edits = self.get_edits()
+        edits = self.prepare_to_edit(edits)
+        self.apply_edits(edits)
+        return set(edit[0] for edit in edits)
+
     def apply_updates(self):
         max_apply_update_errors = 3
 
         try:
-            edits = self.get_edits()
-            edits = self.prepare_to_edit(edits)
-            self.apply_edits(edits)
+            edited = self.update_files()
         except ValueError as err:
             err = err.args[0]
             self.apply_update_errors += 1
@@ -833,11 +837,7 @@ class Coder:
 
         self.apply_update_errors = 0
 
-        # TODO FIXME: make sure
-        edited = set()
-        for edit in sorted(edits):
-            path = edit[0]
-            edited.add(path)
+        for path in edited:
             if self.dry_run:
                 self.io.tool_output(f"Did not apply edit to {path} (--dry-run)")
             else:
