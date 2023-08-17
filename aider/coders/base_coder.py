@@ -739,8 +739,9 @@ class Coder:
 
     def allowed_to_edit(self, path):
         full_path = self.abs_root_path(path)
-        tracked_files = set(self.repo.get_tracked_files())
-        is_in_repo = path in tracked_files
+        if self.repo:
+            tracked_files = set(self.repo.get_tracked_files())
+            is_in_repo = path in tracked_files
 
         if full_path in self.abs_fnames:
             if self.check_for_dirty_commit(path):
