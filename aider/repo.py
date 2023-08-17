@@ -49,16 +49,6 @@ class GitRepo:
         self.repo = git.Repo(repo_paths.pop(), odbt=git.GitDB)
         self.root = utils.safe_abs_path(self.repo.working_tree_dir)
 
-    def add_new_files(self, fnames):
-        cur_files = [str(Path(fn).resolve()) for fn in self.get_tracked_files()]
-        for fname in fnames:
-            if str(Path(fname).resolve()) in cur_files:
-                continue
-            if not Path(fname).exists():
-                continue
-            self.io.tool_output(f"Adding {fname} to git")
-            self.repo.git.add(fname)
-
     def commit(self, context=None, prefix=None, message=None):
         if not self.repo.is_dirty():
             return

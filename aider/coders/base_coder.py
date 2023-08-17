@@ -190,9 +190,6 @@ class Coder:
         for fname in self.get_inchat_relative_files():
             self.io.tool_output(f"Added {fname} to the chat.")
 
-        if self.repo:
-            self.repo.add_new_files(fname for fname in fnames if not Path(fname).is_dir())
-
         self.summarizer = ChatSummary()
         self.summarizer_thread = None
         self.summarized_done_messages = None
