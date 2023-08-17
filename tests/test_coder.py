@@ -62,6 +62,11 @@ class TestCoder(unittest.TestCase):
             self.assertTrue(coder.allowed_to_edit("repo.txt"))
             self.assertTrue(coder.allowed_to_edit("new.txt"))
 
+            self.assertIn("repo.txt", str(coder.abs_fnames))
+            self.assertIn("new.txt", str(coder.abs_fnames))
+
+            self.assertFalse(coder.need_commit_before_edits)
+
     def test_allowed_to_edit_no(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
@@ -84,6 +89,33 @@ class TestCoder(unittest.TestCase):
             self.assertTrue(coder.allowed_to_edit("added.txt"))
             self.assertFalse(coder.allowed_to_edit("repo.txt"))
             self.assertFalse(coder.allowed_to_edit("new.txt"))
+
+            self.assertNotIn("repo.txt", str(coder.abs_fnames))
+            self.assertNotIn("new.txt", str(coder.abs_fnames))
+
+            self.assertFalse(coder.need_commit_before_edits)
+
+    def test_allowed_to_edit_dirty(self):
+        with GitTemporaryDirectory():
+            repo = git.Repo()
+
+            fname = Path("added.txt")
+            fname.touch()
+            repo.git.add(str(fname))
+
+            repo.git.commit("-m", "init")
+
+            # say NO
+            io = InputOutput(yes=False)
+
+            coder = Coder.create(models.GPT4, None, io, fnames=["added.txt"])
+
+            self.assertTrue(coder.allowed_to_edit("added.txt"))
+            self.assertFalse(coder.need_commit_before_edits)
+
+            fname.write_text("dirty!")
+            self.assertTrue(coder.allowed_to_edit("added.txt"))
+            self.assertTrue(coder.need_commit_before_edits)
 
     def test_get_last_modified(self):
         # Mock the IO object
