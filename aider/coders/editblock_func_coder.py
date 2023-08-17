@@ -58,6 +58,7 @@ class EditBlockFunctionCoder(Coder):
     ]
 
     def __init__(self, code_format, *args, **kwargs):
+        raise RuntimeError("Deprecated, needs to be refactored to support get_edits/apply_edits")
         self.code_format = code_format
 
         if code_format == "string":
@@ -91,7 +92,7 @@ class EditBlockFunctionCoder(Coder):
         res = json.dumps(args, indent=4)
         return res
 
-    def update_files(self):
+    def _update_files(self):
         name = self.partial_response_function_call.get("name")
 
         if name and name != "replace_lines":

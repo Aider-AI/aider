@@ -58,13 +58,7 @@ class Coder:
         io,
         **kwargs,
     ):
-        from . import (
-            EditBlockCoder,
-            EditBlockFunctionCoder,
-            SingleWholeFileFunctionCoder,
-            WholeFileCoder,
-            WholeFileFunctionCoder,
-        )
+        from . import EditBlockCoder, WholeFileCoder
 
         if not main_model:
             main_model = models.GPT35_16k
@@ -85,14 +79,6 @@ class Coder:
             return EditBlockCoder(main_model, io, **kwargs)
         elif edit_format == "whole":
             return WholeFileCoder(main_model, io, **kwargs)
-        elif edit_format == "whole-func":
-            return WholeFileFunctionCoder(main_model, io, **kwargs)
-        elif edit_format == "single-whole-func":
-            return SingleWholeFileFunctionCoder(main_model, io, **kwargs)
-        elif edit_format == "diff-func-list":
-            return EditBlockFunctionCoder("list", main_model, io, **kwargs)
-        elif edit_format in ("diff-func", "diff-func-string"):
-            return EditBlockFunctionCoder("string", main_model, io, **kwargs)
         else:
             raise ValueError(f"Unknown edit format {edit_format}")
 
