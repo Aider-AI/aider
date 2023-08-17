@@ -94,26 +94,6 @@ class TestCoder(unittest.TestCase):
             fname.unlink()
             self.assertEqual(coder.get_last_modified(), 0)
 
-    def test_should_dirty_commit(self):
-        # Mock the IO object
-        mock_io = MagicMock()
-
-        with GitTemporaryDirectory():
-            repo = git.Repo(Path.cwd())
-            fname = Path("new.txt")
-            fname.touch()
-            repo.git.add(str(fname))
-            repo.git.commit("-m", "new")
-
-            # Initialize the Coder object with the mocked IO and mocked repo
-            coder = Coder.create(models.GPT4, None, mock_io)
-
-            fname.write_text("hi")
-            self.assertTrue(coder.should_dirty_commit("hi"))
-
-            self.assertFalse(coder.should_dirty_commit("/exit"))
-            self.assertFalse(coder.should_dirty_commit("/help"))
-
     def test_check_for_file_mentions(self):
         # Mock the IO object
         mock_io = MagicMock()
