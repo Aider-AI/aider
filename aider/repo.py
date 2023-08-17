@@ -190,5 +190,5 @@ class GitRepo:
 
         return res
 
-    def is_dirty(self):
-        return self.repo.is_dirty()
+    def is_dirty(self, path=None):
+        return self.repo.is_dirty(path=path)

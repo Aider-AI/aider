@@ -522,7 +522,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
 
     io.tool_output("Use /help to see in-chat commands, run with --help to see cmd line args")
 
-    coder.dirty_commit()
+    # coder.dirty_commit()
 
     if args.message:
         io.tool_output()
