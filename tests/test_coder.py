@@ -382,8 +382,8 @@ class TestCoder(unittest.TestCase):
 
             self.assertTrue(fname.exists())
 
-            ### TODO: assert that the next line raises git.exc.GitCommandError
-            repo.iter_commits(repo.active_branch.name)
+            with self.assertRaises(git.exc.GitCommandError):
+                repo.iter_commits(repo.active_branch.name)
 
             def mock_send(*args, **kwargs):
                 coder.partial_response_content = f"""
