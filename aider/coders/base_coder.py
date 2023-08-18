@@ -727,7 +727,9 @@ class Coder:
     def allowed_to_edit(self, path):
         full_path = self.abs_root_path(path)
         if self.repo:
-            is_in_repo = self.repo.path_in_repo(path)
+            need_to_add = not self.repo.path_in_repo(path)
+        else:
+            need_to_add = False
 
         if full_path in self.abs_fnames:
             self.check_for_dirty_commit(path)
@@ -742,7 +744,10 @@ class Coder:
                 Path(full_path).parent.mkdir(parents=True, exist_ok=True)
                 Path(full_path).touch()
 
-                if self.repo and not is_in_repo:
+                # Seems unlikely that we needed to create the file, but it was
+                # actually already part of the repo.
+                # But let's handle this obscure corner case anyway.
+                if need_to_add:
                     self.repo.repo.git.add(full_path)
 
             self.abs_fnames.add(full_path)
@@ -754,7 +759,7 @@ class Coder:
             self.io.tool_error(f"Skipping edits to {path}")
             return
 
-        if self.repo and not is_in_repo:
+        if need_to_add:
             self.repo.repo.git.add(full_path)
 
         self.abs_fnames.add(full_path)
@@ -780,7 +785,8 @@ class Coder:
             if allowed:
                 res.append(edit)
 
-        self.dirty_commit()
+        fnames = [edit[0] for edit in res]
+        self.dirty_commit(fnames)
         self.need_commit_before_edits = False
 
         return res
@@ -880,14 +886,14 @@ class Coder:
         self.io.tool_output("No changes made to git tracked files.")
         return self.gpt_prompts.files_content_gpt_no_edits
 
-    def dirty_commit(self):
+    def dirty_commit(self, fnames):
         if not self.need_commit_before_edits:
             return
         if not self.dirty_commits:
             return
         if not self.repo:
             return
-        self.repo.commit()
+        self.repo.commit(fnames=fnames)
 
         # files changed, move cur messages back behind the files messages
         self.move_back_cur_messages(self.gpt_prompts.files_content_local_edits)

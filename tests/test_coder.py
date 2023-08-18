@@ -474,9 +474,16 @@ TWO
             fname = Path("file.txt")
             fname.write_text("one\n")
             repo.git.add(str(fname))
+
+            fname2 = Path("other.txt")
+            fname2.write_text("other\n")
+            repo.git.add(str(fname2))
+
             repo.git.commit("-m", "new")
 
+            # dirty
             fname.write_text("two\n")
+            fname2.write_text("OTHER\n")
 
             io = InputOutput(yes=True)
             coder = Coder.create(models.GPT4, "diff", io=io, fnames=[str(fname)])
@@ -495,11 +502,20 @@ three
 """
                 coder.partial_response_function_call = dict()
 
+            saved_diffs = []
+
+            def mock_get_commit_message(diffs, context):
+                saved_diffs.append(diffs)
+                return "commit message"
+
+            coder.repo.get_commit_message = MagicMock(side_effect=mock_get_commit_message)
             coder.send = MagicMock(side_effect=mock_send)
-            coder.repo.get_commit_message = MagicMock()
-            coder.repo.get_commit_message.return_value = "commit message"
 
             coder.run(with_message="hi")
+
+            print("=" * 20)
+            print(repo.git.log(["-p"]))
+            print("=" * 20)
 
             content = fname.read_text()
             self.assertEqual(content, "three\n")
@@ -507,11 +523,38 @@ three
             num_commits = len(list(repo.iter_commits(repo.active_branch.name)))
             self.assertEqual(num_commits, 3)
 
-            self.assertIn("two", repo.git.diff(["HEAD~1", "HEAD"]))
-            self.assertIn("three", repo.git.diff(["HEAD~1", "HEAD"]))
+            diff = repo.git.diff(["HEAD~2", "HEAD~1"])
+            dump(diff)
+            self.assertIn("one", diff)
+            self.assertIn("two", diff)
+            self.assertNotIn("three", diff)
+            self.assertNotIn("other", diff)
+            self.assertNotIn("OTHER", diff)
 
-            self.assertIn("one", repo.git.diff(["HEAD~2", "HEAD~1"]))
-            self.assertIn("two", repo.git.diff(["HEAD~2", "HEAD~1"]))
+            dump(saved_diffs)
+            diff = saved_diffs[0]
+            self.assertIn("one", diff)
+            self.assertIn("two", diff)
+            self.assertNotIn("three", diff)
+            self.assertNotIn("other", diff)
+            self.assertNotIn("OTHER", diff)
+
+            diff = repo.git.diff(["HEAD~1", "HEAD"])
+            self.assertNotIn("one", diff)
+            self.assertIn("two", diff)
+            self.assertIn("three", diff)
+            self.assertNotIn("other", diff)
+            self.assertNotIn("OTHER", diff)
+
+            diff = saved_diffs[1]
+            self.assertNotIn("one", diff)
+            self.assertIn("two", diff)
+            self.assertIn("three", diff)
+            self.assertNotIn("other", diff)
+            self.assertNotIn("OTHER", diff)
+
+            dump(saved_diffs)
+            self.assertEqual(len(saved_diffs), 2)
 
 
 if __name__ == "__main__":

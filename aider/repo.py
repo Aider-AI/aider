@@ -59,7 +59,9 @@ class GitRepo:
             diff_args = []
             if fnames:
                 diff_args += ["--"] + list(fnames)
+            dump(diff_args)
             diffs = self.get_diffs(False, *diff_args)
+            dump(diffs)
             commit_message = self.get_commit_message(diffs, context)
 
         if not commit_message:
@@ -134,6 +136,7 @@ class GitRepo:
         if args:
             if pretty:
                 args = ["--color"] + args
+            dump(args)
             return self.repo.git.diff(*args)
 
         # otherwise, we always want diffs of index and working dir
