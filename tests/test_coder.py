@@ -394,6 +394,8 @@ new
                 coder.partial_response_function_call = dict()
 
             coder.send = MagicMock(side_effect=mock_send)
+            coder.repo.get_commit_message = MagicMock()
+            coder.repo.get_commit_message.return_value = "commit message"
 
             coder.run(with_message="hi")
 
@@ -402,6 +404,53 @@ new
 
             num_commits = len(list(repo.iter_commits(repo.active_branch.name)))
             self.assertEqual(num_commits, 1)
+
+    def test_only_commit_gpt_edited_file(self):
+        """Only commit file that gpt edits, not other dirty files"""
+
+        with GitTemporaryDirectory():
+            repo = git.Repo()
+
+            fname1 = Path("file1.txt")
+            fname2 = Path("file2.txt")
+
+            fname1.write_text("one\n")
+            fname2.write_text("two\n")
+
+            repo.git.add(str(fname1))
+            repo.git.add(str(fname2))
+            repo.git.commit("-m", "new")
+
+            # DIRTY!
+            fname1.write_text("ONE\n")
+
+            io = InputOutput(yes=True)
+            coder = Coder.create(models.GPT4, "diff", io=io, fnames=[str(fname1), str(fname2)])
+
+            def mock_send(*args, **kwargs):
+                coder.partial_response_content = f"""
+Do this:
+
+{str(fname2)}
+<<<<<<< HEAD
+two
+=======
+TWO
+>>>>>>> updated
+
+"""
+                coder.partial_response_function_call = dict()
+
+            coder.send = MagicMock(side_effect=mock_send)
+            coder.repo.get_commit_message = MagicMock()
+            coder.repo.get_commit_message.return_value = "commit message"
+
+            coder.run(with_message="hi")
+
+            content = fname2.read_text()
+            self.assertEqual(content, "TWO\n")
+
+            self.assertTrue(repo.is_dirty(path=str(fname1)))
 
 
 if __name__ == "__main__":
