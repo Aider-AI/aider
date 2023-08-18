@@ -512,10 +512,6 @@ three
 
             coder.run(with_message="hi")
 
-            print("=" * 20)
-            print(repo.git.log(["-p"]))
-            print("=" * 20)
-
             content = fname.read_text()
             self.assertEqual(content, "three\n")
 
