@@ -227,7 +227,6 @@ class TestCoder(unittest.TestCase):
             mock.return_value = set([str(fname)])
             coder.repo.get_tracked_files = mock
 
-            dump(fname)
             # Call the check_for_file_mentions method
             coder.check_for_file_mentions(f"Please check `{fname}`")
 
@@ -524,14 +523,12 @@ three
             self.assertEqual(num_commits, 3)
 
             diff = repo.git.diff(["HEAD~2", "HEAD~1"])
-            dump(diff)
             self.assertIn("one", diff)
             self.assertIn("two", diff)
             self.assertNotIn("three", diff)
             self.assertNotIn("other", diff)
             self.assertNotIn("OTHER", diff)
 
-            dump(saved_diffs)
             diff = saved_diffs[0]
             self.assertIn("one", diff)
             self.assertIn("two", diff)
@@ -553,7 +550,6 @@ three
             self.assertNotIn("other", diff)
             self.assertNotIn("OTHER", diff)
 
-            dump(saved_diffs)
             self.assertEqual(len(saved_diffs), 2)
 
 
