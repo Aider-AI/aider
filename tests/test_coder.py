@@ -406,7 +406,10 @@ new
             self.assertEqual(num_commits, 1)
 
     def test_only_commit_gpt_edited_file(self):
-        """Only commit file that gpt edits, not other dirty files"""
+        """
+        Only commit file that gpt edits, not other dirty files.
+        Also ensure commit msg only depends on diffs from the GPT edited file.
+        """
 
         with GitTemporaryDirectory():
             repo = git.Repo()
@@ -441,9 +444,13 @@ TWO
 """
                 coder.partial_response_function_call = dict()
 
+            def mock_get_commit_message(diffs, context):
+                self.assertNotIn("one", diffs)
+                self.assertNotIn("ONE", diffs)
+                return "commit message"
+
             coder.send = MagicMock(side_effect=mock_send)
-            coder.repo.get_commit_message = MagicMock()
-            coder.repo.get_commit_message.return_value = "commit message"
+            coder.repo.get_commit_message = MagicMock(side_effect=mock_get_commit_message)
 
             coder.run(with_message="hi")
 
