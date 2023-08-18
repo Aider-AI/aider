@@ -479,7 +479,7 @@ class Coder:
 
         if edited:
             if self.repo and self.auto_commits and not self.dry_run:
-                saved_message = self.auto_commit(fnames=edited)
+                saved_message = self.auto_commit(edited)
             elif hasattr(self.gpt_prompts, "files_content_gpt_edits_no_repo"):
                 saved_message = self.gpt_prompts.files_content_gpt_edits_no_repo
             else:

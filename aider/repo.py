@@ -56,7 +56,10 @@ class GitRepo:
         if message:
             commit_message = message
         else:
-            diffs = self.get_diffs(False)
+            diff_args = []
+            if fnames:
+                diff_args += ["--"] + list(fnames)
+            diffs = self.get_diffs(False, *diff_args)
             commit_message = self.get_commit_message(diffs, context)
 
         if not commit_message:
