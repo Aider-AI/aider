@@ -74,7 +74,7 @@ class GitRepo:
 
         cmd = ["-m", full_commit_message, "--no-verify"]
         if fnames:
-            fnames = [str(self.full_path(fn)) for fn in fnames]
+            fnames = [str(self.abs_root_path(fn)) for fn in fnames]
             for fname in fnames:
                 self.repo.git.add(fname)
             cmd += ["--"] + fnames
@@ -199,8 +199,9 @@ class GitRepo:
         tracked_files = set(self.get_tracked_files())
         return path in tracked_files
 
-    def full_path(self, path):
-        return (Path(self.root) / path).resolve()
+    def abs_root_path(self, path):
+        res = Path(self.root) / path
+        return utils.safe_abs_path(res)
 
     def is_dirty(self, path=None):
         if path and not self.path_in_repo(path):

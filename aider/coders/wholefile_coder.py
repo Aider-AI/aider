@@ -46,7 +46,7 @@ class WholeFileCoder(Coder):
                     # ending an existing block
                     saw_fname = None
 
-                    full_path = (Path(self.root) / fname).absolute()
+                    full_path = self.abs_root_path(fname)
 
                     if mode == "diff":
                         output += self.do_live_diff(full_path, new_lines, True)
@@ -121,12 +121,13 @@ class WholeFileCoder(Coder):
         return refined_edits
 
     def apply_edits(self, edits):
-        for path, full_path, fname_source, new_lines in edits:
+        for path, fname_source, new_lines in edits:
+            full_path = self.abs_root_path(path)
             new_lines = "".join(new_lines)
             self.io.write_text(full_path, new_lines)
 
     def do_live_diff(self, full_path, new_lines, final):
-        if full_path.exists():
+        if Path(full_path).exists():
             orig_lines = self.io.read_text(full_path).splitlines(keepends=True)
 
             show_diff = diffs.diff_partial_update(

@@ -715,7 +715,7 @@ class Coder:
         if not self.repo.is_dirty(path):
             return
 
-        fullp = self.repo.full_path(path)
+        fullp = Path(self.abs_root_path(path))
         if not fullp.stat().st_size:
             return
 
@@ -731,7 +731,7 @@ class Coder:
 
         if full_path in self.abs_fnames:
             self.check_for_dirty_commit(path)
-            return full_path
+            return True
 
         if not Path(full_path).exists():
             if not self.io.confirm_ask(f"Allow creation of new file {path}?"):
@@ -746,7 +746,7 @@ class Coder:
                     self.repo.repo.git.add(full_path)
 
             self.abs_fnames.add(full_path)
-            return full_path
+            return True
 
         if not self.io.confirm_ask(
             f"Allow edits to {path} which was not previously added to chat?"
@@ -759,7 +759,7 @@ class Coder:
 
         self.abs_fnames.add(full_path)
         self.check_for_dirty_commit(path)
-        return full_path
+        return True
 
     apply_update_errors = 0
 
@@ -771,15 +771,14 @@ class Coder:
 
         for edit in edits:
             path = edit[0]
-            rest = edit[1:]
             if path in seen:
-                full_path = seen[path]
+                allowed = seen[path]
             else:
-                full_path = self.allowed_to_edit(path)
-                seen[path] = full_path
+                allowed = self.allowed_to_edit(path)
+                seen[path] = allowed
 
-            edit = [path, full_path] + list(rest)
-            res.append(edit)
+            if allowed:
+                res.append(edit)
 
         self.dirty_commit()
         self.need_commit_before_edits = False

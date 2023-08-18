@@ -22,7 +22,8 @@ class EditBlockCoder(Coder):
         return edits
 
     def apply_edits(self, edits):
-        for path, full_path, original, updated in edits:
+        for path, original, updated in edits:
+            full_path = self.abs_root_path(path)
             content = self.io.read_text(full_path)
             content = do_replace(full_path, content, original, updated)
             if content:
