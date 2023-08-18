@@ -2,6 +2,7 @@
 
 ### main branch
 
+- [Only git commit dirty files that GPT tries to edit](https://aider.chat/docs/faq.html#how-does-aider-use-git)
 - Send chat history as prompt/context for Whisper voice transcription
 - Added `--voice-language` switch to constrain `/voice` to transcribe to a specific language
 
