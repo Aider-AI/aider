@@ -22,24 +22,6 @@ class TestCoder(unittest.TestCase):
     def tearDown(self):
         self.patcher.stop()
 
-    def test_new_file_commit_message(self):
-        with GitTemporaryDirectory():
-            repo = git.Repo()
-            fname = Path("foo.txt")
-
-            io = InputOutput(yes=True)
-            # Initialize the Coder object with the mocked IO and mocked repo
-            Coder.create(models.GPT4, None, io, fnames=[str(fname)])
-
-            self.assertTrue(fname.exists())
-
-            # Mock the get_commit_message method to return "I added str(fname)"
-            repo.get_commit_message = MagicMock(return_value=f"I added {str(fname)}")
-            # Get the latest commit message
-            commit_message = repo.get_commit_message()
-            # Check that the latest commit message is "I added str(fname)"
-            self.assertEqual(commit_message, f"I added {str(fname)}")
-
     def test_allowed_to_edit(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
@@ -388,5 +370,39 @@ class TestCoder(unittest.TestCase):
         with self.assertRaises(openai.error.InvalidRequestError):
             coder.run(with_message="hi")
 
-    if __name__ == "__main__":
-        unittest.main()
+    def test_new_file_edit_one_commit(self):
+        """A new file shouldn't get pre-committed before the GPT edit commit"""
+        with GitTemporaryDirectory():
+            repo = git.Repo()
+
+            fname = Path("file.txt")
+
+            io = InputOutput(yes=True)
+            coder = Coder.create(models.GPT4, "diff", io=io, fnames=[str(fname)])
+
+            def mock_send(*args, **kwargs):
+                coder.partial_response_content = f"""
+Do this:
+
+{str(fname)}
+<<<<<<< HEAD
+=======
+new
+>>>>>>> updated
+
+"""
+                coder.partial_response_function_call = dict()
+
+            coder.send = MagicMock(side_effect=mock_send)
+
+            coder.run(with_message="hi")
+
+            content = fname.read_text()
+            self.assertEqual(content, "new\n")
+
+            num_commits = len(list(repo.iter_commits(repo.active_branch.name)))
+            self.assertEqual(num_commits, 1)
+
+
+if __name__ == "__main__":
+    unittest.main()
