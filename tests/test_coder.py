@@ -548,6 +548,53 @@ three
 
             self.assertEqual(len(saved_diffs), 2)
 
+    def test_gpt_edit_to_existing_file_not_in_repo(self):
+        with GitTemporaryDirectory():
+            repo = git.Repo()
+
+            fname = Path("file.txt")
+            fname.write_text("one\n")
+
+            fname2 = Path("other.txt")
+            fname2.write_text("other\n")
+            repo.git.add(str(fname2))
+
+            repo.git.commit("-m", "initial")
+
+            io = InputOutput(yes=True)
+            coder = Coder.create(models.GPT4, "diff", io=io, fnames=[str(fname)])
+
+            def mock_send(*args, **kwargs):
+                coder.partial_response_content = f"""
+Do this:
+
+{str(fname)}
+<<<<<<< HEAD
+one
+=======
+two
+>>>>>>> updated
+
+"""
+                coder.partial_response_function_call = dict()
+
+            saved_diffs = []
+
+            def mock_get_commit_message(diffs, context):
+                saved_diffs.append(diffs)
+                return "commit message"
+
+            coder.repo.get_commit_message = MagicMock(side_effect=mock_get_commit_message)
+            coder.send = MagicMock(side_effect=mock_send)
+
+            coder.run(with_message="hi")
+
+            content = fname.read_text()
+            self.assertEqual(content, "two\n")
+
+            diff = saved_diffs[0]
+            self.assertIn("file.txt", diff)
+
 
 if __name__ == "__main__":
     unittest.main()

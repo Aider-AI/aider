@@ -135,14 +135,20 @@ class GitRepo:
         if not fnames:
             fnames = []
 
+        diffs = ""
+        for fname in fnames:
+            if not self.path_in_repo(fname):
+                diffs += f"Added {fname}\n"
+
         if current_branch_has_commits:
             args = ["HEAD", "--"] + list(fnames)
-            return self.repo.git.diff(*args)
+            diffs += self.repo.git.diff(*args)
+            return diffs
 
         wd_args = ["--"] + list(fnames)
         index_args = ["--cached"] + wd_args
 
-        diffs = self.repo.git.diff(*index_args)
+        diffs += self.repo.git.diff(*index_args)
         diffs += self.repo.git.diff(*wd_args)
 
         return diffs

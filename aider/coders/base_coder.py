@@ -721,7 +721,6 @@ class Coder:
 
         self.io.tool_output(f"Committing {path} before applying edits.")
         self.need_commit_before_edits.add(path)
-        return
 
     def allowed_to_edit(self, path):
         full_path = self.abs_root_path(path)
@@ -763,6 +762,7 @@ class Coder:
 
         self.abs_fnames.add(full_path)
         self.check_for_dirty_commit(path)
+
         return True
 
     apply_update_errors = 0
@@ -891,6 +891,7 @@ class Coder:
             return
         if not self.repo:
             return
+
         self.repo.commit(fnames=self.need_commit_before_edits)
 
         # files changed, move cur messages back behind the files messages
