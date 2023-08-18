@@ -726,7 +726,8 @@ class Coder:
 
     def allowed_to_edit(self, path):
         full_path = self.abs_root_path(path)
-        is_in_repo = self.repo.path_in_repo(path)
+        if self.repo:
+            is_in_repo = self.repo.path_in_repo(path)
 
         if full_path in self.abs_fnames:
             self.check_for_dirty_commit(path)
