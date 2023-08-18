@@ -465,6 +465,54 @@ TWO
 
             self.assertTrue(repo.is_dirty(path=str(fname1)))
 
+    def test_gpt_edit_to_dirty_file(self):
+        """A dirty file should be committed before the GPT edits are committed"""
+
+        with GitTemporaryDirectory():
+            repo = git.Repo()
+
+            fname = Path("file.txt")
+            fname.write_text("one\n")
+            repo.git.add(str(fname))
+            repo.git.commit("-m", "new")
+
+            fname.write_text("two\n")
+
+            io = InputOutput(yes=True)
+            coder = Coder.create(models.GPT4, "diff", io=io, fnames=[str(fname)])
+
+            def mock_send(*args, **kwargs):
+                coder.partial_response_content = f"""
+Do this:
+
+{str(fname)}
+<<<<<<< HEAD
+two
+=======
+three
+>>>>>>> updated
+
+"""
+                coder.partial_response_function_call = dict()
+
+            coder.send = MagicMock(side_effect=mock_send)
+            coder.repo.get_commit_message = MagicMock()
+            coder.repo.get_commit_message.return_value = "commit message"
+
+            coder.run(with_message="hi")
+
+            content = fname.read_text()
+            self.assertEqual(content, "three\n")
+
+            num_commits = len(list(repo.iter_commits(repo.active_branch.name)))
+            self.assertEqual(num_commits, 3)
+
+            self.assertIn("two", repo.git.diff(["HEAD~1", "HEAD"]))
+            self.assertIn("three", repo.git.diff(["HEAD~1", "HEAD"]))
+
+            self.assertIn("one", repo.git.diff(["HEAD~2", "HEAD~1"]))
+            self.assertIn("two", repo.git.diff(["HEAD~2", "HEAD~1"]))
+
 
 if __name__ == "__main__":
     unittest.main()
