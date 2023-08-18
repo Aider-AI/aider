@@ -13,29 +13,29 @@
 It is recommended that you use aider with code that is part of a git repo.
 This allows aider to maintain the safety of your code. Using git makes it easy to:
 
-  - Review the changes GPT made to your code
-  - Undo changes that weren't appropriate
+  - Undo any changes that weren't appropriate
+  - Go back later to review the changes GPT made to your code
   - Manage a series of GPT's changes on a git branch
-  - etc
 
-Working without git means that GPT might drastically change your code without an easy way to undo the changes.
+Working without git means that GPT might drastically change your code
+without an easy way to undo the changes.
 
 Aider tries to provide safety using git in a few ways:
 
   - It asks to create a git repo if you launch it in a directory without one.
-  - When you add a file to the chat, aider asks permission to add it to the git repo if needed.
-  - At launch and before sending requests to GPT, aider checks if the repo is dirty and offers to commit those changes for you. This way, the GPT changes will be applied to a clean repo and won't be intermingled with your own changes.
-  - After GPT changes your code, aider commits those changes with a descriptive commit message.
-
+  - Whenever GPT edits a file, those changes are committed with a descriptive commit message. This makes it easy to revert or review GPT's changes.
+  - If GPT tries to edit files that already have uncommitted changes (dirty files), aider will first commit those existing changes with a descriptive commit message. This makes sure you never lose your work if GPT makes an inappropriate change to uncommitted code.  
+  
 Aider also allows you to use in-chat commands to `/diff` or `/undo` the last change made by GPT.
-To do more complex management of your git history, you should use `git` on the command line outside of aider.
+To do more complex management of your git history, you cat use raw `git` commands,
+either by using `/git` or with git tools outside of aider.
 You can start a branch before using aider to make a sequence of changes.
 Or you can `git reset` a longer series of aider changes that didn't pan out. Etc.
 
 While it is not recommended, you can disable aider's use of git in a few ways:
 
   - `--no-auto-commits` will stop aider from git committing each of GPT's changes.
-  - `--no-dirty-commits` will stop aider from ensuring your repo is clean before sending requests to GPT.
+  - `--no-dirty-commits` will stop aider from committing dirty files before applying GPT's edits.
   - `--no-git` will completely stop aider from using git on your files. You should ensure you are keeping sensible backups of the files you are working with.
 
 

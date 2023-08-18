@@ -230,7 +230,7 @@ class Commands:
             return
 
         commits = f"{self.coder.last_aider_commit_hash}~1"
-        diff = self.coder.repo.get_diffs(
+        diff = self.coder.repo.diff_commits(
             self.coder.pretty,
             commits,
             self.coder.last_aider_commit_hash,

@@ -49,24 +49,14 @@ class GitRepo:
         self.repo = git.Repo(repo_paths.pop(), odbt=git.GitDB)
         self.root = utils.safe_abs_path(self.repo.working_tree_dir)
 
-    def add_new_files(self, fnames):
-        cur_files = [str(Path(fn).resolve()) for fn in self.get_tracked_files()]
-        for fname in fnames:
-            if str(Path(fname).resolve()) in cur_files:
-                continue
-            if not Path(fname).exists():
-                continue
-            self.io.tool_output(f"Adding {fname} to git")
-            self.repo.git.add(fname)
-
-    def commit(self, context=None, prefix=None, message=None):
-        if not self.repo.is_dirty():
+    def commit(self, fnames=None, context=None, prefix=None, message=None):
+        if not fnames and not self.repo.is_dirty():
             return
 
         if message:
             commit_message = message
         else:
-            diffs = self.get_diffs(False)
+            diffs = self.get_diffs(fnames)
             commit_message = self.get_commit_message(diffs, context)
 
         if not commit_message:
@@ -79,7 +69,16 @@ class GitRepo:
         if context:
             full_commit_message += "\n\n# Aider chat conversation:\n\n" + context
 
-        self.repo.git.commit("-a", "-m", full_commit_message, "--no-verify")
+        cmd = ["-m", full_commit_message, "--no-verify"]
+        if fnames:
+            fnames = [str(self.abs_root_path(fn)) for fn in fnames]
+            for fname in fnames:
+                self.repo.git.add(fname)
+            cmd += ["--"] + fnames
+        else:
+            cmd += ["-a"]
+
+        self.repo.git.commit(cmd)
         commit_hash = self.repo.head.commit.hexsha[:7]
         self.io.tool_output(f"Commit {commit_hash} {commit_message}")
 
@@ -125,41 +124,38 @@ class GitRepo:
 
         return commit_message
 
-    def get_diffs(self, pretty, *args):
-        args = list(args)
-
-        # if args are specified, just add --pretty if needed
-        if args:
-            if pretty:
-                args = ["--color"] + args
-            return self.repo.git.diff(*args)
-
-        # otherwise, we always want diffs of index and working dir
-
+    def get_diffs(self, fnames=None):
+        # We always want diffs of index and working dir
         try:
             commits = self.repo.iter_commits(self.repo.active_branch)
             current_branch_has_commits = any(commits)
         except git.exc.GitCommandError:
             current_branch_has_commits = False
 
-        if pretty:
-            args = ["--color"]
+        if not fnames:
+            fnames = []
 
         if current_branch_has_commits:
-            # if there is a HEAD, just diff against it to pick up index + working
-            args += ["HEAD"]
+            args = ["HEAD", "--"] + list(fnames)
             return self.repo.git.diff(*args)
 
-        # diffs in the index
-        diffs = self.repo.git.diff(*(args + ["--cached"]))
-        # plus, diffs in the working dir
-        diffs += self.repo.git.diff(*args)
+        wd_args = ["--"] + list(fnames)
+        index_args = ["--cached"] + wd_args
+
+        diffs = self.repo.git.diff(*index_args)
+        diffs += self.repo.git.diff(*wd_args)
 
         return diffs
 
-    def show_diffs(self, pretty):
-        diffs = self.get_diffs(pretty)
-        print(diffs)
+    def diff_commits(self, pretty, from_commit, to_commit):
+        args = []
+        if pretty:
+            args += ["--color"]
+
+        args += [from_commit, to_commit]
+        diffs = self.repo.git.diff(*args)
+
+        return diffs
 
     def get_tracked_files(self):
         if not self.repo:
@@ -190,5 +186,19 @@ class GitRepo:
 
         return res
 
-    def is_dirty(self):
-        return self.repo.is_dirty()
+    def path_in_repo(self, path):
+        if not self.repo:
+            return
+
+        tracked_files = set(self.get_tracked_files())
+        return path in tracked_files
+
+    def abs_root_path(self, path):
+        res = Path(self.root) / path
+        return utils.safe_abs_path(res)
+
+    def is_dirty(self, path=None):
+        if path and not self.path_in_repo(path):
+            return True
+
+        return self.repo.is_dirty(path=path)

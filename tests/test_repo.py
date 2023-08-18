@@ -26,7 +26,7 @@ class TestRepo(unittest.TestCase):
             fname.write_text("workingdir\n")
 
             git_repo = GitRepo(InputOutput(), None, ".")
-            diffs = git_repo.get_diffs(False)
+            diffs = git_repo.get_diffs()
             self.assertIn("index", diffs)
             self.assertIn("workingdir", diffs)
 
@@ -49,7 +49,7 @@ class TestRepo(unittest.TestCase):
             fname2.write_text("workingdir\n")
 
             git_repo = GitRepo(InputOutput(), None, ".")
-            diffs = git_repo.get_diffs(False)
+            diffs = git_repo.get_diffs()
             self.assertIn("index", diffs)
             self.assertIn("workingdir", diffs)
 
@@ -67,7 +67,7 @@ class TestRepo(unittest.TestCase):
             repo.git.commit("-m", "second")
 
             git_repo = GitRepo(InputOutput(), None, ".")
-            diffs = git_repo.get_diffs(False, ["HEAD~1", "HEAD"])
+            diffs = git_repo.diff_commits(False, "HEAD~1", "HEAD")
             dump(diffs)
             self.assertIn("two", diffs)
 

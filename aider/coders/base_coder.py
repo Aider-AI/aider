@@ -57,13 +57,7 @@ class Coder:
         io,
         **kwargs,
     ):
-        from . import (
-            EditBlockCoder,
-            EditBlockFunctionCoder,
-            SingleWholeFileFunctionCoder,
-            WholeFileCoder,
-            WholeFileFunctionCoder,
-        )
+        from . import EditBlockCoder, WholeFileCoder
 
         if not main_model:
             main_model = models.GPT35_16k
@@ -84,14 +78,6 @@ class Coder:
             return EditBlockCoder(main_model, io, **kwargs)
         elif edit_format == "whole":
             return WholeFileCoder(main_model, io, **kwargs)
-        elif edit_format == "whole-func":
-            return WholeFileFunctionCoder(main_model, io, **kwargs)
-        elif edit_format == "single-whole-func":
-            return SingleWholeFileFunctionCoder(main_model, io, **kwargs)
-        elif edit_format == "diff-func-list":
-            return EditBlockFunctionCoder("list", main_model, io, **kwargs)
-        elif edit_format in ("diff-func", "diff-func-string"):
-            return EditBlockFunctionCoder("string", main_model, io, **kwargs)
         else:
             raise ValueError(f"Unknown edit format {edit_format}")
 
@@ -119,6 +105,7 @@ class Coder:
 
         self.chat_completion_call_hashes = []
         self.chat_completion_response_hashes = []
+        self.need_commit_before_edits = set()
 
         self.verbose = verbose
         self.abs_fnames = set()
@@ -202,9 +189,6 @@ class Coder:
 
         for fname in self.get_inchat_relative_files():
             self.io.tool_output(f"Added {fname} to the chat.")
-
-        if self.repo:
-            self.repo.add_new_files(fname for fname in fnames if not Path(fname).is_dir())
 
         self.summarizer = ChatSummary()
         self.summarizer_thread = None
@@ -408,11 +392,6 @@ class Coder:
             self.commands,
         )
 
-        if self.should_dirty_commit(inp) and self.dirty_commit():
-            if inp.strip():
-                self.io.tool_output("Use up-arrow to retry previous command:", inp)
-            return
-
         if not inp:
             return
 
@@ -500,7 +479,7 @@ class Coder:
 
         if edited:
             if self.repo and self.auto_commits and not self.dry_run:
-                saved_message = self.auto_commit()
+                saved_message = self.auto_commit(edited)
             elif hasattr(self.gpt_prompts, "files_content_gpt_edits_no_repo"):
                 saved_message = self.gpt_prompts.files_content_gpt_edits_no_repo
             else:
@@ -728,42 +707,93 @@ class Coder:
     def get_addable_relative_files(self):
         return set(self.get_all_relative_files()) - set(self.get_inchat_relative_files())
 
-    def allowed_to_edit(self, path, write_content=None):
-        full_path = self.abs_root_path(path)
-
-        if full_path in self.abs_fnames:
-            if write_content:
-                self.io.write_text(full_path, write_content)
-            return full_path
-
-        if not Path(full_path).exists():
-            question = f"Allow creation of new file {path}?"  # noqa: E501
-        else:
-            question = f"Allow edits to {path} which was not previously provided?"  # noqa: E501
-        if not self.io.confirm_ask(question):
-            self.io.tool_error(f"Skipping edit to {path}")
+    def check_for_dirty_commit(self, path):
+        if not self.repo:
+            return
+        if not self.dirty_commits:
+            return
+        if not self.repo.is_dirty(path):
             return
 
-        if not Path(full_path).exists() and not self.dry_run:
-            Path(full_path).parent.mkdir(parents=True, exist_ok=True)
-            Path(full_path).touch()
+        fullp = Path(self.abs_root_path(path))
+        if not fullp.stat().st_size:
+            return
 
-        self.abs_fnames.add(full_path)
+        self.io.tool_output(f"Committing {path} before applying edits.")
+        self.need_commit_before_edits.add(path)
+        return
 
-        # Check if the file is already in the repo
+    def allowed_to_edit(self, path):
+        full_path = self.abs_root_path(path)
         if self.repo:
-            tracked_files = set(self.repo.get_tracked_files())
-            relative_fname = self.get_rel_fname(full_path)
-            if relative_fname not in tracked_files and self.io.confirm_ask(f"Add {path} to git?"):
-                if not self.dry_run:
+            need_to_add = not self.repo.path_in_repo(path)
+        else:
+            need_to_add = False
+
+        if full_path in self.abs_fnames:
+            self.check_for_dirty_commit(path)
+            return True
+
+        if not Path(full_path).exists():
+            if not self.io.confirm_ask(f"Allow creation of new file {path}?"):
+                self.io.tool_error(f"Skipping edits to {path}")
+                return
+
+            if not self.dry_run:
+                Path(full_path).parent.mkdir(parents=True, exist_ok=True)
+                Path(full_path).touch()
+
+                # Seems unlikely that we needed to create the file, but it was
+                # actually already part of the repo.
+                # But let's only add if we need to, just to be safe.
+                if need_to_add:
                     self.repo.repo.git.add(full_path)
 
-        if write_content:
-            self.io.write_text(full_path, write_content)
+            self.abs_fnames.add(full_path)
+            return True
 
-        return full_path
+        if not self.io.confirm_ask(
+            f"Allow edits to {path} which was not previously added to chat?"
+        ):
+            self.io.tool_error(f"Skipping edits to {path}")
+            return
+
+        if need_to_add:
+            self.repo.repo.git.add(full_path)
+
+        self.abs_fnames.add(full_path)
+        self.check_for_dirty_commit(path)
+        return True
 
     apply_update_errors = 0
+
+    def prepare_to_edit(self, edits):
+        res = []
+        seen = dict()
+
+        self.need_commit_before_edits = set()
+
+        for edit in edits:
+            path = edit[0]
+            if path in seen:
+                allowed = seen[path]
+            else:
+                allowed = self.allowed_to_edit(path)
+                seen[path] = allowed
+
+            if allowed:
+                res.append(edit)
+
+        self.dirty_commit()
+        self.need_commit_before_edits = set()
+
+        return res
+
+    def update_files(self):
+        edits = self.get_edits()
+        edits = self.prepare_to_edit(edits)
+        self.apply_edits(edits)
+        return set(edit[0] for edit in edits)
 
     def apply_updates(self):
         max_apply_update_errors = 3
@@ -795,12 +825,11 @@ class Coder:
 
         self.apply_update_errors = 0
 
-        if edited:
-            for path in sorted(edited):
-                if self.dry_run:
-                    self.io.tool_output(f"Did not apply edit to {path} (--dry-run)")
-                else:
-                    self.io.tool_output(f"Applied edit to {path}")
+        for path in edited:
+            if self.dry_run:
+                self.io.tool_output(f"Did not apply edit to {path} (--dry-run)")
+            else:
+                self.io.tool_output(f"Applied edit to {path}")
 
         return edited, None
 
@@ -840,9 +869,9 @@ class Coder:
                 context += "\n" + msg["role"].upper() + ": " + msg["content"] + "\n"
         return context
 
-    def auto_commit(self):
+    def auto_commit(self, edited):
         context = self.get_context_from_history(self.cur_messages)
-        res = self.repo.commit(context=context, prefix="aider: ")
+        res = self.repo.commit(fnames=edited, context=context, prefix="aider: ")
         if res:
             commit_hash, commit_message = res
             self.last_aider_commit_hash = commit_hash
@@ -855,43 +884,14 @@ class Coder:
         self.io.tool_output("No changes made to git tracked files.")
         return self.gpt_prompts.files_content_gpt_no_edits
 
-    def should_dirty_commit(self, inp):
-        cmds = self.commands.matching_commands(inp)
-        if cmds:
-            matching_commands, _, _ = cmds
-            if len(matching_commands) == 1:
-                cmd = matching_commands[0][1:]
-                if cmd in "add clear commit diff drop exit help ls tokens".split():
-                    return
-
-        if self.last_asked_for_commit_time >= self.get_last_modified():
-            return
-        return True
-
     def dirty_commit(self):
+        if not self.need_commit_before_edits:
+            return
         if not self.dirty_commits:
             return
         if not self.repo:
             return
-        if not self.repo.is_dirty():
-            return
-
-        self.io.tool_output("Git repo has uncommitted changes.")
-        self.repo.show_diffs(self.pretty)
-        self.last_asked_for_commit_time = self.get_last_modified()
-        res = self.io.prompt_ask(
-            "Commit before the chat proceeds [y/n/commit message]?",
-            default="y",
-        ).strip()
-        if res.lower() in ["n", "no"]:
-            self.io.tool_error("Skipped commmit.")
-            return
-        if res.lower() in ["y", "yes"]:
-            message = None
-        else:
-            message = res.strip()
-
-        self.repo.commit(message=message)
+        self.repo.commit(fnames=self.need_commit_before_edits)
 
         # files changed, move cur messages back behind the files messages
         self.move_back_cur_messages(self.gpt_prompts.files_content_local_edits)

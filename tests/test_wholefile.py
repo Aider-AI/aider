@@ -90,7 +90,7 @@ class TestWholeFileCoder(unittest.TestCase):
         # Set the partial response content with the updated content
         coder.partial_response_content = f"{sample_file}\n```\n0\n\1\n2\n"
 
-        lines = coder.update_files(mode="diff").splitlines()
+        lines = coder.get_edits(mode="diff").splitlines()
 
         # the live diff should be concise, since we haven't changed anything yet
         self.assertLess(len(lines), 20)
