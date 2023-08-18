@@ -479,7 +479,7 @@ class Coder:
 
         if edited:
             if self.repo and self.auto_commits and not self.dry_run:
-                saved_message = self.auto_commit()
+                saved_message = self.auto_commit(fnames=edited)
             elif hasattr(self.gpt_prompts, "files_content_gpt_edits_no_repo"):
                 saved_message = self.gpt_prompts.files_content_gpt_edits_no_repo
             else:
@@ -709,27 +709,28 @@ class Coder:
 
     def check_for_dirty_commit(self, path):
         if not self.repo:
-            return True
+            return
         if not self.dirty_commits:
-            return True
+            return
         if not self.repo.is_dirty(path):
-            return True
+            return
+
+        fullp = self.repo.full_path(path)
+        if not fullp.stat().st_size:
+            return
 
         self.io.tool_output(f"Committing {path} before applying edits.")
         self.repo.repo.git.add(path)
         self.need_commit_before_edits = True
-        return True
+        return
 
     def allowed_to_edit(self, path):
         full_path = self.abs_root_path(path)
-        if self.repo:
-            tracked_files = set(self.repo.get_tracked_files())
-            is_in_repo = path in tracked_files
+        is_in_repo = self.repo.path_in_repo(path)
 
         if full_path in self.abs_fnames:
-            if self.check_for_dirty_commit(path):
-                return full_path
-            return
+            self.check_for_dirty_commit(path)
+            return full_path
 
         if not Path(full_path).exists():
             if not self.io.confirm_ask(f"Allow creation of new file {path}?"):
@@ -756,8 +757,8 @@ class Coder:
             self.repo.repo.git.add(full_path)
 
         self.abs_fnames.add(full_path)
-        if self.check_for_dirty_commit(path):
-            return full_path
+        self.check_for_dirty_commit(path)
+        return full_path
 
     apply_update_errors = 0
 
@@ -864,9 +865,9 @@ class Coder:
                 context += "\n" + msg["role"].upper() + ": " + msg["content"] + "\n"
         return context
 
-    def auto_commit(self):
+    def auto_commit(self, edited):
         context = self.get_context_from_history(self.cur_messages)
-        res = self.repo.commit(context=context, prefix="aider: ")
+        res = self.repo.commit(fnames=edited, context=context, prefix="aider: ")
         if res:
             commit_hash, commit_message = res
             self.last_aider_commit_hash = commit_hash

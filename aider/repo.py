@@ -49,8 +49,8 @@ class GitRepo:
         self.repo = git.Repo(repo_paths.pop(), odbt=git.GitDB)
         self.root = utils.safe_abs_path(self.repo.working_tree_dir)
 
-    def commit(self, context=None, prefix=None, message=None):
-        if not self.repo.is_dirty():
+    def commit(self, fnames=None, context=None, prefix=None, message=None):
+        if not fnames and not self.repo.is_dirty():
             return
 
         if message:
@@ -69,7 +69,16 @@ class GitRepo:
         if context:
             full_commit_message += "\n\n# Aider chat conversation:\n\n" + context
 
-        self.repo.git.commit("-a", "-m", full_commit_message, "--no-verify")
+        cmd = ["-m", full_commit_message, "--no-verify"]
+        if fnames:
+            fnames = [str(self.full_path(fn)) for fn in fnames]
+            for fname in fnames:
+                self.repo.git.add(fname)
+            cmd += ["--"] + fnames
+        else:
+            cmd += ["-a"]
+
+        self.repo.git.commit(cmd)
         commit_hash = self.repo.head.commit.hexsha[:7]
         self.io.tool_output(f"Commit {commit_hash} {commit_message}")
 
@@ -180,5 +189,18 @@ class GitRepo:
 
         return res
 
+    def path_in_repo(self, path):
+        if not self.repo:
+            return
+
+        tracked_files = set(self.get_tracked_files())
+        return path in tracked_files
+
+    def full_path(self, path):
+        return (Path(self.root) / path).resolve()
+
     def is_dirty(self, path=None):
+        if path and not self.path_in_repo(path):
+            return True
+
         return self.repo.is_dirty(path=path)
