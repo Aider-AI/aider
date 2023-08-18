@@ -380,6 +380,11 @@ class TestCoder(unittest.TestCase):
             io = InputOutput(yes=True)
             coder = Coder.create(models.GPT4, "diff", io=io, fnames=[str(fname)])
 
+            self.assertTrue(fname.exists())
+
+            ### TODO: assert that the next line raises git.exc.GitCommandError
+            repo.iter_commits(repo.active_branch.name)
+
             def mock_send(*args, **kwargs):
                 coder.partial_response_content = f"""
 Do this:
