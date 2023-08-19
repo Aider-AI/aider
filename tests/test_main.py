@@ -74,7 +74,7 @@ class TestMain(TestCase):
     def test_main_with_git_config_yml(self):
         make_repo()
 
-        Path(".aider.conf.yml").write_text("no-auto-commits: true\n")
+        Path(".aider.conf.yml").write_text("auto-commits: false\n")
         with patch("aider.main.Coder.create") as MockCoder:
             main(["--yes"], input=DummyInput(), output=DummyOutput())
             _, kwargs = MockCoder.call_args
