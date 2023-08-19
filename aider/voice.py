@@ -5,16 +5,14 @@ import time
 
 import numpy as np
 import openai
+import soundfile as sf
 from prompt_toolkit.shortcuts import prompt
 
-try:
-    import sounddevice as sd
-except OSError:
-    sd = None
-
-import soundfile as sf
-
 from .dump import dump  # noqa: F401
+
+
+class SoundDeviceError(Exception):
+    pass
 
 
 class Voice:
@@ -24,8 +22,14 @@ class Voice:
 
     threshold = 0.15
 
-    def is_audio_available(self):
-        return sd is not None
+    def __init__(self):
+        try:
+            print("Initializing sound device...")
+            import sounddevice as sd
+
+            self.sd = sd
+        except OSError:
+            raise SoundDeviceError
 
     def callback(self, indata, frames, time, status):
         """This is called (from a separate thread) for each audio block."""
@@ -69,7 +73,7 @@ class Voice:
 
         self.start_time = time.time()
 
-        with sd.InputStream(samplerate=sample_rate, channels=1, callback=self.callback):
+        with self.sd.InputStream(samplerate=sample_rate, channels=1, callback=self.callback):
             prompt(self.get_prompt, refresh_interval=0.1)
 
         with sf.SoundFile(filename, mode="x", samplerate=sample_rate, channels=1) as file:

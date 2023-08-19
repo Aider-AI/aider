@@ -5,6 +5,7 @@
 - [Only git commit dirty files that GPT tries to edit](https://github.com/paul-gauthier/aider/issues/200#issuecomment-1682750798)
 - Send chat history as prompt/context for Whisper voice transcription
 - Added `--voice-language` switch to constrain `/voice` to transcribe to a specific language
+- Late-bind importing `sounddevice`, as it was slowing down aider startup
 - Improved --foo/--no-foo switch handling for command line and yml config settings
 
 ### v0.12.0
