@@ -232,22 +232,15 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     )
     output_group.add_argument(
         "--pretty",
-        action="store_true",
+        action=argparse.BooleanOptionalAction,
         default=True,
-        help="Enable pretty, colorized output (default: True)",
+        help="Enable/disable pretty, colorized output (default: True)",
     )
     output_group.add_argument(
-        "--no-pretty",
-        action="store_false",
-        dest="pretty",
-        help="Disable pretty, colorized output",
-    )
-    output_group.add_argument(
-        "--no-stream",
-        action="store_false",
-        dest="stream",
+        "--stream",
+        action=argparse.BooleanOptionalAction,
         default=True,
-        help="Disable streaming responses",
+        help="Enable/disable streaming responses (default: True)",
     )
     output_group.add_argument(
         "--user-input-color",
@@ -287,43 +280,28 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     ##########
     git_group = parser.add_argument_group("Git Settings")
     git_group.add_argument(
-        "--no-git",
-        action="store_false",
-        dest="git",
+        "--git",
+        action=argparse.BooleanOptionalAction,
         default=True,
-        help="Do not look for a git repo",
+        help="Enable/disable looking for a git repo (default: True)",
     )
     git_group.add_argument(
         "--auto-commits",
-        action="store_true",
-        dest="auto_commits",
+        action=argparse.BooleanOptionalAction,
         default=True,
-        help="Enable auto commit of GPT changes (default: True)",
-    )
-    git_group.add_argument(
-        "--no-auto-commits",
-        action="store_false",
-        dest="auto_commits",
-        help="Disable auto commit of GPT changes (implies --no-dirty-commits)",
+        help="Enable/disable auto commit of GPT changes (default: True)",
     )
     git_group.add_argument(
         "--dirty-commits",
-        action="store_true",
-        dest="dirty_commits",
-        help="Enable commits when repo is found dirty",
+        action=argparse.BooleanOptionalAction,
         default=True,
-    )
-    git_group.add_argument(
-        "--no-dirty-commits",
-        action="store_false",
-        dest="dirty_commits",
-        help="Disable commits when repo is found dirty",
+        help="Enable/disable commits when repo is found dirty (default: True)",
     )
     git_group.add_argument(
         "--dry-run",
-        action="store_true",
-        help="Perform a dry run without modifying files (default: False)",
+        action=argparse.BooleanOptionalAction,
         default=False,
+        help="Enable/disable performing a dry run without modifying files (default: False)",
     )
 
     ##########
