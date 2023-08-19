@@ -3,19 +3,22 @@
 - `/help`: Show help about all commands
 - `/exit`: Exit the application
 
-## token/context management
+## context management
 - `/add <file>`: Add matching files to the chat session using glob patterns
 - `/drop <file>`: Remove matching files from the chat session
 - `/clear`: Clear the chat history
 - `/ls`: List all known files and those included in the chat session
 - `/tokens`: Report on the number of tokens used by the current chat context
-- `/run <command>`: Run a shell command and optionally add the output to the chat
 
 ## git
 - `/undo`: Undo the last git commit if it was done by aider
 - `/diff`: Display the diff of the last aider commit
 - `/commit <message>`: Commit edits to the repo made outside the chat (commit message optional)
 - `/git <command>`: Run a git command
+
+## other
+- `/run <command>`: Run a shell command and optionally add the output to the chat
+- `/voice`: Speak to aider to [request code changes with your voice](https://aider.chat/docs/voice.html).
 
 # Prompt Toolkit defaults
 
