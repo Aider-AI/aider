@@ -105,8 +105,8 @@ if __name__ == '__main__':
 >>>>>>> updated
 ```
 
-> Applied edit to app.py
-> Commit ef9e3e7 aider: Add a factorial endpoint that uses math.factorial.
+> Applied edit to app.py  
+> Commit ef9e3e7 aider: Add a factorial endpoint that uses math.factorial.  
 
 </div>
 <br/>
