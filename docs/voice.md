@@ -19,8 +19,8 @@ information on how to enable the `/voice` command.
 <br/>
 <div class="chat-transcript" markdown="1">
 
-> Aider v0.11.2-dev
-> Added app.py to the chat.
+> Aider v0.11.2-dev  
+> Added app.py to the chat.  
 
 #### /voice
 
