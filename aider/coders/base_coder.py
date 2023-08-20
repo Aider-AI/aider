@@ -175,17 +175,10 @@ class Coder:
                 self.verbose,
             )
 
-            if self.repo_map.use_ctags:
-                self.io.tool_output(f"Repo-map: universal-ctags using {map_tokens} tokens")
-            elif not self.repo_map.has_ctags and map_tokens > 0:
-                self.io.tool_output(
-                    f"Repo-map: basic using {map_tokens} tokens"
-                    f" ({self.repo_map.ctags_disabled_reason})"
-                )
-            else:
-                self.io.tool_output("Repo-map: disabled because map_tokens == 0")
+        if map_tokens > 0:
+            self.io.tool_output(f"Repo-map: universal-ctags using {map_tokens} tokens")
         else:
-            self.io.tool_output("Repo-map: disabled")
+            self.io.tool_output("Repo-map: disabled because map_tokens == 0")
 
         for fname in self.get_inchat_relative_files():
             self.io.tool_output(f"Added {fname} to the chat.")
