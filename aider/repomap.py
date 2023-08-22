@@ -38,7 +38,9 @@ def to_tree(tags):
         if this_fname != cur_fname:
             if context:
                 context.add_context()
-                output += cur_fname + ":\n"
+                if output:
+                    output += "\n"
+                output += cur_fname + ":\n\n"
                 output += context.format()
                 context = None
             elif cur_fname:
@@ -54,8 +56,8 @@ def to_tree(tags):
                     last_line=False,
                     margin=0,
                     mark_lois=False,
-                    header_pad=1,
                     loi_pad=0,
+                    header_max=3,
                 )
             cur_fname = this_fname
 
