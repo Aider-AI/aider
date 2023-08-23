@@ -23,6 +23,12 @@ class TestModels(unittest.TestCase):
         model = Model.create("gpt-4-32k-2123")
         self.assertEqual(model.max_context_tokens, 32 * 1024)
 
+    def test_openrouter_models(self):
+        import openai
+        openai.api_base = 'https://openrouter.ai/api/v1'
+        model = Model.create("gpt-3.5-turbo")
+        self.assertEqual(model.name, 'openai/gpt-3.5-turbo')
+
 
 if __name__ == "__main__":
     unittest.main()
