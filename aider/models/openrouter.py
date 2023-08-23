@@ -21,7 +21,6 @@ class OpenRouterModel(Model):
         # TODO: figure out proper encodings for non openai models
         self.tokenizer = tiktoken.get_encoding("cl100k_base")
 
-        # TODO cache the model list data to speed up using multiple models
         global cached_model_details
         if cached_model_details == None:
             cached_model_details = openai.Model.list().data

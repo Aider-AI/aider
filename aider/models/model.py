@@ -11,15 +11,14 @@ class Model:
 
     prompt_price = None
     completion_price = None
-    openai=None
 
     @classmethod
-    def create(cls, name, **kwargs):
+    def create(cls, name):
         from .openai import OpenAIModel
         from .openrouter import OpenRouterModel
         if ("openrouter.ai" in openai.api_base):
-            return OpenRouterModel(name, **kwargs)
-        return OpenAIModel(name, **kwargs)
+            return OpenRouterModel(name)
+        return OpenAIModel(name)
 
     def __str__(self):
         return self.name
