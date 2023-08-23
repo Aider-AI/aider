@@ -458,7 +458,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
             setattr(openai, mod_key, val)
             io.tool_output(f"Setting openai.{mod_key}={val}")
 
-    main_model = models.Model(args.model, openai)
+    main_model = models.Model.create(args.model)
 
     try:
         coder = Coder.create(
