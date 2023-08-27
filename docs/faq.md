@@ -21,11 +21,11 @@ Aider specifically uses git in these ways:
  
   - It asks to create a git repo if you launch it in a directory without one.
   - Whenever GPT edits a file, aider commits those changes with a descriptive commit message. This makes it easy to undo or review GPT's changes.
-  - Aider takes special care if GPT tries to edit files that already have uncommitted changes (dirty files). Aider will first commit any preexisting changes with a descriptive commit message. This makes sure you never lose your work if GPT makes an inappropriate change. 
+  - Aider takes special care if GPT tries to edit files that already have uncommitted changes (dirty files). Aider will first commit any preexisting changes with a descriptive commit message. This keeps your edits separate from GPT's edits, and makes sure you never lose your work if GPT makes an inappropriate change.
   
 Aider also allows you to use in-chat commands to `/diff` or `/undo` the last change made by GPT.
 To do more complex management of your git history, you cat use raw `git` commands,
-either by using `/git` within your chat, or with git tools outside of aider.
+either by using `/git` within the chat, or with standard git tools outside of aider.
 
 While it is not recommended, you can disable aider's use of git in a few ways:
 
@@ -33,6 +33,18 @@ While it is not recommended, you can disable aider's use of git in a few ways:
   - `--no-dirty-commits` will stop aider from committing dirty files before applying GPT's edits.
   - `--no-git` will completely stop aider from using git on your files. You should ensure you are keeping sensible backups of the files you are working with.
 
+### How did v0.13.0 change git usage?
+
+As of v0.13.0, aider works with git in a more streamlined manner.
+Previously, aider would *always* prompt you
+if it noticed that you had uncommitted changes *anywhere* in your repo.
+
+Now aider only pays attention to uncommitted changes in files
+that GPT attempts to edit.
+And aider doesn't interrupt you, it simply commits your pending
+changes before applying GPT's edits.
+This keeps your edits separate from GPT's edits, and
+makes sure you never lose your work if GPT makes an inappropriate change.
 
 ## GPT-4 vs GPT-3.5
 
@@ -102,12 +114,12 @@ In these cases, here are some things you might try:
 
 ## Can I use aider with other LLMs, local LLMs, etc?
 
-Aider only has experimental support for LLMs other than OpenAI's GPT-3.5 and GPT-4. This is for two reasons:
+Aider provides experimental support for LLMs other than OpenAI's GPT-3.5 and GPT-4. The support is currently only experimental for two reasons:
 
-- GPT-3.5 is just barely capable of *editing code* to provide aider's interactive "pair programming" style workflow. None of the other models seem to be as capable as GPT-3.5.
+- GPT-3.5 is just barely capable of *editing code* to provide aider's interactive "pair programming" style workflow. None of the other models seem to be as capable as GPT-3.5 yet.
 - Just "hooking up" aider to a new model by connecting to its API is almost certainly not enough to get it working in a useful way. Getting aider working well with GPT-3.5 and GPT-4 was a significant undertaking, involving [specific code editing prompts and backends for each model and extensive benchmarking](https://aider.chat/docs/benchmarks.html). Officially supporting each new LLM will probably require a similar effort to tailor the prompts and editing backends.
 
-That said, aider does provide features to experiment with other models. Numerous users have already done experiments with numerous models. None of these experiments have yet identified other models that look like they are capable of working with aider.
+Numerous users have done experiments with numerous models. None of these experiments have yet identified other models that look like they are capable of working well with aider.
 
 Once we see signs that a *particular* model is capable of code editing, it would be reasonable for aider to attempt to officially support such a model. Until then, aider will simply maintain experimental support for using alternative models.
 

@@ -1,8 +1,8 @@
 # Release history
 
-### main branch
+### v0.13.0
 
-- [Only git commit dirty files that GPT tries to edit](https://github.com/paul-gauthier/aider/issues/200#issuecomment-1682750798)
+- [Only git commit dirty files that GPT tries to edit](https://aider.chat/docs/faq.html#how-did-v0130-change-git-usage)
 - Send chat history as prompt/context for Whisper voice transcription
 - Added `--voice-language` switch to constrain `/voice` to transcribe to a specific language
 - Late-bind importing `sounddevice`, as it was slowing down aider startup
