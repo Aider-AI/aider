@@ -76,15 +76,29 @@ def check_gitignore(git_root, io, ask=True):
 
     pat = ".aider*"
 
-    gitignore_file = Path(git_root) / ".gitignore"
-    if gitignore_file.exists():
-        content = io.read_text(gitignore_file)
-        if pat in content.splitlines():
-            return
-    else:
-        content = ""
+    # Initialize the global git configuration
+    config_reader = git.GitConfigParser([os.path.expanduser("~/.gitconfig")], read_only=True)
+    
+    # Check if a global gitignore file is specified
+    try:
+        gitignore_global_path = config_reader.get_value("core", "excludesfile")
+        
+        # Expand user home directory symbol (~) to the actual path
+        gitignore_global_path = os.path.expanduser(gitignore_global_path)
+    except:
+        gitignore_global_path = None
 
-    if ask and not io.confirm_ask(f"Add {pat} to .gitignore (recommended)?"):
+    gitignore_files = [Path(git_root) / ".gitignore"]
+    if gitignore_global_path:
+        gitignore_files.append(gitignore_global_path)
+    for gitignore_file in gitignore_files:
+        if gitignore_file.exists():
+            content = io.read_text(gitignore_file)
+            if pat in content.splitlines():
+                return
+    content = ""
+
+    if ask and not io.confirm_ask(f"Add {pat} to {gitignore_file} (recommended)?"):
         return
 
     if content and not content.endswith("\n"):
