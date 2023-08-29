@@ -88,15 +88,17 @@ def check_gitignore(git_root, io, ask=True):
     except:
         gitignore_global_path = None
 
+    content = ""
     gitignore_files = [Path(git_root) / ".gitignore"]
+    gitignore_file = gitignore_files[0]
     if gitignore_global_path:
-        gitignore_files.append(gitignore_global_path)
-    for gitignore_file in gitignore_files:
-        if gitignore_file.exists():
-            content = io.read_text(gitignore_file)
+        gitignore_files.append(Path(gitignore_global_path))
+    for _gitignore_file in gitignore_files:
+        if _gitignore_file.exists():
+            gitignore_file = _gitignore_file
+            content = io.read_text(_gitignore_file)
             if pat in content.splitlines():
                 return
-    content = ""
 
     if ask and not io.confirm_ask(f"Add {pat} to {gitignore_file} (recommended)?"):
         return
@@ -106,7 +108,7 @@ def check_gitignore(git_root, io, ask=True):
     content += pat + "\n"
     io.write_text(gitignore_file, content)
 
-    io.tool_output(f"Added {pat} to .gitignore")
+    io.tool_output(f"Added {pat} to {gitignore_file}")
 
 
 def main(argv=None, input=None, output=None, force_git_root=None):
