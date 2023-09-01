@@ -34,9 +34,9 @@ CACHE = None
         f"{details.get('exception','Exception')}\nRetry in {details['wait']:.1f} seconds."
     ),
 )
-def send_with_retries(model, messages, functions, stream):
+def send_with_retries(model_name, messages, functions, stream):
     kwargs = dict(
-        model=model,
+        model=model_name,
         messages=messages,
         temperature=0,
         stream=stream,
@@ -49,6 +49,12 @@ def send_with_retries(model, messages, functions, stream):
         kwargs["deployment_id"] = openai.api_deployment_id
     if hasattr(openai, "api_engine"):
         kwargs["engine"] = openai.api_engine
+
+    if "openrouter.ai" in openai.api_base:
+        kwargs["headers"] = {
+            "HTTP-Referer": "http://aider.chat",
+            "X-Title": "Aider"
+        }
 
     key = json.dumps(kwargs, sort_keys=True).encode()
 
@@ -66,10 +72,10 @@ def send_with_retries(model, messages, functions, stream):
     return hash_object, res
 
 
-def simple_send_with_retries(model, messages):
+def simple_send_with_retries(model_name, messages):
     try:
         _hash, response = send_with_retries(
-            model=model,
+            model_name=model_name,
             messages=messages,
             functions=None,
             stream=False,
