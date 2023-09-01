@@ -1,7 +1,6 @@
 import argparse
 import json
 
-import tiktoken
 
 from aider import models, prompts
 from aider.dump import dump  # noqa: F401
