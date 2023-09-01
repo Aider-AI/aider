@@ -9,7 +9,6 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 import networkx as nx
-import tiktoken
 from diskcache import Cache
 from pygments.lexers import guess_lexer_for_filename
 from pygments.token import Token
@@ -81,7 +80,7 @@ class RepoMap:
         self,
         map_tokens=1024,
         root=None,
-        main_model=models.GPT4,
+        main_model=models.Model.strong_model(),
         io=None,
         repo_content_prefix=None,
         verbose=False,
@@ -104,7 +103,7 @@ class RepoMap:
         else:
             self.use_ctags = False
 
-        self.tokenizer = tiktoken.encoding_for_model(main_model.name)
+        self.tokenizer = main_model.tokenizer
         self.repo_content_prefix = repo_content_prefix
 
     def get_repo_map(self, chat_files, other_files):

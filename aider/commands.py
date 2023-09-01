@@ -5,7 +5,6 @@ import sys
 from pathlib import Path
 
 import git
-import tiktoken
 from prompt_toolkit.completion import Completion
 
 from aider import prompts, voice
@@ -24,7 +23,7 @@ class Commands:
             voice_language = None
 
         self.voice_language = voice_language
-        self.tokenizer = tiktoken.encoding_for_model(coder.main_model.name)
+        self.tokenizer = coder.main_model.tokenizer
 
     def is_command(self, inp):
         if inp[0] == "/":

@@ -190,7 +190,7 @@ class Coder:
         for fname in self.get_inchat_relative_files():
             self.io.tool_output(f"Added {fname} to the chat.")
 
-        self.summarizer = ChatSummary()
+        self.summarizer = ChatSummary(models.Model.weak_model())
         self.summarizer_thread = None
         self.summarized_done_messages = None
 
@@ -636,7 +636,7 @@ class Coder:
                 if len(chunk.choices) == 0:
                     continue
 
-                if chunk.choices[0].finish_reason == "length":
+                if hasattr(chunk.choices[0], "finish_reason") and chunk.choices[0].finish_reason == "length":
                     raise ExhaustedContextWindow()
 
                 try:

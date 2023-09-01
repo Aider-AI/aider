@@ -109,8 +109,8 @@ class GitRepo:
             dict(role="user", content=content),
         ]
 
-        for model in [models.GPT35.name, models.GPT35_16k.name]:
-            commit_message = simple_send_with_retries(model, messages)
+        for model in models.Model.commit_message_models():
+            commit_message = simple_send_with_retries(model.name, messages)
             if commit_message:
                 break
 
