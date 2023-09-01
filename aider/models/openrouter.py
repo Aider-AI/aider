@@ -23,7 +23,7 @@ class OpenRouterModel(Model):
         self.tokenizer = tiktoken.get_encoding("cl100k_base")
 
         global cached_model_details
-        if cached_model_details == None:
+        if cached_model_details is None:
             cached_model_details = openai.Model.list().data
         found = next(
             (details for details in cached_model_details if details.get("id") == name), None
