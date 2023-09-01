@@ -1,5 +1,6 @@
 import colorsys
 import os
+import pkg_resources
 import random
 import sys
 from collections import Counter, defaultdict, namedtuple
