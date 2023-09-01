@@ -179,7 +179,7 @@ class RepoMap:
 
         # Load the tags queries
         scm_fname = pkg_resources.resource_filename(
-            __name__, os.path.join("..", "queries", f"tree-sitter-{lang}-tags.scm")
+            __name__, os.path.join("queries", f"tree-sitter-{lang}-tags.scm")
         )
         dump(scm_fname)
         query_scm = Path(scm_fname)
