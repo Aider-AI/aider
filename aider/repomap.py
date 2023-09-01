@@ -181,6 +181,7 @@ class RepoMap:
         scm_fname = pkg_resources.resource_filename(
             __name__, os.path.join("..", "queries", f"tree-sitter-{lang}-tags.scm")
         )
+        dump(scm_fname)
         query_scm = Path(scm_fname)
         if not query_scm.exists():
             return
