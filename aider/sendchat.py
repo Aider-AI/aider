@@ -51,10 +51,7 @@ def send_with_retries(model_name, messages, functions, stream):
         kwargs["engine"] = openai.api_engine
 
     if "openrouter.ai" in openai.api_base:
-        kwargs["headers"] = {
-            "HTTP-Referer": "http://aider.chat",
-            "X-Title": "Aider"
-        }
+        kwargs["headers"] = {"HTTP-Referer": "http://aider.chat", "X-Title": "Aider"}
 
     key = json.dumps(kwargs, sort_keys=True).encode()
 

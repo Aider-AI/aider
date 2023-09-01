@@ -1,5 +1,7 @@
-import tiktoken
 import re
+
+import tiktoken
+
 from .model import Model
 
 known_tokens = {

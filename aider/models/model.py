@@ -1,4 +1,6 @@
-import openai 
+import openai
+
+
 class Model:
     name = None
     edit_format = None
@@ -16,7 +18,8 @@ class Model:
     def create(cls, name):
         from .openai import OpenAIModel
         from .openrouter import OpenRouterModel
-        if ("openrouter.ai" in openai.api_base):
+
+        if "openrouter.ai" in openai.api_base:
             return OpenRouterModel(name)
         return OpenAIModel(name)
 
@@ -25,12 +28,12 @@ class Model:
 
     @staticmethod
     def strong_model():
-        return Model.create('gpt-4')
+        return Model.create("gpt-4")
 
     @staticmethod
     def weak_model():
-        return Model.create('gpt-3.5-turbo')
+        return Model.create("gpt-3.5-turbo")
 
     @staticmethod
     def commit_message_models():
-        return [Model.create('gpt-3.5-turbo'), Model.create('gpt-3.5-turbo-16k')]
+        return [Model.create("gpt-3.5-turbo"), Model.create("gpt-3.5-turbo-16k")]

@@ -636,7 +636,10 @@ class Coder:
                 if len(chunk.choices) == 0:
                     continue
 
-                if hasattr(chunk.choices[0], "finish_reason") and chunk.choices[0].finish_reason == "length":
+                if (
+                    hasattr(chunk.choices[0], "finish_reason")
+                    and chunk.choices[0].finish_reason == "length"
+                ):
                     raise ExhaustedContextWindow()
 
                 try:
