@@ -18,10 +18,10 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     package_data={
-        'aider': ['queries/*'],
+        "aider": ["queries/*"],
     },
     install_requires=requirements,
-    python_requires='>=3.9',
+    python_requires=">=3.9",
     entry_points={
         "console_scripts": [
             "aider = aider.main:main",
