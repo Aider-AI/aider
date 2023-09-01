@@ -177,8 +177,8 @@ class RepoMap:
         parser = get_parser(lang)
 
         # Load the tags queries
-        scm_fname = (
-            f"/Users/gauthier/tmp/py-tree-sitter-languages/queries/tree-sitter-{lang}-tags.scm"
+        scm_fname = pkg_resources.resource_filename(
+            __name__, f"queries/tree-sitter-{lang}-tags.scm"
         )
         query_scm = Path(scm_fname)
         if not query_scm.exists():
