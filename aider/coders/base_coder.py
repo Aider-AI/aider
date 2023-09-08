@@ -359,7 +359,11 @@ class Coder:
         self.summarizer_thread.start()
 
     def summarize_worker(self):
-        self.summarized_done_messages = self.summarizer.summarize(self.done_messages)
+        try:
+            self.summarized_done_messages = self.summarizer.summarize(self.done_messages)
+        except ValueError as err:
+            self.io.tool_error(err.args[0])
+
         if self.verbose:
             self.io.tool_output("Finished summarizing chat history.")
 
