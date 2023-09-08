@@ -1,5 +1,12 @@
 # Release history
 
+### v0.14.0
+
+- [Support for Claude2 and other LLMs via OpenRouter](https://aider.chat/docs/faq.html#accessing-other-llms-with-openrouter) by @joshuavial
+- Documentation for [running the aider benchmarking suite](https://github.com/paul-gauthier/aider/tree/main/benchmark)
+- Aider now requires Python >= 3.9
+
+
 ### v0.13.0
 
 - [Only git commit dirty files that GPT tries to edit](https://aider.chat/docs/faq.html#how-did-v0130-change-git-usage)
