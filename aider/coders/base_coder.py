@@ -606,15 +606,17 @@ class Coder:
             self.io.tool_error(show_content_err)
             raise Exception("No data found in openai response!")
 
-        prompt_tokens = completion.usage.prompt_tokens
-        completion_tokens = completion.usage.completion_tokens
+        tokens = None
+        if hasattr(completion, 'usage'):
+            prompt_tokens = completion.usage.prompt_tokens
+            completion_tokens = completion.usage.completion_tokens
 
-        tokens = f"{prompt_tokens} prompt tokens, {completion_tokens} completion tokens"
-        if self.main_model.prompt_price:
-            cost = prompt_tokens * self.main_model.prompt_price / 1000
-            cost += completion_tokens * self.main_model.completion_price / 1000
-            tokens += f", ${cost:.6f} cost"
-            self.total_cost += cost
+            tokens = f"{prompt_tokens} prompt tokens, {completion_tokens} completion tokens"
+            if self.main_model.prompt_price:
+                cost = prompt_tokens * self.main_model.prompt_price / 1000
+                cost += completion_tokens * self.main_model.completion_price / 1000
+                tokens += f", ${cost:.6f} cost"
+                self.total_cost += cost
 
         show_resp = self.render_incremental_response(True)
         if self.pretty:
@@ -625,7 +627,9 @@ class Coder:
             show_resp = Text(show_resp or "<no response>")
 
         self.io.console.print(show_resp)
-        self.io.tool_output(tokens)
+
+        if tokens is not None:
+            self.io.tool_output(tokens)
 
     def show_send_output_stream(self, completion):
         live = None
