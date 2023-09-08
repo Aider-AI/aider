@@ -25,7 +25,7 @@ This is because the benchmarking harness will be
 taking code written by an LLM
 and executing it without any human review or supervision!
 The LLM could generate dangerous python that harms your system, like this: `import os; os.system("sudo rm -rf /")`.
-Running inside a docker container helps ensure no permanent damage can be done.
+Running inside a docker container helps limit the damage that could be done.
 
 ## Usage
 
