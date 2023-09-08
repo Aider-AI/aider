@@ -181,6 +181,8 @@ class RepoMap:
         scm_fname = pkg_resources.resource_filename(
             __name__, os.path.join("queries", f"tree-sitter-{lang}-tags.scm")
         )
+        dump(fname)
+        dump(scm_fname)
         query_scm = Path(scm_fname)
         if not query_scm.exists():
             return
@@ -194,8 +196,10 @@ class RepoMap:
         captures = query.captures(tree.root_node)
 
         captures = list(captures)
+        dump(captures)
 
         for node, tag in captures:
+            dump(node, tag)
             if tag.startswith("name.definition."):
                 kind = "def"
             elif tag.startswith("name.reference."):
@@ -343,16 +347,15 @@ class RepoMap:
         return best_tree
 
 
-def find_py_files(directory):
+def find_src_files(directory):
     if not os.path.isdir(directory):
         return [directory]
 
-    py_files = []
+    src_files = []
     for root, dirs, files in os.walk(directory):
         for file in files:
-            if file.endswith(".py"):
-                py_files.append(os.path.join(root, file))
-    return py_files
+            src_files.append(os.path.join(root, file))
+    return src_files
 
 
 def get_random_color():
@@ -367,15 +370,13 @@ if __name__ == "__main__":
 
     chat_fnames = []
     other_fnames = []
-    for dname in sys.argv[1:]:
-        if ".venv" in dname:
-            other_fnames += find_py_files(dname)
+    for fname in sys.argv[1:]:
+        if Path(fname).is_dir():
+            chat_fnames += find_src_files(fname)
         else:
-            chat_fnames += find_py_files(dname)
+            chat_fnames.append(fname)
 
-    root = os.path.commonpath(chat_fnames)
-
-    rm = RepoMap(root=root)
+    rm = RepoMap(root=".")
     repo_map = rm.get_ranked_tags_map(chat_fnames, other_fnames)
 
     dump(len(repo_map))
