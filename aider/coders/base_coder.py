@@ -55,7 +55,7 @@ class Coder:
         main_model,
         edit_format,
         io,
-        skip_model_availabily_check,
+        skip_model_availabily_check=False,
         **kwargs,
     ):
         from . import EditBlockCoder, WholeFileCoder
