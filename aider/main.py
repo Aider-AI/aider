@@ -143,6 +143,12 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         help=f"Specify the model to use for the main chat (default: {models.GPT4.name})",
     )
     core_group.add_argument(
+        "--skip-model-availability-check",
+        metavar="SKIP_MODEL_AVAILABILITY_CHECK",
+        default=False,
+        help="Override to skip model availability check (default: False)",
+    )
+    core_group.add_argument(
         "-3",
         action="store_const",
         dest="model",
@@ -465,6 +471,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
             main_model,
             args.edit_format,
             io,
+            args.skip_model_availability_check,
             ##
             fnames=fnames,
             git_dname=git_dname,

@@ -55,6 +55,7 @@ class Coder:
         main_model,
         edit_format,
         io,
+        skip_model_availabily_check=False,
         **kwargs,
     ):
         from . import EditBlockCoder, WholeFileCoder
@@ -62,7 +63,7 @@ class Coder:
         if not main_model:
             main_model = models.GPT35_16k
 
-        if not main_model.always_available:
+        if not skip_model_availabily_check and not main_model.always_available:
             if not check_model_availability(main_model):
                 if main_model != models.GPT4:
                     io.tool_error(
