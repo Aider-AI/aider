@@ -4,6 +4,8 @@ import json
 import backoff
 import openai
 import requests
+from litellm import BudgetManager
+budget_manager.create_budget(total_budget=10, user="1234")
 
 # from diskcache import Cache
 from openai.error import (
@@ -61,7 +63,12 @@ def send_with_retries(model_name, messages, functions, stream):
     if not stream and CACHE is not None and key in CACHE:
         return hash_object, CACHE[key]
 
-    res = openai.ChatCompletion.create(**kwargs)
+        # check if a given call can be made
+    if budget_manager.get_current_cost(user=user) < budget_manager.get_total_budget(user):
+        res = openai.ChatCompletion.create(**kwargs)
+        budget_manager.update_cost(completion_obj=response, user=user)
+    else:
+        raise Exception("User budget exceeded")
 
     if not stream and CACHE is not None:
         CACHE[key] = res
