@@ -68,6 +68,7 @@ class RepoMap:
         "--extras=-F",
         "--output-format=json",
         "--output-encoding=utf-8",
+        "--input-encoding=UTF-8"
     ]
     IDENT_CACHE_DIR = f".aider.ident.cache.v{CACHE_VERSION}"
     TAGS_CACHE_DIR = f".aider.tags.cache.v{CACHE_VERSION}"
