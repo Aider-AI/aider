@@ -154,6 +154,14 @@ For a discussion of using other non-OpenAI models, see the
 
 See the [installation instructions](https://aider.chat/docs/install.html).
 
+## Running Locally
+
+After cloning the repository or creating your fork, you can run the local version of Aider using the following command:
+
+```
+python -m aider.main
+```
+
 ## FAQ
 
 For more information, see the [FAQ](https://aider.chat/docs/faq.html).
