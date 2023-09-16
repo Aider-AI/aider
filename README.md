@@ -156,7 +156,27 @@ See the [installation instructions](https://aider.chat/docs/install.html).
 
 ## Running Locally
 
-After cloning the repository or creating your fork, you can run the local version of Aider using the following command:
+To run the project locally, follow these steps:
+
+1. Clone the repository or create your fork:
+
+```
+git clone https://github.com/your-username/aider.git
+```
+
+2. Navigate to the project directory:
+
+```
+cd aider
+```
+
+3. Install the dependencies listed in the `requirements.txt` file:
+
+```
+pip install -r requirements.txt
+```
+
+4. Run the local version of Aider:
 
 ```
 python -m aider.main
