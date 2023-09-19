@@ -8,6 +8,7 @@
 - [Can I use aider with other LLMs, local LLMs, etc?](#can-i-use-aider-with-other-llms-local-llms-etc)
 - [Can I change the system prompts that aider uses?](#can-i-change-the-system-prompts-that-aider-uses)
 - [Can I run aider in Google Colab?](#can-i-run-aider-in-google-colab)
+- [How can I run aider locally from source code?](#how-can-i-run-aider-locally-from-source-code)
 
 ## How does aider use git?
 
@@ -224,3 +225,31 @@ all the raw information being sent to/from GPT in the conversation.
 User [imabutahersiddik](https://github.com/imabutahersiddik)
 has provided this
 [Colab notebook](https://colab.research.google.com/drive/1J9XynhrCqekPL5PR6olHP6eE--rnnjS9?usp=sharing).
+
+## How can I run aider locally from source code?
+
+To run the project locally, follow these steps:
+
+1. Clone the repository or create your fork:
+
+```
+git clone https://github.com/your-username/aider.git
+```
+
+2. Navigate to the project directory:
+
+```
+cd aider
+```
+
+3. Install the dependencies listed in the `requirements.txt` file:
+
+```
+pip install -r requirements.txt
+```
+
+4. Run the local version of Aider:
+
+```
+python -m aider.main
+```
