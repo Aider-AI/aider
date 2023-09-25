@@ -53,10 +53,13 @@ class GitRepo:
         if not fnames and not self.repo.is_dirty():
             return
 
+        diffs = self.get_diffs(fnames)
+        if not diffs:
+            return
+
         if message:
             commit_message = message
         else:
-            diffs = self.get_diffs(fnames)
             commit_message = self.get_commit_message(diffs, context)
 
         if not commit_message:

@@ -194,3 +194,21 @@ class TestRepo(unittest.TestCase):
             raw_repo.git.commit("-m", "new")
             fnames = git_repo.get_tracked_files()
             self.assertIn(str(fname), fnames)
+
+    @patch("aider.repo.simple_send_with_retries")
+    def test_noop_commit(self, mock_send):
+        mock_send.return_value = '"a good commit message"'
+
+        with GitTemporaryDirectory():
+            # new repo
+            raw_repo = git.Repo()
+
+            # add it, but no commits at all in the raw_repo yet
+            fname = Path("file.txt")
+            fname.touch()
+            raw_repo.git.add(str(fname))
+            raw_repo.git.commit("-m", "new")
+
+            git_repo = GitRepo(InputOutput(), None, None)
+
+            git_repo.commit(fnames=[str(fname)])
