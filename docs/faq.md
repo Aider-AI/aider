@@ -230,26 +230,16 @@ has provided this
 
 To run the project locally, follow these steps:
 
-1. Clone the repository or create your fork:
-
 ```
-git clone https://github.com/your-username/aider.git
-```
+# Clone the repository:
+git clone git@github.com:paul-gauthier/aider.git
 
-2. Navigate to the project directory:
-
-```
+# Navigate to the project directory:
 cd aider
-```
 
-3. Install the dependencies listed in the `requirements.txt` file:
-
-```
+# Install the dependencies listed in the `requirements.txt` file:
 pip install -r requirements.txt
-```
 
-4. Run the local version of Aider:
-
-```
+# Run the local version of Aider:
 python -m aider.main
 ```
