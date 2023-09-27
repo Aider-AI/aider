@@ -293,6 +293,12 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         help="Enable/disable looking for a git repo (default: True)",
     )
     git_group.add_argument(
+        "--gitignore",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Enable/disable adding .aider* to .gitignore (default: True)",
+    )
+    git_group.add_argument(
         "--auto-commits",
         action=argparse.BooleanOptionalAction,
         default=True,
@@ -429,7 +435,8 @@ def main(argv=None, input=None, output=None, force_git_root=None):
 
     if args.git:
         git_root = setup_git(git_root, io)
-        check_gitignore(git_root, io)
+        if args.gitignore:
+            check_gitignore(git_root, io)
 
     def scrub_sensitive_info(text):
         # Replace sensitive information with placeholder
