@@ -70,6 +70,8 @@ def setup_git(git_root, io):
     return repo.working_tree_dir
 
 
+import git
+
 def check_gitignore(git_root, io, ask=True):
     if not git_root:
         return
@@ -83,6 +85,10 @@ def check_gitignore(git_root, io, ask=True):
             return
     else:
         content = ""
+
+    repo = git.Repo(git_root)
+    if repo.is_ignored(pat):
+        return
 
     if ask and not io.confirm_ask(f"Add {pat} to .gitignore (recommended)?"):
         return
