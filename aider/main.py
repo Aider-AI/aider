@@ -74,9 +74,12 @@ def check_gitignore(git_root, io, ask=True):
     if not git_root:
         return
 
-    repo = git.Repo(git_root)
-    if repo.ignored(".aider"):
-        return
+    try:
+        repo = git.Repo(git_root)
+        if repo.ignored(".aider"):
+            return
+    except git.exc.InvalidGitRepositoryError:
+        pass
 
     pat = ".aider*"
 
