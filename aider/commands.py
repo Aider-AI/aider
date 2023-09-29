@@ -279,16 +279,17 @@ class Commands:
                 if any(char in word for char in "*?[]"):
                     self.io.tool_error(f"No files to add matching pattern: {word}")
                 else:
-                    if Path(word).exists():
-                        if Path(word).is_file():
-                            matched_files = [word]
+                    fname = Path(self.coder.root) / word
+                    if fname.exists():
+                        if fname.is_file():
+                            matched_files = [str(fname)]
                         else:
                             self.io.tool_error(f"Unable to add: {word}")
                     elif self.io.confirm_ask(
-                        f"No files matched '{word}'. Do you want to create the file?"
+                        f"No files matched '{word}'. Do you want to create {fname}?"
                     ):
-                        (Path(self.coder.root) / word).touch()
-                        matched_files = [word]
+                        fname.touch()
+                        matched_files = [str(fname)]
 
             all_matched_files.update(matched_files)
 

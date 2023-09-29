@@ -276,3 +276,22 @@ class TestCommands(TestCase):
             commit_message = "Test commit message"
             commands.cmd_commit(commit_message)
             self.assertFalse(repo.is_dirty())
+
+    def test_cmd_add_from_sub_dir(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(pretty=False, yes=False)
+            from aider.coders import Coder
+
+            coder = Coder.create(models.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            Path("side_dir").mkdir()
+            os.chdir("side_dir")
+
+            # add a file that is in the side_dir
+            with open("temp.txt", "w"):
+                pass
+
+            # this was blowing up with GitCommandError, per:
+            # https://github.com/paul-gauthier/aider/issues/201
+            commands.cmd_add("temp.txt")
