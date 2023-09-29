@@ -273,25 +273,21 @@ class Commands:
 
         all_matched_files = set()
         for word in args.split():
+            fname = Path(self.coder.root) / word
+            if fname.exists():
+                if fname.is_file():
+                    all_matched_files.add(str(fname))
+                    continue
+                # else we fall through and glob will pickup all files within a dir
+
             matched_files = self.glob_filtered_to_repo(word)
+            if matched_files:
+                all_matched_files.update(matched_files)
+                continue
 
-            if not matched_files:
-                if any(char in word for char in "*?[]"):
-                    self.io.tool_error(f"No files to add matching pattern: {word}")
-                else:
-                    fname = Path(self.coder.root) / word
-                    if fname.exists():
-                        if fname.is_file():
-                            matched_files = [str(fname)]
-                        else:
-                            self.io.tool_error(f"Unable to add: {word}")
-                    elif self.io.confirm_ask(
-                        f"No files matched '{word}'. Do you want to create {fname}?"
-                    ):
-                        fname.touch()
-                        matched_files = [str(fname)]
-
-            all_matched_files.update(matched_files)
+            if self.io.confirm_ask(f"No files matched '{word}'. Do you want to create {fname}?"):
+                fname.touch()
+                all_matched_files.add(str(fname))
 
         for matched_file in all_matched_files:
             abs_file_path = self.coder.abs_root_path(matched_file)
