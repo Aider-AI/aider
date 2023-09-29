@@ -14,7 +14,7 @@ from aider.coders import Coder
 from aider.commands import Commands
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
-from tests.utils import GitTemporaryDirectory
+from tests.utils import ChdirTemporaryDirectory, GitTemporaryDirectory, make_repo
 
 
 class TestCommands(TestCase):
@@ -295,3 +295,48 @@ class TestCommands(TestCase):
             # this was blowing up with GitCommandError, per:
             # https://github.com/paul-gauthier/aider/issues/201
             commands.cmd_add("temp.txt")
+
+    def test_cmd_add_from_outside_root(self):
+        with ChdirTemporaryDirectory() as tmp_dname:
+            root = Path("root")
+            root.mkdir()
+            os.chdir(str(root))
+
+            io = InputOutput(pretty=False, yes=False)
+            from aider.coders import Coder
+
+            coder = Coder.create(models.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            outside_file = Path(tmp_dname) / "outside.txt"
+            outside_file.touch()
+
+            # This should not be allowed!
+            # https://github.com/paul-gauthier/aider/issues/178
+            commands.cmd_add("../outside.txt")
+
+            self.assertEqual(len(coder.abs_fnames), 0)
+
+    def test_cmd_add_from_outside_git(self):
+        with ChdirTemporaryDirectory() as tmp_dname:
+            root = Path("root")
+            root.mkdir()
+            os.chdir(str(root))
+
+            make_repo()
+
+            io = InputOutput(pretty=False, yes=False)
+            from aider.coders import Coder
+
+            coder = Coder.create(models.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            outside_file = Path(tmp_dname) / "outside.txt"
+            outside_file.touch()
+
+            # This should not be allowed!
+            # It was blowing up with GitCommandError, per:
+            # https://github.com/paul-gauthier/aider/issues/178
+            commands.cmd_add("../outside.txt")
+
+            self.assertEqual(len(coder.abs_fnames), 0)

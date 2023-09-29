@@ -296,6 +296,12 @@ class Commands:
         for matched_file in all_matched_files:
             abs_file_path = self.coder.abs_root_path(matched_file)
 
+            if not abs_file_path.startswith(self.coder.root):
+                self.io.tool_error(
+                    f"Can not add {abs_file_path}, which is not within {self.coder.root}"
+                )
+                continue
+
             if self.coder.repo and matched_file not in git_files:
                 self.coder.repo.repo.git.add(abs_file_path)
                 git_added.append(matched_file)
