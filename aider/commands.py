@@ -273,7 +273,11 @@ class Commands:
 
         all_matched_files = set()
         for word in shlex.split(args):
-            fname = Path(self.coder.root) / word
+            if Path(word).is_absolute():
+                fname = Path(word)
+            else:
+                fname = Path(self.coder.root) / word
+
             if fname.exists() and fname.is_file():
                 all_matched_files.add(str(fname))
                 continue
