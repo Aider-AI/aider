@@ -90,7 +90,7 @@ class TestCommands(TestCase):
         coder = Coder.create(models.GPT35, None, io)
         commands = Commands(io, coder)
 
-        fname = Path("*.nonexistent")
+        fname = Path("[abc].nonexistent")
 
         # Call the cmd_add method with a non-existent file pattern
         commands.cmd_add(str(fname))
