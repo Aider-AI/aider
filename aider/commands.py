@@ -272,13 +272,12 @@ class Commands:
         git_files = self.coder.repo.get_tracked_files() if self.coder.repo else []
 
         all_matched_files = set()
-        for word in args.split():
+        for word in shlex.split(args):
             fname = Path(self.coder.root) / word
-            if fname.exists():
-                if fname.is_file():
-                    all_matched_files.add(str(fname))
-                    continue
-                # else we fall through and glob will pickup all files within a dir
+            if fname.exists() and fname.is_file():
+                all_matched_files.add(str(fname))
+                continue
+                # an existing dir will fall through and get recursed by glob
 
             matched_files = self.glob_filtered_to_repo(word)
             if matched_files:
@@ -342,7 +341,7 @@ class Commands:
             self.io.tool_output("Dropping all files from the chat session.")
             self.coder.abs_fnames = set()
 
-        for word in args.split():
+        for word in shlex.split(args):
             matched_files = self.glob_filtered_to_repo(word)
 
             if not matched_files:

@@ -372,3 +372,33 @@ class TestCommands(TestCase):
             commands.cmd_add(str(fname))
 
             self.assertIn(str(fname.resolve()), coder.abs_fnames)
+
+    def test_cmd_add_abs_filename(self):
+        with ChdirTemporaryDirectory():
+            io = InputOutput(pretty=False, yes=False)
+            from aider.coders import Coder
+
+            coder = Coder.create(models.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            fname = Path("file.txt")
+            fname.touch()
+
+            commands.cmd_add(str(fname.resolve()))
+
+            self.assertIn(str(fname.resolve()), coder.abs_fnames)
+
+    def test_cmd_add_quoted_filename(self):
+        with ChdirTemporaryDirectory():
+            io = InputOutput(pretty=False, yes=False)
+            from aider.coders import Coder
+
+            coder = Coder.create(models.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            fname = Path("file with spaces.txt")
+            fname.touch()
+
+            commands.cmd_add(f'"{fname}"')
+
+            self.assertIn(str(fname.resolve()), coder.abs_fnames)
