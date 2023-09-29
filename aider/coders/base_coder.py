@@ -64,7 +64,7 @@ class Coder:
             main_model = models.GPT35_16k
 
         if not skip_model_availabily_check and not main_model.always_available:
-            if not check_model_availability(main_model):
+            if not check_model_availability(io, main_model):
                 if main_model != models.GPT4:
                     io.tool_error(
                         f"API key does not support {main_model.name}, falling back to"
@@ -608,7 +608,7 @@ class Coder:
             raise Exception("No data found in openai response!")
 
         tokens = None
-        if hasattr(completion, 'usage'):
+        if hasattr(completion, "usage"):
             prompt_tokens = completion.usage.prompt_tokens
             completion_tokens = completion.usage.completion_tokens
 
@@ -911,7 +911,12 @@ class Coder:
         return True
 
 
-def check_model_availability(main_model):
+def check_model_availability(io, main_model):
     available_models = openai.Model.list()
     model_ids = [model.id for model in available_models["data"]]
-    return main_model.name in model_ids
+    if main_model.name in model_ids:
+        return True
+
+    available_models = ", ".join(model_ids)
+    io.tool_error(f"API key supports: {available_models}")
+    return False
