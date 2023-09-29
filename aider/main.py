@@ -522,6 +522,15 @@ def main(argv=None, input=None, output=None, force_git_root=None):
 
     io.tool_output("Use /help to see in-chat commands, run with --help to see cmd line args")
 
+    if git_root and Path.cwd().resolve() != Path(git_root).resolve():
+        io.tool_error(
+            "Note: in-chat filenames are always relative to the git working dir, not the current"
+            " working dir."
+        )
+
+        io.tool_error(f"Cur working dir: {Path.cwd()}")
+        io.tool_error(f"Git working dir: {git_root}")
+
     if args.message:
         io.tool_output()
         coder.run(with_message=args.message)
