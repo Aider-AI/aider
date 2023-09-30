@@ -1,4 +1,5 @@
 import json
+import re
 import shlex
 import subprocess
 import sys
@@ -272,7 +273,9 @@ class Commands:
         git_files = self.coder.repo.get_tracked_files() if self.coder.repo else []
 
         all_matched_files = set()
-        for word in shlex.split(args):
+
+        filenames = parse_quoted_filenames(args)
+        for word in filenames:
             if Path(word).is_absolute():
                 fname = Path(word)
             else:
@@ -345,7 +348,8 @@ class Commands:
             self.io.tool_output("Dropping all files from the chat session.")
             self.coder.abs_fnames = set()
 
-        for word in shlex.split(args):
+        filenames = parse_quoted_filenames(args)
+        for word in filenames:
             matched_files = self.glob_filtered_to_repo(word)
 
             if not matched_files:
@@ -493,3 +497,9 @@ def expand_subdir(file_path):
         for file in file_path.rglob("*"):
             if file.is_file():
                 yield str(file)
+
+
+def parse_quoted_filenames(args):
+    filenames = re.findall(r"\"(.+?)\"|(\S+)", args)
+    filenames = [name for sublist in filenames for name in sublist if name]
+    return filenames
