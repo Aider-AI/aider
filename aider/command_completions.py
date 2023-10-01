@@ -8,6 +8,8 @@ class CommandCompletions:
         files = set(self.coder.get_all_relative_files())
         files = files - set(self.coder.get_inchat_relative_files())
         partial_lower = partial.lower()
+        print(f"Files: {files}")
+        print(f"Partial: {partial_lower}")
         for fname in files:
             fname_lower = fname.lower()
             if all(c in fname_lower for c in partial_lower) and \
