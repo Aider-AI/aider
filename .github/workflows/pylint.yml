@@ -4,11 +4,11 @@ on:
   push:
     branches:
       - main
-      - my-branch
+      - ak/enable-pylint
   pull_request:
     branches:
       - main
-      - my-branch
+      - ak/enable-pylint
 
 jobs:
   pylint:
