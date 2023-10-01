@@ -1,3 +1,5 @@
+from prompt_toolkit.completion import Completion
+
 class CommandCompletions:
     def __init__(self, coder):
         self.coder = coder
