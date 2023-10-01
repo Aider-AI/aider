@@ -241,15 +241,7 @@ class Commands:
         # don't use io.tool_output() because we don't want to log or further colorize
         print(diff)
 
-    def completions_add(self, partial):
-        files = set(self.coder.get_all_relative_files())
-        files = files - set(self.coder.get_inchat_relative_files())
-        partial_lower = partial.lower()
-        for fname in files:
-            fname_lower = fname.lower()
-            if all(c in fname_lower for c in partial_lower) and \
-               ''.join(c for c in fname_lower if c in partial_lower) == partial_lower:
-                yield Completion(fname, start_position=-len(partial))
+    # completions_add method moved to CommandCompletions class in aider/command_completions.py
 
     def glob_filtered_to_repo(self, pattern):
         raw_matched_files = list(Path(self.coder.root).glob(pattern))
