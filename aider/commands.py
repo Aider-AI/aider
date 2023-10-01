@@ -244,7 +244,6 @@ class Commands:
         # don't use io.tool_output() because we don't want to log or further colorize
         print(diff)
 
-    # completions_add method moved to CommandCompletions class in aider/command_completions.py
 
     def glob_filtered_to_repo(self, pattern):
         raw_matched_files = list(Path(self.coder.root).glob(pattern))
