@@ -13,12 +13,15 @@ from aider import prompts, voice
 from .dump import dump  # noqa: F401
 
 
+from aider.command_completions import CommandCompletions
+
 class Commands:
     voice = None
 
     def __init__(self, io, coder, voice_language=None):
         self.io = io
         self.coder = coder
+        self.command_completions = CommandCompletions(coder)
 
         if voice_language == "auto":
             voice_language = None
