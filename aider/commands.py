@@ -332,12 +332,6 @@ class Commands:
         reply = prompts.added_files.format(fnames=", ".join(added_fnames))
         return reply
 
-    def completions_drop(self, partial):
-        files = self.coder.get_inchat_relative_files()
-
-        for fname in files:
-            if partial.lower() in fname.lower():
-                yield Completion(fname, start_position=-len(partial))
 
     def cmd_drop(self, args):
         "Remove matching files from the chat session"
