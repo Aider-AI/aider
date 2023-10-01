@@ -12,8 +12,13 @@ class CommandCompletions:
         print(f"Partial: {partial_lower}")
         for fname in files:
             fname_lower = fname.lower()
-            if all(c in fname_lower for c in partial_lower) and \
-               ''.join(c for c in fname_lower if c in partial_lower) == partial_lower:
+            partial_index = 0
+            for char in fname_lower:
+                if char == partial_lower[partial_index]:
+                    partial_index += 1
+                if partial_index == len(partial_lower):
+                    break
+            if partial_index == len(partial_lower):
                 yield Completion(fname, start_position=-len(partial))
 
     def completions_drop(self, partial):
