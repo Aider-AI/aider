@@ -29,3 +29,8 @@ class TestCommandCompletions(unittest.TestCase):
         result = list(self.command_completions.completions_drop(partial))
         expected = []
         self.assertEqual(result, expected)
+
+        partial = "a/b/c/d"
+        result = list(self.command_completions.completions_drop(partial))
+        expected = ["a/b/c/d"]
+        self.assertEqual(result, expected)
