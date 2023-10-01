@@ -15,7 +15,7 @@ class TestCommandCompletions(unittest.TestCase):
 
     def test_completions_add(self):
         partial = "ab/c"
-        result = list(self.command_completions.completions_add(partial))
+        result = [completion.text for completion in self.command_completions.completions_add(partial)]
         expected = ['a/b/c/d', 'a/b/c/e', 'a/b/c/f']
         self.assertEqual(result, expected)
 
