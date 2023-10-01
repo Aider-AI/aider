@@ -43,7 +43,7 @@ class Commands:
 
     def get_command_completions(self, cmd_name, partial):
         cmd_completions_method_name = f"completions_{cmd_name}"
-        cmd_completions_method = getattr(self, cmd_completions_method_name, None)
+        cmd_completions_method = getattr(self.command_completions, cmd_completions_method_name, None)
         if cmd_completions_method:
             for completion in cmd_completions_method(partial):
                 yield completion
