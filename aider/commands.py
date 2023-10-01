@@ -244,8 +244,8 @@ class Commands:
     def completions_add(self, partial):
         files = set(self.coder.get_all_relative_files())
         files = files - set(self.coder.get_inchat_relative_files())
+        partial_lower = partial.lower()
         for fname in files:
-            partial_lower = partial.lower()
             fname_lower = fname.lower()
             if all(c in fname_lower for c in partial_lower) and \
                ''.join(c for c in fname_lower if c in partial_lower) == partial_lower:
