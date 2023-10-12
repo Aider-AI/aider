@@ -154,6 +154,11 @@ and
 [SimpleAI](https://github.com/lhenault/simpleAI)
 look like relevant tools to serve local models via a compatible API.
 
+### Other Hosted LLMs ( Anthropic,Huggingface,Palm,Ollama, etc.[Full List](https://docs.litellm.ai/docs/providers))
+
+[LiteLLM](https://github.com/BerriAI/litellm) has a tutorial for using creating a local OpenAI-compatible API, that translates OpenAI calls to any of the [supported providers](https://docs.litellm.ai/docs/providers).
+
+[Tutorial](https://docs.litellm.ai/docs/proxy_server#tutorial-use-with-aiderautogencontinue-devlangroidetc)
 
 ### Azure
 
