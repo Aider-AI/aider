@@ -457,7 +457,9 @@ class Commands:
             try:
                 self.voice = voice.Voice()
             except voice.SoundDeviceError:
-                self.io.tool_error("Unable to import `sounddevice`, is portaudio installed?")
+                self.io.tool_error(
+                    "Unable to import `sounddevice` and/or `soundfile`, is portaudio installed?"
+                )
                 return
 
         history_iter = self.io.get_input_history()
