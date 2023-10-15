@@ -562,7 +562,7 @@ class Coder:
         context_file_path = self.root + "/.aider.context"
 
         # Write the messages to the file in YAML format
-        with open(context_file_path, 'a') as f:
+        with open(context_file_path, 'w') as f:
             yaml.dump(messages, f)
 
         interrupted = False
