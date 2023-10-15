@@ -549,12 +549,22 @@ class Coder:
 
         return prompts.added_files.format(fnames=", ".join(mentioned_rel_fnames))
 
+    import json
+
     def send(self, messages, model=None, functions=None):
         if not model:
             model = self.main_model.name
 
         self.partial_response_content = ""
         self.partial_response_function_call = dict()
+
+        # Define the file path where you want to save the contexts
+        context_file_path = self.root + "/.aider.context"
+
+        # Write the messages to the file in JSON format
+        with open(context_file_path, 'a') as f:
+            json.dump(messages, f)
+            f.write('\n')
 
         interrupted = False
         try:

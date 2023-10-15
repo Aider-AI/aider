@@ -12,23 +12,30 @@ RUN mkdir -p /src/aider
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
 
+COPY aider /src/aider
+ARG UID
+ARG GID
+
 # Create the script
 RUN echo '#!/bin/bash' > /create_user.sh && \
     echo 'groupadd -g $GID dockergrp' >> /create_user.sh && \
     echo 'useradd -u $UID -g $GID -m -s /bin/bash dockeruser' >> /create_user.sh && \
-    echo 'su dockeruser -c /usr/bin/bash <<EOF' >> /create_user.sh && \
+    echo 'su dockeruser' >> /create_user.sh && \
     echo 'echo "$@"' >> /create_user.sh && \
-    echo 'exec <>/dev/tty $@' >> /create_user.sh && \
-    echo 'EOF' >> /create_user.sh && \
+    echo 'exec $@' >> /create_user.sh && \
     chmod +x /create_user.sh && \
-    cat /create_user.sh 
+    cat /create_user.sh && \
+    /bin/bash
 
 ENV PYTHONPATH=/src
 ENV PYTHONDONTWRITEBYTECODE=YES
+
+# git config user.email "you@example.com"
+# git config user.name "Your Name"
 
 WORKDIR /app
 
 # Use ENTRYPOINT to allow parameters to be passed in
 #ENTRYPOINT ["/bin/bash"]
-#ENTRYPOINT ["/create_user.sh"]
-ENTRYPOINT ["python3", "/src/aider/main.py"]
+ENTRYPOINT ["/bin/bash", "/create_user.sh"]
+#ENTRYPOINT ["python3", "/src/aider/main.py"]
