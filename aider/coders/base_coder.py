@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import hashlib
-import json
 import os
 import sys
 import threading
@@ -9,6 +8,7 @@ import time
 import traceback
 from json.decoder import JSONDecodeError
 from pathlib import Path
+import yaml
 
 import openai
 from jsonschema import Draft7Validator
@@ -561,10 +561,9 @@ class Coder:
         # Define the file path where you want to save the contexts
         context_file_path = self.root + "/.aider.context"
 
-        # Write the messages to the file in JSON format
+        # Write the messages to the file in YAML format
         with open(context_file_path, 'a') as f:
-            json.dump(messages, f)
-            f.write('\n')
+            yaml.dump(messages, f)
 
         interrupted = False
         try:
