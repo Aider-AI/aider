@@ -9,6 +9,8 @@ import traceback
 from json.decoder import JSONDecodeError
 from pathlib import Path
 import yaml
+from yaml.representer import SafeRepresenter
+from yaml.scalarstring import PreservedScalarString
 
 import openai
 from jsonschema import Draft7Validator
@@ -561,9 +563,12 @@ class Coder:
         # Define the file path where you want to save the contexts
         context_file_path = self.root + "/.aider.context"
 
+        # Create a custom YAML representer for multiline strings
+        yaml.add_representer(str, lambda dumper, data: SafeRepresenter.represent_str(dumper, PreservedScalarString(data)))
+
         # Write the messages to the file in YAML format with newlines for readability
         with open(context_file_path, 'w') as f:
-            yaml.dump(messages, f, default_flow_style=False)
+            yaml.dump(messages, f, default_flow_style=False, allow_unicode=True)
 
         interrupted = False
         try:
