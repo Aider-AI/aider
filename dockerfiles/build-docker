@@ -1,2 +1,4 @@
 #! /usr/bin/bash
-docker build -t aider .
+MYDIR="$(dirname -- "$(readlink -e "$0")")"
+
+docker build --progress=plain -t aider -f $MYDIR/Dockerfile $MYDIR/..
