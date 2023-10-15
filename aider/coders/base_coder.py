@@ -561,9 +561,9 @@ class Coder:
         # Define the file path where you want to save the contexts
         context_file_path = self.root + "/.aider.context"
 
-        # Write the messages to the file in YAML format
+        # Write the messages to the file in YAML format with newlines for readability
         with open(context_file_path, 'w') as f:
-            yaml.dump(messages, f)
+            yaml.dump(messages, f, default_flow_style=False)
 
         interrupted = False
         try:
