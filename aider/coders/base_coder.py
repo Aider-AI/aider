@@ -565,14 +565,20 @@ class Coder:
         yaml.add_representer(str, lambda dumper, data: SafeRepresenter.represent_str(dumper, PreservedScalarString(data)))
 
         # Process messages to replace '\n' character sequences with actual newlines
+        processed_messages = []
         for message in messages:
+            processed_message = {}
             for key, value in message.items():
                 if isinstance(value, str):
-                    message[key] = value.replace('\\n', '\n')
+                    processed_message[key] = value.replace('\\n', '\n')
+                    processed_message[key] = value.replace('\\"', '"')
+                else:
+                    processed_message[key] = value
+                processed_messages.append(processed_message)
 
         # Write the messages to the file in YAML format with newlines for readability
         with open(context_file_path, 'w') as f:
-            yaml.dump(messages, f, default_flow_style=False, allow_unicode=True, width=float("inf"))
+            yaml.dump(processed_messages, f, default_flow_style=False, allow_unicode=True, width=float("inf"))
 
         interrupted = False
         try:
