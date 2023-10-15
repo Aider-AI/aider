@@ -564,19 +564,18 @@ class Coder:
         # Create a custom YAML representer for multiline strings
         yaml.add_representer(str, lambda dumper, data: SafeRepresenter.represent_str(dumper, PreservedScalarString(data)))
 
-        # Process messages to replace '\n' character sequences with actual newlines
+        # Process messages to replace backslash escape sequences with actual control characters
         processed_messages = []
         for message in messages:
             processed_message = {}
             for key, value in message.items():
                 if isinstance(value, str):
-                    processed_message[key] = value.replace('\\n', '\n')
-                    processed_message[key] = value.replace('\\"', '"')
+                    processed_message[key] = value.encode('utf-8').decode('unicode_escape')
                 else:
                     processed_message[key] = value
                 processed_messages.append(processed_message)
 
-        # Write the messages to the file in YAML format with newlines for readability
+        # Write the messages to the file in YAML format with control characters
         with open(context_file_path, 'w') as f:
             yaml.dump(processed_messages, f, default_flow_style=False, allow_unicode=True, width=float("inf"))
 
