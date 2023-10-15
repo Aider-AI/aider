@@ -564,6 +564,12 @@ class Coder:
         # Create a custom YAML representer for multiline strings
         yaml.add_representer(str, lambda dumper, data: SafeRepresenter.represent_str(dumper, PreservedScalarString(data)))
 
+        # Process messages to replace '\n' character sequences with actual newlines
+        for message in messages:
+            for key, value in message.items():
+                if isinstance(value, str):
+                    message[key] = value.replace('\\n', '\n')
+
         # Write the messages to the file in YAML format with newlines for readability
         with open(context_file_path, 'w') as f:
             yaml.dump(messages, f, default_flow_style=False, allow_unicode=True, width=float("inf"))
