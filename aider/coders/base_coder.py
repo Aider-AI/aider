@@ -566,7 +566,7 @@ class Coder:
 
         # Write the messages to the file in YAML format with newlines for readability
         with open(context_file_path, 'w') as f:
-            yaml.dump(messages, f, default_flow_style=False, allow_unicode=True)
+            yaml.dump(messages, f, default_flow_style=False, allow_unicode=True, width=float("inf"))
 
         interrupted = False
         try:
