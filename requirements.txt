@@ -34,3 +34,4 @@ jsonschema==4.17.3
 sounddevice==0.4.6
 soundfile==0.12.1
 pyyaml
+ruamel.yaml

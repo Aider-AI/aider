@@ -8,9 +8,9 @@ import time
 import traceback
 from json.decoder import JSONDecodeError
 from pathlib import Path
-import yaml
-from yaml.representer import SafeRepresenter
-from yaml.scalarstring import PreservedScalarString
+from ruamel.yaml.representer import SafeRepresenter
+from ruamel.yaml.scalarstring import PreservedScalarString
+import ruamel.yaml as yaml
 
 import openai
 from jsonschema import Draft7Validator
@@ -550,8 +550,6 @@ class Coder:
             self.add_rel_fname(rel_fname)
 
         return prompts.added_files.format(fnames=", ".join(mentioned_rel_fnames))
-
-    import json
 
     def send(self, messages, model=None, functions=None):
         if not model:
