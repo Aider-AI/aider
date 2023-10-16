@@ -27,15 +27,22 @@ RUN echo '#!/bin/bash' > /create_user.sh && \
     cat /create_user.sh && \
     /bin/bash
 
+# Add user to the container
+RUN groupadd -g $GID dockergrp \
+    && useradd -u $UID -g $GID -m -s /bin/bash dockeruser \
+    && echo dockeruser ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/dockeruser \
+    && chmod 0440 /etc/sudoers.d/dockeruser
+
 ENV PYTHONPATH=/src
 ENV PYTHONDONTWRITEBYTECODE=YES
 
 # git config user.email "you@example.com"
 # git config user.name "Your Name"
 
+USER dockeruser
 WORKDIR /app
 
 # Use ENTRYPOINT to allow parameters to be passed in
-#ENTRYPOINT ["/bin/bash"]
-ENTRYPOINT ["/bin/bash", "/create_user.sh"]
+ENTRYPOINT ["/bin/bash"]
+#ENTRYPOINT ["/bin/bash", "/create_user.sh"]
 #ENTRYPOINT ["python3", "/src/aider/main.py"]
