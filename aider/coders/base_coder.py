@@ -571,7 +571,10 @@ class Coder:
             for key, value in message.items():
                 if isinstance(value, str):
                     import codecs
-                    processed_message[key] = codecs.decode(value, 'unicode_escape')
+                    try:
+                        processed_message[key] = codecs.decode(value, 'unicode_escape')
+                    except UnicodeDecodeError:
+                        pass
                 else:
                     processed_message[key] = value
                 processed_messages.append(processed_message)
