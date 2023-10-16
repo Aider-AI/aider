@@ -579,7 +579,22 @@ class Coder:
                     processed_message[key] = value
                 processed_messages.append(processed_message)
 
-        # Write the messages to the file in YAML format with control characters
+        # Process messages to replace backslash escape sequences with actual control characters
+        processed_messages = []
+        for message in messages:
+            processed_message = {}
+            for key, value in message.items():
+                if isinstance(value, str):
+                    import codecs
+                    try:
+                        processed_message[key] = codecs.decode(value, 'unicode_escape')
+                    except UnicodeDecodeError:
+                        pass
+                else:
+                    processed_message[key] = value
+                processed_messages.append(processed_message)
+
+        # Write the processed messages to the file in YAML format with control characters
         with open(context_file_path, 'w') as f:
             yaml.dump(processed_messages, f, default_flow_style=False, allow_unicode=True, width=float("inf"))
 
