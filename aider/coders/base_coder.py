@@ -570,7 +570,8 @@ class Coder:
             processed_message = {}
             for key, value in message.items():
                 if isinstance(value, str):
-                    processed_message[key] = value.encode('utf-8').decode('unicode_escape')
+                    import codecs
+                    processed_message[key] = codecs.decode(value, 'unicode_escape')
                 else:
                     processed_message[key] = value
                 processed_messages.append(processed_message)
