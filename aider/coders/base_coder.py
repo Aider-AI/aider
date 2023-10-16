@@ -582,7 +582,7 @@ class Coder:
 
         # Write the processed messages to the file in YAML format with control characters
         with open(context_file_path, 'w') as f:
-            yaml.dump(processed_messages, f, default_flow_style=False, allow_unicode=True, width=float("inf"))
+            yaml.dump(processed_messages, f, Dumper=yaml.Dumper, default_flow_style=False, allow_unicode=True, width=float("inf"))
 
         interrupted = False
         try:
