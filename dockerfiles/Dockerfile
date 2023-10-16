@@ -43,6 +43,6 @@ USER dockeruser
 WORKDIR /app
 
 # Use ENTRYPOINT to allow parameters to be passed in
-ENTRYPOINT ["/bin/bash"]
+#ENTRYPOINT ["/bin/bash"]
 #ENTRYPOINT ["/bin/bash", "/create_user.sh"]
-#ENTRYPOINT ["python3", "/src/aider/main.py"]
+ENTRYPOINT ["python3", "/src/aider/main.py"]
