@@ -580,9 +580,13 @@ class Coder:
                     processed_message[key] = value
                 processed_messages.append(processed_message)
 
-        # Write the processed messages to the file in YAML format with control characters
+        # Create a YAML instance and set the default style to '|'
+        yaml_instance = yaml.YAML()
+        yaml_instance.default_style = '|'
+
+        # Write the messages to the file in YAML format without escaping special characters
         with open(context_file_path, 'w') as f:
-            yaml.dump(processed_messages, f, Dumper=yaml.Dumper, default_flow_style=False, allow_unicode=True, width=float("inf"))
+            yaml_instance.dump(messages, f)
 
         interrupted = False
         try:
