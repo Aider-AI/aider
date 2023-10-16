@@ -573,36 +573,7 @@ class Coder:
                     import codecs
                     try:
                         processed_message[key] = codecs.decode(value, 'unicode_escape')
-                    except UnicodeDecodeError:
-                        pass
-                else:
-                    processed_message[key] = value
-                processed_messages.append(processed_message)
-
-        # Process messages to replace backslash escape sequences with actual control characters
-        processed_messages = []
-        for message in messages:
-            processed_message = {}
-            for key, value in message.items():
-                if isinstance(value, str):
-                    import codecs
-                    try:
-                        processed_message[key] = codecs.decode(value, 'unicode_escape')
-                    except UnicodeDecodeError:
-                        pass
-                else:
-                    processed_message[key] = value
-                processed_messages.append(processed_message)
-
-        # Process messages to replace backslash escape sequences with actual control characters
-        processed_messages = []
-        for message in messages:
-            processed_message = {}
-            for key, value in message.items():
-                if isinstance(value, str):
-                    import codecs
-                    try:
-                        processed_message[key] = codecs.decode(value, 'unicode_escape')
+                        print(f"processed: {processed_message[key]}")
                     except UnicodeDecodeError:
                         pass
                 else:
