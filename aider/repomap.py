@@ -306,12 +306,12 @@ class RepoMap:
         self.cache_missing = False
 
         for fname in fnames:
-            if not Path(fname).is_file():
+            rel_fname = os.path.relpath(fname, self.root)
+            if not Path(rel_fname).is_file():
                 self.io.tool_error(f"Repo-map can't include {fname}")
                 continue
 
             # dump(fname)
-            rel_fname = os.path.relpath(fname, self.root)
 
             if fname in chat_fnames:
                 personalization[rel_fname] = 1.0
