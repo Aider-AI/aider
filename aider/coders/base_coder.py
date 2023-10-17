@@ -193,7 +193,7 @@ class Coder:
 
         self.summarizer = ChatSummary(models.Model.weak_model())
         self.summarizer_thread = None
-        self.summarized_done_messages = None
+        self.summarized_done_messages = []
 
         # validate the functions jsonschema
         if self.functions:
@@ -376,7 +376,7 @@ class Coder:
         self.summarizer_thread = None
 
         self.done_messages = self.summarized_done_messages
-        self.summarized_done_messages = None
+        self.summarized_done_messages = []
 
     def move_back_cur_messages(self, message):
         self.done_messages += self.cur_messages
