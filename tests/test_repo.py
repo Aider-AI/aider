@@ -1,6 +1,5 @@
 import os
 import tempfile
-import time
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -202,9 +201,6 @@ class TestRepo(unittest.TestCase):
             fnames = git_repo.get_tracked_files()
             self.assertIn(str(fname), fnames)
             self.assertIn(str(fname2), fnames)
-
-            # github actions don't seem to update the mtime?
-            time.sleep(1)
 
             aiderignore.write_text("new.txt\n")
 
