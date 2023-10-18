@@ -388,9 +388,8 @@ class Commands:
         "Run a shell command and optionally add the output to the chat"
         combined_output = None
         try:
-            parsed_args = shlex.split(args)
             result = subprocess.run(
-                parsed_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
+                args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, shell=True
             )
             combined_output = result.stdout
         except Exception as e:
