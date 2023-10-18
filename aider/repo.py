@@ -1,8 +1,8 @@
 import os
-import pathspec
 from pathlib import Path, PurePosixPath
 
 import git
+import pathspec
 
 from aider import models, prompts, utils
 from aider.sendchat import simple_send_with_retries
@@ -196,14 +196,14 @@ class GitRepo:
             for path in files
         )
 
-        return res
+        return self.filter_ignored_files(res)
 
     def filter_ignored_files(self, fnames):
         if not self.aider_ignore_file:
             return fnames
 
-        with open(self.aider_ignore_file, 'r') as f:
-            ignore_spec = pathspec.PathSpec.from_lines('gitwildmatch', f)
+        with open(self.aider_ignore_file, "r") as f:
+            ignore_spec = pathspec.PathSpec.from_lines("gitwildmatch", f)
 
         return [fname for fname in fnames if not ignore_spec.match_file(fname)]
 

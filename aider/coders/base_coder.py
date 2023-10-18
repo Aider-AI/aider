@@ -100,6 +100,7 @@ class Coder:
         stream=True,
         use_git=True,
         voice_language=None,
+        aider_ignore_file=None,
     ):
         if not fnames:
             fnames = []
@@ -154,7 +155,7 @@ class Coder:
 
         if use_git:
             try:
-                self.repo = GitRepo(self.io, fnames, git_dname)
+                self.repo = GitRepo(self.io, fnames, git_dname, aider_ignore_file)
                 self.root = self.repo.root
             except FileNotFoundError:
                 self.repo = None

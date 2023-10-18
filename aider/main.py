@@ -305,10 +305,13 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         default=True,
         help="Enable/disable adding .aider* to .gitignore (default: True)",
     )
+    default_aiderignore_file = (
+        os.path.join(git_root, ".aiderignore") if git_root else ".aiderignore"
+    )
     git_group.add_argument(
         "--aiderignore",
         metavar="AIDERIGNORE",
-        default=".aiderignore",
+        default=default_aiderignore_file,
         help="Specify the aider ignore file (default: .aiderignore in git root)",
     )
     git_group.add_argument(
@@ -507,6 +510,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
             stream=args.stream,
             use_git=args.git,
             voice_language=args.voice_language,
+            aider_ignore_file=args.aiderignore,
         )
     except ValueError as err:
         io.tool_error(str(err))
