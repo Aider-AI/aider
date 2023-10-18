@@ -332,6 +332,12 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         default=False,
         help="Enable/disable performing a dry run without modifying files (default: False)",
     )
+    git_group.add_argument(
+        "--commit",
+        action="store_true",
+        help="Commit all pending changes with a suitable commit message",
+        default=False,
+    )
 
     ##########
     other_group = parser.add_argument_group("Other Settings")
