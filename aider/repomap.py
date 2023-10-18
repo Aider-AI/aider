@@ -30,13 +30,9 @@ def to_tree(tags):
     output = ""
 
     # add a bogus tag at the end so we trip the this_fname != cur_fname...
-    for tag in tags + [None]:
-        if tag is None:
-            this_fname = None
-        elif type(tag) is tuple:
-            this_fname = tag[0]
-        else:
-            this_fname = tag.rel_fname
+    dummy_tag = (None,)
+    for tag in tags + [dummy_tag]:
+        this_fname = tag[0]
 
         # ... here ... to output the final real entry in the list
         if this_fname != cur_fname:
