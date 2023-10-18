@@ -28,8 +28,5 @@ git config user.name "Your Name"
 
 ## Limitations
 
-- When you use the in-chat `/run` command, it will
-be running shell commands *inside the docker container*.
-So those commands won't be running in your local environment,
-which may make it tricky to `/run` tests, etc for your project.
-- The `/voice` command won't work.
+- When you use the in-chat `/run` command, it will be running shell commands *inside the docker container*. So those commands won't be running in your local environment, which may make it tricky to `/run` tests, etc for your project.
+- The `/voice` command won't work unless you can figure out how to give the docker container access to your host audio device. The container has libportaudio2 installed, so it should work if you can do that.
