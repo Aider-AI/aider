@@ -25,7 +25,11 @@ git config user.email "you@example.com"
 git config user.name "Your Name"
 ```  
 
-Be aware that when you use the in-chat `/run` command, it will
+
+## Limitations
+
+- When you use the in-chat `/run` command, it will
 be running shell commands *inside the docker container*.
 So those commands won't be running in your local environment,
 which may make it tricky to `/run` tests, etc for your project.
+- The `/voice` command won't work.
