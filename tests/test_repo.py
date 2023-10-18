@@ -204,6 +204,7 @@ class TestRepo(unittest.TestCase):
             self.assertIn(str(fname2), fnames)
 
             aiderignore.write_text("new.txt\n")
+            dump(aiderignore.read_text())
 
             # new.txt should be gone!
             fnames = git_repo.get_tracked_files()
@@ -211,6 +212,7 @@ class TestRepo(unittest.TestCase):
             self.assertIn(str(fname2), fnames)
 
             aiderignore.write_text("new2.txt\n")
+            dump(aiderignore.read_text())
 
             # new2.txt should be gone!
             fnames = git_repo.get_tracked_files()
