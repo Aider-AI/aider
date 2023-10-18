@@ -68,7 +68,6 @@ class TestRepo(unittest.TestCase):
 
             git_repo = GitRepo(InputOutput(), None, ".")
             diffs = git_repo.diff_commits(False, "HEAD~1", "HEAD")
-            dump(diffs)
             self.assertIn("two", diffs)
 
     @patch("aider.repo.simple_send_with_retries")
@@ -171,6 +170,55 @@ class TestRepo(unittest.TestCase):
             self.assertIn(str(fname), fnames)
             self.assertIn(str(fname2), fnames)
 
+    def test_get_tracked_files_with_aiderignore(self):
+        with GitTemporaryDirectory():
+            # new repo
+            raw_repo = git.Repo()
+
+            # add it, but no commits at all in the raw_repo yet
+            fname = Path("new.txt")
+            fname.touch()
+            raw_repo.git.add(str(fname))
+
+            aiderignore = Path(".aiderignore")
+            git_repo = GitRepo(InputOutput(), None, None, str(aiderignore))
+
+            # better be there
+            fnames = git_repo.get_tracked_files()
+            self.assertIn(str(fname), fnames)
+
+            # commit it, better still be there
+            raw_repo.git.commit("-m", "new")
+            fnames = git_repo.get_tracked_files()
+            self.assertIn(str(fname), fnames)
+
+            # new file, added but not committed
+            fname2 = Path("new2.txt")
+            fname2.touch()
+            raw_repo.git.add(str(fname2))
+
+            # both should be there
+            fnames = git_repo.get_tracked_files()
+            self.assertIn(str(fname), fnames)
+            self.assertIn(str(fname2), fnames)
+
+            aiderignore.write_text("new.txt\n")
+
+            # new.txt should be gone!
+            fnames = git_repo.get_tracked_files()
+            self.assertNotIn(str(fname), fnames)
+            self.assertIn(str(fname2), fnames)
+
+            # This does not work in github actions?!
+            # The mtime doesn't change, even if I time.sleep(1)
+            # Before doing this write_text()!?
+            #
+            # aiderignore.write_text("new2.txt\n")
+            # new2.txt should be gone!
+            # fnames = git_repo.get_tracked_files()
+            # self.assertIn(str(fname), fnames)
+            # self.assertNotIn(str(fname2), fnames)
+
     def test_get_tracked_files_from_subdir(self):
         with GitTemporaryDirectory():
             # new repo
@@ -194,3 +242,21 @@ class TestRepo(unittest.TestCase):
             raw_repo.git.commit("-m", "new")
             fnames = git_repo.get_tracked_files()
             self.assertIn(str(fname), fnames)
+
+    @patch("aider.repo.simple_send_with_retries")
+    def test_noop_commit(self, mock_send):
+        mock_send.return_value = '"a good commit message"'
+
+        with GitTemporaryDirectory():
+            # new repo
+            raw_repo = git.Repo()
+
+            # add it, but no commits at all in the raw_repo yet
+            fname = Path("file.txt")
+            fname.touch()
+            raw_repo.git.add(str(fname))
+            raw_repo.git.commit("-m", "new")
+
+            git_repo = GitRepo(InputOutput(), None, None)
+
+            git_repo.commit(fnames=[str(fname)])

@@ -14,7 +14,7 @@ from aider.coders import Coder
 from aider.commands import Commands
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
-from tests.utils import GitTemporaryDirectory
+from tests.utils import ChdirTemporaryDirectory, GitTemporaryDirectory, make_repo
 
 
 class TestCommands(TestCase):
@@ -69,8 +69,8 @@ class TestCommands(TestCase):
         self.assertNotIn(str(Path("test.txt").resolve()), coder.abs_fnames)
 
     def test_cmd_add_no_match(self):
-        # Initialize the Commands and InputOutput objects
-        io = InputOutput(pretty=False, yes=True)
+        # yes=False means we will *not* create the file when it is not found
+        io = InputOutput(pretty=False, yes=False)
         from aider.coders import Coder
 
         coder = Coder.create(models.GPT35, None, io)
@@ -81,6 +81,23 @@ class TestCommands(TestCase):
 
         # Check if no files have been added to the chat session
         self.assertEqual(len(coder.abs_fnames), 0)
+
+    def test_cmd_add_no_match_but_make_it(self):
+        # yes=True means we *will* create the file when it is not found
+        io = InputOutput(pretty=False, yes=True)
+        from aider.coders import Coder
+
+        coder = Coder.create(models.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        fname = Path("[abc].nonexistent")
+
+        # Call the cmd_add method with a non-existent file pattern
+        commands.cmd_add(str(fname))
+
+        # Check if no files have been added to the chat session
+        self.assertEqual(len(coder.abs_fnames), 1)
+        self.assertTrue(fname.exists())
 
     def test_cmd_add_drop_directory(self):
         # Initialize the Commands and InputOutput objects
@@ -255,6 +272,25 @@ class TestCommands(TestCase):
         self.assertNotIn(filenames[1], coder.abs_fnames)
         self.assertIn(filenames[2], coder.abs_fnames)
 
+    def test_cmd_add_from_subdir_again(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(pretty=False, yes=False)
+            from aider.coders import Coder
+
+            coder = Coder.create(models.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            Path("side_dir").mkdir()
+            os.chdir("side_dir")
+
+            # add a file that is in the side_dir
+            with open("temp.txt", "w"):
+                pass
+
+            # this was blowing up with GitCommandError, per:
+            # https://github.com/paul-gauthier/aider/issues/201
+            commands.cmd_add("temp.txt")
+
     def test_cmd_commit(self):
         with GitTemporaryDirectory():
             fname = "test.txt"
@@ -276,3 +312,93 @@ class TestCommands(TestCase):
             commit_message = "Test commit message"
             commands.cmd_commit(commit_message)
             self.assertFalse(repo.is_dirty())
+
+    def test_cmd_add_from_outside_root(self):
+        with ChdirTemporaryDirectory() as tmp_dname:
+            root = Path("root")
+            root.mkdir()
+            os.chdir(str(root))
+
+            io = InputOutput(pretty=False, yes=False)
+            from aider.coders import Coder
+
+            coder = Coder.create(models.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            outside_file = Path(tmp_dname) / "outside.txt"
+            outside_file.touch()
+
+            # This should not be allowed!
+            # https://github.com/paul-gauthier/aider/issues/178
+            commands.cmd_add("../outside.txt")
+
+            self.assertEqual(len(coder.abs_fnames), 0)
+
+    def test_cmd_add_from_outside_git(self):
+        with ChdirTemporaryDirectory() as tmp_dname:
+            root = Path("root")
+            root.mkdir()
+            os.chdir(str(root))
+
+            make_repo()
+
+            io = InputOutput(pretty=False, yes=False)
+            from aider.coders import Coder
+
+            coder = Coder.create(models.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            outside_file = Path(tmp_dname) / "outside.txt"
+            outside_file.touch()
+
+            # This should not be allowed!
+            # It was blowing up with GitCommandError, per:
+            # https://github.com/paul-gauthier/aider/issues/178
+            commands.cmd_add("../outside.txt")
+
+            self.assertEqual(len(coder.abs_fnames), 0)
+
+    def test_cmd_add_filename_with_special_chars(self):
+        with ChdirTemporaryDirectory():
+            io = InputOutput(pretty=False, yes=False)
+            from aider.coders import Coder
+
+            coder = Coder.create(models.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            fname = Path("with[brackets].txt")
+            fname.touch()
+
+            commands.cmd_add(str(fname))
+
+            self.assertIn(str(fname.resolve()), coder.abs_fnames)
+
+    def test_cmd_add_abs_filename(self):
+        with ChdirTemporaryDirectory():
+            io = InputOutput(pretty=False, yes=False)
+            from aider.coders import Coder
+
+            coder = Coder.create(models.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            fname = Path("file.txt")
+            fname.touch()
+
+            commands.cmd_add(str(fname.resolve()))
+
+            self.assertIn(str(fname.resolve()), coder.abs_fnames)
+
+    def test_cmd_add_quoted_filename(self):
+        with ChdirTemporaryDirectory():
+            io = InputOutput(pretty=False, yes=False)
+            from aider.coders import Coder
+
+            coder = Coder.create(models.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            fname = Path("file with spaces.txt")
+            fname.touch()
+
+            commands.cmd_add(f'"{fname}"')
+
+            self.assertIn(str(fname.resolve()), coder.abs_fnames)

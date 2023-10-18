@@ -83,6 +83,8 @@ class RepoMap:
 
     cache_missing = False
 
+    warned_files = set()
+
     def __init__(
         self,
         map_tokens=1024,
@@ -235,7 +237,10 @@ class RepoMap:
 
         for fname in fnames:
             if not Path(fname).is_file():
-                self.io.tool_error(f"Repo-map can't include {fname}")
+                if fname not in self.warned_files:
+                    self.io.tool_error(f"Repo-map can't include {fname}")
+
+                self.warned_files.add(fname)
                 continue
 
             # dump(fname)

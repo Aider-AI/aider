@@ -2,6 +2,7 @@ import os
 from pathlib import Path, PurePosixPath
 
 import git
+import pathspec
 
 from aider import models, prompts, utils
 from aider.sendchat import simple_send_with_retries
@@ -11,8 +12,11 @@ from .dump import dump  # noqa: F401
 
 class GitRepo:
     repo = None
+    aider_ignore_file = None
+    aider_ignore_spec = None
+    aider_ignore_ts = 0
 
-    def __init__(self, io, fnames, git_dname):
+    def __init__(self, io, fnames, git_dname, aider_ignore_file=None):
         self.io = io
 
         if git_dname:
@@ -49,14 +53,20 @@ class GitRepo:
         self.repo = git.Repo(repo_paths.pop(), odbt=git.GitDB)
         self.root = utils.safe_abs_path(self.repo.working_tree_dir)
 
+        if aider_ignore_file:
+            self.aider_ignore_file = Path(aider_ignore_file)
+
     def commit(self, fnames=None, context=None, prefix=None, message=None):
         if not fnames and not self.repo.is_dirty():
+            return
+
+        diffs = self.get_diffs(fnames)
+        if not diffs:
             return
 
         if message:
             commit_message = message
         else:
-            diffs = self.get_diffs(fnames)
             commit_message = self.get_commit_message(diffs, context)
 
         if not commit_message:
@@ -190,7 +200,22 @@ class GitRepo:
             for path in files
         )
 
-        return res
+        return self.filter_ignored_files(res)
+
+    def filter_ignored_files(self, fnames):
+        if not self.aider_ignore_file or not self.aider_ignore_file.is_file():
+            return fnames
+
+        mtime = self.aider_ignore_file.stat().st_mtime
+        if mtime != self.aider_ignore_ts:
+            self.aider_ignore_ts = mtime
+            lines = self.aider_ignore_file.read_text().splitlines()
+            self.aider_ignore_spec = pathspec.PathSpec.from_lines(
+                pathspec.patterns.GitWildMatchPattern,
+                lines,
+            )
+
+        return [fname for fname in fnames if not self.aider_ignore_spec.match_file(fname)]
 
     def path_in_repo(self, path):
         if not self.repo:

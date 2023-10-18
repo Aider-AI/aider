@@ -1,5 +1,5 @@
 import json
-import shlex
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -209,6 +209,10 @@ class Commands:
             or last_commit.hexsha[:7] != self.coder.last_aider_commit_hash
         ):
             self.io.tool_error("The last commit was not made by aider in this chat session.")
+            self.io.tool_error(
+                "You could try `/git reset --hard HEAD^` but be aware that this is a destructive"
+                " command!"
+            )
             return
         self.coder.repo.repo.git.reset("--hard", "HEAD~1")
         self.io.tool_output(
@@ -228,6 +232,7 @@ class Commands:
 
         if not self.coder.last_aider_commit_hash:
             self.io.tool_error("No previous aider commit found.")
+            self.io.tool_error("You could try `/git diff` or `/git diff HEAD^`.")
             return
 
         commits = f"{self.coder.last_aider_commit_hash}~1"
@@ -272,28 +277,36 @@ class Commands:
         git_files = self.coder.repo.get_tracked_files() if self.coder.repo else []
 
         all_matched_files = set()
-        for word in args.split():
+
+        filenames = parse_quoted_filenames(args)
+        for word in filenames:
+            if Path(word).is_absolute():
+                fname = Path(word)
+            else:
+                fname = Path(self.coder.root) / word
+
+            if fname.exists() and fname.is_file():
+                all_matched_files.add(str(fname))
+                continue
+                # an existing dir will fall through and get recursed by glob
+
             matched_files = self.glob_filtered_to_repo(word)
+            if matched_files:
+                all_matched_files.update(matched_files)
+                continue
 
-            if not matched_files:
-                if any(char in word for char in "*?[]"):
-                    self.io.tool_error(f"No files to add matching pattern: {word}")
-                else:
-                    if Path(word).exists():
-                        if Path(word).is_file():
-                            matched_files = [word]
-                        else:
-                            self.io.tool_error(f"Unable to add: {word}")
-                    elif self.io.confirm_ask(
-                        f"No files matched '{word}'. Do you want to create the file?"
-                    ):
-                        (Path(self.coder.root) / word).touch()
-                        matched_files = [word]
-
-            all_matched_files.update(matched_files)
+            if self.io.confirm_ask(f"No files matched '{word}'. Do you want to create {fname}?"):
+                fname.touch()
+                all_matched_files.add(str(fname))
 
         for matched_file in all_matched_files:
             abs_file_path = self.coder.abs_root_path(matched_file)
+
+            if not abs_file_path.startswith(self.coder.root):
+                self.io.tool_error(
+                    f"Can not add {abs_file_path}, which is not within {self.coder.root}"
+                )
+                continue
 
             if self.coder.repo and matched_file not in git_files:
                 self.coder.repo.repo.git.add(abs_file_path)
@@ -339,7 +352,8 @@ class Commands:
             self.io.tool_output("Dropping all files from the chat session.")
             self.coder.abs_fnames = set()
 
-        for word in args.split():
+        filenames = parse_quoted_filenames(args)
+        for word in filenames:
             matched_files = self.glob_filtered_to_repo(word)
 
             if not matched_files:
@@ -355,10 +369,15 @@ class Commands:
         "Run a git command"
         combined_output = None
         try:
-            parsed_args = shlex.split("git " + args)
+            args = "git " + args
             env = dict(GIT_EDITOR="true", **subprocess.os.environ)
             result = subprocess.run(
-                parsed_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, env=env
+                args,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                env=env,
+                shell=True,
             )
             combined_output = result.stdout
         except Exception as e:
@@ -373,9 +392,8 @@ class Commands:
         "Run a shell command and optionally add the output to the chat"
         combined_output = None
         try:
-            parsed_args = shlex.split(args)
             result = subprocess.run(
-                parsed_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
+                args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, shell=True
             )
             combined_output = result.stdout
         except Exception as e:
@@ -447,7 +465,9 @@ class Commands:
             try:
                 self.voice = voice.Voice()
             except voice.SoundDeviceError:
-                self.io.tool_error("Unable to import `sounddevice`, is portaudio installed?")
+                self.io.tool_error(
+                    "Unable to import `sounddevice` and/or `soundfile`, is portaudio installed?"
+                )
                 return
 
         history_iter = self.io.get_input_history()
@@ -487,3 +507,9 @@ def expand_subdir(file_path):
         for file in file_path.rglob("*"):
             if file.is_file():
                 yield str(file)
+
+
+def parse_quoted_filenames(args):
+    filenames = re.findall(r"\"(.+?)\"|(\S+)", args)
+    filenames = [name for sublist in filenames for name in sublist if name]
+    return filenames

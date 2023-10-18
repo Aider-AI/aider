@@ -55,6 +55,7 @@ class Coder:
         main_model,
         edit_format,
         io,
+        skip_model_availabily_check=False,
         **kwargs,
     ):
         from . import EditBlockCoder, WholeFileCoder
@@ -62,8 +63,8 @@ class Coder:
         if not main_model:
             main_model = models.GPT35_16k
 
-        if not main_model.always_available:
-            if not check_model_availability(main_model):
+        if not skip_model_availabily_check and not main_model.always_available:
+            if not check_model_availability(io, main_model):
                 if main_model != models.GPT4:
                     io.tool_error(
                         f"API key does not support {main_model.name}, falling back to"
@@ -99,6 +100,7 @@ class Coder:
         stream=True,
         use_git=True,
         voice_language=None,
+        aider_ignore_file=None,
     ):
         if not fnames:
             fnames = []
@@ -153,7 +155,7 @@ class Coder:
 
         if use_git:
             try:
-                self.repo = GitRepo(self.io, fnames, git_dname)
+                self.repo = GitRepo(self.io, fnames, git_dname, aider_ignore_file)
                 self.root = self.repo.root
             except FileNotFoundError:
                 self.repo = None
@@ -185,7 +187,7 @@ class Coder:
 
         self.summarizer = ChatSummary(models.Model.weak_model())
         self.summarizer_thread = None
-        self.summarized_done_messages = None
+        self.summarized_done_messages = []
 
         # validate the functions jsonschema
         if self.functions:
@@ -352,7 +354,11 @@ class Coder:
         self.summarizer_thread.start()
 
     def summarize_worker(self):
-        self.summarized_done_messages = self.summarizer.summarize(self.done_messages)
+        try:
+            self.summarized_done_messages = self.summarizer.summarize(self.done_messages)
+        except ValueError as err:
+            self.io.tool_error(err.args[0])
+
         if self.verbose:
             self.io.tool_output("Finished summarizing chat history.")
 
@@ -364,7 +370,7 @@ class Coder:
         self.summarizer_thread = None
 
         self.done_messages = self.summarized_done_messages
-        self.summarized_done_messages = None
+        self.summarized_done_messages = []
 
     def move_back_cur_messages(self, message):
         self.done_messages += self.cur_messages
@@ -595,15 +601,17 @@ class Coder:
             self.io.tool_error(show_content_err)
             raise Exception("No data found in openai response!")
 
-        prompt_tokens = completion.usage.prompt_tokens
-        completion_tokens = completion.usage.completion_tokens
+        tokens = None
+        if hasattr(completion, "usage"):
+            prompt_tokens = completion.usage.prompt_tokens
+            completion_tokens = completion.usage.completion_tokens
 
-        tokens = f"{prompt_tokens} prompt tokens, {completion_tokens} completion tokens"
-        if self.main_model.prompt_price:
-            cost = prompt_tokens * self.main_model.prompt_price / 1000
-            cost += completion_tokens * self.main_model.completion_price / 1000
-            tokens += f", ${cost:.6f} cost"
-            self.total_cost += cost
+            tokens = f"{prompt_tokens} prompt tokens, {completion_tokens} completion tokens"
+            if self.main_model.prompt_price:
+                cost = prompt_tokens * self.main_model.prompt_price / 1000
+                cost += completion_tokens * self.main_model.completion_price / 1000
+                tokens += f", ${cost:.6f} cost"
+                self.total_cost += cost
 
         show_resp = self.render_incremental_response(True)
         if self.pretty:
@@ -614,7 +622,9 @@ class Coder:
             show_resp = Text(show_resp or "<no response>")
 
         self.io.console.print(show_resp)
-        self.io.tool_output(tokens)
+
+        if tokens is not None:
+            self.io.tool_output(tokens)
 
     def show_send_output_stream(self, completion):
         live = None
@@ -895,7 +905,12 @@ class Coder:
         return True
 
 
-def check_model_availability(main_model):
+def check_model_availability(io, main_model):
     available_models = openai.Model.list()
     model_ids = [model.id for model in available_models["data"]]
-    return main_model.name in model_ids
+    if main_model.name in model_ids:
+        return True
+
+    available_models = ", ".join(model_ids)
+    io.tool_error(f"API key supports: {available_models}")
+    return False

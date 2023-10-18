@@ -3,7 +3,9 @@
 
 Speak with GPT about your code! Request new features, test cases or bug fixes using your voice and let GPT do the work of editing the files in your local git repo. As with all of aider's capabilities, you can use voice-to-code with an existing repo or to start a new project.
 
-Voice support fits quite naturally into aider's AI pair programming chat interface. Now you can fluidly switch between voice and text chat where you ask GPT to edit the code and your own editor when it makes more sense for you to drive.
+Voice support fits quite naturally into aider's AI pair programming
+chat interface. Now you can fluidly switch between voice and text chat
+when you ask GPT to edit your code.
 
 ## How to use voice-to-code
 

@@ -60,10 +60,10 @@ def setup_git(git_root, io):
     with repo.config_writer() as git_config:
         if not global_git_config.has_option("user", "name"):
             git_config.set_value("user", "name", "Your Name")
-            io.tool_error('Update git name with: git config --global user.name "Your Name"')
+            io.tool_error('Update git name with: git config user.name "Your Name"')
         if not global_git_config.has_option("user", "email"):
             git_config.set_value("user", "email", "you@example.com")
-            io.tool_error('Update git email with: git config --global user.email "you@example.com"')
+            io.tool_error('Update git email with: git config user.email "you@example.com"')
 
     io.tool_output("Git repository created in the current working directory.")
 
@@ -73,6 +73,13 @@ def setup_git(git_root, io):
 def check_gitignore(git_root, io, ask=True):
     if not git_root:
         return
+
+    try:
+        repo = git.Repo(git_root)
+        if repo.ignored(".aider"):
+            return
+    except git.exc.InvalidGitRepositoryError:
+        pass
 
     pat = ".aider*"
 
@@ -141,6 +148,12 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         metavar="MODEL",
         default=models.GPT4.name,
         help=f"Specify the model to use for the main chat (default: {models.GPT4.name})",
+    )
+    core_group.add_argument(
+        "--skip-model-availability-check",
+        metavar="SKIP_MODEL_AVAILABILITY_CHECK",
+        default=False,
+        help="Override to skip model availability check (default: False)",
     )
     core_group.add_argument(
         "-3",
@@ -287,6 +300,21 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         help="Enable/disable looking for a git repo (default: True)",
     )
     git_group.add_argument(
+        "--gitignore",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Enable/disable adding .aider* to .gitignore (default: True)",
+    )
+    default_aiderignore_file = (
+        os.path.join(git_root, ".aiderignore") if git_root else ".aiderignore"
+    )
+    git_group.add_argument(
+        "--aiderignore",
+        metavar="AIDERIGNORE",
+        default=default_aiderignore_file,
+        help="Specify the aider ignore file (default: .aiderignore in git root)",
+    )
+    git_group.add_argument(
         "--auto-commits",
         action=argparse.BooleanOptionalAction,
         default=True,
@@ -302,7 +330,13 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         "--dry-run",
         action=argparse.BooleanOptionalAction,
         default=False,
-        help="Enable/disable performing a dry run without modifying files (default: False)",
+        help="Perform a dry run without modifying files (default: False)",
+    )
+    git_group.add_argument(
+        "--commit",
+        action="store_true",
+        help="Commit all pending changes with a suitable commit message, then exit",
+        default=False,
     )
 
     ##########
@@ -423,7 +457,8 @@ def main(argv=None, input=None, output=None, force_git_root=None):
 
     if args.git:
         git_root = setup_git(git_root, io)
-        check_gitignore(git_root, io)
+        if args.gitignore:
+            check_gitignore(git_root, io)
 
     def scrub_sensitive_info(text):
         # Replace sensitive information with placeholder
@@ -465,6 +500,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
             main_model,
             args.edit_format,
             io,
+            args.skip_model_availability_check,
             ##
             fnames=fnames,
             git_dname=git_dname,
@@ -480,10 +516,15 @@ def main(argv=None, input=None, output=None, force_git_root=None):
             stream=args.stream,
             use_git=args.git,
             voice_language=args.voice_language,
+            aider_ignore_file=args.aiderignore,
         )
     except ValueError as err:
         io.tool_error(str(err))
         return 1
+
+    if args.commit:
+        coder.commands.cmd_commit("")
+        return
 
     if args.show_repo_map:
         repo_map = coder.get_repo_map()
@@ -500,6 +541,15 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         return
 
     io.tool_output("Use /help to see in-chat commands, run with --help to see cmd line args")
+
+    if git_root and Path.cwd().resolve() != Path(git_root).resolve():
+        io.tool_error(
+            "Note: in-chat filenames are always relative to the git working dir, not the current"
+            " working dir."
+        )
+
+        io.tool_error(f"Cur working dir: {Path.cwd()}")
+        io.tool_error(f"Git working dir: {git_root}")
 
     if args.message:
         io.tool_output()

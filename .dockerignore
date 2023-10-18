@@ -7,3 +7,4 @@ OLD*
 .env
 .venv
 .aider.*
+build
