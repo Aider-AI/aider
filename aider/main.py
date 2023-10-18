@@ -522,6 +522,10 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         io.tool_error(str(err))
         return 1
 
+    if args.commit:
+        coder.commands.cmd_commit("")
+        return
+
     if args.show_repo_map:
         repo_map = coder.get_repo_map()
         if repo_map:
