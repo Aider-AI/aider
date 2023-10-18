@@ -43,4 +43,6 @@ jobs:
         context: .
         file: ./docker/Dockerfile
         push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/aider:${{ github.ref_name }}
+        tags: |
+          ${{ secrets.DOCKERHUB_USERNAME }}/aider:${{ github.ref_name }}
+          ${{ secrets.DOCKERHUB_USERNAME }}/aider:latest
