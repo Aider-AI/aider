@@ -28,12 +28,17 @@ def to_tree(tags):
     cur_fname = None
     context = None
     output = ""
-    for tag in tags:
-        if type(tag) is tuple:
+
+    # add a bogus tag at the end so we trip the this_fname != cur_fname...
+    for tag in tags + [None]:
+        if tag is None:
+            this_fname = None
+        elif type(tag) is tuple:
             this_fname = tag[0]
         else:
             this_fname = tag.rel_fname
 
+        # ... here ... to output the final real entry in the list
         if this_fname != cur_fname:
             if context:
                 context.add_context()
@@ -45,7 +50,7 @@ def to_tree(tags):
             elif cur_fname:
                 output += cur_fname + "\n"
 
-            if type(tag) is not tuple:
+            if type(tag) is Tag:
                 context = TreeContext(
                     tag.rel_fname,
                     Path(tag.fname).read_text(),  # TODO: encoding
@@ -120,7 +125,7 @@ class RepoMap:
 
         num_tokens = self.token_count(files_listing)
         if self.verbose:
-            self.io.tool_output(f"ctags map: {num_tokens/1024:.1f} k-tokens")
+            self.io.tool_output(f"ast map: {num_tokens/1024:.1f} k-tokens")
 
         if chat_files:
             other = "other "
