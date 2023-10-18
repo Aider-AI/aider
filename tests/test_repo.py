@@ -1,5 +1,6 @@
 import os
 import tempfile
+import time
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -68,7 +69,6 @@ class TestRepo(unittest.TestCase):
 
             git_repo = GitRepo(InputOutput(), None, ".")
             diffs = git_repo.diff_commits(False, "HEAD~1", "HEAD")
-            dump(diffs)
             self.assertIn("two", diffs)
 
     @patch("aider.repo.simple_send_with_retries")
@@ -203,8 +203,10 @@ class TestRepo(unittest.TestCase):
             self.assertIn(str(fname), fnames)
             self.assertIn(str(fname2), fnames)
 
+            # github actions don't seem to update the mtime?
+            time.sleep(1)
+
             aiderignore.write_text("new.txt\n")
-            dump(aiderignore.read_text())
 
             # new.txt should be gone!
             fnames = git_repo.get_tracked_files()
@@ -212,7 +214,6 @@ class TestRepo(unittest.TestCase):
             self.assertIn(str(fname2), fnames)
 
             aiderignore.write_text("new2.txt\n")
-            dump(aiderignore.read_text())
 
             # new2.txt should be gone!
             fnames = git_repo.get_tracked_files()
