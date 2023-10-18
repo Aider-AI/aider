@@ -5,7 +5,7 @@ You can run aider via docker without doing any local installation, like this:
 
 ```
 docker pull paulgauthier/aider
-docker run -it --volume `pwd`:/app paulgauthier/aider --openai-api-key $OPENAI_API_KEY [...other aider args...]
+docker run -it --volume $(pwd):/app paulgauthier/aider --openai-api-key $OPENAI_API_KEY [...other aider args...]
 ```
 
 You should run the above commands from the root of your git repo,
