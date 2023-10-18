@@ -12,6 +12,9 @@ from .dump import dump  # noqa: F401
 
 class GitRepo:
     repo = None
+    aider_ignore_file = None
+    aider_ignore_spec = None
+    aider_ignore_ts = 0
 
     def __init__(self, io, fnames, git_dname, aider_ignore_file=None):
         self.io = io
@@ -50,7 +53,8 @@ class GitRepo:
         self.repo = git.Repo(repo_paths.pop(), odbt=git.GitDB)
         self.root = utils.safe_abs_path(self.repo.working_tree_dir)
 
-        self.aider_ignore_file = aider_ignore_file
+        if aider_ignore_file:
+            self.aider_ignore_file = Path(aider_ignore_file)
 
     def commit(self, fnames=None, context=None, prefix=None, message=None):
         if not fnames and not self.repo.is_dirty():
@@ -199,16 +203,20 @@ class GitRepo:
         return self.filter_ignored_files(res)
 
     def filter_ignored_files(self, fnames):
-        if not self.aider_ignore_file:
+        if not self.aider_ignore_file or not self.aider_ignore_file.is_file():
             return fnames
 
-        if not Path(self.aider_ignore_file).is_file():
-            return fnames
+        mtime = self.aider_ignore_file.stat().st_mtime
 
-        with open(self.aider_ignore_file, "r") as f:
-            ignore_spec = pathspec.PathSpec.from_lines("gitwildmatch", f)
+        if mtime > self.aider_ignore_ts:
+            self.aider_ignore_ts = mtime
+            lines = self.aider_ignore_file.read_text().splitlines()
+            self.aider_ignore_spec = pathspec.PathSpec.from_lines(
+                pathspec.patterns.GitWildMatchPattern,
+                lines,
+            )
 
-        return [fname for fname in fnames if not ignore_spec.match_file(fname)]
+        return [fname for fname in fnames if not self.aider_ignore_spec.match_file(fname)]
 
     def path_in_repo(self, path):
         if not self.repo:

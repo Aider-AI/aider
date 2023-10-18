@@ -209,6 +209,13 @@ class TestRepo(unittest.TestCase):
             self.assertNotIn(str(fname), fnames)
             self.assertIn(str(fname2), fnames)
 
+            Path(".aiderignore").write_text("new2.txt\n")
+
+            # new2.txt should be gone!
+            fnames = git_repo.get_tracked_files()
+            self.assertIn(str(fname), fnames)
+            self.assertNotIn(str(fname2), fnames)
+
     def test_get_tracked_files_from_subdir(self):
         with GitTemporaryDirectory():
             # new repo
