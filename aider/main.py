@@ -335,7 +335,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     git_group.add_argument(
         "--commit",
         action="store_true",
-        help="Commit all pending changes with a suitable commit message",
+        help="Commit all pending changes with a suitable commit message, then exit",
         default=False,
     )
 
