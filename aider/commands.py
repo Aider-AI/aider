@@ -210,6 +210,10 @@ class Commands:
             or last_commit.hexsha[:7] != self.coder.last_aider_commit_hash
         ):
             self.io.tool_error("The last commit was not made by aider in this chat session.")
+            self.io.tool_error(
+                "You could try `/git reset --hard HEAD^` but be aware that this is a destructive"
+                " command!"
+            )
             return
         self.coder.repo.repo.git.reset("--hard", "HEAD~1")
         self.io.tool_output(
@@ -229,6 +233,7 @@ class Commands:
 
         if not self.coder.last_aider_commit_hash:
             self.io.tool_error("No previous aider commit found.")
+            self.io.tool_error("You could try `/git diff` or `/git diff HEAD^`.")
             return
 
         commits = f"{self.coder.last_aider_commit_hash}~1"
