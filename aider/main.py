@@ -60,10 +60,10 @@ def setup_git(git_root, io):
     with repo.config_writer() as git_config:
         if not global_git_config.has_option("user", "name"):
             git_config.set_value("user", "name", "Your Name")
-            io.tool_error('Update git name with: git config --global user.name "Your Name"')
+            io.tool_error('Update git name with: git config user.name "Your Name"')
         if not global_git_config.has_option("user", "email"):
             git_config.set_value("user", "email", "you@example.com")
-            io.tool_error('Update git email with: git config --global user.email "you@example.com"')
+            io.tool_error('Update git email with: git config user.email "you@example.com"')
 
     io.tool_output("Git repository created in the current working directory.")
 
