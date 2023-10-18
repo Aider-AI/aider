@@ -1,5 +1,11 @@
 # Release history
 
+### v0.14.2
+
+- Easily [run aider from a docker image](https://aider.chat/docker/)
+- Fixed bug with chat history summarization.
+- Fixed bug if `soundfile` package not available.
+
 ### v0.14.1
 
 - /add and /drop handle absolute filenames and quoted filenames
