@@ -206,7 +206,7 @@ class GitRepo:
         if not self.aider_ignore_file or not self.aider_ignore_file.is_file():
             return fnames
 
-        mtime = self.aider_ignore_file.stat().st_mtime
+        mtime = self.aider_ignore_file.stat().st_mtime_ns
 
         if mtime != self.aider_ignore_ts:
             self.aider_ignore_ts = mtime
