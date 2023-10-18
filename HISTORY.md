@@ -2,7 +2,7 @@
 
 ### v0.14.2
 
-- Easily [run aider from a docker image](https://aider.chat/docker/)
+- Easily [run aider from a docker image](https://aider.chat/docs/docker.html)
 - Fixed bug with chat history summarization.
 - Fixed bug if `soundfile` package not available.
 
