@@ -1,5 +1,5 @@
 
-# Running aider with docker (experimental)
+# Run aider with docker (experimental)
 
 You can run aider via docker without doing any local installation, like this:
 
