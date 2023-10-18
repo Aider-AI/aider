@@ -306,6 +306,12 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         help="Enable/disable adding .aider* to .gitignore (default: True)",
     )
     git_group.add_argument(
+        "--aiderignore",
+        metavar="AIDERIGNORE",
+        default=".aiderignore",
+        help="Specify the aider ignore file (default: .aiderignore in git root)",
+    )
+    git_group.add_argument(
         "--auto-commits",
         action=argparse.BooleanOptionalAction,
         default=True,
