@@ -1,4 +1,5 @@
 import os
+import pathspec
 from pathlib import Path, PurePosixPath
 
 import git
@@ -199,9 +200,12 @@ class GitRepo:
 
     def filter_ignored_files(self, fnames):
         if not self.aider_ignore_file:
-            return
+            return fnames
 
-        # todo: use pathspec to filter fnames according to the gitignore type specs in self.aider_ignore_file
+        with open(self.aider_ignore_file, 'r') as f:
+            ignore_spec = pathspec.PathSpec.from_lines('gitwildmatch', f)
+
+        return [fname for fname in fnames if not ignore_spec.match_file(fname)]
 
     def path_in_repo(self, path):
         if not self.repo:
