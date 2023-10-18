@@ -341,7 +341,6 @@ class RepoMap:
             middle = (lower_bound + upper_bound) // 2
             tree = to_tree(ranked_tags[:middle])
             num_tokens = self.token_count(tree)
-            # dump(middle, num_tokens)
 
             if num_tokens < self.max_map_tokens:
                 best_tree = tree
