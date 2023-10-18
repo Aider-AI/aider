@@ -207,7 +207,6 @@ class GitRepo:
             return fnames
 
         mtime = self.aider_ignore_file.stat().st_mtime
-        dump(mtime)
         if mtime != self.aider_ignore_ts:
             self.aider_ignore_ts = mtime
             lines = self.aider_ignore_file.read_text().splitlines()

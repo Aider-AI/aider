@@ -1,6 +1,5 @@
 import json
 import re
-import shlex
 import subprocess
 import sys
 from pathlib import Path
@@ -370,10 +369,15 @@ class Commands:
         "Run a git command"
         combined_output = None
         try:
-            parsed_args = shlex.split("git " + args)
+            args = "git " + args
             env = dict(GIT_EDITOR="true", **subprocess.os.environ)
             result = subprocess.run(
-                parsed_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, env=env
+                args,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                env=env,
+                shell=True,
             )
             combined_output = result.stdout
         except Exception as e:
