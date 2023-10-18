@@ -330,7 +330,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         "--dry-run",
         action=argparse.BooleanOptionalAction,
         default=False,
-        help="Enable/disable performing a dry run without modifying files (default: False)",
+        help="Perform a dry run without modifying files (default: False)",
     )
     git_group.add_argument(
         "--commit",
