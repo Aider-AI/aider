@@ -178,7 +178,7 @@ class Coder:
             )
 
         if map_tokens > 0:
-            self.io.tool_output(f"Repo-map: universal-ctags using {map_tokens} tokens")
+            self.io.tool_output(f"Repo-map: using {map_tokens} tokens")
         else:
             self.io.tool_output("Repo-map: disabled because map_tokens == 0")
 

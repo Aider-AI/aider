@@ -8,12 +8,11 @@ from pathlib import Path
 import networkx as nx
 import pkg_resources
 from diskcache import Cache
-from grep_ast import TreeContext
+from grep_ast import TreeContext, filename_to_lang
 from tqdm import tqdm
 from tree_sitter_languages import get_language, get_parser
 
 from aider import models
-from aider.parsers import filename_to_lang
 
 from .dump import dump  # noqa: F402
 
@@ -183,8 +182,6 @@ class RepoMap:
         scm_fname = pkg_resources.resource_filename(
             __name__, os.path.join("queries", f"tree-sitter-{lang}-tags.scm")
         )
-        dump(fname)
-        dump(scm_fname)
         query_scm = Path(scm_fname)
         if not query_scm.exists():
             return
@@ -198,10 +195,8 @@ class RepoMap:
         captures = query.captures(tree.root_node)
 
         captures = list(captures)
-        dump(captures)
 
         for node, tag in captures:
-            dump(node, tag)
             if tag.startswith("name.definition."):
                 kind = "def"
             elif tag.startswith("name.reference."):
