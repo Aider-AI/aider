@@ -12,7 +12,7 @@ from .dump import dump  # noqa: F401
 class GitRepo:
     repo = None
 
-    def __init__(self, io, fnames, git_dname):
+    def __init__(self, io, fnames, git_dname, aider_ignore_file=None):
         self.io = io
 
         if git_dname:
@@ -48,6 +48,8 @@ class GitRepo:
         # https://github.com/gitpython-developers/GitPython/issues/427
         self.repo = git.Repo(repo_paths.pop(), odbt=git.GitDB)
         self.root = utils.safe_abs_path(self.repo.working_tree_dir)
+
+        self.aider_ignore_file = aider_ignore_file
 
     def commit(self, fnames=None, context=None, prefix=None, message=None):
         if not fnames and not self.repo.is_dirty():
@@ -194,6 +196,12 @@ class GitRepo:
         )
 
         return res
+
+    def filter_ignored_files(self, fnames):
+        if not self.aider_ignore_file:
+            return
+
+        # todo: use pathspec to filter fnames according to the gitignore type specs in self.aider_ignore_file
 
     def path_in_repo(self, path):
         if not self.repo:
