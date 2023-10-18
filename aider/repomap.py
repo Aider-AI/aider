@@ -71,16 +71,6 @@ def to_tree(tags):
     return output
 
 
-def fname_to_components(fname, with_colon):
-    path_components = fname.split(os.sep)
-    res = [pc + os.sep for pc in path_components[:-1]]
-    if with_colon:
-        res.append(path_components[-1] + ":")
-    else:
-        res.append(path_components[-1])
-    return res
-
-
 class RepoMap:
     CACHE_VERSION = 2
     TAGS_CACHE_DIR = f".aider.tags.cache.v{CACHE_VERSION}"
@@ -140,15 +130,6 @@ class RepoMap:
         repo_content += files_listing
 
         return repo_content
-
-    def get_simple_files_map(self, other_files):
-        fnames = []
-        for fname in other_files:
-            fname = self.get_rel_fname(fname)
-            fname = fname_to_components(fname, False)
-            fnames.append(fname)
-
-        return to_tree(fnames)
 
     def token_count(self, string):
         return len(self.tokenizer.encode(string))
