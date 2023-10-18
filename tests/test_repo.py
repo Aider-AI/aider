@@ -181,7 +181,8 @@ class TestRepo(unittest.TestCase):
             fname.touch()
             raw_repo.git.add(str(fname))
 
-            git_repo = GitRepo(InputOutput(), None, None, ".aiderignore")
+            aiderignore = Path(".aiderignore")
+            git_repo = GitRepo(InputOutput(), None, None, str(aiderignore))
 
             # better be there
             fnames = git_repo.get_tracked_files()
@@ -202,14 +203,14 @@ class TestRepo(unittest.TestCase):
             self.assertIn(str(fname), fnames)
             self.assertIn(str(fname2), fnames)
 
-            Path(".aiderignore").write_text("new.txt\n")
+            aiderignore.write_text("new.txt\n")
 
             # new.txt should be gone!
             fnames = git_repo.get_tracked_files()
             self.assertNotIn(str(fname), fnames)
             self.assertIn(str(fname2), fnames)
 
-            Path(".aiderignore").write_text("new2.txt\n")
+            aiderignore.write_text("new2.txt\n")
 
             # new2.txt should be gone!
             fnames = git_repo.get_tracked_files()
