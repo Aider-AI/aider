@@ -171,6 +171,44 @@ class TestRepo(unittest.TestCase):
             self.assertIn(str(fname), fnames)
             self.assertIn(str(fname2), fnames)
 
+    def test_get_tracked_files_with_aiderignore(self):
+        with GitTemporaryDirectory():
+            # new repo
+            raw_repo = git.Repo()
+
+            # add it, but no commits at all in the raw_repo yet
+            fname = Path("new.txt")
+            fname.touch()
+            raw_repo.git.add(str(fname))
+
+            git_repo = GitRepo(InputOutput(), None, None, ".aiderignore")
+
+            # better be there
+            fnames = git_repo.get_tracked_files()
+            self.assertIn(str(fname), fnames)
+
+            # commit it, better still be there
+            raw_repo.git.commit("-m", "new")
+            fnames = git_repo.get_tracked_files()
+            self.assertIn(str(fname), fnames)
+
+            # new file, added but not committed
+            fname2 = Path("new2.txt")
+            fname2.touch()
+            raw_repo.git.add(str(fname2))
+
+            # both should be there
+            fnames = git_repo.get_tracked_files()
+            self.assertIn(str(fname), fnames)
+            self.assertIn(str(fname2), fnames)
+
+            Path(".aiderignore").write_text("new.txt\n")
+
+            # new.txt should be gone!
+            fnames = git_repo.get_tracked_files()
+            self.assertNotIn(str(fname), fnames)
+            self.assertIn(str(fname2), fnames)
+
     def test_get_tracked_files_from_subdir(self):
         with GitTemporaryDirectory():
             # new repo

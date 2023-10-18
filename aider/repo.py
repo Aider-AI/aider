@@ -202,6 +202,9 @@ class GitRepo:
         if not self.aider_ignore_file:
             return fnames
 
+        if not Path(self.aider_ignore_file).is_file():
+            return fnames
+
         with open(self.aider_ignore_file, "r") as f:
             ignore_spec = pathspec.PathSpec.from_lines("gitwildmatch", f)
 
