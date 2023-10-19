@@ -156,6 +156,25 @@ class RepoMap:
             self.io.tool_error(f"File not found error: {fname}")
 
     def get_tags(self, fname, rel_fname):
+        # Check if the file is in the cache and if the modification time has not changed
+        file_mtime = self.get_mtime(fname)
+        if file_mtime is None:
+            return []
+
+        cache_key = fname
+        if cache_key in self.TAGS_CACHE and self.TAGS_CACHE[cache_key]["mtime"] == file_mtime:
+            return self.TAGS_CACHE[cache_key]["data"]
+
+        # miss!
+
+        data = list(self.get_tags_raw(fname, rel_fname))
+
+        # Update the cache
+        self.TAGS_CACHE[cache_key] = {"mtime": file_mtime, "data": data}
+        self.save_tags_cache()
+        return data
+
+    def get_tags_raw(self, fname, rel_fname):
         lang = filename_to_lang(fname)
         if not lang:
             return
