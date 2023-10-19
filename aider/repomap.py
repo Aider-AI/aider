@@ -16,7 +16,7 @@ from aider import models
 
 from .dump import dump  # noqa: F402
 
-Tag = namedtuple("Tag", "fname rel_fname line name kind".split())
+Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
 
 
 def to_tree(tags):
@@ -32,10 +32,7 @@ def to_tree(tags):
     # add a bogus tag at the end so we trip the this_fname != cur_fname...
     dummy_tag = (None,)
     for tag in tags + [dummy_tag]:
-        if type(tag) is Tag:
-            this_fname = tag.rel_fname
-        else:
-            this_fname = tag[0]
+        this_fname = tag[0]
 
         # ... here ... to output the final real entry in the list
         if this_fname != cur_fname:
@@ -46,7 +43,7 @@ def to_tree(tags):
                 output += context.format()
                 context = None
             elif cur_fname:
-                output += cur_fname + "\n"
+                output += "\n" + cur_fname + "\n"
 
             if type(tag) is Tag:
                 context = TreeContext(
@@ -190,8 +187,8 @@ class RepoMap:
                 continue
 
             result = Tag(
-                fname=fname,
                 rel_fname=rel_fname,
+                fname=fname,
                 name=node.text.decode("utf-8"),
                 kind=kind,
                 line=node.start_point[0],
