@@ -4,9 +4,9 @@
 ![robot flowchat](../assets/robot-ast.png)
 
 GPT-4 is extremely useful for "self-contained" coding tasks,
-like generating brand new code or modifying a pure function
-that has no dependencies. Tools like GitHub CoPilot serve this
-task well, by "autocompleting" a stand alone function.
+like generating or modifying a simple function
+that has no dependencies. Tools like GitHub CoPilot serve
+these simple coding tasks well.
 
 But it's difficult to use GPT-4 to work within
 a large, complex pre-existing codebase.
@@ -118,8 +118,7 @@ Mapping out the repo like this provides some key benefits:
   - If it needs to see more code, GPT can use the map to figure out by itself which files it needs to look at. GPT will then ask to see these specific files, and `aider` will automatically add them to the chat context (with user approval).
 
 Of course, for large repositories even just the repo map might be too large
-for the context window.
-Aider solves this problem by analyzing the full repo map using
+for the context window. Aider solves this problem by analyzing the full repo map using
 a graph ranking algorithm.
 By examining which files reference classes and functions in other files,
 aider can determine the most important portions of the repo map.
@@ -128,6 +127,13 @@ selecting the most important parts of the codebase
 which will
 fit into the token budget assigned by the user
 (via the `--map-tokens` switch, which defaults to 1k tokens).
+
+In the sample map above, we're not seeing *every* class, method and function in both files.
+The map only includes the most important identifiers,
+the ones which are most often referenced by other portions of the code.
+These are the key piece of context that GPT needs to know to understand
+the overall codebase.
+
 
 
 ## Using tree-sitter to make the map
@@ -142,7 +148,7 @@ python module,
 which provides simple, pip-installable binary wheels for
 [most popular programming languages](https://github.com/paul-gauthier/grep-ast/blob/main/grep_ast/parsers.py).
 
-Tree-sitter parses source code into an Abstract Syntax Tree,
+Tree-sitter parses source code into an Abstract Syntax Tree (AST),
 which structures the plain text in the source file into a tree, based
 on the syntax of the programming language.
 Using the AST, we can identify where functions, classes, variables, types and
@@ -154,6 +160,16 @@ determine which are the most important identifiers in the repository,
 and to produce the repo map that shows just those key
 lines from the codebase.
 
+## What about ctags?
+
+The tree-sitter repository map replaces the ctags based map that aider originally used.
+Switching from ctags to tree-sitter provides a bunch of benefits:
+
+- The map is richer, showing full function call signatures and other details straight from the source files.
+- Thanks to `py-tree-sitter-languages`, we get full support for many programming languages by automatically installing a python package as part of the normal `pip install aider-chat`.
+- We remove the requirement for users to manually install `universal-ctags` via some extenal tool or package manager (brew, apt, choco, etc).
+- Tree-sitter integration is a key enabler for future work and capabilities for aider.
+
 ## Future work
 
 You'll recall that we identified two key challenges when trying to use GPT
@@ -162,9 +178,9 @@ to code within a large, pre-existing codebase:
 1. Identifying which parts of the codebase need to be modified to complete the task.
 2. Understanding the dependencies and APIs which interconnect the codebase, so that the modifications can make use of existing abstractions, tools, libraries, submodules, etc.
 
-The repo-map is a solution to the second problem.
-One key reason for adopting tree-sitter to build the repo-map is
-to lay the foundation for future work to solve the first problem.
+We're now using tree-sitter to help solve the second problem,
+but it's an important foundation
+for future work to solve the first problem too.
 
 Right now, aider relies on the user to specify which source files
 will need to be modified to complete their request.
@@ -184,7 +200,7 @@ just install [aider](https://aider.chat/docs/install.html).
 ## Credits
 
 Aider uses
-[modified versions of the `tags.scm` files](https://github.com/paul-gauthier/aider/tree/main/aider/queries)
+[modified versions of the tags.scm files](https://github.com/paul-gauthier/aider/tree/main/aider/queries)
 from these
 open source tree-sitter language implementations:
 
