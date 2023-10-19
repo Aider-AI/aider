@@ -246,8 +246,11 @@ class RepoMap:
                     references[tag.name].append(rel_fname)
 
         ##
-        # dump(definitions)
+        # dump(defines)
         # dump(references)
+
+        if not references:
+            references = dict((k, list(v)) for k, v in defines.items())
 
         idents = set(defines.keys()).intersection(set(references.keys()))
 
@@ -257,9 +260,12 @@ class RepoMap:
             definers = defines[ident]
             for referencer, num_refs in Counter(references[ident]).items():
                 for definer in definers:
-                    if referencer == definer:
-                        continue
+                    # if referencer == definer:
+                    #    continue
                     G.add_edge(referencer, definer, weight=num_refs, ident=ident)
+
+        if not references:
+            pass
 
         if personalization:
             pers_args = dict(personalization=personalization, dangling=personalization)
@@ -284,6 +290,9 @@ class RepoMap:
 
         ranked_tags = []
         ranked_definitions = sorted(ranked_definitions.items(), reverse=True, key=lambda x: x[1])
+
+        # dump(ranked_definitions)
+
         for (fname, ident), rank in ranked_definitions:
             # print(f"{rank:.03f} {fname} {ident}")
             if fname in chat_rel_fnames:
