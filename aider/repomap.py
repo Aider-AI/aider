@@ -22,54 +22,6 @@ from .dump import dump  # noqa: F402
 Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
 
 
-def to_tree(tags):
-    if not tags:
-        return ""
-
-    tags = sorted(tags)
-
-    cur_fname = None
-    context = None
-    output = ""
-
-    # add a bogus tag at the end so we trip the this_fname != cur_fname...
-    dummy_tag = (None,)
-    for tag in tags + [dummy_tag]:
-        this_fname = tag[0]
-
-        # ... here ... to output the final real entry in the list
-        if this_fname != cur_fname:
-            if context:
-                context.add_context()
-                output += "\n"
-                output += cur_fname + ":\n"
-                output += context.format()
-                context = None
-            elif cur_fname:
-                output += "\n" + cur_fname + "\n"
-
-            if type(tag) is Tag:
-                context = TreeContext(
-                    tag.rel_fname,
-                    Path(tag.fname).read_text(),  # TODO: encoding
-                    color=False,
-                    line_number=False,
-                    child_context=False,
-                    last_line=False,
-                    margin=0,
-                    mark_lois=False,
-                    loi_pad=0,
-                    header_max=3,
-                    show_top_of_file_parent_scope=False,
-                )
-            cur_fname = this_fname
-
-        if context:
-            context.add_lines_of_interest([tag.line])
-
-    return output
-
-
 class RepoMap:
     CACHE_VERSION = 3
     TAGS_CACHE_DIR = f".aider.tags.cache.v{CACHE_VERSION}"
@@ -191,7 +143,7 @@ class RepoMap:
             return
         query_scm = query_scm.read_text()
 
-        code = Path(fname).read_text()  # TODO: encoding
+        code = Path(fname).read_text(encoding=self.io.encoding)
         tree = parser.parse(bytes(code, "utf-8"))
 
         # Run the tags queries
@@ -381,7 +333,7 @@ class RepoMap:
 
         while lower_bound <= upper_bound:
             middle = (lower_bound + upper_bound) // 2
-            tree = to_tree(ranked_tags[:middle])
+            tree = self.to_tree(ranked_tags[:middle])
             num_tokens = self.token_count(tree)
 
             if num_tokens < self.max_map_tokens:
@@ -391,6 +343,53 @@ class RepoMap:
                 upper_bound = middle - 1
 
         return best_tree
+
+    def to_tree(self, tags):
+        if not tags:
+            return ""
+
+        tags = sorted(tags)
+
+        cur_fname = None
+        context = None
+        output = ""
+
+        # add a bogus tag at the end so we trip the this_fname != cur_fname...
+        dummy_tag = (None,)
+        for tag in tags + [dummy_tag]:
+            this_fname = tag[0]
+
+            # ... here ... to output the final real entry in the list
+            if this_fname != cur_fname:
+                if context:
+                    context.add_context()
+                    output += "\n"
+                    output += cur_fname + ":\n"
+                    output += context.format()
+                    context = None
+                elif cur_fname:
+                    output += "\n" + cur_fname + "\n"
+
+                if type(tag) is Tag:
+                    context = TreeContext(
+                        tag.rel_fname,
+                        Path(tag.fname).read_text(self.io.encoding),
+                        color=False,
+                        line_number=False,
+                        child_context=False,
+                        last_line=False,
+                        margin=0,
+                        mark_lois=False,
+                        loi_pad=0,
+                        header_max=3,
+                        show_top_of_file_parent_scope=False,
+                    )
+                cur_fname = this_fname
+
+            if context:
+                context.add_lines_of_interest([tag.line])
+
+        return output
 
 
 def find_src_files(directory):
