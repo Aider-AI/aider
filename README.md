@@ -8,7 +8,7 @@ GPT to edit the code and your own editor to make changes yourself.
 Aider makes sure edits from you and GPT are
 [committed to git](https://aider.chat/docs/faq.html#how-does-aider-use-git)
 with sensible commit messages.
-Aider is unique in that it [works well with pre-existing, larger codebases](https://aider.chat/docs/ctags.html).
+Aider is unique in that it [works well with pre-existing, larger codebases](https://aider.chat/docs/repomap.html).
 
 <p align="center">
   <img src="assets/screencast.svg" alt="aider screencast">
@@ -61,7 +61,7 @@ Here are some example transcripts that show how you can chat with `aider` to wri
 * [**Complex Multi-file Change with Debugging**](https://aider.chat/examples/complex-change.html): GPT makes a complex code change that is coordinated across multiple source files, and resolves bugs by reviewing error output and doc snippets.
 
 * [**Create a Black Box Test Case**](https://aider.chat/examples/add-test.html): GPT creates a "black box" test case without access to the source of the method being tested, using only a
-[high level map of the repository based on ctags](https://aider.chat/docs/ctags.html).
+[high level map of the repository based on tree-sitter](https://aider.chat/docs/repomap.html).
 
 You can find more chat transcripts on the [examples page](https://aider.chat/examples/).
 
@@ -73,7 +73,7 @@ You can find more chat transcripts on the [examples page](https://aider.chat/exa
 * Aider will apply the edits suggested by GPT directly to your source files.
 * Aider will [automatically commit each changeset to your local git repo](https://aider.chat/docs/faq.html#how-does-aider-use-git) with a descriptive commit message. These frequent, automatic commits provide a safety net. It's easy to undo changes or use standard git workflows to manage longer sequences of changes.
 * You can use aider with multiple source files at once, so GPT can make coordinated code changes across all of them in a single changeset/commit.
-* Aider can [give *GPT-4* a map of your entire git repo](https://aider.chat/docs/ctags.html), which helps it understand and modify large codebases.
+* Aider can [give *GPT-4* a map of your entire git repo](https://aider.chat/docs/repomap.html), which helps it understand and modify large codebases.
 * You can also edit files by hand using your editor while chatting with aider. Aider will notice these out-of-band edits and keep GPT up to date with the latest versions of your files. This lets you bounce back and forth between the aider chat and your editor, to collaboratively code with GPT.
 
 
@@ -134,7 +134,7 @@ Aider has some ability to help GPT figure out which files to edit all by itself,
 * Use Meta-ENTER (Esc+ENTER in some environments) to enter multiline chat messages. Or enter `{` alone on the first line to start a multiline message and `}` alone on the last line to end it.
 * If your code is throwing an error, share the error output with GPT using `/run` or by pasting it into the chat. Let GPT figure out and fix the bug.
 * GPT knows about a lot of standard tools and libraries, but may get some of the fine details wrong about APIs and function arguments. You can paste doc snippets into the chat to resolve these issues.
-* GPT can only see the content of the files you specifically "add to the chat". Aider also sends GPT-4 a [map of your entire git repo](https://aider.chat/docs/ctags.html). So GPT may ask to see additional files if it feels that's needed for your requests.
+* GPT can only see the content of the files you specifically "add to the chat". Aider also sends GPT-4 a [map of your entire git repo](https://aider.chat/docs/repomap.html). So GPT may ask to see additional files if it feels that's needed for your requests.
 * I also shared some general [GPT coding tips on Hacker News](https://news.ycombinator.com/item?id=36211879).
 
 
