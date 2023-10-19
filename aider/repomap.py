@@ -9,6 +9,9 @@ import networkx as nx
 import pkg_resources
 from diskcache import Cache
 from grep_ast import TreeContext, filename_to_lang
+from pygments.lexers import guess_lexer_for_filename
+from pygments.token import Token
+from pygments.util import ClassNotFound
 from tqdm import tqdm
 from tree_sitter_languages import get_language, get_parser
 
@@ -232,7 +235,7 @@ class RepoMap:
                 personalization[rel_fname] = 1.0
                 chat_rel_fnames.add(rel_fname)
 
-            tags = self.get_tags(fname, rel_fname)
+            tags = list(self.get_tags(fname, rel_fname))
             if tags is None:
                 continue
 
@@ -244,6 +247,21 @@ class RepoMap:
 
                 if tag.kind == "ref":
                     references[tag.name].append(rel_fname)
+
+            tag_kinds = set(tag.kind for tag in tags)
+            if "def" in tag_kinds and "ref" not in tag_kinds:
+                content = Path(fname).read_text()  # TODO: encoding
+                try:
+                    lexer = guess_lexer_for_filename(fname, content)
+                except ClassNotFound:
+                    lexer = None
+
+                if lexer:
+                    tokens = list(lexer.get_tokens(content))
+                    tokens = [token[1] for token in tokens if token[0] in Token.Name]
+
+                    for token in tokens:
+                        references[token].append(rel_fname)
 
         ##
         # dump(defines)
