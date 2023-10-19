@@ -215,7 +215,12 @@ class RepoMap:
         for fname in fnames:
             if not Path(fname).is_file():
                 if fname not in self.warned_files:
-                    self.io.tool_error(f"Repo-map can't include {fname}")
+                    if Path(fname).exists():
+                        self.io.tool_error(
+                            f"Repo-map can't include {fname}, it is not a normal file"
+                        )
+                    else:
+                        self.io.tool_error(f"Repo-map can't include {fname}, it no longer exists")
 
                 self.warned_files.add(fname)
                 continue
