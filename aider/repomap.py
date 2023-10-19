@@ -71,7 +71,7 @@ def to_tree(tags):
 
 
 class RepoMap:
-    CACHE_VERSION = 2
+    CACHE_VERSION = 3
     TAGS_CACHE_DIR = f".aider.tags.cache.v{CACHE_VERSION}"
 
     cache_missing = False
@@ -181,6 +181,7 @@ class RepoMap:
 
         captures = list(captures)
 
+        saw = set()
         for node, tag in captures:
             if tag.startswith("name.definition."):
                 kind = "def"
@@ -188,6 +189,8 @@ class RepoMap:
                 kind = "ref"
             else:
                 continue
+
+            saw.add(kind)
 
             result = Tag(
                 rel_fname=rel_fname,
@@ -198,6 +201,32 @@ class RepoMap:
             )
 
             yield result
+
+        if "ref" in saw:
+            return
+        if "def" not in saw:
+            return
+
+        # We saw defs, without any refs
+        # Some tags files only provide defs (cpp, for example)
+        # Use pygments to backfill refs
+
+        try:
+            lexer = guess_lexer_for_filename(fname, code)
+        except ClassNotFound:
+            return
+
+        tokens = list(lexer.get_tokens(code))
+        tokens = [token[1] for token in tokens if token[0] in Token.Name]
+
+        for token in tokens:
+            yield Tag(
+                rel_fname=rel_fname,
+                fname=fname,
+                name=token,
+                kind="ref",
+                line=-1,
+            )
 
     def get_ranked_tags(self, chat_fnames, other_fnames):
         defines = defaultdict(set)
@@ -247,21 +276,6 @@ class RepoMap:
 
                 if tag.kind == "ref":
                     references[tag.name].append(rel_fname)
-
-            tag_kinds = set(tag.kind for tag in tags)
-            if "def" in tag_kinds and "ref" not in tag_kinds:
-                content = Path(fname).read_text()  # TODO: encoding
-                try:
-                    lexer = guess_lexer_for_filename(fname, content)
-                except ClassNotFound:
-                    lexer = None
-
-                if lexer:
-                    tokens = list(lexer.get_tokens(content))
-                    tokens = [token[1] for token in tokens if token[0] in Token.Name]
-
-                    for token in tokens:
-                        references[token].append(rel_fname)
 
         ##
         # dump(defines)
