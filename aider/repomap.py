@@ -1,78 +1,30 @@
 import colorsys
-import json
 import os
 import random
-import subprocess
 import sys
-import tempfile
-from collections import Counter, defaultdict
+from collections import Counter, defaultdict, namedtuple
 from pathlib import Path
 
 import networkx as nx
+import pkg_resources
 from diskcache import Cache
+from grep_ast import TreeContext, filename_to_lang
 from pygments.lexers import guess_lexer_for_filename
 from pygments.token import Token
 from pygments.util import ClassNotFound
 from tqdm import tqdm
+from tree_sitter_languages import get_language, get_parser
 
 from aider import models
 
 from .dump import dump  # noqa: F402
 
-
-def to_tree(tags):
-    if not tags:
-        return ""
-
-    tags = sorted(tags)
-
-    output = ""
-    last = [None] * len(tags[0])
-    tab = "\t"
-    for tag in tags:
-        tag = list(tag)
-
-        for i in range(len(last) + 1):
-            if i == len(last):
-                break
-            if last[i] != tag[i]:
-                break
-
-        num_common = i
-
-        indent = tab * num_common
-        rest = tag[num_common:]
-        for item in rest:
-            output += indent + item + "\n"
-            indent += tab
-        last = tag
-
-    return output
-
-
-def fname_to_components(fname, with_colon):
-    path_components = fname.split(os.sep)
-    res = [pc + os.sep for pc in path_components[:-1]]
-    if with_colon:
-        res.append(path_components[-1] + ":")
-    else:
-        res.append(path_components[-1])
-    return res
+Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
 
 
 class RepoMap:
-    CACHE_VERSION = 1
-    ctags_cmd = [
-        "ctags",
-        "--fields=+S",
-        "--extras=-F",
-        "--output-format=json",
-        "--output-encoding=utf-8",
-    ]
-    IDENT_CACHE_DIR = f".aider.ident.cache.v{CACHE_VERSION}"
+    CACHE_VERSION = 3
     TAGS_CACHE_DIR = f".aider.tags.cache.v{CACHE_VERSION}"
-
-    ctags_disabled_reason = "ctags not initialized"
 
     cache_missing = False
 
@@ -94,26 +46,27 @@ class RepoMap:
             root = os.getcwd()
         self.root = root
 
-        self.load_ident_cache()
         self.load_tags_cache()
 
         self.max_map_tokens = map_tokens
-        self.has_ctags = self.check_for_ctags()
-
-        if map_tokens > 0 and self.has_ctags:
-            self.use_ctags = True
-        else:
-            self.use_ctags = False
 
         self.tokenizer = main_model.tokenizer
         self.repo_content_prefix = repo_content_prefix
 
     def get_repo_map(self, chat_files, other_files):
-        res = self.choose_files_listing(chat_files, other_files)
-        if not res:
+        if self.max_map_tokens <= 0:
             return
 
-        files_listing, ctags_msg = res
+        if not other_files:
+            return
+
+        files_listing = self.get_ranked_tags_map(chat_files, other_files)
+        if not files_listing:
+            return
+
+        num_tokens = self.token_count(files_listing)
+        if self.verbose:
+            self.io.tool_output(f"Repo-map: {num_tokens/1024:.1f} k-tokens")
 
         if chat_files:
             other = "other "
@@ -121,49 +74,13 @@ class RepoMap:
             other = ""
 
         if self.repo_content_prefix:
-            repo_content = self.repo_content_prefix.format(
-                other=other,
-                ctags_msg=ctags_msg,
-            )
+            repo_content = self.repo_content_prefix.format(other=other)
         else:
             repo_content = ""
 
         repo_content += files_listing
 
         return repo_content
-
-    def choose_files_listing(self, chat_files, other_files):
-        if self.max_map_tokens <= 0:
-            return
-
-        if not other_files:
-            return
-
-        if self.use_ctags:
-            files_listing = self.get_ranked_tags_map(chat_files, other_files)
-            if files_listing:
-                num_tokens = self.token_count(files_listing)
-                if self.verbose:
-                    self.io.tool_output(f"ctags map: {num_tokens/1024:.1f} k-tokens")
-                ctags_msg = " with selected ctags info"
-                return files_listing, ctags_msg
-
-        files_listing = self.get_simple_files_map(other_files)
-        ctags_msg = ""
-        num_tokens = self.token_count(files_listing)
-        if self.verbose:
-            self.io.tool_output(f"simple map: {num_tokens/1024:.1f} k-tokens")
-        if num_tokens < self.max_map_tokens:
-            return files_listing, ctags_msg
-
-    def get_simple_files_map(self, other_files):
-        fnames = []
-        for fname in other_files:
-            fname = self.get_rel_fname(fname)
-            fname = fname_to_components(fname, False)
-            fnames.append(fname)
-
-        return to_tree(fnames)
 
     def token_count(self, string):
         return len(self.tokenizer.encode(string))
@@ -175,66 +92,6 @@ class RepoMap:
         path = os.path.relpath(path, self.root)
         return [path + ":"]
 
-    def run_ctags(self, filename):
-        # Check if the file is in the cache and if the modification time has not changed
-        file_mtime = self.get_mtime(filename)
-        if file_mtime is None:
-            return []
-
-        cache_key = filename
-        if cache_key in self.TAGS_CACHE and self.TAGS_CACHE[cache_key]["mtime"] == file_mtime:
-            return self.TAGS_CACHE[cache_key]["data"]
-
-        cmd = self.ctags_cmd + [
-            f"--input-encoding={self.io.encoding}",
-            filename,
-        ]
-        output = subprocess.check_output(cmd, stderr=subprocess.PIPE).decode("utf-8")
-        output_lines = output.splitlines()
-
-        data = []
-        for line in output_lines:
-            try:
-                data.append(json.loads(line))
-            except json.decoder.JSONDecodeError as err:
-                self.io.tool_error(f"Error parsing ctags output: {err}")
-                self.io.tool_error(repr(line))
-
-        # Update the cache
-        self.TAGS_CACHE[cache_key] = {"mtime": file_mtime, "data": data}
-        self.save_tags_cache()
-        return data
-
-    def check_for_ctags(self):
-        try:
-            executable = self.ctags_cmd[0]
-            cmd = [executable, "--version"]
-            output = subprocess.check_output(cmd, stderr=subprocess.PIPE).decode("utf-8")
-            output = output.lower()
-
-            cmd = " ".join(cmd)
-
-            if "universal ctags" not in output:
-                self.ctags_disabled_reason = f"{cmd} does not claim to be universal ctags"
-                return
-            if "+json" not in output:
-                self.ctags_disabled_reason = f"{cmd} does not list +json support"
-                return
-
-            with tempfile.TemporaryDirectory() as tempdir:
-                hello_py = os.path.join(tempdir, "hello.py")
-                with open(hello_py, "w", encoding="utf-8") as f:
-                    f.write("def hello():\n    print('Hello, world!')\n")
-                self.run_ctags(hello_py)
-        except FileNotFoundError:
-            self.ctags_disabled_reason = f"{executable} executable not found"
-            return
-        except Exception as err:
-            self.ctags_disabled_reason = f"error running universal-ctags: {err}"
-            return
-
-        return True
-
     def load_tags_cache(self):
         path = Path(self.root) / self.TAGS_CACHE_DIR
         if not path.exists():
@@ -244,52 +101,103 @@ class RepoMap:
     def save_tags_cache(self):
         pass
 
-    def load_ident_cache(self):
-        path = Path(self.root) / self.IDENT_CACHE_DIR
-        if not path.exists():
-            self.cache_missing = True
-        self.IDENT_CACHE = Cache(path)
-
-    def save_ident_cache(self):
-        pass
-
     def get_mtime(self, fname):
         try:
             return os.path.getmtime(fname)
         except FileNotFoundError:
             self.io.tool_error(f"File not found error: {fname}")
 
-    def get_name_identifiers(self, fname, uniq=True):
+    def get_tags(self, fname, rel_fname):
+        # Check if the file is in the cache and if the modification time has not changed
         file_mtime = self.get_mtime(fname)
         if file_mtime is None:
-            return set()
+            return []
 
         cache_key = fname
-        if cache_key in self.IDENT_CACHE and self.IDENT_CACHE[cache_key]["mtime"] == file_mtime:
-            idents = self.IDENT_CACHE[cache_key]["data"]
-        else:
-            idents = self.get_name_identifiers_uncached(fname)
-            self.IDENT_CACHE[cache_key] = {"mtime": file_mtime, "data": idents}
-            self.save_ident_cache()
+        if cache_key in self.TAGS_CACHE and self.TAGS_CACHE[cache_key]["mtime"] == file_mtime:
+            return self.TAGS_CACHE[cache_key]["data"]
 
-        if uniq:
-            idents = set(idents)
-        return idents
+        # miss!
 
-    def get_name_identifiers_uncached(self, fname):
-        content = self.io.read_text(fname)
-        if content is None:
-            return list()
+        data = list(self.get_tags_raw(fname, rel_fname))
+
+        # Update the cache
+        self.TAGS_CACHE[cache_key] = {"mtime": file_mtime, "data": data}
+        self.save_tags_cache()
+        return data
+
+    def get_tags_raw(self, fname, rel_fname):
+        lang = filename_to_lang(fname)
+        if not lang:
+            return
+
+        language = get_language(lang)
+        parser = get_parser(lang)
+
+        # Load the tags queries
+        scm_fname = pkg_resources.resource_filename(
+            __name__, os.path.join("queries", f"tree-sitter-{lang}-tags.scm")
+        )
+        query_scm = Path(scm_fname)
+        if not query_scm.exists():
+            return
+        query_scm = query_scm.read_text()
+
+        code = Path(fname).read_text(encoding=self.io.encoding)
+        tree = parser.parse(bytes(code, "utf-8"))
+
+        # Run the tags queries
+        query = language.query(query_scm)
+        captures = query.captures(tree.root_node)
+
+        captures = list(captures)
+
+        saw = set()
+        for node, tag in captures:
+            if tag.startswith("name.definition."):
+                kind = "def"
+            elif tag.startswith("name.reference."):
+                kind = "ref"
+            else:
+                continue
+
+            saw.add(kind)
+
+            result = Tag(
+                rel_fname=rel_fname,
+                fname=fname,
+                name=node.text.decode("utf-8"),
+                kind=kind,
+                line=node.start_point[0],
+            )
+
+            yield result
+
+        if "ref" in saw:
+            return
+        if "def" not in saw:
+            return
+
+        # We saw defs, without any refs
+        # Some tags files only provide defs (cpp, for example)
+        # Use pygments to backfill refs
 
         try:
-            lexer = guess_lexer_for_filename(fname, content)
+            lexer = guess_lexer_for_filename(fname, code)
         except ClassNotFound:
-            return list()
+            return
 
-        # lexer.get_tokens_unprocessed() returns (char position in file, token type, token string)
-        tokens = list(lexer.get_tokens_unprocessed(content))
-        res = [token[2] for token in tokens if token[1] in Token.Name]
-        return res
+        tokens = list(lexer.get_tokens(code))
+        tokens = [token[1] for token in tokens if token[0] in Token.Name]
+
+        for token in tokens:
+            yield Tag(
+                rel_fname=rel_fname,
+                fname=fname,
+                name=token,
+                kind="ref",
+                line=-1,
+            )
 
     def get_ranked_tags(self, chat_fnames, other_fnames):
         defines = defaultdict(set)
@@ -327,34 +235,25 @@ class RepoMap:
                 personalization[rel_fname] = 1.0
                 chat_rel_fnames.add(rel_fname)
 
-            data = self.run_ctags(fname)
+            tags = list(self.get_tags(fname, rel_fname))
+            if tags is None:
+                continue
 
-            for tag in data:
-                ident = tag["name"]
-                defines[ident].add(rel_fname)
+            for tag in tags:
+                if tag.kind == "def":
+                    defines[tag.name].add(rel_fname)
+                    key = (rel_fname, tag.name)
+                    definitions[key].add(tag)
 
-                scope = tag.get("scope")
-                kind = tag.get("kind")
-                name = tag.get("name")
-                signature = tag.get("signature")
+                if tag.kind == "ref":
+                    references[tag.name].append(rel_fname)
 
-                last = name
-                if signature:
-                    last += " " + signature
+        ##
+        # dump(defines)
+        # dump(references)
 
-                res = [rel_fname]
-                if scope:
-                    res.append(scope)
-                res += [kind, last]
-
-                key = (rel_fname, ident)
-                definitions[key].add(tuple(res))
-                # definitions[key].add((rel_fname,))
-
-            idents = self.get_name_identifiers(fname, uniq=False)
-            for ident in idents:
-                # dump("ref", fname, ident)
-                references[ident].append(rel_fname)
+        if not references:
+            references = dict((k, list(v)) for k, v in defines.items())
 
         idents = set(defines.keys()).intersection(set(references.keys()))
 
@@ -364,9 +263,12 @@ class RepoMap:
             definers = defines[ident]
             for referencer, num_refs in Counter(references[ident]).items():
                 for definer in definers:
-                    if referencer == definer:
-                        continue
+                    # if referencer == definer:
+                    #    continue
                     G.add_edge(referencer, definer, weight=num_refs, ident=ident)
+
+        if not references:
+            pass
 
         if personalization:
             pers_args = dict(personalization=personalization, dangling=personalization)
@@ -391,6 +293,9 @@ class RepoMap:
 
         ranked_tags = []
         ranked_definitions = sorted(ranked_definitions.items(), reverse=True, key=lambda x: x[1])
+
+        # dump(ranked_definitions)
+
         for (fname, ident), rank in ranked_definitions:
             # print(f"{rank:.03f} {fname} {ident}")
             if fname in chat_rel_fnames:
@@ -428,9 +333,8 @@ class RepoMap:
 
         while lower_bound <= upper_bound:
             middle = (lower_bound + upper_bound) // 2
-            tree = to_tree(ranked_tags[:middle])
+            tree = self.to_tree(ranked_tags[:middle])
             num_tokens = self.token_count(tree)
-            # dump(middle, num_tokens)
 
             if num_tokens < self.max_map_tokens:
                 best_tree = tree
@@ -440,17 +344,63 @@ class RepoMap:
 
         return best_tree
 
+    def to_tree(self, tags):
+        if not tags:
+            return ""
 
-def find_py_files(directory):
+        tags = sorted(tags)
+
+        cur_fname = None
+        context = None
+        output = ""
+
+        # add a bogus tag at the end so we trip the this_fname != cur_fname...
+        dummy_tag = (None,)
+        for tag in tags + [dummy_tag]:
+            this_fname = tag[0]
+
+            # ... here ... to output the final real entry in the list
+            if this_fname != cur_fname:
+                if context:
+                    context.add_context()
+                    output += "\n"
+                    output += cur_fname + ":\n"
+                    output += context.format()
+                    context = None
+                elif cur_fname:
+                    output += "\n" + cur_fname + "\n"
+
+                if type(tag) is Tag:
+                    context = TreeContext(
+                        tag.rel_fname,
+                        Path(tag.fname).read_text(self.io.encoding),
+                        color=False,
+                        line_number=False,
+                        child_context=False,
+                        last_line=False,
+                        margin=0,
+                        mark_lois=False,
+                        loi_pad=0,
+                        header_max=3,
+                        show_top_of_file_parent_scope=False,
+                    )
+                cur_fname = this_fname
+
+            if context:
+                context.add_lines_of_interest([tag.line])
+
+        return output
+
+
+def find_src_files(directory):
     if not os.path.isdir(directory):
         return [directory]
 
-    py_files = []
+    src_files = []
     for root, dirs, files in os.walk(directory):
         for file in files:
-            if file.endswith(".py"):
-                py_files.append(os.path.join(root, file))
-    return py_files
+            src_files.append(os.path.join(root, file))
+    return src_files
 
 
 def get_random_color():
@@ -465,15 +415,13 @@ if __name__ == "__main__":
 
     chat_fnames = []
     other_fnames = []
-    for dname in sys.argv[1:]:
-        if ".venv" in dname:
-            other_fnames += find_py_files(dname)
+    for fname in sys.argv[1:]:
+        if Path(fname).is_dir():
+            chat_fnames += find_src_files(fname)
         else:
-            chat_fnames += find_py_files(dname)
+            chat_fnames.append(fname)
 
-    root = os.path.commonpath(chat_fnames)
-
-    rm = RepoMap(root=root)
+    rm = RepoMap(root=".")
     repo_map = rm.get_ranked_tags_map(chat_fnames, other_fnames)
 
     dump(len(repo_map))

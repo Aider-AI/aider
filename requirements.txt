@@ -34,3 +34,4 @@ jsonschema==4.17.3
 sounddevice==0.4.6
 soundfile==0.12.1
 pathspec==0.11.2
+grep-ast==0.1.1

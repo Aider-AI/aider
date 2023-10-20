@@ -3,6 +3,14 @@
 
 ![robot flowchat](../assets/robot-flowchart.png)
 
+## Updated
+
+Aider no longer uses ctags to build a repo map.
+Please see the newer article about
+[using tree-sitter to build a better repo map](https://aider.chat/docs/repomap.html).
+
+-------
+
 GPT-4 is extremely useful for "self-contained" coding tasks,
 like generating brand new code or modifying a pure function
 that has no dependencies.

@@ -10,7 +10,7 @@ from aider import models
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
-from tests.utils import GitTemporaryDirectory
+from tests.utils import ChdirTemporaryDirectory, GitTemporaryDirectory
 
 
 class TestCoder(unittest.TestCase):
@@ -354,20 +354,21 @@ class TestCoder(unittest.TestCase):
 
     @patch("aider.coders.base_coder.openai.ChatCompletion.create")
     def test_run_with_invalid_request_error(self, mock_chat_completion_create):
-        # Mock the IO object
-        mock_io = MagicMock()
+        with ChdirTemporaryDirectory():
+            # Mock the IO object
+            mock_io = MagicMock()
 
-        # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(models.GPT4, None, mock_io)
+            # Initialize the Coder object with the mocked IO and mocked repo
+            coder = Coder.create(models.GPT4, None, mock_io)
 
-        # Set up the mock to raise InvalidRequestError
-        mock_chat_completion_create.side_effect = openai.error.InvalidRequestError(
-            "Invalid request", "param"
-        )
+            # Set up the mock to raise InvalidRequestError
+            mock_chat_completion_create.side_effect = openai.error.InvalidRequestError(
+                "Invalid request", "param"
+            )
 
-        # Call the run method and assert that InvalidRequestError is raised
-        with self.assertRaises(openai.error.InvalidRequestError):
-            coder.run(with_message="hi")
+            # Call the run method and assert that InvalidRequestError is raised
+            with self.assertRaises(openai.error.InvalidRequestError):
+                coder.run(with_message="hi")
 
     def test_new_file_edit_one_commit(self):
         """A new file shouldn't get pre-committed before the GPT edit commit"""

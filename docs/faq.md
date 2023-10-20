@@ -20,11 +20,11 @@ Aider is tightly integrated with git, which makes it easy to:
   - Manage a series of GPT's changes on a git branch
 
 Aider specifically uses git in these ways:
- 
+
   - It asks to create a git repo if you launch it in a directory without one.
   - Whenever GPT edits a file, aider commits those changes with a descriptive commit message. This makes it easy to undo or review GPT's changes.
   - Aider takes special care if GPT tries to edit files that already have uncommitted changes (dirty files). Aider will first commit any preexisting changes with a descriptive commit message. This keeps your edits separate from GPT's edits, and makes sure you never lose your work if GPT makes an inappropriate change.
-  
+
 Aider also allows you to use in-chat commands to `/diff` or `/undo` the last change made by GPT.
 To do more complex management of your git history, you cat use raw `git` commands,
 either by using `/git` within the chat, or with standard git tools outside of aider.
@@ -58,7 +58,7 @@ They have large context windows, better coding skills and
 they generally obey the instructions in the system prompt.
 GPT-4 is able to structure code edits as simple "diffs"
 and use a
-[repository map](https://aider.chat/docs/ctags.html)
+[repository map](https://aider.chat/docs/repomap.html)
 to improve its ability to make changes in larger codebases.
 
 GPT-3.5 is supported more experimentally
