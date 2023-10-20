@@ -25,7 +25,7 @@ This article is going to focus on the problem of "code context" (2):
   - We need to help GPT understand the overall codebase.
   - This will help it understand the code it needs to change, which may depend on other parts of the codebase.
   - It will also help GPT write new code and modify the existing code in a way
-that respects and utilizes existing libraries, modules and abstractions
+that respect and utilize existing libraries, modules and abstractions
 found elsewhere in the codebase.
   - We must convey all of this "code context" to GPT in an
 efficient manner that fits within the limited context window.
@@ -190,7 +190,7 @@ Switching from ctags to tree-sitter provides a bunch of benefits:
 
 - The map is richer, showing full function call signatures and other details straight from the source files.
 - Thanks to `py-tree-sitter-languages`, we get full support for many programming languages via a python package that's automatically installed as part of the normal `pip install aider-chat`.
-- We remove the requirement for users to manually install `universal-ctags` via some extenal tool or package manager (brew, apt, choco, etc).
+- We remove the requirement for users to manually install `universal-ctags` via some external tool or package manager (brew, apt, choco, etc).
 - Tree-sitter integration is a key enabler for future work and capabilities for aider.
 
 ## Future work
