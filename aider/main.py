@@ -379,6 +379,11 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         help="Specify a single message to send GPT, process reply then exit (disables chat mode)",
     )
     other_group.add_argument(
+        "--encoding",
+        default="utf-8",
+        help="Specify the encoding for input and output (default: utf-8)",
+    )
+    other_group.add_argument(
         "-c",
         "--config",
         is_config_file=True,
@@ -414,6 +419,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         tool_output_color=args.tool_output_color,
         tool_error_color=args.tool_error_color,
         dry_run=args.dry_run,
+        encoding=args.encoding,
     )
 
     fnames = [str(Path(fn).resolve()) for fn in args.files]
