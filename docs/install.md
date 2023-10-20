@@ -7,6 +7,7 @@
 
 Optional steps:
 
+- [Install universal ctags (optional)](#install-universal-ctags-optional)
 - [Add aider to your editor (optional)](#add-aider-to-your-editor-optional)
 - [Install PortAudio (optional)](#install-portaudio-optional)
 
@@ -60,6 +61,56 @@ See the [usage instructions](/#usage) to start coding with aider.
 The rest of the install steps are completely optional.
 
 ---
+
+
+## Install universal ctags (optional)
+
+Aider does not require ctags, and will operate just fine without it.
+
+Installing ctags is helpful if you plan to use aider and GPT-4 with repositories
+that have more than a handful of files.
+This allows aider to build a
+[map of your entire git repo](https://aider.chat/docs/ctags.html)
+and share it with GPT to help it better understand and modify large codebases.
+
+Aider only attempts to use ctags with GPT-4,
+and currently doesn't use ctags at all with GPT-3.5.
+So if your OpenAI API key doesn't support GPT-4, then you don't need ctags.
+
+You should consult the
+[universal ctags repo](https://github.com/universal-ctags/ctags)
+for official instructions on how to install it in your environment.
+But you may be able to install a compatible version using these commands:
+
+* Mac: `brew update && brew install universal-ctags`
+* Windows: `choco install universal-ctags`
+* Ubuntu: `sudo apt update && sudo apt install universal-ctags`
+
+You know aider has found a working ctags if you see this output when you launch aider:
+
+```
+Aider v0.8.3-dev
+Model: gpt-4
+Git repo: .git
+Repo-map: universal-ctags using 1024 tokens <======
+```
+
+Some things to be aware of:
+
+* The `ctags` command needs to be on your shell path so that it will run by default when aider invokes `ctags ...`.
+* You need a build which includes the json feature. You can check by running `ctags --version` and looking for `+json` in the `Optional compiled features` list.
+
+```
+$ ctags --version
+
+Universal Ctags 6.0.0, Copyright (C) 2015-2022 Universal Ctags Team
+Universal Ctags is derived from Exuberant Ctags.
+Exuberant Ctags 5.8, Copyright (C) 1996-2009 Darren Hiebert
+  Compiled: Jun 25 2023, 07:31:18
+  URL: https://ctags.io/
+  Output version: 0.0
+  Optional compiled features: +wildcards, +regex, +gnulib_fnmatch, +gnulib_regex, +iconv, +option-directory, +xpath, +json, +interactive, +yaml, +case-insensitive-filenames, +packcc, +optscript, +pcre2
+```
 
 ## Install PortAudio (optional)
 
