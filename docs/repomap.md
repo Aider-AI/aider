@@ -8,16 +8,19 @@ like generating or modifying a simple function
 that has no dependencies. Tools like GitHub CoPilot serve
 these simple coding tasks well.
 
-But it's difficult to use GPT-4 to work within
-a large, complex pre-existing codebase.
-Accomplishing a programming task in a large codebase presents
-two problems:
+But it's much more difficult for humans or AIs to make
+complex changes in a larger, pre-existing codebase.
+To do this successfully, you need to:
 
-1. Identifying which parts of the codebase need to be modified to complete the task.
-2. Understanding the dependencies and APIs which interconnect the codebase, so that the modifications can make use of existing abstractions, tools, libraries, submodules, etc.
+1. Find the code that needs to be changed.
+2. Understand how that code relates to the rest of the codebase.
+3. Make the correct code change to accomplish the task.
 
-We'll be discussing the second problem in this article, the problem of "code context".
-We need to:
+GPT-4 is actually great at making the code changes (3),
+once you tell it which files need to be changed (1)
+and show it how they fit into the rest of the codebase (2).
+
+This article is going to focus on the problem of "code context" (2), where we need to:
 
   - Help GPT understand the overall codebase, so that it
 can decifer the meaning of code with complex dependencies and generate
@@ -29,15 +32,15 @@ To address these issues, aider
 sends GPT a **concise map of your whole git repository**
 that includes
 the most important classes and functions along with their types and call signatures.
-This *repository map* is built automatically using `tree-sitter`, which
+
+This **repository map** is now built automatically using `tree-sitter`, which
 extracts symbol definitions from source files.
 Tree-sitter is used by many IDEs and editors (and LSP servers) to
 help humans search and navigate large codebases.
-Instead, we're going to use it to help GPT better comprehend, navigate
+Instead, aider uses it to help GPT better comprehend, navigate
 and edit code in larger repos.
 
-To code with GPT-4 using the techniques discussed here,
-just install [aider](https://aider.chat/docs/install.html).
+*To code with GPT-4 using the techniques discussed here, just install [aider](https://aider.chat/docs/install.html).*
 
 ## The problem: code context
 
@@ -51,8 +54,11 @@ being discussed.
 Most real code is not pure and self-contained, it is intertwined with
 and depends on code from many different files in a repo.
 If you ask GPT to "switch all the print statements in class Foo to
-use the BarLog logging system", it needs to see the code in the Foo class
-with the prints, and it also needs to understand the project's BarLog
+use the BarLog logging system", it needs to see and
+modify the code in the Foo class
+with the prints, but it also needs to understand
+how to use
+the project's BarLog
 subsystem.
 
 A simple solution is to **send the entire codebase** to GPT along with
@@ -75,12 +81,18 @@ it just needs to understand it well enough to use it.
 You may quickly run out of context window if you
 send many files worth of code just to convey context.
 
+Aider also strives to reduce the manual work involved in
+coding with AI, so it would be better if we could automatically
+select the code context.
+
 ## Using a repo map to provide context
 
 Aider sends a **repo map** to GPT along with
-each change request. The map contains a list of the files in the
-repo, along with the key symbols which are defined in each file. Callables
-like functions and methods also include their types and signatures.
+each request from the user to make a code change.
+The map contains a list of the files in the
+repo, along with the key symbols which are defined in each file.
+It shows how each of these symbols are defined in the
+source code, by including the key lines of the code for each definition.
 
 Here's a
 sample of the map of the aider repo, just showing the maps of
@@ -115,25 +127,27 @@ aider/main.py:
 Mapping out the repo like this provides some key benefits:
 
   - GPT can see classes, methods and function signatures from everywhere in the repo. This alone may give it enough context to solve many tasks. For example, it can probably figure out how to use the API exported from a module just based on the details shown in the map.
-  - If it needs to see more code, GPT can use the map to figure out by itself which files it needs to look at. GPT will then ask to see these specific files, and `aider` will automatically add them to the chat context (with user approval).
+  - If it needs to see more code, GPT can use the map to figure out by itself which files it needs to look at in more detail. GPT will then ask to see these specific files, and `aider` will automatically add them to the chat context.
 
-Of course, for large repositories even just the repo map might be too large
-for the context window. Aider solves this problem by analyzing the full repo map using
-a graph ranking algorithm.
-By examining which files reference classes and functions in other files,
-aider can determine the most important portions of the repo map.
-Aider builds the repo map by
+Of course, for large repositories the full repo map might be too large
+for GPT's context window.
+Aider solves this problem by sending just the **most relevant**
+portions of the repo map.
+It does this by analyzing the full repo map using
+a graph ranking algorithm, using a graph
+where each source file is a node and edges connect
+files which have dependencies.
+Aider optimizes the repo map by
 selecting the most important parts of the codebase
 which will
 fit into the token budget assigned by the user
 (via the `--map-tokens` switch, which defaults to 1k tokens).
 
-In the sample map above, we're not seeing *every* class, method and function in both files.
-The map only includes the most important identifiers,
+The sample map above doesn't contain *every* class, method and function from both files.
+It only includes the most important identifiers,
 the ones which are most often referenced by other portions of the code.
 These are the key piece of context that GPT needs to know to understand
 the overall codebase.
-
 
 
 ## Using tree-sitter to make the map
@@ -148,8 +162,7 @@ python module,
 which provides simple, pip-installable binary wheels for
 [most popular programming languages](https://github.com/paul-gauthier/grep-ast/blob/main/grep_ast/parsers.py).
 
-Tree-sitter parses source code into an Abstract Syntax Tree (AST),
-which structures the plain text in the source file into a tree, based
+Tree-sitter parses source code into an Abstract Syntax Tree (AST) based
 on the syntax of the programming language.
 Using the AST, we can identify where functions, classes, variables, types and
 other definitions occur in the source code.
@@ -162,30 +175,35 @@ lines from the codebase.
 
 ## What about ctags?
 
-The tree-sitter repository map replaces the ctags based map that aider originally used.
+The tree-sitter repository map replaces the
+[ctags based map](https://aider.chat/docs/ctags.html)
+that aider originally used.
 Switching from ctags to tree-sitter provides a bunch of benefits:
 
 - The map is richer, showing full function call signatures and other details straight from the source files.
-- Thanks to `py-tree-sitter-languages`, we get full support for many programming languages by automatically installing a python package as part of the normal `pip install aider-chat`.
+- Thanks to `py-tree-sitter-languages`, we get full support for many programming languages via a python package that's automatically installed as part of the normal `pip install aider-chat`.
 - We remove the requirement for users to manually install `universal-ctags` via some extenal tool or package manager (brew, apt, choco, etc).
 - Tree-sitter integration is a key enabler for future work and capabilities for aider.
 
 ## Future work
 
-You'll recall that we identified two key challenges when trying to use GPT
+You'll recall that we identified the 3 key steps
+required to use GPT
 to code within a large, pre-existing codebase:
 
-1. Identifying which parts of the codebase need to be modified to complete the task.
-2. Understanding the dependencies and APIs which interconnect the codebase, so that the modifications can make use of existing abstractions, tools, libraries, submodules, etc.
+1. Find the code that needs to be changed.
+2. Understand how that code relates to the rest of the codebase.
+3. Make the correct code change to accomplish the task.
 
-We're now using tree-sitter to help solve the second problem,
-but it's an important foundation
-for future work to solve the first problem too.
+We're now using tree-sitter to help solve the code context problem (2),
+but it's also an important foundation
+for future work on automatically finding all the code which
+will need to be changed (1).
 
 Right now, aider relies on the user to specify which source files
 will need to be modified to complete their request.
 Users manually "add files to the chat" using aider's `/add` command,
-and those files are available for GPT to modify.
+which makes those files available for GPT to modify.
 
 This works well, but a key piece of future work is to harness the
 power of GPT and tree-sitter to automatically identify
