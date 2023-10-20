@@ -149,10 +149,8 @@ you can use `--openai-api-base` to connect to a different API endpoint.
 
 ### Local LLMs
 
-[LocalAI](https://github.com/go-skynet/LocalAI),
+[LocalAI](https://github.com/go-skynet/LocalAI) and
 [SimpleAI](https://github.com/lhenault/simpleAI)
-and
-[LiteLLM](https://docs.litellm.ai/docs/proxy_server#tutorial-use-with-aiderautogencontinue-devlangroidetc)
 look like relevant tools to serve local models via a compatible API.
 
 
