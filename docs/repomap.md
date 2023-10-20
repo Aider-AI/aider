@@ -33,11 +33,12 @@ sends GPT a **concise map of your whole git repository**
 that includes
 the most important classes and functions along with their types and call signatures.
 
-This **repository map** is now built automatically using `tree-sitter`, which
-extracts symbol definitions from source files.
-Tree-sitter is used by many IDEs and editors (and LSP servers) to
+This **repository map** is now built automatically by using
+[tree-sitter](https://tree-sitter.github.io/tree-sitter/)
+to extract symbol definitions from source files.
+Tree-sitter is used by many IDEs, editors and LSP servers to
 help humans search and navigate large codebases.
-Instead, aider uses it to help GPT better comprehend, navigate
+Aider now uses it to help GPT better comprehend, navigate
 and edit code in larger repos.
 
 *To code with GPT-4 using the techniques discussed here, just install [aider](https://aider.chat/docs/install.html).*
@@ -55,8 +56,7 @@ Most real code is not pure and self-contained, it is intertwined with
 and depends on code from many different files in a repo.
 If you ask GPT to "switch all the print statements in class Foo to
 use the BarLog logging system", it needs to see and
-modify the code in the Foo class
-with the prints, but it also needs to understand
+modify the code in the Foo class, but it also needs to understand
 how to use
 the project's BarLog
 subsystem.
@@ -71,19 +71,20 @@ and **hand pick which files to send**.
 For the example above, you could send the file that
 contains the Foo class
 and the file that contains the BarLog logging subsystem.
-This works pretty well, and is supported by `aider` -- you
+This works pretty well, and is supported by aider -- you
 can manually specify which files to "add to the chat" you are having with GPT.
 
 But sending whole files is a bulky way to send code context,
 wasting the precious context window.
 GPT doesn't need to see the entire implementation of BarLog,
 it just needs to understand it well enough to use it.
-You may quickly run out of context window if you
-send many files worth of code just to convey context.
+You may quickly run out of context window by sending
+full files of code
+just to convey context.
 
 Aider also strives to reduce the manual work involved in
 coding with AI, so it would be better if we could automatically
-select the code context.
+provide the needed code context.
 
 ## Using a repo map to provide context
 
@@ -92,7 +93,7 @@ each request from the user to make a code change.
 The map contains a list of the files in the
 repo, along with the key symbols which are defined in each file.
 It shows how each of these symbols are defined in the
-source code, by including the key lines of the code for each definition.
+source code, by including the critical lines of code for each definition.
 
 Here's a
 sample of the map of the aider repo, just showing the maps of
@@ -105,7 +106,6 @@ and
 aider/io.py:
 ⋮...
 │class InputOutput:
-│    num_error_outputs = 0
 ⋮...
 │    def read_text(self, filename):
 ⋮...
@@ -127,14 +127,14 @@ aider/main.py:
 Mapping out the repo like this provides some key benefits:
 
   - GPT can see classes, methods and function signatures from everywhere in the repo. This alone may give it enough context to solve many tasks. For example, it can probably figure out how to use the API exported from a module just based on the details shown in the map.
-  - If it needs to see more code, GPT can use the map to figure out by itself which files it needs to look at in more detail. GPT will then ask to see these specific files, and `aider` will automatically add them to the chat context.
+  - If it needs to see more code, GPT can use the map to figure out by itself which files it needs to look at in more detail. GPT will then ask to see these specific files, and aider will automatically add them to the chat context.
 
-Of course, for large repositories the full repo map might be too large
+Of course, for large repositories even just the repo map might be too large
 for GPT's context window.
 Aider solves this problem by sending just the **most relevant**
 portions of the repo map.
 It does this by analyzing the full repo map using
-a graph ranking algorithm, using a graph
+a graph ranking algorithm, computed on a graph
 where each source file is a node and edges connect
 files which have dependencies.
 Aider optimizes the repo map by
@@ -143,7 +143,8 @@ which will
 fit into the token budget assigned by the user
 (via the `--map-tokens` switch, which defaults to 1k tokens).
 
-The sample map above doesn't contain *every* class, method and function from both files.
+The sample map shown above doesn't contain *every* class, method and function from those
+files.
 It only includes the most important identifiers,
 the ones which are most often referenced by other portions of the code.
 These are the key piece of context that GPT needs to know to understand
