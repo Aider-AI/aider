@@ -20,13 +20,15 @@ GPT-4 is actually great at making the code changes (3),
 once you tell it which files need to be changed (1)
 and show it how they fit into the rest of the codebase (2).
 
-This article is going to focus on the problem of "code context" (2), where we need to:
+This article is going to focus on the problem of "code context" (2):
 
-  - Help GPT understand the overall codebase, so that it
-can decifer the meaning of code with complex dependencies and generate
-new code that respects and utilizes existing abstractions.
-  - Convey all of this "code context" to GPT in an
-efficient manner that fits within GPT's context window.
+  - We need to help GPT understand the overall codebase.
+  - This will help it understand the code it needs to change, which may depend on other parts of the codebase.
+  - It will also help GPT write new code and modify the existing code in a way
+that respects and utilizes existing libraries, modules and abstractions
+found elsewhere in the codebase.
+  - We must convey all of this "code context" to GPT in an
+efficient manner that fits within the limited context window.
 
 To address these issues, aider
 sends GPT a **concise map of your whole git repository**
