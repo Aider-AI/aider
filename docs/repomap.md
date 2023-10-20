@@ -8,8 +8,8 @@ like generating or modifying a simple function
 that has no dependencies. Tools like GitHub CoPilot serve
 these simple coding tasks well.
 
-But it's much more difficult for humans or AIs to make
-complex changes in a larger, pre-existing codebase.
+But making complex changes in a larger, pre-existing codebase
+is much more difficult, for both humans and AIs.
 To do this successfully, you need to:
 
 1. Find the code that needs to be changed.
