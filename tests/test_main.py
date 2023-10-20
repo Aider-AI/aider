@@ -4,7 +4,7 @@ import subprocess
 import tempfile
 from pathlib import Path
 from unittest import TestCase
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import git
 from prompt_toolkit.input import DummyInput
@@ -13,7 +13,7 @@ from prompt_toolkit.output import DummyOutput
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.main import check_gitignore, main, setup_git
-from tests.utils import make_repo
+from tests.utils import GitTemporaryDirectory, make_repo
 
 
 class TestMain(TestCase):
@@ -178,3 +178,18 @@ class TestMain(TestCase):
             main(["--dirty-commits"], input=DummyInput())
             _, kwargs = MockCoder.call_args
             assert kwargs["dirty_commits"] is True
+
+    def test_encodings_arg(self):
+        fname = "foo.py"
+
+        with GitTemporaryDirectory():
+            with patch("aider.main.Coder.create") as MockCoder:  # noqa: F841
+                with patch("aider.main.InputOutput") as MockSend:
+
+                    def side_effect(*args, **kwargs):
+                        self.assertEqual(kwargs["encoding"], "iso-8859-15")
+                        return MagicMock()
+
+                    MockSend.side_effect = side_effect
+
+                    main(["--yes", fname, "--encoding", "iso-8859-15"])
