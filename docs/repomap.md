@@ -33,7 +33,7 @@ sends GPT a **concise map of your whole git repository**
 that includes
 the most important classes and functions along with their types and call signatures.
 
-This **repository map** is now built automatically by using
+This **repository map** is now built automatically using
 [tree-sitter](https://tree-sitter.github.io/tree-sitter/)
 to extract symbol definitions from source files.
 Tree-sitter is used by many IDEs, editors and LSP servers to
