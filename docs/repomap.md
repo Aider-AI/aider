@@ -90,8 +90,9 @@ full files of code
 just to convey context.
 
 Aider also strives to reduce the manual work involved in
-coding with AI, so it would be better if we could automatically
-provide the needed code context.
+coding with AI.
+So in an ideal world, we'd like aider to automatically
+identify and provide the needed code context.
 
 ## Using a repo map to provide context
 
