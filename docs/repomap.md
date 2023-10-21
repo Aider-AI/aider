@@ -157,7 +157,7 @@ The sample map shown above doesn't contain *every* class, method and function fr
 files.
 It only includes the most important identifiers,
 the ones which are most often referenced by other portions of the code.
-These are the key piece of context that GPT needs to know to understand
+These are the key pieces of context that GPT needs to know to understand
 the overall codebase.
 
 
