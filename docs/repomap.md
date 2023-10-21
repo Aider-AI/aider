@@ -20,7 +20,7 @@ GPT-4 is actually great at making the code changes (3),
 once you tell it which files need to be changed (1)
 and show it how they fit into the rest of the codebase (2).
 
-This article is going to focus on the problem of "code context" (2):
+This article is going to focus on step (2), providing "code context":
 
   - We need to help GPT understand the overall codebase.
   - This will help it understand the code it needs to change, which may depend on other parts of the codebase.
