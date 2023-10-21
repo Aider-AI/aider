@@ -25,7 +25,7 @@ This article is going to focus on the problem of "code context" (2):
   - We need to help GPT understand the overall codebase.
   - This will help it understand the code it needs to change, which may depend on other parts of the codebase.
   - It will also help GPT write new code and modify the existing code in a way
-that respect and utilize existing libraries, modules and abstractions
+that respects and utilizes existing libraries, modules and abstractions
 found elsewhere in the codebase.
   - We must convey all of this "code context" to GPT in an
 efficient manner that fits within the limited context window.
