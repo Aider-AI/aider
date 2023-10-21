@@ -200,7 +200,7 @@ Switching from ctags to tree-sitter provides a bunch of benefits:
 
 You'll recall that we identified the 3 key steps
 required to use GPT
-to code within a large, pre-existing codebase:
+to complete a coding task within a large, pre-existing codebase:
 
 1. Find the code that needs to be changed.
 2. Understand how that code relates to the rest of the codebase.
