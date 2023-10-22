@@ -43,7 +43,7 @@ NEVER SKIP LINES in the `HEAD` section!
 NEVER ELIDE LINES AND REPLACE THEM WITH A COMMENT!
 NEVER OMIT ANY WHITESPACE in the `HEAD` section!
 
-Edits to different parts of a file each need their own *edit block*.
+Edits to different parts of a file each need their own *edit block*, including the full path.
 
 If you want to put code in a new file, use an edit block with:
 - A new file path, including dir name if needed
