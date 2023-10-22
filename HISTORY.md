@@ -1,5 +1,10 @@
 # Release history
 
+### main branch
+- [Improved repository map using tree-sitter](https://aider.chat/docs/repomap.html)
+- Improved handling of malformed edit blocks targetting multiple edits to the same file
+- [Benchmarked](https://aider.chat/docs/benchmarks.html) at 65.4% for gpt-4/diff, no regression.
+
 ### v0.15.0
 
 - Added support for `.aiderignore` file, which instructs aider to ignore parts of the git repo.
