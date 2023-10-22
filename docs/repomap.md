@@ -20,12 +20,12 @@ GPT-4 is actually great at making the code changes (3),
 once you tell it which files need to be changed (1)
 and show it how they fit into the rest of the codebase (2).
 
-This article is going to focus on the problem of "code context" (2):
+This article is going to focus on step (2), providing "code context":
 
   - We need to help GPT understand the overall codebase.
   - This will help it understand the code it needs to change, which may depend on other parts of the codebase.
   - It will also help GPT write new code and modify the existing code in a way
-that respect and utilize existing libraries, modules and abstractions
+that respects and utilizes existing libraries, modules and abstractions
 found elsewhere in the codebase.
   - We must convey all of this "code context" to GPT in an
 efficient manner that fits within the limited context window.
@@ -90,8 +90,9 @@ full files of code
 just to convey context.
 
 Aider also strives to reduce the manual work involved in
-coding with AI, so it would be better if we could automatically
-provide the needed code context.
+coding with AI.
+So in an ideal world, we'd like aider to automatically
+identify and provide the needed code context.
 
 ## Using a repo map to provide context
 
@@ -136,6 +137,8 @@ Mapping out the repo like this provides some key benefits:
   - GPT can see classes, methods and function signatures from everywhere in the repo. This alone may give it enough context to solve many tasks. For example, it can probably figure out how to use the API exported from a module just based on the details shown in the map.
   - If it needs to see more code, GPT can use the map to figure out by itself which files it needs to look at in more detail. GPT will then ask to see these specific files, and aider will automatically add them to the chat context.
 
+## Optimizing the map
+
 Of course, for large repositories even just the repo map might be too large
 for GPT's context window.
 Aider solves this problem by sending just the **most relevant**
@@ -154,7 +157,7 @@ The sample map shown above doesn't contain *every* class, method and function fr
 files.
 It only includes the most important identifiers,
 the ones which are most often referenced by other portions of the code.
-These are the key piece of context that GPT needs to know to understand
+These are the key pieces of context that GPT needs to know to understand
 the overall codebase.
 
 
@@ -197,7 +200,7 @@ Switching from ctags to tree-sitter provides a bunch of benefits:
 
 You'll recall that we identified the 3 key steps
 required to use GPT
-to code within a large, pre-existing codebase:
+to complete a coding task within a large, pre-existing codebase:
 
 1. Find the code that needs to be changed.
 2. Understand how that code relates to the rest of the codebase.
