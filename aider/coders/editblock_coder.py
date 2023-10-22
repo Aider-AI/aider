@@ -341,7 +341,7 @@ def find_original_update_blocks(content):
             try:
                 if not len(filename) or "`" in filename:
                     filename = processed[-2].splitlines()[-2].strip()
-                if not len(filename) or "`" in filename:
+                if not len(filename) or "`" in filename or filename == "...":
                     if current_filename:
                         filename = current_filename
                     else:

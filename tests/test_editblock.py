@@ -345,6 +345,39 @@ new
         content = Path(file1).read_text(encoding="utf-8")
         self.assertEqual(content, orig_content)
 
+    def test_find_original_update_blocks_mupltiple_same_file(self):
+        edit = """
+Here's the change:
+
+```text
+foo.txt
+<<<<<<< HEAD
+one
+=======
+two
+>>>>>>> updated
+
+...
+
+<<<<<<< HEAD
+three
+=======
+four
+>>>>>>> updated
+```
+
+Hope you like it!
+"""
+
+        edits = list(eb.find_original_update_blocks(edit))
+        self.assertEqual(
+            edits,
+            [
+                ("foo.txt", "one\n", "two\n"),
+                ("foo.txt", "three\n", "four\n"),
+            ],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
