@@ -381,7 +381,7 @@ class RepoMap:
                         margin=0,
                         mark_lois=False,
                         loi_pad=0,
-                        header_max=3,
+                        # header_max=30,
                         show_top_of_file_parent_scope=False,
                     )
                 cur_fname = this_fname

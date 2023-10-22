@@ -105,30 +105,42 @@ source code, by including the critical lines of code for each definition.
 
 Here's a
 sample of the map of the aider repo, just showing the maps of
-[io.py](https://github.com/paul-gauthier/aider/blob/main/aider/io.py)
+[io.py](https://github.com/paul-gauthier/aider/blob/main/coders/base_coder.py)
 and
-[main.py](https://github.com/paul-gauthier/aider/blob/main/aider/main.py)
+[main.py](https://github.com/paul-gauthier/aider/blob/main/aider/commands.py)
 :
 
 ```
-aider/io.py:
+aider/coders/base_coder.py:
 ⋮...
-│class InputOutput:
+│class Coder:
+│    abs_fnames = None
 ⋮...
-│    def read_text(self, filename):
+│    @classmethod
+│    def create(
+│        self,
+│        main_model,
+│        edit_format,
+│        io,
+│        skip_model_availabily_check=False,
+│        **kwargs,
 ⋮...
-│    def write_text(self, filename, content):
+│    def abs_root_path(self, path):
 ⋮...
-│    def confirm_ask(self, question, default="y"):
-⋮...
-│    def tool_error(self, message):
-⋮...
-│    def tool_output(self, *messages, log_only=False):
+│    def run(self, with_message=None):
 ⋮...
 
-aider/main.py:
+aider/commands.py:
 ⋮...
-│def main(argv=None, input=None, output=None, force_git_root=None):
+│class Commands:
+│    voice = None
+│
+⋮...
+│    def get_commands(self):
+⋮...
+│    def get_command_completions(self, cmd_name, partial):
+⋮...
+│    def run(self, inp):
 ⋮...
 ```
 
