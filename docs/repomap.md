@@ -105,9 +105,9 @@ source code, by including the critical lines of code for each definition.
 
 Here's a
 sample of the map of the aider repo, just showing the maps of
-[io.py](https://github.com/paul-gauthier/aider/blob/main/coders/base_coder.py)
+[base_coder.py](https://github.com/paul-gauthier/aider/blob/main/aider/coders/base_coder.py)
 and
-[main.py](https://github.com/paul-gauthier/aider/blob/main/aider/commands.py)
+[commands.py](https://github.com/paul-gauthier/aider/blob/main/aider/commands.py)
 :
 
 ```
