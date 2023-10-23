@@ -72,11 +72,13 @@ when using GPT-3.5.
 For a detailed and quantitative comparison, please see the
 [code editing benchmark results for GPT-3.5 and GPT-4](https://aider.chat/docs/benchmarks.html).
 
-In practice, this means you can use aider to edit a set of source files
+In practice, this means you can use aider to **edit** a set of source files
 that total up to the sizes below.
-Just add the specific set of files to the chat
-that are relevant to the change you are requesting.
-This minimizes your use of the context window, as well as costs.
+The repo can be arbitrarily large, but
+the specific set of files which need to be edited for your request
+must fit within the context window.
+Only `/add` the files that need to be edited to the chat
+to minimize your use of the context window and costs.
 
 | Model             | Context<br>Size | Edit<br>Format | Max<br>File Size | Max<br>File Size | Repo<br>Map? |
 | ----------------- | -- | --     | -----| -- | -- |
