@@ -31,10 +31,10 @@ class EditBlockCoder(Coder):
                 continue
             raise ValueError(f"""InvalidEditBlock: edit failed!
 
-{path} does not contain the *exact sequence* of HEAD lines you specified.
+{path} does not contain the *exact chunk* of SEARCH lines you specified.
 Try again.
 DO NOT skip blank lines, comments, docstrings, etc!
-The HEAD block needs to be EXACTLY the same as the lines in {path} with nothing missing!
+The SEARCH block needs to be EXACTLY the same as the lines in {path} with nothing missing!
 
 {path} does not contain these {len(original.splitlines())} exact lines in a row:
 ```
@@ -122,7 +122,7 @@ def try_dotdotdots(whole, part, replace):
     replace_pieces = re.split(dots_re, replace)
 
     if len(part_pieces) != len(replace_pieces):
-        raise ValueError("Unpaired ... in edit block")
+        raise ValueError("Unpaired ... in SEARCH/REPLACE block")
 
     if len(part_pieces) == 1:
         # no dots in this edit block, just return None
@@ -132,7 +132,7 @@ def try_dotdotdots(whole, part, replace):
     all_dots_match = all(part_pieces[i] == replace_pieces[i] for i in range(1, len(part_pieces), 2))
 
     if not all_dots_match:
-        raise ValueError("Unmatched ... in edit block")
+        raise ValueError("Unmatched ... in SEARCH/REPLACE block")
 
     part_pieces = [part_pieces[i] for i in range(0, len(part_pieces), 2)]
     replace_pieces = [replace_pieces[i] for i in range(0, len(replace_pieces), 2)]
@@ -148,10 +148,10 @@ def try_dotdotdots(whole, part, replace):
             whole += replace
             continue
 
-        if whole.count(part) != 1:
-            raise ValueError(
-                "No perfect matching chunk in edit block with ... or part appears more than once"
-            )
+        if whole.count(part) == 0:
+            raise ValueError
+        if whole.count(part) > 1:
+            raise ValueError
 
         whole = whole.replace(part, replace, 1)
 
@@ -301,9 +301,9 @@ def do_replace(fname, content, before_text, after_text, fence=None):
     return new_content
 
 
-HEAD = "<<<<<<< HEAD"
+HEAD = "<<<<<<< SEARCH"
 DIVIDER = "======="
-UPDATED = ">>>>>>> updated"
+UPDATED = ">>>>>>> REPLACE"
 
 separators = "|".join([HEAD, DIVIDER, UPDATED])
 
@@ -379,10 +379,10 @@ def find_original_update_blocks(content):
         raise ValueError(f"{processed}\n^^^ {err}")
     except IndexError:
         processed = "".join(processed)
-        raise ValueError(f"{processed}\n^^^ Incomplete HEAD/updated block.")
+        raise ValueError(f"{processed}\n^^^ Incomplete SEARCH/REPLACE block.")
     except Exception:
         processed = "".join(processed)
-        raise ValueError(f"{processed}\n^^^ Error parsing HEAD/updated block.")
+        raise ValueError(f"{processed}\n^^^ Error parsing SEARCH/REPLACE block.")
 
 
 if __name__ == "__main__":

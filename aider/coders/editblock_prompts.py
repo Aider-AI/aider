@@ -14,40 +14,38 @@ If the request is ambiguous, ask questions.
 Once you understand the request you MUST:
 1. List the files you need to modify. *NEVER* suggest changes to a *read-only* file. Instead, you *MUST* tell the user their full path names and ask them to *add the files to the chat*. End your reply and wait for their approval.
 2. Think step-by-step and explain the needed changes.
-3. Describe each change with an *edit block* per the example below.
+3. Describe each change with a *SEARCH/REPLACE block* per the example below.
 """
 
-    system_reminder = """You MUST format EVERY code change with an *edit block* like this:
+    system_reminder = """You MUST use a *SEARCH/REPLACE block* to modify the source file:
 
 {fence[0]}python
 some/dir/example.py
-<<<<<<< HEAD
-    # some comment
-    # Func to multiply
-    def mul(a,b)
+<<<<<<< SEARCH
+    # Multiplication function
+    def multiply(a,b)
+        "multiply 2 numbers"
+
+        return a*b
 =======
-    # updated comment
-    # Function to add
+    # Addition function
     def add(a,b):
->>>>>>> updated
+        "add 2 numbers"
+
+        return a+b
+>>>>>>> REPLACE
 {fence[1]}
 
-A program will parse the edit blocks you generate and replace the `HEAD` lines with the `updated` lines.
-So edit blocks must be precise and unambiguous!
+The *SEARCH* section must *EXACTLY MATCH* the existing source code, character for character.
 
-Every *edit block* must be fenced with {fence[0]}...{fence[1]} with the correct code language.
-Every *edit block* must start with the full path! *NEVER* propose edit blocks for *read-only* files.
+Every *SEARCH/REPLACE block* must be fenced with {fence[0]} and {fence[1]}, with the correct code language.
 
-The `HEAD` section must be an *exact set of sequential lines* from the file!
-NEVER SKIP LINES in the `HEAD` section!
-NEVER ELIDE LINES AND REPLACE THEM WITH A COMMENT!
-NEVER OMIT ANY WHITESPACE in the `HEAD` section!
+Every *SEARCH/REPLACE block* must start with the full path!
+NEVER try to *SEARCH/REPLACE* any *read-only* files.
 
-Edits to different parts of a file each need their own *edit block*, including the full path.
-
-If you want to put code in a new file, use an edit block with:
+If you want to put code in a new file, use a *SEARCH/REPLACE block* with:
 - A new file path, including dir name if needed
-- An empty `HEAD` section
+- An empty `SEARCH` section
 - The new file's contents in the `updated` section
 """
 
