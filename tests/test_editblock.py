@@ -67,11 +67,11 @@ Here's the change:
 
 ```text
 foo.txt
-<<<<<<< HEAD
+<<<<<<< SEARCH
 Two
 =======
 Tooooo
->>>>>>> updated
+>>>>>>> REPLACE
 ```
 
 Hope you like it!
@@ -86,11 +86,11 @@ Here's the change:
 
 foo.txt
 ```text
-<<<<<<< HEAD
+<<<<<<< SEARCH
 Two
 =======
 Tooooo
->>>>>>> updated
+>>>>>>> REPLACE
 ```
 
 Hope you like it!
@@ -105,7 +105,7 @@ Here's the change:
 
 ```text
 foo.txt
-<<<<<<< HEAD
+<<<<<<< SEARCH
 Two
 =======
 Tooooo
@@ -123,7 +123,7 @@ oops!
 Here's the change:
 
 ```text
-<<<<<<< HEAD
+<<<<<<< SEARCH
 Two
 =======
 Tooooo
@@ -139,34 +139,34 @@ oops!
     def test_find_original_update_blocks_no_final_newline(self):
         edit = """
 aider/coder.py
-<<<<<<< HEAD
+<<<<<<< SEARCH
             self.console.print("[red]^C again to quit")
 =======
             self.io.tool_error("^C again to quit")
->>>>>>> updated
+>>>>>>> REPLACE
 
 aider/coder.py
-<<<<<<< HEAD
+<<<<<<< SEARCH
             self.io.tool_error("Malformed ORIGINAL/UPDATE blocks, retrying...")
             self.io.tool_error(err)
 =======
             self.io.tool_error("Malformed ORIGINAL/UPDATE blocks, retrying...")
             self.io.tool_error(str(err))
->>>>>>> updated
+>>>>>>> REPLACE
 
 aider/coder.py
-<<<<<<< HEAD
+<<<<<<< SEARCH
             self.console.print("[red]Unable to get commit message from gpt-3.5-turbo. Use /commit to try again.\n")
 =======
             self.io.tool_error("Unable to get commit message from gpt-3.5-turbo. Use /commit to try again.")
->>>>>>> updated
+>>>>>>> REPLACE
 
 aider/coder.py
-<<<<<<< HEAD
+<<<<<<< SEARCH
             self.console.print("[red]Skipped commmit.")
 =======
             self.io.tool_error("Skipped commmit.")
->>>>>>> updated"""
+>>>>>>> REPLACE"""
 
         # Should not raise a ValueError
         list(eb.find_original_update_blocks(edit))
@@ -177,7 +177,7 @@ No problem! Here are the changes to patch `subprocess.check_output` instead of `
 
 ```python
 tests/test_repomap.py
-<<<<<<< HEAD
+<<<<<<< SEARCH
     def test_check_for_ctags_failure(self):
         with patch("subprocess.run") as mock_run:
             mock_run.side_effect = Exception("ctags not found")
@@ -185,9 +185,9 @@ tests/test_repomap.py
     def test_check_for_ctags_failure(self):
         with patch("subprocess.check_output") as mock_check_output:
             mock_check_output.side_effect = Exception("ctags not found")
->>>>>>> updated
+>>>>>>> REPLACE
 
-<<<<<<< HEAD
+<<<<<<< SEARCH
     def test_check_for_ctags_success(self):
         with patch("subprocess.run") as mock_run:
             mock_run.return_value = CompletedProcess(args=["ctags", "--version"], returncode=0, stdout='''{
@@ -207,7 +207,7 @@ tests/test_repomap.py
   "pattern": "/^    status = main()$/",
   "kind": "variable"
 }'''
->>>>>>> updated
+>>>>>>> REPLACE
 ```
 
 These changes replace the `subprocess.run` patches with `subprocess.check_output` patches in both `test_check_for_ctags_failure` and `test_check_for_ctags_success` tests.
@@ -286,11 +286,11 @@ These changes replace the `subprocess.run` patches with `subprocess.check_output
 Do this:
 
 {Path(file1).name}
-<<<<<<< HEAD
+<<<<<<< SEARCH
 two
 =======
 new
->>>>>>> updated
+>>>>>>> REPLACE
 
 """
             coder.partial_response_function_call = dict()
@@ -328,11 +328,11 @@ new
 Do this:
 
 {Path(file1).name}
-<<<<<<< HEAD
+<<<<<<< SEARCH
 two
 =======
 new
->>>>>>> updated
+>>>>>>> REPLACE
 
 """
             coder.partial_response_function_call = dict()
@@ -351,19 +351,19 @@ Here's the change:
 
 ```text
 foo.txt
-<<<<<<< HEAD
+<<<<<<< SEARCH
 one
 =======
 two
->>>>>>> updated
+>>>>>>> REPLACE
 
 ...
 
-<<<<<<< HEAD
+<<<<<<< SEARCH
 three
 =======
 four
->>>>>>> updated
+>>>>>>> REPLACE
 ```
 
 Hope you like it!
