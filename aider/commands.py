@@ -253,7 +253,11 @@ class Commands:
                 yield Completion(fname, start_position=-len(partial))
 
     def glob_filtered_to_repo(self, pattern):
-        raw_matched_files = list(Path(self.coder.root).glob(pattern))
+        try:
+            raw_matched_files = list(Path(self.coder.root).glob(pattern))
+        except ValueError as err:
+            self.io.tool_error(f"Error matching {pattern}: {err}")
+            raw_matched_files = []
 
         matched_files = []
         for fn in raw_matched_files:

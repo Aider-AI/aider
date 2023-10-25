@@ -42,6 +42,17 @@ class TestCommands(TestCase):
         self.assertTrue(os.path.exists("foo.txt"))
         self.assertTrue(os.path.exists("bar.txt"))
 
+    def test_cmd_add_bad_glob(self):
+        # https://github.com/paul-gauthier/aider/issues/293
+
+        io = InputOutput(pretty=False, yes=True)
+        from aider.coders import Coder
+
+        coder = Coder.create(models.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        commands.cmd_add("**.txt")
+
     def test_cmd_add_with_glob_patterns(self):
         # Initialize the Commands and InputOutput objects
         io = InputOutput(pretty=False, yes=True)
