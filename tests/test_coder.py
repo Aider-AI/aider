@@ -391,10 +391,10 @@ class TestCoder(unittest.TestCase):
 Do this:
 
 {str(fname)}
-<<<<<<< HEAD
+<<<<<<< SEARCH
 =======
 new
->>>>>>> updated
+>>>>>>> REPLACE
 
 """
                 coder.partial_response_function_call = dict()
@@ -441,11 +441,11 @@ new
 Do this:
 
 {str(fname2)}
-<<<<<<< HEAD
+<<<<<<< SEARCH
 two
 =======
 TWO
->>>>>>> updated
+>>>>>>> REPLACE
 
 """
                 coder.partial_response_function_call = dict()
@@ -493,11 +493,11 @@ TWO
 Do this:
 
 {str(fname)}
-<<<<<<< HEAD
+<<<<<<< SEARCH
 two
 =======
 three
->>>>>>> updated
+>>>>>>> REPLACE
 
 """
                 coder.partial_response_function_call = dict()
@@ -570,11 +570,11 @@ three
 Do this:
 
 {str(fname)}
-<<<<<<< HEAD
+<<<<<<< SEARCH
 one
 =======
 two
->>>>>>> updated
+>>>>>>> REPLACE
 
 """
                 coder.partial_response_function_call = dict()
