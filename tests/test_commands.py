@@ -45,7 +45,7 @@ class TestCommands(TestCase):
     def test_cmd_add_bad_glob(self):
         # https://github.com/paul-gauthier/aider/issues/293
 
-        io = InputOutput(pretty=False, yes=True)
+        io = InputOutput(pretty=False, yes=False)
         from aider.coders import Coder
 
         coder = Coder.create(models.GPT35, None, io)
