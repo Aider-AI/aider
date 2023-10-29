@@ -43,12 +43,8 @@ help humans search and navigate large codebases.
 Aider now uses it to help GPT better comprehend, navigate
 and edit code in larger repos.
 
-*To code with GPT-4 using the techniques discussed here, just install aider
-from the main branch of the github repo:*
+*To code with GPT-4 using the techniques discussed here, just install [aider](https://aider.chat/docs/install.html).*
 
-```
-python -m pip install git+https://github.com/paul-gauthier/aider.git
-```
 
 ## The problem: code context
 
@@ -234,12 +230,8 @@ which parts of the code will need changes.
 
 ## Try it out
 
-*To code with GPT-4 using the techniques discussed here, just install aider
-from the main branch of the github repo:*
-
-```
-python -m pip install git+https://github.com/paul-gauthier/aider.git
-```
+To code with GPT-4 using the techniques discussed here,
+just install [aider](https://aider.chat/docs/install.html).
 
 ## Credits
 
