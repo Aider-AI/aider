@@ -12,7 +12,7 @@ Optional steps:
 
 ## pip install aider-chat
 
-Install the “aider-chat” package with pip from one of these sources:
+Install the “aider-chat” package with pip from one of these sources, using python 3.9-3.11:
 
 * PyPI hosts the released and most stable version:
   * `python -m pip install aider-chat`
