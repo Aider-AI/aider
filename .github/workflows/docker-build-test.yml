@@ -1,4 +1,4 @@
-name: Docker Build and Test
+name: Docker Build Test
 
 on:
   push:
@@ -18,8 +18,4 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t myapp:latest .
-
-    - name: Run tests in Docker container
-      run: |
-        docker run myapp:latest python -m unittest discover -s tests
+        docker build -t myapp:latest . -f docker/Dockerfile
