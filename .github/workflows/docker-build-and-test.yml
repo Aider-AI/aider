@@ -1,0 +1,25 @@
+name: Docker Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v3
+
+    - name: Build Docker image
+      run: |
+        docker build -t myapp:latest .
+
+    - name: Run tests in Docker container
+      run: |
+        docker run myapp:latest python -m unittest discover -s tests
