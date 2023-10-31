@@ -2,7 +2,7 @@
 
 ### main branch
 
-- Upgrade to grep-ast 0.2.2 to streamline tree-sitter install
+- Updated tree-sitter dependencies to streamline the pip install process
 
 ### v0.16.0
 
