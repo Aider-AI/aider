@@ -2,6 +2,8 @@
 
 ### main branch
 
+- Upgrade to grep-ast 0.2.2 to streamline tree-sitter install
+
 ### v0.16.0
 
 - [Improved repository map using tree-sitter](https://aider.chat/docs/repomap.html)
