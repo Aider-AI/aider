@@ -28,8 +28,8 @@ PyYAML
 backoff==2.2.1
 networkx==3.1
 diskcache==5.6.1
-numpy==1.24.3
-scipy==1.10.1
+numpy==1.26.1
+scipy==1.11.3
 jsonschema==4.17.3
 sounddevice==0.4.6
 soundfile==0.12.1
