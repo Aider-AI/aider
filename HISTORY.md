@@ -1,6 +1,6 @@
 # Release history
 
-### main branch
+### v0.16.1
 
 - Updated tree-sitter dependencies to streamline the pip install process
 
