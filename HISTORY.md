@@ -1,5 +1,9 @@
 # Release history
 
+### v0.16.2
+
+- Fixed docker image.
+
 ### v0.16.1
 
 - Updated tree-sitter dependencies to streamline the pip install process
