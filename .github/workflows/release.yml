@@ -46,7 +46,7 @@ jobs:
       with:
         context: .
         file: ./docker/Dockerfile
-        platforms: linux/amd64
+        platforms: linux/arm64
         push: false
         tags: |
           ${{ secrets.DOCKERHUB_USERNAME }}/aider:${{ github.ref_name }}
