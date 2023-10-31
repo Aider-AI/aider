@@ -47,7 +47,7 @@ jobs:
         context: .
         file: ./docker/Dockerfile
         platforms: linux/amd64
-        push: true
+        push: false
         tags: |
           ${{ secrets.DOCKERHUB_USERNAME }}/aider:${{ github.ref_name }}
           ${{ secrets.DOCKERHUB_USERNAME }}/aider:latest
