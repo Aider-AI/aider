@@ -124,8 +124,13 @@ To access the openrouter models simply
 
 - register for an account, purchase some credits and generate an api key
 - set --openai-api-base to https://openrouter.ai/api/v1
-- set --openai-api-key to your openrouter key
+- set --openai-api-key to your openrouter key surrounded by single quotes (`'sk-or-v1-.....'`)
 - set --model to the model of your choice (openai/gpt-4-32k, anthropic/claude-2 etc.)
+
+Example: 
+```
+aider --openai-api-base=https://openrouter.ai/api/v1 --openai-api-key='sk-or-v1-.....'  --model=anthropic/claude-2
+```
 
 Some of the models weren't very functional and each llm has its own quirks. The anthropic models work ok, but the llama-2 ones in particular will need more work to play friendly with aider.
 
