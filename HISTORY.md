@@ -1,5 +1,9 @@
 # Release history
 
+### v0.16.3
+
+- Fixed repo-map support for C#.
+
 ### v0.16.2
 
 - Fixed docker image.
