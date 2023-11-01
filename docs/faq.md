@@ -140,7 +140,7 @@ Numerous users have done experiments with numerous models. None of these experim
 
 Once we see signs that a *particular* model is capable of code editing, it would be reasonable for aider to attempt to officially support such a model. Until then, aider will simply maintain experimental support for using alternative models.
 
-There are ongoing discussions about [LLM integrations in the aider discord](https://discord.com/channels/1131200896827654144/1133060780649087048).
+There are ongoing discussions about [LLM integrations in the aider discord](https://discord.gg/yaUk7JqJ9G).
 
 Here are some [GitHub issues which may contain relevant information](https://github.com/paul-gauthier/aider/issues?q=is%3Aissue+%23172).
 
