@@ -143,7 +143,9 @@ class RepoMap:
             return
         query_scm = query_scm.read_text()
 
-        code = Path(fname).read_text(encoding=self.io.encoding)
+        code = self.io.read_text(fname)
+        if not code:
+            return
         tree = parser.parse(bytes(code, "utf-8"))
 
         # Run the tags queries
@@ -371,9 +373,11 @@ class RepoMap:
                     output += "\n" + cur_fname + "\n"
 
                 if type(tag) is Tag:
+                    code = self.io.read_text(tag.fname) or ""
+
                     context = TreeContext(
                         tag.rel_fname,
-                        Path(tag.fname).read_text(self.io.encoding),
+                        code,
                         color=False,
                         line_number=False,
                         child_context=False,
