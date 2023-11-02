@@ -38,8 +38,12 @@ class ChdirTemporaryDirectory(IgnorantTemporaryDirectory):
 class GitTemporaryDirectory(ChdirTemporaryDirectory):
     def __enter__(self):
         res = super().__enter__()
-        make_repo()
+        self.repo = make_repo()
         return res
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        del self.repo
+        super().__exit__(exc_type, exc_val, exc_tb)
 
 
 def make_repo(path=None):
