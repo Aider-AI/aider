@@ -37,6 +37,9 @@ some/dir/example.py
 {fence[1]}
 
 The *SEARCH* section must *EXACTLY MATCH* the existing source code, character for character.
+The *SEARCH/REPLACE block* must be concise.
+Include just enough lines to uniquely specify the change.
+Don't include extra unchanging lines.
 
 Every *SEARCH/REPLACE block* must be fenced with {fence[0]} and {fence[1]}, with the correct code language.
 
