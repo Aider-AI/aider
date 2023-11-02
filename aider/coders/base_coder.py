@@ -225,6 +225,16 @@ class Coder:
     ]
     fence = fences[0]
 
+    def show_pretty(self):
+        if not self.pretty:
+            return False
+
+        # only show pretty output if fences are the normal triple-backtick
+        if self.fence != self.fences[0]:
+            return False
+
+        return True
+
     def get_abs_fnames_content(self):
         for fname in list(self.abs_fnames):
             content = self.io.read_text(fname)
@@ -614,7 +624,7 @@ class Coder:
                 self.total_cost += cost
 
         show_resp = self.render_incremental_response(True)
-        if self.pretty:
+        if self.show_pretty():
             show_resp = Markdown(
                 show_resp, style=self.assistant_output_color, code_theme=self.code_theme
             )
@@ -628,7 +638,7 @@ class Coder:
 
     def show_send_output_stream(self, completion):
         live = None
-        if self.pretty:
+        if self.show_pretty():
             live = Live(vertical_overflow="scroll")
 
         try:
@@ -663,7 +673,7 @@ class Coder:
                 except AttributeError:
                     text = None
 
-                if self.pretty:
+                if self.show_pretty():
                     self.live_incremental_response(live, False)
                 elif text:
                     sys.stdout.write(text)
