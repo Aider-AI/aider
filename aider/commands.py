@@ -313,8 +313,12 @@ class Commands:
                 continue
 
             if self.coder.repo and matched_file not in git_files:
-                self.coder.repo.repo.git.add(abs_file_path)
-                git_added.append(matched_file)
+                try:
+                    self.coder.repo.repo.git.add(abs_file_path)
+                    git_added.append(matched_file)
+                except git.exc.GitCommandError as e:
+                    self.io.tool_error(f"Unable to add {matched_file}: {str(e)}")
+                    continue
 
             if abs_file_path in self.coder.abs_fnames:
                 self.io.tool_error(f"{matched_file} is already in the chat")
