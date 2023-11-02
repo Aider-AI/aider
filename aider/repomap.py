@@ -143,8 +143,11 @@ class RepoMap:
             return
         query_scm = query_scm.read_text()
 
-        code = Path(fname).read_text(encoding=self.io.encoding)
-        tree = parser.parse(bytes(code, "utf-8"))
+        try:
+            code = Path(fname).read_text(encoding=self.io.encoding)
+            tree = parser.parse(bytes(code, "utf-8"))
+        except UnicodeDecodeError:
+            return
 
         # Run the tags queries
         query = language.query(query_scm)
