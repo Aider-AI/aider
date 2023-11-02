@@ -458,3 +458,5 @@ class TestCommands(TestCase):
             commands.cmd_add("two.txt")
 
             self.assertEqual(commit, repo.head.commit.hexsha)
+
+            repo.git.commit("-m", "cleanup")
