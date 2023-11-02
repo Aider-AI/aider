@@ -413,3 +413,22 @@ class TestCommands(TestCase):
             commands.cmd_add(f'"{fname}"')
 
             self.assertIn(str(fname.resolve()), coder.abs_fnames)
+
+    def test_cmd_add_no_autocommit(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(pretty=False, yes=True)
+            from aider.coders import Coder
+
+            coder = Coder.create(models.GPT35, None, io, auto_commits=False)
+            commands = Commands(io, coder)
+
+            commands.cmd_add("foo.txt")
+
+            # Check if both files have been created in the temporary directory
+            self.assertTrue(os.path.exists("foo.txt"))
+
+            repo = git.Repo()
+
+            # Assert that foo.txt has been `git add` but not `git commit`
+            added_files = repo.git.diff("--cached", "--name-only").split()
+            self.assertIn("foo.txt", added_files)
