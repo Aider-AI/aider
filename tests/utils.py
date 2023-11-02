@@ -16,7 +16,7 @@ class IgnorantTemporaryDirectory:
     def __exit__(self, exc_type, exc_val, exc_tb):
         try:
             self.temp_dir.__exit__(exc_type, exc_val, exc_tb)
-        except OSError:
+        except (OSError, PermissionError):
             pass  # Ignore errors (Windows)
 
 
