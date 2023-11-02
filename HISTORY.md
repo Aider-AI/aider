@@ -1,5 +1,12 @@
 # Release history
 
+### main branch
+
+- Ask for more concise SEARCH/REPLACE blocks. [Benchmarked](https://aider.chat/docs/benchmarks.html) at 63.9%, no regression.
+- Improved repo-map support for elisp.
+- Fixed crash bug when `/add` used on file matching `.gitignore`
+- Fixed crash bug when repo-map processed file not matching `--encoding`
+
 ### v0.16.3
 
 - Fixed repo-map support for C#.
