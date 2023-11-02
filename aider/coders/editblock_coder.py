@@ -17,7 +17,7 @@ class EditBlockCoder(Coder):
         content = self.partial_response_content
 
         # might raise ValueError for malformed ORIG/UPD blocks
-        edits = list(find_original_update_blocks(content))
+        edits = list(find_original_update_blocks(content, self.fence))
 
         return edits
 
@@ -25,7 +25,7 @@ class EditBlockCoder(Coder):
         for path, original, updated in edits:
             full_path = self.abs_root_path(path)
             content = self.io.read_text(full_path)
-            content = do_replace(full_path, content, original, updated)
+            content = do_replace(full_path, content, original, updated, self.fence)
             if content:
                 self.io.write_text(full_path, content)
                 continue
@@ -247,7 +247,10 @@ def replace_closest_edit_distance(whole_lines, part, part_lines, replace_lines):
     return modified_whole
 
 
-def strip_quoted_wrapping(res, fname=None, fence=None):
+DEFAULT_FENCE = ("`" * 3, "`" * 3)
+
+
+def strip_quoted_wrapping(res, fname=None, fence=DEFAULT_FENCE):
     """
     Given an input string which may have extra "wrapping" around it, remove the wrapping.
     For example:
@@ -260,9 +263,6 @@ def strip_quoted_wrapping(res, fname=None, fence=None):
     """
     if not res:
         return res
-
-    if not fence:
-        fence = ("```", "```")
 
     res = res.splitlines()
 
@@ -310,7 +310,23 @@ separators = "|".join([HEAD, DIVIDER, UPDATED])
 split_re = re.compile(r"^((?:" + separators + r")[ ]*\n)", re.MULTILINE | re.DOTALL)
 
 
-def find_original_update_blocks(content):
+missing_filename_err = f"Bad/missing filename. Filename should be alone on the line before {HEAD}"
+
+
+def strip_filename(filename, fence):
+    filename = filename.strip()
+
+    if filename == "...":
+        return
+
+    start_fence = fence[0]
+    if filename.startswith(start_fence):
+        return
+
+    return filename
+
+
+def find_original_update_blocks(content, fence=DEFAULT_FENCE):
     # make sure we end with a newline, otherwise the regex will miss <<UPD on the last line
     if not content.endswith("\n"):
         content = content + "\n"
@@ -337,22 +353,20 @@ def find_original_update_blocks(content):
 
             processed.append(cur)  # original_marker
 
-            filename = processed[-2].splitlines()[-1].strip()
+            filename = strip_filename(processed[-2].splitlines()[-1], fence)
             try:
-                if not len(filename) or "`" in filename:
-                    filename = processed[-2].splitlines()[-2].strip()
-                if not len(filename) or "`" in filename or filename == "...":
+                if not filename:
+                    filename = strip_filename(processed[-2].splitlines()[-2], fence)
+                if not filename:
                     if current_filename:
                         filename = current_filename
                     else:
-                        raise ValueError(
-                            f"Bad/missing filename. It should go right above the {HEAD}"
-                        )
+                        raise ValueError(missing_filename_err)
             except IndexError:
                 if current_filename:
                     filename = current_filename
                 else:
-                    raise ValueError(f"Bad/missing filename. It should go right above the {HEAD}")
+                    raise ValueError(missing_filename_err)
 
             current_filename = filename
 

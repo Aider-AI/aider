@@ -80,6 +80,29 @@ Hope you like it!
         edits = list(eb.find_original_update_blocks(edit))
         self.assertEqual(edits, [("foo.txt", "Two\n", "Tooooo\n")])
 
+    def test_find_original_update_blocks_mangled_filename_w_source_tag(self):
+        source = "source"
+
+        edit = """
+Here's the change:
+
+<%s>foo.txt
+<<<<<<< SEARCH
+One
+=======
+Two
+>>>>>>> REPLACE
+</%s>
+
+Hope you like it!
+""" % (source, source)
+
+        fence = ("<%s>" % source, "</%s>" % source)
+
+        with self.assertRaises(ValueError) as cm:
+            _edits = list(eb.find_original_update_blocks(edit, fence))
+        self.assertIn("missing filename", str(cm.exception))
+
     def test_find_original_update_blocks_quote_below_filename(self):
         edit = """
 Here's the change:
