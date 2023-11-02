@@ -432,3 +432,29 @@ class TestCommands(TestCase):
             # Assert that foo.txt has been `git add` but not `git commit`
             added_files = repo.git.diff("--cached", "--name-only").split()
             self.assertIn("foo.txt", added_files)
+
+    def test_cmd_add_existing_with_dirty_repo(self):
+        with GitTemporaryDirectory():
+            repo = git.Repo()
+
+            files = ["one.txt", "two.txt"]
+            for fname in files:
+                Path(fname).touch()
+                repo.git.add(fname)
+            repo.git.commit("-m", "initial")
+
+            commit = repo.head.commit.hexsha
+
+            # leave a dirty `git rm`
+            repo.git.rm("one.txt")
+
+            io = InputOutput(pretty=False, yes=True)
+            from aider.coders import Coder
+
+            coder = Coder.create(models.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # There's no reason this /add should trigger a commit
+            commands.cmd_add("two.txt")
+
+            self.assertEqual(commit, repo.head.commit.hexsha)
