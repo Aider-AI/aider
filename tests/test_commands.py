@@ -459,4 +459,12 @@ class TestCommands(TestCase):
 
             self.assertEqual(commit, repo.head.commit.hexsha)
 
+            # Windows is throwing:
+            # PermissionError: [WinError 32] The process cannot access
+            # the file because it is being used by another process
+
             repo.git.commit("-m", "cleanup")
+
+            del coder
+            del commands
+            del repo
