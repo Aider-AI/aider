@@ -273,7 +273,7 @@ done
 You can also script aider from python:
 
 ```python
-from aider import Coder
+from aider.coders import Coder
 
 # This is a list of files to add to the chat
 fnames = ["foo.py"]
