@@ -468,3 +468,20 @@ class TestCommands(TestCase):
             del coder
             del commands
             del repo
+
+    def test_cmd_add_unicode_error(self):
+        # Initialize the Commands and InputOutput objects
+        io = InputOutput(pretty=False, yes=True)
+        from aider.coders import Coder
+
+        coder = Coder.create(models.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        fname = "file.txt"
+        encoding = "utf-16"
+        some_content_which_will_error_if_read_with_encoding_utf8 = "ÅÍÎÏ".encode(encoding)
+        with open(fname, "wb") as f:
+            f.write(some_content_which_will_error_if_read_with_encoding_utf8)
+
+        commands.cmd_add("file.txt")
+        self.assertEqual(coder.abs_fnames, set())
