@@ -19,6 +19,7 @@ from rich.markdown import Markdown
 from aider import models, prompts, utils
 from aider.commands import Commands
 from aider.history import ChatSummary
+from aider.io import InputOutput
 from aider.repo import GitRepo
 from aider.repomap import RepoMap
 from aider.sendchat import send_with_retries
@@ -52,16 +53,16 @@ class Coder:
     @classmethod
     def create(
         self,
-        main_model,
-        edit_format,
-        io,
+        main_model=None,
+        edit_format=None,
+        io=None,
         skip_model_availabily_check=False,
         **kwargs,
     ):
         from . import EditBlockCoder, WholeFileCoder
 
         if not main_model:
-            main_model = models.GPT35_16k
+            main_model = models.GPT4
 
         if not skip_model_availabily_check and not main_model.always_available:
             if not check_model_availability(io, main_model):
@@ -104,6 +105,9 @@ class Coder:
     ):
         if not fnames:
             fnames = []
+
+        if io is None:
+            io = InputOutput()
 
         self.chat_completion_call_hashes = []
         self.chat_completion_response_hashes = []

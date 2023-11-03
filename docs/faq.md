@@ -273,9 +273,7 @@ done
 You can also script aider from python:
 
 ```python
-from aider.io import InputOutput
 from aider.coders import Coder
-from aider.models import GPT4
 
 # This is a list of files to add to the chat
 fnames = ['foo.py']
@@ -283,10 +281,9 @@ fnames = ['foo.py']
 # This is the instruction to give to GPT
 message = 'make a script that prints hello world!'
 
-io = InputOutput()
-coder = Coder.create(GPT4, None, io, fnames=fnames)
-
+# Create a coder object
+coder = Coder.create(fnames=fnames)
 
 # This will execute that one instruction on those files and then return
-coder.run(with_message=message)
+coder.run(message)
 ```
