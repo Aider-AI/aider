@@ -276,7 +276,7 @@ You can also script aider from python:
 from aider.coders import Coder
 
 # This is a list of files to add to the chat
-fnames = ['foo.py']
+fnames = ["foo.py"]
 
 # Create a coder object
 coder = Coder.create(fnames=fnames)
@@ -286,5 +286,4 @@ coder.run("make a script that prints hello world")
 
 # Send another instruction
 coder.run("make it say goodbye")
-
 ```
