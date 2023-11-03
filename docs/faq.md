@@ -278,12 +278,13 @@ from aider.coders import Coder
 # This is a list of files to add to the chat
 fnames = ['foo.py']
 
-# This is the instruction to give to GPT
-message = 'make a script that prints hello world!'
-
 # Create a coder object
 coder = Coder.create(fnames=fnames)
 
-# This will execute that one instruction on those files and then return
-coder.run(message)
+# This will execute one instruction on those files and then return
+coder.run("make a script that prints hello world")
+
+# Send another instruction
+coder.run("make it say goodbye")
+
 ```
