@@ -1,5 +1,5 @@
 #! /usr/bin/bash
 MYDIR="$(dirname -- "$(readlink -e "$0")")"
 
-docker run -ti -e UID=$(id -u) -e GID=$(id -g) -e OPENAI_API_KEY=$(cat ~/.secrets/puzzel/azure-uk-south-openai) -v $MYDIR/../aider:/src/aider -v $(pwd):/app aider $@
+docker run -ti --rm -e UID=$(id -u) -e GID=$(id -g) -e OPENAI_API_KEY=$(cat ~/.secrets/puzzel/azure-uk-south-openai) -v $MYDIR/../aider:/src/aider -v $(pwd):/app aider --no-pretty $@
 
