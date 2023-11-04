@@ -9,6 +9,7 @@
 - [Can I change the system prompts that aider uses?](#can-i-change-the-system-prompts-that-aider-uses)
 - [Can I run aider in Google Colab?](#can-i-run-aider-in-google-colab)
 - [How can I run aider locally from source code?](#how-can-i-run-aider-locally-from-source-code)
+- [Can I script aider?](#can-i-script-aider)
 
 ## How does aider use git?
 
@@ -20,11 +21,11 @@ Aider is tightly integrated with git, which makes it easy to:
   - Manage a series of GPT's changes on a git branch
 
 Aider specifically uses git in these ways:
- 
+
   - It asks to create a git repo if you launch it in a directory without one.
   - Whenever GPT edits a file, aider commits those changes with a descriptive commit message. This makes it easy to undo or review GPT's changes.
   - Aider takes special care if GPT tries to edit files that already have uncommitted changes (dirty files). Aider will first commit any preexisting changes with a descriptive commit message. This keeps your edits separate from GPT's edits, and makes sure you never lose your work if GPT makes an inappropriate change.
-  
+
 Aider also allows you to use in-chat commands to `/diff` or `/undo` the last change made by GPT.
 To do more complex management of your git history, you cat use raw `git` commands,
 either by using `/git` within the chat, or with standard git tools outside of aider.
@@ -58,7 +59,7 @@ They have large context windows, better coding skills and
 they generally obey the instructions in the system prompt.
 GPT-4 is able to structure code edits as simple "diffs"
 and use a
-[repository map](https://aider.chat/docs/ctags.html)
+[repository map](https://aider.chat/docs/repomap.html)
 to improve its ability to make changes in larger codebases.
 
 GPT-3.5 is supported more experimentally
@@ -72,11 +73,13 @@ when using GPT-3.5.
 For a detailed and quantitative comparison, please see the
 [code editing benchmark results for GPT-3.5 and GPT-4](https://aider.chat/docs/benchmarks.html).
 
-In practice, this means you can use aider to edit a set of source files
+In practice, this means you can use aider to **edit** a set of source files
 that total up to the sizes below.
-Just add the specific set of files to the chat
-that are relevant to the change you are requesting.
-This minimizes your use of the context window, as well as costs.
+The repo can be arbitrarily large, but
+the specific set of files which need to be edited for your request
+must fit within the context window.
+Only `/add` the files that need to be edited to the chat
+to minimize your use of the context window and costs.
 
 | Model             | Context<br>Size | Edit<br>Format | Max<br>File Size | Max<br>File Size | Repo<br>Map? |
 | ----------------- | -- | --     | -----| -- | -- |
@@ -138,7 +141,7 @@ Numerous users have done experiments with numerous models. None of these experim
 
 Once we see signs that a *particular* model is capable of code editing, it would be reasonable for aider to attempt to officially support such a model. Until then, aider will simply maintain experimental support for using alternative models.
 
-There are ongoing discussions about [LLM integrations in the aider discord](https://discord.com/channels/1131200896827654144/1133060780649087048).
+There are ongoing discussions about [LLM integrations in the aider discord](https://discord.gg/yaUk7JqJ9G).
 
 Here are some [GitHub issues which may contain relevant information](https://github.com/paul-gauthier/aider/issues?q=is%3Aissue+%23172).
 
@@ -149,8 +152,7 @@ you can use `--openai-api-base` to connect to a different API endpoint.
 
 ### Local LLMs
 
-[LocalAI](https://github.com/go-skynet/LocalAI)
-and
+[LocalAI](https://github.com/go-skynet/LocalAI) and
 [SimpleAI](https://github.com/lhenault/simpleAI)
 look like relevant tools to serve local models via a compatible API.
 
@@ -242,4 +244,46 @@ pip install -r requirements.txt
 
 # Run the local version of Aider:
 python -m aider.main
+```
+
+# Can I script aider?
+
+You can script aider via the command line or python.
+
+## Command line
+
+Aider takes a `--message` argument, where you can give it a natural language instruction.
+It will do that one thing, apply the edits to the files and then exit.
+So you could do:
+
+```bash
+aider --message "make a script that prints hello" hello.js
+```
+
+Or you can write simple shell scripts to apply the same instruction to many files:
+
+```bash
+for FILE in *.py ; do
+    aider --message "add descriptive docstrings to all the functions" $FILE
+done
+```
+
+## Python
+
+You can also script aider from python:
+
+```python
+from aider.coders import Coder
+
+# This is a list of files to add to the chat
+fnames = ["foo.py"]
+
+# Create a coder object
+coder = Coder.create(fnames=fnames)
+
+# This will execute one instruction on those files and then return
+coder.run("make a script that prints hello world")
+
+# Send another instruction
+coder.run("make it say goodbye")
 ```

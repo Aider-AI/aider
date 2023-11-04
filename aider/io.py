@@ -44,7 +44,7 @@ class AutoCompleter(Completer):
             try:
                 with open(fname, "r", encoding=self.encoding) as f:
                     content = f.read()
-            except FileNotFoundError:
+            except (FileNotFoundError, UnicodeDecodeError):
                 continue
             try:
                 lexer = guess_lexer_for_filename(fname, content)

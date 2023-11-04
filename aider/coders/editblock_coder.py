@@ -17,7 +17,7 @@ class EditBlockCoder(Coder):
         content = self.partial_response_content
 
         # might raise ValueError for malformed ORIG/UPD blocks
-        edits = list(find_original_update_blocks(content))
+        edits = list(find_original_update_blocks(content, self.fence))
 
         return edits
 
@@ -25,16 +25,16 @@ class EditBlockCoder(Coder):
         for path, original, updated in edits:
             full_path = self.abs_root_path(path)
             content = self.io.read_text(full_path)
-            content = do_replace(full_path, content, original, updated)
+            content = do_replace(full_path, content, original, updated, self.fence)
             if content:
                 self.io.write_text(full_path, content)
                 continue
             raise ValueError(f"""InvalidEditBlock: edit failed!
 
-{path} does not contain the *exact sequence* of HEAD lines you specified.
+{path} does not contain the *exact chunk* of SEARCH lines you specified.
 Try again.
 DO NOT skip blank lines, comments, docstrings, etc!
-The HEAD block needs to be EXACTLY the same as the lines in {path} with nothing missing!
+The SEARCH block needs to be EXACTLY the same as the lines in {path} with nothing missing!
 
 {path} does not contain these {len(original.splitlines())} exact lines in a row:
 ```
@@ -122,7 +122,7 @@ def try_dotdotdots(whole, part, replace):
     replace_pieces = re.split(dots_re, replace)
 
     if len(part_pieces) != len(replace_pieces):
-        raise ValueError("Unpaired ... in edit block")
+        raise ValueError("Unpaired ... in SEARCH/REPLACE block")
 
     if len(part_pieces) == 1:
         # no dots in this edit block, just return None
@@ -132,7 +132,7 @@ def try_dotdotdots(whole, part, replace):
     all_dots_match = all(part_pieces[i] == replace_pieces[i] for i in range(1, len(part_pieces), 2))
 
     if not all_dots_match:
-        raise ValueError("Unmatched ... in edit block")
+        raise ValueError("Unmatched ... in SEARCH/REPLACE block")
 
     part_pieces = [part_pieces[i] for i in range(0, len(part_pieces), 2)]
     replace_pieces = [replace_pieces[i] for i in range(0, len(replace_pieces), 2)]
@@ -148,10 +148,10 @@ def try_dotdotdots(whole, part, replace):
             whole += replace
             continue
 
-        if whole.count(part) != 1:
-            raise ValueError(
-                "No perfect matching chunk in edit block with ... or part appears more than once"
-            )
+        if whole.count(part) == 0:
+            raise ValueError
+        if whole.count(part) > 1:
+            raise ValueError
 
         whole = whole.replace(part, replace, 1)
 
@@ -247,7 +247,10 @@ def replace_closest_edit_distance(whole_lines, part, part_lines, replace_lines):
     return modified_whole
 
 
-def strip_quoted_wrapping(res, fname=None, fence=None):
+DEFAULT_FENCE = ("`" * 3, "`" * 3)
+
+
+def strip_quoted_wrapping(res, fname=None, fence=DEFAULT_FENCE):
     """
     Given an input string which may have extra "wrapping" around it, remove the wrapping.
     For example:
@@ -260,9 +263,6 @@ def strip_quoted_wrapping(res, fname=None, fence=None):
     """
     if not res:
         return res
-
-    if not fence:
-        fence = ("```", "```")
 
     res = res.splitlines()
 
@@ -301,16 +301,32 @@ def do_replace(fname, content, before_text, after_text, fence=None):
     return new_content
 
 
-HEAD = "<<<<<<< HEAD"
+HEAD = "<<<<<<< SEARCH"
 DIVIDER = "======="
-UPDATED = ">>>>>>> updated"
+UPDATED = ">>>>>>> REPLACE"
 
 separators = "|".join([HEAD, DIVIDER, UPDATED])
 
 split_re = re.compile(r"^((?:" + separators + r")[ ]*\n)", re.MULTILINE | re.DOTALL)
 
 
-def find_original_update_blocks(content):
+missing_filename_err = f"Bad/missing filename. Filename should be alone on the line before {HEAD}"
+
+
+def strip_filename(filename, fence):
+    filename = filename.strip()
+
+    if filename == "...":
+        return
+
+    start_fence = fence[0]
+    if filename.startswith(start_fence):
+        return
+
+    return filename
+
+
+def find_original_update_blocks(content, fence=DEFAULT_FENCE):
     # make sure we end with a newline, otherwise the regex will miss <<UPD on the last line
     if not content.endswith("\n"):
         content = content + "\n"
@@ -337,22 +353,20 @@ def find_original_update_blocks(content):
 
             processed.append(cur)  # original_marker
 
-            filename = processed[-2].splitlines()[-1].strip()
+            filename = strip_filename(processed[-2].splitlines()[-1], fence)
             try:
-                if not len(filename) or "`" in filename:
-                    filename = processed[-2].splitlines()[-2].strip()
-                if not len(filename) or "`" in filename:
+                if not filename:
+                    filename = strip_filename(processed[-2].splitlines()[-2], fence)
+                if not filename:
                     if current_filename:
                         filename = current_filename
                     else:
-                        raise ValueError(
-                            f"Bad/missing filename. It should go right above the {HEAD}"
-                        )
+                        raise ValueError(missing_filename_err)
             except IndexError:
                 if current_filename:
                     filename = current_filename
                 else:
-                    raise ValueError(f"Bad/missing filename. It should go right above the {HEAD}")
+                    raise ValueError(missing_filename_err)
 
             current_filename = filename
 
@@ -379,10 +393,10 @@ def find_original_update_blocks(content):
         raise ValueError(f"{processed}\n^^^ {err}")
     except IndexError:
         processed = "".join(processed)
-        raise ValueError(f"{processed}\n^^^ Incomplete HEAD/updated block.")
+        raise ValueError(f"{processed}\n^^^ Incomplete SEARCH/REPLACE block.")
     except Exception:
         processed = "".join(processed)
-        raise ValueError(f"{processed}\n^^^ Error parsing HEAD/updated block.")
+        raise ValueError(f"{processed}\n^^^ Error parsing SEARCH/REPLACE block.")
 
 
 if __name__ == "__main__":

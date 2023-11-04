@@ -60,10 +60,10 @@ def setup_git(git_root, io):
     with repo.config_writer() as git_config:
         if not global_git_config.has_option("user", "name"):
             git_config.set_value("user", "name", "Your Name")
-            io.tool_error('Update git name with: git config --global user.name "Your Name"')
+            io.tool_error('Update git name with: git config user.name "Your Name"')
         if not global_git_config.has_option("user", "email"):
             git_config.set_value("user", "email", "you@example.com")
-            io.tool_error('Update git email with: git config --global user.email "you@example.com"')
+            io.tool_error('Update git email with: git config user.email "you@example.com"')
 
     io.tool_output("Git repository created in the current working directory.")
 
@@ -86,6 +86,8 @@ def check_gitignore(git_root, io, ask=True):
     gitignore_file = Path(git_root) / ".gitignore"
     if gitignore_file.exists():
         content = io.read_text(gitignore_file)
+        if content is None:
+            return
         if pat in content.splitlines():
             return
     else:
@@ -305,6 +307,15 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         default=True,
         help="Enable/disable adding .aider* to .gitignore (default: True)",
     )
+    default_aiderignore_file = (
+        os.path.join(git_root, ".aiderignore") if git_root else ".aiderignore"
+    )
+    git_group.add_argument(
+        "--aiderignore",
+        metavar="AIDERIGNORE",
+        default=default_aiderignore_file,
+        help="Specify the aider ignore file (default: .aiderignore in git root)",
+    )
     git_group.add_argument(
         "--auto-commits",
         action=argparse.BooleanOptionalAction,
@@ -321,7 +332,13 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         "--dry-run",
         action=argparse.BooleanOptionalAction,
         default=False,
-        help="Enable/disable performing a dry run without modifying files (default: False)",
+        help="Perform a dry run without modifying files (default: False)",
+    )
+    git_group.add_argument(
+        "--commit",
+        action="store_true",
+        help="Commit all pending changes with a suitable commit message, then exit",
+        default=False,
     )
 
     ##########
@@ -364,6 +381,11 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         help="Specify a single message to send GPT, process reply then exit (disables chat mode)",
     )
     other_group.add_argument(
+        "--encoding",
+        default="utf-8",
+        help="Specify the encoding for input and output (default: utf-8)",
+    )
+    other_group.add_argument(
         "-c",
         "--config",
         is_config_file=True,
@@ -399,6 +421,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         tool_output_color=args.tool_output_color,
         tool_error_color=args.tool_error_color,
         dry_run=args.dry_run,
+        encoding=args.encoding,
     )
 
     fnames = [str(Path(fn).resolve()) for fn in args.files]
@@ -501,10 +524,15 @@ def main(argv=None, input=None, output=None, force_git_root=None):
             stream=args.stream,
             use_git=args.git,
             voice_language=args.voice_language,
+            aider_ignore_file=args.aiderignore,
         )
     except ValueError as err:
         io.tool_error(str(err))
         return 1
+
+    if args.commit:
+        coder.commands.cmd_commit("")
+        return
 
     if args.show_repo_map:
         repo_map = coder.get_repo_map()

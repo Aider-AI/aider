@@ -21,6 +21,7 @@ from rich.markdown import Markdown
 from aider import models, prompts, utils
 from aider.commands import Commands
 from aider.history import ChatSummary
+from aider.io import InputOutput
 from aider.repo import GitRepo
 from aider.repomap import RepoMap
 from aider.sendchat import send_with_retries
@@ -54,16 +55,16 @@ class Coder:
     @classmethod
     def create(
         self,
-        main_model,
-        edit_format,
-        io,
+        main_model=None,
+        edit_format=None,
+        io=None,
         skip_model_availabily_check=False,
         **kwargs,
     ):
         from . import EditBlockCoder, WholeFileCoder
 
         if not main_model:
-            main_model = models.GPT35_16k
+            main_model = models.GPT4
 
         if not skip_model_availabily_check and not main_model.always_available:
             if not check_model_availability(io, main_model):
@@ -102,9 +103,13 @@ class Coder:
         stream=True,
         use_git=True,
         voice_language=None,
+        aider_ignore_file=None,
     ):
         if not fnames:
             fnames = []
+
+        if io is None:
+            io = InputOutput()
 
         self.chat_completion_call_hashes = []
         self.chat_completion_response_hashes = []
@@ -156,7 +161,7 @@ class Coder:
 
         if use_git:
             try:
-                self.repo = GitRepo(self.io, fnames, git_dname)
+                self.repo = GitRepo(self.io, fnames, git_dname, aider_ignore_file)
                 self.root = self.repo.root
             except FileNotFoundError:
                 self.repo = None
@@ -178,24 +183,17 @@ class Coder:
                 self.verbose,
             )
 
-            if self.repo_map.use_ctags:
-                self.io.tool_output(f"Repo-map: universal-ctags using {map_tokens} tokens")
-            elif not self.repo_map.has_ctags and map_tokens > 0:
-                self.io.tool_output(
-                    f"Repo-map: basic using {map_tokens} tokens"
-                    f" ({self.repo_map.ctags_disabled_reason})"
-                )
-            else:
-                self.io.tool_output("Repo-map: disabled because map_tokens == 0")
+        if map_tokens > 0:
+            self.io.tool_output(f"Repo-map: using {map_tokens} tokens")
         else:
-            self.io.tool_output("Repo-map: disabled")
+            self.io.tool_output("Repo-map: disabled because map_tokens == 0")
 
         for fname in self.get_inchat_relative_files():
             self.io.tool_output(f"Added {fname} to the chat.")
 
         self.summarizer = ChatSummary(models.Model.weak_model())
         self.summarizer_thread = None
-        self.summarized_done_messages = None
+        self.summarized_done_messages = []
 
         # validate the functions jsonschema
         if self.functions:
@@ -232,6 +230,16 @@ class Coder:
         wrap_fence("sourcecode"),
     ]
     fence = fences[0]
+
+    def show_pretty(self):
+        if not self.pretty:
+            return False
+
+        # only show pretty output if fences are the normal triple-backtick
+        if self.fence != self.fences[0]:
+            return False
+
+        return True
 
     def get_abs_fnames_content(self):
         for fname in list(self.abs_fnames):
@@ -378,7 +386,7 @@ class Coder:
         self.summarizer_thread = None
 
         self.done_messages = self.summarized_done_messages
-        self.summarized_done_messages = None
+        self.summarized_done_messages = []
 
     def move_back_cur_messages(self, message):
         self.done_messages += self.cur_messages
@@ -633,7 +641,7 @@ class Coder:
                 self.total_cost += cost
 
         show_resp = self.render_incremental_response(True)
-        if self.pretty:
+        if self.show_pretty():
             show_resp = Markdown(
                 show_resp, style=self.assistant_output_color, code_theme=self.code_theme
             )
@@ -647,7 +655,7 @@ class Coder:
 
     def show_send_output_stream(self, completion):
         live = None
-        if self.pretty:
+        if self.show_pretty():
             live = Live(vertical_overflow="scroll")
 
         try:
@@ -682,7 +690,7 @@ class Coder:
                 except AttributeError:
                     text = None
 
-                if self.pretty:
+                if self.show_pretty():
                     self.live_incremental_response(live, False)
                 elif text:
                     sys.stdout.write(text)

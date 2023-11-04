@@ -42,6 +42,17 @@ class TestCommands(TestCase):
         self.assertTrue(os.path.exists("foo.txt"))
         self.assertTrue(os.path.exists("bar.txt"))
 
+    def test_cmd_add_bad_glob(self):
+        # https://github.com/paul-gauthier/aider/issues/293
+
+        io = InputOutput(pretty=False, yes=False)
+        from aider.coders import Coder
+
+        coder = Coder.create(models.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        commands.cmd_add("**.txt")
+
     def test_cmd_add_with_glob_patterns(self):
         # Initialize the Commands and InputOutput objects
         io = InputOutput(pretty=False, yes=True)
@@ -402,3 +413,75 @@ class TestCommands(TestCase):
             commands.cmd_add(f'"{fname}"')
 
             self.assertIn(str(fname.resolve()), coder.abs_fnames)
+
+    def test_cmd_add_no_autocommit(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(pretty=False, yes=True)
+            from aider.coders import Coder
+
+            coder = Coder.create(models.GPT35, None, io, auto_commits=False)
+            commands = Commands(io, coder)
+
+            commands.cmd_add("foo.txt")
+
+            # Check if both files have been created in the temporary directory
+            self.assertTrue(os.path.exists("foo.txt"))
+
+            repo = git.Repo()
+
+            # Assert that foo.txt has been `git add` but not `git commit`
+            added_files = repo.git.diff("--cached", "--name-only").split()
+            self.assertIn("foo.txt", added_files)
+
+    def test_cmd_add_existing_with_dirty_repo(self):
+        with GitTemporaryDirectory():
+            repo = git.Repo()
+
+            files = ["one.txt", "two.txt"]
+            for fname in files:
+                Path(fname).touch()
+                repo.git.add(fname)
+            repo.git.commit("-m", "initial")
+
+            commit = repo.head.commit.hexsha
+
+            # leave a dirty `git rm`
+            repo.git.rm("one.txt")
+
+            io = InputOutput(pretty=False, yes=True)
+            from aider.coders import Coder
+
+            coder = Coder.create(models.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # There's no reason this /add should trigger a commit
+            commands.cmd_add("two.txt")
+
+            self.assertEqual(commit, repo.head.commit.hexsha)
+
+            # Windows is throwing:
+            # PermissionError: [WinError 32] The process cannot access
+            # the file because it is being used by another process
+
+            repo.git.commit("-m", "cleanup")
+
+            del coder
+            del commands
+            del repo
+
+    def test_cmd_add_unicode_error(self):
+        # Initialize the Commands and InputOutput objects
+        io = InputOutput(pretty=False, yes=True)
+        from aider.coders import Coder
+
+        coder = Coder.create(models.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        fname = "file.txt"
+        encoding = "utf-16"
+        some_content_which_will_error_if_read_with_encoding_utf8 = "ÅÍÎÏ".encode(encoding)
+        with open(fname, "wb") as f:
+            f.write(some_content_which_will_error_if_read_with_encoding_utf8)
+
+        commands.cmd_add("file.txt")
+        self.assertEqual(coder.abs_fnames, set())

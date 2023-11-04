@@ -1,5 +1,47 @@
 # Release history
 
+### main branch
+
+- Streamlined [API for scripting aider, added docs](https://aider.chat/docs/faq.html#can-i-script-aider)
+- Ask for more concise SEARCH/REPLACE blocks. [Benchmarked](https://aider.chat/docs/benchmarks.html) at 63.9%, no regression.
+- Improved repo-map support for elisp.
+- Fixed crash bug when `/add` used on file matching `.gitignore`
+- Fixed misc bugs to catch and handle unicode decoding errors.
+
+### v0.16.3
+
+- Fixed repo-map support for C#.
+
+### v0.16.2
+
+- Fixed docker image.
+
+### v0.16.1
+
+- Updated tree-sitter dependencies to streamline the pip install process
+
+### v0.16.0
+
+- [Improved repository map using tree-sitter](https://aider.chat/docs/repomap.html)
+- Switched from "edit block" to "search/replace block", which reduced malformed edit blocks. [Benchmarked](https://aider.chat/docs/benchmarks.html) at 66.2%, no regression.
+- Improved handling of malformed edit blocks targetting multiple edits to the same file. [Benchmarked](https://aider.chat/docs/benchmarks.html) at 65.4%, no regression.
+- Bugfix to properly handle malformed `/add` wildcards.
+
+
+### v0.15.0
+
+- Added support for `.aiderignore` file, which instructs aider to ignore parts of the git repo.
+- New `--commit` cmd line arg, which just commits all pending changes with a sensible commit message geneated by gpt-3.5.
+- Added universal ctags and multiple architectures to the [aider docker image](https://aider.chat/docs/docker.html)
+- `/run` and `/git` now accept full shell commands, like: `/run (cd subdir; ls)`
+- Restored missing `--encoding` cmd line switch.
+
+### v0.14.2
+
+- Easily [run aider from a docker image](https://aider.chat/docs/docker.html)
+- Fixed bug with chat history summarization.
+- Fixed bug if `soundfile` package not available.
+
 ### v0.14.1
 
 - /add and /drop handle absolute filenames and quoted filenames

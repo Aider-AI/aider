@@ -1,6 +1,5 @@
 import json
 import re
-import shlex
 import subprocess
 import sys
 from pathlib import Path
@@ -210,6 +209,10 @@ class Commands:
             or last_commit.hexsha[:7] != self.coder.last_aider_commit_hash
         ):
             self.io.tool_error("The last commit was not made by aider in this chat session.")
+            self.io.tool_error(
+                "You could try `/git reset --hard HEAD^` but be aware that this is a destructive"
+                " command!"
+            )
             return
         self.coder.repo.repo.git.reset("--hard", "HEAD~1")
         self.io.tool_output(
@@ -229,6 +232,7 @@ class Commands:
 
         if not self.coder.last_aider_commit_hash:
             self.io.tool_error("No previous aider commit found.")
+            self.io.tool_error("You could try `/git diff` or `/git diff HEAD^`.")
             return
 
         commits = f"{self.coder.last_aider_commit_hash}~1"
@@ -249,7 +253,11 @@ class Commands:
                 yield Completion(fname, start_position=-len(partial))
 
     def glob_filtered_to_repo(self, pattern):
-        raw_matched_files = list(Path(self.coder.root).glob(pattern))
+        try:
+            raw_matched_files = list(Path(self.coder.root).glob(pattern))
+        except ValueError as err:
+            self.io.tool_error(f"Error matching {pattern}: {err}")
+            raw_matched_files = []
 
         matched_files = []
         for fn in raw_matched_files:
@@ -266,7 +274,7 @@ class Commands:
         return res
 
     def cmd_add(self, args):
-        "Add matching files to the chat session using glob patterns"
+        "Add files to the chat so GPT can edit them or review them in detail"
 
         added_fnames = []
         git_added = []
@@ -297,6 +305,7 @@ class Commands:
 
         for matched_file in all_matched_files:
             abs_file_path = self.coder.abs_root_path(matched_file)
+            rel_path = self.coder.get_rel_fname(matched_file)
 
             if not abs_file_path.startswith(self.coder.root):
                 self.io.tool_error(
@@ -304,9 +313,13 @@ class Commands:
                 )
                 continue
 
-            if self.coder.repo and matched_file not in git_files:
-                self.coder.repo.repo.git.add(abs_file_path)
-                git_added.append(matched_file)
+            if self.coder.repo and rel_path not in git_files:
+                try:
+                    self.coder.repo.repo.git.add(abs_file_path)
+                    git_added.append(matched_file)
+                except git.exc.GitCommandError as e:
+                    self.io.tool_error(f"Unable to add {matched_file}: {str(e)}")
+                    continue
 
             if abs_file_path in self.coder.abs_fnames:
                 self.io.tool_error(f"{matched_file} is already in the chat")
@@ -319,7 +332,7 @@ class Commands:
                     self.io.tool_output(f"Added {matched_file} to the chat")
                     added_fnames.append(matched_file)
 
-        if self.coder.repo and git_added:
+        if self.coder.repo and git_added and self.coder.auto_commits:
             git_added = " ".join(git_added)
             commit_message = f"aider: Added {git_added}"
             self.coder.repo.commit(message=commit_message)
@@ -342,7 +355,7 @@ class Commands:
                 yield Completion(fname, start_position=-len(partial))
 
     def cmd_drop(self, args):
-        "Remove matching files from the chat session"
+        "Remove files from the chat session to free up context space"
 
         if not args.strip():
             self.io.tool_output("Dropping all files from the chat session.")
@@ -365,10 +378,15 @@ class Commands:
         "Run a git command"
         combined_output = None
         try:
-            parsed_args = shlex.split("git " + args)
+            args = "git " + args
             env = dict(GIT_EDITOR="true", **subprocess.os.environ)
             result = subprocess.run(
-                parsed_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, env=env
+                args,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                env=env,
+                shell=True,
             )
             combined_output = result.stdout
         except Exception as e:
@@ -383,9 +401,8 @@ class Commands:
         "Run a shell command and optionally add the output to the chat"
         combined_output = None
         try:
-            parsed_args = shlex.split(args)
             result = subprocess.run(
-                parsed_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
+                args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, shell=True
             )
             combined_output = result.stdout
         except Exception as e:
@@ -411,7 +428,7 @@ class Commands:
         sys.exit()
 
     def cmd_ls(self, args):
-        "List all known files and those included in the chat session"
+        "List all known files and indicate which are included in the chat session"
 
         files = self.coder.get_all_relative_files()
 
