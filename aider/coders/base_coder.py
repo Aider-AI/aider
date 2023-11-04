@@ -561,25 +561,6 @@ class Coder:
         # Define the file path where you want to save the contexts
         context_file_path = self.root + "/.aider.context"
 
-        # Create a custom YAML representer for multiline strings
-        yaml.add_representer(str, lambda dumper, data: SafeRepresenter.represent_str(dumper, PreservedScalarString(data)))
-
-        # Process messages to replace backslash escape sequences with actual control characters
-        processed_messages = []
-        for message in messages:
-            processed_message = {}
-            for key, value in message.items():
-                if isinstance(value, str):
-                    import codecs
-                    try:
-                        processed_message[key] = codecs.decode(value, 'unicode_escape')
-                        print(f"processed: {processed_message[key]}")
-                    except UnicodeDecodeError:
-                        pass
-                else:
-                    processed_message[key] = value
-                processed_messages.append(processed_message)
-
         # Create a YAML instance and set the default style to '|'
         yaml_instance = yaml.YAML()
         yaml_instance.default_style = '|'
