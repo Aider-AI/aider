@@ -8,9 +8,7 @@ import time
 import traceback
 from json.decoder import JSONDecodeError
 from pathlib import Path
-from ruamel.yaml.representer import SafeRepresenter
-from ruamel.yaml.scalarstring import PreservedScalarString
-import ruamel.yaml as yaml
+import yaml
 
 import openai
 from jsonschema import Draft7Validator
@@ -566,16 +564,14 @@ class Coder:
         self.partial_response_content = ""
         self.partial_response_function_call = dict()
 
-        # Define the file path where you want to save the contexts
         context_file_path = self.root + "/.aider.context"
 
-        # Create a YAML instance and set the default style to '|'
-        yaml_instance = yaml.YAML()
-        yaml_instance.default_style = '|'
+        # Set the yaml default style to '|' to avoid escaping special characters
+        #yaml_instance = yaml.YAML()
+        #yaml_instance.default_style = '|'
 
-        # Write the messages to the file in YAML format without escaping special characters
         with open(context_file_path, 'w') as f:
-            yaml_instance.dump(messages, f)
+            yaml.dump(messages, f, default_flow_style=False, default_style='|')
 
         interrupted = False
         try:
