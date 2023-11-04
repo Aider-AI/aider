@@ -1,4 +1,4 @@
 #! /usr/bin/bash
 MYDIR="$(dirname -- "$(readlink -e "$0")")"
 
-docker build --progress=plain --build-arg UID=$(id -u) --build-arg GID=$(id -g) -t aider -f $MYDIR/Dockerfile $MYDIR/..
+docker build --progress=plain --build-arg UID=$(id -u) --build-arg GID=$(id -g) -t aider -f $MYDIR/Dockerfile $@ $MYDIR/..
