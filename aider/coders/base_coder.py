@@ -41,6 +41,7 @@ def wrap_fence(name):
 
 class Coder:
     abs_fnames = None
+    additional_context = None # Dictionary {title: content}
     repo = None
     last_aider_commit_hash = None
     last_asked_for_commit_time = 0
@@ -115,6 +116,7 @@ class Coder:
 
         self.verbose = verbose
         self.abs_fnames = set()
+        self.additional_context = {}
         self.cur_messages = []
         self.done_messages = []
 
@@ -255,6 +257,9 @@ class Coder:
         for _fname, content in self.get_abs_fnames_content():
             all_content += content + "\n"
 
+        for content in self.additional_context.values():
+            all_content += content + "\n"
+
         good = False
         for fence_open, fence_close in self.fences:
             if fence_open in all_content or fence_close in all_content:
@@ -287,6 +292,20 @@ class Coder:
             prompt += f"{self.fence[1]}\n"
 
         return prompt
+    
+    def get_additional_context_content(self):
+        if not self.additional_context:
+            return ""
+        
+        prompt = ""
+        for title, content in self.additional_context.items():
+            prompt += "\n"
+            prompt += title
+            prompt += f"\n{self.fence[0]}\n"
+            prompt += content
+            prompt += f"{self.fence[1]}\n"
+
+        return prompt
 
     def get_repo_map(self):
         if not self.repo_map:
@@ -295,6 +314,22 @@ class Coder:
         other_files = set(self.get_all_abs_files()) - set(self.abs_fnames)
         repo_content = self.repo_map.get_repo_map(self.abs_fnames, other_files)
         return repo_content
+    
+    def get_additional_context_messages(self):
+        content = self.get_additional_context_content()
+        if not content:
+            return []
+        
+        all_content = self.gpt_prompts.additional_context_prefix + "\n"
+        all_content += content
+        
+        messages = [
+            dict(role="user", content=all_content),
+            dict(role="assistant", content="Ok."),
+            dict(role="system", content=self.fmt_system_reminder()),
+        ]
+
+        return messages        
 
     def get_files_messages(self):
         all_content = ""
@@ -435,6 +470,7 @@ class Coder:
             dict(role="system", content=main_sys),
         ]
 
+        messages += self.get_additional_context_messages()
         self.summarize_end()
         messages += self.done_messages
         messages += self.get_files_messages()
