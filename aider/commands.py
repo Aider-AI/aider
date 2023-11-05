@@ -251,6 +251,12 @@ class Commands:
         for fname in files:
             if partial.lower() in fname.lower():
                 yield Completion(fname, start_position=-len(partial))
+        
+        if self.coder.github_repo:
+            for issue_number in self.coder.github_repo.get_issue_numbers():
+                issue_id = R"\issue-" + str(issue_number)
+                if partial.lower() in issue_id:
+                    yield Completion(issue_id, start_position=-len(partial))
 
     def glob_filtered_to_repo(self, pattern):
         try:
@@ -273,6 +279,18 @@ class Commands:
         res = list(map(str, matched_files))
         return res
 
+    def add_issue(self, issue_number):
+        if not self.coder.github_repo:
+            self.io.tool_error("Github repo not configured")
+            return
+        issue_content = self.coder.github_repo.get_issue_content(issue_number)
+        if not issue_content:
+            self.io.tool_error(f"Unable to find issue {issue_number}")
+            return
+        
+        self.coder.additional_context[R"\issue-" + str(issue_number)] = issue_content
+        self.io.tool_output(f"Added issue {issue_number} to the chat")
+
     def cmd_add(self, args):
         "Add files to the chat so GPT can edit them or review them in detail"
 
@@ -284,6 +302,10 @@ class Commands:
 
         filenames = parse_quoted_filenames(args)
         for word in filenames:
+            if word.startswith(R"\issue-"):
+                issue_number = int(word[7:])
+                self.add_issue(issue_number)
+                continue
             if Path(word).is_absolute():
                 fname = Path(word)
             else:
@@ -354,6 +376,10 @@ class Commands:
             if partial.lower() in fname.lower():
                 yield Completion(fname, start_position=-len(partial))
 
+        for key in self.coder.additional_context.keys():
+            if partial.lower() in key.lower():
+                yield Completion(key, start_position=-len(partial))
+
     def cmd_drop(self, args):
         "Remove files from the chat session to free up context space"
 
@@ -363,6 +389,11 @@ class Commands:
 
         filenames = parse_quoted_filenames(args)
         for word in filenames:
+            if word in self.coder.additional_context.keys():
+                del self.coder.additional_context[word]
+                self.io.tool_output(f'Removed context item "{word}" from the chat')
+                continue
+
             matched_files = self.glob_filtered_to_repo(word)
 
             if not matched_files:

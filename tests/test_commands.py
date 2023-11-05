@@ -6,6 +6,7 @@ import tempfile
 from io import StringIO
 from pathlib import Path
 from unittest import TestCase
+from unittest.mock import MagicMock
 
 import git
 
@@ -485,3 +486,18 @@ class TestCommands(TestCase):
 
         commands.cmd_add("file.txt")
         self.assertEqual(coder.abs_fnames, set())
+
+    def test_cmd_add_issue(self):
+        with ChdirTemporaryDirectory():
+            io = InputOutput(pretty=False, yes=False)
+            from aider.coders import Coder
+
+            coder = Coder.create(models.GPT35, None, io)
+            coder.github_repo = MagicMock()
+            coder.github_repo.get_issue_numbers.return_value = [1]
+            coder.github_repo.get_issue_content.return_value = "Issue content"
+            commands = Commands(io, coder)
+
+            commands.cmd_add(R"\issue-1")
+            self.assertIn(R"\issue-1", coder.additional_context.keys())
+            self.assertEqual("Issue content", coder.additional_context[R"\issue-1"])

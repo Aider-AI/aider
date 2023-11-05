@@ -117,3 +117,4 @@ wcwidth==0.2.9
     # via prompt-toolkit
 yarl==1.9.2
     # via aiohttp
+PyGithub==2.1.1

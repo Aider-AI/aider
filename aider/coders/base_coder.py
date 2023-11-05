@@ -103,6 +103,7 @@ class Coder:
         use_git=True,
         voice_language=None,
         aider_ignore_file=None,
+        github_repo=None,
     ):
         if not fnames:
             fnames = []
@@ -203,6 +204,8 @@ class Coder:
             if self.verbose:
                 self.io.tool_output("JSON Schema:")
                 self.io.tool_output(json.dumps(self.functions, indent=4))
+
+        self.github_repo = github_repo
 
     def find_common_root(self):
         if len(self.abs_fnames) == 1:
