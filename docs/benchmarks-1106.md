@@ -16,9 +16,9 @@ For example,
 whenever I change aider's prompting or the backend which drives LLM conversations,
 I run the benchmark to make sure these changes produce improvements (not regressions).
 
-The benchmark asks GPT to complete the
-[Exercism Python coding exercises](https://github.com/exercism/python).
-Exercism provides a starting python file with stubs for the needed functions,
+The benchmark asks GPT to complete
+[133 Exercism Python coding exercises](https://github.com/exercism/python).
+For each exercise, Exercism provides a starting python file with stubs for the needed functions,
 a natural language description of the problem to solve
 and a test suite to evaluate whether the coder has correctly solved the problem.
 
