@@ -34,7 +34,7 @@ and a test suite to evaluate whether the coder has correctly solved the problem.
 The benchmark gives aider two tries to complete the task:
 
 1. On the first try, aider gives GPT the stub code file to edit and the natural language instructions that describe the problem. This reflects how you code with aider. You add your source code files to the chat and ask for changes, which are automatically applied. 
-2. If the test suite fails after the first try, aider gives GPT the test error output and asks it to fix the code. Aider supports this sort of interaction when chatting with GPT using a command like `/run pytest` to run and share pytest results in the chat with GPT. You can `/run` whatever tests/linters/etc make sense for your language/framework/situation.
+2. If the test suite fails after the first try, aider gives GPT the test error output and asks it to fix the code. Aider supports this sort of interaction in the chat using a command like `/run pytest` to run and share pytest results in the chat with GPT. You can `/run` whatever tests/linters/etc make sense for your language/framework/situation.
 
 ## Benchmark results on the new "1106" models
 
