@@ -189,14 +189,14 @@ def show_stats(dirnames):
     top = 95
     ax.annotate(
         "First attempt,\nbased on\nnatural language\ninstructions",
-        xy=(2.25, 40),
+        xy=(2.20, 41),
         xytext=(2, top),
         horizontalalignment="center",
         verticalalignment="top",
         arrowprops={"arrowstyle": "->", "connectionstyle": "arc3,rad=0.3"},
     )
     ax.annotate(
-        "Second attempt,\nincluding unit\ntest error output",
+        "Second attempt,\nincluding unit test\nerror output",
         xy=(2.55, 56),
         xytext=(3.5, top),
         horizontalalignment="center",

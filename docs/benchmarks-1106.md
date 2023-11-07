@@ -48,7 +48,7 @@ The benchmark gives aider two tries to complete the task:
 OpenAI is enforcing very low
 rate limits on the new GPT-4 model. The limits are so low, that
 I have only been able to attempt
-83
+85
 out of 133 exercism problems.
 The problems are selected in random order, so results should be *roughly*
 indicative of the full benchmark.
