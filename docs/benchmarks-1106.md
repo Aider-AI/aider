@@ -25,7 +25,7 @@ For example,
 whenever I change aider's prompting or the backend which drives LLM conversations,
 I run the benchmark to make sure these changes produce improvements (not regressions).
 
-The benchmark users aider to try and complete
+The benchmark uses aider to try and complete
 [133 Exercism Python coding exercises](https://github.com/exercism/python).
 For each exercise, Exercism provides a starting python file with stubs for the needed functions,
 a natural language description of the problem to solve
