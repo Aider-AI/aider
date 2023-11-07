@@ -196,8 +196,8 @@ def show_stats(dirnames):
         arrowprops={"arrowstyle": "->", "connectionstyle": "arc3,rad=0.3"},
     )
     ax.annotate(
-        "Second attempt,\nbased on\nunit test errors",
-        xy=(2.55, 58),
+        "Second attempt,\nincludingn\nunit test errors",
+        xy=(2.55, 56),
         xytext=(3.5, top),
         horizontalalignment="center",
         verticalalignment="top",
