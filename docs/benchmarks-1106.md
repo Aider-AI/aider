@@ -25,7 +25,7 @@ and a test suite to evaluate whether the coder has correctly solved the problem.
 The benchmark that aider uses gives GPT two tries to complete the task:
 
 1. On the first try, GPT is given the stub code file to edit and the natural language instructions that describe the problem.
-2. If the tests fail after the first try, GPT gets to see the test suite error output and try to fix the code.
+2. If the test suite fails after the first try, GPT gets to see the test error output and try to fix the code. Aider supports this sort of interaction when chatting with GPT by letting users `/run pytest` and share the results in the chat. You can `/run` whatever tests/linters/etc make sense for your language/framework/situation.
 
 [OpenAI just released new versions of GPT-3.5 and GPT-4](https://openai.com/blog/new-models-and-developer-products-announced-at-devday),
 and there's a lot
@@ -48,7 +48,7 @@ indicative of the full benchmark.
 ## gpt-3.5-turbo-1106
 
 - The new `gpt-3.5-turbo-1106` model is completing the benchmark **3-4X faster** than the earlier GPT-3.5 models.
-- The overall success rate after the first and second tries seems comparable to the earlier models.
+- The overall success rate after the first and second tries seems comparable or a bit better than the earlier models.
 
 
 ## Updates
