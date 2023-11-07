@@ -2,7 +2,7 @@ from .model import Model
 from .openai import OpenAIModel
 from .openrouter import OpenRouterModel
 
-GPT4 = Model.create("gpt-4")
+GPT4 = Model.create("gpt-4-1106-preview")
 GPT35 = Model.create("gpt-3.5-turbo")
 GPT35_16k = Model.create("gpt-3.5-turbo-16k")
 

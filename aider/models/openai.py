@@ -7,6 +7,7 @@ from .model import Model
 known_tokens = {
     "gpt-3.5-turbo": 4,
     "gpt-4": 8,
+    "gpt-4-1106-preview": 125,
 }
 
 
@@ -39,6 +40,9 @@ class OpenAIModel(Model):
                 self.prompt_price = 0.03
                 self.completion_price = 0.06
             elif tokens == 32:
+                self.prompt_price = 0.06
+                self.completion_price = 0.12
+            else:
                 self.prompt_price = 0.06
                 self.completion_price = 0.12
 
