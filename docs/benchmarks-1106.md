@@ -45,13 +45,13 @@ This is the edit format that aider uses by default with gpt-4.
 
 - The new `gpt-4-1106-preview` model seems **much faster** than the earlier GPT-4 models. I won't be able to properly quantify this until the rate limits loosen up.
 - **It seems better at producing correct code on the first try**. It gets ~56% of the coding exercises correct, without needing to see errors from the test suite. Previous models only get 46-47% of the exercises correct on the first try.
-- The new model seems to perform similar (~65%) to the old models (63-64%) after being given a second chance to correct bugs by reviewing test suite error output.
+- The new model seems to perform similar (~66%) to the old models (63-64%) after being given a second chance to correct bugs by reviewing test suite error output.
 
 **These are preliminary results.**
 OpenAI is enforcing very low
 rate limits on the new GPT-4 model. The limits are so low, that
 I have only been able to attempt
-99
+110
 out of 133 exercism problems.
 The problems are selected in random order, so results should be *roughly*
 indicative of the full benchmark.
