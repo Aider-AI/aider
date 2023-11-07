@@ -1,6 +1,6 @@
 # Code editing benchmarks for OpenAI's new "1106" models
 
-[![benchmark results](../assets/benchmarks.svg)](https://aider.chat/assets/benchmarks-1106.svg)
+[![benchmark results](../assets/benchmarks-1106.svg)](https://aider.chat/assets/benchmarks-1106.svg)
 
 Aider is an open source command line chat tool that lets you work with GPT to edit
 code in your local git repo.
