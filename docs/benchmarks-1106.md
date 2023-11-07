@@ -1,4 +1,4 @@
-# GPT code editing benchmarks
+# Code editing benchmarks for OpenAI's new "1106" models
 
 [![benchmark results](../assets/benchmarks.svg)](https://aider.chat/assets/benchmarks-1106.svg)
 
