@@ -25,7 +25,7 @@ and a test suite to evaluate whether the coder has correctly solved the problem.
 The benchmark that aider uses gives GPT two tries to complete the task:
 
 1. On the first try, GPT is given the stub code file to edit and the natural language instructions that describe the problem.
-2. If the test suite fails after the first try, GPT gets to see the test error output and try to fix the code. Aider supports this sort of interaction when chatting with GPT by letting users `/run pytest` and share the results in the chat. You can `/run` whatever tests/linters/etc make sense for your language/framework/situation.
+2. If the test suite fails after the first try, GPT gets to see the test error output and has a second chance to fix the code. Aider supports this sort of interaction when chatting with GPT by letting users `/run pytest` and share the results in the chat. You can `/run` whatever tests/linters/etc make sense for your language/framework/situation.
 
 [OpenAI just released new versions of GPT-3.5 and GPT-4](https://openai.com/blog/new-models-and-developer-products-announced-at-devday),
 and there's a lot
