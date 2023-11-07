@@ -7,7 +7,7 @@ code in your local git repo.
 To do this, aider needs to be able to reliably recognize when GPT wants to edit local files,
 determine which files it wants to modify and what changes to make.
 
-Doing a good job on this "code editing" task required a good LLM, good prompting and
+Doing a good job on this "code editing" task requires a good LLM, good prompting and
 a good tool driving the interactions with the LLM.
 Aider uses a
 [benchmark to quantitatively evaluate code editing](https://aider.chat/docs/benchmarks.html)
