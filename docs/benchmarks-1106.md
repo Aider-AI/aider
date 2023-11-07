@@ -47,7 +47,7 @@ This is the edit format that aider uses by default with gpt-4.
 - **It seems better at producing correct code on the first try**. It gets ~57% of the coding exercises correct, without needing to see errors from the test suite. Previous models only get 46-47% of the exercises correct on the first try.
 - The new model seems to perform similar (66%) to the old models (63-64%) after being given a second chance to correct bugs by reviewing test suite error output.
 
-**These results are preliminiary.**
+**These are preliminary results.**
 OpenAI is enforcing very low
 rate limits on the new GPT-4 model. The limits are so low, that
 I have only been able to attempt
@@ -71,4 +71,4 @@ The comments below only focus on comparing the `whole` edit format results:
 
 ### Updates
 
-I will update the results on this page as quickly my rate limit allows.
+I will update the results on this page as quickly as my rate limit allows.
