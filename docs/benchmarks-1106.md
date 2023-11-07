@@ -14,7 +14,7 @@ Aider uses a
 whenever one of these things changes.
 For example,
 whenever I change aider's prompting or the backend which drives LLM conversations,
-I benchmark it to make sure these changes produce improvements (not regressions).
+I run the benchmark to make sure these changes produce improvements (not regressions).
 
 The benchmark asks GPT to complete the
 [Exercism Python coding exercises]().
