@@ -54,4 +54,4 @@ indicative of the full benchmark.
 
 ## Updates
 
-I will continue to update the GPT-4 results as my rate limit allows.
+I will update the results on this page as quickly my rate limit allows.
