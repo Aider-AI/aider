@@ -1,4 +1,4 @@
-# Code editing benchmarks for OpenAI's new "1106" models
+# Code editing benchmarks for OpenAI's "1106" models
 
 [![benchmark results](../assets/benchmarks-1106.svg)](https://aider.chat/assets/benchmarks-1106.svg)
 
