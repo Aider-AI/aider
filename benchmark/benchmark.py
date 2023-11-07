@@ -43,7 +43,7 @@ def show_stats(dirnames):
         row = summarize_results(dirname)
         raw_rows.append(row)
 
-    return
+    # return
 
     repeats = []
     seen = dict()
@@ -54,6 +54,10 @@ def show_stats(dirnames):
 
         if row.model == "gpt-3.5-turbo":
             row.model = "gpt-3.5-turbo-0613"
+
+        if row.model == "gpt-4":
+            row.model = "gpt-4-0613"
+
         if row.edit_format == "diff-func-string":
             row.edit_format = "diff-func"
 
@@ -65,10 +69,16 @@ def show_stats(dirnames):
             # remember this row, so we can update it with the repeat_avg
             repeat_row = len(rows)
 
-        pieces = row.model.split("-")
-        row.model = "-".join(pieces[:3])
-        if pieces[3:]:
-            row.model += "\n-" + "-".join(pieces[3:])
+        gpt35 = "gpt-3.5-turbo"
+        gpt4 = "gpt-4"
+
+        if row.model.startswith(gpt35):
+            row.model = gpt35 + "\n" + row.model[len(gpt35) :]
+        elif row.model.startswith(gpt4):
+            row.model = gpt4 + "\n" + row.model[len(gpt4) :]
+
+        if row.model == "gpt-4\n-1106-preview":
+            row.model += "\n(partial run)"
 
         if row.completed_tests < 133:
             print(f"Warning: {row.dir_name} is incomplete: {row.completed_tests}")
@@ -107,6 +117,8 @@ def show_stats(dirnames):
 
     df = pd.DataFrame.from_records(rows)
     df.sort_values(by=["model", "edit_format"], inplace=True)
+
+    dump(df)
 
     tries = [df.groupby(["model", "edit_format"])["pass_rate_2"].mean()]
     if True:
@@ -171,22 +183,22 @@ def show_stats(dirnames):
             markeredgewidth=1,
         )
 
-    ax.set_xticks([p + 1.5 * width for p in pos])
+    ax.set_xticks([p + 0.5 * width for p in pos])
     ax.set_xticklabels(models)
 
     top = 95
     ax.annotate(
-        "First attempt,\nbased on\ninstructions",
-        xy=(2.9, 51),
-        xytext=(2.5, top),
+        "First attempt,\nbased on\nnatural language\ninstructions",
+        xy=(2.25, 40),
+        xytext=(2, top),
         horizontalalignment="center",
         verticalalignment="top",
         arrowprops={"arrowstyle": "->", "connectionstyle": "arc3,rad=0.3"},
     )
     ax.annotate(
         "Second attempt,\nbased on\nunit test errors",
-        xy=(3.1, 68),
-        xytext=(4.25, top),
+        xy=(2.55, 58),
+        xytext=(3.5, top),
         horizontalalignment="center",
         verticalalignment="top",
         arrowprops={"arrowstyle": "->", "connectionstyle": "arc3,rad=0.3"},
