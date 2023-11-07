@@ -40,24 +40,33 @@ The benchmark gives aider two tries to complete the task:
 
 ### gpt-4-1106-preview
 
+For now, I have only benchmarked the GPT-4 models using the `diff` edit method.
+This is the edit format that aider uses by default with gpt-4.
+
 - The new `gpt-4-1106-preview` model seems **much faster** than the earlier GPT-4 models. I won't be able to properly quantify this until the rate limits loosen up.
-- **It seems better at producing correct code on the first try**. It gets ~56% of the coding exercises correct, without needing to see errors from the test suite. Previous models only get 46-47% of the exercises correct on the first try.
+- **It seems better at producing correct code on the first try**. It gets ~57% of the coding exercises correct, without needing to see errors from the test suite. Previous models only get 46-47% of the exercises correct on the first try.
 - The new model seems to perform similar (66%) to the old models (63-64%) after being given a second chance to correct bugs by reviewing test suite error output.
 
 **These results are preliminiary.**
 OpenAI is enforcing very low
 rate limits on the new GPT-4 model. The limits are so low, that
 I have only been able to attempt
-94
+95
 out of 133 exercism problems.
 The problems are selected in random order, so results should be *roughly*
 indicative of the full benchmark.
 
 ### gpt-3.5-turbo-1106
 
+I benchmarked the GPT-3.5 models with both the `whole` and `diff` edit format.
+None of the gpt-3.5 models seem able to effectively use the `diff` edit format, including the newest November (1106) model.
+
+The comments below only focus on comparing the `whole` edit format results:
+
 - The new `gpt-3.5-turbo-1106` model is completing the benchmark **3-4X faster** than the earlier GPT-3.5 models.
 - The success rate after the first try of 42% is comparable to the previous June (0613) model. The new November and previous June models are both worse than the original March (0301) model's 50% result on the first try.
 - The new model's 56% success rate after the second try seems comparable to the original March model, and somewhat better than the June model's 50% score.
+
 
 
 ### Updates
