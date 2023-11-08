@@ -69,7 +69,7 @@ More details on the benchmark, edit formats and results are discussed below.
 
 ## The benchmark
 
-The benchmark uses 
+The benchmark uses
 [133 practice exercises from the Exercism python repository](https://github.com/exercism/python/tree/main/exercises/practice).
 These
 exercises were designed to help individuals learn Python and hone
@@ -199,7 +199,7 @@ demo.py
 
 ### whole-func
 
-The [whole-func](https://github.com/paul-gauthier/aider/blob/main/aider/coders/wholefile_func_coder.py) 
+The [whole-func](https://github.com/paul-gauthier/aider/blob/main/aider/coders/wholefile_func_coder.py)
 format requests updated copies of whole files to be returned using the function call API.
 
 
@@ -218,7 +218,7 @@ format requests updated copies of whole files to be returned using the function 
 
 The
 [diff-func](https://github.com/paul-gauthier/aider/blob/main/aider/coders/editblock_func_coder.py)
-format requests a list of 
+format requests a list of
 original/updated style edits to be returned using the function call API.
 
 ```
@@ -235,7 +235,7 @@ original/updated style edits to be returned using the function call API.
             ],
         }
     ]
-}       
+}
 ```
 
 ## GPT-3.5's performance
@@ -307,7 +307,7 @@ The benchmark harness also logs SHA hashes of
 all the OpenAI API requests and replies.
 This makes it possible to
 detect randomness or nondeterminism
-in the bechmarking process.
+in the benchmarking process.
 
 It turns out that the OpenAI chat APIs are not deterministic, even at
 `temperature=0`.  The same identical request will produce multiple

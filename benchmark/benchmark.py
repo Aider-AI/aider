@@ -121,7 +121,12 @@ def show_stats(dirnames):
     df.sort_values(by=["model", "edit_format"], inplace=True)
 
     dump(df)
+    # plot_timing(df)
     plot_outcomes(df, repeats, repeat_hi, repeat_lo, repeat_avg)
+
+
+def plot_timing(df):
+    """plot a graph showing the average duration of each (model, edit_format)"""
 
 
 def plot_outcomes(df, repeats, repeat_hi, repeat_lo, repeat_avg):
