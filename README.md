@@ -31,7 +31,7 @@ Aider is unique in that it [works well with pre-existing, larger codebases](http
 - [FAQ](https://aider.chat/docs/faq.html)
 - [Discord](https://discord.gg/Tv2uQnR88V)
 
-## New GPT-4 model with 128k context window
+## New GPT-4 Turbo with 128k context window
 
 Aider supports OpenAI's new GPT-4 model that has the massive 128k context window.
 Early benchmark results
