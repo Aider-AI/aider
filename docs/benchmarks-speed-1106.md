@@ -1,4 +1,4 @@
-# Code editing speed benchmarks for OpenAI's "1106" models
+# Speed benchmarks GPT-4 Turbo and gpt-3.5-turbo-1106
 
 [![benchmark results](../assets/benchmarks-speed-1106.svg)](https://aider.chat/assets/benchmarks-speed-1106.svg)
 
