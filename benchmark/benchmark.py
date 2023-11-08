@@ -167,7 +167,7 @@ def plot_timing(df):
     ax.set_xticklabels(models)
 
     ax.set_ylabel("Average GPT response time\nper exercise (sec)")
-    ax.set_title("GPT Code Editing - Timing")
+    ax.set_title("GPT Code Editing Speed")
     ax.legend(
         title="Edit Format",
         loc="upper left",
@@ -266,7 +266,7 @@ def plot_outcomes(df, repeats, repeat_hi, repeat_lo, repeat_avg):
 
     ax.set_ylabel("Percent of exercises completed successfully")
     # ax.set_xlabel("Model")
-    ax.set_title("GPT Code Editing")
+    ax.set_title("GPT Code Editing Skill")
     ax.legend(
         title="Edit Format",
         loc="upper left",
