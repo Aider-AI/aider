@@ -78,7 +78,7 @@ def show_stats(dirnames):
             row.model = gpt4 + "\n" + row.model[len(gpt4) :]
 
         if row.model == "gpt-4\n-1106-preview":
-            row.model += "\n(partial run)"
+            row.model += "\n(preliminary)"
 
         if row.completed_tests < 133:
             print(f"Warning: {row.dir_name} is incomplete: {row.completed_tests}")
@@ -164,7 +164,7 @@ def plot_timing(df):
     ax.set_xticks([p + 0.5 * width for p in pos])
     ax.set_xticklabels(models)
 
-    ax.set_ylabel("Average duration (seconds)")
+    ax.set_ylabel("Average GPT response time\nper exercise (sec)")
     ax.set_title("GPT Code Editing - Timing")
     ax.legend(
         title="Edit Format",
