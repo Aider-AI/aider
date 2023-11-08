@@ -37,7 +37,7 @@ ORIGINAL_DNAME = BENCHMARK_DNAME / "exercism-python"
 app = typer.Typer(add_completion=False, pretty_exceptions_enable=False)
 
 
-def show_stats(dirnames):
+def show_stats(dirnames, graphs):
     raw_rows = []
     for dirname in dirnames:
         row = summarize_results(dirname)
@@ -350,7 +350,7 @@ def main(
         updated_dirnames.append(dirname)
 
     if stats_only:
-        return show_stats(updated_dirnames)
+        return show_stats(updated_dirnames, graphs)
 
     if diffs_only:
         return show_diffs(updated_dirnames)
