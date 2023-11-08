@@ -35,7 +35,7 @@ Aider is unique in that it [works well with pre-existing, larger codebases](http
 
 Aider supports OpenAI's new GPT-4 model that has the massive 128k context window.
 [Early benchmark results](https://aider.chat/docs/benchmarks-1106.html)
-seems to indicate that it is very fast and
+indicate that it is very fast and
 a bit better at coding than previous GPT-4 models.
 
 To use it, run aider like this:
