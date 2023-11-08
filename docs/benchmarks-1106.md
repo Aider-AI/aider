@@ -71,9 +71,3 @@ The comments below only focus on comparing the `whole` edit format results:
 - The new `gpt-3.5-turbo-1106` model is completing the benchmark **3-4X faster** than the earlier GPT-3.5 models.
 - The success rate after the first try of 42% is comparable to the previous June (0613) model. The new November and previous June models are both worse than the original March (0301) model's 50% result on the first try.
 - The new model's 56% success rate after the second try seems comparable to the original March model, and somewhat better than the June model's 50% score.
-
-
-
-### Updates
-
-I will update the results on this page as quickly as my rate limit allows.

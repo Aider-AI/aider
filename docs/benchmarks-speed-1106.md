@@ -15,8 +15,8 @@ Aider relies on a
 to quantitatively evaluate
 performance.
 
-This is the latest in a series of benchmarking reports
-about the code
+This is the latest in a series of reports
+that use the aider benchmarking suite to assess and compare the code
 editing capabilities of OpenAI's GPT models. You can review previous
 reports to get more background on aider's benchmark suite:
 
@@ -44,13 +44,10 @@ Some observations:
 OpenAI is enforcing very low
 rate limits on the new GPT-4 model.
 The rate limiting disrupts the the benchmarking process,
-requiring it to be run single threaded, paused and restarted frequently.
+requiring it to run single threaded, pause and restart frequently.
 These anomolous conditions make it slow to
-benchmark the new model, and make comparisons against
-the older versions less reliable.
+benchmark the new model, and make
+it less reliable to compare the results with
+benchmark runs against the older model versions.
 Once the rate limits are relaxed I will do a clean
 run of the entire benchmark suite.
-
-### Updates
-
-I will update the results on this page as quickly as my rate limit allows.
