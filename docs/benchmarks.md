@@ -307,7 +307,7 @@ The benchmark harness also logs SHA hashes of
 all the OpenAI API requests and replies.
 This makes it possible to
 detect randomness or nondeterminism
-in the bechmarking process.
+in the benchmarking process.
 
 It turns out that the OpenAI chat APIs are not deterministic, even at
 `temperature=0`.  The same identical request will produce multiple
