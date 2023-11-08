@@ -120,8 +120,8 @@ def show_stats(dirnames):
     df = pd.DataFrame.from_records(rows)
     df.sort_values(by=["model", "edit_format"], inplace=True)
 
-    dump(df)
-    # plot_timing(df)
+    #dump(df)
+    plot_timing(df)
     plot_outcomes(df, repeats, repeat_hi, repeat_lo, repeat_avg)
 
 
@@ -329,7 +329,9 @@ def main(
         dirname.rename(dest)
 
     if not dirname.exists():
+        print(f"Copying {ORIGINAL_DNAME} -> {dirname} ...")
         shutil.copytree(ORIGINAL_DNAME, dirname)
+        print("...done")
 
     test_dnames = sorted(os.listdir(dirname))
 
