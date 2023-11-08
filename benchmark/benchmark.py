@@ -121,8 +121,9 @@ def show_stats(dirnames):
     df.sort_values(by=["model", "edit_format"], inplace=True)
 
     # dump(df)
-    plot_timing(df)
-    plot_outcomes(df, repeats, repeat_hi, repeat_lo, repeat_avg)
+    if graphs:
+        plot_timing(df)
+        plot_outcomes(df, repeats, repeat_hi, repeat_lo, repeat_avg)
 
 
 def plot_timing(df):
@@ -309,6 +310,7 @@ def resolve_dirname(dirname, use_single_prior, make_new):
 @app.command()
 def main(
     dirnames: List[str] = typer.Argument(..., help="Directory names"),
+    graphs: bool = typer.Option(False, "--graphs", help="Generate graphs"),
     model: str = typer.Option("gpt-3.5-turbo", "--model", "-m", help="Model name"),
     edit_format: str = typer.Option(None, "--edit-format", "-e", help="Edit format"),
     keywords: str = typer.Option(
