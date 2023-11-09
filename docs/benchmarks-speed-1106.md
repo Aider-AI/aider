@@ -1,4 +1,4 @@
-# Speed benchmarks GPT-4 Turbo and gpt-3.5-turbo-1106
+# Speed benchmarks of GPT-4 Turbo and gpt-3.5-turbo-1106
 
 [![benchmark results](../assets/benchmarks-speed-1106.svg)](https://aider.chat/assets/benchmarks-speed-1106.svg)
 
@@ -43,7 +43,7 @@ Some observations:
 **These are preliminary results.**
 OpenAI is enforcing very low
 rate limits on the new GPT-4 model.
-The rate limiting disrupts the the benchmarking process,
+The rate limiting disrupts the benchmarking process,
 requiring it to run single threaded, pause and restart frequently.
 These anomolous conditions make it slow to
 benchmark the new model, and make
