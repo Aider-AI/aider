@@ -4,24 +4,132 @@
 #
 #    pip-compile --output-file=dev-requirements.txt dev-requirements.in
 #
+alabaster==0.7.13
+    # via sphinx
+babel==2.13.1
+    # via sphinx
 build==1.0.3
     # via pip-tools
+certifi==2023.7.22
+    # via requests
+charset-normalizer==3.3.2
+    # via requests
 click==8.1.7
-    # via pip-tools
+    # via
+    #   pip-tools
+    #   typer
+contourpy==1.2.0
+    # via matplotlib
+cycler==0.12.1
+    # via matplotlib
+dill==0.3.7
+    # via
+    #   multiprocess
+    #   pathos
+docutils==0.18.1
+    # via
+    #   sphinx
+    #   sphinx-rtd-theme
+fonttools==4.44.0
+    # via matplotlib
+idna==3.4
+    # via requests
+imagesize==1.4.1
+    # via sphinx
+imgcat==0.5.0
+    # via -r dev-requirements.in
 iniconfig==2.0.0
     # via pytest
+jinja2==3.1.2
+    # via sphinx
+kiwisolver==1.4.5
+    # via matplotlib
+lox==0.11.0
+    # via -r dev-requirements.in
+markupsafe==2.1.3
+    # via jinja2
+matplotlib==3.8.1
+    # via -r dev-requirements.in
+multiprocess==0.70.15
+    # via pathos
+numpy==1.26.1
+    # via
+    #   contourpy
+    #   matplotlib
+    #   pandas
 packaging==23.2
     # via
     #   build
+    #   matplotlib
     #   pytest
+    #   sphinx
+pandas==2.1.2
+    # via -r dev-requirements.in
+pathos==0.3.1
+    # via lox
+pillow==10.1.0
+    # via matplotlib
 pip-tools==7.3.0
     # via -r dev-requirements.in
 pluggy==1.3.0
     # via pytest
+pox==0.3.3
+    # via pathos
+ppft==1.7.6.7
+    # via pathos
+pygments==2.16.1
+    # via sphinx
+pyparsing==3.1.1
+    # via matplotlib
 pyproject-hooks==1.0.0
     # via build
 pytest==7.4.3
     # via -r dev-requirements.in
+python-dateutil==2.8.2
+    # via
+    #   matplotlib
+    #   pandas
+pytz==2023.3.post1
+    # via pandas
+requests==2.31.0
+    # via sphinx
+six==1.16.0
+    # via python-dateutil
+snowballstemmer==2.2.0
+    # via sphinx
+sphinx==7.2.6
+    # via
+    #   sphinx-rtd-theme
+    #   sphinxcontrib-applehelp
+    #   sphinxcontrib-devhelp
+    #   sphinxcontrib-htmlhelp
+    #   sphinxcontrib-jquery
+    #   sphinxcontrib-qthelp
+    #   sphinxcontrib-serializinghtml
+sphinx-rtd-theme==1.3.0
+    # via lox
+sphinxcontrib-applehelp==1.0.7
+    # via sphinx
+sphinxcontrib-devhelp==1.0.5
+    # via sphinx
+sphinxcontrib-htmlhelp==2.0.4
+    # via sphinx
+sphinxcontrib-jquery==4.1
+    # via sphinx-rtd-theme
+sphinxcontrib-jsmath==1.0.1
+    # via sphinx
+sphinxcontrib-qthelp==1.0.6
+    # via sphinx
+sphinxcontrib-serializinghtml==1.1.9
+    # via sphinx
+typer==0.9.0
+    # via -r dev-requirements.in
+typing-extensions==4.8.0
+    # via typer
+tzdata==2023.3
+    # via pandas
+urllib3==2.0.7
+    # via requests
 wheel==0.41.3
     # via pip-tools
 

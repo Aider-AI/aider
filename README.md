@@ -31,6 +31,22 @@ Aider is unique in that it [works well with pre-existing, larger codebases](http
 - [FAQ](https://aider.chat/docs/faq.html)
 - [Discord](https://discord.gg/Tv2uQnR88V)
 
+## New GPT-4 Turbo with 128k context window
+
+Aider supports OpenAI's new GPT-4 model that has the massive 128k context window.
+Early benchmark results
+indicate that it is
+[very fast](https://aider.chat/docs/benchmarks-speed-1106.html)
+and a bit
+[better at coding](https://aider.chat/docs/benchmarks-1106.html)
+than previous GPT-4 models.
+
+To use it, run aider like this:
+
+```
+aider --model gpt-4-1106-preview
+```
+
 ## Getting started
 
 See the
@@ -161,10 +177,12 @@ For more information, see the [FAQ](https://aider.chat/docs/faq.html).
 * *The best AI coding assistant so far.* -- [Matthew Berman](https://www.youtube.com/watch?v=df8afeb1FY8)
 * *Hands down, this is the best AI coding assistant tool so far.* -- [IndyDevDan](https://www.youtube.com/watch?v=MPYFPvxfGZs)
 * *Aider ... has easily quadrupled my coding productivity.* -- [SOLAR_FIELDS](https://news.ycombinator.com/item?id=36212100)
+* *It's a cool workflow... Aider's ergonomics are perfect for me.* -- [qup](https://news.ycombinator.com/item?id=38185326)
 * *It's really like having your senior developer live right in your Git repo - truly amazing!* -- [rappster](https://github.com/paul-gauthier/aider/issues/124)
 * *What an amazing tool. It's incredible.* -- [valyagolev](https://github.com/paul-gauthier/aider/issues/6#issue-1722897858)
 * *Aider is such an astounding thing!* -- [cgrothaus](https://github.com/paul-gauthier/aider/issues/82#issuecomment-1631876700)
 * *It was WAY faster than I would be getting off the ground and making the first few working versions.* -- [Daniel Feldman](https://twitter.com/d_feldman/status/1662295077387923456)
+* *THANK YOU for Aider! It really feels like a glimpse into the future of coding.* -- [derwiki](https://news.ycombinator.com/item?id=38205643)
 * *This project is stellar.* -- [funkytaco](https://github.com/paul-gauthier/aider/issues/112#issuecomment-1637429008)
 * *Amazing project, definitely the best AI coding assistant I've used.* -- [joshuavial](https://github.com/paul-gauthier/aider/issues/84)
 * *I am an aider addict. I'm getting so much more work done, but in less time.* -- [dandandan](https://discord.com/channels/1131200896827654144/1131200896827654149/1135913253483069470)

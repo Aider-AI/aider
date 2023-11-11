@@ -37,13 +37,13 @@ ORIGINAL_DNAME = BENCHMARK_DNAME / "exercism-python"
 app = typer.Typer(add_completion=False, pretty_exceptions_enable=False)
 
 
-def show_stats(dirnames):
+def show_stats(dirnames, graphs):
     raw_rows = []
     for dirname in dirnames:
         row = summarize_results(dirname)
         raw_rows.append(row)
 
-    return
+    # return
 
     repeats = []
     seen = dict()
@@ -54,6 +54,10 @@ def show_stats(dirnames):
 
         if row.model == "gpt-3.5-turbo":
             row.model = "gpt-3.5-turbo-0613"
+
+        if row.model == "gpt-4":
+            row.model = "gpt-4-0613"
+
         if row.edit_format == "diff-func-string":
             row.edit_format = "diff-func"
 
@@ -65,10 +69,16 @@ def show_stats(dirnames):
             # remember this row, so we can update it with the repeat_avg
             repeat_row = len(rows)
 
-        pieces = row.model.split("-")
-        row.model = "-".join(pieces[:3])
-        if pieces[3:]:
-            row.model += "\n-" + "-".join(pieces[3:])
+        gpt35 = "gpt-3.5-turbo"
+        gpt4 = "gpt-4"
+
+        if row.model.startswith(gpt35):
+            row.model = gpt35 + "\n" + row.model[len(gpt35) :]
+        elif row.model.startswith(gpt4):
+            row.model = gpt4 + "\n" + row.model[len(gpt4) :]
+
+        if row.model == "gpt-4\n-1106-preview":
+            row.model += "\n(preliminary)"
 
         if row.completed_tests < 133:
             print(f"Warning: {row.dir_name} is incomplete: {row.completed_tests}")
@@ -104,10 +114,73 @@ def show_stats(dirnames):
 
         # use the average in the main bar
         rows[repeat_row]["pass_rate_2"] = repeat_avg
+    else:
+        repeat_hi = repeat_lo = repeat_avg = None
 
     df = pd.DataFrame.from_records(rows)
     df.sort_values(by=["model", "edit_format"], inplace=True)
 
+    # dump(df)
+    if graphs:
+        plot_timing(df)
+        plot_outcomes(df, repeats, repeat_hi, repeat_lo, repeat_avg)
+
+
+def plot_timing(df):
+    """plot a graph showing the average duration of each (model, edit_format)"""
+    plt.rcParams["hatch.linewidth"] = 0.5
+    plt.rcParams["hatch.color"] = "#444444"
+
+    from matplotlib import rc
+
+    rc("font", **{"family": "sans-serif", "sans-serif": ["Helvetica"], "size": 10})
+
+    fig, ax = plt.subplots(figsize=(6, 4))
+    ax.grid(axis="y", zorder=0, lw=0.2)
+
+    zorder = 1
+    grouped = df.groupby(["model", "edit_format"])["avg_duration"].mean().unstack()
+    num_models, num_formats = grouped.shape
+
+    pos = np.array(range(num_models))
+    width = 0.8 / num_formats
+
+    formats = grouped.columns
+    models = grouped.index
+
+    for i, fmt in enumerate(formats):
+        edge = dict(edgecolor="#ffffff", linewidth=1.5)
+        color = "#b3e6a8" if "diff" in fmt else "#b3d1e6"
+        hatch = "////" if "func" in fmt else ""
+        rects = ax.bar(
+            pos + i * width,
+            grouped[fmt],
+            width * 0.95,
+            label=fmt,
+            color=color,
+            hatch=hatch,
+            zorder=zorder + 1,
+            **edge,
+        )
+        ax.bar_label(rects, padding=4, labels=[f"{v:.1f}s" for v in grouped[fmt]], size=6)
+
+    ax.set_xticks([p + 0.5 * width for p in pos])
+    ax.set_xticklabels(models)
+
+    ax.set_ylabel("Average GPT response time\nper exercise (sec)")
+    ax.set_title("GPT Code Editing Speed\n(time per coding task)")
+    ax.legend(
+        title="Edit Format",
+        loc="upper left",
+    )
+    ax.set_ylim(top=max(grouped.max()) * 1.1)  # Set y-axis limit to 10% more than the max value
+
+    plt.tight_layout()
+    plt.savefig("tmp_timing.svg")
+    imgcat(fig)
+
+
+def plot_outcomes(df, repeats, repeat_hi, repeat_lo, repeat_avg):
     tries = [df.groupby(["model", "edit_format"])["pass_rate_2"].mean()]
     if True:
         tries += [df.groupby(["model", "edit_format"])["pass_rate_1"].mean()]
@@ -171,22 +244,22 @@ def show_stats(dirnames):
             markeredgewidth=1,
         )
 
-    ax.set_xticks([p + 1.5 * width for p in pos])
+    ax.set_xticks([p + 0.5 * width for p in pos])
     ax.set_xticklabels(models)
 
     top = 95
     ax.annotate(
-        "First attempt,\nbased on\ninstructions",
-        xy=(2.9, 51),
-        xytext=(2.5, top),
+        "First attempt,\nbased on\nnatural language\ninstructions",
+        xy=(2.20, 41),
+        xytext=(2, top),
         horizontalalignment="center",
         verticalalignment="top",
         arrowprops={"arrowstyle": "->", "connectionstyle": "arc3,rad=0.3"},
     )
     ax.annotate(
-        "Second attempt,\nbased on\nunit test errors",
-        xy=(3.1, 68),
-        xytext=(4.25, top),
+        "Second attempt,\nincluding unit test\nerror output",
+        xy=(2.55, 56),
+        xytext=(3.5, top),
         horizontalalignment="center",
         verticalalignment="top",
         arrowprops={"arrowstyle": "->", "connectionstyle": "arc3,rad=0.3"},
@@ -194,7 +267,7 @@ def show_stats(dirnames):
 
     ax.set_ylabel("Percent of exercises completed successfully")
     # ax.set_xlabel("Model")
-    ax.set_title("GPT Code Editing")
+    ax.set_title("GPT Code Editing Skill\n(percent coding tasks correct)")
     ax.legend(
         title="Edit Format",
         loc="upper left",
@@ -237,6 +310,7 @@ def resolve_dirname(dirname, use_single_prior, make_new):
 @app.command()
 def main(
     dirnames: List[str] = typer.Argument(..., help="Directory names"),
+    graphs: bool = typer.Option(False, "--graphs", help="Generate graphs"),
     model: str = typer.Option("gpt-3.5-turbo", "--model", "-m", help="Model name"),
     edit_format: str = typer.Option(None, "--edit-format", "-e", help="Edit format"),
     keywords: str = typer.Option(
@@ -276,7 +350,7 @@ def main(
         updated_dirnames.append(dirname)
 
     if stats_only:
-        return show_stats(updated_dirnames)
+        return show_stats(updated_dirnames, graphs)
 
     if diffs_only:
         return show_diffs(updated_dirnames)
@@ -307,7 +381,9 @@ def main(
         dirname.rename(dest)
 
     if not dirname.exists():
+        print(f"Copying {ORIGINAL_DNAME} -> {dirname} ...")
         shutil.copytree(ORIGINAL_DNAME, dirname)
+        print("...done")
 
     test_dnames = sorted(os.listdir(dirname))
 
