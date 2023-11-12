@@ -136,6 +136,11 @@ class Commands:
             content = f"{relative_fname}\n```\n" + content + "```\n"
             tokens = len(self.tokenizer.encode(content))
             res.append((tokens, f"{relative_fname}", "use /drop to drop from chat"))
+            
+        # additional context
+        for key, value in self.coder.additional_context.items():
+            tokens = len(self.tokenizer.encode(value))
+            res.append((tokens, f"{key}", "use /drop to drop from chat"))
 
         self.io.tool_output("Approximate context window usage, in tokens:")
         self.io.tool_output()
