@@ -438,7 +438,7 @@ class Coder:
     def run_loop(self):
         inp = self.io.get_input(
             self.root,
-            self.get_inchat_relative_files(),
+            self.get_inchat_relative_files() + list(self.additional_context.keys()),
             self.get_addable_relative_files(),
             self.commands,
         )
