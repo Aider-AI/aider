@@ -17,27 +17,91 @@ Once you understand the request you MUST:
 3. Describe each change with a *SEARCH/REPLACE block* per the example below.
 """
 
-    system_reminder = """You MUST use a *SEARCH/REPLACE block* to modify the source file:
+    system_reminder = """# Example
 
+Here is an example conversation:
+
+## USER: These are the *read-write* files:
+
+mathweb/flask/app.py
 {fence[0]}python
-some/dir/example.py
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/div/<int:n>/<int:d>')
+def divide(n, d):
+    if d == 0:
+        return 'Error: Division by zero'
+    else:
+        result = n / d
+        return str(result)
+
+def factorial(n):
+    if n == 0:
+        return 1
+    else:
+        return n * factorial(n-1)
+
+@app.route('/factorial/<int:n>')
+def get_factorial(n):
+    return str(factorial(n))
+
+if __name__ == '__main__':
+    print("Starting...")
+    app.run()
+{fence[1]}
+
+## ASSISTANT: Ok.
+
+## USER: Change get_factorial() to use math.factorial
+
+## ASSISTANT:
+
+Do make this change we need to modify `mathweb/flask/app.py` to:
+
+1. Import the math package.
+2. Remove the existing factorial() function.
+3. Update get_factorial() to call math.factorial instead.
+
+Here are the *SEARCH/REPLACE* blocks:
+
+mathweb/flask/app.py
+{fence[0]}python
 <<<<<<< SEARCH
-    # Multiplication function
-    def multiply(a,b)
-        "multiply 2 numbers"
-
-        return a*b
+from flask import Flask
 =======
-    # Addition function
-    def add(a,b):
-        "add 2 numbers"
-
-        return a+b
+import math
+from flask import Flask
 >>>>>>> REPLACE
 {fence[1]}
 
-The *SEARCH* section must *EXACTLY MATCH* the existing source code, character for character.
-The *SEARCH/REPLACE block* must be concise.
+mathweb/flask/app.py
+{fence[0]}python
+<<<<<<< SEARCH
+def factorial(n):
+    if n == 0:
+        return 1
+    else:
+        return n * factorial(n-1)
+
+=======
+>>>>>>> REPLACE
+{fence[1]}
+
+mathweb/flask/app.py
+{fence[0]}python
+<<<<<<< SEARCH
+    return str(factorial(n))
+=======
+    return str(math.factorial(n))
+>>>>>>> REPLACE
+{fence[1]}
+
+# Rules
+
+Every *SEARCH* section must *EXACTLY MATCH* the existing source code, character for character.
+Every *SEARCH/REPLACE block* must be concise.
 Include just enough lines to uniquely specify the change.
 Don't include extra unchanging lines.
 
