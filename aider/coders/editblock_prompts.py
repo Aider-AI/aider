@@ -22,17 +22,17 @@ Once you understand the request you MUST:
 {fence[0]}python
 some/dir/example.py
 <<<<<<< SEARCH
-    # Multiplication function
-    def multiply(a,b)
-        "multiply 2 numbers"
+# Multiplication function
+def multiply(a,b)
+    "multiply 2 numbers"
 
-        return a*b
+    return a*b
 =======
-    # Addition function
-    def add(a,b):
-        "add 2 numbers"
+# Addition function
+def add(a,b):
+    "add 2 numbers"
 
-        return a+b
+    return a+b
 >>>>>>> REPLACE
 {fence[1]}
 
