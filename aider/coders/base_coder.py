@@ -239,9 +239,14 @@ class Coder:
 
         return True
 
+    def get_code_view(self, code):
+        """override this method to customize the code before sending to assistant"""
+        return code
+
     def get_abs_fnames_content(self):
         for fname in list(self.abs_fnames):
             content = self.io.read_text(fname)
+            content = self.get_code_view(content)
 
             if content is None:
                 relative_fname = self.get_rel_fname(fname)

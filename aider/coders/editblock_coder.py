@@ -13,6 +13,19 @@ class EditBlockCoder(Coder):
         self.gpt_prompts = EditBlockPrompts()
         super().__init__(*args, **kwargs)
 
+    def get_code_view(self, code):
+        """Add line numbers to code."""
+        lines = code.splitlines()
+        lines_view = []
+        digits = 4  # number of digits in line number. TODO: make this configurable
+        for i, line in enumerate(lines):
+            lines_view.append(f"{i+1:{digits}}|{lines[i]}")
+        
+        code_view = "\n".join(lines_view)
+        if code.endswith("\n"):
+            code_view += "\n"
+        return code_view
+
     def get_edits(self):
         content = self.partial_response_content
 
@@ -325,6 +338,11 @@ def strip_filename(filename, fence):
 
     return filename
 
+def remove_line_number(content):
+    result = '\n'.join(line.split('|', 1)[-1] for line in content.split('\n'))
+    if content.endswith("\n"):
+        result += "\n"
+    return result
 
 def find_original_update_blocks(content, fence=DEFAULT_FENCE):
     # make sure we end with a newline, otherwise the regex will miss <<UPD on the last line
@@ -370,7 +388,7 @@ def find_original_update_blocks(content, fence=DEFAULT_FENCE):
 
             current_filename = filename
 
-            original_text = pieces.pop()
+            original_text = remove_line_number(pieces.pop())
             processed.append(original_text)
 
             divider_marker = pieces.pop()
@@ -378,7 +396,7 @@ def find_original_update_blocks(content, fence=DEFAULT_FENCE):
             if divider_marker.strip() != DIVIDER:
                 raise ValueError(f"Expected `{DIVIDER}` not {divider_marker.strip()}")
 
-            updated_text = pieces.pop()
+            updated_text = remove_line_number(pieces.pop())
             processed.append(updated_text)
 
             updated_marker = pieces.pop()
