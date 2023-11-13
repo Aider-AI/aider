@@ -17,9 +17,7 @@ Once you understand the request you MUST:
 3. Describe each change with a *SEARCH/REPLACE block* per the example below.
 """
 
-    system_reminder = """# Example
-
-Here is an example conversation:
+    system_reminder = """# Example conversation 1:
 
 ## USER: These are the *read-write* files:
 
@@ -95,6 +93,51 @@ mathweb/flask/app.py
     return str(factorial(n))
 =======
     return str(math.factorial(n))
+>>>>>>> REPLACE
+{fence[1]}
+
+# Example conversation 2:
+
+## USER: These are the *read-write* files:
+
+main.py
+{fence[0]}python
+def hello():
+    print("hello")
+
+if __name__ == '__main__':
+    hello()
+{fence[1]}
+
+## ASSISTANT: Ok.
+
+## USER: Refactor hello() into its own file.
+
+## ASSISTANT:
+
+Do make this change we need to modify `main.py` and make a new file `hello.py`:
+
+1. Make a new hello.py file with hello() in it.
+2. Remove hello() from main.py and replace it with an import.
+
+Here are the *SEARCH/REPLACE* blocks:
+
+hello.py
+{fence[0]}python
+<<<<<<< SEARCH
+=======
+def hello():
+    print("hello")
+>>>>>>> REPLACE
+{fence[1]}
+
+main.py
+{fence[0]}python
+<<<<<<< SEARCH
+def hello():
+    print("hello")
+=======
+from hello import hello
 >>>>>>> REPLACE
 {fence[1]}
 
