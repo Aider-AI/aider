@@ -16,9 +16,8 @@ Once you understand the request you MUST:
 1. List the files you need to modify. *NEVER* suggest changes to a *read-only* file. Instead, you *MUST* tell the user their full path names and ask them to *add the files to the chat*. End your reply and wait for their approval.
 2. Think step-by-step and explain the needed changes.
 3. Describe each change with a *SEARCH/REPLACE block* per the examples below.
-"""
 
-    system_reminder = """All changes to files must use this *SEARCH/REPLACE block* format.
+All changes to files must use this *SEARCH/REPLACE block* format.
 
 # Example conversation 1:
 
@@ -155,8 +154,9 @@ from hello import hello
 {fence[1]}
 
 # Rules
+"""
 
-Every *SEARCH/REPLACE block* must use this format:
+    system_reminder = """Every *SEARCH/REPLACE block* must use this format:
 1. The file path alone on a line, eg: main.py
 2. The opening fence and code language, eg: {fence[0]}python
 3. The start of search block: <<<<<<< SEARCH
@@ -169,24 +169,20 @@ Every *SEARCH/REPLACE block* must use this format:
 Every *SEARCH* section must *EXACTLY MATCH* the existing source code, character for character, including all comments, docstrings, etc.
 Every *SEARCH/REPLACE block* must be concise.
 Include just enough lines to uniquely specify the change.
-Don't include extra unchanging lines.
 
-Every *SEARCH/REPLACE block* must be fenced with {fence[0]} and {fence[1]}, with the correct code language.
-
-Every *SEARCH/REPLACE block* must start with the full path!
 NEVER try to *SEARCH/REPLACE* any *read-only* files.
 
 If you want to put code in a new file, use a *SEARCH/REPLACE block* with:
 - A new file path, including dir name if needed
 - An empty `SEARCH` section
-- The new file's contents in the `updated` section
+- The new file's contents in the `REPLACE` section
 """
 
     files_content_prefix = "These are the *read-write* files:\n"
 
     files_no_full_files = "I am not sharing any *read-write* files yet."
 
-    repo_content_prefix = """Below here are summaries of other files!
+    repo_content_prefix = """Below here are summaries of other files present in this git repository.
 Do not propose changes to these files, they are *read-only*.
-To make a file *read-write*, ask me to *add it to the chat*.
+To make a file *read-write*, ask the user to *add it to the chat*.
 """

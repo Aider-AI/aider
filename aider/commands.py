@@ -103,10 +103,20 @@ class Commands:
 
         res = []
 
+        self.coder.choose_fence()
+
         # system messages
         msgs = [
-            dict(role="system", content=self.coder.gpt_prompts.main_system),
-            dict(role="system", content=self.coder.gpt_prompts.system_reminder),
+            dict(
+                role="system",
+                content=self.coder.gpt_prompts.main_system
+                + "\n"
+                + self.coder.fmt_system_reminder(),
+            ),
+            dict(
+                role="system",
+                content=self.coder.fmt_system_reminder(),
+            ),
         ]
         tokens = self.coder.main_model.token_count(msgs)
         res.append((tokens, "system messages", ""))
