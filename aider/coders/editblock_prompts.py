@@ -18,7 +18,9 @@ Once you understand the request you MUST:
 3. Describe each change with a *SEARCH/REPLACE block* per the examples below.
 """
 
-    system_reminder = """# Example conversation 1:
+    system_reminder = """All changes to files must use this *SEARCH/REPLACE block* format.
+
+# Example conversation 1:
 
 ## USER: These are the *read-write* files:
 

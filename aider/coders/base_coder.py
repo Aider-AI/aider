@@ -316,10 +316,6 @@ class Coder:
             dict(role="user", content=all_content),
             dict(role="assistant", content="Ok."),
         ]
-        if self.abs_fnames:
-            files_messages += [
-                dict(role="system", content=self.fmt_system_reminder()),
-            ]
 
         return files_messages
 
@@ -423,7 +419,7 @@ class Coder:
     def format_messages(self):
         self.choose_fence()
         main_sys = self.gpt_prompts.main_system
-        main_sys += "\n" + self.fmt_system_reminder()
+        # main_sys += "\n" + self.fmt_system_reminder()
 
         messages = [
             dict(role="system", content=main_sys),
@@ -432,6 +428,24 @@ class Coder:
         self.summarize_end()
         messages += self.done_messages
         messages += self.get_files_messages()
+
+        reminder_message = [
+            dict(role="system", content=self.fmt_system_reminder()),
+        ]
+
+        # messages_tokens = self.main_model.token_count(messages)
+        # reminder_tokens = self.main_model.token_count(reminder_message)
+        # cur_tokens = self.main_model.token_count(self.cur_messages)
+
+        # total_tokens = messages_tokens + reminder_tokens + cur_tokens
+
+        # Add the reminder prompt if there's a lot of context since the original
+        # system prompt, and we still have room to include it.
+        # THRESH = 2048
+        # if messages_tokens > THRESH and total_tokens < self.main_model.max_context_tokens:
+
+        messages += reminder_message
+
         messages += self.cur_messages
 
         return messages
