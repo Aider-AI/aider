@@ -436,7 +436,11 @@ class Coder:
         reminder_tokens = self.main_model.token_count(reminder_message)
         cur_tokens = self.main_model.token_count(self.cur_messages)
 
-        total_tokens = messages_tokens + reminder_tokens + cur_tokens
+        if None not in (messages_tokens, reminder_tokens, cur_tokens):
+            total_tokens = messages_tokens + reminder_tokens + cur_tokens
+        else:
+            # add the reminder anyway
+            total_tokens = 0
 
         # Add the reminder prompt if we still have room to include it.
         if total_tokens < self.main_model.max_context_tokens:
