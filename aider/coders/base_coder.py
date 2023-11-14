@@ -411,15 +411,14 @@ class Coder:
 
         return self.send_new_user_message(inp)
 
-    def fmt_system_reminder(self):
-        prompt = self.gpt_prompts.system_reminder
+    def fmt_system_prompt(self, prompt):
         prompt = prompt.format(fence=self.fence)
         return prompt
 
     def format_messages(self):
         self.choose_fence()
-        main_sys = self.gpt_prompts.main_system
-        main_sys += "\n" + self.fmt_system_reminder()
+        main_sys = self.fmt_system_prompt(self.gpt_prompts.main_system)
+        main_sys += "\n" + self.fmt_system_prompt(self.gpt_prompts.system_reminder)
 
         messages = [
             dict(role="system", content=main_sys),
@@ -430,7 +429,7 @@ class Coder:
         messages += self.get_files_messages()
 
         reminder_message = [
-            dict(role="system", content=self.fmt_system_reminder()),
+            dict(role="system", content=self.fmt_system_prompt(self.gpt_prompts.system_reminder)),
         ]
 
         messages_tokens = self.main_model.token_count(messages)
