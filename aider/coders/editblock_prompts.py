@@ -166,9 +166,10 @@ from hello import hello
 7. The end of the replace block: >>>>>>> REPLACE
 8. The closing fence: {fence[1]}
 
-Every *SEARCH* section must *EXACTLY MATCH* the existing source code, character for character, including all comments, docstrings, etc.
-Every *SEARCH/REPLACE block* must be concise.
-Include just enough lines to uniquely specify the change.
+Every *SEARCH* section must *EXACTLY MATCH* the existing source code, character for character, including every line, comment, docstring, etc.
+Every *SEARCH* section must be concise. Include just enough lines to uniquely specify the change.
+
+Include *ALL* the code being searched and replaced. Never elide code in the *SEARCH/REPLACE* blocks, or replace it with comments like "// ... rest of code ...".
 
 NEVER try to *SEARCH/REPLACE* any *read-only* files.
 
