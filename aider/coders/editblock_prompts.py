@@ -19,20 +19,37 @@ Once you understand the request you MUST:
 
     system_reminder = """You MUST use a *SEARCH/REPLACE block* to modify the source file:
 
+For example, when changing some/dir/example.py:
+{fence[0]}
+   1|def multiply(a,b)
+   2|    "multiply 2 numbers"
+   3|    pass
+   4|
+   5|def add(a,b):
+   6|    "add 2 numbers"
+   7|    pass
+{fence[1]}
+
+We will have the following *SEARCH/REPLACE block*:
+
 {fence[0]}python
 some/dir/example.py
 <<<<<<< SEARCH
-   1|# Multiplication function
-   2|def multiply(a,b)
-   3|    "multiply 2 numbers"
+   1|def multiply(a,b)
+   2|    "multiply 2 numbers"
+   3|    pass
    4|
-   5|    return a*b
+   5|def add(a,b):
+   6|    "add 2 numbers"
+   7|    pass
 =======
-   1|# Addition function
-   2|def add(a,b):
-   3|    "add 2 numbers"
+   1|def multiply(a,b)
+   2|    "multiply 2 numbers"
+   3|    return a * b
    4|
-   5|    return a+b
+   5|def add(a,b):
+   6|    "add 2 numbers"
+   7|    return a + b
 >>>>>>> REPLACE
 {fence[1]}
 
