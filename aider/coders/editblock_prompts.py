@@ -39,6 +39,8 @@ def divide(n, d):
         return str(result)
 
 def factorial(n):
+    "compute factorial"
+
     if n == 0:
         return 1
     else:
@@ -81,6 +83,8 @@ mathweb/flask/app.py
 {fence[0]}python
 <<<<<<< SEARCH
 def factorial(n):
+    "compute factorial"
+
     if n == 0:
         return 1
     else:
@@ -106,6 +110,8 @@ mathweb/flask/app.py
 main.py
 {fence[0]}python
 def hello():
+    "print a greeting"
+
     print("hello")
 
 if __name__ == '__main__':
@@ -130,6 +136,8 @@ hello.py
 <<<<<<< SEARCH
 =======
 def hello():
+    "print a greeting"
+
     print("hello")
 >>>>>>> REPLACE
 {fence[1]}
@@ -138,6 +146,8 @@ main.py
 {fence[0]}python
 <<<<<<< SEARCH
 def hello():
+    "print a greeting"
+
     print("hello")
 =======
 from hello import hello
@@ -150,13 +160,13 @@ Every *SEARCH/REPLACE block* must use this format:
 1. The file path alone on a line, eg: main.py
 2. The opening fence and code language, eg: {fence[0]}python
 3. The start of search block: <<<<<<< SEARCH
-4. A chunk of lines to search for in the existing source code
+4. A contiguous chunk of lines to search for in the existing source code
 5. The dividing line: =======
 6. The lines to replace into the source code
 7. The end of the replace block: >>>>>>> REPLACE
 8. The closing fence: {fence[1]}
 
-Every *SEARCH* section must *EXACTLY MATCH* the existing source code, character for character.
+Every *SEARCH* section must *EXACTLY MATCH* the existing source code, character for character, including all comments, docstrings, etc.
 Every *SEARCH/REPLACE block* must be concise.
 Include just enough lines to uniquely specify the change.
 Don't include extra unchanging lines.
