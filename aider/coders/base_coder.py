@@ -429,22 +429,19 @@ class Coder:
         messages += self.done_messages
         messages += self.get_files_messages()
 
-        # reminder_message = [
-        #    dict(role="system", content=self.fmt_system_reminder()),
-        # ]
+        reminder_message = [
+            dict(role="system", content=self.fmt_system_reminder()),
+        ]
 
-        # messages_tokens = self.main_model.token_count(messages)
-        # reminder_tokens = self.main_model.token_count(reminder_message)
-        # cur_tokens = self.main_model.token_count(self.cur_messages)
+        messages_tokens = self.main_model.token_count(messages)
+        reminder_tokens = self.main_model.token_count(reminder_message)
+        cur_tokens = self.main_model.token_count(self.cur_messages)
 
-        # total_tokens = messages_tokens + reminder_tokens + cur_tokens
+        total_tokens = messages_tokens + reminder_tokens + cur_tokens
 
-        # Add the reminder prompt if there's a lot of context since the original
-        # system prompt, and we still have room to include it.
-        # THRESH = 2048
-        # if messages_tokens > THRESH and total_tokens < self.main_model.max_context_tokens:
-
-        # messages += reminder_message
+        # Add the reminder prompt if we still have room to include it.
+        if total_tokens < self.main_model.max_context_tokens:
+            messages += reminder_message
 
         messages += self.cur_messages
 
