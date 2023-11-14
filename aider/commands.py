@@ -1,4 +1,3 @@
-import json
 import re
 import subprocess
 import sys
@@ -104,20 +103,27 @@ class Commands:
 
         res = []
 
+        self.coder.choose_fence()
+
         # system messages
+        main_sys = self.coder.fmt_system_prompt(self.coder.gpt_prompts.main_system)
+        main_sys += "\n" + self.coder.fmt_system_prompt(self.coder.gpt_prompts.system_reminder)
         msgs = [
-            dict(role="system", content=self.coder.gpt_prompts.main_system),
-            dict(role="system", content=self.coder.gpt_prompts.system_reminder),
+            dict(role="system", content=main_sys),
+            dict(
+                role="system",
+                content=self.coder.fmt_system_prompt(self.coder.gpt_prompts.system_reminder),
+            ),
         ]
-        tokens = len(self.tokenizer.encode(json.dumps(msgs)))
+
+        tokens = self.coder.main_model.token_count(msgs)
         res.append((tokens, "system messages", ""))
 
         # chat history
         msgs = self.coder.done_messages + self.coder.cur_messages
         if msgs:
             msgs = [dict(role="dummy", content=msg) for msg in msgs]
-            msgs = json.dumps(msgs)
-            tokens = len(self.tokenizer.encode(msgs))
+            tokens = self.coder.main_model.token_count(msgs)
             res.append((tokens, "chat history", "use /clear to clear"))
 
         # repo map
@@ -125,7 +131,7 @@ class Commands:
         if self.coder.repo_map:
             repo_content = self.coder.repo_map.get_repo_map(self.coder.abs_fnames, other_files)
             if repo_content:
-                tokens = len(self.tokenizer.encode(repo_content))
+                tokens = self.coder.main_model.token_count(repo_content)
                 res.append((tokens, "repository map", "use --map-tokens to resize"))
 
         # files
@@ -134,7 +140,7 @@ class Commands:
             content = self.io.read_text(fname)
             # approximate
             content = f"{relative_fname}\n```\n" + content + "```\n"
-            tokens = len(self.tokenizer.encode(content))
+            tokens = self.coder.main_model.token_count(content)
             res.append((tokens, f"{relative_fname}", "use /drop to drop from chat"))
 
         self.io.tool_output("Approximate context window usage, in tokens:")

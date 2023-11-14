@@ -1,3 +1,5 @@
+import json
+
 import openai
 
 
@@ -37,3 +39,14 @@ class Model:
     @staticmethod
     def commit_message_models():
         return [Model.create("gpt-3.5-turbo"), Model.create("gpt-3.5-turbo-16k")]
+
+    def token_count(self, messages):
+        if not self.tokenizer:
+            return
+
+        if type(messages) is str:
+            msgs = messages
+        else:
+            msgs = json.dumps(messages)
+
+        return len(self.tokenizer.encode(msgs))

@@ -316,10 +316,6 @@ class Coder:
             dict(role="user", content=all_content),
             dict(role="assistant", content="Ok."),
         ]
-        if self.abs_fnames:
-            files_messages += [
-                dict(role="system", content=self.fmt_system_reminder()),
-            ]
 
         return files_messages
 
@@ -415,21 +411,14 @@ class Coder:
 
         return self.send_new_user_message(inp)
 
-    def fmt_system_reminder(self):
-        prompt = self.gpt_prompts.system_reminder
+    def fmt_system_prompt(self, prompt):
         prompt = prompt.format(fence=self.fence)
         return prompt
 
-    def send_new_user_message(self, inp):
+    def format_messages(self):
         self.choose_fence()
-
-        self.cur_messages += [
-            dict(role="user", content=inp),
-        ]
-
-        main_sys = self.gpt_prompts.main_system
-        # if self.main_model.max_context_tokens > 4 * 1024:
-        main_sys += "\n" + self.fmt_system_reminder()
+        main_sys = self.fmt_system_prompt(self.gpt_prompts.main_system)
+        main_sys += "\n" + self.fmt_system_prompt(self.gpt_prompts.system_reminder)
 
         messages = [
             dict(role="system", content=main_sys),
@@ -438,7 +427,35 @@ class Coder:
         self.summarize_end()
         messages += self.done_messages
         messages += self.get_files_messages()
+
+        reminder_message = [
+            dict(role="system", content=self.fmt_system_prompt(self.gpt_prompts.system_reminder)),
+        ]
+
+        messages_tokens = self.main_model.token_count(messages)
+        reminder_tokens = self.main_model.token_count(reminder_message)
+        cur_tokens = self.main_model.token_count(self.cur_messages)
+
+        if None not in (messages_tokens, reminder_tokens, cur_tokens):
+            total_tokens = messages_tokens + reminder_tokens + cur_tokens
+        else:
+            # add the reminder anyway
+            total_tokens = 0
+
+        # Add the reminder prompt if we still have room to include it.
+        if total_tokens < self.main_model.max_context_tokens:
+            messages += reminder_message
+
         messages += self.cur_messages
+
+        return messages
+
+    def send_new_user_message(self, inp):
+        self.cur_messages += [
+            dict(role="user", content=inp),
+        ]
+
+        messages = self.format_messages()
 
         if self.verbose:
             utils.show_messages(messages, functions=self.functions)
