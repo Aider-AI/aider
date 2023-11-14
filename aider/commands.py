@@ -1,4 +1,3 @@
-import json
 import re
 import subprocess
 import sys
@@ -109,14 +108,13 @@ class Commands:
             dict(role="system", content=self.coder.gpt_prompts.main_system),
             dict(role="system", content=self.coder.gpt_prompts.system_reminder),
         ]
-        tokens = self.coder.main_model.token_count(json.dumps(msgs))
+        tokens = self.coder.main_model.token_count(msgs)
         res.append((tokens, "system messages", ""))
 
         # chat history
         msgs = self.coder.done_messages + self.coder.cur_messages
         if msgs:
             msgs = [dict(role="dummy", content=msg) for msg in msgs]
-            msgs = json.dumps(msgs)
             tokens = self.coder.main_model.token_count(msgs)
             res.append((tokens, "chat history", "use /clear to clear"))
 

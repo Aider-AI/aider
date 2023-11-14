@@ -420,15 +420,9 @@ class Coder:
         prompt = prompt.format(fence=self.fence)
         return prompt
 
-    def send_new_user_message(self, inp):
+    def format_messages(self):
         self.choose_fence()
-
-        self.cur_messages += [
-            dict(role="user", content=inp),
-        ]
-
         main_sys = self.gpt_prompts.main_system
-        # if self.main_model.max_context_tokens > 4 * 1024:
         main_sys += "\n" + self.fmt_system_reminder()
 
         messages = [
@@ -439,6 +433,15 @@ class Coder:
         messages += self.done_messages
         messages += self.get_files_messages()
         messages += self.cur_messages
+
+        return messages
+
+    def send_new_user_message(self, inp):
+        self.cur_messages += [
+            dict(role="user", content=inp),
+        ]
+
+        messages = self.format_messages()
 
         if self.verbose:
             utils.show_messages(messages, functions=self.functions)
