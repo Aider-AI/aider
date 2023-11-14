@@ -106,11 +106,14 @@ class Commands:
         self.coder.choose_fence()
 
         # system messages
-        main_sys = self.fmt_system_prompt(self.gpt_prompts.main_system)
-        main_sys += "\n" + self.fmt_system_prompt(self.gpt_prompts.system_reminder)
+        main_sys = self.coder.fmt_system_prompt(self.coder.gpt_prompts.main_system)
+        main_sys += "\n" + self.coder.fmt_system_prompt(self.coder.gpt_prompts.system_reminder)
         msgs = [
             dict(role="system", content=main_sys),
-            dict(role="system", content=self.fmt_system_prompt(self.gpt_prompts.system_reminder)),
+            dict(
+                role="system",
+                content=self.coder.fmt_system_prompt(self.coder.gpt_prompts.system_reminder),
+            ),
         ]
 
         tokens = self.coder.main_model.token_count(msgs)
