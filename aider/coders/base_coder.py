@@ -419,7 +419,7 @@ class Coder:
     def format_messages(self):
         self.choose_fence()
         main_sys = self.gpt_prompts.main_system
-        # main_sys += "\n" + self.fmt_system_reminder()
+        main_sys += "\n" + self.fmt_system_reminder()
 
         messages = [
             dict(role="system", content=main_sys),
@@ -429,9 +429,9 @@ class Coder:
         messages += self.done_messages
         messages += self.get_files_messages()
 
-        reminder_message = [
-            dict(role="system", content=self.fmt_system_reminder()),
-        ]
+        # reminder_message = [
+        #    dict(role="system", content=self.fmt_system_reminder()),
+        # ]
 
         # messages_tokens = self.main_model.token_count(messages)
         # reminder_tokens = self.main_model.token_count(reminder_message)
@@ -444,7 +444,7 @@ class Coder:
         # THRESH = 2048
         # if messages_tokens > THRESH and total_tokens < self.main_model.max_context_tokens:
 
-        messages += reminder_message
+        # messages += reminder_message
 
         messages += self.cur_messages
 
