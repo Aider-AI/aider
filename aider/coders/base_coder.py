@@ -728,6 +728,7 @@ class Coder:
         else:
             files = self.get_inchat_relative_files()
 
+        files = [fname for fname in files if Path(self.abs_root_path(fname)).is_file()]
         return sorted(set(files))
 
     def get_all_abs_files(self):

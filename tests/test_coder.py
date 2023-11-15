@@ -122,33 +122,6 @@ class TestCoder(unittest.TestCase):
             fname.unlink()
             self.assertEqual(coder.get_last_modified(), 0)
 
-    def test_check_for_file_mentions(self):
-        # Mock the IO object
-        mock_io = MagicMock()
-
-        # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(models.GPT4, None, mock_io)
-
-        # Mock the git repo
-        mock = MagicMock()
-        mock.return_value = set(["file1.txt", "file2.py"])
-        coder.repo.get_tracked_files = mock
-
-        # Call the check_for_file_mentions method
-        coder.check_for_file_mentions("Please check file1.txt and file2.py")
-
-        # Check if coder.abs_fnames contains both files
-        expected_files = set(
-            map(
-                str,
-                [
-                    Path(coder.root) / "file1.txt",
-                    Path(coder.root) / "file2.py",
-                ],
-            )
-        )
-        self.assertEqual(coder.abs_fnames, expected_files)
-
     def test_get_files_content(self):
         tempdir = Path(tempfile.mkdtemp())
 
@@ -167,31 +140,37 @@ class TestCoder(unittest.TestCase):
         self.assertIn("file1.txt", content)
         self.assertIn("file2.txt", content)
 
-    def test_check_for_filename_mentions_of_longer_paths(self):
-        # Mock the IO object
-        mock_io = MagicMock()
+    def test_check_for_filename_mentions(self):
+        with GitTemporaryDirectory():
+            repo = git.Repo()
 
-        # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(models.GPT4, None, mock_io)
+            mock_io = MagicMock()
 
-        mock = MagicMock()
-        mock.return_value = set(["file1.txt", "file2.py"])
-        coder.repo.get_tracked_files = mock
+            fname1 = Path("file1.txt")
+            fname2 = Path("file2.py")
 
-        # Call the check_for_file_mentions method
-        coder.check_for_file_mentions("Please check file1.txt and file2.py")
+            fname1.write_text("one\n")
+            fname2.write_text("two\n")
 
-        # Check if coder.abs_fnames contains both files
-        expected_files = set(
-            map(
-                str,
+            repo.git.add(str(fname1))
+            repo.git.add(str(fname2))
+            repo.git.commit("-m", "new")
+
+            # Initialize the Coder object with the mocked IO and mocked repo
+            coder = Coder.create(models.GPT4, None, mock_io)
+
+            # Call the check_for_file_mentions method
+            coder.check_for_file_mentions("Please check file1.txt and file2.py")
+
+            # Check if coder.abs_fnames contains both files
+            expected_files = set(
                 [
-                    Path(coder.root) / "file1.txt",
-                    Path(coder.root) / "file2.py",
-                ],
+                    str(Path(coder.root) / fname1),
+                    str(Path(coder.root) / fname2),
+                ]
             )
-        )
-        self.assertEqual(coder.abs_fnames, expected_files)
+
+            self.assertEqual(coder.abs_fnames, expected_files)
 
     def test_check_for_ambiguous_filename_mentions_of_longer_paths(self):
         with GitTemporaryDirectory():

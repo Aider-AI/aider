@@ -146,6 +146,9 @@ class InputOutput:
         except FileNotFoundError:
             self.tool_error(f"{filename}: file not found error")
             return
+        except IsADirectoryError:
+            self.tool_error(f"{filename}: is a directory")
+            return
         except UnicodeError as e:
             self.tool_error(f"{filename}: {e}")
             self.tool_error("Use --encoding to set the unicode encoding.")
