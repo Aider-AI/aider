@@ -77,8 +77,8 @@ def show_stats(dirnames, graphs):
         elif row.model.startswith(gpt4):
             row.model = gpt4 + "\n" + row.model[len(gpt4) :]
 
-        if row.model == "gpt-4\n-1106-preview":
-            row.model += "\n(preliminary)"
+        # if row.model == "gpt-4\n-1106-preview":
+        #    row.model += "\n(preliminary)"
 
         if row.completed_tests < 133:
             print(f"Warning: {row.dir_name} is incomplete: {row.completed_tests}")

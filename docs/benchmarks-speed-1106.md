@@ -37,17 +37,5 @@ generate responses which primarily consist of source code.
 Some observations:
 
 - **GPT-3.5 got 6-11x faster.** The `gpt-3.5-turbo-1106` model is 6-11x faster than the June (0613) version which has been the default `gpt-3.5-turbo` model.
-- **GPT-4 Turbo is 4-5x faster.** The new `gpt-4-1106-preview` model is 4-5x faster than the June (0613) version which has been the default `gpt-4` model.
+- **GPT-4 Turbo is 2-2.5x faster.** The new `gpt-4-1106-preview` model is 2-2.5x faster than the June (0613) version which has been the default `gpt-4` model.
 - The old March (0301) version of GPT-3.5 is actually faster than the June (0613) version. This was a surprising discovery.
-
-**These are preliminary results.**
-OpenAI is enforcing very low
-rate limits on the new GPT-4 model.
-The rate limiting disrupts the benchmarking process,
-requiring it to run single threaded, pause and restart frequently.
-These anomolous conditions make it slow to
-benchmark the new model, and make
-it less reliable to compare the results with
-benchmark runs against the older model versions.
-Once the rate limits are relaxed I will do a clean
-run of the entire benchmark suite.

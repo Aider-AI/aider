@@ -2,6 +2,8 @@
 
 [![benchmark results](../assets/benchmarks-1106.svg)](https://aider.chat/assets/benchmarks-1106.svg)
 
+[![benchmark results](../assets/benchmarks-speed-1106.svg)](https://aider.chat/assets/benchmarks-speed-1106.svg)
+
 [OpenAI just released new versions of GPT-3.5 and GPT-4](https://openai.com/blog/new-models-and-developer-products-announced-at-devday),
 and there's a lot
 of interest about their ability to code compared to the previous versions.
@@ -44,22 +46,11 @@ The benchmark gives aider two tries to complete the task:
 For now, I have only benchmarked the GPT-4 models using the `diff` edit method.
 This is the edit format that aider uses by default with gpt-4.
 
-- The new `gpt-4-1106-preview` model seems **much faster** than the earlier GPT-4 models. I won't be able to properly quantify this until the rate limits loosen up.
+- The new `gpt-4-1106-preview` model seems **2-2.5X faster** than the June GPT-4 model.
 - **It seems better at producing correct code on the first try**. It gets
 53% of the coding exercises correct, without needing to see errors from the test suite. Previous models only get 46-47% of the exercises correct on the first try.
 - The new model seems to perform similar
-(~62%) to the old models (63-64%) after their second chance to correct bugs by reviewing test suite error output.
-
-**These are preliminary results.**
-OpenAI is enforcing very low
-rate limits on the new GPT-4 model.
-The rate limiting disrupts the the benchmarking process,
-requiring it to be paused and restarted frequently.
-It took ~20 partial runs over ~2 days to complete all 133 Exercism problems.
-The benchmarking harness is designed to stop/restart in this manner,
-but results from a single "clean" run would be more trustworthy.
-Once the rate limits are relaxed I will do a clean
-run of the entire benchmark.
+(~65%) to the old models (63-64%) after their second chance to correct bugs by reviewing test suite error output.
 
 ### gpt-3.5-turbo-1106
 
