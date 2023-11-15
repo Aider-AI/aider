@@ -119,6 +119,36 @@ print(my_function(3, 4))
             # close the open cache files, so Windows won't error
             del repo_map
 
+    def test_get_repo_map_excludes_added_files(self):
+        # Create a temporary directory with sample files for testing
+        test_files = [
+            "test_file1.py",
+            "test_file2.py",
+            "test_file3.md",
+            "test_file4.json",
+        ]
+
+        with IgnorantTemporaryDirectory() as temp_dir:
+            for file in test_files:
+                with open(os.path.join(temp_dir, file), "w") as f:
+                    f.write("def foo(): pass\n")
+
+            io = InputOutput()
+            repo_map = RepoMap(root=temp_dir, io=io)
+            test_files = [os.path.join(temp_dir, file) for file in test_files]
+            result = repo_map.get_repo_map(test_files[:2], test_files[2:])
+
+            dump(result)
+
+            # Check if the result contains the expected tags map
+            self.assertNotIn("test_file1.py", result)
+            self.assertNotIn("test_file2.py", result)
+            self.assertIn("test_file3.md", result)
+            self.assertIn("test_file4.json", result)
+
+            # close the open cache files, so Windows won't error
+            del repo_map
+
 
 if __name__ == "__main__":
     unittest.main()

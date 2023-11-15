@@ -231,7 +231,7 @@ class RepoMap:
                 continue
 
             # dump(fname)
-            rel_fname = os.path.relpath(fname, self.root)
+            rel_fname = self.get_rel_fname(fname)
 
             if fname in chat_fnames:
                 personalization[rel_fname] = 1.0
@@ -304,9 +304,7 @@ class RepoMap:
                 continue
             ranked_tags += list(definitions.get((fname, ident), []))
 
-        rel_other_fnames_without_tags = set(
-            os.path.relpath(fname, self.root) for fname in other_fnames
-        )
+        rel_other_fnames_without_tags = set(self.get_rel_fname(fname) for fname in other_fnames)
 
         fnames_already_included = set(rt[0] for rt in ranked_tags)
 
@@ -333,9 +331,11 @@ class RepoMap:
         upper_bound = num_tags
         best_tree = None
 
+        chat_rel_fnames = [self.get_rel_fname(fname) for fname in chat_fnames]
+
         while lower_bound <= upper_bound:
             middle = (lower_bound + upper_bound) // 2
-            tree = self.to_tree(ranked_tags[:middle])
+            tree = self.to_tree(ranked_tags[:middle], chat_rel_fnames)
             num_tokens = self.token_count(tree)
 
             if num_tokens < self.max_map_tokens:
@@ -346,10 +346,11 @@ class RepoMap:
 
         return best_tree
 
-    def to_tree(self, tags):
+    def to_tree(self, tags, chat_rel_fnames):
         if not tags:
             return ""
 
+        tags = [tag for tag in tags if tag[0] not in chat_rel_fnames]
         tags = sorted(tags)
 
         cur_fname = None
@@ -359,10 +360,10 @@ class RepoMap:
         # add a bogus tag at the end so we trip the this_fname != cur_fname...
         dummy_tag = (None,)
         for tag in tags + [dummy_tag]:
-            this_fname = tag[0]
+            this_rel_fname = tag[0]
 
             # ... here ... to output the final real entry in the list
-            if this_fname != cur_fname:
+            if this_rel_fname != cur_fname:
                 if context:
                     context.add_context()
                     output += "\n"
@@ -388,7 +389,7 @@ class RepoMap:
                         # header_max=30,
                         show_top_of_file_parent_scope=False,
                     )
-                cur_fname = this_fname
+                cur_fname = this_rel_fname
 
             if context:
                 context.add_lines_of_interest([tag.line])
