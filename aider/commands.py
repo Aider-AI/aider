@@ -283,8 +283,6 @@ class Commands:
         "Add files to the chat so GPT can edit them or review them in detail"
 
         added_fnames = []
-        git_added = []
-        git_files = self.coder.repo.get_tracked_files() if self.coder.repo else []
 
         all_matched_files = set()
 
@@ -311,21 +309,12 @@ class Commands:
 
         for matched_file in all_matched_files:
             abs_file_path = self.coder.abs_root_path(matched_file)
-            rel_path = self.coder.get_rel_fname(matched_file)
 
             if not abs_file_path.startswith(self.coder.root):
                 self.io.tool_error(
                     f"Can not add {abs_file_path}, which is not within {self.coder.root}"
                 )
                 continue
-
-            if self.coder.repo and rel_path not in git_files:
-                try:
-                    self.coder.repo.repo.git.add(abs_file_path)
-                    git_added.append(matched_file)
-                except git.exc.GitCommandError as e:
-                    self.io.tool_error(f"Unable to add {matched_file}: {str(e)}")
-                    continue
 
             if abs_file_path in self.coder.abs_fnames:
                 self.io.tool_error(f"{matched_file} is already in the chat")
@@ -337,11 +326,6 @@ class Commands:
                     self.coder.abs_fnames.add(abs_file_path)
                     self.io.tool_output(f"Added {matched_file} to the chat")
                     added_fnames.append(matched_file)
-
-        if self.coder.repo and git_added and self.coder.auto_commits:
-            git_added = " ".join(git_added)
-            commit_message = f"aider: Added {git_added}"
-            self.coder.repo.commit(message=commit_message)
 
         if not added_fnames:
             return
@@ -372,7 +356,7 @@ class Commands:
             matched_files = self.glob_filtered_to_repo(word)
 
             if not matched_files:
-                self.io.tool_error(f"No files matched '{word}'")
+                matched_files.append(word)
 
             for matched_file in matched_files:
                 abs_fname = self.coder.abs_root_path(matched_file)
