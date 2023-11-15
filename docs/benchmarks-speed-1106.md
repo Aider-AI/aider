@@ -39,3 +39,8 @@ Some observations:
 - **GPT-3.5 got 6-11x faster.** The `gpt-3.5-turbo-1106` model is 6-11x faster than the June (0613) version which has been the default `gpt-3.5-turbo` model.
 - **GPT-4 Turbo is 2-2.5x faster.** The new `gpt-4-1106-preview` model is 2-2.5x faster than the June (0613) version which has been the default `gpt-4` model.
 - The old March (0301) version of GPT-3.5 is actually faster than the June (0613) version. This was a surprising discovery.
+
+## Updates
+
+Last updated 11/14/23.
+OpenAI has relaxed rate limits so these results are no longer considered preliminary.

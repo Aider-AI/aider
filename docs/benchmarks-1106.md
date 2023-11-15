@@ -1,4 +1,4 @@
-# Code editing skill benchmarks for OpenAI's "1106" models
+# Code editing benchmarks for OpenAI's "1106" models
 
 [![benchmark results](../assets/benchmarks-1106.svg)](https://aider.chat/assets/benchmarks-1106.svg)
 
@@ -74,3 +74,9 @@ for additional information:
 
 - [GPT code editing benchmarks](https://aider.chat/docs/benchmarks.html) evaluates the March and June versions of GPT-3.5 and GPT-4.
 - [Code editing speed benchmarks for OpenAI's "1106" models](https://aider.chat/docs/benchmarks-speed-1106.html) compares the performance of the new GPT models.
+
+
+## Updates
+
+Last updated 11/14/23.
+OpenAI has relaxed rate limits so these results are no longer considered preliminary.
