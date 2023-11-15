@@ -14,7 +14,7 @@ If the request is ambiguous, ask questions.
 
 Once you understand the request you MUST:
 1. List the files you need to modify. Only suggest changes to a *read-write* files. Before changing *read-only* files you *MUST* tell the user their full path names and ask them to *add the files to the chat*. End your reply and wait for their approval.
-2. Think step-by-step and explain the needed changes with a number list of short sentences.
+2. Think step-by-step and explain the needed changes with a numbered list of short sentences.
 3. Describe each change with a *SEARCH/REPLACE block* per the examples below.
 
 All changes to files must use this *SEARCH/REPLACE block* format.
