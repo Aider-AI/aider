@@ -3,6 +3,7 @@
 import argparse
 import re
 import subprocess
+import sys
 
 from packaging import version
 
@@ -13,8 +14,36 @@ def main():
     parser.add_argument(
         "--dry-run", action="store_true", help="Print each step without actually executing them"
     )
+    # Function to check if we are on the main branch
+    def check_branch():
+        branch = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"], capture_output=True, text=True).stdout.strip()
+        if branch != "main":
+            print("Error: Not on the main branch.")
+            sys.exit(1)
+
+    # Function to check if the working directory is clean
+    def check_working_directory_clean():
+        status = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True).stdout
+        if status:
+            print("Error: Working directory is not clean.")
+            sys.exit(1)
+
+    # Function to fetch the latest changes and check if the main branch is up to date
+    def check_main_branch_up_to_date():
+        subprocess.run(["git", "fetch", "origin"], check=True)
+        local_main = subprocess.run(["git", "rev-parse", "main"], capture_output=True, text=True).stdout.strip()
+        origin_main = subprocess.run(["git", "rev-parse", "origin/main"], capture_output=True, text=True).stdout.strip()
+        if local_main != origin_main:
+            print("Error: The main branch is not up to date with origin/main.")
+            sys.exit(1)
+
     args = parser.parse_args()
     dry_run = args.dry_run
+
+    # Perform checks before proceeding
+    check_branch()
+    check_working_directory_clean()
+    check_main_branch_up_to_date()
 
     new_version_str = args.new_version
     if not re.match(r"^\d+\.\d+\.\d+$", new_version_str):
