@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+import datetime
 import re
 import subprocess
 import sys
@@ -36,7 +37,16 @@ def main():
         origin_main = subprocess.run(["git", "rev-parse", "origin/main"], capture_output=True, text=True).stdout.strip()
         print(f"Origin main commit hash: {origin_main}")
         if local_main != origin_main:
-            print("Error: The main branch is not up to date with origin/main. Please pull the latest changes.")
+            local_date = subprocess.run(["git", "show", "-s", "--format=%ci", "main"], capture_output=True, text=True).stdout.strip()
+            origin_date = subprocess.run(["git", "show", "-s", "--format=%ci", "origin/main"], capture_output=True, text=True).stdout.strip()
+            local_date = datetime.datetime.strptime(local_date, "%Y-%m-%d %H:%M:%S %z")
+            origin_date = datetime.datetime.strptime(origin_date, "%Y-%m-%d %H:%M:%S %z")
+            if local_date < origin_date:
+                print("Error: The local main branch is behind origin/main. Please pull the latest changes.")
+            elif local_date > origin_date:
+                print("Error: The origin/main branch is behind the local main branch. Please push your changes.")
+            else:
+                print("Error: The main branch and origin/main have diverged.")
             sys.exit(1)
 
     args = parser.parse_args()
