@@ -32,9 +32,11 @@ def main():
     def check_main_branch_up_to_date():
         subprocess.run(["git", "fetch", "origin"], check=True)
         local_main = subprocess.run(["git", "rev-parse", "main"], capture_output=True, text=True).stdout.strip()
+        print(f"Local main commit hash: {local_main}")
         origin_main = subprocess.run(["git", "rev-parse", "origin/main"], capture_output=True, text=True).stdout.strip()
+        print(f"Origin main commit hash: {origin_main}")
         if local_main != origin_main:
-            print("Error: The main branch is not up to date with origin/main.")
+            print("Error: The main branch is not up to date with origin/main. Please pull the latest changes.")
             sys.exit(1)
 
     args = parser.parse_args()
