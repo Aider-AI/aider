@@ -7,7 +7,7 @@ You can start a new project or work with an existing repo.
 Aider makes sure edits from GPT are
 [committed to git](https://aider.chat/docs/faq.html#how-does-aider-use-git)
 with sensible commit messages.
-Aider is unique in that it [works well with pre-existing, larger codebases](https://aider.chat/docs/repomap.html).
+Aider is unique in that it lets you ask for changes to [pre-existing, larger codebases](https://aider.chat/docs/repomap.html).
 
 <p align="center">
   <img src="assets/screencast.svg" alt="aider screencast">
