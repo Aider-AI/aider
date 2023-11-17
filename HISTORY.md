@@ -1,5 +1,13 @@
 # Release history
 
+### v0.18.0
+
+- Improved prompting for both GPT-4 and GPT-4 Turbo.
+  - Far fewer edit errors from GPT-4 Turbo (`gpt-4-1106-preview`).
+  - Significantly better benchmark results from the June GPT-4 (`gpt-4-0613`). Performance leaps from 47%/64% up to 51%/71%.
+- Fixed bug where in-chat files were marked as both read-only and ready-write, sometimes confusing GPT.
+- Fixed bug to properly handle repos with submodules.
+
 ### v0.17.0
 
 - Support for OpenAI's new 11/06 models:
