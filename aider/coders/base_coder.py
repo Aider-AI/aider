@@ -939,7 +939,7 @@ class Coder:
 
 def check_model_availability(io, main_model):
     available_models = openai.Model.list()
-    model_ids = [model.id for model in available_models["data"]]
+    model_ids = sorted(model.id for model in available_models["data"])
     if main_model.name in model_ids:
         return True
 
