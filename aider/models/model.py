@@ -8,6 +8,7 @@ class Model:
     edit_format = None
     max_context_tokens = 0
     tokenizer = None
+    max_chat_history_tokens = 1024
 
     always_available = False
     use_repo_map = False
