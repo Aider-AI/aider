@@ -75,19 +75,21 @@ Installing PortAudio is completely optional, but can usually be accomplished lik
 
 ## Add aider to your editor (optional)
 
-[joshuavial](https://github.com/joshuavial) has been working on editor integrations.
-
 ### NeoVim
 
-He provided a NeoVim plugin for aider:
+[joshuavial](https://github.com/joshuavial) provided a NeoVim plugin for aider:
 
 [https://github.com/joshuavial/aider.nvim](https://github.com/joshuavial/aider.nvim)
 
 ### VS Code
 
-He also confirmed that aider works inside a VS Code terminal window, but
-found that you should
-[run with `--no-pretty` to avoid flickering issues](https://github.com/paul-gauthier/aider/issues/68#issuecomment-1634985231).
+joshuavial also confirmed that aider works inside a VS Code terminal window.
+Aider detects if it is running inside VSCode and turns off pretty/color output,
+since the VSCode terminal doesn't seem to support it well.
+
+[MattFlower](https://github.com/MattFlower) provided a VSCode plugin for aider:
+
+[https://marketplace.visualstudio.com/items?itemName=MattFlower.aider](https://marketplace.visualstudio.com/items?itemName=MattFlower.aider)
 
 ### Other editors
 
