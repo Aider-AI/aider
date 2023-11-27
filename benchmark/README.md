@@ -54,7 +54,7 @@ mkdir tmp.benchmarks
 git clone git@github.com:exercism/python.git
 
 # Copy the practice exercises into the benchmark scratch dir
-cp -rp python/exercises/practice tmp.benchmarks/practice
+cp -rp python/exercises/practice tmp.benchmarks/exercism-python
 
 # Build the docker container
 ./benchmark/docker_build.sh
