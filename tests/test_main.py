@@ -196,3 +196,13 @@ class TestMain(TestCase):
                     MockSend.side_effect = side_effect
 
                     main(["--yes", fname, "--encoding", "iso-8859-15"])
+    @patch("aider.main.InputOutput")
+    @patch("openai.ChatCompletion.create")
+    def test_main_message_adds_to_input_history(self, mock_chat_completion, MockInputOutput):
+        test_message = "test message"
+        mock_io_instance = MockInputOutput.return_value
+        mock_chat_completion.return_value = MagicMock(choices=[{"text": "mocked response"}])
+
+        main(["--message", test_message], input=DummyInput(), output=DummyOutput())
+
+        mock_io_instance.add_to_input_history.assert_called_once_with(test_message)
