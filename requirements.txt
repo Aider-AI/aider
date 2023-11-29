@@ -71,6 +71,8 @@ pathspec==0.11.2
     # via
     #   -r requirements.in
     #   grep-ast
+pillow==10.1.0
+    # via -r requirements.in
 prompt-toolkit==3.0.39
     # via -r requirements.in
 pycparser==2.21
