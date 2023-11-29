@@ -175,7 +175,7 @@ class Commands:
 
         # Check if any images are in the chat and override the max context window size if so
         image_in_chat = any(relative_fname.endswith(ext) for ext in IMAGE_EXTENSIONS for relative_fname in self.coder.get_inchat_relative_files())
-        limit = 4096 if image_in_chat else self.coder.main_model.max_context_tokens
+        limit = 128000 if image_in_chat else self.coder.main_model.max_context_tokens
         remaining = limit - total
         if remaining > 1024:
             self.io.tool_output(f"{cost_pad}{fmt(remaining)} tokens remaining in context window")
