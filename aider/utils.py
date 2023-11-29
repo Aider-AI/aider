@@ -16,7 +16,11 @@ def show_messages(messages, title=None, functions=None):
     for msg in messages:
         role = msg["role"].upper()
         content = msg.get("content")
-        if content:
+        if isinstance(content, list):  # Handle list content (e.g., image messages)
+            for item in content:
+                if isinstance(item, dict) and "image_url" in item:
+                    print(role, "Image URL:", item["image_url"]["url"])
+        elif isinstance(content, str):  # Handle string content
             for line in content.splitlines():
                 print(role, line)
         content = msg.get("function_call")

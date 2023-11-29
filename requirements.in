@@ -16,3 +16,4 @@ packaging
 sounddevice
 soundfile
 PyYAML
+Pillow

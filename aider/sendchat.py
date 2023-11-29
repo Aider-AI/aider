@@ -53,6 +53,13 @@ def send_with_retries(model_name, messages, functions, stream):
     if "openrouter.ai" in openai.api_base:
         kwargs["headers"] = {"HTTP-Referer": "http://aider.chat", "X-Title": "Aider"}
 
+    # Check conditions to switch to gpt-4-vision-preview
+    if "openrouter.ai" not in openai.api_base and model_name.startswith("gpt-4"):
+        if any(isinstance(msg.get("content"), list) and any("image_url" in item for item in msg.get("content") if isinstance(item, dict)) for msg in messages):
+            kwargs['model'] = "gpt-4-vision-preview"
+            # looks like gpt-4-vision is limited to max tokens of 4096
+            kwargs["max_tokens"] = 4096
+
     key = json.dumps(kwargs, sort_keys=True).encode()
 
     # Generate SHA1 hash of kwargs and append it to chat_completion_call_hashes

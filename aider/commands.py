@@ -10,6 +10,8 @@ from aider import prompts, voice
 
 from .dump import dump  # noqa: F401
 
+#NOTE currently duplicated in io.py and base_coder.py
+IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.webp'}
 
 class Commands:
     voice = None
@@ -138,9 +140,13 @@ class Commands:
         for fname in self.coder.abs_fnames:
             relative_fname = self.coder.get_rel_fname(fname)
             content = self.io.read_text(fname)
-            # approximate
-            content = f"{relative_fname}\n```\n" + content + "```\n"
-            tokens = self.coder.main_model.token_count(content)
+            if any(relative_fname.endswith(ext) for ext in IMAGE_EXTENSIONS):
+                # If the file is an image, use the token_count_for_image method
+                tokens = self.coder.main_model.token_count_for_image(fname)
+            else:
+                # approximate
+                content = f"{relative_fname}\n```\n" + content + "```\n"
+                tokens = self.coder.main_model.token_count(content)
             res.append((tokens, f"{relative_fname}", "use /drop to drop from chat"))
 
         self.io.tool_output("Approximate context window usage, in tokens:")
@@ -167,7 +173,9 @@ class Commands:
         self.io.tool_output("=" * (width + cost_width + 1))
         self.io.tool_output(f"${total_cost:5.2f} {fmt(total)} tokens total")
 
-        limit = self.coder.main_model.max_context_tokens
+        # Check if any images are in the chat and override the max context window size if so
+        image_in_chat = any(relative_fname.endswith(ext) for ext in IMAGE_EXTENSIONS for relative_fname in self.coder.get_inchat_relative_files())
+        limit = 4096 if image_in_chat else self.coder.main_model.max_context_tokens
         remaining = limit - total
         if remaining > 1024:
             self.io.tool_output(f"{cost_pad}{fmt(remaining)} tokens remaining in context window")

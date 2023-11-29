@@ -1,6 +1,7 @@
 import os
 from collections import defaultdict
 from datetime import datetime
+import base64
 from pathlib import Path
 
 from prompt_toolkit.completion import Completer, Completion
@@ -17,6 +18,9 @@ from rich.text import Text
 
 from .dump import dump  # noqa: F401
 
+#QUESTION what image extensions do we want to support?
+#QUESTION where should this live? Currently duplicated in base_coder
+IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.webp'}
 
 class AutoCompleter(Completer):
     def __init__(self, root, rel_fnames, addable_rel_fnames, commands, encoding):
@@ -139,7 +143,27 @@ class InputOutput:
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
 
+
+    def read_image(self, filename):
+        try:
+            with open(str(filename), "rb") as image_file:
+                encoded_string = base64.b64encode(image_file.read())
+                return encoded_string.decode('utf-8')
+        except FileNotFoundError:
+            self.tool_error(f"{filename}: file not found error")
+            return
+        except IsADirectoryError:
+            self.tool_error(f"{filename}: is a directory")
+            return
+        except Exception as e:
+            self.tool_error(f"{filename}: {e}")
+            return
+
     def read_text(self, filename):
+        file_extension = Path(filename).suffix.lower()
+        if file_extension in IMAGE_EXTENSIONS:
+            return self.read_image(filename)
+
         try:
             with open(str(filename), "r", encoding=self.encoding) as f:
                 return f.read()

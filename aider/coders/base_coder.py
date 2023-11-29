@@ -38,6 +38,8 @@ class ExhaustedContextWindow(Exception):
 def wrap_fence(name):
     return f"<{name}>", f"</{name}>"
 
+#NOTE currently duplicated in io.py
+IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.webp'}
 
 class Coder:
     abs_fnames = None
@@ -283,12 +285,13 @@ class Coder:
 
         prompt = ""
         for fname, content in self.get_abs_fnames_content():
-            relative_fname = self.get_rel_fname(fname)
-            prompt += "\n"
-            prompt += relative_fname
-            prompt += f"\n{self.fence[0]}\n"
-            prompt += content
-            prompt += f"{self.fence[1]}\n"
+            if not any(fname.lower().endswith(ext) for ext in IMAGE_EXTENSIONS):
+                relative_fname = self.get_rel_fname(fname)
+                prompt += "\n"
+                prompt += relative_fname
+                prompt += f"\n{self.fence[0]}\n"
+                prompt += content
+                prompt += f"{self.fence[1]}\n"
 
         return prompt
 
@@ -321,7 +324,32 @@ class Coder:
             dict(role="assistant", content="Ok."),
         ]
 
+        images_message = self.get_images_message()
+        if images_message is not None:
+            files_messages.append(images_message)
+
         return files_messages
+
+    def get_images_message(self):
+        image_messages = []
+        for fname, content in self.get_abs_fnames_content():
+            if any(fname.lower().endswith(ext) for ext in IMAGE_EXTENSIONS):
+                image_url = f"data:image/{Path(fname).suffix.lstrip('.')};base64,{content}"
+                image_messages.append({
+                    "type": "image_url",
+                    "image_url": {
+                        "url": image_url,
+                        "detail": "high"
+                    }
+                })
+
+        if not image_messages:
+            return None
+
+        return {
+            "role": "user",
+            "content": image_messages
+        }
 
     def run(self, with_message=None):
         while True:
