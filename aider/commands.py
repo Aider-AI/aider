@@ -327,6 +327,7 @@ class Commands:
             if abs_file_path in self.coder.abs_fnames:
                 self.io.tool_error(f"{matched_file} is already in the chat")
             else:
+                #TODO put in guard to stop images being added to non openai / gpt-4
                 content = self.io.read_text(abs_file_path)
                 if content is None:
                     self.io.tool_error(f"Unable to read {matched_file}")

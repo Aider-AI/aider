@@ -418,6 +418,7 @@ class Coder:
         self.done_messages += self.cur_messages
         self.summarize_start()
 
+        #TODO check for impact on image messages
         if message:
             self.done_messages += [
                 dict(role="user", content=message),
@@ -464,6 +465,7 @@ class Coder:
             dict(role="system", content=self.fmt_system_prompt(self.gpt_prompts.system_reminder)),
         ]
 
+        #TODO review impact of token count on image messages
         messages_tokens = self.main_model.token_count(messages)
         reminder_tokens = self.main_model.token_count(reminder_message)
         cur_tokens = self.main_model.token_count(self.cur_messages)
