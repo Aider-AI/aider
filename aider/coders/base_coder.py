@@ -586,13 +586,8 @@ class Coder:
         self.partial_response_function_call = dict()
 
         context_file_path = self.root + "/.aider.context"
-
-        # Set the yaml default style to '|' to avoid escaping special characters
-        #yaml_instance = yaml.YAML()
-        #yaml_instance.default_style = '|'
-
         with open(context_file_path, 'w') as f:
-            yaml.dump(messages, f, default_flow_style=False, default_style='|')
+            [{f.write(f"[{key}]: {value}\n") for key,value in msg.items()} for msg in messages]
 
         interrupted = False
         try:
