@@ -7,7 +7,7 @@ from .model import Model
 known_tokens = {
     "gpt-3.5-turbo": 4,
     "gpt-4": 8,
-    "gpt-4-1106-preview": 128,
+    "gpt-4-1106-Preview": 128,
     "gpt-3.5-turbo-1106": 16,
 }
 
