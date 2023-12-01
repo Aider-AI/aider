@@ -1,4 +1,3 @@
-import json
 import re
 import subprocess
 import sys
@@ -104,20 +103,27 @@ class Commands:
 
         res = []
 
+        self.coder.choose_fence()
+
         # system messages
+        main_sys = self.coder.fmt_system_prompt(self.coder.gpt_prompts.main_system)
+        main_sys += "\n" + self.coder.fmt_system_prompt(self.coder.gpt_prompts.system_reminder)
         msgs = [
-            dict(role="system", content=self.coder.gpt_prompts.main_system),
-            dict(role="system", content=self.coder.gpt_prompts.system_reminder),
+            dict(role="system", content=main_sys),
+            dict(
+                role="system",
+                content=self.coder.fmt_system_prompt(self.coder.gpt_prompts.system_reminder),
+            ),
         ]
-        tokens = len(self.tokenizer.encode(json.dumps(msgs)))
+
+        tokens = self.coder.main_model.token_count(msgs)
         res.append((tokens, "system messages", ""))
 
         # chat history
         msgs = self.coder.done_messages + self.coder.cur_messages
         if msgs:
             msgs = [dict(role="dummy", content=msg) for msg in msgs]
-            msgs = json.dumps(msgs)
-            tokens = len(self.tokenizer.encode(msgs))
+            tokens = self.coder.main_model.token_count(msgs)
             res.append((tokens, "chat history", "use /clear to clear"))
 
         # repo map
@@ -125,7 +131,7 @@ class Commands:
         if self.coder.repo_map:
             repo_content = self.coder.repo_map.get_repo_map(self.coder.abs_fnames, other_files)
             if repo_content:
-                tokens = len(self.tokenizer.encode(repo_content))
+                tokens = self.coder.main_model.token_count(repo_content)
                 res.append((tokens, "repository map", "use --map-tokens to resize"))
 
         # files
@@ -134,7 +140,7 @@ class Commands:
             content = self.io.read_text(fname)
             # approximate
             content = f"{relative_fname}\n```\n" + content + "```\n"
-            tokens = len(self.tokenizer.encode(content))
+            tokens = self.coder.main_model.token_count(content)
             res.append((tokens, f"{relative_fname}", "use /drop to drop from chat"))
 
         self.io.tool_output("Approximate context window usage, in tokens:")
@@ -277,8 +283,6 @@ class Commands:
         "Add files to the chat so GPT can edit them or review them in detail"
 
         added_fnames = []
-        git_added = []
-        git_files = self.coder.repo.get_tracked_files() if self.coder.repo else []
 
         all_matched_files = set()
 
@@ -305,21 +309,12 @@ class Commands:
 
         for matched_file in all_matched_files:
             abs_file_path = self.coder.abs_root_path(matched_file)
-            rel_path = self.coder.get_rel_fname(matched_file)
 
             if not abs_file_path.startswith(self.coder.root):
                 self.io.tool_error(
                     f"Can not add {abs_file_path}, which is not within {self.coder.root}"
                 )
                 continue
-
-            if self.coder.repo and rel_path not in git_files:
-                try:
-                    self.coder.repo.repo.git.add(abs_file_path)
-                    git_added.append(matched_file)
-                except git.exc.GitCommandError as e:
-                    self.io.tool_error(f"Unable to add {matched_file}: {str(e)}")
-                    continue
 
             if abs_file_path in self.coder.abs_fnames:
                 self.io.tool_error(f"{matched_file} is already in the chat")
@@ -331,11 +326,6 @@ class Commands:
                     self.coder.abs_fnames.add(abs_file_path)
                     self.io.tool_output(f"Added {matched_file} to the chat")
                     added_fnames.append(matched_file)
-
-        if self.coder.repo and git_added and self.coder.auto_commits:
-            git_added = " ".join(git_added)
-            commit_message = f"aider: Added {git_added}"
-            self.coder.repo.commit(message=commit_message)
 
         if not added_fnames:
             return
@@ -366,7 +356,7 @@ class Commands:
             matched_files = self.glob_filtered_to_repo(word)
 
             if not matched_files:
-                self.io.tool_error(f"No files matched '{word}'")
+                matched_files.append(word)
 
             for matched_file in matched_files:
                 abs_fname = self.coder.abs_root_path(matched_file)

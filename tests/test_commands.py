@@ -414,25 +414,6 @@ class TestCommands(TestCase):
 
             self.assertIn(str(fname.resolve()), coder.abs_fnames)
 
-    def test_cmd_add_no_autocommit(self):
-        with GitTemporaryDirectory():
-            io = InputOutput(pretty=False, yes=True)
-            from aider.coders import Coder
-
-            coder = Coder.create(models.GPT35, None, io, auto_commits=False)
-            commands = Commands(io, coder)
-
-            commands.cmd_add("foo.txt")
-
-            # Check if both files have been created in the temporary directory
-            self.assertTrue(os.path.exists("foo.txt"))
-
-            repo = git.Repo()
-
-            # Assert that foo.txt has been `git add` but not `git commit`
-            added_files = repo.git.diff("--cached", "--name-only").split()
-            self.assertIn("foo.txt", added_files)
-
     def test_cmd_add_existing_with_dirty_repo(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
@@ -485,3 +466,29 @@ class TestCommands(TestCase):
 
         commands.cmd_add("file.txt")
         self.assertEqual(coder.abs_fnames, set())
+
+    def test_cmd_add_drop_untracked_files(self):
+        with GitTemporaryDirectory():
+            repo = git.Repo()
+
+            io = InputOutput(pretty=False, yes=False)
+            from aider.coders import Coder
+
+            coder = Coder.create(models.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            fname = Path("test.txt")
+            fname.touch()
+
+            self.assertEqual(len(coder.abs_fnames), 0)
+
+            commands.cmd_add(str(fname))
+
+            files_in_repo = repo.git.ls_files()
+            self.assertNotIn(str(fname), files_in_repo)
+
+            self.assertEqual(len(coder.abs_fnames), 1)
+
+            commands.cmd_drop(str(fname))
+
+            self.assertEqual(len(coder.abs_fnames), 0)

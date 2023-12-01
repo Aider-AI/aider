@@ -113,20 +113,23 @@ class TestMain(TestCase):
         self.assertEqual(".aider*", gitignore.read_text().splitlines()[0])
 
     def test_check_gitignore(self):
-        make_repo()
-        io = InputOutput(pretty=False, yes=True)
-        cwd = Path.cwd()
-        gitignore = cwd / ".gitignore"
+        with GitTemporaryDirectory():
+            os.environ["GIT_CONFIG_GLOBAL"] = "globalgitconfig"
 
-        self.assertFalse(gitignore.exists())
-        check_gitignore(cwd, io)
-        self.assertTrue(gitignore.exists())
+            io = InputOutput(pretty=False, yes=True)
+            cwd = Path.cwd()
+            gitignore = cwd / ".gitignore"
 
-        self.assertEqual(".aider*", gitignore.read_text().splitlines()[0])
+            self.assertFalse(gitignore.exists())
+            check_gitignore(cwd, io)
+            self.assertTrue(gitignore.exists())
 
-        gitignore.write_text("one\ntwo\n")
-        check_gitignore(cwd, io)
-        self.assertEqual("one\ntwo\n.aider*\n", gitignore.read_text())
+            self.assertEqual(".aider*", gitignore.read_text().splitlines()[0])
+
+            gitignore.write_text("one\ntwo\n")
+            check_gitignore(cwd, io)
+            self.assertEqual("one\ntwo\n.aider*\n", gitignore.read_text())
+            del os.environ["GIT_CONFIG_GLOBAL"]
 
     def test_main_git_ignore(self):
         cwd = Path().cwd()
