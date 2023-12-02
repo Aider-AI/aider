@@ -473,7 +473,7 @@ class Coder:
             interrupted = self.send(messages, functions=self.functions)
         except ExhaustedContextWindow:
             exhausted = True
-        except openai.OpenAIError as err:
+        except openai.BadRequestError as err:
             if "maximum context length" in str(err):
                 exhausted = True
             else:
@@ -946,7 +946,7 @@ class Coder:
 
 def check_model_availability(io, main_model):
     available_models = client.models.list()
-    model_ids = sorted(model.id for model in available_models["data"])
+    model_ids = sorted(model.id for model in available_models.data)
     if main_model.name in model_ids:
         return True
 
