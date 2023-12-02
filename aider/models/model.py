@@ -1,7 +1,5 @@
 import json
 
-use_open_router = False
-
 
 class Model:
     use_open_router = False
@@ -20,12 +18,10 @@ class Model:
 
     @classmethod
     def create(cls, name):
-        global use_open_router
-
         from .openai import OpenAIModel
         from .openrouter import OpenRouterModel
 
-        if use_open_router:
+        if cls.use_open_router:
             return OpenRouterModel(name)
         return OpenAIModel(name)
 
