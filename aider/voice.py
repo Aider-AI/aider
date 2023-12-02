@@ -4,7 +4,9 @@ import tempfile
 import time
 
 import numpy as np
-import openai
+from openai import OpenAI
+
+client = OpenAI()
 
 try:
     import soundfile as sf
@@ -88,7 +90,7 @@ class Voice:
                 file.write(self.q.get())
 
         with open(filename, "rb") as fh:
-            transcript = openai.Audio.transcribe("whisper-1", fh, prompt=history, language=language)
+            transcript = client.audio.transcribe("whisper-1", fh, prompt=history, language=language)
 
         text = transcript["text"]
         return text

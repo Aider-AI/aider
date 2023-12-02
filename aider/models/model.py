@@ -1,9 +1,10 @@
 import json
 
-import openai
+use_open_router = False
 
 
 class Model:
+    use_open_router = False
     name = None
     edit_format = None
     max_context_tokens = 0
@@ -19,10 +20,12 @@ class Model:
 
     @classmethod
     def create(cls, name):
+        global use_open_router
+
         from .openai import OpenAIModel
         from .openrouter import OpenRouterModel
 
-        if "openrouter.ai" in openai.api_base:
+        if use_open_router:
             return OpenRouterModel(name)
         return OpenAIModel(name)
 

@@ -24,12 +24,11 @@ class TestModels(unittest.TestCase):
         model = Model.create("gpt-4-32k-2123")
         self.assertEqual(model.max_context_tokens, 32 * 1024)
 
-    @patch("openai.Model.list")
+    @patch("openai.resources.Models.list")
     def test_openrouter_model_properties(self, mock_model_list):
-        import openai
+        old_use_open_router = Model.use_open_router
+        Model.use_open_router = True
 
-        old_base = openai.api_base
-        openai.api_base = "https://openrouter.ai/api/v1"
         mock_model_list.return_value = {
             "data": [
                 {
@@ -49,7 +48,8 @@ class TestModels(unittest.TestCase):
         self.assertEqual(model.max_context_tokens, 8192)
         self.assertEqual(model.prompt_price, 0.06)
         self.assertEqual(model.completion_price, 0.12)
-        openai.api_base = old_base
+        
+        Model.use_open_router = old_use_open_router
 
 
 if __name__ == "__main__":

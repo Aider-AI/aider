@@ -2,6 +2,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
+import httpx
 
 import git
 import openai
@@ -340,13 +341,14 @@ class TestCoder(unittest.TestCase):
             # Initialize the Coder object with the mocked IO and mocked repo
             coder = Coder.create(models.GPT4, None, mock_io)
 
-            # Set up the mock to raise InvalidRequestError
-            mock_chat_completion_create.side_effect = openai.error.InvalidRequestError(
-                "Invalid request", "param"
+            # Set up the mock to raise BadRequestError
+            fake_response = httpx.Response(status_code=500, request=httpx.Request("POST", "foo"))
+            mock_chat_completion_create.side_effect = openai.BadRequestError(
+                "Invalid request", body="param", response=fake_response
             )
 
-            # Call the run method and assert that InvalidRequestError is raised
-            with self.assertRaises(openai.error.InvalidRequestError):
+            # Call the run method and assert that BadRequestError is raised
+            with self.assertRaises(openai.BadRequestError):
                 coder.run(with_message="hi")
 
     def test_new_file_edit_one_commit(self):

@@ -11,6 +11,9 @@ from json.decoder import JSONDecodeError
 from pathlib import Path
 
 import openai
+from openai import OpenAI
+
+client = OpenAI()
 from jsonschema import Draft7Validator
 from rich.console import Console, Text
 from rich.live import Live
@@ -470,7 +473,7 @@ class Coder:
             interrupted = self.send(messages, functions=self.functions)
         except ExhaustedContextWindow:
             exhausted = True
-        except openai.error.InvalidRequestError as err:
+        except openai.OpenAIError as err:
             if "maximum context length" in str(err):
                 exhausted = True
             else:
@@ -942,7 +945,7 @@ class Coder:
 
 
 def check_model_availability(io, main_model):
-    available_models = openai.Model.list()
+    available_models = client.models.list()
     model_ids = sorted(model.id for model in available_models["data"])
     if main_model.name in model_ids:
         return True

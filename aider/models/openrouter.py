@@ -1,4 +1,7 @@
-import openai
+from openai import OpenAI
+
+client = OpenAI(base_url="https://openrouter.ai/api/v1")
+
 import tiktoken
 
 from .model import Model
@@ -24,7 +27,7 @@ class OpenRouterModel(Model):
 
         global cached_model_details
         if cached_model_details is None:
-            cached_model_details = openai.Model.list().data
+            cached_model_details = client.models.list().data
         found = next(
             (details for details in cached_model_details if details.get("id") == name), None
         )

@@ -3,6 +3,7 @@ from unittest.mock import patch
 
 import openai
 import requests
+import httpx
 
 from aider.sendchat import send_with_retries
 
@@ -13,8 +14,9 @@ class TestSendChat(unittest.TestCase):
     def test_send_with_retries_rate_limit_error(self, mock_print, mock_chat_completion_create):
         # Set up the mock to raise RateLimitError on
         # the first call and return None on the second call
+        fake_response = httpx.Response(status_code=500, request=httpx.Request("POST", "foo"))
         mock_chat_completion_create.side_effect = [
-            openai.error.RateLimitError("Rate limit exceeded"),
+            openai.RateLimitError("Rate limit exceeded", response=fake_response, body="body"),
             None,
         ]
 

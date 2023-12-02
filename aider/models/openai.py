@@ -29,6 +29,7 @@ class OpenAIModel(Model):
         if tokens is None:
             raise ValueError(f"Unknown context window size for model: {name}")
 
+        self.base_url = None
         self.max_context_tokens = tokens * 1024
         self.tokenizer = tiktoken.encoding_for_model(name)
 

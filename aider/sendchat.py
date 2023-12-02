@@ -3,16 +3,22 @@ import json
 
 import backoff
 import openai
+from openai import OpenAI
+
 import requests
 
 # from diskcache import Cache
-from openai.error import (
+from openai import (
     APIConnectionError,
     APIError,
     RateLimitError,
-    ServiceUnavailableError,
     Timeout,
 )
+
+from .models import Model
+
+# TODO: Should this use the OpenRouter option?
+client = OpenAI()
 
 CACHE_PATH = "~/.aider.send.cache.v1"
 CACHE = None
@@ -24,7 +30,6 @@ CACHE = None
     (
         Timeout,
         APIError,
-        ServiceUnavailableError,
         RateLimitError,
         APIConnectionError,
         requests.exceptions.ConnectionError,
@@ -50,7 +55,7 @@ def send_with_retries(model_name, messages, functions, stream):
     if hasattr(openai, "api_engine"):
         kwargs["engine"] = openai.api_engine
 
-    if "openrouter.ai" in openai.api_base:
+    if Model.use_open_router:
         kwargs["headers"] = {"HTTP-Referer": "http://aider.chat", "X-Title": "Aider"}
 
     key = json.dumps(kwargs, sort_keys=True).encode()
@@ -61,7 +66,7 @@ def send_with_retries(model_name, messages, functions, stream):
     if not stream and CACHE is not None and key in CACHE:
         return hash_object, CACHE[key]
 
-    res = openai.ChatCompletion.create(**kwargs)
+    res = client.chat.completions.create(**kwargs)
 
     if not stream and CACHE is not None:
         CACHE[key] = res
@@ -78,5 +83,5 @@ def simple_send_with_retries(model_name, messages):
             stream=False,
         )
         return response.choices[0].message.content
-    except (AttributeError, openai.error.InvalidRequestError):
+    except (AttributeError, openai.InvalidRequestError):
         return
