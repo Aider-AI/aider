@@ -560,6 +560,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         io.tool_error(f"Git working dir: {git_root}")
 
     if args.message:
+        io.add_to_input_history(args.message)
         io.tool_output()
         coder.run(with_message=args.message)
     else:
