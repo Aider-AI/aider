@@ -480,7 +480,6 @@ class Coder:
         except ExhaustedContextWindow:
             exhausted = True
         except openai.BadRequestError as err:
-            dump(err)
             if "maximum context length" in str(err):
                 exhausted = True
             else:
@@ -955,7 +954,6 @@ class Coder:
 
 def check_model_availability(io, client, main_model):
     available_models = client.models.list()
-    dump(available_models)
     model_ids = sorted(model.id for model in available_models)
     if main_model.name in model_ids:
         return True

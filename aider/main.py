@@ -177,7 +177,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     model_group.add_argument(
         "--openai-api-base",
         metavar="OPENAI_API_BASE",
-        help="Specify the api_base (default: https://api.openai.com/v1)",
+        help="Specify the api base url",
     )
     model_group.add_argument(
         "--openai-api-type",
@@ -497,14 +497,15 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         )
     else:
         kwargs = dict()
-        if args.openai_api_base and "openrouter.ai" in args.openai_api_base:
-            kwargs["default_headers"] = {"HTTP-Referer": "http://aider.chat", "X-Title": "Aider"}
+        if args.openai_api_base:
+            kwargs["base_url"] = args.openai_api_base
+            if "openrouter.ai" in args.openai_api_base:
+                kwargs["default_headers"] = {
+                    "HTTP-Referer": "http://aider.chat",
+                    "X-Title": "Aider",
+                }
 
-        client = openai.OpenAI(
-            api_key=args.openai_api_key,
-            base_url=args.openai_api_base,
-            **kwargs,
-        )
+        client = openai.OpenAI(api_key=args.openai_api_key, **kwargs)
 
     main_model = models.Model.create(args.model, client)
 
