@@ -10,10 +10,6 @@ from aider.sendchat import simple_send_with_retries
 from .dump import dump  # noqa: F401
 
 
-class OpenAIClientNotProvided(Exception):
-    pass
-
-
 class GitRepo:
     repo = None
     aider_ignore_file = None
@@ -106,9 +102,6 @@ class GitRepo:
             return self.repo.git_dir
 
     def get_commit_message(self, diffs, context):
-        if not self.client:
-            raise OpenAIClientNotProvided
-
         if len(diffs) >= 4 * 1024 * 4:
             self.io.tool_error("Diff is too large to generate a commit message.")
             return

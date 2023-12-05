@@ -29,6 +29,9 @@ CACHE = None
     ),
 )
 def send_with_retries(client, model_name, messages, functions, stream):
+    if not client:
+        raise ValueError("No openai client provided")
+
     kwargs = dict(
         model=model_name,
         messages=messages,
