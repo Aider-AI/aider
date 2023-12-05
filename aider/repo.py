@@ -10,13 +10,18 @@ from aider.sendchat import simple_send_with_retries
 from .dump import dump  # noqa: F401
 
 
+class OpenAIClientNotProvided(Exception):
+    pass
+
+
 class GitRepo:
     repo = None
     aider_ignore_file = None
     aider_ignore_spec = None
     aider_ignore_ts = 0
 
-    def __init__(self, io, fnames, git_dname, aider_ignore_file=None):
+    def __init__(self, io, fnames, git_dname, aider_ignore_file=None, client=None):
+        self.client = client
         self.io = io
 
         if git_dname:
@@ -101,6 +106,9 @@ class GitRepo:
             return self.repo.git_dir
 
     def get_commit_message(self, diffs, context):
+        if not self.client:
+            raise OpenAIClientNotProvided
+
         if len(diffs) >= 4 * 1024 * 4:
             self.io.tool_error(
                 f"Diff is too large for {models.GPT35.name} to generate a commit message."
@@ -120,7 +128,7 @@ class GitRepo:
         ]
 
         for model in models.Model.commit_message_models():
-            commit_message = simple_send_with_retries(model.name, messages)
+            commit_message = simple_send_with_retries(self.client, model.name, messages)
             if commit_message:
                 break
 

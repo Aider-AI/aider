@@ -18,7 +18,6 @@ import git
 import lox
 import matplotlib.pyplot as plt
 import numpy as np
-import openai
 import pandas as pd
 import prompts
 import typer
@@ -630,8 +629,6 @@ def run_test(
     dump(edit_format)
     show_fnames = ",".join(map(str, fnames))
     print("fnames:", show_fnames)
-
-    openai.api_key = os.environ["OPENAI_API_KEY"]
 
     coder = Coder.create(
         main_model,

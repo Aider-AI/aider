@@ -341,12 +341,12 @@ class TestCoder(unittest.TestCase):
             coder = Coder.create(models.GPT4, None, mock_io)
 
             # Set up the mock to raise InvalidRequestError
-            mock_chat_completion_create.side_effect = openai.error.InvalidRequestError(
+            mock_chat_completion_create.side_effect = openai.BadRequestError(
                 "Invalid request", "param"
             )
 
             # Call the run method and assert that InvalidRequestError is raised
-            with self.assertRaises(openai.error.InvalidRequestError):
+            with self.assertRaises(openai.BadRequestError):
                 coder.run(with_message="hi")
 
     def test_new_file_edit_one_commit(self):

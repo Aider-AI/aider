@@ -1,4 +1,3 @@
-import openai
 import tiktoken
 
 from .model import Model
@@ -7,7 +6,7 @@ cached_model_details = None
 
 
 class OpenRouterModel(Model):
-    def __init__(self, name):
+    def __init__(self, client, name):
         if name == "gpt-4":
             name = "openai/gpt-4"
         elif name == "gpt-3.5-turbo":
@@ -24,7 +23,7 @@ class OpenRouterModel(Model):
 
         global cached_model_details
         if cached_model_details is None:
-            cached_model_details = openai.Model.list().data
+            cached_model_details = client.models.list().data
         found = next(
             (details for details in cached_model_details if details.get("id") == name), None
         )

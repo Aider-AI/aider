@@ -1,7 +1,5 @@
 import json
 
-import openai
-
 
 class Model:
     name = None
@@ -18,12 +16,12 @@ class Model:
     completion_price = None
 
     @classmethod
-    def create(cls, name):
+    def create(cls, name, client=None):
         from .openai import OpenAIModel
         from .openrouter import OpenRouterModel
 
-        if "openrouter.ai" in openai.api_base:
-            return OpenRouterModel(name)
+        if client and client.base_url.host == "openrouter.ai":
+            return OpenRouterModel(client, name)
         return OpenAIModel(name)
 
     def __str__(self):

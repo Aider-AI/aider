@@ -14,7 +14,7 @@ class TestSendChat(unittest.TestCase):
         # Set up the mock to raise RateLimitError on
         # the first call and return None on the second call
         mock_chat_completion_create.side_effect = [
-            openai.error.RateLimitError("Rate limit exceeded"),
+            openai.RateLimitError("Rate limit exceeded"),
             None,
         ]
 
