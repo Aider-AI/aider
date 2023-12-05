@@ -589,7 +589,7 @@ class Coder:
 
     def send(self, messages, model=None, functions=None):
         if not model:
-            model = self.main_model.name
+            model = self.main_model
 
         self.partial_response_content = ""
         self.partial_response_function_call = dict()

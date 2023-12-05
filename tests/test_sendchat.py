@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, patch
 import httpx
 import openai
 
+from aider.models import Model
 from aider.sendchat import send_with_retries
 
 
@@ -27,7 +28,7 @@ class TestSendChat(unittest.TestCase):
         ]
 
         # Call the send_with_retries method
-        send_with_retries(mock_client, "model", ["message"], None, False)
+        send_with_retries(mock_client, Model.weak_model(), ["message"], None, False)
         mock_print.assert_called_once()
 
     @patch("aider.sendchat.openai.ChatCompletion.create")
@@ -42,5 +43,5 @@ class TestSendChat(unittest.TestCase):
         ]
 
         # Call the send_with_retries method
-        send_with_retries(mock_client, "model", ["message"], None, False)
+        send_with_retries(mock_client, Model.weak_model(), ["message"], None, False)
         mock_print.assert_called_once()

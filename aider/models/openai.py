@@ -13,8 +13,9 @@ known_tokens = {
 
 
 class OpenAIModel(Model):
-    def __init__(self, name):
+    def __init__(self, name, deployment_id=None):
         self.name = name
+        self.deployment_id = deployment_id
 
         tokens = None
 

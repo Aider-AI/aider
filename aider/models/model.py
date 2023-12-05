@@ -16,13 +16,13 @@ class Model:
     completion_price = None
 
     @classmethod
-    def create(cls, name, client=None):
+    def create(cls, name, client=None, deployment_id=None):
         from .openai import OpenAIModel
         from .openrouter import OpenRouterModel
 
         if client and client.base_url.host == "openrouter.ai":
             return OpenRouterModel(client, name)
-        return OpenAIModel(name)
+        return OpenAIModel(name, deployment_id=deployment_id)
 
     def __str__(self):
         return self.name
