@@ -2,8 +2,8 @@ import hashlib
 import json
 
 import backoff
+import httpx
 import openai
-import requests
 
 # from diskcache import Cache
 from openai import APIConnectionError, InternalServerError, RateLimitError
@@ -21,7 +21,7 @@ CACHE = None
         InternalServerError,
         RateLimitError,
         APIConnectionError,
-        requests.exceptions.ConnectionError,
+        httpx.ConnectError,
     ),
     max_tries=10,
     on_backoff=lambda details: print(
