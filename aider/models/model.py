@@ -33,11 +33,11 @@ class Model:
 
     @staticmethod
     def weak_model():
-        return Model.create("gpt-3.5-turbo")
+        return Model.create("gpt-3.5-turbo-1106")
 
     @staticmethod
     def commit_message_models():
-        return [Model.create("gpt-3.5-turbo"), Model.create("gpt-3.5-turbo-16k")]
+        return [Model.weak_model()]
 
     def token_count(self, messages):
         if not self.tokenizer:

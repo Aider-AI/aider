@@ -110,9 +110,7 @@ class GitRepo:
             raise OpenAIClientNotProvided
 
         if len(diffs) >= 4 * 1024 * 4:
-            self.io.tool_error(
-                f"Diff is too large for {models.GPT35.name} to generate a commit message."
-            )
+            self.io.tool_error("Diff is too large to generate a commit message.")
             return
 
         diffs = "# Diffs:\n" + diffs

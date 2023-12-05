@@ -12,6 +12,9 @@ class TestModels(unittest.TestCase):
         model = Model.create("gpt-3.5-turbo-16k")
         self.assertEqual(model.max_context_tokens, 16 * 1024)
 
+        model = Model.create("gpt-3.5-turbo-1106")
+        self.assertEqual(model.max_context_tokens, 16 * 1024)
+
         model = Model.create("gpt-4")
         self.assertEqual(model.max_context_tokens, 8 * 1024)
 

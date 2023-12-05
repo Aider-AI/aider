@@ -157,12 +157,13 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         default=False,
         help="Override to skip model availability check (default: False)",
     )
+    default_3_model = models.GPT35_1106
     core_group.add_argument(
         "-3",
         action="store_const",
         dest="model",
-        const=models.GPT35_16k.name,
-        help=f"Use {models.GPT35_16k.name} model for the main chat (gpt-4 is better)",
+        const=default_3_model.name,
+        help=f"Use {default_3_model.name} model for the main chat (gpt-4 is better)",
     )
     core_group.add_argument(
         "--voice-language",
@@ -509,11 +510,11 @@ def main(argv=None, input=None, output=None, force_git_root=None):
 
     try:
         coder = Coder.create(
-            client,
-            main_model,
-            args.edit_format,
-            io,
-            args.skip_model_availability_check,
+            main_model=main_model,
+            edit_format=args.edit_format,
+            io=io,
+            skip_model_availabily_check=args.skip_model_availability_check,
+            client=client,
             ##
             fnames=fnames,
             git_dname=git_dname,

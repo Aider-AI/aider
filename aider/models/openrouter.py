@@ -7,12 +7,8 @@ cached_model_details = None
 
 class OpenRouterModel(Model):
     def __init__(self, client, name):
-        if name == "gpt-4":
-            name = "openai/gpt-4"
-        elif name == "gpt-3.5-turbo":
-            name = "openai/gpt-3.5-turbo"
-        elif name == "gpt-3.5-turbo-16k":
-            name = "openai/gpt-3.5-turbo-16k"
+        if name.startswith("gpt-4") or name.startswith("gpt-3.5-turbo"):
+            name = "openai/" + name
 
         self.name = name
         self.edit_format = edit_format_for_model(name)

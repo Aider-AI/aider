@@ -53,10 +53,10 @@ class Coder:
     @classmethod
     def create(
         self,
-        client,
         main_model=None,
         edit_format=None,
         io=None,
+        client=None,
         skip_model_availabily_check=False,
         **kwargs,
     ):
@@ -67,12 +67,13 @@ class Coder:
 
         if not skip_model_availabily_check and not main_model.always_available:
             if not check_model_availability(io, client, main_model):
+                fallback_model = models.GPT35_1106
                 if main_model != models.GPT4:
                     io.tool_error(
                         f"API key does not support {main_model.name}, falling back to"
-                        f" {models.GPT35_16k.name}"
+                        f" {fallback_model.name}"
                     )
-                main_model = models.GPT35_16k
+                main_model = fallback_model
 
         if edit_format is None:
             edit_format = main_model.edit_format
@@ -163,7 +164,9 @@ class Coder:
 
         if use_git:
             try:
-                self.repo = GitRepo(self.io, fnames, git_dname, aider_ignore_file)
+                self.repo = GitRepo(
+                    self.io, fnames, git_dname, aider_ignore_file, client=self.client
+                )
                 self.root = self.repo.root
             except FileNotFoundError:
                 self.repo = None
@@ -950,7 +953,8 @@ class Coder:
 
 def check_model_availability(io, client, main_model):
     available_models = client.models.list()
-    model_ids = sorted(model.id for model in available_models["data"])
+    dump(available_models)
+    model_ids = sorted(model.id for model in available_models)
     if main_model.name in model_ids:
         return True
 
