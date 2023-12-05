@@ -40,6 +40,7 @@ def wrap_fence(name):
 
 
 class Coder:
+    client = None
     abs_fnames = None
     repo = None
     last_aider_commit_hash = None
@@ -479,6 +480,7 @@ class Coder:
         except ExhaustedContextWindow:
             exhausted = True
         except openai.BadRequestError as err:
+            dump(err)
             if "maximum context length" in str(err):
                 exhausted = True
             else:
