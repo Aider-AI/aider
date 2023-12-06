@@ -849,7 +849,7 @@ class Coder:
         return set(edit[0] for edit in edits)
 
     def apply_updates(self):
-        max_apply_update_errors = 3
+        max_apply_update_errors = 1
 
         try:
             edited = self.update_files()
