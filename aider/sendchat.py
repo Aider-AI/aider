@@ -28,14 +28,9 @@ CACHE = None
         f"{details.get('exception','Exception')}\nRetry in {details['wait']:.1f} seconds."
     ),
 )
-def send_with_retries(client, model, messages, functions, stream):
+def send_with_retries(client, model_name, messages, functions, stream):
     if not client:
         raise ValueError("No openai client provided")
-
-    if model.deployment_id:
-        model_name = model.deployment_id
-    else:
-        model_name = model.name
 
     kwargs = dict(
         model=model_name,
@@ -62,11 +57,11 @@ def send_with_retries(client, model, messages, functions, stream):
     return hash_object, res
 
 
-def simple_send_with_retries(client, model, messages):
+def simple_send_with_retries(client, model_name, messages):
     try:
         _hash, response = send_with_retries(
             client=client,
-            model=model,
+            model_name=model_name,
             messages=messages,
             functions=None,
             stream=False,

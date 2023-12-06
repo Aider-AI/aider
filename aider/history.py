@@ -85,7 +85,7 @@ class ChatSummary:
             dict(role="user", content=content),
         ]
 
-        summary = simple_send_with_retries(self.client, self.model, messages)
+        summary = simple_send_with_retries(self.client, self.model.name, messages)
         if summary is None:
             raise ValueError(f"summarizer unexpectedly failed for {self.model.name}")
         summary = prompts.summary_prefix + summary
