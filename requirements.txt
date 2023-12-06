@@ -4,66 +4,67 @@
 #
 #    pip-compile requirements.in
 #
-aiohttp==3.8.6
-    # via openai
-aiosignal==1.3.1
-    # via aiohttp
-async-timeout==4.0.3
-    # via aiohttp
+annotated-types==0.6.0
+    # via pydantic
+anyio==3.7.1
+    # via
+    #   httpx
+    #   openai
 attrs==23.1.0
     # via
-    #   aiohttp
     #   jsonschema
     #   referencing
 backoff==2.2.1
     # via -r requirements.in
-certifi==2023.7.22
-    # via requests
+certifi==2023.11.17
+    # via
+    #   httpcore
+    #   httpx
+    #   requests
 cffi==1.16.0
     # via
     #   sounddevice
     #   soundfile
 charset-normalizer==3.3.2
-    # via
-    #   aiohttp
-    #   requests
+    # via requests
 configargparse==1.7
     # via -r requirements.in
 diskcache==5.6.3
     # via -r requirements.in
-frozenlist==1.4.0
-    # via
-    #   aiohttp
-    #   aiosignal
+distro==1.8.0
+    # via openai
 gitdb==4.0.11
     # via gitpython
 gitpython==3.1.40
     # via -r requirements.in
 grep-ast==0.2.4
     # via -r requirements.in
-idna==3.4
+h11==0.14.0
+    # via httpcore
+httpcore==1.0.2
+    # via httpx
+httpx==0.25.2
+    # via openai
+idna==3.6
     # via
+    #   anyio
+    #   httpx
     #   requests
-    #   yarl
-jsonschema==4.19.2
+jsonschema==4.20.0
     # via -r requirements.in
-jsonschema-specifications==2023.7.1
+jsonschema-specifications==2023.11.2
     # via jsonschema
 markdown-it-py==3.0.0
     # via rich
 mdurl==0.1.2
     # via markdown-it-py
-multidict==6.0.4
-    # via
-    #   aiohttp
-    #   yarl
 networkx==3.2.1
     # via -r requirements.in
-numpy==1.26.1
+numpy==1.26.2
     # via
     #   -r requirements.in
     #   scipy
-openai==0.28.1
+openai==1.3.7
     # via -r requirements.in
 packaging==23.2
     # via -r requirements.in
@@ -71,49 +72,59 @@ pathspec==0.11.2
     # via
     #   -r requirements.in
     #   grep-ast
-prompt-toolkit==3.0.39
+prompt-toolkit==3.0.41
     # via -r requirements.in
 pycparser==2.21
     # via cffi
-pygments==2.16.1
+pydantic==2.5.2
+    # via openai
+pydantic-core==2.14.5
+    # via pydantic
+pygments==2.17.2
     # via rich
 pyyaml==6.0.1
     # via -r requirements.in
-referencing==0.30.2
+referencing==0.31.1
     # via
     #   jsonschema
     #   jsonschema-specifications
 regex==2023.10.3
     # via tiktoken
 requests==2.31.0
-    # via
-    #   openai
-    #   tiktoken
-rich==13.6.0
+    # via tiktoken
+rich==13.7.0
     # via -r requirements.in
-rpds-py==0.10.6
+rpds-py==0.13.2
     # via
     #   jsonschema
     #   referencing
-scipy==1.11.3
+scipy==1.11.4
     # via -r requirements.in
 smmap==5.0.1
     # via gitdb
+sniffio==1.3.0
+    # via
+    #   anyio
+    #   httpx
+    #   openai
 sounddevice==0.4.6
     # via -r requirements.in
 soundfile==0.12.1
     # via -r requirements.in
-tiktoken==0.5.1
+tiktoken==0.5.2
     # via -r requirements.in
 tqdm==4.66.1
     # via openai
-tree-sitter==0.20.2
+tree-sitter==0.20.4
     # via tree-sitter-languages
 tree-sitter-languages==1.8.0
     # via grep-ast
-urllib3==2.0.7
+typing-extensions==4.8.0
+    # via
+    #   openai
+    #   pydantic
+    #   pydantic-core
+urllib3==2.1.0
     # via requests
-wcwidth==0.2.9
+wcwidth==0.2.12
     # via prompt-toolkit
-yarl==1.9.2
-    # via aiohttp

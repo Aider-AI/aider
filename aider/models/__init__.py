@@ -4,6 +4,7 @@ from .openrouter import OpenRouterModel
 
 GPT4 = Model.create("gpt-4")
 GPT35 = Model.create("gpt-3.5-turbo")
+GPT35_1106 = Model.create("gpt-3.5-turbo-1106")
 GPT35_16k = Model.create("gpt-3.5-turbo-16k")
 
 __all__ = [

@@ -55,6 +55,7 @@ class OpenAIModel(Model):
         if self.is_gpt35():
             self.edit_format = "whole"
             self.always_available = True
+            self.send_undo_reply = False
 
             if self.name == "gpt-3.5-turbo-1106":
                 self.prompt_price = 0.001
