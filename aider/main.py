@@ -494,6 +494,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
             api_key=args.openai_api_key,
             azure_endpoint=args.openai_api_base,
             api_version=args.openai_api_version,
+            azure_deployment=args.openai_api_deployment_id,
         )
     else:
         kwargs = dict()
