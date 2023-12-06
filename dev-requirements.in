@@ -1,3 +1,6 @@
+#
+#    pip-compile --output-file=dev-requirements.txt dev-requirements.in
+#
 pytest
 pip-tools
 lox
@@ -5,3 +8,4 @@ matplotlib
 pandas
 typer
 imgcat
+pre-commit
