@@ -274,13 +274,17 @@ done
 You can also script aider from python:
 
 ```python
+import openai
 from aider.coders import Coder
+
+# Make an openai client
+client = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
 # This is a list of files to add to the chat
 fnames = ["foo.py"]
 
 # Create a coder object
-coder = Coder.create(fnames=fnames)
+coder = Coder.create(client=client, fnames=fnames)
 
 # This will execute one instruction on those files and then return
 coder.run("make a script that prints hello world")

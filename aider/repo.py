@@ -16,7 +16,8 @@ class GitRepo:
     aider_ignore_spec = None
     aider_ignore_ts = 0
 
-    def __init__(self, io, fnames, git_dname, aider_ignore_file=None):
+    def __init__(self, io, fnames, git_dname, aider_ignore_file=None, client=None):
+        self.client = client
         self.io = io
 
         if git_dname:
@@ -102,9 +103,7 @@ class GitRepo:
 
     def get_commit_message(self, diffs, context):
         if len(diffs) >= 4 * 1024 * 4:
-            self.io.tool_error(
-                f"Diff is too large for {models.GPT35.name} to generate a commit message."
-            )
+            self.io.tool_error("Diff is too large to generate a commit message.")
             return
 
         diffs = "# Diffs:\n" + diffs
@@ -120,7 +119,7 @@ class GitRepo:
         ]
 
         for model in models.Model.commit_message_models():
-            commit_message = simple_send_with_retries(model.name, messages)
+            commit_message = simple_send_with_retries(self.client, model.name, messages)
             if commit_message:
                 break
 

@@ -32,7 +32,7 @@ class TestWholeFileCoder(unittest.TestCase):
         # Initialize WholeFileCoder with the temporary directory
         io = InputOutput(yes=True)
 
-        coder = WholeFileCoder(main_model=models.GPT35, io=io, fnames=[])
+        coder = WholeFileCoder(None, main_model=models.GPT35, io=io, fnames=[])
         coder.partial_response_content = (
             'To print "Hello, World!" in most programming languages, you can use the following'
             ' code:\n\n```python\nprint("Hello, World!")\n```\n\nThis code will output "Hello,'
@@ -44,7 +44,7 @@ class TestWholeFileCoder(unittest.TestCase):
 
     def test_no_files_new_file_should_ask(self):
         io = InputOutput(yes=False)  # <- yes=FALSE
-        coder = WholeFileCoder(main_model=models.GPT35, io=io, fnames=[])
+        coder = WholeFileCoder(None, main_model=models.GPT35, io=io, fnames=[])
         coder.partial_response_content = (
             'To print "Hello, World!" in most programming languages, you can use the following'
             ' code:\n\nfoo.js\n```python\nprint("Hello, World!")\n```\n\nThis code will output'
@@ -61,7 +61,7 @@ class TestWholeFileCoder(unittest.TestCase):
 
         # Initialize WholeFileCoder with the temporary directory
         io = InputOutput(yes=True)
-        coder = WholeFileCoder(main_model=models.GPT35, io=io, fnames=[sample_file])
+        coder = WholeFileCoder(None, main_model=models.GPT35, io=io, fnames=[sample_file])
 
         # Set the partial response content with the updated content
         coder.partial_response_content = f"{sample_file}\n```\nUpdated content\n```"
@@ -85,7 +85,7 @@ class TestWholeFileCoder(unittest.TestCase):
 
         # Initialize WholeFileCoder with the temporary directory
         io = InputOutput(yes=True)
-        coder = WholeFileCoder(main_model=models.GPT35, io=io, fnames=[sample_file])
+        coder = WholeFileCoder(None, main_model=models.GPT35, io=io, fnames=[sample_file])
 
         # Set the partial response content with the updated content
         coder.partial_response_content = f"{sample_file}\n```\n0\n\1\n2\n"
@@ -109,7 +109,7 @@ Quote!
 
         # Initialize WholeFileCoder with the temporary directory
         io = InputOutput(yes=True)
-        coder = WholeFileCoder(main_model=models.GPT35, io=io, fnames=[sample_file])
+        coder = WholeFileCoder(None, main_model=models.GPT35, io=io, fnames=[sample_file])
 
         coder.choose_fence()
 
@@ -139,7 +139,7 @@ Quote!
 
         # Initialize WholeFileCoder with the temporary directory
         io = InputOutput(yes=True)
-        coder = WholeFileCoder(main_model=models.GPT35, io=io, fnames=[sample_file])
+        coder = WholeFileCoder(None, main_model=models.GPT35, io=io, fnames=[sample_file])
 
         # Set the partial response content with the updated content
         # With path/to/ prepended onto the filename
@@ -164,7 +164,7 @@ Quote!
 
         # Initialize WholeFileCoder with the temporary directory
         io = InputOutput(yes=True)
-        coder = WholeFileCoder(main_model=models.GPT35, io=io)
+        coder = WholeFileCoder(None, main_model=models.GPT35, io=io)
 
         # Set the partial response content with the updated content
         coder.partial_response_content = f"{sample_file}\n```\nUpdated content\n```"
@@ -192,7 +192,7 @@ Quote!
 
         # Initialize WholeFileCoder with the temporary directory
         io = InputOutput(yes=True)
-        coder = WholeFileCoder(main_model=models.GPT35, io=io, fnames=[sample_file])
+        coder = WholeFileCoder(None, main_model=models.GPT35, io=io, fnames=[sample_file])
 
         # Set the partial response content with the updated content
         coder.partial_response_content = (
@@ -235,7 +235,7 @@ after b
 """
         # Initialize WholeFileCoder with the temporary directory
         io = InputOutput(yes=True)
-        coder = WholeFileCoder(main_model=models.GPT35, io=io, fnames=[fname_a, fname_b])
+        coder = WholeFileCoder(None, main_model=models.GPT35, io=io, fnames=[fname_a, fname_b])
 
         # Set the partial response content with the updated content
         coder.partial_response_content = response
@@ -259,7 +259,7 @@ after b
 
         # Initialize WholeFileCoder with the temporary directory
         io = InputOutput(yes=True)
-        coder = WholeFileCoder(main_model=models.GPT35, io=io, fnames=[sample_file])
+        coder = WholeFileCoder(None, main_model=models.GPT35, io=io, fnames=[sample_file])
 
         # Set the partial response content with the updated content
         coder.partial_response_content = (

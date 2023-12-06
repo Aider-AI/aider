@@ -631,12 +631,13 @@ def run_test(
     show_fnames = ",".join(map(str, fnames))
     print("fnames:", show_fnames)
 
-    openai.api_key = os.environ["OPENAI_API_KEY"]
+    client = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
     coder = Coder.create(
         main_model,
         edit_format,
         io,
+        client=client,
         fnames=fnames,
         use_git=False,
         stream=False,
