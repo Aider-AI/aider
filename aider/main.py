@@ -189,7 +189,6 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         metavar="OPENAI_API_VERSION",
         help="Specify the api_version",
     )
-    # TODO: use deployment_id
     model_group.add_argument(
         "--openai-api-deployment-id",
         metavar="OPENAI_API_DEPLOYMENT_ID",
