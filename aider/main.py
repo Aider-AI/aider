@@ -378,6 +378,12 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         help="Specify a single message to send GPT, process reply then exit (disables chat mode)",
     )
     other_group.add_argument(
+        "--message-file",
+        "-f",
+        metavar="MESSAGE_FILE",
+        help="Specify a file containing the message to send GPT, process reply, then exit (disables chat mode)",
+    )
+    other_group.add_argument(
         "--encoding",
         default="utf-8",
         help="Specify the encoding for input and output (default: utf-8)",
@@ -568,8 +574,20 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         io.tool_error(f"Git working dir: {git_root}")
 
     if args.message:
+        io.add_to_input_history(args.message)
         io.tool_output()
         coder.run(with_message=args.message)
+    elif args.message_file:
+        try:
+            message_from_file = io.read_text(args.message_file)
+            io.tool_output()
+            coder.run(with_message=message_from_file)
+        except FileNotFoundError:
+            io.tool_error(f"Message file not found: {args.message_file}")
+            return 1
+        except IOError as e:
+            io.tool_error(f"Error reading message file: {e}")
+            return 1
     else:
         coder.run()
 
