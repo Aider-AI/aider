@@ -30,7 +30,7 @@ from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 
-BENCHMARK_DNAME = Path(os.environ["AIDER_BENCHMARK_DIR"])
+BENCHMARK_DNAME = Path(os.environ.get("AIDER_BENCHMARK_DIR", "tmp.benchmarks"))
 
 ORIGINAL_DNAME = BENCHMARK_DNAME / "exercism-python"
 

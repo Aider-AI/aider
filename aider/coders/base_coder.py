@@ -953,7 +953,14 @@ class Coder:
 
 
 def check_model_availability(io, client, main_model):
-    available_models = client.models.list()
+    try:
+        available_models = client.models.list()
+    except openai.NotFoundError:
+        # Azure sometimes returns 404?
+        # https://discord.com/channels/1131200896827654144/1182327371232186459
+        io.tool_error("Unable to list available models, proceeding with {main_model.name}")
+        return True
+
     model_ids = sorted(model.id for model in available_models)
     if main_model.name in model_ids:
         return True
