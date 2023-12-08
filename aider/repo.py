@@ -57,7 +57,7 @@ class GitRepo:
         if aider_ignore_file:
             self.aider_ignore_file = Path(aider_ignore_file)
 
-    def commit(self, fnames=None, context=None, prefix=None, message=None):
+    def commit(self, template, fnames=None, context=None, prefix="aider", message=None):
         if not fnames and not self.repo.is_dirty():
             return
 
@@ -73,12 +73,14 @@ class GitRepo:
         if not commit_message:
             commit_message = "(no commit message provided)"
 
-        if prefix:
-            commit_message = prefix + commit_message
+        full_commit_message = template.replace("{aider.prefix}", prefix).replace("{aider.commit_message}", commit_message)
 
-        full_commit_message = commit_message
         if context:
-            full_commit_message += "\n\n# Aider chat conversation:\n\n" + context
+            context = "\n\n# Aider chat conversation:\n\n" + context
+        else:    
+            context = "(No context provided)"
+        
+        full_commit_message = full_commit_message.replace("{aider.context}", context)
 
         cmd = ["-m", full_commit_message, "--no-verify"]
         if fnames:

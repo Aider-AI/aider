@@ -91,6 +91,7 @@ class Coder:
         client,
         main_model,
         io,
+        commit_template,
         fnames=None,
         git_dname=None,
         pretty=True,
@@ -134,6 +135,7 @@ class Coder:
         self.dirty_commits = dirty_commits
         self.assistant_output_color = assistant_output_color
         self.code_theme = code_theme
+        self.commit_template = commit_template
 
         self.dry_run = dry_run
         self.pretty = pretty
@@ -924,7 +926,7 @@ class Coder:
 
     def auto_commit(self, edited):
         context = self.get_context_from_history(self.cur_messages)
-        res = self.repo.commit(fnames=edited, context=context, prefix="aider: ")
+        res = self.repo.commit(fnames=edited, context=context, template=self.commit_template)
         if res:
             commit_hash, commit_message = res
             self.last_aider_commit_hash = commit_hash
@@ -945,7 +947,7 @@ class Coder:
         if not self.repo:
             return
 
-        self.repo.commit(fnames=self.need_commit_before_edits)
+        self.repo.commit(fnames=self.need_commit_before_edits, template=self.commit_template)
 
         # files changed, move cur messages back behind the files messages
         self.move_back_cur_messages(self.gpt_prompts.files_content_local_edits)

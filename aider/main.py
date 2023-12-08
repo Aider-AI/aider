@@ -1,5 +1,6 @@
 import argparse
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -336,6 +337,12 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         help="Commit all pending changes with a suitable commit message, then exit",
         default=False,
     )
+    git_group.add_argument(
+        "--commit-template-file",
+        metavar="COMMIT_TEMPLATE_FILE",
+        help="Specify the commit message template file (default: None)",
+        default=None,
+    )
 
     ##########
     other_group = parser.add_argument_group("Other Settings")
@@ -513,6 +520,27 @@ def main(argv=None, input=None, output=None, force_git_root=None):
 
         client = openai.OpenAI(api_key=args.openai_api_key, **kwargs)
 
+    commit_template = "{aider.prefix}: {aider.commit_message}\n\n{aider.context}"
+    if args.commit_template_file:
+        commit_template_file_path = Path(args.commit_template_file)
+        if commit_template_file_path.is_file():
+            commit_template = io.read_text(commit_template_file_path)
+            if commit_template is not None:
+                if commit_template is "":
+                    io.tool_error(f"Commit template is not allowed to be empty: {commit_template_file_path}")
+                    return 1
+
+                user_placeholders = re.findall(r"\{user\.[^\}]+\}", commit_template)
+                for placeholder in user_placeholders:
+                    user_input = io.prompt_ask(f"Enter value for {placeholder}: ", "")
+                    commit_template = commit_template.replace(placeholder, user_input)
+            else:
+                # Tool error is set by io.read_text
+                return 1
+        else:
+            io.tool_error(f"Commit template file not found: {commit_template_file_path}")
+            return 1
+
     main_model = models.Model.create(args.model, client)
 
     try:
@@ -538,6 +566,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
             use_git=args.git,
             voice_language=args.voice_language,
             aider_ignore_file=args.aiderignore,
+            commit_template=commit_template,
         )
     except ValueError as err:
         io.tool_error(str(err))
