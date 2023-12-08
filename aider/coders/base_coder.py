@@ -311,6 +311,13 @@ class Coder:
 
     def get_files_messages(self):
         all_content = ""
+
+        repo_content = self.get_repo_map()
+        if repo_content:
+            if all_content:
+                all_content += "\n"
+            all_content += repo_content
+
         if self.abs_fnames:
             files_content = self.gpt_prompts.files_content_prefix
             files_content += self.get_files_content()
@@ -318,12 +325,6 @@ class Coder:
             files_content = self.gpt_prompts.files_no_full_files
 
         all_content += files_content
-
-        repo_content = self.get_repo_map()
-        if repo_content:
-            if all_content:
-                all_content += "\n"
-            all_content += repo_content
 
         files_messages = [
             dict(role="user", content=all_content),
