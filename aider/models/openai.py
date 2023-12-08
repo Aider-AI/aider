@@ -44,11 +44,11 @@ class OpenAIModel(Model):
             elif tokens == 32:
                 self.prompt_price = 0.06
                 self.completion_price = 0.12
-                self.max_chat_history_tokens = 3 * 1024
+                self.max_chat_history_tokens = 2 * 1024
             elif tokens == 128:
                 self.prompt_price = 0.01
                 self.completion_price = 0.03
-                self.max_chat_history_tokens = 4 * 1024
+                self.max_chat_history_tokens = 2 * 1024
 
             return
 
@@ -60,7 +60,7 @@ class OpenAIModel(Model):
             if self.name == "gpt-3.5-turbo-1106":
                 self.prompt_price = 0.001
                 self.completion_price = 0.002
-                self.max_chat_history_tokens = 3 * 1024
+                self.max_chat_history_tokens = 2 * 1024
             elif tokens == 4:
                 self.prompt_price = 0.0015
                 self.completion_price = 0.002
