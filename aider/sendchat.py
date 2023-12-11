@@ -41,13 +41,19 @@ def send_with_retries(client, model_name, messages, functions, stream):
     if functions is not None:
         kwargs["functions"] = functions
 
-    # Check conditions to switch to gpt-4-vision-preview
-    # TODO if baseurl.host does include api.openai.com/ and gpt-4 then switch the models, if it doesn't then strip out any image_url messages
-    if client and client.base_url.host != "openrouter.ai" and model_name.startswith("gpt-4"):
-        if any(isinstance(msg.get("content"), list) and any("image_url" in item for item in msg.get("content") if isinstance(item, dict)) for msg in messages):
-            kwargs['model'] = "gpt-4-vision-preview"
-            # looks like gpt-4-vision is limited to max tokens of 4096
-            kwargs["max_tokens"] = 4096
+    # Check conditions to switch to gpt-4-vision-preview or strip out image_url messages
+    if client and model_name.startswith("gpt-4"):
+        if client.base_url.host != "api.openai.com":
+            if any(isinstance(msg.get("content"), list) and any("image_url" in item for item in msg.get("content") if isinstance(item, dict)) for msg in messages):
+                kwargs['model'] = "gpt-4-vision-preview"
+                # gpt-4-vision is limited to max tokens of 4096
+                kwargs["max_tokens"] = 4096
+        else:
+            # Strip out any image_url messages if not using gpt-4-vision-preview
+            messages = [
+                {k: v for k, v in msg.items() if k != "content" or not any(isinstance(item, dict) and "image_url" in item for item in v)}
+                for msg in messages if isinstance(msg.get("content"), list)
+            ] + [msg for msg in messages if not isinstance(msg.get("content"), list)]
 
     key = json.dumps(kwargs, sort_keys=True).encode()
 
