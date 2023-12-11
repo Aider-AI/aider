@@ -24,6 +24,7 @@ from aider.repo import GitRepo
 from aider.repomap import RepoMap
 from aider.sendchat import send_with_retries
 
+from aider.utils import is_image_file
 from ..dump import dump  # noqa: F401
 
 
@@ -38,8 +39,6 @@ class ExhaustedContextWindow(Exception):
 def wrap_fence(name):
     return f"<{name}>", f"</{name}>"
 
-#NOTE currently duplicated in io.py
-IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.webp'}
 
 class Coder:
     client = None
@@ -294,7 +293,7 @@ class Coder:
 
         prompt = ""
         for fname, content in self.get_abs_fnames_content():
-            if not any(fname.lower().endswith(ext) for ext in IMAGE_EXTENSIONS):
+            if not is_image_file(fname):
                 relative_fname = self.get_rel_fname(fname)
                 prompt += "\n"
                 prompt += relative_fname
@@ -341,9 +340,12 @@ class Coder:
         return files_messages
 
     def get_images_message(self):
+        if not utils.is_gpt4_with_openai_base_url(self.main_model.name, self.client):
+            return None
+
         image_messages = []
         for fname, content in self.get_abs_fnames_content():
-            if any(fname.lower().endswith(ext) for ext in IMAGE_EXTENSIONS):
+            if is_image_file(fname):
                 image_url = f"data:image/{Path(fname).suffix.lstrip('.')};base64,{content}"
                 image_messages.append({
                     "type": "image_url",

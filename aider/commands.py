@@ -140,7 +140,6 @@ class Commands:
             relative_fname = self.coder.get_rel_fname(fname)
             content = self.io.read_text(fname)
             if is_image_file(relative_fname):
-                # If the file is an image, use the token_count_for_image method
                 tokens = self.coder.main_model.token_count_for_image(fname)
             else:
                 # approximate
@@ -172,8 +171,10 @@ class Commands:
         self.io.tool_output("=" * (width + cost_width + 1))
         self.io.tool_output(f"${total_cost:5.2f} {fmt(total)} tokens total")
 
-        # Check if any images are in the chat and override the max context window size if so
-        image_in_chat = any(relative_fname.endswith(ext) for ext in IMAGE_EXTENSIONS for relative_fname in self.coder.get_inchat_relative_files())
+        # Set image_in_chat to False unless is_gpt4_with_openai_base_url returns True
+        image_in_chat = False
+        if utils.is_gpt4_with_openai_base_url(self.coder.main_model.name, self.coder.client):
+            image_in_chat = any(is_image_file(relative_fname) for relative_fname in self.coder.get_inchat_relative_files())
         limit = 128000 if image_in_chat else self.coder.main_model.max_context_tokens
         remaining = limit - total
         if remaining > 1024:

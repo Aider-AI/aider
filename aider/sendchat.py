@@ -41,8 +41,10 @@ def send_with_retries(client, model_name, messages, functions, stream):
     if functions is not None:
         kwargs["functions"] = functions
 
+    from aider.utils import is_gpt4_with_openai_base_url
+
     # Check conditions to switch to gpt-4-vision-preview or strip out image_url messages
-    if client and model_name.startswith("gpt-4") and "api.openai.com" in client.base_url.host:
+    if client and is_gpt4_with_openai_base_url(model_name, client):
         if any(isinstance(msg.get("content"), list) and any("image_url" in item for item in msg.get("content") if isinstance(item, dict)) for msg in messages):
             kwargs['model'] = "gpt-4-vision-preview"
             # gpt-4-vision is limited to max tokens of 4096

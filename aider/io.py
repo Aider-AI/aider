@@ -16,11 +16,9 @@ from pygments.util import ClassNotFound
 from rich.console import Console
 from rich.text import Text
 
+from .utils import is_image_file
 from .dump import dump  # noqa: F401
 
-#QUESTION what image extensions do we want to support?
-#QUESTION where should this live? Currently duplicated in base_coder
-IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.webp'}
 
 class AutoCompleter(Completer):
     def __init__(self, root, rel_fnames, addable_rel_fnames, commands, encoding):
@@ -160,8 +158,7 @@ class InputOutput:
             return
 
     def read_text(self, filename):
-        file_extension = Path(filename).suffix.lower()
-        if file_extension in IMAGE_EXTENSIONS:
+        if is_image_file(filename):
             return self.read_image(filename)
 
         try:

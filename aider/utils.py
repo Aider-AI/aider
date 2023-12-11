@@ -1,4 +1,5 @@
 from pathlib import Path
+from openai import OpenAIError
 
 # Set of image file extensions
 IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.webp'}
@@ -41,3 +42,12 @@ def show_messages(messages, title=None, functions=None):
 
     if functions:
         dump(functions)
+def is_gpt4_with_openai_base_url(model_name, client):
+    """
+    Check if the model_name starts with 'gpt-4' and the client base URL includes 'api.openai.com'.
+    
+    :param model_name: The name of the model to check.
+    :param client: The OpenAI client instance.
+    :return: True if conditions are met, False otherwise.
+    """
+    return model_name.startswith("gpt-4") and "api.openai.com" in client.base_url.host
