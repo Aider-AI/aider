@@ -10,7 +10,7 @@ from aider import prompts, voice
 
 from .dump import dump  # noqa: F401
 
-from aider.utils import is_image_file
+from aider.utils import is_image_file, is_gpt4_with_openai_base_url
 
 class Commands:
     voice = None
@@ -171,11 +171,12 @@ class Commands:
         self.io.tool_output("=" * (width + cost_width + 1))
         self.io.tool_output(f"${total_cost:5.2f} {fmt(total)} tokens total")
 
-        # Set image_in_chat to False unless is_gpt4_with_openai_base_url returns True
+        # only switch to image model token count if gpt4 and openai and image in files
         image_in_chat = False
-        if utils.is_gpt4_with_openai_base_url(self.coder.main_model.name, self.coder.client):
+        if is_gpt4_with_openai_base_url(self.coder.main_model.name, self.coder.client):
             image_in_chat = any(is_image_file(relative_fname) for relative_fname in self.coder.get_inchat_relative_files())
         limit = 128000 if image_in_chat else self.coder.main_model.max_context_tokens
+
         remaining = limit - total
         if remaining > 1024:
             self.io.tool_output(f"{cost_pad}{fmt(remaining)} tokens remaining in context window")
@@ -327,7 +328,9 @@ class Commands:
             if abs_file_path in self.coder.abs_fnames:
                 self.io.tool_error(f"{matched_file} is already in the chat")
             else:
-                #TODO put in guard to stop images being added to non openai / gpt-4
+                if is_image_file(matched_file) and not is_gpt4_with_openai_base_url(self.coder.main_model.name, self.coder.client):
+                    self.io.tool_error(f"Cannot add image file {matched_file} as the model does not support image files")
+                    continue
                 content = self.io.read_text(abs_file_path)
                 if content is None:
                     self.io.tool_error(f"Unable to read {matched_file}")

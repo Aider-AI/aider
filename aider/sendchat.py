@@ -8,6 +8,7 @@ import openai
 # from diskcache import Cache
 from openai import APIConnectionError, InternalServerError, RateLimitError
 
+from aider.utils import is_gpt4_with_openai_base_url
 from aider.dump import dump  # noqa: F401
 
 CACHE_PATH = "~/.aider.send.cache.v1"
@@ -41,7 +42,6 @@ def send_with_retries(client, model_name, messages, functions, stream):
     if functions is not None:
         kwargs["functions"] = functions
 
-    from aider.utils import is_gpt4_with_openai_base_url
 
     # Check conditions to switch to gpt-4-vision-preview or strip out image_url messages
     if client and is_gpt4_with_openai_base_url(model_name, client):
