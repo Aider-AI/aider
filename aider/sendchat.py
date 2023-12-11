@@ -42,6 +42,7 @@ def send_with_retries(client, model_name, messages, functions, stream):
         kwargs["functions"] = functions
 
     # Check conditions to switch to gpt-4-vision-preview
+    # TODO if baseurl.host does include api.openai.com/ and gpt-4 then switch the models, if it doesn't then strip out any image_url messages
     if client and client.base_url.host != "openrouter.ai" and model_name.startswith("gpt-4"):
         if any(isinstance(msg.get("content"), list) and any("image_url" in item for item in msg.get("content") if isinstance(item, dict)) for msg in messages):
             kwargs['model'] = "gpt-4-vision-preview"
