@@ -2,6 +2,8 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+import os
+from tempfile import NamedTemporaryFile
 
 import git
 from prompt_toolkit.completion import Completion
@@ -494,6 +496,39 @@ class Commands:
             print()
 
         return text
+    
+    def cmd_hist(self, args):
+        "List all chat history"
+        columns = os.get_terminal_size()[0] - 20
+        for i, msg in enumerate(self.coder.cur_messages + self.coder.done_messages):
+            content = msg['content'].splitlines()[0]
+            if len(content) > columns:
+                content = content[:columns] + "..."
+            self.io.tool_output(f"#{i} {msg['role']}: {content}")
+    
+    def cmd_edit_history(self, args):
+        "Edit the chat history"
+        args = args.strip()
+        if not args or not args[0] == "#" or not args[1:].isdigit():
+            self.io.tool_error("Invalid command. Please specify a message number with a # prefix.")
+            return
+        msg_number = int(args[1:])
+        if msg_number < 0 or msg_number >= len(self.coder.cur_messages + self.coder.done_messages):
+            self.io.tool_error("Invalid message number.")
+            return
+        
+        msg = (self.coder.cur_messages + self.coder.done_messages)[msg_number]
+        with NamedTemporaryFile(mode='r+', suffix='.txt') as f:
+            f.write(msg['content'])
+            f.flush()
+            subprocess.run(["nano", f.name])
+            f.seek(0)
+            new_content = f.read()
+            if new_content != msg['content']:
+                msg['content'] = new_content
+                self.io.tool_output("Message updated.")
+            else:
+                self.io.tool_output("Message not changed.")        
 
 
 def expand_subdir(file_path):
