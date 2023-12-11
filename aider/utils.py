@@ -12,6 +12,7 @@ def is_image_file(file_name):
     :param file_name: The name of the file to check.
     :return: True if the file is an image, False otherwise.
     """
+    file_name = str(file_name)  # Convert file_name to string
     return any(file_name.endswith(ext) for ext in IMAGE_EXTENSIONS)
 
 
@@ -50,4 +51,6 @@ def is_gpt4_with_openai_base_url(model_name, client):
     :param client: The OpenAI client instance.
     :return: True if conditions are met, False otherwise.
     """
+    if client is None or not hasattr(client, 'base_url'):
+        return False
     return model_name.startswith("gpt-4") and "api.openai.com" in client.base_url.host
