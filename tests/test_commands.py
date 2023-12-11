@@ -6,6 +6,8 @@ import tempfile
 from io import StringIO
 from pathlib import Path
 from unittest import TestCase
+from unittest.mock import MagicMock, call
+from unittest.mock import patch
 
 import git
 
@@ -492,3 +494,54 @@ class TestCommands(TestCase):
             commands.cmd_drop(str(fname))
 
             self.assertEqual(len(coder.abs_fnames), 0)
+
+    def test_cmd_hist(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(pretty=False, yes=True)
+            io.tool_output = MagicMock()
+            from aider.coders import Coder
+
+            coder = Coder.create(models.GPT35, None, io)
+            commands = Commands(io, coder)
+            
+            def mock_send(*args, **kwargs):
+                coder.partial_response_content = "ok"
+                coder.partial_response_function_call = dict()
+
+            coder.send = MagicMock(side_effect=mock_send)
+            coder.run(with_message="hi")
+            
+            commands.cmd_hist("")
+            calls = [call("#0 user: hi"), call("#1 assistant: ok")]
+            io.tool_output.assert_has_calls(calls)
+            
+    def test_cmd_edit_history(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(pretty=False, yes=True)
+            io.tool_output = MagicMock()
+            from aider.coders import Coder
+
+            coder = Coder.create(models.GPT35, None, io)
+            commands = Commands(io, coder)
+            
+            def mock_send(*args, **kwargs):
+                coder.partial_response_content = "ok"
+                coder.partial_response_function_call = dict()
+
+            coder.send = MagicMock(side_effect=mock_send)
+            coder.run(with_message="hi")
+            
+            import os
+            dir_path = os.path.dirname(os.path.realpath(__file__))
+
+            prev_editor = os.environ.get("EDITOR")
+            os.environ["EDITOR"] = os.path.join(dir_path, "mock_editor.sh")
+            commands.cmd_edit_history("#0")
+            if prev_editor:
+                os.environ["EDITOR"] = prev_editor
+            else:
+                del os.environ["EDITOR"]
+            
+            commands.cmd_hist("")
+            calls = [call("#0 user: new content"), call("#1 assistant: ok")]
+            io.tool_output.assert_has_calls(calls)

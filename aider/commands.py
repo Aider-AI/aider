@@ -3,6 +3,7 @@ import subprocess
 import sys
 from pathlib import Path
 import os
+import shutil
 from tempfile import NamedTemporaryFile
 
 import git
@@ -499,7 +500,7 @@ class Commands:
     
     def cmd_hist(self, args):
         "List all chat history"
-        columns = os.get_terminal_size()[0] - 20
+        columns = shutil.get_terminal_size(fallback=(120, 50)).columns - 20
         for i, msg in enumerate(self.coder.cur_messages + self.coder.done_messages):
             content = msg['content'].splitlines()[0]
             if len(content) > columns:
@@ -517,11 +518,12 @@ class Commands:
             self.io.tool_error("Invalid message number.")
             return
         
+        editor = os.environ.get('EDITOR', 'nano')
         msg = (self.coder.cur_messages + self.coder.done_messages)[msg_number]
         with NamedTemporaryFile(mode='r+', suffix='.txt') as f:
             f.write(msg['content'])
             f.flush()
-            subprocess.run(["nano", f.name])
+            subprocess.run([editor, f.name])
             f.seek(0)
             new_content = f.read()
             if new_content != msg['content']:
