@@ -1,6 +1,18 @@
 from pathlib import Path
 
+# Set of image file extensions
+IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.webp'}
+
 from .dump import dump  # noqa: F401
+
+def is_image_file(file_name):
+    """
+    Check if the given file name has an image file extension.
+    
+    :param file_name: The name of the file to check.
+    :return: True if the file is an image, False otherwise.
+    """
+    return any(file_name.endswith(ext) for ext in IMAGE_EXTENSIONS)
 
 
 def safe_abs_path(res):

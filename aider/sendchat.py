@@ -43,18 +43,10 @@ def send_with_retries(client, model_name, messages, functions, stream):
 
     # Check conditions to switch to gpt-4-vision-preview or strip out image_url messages
     if client and model_name.startswith("gpt-4") and "api.openai.com" in client.base_url.host:
-        print('switch model')
         if any(isinstance(msg.get("content"), list) and any("image_url" in item for item in msg.get("content") if isinstance(item, dict)) for msg in messages):
             kwargs['model'] = "gpt-4-vision-preview"
             # gpt-4-vision is limited to max tokens of 4096
             kwargs["max_tokens"] = 4096
-    else:
-        # Strip out any image_url messages if not using gpt-4-vision-preview
-        print('strip img')
-        messages = [
-            {k: v for k, v in msg.items() if k != "content" or not any(isinstance(item, dict) and "image_url" in item for item in v)}
-            for msg in messages if isinstance(msg.get("content"), list)
-        ] + [msg for msg in messages if not isinstance(msg.get("content"), list)]
 
     key = json.dumps(kwargs, sort_keys=True).encode()
 

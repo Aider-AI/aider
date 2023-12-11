@@ -10,8 +10,7 @@ from aider import prompts, voice
 
 from .dump import dump  # noqa: F401
 
-#NOTE currently duplicated in io.py and base_coder.py
-IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.webp'}
+from aider.utils import is_image_file
 
 class Commands:
     voice = None
@@ -140,7 +139,7 @@ class Commands:
         for fname in self.coder.abs_fnames:
             relative_fname = self.coder.get_rel_fname(fname)
             content = self.io.read_text(fname)
-            if any(relative_fname.endswith(ext) for ext in IMAGE_EXTENSIONS):
+            if is_image_file(relative_fname):
                 # If the file is an image, use the token_count_for_image method
                 tokens = self.coder.main_model.token_count_for_image(fname)
             else:
