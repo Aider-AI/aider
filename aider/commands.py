@@ -471,7 +471,7 @@ class Commands:
 
         if not self.voice:
             try:
-                self.voice = voice.Voice()
+                self.voice = voice.Voice(self.coder.client)
             except voice.SoundDeviceError:
                 self.io.tool_error(
                     "Unable to import `sounddevice` and/or `soundfile`, is portaudio installed?"

@@ -1,9 +1,7 @@
 import json
 import math
 
-import openai
 from PIL import Image
-
 
 class Model:
     name = None
@@ -20,12 +18,12 @@ class Model:
     completion_price = None
 
     @classmethod
-    def create(cls, name):
+    def create(cls, name, client=None):
         from .openai import OpenAIModel
         from .openrouter import OpenRouterModel
 
-        if "openrouter.ai" in openai.api_base:
-            return OpenRouterModel(name)
+        if client and client.base_url.host == "openrouter.ai":
+            return OpenRouterModel(client, name)
         return OpenAIModel(name)
 
     def __str__(self):
@@ -37,11 +35,11 @@ class Model:
 
     @staticmethod
     def weak_model():
-        return Model.create("gpt-3.5-turbo")
+        return Model.create("gpt-3.5-turbo-1106")
 
     @staticmethod
     def commit_message_models():
-        return [Model.create("gpt-3.5-turbo"), Model.create("gpt-3.5-turbo-16k")]
+        return [Model.weak_model()]
 
     def token_count(self, messages):
         if not self.tokenizer:
@@ -61,8 +59,6 @@ class Model:
         :param fname: The filename of the image.
         :return: The token cost for the image.
         """
-        # Placeholder for image size retrieval logic
-        # TODO: Implement the logic to retrieve the image size from the file
         width, height = self.get_image_size(fname)
 
         # If the image is larger than 2048 in any dimension, scale it down to fit within 2048x2048

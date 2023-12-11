@@ -4,7 +4,6 @@ import tempfile
 import time
 
 import numpy as np
-import openai
 
 try:
     import soundfile as sf
@@ -27,7 +26,7 @@ class Voice:
 
     threshold = 0.15
 
-    def __init__(self):
+    def __init__(self, client):
         if sf is None:
             raise SoundDeviceError
         try:
@@ -37,6 +36,8 @@ class Voice:
             self.sd = sd
         except (OSError, ModuleNotFoundError):
             raise SoundDeviceError
+
+        self.client = client
 
     def callback(self, indata, frames, time, status):
         """This is called (from a separate thread) for each audio block."""
@@ -88,9 +89,11 @@ class Voice:
                 file.write(self.q.get())
 
         with open(filename, "rb") as fh:
-            transcript = openai.Audio.transcribe("whisper-1", fh, prompt=history, language=language)
+            transcript = self.client.audio.transcriptions.create(
+                model="whisper-1", file=fh, prompt=history, language=language
+            )
 
-        text = transcript["text"]
+        text = transcript.text
         return text
 
 

@@ -182,6 +182,23 @@ class TestMain(TestCase):
             _, kwargs = MockCoder.call_args
             assert kwargs["dirty_commits"] is True
 
+    def test_message_file_flag(self):
+        message_file_content = "This is a test message from a file."
+        message_file_path = tempfile.mktemp()
+        with open(message_file_path, "w", encoding="utf-8") as message_file:
+            message_file.write(message_file_content)
+
+        with patch("aider.main.Coder.create") as MockCoder:
+            MockCoder.return_value.run = MagicMock()
+            main(
+                ["--yes", "--message-file", message_file_path],
+                input=DummyInput(),
+                output=DummyOutput(),
+            )
+            MockCoder.return_value.run.assert_called_once_with(with_message=message_file_content)
+
+        os.remove(message_file_path)
+
     def test_encodings_arg(self):
         fname = "foo.py"
 
@@ -196,3 +213,13 @@ class TestMain(TestCase):
                     MockSend.side_effect = side_effect
 
                     main(["--yes", fname, "--encoding", "iso-8859-15"])
+
+    @patch("aider.main.InputOutput")
+    @patch("aider.coders.base_coder.Coder.run")
+    def test_main_message_adds_to_input_history(self, mock_run, MockInputOutput):
+        test_message = "test message"
+        mock_io_instance = MockInputOutput.return_value
+
+        main(["--message", test_message], input=DummyInput(), output=DummyOutput())
+
+        mock_io_instance.add_to_input_history.assert_called_once_with(test_message)

@@ -182,7 +182,7 @@ If you want to put code in a new file, use a *SEARCH/REPLACE block* with:
 
     files_no_full_files = "I am not sharing any *read-write* files yet."
 
-    repo_content_prefix = """Below here are summaries of other files present in this git repository.
+    repo_content_prefix = """Below here are summaries of files present in the user's git repository.
 Do not propose changes to these files, they are *read-only*.
 To make a file *read-write*, ask the user to *add it to the chat*.
 """

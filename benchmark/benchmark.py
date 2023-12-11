@@ -30,7 +30,7 @@ from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 
-BENCHMARK_DNAME = Path(os.environ["AIDER_BENCHMARK_DIR"])
+BENCHMARK_DNAME = Path(os.environ.get("AIDER_BENCHMARK_DIR", "tmp.benchmarks"))
 
 ORIGINAL_DNAME = BENCHMARK_DNAME / "exercism-python"
 
@@ -631,12 +631,13 @@ def run_test(
     show_fnames = ",".join(map(str, fnames))
     print("fnames:", show_fnames)
 
-    openai.api_key = os.environ["OPENAI_API_KEY"]
+    client = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
     coder = Coder.create(
         main_model,
         edit_format,
         io,
+        client=client,
         fnames=fnames,
         use_git=False,
         stream=False,
