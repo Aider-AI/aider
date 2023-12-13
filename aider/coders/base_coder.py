@@ -16,6 +16,7 @@ from rich.console import Console, Text
 from rich.live import Live
 from rich.markdown import Markdown
 
+from aider.models.model import Model
 from aider import models, prompts, utils
 from aider.commands import Commands
 from aider.history import ChatSummary
