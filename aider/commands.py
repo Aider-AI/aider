@@ -147,18 +147,20 @@ class Commands:
             tokens = self.coder.main_model.token_count(content)
             res.append((tokens, f"{relative_fname}", "use /drop to drop from chat"))
 
+        current_model_name = self.coder.main_model.name
+        self.io.tool_output(f"Current model: {current_model_name}")
         self.io.tool_output("Approximate context window usage, in tokens:")
         self.io.tool_output()
 
         width = 8
-        cost_width = 7
+        cost_width = 10
 
         def fmt(v):
             return format(int(v), ",").rjust(width)
 
         col_width = max(len(row[1]) for row in res)
 
-        cost_pad = " " * cost_width
+        cost_pad = " " * (cost_width - 1)
         total = 0
         total_cost = 0.0
         for tk, msg, tip in res:
@@ -166,7 +168,7 @@ class Commands:
             cost = tk * (self.coder.main_model.prompt_price / 1000)
             total_cost += cost
             msg = msg.ljust(col_width)
-            self.io.tool_output(f"${cost:5.2f} {fmt(tk)} {msg} {tip}")
+            self.io.tool_output(f"${cost:5.4f} {fmt(tk)} {msg} {tip}")
 
         self.io.tool_output("=" * (width + cost_width + 1))
         self.io.tool_output(f"${total_cost:5.2f} {fmt(total)} tokens total")
