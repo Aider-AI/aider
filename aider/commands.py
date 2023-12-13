@@ -7,6 +7,7 @@ import git
 from prompt_toolkit.completion import Completion
 
 from aider import prompts, voice
+from .models_table import models
 
 from .dump import dump  # noqa: F401
 
@@ -445,8 +446,43 @@ class Commands:
         for file in other_files:
             self.io.tool_output(f"  {file}")
 
+    def cmd_models(self, args):
+        "Show available models and their costs"
+        current_model_name = self.coder.main_model.name
+        self.io.tool_output(f"Current model: {current_model_name}")
+        self.io.tool_output("Available models:")
+        self.io.tool_output("Alias | Model | Input Cost | Output Cost | Description")
+        for model_name, model_info in models.items():
+            alias = model_info['Alias']
+            input_cost = f"{model_info['Input_cur']}{model_info['Input_cost']}{model_info['Input_desc']}"
+            output_cost = f"{model_info['Output_cur']}{model_info['Output_cost']}{model_info['Output_desc']}"
+            description = model_name  # Assuming the model name itself is the description
+            self.io.tool_output(f"{alias} | {model_name} | {input_cost} | {output_cost} | {description}")
+
+    def cmd_model(self, args):
+        "Switch to a different model"
+        alias = args.strip()
+        if not alias:
+            # Toggle between models 3 and 4 if no alias is provided
+            current_model_name = self.coder.main_model.name
+            new_model_name = 'gpt-3.5-turbo-1106' if current_model_name == 'gpt-4-1106-preview' else 'gpt-4-1106-preview'
+            self.switch_model(new_model_name)
+            return
+
+        for model_name, model_info in models.items():
+            if model_info['Alias'] == alias:
+                self.switch_model(model_name)
+                return
+        self.io.tool_error(f"Model with alias '{alias}' not found.")
+
+    def switch_model(self, model_name):
+        # Assuming there is a method in the coder to switch models
+        self.coder.switch_model(model_name)
+        self.io.tool_output(f"Switched to model: {model_name}")
+
+    cmd_m = cmd_model  # Alias for cmd_model
+
     def cmd_help(self, args):
-        "Show help about all commands"
         commands = sorted(self.get_commands())
         for cmd in commands:
             cmd_method_name = f"cmd_{cmd[1:]}"
