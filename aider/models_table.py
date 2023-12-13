@@ -2,10 +2,20 @@ models = {
     'gpt-4': {
         'Alias': 'gpt4',
         'Model': 'gpt-4',
-        'Input_cost': 0.01,
+        'Input_cost': 0.03,
         'Input_desc': 'Cost per 1K tokens',
         'Input_cur': '$',
-        'Output_cost': 0.03,
+        'Output_cost': 0.06,
+        'Output_desc': 'Cost per 1K tokens',
+        'Output_cur': '$'
+    },
+    'gpt-4-32k': {
+        'Alias': '4-32',
+        'Model': 'gpt-4-32k',
+        'Input_cost': 0.06,
+        'Input_desc': 'Cost per 1K tokens',
+        'Input_cur': '$',
+        'Output_cost': 0.12,
         'Output_desc': 'Cost per 1K tokens',
         'Output_cur': '$'
     },
@@ -39,14 +49,14 @@ models = {
         'Output_desc': 'Cost per 1K tokens',
         'Output_cur': '$'
     },
-    'ruu3f-perplexityai': {
-        'Alias': 'px',
-        'Model': 'ruu3f-perplexityai',
-        'Input_cost': 0.0,
-        'Input_desc': 'Free with usage limits',
-        'Input_cur': '$',
-        'Output_cost': 0.0,
-        'Output_desc': 'Free with usage limits',
-        'Output_cur': '$'
-    }
+#    'ruu3f-perplexityai': {
+#        'Alias': 'px',
+#        'Model': 'ruu3f-perplexityai',
+#        'Input_cost': 0.0,
+#        'Input_desc': 'Free with usage limits',
+#        'Input_cur': '$',
+#        'Output_cost': 0.0,
+#        'Output_desc': 'Free with usage limits',
+#        'Output_cur': '$'
+#    }
 }
