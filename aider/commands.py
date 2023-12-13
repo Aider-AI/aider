@@ -483,19 +483,20 @@ class Commands:
             # Toggle between models 3 and 4 if no alias is provided
             current_model_name = self.coder.main_model.name
             new_model_name = 'gpt-3.5-turbo-1106' if current_model_name == 'gpt-4-1106-preview' else 'gpt-4-1106-preview'
-            self.switch_model(new_model_name)
+            self.switch_model(new_model_name, output_message=True)
             return
 
         for model_name, model_info in models.items():
             if model_info['Alias'] == alias:
-                self.switch_model(model_name)
+                self.switch_model(model_name, output_message=True)
                 return
         self.io.tool_error(f"Model with alias '{alias}' not found.")
 
-    def switch_model(self, model_name):
+    def switch_model(self, model_name, output_message=False):
         # Assuming there is a method in the coder to switch models
         self.coder.switch_model(model_name)
-        self.io.tool_output(f"Switched to model: {model_name}")
+        if output_message:
+            self.io.tool_output(f"Switched to model: {model_name}")
 
     # Alias for cmd_model
     def cmd_m(self, args):
