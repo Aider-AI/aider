@@ -333,6 +333,20 @@ class Coder:
 
         return files_messages
 
+    def switch_model(self, model_name):
+        # Assuming there is a method in the Model class to create a model instance by name
+        new_model = Model.create(name=model_name, client=self.client)
+        if new_model:
+            self.main_model = new_model
+            # Update any other necessary state to reflect the model change
+            # This might include resetting the tokenizer, updating pricing info, etc.
+            # Add any additional state updates as needed.
+            self.tokenizer = new_model.tokenizer
+            # Log the model switch
+            print(f"Switched to model: {model_name}")
+        else:
+            raise ValueError(f"Model with name '{model_name}' could not be created.")
+
     def run(self, with_message=None):
         while True:
             try:
