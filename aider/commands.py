@@ -500,6 +500,7 @@ class Commands:
 
     # Alias for cmd_model
     def cmd_m(self, args):
+        "Switch to a different model"
         return self.cmd_model(args)
 
     def cmd_help(self, args):
