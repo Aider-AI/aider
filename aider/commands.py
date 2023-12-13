@@ -61,7 +61,10 @@ class Commands:
         rest_inp = inp[len(words[0]) :]
 
         all_commands = self.get_commands()
-        matching_commands = [cmd for cmd in all_commands if cmd.startswith(first_word)]
+        # Prioritize exact matches over partial matches
+        exact_matches = [cmd for cmd in all_commands if cmd == first_word]
+        partial_matches = [cmd for cmd in all_commands if cmd.startswith(first_word) and cmd != first_word]
+        matching_commands = exact_matches if exact_matches else partial_matches
         return matching_commands, first_word, rest_inp
 
     def run(self, inp):
@@ -480,7 +483,9 @@ class Commands:
         self.coder.switch_model(model_name)
         self.io.tool_output(f"Switched to model: {model_name}")
 
-    cmd_m = cmd_model  # Alias for cmd_model
+    # Alias for cmd_model
+    def cmd_m(self, args):
+        return self.cmd_model(args)
 
     def cmd_help(self, args):
         commands = sorted(self.get_commands())
