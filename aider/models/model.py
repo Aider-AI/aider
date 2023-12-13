@@ -17,6 +17,7 @@ class Model:
 
     @classmethod
     def create(cls, name, client=None):
+        print(f"Creating model with name: {name}")  # Added print statement
         from .openai import OpenAIModel
         from .openrouter import OpenRouterModel
 
