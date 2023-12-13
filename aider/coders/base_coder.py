@@ -344,7 +344,7 @@ class Coder:
             # Add any additional state updates as needed.
             self.tokenizer = new_model.tokenizer
             # Log the model switch
-            print(f"Switched to model: {model_name}")
+            self.io.tool_output(f"Switched to model: {model_name}")
         else:
             raise ValueError(f"Model with name '{model_name}' could not be created.")
 
