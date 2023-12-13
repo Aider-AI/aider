@@ -456,13 +456,25 @@ class Commands:
         current_model_name = self.coder.main_model.name
         self.io.tool_output(f"Current model: {current_model_name}")
         self.io.tool_output("Available models:")
-        self.io.tool_output("Alias | Model | Input Cost | Output Cost | Description")
+        # Calculate column widths
+        alias_width = max(len(model_info['Alias']) for model_info in models.values()) + 2
+        model_width = max(len(model_name) for model_name in models.keys()) + 2
+        input_cost_width = max(len(f"{model_info['Input_cur']}{model_info['Input_cost']}{model_info['Input_desc']}") for model_info in models.values()) + 2
+        output_cost_width = max(len(f"{model_info['Output_cur']}{model_info['Output_cost']}{model_info['Output_desc']}") for model_info in models.values()) + 2
+        description_width = max(len(model_name) for model_name in models.keys()) + 2
+
+        # Create a formatted table header
+        header = f"{'Alias'.ljust(alias_width)}| {'Model'.ljust(model_width)}| {'Input Cost'.ljust(input_cost_width)}| {'Output Cost'.ljust(output_cost_width)}| {'Description'.ljust(description_width)}"
+        self.io.tool_output(header)
+        self.io.tool_output("-" * len(header))
+
+        # Output each row in the table
         for model_name, model_info in models.items():
-            alias = model_info['Alias']
-            input_cost = f"{model_info['Input_cur']}{model_info['Input_cost']}{model_info['Input_desc']}"
-            output_cost = f"{model_info['Output_cur']}{model_info['Output_cost']}{model_info['Output_desc']}"
-            description = model_name  # Assuming the model name itself is the description
-            self.io.tool_output(f"{alias} | {model_name} | {input_cost} | {output_cost} | {description}")
+            alias = model_info['Alias'].ljust(alias_width)
+            input_cost = (f"{model_info['Input_cur']}{model_info['Input_cost']}{model_info['Input_desc']}").ljust(input_cost_width)
+            output_cost = (f"{model_info['Output_cur']}{model_info['Output_cost']}{model_info['Output_desc']}").ljust(output_cost_width)
+            description = model_name.ljust(description_width)  # Assuming the model name itself is the description
+            self.io.tool_output(f"{alias}| {model_name.ljust(model_width)}| {input_cost}| {output_cost}| {description}")
 
     def cmd_model(self, args):
         "Switch to a different model"
