@@ -504,6 +504,7 @@ class Commands:
         return self.cmd_model(args)
 
     def cmd_help(self, args):
+        "Shows this /help with all available commands"
         commands = sorted(self.get_commands())
         for cmd in commands:
             cmd_method_name = f"cmd_{cmd[1:]}"
