@@ -1,5 +1,9 @@
 # Release history
 
+### v0.18.1
+
+- Upgraded to new openai python client v1.3.7.
+
 ### v0.18.0
 
 - Improved prompting for both GPT-4 and GPT-4 Turbo.
