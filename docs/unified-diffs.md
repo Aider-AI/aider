@@ -1,7 +1,7 @@
 
 # Fixing GPT-4 Turbo laziness with unified diffs
 
-![robot flowchart](../assets/robot-ast.png)
+![robot flowchart](../assets/udiff.jpg)
 
 
 Aider now asks GPT-4 Turbo to use [unified diffs](https://www.gnu.org/software/diffutils/manual/html_node/Unified-Format.html) to edit your code when you request new features, improvements, bug fixes, test cases, etc.
