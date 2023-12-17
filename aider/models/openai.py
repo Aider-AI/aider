@@ -33,7 +33,11 @@ class OpenAIModel(Model):
         self.tokenizer = tiktoken.encoding_for_model(name)
 
         if self.is_gpt4():
-            self.edit_format = "diff"
+            if name == "gpt-4-1106-preview":
+                self.edit_format = "udiff"
+            else:
+                self.edit_format = "diff"
+
             self.use_repo_map = True
             self.send_undo_reply = True
 

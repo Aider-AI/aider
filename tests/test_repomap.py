@@ -4,7 +4,7 @@ import unittest
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.repomap import RepoMap
-from tests.utils import IgnorantTemporaryDirectory
+from aider.utils import IgnorantTemporaryDirectory
 
 
 class TestRepoMap(unittest.TestCase):
