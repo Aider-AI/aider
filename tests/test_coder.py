@@ -10,7 +10,7 @@ from aider import models
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
-from tests.utils import ChdirTemporaryDirectory, GitTemporaryDirectory
+from aider.utils import ChdirTemporaryDirectory, GitTemporaryDirectory
 
 
 class TestCoder(unittest.TestCase):

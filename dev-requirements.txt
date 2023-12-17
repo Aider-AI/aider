@@ -149,7 +149,6 @@ urllib3==2.1.0
 virtualenv==20.25.0
     # via pre-commit
 wheel==0.42.0
-    # via pip-tools
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip
