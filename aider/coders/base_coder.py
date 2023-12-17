@@ -52,6 +52,7 @@ class Coder:
     num_malformed_responses = 0
     last_keyboard_interrupt = None
     max_apply_update_errors = 3
+    edit_format = None
 
     @classmethod
     def create(
@@ -149,7 +150,7 @@ class Coder:
 
         self.main_model = main_model
 
-        self.io.tool_output(f"Model: {main_model.name}")
+        self.io.tool_output(f"Model: {main_model.name} using {self.edit_format} edit format")
 
         self.show_diffs = show_diffs
 
