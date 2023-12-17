@@ -93,6 +93,8 @@ Hunks don't need to be in any particular order.
 When editing a function, method, loop, etc use a hunk to replace the *entire* code block.
 Delete the entire existing version with `-` lines and then add a new, updated version with `+` lines.
 This will help you generate correct code and correct diffs.
+
+To make a new file, show a diff from `--- /dev/null` to `+++ path/to/new/file.ext`.
 """
 
     files_content_prefix = "These are the *read-write* files:\n"

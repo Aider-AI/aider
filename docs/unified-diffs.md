@@ -127,7 +127,7 @@ helped clarify some general principles, which I think are applicable to any effe
 GPT-4 code editing format:
 
 - FAMILIAR - Choose an edit format that GPT is already familiar with.
-- SIMPLE - Choose a simple format that avoid escaping, syntactic overhead and brittle specifiers like line numbers or line counts.
+- SIMPLE - Choose a simple format that avoids escaping, syntactic overhead and brittle specifiers like line numbers or line counts.
 - HIGH LEVEL - Encourage GPT to structure edits as new versions of substantive code blocks (functions, methods, etc), not as a series of surgical/minimal changes to individual lines of code.
 - FLEXIBLE - Strive to be maximally flexible when interpreting GPT's edit instructions.
 
