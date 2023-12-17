@@ -66,60 +66,6 @@ We will discuss some key design decisions involved in this new format,
 and evaluate their significance using ablation experiments.
 
 
-## Refactoring benchmark
-
-Aider has long used a
-[benchmark suite based on 133 Exercism python exercises]().
-But these are mostly small coding problems,
-usually requiring only a few dozen lines of code to solve.
-GPT-4 Turbo was typically only lazy on 2-3 of these exercises:
-the ones with the largest amount of code and which involved refactoring.
-Rather than fully completing the refactor, GPT would often
-just add a comment
-referencing old code like
-"...copy $USD formatting code here...".
-
-Based on this observation, I set out to build a benchmark based on refactoring
-a non-trivial amount of code found in fairly large source files.
-To do this, I used python's `ast` module to analyze the
-[Django repository](https://github.com/django/django).
-
-The goal was to search the Django repository to:
-
-- Find source files that contain class methods which are non-trivial, having more than 100 AST nodes in their implementation.
-- Focus on methods that are part of a larger class. We want to find methods which are less than half the code present in their containing class.
-- Find methods that do not make any use of their `self` parameter. This means they can be trivially refactored out of the class and turned into a stand-alone top-level function.
-
-We can then turn each of these source files into a task for the benchmark,
-using instructions like:
-
-> Refactor the `_set_csrf_cookie` method in the `CsrfViewMiddleware` class to be a stand alone, top level function.
-> Name the new function `_set_csrf_cookie`, exactly the same name as the existing method.
-> Update any existing `self._set_csrf_cookie` calls to work with the new `_set_csrf_cookie` function.
-
-A [simple python AST scanning script]() found 39 of these source files in the Django repository
-and packaged them up as benchmark tasks using
-the same format as Exercism exercises.
-
-The tool also created a unit test for each task
-which again uses the `ast` module to check that the refactor
-was performed roughly correctly:
-
-- The updated source file must parse as correct python, without `SyntaxError` or `IndentationError` exceptions. This is a powerful check that will surface any mechanical errors made when attempting to edit the source code.
-- The target method must now exist as a top-level function in the file.
-- This new top-level function must contain approximately the same number of AST nodes as the original class method. This ensures that GPT didn't elide code and replace it with comments.
-- The original class must still be present in the file, and it must be smaller by about the number of AST nodes of the method which was removed. This helps confirm that the method was removed from the class, without other significant modifications.
-
-To be clear, this is not a rigorous test that the refactor was performed correctly.
-But it does serve as a basic sanity check that the refactor was essentially done as a cut & paste, without eliding any code as comments.
-And it correlates well with other laziness metrics
-gathered during benchmarking like the
-introduction of new comments that contain "...".
-
-The result is a pragmatic
-[benchmark suite that provokes, detects and quantifies GPT coding laziness](https://github.com/paul-gauthier/refactor-benchmark).
-
-
 ## Unified diff editing format
 
 The design and implementation of aider's new unified diff editing format
@@ -374,8 +320,8 @@ def main(args):
 main(sys.argv[1:])
 ```
 
-GPT might produce a unified diff like the one below,
-which is missing the "show a greeting" comment line.
+**The diff below is missing the "show a greeting" comment line**,
+and represents a common type of mistake GPT might make.
 When we search for the *minus* `-` lines, we won't find them
 in the original file
 because of the missing comment.
@@ -419,6 +365,61 @@ feature:
 
 - **GPT-4 Turbo's performance drops from 65% down to 56%** on the refactoring benchmark.
 - **We see a 9X increase in editing errors** on aider's original Exercism benchmark.
+
+## Refactoring benchmark
+
+Aider has long used a
+[benchmark suite based on 133 Exercism python exercises]().
+But these are mostly small coding problems,
+usually requiring only a few dozen lines of code to solve.
+GPT-4 Turbo was typically only lazy on 2-3 of these exercises:
+the ones with the largest amount of code and which involved refactoring.
+Rather than fully completing the refactor, GPT would often
+just add a comment
+referencing old code like
+"...copy $USD formatting code here...".
+
+Based on this observation, I set out to build a benchmark based on refactoring
+a non-trivial amount of code found in fairly large source files.
+To do this, I used python's `ast` module to analyze the
+[Django repository](https://github.com/django/django).
+
+The goal was to search the Django repository to:
+
+- Find source files that contain class methods which are non-trivial, having more than 100 AST nodes in their implementation.
+- Focus on methods that are part of a larger class. We want to find methods which are less than half the code present in their containing class.
+- Find methods that do not make any use of their `self` parameter. This means they can be trivially refactored out of the class and turned into a stand-alone top-level function.
+
+We can then turn each of these source files into a task for the benchmark,
+using instructions like:
+
+> Refactor the `_set_csrf_cookie` method in the `CsrfViewMiddleware` class to be a stand alone, top level function.
+> Name the new function `_set_csrf_cookie`, exactly the same name as the existing method.
+> Update any existing `self._set_csrf_cookie` calls to work with the new `_set_csrf_cookie` function.
+
+A [simple python AST scanning script]() found 39 of these source files in the Django repository
+and packaged them up as benchmark tasks using
+the same format as Exercism exercises.
+
+The tool also created a unit test for each task
+which again uses the `ast` module to check that the refactor
+was performed roughly correctly:
+
+- The updated source file must parse as correct python, without `SyntaxError` or `IndentationError` exceptions. This is a powerful check that will surface any mechanical errors made when attempting to edit the source code.
+- The target method must now exist as a top-level function in the file.
+- This new top-level function must contain approximately the same number of AST nodes as the original class method. This ensures that GPT didn't elide code and replace it with comments.
+- The original class must still be present in the file, and it must be smaller by about the number of AST nodes of the method which was removed. This helps confirm that the method was removed from the class, without other significant modifications.
+
+To be clear, this is not a rigorous test that the refactor was performed correctly.
+But it does serve as a basic sanity check that the refactor was essentially done as a cut & paste, without eliding any code as comments.
+And it correlates well with other laziness metrics
+gathered during benchmarking like the
+introduction of new comments that contain "...".
+
+The result is a pragmatic
+[benchmark suite that provokes, detects and quantifies GPT coding laziness](https://github.com/paul-gauthier/refactor-benchmark).
+
+
 
 ## Conclusions and future work
 
