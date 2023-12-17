@@ -334,8 +334,8 @@ def process_fenced_block(lines, start_line_num):
     block = lines[start_line_num:line_num]
     block.append("@@ @@")
 
-    if block[0].startswith("--- "):
-        fname = block[0].split()[1]
+    if block[1].startswith("+++ "):
+        fname = block[1].split()[1]
         block = block[2:]
     else:
         fname = None

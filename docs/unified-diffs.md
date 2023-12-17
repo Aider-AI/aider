@@ -444,4 +444,4 @@ seems to be an important part of successful GPT code editing.
 Most LLMs will have already seen plenty of unified diffs
 in their normal training data, and so should be
 very amenable to fining tuning towards this
-particular style of diff.
+particular diff style.

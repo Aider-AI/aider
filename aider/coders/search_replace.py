@@ -584,7 +584,6 @@ def flexible_search_and_replace(texts, strategies):
         for preproc in preprocs:
             res = try_strategy(texts, strategy, preproc)
             if res:
-                dump(strategy, preproc)
                 return res
 
 
