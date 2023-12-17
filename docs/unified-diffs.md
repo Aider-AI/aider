@@ -4,15 +4,18 @@
 ![robot flowchart](../assets/udiffs.jpg)
 
 
-Aider now asks GPT-4 Turbo to use [unified diffs](https://www.gnu.org/software/diffutils/manual/html_node/Unified-Format.html) to edit your code when you request new features, improvements, bug fixes, test cases, etc.
-This new support for unified diffs massively reduces GPT-4 Turbo's habit of being a "lazy" coder.
+Aider now asks GPT-4 Turbo to use
+[unified diffs](https://www.gnu.org/software/diffutils/manual/html_node/Example-Unified.html)
+to edit your code when you request new features, improvements, bug fixes, test cases, etc.
+This new support for unified diffs massively reduces GPT-4 Turbo's bad habit of "lazy" coding.
 
 There are abundant anecdotes
 about GPT-4 Turbo writing half completed code filled with comments that give
 homework assignments to the user
 like "...omitted for brevity..." or "...add logic here...".
 Aider's new unified diff edit format significantly reduces this sort of lazy coding,
-producing much better quantitative scores on a new "laziness benchmark".
+as quantified by dramatically improved scores
+on a new "laziness benchmark".
 
 Before trying to reduce laziness, I needed a way to quantify and measure
 the problem.
@@ -35,21 +38,22 @@ This new laziness benchmark produced the following results with `gpt-4-1106-prev
 - **A system prompt based on widely circulated folklore only scored 15%, same as the baseline.** This experiment used the existing "SEARCH/REPLACE block" format with an additional prompt that claims the user is blind, has no hands, will tip $2000 and has suffered from "truncated code trauma".
 
 The older `gpt-4-0613` also did better on the laziness benchmark by using unified diffs.
-The benchmark was designed to work with large source code files, many of
-which exceeded GPT-4's 8k context window.
-This meant that 28% of tasks exhausted the context window and were marked as a fail,
-significantly dragging down GPT-4's performance on the benchmark.
+The benchmark was designed to work with large source code files, and
+many of them are too large to use with June GPT-4.
+**About 28% of the tasks exhausted the 8k context window** and were automatically
+marked as failures,
+significantly dragging down June GPT-4's performance on the benchmark.
 
-- **GPT-4's baseline was 26%** using aider's existing "SEARCH/REPLACE block" edit format.
-- **Aider's new unified diff edit format raised GPT-4's score to 59%**. 
+- **The June GPT-4's baseline was 26%** using aider's existing "SEARCH/REPLACE block" edit format.
+- **Aider's new unified diff edit format raised June GPT-4's score to 59%**. 
 
 Before settling on unified diffs,
 I explored many other approaches to stop GPT-4 Turbo from eliding code
 and replacing it with comments.
 These efforts included prompts about being tireless and diligent,
 use of OpenAI's function/tool calling capabilities and numerous variations on
-aider's existing editing formats and other diff-like formats.
-All in all, the results shared here reflect
+aider's existing editing formats, line number formats and other diff-like formats.
+The results shared here reflect
 an extensive investigation of possible solutions and
 a large number of benchmarking runs of numerous varied approaches against
 GPT-4 Turbo.
@@ -76,14 +80,14 @@ referencing old code like
 "...copy $USD formatting code here...".
 
 Based on this observation, I set out to build a benchmark based on refactoring
-a non-trivial amount of code from within fairly large source files.
+a non-trivial amount of code found in fairly large source files.
 To do this, I used python's `ast` module to analyze the
-[Django repository]().
+[Django repository](https://github.com/django/django).
 
 The goal was to search the Django repository to:
 
 - Find source files that contain class methods which are non-trivial, having more than 100 AST nodes in their implementation.
-- Focus on methods that are a smaller piece of a larger class, so they don't represent the bulk of the code in their class or the file. We want to find methods which are less than half the AST nodes present in their containing class.
+- Focus on methods that are part of a larger class. We want to find methods which are less than half the code present in their containing class.
 - Find methods that do not make any use of their `self` parameter. This means they can be trivially refactored out of the class and turned into a stand-alone top-level function.
 
 We can then turn each of these source files into a task for the benchmark,
@@ -112,7 +116,8 @@ And it correlates well with other laziness metrics
 gathered during benchmarking like the
 introduction of new comments that contain "...".
 
-The result is a pragmatic benchmark suite that provokes, detects and quantifies laziness.
+The result is a pragmatic
+[benchmark suite that provokes, detects and quantifies GPT coding laziness](https://github.com/paul-gauthier/refactor-benchmark).
 
 
 ## Unified diff editing format
@@ -126,12 +131,13 @@ GPT-4 code editing format:
 - HIGH LEVEL - Encourage GPT to structure edits as new versions of substantive code blocks (functions, methods, etc), not as a series of surgical/minimal changes to individual lines of code.
 - FLEXIBLE - Strive to be maximally flexible when interpreting GPT's edit instructions.
 
-A helpful shortcut here is to have empathy for GPT, and imagine you are on
-the other end of the conversation being tasked with specifying code edits.
+A helpful shortcut here is to have empathy for GPT, and imagine you
+are the one being tasked with specifying code edits.
 Would you want to hand type a properly escaped json data structure
 to specify surgical insert, delete, replace operations on specific code line numbers?
-Would you want a typo, off-by-one line number or flubbed escape character to trigger an error
-and force you to start over?
+Would you want
+to trigger an error and be forced to start over
+after any typo, off-by-one line number or flubbed escape character?
 
 GPT is quantitatively better at code editing when you reduce the
 burden of formatting edits by using a familiar, simple, high level
@@ -172,10 +178,11 @@ They need to *accurately* reflect the original and updated file contents,
 otherwise the patch command will fail to apply the changes.
 Having GPT specify changes in a well-known format that is usually consumed by a
 fairly rigid program like patch
-seems to discourage it from
-leaving informal editing instructions in comments
-and being lazy
-about writing all the needed code.
+seems to encourage rigor.
+GPT is less likely to
+leave informal editing instructions in comments
+or be lazy about writing all the needed code.
+
 
 With unified diffs, GPT acts more like it's writing textual data intended to be read by a program,
 not talking to a person.
@@ -215,8 +222,8 @@ A unified diff looks pretty much like the code it is modifying.
 The one complicated piece is the line numbers found at the start
 of each hunk that look something like this: `@@ -2,4 +3,5 @@`.
 This example is from a
-hunk that will change lines 2-4 in the original file
-into what will become lines 3-5 in the updated file.
+hunk that would change lines 2-4 in the original file
+into what would become lines 3-5 in the updated file.
 
 You've probably read a lot of unified diffs without ever
 caring about these line numbers,
@@ -276,14 +283,14 @@ def main(args):
 
 Simple, right?
 
-## Encourage high level edits
+### Encourage high level edits
 
 The example unified diffs we've seen so far have all been single line changes,
 which makes them pretty easy to read and understand.
 Consider this slightly more complex change, which renames the variable `n` to
 `number`:
 
-``` diff
+```diff
 @@ ... @@
 -def factorial(n):
 +def factorial(number):
@@ -302,7 +309,7 @@ change is not as succinct as the minimal diff above,
 but it is much easier to see two different coherent versions of the
 `factorial()` function.
 
-``` diff
+```diff
 @@ ... @@
 -def factorial(n):
 -    "compute factorial"
@@ -350,8 +357,8 @@ applied as edits to the source files.
 These imperfect diffs exhibit a variety of problems:
 
 - GPT forgets to include some semantically irrelevant lines or details. Often GPT forgets things like comments, docstrings, blank lines, etc. Or it skips over some code that it doesn't intend to change.
-- GPT forgets the leading *plus* `+` character to mark novel lines that it wants to add to the file, and incorrectly includes them with a leading *space* ` `.
-- GPT jumps ahead to a new part of the file without starting a new hunk with a `@@ ... @@` divider.
+- GPT forgets the leading *plus* `+` character to mark novel lines that it wants to add to the file. It incorrectly includes them with a leading *space* ` ` as if they were already in the file.
+- GPT jumps ahead to show edits to a different part of the file without starting a new hunk with a `@@ ... @@` divider.
 
 As an example of the first issue, consider this source code:
 
@@ -425,13 +432,13 @@ Any naive attempt to use actual unified diffs
 or any other strict diff format
 is certainly doomed,
 but the techniques described here and
-now incorporated into aider provide
+incorporated into aider provide
 a highly effective solution.
 
 There could be significant benefits to
 fine tuning models on
 the simpler, high level style of diffs that are described here.
-Dropping the line numbers and focusing on diffs of
+Dropping line numbers from the hunk headers and focusing on diffs of
 semantically coherent chunks of code
 seems to be an important part of successful GPT code editing.
 Most LLMs will have already seen plenty of unified diffs
