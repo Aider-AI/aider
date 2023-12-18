@@ -89,7 +89,7 @@ default output format of `git diff`:
      return
 ```
 
-Choosing such a popular output format means that GPT has
+Choosing such a popular format means that GPT has
 seen *many* examples in its training data.
 It's been trained to generate
 text that conforms to the unified diff syntax.
