@@ -31,35 +31,31 @@ by leaving a comment like
 
 This new laziness benchmark produced the following results with `gpt-4-1106-preview`:
 
-- **GPT-4 Turbo only scored 15% as a baseline** using aider's existing "SEARCH/REPLACE block" edit format. This confirms the anecdotes that GPT-4 Turbo is quite lazy when coding, and serves as a baseline for comparison.
+- **GPT-4 Turbo only scored 15% as a baseline** using aider's existing "SEARCH/REPLACE block" edit format.
 - **Aider's new unified diff edit format raised the score to 65%**.
-- **A system prompt based on widely circulated folklore performed same as the baseline.** This experiment used the existing "SEARCH/REPLACE block" format with an additional prompt that claims the user is blind, has no hands, will tip $2000 and has suffered from "truncated code trauma". This prompt scored only 15% on the refactor benchmark.
+- **A system prompt based on widely circulated folklore performed no better than baseline.** This experiment used the existing "SEARCH/REPLACE block" format with an additional prompt that claims the user is blind, has no hands, will tip $2000 and has suffered from "truncated code trauma". This prompt scored only 15% on the refactor benchmark.
 
 The older `gpt-4-0613` also did better on the laziness benchmark by using unified diffs.
 The benchmark was designed to work with large source code files, and
-many of them are too large to use with June GPT-4.
-**About 28% of the tasks exhausted the 8k context window** and were automatically
-marked as failures,
-significantly dragging down June GPT-4's performance on the benchmark.
+28% of them are too large to use with June GPT-4's 8k context window.
+This significantly harmed June GPT-4's performance on the benchmark.
 
 - **The June GPT-4's baseline was 26%** using aider's existing "SEARCH/REPLACE block" edit format.
 - **Aider's new unified diff edit format raised June GPT-4's score to 59%**. 
 
 Before settling on unified diffs,
-I explored many other approaches to stop GPT-4 Turbo from eliding code
-and replacing it with comments.
+I explored many other approaches.
 These efforts included prompts about being tireless and diligent,
 use of OpenAI's function/tool calling capabilities and numerous variations on
 aider's existing editing formats, line number formats and other diff-like formats.
 The results shared here reflect
-an extensive investigation of possible solutions and
-a large number of benchmarking runs of numerous varied approaches against
-GPT-4 Turbo.
+an extensive investigation and a large number of benchmarking runs of many approaches.
 
-The result is aider's new support for a unified diff like
-editing format which outperforms other potential solutions by a wide margin.
-The rest of this article will describe aider's new refactoring benchmark
-and the new unified diff editing format.
+The result is aider's new support for a unified diff editing format
+which outperforms other solutions by a wide margin.
+The rest of this article will describe
+the new unified diff editing format and
+aider's new refactoring benchmark.
 We will discuss some key design decisions involved in this new format,
 and evaluate their significance using ablation experiments.
 
@@ -78,7 +74,7 @@ GPT-4 code editing format:
 A helpful shortcut here is to have empathy for GPT, and imagine you
 are the one being tasked with specifying code edits.
 Would you want to hand type a properly escaped json data structure
-to specify surgical insert, delete, replace operations on specific code line numbers?
+to invoke surgical insert, delete, replace operations on specific code line numbers?
 Would you want
 to trigger an error and be forced to start over
 after any typo, off-by-one line number or flubbed escape character?
@@ -90,8 +86,8 @@ and flexible editing format.
 ### Choose a familiar editing format
 
 Unified diffs are perhaps the most commonly used format for showing
-how source code files have been changed.
-This is because it is the default output format of `git diff`:
+changes to code, because it's the 
+default output format of `git diff`:
 
 ```diff
 $ git diff hello.py
@@ -119,14 +115,13 @@ usually intended to be consumed by the
 [patch](https://www.gnu.org/software/diffutils/manual/html_node/Merging-with-patch.html)
 program.
 They need to *accurately* reflect the original and updated file contents,
-otherwise the patch command will fail to apply the changes.
+otherwise the patch command will fail.
 Having GPT specify changes in a well-known format that is usually consumed by a
 fairly rigid program like patch
 seems to encourage rigor.
 GPT is less likely to
 leave informal editing instructions in comments
 or be lazy about writing all the needed code.
-
 
 With unified diffs, GPT acts more like it's writing textual data intended to be read by a program,
 not talking to a person.
@@ -156,40 +151,22 @@ unpacked from the JSON container or the JSON decode just fails entirely.
 
 On the other hand, the core of the unified diff format is extremely simple.
 You include a hunk of the file that needs to be changed,
-with every line prefixed by ether a *space* ` `, a *plus* `+` or a *minus* `-`.
-These markers indicate an unchanged line, a new line to add or an existing line to remove.
-There is no escaping, and very little other structure needed
-to create a unified diff.
+with every line prefixed to indicate unchanged, new or deleted lines.
 
 A unified diff looks pretty much like the code it is modifying.
 
 The one complicated piece is the line numbers found at the start
-of each hunk that look something like this: `@@ -2,4 +3,5 @@`.
-This example is from a
-hunk that would change lines 2-4 in the original file
-into what would become lines 3-5 in the updated file.
-
-You've probably read a lot of unified diffs without ever
-caring about these line numbers,
-because the diffs are usually perfectly sensible without them.
-This is good news, because we're going to discard these numbers.
-
+of each hunk. They look something like this: `@@ -2,4 +3,5 @@`,
+which indicates that the hunk
+will change lines 2-4 in original file
+into lines 3-5 in the updated file.
 GPT is terrible at working accurately with source code line numbers.
 This is a general observation about any use of line
 numbers in editing formats,
 backed up by many quantitative benchmark
-experiments.
-Specifically regarding line numbers in unified diffs,
-GPT is frequently off-by-one, or labels a hunk as
-being line numbers 2-4 of the file but the hunk actually contains 6 lines, etc.
-GPT-4 isn't even close to being able to consistently
-produce valid
-line number headers.
-Doing so requires far too much attention to numerical details to ensure
-correctness and self-consistency.
 
-So aider tells GPT not to include line numbers.
-Instead, aider just interprets each hunk from the unified diffs
+So aider tells GPT not to include line numbers,
+and just interprets each hunk from the unified diffs
 as a search and replace operation:
 
 This diff:
@@ -272,35 +249,32 @@ but it is much easier to see two different coherent versions of the
 ```
 
 Aider's system prompt strongly encourages
-GPT to produce this kind of high level diff, and provides a few examples.
-GPT is much more successful at code editing
-with the addition of this "high level diff" prompting.
-It is better at producing correct diffs, which can be successfully
+GPT to produce these high level diffs.
+This prompt makes GPT better at producing correct diffs, which can be successfully
 applied to the original file.
 
 **Experiments without "high level diff" prompting
-measure a 30-50% increase in editing errors,**
+produce a 30-50% increase in editing errors,**
 where diffs fail to apply or apply incorrectly and
 produce invalid code.
-Each such editing error causes a round trip back to GPT,
-asking for better diffs.
-These extra round trips slow down the pair programming experience
-and increase token costs.
+When a patch fails, aider needs to ask GPT for an updated version of the diff.
+This takes time, costs tokens and sometimes fails to result in a successful edit
+even after multiple retries.
 
 There are probably a couple of reasons why high level diffs
 improve code editing performance:
 
-- It is easier to produce diffs that both correctly match the original code and correctly produce the intended new code. There is less risk of getting confused while generating a rapid fire series of minimal, surgical edits mixed into existing code.
+- It's easier to produce diffs that both correctly match the original code and correctly produces the intended new code. There is less risk of getting confused while generating a series of surgical edits mixed into existing code.
 - The high level hunks often contain more lines than a surgical version, so they are less likely to accidentally match unrelated parts of the original file. This is important because GPT can't reliably give us line numbers to specify exactly where in the file to make the change.
 
 ### Be flexible when applying edits
 
 GPT frequently makes errors when generating diffs, which
 can prevent them from being correctly
-applied as edits to the source files.
+applied to edit the code.
 These imperfect diffs exhibit a variety of problems:
 
-- GPT forgets to include some semantically irrelevant lines or details. Often GPT forgets things like comments, docstrings, blank lines, etc. Or it skips over some code that it doesn't intend to change.
+- GPT forgets to include semantically irrelevant details. Often GPT forgets things like comments, docstrings, blank lines, etc. Or it skips over some code that it doesn't intend to change.
 - GPT forgets the leading *plus* `+` character to mark novel lines that it wants to add to the file. It incorrectly includes them with a leading *space* ` ` as if they were already in the file.
 - GPT jumps ahead to show edits to a different part of the file without starting a new hunk with a `@@ ... @@` divider.
 
@@ -338,10 +312,9 @@ because of the missing comment.
 ```
 
 
-Aider tries to be very flexible when applying unified diffs,
-in order to handle all these sorts of defects.
-If a hunk doesn't apply cleanly, aider uses a number of strategies
-to try and apply the edit intended by GPT:
+Aider tries to be very flexible when applying diffs,
+in order to handle defects.
+If a hunk doesn't apply cleanly, aider uses a number of strategies:
 
 - Normalize the hunk, by taking the *minus* `-` and *space* ` ` lines as one version of the hunk and the *space* ` ` and *plus* `+` lines as a second version and doing an actual unified diff on them.
 - Try and discover new lines that GPT is trying to add but which it forgot to mark with *plus* `+` markers. This is done by diffing the *minus* `-` and *space* ` ` lines back against the original file.
@@ -349,17 +322,10 @@ to try and apply the edit intended by GPT:
 - Vary the size and offset of the "context window" of *space* ` ` lines from the hunk that are used to localize the edit to a specific part of the file.
 - Combine the above mechanisms to progressively become more permissive about how to apply the hunk.
 
-These flexible patching strategies are critical to successfully apply the
-unified diffs that GPT produces.
-Removing support for flexible patching
+These flexible patching strategies are critical, and 
+removing them
 radically increases the number of hunks which fail to apply.
-Each such editing error causes a round trip back to GPT,
-asking for better diffs.
-These extra round trips slow down the pair programming experience
-and increase token costs.
-
-**Experiments where flexible patching is disabled** quantify the importance of this
-feature:
+**Experiments where flexible patching is disabled show**:
 
 - **GPT-4 Turbo's performance drops from 65% down to 56%** on the refactoring benchmark.
 - **We see a 9X increase in editing errors** on aider's original Exercism benchmark.
