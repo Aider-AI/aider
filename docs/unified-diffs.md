@@ -27,9 +27,9 @@ This new laziness benchmark produced the following results with `gpt-4-1106-prev
 - **Aider's new unified diff edit format raised the score to 65%**.
 - **No benefit from the user being blind, without hands, tipping $2000 or fearing truncated code trauma.** These widely circulated folk remedies performed no better than baseline when added to the system prompt with aider's SEARCH/REPLACE edit format. Including *all* of them only scored at 15%
 
-The older `gpt-4-0613` also did better on the laziness benchmark by using unified diffs.
+The older `gpt-4-0613` also did better on the laziness benchmark using unified diffs.
 The benchmark was designed to work with large source code files, and
-28% of them are too large to use with June GPT-4's 8k context window.
+28% of them are too large to fit in June GPT-4's 8k context window.
 This significantly harmed the benchmark results.
 
 - **The June GPT-4's baseline was 26%** using aider's existing "SEARCH/REPLACE block" edit format.
@@ -86,7 +86,6 @@ default output format of `git diff`:
 @@ -1,5 +1,5 @@
  def main(args):
      # show a greeting
-
 -    print("Hello!")
 +    print("Goodbye!")
      return
@@ -149,7 +148,7 @@ numbers in editing formats,
 backed up by many quantitative benchmark experiments.
 
 You've probably ignored the line numbers in every diff you've seen?
-So aider tells GPT not to include line numbers,
+So aider tells GPT not to include them,
 and just interprets each hunk from the unified diffs
 as a search and replace operation:
 
@@ -159,19 +158,17 @@ This diff:
 @@ ... @@
  def main(args):
      # show a greeting
-
 -    print("Hello!")
 +    print("Goodbye!")
      return
 ```
 
-Means we want to search the original source file for all the
+Means we want to search the file for all the
 *space* ` ` and *minus* `-` lines from the hunk:
 
 ```python
 def main(args):
     # show a greeting
-
     print("Hello!")
     return
 ```
@@ -181,7 +178,6 @@ And then replace them with all the *space* ` ` and *plus* `+` lines:
 ```python
 def main(args):
     # show a greeting
-
     print("Goodbye!")
     return
 ```
@@ -267,7 +263,6 @@ import sys
 
 def main(args):
     # show a greeting
-
     print("Hello!")
     return
 
@@ -284,11 +279,9 @@ because of the missing comment.
 ```diff
 @@ ... @@
 -def main(args):
--
 -    print("Hello!")
 -    return
 +def main(args):
-+
 +    print("Goodbye!")
 +    return
 ```
