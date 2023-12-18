@@ -346,30 +346,27 @@ referencing old code like
 Based on this observation, I set out to build a benchmark based on refactoring
 a non-trivial amount of code found in fairly large source files.
 To do this, I used python's `ast` module to analyze the
-[Django repository](https://github.com/django/django).
-
-The goal was to search the Django repository to:
+[Django repository](https://github.com/django/django) to:
 
 - Find source files that contain class methods which are non-trivial, having more than 100 AST nodes in their implementation.
-- Focus on methods that are part of a larger class. We want to find methods which are less than half the code present in their containing class.
-- Find methods that do not make any use of their `self` parameter. This means they can be trivially refactored out of the class and turned into a stand-alone top-level function.
+- Focus on methods that are only part of a larger class, which has at least twice as much code as the method.
+- Find methods that don't use their `self` parameter, so they can be trivially refactored out of the class.
 
 We can then turn each of these source files into a task for the benchmark,
-using instructions like:
+where we ask GPT to:
 
 > Refactor the `_set_csrf_cookie` method in the `CsrfViewMiddleware` class to be a stand alone, top level function.
 > Name the new function `_set_csrf_cookie`, exactly the same name as the existing method.
 > Update any existing `self._set_csrf_cookie` calls to work with the new `_set_csrf_cookie` function.
 
-A [simple python AST scanning script]() found 39 of these source files in the Django repository
-and packaged them up as benchmark tasks using
-the same format as Exercism exercises.
-
-The tool also created a unit test for each task
-which again uses the `ast` module to check that the refactor
+A [simple python AST scanning script](https://github.com/paul-gauthier/aider/blob/main/benchmark/refactor_tools.py)
+found 39 of these source files
+and packaged them up as benchmark tasks.
+Each task has a test
+which uses the `ast` module to check that the refactor
 was performed roughly correctly:
 
-- The updated source file must parse as correct python, without `SyntaxError` or `IndentationError` exceptions. This is a powerful check that will surface any mechanical errors made when attempting to edit the source code.
+- The updated source file must parse as valid python, to surface misapplied edits which corrupt the file.
 - The target method must now exist as a top-level function in the file.
 - This new top-level function must contain approximately the same number of AST nodes as the original class method. This ensures that GPT didn't elide code and replace it with comments.
 - The original class must still be present in the file, and it must be smaller by about the number of AST nodes of the method which was removed. This helps confirm that the method was removed from the class, without other significant modifications.
@@ -391,11 +388,11 @@ Based on the refactor benchmark results,
 aider's new unified diff format seems very effective at stopping
 GPT-4 Turbo from being a lazy coder.
 
-Unified diffs were one of the very first edit formats I tried
-when first building aider.
+Unified diffs was one of the very first edit formats I tried
+when originally building aider.
 I think a lot of other AI coding assistant projects have also
 tried going down this path.
-It seems that any naive or direct use of structure diff formats
+It seems like any naive or direct use of structured diff formats
 is pretty much doomed to failure.
 But the techniques described here and
 incorporated into aider provide
