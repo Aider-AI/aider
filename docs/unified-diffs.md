@@ -104,8 +104,8 @@ usually intended to be consumed by the
 program.
 They need to *accurately* reflect the original and updated file contents,
 otherwise the patch command will fail.
-Having GPT specify changes in a well-known format that is usually consumed by a
-fairly rigid program like patch
+Having GPT specify changes in a format that is usually consumed by a
+rigid program like patch
 seems to encourage rigor.
 GPT is less likely to
 leave informal editing instructions in comments
@@ -119,11 +119,11 @@ not talking to a person.
 
 Aider's [previous benchmark results](https://aider.chat/docs/benchmarks.html) made
 it clear that simple editing formats
-work much better than complex ones.
+work best.
 Even though OpenAI provides extensive support for
 structured formats like json and function calls,
 GPT is worse at editing code if you use them.
-I repeated these and many other similar benchmarks against GPT-4 Turbo,
+I repeated these and other similar benchmarks against GPT-4 Turbo,
 and again reached these same conclusions.
 
 Informally, this is probably because stuffing *source code* into JSON is complicated
