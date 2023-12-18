@@ -11,7 +11,7 @@ This massively reduces GPT-4 Turbo's bad habit of "lazy" coding,
 where it writes half completed code filled with comments
 like "...add logic here...".
 
-Aider's also has a new benchmarking suite 
+Aider also has a new benchmarking suite 
 designed to both provoke and quantify lazy coding.
 It consists of
 39 python refactoring tasks,
