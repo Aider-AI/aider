@@ -12,22 +12,22 @@ This new support for unified diffs massively reduces GPT-4 Turbo's bad habit of 
 There are abundant anecdotes
 about GPT-4 Turbo writing half completed code filled with comments that give
 homework assignments to the user
-like "...omitted for brevity..." or "...add logic here...".
+like
+"...add logic here..."
+or
+"...omitted for brevity...".
 Aider's new unified diff edit format significantly reduces this sort of lazy coding,
 as quantified by dramatically improved scores
-on a new "laziness benchmark".
+on a new "laziness" benchmark suite.
 
-Before trying to reduce laziness, I needed a way to quantify and measure
-the problem.
-I developed a new
-benchmarking suite designed to both provoke and quantify lazy coding.
+Aider's new benchmarking suite is
+designed to both provoke and quantify lazy coding.
 It consists of 39 python refactoring tasks,
 which ask GPT to remove a non-trivial method from a class and make it
 a stand alone function.
-
 GPT-4 Turbo is prone to being lazy on this sort of task, because it's mostly a
 "cut & paste" of code from one place in a file to another.
-GPT often creates the new function with a body that is empty except for
+Rather than writing out the code, GPT often just leaves
 a comment like
 "...include the body of the original method..."
 
@@ -35,7 +35,7 @@ This new laziness benchmark produced the following results with `gpt-4-1106-prev
 
 - **GPT-4 Turbo only scored 15% as a baseline** using aider's existing "SEARCH/REPLACE block" edit format. This confirms the anecdotes that GPT-4 Turbo is quite lazy when coding, and serves as a baseline for comparison.
 - **Aider's new unified diff edit format raised the score to 65%**.
-- **A system prompt based on widely circulated folklore only scored 15%, same as the baseline.** This experiment used the existing "SEARCH/REPLACE block" format with an additional prompt that claims the user is blind, has no hands, will tip $2000 and has suffered from "truncated code trauma".
+- **A system prompt based on widely circulated folklore performed same as the baseline.** This experiment used the existing "SEARCH/REPLACE block" format with an additional prompt that claims the user is blind, has no hands, will tip $2000 and has suffered from "truncated code trauma". This prompt scored only 15% on the refactor benchmark.
 
 The older `gpt-4-0613` also did better on the laziness benchmark by using unified diffs.
 The benchmark was designed to work with large source code files, and
@@ -423,22 +423,23 @@ The result is a pragmatic
 
 ## Conclusions and future work
 
-Aider's new unified diff format seems very effective at stopping
+Based on the refactor benchmark results,
+aider's new unified diff format seems very effective at stopping
 GPT-4 Turbo from being a lazy coder.
 
-I suspect that anyone who has tried to have GPT edit code
-started out asking for diffs of some kind.
-I know I did.
-Any naive attempt to use actual unified diffs
-or any other strict diff format
-is certainly doomed,
-but the techniques described here and
+Unified diffs were one of the very first edit formats I tried
+when first building aider.
+I think a lot of other AI coding assistant projects have also
+tried going down this path.
+It seems that any naive or direct use of structure diff formats
+is pretty much doomed to failure.
+But the techniques described here and
 incorporated into aider provide
-a highly effective solution.
+a highly effective way to harness GPT's knowledge of unified diffs.
 
 There could be significant benefits to
 fine tuning models on
-the simpler, high level style of diffs that are described here.
+aider's simple, high level style of unified diffs.
 Dropping line numbers from the hunk headers and focusing on diffs of
 semantically coherent chunks of code
 seems to be an important part of successful GPT code editing.
