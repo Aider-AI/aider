@@ -321,7 +321,7 @@ def plot_refactoring(df):
                 color = "#b3d1e6"
                 label = "Unified diffs"
             elif fmt == "folk":
-                label = "Folk remedy prompt (blind, no hands, etc)"
+                label = "Folk remedy prompt (blind, no hands, tip $2000, etc)"
                 color = "#b3e6a8"
                 hatch = "////"
 
