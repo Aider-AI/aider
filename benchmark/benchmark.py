@@ -77,6 +77,9 @@ def show_stats(dirnames, graphs):
         elif row.model.startswith(gpt4):
             row.model = gpt4 + "\n" + row.model[len(gpt4) :]
 
+        if "folk" in row.dir_name:
+            row.edit_format = "folk"
+
         # if row.model == "gpt-4\n-1106-preview":
         #    row.model += "\n(preliminary)"
 
@@ -116,15 +119,16 @@ def show_stats(dirnames, graphs):
         # use the average in the main bar
         rows[repeat_row]["pass_rate_2"] = repeat_avg
     else:
-        repeat_hi = repeat_lo = repeat_avg = None
+        repeat_hi = repeat_lo = repeat_avg = None  # noqa: F841
 
     df = pd.DataFrame.from_records(rows)
     df.sort_values(by=["model", "edit_format"], inplace=True)
 
     # dump(df)
     if graphs:
-        plot_timing(df)
-        plot_outcomes(df, repeats, repeat_hi, repeat_lo, repeat_avg)
+        # plot_timing(df)
+        # plot_outcomes(df, repeats, repeat_hi, repeat_lo, repeat_avg)
+        plot_refactoring(df)
 
 
 def plot_timing(df):
@@ -269,6 +273,88 @@ def plot_outcomes(df, repeats, repeat_hi, repeat_lo, repeat_avg):
     ax.set_ylabel("Percent of exercises completed successfully")
     # ax.set_xlabel("Model")
     ax.set_title("GPT Code Editing Skill\n(percent coding tasks correct)")
+    ax.legend(
+        title="Edit Format",
+        loc="upper left",
+        # bbox_to_anchor=(0.95, 0.95),
+    )
+    ax.set_ylim(top=100)
+
+    plt.tight_layout()
+    plt.savefig("tmp.svg")
+    imgcat(fig)
+
+    # df.to_csv("tmp.benchmarks.csv")
+
+
+def plot_refactoring(df):
+    tries = [df.groupby(["model", "edit_format"])["pass_rate_1"].mean()]
+
+    plt.rcParams["hatch.linewidth"] = 0.5
+    plt.rcParams["hatch.color"] = "#444444"
+
+    from matplotlib import rc
+
+    rc("font", **{"family": "sans-serif", "sans-serif": ["Helvetica"], "size": 10})
+
+    fig, ax = plt.subplots(figsize=(6, 4))
+    ax.grid(axis="y", zorder=0, lw=0.2)
+
+    zorder = 1
+    for grouped in tries:
+        zorder += 1
+        df = grouped.unstack()
+        num_models, num_formats = df.shape
+
+        pos = np.array(range(num_models))
+        width = 0.8 / num_formats
+
+        formats = df.columns
+        models = df.index
+
+        for i, fmt in enumerate(formats):
+            hatch = ""
+
+            if fmt == "diff":
+                color = "#b3e6a8"
+                label = "Baseline (search/replace blocks)"
+            elif fmt == "udiff":
+                color = "#b3d1e6"
+                label = "Unified diffs"
+            elif fmt == "folk":
+                label = "Folk remedy prompt (blind, no hands, ...)"
+                color = "#b3e6a8"
+                hatch = "////"
+
+            if zorder > 1:
+                edge = dict(
+                    edgecolor="#ffffff",
+                    linewidth=1.5,
+                )
+            else:
+                edge = dict()
+            if zorder == 2:
+                edge["label"] = label
+
+            rects = ax.bar(
+                pos + i * width,
+                df[fmt],
+                width * 0.95,
+                color=color,
+                hatch=hatch,
+                zorder=zorder,
+                **edge,
+            )
+
+            if zorder == 2:
+                ax.bar_label(rects, padding=4, labels=[f"{v:.0f}%" for v in df[fmt]], size=6)
+
+    ax.set_xticks([p + 0.5 * width for p in pos])
+    ax.set_xticklabels(models)
+
+    ax.set_ylabel("Percent of exercises completed successfully")
+    # ax.set_xlabel("Model")
+    ax.set_title('Refactoring "Laziness" Benchmark\n(percent coding tasks correct)')
     ax.legend(
         title="Edit Format",
         loc="upper left",

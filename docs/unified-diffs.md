@@ -1,7 +1,7 @@
 
 # Fixing GPT-4 Turbo laziness with unified diffs
 
-![robot flowchart](../assets/udiffs.jpg)
+![robot flowchart](../assets/benchmarks-udiff.svg)
 
 
 Aider now asks GPT-4 Turbo to use
@@ -15,10 +15,8 @@ Aider also has a new benchmarking suite
 designed to both provoke and quantify lazy coding.
 It consists of
 39 python refactoring tasks,
-which ask GPT to remove a non-trivial method from a class and make it
-a stand alone function.
-GPT-4 Turbo is prone to being lazy on this sort of task,
-often leaving comments like
+which tend to make GPT-4 Turbo very lazy,
+often resulting in comments like
 "...include the original method body...".
 
 This new laziness benchmark produced the following results with `gpt-4-1106-preview`:
@@ -56,8 +54,8 @@ and evaluate their significance using ablation experiments.
 ## Unified diff editing format
 
 The design and implementation of aider's new unified diff editing format
-helped clarify some general principles, which I think are applicable to any effective
-GPT-4 code editing format:
+helped clarify some general principles
+for GPT-4 code editing:
 
 - FAMILIAR - Choose an edit format that GPT is already familiar with.
 - SIMPLE - Choose a simple format that avoids escaping, syntactic overhead and brittle specifiers like line numbers or line counts.
@@ -68,9 +66,7 @@ A helpful shortcut here is to have empathy for GPT, and imagine you
 are the one being asked to specify code edits.
 Would you want to hand type a properly escaped json data structure
 to invoke surgical insert, delete, replace operations on specific code line numbers?
-How would you feel about
-errors firing
-after any typo, off-by-one line number or flubbed escape sequence?
+How would you feel about any mistake causing all your work to be discarded?
 
 GPT is quantitatively better at code editing when you reduce the
 burden of formatting edits by using a familiar, simple, high level
@@ -93,7 +89,7 @@ default output format of `git diff`:
      return
 ```
 
-Choosing such a familiar, popular output format means that GPT has
+Choosing such a popular output format means that GPT has
 seen *many* examples in its training data.
 It's been trained to generate
 text that conforms to the unified diff syntax.
