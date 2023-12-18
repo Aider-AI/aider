@@ -146,7 +146,7 @@ of each hunk. They look something like this: `@@ -2,4 +3,5 @@`.
 GPT is terrible at working with source code line numbers.
 This is a general observation about *any* use of line
 numbers in editing formats,
-backed up by many quantitative benchmark
+backed up by many quantitative benchmark experiments.
 
 You've probably ignored the line numbers in every diff you've seen?
 So aider tells GPT not to include line numbers,
