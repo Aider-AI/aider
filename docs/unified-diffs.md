@@ -6,8 +6,8 @@
 
 Aider now asks GPT-4 Turbo to use
 [unified diffs](https://www.gnu.org/software/diffutils/manual/html_node/Example-Unified.html)
-to edit your code when you request new features, improvements, bug fixes, test cases, etc.
-Using unified diffs massively reduces GPT-4 Turbo's bad habit of "lazy" coding,
+to edit your code.
+This massively reduces GPT-4 Turbo's bad habit of "lazy" coding,
 where it writes half completed code filled with comments
 like "...add logic here...".
 
@@ -25,29 +25,31 @@ This new laziness benchmark produced the following results with `gpt-4-1106-prev
 
 - **GPT-4 Turbo only scored 15% as a baseline** using aider's existing "SEARCH/REPLACE block" edit format.
 - **Aider's new unified diff edit format raised the score to 65%**.
-- **No benefit from the user being blind, without hands, tipping $2000 or fearing truncated code trauma.** These widely circulated folk remedies performed no better than baseline when added to the system prompt with aider's SEARCH/REPLACE edit format. Including *all* of them only scored at 15%
+- **No benefit from the user being blind, without hands, tipping $2000 or fearing truncated code trauma.** These widely circulated folk remedies performed no better than baseline when added to the system prompt with aider's SEARCH/REPLACE edit format. Including *all* of them still only scored at 15%
 
-The older `gpt-4-0613` also did better on the laziness benchmark using unified diffs.
-The benchmark was designed to work with large source code files, and
-28% of them are too large to fit in June GPT-4's 8k context window.
-This significantly harmed the benchmark results.
+The older `gpt-4-0613` also did better on the laziness benchmark using unified diffs:
 
 - **The June GPT-4's baseline was 26%** using aider's existing "SEARCH/REPLACE block" edit format.
 - **Aider's new unified diff edit format raised June GPT-4's score to 59%**. 
+- The benchmark was designed to use large files, and
+28% of them are too large to fit in June GPT-4's 8k context window.
+This significantly harmed the benchmark results.
 
 Before settling on unified diffs,
-I explored many other approaches.
-These efforts included prompts about being tireless and diligent,
-use of OpenAI's function/tool calling capabilities and numerous variations on
-aider's existing editing formats, line number formats and other diff-like formats.
+I explored many other approaches including:
+prompts about being tireless and diligent,
+OpenAI's function/tool calling capabilities,
+numerous variations on aider's existing editing formats,
+line number based formats
+and other diff-like formats.
 The results shared here reflect
-an extensive investigation and a large number of benchmark evaluations of many approaches.
+an extensive investigation and benchmark evaluations of many approaches.
 
-The result is aider's new support for a unified diff editing format,
-which outperforms other solutions by a wide margin.
+Aider's new unified diff editing format
+outperforms other solutions by a wide margin.
 The rest of this article will describe
 aider's new editing format and refactoring benchmark.
-We will discuss some key design decisions,
+It will highlight some key design decisions,
 and evaluate their significance using ablation experiments.
 
 
@@ -148,7 +150,7 @@ numbers in editing formats,
 backed up by many quantitative benchmark experiments.
 
 You've probably ignored the line numbers in every diff you've seen?
-So aider tells GPT not to include them,
+So aider tells GPT not to even include them,
 and just interprets each hunk from the unified diffs
 as a search and replace operation:
 
@@ -163,8 +165,8 @@ This diff:
      return
 ```
 
-Means we want to search the file for all the
-*space* ` ` and *minus* `-` lines from the hunk:
+Means we need to search the file for the
+*space* ` ` and *minus* `-` lines:
 
 ```python
 def main(args):
@@ -173,7 +175,7 @@ def main(args):
     return
 ```
 
-And then replace them with all the *space* ` ` and *plus* `+` lines:
+And replace them with the *space* ` ` and *plus* `+` lines:
 
 ```python
 def main(args):
@@ -195,7 +197,6 @@ Consider this slightly more complex change, which renames the variable `n` to
 @@ ... @@
 -def factorial(n):
 +def factorial(number):
-     "compute factorial"
 -    if n == 0:
 +    if number == 0:
          return 1
@@ -212,13 +213,11 @@ but it is much easier to see two different coherent versions of the
 ```diff
 @@ ... @@
 -def factorial(n):
--    "compute factorial"
 -    if n == 0:
 -        return 1
 -    else:
 -        return n * factorial(n-1)
 +def factorial(number):
-+    "compute factorial"
 +    if number == 0:
 +        return 1
 +    else:
