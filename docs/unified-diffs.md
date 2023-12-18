@@ -65,11 +65,11 @@ GPT-4 code editing format:
 - FLEXIBLE - Strive to be maximally flexible when interpreting GPT's edit instructions.
 
 A helpful shortcut here is to have empathy for GPT, and imagine you
-are the one being tasked with specifying code edits.
+are the one being asked to specify code edits.
 Would you want to hand type a properly escaped json data structure
 to invoke surgical insert, delete, replace operations on specific code line numbers?
-Would it be ok to
-trigger an error and be forced to start over
+How would you feel about
+errors firing
 after any typo, off-by-one line number or flubbed escape sequence?
 
 GPT is quantitatively better at code editing when you reduce the
@@ -139,7 +139,6 @@ On the other hand, the core of the unified diff format is very simple.
 You include a hunk of the file that needs to be changed,
 with every line prefixed by a character
 to indicate unchanged, new or deleted lines.
-
 A unified diff looks pretty much like the code it is modifying.
 
 The one complicated piece is the line numbers found at the start
@@ -150,7 +149,7 @@ numbers in editing formats,
 backed up by many quantitative benchmark experiments.
 
 You've probably ignored the line numbers in every diff you've seen?
-So aider tells GPT not to even include them,
+Aider tells GPT not to include them,
 and just interprets each hunk from the unified diffs
 as a search and replace operation:
 
