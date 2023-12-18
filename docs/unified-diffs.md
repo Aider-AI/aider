@@ -7,38 +7,30 @@
 Aider now asks GPT-4 Turbo to use
 [unified diffs](https://www.gnu.org/software/diffutils/manual/html_node/Example-Unified.html)
 to edit your code when you request new features, improvements, bug fixes, test cases, etc.
-This new support for unified diffs massively reduces GPT-4 Turbo's bad habit of "lazy" coding.
+Using unified diffs massively reduces GPT-4 Turbo's bad habit of "lazy" coding,
+where it writes half completed code filled with comments
+like "...add logic here...".
 
-There are abundant anecdotes
-about GPT-4 Turbo writing half completed code filled with comments that give
-homework assignments to the user
-like
-"...add logic here..."
-or
-"...omitted for brevity...".
-Aider's new unified diff edit format significantly reduces this sort of lazy coding,
-as quantified by dramatically improved scores
-on a new "laziness" benchmark suite.
-
-Aider's new benchmarking suite is
+Aider's also has a new benchmarking suite 
 designed to both provoke and quantify lazy coding.
-It consists of 39 python refactoring tasks,
+It consists of
+39 python refactoring tasks,
 which ask GPT to remove a non-trivial method from a class and make it
 a stand alone function.
-GPT-4 Turbo is prone to being lazy on this sort of copy/paste task,
-by leaving a comment like
-"...include the body of the original method..."
+GPT-4 Turbo is prone to being lazy on this sort of task,
+often leaving comments like
+"...include the original method body...".
 
 This new laziness benchmark produced the following results with `gpt-4-1106-preview`:
 
 - **GPT-4 Turbo only scored 15% as a baseline** using aider's existing "SEARCH/REPLACE block" edit format.
 - **Aider's new unified diff edit format raised the score to 65%**.
-- **A system prompt based on widely circulated folklore performed no better than baseline.** This experiment used the existing "SEARCH/REPLACE block" format with an additional prompt that claims the user is blind, has no hands, will tip $2000 and has suffered from "truncated code trauma". This prompt scored only 15% on the refactor benchmark.
+- **No benefit from the user being blind, without hands, tipping $2000 or fearing truncated code trauma.** These widely circulated folk remedies performed no better than baseline when added to the system prompt with aider's SEARCH/REPLACE edit format. Including *all* of them only scored at 15%
 
 The older `gpt-4-0613` also did better on the laziness benchmark by using unified diffs.
 The benchmark was designed to work with large source code files, and
 28% of them are too large to use with June GPT-4's 8k context window.
-This significantly harmed June GPT-4's performance on the benchmark.
+This significantly harmed the benchmark results.
 
 - **The June GPT-4's baseline was 26%** using aider's existing "SEARCH/REPLACE block" edit format.
 - **Aider's new unified diff edit format raised June GPT-4's score to 59%**. 
@@ -49,14 +41,13 @@ These efforts included prompts about being tireless and diligent,
 use of OpenAI's function/tool calling capabilities and numerous variations on
 aider's existing editing formats, line number formats and other diff-like formats.
 The results shared here reflect
-an extensive investigation and a large number of benchmarking runs of many approaches.
+an extensive investigation and a large number of benchmark evaluations of many approaches.
 
-The result is aider's new support for a unified diff editing format
+The result is aider's new support for a unified diff editing format,
 which outperforms other solutions by a wide margin.
 The rest of this article will describe
-the new unified diff editing format and
-aider's new refactoring benchmark.
-We will discuss some key design decisions involved in this new format,
+aider's new editing format and refactoring benchmark.
+We will discuss some key design decisions,
 and evaluate their significance using ablation experiments.
 
 
@@ -75,9 +66,9 @@ A helpful shortcut here is to have empathy for GPT, and imagine you
 are the one being tasked with specifying code edits.
 Would you want to hand type a properly escaped json data structure
 to invoke surgical insert, delete, replace operations on specific code line numbers?
-Would you want
-to trigger an error and be forced to start over
-after any typo, off-by-one line number or flubbed escape character?
+Would it be ok to
+trigger an error and be forced to start over
+after any typo, off-by-one line number or flubbed escape sequence?
 
 GPT is quantitatively better at code editing when you reduce the
 burden of formatting edits by using a familiar, simple, high level
@@ -86,12 +77,10 @@ and flexible editing format.
 ### Choose a familiar editing format
 
 Unified diffs are perhaps the most commonly used format for showing
-changes to code, because it's the 
+code edits, because it's the 
 default output format of `git diff`:
 
 ```diff
-$ git diff hello.py
-...
 --- a/hello.py
 +++ b/hello.py
 @@ -1,5 +1,5 @@
@@ -104,11 +93,9 @@ $ git diff hello.py
 ```
 
 Choosing such a familiar, popular output format means that GPT has
-seen *many* examples in its training data.
-GPT has therefore been extensively trained to generate
+seen *many* examples in its training dat.
+It's been trained to generate
 text that conforms to the unified diff syntax.
-We won't need to provide many details and examples
-in the system prompt, as it knows this format by name.
 
 Unified diffs are
 usually intended to be consumed by the
@@ -140,31 +127,28 @@ and again reached these same conclusions.
 
 Informally, this is probably because stuffing *source code* into JSON is complicated
 and error prone.
-It likely takes a lot of the model's attention to escape and wrap code
-in JSON containers.
 Wrapping the python code
 `print("On Windows use \"C:\\\"")`
-as valid json is pretty painful and error prone:
-`"print(\\"On Windows use \\"C:\\\\\\"\\")"`
+as valid json is pretty painful and error prone.
 Due to escaping issues GPT's code is often syntactically incorrect when it's
-unpacked from the JSON container or the JSON decode just fails entirely.
+unpacked from JSON,
+or the JSON decode just fails entirely.
 
-On the other hand, the core of the unified diff format is extremely simple.
+On the other hand, the core of the unified diff format is very simple.
 You include a hunk of the file that needs to be changed,
-with every line prefixed to indicate unchanged, new or deleted lines.
+with every line prefixed by a character
+to indicate unchanged, new or deleted lines.
 
 A unified diff looks pretty much like the code it is modifying.
 
 The one complicated piece is the line numbers found at the start
-of each hunk. They look something like this: `@@ -2,4 +3,5 @@`,
-which indicates that the hunk
-will change lines 2-4 in original file
-into lines 3-5 in the updated file.
-GPT is terrible at working accurately with source code line numbers.
-This is a general observation about any use of line
+of each hunk. They look something like this: `@@ -2,4 +3,5 @@`.
+GPT is terrible at working with source code line numbers.
+This is a general observation about *any* use of line
 numbers in editing formats,
 backed up by many quantitative benchmark
 
+You've probably ignored the line numbers in every diff you've seen?
 So aider tells GPT not to include line numbers,
 and just interprets each hunk from the unified diffs
 as a search and replace operation:
@@ -257,25 +241,23 @@ applied to the original file.
 produce a 30-50% increase in editing errors,**
 where diffs fail to apply or apply incorrectly and
 produce invalid code.
-When a patch fails, aider needs to ask GPT for an updated version of the diff.
+When a patch fails, aider needs to ask GPT for a corrected version of the diff.
 This takes time, costs tokens and sometimes fails to result in a successful edit
 even after multiple retries.
 
 There are probably a couple of reasons why high level diffs
-improve code editing performance:
+help:
 
-- It's easier to produce diffs that both correctly match the original code and correctly produces the intended new code. There is less risk of getting confused while generating a series of surgical edits mixed into existing code.
-- The high level hunks often contain more lines than a surgical version, so they are less likely to accidentally match unrelated parts of the original file. This is important because GPT can't reliably give us line numbers to specify exactly where in the file to make the change.
+- It's easier to produce diffs that both correctly match the original code and correctly produces the intended new code. There is less risk of getting confused compared to generating a series of surgical edits mixed into existing code.
+- High level hunks often contain more lines than a surgical hunk, so they are less likely to accidentally match unrelated parts of code. This is helpful because GPT can't reliably give us line numbers to specify exactly where in the file to make changes.
 
 ### Be flexible when applying edits
 
-GPT frequently makes errors when generating diffs, which
-can prevent them from being correctly
-applied to edit the code.
-These imperfect diffs exhibit a variety of problems:
+GPT frequently makes imperfect diffs that won't apply cleanly.
+They exhibit a variety of problems:
 
 - GPT forgets to include semantically irrelevant details. Often GPT forgets things like comments, docstrings, blank lines, etc. Or it skips over some code that it doesn't intend to change.
-- GPT forgets the leading *plus* `+` character to mark novel lines that it wants to add to the file. It incorrectly includes them with a leading *space* ` ` as if they were already in the file.
+- GPT forgets the leading *plus* `+` character to mark novel lines that it wants to add to the file. It incorrectly includes them with a leading *space* ` ` as if they were already there.
 - GPT jumps ahead to show edits to a different part of the file without starting a new hunk with a `@@ ... @@` divider.
 
 As an example of the first issue, consider this source code:
@@ -325,6 +307,7 @@ If a hunk doesn't apply cleanly, aider uses a number of strategies:
 These flexible patching strategies are critical, and 
 removing them
 radically increases the number of hunks which fail to apply.
+
 **Experiments where flexible patching is disabled show**:
 
 - **GPT-4 Turbo's performance drops from 65% down to 56%** on the refactoring benchmark.
@@ -335,41 +318,37 @@ radically increases the number of hunks which fail to apply.
 Aider has long used a
 [benchmark suite based on 133 Exercism python exercises]().
 But these are mostly small coding problems,
-usually requiring only a few dozen lines of code to solve.
-GPT-4 Turbo was typically only lazy on 2-3 of these exercises:
-the ones with the largest amount of code and which involved refactoring.
-Rather than fully completing the refactor, GPT would often
-just add a comment
-referencing old code like
-"...copy $USD formatting code here...".
+usually requiring only a few dozen lines of code.
+GPT-4 Turbo is typically only lazy on 2-3 of these exercises:
+the ones with the most code and which involve refactoring.
 
 Based on this observation, I set out to build a benchmark based on refactoring
-a non-trivial amount of code found in fairly large source files.
+a non-trivial amount of code found in fairly large files.
 To do this, I used python's `ast` module to analyze the
 [Django repository](https://github.com/django/django) to:
 
 - Find source files that contain class methods which are non-trivial, having more than 100 AST nodes in their implementation.
-- Focus on methods that are only part of a larger class, which has at least twice as much code as the method.
+- Focus on methods that are part of a larger class, which has at least twice as much code as the method itself.
 - Find methods that don't use their `self` parameter, so they can be trivially refactored out of the class.
 
 We can then turn each of these source files into a task for the benchmark,
-where we ask GPT to:
+where we ask GPT to do something like:
 
 > Refactor the `_set_csrf_cookie` method in the `CsrfViewMiddleware` class to be a stand alone, top level function.
 > Name the new function `_set_csrf_cookie`, exactly the same name as the existing method.
 > Update any existing `self._set_csrf_cookie` calls to work with the new `_set_csrf_cookie` function.
 
 A [simple python AST scanning script](https://github.com/paul-gauthier/aider/blob/main/benchmark/refactor_tools.py)
-found 39 of these source files
+found 39 suitable files
 and packaged them up as benchmark tasks.
 Each task has a test
-which uses the `ast` module to check that the refactor
+that checks if refactor
 was performed roughly correctly:
 
 - The updated source file must parse as valid python, to surface misapplied edits which corrupt the file.
 - The target method must now exist as a top-level function in the file.
 - This new top-level function must contain approximately the same number of AST nodes as the original class method. This ensures that GPT didn't elide code and replace it with comments.
-- The original class must still be present in the file, and it must be smaller by about the number of AST nodes of the method which was removed. This helps confirm that the method was removed from the class, without other significant modifications.
+- The original class must still be present in the file, and it must be smaller by about the number of AST nodes in the method which was removed. This helps confirm that the method was removed from the class, without other significant modifications.
 
 To be clear, this is not a rigorous test that the refactor was performed correctly.
 But it does serve as a basic sanity check that the refactor was essentially done as a cut & paste, without eliding any code as comments.
