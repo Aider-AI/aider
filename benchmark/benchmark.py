@@ -69,19 +69,18 @@ def show_stats(dirnames, graphs):
             # remember this row, so we can update it with the repeat_avg
             repeat_row = len(rows)
 
-        gpt35 = "gpt-3.5-turbo"
-        gpt4 = "gpt-4"
-
-        if row.model.startswith(gpt35):
-            row.model = gpt35 + "\n" + row.model[len(gpt35) :]
-        elif row.model.startswith(gpt4):
-            row.model = gpt4 + "\n" + row.model[len(gpt4) :]
+        # gpt35 = "gpt-3.5-turbo"
+        # gpt4 = "gpt-4"
+        # if row.model.startswith(gpt35):
+        #    row.model = gpt35 + "\n" + row.model[len(gpt35) :]
+        # elif row.model.startswith(gpt4):
+        #    row.model = gpt4 + "\n" + row.model[len(gpt4) :]
 
         if "folk" in row.dir_name:
             row.edit_format = "folk"
 
-        # if row.model == "gpt-4\n-1106-preview":
-        #    row.model += "\n(preliminary)"
+        if row.model == "gpt-4-0613":
+            row.model += "\n(8k context window is\ntoo small for benchmark)"
 
         if row.completed_tests < 133:
             print(f"Warning: {row.dir_name} is incomplete: {row.completed_tests}")
@@ -322,7 +321,7 @@ def plot_refactoring(df):
                 color = "#b3d1e6"
                 label = "Unified diffs"
             elif fmt == "folk":
-                label = "Folk remedy prompt (blind, no hands, ...)"
+                label = "Folk remedy prompt (blind, no hands, etc)"
                 color = "#b3e6a8"
                 hatch = "////"
 
@@ -349,14 +348,14 @@ def plot_refactoring(df):
             if zorder == 2:
                 ax.bar_label(rects, padding=4, labels=[f"{v:.0f}%" for v in df[fmt]], size=6)
 
-    ax.set_xticks([p + 0.5 * width for p in pos])
+    ax.set_xticks([p + 1.0 * width for p in pos])
     ax.set_xticklabels(models)
 
     ax.set_ylabel("Percent of exercises completed successfully")
     # ax.set_xlabel("Model")
     ax.set_title('Refactoring "Laziness" Benchmark\n(percent coding tasks correct)')
     ax.legend(
-        title="Edit Format",
+        # title="Edit Format",
         loc="upper left",
         # bbox_to_anchor=(0.95, 0.95),
     )
