@@ -247,7 +247,7 @@ help:
 GPT frequently makes imperfect diffs that won't apply cleanly.
 They exhibit a variety of problems:
 
-- GPT forgets to include semantically irrelevant details. Often GPT forgets things like comments, docstrings, blank lines, etc. Or it skips over some code that it doesn't intend to change.
+- GPT forgets things like comments, docstrings, blank lines, etc. Or it skips over some code that it doesn't intend to change.
 - GPT forgets the leading *plus* `+` character to mark novel lines that it wants to add to the file. It incorrectly includes them with a leading *space* ` ` as if they were already there.
 - GPT jumps ahead to show edits to a different part of the file without starting a new hunk with a `@@ ... @@` divider.
 
