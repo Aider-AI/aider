@@ -25,10 +25,8 @@ designed to both provoke and quantify lazy coding.
 It consists of 39 python refactoring tasks,
 which ask GPT to remove a non-trivial method from a class and make it
 a stand alone function.
-GPT-4 Turbo is prone to being lazy on this sort of task, because it's mostly a
-"cut & paste" of code from one place in a file to another.
-Rather than writing out the code, GPT often just leaves
-a comment like
+GPT-4 Turbo is prone to being lazy on this sort of copy/paste task,
+by leaving a comment like
 "...include the body of the original method..."
 
 This new laziness benchmark produced the following results with `gpt-4-1106-preview`:
