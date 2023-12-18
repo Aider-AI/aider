@@ -161,7 +161,7 @@ This diff:
 ```
 
 Means we need to search the file for the
-*space* ` ` and *minus* `-` lines:
+*space* and *minus* `-` lines:
 
 ```python
 def main(args):
@@ -170,7 +170,7 @@ def main(args):
     return
 ```
 
-And replace them with the *space* ` ` and *plus* `+` lines:
+And replace them with the *space* and *plus* `+` lines:
 
 ```python
 def main(args):
@@ -244,7 +244,7 @@ GPT frequently makes imperfect diffs that won't apply cleanly.
 They exhibit a variety of problems:
 
 - GPT forgets things like comments, docstrings, blank lines, etc. Or it skips over some code that it doesn't intend to change.
-- GPT forgets the leading *plus* `+` character to mark novel lines that it wants to add to the file. It incorrectly includes them with a leading *space* ` ` as if they were already there.
+- GPT forgets the leading *plus* `+` character to mark novel lines that it wants to add to the file. It incorrectly includes them with a leading *space* as if they were already there.
 - GPT jumps ahead to show edits to a different part of the file without starting a new hunk with a `@@ ... @@` divider.
 
 As an example of the first issue, consider this source code:
@@ -282,10 +282,10 @@ Aider tries to be very flexible when applying diffs,
 in order to handle defects.
 If a hunk doesn't apply cleanly, aider uses a number of strategies:
 
-- Normalize the hunk, by taking the *minus* `-` and *space* ` ` lines as one version of the hunk and the *space* ` ` and *plus* `+` lines as a second version and doing an actual unified diff on them.
-- Try and discover new lines that GPT is trying to add but which it forgot to mark with *plus* `+` markers. This is done by diffing the *minus* `-` and *space* ` ` lines back against the original file.
+- Normalize the hunk, by taking the *minus* `-` and *space* lines as one version of the hunk and the *space* and *plus* `+` lines as a second version and doing an actual unified diff on them.
+- Try and discover new lines that GPT is trying to add but which it forgot to mark with *plus* `+` markers. This is done by diffing the *minus* `-` and *space* lines back against the original file.
 - Break a large hunk apart into an overlapping sequence of smaller hunks, which each contain only one contiguous run of *plus* `+` and *minus* `-` lines. Try and apply each of these sub-hunks independently.
-- Vary the size and offset of the "context window" of *space* ` ` lines from the hunk that are used to localize the edit to a specific part of the file.
+- Vary the size and offset of the "context window" of *space*  lines from the hunk that are used to localize the edit to a specific part of the file.
 - Combine the above mechanisms to progressively become more permissive about how to apply the hunk.
 
 These flexible patching strategies are critical, and 
