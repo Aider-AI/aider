@@ -78,7 +78,7 @@ and flexible editing format.
 
 ### Choose a familiar editing format
 
-Unified diffs are perhaps the most commonly used format for showing
+Unified diffs are perhaps the most common way to show
 code edits, because it's the 
 default output format of `git diff`:
 
