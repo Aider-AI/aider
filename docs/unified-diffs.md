@@ -22,7 +22,7 @@ often resulting in comments like
 This new laziness benchmark produced the following results with `gpt-4-1106-preview`:
 
 - **GPT-4 Turbo only scored 15% as a baseline** using aider's existing "SEARCH/REPLACE block" edit format.
-- **Aider's new unified diff edit format raised the score to 65%**.
+- **Aider's new unified diff edit format raised the score to 62%**.
 - **No benefit from the user being blind, without hands, tipping $2000 or fearing truncated code trauma.** These widely circulated folk remedies performed no better than baseline when added to the system prompt with aider's SEARCH/REPLACE edit format. Including *all* of them still only scored at 15%
 
 The older `gpt-4-0613` also did better on the laziness benchmark using unified diffs:
