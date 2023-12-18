@@ -144,8 +144,9 @@ This is a general observation about *any* use of line
 numbers in editing formats,
 backed up by many quantitative benchmark experiments.
 
-You've probably ignored the line numbers in every diff you've seen?
-Aider tells GPT not to include them,
+You've probably ignored the line numbers in every diff you've seen,
+because the diffs usually still make sense without them.
+Aider tells GPT not to include line numbers,
 and just interprets each hunk from the unified diffs
 as a search and replace operation:
 
@@ -219,9 +220,9 @@ but it is much easier to see two different coherent versions of the
 +        return number * factorial(number-1)
 ```
 
-Aider's system prompt strongly encourages
+Aider's system prompt encourages
 GPT to produce these high level diffs.
-This prompt makes GPT better at producing correct diffs, which can be successfully
+This makes GPT better at producing correct diffs, which can be successfully
 applied to the original file.
 
 **Experiments without "high level diff" prompting
@@ -229,13 +230,13 @@ produce a 30-50% increase in editing errors,**
 where diffs fail to apply or apply incorrectly and
 produce invalid code.
 When a patch fails, aider needs to ask GPT for a corrected version of the diff.
-This takes time, costs tokens and sometimes fails to result in a successful edit
+This takes time, costs tokens and sometimes fails to produce a successful edit
 even after multiple retries.
 
 There are probably a couple of reasons why high level diffs
 help:
 
-- It's easier to produce diffs that both correctly match the original code and correctly produces the intended new code. There is less risk of getting confused compared to generating a series of surgical edits mixed into existing code.
+- It's easier to produce diffs that both correctly match the original code and correctly produce the intended new code. There is less risk of GPT getting confused, compared to generating a series of surgical edits mixed into existing code.
 - High level hunks often contain more lines than a surgical hunk, so they are less likely to accidentally match unrelated parts of code. This is helpful because GPT can't reliably give us line numbers to specify exactly where in the file to make changes.
 
 ### Be flexible when applying edits
