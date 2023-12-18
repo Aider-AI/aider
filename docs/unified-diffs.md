@@ -299,7 +299,7 @@ radically increases the number of hunks which fail to apply.
 **Experiments where flexible patching is disabled show**:
 
 - **GPT-4 Turbo's performance drops from 65% down to 56%** on the refactoring benchmark.
-- **We see a 9X increase in editing errors** on aider's original Exercism benchmark.
+- **A 9X increase in editing errors** on aider's original Exercism benchmark.
 
 ## Refactoring benchmark
 
