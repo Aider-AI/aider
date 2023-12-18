@@ -92,7 +92,7 @@ default output format of `git diff`:
 ```
 
 Choosing such a familiar, popular output format means that GPT has
-seen *many* examples in its training dat.
+seen *many* examples in its training data.
 It's been trained to generate
 text that conforms to the unified diff syntax.
 
@@ -196,7 +196,6 @@ Consider this slightly more complex change, which renames the variable `n` to
 -def factorial(n):
 +def factorial(number):
      "compute factorial"
-
 -    if n == 0:
 +    if number == 0:
          return 1
@@ -214,14 +213,12 @@ but it is much easier to see two different coherent versions of the
 @@ ... @@
 -def factorial(n):
 -    "compute factorial"
--
 -    if n == 0:
 -        return 1
 -    else:
 -        return n * factorial(n-1)
 +def factorial(number):
 +    "compute factorial"
-+
 +    if number == 0:
 +        return 1
 +    else:
