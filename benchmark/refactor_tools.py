@@ -132,7 +132,10 @@ def find_non_self_methods(path):
     non_self_methods = []
     for filename in python_files:
         with open(filename, "r") as file:
-            node = ast.parse(file.read(), filename=filename)
+            try:
+                node = ast.parse(file.read(), filename=filename)
+            except:
+                pass
             checker = SelfUsageChecker()
             checker.visit(node)
             for method in checker.non_self_methods:
@@ -145,7 +148,7 @@ def process(entry):
     fname, class_name, method_name, class_children, method_children = entry
     if method_children > class_children / 2:
         return
-    if method_children < 100:
+    if method_children < 250:
         return
 
     fname = Path(fname)
@@ -154,7 +157,7 @@ def process(entry):
 
     print(f"{fname} {class_name} {method_name} {class_children} {method_children}")
 
-    dname = Path("tmp.benchmarks/refactor-benchmark")
+    dname = Path("tmp.benchmarks/refactor-benchmark-pylint")
     dname.mkdir(exist_ok=True)
 
     dname = dname / f"{fname.stem}_{class_name}_{method_name}"
