@@ -1,5 +1,5 @@
 
-# Fixing GPT-4 Turbo laziness with unified diffs
+# Reducing GPT-4 Turbo laziness with unified diffs
 
 ![robot flowchart](../assets/benchmarks-udiff.svg)
 
@@ -7,23 +7,25 @@
 Aider now asks GPT-4 Turbo to use
 [unified diffs](https://www.gnu.org/software/diffutils/manual/html_node/Example-Unified.html)
 to edit your code.
-This massively reduces GPT-4 Turbo's bad habit of "lazy" coding,
-where it writes half completed code filled with comments
+This massively improves GPT-4 Turbo's performance on a complex benchmark 
+and significantly reduces its bad habit of "lazy" coding,
+where it writes
+code filled with comments
 like "...add logic here...".
 
-Aider also has a new benchmarking suite 
+Aider also has a new "laziness" benchmark suite 
 designed to both provoke and quantify lazy coding.
 It consists of
-39 python refactoring tasks,
-which tend to make GPT-4 Turbo very lazy,
-often resulting in comments like
+89 python refactoring tasks
+which tend to make GPT-4 Turbo very lazy.
+On these tasks it often produces comments like
 "...include the original method body...".
 
 This new laziness benchmark produced the following results with `gpt-4-1106-preview`:
 
-- **GPT-4 Turbo only scored 15% as a baseline** using aider's existing "SEARCH/REPLACE block" edit format.
-- **Aider's new unified diff edit format raised the score to 65%**.
-- **No benefit from the user being blind, without hands, tipping $2000 or fearing truncated code trauma.** These widely circulated folk remedies performed no better than baseline when added to the system prompt with aider's SEARCH/REPLACE edit format. Including *all* of them still only scored at 15%
+- **GPT-4 Turbo only scored 20% as a baseline** using aider's existing "SEARCH/REPLACE block" edit format. It output "lazy comments" on 12 of the tasks.
+- **Aider's new unified diff edit format raised the score to 61%**. Using this format reduced laziness by 3X, with GPT-4 Turbo only using lazy comments on 4 of the tasks.
+- **It's worse to prompt that the user is blind, without hands, will tip $2000 and fears truncated code trauma.** These widely circulated folk remedies performed worse on the benchmark when added to the baseline SEARCH/REPLACE and new unified diff editing formats. These prompts did *slightly* reduce the amount of laziness, but at a large cost to successful benchmark outcomes.
 
 The older `gpt-4-0613` also did better on the laziness benchmark using unified diffs:
 
@@ -31,7 +33,7 @@ The older `gpt-4-0613` also did better on the laziness benchmark using unified d
 - **Aider's new unified diff edit format raised June GPT-4's score to 59%**. 
 - The benchmark was designed to use large files, and
 28% of them are too large to fit in June GPT-4's 8k context window.
-This significantly harmed the benchmark results.
+This puts a hard ceiling of 72% on how well the June model could possibly score.
 
 Before settling on unified diffs,
 I explored many other approaches including:
@@ -311,12 +313,14 @@ the ones with the most code and which involve refactoring.
 
 Based on this observation, I set out to build a benchmark based on refactoring
 a non-trivial amount of code found in fairly large files.
-To do this, I used python's `ast` module to analyze the
-[Django repository](https://github.com/django/django) to:
+To do this, I used python's `ast` module to analyze
+[9 popular open source python repositories](https://github.com/paul-gauthier/refactor-benchmark)
+to identify challenging refactoring tasks.
+The goal was to find:
 
-- Find source files that contain class methods which are non-trivial, having more than 100 AST nodes in their implementation.
+- Source files that contain class methods which are non-trivial, having 100-250+ AST nodes in their implementation.
 - Focus on methods that are part of a larger class, which has at least twice as much code as the method itself.
-- Find methods that don't use their `self` parameter, so they can be trivially refactored out of the class.
+- Select methods that don't use their `self` parameter, so they can be trivially refactored out of the class.
 
 We can then turn each of these source files into a task for the benchmark,
 where we ask GPT to do something like:
@@ -326,7 +330,7 @@ where we ask GPT to do something like:
 > Update any existing `self._set_csrf_cookie` calls to work with the new `_set_csrf_cookie` function.
 
 A [simple python AST scanning script](https://github.com/paul-gauthier/aider/blob/main/benchmark/refactor_tools.py)
-found 39 suitable files
+found 89 suitable files
 and packaged them up as benchmark tasks.
 Each task has a test
 that checks if refactor

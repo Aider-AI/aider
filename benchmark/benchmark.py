@@ -77,12 +77,12 @@ def show_stats(dirnames, graphs):
         #    row.model = gpt4 + "\n" + row.model[len(gpt4) :]
 
         if "folk" in row.dir_name:
-            row.edit_format = "folk"
+            row.edit_format += "folk"
 
         if row.model == "gpt-4-0613":
             row.model += "\n(8k context window is\ntoo small for benchmark)"
 
-        if row.completed_tests < 133:
+        if row.completed_tests < 89:
             print(f"Warning: {row.dir_name} is incomplete: {row.completed_tests}")
 
         # if "repeat" in row.dir_name:
@@ -311,6 +311,7 @@ def plot_refactoring(df):
         formats = df.columns
         models = df.index
 
+        dump(formats)
         for i, fmt in enumerate(formats):
             hatch = ""
 
@@ -320,9 +321,13 @@ def plot_refactoring(df):
             elif fmt == "udiff":
                 color = "#b3d1e6"
                 label = "Unified diffs"
-            elif fmt == "folk":
-                label = "Prompt with blind, no hands, tip $2000, etc"
+            elif fmt == "difffolk":
+                label = "Baseline + blind, no hands, $2k tip, etc"
                 color = "#b3e6a8"
+                hatch = "////"
+            elif fmt == "udifffolk":
+                label = "Unified diffs + blind, no hands, $2k tip, etc"
+                color = "#b3d1e6"
                 hatch = "////"
 
             if zorder > 1:
