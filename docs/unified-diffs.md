@@ -5,12 +5,12 @@
 
 
 Aider now asks GPT-4 Turbo to use
-[unified diffs](https://www.gnu.org/software/diffutils/manual/html_node/Example-Unified.html)
+[unified diffs](#choose-a-familiar-editing-format)
 to edit your code.
-This massively improves GPT-4 Turbo's performance on a complex benchmark 
+This dramatically improves GPT-4 Turbo's performance on a complex benchmark 
 and significantly reduces its bad habit of "lazy" coding,
 where it writes
-code filled with comments
+code with comments
 like "...add logic here...".
 
 Aider also has a new "laziness" benchmark suite 
@@ -25,7 +25,7 @@ This new laziness benchmark produced the following results with `gpt-4-1106-prev
 
 - **GPT-4 Turbo only scored 20% as a baseline** using aider's existing "SEARCH/REPLACE block" edit format. It output "lazy comments" on 12 of the tasks.
 - **Aider's new unified diff edit format raised the score to 61%**. Using this format reduced laziness by 3X, with GPT-4 Turbo only using lazy comments on 4 of the tasks.
-- **It's worse to prompt that the user is blind, without hands, will tip $2000 and fears truncated code trauma.** These widely circulated folk remedies performed worse on the benchmark when added to the baseline SEARCH/REPLACE and new unified diff editing formats. These prompts did *slightly* reduce the amount of laziness, but at a large cost to successful benchmark outcomes.
+- **It's worse to prompt that the user is blind, without hands, will tip $2000 and fears truncated code trauma.** These widely circulated folk remedies performed worse on the benchmark when added to the system prompt for the baseline SEARCH/REPLACE and new unified diff editing formats. These prompts did *slightly* reduce the amount of laziness, but at a large cost to successful benchmark outcomes.
 
 The older `gpt-4-0613` also did better on the laziness benchmark using unified diffs:
 
@@ -296,11 +296,7 @@ If a hunk doesn't apply cleanly, aider uses a number of strategies:
 These flexible patching strategies are critical, and 
 removing them
 radically increases the number of hunks which fail to apply.
-
-**Experiments where flexible patching is disabled show**:
-
-- **GPT-4 Turbo's performance drops from 65% down to 56%** on the refactoring benchmark.
-- **A 9X increase in editing errors** on aider's original Exercism benchmark.
+**Experiments where flexible patching is disabled show a 9X increase in editing errors** on aider's original Exercism benchmark.
 
 ## Refactoring benchmark
 
@@ -355,8 +351,10 @@ The result is a pragmatic
 ## Conclusions and future work
 
 Based on the refactor benchmark results,
-aider's new unified diff format seems very effective at stopping
-GPT-4 Turbo from being a lazy coder.
+aider's new unified diff format seems
+to dramatically increase GPT-4 Turbo's skill at more complex coding tasks.
+It also seems very effective at reducing the lazy coding
+which has been widely noted as a problem with GPT-4 Turbo.
 
 Unified diffs was one of the very first edit formats I tried
 when originally building aider.
