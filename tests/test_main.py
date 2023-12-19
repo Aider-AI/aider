@@ -13,7 +13,7 @@ from prompt_toolkit.output import DummyOutput
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.main import check_gitignore, main, setup_git
-from tests.utils import GitTemporaryDirectory, make_repo
+from aider.utils import GitTemporaryDirectory, make_repo
 
 
 class TestMain(TestCase):
