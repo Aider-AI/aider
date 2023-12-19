@@ -14,19 +14,19 @@ where it writes
 code with comments
 like "...add logic here...".
 
-Aider also has a new "laziness" benchmark suite 
+Aider's new "laziness" benchmark suite 
 designed to both provoke and quantify lazy coding.
 It consists of
 89 python refactoring tasks
 which tend to make GPT-4 Turbo lazy
 and write comments like
-"...include the original method body...".
+"...include original method body...".
 
 This new laziness benchmark produced the following results with `gpt-4-1106-preview`:
 
 - **GPT-4 Turbo only scored 20% as a baseline** using aider's existing "SEARCH/REPLACE block" edit format. It outputs "lazy comments" on 12 of the tasks.
 - **Aider's new unified diff edit format raised the score to 61%**. Using this format reduced laziness by 3X, with GPT-4 Turbo only using lazy comments on 4 of the tasks.
-- **It's worse to add a prompt that the user is blind, has no hands, will tip $2000 and fears truncated code trauma.**
+- **It's worse to add a prompt that says the user is blind, has no hands, will tip $2000 and fears truncated code trauma.**
 
 These widely circulated "emotional appeal" folk remedies 
 produced worse benchmark scores.
@@ -328,7 +328,7 @@ To do this, I used python's `ast` module to analyze
 to identify challenging refactoring tasks.
 The goal was to find:
 
-- Source files that contain class methods which are non-trivial, having 100-250+ AST nodes in their implementation.
+- Source files that contain classes with non-trivial methods, having 100-250+ AST nodes in their implementation.
 - Focus on methods that are part of a larger class, which has at least twice as much code as the method itself.
 - Select methods that don't use their `self` parameter, so they can be trivially refactored out of the class.
 
@@ -343,10 +343,10 @@ A [simple python AST scanning script](https://github.com/paul-gauthier/aider/blo
 found 89 suitable files
 and packaged them up as benchmark tasks.
 Each task has a test
-that checks if refactor
+that checks if the refactor
 was performed roughly correctly:
 
-- The updated source file must parse as valid python, to surface misapplied edits which corrupt the file.
+- The updated source file must parse as valid python, to detect misapplied edits which produce invalid code.
 - The target method must now exist as a top-level function in the file.
 - This new top-level function must contain approximately the same number of AST nodes as the original class method. This ensures that GPT didn't elide code and replace it with comments.
 - The original class must still be present in the file, and it must be smaller by about the number of AST nodes in the method which was removed. This helps confirm that the method was removed from the class, without other significant modifications.

@@ -21,25 +21,23 @@ class ParentNodeTransformer(ast.NodeTransformer):
 
 
 def verify_full_func_at_top_level(tree, func, func_children):
-    func_node = next(
-        (
-            item
-            for item in ast.walk(tree)
-            if isinstance(item, ast.FunctionDef) and item.name == func
-        ),
-        None,
-    )
-    assert func_node is not None, f"Function {func} not found"
+    func_nodes = [
+        item for item in ast.walk(tree) if isinstance(item, ast.FunctionDef) and item.name == func
+    ]
+    assert func_nodes, f"Function {func} not found"
 
-    assert isinstance(
-        func_node.parent, ast.Module
-    ), f"{func} is not a top level function, it has parent {func_node.parent}"
+    for func_node in func_nodes:
+        if not isinstance(func_node.parent, ast.Module):
+            continue
 
-    num_children = sum(1 for _ in ast.walk(func_node))
-    pct_diff_children = abs(num_children - func_children) * 100 / func_children
-    assert (
-        pct_diff_children < 10
-    ), f"Old method had {func_children} children, new method has {num_children}"
+        num_children = sum(1 for _ in ast.walk(func_node))
+        pct_diff_children = abs(num_children - func_children) * 100 / func_children
+        assert (
+            pct_diff_children < 10
+        ), f"Old method had {func_children} children, new method has {num_children}"
+        return
+
+    assert False, f"{func} is not a top level function"
 
 
 def verify_old_class_children(tree, old_class, old_class_children):
