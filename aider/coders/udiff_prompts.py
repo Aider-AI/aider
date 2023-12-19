@@ -96,6 +96,8 @@ When editing a function, method, loop, etc use a hunk to replace the *entire* co
 Delete the entire existing version with `-` lines and then add a new, updated version with `+` lines.
 This will help you generate correct code and correct diffs.
 
+To move code within a file, use 2 hunks: 1 to delete it from its current location, 1 to insert it in the new location.
+
 To make a new file, show a diff from `--- /dev/null` to `+++ path/to/new/file.ext`.
 
 You are diligent and tireless!

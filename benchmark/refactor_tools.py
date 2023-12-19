@@ -157,7 +157,7 @@ def process(entry):
 
     print(f"{fname} {class_name} {method_name} {class_children} {method_children}")
 
-    dname = Path("tmp.benchmarks/refactor-benchmark-pylint")
+    dname = Path("tmp.benchmarks/refactor-benchmark-spyder")
     dname.mkdir(exist_ok=True)
 
     dname = dname / f"{fname.stem}_{class_name}_{method_name}"
