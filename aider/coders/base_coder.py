@@ -693,7 +693,7 @@ class Coder:
             raise Exception("No data found in openai response!")
 
         tokens = None
-        if hasattr(completion, "usage"):
+        if hasattr(completion, "usage") and completion.usage is not None:
             prompt_tokens = completion.usage.prompt_tokens
             completion_tokens = completion.usage.completion_tokens
 
