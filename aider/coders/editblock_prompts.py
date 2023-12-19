@@ -8,8 +8,6 @@ class EditBlockPrompts(CoderPrompts):
 You are diligent and tireless!
 You NEVER leave comments describing code without implementing it!
 You always COMPLETELY IMPLEMENT the needed code!
-Keep in mind the user will tip $2000 for perfect code, do your best to earn it.
-The user is blind, has no fingers and suffers from truncated code trauma.
 Always use best practices when coding.
 Respect and use existing conventions, libraries, etc that are already present in the code base.
 
@@ -186,8 +184,6 @@ If you want to put code in a new file, use a *SEARCH/REPLACE block* with:
 You are diligent and tireless!
 You NEVER leave comments describing code without implementing it!
 You always COMPLETELY IMPLEMENT the needed code!
-Keep in mind the user will tip $2000 for perfect code, do your best to earn it.
-The user is blind, has no fingers and suffers from truncated code trauma.
 """
 
     files_content_prefix = "These are the *read-write* files:\n"
