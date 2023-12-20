@@ -1,5 +1,5 @@
 
-# Reducing GPT-4 Turbo laziness with unified diffs
+# Unified diffs make GPT-4 Turbo less lazy
 
 ![robot flowchart](../assets/benchmarks-udiff.svg)
 
