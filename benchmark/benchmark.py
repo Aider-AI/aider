@@ -787,11 +787,10 @@ def run_test(
         chat_history_file=history_fname,
     )
 
-    # Check if AIDER_DOCKER environment variable is set and create client accordingly
     if "OPENAI_API_BASE" in os.environ and "openrouter.ai" in os.environ["OPENAI_API_BASE"]:
         client = openai.OpenAI(
             api_key=os.environ["OPENAI_API_KEY"],
-            base_url=os.environ.get("OPENAI_API_BASE", "https://api.openai.com"),
+            base_url=os.environ.get("OPENAI_API_BASE"),
             default_headers={
                 "HTTP-Referer": "http://aider.chat",
                 "X-Title": "Aider",
@@ -800,6 +799,7 @@ def run_test(
     else:
         client = openai.OpenAI(
             api_key=os.environ["OPENAI_API_KEY"],
+            base_url=os.environ.get("OPENAI_API_BASE", "https://api.openai.com/v1"),
         )
 
     main_model = models.Model.create(model_name, client)
