@@ -385,8 +385,9 @@ fine tuning models on
 aider's simple, high level style of unified diffs.
 Dropping line numbers from the hunk headers and focusing on diffs of
 semantically coherent chunks of code
-seems to be an important part of successful GPT code editing.
+seems to be an important part of successful GPT code editing
+(besides the relentless focus on flexibly applying edits).
 Most LLMs will have already seen plenty of unified diffs
 in their normal training data, and so should be
-very amenable to fining tuning towards this
+amenable to fining tuning towards this
 particular diff style.
