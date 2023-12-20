@@ -26,20 +26,11 @@ This new laziness benchmark produced the following results with `gpt-4-1106-prev
 
 - **GPT-4 Turbo only scored 20% as a baseline** using aider's existing "SEARCH/REPLACE block" edit format. It outputs "lazy comments" on 12 of the tasks.
 - **Aider's new unified diff edit format raised the score to 61%**. Using this format reduced laziness by 3X, with GPT-4 Turbo only using lazy comments on 4 of the tasks.
-- **It's worse to add a prompt that says the user is blind, has no hands, will tip $2000 and fears truncated code trauma.**
-
-Widely circulated "emotional appeal" folk remedies 
+- **It's worse to add a prompt that says the user is blind, has no hands, will tip $2000 and fears truncated code trauma.** Widely circulated "emotional appeal" folk remedies 
 produced worse benchmark scores.
 Adding *all* of the various emotional statements to the system prompt
 resulted in worse benchmark scores
 for the baseline SEARCH/REPLACE and new unified diff editing formats.
-These prompts did somewhat reduce the amount of laziness when used
-with the SEARCH/REPLACE edit format,
-from 12 to 8 lazy tasks.
-They slightly increased the lazy tasks from 4 to 5 when added to the unified diff prompt,
-which means they had roughly no effect on this format.
-But again, they seem to harm the overall ability of GPT-4 Turbo to complete
-the benchmark's refactoring coding tasks.
 
 The older `gpt-4-0613` also did better on the laziness benchmark using unified diffs:
 
@@ -49,7 +40,20 @@ The older `gpt-4-0613` also did better on the laziness benchmark using unified d
 28% of them are too large to fit in June GPT-4's 8k context window.
 This puts a hard ceiling of 72% on how well the June model could possibly score.
 
-Before settling on unified diffs,
+With unified diffs, GPT acts more like it's writing textual data intended to be read by a program,
+not talking to a person.
+They are
+usually
+consumed by the
+[patch](https://www.gnu.org/software/diffutils/manual/html_node/Merging-with-patch.html)
+program, which is fairly rigid.
+This seems to encourage rigor, making
+GPT less likely to
+leave informal editing instructions in comments
+or be lazy about writing all the needed code.
+
+Aider's new unified diff editing format
+outperforms other solutions I evaluated by a wide margin.
 I explored many other approaches including:
 prompts about being tireless and diligent,
 OpenAI's function/tool calling capabilities,
@@ -59,8 +63,6 @@ and other diff-like formats.
 The results shared here reflect
 an extensive investigation and benchmark evaluations of many approaches.
 
-Aider's new unified diff editing format
-outperforms other solutions by a wide margin.
 The rest of this article will describe
 aider's new editing format and refactoring benchmark.
 It will highlight some key design decisions,
@@ -82,7 +84,8 @@ A helpful shortcut here is to have empathy for GPT, and imagine you
 are the one being asked to specify code edits.
 Would you want to hand type a properly escaped json data structure
 to invoke surgical insert, delete, replace operations on specific code line numbers?
-How would you feel about any mistake causing all your work to be discarded?
+Do you want to use a brittle format, where any mistake
+causes and error and all your work to be discarded?
 
 GPT is quantitatively better at code editing when you reduce the
 burden of formatting edits by using a familiar, simple, high level
@@ -109,23 +112,6 @@ Choosing such a popular format means that GPT has
 seen *many* examples in its training data.
 It's been trained to generate
 text that conforms to the unified diff syntax.
-
-Unified diffs are
-usually intended to be consumed by the
-[patch](https://www.gnu.org/software/diffutils/manual/html_node/Merging-with-patch.html)
-program.
-They need to *accurately* reflect the original and updated file contents,
-otherwise the patch command will fail.
-Having GPT specify changes in a format that is usually consumed by a
-rigid program like patch
-seems to encourage rigor.
-GPT is less likely to
-leave informal editing instructions in comments
-or be lazy about writing all the needed code.
-
-With unified diffs, GPT acts more like it's writing textual data intended to be read by a program,
-not talking to a person.
-
 
 ### Use a simple editing format
 
