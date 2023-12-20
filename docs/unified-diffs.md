@@ -27,10 +27,8 @@ This new laziness benchmark produced the following results with `gpt-4-1106-prev
 - **GPT-4 Turbo only scored 20% as a baseline** using aider's existing "SEARCH/REPLACE block" edit format. It outputs "lazy comments" on 12 of the tasks.
 - **Aider's new unified diff edit format raised the score to 61%**. Using this format reduced laziness by 3X, with GPT-4 Turbo only using lazy comments on 4 of the tasks.
 - **It's worse to add a prompt that says the user is blind, has no hands, will tip $2000 and fears truncated code trauma.** Widely circulated "emotional appeal" folk remedies 
-produced worse benchmark scores.
-Adding *all* of the various emotional statements to the system prompt
-resulted in worse benchmark scores
-for the baseline SEARCH/REPLACE and new unified diff editing formats.
+produced worse benchmark scores
+for both the baseline SEARCH/REPLACE and new unified diff editing formats.
 
 The older `gpt-4-0613` also did better on the laziness benchmark using unified diffs:
 
