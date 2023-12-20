@@ -15,7 +15,7 @@ code with comments
 like "...add logic here...".
 
 Aider's new "laziness" benchmark suite 
-designed to both provoke and quantify lazy coding.
+is designed to both provoke and quantify lazy coding.
 It consists of
 89 python refactoring tasks
 which tend to make GPT-4 Turbo lazy
