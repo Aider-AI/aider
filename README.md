@@ -38,7 +38,7 @@ Benchmark results indicate that it is
 [very fast](https://aider.chat/docs/benchmarks-speed-1106.html),
 and a bit [better at coding](https://aider.chat/docs/benchmarks-1106.html) than previous GPT-4 models.
 
-Aider now supports a [unified diffs editing format, which reduces GPT-4 Turbo's "lazy" coding](https://aider.chat/docs/unified-diffs.html)
+Aider now supports a [unified diff editing format, which reduces GPT-4 Turbo's "lazy" coding](https://aider.chat/docs/unified-diffs.html).
 
 To use it, run aider like this:
 
