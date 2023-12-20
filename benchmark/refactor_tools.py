@@ -21,25 +21,23 @@ class ParentNodeTransformer(ast.NodeTransformer):
 
 
 def verify_full_func_at_top_level(tree, func, func_children):
-    func_node = next(
-        (
-            item
-            for item in ast.walk(tree)
-            if isinstance(item, ast.FunctionDef) and item.name == func
-        ),
-        None,
-    )
-    assert func_node is not None, f"Function {func} not found"
+    func_nodes = [
+        item for item in ast.walk(tree) if isinstance(item, ast.FunctionDef) and item.name == func
+    ]
+    assert func_nodes, f"Function {func} not found"
 
-    assert isinstance(
-        func_node.parent, ast.Module
-    ), f"{func} is not a top level function, it has parent {func_node.parent}"
+    for func_node in func_nodes:
+        if not isinstance(func_node.parent, ast.Module):
+            continue
 
-    num_children = sum(1 for _ in ast.walk(func_node))
-    pct_diff_children = abs(num_children - func_children) * 100 / func_children
-    assert (
-        pct_diff_children < 10
-    ), f"Old method had {func_children} children, new method has {num_children}"
+        num_children = sum(1 for _ in ast.walk(func_node))
+        pct_diff_children = abs(num_children - func_children) * 100 / func_children
+        assert (
+            pct_diff_children < 10
+        ), f"Old method had {func_children} children, new method has {num_children}"
+        return
+
+    assert False, f"{func} is not a top level function"
 
 
 def verify_old_class_children(tree, old_class, old_class_children):
@@ -132,7 +130,10 @@ def find_non_self_methods(path):
     non_self_methods = []
     for filename in python_files:
         with open(filename, "r") as file:
-            node = ast.parse(file.read(), filename=filename)
+            try:
+                node = ast.parse(file.read(), filename=filename)
+            except:
+                pass
             checker = SelfUsageChecker()
             checker.visit(node)
             for method in checker.non_self_methods:
@@ -145,7 +146,7 @@ def process(entry):
     fname, class_name, method_name, class_children, method_children = entry
     if method_children > class_children / 2:
         return
-    if method_children < 100:
+    if method_children < 250:
         return
 
     fname = Path(fname)
@@ -154,7 +155,7 @@ def process(entry):
 
     print(f"{fname} {class_name} {method_name} {class_children} {method_children}")
 
-    dname = Path("tmp.benchmarks/refactor-benchmark")
+    dname = Path("tmp.benchmarks/refactor-benchmark-spyder")
     dname.mkdir(exist_ok=True)
 
     dname = dname / f"{fname.stem}_{class_name}_{method_name}"
