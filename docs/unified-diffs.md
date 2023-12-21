@@ -40,7 +40,7 @@ This puts a hard ceiling of 72% on how well the June model could possibly score.
 
 With unified diffs, GPT acts more like it's writing textual data intended to be read by a program,
 not talking to a person.
-They are
+Diffs are
 usually
 consumed by the
 [patch](https://www.gnu.org/software/diffutils/manual/html_node/Merging-with-patch.html)

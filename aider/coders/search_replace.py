@@ -388,7 +388,7 @@ def dmp_lines_apply(texts, remap=True):
     if debug:
         diff = list(diff_lines)
         dmp.diff_charsToLines(diff, mapping)
-        dump(diff)
+        # dump(diff)
         html = dmp.diff_prettyHtml(diff)
         Path("tmp.search_replace_diff.html").write_text(html)
 
@@ -425,7 +425,7 @@ def diff_lines(search_text, replace_text):
 
     diff = list(diff_lines)
     dmp.diff_charsToLines(diff, mapping)
-    dump(diff)
+    # dump(diff)
 
     udiff = []
     for d, lines in diff:
