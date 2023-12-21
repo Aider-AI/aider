@@ -1,5 +1,5 @@
 
-# Reducing GPT-4 Turbo laziness with unified diffs
+# Unified diffs make GPT-4 Turbo less lazy
 
 ![robot flowchart](../assets/benchmarks-udiff.svg)
 
@@ -18,8 +18,7 @@ Aider's new "laziness" benchmark suite
 is designed to both provoke and quantify lazy coding.
 It consists of
 89 python refactoring tasks
-which tend to make GPT-4 Turbo lazy
-and write comments like
+which tend to make GPT-4 Turbo write lazy comments like
 "...include original method body...".
 
 This new laziness benchmark produced the following results with `gpt-4-1106-preview`:
