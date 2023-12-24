@@ -392,7 +392,7 @@ class Commands:
         combined_output = None
         try:
             result = subprocess.run(
-                args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, shell=True
+                args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, shell=True, encoding='utf-8', errors='replace'
             )
             combined_output = result.stdout
         except Exception as e:
@@ -412,7 +412,7 @@ class Commands:
                 output=combined_output,
             )
             return msg
-
+        
     def cmd_exit(self, args):
         "Exit the application"
         sys.exit()
