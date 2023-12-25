@@ -133,6 +133,9 @@ Aider supports commands from within the chat, which all start with `/`. Here are
 * `/diff`: Display the diff of the last aider commit.
 * `/run <command>`: Run a shell command and optionally add the output to the chat.
 * `/voice`: Speak to aider to [request code changes with your voice](https://aider.chat/docs/voice.html).
+* `/models`: Show available models and pricings.
+* `/model <alias/model>`: Choose a model to use.
+* `/tokens`: Show token usage
 * `/help`: Show help about all commands.
 
 See the [full command docs](https://aider.chat/docs/commands.html) for more information.
@@ -155,7 +158,7 @@ Aider has some ability to help GPT figure out which files to edit all by itself,
 ## GPT-4 vs GPT-3.5
 
 Aider supports all of OpenAI's chat models.
-You can choose a model with the `--model` command line argument.
+You can choose a model with the `--model` command line argument or use `/model <alias/model>` command in chat.
 
 You should probably use GPT-4 if you can. For more details see the
 [FAQ entry that compares GPT-4 vs GPT-3.5](https://aider.chat/docs/faq.html#gpt-4-vs-gpt-35).
