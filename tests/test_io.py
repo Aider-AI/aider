@@ -4,7 +4,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from aider.io import AutoCompleter, InputOutput
-from tests.utils import ChdirTemporaryDirectory
+from aider.utils import ChdirTemporaryDirectory
 
 
 class TestInputOutput(unittest.TestCase):

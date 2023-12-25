@@ -9,6 +9,8 @@ from .editblock_prompts import EditBlockPrompts
 
 
 class EditBlockCoder(Coder):
+    edit_format = "diff"
+
     def __init__(self, *args, **kwargs):
         self.gpt_prompts = EditBlockPrompts()
         super().__init__(*args, **kwargs)
