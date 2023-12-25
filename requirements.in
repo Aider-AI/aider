@@ -19,3 +19,4 @@ packaging
 sounddevice
 soundfile
 PyYAML
+diff-match-patch

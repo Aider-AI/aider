@@ -14,7 +14,7 @@ from aider.coders import Coder
 from aider.commands import Commands
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
-from tests.utils import ChdirTemporaryDirectory, GitTemporaryDirectory, make_repo
+from aider.utils import ChdirTemporaryDirectory, GitTemporaryDirectory, make_repo
 
 
 class TestCommands(TestCase):

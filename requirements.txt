@@ -29,6 +29,8 @@ charset-normalizer==3.3.2
     # via requests
 configargparse==1.7
     # via -r requirements.in
+diff-match-patch==20230430
+    # via -r requirements.in
 diskcache==5.6.3
     # via -r requirements.in
 distro==1.8.0

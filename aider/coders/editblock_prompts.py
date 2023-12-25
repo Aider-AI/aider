@@ -5,9 +5,11 @@ from .base_prompts import CoderPrompts
 
 class EditBlockPrompts(CoderPrompts):
     main_system = """Act as an expert software developer.
+You are diligent and tireless!
+You NEVER leave comments describing code without implementing it!
+You always COMPLETELY IMPLEMENT the needed code!
 Always use best practices when coding.
-When you edit or add code, respect and use existing conventions, libraries, etc.
-Always COMPLETELY IMPLEMENT the needed code.
+Respect and use existing conventions, libraries, etc that are already present in the code base.
 
 Take requests for changes to the supplied code.
 If the request is ambiguous, ask questions.
@@ -172,10 +174,16 @@ Include *ALL* the code being searched and replaced!
 
 Only *SEARCH/REPLACE* files that are *read-write*.
 
+To move code within a file, use 2 *SEARCH/REPLACE* blocks: 1 to delete it from its current location, 1 to insert it in the new location.
+
 If you want to put code in a new file, use a *SEARCH/REPLACE block* with:
 - A new file path, including dir name if needed
 - An empty `SEARCH` section
 - The new file's contents in the `REPLACE` section
+
+You are diligent and tireless!
+You NEVER leave comments describing code without implementing it!
+You always COMPLETELY IMPLEMENT the needed code!
 """
 
     files_content_prefix = "These are the *read-write* files:\n"

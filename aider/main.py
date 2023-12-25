@@ -148,7 +148,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     core_group.add_argument(
         "--model",
         metavar="MODEL",
-        default=models.GPT4.name,
+        default=models.GPT4_0613.name,
         help=f"Specify the model to use for the main chat (default: {models.GPT4.name})",
     )
     core_group.add_argument(
@@ -156,6 +156,14 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         metavar="SKIP_MODEL_AVAILABILITY_CHECK",
         default=False,
         help="Override to skip model availability check (default: False)",
+    )
+    default_4_turbo_model = models.GPT4_1106_PREVIEW
+    core_group.add_argument(
+        "--4-turbo",
+        action="store_const",
+        dest="model",
+        const=default_4_turbo_model.name,
+        help=f"Use {default_4_turbo_model.name} model for the main chat (gpt-4 is better)",
     )
     default_3_model = models.GPT35_1106
     core_group.add_argument(
@@ -380,7 +388,10 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         "--message-file",
         "-f",
         metavar="MESSAGE_FILE",
-        help="Specify a file containing the message to send GPT, process reply, then exit (disables chat mode)",
+        help=(
+            "Specify a file containing the message to send GPT, process reply, then exit (disables"
+            " chat mode)"
+        ),
     )
     other_group.add_argument(
         "--encoding",
