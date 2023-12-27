@@ -236,7 +236,7 @@ There are probably a couple of reasons why high level diffs
 help:
 
 - It's easier to produce diffs that both correctly match the original code and correctly produce the intended new code. There is less risk of GPT getting confused, compared to generating a series of surgical edits that interleave lines of old and new code.
-- High level hunks often contain more lines than a surgical hunk, so they are less likely to accidentally match unrelated parts of code. This is helpful because GPT can't reliably give us line numbers to specify exactly where in the file to make changes.
+- High level hunks often contain more lines than a surgical hunk, so they are less likely to accidentally match unrelated parts of the code. This is helpful because GPT can't reliably give us line numbers to specify exactly where in the file to make changes.
 
 ### Be flexible when applying edits
 
