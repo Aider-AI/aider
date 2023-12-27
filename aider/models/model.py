@@ -49,3 +49,6 @@ class Model:
             msgs = json.dumps(messages)
 
         return len(self.tokenizer.encode(msgs))
+
+    def available_models(self):
+        raise NotImplementedError

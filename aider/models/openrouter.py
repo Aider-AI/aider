@@ -32,6 +32,22 @@ class OpenRouterModel(Model):
         else:
             raise ValueError(f"invalid openrouter model: {name}")
 
+    def available_models(self):
+        global cached_model_details
+        models_dict_format = {}
+        for model in cached_model_details:
+            model_id = model.id
+            models_dict_format[model_id] = {
+                'Alias': '',  # Alias can be added later if needed
+                'Model': model_id,
+                'Input_cost': round(float(model.pricing.get('prompt')) * 1000, 6),
+                'Input_desc': ' / 1K tokens',
+                'Input_cur': '$',
+                'Output_cost': round(float(model.pricing.get('completion')) * 1000, 6),
+                'Output_desc': ' / 1K tokens',
+                'Output_cur': '$'
+            }
+        return models_dict_format
 
 # TODO run benchmarks and figure out which models support which edit-formats
 def edit_format_for_model(name):

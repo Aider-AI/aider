@@ -3,6 +3,7 @@ import re
 import tiktoken
 
 from .model import Model
+from aider.models_table import models
 
 known_tokens = {
     "gpt-3.5-turbo": 4,
@@ -83,3 +84,6 @@ class OpenAIModel(Model):
 
     def is_gpt35(self):
         return self.name.startswith("gpt-3.5-turbo")
+
+    def available_models(self):
+        return models

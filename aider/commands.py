@@ -7,7 +7,6 @@ import git
 from prompt_toolkit.completion import Completion
 
 from aider import prompts, voice
-from .models_table import models
 
 from .dump import dump  # noqa: F401
 
@@ -454,6 +453,7 @@ class Commands:
     def cmd_models(self, args):
         "Show available models and their costs"
         current_model_name = self.coder.main_model.name
+        models = self.coder.main_model.available_models()
         self.io.tool_output(f"Current model: {current_model_name}")
         self.io.tool_output("Available models:")
         # Calculate column widths
@@ -486,8 +486,9 @@ class Commands:
             self.switch_model(new_model_name, output_message=True)
             return
 
+        models = self.coder.main_model.available_models()
         for model_name, model_info in models.items():
-            if model_info['Alias'] == alias:
+            if model_info['Alias'] == alias or model_info['Model'] == alias:
                 self.switch_model(model_name, output_message=True)
                 return
         self.io.tool_error(f"Model with alias '{alias}' not found.")
