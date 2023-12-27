@@ -82,7 +82,7 @@ are the one being asked to specify code edits.
 Would you want to hand type a properly escaped json data structure
 to invoke surgical insert, delete, replace operations on specific code line numbers?
 Do you want to use a brittle format, where any mistake
-causes and error and all your work to be discarded?
+causes an error that discards all your work?
 
 GPT is quantitatively better at code editing when you reduce the
 burden of formatting edits by using a familiar, simple, high level
