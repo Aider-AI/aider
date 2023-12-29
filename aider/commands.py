@@ -392,7 +392,7 @@ class Commands:
         combined_output = None
         try:
             result = subprocess.run(
-                args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, shell=True
+                args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, shell=True, encoding=self.io.encoding, errors='replace'
             )
             combined_output = result.stdout
         except Exception as e:
