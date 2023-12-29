@@ -195,11 +195,14 @@ class GitRepo:
 
         # convert to appropriate os.sep, since git always normalizes to /
         res = set(
-            str(Path(PurePosixPath((Path(self.root) / path).relative_to(self.root))))
+            self.normalize_path(path)
             for path in files
         )
 
         return self.filter_ignored_files(res)
+
+    def normalize_path(self, path):
+        return str(Path(PurePosixPath((Path(self.root) / path).relative_to(self.root))))
 
     def filter_ignored_files(self, fnames):
         if not self.aider_ignore_file or not self.aider_ignore_file.is_file():
@@ -221,7 +224,7 @@ class GitRepo:
             return
 
         tracked_files = set(self.get_tracked_files())
-        return path in tracked_files
+        return self.normalize_path(path) in tracked_files
 
     def abs_root_path(self, path):
         res = Path(self.root) / path
