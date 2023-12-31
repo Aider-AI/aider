@@ -27,7 +27,10 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
-      if: ${{ secrets.DOCKERHUB_USERNAME }} && ${{ secrets.DOCKERHUB_PASSWORD }}
+      env:
+        dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+        dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      if: ${{ env.dockerhub_username }} && ${{ env.dockerhub_password }}
 
     - name: Build Docker image
       uses: docker/build-push-action@v5
