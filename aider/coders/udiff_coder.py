@@ -334,8 +334,11 @@ def process_fenced_block(lines, start_line_num):
     block = lines[start_line_num:line_num]
     block.append("@@ @@")
 
-    if block[1].startswith("+++ "):
-        fname = block[1].split()[1]
+    if block[1].startswith("--- ") and block[2].startswith("+++ "):
+        # Extract the file path, considering that it might contain spaces
+        fname = block[1][4:].strip()
+        # Ensure that the file path is the same for both the original and new file
+        assert fname == block[2][4:].strip(), "File paths in diff headers do not match"
         block = block[2:]
     else:
         fname = None
