@@ -187,8 +187,9 @@ class Commands:
             return
 
         last_commit = self.coder.repo.repo.head.commit
+        dump(last_commit)
         changed_files_last_commit = {item.a_path for item in last_commit.diff(None)}
-        dirty_files = self.coder.repo.repo.untracked_files + [item.a_path for item in self.coder.repo.repo.index.diff(None)]
+        dirty_files = [item.a_path for item in self.coder.repo.repo.index.diff(None)]
         dirty_files_in_last_commit = changed_files_last_commit.intersection(dirty_files)
         dump(changed_files_last_commit)
         dump(dirty_files)
@@ -228,7 +229,7 @@ class Commands:
                 " command!"
             )
             return
-        # self.coder.repo.repo.git.reset("--hard", "HEAD~1")
+        self.coder.repo.repo.git.reset("--hard", "HEAD~1")
         self.io.tool_output(
             f"{last_commit.message.strip()}\n"
             f"The above commit {self.coder.last_aider_commit_hash} "
