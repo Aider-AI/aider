@@ -181,7 +181,7 @@ class Coder:
         if self.repo:
             rel_repo_dir = self.repo.get_rel_repo_dir()
             num_files = len(self.repo.get_tracked_files())
-            self.io.tool_output(f"Git repo: {rel_repo_dir} with {num_files} files")
+            self.io.tool_output(f"Git repo: {rel_repo_dir} with {num_files:,} files")
         else:
             self.io.tool_output("Git repo: none")
             self.find_common_root()
