@@ -186,10 +186,15 @@ class Commands:
             self.io.tool_error("No git repository found.")
             return
 
-        if self.coder.repo.is_dirty():
+        last_commit = self.coder.repo.repo.head.commit
+        changed_files_last_commit = {item.a_path for item in last_commit.diff(None)}
+        dirty_files = self.coder.repo.repo.untracked_files + [item.a_path for item in self.coder.repo.repo.index.diff(None)]
+        dirty_files_in_last_commit = changed_files_last_commit.intersection(dirty_files)
+
+        if dirty_files_in_last_commit:
             self.io.tool_error(
-                "The repository has uncommitted changes. Please commit or stash them before"
-                " undoing."
+                "The repository has uncommitted changes in files that were modified in the last commit. "
+                "Please commit or stash them before undoing."
             )
             return
 
