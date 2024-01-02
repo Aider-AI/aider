@@ -188,8 +188,11 @@ class Commands:
 
         last_commit = self.coder.repo.repo.head.commit
         changed_files_last_commit = {item.a_path for item in last_commit.diff(None)}
-        dirty_files = self.coder.repo.repo.untracked_files + [item.a_path for item in self.coder.repo.repo.index.diff(None)]
+        dirty_files = [item.a_path for item in self.coder.repo.repo.index.diff(None)]
         dirty_files_in_last_commit = changed_files_last_commit.intersection(dirty_files)
+        dump(changed_files_last_commit)
+        dump(dirty_files)
+        dump(dirty_files_in_last_commit)
 
         if dirty_files_in_last_commit:
             self.io.tool_error(
