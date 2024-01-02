@@ -533,3 +533,7 @@ class TestCommands(TestCase):
 
             commands.cmd_undo("")
             self.assertNotEqual(last_commit_hash, repo.head.commit.hexsha[:7])
+
+            del coder
+            del commands
+            del repo
