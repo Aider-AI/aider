@@ -23,8 +23,8 @@ from aider.io import InputOutput
 from aider.repo import GitRepo
 from aider.repomap import RepoMap
 from aider.sendchat import send_with_retries
-
 from aider.utils import is_image_file
+
 from ..dump import dump  # noqa: F401
 
 
@@ -347,7 +347,10 @@ class Coder:
 
         images_message = self.get_images_message()
         if images_message is not None:
-            files_messages.append(images_message)
+            files_messages += [
+                images_message,
+                dict(role="assistant", content="Ok."),
+            ]
 
         return files_messages
 
@@ -359,21 +362,14 @@ class Coder:
         for fname, content in self.get_abs_fnames_content():
             if is_image_file(fname):
                 image_url = f"data:image/{Path(fname).suffix.lstrip('.')};base64,{content}"
-                image_messages.append({
-                    "type": "image_url",
-                    "image_url": {
-                        "url": image_url,
-                        "detail": "high"
-                    }
-                })
+                image_messages.append(
+                    {"type": "image_url", "image_url": {"url": image_url, "detail": "high"}}
+                )
 
         if not image_messages:
             return None
 
-        return {
-            "role": "user",
-            "content": image_messages
-        }
+        return {"role": "user", "content": image_messages}
 
     def run(self, with_message=None):
         while True:
@@ -442,7 +438,7 @@ class Coder:
         self.done_messages += self.cur_messages
         self.summarize_start()
 
-        #TODO check for impact on image messages
+        # TODO check for impact on image messages
         if message:
             self.done_messages += [
                 dict(role="user", content=message),
@@ -489,7 +485,7 @@ class Coder:
             dict(role="system", content=self.fmt_system_prompt(self.gpt_prompts.system_reminder)),
         ]
 
-        #TODO review impact of token count on image messages
+        # TODO review impact of token count on image messages
         messages_tokens = self.main_model.token_count(messages)
         reminder_tokens = self.main_model.token_count(reminder_message)
         cur_tokens = self.main_model.token_count(self.cur_messages)
