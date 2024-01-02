@@ -60,7 +60,12 @@ class RepoMap:
         if not other_files:
             return
 
-        files_listing = self.get_ranked_tags_map(chat_files, other_files)
+        try:
+            files_listing = self.get_ranked_tags_map(chat_files, other_files)
+        except RecursionError:
+            self.io.tool_error("Disabling repo map, git repo too large?")
+            self.max_map_tokens = 0
+            return
         if not files_listing:
             return
 
