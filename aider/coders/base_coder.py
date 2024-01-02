@@ -182,6 +182,11 @@ class Coder:
             rel_repo_dir = self.repo.get_rel_repo_dir()
             num_files = len(self.repo.get_tracked_files())
             self.io.tool_output(f"Git repo: {rel_repo_dir} with {num_files:,} files")
+            if num_files > 1000:
+                self.io.tool_error(
+                    "Warning: For large repos, consider using an .aiderignore file to ignore"
+                    " irrelevant files/dirs."
+                )
         else:
             self.io.tool_output("Git repo: none")
             self.find_common_root()
@@ -198,6 +203,12 @@ class Coder:
 
         if map_tokens > 0:
             self.io.tool_output(f"Repo-map: using {map_tokens} tokens")
+            max_map_tokens = 2048
+            if map_tokens > max_map_tokens:
+                self.io.tool_error(
+                    f"Warning: map-tokens > {max_map_tokens} is not recommended as too much"
+                    " irrelevant code can confused GPT."
+                )
         else:
             self.io.tool_output("Repo-map: disabled because map_tokens == 0")
 
