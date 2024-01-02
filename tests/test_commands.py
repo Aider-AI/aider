@@ -492,3 +492,41 @@ class TestCommands(TestCase):
             commands.cmd_drop(str(fname))
 
             self.assertEqual(len(coder.abs_fnames), 0)
+    def test_cmd_undo_with_dirty_files_not_in_last_commit(self):
+        with GitTemporaryDirectory() as repo_dir:
+            repo = git.Repo(repo_dir)
+            io = InputOutput(pretty=False, yes=True)
+            coder = Coder.create(models.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Create and commit a file
+            filename = "test_file.txt"
+            file_path = Path(repo_dir) / filename
+            file_path.write_text("Initial content")
+            repo.git.add(filename)
+            repo.git.commit("-m", "Initial commit")
+
+            # Modify the file and commit again
+            file_path.write_text("Modified content")
+            repo.git.add(filename)
+            repo.git.commit("-m", "aider: Modify test_file.txt")
+
+            # Store the commit hash
+            last_commit_hash = repo.head.commit.hexsha[:7]
+            coder.last_aider_commit_hash = last_commit_hash
+
+            # Create a dirty file that was not in the last commit
+            other_file = "other_file.txt"
+            other_file_path = Path(repo_dir) / other_file
+            other_file_path.write_text("This is an untracked file")
+
+            # Attempt to undo the last commit
+            output = commands.cmd_undo("")
+            self.assertIsNone(output, "Undo should not produce any output")
+
+            # Check that the last commit is still present
+            self.assertEqual(last_commit_hash, repo.head.commit.hexsha[:7])
+
+            # Check that the dirty file is still untracked
+            self.assertTrue(other_file_path.exists())
+            self.assertIn(other_file, repo.untracked_files)
