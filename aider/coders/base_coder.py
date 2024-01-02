@@ -935,6 +935,7 @@ class Coder:
         if history:
             for msg in history:
                 context += "\n" + msg["role"].upper() + ": " + msg["content"] + "\n"
+
         return context
 
     def auto_commit(self, edited):
@@ -963,7 +964,7 @@ class Coder:
         self.repo.commit(fnames=self.need_commit_before_edits)
 
         # files changed, move cur messages back behind the files messages
-        self.move_back_cur_messages(self.gpt_prompts.files_content_local_edits)
+        # self.move_back_cur_messages(self.gpt_prompts.files_content_local_edits)
         return True
 
 
