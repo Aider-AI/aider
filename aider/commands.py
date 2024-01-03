@@ -151,7 +151,7 @@ class Commands:
             res.append((tokens, f"{relative_fname}", "use /drop to drop from chat"))
 
         current_model_name = self.coder.main_model.name
-        self.io.tool_output(f"Current model: {current_model_name}")
+        self.io.tool_output(f"Current model: {current_model_name} ({self.coder.edit_format})")
         self.io.tool_output("Approximate context window usage, in tokens:")
         self.io.tool_output()
 
@@ -512,7 +512,7 @@ class Commands:
 
     def switch_model(self, model_name):
         # Assuming there is a method in the coder to switch models
-        self.coder.switch_model(model_name)
+        self.coder = self.coder.clone_with_new_model(model_name)
 
     # Alias for cmd_model
     def cmd_m(self, args):
