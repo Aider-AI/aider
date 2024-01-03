@@ -513,8 +513,6 @@ class Commands:
     def switch_model(self, model_name, output_message=False):
         # Assuming there is a method in the coder to switch models
         self.coder.switch_model(model_name)
-        if output_message:
-            self.io.tool_output(f"Switched to model: {model_name}")
 
     # Alias for cmd_model
     def cmd_m(self, args):
