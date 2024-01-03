@@ -24,6 +24,7 @@ from aider.io import InputOutput
 from aider.repo import GitRepo
 from aider.repomap import RepoMap
 from aider.sendchat import send_with_retries
+from aider.utils import is_image_file
 
 from ..dump import dump  # noqa: F401
 
@@ -181,7 +182,12 @@ class Coder:
         if self.repo:
             rel_repo_dir = self.repo.get_rel_repo_dir()
             num_files = len(self.repo.get_tracked_files())
-            self.io.tool_output(f"Git repo: {rel_repo_dir} with {num_files} files")
+            self.io.tool_output(f"Git repo: {rel_repo_dir} with {num_files:,} files")
+            if num_files > 1000:
+                self.io.tool_error(
+                    "Warning: For large repos, consider using an .aiderignore file to ignore"
+                    " irrelevant files/dirs."
+                )
         else:
             self.io.tool_output("Git repo: none")
             self.find_common_root()
@@ -198,6 +204,12 @@ class Coder:
 
         if map_tokens > 0:
             self.io.tool_output(f"Repo-map: using {map_tokens} tokens")
+            max_map_tokens = 2048
+            if map_tokens > max_map_tokens:
+                self.io.tool_error(
+                    f"Warning: map-tokens > {max_map_tokens} is not recommended as too much"
+                    " irrelevant code can confused GPT."
+                )
         else:
             self.io.tool_output("Repo-map: disabled because map_tokens == 0")
 
@@ -299,18 +311,19 @@ class Coder:
 
         prompt = ""
         for fname, content in self.get_abs_fnames_content():
-            relative_fname = self.get_rel_fname(fname)
-            prompt += "\n"
-            prompt += relative_fname
-            prompt += f"\n{self.fence[0]}\n"
+            if not is_image_file(fname):
+                relative_fname = self.get_rel_fname(fname)
+                prompt += "\n"
+                prompt += relative_fname
+                prompt += f"\n{self.fence[0]}\n"
 
-            prompt += content
+                prompt += content
 
-            # lines = content.splitlines(keepends=True)
-            # lines = [f"{i+1:03}:{line}" for i, line in enumerate(lines)]
-            # prompt += "".join(lines)
+                # lines = content.splitlines(keepends=True)
+                # lines = [f"{i+1:03}:{line}" for i, line in enumerate(lines)]
+                # prompt += "".join(lines)
 
-            prompt += f"{self.fence[1]}\n"
+                prompt += f"{self.fence[1]}\n"
 
         return prompt
 
@@ -344,6 +357,13 @@ class Coder:
             dict(role="assistant", content="Ok."),
         ]
 
+        images_message = self.get_images_message()
+        if images_message is not None:
+            files_messages += [
+                images_message,
+                dict(role="assistant", content="Ok."),
+            ]
+
         return files_messages
 
     def switch_model(self, model_name):
@@ -359,6 +379,23 @@ class Coder:
             self.io.tool_output(f"Switched to model: {model_name}")
         else:
             raise ValueError(f"Model with name '{model_name}' could not be created.")
+
+    def get_images_message(self):
+        if not utils.is_gpt4_with_openai_base_url(self.main_model.name, self.client):
+            return None
+
+        image_messages = []
+        for fname, content in self.get_abs_fnames_content():
+            if is_image_file(fname):
+                image_url = f"data:image/{Path(fname).suffix.lstrip('.')};base64,{content}"
+                image_messages.append(
+                    {"type": "image_url", "image_url": {"url": image_url, "detail": "high"}}
+                )
+
+        if not image_messages:
+            return None
+
+        return {"role": "user", "content": image_messages}
 
     def run(self, with_message=None):
         while True:
@@ -427,6 +464,7 @@ class Coder:
         self.done_messages += self.cur_messages
         self.summarize_start()
 
+        # TODO check for impact on image messages
         if message:
             self.done_messages += [
                 dict(role="user", content=message),
@@ -473,6 +511,7 @@ class Coder:
             dict(role="system", content=self.fmt_system_prompt(self.gpt_prompts.system_reminder)),
         ]
 
+        # TODO review impact of token count on image messages
         messages_tokens = self.main_model.token_count(messages)
         reminder_tokens = self.main_model.token_count(reminder_message)
         cur_tokens = self.main_model.token_count(self.cur_messages)
@@ -676,7 +715,7 @@ class Coder:
             raise Exception("No data found in openai response!")
 
         tokens = None
-        if hasattr(completion, "usage"):
+        if hasattr(completion, "usage") and completion.usage is not None:
             prompt_tokens = completion.usage.prompt_tokens
             completion_tokens = completion.usage.completion_tokens
 
@@ -950,6 +989,7 @@ class Coder:
         if history:
             for msg in history:
                 context += "\n" + msg["role"].upper() + ": " + msg["content"] + "\n"
+
         return context
 
     def auto_commit(self, edited):
@@ -978,7 +1018,7 @@ class Coder:
         self.repo.commit(fnames=self.need_commit_before_edits)
 
         # files changed, move cur messages back behind the files messages
-        self.move_back_cur_messages(self.gpt_prompts.files_content_local_edits)
+        # self.move_back_cur_messages(self.gpt_prompts.files_content_local_edits)
         return True
 
 

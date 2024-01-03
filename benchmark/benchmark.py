@@ -787,15 +787,28 @@ def run_test(
         chat_history_file=history_fname,
     )
 
-    main_model = models.Model.create(model_name)
+    if "OPENAI_API_BASE" in os.environ and "openrouter.ai" in os.environ["OPENAI_API_BASE"]:
+        client = openai.OpenAI(
+            api_key=os.environ["OPENAI_API_KEY"],
+            base_url=os.environ.get("OPENAI_API_BASE"),
+            default_headers={
+                "HTTP-Referer": "http://aider.chat",
+                "X-Title": "Aider",
+            }
+        )
+    else:
+        client = openai.OpenAI(
+            api_key=os.environ["OPENAI_API_KEY"],
+            base_url=os.environ.get("OPENAI_API_BASE", "https://api.openai.com/v1"),
+        )
+
+    main_model = models.Model.create(model_name, client)
     edit_format = edit_format or main_model.edit_format
 
     dump(main_model)
     dump(edit_format)
     show_fnames = ",".join(map(str, fnames))
     print("fnames:", show_fnames)
-
-    client = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
     coder = Coder.create(
         main_model,

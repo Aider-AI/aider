@@ -334,8 +334,9 @@ def process_fenced_block(lines, start_line_num):
     block = lines[start_line_num:line_num]
     block.append("@@ @@")
 
-    if block[1].startswith("+++ "):
-        fname = block[1].split()[1]
+    if block[0].startswith("--- ") and block[1].startswith("+++ "):
+        # Extract the file path, considering that it might contain spaces
+        fname = block[1][4:].strip()
         block = block[2:]
     else:
         fname = None

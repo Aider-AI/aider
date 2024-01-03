@@ -82,7 +82,7 @@ are the one being asked to specify code edits.
 Would you want to hand type a properly escaped json data structure
 to invoke surgical insert, delete, replace operations on specific code line numbers?
 Do you want to use a brittle format, where any mistake
-causes and error and all your work to be discarded?
+causes an error that discards all your work?
 
 GPT is quantitatively better at code editing when you reduce the
 burden of formatting edits by using a familiar, simple, high level
@@ -235,8 +235,8 @@ even after multiple retries.
 There are probably a couple of reasons why high level diffs
 help:
 
-- It's easier to produce diffs that both correctly match the original code and correctly produce the intended new code. There is less risk of GPT getting confused, compared to generating a series of surgical edits mixed into existing code.
-- High level hunks often contain more lines than a surgical hunk, so they are less likely to accidentally match unrelated parts of code. This is helpful because GPT can't reliably give us line numbers to specify exactly where in the file to make changes.
+- It's easier to produce diffs that both correctly match the original code and correctly produce the intended new code. There is less risk of GPT getting confused, compared to generating a series of surgical edits that interleave lines of old and new code.
+- High level hunks often contain more lines than a surgical hunk, so they are less likely to accidentally match unrelated parts of the code. This is helpful because GPT can't reliably give us line numbers to specify exactly where in the file to make changes.
 
 ### Be flexible when applying edits
 

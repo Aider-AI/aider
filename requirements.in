@@ -19,4 +19,5 @@ packaging
 sounddevice
 soundfile
 PyYAML
+Pillow
 diff-match-patch
