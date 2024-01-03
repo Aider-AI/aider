@@ -3,7 +3,6 @@ import re
 import tiktoken
 
 from .model import Model
-from aider.models_table import models
 
 known_tokens = {
     "gpt-3.5-turbo": 4,
@@ -11,7 +10,6 @@ known_tokens = {
     "gpt-4-1106-preview": 128,
     "gpt-3.5-turbo-1106": 16,
 }
-
 
 class OpenAIModel(Model):
     def __init__(self, name):
@@ -86,4 +84,59 @@ class OpenAIModel(Model):
         return self.name.startswith("gpt-3.5-turbo")
 
     def available_models(self):
-        return models
+        return AVAILABLE_MODELS
+
+# TODO fix the duplication of pricing information
+# This is used in the /models command
+AVAILABLE_MODELS= {
+    'gpt-4': {
+        'Alias': 'gpt4',
+        'Model': 'gpt-4',
+        'Input_cost': 0.03,
+        'Input_desc': ' / 1K tokens',
+        'Input_cur': '$',
+        'Output_cost': 0.06,
+        'Output_desc': ' / 1K tokens',
+        'Output_cur': '$'
+    },
+    'gpt-4-1106-preview': {
+        'Alias': '4',
+        'Model': 'gpt-4-1106-preview',
+        'Input_cost': 0.01,
+        'Input_desc': ' / 1K tokens',
+        'Input_cur': '$',
+        'Output_cost': 0.03,
+        'Output_desc': ' / 1K tokens',
+        'Output_cur': '$'
+    },
+    'gpt-4-1106-vision-preview': {
+        'Alias': '4v',
+        'Model': 'gpt-4-1106-vision-preview',
+        'Input_cost': 0.01,
+        'Input_desc': ' / 1K tokens',
+        'Input_cur': '$',
+        'Output_cost': 0.03,
+        'Output_desc': ' / 1K tokens',
+        'Output_cur': '$'
+    },
+    'gpt-4-32k': {
+        'Alias': '4-32',
+        'Model': 'gpt-4-32k',
+        'Input_cost': 0.06,
+        'Input_desc': ' / 1K tokens',
+        'Input_cur': '$',
+        'Output_cost': 0.12,
+        'Output_desc': ' / 1K tokens',
+        'Output_cur': '$'
+    },
+    'gpt-3.5-turbo-1106': {
+        'Alias': '3',
+        'Model': 'gpt-3.5-turbo-1106',
+        'Input_cost': 0.0010,
+        'Input_desc': ' / 1K tokens',
+        'Input_cur': '$',
+        'Output_cost': 0.0020,
+        'Output_desc': ' / 1K tokens',
+        'Output_cur': '$'
+    },
+}
