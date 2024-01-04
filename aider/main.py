@@ -354,6 +354,12 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         help="Show the version number and exit",
     )
     other_group.add_argument(
+        "--check-update",
+        action="store_true",
+        help="Check for updates and return status in the exit code",
+        default=False,
+    )
+    other_group.add_argument(
         "--apply",
         metavar="FILE",
         help="Apply the changes from the given file instead of running the chat (debug)",
@@ -471,6 +477,10 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     io.tool_output(f"Aider v{__version__}")
 
     check_version(io.tool_error)
+
+    if args.check_update:
+        update_available = check_version(lambda msg: None)
+        sys.exit(0 if not update_available else 1)
 
     if "VSCODE_GIT_IPC_HANDLE" in os.environ:
         args.pretty = False
