@@ -3,8 +3,10 @@
 ### v0.20.0
 
 - Add images to the chat to automatically use GPT-4 Vision, by @joshuavial
-- Improved unicode encoding for `/run` command output, by @ctoth
-- Bugfix to prevent false auto-commits on Windows, by @ctoth
+
+- Bugfixes:
+  - Improved unicode encoding for `/run` command output, by @ctoth
+  - Prevent false auto-commits on Windows, by @ctoth
 
 ### v0.19.1
 
