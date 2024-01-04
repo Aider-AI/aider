@@ -38,6 +38,10 @@ The diff needs to apply to a unique set of lines in {path}!
 {original}```
 """
 
+other_hunks_applied = (
+    "Note: some hunks did apply successfully. See the updated source code shown above.\n\n"
+)
+
 
 class UnifiedDiffCoder(Coder):
     edit_format = "udiff"
@@ -110,6 +114,8 @@ class UnifiedDiffCoder(Coder):
 
         if errors:
             errors = "\n\n".join(errors)
+            if len(errors) < len(uniq):
+                errors += other_hunks_applied
             raise ValueError(errors)
 
 
