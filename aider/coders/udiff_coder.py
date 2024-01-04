@@ -307,7 +307,7 @@ def apply_partial_hunk(content, preceding_context, changes, following_context):
 
 
 def find_diffs(content):
-    # We can always use triple-quotes, because all the udiff content
+    # We can always fence with triple-quotes, because all the udiff content
     # is prefixed with +/-/space.
 
     if not content.endswith("\n"):
@@ -356,6 +356,20 @@ def process_fenced_block(lines, start_line_num):
         hunk.append(line)
         if len(line) < 2:
             continue
+
+        if line.startswith("+++ ") and hunk[-2].startswith("--- "):
+            if hunk[-3] == "\n":
+                hunk = hunk[:-3]
+            else:
+                hunk = hunk[:-2]
+
+            edits.append((fname, hunk))
+            hunk = []
+            keeper = False
+
+            fname = line[4:].strip()
+            continue
+
         op = line[0]
         if op in "-+":
             keeper = True
@@ -369,6 +383,7 @@ def process_fenced_block(lines, start_line_num):
         hunk = hunk[:-1]
         edits.append((fname, hunk))
         hunk = []
+        keeper = False
 
     return line_num + 1, edits
 
