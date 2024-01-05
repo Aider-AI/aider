@@ -21,7 +21,7 @@ setup(
         "aider": ["queries/*"],
     },
     install_requires=requirements,
-    python_requires=">=3.9,<3.12",
+    python_requires=">=3.9,<3.13",
     entry_points={
         "console_scripts": [
             "aider = aider.main:main",
