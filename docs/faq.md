@@ -269,6 +269,8 @@ for FILE in *.py ; do
 done
 ```
 
+To make aider run in non interactive mode use `--yes` or `--no` to always answer yes/no to all questions.
+
 ## Python
 
 You can also script aider from python:
