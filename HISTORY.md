@@ -1,5 +1,11 @@
 # Release history
 
+### v0.21.0
+
+- Support for python 3.12.
+- Improvements to unified diff editing format.
+- New `--check-update` arg to check if updates are available and exit with status code.
+
 ### v0.20.0
 
 - Add images to the chat to automatically use GPT-4 Vision, by @joshuavial
