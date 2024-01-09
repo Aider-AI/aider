@@ -262,6 +262,9 @@ def normalize_hunk(hunk):
 def directly_apply_hunk(content, hunk):
     before, after = hunk_to_before_after(hunk)
 
+    if not before:
+        return
+
     before_lines, _ = hunk_to_before_after(hunk, lines=True)
     before_lines = "".join([line.strip() for line in before_lines])
 
@@ -283,7 +286,8 @@ def apply_partial_hunk(content, preceding_context, changes, following_context):
 
     use_all = len_prec + len_foll
 
-    for drop in range(use_all):
+    # if there is a - in the hunk, we can go all the way to `use=0`
+    for drop in range(use_all + 1):
         use = use_all - drop
 
         for use_prec in range(len_prec, -1, -1):
