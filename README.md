@@ -43,7 +43,7 @@ Aider now supports a [unified diff editing format, which reduces GPT-4 Turbo's "
 To use it, run aider like this:
 
 ```
-aider --4-turbo
+aider --4turbo
 ```
 
 ## Getting started
