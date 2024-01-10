@@ -1,5 +1,10 @@
 # Release history
 
+### v0.21.1
+
+- Bugfix for unified diff editing format.
+- Added --4turbo and --4 aliases for --4-turbo.
+
 ### v0.21.0
 
 - Support for python 3.12.
