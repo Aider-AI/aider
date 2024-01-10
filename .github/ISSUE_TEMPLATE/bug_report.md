@@ -1,23 +1,19 @@
 ---
-name: Bug report
-about: Create a bug report to help improve aider
+name: New issue
+about: Ask a question or report a bug
 title: ''
 labels: ''
 assignees: ''
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
-
-**Aider version and settings**
-Please include:
+When asking questions or reporting issues, it is very helpful if you can include:
 
 - Aider version
 - Model being used (`gpt-4-xxx`, etc)
-- Other switches or settings.
+- Other switches or config settings that are active
 
-Ideally just copy & paste the announcement lines that aider prints when you launch it, like these:
+The easiest way to do this is just just copy & paste the announcement lines that aider prints when you launch it, like these:
 
 ```
 Aider v0.21.2-dev
