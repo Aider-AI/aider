@@ -207,7 +207,7 @@ class Coder:
             if map_tokens > max_map_tokens:
                 self.io.tool_error(
                     f"Warning: map-tokens > {max_map_tokens} is not recommended as too much"
-                    " irrelevant code can confused GPT."
+                    " irrelevant code can confuse GPT."
                 )
         else:
             self.io.tool_output("Repo-map: disabled because map_tokens == 0")
