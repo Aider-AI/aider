@@ -13,14 +13,17 @@ def check_version(print_cmd):
         latest_version = data["info"]["version"]
         current_version = aider.__version__
 
-        if packaging.version.parse(latest_version) <= packaging.version.parse(current_version):
-            return
+        is_update_available = packaging.version.parse(latest_version) > packaging.version.parse(current_version)
 
-        print_cmd(f"Newer version v{latest_version} is available. To upgrade, run:")
-        py = sys.executable
-        print_cmd(f"{py} -m pip install --upgrade aider-chat")
+        if is_update_available:
+            print_cmd(f"Newer version v{latest_version} is available. To upgrade, run:")
+            py = sys.executable
+            print_cmd(f"{py} -m pip install --upgrade aider-chat")
+
+        return is_update_available
     except Exception as err:
         print_cmd(f"Error checking pypi for new version: {err}")
+        return False
 
 
 if __name__ == "__main__":

@@ -23,6 +23,7 @@ from aider.io import InputOutput
 from aider.repo import GitRepo
 from aider.repomap import RepoMap
 from aider.sendchat import send_with_retries
+from aider.utils import is_image_file
 
 from ..dump import dump  # noqa: F401
 
@@ -40,6 +41,7 @@ def wrap_fence(name):
 
 
 class Coder:
+    client = None
     abs_fnames = None
     repo = None
     last_aider_commit_hash = None
@@ -48,7 +50,10 @@ class Coder:
     functions = None
     total_cost = 0.0
     num_exhausted_context_windows = 0
+    num_malformed_responses = 0
     last_keyboard_interrupt = None
+    max_apply_update_errors = 3
+    edit_format = None
 
     @classmethod
     def create(
@@ -56,35 +61,40 @@ class Coder:
         main_model=None,
         edit_format=None,
         io=None,
+        client=None,
         skip_model_availabily_check=False,
         **kwargs,
     ):
-        from . import EditBlockCoder, WholeFileCoder
+        from . import EditBlockCoder, UnifiedDiffCoder, WholeFileCoder
 
         if not main_model:
             main_model = models.GPT4
 
         if not skip_model_availabily_check and not main_model.always_available:
-            if not check_model_availability(io, main_model):
+            if not check_model_availability(io, client, main_model):
+                fallback_model = models.GPT35_1106
                 if main_model != models.GPT4:
                     io.tool_error(
                         f"API key does not support {main_model.name}, falling back to"
-                        f" {models.GPT35_16k.name}"
+                        f" {fallback_model.name}"
                     )
-                main_model = models.GPT35_16k
+                main_model = fallback_model
 
         if edit_format is None:
             edit_format = main_model.edit_format
 
         if edit_format == "diff":
-            return EditBlockCoder(main_model, io, **kwargs)
+            return EditBlockCoder(client, main_model, io, **kwargs)
         elif edit_format == "whole":
-            return WholeFileCoder(main_model, io, **kwargs)
+            return WholeFileCoder(client, main_model, io, **kwargs)
+        elif edit_format == "udiff":
+            return UnifiedDiffCoder(client, main_model, io, **kwargs)
         else:
             raise ValueError(f"Unknown edit format {edit_format}")
 
     def __init__(
         self,
+        client,
         main_model,
         io,
         fnames=None,
@@ -103,6 +113,8 @@ class Coder:
         voice_language=None,
         aider_ignore_file=None,
     ):
+        self.client = client
+
         if not fnames:
             fnames = []
 
@@ -139,7 +151,7 @@ class Coder:
 
         self.main_model = main_model
 
-        self.io.tool_output(f"Model: {main_model.name}")
+        self.io.tool_output(f"Model: {main_model.name} using {self.edit_format} edit format")
 
         self.show_diffs = show_diffs
 
@@ -159,14 +171,22 @@ class Coder:
 
         if use_git:
             try:
-                self.repo = GitRepo(self.io, fnames, git_dname, aider_ignore_file)
+                self.repo = GitRepo(
+                    self.io, fnames, git_dname, aider_ignore_file, client=self.client
+                )
                 self.root = self.repo.root
             except FileNotFoundError:
                 self.repo = None
 
         if self.repo:
             rel_repo_dir = self.repo.get_rel_repo_dir()
-            self.io.tool_output(f"Git repo: {rel_repo_dir}")
+            num_files = len(self.repo.get_tracked_files())
+            self.io.tool_output(f"Git repo: {rel_repo_dir} with {num_files:,} files")
+            if num_files > 1000:
+                self.io.tool_error(
+                    "Warning: For large repos, consider using an .aiderignore file to ignore"
+                    " irrelevant files/dirs."
+                )
         else:
             self.io.tool_output("Git repo: none")
             self.find_common_root()
@@ -183,6 +203,12 @@ class Coder:
 
         if map_tokens > 0:
             self.io.tool_output(f"Repo-map: using {map_tokens} tokens")
+            max_map_tokens = 2048
+            if map_tokens > max_map_tokens:
+                self.io.tool_error(
+                    f"Warning: map-tokens > {max_map_tokens} is not recommended as too much"
+                    " irrelevant code can confused GPT."
+                )
         else:
             self.io.tool_output("Repo-map: disabled because map_tokens == 0")
 
@@ -190,6 +216,7 @@ class Coder:
             self.io.tool_output(f"Added {fname} to the chat.")
 
         self.summarizer = ChatSummary(
+            self.client,
             models.Model.weak_model(),
             self.main_model.max_chat_history_tokens,
         )
@@ -283,12 +310,19 @@ class Coder:
 
         prompt = ""
         for fname, content in self.get_abs_fnames_content():
-            relative_fname = self.get_rel_fname(fname)
-            prompt += "\n"
-            prompt += relative_fname
-            prompt += f"\n{self.fence[0]}\n"
-            prompt += content
-            prompt += f"{self.fence[1]}\n"
+            if not is_image_file(fname):
+                relative_fname = self.get_rel_fname(fname)
+                prompt += "\n"
+                prompt += relative_fname
+                prompt += f"\n{self.fence[0]}\n"
+
+                prompt += content
+
+                # lines = content.splitlines(keepends=True)
+                # lines = [f"{i+1:03}:{line}" for i, line in enumerate(lines)]
+                # prompt += "".join(lines)
+
+                prompt += f"{self.fence[1]}\n"
 
         return prompt
 
@@ -302,6 +336,13 @@ class Coder:
 
     def get_files_messages(self):
         all_content = ""
+
+        repo_content = self.get_repo_map()
+        if repo_content:
+            if all_content:
+                all_content += "\n"
+            all_content += repo_content
+
         if self.abs_fnames:
             files_content = self.gpt_prompts.files_content_prefix
             files_content += self.get_files_content()
@@ -310,18 +351,36 @@ class Coder:
 
         all_content += files_content
 
-        repo_content = self.get_repo_map()
-        if repo_content:
-            if all_content:
-                all_content += "\n"
-            all_content += repo_content
-
         files_messages = [
             dict(role="user", content=all_content),
             dict(role="assistant", content="Ok."),
         ]
 
+        images_message = self.get_images_message()
+        if images_message is not None:
+            files_messages += [
+                images_message,
+                dict(role="assistant", content="Ok."),
+            ]
+
         return files_messages
+
+    def get_images_message(self):
+        if not utils.is_gpt4_with_openai_base_url(self.main_model.name, self.client):
+            return None
+
+        image_messages = []
+        for fname, content in self.get_abs_fnames_content():
+            if is_image_file(fname):
+                image_url = f"data:image/{Path(fname).suffix.lstrip('.')};base64,{content}"
+                image_messages.append(
+                    {"type": "image_url", "image_url": {"url": image_url, "detail": "high"}}
+                )
+
+        if not image_messages:
+            return None
+
+        return {"role": "user", "content": image_messages}
 
     def run(self, with_message=None):
         while True:
@@ -336,7 +395,7 @@ class Coder:
                     new_user_message = self.send_new_user_message(new_user_message)
 
                 if with_message:
-                    return
+                    return self.partial_response_content
 
             except KeyboardInterrupt:
                 self.keyboard_interrupt()
@@ -390,6 +449,7 @@ class Coder:
         self.done_messages += self.cur_messages
         self.summarize_start()
 
+        # TODO check for impact on image messages
         if message:
             self.done_messages += [
                 dict(role="user", content=message),
@@ -436,6 +496,7 @@ class Coder:
             dict(role="system", content=self.fmt_system_prompt(self.gpt_prompts.system_reminder)),
         ]
 
+        # TODO review impact of token count on image messages
         messages_tokens = self.main_model.token_count(messages)
         reminder_tokens = self.main_model.token_count(reminder_message)
         cur_tokens = self.main_model.token_count(self.cur_messages)
@@ -446,11 +507,11 @@ class Coder:
             # add the reminder anyway
             total_tokens = 0
 
+        messages += self.cur_messages
+
         # Add the reminder prompt if we still have room to include it.
         if total_tokens < self.main_model.max_context_tokens:
             messages += reminder_message
-
-        messages += self.cur_messages
 
         return messages
 
@@ -470,7 +531,7 @@ class Coder:
             interrupted = self.send(messages, functions=self.functions)
         except ExhaustedContextWindow:
             exhausted = True
-        except openai.error.InvalidRequestError as err:
+        except openai.BadRequestError as err:
             if "maximum context length" in str(err):
                 exhausted = True
             else:
@@ -591,7 +652,9 @@ class Coder:
 
         interrupted = False
         try:
-            hash_object, completion = send_with_retries(model, messages, functions, self.stream)
+            hash_object, completion = send_with_retries(
+                self.client, model, messages, functions, self.stream
+            )
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
 
             if self.stream:
@@ -641,7 +704,7 @@ class Coder:
             raise Exception("No data found in openai response!")
 
         tokens = None
-        if hasattr(completion, "usage"):
+        if hasattr(completion, "usage") and completion.usage is not None:
             prompt_tokens = completion.usage.prompt_tokens
             completion_tokens = completion.usage.completion_tokens
 
@@ -842,19 +905,19 @@ class Coder:
         return set(edit[0] for edit in edits)
 
     def apply_updates(self):
-        max_apply_update_errors = 3
-
         try:
             edited = self.update_files()
         except ValueError as err:
+            self.num_malformed_responses += 1
             err = err.args[0]
             self.apply_update_errors += 1
-            if self.apply_update_errors < max_apply_update_errors:
+            if self.apply_update_errors < self.max_apply_update_errors:
                 self.io.tool_error(f"Malformed response #{self.apply_update_errors}, retrying...")
                 self.io.tool_error(str(err))
                 return None, err
             else:
                 self.io.tool_error(f"Malformed response #{self.apply_update_errors}, aborting.")
+                self.io.tool_error(str(err))
                 return False, None
 
         except Exception as err:
@@ -862,11 +925,13 @@ class Coder:
             print()
             traceback.print_exc()
             self.apply_update_errors += 1
-            if self.apply_update_errors < max_apply_update_errors:
+            if self.apply_update_errors < self.max_apply_update_errors:
                 self.io.tool_error(f"Update exception #{self.apply_update_errors}, retrying...")
+                self.io.tool_error(str(err))
                 return None, str(err)
             else:
                 self.io.tool_error(f"Update exception #{self.apply_update_errors}, aborting")
+                self.io.tool_error(str(err))
                 return False, None
 
         self.apply_update_errors = 0
@@ -913,6 +978,7 @@ class Coder:
         if history:
             for msg in history:
                 context += "\n" + msg["role"].upper() + ": " + msg["content"] + "\n"
+
         return context
 
     def auto_commit(self, edited):
@@ -941,13 +1007,20 @@ class Coder:
         self.repo.commit(fnames=self.need_commit_before_edits)
 
         # files changed, move cur messages back behind the files messages
-        self.move_back_cur_messages(self.gpt_prompts.files_content_local_edits)
+        # self.move_back_cur_messages(self.gpt_prompts.files_content_local_edits)
         return True
 
 
-def check_model_availability(io, main_model):
-    available_models = openai.Model.list()
-    model_ids = sorted(model.id for model in available_models["data"])
+def check_model_availability(io, client, main_model):
+    try:
+        available_models = client.models.list()
+    except openai.NotFoundError:
+        # Azure sometimes returns 404?
+        # https://discord.com/channels/1131200896827654144/1182327371232186459
+        io.tool_error("Unable to list available models, proceeding with {main_model.name}")
+        return True
+
+    model_ids = sorted(model.id for model in available_models)
     if main_model.name in model_ids:
         return True
 

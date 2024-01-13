@@ -1,4 +1,3 @@
-import openai
 import tiktoken
 
 from .model import Model
@@ -7,13 +6,9 @@ cached_model_details = None
 
 
 class OpenRouterModel(Model):
-    def __init__(self, name):
-        if name == "gpt-4":
-            name = "openai/gpt-4"
-        elif name == "gpt-3.5-turbo":
-            name = "openai/gpt-3.5-turbo"
-        elif name == "gpt-3.5-turbo-16k":
-            name = "openai/gpt-3.5-turbo-16k"
+    def __init__(self, client, name):
+        if name.startswith("gpt-4") or name.startswith("gpt-3.5-turbo"):
+            name = "openai/" + name
 
         self.name = name
         self.edit_format = edit_format_for_model(name)
@@ -24,21 +19,20 @@ class OpenRouterModel(Model):
 
         global cached_model_details
         if cached_model_details is None:
-            cached_model_details = openai.Model.list().data
+            cached_model_details = client.models.list().data
         found = next(
-            (details for details in cached_model_details if details.get("id") == name), None
+            (details for details in cached_model_details if details.id == name), None
         )
 
         if found:
-            self.max_context_tokens = int(found.get("context_length"))
-            self.prompt_price = round(float(found.get("pricing").get("prompt")) * 1000, 6)
-            self.completion_price = round(float(found.get("pricing").get("completion")) * 1000, 6)
+            self.max_context_tokens = int(found.context_length)
+            self.prompt_price = round(float(found.pricing.get("prompt")) * 1000, 6)
+            self.completion_price = round(float(found.pricing.get("completion")) * 1000, 6)
 
         else:
             raise ValueError(f"invalid openrouter model: {name}")
 
 
-# TODO run benchmarks and figure out which models support which edit-formats
 def edit_format_for_model(name):
     if any(str in name for str in ["gpt-4", "claude-2"]):
         return "diff"

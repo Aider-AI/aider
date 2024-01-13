@@ -1,5 +1,39 @@
 # Release history
 
+### v0.21.1
+
+- Bugfix for unified diff editing format.
+- Added --4turbo and --4 aliases for --4-turbo.
+
+### v0.21.0
+
+- Support for python 3.12.
+- Improvements to unified diff editing format.
+- New `--check-update` arg to check if updates are available and exit with status code.
+
+### v0.20.0
+
+- Add images to the chat to automatically use GPT-4 Vision, by @joshuavial
+
+- Bugfixes:
+  - Improved unicode encoding for `/run` command output, by @ctoth
+  - Prevent false auto-commits on Windows, by @ctoth
+
+### v0.19.1
+
+- Removed stray debug output.
+
+### v0.19.0
+
+- [Significantly reduced "lazy" coding from GPT-4 Turbo due to new unified diff edit format](https://aider.chat/docs/unified-diffs.html)
+  - Score improves from 20% to 61% on new "laziness benchmark".
+  - Aider now uses unified diffs by default for `gpt-4-1106-preview`.
+- New `--4-turbo` command line switch as a shortcut for `--model gpt-4-1106-preview`.
+
+### v0.18.1
+
+- Upgraded to new openai python client v1.3.7.
+
 ### v0.18.0
 
 - Improved prompting for both GPT-4 and GPT-4 Turbo.

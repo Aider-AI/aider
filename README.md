@@ -31,20 +31,19 @@ Aider is unique in that it lets you ask for changes to [pre-existing, larger cod
 - [FAQ](https://aider.chat/docs/faq.html)
 - [Discord](https://discord.gg/Tv2uQnR88V)
 
-## New GPT-4 Turbo with 128k context window
+## GPT-4 Turbo with 128k context and unified diffs
 
 Aider supports OpenAI's new GPT-4 model that has the massive 128k context window.
-Early benchmark results
-indicate that it is
-[very fast](https://aider.chat/docs/benchmarks-speed-1106.html)
-and a bit
-[better at coding](https://aider.chat/docs/benchmarks-1106.html)
-than previous GPT-4 models.
+Benchmark results indicate that it is
+[very fast](https://aider.chat/docs/benchmarks-speed-1106.html),
+and a bit [better at coding](https://aider.chat/docs/benchmarks-1106.html) than previous GPT-4 models.
+
+Aider now supports a [unified diff editing format, which reduces GPT-4 Turbo's "lazy" coding](https://aider.chat/docs/unified-diffs.html).
 
 To use it, run aider like this:
 
 ```
-aider --model gpt-4-1106-preview
+aider --4turbo
 ```
 
 ## Getting started
@@ -90,6 +89,7 @@ You can find more chat transcripts on the [examples page](https://aider.chat/exa
 * You can use aider with multiple source files at once, so GPT can make coordinated code changes across all of them in a single changeset/commit.
 * Aider can [give *GPT-4* a map of your entire git repo](https://aider.chat/docs/repomap.html), which helps it understand and modify large codebases.
 * You can also edit files by hand using your editor while chatting with aider. Aider will notice these out-of-band edits and keep GPT up to date with the latest versions of your files. This lets you bounce back and forth between the aider chat and your editor, to collaboratively code with GPT.
+* If you are using gpt-4 through openai directly, you can add image files to your context which will automatically switch you to the gpt-4-vision-preview model
 
 
 ## Usage

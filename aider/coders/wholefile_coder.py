@@ -8,6 +8,8 @@ from .wholefile_prompts import WholeFilePrompts
 
 
 class WholeFileCoder(Coder):
+    edit_format = "whole"
+
     def __init__(self, *args, **kwargs):
         self.gpt_prompts = WholeFilePrompts()
         super().__init__(*args, **kwargs)

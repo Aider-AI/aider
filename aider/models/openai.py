@@ -33,7 +33,11 @@ class OpenAIModel(Model):
         self.tokenizer = tiktoken.encoding_for_model(name)
 
         if self.is_gpt4():
-            self.edit_format = "diff"
+            if name == "gpt-4-1106-preview":
+                self.edit_format = "udiff"
+            else:
+                self.edit_format = "diff"
+
             self.use_repo_map = True
             self.send_undo_reply = True
 
@@ -44,22 +48,23 @@ class OpenAIModel(Model):
             elif tokens == 32:
                 self.prompt_price = 0.06
                 self.completion_price = 0.12
-                self.max_chat_history_tokens = 3 * 1024
+                self.max_chat_history_tokens = 2 * 1024
             elif tokens == 128:
                 self.prompt_price = 0.01
                 self.completion_price = 0.03
-                self.max_chat_history_tokens = 4 * 1024
+                self.max_chat_history_tokens = 2 * 1024
 
             return
 
         if self.is_gpt35():
             self.edit_format = "whole"
             self.always_available = True
+            self.send_undo_reply = False
 
             if self.name == "gpt-3.5-turbo-1106":
                 self.prompt_price = 0.001
                 self.completion_price = 0.002
-                self.max_chat_history_tokens = 3 * 1024
+                self.max_chat_history_tokens = 2 * 1024
             elif tokens == 4:
                 self.prompt_price = 0.0015
                 self.completion_price = 0.002
