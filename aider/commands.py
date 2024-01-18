@@ -524,8 +524,16 @@ def expand_subdir(file_path):
             if file.is_file():
                 yield str(file)
 
+def is_file_exists(file_path):
+    file_path = Path(file_path)
+    if not file_path.exists():
+        return False
+    return True
 
 def parse_quoted_filenames(args):
+    if is_file_exists(args.strip()):
+        return [args.strip()]
+    
     filenames = re.findall(r"\"(.+?)\"|(\S+)", args)
     filenames = [name for sublist in filenames for name in sublist if name]
     return filenames

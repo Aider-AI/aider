@@ -110,6 +110,21 @@ class TestCommands(TestCase):
         self.assertEqual(len(coder.abs_fnames), 1)
         self.assertTrue(fname.exists())
 
+    def test_cmd_add_with_spaces(self):
+        # Initialize the Commands and InputOutput objects
+        io = InputOutput(pretty=False, yes=True)
+        from aider.coders import Coder
+
+        coder = Coder.create(models.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # Check if files with spaces in their names are added correctly
+        Path("test file1 with spaces.txt").write_text("Test file 1")
+        
+        # Call the cmd_add method with a directory
+        commands.cmd_add("test file1 with spaces.txt")
+        self.assertIn(str(Path("test file1 with spaces.txt").resolve()), coder.abs_fnames)
+    
     def test_cmd_add_drop_directory(self):
         # Initialize the Commands and InputOutput objects
         io = InputOutput(pretty=False, yes=False)
