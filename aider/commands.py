@@ -419,7 +419,12 @@ class Commands:
 
         self.io.tool_output(combined_output)
 
-    def cmd_run(self, args):
+    def cmd_test(self, args):
+        "Run a shell command and add the output to the chat on non-zero exit code"
+
+        return self.cmd_run(args, True)
+
+    def cmd_run(self, args, add_on_nonzero_exit=False):
         "Run a shell command and optionally add the output to the chat"
         combined_output = None
         try:
@@ -441,7 +446,12 @@ class Commands:
 
         self.io.tool_output(combined_output)
 
-        if self.io.confirm_ask("Add the output to the chat?", default="y"):
+        if add_on_nonzero_exit:
+            add = result.returncode != 0
+        else:
+            add = self.io.confirm_ask("Add the output to the chat?", default="y")
+
+        if add:
             for line in combined_output.splitlines():
                 self.io.tool_output(line, log_only=True)
 
