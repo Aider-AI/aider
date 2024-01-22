@@ -1,5 +1,12 @@
 # Release history
 
+### main
+
+- Improvements for unified diff editing format.
+- Added ! as an alias for /run.
+- Autocomplete for /add and /drop now properly quotes filenames with spaces.
+- The /undo command asks GPT not to just retry reverted edit.
+
 ### v0.21.1
 
 - Bugfix for unified diff editing format.
