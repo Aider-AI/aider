@@ -7,10 +7,10 @@ import git
 from prompt_toolkit.completion import Completion
 
 from aider import prompts, voice
+from aider.utils import is_gpt4_with_openai_base_url, is_image_file
 
 from .dump import dump  # noqa: F401
 
-from aider.utils import is_image_file, is_gpt4_with_openai_base_url
 
 class Commands:
     voice = None
@@ -174,7 +174,10 @@ class Commands:
         # only switch to image model token count if gpt4 and openai and image in files
         image_in_chat = False
         if is_gpt4_with_openai_base_url(self.coder.main_model.name, self.coder.client):
-            image_in_chat = any(is_image_file(relative_fname) for relative_fname in self.coder.get_inchat_relative_files())
+            image_in_chat = any(
+                is_image_file(relative_fname)
+                for relative_fname in self.coder.get_inchat_relative_files()
+            )
         limit = 128000 if image_in_chat else self.coder.main_model.max_context_tokens
 
         remaining = limit - total
@@ -196,14 +199,16 @@ class Commands:
             return
 
         last_commit = self.coder.repo.repo.head.commit
-        changed_files_last_commit = {item.a_path for item in last_commit.diff(last_commit.parents[0])}
+        changed_files_last_commit = {
+            item.a_path for item in last_commit.diff(last_commit.parents[0])
+        }
         dirty_files = [item.a_path for item in self.coder.repo.repo.index.diff(None)]
         dirty_files_in_last_commit = changed_files_last_commit.intersection(dirty_files)
 
         if dirty_files_in_last_commit:
             self.io.tool_error(
-                "The repository has uncommitted changes in files that were modified in the last commit. "
-                "Please commit or stash them before undoing."
+                "The repository has uncommitted changes in files that were modified in the last"
+                " commit. Please commit or stash them before undoing."
             )
             return
 
@@ -265,12 +270,17 @@ class Commands:
         # don't use io.tool_output() because we don't want to log or further colorize
         print(diff)
 
+    def quote_fname(self, fname):
+        if " " in fname and '"' not in fname:
+            fname = f'"{fname}"'
+        return fname
+
     def completions_add(self, partial):
         files = set(self.coder.get_all_relative_files())
         files = files - set(self.coder.get_inchat_relative_files())
         for fname in files:
             if partial.lower() in fname.lower():
-                yield Completion(fname, start_position=-len(partial))
+                yield Completion(self.quote_fname(fname), start_position=-len(partial))
 
     def glob_filtered_to_repo(self, pattern):
         try:
@@ -333,8 +343,13 @@ class Commands:
             if abs_file_path in self.coder.abs_fnames:
                 self.io.tool_error(f"{matched_file} is already in the chat")
             else:
-                if is_image_file(matched_file) and not is_gpt4_with_openai_base_url(self.coder.main_model.name, self.coder.client):
-                    self.io.tool_error(f"Cannot add image file {matched_file} as the model does not support image files")
+                if is_image_file(matched_file) and not is_gpt4_with_openai_base_url(
+                    self.coder.main_model.name, self.coder.client
+                ):
+                    self.io.tool_error(
+                        f"Cannot add image file {matched_file} as the model does not support image"
+                        " files"
+                    )
                     continue
                 content = self.io.read_text(abs_file_path)
                 if content is None:
@@ -359,7 +374,7 @@ class Commands:
 
         for fname in files:
             if partial.lower() in fname.lower():
-                yield Completion(fname, start_position=-len(partial))
+                yield Completion(self.quote_fname(fname), start_position=-len(partial))
 
     def cmd_drop(self, args):
         "Remove files from the chat session to free up context space"
@@ -409,7 +424,13 @@ class Commands:
         combined_output = None
         try:
             result = subprocess.run(
-                args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, shell=True, encoding=self.io.encoding, errors='replace'
+                args,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                shell=True,
+                encoding=self.io.encoding,
+                errors="replace",
             )
             combined_output = result.stdout
         except Exception as e:
