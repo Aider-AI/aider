@@ -26,8 +26,7 @@ class Commands:
         self.tokenizer = coder.main_model.tokenizer
 
     def is_command(self, inp):
-        if inp[0] == "/":
-            return True
+        return inp[0] in "/!"
 
     def get_commands(self):
         commands = []
@@ -65,6 +64,10 @@ class Commands:
         return matching_commands, first_word, rest_inp
 
     def run(self, inp):
+        if inp.startswith("!"):
+            self.do_run("run", inp[1:])
+            return
+
         res = self.matching_commands(inp)
         if res is None:
             return
