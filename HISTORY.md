@@ -1,7 +1,14 @@
 # Release history
 
+### main
+
+- Improved streaming of markdown to the terminal.
+- Added `/quit` as alias for `/exit`.
+- Added `--skip-check-update` to skip checking for the update on launch.
+
 ### v0.22.0
 
+- New `/test` command that runs a command and adds the output to the chat on non-zero exit status.
 - Improvements for unified diff editing format.
 - Added ! as an alias for /run.
 - Autocomplete for /add and /drop now properly quotes filenames with spaces.
