@@ -428,7 +428,7 @@ class Commands:
         return self.cmd_run(args, True)
 
     def cmd_run(self, args, add_on_nonzero_exit=False):
-        "Run a shell command and optionally add the output to the chat"
+        "Run a shell command and optionally add the output to the chat (alias: !)"
         combined_output = None
         try:
             result = subprocess.run(
