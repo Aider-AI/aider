@@ -40,23 +40,6 @@ The end.
 """  # noqa: E501
 
 
-def showit(lines):
-    return
-
-    num_lines = len(lines)
-    d = 10
-    if num_lines < d:
-        start = 0
-    else:
-        start = num_lines - d
-
-    print("-" * 50)
-    for i in range(start, num_lines):
-        line = repr(lines[i])[:70]
-        print(f"{i:02d}:{line}")
-    print("-" * 50)
-
-
 class MarkdownStream:
     live = None
     when = 0
@@ -75,7 +58,8 @@ class MarkdownStream:
         self.live.start()
 
     def __del__(self):
-        self.live.stop()
+        if self.live:
+            self.live.stop()
 
     def update(self, text, final=False):
         now = time.time()
@@ -115,6 +99,7 @@ class MarkdownStream:
         if final:
             self.live.update(Text(""))
             self.live.stop()
+            self.live = None
         else:
             rest = lines[num_lines:]
             rest = "".join(rest)
