@@ -362,6 +362,11 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         default=False,
     )
     other_group.add_argument(
+        "--skip-check-update",
+        action="store_true",
+        help="Skips checking for the update when the program runs",
+    )
+    other_group.add_argument(
         "--apply",
         metavar="FILE",
         help="Apply the changes from the given file instead of running the chat (debug)",
@@ -478,7 +483,8 @@ def main(argv=None, input=None, output=None, force_git_root=None):
 
     io.tool_output(f"Aider v{__version__}")
 
-    check_version(io.tool_error)
+    if not args.skip_check_update:
+        check_version(io.tool_error)
 
     if args.check_update:
         update_available = check_version(lambda msg: None)
