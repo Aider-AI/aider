@@ -59,7 +59,10 @@ class MarkdownStream:
 
     def __del__(self):
         if self.live:
-            self.live.stop()
+            try:
+                self.live.stop()
+            except Exception:
+                pass
 
     def update(self, text, final=False):
         now = time.time()
