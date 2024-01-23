@@ -40,7 +40,7 @@ The end.
 
 """
 
-_text = 5 * _text
+_text = 5 * _text  # noqa: 501
 # print(text)
 
 
