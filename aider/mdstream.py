@@ -60,7 +60,7 @@ class MarkdownStream:
         self.printed = []
         self.when = 0
 
-    def update(self, text, final=False, min_delay=0.100):
+    def update(self, text, final=False, min_delay=0.100, mdargs=None):
         now = time.time()
         if not final and now - self.when < min_delay:
             return
@@ -69,7 +69,11 @@ class MarkdownStream:
         string_io = io.StringIO()
         console = Console(file=string_io, force_terminal=True)
 
-        markdown = Markdown(text)
+        if not mdargs:
+            mdargs = dict()
+
+        markdown = Markdown(text, **mdargs)
+
         console.print(markdown)
         output = string_io.getvalue()
 
@@ -78,7 +82,7 @@ class MarkdownStream:
         if not final:
             num_lines -= 4
 
-        if num_lines <= 1:
+        if num_lines <= 1 and not final:
             return
 
         num_printed = len(self.printed)
@@ -111,6 +115,6 @@ if __name__ == "__main__":
     pm = MarkdownStream()
     for i in range(6, len(_text)):
         pm.update(_text[:i])
-        # time.sleep(0.001)
+        time.sleep(0.001)
 
     pm.update(_text, final=True)
