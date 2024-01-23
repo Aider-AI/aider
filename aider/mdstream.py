@@ -69,6 +69,9 @@ class MarkdownStream:
         self.live = Live(Text(''), refresh_per_second=1./self.min_delay)
         self.live.start()
 
+    def __del__(self):
+        self.live.stop()
+
     def update(self, text, final=False, mdargs=None):
         now = time.time()
         if not final and now - self.when < self.min_delay:
