@@ -37,9 +37,6 @@ The end.
 
 """  # noqa: E501
 
-_text = 5 * _text
-# print(text)
-
 
 def showit(lines):
     return
@@ -109,6 +106,8 @@ class MarkdownStream:
 
 
 if __name__ == "__main__":
+    _text = 5 * _text
+
     pm = MarkdownStream()
     for i in range(6, len(_text)):
         pm.update(_text[:i])
