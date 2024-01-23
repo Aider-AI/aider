@@ -1,6 +1,6 @@
 # Release history
 
-### main
+### v0.22.0
 
 - Improvements for unified diff editing format.
 - Added ! as an alias for /run.
