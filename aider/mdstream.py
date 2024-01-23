@@ -1,15 +1,12 @@
 #!/usr/bin/env python
 
 import io
-import sys
 import time
-from collections import defaultdict
-from pathlib import Path
 
 from rich.console import Console
 from rich.markdown import Markdown
 
-from aider.dump import dump
+from aider.dump import dump  # noqa: F401
 
 _text = """
 # Header
@@ -38,9 +35,9 @@ def greeting():
 
 The end.
 
-"""
+"""  # noqa: E501
 
-_text = 5 * _text  # noqa: 501
+_text = 5 * _text
 # print(text)
 
 
