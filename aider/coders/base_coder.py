@@ -726,7 +726,8 @@ class Coder:
 
     def show_send_output_stream(self, completion):
         if self.show_pretty():
-            mdstream = MarkdownStream()
+            mdargs = dict(style=self.assistant_output_color, code_theme=self.code_theme)
+            mdstream = MarkdownStream(mdargs=mdargs)
         else:
             mdstream = None
 
@@ -773,8 +774,7 @@ class Coder:
         if not show_resp:
             return
 
-        mdargs = dict(style=self.assistant_output_color, code_theme=self.code_theme)
-        mdstream.update(show_resp, mdargs=mdargs, final=final)
+        mdstream.update(show_resp, final=final)
 
     def render_incremental_response(self, final):
         return self.partial_response_content
