@@ -4,7 +4,7 @@
 - [Install git](#install-git)
 - [Get your OpenAI API key](#get-your-openai-api-key)
 - [Windows install](#windows-install)
-- [MacOS or Linux install](#macos-or-linux-install)
+- [Mac/Linux install](#mac-linux-install)
 
 ## Install git
 
@@ -28,7 +28,7 @@ py -m pip install aider-chat
 aider --openai-api-key sk-xxxxxxxxxxxxxxx
 ```
 
-## MacOS or Linux install
+## Mac/Linux install
 
 
 ```
@@ -49,9 +49,10 @@ See the [usage instructions](/#usage) to start coding with aider.
 
 The steps below are completely optional.
 
-- [Store your API key (optional)](#store-your-api-key-optional)
-- [Add aider to your editor (optional)](#add-aider-to-your-editor-optional)
-- [Install PortAudio (optional)](#install-portaudio-optional)
+- [Store your API key](#store-your-api-key-optional)
+- [Enable voice coding](#enable-voice-coding-optional)
+- [Add aider to your editor](#add-aider-to-your-editor-optional)
+- [Install development versions of aider](#install-development-versions-of-aider-optional)
 
 ## Store your api key (optional)
 
@@ -69,7 +70,7 @@ openai-api-key: sk-...
 
 
 
-## Install PortAudio (optional)
+## Enable voice coding (optional)
 
 Aider supports [coding with your voice](https://aider.chat/docs/voice.html)
 using the in-chat `/voice` command.
