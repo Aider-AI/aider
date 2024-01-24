@@ -6,12 +6,6 @@
 - [Windows install](#windows-install)
 - [MacOS or Linux install](#macos-or-linux-install)
 
-Optional steps:
-
-- [Store your API key](#store-your-api-key-optional)
-- [Add aider to your editor (optional)](#add-aider-to-your-editor-optional)
-- [Install PortAudio (optional)](#install-portaudio-optional)
-
 ## Install git
 
 Make sure you have git installed.
@@ -27,7 +21,10 @@ Note that this is different than being a "ChatGPT Plus" subscriber.
 ## Windows install
 
 ```
+# Install aider
 py -m pip install aider-chat
+
+# Launch aider
 aider --openai-api-key sk-xxxxxxxxxxxxxxx
 ```
 
@@ -35,7 +32,10 @@ aider --openai-api-key sk-xxxxxxxxxxxxxxx
 
 
 ```
+# Install aider
 python -m pip install aider-chat
+
+# Launch aider
 aider --openai-api-key sk-xxxxxxxxxxxxxxx
 ```
 
@@ -48,6 +48,10 @@ See the [usage instructions](/#usage) to start coding with aider.
 # Optional steps
 
 The steps below are completely optional.
+
+- [Store your API key (optional)](#store-your-api-key-optional)
+- [Add aider to your editor (optional)](#add-aider-to-your-editor-optional)
+- [Install PortAudio (optional)](#install-portaudio-optional)
 
 ## Store your api key (optional)
 
