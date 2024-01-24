@@ -116,8 +116,15 @@ session with the `/add` and `/drop` chat commands described below.
 If you or GPT mention one of the repo's filenames in the conversation,
 aider will ask if you'd like to add it to the chat.
 
-Aider will work best if you think about which files need to be edited to make your change and add them to the chat.
-Aider has some ability to help GPT figure out which files to edit all by itself, but the most effective approach is to explicitly add the needed files to the chat yourself.
+Think about the change you want to make and which files will need
+to be edited -- add those files to the chat.
+Don't add *all* the files in your repo to the chat.
+Be selective, and just add the files that GPT will need to edit.
+If you add a bunch of unrelated files, GPT can get overwhelmed
+and confused (and it costs more tokens).
+Aider will automatically
+share snippets from other, related files with GPT so it can
+[understand the rest of your code base](https://aider.chat/docs/repomap.html).
 
 Aider also has many
 additional command-line options, environment variables or configuration file

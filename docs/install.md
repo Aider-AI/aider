@@ -4,7 +4,7 @@
 - [Install git](#install-git)
 - [Get your OpenAI API key](#get-your-openai-api-key)
 - [Windows install](#windows-install)
-- [Mac/Linux install](#mac-linux-install)
+- [Mac/Linux install](#maclinux-install)
 
 ## Install git
 
