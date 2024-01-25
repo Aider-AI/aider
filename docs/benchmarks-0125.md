@@ -1,4 +1,4 @@
-# Code editing benchmarks for OpenAI's "1106" models
+# Lazy coding benchmark for gpt-4-0125-preview
 
 [![benchmark results](../assets/benchmarks-0125.svg)](https://aider.chat/assets/benchmarks-0125.svg)
 
