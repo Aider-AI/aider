@@ -3,7 +3,7 @@
 [![benchmark results](../assets/benchmarks-0125.svg)](https://aider.chat/assets/benchmarks-0125.svg)
 
 [OpenAI just released a new version of GPT-4 Turbo](https://openai.com/blog/new-embedding-models-and-api-updates).
-This new model is intended to reduce the "lazy coding" that has been widely observed with the previous `gpt-4-1106-preview` model:
+This new model is intended to reduce the "laziness" that has been widely observed with the previous `gpt-4-1106-preview` model:
 
 > Today, we are releasing an updated GPT-4 Turbo preview model, gpt-4-0125-preview. This model completes tasks like code generation more thoroughly than the previous preview model and is intended to reduce cases of “laziness” where the model doesn’t complete a task.
 
