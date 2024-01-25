@@ -303,6 +303,7 @@ def plot_refactoring(df):
     for grouped in tries:
         zorder += 1
         df = grouped.unstack()
+        df.sort_values(by=["model"], ascending=False, inplace=True)
         num_models, num_formats = df.shape
 
         pos = np.array(range(num_models))
@@ -311,13 +312,15 @@ def plot_refactoring(df):
         formats = df.columns
         models = df.index
 
+        dump(df)
+        dump(models)
         dump(formats)
         for i, fmt in enumerate(formats):
             hatch = ""
 
             if fmt == "diff":
                 color = "#b3e6a8"
-                label = "Baseline (search/replace blocks)"
+                label = "Search/replace blocks"
             elif fmt == "udiff":
                 color = "#b3d1e6"
                 label = "Unified diffs"
@@ -353,7 +356,7 @@ def plot_refactoring(df):
             if zorder == 2:
                 ax.bar_label(rects, padding=4, labels=[f"{v:.0f}%" for v in df[fmt]], size=6)
 
-    ax.set_xticks([p + 1.0 * width for p in pos])
+    ax.set_xticks([p + 0.5 * width for p in pos])
     ax.set_xticklabels(models)
 
     ax.set_ylabel("Percent of exercises completed successfully")
@@ -794,7 +797,7 @@ def run_test(
             default_headers={
                 "HTTP-Referer": "http://aider.chat",
                 "X-Title": "Aider",
-            }
+            },
         )
     else:
         client = openai.OpenAI(
