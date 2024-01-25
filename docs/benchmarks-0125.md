@@ -3,7 +3,7 @@
 [![benchmark results](../assets/benchmarks-0125.svg)](https://aider.chat/assets/benchmarks-0125.svg)
 
 [OpenAI just released a new version of GPT-4 Turbo](https://openai.com/blog/new-embedding-models-and-api-updates).
-This new model is intended to reduce the "lazy coding" that has been widely observed with the previous `gpt-1106-preview` model:
+This new model is intended to reduce the "lazy coding" that has been widely observed with the previous `gpt-4-1106-preview` model:
 
 > Today, we are releasing an updated GPT-4 Turbo preview model, gpt-4-0125-preview. This model completes tasks like code generation more thoroughly than the previous preview model and is intended to reduce cases of “laziness” where the model doesn’t complete a task.
 
@@ -15,11 +15,12 @@ aider's existing
 
 **These results are currently preliminary, and will be updated as additional benchmark runs complete.**
 
-The new `gpt-4-0125-preview` model produces mixed results on the
-lazy coding benchmark as compared to the November `gpt-4-1106-preview` model:
+Overall,
+the new `gpt-4-0125-preview` model does worse on the lazy coding benchmark
+as compared to the November `gpt-4-1106-preview` model:
 
-- It performs much worse when using the [unified diffs](https://aider.chat/docs/unified-diffs.html) code editign format.
-- Using aider's older SEARCH/REPLACE block editing format, the new January model outperfoms the older November model. But it still performs worse than both models using unified diffs.
+- It performs much worse when using the [unified diffs](https://aider.chat/docs/unified-diffs.html) code editing format.
+- Using aider's older [SEARCH/REPLACE block](https://github.com/paul-gauthier/aider/blob/9033be74bf74ae70459013e54b2ae6a97c47c2e6/aider/coders/editblock_prompts.py#L75-L80) editing format, the new January model outperfoms the older November model. But it still performs worse than both models using unified diffs.
 
 ## Related reports
 
@@ -34,7 +35,3 @@ for additional information:
 - [Aider's lazy coding benchmark](https://aider.chat/docs/unified-diffs.html).
 
 
-## Updates
-
-Last updated 11/14/23.
-OpenAI has relaxed rate limits so these results are no longer considered preliminary.
