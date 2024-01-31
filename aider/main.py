@@ -142,8 +142,8 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     core_group.add_argument(
         "--openai-api-key",
         metavar="OPENAI_API_KEY",
-        help="Specify the OpenAI API key",
         env_var="OPENAI_API_KEY",
+        help="Specify the OpenAI API key",
     )
     core_group.add_argument(
         "--model",
@@ -187,21 +187,25 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     model_group.add_argument(
         "--openai-api-base",
         metavar="OPENAI_API_BASE",
+        env_var="OPENAI_API_BASE",
         help="Specify the api base url",
     )
     model_group.add_argument(
         "--openai-api-type",
         metavar="OPENAI_API_TYPE",
+        env_var="OPENAI_API_TYPE",
         help="Specify the api_type",
     )
     model_group.add_argument(
         "--openai-api-version",
         metavar="OPENAI_API_VERSION",
+        env_var="OPENAI_API_VERSION",
         help="Specify the api_version",
     )
     model_group.add_argument(
         "--openai-api-deployment-id",
         metavar="OPENAI_API_DEPLOYMENT_ID",
+        env_var="OPENAI_API_DEPLOYMENT_ID",
         help="Specify the deployment_id",
     )
     model_group.add_argument(
