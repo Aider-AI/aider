@@ -5,6 +5,7 @@
 - Improved streaming of markdown to the terminal.
 - Added `/quit` as alias for `/exit`.
 - Added `--skip-check-update` to skip checking for the update on launch.
+- Added `--openrouter` as a shortcut for `--openai-api-base https://openrouter.ai/api/v1`
 
 ### v0.22.0
 
