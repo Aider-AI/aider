@@ -209,6 +209,13 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         help="Specify the deployment_id",
     )
     model_group.add_argument(
+        "--openrouter",
+        dest="openai_api_base",
+        action="store_const",
+        const="https://openrouter.ai/api/v1",
+        help="Specify the api base url as https://openrouter.ai/api/v1",
+    )
+    model_group.add_argument(
         "--edit-format",
         metavar="EDIT_FORMAT",
         default=None,
