@@ -1,15 +1,17 @@
 # Release history
 
-### main
+### v0.23.0
 
+- Added support for the new `gpt-4-0125-preview`, use `--model gpt-4-0125-preview`.
+- New `/test` command that runs a command and adds the output to the chat on non-zero exit status.
 - Improved streaming of markdown to the terminal.
 - Added `/quit` as alias for `/exit`.
 - Added `--skip-check-update` to skip checking for the update on launch.
 - Added `--openrouter` as a shortcut for `--openai-api-base https://openrouter.ai/api/v1`
+- Fixed bug preventing use of env vars `OPENAI_API_BASE, OPENAI_API_TYPE, OPENAI_API_VERSION, OPENAI_API_DEPLOYMENT_ID`.
 
 ### v0.22.0
 
-- New `/test` command that runs a command and adds the output to the chat on non-zero exit status.
 - Improvements for unified diff editing format.
 - Added ! as an alias for /run.
 - Autocomplete for /add and /drop now properly quotes filenames with spaces.
