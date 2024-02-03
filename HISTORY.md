@@ -2,7 +2,7 @@
 
 ### v0.23.0
 
-- Added support for the new `gpt-4-0125-preview`, use `--model gpt-4-0125-preview`.
+- Added support for `--model gpt-4-0125-preview` and OpenAI's alias `--model gpt-4-turbo-preview`. The `--4turbo` switch remains an alias for `--model gpt-4-1106-preview` at this time.
 - New `/test` command that runs a command and adds the output to the chat on non-zero exit status.
 - Improved streaming of markdown to the terminal.
 - Added `/quit` as alias for `/exit`.

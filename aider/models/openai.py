@@ -9,6 +9,7 @@ known_tokens = {
     "gpt-4": 8,
     "gpt-4-1106-preview": 128,
     "gpt-4-0125-preview": 128,
+    "gpt-4-turbo-preview": 128,
     "gpt-3.5-turbo-1106": 16,
 }
 
@@ -34,7 +35,7 @@ class OpenAIModel(Model):
         self.tokenizer = tiktoken.encoding_for_model(name)
 
         if self.is_gpt4():
-            if name in ("gpt-4-1106-preview", "gpt-4-0125-preview"):
+            if name in ("gpt-4-1106-preview", "gpt-4-0125-preview", "gpt-4-turbo-preview"):
                 self.edit_format = "udiff"
             else:
                 self.edit_format = "diff"
