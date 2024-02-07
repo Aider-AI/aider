@@ -149,7 +149,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         "--model",
         metavar="MODEL",
         default=models.GPT4_0613.name,
-        help=f"Specify the model to use for the main chat (default: {models.GPT4.name})",
+        help=f"Specify the model to use for the main chat (default: {models.GPT4_0613.name})",
     )
     core_group.add_argument(
         "--skip-model-availability-check",
@@ -167,7 +167,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         const=default_4_turbo_model,
         help=f"Use {default_4_turbo_model} model for the main chat (gpt-4 is better)",
     )
-    default_3_model = models.GPT35_1106
+    default_3_model = models.GPT35_0125
     core_group.add_argument(
         "-3",
         action="store_const",
