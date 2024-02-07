@@ -2,7 +2,7 @@ from dataclasses import dataclass, fields
 
 import tiktoken
 
-from aider.dump import dump
+from aider.dump import dump  # noqa: F401
 
 from .model import Model
 
@@ -125,13 +125,9 @@ class OpenAIModel(Model):
         if not model_info:
             raise ValueError(f"Unsupported model: {name}")
 
-        print()
-        dump(name)
-        dump(true_name)
         for field in fields(ModelInfo):
             val = getattr(model_info, field.name)
             setattr(self, field.name, val)
-            dump(field.name, val)
 
         # restore the caller's specified name
         self.name = name
