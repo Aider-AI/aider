@@ -65,7 +65,7 @@ class Commands:
 
     def run(self, inp):
         if inp.startswith("!"):
-            self.do_run("run", inp[1:])
+            return self.do_run("run", inp[1:])
             return
 
         res = self.matching_commands(inp)
