@@ -19,6 +19,10 @@ class ModelInfo:
     send_undo_reply: bool = False
 
 
+# https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
+# https://platform.openai.com/docs/models/gpt-3-5-turbo
+# https://openai.com/pricing
+
 openai_models = [
     # gpt-3.5
     ModelInfo(
