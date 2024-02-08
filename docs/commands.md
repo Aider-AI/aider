@@ -6,6 +6,7 @@
 ## context management
 - `/add <file>`: Add matching files to the chat session using glob patterns
 - `/drop <file>`: Remove matching files from the chat session
+- `/web <url>`: Add the contents of a webpage to the chat
 - `/clear`: Clear the chat history
 - `/ls`: List all known files and those included in the chat session
 - `/tokens`: Report on the number of tokens used by the current chat context
