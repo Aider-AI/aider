@@ -56,7 +56,20 @@ class Scraper:
                 self.print_error(PLAYWRIGHT_INFO)
 
     def scrape_with_httpx(self, url):
-        pass
+        import httpx
+        headers = {
+            'User-Agent': aider_user_agent
+        }
+        try:
+            with httpx.Client(headers=headers) as client:
+                response = client.get(url)
+                response.raise_for_status()
+                return response.text
+        except httpx.HTTPError as http_err:
+            self.print_error(f'HTTP error occurred: {http_err}')
+        except Exception as err:
+            self.print_error(f'An error occurred: {err}')
+        return None
 
     def scrape(self, url):
         if self.playwright_available is None:
