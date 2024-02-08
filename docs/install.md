@@ -59,6 +59,7 @@ See the [usage instructions](/#usage) to start coding with aider.
 The steps below are completely optional.
 
 - [Store your API key](#store-your-api-key-optional)
+- [Enable Playwright](#enable-playwright) to enhance the `/web <url>` command.
 - [Enable voice coding](#enable-voice-coding-optional)
 - [Add aider to your editor](#add-aider-to-your-editor-optional)
 - [Install development versions of aider](#install-development-versions-of-aider-optional)
