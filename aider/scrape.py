@@ -13,7 +13,7 @@ from aider import __version__
 aider_user_agent = f"Aider/{__version__} +https://aider.chat"
 
 PLAYWRIGHT_INFO = """
-For better web scraping, install Playwright chromium:
+For better web scraping, install Playwright chromium with this command in your terminal:
 
     playwright install --with-deps chromium
 
