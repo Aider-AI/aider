@@ -37,8 +37,9 @@ class OpenRouterModel(Model):
         models_dict_format = {}
         for model in cached_model_details:
             model_id = model.id
+            alias = openai_aliases.get(model_id, '')  # Use the alias if available
             models_dict_format[model_id] = {
-                'Alias': '',  # Alias can be added later if needed
+                'Alias': alias,
                 'Model': model_id,
                 'Input_cost': round(float(model.pricing.get('prompt')) * 1000, 6),
                 'Input_desc': ' / 1K tokens',

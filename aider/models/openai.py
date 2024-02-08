@@ -137,10 +137,17 @@ class OpenAIModel(Model):
             self.max_chat_history_tokens = 2 * 1024
 
     def available_models(self):
+        aliases = {
+                'gpt-4-0613': 'gpt4',
+                'gpt-4-1106-preview': '4',
+                'gpt-4-vision-preview': '4v',
+                'gpt-4-32k-0613': '4-32',
+                'gpt-3.5-turbo-0125': '3',
+        }
         models_info = {}
         for model_info in openai_models:
             models_info[model_info.name] = {
-                'Alias': model_info.name.split('-')[1] if 'gpt-4' in model_info.name else model_info.name.split('-')[2],
+                'Alias': aliases.get(model_info.name, ''),
                 'Model': model_info.name,
                 'Input_cost': model_info.prompt_price,
                 'Input_desc': ' / 1K tokens',
