@@ -7,14 +7,15 @@ import git
 from prompt_toolkit.completion import Completion
 
 from aider import prompts, voice
-from aider.utils import is_gpt4_with_openai_base_url, is_image_file, scrape
+from aider.scrape import Scraper
+from aider.utils import is_gpt4_with_openai_base_url, is_image_file
 
 from .dump import dump  # noqa: F401
 
 
 class Commands:
     voice = None
-    web_driver = None
+    scraper = None
 
     def __init__(self, io, coder, voice_language=None):
         self.io = io
@@ -33,8 +34,12 @@ class Commands:
             self.io.tool_error("Please provide a URL to scrape.")
             return
 
-        content = scrape(url)
-        print(content)
+        if not self.scraper:
+            self.scraper = Scraper(print_error=self.io.tool_error)
+
+        content = self.scraper.scrape(url)
+        self.io.tool_output(content)
+
         return content
 
     def is_command(self, inp):
