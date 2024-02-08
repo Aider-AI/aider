@@ -117,6 +117,9 @@ def html_to_text(page_source: str) -> str:
     return text
 
 
+def html_to_markdown(page_source: str) -> str:
+    pass
+
 def main(url):
     scraper = Scraper()
     content = scraper.scrape(url)
