@@ -94,6 +94,8 @@ class Scraper:
         else:
             content = self.scrape_with_httpx(url)
 
+        Path('tmp.html').write_text(content)
+
         if content:
             content = html_to_markdown(content)
             #content = html_to_text(content)
@@ -107,7 +109,10 @@ class Scraper:
 
 
 def html_to_text(page_source: str) -> str:
+
     soup = BeautifulSoup(page_source, "html.parser")
+
+    soup = slimdown_html(soup)
 
     for script in soup(["script", "style"]):
         script.extract()
@@ -119,8 +124,7 @@ def html_to_text(page_source: str) -> str:
     return text
 
 
-def slimdown_html(page_source: str) -> str:
-    soup = BeautifulSoup(page_source, "html.parser")
+def slimdown_html(soup):
     # Remove all <img> tags
     for img in soup.find_all('img'):
         img.decompose()
@@ -131,7 +135,7 @@ def slimdown_html(page_source: str) -> str:
     for anchor in soup.find_all('a', href=True):
         if anchor['href'].startswith('#'):
             anchor.decompose()
-    return str(soup)
+    return soup
 
 def html_to_markdown(page_source: str) -> str:
     return pypandoc.convert_text(page_source, 'markdown', format='html')
