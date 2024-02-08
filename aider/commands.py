@@ -1,9 +1,3 @@
-from pathlib import Path
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
 import re
 import subprocess
 import sys
@@ -13,7 +7,7 @@ import git
 from prompt_toolkit.completion import Completion
 
 from aider import prompts, voice
-from aider.utils import is_gpt4_with_openai_base_url, is_image_file
+from aider.utils import is_gpt4_with_openai_base_url, is_image_file, scrape
 
 from .dump import dump  # noqa: F401
 
@@ -31,18 +25,6 @@ class Commands:
 
         self.voice_language = voice_language
         self.tokenizer = coder.main_model.tokenizer
-        self.initialize_web_driver()
-
-    def initialize_web_driver(self):
-        chrome_options = Options()
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--disable-gpu")
-        chrome_options.add_argument("--no-sandbox")
-        chrome_options.add_argument("--disable-dev-shm-usage")
-        self.web_driver = webdriver.Chrome(
-            service=Service(ChromeDriverManager().install()),
-            options=chrome_options
-        )
 
     def cmd_web(self, args):
         "Use headless selenium to scrape a webpage and add the content to the chat"
@@ -51,13 +33,9 @@ class Commands:
             self.io.tool_error("Please provide a URL to scrape.")
             return
 
-        try:
-            self.web_driver.get(url)
-            page_content = self.web_driver.find_element(By.TAG_NAME, "body").text
-            self.io.tool_output(f"Content from {url}:\n{page_content}")
-            return page_content
-        except Exception as e:
-            self.io.tool_error(f"Error scraping {url}: {e}")
+        content = scrape(url)
+        print(content)
+        return content
 
     def is_command(self, inp):
         return inp[0] in "/!"
