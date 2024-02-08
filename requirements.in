@@ -24,3 +24,4 @@ Pillow
 diff-match-patch
 webdriver_manager
 selenium
+chromedriver-autoinstaller
