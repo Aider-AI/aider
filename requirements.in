@@ -22,6 +22,4 @@ bs4
 PyYAML
 Pillow
 diff-match-patch
-webdriver_manager
-selenium
-chromedriver-autoinstaller
+playwright
