@@ -17,8 +17,6 @@ attrs==23.2.0
 backoff==2.2.1
     # via -r requirements.in
 beautifulsoup4==4.12.3
-    # via bs4
-bs4==0.0.2
     # via -r requirements.in
 certifi==2023.11.17
     # via
