@@ -121,7 +121,17 @@ def html_to_text(page_source: str) -> str:
 
 def slimdown_html(page_source: str) -> str:
     soup = BeautifulSoup(page_source, "html.parser")
-    # ...
+    # Remove all <img> tags
+    for img in soup.find_all('img'):
+        img.decompose()
+    # Remove all per-element CSS styles
+    for tag in soup.find_all(True):
+        tag.attrs.pop('style', None)
+    # Remove all internal anchor elements
+    for anchor in soup.find_all('a', href=True):
+        if anchor['href'].startswith('#'):
+            anchor.decompose()
+    return str(soup)
 
 def html_to_markdown(page_source: str) -> str:
     return pypandoc.convert_text(page_source, 'markdown', format='html')
