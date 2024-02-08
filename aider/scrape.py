@@ -134,7 +134,9 @@ def slimdown_html(soup):
         tag.decompose()
 
     for tag in soup.find_all(True):
-        tag.attrs.clear()
+        for attr in list(tag.attrs):
+            if attr != "href":
+                tag.attrs.pop(attr, None)
 
     return soup
 
