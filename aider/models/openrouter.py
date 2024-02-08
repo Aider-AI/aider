@@ -40,9 +40,19 @@ class OpenRouterModel(Model):
         models_dict_format = {}
         for model in cached_model_details:
             model_id = model.id
-            alias = openai_aliases.get(model_id, '')  # Use the alias if available
+            aliases = {
+                'openai/gpt-4': 'gpt4',
+                'openai/gpt-4-1106-preview': '4',
+                'openai/gpt-4-vision-preview': '4v',
+                'openai/gpt-4-32k-0613': '4-32',
+                'openai/gpt-3.5-turbo-0125': '3',
+                'anthropic/claude-2': 'claude-2',
+                'mistralai/mistral-medium': 'mistral-medium',
+                'google/gemini-pro': 'gemini-pro',
+                'codellama/codellama-70b-instruct': 'code-llama',
+            }
             models_dict_format[model_id] = {
-                'Alias': alias,
+                'Alias': aliases.get(model_id, ''),
                 'Model': model_id,
                 'Input_cost': round(float(model.pricing.get('prompt')) * 1000, 6),
                 'Input_desc': ' / 1K tokens',
