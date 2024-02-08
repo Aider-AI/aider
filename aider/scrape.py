@@ -7,6 +7,7 @@ import httpx
 import pypandoc
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
+from pypandoc.pandoc_download import download_pandoc
 
 from aider import __version__
 
@@ -22,6 +23,7 @@ See https://aider.chat/docs/install.html#enable-playwright for more info.
 
 
 class Scraper:
+    pandoc_available = None
     playwright_available = None
     playwright_instructions_shown = False
 
@@ -95,29 +97,44 @@ class Scraper:
         else:
             content = self.scrape_with_httpx(url)
 
-        if content:
-            content = html_to_markdown(content)
-            # content = html_to_text(content)
+        if not content:
+            return
+
+        self.try_pandoc()
+
+        content = self.html_to_markdown(content)
+        # content = html_to_text(content)
 
         return content
 
+    def try_pandoc(self):
+        if self.pandoc_available:
+            return
 
-# Adapted from AutoGPT, MIT License
-#
-# https://github.com/Significant-Gravitas/AutoGPT/blob/fe0923ba6c9abb42ac4df79da580e8a4391e0418/autogpts/autogpt/autogpt/commands/web_selenium.py#L173
+        html = "<body></body>"
+        try:
+            pypandoc.convert_text(html, "markdown", format="html")
+            self.pandoc_available = True
+            return
+        except OSError:
+            pass
 
+        download_pandoc()
+        self.pandoc_available = True
 
-def html_to_text(page_source: str) -> str:
-    soup = BeautifulSoup(page_source, "html.parser")
+    def html_to_markdown(self, page_source):
+        soup = BeautifulSoup(page_source, "html.parser")
+        soup = slimdown_html(soup)
+        page_source = str(soup)
 
-    for script in soup(["script", "style"]):
-        script.extract()
+        md = pypandoc.convert_text(page_source, "markdown", format="html")
 
-    text = soup.get_text()
-    lines = (line.strip() for line in text.splitlines())
-    chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
-    text = "\n".join(chunk for chunk in chunks if chunk)
-    return text
+        md = re.sub(r"</div>", "      ", md)
+        md = re.sub(r"<div>", "     ", md)
+
+        md = re.sub(r"\n\s*\n", "\n\n", md)
+
+        return md
 
 
 def slimdown_html(soup):
@@ -141,19 +158,22 @@ def slimdown_html(soup):
     return soup
 
 
-def html_to_markdown(page_source: str) -> str:
+# Adapted from AutoGPT, MIT License
+#
+# https://github.com/Significant-Gravitas/AutoGPT/blob/fe0923ba6c9abb42ac4df79da580e8a4391e0418/autogpts/autogpt/autogpt/commands/web_selenium.py#L173
+
+
+def html_to_text(page_source: str) -> str:
     soup = BeautifulSoup(page_source, "html.parser")
-    soup = slimdown_html(soup)
-    page_source = str(soup)
 
-    md = pypandoc.convert_text(page_source, "markdown", format="html")
+    for script in soup(["script", "style"]):
+        script.extract()
 
-    md = re.sub(r"</div>", "      ", md)
-    md = re.sub(r"<div>", "     ", md)
-
-    md = re.sub(r"\n\s*\n", "\n\n", md)
-
-    return md
+    text = soup.get_text()
+    lines = (line.strip() for line in text.splitlines())
+    chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
+    text = "\n".join(chunk for chunk in chunks if chunk)
+    return text
 
 
 def main(url):

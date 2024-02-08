@@ -96,8 +96,6 @@ pygments==2.17.2
     # via rich
 pypandoc==1.12
     # via -r requirements.in
-pypandoc-binary==1.12
-    # via -r requirements.in
 pyyaml==6.0.1
     # via -r requirements.in
 referencing==0.32.0

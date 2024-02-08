@@ -37,10 +37,13 @@ class Commands:
         if not self.scraper:
             self.scraper = Scraper(print_error=self.io.tool_error)
 
-        content = self.scraper.scrape(url)
+        content = self.scraper.scrape(url) or ""
         if content:
             self.io.tool_output(content)
+
         self.scraper.show_playwright_instructions()
+
+        content = f"{url}:\n\n" + content
 
         return content
 
