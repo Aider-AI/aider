@@ -17,6 +17,8 @@ def scrape_with_playwright(url):
 
         # user_agent = ??
         page = browser.new_page()
+        user_agent = page.evaluate("navigator.userAgent")
+        print(f"User Agent: {user_agent}")
         page.goto(url)
         content = page.content()
         browser.close()
