@@ -18,6 +18,7 @@ grep_ast
 packaging
 sounddevice
 soundfile
+bs4
 PyYAML
 Pillow
 diff-match-patch
