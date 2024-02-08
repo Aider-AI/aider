@@ -136,62 +136,23 @@ class OpenAIModel(Model):
         else:
             self.max_chat_history_tokens = 2 * 1024
 
+    def available_models(self):
+        models_info = {}
+        for model_info in openai_models:
+            models_info[model_info.name] = {
+                'Alias': model_info.name.split('-')[1] if 'gpt-4' in model_info.name else model_info.name.split('-')[2],
+                'Model': model_info.name,
+                'Input_cost': model_info.prompt_price,
+                'Input_desc': ' / 1K tokens',
+                'Input_cur': '$',
+                'Output_cost': model_info.completions_price,
+                'Output_desc': ' / 1K tokens',
+                'Output_cur': '$'
+            }
+        return models_info
+
     def lookup_model_info(self, name):
         for mi in openai_models:
             if mi.name == name:
                 return mi
 
-# TODO fix the duplication of pricing information
-# This is used in the /models command
-AVAILABLE_MODELS= {
-    'gpt-4': {
-        'Alias': 'gpt4',
-        'Model': 'gpt-4',
-        'Input_cost': 0.03,
-        'Input_desc': ' / 1K tokens',
-        'Input_cur': '$',
-        'Output_cost': 0.06,
-        'Output_desc': ' / 1K tokens',
-        'Output_cur': '$'
-    },
-    'gpt-4-1106-preview': {
-        'Alias': '4',
-        'Model': 'gpt-4-1106-preview',
-        'Input_cost': 0.01,
-        'Input_desc': ' / 1K tokens',
-        'Input_cur': '$',
-        'Output_cost': 0.03,
-        'Output_desc': ' / 1K tokens',
-        'Output_cur': '$'
-    },
-    'gpt-4-1106-vision-preview': {
-        'Alias': '4v',
-        'Model': 'gpt-4-1106-vision-preview',
-        'Input_cost': 0.01,
-        'Input_desc': ' / 1K tokens',
-        'Input_cur': '$',
-        'Output_cost': 0.03,
-        'Output_desc': ' / 1K tokens',
-        'Output_cur': '$'
-    },
-    'gpt-4-32k': {
-        'Alias': '4-32',
-        'Model': 'gpt-4-32k',
-        'Input_cost': 0.06,
-        'Input_desc': ' / 1K tokens',
-        'Input_cur': '$',
-        'Output_cost': 0.12,
-        'Output_desc': ' / 1K tokens',
-        'Output_cur': '$'
-    },
-    'gpt-3.5-turbo-1106': {
-        'Alias': '3',
-        'Model': 'gpt-3.5-turbo-1106',
-        'Input_cost': 0.0010,
-        'Input_desc': ' / 1K tokens',
-        'Input_cur': '$',
-        'Output_cost': 0.0020,
-        'Output_desc': ' / 1K tokens',
-        'Output_cur': '$'
-    },
-}
