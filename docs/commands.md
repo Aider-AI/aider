@@ -17,7 +17,8 @@
 - `/git <command>`: Run a git command
 
 ## other
-- `/run <command>`: Run a shell command and optionally add the output to the chat
+- `/run <command>`: Run a shell command and optionally add the output to the chat, or use `!<command>`.
+- `/test <command>`: Like run, but automatically adds the output to the chat on non-zero exit codes.
 - `/voice`: Speak to aider to [request code changes with your voice](https://aider.chat/docs/voice.html).
 
 # Prompt Toolkit defaults

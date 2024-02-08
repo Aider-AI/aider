@@ -142,14 +142,14 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     core_group.add_argument(
         "--openai-api-key",
         metavar="OPENAI_API_KEY",
-        help="Specify the OpenAI API key",
         env_var="OPENAI_API_KEY",
+        help="Specify the OpenAI API key",
     )
     core_group.add_argument(
         "--model",
         metavar="MODEL",
         default=models.GPT4_0613.name,
-        help=f"Specify the model to use for the main chat (default: {models.GPT4.name})",
+        help=f"Specify the model to use for the main chat (default: {models.GPT4_0613.name})",
     )
     core_group.add_argument(
         "--skip-model-availability-check",
@@ -157,15 +157,17 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         default=False,
         help="Override to skip model availability check (default: False)",
     )
-    default_4_turbo_model = models.GPT4_1106_PREVIEW
+    default_4_turbo_model = "gpt-4-1106-preview"
     core_group.add_argument(
         "--4-turbo",
+        "--4turbo",
+        "--4",
         action="store_const",
         dest="model",
-        const=default_4_turbo_model.name,
-        help=f"Use {default_4_turbo_model.name} model for the main chat (gpt-4 is better)",
+        const=default_4_turbo_model,
+        help=f"Use {default_4_turbo_model} model for the main chat (gpt-4 is better)",
     )
-    default_3_model = models.GPT35_1106
+    default_3_model = models.GPT35_0125
     core_group.add_argument(
         "-3",
         action="store_const",
@@ -185,22 +187,33 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     model_group.add_argument(
         "--openai-api-base",
         metavar="OPENAI_API_BASE",
+        env_var="OPENAI_API_BASE",
         help="Specify the api base url",
     )
     model_group.add_argument(
         "--openai-api-type",
         metavar="OPENAI_API_TYPE",
+        env_var="OPENAI_API_TYPE",
         help="Specify the api_type",
     )
     model_group.add_argument(
         "--openai-api-version",
         metavar="OPENAI_API_VERSION",
+        env_var="OPENAI_API_VERSION",
         help="Specify the api_version",
     )
     model_group.add_argument(
         "--openai-api-deployment-id",
         metavar="OPENAI_API_DEPLOYMENT_ID",
+        env_var="OPENAI_API_DEPLOYMENT_ID",
         help="Specify the deployment_id",
+    )
+    model_group.add_argument(
+        "--openrouter",
+        dest="openai_api_base",
+        action="store_const",
+        const="https://openrouter.ai/api/v1",
+        help="Specify the api base url as https://openrouter.ai/api/v1",
     )
     model_group.add_argument(
         "--edit-format",
@@ -354,6 +367,17 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         help="Show the version number and exit",
     )
     other_group.add_argument(
+        "--check-update",
+        action="store_true",
+        help="Check for updates and return status in the exit code",
+        default=False,
+    )
+    other_group.add_argument(
+        "--skip-check-update",
+        action="store_true",
+        help="Skips checking for the update when the program runs",
+    )
+    other_group.add_argument(
         "--apply",
         metavar="FILE",
         help="Apply the changes from the given file instead of running the chat (debug)",
@@ -470,7 +494,12 @@ def main(argv=None, input=None, output=None, force_git_root=None):
 
     io.tool_output(f"Aider v{__version__}")
 
-    check_version(io.tool_error)
+    if not args.skip_check_update:
+        check_version(io.tool_error)
+
+    if args.check_update:
+        update_available = check_version(lambda msg: None)
+        sys.exit(0 if not update_available else 1)
 
     if "VSCODE_GIT_IPC_HANDLE" in os.environ:
         args.pretty = False

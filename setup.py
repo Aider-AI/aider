@@ -21,7 +21,7 @@ setup(
         "aider": ["queries/*"],
     },
     install_requires=requirements,
-    python_requires=">=3.9,<3.12",
+    python_requires=">=3.9,<3.13",
     entry_points={
         "console_scripts": [
             "aider = aider.main:main",
@@ -39,6 +39,7 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python",
         "Topic :: Software Development",

@@ -79,8 +79,8 @@ def show_stats(dirnames, graphs):
         if "folk" in row.dir_name:
             row.edit_format += "folk"
 
-        if row.model == "gpt-4-0613":
-            row.model += "\n(8k context window is\ntoo small for benchmark)"
+        # if row.model == "gpt-4-0613":
+        #    row.model += "\n(8k context window is\ntoo small for benchmark)"
 
         if row.completed_tests < 89:
             print(f"Warning: {row.dir_name} is incomplete: {row.completed_tests}")
@@ -126,8 +126,8 @@ def show_stats(dirnames, graphs):
     # dump(df)
     if graphs:
         # plot_timing(df)
-        # plot_outcomes(df, repeats, repeat_hi, repeat_lo, repeat_avg)
-        plot_refactoring(df)
+        plot_outcomes(df, repeats, repeat_hi, repeat_lo, repeat_avg)
+        # plot_refactoring(df)
 
 
 def plot_timing(df):
@@ -249,7 +249,13 @@ def plot_outcomes(df, repeats, repeat_hi, repeat_lo, repeat_avg):
         )
 
     ax.set_xticks([p + 0.5 * width for p in pos])
-    ax.set_xticklabels(models)
+    model_labels = []
+    for model in models:
+        pieces = model.split("-")
+        ml = "-".join(pieces[:2]) + "-\n" + "-".join(pieces[2:])
+        model_labels.append(ml)
+
+    ax.set_xticklabels(model_labels)
 
     top = 95
     ax.annotate(
@@ -303,6 +309,7 @@ def plot_refactoring(df):
     for grouped in tries:
         zorder += 1
         df = grouped.unstack()
+        df.sort_values(by=["model"], ascending=False, inplace=True)
         num_models, num_formats = df.shape
 
         pos = np.array(range(num_models))
@@ -311,13 +318,15 @@ def plot_refactoring(df):
         formats = df.columns
         models = df.index
 
+        dump(df)
+        dump(models)
         dump(formats)
         for i, fmt in enumerate(formats):
             hatch = ""
 
             if fmt == "diff":
                 color = "#b3e6a8"
-                label = "Baseline (search/replace blocks)"
+                label = "Search/replace blocks"
             elif fmt == "udiff":
                 color = "#b3d1e6"
                 label = "Unified diffs"
@@ -353,7 +362,7 @@ def plot_refactoring(df):
             if zorder == 2:
                 ax.bar_label(rects, padding=4, labels=[f"{v:.0f}%" for v in df[fmt]], size=6)
 
-    ax.set_xticks([p + 1.0 * width for p in pos])
+    ax.set_xticks([p + 0.5 * width for p in pos])
     ax.set_xticklabels(models)
 
     ax.set_ylabel("Percent of exercises completed successfully")
@@ -794,7 +803,7 @@ def run_test(
             default_headers={
                 "HTTP-Referer": "http://aider.chat",
                 "X-Title": "Aider",
-            }
+            },
         )
     else:
         client = openai.OpenAI(

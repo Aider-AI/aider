@@ -13,7 +13,6 @@ from pathlib import Path
 import openai
 from jsonschema import Draft7Validator
 from rich.console import Console, Text
-from rich.live import Live
 from rich.markdown import Markdown
 
 from aider.models.model import Model
@@ -21,6 +20,7 @@ from aider import models, prompts, utils
 from aider.commands import Commands
 from aider.history import ChatSummary
 from aider.io import InputOutput
+from aider.mdstream import MarkdownStream
 from aider.repo import GitRepo
 from aider.repomap import RepoMap
 from aider.sendchat import send_with_retries
@@ -73,12 +73,11 @@ class Coder:
 
         if not skip_model_availabily_check and not main_model.always_available:
             if not check_model_availability(io, client, main_model):
-                fallback_model = models.GPT35_1106
-                if main_model != models.GPT4:
-                    io.tool_error(
-                        f"API key does not support {main_model.name}, falling back to"
-                        f" {fallback_model.name}"
-                    )
+                fallback_model = models.GPT35_0125
+                io.tool_error(
+                    f"API key does not support {main_model.name}, falling back to"
+                    f" {fallback_model.name}"
+                )
                 main_model = fallback_model
 
         if edit_format is None:
@@ -208,7 +207,7 @@ class Coder:
             if map_tokens > max_map_tokens:
                 self.io.tool_error(
                     f"Warning: map-tokens > {max_map_tokens} is not recommended as too much"
-                    " irrelevant code can confused GPT."
+                    " irrelevant code can confuse GPT."
                 )
         else:
             self.io.tool_output("Repo-map: disabled because map_tokens == 0")
@@ -760,14 +759,13 @@ class Coder:
             self.io.tool_output(tokens)
 
     def show_send_output_stream(self, completion):
-        live = None
         if self.show_pretty():
-            live = Live(vertical_overflow="scroll")
+            mdargs = dict(style=self.assistant_output_color, code_theme=self.code_theme)
+            mdstream = MarkdownStream(mdargs=mdargs)
+        else:
+            mdstream = None
 
         try:
-            if live:
-                live.start()
-
             for chunk in completion:
                 if len(chunk.choices) == 0:
                     continue
@@ -797,22 +795,20 @@ class Coder:
                     text = None
 
                 if self.show_pretty():
-                    self.live_incremental_response(live, False)
+                    self.live_incremental_response(mdstream, False)
                 elif text:
                     sys.stdout.write(text)
                     sys.stdout.flush()
         finally:
-            if live:
-                self.live_incremental_response(live, True)
-                live.stop()
+            if mdstream:
+                self.live_incremental_response(mdstream, True)
 
-    def live_incremental_response(self, live, final):
+    def live_incremental_response(self, mdstream, final):
         show_resp = self.render_incremental_response(final)
         if not show_resp:
             return
 
-        md = Markdown(show_resp, style=self.assistant_output_color, code_theme=self.code_theme)
-        live.update(md)
+        mdstream.update(show_resp, final=final)
 
     def render_incremental_response(self, final):
         return self.partial_response_content
@@ -1048,7 +1044,7 @@ def check_model_availability(io, client, main_model):
     except openai.NotFoundError:
         # Azure sometimes returns 404?
         # https://discord.com/channels/1131200896827654144/1182327371232186459
-        io.tool_error("Unable to list available models, proceeding with {main_model.name}")
+        io.tool_error(f"Unable to list available models, proceeding with {main_model.name}")
         return True
 
     model_ids = sorted(model.id for model in available_models)

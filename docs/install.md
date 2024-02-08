@@ -1,33 +1,69 @@
 
 # Installing aider
 
-- [pip install aider-chat](#pip-install-aider-chat)
-- [Provide your OpenAI API key](#provide-your-openai-api-key)
 - [Install git](#install-git)
+- [Get your OpenAI API key](#get-your-openai-api-key)
+- [Windows install](#windows-install)
+- [Mac/Linux install](#maclinux-install)
+- [Tutorial videos](#tutorial-videos)
 
-Optional steps:
+## Install git
 
-- [Add aider to your editor (optional)](#add-aider-to-your-editor-optional)
-- [Install PortAudio (optional)](#install-portaudio-optional)
+Make sure you have git installed.
+Here are
+[instructions for installing git in various environments](https://github.com/git-guides/install-git).
 
-## pip install aider-chat
+## Get your OpenAI API key
 
-Install the “aider-chat” package with pip from one of these sources, using python 3.9-3.11:
+You need a paid
+[OpenAI API key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key).
+Note that this is different than being a "ChatGPT Plus" subscriber.
 
-* PyPI hosts the released and most stable version:
-  * `python -m pip install aider-chat`
-* GitHub hosts the latest version, which is under active development:
-  * `python -m pip install git+https://github.com/paul-gauthier/aider.git`
-* If you've git cloned the aider repository already, you can install "live" from your local copy. This is mostly useful if you are developing aider and want your current modifications to take effect immediately.
-  * `python -m pip install -e .`
+## Windows install
 
-On Windows, you may need to run `py -m pip install ...` to install python packages.
+```
+# Install aider
+py -m pip install aider-chat
 
-## Provide your OpenAI API key
+# Launch aider
+aider --openai-api-key sk-xxxxxxxxxxxxxxx
+```
 
-You need a
-[paid API key from OpenAI](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key)
-to use aider. Note that this is different than being a "ChatGPT Plus" subscriber.
+## Mac/Linux install
+
+
+```
+# Install aider
+python -m pip install aider-chat
+
+# Launch aider
+aider --openai-api-key sk-xxxxxxxxxxxxxxx
+```
+
+## Tutorial videos
+
+Here are a few tutorial videos:
+
+- [Aider : the production ready AI coding assistant you've been waiting for](https://www.youtube.com/watch?v=zddJofosJuM) -- Learn Code With JV
+- [Holy Grail: FREE Coding Assistant That Can Build From EXISTING CODE BASE](https://www.youtube.com/watch?v=df8afeb1FY8) -- Matthew Berman
+- [Aider: This AI Coder Can Create AND Update Git Codebases](https://www.youtube.com/watch?v=EqLyFT78Sig) -- Ian Wootten
+
+## You are done!
+
+See the [usage instructions](/#usage) to start coding with aider.
+
+---
+
+# Optional steps
+
+The steps below are completely optional.
+
+- [Store your API key](#store-your-api-key-optional)
+- [Enable voice coding](#enable-voice-coding-optional)
+- [Add aider to your editor](#add-aider-to-your-editor-optional)
+- [Install development versions of aider](#install-development-versions-of-aider-optional)
+
+## Store your api key (optional)
 
 You can place your api key in an environment variable:
 
@@ -41,27 +77,9 @@ Put a line in it like this to specify your api key:
 openai-api-key: sk-...
 ```
 
-Or you can provide your key as a command line argument:
 
-```
-aider --openai-api-key sk-...
-```
 
-## Install git
-
-Make sure you have git installed and available on your shell path.
-Here are
-[instructions for installing git in various environments](https://github.com/git-guides/install-git).
-
-## You are done!
-
-See the [usage instructions](/#usage) to start coding with aider.
-
-The rest of the install steps are completely optional.
-
----
-
-## Install PortAudio (optional)
+## Enable voice coding (optional)
 
 Aider supports [coding with your voice](https://aider.chat/docs/voice.html)
 using the in-chat `/voice` command.
@@ -96,3 +114,14 @@ since the VSCode terminal doesn't seem to support it well.
 If you are interested in creating an aider plugin for your favorite editor,
 please let me know by opening a
 [GitHub issue](https://github.com/paul-gauthier/aider/issues).
+
+
+## Install development versions of aider (optional)
+
+If you want to install the very latest development version of aider:
+
+* GitHub hosts the latest version, which is under active development:
+  * `python -m pip install git+https://github.com/paul-gauthier/aider.git`
+* If you've git cloned the aider repository already, you can install "live" from your local copy. This is mostly useful if you are developing aider and want your current modifications to take effect immediately.
+  * `python -m pip install -e .`
+
