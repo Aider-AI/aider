@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
+import re
 import sys
 
-import pypandoc
 import httpx
+import pypandoc
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 
@@ -94,11 +95,9 @@ class Scraper:
         else:
             content = self.scrape_with_httpx(url)
 
-        Path('tmp.html').write_text(content)
-
         if content:
             content = html_to_markdown(content)
-            #content = html_to_text(content)
+            # content = html_to_text(content)
 
         return content
 
@@ -109,10 +108,7 @@ class Scraper:
 
 
 def html_to_text(page_source: str) -> str:
-
     soup = BeautifulSoup(page_source, "html.parser")
-
-    soup = slimdown_html(soup)
 
     for script in soup(["script", "style"]):
         script.extract()
@@ -125,25 +121,38 @@ def html_to_text(page_source: str) -> str:
 
 
 def slimdown_html(soup):
-    # Remove all <img> tags
-    for img in soup.find_all('img'):
-        img.decompose()
-    # Remove all elements with data: URLs
-    for tag in soup.find_all(href=lambda x: x and x.startswith('data:')):
+    for svg in soup.find_all("svg"):
+        svg.decompose()
+
+    if soup.img:
+        soup.img.decompose()
+
+    for tag in soup.find_all(href=lambda x: x and x.startswith("data:")):
         tag.decompose()
-    for tag in soup.find_all(src=lambda x: x and x.startswith('data:')):
+
+    for tag in soup.find_all(src=lambda x: x and x.startswith("data:")):
         tag.decompose()
-    # Remove all per-element CSS styles
+
     for tag in soup.find_all(True):
-        tag.attrs.pop('style', None)
-    # Remove all internal anchor elements
-    for anchor in soup.find_all('a', href=True):
-        if anchor['href'].startswith('#'):
-            anchor.decompose()
+        tag.attrs.clear()
+
     return soup
 
+
 def html_to_markdown(page_source: str) -> str:
-    return pypandoc.convert_text(page_source, 'markdown', format='html')
+    soup = BeautifulSoup(page_source, "html.parser")
+    soup = slimdown_html(soup)
+    page_source = str(soup)
+
+    md = pypandoc.convert_text(page_source, "markdown", format="html")
+
+    md = re.sub(r"</div>", "      ", md)
+    md = re.sub(r"<div>", "     ", md)
+
+    md = re.sub(r"\n\s*\n", "\n\n", md)
+
+    return md
+
 
 def main(url):
     scraper = Scraper()

@@ -23,3 +23,5 @@ PyYAML
 Pillow
 diff-match-patch
 playwright
+pypandoc
+pypandoc_binary
