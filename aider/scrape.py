@@ -95,7 +95,8 @@ class Scraper:
             content = self.scrape_with_httpx(url)
 
         if content:
-            content = html_to_text(content)
+            content = html_to_markdown(content)
+            #content = html_to_text(content)
 
         return content
 
@@ -118,8 +119,12 @@ def html_to_text(page_source: str) -> str:
     return text
 
 
+def slimdown_html(page_source: str) -> str:
+    soup = BeautifulSoup(page_source, "html.parser")
+    # ...
+
 def html_to_markdown(page_source: str) -> str:
-    return pypandoc.convert_text(page_source, 'md', format='html')
+    return pypandoc.convert_text(page_source, 'markdown', format='html')
 
 def main(url):
     scraper = Scraper()
