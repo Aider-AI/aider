@@ -2,6 +2,7 @@
 
 import sys
 
+import httpx
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 
@@ -20,6 +21,7 @@ See https://aider.chat/docs/install.html#enable-playwright for more info.
 
 class Scraper:
     playwright_available = None
+    playwright_instructions_shown = False
 
     def __init__(self, print_error=None):
         if print_error:
@@ -51,17 +53,26 @@ class Scraper:
         return content
 
     def try_playwright(self):
+        if self.playwright_available is not None:
+            return
+
         with sync_playwright() as p:
             try:
                 p.chromium.launch()
                 self.playwright_available = True
             except Exception:
                 self.playwright_available = False
-                self.print_error(PLAYWRIGHT_INFO)
+
+    def show_playwright_instructions(self):
+        if self.playwright_available in (True, None):
+            return
+        if self.playwright_instructions_shown:
+            return
+
+        self.playwright_instructions_shown = True
+        self.print_error(PLAYWRIGHT_INFO)
 
     def scrape_with_httpx(self, url):
-        import httpx
-
         headers = {"User-Agent": f"Mozilla./5.0 ({aider_user_agent})"}
         try:
             with httpx.Client(headers=headers) as client:
@@ -75,15 +86,15 @@ class Scraper:
         return None
 
     def scrape(self, url):
-        if self.playwright_available is None:
-            self.try_playwright()
+        self.try_playwright()
 
         if self.playwright_available:
             content = self.scrape_with_playwright(url)
         else:
             content = self.scrape_with_httpx(url)
 
-        content = html_to_text(content)
+        if content:
+            content = html_to_text(content)
 
         return content
 
