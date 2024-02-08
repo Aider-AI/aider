@@ -8,7 +8,7 @@ def main(url):
         p.chromium.launch()
 
     with sync_playwright() as p:
-        browser = p.chromium.launch()
+        browser = p.chromium.launch(user_agent='Aider v0.24.0-dev')
         page = browser.new_page()
         page.goto(url)
         #page.wait_for_load_state('networkidle')
