@@ -128,6 +128,11 @@ def slimdown_html(soup):
     # Remove all <img> tags
     for img in soup.find_all('img'):
         img.decompose()
+    # Remove all elements with data: URLs
+    for tag in soup.find_all(href=lambda x: x and x.startswith('data:')):
+        tag.decompose()
+    for tag in soup.find_all(src=lambda x: x and x.startswith('data:')):
+        tag.decompose()
     # Remove all per-element CSS styles
     for tag in soup.find_all(True):
         tag.attrs.pop('style', None)
