@@ -2,6 +2,7 @@
 
 import sys
 
+import pypandoc
 import httpx
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
@@ -118,7 +119,7 @@ def html_to_text(page_source: str) -> str:
 
 
 def html_to_markdown(page_source: str) -> str:
-    pass
+    return pypandoc.convert_text(page_source, 'md', format='html')
 
 def main(url):
     scraper = Scraper()
