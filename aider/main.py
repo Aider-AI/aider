@@ -81,7 +81,7 @@ def check_gitignore(git_root, io, ask=True):
     except git.exc.InvalidGitRepositoryError:
         pass
 
-    pat = ".aider*"
+    pat = ".aider.*"
 
     gitignore_file = Path(git_root) / ".gitignore"
     if gitignore_file.exists():
