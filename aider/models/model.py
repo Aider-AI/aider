@@ -3,6 +3,7 @@ import math
 
 from PIL import Image
 
+
 class Model:
     name = None
     edit_format = None
@@ -35,7 +36,7 @@ class Model:
 
     @staticmethod
     def weak_model():
-        return Model.create("gpt-3.5-turbo-1106")
+        return Model.create("gpt-3.5-turbo-0125")
 
     @staticmethod
     def commit_message_models():
@@ -82,7 +83,6 @@ class Model:
         # Each tile costs 170 tokens, and there's an additional fixed cost of 85 tokens
         token_cost = num_tiles * 170 + 85
         return token_cost
-
 
     def get_image_size(self, fname):
         """
