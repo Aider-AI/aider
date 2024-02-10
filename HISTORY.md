@@ -5,6 +5,7 @@
 - New `/web <url>` command which scrapes the url, turns it into fairly clean markdown and adds it to the chat.
 - Updated all OpenAI model names, pricing info
 - Default GPT 3.5 model is now `gpt-3.5-turbo-0125`.
+- Bugfix to the `!` alias for `/run`.
 
 ### v0.23.0
 

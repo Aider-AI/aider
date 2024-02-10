@@ -32,7 +32,7 @@ class Model:
 
     @staticmethod
     def strong_model():
-        return Model.create("gpt-4")
+        return Model.create("gpt-4-0613")
 
     @staticmethod
     def weak_model():
