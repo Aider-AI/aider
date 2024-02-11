@@ -12,6 +12,7 @@
 - [Can I script aider?](#can-i-script-aider)
 - [What code languages does aider support?](#what-code-languages-does-aider-support)
 - [How to use pipx to avoid python package conflicts?](#how-to-use-pipx-to-avoid-python-package-conflicts)
+- [Can I specify guidelines or conventions?](#can-i-specify-guidelines-or-conventions)
 
 ## How does aider use git?
 
