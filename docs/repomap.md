@@ -1,7 +1,7 @@
 
 # Building a better repository map with tree sitter
 
-![robot flowchat](../assets/robot-ast.png)
+![robot flowchat](/assets/robot-ast.png)
 
 GPT-4 is extremely useful for "self-contained" coding tasks,
 like generating or modifying a simple function

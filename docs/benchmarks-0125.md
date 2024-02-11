@@ -1,6 +1,6 @@
 # Lazy coding benchmark for gpt-4-0125-preview
 
-[![benchmark results](../assets/benchmarks-0125.svg)](https://aider.chat/assets/benchmarks-0125.svg)
+[![benchmark results](/assets/benchmarks-0125.svg)](https://aider.chat/assets/benchmarks-0125.svg)
 
 [OpenAI just released a new version of GPT-4 Turbo](https://openai.com/blog/new-embedding-models-and-api-updates).
 This new model is intended to reduce the "laziness" that has been widely observed with the previous `gpt-4-1106-preview` model:

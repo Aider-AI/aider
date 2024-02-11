@@ -1,8 +1,8 @@
 # Code editing benchmarks for OpenAI's "1106" models
 
-[![benchmark results](../assets/benchmarks-1106.svg)](https://aider.chat/assets/benchmarks-1106.svg)
+[![benchmark results](/assets/benchmarks-1106.svg)](https://aider.chat/assets/benchmarks-1106.svg)
 
-[![benchmark results](../assets/benchmarks-speed-1106.svg)](https://aider.chat/assets/benchmarks-speed-1106.svg)
+[![benchmark results](/assets/benchmarks-speed-1106.svg)](https://aider.chat/assets/benchmarks-speed-1106.svg)
 
 [OpenAI just released new versions of GPT-3.5 and GPT-4](https://openai.com/blog/new-models-and-developer-products-announced-at-devday),
 and there's a lot

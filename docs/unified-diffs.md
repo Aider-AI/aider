@@ -1,7 +1,7 @@
 
 # Unified diffs make GPT-4 Turbo less lazy
 
-![robot flowchart](../assets/benchmarks-udiff.svg)
+![robot flowchart](/assets/benchmarks-udiff.svg)
 
 Aider now asks GPT-4 Turbo to use
 [unified diffs](#choose-a-familiar-editing-format)

@@ -1,7 +1,7 @@
 
 # Improving GPT-4's codebase understanding with ctags
 
-![robot flowchat](../assets/robot-flowchart.png)
+![robot flowchat](/assets/robot-flowchart.png)
 
 ## Updated
 
