@@ -9,7 +9,7 @@ layout: default
       <h1><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></h1>
 
       <div class="entry">
-          {{ post.content | strip_html | truncatewords: 100 }}...
+          {{ post.excerpt | default: post.content | strip_html | truncatewords: 100 }}...
       </div>
 
       <a href="{{ site.baseurl }}{{ post.url }}" class="read-more">Read More</a>
