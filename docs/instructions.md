@@ -50,7 +50,8 @@ This function uses `httpx` to make a GET request to `httpbin.org/user-agent`, wh
 </div>
 
 GPT correctly used `httpx` and provided type hints.
-See below for the transcript of this same chat *without*
+See below for the transcript of this same
+coding task conducted *without*
 using `INSTRUCTIONS.md`.
 In this case, GPT used `requests` and skipped types,
 which is perhaps more typical in small python scripts.
