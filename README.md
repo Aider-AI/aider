@@ -35,7 +35,7 @@ Aider is unique in that it lets you ask for changes to [pre-existing, larger cod
 
 Aider supports OpenAI's new GPT-4 model that has the massive 128k context window.
 Benchmark results indicate that it is
-[very fast](https://aider.chat/docs/benchmarks-speed-1106.html),
+[very fast](https://aider.chat/2023/11/06/benchmarks-speed-1106.html),
 and a bit [better at coding](https://aider.chat/docs/benchmarks-1106.html) than previous GPT-4 models.
 
 Aider now supports a [unified diff editing format, which reduces GPT-4 Turbo's "lazy" coding](https://aider.chat/docs/unified-diffs.html).

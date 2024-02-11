@@ -73,7 +73,7 @@ You can review the other reports
 for additional information:
 
 - [GPT code editing benchmarks](https://aider.chat/docs/benchmarks.html) evaluates the March and June versions of GPT-3.5 and GPT-4.
-- [Code editing speed benchmarks for OpenAI's "1106" models](https://aider.chat/docs/benchmarks-speed-1106.html) compares the performance of the new GPT models.
+- [Code editing speed benchmarks for OpenAI's "1106" models](https://aider.chat/2023/11/06/benchmarks-speed-1106.html) compares the performance of the new GPT models.
 
 
 ## Updates

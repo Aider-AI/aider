@@ -1,3 +1,8 @@
+---
+title: Speed benchmarks of GPT-4 Turbo and gpt-3.5-turbo-1106
+redirect_from:
+  - /docs/benchmarks-speed-1106.md
+---
 # Speed benchmarks of GPT-4 Turbo and gpt-3.5-turbo-1106
 
 [![benchmark results](../assets/benchmarks-speed-1106.svg)](https://aider.chat/assets/benchmarks-speed-1106.svg)
