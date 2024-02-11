@@ -360,3 +360,10 @@ Then just do:
 pipx install aider
 ```
 
+## Can I specify guidelines or conventions?
+
+Yes, just write some extra instructions in a file
+like `INSTRUCTIONS.md` and then add it to the chat.
+
+For more details, see this documentation on
+[using an instructions file with aider](/docs/instructions.md).
