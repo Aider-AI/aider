@@ -6,7 +6,7 @@ redirect_from:
 ---
 # Speed benchmarks of GPT-4 Turbo and gpt-3.5-turbo-1106
 
-<p class="post-date">{{ post.date | date: "%b %-d, %Y" }}</p>
+<p class="post-date">{{ page.date | date: "%b %-d, %Y" }}</p>
 
 [![benchmark results](/assets/benchmarks-speed-1106.svg)](https://aider.chat/assets/benchmarks-speed-1106.svg)
 
