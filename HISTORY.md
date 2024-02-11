@@ -1,5 +1,9 @@
 # Release history
 
+### v0.24.1
+
+- Fixed bug with cost computations when --no-steam in effect
+
 ### v0.24.0
 
 - New `/web <url>` command which scrapes the url, turns it into fairly clean markdown and adds it to the chat.
