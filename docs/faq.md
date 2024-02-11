@@ -350,11 +350,7 @@ within its own python environment.
 This way you can use aider to work on any python project,
 even if that project has conflicting dependencies.
 
-See the pipx docs for how to install pipx:
-
-https://pipx.pypa.io/stable/
-
-Then just do:
+Install [pipx](https://pipx.pypa.io/stable/) then just do:
 
 ```
 pipx install aider
@@ -362,7 +358,11 @@ pipx install aider
 
 ## Can I specify guidelines or conventions?
 
-Yes, just write some extra instructions in a file
+Sometimes you want GPT to be aware of certain coding guidelines,
+like whether to provide type hints, which libraries or packages
+to prefer, etc.
+
+Just put any extra instructions in a file
 like `INSTRUCTIONS.md` and then add it to the chat.
 
 For more details, see this documentation on
