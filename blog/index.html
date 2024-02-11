@@ -5,7 +5,6 @@ layout: default
 <div class="posts">
   {% for post in site.posts %}
     <article class="post">
-      <p class="post-date">{{ post.date | date: "%b %-d, %Y" }}</p>
       <h1><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></h1>
       <div class="entry">
           {% if post.excerpt %}
@@ -15,7 +14,9 @@ layout: default
           {% endif %}
       </div>
 
-      <a href="{{ site.baseurl }}{{ post.url }}" class="read-more">Read More</a>
+      <a href="{{ site.baseurl }}{{ post.url }}" class="read-more">
+          <p class="post-date">{{ post.date | date: "%b %-d, %Y" }}</p>
+      </a>
     </article>
   {% endfor %}
 </div>
