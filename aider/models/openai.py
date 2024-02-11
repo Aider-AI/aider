@@ -12,7 +12,7 @@ class ModelInfo:
     name: str
     max_context_tokens: int
     prompt_price: float
-    completions_price: float
+    completion_price: float
     edit_format: str
     always_available: bool = False
     use_repo_map: bool = False

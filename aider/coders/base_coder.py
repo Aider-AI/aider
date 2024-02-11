@@ -706,7 +706,8 @@ class Coder:
             tokens = f"{prompt_tokens} prompt tokens, {completion_tokens} completion tokens"
             if self.main_model.prompt_price:
                 cost = prompt_tokens * self.main_model.prompt_price / 1000
-                cost += completion_tokens * self.main_model.completion_price / 1000
+                if self.main_model.completion_price:
+                    cost += completion_tokens * self.main_model.completion_price / 1000
                 tokens += f", ${cost:.6f} cost"
                 self.total_cost += cost
 
