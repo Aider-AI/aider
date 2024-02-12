@@ -1,3 +1,4 @@
+# Specifying coding conventions
 
 Sometimes you want GPT to be aware of certain coding guidelines,
 like whether to provide type hints, which libraries or packages
