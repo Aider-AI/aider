@@ -26,8 +26,14 @@
 }
 
 .post-highlight {
-  max-width: 200px;
+  max-width: 12.5em; /* Assuming the base font-size is 16px, 12.5em is equivalent to 200px */
   margin-right: 1em;
+}
+
+@media (max-width: 768px) {
+  .post-highlight {
+    max-width: 18em; /* Larger size on mobile */
+  }
 }
 
 .post-content {
