@@ -11,11 +11,22 @@
   margin-top: 0;
   margin-left: 0.75rem;
 }
+.post {
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  margin-bottom: 2em;
+  padding: 1em;
+  border-radius: 4px;
+}
 .post-date {
-  color: #777;
+  color: #333;
   font-size: 0.85em;
-  margin-bottom: 0.5em;
+  margin-bottom: 1em;
   padding-top: 1em;
+  font-weight: bold;
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .chat-transcript {
