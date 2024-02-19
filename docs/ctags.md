@@ -1,4 +1,7 @@
-
+---
+title: Improving GPT-4's codebase understanding with ctags
+excerpt: Using ctags to build a "repository map" to increase GPT-4's ability to understand a large code base.
+---
 # Improving GPT-4's codebase understanding with ctags
 
 ![robot flowchat](/assets/robot-flowchart.png)

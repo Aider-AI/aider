@@ -1,6 +1,6 @@
 ---
 title: Code editing benchmarks for OpenAI's "1106" models
-excerpt: A quantitative comparison of the code editing capabilities of GPT-3.5 and GPT-4 versions that were released in Nov 2023.
+excerpt: A quantitative comparison of the code editing capabilities of the new GPT-3.5 and GPT-4 versions that were released in Nov 2023.
 ---
 # Code editing benchmarks for OpenAI's "1106" models
 

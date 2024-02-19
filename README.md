@@ -3,10 +3,10 @@
 
 Aider is a command line tool that lets you pair program with GPT-3.5/GPT-4,
 to edit code stored in your local git repository.
-You can start a new project or work with an existing repo.
-Aider makes sure edits from GPT are
-[committed to git](https://aider.chat/docs/faq.html#how-does-aider-use-git)
+Aider will directly edit the code in your local source files,
+and [git commit the changes](https://aider.chat/docs/faq.html#how-does-aider-use-git)
 with sensible commit messages.
+You can start a new project or work with an existing git repo.
 Aider is unique in that it lets you ask for changes to [pre-existing, larger codebases](https://aider.chat/docs/repomap.html).
 
 <p align="center">

@@ -1,4 +1,7 @@
-
+---
+title: ed diffs make GPT-4 Turbo less lazy
+excerpt: GPT-4 Turbo has a problem with lazy coding, which can be signiciantly improved by asking for code changes formatted as unified diffs.
+---
 # Unified diffs make GPT-4 Turbo less lazy
 
 ![robot flowchart](/assets/benchmarks-udiff.svg)
