@@ -6,17 +6,19 @@ layout: default
   {% for post in site.posts %}
     <article class="post">
       <h1><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></h1>
-      {% if post.highlight_image %}
-      <div class="post-highlight">
-        <img src="{{ site.baseurl }}{{ post.highlight_image }}" alt="Highlight Image">
-      </div>
-      {% endif %}
       <div class="entry">
+        <div class="post-content">
+          {% if post.highlight_image %}
+          <div class="post-highlight">
+            <img src="{{ site.baseurl }}{{ post.highlight_image }}" alt="Highlight Image">
+          </div>
+          {% endif %}
           {% if post.excerpt %}
           {{ post.excerpt }}
           {% else %}
           {{ post.content | strip_html | truncatewords: 100 }}...
           {% endif %}
+        </div>
       </div>
 
       <p class="post-date">

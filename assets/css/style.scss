@@ -17,12 +17,23 @@
   margin-bottom: 2em;
   padding: 1em;
   border-radius: 4px;
+  display: flex;
+  align-items: flex-start;
 }
 .post-date {
   color: #777;
   font-size: 0.85em;
   margin-bottom: 1em;
   display: block;
+}
+
+.post-highlight {
+  max-width: 200px;
+  margin-right: 1em;
+}
+
+.post-content {
+  flex: 1;
 }
 
 .chat-transcript {
