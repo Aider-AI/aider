@@ -15,9 +15,7 @@ layout: default
       </div>
 
       <p class="post-date">
-          <a href="{{ site.baseurl }}{{ post.url }}">
-              {{ post.date | date: "%b %-d, %Y" }}
-          </a>
+          {{ post.date | date: "%b %-d, %Y" }}
       </p>
     </article>
   {% endfor %}
