@@ -1,6 +1,7 @@
 ---
 title: Speed benchmarks of GPT-4 Turbo and gpt-3.5-turbo-1106
 excerpt: This report provides a detailed comparison of the speed of GPT-4 Turbo and gpt-3.5-turbo-1106 models based on the aider benchmarking suite.
+highlight_image: /assets/benchmarks-speed-1106.svg
 redirect_from:
   - /docs/benchmarks-speed-1106.html
 ---
