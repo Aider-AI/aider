@@ -15,7 +15,7 @@ layout: default
       </div>
 
       <p class="post-date">
-          {{ post.date | date: "%b %-d, %Y" }}
+          {{ post.date | date: "%b %-d, %Y" | upcase }}
       </p>
     </article>
   {% endfor %}
