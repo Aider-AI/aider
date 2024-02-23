@@ -14,15 +14,15 @@ For example, say we want our python code to:
 - Use types everywhere possible.
 ```
 
-We would simply create a file like `INSTRUCTIONS.md` with those lines
+We would simply create a file like `CONVENTIONS.md` with those lines
 and then we can add it to the aider chat, along with the file(s)
 that we want to edit:
 
 <div class="chat-transcript" markdown="1">
-> $ aider INSTRUCTIONS.md useragent.py  
+> $ aider CONVENTIONS.md useragent.py  
 >  
 > Aider v0.24.2-dev  
-> Added INSTRUCTIONS.md to the chat.  
+> Added CONVENTIONS.md to the chat.  
 > Added useragent.py to the chat.  
 
 #### write a function that uses httpbin to check the user agent on the request. return the ua.  
@@ -53,7 +53,7 @@ This function uses `httpx` to make a GET request to `httpbin.org/user-agent`, wh
 GPT correctly used `httpx` and provided type hints.
 See below for the transcript of this same
 coding task conducted *without*
-using `INSTRUCTIONS.md`.
+using `CONVENTIONS.md`.
 In this case, GPT used `requests` and skipped types,
 which is perhaps more typical in small python scripts.
 

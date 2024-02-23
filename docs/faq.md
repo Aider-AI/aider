@@ -364,7 +364,7 @@ like whether to provide type hints, which libraries or packages
 to prefer, etc.
 
 Just put any extra instructions in a file
-like `INSTRUCTIONS.md` and then add it to the chat.
+like `CONVENTIONS.md` and then add it to the chat.
 
 For more details, see this documentation on
-[using an instructions file with aider](/docs/instructions.md).
+[using a conventions file with aider](/docs/instructions.md).
