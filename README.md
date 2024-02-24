@@ -25,7 +25,6 @@ Aider is unique in that it lets you ask for changes to [pre-existing, larger cod
 - [Usage](#usage)
 - [In-chat commands](#in-chat-commands)
 - [Tips](#tips)
-- [GPT-4 vs GPT-3.5](https://aider.chat/docs/faq.html#gpt-4-vs-gpt-35)
 - [Installation](https://aider.chat/docs/install.html)
 - [Voice-to-code](https://aider.chat/docs/voice.html)
 - [FAQ](https://aider.chat/docs/faq.html)
@@ -46,6 +45,8 @@ To use it, run aider like this:
 ```
 aider --4turbo
 ```
+
+For more discussion about the [different OpenAI models see the FAQ](https://aider.chat/docs/faq.html#gpt-4-vs-gpt-35).
 
 ## Getting started
 
@@ -160,17 +161,6 @@ Aider has some ability to help GPT figure out which files to edit all by itself,
 * GPT can only see the content of the files you specifically "add to the chat". Aider also sends GPT-4 a [map of your entire git repo](https://aider.chat/docs/repomap.html). So GPT may ask to see additional files if it feels that's needed for your requests.
 * I also shared some general [GPT coding tips on Hacker News](https://news.ycombinator.com/item?id=36211879).
 
-
-## GPT-4 vs GPT-3.5
-
-Aider supports all of OpenAI's chat models.
-You can choose a model with the `--model` command line argument.
-
-You should probably use GPT-4 if you can. For more details see the
-[FAQ entry that compares GPT-4 vs GPT-3.5](https://aider.chat/docs/faq.html#gpt-4-vs-gpt-35).
-
-For a discussion of using other non-OpenAI models, see the
-[FAQ about other LLMs](https://aider.chat/docs/faq.html#can-i-use-aider-with-other-llms-local-llms-etc).
 
 ## Installation
 
