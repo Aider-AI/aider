@@ -57,39 +57,30 @@ makes sure you never lose your work if GPT makes an inappropriate change.
 Aider supports all of OpenAI's chat models.
 You can choose a model with the `--model` command line argument.
 
-You will probably get the best results with one of the GPT-4 models.
-They have large context windows, better coding skills and
+You will probably get the best results with one of the GPT-4 Turbo models,
+which you can use by running `aider --4turbo`.
+They have large context windows, good coding skills and
 they generally obey the instructions in the system prompt.
-GPT-4 is able to structure code edits as simple "diffs"
+The older `gpt-4-0613` model is a great choice if GPT-4 Turbo is having
+trouble with your coding task, although it has a smaller context window
+which can be a real limitation.
+
+All the GPT-4 models are able to structure code edits as "diffs"
 and use a
 [repository map](https://aider.chat/docs/repomap.html)
 to improve its ability to make changes in larger codebases.
 
-GPT-3.5 is supported more experimentally
-and is limited to editing somewhat smaller codebases.
+GPT-3.5 is
+limited to editing somewhat smaller codebases.
 It is less able to follow instructions and
 can't reliably return code edits as "diffs".
 Aider disables the
 repository map
 when using GPT-3.5.
 
-For a detailed and quantitative comparison, please see the
-[code editing benchmark results for GPT-3.5 and GPT-4](https://aider.chat/docs/benchmarks.html).
-
-In practice, this means you can use aider to **edit** a set of source files
-that total up to the sizes below.
-The repo can be arbitrarily large, but
-the specific set of files which need to be edited for your request
-must fit within the context window.
-Only `/add` the files that need to be edited to the chat
-to minimize your use of the context window and costs.
-
-| Model             | Context<br>Size | Edit<br>Format | Max<br>File Size | Max<br>File Size | Repo<br>Map? |
-| ----------------- | -- | --     | -----| -- | -- |
-| gpt-3.5-turbo     |  4k tokens | whole file | 2k tokens | ~8k bytes | no |
-| gpt-3.5-turbo-16k | 16k tokens | whole file | 8k tokens | ~32k bytes | no |
-| gpt-4             |  8k tokens | diffs | 8k tokens | ~32k bytes | yes |
-| gpt-4-32k         | 32k tokens | diffs | 32k tokens  | ~128k bytes | yes |
+For detailed quantitative comparisons, please see the
+[aider blog](https://aider.chat/blog/)
+which contains many benchmarking articles.
 
 ## Aider isn't editing my files?
 
@@ -112,11 +103,6 @@ introduced.
 But sometimes GPT just won't cooperate.
 In these cases, here are some things you might try:
 
-  - Just ask it to try again. Explain the problem with the response if you can. Here is some suggested language which will be familiar to GPT based on its system prompt.
-    - With GPT-3.5, you could say something like "Send me back the new code as a properly formatted **file listing**".
-    - With GPT-4, you could say something like "Format those code changes properly as an **edit block**".
-    - "Don't skip code and replace it with comments, send me back all the code!"
-    - Etc...
   - Use `/drop` to remove files from the chat session which aren't needed for the task at hand. This will reduce distractions and may help GPT produce properly formatted edits.
   - Use `/clear` to remove the conversation history, again to help GPT focus.
 
