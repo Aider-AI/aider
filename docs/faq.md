@@ -19,8 +19,8 @@
 Aider works best with code that is part of a git repo.
 Aider is tightly integrated with git, which makes it easy to:
 
-  - Undo any GPT changes that you don't like
-  - Go back later to review the changes GPT made to your code
+  - Use git to undo any GPT changes that you don't like
+  - Go back in the git history to review the changes GPT made to your code
   - Manage a series of GPT's changes on a git branch
 
 Aider specifically uses git in these ways:
@@ -38,19 +38,6 @@ While it is not recommended, you can disable aider's use of git in a few ways:
   - `--no-auto-commits` will stop aider from git committing each of GPT's changes.
   - `--no-dirty-commits` will stop aider from committing dirty files before applying GPT's edits.
   - `--no-git` will completely stop aider from using git on your files. You should ensure you are keeping sensible backups of the files you are working with.
-
-### How did v0.13.0 change git usage?
-
-As of v0.13.0, aider works with git in a more streamlined manner.
-Previously, aider would *always* prompt you
-if it noticed that you had uncommitted changes *anywhere* in your repo.
-
-Now aider only pays attention to uncommitted changes in files
-that GPT attempts to edit.
-And aider doesn't interrupt you, it simply commits your pending
-changes before applying GPT's edits.
-This keeps your edits separate from GPT's edits, and
-makes sure you never lose your work if GPT makes an inappropriate change.
 
 ## GPT-4 vs GPT-3.5
 
