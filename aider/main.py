@@ -209,6 +209,12 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         help="Specify the deployment_id",
     )
     model_group.add_argument(
+        "--openai-organization-id",
+        metavar="OPENAI_ORGANIZATION_ID",
+        env_var="OPENAI_ORGANIZATION_ID",
+        help="Specify the OpenAI organization ID",
+    )
+    model_group.add_argument(
         "--openrouter",
         dest="openai_api_base",
         action="store_const",
@@ -520,6 +526,8 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         io.tool_output("Option settings:")
         for arg, val in sorted(vars(args).items()):
             io.tool_output(f"  - {arg}: {scrub_sensitive_info(str(val))}")
+        if args.openai_organization_id:
+            io.tool_output(f"  - openai_organization_id: {args.openai_organization_id}")
 
     io.tool_output(*sys.argv, log_only=True)
 
@@ -550,6 +558,8 @@ def main(argv=None, input=None, output=None, force_git_root=None):
                     "HTTP-Referer": "http://aider.chat",
                     "X-Title": "Aider",
                 }
+        if args.openai_organization_id:
+            kwargs["organization"] = args.openai_organization_id
 
         client = openai.OpenAI(api_key=args.openai_api_key, **kwargs)
 
