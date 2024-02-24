@@ -3,16 +3,16 @@
 
 - [How does aider use git?](#how-does-aider-use-git)
 - [GPT-4 vs GPT-3.5](#gpt-4-vs-gpt-35)
-- [Aider isn't editing my files?](#aider-isnt-editing-my-files)
 - [Accessing other LLMs with OpenRouter](#accessing-other-llms-with-openrouter)
 - [Can I use aider with other LLMs, local LLMs, etc?](#can-i-use-aider-with-other-llms-local-llms-etc)
-- [Can I change the system prompts that aider uses?](#can-i-change-the-system-prompts-that-aider-uses)
+- [Aider isn't editing my files?](#aider-isnt-editing-my-files)
 - [Can I run aider in Google Colab?](#can-i-run-aider-in-google-colab)
 - [How can I run aider locally from source code?](#how-can-i-run-aider-locally-from-source-code)
 - [Can I script aider?](#can-i-script-aider)
 - [What code languages does aider support?](#what-code-languages-does-aider-support)
 - [How to use pipx to avoid python package conflicts?](#how-to-use-pipx-to-avoid-python-package-conflicts)
 - [Can I specify guidelines or conventions?](#can-i-specify-guidelines-or-conventions)
+- [Can I change the system prompts that aider uses?](#can-i-change-the-system-prompts-that-aider-uses)
 
 ## How does aider use git?
 
@@ -81,30 +81,6 @@ when using GPT-3.5.
 For detailed quantitative comparisons, please see the
 [aider blog](https://aider.chat/blog/)
 which contains many benchmarking articles.
-
-## Aider isn't editing my files?
-
-Sometimes GPT will reply with some code changes that don't get applied to your local files.
-In these cases, aider might say something like "Failed to apply edit to *filename*".
-
-This usually happens because GPT is not specifying the edits
-to make in the format that aider expects.
-GPT-3.5 is especially prone to disobeying the system prompt instructions in this manner, but it also happens with GPT-4.
-
-Aider makes every effort to get GPT to conform, and works hard to deal with
-replies that are "almost" correctly formatted.
-If Aider detects an improperly formatted reply, it gives GPT feedback to try again.
-Also, before each release new versions of aider are
-[benchmarked](https://aider.chat/docs/benchmarks.html).
-This helps prevent regressions in the code editing
-performance of GPT that could have been inadvertantly
-introduced.
-
-But sometimes GPT just won't cooperate.
-In these cases, here are some things you might try:
-
-  - Use `/drop` to remove files from the chat session which aren't needed for the task at hand. This will reduce distractions and may help GPT produce properly formatted edits.
-  - Use `/clear` to remove the conversation history, again to help GPT focus.
 
 ## Accessing other LLMs with OpenRouter
 
@@ -179,37 +155,30 @@ for more information on how to populate the above configuration values.
 
 
 
+## Aider isn't editing my files?
 
-## Can I change the system prompts that aider uses?
+Sometimes GPT will reply with some code changes that don't get applied to your local files.
+In these cases, aider might say something like "Failed to apply edit to *filename*".
 
-Aider is set up to support different system prompts and edit formats
-in a modular way. If you look in the `aider/coders` subdirectory, you'll
-see there's a base coder with base prompts, and then there are
-a number of
-different specific coder implementations.
+This usually happens because GPT is not specifying the edits
+to make in the format that aider expects.
+GPT-3.5 is especially prone to disobeying the system prompt instructions in this manner, but it also happens with GPT-4.
 
-If you're thinking about experimenting with system prompts
-this document about
-[benchmarking GPT-3.5 and GPT-4 on code editing](https://aider.chat/docs/benchmarks.html)
-might be useful background.
+Aider makes every effort to get GPT to conform, and works hard to deal with
+replies that are "almost" correctly formatted.
+If Aider detects an improperly formatted reply, it gives GPT feedback to try again.
+Also, before each release new versions of aider are
+[benchmarked](https://aider.chat/docs/benchmarks.html).
+This helps prevent regressions in the code editing
+performance of GPT that could have been inadvertantly
+introduced.
 
-While it's not well documented how to add new coder subsystems, you may be able
-to modify an existing implementation or use it as a template to add another.
+But sometimes GPT just won't cooperate.
+In these cases, here are some things you might try:
 
-To get started, try looking at and modifying these files.
+  - Use `/drop` to remove files from the chat session which aren't needed for the task at hand. This will reduce distractions and may help GPT produce properly formatted edits.
+  - Use `/clear` to remove the conversation history, again to help GPT focus.
 
-The wholefile coder is currently used by GPT-3.5 by default. You can manually select it with `--edit-format whole`.
-
-- wholefile_coder.py
-- wholefile_prompts.py
-
-The editblock coder is currently used by GPT-4 by default. You can manually select it with `--edit-format diff`.
-
-- editblock_coder.py
-- editblock_prompts.py
-
-When experimenting with coder backends, it helps to run aider with `--verbose --no-pretty` so you can see
-all the raw information being sent to/from GPT in the conversation.
 
 ## Can I run aider in Google Colab?
 
@@ -354,3 +323,34 @@ like `CONVENTIONS.md` and then add it to the chat.
 
 For more details, see this documentation on
 [using a conventions file with aider](/docs/conventions.html).
+
+## Can I change the system prompts that aider uses?
+
+Aider is set up to support different system prompts and edit formats
+in a modular way. If you look in the `aider/coders` subdirectory, you'll
+see there's a base coder with base prompts, and then there are
+a number of
+different specific coder implementations.
+
+If you're thinking about experimenting with system prompts
+this document about
+[benchmarking GPT-3.5 and GPT-4 on code editing](https://aider.chat/docs/benchmarks.html)
+might be useful background.
+
+While it's not well documented how to add new coder subsystems, you may be able
+to modify an existing implementation or use it as a template to add another.
+
+To get started, try looking at and modifying these files.
+
+The wholefile coder is currently used by GPT-3.5 by default. You can manually select it with `--edit-format whole`.
+
+- wholefile_coder.py
+- wholefile_prompts.py
+
+The editblock coder is currently used by GPT-4 by default. You can manually select it with `--edit-format diff`.
+
+- editblock_coder.py
+- editblock_prompts.py
+
+When experimenting with coder backends, it helps to run aider with `--verbose --no-pretty` so you can see
+all the raw information being sent to/from GPT in the conversation.
