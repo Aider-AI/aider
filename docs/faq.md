@@ -339,5 +339,10 @@ The editblock coder is currently used by GPT-4 by default. You can manually sele
 - editblock_coder.py
 - editblock_prompts.py
 
+The universal diff coder is currently used by GPT-4 Turbo by default. You can manually select it with `--edit-format udiff`.
+
+- udiff_coder.py
+- udiff_prompts.py
+
 When experimenting with coder backends, it helps to run aider with `--verbose --no-pretty` so you can see
 all the raw information being sent to/from GPT in the conversation.
