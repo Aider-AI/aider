@@ -578,6 +578,34 @@ two
             diff = saved_diffs[0]
             self.assertIn("file.txt", diff)
 
+    def test_skip_aiderignored_files(self):
+        with GitTemporaryDirectory():
+            repo = git.Repo()
+
+            fname1 = "ignoreme1.txt"
+            fname2 = "ignoreme2.txt"
+            fname3 = "dir/ignoreme3.txt"
+
+            Path(fname2).touch()
+            repo.git.add(str(fname2))
+            repo.git.commit("-m", "initial")
+
+            aignore = Path(".aiderignore")
+            aignore.write_text(f"{fname1}\n{fname2}\ndir\n")
+
+            io = InputOutput(yes=True)
+            coder = Coder.create(
+                models.GPT4,
+                None,
+                io,
+                fnames=[fname1, fname2, fname3],
+                aider_ignore_file=str(aignore),
+            )
+
+            self.assertNotIn(fname1, str(coder.abs_fnames))
+            self.assertNotIn(fname2, str(coder.abs_fnames))
+            self.assertNotIn(fname3, str(coder.abs_fnames))
+
 
 if __name__ == "__main__":
     unittest.main()

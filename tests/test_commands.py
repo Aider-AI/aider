@@ -6,6 +6,7 @@ import tempfile
 from io import StringIO
 from pathlib import Path
 from unittest import TestCase
+from unittest.mock import patch
 
 import git
 
@@ -22,6 +23,10 @@ class TestCommands(TestCase):
         self.original_cwd = os.getcwd()
         self.tempdir = tempfile.mkdtemp()
         os.chdir(self.tempdir)
+
+        self.patcher = patch("aider.coders.base_coder.check_model_availability")
+        self.mock_check = self.patcher.start()
+        self.mock_check.return_value = True
 
     def tearDown(self):
         os.chdir(self.original_cwd)
@@ -537,3 +542,30 @@ class TestCommands(TestCase):
             del coder
             del commands
             del repo
+
+    def test_cmd_add_aiderignored_file(self):
+        with GitTemporaryDirectory():
+            repo = git.Repo()
+
+            fname1 = "ignoreme1.txt"
+            fname2 = "ignoreme2.txt"
+            fname3 = "dir/ignoreme3.txt"
+
+            Path(fname2).touch()
+            repo.git.add(str(fname2))
+            repo.git.commit("-m", "initial")
+
+            aignore = Path(".aiderignore")
+            aignore.write_text(f"{fname1}\n{fname2}\ndir\n")
+
+            io = InputOutput(yes=True)
+            coder = Coder.create(
+                models.GPT4, None, io, fnames=[fname1, fname2], aider_ignore_file=str(aignore)
+            )
+            commands = Commands(io, coder)
+
+            commands.cmd_add(f"{fname1} {fname2} {fname3}")
+
+            self.assertNotIn(fname1, str(coder.abs_fnames))
+            self.assertNotIn(fname2, str(coder.abs_fnames))
+            self.assertNotIn(fname3, str(coder.abs_fnames))

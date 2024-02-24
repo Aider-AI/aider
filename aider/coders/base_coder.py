@@ -156,6 +156,22 @@ class Coder:
 
         self.commands = Commands(self.io, self, voice_language)
 
+        if use_git:
+            try:
+                self.repo = GitRepo(
+                    self.io, fnames, git_dname, aider_ignore_file, client=self.client
+                )
+                self.root = self.repo.root
+            except FileNotFoundError:
+                self.repo = None
+
+        if self.repo:
+            filtered_fnames = self.repo.filter_ignored_files(fnames)
+            for fname in fnames:
+                if fname not in filtered_fnames:
+                    self.io.tool_error(f"Skipping {fname} that matches aiderignore spec.")
+            fnames = filtered_fnames
+
         for fname in fnames:
             fname = Path(fname)
             if not fname.exists():
@@ -167,16 +183,6 @@ class Coder:
                 raise ValueError(f"{fname} is not a file")
 
             self.abs_fnames.add(str(fname.resolve()))
-
-        if use_git:
-            try:
-                self.repo = GitRepo(
-                    self.io, fnames, git_dname, aider_ignore_file, client=self.client
-                )
-                self.root = self.repo.root
-            except FileNotFoundError:
-                self.repo = None
-
         if self.repo:
             rel_repo_dir = self.repo.get_rel_repo_dir()
             num_files = len(self.repo.get_tracked_files())

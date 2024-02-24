@@ -41,6 +41,8 @@ class GitRepo:
                 repo_paths.append(repo_path)
             except git.exc.InvalidGitRepositoryError:
                 pass
+            except git.exc.NoSuchPathError:
+                pass
 
         num_repos = len(set(repo_paths))
 
@@ -194,10 +196,7 @@ class GitRepo:
         files.extend(staged_files)
 
         # convert to appropriate os.sep, since git always normalizes to /
-        res = set(
-            self.normalize_path(path)
-            for path in files
-        )
+        res = set(self.normalize_path(path) for path in files)
 
         return self.filter_ignored_files(res)
 
