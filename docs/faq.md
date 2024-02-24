@@ -367,4 +367,4 @@ Just put any extra instructions in a file
 like `CONVENTIONS.md` and then add it to the chat.
 
 For more details, see this documentation on
-[using a conventions file with aider](/docs/instructions.md).
+[using a conventions file with aider](/docs/conventions.html).
