@@ -11,7 +11,7 @@
 - [Can I script aider?](#can-i-script-aider)
 - [What code languages does aider support?](#what-code-languages-does-aider-support)
 - [How to use pipx to avoid python package conflicts?](#how-to-use-pipx-to-avoid-python-package-conflicts)
-- [How can I add all the files to the chat?](#how-can-i-add-all-the-files-to-the-chat)
+- [How can I add ALL the files to the chat?](#how-can-i-add-all-the-files-to-the-chat)
 - [Can I specify guidelines or conventions?](#can-i-specify-guidelines-or-conventions)
 - [Can I change the system prompts that aider uses?](#can-i-change-the-system-prompts-that-aider-uses)
 
@@ -300,9 +300,9 @@ Install [pipx](https://pipx.pypa.io/stable/) then just do:
 pipx install aider
 ```
 
-## How can I add all the files to the chat?
+## How can I add ALL the files to the chat?
 
-People regularly ask about how to add many or all of their repo's files to the chat.
+People regularly ask about how to add **many or all of their repo's files** to the chat.
 This is probably not a good idea and will likely do more harm than good.
 
 The best approach is think about which files need to be changed to accomplish
