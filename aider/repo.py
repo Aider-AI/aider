@@ -198,14 +198,18 @@ class GitRepo:
         # convert to appropriate os.sep, since git always normalizes to /
         res = set(self.normalize_path(path) for path in files)
 
-        return self.filter_ignored_files(res)
+        res = [fname for fname in res if not self.ignored_file(fname)]
+
+        return res
 
     def normalize_path(self, path):
         return str(Path(PurePosixPath((Path(self.root) / path).relative_to(self.root))))
 
-    def filter_ignored_files(self, fnames):
+    def ignored_file(self, fname):
         if not self.aider_ignore_file or not self.aider_ignore_file.is_file():
-            return fnames
+            return
+
+        fname = self.normalize_path(fname)
 
         mtime = self.aider_ignore_file.stat().st_mtime
         if mtime != self.aider_ignore_ts:
@@ -216,7 +220,7 @@ class GitRepo:
                 lines,
             )
 
-        return [fname for fname in fnames if not self.aider_ignore_spec.match_file(fname)]
+        return self.aider_ignore_spec.match_file(fname)
 
     def path_in_repo(self, path):
         if not self.repo:

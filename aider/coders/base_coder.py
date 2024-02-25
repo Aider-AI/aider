@@ -165,13 +165,6 @@ class Coder:
             except FileNotFoundError:
                 self.repo = None
 
-        if self.repo:
-            filtered_fnames = self.repo.filter_ignored_files(fnames)
-            for fname in fnames:
-                if fname not in filtered_fnames:
-                    self.io.tool_error(f"Skipping {fname} that matches aiderignore spec.")
-            fnames = filtered_fnames
-
         for fname in fnames:
             fname = Path(fname)
             if not fname.exists():
@@ -182,7 +175,13 @@ class Coder:
             if not fname.is_file():
                 raise ValueError(f"{fname} is not a file")
 
-            self.abs_fnames.add(str(fname.resolve()))
+            fname = str(fname.resolve())
+
+            if self.repo and self.repo.ignored_file(fname):
+                self.io.tool_error(f"Skipping {fname} that matches aiderignore spec.")
+                continue
+
+            self.abs_fnames.add(fname)
             self.check_added_files()
 
         if self.repo:

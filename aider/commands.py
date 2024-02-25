@@ -342,7 +342,7 @@ class Commands:
             else:
                 fname = Path(self.coder.root) / word
 
-            if self.coder.repo and not self.coder.repo.filter_ignored_files([fname]):
+            if self.coder.repo and self.coder.repo.ignored_file(fname):
                 self.io.tool_error(f"Skipping {fname} that matches aiderignore spec.")
                 continue
 
