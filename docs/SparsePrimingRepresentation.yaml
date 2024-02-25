@@ -9,7 +9,7 @@ ReadingInstructionCodex:
 
 words:
   - term: "SparsePrimingRepresentation"
-    inferred_meaning: "A shared language or terminology that encapsulates complex concepts into concise, descriptive terms written in CamelCase. This approach allows for efficient discussion of complex ideas and serves as a naming convention for components within a system that embody these ideas."
+    inferred_meaning: "A shared language or terminology that encapsulates complex concepts into concise, descriptive terms written in PascalCase. This approach allows for efficient discussion of complex ideas and serves as a naming convention for components within a system that embody these ideas."
     negative_definition: "SparsePrimingRepresentation is not a specific algorithm, data structure, or code implementation. It is not used to describe literal sparsity in data or memory."
     preferred_acronym_usage: "SPR"
     examples:
