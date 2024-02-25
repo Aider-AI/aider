@@ -11,6 +11,7 @@
 - [Can I script aider?](#can-i-script-aider)
 - [What code languages does aider support?](#what-code-languages-does-aider-support)
 - [How to use pipx to avoid python package conflicts?](#how-to-use-pipx-to-avoid-python-package-conflicts)
+- [How can I add all the files to the chat?](#how-can-i-add-all-the-files-to-the-chat)
 - [Can I specify guidelines or conventions?](#can-i-specify-guidelines-or-conventions)
 - [Can I change the system prompts that aider uses?](#can-i-change-the-system-prompts-that-aider-uses)
 
@@ -298,6 +299,36 @@ Install [pipx](https://pipx.pypa.io/stable/) then just do:
 ```
 pipx install aider
 ```
+
+## How can I add all the files to the chat?
+
+People regularly ask about how to add many or all of their repo's files to the chat.
+This is probably not a good idea and will likely do more harm than good.
+
+The best approach is think about which files need to be changed to accomplish
+the task you are working on. Just add those files ot the chat.
+
+Aider will automatically give GPT a bunch of additional context about
+how those specific files relate to
+the rest of your git repo.
+It does this by analyzing your entire codebase in light of the
+current chat to build a compact
+[repository map](https://aider.chat/2023/10/22/repomap.html).
+
+Usually when people want to add "all the files" it's because they think it
+will give GPT helpful context about the overall code base.
+The repo map usually does a good job at this without using a lot of tokens.
+
+Sending GPT a ton of code that is mostly irrelevant to the
+task at hand will often distract or confuse it.
+It will also increase the token costs on your OpenAI invoice.
+
+Again, it's usually best to just add the files to the chat that will need to be modified.
+If you still wish to add lots of files to the chat, you can:
+
+- Use a wildcard when you launch aider: `aider src/*.py`
+- Use a wildcard with the in chat `/add` command: `/add src/*.py`
+- Give the `/add` command a directory name and it will recurisvely add every file under that dir: `/add src`
 
 ## Can I specify guidelines or conventions?
 
