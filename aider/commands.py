@@ -386,6 +386,7 @@ class Commands:
                 else:
                     self.coder.abs_fnames.add(abs_file_path)
                     self.io.tool_output(f"Added {matched_file} to the chat")
+                    self.coder.check_added_files()
                     added_fnames.append(matched_file)
 
         if not added_fnames:
