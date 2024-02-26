@@ -527,7 +527,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         for arg, val in sorted(vars(args).items()):
             io.tool_output(f"  - {arg}: {scrub_sensitive_info(str(val))}")
 
-    io.tool_output(*sys.argv, log_only=True)
+    io.tool_output(*map(scrub_sensitive_info, sys.argv), log_only=True)
 
     if not args.openai_api_key:
         if os.name == "nt":
