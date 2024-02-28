@@ -169,6 +169,9 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     )
     default_3_model = models.GPT35_0125
     core_group.add_argument(
+        "--35turbo",
+        "--35-turbo",
+        "--3",
         "-3",
         action="store_const",
         dest="model",

@@ -46,7 +46,8 @@ Aider supports all of OpenAI's chat models.
 You can choose a model with the `--model` command line argument.
 
 You will probably get the best results with one of the GPT-4 Turbo models,
-which you can use by running `aider --4turbo`.
+which you can use by running `aider --4turbo`
+(this is a convenient shortcut for `--model gpt-4-1106-preview`).
 They have large context windows, good coding skills and
 they generally obey the instructions in the system prompt.
 The older `gpt-4-0613` model is a great choice if GPT-4 Turbo is having
@@ -65,6 +66,7 @@ can't reliably return code edits as "diffs".
 Aider disables the
 repository map
 when using GPT-3.5.
+To use GPT-3.5, you can run `aider --35turbo` as a shortcut for `--model gpt-3.5-turbo-0125`.
 
 For detailed quantitative comparisons, please see the
 [aider blog](https://aider.chat/blog/)
@@ -77,9 +79,9 @@ which contains many benchmarking articles.
 To access the openrouter models simply
 
 - register for an account, purchase some credits and generate an api key
-- set --openai-api-base to https://openrouter.ai/api/v1
-- set --openai-api-key to your openrouter key
-- set --model to the model of your choice (openai/gpt-4-32k, anthropic/claude-2 etc.)
+- set `--openai-api-base` to `https://openrouter.ai/api/v1`
+- set `--openai-api-key` to your openrouter key
+- set `--model` to the model of your choice (`openai/gpt-4-32k`, `anthropic/claude-2` etc.)
 
 Some of the models weren't very functional and each llm has its own quirks. The anthropic models work ok, but the llama-2 ones in particular will need more work to play friendly with aider.
 
