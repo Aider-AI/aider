@@ -1,5 +1,14 @@
 # Release history
 
+### main branch
+
+- Issue a warning if user adds too much code to the chat.
+  - https://aider.chat/docs/faq.html#how-can-i-add-all-the-files-to-the-chat
+- Vocally refuse to add files to the chat that match `.aiderignore`
+  - Prevents bug where subsequent git commit of those files will fail.
+- Added `--openai-organization-id` argument.
+- Made past articles part of https://aider.chat/blog/
+
 ### v0.24.1
 
 - Fixed bug with cost computations when --no-steam in effect
