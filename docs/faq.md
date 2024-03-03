@@ -46,7 +46,8 @@ Aider supports all of OpenAI's chat models.
 You can choose a model with the `--model` command line argument.
 
 You will probably get the best results with one of the GPT-4 Turbo models,
-which you can use by running `aider --4turbo`.
+which you can use by running `aider --4turbo`
+(this is a convenient shortcut for `--model gpt-4-1106-preview`).
 They have large context windows, good coding skills and
 they generally obey the instructions in the system prompt.
 The older `gpt-4-0613` model is a great choice if GPT-4 Turbo is having
@@ -65,6 +66,7 @@ can't reliably return code edits as "diffs".
 Aider disables the
 repository map
 when using GPT-3.5.
+To use GPT-3.5, you can run `aider --35turbo` as a shortcut for `--model gpt-3.5-turbo-0125`.
 
 For detailed quantitative comparisons, please see the
 [aider blog](https://aider.chat/blog/)
@@ -77,9 +79,9 @@ which contains many benchmarking articles.
 To access the openrouter models simply
 
 - register for an account, purchase some credits and generate an api key
-- set --openai-api-base to https://openrouter.ai/api/v1
-- set --openai-api-key to your openrouter key
-- set --model to the model of your choice (openai/gpt-4-32k, anthropic/claude-2 etc.)
+- set `--openai-api-base` to `https://openrouter.ai/api/v1`
+- set `--openai-api-key` to your openrouter key
+- set `--model` to the model of your choice (`openai/gpt-4-32k`, `anthropic/claude-2` etc.)
 
 Some of the models weren't very functional and each llm has its own quirks. The anthropic models work ok, but the llama-2 ones in particular will need more work to play friendly with aider.
 
@@ -306,8 +308,10 @@ People regularly ask about how to add **many or all of their repo's files** to t
 This is probably not a good idea and will likely do more harm than good.
 
 The best approach is think about which files need to be changed to accomplish
-the task you are working on. Just add those files ot the chat.
+the task you are working on. Just add those files to the chat.
 
+Usually when people want to add "all the files" it's because they think it
+will give GPT helpful context about the overall code base.
 Aider will automatically give GPT a bunch of additional context about
 how those specific files relate to
 the rest of your git repo.
@@ -315,13 +319,10 @@ It does this by analyzing your entire codebase in light of the
 current chat to build a compact
 [repository map](https://aider.chat/2023/10/22/repomap.html).
 
-Usually when people want to add "all the files" it's because they think it
-will give GPT helpful context about the overall code base.
-The repo map usually does a good job at this without using a lot of tokens.
-
-Sending GPT a ton of code that is mostly irrelevant to the
-task at hand will often distract or confuse it.
-It will also increase the token costs on your OpenAI invoice.
+Adding a bunch of files that are mostly irrelevant to the
+task at hand will often distract or confuse GPT.
+GPT will give worse coding results, and sometimese even fail to correctly edit files.
+Addings extra files will also increase the token costs on your OpenAI invoice.
 
 Again, it's usually best to just add the files to the chat that will need to be modified.
 If you still wish to add lots of files to the chat, you can:
@@ -340,7 +341,7 @@ Just put any extra instructions in a file
 like `CONVENTIONS.md` and then add it to the chat.
 
 For more details, see this documentation on
-[using a conventions file with aider](/docs/conventions.html).
+[using a conventions file with aider](https://aider.chat/docs/conventions.html).
 
 ## Can I change the system prompts that aider uses?
 

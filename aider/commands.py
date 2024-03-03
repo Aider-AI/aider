@@ -342,7 +342,7 @@ class Commands:
             else:
                 fname = Path(self.coder.root) / word
 
-            if self.coder.repo and not self.coder.repo.filter_ignored_files([fname]):
+            if self.coder.repo and self.coder.repo.ignored_file(fname):
                 self.io.tool_error(f"Skipping {fname} that matches aiderignore spec.")
                 continue
 
@@ -386,6 +386,7 @@ class Commands:
                 else:
                     self.coder.abs_fnames.add(abs_file_path)
                     self.io.tool_output(f"Added {matched_file} to the chat")
+                    self.coder.check_added_files()
                     added_fnames.append(matched_file)
 
         if not added_fnames:

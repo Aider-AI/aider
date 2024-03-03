@@ -169,6 +169,9 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     )
     default_3_model = models.GPT35_0125
     core_group.add_argument(
+        "--35turbo",
+        "--35-turbo",
+        "--3",
         "-3",
         action="store_const",
         dest="model",
@@ -527,7 +530,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         for arg, val in sorted(vars(args).items()):
             io.tool_output(f"  - {arg}: {scrub_sensitive_info(str(val))}")
 
-    io.tool_output(*sys.argv, log_only=True)
+    io.tool_output(*map(scrub_sensitive_info, sys.argv), log_only=True)
 
     if not args.openai_api_key:
         if os.name == "nt":
