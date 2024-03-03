@@ -1,10 +1,13 @@
 # flake8: noqa: E501
 
 from .base_prompts import CoderPrompts
+from . import prompt_manager
+
 
 
 class UnifiedDiffPrompts(CoderPrompts):
-    main_system = """Act as an expert software developer.
+    yaml_prompt_entry = prompt_manager.get_prompt_value('EditBlockFunctionPrompts', 'main_system')
+    main_system = yaml_prompt_entry if yaml_prompt_entry else """Act as an expert software developer.
 You are diligent and tireless!
 You NEVER leave comments describing code without implementing it!
 You always COMPLETELY IMPLEMENT the needed code!
