@@ -15,6 +15,42 @@ words:
     examples:
       - context: "The term 'SparsePrimingRepresentation' could be used within a software development team to refer to a specific pattern or method that is commonly understood among the team members, without needing to explain the details each time."
       - context: "In project documentation, 'SparsePrimingRepresentation' might be used as a header or keyword to quickly convey the underlying complex concept it represents, facilitating quicker navigation and understanding for readers familiar with the term."
+  - term: "MultiIndexDataFrameBuilder"
+    inferred_meaning: "A mechanism or process that transforms a flat DataFrame into a structured multi-index DataFrame, representing hierarchical data from XML."
+    negative_definition: "MultiIndexDataFrameBuilder is not a simple data conversion tool, but a complex process that ensures the correct hierarchical representation of data."
+    preferred_acronym_usage: "MIDFB"
+    examples:
+      - context: "The MIDFB will be used to convert the initial flat DataFrame into the multi-index DataFrame required for our analysis."
+  - term: "XMLHierarchyExtractor"
+    inferred_meaning: "A component that analyzes XML structure to identify and extract hierarchical relationships and unique identifiers for DataFrame construction."
+    negative_definition: "XMLHierarchyExtractor does not modify the XML content but extracts structural information for further processing."
+    preferred_acronym_usage: "XHE"
+    examples:
+      - context: "Our XHE module has successfully identified the parent-child relationships necessary for multi-index DataFrame creation."
+  - term: "DataFrameIntegrator"
+    inferred_meaning: "A process or tool that integrates parsed respondent data from various sources into a structured multi-index DataFrame."
+    negative_definition: "DataFrameIntegrator is not limited to simple data merging but involves complex integration of disparate data sets."
+    preferred_acronym_usage: "DFI"
+    examples:
+      - context: "The DFI will be responsible for combining the XML parsed data with the respondent answers to form a comprehensive dataset."
+  - term: "MacroLexiconParser"
+    inferred_meaning: "A parser that processes XML text elements into multiple lexicons, where the term 'Macro' refers to the keywords that are associated with underlying macros performing specific functions."
+    negative_definition: "MacroLexiconParser does not refer to parsing macro-level language patterns, but rather to the identification and categorization of keywords that trigger specific macros within the system."
+    preferred_acronym_usage: "MLP"
+    examples:
+      - context: "Our MLP has been instrumental in identifying keywords that correspond to macros, which are then used to automate specific functions within our system."
+  - term: "QuestionnaireDataModel"
+    inferred_meaning: "A comprehensive data model that includes all aspects of questionnaire data, such as PageData, PageDataItem, and their associated metadata, questions, and answers."
+    negative_definition: "QuestionnaireDataModel is not just a database schema but a full representation of the questionnaire's logical structure."
+    preferred_acronym_usage: "QDM"
+    examples:
+      - context: "The QDM has been updated to include new metadata fields as per the latest questionnaire design changes."
+  - term: "AnswerDictionaryAggregator"
+    inferred_meaning: "A process that compiles multiple child elements or attributes into a dictionary structure within a multi-index DataFrame."
+    negative_definition: "AnswerDictionaryAggregator does not simply collect data but organizes it in a way that preserves the hierarchical context."
+    preferred_acronym_usage: "ADA"
+    examples:
+      - context: "The ADA ensures that each PageDataItem's answers are grouped correctly in the DataFrame."
   - term: "CloseTheLoopPrimeDirective"
     inferred_meaning: "A software development principle emphasizing the creation of end-to-end functional prototypes by starting with the expected final output and working backward to define all necessary components and interfaces. This approach prioritizes early user interaction and feedback."
     negative_definition: "CloseTheLoopPrimeDirective is not about perfecting each component before integration, but rather ensuring that all components connect and function together to meet the end goal as soon as possible."
@@ -36,3 +72,31 @@ words:
     examples:
       - context: "When onboarding new developers, we introduce them to our 'CodingStandardsPrimer' to quickly get them up to speed with our project's coding conventions."
       - context: "The project's pull request checklist includes a reminder to review the 'CodingStandardsPrimer' to ensure all contributions adhere to our established practices."
+  - term: "CodingStandardsPrimerOperationalPrototypes"
+    inferred_meaning: "A term that describes the practice of developing Proof of Principle implementations that are mature enough to be deployed to alpha testers. It emphasizes the importance of creating operational prototypes that adhere to coding standards and design principles, ensuring that the prototype is not only a proof of concept but also robust enough for early-stage deployment and testing."
+    negative_definition: "CodingStandardsPrimerOperationalPrototypes is not about creating quick and dirty prototypes for internal review, but rather about developing prototypes that are operational and adhere to predefined coding standards and design principles."
+    preferred_acronym_usage: "CSPOP"
+    examples:
+      - context: "By adhering to the 'CodingStandardsPrimerOperationalPrototypes', our team ensures that even our earliest prototypes are built with quality and can be confidently shared with alpha testers for real-world feedback."
+      - context: "The CSPOP approach has streamlined our development process by ensuring that every prototype is not only functional but also meets our rigorous standards for code quality and maintainability."
+  - term: "StreamlitAppGUIConsiderations"
+    inferred_meaning: "A set of guidelines and design choices that inform the development of the graphical user interface for a Streamlit application, particularly focusing on the user experience and effective presentation of data."
+    negative_definition: "StreamlitAppGUIConsiderations do not dictate the specific technical implementation details but rather provide an overarching direction for the GUI's look and feel, usability, and functionality."
+    preferred_acronym_usage: "SAGC"
+    examples:
+      - context: "Incorporating 'StreamlitAppGUIConsiderations' ensures that our data visualization tools are both intuitive and powerful, providing users with a seamless experience."
+      - context: "The SAGC principles guided us in creating an interactive dashboard that allows users to manipulate and explore data with ease."
+  - term: "IsomorphicVerificationStrategy"
+    inferred_meaning: "A strategy that focuses on verifying the isomorphism of data transformations, such as converting XML into pandas DataFrames, by coding the reverse transformation and checking if the original data can be accurately reconstructed."
+    negative_definition: "IsomorphicVerificationStrategy is not about the transformation process itself, but about the verification of the integrity and accuracy of the transformation."
+    preferred_acronym_usage: "IVS"
+    examples:
+      - context: "The IVS will be crucial in ensuring that our data transformation processes are reversible and that the integrity of the data is maintained throughout the transformation."
+      - context: "Implementing an IVS will allow us to confidently use complex data transformations knowing that we can validate their correctness."
+
+ # Copyright
+ # Copyright (c) 2023 Bjorn Heijligers, Chairman of Stichting "De Stichting" / TheFoundation.global
+ # Origin for the importance of SPRs when working with LLMs:
+ # David Shapiro - https://github.com/daveshap/SparsePrimingRepresentations
+ # License
+ # MIT License
