@@ -378,3 +378,6 @@ The universal diff coder is currently used by GPT-4 Turbo by default. You can ma
 
 When experimenting with coder backends, it helps to run aider with `--verbose --no-pretty` so you can see
 all the raw information being sent to/from GPT in the conversation.
+
+You can also refer to the
+[instructions for installing a development version of aider](https://aider.chat/docs/install.html#install-development-versions-of-aider-optional).
