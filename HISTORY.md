@@ -1,6 +1,6 @@
 # Release history
 
-### main branch
+### v0.25.0
 
 - Issue a warning if user adds too much code to the chat.
   - https://aider.chat/docs/faq.html#how-can-i-add-all-the-files-to-the-chat
