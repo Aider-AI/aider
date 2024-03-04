@@ -7,6 +7,7 @@
 - Vocally refuse to add files to the chat that match `.aiderignore`
   - Prevents bug where subsequent git commit of those files will fail.
 - Added `--openai-organization-id` argument.
+- Show the user a FAQ link if edits fail to apply.
 - Made past articles part of https://aider.chat/blog/
 
 ### v0.24.1

@@ -166,6 +166,7 @@ introduced.
 But sometimes GPT just won't cooperate.
 In these cases, here are some things you might try:
 
+  - Try the older GPT-4 model `gpt-4-0613` not GPT-4 Turbo by running `aider --model gpt-4-0613`.
   - Use `/drop` to remove files from the chat session which aren't needed for the task at hand. This will reduce distractions and may help GPT produce properly formatted edits.
   - Use `/clear` to remove the conversation history, again to help GPT focus.
 
