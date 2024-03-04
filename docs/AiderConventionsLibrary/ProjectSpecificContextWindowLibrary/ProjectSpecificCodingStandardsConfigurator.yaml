@@ -1,0 +1,28 @@
+ProjectSpecificCodingStandardsConfigurator:
+  SPRProjectType: "OperationalPrototypeProject"
+  CodingStandards: "CodingStandardsPrimerOperationalPrototypes"
+  CodeStyle:
+    Indentation: "2 spaces"
+    LineLength: "100 characters"
+    NamingConventions:
+      Variables: "snake_case"
+      Functions: "snake_case"
+      Classes: "PascalCase"
+  Documentation:
+    InlineComments: "Where possible matching the high level algorithm to the code"
+    Docstrings: "Concise and relevant, when possible using data types and examples"
+  Testing:
+    Framework: "pytest"
+    Coverage: "Sufficient for critical paths"
+  VersionControl:
+    Branches: "Use descriptive names"
+    Commits: "Small and focused"
+    GitPlatform: "GitHub"
+    GitHubPrivacy: "private"
+  ContinuousIntegration:
+    Tool: "GitHub Actions"
+    Build: "On push to main and development branches"
+  Performance:
+    Profiling: "Profile to identify bottlenecks in critical paths"
+  CodeReviews:
+    Process: "Simplified for speed but ensuring quality and consistency"

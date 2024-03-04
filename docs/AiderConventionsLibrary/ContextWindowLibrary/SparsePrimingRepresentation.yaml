@@ -1,0 +1,72 @@
+ReadingInstructionCodex:
+  - This YAML file is a lexicon for the term "SparsePrimingRepresentation" (SPR).
+  - It encapsulates the shared understanding of SPR within the context of our project.
+  - The 'inferred_meaning' provides a concise description of what SPR represents.
+  - The 'negative_definition' clarifies what SPR is not, preventing misinterpretation.
+  - The 'preferred_acronym_usage' indicates the acronym that should be used for SPR.
+  - The 'examples' section illustrates how SPR might be used in communication and documentation.
+  - Use this file as a reference to ensure consistent usage and understanding of SPR across the team.
+
+words:
+  - term: "SparsePrimingRepresentation"
+    inferred_meaning: "A shared language or terminology that encapsulates complex concepts into concise, descriptive terms written in CamelCase. This approach allows for efficient discussion of complex ideas and serves as a naming convention for components within a system that embody these ideas."
+    negative_definition: "SparsePrimingRepresentation is not a specific algorithm, data structure, or code implementation. It is not used to describe literal sparsity in data or memory."
+    preferred_acronym_usage: "SPR"
+    examples:
+      - context: "The term 'SparsePrimingRepresentation' could be used within a software development team to refer to a specific pattern or method that is commonly understood among the team members, without needing to explain the details each time."
+      - context: "In project documentation, 'SparsePrimingRepresentation' might be used as a header or keyword to quickly convey the underlying complex concept it represents, facilitating quicker navigation and understanding for readers familiar with the term."
+  - term: "ProjectSpecificSparsePrimingRepresentation"
+    inferred_meaning: "A specialized version of SparsePrimingRepresentation that is tailored to the specific terminology, concepts, and components used within a particular project or context."
+    negative_definition: "ProjectSpecificSparsePrimingRepresentation is not a general-purpose lexicon but is designed to be used within the confines of a specific project to ensure clarity and consistency among team members."
+    preferred_acronym_usage: "PSSPR"
+    examples:
+      - context: "The 'ProjectSpecificSparsePrimingRepresentation' for our XML parsing project includes terms like 'XMLHierarchyExtractor' and 'MultiIndexDataFrameBuilder'."
+      - context: "When discussing project-specific components, we refer to the 'ProjectSpecificSparsePrimingRepresentation' to avoid any confusion with general terminology."
+  - term: "CloseTheLoopPrimeDirective"
+    inferred_meaning: "A software development principle emphasizing the creation of end-to-end functional prototypes by starting with the expected final output and working backward to define all necessary components and interfaces. This approach prioritizes early user interaction and feedback."
+    negative_definition: "CloseTheLoopPrimeDirective is not about perfecting each component before integration, but rather ensuring that all components connect and function together to meet the end goal as soon as possible."
+    preferred_acronym_usage: "CTLPD"
+    examples:
+      - context: "By following the CTLPD, we were able to quickly set up a basic end-to-end flow and start user testing, which provided valuable insights for further development."
+      - context: "The CTLPD approach helped us identify missing links in our data processing pipeline early in the project lifecycle."
+  - term: "CommentDrivenDevelopment"
+    inferred_meaning: "A development methodology where the design and logic of the code are first thoroughly outlined in the form of detailed comments before actual code implementation begins."
+    negative_definition: "CommentDrivenDevelopment is not about writing comments for already existing code, but rather using comments to drive the design and development process."
+    preferred_acronym_usage: "CDD"
+    examples:
+      - context: "Using CDD, we can ensure that all team members have a clear understanding of the new features before any code is written."
+      - context: "The CDD approach helps in identifying potential issues and discussing them within the team at an early stage of development."
+  - term: "CodingStandardsPrimer"
+    inferred_meaning: "A concise term that encapsulates the collective set of coding standards and design principles adopted by a project, including modular design, SOLID principles, design patterns, clean code, type safety, error handling, and comprehensive documentation."
+    negative_definition: "CodingStandardsPrimer is not a specific coding standard or principle but rather a reference to the entire collection of standards and principles."
+    preferred_acronym_usage: "CSP"
+    examples:
+      - context: "When onboarding new developers, we introduce them to our 'CodingStandardsPrimer' to quickly get them up to speed with our project's coding conventions."
+      - context: "The project's pull request checklist includes a reminder to review the 'CodingStandardsPrimer' to ensure all contributions adhere to our established practices."
+  - term: "CodingStandardsPrimerOperationalPrototypes"
+    inferred_meaning: "A term that describes the practice of developing Proof of Principle implementations that are mature enough to be deployed to alpha testers. It emphasizes the importance of creating operational prototypes that adhere to coding standards and design principles, ensuring that the prototype is not only a proof of concept but also robust enough for early-stage deployment and testing."
+    negative_definition: "CodingStandardsPrimerOperationalPrototypes is not about creating quick and dirty prototypes for internal review, but rather about developing prototypes that are operational and adhere to predefined coding standards and design principles."
+    preferred_acronym_usage: "CSPOP"
+    examples:
+      - context: "By adhering to the 'CodingStandardsPrimerOperationalPrototypes', our team ensures that even our earliest prototypes are built with quality and can be confidently shared with alpha testers for real-world feedback."
+      - context: "The CSPOP approach has streamlined our development process by ensuring that every prototype is not only functional but also meets our rigorous standards for code quality and maintainability."
+  - term: "IsomorphicVerificationStrategy"
+    inferred_meaning: "A strategy that focuses on verifying the isomorphism of data transformations, such as converting XML into pandas DataFrames, by coding the reverse transformation and checking if the original data can be accurately reconstructed."
+    negative_definition: "IsomorphicVerificationStrategy is not about the transformation process itself, but about the verification of the integrity and accuracy of the transformation."
+    preferred_acronym_usage: "IVS"
+    examples:
+      - context: "The IVS will be crucial in ensuring that our data transformation processes are reversible and that the integrity of the data is maintained throughout the transformation."
+      - context: "Implementing an IVS will allow us to confidently use complex data transformations knowing that we can validate their correctness."
+  - term: "OperationalPrototypeProject"
+    inferred_meaning: "A project approach focused on the rapid development and iteration of functional prototypes, which are operational and can be used for immediate testing and feedback."
+    negative_definition: "OperationalPrototypeProject does not refer to fully polished and final products, but rather to working prototypes that are developed with speed and flexibility in mind."
+    preferred_acronym_usage: "OPP"
+    examples:
+      - context: "In the OPP, we prioritize creating a minimum viable product that can be tested and improved upon in short development cycles."
+      - context: "The OPP methodology is perfect for startups that need to quickly bring a product to market to gauge user interest and gather feedback."
+
+
+ # Copyright (c) 2023 Bjorn Heijligers, Chairman of Stichting "De Stichting" / TheFoundation.global
+ # Origin for the importance of SPRs when working with LLMs:
+ # David Shapiro - https://github.com/daveshap/SparsePrimingRepresentations
+ # MIT License
