@@ -8,42 +8,7 @@ ReadingInstructionCodex:
   - Use this file as a reference to ensure consistent usage and understanding of SPR across the team.
 
 words:
-  - term: "MultiIndexDataFrameBuilder"
-    inferred_meaning: "A mechanism or process that transforms a flat DataFrame into a structured multi-index DataFrame, representing hierarchical data from XML."
-    negative_definition: "MultiIndexDataFrameBuilder is not a simple data conversion tool, but a complex process that ensures the correct hierarchical representation of data."
-    preferred_acronym_usage: "MIDFB"
-    examples:
-      - context: "The MIDFB will be used to convert the initial flat DataFrame into the multi-index DataFrame required for our analysis."
-  - term: "XMLHierarchyExtractor"
-    inferred_meaning: "A component that analyzes XML structure to identify and extract hierarchical relationships and unique identifiers for DataFrame construction."
-    negative_definition: "XMLHierarchyExtractor does not modify the XML content but extracts structural information for further processing."
-    preferred_acronym_usage: "XHE"
-    examples:
-      - context: "Our XHE module has successfully identified the parent-child relationships necessary for multi-index DataFrame creation."
-  - term: "DataFrameIntegrator"
-    inferred_meaning: "A process or tool that integrates parsed respondent data from various sources into a structured multi-index DataFrame."
-    negative_definition: "DataFrameIntegrator is not limited to simple data merging but involves complex integration of disparate data sets."
-    preferred_acronym_usage: "DFI"
-    examples:
-      - context: "The DFI will be responsible for combining the XML parsed data with the respondent answers to form a comprehensive dataset."
-  - term: "MacroLexiconParser"
-    inferred_meaning: "A parser that processes XML text elements into multiple lexicons, where the term 'Macro' refers to the keywords that are associated with underlying macros performing specific functions."
-    negative_definition: "MacroLexiconParser does not refer to parsing macro-level language patterns, but rather to the identification and categorization of keywords that trigger specific macros within the system."
-    preferred_acronym_usage: "MLP"
-    examples:
-      - context: "Our MLP has been instrumental in identifying keywords that correspond to macros, which are then used to automate specific functions within our system."
-  - term: "QuestionnaireDataModel"
-    inferred_meaning: "A comprehensive data model that includes all aspects of questionnaire data, such as PageData, PageDataItem, and their associated metadata, questions, and answers."
-    negative_definition: "QuestionnaireDataModel is not just a database schema but a full representation of the questionnaire's logical structure."
-    preferred_acronym_usage: "QDM"
-    examples:
-      - context: "The QDM has been updated to include new metadata fields as per the latest questionnaire design changes."
-  - term: "AnswerDictionaryAggregator"
-    inferred_meaning: "A process that compiles multiple child elements or attributes into a dictionary structure within a multi-index DataFrame."
-    negative_definition: "AnswerDictionaryAggregator does not simply collect data but organizes it in a way that preserves the hierarchical context."
-    preferred_acronym_usage: "ADA"
-    examples:
-      - context: "The ADA ensures that each PageDataItem's answers are grouped correctly in the DataFrame."
+
 
 # Copyright (c) 2023 Bjorn Heijligers, Chairman of Stichting "De Stichting" / TheFoundation.global
 # Origin for the importance of SPRs when working with LLMs:
