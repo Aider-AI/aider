@@ -1,5 +1,9 @@
+Aider Conventions Library
+=========================
+In the 'AiderConventionsLibrary' subfolder you will find some advanced 'SparsePrimingPrompts' to help you streamline your interaction with the underlying LLM that aider utilizes.
+
 Project-Specific vs General Context Window Library Conventions
-=============================================================
+--------------------------------------------------------------
 
 Within our project structure, we maintain two distinct sets of libraries for defining conventions, terms, and instructions: the general `ContextWindowLibrary` and the `ProjectSpecificContextWindowLibrary`. It is crucial to understand the role and precedence of each library to ensure consistency and clarity across the project.
 
