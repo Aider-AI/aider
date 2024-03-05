@@ -217,6 +217,33 @@ for FILE in *.py ; do
 done
 ```
 
+User `aider --help` to see all the command line options, but these are useful for scripting:
+
+```
+--stream, --no-stream
+                      Enable/disable streaming responses (default: True) [env var:
+                      AIDER_STREAM]
+--message COMMAND, --msg COMMAND, -m COMMAND
+                      Specify a single message to send GPT, process reply then exit
+                      (disables chat mode) [env var: AIDER_MESSAGE]
+--message-file MESSAGE_FILE, -f MESSAGE_FILE
+                      Specify a file containing the message to send GPT, process reply,
+                      then exit (disables chat mode) [env var: AIDER_MESSAGE_FILE]
+--yes                 Always say yes to every confirmation [env var: AIDER_YES]
+--auto-commits, --no-auto-commits
+                      Enable/disable auto commit of GPT changes (default: True) [env var:
+                      AIDER_AUTO_COMMITS]
+--dirty-commits, --no-dirty-commits
+                      Enable/disable commits when repo is found dirty (default: True) [env
+                      var: AIDER_DIRTY_COMMITS]
+--dry-run, --no-dry-run
+                      Perform a dry run without modifying files (default: False) [env var:
+                      AIDER_DRY_RUN]
+--commit              Commit all pending changes with a suitable commit message, then exit
+                      [env var: AIDER_COMMIT]
+```
+
+
 ## Python
 
 You can also script aider from python:
@@ -239,6 +266,19 @@ coder.run("make a script that prints hello world")
 
 # Send another instruction
 coder.run("make it say goodbye")
+```
+
+See the
+[Coder.create() and Coder.__init__() methods](https://github.com/paul-gauthier/aider/blob/main/aider/coders/base_coder.py)
+for all the supported arguments.
+
+It can also helpful to set the equivalend of `--yes` by doing this:
+
+```
+from aider.io import InputOutput
+io = InputOutput(yes=True)
+# ...
+coder = Coder.create(client=client, fnames=fnames, io=io)
 ```
 
 ## What code languages does aider support?
