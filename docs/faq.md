@@ -300,7 +300,7 @@ even if that project has conflicting dependencies.
 Install [pipx](https://pipx.pypa.io/stable/) then just do:
 
 ```
-pipx install aider
+pipx install aider-chat
 ```
 
 ## How can I add ALL the files to the chat?
