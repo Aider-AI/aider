@@ -159,13 +159,13 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     )
     default_4_turbo_model = "gpt-4-1106-preview"
     core_group.add_argument(
-        "--4-turbo",
         "--4turbo",
+        "--4-turbo",
         "--4",
         action="store_const",
         dest="model",
         const=default_4_turbo_model,
-        help=f"Use {default_4_turbo_model} model for the main chat (gpt-4 is better)",
+        help=f"Use {default_4_turbo_model} model for the main chat",
     )
     default_3_model = models.GPT35_0125
     core_group.add_argument(
