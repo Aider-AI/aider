@@ -682,6 +682,10 @@ class Coder:
         if self.verbose:
             print(completion)
 
+        if not completion.choices:
+            self.io.tool_error(str(completion))
+            return
+
         show_func_err = None
         show_content_err = None
         try:

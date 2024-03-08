@@ -74,16 +74,22 @@ which contains many benchmarking articles.
 
 ## Accessing other LLMs with OpenRouter
 
-[OpenRouter](https://openrouter.ai) provide an interface to [many models](https://openrouter.ai/docs) which are not widely accessible, in particular gpt-4-32k and claude-2.
+[OpenRouter](https://openrouter.ai) provide an interface to [many models](https://openrouter.ai/models) which are not widely accessible, in particular Claude 3 Opus.
 
-To access the openrouter models simply
+To access the OpenRouter models, simply:
 
-- register for an account, purchase some credits and generate an api key
-- set `--openai-api-base https://openrouter.ai/api/v1`
-- set `--openai-api-key` to your openrouter key
-- set `--model` to the model of your choice (`openai/gpt-4-32k`, `anthropic/claude-2` etc.)
+```
+# Install Aider
+pip install aider-chat
 
-Some of the models weren't very functional and each llm has its own quirks. The anthropic models work ok, but the llama-2 ones in particular will need more work to play friendly with aider.
+# Setup openrouter access
+export OPENAI_API_KEY=<your-openrouter-key>
+export export OPENAI_API_BASE=https://openrouter.ai/api/v1
+
+# For example, run aider with Claude 3 Opus using the diff editing format
+aider --model anthropic/claude-3-opus --edit-format diff
+```
+
 
 ## Can I use aider with other LLMs, local LLMs, etc?
 
