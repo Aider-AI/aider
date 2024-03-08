@@ -79,12 +79,12 @@ which contains many benchmarking articles.
 To access the OpenRouter models, simply:
 
 ```
-# Install Aider
+# Install aider
 pip install aider-chat
 
-# Setup openrouter access
+# Setup OpenRouter access
 export OPENAI_API_KEY=<your-openrouter-key>
-export export OPENAI_API_BASE=https://openrouter.ai/api/v1
+export OPENAI_API_BASE=https://openrouter.ai/api/v1
 
 # For example, run aider with Claude 3 Opus using the diff editing format
 aider --model anthropic/claude-3-opus --edit-format diff
