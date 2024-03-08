@@ -45,27 +45,32 @@ def guessed_wrong_repo(io, git_root, fnames, git_dname):
 
 
 def setup_git(git_root, io):
+    repo = None
     if git_root:
-        return git_root
+        repo = git.Repo(git_root)
+    elif io.confirm_ask("No git repo found, create one to track GPT's changes (recommended)?"):
+        git_root = str(Path.cwd().resolve())
+        repo = git.Repo.init(git_root)
+        io.tool_output("Git repository created in the current working directory.")
+        check_gitignore(git_root, io, False)
 
-    if not io.confirm_ask("No git repo found, create one to track GPT's changes (recommended)?"):
+    if not repo:
         return
 
-    git_root = str(Path.cwd().resolve())
+    with repo.config_reader() as config:
+        user_name = config.get_value("user", "name", None)
+        user_email = config.get_value("user", "email", None)
 
-    check_gitignore(git_root, io, False)
+    if user_name and user_email:
+        return repo.working_tree_dir
 
-    repo = git.Repo.init(git_root)
-    global_git_config = git.GitConfigParser([str(Path.home() / ".gitconfig")], read_only=True)
     with repo.config_writer() as git_config:
-        if not global_git_config.has_option("user", "name"):
+        if not user_name:
             git_config.set_value("user", "name", "Your Name")
             io.tool_error('Update git name with: git config user.name "Your Name"')
-        if not global_git_config.has_option("user", "email"):
+        if not user_email:
             git_config.set_value("user", "email", "you@example.com")
             io.tool_error('Update git email with: git config user.email "you@example.com"')
-
-    io.tool_output("Git repository created in the current working directory.")
 
     return repo.working_tree_dir
 
