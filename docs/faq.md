@@ -42,14 +42,19 @@ While it is not recommended, you can disable aider's use of git in a few ways:
 
 ## GPT-4 vs GPT-3.5
 
-Aider supports all of OpenAI's chat models.
-You can choose a model with the `--model` command line argument.
+Aider supports all of OpenAI's chat models,
+and uses GPT-4 Turbo by default.
+It has a large context window, good coding skills and
+generally obeys the instructions in the system prompt.
 
-You will probably get the best results with one of the GPT-4 Turbo models,
-which you can use by running `aider --4turbo`
-(this is a convenient shortcut for `--model gpt-4-1106-preview`).
-They have large context windows, good coding skills and
-they generally obey the instructions in the system prompt.
+You can choose another model with the `--model` command line argument
+or one of these shortcuts:
+
+```
+aider -4 # to use gpt-4-0613
+aider -3 # to use gpt-3.5-turbo-0125
+```
+
 The older `gpt-4-0613` model is a great choice if GPT-4 Turbo is having
 trouble with your coding task, although it has a smaller context window
 which can be a real limitation.
@@ -62,13 +67,12 @@ to improve its ability to make changes in larger codebases.
 GPT-3.5 is
 limited to editing somewhat smaller codebases.
 It is less able to follow instructions and
-can't reliably return code edits as "diffs".
+so can't reliably return code edits as "diffs".
 Aider disables the
 repository map
 when using GPT-3.5.
-To use GPT-3.5, you can run `aider --35turbo` as a shortcut for `--model gpt-3.5-turbo-0125`.
 
-For detailed quantitative comparisons, please see the
+For detailed quantitative comparisons of the various models, please see the
 [aider blog](https://aider.chat/blog/)
 which contains many benchmarking articles.
 

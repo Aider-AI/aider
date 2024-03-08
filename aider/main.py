@@ -150,11 +150,12 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         env_var="OPENAI_API_KEY",
         help="Specify the OpenAI API key",
     )
+    default_model = "gpt-4-1106-preview"
     core_group.add_argument(
         "--model",
         metavar="MODEL",
-        default=models.GPT4_0613.name,
-        help=f"Specify the model to use for the main chat (default: {models.GPT4_0613.name})",
+        default=default_model,
+        help=f"Specify the model to use for the main chat (default: {default_model})",
     )
     core_group.add_argument(
         "--skip-model-availability-check",
@@ -162,11 +163,19 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         default=False,
         help="Override to skip model availability check (default: False)",
     )
+    default_4_model = "gpt-4-0613"
+    core_group.add_argument(
+        "--4",
+        "-4",
+        action="store_const",
+        dest="model",
+        const=default_4_model,
+        help=f"Use {default_4_model} model for the main chat",
+    )
     default_4_turbo_model = "gpt-4-1106-preview"
     core_group.add_argument(
         "--4turbo",
         "--4-turbo",
-        "--4",
         action="store_const",
         dest="model",
         const=default_4_turbo_model,
@@ -181,7 +190,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         action="store_const",
         dest="model",
         const=default_3_model.name,
-        help=f"Use {default_3_model.name} model for the main chat (gpt-4 is better)",
+        help=f"Use {default_3_model.name} model for the main chat",
     )
     core_group.add_argument(
         "--voice-language",

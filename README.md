@@ -23,6 +23,7 @@ Aider is unique in that it lets you ask for changes to [pre-existing, larger cod
 - [Example chat transcripts](#example-chat-transcripts)
 - [Features](#features)
 - [Usage](#usage)
+- [Tutorial videos](https://aider.chat/docs/install.html#tutorial-videos)
 - [In-chat commands](#in-chat-commands)
 - [Tips](#tips)
 - [Installation](https://aider.chat/docs/install.html)
@@ -31,22 +32,6 @@ Aider is unique in that it lets you ask for changes to [pre-existing, larger cod
 - [Discord](https://discord.gg/Tv2uQnR88V)
 - [Blog](https://aider.chat/blog/)
 
-## GPT-4 Turbo with 128k context and unified diffs
-
-Aider supports OpenAI's new GPT-4 model that has the massive 128k context window.
-Benchmark results indicate that it is
-[very fast](https://aider.chat/2023/11/06/benchmarks-speed-1106.html),
-and a bit [better at coding](https://aider.chat/docs/benchmarks-1106.html) than previous GPT-4 models.
-
-Aider now supports a [unified diff editing format, which reduces GPT-4 Turbo's "lazy" coding](https://aider.chat/docs/unified-diffs.html).
-
-To use it, run aider like this:
-
-```
-aider --4turbo
-```
-
-For more discussion about the [different OpenAI models see the FAQ](https://aider.chat/docs/faq.html#gpt-4-vs-gpt-35).
 
 ## Getting started
 
