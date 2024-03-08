@@ -79,7 +79,7 @@ which contains many benchmarking articles.
 To access the openrouter models simply
 
 - register for an account, purchase some credits and generate an api key
-- set `--openai-api-base` to `https://openrouter.ai/api/v1`
+- set `--openai-api-base https://openrouter.ai/api/v1`
 - set `--openai-api-key` to your openrouter key
 - set `--model` to the model of your choice (`openai/gpt-4-32k`, `anthropic/claude-2` etc.)
 
