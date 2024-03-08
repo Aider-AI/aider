@@ -10,6 +10,7 @@ import traceback
 from json.decoder import JSONDecodeError
 from pathlib import Path
 
+import git
 import openai
 from jsonschema import Draft7Validator
 from rich.console import Console, Text
@@ -959,6 +960,9 @@ class Coder:
                 self.io.tool_error(str(err))
                 return False, None
 
+        except git.exc.GitCommandError as err:
+            self.io.tool_error(str(err))
+            return False, None
         except Exception as err:
             print(err)
             print()
