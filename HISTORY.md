@@ -1,5 +1,12 @@
 # Release history
 
+### v0.26.0
+
+- Use GPT-4 Turbo by default.
+- Added `-3` and `-4` switches to use GPT 3.5 or GPT-4 (non-Turbo).
+- Bug fix to avoid reflecting local git errors back to GPT.
+- Improved logic for opening git repo on launch.
+
 ### v0.25.0
 
 - Issue a warning if user adds too much code to the chat.
