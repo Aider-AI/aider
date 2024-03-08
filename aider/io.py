@@ -18,6 +18,7 @@ from rich.text import Text
 
 from .utils import is_image_file
 from .dump import dump  # noqa: F401
+from pyfzf.pyfzf import FzfPrompt
 
 
 class AutoCompleter(Completer):
@@ -360,3 +361,16 @@ class InputOutput:
         if self.chat_history_file is not None:
             with self.chat_history_file.open("a", encoding=self.encoding) as f:
                 f.write(text)
+
+    def fzf_select_files(self, directory='.', prompt='Select files:'):
+        """
+        Presents a file selection dialog using pyfzf for multiple files.
+
+        :param directory: The directory to search for files. Defaults to the current directory.
+        :param prompt: The prompt to display to the user. Defaults to 'Select a file:'.
+        :return: The list of selected file paths or an empty list if no files were selected.
+        """
+        fzf = FzfPrompt()
+        files = [os.path.join(dp, f) for dp, dn, filenames in os.walk(directory) for f in filenames]
+        selected = fzf.prompt(files, '--multi')
+        return selected if selected else []

@@ -392,6 +392,12 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         help="Apply the changes from the given file instead of running the chat (debug)",
     )
     other_group.add_argument(
+        "--fzf",
+        action="store_true",
+        help="Invoke file selection using FZF",
+        default=False,
+    )
+    other_group.add_argument(
         "--yes",
         action="store_true",
         help="Always say yes to every confirmation",
@@ -470,7 +476,14 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         encoding=args.encoding,
     )
 
-    fnames = [str(Path(fn).resolve()) for fn in args.files]
+    if args.fzf:
+        selected_files = io.fzf_select_files()
+        if not selected_files:
+            io.tool_error("No files selected.")
+            return
+        fnames = selected_files
+    else:
+        fnames = [str(Path(fn).resolve()) for fn in args.files]
     if len(args.files) > 1:
         good = True
         for fname in args.files:
