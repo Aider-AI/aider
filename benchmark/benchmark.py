@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 import datetime
 import json
 import os
@@ -121,12 +120,13 @@ def show_stats(dirnames, graphs):
         repeat_hi = repeat_lo = repeat_avg = None  # noqa: F841
 
     df = pd.DataFrame.from_records(rows)
-    df.sort_values(by=["model", "edit_format"], inplace=True)
+    # df.sort_values(by=["model", "edit_format"], inplace=True)
 
     # dump(df)
     if graphs:
         # plot_timing(df)
-        plot_outcomes(df, repeats, repeat_hi, repeat_lo, repeat_avg)
+        # plot_outcomes(df, repeats, repeat_hi, repeat_lo, repeat_avg)
+        plot_outcomes_claude(df)
         # plot_refactoring(df)
 
 
@@ -283,6 +283,139 @@ def plot_outcomes(df, repeats, repeat_hi, repeat_lo, repeat_avg):
         loc="upper left",
         # bbox_to_anchor=(0.95, 0.95),
     )
+    ax.set_ylim(top=100)
+
+    plt.tight_layout()
+    plt.savefig("tmp.svg")
+    imgcat(fig)
+
+    # df.to_csv("tmp.benchmarks.csv")
+
+
+def plot_outcomes_claude(df):
+    print(df)
+
+    # Fix wrong column label
+    df["model"] = df["model"].replace("gpt-4-0314", "gpt-4-0613")
+
+    tries = [
+        df[["model", "pass_rate_2"]],
+        df[["model", "pass_rate_1"]],
+    ]
+
+    plt.rcParams["hatch.linewidth"] = 0.5
+    plt.rcParams["hatch.color"] = "#444444"
+
+    from matplotlib import rc
+
+    rc("font", **{"family": "sans-serif", "sans-serif": ["Helvetica"], "size": 10})
+
+    fig, ax = plt.subplots(figsize=(6, 4))
+    ax.grid(axis="y", zorder=0, lw=0.2)
+
+    zorder = 1
+    for df in tries:
+        zorder += 1
+        print(df)
+
+        num_models, _ = df.shape
+        num_formats = 1
+
+        pos = np.array(range(num_models))
+        width = 0.6 / num_formats
+
+        if zorder > 1:
+            edge = dict(
+                edgecolor="#ffffff",
+                linewidth=1.5,
+            )
+        else:
+            edge = dict()
+        if zorder == 2:
+            edge["label"] = "??"
+
+        color = [
+            "#b3e6a8",
+            "#b3e6a8",
+            "#b3e6a8",
+            "#b3e6a8",
+            "#b3d1e6",
+            "#b3d1e6",
+            "#b3d1e6",
+            "#e6b3b3",
+            "#d1b3e6",
+        ]
+        hatch = [
+            "",
+            "",
+            "",
+            "",
+            "////",
+            "////",
+            "////",
+            "",
+            "////",
+        ]
+        hatch = [
+            "////",
+            "////",
+            "////",
+            "////",
+            "",
+            "",
+            "",
+            "////",
+            "",
+        ]
+        rects = ax.bar(
+            pos + 0.5 * width,
+            df.iloc[:, 1],
+            width * 0.95,
+            color=color,
+            hatch=hatch,
+            zorder=zorder,
+            **edge,
+        )
+        if zorder == 2:
+            ax.bar_label(rects, padding=4, labels=[f"{v:.0f}%" for v in df.iloc[:, 1]], size=6)
+
+    ax.set_xticks([p + 0.5 * width for p in pos])
+    model_labels = []
+    for model in df.iloc[:, 0]:
+        pieces = model.split("-")
+        N = 3
+        ml = "-".join(pieces[:N])
+        if pieces[N:]:
+            ml += "-\n" + "-".join(pieces[N:])
+        model_labels.append(ml)
+
+    ax.set_xticklabels(model_labels, rotation=60)
+
+    top = 95
+    ax.annotate(
+        "First attempt,\nbased on\nnatural language\ninstructions",
+        xy=(2.0, 41),
+        xytext=(1.75, top),
+        horizontalalignment="center",
+        verticalalignment="top",
+        arrowprops={"arrowstyle": "->", "connectionstyle": "arc3,rad=0.3"},
+    )
+    ax.annotate(
+        "Second attempt,\nincluding unit test\nerror output",
+        xy=(2.55, 56),
+        xytext=(3.9, top),
+        horizontalalignment="center",
+        verticalalignment="top",
+        arrowprops={"arrowstyle": "->", "connectionstyle": "arc3,rad=0.3"},
+    )
+
+    ax.set_ylabel("Percent of exercises completed successfully")
+    # ax.set_xlabel("Model")
+    ax.set_title("Code Editing Skill")
+    # ax.legend(
+    #    title="Model family",
+    #    loc="upper left",
+    # )
     ax.set_ylim(top=100)
 
     plt.tight_layout()
