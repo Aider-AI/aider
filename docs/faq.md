@@ -3,8 +3,8 @@
 
 - [How does aider use git?](#how-does-aider-use-git)
 - [GPT-4 vs GPT-3.5](#gpt-4-vs-gpt-35)
-- [Accessing other LLMs with OpenRouter](#accessing-other-llms-with-openrouter)
 - [Can I use aider with other LLMs, local LLMs, etc?](#can-i-use-aider-with-other-llms-local-llms-etc)
+- [Accessing other LLMs with OpenRouter](#accessing-other-llms-with-openrouter)
 - [Aider isn't editing my files?](#aider-isnt-editing-my-files)
 - [Can I run aider in Google Colab?](#can-i-run-aider-in-google-colab)
 - [How can I run aider locally from source code?](#how-can-i-run-aider-locally-from-source-code)
@@ -76,25 +76,6 @@ For detailed quantitative comparisons of the various models, please see the
 [aider blog](https://aider.chat/blog/)
 which contains many benchmarking articles.
 
-## Accessing other LLMs with OpenRouter
-
-[OpenRouter](https://openrouter.ai) provide an interface to [many models](https://openrouter.ai/models) which are not widely accessible, in particular Claude 3 Opus.
-
-To access the OpenRouter models, simply:
-
-```
-# Install aider
-pip install aider-chat
-
-# Setup OpenRouter access
-export OPENAI_API_KEY=<your-openrouter-key>
-export OPENAI_API_BASE=https://openrouter.ai/api/v1
-
-# For example, run aider with Claude 3 Opus using the diff editing format
-aider --model anthropic/claude-3-opus --edit-format diff
-```
-
-
 ## Can I use aider with other LLMs, local LLMs, etc?
 
 Aider provides experimental support for LLMs other than OpenAI's GPT-3.5 and GPT-4. The support is currently only experimental for two reasons:
@@ -117,9 +98,9 @@ you can use `--openai-api-base` to connect to a different API endpoint.
 
 ### Local LLMs
 
-[LocalAI](https://github.com/go-skynet/LocalAI) and
-[SimpleAI](https://github.com/lhenault/simpleAI)
-look like relevant tools to serve local models via a compatible API.
+[LiteLLM](https://github.com/BerriAI/litellm) and
+[LocalAI](https://github.com/go-skynet/LocalAI)
+are relevant tools to serve local models via an OpenAI compatible API.
 
 
 ### Azure
@@ -153,6 +134,24 @@ See the
 [official Azure documentation on using OpenAI models](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/chatgpt-quickstart?tabs=command-line&pivots=programming-language-python)
 for more information on how to populate the above configuration values.
 
+
+## Accessing other LLMs with OpenRouter
+
+[OpenRouter](https://openrouter.ai) provide an interface to [many models](https://openrouter.ai/models) which are not widely accessible, in particular Claude 3 Opus.
+
+To access the OpenRouter models, simply:
+
+```
+# Install aider
+pip install aider-chat
+
+# Setup OpenRouter access
+export OPENAI_API_KEY=<your-openrouter-key>
+export OPENAI_API_BASE=https://openrouter.ai/api/v1
+
+# For example, run aider with Claude 3 Opus using the diff editing format
+aider --model anthropic/claude-3-opus --edit-format diff
+```
 
 
 ## Aider isn't editing my files?
