@@ -1,4 +1,5 @@
 import argparse
+import configparser
 import os
 import sys
 from pathlib import Path
@@ -57,9 +58,17 @@ def setup_git(git_root, io):
     if not repo:
         return
 
+    user_name = None
+    user_email = None
     with repo.config_reader() as config:
-        user_name = config.get_value("user", "name", None)
-        user_email = config.get_value("user", "email", None)
+        try:
+            user_name = config.get_value("user", "name", None)
+        except configparser.NoSectionError:
+            pass
+        try:
+            user_email = config.get_value("user", "email", None)
+        except configparser.NoSectionError:
+            pass
 
     if user_name and user_email:
         return repo.working_tree_dir
