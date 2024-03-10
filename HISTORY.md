@@ -1,5 +1,9 @@
 # Release history
 
+### v0.26.1
+
+- Fixed bug affecting parsing of git config in some environments.
+
 ### v0.26.0
 
 - Use GPT-4 Turbo by default.
