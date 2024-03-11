@@ -238,6 +238,12 @@ class InputOutput:
             session = PromptSession(key_bindings=kb, **session_kwargs)
             line = session.prompt()
 
+            if line and line.strip() == "/block":
+                input = read_block()
+                if input.strip():
+                    return input
+                else:
+                    return
             if line and line[0] == "{" and not multiline_input:
                 multiline_input = True
                 inp += line[1:] + "\n"
@@ -360,3 +366,27 @@ class InputOutput:
         if self.chat_history_file is not None:
             with self.chat_history_file.open("a", encoding=self.encoding) as f:
                 f.write(text)
+
+def read_block():
+    import sys
+
+    print("Use CTRL+D or CTRL+Z to finish...")
+
+    echo_buffer = ""
+    while True:
+        char = sys.stdin.read(1)
+        if not char:
+            break
+        elif char == '\b':  # backspace
+            if echo_buffer:
+                # Move the cursor back one position and overwrite the character with a space
+                sys.stdout.write('\b \b')
+                sys.stdout.flush()
+                echo_buffer = echo_buffer[:-1]  # Remove the last character from the buffer
+        else:
+            sys.stdout.write(char)
+            sys.stdout.flush()
+            echo_buffer += char
+
+    print("\nFinished.\n")
+    return echo_buffer

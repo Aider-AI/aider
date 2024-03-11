@@ -27,6 +27,11 @@ class Commands:
         self.voice_language = voice_language
         self.tokenizer = coder.main_model.tokenizer
 
+    def cmd_block(self, args):
+        "Read input block containing tabs, line breaks, etc"
+        # Will be processed inside get_input()
+        return
+
     def cmd_web(self, args):
         "Use headless selenium to scrape a webpage and add the content to the chat"
         url = args.strip()
