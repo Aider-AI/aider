@@ -370,7 +370,7 @@ class InputOutput:
 def read_block():
     import sys
 
-    print("Use CTRL+D or CTRL+Z to finish...")
+    print("Use CTRL+D, CTRL+Z or CTRL+Z + ENTER to finish...")
 
     echo_buffer = ""
     while True:
