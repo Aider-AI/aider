@@ -321,13 +321,12 @@ def find_diffs(content):
     line_num = 0
     edits = []
     while line_num < len(lines):
-        while line_num < len(lines):
-            line = lines[line_num]
-            if line.startswith("```diff"):
-                line_num, these_edits = process_fenced_block(lines, line_num + 1)
-                edits += these_edits
-                break
-            line_num += 1
+        line = lines[line_num]
+        if line.startswith("```diff"):
+            line_num, these_edits = process_fenced_block(lines, line_num + 1)
+            edits += these_edits
+            break
+        line_num += 1
 
     # For now, just take 1!
     # edits = edits[:1]
