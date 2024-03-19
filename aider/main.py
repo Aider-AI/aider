@@ -551,7 +551,9 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         io.tool_output(show)
         io.tool_output("Option settings:")
         for arg, val in sorted(vars(args).items()):
-            io.tool_output(f"  - {arg}: {scrub_sensitive_info(str(val))}")
+            if val:
+                val = scrub_sensitive_info(str(val))
+            io.tool_output(f"  - {arg}: {val}")
 
     io.tool_output(*map(scrub_sensitive_info, sys.argv), log_only=True)
 
