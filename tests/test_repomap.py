@@ -1,9 +1,13 @@
+from collections import defaultdict
 import os
 import unittest
+from pathlib import Path
+import networkx as nx
 
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.repomap import RepoMap
+from aider import models
 from aider.utils import IgnorantTemporaryDirectory
 
 
@@ -149,6 +153,61 @@ print(my_function(3, 4))
             # close the open cache files, so Windows won't error
             del repo_map
 
+
+class TestRepoMapTypescript(unittest.TestCase):
+    def test_get_repo_map_typescript(self):
+        # Create a temporary directory with a sample TypeScript file
+        test_file_ts = "test_file.ts"
+        file_content_ts = """\
+interface IMyInterface {
+    someMethod(): void;
+}
+
+type ExampleType = {
+    key: string;
+    value: number;
+};
+
+enum Status {
+    New,
+    InProgress,
+    Completed,
+}
+
+export class MyClass {
+    constructor(public value: number) {}
+
+    add(input: number): number {
+        return this.value + input;
+        return this.value + input;
+    }
+}
+
+export function myFunction(input: number): number {
+    return input * 2;
+}
+"""
+
+        with IgnorantTemporaryDirectory() as temp_dir:
+            with open(os.path.join(temp_dir, test_file_ts), "w") as f:
+                f.write(file_content_ts)
+
+            io = InputOutput()
+            repo_map = RepoMap(root=temp_dir, io=io)
+            other_files = [os.path.join(temp_dir, test_file_ts)]
+            result = repo_map.get_repo_map([], other_files)
+
+            # Check if the result contains the expected tags map with TypeScript identifiers
+            self.assertIn("test_file.ts", result)
+            self.assertIn("IMyInterface", result)
+            self.assertIn("ExampleType", result)
+            self.assertIn("Status", result)
+            self.assertIn("MyClass", result)
+            self.assertIn("add", result)
+            self.assertIn("myFunction", result)
+
+            # close the open cache files, so Windows won't error
+            del repo_map
 
 if __name__ == "__main__":
     unittest.main()
