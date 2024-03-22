@@ -539,6 +539,9 @@ class TestCommands(TestCase):
             commands.cmd_undo("")
             self.assertNotEqual(last_commit_hash, repo.head.commit.hexsha[:7])
 
+            self.assertEqual(file_path.read_text(), "first content")
+            self.assertEqual(other_path.read_text(), "dirty content")
+
             del coder
             del commands
             del repo
