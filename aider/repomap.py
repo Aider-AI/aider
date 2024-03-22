@@ -140,9 +140,12 @@ class RepoMap:
         parser = get_parser(lang)
 
         # Load the tags queries
-        scm_fname = pkg_resources.resource_filename(
-            __name__, os.path.join("queries", f"tree-sitter-{lang}-tags.scm")
-        )
+        try:
+            scm_fname = pkg_resources.resource_filename(
+                __name__, os.path.join("queries", f"tree-sitter-{lang}-tags.scm")
+            )
+        except KeyError:
+            return
         query_scm = Path(scm_fname)
         if not query_scm.exists():
             return
