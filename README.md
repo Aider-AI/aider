@@ -126,6 +126,7 @@ Aider supports commands from within the chat, which all start with `/`. Here are
 * `/drop <file>`: Remove matching files from the chat session.
 * `/undo`: Undo the last git commit if it was done by aider.
 * `/diff`: Display the diff of the last aider commit.
+* `/rg <pattern>`: Run ripgrep with the given pattern and add the matching files to the chat.
 * `/run <command>`: Run a shell command and optionally add the output to the chat.
 * `/voice`: Speak to aider to [request code changes with your voice](https://aider.chat/docs/voice.html).
 * `/help`: Show help about all commands.

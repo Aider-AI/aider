@@ -15,6 +15,7 @@
 - `/undo`: Undo the last git commit if it was done by aider
 - `/diff`: Display the diff of the last aider commit
 - `/commit <message>`: Commit edits to the repo made outside the chat (commit message optional)
+- `/rg <pattern>`: Run ripgrep with the given pattern and add the matching files to the chat
 - `/git <command>`: Run a git command
 
 ## other
