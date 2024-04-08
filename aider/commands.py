@@ -495,6 +495,34 @@ class Commands:
             )
             return msg
 
+    # Add cmd_rg for calling ripgrep with -l and the user-provided arguments. Then call cmd_add with the returned file names.
+    def cmd_rg(self, args):
+        "Run ripgrep and add the matching files to the chat"
+        output = None
+        try:
+            args = "rg -l " + args
+            result = subprocess.run(
+                args,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                shell=True,
+                encoding=self.io.encoding,
+                errors="replace",
+            )
+            output = result.stdout
+        except Exception as e:
+            self.io.tool_error(f"Error running ripgrep: {e}")
+
+        # Split the output into an array that can be passed into cmd_add
+        if output is None:
+            self.io.tool_error("No files found")
+            return
+
+        # Quote each line then replace each line break with a space.
+        output = " ".join(map(self.quote_fname, output.splitlines()))
+        self.cmd_add(output)
+
     def cmd_exit(self, args):
         "Exit the application"
         sys.exit()
