@@ -338,14 +338,9 @@ def plot_outcomes_claude(df):
             "#b3e6a8",
             "#b3e6a8",
             "#b3e6a8",
-            "#b3e6a8",
             "#b3d1e6",
-            "#b3d1e6",
-            "#b3d1e6",
-            "#e6b3b3",
-            "#d1b3e6",
         ]
-        hatch = [
+        hatch = [  # noqa: F841
             "",
             "",
             "",
@@ -356,7 +351,7 @@ def plot_outcomes_claude(df):
             "",
             "////",
         ]
-        hatch = [
+        hatch = [  # noqa: F841
             "////",
             "////",
             "////",
@@ -372,38 +367,41 @@ def plot_outcomes_claude(df):
             df.iloc[:, 1],
             width * 0.95,
             color=color,
-            hatch=hatch,
-            zorder=zorder,
+            # hatch=hatch,
+            # zorder=zorder,
             **edge,
         )
         if zorder == 2:
             ax.bar_label(rects, padding=4, labels=[f"{v:.0f}%" for v in df.iloc[:, 1]], size=6)
 
     ax.set_xticks([p + 0.5 * width for p in pos])
-    model_labels = []
-    for model in df.iloc[:, 0]:
-        pieces = model.split("-")
-        N = 3
-        ml = "-".join(pieces[:N])
-        if pieces[N:]:
-            ml += "-\n" + "-".join(pieces[N:])
-        model_labels.append(ml)
 
-    ax.set_xticklabels(model_labels, rotation=60)
+    models = df.iloc[:, 0]
+    model_map = {
+        "gpt-4-0613": "gpt-4-\n0613",
+        "gpt-4-0125-preview": "gpt-4-\n0125-preview",
+        "gpt-4-1106-preview": "gpt-4-\n1106-preview",
+        "gpt-4-turbo-2024-04-09": "gpt-4-turbo-\n2024-04-09\n(GPT-4 Turbo with Vision)",
+    }
+    model_labels = []
+    for model in models:
+        ml = model_map.get(model, model)
+        model_labels.append(ml)
+    ax.set_xticklabels(model_labels, rotation=0)
 
     top = 95
     ax.annotate(
         "First attempt,\nbased on\nnatural language\ninstructions",
-        xy=(2.0, 41),
-        xytext=(1.75, top),
+        xy=(1.0, 53),
+        xytext=(0.75, top),
         horizontalalignment="center",
         verticalalignment="top",
         arrowprops={"arrowstyle": "->", "connectionstyle": "arc3,rad=0.3"},
     )
     ax.annotate(
         "Second attempt,\nincluding unit test\nerror output",
-        xy=(2.55, 56),
-        xytext=(3.9, top),
+        xy=(1.55, 65),
+        xytext=(1.9, top),
         horizontalalignment="center",
         verticalalignment="top",
         arrowprops={"arrowstyle": "->", "connectionstyle": "arc3,rad=0.3"},
@@ -442,7 +440,7 @@ def plot_refactoring(df):
     for grouped in tries:
         zorder += 1
         df = grouped.unstack()
-        df.sort_values(by=["model"], ascending=False, inplace=True)
+        # df.sort_values(by=["model"], ascending=False, inplace=True)
         num_models, num_formats = df.shape
 
         pos = np.array(range(num_models))
@@ -482,6 +480,12 @@ def plot_refactoring(df):
             if zorder == 2:
                 edge["label"] = label
 
+            color = [
+                "#b3e6a8",
+                "#b3e6a8",
+                "#b3d1e6",
+            ]
+
             rects = ax.bar(
                 pos + i * width,
                 df[fmt],
@@ -495,17 +499,28 @@ def plot_refactoring(df):
             if zorder == 2:
                 ax.bar_label(rects, padding=4, labels=[f"{v:.0f}%" for v in df[fmt]], size=6)
 
-    ax.set_xticks([p + 0.5 * width for p in pos])
-    ax.set_xticklabels(models)
+    ax.set_xticks([p + 0 * width for p in pos])
+
+    model_map = {
+        "gpt-4-0125-preview": "gpt-4-\n0125-preview",
+        "gpt-4-1106-preview": "gpt-4-\n1106-preview",
+        "gpt-4-turbo-2024-04-09": "gpt-4-turbo-\n2024-04-09\n(GPT-4 Turbo with Vision)",
+    }
+    model_labels = []
+    for model in models:
+        ml = model_map.get(model, model)
+        model_labels.append(ml)
+
+    ax.set_xticklabels(model_labels, rotation=0)
 
     ax.set_ylabel("Percent of exercises completed successfully")
     # ax.set_xlabel("Model")
-    ax.set_title('Refactoring "Laziness" Benchmark\n(percent coding tasks correct)')
-    ax.legend(
-        # title="Edit Format",
-        loc="upper left",
-        # bbox_to_anchor=(0.95, 0.95),
-    )
+    ax.set_title('Refactoring "Laziness" Benchmark')
+    # ax.legend(
+    # title="Edit Format",
+    # loc="upper left",
+    # bbox_to_anchor=(0.95, 0.95),
+    # )
     ax.set_ylim(top=100)
 
     plt.tight_layout()
