@@ -1,6 +1,13 @@
 
 # Release history
 
+### v0.28.0
+
+- Added support for new `gpt-4-turbo-2024-04-09` and `gpt-4-turbo` models.
+  - Benchmarked at 61.7% on Exercism benchmark, comparable to `gpt-4-0613` and worse than the `gpt-4-preview-XXXX` models. See [recent Exercism benchmark results](https://aider.chat/2024/03/08/claude-3.html).
+  - Benchmarked at 34.1% on the refactoring/laziness benchmark, comparable to `gpt-4-0125-preview` and worse than `gpt-4-1106-preview`. See [recent refactor bencmark results](https://aider.chat/2024/01/25/benchmarks-0125.html).
+  - Aider continues to default to `gpt-4-1106-preview` as it performs best on both benchmarks, and significantly better on the refactoring/laziness benchmark.
+
 ### v0.27.0
 
 - Improved repomap support for typescript, by @ryanfreckleton.
