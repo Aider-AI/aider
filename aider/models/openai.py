@@ -59,6 +59,15 @@ openai_models = [
     ),
     # gpt-4
     ModelInfo(
+        "gpt-4-turbo-2024-04-09",
+        128000,
+        0.01,
+        0.03,
+        "udiff",
+        use_repo_map=True,
+        send_undo_reply=True,
+    ),
+    ModelInfo(
         "gpt-4-0125-preview",
         128000,
         0.01,
@@ -110,6 +119,7 @@ openai_aliases = {
     "gpt-3.5-turbo": "gpt-3.5-turbo-0613",
     "gpt-3.5-turbo-16k": "gpt-3.5-turbo-16k-0613",
     # gpt-4
+    "gpt-4-turbo": "gpt-4-turbo-2024-04-09",
     "gpt-4-turbo-preview": "gpt-4-0125-preview",
     "gpt-4": "gpt-4-0613",
     "gpt-4-32k": "gpt-4-32k-0613",
