@@ -126,8 +126,8 @@ def show_stats(dirnames, graphs):
     if graphs:
         # plot_timing(df)
         # plot_outcomes(df, repeats, repeat_hi, repeat_lo, repeat_avg)
-        plot_outcomes_claude(df)
-        # plot_refactoring(df)
+        # plot_outcomes_claude(df)
+        plot_refactoring(df)
 
 
 def plot_timing(df):
@@ -440,6 +440,12 @@ def plot_refactoring(df):
     for grouped in tries:
         zorder += 1
         df = grouped.unstack()
+
+        i, j = 0, 1
+        temp = df.iloc[i].copy()
+        df.iloc[i], df.iloc[j] = df.iloc[j], temp
+        dump(df)
+
         # df.sort_values(by=["model"], ascending=False, inplace=True)
         num_models, num_formats = df.shape
 
@@ -507,10 +513,16 @@ def plot_refactoring(df):
         "gpt-4-turbo-2024-04-09": "gpt-4-turbo-\n2024-04-09\n(GPT-4 Turbo with Vision)",
     }
     model_labels = []
+
     for model in models:
         ml = model_map.get(model, model)
         model_labels.append(ml)
 
+    model_labels = [
+        "gpt-4-\n1106-preview",
+        "gpt-4-\n0125-preview",
+        "gpt-4-turbo-\n2024-04-09\n(GPT-4 Turbo with Vision)",
+    ]
     ax.set_xticklabels(model_labels, rotation=0)
 
     ax.set_ylabel("Percent of exercises completed successfully")
