@@ -307,7 +307,7 @@ class Coder:
             self.fence = self.fences[0]
             self.io.tool_error(
                 "Unable to find a fencing strategy! Falling back to:"
-                " {self.fence[0]}...{self.fence[1]}"
+                f" {self.fence[0]}...{self.fence[1]}"
             )
 
         return
