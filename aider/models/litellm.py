@@ -7,6 +7,15 @@ from .model import Model
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger('aider-litellm')
 
+LITELLM_VERSION = None
+try:
+  LITELLM_VERSION = pkg_resources.get_distribution("litellm").version
+except pkg_resources.DistributionNotFound:
+  pass
+
+def is_litellm_installed():
+  return LITELLM_VERSION is not None
+
 model_aliases = {
     # claude-3
     "opus": "claude-3-opus-20240229",
@@ -80,14 +89,13 @@ def fetchModelsInfo():
   import requests
   import json
 
-  try:
-    version = pkg_resources.get_distribution("litellm").version
-    logger.info(f"Found LiteLLM version: {version}")
-  except pkg_resources.DistributionNotFound:
+  global LITELLM_VERSION
+  if LITELLM_VERSION is None:
     logger.error("LiteLLM not installed. Please run 'pip install litellm' first.")
     return {}
 
-  supported_models_url = f"https://raw.githubusercontent.com/BerriAI/litellm/v{version}/model_prices_and_context_window.json"
+  logger.info(f"Found LiteLLM version: {LITELLM_VERSION}")
+  supported_models_url = f"https://raw.githubusercontent.com/BerriAI/litellm/v{LITELLM_VERSION}/model_prices_and_context_window.json"
 
   try:
     logger.info(f"Fetching supported models from {supported_models_url}")

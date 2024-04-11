@@ -14,6 +14,7 @@ from aider.coders import Coder
 from aider.io import InputOutput
 from aider.repo import GitRepo
 from aider.versioncheck import check_version
+from aider.models.litellm import is_litellm_installed
 
 from .dump import dump  # noqa: F401
 
@@ -564,6 +565,11 @@ def main(argv=None, input=None, output=None, force_git_root=None):
             io.tool_output(f"  - {arg}: {val}")
 
     io.tool_output(*map(scrub_sensitive_info, sys.argv), log_only=True)
+
+    if not (args.openai_api_key or args.openai_api_base) and \
+            args.model is not None and \
+            is_litellm_installed():
+        args.litellm = True
 
     if args.litellm:
         if not args.model:
