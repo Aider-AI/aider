@@ -1,6 +1,8 @@
 import pkg_resources
 import logging
 import tiktoken
+import platform
+import os
 
 from .model import Model
 
@@ -95,6 +97,15 @@ def fetchModelsInfo():
     return {}
 
   logger.info(f"Found LiteLLM version: {LITELLM_VERSION}")
+
+  # Get a cache path for the model info
+  models_cache_path = os.path.join(get_cache_dir(), f"litellm-models-{LITELLM_VERSION}.json")
+
+  if os.path.exists(models_cache_path):
+    logger.info(f"Loading supported models from cache: {models_cache_path}")
+    with open(models_cache_path, "r") as f:
+      return json.load(f)
+
   supported_models_url = f"https://raw.githubusercontent.com/BerriAI/litellm/v{LITELLM_VERSION}/model_prices_and_context_window.json"
 
   try:
@@ -102,6 +113,9 @@ def fetchModelsInfo():
     response = requests.get(supported_models_url)
 
     if response.status_code == 200:
+      with open(models_cache_path, "w") as f:
+        f.write(response.text)
+
       return json.loads(response.text)
 
     logger.error(f"Request failed with status code {response.status_code}")
@@ -110,3 +124,11 @@ def fetchModelsInfo():
   except Exception as e:
     logger.error(f"Failed to fetch models info: {str(e)}")
     return {}
+
+def get_cache_dir():
+    if platform.system() == 'Windows':
+        return os.getenv('LOCALAPPDATA')
+    elif platform.system() == 'Darwin':
+        return os.path.expanduser('~/Library/Caches')
+    else:
+        return os.getenv('XDG_CACHE_HOME', os.path.expanduser('~/.cache'))
