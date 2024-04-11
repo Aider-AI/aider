@@ -159,7 +159,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         env_var="OPENAI_API_KEY",
         help="Specify the OpenAI API key",
     )
-    default_model = "gpt-4-1106-preview"
+    default_model = models.DEFAULT_MODEL_NAME
     core_group.add_argument(
         "--model",
         metavar="MODEL",
