@@ -16,7 +16,8 @@ class GitRepo:
     aider_ignore_spec = None
     aider_ignore_ts = 0
 
-    def __init__(self, io, fnames, git_dname, aider_ignore_file=None, client=None):
+    def __init__(self, io, fnames, git_dname, main_model=None, aider_ignore_file=None, client=None):
+        self.main_model = main_model
         self.client = client
         self.io = io
 
@@ -120,10 +121,8 @@ class GitRepo:
             dict(role="user", content=content),
         ]
 
-        for model in models.Model.commit_message_models():
-            commit_message = simple_send_with_retries(self.client, model.name, messages)
-            if commit_message:
-                break
+        commit_model = self.main_model.get_weak_model()
+        commit_message = simple_send_with_retries(self.client, commit_model.name, messages)
 
         if not commit_message:
             self.io.tool_error("Failed to generate commit message!")

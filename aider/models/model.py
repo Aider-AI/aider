@@ -22,7 +22,10 @@ class Model:
     def create(cls, name, client=None):
         from .openai import OpenAIModel
         from .openrouter import OpenRouterModel
+        from .litellm import LiteLLMModel
 
+        if not hasattr(client, "base_url"):
+            return LiteLLMModel(name)
         if client and client.base_url.host == "openrouter.ai":
             return OpenRouterModel(client, name)
         return OpenAIModel(name)
@@ -38,9 +41,10 @@ class Model:
     def weak_model():
         return Model.create("gpt-3.5-turbo-0125")
 
-    @staticmethod
-    def commit_message_models():
-        return [Model.weak_model()]
+    def get_weak_model(self):
+        if self.use_repo_map:
+            return Model.weak_model()
+        return self
 
     def token_count(self, messages):
         if not self.tokenizer:

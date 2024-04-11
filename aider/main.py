@@ -3,6 +3,7 @@ import configparser
 import os
 import sys
 from pathlib import Path
+from importlib import import_module
 
 import configargparse
 import git
@@ -246,6 +247,11 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         action="store_const",
         const="https://openrouter.ai/api/v1",
         help="Specify the api base url as https://openrouter.ai/api/v1",
+    )
+    model_group.add_argument(
+        "--litellm",
+        action="store_true",
+        help="Use litellm instead of openai",
     )
     model_group.add_argument(
         "--edit-format",
@@ -543,6 +549,8 @@ def main(argv=None, input=None, output=None, force_git_root=None):
             check_gitignore(git_root, io)
 
     def scrub_sensitive_info(text):
+        if not args.openai_api_key:
+            return text
         # Replace sensitive information with placeholder
         return text.replace(args.openai_api_key, "***")
 
@@ -557,7 +565,12 @@ def main(argv=None, input=None, output=None, force_git_root=None):
 
     io.tool_output(*map(scrub_sensitive_info, sys.argv), log_only=True)
 
-    if not args.openai_api_key:
+    if args.litellm:
+        if not args.model:
+            io.tool_error("You must specify --model or AIDER_MODEL environment variable when using --litellm.")
+            return 1
+
+    elif not args.openai_api_key:
         if os.name == "nt":
             io.tool_error(
                 "No OpenAI API key provided. Use --openai-api-key or setx OPENAI_API_KEY."
@@ -568,7 +581,10 @@ def main(argv=None, input=None, output=None, force_git_root=None):
             )
         return 1
 
-    if args.openai_api_type == "azure":
+    if args.litellm:
+        from litellm import LiteLLM
+        client = LiteLLM()
+    elif args.openai_api_type == "azure":
         client = openai.AzureOpenAI(
             api_key=args.openai_api_key,
             azure_endpoint=args.openai_api_base,

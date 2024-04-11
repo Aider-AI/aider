@@ -160,7 +160,7 @@ class Coder:
         if use_git:
             try:
                 self.repo = GitRepo(
-                    self.io, fnames, git_dname, aider_ignore_file, client=self.client
+                    self.io, fnames, git_dname, main_model, aider_ignore_file, client=self.client
                 )
                 self.root = self.repo.root
             except FileNotFoundError:
@@ -224,7 +224,7 @@ class Coder:
 
         self.summarizer = ChatSummary(
             self.client,
-            models.Model.weak_model(),
+            self.main_model.get_weak_model(),
             self.main_model.max_chat_history_tokens,
         )
 
@@ -1055,6 +1055,9 @@ class Coder:
 
 
 def check_model_availability(io, client, main_model):
+    if not hasattr(client, "models"):
+        return True
+
     try:
         available_models = client.models.list()
     except openai.NotFoundError:
