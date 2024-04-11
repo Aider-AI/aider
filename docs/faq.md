@@ -364,7 +364,6 @@ the task you are working on. Just add those files to the chat.
 Usually when people want to add "all the files" it's because they think it
 will give GPT helpful context about the overall code base.
 Aider will automatically give GPT a bunch of additional context about
-how those specific files relate to
 the rest of your git repo.
 It does this by analyzing your entire codebase in light of the
 current chat to build a compact
@@ -379,7 +378,7 @@ Again, it's usually best to just add the files to the chat that will need to be 
 If you still wish to add lots of files to the chat, you can:
 
 - Use a wildcard when you launch aider: `aider src/*.py`
-- Use a wildcard with the in chat `/add` command: `/add src/*.py`
+- Use a wildcard with the in-chat `/add` command: `/add src/*.py`
 - Give the `/add` command a directory name and it will recurisvely add every file under that dir: `/add src`
 
 ## Can I specify guidelines or conventions?
