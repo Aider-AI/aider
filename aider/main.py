@@ -165,7 +165,6 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     core_group.add_argument(
         "--model",
         metavar="MODEL",
-        default=default_model,
         help=f"Specify the model to use for the main chat (default: {default_model})",
     )
     core_group.add_argument(
@@ -577,15 +576,14 @@ def main(argv=None, input=None, output=None, force_git_root=None):
             return 1
 
     elif not args.openai_api_key:
-        if os.name == "nt":
-            io.tool_error(
-                "No OpenAI API key provided. Use --openai-api-key or setx OPENAI_API_KEY."
-            )
-        else:
-            io.tool_error(
-                "No OpenAI API key provided. Use --openai-api-key or export OPENAI_API_KEY."
-            )
+        export_kw = "setx" if os.name == "nt" else "export"
+        io.tool_error(
+            f"No OpenAI API key provided. Use --openai-api-key or {export_kw} OPENAI_API_KEY."
+        )
         return 1
+
+    if not args.model:
+        args.model = default_model
 
     if args.litellm:
         from litellm import LiteLLM
