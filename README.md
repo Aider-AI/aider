@@ -69,7 +69,7 @@ You can find more chat transcripts on the [examples page](https://aider.chat/exa
 ## Features
 
 * Chat with GPT about your code by launching `aider` from the command line with set of source files to discuss and edit together. Aider lets GPT see and edit the content of those files.
-* GPT can write and edit code in most popular languages: python, javascript, typescript, html, css, etc.
+* GPT can write and edit code in most popular languages: python, javascript, typescript, php, html, css, etc.
 * Request new features, changes, improvements, or bug fixes to your code. Ask for new test cases, updated documentation or code refactors.
 * Aider will apply the edits suggested by GPT directly to your source files.
 * Aider will [automatically commit each changeset to your local git repo](https://aider.chat/docs/faq.html#how-does-aider-use-git) with a descriptive commit message. These frequent, automatic commits provide a safety net. It's easy to undo changes or use standard git workflows to manage longer sequences of changes.
