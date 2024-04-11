@@ -53,6 +53,36 @@ class TestRepo(unittest.TestCase):
             self.assertIn("index", diffs)
             self.assertIn("workingdir", diffs)
 
+    def test_diffs_detached_head(self):
+        with GitTemporaryDirectory():
+            repo = git.Repo()
+            fname = Path("foo.txt")
+            fname.touch()
+            repo.git.add(str(fname))
+            repo.git.commit("-m", "foo")
+
+            fname2 = Path("bar.txt")
+            fname2.touch()
+            repo.git.add(str(fname2))
+            repo.git.commit("-m", "bar")
+
+            fname3 = Path("baz.txt")
+            fname3.touch()
+            repo.git.add(str(fname3))
+            repo.git.commit("-m", "baz")
+
+            repo.git.checkout("HEAD^")
+
+            fname.write_text("index\n")
+            repo.git.add(str(fname))
+
+            fname2.write_text("workingdir\n")
+
+            git_repo = GitRepo(InputOutput(), None, ".")
+            diffs = git_repo.get_diffs()
+            self.assertIn("index", diffs)
+            self.assertIn("workingdir", diffs)
+
     def test_diffs_between_commits(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
