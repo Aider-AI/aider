@@ -1,8 +1,6 @@
 import pkg_resources
 import logging
 import tiktoken
-import platform
-import os
 
 from .model import Model
 

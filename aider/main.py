@@ -2,7 +2,6 @@ import argparse
 import configparser
 import os
 import sys
-import importlib
 from pathlib import Path
 
 import configargparse
@@ -587,6 +586,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         args.model = default_model
 
     if args.litellm:
+        import importlib
         spec = importlib.util.find_spec("litellm")
         if spec is None:
             io.tool_error("LiteLLM is not installed. Install it with `pip install litellm`.")
