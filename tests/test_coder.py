@@ -12,6 +12,7 @@ from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.utils import ChdirTemporaryDirectory, GitTemporaryDirectory
 
+GPT4 = models.Model.create("gpt-4")
 
 class TestCoder(unittest.TestCase):
     def setUp(self):
@@ -38,7 +39,7 @@ class TestCoder(unittest.TestCase):
 
             # YES!
             io = InputOutput(yes=True)
-            coder = Coder.create(models.GPT4, None, io, fnames=["added.txt"])
+            coder = Coder.create(GPT4, None, io, fnames=["added.txt"])
 
             self.assertTrue(coder.allowed_to_edit("added.txt"))
             self.assertTrue(coder.allowed_to_edit("repo.txt"))
@@ -66,7 +67,7 @@ class TestCoder(unittest.TestCase):
             # say NO
             io = InputOutput(yes=False)
 
-            coder = Coder.create(models.GPT4, None, io, fnames=["added.txt"])
+            coder = Coder.create(GPT4, None, io, fnames=["added.txt"])
 
             self.assertTrue(coder.allowed_to_edit("added.txt"))
             self.assertFalse(coder.allowed_to_edit("repo.txt"))
@@ -90,7 +91,7 @@ class TestCoder(unittest.TestCase):
             # say NO
             io = InputOutput(yes=False)
 
-            coder = Coder.create(models.GPT4, None, io, fnames=["added.txt"])
+            coder = Coder.create(GPT4, None, io, fnames=["added.txt"])
 
             self.assertTrue(coder.allowed_to_edit("added.txt"))
             self.assertFalse(coder.need_commit_before_edits)
@@ -111,7 +112,7 @@ class TestCoder(unittest.TestCase):
             repo.git.commit("-m", "new")
 
             # Initialize the Coder object with the mocked IO and mocked repo
-            coder = Coder.create(models.GPT4, None, mock_io)
+            coder = Coder.create(GPT4, None, mock_io)
 
             mod = coder.get_last_modified()
 
@@ -134,7 +135,7 @@ class TestCoder(unittest.TestCase):
         files = [file1, file2]
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(models.GPT4, None, io=InputOutput(), fnames=files)
+        coder = Coder.create(GPT4, None, io=InputOutput(), fnames=files)
 
         content = coder.get_files_content().splitlines()
         self.assertIn("file1.txt", content)
@@ -157,7 +158,7 @@ class TestCoder(unittest.TestCase):
             repo.git.commit("-m", "new")
 
             # Initialize the Coder object with the mocked IO and mocked repo
-            coder = Coder.create(models.GPT4, None, mock_io)
+            coder = Coder.create(GPT4, None, mock_io)
 
             # Call the check_for_file_mentions method
             coder.check_for_file_mentions("Please check file1.txt and file2.py")
@@ -175,7 +176,7 @@ class TestCoder(unittest.TestCase):
     def test_check_for_ambiguous_filename_mentions_of_longer_paths(self):
         with GitTemporaryDirectory():
             io = InputOutput(pretty=False, yes=True)
-            coder = Coder.create(models.GPT4, None, io)
+            coder = Coder.create(GPT4, None, io)
 
             fname = Path("file1.txt")
             fname.touch()
@@ -196,7 +197,7 @@ class TestCoder(unittest.TestCase):
     def test_check_for_subdir_mention(self):
         with GitTemporaryDirectory():
             io = InputOutput(pretty=False, yes=True)
-            coder = Coder.create(models.GPT4, None, io)
+            coder = Coder.create(GPT4, None, io)
 
             fname = Path("other") / "file1.txt"
             fname.parent.mkdir(parents=True, exist_ok=True)
@@ -225,7 +226,7 @@ class TestCoder(unittest.TestCase):
         files = [file1, file2]
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(models.GPT4, None, io=InputOutput(), fnames=files)
+        coder = Coder.create(GPT4, None, io=InputOutput(), fnames=files)
 
         def mock_send(*args, **kwargs):
             coder.partial_response_content = "ok"
@@ -251,7 +252,7 @@ class TestCoder(unittest.TestCase):
         files = [file1, file2]
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(models.GPT4, None, io=InputOutput(), fnames=files)
+        coder = Coder.create(GPT4, None, io=InputOutput(), fnames=files)
 
         def mock_send(*args, **kwargs):
             coder.partial_response_content = "ok"
@@ -281,7 +282,7 @@ class TestCoder(unittest.TestCase):
         files = [file1]
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(models.GPT4, None, io=InputOutput(), fnames=files)
+        coder = Coder.create(GPT4, None, io=InputOutput(), fnames=files)
 
         def mock_send(*args, **kwargs):
             coder.partial_response_content = "ok"
@@ -306,7 +307,7 @@ class TestCoder(unittest.TestCase):
 
         # Initialize the Coder object with the mocked IO and mocked repo
         coder = Coder.create(
-            models.GPT4,
+            GPT4,
             None,
             io=InputOutput(encoding=encoding),
             fnames=files,
@@ -339,7 +340,7 @@ class TestCoder(unittest.TestCase):
             mock_client = MagicMock()
 
             # Initialize the Coder object with the mocked IO and mocked repo
-            coder = Coder.create(models.GPT4, None, mock_io, client=mock_client)
+            coder = Coder.create(GPT4, None, mock_io, client=mock_client)
 
             # Set up the mock to raise
             mock_client.chat.completions.create.side_effect = openai.BadRequestError(
@@ -360,7 +361,7 @@ class TestCoder(unittest.TestCase):
             fname = Path("file.txt")
 
             io = InputOutput(yes=True)
-            coder = Coder.create(models.GPT4, "diff", io=io, fnames=[str(fname)])
+            coder = Coder.create(GPT4, "diff", io=io, fnames=[str(fname)])
 
             self.assertTrue(fname.exists())
 
@@ -416,7 +417,7 @@ new
             fname1.write_text("ONE\n")
 
             io = InputOutput(yes=True)
-            coder = Coder.create(models.GPT4, "diff", io=io, fnames=[str(fname1), str(fname2)])
+            coder = Coder.create(GPT4, "diff", io=io, fnames=[str(fname1), str(fname2)])
 
             def mock_send(*args, **kwargs):
                 coder.partial_response_content = f"""
@@ -468,7 +469,7 @@ TWO
             fname2.write_text("OTHER\n")
 
             io = InputOutput(yes=True)
-            coder = Coder.create(models.GPT4, "diff", io=io, fnames=[str(fname)])
+            coder = Coder.create(GPT4, "diff", io=io, fnames=[str(fname)])
 
             def mock_send(*args, **kwargs):
                 coder.partial_response_content = f"""
@@ -545,7 +546,7 @@ three
             repo.git.commit("-m", "initial")
 
             io = InputOutput(yes=True)
-            coder = Coder.create(models.GPT4, "diff", io=io, fnames=[str(fname)])
+            coder = Coder.create(GPT4, "diff", io=io, fnames=[str(fname)])
 
             def mock_send(*args, **kwargs):
                 coder.partial_response_content = f"""
@@ -595,7 +596,7 @@ two
 
             io = InputOutput(yes=True)
             coder = Coder.create(
-                models.GPT4,
+                GPT4,
                 None,
                 io,
                 fnames=[fname1, fname2, fname3],

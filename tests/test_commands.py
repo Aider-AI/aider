@@ -17,6 +17,7 @@ from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.utils import ChdirTemporaryDirectory, GitTemporaryDirectory, make_repo
 
+GPT35 = models.Model.create("gpt-3.5")
 
 class TestCommands(TestCase):
     def setUp(self):
@@ -37,7 +38,7 @@ class TestCommands(TestCase):
         io = InputOutput(pretty=False, yes=True)
         from aider.coders import Coder
 
-        coder = Coder.create(models.GPT35, None, io)
+        coder = Coder.create(GPT35, None, io)
         commands = Commands(io, coder)
 
         # Call the cmd_add method with 'foo.txt' and 'bar.txt' as a single string
@@ -53,7 +54,7 @@ class TestCommands(TestCase):
         io = InputOutput(pretty=False, yes=False)
         from aider.coders import Coder
 
-        coder = Coder.create(models.GPT35, None, io)
+        coder = Coder.create(GPT35, None, io)
         commands = Commands(io, coder)
 
         commands.cmd_add("**.txt")
@@ -63,7 +64,7 @@ class TestCommands(TestCase):
         io = InputOutput(pretty=False, yes=True)
         from aider.coders import Coder
 
-        coder = Coder.create(models.GPT35, None, io)
+        coder = Coder.create(GPT35, None, io)
         commands = Commands(io, coder)
 
         # Create some test files
@@ -89,7 +90,7 @@ class TestCommands(TestCase):
         io = InputOutput(pretty=False, yes=False)
         from aider.coders import Coder
 
-        coder = Coder.create(models.GPT35, None, io)
+        coder = Coder.create(GPT35, None, io)
         commands = Commands(io, coder)
 
         # Call the cmd_add method with a non-existent file pattern
@@ -103,7 +104,7 @@ class TestCommands(TestCase):
         io = InputOutput(pretty=False, yes=True)
         from aider.coders import Coder
 
-        coder = Coder.create(models.GPT35, None, io)
+        coder = Coder.create(GPT35, None, io)
         commands = Commands(io, coder)
 
         fname = Path("[abc].nonexistent")
@@ -120,7 +121,7 @@ class TestCommands(TestCase):
         io = InputOutput(pretty=False, yes=False)
         from aider.coders import Coder
 
-        coder = Coder.create(models.GPT35, None, io)
+        coder = Coder.create(GPT35, None, io)
         commands = Commands(io, coder)
 
         # Create a directory and add files to it using pathlib
@@ -171,7 +172,7 @@ class TestCommands(TestCase):
         io = InputOutput(pretty=False, yes=True)
         from aider.coders import Coder
 
-        coder = Coder.create(models.GPT35, None, io)
+        coder = Coder.create(GPT35, None, io)
         commands = Commands(io, coder)
 
         subdir = Path("subdir")
@@ -198,7 +199,7 @@ class TestCommands(TestCase):
         io = InputOutput(pretty=False, yes=True)
         from aider.coders import Coder
 
-        coder = Coder.create(models.GPT35, None, io)
+        coder = Coder.create(GPT35, None, io)
         commands = Commands(io, coder)
 
         # Create a new file foo.bad which will fail to decode as utf-8
@@ -218,7 +219,7 @@ class TestCommands(TestCase):
             with open(f"{tempdir}/test.txt", "w") as f:
                 f.write("test")
 
-            coder = Coder.create(models.GPT35, None, io)
+            coder = Coder.create(GPT35, None, io)
             commands = Commands(io, coder)
 
             # Run the cmd_git method with the arguments "commit -a -m msg"
@@ -234,7 +235,7 @@ class TestCommands(TestCase):
         # Initialize the Commands and InputOutput objects
         io = InputOutput(pretty=False, yes=True)
 
-        coder = Coder.create(models.GPT35, None, io)
+        coder = Coder.create(GPT35, None, io)
         commands = Commands(io, coder)
 
         commands.cmd_add("foo.txt bar.txt")
@@ -275,7 +276,7 @@ class TestCommands(TestCase):
         os.chdir("subdir")
 
         io = InputOutput(pretty=False, yes=True)
-        coder = Coder.create(models.GPT35, None, io)
+        coder = Coder.create(GPT35, None, io)
         commands = Commands(io, coder)
 
         # this should get added
@@ -293,7 +294,7 @@ class TestCommands(TestCase):
             io = InputOutput(pretty=False, yes=False)
             from aider.coders import Coder
 
-            coder = Coder.create(models.GPT35, None, io)
+            coder = Coder.create(GPT35, None, io)
             commands = Commands(io, coder)
 
             Path("side_dir").mkdir()
@@ -317,7 +318,7 @@ class TestCommands(TestCase):
             repo.git.commit("-m", "initial")
 
             io = InputOutput(pretty=False, yes=True)
-            coder = Coder.create(models.GPT35, None, io)
+            coder = Coder.create(GPT35, None, io)
             commands = Commands(io, coder)
 
             self.assertFalse(repo.is_dirty())
@@ -338,7 +339,7 @@ class TestCommands(TestCase):
             io = InputOutput(pretty=False, yes=False)
             from aider.coders import Coder
 
-            coder = Coder.create(models.GPT35, None, io)
+            coder = Coder.create(GPT35, None, io)
             commands = Commands(io, coder)
 
             outside_file = Path(tmp_dname) / "outside.txt"
@@ -361,7 +362,7 @@ class TestCommands(TestCase):
             io = InputOutput(pretty=False, yes=False)
             from aider.coders import Coder
 
-            coder = Coder.create(models.GPT35, None, io)
+            coder = Coder.create(GPT35, None, io)
             commands = Commands(io, coder)
 
             outside_file = Path(tmp_dname) / "outside.txt"
@@ -379,7 +380,7 @@ class TestCommands(TestCase):
             io = InputOutput(pretty=False, yes=False)
             from aider.coders import Coder
 
-            coder = Coder.create(models.GPT35, None, io)
+            coder = Coder.create(GPT35, None, io)
             commands = Commands(io, coder)
 
             fname = Path("with[brackets].txt")
@@ -394,7 +395,7 @@ class TestCommands(TestCase):
             io = InputOutput(pretty=False, yes=False)
             from aider.coders import Coder
 
-            coder = Coder.create(models.GPT35, None, io)
+            coder = Coder.create(GPT35, None, io)
             commands = Commands(io, coder)
 
             fname = Path("file.txt")
@@ -409,7 +410,7 @@ class TestCommands(TestCase):
             io = InputOutput(pretty=False, yes=False)
             from aider.coders import Coder
 
-            coder = Coder.create(models.GPT35, None, io)
+            coder = Coder.create(GPT35, None, io)
             commands = Commands(io, coder)
 
             fname = Path("file with spaces.txt")
@@ -437,7 +438,7 @@ class TestCommands(TestCase):
             io = InputOutput(pretty=False, yes=True)
             from aider.coders import Coder
 
-            coder = Coder.create(models.GPT35, None, io)
+            coder = Coder.create(GPT35, None, io)
             commands = Commands(io, coder)
 
             # There's no reason this /add should trigger a commit
@@ -460,7 +461,7 @@ class TestCommands(TestCase):
         io = InputOutput(pretty=False, yes=True)
         from aider.coders import Coder
 
-        coder = Coder.create(models.GPT35, None, io)
+        coder = Coder.create(GPT35, None, io)
         commands = Commands(io, coder)
 
         fname = "file.txt"
@@ -479,7 +480,7 @@ class TestCommands(TestCase):
             io = InputOutput(pretty=False, yes=False)
             from aider.coders import Coder
 
-            coder = Coder.create(models.GPT35, None, io)
+            coder = Coder.create(GPT35, None, io)
             commands = Commands(io, coder)
 
             fname = Path("test.txt")
@@ -502,7 +503,7 @@ class TestCommands(TestCase):
         with GitTemporaryDirectory() as repo_dir:
             repo = git.Repo(repo_dir)
             io = InputOutput(pretty=False, yes=True)
-            coder = Coder.create(models.GPT35, None, io)
+            coder = Coder.create(GPT35, None, io)
             commands = Commands(io, coder)
 
             other_path = Path(repo_dir) / "other_file.txt"
@@ -562,8 +563,9 @@ class TestCommands(TestCase):
             aignore.write_text(f"{fname1}\n{fname2}\ndir\n")
 
             io = InputOutput(yes=True)
+            model = models.Model.create("gpt-4")
             coder = Coder.create(
-                models.GPT4, None, io, fnames=[fname1, fname2], aider_ignore_file=str(aignore)
+                model, None, io, fnames=[fname1, fname2], aider_ignore_file=str(aignore)
             )
             commands = Commands(io, coder)
 

@@ -73,7 +73,7 @@ class Coder:
 
         if not skip_model_availabily_check and not main_model.always_available:
             if not check_model_availability(io, client, main_model):
-                fallback_model = models.GPT35_0125
+                fallback_model = models.Model.create("gpt-3.5-turbo-0125")
                 io.tool_error(
                     f"API key does not support {main_model.name}, falling back to"
                     f" {fallback_model.name}"
