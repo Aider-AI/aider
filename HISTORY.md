@@ -1,6 +1,12 @@
 
 # Release history
 
+### main
+
+- Allow `/add` of images from anywhere in the filesystem.
+- Fixed crash when operating in a repo in a detached HEAD state.
+- Fix: Use the same default model in CLI and python scripting.
+
 ### v0.28.0
 
 - Added support for new `gpt-4-turbo-2024-04-09` and `gpt-4-turbo` models.
