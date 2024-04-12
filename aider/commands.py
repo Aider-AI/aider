@@ -367,7 +367,7 @@ class Commands:
         for matched_file in all_matched_files:
             abs_file_path = self.coder.abs_root_path(matched_file)
 
-            if not abs_file_path.startswith(self.coder.root):
+            if not abs_file_path.startswith(self.coder.root) and not is_image_file(matched_file):
                 self.io.tool_error(
                     f"Can not add {abs_file_path}, which is not within {self.coder.root}"
                 )

@@ -215,7 +215,10 @@ class GitRepo:
         if not self.aider_ignore_file or not self.aider_ignore_file.is_file():
             return
 
-        fname = self.normalize_path(fname)
+        try:
+            fname = self.normalize_path(fname)
+        except ValueError:
+            return
 
         mtime = self.aider_ignore_file.stat().st_mtime
         if mtime != self.aider_ignore_ts:
