@@ -1,4 +1,4 @@
-import pkg_resources
+import importlib.util
 import logging
 import tiktoken
 
@@ -7,11 +7,7 @@ from .model import Model
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger("aider-litellm")
 
-LITELLM_VERSION = None
-try:
-  LITELLM_VERSION = pkg_resources.get_distribution("litellm").version
-except pkg_resources.DistributionNotFound:
-  pass
+LITELLM_SPEC = importlib.util.find_spec("litellm")
 
 model_aliases = {
     # claude-3

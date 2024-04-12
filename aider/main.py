@@ -13,7 +13,7 @@ from aider.coders import Coder
 from aider.io import InputOutput
 from aider.repo import GitRepo
 from aider.versioncheck import check_version
-from aider.models.litellm import LITELLM_VERSION
+from aider.models.litellm import LITELLM_SPEC
 
 from .dump import dump  # noqa: F401
 
@@ -571,8 +571,8 @@ def main(argv=None, input=None, output=None, force_git_root=None):
 
     elif not (args.openai_api_key or args.openai_api_base) and \
             args.model is not None and \
-            LITELLM_VERSION is not None:
-        io.tool_output(f"OpenAI key not provided, using LiteLLM v{LITELLM_VERSION} instead.")
+            LITELLM_SPEC is not None:
+        io.tool_output(f"OpenAI key not provided, using LiteLLM instead.")
         args.litellm = True
 
     elif not args.openai_api_key:
@@ -586,15 +586,13 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         args.model = default_model
 
     if args.litellm:
-        import importlib
-        spec = importlib.util.find_spec("litellm")
-        if spec is None:
+        if LITELLM_SPEC is None:
             io.tool_error("LiteLLM is not installed. Install it with `pip install litellm`.")
             return 1
 
         io.tool_output("LiteLLM is enabled.")
 
-        packageRootDir = os.path.dirname(spec.origin)
+        packageRootDir = os.path.dirname(LITELLM_SPEC.origin)
         modelPricesBackupName = "model_prices_and_context_window_backup.json"
         modelPricesPath = os.path.join(packageRootDir, modelPricesBackupName)
 
