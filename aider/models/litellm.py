@@ -24,7 +24,7 @@ model_aliases = {
     "sonnet": "claude-3-sonnet-20240229",
     "haiku": "claude-3-haiku-20240307",
     # gemini-1.5-pro
-    "gemini": "gemini-1.5-pro-preview-0409",
+    "gemini": "gemini/gemini-1.5-pro-latest",
     # gpt-3.5
     "gpt-3.5": "gpt-3.5-turbo-0613",
     "gpt-3.5-turbo": "gpt-3.5-turbo-0613",
@@ -48,7 +48,15 @@ class LiteLLMModel(Model):
 
         model_data = models_info.get(model_id)
         if not model_data:
-            raise ValueError(f"Unsupported model: {model_id}")
+            # HACK: for gemini 1.5 pro to work, LiteLLM needs the "-latest" part
+            # included in the model name, but it's not included in the list of
+            # supported models that way, so finesse it here
+            if model_id == "gemini/gemini-1.5-pro-latest":
+               model_data = models_info.get("gemini/gemini-1.5-pro")
+               if not model_data:
+                   raise ValueError(f"Unsupported model: {model_id}")
+            else:
+                raise ValueError(f"Unsupported model: {model_id}")
 
         self.tokenizer = tiktoken.get_encoding("cl100k_base")
 
