@@ -24,7 +24,7 @@ class Model:
         from .openrouter import OpenRouterModel
         from .litellm import LiteLLMModel
 
-        if not hasattr(client, "base_url"):
+        if client and not hasattr(client, "base_url"):
             return LiteLLMModel(name)
         if client and client.base_url.host == "openrouter.ai":
             return OpenRouterModel(client, name)

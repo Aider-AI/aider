@@ -2,8 +2,8 @@ import argparse
 import configparser
 import os
 import sys
+import importlib
 from pathlib import Path
-from importlib import import_module
 
 import configargparse
 import git
@@ -14,7 +14,7 @@ from aider.coders import Coder
 from aider.io import InputOutput
 from aider.repo import GitRepo
 from aider.versioncheck import check_version
-from aider.models.litellm import is_litellm_installed
+from aider.models.litellm import LITELLM_VERSION
 
 from .dump import dump  # noqa: F401
 
@@ -565,15 +565,16 @@ def main(argv=None, input=None, output=None, force_git_root=None):
 
     io.tool_output(*map(scrub_sensitive_info, sys.argv), log_only=True)
 
-    if not (args.openai_api_key or args.openai_api_base) and \
-            args.model is not None and \
-            is_litellm_installed():
-        args.litellm = True
-
     if args.litellm:
         if not args.model:
             io.tool_error("You must specify --model or AIDER_MODEL environment variable when using --litellm.")
             return 1
+
+    elif not (args.openai_api_key or args.openai_api_base) and \
+            args.model is not None and \
+            LITELLM_VERSION is not None:
+        io.tool_output(f"OpenAI key not provided, using LiteLLM v{LITELLM_VERSION} instead.")
+        args.litellm = True
 
     elif not args.openai_api_key:
         export_kw = "setx" if os.name == "nt" else "export"
@@ -586,6 +587,49 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         args.model = default_model
 
     if args.litellm:
+        spec = importlib.util.find_spec("litellm")
+        if spec is None:
+            io.tool_error("LiteLLM is not installed. Install it with `pip install litellm`.")
+            return 1
+
+        io.tool_output("LiteLLM is enabled.")
+
+        packageRootDir = os.path.dirname(spec.origin)
+        modelPricesBackupName = "model_prices_and_context_window_backup.json"
+        modelPricesPath = os.path.join(packageRootDir, modelPricesBackupName)
+
+        # LiteLLM keeps a backup of the model prices for when the network is
+        # down, but it's otherwise not used unless LITELLM_LOCAL_MODEL_COST_MAP
+        # is set to True. To keep Aider's startup time fast, prevent the network
+        # request unless the model prices haven‘t been updated in 12 hours.
+        from datetime import datetime, timedelta
+        timeSinceModified = datetime.now() - datetime.fromtimestamp(os.path.getmtime(modelPricesPath))
+
+        if timeSinceModified < timedelta(hours=12):
+            os.environ["LITELLM_LOCAL_MODEL_COST_MAP"] = "True"
+            io.tool_output("LiteLLM model list backup is recent, using it instead of network request.")
+        else:
+            def strfdelta(delta):
+                days = delta.days
+                hours, remainder = divmod(delta.seconds, 3600)
+                minutes, seconds = divmod(remainder, 60)
+                time_parts = [f"{days} day{'' if days == 1 else 's'}" if days else "",
+                                f"{hours} hour{'' if hours == 1 else 's'}" if hours else "",
+                                f"{minutes} minute{'' if minutes == 1 else 's'}" if minutes else "",
+                                f"{seconds} second{'' if seconds == 1 else 's'}"]
+                time_parts = [part for part in time_parts if part]
+                return ", ".join(time_parts)
+
+            formattedTime = strfdelta(timeSinceModified)
+            io.tool_output(f"LiteLLM model list backup last updated {formattedTime} ago, updating now.")
+
+            # Since LiteLLM never updates its backup after hitting the
+            # network, we'll have to do it ourselves.
+            from litellm import model_cost
+            with open(modelPricesPath, "w") as f:
+                import json
+                json.dump(model_cost, f)
+
         from litellm import LiteLLM
         client = LiteLLM()
     elif args.openai_api_type == "azure":

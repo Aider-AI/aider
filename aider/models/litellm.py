@@ -6,17 +6,14 @@ import os
 
 from .model import Model
 
-logging.basicConfig(level=logging.INFO, format='%(message)s')
-logger = logging.getLogger('aider-litellm')
+logging.basicConfig(level=logging.INFO, format="%(message)s")
+logger = logging.getLogger("aider-litellm")
 
 LITELLM_VERSION = None
 try:
   LITELLM_VERSION = pkg_resources.get_distribution("litellm").version
 except pkg_resources.DistributionNotFound:
   pass
-
-def is_litellm_installed():
-  return LITELLM_VERSION is not None
 
 model_aliases = {
     # claude-3
@@ -42,17 +39,15 @@ class LiteLLMModel(Model):
         if name in model_aliases:
             model_id = model_aliases[name]
 
-        global models_info
-        if not models_info:
-          models_info = fetchModelsInfo()
+        from litellm import model_cost
 
-        model_data = models_info.get(model_id)
+        model_data = model_cost.get(model_id)
         if not model_data:
-            # HACK: for gemini 1.5 pro to work, LiteLLM needs the "-latest" part
-            # included in the model name, but it's not included in the list of
-            # supported models that way, so finesse it here
+            # For gemini 1.5 pro to work, LiteLLM appears to need the "-latest"
+            # part included in the model name, but it's not included in the list
+            # of supported models that way, so finesse it here
             if model_id == "gemini/gemini-1.5-pro-latest":
-               model_data = models_info.get("gemini/gemini-1.5-pro")
+               model_data = model_cost.get("gemini/gemini-1.5-pro")
                if not model_data:
                    raise ValueError(f"Unsupported model: {model_id}")
             else:
@@ -76,67 +71,3 @@ class LiteLLMModel(Model):
             self.max_chat_history_tokens = 1024
         else:
             self.max_chat_history_tokens = 2 * 1024
-
-# Returns a JSON object where each key is a model name and each model name
-# points to a JSON object. See the following example:
-#
-#     "gemini/gemini-1.5-pro": {
-#        "max_tokens": 8192,
-#        "max_input_tokens": 1000000,
-#        "max_output_tokens": 8192,
-#        "input_cost_per_token": 0, 
-#        "output_cost_per_token": 0,
-#        "litellm_provider": "gemini",
-#        "mode": "chat",
-#        "supports_function_calling": true,
-#        "source": "https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models#foundation_models"
-#      }
-#
-# The 'source', 'mode', and 'supports_function_calling' properties may not
-# exist.
-#
-def fetchModelsInfo():
-  import requests
-  import json
-
-  global LITELLM_VERSION
-  if LITELLM_VERSION is None:
-    logger.error("LiteLLM not installed. Please run 'pip install litellm' first.")
-    return {}
-
-  logger.info(f"Found LiteLLM version: {LITELLM_VERSION}")
-
-  # Get a cache path for the model info
-  models_cache_path = os.path.join(get_cache_dir(), f"litellm-models-{LITELLM_VERSION}.json")
-
-  if os.path.exists(models_cache_path):
-    logger.info(f"Loading supported models from cache: {models_cache_path}")
-    with open(models_cache_path, "r") as f:
-      return json.load(f)
-
-  supported_models_url = f"https://raw.githubusercontent.com/BerriAI/litellm/v{LITELLM_VERSION}/model_prices_and_context_window.json"
-
-  try:
-    logger.info(f"Fetching supported models from {supported_models_url}")
-    response = requests.get(supported_models_url)
-
-    if response.status_code == 200:
-      with open(models_cache_path, "w") as f:
-        f.write(response.text)
-
-      return json.loads(response.text)
-
-    logger.error(f"Request failed with status code {response.status_code}")
-    return {}
-
-  except Exception as e:
-    logger.error(f"Failed to fetch models info: {str(e)}")
-    return {}
-
-def get_cache_dir():
-    if platform.system() == 'Windows':
-        return os.getenv('LOCALAPPDATA')
-    elif platform.system() == 'Darwin':
-        return os.path.expanduser('~/Library/Caches')
-    else:
-        return os.getenv('XDG_CACHE_HOME', os.path.expanduser('~/.cache'))
