@@ -140,7 +140,7 @@
 
 - [Improved repository map using tree-sitter](https://aider.chat/docs/repomap.html)
 - Switched from "edit block" to "search/replace block", which reduced malformed edit blocks. [Benchmarked](https://aider.chat/docs/benchmarks.html) at 66.2%, no regression.
-- Improved handling of malformed edit blocks targetting multiple edits to the same file. [Benchmarked](https://aider.chat/docs/benchmarks.html) at 65.4%, no regression.
+- Improved handling of malformed edit blocks targeting multiple edits to the same file. [Benchmarked](https://aider.chat/docs/benchmarks.html) at 65.4%, no regression.
 - Bugfix to properly handle malformed `/add` wildcards.
 
 
