@@ -543,6 +543,9 @@ def main(argv=None, input=None, output=None, force_git_root=None):
             check_gitignore(git_root, io)
 
     def scrub_sensitive_info(text):
+        # Raise an exception if no api key instead of a str.replace error
+        if not args.openai_api_key:
+            raise Exception("No OpenAI API key provided. Use --openai-api-key or export OPENAI_API_KEY.")
         # Replace sensitive information with placeholder
         return text.replace(args.openai_api_key, "***")
 
