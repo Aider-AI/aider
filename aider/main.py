@@ -544,7 +544,9 @@ def main(argv=None, input=None, output=None, force_git_root=None):
 
     def scrub_sensitive_info(text):
         # Replace sensitive information with placeholder
-        return text.replace(args.openai_api_key, "***")
+        if text and args.openai_api_key:
+            return text.replace(args.openai_api_key, "***")
+        return text
 
     if args.verbose:
         show = scrub_sensitive_info(parser.format_values())
