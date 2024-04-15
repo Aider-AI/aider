@@ -628,6 +628,12 @@ def main(argv=None, input=None, output=None, force_git_root=None):
                 import json
                 json.dump(model_cost, f)
 
+        # Strangely, LiteLLM has DEBUG-level logging enabled by default. This is
+        # a rather fragile solution, so we should report the issue upstream.
+        import logging
+        from litellm._logging import handler
+        handler.setLevel(logging.ERROR)
+
         from litellm import LiteLLM
         client = LiteLLM()
     elif args.openai_api_type == "azure":
