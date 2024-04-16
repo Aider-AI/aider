@@ -635,8 +635,11 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         handler.setLevel(logging.ERROR)
 
         # Support LITELLM_API_KEY, LITELLM_BASE_URL, etc.
-        import os
-        litellm_kwargs = {key.replace("LITELLM_", "").lower(): value for key, value in os.environ.items() if key.startswith("LITELLM_")}
+        litellm_kwargs = {
+            key.replace("LITELLM_", "").lower(): value
+            for key, value in os.environ.items()
+            if key.startswith("LITELLM_")
+        }
 
         from litellm import LiteLLM
         client = LiteLLM(**litellm_kwargs)
