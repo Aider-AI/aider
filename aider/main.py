@@ -634,15 +634,13 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         from litellm._logging import handler
         handler.setLevel(logging.ERROR)
 
-        # Support LITELLM_API_KEY, LITELLM_BASE_URL, etc.
-        litellm_kwargs = {
-            key.replace("LITELLM_", "").lower(): value
-            for key, value in os.environ.items()
-            if key.startswith("LITELLM_")
-        }
-
         from litellm import LiteLLM
-        client = LiteLLM(**litellm_kwargs)
+        client = LiteLLM(
+            api_key=os.environ.get("LITELLM_API_KEY"),
+            base_url=os.environ.get("LITELLM_BASE_URL"),
+            organization=os.environ.get("LITELLM_ORGANIZATION_ID"),
+            timeout=int(os.environ.get("LITELLM_TIMEOUT", 600)),
+        )
     elif args.openai_api_type == "azure":
         client = openai.AzureOpenAI(
             api_key=args.openai_api_key,
