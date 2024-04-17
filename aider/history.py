@@ -7,8 +7,7 @@ from aider.sendchat import simple_send_with_retries
 
 
 class ChatSummary:
-    def __init__(self, client, model=None, max_tokens=1024):
-        self.client = client
+    def __init__(self, model=None, max_tokens=1024):
         self.tokenizer = model.tokenizer
         self.max_tokens = max_tokens
         self.model = model
@@ -85,7 +84,7 @@ class ChatSummary:
             dict(role="user", content=content),
         ]
 
-        summary = simple_send_with_retries(self.client, self.model.name, messages)
+        summary = simple_send_with_retries(self.model.name, messages)
         if summary is None:
             raise ValueError(f"summarizer unexpectedly failed for {self.model.name}")
         summary = prompts.summary_prefix + summary

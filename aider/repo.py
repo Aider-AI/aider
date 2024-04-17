@@ -121,7 +121,7 @@ class GitRepo:
         ]
 
         for model in self.models:
-            commit_message = simple_send_with_retries(None, model.name, messages)
+            commit_message = simple_send_with_retries(model.name, messages)
             if commit_message:
                 break
 

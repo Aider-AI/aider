@@ -42,7 +42,6 @@ def wrap_fence(name):
 
 
 class Coder:
-    client = None
     abs_fnames = None
     repo = None
     last_aider_commit_hash = None
@@ -62,7 +61,6 @@ class Coder:
         main_model=None,
         edit_format=None,
         io=None,
-        client=None,
         **kwargs,
     ):
         from . import EditBlockCoder, UnifiedDiffCoder, WholeFileCoder
@@ -74,17 +72,16 @@ class Coder:
             edit_format = main_model.edit_format
 
         if edit_format == "diff":
-            return EditBlockCoder(client, main_model, io, **kwargs)
+            return EditBlockCoder(main_model, io, **kwargs)
         elif edit_format == "whole":
-            return WholeFileCoder(client, main_model, io, **kwargs)
+            return WholeFileCoder(main_model, io, **kwargs)
         elif edit_format == "udiff":
-            return UnifiedDiffCoder(client, main_model, io, **kwargs)
+            return UnifiedDiffCoder(main_model, io, **kwargs)
         else:
             raise ValueError(f"Unknown edit format {edit_format}")
 
     def __init__(
         self,
-        client,
         main_model,
         io,
         fnames=None,
@@ -103,8 +100,6 @@ class Coder:
         voice_language=None,
         aider_ignore_file=None,
     ):
-        self.client = client
-
         if not fnames:
             fnames = []
 
@@ -217,7 +212,6 @@ class Coder:
             self.io.tool_output(f"Added {fname} to the chat.")
 
         self.summarizer = ChatSummary(
-            self.client,
             self.main_model.weak_model(),
             self.main_model.max_chat_history_tokens,
         )
@@ -368,7 +362,7 @@ class Coder:
         return files_messages
 
     def get_images_message(self):
-        if not utils.is_gpt4_with_openai_base_url(self.main_model.name, self.client):
+        if not utils.is_gpt4_with_openai_base_url(self.main_model.name):
             return None
 
         image_messages = []
@@ -650,9 +644,7 @@ class Coder:
 
         interrupted = False
         try:
-            hash_object, completion = send_with_retries(
-                self.client, model, messages, functions, self.stream
-            )
+            hash_object, completion = send_with_retries(model, messages, functions, self.stream)
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
 
             if self.stream:

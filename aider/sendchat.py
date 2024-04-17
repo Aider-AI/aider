@@ -30,7 +30,7 @@ CACHE = None
         f"{details.get('exception','Exception')}\nRetry in {details['wait']:.1f} seconds."
     ),
 )
-def send_with_retries(client, model_name, messages, functions, stream):
+def send_with_retries(model_name, messages, functions, stream):
     kwargs = dict(
         model=model_name,
         messages=messages,
@@ -41,7 +41,7 @@ def send_with_retries(client, model_name, messages, functions, stream):
         kwargs["functions"] = functions
 
     # Check conditions to switch to gpt-4-vision-preview or strip out image_url messages
-    if client and is_gpt4_with_openai_base_url(model_name, client):
+    if is_gpt4_with_openai_base_url(model_name):
         if any(
             isinstance(msg.get("content"), list)
             and any("image_url" in item for item in msg.get("content") if isinstance(item, dict))
@@ -67,10 +67,9 @@ def send_with_retries(client, model_name, messages, functions, stream):
     return hash_object, res
 
 
-def simple_send_with_retries(client, model_name, messages):
+def simple_send_with_retries(model_name, messages):
     try:
         _hash, response = send_with_retries(
-            client=client,
             model_name=model_name,
             messages=messages,
             functions=None,

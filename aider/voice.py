@@ -26,7 +26,7 @@ class Voice:
 
     threshold = 0.15
 
-    def __init__(self, client):
+    def __init__(self):
         if sf is None:
             raise SoundDeviceError
         try:
@@ -36,8 +36,6 @@ class Voice:
             self.sd = sd
         except (OSError, ModuleNotFoundError):
             raise SoundDeviceError
-
-        self.client = client
 
     def callback(self, indata, frames, time, status):
         """This is called (from a separate thread) for each audio block."""
@@ -88,6 +86,7 @@ class Voice:
             while not self.q.empty():
                 file.write(self.q.get())
 
+        # TODO: fix client!
         with open(filename, "rb") as fh:
             transcript = self.client.audio.transcriptions.create(
                 model="whisper-1", file=fh, prompt=history, language=language
