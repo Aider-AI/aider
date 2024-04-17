@@ -4,7 +4,7 @@ from pathlib import Path, PurePosixPath
 import git
 import pathspec
 
-from aider import models, prompts, utils
+from aider import prompts, utils
 from aider.sendchat import simple_send_with_retries
 
 from .dump import dump  # noqa: F401
@@ -16,9 +16,9 @@ class GitRepo:
     aider_ignore_spec = None
     aider_ignore_ts = 0
 
-    def __init__(self, io, fnames, git_dname, aider_ignore_file=None, client=None):
-        self.client = client
+    def __init__(self, io, fnames, git_dname, aider_ignore_file=None, models=None):
         self.io = io
+        self.models = models
 
         if git_dname:
             check_fnames = [git_dname]
@@ -120,8 +120,8 @@ class GitRepo:
             dict(role="user", content=content),
         ]
 
-        for model in models.Model.commit_message_models():
-            commit_message = simple_send_with_retries(self.client, model.name, messages)
+        for model in self.models:
+            commit_message = simple_send_with_retries(None, model.name, messages)
             if commit_message:
                 break
 

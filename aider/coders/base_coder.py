@@ -150,7 +150,11 @@ class Coder:
         if use_git:
             try:
                 self.repo = GitRepo(
-                    self.io, fnames, git_dname, aider_ignore_file, client=self.client
+                    self.io,
+                    fnames,
+                    git_dname,
+                    aider_ignore_file,
+                    models=main_model.commit_message_models(),
                 )
                 self.root = self.repo.root
             except FileNotFoundError:
