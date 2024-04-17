@@ -1,4 +1,4 @@
 *.pyc
-.aider.*
+.aider*
 aider_chat.egg-info/
 build
