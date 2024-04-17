@@ -18,6 +18,15 @@ class Model:
     prompt_price = None
     completion_price = None
 
+    @classmethod
+    def create(cls, name, client=None):
+        from .openai import OpenAIModel
+        from .openrouter import OpenRouterModel
+
+        if client and client.base_url.host == "openrouter.ai":
+            return OpenRouterModel(client, name)
+        return OpenAIModel(name)
+
     def __str__(self):
         return self.name
 
