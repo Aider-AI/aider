@@ -133,7 +133,8 @@ class OpenAIModel(Model):
         try:
             self.tokenizer = tiktoken.encoding_for_model(true_name)
         except KeyError:
-            raise ValueError(f"No known tokenizer for model: {name}")
+            self.tokenizer = None
+            # raise ValueError(f"No known tokenizer for model: {name}")
 
         model_info = self.lookup_model_info(true_name)
         if not model_info:

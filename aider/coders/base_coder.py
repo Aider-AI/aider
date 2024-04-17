@@ -63,22 +63,12 @@ class Coder:
         edit_format=None,
         io=None,
         client=None,
-        skip_model_availabily_check=False,
         **kwargs,
     ):
         from . import EditBlockCoder, UnifiedDiffCoder, WholeFileCoder
 
         if not main_model:
             main_model = models.Model.create(models.DEFAULT_MODEL_NAME)
-
-        if not skip_model_availabily_check and not main_model.always_available:
-            if not check_model_availability(io, client, main_model):
-                fallback_model = models.GPT35_0125
-                io.tool_error(
-                    f"API key does not support {main_model.name}, falling back to"
-                    f" {fallback_model.name}"
-                )
-                main_model = fallback_model
 
         if edit_format is None:
             edit_format = main_model.edit_format
@@ -1052,21 +1042,3 @@ class Coder:
         # files changed, move cur messages back behind the files messages
         # self.move_back_cur_messages(self.gpt_prompts.files_content_local_edits)
         return True
-
-
-def check_model_availability(io, client, main_model):
-    try:
-        available_models = client.models.list()
-    except openai.NotFoundError:
-        # Azure sometimes returns 404?
-        # https://discord.com/channels/1131200896827654144/1182327371232186459
-        io.tool_error(f"Unable to list available models, proceeding with {main_model.name}")
-        return True
-
-    model_ids = sorted(model.id for model in available_models)
-    if main_model.name in model_ids:
-        return True
-
-    available_models = ", ".join(model_ids)
-    io.tool_error(f"API key supports: {available_models}")
-    return False

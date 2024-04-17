@@ -170,13 +170,6 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         default=default_model,
         help=f"Specify the model to use for the main chat (default: {default_model})",
     )
-    core_group.add_argument(
-        "--skip-model-availability-check",
-        metavar="SKIP_MODEL_AVAILABILITY_CHECK",
-        action=argparse.BooleanOptionalAction,
-        default=False,
-        help="Override to skip model availability check (default: False)",
-    )
     default_4_model = "gpt-4-0613"
     core_group.add_argument(
         "--4",
@@ -576,11 +569,15 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         os.environ["OPENAI_ORGANIZATION"] = args.openai_organization_id
 
     res = litellm.validate_environment(args.model)
+
     missing_keys = res.get("missing_keys")
     if missing_keys:
         io.tool_error(f"To use model {args.model}, please set these environment variables:")
         for key in missing_keys:
             io.tool_error(f"- {key}")
+        return 1
+    elif not res["keys_in_environment"]:
+        io.tool_error(f"Unknown model {args.model}.")
         return 1
 
     main_model = models.Model.create(args.model, None)
@@ -590,7 +587,6 @@ def main(argv=None, input=None, output=None, force_git_root=None):
             main_model=main_model,
             edit_format=args.edit_format,
             io=io,
-            skip_model_availabily_check=args.skip_model_availability_check,
             client=None,
             ##
             fnames=fnames,
