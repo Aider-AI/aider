@@ -25,6 +25,8 @@ class Model:
         else:
             self.max_chat_history_tokens = 2 * 1024
 
+        # TODO: set edit_format,use_repo_map,send_undo_reply for various models
+
     def __str__(self):
         return self.name
 
