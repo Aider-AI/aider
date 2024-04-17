@@ -1,0 +1,4 @@
+*.pyc
+.aider.*
+aider_chat.egg-info/
+build
