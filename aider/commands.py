@@ -176,7 +176,7 @@ class Commands:
         self.io.tool_output()
 
         width = 8
-        cost_width = 7
+        cost_width = 9
 
         def fmt(v):
             return format(int(v), ",").rjust(width)
@@ -188,13 +188,13 @@ class Commands:
         total_cost = 0.0
         for tk, msg, tip in res:
             total += tk
-            cost = tk * (self.coder.main_model.prompt_price / 1000)
+            cost = tk * self.coder.main_model.info.get("input_cost_per_token", 0)
             total_cost += cost
             msg = msg.ljust(col_width)
-            self.io.tool_output(f"${cost:5.2f} {fmt(tk)} {msg} {tip}")
+            self.io.tool_output(f"${cost:7.4f} {fmt(tk)} {msg} {tip}")
 
         self.io.tool_output("=" * (width + cost_width + 1))
-        self.io.tool_output(f"${total_cost:5.2f} {fmt(total)} tokens total")
+        self.io.tool_output(f"${total_cost:7.4f} {fmt(total)} tokens total")
 
         # only switch to image model token count if gpt4 and openai and image in files
         image_in_chat = False
@@ -203,7 +203,7 @@ class Commands:
                 is_image_file(relative_fname)
                 for relative_fname in self.coder.get_inchat_relative_files()
             )
-        limit = 128000 if image_in_chat else self.coder.main_model.max_context_tokens
+        limit = 128000 if image_in_chat else self.coder.main_model.info.get("max_input_tokens")
 
         remaining = limit - total
         if remaining > 1024:

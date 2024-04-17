@@ -508,7 +508,7 @@ class Coder:
         messages += self.cur_messages
 
         # Add the reminder prompt if we still have room to include it.
-        if total_tokens < self.main_model.max_context_tokens:
+        if total_tokens < self.main_model.info.get("max_input_tokens", 0):
             messages += reminder_message
 
         return messages
@@ -707,10 +707,10 @@ class Coder:
             completion_tokens = completion.usage.completion_tokens
 
             tokens = f"{prompt_tokens} prompt tokens, {completion_tokens} completion tokens"
-            if self.main_model.prompt_price:
-                cost = prompt_tokens * self.main_model.prompt_price / 1000
-                if self.main_model.completion_price:
-                    cost += completion_tokens * self.main_model.completion_price / 1000
+            if self.main_model.info.get("input_cost_per_token"):
+                cost = prompt_tokens * self.main_model.info.get("input_cost_per_token")
+                if self.main_model.info.get("output_cost_per_token"):
+                    cost += completion_tokens * self.main_model.info.get("output_cost_per_token")
                 tokens += f", ${cost:.6f} cost"
                 self.total_cost += cost
 

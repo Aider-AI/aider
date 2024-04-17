@@ -4,22 +4,26 @@ import math
 import litellm
 from PIL import Image
 
+from aider.dump import dump
+
 
 class Model:
     name = None
     edit_format = "whole"
-    max_context_tokens = 0
-    max_chat_history_tokens = 1024
 
-    always_available = False
     use_repo_map = False
     send_undo_reply = False
-
-    prompt_price = None
-    completion_price = None
+    max_chat_history_tokens = 1024
 
     def __init__(self, model):
         self.name = model
+        self.info = litellm.get_model_info(model)
+        dump(self.info)
+
+        if self.info.get("max_input_tokens", 0) < 32 * 1024:
+            self.max_chat_history_tokens = 1024
+        else:
+            self.max_chat_history_tokens = 2 * 1024
 
     def __str__(self):
         return self.name
