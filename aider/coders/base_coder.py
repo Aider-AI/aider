@@ -68,7 +68,7 @@ class Coder:
         from . import EditBlockCoder, UnifiedDiffCoder, WholeFileCoder
 
         if not main_model:
-            main_model = models.Model.create(models.DEFAULT_MODEL_NAME)
+            main_model = models.Model(models.DEFAULT_MODEL_NAME)
 
         if edit_format is None:
             edit_format = main_model.edit_format
@@ -214,7 +214,7 @@ class Coder:
 
         self.summarizer = ChatSummary(
             self.client,
-            models.Model.weak_model(),
+            self.main_model.weak_model(),
             self.main_model.max_chat_history_tokens,
         )
 

@@ -7,7 +7,7 @@ from aider.sendchat import simple_send_with_retries
 
 
 class ChatSummary:
-    def __init__(self, client, model=models.Model.weak_model(), max_tokens=1024):
+    def __init__(self, client, model=None, max_tokens=1024):
         self.client = client
         self.tokenizer = model.tokenizer
         self.max_tokens = max_tokens
@@ -21,7 +21,7 @@ class ChatSummary:
     def tokenize(self, messages):
         sized = []
         for msg in messages:
-            tokens = len(self.tokenizer.encode(json.dumps(msg)))
+            tokens = len(self.tokenizer(json.dumps(msg)))
             sized.append((tokens, msg))
         return sized
 
@@ -61,7 +61,7 @@ class ChatSummary:
         summary = self.summarize_all(head)
 
         tail_tokens = sum(tokens for tokens, msg in sized[split_index:])
-        summary_tokens = len(self.tokenizer.encode(json.dumps(summary)))
+        summary_tokens = len(self.tokenizer(json.dumps(summary)))
 
         result = summary + tail
         if summary_tokens + tail_tokens < self.max_tokens:

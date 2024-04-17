@@ -15,8 +15,6 @@ from pygments.util import ClassNotFound
 from tqdm import tqdm
 from tree_sitter_languages import get_language, get_parser
 
-from aider import models
-
 from .dump import dump  # noqa: F402
 
 Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
@@ -34,7 +32,7 @@ class RepoMap:
         self,
         map_tokens=1024,
         root=None,
-        main_model=models.Model.strong_model(),
+        main_model=None,
         io=None,
         repo_content_prefix=None,
         verbose=False,
@@ -88,7 +86,7 @@ class RepoMap:
         return repo_content
 
     def token_count(self, string):
-        return len(self.tokenizer.encode(string))
+        return len(self.tokenizer(string))
 
     def get_rel_fname(self, fname):
         return os.path.relpath(fname, self.root)

@@ -188,7 +188,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         const=default_4_turbo_model,
         help=f"Use {default_4_turbo_model} model for the main chat",
     )
-    default_3_model = models.GPT35_0125
+    default_3_model_name = "gpt-3.5-turbo-0125"
     core_group.add_argument(
         "--35turbo",
         "--35-turbo",
@@ -196,8 +196,8 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         "-3",
         action="store_const",
         dest="model",
-        const=default_3_model.name,
-        help=f"Use {default_3_model.name} model for the main chat",
+        const=default_3_model_name,
+        help=f"Use {default_3_model_name} model for the main chat",
     )
     core_group.add_argument(
         "--voice-language",
@@ -580,7 +580,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         io.tool_error(f"Unknown model {args.model}.")
         return 1
 
-    main_model = models.Model.create(args.model, None)
+    main_model = models.Model(args.model)
 
     try:
         coder = Coder.create(

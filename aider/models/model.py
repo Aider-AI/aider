@@ -1,14 +1,14 @@
 import json
 import math
 
+import litellm
 from PIL import Image
 
 
 class Model:
     name = None
-    edit_format = None
+    edit_format = "whole"
     max_context_tokens = 0
-    tokenizer = None
     max_chat_history_tokens = 1024
 
     always_available = False
@@ -18,29 +18,24 @@ class Model:
     prompt_price = None
     completion_price = None
 
-    @classmethod
-    def create(cls, name, client=None):
-        from .openai import OpenAIModel
-        from .openrouter import OpenRouterModel
-
-        if client and client.base_url.host == "openrouter.ai":
-            return OpenRouterModel(client, name)
-        return OpenAIModel(name)
+    def __init__(self, model):
+        self.name = model
 
     def __str__(self):
         return self.name
 
-    @staticmethod
-    def strong_model():
-        return Model.create("gpt-4-0613")
+    def weak_model(self):
+        model = "gpt-3.5-turbo-0125"
+        if self.name == model:
+            return self
 
-    @staticmethod
-    def weak_model():
-        return Model.create("gpt-3.5-turbo-0125")
+        return Model(model)
 
-    @staticmethod
-    def commit_message_models():
-        return [Model.weak_model()]
+    def commit_message_models(self):
+        return [self.weak_model()]
+
+    def tokenizer(self, text):
+        return litellm.encode(model=self.name, text=text)
 
     def token_count(self, messages):
         if not self.tokenizer:
@@ -51,7 +46,7 @@ class Model:
         else:
             msgs = json.dumps(messages)
 
-        return len(self.tokenizer.encode(msgs))
+        return len(self.tokenizer(msgs))
 
     def token_count_for_image(self, fname):
         """
