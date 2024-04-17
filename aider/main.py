@@ -6,7 +6,7 @@ from pathlib import Path
 
 import configargparse
 import git
-import openai
+import litellm
 
 from aider import __version__, models
 from aider.coders import Coder
@@ -15,6 +15,10 @@ from aider.repo import GitRepo
 from aider.versioncheck import check_version
 
 from .dump import dump  # noqa: F401
+
+litellm.suppress_debug_info = True
+os.environ["OR_SITE_URL"] = "http://aider.chat"
+os.environ["OR_APP_NAME"] = "Aider"
 
 
 def get_git_root():
@@ -169,6 +173,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     core_group.add_argument(
         "--skip-model-availability-check",
         metavar="SKIP_MODEL_AVAILABILITY_CHECK",
+        action=argparse.BooleanOptionalAction,
         default=False,
         help="Override to skip model availability check (default: False)",
     )
@@ -559,39 +564,26 @@ def main(argv=None, input=None, output=None, force_git_root=None):
 
     io.tool_output(*map(scrub_sensitive_info, sys.argv), log_only=True)
 
-    if not args.openai_api_key:
-        if os.name == "nt":
-            io.tool_error(
-                "No OpenAI API key provided. Use --openai-api-key or setx OPENAI_API_KEY."
-            )
-        else:
-            io.tool_error(
-                "No OpenAI API key provided. Use --openai-api-key or export OPENAI_API_KEY."
-            )
+    if args.openai_api_key:
+        os.environ["OPENAI_API_KEY"] = args.openai_api_key
+    if args.openai_api_base:
+        os.environ["OPENAI_API_BASE"] = args.openai_api_base
+    if args.openai_api_version:
+        os.environ["AZURE_API_VERSION"] = args.openai_api_version
+    if args.openai_api_type:
+        os.environ["AZURE_API_TYPE"] = args.openai_api_type
+    if args.openai_organization_id:
+        os.environ["OPENAI_ORGANIZATION"] = args.openai_organization_id
+
+    res = litellm.validate_environment(args.model)
+    missing_keys = res.get("missing_keys")
+    if missing_keys:
+        io.tool_error(f"To use model {args.model}, please set these environment variables:")
+        for key in missing_keys:
+            io.tool_error(f"- {key}")
         return 1
 
-    if args.openai_api_type == "azure":
-        client = openai.AzureOpenAI(
-            api_key=args.openai_api_key,
-            azure_endpoint=args.openai_api_base,
-            api_version=args.openai_api_version,
-            azure_deployment=args.openai_api_deployment_id,
-        )
-    else:
-        kwargs = dict()
-        if args.openai_api_base:
-            kwargs["base_url"] = args.openai_api_base
-            if "openrouter.ai" in args.openai_api_base:
-                kwargs["default_headers"] = {
-                    "HTTP-Referer": "http://aider.chat",
-                    "X-Title": "Aider",
-                }
-        if args.openai_organization_id:
-            kwargs["organization"] = args.openai_organization_id
-
-        client = openai.OpenAI(api_key=args.openai_api_key, **kwargs)
-
-    main_model = models.Model.create(args.model, client)
+    main_model = models.Model.create(args.model, None)
 
     try:
         coder = Coder.create(
@@ -599,7 +591,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
             edit_format=args.edit_format,
             io=io,
             skip_model_availabily_check=args.skip_model_availability_check,
-            client=client,
+            client=None,
             ##
             fnames=fnames,
             git_dname=git_dname,
