@@ -198,15 +198,7 @@ class Commands:
         self.io.tool_output("=" * (width + cost_width + 1))
         self.io.tool_output(f"${total_cost:7.4f} {fmt(total)} tokens total")
 
-        # only switch to image model token count if gpt4 and openai and image in files
-        image_in_chat = False
-        if self.coder.main_model.accepts_images:
-            image_in_chat = any(
-                is_image_file(relative_fname)
-                for relative_fname in self.coder.get_inchat_relative_files()
-            )
-        limit = 128000 if image_in_chat else self.coder.main_model.info.get("max_input_tokens")
-
+        limit = self.coder.main_model.info.get("max_input_tokens")
         remaining = limit - total
         if remaining > 1024:
             self.io.tool_output(f"{cost_pad}{fmt(remaining)} tokens remaining in context window")
