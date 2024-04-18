@@ -1,21 +1,25 @@
 import colorsys
+import importlib.resources as pkg_resources
 import os
 import random
 import sys
+import warnings
 from collections import Counter, defaultdict, namedtuple
 from pathlib import Path
 
 import networkx as nx
-import importlib.resources as pkg_resources
 from diskcache import Cache
 from grep_ast import TreeContext, filename_to_lang
 from pygments.lexers import guess_lexer_for_filename
 from pygments.token import Token
 from pygments.util import ClassNotFound
 from tqdm import tqdm
-from tree_sitter_languages import get_language, get_parser
 
-from .dump import dump  # noqa: F402
+# tree_sitter is throwing a FutureWarning
+warnings.simplefilter("ignore", category=FutureWarning)
+from tree_sitter_languages import get_language, get_parser  # noqa: E402
+
+from aider.dump import dump  # noqa: F402,E402
 
 Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
 
