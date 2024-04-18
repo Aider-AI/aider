@@ -24,3 +24,4 @@ Pillow
 diff-match-patch
 playwright
 pypandoc
+litellm
