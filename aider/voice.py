@@ -3,6 +3,7 @@ import queue
 import tempfile
 import time
 
+import litellm
 import numpy as np
 
 try:
@@ -86,9 +87,8 @@ class Voice:
             while not self.q.empty():
                 file.write(self.q.get())
 
-        # TODO: fix client!
         with open(filename, "rb") as fh:
-            transcript = self.client.audio.transcriptions.create(
+            transcript = litellm.transcription(
                 model="whisper-1", file=fh, prompt=history, language=language
             )
 

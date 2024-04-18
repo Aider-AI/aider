@@ -1,9 +1,11 @@
+import os
 import re
 import subprocess
 import sys
 from pathlib import Path
 
 import git
+import openai
 from prompt_toolkit.completion import Completion
 
 from aider import prompts, voice
@@ -547,8 +549,11 @@ class Commands:
         "Record and transcribe voice input"
 
         if not self.voice:
+            if "OPENAI_API_KEY" not in os.environ:
+                self.io.tool_error("To use /voice you must provide an OpenAI API key.")
+                return
             try:
-                self.voice = voice.Voice(self.coder.client)
+                self.voice = voice.Voice()
             except voice.SoundDeviceError:
                 self.io.tool_error(
                     "Unable to import `sounddevice` and/or `soundfile`, is portaudio installed?"
@@ -572,7 +577,12 @@ class Commands:
         history.reverse()
         history = "\n".join(history)
 
-        text = self.voice.record_and_transcribe(history, language=self.voice_language)
+        try:
+            text = self.voice.record_and_transcribe(history, language=self.voice_language)
+        except openai.OpenAIError as err:
+            self.io.tool_error(f"Unable to use OpenAI whisper model: {err}")
+            return
+
         if text:
             self.io.add_to_input_history(text)
             print()
