@@ -212,7 +212,7 @@ class Coder:
             self.io.tool_output(f"Added {fname} to the chat.")
 
         self.summarizer = ChatSummary(
-            self.main_model.weak_model(),
+            self.main_model.get_weak_model(),
             self.main_model.max_chat_history_tokens,
         )
 

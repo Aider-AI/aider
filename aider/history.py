@@ -124,7 +124,7 @@ def main():
 
         assistant.append(line)
 
-    summarizer = ChatSummary(models.Model.weak_model())
+    summarizer = ChatSummary(models.Model.get_weak_model())
     summary = summarizer.summarize(messages[-40:])
     dump(summary)
 
