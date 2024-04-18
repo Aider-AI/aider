@@ -117,6 +117,7 @@ class Model:
     edit_format = "whole"
     use_repo_map = False
     send_undo_reply = False
+    accepts_images = False
 
     max_chat_history_tokens = 1024
     weak_model = None
