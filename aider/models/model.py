@@ -3,9 +3,17 @@ import math
 from dataclasses import dataclass, fields
 
 import litellm
+from typing import Optional
 from PIL import Image
 
 from aider.dump import dump
+
+class NoModelInfo(Exception):
+    """
+    Exception raised when model information cannot be retrieved.
+    """
+    def __init__(self, message: Optional[str] = None):
+        super().__init__(message or "No model information available.")
 
 
 @dataclass
