@@ -6,7 +6,7 @@ from collections import Counter, defaultdict, namedtuple
 from pathlib import Path
 
 import networkx as nx
-import pkg_resources
+import importlib.resources as pkg_resources
 from diskcache import Cache
 from grep_ast import TreeContext, filename_to_lang
 from pygments.lexers import guess_lexer_for_filename
@@ -139,12 +139,12 @@ class RepoMap:
 
         # Load the tags queries
         try:
-            scm_fname = pkg_resources.resource_filename(
-                __name__, os.path.join("queries", f"tree-sitter-{lang}-tags.scm")
+            scm_fname = pkg_resources.files(__package__).joinpath(
+                "queries", f"tree-sitter-{lang}-tags.scm"
             )
         except KeyError:
             return
-        query_scm = Path(scm_fname)
+        query_scm = scm_fname
         if not query_scm.exists():
             return
         query_scm = query_scm.read_text()
