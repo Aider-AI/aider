@@ -568,9 +568,8 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     if args.openai_organization_id:
         os.environ["OPENAI_ORGANIZATION"] = args.openai_organization_id
 
-    res = litellm.validate_environment(args.model)
-
     # Is the model known and are all needed keys/params available?
+    res = litellm.validate_environment(args.model)
     missing_keys = res.get("missing_keys")
     if missing_keys:
         io.tool_error(f"To use model {args.model}, please set these environment variables:")
