@@ -94,7 +94,7 @@ multidict==6.0.5
     # via
     #   aiohttp
     #   yarl
-networkx==3.3
+networkx==3.2.1
     # via -r requirements.in
 numpy==1.26.4
     # via
