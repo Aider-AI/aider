@@ -1,17 +1,21 @@
 import json
 import math
 from dataclasses import dataclass, fields
+from typing import Optional
 
 import litellm
-from typing import Optional
 from PIL import Image
 
 from aider.dump import dump
+
+DEFAULT_MODEL_NAME = "gpt-4-1106-preview"
+
 
 class NoModelInfo(Exception):
     """
     Exception raised when model information cannot be retrieved.
     """
+
     def __init__(self, message: Optional[str] = None):
         super().__init__(message or "No model information available.")
 
