@@ -3,13 +3,13 @@ import shutil
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
-from aider import models
 from aider.coders import Coder
 from aider.coders.wholefile_coder import WholeFileCoder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
+from aider.models import Model
 
 
 class TestWholeFileCoder(unittest.TestCase):
@@ -18,21 +18,17 @@ class TestWholeFileCoder(unittest.TestCase):
         self.tempdir = tempfile.mkdtemp()
         os.chdir(self.tempdir)
 
-        self.patcher = patch("aider.coders.base_coder.check_model_availability")
-        self.mock_check = self.patcher.start()
-        self.mock_check.return_value = True
+        self.GPT35 = Model("gpt-3.5-turbo")
 
     def tearDown(self):
         os.chdir(self.original_cwd)
         shutil.rmtree(self.tempdir, ignore_errors=True)
 
-        self.patcher.stop()
-
     def test_no_files(self):
         # Initialize WholeFileCoder with the temporary directory
         io = InputOutput(yes=True)
 
-        coder = WholeFileCoder(None, main_model=models.GPT35, io=io, fnames=[])
+        coder = WholeFileCoder(main_model=self.GPT35, io=io, fnames=[])
         coder.partial_response_content = (
             'To print "Hello, World!" in most programming languages, you can use the following'
             ' code:\n\n```python\nprint("Hello, World!")\n```\n\nThis code will output "Hello,'
@@ -44,7 +40,7 @@ class TestWholeFileCoder(unittest.TestCase):
 
     def test_no_files_new_file_should_ask(self):
         io = InputOutput(yes=False)  # <- yes=FALSE
-        coder = WholeFileCoder(None, main_model=models.GPT35, io=io, fnames=[])
+        coder = WholeFileCoder(main_model=self.GPT35, io=io, fnames=[])
         coder.partial_response_content = (
             'To print "Hello, World!" in most programming languages, you can use the following'
             ' code:\n\nfoo.js\n```python\nprint("Hello, World!")\n```\n\nThis code will output'
@@ -61,7 +57,7 @@ class TestWholeFileCoder(unittest.TestCase):
 
         # Initialize WholeFileCoder with the temporary directory
         io = InputOutput(yes=True)
-        coder = WholeFileCoder(None, main_model=models.GPT35, io=io, fnames=[sample_file])
+        coder = WholeFileCoder(main_model=self.GPT35, io=io, fnames=[sample_file])
 
         # Set the partial response content with the updated content
         coder.partial_response_content = f"{sample_file}\n```\nUpdated content\n```"
@@ -85,7 +81,7 @@ class TestWholeFileCoder(unittest.TestCase):
 
         # Initialize WholeFileCoder with the temporary directory
         io = InputOutput(yes=True)
-        coder = WholeFileCoder(None, main_model=models.GPT35, io=io, fnames=[sample_file])
+        coder = WholeFileCoder(main_model=self.GPT35, io=io, fnames=[sample_file])
 
         # Set the partial response content with the updated content
         coder.partial_response_content = f"{sample_file}\n```\n0\n\1\n2\n"
@@ -109,7 +105,7 @@ Quote!
 
         # Initialize WholeFileCoder with the temporary directory
         io = InputOutput(yes=True)
-        coder = WholeFileCoder(None, main_model=models.GPT35, io=io, fnames=[sample_file])
+        coder = WholeFileCoder(main_model=self.GPT35, io=io, fnames=[sample_file])
 
         coder.choose_fence()
 
@@ -139,7 +135,7 @@ Quote!
 
         # Initialize WholeFileCoder with the temporary directory
         io = InputOutput(yes=True)
-        coder = WholeFileCoder(None, main_model=models.GPT35, io=io, fnames=[sample_file])
+        coder = WholeFileCoder(main_model=self.GPT35, io=io, fnames=[sample_file])
 
         # Set the partial response content with the updated content
         # With path/to/ prepended onto the filename
@@ -164,7 +160,7 @@ Quote!
 
         # Initialize WholeFileCoder with the temporary directory
         io = InputOutput(yes=True)
-        coder = WholeFileCoder(None, main_model=models.GPT35, io=io)
+        coder = WholeFileCoder(main_model=self.GPT35, io=io)
 
         # Set the partial response content with the updated content
         coder.partial_response_content = f"{sample_file}\n```\nUpdated content\n```"
@@ -192,7 +188,7 @@ Quote!
 
         # Initialize WholeFileCoder with the temporary directory
         io = InputOutput(yes=True)
-        coder = WholeFileCoder(None, main_model=models.GPT35, io=io, fnames=[sample_file])
+        coder = WholeFileCoder(main_model=self.GPT35, io=io, fnames=[sample_file])
 
         # Set the partial response content with the updated content
         coder.partial_response_content = (
@@ -235,7 +231,7 @@ after b
 """
         # Initialize WholeFileCoder with the temporary directory
         io = InputOutput(yes=True)
-        coder = WholeFileCoder(None, main_model=models.GPT35, io=io, fnames=[fname_a, fname_b])
+        coder = WholeFileCoder(main_model=self.GPT35, io=io, fnames=[fname_a, fname_b])
 
         # Set the partial response content with the updated content
         coder.partial_response_content = response
@@ -259,7 +255,7 @@ after b
 
         # Initialize WholeFileCoder with the temporary directory
         io = InputOutput(yes=True)
-        coder = WholeFileCoder(None, main_model=models.GPT35, io=io, fnames=[sample_file])
+        coder = WholeFileCoder(main_model=self.GPT35, io=io, fnames=[sample_file])
 
         # Set the partial response content with the updated content
         coder.partial_response_content = (
@@ -292,7 +288,7 @@ after b
         files = [file1]
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(models.GPT4, "whole", io=InputOutput(), fnames=files)
+        coder = Coder.create(self.GPT35, "whole", io=InputOutput(), fnames=files)
 
         # no trailing newline so the response content below doesn't add ANOTHER newline
         new_content = "new\ntwo\nthree"
