@@ -110,7 +110,11 @@ class Model:
 
     def __init__(self, model):
         self.name = model
-        self.info = litellm.get_model_info(model)
+
+        try:
+            self.info = litellm.get_model_info(model)
+        except Exception as err:
+            raise NoModelInfo(str(err))
 
         dump(model, self.info)
 
