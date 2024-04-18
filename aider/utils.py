@@ -104,14 +104,3 @@ def show_messages(messages, title=None, functions=None):
 
     if functions:
         dump(functions)
-
-
-# TODO: fix this
-def is_gpt4_with_openai_base_url(model_name):
-    """
-    Check if the model_name starts with 'gpt-4' and the client base URL includes 'api.openai.com'.
-
-    :param model_name: The name of the model to check.
-    :return: True if conditions are met, False otherwise.
-    """
-    return model_name.startswith("gpt-4")

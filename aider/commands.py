@@ -10,7 +10,7 @@ from prompt_toolkit.completion import Completion
 
 from aider import prompts, voice
 from aider.scrape import Scraper
-from aider.utils import is_gpt4_with_openai_base_url, is_image_file
+from aider.utils import is_image_file
 
 from .dump import dump  # noqa: F401
 
@@ -200,7 +200,7 @@ class Commands:
 
         # only switch to image model token count if gpt4 and openai and image in files
         image_in_chat = False
-        if is_gpt4_with_openai_base_url(self.coder.main_model.name, self.coder.client):
+        if self.coder.main_model.accepts_images:
             image_in_chat = any(
                 is_image_file(relative_fname)
                 for relative_fname in self.coder.get_inchat_relative_files()
@@ -378,9 +378,7 @@ class Commands:
             if abs_file_path in self.coder.abs_fnames:
                 self.io.tool_error(f"{matched_file} is already in the chat")
             else:
-                if is_image_file(matched_file) and not is_gpt4_with_openai_base_url(
-                    self.coder.main_model.name, self.coder.client
-                ):
+                if is_image_file(matched_file) and not self.coder.main_model.accepts_images:
                     self.io.tool_error(
                         f"Cannot add image file {matched_file} as the model does not support image"
                         " files"

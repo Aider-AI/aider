@@ -362,7 +362,7 @@ class Coder:
         return files_messages
 
     def get_images_message(self):
-        if not utils.is_gpt4_with_openai_base_url(self.main_model.name):
+        if not self.main_model.accepts_images:
             return None
 
         image_messages = []

@@ -10,7 +10,6 @@ import openai
 from openai import APIConnectionError, InternalServerError, RateLimitError
 
 from aider.dump import dump  # noqa: F401
-from aider.utils import is_gpt4_with_openai_base_url
 
 CACHE_PATH = "~/.aider.send.cache.v1"
 CACHE = None
@@ -39,17 +38,6 @@ def send_with_retries(model_name, messages, functions, stream):
     )
     if functions is not None:
         kwargs["functions"] = functions
-
-    # Check conditions to switch to gpt-4-vision-preview or strip out image_url messages
-    if is_gpt4_with_openai_base_url(model_name):
-        if any(
-            isinstance(msg.get("content"), list)
-            and any("image_url" in item for item in msg.get("content") if isinstance(item, dict))
-            for msg in messages
-        ):
-            kwargs["model"] = "gpt-4-vision-preview"
-            # gpt-4-vision is limited to max tokens of 4096
-            kwargs["max_tokens"] = 4096
 
     key = json.dumps(kwargs, sort_keys=True).encode()
 

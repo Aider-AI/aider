@@ -27,6 +27,7 @@ class ModelSettings:
     weak_model_name: str = "gpt-3.5-turbo-0125"
     use_repo_map: bool = False
     send_undo_reply: bool = False
+    accepts_images: bool = False
 
 
 # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
@@ -57,6 +58,14 @@ MODEL_SETTINGS = [
         "udiff",
         use_repo_map=True,
         send_undo_reply=True,
+        accepts_images=True,
+    ),
+    ModelSettings(
+        "gpt-4-turbo",
+        "udiff",
+        use_repo_map=True,
+        send_undo_reply=True,
+        accepts_images=True,
     ),
     ModelSettings(
         "gpt-4-0125-preview",
@@ -75,6 +84,7 @@ MODEL_SETTINGS = [
         "diff",
         use_repo_map=True,
         send_undo_reply=True,
+        accepts_images=True,
     ),
     ModelSettings(
         "gpt-4-0613",
