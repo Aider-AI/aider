@@ -1,5 +1,6 @@
 import json
 import math
+from dataclasses import dataclass, fields
 
 import litellm
 from PIL import Image
@@ -7,35 +8,146 @@ from PIL import Image
 from aider.dump import dump
 
 
+@dataclass
+class ModelSettings:
+    name: str
+    edit_format: str
+    weak_model_name: str = "gpt-3.5-turbo-0125"
+    use_repo_map: bool = False
+    send_undo_reply: bool = False
+
+
+# https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
+# https://platform.openai.com/docs/models/gpt-3-5-turbo
+# https://openai.com/pricing
+
+MODEL_SETTINGS = [
+    # gpt-3.5
+    ModelSettings(
+        "gpt-3.5-turbo-0125",
+        "whole",
+    ),
+    ModelSettings(
+        "gpt-3.5-turbo-1106",
+        "whole",
+    ),
+    ModelSettings(
+        "gpt-3.5-turbo-0613",
+        "whole",
+    ),
+    ModelSettings(
+        "gpt-3.5-turbo-16k-0613",
+        "whole",
+    ),
+    # gpt-4
+    ModelSettings(
+        "gpt-4-turbo-2024-04-09",
+        "udiff",
+        use_repo_map=True,
+        send_undo_reply=True,
+    ),
+    ModelSettings(
+        "gpt-4-0125-preview",
+        "udiff",
+        use_repo_map=True,
+        send_undo_reply=True,
+    ),
+    ModelSettings(
+        "gpt-4-1106-preview",
+        "udiff",
+        use_repo_map=True,
+        send_undo_reply=True,
+    ),
+    ModelSettings(
+        "gpt-4-vision-preview",
+        "diff",
+        use_repo_map=True,
+        send_undo_reply=True,
+    ),
+    ModelSettings(
+        "gpt-4-0613",
+        "diff",
+        use_repo_map=True,
+        send_undo_reply=True,
+    ),
+    ModelSettings(
+        "gpt-4-32k-0613",
+        "diff",
+        use_repo_map=True,
+        send_undo_reply=True,
+    ),
+    # Claude
+    ModelSettings(
+        "claude-3-opus-20240229",
+        "udiff",
+        weak_model_name="claude-3-haiku-20240307",
+        use_repo_map=True,
+        send_undo_reply=True,
+    ),
+]
+
+ALIASES = {
+    # gpt-3.5
+    "gpt-3.5-turbo": "gpt-3.5-turbo-0613",
+    "gpt-3.5-turbo-16k": "gpt-3.5-turbo-16k-0613",
+    # gpt-4
+    "gpt-4-turbo": "gpt-4-turbo-2024-04-09",
+    "gpt-4-turbo-preview": "gpt-4-0125-preview",
+    "gpt-4": "gpt-4-0613",
+    "gpt-4-32k": "gpt-4-32k-0613",
+}
+
+
 class Model:
     name = None
-    edit_format = "whole"
 
+    weak_model_name = "gpt-3.5-turbo-0125"
+    edit_format = "whole"
     use_repo_map = False
     send_undo_reply = False
+
     max_chat_history_tokens = 1024
 
     def __init__(self, model):
         self.name = model
         self.info = litellm.get_model_info(model)
-        dump(self.info)
+
+        dump(model, self.info)
 
         if self.info.get("max_input_tokens", 0) < 32 * 1024:
             self.max_chat_history_tokens = 1024
         else:
             self.max_chat_history_tokens = 2 * 1024
 
-        # TODO: set edit_format,use_repo_map,send_undo_reply for various models
+        self.configure_model_settings(model)
+
+    def configure_model_settings(self, model):
+        for ms in MODEL_SETTINGS:
+            # direct match, or match "provider/<model>"
+            if model == ms.name or model.endswith("/" + ms.name):
+                for field in fields(ModelSettings):
+                    val = getattr(ms, field.name)
+                    setattr(self, field.name, val)
+
+                return  # <--
+
+        if "gpt-4" in model or "claude-2" in model:
+            self.edit_format = "diff"
+            self.use_repo_map = True
+            self.send_undo_reply = True
+
+            return  # <--
+
+        # use the defaults
 
     def __str__(self):
         return self.name
 
     def weak_model(self):
-        model = "gpt-3.5-turbo-0125"
-        if self.name == model:
+        if self.name == self.weak_model_name:
             return self
 
-        return Model(model)
+        return Model(self.weak_model_name)
 
     def commit_message_models(self):
         return [self.weak_model()]

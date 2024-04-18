@@ -570,6 +570,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
 
     res = litellm.validate_environment(args.model)
 
+    # Is the model known and are all needed keys/params available?
     missing_keys = res.get("missing_keys")
     if missing_keys:
         io.tool_error(f"To use model {args.model}, please set these environment variables:")
@@ -578,6 +579,14 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         return 1
     elif not res["keys_in_environment"]:
         io.tool_error(f"Unknown model {args.model}.")
+        return 1
+
+    # Check in advance that we have model metadata
+    try:
+        litellm.get_model_info(args.model)
+    except Exception as err:
+        io.tool_error(f"Unknown model {args.model}.")
+        io.tool_error(str(err))
         return 1
 
     main_model = models.Model(args.model)
