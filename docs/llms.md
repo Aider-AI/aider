@@ -6,11 +6,11 @@ Anthropic's Claude 3 Opus and Sonnet.
 
 GPT-4 Turbo and Claude 3 Opus are recommended for the best results.
 
-Aider also has support for connecting to almost any LLM, but it may not work as well
-depending on the capabilities of the model.
-For context, GPT-3.5 is just barely capable of *editing code* to provide aider's
+Aider also supports connecting to almost any LLM,
+but it may not work well with some models depending on their capabilities.
+For example, GPT-3.5 is just barely capable of reliably *editing code* to provide aider's
 interactive "pair programming" style workflow.
-Models that are less capable than GPT-3.5 may struggle to perform well with aider.
+So you should expect that models which are less capable than GPT-3.5 may struggle to perform well with aider.
 
 - [OpenAI](#openai)
 - [Anthropic](#anthropic)
@@ -29,9 +29,9 @@ via the `--openai-api-key` command line switch.
 Aider has some built in shortcuts for the most popular OpenAI models and
 has been tested and benchmarked to work well with them:
 
-- GPT-4 Turbo: running `aider` with no arguments uses GPT-4 Turbo by default.
-- GPT-4 Turbo with Vision: run `aider --4-turbo-vision` to use this vision capable model, allowing you to share images with GPT by adding them to the chat with `/add` or by naming them on the command line.
-- GPT-3.5 Turbo: Run `aider --35-turbo`.
+- **GPT-4 Turbo**: running `aider` with no arguments uses GPT-4 Turbo by default.
+- **GPT-4 Turbo with Vision**: run `aider --4-turbo-vision` to use this vision capable model, allowing you to share images with GPT by adding them to the chat with `/add` or by naming them on the command line.
+- **GPT-3.5 Turbo**: `aider --35-turbo`.
 
 You can use `aider --model <model-name>` to use any other OpenAI model.
 For example, if you want to use a specific version of GPT-4 Turbo
@@ -47,8 +47,8 @@ via the `--anthropic-api-key` command line switch.
 Aider has some built in shortcuts for the most popular Anthropic models and
 has been tested and benchmarked to work well with them:
 
-- Claude 3 Opus: `aider --opus`
-- Claude 3 Sonnet: `aider --sonnet`
+- **Claude 3 Opus**: `aider --opus`
+- **Claude 3 Sonnet**: `aider --sonnet`
 
 You can use `aider --model <model-name>` to use any other Anthropic model.
 For example, if you want to use a specific version of Opus
@@ -57,36 +57,22 @@ you could do `aider --model claude-3-opus-20240229`.
 ## Azure
 
 Aider can be configured to connect to the OpenAI models on Azure.
-You can run aider with the following arguments to connect to Azure:
+Run aider with the following arguments to connect to Azure:
 
 ```
-$ aider \
-    --openai-api-type azure \
-    --openai-api-key your-key-goes-here \
-    --openai-api-base https://example-endpoint.openai.azure.com \
-    --openai-api-version 2023-05-15 \
-    --openai-api-deployment-id deployment-name \
-    ...
+--model azure/<your_deployment_name>
+--openai-api-key your-key-goes-here 
+--openai-api-base https://example-endpoint.openai.azure.com 
+--openai-api-version 2023-05-15 
 ```
 
-You could also store those values in an `.aider.conf.yml` file in your home directory:
+Or you can run `aider --model azure/<your_deployment_name>` and
+populate the following environment variables instead:
 
 ```
-openai-api-type: azure
-openai-api-key: your-key-goes-here
-openai-api-base: https://example-endpoint.openai.azure.com
-openai-api-version: 2023-05-15
-openai-api-deployment-id: deployment-name
-```
-
-Or you can populate the following environment variables instead:
-
-```
-OPENAI_API_TYPE=azure
 OPENAI_API_KEY=your-key-goes-here
 OPENAI_API_BASE=https://example-endpoint.openai.azure.com
 OPENAI_API_VERSION=2023-05-15
-OPENAI_API_DEPLOYMENT_ID=deployment-name
 ```
 
 See the
@@ -95,7 +81,7 @@ for more information on how to populate the above configuration values.
 
 ## OpenAI compatible APIs
 
-If you can make an LLM accessible via an OpenAI compatible API endpoint,
+If your LLM is accessible via an OpenAI compatible API endpoint,
 you can use `--openai-api-base` to have aider connect to it.
 
 You might need to use `--no-require-model-info` if aider doesn't
