@@ -170,6 +170,14 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         default=default_model,
         help=f"Specify the model to use for the main chat (default: {default_model})",
     )
+    opus_model = "claude-3-opus-20240229"
+    core_group.add_argument(
+        "--opus",
+        action="store_const",
+        dest="model",
+        const=opus_model,
+        help=f"Use {opus_model} model for the main chat",
+    )
     default_4_model = "gpt-4-0613"
     core_group.add_argument(
         "--4",
@@ -237,13 +245,6 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         metavar="OPENAI_ORGANIZATION_ID",
         env_var="OPENAI_ORGANIZATION_ID",
         help="Specify the OpenAI organization ID",
-    )
-    model_group.add_argument(
-        "--openrouter",
-        dest="openai_api_base",
-        action="store_const",
-        const="https://openrouter.ai/api/v1",
-        help="Specify the api base url as https://openrouter.ai/api/v1",
     )
     model_group.add_argument(
         "--edit-format",

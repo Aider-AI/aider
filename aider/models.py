@@ -101,7 +101,7 @@ MODEL_SETTINGS = [
     # Claude
     ModelSettings(
         "claude-3-opus-20240229",
-        "udiff",
+        "diff",
         weak_model_name="claude-3-haiku-20240307",
         use_repo_map=True,
         send_undo_reply=True,
