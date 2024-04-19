@@ -1,5 +1,4 @@
 import argparse
-import json
 
 from aider import models, prompts
 from aider.dump import dump  # noqa: F401
@@ -7,9 +6,8 @@ from aider.sendchat import simple_send_with_retries
 
 
 class ChatSummary:
-    def __init__(self, client, model=models.Model.weak_model(), max_tokens=1024):
-        self.client = client
-        self.tokenizer = model.tokenizer
+    def __init__(self, model=None, max_tokens=1024):
+        self.token_count = model.token_count
         self.max_tokens = max_tokens
         self.model = model
 
@@ -21,7 +19,7 @@ class ChatSummary:
     def tokenize(self, messages):
         sized = []
         for msg in messages:
-            tokens = len(self.tokenizer.encode(json.dumps(msg)))
+            tokens = self.token_count(msg)
             sized.append((tokens, msg))
         return sized
 
@@ -61,7 +59,7 @@ class ChatSummary:
         summary = self.summarize_all(head)
 
         tail_tokens = sum(tokens for tokens, msg in sized[split_index:])
-        summary_tokens = len(self.tokenizer.encode(json.dumps(summary)))
+        summary_tokens = self.token_count(summary)
 
         result = summary + tail
         if summary_tokens + tail_tokens < self.max_tokens:
@@ -85,7 +83,7 @@ class ChatSummary:
             dict(role="user", content=content),
         ]
 
-        summary = simple_send_with_retries(self.client, self.model.name, messages)
+        summary = simple_send_with_retries(self.model.name, messages)
         if summary is None:
             raise ValueError(f"summarizer unexpectedly failed for {self.model.name}")
         summary = prompts.summary_prefix + summary
@@ -125,7 +123,7 @@ def main():
 
         assistant.append(line)
 
-    summarizer = ChatSummary(models.Model.weak_model())
+    summarizer = ChatSummary(models.Model(models.DEFAULT_WEAK_MODEL_NAME, weak_model=False))
     summary = summarizer.summarize(messages[-40:])
     dump(summary)
 

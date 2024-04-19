@@ -1,14 +1,16 @@
+import os
 import re
 import subprocess
 import sys
 from pathlib import Path
 
 import git
+import openai
 from prompt_toolkit.completion import Completion
 
 from aider import prompts, voice
 from aider.scrape import Scraper
-from aider.utils import is_gpt4_with_openai_base_url, is_image_file
+from aider.utils import is_image_file
 
 from .dump import dump  # noqa: F401
 
@@ -25,7 +27,6 @@ class Commands:
             voice_language = None
 
         self.voice_language = voice_language
-        self.tokenizer = coder.main_model.tokenizer
 
     def cmd_web(self, args):
         "Use headless selenium to scrape a webpage and add the content to the chat"
@@ -176,7 +177,7 @@ class Commands:
         self.io.tool_output()
 
         width = 8
-        cost_width = 7
+        cost_width = 9
 
         def fmt(v):
             return format(int(v), ",").rjust(width)
@@ -188,22 +189,17 @@ class Commands:
         total_cost = 0.0
         for tk, msg, tip in res:
             total += tk
-            cost = tk * (self.coder.main_model.prompt_price / 1000)
+            cost = tk * self.coder.main_model.info.get("input_cost_per_token", 0)
             total_cost += cost
             msg = msg.ljust(col_width)
-            self.io.tool_output(f"${cost:5.2f} {fmt(tk)} {msg} {tip}")
+            self.io.tool_output(f"${cost:7.4f} {fmt(tk)} {msg} {tip}")
 
         self.io.tool_output("=" * (width + cost_width + 1))
-        self.io.tool_output(f"${total_cost:5.2f} {fmt(total)} tokens total")
+        self.io.tool_output(f"${total_cost:7.4f} {fmt(total)} tokens total")
 
-        # only switch to image model token count if gpt4 and openai and image in files
-        image_in_chat = False
-        if is_gpt4_with_openai_base_url(self.coder.main_model.name, self.coder.client):
-            image_in_chat = any(
-                is_image_file(relative_fname)
-                for relative_fname in self.coder.get_inchat_relative_files()
-            )
-        limit = 128000 if image_in_chat else self.coder.main_model.max_context_tokens
+        limit = self.coder.main_model.info.get("max_input_tokens", 0)
+        if not limit:
+            return
 
         remaining = limit - total
         if remaining > 1024:
@@ -214,7 +210,10 @@ class Commands:
                 " /clear to make space)"
             )
         else:
-            self.io.tool_error(f"{cost_pad}{fmt(remaining)} tokens remaining, window exhausted!")
+            self.io.tool_error(
+                f"{cost_pad}{fmt(remaining)} tokens remaining, window exhausted (use /drop or"
+                " /clear to make space)"
+            )
         self.io.tool_output(f"{cost_pad}{fmt(limit)} tokens max context window size")
 
     def cmd_undo(self, args):
@@ -376,12 +375,11 @@ class Commands:
             if abs_file_path in self.coder.abs_fnames:
                 self.io.tool_error(f"{matched_file} is already in the chat")
             else:
-                if is_image_file(matched_file) and not is_gpt4_with_openai_base_url(
-                    self.coder.main_model.name, self.coder.client
-                ):
+                if is_image_file(matched_file) and not self.coder.main_model.accepts_images:
                     self.io.tool_error(
-                        f"Cannot add image file {matched_file} as the model does not support image"
-                        " files"
+                        f"Cannot add image file {matched_file} as the"
+                        f" {self.coder.main_model.name} does not support image.\nYou can run `aider"
+                        " --4turbo` to use GPT-4 Turbo with Vision."
                     )
                     continue
                 content = self.io.read_text(abs_file_path)
@@ -547,8 +545,11 @@ class Commands:
         "Record and transcribe voice input"
 
         if not self.voice:
+            if "OPENAI_API_KEY" not in os.environ:
+                self.io.tool_error("To use /voice you must provide an OpenAI API key.")
+                return
             try:
-                self.voice = voice.Voice(self.coder.client)
+                self.voice = voice.Voice()
             except voice.SoundDeviceError:
                 self.io.tool_error(
                     "Unable to import `sounddevice` and/or `soundfile`, is portaudio installed?"
@@ -572,7 +573,12 @@ class Commands:
         history.reverse()
         history = "\n".join(history)
 
-        text = self.voice.record_and_transcribe(history, language=self.voice_language)
+        try:
+            text = self.voice.record_and_transcribe(history, language=self.voice_language)
+        except openai.OpenAIError as err:
+            self.io.tool_error(f"Unable to use OpenAI whisper model: {err}")
+            return
+
         if text:
             self.io.add_to_input_history(text)
             print()

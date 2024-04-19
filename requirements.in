@@ -12,7 +12,7 @@ numpy
 scipy
 backoff
 pathspec
-networkx
+networkx<3.3 # 3.3 no longer works on python 3.9
 diskcache
 grep_ast
 packaging
@@ -24,3 +24,4 @@ Pillow
 diff-match-patch
 playwright
 pypandoc
+litellm

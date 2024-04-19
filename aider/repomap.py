@@ -2,22 +2,24 @@ import colorsys
 import os
 import random
 import sys
+import warnings
 from collections import Counter, defaultdict, namedtuple
+from importlib import resources
 from pathlib import Path
 
 import networkx as nx
-import pkg_resources
 from diskcache import Cache
 from grep_ast import TreeContext, filename_to_lang
 from pygments.lexers import guess_lexer_for_filename
 from pygments.token import Token
 from pygments.util import ClassNotFound
 from tqdm import tqdm
-from tree_sitter_languages import get_language, get_parser
 
-from aider import models
+# tree_sitter is throwing a FutureWarning
+warnings.simplefilter("ignore", category=FutureWarning)
+from tree_sitter_languages import get_language, get_parser  # noqa: E402
 
-from .dump import dump  # noqa: F402
+from aider.dump import dump  # noqa: F402,E402
 
 Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
 
@@ -34,7 +36,7 @@ class RepoMap:
         self,
         map_tokens=1024,
         root=None,
-        main_model=models.Model.strong_model(),
+        main_model=None,
         io=None,
         repo_content_prefix=None,
         verbose=False,
@@ -50,7 +52,7 @@ class RepoMap:
 
         self.max_map_tokens = map_tokens
 
-        self.tokenizer = main_model.tokenizer
+        self.token_count = main_model.token_count
         self.repo_content_prefix = repo_content_prefix
 
     def get_repo_map(self, chat_files, other_files):
@@ -86,9 +88,6 @@ class RepoMap:
         repo_content += files_listing
 
         return repo_content
-
-    def token_count(self, string):
-        return len(self.tokenizer.encode(string))
 
     def get_rel_fname(self, fname):
         return os.path.relpath(fname, self.root)
@@ -141,12 +140,12 @@ class RepoMap:
 
         # Load the tags queries
         try:
-            scm_fname = pkg_resources.resource_filename(
-                __name__, os.path.join("queries", f"tree-sitter-{lang}-tags.scm")
+            scm_fname = resources.files(__package__).joinpath(
+                "queries", f"tree-sitter-{lang}-tags.scm"
             )
         except KeyError:
             return
-        query_scm = Path(scm_fname)
+        query_scm = scm_fname
         if not query_scm.exists():
             return
         query_scm = query_scm.read_text()

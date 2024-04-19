@@ -2,9 +2,10 @@
 # Installing aider
 
 - [Install git](#install-git)
-- [Get your OpenAI API key](#get-your-openai-api-key)
+- [Get your API key](#get-your-api-key)
 - [Windows install](#windows-install)
 - [Mac/Linux install](#maclinux-install)
+- [Working with other LLMs](https://aider.chat/docs/llms.html)
 - [Tutorial videos](#tutorial-videos)
 
 ## Install git
@@ -13,11 +14,14 @@ Make sure you have git installed.
 Here are
 [instructions for installing git in various environments](https://github.com/git-guides/install-git).
 
-## Get your OpenAI API key
+## Get your API key
 
-You need a paid
+To work with OpenAI's GPT 3.5 or GPT-4 models you need a paid
 [OpenAI API key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key).
 Note that this is different than being a "ChatGPT Plus" subscriber.
+
+To work with Anthropic's models like Claude 3 Opus you need a paid
+[Anthropic API key](https://docs.anthropic.com/claude/reference/getting-started-with-the-api).
 
 ## Windows install
 
@@ -25,20 +29,32 @@ Note that this is different than being a "ChatGPT Plus" subscriber.
 # Install aider
 py -m pip install aider-chat
 
-# Launch aider
-aider --openai-api-key sk-xxxxxxxxxxxxxxx
+# To work with GPT-4 Turbo:
+$ aider --openai-api-key sk-xxx... --4turbo
+
+# To work with Claude 3 Opus:
+$ aider --anthropic-api-key sk-xxx... --opus
 ```
 
 ## Mac/Linux install
-
 
 ```
 # Install aider
 python -m pip install aider-chat
 
-# Launch aider
-aider --openai-api-key sk-xxxxxxxxxxxxxxx
+# To work with GPT-4 Turbo:
+$ aider --openai-api-key sk-xxx... --4turbo
+
+# To work with Claude 3 Opus:
+$ aider --anthropic-api-key sk-xxx... --opus
 ```
+
+## Working with other LLMs
+
+Aider works well with GPT 3.5, GPT-4, GPT-4 Turbo with Vision,
+and Claude 3 Opus.
+It also has support for [connecting to almost any LLM](https://aider.chat/docs/llms.html).
+
 
 ## Tutorial videos
 

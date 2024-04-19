@@ -1,17 +1,17 @@
-from collections import defaultdict
 import os
 import unittest
-from pathlib import Path
-import networkx as nx
 
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
+from aider.models import Model
 from aider.repomap import RepoMap
-from aider import models
 from aider.utils import IgnorantTemporaryDirectory
 
 
 class TestRepoMap(unittest.TestCase):
+    def setUp(self):
+        self.GPT35 = Model("gpt-3.5-turbo")
+
     def test_get_repo_map(self):
         # Create a temporary directory with sample files for testing
         test_files = [
@@ -27,7 +27,7 @@ class TestRepoMap(unittest.TestCase):
                     f.write("")
 
             io = InputOutput()
-            repo_map = RepoMap(root=temp_dir, io=io)
+            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
             other_files = [os.path.join(temp_dir, file) for file in test_files]
             result = repo_map.get_repo_map([], other_files)
 
@@ -75,7 +75,7 @@ print(my_function(3, 4))
                 f.write(file_content3)
 
             io = InputOutput()
-            repo_map = RepoMap(root=temp_dir, io=io)
+            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
             other_files = [
                 os.path.join(temp_dir, test_file1),
                 os.path.join(temp_dir, test_file2),
@@ -109,7 +109,7 @@ print(my_function(3, 4))
                 with open(os.path.join(temp_dir, file), "w") as f:
                     f.write("")
 
-            repo_map = RepoMap(root=temp_dir, io=InputOutput())
+            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=InputOutput())
 
             other_files = [os.path.join(temp_dir, file) for file in test_files]
             result = repo_map.get_repo_map([], other_files)
@@ -138,7 +138,7 @@ print(my_function(3, 4))
                     f.write("def foo(): pass\n")
 
             io = InputOutput()
-            repo_map = RepoMap(root=temp_dir, io=io)
+            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
             test_files = [os.path.join(temp_dir, file) for file in test_files]
             result = repo_map.get_repo_map(test_files[:2], test_files[2:])
 
@@ -155,6 +155,9 @@ print(my_function(3, 4))
 
 
 class TestRepoMapTypescript(unittest.TestCase):
+    def setUp(self):
+        self.GPT35 = Model("gpt-3.5-turbo")
+
     def test_get_repo_map_typescript(self):
         # Create a temporary directory with a sample TypeScript file
         test_file_ts = "test_file.ts"
@@ -193,7 +196,7 @@ export function myFunction(input: number): number {
                 f.write(file_content_ts)
 
             io = InputOutput()
-            repo_map = RepoMap(root=temp_dir, io=io)
+            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
             other_files = [os.path.join(temp_dir, test_file_ts)]
             result = repo_map.get_repo_map([], other_files)
 
@@ -208,6 +211,7 @@ export function myFunction(input: number): number {
 
             # close the open cache files, so Windows won't error
             del repo_map
+
 
 if __name__ == "__main__":
     unittest.main()

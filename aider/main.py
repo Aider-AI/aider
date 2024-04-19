@@ -6,7 +6,7 @@ from pathlib import Path
 
 import configargparse
 import git
-import openai
+import litellm
 
 from aider import __version__, models
 from aider.coders import Coder
@@ -15,6 +15,10 @@ from aider.repo import GitRepo
 from aider.versioncheck import check_version
 
 from .dump import dump  # noqa: F401
+
+litellm.suppress_debug_info = True
+os.environ["OR_SITE_URL"] = "http://aider.chat"
+os.environ["OR_APP_NAME"] = "Aider"
 
 
 def get_git_root():
@@ -159,6 +163,12 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         env_var="OPENAI_API_KEY",
         help="Specify the OpenAI API key",
     )
+    core_group.add_argument(
+        "--anthropic-api-key",
+        metavar="ANTHROPIC_API_KEY",
+        env_var="ANTHROPIC_API_KEY",
+        help="Specify the OpenAI API key",
+    )
     default_model = models.DEFAULT_MODEL_NAME
     core_group.add_argument(
         "--model",
@@ -166,31 +176,40 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         default=default_model,
         help=f"Specify the model to use for the main chat (default: {default_model})",
     )
+    opus_model = "claude-3-opus-20240229"
     core_group.add_argument(
-        "--skip-model-availability-check",
-        metavar="SKIP_MODEL_AVAILABILITY_CHECK",
-        default=False,
-        help="Override to skip model availability check (default: False)",
+        "--opus",
+        action="store_const",
+        dest="model",
+        const=opus_model,
+        help=f"Use {opus_model} model for the main chat",
     )
-    default_4_model = "gpt-4-0613"
+    sonnet_model = "claude-3-sonnet-20240229"
+    core_group.add_argument(
+        "--sonnet",
+        action="store_const",
+        dest="model",
+        const=sonnet_model,
+        help=f"Use {sonnet_model} model for the main chat",
+    )
+    gpt_4_model = "gpt-4-0613"
     core_group.add_argument(
         "--4",
         "-4",
         action="store_const",
         dest="model",
-        const=default_4_model,
-        help=f"Use {default_4_model} model for the main chat",
+        const=gpt_4_model,
+        help=f"Use {gpt_4_model} model for the main chat",
     )
-    default_4_turbo_model = "gpt-4-1106-preview"
+    gpt_4_turbo_model = "gpt-4-turbo"
     core_group.add_argument(
-        "--4turbo",
-        "--4-turbo",
+        "--4-turbo-vision",
         action="store_const",
         dest="model",
-        const=default_4_turbo_model,
-        help=f"Use {default_4_turbo_model} model for the main chat",
+        const=gpt_4_turbo_model,
+        help=f"Use {gpt_4_turbo_model} model for the main chat",
     )
-    default_3_model = models.GPT35_0125
+    gpt_3_model_name = "gpt-3.5-turbo"
     core_group.add_argument(
         "--35turbo",
         "--35-turbo",
@@ -198,8 +217,8 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         "-3",
         action="store_const",
         dest="model",
-        const=default_3_model.name,
-        help=f"Use {default_3_model.name} model for the main chat",
+        const=gpt_3_model_name,
+        help=f"Use {gpt_3_model_name} model for the main chat",
     )
     core_group.add_argument(
         "--voice-language",
@@ -241,17 +260,25 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         help="Specify the OpenAI organization ID",
     )
     model_group.add_argument(
-        "--openrouter",
-        dest="openai_api_base",
-        action="store_const",
-        const="https://openrouter.ai/api/v1",
-        help="Specify the api base url as https://openrouter.ai/api/v1",
-    )
-    model_group.add_argument(
         "--edit-format",
         metavar="EDIT_FORMAT",
         default=None,
         help="Specify what edit format GPT should use (default depends on model)",
+    )
+    core_group.add_argument(
+        "--weak-model",
+        metavar="WEAK_MODEL",
+        default=None,
+        help=(
+            "Specify the model to use for commit messages and chat history summarization (default"
+            " depends on --model)"
+        ),
+    )
+    model_group.add_argument(
+        "--require-model-info",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Only work with models that have meta-data available (default: True)",
     )
     model_group.add_argument(
         "--map-tokens",
@@ -545,7 +572,9 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     def scrub_sensitive_info(text):
         # Replace sensitive information with placeholder
         if text and args.openai_api_key:
-            return text.replace(args.openai_api_key, "***")
+            text = text.replace(args.openai_api_key, "***")
+        if text and args.anthropic_api_key:
+            text = text.replace(args.anthropic_api_key, "***")
         return text
 
     if args.verbose:
@@ -559,47 +588,46 @@ def main(argv=None, input=None, output=None, force_git_root=None):
 
     io.tool_output(*map(scrub_sensitive_info, sys.argv), log_only=True)
 
-    if not args.openai_api_key:
-        if os.name == "nt":
-            io.tool_error(
-                "No OpenAI API key provided. Use --openai-api-key or setx OPENAI_API_KEY."
-            )
-        else:
-            io.tool_error(
-                "No OpenAI API key provided. Use --openai-api-key or export OPENAI_API_KEY."
-            )
+    if args.anthropic_api_key:
+        os.environ["ANTHROPIC_API_KEY"] = args.anthropic_api_key
+
+    if args.openai_api_key:
+        os.environ["OPENAI_API_KEY"] = args.openai_api_key
+    if args.openai_api_base:
+        os.environ["OPENAI_API_BASE"] = args.openai_api_base
+    if args.openai_api_version:
+        os.environ["AZURE_API_VERSION"] = args.openai_api_version
+    if args.openai_api_type:
+        os.environ["AZURE_API_TYPE"] = args.openai_api_type
+    if args.openai_organization_id:
+        os.environ["OPENAI_ORGANIZATION"] = args.openai_organization_id
+
+    # Is the model known and are all needed keys/params available?
+    res = litellm.validate_environment(args.model)
+    missing_keys = res.get("missing_keys")
+    if missing_keys:
+        io.tool_error(f"To use model {args.model}, please set these environment variables:")
+        for key in missing_keys:
+            io.tool_error(f"- {key}")
+        return 1
+    elif not res["keys_in_environment"] and args.require_model_info:
+        io.tool_error(models.check_model_name(args.model))
         return 1
 
-    if args.openai_api_type == "azure":
-        client = openai.AzureOpenAI(
-            api_key=args.openai_api_key,
-            azure_endpoint=args.openai_api_base,
-            api_version=args.openai_api_version,
-            azure_deployment=args.openai_api_deployment_id,
+    # Check in advance that we have model metadata
+    try:
+        main_model = models.Model(
+            args.model, weak_model=args.weak_model, require_model_info=args.require_model_info
         )
-    else:
-        kwargs = dict()
-        if args.openai_api_base:
-            kwargs["base_url"] = args.openai_api_base
-            if "openrouter.ai" in args.openai_api_base:
-                kwargs["default_headers"] = {
-                    "HTTP-Referer": "http://aider.chat",
-                    "X-Title": "Aider",
-                }
-        if args.openai_organization_id:
-            kwargs["organization"] = args.openai_organization_id
-
-        client = openai.OpenAI(api_key=args.openai_api_key, **kwargs)
-
-    main_model = models.Model.create(args.model, client)
+    except models.NoModelInfo as err:
+        io.tool_error(str(err))
+        return 1
 
     try:
         coder = Coder.create(
             main_model=main_model,
             edit_format=args.edit_format,
             io=io,
-            skip_model_availabily_check=args.skip_model_availability_check,
-            client=client,
             ##
             fnames=fnames,
             git_dname=git_dname,

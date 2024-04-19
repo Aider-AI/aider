@@ -3,6 +3,7 @@ import queue
 import tempfile
 import time
 
+import litellm
 import numpy as np
 
 try:
@@ -26,7 +27,7 @@ class Voice:
 
     threshold = 0.15
 
-    def __init__(self, client):
+    def __init__(self):
         if sf is None:
             raise SoundDeviceError
         try:
@@ -36,8 +37,6 @@ class Voice:
             self.sd = sd
         except (OSError, ModuleNotFoundError):
             raise SoundDeviceError
-
-        self.client = client
 
     def callback(self, indata, frames, time, status):
         """This is called (from a separate thread) for each audio block."""
@@ -89,7 +88,7 @@ class Voice:
                 file.write(self.q.get())
 
         with open(filename, "rb") as fh:
-            transcript = self.client.audio.transcriptions.create(
+            transcript = litellm.transcription(
                 model="whisper-1", file=fh, prompt=history, language=language
             )
 

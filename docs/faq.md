@@ -2,15 +2,13 @@
 # Frequently asked questions
 
 - [How does aider use git?](#how-does-aider-use-git)
-- [GPT-4 vs GPT-3.5](#gpt-4-vs-gpt-35)
-- [Can I use aider with other LLMs, local LLMs, etc?](#can-i-use-aider-with-other-llms-local-llms-etc)
-- [Accessing other LLMs with OpenRouter](#accessing-other-llms-with-openrouter)
-- [Aider isn't editing my files?](#aider-isnt-editing-my-files)
+- [Can I use aider with other LLMs, local LLMs, etc?](https://aider.chat/docs/llms.html)
 - [Can I run aider in Google Colab?](#can-i-run-aider-in-google-colab)
 - [How can I run aider locally from source code?](#how-can-i-run-aider-locally-from-source-code)
 - [Can I script aider?](#can-i-script-aider)
 - [What code languages does aider support?](#what-code-languages-does-aider-support)
 - [How to use pipx to avoid python package conflicts?](#how-to-use-pipx-to-avoid-python-package-conflicts)
+- [Aider isn't editing my files?](#aider-isnt-editing-my-files)
 - [How can I add ALL the files to the chat?](#how-can-i-add-all-the-files-to-the-chat)
 - [Can I specify guidelines or conventions?](#can-i-specify-guidelines-or-conventions)
 - [Can I change the system prompts that aider uses?](#can-i-change-the-system-prompts-that-aider-uses)
@@ -39,145 +37,6 @@ While it is not recommended, you can disable aider's use of git in a few ways:
   - `--no-auto-commits` will stop aider from git committing each of GPT's changes.
   - `--no-dirty-commits` will stop aider from committing dirty files before applying GPT's edits.
   - `--no-git` will completely stop aider from using git on your files. You should ensure you are keeping sensible backups of the files you are working with.
-
-## GPT-4 vs GPT-3.5
-
-Aider supports all of OpenAI's chat models,
-and uses GPT-4 Turbo by default.
-It has a large context window, good coding skills and
-generally obeys the instructions in the system prompt.
-
-You can choose another model with the `--model` command line argument
-or one of these shortcuts:
-
-```
-aider -4 # to use gpt-4-0613
-aider -3 # to use gpt-3.5-turbo-0125
-```
-
-The older `gpt-4-0613` model is a great choice if GPT-4 Turbo is having
-trouble with your coding task, although it has a smaller context window
-which can be a real limitation.
-
-All the GPT-4 models are able to structure code edits as "diffs"
-and use a
-[repository map](https://aider.chat/docs/repomap.html)
-to improve its ability to make changes in larger codebases.
-
-GPT-3.5 is
-limited to editing somewhat smaller codebases.
-It is less able to follow instructions and
-so can't reliably return code edits as "diffs".
-Aider disables the
-repository map
-when using GPT-3.5.
-
-For detailed quantitative comparisons of the various models, please see the
-[aider blog](https://aider.chat/blog/)
-which contains many benchmarking articles.
-
-## Can I use aider with other LLMs, local LLMs, etc?
-
-Aider provides experimental support for LLMs other than OpenAI's GPT-3.5 and GPT-4. The support is currently only experimental for two reasons:
-
-- GPT-3.5 is just barely capable of *editing code* to provide aider's interactive "pair programming" style workflow. None of the other models seem to be as capable as GPT-3.5 yet.
-- Just "hooking up" aider to a new model by connecting to its API is almost certainly not enough to get it working in a useful way. Getting aider working well with GPT-3.5 and GPT-4 was a significant undertaking, involving [specific code editing prompts and backends for each model and extensive benchmarking](https://aider.chat/docs/benchmarks.html). Officially supporting each new LLM will probably require a similar effort to tailor the prompts and editing backends.
-
-Numerous users have done experiments with numerous models. None of these experiments have yet identified other models that look like they are capable of working well with aider.
-
-Once we see signs that a *particular* model is capable of code editing, it would be reasonable for aider to attempt to officially support such a model. Until then, aider will simply maintain experimental support for using alternative models.
-
-There are ongoing discussions about [LLM integrations in the aider discord](https://discord.gg/yaUk7JqJ9G).
-
-Here are some [GitHub issues which may contain relevant information](https://github.com/paul-gauthier/aider/issues?q=is%3Aissue+%23172).
-
-### OpenAI API compatible LLMs
-
-If you can make the model accessible via an OpenAI compatible API,
-you can use `--openai-api-base` to connect to a different API endpoint.
-
-### Local LLMs
-
-[LiteLLM](https://github.com/BerriAI/litellm) and
-[LocalAI](https://github.com/go-skynet/LocalAI)
-are relevant tools to serve local models via an OpenAI compatible API.
-
-
-### Azure
-
-Aider can be configured to connect to the OpenAI models on Azure.
-Aider supports the configuration changes specified in the
-[official openai python library docs](https://github.com/openai/openai-python#microsoft-azure-endpoints).
-You should be able to run aider with the following arguments to connect to Azure:
-
-```
-$ aider \
-    --openai-api-type azure \
-    --openai-api-key your-key-goes-here \
-    --openai-api-base https://example-endpoint.openai.azure.com \
-    --openai-api-version 2023-05-15 \
-    --openai-api-deployment-id deployment-name \
-    ...
-```
-
-You could also store those values in an `.aider.conf.yml` file in your home directory:
-
-```
-openai-api-type: azure
-openai-api-key: your-key-goes-here
-openai-api-base: https://example-endpoint.openai.azure.com
-openai-api-version: 2023-05-15
-openai-api-deployment-id: deployment-name
-```
-
-See the
-[official Azure documentation on using OpenAI models](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/chatgpt-quickstart?tabs=command-line&pivots=programming-language-python)
-for more information on how to populate the above configuration values.
-
-
-## Accessing other LLMs with OpenRouter
-
-[OpenRouter](https://openrouter.ai) provide an interface to [many models](https://openrouter.ai/models) which are not widely accessible, in particular Claude 3 Opus.
-
-To access the OpenRouter models, simply:
-
-```
-# Install aider
-pip install aider-chat
-
-# Setup OpenRouter access
-export OPENAI_API_KEY=<your-openrouter-key>
-export OPENAI_API_BASE=https://openrouter.ai/api/v1
-
-# For example, run aider with Claude 3 Opus using the diff editing format
-aider --model anthropic/claude-3-opus --edit-format diff
-```
-
-
-## Aider isn't editing my files?
-
-Sometimes GPT will reply with some code changes that don't get applied to your local files.
-In these cases, aider might say something like "Failed to apply edit to *filename*".
-
-This usually happens because GPT is not specifying the edits
-to make in the format that aider expects.
-GPT-3.5 is especially prone to disobeying the system prompt instructions in this manner, but it also happens with GPT-4.
-
-Aider makes every effort to get GPT to conform, and works hard to deal with
-replies that are "almost" correctly formatted.
-If Aider detects an improperly formatted reply, it gives GPT feedback to try again.
-Also, before each release new versions of aider are
-[benchmarked](https://aider.chat/docs/benchmarks.html).
-This helps prevent regressions in the code editing
-performance of GPT that could have been inadvertantly
-introduced.
-
-But sometimes GPT just won't cooperate.
-In these cases, here are some things you might try:
-
-  - Try the older GPT-4 model `gpt-4-0613` not GPT-4 Turbo by running `aider --model gpt-4-0613`.
-  - Use `/drop` to remove files from the chat session which aren't needed for the task at hand. This will reduce distractions and may help GPT produce properly formatted edits.
-  - Use `/clear` to remove the conversation history, again to help GPT focus.
 
 
 ## Can I run aider in Google Colab?
@@ -352,6 +211,31 @@ Install [pipx](https://pipx.pypa.io/stable/) then just do:
 ```
 pipx install aider-chat
 ```
+
+## Aider isn't editing my files?
+
+Sometimes GPT will reply with some code changes that don't get applied to your local files.
+In these cases, aider might say something like "Failed to apply edit to *filename*".
+
+This usually happens because GPT is not specifying the edits
+to make in the format that aider expects.
+GPT-3.5 is especially prone to disobeying the system prompt instructions in this manner, but it also happens with GPT-4.
+
+Aider makes every effort to get GPT to conform, and works hard to deal with
+replies that are "almost" correctly formatted.
+If Aider detects an improperly formatted reply, it gives GPT feedback to try again.
+Also, before each release new versions of aider are
+[benchmarked](https://aider.chat/docs/benchmarks.html).
+This helps prevent regressions in the code editing
+performance of GPT that could have been inadvertantly
+introduced.
+
+But sometimes GPT just won't cooperate.
+In these cases, here are some things you might try:
+
+  - Try the older GPT-4 model `gpt-4-0613` not GPT-4 Turbo by running `aider --model gpt-4-0613`.
+  - Use `/drop` to remove files from the chat session which aren't needed for the task at hand. This will reduce distractions and may help GPT produce properly formatted edits.
+  - Use `/clear` to remove the conversation history, again to help GPT focus.
 
 ## How can I add ALL the files to the chat?
 

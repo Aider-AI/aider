@@ -42,7 +42,6 @@ def wrap_fence(name):
 
 
 class Coder:
-    client = None
     abs_fnames = None
     repo = None
     last_aider_commit_hash = None
@@ -62,39 +61,27 @@ class Coder:
         main_model=None,
         edit_format=None,
         io=None,
-        client=None,
-        skip_model_availabily_check=False,
         **kwargs,
     ):
         from . import EditBlockCoder, UnifiedDiffCoder, WholeFileCoder
 
         if not main_model:
-            main_model = models.Model.create(models.DEFAULT_MODEL_NAME)
-
-        if not skip_model_availabily_check and not main_model.always_available:
-            if not check_model_availability(io, client, main_model):
-                fallback_model = models.GPT35_0125
-                io.tool_error(
-                    f"API key does not support {main_model.name}, falling back to"
-                    f" {fallback_model.name}"
-                )
-                main_model = fallback_model
+            main_model = models.Model(models.DEFAULT_MODEL_NAME)
 
         if edit_format is None:
             edit_format = main_model.edit_format
 
         if edit_format == "diff":
-            return EditBlockCoder(client, main_model, io, **kwargs)
+            return EditBlockCoder(main_model, io, **kwargs)
         elif edit_format == "whole":
-            return WholeFileCoder(client, main_model, io, **kwargs)
+            return WholeFileCoder(main_model, io, **kwargs)
         elif edit_format == "udiff":
-            return UnifiedDiffCoder(client, main_model, io, **kwargs)
+            return UnifiedDiffCoder(main_model, io, **kwargs)
         else:
             raise ValueError(f"Unknown edit format {edit_format}")
 
     def __init__(
         self,
-        client,
         main_model,
         io,
         fnames=None,
@@ -113,8 +100,6 @@ class Coder:
         voice_language=None,
         aider_ignore_file=None,
     ):
-        self.client = client
-
         if not fnames:
             fnames = []
 
@@ -151,7 +136,11 @@ class Coder:
 
         self.main_model = main_model
 
-        self.io.tool_output(f"Model: {main_model.name} using {self.edit_format} edit format")
+        weak_model = main_model.weak_model
+        self.io.tool_output(
+            f"Models: {main_model.name} with {self.edit_format} edit format, weak model"
+            f" {weak_model.name}"
+        )
 
         self.show_diffs = show_diffs
 
@@ -160,7 +149,11 @@ class Coder:
         if use_git:
             try:
                 self.repo = GitRepo(
-                    self.io, fnames, git_dname, aider_ignore_file, client=self.client
+                    self.io,
+                    fnames,
+                    git_dname,
+                    aider_ignore_file,
+                    models=main_model.commit_message_models(),
                 )
                 self.root = self.repo.root
             except FileNotFoundError:
@@ -223,8 +216,7 @@ class Coder:
             self.io.tool_output(f"Added {fname} to the chat.")
 
         self.summarizer = ChatSummary(
-            self.client,
-            models.Model.weak_model(),
+            self.main_model.weak_model,
             self.main_model.max_chat_history_tokens,
         )
 
@@ -374,7 +366,7 @@ class Coder:
         return files_messages
 
     def get_images_message(self):
-        if not utils.is_gpt4_with_openai_base_url(self.main_model.name, self.client):
+        if not self.main_model.accepts_images:
             return None
 
         image_messages = []
@@ -518,7 +510,7 @@ class Coder:
         messages += self.cur_messages
 
         # Add the reminder prompt if we still have room to include it.
-        if total_tokens < self.main_model.max_context_tokens:
+        if total_tokens < self.main_model.info.get("max_input_tokens", 0):
             messages += reminder_message
 
         return messages
@@ -656,9 +648,7 @@ class Coder:
 
         interrupted = False
         try:
-            hash_object, completion = send_with_retries(
-                self.client, model, messages, functions, self.stream
-            )
+            hash_object, completion = send_with_retries(model, messages, functions, self.stream)
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
 
             if self.stream:
@@ -717,10 +707,10 @@ class Coder:
             completion_tokens = completion.usage.completion_tokens
 
             tokens = f"{prompt_tokens} prompt tokens, {completion_tokens} completion tokens"
-            if self.main_model.prompt_price:
-                cost = prompt_tokens * self.main_model.prompt_price / 1000
-                if self.main_model.completion_price:
-                    cost += completion_tokens * self.main_model.completion_price / 1000
+            if self.main_model.info.get("input_cost_per_token"):
+                cost = prompt_tokens * self.main_model.info.get("input_cost_per_token")
+                if self.main_model.info.get("output_cost_per_token"):
+                    cost += completion_tokens * self.main_model.info.get("output_cost_per_token")
                 tokens += f", ${cost:.6f} cost"
                 self.total_cost += cost
 
@@ -1052,21 +1042,3 @@ class Coder:
         # files changed, move cur messages back behind the files messages
         # self.move_back_cur_messages(self.gpt_prompts.files_content_local_edits)
         return True
-
-
-def check_model_availability(io, client, main_model):
-    try:
-        available_models = client.models.list()
-    except openai.NotFoundError:
-        # Azure sometimes returns 404?
-        # https://discord.com/channels/1131200896827654144/1182327371232186459
-        io.tool_error(f"Unable to list available models, proceeding with {main_model.name}")
-        return True
-
-    model_ids = sorted(model.id for model in available_models)
-    if main_model.name in model_ids:
-        return True
-
-    available_models = ", ".join(model_ids)
-    io.tool_error(f"API key supports: {available_models}")
-    return False
