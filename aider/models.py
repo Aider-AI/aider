@@ -234,5 +234,20 @@ class Model:
             return img.size
 
 
+import difflib
+
 def fuzzy_match_models(name):
     models = litellm.most_cost.keys()
+    
+    # Check for exact match first
+    if name in models:
+        return [name]
+    
+    # Check for models containing the name
+    matching_models = [model for model in models if name in model]
+    
+    # If no matches found, check for slight misspellings
+    if not matching_models:
+        matching_models = difflib.get_close_matches(name, models, n=3, cutoff=0.8)
+    
+    return matching_models
