@@ -5,7 +5,7 @@ import git
 import pathspec
 
 from aider import prompts, utils
-from aider.models import Model
+from aider.models import DEFAULT_WEAK_MODEL_NAME, Model
 from aider.sendchat import simple_send_with_retries
 
 from .dump import dump  # noqa: F401
@@ -22,7 +22,7 @@ class GitRepo:
         if models:
             self.models = models
         else:
-            self.models = [Model("gpt-3.5-turbo")]
+            self.models = [Model(DEFAULT_WEAK_MODEL_NAME)]
 
         if git_dname:
             check_fnames = [git_dname]

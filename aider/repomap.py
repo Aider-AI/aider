@@ -1,10 +1,10 @@
 import colorsys
-import importlib.resources as pkg_resources
 import os
 import random
 import sys
 import warnings
 from collections import Counter, defaultdict, namedtuple
+from importlib import resources
 from pathlib import Path
 
 import networkx as nx
@@ -140,7 +140,7 @@ class RepoMap:
 
         # Load the tags queries
         try:
-            scm_fname = pkg_resources.files(__package__).joinpath(
+            scm_fname = resources.files(__package__).joinpath(
                 "queries", f"tree-sitter-{lang}-tags.scm"
             )
         except KeyError:
