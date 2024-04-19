@@ -17,7 +17,6 @@ import git
 import lox
 import matplotlib.pyplot as plt
 import numpy as np
-import openai
 import pandas as pd
 import prompts
 import typer
@@ -956,22 +955,7 @@ def run_test(
         chat_history_file=history_fname,
     )
 
-    if "OPENAI_API_BASE" in os.environ and "openrouter.ai" in os.environ["OPENAI_API_BASE"]:
-        client = openai.OpenAI(
-            api_key=os.environ["OPENAI_API_KEY"],
-            base_url=os.environ.get("OPENAI_API_BASE"),
-            default_headers={
-                "HTTP-Referer": "http://aider.chat",
-                "X-Title": "Aider",
-            },
-        )
-    else:
-        client = openai.OpenAI(
-            api_key=os.environ["OPENAI_API_KEY"],
-            base_url=os.environ.get("OPENAI_API_BASE", "https://api.openai.com/v1"),
-        )
-
-    main_model = models.Model.create(model_name, client)
+    main_model = models.Model(model_name)
     edit_format = edit_format or main_model.edit_format
 
     dump(main_model)
@@ -983,7 +967,6 @@ def run_test(
         main_model,
         edit_format,
         io,
-        client=client,
         fnames=fnames,
         use_git=False,
         stream=False,
