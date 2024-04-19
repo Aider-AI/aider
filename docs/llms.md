@@ -12,6 +12,13 @@ For context, GPT-3.5 is just barely capable of *editing code* to provide aider's
 interactive "pair programming" style workflow.
 Models that are less capable than GPT-3.5 may struggle to perform well with aider.
 
+- [OpenAI](#openai)
+- [Anthropic](#anthropic)
+- [Azure](#azure)
+- [OpenAI compatible APIs](#openai-compatible-apis)
+- [Other LLMs](#other-llms)
+- [Editing format](#editing-format)
+
 ## OpenAI
 
 To work with OpenAI's models, you need to provide your
