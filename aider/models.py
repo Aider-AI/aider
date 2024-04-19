@@ -1,7 +1,7 @@
 import difflib
-import sys
 import json
 import math
+import sys
 from dataclasses import dataclass, fields
 
 import litellm
@@ -170,11 +170,6 @@ class Model:
             self.weak_model = self
             return
 
-        try:
-            self.info = litellm.get_model_info(self.weak_model_name)
-        except Exception:
-            raise NoModelInfo(self.weak_model_name)
-
         self.weak_model = Model(self.weak_model_name)
         return self.weak_model
 
@@ -242,11 +237,12 @@ def check_model_name(model):
     possible_matches = fuzzy_match_models(model)
 
     if possible_matches:
-        res += '\n\nDid you mean one of these:\n'
+        res += "\n\nDid you mean one of these:\n"
         for match in possible_matches:
-            res += '\n- ' + match
+            res += "\n- " + match
 
     return res
+
 
 def fuzzy_match_models(name):
     models = litellm.model_cost.keys()
@@ -279,6 +275,7 @@ def main():
             print(model)
     else:
         print(f"No matching models found for '{model_name}'.")
+
 
 if __name__ == "__main__":
     main()
