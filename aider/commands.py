@@ -27,7 +27,6 @@ class Commands:
             voice_language = None
 
         self.voice_language = voice_language
-        self.tokenizer = coder.main_model.tokenizer
 
     def cmd_web(self, args):
         "Use headless selenium to scrape a webpage and add the content to the chat"

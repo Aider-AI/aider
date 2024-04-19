@@ -52,7 +52,7 @@ class RepoMap:
 
         self.max_map_tokens = map_tokens
 
-        self.tokenizer = main_model.tokenizer
+        self.token_count = main_model.token_count
         self.repo_content_prefix = repo_content_prefix
 
     def get_repo_map(self, chat_files, other_files):
@@ -88,9 +88,6 @@ class RepoMap:
         repo_content += files_listing
 
         return repo_content
-
-    def token_count(self, string):
-        return len(self.tokenizer(string))
 
     def get_rel_fname(self, fname):
         return os.path.relpath(fname, self.root)

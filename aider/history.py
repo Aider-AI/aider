@@ -1,5 +1,4 @@
 import argparse
-import json
 
 from aider import models, prompts
 from aider.dump import dump  # noqa: F401
@@ -8,7 +7,7 @@ from aider.sendchat import simple_send_with_retries
 
 class ChatSummary:
     def __init__(self, model=None, max_tokens=1024):
-        self.tokenizer = model.tokenizer
+        self.token_count = model.token_count
         self.max_tokens = max_tokens
         self.model = model
 
@@ -20,7 +19,7 @@ class ChatSummary:
     def tokenize(self, messages):
         sized = []
         for msg in messages:
-            tokens = len(self.tokenizer(json.dumps(msg)))
+            tokens = self.token_count(msg)
             sized.append((tokens, msg))
         return sized
 
@@ -60,7 +59,7 @@ class ChatSummary:
         summary = self.summarize_all(head)
 
         tail_tokens = sum(tokens for tokens, msg in sized[split_index:])
-        summary_tokens = len(self.tokenizer(json.dumps(summary)))
+        summary_tokens = self.token_count(summary)
 
         result = summary + tail
         if summary_tokens + tail_tokens < self.max_tokens:
