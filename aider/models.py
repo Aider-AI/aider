@@ -232,3 +232,7 @@ class Model:
         """
         with Image.open(fname) as img:
             return img.size
+
+
+def fuzzy_match_models(name):
+    models = litellm.most_cost.keys()
