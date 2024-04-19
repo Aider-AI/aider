@@ -192,26 +192,24 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         const=sonnet_model,
         help=f"Use {sonnet_model} model for the main chat",
     )
-    default_4_model = "gpt-4-0613"
+    gpt_4_model = "gpt-4-0613"
     core_group.add_argument(
         "--4",
         "-4",
         action="store_const",
         dest="model",
-        const=default_4_model,
-        help=f"Use {default_4_model} model for the main chat",
+        const=gpt_4_model,
+        help=f"Use {gpt_4_model} model for the main chat",
     )
-    default_4_turbo_model = "gpt-4-turbo"
+    gpt_4_turbo_model = "gpt-4-turbo"
     core_group.add_argument(
-        "--4turbo",
-        "--4-turbo",
         "--4-turbo-vision",
         action="store_const",
         dest="model",
-        const=default_4_turbo_model,
-        help=f"Use {default_4_turbo_model} model for the main chat",
+        const=gpt_4_turbo_model,
+        help=f"Use {gpt_4_turbo_model} model for the main chat",
     )
-    default_3_model_name = "gpt-3.5-turbo"
+    gpt_3_model_name = "gpt-3.5-turbo"
     core_group.add_argument(
         "--35turbo",
         "--35-turbo",
@@ -219,8 +217,8 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         "-3",
         action="store_const",
         dest="model",
-        const=default_3_model_name,
-        help=f"Use {default_3_model_name} model for the main chat",
+        const=gpt_3_model_name,
+        help=f"Use {gpt_3_model_name} model for the main chat",
     )
     core_group.add_argument(
         "--voice-language",
