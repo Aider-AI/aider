@@ -587,14 +587,14 @@ def main(argv=None, input=None, output=None, force_git_root=None):
             io.tool_error(f"- {key}")
         return 1
     elif not res["keys_in_environment"]:
-        io.tool_error(f"Unknown model {args.model}.")
+        io.tool_error(models.check_model_name(args.model))
         return 1
 
     # Check in advance that we have model metadata
     try:
         main_model = models.Model(args.model, weak_model=args.weak_model)
     except models.NoModelInfo as err:
-        io.tool_error(f"Unknown model {err}.")
+        io.tool_error(str(err))
         return 1
 
     try:

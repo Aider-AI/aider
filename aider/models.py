@@ -1,3 +1,5 @@
+import difflib
+import sys
 import json
 import math
 from dataclasses import dataclass, fields
@@ -17,7 +19,7 @@ class NoModelInfo(Exception):
     """
 
     def __init__(self, model):
-        super().__init__(model)
+        super().__init__(check_model_name(model))
 
 
 @dataclass
@@ -234,24 +236,34 @@ class Model:
             return img.size
 
 
-import difflib
+def check_model_name(model):
+    res = f"Unknown model: {model}"
+
+    possible_matches = fuzzy_match_models(model)
+
+    if possible_matches:
+        res += '\n\nDid you mean one of these:\n'
+        for match in possible_matches:
+            res += '\n- ' + match
+
+    return res
 
 def fuzzy_match_models(name):
-    models = litellm.most_cost.keys()
-    
+    models = litellm.model_cost.keys()
+
     # Check for exact match first
     if name in models:
         return [name]
-    
+
     # Check for models containing the name
     matching_models = [model for model in models if name in model]
-    
+
     # If no matches found, check for slight misspellings
     if not matching_models:
         matching_models = difflib.get_close_matches(name, models, n=3, cutoff=0.8)
-    
+
     return matching_models
-import sys
+
 
 def main():
     if len(sys.argv) != 2:
