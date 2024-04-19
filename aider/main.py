@@ -277,6 +277,12 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         ),
     )
     model_group.add_argument(
+        "--require-model-info",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Only work with models that have meta-data available (default: True)",
+    )
+    model_group.add_argument(
         "--map-tokens",
         type=int,
         default=1024,
@@ -606,13 +612,15 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         for key in missing_keys:
             io.tool_error(f"- {key}")
         return 1
-    elif not res["keys_in_environment"]:
+    elif not res["keys_in_environment"] and args.require_model_info:
         io.tool_error(models.check_model_name(args.model))
         return 1
 
     # Check in advance that we have model metadata
     try:
-        main_model = models.Model(args.model, weak_model=args.weak_model)
+        main_model = models.Model(
+            args.model, weak_model=args.weak_model, require_model_info=args.require_model_info
+        )
     except models.NoModelInfo as err:
         io.tool_error(str(err))
         return 1

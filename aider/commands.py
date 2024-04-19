@@ -197,7 +197,10 @@ class Commands:
         self.io.tool_output("=" * (width + cost_width + 1))
         self.io.tool_output(f"${total_cost:7.4f} {fmt(total)} tokens total")
 
-        limit = self.coder.main_model.info.get("max_input_tokens")
+        limit = self.coder.main_model.info.get("max_input_tokens", 0)
+        if not limit:
+            return
+
         remaining = limit - total
         if remaining > 1024:
             self.io.tool_output(f"{cost_pad}{fmt(remaining)} tokens remaining in context window")
@@ -207,7 +210,10 @@ class Commands:
                 " /clear to make space)"
             )
         else:
-            self.io.tool_error(f"{cost_pad}{fmt(remaining)} tokens remaining, window exhausted!")
+            self.io.tool_error(
+                f"{cost_pad}{fmt(remaining)} tokens remaining, window exhausted (use /drop or"
+                " /clear to make space)"
+            )
         self.io.tool_output(f"{cost_pad}{fmt(limit)} tokens max context window size")
 
     def cmd_undo(self, args):

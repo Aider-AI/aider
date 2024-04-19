@@ -22,7 +22,13 @@ class GitRepo:
         if models:
             self.models = models
         else:
-            self.models = [Model(DEFAULT_WEAK_MODEL_NAME)]
+            self.models = [
+                Model(
+                    DEFAULT_WEAK_MODEL_NAME,
+                    weak_model=DEFAULT_WEAK_MODEL_NAME,
+                    require_model_info=False,
+                )
+            ]
 
         if git_dname:
             check_fnames = [git_dname]
