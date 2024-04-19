@@ -2,7 +2,7 @@
 # Frequently asked questions
 
 - [How does aider use git?](#how-does-aider-use-git)
-- [Can I use aider with other LLMs, local LLMs, etc?](https://aider.chat/docs/connect.html)
+- [Can I use aider with other LLMs, local LLMs, etc?](https://aider.chat/docs/llms.html)
 - [Can I run aider in Google Colab?](#can-i-run-aider-in-google-colab)
 - [How can I run aider locally from source code?](#how-can-i-run-aider-locally-from-source-code)
 - [Can I script aider?](#can-i-script-aider)

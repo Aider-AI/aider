@@ -5,7 +5,7 @@
 - [Get your API key](#get-your-api-key)
 - [Windows install](#windows-install)
 - [Mac/Linux install](#maclinux-install)
-- [Working with other LLMs](https://aider.chat/docs/connect.html)
+- [Working with other LLMs](https://aider.chat/docs/llms.html)
 - [Tutorial videos](#tutorial-videos)
 
 ## Install git
@@ -53,7 +53,7 @@ $ aider --anthropic-api-key sk-xxx... --opus
 
 Aider works well with GPT 3.5, GPT-4, GPT-4 Turbo with Vision,
 and Claude 3 Opus.
-It also has support for [connecting to almost any LLM](https://aider.chat/docs/connect.html).
+It also has support for [connecting to almost any LLM](https://aider.chat/docs/llms.html).
 
 
 ## Tutorial videos
