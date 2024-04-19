@@ -251,3 +251,22 @@ def fuzzy_match_models(name):
         matching_models = difflib.get_close_matches(name, models, n=3, cutoff=0.8)
     
     return matching_models
+import sys
+
+def main():
+    if len(sys.argv) != 2:
+        print("Usage: python models.py <model_name>")
+        sys.exit(1)
+
+    model_name = sys.argv[1]
+    matching_models = fuzzy_match_models(model_name)
+
+    if matching_models:
+        print(f"Matching models for '{model_name}':")
+        for model in matching_models:
+            print(model)
+    else:
+        print(f"No matching models found for '{model_name}'.")
+
+if __name__ == "__main__":
+    main()
