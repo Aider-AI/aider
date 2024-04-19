@@ -232,12 +232,12 @@ class Model:
 
 
 def check_model_name(model):
-    res = f"Unknown model: {model}"
+    res = f"Unknown model {model}"
 
     possible_matches = fuzzy_match_models(model)
 
     if possible_matches:
-        res += "\n\nDid you mean one of these:\n"
+        res += ", did you mean one of these?"
         for match in possible_matches:
             res += "\n- " + match
 

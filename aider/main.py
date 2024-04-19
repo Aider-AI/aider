@@ -205,6 +205,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     core_group.add_argument(
         "--4turbo",
         "--4-turbo",
+        "--4-turbo-vision",
         action="store_const",
         dest="model",
         const=default_4_turbo_model,

@@ -4,11 +4,13 @@
 Aider works well with OpenAI's GPT 3.5, GPT-4, GPT-4 Turbo with Vision and
 Anthropic's Claude 3 Opus and Sonnet.
 
+GPT-4 Turbo and Claude 3 Opus are recommended for the best results.
+
 Aider also has support for connecting to almost any LLM, but may not be as effective
-because of the reduced capabilities of such alternative models.
+depending on the capabilities of the model.
 For comparison, GPT-3.5 is just barely capable of *editing code* to provide aider's
 interactive "pair programming" style workflow.
-So models that are less capable than GPT-3.5 may struggle to perform well with aider.
+Models that are less capable than GPT-3.5 may struggle to perform well with aider.
 
 ## OpenAI
 
@@ -20,11 +22,13 @@ via the `--openai-api-key` command line switch.
 Aider has some built in shortcuts for the most popular OpenAI models and
 has been tested and benchmarked to work well with them:
 
-- OpenAI's GPT-4 Turbo: `aider` with no args uses GPT-4 Turbo by default.
-- OpenAI's GPT-4 Turbo with Vision: `aider --4turbo` will use this vision capable model, allowing you to share images with GPT by adding them to the chat with `/add` or by naming them on the command line.
-- OpenAI's GPT-3.5 Turbo: `aider --35turbo`
+- OpenAI's GPT-4 Turbo: run `aider` with no args uses GPT-4 Turbo by default.
+- OpenAI's GPT-4 Turbo with Vision: run `aider --4-turbo-vision` to use this vision capable model, allowing you to share images with GPT by adding them to the chat with `/add` or by naming them on the command line.
+- OpenAI's GPT-3.5 Turbo: Run `aider --35-turbo`.
 
 You can use `aider --model <model-name>` to use any other OpenAI model.
+For example, if you want to use a specific version of GPT-4 Turbo
+you could do `aider --model gpt-4-0125-preview`.
 
 ## Anthropic
 
@@ -40,6 +44,8 @@ has been tested and benchmarked to work well with them:
 - Anthropic's Claude 3 Sonnet: `aider --sonnet`
 
 You can use `aider --model <model-name>` to use any other Anthropic model.
+For example, if you want to use a specific version of Opus
+you could do `aider --model claude-3-opus-20240229`.
 
 ## Azure
 
@@ -88,33 +94,30 @@ you can use `--openai-api-base` to connect to a different API endpoint.
 ## Other LLMs
 
 Aider uses the [litellm](https://docs.litellm.ai/docs/providers) package
-to provide connections to hundreds of other models.
-You can use `aider --model <provider-name>/<model-name>` to use any supported model.
-
-Depending on which model you access, you may need to provide an API key
-or other configuration parameters by setting certain environment variables.
-If any required variables are not set, aider will print a brief
-error message listing which parameters are needed.
+to connect to hundreds of other models.
+You can use `aider --model <model-name>` to use any supported model.
 
 To explore the list of supported models you can run `aider --model <name>`.
 If it's not an exact match for a model, aider will
 return a list of possible matching models.
-For example `aider --model 3.5` will return the following list of models:
+For example:
 
+```
+$ aider --model turbo
+
+Unknown model turbo, did you mean one of these?
+- gpt-4-turbo-preview
+- gpt-4-turbo
+- gpt-4-turbo-2024-04-09
 - gpt-3.5-turbo
 - gpt-3.5-turbo-0301
-- gpt-3.5-turbo-0613
-- gpt-3.5-turbo-1106
-- gpt-3.5-turbo-0125
-- gpt-3.5-turbo-16k
-- gpt-3.5-turbo-16k-0613
-- ft:gpt-3.5-turbo
-- azure/gpt-3.5-turbo-instruct-0914
-- gpt-3.5-turbo-instruct
-- gpt-3.5-turbo-instruct-0914
-- openrouter/openai/gpt-3.5-turbo
-- openrouter/openai/gpt-3.5-turbo-16k
-- deepinfra/openchat/openchat_3.5
+...
+```
+
+Depending on which model you access, you may need to provide an API key
+or other configuration parameters by setting certain environment variables.
+If any required variables are not set, aider will print an
+error message listing which parameters are needed.
 
 Or, see the [list of providers supported by litellm](https://docs.litellm.ai/docs/providers)
 for more details.
