@@ -196,7 +196,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         const=default_4_turbo_model,
         help=f"Use {default_4_turbo_model} model for the main chat",
     )
-    default_3_model_name = "gpt-3.5-turbo-0125"
+    default_3_model_name = "gpt-3.5-turbo"
     core_group.add_argument(
         "--35turbo",
         "--35-turbo",
@@ -251,6 +251,15 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         metavar="EDIT_FORMAT",
         default=None,
         help="Specify what edit format GPT should use (default depends on model)",
+    )
+    core_group.add_argument(
+        "--weak-model",
+        metavar="WEAK_MODEL",
+        default=None,
+        help=(
+            "Specify the model to use for commit messages and chat history summarization (default"
+            " depends on --model)"
+        ),
     )
     model_group.add_argument(
         "--map-tokens",
@@ -583,10 +592,9 @@ def main(argv=None, input=None, output=None, force_git_root=None):
 
     # Check in advance that we have model metadata
     try:
-        main_model = models.Model(args.model)
+        main_model = models.Model(args.model, weak_model=args.weak_model)
     except models.NoModelInfo as err:
-        io.tool_error(f"Unknown model {args.model}.")
-        io.tool_error(str(err))
+        io.tool_error(f"Unknown model {err}.")
         return 1
 
     try:

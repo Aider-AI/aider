@@ -136,7 +136,11 @@ class Coder:
 
         self.main_model = main_model
 
-        self.io.tool_output(f"Model: {main_model.name} using {self.edit_format} edit format")
+        weak_model = main_model.weak_model
+        self.io.tool_output(
+            f"Models: {main_model.name} with {self.edit_format} edit format, weak model"
+            f" {weak_model.name}"
+        )
 
         self.show_diffs = show_diffs
 
@@ -212,7 +216,7 @@ class Coder:
             self.io.tool_output(f"Added {fname} to the chat.")
 
         self.summarizer = ChatSummary(
-            self.main_model.get_weak_model(),
+            self.main_model.weak_model,
             self.main_model.max_chat_history_tokens,
         )
 
