@@ -1,14 +1,14 @@
 
-# Connecting aider to LLMs
+# Aider can connect to most LLMs
 
 Aider works well with OpenAI's GPT 3.5, GPT-4, GPT-4 Turbo with Vision and
 Anthropic's Claude 3 Opus and Sonnet.
 
 GPT-4 Turbo and Claude 3 Opus are recommended for the best results.
 
-Aider also has support for connecting to almost any LLM, but may not be as effective
+Aider also has support for connecting to almost any LLM, but it may not work as well
 depending on the capabilities of the model.
-For comparison, GPT-3.5 is just barely capable of *editing code* to provide aider's
+For context, GPT-3.5 is just barely capable of *editing code* to provide aider's
 interactive "pair programming" style workflow.
 Models that are less capable than GPT-3.5 may struggle to perform well with aider.
 
@@ -88,12 +88,13 @@ for more information on how to populate the above configuration values.
 
 ## OpenAI compatible APIs
 
-If you can make an LLM accessible via an OpenAI compatible API,
-you can use `--openai-api-base` to connect to a different API endpoint.
+If you can make an LLM accessible via an OpenAI compatible API endpoint,
+you can use `--openai-api-base` to have aider connect to it.
 
-You might need to use `--no-require-model-info` to tell aider to
-work with an unknown model that has no metadata available like
-context size, token costs, etc.
+You might need to use `--no-require-model-info` if aider doesn't
+recognize the model you want to use.
+For unknown models, aider won't have normal metadata available like
+the context window size, token costs, etc.
 Some minor functionality will be limited when using such models.
 
 ## Other LLMs
@@ -103,7 +104,7 @@ to connect to hundreds of other models.
 You can use `aider --model <model-name>` to use any supported model.
 
 To explore the list of supported models you can run `aider --model <name>`.
-If it's not an exact match for a model, aider will
+If the supplied name is not an exact match for a known model, aider will
 return a list of possible matching models.
 For example:
 
@@ -120,10 +121,25 @@ Unknown model turbo, did you mean one of these?
 ```
 
 Depending on which model you access, you may need to provide an API key
-or other configuration parameters by setting certain environment variables.
+or other configuration parameters by setting environment variables.
 If any required variables are not set, aider will print an
 error message listing which parameters are needed.
 
-Or, see the [list of providers supported by litellm](https://docs.litellm.ai/docs/providers)
+See the [list of providers supported by litellm](https://docs.litellm.ai/docs/providers)
 for more details.
 
+
+## Editing format
+
+Aider uses 3 different "edit formats" to collect code edits from different LLMs:
+
+- `whole` is a "whole file" editing format, where the model edits a file by returning a full new copy of the file with any changes included.
+- `diff` is a more efficient diff style format, where the model specified blocks of code to search and replace in order to made changes to files.
+- `udiff` is the most efficient editing format, where the model returns unified diffs to apply changes to the file.
+
+Different models work best with different editing formats.
+Aider is configured to use the best edit format for all the popular OpenAI and Anthropic models.
+
+For lesser known models aider will default to using the "whole" editing format.
+If you would like to experiment with the more advanced formats, you can
+use these switches: `--edit-format diff` or `--edit-format udiff`.
