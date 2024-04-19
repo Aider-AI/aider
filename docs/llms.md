@@ -29,7 +29,7 @@ via the `--openai-api-key` command line switch.
 Aider has some built in shortcuts for the most popular OpenAI models and
 has been tested and benchmarked to work well with them:
 
-- GPT-4 Turbo: run `aider` with no args uses GPT-4 Turbo by default.
+- GPT-4 Turbo: running `aider` with no arguments uses GPT-4 Turbo by default.
 - GPT-4 Turbo with Vision: run `aider --4-turbo-vision` to use this vision capable model, allowing you to share images with GPT by adding them to the chat with `/add` or by naming them on the command line.
 - GPT-3.5 Turbo: Run `aider --35-turbo`.
 
