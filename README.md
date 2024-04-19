@@ -9,7 +9,7 @@ with sensible commit messages.
 You can start a new project or work with an existing git repo.
 Aider is unique in that it lets you ask for changes to [pre-existing, larger codebases](https://aider.chat/docs/repomap.html).
 Aider works well with GPT 3.5, GPT-4, GPT-4 Turbo with Vision,
-Claude 3 Opus and has support for connecting to almost any LLM.
+and Claude 3 Opus; it also has support for [connecting to almost any LLM](https://aider.chat/docs/connect.html).
 
 <p align="center">
   <img src="assets/screencast.svg" alt="aider screencast">
@@ -44,13 +44,14 @@ get started quickly like this:
 
 ```
 $ pip install aider-chat
+
+# To work with GPT-4 Turbo:
 $ export OPENAI_API_KEY=your-key-goes-here
-$ aider hello.js
+$ aider 
 
-Using git repo: .git
-Added hello.js to the chat.
-
-hello.js> write a js script that prints hello world
+# To work with Claude 3 Opus:
+$ export ANTHROPIC_API_KEY=your-key-goes-here
+$ aider --opus
 ```
 
 ## Example chat transcripts
@@ -72,6 +73,8 @@ You can find more chat transcripts on the [examples page](https://aider.chat/exa
 
 * Chat with aider about your code by launching `aider` from the command line with set of source files to discuss and edit together. Aider lets the LLM see and edit the content of those files.
 * Aider can write and edit code in most popular languages: python, javascript, typescript, php, html, css, etc.
+* Aider works well with GPT 3.5, GPT-4, GPT-4 Turbo with Vision,
+and Claude 3 Opus; it also has support for [connecting to almost any LLM](https://aider.chat/docs/connect.html).
 * Request new features, changes, improvements, or bug fixes to your code. Ask for new test cases, updated documentation or code refactors.
 * Aider will apply the edits suggested by the LLM directly to your source files.
 * Aider will [automatically commit each changeset to your local git repo](https://aider.chat/docs/faq.html#how-does-aider-use-git) with a descriptive commit message. These frequent, automatic commits provide a safety net. It's easy to undo changes or use standard git workflows to manage longer sequences of changes.

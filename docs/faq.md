@@ -2,7 +2,6 @@
 # Frequently asked questions
 
 - [How does aider use git?](#how-does-aider-use-git)
-- [GPT-4 vs GPT-3.5](#gpt-4-vs-gpt-35)
 - [Can I use aider with other LLMs, local LLMs, etc?](#can-i-use-aider-with-other-llms-local-llms-etc)
 - [Accessing other LLMs with OpenRouter](#accessing-other-llms-with-openrouter)
 - [Aider isn't editing my files?](#aider-isnt-editing-my-files)
@@ -40,42 +39,6 @@ While it is not recommended, you can disable aider's use of git in a few ways:
   - `--no-dirty-commits` will stop aider from committing dirty files before applying GPT's edits.
   - `--no-git` will completely stop aider from using git on your files. You should ensure you are keeping sensible backups of the files you are working with.
 
-## GPT-4 vs GPT-3.5
-
-Aider supports all of OpenAI's chat models,
-and uses GPT-4 Turbo by default.
-It has a large context window, good coding skills and
-generally obeys the instructions in the system prompt.
-
-You can choose another model with the `--model` command line argument
-or one of these shortcuts:
-
-```
-aider -4 # to use gpt-4-0613
-aider -3 # to use gpt-3.5-turbo-0125
-```
-
-The older `gpt-4-0613` model is a great choice if GPT-4 Turbo is having
-trouble with your coding task, although it has a smaller context window
-which can be a real limitation.
-
-All the GPT-4 models are able to structure code edits as "diffs"
-and use a
-[repository map](https://aider.chat/docs/repomap.html)
-to improve its ability to make changes in larger codebases.
-
-GPT-3.5 is
-limited to editing somewhat smaller codebases.
-It is less able to follow instructions and
-so can't reliably return code edits as "diffs".
-Aider disables the
-repository map
-when using GPT-3.5.
-
-For detailed quantitative comparisons of the various models, please see the
-[aider blog](https://aider.chat/blog/)
-which contains many benchmarking articles.
-
 ## Can I use aider with other LLMs, local LLMs, etc?
 
 Aider provides experimental support for LLMs other than OpenAI's GPT-3.5 and GPT-4. The support is currently only experimental for two reasons:
@@ -105,54 +68,13 @@ are relevant tools to serve local models via an OpenAI compatible API.
 
 ### Azure
 
-Aider can be configured to connect to the OpenAI models on Azure.
-Aider supports the configuration changes specified in the
-[official openai python library docs](https://github.com/openai/openai-python#microsoft-azure-endpoints).
-You should be able to run aider with the following arguments to connect to Azure:
-
-```
-$ aider \
-    --openai-api-type azure \
-    --openai-api-key your-key-goes-here \
-    --openai-api-base https://example-endpoint.openai.azure.com \
-    --openai-api-version 2023-05-15 \
-    --openai-api-deployment-id deployment-name \
-    ...
-```
-
-You could also store those values in an `.aider.conf.yml` file in your home directory:
-
-```
-openai-api-type: azure
-openai-api-key: your-key-goes-here
-openai-api-base: https://example-endpoint.openai.azure.com
-openai-api-version: 2023-05-15
-openai-api-deployment-id: deployment-name
-```
-
-See the
-[official Azure documentation on using OpenAI models](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/chatgpt-quickstart?tabs=command-line&pivots=programming-language-python)
-for more information on how to populate the above configuration values.
-
+See the documentation on connection to LLMs for details on
+[connecting aider to Azure]().
 
 ## Accessing other LLMs with OpenRouter
 
-[OpenRouter](https://openrouter.ai) provide an interface to [many models](https://openrouter.ai/models) which are not widely accessible, in particular Claude 3 Opus.
-
-To access the OpenRouter models, simply:
-
-```
-# Install aider
-pip install aider-chat
-
-# Setup OpenRouter access
-export OPENAI_API_KEY=<your-openrouter-key>
-export OPENAI_API_BASE=https://openrouter.ai/api/v1
-
-# For example, run aider with Claude 3 Opus using the diff editing format
-aider --model anthropic/claude-3-opus --edit-format diff
-```
-
+See the documentation on connection to LLMs for details on
+[connecting aider to OpenRouter]().
 
 ## Aider isn't editing my files?
 

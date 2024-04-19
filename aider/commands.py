@@ -371,8 +371,9 @@ class Commands:
             else:
                 if is_image_file(matched_file) and not self.coder.main_model.accepts_images:
                     self.io.tool_error(
-                        f"Cannot add image file {matched_file} as the model does not support image"
-                        " files"
+                        f"Cannot add image file {matched_file} as the"
+                        f" {self.coder.main_model.name} does not support image.\nYou can run `aider"
+                        " --4turbo` to use GPT-4 Turbo with Vision."
                     )
                     continue
                 content = self.io.read_text(abs_file_path)

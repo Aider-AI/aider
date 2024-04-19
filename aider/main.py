@@ -163,6 +163,12 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         env_var="OPENAI_API_KEY",
         help="Specify the OpenAI API key",
     )
+    core_group.add_argument(
+        "--anthropic-api-key",
+        metavar="ANTHROPIC_API_KEY",
+        env_var="ANTHROPIC_API_KEY",
+        help="Specify the OpenAI API key",
+    )
     default_model = models.DEFAULT_MODEL_NAME
     core_group.add_argument(
         "--model",
@@ -178,6 +184,14 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         const=opus_model,
         help=f"Use {opus_model} model for the main chat",
     )
+    sonnet_model = "claude-3-sonnet-20240229"
+    core_group.add_argument(
+        "--sonnet",
+        action="store_const",
+        dest="model",
+        const=sonnet_model,
+        help=f"Use {sonnet_model} model for the main chat",
+    )
     default_4_model = "gpt-4-0613"
     core_group.add_argument(
         "--4",
@@ -187,7 +201,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         const=default_4_model,
         help=f"Use {default_4_model} model for the main chat",
     )
-    default_4_turbo_model = "gpt-4-1106-preview"
+    default_4_turbo_model = "gpt-4-turbo"
     core_group.add_argument(
         "--4turbo",
         "--4-turbo",
@@ -553,7 +567,9 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     def scrub_sensitive_info(text):
         # Replace sensitive information with placeholder
         if text and args.openai_api_key:
-            return text.replace(args.openai_api_key, "***")
+            text = text.replace(args.openai_api_key, "***")
+        if text and args.anthropic_api_key:
+            text = text.replace(args.anthropic_api_key, "***")
         return text
 
     if args.verbose:
@@ -566,6 +582,9 @@ def main(argv=None, input=None, output=None, force_git_root=None):
             io.tool_output(f"  - {arg}: {val}")
 
     io.tool_output(*map(scrub_sensitive_info, sys.argv), log_only=True)
+
+    if args.anthropic_api_key:
+        os.environ["ANTHROPIC_API_KEY"] = args.anthropic_api_key
 
     if args.openai_api_key:
         os.environ["OPENAI_API_KEY"] = args.openai_api_key
