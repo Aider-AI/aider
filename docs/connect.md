@@ -91,6 +91,11 @@ for more information on how to populate the above configuration values.
 If you can make an LLM accessible via an OpenAI compatible API,
 you can use `--openai-api-base` to connect to a different API endpoint.
 
+You might need to use `--no-require-model-info` to tell aider to
+work with an unknown model that has no metadata available like
+context size, token costs, etc.
+Some minor functionality will be limited when using such models.
+
 ## Other LLMs
 
 Aider uses the [litellm](https://docs.litellm.ai/docs/providers) package

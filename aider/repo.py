@@ -25,7 +25,7 @@ class GitRepo:
             self.models = [
                 Model(
                     DEFAULT_WEAK_MODEL_NAME,
-                    weak_model=DEFAULT_WEAK_MODEL_NAME,
+                    weak_model=False,
                     require_model_info=False,
                 )
             ]

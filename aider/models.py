@@ -139,7 +139,10 @@ class Model:
             self.max_chat_history_tokens = 2 * 1024
 
         self.configure_model_settings(model)
-        self.get_weak_model(weak_model, require_model_info)
+        if weak_model is False:
+            self.weak_model_name = None
+        else:
+            self.get_weak_model(weak_model, require_model_info)
 
     def configure_model_settings(self, model):
         for ms in MODEL_SETTINGS:
@@ -174,7 +177,7 @@ class Model:
 
         self.weak_model = Model(
             self.weak_model_name,
-            weak_model=self.weak_model_name,
+            weak_model=False,
             require_model_info=require_model_info,
         )
         return self.weak_model
