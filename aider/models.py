@@ -22,6 +22,15 @@ class NoModelInfo(Exception):
         super().__init__(check_model_name(model))
 
 
+class ModelEnvironmentError(Exception):
+    """
+    Exception raised when the environment isn't setup for the model
+    """
+
+    def __init__(self, message):
+        super().__init__(message)
+
+
 @dataclass
 class ModelSettings:
     name: str
@@ -126,6 +135,20 @@ class Model:
     def __init__(self, model, weak_model=None, require_model_info=True):
         self.name = model
 
+        # Are all needed keys/params available?
+        res = litellm.validate_environment(model)
+        missing_keys = res.get("missing_keys")
+        keys_in_environment = res.get("keys_in_environment")
+
+        if missing_keys:
+            res = f"To use model {model}, please set these environment variables:"
+            for key in missing_keys:
+                res += f"- {key}"
+            raise ModelEnvironmentError(res)
+        elif not keys_in_environment:
+            print(f"Unable to check environment variables for model {model}")
+
+        # Do we have the model_info?
         try:
             self.info = litellm.get_model_info(model)
         except Exception:

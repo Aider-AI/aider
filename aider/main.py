@@ -602,28 +602,12 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     if args.openai_organization_id:
         os.environ["OPENAI_ORGANIZATION"] = args.openai_organization_id
 
-    # Is the model known and are all needed keys/params available?
-    res = litellm.validate_environment(args.model)
-    missing_keys = res.get("missing_keys")
-    keys_in_environment = res.get("keys_in_environment")
-
-    if not keys_in_environment and not missing_keys:
-        io.tool_error(f"Unable to check environment variables for model {args.model}")
-    elif missing_keys:
-        io.tool_error(f"To use model {args.model}, please set these environment variables:")
-        for key in missing_keys:
-            io.tool_error(f"- {key}")
-        return 1
-    elif not keys_in_environment and args.require_model_info:
-        io.tool_error(models.check_model_name(args.model))
-        return 1
-
     # Check in advance that we have model metadata
     try:
         main_model = models.Model(
             args.model, weak_model=args.weak_model, require_model_info=args.require_model_info
         )
-    except models.NoModelInfo as err:
+    except (models.NoModelInfo, models.ModelEnvironmentError) as err:
         io.tool_error(str(err))
         return 1
 
