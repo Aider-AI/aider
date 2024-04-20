@@ -5,7 +5,6 @@ import git
 import pathspec
 
 from aider import prompts, utils
-from aider.models import DEFAULT_WEAK_MODEL_NAME, Model
 from aider.sendchat import simple_send_with_retries
 
 from .dump import dump  # noqa: F401
@@ -19,16 +18,7 @@ class GitRepo:
 
     def __init__(self, io, fnames, git_dname, aider_ignore_file=None, models=None):
         self.io = io
-        if models:
-            self.models = models
-        else:
-            self.models = [
-                Model(
-                    DEFAULT_WEAK_MODEL_NAME,
-                    weak_model=False,
-                    require_model_info=False,
-                )
-            ]
+        self.models = models
 
         if git_dname:
             check_fnames = [git_dname]
