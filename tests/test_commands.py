@@ -23,7 +23,7 @@ class TestCommands(TestCase):
         self.tempdir = tempfile.mkdtemp()
         os.chdir(self.tempdir)
 
-        self.GPT35 = Model("gpt-3.5-turbo")
+        self.GPT35 = Model("gpt-3.5-turbo", validate_environment=False)
 
     def tearDown(self):
         os.chdir(self.original_cwd)

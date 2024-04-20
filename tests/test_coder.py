@@ -15,7 +15,7 @@ from aider.utils import ChdirTemporaryDirectory, GitTemporaryDirectory
 
 class TestCoder(unittest.TestCase):
     def setUp(self):
-        self.GPT35 = Model("gpt-3.5-turbo")
+        self.GPT35 = Model("gpt-3.5-turbo", validate_environment=False)
 
     def test_allowed_to_edit(self):
         with GitTemporaryDirectory():

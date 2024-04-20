@@ -14,7 +14,7 @@ from aider.models import Model
 
 class TestUtils(unittest.TestCase):
     def setUp(self):
-        self.GPT35 = Model("gpt-3.5-turbo")
+        self.GPT35 = Model("gpt-3.5-turbo", validate_environment=False)
 
     # fuzzy logic disabled v0.11.2-dev
     def __test_replace_most_similar_chunk(self):

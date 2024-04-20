@@ -132,7 +132,7 @@ class Model:
     max_chat_history_tokens = 1024
     weak_model = None
 
-    def __init__(self, model, weak_model=None, require_model_info=True):
+    def __init__(self, model, weak_model=None, require_model_info=True, validate_environment=True):
         self.name = model
 
         # Are all needed keys/params available?
@@ -141,11 +141,13 @@ class Model:
         keys_in_environment = res.get("keys_in_environment")
 
         if missing_keys:
-            res = f"To use model {model}, please set these environment variables:"
-            for key in missing_keys:
-                res += f"- {key}"
-            raise ModelEnvironmentError(res)
+            if validate_environment:
+                res = f"To use model {model}, please set these environment variables:"
+                for key in missing_keys:
+                    res += f"- {key}"
+                raise ModelEnvironmentError(res)
         elif not keys_in_environment:
+            # https://github.com/BerriAI/litellm/issues/3190
             print(f"Unable to check environment variables for model {model}")
 
         # Do we have the model_info?
