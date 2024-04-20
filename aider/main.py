@@ -605,12 +605,16 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     # Is the model known and are all needed keys/params available?
     res = litellm.validate_environment(args.model)
     missing_keys = res.get("missing_keys")
-    if missing_keys:
+    keys_in_environment = res.get("keys_in_environment")
+
+    if not keys_in_environment and not missing_keys:
+        io.tool_error(f"Unable to check environment variables for model {args.model}")
+    elif missing_keys:
         io.tool_error(f"To use model {args.model}, please set these environment variables:")
         for key in missing_keys:
             io.tool_error(f"- {key}")
         return 1
-    elif not res["keys_in_environment"] and args.require_model_info:
+    elif not keys_in_environment and args.require_model_info:
         io.tool_error(models.check_model_name(args.model))
         return 1
 
