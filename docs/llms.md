@@ -4,9 +4,11 @@
 Aider works well with OpenAI's GPT 3.5, GPT-4, GPT-4 Turbo with Vision and
 Anthropic's Claude 3 Opus and Sonnet.
 
-GPT-4 Turbo and Claude 3 Opus are recommended for the best results.
+GPT-4 Turbo and Claude 3 Opus are recommended, as they are the very best coding assistants.
+Cohere offers *free* API access to their Command-R+ model, which works well with aider
+as a *very basic* coding assistant.
 
-Aider also supports connecting to almost any LLM,
+Aider supports connecting to almost any LLM,
 but it may not work well with some models depending on their capabilities.
 For example, GPT-3.5 is just barely capable of reliably *editing code* to provide aider's
 interactive "pair programming" style workflow.
@@ -14,6 +16,7 @@ So you should expect that models which are less capable than GPT-3.5 may struggl
 
 - [OpenAI](#openai)
 - [Anthropic](#anthropic)
+- [Cohere](#cohere)
 - [Azure](#azure)
 - [OpenAI compatible APIs](#openai-compatible-apis)
 - [Other LLMs](#other-llms)
@@ -53,6 +56,14 @@ has been tested and benchmarked to work well with them:
 You can use `aider --model <model-name>` to use any other Anthropic model.
 For example, if you want to use a specific version of Opus
 you could do `aider --model claude-3-opus-20240229`.
+
+## Cohere
+
+To work with Cohere's models, you need to provide your
+[Cohere API key](https://dashboard.cohere.com/)
+in the `COHERE_API_KEY` environment variable.
+
+- **Command-R+**: `aider --model command-r-plus`
 
 ## Azure
 

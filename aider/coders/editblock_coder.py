@@ -312,7 +312,10 @@ separators = "|".join([HEAD, DIVIDER, UPDATED])
 split_re = re.compile(r"^((?:" + separators + r")[ ]*\n)", re.MULTILINE | re.DOTALL)
 
 
-missing_filename_err = f"Bad/missing filename. Filename should be alone on the line before {HEAD}"
+missing_filename_err = (
+    "Bad/missing filename. The filename must be alone on the line before the opening fence"
+    " {fence[0]}"
+)
 
 
 def strip_filename(filename, fence):
@@ -324,6 +327,9 @@ def strip_filename(filename, fence):
     start_fence = fence[0]
     if filename.startswith(start_fence):
         return
+
+    filename = filename.rstrip(":")
+    filename = filename.strip("`")
 
     return filename
 
@@ -363,12 +369,12 @@ def find_original_update_blocks(content, fence=DEFAULT_FENCE):
                     if current_filename:
                         filename = current_filename
                     else:
-                        raise ValueError(missing_filename_err)
+                        raise ValueError(missing_filename_err.format(fence=fence))
             except IndexError:
                 if current_filename:
                     filename = current_filename
                 else:
-                    raise ValueError(missing_filename_err)
+                    raise ValueError(missing_filename_err.format(fence=fence))
 
             current_filename = filename
 

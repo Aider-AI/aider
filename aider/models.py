@@ -117,6 +117,14 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         send_undo_reply=True,
     ),
+    # Cohere
+    ModelSettings(
+        "command-r-plus",
+        "whole",
+        weak_model_name="command-r-plus",
+        use_repo_map=True,
+        send_undo_reply=True,
+    ),
 ]
 
 
@@ -187,6 +195,8 @@ class Model:
             return  # <--
 
         # use the defaults
+        if self.edit_format == "diff":
+            self.use_repo_map = True
 
     def __str__(self):
         return self.name
