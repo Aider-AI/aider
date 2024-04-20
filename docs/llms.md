@@ -59,6 +59,9 @@ you could do `aider --model claude-3-opus-20240229`.
 
 ## Cohere
 
+Cohere offers *free* API access to their Command-R+ model, which works well with aider
+as a *very basic* coding assistant.
+
 To work with Cohere's models, you need to provide your
 [Cohere API key](https://dashboard.cohere.com/)
 in the `COHERE_API_KEY` environment variable.
