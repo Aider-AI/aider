@@ -22,6 +22,8 @@ So you should expect that models which are less capable than GPT-3.5 may struggl
 - [Other LLMs](#other-llms)
 - [Editing format](#editing-format)
 
+[![connecting to many LLMs](/assets/llms.jpg)](https://aider.chat/assets/llms.jpg)
+
 ## OpenAI
 
 To work with OpenAI's models, you need to provide your
