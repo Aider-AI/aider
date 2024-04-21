@@ -1,8 +1,16 @@
 
 # Release history
 
-### main
+### v0.29.0
 
+- Added support for [directly connecting to Anthropic, Cohere, Gemini and many other LLM providers](https://aider.chat/docs/llms.html).
+- Added `--weak-model <model-name>` which allows you to specify which model to use for commit messages and chat history summarization.
+- New command line switches for working with popular models:
+  - `--4-turbo-vision`
+  - `--opus`
+  - `--sonnet`
+  - `--anthropic-api-key`
+- Improved "whole" and "diff" backends to better support [Cohere's free to use Command-R+ model](https://aider.chat/docs/llms.html#cohere).
 - Allow `/add` of images from anywhere in the filesystem.
 - Fixed crash when operating in a repo in a detached HEAD state.
 - Fix: Use the same default model in CLI and python scripting.

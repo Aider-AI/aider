@@ -121,14 +121,13 @@ import os
 import openai
 from aider.coders import Coder
 
-# Make an openai client
-client = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
-
 # This is a list of files to add to the chat
 fnames = ["foo.py"]
 
+model = models.Model("gpt-4-turbo", weak_model="gpt-3.5-turbo")
+
 # Create a coder object
-coder = Coder.create(client=client, fnames=fnames)
+coder = Coder.create(main_model=model, fnames=fnames)
 
 # This will execute one instruction on those files and then return
 coder.run("make a script that prints hello world")

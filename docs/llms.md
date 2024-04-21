@@ -3,11 +3,10 @@
 
 [![connecting to many LLMs](/assets/llms.jpg)](https://aider.chat/assets/llms.jpg)
 
-Aider works well with OpenAI's GPT 3.5, GPT-4, GPT-4 Turbo with Vision and
-Anthropic's Claude 3 Opus and Sonnet.
-
-GPT-4 Turbo and Claude 3 Opus are recommended, as they are the very best coding assistants.
-Cohere offers *free* API access to their Command-R+ model, which works well with aider
+Aider works best with GPT-4 Turbo and Claude 3 Opus,
+as they are the very best models for editing code.
+Aider also works quite well with GPT-3.5.
+Cohere offers *free* API access to their Command-R+ model, which works with aider
 as a *very basic* coding assistant.
 
 Aider supports connecting to almost any LLM,
@@ -61,7 +60,8 @@ you could do `aider --model claude-3-opus-20240229`.
 
 ## Cohere
 
-Cohere offers *free* API access to their Command-R+ model, which works well with aider
+Cohere offers *free* API access to their Command-R+ model with reasonably
+low rate limits. Command-R+ works well with aider
 as a *very basic* coding assistant.
 
 To work with Cohere's models, you need to provide your
@@ -112,7 +112,8 @@ Aider uses the [litellm](https://docs.litellm.ai/docs/providers) package
 to connect to hundreds of other models.
 You can use `aider --model <model-name>` to use any supported model.
 
-To explore the list of supported models you can run `aider --model <name>`.
+To explore the list of supported models you can run `aider --model <model-name>`
+with a partial model name.
 If the supplied name is not an exact match for a known model, aider will
 return a list of possible matching models.
 For example:
