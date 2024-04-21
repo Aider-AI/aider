@@ -1,6 +1,8 @@
 
 # Aider can connect to most LLMs
 
+[![connecting to many LLMs](/assets/llms.jpg)](https://aider.chat/assets/llms.jpg)
+
 Aider works well with OpenAI's GPT 3.5, GPT-4, GPT-4 Turbo with Vision and
 Anthropic's Claude 3 Opus and Sonnet.
 
@@ -21,8 +23,6 @@ So you should expect that models which are less capable than GPT-3.5 may struggl
 - [OpenAI compatible APIs](#openai-compatible-apis)
 - [Other LLMs](#other-llms)
 - [Editing format](#editing-format)
-
-[![connecting to many LLMs](/assets/llms.jpg)](https://aider.chat/assets/llms.jpg)
 
 ## OpenAI
 
