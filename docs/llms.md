@@ -15,6 +15,8 @@ For example, GPT-3.5 is just barely capable of reliably *editing code* to provid
 interactive "pair programming" style workflow.
 So you should expect that models which are less capable than GPT-3.5 may struggle to perform well with aider.
 
+## Providers
+
 - [OpenAI](#openai)
 - [Anthropic](#anthropic)
 - [Cohere](#cohere)
