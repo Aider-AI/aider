@@ -1,6 +1,10 @@
 
 # Release history
 
+### v0.29.1
+
+- Added better support for groq/llama3-70b-8192
+
 ### v0.29.0
 
 - Added support for [directly connecting to Anthropic, Cohere, Gemini and many other LLM providers](https://aider.chat/docs/llms.html).
