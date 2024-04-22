@@ -18,11 +18,11 @@ For example, GPT-3.5 is just barely capable of reliably *editing code* to provid
 interactive "pair programming" style workflow.
 So you should expect that models which are less capable than GPT-3.5 may struggle to perform well with aider.
 
-## Providers & models
+## Configuring models for aider
 
 - [OpenAI](#openai)
 - [Anthropic](#anthropic)
-- [Llama3](#llama3)
+- [Llama3](#llama3-70b)
 - [Cohere](#cohere)
 - [Azure](#azure)
 - [OpenAI compatible APIs](#openai-compatible-apis)
@@ -64,46 +64,42 @@ You can use `aider --model <model-name>` to use any other Anthropic model.
 For example, if you want to use a specific version of Opus
 you could do `aider --model claude-3-opus-20240229`.
 
-## Llama3
+## CROQ
 
-Groq offers *free* API access to the Llama 3 70B model, which works
+Groq currently offers *free* API access.
+They host the Llama 3 70B model, which works
 well with aider and is comparable to GPT-3.5 in code editing performance.
-You need to provide your Groq API key in the `GROQ_API_KEY`
-environment variable.
 
-- **Llama3 70B**: `aider --model groq/llama3-70b-8192`
+
+### Llama3 70B
+
+```
+export GROQ_API_KEY=<your-key-goes-here>
+aider --model groq/llama3-70b-8192
+```
 
 ## Cohere
 
-Cohere offers *free* API access to their Command-R+ model with reasonably
-low rate limits. Command-R+ works well with aider
+Cohere offers *free* API access with a reasonable rate limit.
+Their Command-R+ works well with aider
 as a *very basic* coding assistant.
 
-To work with Cohere's models, you need to provide your
-[Cohere API key](https://dashboard.cohere.com/)
-in the `COHERE_API_KEY` environment variable.
+**Command-R+**:
 
-- **Command-R+**: `aider --model command-r-plus`
+```
+export COHERE_API_KEY=<your-key-goes-here>
+aider --model command-r-plus
+```
 
 ## Azure
 
 Aider can be configured to connect to the OpenAI models on Azure.
-Run aider with the following arguments to connect to Azure:
 
 ```
---model azure/<your_deployment_name>
---openai-api-key your-key-goes-here 
---openai-api-base https://example-endpoint.openai.azure.com 
---openai-api-version 2023-05-15 
-```
-
-Or you can run `aider --model azure/<your_deployment_name>` and
-populate the following environment variables instead:
-
-```
-OPENAI_API_KEY=your-key-goes-here
-OPENAI_API_BASE=https://example-endpoint.openai.azure.com
-OPENAI_API_VERSION=2023-05-15
+export AZURE_API_KEY=your-key-goes-here
+export AZURE_API_VERSION=2023-05-15
+export AZURE_API_BASE=https://example-endpoint.openai.azure.com
+aider --model azure/<your_deployment_name>
 ```
 
 See the

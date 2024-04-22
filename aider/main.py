@@ -596,9 +596,9 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     if args.openai_api_base:
         os.environ["OPENAI_API_BASE"] = args.openai_api_base
     if args.openai_api_version:
-        os.environ["AZURE_API_VERSION"] = args.openai_api_version
+        os.environ["OPENAI_API_VERSION"] = args.openai_api_version
     if args.openai_api_type:
-        os.environ["AZURE_API_TYPE"] = args.openai_api_type
+        os.environ["OPENAI_API_TYPE"] = args.openai_api_type
     if args.openai_organization_id:
         os.environ["OPENAI_ORGANIZATION"] = args.openai_organization_id
 
