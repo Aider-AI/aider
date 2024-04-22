@@ -97,7 +97,7 @@ aider --model groq/llama3-70b-8192
 ## Cohere
 
 Cohere offers *free* API access to their models.
-Their Command-R+ works well with aider
+Their Command-R+ model works well with aider
 as a *very basic* coding assistant.
 
 To use **Command-R+**:
@@ -117,10 +117,6 @@ export AZURE_API_VERSION=2023-05-15
 export AZURE_API_BASE=https://example-endpoint.openai.azure.com
 aider --model azure/<your_deployment_name>
 ```
-
-See the
-[official Azure documentation on using OpenAI models](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/chatgpt-quickstart?tabs=command-line&pivots=programming-language-python)
-for more information on how to populate the above configuration values.
 
 ## OpenAI compatible APIs
 
