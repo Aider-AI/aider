@@ -22,7 +22,7 @@ So you should expect that models which are less capable than GPT-3.5 may struggl
 
 - [OpenAI](#openai)
 - [Anthropic](#anthropic)
-- [Llama3](#llama3-70b)
+- [Llama3](#groq)
 - [Cohere](#cohere)
 - [Azure](#azure)
 - [OpenAI compatible APIs](#openai-compatible-apis)
@@ -39,9 +39,18 @@ via the `--openai-api-key` command line switch.
 Aider has some built in shortcuts for the most popular OpenAI models and
 has been tested and benchmarked to work well with them:
 
-- **GPT-4 Turbo**: running `aider` with no arguments uses GPT-4 Turbo by default.
-- **GPT-4 Turbo with Vision**: run `aider --4-turbo-vision` to use this vision capable model, allowing you to share images with GPT by adding them to the chat with `/add` or by naming them on the command line.
-- **GPT-3.5 Turbo**: `aider --35-turbo`.
+```
+export OPENAI_API_KEY=<your-key-goes-here>
+
+# GPT-4 Turbo is used by default
+aider
+
+# GPT-4 Turbo with Vision
+aider --4-turbo-vision
+
+# GPT-3.5 Turbo
+aider --35-turbo
+```
 
 You can use `aider --model <model-name>` to use any other OpenAI model.
 For example, if you want to use a specific version of GPT-4 Turbo
@@ -57,21 +66,28 @@ via the `--anthropic-api-key` command line switch.
 Aider has some built in shortcuts for the most popular Anthropic models and
 has been tested and benchmarked to work well with them:
 
-- **Claude 3 Opus**: `aider --opus`
-- **Claude 3 Sonnet**: `aider --sonnet`
+```
+export ANTHROPIC_API_KEY=<your-key-goes-here>
+
+# Claude 3 Opus
+aider --opus
+
+# Claude 3 Sonnet
+aider --sonnet
+```
 
 You can use `aider --model <model-name>` to use any other Anthropic model.
 For example, if you want to use a specific version of Opus
 you could do `aider --model claude-3-opus-20240229`.
 
-## CROQ
+## GROQ
 
-Groq currently offers *free* API access.
-They host the Llama 3 70B model, which works
+Groq currently offers *free* API access to the models they host.
+The Llama 3 70B model works
 well with aider and is comparable to GPT-3.5 in code editing performance.
 
 
-### Llama3 70B
+To use **Llama3 70B**:
 
 ```
 export GROQ_API_KEY=<your-key-goes-here>
@@ -80,11 +96,11 @@ aider --model groq/llama3-70b-8192
 
 ## Cohere
 
-Cohere offers *free* API access with a reasonable rate limit.
+Cohere offers *free* API access to their models.
 Their Command-R+ works well with aider
 as a *very basic* coding assistant.
 
-**Command-R+**:
+To use **Command-R+**:
 
 ```
 export COHERE_API_KEY=<your-key-goes-here>
@@ -96,7 +112,7 @@ aider --model command-r-plus
 Aider can be configured to connect to the OpenAI models on Azure.
 
 ```
-export AZURE_API_KEY=your-key-goes-here
+export AZURE_API_KEY=<your-key-goes-here>
 export AZURE_API_VERSION=2023-05-15
 export AZURE_API_BASE=https://example-endpoint.openai.azure.com
 aider --model azure/<your_deployment_name>
