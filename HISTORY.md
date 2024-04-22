@@ -1,6 +1,10 @@
 
 # Release history
 
+### v0.29.2
+
+- Improved [model warnings](https://aider.chat/docs/llms.html#model-warnings) for unknown or unfamiliar models
+
 ### v0.29.1
 
 - Added better support for groq/llama3-70b-8192
