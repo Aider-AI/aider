@@ -222,7 +222,7 @@ class Model:
             self.send_undo_reply = True
             return  # <--
 
-        if "gpt-4" in model or "claude-2" in model or "claude-3-opus" in model:
+        if "gpt-4" in model or "claude-3-opus" in model:
             self.edit_format = "diff"
             self.use_repo_map = True
             self.send_undo_reply = True
