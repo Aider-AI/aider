@@ -7,7 +7,7 @@ Aider works best with [GPT-4 Turbo](#openai) and [Claude 3 Opus](#anthropic),
 as they are the very best models for editing code.
 Aider also works quite well with [GPT-3.5](#openai).
 
-To use aider with a *free* API provider, you can use [Groq's Llama 3 70B](#llama3)
+To use aider with a *free* API provider, you can use [Llama 3 70B on Groq](#llama3)
 which is comparable to GPT-3.5 in code editing performance.
 Cohere also offers free API access to their [Command-R+ model](#cohere),
 which works with aider
@@ -19,7 +19,7 @@ For example, GPT-3.5 is just barely capable of reliably *editing code* to provid
 interactive "pair programming" style workflow.
 So you should expect that models which are less capable than GPT-3.5 may struggle to perform well with aider.
 
-## Configuring models for aider
+## Configuring models
 
 - [OpenAI](#openai)
 - [Anthropic](#anthropic)
@@ -123,7 +123,7 @@ aider --model azure/<your_deployment_name>
 
 ## OpenRouter
 
-Aider can connect to models provided by OpenRouter:
+Aider can connect to [models provided by OpenRouter](https://openrouter.ai/models?o=top-weekly):
 
 ```
 export OPENROUTER_API_KEY=<your-key-goes-here>
@@ -147,7 +147,7 @@ export OPENAI_API_KEY=<your-key-goes-here-if-required>
 aider --model <model-name>
 ```
 
-See the [Model warnings](#model-warnings)
+See the [model warnings](#model-warnings)
 section for information on warnings which will occur
 when working with models that aider is not familiar with.
 
@@ -166,7 +166,8 @@ For example:
 ```
 $ aider --model turbo
 
-Unknown model turbo, did you mean one of these?
+Model turbo: Unknown model, context window size and token costs unavailable.
+Did you mean one of these?
 - gpt-4-turbo-preview
 - gpt-4-turbo
 - gpt-4-turbo-2024-04-09
@@ -174,11 +175,6 @@ Unknown model turbo, did you mean one of these?
 - gpt-3.5-turbo-0301
 ...
 ```
-
-Depending on which model you access, you may need to provide an API key
-or other configuration parameters by setting environment variables.
-If any required variables are not set, aider will print an
-error message listing which parameters are needed.
 
 See the [list of providers supported by litellm](https://docs.litellm.ai/docs/providers)
 for more details.
@@ -194,10 +190,7 @@ to work with the specified models:
 Sometimes one or both of these checks will fail, so aider will issue
 some of the following warnings.
 
-##### Missing environment variables
-
-You need to set the listed variables.
-Otherwise you will get error messages when you attempt to chat with the model.
+#### Missing environment variables
 
 ```
 Model azure/gpt-4-turbo: Missing these environment variables:
@@ -206,7 +199,15 @@ Model azure/gpt-4-turbo: Missing these environment variables:
 - AZURE_API_KEY
 ```
 
-##### Unknown which environment variables are required
+You need to set the listed environment variables.
+Otherwise you will get error messages when you start chatting with the model.
+
+
+#### Unknown which environment variables are required
+
+```
+Model gpt-5: Unknown which environment variables are required.
+```
 
 Aider is unable verify the environment because it doesn't know
 which variables are required for the model.
@@ -215,23 +216,8 @@ you may get errors when you attempt to chat with the model.
 You can look in the
 [litellm provider documentation](https://docs.litellm.ai/docs/providers)
 to see if the required variables are listed there.
-```
-Model gpt-5: Unknown which environment variables are required.
-```
 
-
-##### Unknown model, did you mean?
-
-If you specify a model that aider has never heard of, you will get an
-"unknown model" warning.
-
-In this case, aider won't have normal metadata available like
-the context window size, token costs, etc.
-Some minor functionality will be limited when using such models, but
-it's not really a significant problem.
-
-Aider will also try to suggest similarly named models,
-in case you made a typo or mistake when specifying the model name.
+#### Unknown model, did you mean?
 
 ```
 Model gpt-5: Unknown model, context window size and token costs unavailable.
@@ -239,7 +225,15 @@ Did you mean one of these?
 - gpt-4
 ```
 
+If you specify a model that aider has never heard of, you will get an
+"unknown model" warning.
+This means aider doesn't know the context window size and token costs
+for that model.
+Some minor functionality will be limited when using such models, but
+it's not really a significant problem.
 
+Aider will also try to suggest similarly named models,
+in case you made a typo or mistake when specifying the model name.
 
 
 ## Editing format
