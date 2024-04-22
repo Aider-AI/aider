@@ -9,7 +9,8 @@ Aider also works quite well with [GPT-3.5](#openai).
 
 To use aider with a *free* API provider, you can use [Groq's Llama 3 70B](#llama3)
 which is comparable to GPT-3.5 in code editing performance.
-Cohere also offers free API access to their [Command-R+ model](#cohere), which works with aider
+Cohere also offers free API access to their [Command-R+ model](#cohere),
+which works with aider
 as a *very basic* coding assistant.
 
 Aider supports connecting to almost any LLM,
@@ -25,6 +26,7 @@ So you should expect that models which are less capable than GPT-3.5 may struggl
 - [Llama3](#groq)
 - [Cohere](#cohere)
 - [Azure](#azure)
+- [OpenRouter](#openrouter)
 - [OpenAI compatible APIs](#openai-compatible-apis)
 - [Other LLMs](#other-llms)
 - [Editing format](#editing-format)
@@ -118,6 +120,20 @@ export AZURE_API_BASE=https://example-endpoint.openai.azure.com
 aider --model azure/<your_deployment_name>
 ```
 
+## OpenRouter
+
+Aider can connect to models provided by OpenRouter:
+
+```
+export OPENROUTER_API_KEY=<your-key-goes-here>
+
+# Llama3 70B instruct
+aider --model openrouter/meta-llama/llama-3-70b-instruct
+
+# Or any other open router model
+aider --model openrouter/<provider>/<model>
+```
+
 ## OpenAI compatible APIs
 
 If your LLM is accessible via an OpenAI compatible API endpoint,
@@ -128,6 +144,7 @@ recognize the model you want to use.
 For unknown models, aider won't have normal metadata available like
 the context window size, token costs, etc.
 Some minor functionality will be limited when using such models.
+
 
 ## Other LLMs
 
