@@ -82,7 +82,7 @@ jsonschema==4.21.1
     # via -r requirements.in
 jsonschema-specifications==2023.12.1
     # via jsonschema
-litellm==1.35.12
+litellm==1.35.18
     # via -r requirements.in
 markdown-it-py==3.0.0
     # via rich
@@ -100,7 +100,7 @@ numpy==1.26.4
     # via
     #   -r requirements.in
     #   scipy
-openai==1.23.1
+openai==1.23.2
     # via
     #   -r requirements.in
     #   litellm
