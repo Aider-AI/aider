@@ -10,7 +10,7 @@ from aider.utils import IgnorantTemporaryDirectory
 
 class TestRepoMap(unittest.TestCase):
     def setUp(self):
-        self.GPT35 = Model("gpt-3.5-turbo", validate_environment=False)
+        self.GPT35 = Model("gpt-3.5-turbo")
 
     def test_get_repo_map(self):
         # Create a temporary directory with sample files for testing
@@ -156,7 +156,7 @@ print(my_function(3, 4))
 
 class TestRepoMapTypescript(unittest.TestCase):
     def setUp(self):
-        self.GPT35 = Model("gpt-3.5-turbo", validate_environment=False)
+        self.GPT35 = Model("gpt-3.5-turbo")
 
     def test_get_repo_map_typescript(self):
         # Create a temporary directory with a sample TypeScript file

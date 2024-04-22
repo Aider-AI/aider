@@ -15,7 +15,7 @@ from aider.utils import GitTemporaryDirectory
 
 class TestRepo(unittest.TestCase):
     def setUp(self):
-        self.GPT35 = Model("gpt-3.5-turbo", validate_environment=False)
+        self.GPT35 = Model("gpt-3.5-turbo")
 
     def test_diffs_empty_repo(self):
         with GitTemporaryDirectory():

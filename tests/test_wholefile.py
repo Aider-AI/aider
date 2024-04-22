@@ -18,7 +18,7 @@ class TestWholeFileCoder(unittest.TestCase):
         self.tempdir = tempfile.mkdtemp()
         os.chdir(self.tempdir)
 
-        self.GPT35 = Model("gpt-3.5-turbo", validate_environment=False)
+        self.GPT35 = Model("gpt-3.5-turbo")
 
     def tearDown(self):
         os.chdir(self.original_cwd)
