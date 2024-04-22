@@ -21,36 +21,6 @@ os.environ["OR_SITE_URL"] = "http://aider.chat"
 os.environ["OR_APP_NAME"] = "Aider"
 
 
-def sanity_check_model(io, model):
-    show = False
-
-    if model.missing_keys:
-        show = True
-        io.tool_error(f"Model {model}: Missing these environment variables:")
-        for key in model.missing_keys:
-            io.tool_error(f"- {key}")
-    elif not model.keys_in_environment:
-        show = True
-        io.tool_error(f"Model {model}: Unknown which environment variables are required.")
-
-    if not model.info:
-        show = True
-        io.tool_error(
-            f"Model {model}: Unknown model, context window size and token costs unavailable."
-        )
-
-        possible_matches = models.fuzzy_match_models(model.name)
-        if possible_matches:
-            io.tool_error("Did you mean one of these?")
-            for match in possible_matches:
-                io.tool_error(f"- {match}")
-
-    if show:
-        io.tool_error("For more info see https://aider.chat/docs/llms.html#model-warnings")
-
-    return False
-
-
 def get_git_root():
     """Try and guess the git repo, since the conf.yml can be at the repo root"""
     try:
@@ -634,12 +604,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
 
     main_model = models.Model(args.model, weak_model=args.weak_model)
 
-    missing_model_info = False
-    if not sanity_check_model(io, main_model):
-        missing_model_info = True
-    if main_model.weak_model and main_model.weak_model is not main_model:
-        if not sanity_check_model(io, main_model.weak_model):
-            missing_model_info = True
+    missing_model_info = models.sanity_check_models(io, main_model)
     if args.require_model_info and missing_model_info:
         return 1
 

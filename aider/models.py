@@ -284,6 +284,46 @@ class Model:
             return img.size
 
 
+def sanity_check_models(io, main_model):
+    missing_model_info = False
+    if not sanity_check_model(io, main_model):
+        missing_model_info = True
+    if main_model.weak_model and main_model.weak_model is not main_model:
+        if not sanity_check_model(io, main_model.weak_model):
+            missing_model_info = True
+    return missing_model_info
+
+
+def sanity_check_model(io, model):
+    show = False
+
+    if model.missing_keys:
+        show = True
+        io.tool_error(f"Model {model}: Missing these environment variables:")
+        for key in model.missing_keys:
+            io.tool_error(f"- {key}")
+    elif not model.keys_in_environment:
+        show = True
+        io.tool_error(f"Model {model}: Unknown which environment variables are required.")
+
+    if not model.info:
+        show = True
+        io.tool_error(
+            f"Model {model}: Unknown model, context window size and token costs unavailable."
+        )
+
+        possible_matches = fuzzy_match_models(model.name)
+        if possible_matches:
+            io.tool_error("Did you mean one of these?")
+            for match in possible_matches:
+                io.tool_error(f"- {match}")
+
+    if show:
+        io.tool_error("For more info see https://aider.chat/docs/llms.html#model-warnings")
+
+    return False
+
+
 def fuzzy_match_models(name):
     models = litellm.model_cost.keys()
 
