@@ -3,10 +3,13 @@
 
 [![connecting to many LLMs](/assets/llms.jpg)](https://aider.chat/assets/llms.jpg)
 
-Aider works best with GPT-4 Turbo and Claude 3 Opus,
+Aider works best with [GPT-4 Turbo](#openai) and [Claude 3 Opus](#anthropic),
 as they are the very best models for editing code.
-Aider also works quite well with GPT-3.5.
-Cohere offers *free* API access to their Command-R+ model, which works with aider
+Aider also works quite well with [GPT-3.5](#openai).
+
+To use aider with a *free* API provider, you can use [Groq's Llama 3 70B](#llama3)
+which is comparable to GPT-3.5 in code editing performance.
+Cohere also offers free API access to their [Command-R+ model](#cohere), which works with aider
 as a *very basic* coding assistant.
 
 Aider supports connecting to almost any LLM,
@@ -15,10 +18,11 @@ For example, GPT-3.5 is just barely capable of reliably *editing code* to provid
 interactive "pair programming" style workflow.
 So you should expect that models which are less capable than GPT-3.5 may struggle to perform well with aider.
 
-## Providers
+## Providers & models
 
 - [OpenAI](#openai)
 - [Anthropic](#anthropic)
+- [Llama3](#llama3)
 - [Cohere](#cohere)
 - [Azure](#azure)
 - [OpenAI compatible APIs](#openai-compatible-apis)
@@ -59,6 +63,15 @@ has been tested and benchmarked to work well with them:
 You can use `aider --model <model-name>` to use any other Anthropic model.
 For example, if you want to use a specific version of Opus
 you could do `aider --model claude-3-opus-20240229`.
+
+## Llama3
+
+Groq offers *free* API access to the Llama 3 70B model, which works
+well with aider and is comparable to GPT-3.5 in code editing performance.
+You need to provide your Groq API key in the `GROQ_API_KEY`
+environment variable.
+
+- **Llama3 70B**: `aider --model groq/llama3-70b-8192`
 
 ## Cohere
 

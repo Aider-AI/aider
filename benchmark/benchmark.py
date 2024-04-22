@@ -955,7 +955,7 @@ def run_test(
         chat_history_file=history_fname,
     )
 
-    main_model = models.Model(model_name)
+    main_model = models.Model(model_name, require_model_info=False)
     edit_format = edit_format or main_model.edit_format
 
     dump(main_model)
