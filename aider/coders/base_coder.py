@@ -137,10 +137,13 @@ class Coder:
         self.main_model = main_model
 
         weak_model = main_model.weak_model
-        self.io.tool_output(
-            f"Models: {main_model.name} with {self.edit_format} edit format, weak model"
-            f" {weak_model.name}"
-        )
+        prefix = "Model:"
+        output = f" {main_model.name} with {self.edit_format} edit format"
+        if weak_model is not main_model:
+            prefix = "Models:"
+            output += f", weak model {weak_model.name}"
+
+        self.io.tool_output(prefix + output)
 
         self.show_diffs = show_diffs
 

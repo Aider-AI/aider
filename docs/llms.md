@@ -29,6 +29,7 @@ So you should expect that models which are less capable than GPT-3.5 may struggl
 - [OpenRouter](#openrouter)
 - [OpenAI compatible APIs](#openai-compatible-apis)
 - [Other LLMs](#other-llms)
+- [Model warnings](#model-warnings)
 - [Editing format](#editing-format)
 
 ## OpenAI
@@ -136,15 +137,19 @@ aider --model openrouter/<provider>/<model>
 
 ## OpenAI compatible APIs
 
-If your LLM is accessible via an OpenAI compatible API endpoint,
-you can use `--openai-api-base` to have aider connect to it.
+Aider can connect to any LLM which is accessible via an OpenAI compatible API endpoint.
+Use `--openai-api-base` or set the `OPENAI_API_BASE`
+environment variable to have aider connect to it.
 
-You might need to use `--no-require-model-info` if aider doesn't
-recognize the model you want to use.
-For unknown models, aider won't have normal metadata available like
-the context window size, token costs, etc.
-Some minor functionality will be limited when using such models.
+```
+export OPENAI_API_BASE=<your-endpoint-goes-here>
+export OPENAI_API_KEY=<your-key-goes-here-if-required>
+aider --model <model-name>
+```
 
+See the [Model warnings](#model-warnings)
+section for information on warnings which will occur
+when working with models that aider is not familiar with.
 
 ## Other LLMs
 
@@ -177,6 +182,64 @@ error message listing which parameters are needed.
 
 See the [list of providers supported by litellm](https://docs.litellm.ai/docs/providers)
 for more details.
+
+## Model warnings
+
+On startup, aider tries to sanity check that it is configured correctly
+to work with the specified models:
+
+- It checks to see that all required environment variables are set for the model. These variables are required to configure things like API keys, API base URLs, etc.
+- It checks a metadata database to look up the context window size and token costs for the model.
+
+Sometimes one or both of these checks will fail, so aider will issue
+some of the following warnings.
+
+##### Missing environment variables
+
+You need to set the listed variables.
+Otherwise you will get error messages when you attempt to chat with the model.
+
+```
+Model azure/gpt-4-turbo: Missing these environment variables:
+- AZURE_API_BASE
+- AZURE_API_VERSION
+- AZURE_API_KEY
+```
+
+##### Unknown which environment variables are required
+
+Aider is unable verify the environment because it doesn't know
+which variables are required for the model.
+If required variables are missing,
+you may get errors when you attempt to chat with the model.
+You can look in the
+[litellm provider documentation](https://docs.litellm.ai/docs/providers)
+to see if the required variables are listed there.
+```
+Model gpt-5: Unknown which environment variables are required.
+```
+
+
+##### Unknown model, did you mean?
+
+If you specify a model that aider has never heard of, you will get an
+"unknown model" warning.
+
+In this case, aider won't have normal metadata available like
+the context window size, token costs, etc.
+Some minor functionality will be limited when using such models, but
+it's not really a significant problem.
+
+Aider will also try to suggest similarly named models,
+in case you made a typo or mistake when specifying the model name.
+
+```
+Model gpt-5: Unknown model, context window size and token costs unavailable.
+Did you mean one of these?
+- gpt-4
+```
+
+
 
 
 ## Editing format
