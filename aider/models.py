@@ -190,6 +190,8 @@ class Model:
             # direct match, or match "provider/<model>"
             if model == ms.name or model.endswith("/" + ms.name):
                 for field in fields(ModelSettings):
+                    if field.name == "name":
+                        continue
                     val = getattr(ms, field.name)
                     setattr(self, field.name, val)
 
