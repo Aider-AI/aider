@@ -3,6 +3,7 @@ import json
 import math
 import sys
 from dataclasses import dataclass, fields
+from typing import Optional
 
 import litellm
 from PIL import Image
@@ -10,7 +11,6 @@ from PIL import Image
 from aider.dump import dump  # noqa: F401
 
 DEFAULT_MODEL_NAME = "gpt-4-1106-preview"
-DEFAULT_WEAK_MODEL_NAME = "gpt-3.5-turbo"
 
 
 class NoModelInfo(Exception):
@@ -35,7 +35,7 @@ class ModelEnvironmentError(Exception):
 class ModelSettings:
     name: str
     edit_format: str
-    weak_model_name: str = DEFAULT_WEAK_MODEL_NAME
+    weak_model_name: Optional[str] = None
     use_repo_map: bool = False
     send_undo_reply: bool = False
     accepts_images: bool = False
@@ -50,23 +50,28 @@ MODEL_SETTINGS = [
     ModelSettings(
         "gpt-3.5-turbo-0125",
         "whole",
+        weak_model_name="gpt-3.5-turbo",
     ),
     ModelSettings(
         "gpt-3.5-turbo-1106",
         "whole",
+        weak_model_name="gpt-3.5-turbo",
     ),
     ModelSettings(
         "gpt-3.5-turbo-0613",
         "whole",
+        weak_model_name="gpt-3.5-turbo",
     ),
     ModelSettings(
         "gpt-3.5-turbo-16k-0613",
         "whole",
+        weak_model_name="gpt-3.5-turbo",
     ),
     # gpt-4
     ModelSettings(
         "gpt-4-turbo-2024-04-09",
         "udiff",
+        weak_model_name="gpt-3.5-turbo",
         use_repo_map=True,
         send_undo_reply=True,
         accepts_images=True,
@@ -74,6 +79,7 @@ MODEL_SETTINGS = [
     ModelSettings(
         "gpt-4-turbo",
         "udiff",
+        weak_model_name="gpt-3.5-turbo",
         use_repo_map=True,
         send_undo_reply=True,
         accepts_images=True,
@@ -81,18 +87,21 @@ MODEL_SETTINGS = [
     ModelSettings(
         "gpt-4-0125-preview",
         "udiff",
+        weak_model_name="gpt-3.5-turbo",
         use_repo_map=True,
         send_undo_reply=True,
     ),
     ModelSettings(
         "gpt-4-1106-preview",
         "udiff",
+        weak_model_name="gpt-3.5-turbo",
         use_repo_map=True,
         send_undo_reply=True,
     ),
     ModelSettings(
         "gpt-4-vision-preview",
         "diff",
+        weak_model_name="gpt-3.5-turbo",
         use_repo_map=True,
         send_undo_reply=True,
         accepts_images=True,
@@ -100,12 +109,14 @@ MODEL_SETTINGS = [
     ModelSettings(
         "gpt-4-0613",
         "diff",
+        weak_model_name="gpt-3.5-turbo",
         use_repo_map=True,
         send_undo_reply=True,
     ),
     ModelSettings(
         "gpt-4-32k-0613",
         "diff",
+        weak_model_name="gpt-3.5-turbo",
         use_repo_map=True,
         send_undo_reply=True,
     ),
@@ -116,6 +127,11 @@ MODEL_SETTINGS = [
         weak_model_name="claude-3-haiku-20240307",
         use_repo_map=True,
         send_undo_reply=True,
+    ),
+    ModelSettings(
+        "claude-3-sonnet-20240229",
+        "whole",
+        weak_model_name="claude-3-haiku-20240307",
     ),
     # Cohere
     ModelSettings(
@@ -143,7 +159,7 @@ class Model:
     use_repo_map = False
     send_undo_reply = False
     accepts_images = False
-    weak_model_name = DEFAULT_WEAK_MODEL_NAME
+    weak_model_name = None
 
     max_chat_history_tokens = 1024
     weak_model = None
@@ -188,20 +204,28 @@ class Model:
     def configure_model_settings(self, model):
         for ms in MODEL_SETTINGS:
             # direct match, or match "provider/<model>"
-            if model == ms.name or model.endswith("/" + ms.name):
+            if model == ms.name:
                 for field in fields(ModelSettings):
-                    if field.name == "name":
-                        continue
                     val = getattr(ms, field.name)
                     setattr(self, field.name, val)
-
                 return  # <--
 
-        if "gpt-4" in model or "claude-2" in model:
+        if "llama3" in model and "70b" in model:
             self.edit_format = "diff"
             self.use_repo_map = True
             self.send_undo_reply = True
+            return  # <--
 
+        if "gpt-4-turbo" in model or ("gpt-4-" in model and "-preview" in model):
+            self.edit_format = "udiff"
+            self.use_repo_map = True
+            self.send_undo_reply = True
+            return  # <--
+
+        if "gpt-4" in model or "claude-2" in model or "claude-3-opus" in model:
+            self.edit_format = "diff"
+            self.use_repo_map = True
+            self.send_undo_reply = True
             return  # <--
 
         # use the defaults
@@ -215,6 +239,10 @@ class Model:
         # If weak_model_name is provided, override the model settings
         if provided_weak_model_name:
             self.weak_model_name = provided_weak_model_name
+
+        if not self.weak_model_name:
+            self.weak_model = self
+            return
 
         if self.weak_model_name == self.name:
             self.weak_model = self

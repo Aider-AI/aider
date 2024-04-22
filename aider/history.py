@@ -1,6 +1,6 @@
 import argparse
 
-from aider import models, prompts
+from aider import prompts
 from aider.dump import dump  # noqa: F401
 from aider.sendchat import simple_send_with_retries
 
@@ -123,7 +123,7 @@ def main():
 
         assistant.append(line)
 
-    summarizer = ChatSummary(models.Model(models.DEFAULT_WEAK_MODEL_NAME, weak_model=False))
+    summarizer = ChatSummary("gpt-3.5-turbo", weak_model=False)
     summary = summarizer.summarize(messages[-40:])
     dump(summary)
 
