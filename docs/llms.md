@@ -254,7 +254,7 @@ Aider uses 3 different "edit formats" to collect code edits from different LLMs:
 - `udiff` is the most efficient editing format, where the model returns unified diffs to apply changes to the file.
 
 Different models work best with different editing formats.
-Aider is configured to use the best edit format for all the popular OpenAI and Anthropic models.
+Aider is configured to use the best edit format for the popular OpenAI and Anthropic models and the other models recommended on this page. 
 
 For lesser known models aider will default to using the "whole" editing format.
 If you would like to experiment with the more advanced formats, you can
