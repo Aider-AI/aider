@@ -43,6 +43,7 @@ Aider has some built in shortcuts for the most popular OpenAI models and
 has been tested and benchmarked to work well with them:
 
 ```
+pip install aider-chat
 export OPENAI_API_KEY=<your-key-goes-here>
 
 # GPT-4 Turbo is used by default
@@ -70,6 +71,7 @@ Aider has some built in shortcuts for the most popular Anthropic models and
 has been tested and benchmarked to work well with them:
 
 ```
+pip install aider-chat
 export ANTHROPIC_API_KEY=<your-key-goes-here>
 
 # Claude 3 Opus
@@ -93,6 +95,7 @@ You'll need a [Groq API key](https://console.groq.com/keys).
 To use **Llama3 70B**:
 
 ```
+pip install aider-chat
 export GROQ_API_KEY=<your-key-goes-here>
 aider --model groq/llama3-70b-8192
 ```
@@ -107,6 +110,7 @@ You'll need a [Cohere API key](https://dashboard.cohere.com/welcome/login).
 To use **Command-R+**:
 
 ```
+pip install aider-chat
 export COHERE_API_KEY=<your-key-goes-here>
 aider --model command-r-plus
 ```
@@ -116,6 +120,7 @@ aider --model command-r-plus
 Aider can connect to the OpenAI models on Azure.
 
 ```
+pip install aider-chat
 export AZURE_API_KEY=<your-key-goes-here>
 export AZURE_API_VERSION=2023-05-15
 export AZURE_API_BASE=https://example-endpoint.openai.azure.com
@@ -128,6 +133,7 @@ Aider can connect to [models provided by OpenRouter](https://openrouter.ai/model
 You'll need an [OpenRouter API key](https://openrouter.ai/keys).
 
 ```
+pip install aider-chat
 export OPENROUTER_API_KEY=<your-key-goes-here>
 
 # Llama3 70B instruct
@@ -144,6 +150,7 @@ Use `--openai-api-base` or set the `OPENAI_API_BASE`
 environment variable to have aider connect to it.
 
 ```
+pip install aider-chat
 export OPENAI_API_BASE=<your-endpoint-goes-here>
 export OPENAI_API_KEY=<your-key-goes-here-if-required>
 aider --model <model-name>
