@@ -11,6 +11,8 @@ from PIL import Image
 
 from aider.dump import dump  # noqa: F401
 
+litellm.suppress_debug_info = True
+
 DEFAULT_MODEL_NAME = "gpt-4-1106-preview"
 
 

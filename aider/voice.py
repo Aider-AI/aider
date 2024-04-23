@@ -15,6 +15,8 @@ from prompt_toolkit.shortcuts import prompt
 
 from .dump import dump  # noqa: F401
 
+litellm.suppress_debug_info = True
+
 
 class SoundDeviceError(Exception):
     pass
