@@ -20,7 +20,7 @@ interactive "pair programming" style workflow.
 So you should expect that models which are less capable than GPT-3.5 may struggle to perform well with aider.
 
 Aider uses the LiteLLM package to connect to LLM providers.
-The [LiteLLM provider docs](https://docs.litellm.ai/docs/providers).
+The [LiteLLM provider docs](https://docs.litellm.ai/docs/providers)
 contain more detail on the supported providers, their models and any required environment variables. 
 
 ## Configuring models
