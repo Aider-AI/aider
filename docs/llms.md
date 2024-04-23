@@ -3,7 +3,7 @@
 
 [![connecting to many LLMs](/assets/llms.jpg)](https://aider.chat/assets/llms.jpg)
 
-Aider works best with [GPT-4 Turbo](#openai) and [Claude 3 Opus](#anthropic),
+**Aider works best with [GPT-4 Turbo](#openai) and [Claude 3 Opus](#anthropic),**
 as they are the very best models for editing code.
 Aider also works quite well with [GPT-3.5](#openai).
 
@@ -18,6 +18,10 @@ but it may not work well with some models depending on their capabilities.
 For example, GPT-3.5 is just barely capable of reliably *editing code* to provide aider's
 interactive "pair programming" style workflow.
 So you should expect that models which are less capable than GPT-3.5 may struggle to perform well with aider.
+
+Aider uses the LiteLLM package to connect to LLM providers.
+The [LiteLLM provider docs](https://docs.litellm.ai/docs/providers)
+contain more detail on the supported providers, their models and any required environment variables. 
 
 ## Configuring models
 
