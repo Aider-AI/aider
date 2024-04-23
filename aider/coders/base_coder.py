@@ -513,10 +513,11 @@ class Coder:
             total_tokens = 0
 
         messages += self.cur_messages
+        messages[-1]["content"] += "\n\n" + self.fmt_system_prompt(self.gpt_prompts.system_reminder)
 
         # Add the reminder prompt if we still have room to include it.
-        if total_tokens < self.main_model.info.get("max_input_tokens", 0):
-            messages += reminder_message
+        # if total_tokens < self.main_model.info.get("max_input_tokens", 0):
+        #    messages += reminder_message
 
         return messages
 
