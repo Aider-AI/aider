@@ -113,7 +113,7 @@ aider --model command-r-plus
 
 ## Azure
 
-Aider can be configured to connect to the OpenAI models on Azure.
+Aider can connect to the OpenAI models on Azure.
 
 ```
 export AZURE_API_KEY=<your-key-goes-here>
