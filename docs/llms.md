@@ -171,8 +171,12 @@ environment variable to have aider connect to it.
 ```
 pip install aider-chat
 export OPENAI_API_BASE=<your-endpoint-goes-here>
-export OPENAI_API_KEY=<your-key-goes-here-if-required>
-aider --model <model-name>
+
+# If your endpoint needs a key
+export OPENAI_API_KEY=<your-key-goes-here>
+
+# Prefix the model name with openai/
+aider --model openai/<model-name>
 ```
 
 See the [model warnings](#model-warnings)
