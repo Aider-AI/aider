@@ -129,8 +129,8 @@ MODEL_SETTINGS = [
         "groq/llama3-70b-8192",
         "diff",
         weak_model_name="groq/llama3-8b-8192",
-        use_repo_map=True,
-        send_undo_reply=True,
+        use_repo_map=False,
+        send_undo_reply=False,
     ),
     # Gemini
     ModelSettings(

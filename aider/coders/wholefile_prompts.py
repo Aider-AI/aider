@@ -41,3 +41,7 @@ Create a new file you MUST return a *file listing* which includes an appropriate
 
     # this coder is not able to handle repo content
     repo_content_prefix = None
+
+    repo_content_prefix = """Below here are summaries of files present in the user's git repository.
+Do not propose changes to these files, they are *read-only*.
+"""

@@ -204,7 +204,7 @@ class Coder:
                 self.verbose,
             )
 
-        if map_tokens > 0:
+        if map_tokens > 0 and self.repo_map:
             self.io.tool_output(f"Repo-map: using {map_tokens} tokens")
             max_map_tokens = 2048
             if map_tokens > max_map_tokens:
@@ -212,8 +212,10 @@ class Coder:
                     f"Warning: map-tokens > {max_map_tokens} is not recommended as too much"
                     " irrelevant code can confuse GPT."
                 )
-        else:
+        elif not map_tokens:
             self.io.tool_output("Repo-map: disabled because map_tokens == 0")
+        else:
+            self.io.tool_output("Repo-map: disabled")
 
         for fname in self.get_inchat_relative_files():
             self.io.tool_output(f"Added {fname} to the chat.")
