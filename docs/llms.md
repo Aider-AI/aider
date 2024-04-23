@@ -56,7 +56,7 @@ aider --4-turbo-vision
 aider --35-turbo
 
 # List models available from OpenAI
-aider --models openai
+aider --models openai/
 ```
 
 You can use `aider --model <model-name>` to use any other OpenAI model.
@@ -84,7 +84,7 @@ aider --opus
 aider --sonnet
 
 # List models available from Anthropic
-aider --models anthropic
+aider --models anthropic/
 ```
 
 You can use `aider --model <model-name>` to use any other Anthropic model.
@@ -106,7 +106,7 @@ export GROQ_API_KEY=<your-key-goes-here>
 aider --model groq/llama3-70b-8192
 
 # List models available from Groq
-aider --models groq
+aider --models groq/
 ```
 
 
@@ -125,7 +125,7 @@ export COHERE_API_KEY=<your-key-goes-here>
 aider --model command-r-plus
 
 # List models available from Cohere
-aider --models cohere_chat
+aider --models cohere_chat/
 ```
 
 ## Azure
@@ -140,7 +140,7 @@ export AZURE_API_BASE=https://example-endpoint.openai.azure.com
 aider --model azure/<your_deployment_name>
 
 # List models available from Azure
-aider --models azure
+aider --models azure/
 ```
 
 ## OpenRouter
@@ -159,7 +159,7 @@ aider --model openrouter/meta-llama/llama-3-70b-instruct
 aider --model openrouter/<provider>/<model>
 
 # List models available from OpenRouter
-aider --models openrouter
+aider --models openrouter/
 ```
 
 ## OpenAI compatible APIs
@@ -196,11 +196,11 @@ $ aider --models turbo
 
 Aider v0.29.3-dev
 Models which match "turbo":
-- gpt-4-turbo-preview
-- gpt-4-turbo
-- gpt-4-turbo-2024-04-09
-- gpt-3.5-turbo
-...
+- gpt-4-turbo-preview (openai/gpt-4-turbo-preview)
+- gpt-4-turbo (openai/gpt-4-turbo)
+- gpt-4-turbo-2024-04-09 (openai/gpt-4-turbo-2024-04-09)
+- gpt-3.5-turbo (openai/gpt-3.5-turbo)
+- ...
 ```
 
 See the [list of providers supported by litellm](https://docs.litellm.ai/docs/providers)

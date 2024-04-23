@@ -574,7 +574,11 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         if matches:
             io.tool_output(f'Models which match "{args.models}":')
             for model in matches:
-                io.tool_output(f"- {model}")
+                fq, m = model
+                if fq == m:
+                    io.tool_output(f"- {m}")
+                else:
+                    io.tool_output(f"- {m} ({fq})")
         else:
             io.tool_output(f'No models match "{args.models}".')
         return 0
