@@ -176,6 +176,11 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         default=default_model,
         help=f"Specify the model to use for the main chat (default: {default_model})",
     )
+    core_group.add_argument(
+        "--models",
+        metavar="MODEL",
+        help="List known models which match the (partial) MODEL name",
+    )
     opus_model = "claude-3-opus-20240229"
     core_group.add_argument(
         "--opus",
@@ -563,6 +568,16 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     if "VSCODE_GIT_IPC_HANDLE" in os.environ:
         args.pretty = False
         io.tool_output("VSCode terminal detected, pretty output has been disabled.")
+
+    if args.models:
+        matches = models.fuzzy_match_models(args.models)
+        if matches:
+            io.tool_output(f'Models which match "{args.models}":')
+            for model in matches:
+                io.tool_output(f"- {model}")
+        else:
+            io.tool_output(f'No models match "{args.models}".')
+        return 0
 
     if args.git:
         git_root = setup_git(git_root, io)

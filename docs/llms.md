@@ -23,7 +23,7 @@ So you should expect that models which are less capable than GPT-3.5 may struggl
 
 - [OpenAI](#openai)
 - [Anthropic](#anthropic)
-- [Llama3](#groq)
+- [Groq & Llama3](#groq)
 - [Cohere](#cohere)
 - [Azure](#azure)
 - [OpenRouter](#openrouter)
@@ -54,6 +54,9 @@ aider --4-turbo-vision
 
 # GPT-3.5 Turbo
 aider --35-turbo
+
+# List models available from OpenAI
+aider --models openai
 ```
 
 You can use `aider --model <model-name>` to use any other OpenAI model.
@@ -79,6 +82,9 @@ aider --opus
 
 # Claude 3 Sonnet
 aider --sonnet
+
+# List models available from Anthropic
+aider --models anthropic
 ```
 
 You can use `aider --model <model-name>` to use any other Anthropic model.
@@ -98,7 +104,11 @@ To use **Llama3 70B**:
 pip install aider-chat
 export GROQ_API_KEY=<your-key-goes-here>
 aider --model groq/llama3-70b-8192
+
+# List models available from Groq
+aider --models groq
 ```
+
 
 ## Cohere
 
@@ -113,6 +123,9 @@ To use **Command-R+**:
 pip install aider-chat
 export COHERE_API_KEY=<your-key-goes-here>
 aider --model command-r-plus
+
+# List models available from Cohere
+aider --models cohere_chat
 ```
 
 ## Azure
@@ -125,6 +138,9 @@ export AZURE_API_KEY=<your-key-goes-here>
 export AZURE_API_VERSION=2023-05-15
 export AZURE_API_BASE=https://example-endpoint.openai.azure.com
 aider --model azure/<your_deployment_name>
+
+# List models available from Azure
+aider --models azure
 ```
 
 ## OpenRouter
@@ -141,6 +157,9 @@ aider --model openrouter/meta-llama/llama-3-70b-instruct
 
 # Or any other open router model
 aider --model openrouter/<provider>/<model>
+
+# List models available from OpenRouter
+aider --models openrouter
 ```
 
 ## OpenAI compatible APIs
@@ -166,22 +185,21 @@ Aider uses the [litellm](https://docs.litellm.ai/docs/providers) package
 to connect to hundreds of other models.
 You can use `aider --model <model-name>` to use any supported model.
 
-To explore the list of supported models you can run `aider --model <model-name>`
+To explore the list of supported models you can run `aider --models <model-name>`
 with a partial model name.
 If the supplied name is not an exact match for a known model, aider will
 return a list of possible matching models.
 For example:
 
 ```
-$ aider --model turbo
+$ aider --models turbo
 
-Model turbo: Unknown model, context window size and token costs unavailable.
-Did you mean one of these?
+Aider v0.29.3-dev
+Models which match "turbo":
 - gpt-4-turbo-preview
 - gpt-4-turbo
 - gpt-4-turbo-2024-04-09
 - gpt-3.5-turbo
-- gpt-3.5-turbo-0301
 ...
 ```
 

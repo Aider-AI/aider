@@ -355,19 +355,29 @@ def sanity_check_model(io, model):
 
 
 def fuzzy_match_models(name):
-    models = litellm.model_cost.keys()
+    chat_models = [
+        model for model, attrs in litellm.model_cost.items() if attrs.get("mode") == "chat"
+    ]
 
-    # Check for exact match first
-    if name in models:
-        return [name]
+    # exactly matching model
+    matching_models = [model for model in chat_models if name == model]
+    if matching_models:
+        return matching_models
 
-    # Check for models containing the name
-    matching_models = [model for model in models if name in model]
+    # exactly matching provider
+    matching_models = [
+        model for model in chat_models if litellm.model_cost[model]["litellm_provider"] == name
+    ]
+    if matching_models:
+        return matching_models
 
-    # If no matches found, check for slight misspellings
-    if not matching_models:
-        matching_models = difflib.get_close_matches(name, models, n=3, cutoff=0.8)
+    # Check for model names containing the name
+    matching_models = [model for model in chat_models if name in model]
+    if matching_models:
+        return matching_models
 
+    # Check for slight misspellings
+    matching_models = difflib.get_close_matches(name, chat_models, n=3, cutoff=0.8)
     return matching_models
 
 
