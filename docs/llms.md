@@ -7,7 +7,11 @@
 as they are the very best models for editing code.
 Aider also works quite well with [GPT-3.5](#openai).
 
-To use aider with a *free* API provider, you can use [Llama 3 70B on Groq](#llama3)
+**Aider works with a number of free API providers.**
+Google's [Gemini 1.5 Pro](#gemini) is
+the most capable free model to use with aider, with
+code editing capabilities between GPT-3.5 and GPT-4.
+You can use [Llama 3 70B on Groq](#llama3)
 which is comparable to GPT-3.5 in code editing performance.
 Cohere also offers free API access to their [Command-R+ model](#cohere),
 which works with aider
@@ -27,6 +31,7 @@ contain more detail on the supported providers, their models and any required en
 
 - [OpenAI](#openai)
 - [Anthropic](#anthropic)
+- [Gemini](#gemini)
 - [Groq & Llama3](#groq)
 - [Cohere](#cohere)
 - [Azure](#azure)
@@ -94,6 +99,24 @@ aider --models anthropic/
 You can use `aider --model <model-name>` to use any other Anthropic model.
 For example, if you want to use a specific version of Opus
 you could do `aider --model claude-3-opus-20240229`.
+
+## Gemini
+
+Google currently offers
+[*free* API access to the Gemini 1.5 Pro model](https://ai.google.dev/pricing).
+This is the most capable free model to use with aider,
+with code editing capability that's better than GPT-3.5
+and competitive with GPT-4 Turbo and Opus.
+You'll need a [Gemini API key](https://aistudio.google.com/app/u/2/apikey).
+
+```
+pip install aider-chat
+export GEMINI_API_KEY=<your-key-goes-here>
+aider --model gemini/gemini-1.5-pro-latest
+
+# List models available from Gemini
+aider --models gemini/
+```
 
 ## GROQ
 

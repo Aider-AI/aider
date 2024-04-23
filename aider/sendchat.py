@@ -23,6 +23,7 @@ CACHE = None
         RateLimitError,
         APIConnectionError,
         httpx.ConnectError,
+        litellm.exceptions.BadRequestError,
     ),
     max_tries=10,
     on_backoff=lambda details: print(

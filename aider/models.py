@@ -132,6 +132,19 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         send_undo_reply=True,
     ),
+    # Gemini
+    ModelSettings(
+        "gemini/gemini-1.5-pro",
+        "udiff",
+        use_repo_map=True,
+        send_undo_reply=True,
+    ),
+    ModelSettings(
+        "gemini/gemini-1.5-pro-latest",
+        "udiff",
+        use_repo_map=True,
+        send_undo_reply=True,
+    ),
 ]
 
 
