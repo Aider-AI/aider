@@ -169,8 +169,6 @@ aider --models openrouter/
 ## OpenAI compatible APIs
 
 Aider can connect to any LLM which is accessible via an OpenAI compatible API endpoint.
-Use `--openai-api-base` or set the `OPENAI_API_BASE`
-environment variable to have aider connect to it.
 
 ```
 pip install aider-chat
