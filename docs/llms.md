@@ -3,19 +3,25 @@
 
 [![connecting to many LLMs](/assets/llms.jpg)](https://aider.chat/assets/llms.jpg)
 
+## Best models
+
 **Aider works best with [GPT-4 Turbo](#openai) and [Claude 3 Opus](#anthropic),**
 as they are the very best models for editing code.
 Aider also works quite well with [GPT-3.5](#openai).
 
+## Free models
+
 **Aider works with a number of free API providers.**
 Google's [Gemini 1.5 Pro](#gemini) is
 the most capable free model to use with aider, with
-code editing capabilities between GPT-3.5 and GPT-4.
+code editing capabilities similar to GPT-3.5.
 You can use [Llama 3 70B on Groq](#llama3)
 which is comparable to GPT-3.5 in code editing performance.
 Cohere also offers free API access to their [Command-R+ model](#cohere),
 which works with aider
 as a *very basic* coding assistant.
+
+## Other models
 
 Aider supports connecting to almost any LLM,
 but it may not work well with some models depending on their capabilities.
@@ -105,8 +111,7 @@ you could do `aider --model claude-3-opus-20240229`.
 Google currently offers
 [*free* API access to the Gemini 1.5 Pro model](https://ai.google.dev/pricing).
 This is the most capable free model to use with aider,
-with code editing capability that's better than GPT-3.5
-and competitive with GPT-4 Turbo and Opus.
+with code editing capability that's comparable to GPT-3.5.
 You'll need a [Gemini API key](https://aistudio.google.com/app/u/2/apikey).
 
 ```
