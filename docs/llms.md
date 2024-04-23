@@ -125,6 +125,7 @@ aider --model azure/<your_deployment_name>
 ## OpenRouter
 
 Aider can connect to [models provided by OpenRouter](https://openrouter.ai/models?o=top-weekly):
+You'll need an [OpenRouter API key](https://openrouter.ai/keys).
 
 ```
 export OPENROUTER_API_KEY=<your-key-goes-here>
