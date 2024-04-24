@@ -117,8 +117,6 @@ User `aider --help` to see all the command line options, but these are useful fo
 You can also script aider from python:
 
 ```python
-import os
-import openai
 from aider.coders import Coder
 
 # This is a list of files to add to the chat
