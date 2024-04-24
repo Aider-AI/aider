@@ -23,6 +23,8 @@ backoff==2.2.1
     # via -r requirements.in
 beautifulsoup4==4.12.3
     # via -r requirements.in
+cachetools==5.3.3
+    # via google-auth
 certifi==2024.2.2
     # via
     #   httpcore
@@ -56,14 +58,48 @@ gitdb==4.0.11
     # via gitpython
 gitpython==3.1.43
     # via -r requirements.in
+google-ai-generativelanguage==0.6.2
+    # via google-generativeai
+google-api-core[grpc]==2.18.0
+    # via
+    #   google-ai-generativelanguage
+    #   google-api-python-client
+    #   google-generativeai
+google-api-python-client==2.127.0
+    # via google-generativeai
+google-auth==2.29.0
+    # via
+    #   google-ai-generativelanguage
+    #   google-api-core
+    #   google-api-python-client
+    #   google-auth-httplib2
+    #   google-generativeai
+google-auth-httplib2==0.2.0
+    # via google-api-python-client
+google-generativeai==0.5.2
+    # via -r requirements.in
+googleapis-common-protos==1.63.0
+    # via
+    #   google-api-core
+    #   grpcio-status
 greenlet==3.0.3
     # via playwright
 grep-ast==0.2.4
     # via -r requirements.in
+grpcio==1.62.2
+    # via
+    #   google-api-core
+    #   grpcio-status
+grpcio-status==1.62.2
+    # via google-api-core
 h11==0.14.0
     # via httpcore
 httpcore==1.0.5
     # via httpx
+httplib2==0.22.0
+    # via
+    #   google-api-python-client
+    #   google-auth-httplib2
 httpx==0.27.0
     # via openai
 huggingface-hub==0.22.2
@@ -82,7 +118,7 @@ jsonschema==4.21.1
     # via -r requirements.in
 jsonschema-specifications==2023.12.1
     # via jsonschema
-litellm==1.35.18
+litellm==1.35.23
     # via -r requirements.in
 markdown-it-py==3.0.0
     # via rich
@@ -100,7 +136,7 @@ numpy==1.26.4
     # via
     #   -r requirements.in
     #   scipy
-openai==1.23.2
+openai==1.23.3
     # via
     #   -r requirements.in
     #   litellm
@@ -118,11 +154,31 @@ playwright==1.43.0
     # via -r requirements.in
 prompt-toolkit==3.0.43
     # via -r requirements.in
+proto-plus==1.23.0
+    # via
+    #   google-ai-generativelanguage
+    #   google-api-core
+protobuf==4.25.3
+    # via
+    #   google-ai-generativelanguage
+    #   google-api-core
+    #   google-generativeai
+    #   googleapis-common-protos
+    #   grpcio-status
+    #   proto-plus
+pyasn1==0.6.0
+    # via
+    #   pyasn1-modules
+    #   rsa
+pyasn1-modules==0.4.0
+    # via google-auth
 pycparser==2.22
     # via cffi
-pydantic==2.7.0
-    # via openai
-pydantic-core==2.18.1
+pydantic==2.7.1
+    # via
+    #   google-generativeai
+    #   openai
+pydantic-core==2.18.2
     # via pydantic
 pyee==11.1.0
     # via playwright
@@ -130,13 +186,15 @@ pygments==2.17.2
     # via rich
 pypandoc==1.13
     # via -r requirements.in
+pyparsing==3.1.2
+    # via httplib2
 python-dotenv==1.0.1
     # via litellm
 pyyaml==6.0.1
     # via
     #   -r requirements.in
     #   huggingface-hub
-referencing==0.34.0
+referencing==0.35.0
     # via
     #   jsonschema
     #   jsonschema-specifications
@@ -144,6 +202,7 @@ regex==2024.4.16
     # via tiktoken
 requests==2.31.0
     # via
+    #   google-api-core
     #   huggingface-hub
     #   litellm
     #   tiktoken
@@ -153,6 +212,8 @@ rpds-py==0.18.0
     # via
     #   jsonschema
     #   referencing
+rsa==4.9
+    # via google-auth
 scipy==1.13.0
     # via -r requirements.in
 smmap==5.0.1
@@ -176,6 +237,7 @@ tokenizers==0.19.1
     # via litellm
 tqdm==4.66.2
     # via
+    #   google-generativeai
     #   huggingface-hub
     #   openai
 tree-sitter==0.21.3
@@ -184,11 +246,14 @@ tree-sitter-languages==1.10.2
     # via grep-ast
 typing-extensions==4.11.0
     # via
+    #   google-generativeai
     #   huggingface-hub
     #   openai
     #   pydantic
     #   pydantic-core
     #   pyee
+uritemplate==4.1.1
+    # via google-api-python-client
 urllib3==2.2.1
     # via requests
 wcwidth==0.2.13
