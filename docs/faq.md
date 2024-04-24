@@ -118,11 +118,12 @@ You can also script aider from python:
 
 ```python
 from aider.coders import Coder
+from aider.models import Model
 
 # This is a list of files to add to the chat
-fnames = ["foo.py"]
+fnames = ["greeting.py"]
 
-model = models.Model("gpt-4-turbo", weak_model="gpt-3.5-turbo")
+model = Model("gpt-4-turbo", weak_model="gpt-3.5-turbo")
 
 # Create a coder object
 coder = Coder.create(main_model=model, fnames=fnames)
