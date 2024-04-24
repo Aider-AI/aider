@@ -280,9 +280,9 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         ),
     )
     model_group.add_argument(
-        "--require-model-info",
+        "--show-model-warnings",
         action=argparse.BooleanOptionalAction,
-        default=False,
+        default=True,
         help="Only work with models that have meta-data available (default: True)",
     )
     model_group.add_argument(
@@ -623,9 +623,8 @@ def main(argv=None, input=None, output=None, force_git_root=None):
 
     main_model = models.Model(args.model, weak_model=args.weak_model)
 
-    missing_model_info = models.sanity_check_models(io, main_model)
-    if args.require_model_info and missing_model_info:
-        return 1
+    if args.show_model_warnings:
+        models.sanity_check_models(io, main_model)
 
     try:
         coder = Coder.create(

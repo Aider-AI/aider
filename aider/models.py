@@ -11,6 +11,8 @@ from PIL import Image
 
 from aider.dump import dump  # noqa: F401
 
+litellm.suppress_debug_info = True
+
 DEFAULT_MODEL_NAME = "gpt-4-1106-preview"
 
 
@@ -129,8 +131,8 @@ MODEL_SETTINGS = [
         "groq/llama3-70b-8192",
         "diff",
         weak_model_name="groq/llama3-8b-8192",
-        use_repo_map=True,
-        send_undo_reply=True,
+        use_repo_map=False,
+        send_undo_reply=False,
     ),
     # Gemini
     ModelSettings(
@@ -307,7 +309,7 @@ class Model:
         if res["missing_keys"]:
             return res
 
-        provider = self.info.get("litellm_provider").lower()
+        provider = self.info.get("litellm_provider", "").lower()
         if provider == "cohere_chat":
             return validate_variables(["COHERE_API_KEY"])
         if provider == "gemini":
@@ -329,13 +331,9 @@ def validate_variables(vars):
 
 
 def sanity_check_models(io, main_model):
-    missing_model_info = False
-    if not sanity_check_model(io, main_model):
-        missing_model_info = True
+    sanity_check_model(io, main_model)
     if main_model.weak_model and main_model.weak_model is not main_model:
-        if not sanity_check_model(io, main_model.weak_model):
-            missing_model_info = True
-    return missing_model_info
+        sanity_check_model(io, main_model.weak_model)
 
 
 def sanity_check_model(io, model):
@@ -368,8 +366,6 @@ def sanity_check_model(io, model):
 
     if show:
         io.tool_error("For more info see https://aider.chat/docs/llms.html#model-warnings")
-
-    return False
 
 
 def fuzzy_match_models(name):

@@ -15,6 +15,8 @@ CACHE_PATH = "~/.aider.send.cache.v1"
 CACHE = None
 # CACHE = Cache(CACHE_PATH)
 
+litellm.suppress_debug_info = True
+
 
 @backoff.on_exception(
     backoff.expo,
