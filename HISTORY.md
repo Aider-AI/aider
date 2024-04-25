@@ -1,6 +1,10 @@
 
 # Release history
 
+### v0.30.1
+
+- Adding missing `google-generativeai` dependency
+
 ### v0.30.0
 
 - Added [Gemini 1.5 Pro](https://aider.chat/docs/llms.html#free-models) as a recommended free model.
