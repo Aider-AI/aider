@@ -2,16 +2,12 @@
 
 import os
 import random
-import sys
 from pathlib import Path
 
 import streamlit as st
-from st_row_buttons import st_row_buttons
-from streamlit_file_browser import st_file_browser
-from streamlit_searchbox import st_searchbox
 
 from aider.coders import Coder
-from aider.dump import dump
+from aider.dump import dump  # noqa: F401
 from aider.models import Model
 
 if "recent_msgs_num" not in st.session_state:
@@ -25,7 +21,6 @@ diff = Path("aider/tmp.diff").read_text()
 def mock_tool_output():
     global chat_controls
 
-    messages = """Commit `33a242c`: Added sample python that highlights language features  \nApplied edit to new_program.py"""
     messages = """Applied edit to new_program.py"""
     # st.info(messages)
 
