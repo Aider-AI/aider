@@ -11,9 +11,6 @@ from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.main import main as cli_main
 
-if "recent_msgs_num" not in st.session_state:
-    st.session_state.recent_msgs_num = 0
-
 
 # st.cache_data
 def get_diff():
@@ -36,8 +33,9 @@ def recent_msgs():
             " tempor adipiscing sit et"
         ),
     ]
-    msgs = 30 * msgs
+    # msgs = 30 * msgs
 
+    dump(st.session_state.recent_msgs_num)
     return st.selectbox(
         "N/A",
         msgs,
@@ -73,6 +71,41 @@ class GUI:
         lines = self.coder.get_announcements()
         lines = "  \n".join(lines)
         st.info(lines)
+
+    def mock_tool_output(self):
+        messages = """Applied edit to new_program.py"""
+        # st.info(messages)
+
+        if self.chat_controls:
+            self.chat_controls.empty()
+
+        self.chat_controls = st.empty()
+        with self.chat_controls:
+            container = st.container()
+
+        with container:
+            # cols = st.columns([0.8,0.2])
+            # with cols[0]:
+
+            # with st.expander(messages):
+            #    diff = Path("aider/tmp.diff").read_text()
+            #    st.code(diff, language="diff")
+            with st.expander(
+                "Commit `33a242c`: Added sample python that highlights language features "
+                f" \n{messages}"
+            ):
+                # st.info(messages)
+                st.code(diff, language="diff")
+                st.button(
+                    "Undo commit `33a242c`",
+                    key=random.random(),
+                    help="wtf?",
+                )
+
+            if False:
+                st.button("Allow edits to `foobar.py`", key=random.random(), help="??")
+                st.button("Allow creation of new file `some/new/file.js`", key=random.random())
+                st.button("Add `baz/foo.py` to the chat", key=random.random())
 
     def do_sidebar(self):
         with st.sidebar:
@@ -158,6 +191,12 @@ class GUI:
                     )
 
             self.recent_msgs_empty = st.empty()
+            self.reset_recent_msgs()
+
+    def reset_recent_msgs(self):
+        self.recent_msgs_empty.empty()
+        with self.recent_msgs_empty:
+            self.old_prompt = recent_msgs()
 
     def do_messages_container(self):
         self.messages = st.container()
@@ -168,49 +207,11 @@ class GUI:
         with self.messages:
             self.announce()
 
-        with self.recent_msgs_empty:
-            self.old_prompt = recent_msgs()
-
         for msg in st.session_state.messages:
             with self.messages.chat_message(msg["role"]):
                 st.write(msg["content"])
                 cost = random.random() * 0.003 + 0.001
                 st.caption(f"${cost:0.4f}")
-
-    def mock_tool_output(self):
-        messages = """Applied edit to new_program.py"""
-        # st.info(messages)
-
-        if self.chat_controls:
-            self.chat_controls.empty()
-
-        self.chat_controls = st.empty()
-        with self.chat_controls:
-            container = st.container()
-
-        with container:
-            # cols = st.columns([0.8,0.2])
-            # with cols[0]:
-
-            # with st.expander(messages):
-            #    diff = Path("aider/tmp.diff").read_text()
-            #    st.code(diff, language="diff")
-            with st.expander(
-                "Commit `33a242c`: Added sample python that highlights language features "
-                f" \n{messages}"
-            ):
-                # st.info(messages)
-                st.code(diff, language="diff")
-                st.button(
-                    "Undo commit `33a242c`",
-                    key=random.random(),
-                    help="wtf?",
-                )
-
-            if False:
-                st.button("Allow edits to `foobar.py`", key=random.random(), help="??")
-                st.button("Allow creation of new file `some/new/file.js`", key=random.random())
-                st.button("Add `baz/foo.py` to the chat", key=random.random())
 
     def clear_controls(self):
         if self.chat_controls:
@@ -219,6 +220,9 @@ class GUI:
     def init_state(self):
         if "messages" not in st.session_state:
             st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
+
+        if "recent_msgs_num" not in st.session_state:
+            st.session_state.recent_msgs_num = 0
 
     def __init__(self, coder):
         self.coder = coder
@@ -229,35 +233,39 @@ class GUI:
         self.do_sidebar()
         self.do_cmd_tab()
         self.do_messages_container()
+
+        self.prompt = st.chat_input("Say something", on_submit=self.clear_controls)
         self.chat()
 
     def chat(self):
-        prompt = st.chat_input("Say something", on_submit=self.clear_controls)
-
         if self.old_prompt:
             prompt = self.old_prompt
             st.session_state.recent_msgs_num += 1
-            with self.recent_msgs_empty:
-                # do I need the assignment here?
-                self.old_prompt = recent_msgs()
+            self.reset_recent_msgs()
+        elif self.prompt:
+            prompt = self.prompt
+        else:
+            prompt = None
 
-        if prompt:
-            self.clear_controls()
+        if not prompt:
+            return
 
-            st.session_state.messages.append({"role": "user", "content": prompt})
-            with self.messages.chat_message("user"):
-                st.write(prompt)
+        self.clear_controls()
 
-            res = self.coder.run(prompt)
-            st.session_state.messages.append({"role": "assistant", "content": res})
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        with self.messages.chat_message("user"):
+            st.write(prompt)
 
-            with self.messages.chat_message("assistant"):
-                st.write(res)
-                cost = random.random() * 0.003 + 0.001
-                st.caption(f"${cost:0.4f}")
+        res = self.coder.run(prompt)
+        st.session_state.messages.append({"role": "assistant", "content": res})
 
-            with self.messages:
-                self.mock_tool_output()
+        with self.messages.chat_message("assistant"):
+            st.write(res)
+            cost = random.random() * 0.003 + 0.001
+            st.caption(f"${cost:0.4f}")
+
+        with self.messages:
+            self.mock_tool_output()
 
 
 def gui_main():
