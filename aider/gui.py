@@ -263,6 +263,10 @@ class GUI:
             self.reset_recent_msgs()
             self.chat(prompt)
 
+    def cost(self):
+        cost = random.random() * 0.003 + 0.001
+        st.caption(f"${cost:0.4f}")
+
     def chat(self, prompt):
         self.clear_controls()
 
@@ -270,10 +274,14 @@ class GUI:
         with self.messages.chat_message("user"):
             st.write(prompt)
 
-        with self.messages.chat_message("assistant"):
-            res = st.write(self.coder.run_stream(prompt))
-            cost = random.random() * 0.003 + 0.001
-            st.caption(f"${cost:0.4f}")
+        while prompt:
+            with self.messages.chat_message("assistant"):
+                res = st.write(self.coder.run_stream(prompt))
+                self.cost()
+            dump(self.coder.reflected_message)
+            if self.coder.reflected_message:
+                self.messages.info(self.coder.reflected_message)
+            prompt = self.coder.reflected_message
 
         st.session_state.messages.append({"role": "assistant", "content": res})
 

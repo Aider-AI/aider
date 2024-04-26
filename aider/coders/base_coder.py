@@ -37,11 +37,6 @@ class ExhaustedContextWindow(Exception):
     pass
 
 
-class ReflectMessage(Exception):
-    def __init__(self, message):
-        super().__init__(message)
-
-
 def wrap_fence(name):
     return f"<{name}>", f"</{name}>"
 
@@ -410,10 +405,13 @@ class Coder:
 
         return {"role": "user", "content": image_messages}
 
-    def run(self, with_message=None):
-        list(self.run_stream(with_message))
+    def run_stream(self, user_message):
+        self.io.user_input(user_message)
+        self.reflected_message = None
+        for chunk in self.send_new_user_message(user_message):
+            yield chunk
 
-    def run_stream(self, with_message=None):
+    def run(self, with_message=None):
         while True:
             try:
                 if with_message:
@@ -423,12 +421,9 @@ class Coder:
                     new_user_message = self.run_loop()
 
                 while new_user_message:
-                    try:
-                        for chunk in self.send_new_user_message(new_user_message):
-                            yield chunk
-                        new_user_message = None
-                    except ReflectMessage as msg:
-                        new_user_message = str(msg)
+                    self.reflected_message = None
+                    list(self.send_new_user_message(new_user_message))
+                    new_user_message = self.reflected_message
 
                 if with_message:
                     return self.partial_response_content
@@ -508,11 +503,7 @@ class Coder:
             return self.commands.run(inp)
 
         self.check_for_file_mentions(inp)
-
-        try:
-            list(self.send_new_user_message(inp))
-        except ReflectMessage as msg:
-            return str(msg)
+        return inp
 
     def fmt_system_prompt(self, prompt):
         prompt = prompt.format(fence=self.fence)
@@ -609,7 +600,7 @@ class Coder:
         edited, edit_error = self.apply_updates()
         if edit_error:
             self.update_cur_messages(set())
-            raise ReflectMessage(edit_error)
+            self.reflected_message = edit_error
 
         self.update_cur_messages(edited)
 
@@ -625,7 +616,7 @@ class Coder:
 
         add_rel_files_message = self.check_for_file_mentions(content)
         if add_rel_files_message:
-            raise ReflectMessage(add_rel_files_message)
+            self.reflected_message = add_rel_files_message
 
     def update_cur_messages(self, edited):
         if self.partial_response_content:
