@@ -235,21 +235,18 @@ class GUI:
         self.do_messages_container()
 
         self.prompt = st.chat_input("Say something", on_submit=self.clear_controls)
-        self.chat()
 
-    def chat(self):
+        if self.prompt:
+            self.chat(self.prompt)
+            return
+
         if self.old_prompt:
             prompt = self.old_prompt
             st.session_state.recent_msgs_num += 1
             self.reset_recent_msgs()
-        elif self.prompt:
-            prompt = self.prompt
-        else:
-            prompt = None
+            self.chat(prompt)
 
-        if not prompt:
-            return
-
+    def chat(self, prompt):
         self.clear_controls()
 
         st.session_state.messages.append({"role": "user", "content": prompt})
