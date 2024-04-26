@@ -2,62 +2,20 @@
 
 import os
 import random
+import sys
 from pathlib import Path
 
 import streamlit as st
 
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
-from aider.main import main
+from aider.main import main as cli_main
 
 if "recent_msgs_num" not in st.session_state:
     st.session_state.recent_msgs_num = 0
 
-chat_controls = None
 
 diff = Path("aider/tmp.diff").read_text()
-
-
-def mock_tool_output():
-    global chat_controls
-
-    messages = """Applied edit to new_program.py"""
-    # st.info(messages)
-
-    if chat_controls:
-        chat_controls.empty()
-    chat_controls = st.empty()
-    with chat_controls:
-        container = st.container()
-
-    with container:
-        # cols = st.columns([0.8,0.2])
-        # with cols[0]:
-
-        # with st.expander(messages):
-        #    diff = Path("aider/tmp.diff").read_text()
-        #    st.code(diff, language="diff")
-        with st.expander(
-            f"Commit `33a242c`: Added sample python that highlights language features  \n{messages}"
-        ):
-            # st.info(messages)
-            st.code(diff, language="diff")
-            st.button(
-                "Undo commit `33a242c`",
-                key=random.random(),
-                help="wtf?",
-            )
-
-        if False:
-            st.button("Allow edits to `foobar.py`", key=random.random(), help="??")
-            st.button("Allow creation of new file `some/new/file.js`", key=random.random())
-            st.button("Add `baz/foo.py` to the chat", key=random.random())
-
-        # st.toggle("Show diffs", key=random.random())
-        # st.toggle("Undo this commit `33a242c`", key=random.random(), help="?")
-
-        # cost = random.random() * 0.003 + 0.001
-        # st.caption(f"${cost:0.4f} to send the next message", help="# header\n- list\n- list\n")
 
 
 def recent_msgs():
@@ -97,166 +55,217 @@ def search(text=None):
     return results
 
 
-# selected_value = st_searchbox(search)
-
-
 @st.cache_resource
 def get_coder():
-    coder = main(return_coder=True)
+    coder = cli_main(return_coder=True)
     if isinstance(coder, Coder):
         return coder
     raise ValueError()
 
 
-coder = get_coder()
+class GUI:
+    def announce(self):
+        lines = self.coder.get_announcements()
+        lines = "  \n".join(lines)
+        st.info(lines)
 
+    def do_sidebar(self):
+        with st.sidebar:
+            st.title("Aider")
+            self.cmds_tab, self.settings_tab = st.tabs(["Commands", "Settings"])
 
-def announce(coder):
-    lines = coder.get_announcements()
-    lines = "  \n".join(lines)
-    st.info(lines)
+    def do_cmd_tab(self):
+        with st.expander("Recommended actions", expanded=True):
+            with st.popover("Create a git repo to track changes"):
+                st.write(
+                    "Aider works best when your code is stored in a git repo.  \n[See the FAQ for"
+                    " more info](https://aider.chat/docs/faq.html#how-does-aider-use-git)"
+                )
+                st.button("Create git repo", key=random.random(), help="?")
 
+            with st.popover("Update your `.gitignore` file"):
+                st.write("It's best to keep aider's internal files out of your git repo.")
+                st.button("Add `.aider*` to `.gitignore`", key=random.random(), help="?")
 
-with st.sidebar:
-    st.title("Aider")
-    cmds_tab, settings_tab = st.tabs(["Commands", "Settings"])
-
-with cmds_tab:
-    with st.expander("Recommended actions", expanded=True):
-        with st.popover("Create a git repo to track changes"):
-            st.write(
-                "Aider works best when your code is stored in a git repo.  \n[See the FAQ for more"
-                " info](https://aider.chat/docs/faq.html#how-does-aider-use-git)"
+        with st.expander("Add to the chat", expanded=True):
+            st.multiselect(
+                "Files for the LLM to edit",
+                search(),
+                default=["aider/main.py", "aider/io.py"],
+                help=(
+                    "Only add the files that need to be *edited* for the task you are working on."
+                    " Aider will pull in other code to provide relevant context to the LLM."
+                ),
             )
-            st.button("Create git repo", key=random.random(), help="?")
+            with st.popover("Add web page"):
+                st.markdown("www")
+                st.text_input("URL?")
+            with st.popover("Add image"):
+                st.markdown("Hello World 👋")
+                st.file_uploader("Image file")
+            with st.popover("Run shell commands, tests, etc"):
+                st.markdown(
+                    "Run a shell command and optionally share the output with the LLM. This is a"
+                    " great way to run your program or run tests and have the LLM fix bugs."
+                )
+                st.text_input("Command:")
+                st.radio(
+                    "Share the command output with the LLM?",
+                    [
+                        "Review the output and decide whether to share",
+                        (
+                            "Automatically share the output on non-zero exit code (ie, if any tests"
+                            " fail)"
+                        ),
+                    ],
+                )
+                st.selectbox(
+                    "Recent commands",
+                    [
+                        "my_app.py --doit",
+                        "my_app.py --cleanup",
+                    ],
+                )
 
-        with st.popover("Update your `.gitignore` file"):
-            st.write("It's best to keep aider's internal files out of your git repo.")
-            st.button("Add `.aider*` to `.gitignore`", key=random.random(), help="?")
+        with st.expander("Tokens and costs", expanded=True):
+            with st.popover("Show token usage"):
+                st.write("hi")
+            st.button("Clear chat history")
+            # st.metric("Cost of last message send & reply", "$0.0019", help="foo")
+            # st.metric("Cost to send next message", "$0.0013", help="foo")
+            st.metric("Total cost this session", "$0.22")
 
-    with st.expander("Add to the chat", expanded=True):
-        st.multiselect(
-            "Files for the LLM to edit",
-            search(),
-            default=["aider/main.py", "aider/io.py"],
-            help=(
-                "Only add the files that need to be *edited* for the task you are working on. Aider"
-                " will pull in other code to provide relevant context to the LLM."
-            ),
-        )
-        with st.popover("Add web page"):
-            st.markdown("www")
-            name = st.text_input("URL?")
-        with st.popover("Add image"):
-            st.markdown("Hello World 👋")
-            st.file_uploader("Image file")
-        with st.popover("Run shell commands, tests, etc"):
-            st.markdown(
-                "Run a shell command and optionally share the output with the LLM. This is a great"
-                " way to run your program or run tests and have the LLM fix bugs."
-            )
-            name = st.text_input("Command:")
-            st.radio(
-                "Share the command output with the LLM?",
-                [
-                    "Review the output and decide whether to share",
-                    "Automatically share the output on non-zero exit code (ie, if any tests fail)",
-                ],
-            )
-            st.selectbox(
-                "Recent commands",
-                [
-                    "my_app.py --doit",
-                    "my_app.py --cleanup",
-                ],
-            )
+        with st.expander("Git", expanded=False):
+            # st.button("Show last diff")
+            # st.button("Undo last commit")
+            st.button("Commit any pending changes")
+            with st.popover("Run git command"):
+                st.markdown("## Run git command")
+                st.text_input("git", value="git ")
+                st.button("Run")
+                st.selectbox(
+                    "Recent git commands",
+                    [
+                        "git checkout -b experiment",
+                        "git stash",
+                    ],
+                )
 
-    with st.expander("Tokens and costs", expanded=True):
-        with st.popover("Show token usage"):
-            st.write("hi")
-        st.button("Clear chat history")
-        # st.metric("Cost of last message send & reply", "$0.0019", help="foo")
-        # st.metric("Cost to send next message", "$0.0013", help="foo")
-        st.metric("Total cost this session", "$0.22")
+        self.recent_msgs_empty = st.empty()
 
-    with st.expander("Git", expanded=False):
-        # st.button("Show last diff")
-        # st.button("Undo last commit")
-        st.button("Commit any pending changes")
-        with st.popover("Run git command"):
-            st.markdown("## Run git command")
-            name = st.text_input("git", value="git ")
-            st.button("Run")
-            st.selectbox(
-                "Recent git commands",
-                [
-                    "git checkout -b experiment",
-                    "git stash",
-                ],
-            )
+    def do_messages_container(self):
+        self.messages = st.container()
 
-    recent_msgs_empty = st.empty()
+        # stuff a bunch of vertical whitespace at the top
+        # to get all the chat text to the bottom
+        self.messages.container(height=1200, border=False)
+        with self.messages:
+            self.announce()
+
+        with self.recent_msgs_empty:
+            self.old_prompt = recent_msgs()
+
+        for msg in st.session_state.messages:
+            with self.messages.chat_message(msg["role"]):
+                st.write(msg["content"])
+                cost = random.random() * 0.003 + 0.001
+                st.caption(f"${cost:0.4f}")
+
+    def mock_tool_output(self):
+        messages = """Applied edit to new_program.py"""
+        # st.info(messages)
+
+        if self.chat_controls:
+            self.chat_controls.empty()
+
+        self.chat_controls = st.empty()
+        with self.chat_controls:
+            container = st.container()
+
+        with container:
+            # cols = st.columns([0.8,0.2])
+            # with cols[0]:
+
+            # with st.expander(messages):
+            #    diff = Path("aider/tmp.diff").read_text()
+            #    st.code(diff, language="diff")
+            with st.expander(
+                "Commit `33a242c`: Added sample python that highlights language features "
+                f" \n{messages}"
+            ):
+                # st.info(messages)
+                st.code(diff, language="diff")
+                st.button(
+                    "Undo commit `33a242c`",
+                    key=random.random(),
+                    help="wtf?",
+                )
+
+            if False:
+                st.button("Allow edits to `foobar.py`", key=random.random(), help="??")
+                st.button("Allow creation of new file `some/new/file.js`", key=random.random())
+                st.button("Add `baz/foo.py` to the chat", key=random.random())
+
+    def clear_controls(self):
+        if self.chat_controls:
+            self.chat_controls.empty()
+
+    def init_state(self):
+        if "messages" not in st.session_state:
+            st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
+
+    def __init__(self, coder):
+        self.coder = coder
+        self.chat_controls = None
+
+        self.init_state()
+
+        self.do_sidebar()
+        with self.cmds_tab:
+            self.do_cmd_tab()
+
+        self.do_messages_container()
+
+        with self.messages:
+            self.mock_tool_output()
+
+        self.chat()
+
+    def chat(self):
+        prompt = st.chat_input("Say something", on_submit=self.clear_controls)
+        # dump(old_prompt, prompt)
+
+        if self.old_prompt:
+            prompt = self.old_prompt
+            st.session_state.recent_msgs_num += 1
+            with self.recent_msgs_empty:
+                # do I need the assignment here?
+                self.old_prompt = recent_msgs()
+
+        if prompt:
+            self.clear_controls()
+
+            st.session_state.messages.append({"role": "user", "content": prompt})
+            with self.messages.chat_message("user"):
+                st.write(prompt)
+
+            res = self.coder.run(prompt)
+            st.session_state.messages.append({"role": "assistant", "content": res})
+
+            with self.messages.chat_message("assistant"):
+                st.write(res)
+                cost = random.random() * 0.003 + 0.001
+                st.caption(f"${cost:0.4f}")
+
+            with self.messages:
+                self.mock_tool_output()
 
 
-# chat_tab, settings_tab = st.tabs(["Chat", "Settings"])
+def gui_main():
+    coder = get_coder()
+    GUI(coder)
 
 
-messages = st.container()
-
-# stuff a bunch of vertical whitespace at the top
-# to get all the chat text to the bottom
-messages.container(height=1200, border=False)
-with messages:
-    announce(coder)
-
-with recent_msgs_empty:
-    old_prompt = recent_msgs()
-
-if "messages" not in st.session_state:
-    st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
-
-
-for msg in st.session_state.messages:
-    with messages.chat_message(msg["role"]):
-        st.write(msg["content"])
-        cost = random.random() * 0.003 + 0.001
-        st.caption(f"${cost:0.4f}")
-
-with messages:
-    mock_tool_output()
-
-# inp_empty = st.empty()
-
-
-def clear_controls():
-    if chat_controls:
-        chat_controls.empty()
-
-
-prompt = st.chat_input("Say something", on_submit=clear_controls)
-# dump(old_prompt, prompt)
-
-if old_prompt:
-    prompt = old_prompt
-    st.session_state.recent_msgs_num += 1
-    with recent_msgs_empty:
-        old_prompt = recent_msgs()
-
-if prompt:
-    if chat_controls:
-        chat_controls.empty()
-
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    with messages.chat_message("user"):
-        st.write(prompt)
-
-    res = coder.run(prompt)
-    st.session_state.messages.append({"role": "assistant", "content": res})
-
-    with messages.chat_message("assistant"):
-        st.write(res)
-        cost = random.random() * 0.003 + 0.001
-        st.caption(f"${cost:0.4f}")
-
-    with messages:
-        mock_tool_output()
+if __name__ == "__main__":
+    status = gui_main()
+    sys.exit(status)
