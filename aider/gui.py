@@ -15,7 +15,12 @@ if "recent_msgs_num" not in st.session_state:
     st.session_state.recent_msgs_num = 0
 
 
-diff = Path("aider/tmp.diff").read_text()
+# st.cache_data
+def get_diff():
+    return Path("/Users/gauthier/Projects/aider/aider/tmp.diff").read_text()
+
+
+diff = get_diff()
 
 
 def recent_msgs():
@@ -75,83 +80,84 @@ class GUI:
             self.cmds_tab, self.settings_tab = st.tabs(["Commands", "Settings"])
 
     def do_cmd_tab(self):
-        with st.expander("Recommended actions", expanded=True):
-            with st.popover("Create a git repo to track changes"):
-                st.write(
-                    "Aider works best when your code is stored in a git repo.  \n[See the FAQ for"
-                    " more info](https://aider.chat/docs/faq.html#how-does-aider-use-git)"
-                )
-                st.button("Create git repo", key=random.random(), help="?")
+        with self.cmds_tab:
+            with st.expander("Recommended actions", expanded=True):
+                with st.popover("Create a git repo to track changes"):
+                    st.write(
+                        "Aider works best when your code is stored in a git repo.  \n[See the FAQ"
+                        " for more info](https://aider.chat/docs/faq.html#how-does-aider-use-git)"
+                    )
+                    st.button("Create git repo", key=random.random(), help="?")
 
-            with st.popover("Update your `.gitignore` file"):
-                st.write("It's best to keep aider's internal files out of your git repo.")
-                st.button("Add `.aider*` to `.gitignore`", key=random.random(), help="?")
+                with st.popover("Update your `.gitignore` file"):
+                    st.write("It's best to keep aider's internal files out of your git repo.")
+                    st.button("Add `.aider*` to `.gitignore`", key=random.random(), help="?")
 
-        with st.expander("Add to the chat", expanded=True):
-            st.multiselect(
-                "Files for the LLM to edit",
-                search(),
-                default=["aider/main.py", "aider/io.py"],
-                help=(
-                    "Only add the files that need to be *edited* for the task you are working on."
-                    " Aider will pull in other code to provide relevant context to the LLM."
-                ),
-            )
-            with st.popover("Add web page"):
-                st.markdown("www")
-                st.text_input("URL?")
-            with st.popover("Add image"):
-                st.markdown("Hello World 👋")
-                st.file_uploader("Image file")
-            with st.popover("Run shell commands, tests, etc"):
-                st.markdown(
-                    "Run a shell command and optionally share the output with the LLM. This is a"
-                    " great way to run your program or run tests and have the LLM fix bugs."
+            with st.expander("Add to the chat", expanded=True):
+                st.multiselect(
+                    "Files for the LLM to edit",
+                    self.coder.get_all_relative_files(),
+                    default=self.coder.get_inchat_relative_files(),
+                    help=(
+                        "Only add the files that need to be *edited* for the task you are working"
+                        " on. Aider will pull in other code to provide relevant context to the LLM."
+                    ),
                 )
-                st.text_input("Command:")
-                st.radio(
-                    "Share the command output with the LLM?",
-                    [
-                        "Review the output and decide whether to share",
-                        (
-                            "Automatically share the output on non-zero exit code (ie, if any tests"
-                            " fail)"
-                        ),
-                    ],
-                )
-                st.selectbox(
-                    "Recent commands",
-                    [
-                        "my_app.py --doit",
-                        "my_app.py --cleanup",
-                    ],
-                )
+                with st.popover("Add web page"):
+                    st.markdown("www")
+                    st.text_input("URL?")
+                with st.popover("Add image"):
+                    st.markdown("Hello World 👋")
+                    st.file_uploader("Image file")
+                with st.popover("Run shell commands, tests, etc"):
+                    st.markdown(
+                        "Run a shell command and optionally share the output with the LLM. This is"
+                        " a great way to run your program or run tests and have the LLM fix bugs."
+                    )
+                    st.text_input("Command:")
+                    st.radio(
+                        "Share the command output with the LLM?",
+                        [
+                            "Review the output and decide whether to share",
+                            (
+                                "Automatically share the output on non-zero exit code (ie, if any"
+                                " tests fail)"
+                            ),
+                        ],
+                    )
+                    st.selectbox(
+                        "Recent commands",
+                        [
+                            "my_app.py --doit",
+                            "my_app.py --cleanup",
+                        ],
+                    )
 
-        with st.expander("Tokens and costs", expanded=True):
-            with st.popover("Show token usage"):
-                st.write("hi")
-            st.button("Clear chat history")
-            # st.metric("Cost of last message send & reply", "$0.0019", help="foo")
-            # st.metric("Cost to send next message", "$0.0013", help="foo")
-            st.metric("Total cost this session", "$0.22")
+            with st.expander("Tokens and costs", expanded=True):
+                with st.popover("Show token usage"):
+                    st.write("hi")
+                st.button("Clear chat history")
+                # st.metric("Cost of last message send & reply", "$0.0019", help="foo")
+                # st.metric("Cost to send next message", "$0.0013", help="foo")
+                st.metric("Total cost this session", "$0.22")
 
-        with st.expander("Git", expanded=False):
-            # st.button("Show last diff")
-            # st.button("Undo last commit")
-            st.button("Commit any pending changes")
-            with st.popover("Run git command"):
-                st.markdown("## Run git command")
-                st.text_input("git", value="git ")
-                st.button("Run")
-                st.selectbox(
-                    "Recent git commands",
-                    [
-                        "git checkout -b experiment",
-                        "git stash",
-                    ],
-                )
+            with st.expander("Git", expanded=False):
+                # st.button("Show last diff")
+                # st.button("Undo last commit")
+                st.button("Commit any pending changes")
+                with st.popover("Run git command"):
+                    st.markdown("## Run git command")
+                    st.text_input("git", value="git ")
+                    st.button("Run")
+                    st.selectbox(
+                        "Recent git commands",
+                        [
+                            "git checkout -b experiment",
+                            "git stash",
+                        ],
+                    )
 
-        self.recent_msgs_empty = st.empty()
+            self.recent_msgs_empty = st.empty()
 
     def do_messages_container(self):
         self.messages = st.container()
@@ -221,19 +227,12 @@ class GUI:
         self.init_state()
 
         self.do_sidebar()
-        with self.cmds_tab:
-            self.do_cmd_tab()
-
+        self.do_cmd_tab()
         self.do_messages_container()
-
-        with self.messages:
-            self.mock_tool_output()
-
         self.chat()
 
     def chat(self):
         prompt = st.chat_input("Say something", on_submit=self.clear_controls)
-        # dump(old_prompt, prompt)
 
         if self.old_prompt:
             prompt = self.old_prompt
