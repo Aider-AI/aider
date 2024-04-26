@@ -270,15 +270,12 @@ class GUI:
         with self.messages.chat_message("user"):
             st.write(prompt)
 
-        res = self.coder.run(prompt)
-        # self.coder.io.user_input(with_message)
-
-        st.session_state.messages.append({"role": "assistant", "content": res})
-
         with self.messages.chat_message("assistant"):
-            st.write(res)
+            res = st.write(self.coder.run_stream(prompt))
             cost = random.random() * 0.003 + 0.001
             st.caption(f"${cost:0.4f}")
+
+        st.session_state.messages.append({"role": "assistant", "content": res})
 
         with self.messages:
             self.mock_tool_output()
