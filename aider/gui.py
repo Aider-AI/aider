@@ -35,7 +35,6 @@ def recent_msgs():
     ]
     # msgs = 30 * msgs
 
-    dump(st.session_state.recent_msgs_num)
     return st.selectbox(
         "N/A",
         msgs,
@@ -114,84 +113,95 @@ class GUI:
 
     def do_cmd_tab(self):
         with self.cmds_tab:
-            with st.expander("Recommended actions", expanded=True):
-                with st.popover("Create a git repo to track changes"):
-                    st.write(
-                        "Aider works best when your code is stored in a git repo.  \n[See the FAQ"
-                        " for more info](https://aider.chat/docs/faq.html#how-does-aider-use-git)"
-                    )
-                    st.button("Create git repo", key=random.random(), help="?")
+            self.do_recommended_actions()
+            self.do_add_to_chat()
+            self.do_tokens_and_cost()
+            self.do_git()
+            self.do_recent_msgs()
 
-                with st.popover("Update your `.gitignore` file"):
-                    st.write("It's best to keep aider's internal files out of your git repo.")
-                    st.button("Add `.aider*` to `.gitignore`", key=random.random(), help="?")
-
-            with st.expander("Add to the chat", expanded=True):
-                st.multiselect(
-                    "Files for the LLM to edit",
-                    self.coder.get_all_relative_files(),
-                    default=self.coder.get_inchat_relative_files(),
-                    help=(
-                        "Only add the files that need to be *edited* for the task you are working"
-                        " on. Aider will pull in other code to provide relevant context to the LLM."
-                    ),
+    def do_recommended_actions(self):
+        with st.expander("Recommended actions", expanded=True):
+            with st.popover("Create a git repo to track changes"):
+                st.write(
+                    "Aider works best when your code is stored in a git repo.  \n[See the FAQ"
+                    " for more info](https://aider.chat/docs/faq.html#how-does-aider-use-git)"
                 )
-                with st.popover("Add web page"):
-                    st.markdown("www")
-                    st.text_input("URL?")
-                with st.popover("Add image"):
-                    st.markdown("Hello World 👋")
-                    st.file_uploader("Image file")
-                with st.popover("Run shell commands, tests, etc"):
-                    st.markdown(
-                        "Run a shell command and optionally share the output with the LLM. This is"
-                        " a great way to run your program or run tests and have the LLM fix bugs."
-                    )
-                    st.text_input("Command:")
-                    st.radio(
-                        "Share the command output with the LLM?",
-                        [
-                            "Review the output and decide whether to share",
-                            (
-                                "Automatically share the output on non-zero exit code (ie, if any"
-                                " tests fail)"
-                            ),
-                        ],
-                    )
-                    st.selectbox(
-                        "Recent commands",
-                        [
-                            "my_app.py --doit",
-                            "my_app.py --cleanup",
-                        ],
-                    )
+                st.button("Create git repo", key=random.random(), help="?")
 
-            with st.expander("Tokens and costs", expanded=True):
-                with st.popover("Show token usage"):
-                    st.write("hi")
-                st.button("Clear chat history")
-                # st.metric("Cost of last message send & reply", "$0.0019", help="foo")
-                # st.metric("Cost to send next message", "$0.0013", help="foo")
-                st.metric("Total cost this session", "$0.22")
+            with st.popover("Update your `.gitignore` file"):
+                st.write("It's best to keep aider's internal files out of your git repo.")
+                st.button("Add `.aider*` to `.gitignore`", key=random.random(), help="?")
 
-            with st.expander("Git", expanded=False):
-                # st.button("Show last diff")
-                # st.button("Undo last commit")
-                st.button("Commit any pending changes")
-                with st.popover("Run git command"):
-                    st.markdown("## Run git command")
-                    st.text_input("git", value="git ")
-                    st.button("Run")
-                    st.selectbox(
-                        "Recent git commands",
-                        [
-                            "git checkout -b experiment",
-                            "git stash",
-                        ],
-                    )
+    def do_add_to_chat(self):
+        with st.expander("Add to the chat", expanded=True):
+            st.multiselect(
+                "Files for the LLM to edit",
+                self.coder.get_all_relative_files(),
+                default=self.coder.get_inchat_relative_files(),
+                help=(
+                    "Only add the files that need to be *edited* for the task you are working"
+                    " on. Aider will pull in other code to provide relevant context to the LLM."
+                ),
+            )
+            with st.popover("Add web page"):
+                st.markdown("www")
+                st.text_input("URL?")
+            with st.popover("Add image"):
+                st.markdown("Hello World 👋")
+                st.file_uploader("Image file")
+            with st.popover("Run shell commands, tests, etc"):
+                st.markdown(
+                    "Run a shell command and optionally share the output with the LLM. This is"
+                    " a great way to run your program or run tests and have the LLM fix bugs."
+                )
+                st.text_input("Command:")
+                st.radio(
+                    "Share the command output with the LLM?",
+                    [
+                        "Review the output and decide whether to share",
+                        (
+                            "Automatically share the output on non-zero exit code (ie, if any"
+                            " tests fail)"
+                        ),
+                    ],
+                )
+                st.selectbox(
+                    "Recent commands",
+                    [
+                        "my_app.py --doit",
+                        "my_app.py --cleanup",
+                    ],
+                )
 
-            self.recent_msgs_empty = st.empty()
-            self.reset_recent_msgs()
+    def do_tokens_and_cost(self):
+        with st.expander("Tokens and costs", expanded=True):
+            with st.popover("Show token usage"):
+                st.write("hi")
+            st.button("Clear chat history")
+            # st.metric("Cost of last message send & reply", "$0.0019", help="foo")
+            # st.metric("Cost to send next message", "$0.0013", help="foo")
+            st.metric("Total cost this session", "$0.22")
+
+    def do_git(self):
+        with st.expander("Git", expanded=False):
+            # st.button("Show last diff")
+            # st.button("Undo last commit")
+            st.button("Commit any pending changes")
+            with st.popover("Run git command"):
+                st.markdown("## Run git command")
+                st.text_input("git", value="git ")
+                st.button("Run")
+                st.selectbox(
+                    "Recent git commands",
+                    [
+                        "git checkout -b experiment",
+                        "git stash",
+                    ],
+                )
+
+    def do_recent_msgs(self):
+        self.recent_msgs_empty = st.empty()
+        self.reset_recent_msgs()
 
     def reset_recent_msgs(self):
         self.recent_msgs_empty.empty()
@@ -226,6 +236,13 @@ class GUI:
 
     def __init__(self, coder):
         self.coder = coder
+
+        # Force the coder to cooperate, regardless of cmd line args
+        self.coder.yield_stream = True
+        self.coder.stream = True
+        self.coder.io.yes = True
+        self.coder.pretty = False
+
         self.chat_controls = None
 
         self.init_state()
@@ -254,6 +271,8 @@ class GUI:
             st.write(prompt)
 
         res = self.coder.run(prompt)
+        # self.coder.io.user_input(with_message)
+
         st.session_state.messages.append({"role": "assistant", "content": res})
 
         with self.messages.chat_message("assistant"):
