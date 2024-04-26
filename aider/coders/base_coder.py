@@ -108,17 +108,18 @@ class Coder:
             lines.append("Git repo: none")
 
         # Repo-map
-        map_tokens = self.repo_map.max_map_tokens if self.repo_map else 0
-        if map_tokens > 0 and self.repo_map:
-            lines.append(f"Repo-map: using {map_tokens} tokens")
-            max_map_tokens = 2048
-            if map_tokens > max_map_tokens:
-                lines.append(
-                    f"Warning: map-tokens > {max_map_tokens} is not recommended as too much"
-                    " irrelevant code can confuse GPT."
-                )
-        elif not map_tokens:
-            lines.append("Repo-map: disabled because map_tokens == 0")
+        if self.repo_map:
+            map_tokens = self.repo_map.max_map_tokens
+            if map_tokens > 0:
+                lines.append(f"Repo-map: using {map_tokens} tokens")
+                max_map_tokens = 2048
+                if map_tokens > max_map_tokens:
+                    lines.append(
+                        f"Warning: map-tokens > {max_map_tokens} is not recommended as too much"
+                        " irrelevant code can confuse GPT."
+                    )
+            else:
+                lines.append("Repo-map: disabled because map_tokens == 0")
         else:
             lines.append("Repo-map: disabled")
 
