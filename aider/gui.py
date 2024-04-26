@@ -75,8 +75,7 @@ class GUI:
         messages = """Applied edit to new_program.py"""
         # st.info(messages)
 
-        if self.chat_controls:
-            self.chat_controls.empty()
+        self.chat_controls.empty()
 
         self.chat_controls = st.empty()
         with self.chat_controls:
@@ -223,9 +222,10 @@ class GUI:
                 cost = random.random() * 0.003 + 0.001
                 st.caption(f"${cost:0.4f}")
 
+        self.chat_controls = st.empty()
+
     def clear_controls(self):
-        if self.chat_controls:
-            self.chat_controls.empty()
+        self.chat_controls.empty()
 
     def init_state(self):
         if "messages" not in st.session_state:
@@ -242,8 +242,6 @@ class GUI:
         self.coder.stream = True
         self.coder.io.yes = True
         self.coder.pretty = False
-
-        self.chat_controls = None
 
         self.init_state()
 
@@ -278,7 +276,6 @@ class GUI:
             with self.messages.chat_message("assistant"):
                 res = st.write(self.coder.run_stream(prompt))
                 self.cost()
-            dump(self.coder.reflected_message)
             if self.coder.reflected_message:
                 self.messages.info(self.coder.reflected_message)
             prompt = self.coder.reflected_message
