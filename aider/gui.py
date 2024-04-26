@@ -109,8 +109,6 @@ model = Model("claude-3-haiku-20240307")
 fnames = ["greeting.py"]
 coder = Coder.create(main_model=model, fnames=fnames, use_git=False, pretty=False)
 
-import random
-
 lorem_words = [
     "lorem",
     "ipsum",
