@@ -122,7 +122,7 @@ def check_gitignore(git_root, io, ask=True):
     io.tool_output(f"Added {pat} to .gitignore")
 
 
-def main(argv=None, input=None, output=None, force_git_root=None):
+def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
     if argv is None:
         argv = sys.argv[1:]
 
@@ -554,20 +554,14 @@ def main(argv=None, input=None, output=None, force_git_root=None):
     if args.git and not force_git_root:
         right_repo_root = guessed_wrong_repo(io, git_root, fnames, git_dname)
         if right_repo_root:
-            return main(argv, input, output, right_repo_root)
-
-    io.tool_output(f"Aider v{__version__}")
+            return main(argv, input, output, right_repo_root, return_coder=return_coder)
 
     if not args.skip_check_update:
         check_version(io.tool_error)
 
     if args.check_update:
         update_available = check_version(lambda msg: None)
-        sys.exit(0 if not update_available else 1)
-
-    if "VSCODE_GIT_IPC_HANDLE" in os.environ:
-        args.pretty = False
-        io.tool_output("VSCode terminal detected, pretty output has been disabled.")
+        return 0 if not update_available else 1
 
     if args.models:
         matches = models.fuzzy_match_models(args.models)
@@ -652,6 +646,9 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         io.tool_error(str(err))
         return 1
 
+    if return_coder:
+        return coder
+
     if args.commit:
         coder.commands.cmd_commit("")
         return
@@ -670,6 +667,10 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         coder.apply_updates()
         return
 
+    if "VSCODE_GIT_IPC_HANDLE" in os.environ:
+        args.pretty = False
+        io.tool_output("VSCode terminal detected, pretty output has been disabled.")
+
     io.tool_output("Use /help to see in-chat commands, run with --help to see cmd line args")
 
     if git_root and Path.cwd().resolve() != Path(git_root).resolve():
@@ -685,7 +686,9 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         io.add_to_input_history(args.message)
         io.tool_output()
         coder.run(with_message=args.message)
-    elif args.message_file:
+        return
+
+    if args.message_file:
         try:
             message_from_file = io.read_text(args.message_file)
             io.tool_output()
@@ -696,8 +699,9 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         except IOError as e:
             io.tool_error(f"Error reading message file: {e}")
             return 1
-    else:
-        coder.run()
+        return
+
+    coder.run()
 
 
 if __name__ == "__main__":

@@ -8,7 +8,7 @@ import streamlit as st
 
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
-from aider.models import Model
+from aider.main import main
 
 if "recent_msgs_num" not in st.session_state:
     st.session_state.recent_msgs_num = 0
@@ -100,122 +100,25 @@ def search(text=None):
 # selected_value = st_searchbox(search)
 
 
-model = Model("claude-3-haiku-20240307")
-fnames = ["greeting.py"]
-coder = Coder.create(main_model=model, fnames=fnames, use_git=False, pretty=False)
-
-lorem_words = [
-    "lorem",
-    "ipsum",
-    "dolor",
-    "sit",
-    "amet",
-    "consectetur",
-    "adipiscing",
-    "elit",
-    "sed",
-    "do",
-    "eiusmod",
-    "tempor",
-    "incididunt",
-    "ut",
-    "labore",
-    "et",
-    "dolore",
-    "magna",
-    "aliqua",
-    "enim",
-    "ad",
-    "minim",
-    "veniam",
-    "quis",
-    "nostrudlorem",
-    "ipsum",
-    "dolor",
-    "sit",
-    "amet",
-    "consectetur",
-    "adipiscing",
-    "elit",
-    "sed",
-    "do",
-    "eiusmod",
-    "tempor",
-    "incididunt",
-    "ut",
-    "labore",
-    "et",
-    "dolore",
-    "magna",
-    "aliqua",
-    "enim",
-    "ad",
-    "minim",
-    "veniam",
-    "quis",
-    "nostrudlorem",
-    "ipsum",
-    "dolor",
-    "sit",
-    "amet",
-    "consectetur",
-    "adipiscing",
-    "elit",
-    "sed",
-    "do",
-    "eiusmod",
-    "tempor",
-    "incididunt",
-    "ut",
-    "labore",
-    "et",
-    "dolore",
-    "magna",
-    "aliqua",
-    "enim",
-    "ad",
-    "minim",
-    "veniam",
-    "quis",
-    "nostrudlorem",
-    "ipsum",
-    "dolor",
-    "sit",
-    "amet",
-    "consectetur",
-    "adipiscing",
-    "elit",
-    "sed",
-    "do",
-    "eiusmod",
-    "tempor",
-    "incididunt",
-    "ut",
-    "labore",
-    "et",
-    "dolore",
-    "magna",
-    "aliqua",
-    "enim",
-    "ad",
-    "minim",
-    "veniam",
-    "quis",
-    "nostrud\n\n",
-    "\n\n",
-    "\n\n",
-]
+@st.cache_resource
+def get_coder():
+    coder = main(return_coder=True)
+    if isinstance(coder, Coder):
+        return coder
+    raise ValueError()
 
 
-def generate_lorem_text(min_words=10, max_words=50):
-    num_words = random.randint(min_words, max_words)
-    words = random.sample(lorem_words, num_words)
-    return " ".join(words)
+coder = get_coder()
+
+
+def announce(coder):
+    lines = coder.get_announcements()
+    lines = "  \n".join(lines)
+    st.info(lines)
 
 
 with st.sidebar:
     st.title("Aider")
-
     cmds_tab, settings_tab = st.tabs(["Commands", "Settings"])
 
 with cmds_tab:
@@ -303,6 +206,8 @@ messages = st.container()
 # stuff a bunch of vertical whitespace at the top
 # to get all the chat text to the bottom
 messages.container(height=1200, border=False)
+with messages:
+    announce(coder)
 
 with recent_msgs_empty:
     old_prompt = recent_msgs()

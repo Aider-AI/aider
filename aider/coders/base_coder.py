@@ -16,7 +16,7 @@ from jsonschema import Draft7Validator
 from rich.console import Console, Text
 from rich.markdown import Markdown
 
-from aider import models, prompts, utils
+from aider import __version__, models, prompts, utils
 from aider.commands import Commands
 from aider.history import ChatSummary
 from aider.io import InputOutput
@@ -80,6 +80,54 @@ class Coder:
         else:
             raise ValueError(f"Unknown edit format {edit_format}")
 
+    def get_announcements(self):
+        lines = []
+        lines.append(f"Aider v{__version__}")
+
+        # Model
+        main_model = self.main_model
+        weak_model = main_model.weak_model
+        prefix = "Model:"
+        output = f" {main_model.name} with {self.edit_format} edit format"
+        if weak_model is not main_model:
+            prefix = "Models:"
+            output += f", weak model {weak_model.name}"
+        lines.append(prefix + output)
+
+        # Repo
+        if self.repo:
+            rel_repo_dir = self.repo.get_rel_repo_dir()
+            num_files = len(self.repo.get_tracked_files())
+            lines.append(f"Git repo: {rel_repo_dir} with {num_files:,} files")
+            if num_files > 1000:
+                lines.append(
+                    "Warning: For large repos, consider using an .aiderignore file to ignore"
+                    " irrelevant files/dirs."
+                )
+        else:
+            lines.append("Git repo: none")
+
+        # Repo-map
+        map_tokens = self.repo_map.max_map_tokens if self.repo_map else 0
+        if map_tokens > 0 and self.repo_map:
+            lines.append(f"Repo-map: using {map_tokens} tokens")
+            max_map_tokens = 2048
+            if map_tokens > max_map_tokens:
+                lines.append(
+                    f"Warning: map-tokens > {max_map_tokens} is not recommended as too much"
+                    " irrelevant code can confuse GPT."
+                )
+        elif not map_tokens:
+            lines.append("Repo-map: disabled because map_tokens == 0")
+        else:
+            lines.append("Repo-map: disabled")
+
+        # Files
+        for fname in self.get_inchat_relative_files():
+            lines.append(f"Added {fname} to the chat.")
+
+        return lines
+
     def __init__(
         self,
         main_model,
@@ -136,15 +184,6 @@ class Coder:
 
         self.main_model = main_model
 
-        weak_model = main_model.weak_model
-        prefix = "Model:"
-        output = f" {main_model.name} with {self.edit_format} edit format"
-        if weak_model is not main_model:
-            prefix = "Models:"
-            output += f", weak model {weak_model.name}"
-
-        self.io.tool_output(prefix + output)
-
         self.show_diffs = show_diffs
 
         self.commands = Commands(self.io, self, voice_language)
@@ -181,17 +220,7 @@ class Coder:
             self.abs_fnames.add(fname)
             self.check_added_files()
 
-        if self.repo:
-            rel_repo_dir = self.repo.get_rel_repo_dir()
-            num_files = len(self.repo.get_tracked_files())
-            self.io.tool_output(f"Git repo: {rel_repo_dir} with {num_files:,} files")
-            if num_files > 1000:
-                self.io.tool_error(
-                    "Warning: For large repos, consider using an .aiderignore file to ignore"
-                    " irrelevant files/dirs."
-                )
-        else:
-            self.io.tool_output("Git repo: none")
+        if not self.repo:
             self.find_common_root()
 
         if main_model.use_repo_map and self.repo and self.gpt_prompts.repo_content_prefix:
@@ -203,22 +232,6 @@ class Coder:
                 self.gpt_prompts.repo_content_prefix,
                 self.verbose,
             )
-
-        if map_tokens > 0 and self.repo_map:
-            self.io.tool_output(f"Repo-map: using {map_tokens} tokens")
-            max_map_tokens = 2048
-            if map_tokens > max_map_tokens:
-                self.io.tool_error(
-                    f"Warning: map-tokens > {max_map_tokens} is not recommended as too much"
-                    " irrelevant code can confuse GPT."
-                )
-        elif not map_tokens:
-            self.io.tool_output("Repo-map: disabled because map_tokens == 0")
-        else:
-            self.io.tool_output("Repo-map: disabled")
-
-        for fname in self.get_inchat_relative_files():
-            self.io.tool_output(f"Added {fname} to the chat.")
 
         self.summarizer = ChatSummary(
             self.main_model.weak_model,
@@ -236,6 +249,9 @@ class Coder:
             if self.verbose:
                 self.io.tool_output("JSON Schema:")
                 self.io.tool_output(json.dumps(self.functions, indent=4))
+
+        for line in self.get_announcements():
+            self.io.tool_output(line)
 
     def find_common_root(self):
         if len(self.abs_fnames) == 1:
