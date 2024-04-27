@@ -225,8 +225,9 @@ class TestCoder(unittest.TestCase):
         def mock_send(*args, **kwargs):
             coder.partial_response_content = "ok"
             coder.partial_response_function_call = dict()
+            return []
 
-        coder.send = MagicMock(side_effect=mock_send)
+        coder.send = mock_send
 
         # Call the run method with a message
         coder.run(with_message="hi")
@@ -251,8 +252,9 @@ class TestCoder(unittest.TestCase):
         def mock_send(*args, **kwargs):
             coder.partial_response_content = "ok"
             coder.partial_response_function_call = dict()
+            return []
 
-        coder.send = MagicMock(side_effect=mock_send)
+        coder.send = mock_send
 
         # Call the run method with a message
         coder.run(with_message="hi")
@@ -281,8 +283,9 @@ class TestCoder(unittest.TestCase):
         def mock_send(*args, **kwargs):
             coder.partial_response_content = "ok"
             coder.partial_response_function_call = dict()
+            return []
 
-        coder.send = MagicMock(side_effect=mock_send)
+        coder.send = mock_send
 
         # Call the run method with a message
         coder.run(with_message="hi")
@@ -310,8 +313,9 @@ class TestCoder(unittest.TestCase):
         def mock_send(*args, **kwargs):
             coder.partial_response_content = "ok"
             coder.partial_response_function_call = dict()
+            return []
 
-        coder.send = MagicMock(side_effect=mock_send)
+        coder.send = mock_send
 
         # Call the run method with a message
         coder.run(with_message="hi")
@@ -373,8 +377,9 @@ new
 
 """
                 coder.partial_response_function_call = dict()
+                return []
 
-            coder.send = MagicMock(side_effect=mock_send)
+            coder.send = mock_send
             coder.repo.get_commit_message = MagicMock()
             coder.repo.get_commit_message.return_value = "commit message"
 
@@ -424,13 +429,14 @@ TWO
 
 """
                 coder.partial_response_function_call = dict()
+                return []
 
             def mock_get_commit_message(diffs, context):
                 self.assertNotIn("one", diffs)
                 self.assertNotIn("ONE", diffs)
                 return "commit message"
 
-            coder.send = MagicMock(side_effect=mock_send)
+            coder.send = mock_send
             coder.repo.get_commit_message = MagicMock(side_effect=mock_get_commit_message)
 
             coder.run(with_message="hi")
@@ -476,6 +482,7 @@ three
 
 """
                 coder.partial_response_function_call = dict()
+                return []
 
             saved_diffs = []
 
@@ -484,7 +491,7 @@ three
                 return "commit message"
 
             coder.repo.get_commit_message = MagicMock(side_effect=mock_get_commit_message)
-            coder.send = MagicMock(side_effect=mock_send)
+            coder.send = mock_send
 
             coder.run(with_message="hi")
 
@@ -553,6 +560,7 @@ two
 
 """
                 coder.partial_response_function_call = dict()
+                return []
 
             saved_diffs = []
 
@@ -561,7 +569,7 @@ two
                 return "commit message"
 
             coder.repo.get_commit_message = MagicMock(side_effect=mock_get_commit_message)
-            coder.send = MagicMock(side_effect=mock_send)
+            coder.send = mock_send
 
             coder.run(with_message="hi")
 

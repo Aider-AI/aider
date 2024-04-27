@@ -312,8 +312,9 @@ new
 
 """
             coder.partial_response_function_call = dict()
+            return []
 
-        coder.send = MagicMock(side_effect=mock_send)
+        coder.send = mock_send
 
         # Call the run method with a message
         coder.run(with_message="hi")
@@ -354,8 +355,9 @@ new
 
 """
             coder.partial_response_function_call = dict()
+            return []
 
-        coder.send = MagicMock(side_effect=mock_send)
+        coder.send = mock_send
 
         # Call the run method with a message
         coder.run(with_message="hi")
