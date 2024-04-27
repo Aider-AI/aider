@@ -203,7 +203,7 @@ class GUI:
             if self.button("Clear chat history"):
                 self.coder.done_messages = []
                 self.coder.cur_messages = []
-                self.info("Cleared chat history")
+                self.info("Cleared chat history. Now the LLM can't see anything before this line.")
 
             # st.metric("Cost of last message send & reply", "$0.0019", help="foo")
             # st.metric("Cost to send next message", "$0.0013", help="foo")
@@ -238,7 +238,7 @@ class GUI:
         with self.recent_msgs_empty:
             self.old_prompt = st.selectbox(
                 "Resend recent chat message",
-                MESSAGES,
+                self.state.input_history,
                 placeholder="Choose a recent chat message",
                 # label_visibility="collapsed",
                 index=None,
@@ -278,7 +278,9 @@ class GUI:
         self.state.init("recent_msgs_num", 0)
         self.state.init("prompt")
 
-        dump(self.state.messages)
+        if "input_history" not in self.state.keys:
+            self.state.input_history = list(self.coder.io.get_input_history())
+            # TODO: make self.state.input_history entries unique, but keep their order
 
     def button(self, args, **kwargs):
         "Create a button, disabled if prompt pending"
@@ -316,6 +318,7 @@ class GUI:
         self.state.prompt = prompt
 
         self.coder.io.add_to_input_history(prompt)
+        self.state.input_history.append(prompt)
 
         self.state.messages.append({"role": "user", "content": prompt})
         with self.messages.chat_message("user"):
