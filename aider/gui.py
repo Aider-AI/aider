@@ -11,7 +11,7 @@ from aider.dump import dump  # noqa: F401
 from aider.main import main as cli_main
 
 
-def init_state(key, val):
+def init_state(key, val=None):
     if key in st.session_state:
         return
     setattr(st.session_state, key, val)
@@ -54,8 +54,16 @@ def search(text=None):
     return results
 
 
+@st.cache_data
+def get_nominal_cached_data():
+    print("get_nominal_cached_data")
+
+
 @st.cache_resource
 def get_coder():
+    print("get_coder")
+    get_nominal_cached_data()
+
     coder = cli_main(return_coder=True)
     if not isinstance(coder, Coder):
         raise ValueError(coder)
@@ -113,7 +121,7 @@ class GUI:
 
         self.last_undo_button = st.empty()
         with self.last_undo_button:
-            st.button(f"Undo commit `{commit_hash}`", key=f"undo_{commit_hash}")
+            self.button(f"Undo commit `{commit_hash}`", key=f"undo_{commit_hash}")
 
     def do_sidebar(self):
         with st.sidebar:
@@ -135,11 +143,11 @@ class GUI:
                     "Aider works best when your code is stored in a git repo.  \n[See the FAQ"
                     " for more info](https://aider.chat/docs/faq.html#how-does-aider-use-git)"
                 )
-                st.button("Create git repo", key=random.random(), help="?")
+                self.button("Create git repo", key=random.random(), help="?")
 
             with st.popover("Update your `.gitignore` file"):
                 st.write("It's best to keep aider's internal files out of your git repo.")
-                st.button("Add `.aider*` to `.gitignore`", key=random.random(), help="?")
+                self.button("Add `.aider*` to `.gitignore`", key=random.random(), help="?")
 
     def do_add_to_chat(self):
         with st.expander("Add to the chat", expanded=True):
@@ -148,6 +156,7 @@ class GUI:
                 sorted(self.coder.get_all_relative_files()),
                 default=sorted(self.coder.get_inchat_relative_files()),
                 placeholder="Files to edit",
+                disabled=self.prompt_pending(),
                 help=(
                     "Only add the files that need to be *edited* for the task you are working"
                     " on. Aider will pull in other code to provide relevant context to the LLM."
@@ -163,7 +172,7 @@ class GUI:
                 st.text_input("URL?")
             with st.popover("Add image"):
                 st.markdown("Hello World 👋")
-                st.file_uploader("Image file")
+                st.file_uploader("Image file", disabled=self.prompt_pending())
             with st.popover("Run shell commands, tests, etc"):
                 st.markdown(
                     "Run a shell command and optionally share the output with the LLM. This is"
@@ -186,13 +195,14 @@ class GUI:
                         "my_app.py --doit",
                         "my_app.py --cleanup",
                     ],
+                    disabled=self.prompt_pending(),
                 )
 
     def do_tokens_and_cost(self):
         with st.expander("Tokens and costs", expanded=True):
             with st.popover("Show token usage"):
                 st.write("hi")
-            st.button("Clear chat history")
+            self.button("Clear chat history")
             # st.metric("Cost of last message send & reply", "$0.0019", help="foo")
             # st.metric("Cost to send next message", "$0.0013", help="foo")
             # st.metric("Total cost this session", "$0.22")
@@ -201,17 +211,18 @@ class GUI:
         with st.expander("Git", expanded=False):
             # st.button("Show last diff")
             # st.button("Undo last commit")
-            st.button("Commit any pending changes")
+            self.button("Commit any pending changes")
             with st.popover("Run git command"):
                 st.markdown("## Run git command")
                 st.text_input("git", value="git ")
-                st.button("Run")
+                self.button("Run")
                 st.selectbox(
                     "Recent git commands",
                     [
                         "git checkout -b experiment",
                         "git stash",
                     ],
+                    disabled=self.prompt_pending(),
                 )
 
     def do_recent_msgs(self):
@@ -253,6 +264,12 @@ class GUI:
         init_state("messages", messages)
         init_state("recent_msgs_num", 0)
         init_state("last_aider_commit_hash", self.coder.last_aider_commit_hash)
+        init_state("prompt")
+
+    def button(self, args, **kwargs):
+        "Create a button, disabled if prompt pending"
+        kwargs["disabled"] = self.prompt_pending()
+        return st.button(args, **kwargs)
 
     def __init__(self, coder):
         self.coder = coder
@@ -270,10 +287,13 @@ class GUI:
         self.do_cmd_tab()
         self.do_messages_container()
 
-        self.prompt = st.chat_input("Say something")
+        prompt = st.chat_input("Say something")
 
-        if self.prompt:
-            self.chat(self.prompt)
+        if self.prompt_pending():
+            self.process_chat()
+
+        if prompt:
+            self.chat(prompt)
             return
 
         if self.old_prompt:
@@ -281,15 +301,28 @@ class GUI:
             st.session_state.recent_msgs_num += 1
             self.reset_recent_msgs()
             self.chat(prompt)
+            return
+
+    def prompt_pending(self):
+        return st.session_state.prompt is not None
 
     def cost(self):
         cost = random.random() * 0.003 + 0.001
         st.caption(f"${cost:0.4f}")
 
     def chat(self, prompt):
+        st.session_state.prompt = prompt
+
         st.session_state.messages.append({"role": "user", "content": prompt})
         with self.messages.chat_message("user"):
             st.write(prompt)
+
+        # re-render the UI for the prompt_pending state
+        st.experimental_rerun()
+
+    def process_chat(self):
+        prompt = st.session_state.prompt
+        st.session_state.prompt = None
 
         while prompt:
             with self.messages.chat_message("assistant"):
@@ -321,6 +354,9 @@ class GUI:
 
             st.session_state.messages.append(edit)
             self.show_edit_info(edit)
+
+        # re-render the UI for the non-prompt_pending state
+        st.experimental_rerun()
 
 
 def gui_main():
