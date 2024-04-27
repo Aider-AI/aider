@@ -107,7 +107,8 @@ class GUI:
 
         self.last_undo_button = st.empty()
         with self.last_undo_button:
-            self.button(f"Undo commit `{commit_hash}`", key=f"undo_{commit_hash}")
+            if self.button(f"Undo commit `{commit_hash}`", key=f"undo_{commit_hash}"):
+                self.do_undo(commit_hash)
 
     def do_sidebar(self):
         with st.sidebar:
@@ -162,9 +163,10 @@ class GUI:
             with st.popover("Add web page"):
                 self.do_web()
 
-            with st.popover("Add image"):
-                st.markdown("Hello World 👋")
-                st.file_uploader("Image file", disabled=self.prompt_pending())
+            # with st.popover("Add image"):
+            #    st.markdown("Hello World 👋")
+            #    st.file_uploader("Image file", disabled=self.prompt_pending())
+
             with st.popover("Run shell commands, tests, etc"):
                 st.markdown(
                     "Run a shell command and optionally share the output with the LLM. This is"
@@ -252,8 +254,6 @@ class GUI:
             self.announce()
 
             for msg in self.state.messages:
-                dump(msg)
-
                 role = msg["role"]
 
                 if role == "edit":
@@ -322,7 +322,8 @@ class GUI:
         self.coder.io.add_to_input_history(self.prompt)
         self.state.input_history.append(self.prompt)
 
-        self.state.messages.append({"role": self.prompt_as, "content": self.prompt})
+        if self.prompt_as:
+            self.state.messages.append({"role": self.prompt_as, "content": self.prompt})
         if self.prompt_as == "user":
             with self.messages.chat_message("user"):
                 st.write(self.prompt)
@@ -418,6 +419,9 @@ class GUI:
         else:
             self.info(f"No web content found for `{url}`.")
             self.web_content = None
+
+    def do_undo(self, commit_hash):
+        pass
 
 
 def gui_main():
