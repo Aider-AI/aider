@@ -303,6 +303,8 @@ class GUI:
 
         self.state.prompt = prompt
 
+        self.coder.io.add_to_input_history(prompt)
+
         self.state.messages.append({"role": "user", "content": prompt})
         with self.messages.chat_message("user"):
             st.write(prompt)
