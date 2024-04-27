@@ -53,6 +53,11 @@ def get_coder():
 
 
 class GUI:
+    prompt = None
+    last_undo_button = None
+    recent_msgs_empty = None
+    web_content_empty = None
+
     def announce(self):
         lines = self.coder.get_announcements()
         lines = "  \n".join(lines)
@@ -233,6 +238,8 @@ class GUI:
                 key=f"recent_msgs_{self.state.recent_msgs_num}",
                 disabled=self.prompt_pending(),
             )
+            if self.old_prompt:
+                self.prompt = self.old_prompt
 
     def do_messages_container(self):
         self.messages = st.container()
@@ -252,6 +259,10 @@ class GUI:
                     self.show_edit_info(msg)
                 elif role == "info":
                     st.info(msg["message"])
+                # elif role == "text":
+                #    text = msg["message"]
+                #    with st.expander(text[0]):
+                #        st.text(text)
                 elif role in ("user", "assistant"):
                     with st.chat_message(role):
                         st.write(msg["content"])
@@ -283,11 +294,6 @@ class GUI:
         self.coder = coder
         self.state = state
 
-        self.last_undo_button = None
-
-        self.recent_msgs_empty = None
-        self.web_content_empty = None
-
         # Force the coder to cooperate, regardless of cmd line args
         self.coder.yield_stream = True
         self.coder.stream = True
@@ -300,26 +306,24 @@ class GUI:
         self.do_sidebar()
         self.do_cmd_tab()
 
-        prompt = st.chat_input("Say something")
+        user_inp = st.chat_input("Say something")
+        if user_inp:
+            self.prompt = user_inp
 
         if self.prompt_pending():
             self.process_chat()
 
-        for prompt in [prompt, self.old_prompt, self.web_content]:
-            if prompt:
-                break
-
-        if not prompt:
+        if not self.prompt:
             return
 
-        self.state.prompt = prompt
+        self.state.prompt = self.prompt
 
-        self.coder.io.add_to_input_history(prompt)
-        self.state.input_history.append(prompt)
+        self.coder.io.add_to_input_history(self.prompt)
+        self.state.input_history.append(self.prompt)
 
-        self.state.messages.append({"role": "user", "content": prompt})
+        self.state.messages.append({"role": "user", "content": self.prompt})
         with self.messages.chat_message("user"):
-            st.write(prompt)
+            st.write(self.prompt)
 
         # re-render the UI for the prompt_pending state
         st.experimental_rerun()
@@ -404,10 +408,13 @@ class GUI:
         content = self.scraper.scrape(url) or ""
         if content.strip():
             content = f"{url}:\n\n" + content
-            self.web_content = content
+            self.prompt = content
         else:
             self.info(f"No web content found for `{url}`.")
             self.web_content = None
+
+        # with self.messages.expander(content.splitlines()[0]):
+        #    st.text(content)
 
 
 def gui_main():
