@@ -86,16 +86,17 @@ class GUI:
         show_undo = False
         res = ""
         if commit_hash:
+            prefix = "aider: "
+            if commit_message.startswith(prefix):
+                commit_message = commit_message[len(prefix) :]
             res += f"Commit `{commit_hash}`: {commit_message}  \n"
             if commit_hash == self.coder.last_aider_commit_hash:
                 show_undo = True
 
-        if len(fnames) == 1:
-            res += f"Applied edits to `{fnames[0]}`"
-        elif len(fnames) > 1:
-            res += "Applied edits to:  \n"
-            for fname in fnames:
-                res += f"- `{fname}`  \n"
+        if fnames:
+            fnames = [f"`{fname}`" for fname in fnames]
+            fnames = ", ".join(fnames)
+            res += f"Applied edits to {fnames}."
 
         with st.container(border=True):
             st.write(res)
