@@ -42,7 +42,9 @@ class Commands:
         if content:
             self.io.tool_output(content)
 
-        self.scraper.show_playwright_instructions()
+        instructions = self.scraper.get_playwright_instructions()
+        if instructions:
+            self.io.tool_error(instructions)
 
         content = f"{url}:\n\n" + content
 

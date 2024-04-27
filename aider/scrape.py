@@ -66,14 +66,14 @@ class Scraper:
             except Exception:
                 self.playwright_available = False
 
-    def show_playwright_instructions(self):
+    def get_playwright_instructions(self):
         if self.playwright_available in (True, None):
             return
         if self.playwright_instructions_shown:
             return
 
         self.playwright_instructions_shown = True
-        self.print_error(PLAYWRIGHT_INFO)
+        return PLAYWRIGHT_INFO
 
     def scrape_with_httpx(self, url):
         headers = {"User-Agent": f"Mozilla./5.0 ({aider_user_agent})"}

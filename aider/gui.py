@@ -9,19 +9,7 @@ import streamlit as st
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.main import main as cli_main
-
-MESSAGES = [
-    "write a python program that shows off some python features",
-    "write a tsx program that shows off some language features",
-    "refactor the Frobulator.simplify method to be a stand alone function",
-    "lorem ipsum dolor",
-    "lorem adipiscing adipiscing et dolore sit elit aliqua dolore ut incididunt",
-    (
-        "sed magna consectetur et quis do magna labore ad elit et elit ad eiusmod sed"
-        " labore aliqua eiusmod enim ad nostrud\n\namet consectetur magna tempor do enim"
-        " aliqua enim tempor adipiscing sit et"
-    ),
-]
+from aider.scrape import Scraper
 
 
 def search(text=None):
@@ -166,8 +154,8 @@ class GUI:
                     self.messages.info(f"Removed {fname} from the chat")
 
             with st.popover("Add web page"):
-                st.markdown("www")
-                st.text_input("URL?")
+                self.do_web()
+
             with st.popover("Add image"):
                 st.markdown("Hello World 👋")
                 st.file_uploader("Image file", disabled=self.prompt_pending())
@@ -276,7 +264,9 @@ class GUI:
         self.state.init("messages", messages)
         self.state.init("last_aider_commit_hash", self.coder.last_aider_commit_hash)
         self.state.init("recent_msgs_num", 0)
+        self.state.init("web_content_num", 0)
         self.state.init("prompt")
+        self.state.init("scraper")
 
         if "input_history" not in self.state.keys:
             input_history = list(self.coder.io.get_input_history())
@@ -294,7 +284,9 @@ class GUI:
         self.state = state
 
         self.last_undo_button = None
+
         self.recent_msgs_empty = None
+        self.web_content_empty = None
 
         # Force the coder to cooperate, regardless of cmd line args
         self.coder.yield_stream = True
@@ -313,7 +305,10 @@ class GUI:
         if self.prompt_pending():
             self.process_chat()
 
-        prompt = prompt if prompt else self.old_prompt
+        for prompt in [prompt, self.old_prompt, self.web_content]:
+            if prompt:
+                break
+
         if not prompt:
             return
 
@@ -376,6 +371,43 @@ class GUI:
         info = dict(role="info", message=message)
         self.state.messages.append(info)
         self.messages.info(message)
+
+    def do_web(self):
+        st.markdown("Add the text content of a web page to the chat")
+
+        if not self.web_content_empty:
+            self.web_content_empty = st.empty()
+
+        if self.prompt_pending():
+            self.web_content_empty.empty()
+            self.state.web_content_num += 1
+
+        with self.web_content_empty:
+            self.web_content = st.text_input(
+                "URL",
+                placeholder="https://...",
+                key=f"web_content_{self.state.web_content_num}",
+            )
+
+        if not self.web_content:
+            return
+
+        url = self.web_content
+
+        if not self.state.scraper:
+            self.scraper = Scraper(print_error=self.info)
+
+        instructions = self.scraper.get_playwright_instructions()
+        if instructions:
+            self.info(instructions)
+
+        content = self.scraper.scrape(url) or ""
+        if content.strip():
+            content = f"{url}:\n\n" + content
+            self.web_content = content
+        else:
+            self.info(f"No web content found for `{url}`.")
+            self.web_content = None
 
 
 def gui_main():
