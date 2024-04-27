@@ -8,8 +8,24 @@ import streamlit as st
 
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
+from aider.io import InputOutput
 from aider.main import main as cli_main
 from aider.scrape import Scraper
+
+
+class CaptureIO(InputOutput):
+    lines = []
+
+    def tool_output(self, msg):
+        self.lines.append(msg)
+
+    def tool_error(self, msg):
+        self.lines.append(msg)
+
+    def get_captured_lines(self):
+        lines = self.lines
+        self.lines = []
+        return lines
 
 
 def search(text=None):
@@ -49,13 +65,23 @@ def get_coder():
         raise ValueError(coder)
     if not coder.repo:
         raise ValueError("GUI can currently only be used inside a git repo")
+
+    io = CaptureIO(
+        pretty=False,
+        yes=True,
+        dry_run=coder.io.dry_run,
+        encoding=coder.io.encoding,
+    )
+    # coder.io = io # this breaks the input_history
+    coder.commands.io = io
+
     return coder
 
 
 class GUI:
     prompt = None
     prompt_as = "user"
-    last_undo_button = None
+    last_undo_empty = None
     recent_msgs_empty = None
     web_content_empty = None
 
@@ -102,13 +128,15 @@ class GUI:
                     self.add_undo(commit_hash)
 
     def add_undo(self, commit_hash):
-        if self.last_undo_button:
-            self.last_undo_button.empty()
+        if self.last_undo_empty:
+            self.last_undo_empty.empty()
 
-        self.last_undo_button = st.empty()
-        with self.last_undo_button:
-            if self.button(f"Undo commit `{commit_hash}`", key=f"undo_{commit_hash}"):
-                self.do_undo(commit_hash)
+        self.last_undo_empty = st.empty()
+        undone = self.state.last_undone_commit_hash == commit_hash
+        if not undone:
+            with self.last_undo_empty:
+                if self.button(f"Undo commit `{commit_hash}`", key=f"undo_{commit_hash}"):
+                    self.do_undo(commit_hash)
 
     def do_sidebar(self):
         with st.sidebar:
@@ -275,6 +303,7 @@ class GUI:
         messages = [{"role": "assistant", "content": "How can I help you?"}]
         self.state.init("messages", messages)
         self.state.init("last_aider_commit_hash", self.coder.last_aider_commit_hash)
+        self.state.init("last_undone_commit_hash")
         self.state.init("recent_msgs_num", 0)
         self.state.init("web_content_num", 0)
         self.state.init("prompt")
@@ -285,10 +314,15 @@ class GUI:
             seen = set()
             input_history = [x for x in input_history if not (x in seen or seen.add(x))]
             self.state.input_history = input_history
+            self.state.keys.add("input_history")
 
     def button(self, args, **kwargs):
         "Create a button, disabled if prompt pending"
-        kwargs["disabled"] = self.prompt_pending()
+
+        # Force everything to be disabled if there is a prompt pending
+        if self.prompt_pending():
+            kwargs["disabled"] = True
+
         return st.button(args, **kwargs)
 
     def __init__(self, coder, state):
@@ -298,7 +332,6 @@ class GUI:
         # Force the coder to cooperate, regardless of cmd line args
         self.coder.yield_stream = True
         self.coder.stream = True
-        self.coder.io.yes = True
         self.coder.pretty = False
 
         self.initialize_state()
@@ -319,7 +352,9 @@ class GUI:
 
         self.state.prompt = self.prompt
 
-        self.coder.io.add_to_input_history(self.prompt)
+        if self.prompt_as == "user":
+            self.coder.io.add_to_input_history(self.prompt)
+
         self.state.input_history.append(self.prompt)
 
         if self.prompt_as:
@@ -332,7 +367,7 @@ class GUI:
                 st.text(self.prompt)
 
         # re-render the UI for the prompt_pending state
-        st.experimental_rerun()
+        st.rerun()
 
     def prompt_pending(self):
         return self.state.prompt is not None
@@ -375,12 +410,15 @@ class GUI:
             self.show_edit_info(edit)
 
         # re-render the UI for the non-prompt_pending state
-        st.experimental_rerun()
+        st.rerun()
 
-    def info(self, message):
+    def info(self, message, echo=True):
         info = dict(role="info", message=message)
         self.state.messages.append(info)
-        self.messages.info(message)
+
+        # We will render the tail of the messages array after this call
+        if echo:
+            self.messages.info(message)
 
     def do_web(self):
         st.markdown("Add the text content of a web page to the chat")
@@ -421,7 +459,29 @@ class GUI:
             self.web_content = None
 
     def do_undo(self, commit_hash):
-        pass
+        self.last_undo_empty.empty()
+
+        if (
+            self.state.last_aider_commit_hash != commit_hash
+            or self.coder.last_aider_commit_hash != commit_hash
+        ):
+            self.info(f"Commit `{commit_hash}` is not the latest commit.")
+            return
+
+        self.coder.commands.io.get_captured_lines()
+        reply = self.coder.commands.cmd_undo(None)
+        lines = self.coder.commands.io.get_captured_lines()
+
+        lines = "\n".join(lines)
+        lines = lines.splitlines()
+        lines = "  \n".join(lines)
+        self.info(lines, echo=False)
+
+        self.state.last_undone_commit_hash = commit_hash
+
+        if reply:
+            self.prompt_as = None
+            self.prompt = reply
 
 
 def gui_main():

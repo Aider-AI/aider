@@ -271,9 +271,7 @@ class Commands:
         self.coder.repo.repo.git.reset("--soft", "HEAD~1")
 
         self.io.tool_output(
-            f"{last_commit.message.strip()}\n"
-            f"The above commit {self.coder.last_aider_commit_hash} "
-            "was reset and removed from git.\n"
+            f"Commit `{self.coder.last_aider_commit_hash}` was reset and removed from git.\n"
         )
 
         if self.coder.main_model.send_undo_reply:
