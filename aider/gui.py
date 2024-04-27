@@ -279,8 +279,9 @@ class GUI:
         self.state.init("prompt")
 
         if "input_history" not in self.state.keys:
-            self.state.input_history = list(self.coder.io.get_input_history())
-            # TODO: make self.state.input_history entries unique, but keep their order
+            input_history = list(self.coder.io.get_input_history())
+            seen = set()
+            self.state.input_history = [x for x in input_history if not (x in seen or seen.add(x))]
 
     def button(self, args, **kwargs):
         "Create a button, disabled if prompt pending"
