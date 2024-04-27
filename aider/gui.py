@@ -133,15 +133,21 @@ class GUI:
 
     def do_add_to_chat(self):
         with st.expander("Add to the chat", expanded=True):
-            st.multiselect(
+            fnames = st.multiselect(
                 "Files for the LLM to edit",
-                self.coder.get_all_relative_files(),
-                default=self.coder.get_inchat_relative_files(),
+                sorted(self.coder.get_all_relative_files()),
+                default=sorted(self.coder.get_inchat_relative_files()),
+                placeholder="Files to edit",
                 help=(
                     "Only add the files that need to be *edited* for the task you are working"
                     " on. Aider will pull in other code to provide relevant context to the LLM."
                 ),
             )
+
+            for fname in fnames:
+                if fname not in self.coder.get_inchat_relative_files():
+                    self.coder.add_rel_fname(fname)
+
             with st.popover("Add web page"):
                 st.markdown("www")
                 st.text_input("URL?")
@@ -219,8 +225,7 @@ class GUI:
         for msg in st.session_state.messages:
             with self.messages.chat_message(msg["role"]):
                 st.write(msg["content"])
-                cost = random.random() * 0.003 + 0.001
-                st.caption(f"${cost:0.4f}")
+                # self.cost()
 
         self.chat_controls = st.empty()
 
@@ -274,14 +279,14 @@ class GUI:
 
         while prompt:
             with self.messages.chat_message("assistant"):
-                res = st.write(self.coder.run_stream(prompt))
-                self.cost()
+                res = st.write_stream(self.coder.run_stream(prompt))
+                st.session_state.messages.append({"role": "assistant", "content": res})
+                # self.cost()
             if self.coder.reflected_message:
                 self.messages.info(self.coder.reflected_message)
             prompt = self.coder.reflected_message
 
-        st.session_state.messages.append({"role": "assistant", "content": res})
-
+        dump(st.session_state.messages)
         with self.messages:
             self.mock_tool_output()
 
