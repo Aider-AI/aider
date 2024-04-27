@@ -45,6 +45,7 @@ class Coder:
     abs_fnames = None
     repo = None
     last_aider_commit_hash = None
+    aider_edited_files = None
     last_asked_for_commit_time = 0
     repo_map = None
     functions = None
@@ -546,6 +547,8 @@ class Coder:
         return messages
 
     def send_new_user_message(self, inp):
+        self.aider_edited_files = None
+
         self.cur_messages += [
             dict(role="user", content=inp),
         ]
@@ -605,6 +608,7 @@ class Coder:
         self.update_cur_messages(edited)
 
         if edited:
+            self.aider_edited_files = edited
             if self.repo and self.auto_commits and not self.dry_run:
                 saved_message = self.auto_commit(edited)
             elif hasattr(self.gpt_prompts, "files_content_gpt_edits_no_repo"):
@@ -1055,6 +1059,7 @@ class Coder:
         if res:
             commit_hash, commit_message = res
             self.last_aider_commit_hash = commit_hash
+            self.last_aider_commit_message = commit_message
 
             return self.gpt_prompts.files_content_gpt_edits.format(
                 hash=commit_hash,

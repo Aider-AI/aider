@@ -513,7 +513,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     io = InputOutput(
         args.pretty,
-        args.yes,
+        args.yes or return_coder,  # Force --yes if return_coder
         args.input_history_file,
         args.chat_history_file,
         input=input,
