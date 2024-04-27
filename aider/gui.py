@@ -43,8 +43,10 @@ class State:
     def init(self, key, val=None):
         if key in self.keys:
             return
+
         self.keys.add(key)
         setattr(self, key, val)
+        return True
 
 
 @st.cache_resource
@@ -198,7 +200,11 @@ class GUI:
         with st.expander("Tokens and costs", expanded=True):
             with st.popover("Show token usage"):
                 st.write("hi")
-            self.button("Clear chat history")
+            if self.button("Clear chat history"):
+                self.coder.done_messages = []
+                self.coder.cur_messages = []
+                self.info("Cleared chat history")
+
             # st.metric("Cost of last message send & reply", "$0.0019", help="foo")
             # st.metric("Cost to send next message", "$0.0013", help="foo")
             # st.metric("Total cost this session", "$0.22")
@@ -335,9 +341,7 @@ class GUI:
                 self.state.messages.append({"role": "assistant", "content": res})
                 # self.cost()
             if self.coder.reflected_message:
-                info = dict(role="info", message=self.coder.reflected_message)
-                self.state.messages.append(info)
-                self.messages.info(self.coder.reflected_message)
+                self.info(self.coder.reflected_message)
             prompt = self.coder.reflected_message
 
         with self.messages:
@@ -362,6 +366,11 @@ class GUI:
 
         # re-render the UI for the non-prompt_pending state
         st.experimental_rerun()
+
+    def info(self, message):
+        info = dict(role="info", message=message)
+        self.state.messages.append(info)
+        self.messages.info(message)
 
 
 def gui_main():
