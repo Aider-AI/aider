@@ -409,8 +409,7 @@ class Coder:
     def run_stream(self, user_message):
         self.io.user_input(user_message)
         self.reflected_message = None
-        for chunk in self.send_new_user_message(user_message):
-            yield chunk
+        yield from self.send_new_user_message(user_message)
 
     def run(self, with_message=None):
         while True:
@@ -561,8 +560,7 @@ class Coder:
         exhausted = False
         interrupted = False
         try:
-            for chunk in self.send(messages, functions=self.functions):
-                yield chunk
+            yield from self.send(messages, functions=self.functions)
         except KeyboardInterrupt:
             interrupted = True
         except ExhaustedContextWindow:
@@ -688,8 +686,7 @@ class Coder:
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
 
             if self.stream:
-                for chunk in self.show_send_output_stream(completion):
-                    yield chunk
+                yield from self.show_send_output_stream(completion)
             else:
                 self.show_send_output(completion)
         except KeyboardInterrupt:
