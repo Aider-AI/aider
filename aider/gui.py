@@ -54,6 +54,7 @@ def get_coder():
 
 class GUI:
     prompt = None
+    prompt_as = "user"
     last_undo_button = None
     recent_msgs_empty = None
     web_content_empty = None
@@ -259,10 +260,10 @@ class GUI:
                     self.show_edit_info(msg)
                 elif role == "info":
                     st.info(msg["message"])
-                # elif role == "text":
-                #    text = msg["message"]
-                #    with st.expander(text[0]):
-                #        st.text(text)
+                elif role == "text":
+                    text = msg["content"]
+                    with self.messages.expander(text.splitlines()[0]):
+                        st.text(text)
                 elif role in ("user", "assistant"):
                     with st.chat_message(role):
                         st.write(msg["content"])
@@ -321,9 +322,13 @@ class GUI:
         self.coder.io.add_to_input_history(self.prompt)
         self.state.input_history.append(self.prompt)
 
-        self.state.messages.append({"role": "user", "content": self.prompt})
-        with self.messages.chat_message("user"):
-            st.write(self.prompt)
+        self.state.messages.append({"role": self.prompt_as, "content": self.prompt})
+        if self.prompt_as == "user":
+            with self.messages.chat_message("user"):
+                st.write(self.prompt)
+        elif self.prompt_as == "text":
+            with self.messages.expander(self.prompt.splitlines()[0]):
+                st.text(self.prompt)
 
         # re-render the UI for the prompt_pending state
         st.experimental_rerun()
@@ -407,17 +412,17 @@ class GUI:
 
         content = self.scraper.scrape(url) or ""
         if content.strip():
-            content = f"{url}:\n\n" + content
+            content = f"{url}\n\n" + content
             self.prompt = content
+            self.prompt_as = "text"
         else:
             self.info(f"No web content found for `{url}`.")
             self.web_content = None
 
-        # with self.messages.expander(content.splitlines()[0]):
-        #    st.text(content)
-
 
 def gui_main():
+    st.set_page_config(layout="wide")
+
     coder = get_coder()
     state = get_state()
     GUI(coder, state)
