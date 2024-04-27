@@ -10,6 +10,19 @@ from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.main import main as cli_main
 
+MESSAGES = [
+    "write a python program that shows off some python features",
+    "write a tsx program that shows off some language features",
+    "refactor the Frobulator.simplify method to be a stand alone function",
+    "lorem ipsum dolor",
+    "lorem adipiscing adipiscing et dolore sit elit aliqua dolore ut incididunt",
+    (
+        "sed magna consectetur et quis do magna labore ad elit et elit ad eiusmod sed"
+        " labore aliqua eiusmod enim ad nostrud\n\namet consectetur magna tempor do enim"
+        " aliqua enim tempor adipiscing sit et"
+    ),
+]
+
 
 def search(text=None):
     results = []
@@ -203,13 +216,23 @@ class GUI:
                 )
 
     def do_recent_msgs(self):
-        self.recent_msgs_empty = st.empty()
-        self.reset_recent_msgs()
+        if not self.recent_msgs_empty:
+            self.recent_msgs_empty = st.empty()
 
-    def reset_recent_msgs(self):
-        self.recent_msgs_empty.empty()
+        if self.prompt_pending():
+            self.recent_msgs_empty.empty()
+            self.state.recent_msgs_num += 1
+
         with self.recent_msgs_empty:
-            self.old_prompt = self.recent_msgs()
+            self.old_prompt = st.selectbox(
+                "Resend recent chat message",
+                MESSAGES,
+                placeholder="Choose a recent chat message",
+                # label_visibility="collapsed",
+                index=None,
+                key=f"recent_msgs_{self.state.recent_msgs_num}",
+                disabled=self.prompt_pending(),
+            )
 
     def do_messages_container(self):
         self.messages = st.container()
@@ -239,8 +262,8 @@ class GUI:
     def initialize_state(self):
         messages = [{"role": "assistant", "content": "How can I help you?"}]
         self.state.init("messages", messages)
-        self.state.init("recent_msgs_num", 0)
         self.state.init("last_aider_commit_hash", self.coder.last_aider_commit_hash)
+        self.state.init("recent_msgs_num", 0)
         self.state.init("prompt")
 
         dump(self.state.messages)
@@ -255,6 +278,7 @@ class GUI:
         self.state = state
 
         self.last_undo_button = None
+        self.recent_msgs_empty = None
 
         # Force the coder to cooperate, regardless of cmd line args
         self.coder.yield_stream = True
@@ -273,25 +297,10 @@ class GUI:
         if self.prompt_pending():
             self.process_chat()
 
-        if prompt:
-            self.chat(prompt)
+        prompt = prompt if prompt else self.old_prompt
+        if not prompt:
             return
 
-        if self.old_prompt:
-            prompt = self.old_prompt
-            self.state.recent_msgs_num += 1
-            self.reset_recent_msgs()
-            self.chat(prompt)
-            return
-
-    def prompt_pending(self):
-        return self.state.prompt is not None
-
-    def cost(self):
-        cost = random.random() * 0.003 + 0.001
-        st.caption(f"${cost:0.4f}")
-
-    def chat(self, prompt):
         self.state.prompt = prompt
 
         self.state.messages.append({"role": "user", "content": prompt})
@@ -300,6 +309,13 @@ class GUI:
 
         # re-render the UI for the prompt_pending state
         st.experimental_rerun()
+
+    def prompt_pending(self):
+        return self.state.prompt is not None
+
+    def cost(self):
+        cost = random.random() * 0.003 + 0.001
+        st.caption(f"${cost:0.4f}")
 
     def process_chat(self):
         prompt = self.state.prompt
@@ -338,30 +354,6 @@ class GUI:
 
         # re-render the UI for the non-prompt_pending state
         st.experimental_rerun()
-
-    def recent_msgs(self):
-        msgs = [
-            "write a python program that shows off some python features",
-            "write a tsx program that shows off some language features",
-            "refactor the Frobulator.simplify method to be a stand alone function",
-            "lorem ipsum dolor",
-            "lorem adipiscing adipiscing et dolore sit elit aliqua dolore ut incididunt",
-            (
-                "sed magna consectetur et quis do magna labore ad elit et elit ad eiusmod sed"
-                " labore aliqua eiusmod enim ad nostrud\n\namet consectetur magna tempor do enim"
-                " aliqua enim tempor adipiscing sit et"
-            ),
-        ]
-        # msgs = 30 * msgs
-
-        return st.selectbox(
-            "N/A",
-            msgs,
-            placeholder="Resend recent chat message",
-            label_visibility="collapsed",
-            index=None,
-            key=f"recent_msgs_{self.state.recent_msgs_num}",
-        )
 
 
 def gui_main():
