@@ -156,6 +156,12 @@ class GUI:
             for fname in fnames:
                 if fname not in self.coder.get_inchat_relative_files():
                     self.coder.add_rel_fname(fname)
+                    self.messages.info(f"Added {fname} to the chat")
+            for fname in self.coder.get_inchat_relative_files():
+                if fname not in fnames:
+                    abs_fname = self.coder.abs_root_path(fname)
+                    self.coder.abs_fnames.remove(abs_fname)
+                    self.messages.info(f"Removed {fname} from the chat")
 
             with st.popover("Add web page"):
                 st.markdown("www")
@@ -239,7 +245,7 @@ class GUI:
 
         # stuff a bunch of vertical whitespace at the top
         # to get all the chat text to the bottom
-        self.messages.container(height=1200, border=False)
+        self.messages.container(height=300, border=False)
         with self.messages:
             self.announce()
 
@@ -288,9 +294,9 @@ class GUI:
 
         self.initialize_state()
 
+        self.do_messages_container()
         self.do_sidebar()
         self.do_cmd_tab()
-        self.do_messages_container()
 
         prompt = st.chat_input("Say something")
 
