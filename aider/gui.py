@@ -3,7 +3,6 @@
 import os
 import random
 import sys
-from pathlib import Path
 
 import streamlit as st
 
@@ -12,12 +11,10 @@ from aider.dump import dump  # noqa: F401
 from aider.main import main as cli_main
 
 
-# st.cache_data
-def get_diff():
-    return Path("/Users/gauthier/Projects/aider/aider/tmp.diff").read_text()
-
-
-diff = get_diff()
+def init_state(key, val):
+    if key in st.session_state:
+        return
+    setattr(st.session_state, key, val)
 
 
 def recent_msgs():
@@ -76,6 +73,7 @@ class GUI:
     def show_edit_info(self, edit):
         commit_hash = edit.get("commit_hash")
         commit_message = edit.get("commit_message")
+        diff = edit.get("diff")
         fnames = edit.get("fnames")
         if fnames:
             fnames = sorted(fnames)
@@ -98,10 +96,24 @@ class GUI:
             fnames = ", ".join(fnames)
             res += f"Applied edits to {fnames}."
 
-        with st.container(border=True):
-            st.write(res)
-            if show_undo:
-                st.button(f"Undo commit `{commit_hash}`", key=f"undo_{commit_hash}")
+        if diff:
+            with st.expander(res):
+                st.code(diff, language="diff")
+                if show_undo:
+                    self.add_undo(commit_hash)
+        else:
+            with st.container(border=True):
+                st.write(res)
+                if show_undo:
+                    self.add_undo(commit_hash)
+
+    def add_undo(self, commit_hash):
+        if self.last_undo_button:
+            self.last_undo_button.empty()
+
+        self.last_undo_button = st.empty()
+        with self.last_undo_button:
+            st.button(f"Undo commit `{commit_hash}`", key=f"undo_{commit_hash}")
 
     def do_sidebar(self):
         with st.sidebar:
@@ -236,18 +248,15 @@ class GUI:
                 else:
                     st.dict(msg)
 
-    def init_state(self):
-        if "messages" not in st.session_state:
-            st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
-
-        if "recent_msgs_num" not in st.session_state:
-            st.session_state.recent_msgs_num = 0
-
-        if "last_aider_commit_hash" not in st.session_state:
-            st.session_state.last_aider_commit_hash = self.coder.last_aider_commit_hash
+    def initialize_state(self):
+        messages = [{"role": "assistant", "content": "How can I help you?"}]
+        init_state("messages", messages)
+        init_state("recent_msgs_num", 0)
+        init_state("last_aider_commit_hash", self.coder.last_aider_commit_hash)
 
     def __init__(self, coder):
         self.coder = coder
+        self.last_undo_button = None
 
         # Force the coder to cooperate, regardless of cmd line args
         self.coder.yield_stream = True
@@ -255,7 +264,7 @@ class GUI:
         self.coder.io.yes = True
         self.coder.pretty = False
 
-        self.init_state()
+        self.initialize_state()
 
         self.do_sidebar()
         self.do_cmd_tab()
@@ -301,6 +310,13 @@ class GUI:
             if st.session_state.last_aider_commit_hash != self.coder.last_aider_commit_hash:
                 edit["commit_hash"] = self.coder.last_aider_commit_hash
                 edit["commit_message"] = self.coder.last_aider_commit_message
+                commits = f"{self.coder.last_aider_commit_hash}~1"
+                diff = self.coder.repo.diff_commits(
+                    self.coder.pretty,
+                    commits,
+                    self.coder.last_aider_commit_hash,
+                )
+                edit["diff"] = diff
                 st.session_state.last_aider_commit_hash = self.coder.last_aider_commit_hash
 
             st.session_state.messages.append(edit)
