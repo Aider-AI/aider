@@ -151,6 +151,7 @@ class GUI:
             # self.do_recommended_actions()
             self.do_add_to_chat()
             self.do_recent_msgs()
+            self.do_clear_chat_history()
 
     def do_recommended_actions(self):
         with st.expander("Recommended actions", expanded=True):
@@ -166,21 +167,20 @@ class GUI:
                 self.button("Add `.aider*` to `.gitignore`", key=random.random(), help="?")
 
     def do_add_to_chat(self):
-        with st.expander("Add to the chat", expanded=True):
-            self.do_add_files()
-            self.do_add_web_page()
-            self.do_clear_chat_history()
+        # with st.expander("Add to the chat", expanded=True):
+        self.do_add_files()
+        self.do_add_web_page()
 
     def do_add_files(self):
         fnames = st.multiselect(
-            "Files for the LLM to edit",
+            "Add files to the chat",
             sorted(self.coder.get_all_relative_files()),
             default=sorted(self.coder.get_inchat_relative_files()),
             placeholder="Files to edit",
             disabled=self.prompt_pending(),
             help=(
                 "Only add the files that need to be *edited* for the task you are working"
-                " on. Aider will pull in other code to provide relevant context to the LLM."
+                " on. Aider will pull in other relevant code to provide context to the LLM."
             ),
         )
 
@@ -194,7 +194,7 @@ class GUI:
                 self.info(f"Removed {fname} from the chat")
 
     def do_add_web_page(self):
-        with st.popover("Add web page"):
+        with st.popover("Add a web page to the chat"):
             self.do_web()
 
     def do_add_image(self):
@@ -234,7 +234,8 @@ class GUI:
             st.write("hi")
 
     def do_clear_chat_history(self):
-        if self.button("Clear chat history"):
+        text = "Saves tokens, reduces confusion"
+        if self.button("Clear chat history", help=text):
             self.coder.done_messages = []
             self.coder.cur_messages = []
             self.info("Cleared chat history. Now the LLM can't see anything before this line.")
@@ -272,7 +273,7 @@ class GUI:
 
         with self.recent_msgs_empty:
             self.old_prompt = st.selectbox(
-                "Resend recent chat message",
+                "Resend a recent chat message",
                 self.state.input_history,
                 placeholder="Choose a recent chat message",
                 # label_visibility="collapsed",
@@ -501,7 +502,15 @@ class GUI:
 
 
 def gui_main():
-    st.set_page_config(layout="wide")
+    st.set_page_config(
+        layout="wide",
+        page_title="Aider",
+        menu_items={
+            "Get Help": "https://aider.chat/docs/faq.html",
+            "Report a bug": "https://github.com/paul-gauthier/aider/issues",
+            "About": "# Aider\nAI pair programming in your browser.",
+        },
+    )
 
     GUI()
 
