@@ -364,5 +364,12 @@ def get_parser(default_config_files, git_root):
             " or home directory)"
         ),
     )
+    group.add_argument(
+        "--gui",
+        "--browser",
+        action="store_true",
+        help="Run aider in your browser",
+        default=False,
+    )
 
     return parser

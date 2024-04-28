@@ -5,6 +5,8 @@ from pathlib import Path
 
 import git
 import litellm
+from click.testing import CliRunner
+from streamlit.web import cli
 
 from aider import models
 from aider.args import get_parser
@@ -141,6 +143,26 @@ def scrub_sensitive_info(args, text):
     return text
 
 
+def launch_gui(args):
+    from aider import gui
+
+    target = gui.__file__
+
+    # from streamlit.web import bootstrap
+    # bootstrap.load_config_options(flag_options={})
+    # cli.main_run(target, args)
+    # sys.argv = ['streamlit', 'run', '--'] + args
+
+    runner = CliRunner()
+    st_args = [
+        "run",
+        target,
+        "--global.developmentMode=false",
+        "--",
+    ]
+    runner.invoke(cli.main, st_args + args)
+
+
 def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
     if argv is None:
         argv = sys.argv[1:]
@@ -162,6 +184,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     parser = get_parser(default_config_files, git_root)
     args = parser.parse_args(argv)
+
+    if args.gui and not return_coder:
+        launch_gui(argv)
+        return
 
     if args.dark_mode:
         args.user_input_color = "#32FF32"
