@@ -11,10 +11,8 @@ body:
   - type: textarea
     attributes:
       label: Version and model info
-      description: Please include the aider version, model name and other config/switches in effect.
-      placeholder: |
-        Please include aider version, model being used (`gpt-4-xxx`, etc) and any other switches or config settings that are active. Just copy & paste these lines from aider's output:
-          
+      description: Please include aider version, model being used (`gpt-4-xxx`, etc) and any other switches or config settings that are active.
+      placeholder: |          
         Aider v0.21.2-dev
         Model: gpt-4-0613 using diff edit format
         Git repo: .git with 134 files
