@@ -284,7 +284,7 @@ class GUI:
                 if role == "edit":
                     self.show_edit_info(msg)
                 elif role == "info":
-                    st.info(msg["message"])
+                    st.info(msg["content"])
                 elif role == "text":
                     text = msg["content"]
                     line = text.splitlines()[0]
@@ -299,7 +299,7 @@ class GUI:
 
     def initialize_state(self):
         messages = [
-            dict(role="text", content=self.announce()),
+            dict(role="info", content=self.announce()),
             dict(role="assistant", content="How can I help you?"),
         ]
 
@@ -417,7 +417,7 @@ class GUI:
         st.rerun()
 
     def info(self, message, echo=True):
-        info = dict(role="info", message=message)
+        info = dict(role="info", content=message)
         self.state.messages.append(info)
 
         # We will render the tail of the messages array after this call
