@@ -505,6 +505,7 @@ def gui_main():
     st.set_page_config(
         layout="wide",
         page_title="Aider",
+        page_icon="https://aider.chat/assets/favicon-32x32.png",
         menu_items={
             "Get Help": "https://aider.chat/docs/faq.html",
             "Report a bug": "https://github.com/paul-gauthier/aider/issues",
