@@ -146,12 +146,9 @@ def scrub_sensitive_info(args, text):
 def launch_gui(args):
     from aider import gui
 
-    target = gui.__file__
+    print("Hit CONTROL-C to exit...")
 
-    # from streamlit.web import bootstrap
-    # bootstrap.load_config_options(flag_options={})
-    # cli.main_run(target, args)
-    # sys.argv = ['streamlit', 'run', '--'] + args
+    target = gui.__file__
 
     runner = CliRunner()
     st_args = [
@@ -161,6 +158,11 @@ def launch_gui(args):
         "--",
     ]
     runner.invoke(cli.main, st_args + args)
+
+    # from streamlit.web import bootstrap
+    # bootstrap.load_config_options(flag_options={})
+    # cli.main_run(target, args)
+    # sys.argv = ['streamlit', 'run', '--'] + args
 
 
 def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
