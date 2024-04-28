@@ -1,15 +1,15 @@
 name: Question or bug repot
 description: Submit a question or bug report to help us improve aider
-labels:
+labels: []
 body:
-  - type: markdown
-    attributes:
   - type: textarea
     attributes:
       label: Issue
       description: Please describe your problem or question.
     validations:
       required: true      
+  - type: markdown
+    attributes:
       value: |
         When asking questions or reporting issues, it is very helpful if you can include:
 
