@@ -143,15 +143,15 @@ class GUI:
             st.title("Aider")
             # self.cmds_tab, self.settings_tab = st.tabs(["Commands", "Settings"])
 
-    def do_settings_tab(self):
-        pass
-
-    def do_cmd_tab(self):
-        with st.sidebar:
             # self.do_recommended_actions()
             self.do_add_to_chat()
             self.do_recent_msgs()
             self.do_clear_chat_history()
+            # st.container(height=150, border=False)
+            # st.write("### Experimental")
+
+    def do_settings_tab(self):
+        pass
 
     def do_recommended_actions(self):
         with st.expander("Recommended actions", expanded=True):
@@ -290,7 +290,12 @@ class GUI:
         # stuff a bunch of vertical whitespace at the top
         # to get all the chat text to the bottom
         self.messages.container(height=300, border=False)
+
         with self.messages:
+            st.warning(
+                "This browser version of aider is experimental. Please share feedback in [GitHub"
+                " issues](https://github.com/paul-gauthier/aider/issues)."
+            )
             for msg in self.state.messages:
                 role = msg["role"]
 
@@ -353,7 +358,6 @@ class GUI:
 
         self.do_messages_container()
         self.do_sidebar()
-        self.do_cmd_tab()
 
         user_inp = st.chat_input("Say something")
         if user_inp:
