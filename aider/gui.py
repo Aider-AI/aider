@@ -143,6 +143,9 @@ class GUI:
             st.title("Aider")
             # self.cmds_tab, self.settings_tab = st.tabs(["Commands", "Settings"])
 
+    def do_settings_tab(self):
+        pass
+
     def do_cmd_tab(self):
         with st.sidebar:
             # self.do_recommended_actions()
@@ -336,9 +339,9 @@ class GUI:
 
         return st.button(args, **kwargs)
 
-    def __init__(self, coder, state):
-        self.coder = coder
-        self.state = state
+    def __init__(self):
+        self.coder = get_coder()
+        self.state = get_state()
 
         # Force the coder to cooperate, regardless of cmd line args
         self.coder.yield_stream = True
@@ -500,9 +503,7 @@ class GUI:
 def gui_main():
     st.set_page_config(layout="wide")
 
-    coder = get_coder()
-    state = get_state()
-    GUI(coder, state)
+    GUI()
 
 
 if __name__ == "__main__":

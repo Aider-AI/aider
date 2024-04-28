@@ -122,25 +122,7 @@ def check_gitignore(git_root, io, ask=True):
     io.tool_output(f"Added {pat} to .gitignore")
 
 
-def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
-    if argv is None:
-        argv = sys.argv[1:]
-
-    if force_git_root:
-        git_root = force_git_root
-    else:
-        git_root = get_git_root()
-
-    conf_fname = Path(".aider.conf.yml")
-
-    default_config_files = [conf_fname.resolve()]  # CWD
-    if git_root:
-        git_conf = Path(git_root) / conf_fname  # git root
-        if git_conf not in default_config_files:
-            default_config_files.append(git_conf)
-    default_config_files.append(Path.home() / conf_fname)  # homedir
-    default_config_files = list(map(str, default_config_files))
-
+def get_parser(default_config_files, git_root):
     parser = configargparse.ArgumentParser(
         description="aider is GPT powered coding in your terminal",
         add_config_file_help=True,
@@ -497,6 +479,49 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         ),
     )
 
+    return parser
+
+
+def format_settings(parser, args):
+    show = scrub_sensitive_info(args, parser.format_values())
+    show += "\n"
+    show += "Option settings:\n"
+    for arg, val in sorted(vars(args).items()):
+        if val:
+            val = scrub_sensitive_info(args, str(val))
+        show += f"  - {arg}: {val}\n"
+    return show
+
+
+def scrub_sensitive_info(args, text):
+    # Replace sensitive information with placeholder
+    if text and args.openai_api_key:
+        text = text.replace(args.openai_api_key, "***")
+    if text and args.anthropic_api_key:
+        text = text.replace(args.anthropic_api_key, "***")
+    return text
+
+
+def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
+    if argv is None:
+        argv = sys.argv[1:]
+
+    if force_git_root:
+        git_root = force_git_root
+    else:
+        git_root = get_git_root()
+
+    conf_fname = Path(".aider.conf.yml")
+
+    default_config_files = [conf_fname.resolve()]  # CWD
+    if git_root:
+        git_conf = Path(git_root) / conf_fname  # git root
+        if git_conf not in default_config_files:
+            default_config_files.append(git_conf)
+    default_config_files.append(Path.home() / conf_fname)  # homedir
+    default_config_files = list(map(str, default_config_files))
+
+    parser = get_parser(default_config_files, git_root)
     args = parser.parse_args(argv)
 
     if args.dark_mode:
@@ -582,24 +607,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         if args.gitignore:
             check_gitignore(git_root, io)
 
-    def scrub_sensitive_info(text):
-        # Replace sensitive information with placeholder
-        if text and args.openai_api_key:
-            text = text.replace(args.openai_api_key, "***")
-        if text and args.anthropic_api_key:
-            text = text.replace(args.anthropic_api_key, "***")
-        return text
-
     if args.verbose:
-        show = scrub_sensitive_info(parser.format_values())
+        show = format_settings(parser, args)
         io.tool_output(show)
-        io.tool_output("Option settings:")
-        for arg, val in sorted(vars(args).items()):
-            if val:
-                val = scrub_sensitive_info(str(val))
-            io.tool_output(f"  - {arg}: {val}")
 
-    io.tool_output(*map(scrub_sensitive_info, sys.argv), log_only=True)
+    cmd_line = " ".join(sys.argv)
+    cmd_line = scrub_sensitive_info(args, cmd_line)
+    io.tool_output(cmd_line, log_only=True)
 
     if args.anthropic_api_key:
         os.environ["ANTHROPIC_API_KEY"] = args.anthropic_api_key
