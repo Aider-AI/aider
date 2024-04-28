@@ -8,9 +8,11 @@ body:
       description: Please describe your problem or question.
     validations:
       required: true      
-  - type: markdown
+  - type: textarea
     attributes:
-      value: |
+      label: Version and model info
+      description: Please include the aider version, model name and other config/switches in effect.
+      placeholder: |
         When asking questions or reporting issues, it is very helpful if you can include:
 
         - Aider version
@@ -26,9 +28,5 @@ body:
         Repo-map: using 1024 tokens
         Use /help to see in-chat commands, run with --help to see cmd line args
         ```        
-  - type: textarea
-    attributes:
-      label: Version and model info
-      description: Please include the aider version, model name and other config/switches in effect.
     validations:
       required: false
