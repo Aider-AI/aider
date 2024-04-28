@@ -270,6 +270,12 @@ class Coder:
         self.abs_fnames.add(self.abs_root_path(rel_fname))
         self.check_added_files()
 
+    def drop_rel_fname(self, fname):
+        abs_fname = self.abs_root_path(fname)
+        if abs_fname in self.abs_fnames:
+            self.abs_fnames.remove(abs_fname)
+            return True
+
     def abs_root_path(self, path):
         res = Path(self.root) / path
         return utils.safe_abs_path(res)
