@@ -439,6 +439,23 @@ class Coder:
             except EOFError:
                 return
 
+    def run_loop(self):
+        inp = self.io.get_input(
+            self.root,
+            self.get_inchat_relative_files(),
+            self.get_addable_relative_files(),
+            self.commands,
+        )
+
+        if not inp:
+            return
+
+        if self.commands.is_command(inp):
+            return self.commands.run(inp)
+
+        self.check_for_file_mentions(inp)
+        return inp
+
     def keyboard_interrupt(self):
         now = time.time()
 
@@ -493,23 +510,6 @@ class Coder:
                 dict(role="assistant", content="Ok."),
             ]
         self.cur_messages = []
-
-    def run_loop(self):
-        inp = self.io.get_input(
-            self.root,
-            self.get_inchat_relative_files(),
-            self.get_addable_relative_files(),
-            self.commands,
-        )
-
-        if not inp:
-            return
-
-        if self.commands.is_command(inp):
-            return self.commands.run(inp)
-
-        self.check_for_file_mentions(inp)
-        return inp
 
     def fmt_system_prompt(self, prompt):
         prompt = prompt.format(fence=self.fence)
