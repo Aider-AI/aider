@@ -5,7 +5,6 @@ from pathlib import Path
 
 import git
 import litellm
-from click.testing import CliRunner
 from streamlit.web import cli
 
 from aider import models
@@ -146,19 +145,21 @@ def scrub_sensitive_info(args, text):
 def launch_gui(args):
     from aider import gui
 
-    print("Hit CONTROL-C to exit...")
+    print()
+    print("CONTROL-C to exit...")
 
     target = gui.__file__
 
-    runner = CliRunner()
     st_args = [
         "run",
         target,
         "--global.developmentMode=false",
         "--",
     ]
-    runner.invoke(cli.main, st_args + args)
+    cli.main(st_args + args)
 
+    # from click.testing import CliRunner
+    # runner = CliRunner()
     # from streamlit.web import bootstrap
     # bootstrap.load_config_options(flag_options={})
     # cli.main_run(target, args)
@@ -329,6 +330,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     if return_coder:
         return coder
+
+    coder.show_announcements()
 
     if args.commit:
         coder.commands.cmd_commit("")

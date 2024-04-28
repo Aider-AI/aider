@@ -253,6 +253,7 @@ class Coder:
                 self.io.tool_output("JSON Schema:")
                 self.io.tool_output(json.dumps(self.functions, indent=4))
 
+    def show_announcements(self):
         for line in self.get_announcements():
             self.io.tool_output(line)
 
