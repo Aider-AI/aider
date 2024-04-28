@@ -181,12 +181,12 @@ class GUI:
             for fname in fnames:
                 if fname not in self.coder.get_inchat_relative_files():
                     self.coder.add_rel_fname(fname)
-                    self.messages.info(f"Added {fname} to the chat")
+                    self.info(f"Added {fname} to the chat")
             for fname in self.coder.get_inchat_relative_files():
                 if fname not in fnames:
                     abs_fname = self.coder.abs_root_path(fname)
                     self.coder.abs_fnames.remove(abs_fname)
-                    self.messages.info(f"Removed {fname} from the chat")
+                    self.info(f"Removed {fname} from the chat")
 
             with st.popover("Add web page"):
                 self.do_web()
