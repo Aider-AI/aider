@@ -21,6 +21,10 @@ Cohere also offers free API access to their [Command-R+ model](#cohere),
 which works with aider
 as a *very basic* coding assistant.
 
+## Local models
+
+Aider can work also with local models, for example using [Ollama](#ollama).
+
 ## Other models
 
 Aider supports connecting to almost any LLM,
@@ -39,6 +43,7 @@ So you should expect that models which are less capable than GPT-3.5 may struggl
 - [Azure](#azure)
 - [OpenRouter](#openrouter)
 - [OpenAI compatible APIs](#openai-compatible-apis)
+- [Ollama](#ollama)
 - [Other LLMs](#other-llms)
 - [Model warnings](#model-warnings)
 - [Editing format](#editing-format)
@@ -211,6 +216,26 @@ aider --model openai/<model-name>
 ```
 
 See the [model warnings](#model-warnings)
+section for information on warnings which will occur
+when working with models that aider is not familiar with.
+
+## Ollama
+
+Aider can connect to local Ollama models.
+
+```
+# Start your ollama server
+ollama serve
+
+# In another terminal window:
+export OLLAMA_API_BASE=http://127.0.0.1:11434
+aider --model ollama/<MODEL>
+```
+
+The Llama3 70B model works well with aider.
+Give aider the `--edit-format diff` switch if you're working with it.
+
+Also see the [model warnings](#model-warnings)
 section for information on warnings which will occur
 when working with models that aider is not familiar with.
 
