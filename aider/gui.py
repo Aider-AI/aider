@@ -141,14 +141,12 @@ class GUI:
     def do_sidebar(self):
         with st.sidebar:
             st.title("Aider")
-            self.cmds_tab, self.settings_tab = st.tabs(["Commands", "Settings"])
+            # self.cmds_tab, self.settings_tab = st.tabs(["Commands", "Settings"])
 
     def do_cmd_tab(self):
-        with self.cmds_tab:
+        with st.sidebar:
             # self.do_recommended_actions()
             self.do_add_to_chat()
-            self.do_tokens_and_cost()
-            self.do_git()
             self.do_recent_msgs()
 
     def do_recommended_actions(self):
@@ -166,71 +164,82 @@ class GUI:
 
     def do_add_to_chat(self):
         with st.expander("Add to the chat", expanded=True):
-            fnames = st.multiselect(
-                "Files for the LLM to edit",
-                sorted(self.coder.get_all_relative_files()),
-                default=sorted(self.coder.get_inchat_relative_files()),
-                placeholder="Files to edit",
-                disabled=self.prompt_pending(),
-                help=(
-                    "Only add the files that need to be *edited* for the task you are working"
-                    " on. Aider will pull in other code to provide relevant context to the LLM."
-                ),
+            self.do_add_files()
+            self.do_add_web_page()
+            self.do_clear_chat_history()
+
+    def do_add_files(self):
+        fnames = st.multiselect(
+            "Files for the LLM to edit",
+            sorted(self.coder.get_all_relative_files()),
+            default=sorted(self.coder.get_inchat_relative_files()),
+            placeholder="Files to edit",
+            disabled=self.prompt_pending(),
+            help=(
+                "Only add the files that need to be *edited* for the task you are working"
+                " on. Aider will pull in other code to provide relevant context to the LLM."
+            ),
+        )
+
+        for fname in fnames:
+            if fname not in self.coder.get_inchat_relative_files():
+                self.coder.add_rel_fname(fname)
+                self.info(f"Added {fname} to the chat")
+        for fname in self.coder.get_inchat_relative_files():
+            if fname not in fnames:
+                self.coder.drop_rel_fname(fname)
+                self.info(f"Removed {fname} from the chat")
+
+    def do_add_web_page(self):
+        with st.popover("Add web page"):
+            self.do_web()
+
+    def do_add_image(self):
+        with st.popover("Add image"):
+            st.markdown("Hello World 👋")
+            st.file_uploader("Image file", disabled=self.prompt_pending())
+
+    def do_run_shell(self):
+        with st.popover("Run shell commands, tests, etc"):
+            st.markdown(
+                "Run a shell command and optionally share the output with the LLM. This is"
+                " a great way to run your program or run tests and have the LLM fix bugs."
             )
-
-            for fname in fnames:
-                if fname not in self.coder.get_inchat_relative_files():
-                    self.coder.add_rel_fname(fname)
-                    self.info(f"Added {fname} to the chat")
-            for fname in self.coder.get_inchat_relative_files():
-                if fname not in fnames:
-                    self.coder.drop_rel_fname(fname)
-                    self.info(f"Removed {fname} from the chat")
-
-            with st.popover("Add web page"):
-                self.do_web()
-
-            # with st.popover("Add image"):
-            #    st.markdown("Hello World 👋")
-            #    st.file_uploader("Image file", disabled=self.prompt_pending())
-
-            with st.popover("Run shell commands, tests, etc"):
-                st.markdown(
-                    "Run a shell command and optionally share the output with the LLM. This is"
-                    " a great way to run your program or run tests and have the LLM fix bugs."
-                )
-                st.text_input("Command:")
-                st.radio(
-                    "Share the command output with the LLM?",
-                    [
-                        "Review the output and decide whether to share",
-                        (
-                            "Automatically share the output on non-zero exit code (ie, if any"
-                            " tests fail)"
-                        ),
-                    ],
-                )
-                st.selectbox(
-                    "Recent commands",
-                    [
-                        "my_app.py --doit",
-                        "my_app.py --cleanup",
-                    ],
-                    disabled=self.prompt_pending(),
-                )
+            st.text_input("Command:")
+            st.radio(
+                "Share the command output with the LLM?",
+                [
+                    "Review the output and decide whether to share",
+                    "Automatically share the output on non-zero exit code (ie, if any tests fail)",
+                ],
+            )
+            st.selectbox(
+                "Recent commands",
+                [
+                    "my_app.py --doit",
+                    "my_app.py --cleanup",
+                ],
+                disabled=self.prompt_pending(),
+            )
 
     def do_tokens_and_cost(self):
         with st.expander("Tokens and costs", expanded=True):
-            with st.popover("Show token usage"):
-                st.write("hi")
-            if self.button("Clear chat history"):
-                self.coder.done_messages = []
-                self.coder.cur_messages = []
-                self.info("Cleared chat history. Now the LLM can't see anything before this line.")
+            pass
 
-            # st.metric("Cost of last message send & reply", "$0.0019", help="foo")
-            # st.metric("Cost to send next message", "$0.0013", help="foo")
-            # st.metric("Total cost this session", "$0.22")
+    def do_show_token_usage(self):
+        with st.popover("Show token usage"):
+            st.write("hi")
+
+    def do_clear_chat_history(self):
+        if self.button("Clear chat history"):
+            self.coder.done_messages = []
+            self.coder.cur_messages = []
+            self.info("Cleared chat history. Now the LLM can't see anything before this line.")
+
+    def do_show_metrics(self):
+        st.metric("Cost of last message send & reply", "$0.0019", help="foo")
+        st.metric("Cost to send next message", "$0.0013", help="foo")
+        st.metric("Total cost this session", "$0.22")
 
     def do_git(self):
         with st.expander("Git", expanded=False):
