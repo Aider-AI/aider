@@ -88,7 +88,7 @@ class GUI:
     def announce(self):
         lines = self.coder.get_announcements()
         lines = "  \n".join(lines)
-        st.info(lines)
+        return lines
 
     def show_edit_info(self, edit):
         commit_hash = edit.get("commit_hash")
@@ -278,8 +278,6 @@ class GUI:
         # to get all the chat text to the bottom
         self.messages.container(height=300, border=False)
         with self.messages:
-            self.announce()
-
             for msg in self.state.messages:
                 role = msg["role"]
 
@@ -289,7 +287,8 @@ class GUI:
                     st.info(msg["message"])
                 elif role == "text":
                     text = msg["content"]
-                    with self.messages.expander(text.splitlines()[0]):
+                    line = text.splitlines()[0]
+                    with self.messages.expander(line):
                         st.text(text)
                 elif role in ("user", "assistant"):
                     with st.chat_message(role):
@@ -299,7 +298,11 @@ class GUI:
                     st.dict(msg)
 
     def initialize_state(self):
-        messages = [{"role": "assistant", "content": "How can I help you?"}]
+        messages = [
+            dict(role="text", content=self.announce()),
+            dict(role="assistant", content="How can I help you?"),
+        ]
+
         self.state.init("messages", messages)
         self.state.init("last_aider_commit_hash", self.coder.last_aider_commit_hash)
         self.state.init("last_undone_commit_hash")
@@ -362,7 +365,9 @@ class GUI:
             with self.messages.chat_message("user"):
                 st.write(self.prompt)
         elif self.prompt_as == "text":
-            with self.messages.expander(self.prompt.splitlines()[0]):
+            line = self.prompt.splitlines()[0]
+            line += "??"
+            with self.messages.expander(line):
                 st.text(self.prompt)
 
         # re-render the UI for the prompt_pending state
