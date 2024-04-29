@@ -150,6 +150,11 @@ class GUI:
             # st.container(height=150, border=False)
             # st.write("### Experimental")
 
+            st.warning(
+                "This browser version of aider is experimental. Please share feedback in [GitHub"
+                " issues](https://github.com/paul-gauthier/aider/issues)."
+            )
+
     def do_settings_tab(self):
         pass
 
@@ -174,8 +179,8 @@ class GUI:
     def do_add_files(self):
         fnames = st.multiselect(
             "Add files to the chat",
-            sorted(self.coder.get_all_relative_files()),
-            default=sorted(self.coder.get_inchat_relative_files()),
+            self.coder.get_all_relative_files(),
+            default=self.state.initial_inchat_files,
             placeholder="Files to edit",
             disabled=self.prompt_pending(),
             help=(
@@ -188,6 +193,7 @@ class GUI:
             if fname not in self.coder.get_inchat_relative_files():
                 self.coder.add_rel_fname(fname)
                 self.info(f"Added {fname} to the chat")
+
         for fname in self.coder.get_inchat_relative_files():
             if fname not in fnames:
                 self.coder.drop_rel_fname(fname)
@@ -292,10 +298,6 @@ class GUI:
         self.messages.container(height=300, border=False)
 
         with self.messages:
-            st.warning(
-                "This browser version of aider is experimental. Please share feedback in [GitHub"
-                " issues](https://github.com/paul-gauthier/aider/issues)."
-            )
             for msg in self.state.messages:
                 role = msg["role"]
 
@@ -328,6 +330,8 @@ class GUI:
         self.state.init("web_content_num", 0)
         self.state.init("prompt")
         self.state.init("scraper")
+
+        self.state.init("initial_inchat_files", self.coder.get_inchat_relative_files())
 
         if "input_history" not in self.state.keys:
             input_history = list(self.coder.io.get_input_history())
