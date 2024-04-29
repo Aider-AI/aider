@@ -28,10 +28,12 @@ Aider can work also with local models, for example using [Ollama](#ollama).
 ## Other models
 
 Aider supports connecting to almost any LLM,
-but it may not work well with some models depending on their capabilities.
-For example, GPT-3.5 is just barely capable of reliably *editing code* to provide aider's
-interactive "pair programming" style workflow.
-So you should expect that models which are less capable than GPT-3.5 may struggle to perform well with aider.
+but it may not work well with less capable models.
+If you see the model returning code, but aider isn't able to edit your files
+and commit the changes...
+this is usually because the model isn't capable of properly
+returning "code edits".
+Models weaker than GPT 3.5 may have problems working well with aider.
 
 ## Configuring models
 
@@ -288,8 +290,16 @@ for more details.
 
 ## Model warnings
 
-On startup, aider tries to sanity check that it is configured correctly
-to work with the specified models:
+Aider supports connecting to almost any LLM,
+but it may not work well with less capable models.
+If you see the model returning code, but aider isn't able to edit your files
+and commit the changes...
+this is usually because the model isn't capable of properly
+returning "code edits".
+Models weaker than GPT 3.5 may have problems working well with aider.
+
+Aider tries to sanity check that it is configured correctly
+to work with the specified model:
 
 - It checks to see that all required environment variables are set for the model. These variables are required to configure things like API keys, API base URLs, etc.
 - It checks a metadata database to look up the context window size and token costs for the model.
