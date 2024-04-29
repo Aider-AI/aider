@@ -7,7 +7,7 @@ import git
 import litellm
 from streamlit.web import cli
 
-from aider import models
+from aider import __version__, models
 from aider.args import get_parser
 from aider.coders import Coder
 from aider.io import InputOutput
@@ -150,13 +150,26 @@ def launch_gui(args):
 
     target = gui.__file__
 
-    st_args = [
-        "run",
-        target,
-        "--global.developmentMode=false",
-        "--",
+    st_args = ["run", target]
+
+    st_args += [
+        "--browser.gatherUsageStats=false",
+        "--runner.magicEnabled=false",
+        "--server.runOnSave=false",
     ]
-    cli.main(st_args + args)
+
+    if "-dev" in __version__:
+        print("Watching for file changes.")
+    else:
+        st_args += [
+            "--global.developmentMode=false",
+            "--server.fileWatcherType=none",
+            "--client.toolbarMode=viewer",  # minimal?
+        ]
+
+    st_args += ["--"] + args
+
+    cli.main(st_args)
 
     # from click.testing import CliRunner
     # runner = CliRunner()

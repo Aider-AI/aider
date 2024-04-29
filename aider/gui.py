@@ -521,6 +521,10 @@ def gui_main():
         },
     )
 
+    # config_options = st.config._config_options
+    # for key, value in config_options.items():
+    #    print(f"{key}: {value.value}")
+
     GUI()
 
 
