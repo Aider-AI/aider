@@ -197,7 +197,7 @@ aider --model openrouter/<provider>/<model>
 aider --models openrouter/
 ```
 
-In particular, Llama3 70B works well with aider:
+In particular, Llama3 70B works well with aider, at low cost:
 
 ```
 # Llama3 70B instruct
@@ -221,7 +221,7 @@ export OLLAMA_API_BASE=http://127.0.0.1:11434
 aider --model ollama/<MODEL>
 ```
 
-In particular, `llama3:70b` works very well with aider
+In particular, `llama3:70b` works very well with aider:
 
 
 ```
