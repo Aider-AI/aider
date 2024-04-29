@@ -224,16 +224,26 @@ when working with models that aider is not familiar with.
 Aider can connect to local Ollama models.
 
 ```
+# Pull the model
+ollama pull <MODEL>
+
 # Start your ollama server
 ollama serve
 
 # In another terminal window:
 export OLLAMA_API_BASE=http://127.0.0.1:11434
 aider --model ollama/<MODEL>
-```
 
-The Llama3 70B model works well with aider.
-Give aider the `--edit-format diff` switch if you're working with it.
+###
+#
+# llama3:70b works very well with aider
+#
+ollama pull llama3:70b
+ollama serve
+# ...in another terminal window:
+export OLLAMA_API_BASE=http://127.0.0.1:11434
+aider --model ollama/llama3:70b 
+```
 
 Also see the [model warnings](#model-warnings)
 section for information on warnings which will occur
