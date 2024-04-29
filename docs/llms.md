@@ -49,6 +49,7 @@ Models weaker than GPT 3.5 may have problems working well with aider.
 - [Other LLMs](#other-llms)
 - [Model warnings](#model-warnings)
 - [Editing format](#editing-format)
+- [Using a .env file](#using-a-env-file)
 
 Aider uses the LiteLLM package to connect to LLM providers.
 The [LiteLLM provider docs](https://docs.litellm.ai/docs/providers)
@@ -384,3 +385,25 @@ Aider is configured to use the best edit format for the popular OpenAI and Anthr
 For lesser known models aider will default to using the "whole" editing format.
 If you would like to experiment with the more advanced formats, you can
 use these switches: `--edit-format diff` or `--edit-format udiff`.
+
+# Using a .env file
+
+Aider will read environment variables from a `.env` file in
+the current directory.
+You can use it to store various keys and other settings for the
+models you use with aider.
+
+Here is an example `.env` file:
+
+```
+OPENAI_API_KEY=<your-key-goes-here>
+ANTHROPIC_API_KEY=<your-key-goes-here>
+GROQ_API_KEY=<your-key-goes-here>
+OPENROUTER_API_KEY=<your-key-goes-here>
+
+AZURE_API_KEY=<your-key-goes-here>
+AZURE_API_VERSION=2023-05-15
+AZURE_API_BASE=https://example-endpoint.openai.azure.com
+
+OLLAMA_API_BASE=http://127.0.0.1:11434
+```
