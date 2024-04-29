@@ -42,8 +42,8 @@ So you should expect that models which are less capable than GPT-3.5 may struggl
 - [Cohere](#cohere)
 - [Azure](#azure)
 - [OpenRouter](#openrouter)
-- [OpenAI compatible APIs](#openai-compatible-apis)
 - [Ollama](#ollama)
+- [OpenAI compatible APIs](#openai-compatible-apis)
 - [Other LLMs](#other-llms)
 - [Model warnings](#model-warnings)
 - [Editing format](#editing-format)
@@ -190,15 +190,53 @@ You'll need an [OpenRouter API key](https://openrouter.ai/keys).
 pip install aider-chat
 export OPENROUTER_API_KEY=<your-key-goes-here>
 
-# Llama3 70B instruct
-aider --model openrouter/meta-llama/llama-3-70b-instruct
-
 # Or any other open router model
 aider --model openrouter/<provider>/<model>
 
 # List models available from OpenRouter
 aider --models openrouter/
 ```
+
+In particular, Llama3 70B works well with aider:
+
+```
+# Llama3 70B instruct
+aider --model openrouter/meta-llama/llama-3-70b-instruct
+```
+
+
+## Ollama
+
+Aider can connect to local Ollama models.
+
+```
+# Pull the model
+ollama pull <MODEL>
+
+# Start your ollama server
+ollama serve
+
+# In another terminal window
+export OLLAMA_API_BASE=http://127.0.0.1:11434
+aider --model ollama/<MODEL>
+```
+
+In particular, `llama3:70b` works very well with aider
+
+
+```
+ollama pull llama3:70b
+ollama serve
+
+# ...in another terminal window...
+export OLLAMA_API_BASE=http://127.0.0.1:11434
+aider --model ollama/llama3:70b 
+```
+
+Also see the [model warnings](#model-warnings)
+section for information on warnings which will occur
+when working with models that aider is not familiar with.
+
 
 ## OpenAI compatible APIs
 
@@ -216,36 +254,6 @@ aider --model openai/<model-name>
 ```
 
 See the [model warnings](#model-warnings)
-section for information on warnings which will occur
-when working with models that aider is not familiar with.
-
-## Ollama
-
-Aider can connect to local Ollama models.
-
-```
-# Pull the model
-ollama pull <MODEL>
-
-# Start your ollama server
-ollama serve
-
-# In another terminal window:
-export OLLAMA_API_BASE=http://127.0.0.1:11434
-aider --model ollama/<MODEL>
-
-###
-#
-# llama3:70b works very well with aider
-#
-ollama pull llama3:70b
-ollama serve
-# ...in another terminal window:
-export OLLAMA_API_BASE=http://127.0.0.1:11434
-aider --model ollama/llama3:70b 
-```
-
-Also see the [model warnings](#model-warnings)
 section for information on warnings which will occur
 when working with models that aider is not familiar with.
 
