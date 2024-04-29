@@ -7,28 +7,27 @@
 
 **Aider works best with [GPT-4 Turbo](#openai) and [Claude 3 Opus](#anthropic),**
 as they are the very best models for editing code.
-Aider also works quite well with [GPT-3.5](#openai).
 
 ## Free models
 
-**Aider works with a number of free API providers.**
-Google's [Gemini 1.5 Pro](#gemini) is
-the most capable free model to use with aider, with
+Aider works with a number of **free** API providers:
+
+- Google's [Gemini 1.5 Pro](#gemini) is the most capable free model to use with aider, with
 code editing capabilities similar to GPT-3.5.
-You can use [Llama 3 70B on Groq](#llama3)
-which is comparable to GPT-3.5 in code editing performance.
-Cohere also offers free API access to their [Command-R+ model](#cohere),
-which works with aider
-as a *very basic* coding assistant.
+- You can use [Llama 3 70B on Groq](#llama3) which is comparable to GPT-3.5 in code editing performance.
+- The [Deepseek Coder](#deepseek) model works well with aider, comparable to GPT-3.5. Deepseek.com currently offers 5M free tokens of API usage.
+- Cohere also offers free API access to their [Command-R+ model](#cohere), which works with aider as a *very basic* coding assistant.
 
 ## Local models
 
 Aider can work also with local models, for example using [Ollama](#ollama).
+It can also access
+local models that provide an
+[Open AI compatible API](#openai-compatible-apis).
 
-## Other models
+## Use a capable model
 
-Aider supports connecting to almost any LLM,
-but it may not work well with less capable models.
+Be aware that aider may not work well with less capable models.
 If you see the model returning code, but aider isn't able to edit your files
 and commit the changes...
 this is usually because the model isn't capable of properly
@@ -45,6 +44,7 @@ Models weaker than GPT 3.5 may have problems working well with aider.
 - [Azure](#azure)
 - [OpenRouter](#openrouter)
 - [Ollama](#ollama)
+- [Deepseek](#deepseek)
 - [OpenAI compatible APIs](#openai-compatible-apis)
 - [Other LLMs](#other-llms)
 - [Model warnings](#model-warnings)
@@ -238,6 +238,23 @@ aider --model ollama/llama3:70b
 ```
 
 Also see the [model warnings](#model-warnings)
+section for information on warnings which will occur
+when working with models that aider is not familiar with.
+
+
+## Deepseek
+
+Aider can connect to the Deepseek API, which is OpenAI compatible.
+They appear to grant 5M tokens of free API usage to new accounts.
+
+```
+pip install aider-chat
+export OPENAI_API_KEY=<your-key-goes-here>
+export OPENAI_API_BASE=https://api.deepseek.com/v1
+aider --model openai/deepseek-coder
+```
+
+See the [model warnings](#model-warnings)
 section for information on warnings which will occur
 when working with models that aider is not familiar with.
 
