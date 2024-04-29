@@ -200,7 +200,8 @@ aider --models openrouter/
 In particular, Llama3 70B works well with aider, at low cost:
 
 ```
-# Llama3 70B instruct
+pip install aider-chat
+export OPENROUTER_API_KEY=<your-key-goes-here>
 aider --model openrouter/meta-llama/llama-3-70b-instruct
 ```
 
@@ -217,6 +218,7 @@ ollama pull <MODEL>
 ollama serve
 
 # In another terminal window
+pip install aider-chat
 export OLLAMA_API_BASE=http://127.0.0.1:11434
 aider --model ollama/<MODEL>
 ```
