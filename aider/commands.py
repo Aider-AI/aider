@@ -15,6 +15,11 @@ from aider.utils import is_image_file
 from .dump import dump  # noqa: F401
 
 
+class SwitchModel(Exception):
+    def __init__(self, model):
+        self.model = model
+
+
 class Commands:
     voice = None
     scraper = None
@@ -29,6 +34,14 @@ class Commands:
         self.voice_language = voice_language
 
     def cmd_model(self, args):
+        "Switch to a new LLM"
+
+        model_name = args.strip()
+        model = models.Model(model_name)
+        models.sanity_check_models(self.io, model)
+        raise SwitchModel(model)
+
+    def cmd_models(self, args):
         "Search the list of available models"
 
         args = args.strip()
@@ -36,7 +49,7 @@ class Commands:
         if args:
             models.print_matching_models(self.io, args)
         else:
-            self.io.tool_output("Use `/model <SEARCH>` to show models which match")
+            self.io.tool_output("Please provide a partial model name to search for.")
 
     def cmd_web(self, args):
         "Use headless selenium to scrape a webpage and add the content to the chat"
@@ -109,6 +122,8 @@ class Commands:
         matching_commands, first_word, rest_inp = res
         if len(matching_commands) == 1:
             return self.do_run(matching_commands[0][1:], rest_inp)
+        elif first_word in matching_commands:
+            return self.do_run(first_word[1:], rest_inp)
         elif len(matching_commands) > 1:
             self.io.tool_error(f"Ambiguous command: {', '.join(matching_commands)}")
         else:
