@@ -18,12 +18,6 @@ CACHE = None
 litellm.suppress_debug_info = True
 
 
-def giveup_on_recitiation(ex):
-    if not isinstance(ex, litellm.exceptions.BadRequestError):
-        return
-    return "RECITATION" in str(ex)
-
-
 @backoff.on_exception(
     backoff.expo,
     (
@@ -31,10 +25,8 @@ def giveup_on_recitiation(ex):
         RateLimitError,
         APIConnectionError,
         httpx.ConnectError,
-        litellm.exceptions.BadRequestError,
         litellm.exceptions.ServiceUnavailableError,
     ),
-    giveup=giveup_on_recitiation,
     max_tries=10,
     on_backoff=lambda details: print(
         f"{details.get('exception','Exception')}\nRetry in {details['wait']:.1f} seconds."
