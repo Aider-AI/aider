@@ -32,6 +32,7 @@ def giveup_on_recitiation(ex):
         APIConnectionError,
         httpx.ConnectError,
         litellm.exceptions.BadRequestError,
+        litellm.exceptions.ServiceUnavailableError,
     ),
     giveup=giveup_on_recitiation,
     max_tries=10,
