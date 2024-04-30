@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 
 import git
+import litellm
 import openai
 from prompt_toolkit.completion import Completion
 
@@ -13,6 +14,8 @@ from aider.scrape import Scraper
 from aider.utils import is_image_file
 
 from .dump import dump  # noqa: F401
+
+litellm.suppress_debug_info = True
 
 
 class SwitchModel(Exception):
@@ -40,6 +43,12 @@ class Commands:
         model = models.Model(model_name)
         models.sanity_check_models(self.io, model)
         raise SwitchModel(model)
+
+    def completions_model(self, partial):
+        models = litellm.model_cost.keys()
+        for model in models:
+            if partial.lower() in model.lower():
+                yield Completion(model, start_position=-len(partial))
 
     def cmd_models(self, args):
         "Search the list of available models"
