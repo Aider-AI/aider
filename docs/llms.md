@@ -7,27 +7,32 @@
 
 **Aider works best with [GPT-4 Turbo](#openai) and [Claude 3 Opus](#anthropic),**
 as they are the very best models for editing code.
-Aider also works quite well with [GPT-3.5](#openai).
 
 ## Free models
 
-**Aider works with a number of free API providers.**
-Google's [Gemini 1.5 Pro](#gemini) is
-the most capable free model to use with aider, with
+Aider works with a number of **free** API providers:
+
+- Google's [Gemini 1.5 Pro](#gemini) is the most capable free model to use with aider, with
 code editing capabilities similar to GPT-3.5.
-You can use [Llama 3 70B on Groq](#llama3)
-which is comparable to GPT-3.5 in code editing performance.
-Cohere also offers free API access to their [Command-R+ model](#cohere),
-which works with aider
-as a *very basic* coding assistant.
+- You can use [Llama 3 70B on Groq](#llama3) which is comparable to GPT-3.5 in code editing performance.
+- The [Deepseek Coder](#deepseek) model works well with aider, comparable to GPT-3.5. Deepseek.com currently offers 5M free tokens of API usage.
+- Cohere also offers free API access to their [Command-R+ model](#cohere), which works with aider as a *very basic* coding assistant.
 
-## Other models
+## Local models
 
-Aider supports connecting to almost any LLM,
-but it may not work well with some models depending on their capabilities.
-For example, GPT-3.5 is just barely capable of reliably *editing code* to provide aider's
-interactive "pair programming" style workflow.
-So you should expect that models which are less capable than GPT-3.5 may struggle to perform well with aider.
+Aider can work also with local models, for example using [Ollama](#ollama).
+It can also access
+local models that provide an
+[Open AI compatible API](#openai-compatible-apis).
+
+## Use a capable model
+
+Be aware that aider may not work well with less capable models.
+If you see the model returning code, but aider isn't able to edit your files
+and commit the changes...
+this is usually because the model isn't capable of properly
+returning "code edits".
+Models weaker than GPT 3.5 may have problems working well with aider.
 
 ## Configuring models
 
@@ -38,10 +43,13 @@ So you should expect that models which are less capable than GPT-3.5 may struggl
 - [Cohere](#cohere)
 - [Azure](#azure)
 - [OpenRouter](#openrouter)
+- [Ollama](#ollama)
+- [Deepseek](#deepseek)
 - [OpenAI compatible APIs](#openai-compatible-apis)
 - [Other LLMs](#other-llms)
 - [Model warnings](#model-warnings)
 - [Editing format](#editing-format)
+- [Using a .env file](#using-a-env-file)
 
 Aider uses the LiteLLM package to connect to LLM providers.
 The [LiteLLM provider docs](https://docs.litellm.ai/docs/providers)
@@ -185,15 +193,72 @@ You'll need an [OpenRouter API key](https://openrouter.ai/keys).
 pip install aider-chat
 export OPENROUTER_API_KEY=<your-key-goes-here>
 
-# Llama3 70B instruct
-aider --model openrouter/meta-llama/llama-3-70b-instruct
-
 # Or any other open router model
 aider --model openrouter/<provider>/<model>
 
 # List models available from OpenRouter
 aider --models openrouter/
 ```
+
+In particular, Llama3 70B works well with aider, at low cost:
+
+```
+pip install aider-chat
+export OPENROUTER_API_KEY=<your-key-goes-here>
+aider --model openrouter/meta-llama/llama-3-70b-instruct
+```
+
+
+## Ollama
+
+Aider can connect to local Ollama models.
+
+```
+# Pull the model
+ollama pull <MODEL>
+
+# Start your ollama server
+ollama serve
+
+# In another terminal window
+pip install aider-chat
+export OLLAMA_API_BASE=http://127.0.0.1:11434
+aider --model ollama/<MODEL>
+```
+
+In particular, `llama3:70b` works very well with aider:
+
+
+```
+ollama pull llama3:70b
+ollama serve
+
+# ...in another terminal window...
+export OLLAMA_API_BASE=http://127.0.0.1:11434
+aider --model ollama/llama3:70b 
+```
+
+Also see the [model warnings](#model-warnings)
+section for information on warnings which will occur
+when working with models that aider is not familiar with.
+
+
+## Deepseek
+
+Aider can connect to the Deepseek API, which is OpenAI compatible.
+They appear to grant 5M tokens of free API usage to new accounts.
+
+```
+pip install aider-chat
+export OPENAI_API_KEY=<your-key-goes-here>
+export OPENAI_API_BASE=https://api.deepseek.com/v1
+aider --model openai/deepseek-coder
+```
+
+See the [model warnings](#model-warnings)
+section for information on warnings which will occur
+when working with models that aider is not familiar with.
+
 
 ## OpenAI compatible APIs
 
@@ -243,8 +308,16 @@ for more details.
 
 ## Model warnings
 
-On startup, aider tries to sanity check that it is configured correctly
-to work with the specified models:
+Aider supports connecting to almost any LLM,
+but it may not work well with less capable models.
+If you see the model returning code, but aider isn't able to edit your files
+and commit the changes...
+this is usually because the model isn't capable of properly
+returning "code edits".
+Models weaker than GPT 3.5 may have problems working well with aider.
+
+Aider tries to sanity check that it is configured correctly
+to work with the specified model:
 
 - It checks to see that all required environment variables are set for the model. These variables are required to configure things like API keys, API base URLs, etc.
 - It checks a metadata database to look up the context window size and token costs for the model.
@@ -312,3 +385,25 @@ Aider is configured to use the best edit format for the popular OpenAI and Anthr
 For lesser known models aider will default to using the "whole" editing format.
 If you would like to experiment with the more advanced formats, you can
 use these switches: `--edit-format diff` or `--edit-format udiff`.
+
+# Using a .env file
+
+Aider will read environment variables from a `.env` file in
+the current directory.
+You can use it to store various keys and other settings for the
+models you use with aider.
+
+Here is an example `.env` file:
+
+```
+OPENAI_API_KEY=<your-key-goes-here>
+ANTHROPIC_API_KEY=<your-key-goes-here>
+GROQ_API_KEY=<your-key-goes-here>
+OPENROUTER_API_KEY=<your-key-goes-here>
+
+AZURE_API_KEY=<your-key-goes-here>
+AZURE_API_VERSION=2023-05-15
+AZURE_API_BASE=https://example-endpoint.openai.azure.com
+
+OLLAMA_API_BASE=http://127.0.0.1:11434
+```

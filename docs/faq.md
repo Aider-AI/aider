@@ -117,14 +117,13 @@ User `aider --help` to see all the command line options, but these are useful fo
 You can also script aider from python:
 
 ```python
-import os
-import openai
 from aider.coders import Coder
+from aider.models import Model
 
 # This is a list of files to add to the chat
-fnames = ["foo.py"]
+fnames = ["greeting.py"]
 
-model = models.Model("gpt-4-turbo", weak_model="gpt-3.5-turbo")
+model = Model("gpt-4-turbo", weak_model="gpt-3.5-turbo")
 
 # Create a coder object
 coder = Coder.create(main_model=model, fnames=fnames)
@@ -140,7 +139,7 @@ See the
 [Coder.create() and Coder.__init__() methods](https://github.com/paul-gauthier/aider/blob/main/aider/coders/base_coder.py)
 for all the supported arguments.
 
-It can also helpful to set the equivalend of `--yes` by doing this:
+It can also be helpful to set the equivalend of `--yes` by doing this:
 
 ```
 from aider.io import InputOutput

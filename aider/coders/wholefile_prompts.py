@@ -18,14 +18,14 @@ Once you understand the request you MUST:
 You MUST use this *file listing* format:
 
 path/to/filename.js
-{fence[0]}
+{fence[0]}javascript
 // entire file content ...
 // ... goes in between
 {fence[1]}
 
 Every *file listing* MUST use this format:
 - First line: the filename with any originally provided path
-- Second line: opening {fence[0]}
+- Second line: opening {fence[0]} including the code language
 - ... entire content of the file ...
 - Final line: closing {fence[1]}
 

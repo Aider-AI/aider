@@ -16,7 +16,7 @@ from jsonschema import Draft7Validator
 from rich.console import Console, Text
 from rich.markdown import Markdown
 
-from aider import models, prompts, utils
+from aider import __version__, models, prompts, utils
 from aider.commands import Commands
 from aider.history import ChatSummary
 from aider.io import InputOutput
@@ -45,6 +45,7 @@ class Coder:
     abs_fnames = None
     repo = None
     last_aider_commit_hash = None
+    aider_edited_files = None
     last_asked_for_commit_time = 0
     repo_map = None
     functions = None
@@ -54,6 +55,7 @@ class Coder:
     last_keyboard_interrupt = None
     max_apply_update_errors = 3
     edit_format = None
+    yield_stream = False
 
     @classmethod
     def create(
@@ -79,6 +81,55 @@ class Coder:
             return UnifiedDiffCoder(main_model, io, **kwargs)
         else:
             raise ValueError(f"Unknown edit format {edit_format}")
+
+    def get_announcements(self):
+        lines = []
+        lines.append(f"Aider v{__version__}")
+
+        # Model
+        main_model = self.main_model
+        weak_model = main_model.weak_model
+        prefix = "Model:"
+        output = f" {main_model.name} with {self.edit_format} edit format"
+        if weak_model is not main_model:
+            prefix = "Models:"
+            output += f", weak model {weak_model.name}"
+        lines.append(prefix + output)
+
+        # Repo
+        if self.repo:
+            rel_repo_dir = self.repo.get_rel_repo_dir()
+            num_files = len(self.repo.get_tracked_files())
+            lines.append(f"Git repo: {rel_repo_dir} with {num_files:,} files")
+            if num_files > 1000:
+                lines.append(
+                    "Warning: For large repos, consider using an .aiderignore file to ignore"
+                    " irrelevant files/dirs."
+                )
+        else:
+            lines.append("Git repo: none")
+
+        # Repo-map
+        if self.repo_map:
+            map_tokens = self.repo_map.max_map_tokens
+            if map_tokens > 0:
+                lines.append(f"Repo-map: using {map_tokens} tokens")
+                max_map_tokens = 2048
+                if map_tokens > max_map_tokens:
+                    lines.append(
+                        f"Warning: map-tokens > {max_map_tokens} is not recommended as too much"
+                        " irrelevant code can confuse GPT."
+                    )
+            else:
+                lines.append("Repo-map: disabled because map_tokens == 0")
+        else:
+            lines.append("Repo-map: disabled")
+
+        # Files
+        for fname in self.get_inchat_relative_files():
+            lines.append(f"Added {fname} to the chat.")
+
+        return lines
 
     def __init__(
         self,
@@ -136,15 +187,6 @@ class Coder:
 
         self.main_model = main_model
 
-        weak_model = main_model.weak_model
-        prefix = "Model:"
-        output = f" {main_model.name} with {self.edit_format} edit format"
-        if weak_model is not main_model:
-            prefix = "Models:"
-            output += f", weak model {weak_model.name}"
-
-        self.io.tool_output(prefix + output)
-
         self.show_diffs = show_diffs
 
         self.commands = Commands(self.io, self, voice_language)
@@ -181,17 +223,7 @@ class Coder:
             self.abs_fnames.add(fname)
             self.check_added_files()
 
-        if self.repo:
-            rel_repo_dir = self.repo.get_rel_repo_dir()
-            num_files = len(self.repo.get_tracked_files())
-            self.io.tool_output(f"Git repo: {rel_repo_dir} with {num_files:,} files")
-            if num_files > 1000:
-                self.io.tool_error(
-                    "Warning: For large repos, consider using an .aiderignore file to ignore"
-                    " irrelevant files/dirs."
-                )
-        else:
-            self.io.tool_output("Git repo: none")
+        if not self.repo:
             self.find_common_root()
 
         if main_model.use_repo_map and self.repo and self.gpt_prompts.repo_content_prefix:
@@ -203,22 +235,6 @@ class Coder:
                 self.gpt_prompts.repo_content_prefix,
                 self.verbose,
             )
-
-        if map_tokens > 0 and self.repo_map:
-            self.io.tool_output(f"Repo-map: using {map_tokens} tokens")
-            max_map_tokens = 2048
-            if map_tokens > max_map_tokens:
-                self.io.tool_error(
-                    f"Warning: map-tokens > {max_map_tokens} is not recommended as too much"
-                    " irrelevant code can confuse GPT."
-                )
-        elif not map_tokens:
-            self.io.tool_output("Repo-map: disabled because map_tokens == 0")
-        else:
-            self.io.tool_output("Repo-map: disabled")
-
-        for fname in self.get_inchat_relative_files():
-            self.io.tool_output(f"Added {fname} to the chat.")
 
         self.summarizer = ChatSummary(
             self.main_model.weak_model,
@@ -237,6 +253,10 @@ class Coder:
                 self.io.tool_output("JSON Schema:")
                 self.io.tool_output(json.dumps(self.functions, indent=4))
 
+    def show_announcements(self):
+        for line in self.get_announcements():
+            self.io.tool_output(line)
+
     def find_common_root(self):
         if len(self.abs_fnames) == 1:
             self.root = os.path.dirname(list(self.abs_fnames)[0])
@@ -250,6 +270,12 @@ class Coder:
     def add_rel_fname(self, rel_fname):
         self.abs_fnames.add(self.abs_root_path(rel_fname))
         self.check_added_files()
+
+    def drop_rel_fname(self, fname):
+        abs_fname = self.abs_root_path(fname)
+        if abs_fname in self.abs_fnames:
+            self.abs_fnames.remove(abs_fname)
+            return True
 
     def abs_root_path(self, path):
         res = Path(self.root) / path
@@ -387,6 +413,11 @@ class Coder:
 
         return {"role": "user", "content": image_messages}
 
+    def run_stream(self, user_message):
+        self.io.user_input(user_message)
+        self.reflected_message = None
+        yield from self.send_new_user_message(user_message)
+
     def run(self, with_message=None):
         while True:
             try:
@@ -397,7 +428,9 @@ class Coder:
                     new_user_message = self.run_loop()
 
                 while new_user_message:
-                    new_user_message = self.send_new_user_message(new_user_message)
+                    self.reflected_message = None
+                    list(self.send_new_user_message(new_user_message))
+                    new_user_message = self.reflected_message
 
                 if with_message:
                     return self.partial_response_content
@@ -406,6 +439,23 @@ class Coder:
                 self.keyboard_interrupt()
             except EOFError:
                 return
+
+    def run_loop(self):
+        inp = self.io.get_input(
+            self.root,
+            self.get_inchat_relative_files(),
+            self.get_addable_relative_files(),
+            self.commands,
+        )
+
+        if not inp:
+            return
+
+        if self.commands.is_command(inp):
+            return self.commands.run(inp)
+
+        self.check_for_file_mentions(inp)
+        return inp
 
     def keyboard_interrupt(self):
         now = time.time()
@@ -462,24 +512,6 @@ class Coder:
             ]
         self.cur_messages = []
 
-    def run_loop(self):
-        inp = self.io.get_input(
-            self.root,
-            self.get_inchat_relative_files(),
-            self.get_addable_relative_files(),
-            self.commands,
-        )
-
-        if not inp:
-            return
-
-        if self.commands.is_command(inp):
-            return self.commands.run(inp)
-
-        self.check_for_file_mentions(inp)
-
-        return self.send_new_user_message(inp)
-
     def fmt_system_prompt(self, prompt):
         prompt = prompt.format(fence=self.fence)
         return prompt
@@ -522,6 +554,8 @@ class Coder:
         return messages
 
     def send_new_user_message(self, inp):
+        self.aider_edited_files = None
+
         self.cur_messages += [
             dict(role="user", content=inp),
         ]
@@ -534,7 +568,9 @@ class Coder:
         exhausted = False
         interrupted = False
         try:
-            interrupted = self.send(messages, functions=self.functions)
+            yield from self.send(messages, functions=self.functions)
+        except KeyboardInterrupt:
+            interrupted = True
         except ExhaustedContextWindow:
             exhausted = True
         except openai.BadRequestError as err:
@@ -563,22 +599,22 @@ class Coder:
         else:
             content = ""
 
+        self.io.tool_output()
+
         if interrupted:
             content += "\n^C KeyboardInterrupt"
-
-        self.io.tool_output()
-        if interrupted:
             self.cur_messages += [dict(role="assistant", content=content)]
             return
 
         edited, edit_error = self.apply_updates()
         if edit_error:
             self.update_cur_messages(set())
-            return edit_error
+            self.reflected_message = edit_error
 
         self.update_cur_messages(edited)
 
         if edited:
+            self.aider_edited_files = edited
             if self.repo and self.auto_commits and not self.dry_run:
                 saved_message = self.auto_commit(edited)
             elif hasattr(self.gpt_prompts, "files_content_gpt_edits_no_repo"):
@@ -590,7 +626,7 @@ class Coder:
 
         add_rel_files_message = self.check_for_file_mentions(content)
         if add_rel_files_message:
-            return add_rel_files_message
+            self.reflected_message = add_rel_files_message
 
     def update_cur_messages(self, edited):
         if self.partial_response_content:
@@ -658,7 +694,7 @@ class Coder:
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
 
             if self.stream:
-                self.show_send_output_stream(completion)
+                yield from self.show_send_output_stream(completion)
             else:
                 self.show_send_output(completion)
         except KeyboardInterrupt:
@@ -673,7 +709,8 @@ class Coder:
             if args:
                 self.io.ai_output(json.dumps(args, indent=4))
 
-        return interrupted
+        if interrupted:
+            raise KeyboardInterrupt
 
     def show_send_output(self, completion):
         if self.verbose:
@@ -774,6 +811,7 @@ class Coder:
                 elif text:
                     sys.stdout.write(text)
                     sys.stdout.flush()
+                    yield text
         finally:
             if mdstream:
                 self.live_incremental_response(mdstream, True)
@@ -1026,6 +1064,7 @@ class Coder:
         if res:
             commit_hash, commit_message = res
             self.last_aider_commit_hash = commit_hash
+            self.last_aider_commit_message = commit_message
 
             return self.gpt_prompts.files_content_gpt_edits.format(
                 hash=commit_hash,

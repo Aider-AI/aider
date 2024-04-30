@@ -26,3 +26,4 @@ playwright
 pypandoc
 litellm
 google-generativeai
+streamlit

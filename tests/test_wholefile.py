@@ -304,6 +304,7 @@ Do this:
 
 """
             coder.partial_response_function_call = dict()
+            return []
 
         coder.send = MagicMock(side_effect=mock_send)
 
