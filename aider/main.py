@@ -270,17 +270,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         return 0 if not update_available else 1
 
     if args.models:
-        matches = models.fuzzy_match_models(args.models)
-        if matches:
-            io.tool_output(f'Models which match "{args.models}":')
-            for model in matches:
-                fq, m = model
-                if fq == m:
-                    io.tool_output(f"- {m}")
-                else:
-                    io.tool_output(f"- {m} ({fq})")
-        else:
-            io.tool_output(f'No models match "{args.models}".')
+        models.print_matching_models(io, args.models)
         return 0
 
     if args.git:

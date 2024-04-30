@@ -8,7 +8,7 @@ import git
 import openai
 from prompt_toolkit.completion import Completion
 
-from aider import prompts, voice
+from aider import models, prompts, voice
 from aider.scrape import Scraper
 from aider.utils import is_image_file
 
@@ -27,6 +27,16 @@ class Commands:
             voice_language = None
 
         self.voice_language = voice_language
+
+    def cmd_model(self, args):
+        "Search the list of available models"
+
+        args = args.strip()
+
+        if args:
+            models.print_matching_models(self.io, args)
+        else:
+            self.io.tool_output("Use `/model <SEARCH>` to show models which match")
 
     def cmd_web(self, args):
         "Use headless selenium to scrape a webpage and add the content to the chat"
