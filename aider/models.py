@@ -235,6 +235,9 @@ class Model:
             self.send_undo_reply = True
             return  # <--
 
+        if "gpt-3.5" in model or "gpt-4" in model:
+            self.accepts_multi_system_msgs = True
+
         # use the defaults
         if self.edit_format == "diff":
             self.use_repo_map = True
