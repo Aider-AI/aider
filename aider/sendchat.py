@@ -18,6 +18,12 @@ CACHE = None
 litellm.suppress_debug_info = True
 
 
+def giveup_on_recitiation(ex):
+    if not isinstance(ex, litellm.exceptions.BadRequestError):
+        return
+    return "RECITATION" in str(ex)
+
+
 @backoff.on_exception(
     backoff.expo,
     (
@@ -27,6 +33,7 @@ litellm.suppress_debug_info = True
         httpx.ConnectError,
         litellm.exceptions.BadRequestError,
     ),
+    giveup=giveup_on_recitiation,
     max_tries=10,
     on_backoff=lambda details: print(
         f"{details.get('exception','Exception')}\nRetry in {details['wait']:.1f} seconds."
@@ -49,6 +56,8 @@ def send_with_retries(model_name, messages, functions, stream):
 
     if not stream and CACHE is not None and key in CACHE:
         return hash_object, CACHE[key]
+
+    # del kwargs['stream']
 
     res = litellm.completion(**kwargs)
 
