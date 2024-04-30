@@ -24,6 +24,8 @@ class ModelSettings:
     use_repo_map: bool = False
     send_undo_reply: bool = False
     accepts_images: bool = False
+    lazy: bool = False
+    accepts_multi_system_msgs: bool = False
 
 
 # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
@@ -36,21 +38,25 @@ MODEL_SETTINGS = [
         "gpt-3.5-turbo-0125",
         "whole",
         weak_model_name="gpt-3.5-turbo",
+        accepts_multi_system_msgs=True,
     ),
     ModelSettings(
         "gpt-3.5-turbo-1106",
         "whole",
         weak_model_name="gpt-3.5-turbo",
+        accepts_multi_system_msgs=True,
     ),
     ModelSettings(
         "gpt-3.5-turbo-0613",
         "whole",
         weak_model_name="gpt-3.5-turbo",
+        accepts_multi_system_msgs=True,
     ),
     ModelSettings(
         "gpt-3.5-turbo-16k-0613",
         "whole",
         weak_model_name="gpt-3.5-turbo",
+        accepts_multi_system_msgs=True,
     ),
     # gpt-4
     ModelSettings(
@@ -60,6 +66,8 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         send_undo_reply=True,
         accepts_images=True,
+        lazy=True,
+        accepts_multi_system_msgs=True,
     ),
     ModelSettings(
         "gpt-4-turbo",
@@ -68,6 +76,8 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         send_undo_reply=True,
         accepts_images=True,
+        lazy=True,
+        accepts_multi_system_msgs=True,
     ),
     ModelSettings(
         "gpt-4-0125-preview",
@@ -75,6 +85,8 @@ MODEL_SETTINGS = [
         weak_model_name="gpt-3.5-turbo",
         use_repo_map=True,
         send_undo_reply=True,
+        lazy=True,
+        accepts_multi_system_msgs=True,
     ),
     ModelSettings(
         "gpt-4-1106-preview",
@@ -82,6 +94,8 @@ MODEL_SETTINGS = [
         weak_model_name="gpt-3.5-turbo",
         use_repo_map=True,
         send_undo_reply=True,
+        lazy=True,
+        accepts_multi_system_msgs=True,
     ),
     ModelSettings(
         "gpt-4-vision-preview",
@@ -90,6 +104,7 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         send_undo_reply=True,
         accepts_images=True,
+        accepts_multi_system_msgs=True,
     ),
     ModelSettings(
         "gpt-4-0613",
@@ -97,6 +112,7 @@ MODEL_SETTINGS = [
         weak_model_name="gpt-3.5-turbo",
         use_repo_map=True,
         send_undo_reply=True,
+        accepts_multi_system_msgs=True,
     ),
     ModelSettings(
         "gpt-4-32k-0613",
@@ -104,6 +120,7 @@ MODEL_SETTINGS = [
         weak_model_name="gpt-3.5-turbo",
         use_repo_map=True,
         send_undo_reply=True,
+        accepts_multi_system_msgs=True,
     ),
     # Claude
     ModelSettings(
@@ -158,6 +175,8 @@ class Model:
     send_undo_reply = False
     accepts_images = False
     weak_model_name = None
+    lazy = False
+    accepts_multi_system_msgs = False
 
     max_chat_history_tokens = 1024
     weak_model = None

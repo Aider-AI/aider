@@ -513,7 +513,9 @@ class Coder:
         self.cur_messages = []
 
     def fmt_system_prompt(self, prompt):
-        prompt = prompt.format(fence=self.fence)
+        lazy_prompt = self.gpt_prompts.lazy_prompt if self.main_model.lazy else ""
+
+        prompt = prompt.format(fence=self.fence, lazy_prompt=lazy_prompt)
         return prompt
 
     def format_messages(self):

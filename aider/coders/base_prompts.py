@@ -6,3 +6,5 @@ class CoderPrompts:
     files_content_gpt_no_edits = "I didn't see any properly formatted edits in your reply?!"
 
     files_content_local_edits = "I edited the files myself."
+
+    lazy_prompt = ""
