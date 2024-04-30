@@ -401,6 +401,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 main_model=switch.model,
                 edit_format=None,
                 fnames=coder.get_inchat_relative_files(),
+                done_messages=coder.done_messages,
+                cur_messages=coder.cur_messages,
             )
             coder_kwargs.update(kwargs)
 

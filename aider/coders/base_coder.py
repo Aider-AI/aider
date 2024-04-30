@@ -153,6 +153,8 @@ class Coder:
         use_git=True,
         voice_language=None,
         aider_ignore_file=None,
+        cur_messages=None,
+        done_messages=None,
     ):
         if not fnames:
             fnames = []
@@ -166,8 +168,16 @@ class Coder:
 
         self.verbose = verbose
         self.abs_fnames = set()
-        self.cur_messages = []
-        self.done_messages = []
+
+        if cur_messages:
+            self.cur_messages = cur_messages
+        else:
+            self.cur_messages = []
+
+        if done_messages:
+            self.done_messages = done_messages
+        else:
+            self.done_messages = []
 
         self.io = io
         self.stream = stream
