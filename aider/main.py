@@ -306,30 +306,28 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.show_model_warnings:
         models.sanity_check_models(io, main_model)
 
-    coder_kwargs = dict(
-        main_model=main_model,
-        edit_format=args.edit_format,
-        io=io,
-        ##
-        fnames=fnames,
-        git_dname=git_dname,
-        pretty=args.pretty,
-        show_diffs=args.show_diffs,
-        auto_commits=args.auto_commits,
-        dirty_commits=args.dirty_commits,
-        dry_run=args.dry_run,
-        map_tokens=args.map_tokens,
-        verbose=args.verbose,
-        assistant_output_color=args.assistant_output_color,
-        code_theme=args.code_theme,
-        stream=args.stream,
-        use_git=args.git,
-        voice_language=args.voice_language,
-        aider_ignore_file=args.aiderignore,
-    )
-
     try:
-        coder = Coder.create(**coder_kwargs)
+        coder = Coder.create(
+            main_model=main_model,
+            edit_format=args.edit_format,
+            io=io,
+            ##
+            fnames=fnames,
+            git_dname=git_dname,
+            pretty=args.pretty,
+            show_diffs=args.show_diffs,
+            auto_commits=args.auto_commits,
+            dirty_commits=args.dirty_commits,
+            dry_run=args.dry_run,
+            map_tokens=args.map_tokens,
+            verbose=args.verbose,
+            assistant_output_color=args.assistant_output_color,
+            code_theme=args.code_theme,
+            stream=args.stream,
+            use_git=args.git,
+            voice_language=args.voice_language,
+            aider_ignore_file=args.aiderignore,
+        )
 
     except ValueError as err:
         io.tool_error(str(err))
@@ -397,16 +395,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             coder.run()
             return
         except SwitchModel as switch:
-            kwargs = dict(
-                main_model=switch.model,
-                edit_format=None,
-                fnames=coder.get_inchat_relative_files(),
-                done_messages=coder.done_messages,
-                cur_messages=coder.cur_messages,
-            )
-            coder_kwargs.update(kwargs)
-
-            coder = Coder.create(**coder_kwargs)
+            coder = Coder.create(main_model=switch.model, io=io, from_coder=coder)
             coder.show_announcements()
 
 

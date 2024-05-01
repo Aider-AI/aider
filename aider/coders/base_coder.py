@@ -66,6 +66,7 @@ class Coder:
         main_model=None,
         edit_format=None,
         io=None,
+        from_coder=None,
         **kwargs,
     ):
         from . import EditBlockCoder, UnifiedDiffCoder, WholeFileCoder
@@ -76,14 +77,41 @@ class Coder:
         if edit_format is None:
             edit_format = main_model.edit_format
 
+        if from_coder:
+            use_kwargs = dict(from_coder.original_kwargs)  # copy orig kwargs
+
+            # If the edit format changes, we can't leave old ASSISTANT
+            # messages in the chat history. The old edit format will
+            # confused the new LLM. It may try and imitate it, disobeying
+            # the system prompt.
+            done_messages = from_coder.done_messages
+            if edit_format != from_coder.edit_format and done_messages:
+                done_messages = from_coder.summarizer.summarize_all(done_messages)
+
+            # Bring along context from the old Coder
+            update = dict(
+                fnames=from_coder.get_inchat_relative_files(),
+                done_messages=done_messages,
+                cur_messages=from_coder.cur_messages,
+            )
+
+            use_kwargs.update(update)  # override to complete the switch
+            use_kwargs.update(kwargs)  # override passed kwargs
+
+            kwargs = use_kwargs
+
         if edit_format == "diff":
-            return EditBlockCoder(main_model, io, **kwargs)
+            res = EditBlockCoder(main_model, io, **kwargs)
         elif edit_format == "whole":
-            return WholeFileCoder(main_model, io, **kwargs)
+            res = WholeFileCoder(main_model, io, **kwargs)
         elif edit_format == "udiff":
-            return UnifiedDiffCoder(main_model, io, **kwargs)
+            res = UnifiedDiffCoder(main_model, io, **kwargs)
         else:
             raise ValueError(f"Unknown edit format {edit_format}")
+
+        res.original_kwargs = dict(kwargs)
+
+        return res
 
     def get_announcements(self):
         lines = []
