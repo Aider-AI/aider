@@ -25,7 +25,7 @@ litellm.suppress_debug_info = True
         RateLimitError,
         APIConnectionError,
         httpx.ConnectError,
-        litellm.exceptions.BadRequestError,
+        litellm.exceptions.ServiceUnavailableError,
     ),
     max_tries=10,
     on_backoff=lambda details: print(
@@ -49,6 +49,8 @@ def send_with_retries(model_name, messages, functions, stream):
 
     if not stream and CACHE is not None and key in CACHE:
         return hash_object, CACHE[key]
+
+    # del kwargs['stream']
 
     res = litellm.completion(**kwargs)
 

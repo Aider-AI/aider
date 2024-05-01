@@ -349,10 +349,12 @@ class Commands:
                 self.io.tool_error(f"Skipping {fname} that matches aiderignore spec.")
                 continue
 
-            if fname.exists() and fname.is_file():
-                all_matched_files.add(str(fname))
-                continue
-                # an existing dir will fall through and get recursed by glob
+            if fname.exists():
+                if fname.is_file():
+                    all_matched_files.add(str(fname))
+                    continue
+                # an existing dir, escape any special chars so they won't be globs
+                word = re.sub(r"([\*\?\[\]])", r"[\1]", word)
 
             matched_files = self.glob_filtered_to_repo(word)
             if matched_files:

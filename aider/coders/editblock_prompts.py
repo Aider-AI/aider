@@ -67,6 +67,7 @@ mathweb/flask/app.py
     return str(math.factorial(n))
 >>>>>>> REPLACE
 {fence[1]}
+<<<<<<< HEAD
 """,
         ),
         dict(

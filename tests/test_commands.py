@@ -386,6 +386,23 @@ class TestCommands(TestCase):
 
             self.assertIn(str(fname.resolve()), coder.abs_fnames)
 
+    def test_cmd_add_dirname_with_special_chars(self):
+        with ChdirTemporaryDirectory():
+            io = InputOutput(pretty=False, yes=False)
+            from aider.coders import Coder
+
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            dname = Path("with[brackets]")
+            dname.mkdir()
+            fname = dname / "filename.txt"
+            fname.touch()
+
+            commands.cmd_add(str(dname))
+
+            self.assertIn(str(fname.resolve()), coder.abs_fnames)
+
     def test_cmd_add_abs_filename(self):
         with ChdirTemporaryDirectory():
             io = InputOutput(pretty=False, yes=False)

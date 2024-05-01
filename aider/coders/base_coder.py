@@ -11,6 +11,7 @@ from json.decoder import JSONDecodeError
 from pathlib import Path
 
 import git
+import litellm
 import openai
 from jsonschema import Draft7Validator
 from rich.console import Console, Text
@@ -27,6 +28,8 @@ from aider.sendchat import send_with_retries
 from aider.utils import is_image_file
 
 from ..dump import dump  # noqa: F401
+
+litellm.suppress_debug_info = True
 
 
 class MissingAPIKeyError(ValueError):
@@ -597,6 +600,9 @@ class Coder:
             interrupted = True
         except ExhaustedContextWindow:
             exhausted = True
+        except litellm.exceptions.BadRequestError as err:
+            self.io.tool_error(f"BadRequestError: {err}")
+            return
         except openai.BadRequestError as err:
             if "maximum context length" in str(err):
                 exhausted = True
