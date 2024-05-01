@@ -538,7 +538,13 @@ class Coder:
             )
         if self.gpt_prompts.example_messages:
             messages += [
-                dict(role="user", content="I switched to a new code base."),
+                dict(
+                    role="user",
+                    content=(
+                        "I switched to a new code base. Please don't consider the above files or"
+                        " try to edit them any longer."
+                    ),
+                ),
                 dict(role="assistant", content="Ok."),
             ]
 
