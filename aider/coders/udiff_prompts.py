@@ -14,13 +14,17 @@ Respect and use existing conventions, libraries, etc that are already present in
 Take requests for changes to the supplied code.
 If the request is ambiguous, ask questions.
 
-For each file that needs to be changed, write out the changes similar to a unified diff like `diff -U0` would produce. For example:
+For each file that needs to be changed, write out the changes similar to a unified diff like `diff -U0` would produce.
+"""
 
-# Example conversation 1
-
-## USER: Replace is_prime with a call to sympy.
-
-## ASSISTANT: Ok, I will:
+    example_messages = [
+        dict(
+            role="user",
+            content="Replace is_prime with a call to sympy.",
+        ),
+        dict(
+            role="assistant",
+            content="""Ok, I will:
 
 1. Add an imports of sympy.
 2. Remove the is_prime() function.
@@ -64,7 +68,9 @@ Here are the diffs for those changes:
 +            count += 1
 +    return str(num)
 ```
-"""
+""",
+        ),
+    ]
 
     system_reminder = """# File editing rules:
 

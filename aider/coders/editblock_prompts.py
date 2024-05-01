@@ -16,49 +16,17 @@ Once you understand the request you MUST:
 2. Think step-by-step and explain the needed changes with a numbered list of short sentences.
 3. Describe each change with a *SEARCH/REPLACE block* per the examples below. All changes to files must use this *SEARCH/REPLACE block* format. ONLY EVER RETURN CODE IN A *SEARCH/REPLACE BLOCK*!
 
+All changes to files must use the *SEARCH/REPLACE block* format.
+"""
 
-# Example conversation:
-
-## USER: These are the *read-write* files:
-
-{fence[0]}
-mathweb/flask/app.py
-from flask import Flask
-
-app = Flask(__name__)
-
-@app.route('/div/<int:n>/<int:d>')
-def divide(n, d):
-    if d == 0:
-        return 'Error: Division by zero'
-    else:
-        result = n / d
-        return str(result)
-
-def factorial(n):
-    "compute factorial"
-
-    if n == 0:
-        return 1
-    else:
-        return n * factorial(n-1)
-
-@app.route('/factorial/<int:n>')
-def get_factorial(n):
-    return str(factorial(n))
-
-if __name__ == '__main__':
-    print("Starting...")
-    app.run()
-{fence[1]}
-
-## ASSISTANT: Ok.
-
-## USER: Change get_factorial() to use math.factorial
-
-## ASSISTANT:
-
-Do make this change we need to modify `mathweb/flask/app.py` to:
+    example_messages = [
+        dict(
+            role="user",
+            content="Change get_factorial() to use math.factorial",
+        ),
+        dict(
+            role="assistant",
+            content="""To make this change we need to modify `mathweb/flask/app.py` to:
 
 1. Import the math package.
 2. Remove the existing factorial() function.
@@ -99,30 +67,15 @@ mathweb/flask/app.py
     return str(math.factorial(n))
 >>>>>>> REPLACE
 {fence[1]}
-
-
-# Example conversation:
-
-## USER: These are the *read-write* files:
-
-{fence[0]}
-main.py
-def hello():
-    "print a greeting"
-
-    print("hello")
-
-if __name__ == '__main__':
-    hello()
-{fence[1]}
-
-## ASSISTANT: Ok.
-
-## USER: Refactor hello() into its own file.
-
-## ASSISTANT:
-
-Do make this change we need to modify `main.py` and make a new file `hello.py`:
+""",
+        ),
+        dict(
+            role="user",
+            content="Refactor hello() into its own file.",
+        ),
+        dict(
+            role="assistant",
+            content="""To make this change we need to modify `main.py` and make a new file `hello.py`:
 
 1. Make a new hello.py file with hello() in it.
 2. Remove hello() from main.py and replace it with an import.
@@ -151,9 +104,9 @@ def hello():
 from hello import hello
 >>>>>>> REPLACE
 {fence[1]}
-
-# Rules
-"""
+""",
+        ),
+    ]
 
     system_reminder = """Every *SEARCH/REPLACE block* must use this format:
 1. The opening fence and code language, eg: {fence[0]}

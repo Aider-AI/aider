@@ -526,6 +526,13 @@ class Coder:
         messages = [
             dict(role="system", content=main_sys),
         ]
+        for msg in self.gpt_prompts.example_messages:
+            messages.append(
+                dict(
+                    role=msg["role"],
+                    content=self.fmt_system_prompt(msg["content"]),
+                )
+            )
 
         self.summarize_end()
         messages += self.done_messages
