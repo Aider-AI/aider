@@ -34,8 +34,8 @@ All changes to files must use the *SEARCH/REPLACE block* format.
 
 Here are the *SEARCH/REPLACE* blocks:
 
-{fence[0]}
 mathweb/flask/app.py
+{fence[0]}python
 <<<<<<< SEARCH
 from flask import Flask
 =======
@@ -44,8 +44,8 @@ from flask import Flask
 >>>>>>> REPLACE
 {fence[1]}
 
-{fence[0]}
 mathweb/flask/app.py
+{fence[0]}python
 <<<<<<< SEARCH
 def factorial(n):
     "compute factorial"
@@ -59,8 +59,8 @@ def factorial(n):
 >>>>>>> REPLACE
 {fence[1]}
 
-{fence[0]}
 mathweb/flask/app.py
+{fence[0]}python
 <<<<<<< SEARCH
     return str(factorial(n))
 =======
@@ -83,8 +83,8 @@ mathweb/flask/app.py
 
 Here are the *SEARCH/REPLACE* blocks:
 
-{fence[0]}
 hello.py
+{fence[0]}python
 <<<<<<< SEARCH
 =======
 def hello():
@@ -94,8 +94,8 @@ def hello():
 >>>>>>> REPLACE
 {fence[1]}
 
-{fence[0]}
 main.py
+{fence[0]}python
 <<<<<<< SEARCH
 def hello():
     "print a greeting"
@@ -110,8 +110,8 @@ from hello import hello
     ]
 
     system_reminder = """Every *SEARCH/REPLACE block* must use this format:
-1. The opening fence and code language, eg: {fence[0]}
-2. The file path alone on a line, eg: main.py
+1. The file path alone on a line, verbatim. No bold asterisks, no quotes around it, no escaping of characters, etc.
+2. The opening fence and code language, eg: {fence[0]}python
 3. The start of search block: <<<<<<< SEARCH
 4. A contiguous chunk of lines to search for in the existing source code
 5. The dividing line: =======

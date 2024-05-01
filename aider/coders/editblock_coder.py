@@ -329,7 +329,11 @@ def strip_filename(filename, fence):
         return
 
     filename = filename.rstrip(":")
+    filename = filename.lstrip("#")
+    filename = filename.strip()
     filename = filename.strip("`")
+    filename = filename.strip("*")
+    filename = filename.replace("\\_", "_")
 
     return filename
 
