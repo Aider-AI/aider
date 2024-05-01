@@ -8,3 +8,5 @@ class CoderPrompts:
     files_content_local_edits = "I edited the files myself."
 
     lazy_prompt = ""
+
+    example_messages = []
