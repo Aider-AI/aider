@@ -533,6 +533,11 @@ class Coder:
                     content=self.fmt_system_prompt(msg["content"]),
                 )
             )
+        if self.gpt_prompts.example_messages:
+            messages += [
+                dict(role="user", content="I switched to a new code base."),
+                dict(role="assistant", content="Ok."),
+            ]
 
         self.summarize_end()
         messages += self.done_messages

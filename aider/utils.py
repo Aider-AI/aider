@@ -89,6 +89,7 @@ def show_messages(messages, title=None, functions=None):
         print(title.upper(), "*" * 50)
 
     for msg in messages:
+        print()
         role = msg["role"].upper()
         content = msg.get("content")
         if isinstance(content, list):  # Handle list content (e.g., image messages)
