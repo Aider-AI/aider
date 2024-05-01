@@ -62,7 +62,7 @@ if __name__ == '__main__':
 
 ## ASSISTANT:
 
-Do make this change we need to modify `mathweb/flask/app.py` to:
+To make this change we need to modify `mathweb/flask/app.py` to:
 
 1. Import the math package.
 2. Remove the existing factorial() function.
@@ -125,7 +125,7 @@ if __name__ == '__main__':
 
 ## ASSISTANT:
 
-Do make this change we need to modify `main.py` and make a new file `hello.py`:
+To make this change we need to modify `main.py` and make a new file `hello.py`:
 
 1. Make a new hello.py file with hello() in it.
 2. Remove hello() from main.py and replace it with an import.
