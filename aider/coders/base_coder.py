@@ -573,7 +573,7 @@ class Coder:
 
         # Add the reminder prompt if we still have room to include it.
         if total_tokens < self.main_model.info.get("max_input_tokens", 0):
-            if self.main_model.accepts_multi_system_msgs:
+            if self.main_model.reminder_as_sys_msg:
                 messages += reminder_message
             elif final["role"] == "user":
                 # stuff it into the user message
