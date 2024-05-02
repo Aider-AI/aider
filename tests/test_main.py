@@ -219,3 +219,21 @@ class TestMain(TestCase):
         main(["--message", test_message], input=DummyInput(), output=DummyOutput())
 
         mock_io_instance.add_to_input_history.assert_called_once_with(test_message)
+
+    @patch("aider.main.InputOutput")
+    @patch("aider.coders.base_coder.Coder.run")
+    def test_yes(self, mock_run, MockInputOutput):
+        test_message = "test message"
+
+        main(["--yes", "--message", test_message])
+        args, kwargs = MockInputOutput.call_args
+        self.assertTrue(args[1])
+
+    @patch("aider.main.InputOutput")
+    @patch("aider.coders.base_coder.Coder.run")
+    def test_default_yes(self, mock_run, MockInputOutput):
+        test_message = "test message"
+
+        main(["--message", test_message])
+        args, kwargs = MockInputOutput.call_args
+        self.assertEqual(args[1], None)
