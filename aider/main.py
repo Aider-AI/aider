@@ -219,9 +219,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         args.assistant_output_color = "blue"
         args.code_theme = "default"
 
+    if return_coder:
+        args.yes = True
+
     io = InputOutput(
         args.pretty,
-        args.yes or return_coder,  # Force --yes if return_coder
+        args.yes,
         args.input_history_file,
         args.chat_history_file,
         input=input,
