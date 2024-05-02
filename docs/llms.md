@@ -431,8 +431,10 @@ use these switches: `--edit-format diff` or `--edit-format udiff`.
 # Using a .env file
 
 Aider will read environment variables from a `.env` file in
-the current directory.
-You can use it to store various keys and other settings for the
+root of your git repo or in current directory.
+You can give it an explicit file to load with the `--env-file <filename>` parameter.
+
+You can use a `.env` file to store various keys and other settings for the
 models you use with aider.
 
 Here is an example `.env` file:
