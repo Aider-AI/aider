@@ -295,7 +295,7 @@ class GUI:
 
         # stuff a bunch of vertical whitespace at the top
         # to get all the chat text to the bottom
-        self.messages.container(height=300, border=False)
+        # self.messages.container(height=300, border=False)
 
         with self.messages:
             for msg in self.state.messages:
