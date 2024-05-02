@@ -282,7 +282,7 @@ They appear to grant 5M tokens of free API usage to new accounts.
 ```
 pip install aider-chat
 
-# Mac/Linux
+# Mac/Linux:
 export OPENAI_API_KEY=<key>
 export OPENAI_API_BASE=https://api.deepseek.com/v1
 
