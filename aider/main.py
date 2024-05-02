@@ -287,6 +287,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     cmd_line = scrub_sensitive_info(args, cmd_line)
     io.tool_output(cmd_line, log_only=True)
 
+    # todo: load .env using filename args.env_file
+
     if args.anthropic_api_key:
         os.environ["ANTHROPIC_API_KEY"] = args.anthropic_api_key
 
