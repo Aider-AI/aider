@@ -151,6 +151,13 @@ def get_parser(default_config_files, git_root):
         default=1024,
         help="Max number of tokens to use for repo map, use 0 to disable (default: 1024)",
     )
+    default_env_file = os.path.join(git_root, ".env") if git_root else ".env"
+    group.add_argument(
+        "--env-file",
+        metavar="ENV_FILE",
+        default=default_env_file,
+        help="Specify the .env file to load (default: .env in git root)",
+    )
 
     ##########
     group = parser.add_argument_group("History Files")
