@@ -3,6 +3,7 @@ claude-3-opus-20240229,68.4,53.4,diff,aider --opus,0.30.1,f4b1797,5/2/24
 gpt-4-0613,67.7,46.6,diff,aider -4,0.18.1,3aa17c4,12/16/23
 gpt-4-turbo-2024-04-09,64.4,49.2,diff,aider --gpt-4-turbo,0.30.1,e610e5b,5/1/24
 gemini-1.5-pro-latest,57.1,45.9,diff-fenced,aider --model gemini/gemini-1.5-pro-latest,0.32.0,5d32dd7,5/3/24
+gpt-3.5-turbo-1106,56.1,45.5,whole,aider --model gpt-3.5-turbo-1106,0.30.1,7b14d77,4/30/24
 claude-3-sonnet-20240229,54.9,43.6,whole,aider --sonnet,0.25.0,a5f8076,3/6/24
 Deepseek Coder,54.5,47,whole,aider --model openai/deepseek-coder,0.30.1,c07f793,4/29/24
 gpt-3.5-turbo-0125,49.6,39.8,whole,aider --35turbo,0.22.0,da14474,2/2/24

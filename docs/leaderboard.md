@@ -4,7 +4,7 @@
 Aider works best with LLMs which are good at *editing* code, not just good at writing
 code.
 Aider works with the LLM to make changes to the existing code in your git repo,
-so the LLM needs to be able to specify how to edit that code.
+so the LLM needs to be capable of reliably specifying how to edit that code.
 
 Aider uses a
 [code editing benchmark](https://aider.chat/docs/benchmarks.html#the-benchmark)
