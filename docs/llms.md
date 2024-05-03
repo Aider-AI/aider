@@ -415,10 +415,11 @@ in case you made a typo or mistake when specifying the model name.
 
 ## Editing format
 
-Aider uses 3 different "edit formats" to collect code edits from different LLMs:
+Aider uses different "edit formats" to collect code edits from different LLMs:
 
 - `whole` is a "whole file" editing format, where the model edits a file by returning a full new copy of the file with any changes included.
 - `diff` is a more efficient diff style format, where the model specifies blocks of code to search and replace in order to made changes to files.
+- `diff-fenced` is similar to diff, but fences the entire diff block including the filename.
 - `udiff` is the most efficient editing format, where the model returns unified diffs to apply changes to the file.
 
 Different models work best with different editing formats.
