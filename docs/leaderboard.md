@@ -1,7 +1,7 @@
 
 # Aider's LLM code editing leaderboard
 
-<table style="width: 100%; max-width: 960px; margin: auto; border-collapse: collapse;">
+<table style="width: 90%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
   <thead style="background-color: #f2f2f2;">
     <tr>
       <th style="padding: 8px; text-align: left;">Model</th>
