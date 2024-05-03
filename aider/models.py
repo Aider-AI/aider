@@ -154,13 +154,13 @@ MODEL_SETTINGS = [
     # Gemini
     ModelSettings(
         "gemini/gemini-1.5-pro",
-        "whole",
+        "diff-fenced",
         use_repo_map=True,
         send_undo_reply=True,
     ),
     ModelSettings(
         "gemini/gemini-1.5-pro-latest",
-        "whole",
+        "diff-fenced",
         use_repo_map=True,
         send_undo_reply=True,
     ),

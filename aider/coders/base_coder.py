@@ -69,7 +69,12 @@ class Coder:
         from_coder=None,
         **kwargs,
     ):
-        from . import EditBlockCoder, UnifiedDiffCoder, WholeFileCoder
+        from . import (
+            EditBlockCoder,
+            EditBlockFencedCoder,
+            UnifiedDiffCoder,
+            WholeFileCoder,
+        )
 
         if not main_model:
             main_model = models.Model(models.DEFAULT_MODEL_NAME)
@@ -102,6 +107,8 @@ class Coder:
 
         if edit_format == "diff":
             res = EditBlockCoder(main_model, io, **kwargs)
+        elif edit_format == "diff-fenced":
+            res = EditBlockFencedCoder(main_model, io, **kwargs)
         elif edit_format == "whole":
             res = WholeFileCoder(main_model, io, **kwargs)
         elif edit_format == "udiff":
