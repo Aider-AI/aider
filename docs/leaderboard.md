@@ -15,7 +15,7 @@
       <tr>
         <td>{{ row.model }}</td>
         <td>{{ row.second }}%</td>
-        <td>`{{ row.command }}`</td>
+        <td><pre>{{ row.command }}</pre></td>
         <td>{{ row.format }}</td>
       </tr>
     {% endfor %}
