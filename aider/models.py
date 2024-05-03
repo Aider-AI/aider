@@ -26,6 +26,7 @@ class ModelSettings:
     accepts_images: bool = False
     lazy: bool = False
     reminder_as_sys_msg: bool = False
+    examples_as_sys_msg: bool = False
 
 
 # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
@@ -150,7 +151,16 @@ MODEL_SETTINGS = [
         weak_model_name="groq/llama3-8b-8192",
         use_repo_map=False,
         send_undo_reply=False,
-        reminder_as_sys_msg=True,
+        examples_as_sys_msg=True,
+    ),
+    # Openrouter llama3
+    ModelSettings(
+        "openrouter/meta-llama/llama-3-70b-instruct",
+        "diff",
+        weak_model_name="openrouter/meta-llama/llama-3-70b-instruct",
+        use_repo_map=False,
+        send_undo_reply=False,
+        examples_as_sys_msg=True,
     ),
     # Gemini
     ModelSettings(
@@ -178,6 +188,7 @@ class Model:
     weak_model_name = None
     lazy = False
     reminder_as_sys_msg = False
+    examples_as_sys_msg = False
 
     max_chat_history_tokens = 1024
     weak_model = None

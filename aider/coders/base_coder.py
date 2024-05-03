@@ -571,27 +571,38 @@ class Coder:
         main_sys = self.fmt_system_prompt(self.gpt_prompts.main_system)
         main_sys += "\n" + self.fmt_system_prompt(self.gpt_prompts.system_reminder)
 
+        example_messages = []
+        if self.main_model.examples_as_sys_msg:
+            main_sys += "\n# Example conversations:\n\n"
+            for msg in self.gpt_prompts.example_messages:
+                role = msg["role"]
+                content = self.fmt_system_prompt(msg["content"])
+                main_sys += f"## {role.upper()}: {content}\n\n"
+            main_sys = main_sys.strip()
+        else:
+            for msg in self.gpt_prompts.example_messages:
+                example_messages.append(
+                    dict(
+                        role=msg["role"],
+                        content=self.fmt_system_prompt(msg["content"]),
+                    )
+                )
+            if self.gpt_prompts.example_messages:
+                example_messages += [
+                    dict(
+                        role="user",
+                        content=(
+                            "I switched to a new code base. Please don't consider the above files"
+                            " or try to edit them any longer."
+                        ),
+                    ),
+                    dict(role="assistant", content="Ok."),
+                ]
+
         messages = [
             dict(role="system", content=main_sys),
         ]
-        for msg in self.gpt_prompts.example_messages:
-            messages.append(
-                dict(
-                    role=msg["role"],
-                    content=self.fmt_system_prompt(msg["content"]),
-                )
-            )
-        if self.gpt_prompts.example_messages:
-            messages += [
-                dict(
-                    role="user",
-                    content=(
-                        "I switched to a new code base. Please don't consider the above files or"
-                        " try to edit them any longer."
-                    ),
-                ),
-                dict(role="assistant", content="Ok."),
-            ]
+        messages += example_messages
 
         self.summarize_end()
         messages += self.done_messages
