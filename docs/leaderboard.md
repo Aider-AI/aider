@@ -22,9 +22,6 @@
         <td>{{ row.first }}</td>
         <td>{{ row.format }}</td>
         <td>{{ row.command }}</td>
-        <td>{{ row.version }}</td>
-        <td>{{ row.commit }}</td>
-        <td>{{ row.date }}</td>
       </tr>
     {% endfor %}
   </tbody>
