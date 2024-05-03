@@ -233,6 +233,7 @@ class Model:
             self.edit_format = "diff"
             self.use_repo_map = True
             self.send_undo_reply = True
+            self.examples_as_sys_msg = True
             return  # <--
 
         if "gpt-4-turbo" in model or ("gpt-4-" in model and "-preview" in model):

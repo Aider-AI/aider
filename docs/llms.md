@@ -14,7 +14,7 @@ Aider works with a number of **free** API providers:
 
 - Google's [Gemini 1.5 Pro](#gemini) is the most capable free model to use with aider, with
 code editing capabilities similar to GPT-3.5.
-- You can use [Llama 3 70B on Groq](#llama3) which is comparable to GPT-3.5 in code editing performance.
+- You can use [Llama 3 70B on Groq](#groq) which is comparable to GPT-3.5 in code editing performance.
 - The [Deepseek Coder](#deepseek) model works well with aider, comparable to GPT-3.5. Deepseek.com currently offers 5M free tokens of API usage.
 - Cohere also offers free API access to their [Command-R+ model](#cohere), which works with aider as a *very basic* coding assistant.
 
