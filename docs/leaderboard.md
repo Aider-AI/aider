@@ -38,7 +38,7 @@ it will work best with models that score well on the code editing benchmark.
 </table>
 
 
-# Edit format
+## Edit format
 
 
 Aider uses different "edit formats" to collect code edits from different LLMs:
