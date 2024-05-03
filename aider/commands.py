@@ -300,7 +300,14 @@ class Commands:
 
         # Reset only the files which are part of `last_commit`
         for file_path in changed_files_last_commit:
-            self.coder.repo.repo.git.checkout("HEAD~1", file_path)
+            try:
+                # Check if the file existed in the previous commit
+                self.coder.repo.repo.git.cat_file("-e", f"HEAD~1:{file_path}")
+                # If present, rollback to the previous state
+                self.coder.repo.repo.git.checkout("HEAD~1", file_path)
+            except git.exc.GitCommandError:
+                # If it doesn't exist (i.e., a new file was added in the last commit), simply delete the file
+                self.coder.repo.repo.git.rm(file_path)
         # Move the HEAD back before the latest commit
         self.coder.repo.repo.git.reset("--soft", "HEAD~1")
 
