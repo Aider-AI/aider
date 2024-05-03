@@ -25,6 +25,7 @@ litellm.suppress_debug_info = True
         RateLimitError,
         APIConnectionError,
         httpx.ConnectError,
+        httpx.RemoteProtocolError,
         litellm.exceptions.ServiceUnavailableError,
     ),
     max_tries=10,

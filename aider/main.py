@@ -5,11 +5,13 @@ from pathlib import Path
 
 import git
 import litellm
+from dotenv import load_dotenv
 from streamlit.web import cli
 
 from aider import __version__, models
 from aider.args import get_parser
 from aider.coders import Coder
+from aider.commands import SwitchModel
 from aider.io import InputOutput
 from aider.repo import GitRepo
 from aider.versioncheck import check_version
@@ -217,9 +219,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         args.assistant_output_color = "blue"
         args.code_theme = "default"
 
+    if return_coder and args.yes is None:
+        args.yes = True
+
     io = InputOutput(
         args.pretty,
-        args.yes or return_coder,  # Force --yes if return_coder
+        args.yes,
         args.input_history_file,
         args.chat_history_file,
         input=input,
@@ -270,17 +275,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         return 0 if not update_available else 1
 
     if args.models:
-        matches = models.fuzzy_match_models(args.models)
-        if matches:
-            io.tool_output(f'Models which match "{args.models}":')
-            for model in matches:
-                fq, m = model
-                if fq == m:
-                    io.tool_output(f"- {m}")
-                else:
-                    io.tool_output(f"- {m} ({fq})")
-        else:
-            io.tool_output(f'No models match "{args.models}".')
+        models.print_matching_models(io, args.models)
         return 0
 
     if args.git:
@@ -295,6 +290,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     cmd_line = " ".join(sys.argv)
     cmd_line = scrub_sensitive_info(args, cmd_line)
     io.tool_output(cmd_line, log_only=True)
+
+    if args.env_file:
+        load_dotenv(args.env_file)
 
     if args.anthropic_api_key:
         os.environ["ANTHROPIC_API_KEY"] = args.anthropic_api_key
@@ -337,6 +335,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             voice_language=args.voice_language,
             aider_ignore_file=args.aiderignore,
         )
+
     except ValueError as err:
         io.tool_error(str(err))
         return 1
@@ -398,7 +397,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             return 1
         return
 
-    coder.run()
+    while True:
+        try:
+            coder.run()
+            return
+        except SwitchModel as switch:
+            coder = Coder.create(main_model=switch.model, io=io, from_coder=coder)
+            coder.show_announcements()
 
 
 if __name__ == "__main__":

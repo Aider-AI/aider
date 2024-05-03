@@ -3,8 +3,8 @@
 
 ### v0.31.0
 
-- Aider is now also AI pair programming in your browser! Use the `--browser` switch to launch am experimental browser based version of aider.
-- Switch models during the chat with `/model <name>` and search the list of available models with `/model <query>`.
+- [Aider is now also AI pair programming in your browser!](https://aider.chat/2024/05/02/browser.html) Use the `--browser` switch to launch an experimental browser based version of aider.
+- Switch models during the chat with `/model <name>` and search the list of available models with `/models <query>`.
 
 ### v0.30.1
 

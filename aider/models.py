@@ -431,6 +431,20 @@ def fuzzy_match_models(name):
     return list(zip(matching_models, matching_models))
 
 
+def print_matching_models(io, search):
+    matches = fuzzy_match_models(search)
+    if matches:
+        io.tool_output(f'Models which match "{search}":')
+        for model in matches:
+            fq, m = model
+            if fq == m:
+                io.tool_output(f"- {m}")
+            else:
+                io.tool_output(f"- {m} ({fq})")
+    else:
+        io.tool_output(f'No models match "{search}".')
+
+
 def main():
     if len(sys.argv) != 2:
         print("Usage: python models.py <model_name>")

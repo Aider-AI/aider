@@ -132,6 +132,12 @@ Installing PortAudio is completely optional, but can usually be accomplished lik
 
 ## Add aider to your editor (optional)
 
+Other projects have integrated aider into some IDE/editors.
+It's not clear if they are tracking the latest
+versions of aider,
+so it may be best to just run the latest
+aider in a terminal alongside your editor.
+
 ### NeoVim
 
 [joshuavial](https://github.com/joshuavial) provided a NeoVim plugin for aider:

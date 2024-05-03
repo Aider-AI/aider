@@ -12,6 +12,8 @@ from aider import __version__
 
 aider_user_agent = f"Aider/{__version__} +https://aider.chat"
 
+# Playwright is nice because it has a simple way to install dependencies on most
+# platforms.
 PLAYWRIGHT_INFO = """
 For better web scraping, install Playwright chromium with this command in your terminal:
 
@@ -26,12 +28,40 @@ class Scraper:
     playwright_available = None
     playwright_instructions_shown = False
 
+    # Public API...
     def __init__(self, print_error=None):
+        """
+        `print_error` - a function to call to print error/debug info.
+        """
         if print_error:
             self.print_error = print_error
         else:
             self.print_error = print
 
+    def scrape(self, url):
+        """
+        Scrape a url and turn it into readable markdown.
+
+        `url` - the URLto scrape.
+        """
+        self.try_playwright()
+
+        if self.playwright_available:
+            content = self.scrape_with_playwright(url)
+        else:
+            content = self.scrape_with_httpx(url)
+
+        if not content:
+            return
+
+        self.try_pandoc()
+
+        content = self.html_to_markdown(content)
+        # content = html_to_text(content)
+
+        return content
+
+    # Internals...
     def scrape_with_playwright(self, url):
         with sync_playwright() as p:
             try:
@@ -87,24 +117,6 @@ class Scraper:
         except Exception as err:
             self.print_error(f"An error occurred: {err}")
         return None
-
-    def scrape(self, url):
-        self.try_playwright()
-
-        if self.playwright_available:
-            content = self.scrape_with_playwright(url)
-        else:
-            content = self.scrape_with_httpx(url)
-
-        if not content:
-            return
-
-        self.try_pandoc()
-
-        content = self.html_to_markdown(content)
-        # content = html_to_text(content)
-
-        return content
 
     def try_pandoc(self):
         if self.pandoc_available:

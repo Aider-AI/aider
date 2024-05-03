@@ -68,7 +68,9 @@ has been tested and benchmarked to work well with them:
 
 ```
 pip install aider-chat
-export OPENAI_API_KEY=<your-key-goes-here>
+
+export OPENAI_API_KEY=<key> # Mac/Linux
+setx   OPENAI_API_KEY <key> # Windows
 
 # GPT-4 Turbo is used by default
 aider
@@ -99,7 +101,9 @@ has been tested and benchmarked to work well with them:
 
 ```
 pip install aider-chat
-export ANTHROPIC_API_KEY=<your-key-goes-here>
+
+export ANTHROPIC_API_KEY=<key> # Mac/Linux
+setx   ANTHROPIC_API_KEY <key> # Windows
 
 # Claude 3 Opus
 aider --opus
@@ -125,7 +129,10 @@ You'll need a [Gemini API key](https://aistudio.google.com/app/u/2/apikey).
 
 ```
 pip install aider-chat
-export GEMINI_API_KEY=<your-key-goes-here>
+
+export GEMINI_API_KEY=<key> # Mac/Linux
+setx   GEMINI_API_KEY <key> # Windows
+
 aider --model gemini/gemini-1.5-pro-latest
 
 # List models available from Gemini
@@ -143,7 +150,10 @@ To use **Llama3 70B**:
 
 ```
 pip install aider-chat
-export GROQ_API_KEY=<your-key-goes-here>
+
+export GROQ_API_KEY=<key> # Mac/Linux
+setx   GROQ_API_KEY <key> # Windows
+
 aider --model groq/llama3-70b-8192
 
 # List models available from Groq
@@ -162,7 +172,10 @@ To use **Command-R+**:
 
 ```
 pip install aider-chat
-export COHERE_API_KEY=<your-key-goes-here>
+
+export COHERE_API_KEY=<key> # Mac/Linux
+setx   COHERE_API_KEY <key> # Windows
+
 aider --model command-r-plus
 
 # List models available from Cohere
@@ -175,9 +188,17 @@ Aider can connect to the OpenAI models on Azure.
 
 ```
 pip install aider-chat
-export AZURE_API_KEY=<your-key-goes-here>
+
+# Mac/Linux:                                           
+export AZURE_API_KEY=<key>
 export AZURE_API_VERSION=2023-05-15
-export AZURE_API_BASE=https://example-endpoint.openai.azure.com
+export AZURE_API_BASE=https://myendpt.openai.azure.com
+
+# Windows:
+setx AZURE_API_KEY <key>
+setx AZURE_API_VERSION 2023-05-15
+setx AZURE_API_BASE https://myendpt.openai.azure.com
+
 aider --model azure/<your_deployment_name>
 
 # List models available from Azure
@@ -191,7 +212,9 @@ You'll need an [OpenRouter API key](https://openrouter.ai/keys).
 
 ```
 pip install aider-chat
-export OPENROUTER_API_KEY=<your-key-goes-here>
+
+export OPENROUTER_API_KEY=<key> # Mac/Linux
+setx   OPENROUTER_API_KEY <key> # Windows
 
 # Or any other open router model
 aider --model openrouter/<provider>/<model>
@@ -204,7 +227,10 @@ In particular, Llama3 70B works well with aider, at low cost:
 
 ```
 pip install aider-chat
-export OPENROUTER_API_KEY=<your-key-goes-here>
+
+export OPENROUTER_API_KEY=<key> # Mac/Linux
+setx   OPENROUTER_API_KEY <key> # Windows
+
 aider --model openrouter/meta-llama/llama-3-70b-instruct
 ```
 
@@ -215,15 +241,18 @@ Aider can connect to local Ollama models.
 
 ```
 # Pull the model
-ollama pull <MODEL>
+ollama pull <model>
 
 # Start your ollama server
 ollama serve
 
-# In another terminal window
+# In another terminal window...
 pip install aider-chat
-export OLLAMA_API_BASE=http://127.0.0.1:11434
-aider --model ollama/<MODEL>
+
+export OLLAMA_API_BASE=http://127.0.0.1:11434 # Mac/Linux
+setx   OLLAMA_API_BASE http://127.0.0.1:11434 # Windows
+
+aider --model ollama/<model>
 ```
 
 In particular, `llama3:70b` works very well with aider:
@@ -233,8 +262,10 @@ In particular, `llama3:70b` works very well with aider:
 ollama pull llama3:70b
 ollama serve
 
-# ...in another terminal window...
-export OLLAMA_API_BASE=http://127.0.0.1:11434
+# In another terminal window...
+export OLLAMA_API_BASE=http://127.0.0.1:11434 # Mac/Linux
+setx   OLLAMA_API_BASE http://127.0.0.1:11434 # Windows
+
 aider --model ollama/llama3:70b 
 ```
 
@@ -250,8 +281,15 @@ They appear to grant 5M tokens of free API usage to new accounts.
 
 ```
 pip install aider-chat
-export OPENAI_API_KEY=<your-key-goes-here>
+
+# Mac/Linux:
+export OPENAI_API_KEY=<key>
 export OPENAI_API_BASE=https://api.deepseek.com/v1
+
+# Windows:
+setx OPENAI_API_KEY <key>
+setx OPENAI_API_BASE https://api.deepseek.com/v1
+
 aider --model openai/deepseek-coder
 ```
 
@@ -266,10 +304,14 @@ Aider can connect to any LLM which is accessible via an OpenAI compatible API en
 
 ```
 pip install aider-chat
-export OPENAI_API_BASE=<your-endpoint-goes-here>
 
-# If your endpoint needs a key
-export OPENAI_API_KEY=<your-key-goes-here>
+# Mac/Linux:
+export OPENAI_API_BASE=<endpoint>
+export OPENAI_API_KEY=<key>
+
+# Windows:
+setx OPENAI_API_BASE <endpoint>
+setx OPENAI_API_KEY <key>
 
 # Prefix the model name with openai/
 aider --model openai/<model-name>
@@ -389,19 +431,21 @@ use these switches: `--edit-format diff` or `--edit-format udiff`.
 # Using a .env file
 
 Aider will read environment variables from a `.env` file in
-the current directory.
-You can use it to store various keys and other settings for the
+root of your git repo or in current directory.
+You can give it an explicit file to load with the `--env-file <filename>` parameter.
+
+You can use a `.env` file to store various keys and other settings for the
 models you use with aider.
 
 Here is an example `.env` file:
 
 ```
-OPENAI_API_KEY=<your-key-goes-here>
-ANTHROPIC_API_KEY=<your-key-goes-here>
-GROQ_API_KEY=<your-key-goes-here>
-OPENROUTER_API_KEY=<your-key-goes-here>
+OPENAI_API_KEY=<key>
+ANTHROPIC_API_KEY=<key>
+GROQ_API_KEY=<key>
+OPENROUTER_API_KEY=<key>
 
-AZURE_API_KEY=<your-key-goes-here>
+AZURE_API_KEY=<key>
 AZURE_API_VERSION=2023-05-15
 AZURE_API_BASE=https://example-endpoint.openai.azure.com
 
