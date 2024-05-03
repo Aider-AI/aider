@@ -1,10 +1,10 @@
 
-# Aider's LLM code editing leaderboard
+# Aider's LLM leaderboard
 
 Aider works best with LLMs which are good at *editing* code, not just good at writing
 code.
 Aider works with the LLM to make changes to the existing code in your git repo,
-so the LLM needs to be capable of reliably specifying how to edit that code.
+so the LLM needs to be capable of reliably specifying how to edit code.
 
 Aider uses a
 [code editing benchmark](https://aider.chat/docs/benchmarks.html#the-benchmark)
@@ -14,6 +14,7 @@ to help users select which models to use with aider.
 While [aider can connect to almost any LLM](https://aider.chat/docs/llms.html)
 it will work best with models that score well on the code editing benchmark.
 
+## Code editing leaderboard
 
 <table style="width: 90%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
   <thead style="background-color: #f2f2f2;">
