@@ -150,6 +150,7 @@ MODEL_SETTINGS = [
         weak_model_name="groq/llama3-8b-8192",
         use_repo_map=False,
         send_undo_reply=False,
+        reminder_as_sys_msg=True,
     ),
     # Gemini
     ModelSettings(
