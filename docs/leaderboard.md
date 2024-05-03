@@ -5,12 +5,12 @@
   <thead>
     <tr>
       <th>Model</th>
-      <th>Second</th>
-      <th>First</th>
-      <th>Format</th>
+      <th>Final score</th>
+      <th>First try score</th>
+      <th>Edit format</th>
       <th>Command</th>
       <th>Version</th>
-      <th>Commit</th>
+      <th>Git commit</th>
       <th>Date</th>
     </tr>
   </thead>
