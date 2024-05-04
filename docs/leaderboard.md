@@ -1,18 +1,21 @@
 
-# Aider's LLM leaderboard
+# Aider's LLM leaderboards
 
 Aider works best with LLMs which are good at *editing* code, not just good at writing
 code.
 Aider works with the LLM to make changes to the existing code in your git repo,
 so the LLM needs to be capable of reliably specifying how to edit code.
 
-Aider uses a
-[code editing benchmark](https://aider.chat/docs/benchmarks.html#the-benchmark)
-to measure an LLM's code editing ability.
-This table reports the results from a number of popular LLMs,
+Aider uses two benchmarks
+to measure an LLM's code editing ability:
+
+- The [code editing benchmark](https://aider.chat/docs/benchmarks.html#the-benchmark) asks the LLM to edit python source files to complete 133 Exercism exercises.
+- The [refactoring benchmark](https://github.com/paul-gauthier/refactor-benchmark) asks the LLM to refactor large methods from a large python source file. This is a more challenging benchmark, which tests the model's ability to output long chunks of code without skipping sections.
+
+These leaderboards report the results from a number of popular LLMs,
 to help users select which models to use with aider.
 While [aider can connect to almost any LLM](https://aider.chat/docs/llms.html)
-it will work best with models that score well on the code editing benchmark.
+it will work best with models that score well on the benchmarks.
 
 ## Code editing leaderboard
 
@@ -26,7 +29,7 @@ it will work best with models that score well on the code editing benchmark.
     </tr>
   </thead>
   <tbody>
-    {% assign sorted = site.data.leaderboard | sort: 'second' | reverse %}
+    {% assign sorted = site.data.edit_leaderboard | sort: 'second' | reverse %}
     {% for row in sorted %}
       <tr style="border-bottom: 1px solid #ddd;">
         <td style="padding: 8px;">{{ row.model }}</td>
@@ -46,7 +49,7 @@ it will work best with models that score well on the code editing benchmark.
     var leaderboardData = {
       labels: [],
       datasets: [{
-        label: 'Percent correct',
+        label: 'Percent correct on code editing tasks',
         data: [],
         backgroundColor: 'rgba(54, 162, 235, 0.2)',
         borderColor: 'rgba(54, 162, 235, 1)',
@@ -78,9 +81,73 @@ it will work best with models that score well on the code editing benchmark.
   });
 </script>
 
+## Code refactoring leaderboard
+
+<table style="width: 90%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
+  <thead style="background-color: #f2f2f2;">
+    <tr>
+      <th style="padding: 8px; text-align: left;">Model</th>
+      <th style="padding: 8px; text-align: center;">Percent correct</th>
+      <th style="padding: 8px; text-align: left;">Command</th>
+      <th style="padding: 8px; text-align: center;">Edit format</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% assign sorted = site.data.refactor_leaderboard | sort: 'first' | reverse %}
+    {% for row in sorted %}
+      <tr style="border-bottom: 1px solid #ddd;">
+        <td style="padding: 8px;">{{ row.model }}</td>
+        <td style="padding: 8px; text-align: center;">{{ row.first }}%</td>
+        <td style="padding: 8px;"><code>{{ row.command }}</code></td>
+        <td style="padding: 8px; text-align: center;">{{ row.format }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<canvas id="leaderboardChart" width="800" height="450" style="margin-top: 20px"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var ctx = document.getElementById('leaderboardChart').getContext('2d');
+    var leaderboardData = {
+      labels: [],
+      datasets: [{
+        label: 'Percent correct on code refactoring tasks',
+        data: [],
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1
+      }]
+    };
+
+    {% for row in sorted %}
+      leaderboardData.labels.push('{{ row.model }}');
+      leaderboardData.datasets[0].data.push({{ row.first }});
+    {% endfor %}
+
+    var leaderboardChart = new Chart(ctx, {
+      type: 'bar',
+      data: leaderboardData,
+      options: {
+        scales: {
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+            },
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    });
+  });
+</script>
 
 
-## Edit format
+
+## Notes on the edit format
 
 Aider uses different "edit formats" to collect code edits from different LLMs.
 The "whole" format is the easiest for an LLM to use, but it uses a lot of tokens
