@@ -878,7 +878,8 @@ def summarize_results(dirname):
     csv.append(f"{first:.1f}")
 
     csv.append(" ".join(variants["edit_format"]))
-    csv.append("aider")
+    model = variants["model"].pop()
+    csv.append(f"aider --model {model}")
     versions = set()
     for hsh in variants["commit_hash"]:
         if not hsh:
