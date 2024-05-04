@@ -9,10 +9,10 @@ so the LLM needs to be capable of reliably specifying how to edit code.
 Aider uses two benchmarks
 to measure an LLM's code editing ability:
 
-- The [code editing benchmark](https://aider.chat/docs/benchmarks.html#the-benchmark) asks the LLM to edit python source files to complete 133 Exercism exercises.
-- The [refactoring benchmark](https://github.com/paul-gauthier/refactor-benchmark) asks the LLM to refactor large methods from a large python source file. This is a more challenging benchmark, which tests the model's ability to output long chunks of code without skipping sections.
+- The [code editing benchmark](https://aider.chat/docs/benchmarks.html#the-benchmark) asks the LLM to edit python source files to complete 133 Exercism exercises. This benchmark measures the LLM's ability to emit code edits according to the format aider specifies in the system prompt.
+- The [refactoring benchmark](https://github.com/paul-gauthier/refactor-benchmark) asks the LLM to refactor 89 large methods from large python classes. This is a more challenging benchmark, which tests the model's ability to output long chunks of code without skipping sections. It was developed to provoke and measure GPT-4 Turbo's "lazy coding" habit.
 
-These leaderboards report the results from a number of popular LLMs,
+The leaderboards below report the results from a number of popular LLMs,
 to help users select which models to use with aider.
 While [aider can connect to almost any LLM](https://aider.chat/docs/llms.html)
 it will work best with models that score well on the benchmarks.
@@ -82,6 +82,10 @@ it will work best with models that score well on the benchmarks.
 </script>
 
 ## Code refactoring leaderboard
+
+The refactoring benchmark requires a large context window to
+work with large source files.
+Therefore, results are available for fewer models.
 
 <table style="width: 90%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
   <thead style="background-color: #f2f2f2;">
