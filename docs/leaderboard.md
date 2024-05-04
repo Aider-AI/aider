@@ -30,9 +30,9 @@ it will work best with models that score well on the code editing benchmark.
     {% for row in sorted %}
       <tr style="border-bottom: 1px solid #ddd;">
         <td style="padding: 8px;">{{ row.model }}</td>
-        <td style="padding: 8px;">{{ row.second }}%</td>
+        <td style="padding: 8px; text-align: center;">{{ row.second }}%</td>
         <td style="padding: 8px;"><code>{{ row.command }}</code></td>
-        <td style="padding: 8px;">{{ row.format }}</td>
+        <td style="padding: 8px; text-align: center;">{{ row.format }}</td>
       </tr>
     {% endfor %}
   </tbody>

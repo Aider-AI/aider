@@ -108,6 +108,15 @@ MODEL_SETTINGS = [
         reminder_as_sys_msg=True,
     ),
     ModelSettings(
+        "gpt-4-0314",
+        "diff",
+        weak_model_name="gpt-3.5-turbo",
+        use_repo_map=True,
+        send_undo_reply=True,
+        reminder_as_sys_msg=True,
+        examples_as_sys_msg=True,
+    ),
+    ModelSettings(
         "gpt-4-0613",
         "diff",
         weak_model_name="gpt-3.5-turbo",
