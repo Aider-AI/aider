@@ -419,17 +419,19 @@ in case you made a typo or mistake when specifying the model name.
 
 ## Editing format
 
-Aider uses different "edit formats" to collect code edits from different LLMs:
+Aider uses different "edit formats" to collect code edits from different LLMs.
+The "whole" format is the easiest for an LLM to use, but it uses a lot of tokens
+and may limit how large a file can be edited.
+Models which can use one of the diff formats are much more efficient,
+using far fewer tokens.
+Models that use a diff-like format are able to 
+edit larger files with less cost and without hitting token limits.
 
-- `whole` is a "whole file" editing format, where the model edits a file by returning a full new copy of the file with any changes included.
-- `diff` is a more efficient diff style format, where the model specifies blocks of code to search and replace in order to made changes to files.
-- `diff-fenced` is similar to diff, but fences the entire diff block including the filename.
-- `udiff` is the most efficient editing format, where the model returns unified diffs to apply changes to the file.
+Aider is configured to use the best edit format for the popular OpenAI and Anthropic models
+and the [other models recommended on the LLM page](https://aider.chat/docs/llms.html).
+For lesser known models aider will default to using the "whole" editing format
+since it is the easiest format for an LLM to use.
 
-Different models work best with different editing formats.
-Aider is configured to use the best edit format for the popular OpenAI and Anthropic models and the other models recommended on this page. 
-
-For lesser known models aider will default to using the "whole" editing format.
 If you would like to experiment with the more advanced formats, you can
 use these switches: `--edit-format diff` or `--edit-format udiff`.
 

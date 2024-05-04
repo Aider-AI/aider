@@ -3,18 +3,20 @@
 
 Aider works best with LLMs which are good at *editing* code, not just good at writing
 code.
-Aider works with the LLM to make changes to the existing code in your git repo,
-so the LLM needs to be capable of reliably specifying how to edit code.
+Aider uses the system prompt to tell the LLM how to specify edits to the existing code
+in your local git repo.
+Some LLMs are better than others at consistently following these instructions
+to successfully edit code.
 
 Aider uses two benchmarks
 to measure an LLM's code editing ability:
 
-- The [code editing benchmark](https://aider.chat/docs/benchmarks.html#the-benchmark) asks the LLM to edit python source files to complete 133 Exercism exercises. This benchmark measures the LLM's ability to emit code edits according to the format aider specifies in the system prompt.
-- The [refactoring benchmark](https://github.com/paul-gauthier/refactor-benchmark) asks the LLM to refactor 89 large methods from large python classes. This is a more challenging benchmark, which tests the model's ability to output long chunks of code without skipping sections. It was developed to provoke and measure GPT-4 Turbo's "lazy coding" habit.
+- The [code editing benchmark](/docs/benchmarks.html#the-benchmark) asks the LLM to edit python source files to complete 133 small coding exercises. This benchmark measures the LLM's coding ability, but also whether it can consistently emit code edits in the format specified in the system prompt.
+- The [refactoring benchmark](https://github.com/paul-gauthier/refactor-benchmark) asks the LLM to refactor 89 large methods from large python classes. This is a more challenging benchmark, which tests the model's ability to output long chunks of code without skipping sections or making mistakes. It was developed to provoke and measure [GPT-4 Turbo's "lazy coding" habit](/2023/12/21/unified-diffs.html).
 
 The leaderboards below report the results from a number of popular LLMs,
 to help users select which models to use with aider.
-While [aider can connect to almost any LLM](https://aider.chat/docs/llms.html)
+While [aider can connect to almost any LLM](/docs/llms.html)
 it will work best with models that score well on the benchmarks.
 
 ## Code editing leaderboard
@@ -162,7 +164,7 @@ Models that use a diff-like format are able to
 edit larger files with less cost and without hitting token limits.
 
 Aider is configured to use the best edit format for the popular OpenAI and Anthropic models
-and the [other models recommended on the LLM page](https://aider.chat/docs/llms.html).
+and the [other models recommended on the LLM page](/docs/llms.html).
 For lesser known models aider will default to using the "whole" editing format
 since it is the easiest format for an LLM to use.
 
