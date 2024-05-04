@@ -569,7 +569,6 @@ class Coder:
     def format_messages(self):
         self.choose_fence()
         main_sys = self.fmt_system_prompt(self.gpt_prompts.main_system)
-        main_sys += "\n" + self.fmt_system_prompt(self.gpt_prompts.system_reminder)
 
         example_messages = []
         if self.main_model.examples_as_sys_msg:
@@ -599,6 +598,7 @@ class Coder:
                     dict(role="assistant", content="Ok."),
                 ]
 
+        main_sys += "\n" + self.fmt_system_prompt(self.gpt_prompts.system_reminder)
         messages = [
             dict(role="system", content=main_sys),
         ]
