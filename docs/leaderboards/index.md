@@ -173,6 +173,6 @@ since it is the easiest format for an LLM to use.
 Contributions of benchmark results are welcome!
 See the
 [benchmark README](https://github.com/paul-gauthier/aider/blob/main/benchmark/README.md)
-for information on running aider's code editing benchmark.
+for information on running aider's benchmarks.
 Submit results by opening a PR with edits to the
 [benchmark results CSV data files](https://github.com/paul-gauthier/aider/blob/main/_data/).
