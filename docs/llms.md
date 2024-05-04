@@ -27,6 +27,10 @@ local models that provide an
 
 ## Use a capable model
 
+Check
+[Aider's LLM leaderboard](https://aider.chat/docs/leaderboard.html)
+to see which models work best with aider.
+
 Be aware that aider may not work well with less capable models.
 If you see the model returning code, but aider isn't able to edit your files
 and commit the changes...
