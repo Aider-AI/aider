@@ -876,8 +876,16 @@ def summarize_results(dirname):
     csv.append(' '.join(variants['edit_format']))
     csv.append('aider')
     csv.append('version')
-    for hsh in variants['commit_hash']):
-        # TODO: get the output from `git show {hsh}:aider/__init__.py`
+    for hsh in variants['commit_hash']:
+        try:
+            version = subprocess.check_output(
+                ['git', 'show', f'{hsh}:aider/__init__.py'], 
+                universal_newlines=True
+            )
+            version = re.search(r'__version__ = "(.*)"', version).group(1)
+            csv.append(version)
+        except subprocess.CalledProcessError:
+            csv.append('unknown')
     csv.append(' '.join(variants['commit_hash']))
     csv.append(dirname.name[:10])
     csv = ','.join(csv)
