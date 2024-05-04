@@ -39,6 +39,40 @@ it will work best with models that score well on the code editing benchmark.
 </table>
 
 <canvas id="leaderboardChart" width="800" height="450"></canvas>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var ctx = document.getElementById('leaderboardChart').getContext('2d');
+    var leaderboardData = {
+      labels: [],
+      datasets: [{
+        label: 'Percent correct',
+        data: [],
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1
+      }]
+    };
+
+    {% for row in site.data.leaderboard | sort: 'second' | reverse %}
+      leaderboardData.labels.push('{{ row.model }}');
+      leaderboardData.datasets[0].data.push({{ row.second }});
+    {% endfor %}
+
+    var leaderboardChart = new Chart(ctx, {
+      type: 'bar',
+      data: leaderboardData,
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    });
+  });
+</script>
 
 
 
