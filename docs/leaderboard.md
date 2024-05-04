@@ -19,19 +19,19 @@ it will work best with models that score well on the code editing benchmark.
 <table style="width: 90%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
   <thead style="background-color: #f2f2f2;">
     <tr>
-      <th style="padding: 4px; text-align: left;">Model</th>
-      <th style="padding: 4px; text-align: left;">Percent correct</th>
-      <th style="padding: 4px; text-align: left;">Command</th>
-      <th style="padding: 4px; text-align: left;">Edit format</th>
+      <th style="padding: 8px; text-align: left;">Model</th>
+      <th style="padding: 8px; text-align: left;">Percent correct</th>
+      <th style="padding: 8px; text-align: left;">Command</th>
+      <th style="padding: 8px; text-align: left;">Edit format</th>
     </tr>
   </thead>
   <tbody>
     {% for row in site.data.leaderboard %}
       <tr style="border-bottom: 1px solid #ddd;">
-        <td style="padding: 4px;">{{ row.model }}</td>
-        <td style="padding: 4px;">{{ row.second }}%</td>
-        <td style="padding: 4px;"><code>{{ row.command }}</code></td>
-        <td style="padding: 4px;">{{ row.format }}</td>
+        <td style="padding: 8px;">{{ row.model }}</td>
+        <td style="padding: 8px;">{{ row.second }}%</td>
+        <td style="padding: 8px;"><code>{{ row.command }}</code></td>
+        <td style="padding: 8px;">{{ row.format }}</td>
       </tr>
     {% endfor %}
   </tbody>
