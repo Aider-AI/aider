@@ -848,8 +848,10 @@ def summarize_results(dirname):
     show("test_timeouts")
 
     console.print()
+    percents = dict()
     for i in range(tries):
         pass_rate = 100 * passed_tests[i] / res.completed_tests
+        percents[i] = pass_rate
         console.print(f"{pass_rate:.1f}% correct after try {i}")
         setattr(res, f"pass_rate_{i+1}", pass_rate)
 
@@ -867,6 +869,20 @@ def summarize_results(dirname):
         f" ${projected_cost:.2f} projected"
     )
 
+    csv = []
+    csv.append(' '.join(variants['model']))
+    csv.append(f"{percents[1]:.1f}")
+    csv.append(f"{percents[0]:.1f}")
+    csv.append(' '.join(variants['edit_format']))
+    csv.append('aider')
+    csv.append('version')
+    for hsh in variants['commit_hash']):
+        # TODO: get the output from `git show {hsh}:aider/__init__.py`
+    csv.append(' '.join(variants['commit_hash']))
+    csv.append(dirname.name[:10])
+    csv = ','.join(csv)
+    print()
+    print(csv)
     console.rule()
 
     # print(json.dumps(vars(res), indent=4, sort_keys=True))
