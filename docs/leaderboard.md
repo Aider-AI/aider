@@ -38,6 +38,52 @@ it will work best with models that score well on the code editing benchmark.
   </tbody>
 </table>
 
+<canvas id="leaderboardChart" width="800" height="450"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var ctx = document.getElementById('leaderboardChart').getContext('2d');
+  var leaderboardData = {
+    labels: [], // Populate with model names
+    datasets: [{
+      label: 'Percent correct',
+      data: [], // Populate with percent correct values
+      backgroundColor: 'rgba(54, 162, 235, 0.2)',
+      borderColor: 'rgba(54, 162, 235, 1)',
+      borderWidth: 1
+    }]
+  };
+
+  // Fetch leaderboard data and populate the chart
+  fetch('/_data/leaderboard.csv')
+    .then(function (response) {
+      return response.text();
+    })
+    .then(function (text) {
+      var rows = text.split('\n');
+      rows.forEach(function (row) {
+        var columns = row.split(',');
+        if (columns.length === 4) {
+          leaderboardData.labels.push(columns[0]);
+          leaderboardData.datasets[0].data.push(parseFloat(columns[1]));
+        }
+      });
+      new Chart(ctx, {
+        type: 'bar',
+        data: leaderboardData,
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    });
+});
+</script>
+
 
 ## Edit format
 
