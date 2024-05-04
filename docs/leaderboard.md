@@ -65,6 +65,10 @@ it will work best with models that score well on the code editing benchmark.
       options: {
         scales: {
           yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Percent correct'
+            },
             ticks: {
               beginAtZero: true
             }
