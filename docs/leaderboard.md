@@ -39,6 +39,7 @@ it will work best with models that score well on the code editing benchmark.
 </table>
 
 <canvas id="leaderboardChart" width="800" height="450"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     var ctx = document.getElementById('leaderboardChart').getContext('2d');
