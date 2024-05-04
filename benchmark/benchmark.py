@@ -870,26 +870,38 @@ def summarize_results(dirname):
     )
 
     csv = []
-    csv.append(' '.join(variants['model']))
-    csv.append(f"{percents[1]:.1f}")
-    csv.append(f"{percents[0]:.1f}")
-    csv.append(' '.join(variants['edit_format']))
-    csv.append('aider')
-    csv.append('version')
-    for hsh in variants['commit_hash']:
+    csv.append(" ".join(variants["model"]))
+
+    second = percents.get(1, 0)
+    first = percents.get(0, 0)
+    csv.append(f"{second:.1f}")
+    csv.append(f"{first:.1f}")
+
+    csv.append(" ".join(variants["edit_format"]))
+    csv.append("aider")
+    versions = set()
+    for hsh in variants["commit_hash"]:
+        if not hsh:
+            continue
+        hsh = hsh.split("-")[0]
         try:
             version = subprocess.check_output(
-                ['git', 'show', f'{hsh}:aider/__init__.py'], 
-                universal_newlines=True
+                ["git", "show", f"{hsh}:aider/__init__.py"], universal_newlines=True
             )
             version = re.search(r'__version__ = "(.*)"', version).group(1)
-            csv.append(version)
+            versions.add(version)
         except subprocess.CalledProcessError:
-            csv.append('unknown')
-    csv.append(' '.join(variants['commit_hash']))
+            pass
+    csv.append(" ".join(sorted(versions)))
+    commit_hashes = variants.get("commit_hash", [])
+    if all(commit_hashes):
+        csv.append(" ".join(commit_hashes))
+    else:
+        csv.append("")
     csv.append(dirname.name[:10])
-    csv = ','.join(csv)
+    csv = ",".join(csv)
     print()
+    print("Add this to _data/leaderboard.csv:")
     print(csv)
     console.rule()
 

@@ -26,7 +26,8 @@ it will work best with models that score well on the code editing benchmark.
     </tr>
   </thead>
   <tbody>
-    {% for row in site.data.leaderboard %}
+    {% assign sorted = site.data.leaderboard | sort: 'second' | reverse %}
+    {% for row in sorted %}
       <tr style="border-bottom: 1px solid #ddd;">
         <td style="padding: 8px;">{{ row.model }}</td>
         <td style="padding: 8px;">{{ row.second }}%</td>
