@@ -46,7 +46,6 @@ it will work best with models that score well on the code editing benchmark.
     var leaderboardData = {
       labels: [],
       datasets: [{
-        label: 'Percent correct',
         data: [],
         backgroundColor: 'rgba(54, 162, 235, 0.2)',
         borderColor: 'rgba(54, 162, 235, 1)',
