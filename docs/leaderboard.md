@@ -16,7 +16,7 @@ it will work best with models that score well on the code editing benchmark.
 
 ## Code editing leaderboard
 
-<table style="width: 90%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+<table style="width: 90%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
   <thead style="background-color: #f2f2f2;">
     <tr>
       <th style="padding: 4px; text-align: left;">Model</th>
