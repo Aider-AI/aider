@@ -31,7 +31,7 @@ it will work best with models that score well on the code editing benchmark.
         <td style="padding: 8px;">{{ row.model }}</td>
         <td style="padding: 8px;">{{ row.second }}%</td>
         <td style="padding: 8px;"><code>{{ row.command }}</code></td>
-        <td style="padding: 8px;">{{ row.format }}</td>
+>        <td style="padding: 8px;">{{ row.format }}</td>
       </tr>
     {% endfor %}
   </tbody>
@@ -40,27 +40,18 @@ it will work best with models that score well on the code editing benchmark.
 
 ## Edit format
 
+Aider uses different "edit formats" to collect code edits from different LLMs.
+The "whole" format is the easiest for an LLM to use, but it uses a lot of tokens
+and may limit how large a file can be edited.
+Models which can use one of the diff formats are much more efficient,
+using far fewer tokens.
+Models that use a diff-like format are able to 
+edit larger files with less cost and without hitting token limits.
 
-Aider uses different "edit formats" to collect code edits from different LLMs:
-
-- `whole` is a "whole file" editing format, where the model edits a file by returning a full new copy of the file with any changes included.
-- `diff` is a more efficient diff style format, where the model specifies blocks of code to search and replace in order to made changes to files.
-- `diff-fenced` is similar to diff, but fences the entire diff block including the filename.
-- `udiff` is the most efficient editing format, where the model returns unified diffs to apply changes to the file.
-
-Different models work best with different editing formats.
 Aider is configured to use the best edit format for the popular OpenAI and Anthropic models
 and the [other models recommended on the LLM page](https://aider.chat/docs/llms.html).
-
 For lesser known models aider will default to using the "whole" editing format
 since it is the easiest format for an LLM to use.
-But it is also the least efficient, requiring the model to output the
-entire source file for every set of changes.
-This can raise costs and cause errors with LLMs that have smaller
-context window sizes.
-
-All of the other diff-like edit formats are much more efficient with their use of tokens.
-
 
 ## Contributing benchmark results
 
