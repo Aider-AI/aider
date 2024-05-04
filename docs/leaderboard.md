@@ -22,7 +22,7 @@ it will work best with models that score well on the code editing benchmark.
       <th style="padding: 8px; text-align: left;">Model</th>
       <th style="padding: 8px; text-align: center;">Percent correct</th>
       <th style="padding: 8px; text-align: left;">Command</th>
-      <th style="padding: 8px; text-align: left;">Edit format</th>
+      <th style="padding: 8px; text-align: center;">Edit format</th>
     </tr>
   </thead>
   <tbody>
