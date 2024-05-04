@@ -109,7 +109,9 @@ from hello import hello
         ),
     ]
 
-    system_reminder = """Every *SEARCH/REPLACE block* must use this format:
+    system_reminder = """# *SEARCH/REPLACE block* Rules:
+
+Every *SEARCH/REPLACE block* must use this format:
 1. The file path alone on a line, verbatim. No bold asterisks, no quotes around it, no escaping of characters, etc.
 2. The opening fence and code language, eg: {fence[0]}python
 3. The start of search block: <<<<<<< SEARCH
