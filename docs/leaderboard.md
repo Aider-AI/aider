@@ -54,7 +54,7 @@ it will work best with models that score well on the code editing benchmark.
       }]
     };
 
-    {% for row in site.data.leaderboard | sort: 'second' | reverse %}
+    {% for row in sorted %}
       leaderboardData.labels.push('{{ row.model }}');
       leaderboardData.datasets[0].data.push({{ row.second }});
     {% endfor %}
