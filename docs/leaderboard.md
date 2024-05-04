@@ -38,7 +38,7 @@ it will work best with models that score well on the code editing benchmark.
   </tbody>
 </table>
 
-<canvas id="leaderboardChart" width="800" height="800" style="margin-top: 20px"></canvas>
+<canvas id="leaderboardChart" width="800" height="450" style="margin-top: 20px"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
