@@ -64,10 +64,8 @@ document.addEventListener('DOMContentLoaded', function () {
       var rows = text.split('\n');
       rows.forEach(function (row) {
         var columns = row.split(',');
-        if (columns.length === 4) {
-          leaderboardData.labels.push(columns[0]);
-          leaderboardData.datasets[0].data.push(parseFloat(columns[1]));
-        }
+        leaderboardData.labels.push(columns[0]);
+        leaderboardData.datasets[0].data.push(parseFloat(columns[1]));
       });
       new Chart(ctx, {
         type: 'bar',
