@@ -29,8 +29,8 @@ it will work best with models that score well on the benchmarks.
     </tr>
   </thead>
   <tbody>
-    {% assign sorted = site.data.edit_leaderboard | sort: 'second' | reverse %}
-    {% for row in sorted %}
+    {% assign edit_sorted = site.data.edit_leaderboard | sort: 'second' | reverse %}
+    {% for row in edit_sorted %}
       <tr style="border-bottom: 1px solid #ddd;">
         <td style="padding: 8px;">{{ row.model }}</td>
         <td style="padding: 8px; text-align: center;">{{ row.second }}%</td>
@@ -41,11 +41,11 @@ it will work best with models that score well on the benchmarks.
   </tbody>
 </table>
 
-<canvas id="leaderboardChart" width="800" height="450" style="margin-top: 20px"></canvas>
+<canvas id="editChart" width="800" height="450" style="margin-top: 20px"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    var ctx = document.getElementById('leaderboardChart').getContext('2d');
+    var ctx = document.getElementById('editChart').getContext('2d');
     var leaderboardData = {
       labels: [],
       datasets: [{
@@ -57,7 +57,7 @@ it will work best with models that score well on the benchmarks.
       }]
     };
 
-    {% for row in sorted %}
+    {% for row in edit_sorted %}
       leaderboardData.labels.push('{{ row.model }}');
       leaderboardData.datasets[0].data.push({{ row.second }});
     {% endfor %}
@@ -93,8 +93,8 @@ it will work best with models that score well on the benchmarks.
     </tr>
   </thead>
   <tbody>
-    {% assign sorted = site.data.refactor_leaderboard | sort: 'first' | reverse %}
-    {% for row in sorted %}
+    {% assign refac_sorted = site.data.refactor_leaderboard | sort: 'first' | reverse %}
+    {% for row in refac_sorted %}
       <tr style="border-bottom: 1px solid #ddd;">
         <td style="padding: 8px;">{{ row.model }}</td>
         <td style="padding: 8px; text-align: center;">{{ row.first }}%</td>
@@ -105,11 +105,11 @@ it will work best with models that score well on the benchmarks.
   </tbody>
 </table>
 
-<canvas id="leaderboardChart" width="800" height="450" style="margin-top: 20px"></canvas>
+<canvas id="refacChart" width="800" height="450" style="margin-top: 20px"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    var ctx = document.getElementById('leaderboardChart').getContext('2d');
+    var ctx = document.getElementById('refacChart').getContext('2d');
     var leaderboardData = {
       labels: [],
       datasets: [{
@@ -121,7 +121,7 @@ it will work best with models that score well on the benchmarks.
       }]
     };
 
-    {% for row in sorted %}
+    {% for row in refac_sorted %}
       leaderboardData.labels.push('{{ row.model }}');
       leaderboardData.datasets[0].data.push({{ row.first }});
     {% endfor %}
