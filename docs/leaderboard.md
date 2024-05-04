@@ -60,11 +60,11 @@ it will work best with models that score well on the code editing benchmark.
     {% endfor %}
 
     var leaderboardChart = new Chart(ctx, {
-      type: 'bar',
+      type: 'horizontalBar',
       data: leaderboardData,
       options: {
         scales: {
-          yAxes: [{
+          xAxes: [{
             scaleLabel: {
               display: true,
             },
