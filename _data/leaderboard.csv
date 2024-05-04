@@ -9,7 +9,7 @@ gpt-3.5-turbo-0301,57.9,50.4,whole,aider --model gpt-3.5-turbo-0301,0.16.4-dev,4
 gpt-3.5-turbo-0613,50.4,38.3,whole,aider --model gpt-3.5-turbo-0613,0.16.4-dev,93aa497-dirty,11/7/23
 gpt-3.5-turbo-1106,56.1,45.5,whole,aider --model gpt-3.5-turbo-1106,0.30.1,7b14d77,4/30/24
 gpt-4-0125-preview,66.2,55.6,udiff,aider --model gpt-4-0125-preview,0.22.1-dev,edcf9b1,1/25/24
-gpt-4-0314,62.4,51.1,diff,aider --model gpt-4-0314,0.31.2-dev,c9dbca9 f6580ff-dirty,5/4/24
+gpt-4-0314,66.2,50.4,diff,aider --model gpt-4-0314,0.31.2-dev,0d43468,5/4/24
 gpt-4-0613,67.7,46.6,diff,aider -4,0.18.1,3aa17c4,12/16/23
 gpt-4-1106-preview,63.2,57.1,udiff,aider,0.31.2-dev,1981105-dirty,5/4/24
 gpt-4-turbo-2024-04-09,64.4,49.2,diff,aider --gpt-4-turbo,0.30.1,e610e5b,5/1/24
