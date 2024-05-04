@@ -38,7 +38,7 @@ it will work best with models that score well on the code editing benchmark.
   </tbody>
 </table>
 
-<canvas id="leaderboardChart" width="800" height="450"></canvas>
+<canvas id="leaderboardChart" width="800" height="450" style="margin-top: 20px"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
@@ -46,6 +46,7 @@ it will work best with models that score well on the code editing benchmark.
     var leaderboardData = {
       labels: [],
       datasets: [{
+        label: 'Percent correct',
         data: [],
         backgroundColor: 'rgba(54, 162, 235, 0.2)',
         borderColor: 'rgba(54, 162, 235, 1)',
@@ -66,7 +67,6 @@ it will work best with models that score well on the code editing benchmark.
           yAxes: [{
             scaleLabel: {
               display: true,
-              labelString: 'Percent correct'
             },
             ticks: {
               beginAtZero: true
