@@ -30,7 +30,7 @@ it will work best with models that score well on the code editing benchmark.
       <tr style="border-bottom: 1px solid #ddd;">
         <td style="padding: 4px;">{{ row.model }}</td>
         <td style="padding: 4px;">{{ row.second }}%</td>
-        <td style="padding: 4px;"><pre style="overflow-x: auto; white-space: pre-wrap;">{{ row.command }}</pre></td>
+        <td style="padding: 4px;"><code>{{ row.command }}</code></td>
         <td style="padding: 4px;">{{ row.format }}</td>
       </tr>
     {% endfor %}
