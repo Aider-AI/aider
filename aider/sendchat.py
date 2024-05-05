@@ -18,6 +18,13 @@ CACHE = None
 litellm.suppress_debug_info = True
 
 
+def should_giveup(e):
+    if not hasattr(e, "status_code"):
+        return False
+
+    return not litellm._should_retry(e.status_code)
+
+
 @backoff.on_exception(
     backoff.expo,
     (
@@ -28,7 +35,8 @@ litellm.suppress_debug_info = True
         httpx.RemoteProtocolError,
         litellm.exceptions.ServiceUnavailableError,
     ),
-    max_tries=10,
+    giveup=should_giveup,
+    max_tries=3,
     on_backoff=lambda details: print(
         f"{details.get('exception','Exception')}\nRetry in {details['wait']:.1f} seconds."
     ),
