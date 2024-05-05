@@ -11,8 +11,8 @@ to successfully edit code.
 Aider uses two benchmarks
 to measure an LLM's code editing ability:
 
-- The [code editing benchmark](/docs/benchmarks.html#the-benchmark) asks the LLM to edit python source files to complete 133 small coding exercises. This benchmark measures the LLM's coding ability, but also whether it can consistently emit code edits in the format specified in the system prompt.
-- The [refactoring benchmark](https://github.com/paul-gauthier/refactor-benchmark) asks the LLM to refactor 89 large methods from large python classes. This is a more challenging benchmark, which tests the model's ability to output long chunks of code without skipping sections or making mistakes. It was developed to provoke and measure [GPT-4 Turbo's "lazy coding" habit](/2023/12/21/unified-diffs.html).
+- [Aider's code editing benchmark](/docs/benchmarks.html#the-benchmark) asks the LLM to edit python source files to complete 133 small coding exercises. This benchmark measures the LLM's coding ability, but also whether it can consistently emit code edits in the format specified in the system prompt.
+- [Aider's refactoring benchmark](https://github.com/paul-gauthier/refactor-benchmark) asks the LLM to refactor 89 large methods from large python classes. This is a more challenging benchmark, which tests the model's ability to output long chunks of code without skipping sections or making mistakes. It was developed to provoke and measure [GPT-4 Turbo's "lazy coding" habit](/2023/12/21/unified-diffs.html).
 
 The leaderboards below report the results from a number of popular LLMs,
 to help users select which models to use with aider.
@@ -173,6 +173,6 @@ since it is the easiest format for an LLM to use.
 Contributions of benchmark results are welcome!
 See the
 [benchmark README](https://github.com/paul-gauthier/aider/blob/main/benchmark/README.md)
-for information on running aider's benchmarks.
+for information on running aider's code editing benchmark.
 Submit results by opening a PR with edits to the
 [benchmark results CSV data files](https://github.com/paul-gauthier/aider/blob/main/_data/).
