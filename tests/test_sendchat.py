@@ -15,11 +15,14 @@ class TestSendChat(unittest.TestCase):
     @patch("litellm.completion")
     @patch("builtins.print")
     def test_send_with_retries_rate_limit_error(self, mock_print, mock_completion):
+        mock = MagicMock()
+        mock.status_code = 500
+
         # Set up the mock to raise
         mock_completion.side_effect = [
             openai.RateLimitError(
                 "rate limit exceeded",
-                response=MagicMock(),
+                response=mock,
                 body=None,
             ),
             None,
