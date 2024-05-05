@@ -759,12 +759,13 @@ def load_results(dirname):
 
 def summarize_results(dirname):
     all_results = load_results(dirname)
+    dump(len(all_results))
 
     res = SimpleNamespace()
     res.total_tests = len(list(Path(dirname).glob("*")))
 
     try:
-        tries = max(len(results["tests_outcomes"]) for results in all_results if results)
+        tries = max(len(results.get("tests_outcomes", [])) for results in all_results if results)
     except ValueError:
         tries = 0
 
@@ -791,13 +792,14 @@ def summarize_results(dirname):
             continue
 
         res.completed_tests += 1
-        passed = results["tests_outcomes"][-1]
+        tests_outcomes = results.get("tests_outcomes", [])
+        passed = tests_outcomes and tests_outcomes[-1]
         if passed:
-            for i in range(len(results["tests_outcomes"]) - 1, tries):
+            for i in range(len(tests_outcomes) - 1, tries):
                 passed_tests[i] += 1
 
-        res.cost += results["cost"]
-        res.duration += results["duration"]
+        res.cost += results.get("cost", 0)
+        res.duration += results.get("duration", 0)
         res.test_timeouts += results.get("test_timeouts", 0)
 
         res.error_outputs += results.get("num_error_outputs", 0)
@@ -811,7 +813,8 @@ def summarize_results(dirname):
 
         for key in "model edit_format commit_hash".split():
             val = results.get(key)
-            variants[key].add(val)
+            if val:
+                variants[key].add(val)
 
     if not res.completed_tests:
         return
@@ -903,7 +906,7 @@ def summarize_results(dirname):
     csv.append(dirname.name[:10])
     csv = ",".join(csv)
     print()
-    print("Add this to _data/leaderboard.csv:")
+    print("Add this to the files in _data:")
     print(csv)
     console.rule()
 
@@ -928,14 +931,18 @@ def get_replayed_content(replay_dname, test_dname):
     return "".join(res)
 
 
-def run_test(*args, **kwargs):
+def run_test(original_dname, testdir, *args, **kwargs):
     try:
-        return run_test_real(*args, **kwargs)
+        return run_test_real(original_dname, testdir, *args, **kwargs)
     except Exception as err:
         print("=" * 40)
         print("Test failed")
         print(err)
         traceback.print_exc()
+
+        testdir = Path(testdir)
+        results_fname = testdir / ".aider.results.json"
+        results_fname.write_text(json.dumps(dict(exception=str(err))))
 
 
 def run_test_real(
