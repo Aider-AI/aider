@@ -7,6 +7,7 @@ import re
 import shutil
 import subprocess
 import time
+import traceback
 from collections import defaultdict
 from json.decoder import JSONDecodeError
 from pathlib import Path
@@ -927,7 +928,17 @@ def get_replayed_content(replay_dname, test_dname):
     return "".join(res)
 
 
-def run_test(
+def run_test(*args, **kwargs):
+    try:
+        return run_test_real(*args, **kwargs)
+    except Exception as err:
+        print("=" * 40)
+        print("Test failed")
+        print(err)
+        traceback.print_exc()
+
+
+def run_test_real(
     original_dname,
     testdir,
     model_name,
