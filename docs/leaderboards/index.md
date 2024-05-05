@@ -3,7 +3,7 @@
 
 Aider works best with LLMs which are good at *editing* code, not just good at writing
 code.
-Aider uses the system prompt to tell the LLM how to specify edits to the existing code
+Aider uses the system prompt to tell the LLM how to make edits to the existing code
 in your local git repo.
 Some LLMs are better than others at consistently following these instructions
 to successfully edit code.
