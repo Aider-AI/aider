@@ -36,7 +36,7 @@ def should_giveup(e):
         litellm.exceptions.ServiceUnavailableError,
     ),
     giveup=should_giveup,
-    max_tries=3,
+    max_time=60,
     on_backoff=lambda details: print(
         f"{details.get('exception','Exception')}\nRetry in {details['wait']:.1f} seconds."
     ),
