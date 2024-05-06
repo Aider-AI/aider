@@ -288,9 +288,11 @@ class Coder:
                 self.verbose,
             )
 
+        if max_chat_history_tokens is None:
+            max_chat_history_tokens = self.main_model.max_chat_history_tokens
         self.summarizer = ChatSummary(
             self.main_model.weak_model,
-            self.main_model.max_chat_history_tokens,
+            max_chat_history_tokens,
         )
 
         if not self.done_messages:
