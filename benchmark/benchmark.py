@@ -34,6 +34,9 @@ EXERCISES_DIR_DEFAULT = "exercism-python"
 app = typer.Typer(add_completion=False, pretty_exceptions_enable=False)
 
 
+NUM_TESTS = (89, 133)
+
+
 def show_stats(dirnames, graphs):
     raw_rows = []
     for dirname in dirnames:
@@ -48,7 +51,7 @@ def show_stats(dirnames, graphs):
         if not row:
             continue
 
-        if row.completed_tests not in (89, 133):
+        if row.completed_tests not in NUM_TESTS:
             print(f"Warning: {row.dir_name} is incomplete: {row.completed_tests}")
 
         kind = (row.model, row.edit_format)
@@ -356,7 +359,25 @@ def summarize_results(dirname):
     console = Console(highlight=False)
     console.rule(title=str(dirname))
 
-    console.print(f"test-cases: {res.completed_tests}")
+    commit_hashes = variants["commit_hash"]
+    versions = get_versions(commit_hashes)
+    date = dirname.name[:10]
+
+    def show(stat, red="red"):
+        val = getattr(res, stat)
+        style = red if val else None
+        console.print(f"  {stat}: {val}", style=style)
+
+    percents = dict()
+    for i in range(tries):
+        pass_rate = 100 * passed_tests[i] / res.completed_tests
+        percents[i] = pass_rate
+        # console.print(f"{pass_rate:.1f}% correct after try {i+1}")
+        setattr(res, f"pass_rate_{i+1}", f"{pass_rate:.1f}")
+
+    print(f"- dirname: {dirname.name}")
+    style = None if res.completed_tests in NUM_TESTS else "red"
+    console.print(f"  test_cases: {res.completed_tests}", style=style)
     for key, val in variants.items():
         if len(val) > 1:
             style = "red"
@@ -364,42 +385,41 @@ def summarize_results(dirname):
             style = None
         val = ", ".join(map(str, val))
         setattr(res, key, val)
-        console.print(f"{key}: {val}", style=style)
+        console.print(f"  {key}: {val}", style=style)
 
-    def show(stat):
-        val = getattr(res, stat)
-        style = "red" if val else None
-        console.print(f"{stat}: {val}", style=style)
+    for i in range(tries):
+        print(f"  pass_rate_{i+1}: {percents[i]:.1f}")
 
-    console.print()
+    pct_well_formed = 1.0 - res.num_malformed_responses / res.completed_tests
+    print(f"  percent_cases_well_formed: {pct_well_formed*100:.1f}")
+
     show("error_outputs")
+    show("num_malformed_responses")
     show("user_asks")
     show("lazy_comments")
-    show("num_malformed_responses")
     show("syntax_errors")
     show("indentation_errors")
-    console.print()
     show("exhausted_context_windows")
     show("test_timeouts")
 
-    console.print()
-    percents = dict()
-    for i in range(tries):
-        pass_rate = 100 * passed_tests[i] / res.completed_tests
-        percents[i] = pass_rate
-        console.print(f"{pass_rate:.1f}% correct after try {i}")
-        setattr(res, f"pass_rate_{i+1}", pass_rate)
+    a_model = set(variants["model"]).pop()
+    command = f"aider --model {a_model}"
+    print(f"  command: {command}")
 
-    console.print()
+    print(f"  date: {date}")
+    print("  versions:", ",".join(versions))
+
     res.avg_duration = res.duration / res.completed_tests
+    print(f"  seconds_per_case: {res.avg_duration:.1f}")
 
-    console.print(f"duration: {res.avg_duration:.1f} sec/test-case")
+    print(f"  total_cost: {res.cost:.4f}")
 
     res.avg_cost = res.cost / res.completed_tests
 
     projected_cost = res.avg_cost * res.total_tests
 
-    console.print(
+    print()
+    print(
         f"costs: ${res.avg_cost:.4f}/test-case, ${res.cost:.2f} total,"
         f" ${projected_cost:.2f} projected"
     )
@@ -413,21 +433,8 @@ def summarize_results(dirname):
     csv.append(f"{first:.1f}")
 
     csv.append(" ".join(variants["edit_format"]))
-    model = variants["model"].pop()
-    csv.append(f"aider --model {model}")
-    versions = set()
-    for hsh in variants["commit_hash"]:
-        if not hsh:
-            continue
-        hsh = hsh.split("-")[0]
-        try:
-            version = subprocess.check_output(
-                ["git", "show", f"{hsh}:aider/__init__.py"], universal_newlines=True
-            )
-            version = re.search(r'__version__ = "(.*)"', version).group(1)
-            versions.add(version)
-        except subprocess.CalledProcessError:
-            pass
+    csv.append(command)
+
     csv.append(" ".join(sorted(versions)))
     commit_hashes = variants.get("commit_hash", [])
     if all(commit_hashes):
@@ -443,6 +450,23 @@ def summarize_results(dirname):
 
     # print(json.dumps(vars(res), indent=4, sort_keys=True))
     return res
+
+
+def get_versions(commit_hashes):
+    versions = set()
+    for hsh in commit_hashes:
+        if not hsh:
+            continue
+        hsh = hsh.split("-")[0]
+        try:
+            version = subprocess.check_output(
+                ["git", "show", f"{hsh}:aider/__init__.py"], universal_newlines=True
+            )
+            version = re.search(r'__version__ = "(.*)"', version).group(1)
+            versions.add(version)
+        except subprocess.CalledProcessError:
+            pass
+    return versions
 
 
 def get_replayed_content(replay_dname, test_dname):
