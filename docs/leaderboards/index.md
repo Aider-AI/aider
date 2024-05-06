@@ -31,13 +31,13 @@ it will work best with models that score well on the benchmarks.
     </tr>
   </thead>
   <tbody>
-    {% assign edit_sorted = site.data.edit_leaderboard | sort: 'second' | reverse %}
+    {% assign edit_sorted = site.data.edit_leaderboard | sort: 'pass_rate_2' | reverse %}
     {% for row in edit_sorted %}
       <tr style="border-bottom: 1px solid #ddd;">
         <td style="padding: 8px;">{{ row.model }}</td>
-        <td style="padding: 8px; text-align: center;">{{ row.second }}%</td>
+        <td style="padding: 8px; text-align: center;">{{ row.pass_rate_2 }}%</td>
         <td style="padding: 8px;"><code>{{ row.command }}</code></td>
-        <td style="padding: 8px; text-align: center;">{{ row.format }}</td>
+        <td style="padding: 8px; text-align: center;">{{ row.edit_format }}</td>
       </tr>
     {% endfor %}
   </tbody>
@@ -61,7 +61,7 @@ it will work best with models that score well on the benchmarks.
 
     {% for row in edit_sorted %}
       leaderboardData.labels.push('{{ row.model }}');
-      leaderboardData.datasets[0].data.push({{ row.second }});
+      leaderboardData.datasets[0].data.push({{ row.pass_rate_2 }});
     {% endfor %}
 
     var leaderboardChart = new Chart(ctx, {
