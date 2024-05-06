@@ -20,7 +20,7 @@
   total_cost: 0.0000
 - dirname: 2024-05-04-17-45-53--refac-opus
   test_cases: 83
-  model: openrouter/anthropic/claude-3-opus
+  model: claude-3-opus-20240229
   edit_format: diff
   commit_hash: b02320b-dirty
   pass_rate_1: 72.3
