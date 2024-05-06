@@ -289,6 +289,12 @@ class Coder:
             self.main_model.max_chat_history_tokens,
         )
 
+        if not self.done_messages:
+            history_md = self.io.read_text(self.io.chat_history_file)
+            dump(history_md)
+            self.done_messages = self.summarizer.summarize_chat_history_markdown(history_md)
+            dump(self.done_messages)
+
         self.summarizer_thread = None
         self.summarized_done_messages = []
 
