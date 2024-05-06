@@ -30,6 +30,8 @@ It also supports [connecting to almost any LLM](https://aider.chat/docs/llms.htm
 - [In-chat commands](#in-chat-commands)
 - [Tips](#tips)
 - [Installation](https://aider.chat/docs/install.html)
+- [Connecting to LLMs](/docs/llms.html)
+- [LLM Leaderboards](/docs/leaderboards/)
 - [Voice-to-code](https://aider.chat/docs/voice.html)
 - [FAQ](https://aider.chat/docs/faq.html)
 - [Discord](https://discord.gg/Tv2uQnR88V)
