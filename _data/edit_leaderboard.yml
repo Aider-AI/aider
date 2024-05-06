@@ -1,6 +1,6 @@
 - dirname: 2024-05-01-20-05-59--direct-opus-filenames-outside-fence
   test_cases: 133
-  model: openrouter/anthropic/claude-3-opus, claude-3-opus-20240229
+  model: claude-3-opus-20240229
   edit_format: diff
   commit_hash: f4b1797-dirty, f4b1797
   pass_rate_1: 53.4
@@ -98,7 +98,7 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 4
-  command: aider --model gpt-3.5-turbo-0125
+  command: aider -3
   date: 2024-02-02
   versions: 0.22.1-dev
   seconds_per_case: 3.2
@@ -224,7 +224,7 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 2
-  command: aider --model gpt-4-0613
+  command: aider -4
   date: 2023-12-16
   versions: 0.18.2-dev
   seconds_per_case: 33.6
@@ -245,14 +245,14 @@
   indentation_errors: 5
   exhausted_context_windows: 0
   test_timeouts: 2
-  command: aider --model gpt-4-1106-preview
+  command: aider
   date: 2024-05-04
   versions: 0.31.2-dev
   seconds_per_case: 15.6
   total_cost: 5.9468
 - dirname: 2024-05-01-02-09-20--gpt-4-turbo-examples
   test_cases: 133
-  model: gpt-4-turbo
+  model: gpt-4-turbo-2024-04-09
   edit_format: udiff
   commit_hash: e610e5b-dirty
   pass_rate_1: 48.1
@@ -266,14 +266,14 @@
   indentation_errors: 2
   exhausted_context_windows: 0
   test_timeouts: 3
-  command: aider --model gpt-4-turbo
+  command: aider --gpt-4-turbo
   date: 2024-05-01
   versions: 0.30.2-dev
   seconds_per_case: 22.8
   total_cost: 6.3337
 - dirname: 2024-05-03-22-24-48--openrouter--llama3-diff-examples-sys-msg
   test_cases: 132
-  model: openrouter/meta-llama/llama-3-70b-instruct
+  model: groq/llama3-70b-8192
   edit_format: diff
   commit_hash: b5bb453
   pass_rate_1: 38.6
@@ -287,7 +287,7 @@
   indentation_errors: 2
   exhausted_context_windows: 0
   test_timeouts: 3
-  command: aider --model openrouter/meta-llama/llama-3-70b-instruct
+  command: aider --model groq/llama3-70b-8192
   date: 2024-05-03
   versions: 0.31.2-dev
   seconds_per_case: 14.5
