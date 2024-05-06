@@ -19,13 +19,19 @@ to help users select which models to use with aider.
 While [aider can connect to almost any LLM](/docs/llms.html)
 it will work best with models that score well on the benchmarks.
 
+The key benchmarking results are:
+
+- **Percent completed** - Measures what percentage of the coding tasks that the LLM completed successfully. To complete a task, the LLM must solve the programming assignment *and* edit the code to implement that solution.
+- **Percent without edit errors** - Measures the percent of coding tasks that the LLM completed without making any mistakes in the code editing format. If the LLM makes edit mistakes, aider will give it feedback and ask for a fixed copy of the edit. But the best models can reliably conform to the edit format, without making errors.
+
 ## Code editing leaderboard
 
 <table style="width: 90%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
   <thead style="background-color: #f2f2f2;">
     <tr>
       <th style="padding: 8px; text-align: left;">Model</th>
-      <th style="padding: 8px; text-align: center;">Percent correct</th>
+      <th style="padding: 8px; text-align: center;">Percent completed</th>
+      <th style="padding: 8px; text-align: center;">Percent without edit errors</th>
       <th style="padding: 8px; text-align: left;">Command</th>
       <th style="padding: 8px; text-align: center;">Edit format</th>
     </tr>
@@ -36,6 +42,7 @@ it will work best with models that score well on the benchmarks.
       <tr style="border-bottom: 1px solid #ddd;">
         <td style="padding: 8px;">{{ row.model }}</td>
         <td style="padding: 8px; text-align: center;">{{ row.pass_rate_2 }}%</td>
+        <td style="padding: 8px; text-align: center;">{{ row.percent_cases_well_formed }}%</td>
         <td style="padding: 8px;"><code>{{ row.command }}</code></td>
         <td style="padding: 8px; text-align: center;">{{ row.edit_format }}</td>
       </tr>
@@ -51,14 +58,14 @@ it will work best with models that score well on the benchmarks.
     var leaderboardData = {
       labels: [],
       datasets: [{
-        label: 'Percent correct on code editing tasks',
+        label: 'Percent coding tasks solved',
         data: [],
         backgroundColor: 'rgba(54, 162, 235, 0.2)',
         borderColor: 'rgba(54, 162, 235, 1)',
         borderWidth: 1
       },
       {
-        label: 'Percent cases well formed',
+        label: 'Percent completed without edit errors',
         data: [],
         backgroundColor: 'rgba(255, 99, 132, 0.2)',
         borderColor: 'rgba(255, 99, 132, 1)',
@@ -101,7 +108,8 @@ Therefore, results are available for fewer models.
   <thead style="background-color: #f2f2f2;">
     <tr>
       <th style="padding: 8px; text-align: left;">Model</th>
-      <th style="padding: 8px; text-align: center;">Percent correct</th>
+      <th style="padding: 8px; text-align: center;">Percent completed</th>
+      <th style="padding: 8px; text-align: center;">Percent without edit errors</th>
       <th style="padding: 8px; text-align: left;">Command</th>
       <th style="padding: 8px; text-align: center;">Edit format</th>
     </tr>
@@ -112,6 +120,7 @@ Therefore, results are available for fewer models.
       <tr style="border-bottom: 1px solid #ddd;">
         <td style="padding: 8px;">{{ row.model }}</td>
         <td style="padding: 8px; text-align: center;">{{ row.pass_rate_1 }}%</td>
+        <td style="padding: 8px; text-align: center;">{{ row.percent_cases_well_formed }}%</td>
         <td style="padding: 8px;"><code>{{ row.command }}</code></td>
         <td style="padding: 8px; text-align: center;">{{ row.edit_format }}</td>
       </tr>
@@ -127,14 +136,14 @@ Therefore, results are available for fewer models.
     var leaderboardData = {
       labels: [],
       datasets: [{
-        label: 'Percent correct on code refactoring tasks',
+        label: 'Percent coding tasks solved',
         data: [],
         backgroundColor: 'rgba(54, 162, 235, 0.2)',
         borderColor: 'rgba(54, 162, 235, 1)',
         borderWidth: 1
       },
       {
-        label: 'Percent cases well formed',
+        label: 'Percent completed without edit errors',
         data: [],
         backgroundColor: 'rgba(255, 99, 132, 0.2)',
         borderColor: 'rgba(255, 99, 132, 1)',
