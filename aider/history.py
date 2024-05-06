@@ -4,7 +4,6 @@ from aider import models, prompts
 from aider.dump import dump  # noqa: F401
 from aider.sendchat import simple_send_with_retries
 
-from tqdm import tqdm
 
 class ChatSummary:
     def __init__(self, model=None, max_tokens=1024):
@@ -57,7 +56,21 @@ class ChatSummary:
         head = messages[:split_index]
         tail = messages[split_index:]
 
-        summary = self.summarize_all(head)
+        sized = sized[:split_index]
+        head.reverse()
+        sized.reverse()
+        keep = []
+        total = 0
+        model_max_input_tokens = self.model.info.get("max_input_tokens", 4096) - 512
+        for i in range(split_index):
+            total += sized[i][0]
+            if total > model_max_input_tokens:
+                break
+            keep.append(head[i])
+
+        keep.reverse()
+
+        summary = self.summarize_all(keep)
 
         tail_tokens = sum(tokens for tokens, msg in sized[split_index:])
         summary_tokens = self.token_count(summary)
@@ -91,11 +104,11 @@ class ChatSummary:
 
         return [dict(role="user", content=summary)]
 
-    def summarize_chat_history_markdown(self, text):
+    def split_chat_history_markdown(self, text):
         messages = []
         assistant = []
         lines = text.splitlines(keepends=True)
-        for line in tqdm(lines, desc="Summarizing chat history"):
+        for line in lines:
             if line.startswith("# "):
                 continue
             if line.startswith(">"):
@@ -117,8 +130,7 @@ class ChatSummary:
 
             assistant.append(line)
 
-        summary = self.summarize(messages[-40:])
-        return summary
+        return messages
 
 
 def main():
