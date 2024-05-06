@@ -4,6 +4,7 @@ from aider import models, prompts
 from aider.dump import dump  # noqa: F401
 from aider.sendchat import simple_send_with_retries
 
+from tqdm import tqdm
 
 class ChatSummary:
     def __init__(self, model=None, max_tokens=1024):
@@ -93,7 +94,8 @@ class ChatSummary:
     def summarize_chat_history_markdown(self, text):
         messages = []
         assistant = []
-        for line in text.splitlines(keepends=True):
+        lines = text.splitlines(keepends=True)
+        for line in tqdm(lines, desc="Summarizing chat history"):
             if line.startswith("# "):
                 continue
             if line.startswith(">"):
