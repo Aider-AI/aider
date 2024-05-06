@@ -56,12 +56,20 @@ it will work best with models that score well on the benchmarks.
         backgroundColor: 'rgba(54, 162, 235, 0.2)',
         borderColor: 'rgba(54, 162, 235, 1)',
         borderWidth: 1
+      },
+      {
+        label: 'Percent cases well formed',
+        data: [],
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1
       }]
     };
 
     {% for row in edit_sorted %}
       leaderboardData.labels.push('{{ row.model }}');
       leaderboardData.datasets[0].data.push({{ row.pass_rate_2 }});
+      leaderboardData.datasets[1].data.push({{ row.percent_cases_well_formed }});
     {% endfor %}
 
     var leaderboardChart = new Chart(ctx, {
@@ -124,12 +132,20 @@ Therefore, results are available for fewer models.
         backgroundColor: 'rgba(54, 162, 235, 0.2)',
         borderColor: 'rgba(54, 162, 235, 1)',
         borderWidth: 1
+      },
+      {
+        label: 'Percent cases well formed',
+        data: [],
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1
       }]
     };
 
     {% for row in refac_sorted %}
       leaderboardData.labels.push('{{ row.model }}');
       leaderboardData.datasets[0].data.push({{ row.pass_rate_1 }});
+      leaderboardData.datasets[1].data.push({{ row.percent_cases_well_formed }});
     {% endfor %}
 
     var leaderboardChart = new Chart(ctx, {
