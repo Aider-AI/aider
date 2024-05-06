@@ -1,12 +1,13 @@
 
 # Aider LLM leaderboards
 
+
 Aider works best with LLMs which are good at *editing* code, not just good at writing
 code.
-Aider uses the system prompt to tell the LLM how to make edits to the existing code
-in your local git repo.
-Some LLMs are better than others at consistently following these instructions
-to successfully edit code.
+Aider's system prompt directs the LLM on how to modify existing code in your local git
+repository.
+To evaluate an LLM's editing skill, aider uses a pair of benchmarks that
+assess their ability to consistently follow these instructions and successfully edit code.
 
 The leaderboards below report the results from a number of popular LLMs,
 to help users select which models to use with aider.
