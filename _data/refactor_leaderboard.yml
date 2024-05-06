@@ -33,9 +33,69 @@
   indentation_errors: 3
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model openrouter/anthropic/claude-3-opus
+  command: aider --opus
   date: 2024-05-04
   versions: 0.31.2-dev
   seconds_per_case: 67.8
   total_cost: 27.9176
+- dirname: 2024-04-09-21-49-54--refac-gpt-4-turbo-2024-04-09
+  test_cases: 88
+  model: gpt-4-turbo-2024-04-09
+  edit_format: udiff
+  commit_hash: b75fdb9
+  pass_rate_1: 34.1
+  percent_cases_well_formed: 30.7
+  error_outputs: 183
+  num_malformed_responses: 61
+  user_asks: 0
+  lazy_comments: 1
+  syntax_errors: 3
+  indentation_errors: 15
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --gpt-4-turbo
+  date: 2024-04-09
+  versions: 0.27.1-dev
+  seconds_per_case: 42.4
+  total_cost: 19.6556
+- dirname: 2024-01-25-22-07-21--jan-gpt-4-0125-preview-udiff
+  test_cases: 89
+  model: gpt-4-0125-preview
+  edit_format: udiff
+  commit_hash: 0fbd702
+  pass_rate_1: 43.8
+  percent_cases_well_formed: 74.2
+  error_outputs: 51
+  num_malformed_responses: 23
+  user_asks: 0
+  lazy_comments: 1
+  syntax_errors: 4
+  indentation_errors: 11
+  exhausted_context_windows: 1
+  test_timeouts: 0
+  command: aider --model gpt-4-0125-preview
+  date: 2024-01-25
+  versions: 0.22.1-dev
+  seconds_per_case: 70.4
+  total_cost: 43.3437
+- dirname: 2024-01-25-21-27-47--jan-gpt-4-1106-preview-udiff
+  test_cases: 89
+  model: gpt-4-1106-preview
+  edit_format: udiff
+  commit_hash: a75e7c8
+  pass_rate_1: 57.3
+  percent_cases_well_formed: 31.5
+  error_outputs: 127
+  num_malformed_responses: 61
+  user_asks: 0
+  lazy_comments: 4
+  syntax_errors: 1
+  indentation_errors: 15
+  exhausted_context_windows: 1
+  test_timeouts: 0
+  command: aider
+  date: 2024-01-25
+  versions: 0.22.1-dev
+  seconds_per_case: 181.9
+  total_cost: 18.6347
   
