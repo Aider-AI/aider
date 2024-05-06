@@ -12,7 +12,7 @@ assess their ability to consistently follow these instructions and successfully 
 The leaderboards below report the results from a number of popular LLMs,
 to help users select which models to use with aider.
 While [aider can connect to almost any LLM](/docs/llms.html),
-it will work best with models that score well on the benchmarks.
+it works best with models that score well on the benchmarks.
 
 ## Code editing leaderboard
 
