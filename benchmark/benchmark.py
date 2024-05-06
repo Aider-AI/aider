@@ -42,49 +42,14 @@ def show_stats(dirnames, graphs):
 
     # return
 
-    repeats = []
     seen = dict()
     rows = []
     for row in raw_rows:
         if not row:
             continue
 
-        if row.model == "gpt-3.5-turbo":
-            row.model = "gpt-3.5-turbo-0613"
-
-        if row.model == "gpt-4":
-            row.model = "gpt-4-0613"
-
-        if row.edit_format == "diff-func-string":
-            row.edit_format = "diff-func"
-
-        if (
-            row.model == "gpt-3.5-turbo-0613"
-            and row.edit_format == "whole"
-            and "repeat" not in row.dir_name
-        ):
-            # remember this row, so we can update it with the repeat_avg
-            repeat_row = len(rows)
-
-        # gpt35 = "gpt-3.5-turbo"
-        # gpt4 = "gpt-4"
-        # if row.model.startswith(gpt35):
-        #    row.model = gpt35 + "\n" + row.model[len(gpt35) :]
-        # elif row.model.startswith(gpt4):
-        #    row.model = gpt4 + "\n" + row.model[len(gpt4) :]
-
-        if "folk" in row.dir_name:
-            row.edit_format += "folk"
-
-        # if row.model == "gpt-4-0613":
-        #    row.model += "\n(8k context window is\ntoo small for benchmark)"
-
-        if row.completed_tests < 89:
+        if row.completed_tests not in (89, 133):
             print(f"Warning: {row.dir_name} is incomplete: {row.completed_tests}")
-
-        # if "repeat" in row.dir_name:
-        #    repeats.append(vars(row))
-        #    continue
 
         kind = (row.model, row.edit_format)
         if kind in seen:
@@ -95,27 +60,7 @@ def show_stats(dirnames, graphs):
         seen[kind] = row.dir_name
         rows.append(vars(row))
 
-    if repeats:
-        dump(repeats)
-        extra = rows[repeat_row]
-        dump(extra)
-        repeats.append(extra)
-        repeats = pd.DataFrame.from_records(repeats)
-        repeat_max = repeats["pass_rate_2"].max()
-        repeat_min = repeats["pass_rate_2"].min()
-        repeat_avg = repeats["pass_rate_2"].mean()
-
-        repeat_lo = repeat_avg - repeat_min
-        repeat_hi = repeat_max - repeat_avg
-
-        dump(repeat_max)
-        dump(repeat_min)
-        dump(repeat_avg)
-
-        # use the average in the main bar
-        rows[repeat_row]["pass_rate_2"] = repeat_avg
-    else:
-        repeat_hi = repeat_lo = repeat_avg = None  # noqa: F841
+    repeat_hi = repeat_lo = repeat_avg = None  # noqa: F841
 
     df = pd.DataFrame.from_records(rows)
     # df.sort_values(by=["model", "edit_format"], inplace=True)
