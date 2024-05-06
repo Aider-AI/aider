@@ -167,6 +167,9 @@ class Coder:
         for fname in self.get_inchat_relative_files():
             lines.append(f"Added {fname} to the chat.")
 
+        if self.done_messages:
+            lines.append("Restored previous conversation history.")
+
         return lines
 
     def __init__(
