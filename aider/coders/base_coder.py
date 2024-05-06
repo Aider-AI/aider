@@ -193,6 +193,7 @@ class Coder:
         aider_ignore_file=None,
         cur_messages=None,
         done_messages=None,
+        max_chat_history_tokens=None,
     ):
         if not fnames:
             fnames = []
