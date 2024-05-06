@@ -21,8 +21,8 @@ it will work best with models that score well on the benchmarks.
 
 The key benchmarking results are:
 
-- **Percent completed** - Measures what percentage of the coding tasks that the LLM completed successfully. To complete a task, the LLM must solve the programming assignment *and* edit the code to implement that solution.
-- **Percent without edit errors** - Measures the percent of coding tasks that the LLM completed without making any mistakes in the code editing format. If the LLM makes edit mistakes, aider will give it feedback and ask for a fixed copy of the edit. But the best models can reliably conform to the edit format, without making errors.
+- **Percent completed correctly** - Measures what percentage of the coding tasks that the LLM completed successfully. To complete a task, the LLM must solve the programming assignment *and* edit the code to implement that solution.
+- **Percent using correct edit format** - Measures the percent of coding tasks where the LLM complied with the edit format specified in the system prompt. If the LLM makes edit mistakes, aider will give it feedback and ask for a fixed copy of the edit. But the best models can reliably conform to the edit format, without making errors.
 
 ## Code editing leaderboard
 
@@ -30,8 +30,8 @@ The key benchmarking results are:
   <thead style="background-color: #f2f2f2;">
     <tr>
       <th style="padding: 8px; text-align: left;">Model</th>
-      <th style="padding: 8px; text-align: center;">Percent completed</th>
-      <th style="padding: 8px; text-align: center;">Percent without edit errors</th>
+      <th style="padding: 8px; text-align: center;">Percent completed correctly</th>
+      <th style="padding: 8px; text-align: center;">Percent using correct edit format</th>
       <th style="padding: 8px; text-align: left;">Command</th>
       <th style="padding: 8px; text-align: center;">Edit format</th>
     </tr>
@@ -58,14 +58,14 @@ The key benchmarking results are:
     var leaderboardData = {
       labels: [],
       datasets: [{
-        label: 'Percent coding tasks solved',
+        label: 'Percent completed correctly',
         data: [],
         backgroundColor: 'rgba(54, 162, 235, 0.2)',
         borderColor: 'rgba(54, 162, 235, 1)',
         borderWidth: 1
       },
       {
-        label: 'Percent completed without edit errors',
+        label: 'Percent using correct edit format',
         data: [],
         backgroundColor: 'rgba(255, 99, 132, 0.2)',
         borderColor: 'rgba(255, 99, 132, 1)',
@@ -108,8 +108,8 @@ Therefore, results are available for fewer models.
   <thead style="background-color: #f2f2f2;">
     <tr>
       <th style="padding: 8px; text-align: left;">Model</th>
-      <th style="padding: 8px; text-align: center;">Percent completed</th>
-      <th style="padding: 8px; text-align: center;">Percent without edit errors</th>
+      <th style="padding: 8px; text-align: center;">Percent completed correctly</th>
+      <th style="padding: 8px; text-align: center;">Percent using correct edit format</th>
       <th style="padding: 8px; text-align: left;">Command</th>
       <th style="padding: 8px; text-align: center;">Edit format</th>
     </tr>
@@ -136,14 +136,14 @@ Therefore, results are available for fewer models.
     var leaderboardData = {
       labels: [],
       datasets: [{
-        label: 'Percent coding tasks solved',
+        label: 'Percent completed correctly',
         data: [],
         backgroundColor: 'rgba(54, 162, 235, 0.2)',
         borderColor: 'rgba(54, 162, 235, 1)',
         borderWidth: 1
       },
       {
-        label: 'Percent completed without edit errors',
+        label: 'Percent using correct edit format',
         data: [],
         backgroundColor: 'rgba(255, 99, 132, 0.2)',
         borderColor: 'rgba(255, 99, 132, 1)',
