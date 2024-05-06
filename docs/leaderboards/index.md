@@ -16,7 +16,7 @@ to measure an LLM's code editing ability:
 
 The leaderboards below report the results from a number of popular LLMs,
 to help users select which models to use with aider.
-While [aider can connect to almost any LLM](/docs/llms.html)
+While [aider can connect to almost any LLM](/docs/llms.html),
 it will work best with models that score well on the benchmarks.
 
 The key benchmarking results are:
@@ -198,6 +198,6 @@ since it is the easiest format for an LLM to use.
 Contributions of benchmark results are welcome!
 See the
 [benchmark README](https://github.com/paul-gauthier/aider/blob/main/benchmark/README.md)
-for information on running aider's code editing benchmark.
+for information on running aider's code editing benchmarks.
 Submit results by opening a PR with edits to the
 [benchmark results data files](https://github.com/paul-gauthier/aider/blob/main/_data/).
