@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
 
     {% seo %}
-    {% if post.highlight_image %}
-    <meta property="og:image" content="{{ site.url }}/assets/aider.jpg">
+    {% if highlight_image %}
+    <meta property="og:image" content="{{ site.url }}{{ highlight_image }}">
     {% else %}
-    <meta property="og:image" content="{{ site.baseurl }}{{ post.highlight_image }}">
+    <meta property="og:image" content="{{ site.url }}/assets/aider.jpg">
     {% endif %}
 <meta property="twitter:image" content="{{ site.url }}/assets/aider-square.jpg">
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -36,8 +36,8 @@
       <h1 class="project-name">{{ page.title | default: site.title | default: site.github.repository_name }}</h1>
       <h2 class="project-tagline">{{ page.description | default: site.description | default: site.github.project_tagline }}</h2>
       {% endif %}
-      <a href="{{ site.baseurl }}/" class="btn">Home</a>
-      <a href="{{ site.baseurl }}/blog/" class="btn">Blog</a>
+      <a href="{{ site.url }}/" class="btn">Home</a>
+      <a href="{{ site.url }}/blog/" class="btn">Blog</a>
       {% if site.github.is_project_page %}
         <a href="{{ site.github.repository_url }}" class="btn">GitHub</a>
       {% endif %}
