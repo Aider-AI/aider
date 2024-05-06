@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
 
     {% seo %}
-    {% if highlight_image %}
-    <meta property="og:image" content="{{ site.url }}{{ highlight_image }}">
+    {% if page.highlight_image %}
+    <meta property="og:image" content="{{ site.url }}{{ page.highlight_image }}">
     {% else %}
     <meta property="og:image" content="{{ site.url }}/assets/aider.jpg">
     {% endif %}
