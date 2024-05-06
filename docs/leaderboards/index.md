@@ -1,3 +1,6 @@
+---
+highlight_image: /assets/leaderboard.jpg
+---
 
 # Aider LLM leaderboards
 

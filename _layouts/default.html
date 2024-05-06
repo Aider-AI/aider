@@ -3,8 +3,12 @@
   <head>
     <meta charset="UTF-8">
 
-{% seo %}
-<meta property="og:image" content="{{ site.url }}/assets/aider.jpg">
+    {% seo %}
+    {% if post.highlight_image %}
+    <meta property="og:image" content="{{ site.url }}/assets/aider.jpg">
+    {% else %}
+    <meta property="og:image" content="{{ site.baseurl }}{{ post.highlight_image }}">
+    {% endif %}
 <meta property="twitter:image" content="{{ site.url }}/assets/aider-square.jpg">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap" as="style" type="text/css" crossorigin>
