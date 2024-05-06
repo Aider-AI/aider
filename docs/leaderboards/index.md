@@ -8,23 +8,14 @@ in your local git repo.
 Some LLMs are better than others at consistently following these instructions
 to successfully edit code.
 
-Aider uses two benchmarks
-to measure an LLM's code editing ability:
-
-- [Aider's code editing benchmark](/docs/benchmarks.html#the-benchmark) asks the LLM to edit python source files to complete 133 small coding exercises. This benchmark measures the LLM's coding ability, but also whether it can consistently emit code edits in the format specified in the system prompt.
-- [Aider's refactoring benchmark](https://github.com/paul-gauthier/refactor-benchmark) asks the LLM to refactor 89 large methods from large python classes. This is a more challenging benchmark, which tests the model's ability to output long chunks of code without skipping sections or making mistakes. It was developed to provoke and measure [GPT-4 Turbo's "lazy coding" habit](/2023/12/21/unified-diffs.html).
-
 The leaderboards below report the results from a number of popular LLMs,
 to help users select which models to use with aider.
 While [aider can connect to almost any LLM](/docs/llms.html),
 it will work best with models that score well on the benchmarks.
 
-The key benchmarking results are:
-
-- **Percent completed correctly** - Measures what percentage of the coding tasks that the LLM completed successfully. To complete a task, the LLM must solve the programming assignment *and* edit the code to implement that solution.
-- **Percent using correct edit format** - Measures the percent of coding tasks where the LLM complied with the edit format specified in the system prompt. If the LLM makes edit mistakes, aider will give it feedback and ask for a fixed copy of the edit. But the best models can reliably conform to the edit format, without making errors.
-
 ## Code editing leaderboard
+
+[Aider's code editing benchmark](/docs/benchmarks.html#the-benchmark) asks the LLM to edit python source files to complete 133 small coding exercises. This benchmark measures the LLM's coding ability, but also whether it can consistently emit code edits in the format specified in the system prompt.
 
 <table style="width: 90%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
   <thead style="background-color: #f2f2f2;">
@@ -99,6 +90,8 @@ The key benchmarking results are:
 </script>
 
 ## Code refactoring leaderboard
+
+[Aider's refactoring benchmark](https://github.com/paul-gauthier/refactor-benchmark) asks the LLM to refactor 89 large methods from large python classes. This is a more challenging benchmark, which tests the model's ability to output long chunks of code without skipping sections or making mistakes. It was developed to provoke and measure [GPT-4 Turbo's "lazy coding" habit](/2023/12/21/unified-diffs.html).
 
 The refactoring benchmark requires a large context window to
 work with large source files.
@@ -176,6 +169,14 @@ Therefore, results are available for fewer models.
   });
 </script>
 
+
+
+## Notes on benchmarking results
+
+The key benchmarking results are:
+
+- **Percent completed correctly** - Measures what percentage of the coding tasks that the LLM completed successfully. To complete a task, the LLM must solve the programming assignment *and* edit the code to implement that solution.
+- **Percent using correct edit format** - Measures the percent of coding tasks where the LLM complied with the edit format specified in the system prompt. If the LLM makes edit mistakes, aider will give it feedback and ask for a fixed copy of the edit. But the best models can reliably conform to the edit format, without making errors.
 
 
 ## Notes on the edit format
