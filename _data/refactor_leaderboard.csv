@@ -1,6 +1,0 @@
-model,second,first,format,command,version,commits,date
-gpt-4-turbo-2024-04-09,0,34.1,udiff,aider --gpt-4-turbo,0.27.1-dev,b75fdb9,4/9/24
-gpt-4-0125-preview,0,43.8,udiff,aider --model gpt-4-0125-preview,0.22.1-dev,0fbd702,1/25/24
-gpt-4-1106-preview,0,57.3,udiff,aider --model gpt-4-1106-preview,0.22.1-dev,a75e7c8,1/25/24
-claude-3-opus-20240229,0,67.4,diff,aider --opus,0.31.2-dev,b02320b-dirty,5/4/24
-gemini/gemini-1.5-pro-latest,0.0,49.4,diff-fenced,aider --model gemini/gemini-1.5-pro-latest,0.31.2-dev,425cb29 1b35ca2-dirty a0649ba-dirty 3e4fca2-dirty,2024-05-04

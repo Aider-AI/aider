@@ -1,0 +1,41 @@
+- dirname: 2024-05-04-23-27-02--refac-gemini
+  test_cases: 89
+  model: gemini/gemini-1.5-pro-latest
+  edit_format: diff-fenced
+  commit_hash: a0649ba-dirty, 425cb29, 1b35ca2-dirty, 3e4fca2-dirty
+  pass_rate_1: 49.4
+  percent_cases_well_formed: 7.9
+  error_outputs: 247
+  num_malformed_responses: 82
+  user_asks: 0
+  lazy_comments: 4
+  syntax_errors: 0
+  indentation_errors: 8
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model gemini/gemini-1.5-pro-latest
+  date: 2024-05-04
+  versions: 0.31.2-dev
+  seconds_per_case: 55.7
+  total_cost: 0.0000
+- dirname: 2024-05-04-17-45-53--refac-opus
+  test_cases: 83
+  model: openrouter/anthropic/claude-3-opus
+  edit_format: diff
+  commit_hash: b02320b-dirty
+  pass_rate_1: 72.3
+  percent_cases_well_formed: 79.5
+  error_outputs: 51
+  num_malformed_responses: 17
+  user_asks: 0
+  lazy_comments: 2
+  syntax_errors: 1
+  indentation_errors: 3
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model openrouter/anthropic/claude-3-opus
+  date: 2024-05-04
+  versions: 0.31.2-dev
+  seconds_per_case: 67.8
+  total_cost: 27.9176
+  

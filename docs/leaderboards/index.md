@@ -99,13 +99,13 @@ Therefore, results are available for fewer models.
     </tr>
   </thead>
   <tbody>
-    {% assign refac_sorted = site.data.refactor_leaderboard | sort: 'first' | reverse %}
+    {% assign refac_sorted = site.data.refactor_leaderboard | sort: 'pass_rate_1' | reverse %}
     {% for row in refac_sorted %}
       <tr style="border-bottom: 1px solid #ddd;">
         <td style="padding: 8px;">{{ row.model }}</td>
-        <td style="padding: 8px; text-align: center;">{{ row.first }}%</td>
+        <td style="padding: 8px; text-align: center;">{{ row.pass_rate_1 }}%</td>
         <td style="padding: 8px;"><code>{{ row.command }}</code></td>
-        <td style="padding: 8px; text-align: center;">{{ row.format }}</td>
+        <td style="padding: 8px; text-align: center;">{{ row.edit_format }}</td>
       </tr>
     {% endfor %}
   </tbody>
@@ -129,7 +129,7 @@ Therefore, results are available for fewer models.
 
     {% for row in refac_sorted %}
       leaderboardData.labels.push('{{ row.model }}');
-      leaderboardData.datasets[0].data.push({{ row.first }});
+      leaderboardData.datasets[0].data.push({{ row.pass_rate_1 }});
     {% endfor %}
 
     var leaderboardChart = new Chart(ctx, {
