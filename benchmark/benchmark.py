@@ -424,28 +424,6 @@ def summarize_results(dirname):
         f" ${projected_cost:.2f} projected"
     )
 
-    csv = []
-    csv.append(" ".join(variants["model"]))
-
-    second = percents.get(1, 0)
-    first = percents.get(0, 0)
-    csv.append(f"{second:.1f}")
-    csv.append(f"{first:.1f}")
-
-    csv.append(" ".join(variants["edit_format"]))
-    csv.append(command)
-
-    csv.append(" ".join(sorted(versions)))
-    commit_hashes = variants.get("commit_hash", [])
-    if all(commit_hashes):
-        csv.append(" ".join(commit_hashes))
-    else:
-        csv.append("")
-    csv.append(dirname.name[:10])
-    csv = ",".join(csv)
-    print()
-    print("Add this to the files in _data:")
-    print(csv)
     console.rule()
 
     # print(json.dumps(vars(res), indent=4, sort_keys=True))
