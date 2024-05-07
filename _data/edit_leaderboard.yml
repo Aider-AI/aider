@@ -63,7 +63,7 @@
   total_cost: 0.0000
 - dirname: 2024-05-03-20-47-24--gemini-1.5-pro-diff-fenced
   test_cases: 133
-  model: gemini/gemini-1.5-pro-latest
+  model: gemini-1.5-pro-latest
   edit_format: diff-fenced
   commit_hash: 3a48dfb, 5d32dd7
   pass_rate_1: 45.9
@@ -273,7 +273,7 @@
   total_cost: 6.3337
 - dirname: 2024-05-03-22-24-48--openrouter--llama3-diff-examples-sys-msg
   test_cases: 132
-  model: groq/llama3-70b-8192
+  model: llama3-70b-8192
   edit_format: diff
   commit_hash: b5bb453
   pass_rate_1: 38.6
