@@ -293,7 +293,6 @@ def load_results(dirname):
 
 def summarize_results(dirname):
     all_results = load_results(dirname)
-    dump(len(all_results))
 
     res = SimpleNamespace()
     res.total_tests = len(list(Path(dirname).glob("*")))

@@ -313,4 +313,25 @@
   versions: 0.31.2-dev
   seconds_per_case: 22.9
   total_cost: 2.7494
+- dirname: 2024-05-07-12-55-06--deepseek-chat-v2-whole
+  test_cases: 133
+  model: deepseek-chat v2
+  edit_format: whole
+  commit_hash: b1cae73, db994fb
+  pass_rate_1: 50.4
+  pass_rate_2: 60.2
+  percent_cases_well_formed: 100.0
+  error_outputs: 3
+  num_malformed_responses: 0
+  user_asks: 3
+  lazy_comments: 13
+  syntax_errors: 0
+  indentation_errors: 2
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model openai/deepseek-chat
+  date: 2024-05-07
+  versions: 0.31.2-dev
+  seconds_per_case: 42.4
+  total_cost: 0.0000
   
