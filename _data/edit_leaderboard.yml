@@ -375,4 +375,25 @@
   date: 2024-05-07
   versions: 0.31.2-dev
   seconds_per_case: 46.9
-  total_cost: 0.0000  
+  total_cost: 0.0000
+- dirname: 2024-05-07-20-57-04--wizardlm-2-8x22b-whole
+  test_cases: 133
+  model: WizardLM-2 8x22B
+  edit_format: whole
+  commit_hash: 8e272bf, bbe8639
+  pass_rate_1: 27.8
+  pass_rate_2: 44.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 1
+  syntax_errors: 2
+  indentation_errors: 2
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model openrouter/microsoft/wizardlm-2-8x22b
+  date: 2024-05-07
+  versions: 0.31.2-dev
+  seconds_per_case: 36.6
+  total_cost: 0.0000
