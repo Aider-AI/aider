@@ -315,7 +315,7 @@
   total_cost: 2.7494
 - dirname: 2024-05-07-12-55-06--deepseek-chat-v2-whole
   test_cases: 133
-  model: deepseek-chat v2
+  model: deepseek-chat v2 (whole)
   edit_format: whole
   commit_hash: b1cae73, db994fb
   pass_rate_1: 50.4
@@ -329,9 +329,29 @@
   indentation_errors: 2
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openai/deepseek-chat
+  command: aider --model openai/deepseek-chat --edit-format whole
   date: 2024-05-07
   versions: 0.31.2-dev
   seconds_per_case: 42.4
   total_cost: 0.0000
-  
+- dirname: 2024-05-07-15-49-02--deepseek-chat-v2-diff-sysex-sysrem
+  test_cases: 133
+  model: deepseek-chat v2 (diff)
+  edit_format: diff
+  commit_hash: e9da401
+  pass_rate_1: 42.9
+  pass_rate_2: 55.6
+  percent_cases_well_formed: 97.7
+  error_outputs: 11
+  num_malformed_responses: 3
+  user_asks: 2
+  lazy_comments: 0
+  syntax_errors: 2
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 4
+  command: aider --model openai/deepseek-chat
+  date: 2024-05-07
+  versions: 0.31.2-dev
+  seconds_per_case: 53.8
+  total_cost: 0.0000  
