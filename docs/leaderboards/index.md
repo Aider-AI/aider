@@ -8,7 +8,7 @@ highlight_image: /assets/leaderboard.jpg
 Aider works best with LLMs which are good at *editing* code, not just good at writing
 code.
 To evaluate an LLM's editing skill, aider uses a pair of benchmarks that
-assess their ability to consistently follow the system instructions
+assess a model's ability to consistently follow the system prompt
 to successfully edit code.
 
 The leaderboards below report the results from a number of popular LLMs.

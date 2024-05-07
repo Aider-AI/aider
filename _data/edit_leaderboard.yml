@@ -42,7 +42,7 @@
   total_cost: 0.0000
 - dirname: 2024-04-29-19-17-28--deepseek-coder-whole
   test_cases: 132
-  model: openai/deepseek-coder
+  model: deepseek-coder
   edit_format: whole
   commit_hash: c07f793-dirty
   pass_rate_1: 47.0
