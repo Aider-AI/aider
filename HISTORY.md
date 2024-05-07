@@ -1,6 +1,10 @@
 
 # Release history
 
+### v0.32.0
+
+- Gemini 1.5 Pro now defaults to a diff-style edit format, enabling it to work better with larger code bases.
+
 ### v0.31.0
 
 - [Aider is now also AI pair programming in your browser!](https://aider.chat/2024/05/02/browser.html) Use the `--browser` switch to launch an experimental browser based version of aider.
