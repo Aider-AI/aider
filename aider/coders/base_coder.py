@@ -627,8 +627,9 @@ class Coder:
 
         final = messages[-1]
 
+        max_input_tokens = self.main_model.info.get("max_input_tokens")
         # Add the reminder prompt if we still have room to include it.
-        if total_tokens < self.main_model.info.get("max_input_tokens", 0):
+        if max_input_tokens is None or total_tokens < max_input_tokens:
             if self.main_model.reminder_as_sys_msg:
                 messages += reminder_message
             elif final["role"] == "user":
