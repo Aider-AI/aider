@@ -354,4 +354,25 @@
   date: 2024-05-07
   versions: 0.31.2-dev
   seconds_per_case: 53.8
+  total_cost: 0.0000
+- dirname: 2024-05-07-20-32-37--qwen1.5-110b-chat-whole
+  test_cases: 133
+  model: together_ai/qwen/qwen1.5-110b-chat
+  edit_format: whole
+  commit_hash: 70b1c0c
+  pass_rate_1: 30.8
+  pass_rate_2: 37.6
+  percent_cases_well_formed: 100.0
+  error_outputs: 3
+  num_malformed_responses: 0
+  user_asks: 3
+  lazy_comments: 20
+  syntax_errors: 0
+  indentation_errors: 6
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: aider --model together_ai/qwen/qwen1.5-110b-chat
+  date: 2024-05-07
+  versions: 0.31.2-dev
+  seconds_per_case: 46.9
   total_cost: 0.0000  
