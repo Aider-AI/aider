@@ -357,7 +357,7 @@
   total_cost: 0.0000
 - dirname: 2024-05-07-20-32-37--qwen1.5-110b-chat-whole
   test_cases: 133
-  model: together_ai/qwen/qwen1.5-110b-chat
+  model: qwen1.5-110b-chat
   edit_format: whole
   commit_hash: 70b1c0c
   pass_rate_1: 30.8
