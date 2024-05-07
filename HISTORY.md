@@ -3,7 +3,12 @@
 
 ### v0.32.0
 
-- Gemini 1.5 Pro now defaults to a diff-style edit format, enabling it to work better with larger code bases.
+- [Aider LLM code editing leaderboards](https://aider.chat/docs/leaderboards/) that rank popular models according to their ability to edit code.
+  - Leaderboards include GPT-3.5/4 Turbo, Opus, Sonnet, Gemini 1.5 Pro, Llama 3, Deepseek Coder & Command-R+.
+- Gemini 1.5 Pro now defaults to a new diff-style edit format (diff-fenced), enabling it to work better with larger code bases.
+- Support for Deepseek-V2, via more a flexible config of system messages in the diff edit format.
+- Improved retry handling on errors from model APIs.
+- Benchmark outputs results in YAML, compatible with leaderboard.
 
 ### v0.31.0
 
