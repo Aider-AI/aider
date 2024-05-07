@@ -184,6 +184,14 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         send_undo_reply=True,
     ),
+    ModelSettings(
+        "openai/deepseek-chat",
+        "diff",
+        use_repo_map=True,
+        send_undo_reply=True,
+        examples_as_sys_msg=True,
+        reminder_as_sys_msg=True,
+    ),
 ]
 
 
