@@ -19,7 +19,7 @@ it works best with models that score well on the benchmarks.
 
 [Aider's code editing benchmark](/docs/benchmarks.html#the-benchmark) asks the LLM to edit python source files to complete 133 small coding exercises. This benchmark measures the LLM's coding ability, but also whether it can consistently emit code edits in the format specified in the system prompt.
 
-<table style="width: 90%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
+<table style="width: 90%; max-width: 900px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
   <thead style="background-color: #f2f2f2;">
     <tr>
       <th style="padding: 8px; text-align: left;">Model</th>
@@ -99,7 +99,7 @@ The refactoring benchmark requires a large context window to
 work with large source files.
 Therefore, results are available for fewer models.
 
-<table style="width: 90%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
+<table style="width: 90%; max-width: 900px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
   <thead style="background-color: #f2f2f2;">
     <tr>
       <th style="padding: 8px; text-align: left;">Model</th>
