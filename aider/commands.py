@@ -5,17 +5,15 @@ import sys
 from pathlib import Path
 
 import git
-import litellm
 import openai
 from prompt_toolkit.completion import Completion
 
 from aider import models, prompts, voice
+from aider.litellm import litellm
 from aider.scrape import Scraper
 from aider.utils import is_image_file
 
 from .dump import dump  # noqa: F401
-
-litellm.suppress_debug_info = True
 
 
 class SwitchModel(Exception):

@@ -11,7 +11,6 @@ from json.decoder import JSONDecodeError
 from pathlib import Path
 
 import git
-import litellm
 import openai
 from jsonschema import Draft7Validator
 from rich.console import Console, Text
@@ -21,6 +20,7 @@ from aider import __version__, models, prompts, utils
 from aider.commands import Commands
 from aider.history import ChatSummary
 from aider.io import InputOutput
+from aider.litellm import litellm
 from aider.mdstream import MarkdownStream
 from aider.repo import GitRepo
 from aider.repomap import RepoMap
@@ -28,8 +28,6 @@ from aider.sendchat import send_with_retries
 from aider.utils import is_image_file
 
 from ..dump import dump  # noqa: F401
-
-litellm.suppress_debug_info = True
 
 
 class MissingAPIKeyError(ValueError):

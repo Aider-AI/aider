@@ -3,19 +3,17 @@ import json
 
 import backoff
 import httpx
-import litellm
 import openai
 
 # from diskcache import Cache
 from openai import APIConnectionError, InternalServerError, RateLimitError
 
 from aider.dump import dump  # noqa: F401
+from aider.litellm import litellm
 
 CACHE_PATH = "~/.aider.send.cache.v1"
 CACHE = None
 # CACHE = Cache(CACHE_PATH)
-
-litellm.suppress_debug_info = True
 
 
 def should_giveup(e):

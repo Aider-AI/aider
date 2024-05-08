@@ -4,7 +4,6 @@ import sys
 from pathlib import Path
 
 import git
-import litellm
 from dotenv import load_dotenv
 from streamlit.web import cli
 
@@ -13,14 +12,11 @@ from aider.args import get_parser
 from aider.coders import Coder
 from aider.commands import SwitchModel
 from aider.io import InputOutput
+from aider.litellm import litellm  # noqa: F401; properly init litellm on launch
 from aider.repo import GitRepo
 from aider.versioncheck import check_version
 
 from .dump import dump  # noqa: F401
-
-litellm.suppress_debug_info = True
-os.environ["OR_SITE_URL"] = "http://aider.chat"
-os.environ["OR_APP_NAME"] = "Aider"
 
 
 def get_git_root():

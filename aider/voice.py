@@ -3,8 +3,9 @@ import queue
 import tempfile
 import time
 
-import litellm
 import numpy as np
+
+from aider.litellm import litellm
 
 try:
     import soundfile as sf
@@ -14,8 +15,6 @@ except (OSError, ModuleNotFoundError):
 from prompt_toolkit.shortcuts import prompt
 
 from .dump import dump  # noqa: F401
-
-litellm.suppress_debug_info = True
 
 
 class SoundDeviceError(Exception):
