@@ -14,7 +14,9 @@ You always COMPLETELY IMPLEMENT the needed code!
 
     example_messages = []
 
-    files_content_prefix = "These are files that you can edit:\n"
+    files_content_prefix = (
+        "I have *added these files to the chat* so you can go ahead and edit them:\n"
+    )
 
     files_no_full_files = "I am not sharing any files that you can edit yet."
 
