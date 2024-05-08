@@ -34,6 +34,12 @@ class ModelSettings:
 MODEL_SETTINGS = [
     # gpt-3.5
     ModelSettings(
+        "gpt-3.5-turbo",
+        "whole",
+        weak_model_name="gpt-3.5-turbo",
+        reminder_as_sys_msg=True,
+    ),
+    ModelSettings(
         "gpt-3.5-turbo-0125",
         "whole",
         weak_model_name="gpt-3.5-turbo",
