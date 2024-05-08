@@ -144,6 +144,15 @@ MODEL_SETTINGS = [
         weak_model_name="claude-3-haiku-20240307",
         use_repo_map=True,
         send_undo_reply=True,
+        examples_as_sys_msg=True,
+    ),
+    ModelSettings(
+        "openrouter/anthropic/claude-3-opus",
+        "diff",
+        weak_model_name="claude-3-haiku-20240307",
+        use_repo_map=True,
+        send_undo_reply=True,
+        examples_as_sys_msg=True,
     ),
     ModelSettings(
         "claude-3-sonnet-20240229",
