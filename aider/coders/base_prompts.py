@@ -23,5 +23,6 @@ You always COMPLETELY IMPLEMENT the needed code!
     repo_content_prefix = """I'm discussing files that are part of a git repository.
 Here are summaries of some files present in my git repo.
 Do not propose changes to these files, treat them as *read-only*.
-If you need to edit one of them, ask me to *add it to the chat* first.
+If you need to edit any of these files, ask me to *add them to the chat* first,
+so I can show you their full content.
 """
