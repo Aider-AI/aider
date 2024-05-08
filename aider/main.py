@@ -342,6 +342,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     coder.show_announcements()
 
     if args.show_prompts:
+        coder.cur_messages += [
+            dict(role="user", content="Hello!"),
+        ]
         messages = coder.format_messages()
         utils.show_messages(messages)
         return

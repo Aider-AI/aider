@@ -418,7 +418,7 @@ class Coder:
         if repo_content:
             if all_content:
                 all_content += "\n"
-            all_content += repo_content
+            all_content += repo_content + "\n"
 
         if self.abs_fnames:
             files_content = self.gpt_prompts.files_content_prefix
