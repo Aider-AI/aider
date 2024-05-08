@@ -61,14 +61,4 @@ Create a new file you MUST return a *file listing* which includes an appropriate
 {lazy_prompt}
 """
 
-    files_content_prefix = "Here is the current content of the files:\n"
-    files_no_full_files = "I am not sharing any files yet."
-
     redacted_edit_message = "No changes are needed."
-
-    # this coder is not able to handle repo content
-    repo_content_prefix = None
-
-    repo_content_prefix = """Below here are summaries of files present in the user's git repository.
-Do not propose changes to these files, they are *read-only*.
-"""

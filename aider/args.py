@@ -339,6 +339,12 @@ def get_parser(default_config_files, git_root):
         default=False,
     )
     group.add_argument(
+        "--show-prompts",
+        action="store_true",
+        help="Print the system prompts and exit (debug)",
+        default=False,
+    )
+    group.add_argument(
         "--message",
         "--msg",
         "-m",

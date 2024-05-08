@@ -7,7 +7,7 @@ import git
 from dotenv import load_dotenv
 from streamlit.web import cli
 
-from aider import __version__, models
+from aider import __version__, models, utils
 from aider.args import get_parser
 from aider.coders import Coder
 from aider.commands import SwitchModel
@@ -340,6 +340,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         return coder
 
     coder.show_announcements()
+
+    if args.show_prompts:
+        messages = coder.format_messages()
+        utils.show_messages(messages)
+        return
 
     if args.commit:
         coder.commands.cmd_commit("")

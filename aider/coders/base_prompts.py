@@ -13,3 +13,13 @@ You always COMPLETELY IMPLEMENT the needed code!
 """
 
     example_messages = []
+
+    files_content_prefix = "These are files that you can edit:\n"
+
+    files_no_full_files = "I am not sharing any files that you can edit yet."
+
+    repo_content_prefix = """I'm discussing files that are part of a git repository.
+Here are summaries of some files present in my git repo.
+Do not propose changes to these files, treat them as *read-only*.
+If you need to edit one of them, ask me to *add it to the chat* first.
+"""

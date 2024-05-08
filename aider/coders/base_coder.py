@@ -415,6 +415,7 @@ class Coder:
         all_content = ""
 
         repo_content = self.get_repo_map()
+
         if repo_content:
             if all_content:
                 all_content += "\n"

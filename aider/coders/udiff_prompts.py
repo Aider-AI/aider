@@ -106,12 +106,3 @@ To make a new file, show a diff from `--- /dev/null` to `+++ path/to/new/file.ex
 
 {lazy_prompt}
 """
-
-    files_content_prefix = "These are the *read-write* files:\n"
-
-    files_no_full_files = "I am not sharing any *read-write* files yet."
-
-    repo_content_prefix = """Below here are summaries of some files present in this git repository.
-Do not propose changes to these files, they are *read-only*.
-To make a file *read-write*, ask the user to *add it to the chat*.
-"""
