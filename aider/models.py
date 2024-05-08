@@ -44,7 +44,6 @@ MODEL_SETTINGS = [
         "whole",
         weak_model_name="gpt-3.5-turbo",
         reminder_as_sys_msg=True,
-        examples_as_sys_msg=True,
     ),
     ModelSettings(
         "gpt-3.5-turbo-1106",
@@ -93,6 +92,7 @@ MODEL_SETTINGS = [
         send_undo_reply=True,
         lazy=True,
         reminder_as_sys_msg=True,
+        examples_as_sys_msg=True,
     ),
     ModelSettings(
         "gpt-4-1106-preview",
