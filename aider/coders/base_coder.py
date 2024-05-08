@@ -409,6 +409,11 @@ class Coder:
 
         other_files = set(self.get_all_abs_files()) - set(self.abs_fnames)
         repo_content = self.repo_map.get_repo_map(self.abs_fnames, other_files)
+
+        # fall back to global repo map if files in chat are disjoint from rest of repo
+        if not repo_content:
+            repo_content = self.repo_map.get_repo_map(set(), set(self.get_all_abs_files()))
+
         return repo_content
 
     def get_files_messages(self):
