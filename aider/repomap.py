@@ -58,7 +58,6 @@ class RepoMap:
     def get_repo_map(self, chat_files, other_files):
         if self.max_map_tokens <= 0:
             return
-
         if not other_files:
             return
 
