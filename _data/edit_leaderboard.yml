@@ -85,7 +85,7 @@
 
 - dirname: 2024-05-08-20-59-15--may-gpt-3.5-turbo-whole
   test_cases: 133
-  model: gpt-3.5-turbo
+  model: gpt-3.5-turbo-0125
   edit_format: whole
   commit_hash: 1d55f74
   pass_rate_1: 41.4
@@ -99,7 +99,7 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 4
-  command: aider --model gpt-3.5-turbo
+  command: aider -3
   date: 2024-05-08
   versions: 0.33.1-dev
   seconds_per_case: 6.5
