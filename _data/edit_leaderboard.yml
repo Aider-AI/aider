@@ -82,13 +82,14 @@
   versions: 0.31.2-dev
   seconds_per_case: 21.3
   total_cost: 0.0000
-- dirname: 2024-02-02-02-07-28--exercism-gpt-3.5-turbo-0125-whole
+
+- dirname: 2024-05-08-20-59-15--may-gpt-3.5-turbo-whole
   test_cases: 133
-  model: gpt-3.5-turbo-0125
+  model: gpt-3.5-turbo
   edit_format: whole
-  commit_hash: da14474
-  pass_rate_1: 39.8
-  pass_rate_2: 49.6
+  commit_hash: 1d55f74
+  pass_rate_1: 41.4
+  pass_rate_2: 50.4
   percent_cases_well_formed: 100.0
   error_outputs: 0
   num_malformed_responses: 0
@@ -98,11 +99,12 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 4
-  command: aider -3
-  date: 2024-02-02
-  versions: 0.22.1-dev
-  seconds_per_case: 3.2
-  total_cost: 0.4701
+  command: aider --model gpt-3.5-turbo
+  date: 2024-05-08
+  versions: 0.33.1-dev
+  seconds_per_case: 6.5
+  total_cost: 0.5032
+  
 - dirname: 2023-11-06-21-23-59--gpt-3.5-turbo-0301
   test_cases: 133
   model: gpt-3.5-turbo-0301
