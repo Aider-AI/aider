@@ -78,24 +78,25 @@
   versions: 0.22.1-dev
   seconds_per_case: 70.4
   total_cost: 43.3437
-- dirname: 2024-01-25-21-27-47--jan-gpt-4-1106-preview-udiff
+
+- dirname: 2024-05-08-21-24-16--may-refac-gpt-4-1106-preview
   test_cases: 89
   model: gpt-4-1106-preview
   edit_format: udiff
-  commit_hash: a75e7c8
-  pass_rate_1: 57.3
-  percent_cases_well_formed: 31.5
-  error_outputs: 127
-  num_malformed_responses: 61
-  user_asks: 0
-  lazy_comments: 4
-  syntax_errors: 1
-  indentation_errors: 15
-  exhausted_context_windows: 1
+  commit_hash: eaa2514-dirty
+  pass_rate_1: 50.6
+  percent_cases_well_formed: 39.3
+  error_outputs: 164
+  num_malformed_responses: 54
+  user_asks: 1
+  lazy_comments: 17
+  syntax_errors: 0
+  indentation_errors: 8
+  exhausted_context_windows: 0
   test_timeouts: 0
   command: aider
-  date: 2024-01-25
-  versions: 0.22.1-dev
-  seconds_per_case: 181.9
-  total_cost: 18.6347
+  date: 2024-05-08
+  versions: 0.33.1-dev
+  seconds_per_case: 61.8
+  total_cost: 18.3844
   

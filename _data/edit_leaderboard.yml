@@ -231,27 +231,29 @@
   versions: 0.18.2-dev
   seconds_per_case: 33.6
   total_cost: 17.4657
-- dirname: 2024-05-04-14-33-15--redo-gpt-4-1106-preview-udiff5
+
+- dirname: 2024-05-08-21-16-03--may-gpt-4-1106-preview-udiff
   test_cases: 133
   model: gpt-4-1106-preview
   edit_format: udiff
-  commit_hash: 1981105-dirty
-  pass_rate_1: 57.1
-  pass_rate_2: 63.2
-  percent_cases_well_formed: 94.0
-  error_outputs: 24
-  num_malformed_responses: 8
+  commit_hash: 87664dc
+  pass_rate_1: 51.9
+  pass_rate_2: 65.4
+  percent_cases_well_formed: 92.5
+  error_outputs: 30
+  num_malformed_responses: 10
   user_asks: 0
-  lazy_comments: 7
-  syntax_errors: 3
-  indentation_errors: 5
+  lazy_comments: 3
+  syntax_errors: 11
+  indentation_errors: 2
   exhausted_context_windows: 0
-  test_timeouts: 2
+  test_timeouts: 1
   command: aider
-  date: 2024-05-04
-  versions: 0.31.2-dev
-  seconds_per_case: 15.6
-  total_cost: 5.9468
+  date: 2024-05-08
+  versions: 0.33.1-dev
+  seconds_per_case: 20.4
+  total_cost: 6.6061
+  
 - dirname: 2024-05-01-02-09-20--gpt-4-turbo-examples
   test_cases: 133
   model: gpt-4-turbo-2024-04-09
