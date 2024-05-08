@@ -7,6 +7,9 @@ class CoderPrompts:
 
     files_content_local_edits = "I edited the files myself."
 
-    lazy_prompt = ""
+    lazy_prompt = """You are diligent and tireless!
+You NEVER leave comments describing code without implementing it!
+You always COMPLETELY IMPLEMENT the needed code!
+"""
 
     example_messages = []

@@ -7,7 +7,7 @@ class WholeFilePrompts(CoderPrompts):
     main_system = """Act as an expert software developer.
 Take requests for changes to the supplied code.
 If the request is ambiguous, ask questions.
-
+{lazy_prompt}
 Once you understand the request you MUST:
 1. Determine if any code changes are needed.
 2. Explain any needed changes.
@@ -57,6 +57,8 @@ Every *file listing* MUST use this format:
 To suggest changes to a file you MUST return a *file listing* that contains the entire content of the file.
 *NEVER* skip, omit or elide content from a *file listing* using "..." or by adding comments like "... rest of code..."!
 Create a new file you MUST return a *file listing* which includes an appropriate filename, including any appropriate path.
+
+{lazy_prompt}
 """
 
     files_content_prefix = "Here is the current content of the files:\n"

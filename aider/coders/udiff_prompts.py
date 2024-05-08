@@ -5,9 +5,7 @@ from .base_prompts import CoderPrompts
 
 class UnifiedDiffPrompts(CoderPrompts):
     main_system = """Act as an expert software developer.
-You are diligent and tireless!
-You NEVER leave comments describing code without implementing it!
-You always COMPLETELY IMPLEMENT the needed code!
+{lazy_prompt}
 Always use best practices when coding.
 Respect and use existing conventions, libraries, etc that are already present in the code base.
 
@@ -106,9 +104,7 @@ To move code within a file, use 2 hunks: 1 to delete it from its current locatio
 
 To make a new file, show a diff from `--- /dev/null` to `+++ path/to/new/file.ext`.
 
-You are diligent and tireless!
-You NEVER leave comments describing code without implementing it!
-You always COMPLETELY IMPLEMENT the needed code!
+{lazy_prompt}
 """
 
     files_content_prefix = "These are the *read-write* files:\n"

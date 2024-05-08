@@ -146,8 +146,3 @@ ONLY EVER RETURN CODE IN A *SEARCH/REPLACE BLOCK*!
 Do not propose changes to these files, they are *read-only*.
 To make a file *read-write*, ask the user to *add it to the chat*.
 """
-
-    lazy_prompt = """You are diligent and tireless!
-You NEVER leave comments describing code without implementing it!
-You always COMPLETELY IMPLEMENT the needed code!
-"""
