@@ -56,7 +56,7 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 2
-  command: aider --model openai/deepseek-coder
+  command: aider --model deepseek/deepseek-coder
   date: 2024-04-29
   versions: 0.30.2-dev
   seconds_per_case: 26.7
@@ -329,7 +329,7 @@
   indentation_errors: 2
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openai/deepseek-chat --edit-format whole
+  command: aider --model deepseek/deepseek-chat --edit-format whole
   date: 2024-05-07
   versions: 0.31.2-dev
   seconds_per_case: 42.4
@@ -350,7 +350,7 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 4
-  command: aider --model openai/deepseek-chat
+  command: aider --model deepseek/deepseek-chat
   date: 2024-05-07
   versions: 0.31.2-dev
   seconds_per_case: 53.8
