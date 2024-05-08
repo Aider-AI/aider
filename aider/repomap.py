@@ -69,8 +69,6 @@ class RepoMap:
             self.max_map_tokens = 0
             return
 
-        dump(chat_files, other_files)
-        dump(files_listing)
         if not files_listing:
             return
 
@@ -90,7 +88,6 @@ class RepoMap:
 
         repo_content += files_listing
 
-        dump(repo_content)
         return repo_content
 
     def get_rel_fname(self, fname):
@@ -262,8 +259,8 @@ class RepoMap:
                     references[tag.name].append(rel_fname)
 
         ##
-        dump(defines)
-        dump(references)
+        # dump(defines)
+        # dump(references)
 
         if not references:
             references = dict((k, list(v)) for k, v in defines.items())
@@ -291,7 +288,6 @@ class RepoMap:
         try:
             ranked = nx.pagerank(G, weight="weight", **pers_args)
         except ZeroDivisionError:
-            dump(ZeroDivisionError)
             return []
 
         # distribute the rank from each source node, across all of its out edges
@@ -338,8 +334,6 @@ class RepoMap:
 
         ranked_tags = self.get_ranked_tags(chat_fnames, other_fnames)
         num_tags = len(ranked_tags)
-
-        dump(num_tags)
 
         lower_bound = 0
         upper_bound = num_tags
