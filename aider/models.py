@@ -192,6 +192,14 @@ MODEL_SETTINGS = [
         examples_as_sys_msg=True,
         reminder_as_sys_msg=True,
     ),
+    ModelSettings(
+        "deepseek/deepseek-chat",
+        "diff",
+        use_repo_map=True,
+        send_undo_reply=True,
+        examples_as_sys_msg=True,
+        reminder_as_sys_msg=True,
+    ),
 ]
 
 
