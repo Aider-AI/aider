@@ -1,6 +1,15 @@
 
 # Release history
 
+### main
+
+- Updated prompting to use more natural phrasing about files, the git repo, etc. Removed reliance on read-write/read-only terminology.
+- Refactored prompting to unify some phrasing across edit formats.
+- Enhanced the canned assistant responses used in prompts.
+- Added explicit model settings for `openrouter/anthropic/claude-3-opus`, `gpt-3.5-turbo`
+- Added `-show-prompts` debug switch.
+
+
 ### v0.33.0
 
 - Added native support for [Deepseek models](https://aider.chat/docs/llms.html#deepseek) using `DEEPSEEK_API_KEY` and `deepseek/deepseek-chat`, etc rather than as a generic OpenAI compatible API.
