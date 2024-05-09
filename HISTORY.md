@@ -7,7 +7,8 @@
 - Refactored prompting to unify some phrasing across edit formats.
 - Enhanced the canned assistant responses used in prompts.
 - Added explicit model settings for `openrouter/anthropic/claude-3-opus`, `gpt-3.5-turbo`
-- Added `-show-prompts` debug switch.
+- Added `--show-prompts` debug switch.
+- Bugfix: catch and retry on all litellm exceptions.
 
 
 ### v0.33.0

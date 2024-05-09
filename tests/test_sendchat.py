@@ -2,8 +2,8 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 import httpx
-import openai
 
+from aider.litellm import litellm
 from aider.sendchat import send_with_retries
 
 
@@ -20,10 +20,11 @@ class TestSendChat(unittest.TestCase):
 
         # Set up the mock to raise
         mock_completion.side_effect = [
-            openai.RateLimitError(
+            litellm.exceptions.RateLimitError(
                 "rate limit exceeded",
                 response=mock,
-                body=None,
+                llm_provider="llm_provider",
+                model="model",
             ),
             None,
         ]
