@@ -1,7 +1,7 @@
 ---
 title: GPT code editing benchmarks
 excerpt: Benchmarking GPT-3.5 and GPT-4 code editing skill using a new code editing benchmark suite based on the Exercism python exercises.
-highlight_image: /assets/benchmarks.svg
+highlight_image: /assets/benchmarks.jpg
 ---
 # GPT code editing benchmarks
 
