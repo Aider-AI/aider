@@ -5,11 +5,11 @@ import backoff
 import httpx
 import openai
 
-# from diskcache import Cache
-from openai import APIConnectionError, InternalServerError, RateLimitError
-
 from aider.dump import dump  # noqa: F401
 from aider.litellm import litellm
+
+# from diskcache import Cache
+
 
 CACHE_PATH = "~/.aider.send.cache.v1"
 CACHE = None
@@ -26,12 +26,13 @@ def should_giveup(e):
 @backoff.on_exception(
     backoff.expo,
     (
-        InternalServerError,
-        RateLimitError,
-        APIConnectionError,
         httpx.ConnectError,
         httpx.RemoteProtocolError,
+        litellm.exceptions.APIConnectionError,
+        litellm.exceptions.APIError,
+        litellm.exceptions.RateLimitError,
         litellm.exceptions.ServiceUnavailableError,
+        litellm.exceptions.Timeout,
     ),
     giveup=should_giveup,
     max_time=60,
