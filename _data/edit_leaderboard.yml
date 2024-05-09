@@ -339,28 +339,28 @@
   seconds_per_case: 42.4
   total_cost: 0.0000
 
-- dirname: 2024-05-09-18-27-40--deepseek-chat-v2-diff-reverted-and-helpful-assistant
+- dirname: 2024-05-09-18-57-52--deepseek-chat-v2-diff-reverted-and-helpful-assistant2
   test_cases: 133
   model: deepseek/deepseek-chat
   edit_format: diff
-  commit_hash: 444d17d
-  pass_rate_1: 40.6
-  pass_rate_2: 57.9
-  percent_cases_well_formed: 93.2
-  error_outputs: 30
-  num_malformed_responses: 9
-  user_asks: 3
+  commit_hash: 80a3f6d
+  pass_rate_1: 44.4
+  pass_rate_2: 60.9
+  percent_cases_well_formed: 97.0
+  error_outputs: 14
+  num_malformed_responses: 4
+  user_asks: 2
   lazy_comments: 0
-  syntax_errors: 2
+  syntax_errors: 13
   indentation_errors: 0
   exhausted_context_windows: 0
-  test_timeouts: 2
+  test_timeouts: 3
   command: aider --model deepseek/deepseek-chat
   date: 2024-05-09
   versions: 0.33.1-dev
-  seconds_per_case: 102.4
-  total_cost: 0.1006
-
+  seconds_per_case: 86.8
+  total_cost: 0.0941
+  
 - dirname: 2024-05-07-20-32-37--qwen1.5-110b-chat-whole
   test_cases: 133
   model: qwen1.5-110b-chat
