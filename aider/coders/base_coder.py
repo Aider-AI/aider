@@ -423,7 +423,10 @@ class Coder:
         if repo_content:
             files_messages += [
                 dict(role="user", content=repo_content),
-                dict(role="assistant", content="Ok."),
+                dict(
+                    role="assistant",
+                    content="Ok, I won't try and edit those files without asking first.",
+                ),
             ]
 
         if self.abs_fnames:
@@ -434,7 +437,10 @@ class Coder:
 
         files_messages += [
             dict(role="user", content=files_content),
-            dict(role="assistant", content="Ok."),
+            dict(
+                role="assistant",
+                content="Ok, I will propose edits to those files to complete your request.",
+            ),
         ]
 
         images_message = self.get_images_message()

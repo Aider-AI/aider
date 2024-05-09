@@ -20,9 +20,7 @@ You always COMPLETELY IMPLEMENT the needed code!
 
     files_no_full_files = "I am not sharing any files that you can edit yet."
 
-    repo_content_prefix = """I'm discussing files that are part of a git repository.
-Here are summaries of some files present in my git repo.
+    repo_content_prefix = """Here are summaries of some files present in my git repository.
 Do not propose changes to these files, treat them as *read-only*.
-If you need to edit any of these files, ask me to *add them to the chat* first,
-so I can show you their full content.
+If you need to edit any of these files, ask me to *add them to the chat* first.
 """
