@@ -341,7 +341,7 @@
 
 - dirname: 2024-05-09-18-57-52--deepseek-chat-v2-diff-reverted-and-helpful-assistant2
   test_cases: 133
-  model: deepseek/deepseek-chat
+  model: deepseek-chat v2 (diff)
   edit_format: diff
   commit_hash: 80a3f6d
   pass_rate_1: 44.4
