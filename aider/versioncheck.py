@@ -13,12 +13,19 @@ def check_version(print_cmd):
         latest_version = data["info"]["version"]
         current_version = aider.__version__
 
-        is_update_available = packaging.version.parse(latest_version) > packaging.version.parse(current_version)
+        is_update_available = packaging.version.parse(latest_version) > packaging.version.parse(
+            current_version
+        )
 
         if is_update_available:
-            print_cmd(f"Newer version v{latest_version} is available. To upgrade, run:")
+            print_cmd(
+                f"Newer version v{latest_version} is available. To upgrade, run:"  # noqa: E231
+            )
             py = sys.executable
-            print_cmd(f"{py} -m pip install --upgrade aider-chat")
+            if "pipx" in py:
+                print_cmd("pipx upgrade aider-chat")
+            else:
+                print_cmd(f"{py} -m pip install --upgrade aider-chat")
 
         return is_update_available
     except Exception as err:
