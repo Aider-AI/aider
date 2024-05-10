@@ -1,7 +1,7 @@
 
 # Release history
 
-### main
+### v0.34.0
 
 - Updated prompting to use more natural phrasing about files, the git repo, etc. Removed reliance on read-write/read-only terminology.
 - Refactored prompting to unify some phrasing across edit formats.
