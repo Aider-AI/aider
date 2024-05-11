@@ -1,6 +1,6 @@
 import argparse
 
-from aider import prompts
+from aider import models, prompts
 from aider.dump import dump  # noqa: F401
 from aider.sendchat import simple_send_with_retries
 
@@ -56,7 +56,21 @@ class ChatSummary:
         head = messages[:split_index]
         tail = messages[split_index:]
 
-        summary = self.summarize_all(head)
+        sized = sized[:split_index]
+        head.reverse()
+        sized.reverse()
+        keep = []
+        total = 0
+        model_max_input_tokens = self.model.info.get("max_input_tokens", 4096) - 512
+        for i in range(split_index):
+            total += sized[i][0]
+            if total > model_max_input_tokens:
+                break
+            keep.append(head[i])
+
+        keep.reverse()
+
+        summary = self.summarize_all(keep)
 
         tail_tokens = sum(tokens for tokens, msg in sized[split_index:])
         summary_tokens = self.token_count(summary)
@@ -90,41 +104,47 @@ class ChatSummary:
 
         return [dict(role="user", content=summary)]
 
+    def split_chat_history_markdown(self, text):
+        messages = []
+        assistant = []
+        lines = text.splitlines(keepends=True)
+        for line in lines:
+            if line.startswith("# "):
+                continue
+            if line.startswith(">"):
+                continue
+            if line.startswith("#### /"):
+                continue
+
+            if line.startswith("#### "):
+                if assistant:
+                    assistant = "".join(assistant)
+                    if assistant.strip():
+                        messages.append(dict(role="assistant", content=assistant))
+                    assistant = []
+
+                content = line[5:]
+                if content.strip() and content.strip() != "<blank>":
+                    messages.append(dict(role="user", content=line[5:]))
+                continue
+
+            assistant.append(line)
+
+        return messages
+
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("filename", help="Markdown file to parse")
     args = parser.parse_args()
 
+    model = models.Model("gpt-3.5-turbo")
+    summarizer = ChatSummary(model)
+
     with open(args.filename, "r") as f:
         text = f.read()
 
-    messages = []
-    assistant = []
-    for line in text.splitlines(keepends=True):
-        if line.startswith("# "):
-            continue
-        if line.startswith(">"):
-            continue
-        if line.startswith("#### /"):
-            continue
-
-        if line.startswith("#### "):
-            if assistant:
-                assistant = "".join(assistant)
-                if assistant.strip():
-                    messages.append(dict(role="assistant", content=assistant))
-                assistant = []
-
-            content = line[5:]
-            if content.strip() and content.strip() != "<blank>":
-                messages.append(dict(role="user", content=line[5:]))
-            continue
-
-        assistant.append(line)
-
-    summarizer = ChatSummary("gpt-3.5-turbo", weak_model=False)
-    summary = summarizer.summarize(messages[-40:])
+    summary = summarizer.summarize_chat_history_markdown(text)
     dump(summary)
 
 

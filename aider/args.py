@@ -151,6 +151,12 @@ def get_parser(default_config_files, git_root):
         default=1024,
         help="Max number of tokens to use for repo map, use 0 to disable (default: 1024)",
     )
+    group.add_argument(
+        "--max-chat-history-tokens",
+        type=int,
+        default=None,
+        help="Maximum number of tokens to use for chat history. If not specified, uses the model's max_chat_history_tokens.",
+    )
     default_env_file = os.path.join(git_root, ".env") if git_root else ".env"
     group.add_argument(
         "--env-file",

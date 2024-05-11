@@ -165,6 +165,9 @@ class Coder:
         for fname in self.get_inchat_relative_files():
             lines.append(f"Added {fname} to the chat.")
 
+        if self.done_messages:
+            lines.append("Restored previous conversation history.")
+
         return lines
 
     def __init__(
@@ -188,6 +191,7 @@ class Coder:
         aider_ignore_file=None,
         cur_messages=None,
         done_messages=None,
+        max_chat_history_tokens=None,
     ):
         if not fnames:
             fnames = []
@@ -282,13 +286,21 @@ class Coder:
                 self.verbose,
             )
 
+        if max_chat_history_tokens is None:
+            max_chat_history_tokens = self.main_model.max_chat_history_tokens
         self.summarizer = ChatSummary(
             self.main_model.weak_model,
-            self.main_model.max_chat_history_tokens,
+            max_chat_history_tokens,
         )
 
         self.summarizer_thread = None
         self.summarized_done_messages = []
+
+        if not self.done_messages:
+            history_md = self.io.read_text(self.io.chat_history_file)
+            if history_md:
+                self.done_messages = self.summarizer.split_chat_history_markdown(history_md)
+                self.summarize_start()
 
         # validate the functions jsonschema
         if self.functions:
