@@ -57,8 +57,6 @@ class EditBlockCoder(Coder):
             full_path = self.abs_root_path(path)
             content = self.io.read_text(full_path)
 
-            did_you_mean = find_similar_lines(original, content)
-
             res += f"""
 ## SearchReplaceNoExactMatch: This SEARCH block failed to exactly match lines in {path}
 <<<<<<< SEARCH
@@ -66,10 +64,20 @@ class EditBlockCoder(Coder):
 =======
 {updated}
 >>>>>>> REPLACE
-{did_you_mean}
+
 """
+            did_you_mean = find_similar_lines(original, content)
+            if did_you_mean:
+                res += f"""Did you mean to match some of these actual lines from {path}?
+
+{self.fence[0]}
+{did_you_mean}
+{self.fence[1]}
+
+"""
+
         res += (
-            "\nThe SEARCH section must exactly match an existing block of lines including all white"
+            "The SEARCH section must exactly match an existing block of lines including all white"
             " space, comments, indentation, docstrings, etc\n"
         )
         if passed:
@@ -465,21 +473,32 @@ Tooooo
 Hope you like it!
 """
     print(list(find_original_update_blocks(edit)))
+
+
 def find_similar_lines(search_lines, content_lines, threshold=0.8):
     search_lines = search_lines.splitlines()
     content_lines = content_lines.splitlines()
-    
+
     best_ratio = 0
     best_match = None
-    
+
     for i in range(len(content_lines) - len(search_lines) + 1):
-        chunk = content_lines[i:i+len(search_lines)]
+        chunk = content_lines[i : i + len(search_lines)]
         ratio = SequenceMatcher(None, search_lines, chunk).ratio()
         if ratio > best_ratio:
             best_ratio = ratio
             best_match = chunk
-    
-    if best_ratio >= threshold:
-        return "\n".join(best_match)
-    else:
+            best_match_i = i
+
+    if best_ratio < threshold:
         return ""
+
+    if best_match[0] == search_lines[0] and best_match[-1] == search_lines[-1]:
+        return "\n".join(best_match)
+
+    N = 5
+    best_match_end = min(len(content_lines), best_match_i + len(search_lines) + N)
+    best_match_i = max(0, best_match_i - N)
+
+    best = content_lines[best_match_i:best_match_end]
+    return "\n".join(best)
