@@ -1098,12 +1098,14 @@ class Coder:
             if self.apply_update_errors < self.max_apply_update_errors:
                 self.io.tool_error(f"Malformed response #{self.apply_update_errors}, retrying...")
                 self.io.tool_error("https://aider.chat/docs/faq.html#aider-isnt-editing-my-files")
-                self.io.tool_error(str(err))
+                for line in str(err).splitlines():
+                    self.io.tool_error(line)
                 return None, err
             else:
                 self.io.tool_error(f"Malformed response #{self.apply_update_errors}, aborting.")
                 self.io.tool_error("https://aider.chat/docs/faq.html#aider-isnt-editing-my-files")
-                self.io.tool_error(str(err))
+                for line in str(err).splitlines():
+                    self.io.tool_error(line)
                 return False, None
 
         except git.exc.GitCommandError as err:
