@@ -60,10 +60,8 @@ class EditBlockCoder(Coder):
             res += f"""
 ## SearchReplaceNoExactMatch: This SEARCH block failed to exactly match lines in {path}
 <<<<<<< SEARCH
-{original}
-=======
-{updated}
->>>>>>> REPLACE
+{original}=======
+{updated}>>>>>>> REPLACE
 
 """
             did_you_mean = find_similar_lines(original, content)
@@ -76,6 +74,11 @@ class EditBlockCoder(Coder):
 
 """
 
+            if updated in content:
+                res += f"""Are you sure you need this SEARCH/REPLACE block?
+The REPLACE lines are already in {path}!
+
+"""
         res += (
             "The SEARCH section must exactly match an existing block of lines including all white"
             " space, comments, indentation, docstrings, etc\n"
