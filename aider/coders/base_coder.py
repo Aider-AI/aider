@@ -432,7 +432,7 @@ class Coder:
         if self.abs_fnames:
             files_content = self.gpt_prompts.files_content_prefix
             files_content += self.get_files_content()
-            files_reply = "Ok, I will propose edits to those files to complete your request."
+            files_reply = "Ok, any changes I propose will be to those files."
         else:
             files_content = self.gpt_prompts.files_no_full_files
             files_reply = "Ok."

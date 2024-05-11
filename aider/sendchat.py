@@ -28,6 +28,7 @@ def should_giveup(e):
     (
         httpx.ConnectError,
         httpx.RemoteProtocolError,
+        httpx.ReadTimeout,
         litellm.exceptions.APIConnectionError,
         litellm.exceptions.APIError,
         litellm.exceptions.RateLimitError,
