@@ -299,7 +299,7 @@ class Coder:
         if not self.done_messages:
             history_md = self.io.read_text(self.io.chat_history_file)
             if history_md:
-                self.done_messages = self.summarizer.split_chat_history_markdown(history_md)
+                self.done_messages = utils.split_chat_history_markdown(history_md)
                 self.summarize_start()
 
         # validate the functions jsonschema

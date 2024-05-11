@@ -105,3 +105,32 @@ def show_messages(messages, title=None, functions=None):
 
     if functions:
         dump(functions)
+
+
+def split_chat_history_markdown(text):
+    messages = []
+    assistant = []
+    lines = text.splitlines(keepends=True)
+    for line in lines:
+        if line.startswith("# "):
+            continue
+        if line.startswith(">"):
+            continue
+        if line.startswith("#### /"):
+            continue
+
+        if line.startswith("#### "):
+            if assistant:
+                assistant = "".join(assistant)
+                if assistant.strip():
+                    messages.append(dict(role="assistant", content=assistant))
+                assistant = []
+
+            content = line[5:]
+            if content.strip() and content.strip() != "<blank>":
+                messages.append(dict(role="user", content=line[5:]))
+            continue
+
+        assistant.append(line)
+
+    return messages
