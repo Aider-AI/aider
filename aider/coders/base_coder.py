@@ -738,7 +738,10 @@ class Coder:
 
         add_rel_files_message = self.check_for_file_mentions(content)
         if add_rel_files_message:
-            self.reflected_message = add_rel_files_message
+            if self.reflected_message:
+                self.reflected_message += "\n\n" + add_rel_files_message
+            else:
+                self.reflected_message = add_rel_files_message
 
     def update_cur_messages(self, edited):
         if self.partial_response_content:
@@ -1099,13 +1102,13 @@ class Coder:
                 self.io.tool_error(f"Malformed response #{self.apply_update_errors}, retrying...")
                 self.io.tool_error("https://aider.chat/docs/faq.html#aider-isnt-editing-my-files")
                 for line in str(err).splitlines():
-                    self.io.tool_error(line)
+                    self.io.tool_error(line, strip=False)
                 return None, err
             else:
                 self.io.tool_error(f"Malformed response #{self.apply_update_errors}, aborting.")
                 self.io.tool_error("https://aider.chat/docs/faq.html#aider-isnt-editing-my-files")
                 for line in str(err).splitlines():
-                    self.io.tool_error(line)
+                    self.io.tool_error(line, strip=False)
                 return False, None
 
         except git.exc.GitCommandError as err:

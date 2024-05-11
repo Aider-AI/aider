@@ -1,7 +1,7 @@
+import base64
 import os
 from collections import defaultdict
 from datetime import datetime
-import base64
 from pathlib import Path
 
 from prompt_toolkit.completion import Completer, Completion
@@ -16,8 +16,8 @@ from pygments.util import ClassNotFound
 from rich.console import Console
 from rich.text import Text
 
-from .utils import is_image_file
 from .dump import dump  # noqa: F401
+from .utils import is_image_file
 
 
 class AutoCompleter(Completer):
@@ -141,12 +141,11 @@ class InputOutput:
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
 
-
     def read_image(self, filename):
         try:
             with open(str(filename), "rb") as image_file:
                 encoded_string = base64.b64encode(image_file.read())
-                return encoded_string.decode('utf-8')
+                return encoded_string.decode("utf-8")
         except FileNotFoundError:
             self.tool_error(f"{filename}: file not found error")
             return
@@ -326,11 +325,14 @@ class InputOutput:
 
         return res
 
-    def tool_error(self, message):
+    def tool_error(self, message, strip=True):
         self.num_error_outputs += 1
 
         if message.strip():
-            hist = f"{message.strip()}"
+            if strip:
+                hist = message.strip()
+            else:
+                hist = message
             self.append_chat_history(hist, linebreak=True, blockquote=True)
 
         message = Text(message)
