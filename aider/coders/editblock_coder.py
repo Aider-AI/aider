@@ -57,7 +57,7 @@ class EditBlockCoder(Coder):
             full_path = self.abs_root_path(path)
             content = self.io.read_text(full_path)
 
-            did_you_mean = find_similar_lines(original, content)
+            did_you_mean = find_similar_text(original, content)
 
             res += f"""
 ## SearchReplaceNoExactMatch: This SEARCH block failed to exactly match lines in {path}
