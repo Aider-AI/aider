@@ -20,6 +20,13 @@ def should_giveup(e):
     if not hasattr(e, "status_code"):
         return False
 
+    if type(e) in (
+        httpx.ConnectError,
+        httpx.RemoteProtocolError,
+        httpx.ReadTimeout,
+    ):
+        return False
+
     return not litellm._should_retry(e.status_code)
 
 
