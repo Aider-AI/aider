@@ -464,3 +464,21 @@ Tooooo
 Hope you like it!
 """
     print(list(find_original_update_blocks(edit)))
+from difflib import SequenceMatcher
+
+def find_similar_text(original, content):
+    content_len = len(content)
+    original_len = len(original)
+    
+    best_ratio = 0
+    best_match = None
+    
+    for i in range(content_len - original_len + 1):
+        chunk = content[i:i+original_len]
+        ratio = SequenceMatcher(None, original, chunk).ratio()
+        
+        if ratio > best_ratio:
+            best_ratio = ratio
+            best_match = chunk
+
+    return best_match
