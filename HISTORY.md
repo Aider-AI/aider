@@ -1,6 +1,10 @@
 
 # Release history
 
+### main
+
+- Restores prior chat history on launch, so you can continue the last conversation.
+
 ### v0.34.0
 
 - Updated prompting to use more natural phrasing about files, the git repo, etc. Removed reliance on read-write/read-only terminology.
