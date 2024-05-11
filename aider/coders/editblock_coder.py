@@ -57,7 +57,7 @@ class EditBlockCoder(Coder):
             full_path = self.abs_root_path(path)
             content = self.io.read_text(full_path)
 
-            did_you_mean = find_similar_text(original, content)
+            did_you_mean = find_similar_lines(original, content)
 
             res += f"""
 ## SearchReplaceNoExactMatch: This SEARCH block failed to exactly match lines in {path}
@@ -66,6 +66,7 @@ class EditBlockCoder(Coder):
 =======
 {updated}
 >>>>>>> REPLACE
+{did_you_mean}
 """
         res += (
             "\nThe SEARCH section must exactly match an existing block of lines including all white"
@@ -464,21 +465,3 @@ Tooooo
 Hope you like it!
 """
     print(list(find_original_update_blocks(edit)))
-from difflib import SequenceMatcher
-
-def find_similar_text(original, content):
-    content_len = len(content)
-    original_len = len(original)
-    
-    best_ratio = 0
-    best_match = None
-    
-    for i in range(content_len - original_len + 1):
-        chunk = content[i:i+original_len]
-        ratio = SequenceMatcher(None, original, chunk).ratio()
-        
-        if ratio > best_ratio:
-            best_ratio = ratio
-            best_match = chunk
-
-    return best_match
