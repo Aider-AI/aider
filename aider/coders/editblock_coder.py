@@ -24,24 +24,47 @@ class EditBlockCoder(Coder):
         return edits
 
     def apply_edits(self, edits):
-        for path, original, updated in edits:
+        failed = []
+        passed = []
+        for edit in edits:
+            path, original, updated = edit
             full_path = self.abs_root_path(path)
             content = self.io.read_text(full_path)
             content = do_replace(full_path, content, original, updated, self.fence)
             if content:
                 self.io.write_text(full_path, content)
-                continue
-            raise ValueError(f"""InvalidEditBlock: edit failed!
+                passed.append(edit)
+            else:
+                failed.append(edit)
 
-{path} does not contain the *exact chunk* of SEARCH lines you specified.
-Try again.
-DO NOT skip blank lines, comments, docstrings, etc!
-The SEARCH block needs to be EXACTLY the same as the lines in {path} with nothing missing!
+        if not failed:
+            return
 
-{path} does not contain these {len(original.splitlines())} exact lines in a row:
-```
-{original}```
-""")
+        blocks = "block" if len(failed) == 1 else "blocks"
+
+        res = f"# {len(failed)} SEARCH/REPLACE {blocks} failed to match!\n"
+        for edit in failed:
+            path, original, updated = edit
+            res += f"""
+## SearchReplaceNoExactMatch: This SEARCH block failed to exactly match lines in {path}
+<<<<<<< SEARCH
+{original}
+=======
+{updated}
+>>>>>>> REPLACE
+"""
+        res += (
+            "\nThe SEARCH section must exactly match an existing block of lines including all white"
+            " space, comments, indentation, docstrings, etc\n"
+        )
+        if passed:
+            pblocks = "block" if len(passed) == 1 else "blocks"
+            res += f"""
+# The other {len(passed)} SEARCH/REPLACE {pblocks} were applied successfully.
+Don't re-send them.
+Just reply with fixed versions of the {blocks} above that failed to match.
+"""
+        raise ValueError(res)
 
 
 def prep(content):
