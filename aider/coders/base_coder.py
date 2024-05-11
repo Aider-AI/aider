@@ -744,7 +744,7 @@ class Coder:
         words = set(word for word in content.split())
 
         # drop sentence punctuation from the end
-        words = set(word.rstrip(",.!;") for word in words)
+        words = set(word.rstrip(",.!;:") for word in words)
 
         # strip away all kinds of quotes
         quotes = "".join(['"', "'", "`"])
