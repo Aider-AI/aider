@@ -85,6 +85,16 @@ MODEL_SETTINGS = [
         reminder_as_sys_msg=True,
     ),
     ModelSettings(
+        "gpt-4o",
+        "udiff",
+        weak_model_name="gpt-3.5-turbo",
+        use_repo_map=True,
+        send_undo_reply=True,
+        accepts_images=True,
+        lazy=True,
+        reminder_as_sys_msg=True,
+    ),
+    ModelSettings(
         "gpt-4-0125-preview",
         "udiff",
         weak_model_name="gpt-3.5-turbo",
