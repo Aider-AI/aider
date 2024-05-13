@@ -21,6 +21,13 @@ GPT-4o tops the aider LLM code editing leaderboard at 72.9%, versus 68.4% for Op
 
 GPT-4o did much better than the 4-turbo models, and seems *much* less lazy.
 
+GPT-4o is also able to use aider's established "diff" edit format that uses
+`SEARCH/REPLACE` blocks.
+This diff format is used by all the other capable models, including Opus and
+the original GPT-4 models
+The GPT-4 Turbo models have all required the "udiff" edit format, due to their
+tendancy to lazy coding.
+
 
 ## Code editing leaderboard
 
