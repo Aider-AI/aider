@@ -17,7 +17,7 @@ it works best with models that score well on the benchmarks.
 
 ## GPT-4o
 
-GPT-4o tops the aider LLM code editing leaderboard at 72.9%, versus 68.4% for Opus. GPT-4o takes second on aider's refactoring leaderboard with XX, versus Opus at 72.3%.
+GPT-4o tops the aider LLM code editing leaderboard at 72.9%, versus 68.4% for Opus. GPT-4o takes second on aider's refactoring leaderboard with 62.9%, versus Opus at 72.3%.
 
 GPT-4o did much better than the 4-turbo models, and seems *much* less lazy.
 
