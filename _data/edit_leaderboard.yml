@@ -248,7 +248,7 @@
   indentation_errors: 2
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider
+  command: aider --model gpt-4-1106-preview
   date: 2024-05-08
   versions: 0.33.1-dev
   seconds_per_case: 20.4
@@ -420,7 +420,7 @@
   indentation_errors: 2
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openai/gpt-4o
+  command: aider
   date: 2024-05-13
   versions: 0.34.1-dev
   seconds_per_case: 6.0
