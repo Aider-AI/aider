@@ -85,7 +85,7 @@ MODEL_SETTINGS = [
         reminder_as_sys_msg=True,
     ),
     ModelSettings(
-        "gpt-4o",
+        "openai/gpt-4o",
         "udiff",
         weak_model_name="gpt-3.5-turbo",
         use_repo_map=True,
