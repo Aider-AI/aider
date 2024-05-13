@@ -2,8 +2,7 @@
 highlight_image: /assets/leaderboard.jpg
 ---
 
-# GPT-4o tops the Aider LLM leaderboards
-
+# GPT-4o takes #1 & #2 on the Aider LLM leaderboards
 
 Aider works best with LLMs which are good at *editing* code, not just good at writing
 code.
