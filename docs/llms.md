@@ -5,7 +5,7 @@
 
 ## Best models
 
-**Aider works best with [GPT-4 Turbo](#openai) and [Claude 3 Opus](#anthropic),**
+**Aider works best with [GPT-4o](#openai) and [Claude 3 Opus](#anthropic),**
 as they are the very best models for editing code.
 
 ## Free models
@@ -76,11 +76,8 @@ pip install aider-chat
 export OPENAI_API_KEY=<key> # Mac/Linux
 setx   OPENAI_API_KEY <key> # Windows
 
-# GPT-4o is used by default
+# GPT-4o is the best model, used by default
 aider
-
-# GPT-4 Turbo with Vision
-aider --4-turbo-vision
 
 # GPT-3.5 Turbo
 aider --35-turbo
