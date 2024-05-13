@@ -75,9 +75,9 @@ def get_parser(default_config_files, git_root):
         const=gpt_4o_model,
         help=f"Use {gpt_4o_model} model for the main chat",
     )
-    gpt_4_turbo_model = "gpt-4-turbo"
+    gpt_4_turbo_model = "gpt-4-1106-preview"
     group.add_argument(
-        "--4-turbo-vision",
+        "--4-turbo",
         action="store_const",
         dest="model",
         const=gpt_4_turbo_model,

@@ -79,6 +79,9 @@ setx   OPENAI_API_KEY <key> # Windows
 # GPT-4o is the best model, used by default
 aider
 
+# GPT-4 Turbo (1106)
+aider --4-turbo
+
 # GPT-3.5 Turbo
 aider --35-turbo
 
