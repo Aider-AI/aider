@@ -4,10 +4,9 @@
 ### v0.35.0
 
 - Aider now uses GPT-4o by default.
-  - GPT-4o tops the aider LLM code editing leaderboard at 72.9%, versus 68.4% for Opus.
-  - GPT-4o takes second on aider's refactoring leaderboard with 62.9%, versus Opus at 72.3%.
-  
-- Restores prior chat history on launch, so you can continue the last conversation.
+  - GPT-4o tops the [aider LLM code editing leaderboard](https://aider.chat/docs/leaderboards/) at 72.9%, versus 68.4% for Opus.
+  - GPT-4o takes second on [aider's refactoring leaderboard](https://aider.chat/docs/leaderboards/#code-refactoring-leaderboard) with 62.9%, versus Opus at 72.3%.
+- Added `--restore-chat-history` to restore prior chat history on launch, so you can continue the last conversation.
 
 ### v0.34.0
 
