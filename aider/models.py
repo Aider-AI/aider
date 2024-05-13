@@ -11,7 +11,7 @@ from PIL import Image
 from aider.dump import dump  # noqa: F401
 from aider.litellm import litellm
 
-DEFAULT_MODEL_NAME = "gpt-4-1106-preview"
+DEFAULT_MODEL_NAME = "openai/gpt-4o"
 
 
 @dataclass
@@ -86,7 +86,7 @@ MODEL_SETTINGS = [
     ),
     ModelSettings(
         "openai/gpt-4o",
-        "udiff",
+        "diff",
         weak_model_name="gpt-3.5-turbo",
         use_repo_map=True,
         send_undo_reply=True,
@@ -248,6 +248,20 @@ class Model:
             self.info = litellm.get_model_info(model)
         except Exception:
             self.info = dict()
+
+        if not self.info and "gpt-4o" in self.name:
+            self.info = {
+                "max_tokens": 4096,
+                "max_input_tokens": 128000,
+                "max_output_tokens": 4096,
+                "input_cost_per_token": 5e-06,
+                "output_cost_per_token": 1.5e-5,
+                "litellm_provider": "openai",
+                "mode": "chat",
+                "supports_function_calling": True,
+                "supports_parallel_function_calling": True,
+                "supports_vision": True,
+            }
 
         # Are all needed keys/params available?
         res = self.validate_environment()

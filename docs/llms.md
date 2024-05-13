@@ -76,7 +76,7 @@ pip install aider-chat
 export OPENAI_API_KEY=<key> # Mac/Linux
 setx   OPENAI_API_KEY <key> # Windows
 
-# GPT-4 Turbo is used by default
+# GPT-4o is used by default
 aider
 
 # GPT-4 Turbo with Vision

@@ -67,6 +67,14 @@ def get_parser(default_config_files, git_root):
         const=gpt_4_model,
         help=f"Use {gpt_4_model} model for the main chat",
     )
+    gpt_4o_model = "openai/gpt-4o"
+    group.add_argument(
+        "--4o",
+        action="store_const",
+        dest="model",
+        const=gpt_4o_model,
+        help=f"Use {gpt_4o_model} model for the main chat",
+    )
     gpt_4_turbo_model = "gpt-4-turbo"
     group.add_argument(
         "--4-turbo-vision",
@@ -155,7 +163,10 @@ def get_parser(default_config_files, git_root):
         "--max-chat-history-tokens",
         type=int,
         default=None,
-        help="Maximum number of tokens to use for chat history. If not specified, uses the model's max_chat_history_tokens.",
+        help=(
+            "Maximum number of tokens to use for chat history. If not specified, uses the model's"
+            " max_chat_history_tokens."
+        ),
     )
     default_env_file = os.path.join(git_root, ".env") if git_root else ".env"
     group.add_argument(
