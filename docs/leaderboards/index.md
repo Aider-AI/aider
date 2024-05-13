@@ -15,6 +15,13 @@ The leaderboards below report the results from a number of popular LLMs.
 While [aider can connect to almost any LLM](/docs/llms.html),
 it works best with models that score well on the benchmarks.
 
+## GPT-4o
+
+GPT-4o tops the aider LLM code editing leaderboard at 72.9%, versus 68.4% for Opus. GPT-4o takes second on aider's refactoring leaderboard with XX, versus Opus at 72.3%.
+
+GPT-4o did much better than the 4-turbo models, and seems *much* less lazy.
+
+
 ## Code editing leaderboard
 
 [Aider's code editing benchmark](/docs/benchmarks.html#the-benchmark) asks the LLM to edit python source files to complete 133 small coding exercises. This benchmark measures the LLM's coding ability, but also whether it can consistently emit code edits in the format specified in the system prompt.
