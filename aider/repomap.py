@@ -61,8 +61,13 @@ class RepoMap:
         if not other_files:
             return
 
+        max_map_tokens = self.max_map_tokens
+        if not chat_files:
+            # with no code in the chat, give a bigger view of the entire repo
+            max_map_tokens *= 4
+
         try:
-            files_listing = self.get_ranked_tags_map(chat_files, other_files)
+            files_listing = self.get_ranked_tags_map(chat_files, other_files, max_map_tokens)
         except RecursionError:
             self.io.tool_error("Disabling repo map, git repo too large?")
             self.max_map_tokens = 0
@@ -327,9 +332,11 @@ class RepoMap:
 
         return ranked_tags
 
-    def get_ranked_tags_map(self, chat_fnames, other_fnames=None):
+    def get_ranked_tags_map(self, chat_fnames, other_fnames=None, max_map_tokens=None):
         if not other_fnames:
             other_fnames = list()
+        if not max_map_tokens:
+            max_map_tokens = self.max_map_tokens
 
         ranked_tags = self.get_ranked_tags(chat_fnames, other_fnames)
         num_tags = len(ranked_tags)
@@ -345,7 +352,7 @@ class RepoMap:
             tree = self.to_tree(ranked_tags[:middle], chat_rel_fnames)
             num_tokens = self.token_count(tree)
 
-            if num_tokens < self.max_map_tokens:
+            if num_tokens < max_map_tokens:
                 best_tree = tree
                 lower_bound = middle + 1
             else:

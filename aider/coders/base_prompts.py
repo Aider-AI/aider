@@ -20,6 +20,11 @@ You always COMPLETELY IMPLEMENT the needed code!
 
     files_no_full_files = "I am not sharing any files that you can edit yet."
 
+    files_no_full_files_with_repo_map = """Tell me which files in my repo are the most likely to **need changes** to solve the requests I make.
+Only include the 1-2 files that are most likely to actually need to be edited.
+Don't include files that might contain relevant context, just files that will need to be changed.
+"""  # noqa: E501
+
     repo_content_prefix = """Here are summaries of some files present in my git repository.
 Do not propose changes to these files, treat them as *read-only*.
 If you need to edit any of these files, ask me to *add them to the chat* first.
