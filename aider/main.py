@@ -331,6 +331,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             voice_language=args.voice_language,
             aider_ignore_file=args.aiderignore,
             max_chat_history_tokens=args.max_chat_history_tokens,
+            restore_chat_history=args.restore_chat_history,
         )
 
     except ValueError as err:

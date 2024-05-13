@@ -192,6 +192,7 @@ class Coder:
         cur_messages=None,
         done_messages=None,
         max_chat_history_tokens=None,
+        restore_chat_history=False,
     ):
         if not fnames:
             fnames = []
@@ -296,7 +297,7 @@ class Coder:
         self.summarizer_thread = None
         self.summarized_done_messages = []
 
-        if not self.done_messages:
+        if not self.done_messages and restore_chat_history:
             history_md = self.io.read_text(self.io.chat_history_file)
             if history_md:
                 self.done_messages = utils.split_chat_history_markdown(history_md)
