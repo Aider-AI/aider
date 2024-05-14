@@ -360,6 +360,8 @@ class RepoMap:
         # Guess a small starting number to help with giant repos
         middle = min(max_map_tokens // 25, num_tags)
 
+        self.tree_cache = dict()
+
         while lower_bound <= upper_bound:
             tree = self.to_tree(ranked_tags[:middle], chat_rel_fnames)
             num_tokens = self.token_count(tree)
@@ -387,6 +389,11 @@ class RepoMap:
     tree_cache = dict()
 
     def render_tree(self, abs_fname, rel_fname, lois):
+        key = (rel_fname, tuple(sorted(lois)))
+
+        if key in self.tree_cache:
+            return self.tree_cache[key]
+
         code = self.io.read_text(abs_fname) or ""
         if not code.endswith("\n"):
             code += "\n"
@@ -407,7 +414,9 @@ class RepoMap:
 
         context.add_lines_of_interest(lois)
         context.add_context()
-        return context.format()
+        res = context.format()
+        self.tree_cache[key] = res
+        return res
 
     def to_tree(self, tags, chat_rel_fnames):
         if not tags:
