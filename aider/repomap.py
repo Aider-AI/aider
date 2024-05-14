@@ -78,7 +78,7 @@ class RepoMap:
 
         num_tokens = self.token_count(files_listing)
         if self.verbose:
-            self.io.tool_output(f"Repo-map: {num_tokens/1024:.1f} k-tokens")  # noqa: E226, E231
+            self.io.tool_output(f"Repo-map: {num_tokens/1024:.1f} k-tokens")
 
         if chat_files:
             other = "other "
@@ -454,7 +454,7 @@ def find_src_files(directory):
 def get_random_color():
     hue = random.random()
     r, g, b = [int(x * 255) for x in colorsys.hsv_to_rgb(hue, 1, 0.75)]
-    res = f"#{r:02x}{g:02x}{b:02x}"  # noqa: E231
+    res = f"#{r:02x}{g:02x}{b:02x}"
     return res
 
 
