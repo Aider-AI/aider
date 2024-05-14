@@ -762,7 +762,7 @@ class Coder:
                 )
             ]
 
-    def check_for_file_mentions(self, content):
+    def get_file_mentions(self, content):
         words = set(word for word in content.split())
 
         # drop sentence punctuation from the end
@@ -781,13 +781,21 @@ class Coder:
                 mentioned_rel_fnames.add(str(rel_fname))
 
             fname = os.path.basename(rel_fname)
-            if fname not in fname_to_rel_fnames:
-                fname_to_rel_fnames[fname] = []
-            fname_to_rel_fnames[fname].append(rel_fname)
+
+            # Don't add basenames that could be plain words like "run" or "make"
+            if "/" in fname or "." in fname:
+                if fname not in fname_to_rel_fnames:
+                    fname_to_rel_fnames[fname] = []
+                fname_to_rel_fnames[fname].append(rel_fname)
 
         for fname, rel_fnames in fname_to_rel_fnames.items():
             if len(rel_fnames) == 1 and fname in words:
                 mentioned_rel_fnames.add(rel_fnames[0])
+
+        return mentioned_rel_fnames
+
+    def check_for_file_mentions(self, content):
+        mentioned_rel_fnames = self.get_file_mentions(content)
 
         if not mentioned_rel_fnames:
             return

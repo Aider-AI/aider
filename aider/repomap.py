@@ -225,7 +225,7 @@ class RepoMap:
 
         fnames = sorted(fnames)
 
-        if self.cache_missing:
+        if self.cache_missing or True:
             fnames = tqdm(fnames)
         self.cache_missing = False
 
@@ -338,24 +338,15 @@ class RepoMap:
         if not max_map_tokens:
             max_map_tokens = self.max_map_tokens
 
-        dump(max_map_tokens, self.max_map_tokens)
-
         ranked_tags = self.get_ranked_tags(chat_fnames, other_fnames)
-        # dump(ranked_tags)
 
         num_tags = len(ranked_tags)
-
-        dump(num_tags, max_map_tokens)
-
         lower_bound = 0
         upper_bound = num_tags
-
         best_tree = None
         best_tree_tokens = 0
 
         chat_rel_fnames = [self.get_rel_fname(fname) for fname in chat_fnames]
-
-        print("#" * 80)
 
         # Guess a small starting number to help with giant repos
         middle = min(max_map_tokens // 25, num_tags)
@@ -366,14 +357,7 @@ class RepoMap:
             tree = self.to_tree(ranked_tags[:middle], chat_rel_fnames)
             num_tokens = self.token_count(tree)
 
-            dump(lower_bound, middle, upper_bound)
-            dump(num_tokens)
-            dump(num_tokens / middle)
-
-            # dump(len(tree))
-
             if num_tokens < max_map_tokens and num_tokens > best_tree_tokens:
-                print(f"best_tree: {num_tokens} tokens, {middle} middle")
                 best_tree = tree
                 best_tree_tokens = num_tokens
 
