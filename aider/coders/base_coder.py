@@ -448,7 +448,10 @@ class Coder:
             files_reply = "Ok, any changes I propose will be to those files."
         elif repo_content:
             files_content = self.gpt_prompts.files_no_full_files_with_repo_map
-            files_reply = "Ok, based on your requests I will suggest which files need to be edited."
+            files_reply = (
+                "Ok, based on your requests I will suggest which files need to be edited and then"
+                " stop and wait for your approval."
+            )
         else:
             files_content = self.gpt_prompts.files_no_full_files
             files_reply = "Ok."

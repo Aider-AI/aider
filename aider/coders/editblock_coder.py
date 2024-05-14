@@ -478,7 +478,7 @@ Hope you like it!
     print(list(find_original_update_blocks(edit)))
 
 
-def find_similar_lines(search_lines, content_lines, threshold=0.9):
+def find_similar_lines(search_lines, content_lines, threshold=0.8):
     search_lines = search_lines.splitlines()
     content_lines = content_lines.splitlines()
 
