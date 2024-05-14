@@ -68,7 +68,9 @@ class RepoMap:
         max_map_tokens = self.max_map_tokens
         if not chat_files:
             # with no code in the chat, give a bigger view of the entire repo
-            max_map_tokens *= 8
+            max_map_tokens *= 16
+
+        dump(max_map_tokens)
 
         try:
             files_listing = self.get_ranked_tags_map(

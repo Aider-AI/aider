@@ -3,6 +3,7 @@
 import hashlib
 import json
 import os
+import re
 import sys
 import threading
 import time
@@ -416,16 +417,49 @@ class Coder:
 
         return prompt
 
+    def get_cur_message_text(self):
+        text = ""
+        for msg in self.cur_messages:
+            text += msg["content"] + "\n"
+        return text
+
+    def get_ident_mentions(self, text):
+        # Split the string on any character that is not alphanumeric
+        # \W+ matches one or more non-word characters (equivalent to [^a-zA-Z0-9_]+)
+        words = set(re.split(r"\W+", text))
+        return words
+
     def get_repo_map(self):
         if not self.repo_map:
             return
 
+        cur_msg_text = self.get_cur_message_text()
+        mentioned_fnames = self.get_file_mentions(cur_msg_text)
+        mentioned_idents = self.get_ident_mentions(cur_msg_text)
+
         other_files = set(self.get_all_abs_files()) - set(self.abs_fnames)
-        repo_content = self.repo_map.get_repo_map(self.abs_fnames, other_files)
+        repo_content = self.repo_map.get_repo_map(
+            self.abs_fnames,
+            other_files,
+            mentioned_fnames=mentioned_fnames,
+            mentioned_idents=mentioned_idents,
+        )
 
         # fall back to global repo map if files in chat are disjoint from rest of repo
         if not repo_content:
-            repo_content = self.repo_map.get_repo_map(set(), set(self.get_all_abs_files()))
+            repo_content = self.repo_map.get_repo_map(
+                set(),
+                set(self.get_all_abs_files()),
+                mentioned_fnames=mentioned_fnames,
+                mentioned_idents=mentioned_idents,
+            )
+
+        # fall back to completely unhinted repo
+        if not repo_content:
+            repo_content = self.repo_map.get_repo_map(
+                set(),
+                set(self.get_all_abs_files()),
+            )
 
         return repo_content
 
