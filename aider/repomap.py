@@ -345,35 +345,33 @@ class RepoMap:
 
         num_tags = len(ranked_tags)
 
+        dump(num_tags, max_map_tokens)
+
         lower_bound = 0
         upper_bound = num_tags
+
         best_tree = None
         best_tree_tokens = 0
 
         chat_rel_fnames = [self.get_rel_fname(fname) for fname in chat_fnames]
 
-        if False:
-            for i in range(num_tags):
-                print("making tree...")
-                tree = self.to_tree(ranked_tags[:i], chat_rel_fnames)
-                print("tokenizing")
-                num_tokens = self.token_count(tree)
-                # print('*'*50)
-                dump(i, num_tokens)
-                # print(tree)
+        print("#" * 80)
+
+        # Guess a small starting number to help with giant repos
+        middle = min(max_map_tokens // 25, num_tags)
 
         while lower_bound <= upper_bound:
-            middle = (lower_bound + upper_bound) // 2
-            # print("making tree...")
             tree = self.to_tree(ranked_tags[:middle], chat_rel_fnames)
-            # print("tokenizing")
             num_tokens = self.token_count(tree)
+
             dump(lower_bound, middle, upper_bound)
             dump(num_tokens)
+            dump(num_tokens / middle)
+
             # dump(len(tree))
 
             if num_tokens < max_map_tokens and num_tokens > best_tree_tokens:
-                print("best_tree", num_tokens)
+                print(f"best_tree: {num_tokens} tokens, {middle} middle")
                 best_tree = tree
                 best_tree_tokens = num_tokens
 
@@ -382,7 +380,34 @@ class RepoMap:
             else:
                 upper_bound = middle - 1
 
+            middle = (lower_bound + upper_bound) // 2
+
         return best_tree
+
+    tree_cache = dict()
+
+    def render_tree(self, abs_fname, rel_fname, lois):
+        code = self.io.read_text(abs_fname) or ""
+        if not code.endswith("\n"):
+            code += "\n"
+
+        context = TreeContext(
+            rel_fname,
+            code,
+            color=False,
+            line_number=False,
+            child_context=False,
+            last_line=False,
+            margin=0,
+            mark_lois=False,
+            loi_pad=0,
+            # header_max=30,
+            show_top_of_file_parent_scope=False,
+        )
+
+        context.add_lines_of_interest(lois)
+        context.add_context()
+        return context.format()
 
     def to_tree(self, tags, chat_rel_fnames):
         if not tags:
@@ -392,7 +417,8 @@ class RepoMap:
         tags = sorted(tags)
 
         cur_fname = None
-        context = None
+        cur_abs_fname = None
+        lois = None
         output = ""
 
         # add a bogus tag at the end so we trip the this_fname != cur_fname...
@@ -402,37 +428,20 @@ class RepoMap:
 
             # ... here ... to output the final real entry in the list
             if this_rel_fname != cur_fname:
-                if context:
-                    context.add_context()
+                if lois is not None:
                     output += "\n"
                     output += cur_fname + ":\n"
-                    output += context.format()
-                    context = None
+                    output += self.render_tree(cur_abs_fname, cur_fname, lois)
+                    lois = None
                 elif cur_fname:
                     output += "\n" + cur_fname + "\n"
-
                 if type(tag) is Tag:
-                    code = self.io.read_text(tag.fname) or ""
-                    if not code.endswith("\n"):
-                        code += "\n"
-
-                    context = TreeContext(
-                        tag.rel_fname,
-                        code,
-                        color=False,
-                        line_number=False,
-                        child_context=False,
-                        last_line=False,
-                        margin=0,
-                        mark_lois=False,
-                        loi_pad=0,
-                        # header_max=30,
-                        show_top_of_file_parent_scope=False,
-                    )
+                    lois = []
+                    cur_abs_fname = tag.fname
                 cur_fname = this_rel_fname
 
-            if context:
-                context.add_lines_of_interest([tag.line])
+            if lois is not None:
+                lois.append(tag.line)
 
         # truncate long lines, in case we get minified js or something else crazy
         output = "".join([line[:100] for line in output.splitlines(keepends=True)])
