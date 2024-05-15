@@ -426,3 +426,24 @@
   seconds_per_case: 6.0
   total_cost: 0.0000
 
+- dirname: 2024-04-12-22-11-22--gpt-4-turbo-2024-04-09-plain-udiff
+  test_cases: 133
+  model: gpt-4-turbo-2024-04-09 (udiff)
+  edit_format: udiff
+  commit_hash: 9b2e697-dirty
+  pass_rate_1: 44.4
+  pass_rate_2: 60.9
+  percent_cases_well_formed: 82.0
+  error_outputs: 72
+  num_malformed_responses: 24
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 4
+  exhausted_context_windows: 0
+  test_timeouts: 5
+  command: aider --model gpt-4-turbo-2024-04-09
+  date: 2024-04-12
+  versions: 0.28.1-dev
+  seconds_per_case: 22.0
+  total_cost: 6.3924
