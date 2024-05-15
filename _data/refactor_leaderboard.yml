@@ -103,7 +103,7 @@
 
 - dirname: 2024-05-13-17-42-22--refac-gpt-4o-diff
   test_cases: 89
-  model: openai/gpt-4o
+  model: gpt-4o
   edit_format: diff
   commit_hash: b6cd852
   pass_rate_1: 62.9

@@ -406,7 +406,7 @@
 
 - dirname: 2024-05-13-17-39-05--gpt-4o-diff
   test_cases: 133
-  model: openai/gpt-4o
+  model: gpt-4o
   edit_format: diff
   commit_hash: b6cd852
   pass_rate_1: 60.2
