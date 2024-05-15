@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import yaml
 from datetime import datetime
 from matplotlib import rc
+from imgcat import imgcat
 
 def plot_over_time(yaml_file):
     with open(yaml_file, 'r') as file:
@@ -34,7 +35,7 @@ def plot_over_time(yaml_file):
     ax.set_ylabel('Pass Rate 2')
     ax.set_title('Model Performance Over Time')
     plt.tight_layout()
-    plt.savefig("tmp_over_time.svg")
+    plt.savefig("tmp_over_time.png")
     imgcat(fig)
 
 # Example usage
