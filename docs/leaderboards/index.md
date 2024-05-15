@@ -185,6 +185,10 @@ Therefore, results are available for fewer models.
 </script>
 
 
+## LLM code editing skill by model release date
+
+[![connecting to many LLMs](/assets/models-over-time.png)](https://aider.chat/assets/models-over-time.png)
+
 
 ## Notes on benchmarking results
 
