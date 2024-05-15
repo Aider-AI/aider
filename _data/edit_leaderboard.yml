@@ -256,7 +256,7 @@
   
 - dirname: 2024-05-01-02-09-20--gpt-4-turbo-examples
   test_cases: 133
-  model: gpt-4-turbo-2024-04-09
+  model: gpt-4-turbo-2024-04-09 (udiff)
   edit_format: udiff
   commit_hash: e610e5b-dirty
   pass_rate_1: 48.1

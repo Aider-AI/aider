@@ -40,7 +40,7 @@
   total_cost: 27.9176
 - dirname: 2024-04-09-21-49-54--refac-gpt-4-turbo-2024-04-09
   test_cases: 88
-  model: gpt-4-turbo-2024-04-09
+  model: gpt-4-turbo-2024-04-09 (udiff)
   edit_format: udiff
   commit_hash: b75fdb9
   pass_rate_1: 34.1
