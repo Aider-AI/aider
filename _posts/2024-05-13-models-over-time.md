@@ -40,7 +40,13 @@ excerpt: A comparison of LLM code editing skill based on the release dates of th
             type: 'time',
             time: {
               unit: 'month',
-              tooltipFormat: 'll'
+              tooltipFormat: 'll',
+              parser: 'YYYY-MM-DD'
+            },
+            ticks: {
+              callback: function(value, index, values) {
+                return new Date(value).toLocaleDateString();
+              }
             },
             scaleLabel: {
               display: true,
