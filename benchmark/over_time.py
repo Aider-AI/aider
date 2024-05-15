@@ -17,7 +17,8 @@ def plot_over_time(yaml_file):
             models.append(entry['model'])
 
     plt.figure(figsize=(10, 6))
-    plt.scatter(dates, pass_rates, c='blue', alpha=0.5)
+    colors = ['red' if 'gpt-4' in model else 'blue' for model in models]
+    plt.scatter(dates, pass_rates, c=colors, alpha=0.5)
 
     for i, model in enumerate(models):
         plt.annotate(model, (dates[i], pass_rates[i]), fontsize=8, alpha=0.75)
