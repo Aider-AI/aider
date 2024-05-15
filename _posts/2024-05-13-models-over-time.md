@@ -36,7 +36,7 @@ excerpt: A comparison of LLM code editing skill based on the release dates of th
       data: scatterData,
       options: {
         scales: {
-          xAxes: [{
+          x: {
             type: 'time',
             time: {
               unit: 'month',
@@ -48,20 +48,18 @@ excerpt: A comparison of LLM code editing skill based on the release dates of th
                 return new Date(value).toLocaleDateString();
               }
             },
-            scaleLabel: {
+            title: {
               display: true,
-              labelString: 'Release Date'
+              text: 'Release Date'
             }
-          }],
-          yAxes: [{
-            scaleLabel: {
+          },
+          y: {
+            title: {
               display: true,
-              labelString: 'Pass Rate 2 (%)'
+              text: 'Pass Rate 2 (%)'
             },
-            ticks: {
-              beginAtZero: true
-            }
-          }]
+            beginAtZero: true
+          }
         },
         tooltips: {
           callbacks: {
