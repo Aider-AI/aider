@@ -29,7 +29,8 @@ def plot_over_time(yaml_file):
     ax.scatter(dates, pass_rates, c=colors, alpha=0.5)
 
     for i, model in enumerate(models):
-        ax.annotate(model, (dates[i], pass_rates[i]), fontsize=8, alpha=0.75)
+        ax.annotate(model, (dates[i], pass_rates[i]), fontsize=8, alpha=0.75,
+                    xytext=(5, 5), textcoords='offset points')
 
     ax.set_xlabel('Release Date')
     ax.set_ylabel('Pass Rate 2')
