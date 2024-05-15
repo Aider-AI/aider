@@ -18,3 +18,6 @@ exclude:
   - .github
   - node_modules
   - vendor
+  - Gemfile
+  - Gemfile.lock
+  - scripts
