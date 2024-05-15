@@ -16,7 +16,7 @@ excerpt: A comparison of LLM code editing skill based on the release dates of th
           {% for row in site.data.edit_leaderboard %}
             {% if row.released %}
               {
-                x: new Date('{{ row.released }}'),
+                x: new Date('{{ row.released | date: "%Y-%m-%dT%H:%M:%S" }}'),
                 y: {{ row.pass_rate_2 }},
                 label: '{{ row.model }}'
               },
