@@ -40,7 +40,7 @@
   total_cost: 27.9176
 - dirname: 2024-04-09-21-49-54--refac-gpt-4-turbo-2024-04-09
   test_cases: 88
-  model: gpt-4-turbo-2024-04-09
+  model: gpt-4-turbo-2024-04-09 (udiff)
   edit_format: udiff
   commit_hash: b75fdb9
   pass_rate_1: 34.1
@@ -103,7 +103,7 @@
 
 - dirname: 2024-05-13-17-42-22--refac-gpt-4o-diff
   test_cases: 89
-  model: openai/gpt-4o
+  model: gpt-4o
   edit_format: diff
   commit_hash: b6cd852
   pass_rate_1: 62.9
@@ -121,3 +121,26 @@
   versions: 0.34.1-dev
   seconds_per_case: 27.8
   total_cost: 0.0000
+
+- dirname: 2024-04-10-13-26-18--refac-gpt-4-turbo-2024-04-09-diff
+  test_cases: 88
+  model: gpt-4-turbo-2024-04-09 (diff)
+  edit_format: diff
+  commit_hash: 7875418
+  pass_rate_1: 21.4
+  percent_cases_well_formed: 6.8
+  error_outputs: 247
+  num_malformed_responses: 82
+  user_asks: 1
+  lazy_comments: 2
+  syntax_errors: 3
+  indentation_errors: 8
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model gpt-4-turbo-2024-04-09
+  date: 2024-04-10
+  versions: 0.28.1-dev
+  seconds_per_case: 67.8
+  total_cost: 20.4889
+
+  

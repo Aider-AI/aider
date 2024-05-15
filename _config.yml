@@ -11,3 +11,6 @@ defaults:
       type: "pages"
     values:
       description: "A command-line chat tool for coding with GPT"
+
+exclude:
+  - tmp.benchmarks

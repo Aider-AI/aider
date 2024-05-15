@@ -11,7 +11,7 @@ from PIL import Image
 from aider.dump import dump  # noqa: F401
 from aider.litellm import litellm
 
-DEFAULT_MODEL_NAME = "openai/gpt-4o"
+DEFAULT_MODEL_NAME = "gpt-4o"
 
 
 @dataclass
@@ -86,6 +86,16 @@ MODEL_SETTINGS = [
     ),
     ModelSettings(
         "openai/gpt-4o",
+        "diff",
+        weak_model_name="gpt-3.5-turbo",
+        use_repo_map=True,
+        send_undo_reply=True,
+        accepts_images=True,
+        lazy=True,
+        reminder_as_sys_msg=True,
+    ),
+    ModelSettings(
+        "gpt-4o",
         "diff",
         weak_model_name="gpt-3.5-turbo",
         use_repo_map=True,
