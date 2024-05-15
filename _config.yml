@@ -14,3 +14,7 @@ defaults:
 
 exclude:
   - tmp.benchmarks
+  - .git
+  - .github
+  - node_modules
+  - vendor
