@@ -13,5 +13,8 @@ RUN bundle install
 # Expose port 4000 to the host
 EXPOSE 4000
 
+# Health check to ensure the server is running
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s CMD curl -f http://localhost:4000 || exit 1
+
 # Run Jekyll server
 CMD ["jekyll", "serve", "--host", "0.0.0.0"]
