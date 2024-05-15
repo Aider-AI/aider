@@ -13,12 +13,12 @@ defaults:
       description: "A command-line chat tool for coding with GPT"
 
 exclude:
-  - tmp.benchmarks
-  - scripts
-  - Gemfile
-  - Gemfile.lock
-  - README.md
-  - other_directories_or_files_to_exclude
+  - "*"
+  - "!docs"
+  - "!_posts"
+  - "!_layouts"
+  - "!_data"
+  - "!_config.yml"
 CNAME
 CONTRIBUTING.md
 Dockerfile~
