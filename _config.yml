@@ -14,10 +14,3 @@ defaults:
 
 exclude:
   - tmp.benchmarks
-  - .git
-  - .github
-  - node_modules
-  - vendor
-  - Gemfile
-  - Gemfile.lock
-  - scripts
