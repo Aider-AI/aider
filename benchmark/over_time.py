@@ -16,7 +16,7 @@ def plot_over_time(yaml_file):
         if 'released' in entry and 'pass_rate_2' in entry:
             dates.append(entry['released'])
             pass_rates.append(entry['pass_rate_2'])
-            models.append(entry['model'])
+            models.append(entry['model'].split('(')[0].strip())
 
     plt.rcParams["hatch.linewidth"] = 0.5
     plt.rcParams["hatch.color"] = "#444444"
