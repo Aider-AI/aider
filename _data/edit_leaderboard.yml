@@ -1,6 +1,7 @@
 - dirname: 2024-05-01-20-05-59--direct-opus-filenames-outside-fence
   test_cases: 133
   model: claude-3-opus-20240229
+  released: 2024-02-29
   edit_format: diff
   commit_hash: f4b1797-dirty, f4b1797
   pass_rate_1: 53.4
@@ -19,9 +20,11 @@
   versions: 0.30.2-dev
   seconds_per_case: 32.4
   total_cost: 13.8395
+  
 - dirname: 2024-03-06-16-42-00--claude3-sonnet-whole
   test_cases: 133
   model: claude-3-sonnet-20240229
+  released: 2024-02-29
   edit_format: whole
   commit_hash: a5f8076-dirty
   pass_rate_1: 43.6
@@ -40,9 +43,11 @@
   versions: 0.25.1-dev
   seconds_per_case: 23.1
   total_cost: 0.0000
+  
 - dirname: 2024-04-29-19-17-28--deepseek-coder-whole
   test_cases: 132
   model: deepseek-coder
+  released: 2024-01-25
   edit_format: whole
   commit_hash: c07f793-dirty
   pass_rate_1: 47.0
@@ -61,6 +66,7 @@
   versions: 0.30.2-dev
   seconds_per_case: 26.7
   total_cost: 0.0000
+  
 - dirname: 2024-05-03-20-47-24--gemini-1.5-pro-diff-fenced
   test_cases: 133
   model: gemini-1.5-pro-latest
@@ -86,6 +92,7 @@
 - dirname: 2024-05-08-20-59-15--may-gpt-3.5-turbo-whole
   test_cases: 133
   model: gpt-3.5-turbo-0125
+  released: 2024-01-25
   edit_format: whole
   commit_hash: 1d55f74
   pass_rate_1: 41.4
@@ -108,6 +115,7 @@
 - dirname: 2023-11-06-21-23-59--gpt-3.5-turbo-0301
   test_cases: 133
   model: gpt-3.5-turbo-0301
+  released: 2023-03-01
   edit_format: whole
   commit_hash: 44388db-dirty
   pass_rate_1: 50.4
@@ -126,9 +134,11 @@
   versions: 0.16.4-dev
   seconds_per_case: 6.5
   total_cost: 0.4822
+  
 - dirname: 2023-11-07-02-41-07--gpt-3.5-turbo-0613
   test_cases: 133
   model: gpt-3.5-turbo-0613
+  released: 2023-06-13
   edit_format: whole
   commit_hash: 93aa497-dirty
   pass_rate_1: 38.3
@@ -168,9 +178,11 @@
   versions: 0.30.2-dev
   seconds_per_case: 5.3
   total_cost: 0.3261
+  
 - dirname: 2024-01-25-23-37-15--jan-exercism-gpt-4-0125-preview-udiff
   test_cases: 133
   model: gpt-4-0125-preview
+  released: 2024-01-25
   edit_format: udiff
   commit_hash: edcf9b1
   pass_rate_1: 55.6
@@ -189,9 +201,11 @@
   versions: 0.22.1-dev
   seconds_per_case: 44.8
   total_cost: 14.6428
+  
 - dirname: 2024-05-04-15-07-30--redo-gpt-4-0314-diff-reminder-rules
   test_cases: 133
   model: gpt-4-0314
+  released: 2023-03-14
   edit_format: diff
   commit_hash: 0d43468
   pass_rate_1: 50.4
@@ -210,9 +224,11 @@
   versions: 0.31.2-dev
   seconds_per_case: 19.8
   total_cost: 16.2689
+  
 - dirname: 2023-12-16-21-24-28--editblock-gpt-4-0613-actual-main
   test_cases: 133
   model: gpt-4-0613
+  released: 2023-06-13
   edit_format: diff
   commit_hash: 3aa17c4
   pass_rate_1: 46.6
@@ -235,6 +251,7 @@
 - dirname: 2024-05-08-21-16-03--may-gpt-4-1106-preview-udiff
   test_cases: 133
   model: gpt-4-1106-preview
+  released: 2023-11-06  
   edit_format: udiff
   commit_hash: 87664dc
   pass_rate_1: 51.9
@@ -257,6 +274,7 @@
 - dirname: 2024-05-01-02-09-20--gpt-4-turbo-examples
   test_cases: 133
   model: gpt-4-turbo-2024-04-09
+  released: 2024-04-09
   edit_format: udiff
   commit_hash: e610e5b-dirty
   pass_rate_1: 48.1
@@ -275,9 +293,11 @@
   versions: 0.30.2-dev
   seconds_per_case: 22.8
   total_cost: 6.3337
+  
 - dirname: 2024-05-03-22-24-48--openrouter--llama3-diff-examples-sys-msg
   test_cases: 132
   model: llama3-70b-8192
+  released: 2024-04-18
   edit_format: diff
   commit_hash: b5bb453
   pass_rate_1: 38.6
@@ -296,9 +316,11 @@
   versions: 0.31.2-dev
   seconds_per_case: 14.5
   total_cost: 0.4311
+  
 - dirname: 2024-05-06-18-31-08--command-r-plus-whole-final
   test_cases: 133
   model: command-r-plus
+  released: 2024-04-04
   edit_format: whole
   commit_hash: fc3a43e-dirty
   pass_rate_1: 21.8
@@ -317,9 +339,11 @@
   versions: 0.31.2-dev
   seconds_per_case: 22.9
   total_cost: 2.7494
+  
 - dirname: 2024-05-07-12-55-06--deepseek-chat-v2-whole
   test_cases: 133
   model: deepseek-chat v2 (whole)
+  released: 2024-05-06
   edit_format: whole
   commit_hash: b1cae73, db994fb
   pass_rate_1: 50.4
@@ -342,6 +366,7 @@
 - dirname: 2024-05-09-18-57-52--deepseek-chat-v2-diff-reverted-and-helpful-assistant2
   test_cases: 133
   model: deepseek-chat v2 (diff)
+  released: 2024-05-06
   edit_format: diff
   commit_hash: 80a3f6d
   pass_rate_1: 44.4
@@ -364,6 +389,7 @@
 - dirname: 2024-05-07-20-32-37--qwen1.5-110b-chat-whole
   test_cases: 133
   model: qwen1.5-110b-chat
+  released: 2024-02-04  
   edit_format: whole
   commit_hash: 70b1c0c
   pass_rate_1: 30.8
@@ -382,6 +408,7 @@
   versions: 0.31.2-dev
   seconds_per_case: 46.9
   total_cost: 0.0000
+  
 - dirname: 2024-05-07-20-57-04--wizardlm-2-8x22b-whole
   test_cases: 133
   model: WizardLM-2 8x22B
@@ -407,6 +434,7 @@
 - dirname: 2024-05-13-17-39-05--gpt-4o-diff
   test_cases: 133
   model: gpt-4o
+  released: 2024-05-13
   edit_format: diff
   commit_hash: b6cd852
   pass_rate_1: 60.2
