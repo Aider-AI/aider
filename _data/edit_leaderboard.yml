@@ -343,7 +343,6 @@
 - dirname: 2024-05-07-12-55-06--deepseek-chat-v2-whole
   test_cases: 133
   model: deepseek-chat v2 (whole)
-  released: 2024-05-06
   edit_format: whole
   commit_hash: b1cae73, db994fb
   pass_rate_1: 50.4
