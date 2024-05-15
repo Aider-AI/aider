@@ -25,6 +25,10 @@ def plot_over_time(yaml_file):
 
     fig, ax = plt.subplots(figsize=(10, 4))
     ax.grid(axis="y", zorder=0, lw=0.2)
+    for spine in ax.spines.values():
+        spine.set_edgecolor('#DDDDDD')
+        spine.set_linewidth(0.5)
+
     colors = ['red' if 'gpt-4' in model else 'green' if 'gpt-3.5' in model else 'blue' for model in models]
     ax.scatter(dates, pass_rates, c=colors, alpha=0.5, s=100)
 
