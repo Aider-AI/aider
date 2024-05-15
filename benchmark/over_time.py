@@ -12,7 +12,7 @@ def plot_over_time(yaml_file):
 
     for entry in data:
         if 'released' in entry and 'pass_rate_2' in entry:
-            dates.append(datetime.strptime(entry['released'], '%Y-%m-%d'))
+            dates.append(entry['released'])
             pass_rates.append(entry['pass_rate_2'])
             models.append(entry['model'])
 
