@@ -17,4 +17,4 @@ EXPOSE 4000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s CMD curl -f http://localhost:4000 || exit 1
 
 # Run Jekyll server
-CMD ["jekyll", "serve", "--host", "0.0.0.0"]
+CMD ["jekyll", "serve", "--host", "0.0.0.0", "--port", "4000"]
