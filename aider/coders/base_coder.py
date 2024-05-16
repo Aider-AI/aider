@@ -58,6 +58,7 @@ class Coder:
     max_apply_update_errors = 3
     edit_format = None
     yield_stream = False
+    temperature = 0
 
     @classmethod
     def create(
@@ -528,6 +529,7 @@ class Coder:
 
     def run(self, with_message=None):
         while True:
+            self.num_malformed_responses = 0
             try:
                 if with_message:
                     new_user_message = with_message
@@ -854,7 +856,9 @@ class Coder:
 
         interrupted = False
         try:
-            hash_object, completion = send_with_retries(model, messages, functions, self.stream)
+            hash_object, completion = send_with_retries(
+                model, messages, functions, self.stream, self.temperature
+            )
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
 
             if self.stream:

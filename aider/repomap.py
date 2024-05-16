@@ -470,7 +470,7 @@ class RepoMap:
                 lois.append(tag.line)
 
         # truncate long lines, in case we get minified js or something else crazy
-        output = "".join([line[:100] for line in output.splitlines(keepends=True)])
+        output = "\n".join([line[:100] for line in output.splitlines()]) + "\n"
 
         return output
 

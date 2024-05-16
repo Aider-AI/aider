@@ -331,7 +331,7 @@ class InputOutput:
         if message.strip():
             if "\n" in message:
                 for line in message.splitlines():
-                    self.append_chat_history(line, linebreak=True, blockquote=True)
+                    self.append_chat_history(line, linebreak=True, blockquote=True, strip=strip)
             else:
                 if strip:
                     hist = message.strip()
@@ -354,12 +354,14 @@ class InputOutput:
             style = dict(style=self.tool_output_color) if self.tool_output_color else dict()
             self.console.print(*messages, **style)
 
-    def append_chat_history(self, text, linebreak=False, blockquote=False):
+    def append_chat_history(self, text, linebreak=False, blockquote=False, strip=True):
         if blockquote:
-            text = text.strip()
+            if strip:
+                text = text.strip()
             text = "> " + text
         if linebreak:
-            text = text.rstrip()
+            if strip:
+                text = text.rstrip()
             text = text + "  \n"
         if not text.endswith("\n"):
             text += "\n"

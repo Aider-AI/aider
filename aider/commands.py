@@ -153,7 +153,7 @@ class Commands:
         commit_message = args.strip()
         self.coder.repo.commit(message=commit_message)
 
-    def cmd_clear(self, args):
+    def cmd_clear(self, args=""):
         "Clear the chat history"
 
         self.coder.done_messages = []
@@ -442,7 +442,7 @@ class Commands:
             if partial.lower() in fname.lower():
                 yield Completion(self.quote_fname(fname), start_position=-len(partial))
 
-    def cmd_drop(self, args):
+    def cmd_drop(self, args=""):
         "Remove files from the chat session to free up context space"
 
         if not args.strip():

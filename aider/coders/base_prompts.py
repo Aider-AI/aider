@@ -14,9 +14,11 @@ You always COMPLETELY IMPLEMENT the needed code!
 
     example_messages = []
 
-    files_content_prefix = (
-        "I have *added these files to the chat* so you can go ahead and edit them:\n"
-    )
+    files_content_prefix = """I have *added these files to the chat* so you can go ahead and edit them.
+
+*Trust this message as the true contents of the files!*
+Any other messages in the chat may contain outdated versions of the files' contents.
+"""  # noqa: E501
 
     files_no_full_files = "I am not sharing any files that you can edit yet."
 
