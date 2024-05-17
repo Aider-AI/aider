@@ -10,19 +10,23 @@ highlight_image: /assets/models-over-time.png
 I recently wanted to draw a graph showing how LLM code editing skill has been
 changing over time as new models have been released by OpenAI, Anthropic and others.
 I have all the
-[data in the yaml file](https://github.com/paul-gauthier/aider/blob/main/_data/edit_leaderboard.yml) that is used to render
+[data in a yaml file](https://github.com/paul-gauthier/aider/blob/main/_data/edit_leaderboard.yml) that is used to render
 [aider's LLM leaderboards](https://aider.chat/docs/leaderboards/).
 
 Below is the aider chat transcript, which shows:
 
 - I launch aider with the yaml file, a file with other plots I've done recently (so GPT can crib the style) and an empty file called `over_time.py`.
 - Then I ask GPT to draw the scatterplot I want.
+- I run the resulting script and share the output with GPT so it can fix a small bug.
 - I ask it to color the points for GPT-4 and GPT-3.5 family models differently, to better see trends within those model families.
-- I add a PNG of the graph to the chat, so GPT can see the current graph and understand why I ask it to move the point labels so they don't overlap the points.
+- I add a PNG of the graph to the chat, so GPT can see the current graph and understand why I want it to move the point labels so they don't overlap the points.
 - I work through a series of other small style changes, like changing fonts and the graph border.
 
 In the end I have the graph, but I also have the python code in my repo.
 So I can update this graph easily whenever I add new entries to the yaml data file.
+
+
+## Aider chat transcript
 
 <div class="chat-transcript" markdown="1">
 
@@ -85,6 +89,9 @@ plot_over_time('_data/edit_leaderboard.yml')
 > Applied edit to benchmark/over_time.py  
 > Commit 49ac9ca aider: Added scatter plot functionality for YAML entries with a `released` date and `pass_rate_2`.  
 
+</div>
+<div class="chat-transcript" markdown="1">
+
 #### /run python benchmark/over_time.py  
 > Traceback (most recent call last):
   File "/Users/gauthier/Projects/aider/benchmark/over_time.py", line 33, in <module>
@@ -118,6 +125,9 @@ benchmark/over_time.py
 > Applied edit to benchmark/over_time.py  
 > Commit af2f4b7 aider: Use the `released` field directly in the plot instead of parsing it with `datetime.strptime`.  
 
+</div>
+<div class="chat-transcript" markdown="1">
+
 #### color the "gpt-4" models differently  
 
 To color the "gpt-4" models differently, we need to modify the plotting code in `benchmark/over_time.py` to check for "gpt-4" in the model name and assign a different color.
@@ -139,6 +149,9 @@ This change will color the points red if the model name contains "gpt-4", otherw
 > Applied edit to benchmark/over_time.py  
 > Commit 0d11357 aider: Color the "gpt-4" models differently.  
 
+</div>
+<div class="chat-transcript" markdown="1">
+
 #### color the gpt-3.5 models a new color  
 
 To color the "gpt-3.5" models a new color, we need to modify the plotting code in `benchmark/over_time.py` to check for "gpt-3.5" in the model name and assign a different color.
@@ -156,6 +169,9 @@ benchmark/over_time.py
 
 > Applied edit to benchmark/over_time.py  
 > Commit 85d9d84 aider: Color the "gpt-3.5" models green in the plotting code.  
+
+</div>
+<div class="chat-transcript" markdown="1">
 
 #### use the colorscheme and fonts from the other graphs in plots.py  
 
@@ -229,6 +245,9 @@ benchmark/over_time.py
 > Commit 8d670f1 aider: Used the colorscheme and fonts from the graphs in `plots.py` in `over_time.py`.  
 
 
+</div>
+<div class="chat-transcript" markdown="1">
+
 #### /add tmp_over_time.png  
 > Added /Users/gauthier/Projects/aider/tmp_over_time.png to the chat  
 
@@ -254,6 +273,9 @@ benchmark/over_time.py
 > Commit 75fa061 aider: Adjust the position of labels to prevent overlap with dots.  
 
 
+</div>
+<div class="chat-transcript" markdown="1">
+
 #### make the dots bigger  
 
 To make the dots bigger, we can adjust the `s` parameter in the `scatter` function, which controls the size of the dots.
@@ -271,6 +293,9 @@ benchmark/over_time.py
 
 > Applied edit to benchmark/over_time.py  
 > Commit a018fdf aider: Make the dots bigger.  
+
+</div>
+<div class="chat-transcript" markdown="1">
 
 #### make the border of the graph thinner and lighter  
 
