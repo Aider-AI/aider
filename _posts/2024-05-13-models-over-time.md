@@ -90,6 +90,7 @@ plot_over_time('_data/edit_leaderboard.yml')
 > Commit 49ac9ca aider: Added scatter plot functionality for YAML entries with a `released` date and `pass_rate_2`.  
 
 </div>
+<div style="margin: 20px;"></div>
 <div class="chat-transcript" markdown="1">
 
 #### /run python benchmark/over_time.py  
@@ -295,6 +296,7 @@ benchmark/over_time.py
 > Commit a018fdf aider: Make the dots bigger.  
 
 </div>
+<div style="margin: 20px;"></div>
 <div class="chat-transcript" markdown="1">
 
 #### make the border of the graph thinner and lighter  
