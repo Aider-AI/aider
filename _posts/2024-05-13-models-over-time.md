@@ -91,7 +91,7 @@ plot_over_time('_data/edit_leaderboard.yml')
 > Commit 49ac9ca aider: Added scatter plot functionality for YAML entries with a `released` date and `pass_rate_2`.  
 
 </div>
-<div style="margin: 20px;"></div>
+<div style="margin: 30px;"></div>
 <div class="chat-transcript" markdown="1">
 
 #### /run python benchmark/over_time.py  
@@ -128,6 +128,7 @@ benchmark/over_time.py
 > Commit af2f4b7 aider: Use the `released` field directly in the plot instead of parsing it with `datetime.strptime`.  
 
 </div>
+<div style="margin: 30px;"></div>
 <div class="chat-transcript" markdown="1">
 
 #### color the "gpt-4" models differently  
@@ -152,6 +153,7 @@ This change will color the points red if the model name contains "gpt-4", otherw
 > Commit 0d11357 aider: Color the "gpt-4" models differently.  
 
 </div>
+<div style="margin: 30px;"></div>
 <div class="chat-transcript" markdown="1">
 
 #### color the gpt-3.5 models a new color  
@@ -173,6 +175,7 @@ benchmark/over_time.py
 > Commit 85d9d84 aider: Color the "gpt-3.5" models green in the plotting code.  
 
 </div>
+<div style="margin: 30px;"></div>
 <div class="chat-transcript" markdown="1">
 
 #### use the colorscheme and fonts from the other graphs in plots.py  
@@ -248,6 +251,7 @@ benchmark/over_time.py
 
 
 </div>
+<div style="margin: 30px;"></div>
 <div class="chat-transcript" markdown="1">
 
 #### /add tmp_over_time.png  
@@ -276,6 +280,7 @@ benchmark/over_time.py
 
 
 </div>
+<div style="margin: 30px;"></div>
 <div class="chat-transcript" markdown="1">
 
 #### make the dots bigger  
