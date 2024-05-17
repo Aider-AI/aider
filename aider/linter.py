@@ -1,3 +1,4 @@
+import os
 import sys
 import warnings
 from pathlib import Path
@@ -8,6 +9,23 @@ from grep_ast import TreeContext, filename_to_lang
 warnings.simplefilter("ignore", category=FutureWarning)
 from tree_sitter_languages import get_parser  # noqa: E402
 
+
+class Linter:
+    def __init__(self, encoding="utf-8", root=None):
+        self.encoding = encoding
+        self.root = root
+
+    def get_rel_fname(self, fname):
+        if self.root:
+            os.path.relpath(fname, self.root)
+        else:
+            return fname
+
+    def lint(self, fname):
+        code = Path(fname).read_text()
+
+        display_fname = self.get_rel_fname(fname)
+        return basic_lint(display_fname, code)
 
 def basic_lint(fname, code):
     lang = filename_to_lang(fname)
@@ -65,9 +83,9 @@ def main():
         print("Usage: python linter.py <file1> <file2> ...")
         sys.exit(1)
 
+    linter = Linter()
     for file_path in sys.argv[1:]:
-        code = Path(file_path).read_text()
-        errors = basic_lint(file_path, code)
+        errors = linter.lint(file_path)
         if errors:
             print(errors)
 
