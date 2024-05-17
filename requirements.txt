@@ -292,8 +292,10 @@ tqdm==4.66.4
     #   google-generativeai
     #   huggingface-hub
     #   openai
-tree-sitter==0.22.2
-    # via tree-sitter-languages
+tree-sitter==0.21.3
+    # via
+    #   -r requirements.in
+    #   tree-sitter-languages
 tree-sitter-languages==1.10.2
     # via grep-ast
 typing-extensions==4.11.0

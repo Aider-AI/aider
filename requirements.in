@@ -27,3 +27,6 @@ pypandoc
 litellm
 google-generativeai
 streamlit
+
+# 0.22.2 seems to break tree-sitter-languages?
+tree-sitter==0.21.3 
