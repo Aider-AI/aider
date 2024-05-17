@@ -59,7 +59,7 @@ $ aider --opus
 
 ## Features
 
-* Chat with aider about your code by launching `aider` from the command line with set of source files to discuss and edit together. Aider lets the LLM see and edit the content of those files.
+* Chat with aider about your code by running `aider <file1> <file2> ...` from the command line with set of source files to discuss and edit together. Aider lets the LLM see and edit the content of those files.
 * Aider can write and edit code in most popular languages: python, javascript, typescript, php, html, css, etc.
 * Aider works well with GPT-4o, Claude 3 Opus, GPT-3.5 and supports [connecting to almost any LLM](https://aider.chat/docs/llms.html).
 * Request new features, changes, improvements, or bug fixes to your code. Ask for new test cases, updated documentation or code refactors.
@@ -73,7 +73,7 @@ $ aider --opus
 
 ## Usage
 
-Run the `aider` tool by executing the following command with the source code files you want to edit.
+Run `aider` with the source code files you want to edit.
 These files will be "added to the chat session", so that the LLM can see their
 contents and edit them according to your instructions.
 
@@ -88,7 +88,7 @@ Aider will automatically
 share snippets from other, related files with the LLM so it can
 [understand the rest of your code base](https://aider.chat/docs/repomap.html).
 
-You can also just launch `aider` anywhere in a git repo without naming
+You can also just launch aider anywhere in a git repo without naming
 files on the command line.  It will discover all the files in the
 repo.  You can then add and remove individual files in the chat
 session with the `/add` and `/drop` chat commands described below.
@@ -129,7 +129,7 @@ Aider can help the LLM figure out which files to edit all by itself, but the mos
 
 ## Example chat transcripts
 
-[The example transcripts page](/examples/README.md) shows how you can chat with `aider` to write
+[The example transcripts page](/examples/README.md) shows how you can chat with aider to write
 and edit code.
 
 ## Installation
