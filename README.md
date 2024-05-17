@@ -129,7 +129,7 @@ Aider can help the LLM figure out which files to edit all by itself, but the mos
 
 ## Example chat transcripts
 
-[The example transcripts page](/examples/README.md) shows how you can chat with aider to write
+[The example transcripts page](https://aider.chat/examples/) shows how you can chat with aider to write
 and edit code.
 
 ## Installation
