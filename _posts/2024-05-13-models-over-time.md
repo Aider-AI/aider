@@ -18,7 +18,7 @@ Below is the aider chat transcript, which shows:
 
 - I launch aider with the yaml file, a file with other plots I've done recently (so GPT can crib the style) and an empty file called `over_time.py`.
 - Then I ask GPT to draw the scatterplot I want.
-- I run the resulting script and share the output with GPT so it can fix a small bug.
+- I run the resulting script and share the error output with GPT so it can fix a small bug.
 - I ask it to color the points for GPT-4 and GPT-3.5 family models differently, to better see trends within those model families.
 - I add a PNG of the graph to the chat, so GPT can see the current graph and understand why I want it to move the point labels so they don't overlap the points.
 - I work through a series of other small style changes, like changing fonts and the graph border.
