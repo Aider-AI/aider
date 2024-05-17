@@ -12,6 +12,8 @@ In this chat transcript, the user asks about the open source [CSS Exercises repo
 Based on the file list provided, it seems like this repository contains a collection of CSS and HTML exercises, solutions, and examples. The exercises cover various topics such as Flexbox, Grid, Animation, Foundations, and Margin & Padding. The repository also includes images and other assets used in the exercises.
 
 
+</div>
+<div class="chat-transcript" markdown="1">
 #### /add animation/03-dropdown-menu/README.md
 
 > Added animation/03-dropdown-menu/README.md to the chat  
@@ -21,6 +23,8 @@ Yes, I see the content of the `animation/03-dropdown-menu/README.md` file. It de
 Is there any specific change or improvement you would like me to make to this file or any other file in the repository?
 
 
+</div>
+<div class="chat-transcript" markdown="1">
 #### can you make the changes suggested in the readme?  
 
 To make the changes suggested in the `animation/03-dropdown-menu/README.md`, I need to see the contents of the following files:
@@ -70,6 +74,8 @@ These changes add the bounce animation to the dropdown menu by creating a new ke
 > Applied edit to animation/03-dropdown-menu/style.css  
 > Commit bb3a813 aider: Added bounce animation to dropdown menu.  
 
+</div>
+<div class="chat-transcript" markdown="1">
 #### that worked!  
 
 I'm glad the changes worked for you! If you have any more requests or need assistance with other parts of the code, feel free to ask. I'm here to help!

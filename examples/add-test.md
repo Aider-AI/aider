@@ -83,6 +83,8 @@ This test will ensure that the `cmd_add` method creates the specified files in t
 > Applied edit to tests/test_commands.py  
 > Commit e2d5212 aider: Added a test method `test_cmd_add` that creates a temporary directory, calls the `cmd_add` method with 'foo.txt' and 'bar.txt', and checks if both files have been created in the temporary directory.  
 
+</div>
+<div class="chat-transcript" markdown="1">
 #### /run pytest tests/test_commands.py
 
 > ```  
@@ -157,6 +159,8 @@ pytest tests/test_commands.py
 > Applied edit to tests/test_commands.py  
 > Commit d1551b4 aider: Updated test to pass a string instead of a list when calling `cmd_add` method.  
 
+</div>
+<div class="chat-transcript" markdown="1">
 #### /run pytest tests/test_commands.py
 
 > ```  
