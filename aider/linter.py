@@ -1,20 +1,22 @@
 import os
-import tree_sitter
 import sys
 import warnings
 from pathlib import Path
 
-from aider.dump import dump
-
+import tree_sitter
 from grep_ast import TreeContext, filename_to_lang
+
+from aider.dump import dump
 
 # tree_sitter is throwing a FutureWarning
 warnings.simplefilter("ignore", category=FutureWarning)
 from tree_sitter_languages import get_language, get_parser  # noqa: E402
 
-def basic_lint(fname, code):
 
+def basic_lint(fname, code):
     lang = filename_to_lang(fname)
+    if not lang:
+        return
 
     language = get_language(lang)
     parser = get_parser(lang)
@@ -46,10 +48,11 @@ def basic_lint(fname, code):
 
     return output
 
+
 # Traverse the tree to find errors and print context
 def traverse_tree(node):
     errors = []
-    if node.type == 'ERROR' or node.is_missing:
+    if node.type == "ERROR" or node.is_missing:
         line_no = node.start_point[0]
         errors.append(line_no)
 
@@ -57,6 +60,7 @@ def traverse_tree(node):
         errors += traverse_tree(child)
 
     return errors
+
 
 def main():
     """
@@ -71,6 +75,7 @@ def main():
         errors = basic_lint(file_path, code)
         if errors:
             print(errors)
+
 
 if __name__ == "__main__":
     main()
