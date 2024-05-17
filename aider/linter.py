@@ -22,8 +22,9 @@ def parse_file_for_errors(file_path):
 
     # Traverse the tree to find errors
     def traverse_tree(node):
-        if node.type == 'ERROR':
-            print(f"Syntax error at line: {node.start_point[0] + 1}")
+        if node.type == 'ERROR' or node.is_missing:
+            error_type = 'Syntax error' if node.type == 'ERROR' else 'Missing element'
+            print(f"{error_type} at line: {node.start_point[0] + 1}")
         for child in node.children:
             traverse_tree(child)
 
