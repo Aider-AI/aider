@@ -6,7 +6,7 @@ from grep_ast import TreeContext, filename_to_lang
 
 # tree_sitter is throwing a FutureWarning
 warnings.simplefilter("ignore", category=FutureWarning)
-from tree_sitter_languages import get_language, get_parser  # noqa: E402
+from tree_sitter_languages import get_parser  # noqa: E402
 
 
 def basic_lint(fname, code):
