@@ -1,4 +1,5 @@
 import os
+import subprocess
 import sys
 import warnings
 from pathlib import Path
@@ -15,25 +16,56 @@ class Linter:
         self.encoding = encoding
         self.root = root
 
+        fatal = "E9,F821,F823,F831,F406,F407,F701,F702,F704,F706"
+        py_cmd = f"flake8 --select={fatal} --show-source"
+
+        self.languages = dict(python=py_cmd)
+
+    def set_linter(self, lang, cmd):
+        self.languages[lang] = cmd
+
     def get_rel_fname(self, fname):
         if self.root:
-            os.path.relpath(fname, self.root)
+            return os.path.relpath(fname, self.root)
         else:
             return fname
 
-    def lint(self, fname):
-        code = Path(fname).read_text()
+    def run_cmd(self, cmd, rel_fname):
+        cmd += " " + rel_fname
+        cmd = cmd.split()
+        try:
+            _output = subprocess.check_output(cmd, cwd=self.root).decode()
+            return  # zero exit status
+        except subprocess.CalledProcessError as err:
+            return err.output.decode()  # non-zero exit status
 
-        display_fname = self.get_rel_fname(fname)
-        return basic_lint(display_fname, code)
+    def lint(self, fname):
+        lang = filename_to_lang(fname)
+        if not lang:
+            return
+
+        rel_fname = self.get_rel_fname(fname)
+
+        cmd = self.languages[lang]
+        if cmd:
+            return self.run_cmd(cmd, rel_fname)
+
+        # fall back to tree sitter / tree context linter
+        code = Path(fname).read_text(self.encoding)
+
+        return basic_lint(rel_fname, code)
+
 
 def basic_lint(fname, code):
+    """
+    Use tree-sitter to look for syntax errors, display them with tree context.
+    """
+
     lang = filename_to_lang(fname)
     if not lang:
         return
 
     parser = get_parser(lang)
-
     tree = parser.parse(bytes(code, "utf-8"))
 
     errors = traverse_tree(tree.root_node)
@@ -62,7 +94,7 @@ def basic_lint(fname, code):
     return output
 
 
-# Traverse the tree to find errors and print context
+# Traverse the tree to find errors
 def traverse_tree(node):
     errors = []
     if node.type == "ERROR" or node.is_missing:
@@ -83,7 +115,7 @@ def main():
         print("Usage: python linter.py <file1> <file2> ...")
         sys.exit(1)
 
-    linter = Linter()
+    linter = Linter(root=os.getcwd())
     for file_path in sys.argv[1:]:
         errors = linter.lint(file_path)
         if errors:
