@@ -34,7 +34,7 @@ class Linter:
         cmd += " " + rel_fname
         cmd = cmd.split()
         try:
-            _output = subprocess.check_output(cmd, cwd=self.root).decode()
+            subprocess.check_output(cmd, cwd=self.root).decode()
             return  # zero exit status
         except subprocess.CalledProcessError as err:
             return err.output.decode()  # non-zero exit status
