@@ -60,7 +60,7 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2024.3.1
+fsspec==2024.5.0
     # via huggingface-hub
 gitdb==4.0.11
     # via gitpython
@@ -68,14 +68,14 @@ gitpython==3.1.43
     # via
     #   -r requirements.in
     #   streamlit
-google-ai-generativelanguage==0.6.2
+google-ai-generativelanguage==0.6.4
     # via google-generativeai
 google-api-core[grpc]==2.19.0
     # via
     #   google-ai-generativelanguage
     #   google-api-python-client
     #   google-generativeai
-google-api-python-client==2.128.0
+google-api-python-client==2.129.0
     # via google-generativeai
 google-auth==2.29.0
     # via
@@ -86,7 +86,7 @@ google-auth==2.29.0
     #   google-generativeai
 google-auth-httplib2==0.2.0
     # via google-api-python-client
-google-generativeai==0.5.2
+google-generativeai==0.5.4
     # via -r requirements.in
 googleapis-common-protos==1.63.0
     # via
@@ -94,7 +94,7 @@ googleapis-common-protos==1.63.0
     #   grpcio-status
 greenlet==3.0.3
     # via playwright
-grep-ast==0.2.4
+grep-ast==0.3.0
     # via -r requirements.in
 grpcio==1.63.0
     # via
@@ -133,7 +133,7 @@ jsonschema==4.22.0
     #   altair
 jsonschema-specifications==2023.12.1
     # via jsonschema
-litellm==1.36.2
+litellm==1.37.14
     # via -r requirements.in
 markdown-it-py==3.0.0
     # via rich
@@ -156,7 +156,7 @@ numpy==1.26.4
     #   pydeck
     #   scipy
     #   streamlit
-openai==1.26.0
+openai==1.30.1
     # via
     #   -r requirements.in
     #   litellm
@@ -178,7 +178,7 @@ pillow==10.3.0
     # via
     #   -r requirements.in
     #   streamlit
-playwright==1.43.0
+playwright==1.44.0
     # via -r requirements.in
 prompt-toolkit==3.0.43
     # via -r requirements.in
@@ -195,7 +195,7 @@ protobuf==4.25.3
     #   grpcio-status
     #   proto-plus
     #   streamlit
-pyarrow==16.0.0
+pyarrow==16.1.0
     # via streamlit
 pyasn1==0.6.0
     # via
@@ -211,7 +211,7 @@ pydantic==2.7.1
     #   openai
 pydantic-core==2.18.2
     # via pydantic
-pydeck==0.9.0
+pydeck==0.9.1
     # via streamlit
 pyee==11.1.0
     # via playwright
@@ -235,7 +235,7 @@ referencing==0.35.1
     # via
     #   jsonschema
     #   jsonschema-specifications
-regex==2024.4.28
+regex==2024.5.15
     # via tiktoken
 requests==2.31.0
     # via
@@ -275,7 +275,7 @@ streamlit==1.34.0
     # via -r requirements.in
 tenacity==8.3.0
     # via streamlit
-tiktoken==0.6.0
+tiktoken==0.7.0
     # via
     #   -r requirements.in
     #   litellm
@@ -292,7 +292,7 @@ tqdm==4.66.4
     #   google-generativeai
     #   huggingface-hub
     #   openai
-tree-sitter==0.21.3
+tree-sitter==0.22.2
     # via tree-sitter-languages
 tree-sitter-languages==1.10.2
     # via grep-ast
@@ -315,5 +315,5 @@ wcwidth==0.2.13
     # via prompt-toolkit
 yarl==1.9.4
     # via aiohttp
-zipp==3.18.1
+zipp==3.18.2
     # via importlib-metadata
