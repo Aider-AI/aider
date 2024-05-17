@@ -23,7 +23,6 @@ It also supports [connecting to almost any LLM](https://aider.chat/docs/llms.htm
 </p>
 
 - [Getting started](#getting-started)
-- [Example chat transcripts](#example-chat-transcripts)
 - [Features](#features)
 - [Usage](#usage)
 - [Tutorial videos](https://aider.chat/docs/install.html#tutorial-videos)
@@ -33,6 +32,7 @@ It also supports [connecting to almost any LLM](https://aider.chat/docs/llms.htm
 - [Connecting to LLMs](https://aider.chat/docs/llms.html)
 - [LLM Leaderboards](https://aider.chat/docs/leaderboards/)
 - [Voice-to-code](https://aider.chat/docs/voice.html)
+- [Example chat transcripts](https://aider.chat/examples/)
 - [FAQ](https://aider.chat/docs/faq.html)
 - [Discord](https://discord.gg/Tv2uQnR88V)
 - [Blog](https://aider.chat/blog/)
@@ -57,20 +57,6 @@ $ export ANTHROPIC_API_KEY=your-key-goes-here
 $ aider --opus
 ```
 
-## Example chat transcripts
-
-Here are some example transcripts that show how you can chat with `aider` to write and edit code with GPT-4.
-
-* [**Hello World Flask App**](https://aider.chat/examples/hello-world-flask.html): Start from scratch and have aider create a simple Flask app with various endpoints, such as adding two numbers and calculating the Fibonacci sequence.
-
-* [**Javascript Game Modification**](https://aider.chat/examples/2048-game.html): Dive into an existing open-source repo, and get aider's help to understand it and make modifications.
-
-* [**Complex Multi-file Change with Debugging**](https://aider.chat/examples/complex-change.html): Aider makes a complex code change that is coordinated across multiple source files, and resolves bugs by reviewing error output and doc snippets.
-
-* [**Create a Black Box Test Case**](https://aider.chat/examples/add-test.html): Aider creates a "black box" test case without access to the source of the method being tested, using only a
-[high level map of the repository based on tree-sitter](https://aider.chat/docs/repomap.html).
-
-You can find more chat transcripts on the [examples page](https://aider.chat/examples/).
 
 ## Features
 
