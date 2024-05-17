@@ -89,7 +89,7 @@ def basic_lint(fname, code):
     )
     context.add_lines_of_interest(errors)
     context.add_context()
-    output = "# Syntax Errors found on the lines marked with █\n"
+    output = "# Syntax Errors found on the lines marked with █\n\n"
     output += fname + ":\n"
     output += context.format()
 

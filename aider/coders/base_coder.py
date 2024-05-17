@@ -20,6 +20,7 @@ from aider import __version__, models, prompts, utils
 from aider.commands import Commands
 from aider.history import ChatSummary
 from aider.io import InputOutput
+from aider.linter import Linter
 from aider.litellm import litellm
 from aider.mdstream import MarkdownStream
 from aider.repo import GitRepo
@@ -286,6 +287,8 @@ class Coder:
                 self.gpt_prompts.repo_content_prefix,
                 self.verbose,
             )
+
+        self.linter = Linter(root=self.root, encoding=io.encoding)
 
         if max_chat_history_tokens is None:
             max_chat_history_tokens = self.main_model.max_chat_history_tokens
@@ -721,8 +724,16 @@ class Coder:
 
         edited, edit_error = self.apply_updates()
         if edit_error:
-            self.update_cur_messages(set())
             self.reflected_message = edit_error
+            self.update_cur_messages(set())
+            return
+
+        if edited:
+            lint_errors = self.lint_edited(edited)
+            if lint_errors:
+                self.reflected_message = lint_errors
+                self.update_cur_messages(set())
+                return
 
         self.update_cur_messages(edited)
 
@@ -743,6 +754,20 @@ class Coder:
                 self.reflected_message += "\n\n" + add_rel_files_message
             else:
                 self.reflected_message = add_rel_files_message
+
+    def lint_edited(self, fnames):
+        res = ""
+        for fname in fnames:
+            errors = self.linter.lint(fname)
+            if errors:
+                res += "\n"
+                res += errors
+                res += "\n"
+
+        if res:
+            self.io.tool_error(res)
+
+        return res
 
     def update_cur_messages(self, edited):
         if self.partial_response_content:
