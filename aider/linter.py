@@ -1,12 +1,8 @@
-import os
 import sys
 import warnings
 from pathlib import Path
 
-import tree_sitter
 from grep_ast import TreeContext, filename_to_lang
-
-from aider.dump import dump
 
 # tree_sitter is throwing a FutureWarning
 warnings.simplefilter("ignore", category=FutureWarning)
@@ -18,7 +14,6 @@ def basic_lint(fname, code):
     if not lang:
         return
 
-    language = get_language(lang)
     parser = get_parser(lang)
 
     tree = parser.parse(bytes(code, "utf-8"))
