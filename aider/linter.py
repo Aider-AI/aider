@@ -17,9 +17,11 @@ class Linter:
         self.root = root
 
         fatal = "E9,F821,F823,F831,F406,F407,F701,F702,F704,F706"
-        py_cmd = f"flake8 --select={fatal} --show-source"
+        py_cmd = f"flake8 --select={fatal} --show-source"  # noqa: F841
 
-        self.languages = dict(python=py_cmd)
+        self.languages = dict(
+            # python=py_cmd,
+        )
 
     def set_linter(self, lang, cmd):
         self.languages[lang] = cmd
@@ -46,7 +48,7 @@ class Linter:
 
         rel_fname = self.get_rel_fname(fname)
 
-        cmd = self.languages[lang]
+        cmd = self.languages.get(lang)
         if cmd:
             return self.run_cmd(cmd, rel_fname)
 
