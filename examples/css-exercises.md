@@ -1,5 +1,5 @@
 
-# Complete a css exercise with aider and GPT-4
+# Complete a css exercise with aider
 
 In this chat transcript, the user asks about the open source [CSS Exercises repo](https://github.com/TheOdinProject/css-exercises) and completes an animation exercise.
 

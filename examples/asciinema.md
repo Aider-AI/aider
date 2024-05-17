@@ -1,5 +1,5 @@
 
-# Editing an asciinema cast file with aider and gpt-4
+# Editing an asciinema cast file with aider
 
 The user needs to make some tedious edits to the escape sequences in an `asciinema` screencast file.
 

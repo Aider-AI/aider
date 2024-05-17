@@ -2,13 +2,13 @@
 # Honor the NO_COLOR environment variable
 
 The user pastes the specification of the NO_COLOR environment variable protocol
-from [no-color.org](https://no-color.org) into the chat with GPT-4.
+from [no-color.org](https://no-color.org) into the aider chat.
 
-GPT figures out which files need to be edited, and asks permission to make changes.
+Aider figures out which files need to be edited, and asks permission to make changes.
 It then disables all the color and pretty-printing functions if NO_COLOR is
 set, so the tool conforms to the specification.
 
-The user then asks for a test case, which GPT adds as well.
+The user then asks for a test case, which aider adds as well.
 
 <div class="chat-transcript" markdown="1">
 

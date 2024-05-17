@@ -1,5 +1,5 @@
 
-# Create a simple flask app with aider & gpt-4
+# Create a simple flask app with aider
 
 In this chat transcript, the user asks to make a simple flask app with various endpoints.
 

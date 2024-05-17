@@ -1,4 +1,4 @@
-# Semantic search & replace code with aider and gpt-4
+# Semantic search & replace code with aider
 
 In this chat transcript, the user asks to modify a series of function calls. 
 

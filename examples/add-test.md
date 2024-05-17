@@ -1,17 +1,17 @@
 
 # Create a "black box" test case
 
-This transcript shows GPT-4 creating a black box test case,
+This transcript shows aider creating a black box test case,
 **without being given
 access to the source code of the function being tested or any of the
 other code in the repo.**
 
-Instead, GPT is operating entirely off a
+Instead, aider is operating entirely off a
 [high level map of the repository based on ctags](https://aider.chat/docs/ctags.html),
 which provides details on all the symbols and function signatures in the repo.
-Using only the meta-data in the map, GPT is able to figure out how to call the method to be tested, as well as how to instantiate multiple class objects that are required to prepare for the test.
+Using only the meta-data in the map, the LLM is able to figure out how to call the method to be tested, as well as how to instantiate multiple class objects that are required to prepare for the test.
 
-In detail, GPT is able to use the repo map to:
+In detail, aider is able to use the repo map to:
 
   - Find the function signature of the `cmd_add()` function which the user wants a test case for.
   - Determine that it is a method of the `Command` class, so the test case will need to instantiate an instance to conduct the test.
@@ -19,12 +19,12 @@ In detail, GPT is able to use the repo map to:
   - Figure out the arguments required to instantiate the `InputOutput` instance.
   - Decide that the `Coder` class looks complex enough to use a `MagickMock`.
 
-The `cmd_add()` method is defined without type annotations, so GPT makes a
+The `cmd_add()` method is defined without type annotations, so aider makes a
 reasonable but incorrect guess that it accepts a `list` of files. The
 user invokes the `/run` command to run the new unit test, which throws an
 error based on this misunderstanding.
 
-GPT reviews the error message and fixes the call to `cmd_add()` to
+The LLM reviews the error message and fixes the call to `cmd_add()` to
 correctly pass a `str` with a space-separated list of filenames
 instead.  The test then passes on the next `/run`.
 

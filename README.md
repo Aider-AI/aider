@@ -126,8 +126,11 @@ Aider can help the LLM figure out which files to edit all by itself, but the mos
 * If your code is throwing an error, share the error output with the LLM using `/run` or by pasting it into the chat. Let the LLM figure out and fix the bug.
 * LLMs know about a lot of standard tools and libraries, but may get some of the fine details wrong about APIs and function arguments. You can paste doc snippets into the chat to resolve these issues.
 * The LLM can only see the content of the files you specifically "add to the chat". Aider also sends a [map of your entire git repo](https://aider.chat/docs/repomap.html). So the LLM may ask to see additional files if it feels that's needed for your requests.
-* I also shared some general [LLM coding tips on Hacker News](https://news.ycombinator.com/item?id=36211879).
 
+## Example chat transcripts
+
+[The example transcripts page](/examples/README.md) shows how you can chat with `aider` to write
+and edit code.
 
 ## Installation
 

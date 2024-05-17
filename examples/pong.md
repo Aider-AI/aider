@@ -1,5 +1,5 @@
 
-# Build pong with aider, gpt-4 and pygame.
+# Build pong with aider and pygame.
 
 In this chat transcript, the user asks to make a pong game using pygame.
 After setting up a basic game, the user asks for some customization of the colors and game mechanics.
