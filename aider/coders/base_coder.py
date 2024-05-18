@@ -1132,7 +1132,7 @@ class Coder:
 
             err = err.args[0]
 
-            self.io.tool_error(f"The LLM did not conform to the edit format.")
+            self.io.tool_error("The LLM did not conform to the edit format.")
             self.io.tool_error(
                 "For more info see: https://aider.chat/docs/faq.html#aider-isnt-editing-my-files"
             )
@@ -1145,7 +1145,7 @@ class Coder:
             self.io.tool_error(str(err))
             return
         except Exception as err:
-            self.io.tool_error(f"Exception while updating files:")
+            self.io.tool_error("Exception while updating files:")
             self.io.tool_error(str(err), strip=False)
 
             traceback.print_exc()
