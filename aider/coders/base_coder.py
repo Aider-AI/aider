@@ -55,7 +55,8 @@ class Coder:
     num_exhausted_context_windows = 0
     num_malformed_responses = 0
     last_keyboard_interrupt = None
-    max_apply_update_errors = 3
+    num_reflections = 0
+    max_reflections = 5
     edit_format = None
     yield_stream = False
 
@@ -487,10 +488,12 @@ class Coder:
     def run_stream(self, user_message):
         self.io.user_input(user_message)
         self.reflected_message = None
+        self.num_reflections = 0
         yield from self.send_new_user_message(user_message)
 
     def run(self, with_message=None):
         while True:
+            self.num_reflections = 0
             try:
                 if with_message:
                     new_user_message = with_message
@@ -501,7 +504,14 @@ class Coder:
                 while new_user_message:
                     self.reflected_message = None
                     list(self.send_new_user_message(new_user_message))
-                    new_user_message = self.reflected_message
+                    if self.num_reflections < self.max_reflections:
+                        self.num_reflections += 1
+                        new_user_message = self.reflected_message
+                    else:
+                        self.io.tool_error(
+                            f"Only {self.max_reflections} reflections allowed, stopping."
+                        )
+                        new_user_message = None
 
                 if with_message:
                     return self.partial_response_content
@@ -722,9 +732,8 @@ class Coder:
             self.cur_messages += [dict(role="assistant", content=content)]
             return
 
-        edited, edit_error = self.apply_updates()
-        if edit_error:
-            self.reflected_message = edit_error
+        edited = self.apply_updates()
+        if self.reflected_message:
             self.update_cur_messages(set())
             return
 
@@ -1087,8 +1096,6 @@ class Coder:
         )
         self.warning_given = True
 
-    apply_update_errors = 0
-
     def prepare_to_edit(self, edits):
         res = []
         seen = dict()
@@ -1122,37 +1129,29 @@ class Coder:
             edited = self.update_files()
         except ValueError as err:
             self.num_malformed_responses += 1
+
             err = err.args[0]
-            self.apply_update_errors += 1
-            if self.apply_update_errors < self.max_apply_update_errors:
-                self.io.tool_error(f"Malformed response #{self.apply_update_errors}, retrying...")
-                self.io.tool_error("https://aider.chat/docs/faq.html#aider-isnt-editing-my-files")
-                self.io.tool_error(str(err), strip=False)
-                return None, err
-            else:
-                self.io.tool_error(f"Malformed response #{self.apply_update_errors}, aborting.")
-                self.io.tool_error("https://aider.chat/docs/faq.html#aider-isnt-editing-my-files")
-                self.io.tool_error(str(err), strip=False)
-                return False, None
+
+            self.io.tool_error(f"The LLM did not conform to the edit format.")
+            self.io.tool_error(
+                "For more info see: https://aider.chat/docs/faq.html#aider-isnt-editing-my-files"
+            )
+            self.io.tool_error(str(err), strip=False)
+
+            self.reflected_message = str(err)
+            return
 
         except git.exc.GitCommandError as err:
             self.io.tool_error(str(err))
-            return False, None
+            return
         except Exception as err:
-            print(err)
-            print()
-            traceback.print_exc()
-            self.apply_update_errors += 1
-            if self.apply_update_errors < self.max_apply_update_errors:
-                self.io.tool_error(f"Update exception #{self.apply_update_errors}, retrying...")
-                self.io.tool_error(str(err), strip=False)
-                return None, str(err)
-            else:
-                self.io.tool_error(f"Update exception #{self.apply_update_errors}, aborting")
-                self.io.tool_error(str(err), strip=False)
-                return False, None
+            self.io.tool_error(f"Exception while updating files:")
+            self.io.tool_error(str(err), strip=False)
 
-        self.apply_update_errors = 0
+            traceback.print_exc()
+
+            self.reflected_message = str(err)
+            return
 
         for path in edited:
             if self.dry_run:
@@ -1160,7 +1159,7 @@ class Coder:
             else:
                 self.io.tool_output(f"Applied edit to {path}")
 
-        return edited, None
+        return edited
 
     def parse_partial_args(self):
         # dump(self.partial_response_function_call)
