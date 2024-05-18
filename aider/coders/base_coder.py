@@ -767,7 +767,7 @@ class Coder:
     def lint_edited(self, fnames):
         res = ""
         for fname in fnames:
-            errors = self.linter.lint(fname)
+            errors = self.linter.lint(self.abs_root_path(fname))
             if errors:
                 res += "\n"
                 res += errors
