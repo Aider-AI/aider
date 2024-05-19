@@ -331,20 +331,8 @@ class Coder:
                 self.io.tool_output(json.dumps(self.functions, indent=4))
 
     def setup_lint_cmds(self, lint_cmds):
-        for lint_cmd in lint_cmds:
-            pieces = lint_cmd.split(":")
-            lang = pieces[0]
-            cmd = lint_cmd[len(lang) + 1 :]
-
-            lang = lang.strip()
-            cmd = cmd.strip()
-
-            if lang and cmd:
-                self.linter.set_linter(lang, cmd)
-            else:
-                self.io.tool_error(f'Unable to parse --lint-cmd "{lint_cmd}"')
-                self.io.tool_error(f'The arg should be "language: cmd --args ..."')
-                self.io.tool_error('For example: --lint-cmd "python: flake8 --select=E9"')
+        for lang,cmd in lint_cmds.items():
+            self.linter.set_linter(lang, cmd)
 
     def show_announcements(self):
         for line in self.get_announcements():

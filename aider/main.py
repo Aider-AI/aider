@@ -177,6 +177,28 @@ def launch_gui(args):
     # sys.argv = ['streamlit', 'run', '--'] + args
 
 
+def parse_lint_cmds(lint_cmds, io):
+    err = False
+    res = dict()
+    for lint_cmd in lint_cmds:
+        pieces = lint_cmd.split(":")
+        lang = pieces[0]
+        cmd = lint_cmd[len(lang) + 1 :]
+
+        lang = lang.strip()
+        cmd = cmd.strip()
+
+        if lang and cmd:
+            res[lang] = cmd
+        else:
+            io.tool_error(f'Unable to parse --lint-cmd "{lint_cmd}"')
+            io.tool_error(f'The arg should be "language: cmd --args ..."')
+            io.tool_error('For example: --lint-cmd "python: flake8 --select=E9"')
+            err = True
+    if err:
+        return
+    return res
+
 def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
     if argv is None:
         argv = sys.argv[1:]
@@ -306,6 +328,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     main_model = models.Model(args.model, weak_model=args.weak_model)
 
+    lint_cmds = parse_lint_cmds(args.lint_cmd, io)
+    if lint_cmds is None:
+        return 1
+
     if args.show_model_warnings:
         models.sanity_check_models(io, main_model)
 
@@ -334,7 +360,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             restore_chat_history=args.restore_chat_history,
             auto_lint=args.auto_lint,
             auto_test=args.auto_test,
-            lint_cmds=args.lint_cmd,
+            lint_cmds=lint_cmds,
             test_cmd=args.test_cmd,
         )
 
