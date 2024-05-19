@@ -45,18 +45,16 @@ class Linter:
             return  # zero exit status
 
         cmd = " ".join(cmd)
-        res = f"# Running: {cmd}\n\n"
-        res += "## Fix these errors:\n\n"
+        res = f"## Running: {cmd}\n\n"
         res += errors
 
+        linenums = []
         filenames_linenums = find_filenames_and_linenums(errors, [rel_fname])
         if filenames_linenums:
             filename, linenums = next(iter(filenames_linenums.items()))
             linenums = [num-1 for num in linenums]
-            res += "\n"
-            res += tree_context(rel_fname, code, linenums)
 
-        return res
+        return LintResult(text=res, lines=linenums)
 
     def lint(self, fname):
         lang = filename_to_lang(fname)
@@ -69,12 +67,21 @@ class Linter:
         cmd = self.languages.get(lang)
 
         if callable(cmd):
-            return cmd(fname, rel_fname, code)
+            linkres = cmd(fname, rel_fname, code)
+        elif cmd:
+            linkres = self.run_cmd(cmd, rel_fname, code)
+        else:
+            linkres = basic_lint(rel_fname, code)
 
-        if cmd:
-            return self.run_cmd(cmd, rel_fname, code)
+        if not linkres:
+            return
 
-        return basic_lint(rel_fname, code)
+        res = '# Fix any errors below\n\n'
+        res += linkres.text
+        res += '\n'
+        res += tree_context(fname, code, linkres.lines)
+
+        return res
 
     def py_lint(self, fname, rel_fname, code):
         result = ''
@@ -117,11 +124,8 @@ def lint_python_compile(fname, code):
 
         tb_lines = tb_lines[:1] + tb_lines[last_file_i + 1 :]
 
-    res = "# Fix this error:\n\n"
-    res += "".join(tb_lines)
-    res += "\n"
-    res += tree_context(fname, code, line_numbers)
-    return res
+    res = "".join(tb_lines)
+    return LintResult(text = res, lines = line_numbers)
 
 
 def basic_lint(fname, code):
@@ -140,7 +144,7 @@ def basic_lint(fname, code):
     if not errors:
         return
 
-    return tree_context(fname, code, errors)
+    return LintResult(text = '', lines = errors)
 
 
 def tree_context(fname, code, line_nums):
