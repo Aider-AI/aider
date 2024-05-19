@@ -54,7 +54,7 @@ class Linter:
 
         filenames_linenums = find_filenames_and_linenums(errors, [rel_fname])
         if filenames_linenums:
-            filename, linenums = filenames_linenums.items().next()
+            filename, linenums = next(iter(filenames_linenums.items()))
             res += tree_context(rel_fname, code, linenums)
 
         return res
