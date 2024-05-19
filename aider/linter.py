@@ -21,9 +21,10 @@ class Linter:
         py_cmd = f"flake8 --select={fatal} --show-source"  # noqa: F841
 
         self.languages = dict(
-            python=self.py_lint,
-            #python="/Users/gauthier/Projects/aider/tmp.sh"
-            #python="flake8 --show-source"
+            #python=self.py_lint,
+            #python="/Users/gauthier/Projects/aider/tmp.sh",
+            #python="flake8 --show-source",
+            python=py_cmd,
         )
 
     def set_linter(self, lang, cmd):
@@ -161,6 +162,11 @@ def traverse_tree(node):
 
     return errors
 
+def find_filenames_and_linenums(text, fnames):
+    # TODO:
+    # search text for all occurrances of <filename>:\d+ and make a list of them
+    # where <filename> is one of the filenames in the list `fnames`
+    pass
 
 def main():
     """
