@@ -75,17 +75,17 @@ def lint_pycompile(fname, code):
         #py_compile.compile(fname, doraise=True)
         compile(code, fname, 'exec')
         return
-    except Exception as err:
+    except ValueError as err:
         dump(dir(err))
         dump(err.text)
         res = f"{type(err).__name__}: {err}\n"
         line_numbers = list(range(err.lineno - 1, err.end_lineno))
 
     dump(line_numbers)
-    #last_call_stack = tb[-1]  # Get the last call stack
-    #file_name = last_call_stack.filename
-    #line_number = last_call_stack.lineno
 
+    # todo: print out the Traceback, but only the last call stack
+
+    res += '\n'
     res += tree_context(fname, code, line_numbers)
     return res
 
@@ -125,7 +125,7 @@ def tree_context(fname, code, line_nums):
     context.add_lines_of_interest(line_nums)
     context.add_context()
     s = "s" if len(line_nums) > 1 else ""
-    output = f"# Fix the syntax error{s} found on the line{s} marked with █.\n\n"
+    output = f"# Fix the error{s}, see relevant line{s} below marked with █.\n\n"
     output += fname + ":\n"
     output += context.format()
 
