@@ -192,12 +192,13 @@ def parse_lint_cmds(lint_cmds, io):
             res[lang] = cmd
         else:
             io.tool_error(f'Unable to parse --lint-cmd "{lint_cmd}"')
-            io.tool_error(f'The arg should be "language: cmd --args ..."')
+            io.tool_error('The arg should be "language: cmd --args ..."')
             io.tool_error('For example: --lint-cmd "python: flake8 --select=E9"')
             err = True
     if err:
         return
     return res
+
 
 def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
     if argv is None:
