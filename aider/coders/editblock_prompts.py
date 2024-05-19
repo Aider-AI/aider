@@ -124,6 +124,9 @@ Every *SEARCH/REPLACE block* must use this format:
 
 Every *SEARCH* section must *EXACTLY MATCH* the existing source code, character for character, including all comments, docstrings, etc.
 
+*SEARCH/REPLACE* blocks will replace *all* matching occurrences.
+Include enough lines to ensure unique matches if needed.
+
 Include *ALL* the code being searched and replaced!
 
 Only *SEARCH/REPLACE* files that the user says you can edit.
