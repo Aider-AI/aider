@@ -162,11 +162,16 @@ def traverse_tree(node):
 
     return errors
 
+import re
+
 def find_filenames_and_linenums(text, fnames):
-    # TODO:
-    # search text for all occurrances of <filename>:\d+ and make a list of them
-    # where <filename> is one of the filenames in the list `fnames`
-    pass
+    """
+    Search text for all occurrences of <filename>:\d+ and make a list of them
+    where <filename> is one of the filenames in the list `fnames`.
+    """
+    pattern = re.compile(r'(\b(?:' + '|'.join(re.escape(fname) for fname in fnames) + r'):\d+\b)')
+    matches = pattern.findall(text)
+    return matches
 
 def main():
     """
