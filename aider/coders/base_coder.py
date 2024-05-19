@@ -56,7 +56,7 @@ class Coder:
     num_malformed_responses = 0
     last_keyboard_interrupt = None
     num_reflections = 0
-    max_reflections = 5
+    max_reflections = 3
     edit_format = None
     yield_stream = False
     auto_lint = True
@@ -767,21 +767,21 @@ class Coder:
             lint_errors = self.lint_edited(edited)
             self.lint_outcome = not lint_errors
             if lint_errors:
-                ok = self.io.confirm_ask("Attempt to fix lint errors?")
-                if ok:
-                    self.reflected_message = lint_errors
-                    self.update_cur_messages(set())
-                    return
+                # ok = self.io.confirm_ask("Attempt to fix lint errors?")
+                # if ok:
+                self.reflected_message = lint_errors
+                self.update_cur_messages(set())
+                return
 
         if edited and self.auto_test:
             test_errors = self.commands.cmd_test(self.test_cmd)
             self.test_outcome = not test_errors
             if test_errors:
-                ok = self.io.confirm_ask("Attempt to fix test errors?")
-                if ok:
-                    self.reflected_message = test_errors
-                    self.update_cur_messages(set())
-                    return
+                # ok = self.io.confirm_ask("Attempt to fix test errors?")
+                # if ok:
+                self.reflected_message = test_errors
+                self.update_cur_messages(set())
+                return
 
         self.update_cur_messages(edited)
 
