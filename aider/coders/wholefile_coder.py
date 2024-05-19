@@ -1,4 +1,3 @@
-from pathlib import Path
 
 from aider import diffs
 
