@@ -107,7 +107,7 @@ class Linter:
             text += res.text
             lines.update(res.lines)
 
-        if text:
+        if text or lines:
             return LintResult(text, lines)
 
 @dataclass
