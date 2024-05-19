@@ -78,7 +78,7 @@ def lint_pycompile(fname, code):
     except Exception as err:
         dump(dir(err))
         dump(err.text)
-        res = f"{type(err)}: {err}\n"
+        res = f"{type(err).__name__}: {err}\n"
         line_numbers = list(range(err.lineno - 1, err.end_lineno))
 
     dump(line_numbers)
