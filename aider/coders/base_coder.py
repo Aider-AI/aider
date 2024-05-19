@@ -330,6 +330,8 @@ class Coder:
                 self.io.tool_output(json.dumps(self.functions, indent=4))
 
     def setup_lint_cmds(self, lint_cmds):
+        if not lint_cmds:
+            return
         for lang, cmd in lint_cmds.items():
             self.linter.set_linter(lang, cmd)
 
