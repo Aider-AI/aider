@@ -42,11 +42,14 @@ class Linter:
         cmd = cmd.split()
         try:
             subprocess.check_output(cmd, cwd=self.root).decode()
-            print("zero")
             return  # zero exit status
         except subprocess.CalledProcessError as err:
-            print("non-zero")
-            return err.output.decode()  # non-zero exit status
+            errors = err.output.decode()  # non-zero exit status
+
+        res = "# Running: {cmd]\n"
+        res += "If the output below indicates errors or problems, fix them.\n"
+        res += "But if the command fixed all the issues itself, don't take further action.\n\n"
+        res += errors
 
     def lint(self, fname):
         lang = filename_to_lang(fname)
