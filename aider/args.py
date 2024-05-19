@@ -321,6 +321,7 @@ def get_parser(default_config_files, git_root):
         "--lint-cmd",
         action="append",
         help='Specify lint commands to run for different languages, eg: "python: flake8 --select=..." (can be used multiple times)',
+        default=[],
     )
 
 

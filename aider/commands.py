@@ -165,26 +165,28 @@ class Commands:
             return
 
         fnames = self.coder.repo.get_dirty_files()
-
-        if fnames:
-            self.cmd_commit("")
-
+        linted = False
         for fname in fnames:
             try:
                 errors = self.coder.linter.lint(fname)
+                linted = True
             except FileNotFoundError as err:
                 self.io.tool_error(f"Unable to lint {fname}")
                 self.io.tool_error(str(err))
                 continue
 
             if errors:
+                # Commit everything before we start fixing lint errors
+                if self.coder.repo.is_dirty():
+                    self.cmd_commit("")
+
                 self.io.tool_error(errors)
 
                 abs_file_path = self.coder.abs_root_path(fname)
                 self.coder.abs_fnames.add(abs_file_path)
                 self.coder.run(errors)
 
-        if self.coder.repo.is_dirty():
+        if linted and self.coder.repo.is_dirty():
             self.cmd_commit("")
 
     def cmd_clear(self, args):
