@@ -171,7 +171,11 @@ def find_filenames_and_linenums(text, fnames):
     """
     pattern = re.compile(r'(\b(?:' + '|'.join(re.escape(fname) for fname in fnames) + r'):\d+\b)')
     matches = pattern.findall(text)
-    return matches
+    result = []
+    for match in matches:
+        fname, linenum = match.rsplit(':', 1)
+        result.append((fname, int(linenum)))
+    return result
 
 def main():
     """
