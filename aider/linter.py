@@ -1,19 +1,21 @@
 import os
-import traceback
+import py_compile # noqa: F401
 import subprocess
 import sys
+import traceback
 import warnings
-import py_compile
-from pathlib import Path
+import traceback
 
-from aider.dump import dump
+from pathlib import Path
 
 from grep_ast import TreeContext, filename_to_lang
 
+from aider.dump import dump # noqa: F401
+
 # tree_sitter is throwing a FutureWarning
 warnings.simplefilter("ignore", category=FutureWarning)
+
 from tree_sitter_languages import get_parser  # noqa: E402
-import traceback
 
 
 class Linter:
@@ -69,29 +71,33 @@ class Linter:
         if res:
             return res
 
-        return lint_pycompile(fname, code)
+        return lint_python_compile(fname, code)
 
-def lint_pycompile(fname, code):
+
+def lint_python_compile(fname, code):
     try:
-        # py_compile.compile(fname, doraise=True)
-        compile(code, fname, 'exec')
+        compile(code, fname, "exec")  # USE TRACEBACK BELOW HERE
         return
-    except ValueError as err:
-        dump(dir(err))
-        dump(err.text)
-        res = f"{type(err).__name__}: {err}\n"
+    except Exception as err:
         line_numbers = list(range(err.lineno - 1, err.end_lineno))
 
-    dump(line_numbers)
+        tb_lines = traceback.format_exception(type(err), err, err.__traceback__)
+        last_file_i = 0
 
-    # Print out the Traceback, but only the last call stack
-    tb_lines = traceback.format_exception(type(err), err, err.__traceback__)
-    last_call_stack = ''.join(tb_lines[-2:])
-    res += last_call_stack
+        target = "# USE TRACEBACK"
+        target += " BELOW HERE"
+        for i in range(len(tb_lines)):
+            if target in tb_lines[i]:
+                last_file_i = i
+                break
 
-    res += '\n'
+        tb_lines = tb_lines[:1] + tb_lines[last_file_i + 1 :]
+
+    res = "".join(tb_lines)
+    res += "\n"
     res += tree_context(fname, code, line_numbers)
     return res
+
 
 def basic_lint(fname, code):
     """
@@ -110,6 +116,7 @@ def basic_lint(fname, code):
         return
 
     return tree_context(fname, code, errors)
+
 
 def tree_context(fname, code, line_nums):
     context = TreeContext(
