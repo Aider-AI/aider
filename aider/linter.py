@@ -38,11 +38,13 @@ class Linter:
         cmd += " " + rel_fname
         cmd = cmd.split()
 
-        try:
-            subprocess.check_output(cmd, cwd=self.root).decode()
+        process = subprocess.Popen(
+            cmd, cwd=self.root, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        )
+        stdout, _ = process.communicate()
+        errors = stdout.decode()
+        if process.returncode == 0:
             return  # zero exit status
-        except subprocess.CalledProcessError as err:
-            errors = err.output.decode()  # non-zero exit status
 
         cmd = " ".join(cmd)
         res = f"# Running: {cmd}\n\n"
