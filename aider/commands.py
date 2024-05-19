@@ -178,7 +178,7 @@ class Commands:
                 self.coder.abs_fnames.add(abs_file_path)
                 self.coder.run(errors)
 
-        if self.repo.is_dirty():
+        if self.coder.repo.is_dirty():
             self.cmd_commit("")
 
     def cmd_clear(self, args):
