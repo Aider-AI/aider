@@ -3,8 +3,8 @@ import subprocess
 import sys
 import traceback
 import warnings
-from pathlib import Path
 from dataclasses import dataclass
+from pathlib import Path
 
 from grep_ast import TreeContext, filename_to_lang
 from tree_sitter_languages import get_parser  # noqa: E402
@@ -51,19 +51,21 @@ class Linter:
         filenames_linenums = find_filenames_and_linenums(errors, [rel_fname])
         if filenames_linenums:
             filename, linenums = next(iter(filenames_linenums.items()))
-            linenums = [num-1 for num in linenums]
+            linenums = [num - 1 for num in linenums]
 
         return LintResult(text=res, lines=linenums)
 
-    def lint(self, fname):
-        lang = filename_to_lang(fname)
-        if not lang:
-            return
-
+    def lint(self, fname, cmd=None):
         rel_fname = self.get_rel_fname(fname)
         code = Path(fname).read_text(self.encoding)
 
-        cmd = self.languages.get(lang)
+        if cmd:
+            cmd = cmd.strip()
+        if not cmd:
+            lang = filename_to_lang(fname)
+            if not lang:
+                return
+            cmd = self.languages.get(lang)
 
         if callable(cmd):
             linkres = cmd(fname, rel_fname, code)
@@ -75,15 +77,15 @@ class Linter:
         if not linkres:
             return
 
-        res = '# Fix any errors below\n\n'
+        res = "# Fix any errors below, if possible.\n\n"
         res += linkres.text
-        res += '\n'
+        res += "\n"
         res += tree_context(fname, code, linkres.lines)
 
         return res
 
     def py_lint(self, fname, rel_fname, code):
-        result = ''
+        result = ""
         basic_res = basic_lint(rel_fname, code)
         compile_res = lint_python_compile(fname, code)
 
@@ -95,18 +97,19 @@ class Linter:
         except FileNotFoundError:
             flake_res = None
 
-        text = ''
+        text = ""
         lines = set()
         for res in [basic_res, compile_res, flake_res]:
             if not res:
                 continue
             if text:
-                text += '\n'
+                text += "\n"
             text += res.text
             lines.update(res.lines)
 
         if text or lines:
             return LintResult(text, lines)
+
 
 @dataclass
 class LintResult:
@@ -134,7 +137,7 @@ def lint_python_compile(fname, code):
         tb_lines = tb_lines[:1] + tb_lines[last_file_i + 1 :]
 
     res = "".join(tb_lines)
-    return LintResult(text = res, lines = line_numbers)
+    return LintResult(text=res, lines=line_numbers)
 
 
 def basic_lint(fname, code):
@@ -153,7 +156,7 @@ def basic_lint(fname, code):
     if not errors:
         return
 
-    return LintResult(text = '', lines = errors)
+    return LintResult(text="", lines=errors)
 
 
 def tree_context(fname, code, line_nums):
@@ -193,22 +196,25 @@ def traverse_tree(node):
 
     return errors
 
+
 import re
+
 
 def find_filenames_and_linenums(text, fnames):
     """
     Search text for all occurrences of <filename>:\d+ and make a list of them
     where <filename> is one of the filenames in the list `fnames`.
     """
-    pattern = re.compile(r'(\b(?:' + '|'.join(re.escape(fname) for fname in fnames) + r'):\d+\b)')
+    pattern = re.compile(r"(\b(?:" + "|".join(re.escape(fname) for fname in fnames) + r"):\d+\b)")
     matches = pattern.findall(text)
     result = {}
     for match in matches:
-        fname, linenum = match.rsplit(':', 1)
+        fname, linenum = match.rsplit(":", 1)
         if fname not in result:
             result[fname] = set()
         result[fname].add(int(linenum))
     return result
+
 
 def main():
     """

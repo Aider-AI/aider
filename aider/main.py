@@ -332,6 +332,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             aider_ignore_file=args.aiderignore,
             max_chat_history_tokens=args.max_chat_history_tokens,
             restore_chat_history=args.restore_chat_history,
+            auto_lint=args.auto_lint,
+            auto_test=args.auto_test,
+            lint_cmds=args.lint_cmd,
+            test_cmd=args.test_cmd,
         )
 
     except ValueError as err:
@@ -342,19 +346,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         return coder
 
     coder.show_announcements()
-
-    for lint_cmd in args.lint_cmd:
-        pieces = lint_cmd.split(':')
-        lang = pieces[0]
-        cmd = lint_cmd[len(lang)+1:]
-
-        lang = lang.strip()
-        cmd = cmd.strip()
-
-        if lang and cmd:
-            coder.linter.set_linter(lang, cmd)
-        else:
-            io.tool_error(f"Unable to parse --lang-cmd {lang_cmd}")
 
     if args.show_prompts:
         coder.cur_messages += [
@@ -370,6 +361,15 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     if args.lint:
         coder.commands.cmd_lint("")
+        return
+
+    if args.test:
+        if not args.test_cmd:
+            io.tool_error("No --test-cmd provided.")
+            return 1
+        test_errors = coder.commands.cmd_test(args.test_cmd)
+        if test_errors:
+            coder.run(test_errors)
         return
 
     if args.show_repo_map:

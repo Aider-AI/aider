@@ -168,7 +168,7 @@ class Commands:
         linted = False
         for fname in fnames:
             try:
-                errors = self.coder.linter.lint(fname)
+                errors = self.coder.linter.lint(fname, cmd=args)
                 linted = True
             except FileNotFoundError as err:
                 self.io.tool_error(f"Unable to lint {fname}")

@@ -15,13 +15,6 @@ def get_parser(default_config_files, git_root):
         auto_env_var_prefix="AIDER_",
     )
     group = parser.add_argument_group("Main")
-    group = parser.add_argument_group("Main")
-    group.add_argument(
-        "--auto-lint",
-        action=argparse.BooleanOptionalAction,
-        default=True,
-        help="Enable/disable automatic linting after changes (default: True)",
-    )
     group.add_argument(
         "files",
         metavar="FILE",
@@ -310,6 +303,7 @@ def get_parser(default_config_files, git_root):
         default=False,
         help="Perform a dry run without modifying files (default: False)",
     )
+    group = parser.add_argument_group("Fixing and committing")
     group.add_argument(
         "--commit",
         action="store_true",
@@ -319,16 +313,42 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--lint",
         action="store_true",
-        help="Commit, run the linter on all dirty files, fix problems and commit again",
+        help="Run the linter on all dirty files, fix problems and commit",
         default=False,
     )
     group.add_argument(
         "--lint-cmd",
         action="append",
-        help='Specify lint commands to run for different languages, eg: "python: flake8 --select=..." (can be used multiple times)',
+        help=(
+            'Specify lint commands to run for different languages, eg: "python: flake8'
+            ' --select=..." (can be used multiple times)'
+        ),
         default=[],
     )
-
+    group.add_argument(
+        "--auto-lint",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Enable/disable automatic linting after changes (default: True)",
+    )
+    group.add_argument(
+        "--test-cmd",
+        action="append",
+        help="Specify command to run tests",
+        default=[],
+    )
+    group.add_argument(
+        "--auto-test",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable/disable automatic testing after changes (default: False)",
+    )
+    group.add_argument(
+        "--test",
+        action="store_true",
+        help="Run tests and fix problems found",
+        default=False,
+    )
 
     ##########
     group = parser.add_argument_group("Other Settings")

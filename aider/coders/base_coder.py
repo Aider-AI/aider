@@ -59,6 +59,9 @@ class Coder:
     max_reflections = 5
     edit_format = None
     yield_stream = False
+    auto_lint = True
+    auto_test = False
+    test_cmd = None
 
     @classmethod
     def create(
@@ -195,6 +198,10 @@ class Coder:
         done_messages=None,
         max_chat_history_tokens=None,
         restore_chat_history=False,
+        auto_lint=True,
+        auto_test=False,
+        lint_cmds=None,
+        test_cmd=None,
     ):
         if not fnames:
             fnames = []
@@ -289,8 +296,6 @@ class Coder:
                 self.verbose,
             )
 
-        self.linter = Linter(root=self.root, encoding=io.encoding)
-
         if max_chat_history_tokens is None:
             max_chat_history_tokens = self.main_model.max_chat_history_tokens
         self.summarizer = ChatSummary(
@@ -307,6 +312,14 @@ class Coder:
                 self.done_messages = utils.split_chat_history_markdown(history_md)
                 self.summarize_start()
 
+        # Linting and testing
+        self.linter = Linter(root=self.root, encoding=io.encoding)
+        self.auto_lint = auto_lint
+        self.setup_lint_cmds(lint_cmds)
+
+        self.auto_test = auto_test
+        self.test_cmd = test_cmd
+
         # validate the functions jsonschema
         if self.functions:
             for function in self.functions:
@@ -315,6 +328,22 @@ class Coder:
             if self.verbose:
                 self.io.tool_output("JSON Schema:")
                 self.io.tool_output(json.dumps(self.functions, indent=4))
+
+    def setup_lint_cmds(self, lint_cmds):
+        for lint_cmd in lint_cmds:
+            pieces = lint_cmd.split(":")
+            lang = pieces[0]
+            cmd = lint_cmd[len(lang) + 1 :]
+
+            lang = lang.strip()
+            cmd = cmd.strip()
+
+            if lang and cmd:
+                self.linter.set_linter(lang, cmd)
+            else:
+                self.io.tool_error(f'Unable to parse --lint-cmd "{lint_cmd}"')
+                self.io.tool_error(f'The arg should be "language: cmd --args ..."')
+                self.io.tool_error('For example: --lint-cmd "python: flake8 --select=E9"')
 
     def show_announcements(self):
         for line in self.get_announcements():
@@ -737,10 +766,17 @@ class Coder:
             self.update_cur_messages(set())
             return
 
-        if edited:
+        if edited and self.auto_lint:
             lint_errors = self.lint_edited(edited)
             if lint_errors:
                 self.reflected_message = lint_errors
+                self.update_cur_messages(set())
+                return
+
+        if edited and self.auto_test:
+            test_errors = self.commands.cmd_test(self.test_cmd)
+            if test_errors:
+                self.reflected_message = test_errors
                 self.update_cur_messages(set())
                 return
 
