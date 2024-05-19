@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from aider import diffs
 
 from ..dump import dump  # noqa: F401
