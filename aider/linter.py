@@ -17,14 +17,10 @@ class Linter:
         self.encoding = encoding
         self.root = root
 
-        fatal = "E9,F821,F823,F831,F406,F407,F701,F702,F704,F706"
-        py_cmd = f"flake8 --select={fatal} --show-source"  # noqa: F841
-
         self.languages = dict(
-            #python=self.py_lint,
+            python=self.py_lint,
             #python="/Users/gauthier/Projects/aider/tmp.sh",
             #python="flake8 --show-source",
-            python=py_cmd,
         )
 
     def set_linter(self, lang, cmd):
@@ -85,7 +81,14 @@ class Linter:
         if res:
             return res
 
-        return lint_python_compile(fname, code)
+        res = lint_python_compile(fname, code)
+        if res:
+            return res
+
+        fatal = "E9,F821,F823,F831,F406,F407,F701,F702,F704,F706"
+        flake8 = f"flake8a --select={fatal} --show-source"
+
+        return self.run_cmd(flake8, rel_fname, code)
 
 
 def lint_python_compile(fname, code):
