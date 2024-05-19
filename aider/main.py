@@ -343,6 +343,19 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     coder.show_announcements()
 
+    for lint_cmd in args.lint_cmd:
+        pieces = lint_cmd.split(':')
+        lang = pieces[0]
+        cmd = lint_cmd[len(lang)+1:]
+
+        lang = lang.strip()
+        cmd = cmd.strip()
+
+        if lang and cmd:
+            coder.linter.set_linter(lang, cmd)
+        else:
+            io.tool_error(f"Unable to parse --lang-cmd {lang_cmd}")
+
     if args.show_prompts:
         coder.cur_messages += [
             dict(role="user", content="Hello!"),
