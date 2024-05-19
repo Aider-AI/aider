@@ -88,7 +88,10 @@ class Linter:
         fatal = "E9,F821,F823,F831,F406,F407,F701,F702,F704,F706"
         flake8 = f"flake8a --select={fatal} --show-source"
 
-        return self.run_cmd(flake8, rel_fname, code)
+        try:
+            return self.run_cmd(flake8, rel_fname, code)
+        except FileNotFoundError:
+            pass
 
 
 def lint_python_compile(fname, code):
