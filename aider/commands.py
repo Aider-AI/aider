@@ -170,7 +170,13 @@ class Commands:
             self.cmd_commit("")
 
         for fname in fnames:
-            errors = self.coder.linter.lint(fname)
+            try:
+                errors = self.coder.linter.lint(fname)
+            except FileNotFoundError as err:
+                self.io.tool_error(f"Unable to lint {fname}")
+                self.io.tool_error(err)
+                continue
+
             if errors:
                 self.io.tool_error(errors)
 
