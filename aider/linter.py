@@ -8,7 +8,7 @@ from pathlib import Path
 from grep_ast import TreeContext, filename_to_lang
 from tree_sitter_languages import get_parser  # noqa: E402
 
-from aider.dump import dump  # noqa: F401
+from aider.dump import dump
 
 # tree_sitter is throwing a FutureWarning
 warnings.simplefilter("ignore", category=FutureWarning)
