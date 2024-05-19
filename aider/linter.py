@@ -1,8 +1,12 @@
 import os
+import traceback
 import subprocess
 import sys
 import warnings
+import py_compile
 from pathlib import Path
+
+from aider.dump import dump
 
 from grep_ast import TreeContext, filename_to_lang
 
@@ -20,7 +24,7 @@ class Linter:
         py_cmd = f"flake8 --select={fatal} --show-source"  # noqa: F841
 
         self.languages = dict(
-            # python=py_cmd,
+            python=self.py_lint,
         )
 
     def set_linter(self, lang, cmd):
@@ -47,16 +51,43 @@ class Linter:
             return
 
         rel_fname = self.get_rel_fname(fname)
+        code = Path(fname).read_text(self.encoding)
 
         cmd = self.languages.get(lang)
+
+        if callable(cmd):
+            return cmd(fname, rel_fname, code)
+
         if cmd:
             return self.run_cmd(cmd, rel_fname)
 
-        # fall back to tree sitter / tree context linter
-        code = Path(fname).read_text(self.encoding)
-
         return basic_lint(rel_fname, code)
 
+    def py_lint(self, fname, rel_fname, code):
+        res = basic_lint(rel_fname, code)
+        if res:
+            return res
+
+        return lint_pycompile(fname, code)
+
+def lint_pycompile(fname, code):
+    try:
+        #py_compile.compile(fname, doraise=True)
+        compile(code, fname, 'exec')
+        return
+    except Exception as err:
+        dump(dir(err))
+        dump(err.text)
+        res = f"{type(err)}: {err}\n"
+        line_numbers = list(range(err.lineno - 1, err.end_lineno))
+
+    dump(line_numbers)
+    #last_call_stack = tb[-1]  # Get the last call stack
+    #file_name = last_call_stack.filename
+    #line_number = last_call_stack.lineno
+
+    res += tree_context(fname, code, line_numbers)
+    return res
 
 def basic_lint(fname, code):
     """
@@ -74,11 +105,14 @@ def basic_lint(fname, code):
     if not errors:
         return
 
+    return tree_context(fname, code, errors)
+
+def tree_context(fname, code, line_nums):
     context = TreeContext(
         fname,
         code,
         color=False,
-        line_number=False,
+        line_number=True,
         child_context=False,
         last_line=False,
         margin=0,
@@ -87,9 +121,11 @@ def basic_lint(fname, code):
         # header_max=30,
         show_top_of_file_parent_scope=False,
     )
-    context.add_lines_of_interest(errors)
+    line_nums = set(line_nums)
+    context.add_lines_of_interest(line_nums)
     context.add_context()
-    output = "# Syntax Errors found on the lines marked with █\n\n"
+    s = "s" if len(line_nums) > 1 else ""
+    output = f"# Fix the syntax error{s} found on the line{s} marked with █.\n\n"
     output += fname + ":\n"
     output += context.format()
 
