@@ -46,9 +46,11 @@ class Linter:
         except subprocess.CalledProcessError as err:
             errors = err.output.decode()  # non-zero exit status
 
-        res = "# Running: {cmd]\n"
+        res = f"# Running: {cmd}\n"
         res += "If the output below indicates errors or problems, fix them.\n"
-        res += "But if the command fixed all the issues itself, don't take further action.\n\n"
+        res += (
+            "But if the command says it fixed all the issues itself, don't take further action.\n\n"
+        )
         res += errors
 
         return res
