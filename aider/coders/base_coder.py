@@ -516,6 +516,7 @@ class Coder:
         self.num_reflections = 0
         self.lint_outcome = None
         self.test_outcome = None
+        self.edit_outcome = None
 
     def run(self, with_message=None):
         while True:
@@ -760,28 +761,31 @@ class Coder:
 
         edited = self.apply_updates()
         if self.reflected_message:
+            self.edit_outcome = False
             self.update_cur_messages(set())
             return
+        if edited:
+            self.edit_outcome = True
 
         if edited and self.auto_lint:
             lint_errors = self.lint_edited(edited)
             self.lint_outcome = not lint_errors
             if lint_errors:
-                # ok = self.io.confirm_ask("Attempt to fix lint errors?")
-                # if ok:
-                self.reflected_message = lint_errors
-                self.update_cur_messages(set())
-                return
+                ok = self.io.confirm_ask("Attempt to fix lint errors?")
+                if ok:
+                    self.reflected_message = lint_errors
+                    self.update_cur_messages(set())
+                    return
 
         if edited and self.auto_test:
             test_errors = self.commands.cmd_test(self.test_cmd)
             self.test_outcome = not test_errors
             if test_errors:
-                # ok = self.io.confirm_ask("Attempt to fix test errors?")
-                # if ok:
-                self.reflected_message = test_errors
-                self.update_cur_messages(set())
-                return
+                ok = self.io.confirm_ask("Attempt to fix test errors?")
+                if ok:
+                    self.reflected_message = test_errors
+                    self.update_cur_messages(set())
+                    return
 
         self.update_cur_messages(edited)
 
