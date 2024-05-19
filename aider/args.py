@@ -312,9 +312,9 @@ def get_parser(default_config_files, git_root):
         default=False,
     )
     group.add_argument(
-        "--lint",
+        "--lint-and-commit",
         action="store_true",
-        help="Run the linter on all dirty files, fix problems and then commit.",
+        help="Commit, run the linter on all dirty files, fix problems and commit again",
         default=False,
     )
 

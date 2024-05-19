@@ -154,7 +154,7 @@ class Commands:
         self.coder.repo.commit(message=commit_message)
 
     def cmd_lint(self, args):
-        "Run the linter on all dirty files, fix problems and then commit"
+        "Commit, run the linter on all dirty files, fix problems and commit again"
 
         if not self.coder.repo:
             self.io.tool_error("No git repository found.")
