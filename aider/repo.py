@@ -244,7 +244,8 @@ class GitRepo:
 
     def get_dirty_files(self):
         """
-        Returns a list of all files which are dirty (not committed), either staged or in the working directory.
+        Returns a list of all files which are dirty (not committed), either staged or in the working
+        directory.
         """
         dirty_files = set()
 
