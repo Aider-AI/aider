@@ -1,16 +1,13 @@
 import os
-import py_compile # noqa: F401
 import subprocess
 import sys
 import traceback
 import warnings
-import traceback
-
 from pathlib import Path
 
 from grep_ast import TreeContext, filename_to_lang
 
-from aider.dump import dump # noqa: F401
+from aider.dump import dump  # noqa: F401
 
 # tree_sitter is throwing a FutureWarning
 warnings.simplefilter("ignore", category=FutureWarning)
