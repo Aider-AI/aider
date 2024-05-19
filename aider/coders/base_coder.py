@@ -1179,6 +1179,7 @@ class Coder:
             self.io.tool_error(
                 "For more info see: https://aider.chat/docs/faq.html#aider-isnt-editing-my-files"
             )
+            self.io.tool_error()
             self.io.tool_error(str(err), strip=False)
 
             self.reflected_message = str(err)

@@ -56,6 +56,8 @@ distro==1.9.0
     # via openai
 filelock==3.14.0
     # via huggingface-hub
+flake8==7.0.0
+    # via -r requirements.in
 frozenlist==1.4.1
     # via
     #   aiohttp
@@ -94,7 +96,7 @@ googleapis-common-protos==1.63.0
     #   grpcio-status
 greenlet==3.0.3
     # via playwright
-grep-ast==0.3.0
+grep-ast==0.3.1
     # via -r requirements.in
 grpcio==1.63.0
     # via
@@ -133,12 +135,14 @@ jsonschema==4.22.0
     #   altair
 jsonschema-specifications==2023.12.1
     # via jsonschema
-litellm==1.37.14
+litellm==1.37.16
     # via -r requirements.in
 markdown-it-py==3.0.0
     # via rich
 markupsafe==2.1.5
     # via jinja2
+mccabe==0.7.0
+    # via flake8
 mdurl==0.1.2
     # via markdown-it-py
 multidict==6.0.5
@@ -203,6 +207,8 @@ pyasn1==0.6.0
     #   rsa
 pyasn1-modules==0.4.0
     # via google-auth
+pycodestyle==2.11.1
+    # via flake8
 pycparser==2.22
     # via cffi
 pydantic==2.7.1
@@ -215,6 +221,8 @@ pydeck==0.9.1
     # via streamlit
 pyee==11.1.0
     # via playwright
+pyflakes==3.2.0
+    # via flake8
 pygments==2.18.0
     # via rich
 pypandoc==1.13
