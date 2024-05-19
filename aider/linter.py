@@ -13,6 +13,7 @@ from tree_sitter_languages import get_parser  # noqa: E402
 warnings.simplefilter("ignore", category=FutureWarning)
 
 
+
 class Linter:
     def __init__(self, encoding="utf-8", root=None):
         self.encoding = encoding

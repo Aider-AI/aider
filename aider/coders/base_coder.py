@@ -39,6 +39,7 @@ class ExhaustedContextWindow(Exception):
     pass
 
 
+
 def wrap_fence(name):
     return f"<{name}>", f"</{name}>"
 
