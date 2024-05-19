@@ -40,6 +40,7 @@ class Linter:
     def run_cmd(self, cmd, rel_fname):
         cmd += " " + rel_fname
         cmd = cmd.split()
+
         try:
             subprocess.check_output(cmd, cwd=self.root).decode()
             return  # zero exit status
@@ -50,6 +51,8 @@ class Linter:
         res += "If the output below indicates errors or problems, fix them.\n"
         res += "But if the command fixed all the issues itself, don't take further action.\n\n"
         res += errors
+
+        return res
 
     def lint(self, fname):
         lang = filename_to_lang(fname)
