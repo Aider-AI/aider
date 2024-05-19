@@ -24,7 +24,7 @@ class Linter:
 
         self.languages = dict(
             # python=self.py_lint,
-            python="pre-commit run --files"
+            python="/Users/gauthier/Projects/aider/tmp.sh"
         )
 
     def set_linter(self, lang, cmd):
@@ -46,11 +46,8 @@ class Linter:
         except subprocess.CalledProcessError as err:
             errors = err.output.decode()  # non-zero exit status
 
-        res = f"# Running: {cmd}\n"
-        res += "If the output below indicates errors or problems, fix them.\n"
-        res += (
-            "But if the command says it fixed all the issues itself, don't take further action.\n\n"
-        )
+        cmd = " ".join(cmd)
+        res = f"# Running: {cmd}\n\n"
         res += errors
 
         return res
