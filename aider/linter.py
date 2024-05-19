@@ -36,7 +36,7 @@ class Linter:
         else:
             return fname
 
-    def run_cmd(self, cmd, rel_fname):
+    def run_cmd(self, cmd, rel_fname, code):
         cmd += " " + rel_fname
         cmd = cmd.split()
 
@@ -51,6 +51,11 @@ class Linter:
         cmd = " ".join(cmd)
         res = f"# Running: {cmd}\n\n"
         res += errors
+
+        filenames_linenums = find_filenames_and_linenums(errors, [rel_fname])
+        if filenames_linenums:
+            filename, linenums = filenames_linenums.items().next()
+            res += tree_context(rel_fname, code, linenums)
 
         return res
 
@@ -68,7 +73,7 @@ class Linter:
             return cmd(fname, rel_fname, code)
 
         if cmd:
-            return self.run_cmd(cmd, rel_fname)
+            return self.run_cmd(cmd, rel_fname, code)
 
         return basic_lint(rel_fname, code)
 
