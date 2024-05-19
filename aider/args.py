@@ -14,6 +14,15 @@ def get_parser(default_config_files, git_root):
         config_file_parser_class=configargparse.YAMLConfigFileParser,
         auto_env_var_prefix="AIDER_",
     )
+    
+    ##########
+    group = parser.add_argument_group("Lint Settings")
+    group.add_argument(
+        "--lint-cmd",
+        action="append",
+        metavar="LINT_CMD",
+        help="Specify a lint command to run. Can be specified multiple times.",
+    )
 
     ##########
     group = parser.add_argument_group("Main")
