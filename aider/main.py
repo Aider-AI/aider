@@ -355,6 +355,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         coder.commands.cmd_commit("")
         return
 
+    if args.lint:
+        coder.commands.cmd_lint("")
+        return
+
     if args.show_repo_map:
         repo_map = coder.get_repo_map()
         if repo_map:

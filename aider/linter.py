@@ -24,7 +24,8 @@ class Linter:
         py_cmd = f"flake8 --select={fatal} --show-source"  # noqa: F841
 
         self.languages = dict(
-            python=self.py_lint,
+            # python=self.py_lint,
+            python="pre-commit run --files"
         )
 
     def set_linter(self, lang, cmd):
@@ -41,8 +42,10 @@ class Linter:
         cmd = cmd.split()
         try:
             subprocess.check_output(cmd, cwd=self.root).decode()
+            print("zero")
             return  # zero exit status
         except subprocess.CalledProcessError as err:
+            print("non-zero")
             return err.output.decode()  # non-zero exit status
 
     def lint(self, fname):

@@ -311,6 +311,12 @@ def get_parser(default_config_files, git_root):
         help="Commit all pending changes with a suitable commit message, then exit",
         default=False,
     )
+    group.add_argument(
+        "--lint",
+        action="store_true",
+        help="Run the linter on all dirty files, fix problems and then commit.",
+        default=False,
+    )
 
     ##########
     group = parser.add_argument_group("Other Settings")
