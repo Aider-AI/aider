@@ -14,14 +14,14 @@ def get_parser(default_config_files, git_root):
         config_file_parser_class=configargparse.YAMLConfigFileParser,
         auto_env_var_prefix="AIDER_",
     )
-    ##########
+    group = parser.add_argument_group("Main")
+    group = parser.add_argument_group("Main")
     group.add_argument(
         "--auto-lint",
         action=argparse.BooleanOptionalAction,
         default=True,
         help="Enable/disable automatic linting after changes (default: True)",
     )
-    group = parser.add_argument_group("Main")
     group.add_argument(
         "files",
         metavar="FILE",
