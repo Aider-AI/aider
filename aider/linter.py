@@ -86,32 +86,35 @@ class Linter:
 
     def py_lint(self, fname, rel_fname, code):
         result = ''
-        res = basic_lint(rel_fname, code)
-        if res:
-            result += res
-
-        res = lint_python_compile(fname, code)
-        if res:
-            result += res
+        basic_res = basic_lint(rel_fname, code)
+        compile_res = lint_python_compile(fname, code)
 
         fatal = "E9,F821,F823,F831,F406,F407,F701,F702,F704,F706"
         flake8 = f"flake8 --select={fatal} --show-source"
 
         try:
-            res = self.run_cmd(flake8, rel_fname, code)
+            flake_res = self.run_cmd(flake8, rel_fname, code)
         except FileNotFoundError:
-            pass
-        if res:
-            result += res
+            flake_res = None
 
-        return result
+        text = ''
+        lines = set()
+        for res in [basic_res, compile_res, flake_res]:
+            if not res:
+                continue
+            if text:
+                text += '\n'
+            text += res.text
+            lines.update(res.lines)
+
+        return LintResult(text, lines)
 
 @dataclass
 class LintResult:
     text: str
     lines: list
 
-    
+
 def lint_python_compile(fname, code):
     try:
         compile(code, fname, "exec")  # USE TRACEBACK BELOW HERE
