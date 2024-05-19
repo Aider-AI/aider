@@ -174,7 +174,7 @@ class Commands:
                 errors = self.coder.linter.lint(fname)
             except FileNotFoundError as err:
                 self.io.tool_error(f"Unable to lint {fname}")
-                self.io.tool_error(err)
+                self.io.tool_error(str(err))
                 continue
 
             if errors:
