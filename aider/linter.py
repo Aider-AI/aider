@@ -50,11 +50,14 @@ class Linter:
 
         cmd = " ".join(cmd)
         res = f"# Running: {cmd}\n\n"
+        res += "## Fix these errors:\n\n"
         res += errors
 
         filenames_linenums = find_filenames_and_linenums(errors, [rel_fname])
         if filenames_linenums:
             filename, linenums = next(iter(filenames_linenums.items()))
+            linenums = [num-1 for num in linenums]
+            res += "\n"
             res += tree_context(rel_fname, code, linenums)
 
         return res
