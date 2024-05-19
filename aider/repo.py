@@ -242,7 +242,21 @@ class GitRepo:
         res = Path(self.root) / path
         return utils.safe_abs_path(res)
 
-    def is_dirty(self, path=None):
+    def get_dirty_files(self):
+        """
+        Returns a list of all files which are dirty (not committed), either staged or in the working directory.
+        """
+        dirty_files = set()
+
+        # Get staged files
+        staged_files = self.repo.git.diff('--name-only', '--cached').splitlines()
+        dirty_files.update(staged_files)
+
+        # Get unstaged files
+        unstaged_files = self.repo.git.diff('--name-only').splitlines()
+        dirty_files.update(unstaged_files)
+
+        return list(dirty_files)
         if path and not self.path_in_repo(path):
             return True
 
