@@ -2,7 +2,7 @@
 highlight_image: /assets/leaderboard.jpg
 ---
 
-# GPT-4o takes #1 & #2 on the Aider LLM leaderboards
+# Aider LLM Leaderboards
 
 Aider works best with LLMs which are good at *editing* code, not just good at writing
 code.
@@ -14,7 +14,7 @@ The leaderboards below report the results from a number of popular LLMs.
 While [aider can connect to almost any LLM](/docs/llms.html),
 it works best with models that score well on the benchmarks.
 
-## GPT-4o
+## GPT-4o takes the #1 & #2 spots
 
 GPT-4o tops the aider LLM code editing leaderboard at 72.9%, versus 68.4% for Opus. GPT-4o takes second on aider's refactoring leaderboard with 62.9%, versus Opus at 72.3%.
 

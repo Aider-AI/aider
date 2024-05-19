@@ -37,6 +37,5 @@ The interactive prompt is built with [prompt-toolkit](https://github.com/prompt-
 - `Ctrl-P` : Move up to the previous history entry.
 - `Ctrl-R` : Reverse search in command history.
 
-Note: aider currently exits vi normal mode after a single command, (maybe something to do with the esc keybinding?). Feel free to investigate and make a PR if you would like to see it fully supported.
-
-Prompt toolkit also does not provide clear documentation on the bindings they support - maybe you can take aider and help them out with that and we can then link to the authoritative docs.
+Note: aider currently exits vi normal mode after a single command, (maybe something to do with the esc keybinding?).
+Feel free to investigate and make a PR if you would like to see it fully supported.

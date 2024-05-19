@@ -8,4 +8,6 @@ os.environ["OR_APP_NAME"] = "Aider"
 
 import litellm  # noqa: E402
 
+litellm.suppress_debug_info = True
+
 __all__ = [litellm]

@@ -8,9 +8,8 @@ and [git commit the changes](https://aider.chat/docs/faq.html#how-does-aider-use
 with sensible commit messages.
 You can start a new project or work with an existing git repo.
 Aider is unique in that it lets you ask for changes to [pre-existing, larger codebases](https://aider.chat/docs/repomap.html).
-Aider works well with GPT 3.5, GPT-4o, GPT-4 Turbo with Vision,
-and Claude 3 Opus.
-It also supports [connecting to almost any LLM](https://aider.chat/docs/llms.html).
+Aider works well with GPT-4o, Claude 3 Opus, GPT-3.5
+and supports [connecting to almost any LLM](https://aider.chat/docs/llms.html).
 
 <p align="center">
   <img src="assets/screencast.svg" alt="aider screencast">
@@ -23,7 +22,6 @@ It also supports [connecting to almost any LLM](https://aider.chat/docs/llms.htm
 </p>
 
 - [Getting started](#getting-started)
-- [Example chat transcripts](#example-chat-transcripts)
 - [Features](#features)
 - [Usage](#usage)
 - [Tutorial videos](https://aider.chat/docs/install.html#tutorial-videos)
@@ -33,6 +31,7 @@ It also supports [connecting to almost any LLM](https://aider.chat/docs/llms.htm
 - [Connecting to LLMs](https://aider.chat/docs/llms.html)
 - [LLM Leaderboards](https://aider.chat/docs/leaderboards/)
 - [Voice-to-code](https://aider.chat/docs/voice.html)
+- [Example chat transcripts](https://aider.chat/examples/)
 - [FAQ](https://aider.chat/docs/faq.html)
 - [Discord](https://discord.gg/Tv2uQnR88V)
 - [Blog](https://aider.chat/blog/)
@@ -57,63 +56,31 @@ $ export ANTHROPIC_API_KEY=your-key-goes-here
 $ aider --opus
 ```
 
-## Example chat transcripts
-
-Here are some example transcripts that show how you can chat with `aider` to write and edit code with GPT-4.
-
-* [**Hello World Flask App**](https://aider.chat/examples/hello-world-flask.html): Start from scratch and have aider create a simple Flask app with various endpoints, such as adding two numbers and calculating the Fibonacci sequence.
-
-* [**Javascript Game Modification**](https://aider.chat/examples/2048-game.html): Dive into an existing open-source repo, and get aider's help to understand it and make modifications.
-
-* [**Complex Multi-file Change with Debugging**](https://aider.chat/examples/complex-change.html): Aider makes a complex code change that is coordinated across multiple source files, and resolves bugs by reviewing error output and doc snippets.
-
-* [**Create a Black Box Test Case**](https://aider.chat/examples/add-test.html): Aider creates a "black box" test case without access to the source of the method being tested, using only a
-[high level map of the repository based on tree-sitter](https://aider.chat/docs/repomap.html).
-
-You can find more chat transcripts on the [examples page](https://aider.chat/examples/).
 
 ## Features
 
-* Chat with aider about your code by launching `aider` from the command line with set of source files to discuss and edit together. Aider lets the LLM see and edit the content of those files.
+* Chat with aider about your code by running `aider <file1> <file2> ...` from the command line with set of source files to discuss and edit together. Aider lets the LLM see and edit the content of those files.
 * Aider can write and edit code in most popular languages: python, javascript, typescript, php, html, css, etc.
-* Aider works well with GPT 3.5, GPT-4o, GPT-4 Turbo with Vision,
-and Claude 3 Opus. It also supports [connecting to almost any LLM](https://aider.chat/docs/llms.html).
+* Aider works well with GPT-4o, Claude 3 Opus, GPT-3.5 and supports [connecting to almost any LLM](https://aider.chat/docs/llms.html).
 * Request new features, changes, improvements, or bug fixes to your code. Ask for new test cases, updated documentation or code refactors.
 * Aider will apply the edits suggested by the LLM directly to your source files.
 * Aider will [automatically commit each changeset to your local git repo](https://aider.chat/docs/faq.html#how-does-aider-use-git) with a descriptive commit message. These frequent, automatic commits provide a safety net. It's easy to undo changes or use standard git workflows to manage longer sequences of changes.
 * You can use aider with multiple source files at once, so aider can make coordinated code changes across all of them in a single changeset/commit.
 * Aider can [give the LLM a map of your entire git repo](https://aider.chat/docs/repomap.html), which helps it understand and modify large codebases.
 * You can also edit files by hand using your editor while chatting with aider. Aider will notice these out-of-band edits and keep up to date with the latest versions of your files. This lets you bounce back and forth between the aider chat and your editor, to collaboratively code with an LLM.
-* If you are using gpt-4 through openai directly, you can add image files to your context which will automatically switch you to the gpt-4-vision-preview model
+* You can add images files to your chat if you are working with a vision capable OpenAI model (GPT-4o, GPT-4 Turbo, etc).
 
 
 ## Usage
 
-Run the `aider` tool by executing the following command:
+Run `aider` with the source code files you want to edit.
+These files will be "added to the chat session", so that the LLM can see their
+contents and edit them according to your instructions.
 
 ```
 aider <file1> <file2> ...
 ```
 
-If your pip install did not place the `aider` executable on your path, you can invoke aider like this:
-
-```
-python -m aider.main <file1> <file2>
-```
-
-Replace `<file1>`, `<file2>`, etc., with the paths to the source code files you want to work on.
-These files will be "added to the chat session", so that the LLM can see their contents and edit them according to your instructions.
-
-You can also just launch `aider` anywhere in a git repo without naming
-files on the command line.  It will discover all the files in the
-repo.  You can then add and remove individual files in the chat
-session with the `/add` and `/drop` chat commands described below.
-If you or the LLM mention one of the repo's filenames in the conversation,
-aider will ask if you'd like to add it to the chat.
-
-Think about the change you want to make and which files will need
-to be edited -- add those files to the chat.
-Don't add *all* the files in your repo to the chat.
 Be selective, and just add the files that the LLM will need to edit.
 If you add a bunch of unrelated files, the LLM can get overwhelmed
 and confused (and it costs more tokens).
@@ -121,16 +88,23 @@ Aider will automatically
 share snippets from other, related files with the LLM so it can
 [understand the rest of your code base](https://aider.chat/docs/repomap.html).
 
-Aider also has many
-additional command-line options, environment variables or configuration file
-to set many options. See `aider --help` for details.
+You can also just launch aider anywhere in a git repo without naming
+files on the command line.  It will discover all the files in the
+repo.  You can then add and remove individual files in the chat
+session with the `/add` and `/drop` chat commands described below.
+If you or the LLM mention any of the repo's filenames in the conversation,
+aider will ask if you'd like to add them to the chat.
+
+Aider also has many other options which can be set with
+command line switches, environment variables or via a configuration file.
+See `aider --help` for details.
 
 
 ## In-chat commands
 
 Aider supports commands from within the chat, which all start with `/`. Here are some of the most useful in-chat commands:
 
-* `/add <file>`: Add matching files to the chat session.
+* `/add <file>`: Add matching files to the chat session, including image files.
 * `/drop <file>`: Remove matching files from the chat session.
 * `/undo`: Undo the last git commit if it was done by aider.
 * `/diff`: Display the diff of the last aider commit.
@@ -144,7 +118,7 @@ See the [full command docs](https://aider.chat/docs/commands.html) for more info
 ## Tips
 
 * Think about which files need to be edited to make your change and add them to the chat.
-Aider has some ability to help the LLM figure out which files to edit all by itself, but the most effective approach is to explicitly add the needed files to the chat yourself.
+Aider can help the LLM figure out which files to edit all by itself, but the most efficient approach is to add the needed files to the chat yourself.
 * Large changes are best performed as a sequence of thoughtful bite sized steps, where you plan out the approach and overall design. Walk the LLM through changes like you might with a junior dev. Ask for a refactor to prepare, then ask for the actual change. Spend the time to ask for code quality/structure improvements.
 * Use Control-C to safely interrupt the LLM if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply to the LLM with more information or direction.
 * Use the `/run` command to run tests, linters, etc and show the output to the LLM so it can fix any issues.
@@ -152,8 +126,11 @@ Aider has some ability to help the LLM figure out which files to edit all by its
 * If your code is throwing an error, share the error output with the LLM using `/run` or by pasting it into the chat. Let the LLM figure out and fix the bug.
 * LLMs know about a lot of standard tools and libraries, but may get some of the fine details wrong about APIs and function arguments. You can paste doc snippets into the chat to resolve these issues.
 * The LLM can only see the content of the files you specifically "add to the chat". Aider also sends a [map of your entire git repo](https://aider.chat/docs/repomap.html). So the LLM may ask to see additional files if it feels that's needed for your requests.
-* I also shared some general [LLM coding tips on Hacker News](https://news.ycombinator.com/item?id=36211879).
 
+## Example chat transcripts
+
+[The example transcripts page](https://aider.chat/examples/) shows how you can chat with aider to write
+and edit code.
 
 ## Installation
 

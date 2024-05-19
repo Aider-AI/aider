@@ -124,6 +124,9 @@ Every *SEARCH/REPLACE block* must use this format:
 
 Every *SEARCH* section must *EXACTLY MATCH* the existing source code, character for character, including all comments, docstrings, etc.
 
+*SEARCH/REPLACE* blocks will replace *all* matching occurrences.
+Include enough lines to make the SEARCH blocks unique.
+
 Include *ALL* the code being searched and replaced!
 
 Only create *SEARCH/REPLACE* blocks for files that the user has added to the chat!

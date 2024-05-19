@@ -29,8 +29,8 @@ To work with Anthropic's models like Claude 3 Opus you need a paid
 # Install aider
 py -m pip install aider-chat
 
-# To work with GPT-4 Turbo:
-$ aider --openai-api-key sk-xxx... --4turbo
+# To work with GPT-4o:
+$ aider --openai-api-key sk-xxx...
 
 # To work with Claude 3 Opus:
 $ aider --anthropic-api-key sk-xxx... --opus
@@ -42,8 +42,8 @@ $ aider --anthropic-api-key sk-xxx... --opus
 # Install aider
 python -m pip install aider-chat
 
-# To work with GPT-4 Turbo:
-$ aider --openai-api-key sk-xxx... --4turbo
+# To work with GPT-4o:
+$ aider --openai-api-key sk-xxx...
 
 # To work with Claude 3 Opus:
 $ aider --anthropic-api-key sk-xxx... --opus
@@ -51,10 +51,7 @@ $ aider --anthropic-api-key sk-xxx... --opus
 
 ## Working with other LLMs
 
-Aider works well with GPT 3.5, GPT-4, GPT-4 Turbo with Vision,
-and Claude 3 Opus.
-It also has support for [connecting to almost any LLM](https://aider.chat/docs/llms.html).
-
+Aider works well with GPT-4o, Claude 3 Opus, GPT-3.5 and supports [connecting to almost any LLM](https://aider.chat/docs/llms.html).
 
 ## Tutorial videos
 

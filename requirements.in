@@ -12,7 +12,6 @@ numpy
 scipy
 backoff
 pathspec
-networkx<3.3 # 3.3 no longer works on python 3.9
 diskcache
 grep_ast
 packaging
@@ -27,3 +26,10 @@ pypandoc
 litellm
 google-generativeai
 streamlit
+flake8
+
+# v3.3 no longer works on python 3.9
+networkx<3.3
+
+# v0.22.2 seems to break tree-sitter-languages?
+tree-sitter==0.21.3 

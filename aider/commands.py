@@ -153,7 +153,43 @@ class Commands:
         commit_message = args.strip()
         self.coder.repo.commit(message=commit_message)
 
-    def cmd_clear(self, args=""):
+    def cmd_lint(self, args):
+        "Commit, run the linter on all dirty files, fix problems and commit again"
+
+        if not self.coder.repo:
+            self.io.tool_error("No git repository found.")
+            return
+
+        if not self.coder.repo.is_dirty():
+            self.io.tool_error("No more changes to commit.")
+            return
+
+        fnames = self.coder.repo.get_dirty_files()
+        linted = False
+        for fname in fnames:
+            try:
+                errors = self.coder.linter.lint(fname, cmd=args)
+                linted = True
+            except FileNotFoundError as err:
+                self.io.tool_error(f"Unable to lint {fname}")
+                self.io.tool_error(str(err))
+                continue
+
+            if errors:
+                # Commit everything before we start fixing lint errors
+                if self.coder.repo.is_dirty():
+                    self.cmd_commit("")
+
+                self.io.tool_error(errors)
+
+                abs_file_path = self.coder.abs_root_path(fname)
+                self.coder.abs_fnames.add(abs_file_path)
+                self.coder.run(errors)
+
+        if linted and self.coder.repo.is_dirty():
+            self.cmd_commit("")
+
+    def cmd_clear(self, args):
         "Clear the chat history"
 
         self.coder.done_messages = []

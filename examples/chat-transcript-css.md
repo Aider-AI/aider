@@ -24,6 +24,8 @@ assets/css/style.css
 > ^C again to quit  
 
 
+</div>
+<div class="chat-transcript" markdown="1">
 #### make all the edits to the embedded style tag in the html  
 
 ```html
@@ -63,12 +65,9 @@ index.html
 > Commit e7a5cb5 aider: Added rounded border to all sides of the boxquote.  
 
 
-#### (blank)  
-> Git repo has uncommitted changes.  
-> Commit before the chat proceeds [y/n/commit message]? Changed border color and width of blockquote in index.html.  
-> Commit 6898a1d Changed border color and width of blockquote in index.html.  
 
-
+</div>
+<div class="chat-transcript" markdown="1">
 #### make the blockquote font color the same as the p color  
 > Git repo has uncommitted changes.  
 > Commit before the chat proceeds [y/n/commit message]? Added note about missing method and incorrect method calls in index.html.  
@@ -123,12 +122,8 @@ index.html
 > Commit 8645217 aider: Changed blockquote font color to match <p> color in index.html.  
 
 
-#### (blank)  
-> Git repo has uncommitted changes.  
-> Commit before the chat proceeds [y/n/commit message]? Removed color and button styles from blockquote in index.html.  
-> Commit f8d4782 Removed color and button styles from blockquote in index.html.  
-
-
+</div>
+<div class="chat-transcript" markdown="1">
 #### make the blockquote background a lighter shade of the same green as the border  
 
 ```html
@@ -153,6 +148,8 @@ index.html
 > Commit 57b7b10 aider: Changed blockquote background color to a lighter shade of green.  
 
 
+</div>
+<div class="chat-transcript" markdown="1">
 #### add some space inside the border of the blockquote  
 
 ```html
@@ -179,6 +176,8 @@ index.html
 > Commit dd7dcb6 aider: Added padding inside the border of the blockquote.  
 
 
+</div>
+<div class="chat-transcript" markdown="1">
 #### can we add a label "aider" along the top of the blockquote box only using style
 
 ```html
@@ -220,6 +219,8 @@ index.html
 > Commit 0b0e332 aider: Added label "aider" to the top of the blockquote box using style.  
 
 
+</div>
+<div class="chat-transcript" markdown="1">
 #### add more padding on the top of the box and bring the label into the box so it doesn't intersect the border  
 
 ```html
@@ -273,12 +274,8 @@ index.html
 > Commit eee902e aider: Added more padding on the top of the box and brought the label into the box so it doesn't intersect the border.  
 
 
-#### (blank)  
-> Git repo has uncommitted changes.  
-> Commit before the chat proceeds [y/n/commit message]? Changed padding and added margin to main-content blockquote.  
-> Commit c9128d1 Changed padding and added margin to main-content blockquote.  
-
-
+</div>
+<div class="chat-transcript" markdown="1">
 #### change all the blockquote colors to be shades of blue instead of green. choose the blue based on the blue in the header gradient  
 
 ```html
@@ -331,6 +328,8 @@ index.html
 > Applied edit to index.html  
 > Commit a26c135 aider: Changed blockquote colors to shades of blue based on the blue in the header gradient.  
 
+</div>
+<div class="chat-transcript" markdown="1">
 #### can you style the "aider" label on the blockquote as a "tab" that docks onto the top of the box?
 
 ```html
@@ -385,12 +384,8 @@ index.html
 > Commit 292eda3 aider: Styled the "aider" label on the blockquote as a "tab" that docks onto the top of the box.  
 
 
-#### (blank)  
-> Git repo has uncommitted changes.  
-> Commit before the chat proceeds [y/n/commit message]? Changed padding and positioning of a CSS element and updated its border.  
-> Commit 01fda51 Changed padding and positioning of a CSS element and updated its border.  
-
-
+</div>
+<div class="chat-transcript" markdown="1">
 #### apply the same box around the h4 element  
 
 ```html

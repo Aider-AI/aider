@@ -317,6 +317,7 @@ def summarize_results(dirname):
     res.test_timeouts = 0
     res.exhausted_context_windows = 0
     res.num_malformed_responses = 0
+    res.num_with_malformed_responses = 0
     res.syntax_errors = 0
     res.indentation_errors = 0
     res.lazy_comments = 0
@@ -342,6 +343,8 @@ def summarize_results(dirname):
         res.user_asks += results.get("num_user_asks", 0)
         res.exhausted_context_windows += results.get("num_exhausted_context_windows", 0)
         res.num_malformed_responses += results.get("num_malformed_responses", 0)
+        if results.get("num_malformed_responses"):
+            res.num_with_malformed_responses += 1
         res.lazy_comments += results.get("lazy_comments", 0)
 
         res.syntax_errors += results.get("syntax_errors", 0)
@@ -392,11 +395,12 @@ def summarize_results(dirname):
     for i in range(tries):
         print(f"  pass_rate_{i+1}: {percents[i]:.1f}")
 
-    pct_well_formed = 1.0 - res.num_malformed_responses / res.completed_tests
+    pct_well_formed = 1.0 - res.num_with_malformed_responses / res.completed_tests
     print(f"  percent_cases_well_formed: {pct_well_formed*100:.1f}")
 
     show("error_outputs")
     show("num_malformed_responses")
+    show("num_with_malformed_responses")
     show("user_asks")
     show("lazy_comments")
     show("syntax_errors")
