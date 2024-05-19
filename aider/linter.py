@@ -77,22 +77,26 @@ class Linter:
         return basic_lint(rel_fname, code)
 
     def py_lint(self, fname, rel_fname, code):
+        result = ''
         res = basic_lint(rel_fname, code)
         if res:
-            return res
+            result += res
 
         res = lint_python_compile(fname, code)
         if res:
-            return res
+            result += res
 
         fatal = "E9,F821,F823,F831,F406,F407,F701,F702,F704,F706"
         flake8 = f"flake8 --select={fatal} --show-source"
 
         try:
-            return self.run_cmd(flake8, rel_fname, code)
+            res = self.run_cmd(flake8, rel_fname, code)
         except FileNotFoundError:
             pass
+        if res:
+            result += res
 
+        return result
 
 def lint_python_compile(fname, code):
     try:
@@ -149,7 +153,7 @@ def tree_context(fname, code, line_nums):
         last_line=False,
         margin=0,
         mark_lois=True,
-        loi_pad=5,
+        loi_pad=3,
         # header_max=30,
         show_top_of_file_parent_scope=False,
     )
