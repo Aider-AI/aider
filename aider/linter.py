@@ -13,6 +13,7 @@ from grep_ast import TreeContext, filename_to_lang
 # tree_sitter is throwing a FutureWarning
 warnings.simplefilter("ignore", category=FutureWarning)
 from tree_sitter_languages import get_parser  # noqa: E402
+import traceback
 
 
 class Linter:
@@ -72,7 +73,7 @@ class Linter:
 
 def lint_pycompile(fname, code):
     try:
-        #py_compile.compile(fname, doraise=True)
+        # py_compile.compile(fname, doraise=True)
         compile(code, fname, 'exec')
         return
     except ValueError as err:
@@ -83,7 +84,10 @@ def lint_pycompile(fname, code):
 
     dump(line_numbers)
 
-    # todo: print out the Traceback, but only the last call stack
+    # Print out the Traceback, but only the last call stack
+    tb_lines = traceback.format_exception(type(err), err, err.__traceback__)
+    last_call_stack = ''.join(tb_lines[-2:])
+    res += last_call_stack
 
     res += '\n'
     res += tree_context(fname, code, line_numbers)
