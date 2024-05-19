@@ -39,7 +39,6 @@ class ExhaustedContextWindow(Exception):
     pass
 
 
-
 def wrap_fence(name):
     return f"<{name}>", f"</{name}>"
 
@@ -331,7 +330,7 @@ class Coder:
                 self.io.tool_output(json.dumps(self.functions, indent=4))
 
     def setup_lint_cmds(self, lint_cmds):
-        for lang,cmd in lint_cmds.items():
+        for lang, cmd in lint_cmds.items():
             self.linter.set_linter(lang, cmd)
 
     def show_announcements(self):
