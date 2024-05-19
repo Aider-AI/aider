@@ -4,6 +4,7 @@ import sys
 import traceback
 import warnings
 from pathlib import Path
+from dataclasses import dataclass
 
 from grep_ast import TreeContext, filename_to_lang
 from tree_sitter_languages import get_parser  # noqa: E402
@@ -105,6 +106,12 @@ class Linter:
 
         return result
 
+@dataclass
+class LintResult:
+    text: str
+    lines: list
+
+    
 def lint_python_compile(fname, code):
     try:
         compile(code, fname, "exec")  # USE TRACEBACK BELOW HERE
