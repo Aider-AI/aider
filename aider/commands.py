@@ -166,6 +166,9 @@ class Commands:
 
         fnames = self.coder.repo.get_dirty_files()
 
+        if fnames:
+            self.cmd_commit("")
+
         for fname in fnames:
             errors = self.coder.linter.lint(fname)
             if errors:
@@ -175,7 +178,8 @@ class Commands:
                 self.coder.abs_fnames.add(abs_file_path)
                 self.coder.run(errors)
 
-        self.cmd_commit("")
+        if self.repo.is_dirty():
+            self.cmd_commit("")
 
     def cmd_clear(self, args):
         "Clear the chat history"
