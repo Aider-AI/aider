@@ -62,6 +62,8 @@ class Coder:
     auto_lint = True
     auto_test = False
     test_cmd = None
+    lint_outcome = None
+    test_outcome = None
 
     @classmethod
     def create(
@@ -506,13 +508,18 @@ class Coder:
 
     def run_stream(self, user_message):
         self.io.user_input(user_message)
+        self.init_before_message()
+        yield from self.send_new_user_message(user_message)
+
+    def init_before_message(self):
         self.reflected_message = None
         self.num_reflections = 0
-        yield from self.send_new_user_message(user_message)
+        self.lint_outcome = None
+        self.test_outcome = None
 
     def run(self, with_message=None):
         while True:
-            self.num_reflections = 0
+            self.init_before_message()
             try:
                 if with_message:
                     new_user_message = with_message
@@ -758,6 +765,7 @@ class Coder:
 
         if edited and self.auto_lint:
             lint_errors = self.lint_edited(edited)
+            self.lint_outcome = not lint_errors
             if lint_errors:
                 self.reflected_message = lint_errors
                 self.update_cur_messages(set())
@@ -765,6 +773,7 @@ class Coder:
 
         if edited and self.auto_test:
             test_errors = self.commands.cmd_test(self.test_cmd)
+            self.test_outcome = not test_errors
             if test_errors:
                 self.reflected_message = test_errors
                 self.update_cur_messages(set())
