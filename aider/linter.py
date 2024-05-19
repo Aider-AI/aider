@@ -21,8 +21,9 @@ class Linter:
         py_cmd = f"flake8 --select={fatal} --show-source"  # noqa: F841
 
         self.languages = dict(
-            # python=self.py_lint,
-            python="/Users/gauthier/Projects/aider/tmp.sh"
+            python=self.py_lint,
+            #python="/Users/gauthier/Projects/aider/tmp.sh"
+            #python="flake8 --show-source"
         )
 
     def set_linter(self, lang, cmd):
@@ -97,7 +98,8 @@ def lint_python_compile(fname, code):
 
         tb_lines = tb_lines[:1] + tb_lines[last_file_i + 1 :]
 
-    res = "".join(tb_lines)
+    res = "# Fix this error:\n\n"
+    res += "".join(tb_lines)
     res += "\n"
     res += tree_context(fname, code, line_numbers)
     return res
@@ -140,7 +142,7 @@ def tree_context(fname, code, line_nums):
     context.add_lines_of_interest(line_nums)
     context.add_context()
     s = "s" if len(line_nums) > 1 else ""
-    output = f"# Fix the error{s}, see relevant line{s} below marked with █.\n\n"
+    output = f"## See relevant line{s} below marked with █.\n\n"
     output += fname + ":\n"
     output += context.format()
 
