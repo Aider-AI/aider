@@ -20,8 +20,6 @@ class Linter:
 
         self.languages = dict(
             python=self.py_lint,
-            #python="/Users/gauthier/Projects/aider/tmp.sh",
-            #python="flake8 --show-source",
         )
 
     def set_linter(self, lang, cmd):

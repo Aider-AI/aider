@@ -355,7 +355,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         coder.commands.cmd_commit("")
         return
 
-    if args.lint_and_commit:
+    if args.lint:
         coder.commands.cmd_lint("")
         return
 
