@@ -86,7 +86,7 @@ class Linter:
             return res
 
         fatal = "E9,F821,F823,F831,F406,F407,F701,F702,F704,F706"
-        flake8 = f"flake8a --select={fatal} --show-source"
+        flake8 = f"flake8 --select={fatal} --show-source"
 
         try:
             return self.run_cmd(flake8, rel_fname, code)
