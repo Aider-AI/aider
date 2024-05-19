@@ -14,15 +14,6 @@ def get_parser(default_config_files, git_root):
         config_file_parser_class=configargparse.YAMLConfigFileParser,
         auto_env_var_prefix="AIDER_",
     )
-    
-    ##########
-    group = parser.add_argument_group("Lint Settings")
-    group.add_argument(
-        "--lint-cmd",
-        action="append",
-        metavar="LINT_CMD",
-        help="Specify a lint command to run. Can be specified multiple times.",
-    )
 
     ##########
     group = parser.add_argument_group("Main")
@@ -321,11 +312,17 @@ def get_parser(default_config_files, git_root):
         default=False,
     )
     group.add_argument(
-        "--lint-and-commit",
+        "--lint",
         action="store_true",
         help="Commit, run the linter on all dirty files, fix problems and commit again",
         default=False,
     )
+    group.add_argument(
+        "--lint-cmd",
+        action="append",
+        help='Specify lint commands to run for different languages, eg: "python: flake8 --select=..." (can be used multiple times)',
+    )
+
 
     ##########
     group = parser.add_argument_group("Other Settings")
