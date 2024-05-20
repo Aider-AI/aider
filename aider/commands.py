@@ -154,14 +154,14 @@ class Commands:
         self.coder.repo.commit(message=commit_message)
 
     def cmd_lint(self, args="", fnames=None):
-        "Commit, run the linter on all dirty files, fix problems and commit again"
+        "Lint and fix provided files or in-chat files if none provided"
 
         if not self.coder.repo:
             self.io.tool_error("No git repository found.")
             return
 
         if not fnames:
-            fnames = self.coder.repo.get_dirty_files()
+            fnames = self.coder.get_inchat_relative_files()
 
             if not fnames:
                 self.io.tool_error("No dirty files to lint.")
@@ -170,7 +170,7 @@ class Commands:
         lint_coder = None
         for fname in fnames:
             try:
-                errors = self.coder.linter.lint(fname, cmd=args)
+                errors = self.coder.linter.lint(fname)
             except FileNotFoundError as err:
                 self.io.tool_error(f"Unable to lint {fname}")
                 self.io.tool_error(str(err))

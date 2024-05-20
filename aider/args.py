@@ -313,7 +313,7 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--lint",
         action="store_true",
-        help="Run the linter on all dirty files, fix problems and commit",
+        help="Lint and fix provided files, or dirty files if none provided",
         default=False,
     )
     group.add_argument(

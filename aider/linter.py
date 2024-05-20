@@ -1,9 +1,9 @@
 import os
+import re
 import subprocess
 import sys
 import traceback
 import warnings
-import re
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -203,9 +203,6 @@ def traverse_tree(node):
         errors += traverse_tree(child)
 
     return errors
-
-
-import re
 
 
 def find_filenames_and_linenums(text, fnames):
