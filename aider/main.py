@@ -1,5 +1,6 @@
 import configparser
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -181,14 +182,18 @@ def parse_lint_cmds(lint_cmds, io):
     err = False
     res = dict()
     for lint_cmd in lint_cmds:
-        pieces = lint_cmd.split(":")
-        lang = pieces[0]
-        cmd = lint_cmd[len(lang) + 1 :]
+        if re.match(r"^[a-z]+:.*", lint_cmd):
+            pieces = lint_cmd.split(":")
+            lang = pieces[0]
+            cmd = lint_cmd[len(lang) + 1 :]
+            lang = lang.strip()
+        else:
+            lang = None
+            cmd = lint_cmd
 
-        lang = lang.strip()
         cmd = cmd.strip()
 
-        if lang and cmd:
+        if cmd:
             res[lang] = cmd
         else:
             io.tool_error(f'Unable to parse --lint-cmd "{lint_cmd}"')
@@ -383,11 +388,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         return
 
     if args.commit:
-        coder.commands.cmd_commit("")
+        coder.commands.cmd_commit()
         return
 
     if args.lint:
-        coder.commands.cmd_lint("")
+        coder.commands.cmd_lint(fnames=fnames)
         return
 
     if args.test:

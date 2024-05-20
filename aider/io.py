@@ -325,7 +325,7 @@ class InputOutput:
 
         return res
 
-    def tool_error(self, message, strip=True):
+    def tool_error(self, message="", strip=True):
         self.num_error_outputs += 1
 
         if message.strip():

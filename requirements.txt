@@ -96,7 +96,7 @@ googleapis-common-protos==1.63.0
     #   grpcio-status
 greenlet==3.0.3
     # via playwright
-grep-ast==0.3.1
+grep-ast==0.3.2
     # via -r requirements.in
 grpcio==1.63.0
     # via

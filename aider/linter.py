@@ -1,4 +1,5 @@
 import os
+import re
 import subprocess
 import sys
 import traceback
@@ -13,7 +14,6 @@ from tree_sitter_languages import get_parser  # noqa: E402
 warnings.simplefilter("ignore", category=FutureWarning)
 
 
-
 class Linter:
     def __init__(self, encoding="utf-8", root=None):
         self.encoding = encoding
@@ -22,9 +22,14 @@ class Linter:
         self.languages = dict(
             python=self.py_lint,
         )
+        self.all_lint_cmd = None
 
     def set_linter(self, lang, cmd):
-        self.languages[lang] = cmd
+        if lang:
+            self.languages[lang] = cmd
+            return
+
+        self.all_lint_cmd = cmd
 
     def get_rel_fname(self, fname):
         if self.root:
@@ -66,7 +71,10 @@ class Linter:
             lang = filename_to_lang(fname)
             if not lang:
                 return
-            cmd = self.languages.get(lang)
+            if self.all_lint_cmd:
+                cmd = self.all_lint_cmd
+            else:
+                cmd = self.languages.get(lang)
 
         if callable(cmd):
             linkres = cmd(fname, rel_fname, code)
@@ -86,7 +94,6 @@ class Linter:
         return res
 
     def py_lint(self, fname, rel_fname, code):
-        result = ""
         basic_res = basic_lint(rel_fname, code)
         compile_res = lint_python_compile(fname, code)
 
@@ -198,12 +205,9 @@ def traverse_tree(node):
     return errors
 
 
-import re
-
-
 def find_filenames_and_linenums(text, fnames):
     """
-    Search text for all occurrences of <filename>:\d+ and make a list of them
+    Search text for all occurrences of <filename>:\\d+ and make a list of them
     where <filename> is one of the filenames in the list `fnames`.
     """
     pattern = re.compile(r"(\b(?:" + "|".join(re.escape(fname) for fname in fnames) + r"):\d+\b)")
