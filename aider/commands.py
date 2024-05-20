@@ -535,7 +535,15 @@ class Commands:
     def cmd_test(self, args):
         "Run a shell command and add the output to the chat on non-zero exit code"
 
-        return self.cmd_run(args, True)
+        if not callable(args):
+            return self.cmd_run(args, True)
+
+        errors = args()
+        if not errors:
+            return
+
+        self.io.tool_error(errors, strip=False)
+        return errors
 
     def cmd_run(self, args, add_on_nonzero_exit=False):
         "Run a shell command and optionally add the output to the chat (alias: !)"
