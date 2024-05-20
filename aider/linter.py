@@ -3,7 +3,6 @@ import subprocess
 import sys
 import traceback
 import warnings
-import re
 from dataclasses import dataclass
 from pathlib import Path
 
