@@ -3,6 +3,7 @@ import subprocess
 import sys
 import traceback
 import warnings
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -93,7 +94,6 @@ class Linter:
         return res
 
     def py_lint(self, fname, rel_fname, code):
-        result = ""
         basic_res = basic_lint(rel_fname, code)
         compile_res = lint_python_compile(fname, code)
 
@@ -210,7 +210,7 @@ import re
 
 def find_filenames_and_linenums(text, fnames):
     """
-    Search text for all occurrences of <filename>:\d+ and make a list of them
+    Search text for all occurrences of <filename>:\\d+ and make a list of them
     where <filename> is one of the filenames in the list `fnames`.
     """
     pattern = re.compile(r"(\b(?:" + "|".join(re.escape(fname) for fname in fnames) + r"):\d+\b)")
