@@ -310,6 +310,7 @@ class Coder:
                 io,
                 self.gpt_prompts.repo_content_prefix,
                 self.verbose,
+                self.main_model.info.get("max_input_tokens"),
             )
 
         if max_chat_history_tokens is None:
