@@ -82,10 +82,19 @@ class Coder:
         )
 
         if not main_model:
-            main_model = models.Model(models.DEFAULT_MODEL_NAME)
+            if from_coder:
+                main_model = from_coder.main_model
+            else:
+                main_model = models.Model(models.DEFAULT_MODEL_NAME)
 
         if edit_format is None:
-            edit_format = main_model.edit_format
+            if from_coder:
+                edit_format = from_coder.edit_format
+            else:
+                edit_format = main_model.edit_format
+
+        if not io and from_coder:
+            io = from_coder.io
 
         if from_coder:
             use_kwargs = dict(from_coder.original_kwargs)  # copy orig kwargs
@@ -124,6 +133,9 @@ class Coder:
         res.original_kwargs = dict(kwargs)
 
         return res
+
+    def clone(self, **kwargs):
+        return Coder.create(from_coder=self, **kwargs)
 
     def get_announcements(self):
         lines = []

@@ -13,7 +13,6 @@ from tree_sitter_languages import get_parser  # noqa: E402
 warnings.simplefilter("ignore", category=FutureWarning)
 
 
-
 class Linter:
     def __init__(self, encoding="utf-8", root=None):
         self.encoding = encoding
@@ -22,9 +21,14 @@ class Linter:
         self.languages = dict(
             python=self.py_lint,
         )
+        self.all_lint_cmd = None
 
     def set_linter(self, lang, cmd):
-        self.languages[lang] = cmd
+        if lang:
+            self.languages[lang] = cmd
+            return
+
+        self.all_lint_cmd = cmd
 
     def get_rel_fname(self, fname):
         if self.root:
@@ -66,7 +70,10 @@ class Linter:
             lang = filename_to_lang(fname)
             if not lang:
                 return
-            cmd = self.languages.get(lang)
+            if self.all_lint_cmd:
+                cmd = self.all_lint_cmd
+            else:
+                cmd = self.languages.get(lang)
 
         if callable(cmd):
             linkres = cmd(fname, rel_fname, code)
