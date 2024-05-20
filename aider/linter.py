@@ -89,7 +89,7 @@ class Linter:
         res = "# Fix any errors below, if possible.\n\n"
         res += linkres.text
         res += "\n"
-        res += tree_context(fname, code, linkres.lines)
+        res += tree_context(rel_fname, code, linkres.lines)
 
         return res
 
