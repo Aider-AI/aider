@@ -105,7 +105,7 @@ pyproject-hooks==1.1.0
     # via
     #   build
     #   pip-tools
-pytest==8.2.0
+pytest==8.2.1
     # via -r dev-requirements.in
 python-dateutil==2.9.0.post0
     # via
@@ -115,7 +115,7 @@ pytz==2024.1
     # via pandas
 pyyaml==6.0.1
     # via pre-commit
-requests==2.31.0
+requests==2.32.0
     # via sphinx
 rich==13.7.1
     # via typer
