@@ -98,7 +98,7 @@ class Linter:
         compile_res = lint_python_compile(fname, code)
 
         fatal = "E9,F821,F823,F831,F406,F407,F701,F702,F704,F706"
-        flake8 = f"flake8 --select={fatal} --show-source"
+        flake8 = f"flake8 --select={fatal} --show-source --isolated"
 
         try:
             flake_res = self.run_cmd(flake8, rel_fname, code)
