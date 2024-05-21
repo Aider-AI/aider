@@ -71,12 +71,10 @@ class RepoMap:
 
         # With no files in the chat, give a bigger view of the entire repo
         MUL = 16
-        if (
-            not chat_files
-            and self.max_context_window
-            and max_map_tokens * MUL < (self.max_context_window - 2048)
-        ):
-            max_map_tokens *= MUL
+        padding = 4096
+        target = min(max_map_tokens * MUL, self.max_context_window - padding)
+        if not chat_files and self.max_context_window and target > 0:
+            max_map_tokens = target
 
         dump(max_map_tokens)
 
