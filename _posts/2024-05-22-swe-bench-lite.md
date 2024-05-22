@@ -5,8 +5,6 @@ highlight_image: /assets/swe_bench_lite.jpg
 draft: true
 ---
 
-[![SWE Bench Lite results](/assets/swe_bench_lite.svg)](https://aider.chat/assets/swe_bench_lite.svg)
-
 # Aider scores SOTA 26.3% on SWE Bench Lite
  
 Aider scored 26.3%
@@ -16,6 +14,8 @@ The current top leaderboard entry is 20.33%
 from Amazon Q Developer Agent.
 The best result reported elsewhere online seems to be
 [22.3% from AutoCodeRover](https://github.com/nus-apr/auto-code-rover).
+
+[![SWE Bench Lite results](/assets/swe_bench_lite.svg)](https://aider.chat/assets/swe_bench_lite.svg)
 
 ## Interactive, not agentic
 
