@@ -48,6 +48,7 @@ def plot_over_time(yaml_file):
     ax.set_ylabel("Aider code editing benchmark,\npercent completed correctly", fontsize=18)
     ax.set_title("LLM code editing skill by model release date", fontsize=20)
     ax.set_ylim(0, 30)
+    plt.xticks(fontsize=14)
     plt.tight_layout()
     plt.savefig("tmp_over_time.png")
     plt.savefig("tmp_over_time.svg")
