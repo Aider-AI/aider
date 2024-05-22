@@ -10,7 +10,7 @@ draft: true
 Aider scored 26.3%
 on the
 [SWE Bench Lite benchmark](https://www.swebench.com), achieving a state of the art result. 
-The current top leaderboard entry is 20.33%
+The current top leaderboard entry is 20.3%
 from Amazon Q Developer Agent.
 The best result reported elsewhere online seems to be
 [22.3% from AutoCodeRover](https://github.com/nus-apr/auto-code-rover).
@@ -31,12 +31,13 @@ etc.
 
 Aider is first and foremost a tool for engineers to get real work done in
 real code bases through a pair programming chat style interface.
+When a user asks aider for a change, they see the edits performed in real-time
+and aider may also then offer additional
+help like fixing lint or test errors.
 In normal use, the user is in full interactive control. 
 This lets them quickly steer misunderstandings back on course and
 avoid wasted time, code reviews and token costs.
-When a user asks aider for a change, they see the edits performed in real-time. 
-Aider may also then offer additional
-help like fixing lint or test errors.
+
 
 ## Methodology
 
@@ -46,29 +47,21 @@ with the problem statement
 submitted as the opening chat message from "the user".
 After that aider runs as normal, with the following modifications:
 
-- Aider's suggestions were always accepted.
-When chatting, aider will suggest which files in the repo may need to be edited based on
-the conversation.
-It will offer to lint code that has been edited,
-and to fix any issues uncovered.
-Aider has workflows to run the repo's test suite and resolve failing tests.
-Normally the user is asked to approved such suggestions, but
-they were always accepted during the benchmark.
+- Aider's suggestions were always accepted without user approval.
 - A simple harness was used to retry the SWE Bench problem if aider produced code which wasn't *plausibly correct*.
-Plausible means that aider successfully edited the repo without breaking anything.
-As mentioned, aider has integrated support for linting and testing,
-so the harness just looks at aider's completion status to see if those
-operations finished clean.
-Note that *aider only had access to the pre-existing tests in the repo*,
-not the held out "acceptance tests" that are used later to see if the
-SWE Bench problem was correctly resolved.
-- If the solution isn't plausible, the harness launches aider to try again from scratch.
-The harness alternates between running aider with GPT-4o and Opus up to three times each,
-until it finds a plausible solution.
-- If no plausible solution is found, the harness picks the solution
+Plausibly correct means that aider concluded that it had successfully edited the repo
+without causing syntax errors or breaking any *pre-existing* tests.
+- If the solution isn't plausible, the harness launches aider to try again from scratch
+alternating between using aider with GPT-4o and Opus.
+- If no plausible solution is found after six tries, the harness picks the solution
 with the least amount of edit/lint/test problems.
 
-This is all roughly equivalent to a user:
+It's important to be clear that during benchmarking
+*aider only had access to the pre-existing tests in the repo*.
+It could not see or run the held out "acceptance tests" that are used later to see if the
+SWE Bench problem was correctly resolved.
+
+The benchmarking process can be thought of as similar to a user:
 
 - Launching aider in their repo with the something like command below, which
 tells aider to say yes to every suggestion and use pytest to run tests.
@@ -77,7 +70,7 @@ tells aider to say yes to every suggestion and use pytest to run tests.
   - `/web https://github.com/django/django/issues/XXX`
 - If aider doesn't produce code that lints and tests clean, the user might decide to revert the changes and try again. Maybe with a different LLM this time.
 [Aider is tightly integrated with git](https://aider.chat/docs/faq.html#how-does-aider-use-git),
-so it's always easy to undo/revert AI changes that don't pan out.
+so it's always easy to revert AI changes that don't pan out.
 
 Of course, outside a benchmark setting it's probably
 unwise to let *any* AI agent run unsupervised on your code base.
@@ -93,7 +86,7 @@ Running the entire SWE Bench Lite benchmark using aider with just GPT-4o
 achieved a score of 25%.
 This was itself a state of the art result, before being surpassed by the main
 result being reported here
-that uses aider with both GPT-4o & Opus.
+that used aider with both GPT-4o & Opus.
 
 ## GPT-4o vs Opus
 
@@ -102,36 +95,36 @@ The harness proceeded in a fixed order, always starting with GPT-4o and
 then alternating with Opus until a plausible solution was found.
 
 The table below breaks down the 79 solutions which were ultimately
-verified as correctly resolving their task.
+verified as correctly resolving their issue.
 Some noteworthy observations:
 
 - Aider with GPT-4o immediately found 77% of the valid solutions on the first attempt.
 - ~90% of valid solutions were found after one attempt from aider with GPT-4o and Opus.
-- A long tail of solutions continued to be found by both models including on the final, 6th attempt.
+- A long tail of solutions continued to be found by both models including one on the final, sixth attempt of that problem.
 
 
-| Attempt | Model      | Number<br/>resolved | Percent<br/>of resolved | Cumulative<br/>percent of<br/>resolved |
+| Attempt | Agent      | Number<br/>resolved | Percent<br/>of resolved | Cumulative<br/>percent of<br/>resolved |
 |:--------:|------------|---------:|---------:|----:|
-| 1 | GPT-4o | 61 | 77.2 | 77.2
-| 2 | Opus   | 10 | 12.7 | 89.9
-| 3 | GPT-4o |  3 |  3.8 | 93.7
-| 4 | Opus   |  2 |  2.5 | 96.2
-| 5 | GPT-4o |  2 |  2.5 | 98.7
-| 6 | Opus   |  1 |  1.3 | 100.0
+| 1 | Aider with GPT-4o | 61 | 77.2 | 77.2
+| 2 | Aider with Opus | 10 | 12.7 | 89.9
+| 3 | Aider with GPT-4o |  3 |  3.8 | 93.7
+| 4 | Aider with Opus |  2 |  2.5 | 96.2
+| 5 | Aider with GPT-4o |  2 |  2.5 | 98.7
+| 6 | Aider with Opus |  1 |  1.3 | 100.0
 |**Total**|   | **79** | **100%** | **100%** |
 
 If we breakdown correct solutions purely by model,
 we can see that GPT-4o dominates.
-This isn't a fair comparison, because GPT-4o always took the first
-attempt at solving.
-But anecdotal evidence from early runs of the benchmark
-supports the observation that GPT-4o is significantly stronger than Opus
+This isn't a fair and direct comparison, because GPT-4o always took the first
+turn at solving.
+But anecdotal evidence from earlier runs of the benchmark
+supports the observation that aider with GPT-4o is significantly stronger than Opus
 for this endeavor.
 
-| Model      | Number resolved | Percent of resolved | 
+| Agent      | Number resolved | Percent of resolved | 
 |------------|---------:|---------:|
-| GPT-4o | 66 | 83.5 |
-| Opus   | 13 | 16.5 |
+| Aider with GPT-4o | 66 | 83.5 |
+| Aider with Opus | 13 | 16.5 |
 |**Total**| **79** | **100%** |
 
 
