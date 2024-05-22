@@ -1,6 +1,12 @@
 
 # Release history
 
+### v0.36.0
+
+- [Aider can now lint your code and fix any errors]()
+  - Aider lints and fixes after every LLM edit.
+  - You can manually lint-and-fix files with `/lint` in the chat or `--lint` on the command line.  
+
 ### v0.35.0
 
 - Aider now uses GPT-4o by default.
