@@ -200,7 +200,7 @@ respected when new code is added.
 
 ## Linting and fixing
 
-[Aider lints code](https://aider.chat/docs/linting/)
+[Aider lints code](https://aider.chat/2024/05/22/linting.html)
 after every LLM edit and offers to automatically fix
 any linting errors.
 Aider includes basic linters built with tree-sitter that supports
@@ -258,7 +258,7 @@ make the correct changes to resolve it.
 ## Testing and fixing
 
 Aider can be configured with the command needed to run tests for a repo.
-A user working on a Python project might do that by launching
+A user working on a python project might do that by launching
 aider like this:
 
 ```
