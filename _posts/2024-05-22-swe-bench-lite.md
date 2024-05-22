@@ -1,18 +1,23 @@
 ---
 title: Aider scores SOTA 26.3% on SWE Bench Lite
 excerpt: Aider scored 26.3% on SWE Bench Lite, achieving a state of the art result.
+highlight_image: /assets/swe_bench_lite.jpg
 draft: true
 ---
 
+[![SWE Bench Lite results](/assets/swe_bench_lite.svg)](https://aider.chat/assets/swe_bench_lite.svg)
+
 # Aider scores SOTA 26.3% on SWE Bench Lite
  
-[Aider scored 26.3%]()
+Aider scored 26.3%
 on the
 [SWE Bench Lite benchmark](https://www.swebench.com), achieving a state of the art result. 
 The current top leaderboard entry is 20.33%
 from Amazon Q Developer Agent.
 The best result reported elsewhere online seems to be
 [22.3% from AutoCodeRover](https://github.com/nus-apr/auto-code-rover).
+
+## Interactive, not agentic
 
 Aider achieved this result mainly through its focus on static code analysis,
 reliable LLM code editing
@@ -32,6 +37,8 @@ avoid wasted time, code reviews and token costs.
 When a user asks aider for a change, they see the edits performed in real-time. 
 Aider may also then offer additional
 help like fixing lint or test errors.
+
+## Methodology
 
 For the benchmark, 
 aider was launched in each problem's git repository
@@ -113,7 +120,7 @@ Some noteworthy observations:
 | 6 | Opus   |  1 |  1.3 | 100.0
 |**Total**|   | **79** | **100%** | **100%** |
 
-If we just look at which models produced correct solutions,
+If we breakdown correct solutions purely by model,
 we can see that GPT-4o dominates.
 This isn't a fair comparison, because GPT-4o always took the first
 attempt at solving.
@@ -145,8 +152,7 @@ to provide a compact and powerful summary of the entire code base.
 The map is constantly
 tailored to show
 repo context that is relevant to the current state of the chat conversation.
-
-by performing a graph optimization on the code's call graph.
+This is done by performing a graph optimization on the code's call graph.
 
 When the user asks for a change to their code, the LLM uses the repo map
 to decide which files to edit.
