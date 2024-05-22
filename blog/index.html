@@ -3,7 +3,8 @@ layout: default
 ---
 
 <div class="posts">
-  {% for post in site.posts %}
+    {% for post in site.posts %}
+    {% unless post.draft %}
     <article class="post">
       <h2><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></h2>
       <div class="entry">
@@ -27,5 +28,6 @@ layout: default
           {{ post.date | date: "%b %-d, %Y" | upcase }}
       </p>
     </article>
-  {% endfor %}
+    {% endunless %}
+    {% endfor %}
 </div>
