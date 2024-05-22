@@ -45,8 +45,8 @@ def plot_over_time(yaml_file):
             textcoords="offset points",
         )
 
-    ax.set_xlabel("Model release date", fontsize=18)
-    ax.set_ylabel("Aider code editing benchmark,\npercent completed correctly", fontsize=18)
+    ax.set_xlabel("Model release date", fontsize=18, color="#555")
+    ax.set_ylabel("Aider code editing benchmark,\npercent completed correctly", fontsize=18, color="#555")
     ax.set_title("LLM code editing skill by model release date", fontsize=20)
     ax.set_ylim(0, 30)
     plt.xticks(fontsize=14)

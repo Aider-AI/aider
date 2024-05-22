@@ -46,7 +46,7 @@ def plot_swe_bench_lite(data_file):
         )
 
     # ax.set_xlabel("Models", fontsize=18)
-    ax.set_ylabel("Pass rate (%)", fontsize=18)
+    ax.set_ylabel("Pass rate (%)", fontsize=18, color="#555")
     ax.set_title("SWE Bench Lite", fontsize=20)
     ax.set_ylim(0, 30)
     plt.xticks(rotation=45, ha="right", fontsize=16)
@@ -54,6 +54,7 @@ def plot_swe_bench_lite(data_file):
     plt.savefig("swe_bench_lite.jpg")
     plt.savefig("swe_bench_lite.svg")
     imgcat(fig)
+    ax.xaxis.label.set_color("#555")
 
 
 # Example usage
