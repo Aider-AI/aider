@@ -23,7 +23,7 @@ def plot_swe_bench_lite(data_file):
 
     rc("font", **{"family": "sans-serif", "sans-serif": ["Helvetica"], "size": 10})
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(10, 5))
     ax.grid(axis="y", zorder=0, lw=0.2)
     for spine in ax.spines.values():
         spine.set_edgecolor("#DDDDDD")
