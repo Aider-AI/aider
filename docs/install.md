@@ -5,6 +5,7 @@
 - [Get your API key](#get-your-api-key)
 - [Windows install](#windows-install)
 - [Mac/Linux install](#maclinux-install)
+- [FreeBSD install](#freebsd-install)
 - [Working with other LLMs](https://aider.chat/docs/llms.html)
 - [Tutorial videos](#tutorial-videos)
 
@@ -41,6 +42,19 @@ $ aider --anthropic-api-key sk-xxx... --opus
 ```
 # Install aider
 python -m pip install aider-chat
+
+# To work with GPT-4o:
+$ aider --openai-api-key sk-xxx...
+
+# To work with Claude 3 Opus:
+$ aider --anthropic-api-key sk-xxx... --opus
+```
+
+## FreeBSD install
+
+```
+# Install aider
+$ sudo pkg install -r FreeBSD misc/py-aider-chat
 
 # To work with GPT-4o:
 $ aider --openai-api-key sk-xxx...
