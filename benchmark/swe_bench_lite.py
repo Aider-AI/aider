@@ -22,7 +22,7 @@ def plot_swe_bench_lite(data_file):
     plt.rcParams["hatch.color"] = "#444444"
 
     rc("font", **{"family": "sans-serif", "sans-serif": ["Helvetica"], "size": 10})
-    plt.rcParams["text.color"] = "#444444"
+    plt.rcParams["text.color"] = "#555"
 
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.grid(axis="y", zorder=0, lw=0.2)
