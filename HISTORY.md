@@ -3,15 +3,15 @@
 
 ### v0.36.0
 
-- [Aider can now lint your code and fix any errors](https://aider.chat/2024/05/22/linting.html)
-  - Aider lints and fixes after every LLM edit.
+- [Aider can now lint your code and fix any errors](https://aider.chat/2024/05/22/linting.html).
+  - Aider automatically lints and fixes after every LLM edit.
   - You can manually lint-and-fix files with `/lint` in the chat or `--lint` on the command line.
-  - Aider includes build in basic linters for all supported tree-sitter languages.
-  - You can also configure aider to use your preffered linter with `--lint-cmd`.
-- Aider has better support for running tests and fixing problems.
+  - Aider includes built in basic linters for all supported tree-sitter languages.
+  - You can also configure aider to use your preferred linter with `--lint-cmd`.
+- Aider has additional support for running tests and fixing problems.
   - Configure your testing command with `--test-cmd`.
   - Run tests with `/test` or from the command line with `--test`.
-  - Aider will attempt to fix any errors.  
+  - Aider will automatically attempt to fix any test failures.
   
 
 ### v0.35.0
