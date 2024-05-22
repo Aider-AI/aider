@@ -26,7 +26,7 @@ def plot_swe_bench_lite(data_file):
         spine.set_linewidth(0.5)
 
     colors = [
-        "red" if "Aider" in model else "green" if "AutoCodeRover" in model else "blue" for model in models
+        "red" if "Aider" in model else "blue" for model in models
     ]
     bars = ax.bar(models, pass_rates, color=colors, alpha=0.5, zorder=3)
 
@@ -36,7 +36,7 @@ def plot_swe_bench_lite(data_file):
 
     ax.set_xlabel("Models", fontsize=18)
     ax.set_ylabel("Pass Rate (%)", fontsize=18)
-    ax.set_title("SWE Benchmark Pass Rates by Model", fontsize=20)
+    ax.set_title("SWE Bench Lite pass rates", fontsize=20)
     plt.xticks(rotation=45, ha='right')
     plt.tight_layout()
     plt.savefig("swe_bench_lite.png")
