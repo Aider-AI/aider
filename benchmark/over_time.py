@@ -21,7 +21,7 @@ def plot_over_time(yaml_file):
     plt.rcParams["hatch.linewidth"] = 0.5
     plt.rcParams["hatch.color"] = "#444444"
 
-    rc("font", **{"family": "sans-serif", "sans-serif": ["Helvetica"], "size": 10})
+    rc("font", **{"family": "sans-serif", "sans-serif": ["Helvetica"], "size": 10, "color": "#444444"})
 
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.grid(axis="y", zorder=0, lw=0.2)
