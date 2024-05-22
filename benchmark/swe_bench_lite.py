@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from matplotlib import rc
+from imgcat import imgcat
 
 def plot_swe_bench_lite(data_file):
     with open(data_file, "r") as file:
@@ -41,6 +42,7 @@ def plot_swe_bench_lite(data_file):
     plt.tight_layout()
     plt.savefig("swe_bench_lite.png")
     plt.savefig("swe_bench_lite.svg")
+    imgcat(fig)
     plt.show()
 
 # Example usage
