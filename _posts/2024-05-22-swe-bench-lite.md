@@ -9,7 +9,7 @@ draft: true
  
 Aider scored 26.3%
 on the
-[SWE Bench Lite benchmark](https://www.swebench.com), achieving a state of the art result. 
+[SWE Bench Lite benchmark](https://www.swebench.com), achieving a state-of-the-art result. 
 The current top leaderboard entry is 20.3%
 from Amazon Q Developer Agent.
 The best result reported elsewhere online seems to be
@@ -20,18 +20,18 @@ The best result reported elsewhere online seems to be
 ## Interactive, not agentic
 
 Aider achieved this result mainly through its focus on static code analysis,
-reliable LLM code editing
+reliable LLM code editing,
 and pragmatic workflows for interactive pair programming with AI.
 Aider intentionally has quite limited and narrow "agentic behavior":
 it doesn't require a highly detailed upfront "spec" from the user,
 use RAG or vector search, farm out sub-problems to an army of LLMs,
-allow the LLM to use tools
-or perform  web searches,
+allow the LLM to use tools,
+or perform web searches,
 etc.
 
 Aider is first and foremost a tool for engineers to get real work done in
 real code bases through a pair programming chat style interface.
-When a user asks aider for a change, they see the edits performed in real-time
+When a user asks aider for a change, they see the edits performed in real-time,
 and aider may also then offer additional
 help like fixing lint or test errors.
 In normal use, the user is in full interactive control. 
@@ -44,14 +44,14 @@ avoid wasted time, code reviews and token costs.
 For the benchmark, 
 aider was launched in each problem's git repository
 with the problem statement
-submitted as the opening chat message from "the user".
+submitted as the opening chat message from "the user."
 After that aider runs as normal, with the following modifications:
 
 - Aider's suggestions were always accepted without user approval.
-- A simple harness was used to retry the SWE Bench problem if aider produced code which wasn't *plausibly correct*.
+- A simple harness was used to retry the SWE Bench problem if aider produced code that wasn't *plausibly correct*.
 Plausibly correct means that aider concluded that it had successfully edited the repo
 without causing syntax errors or breaking any *pre-existing* tests.
-- If the solution isn't plausible, the harness launches aider to try again from scratch
+- If the solution isn't plausible, the harness launches aider to try again from scratch,
 alternating between using aider with GPT-4o and Opus.
 - If no plausible solution is found after six tries, the harness picks the solution
 with the least amount of edit/lint/test problems.
@@ -68,11 +68,11 @@ tells aider to say yes to every suggestion and use pytest to run tests.
   - `aider --yes --test-cmd pytest`
 - Pasting the text of a GitHub issue into the chat, or adding it via URL with a command in the chat like:
   - `/web https://github.com/django/django/issues/XXX`
-- If aider doesn't produce code that lints and tests clean, the user might decide to revert the changes and try again. Maybe with a different LLM this time.
+- If aider doesn't produce code that lints and tests clean, the user might decide to revert the changes and try again, maybe with a different LLM this time.
 [Aider is tightly integrated with git](https://aider.chat/docs/faq.html#how-does-aider-use-git),
 so it's always easy to revert AI changes that don't pan out.
 
-Of course, outside a benchmark setting it's probably
+Of course, outside a benchmark setting, it's probably
 unwise to let *any* AI agent run unsupervised on your code base.
 Aider is intended to be used as an interactive pair-programming chat,
 where the user participates to direct aider's work and approve suggestions.
@@ -84,7 +84,7 @@ or if the AI starts going down a wrong path.
 
 Running the entire SWE Bench Lite benchmark using aider with just GPT-4o
 achieved a score of 25%.
-This was itself a state of the art result, before being surpassed by the main
+This was itself a state-of-the-art result, before being surpassed by the main
 result being reported here
 that used aider with both GPT-4o & Opus.
 
@@ -94,7 +94,7 @@ The benchmark harness alternated between running aider with GPT-4o and Opus.
 The harness proceeded in a fixed order, always starting with GPT-4o and
 then alternating with Opus until a plausible solution was found.
 
-The table below breaks down the 79 solutions which were ultimately
+The table below breaks down the 79 solutions that were ultimately
 verified as correctly resolving their issue.
 Some noteworthy observations:
 
@@ -113,7 +113,7 @@ Some noteworthy observations:
 | 6 | Aider with Opus |  1 |  1.3 | 100.0
 |**Total**|   | **79** | **100%** | **100%** |
 
-If we breakdown correct solutions purely by model,
+If we break down correct solutions purely by model,
 we can see that GPT-4o dominates.
 This isn't a fair and direct comparison, because GPT-4o always took the first
 turn at solving.
@@ -139,7 +139,7 @@ tools to interactively explore the code base.
 Aider instead uses a
 [repository map](https://aider.chat/2023/10/22/repomap.html)
 to help the LLM understand the 
-layout, code structure and content of a git repo.
+layout, code structure, and content of a git repo.
 The repo map is created from the code's AST and call graph
 to provide a compact and powerful summary of the entire code base.
 The map is constantly
@@ -185,9 +185,9 @@ They were only used to compute this statistic after the benchmarking was complet
 Once files have been selected for editing,
 the next step is of course to edit the source code to fix the problem.
 
-Aider has  always had a deep focus on ensuring that LLMs can not just write code,
+Aider has always had a deep focus on ensuring that LLMs can not just write code,
 but reliably *edit* code.
-Aider a collection of prompting strategies and code editing backends which have
+Aider has a collection of prompting strategies and code editing backends which have
 been honed through
 [extensive benchmarking](https://aider.chat/docs/leaderboards/).
 These foundational capabilities help ensure that the LLM can not only code up a solution but
@@ -200,10 +200,10 @@ respected when new code is added.
 
 ## Linting and fixing
 
-[Aider lints code]()
-after every LLM edit, and offers to automatically fix
+[Aider lints code](https://aider.chat/docs/linting/)
+after every LLM edit and offers to automatically fix
 any linting errors.
-Aider includes basic linters built with tree-sitter that support
+Aider includes basic linters built with tree-sitter that supports
 [most popular programming languages](https://github.com/paul-gauthier/grep-ast/blob/main/grep_ast/parsers.py).
 These built in linters will detect syntax errors and other fatal problems with the code.
 
@@ -258,14 +258,14 @@ make the correct changes to resolve it.
 ## Testing and fixing
 
 Aider can be configured with the command needed to run tests for a repo.
-A user working on a python project might do that by launching
+A user working on a Python project might do that by launching
 aider like this:
 
 ```
 aider --test-cmd pytest
 ``` 
 
-The repositories that are used in the SWE Bench problems are large open
+The repositories that are used in the SWE Bench problems are large, open
 source projects with extensive existing test suites.
 A repo's test suite can be run in three ways:
 
@@ -291,7 +291,7 @@ aider will automatically
 share the test output with the LLM and ask it to 
 try and resolve the test failures.
 
-To be clear, *aider can not run or even see the "acceptance tests"* from the `test_patch`
+To be clear, *aider cannot run or even see the "acceptance tests"* from the `test_patch`
 as described in (3).
 Those tests are only run outside of aider and the benchmark harness,
 to compute the final benchmark score.
@@ -300,9 +300,9 @@ to compute the final benchmark score.
 
 ## Finding a plausible solution
 
-As aider executes, it notes the outcome of the editing, linting and testing
+As aider executes, it notes the outcome of the editing, linting, and testing
 steps.
-When aider completes, it returns their final status as either:
+When aider completes, it returns its final status as either:
 succeeded with no errors remaining,
 or ended without resolving all errors.
 
@@ -311,7 +311,7 @@ solution to the current SWE Bench task.
 A plausible solution is one where aider
 returns saying that it 
 edited the repo with no outstanding
-edit, lint or test errors.
+edit, lint, or test errors.
 In this case, aider's changes are taken as the proposed solution and recorded
 as the SWE Bench `model_patch` to be evaluated later with the
 `test_patch` "acceptance tests".
@@ -326,7 +326,7 @@ harness moves on to the next SWE Bench instance.
 It's worth noting that repositories may have lint or test errors present before aider even starts to edit them. Whether errors are caused by aider or were pre-existing, there will be instances where, after six tries, no plausible solution is obtained.
 
 If all six attempts fail to produce a plausible solution,
-then the "best" solution available is selected as a the
+then the "best" solution available is selected as the
 `model_patch`.
 Which of the non-plausible solutions to use is determined
 by ignoring the testing outcome
@@ -340,14 +340,14 @@ and prioritizing solutions in the following order:
 ## Computing the benchmark score
 
 The benchmark harness produces one "best" solution for each of the 300
-SWE Bench Lite instances, and saves it as a `model_patch`.
+SWE Bench Lite instances and saves it as a `model_patch`.
 A separate evaluation script uses the SWE Bench support code to
 test each of these results with the acceptance tests.
 
 These `test_patch` acceptance tests are only ever run outside of aider
 and the benchmark harness, and only to compute the number of
 correctly resolved instances.
-They are never run, used or even visible during the attempts to solve the problems.
+They are never run, used, or even visible during the attempts to solve the problems.
 
 Aider correctly resolved 79 out of 300 SWE Bench Lite instances, or 26.3%.
 
@@ -358,6 +358,6 @@ Much thanks to the team behind the
 family of AI coding benchmarks.
 Also thanks to Albert Örwall who has
 [dockerized the SWE Bench evaluation scripts](SWE-bench-docker)
-making it faster, easier and more reliable to run the acceptance tests.
+making it faster, easier, and more reliable to run the acceptance tests.
 
 
