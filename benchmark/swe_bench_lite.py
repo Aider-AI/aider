@@ -27,7 +27,7 @@ def plot_swe_bench_lite(data_file):
         spine.set_linewidth(0.5)
 
     colors = [
-        "red" if "Aider" in model else "blue" for model in models
+        "#b3e6a8" if "Aider" in model else "#b3d1e6" for model in models
     ]
     bars = ax.bar(models, pass_rates, color=colors, alpha=0.5, zorder=3)
 
@@ -36,14 +36,13 @@ def plot_swe_bench_lite(data_file):
         ax.text(bar.get_x() + bar.get_width()/2, yval + 0.5, f'{yval}%', ha='center', va='bottom', fontsize=12, alpha=0.75)
 
     ax.set_xlabel("Models", fontsize=18)
-    ax.set_ylabel("Pass Rate (%)", fontsize=18)
+    ax.set_ylabel("Pass rate (%)", fontsize=18)
     ax.set_title("SWE Bench Lite pass rates", fontsize=20)
     plt.xticks(rotation=45, ha='right')
     plt.tight_layout()
     plt.savefig("swe_bench_lite.png")
     plt.savefig("swe_bench_lite.svg")
     imgcat(fig)
-    plt.show()
 
 # Example usage
 plot_swe_bench_lite("benchmark/tmp.txt")
