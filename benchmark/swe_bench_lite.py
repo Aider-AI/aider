@@ -12,6 +12,8 @@ def plot_swe_bench_lite(data_file):
     for line in lines:
         if line.strip():
             pass_rate, model = line.split("%")
+            model = model.strip()
+            model = model.replace("|", "\n")
             models.append(model.strip())
             pass_rates.append(float(pass_rate.strip()))
 
@@ -29,13 +31,13 @@ def plot_swe_bench_lite(data_file):
     colors = [
         "#b3e6a8" if "Aider" in model else "#b3d1e6" for model in models
     ]
-    bars = ax.bar(models, pass_rates, color=colors, alpha=0.5, zorder=3)
+    bars = ax.bar(models, pass_rates, color=colors, alpha=0.75, zorder=3)
 
     for bar in bars:
         yval = bar.get_height()
         ax.text(bar.get_x() + bar.get_width()/2, yval + 0.5, f'{yval}%', ha='center', va='bottom', fontsize=12, alpha=0.75)
 
-    ax.set_xlabel("Models", fontsize=18)
+    #ax.set_xlabel("Models", fontsize=18)
     ax.set_ylabel("Pass rate (%)", fontsize=18)
     ax.set_title("SWE Bench Lite pass rates", fontsize=20)
     ax.set_ylim(0, 30)
