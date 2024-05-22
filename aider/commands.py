@@ -534,6 +534,8 @@ class Commands:
 
     def cmd_test(self, args):
         "Run a shell command and add the output to the chat on non-zero exit code"
+        if not args and self.coder.test_cmd:
+            args = self.coder.test_cmd
 
         if not callable(args):
             return self.cmd_run(args, True)
