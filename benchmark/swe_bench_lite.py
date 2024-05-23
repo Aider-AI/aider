@@ -65,6 +65,7 @@ def plot_swe_bench_lite(data_file):
     for label in xticks[1]:
         if "Aider" in label.get_text():
             label.set_fontweight("bold")
+            label.set_fontsize(16)
     plt.tight_layout(pad=3.0)
     plt.savefig("swe_bench_lite.jpg")
     plt.savefig("swe_bench_lite.svg")
