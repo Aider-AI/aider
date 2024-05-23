@@ -575,6 +575,13 @@ class Coder:
             return self.commands.run(inp)
 
         self.check_for_file_mentions(inp)
+        inp = self.check_for_urls(inp)
+
+        return inp
+
+    def check_for_urls(self, inp):
+        # todo use a regex to find all urls in inp
+
         return inp
 
     def keyboard_interrupt(self):
