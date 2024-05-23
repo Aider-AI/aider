@@ -61,13 +61,14 @@ It's important to be clear that during benchmarking
 It could not see or run the held out "acceptance tests" that are used later to see if the
 SWE Bench problem was correctly resolved.
 
-The benchmarking process was similar to a user employing aider like this:
+The benchmarking process was similar to how a developer might use aider to
+resolve a GitHub issue:
 
-- Launching aider in their repo with the command below, which
-tells aider to automatically proceed with every suggestion
-and use pytest to run tests.
+- They could launch aider in their repo with the command below, which
+tells aider they want to accept every suggestion
+and to use pytest to run tests.
   - `aider --yes --test-cmd pytest`
-- Pasting the URL of a GitHub issue into the chat. Aider will offer to pull in the URL's content.
+- Paste the URL or text of a GitHub issue into the chat. Aider will pull in the URL's content and then try and solve the issue.
 - If aider doesn't produce code that lints and tests clean, the user might decide to revert the changes and try again, maybe using aider with a different LLM this time.
 [Aider is tightly integrated with git](https://aider.chat/docs/faq.html#how-does-aider-use-git),
 so it's always easy to revert AI changes that don't pan out.
