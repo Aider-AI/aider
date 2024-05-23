@@ -42,7 +42,7 @@ def plot_swe_bench_lite(data_file):
         yval = bar.get_height()
         y = yval + 0.75 if "Aider" in model else yval - 1.25
         va = "bottom" if "Aider" in model else "top"
-        fontweight = "bold" if "Aider" in model else "light"
+        fontweight = "bold" if "Aider" in model else "normal"
 
         ax.text(
             bar.get_x() + bar.get_width() / 2,
