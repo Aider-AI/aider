@@ -50,7 +50,12 @@ def plot_swe_bench_lite(data_file):
     ax.set_ylabel("Pass rate (%)", fontsize=18, color=font_color)
     ax.set_title("SWE Bench Lite", fontsize=20)
     ax.set_ylim(0, 29)
-    plt.xticks(rotation=45, ha="right", fontsize=16, color=font_color)
+    plt.xticks(
+        # rotation=45,
+        # ha="center",
+        fontsize=16,
+        color=font_color,
+    )
     plt.tight_layout(pad=3.0)
     plt.savefig("swe_bench_lite.jpg")
     plt.savefig("swe_bench_lite.svg")
