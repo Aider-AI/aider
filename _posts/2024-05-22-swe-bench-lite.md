@@ -243,10 +243,12 @@ or other fatal errors.
 after every LLM edit and offers to automatically fix
 any problems.
 
+Aider ships with built-in linters based on tree-sitter
+which work with most popular programming languages.
 Aider shows linting errors to the LLM in a novel format,
 using the abstract syntax tree to display relevant code context for each
 error.
-This context increases the ability of the LLM to understand the problem and
+This context helps LLMs understand the problem and
 make the correct changes to resolve it.
 
 <div class="chat-transcript" markdown="1">
