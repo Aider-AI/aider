@@ -1,15 +1,16 @@
 ---
-title: Aider scores SOTA 26.3% on SWE Bench Lite
+title: Aider scores 26.3% on SWE Bench Lite
 excerpt: Aider scored 26.3% on SWE Bench Lite, achieving a state of the art result.
 highlight_image: /assets/swe_bench_lite.jpg
 draft: true
 ---
 
-# Aider scores SOTA 26.3% on SWE Bench Lite
+# Aider scores 26.3% on SWE Bench Lite
  
 Aider scored 26.3%
 on the
-[SWE Bench Lite benchmark](https://www.swebench.com), achieving a state-of-the-art result. 
+[SWE Bench Lite benchmark](https://www.swebench.com),
+achieving a state-of-the-art result. 
 The current top leaderboard entry is 20.3%
 from Amazon Q Developer Agent.
 The best result reported elsewhere online seems to be
@@ -207,19 +208,24 @@ can see relevant classes, functions and variables from the entire repo.
 This helps ensure that the project's existing APIs and conventions are
 respected when new code is added.
 
+Regardless, there are still cases where aider may be unable to cleanly
+complete the edits specified by the LLM.
+This is usually because the LLM has failed to conform to the editing
+instructions in its system prompt.
+When aider completes, it returns an editing outcome that indicates
+whether it was able to successfully complete all edits.
+The benchmark harness used this editing status as
+one criteria to determine if aider has
+created a plausible soultion.
+
 ## Linting and fixing
 
+One key criteria for a plausible solution is that it passes basic
+linting, which means that the code is valid and without syntax
+or other fatal errors.
 [Aider lints code](https://aider.chat/2024/05/22/linting.html)
 after every LLM edit and offers to automatically fix
-any linting errors.
-Aider includes basic linters built with tree-sitter to check
-[most popular programming languages](https://github.com/paul-gauthier/grep-ast/blob/main/grep_ast/parsers.py).
-These built in linters will detect syntax errors and other fatal problems with the code.
-
-Users can also configure aider to use their preferred linters.
-This allows aider to check for a larger class of problems, keep the code style
-aligned with the rest of the repo, etc.
-But for the benchmark, aider simply used its built-in linters.
+any problems.
 
 Aider shows linting errors to the LLM in a novel format,
 using the abstract syntax tree (AST) to display relevant code context for each
@@ -265,67 +271,68 @@ app.py:
 
 </div>
 
+In the benchmark, these linting suggestions are always accepted.
+At completion,
+aider reports a linting outcome that
+indicates if it was able to ultimately produce
+code without any outstanding linting errors.
+The benchmark harness used this status as
+one of the criteria to determine if aider has
+created a plausible soultion.
 
 ## Testing and fixing
 
-Aider can be configured with the command needed to run tests for a repo.
-A user working on a python project might do that by launching
-aider like this:
+Another key crtieria for a plausible solution is that it must
+not have any broken tests.
+Aider can be configured with the command needed to run tests for a repo,
+and can automatically attempt to fix any testing errors.
+
+A user working on a python project might configure testing
+by launching aider like this:
 
 ```
 aider --test-cmd pytest
 ``` 
 
-The repositories that are used in the SWE Bench problems are large open
+For the benchmark, aider is configured with a test command that will run the
+tests that already exist in each problem's repository.
+SWE Bench problems are based on repositories from large open
 source projects with extensive existing test suites.
-A repo's test suite can be run in three ways:
-
-1. Run tests as they existed before trying to solve the problem, without any changes.
-2. Run tests after aider has modified the repo.
-So the pre-existing test cases are still present, but may have been modified by aider.
-Aider may have also added new tests.
-3. Run the final "acceptance tests" to judge if aider has successfully resolved the problem.
-These tests include the unmodified pre-existing tests and
-a held out set of tests (from the so called `test_patch`).
-
-For the benchmark, aider is configured with a test command that will run the tests
-as described in (2) above.
-So testing will fail if aider has broken any pre-existing tests or if any new
+This means that
+testing will fail if aider has broken any of these
+pre-existing tests or if any new
 tests that it created aren't passing.
-If any tests fail, aider will automatically
-share the test output with the LLM and ask it to 
-try and resolve the test failures.
 
-To be clear, *aider cannot run or even see the "acceptance tests"* from the `test_patch`
-described in (3).
+As with editig and linting, aider reports a testing outcome
+that indicates if it completed with any outstanding testing errors.
+The benchmark harness uses this status when deciding if aider
+has produced a plausible solution.
+
+To be clear, *aider cannot run or even see the "acceptance tests"*
+that are used to determine if a proposed solution correctly
+resolves the problem.
 Those tests are only run outside of aider and the benchmark harness,
 to compute the final benchmark score.
-To do that,
-an evaluation script
-verifies that the pre-existing and held out tests
-pass as expected from a correct solution.
-If so, the issue is marked as resolved.
-For this final acceptance testing,
-any aider edits to tests are discarded to ensure a faithful determination
-of whether the issue was resolved.
 
 ## Finding a plausible solution
 
-As aider executes, it notes the outcome of the editing, linting, and testing
+Each time aider executes, it reports
+the outcome of the editing, linting, and testing
 steps.
-When aider completes, it returns its final status as either:
-succeeded with no errors remaining,
-or ended without resolving all errors.
+Each of these steps may complete successfully or
+return a status that indicates that there were outstanding
+problems that remain unresolved.
 
-The benchmark harness uses these outcomes to determine if it has a plausible
+The benchmark harness uses these outcomes to determine if
+aider has produced a plausible
 solution to the current SWE Bench task.
 A plausible solution is one where aider
 returns saying that it 
 edited the repo with no outstanding
 edit, lint, or test errors.
-In this case, aider's changes are taken as the proposed solution and recorded
+In this case, aider's changes are recorded
 as the SWE Bench `model_patch` to be evaluated later with the
-`test_patch` "acceptance tests".
+acceptance tests.
 
 If the solution is not plausible, another
 instance of aider is launched again from scratch on the same problem.
@@ -334,7 +341,12 @@ and gives each model three attempts -- for a total of six attempts.
 As soon as a plausible solution is found, it is accepted and the
 harness moves on to the next SWE Bench instance.
 
-It's worth noting that repositories may have lint or test errors present before aider even starts to edit them. Whether errors are caused by aider or were pre-existing, there will be instances where, after six tries, no plausible solution is obtained.
+It's worth noting that repositories may have lint or test errors
+present before aider even starts to edit them.
+Whether errors are caused by aider or were pre-existing,
+there will be instances where
+no plausible solution is
+found after six tries.
 
 If all six attempts fail to produce a plausible solution,
 then the "best" solution available is selected as the
