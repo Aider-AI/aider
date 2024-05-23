@@ -34,14 +34,21 @@ def plot_swe_bench_lite(data_file):
     colors = ["#b3e6a8" if "Aider" in model else "#b3d1e6" for model in models]
     bars = ax.bar(models, pass_rates, color=colors, alpha=0.75, zorder=3)
 
-    for bar in bars:
+    for model, bar in zip(models, bars):
         yval = bar.get_height()
+        if "Aider" in model:
+            y = yval + 0.75
+            va = "bottom"
+        else:
+            y = yval - 1.25
+            va = "top"
+
         ax.text(
             bar.get_x() + bar.get_width() / 2,
-            yval - 1.25,
+            y,
             f"{yval}%",
             ha="center",
-            va="top",
+            va=va,
             fontsize=14,
             # alpha=0.75,
         )
@@ -49,7 +56,7 @@ def plot_swe_bench_lite(data_file):
     # ax.set_xlabel("Models", fontsize=18)
     ax.set_ylabel("Instances resolved (%)", fontsize=18, color=font_color)
     ax.set_title("SWE Bench Lite", fontsize=20)
-    ax.set_ylim(0, 29)
+    ax.set_ylim(0, 29.9)
     plt.xticks(
         # rotation=45,
         # ha="center",
