@@ -39,7 +39,7 @@ This lets them quickly steer misunderstandings back on course and
 avoid wasted time, code reviews and token costs.
 
 
-## Methodology
+## Benchmark methodology
 
 For the benchmark, 
 aider was launched in each problem's git repository
@@ -61,18 +61,18 @@ It's important to be clear that during benchmarking
 It could not see or run the held out "acceptance tests" that are used later to see if the
 SWE Bench problem was correctly resolved.
 
-The benchmarking process can be thought of as similar to a user:
+The benchmarking process was similar to a user employing aider like this:
 
 - Launching aider in their repo with the something like command below, which
 tells aider to say yes to every suggestion and use pytest to run tests.
   - `aider --yes --test-cmd pytest`
 - Pasting the text of a GitHub issue into the chat, or adding it via URL with a command in the chat like:
   - `/web https://github.com/django/django/issues/XXX`
-- If aider doesn't produce code that lints and tests clean, the user might decide to revert the changes and try again, maybe with a different LLM this time.
+- If aider doesn't produce code that lints and tests clean, the user might decide to revert the changes and try again, maybe using aider with a different LLM this time.
 [Aider is tightly integrated with git](https://aider.chat/docs/faq.html#how-does-aider-use-git),
 so it's always easy to revert AI changes that don't pan out.
 
-Of course, outside a benchmark setting, it's probably
+Outside a benchmark setting, it's probably
 unwise to let *any* AI agent run unsupervised on your code base.
 Aider is intended to be used as an interactive pair-programming chat,
 where the user participates to direct aider's work and approve suggestions.
@@ -82,7 +82,7 @@ or if the AI starts going down a wrong path.
 
 ## Aider with GPT-4o alone was SOTA
 
-Running the entire SWE Bench Lite benchmark using aider with just GPT-4o
+Running the SWE Bench Lite benchmark using aider with just GPT-4o
 achieved a score of 25%.
 This was itself a state-of-the-art result, before being surpassed by the main
 result being reported here
@@ -203,7 +203,7 @@ respected when new code is added.
 [Aider lints code](https://aider.chat/2024/05/22/linting.html)
 after every LLM edit and offers to automatically fix
 any linting errors.
-Aider includes basic linters built with tree-sitter that supports
+Aider includes basic linters built with tree-sitter to check
 [most popular programming languages](https://github.com/paul-gauthier/grep-ast/blob/main/grep_ast/parsers.py).
 These built in linters will detect syntax errors and other fatal problems with the code.
 
@@ -220,36 +220,38 @@ make the correct changes to resolve it.
 
 <div class="chat-transcript" markdown="1">
 
-> app.py:23:36: F821 undefined name 'num'  
-> app.py:41:16: F541 f-string is missing placeholders  
->   
-> app.py:  
-> ...⋮...  
->   6│class LongNum:  
->   7│    def __init__(self, num):  
->   8│        """  
->   9│        Initialize the number.  
->  10│        """  
-> ...⋮...  
->  19│    def __str__(self):  
->  20│        """  
->  21│        Render the number as a string.  
->  22│        """  
->  23█        return str(num)  
->  24│  
->  25│  
->  26│@app.route('/subtract/<int:x>/<int:y>')  
-> ...⋮...  
->  38│@app.route('/divide/<int:x>/<int:y>')  
->  39│def divide(x, y):  
->  40│    if y == 0:  
->  41█        return f"Error: Cannot divide by zero"  
->  42│    else:  
->  43│        result = x / y  
->  44│        return str(result)  
->  45│  
-> ...⋮...  
->   
+```
+app.py:23:36: F821 undefined name 'num'  
+app.py:41:16: F541 f-string is missing placeholders  
+  
+app.py:  
+...⋮...  
+  6│class LongNum:  
+  7│    def __init__(self, num):  
+  8│        """  
+  9│        Initialize the number.  
+ 10│        """  
+...⋮...  
+ 19│    def __str__(self):  
+ 20│        """  
+ 21│        Render the number as a string.  
+ 22│        """  
+ 23█        return str(num)  
+ 24│  
+ 25│  
+ 26│@app.route('/subtract/<int:x>/<int:y>')  
+...⋮...  
+ 38│@app.route('/divide/<int:x>/<int:y>')  
+ 39│def divide(x, y):  
+ 40│    if y == 0:  
+ 41█        return f"Error: Cannot divide by zero"  
+ 42│    else:  
+ 43│        result = x / y  
+ 44│        return str(result)  
+ 45│  
+...⋮...  
+```  
+
 > Attempt to fix lint errors? yes
 
 </div>
