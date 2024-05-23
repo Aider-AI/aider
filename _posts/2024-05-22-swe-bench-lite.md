@@ -96,7 +96,7 @@ result being reported here
 that used aider with both GPT-4o & Opus.
 
 As noted below, a single attempt using Aider with GPT-4o tied
-the current top entry on the leader.
+the current top entry on the leaderboard.
 
 ## Aider with GPT-4o & Opus
 
@@ -105,17 +105,19 @@ The harness proceeded in a fixed order, always starting with GPT-4o and
 then alternating with Opus until a plausible solution was found for each
 problem.
 
-The table below breaks down the 79 solutions that were ultimately
+The table below breaks down the plausible solutions that
+were found for the 300 problems.
+It also provides details on the 79 that were ultimately
 verified as correctly resolving their issue.
 Some noteworthy observations:
 
 - *Just the first attempt* of Aider with GPT-4o resolved 20.3% of the problems, which ties the Amazon Q Developer Agent currently atop the official leaderboard.
 - Including the second attempt, Aider with GPT-4o and Opus scored 23.6% on the benchmark, better than all other known results.
 These first two attempts obtained ~75% of all plausible and ~90% of all resolved solutions.
-- A long tail of solutions continued to be found by both models including one correctly resolved solution on the final, sixth attempt of that problem.
+- A long tail of solutions continued to be found using both models including one correctly resolved solution on the final, sixth attempt of that problem.
 
 
-| Attempt | Agent |Number<br>plausible<br>solutions|Percent&nbsp;of<br>plausible<br>solutions| Number<br/>correctly<br>resolved | Percent&nbsp;of<br>correctly<br>resolved | Score&nbsp;on<br>SWE&nbsp;Bench<br>Lite |
+| Attempt | Agent |Number&nbsp;of<br>plausible<br>solutions|Percent&nbsp;of<br>plausible<br>solutions| Number&nbsp;of<br/>correctly<br>resolved<br>solutions | Percent&nbsp;of<br>correctly<br>resolved<br>solutions | Score&nbsp;on<br>SWE&nbsp;Bench<br>Lite<br>(resolved/300) |
 |:--------:|------------|---------:|---------:|----:|---:|--:|
 | 1 | Aider with GPT-4o    | 208 | 69.3% | 61 | 77.2% | 20.3% |
 | 2 | Aider with Opus      |  49 | 16.3% | 10 | 12.7% |  3.3% |
@@ -138,10 +140,10 @@ with a greater chance of going on to be accepted as resolving the issue.
 Again, this is biased by the turn ordering.
 But other anecdotal evidence from earlier runs of the benchmark
 also supports the observation that aider with GPT-4o is significantly stronger than Opus
-for this endeavor.
+for this benchmark.
 
 
-| Agent      | Number<br>plausible<br>solutions | Number<br>correctly<br>resolved | Percent<br>plausible<br>which<br>resolved| 
+| Agent      | Number&nbsp;of<br>plausible<br>solutions | Number&nbsp;of<br>correctly<br>resolved<br>solutions | Percent&nbsp;of<br>plausible<br>which<br>correctly<br>resolved<br>| 
 |------------|---------:|---------:|---:|
 | Aider with GPT-4o    | 239 | 66 |27.6% |
 | Aider with Opus      |  61 | 13 |21.3% |
@@ -194,7 +196,7 @@ Aider successfully identified the correct file to edit
 in 70.3% of the benchmark tasks.
 
 We can determine which file needed to be edited using the "gold" patch
-which is associated with each SWE Bench Task.
+which is associated with each SWE Bench task.
 This patch was created by a human developer
 to solve the issue, and therefore reveals a file which can
 be edited to solve the problem.
@@ -251,33 +253,18 @@ make the correct changes to resolve it.
 
 ```
 app.py:23:36: F821 undefined name 'num'  
-app.py:41:16: F541 f-string is missing placeholders  
   
 app.py:  
 ...⋮...  
   6│class LongNum:  
-  7│    def __init__(self, num):  
-  8│        """  
-  9│        Initialize the number.  
- 10│        """  
 ...⋮...  
- 19│    def __str__(self):  
- 20│        """  
- 21│        Render the number as a string.  
- 22│        """  
- 23█        return str(num)  
+ 19│    def expound(self, threshold):  
+ 20│        number = self.basis  
+ 21│        while number < threshold:  
+ 22│            number *= self.factor  
+ 23█        return num  
  24│  
  25│  
- 26│@app.route('/subtract/<int:x>/<int:y>')  
-...⋮...  
- 38│@app.route('/divide/<int:x>/<int:y>')  
- 39│def divide(x, y):  
- 40│    if y == 0:  
- 41█        return f"Error: Cannot divide by zero"  
- 42│    else:  
- 43│        result = x / y  
- 44│        return str(result)  
- 45│  
 ...⋮...  
 ```  
 
@@ -288,7 +275,7 @@ app.py:
 In the benchmark, these linting suggestions are always accepted.
 At completion,
 aider reports a linting outcome that
-indicates if it was able to ultimately produce
+indicates if it was able to produce
 code without any outstanding linting errors.
 The benchmark harness used this status as
 one of the criteria to determine if aider has
@@ -298,8 +285,8 @@ created a plausible solution.
 
 The final crtieria for a plausible solution is that 
 all tests must be passing.
-Aider can be configured with the command needed to run tests for a repo,
-and will automatically attempt to fix any testing errors.
+Aider can be configured with the command to run tests for a repo,
+and will automatically attempt to fix any test failures.
 
 A user working on a python project might configure testing
 by launching aider like this:
@@ -318,11 +305,11 @@ pre-existing tests or if any new
 tests that it created aren't passing.
 
 As with editing and linting, aider reports a testing outcome
-that indicates if it completed with any outstanding testing errors.
+that indicates if it completed with any outstanding failing tests.
 The benchmark harness uses this status when deciding if aider
 has produced a plausible solution.
 
-To be clear, *aider cannot run or even see the "acceptance tests"*
+To be clear, *aider cannot run or even see the held out "acceptance tests"*
 that are used to determine if a proposed solution correctly
 resolves the problem.
 Those tests are only run outside of aider and the benchmark harness,
@@ -390,9 +377,7 @@ with results from testing
 the "gold" patch that was developed by a human to correctly solve the issue.
 If they match, the candidate solution has correctly resolved the issue.
 
-
-
-These so called `test_patch` acceptance tests are only ever run outside of aider
+These acceptance tests are only ever run outside of aider
 and the benchmark harness, and only to compute the number of
 correctly resolved instances.
 They are never run, used, or even visible during aider's attempts to solve the problems.
