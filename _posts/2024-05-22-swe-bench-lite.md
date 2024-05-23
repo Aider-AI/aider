@@ -102,12 +102,12 @@ verified as correctly resolving their issue.
 Some noteworthy observations:
 
 - Just the first attempt of Aider with GPT-4o resolved 20.3% of the problems, which ties the Amazon Q Developer Agent currently atop the official leaderboard.
-- Aider with GPT-4o on the first attempt immediately found 69% of all plausible solutions which accounted for 77% of the correctly resolved problems.
-- ~75% of all plausible and ~90% of all resolved solutions were found after one attempt from aider with GPT-4o and Opus.
+- Including the second attempt, Aider with GPT-4o and Opus scored 23.6% on the benchmark, better than all other known results.
+These first two attempts obtained ~75% of all plausible and ~90% of all resolved solutions.
 - A long tail of solutions continued to be found by both models including one correctly resolved solution on the final, sixth attempt of that problem.
 
 
-| Attempt | Agent |Number<br>plausible<br>solutions|Percent&nbsp;of<br>plausible<br>solutions| Number<br/>correctly<br>resolved | Percent&nbsp;of<br>correctly<br>resolved | Percent of<br>SWE Bench Lite&nbsp;Resolved |
+| Attempt | Agent |Number<br>plausible<br>solutions|Percent&nbsp;of<br>plausible<br>solutions| Number<br/>correctly<br>resolved | Percent&nbsp;of<br>correctly<br>resolved | Score&nbsp;on<br>SWE&nbsp;Bench<br>Lite |
 |:--------:|------------|---------:|---------:|----:|---:|--:|
 | 1 | Aider with GPT-4o    | 208 | 69.3% | 61 | 77.2% | 20.3% |
 | 2 | Aider with Opus      |  49 | 16.3% | 10 | 12.7% |  3.3% |
