@@ -89,7 +89,7 @@ This was itself a state-of-the-art result, before being surpassed by the main
 result being reported here
 that used aider with both GPT-4o & Opus.
 
-## GPT-4o vs Opus
+## Aider with GPT-4o & Opus
 
 The benchmark harness alternated between running aider with GPT-4o and Opus.
 The harness proceeded in a fixed order, always starting with GPT-4o and
@@ -99,35 +99,39 @@ The table below breaks down the 79 solutions that were ultimately
 verified as correctly resolving their issue.
 Some noteworthy observations:
 
-- Aider with GPT-4o immediately found 77% of the valid solutions on the first attempt.
-- ~90% of valid solutions were found after one attempt from aider with GPT-4o and Opus.
-- A long tail of solutions continued to be found by both models including one on the final, sixth attempt of that problem.
+- Aider with GPT-4o on the first attempt immediately found 69% of all plausible solutions which accounted for 77% of the correctly resulted problems.
+- ~75% of all plausible and ~90% of all resolved solutions were found after one attempt from aider with GPT-4o and Opus.
+- A long tail of solutions continued to be found by both models including one resolved solution on the final, sixth attempt of that problem.
 
 
-| Attempt | Agent      | Number<br/>resolved | Percent<br/>of resolved | Cumulative<br/>percent of<br/>resolved |
-|:--------:|------------|---------:|---------:|----:|
-| 1 | Aider with GPT-4o | 61 | 77.2 | 77.2
-| 2 | Aider with Opus | 10 | 12.7 | 89.9
-| 3 | Aider with GPT-4o |  3 |  3.8 | 93.7
-| 4 | Aider with Opus |  2 |  2.5 | 96.2
-| 5 | Aider with GPT-4o |  2 |  2.5 | 98.7
-| 6 | Aider with Opus |  1 |  1.3 | 100.0
-|**Total**|   | **79** | **100%** | **100%** |
+| Attempt | Agent |Number<br>plausible<br>solutions|Percent of<br>plausible<br>solutions| Number<br/>correctly<br>resolved | Percent<br>of correctly<br>resolved |
+|:--------:|------------|---------:|---------:|----:|---:|
+| 1 | Aider with GPT-4o    | 208 | 69.3% | 61 | 77.2% |
+| 2 | Aider with Opus      |  49 | 16.3% | 10 | 12.7% |
+| 3 | Aider with GPT-4o    |  20 |  6.7% |  3 |  3.8% |
+| 4 | Aider with Opus      |   9 |  3.0% |  2 |  2.5% |
+| 5 | Aider with GPT-4o    |  11 |  3.7% |  2 |  2.5% |
+| 6 | Aider with Opus      |   3 |  1.0% |  1 |  1.3% |
+| **Total** | | **300** | **100%** | **79** | **100%** |
 
 If we break down correct solutions purely by model,
-we can see that GPT-4o dominates.
+we can see that aider with GPT-4o outperforms Opus.
 This isn't a fair and direct comparison, because GPT-4o always took the first
-turn at solving.
-But anecdotal evidence from earlier runs of the benchmark
-supports the observation that aider with GPT-4o is significantly stronger than Opus
+turn at solving and therefore got to solve all the "easiest" problems.
+Aider with Opus only ever saw the problems that GPT-4o failed to solve on the first attempt.
+
+Aider with GPT-4o was producing higher quality plausible solutions,
+with a greater chance of going on to be accepted as resolving the issue.
+Other anecdotal evidence from earlier runs of the benchmark
+also supports the observation that aider with GPT-4o is significantly stronger than Opus
 for this endeavor.
 
-| Agent      | Number resolved | Percent of resolved | 
-|------------|---------:|---------:|
-| Aider with GPT-4o | 66 | 83.5 |
-| Aider with Opus | 13 | 16.5 |
-|**Total**| **79** | **100%** |
 
+| Agent      | Number<br>plausible<br>solutions | Number<br>correctly<br>resolved | Percent<br>plausible<br>which<br>resolved| 
+|------------|---------:|---------:|---:|
+| Aider with GPT-4o    | 239 | 66 |27.6% |
+| Aider with Opus      |  61 | 13 |21.3% |
+| **Total** | **300** | **79** |**26.3%** |
 
 ## Repository map, not RAG
 
@@ -171,14 +175,18 @@ Please add app.py to the chat so I can proceed with the changes.
 
 This is a convenient and natural workflow for interactive chat,
 and it worked well for the SWE Bench tasks.
-Each task comes with a “gold” patch, which was created by a human developer
-to solve the issue. 
-Aider successfully identified and added the file from the gold patch
+Aider successfully identified the correct file to edit
 in 70.3% of the benchmark tasks.
 
+We can determine which file needed to be edited using the "gold" patch
+which is associated with SWE Bench Task.
+This patch was created by a human developer
+to solve the issue, and therefore reveals a file which can
+be edited to solve the problem.
 Of course aider is not able to see or use the gold patch
-or the files it names in any way. 
-They were only used to compute this statistic after the benchmarking was completed. 
+or the file names it contains in any way.
+This information was only used to compute
+statistics after the benchmarking was completed. 
 
 
 ## Reliable code editing
@@ -186,13 +194,13 @@ They were only used to compute this statistic after the benchmarking was complet
 Once files have been selected for editing,
 the next step is of course to edit the source code to fix the problem.
 
-Aider has always had a deep focus on ensuring that LLMs can not just write code,
+Aider goes to great lengths to ensure that LLMs can not just write code,
 but reliably *edit* code.
 Aider has a collection of prompting strategies and code editing backends which have
 been honed through
 [extensive benchmarking](https://aider.chat/docs/leaderboards/).
-These foundational capabilities help ensure that the LLM can not only code up a solution but
-also properly integrate it into the existing code base and source files.
+These foundational capabilities help ensure that aider can
+properly integrate code from LLMs into an existing code base and source files.
 
 The repository map helps here too, making sure that the LLM
 can see relevant classes, functions and variables from the entire repo.
@@ -293,7 +301,7 @@ described in (3).
 Those tests are only run outside of aider and the benchmark harness,
 to compute the final benchmark score.
 To do that,
-the SWE Bench support code
+an evaluation script
 verifies that the pre-existing and held out tests
 pass as expected from a correct solution.
 If so, the issue is marked as resolved.
@@ -342,10 +350,12 @@ and prioritizing solutions in the following order:
 
 ## Computing the benchmark score
 
-The benchmark harness produces one "best" solution for each of the 300
+The benchmark harness produces one candidate solution for each of the 300
 SWE Bench Lite instances and saves it as a `model_patch`.
-A separate evaluation script uses the SWE Bench support code to
-test each of these results with the acceptance tests.
+A separate evaluation script 
+tests each of these results with the acceptance tests.
+It verifies that they pass as expected from a correct solution, like
+the "gold" patch developed by a human to solve the issue.
 
 These `test_patch` acceptance tests are only ever run outside of aider
 and the benchmark harness, and only to compute the number of
