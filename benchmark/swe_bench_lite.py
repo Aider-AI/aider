@@ -38,7 +38,7 @@ def plot_swe_bench_lite(data_file):
         yval = bar.get_height()
         ax.text(
             bar.get_x() + bar.get_width() / 2,
-            yval - 1.5,
+            yval - 1.25,
             f"{yval}%",
             ha="center",
             va="top",

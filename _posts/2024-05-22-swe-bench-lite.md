@@ -23,21 +23,21 @@ The best result reported elsewhere seems to be
 Aider achieved this result mainly through its focus on static code analysis,
 reliable LLM code editing,
 and pragmatic workflows for interactive pair programming with AI.
-Aider intentionally has quite limited and narrow "agentic behavior":
-it doesn't require a highly detailed upfront "spec" from the user,
-use RAG or vector search, farm out sub-problems to an army of LLMs,
-allow the LLM to use tools,
-or perform web searches,
-etc.
+Aider intentionally has quite limited and narrow "agentic behavior"
+to avoid long delays, high token costs
+and the need for users to repeatedly code review incorrect solutions.
+It's also worth noting that aider currently does not use
+RAG, vector search, tools or give the LLM access to execute code
+or run web searches.
 
-Aider is first and foremost a tool for engineers to get real work done in
-real code bases through a pair programming chat style interface.
-When a user asks aider for a change, they see the edits performed in real-time,
-and aider may also then offer additional
-help like fixing lint or test errors.
-In normal use, the user is in full interactive control. 
+Aider is first and foremost an interactive tool for engineers to get real work done in
+real code bases using a chat interface.
+Aider provides a pair programming experience where users can ask for a change
+and see the edits performed in real-time.
+Aider can also offer additional help like fixing lint or test errors,
+but the user is always in full interactive control.
 This lets them quickly steer misunderstandings back on course and
-avoid wasted time, code reviews and token costs.
+avoid wasting time and token costs.
 
 
 ## Benchmark methodology
