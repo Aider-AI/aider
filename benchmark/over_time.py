@@ -22,6 +22,7 @@ def plot_over_time(yaml_file):
     plt.rcParams["hatch.color"] = "#444444"
 
     rc("font", **{"family": "sans-serif", "sans-serif": ["Helvetica"], "size": 10})
+    plt.rcParams["text.color"] = "#444444"
 
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.grid(axis="y", zorder=0, lw=0.2)
@@ -44,10 +45,12 @@ def plot_over_time(yaml_file):
             textcoords="offset points",
         )
 
-    ax.set_xlabel("Model release date", fontsize=18)
-    ax.set_ylabel("Aider code editing benchmark,\npercent completed correctly", fontsize=18)
+    ax.set_xlabel("Model release date", fontsize=18, color="#555")
+    ax.set_ylabel("Aider code editing benchmark,\npercent completed correctly", fontsize=18, color="#555")
     ax.set_title("LLM code editing skill by model release date", fontsize=20)
-    plt.tight_layout()
+    ax.set_ylim(0, 30)
+    plt.xticks(fontsize=14)
+    plt.tight_layout(pad=3.0)
     plt.savefig("tmp_over_time.png")
     plt.savefig("tmp_over_time.svg")
     imgcat(fig)

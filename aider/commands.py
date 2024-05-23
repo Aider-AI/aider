@@ -69,8 +69,8 @@ class Commands:
             self.scraper = Scraper(print_error=self.io.tool_error)
 
         content = self.scraper.scrape(url) or ""
-        if content:
-            self.io.tool_output(content)
+        # if content:
+        #    self.io.tool_output(content)
 
         instructions = self.scraper.get_playwright_instructions()
         if instructions:

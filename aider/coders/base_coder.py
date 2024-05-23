@@ -618,6 +618,20 @@ class Coder:
             return self.commands.run(inp)
 
         self.check_for_file_mentions(inp)
+        inp = self.check_for_urls(inp)
+
+        return inp
+
+    def check_for_urls(self, inp):
+        url_pattern = re.compile(
+            r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
+        )
+        urls = url_pattern.findall(inp)
+        for url in urls:
+            if self.io.confirm_ask(f"Add {url} to the chat?"):
+                inp += "\n\n"
+                inp += self.commands.cmd_web(url)
+
         return inp
 
     def keyboard_interrupt(self):
