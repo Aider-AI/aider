@@ -58,7 +58,7 @@ alternating between using aider with GPT-4o and Opus.
 with the least amount of edit/lint/test problems.
 
 It's important to be clear that during benchmarking
-*aider only had access to the pre-existing tests in the repo*.
+*aider only had access to the pre-existing tests in the problem's repo*.
 It could not see or run the held out "acceptance tests" that are used later to see if the
 SWE Bench problem was correctly resolved.
 
@@ -85,7 +85,7 @@ or if the AI starts going down a wrong path.
 ## Aider with GPT-4o alone was SOTA
 
 Running the SWE Bench Lite benchmark using aider with just GPT-4o
-achieved a score of 25%.
+achieved a score of 25.0%.
 This was itself a state-of-the-art result, before being surpassed by the main
 result being reported here
 that used aider with both GPT-4o & Opus.
@@ -121,12 +121,14 @@ These first two attempts obtained ~75% of all plausible and ~90% of all resolved
 If we break down correct solutions purely by model,
 we can see that aider with GPT-4o outperforms Opus.
 This isn't a fair and direct comparison, because GPT-4o always took the first
-turn at solving and therefore got to solve all the "easiest" problems.
-Aider with Opus only ever saw the problems that GPT-4o failed to solve on the first attempt.
+turn and therefore got first crack at all the "easiest" problems.
+Aider with Opus only ever saw problems that GPT-4o failed to
+find plausible solutions for on its first try.
 
 Aider with GPT-4o was producing higher quality plausible solutions,
 with a greater chance of going on to be accepted as resolving the issue.
-Other anecdotal evidence from earlier runs of the benchmark
+Again, this is biased by the turn ordering.
+But other anecdotal evidence from earlier runs of the benchmark
 also supports the observation that aider with GPT-4o is significantly stronger than Opus
 for this endeavor.
 
@@ -142,7 +144,7 @@ for this endeavor.
 The crucial first step in solving a SWE Bench problem is figuring out
 which parts of the repo are relevant and which files need to be edited.
 Most coding agents use some combination of RAG, vector search
-and arming the LLM with
+and providing the LLM with
 tools to interactively explore the code base.
 
 Aider instead uses a
@@ -178,19 +180,19 @@ Please add app.py to the chat so I can proceed with the changes.
 </div>
 
 This is a convenient and natural workflow for interactive chat,
-and it worked well for the SWE Bench tasks.
+and it worked well for the SWE Bench problems.
 Aider successfully identified the correct file to edit
 in 70.3% of the benchmark tasks.
 
 We can determine which file needed to be edited using the "gold" patch
-which is associated with SWE Bench Task.
+which is associated with each SWE Bench Task.
 This patch was created by a human developer
 to solve the issue, and therefore reveals a file which can
 be edited to solve the problem.
 Of course aider is not able to see or use the gold patch
 or the file names it contains in any way.
 This information was only used to compute
-statistics after the benchmarking was completed. 
+statistics outside the benchmarking process.
 
 
 ## Reliable code editing
@@ -209,7 +211,7 @@ properly integrate code from LLMs into an existing code base and source files.
 The repository map helps here too, making sure that the LLM
 can see relevant classes, functions and variables from the entire repo.
 This helps ensure that the project's existing APIs and conventions are
-respected when new code is added.
+respected and utilized when new code is added.
 
 Regardless, there are still cases where aider may be unable to cleanly
 complete the edits specified by the LLM.
@@ -223,7 +225,7 @@ created a plausible soultion.
 
 ## Linting and fixing
 
-One key criteria for a plausible solution is that it passes basic
+Another key criteria for a plausible solution is that it passes basic
 linting, which means that the code is valid and without syntax
 or other fatal errors.
 [Aider lints code](https://aider.chat/2024/05/22/linting.html)
@@ -285,10 +287,10 @@ created a plausible soultion.
 
 ## Testing and fixing
 
-Another key crtieria for a plausible solution is that it must
-not have any broken tests.
+The final crtieria for a plausible solution is that 
+all tests must be passing.
 Aider can be configured with the command needed to run tests for a repo,
-and can automatically attempt to fix any testing errors.
+and will automatically attempt to fix any testing errors.
 
 A user working on a python project might configure testing
 by launching aider like this:
@@ -306,7 +308,7 @@ testing will fail if aider has broken any of these
 pre-existing tests or if any new
 tests that it created aren't passing.
 
-As with editig and linting, aider reports a testing outcome
+As with editing and linting, aider reports a testing outcome
 that indicates if it completed with any outstanding testing errors.
 The benchmark harness uses this status when deciding if aider
 has produced a plausible solution.
@@ -346,7 +348,7 @@ harness moves on to the next SWE Bench instance.
 
 It's worth noting that repositories may have lint or test errors
 present before aider even starts to edit them.
-Whether errors are caused by aider or were pre-existing,
+Whether unresolved errors were caused by aider or were pre-existing,
 there will be instances where
 no plausible solution is
 found after six tries.
@@ -365,17 +367,18 @@ and prioritizing solutions in the following order:
 
 ## Computing the benchmark score
 
-The benchmark harness produces one candidate solution for each of the 300
-SWE Bench Lite instances and saves it as a `model_patch`.
+The benchmark harness produces a candidate solution for each of the 300
+SWE Bench Lite instances and saves it as the `model_patch`.
+
 A separate evaluation script 
 tests each of these results with the acceptance tests.
 It verifies that they pass as expected from a correct solution, like
 the "gold" patch developed by a human to solve the issue.
 
-These `test_patch` acceptance tests are only ever run outside of aider
+These so called `test_patch` acceptance tests are only ever run outside of aider
 and the benchmark harness, and only to compute the number of
 correctly resolved instances.
-They are never run, used, or even visible during the attempts to solve the problems.
+They are never run, used, or even visible during aider's attempts to solve the problems.
 
 Aider correctly resolved 79 out of 300 SWE Bench Lite instances, or 26.3%.
 
