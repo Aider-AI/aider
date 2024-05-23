@@ -45,6 +45,9 @@ class TestInputOutput(unittest.TestCase):
 
     @patch('aider.io.PromptSession')
     def test_get_input_is_a_directory_error(self, MockPromptSession):
+        # Set the environment variable to ensure UTF-8 encoding
+        os.environ["PYTHONIOENCODING"] = "utf-8"
+
         # Mock the PromptSession to simulate user input
         mock_session = MockPromptSession.return_value
         mock_session.prompt.return_value = "test input"
