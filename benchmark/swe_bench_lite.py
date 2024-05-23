@@ -42,7 +42,7 @@ def plot_swe_bench_lite(data_file):
         yval = bar.get_height()
         y = yval + 0.75 if "Aider" in model else yval - 1.25
         va = "bottom" if "Aider" in model else "top"
-        fontweight = "bold" if "Aider" in model else "normal"
+        fontweight = 800 if "Aider" in model else "normal"
 
         ax.text(
             bar.get_x() + bar.get_width() / 2,
@@ -64,7 +64,7 @@ def plot_swe_bench_lite(data_file):
     )
     for label in xticks[1]:
         if "Aider" in label.get_text():
-            label.set_fontweight("bold")
+            label.set_fontweight(800)
             label.set_fontsize(16)
     plt.tight_layout(pad=3.0)
     plt.savefig("swe_bench_lite.jpg")
