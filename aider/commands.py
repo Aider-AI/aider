@@ -441,8 +441,14 @@ class Commands:
                 continue
 
             if self.io.confirm_ask(f"No files matched '{word}'. Do you want to create {fname}?"):
-                fname.touch()
-                all_matched_files.add(str(fname))
+                if "*" in str(fname) or "?" in str(fname):
+                    self.io.tool_error(f"Cannot create file with wildcard characters: {fname}")
+                else:
+                    try:
+                        fname.touch()
+                        all_matched_files.add(str(fname))
+                    except OSError as e:
+                        self.io.tool_error(f"Error creating file {fname}: {e}")
 
         for matched_file in all_matched_files:
             abs_file_path = self.coder.abs_root_path(matched_file)
