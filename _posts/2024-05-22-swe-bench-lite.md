@@ -27,8 +27,8 @@ Aider intentionally has quite limited and narrow "agentic behavior"
 to avoid long delays, high token costs
 and the need for users to repeatedly code review incorrect solutions.
 It's also worth noting that aider currently does not use
-RAG, vector search, tools or give the LLM access to execute code
-or run web searches.
+RAG, vector search, tools or give the LLM access to search the web
+or unilaterally execute code.
 
 Aider is first and foremost an interactive tool for engineers to get real work done in
 real code bases using a chat interface.
