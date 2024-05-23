@@ -4,6 +4,8 @@
 ### main
 
 - Aider will notice if you paste a URL into the chat, and offer to scrape it.
+- Performance improvements the repo map, especially in large repos.
+- Aider will not offer to add bare filenames like `make` or `run` which may just be words.
 
 ### v0.36.0
 

@@ -76,8 +76,6 @@ class RepoMap:
         if not chat_files and self.max_context_window and target > 0:
             max_map_tokens = target
 
-        dump(max_map_tokens)
-
         try:
             files_listing = self.get_ranked_tags_map(
                 chat_files, other_files, max_map_tokens, mentioned_fnames, mentioned_idents
@@ -243,7 +241,7 @@ class RepoMap:
         # https://networkx.org/documentation/stable/_modules/networkx/algorithms/link_analysis/pagerank_alg.html#pagerank
         personalize = 10 / len(fnames)
 
-        if self.cache_missing or True:
+        if self.cache_missing:
             fnames = tqdm(fnames)
         self.cache_missing = False
 
