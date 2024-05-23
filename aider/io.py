@@ -300,7 +300,7 @@ class InputOutput:
             res = prompt(question + " ", default=default)
 
         hist = f"{question.strip()} {res.strip()}"
-        self.tool_output(hist)
+        self.append_chat_history(hist, linebreak=True, blockquote=True)
 
         if not res or not res.strip():
             return
