@@ -40,12 +40,9 @@ def plot_swe_bench_lite(data_file):
 
     for model, bar in zip(models, bars):
         yval = bar.get_height()
-        if "Aider" in model:
-            y = yval + 0.75
-            va = "bottom"
-        else:
-            y = yval - 1.25
-            va = "top"
+        y = yval + 0.75 if "Aider" in model else yval - 1.25
+        va = "bottom" if "Aider" in model else "top"
+        fontweight = "bold" if "Aider" in model else "normal"
 
         ax.text(
             bar.get_x() + bar.get_width() / 2,
@@ -54,19 +51,20 @@ def plot_swe_bench_lite(data_file):
             ha="center",
             va=va,
             fontsize=14,
-            # alpha=0.75,
+            fontweight=fontweight,
         )
 
     # ax.set_xlabel("Models", fontsize=18)
     ax.set_ylabel("Instances resolved (%)", fontsize=18, color=font_color)
     ax.set_title("SWE Bench Lite", fontsize=20)
     ax.set_ylim(0, 29.9)
-    plt.xticks(
-        # rotation=45,
-        # ha="center",
+    xticks = plt.xticks(
         fontsize=16,
         color=font_color,
     )
+    for label in xticks[1]:
+        if "Aider" in label.get_text():
+            label.set_fontweight("bold")
     plt.tight_layout(pad=3.0)
     plt.savefig("swe_bench_lite.jpg")
     plt.savefig("swe_bench_lite.svg")
