@@ -57,9 +57,11 @@ alternating between using aider with GPT-4o and Opus.
 - If no plausible solution is found after six tries, the harness picks the solution
 with the least amount of edit/lint/test problems.
 
-It's important to be clear that during benchmarking
-*aider only had access to the pre-existing tests in the problem's repo*.
-It could not see or run the held out "acceptance tests" that are used later to see if the
+It's important to be clear that
+*aider and the benchmark harness
+only had access to the pre-existing tests in each problem's repo*.
+They could not see or run the held out "acceptance tests" that are used
+after benchmarking to see if the
 SWE Bench problem was correctly resolved.
 
 The benchmarking process was similar to how a developer might use aider to
@@ -69,26 +71,32 @@ resolve a GitHub issue:
 tells aider they want to accept every suggestion
 and to use pytest to run tests.
   - `aider --yes --test-cmd pytest`
-- Paste the URL or text of a GitHub issue into the chat. Aider will pull in the URL's content and then try and solve the issue.
+- They could start the chat by pasting in the URL or text of a GitHub issue.
+Aider will pull in the URL's content and then try and solve the issue.
 - If aider doesn't produce code that lints and tests clean, the user might decide to revert the changes and try again, maybe using aider with a different LLM this time.
 [Aider is tightly integrated with git](https://aider.chat/docs/faq.html#how-does-aider-use-git),
 so it's always easy to revert AI changes that don't pan out.
 
 Outside a benchmark setting, it's probably
-unwise to let *any* AI agent run unsupervised on your code base.
-Aider is intended to be used as an interactive pair-programming chat,
-where the user participates to direct aider's work and approve suggestions.
+unwise or at least highly inefficient
+to let *any* AI agent run unsupervised on your code base.
+The reason aider is intended to be used interactively
+is so that the user can participate and direct aider's work and approve suggestions.
 This way the user can offer immediate feedback or corrections if their initial
 instructions turn out to be ambiguous,
 or if the AI starts going down a wrong path.
 
 ## Aider with GPT-4o alone was SOTA
 
-Running the SWE Bench Lite benchmark using aider with just GPT-4o
+Running the benchmark harness
+only using aider with GPT-4o to find plausible solutions
 achieved a score of 25.0%.
 This was itself a state-of-the-art result, before being surpassed by the main
 result being reported here
 that used aider with both GPT-4o & Opus.
+
+As noted below, a single attempt using Aider with GPT-4o tied
+the current top entry on the leader.
 
 ## Aider with GPT-4o & Opus
 
@@ -101,7 +109,7 @@ The table below breaks down the 79 solutions that were ultimately
 verified as correctly resolving their issue.
 Some noteworthy observations:
 
-- Just the first attempt of Aider with GPT-4o resolved 20.3% of the problems, which ties the Amazon Q Developer Agent currently atop the official leaderboard.
+- *Just the first attempt* of Aider with GPT-4o resolved 20.3% of the problems, which ties the Amazon Q Developer Agent currently atop the official leaderboard.
 - Including the second attempt, Aider with GPT-4o and Opus scored 23.6% on the benchmark, better than all other known results.
 These first two attempts obtained ~75% of all plausible and ~90% of all resolved solutions.
 - A long tail of solutions continued to be found by both models including one correctly resolved solution on the final, sixth attempt of that problem.
@@ -151,7 +159,8 @@ Aider instead uses a
 [repository map](https://aider.chat/2023/10/22/repomap.html)
 to help the LLM understand the 
 layout, code structure, and content of a git repo.
-The repo map is created from the code's AST and call graph
+The repo map is created from the code's
+abstract syntax tree and call graph
 to provide a compact and powerful summary of the entire code base.
 The map is constantly
 tailored to show
@@ -221,7 +230,7 @@ When aider completes, it returns an editing outcome that indicates
 whether it was able to successfully complete all edits.
 The benchmark harness used this editing status as
 one criteria to determine if aider has
-created a plausible soultion.
+created a plausible solution.
 
 ## Linting and fixing
 
@@ -233,7 +242,7 @@ after every LLM edit and offers to automatically fix
 any problems.
 
 Aider shows linting errors to the LLM in a novel format,
-using the abstract syntax tree (AST) to display relevant code context for each
+using the abstract syntax tree to display relevant code context for each
 error.
 This context increases the ability of the LLM to understand the problem and
 make the correct changes to resolve it.
@@ -283,7 +292,7 @@ indicates if it was able to ultimately produce
 code without any outstanding linting errors.
 The benchmark harness used this status as
 one of the criteria to determine if aider has
-created a plausible soultion.
+created a plausible solution.
 
 ## Testing and fixing
 
@@ -371,9 +380,17 @@ The benchmark harness produces a candidate solution for each of the 300
 SWE Bench Lite instances and saves it as the `model_patch`.
 
 A separate evaluation script 
-tests each of these results with the acceptance tests.
-It verifies that they pass as expected from a correct solution, like
-the "gold" patch developed by a human to solve the issue.
+tests each of these solutions with the full test suite
+including the held out acceptance tests.
+For this final acceptance testing, any edits that aider made to tests
+are discarded.
+This ensures that the full, correct test suite is used for acceptance testing.
+The evaluation script compares the test results
+with results from testing
+the "gold" patch that was developed by a human to correctly solve the issue.
+If they match, the candidate solution has correctly resolved the issue.
+
+
 
 These so called `test_patch` acceptance tests are only ever run outside of aider
 and the benchmark harness, and only to compute the number of
