@@ -15,8 +15,8 @@ def plot_swe_bench_lite(data_file):
             pass_rate, model = line.split("%")
             model = model.strip()
             model = model.replace("|", "\n")
-            models.append(model.strip())
-            pass_rates.append(float(pass_rate.strip()))
+            models.insert(0, model.strip())
+            pass_rates.insert(0, float(pass_rate.strip()))
 
     plt.rcParams["hatch.linewidth"] = 0.5
     plt.rcParams["hatch.color"] = "#444444"
