@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import hashlib
+import re
 import json
 import os
 import sys
@@ -580,8 +581,12 @@ class Coder:
         return inp
 
     def check_for_urls(self, inp):
-        # todo use a regex to find all urls in inp
-
+        url_pattern = re.compile(
+            r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+        )
+        urls = url_pattern.findall(inp)
+        if urls:
+            self.io.tool_output(f"Found URLs: {', '.join(urls)}")
         return inp
 
     def keyboard_interrupt(self):
