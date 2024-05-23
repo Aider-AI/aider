@@ -586,9 +586,9 @@ class Coder:
         )
         urls = url_pattern.findall(inp)
         for url in urls:
-            self.io.tool_output(f"Adding {url} to the chat.")
-            inp += "\n\n"
-            inp += self.commands.cmd_web(url)
+            if self.io.confirm_ask(f"Add {url} to the chat?"):
+                inp += "\n\n"
+                inp += self.commands.cmd_web(url)
 
         return inp
 

@@ -67,8 +67,7 @@ The benchmarking process was similar to a user employing aider like this:
 tells aider to automatically proceed with every suggestion
 and use pytest to run tests.
   - `aider --yes --test-cmd pytest`
-- Pasting the text of a GitHub issue into the chat, or adding it via URL with a command in the chat like:
-  - `/web https://github.com/django/django/issues/XXX`
+- Pasting the URL of a GitHub issue into the chat. Aider will offer to pull in the URL's content.
 - If aider doesn't produce code that lints and tests clean, the user might decide to revert the changes and try again, maybe using aider with a different LLM this time.
 [Aider is tightly integrated with git](https://aider.chat/docs/faq.html#how-does-aider-use-git),
 so it's always easy to revert AI changes that don't pan out.
