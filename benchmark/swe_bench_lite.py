@@ -32,7 +32,11 @@ def plot_swe_bench_lite(data_file):
         spine.set_linewidth(0.5)
 
     colors = ["#b3e6a8" if "Aider" in model else "#b3d1e6" for model in models]
-    bars = ax.bar(models, pass_rates, color=colors, alpha=0.75, zorder=3)
+    bars = []
+    for model, pass_rate, color in zip(models, pass_rates, colors):
+        alpha = 0.9 if "Aider" in model else 0.5
+        bar = ax.bar(model, pass_rate, color=color, alpha=alpha, zorder=3)
+        bars.append(bar[0])
 
     for model, bar in zip(models, bars):
         yval = bar.get_height()
