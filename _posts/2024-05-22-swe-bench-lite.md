@@ -273,12 +273,12 @@ A repo's test suite can be run in three ways:
 2. Run tests after aider has modified the repo.
 So the pre-existing test cases are still present, but may have been modified by aider.
 Aider may have also added new tests.
-3. Run the final "acceptance tests" to judge if the coding agent has
+3. Run the final "acceptance tests" to judge if aider has
 successfully resolved the problem.
 SWE Bench verifies both pre-existing tests and a set of held out acceptance tests
 (from the so called `test_patch`)
 to check that the issue is properly resolved. During this final acceptance testing,
-any aider edits to tests are discard to ensure a faithful test of whether the
+any aider edits to tests are discarded to ensure a faithful test of whether the
 issue was resolved.
 
 For the benchmark, aider is configured with a test command that will run the tests
