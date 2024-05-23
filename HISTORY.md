@@ -1,6 +1,10 @@
 
 # Release history
 
+### main
+
+- Aider will notice if you paste a URL into the chat, and offer to scrape it.
+
 ### v0.36.0
 
 - [Aider can now lint your code and fix any errors](https://aider.chat/2024/05/22/linting.html).
