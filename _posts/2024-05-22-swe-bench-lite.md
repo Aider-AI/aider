@@ -50,19 +50,19 @@ After that aider runs as normal, with the following modifications:
 
 - Aider's suggestions were always accepted without user approval.
 - A simple harness was used to retry the SWE Bench problem if aider produced code that wasn't *plausibly correct*.
-Plausibly correct means that aider concluded that it had successfully edited the repo
+Plausibly correct means that aider reported that it had successfully edited the repo
 without causing syntax errors or breaking any *pre-existing* tests.
 - If the solution isn't plausible, the harness launches aider to try again from scratch,
 alternating between using aider with GPT-4o and Opus.
 - If no plausible solution is found after six tries, the harness picks the solution
-with the least amount of edit/lint/test problems.
+with the fewest edit/lint/test problems.
 
 It's important to be clear that
 *aider and the benchmark harness
 only had access to the pre-existing tests in each problem's repo*.
-They could not see or run the held out "acceptance tests" that are used
-after benchmarking to see if the
-SWE Bench problem was correctly resolved.
+The held out "acceptance tests" were *only* used
+after benchmarking to compute statistics on which problems aider
+correctly resolved.
 
 The benchmarking process was similar to how a developer might use aider to
 resolve a GitHub issue:
@@ -312,10 +312,10 @@ The benchmark harness uses this status when deciding if aider
 has produced a plausible solution.
 
 To be clear, *aider cannot run or even see the held out "acceptance tests"* that
-are used to determine if a proposed solution correctly
+are used to judge if a proposed solution correctly
 resolves the problem.
 Those tests are only run outside of aider and the benchmark harness,
-to compute the final benchmark score.
+to compute the final benchmark statistics.
 
 ## Finding a plausible solution
 
