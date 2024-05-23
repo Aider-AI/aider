@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 import hashlib
-import re
 import json
 import os
+import re
 import sys
 import threading
 import time
@@ -582,11 +582,14 @@ class Coder:
 
     def check_for_urls(self, inp):
         url_pattern = re.compile(
-            r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+            r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
         )
         urls = url_pattern.findall(inp)
-        if urls:
-            self.io.tool_output(f"Found URLs: {', '.join(urls)}")
+        for url in urls:
+            self.io.tool_output(f"Adding {url} to the chat.")
+            inp += "\n\n"
+            inp += self.commands.cmd_web(url)
+
         return inp
 
     def keyboard_interrupt(self):
