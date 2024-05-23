@@ -63,8 +63,9 @@ SWE Bench problem was correctly resolved.
 
 The benchmarking process was similar to a user employing aider like this:
 
-- Launching aider in their repo with the something like command below, which
-tells aider to say yes to every suggestion and use pytest to run tests.
+- Launching aider in their repo with the command below, which
+tells aider to automatically proceed with every suggestion
+and use pytest to run tests.
   - `aider --yes --test-cmd pytest`
 - Pasting the text of a GitHub issue into the chat, or adding it via URL with a command in the chat like:
   - `/web https://github.com/django/django/issues/XXX`
@@ -267,7 +268,7 @@ aider like this:
 aider --test-cmd pytest
 ``` 
 
-The repositories that are used in the SWE Bench problems are large, open
+The repositories that are used in the SWE Bench problems are large open
 source projects with extensive existing test suites.
 A repo's test suite can be run in three ways:
 
@@ -275,30 +276,30 @@ A repo's test suite can be run in three ways:
 2. Run tests after aider has modified the repo.
 So the pre-existing test cases are still present, but may have been modified by aider.
 Aider may have also added new tests.
-3. Run the final "acceptance tests" to judge if aider has
-successfully resolved the problem.
-SWE Bench verifies both pre-existing tests and a set of held out acceptance tests
-(from the so called `test_patch`)
-to check that the issue is properly resolved. During this final acceptance testing,
-any aider edits to tests are discarded to ensure a faithful test of whether the
-issue was resolved.
+3. Run the final "acceptance tests" to judge if aider has successfully resolved the problem.
+These tests include the unmodified pre-existing tests and
+a held out set of tests (from the so called `test_patch`).
 
 For the benchmark, aider is configured with a test command that will run the tests
 as described in (2) above.
 So testing will fail if aider has broken any pre-existing tests or if any new
 tests that it created aren't passing.
-When aider runs a test command, it checks for a non-zero exit status.
-In this case,
-aider will automatically
+If any tests fail, aider will automatically
 share the test output with the LLM and ask it to 
 try and resolve the test failures.
 
 To be clear, *aider cannot run or even see the "acceptance tests"* from the `test_patch`
-as described in (3).
+described in (3).
 Those tests are only run outside of aider and the benchmark harness,
 to compute the final benchmark score.
-
-
+To do that,
+the SWE Bench support code
+verifies that the pre-existing and held out tests
+pass as expected from a correct solution.
+If so, the issue is marked as resolved.
+For this final acceptance testing,
+any aider edits to tests are discarded to ensure a faithful determination
+of whether the issue was resolved.
 
 ## Finding a plausible solution
 
@@ -320,7 +321,7 @@ as the SWE Bench `model_patch` to be evaluated later with the
 
 If the solution is not plausible, another
 instance of aider is launched again from scratch on the same problem.
-The harness alternates asking GPT-4o and Opus to solve the problem,
+The harness alternates launching aider with GPT-4o and Opus to solve the problem,
 and gives each model three attempts -- for a total of six attempts.
 As soon as a plausible solution is found, it is accepted and the
 harness moves on to the next SWE Bench instance.
