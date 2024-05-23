@@ -13,7 +13,7 @@ on the
 achieving a state-of-the-art result. 
 The current top leaderboard entry is 20.3%
 from Amazon Q Developer Agent.
-The best result reported elsewhere online seems to be
+The best result reported elsewhere seems to be
 [22.3% from AutoCodeRover](https://github.com/nus-apr/auto-code-rover).
 
 [![SWE Bench Lite results](/assets/swe_bench_lite.svg)](https://aider.chat/assets/swe_bench_lite.svg)
@@ -94,26 +94,29 @@ that used aider with both GPT-4o & Opus.
 
 The benchmark harness alternated between running aider with GPT-4o and Opus.
 The harness proceeded in a fixed order, always starting with GPT-4o and
-then alternating with Opus until a plausible solution was found.
+then alternating with Opus until a plausible solution was found for each
+problem.
 
 The table below breaks down the 79 solutions that were ultimately
 verified as correctly resolving their issue.
 Some noteworthy observations:
 
-- Aider with GPT-4o on the first attempt immediately found 69% of all plausible solutions which accounted for 77% of the correctly resulted problems.
+- Just the first attempt of Aider with GPT-4o resolved 20.3% of the problems, which ties the Amazon Q Developer Agent currently atop the official leaderboard.
+- Aider with GPT-4o on the first attempt immediately found 69% of all plausible solutions which accounted for 77% of the correctly resolved problems.
 - ~75% of all plausible and ~90% of all resolved solutions were found after one attempt from aider with GPT-4o and Opus.
-- A long tail of solutions continued to be found by both models including one resolved solution on the final, sixth attempt of that problem.
+- A long tail of solutions continued to be found by both models including one correctly resolved solution on the final, sixth attempt of that problem.
 
 
-| Attempt | Agent |Number<br>plausible<br>solutions|Percent of<br>plausible<br>solutions| Number<br/>correctly<br>resolved | Percent<br>of correctly<br>resolved |
-|:--------:|------------|---------:|---------:|----:|---:|
-| 1 | Aider with GPT-4o    | 208 | 69.3% | 61 | 77.2% |
-| 2 | Aider with Opus      |  49 | 16.3% | 10 | 12.7% |
-| 3 | Aider with GPT-4o    |  20 |  6.7% |  3 |  3.8% |
-| 4 | Aider with Opus      |   9 |  3.0% |  2 |  2.5% |
-| 5 | Aider with GPT-4o    |  11 |  3.7% |  2 |  2.5% |
-| 6 | Aider with Opus      |   3 |  1.0% |  1 |  1.3% |
-| **Total** | | **300** | **100%** | **79** | **100%** |
+| Attempt | Agent |Number<br>plausible<br>solutions|Percent&nbsp;of<br>plausible<br>solutions| Number<br/>correctly<br>resolved | Percent&nbsp;of<br>correctly<br>resolved | Percent of<br>SWE Bench Lite&nbsp;Resolved |
+|:--------:|------------|---------:|---------:|----:|---:|--:|
+| 1 | Aider with GPT-4o    | 208 | 69.3% | 61 | 77.2% | 20.3% |
+| 2 | Aider with Opus      |  49 | 16.3% | 10 | 12.7% |  3.3% |
+| 3 | Aider with GPT-4o    |  20 |  6.7% |  3 |  3.8% |  1.0% |
+| 4 | Aider with Opus      |   9 |  3.0% |  2 |  2.5% |  0.7% |
+| 5 | Aider with GPT-4o    |  11 |  3.7% |  2 |  2.5% |  0.7% |
+| 6 | Aider with Opus      |   3 |  1.0% |  1 |  1.3% |  0.3% |
+| **Total** | | **300** | **100%** | **79** | **100%** | **26.3%** |
+
 
 If we break down correct solutions purely by model,
 we can see that aider with GPT-4o outperforms Opus.
