@@ -68,4 +68,4 @@ def plot_swe_bench_lite(data_file):
 
 
 # Example usage
-plot_swe_bench_lite("benchmark/tmp.txt")
+plot_swe_bench_lite("benchmark/swe-bench-lite.txt")
