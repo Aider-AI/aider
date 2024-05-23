@@ -161,7 +161,7 @@ Aider instead uses a
 [repository map](https://aider.chat/2023/10/22/repomap.html)
 to help the LLM understand the 
 layout, code structure, and content of a git repo.
-The repo map is created from the code's
+The repo map is created through static analysis of the code's
 abstract syntax tree and call graph
 to provide a compact and powerful summary of the entire code base.
 The map is constantly
@@ -169,7 +169,7 @@ tailored to show
 repo context that is relevant to the current state of the chat conversation.
 This is done by performing a graph optimization on the code's call graph.
 
-When the user asks for a change to their code, the LLM uses the repo map
+When the user asks for a change to their code, the LLM can use the repo map
 to decide which files to edit.
 The LLM simply returns a normal text response explaining which files
 it needs to edit and why.
@@ -230,7 +230,7 @@ This is usually because the LLM has failed to conform to the editing
 instructions in its system prompt.
 When aider completes, it returns an editing outcome that indicates
 whether it was able to successfully complete all edits.
-The benchmark harness used this editing status as
+The benchmark harness uses this editing status as
 one criteria to determine if aider has
 created a plausible solution.
 
@@ -277,7 +277,7 @@ At completion,
 aider reports a linting outcome that
 indicates if it was able to produce
 code without any outstanding linting errors.
-The benchmark harness used this status as
+The benchmark harness uses this status as
 one of the criteria to determine if aider has
 created a plausible solution.
 
@@ -309,8 +309,8 @@ that indicates if it completed with any outstanding failing tests.
 The benchmark harness uses this status when deciding if aider
 has produced a plausible solution.
 
-To be clear, *aider cannot run or even see the held out "acceptance tests"*
-that are used to determine if a proposed solution correctly
+To be clear, *aider cannot run or even see the held out "acceptance tests"* that
+are used to determine if a proposed solution correctly
 resolves the problem.
 Those tests are only run outside of aider and the benchmark harness,
 to compute the final benchmark score.
