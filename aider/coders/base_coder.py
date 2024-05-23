@@ -1328,6 +1328,8 @@ class Coder:
             commit_hash, commit_message = res
             self.last_aider_commit_hash = commit_hash
             self.last_aider_commit_message = commit_message
+            if self.show_diffs:
+                self.commands.cmd_diff()
 
             return self.gpt_prompts.files_content_gpt_edits.format(
                 hash=commit_hash,
