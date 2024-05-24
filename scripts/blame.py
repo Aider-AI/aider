@@ -8,7 +8,7 @@ import pylab as plt
 from aider.dump import dump
 from imgcat import imgcat
 
-def get_lines_with_commit_hash(filename, aider_commits, git_dname, verbose=True):
+def get_lines_with_commit_hash(filename, aider_commits, git_dname, verbose=False):
     result = subprocess.run(
         ["git", "-C", git_dname, "blame", "-l", filename],
         capture_output=True,
@@ -58,15 +58,23 @@ def get_aider_commits(git_dname):
             commits.add(commit_hash)
 
     dump(len(commits))
+
+
     return commits
 
 
+def show_commit_stats(commits):
+    # TODO: print out the number of lines added and deleted for each commit
+    # report totals
+    pass
 
 def process_fnames(fnames, git_dname):
     if not git_dname:
         git_dname = "."
 
     aider_commits = get_aider_commits(git_dname)
+    show_commit_stats(aider_commits)
+
     total_lines = 0
     total_aider_lines = 0
 
@@ -159,8 +167,7 @@ def history():
 
 
 def main():
-    #history()
-    #return
+    #return history()
 
     if len(sys.argv) < 2:
         return process_repo()
