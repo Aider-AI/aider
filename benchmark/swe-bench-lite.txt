@@ -1,44 +1,7 @@
-model: gpt-3.5-turbo
-validate_environment: {'keys_in_environment': True, 'missing_keys': []}
-completion: Hello! How can I assist you today?
-
-model: claude-3-sonnet-20240229
-validate_environment: {'keys_in_environment': True, 'missing_keys': []}
-completion: Hello! How can I assist you today?
-
-model: gemini/gemini-1.5-pro-latest
-validate_environment: {'keys_in_environment': False, 'missing_keys': []}
-completion: Hello! 👋 How can I help you today? 😊 
-
-
-model: command-r-plus
-validate_environment: {'keys_in_environment': False, 'missing_keys': []}
-completion: Hello! How can I help you today?
-
-erased environment
-
-model: gpt-3.5-turbo
-validate_environment: {'keys_in_environment': False, 'missing_keys': ['OPENAI_API_KEY']}
-completion error: OpenAIException - Traceback (most recent call last):
-  File "/Users/gauthier/Projects/aider/.venv/lib/python3.11/site-packages/litellm/llms/openai.py", line 414, in completion
-    raise e
-  File "/Users/gauthier/Projects/aider/.venv/lib/python3.11/site-packages/litellm/llms/openai.py", line 350, in completion
-    openai_client = openai(
-                    ^^^^^^^
-  File "/Users/gauthier/Projects/aider/.venv/lib/python3.11/site-packages/openai/_client.py", line 104, in __init__
-    raise openaiError(
-openai.openaiError: The api_key client option must be set either by passing api_key to the client or by setting the OPENAI_API_KEY environment variable
-
-
-model: claude-3-sonnet-20240229
-validate_environment: {'keys_in_environment': False, 'missing_keys': ['ANTHROPIC_API_KEY']}
-completion error: Missing Anthropic API Key - A call is being made to anthropic but no key is set either in the environment variables or via params
-
-model: gemini/gemini-1.5-pro-latest
-validate_environment: {'keys_in_environment': False, 'missing_keys': []}
-completion error: PalmException - Invalid api key
-
-model: command-r-plus
-validate_environment: {'keys_in_environment': False, 'missing_keys': []}
-completion error: {"message":"no api key supplied"}
-
+26.3% Aider|GPT-4o|& Opus
+25.0% Aider|GPT-4o
+22.3% AutoCode|Rover
+21.0% Open|Devin
+20.3% Amazon Q|Developer|Agent
+18.0% SWE-|Agent|+ GPT-4
+11.7% SWE-|Agent|+ Opus
