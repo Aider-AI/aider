@@ -5,7 +5,7 @@ import subprocess
 from pathlib import Path
 from aider.dump import dump
 
-def get_lines_with_commit_hash(filename, aider_commits, verbose=True):
+def get_lines_with_commit_hash(filename, aider_commits, verbose=False):
     result = subprocess.run(
         ["git", "blame", "-l", filename],
         capture_output=True,
@@ -46,7 +46,6 @@ def get_aider_commits():
     )
 
     for line in result.stdout.splitlines():
-        print(line)
         commit_hash, commit_message = line.split(" ", 1)
         if commit_message.startswith("aider:"):
             commits.add(commit_hash)
@@ -55,14 +54,18 @@ def get_aider_commits():
 
 
 
+def process(fnames):
+    aider_commits = get_aider_commits()
+    for fname in fnames:
+        get_lines_with_commit_hash(fname, aider_commits)
+
 def main():
-    if len(sys.argv) != 2:
-        print(f"Usage: {sys.argv[0]} <filename>")
+    if len(sys.argv) < 2:
+        print(f"Usage: {sys.argv[0]} <filename> ...")
         sys.exit(1)
 
+    process(sys.argv[1:])
 
-    aider_commits = get_aider_commits()
-    get_lines_with_commit_hash(sys.argv[1], aider_commits)
 
 if __name__ == "__main__":
     main()
