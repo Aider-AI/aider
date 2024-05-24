@@ -128,7 +128,7 @@ These first two attempts obtained ~75% of all plausible and ~90% of all resolved
 | **Total** | | **300** | **100%** | **79** | **100%** | **26.3%** |
 
 
-If we break down correct solutions purely by model,
+If we break down the solutions solely by model,
 we can see that aider with GPT-4o outperforms Opus.
 This isn't a fair and direct comparison, because GPT-4o always took the first
 turn and therefore got first crack at all the "easiest" problems.
@@ -229,7 +229,7 @@ complete the edits specified by the LLM.
 This is usually because the LLM has failed to conform to the editing
 instructions in its system prompt.
 When aider completes, it returns an editing outcome that indicates
-whether it was able to successfully complete all edits.
+whether it was able to successfully apply all edits.
 The benchmark harness uses this editing status as
 one criteria to determine if aider has
 created a plausible solution.
