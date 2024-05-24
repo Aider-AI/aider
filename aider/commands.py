@@ -150,7 +150,7 @@ class Commands:
             self.io.tool_error("No more changes to commit.")
             return
 
-        commit_message = args.strip()
+        commit_message = args.strip() if args else None
         self.coder.repo.commit(message=commit_message)
 
     def cmd_lint(self, args="", fnames=None):
