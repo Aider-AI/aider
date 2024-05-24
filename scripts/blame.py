@@ -5,6 +5,7 @@ from aider.dump import dump
 
 def get_aider_commits():
     """Get commit hashes for commits with messages starting with 'aider:'"""
+    commits = []
     result = subprocess.run(
         ["git", "log", "--pretty=format:%H %s"],
         capture_output=True,
@@ -17,7 +18,6 @@ def get_aider_commits():
         commit_hash, commit_message = line.split(" ", 1)
         if commit_message.startswith("aider:"):
             commits.append(commit_hash)
-
 
     return commits
 
