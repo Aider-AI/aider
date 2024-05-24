@@ -7,7 +7,7 @@ draft: true
 
 # Aider scores 26.3% on SWE Bench Lite
  
-Aider scored 26.3%
+[Aider scored 26.3%](https://github.com/swe-bench/experiments/pull/7)
 on the
 [SWE Bench Lite benchmark](https://www.swebench.com),
 achieving a state-of-the-art result. 
@@ -195,7 +195,7 @@ and it worked well for the SWE Bench problems.
 Aider successfully identified the correct file to edit
 in 70.3% of the benchmark tasks.
 
-We can determine which file needed to be edited using the "gold" patch
+We can determine which file needs to be edited using the "gold" patch
 which is associated with each SWE Bench task.
 This patch was created by a human developer
 to solve the issue, and therefore reveals a file which can
@@ -237,7 +237,7 @@ created a plausible solution.
 ## Linting and fixing
 
 Another key criteria for a plausible solution is that it passes basic
-linting, which means that the code is valid and without syntax
+linting, which means that the code has no syntax
 or other fatal errors.
 [Aider lints code](https://aider.chat/2024/05/22/linting.html)
 after every LLM edit and offers to automatically fix
@@ -365,15 +365,16 @@ and prioritizing solutions in the following order:
 
 ## Computing the benchmark score
 
-The benchmark harness produces a candidate solution for each of the 300
-SWE Bench Lite instances and saves it as the `model_patch`.
+The benchmark harness produced a plausible solution for each of the 300
+SWE Bench Lite instances and saved it as the `model_patch`.
 
-A separate evaluation script 
-tests each of these solutions with the full test suite
+A separate evaluation script was used to
+test each of these solutions with the full test suite,
 including the held out acceptance tests.
 For this final acceptance testing, any edits that aider made to tests
 are discarded.
-This ensures that the full, correct test suite is used for acceptance testing.
+This ensures that the correct,
+unmodified test suite is used for acceptance testing.
 The evaluation script compares the test results
 with results from testing
 the "gold" patch that was developed by a human to correctly solve the issue.

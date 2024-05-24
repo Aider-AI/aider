@@ -18,24 +18,24 @@
 Aider works best with code that is part of a git repo.
 Aider is tightly integrated with git, which makes it easy to:
 
-  - Use git to undo any GPT changes that you don't like
-  - Go back in the git history to review the changes GPT made to your code
-  - Manage a series of GPT's changes on a git branch
+  - Use git to undo any aider changes that you don't like
+  - Go back in the git history to review the changes that aider made to your code
+  - Manage a series of aider's changes on a git branch
 
 Aider specifically uses git in these ways:
 
   - It asks to create a git repo if you launch it in a directory without one.
-  - Whenever GPT edits a file, aider commits those changes with a descriptive commit message. This makes it easy to undo or review GPT's changes.
-  - Aider takes special care if GPT tries to edit files that already have uncommitted changes (dirty files). Aider will first commit any preexisting changes with a descriptive commit message. This keeps your edits separate from GPT's edits, and makes sure you never lose your work if GPT makes an inappropriate change.
+  - Whenever aider edits a file, it commits those changes with a descriptive commit message. This makes it easy to undo or review aider's changes.
+  - Aider takes special care before editing files that already have uncommitted changes (dirty files). Aider will first commit any preexisting changes with a descriptive commit message. This keeps your edits separate from aider's edits, and makes sure you never lose your work if aider makes an inappropriate change.
 
-Aider also allows you to use in-chat commands to `/diff` or `/undo` the last change made by GPT.
+Aider also allows you to use in-chat commands to `/diff` or `/undo` the last change.
 To do more complex management of your git history, you cat use raw `git` commands,
 either by using `/git` within the chat, or with standard git tools outside of aider.
 
 While it is not recommended, you can disable aider's use of git in a few ways:
 
-  - `--no-auto-commits` will stop aider from git committing each of GPT's changes.
-  - `--no-dirty-commits` will stop aider from committing dirty files before applying GPT's edits.
+  - `--no-auto-commits` will stop aider from git committing each of its changes.
+  - `--no-dirty-commits` will stop aider from committing dirty files before applying its edits.
   - `--no-git` will completely stop aider from using git on your files. You should ensure you are keeping sensible backups of the files you are working with.
 
 
@@ -151,20 +151,20 @@ coder = Coder.create(client=client, fnames=fnames, io=io)
 ## What code languages does aider support?
 
 Aider supports pretty much all the popular coding languages.
-This is partly because GPT-4 is fluent in most mainstream languages,
+This is partly because top LLMs are fluent in most mainstream languages,
 and familiar with popular libraries, packages and frameworks.
 
 In fact, coding with aider is sometimes the most magical
 when you're working in a language that you
 are less familiar with.
-GPT often knows the language better than you,
+the LLM often knows the language better than you,
 and can generate all the boilerplate to get to the heart of your
 problem.
-GPT will often solve your problem in an elegant way
+The LLM will often solve your problem in an elegant way
 using a library or package that you weren't even aware of.
 
 Aider uses tree-sitter to do code analysis and help
-GPT navigate larger code bases by producing
+the LLM navigate larger code bases by producing
 a [repository map](https://aider.chat/docs/repomap.html).
 
 Aider can currently produce repository maps for most mainstream languages, listed below.
@@ -212,28 +212,30 @@ pipx install aider-chat
 
 ## Aider isn't editing my files?
 
-Sometimes GPT will reply with some code changes that don't get applied to your local files.
+Sometimes the LLM will reply with some code changes that don't get applied to your local files.
 In these cases, aider might say something like "Failed to apply edit to *filename*".
 
-This usually happens because GPT is not specifying the edits
+This usually happens because the LLM is not specifying the edits
 to make in the format that aider expects.
-GPT-3.5 is especially prone to disobeying the system prompt instructions in this manner, but it also happens with GPT-4.
+GPT-3.5 is especially prone to disobeying the system prompt instructions in this manner, but it also happens with stronger models.
 
-Aider makes every effort to get GPT to conform, and works hard to deal with
+Aider makes every effort to get the LLM
+to conform, and works hard to deal with
 replies that are "almost" correctly formatted.
-If Aider detects an improperly formatted reply, it gives GPT feedback to try again.
+If Aider detects an improperly formatted reply, it gives
+the LLM feedback to try again.
 Also, before each release new versions of aider are
 [benchmarked](https://aider.chat/docs/benchmarks.html).
 This helps prevent regressions in the code editing
-performance of GPT that could have been inadvertantly
+performance of an LLM that could have been inadvertantly
 introduced.
 
-But sometimes GPT just won't cooperate.
+But sometimes the LLM just won't cooperate.
 In these cases, here are some things you might try:
 
-  - Try the older GPT-4 model `gpt-4-0613` not GPT-4 Turbo by running `aider --model gpt-4-0613`.
   - Use `/drop` to remove files from the chat session which aren't needed for the task at hand. This will reduce distractions and may help GPT produce properly formatted edits.
   - Use `/clear` to remove the conversation history, again to help GPT focus.
+  - Try the a different LLM.
 
 ## How can I add ALL the files to the chat?
 
@@ -244,16 +246,16 @@ The best approach is think about which files need to be changed to accomplish
 the task you are working on. Just add those files to the chat.
 
 Usually when people want to add "all the files" it's because they think it
-will give GPT helpful context about the overall code base.
-Aider will automatically give GPT a bunch of additional context about
+will give the LLM helpful context about the overall code base.
+Aider will automatically give the LLM a bunch of additional context about
 the rest of your git repo.
 It does this by analyzing your entire codebase in light of the
 current chat to build a compact
 [repository map](https://aider.chat/2023/10/22/repomap.html).
 
 Adding a bunch of files that are mostly irrelevant to the
-task at hand will often distract or confuse GPT.
-GPT will give worse coding results, and sometimese even fail to correctly edit files.
+task at hand will often distract or confuse the LLM.
+The LLM will give worse coding results, and sometimese even fail to correctly edit files.
 Addings extra files will also increase the token costs on your OpenAI invoice.
 
 Again, it's usually best to just add the files to the chat that will need to be modified.
@@ -265,7 +267,7 @@ If you still wish to add lots of files to the chat, you can:
 
 ## Can I specify guidelines or conventions?
 
-Sometimes you want GPT to be aware of certain coding guidelines,
+Sometimes you want the LLM to be aware of certain coding guidelines,
 like whether to provide type hints, which libraries or packages
 to prefer, etc.
 
@@ -298,7 +300,7 @@ The wholefile coder is currently used by GPT-3.5 by default. You can manually se
 - wholefile_coder.py
 - wholefile_prompts.py
 
-The editblock coder is currently used by GPT-4 by default. You can manually select it with `--edit-format diff`.
+The editblock coder is currently used by GPT-4o by default. You can manually select it with `--edit-format diff`.
 
 - editblock_coder.py
 - editblock_prompts.py
@@ -309,7 +311,7 @@ The universal diff coder is currently used by GPT-4 Turbo by default. You can ma
 - udiff_prompts.py
 
 When experimenting with coder backends, it helps to run aider with `--verbose --no-pretty` so you can see
-all the raw information being sent to/from GPT in the conversation.
+all the raw information being sent to/from the LLM in the conversation.
 
 You can also refer to the
 [instructions for installing a development version of aider](https://aider.chat/docs/install.html#install-development-versions-of-aider-optional).
