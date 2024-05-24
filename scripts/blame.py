@@ -78,6 +78,7 @@ def show_commit_stats(commits):
         added_lines = 0
         deleted_lines = 0
         for line in result.stdout.splitlines():
+            dump(line)
             if "insertion" in line:
                 added_lines += int(line.split()[0])
             if "deletion" in line:
