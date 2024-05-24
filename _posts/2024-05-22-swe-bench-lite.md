@@ -115,7 +115,7 @@ These first two attempts obtained ~75% of all plausible and ~90% of all resolved
 - A long tail of solutions continued to be found using both models including one correctly resolved solution on the final, sixth attempt of that problem.
 
 
-| Attempt | Agent |Number&nbsp;of<br>plausible<br>solutions|Percent&nbsp;of<br>plausible<br>solutions| Number&nbsp;of<br/>correctly<br>resolved<br>solutions | Percent&nbsp;of<br>correctly<br>resolved<br>solutions | Score&nbsp;on<br>SWE&nbsp;Bench<br>Lite<br>(resolved/300) |
+| Attempt | Agent |Number&nbsp;of<br>plausible<br>solutions|Percent&nbsp;of<br>plausible<br>solutions| Number&nbsp;of<br/>correctly<br>resolved<br>solutions | Percent&nbsp;of<br>correctly<br>resolved<br>solutions | Score&nbsp;on<br>SWE&nbsp;Bench<br>Lite |
 |:--------:|------------|---------:|---------:|----:|---:|--:|
 | 1 | Aider with GPT-4o    | 208 | 69.3% | 61 | 77.2% | 20.3% |
 | 2 | Aider with Opus      |  49 | 16.3% | 10 | 12.7% |  3.3% |
