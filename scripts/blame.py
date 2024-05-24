@@ -63,9 +63,11 @@ def process(fnames):
         num_lines, num_aider_lines = get_lines_with_commit_hash(fname, aider_commits)
         total_lines += num_lines
         total_aider_lines += num_aider_lines
-        print(f"{fname}: {num_aider_lines}/{num_lines} lines modified by aider")
+        percent_modified = (num_aider_lines / num_lines) * 100 if num_lines > 0 else 0
+        print(f"{fname}: {num_aider_lines}/{num_lines} lines modified by aider ({percent_modified:.2f}%)")
 
-    print(f"Total: {total_aider_lines}/{total_lines} lines modified by aider")
+    total_percent_modified = (total_aider_lines / total_lines) * 100 if total_lines > 0 else 0
+    print(f"Total: {total_aider_lines}/{total_lines} lines modified by aider ({total_percent_modified:.2f}%)")
 
 def main():
     if len(sys.argv) < 2:
