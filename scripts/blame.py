@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import subprocess
+from aider.dump import dump
 
 def get_aider_commits():
     """Get commit hashes for commits with messages starting with 'aider:'"""
