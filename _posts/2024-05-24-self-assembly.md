@@ -1,6 +1,6 @@
 ---
 title: Aider has written 7% of its own code
-excerpt: Aider is 14K lines of python and 7% of those were written by aider itself.
+excerpt: Aider has written 7% of its own code, via 600+ commits that inserted 4.8K and deleted 1.5K lines of code.
 highlight_image: /assets/self-assembly.jpg
 ---
 
@@ -16,7 +16,7 @@ Aider made 15% of the commits, inserting 4.8K and deleting 1.5K lines of code.
 
 About 7% of the code now in the repo is attributable to an aider commit
 using `git blame`.
-The number is probably a significant undercount, because periodic reformatting
+This number is probably a significant undercount, because periodic reformatting
 by `black` is likely obscuring aider's authorship of many lines.
 
 Here's the breakdown of the code aider wrote in the current code base
