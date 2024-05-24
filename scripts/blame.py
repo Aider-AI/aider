@@ -119,11 +119,11 @@ def process_fnames(fnames, git_dname):
         percent_modified = (num_aider_lines / num_lines) * 100 if num_lines > 0 else 0
         if not num_aider_lines:
             continue
-        print(f"|{fname}| {num_aider_lines} of {num_lines} | {percent_modified:.2f}% |")
+        print(f"|{fname}| {num_aider_lines} of {num_lines} | {percent_modified:.1f}% |")
 
     total_percent_modified = (total_aider_lines / total_lines) * 100 if total_lines > 0 else 0
     print(
-        f"Total: {total_aider_lines}/{total_lines} lines by aider ({total_percent_modified:.2f}%)"
+        f"| **Total** | **{total_aider_lines} of {total_lines}** | {total_percent_modified:.1f}% |"
     )
     return total_aider_lines, total_lines, total_percent_modified
 
