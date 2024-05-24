@@ -532,7 +532,7 @@ class Commands:
             )
             combined_output = result.stdout
         except Exception as e:
-            self.io.tool_error(f"Error running git command: {e}")
+            self.io.tool_error(f"Error running /git command: {e}")
 
         if combined_output is None:
             return
