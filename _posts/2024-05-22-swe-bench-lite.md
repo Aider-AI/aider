@@ -395,3 +395,14 @@ Also thanks to Albert Örwall who has
 making it faster, easier, and more reliable to run the acceptance tests.
 
 
+## References
+
+Below are the references for the SWE-Bench Lite results
+displayed in the graph at the top of this page.
+
+- 22.3% AutoCodeRover https://github.com/nus-apr/auto-code-rover
+- 21.0% OpenDevin https://github.com/OpenDevin/OpenDevin
+- 20.3% Amazon Q Developer Agent (v20240430-dev) https://www.swebench.com
+- 18.0% SWE-Agent + GPT-4 https://www.swebench.com
+- 11.7% SWE-Agent + Opus https://www.swebench.com
+
