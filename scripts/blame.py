@@ -7,7 +7,7 @@ from pathlib import Path
 import pylab as plt
 from aider.dump import dump
 
-def get_lines_with_commit_hash(filename, aider_commits, git_dname, verbose=False):
+def get_lines_with_commit_hash(filename, aider_commits, git_dname, verbose=True):
     result = subprocess.run(
         ["git", "-C", git_dname, "blame", "-l", filename],
         capture_output=True,
@@ -116,12 +116,16 @@ def history():
     dump(len(commits))
 
     num_commits = len(commits)
-    N=3
-    step = num_commits//N
+    N=10
+    step = (num_commits-1)/(N-1)
     results = []
-    for i in range(0, num_commits+1, step):
-        dump(i, num_commits)
-        commit = commits[i]
+    i = 0
+    while i < num_commits:
+        commit_num = int(i)
+        dump(i, commit_num, num_commits)
+        i += step
+
+        commit = commits[commit_num]
 
         repo_dname = tempfile.TemporaryDirectory().name
         cmd = f"git clone . {repo_dname}"
@@ -131,7 +135,7 @@ def history():
         subprocess.run(cmd.split(), check=True)
 
         aider_lines, total_lines, pct = process_repo(repo_dname)
-        results.append((i, aider_lines, total_lines, pct))
+        results.append((commit_num, aider_lines, total_lines, pct))
 
     dump(results)
 
@@ -152,14 +156,14 @@ def history():
 
 
 def main():
-    history()
-    return
+    #history()
+    #return
 
     if len(sys.argv) < 2:
         return process_repo()
 
     fnames = sys.argv[1:]
-    process_fnames(fnames)
+    process_fnames(fnames, ".")
 
 
 if __name__ == "__main__":
