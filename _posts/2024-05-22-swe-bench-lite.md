@@ -1,11 +1,11 @@
 ---
-title: Aider scores 26.3% on SWE Bench Lite
+title: Aider scored SOTA 26.3% on SWE Bench Lite
 excerpt: Aider scored 26.3% on SWE Bench Lite, achieving a state of the art result.
 highlight_image: /assets/swe_bench_lite.jpg
 draft: true
 ---
 
-# Aider scores 26.3% on SWE Bench Lite
+# Aider scored SOTA 26.3% on SWE Bench Lite
  
 [Aider scored 26.3%](https://github.com/swe-bench/experiments/pull/7)
 on the
