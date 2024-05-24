@@ -5,7 +5,7 @@ import subprocess
 from pathlib import Path
 from aider.dump import dump
 
-def get_lines_with_commit_hash(filename):
+def get_lines_with_commit_hash(filename, aider_commits, verbose=True):
     result = subprocess.run(
         ["git", "blame", "-l", filename],
         capture_output=True,
@@ -13,19 +13,31 @@ def get_lines_with_commit_hash(filename):
         check=True
     )
 
-    lines_with_hash = []
-    commit_hash = None
-
     hashes = [
         line.split()[0]
         for line in result.stdout.splitlines()
     ]
     lines = Path(filename).read_text().splitlines()
 
+    num_aider_lines = 0
+    for hsh,line in zip(hashes, lines):
+        if hsh in aider_commits:
+            num_aider_lines += 1
+            prefix = '+'
+        else:
+            prefix = " "
+
+        if verbose:
+            print(f"{prefix}{line}")
+
+    num_lines = len(lines)
+
+    return num_lines, num_aider_lines
+
 
 def get_aider_commits():
     """Get commit hashes for commits with messages starting with 'aider:'"""
-    commits = []
+    commits = set()
     result = subprocess.run(
         ["git", "log", "--pretty=format:%H %s"],
         capture_output=True,
@@ -37,15 +49,20 @@ def get_aider_commits():
         print(line)
         commit_hash, commit_message = line.split(" ", 1)
         if commit_message.startswith("aider:"):
-            commits.append(commit_hash)
+            commits.add(commit_hash)
 
     return commits
 
 
 
-if __name__ == "__main__":
+def main():
     if len(sys.argv) != 2:
         print(f"Usage: {sys.argv[0]} <filename>")
         sys.exit(1)
 
-    get_lines_with_commit_hash(sys.argv[1])
+
+    aider_commits = get_aider_commits()
+    get_lines_with_commit_hash(sys.argv[1], aider_commits)
+
+if __name__ == "__main__":
+    main()
