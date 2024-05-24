@@ -13,9 +13,14 @@ The
 currently contains about 4K commits and 14K lines of code.
 
 Aider made 15% of the commits, inserting 4.8K and deleting 1.5K lines of code.
-About 7% of the code now in the repo was written by aider.
 
-Here's the breakdown of the code aider wrote in the current code base.
+About 7% of the code now in the repo is attributable to an aider commit
+using `git blame`.
+The number is probably a significant undercount, because periodic reformatting
+by `black` is likely obscuring aider's authorship of many lines.
+
+Here's the breakdown of the code aider wrote in the current code base
+according to `git blame`.
 
 | File | Lines | Percent |
 |---|---:|---:|
