@@ -71,8 +71,18 @@ def process(fnames):
 
 def main():
     if len(sys.argv) < 2:
-        print(f"Usage: {sys.argv[0]} <filename> ...")
-        sys.exit(1)
+        result = subprocess.run(
+            ["git", "ls-files"],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        fnames = [fname for fname in result.stdout.splitlines() if fname.endswith('.py')]
+        if not fnames:
+            print("No Python files found in the repository.")
+            sys.exit(1)
+    else:
+        fnames = sys.argv[1:]
 
     process(sys.argv[1:])
 
