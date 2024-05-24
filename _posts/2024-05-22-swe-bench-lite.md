@@ -22,7 +22,7 @@ The best result reported elsewhere seems to be
 
 Aider achieved this result mainly through its focus on static code analysis,
 reliable LLM code editing,
-and pragmatic workflows for interactive pair programming with AI.
+and pragmatic features for AI pair programming.
 Aider intentionally has quite limited and narrow "agentic behavior"
 to avoid long delays, high token costs
 and the need for users to repeatedly code review incorrect solutions.
