@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import tempfile
 import sys
 import subprocess
 from pathlib import Path
@@ -37,7 +38,7 @@ def get_lines_with_commit_hash(filename, aider_commits, git_dname, verbose=False
 
 def get_aider_commits(git_dname):
     """Get commit hashes for commits with messages starting with 'aider:'"""
-    commits = set()
+
     result = subprocess.run(
         ["git", "-C", git_dname, "log", "--pretty=format:%H %s"],
         capture_output=True,
@@ -45,11 +46,16 @@ def get_aider_commits(git_dname):
         check=True
     )
 
-    for line in result.stdout.splitlines():
+    results = result.stdout.splitlines()
+    dump(len(results))
+
+    commits = set()
+    for line in results:
         commit_hash, commit_message = line.split(" ", 1)
         if commit_message.startswith("aider:"):
             commits.add(commit_hash)
 
+    dump(len(commits))
     return commits
 
 
@@ -73,26 +79,72 @@ def process_fnames(fnames, git_dname):
 
     total_percent_modified = (total_aider_lines / total_lines) * 100 if total_lines > 0 else 0
     print(f"Total: {total_aider_lines}/{total_lines} lines by aider ({total_percent_modified:.2f}%)")
-    return total_percent_modified
+    return total_aider_lines, total_lines, total_percent_modified
 
 def process_repo(git_dname=None):
     if not git_dname:
         git_dname = "."
+
     result = subprocess.run(
         ["git", "-C", git_dname, "ls-files"],
         capture_output=True,
         text=True,
         check=True
     )
-    fnames = [fname for fname in result.stdout.splitlines() if fname.endswith('.py')]
-    process_fnames(fnames, git_dname)
+    git_dname = Path(git_dname)
+    fnames = [git_dname/fname for fname in result.stdout.splitlines() if fname.endswith('.py')]
+
+    return process_fnames(fnames, git_dname)
+
+
+def history():
+    git_dname = "."
+    result = subprocess.run(
+        ["git", "-C", git_dname, "log", "--pretty=format:%H %s"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+
+    commits = []
+    for line in result.stdout.splitlines():
+        commit_hash, commit_message = line.split(" ", 1)
+        commits.append(commit_hash)
+
+    commits.reverse()
+    dump(len(commits))
+
+    num_commits = len(commits)
+    N=3
+    step = num_commits//N
+    results = []
+    for i in range(0, num_commits+1, step):
+        dump(i, num_commits)
+        commit = commits[i]
+
+        repo_dname = tempfile.TemporaryDirectory().name
+        cmd = f"git clone . {repo_dname}"
+        subprocess.run(cmd.split(), check=True)
+        dump(commit)
+        cmd = f"git -c advice.detachedHead=false -C {repo_dname} checkout {commit}"
+        subprocess.run(cmd.split(), check=True)
+
+        aider_lines, total_lines, pct = process_repo(repo_dname)
+        results.append((i, aider_lines, total_lines, pct))
+
+    dump(results)
+
+
+
 
 def main():
-    if len(sys.argv) < 2:
-        process_repo()
-    else:
-        fnames = sys.argv[1:]
+    history()
+    return
 
+    if len(sys.argv) < 2:
+        return process_repo()
+
+    fnames = sys.argv[1:]
     process_fnames(fnames)
 
 
