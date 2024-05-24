@@ -150,7 +150,8 @@ def history():
     plt.ylabel('Lines of Code')
     plt.title('Aider Lines and Total Lines Over Time')
     plt.legend()
-    plt.show()
+    plt.savefig('aider_plot.png')
+    subprocess.run(['imgcat', 'aider_plot.png'])
 
 
 
