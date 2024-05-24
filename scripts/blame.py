@@ -13,7 +13,7 @@ from aider.dump import dump
 
 def get_lines_with_commit_hash(filename, aider_commits, git_dname, verbose=False):
     result = subprocess.run(
-        ["git", "-C", git_dname, "blame", "-l", filename],
+        ["git", "-C", git_dname, "blame", "-w", "-l", filename],
         capture_output=True,
         text=True,
         check=True,
