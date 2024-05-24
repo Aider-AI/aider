@@ -79,10 +79,10 @@ def show_commit_stats(commits):
         deleted_lines = 0
         for line in result.stdout.splitlines():
             dump(line)
-            if "insertion" in line:
-                added_lines += int(line.split()[0])
-            if "deletion" in line:
-                deleted_lines += int(line.split()[0])
+            if "insertion" in line or "insertion(+)" in line:
+                added_lines += int(line.split()[line.split().index("insertion(+)") - 1])
+            if "deletion" in line or "deletion(-)" in line:
+                deleted_lines += int(line.split()[line.split().index("deletion(-)") - 1])
 
         total_added_lines += added_lines
         total_deleted_lines += deleted_lines
