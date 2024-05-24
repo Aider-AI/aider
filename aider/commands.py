@@ -139,7 +139,7 @@ class Commands:
     # any method called cmd_xxx becomes a command automatically.
     # each one must take an args param.
 
-    def cmd_commit(self, args):
+    def cmd_commit(self, args=None):
         "Commit edits to the repo made outside the chat (commit message optional)"
 
         if not self.coder.repo:
