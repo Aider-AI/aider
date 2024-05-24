@@ -56,7 +56,16 @@ def get_aider_commits():
 
 def process(fnames):
     aider_commits = get_aider_commits()
+    total_lines = 0
+    total_aider_lines = 0
+
     for fname in fnames:
+        num_lines, num_aider_lines = get_lines_with_commit_hash(fname, aider_commits)
+        total_lines += num_lines
+        total_aider_lines += num_aider_lines
+        print(f"{fname}: {num_aider_lines}/{num_lines} lines modified by aider")
+
+    print(f"Total: {total_aider_lines}/{total_lines} lines modified by aider")
         get_lines_with_commit_hash(fname, aider_commits)
 
 def main():
