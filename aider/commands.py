@@ -520,8 +520,8 @@ class Commands:
         combined_output = None
         try:
             args = "git " + args
-            if 'GIT_EDITOR' not in subprocess.os.environ:
-                env = dict(GIT_EDITOR="true", **subprocess.os.environ)
+            env = dict(subprocess.os.environ)
+            env["GIT_EDITOR"] = "true"
             result = subprocess.run(
                 args,
                 stdout=subprocess.PIPE,
