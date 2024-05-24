@@ -6,6 +6,7 @@ import subprocess
 from pathlib import Path
 import pylab as plt
 from aider.dump import dump
+from imgcat import imgcat
 
 def get_lines_with_commit_hash(filename, aider_commits, git_dname, verbose=True):
     result = subprocess.run(
@@ -151,7 +152,8 @@ def history():
     plt.title('Aider Lines and Total Lines Over Time')
     plt.legend()
     plt.savefig('aider_plot.png')
-    subprocess.run(['imgcat', 'aider_plot.png'])
+    with open('aider_plot.png', 'rb') as f:
+        imgcat(f.read())
 
 
 
