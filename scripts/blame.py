@@ -2,6 +2,7 @@
 
 import sys
 import subprocess
+from pathlib import Path
 from aider.dump import dump
 
 def get_lines_with_commit_hash(filename):
@@ -16,10 +17,10 @@ def get_lines_with_commit_hash(filename):
     commit_hash = None
 
     hashes = [
-        line.split[0]
+        line.split()[0]
         for line in result.stdout.splitlines()
     ]
-    lines = Path(filename).splitlines()
+    lines = Path(filename).read_text().splitlines()
 
 
 def get_aider_commits():
