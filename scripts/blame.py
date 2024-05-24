@@ -4,6 +4,7 @@ import tempfile
 import sys
 import subprocess
 from pathlib import Path
+import pylab as plt
 from aider.dump import dump
 
 def get_lines_with_commit_hash(filename, aider_commits, git_dname, verbose=False):
@@ -133,6 +134,19 @@ def history():
         results.append((i, aider_lines, total_lines, pct))
 
     dump(results)
+
+    # Plotting the results
+    x = [i for i, _, _, _ in results]
+    aider_lines = [aider_lines for _, aider_lines, _, _ in results]
+    total_lines = [total_lines for _, _, total_lines, _ in results]
+
+    plt.fill_between(x, aider_lines, label='Aider Lines', color='skyblue', alpha=0.5)
+    plt.fill_between(x, total_lines, label='Total Lines', color='lightgreen', alpha=0.5)
+    plt.xlabel('Commit Number')
+    plt.ylabel('Lines of Code')
+    plt.title('Aider Lines and Total Lines Over Time')
+    plt.legend()
+    plt.show()
 
 
 
