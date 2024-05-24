@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import subprocess
 
 def get_aider_commits():
