@@ -1,6 +1,6 @@
 ---
 title: Aider scored SOTA 26.3% on SWE Bench Lite
-excerpt: Aider scored 26.3% on SWE Bench Lite, achieving a state of the art result.
+excerpt: Aider achieved this result mainly through its existing features that focus on static code analysis, reliable LLM code editing, and pragmatic UX for AI pair programming.
 highlight_image: /assets/swe_bench_lite.jpg
 draft: true
 ---
@@ -20,11 +20,7 @@ The best result reported elsewhere seems to be
 
 ## Interactive, not agentic
 
-Aider achieved this result mainly through its
-existing features that
-focus on static code analysis,
-reliable LLM code editing,
-and pragmatic UX for AI pair programming.
+Aider achieved this result mainly through its existing features that focus on static code analysis, reliable LLM code editing, and pragmatic UX for AI pair programming.
 Aider intentionally has quite limited and narrow "agentic behavior"
 to avoid long delays, high token costs
 and the need for users to repeatedly code review incorrect solutions.
