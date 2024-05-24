@@ -12,9 +12,12 @@ def get_aider_commits():
     )
     commits = []
     for line in result.stdout.splitlines():
+        print(line)
         commit_hash, commit_message = line.split(" ", 1)
         if commit_message.startswith("aider:"):
             commits.append(commit_hash)
+
+    dump(commits)
     return commits
 
 def get_blame_lines(commit_hash):
