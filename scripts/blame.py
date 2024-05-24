@@ -1,32 +1,32 @@
 #!/usr/bin/env python3
 
-import tempfile
-import sys
 import subprocess
+import sys
+import tempfile
 from pathlib import Path
+
 import pylab as plt
-from aider.dump import dump
 from imgcat import imgcat
+
+from aider.dump import dump
+
 
 def get_lines_with_commit_hash(filename, aider_commits, git_dname, verbose=False):
     result = subprocess.run(
         ["git", "-C", git_dname, "blame", "-l", filename],
         capture_output=True,
         text=True,
-        check=True
+        check=True,
     )
 
-    hashes = [
-        line.split()[0]
-        for line in result.stdout.splitlines()
-    ]
+    hashes = [line.split()[0] for line in result.stdout.splitlines()]
     lines = Path(filename).read_text().splitlines()
 
     num_aider_lines = 0
-    for hsh,line in zip(hashes, lines):
+    for hsh, line in zip(hashes, lines):
         if hsh in aider_commits:
             num_aider_lines += 1
-            prefix = '+'
+            prefix = "+"
         else:
             prefix = " "
 
@@ -45,7 +45,7 @@ def get_aider_commits(git_dname):
         ["git", "-C", git_dname, "log", "--pretty=format:%H %s"],
         capture_output=True,
         text=True,
-        check=True
+        check=True,
     )
 
     results = result.stdout.splitlines()
@@ -59,7 +59,6 @@ def get_aider_commits(git_dname):
 
     dump(len(commits))
 
-
     return commits
 
 
@@ -72,17 +71,28 @@ def show_commit_stats(commits):
             ["git", "show", "--stat", "--oneline", commit],
             capture_output=True,
             text=True,
-            check=True
+            check=True,
         )
 
         added_lines = 0
         deleted_lines = 0
         for line in result.stdout.splitlines():
+            if "changed," not in line:
+                continue
+            if "insertion" not in line and "deletion" not in line:
+                continue
             dump(line)
-            if "insertion" in line or "insertion(+)" in line:
-                added_lines += int(line.split()[line.split().index("insertion(+)") - 1])
-            if "deletion" in line or "deletion(-)" in line:
-                deleted_lines += int(line.split()[line.split().index("deletion(-)") - 1])
+            pieces = line.split(",")
+            try:
+                for piece in pieces:
+                    if "insertion" in piece:
+                        dump(piece)
+                        added_lines += int(piece.strip().split()[0])
+                    if "deletion" in piece:
+                        dump(piece)
+                        deleted_lines += int(piece.strip().split()[0])
+            except ValueError:
+                pass
 
         total_added_lines += added_lines
         total_deleted_lines += deleted_lines
@@ -91,12 +101,13 @@ def show_commit_stats(commits):
 
     print(f"Total: +{total_added_lines} -{total_deleted_lines}")
 
+
 def process_fnames(fnames, git_dname):
     if not git_dname:
         git_dname = "."
 
     aider_commits = get_aider_commits(git_dname)
-    show_commit_stats(aider_commits)
+    # show_commit_stats(aider_commits)
 
     total_lines = 0
     total_aider_lines = 0
@@ -108,24 +119,24 @@ def process_fnames(fnames, git_dname):
         percent_modified = (num_aider_lines / num_lines) * 100 if num_lines > 0 else 0
         if not num_aider_lines:
             continue
-        print(f"{fname}: {num_aider_lines}/{num_lines} ({percent_modified:.2f}%)")
+        print(f"|{fname}| {num_aider_lines} of {num_lines} | {percent_modified:.2f}% |")
 
     total_percent_modified = (total_aider_lines / total_lines) * 100 if total_lines > 0 else 0
-    print(f"Total: {total_aider_lines}/{total_lines} lines by aider ({total_percent_modified:.2f}%)")
+    print(
+        f"Total: {total_aider_lines}/{total_lines} lines by aider ({total_percent_modified:.2f}%)"
+    )
     return total_aider_lines, total_lines, total_percent_modified
+
 
 def process_repo(git_dname=None):
     if not git_dname:
         git_dname = "."
 
     result = subprocess.run(
-        ["git", "-C", git_dname, "ls-files"],
-        capture_output=True,
-        text=True,
-        check=True
+        ["git", "-C", git_dname, "ls-files"], capture_output=True, text=True, check=True
     )
     git_dname = Path(git_dname)
-    fnames = [git_dname/fname for fname in result.stdout.splitlines() if fname.endswith('.py')]
+    fnames = [git_dname / fname for fname in result.stdout.splitlines() if fname.endswith(".py")]
 
     return process_fnames(fnames, git_dname)
 
@@ -136,7 +147,7 @@ def history():
         ["git", "-C", git_dname, "log", "--pretty=format:%H %s"],
         capture_output=True,
         text=True,
-        check=True
+        check=True,
     )
 
     commits = []
@@ -148,8 +159,8 @@ def history():
     dump(len(commits))
 
     num_commits = len(commits)
-    N=10
-    step = (num_commits-1)/(N-1)
+    N = 10
+    step = (num_commits - 1) / (N - 1)
     results = []
     i = 0
     while i < num_commits:
@@ -176,21 +187,19 @@ def history():
     aider_lines = [aider_lines for _, aider_lines, _, _ in results]
     total_lines = [total_lines for _, _, total_lines, _ in results]
 
-    plt.fill_between(x, aider_lines, label='Aider Lines', color='skyblue', alpha=0.5)
-    plt.fill_between(x, total_lines, label='Total Lines', color='lightgreen', alpha=0.5)
-    plt.xlabel('Commit Number')
-    plt.ylabel('Lines of Code')
-    plt.title('Aider Lines and Total Lines Over Time')
+    plt.fill_between(x, aider_lines, label="Aider Lines", color="skyblue", alpha=0.5)
+    plt.fill_between(x, total_lines, label="Total Lines", color="lightgreen", alpha=0.5)
+    plt.xlabel("Commit Number")
+    plt.ylabel("Lines of Code")
+    plt.title("Aider Lines and Total Lines Over Time")
     plt.legend()
-    plt.savefig('aider_plot.png')
-    with open('aider_plot.png', 'rb') as f:
+    plt.savefig("aider_plot.png")
+    with open("aider_plot.png", "rb") as f:
         imgcat(f.read())
 
 
-
-
 def main():
-    #return history()
+    # return history()
 
     if len(sys.argv) < 2:
         return process_repo()
