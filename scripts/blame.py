@@ -64,9 +64,31 @@ def get_aider_commits(git_dname):
 
 
 def show_commit_stats(commits):
-    # TODO: print out the number of lines added and deleted for each commit
-    # report totals
-    pass
+    total_added_lines = 0
+    total_deleted_lines = 0
+
+    for commit in commits:
+        result = subprocess.run(
+            ["git", "show", "--stat", "--oneline", commit],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+
+        added_lines = 0
+        deleted_lines = 0
+        for line in result.stdout.splitlines():
+            if "insertion" in line:
+                added_lines += int(line.split()[0])
+            if "deletion" in line:
+                deleted_lines += int(line.split()[0])
+
+        total_added_lines += added_lines
+        total_deleted_lines += deleted_lines
+
+        print(f"Commit {commit}: +{added_lines} -{deleted_lines}")
+
+    print(f"Total: +{total_added_lines} -{total_deleted_lines}")
 
 def process_fnames(fnames, git_dname):
     if not git_dname:
