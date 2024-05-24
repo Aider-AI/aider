@@ -20,9 +20,11 @@ The best result reported elsewhere seems to be
 
 ## Interactive, not agentic
 
-Aider achieved this result mainly through its focus on static code analysis,
+Aider achieved this result mainly through its
+existing features that
+focus on static code analysis,
 reliable LLM code editing,
-and pragmatic features for AI pair programming.
+and pragmatic UX for AI pair programming.
 Aider intentionally has quite limited and narrow "agentic behavior"
 to avoid long delays, high token costs
 and the need for users to repeatedly code review incorrect solutions.
