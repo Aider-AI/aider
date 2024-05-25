@@ -1,7 +1,7 @@
 26.3% Aider|GPT-4o|& Opus
 25.0% Aider|GPT-4o
+25.0% Open|Devin
 22.3% AutoCode|Rover
-21.0% Open|Devin
 20.3% Amazon Q|Developer|Agent
 18.0% SWE-|Agent|+ GPT-4
 11.7% SWE-|Agent|+ Opus

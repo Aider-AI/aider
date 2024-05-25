@@ -14,7 +14,7 @@ achieving a state-of-the-art result.
 The current top leaderboard entry is 20.3%
 from Amazon Q Developer Agent.
 The best result reported elsewhere seems to be
-[22.3% from AutoCodeRover](https://github.com/nus-apr/auto-code-rover).
+[25% from OpenDevin](https://x.com/gneubig/status/1791498953709752405)
 
 [![SWE Bench Lite results](/assets/swe_bench_lite.svg)](https://aider.chat/assets/swe_bench_lite.svg)
 
@@ -89,7 +89,7 @@ or if the AI starts going down a wrong path.
 Running the benchmark harness
 only using aider with GPT-4o to find plausible solutions
 achieved a score of 25.0%.
-This was itself a state-of-the-art result, before being surpassed by the main
+This was itself matching the state-of-the-art, before being surpassed by the main
 result being reported here
 that used aider with both GPT-4o & Opus.
 
@@ -400,8 +400,8 @@ making it faster, easier, and more reliable to run the acceptance tests.
 Below are the references for the SWE-Bench Lite results
 displayed in the graph at the top of this page.
 
+- 25.0% OpenDevin https://x.com/gneubig/status/1791498953709752405
 - 22.3% AutoCodeRover https://github.com/nus-apr/auto-code-rover
-- 21.0% OpenDevin https://github.com/OpenDevin/OpenDevin
 - 20.3% Amazon Q Developer Agent (v20240430-dev) https://www.swebench.com
 - 18.0% SWE-Agent + GPT-4 https://www.swebench.com
 - 11.7% SWE-Agent + Opus https://www.swebench.com
