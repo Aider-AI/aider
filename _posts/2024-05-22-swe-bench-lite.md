@@ -29,7 +29,7 @@ or unilaterally execute code.
 
 Aider is first and foremost an interactive tool for engineers to get real work done in
 real code bases using a chat interface.
-Aider provides a pair programming experience where users can ask for a change
+Aider provides a pair programming UX where users can ask for a change
 and see the edits performed in real-time.
 Aider can also offer additional help like fixing lint or test errors,
 but the user is always in full interactive control.
