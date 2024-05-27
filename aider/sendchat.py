@@ -1,6 +1,6 @@
 import hashlib
 import json
-from typing import TYPE_CHECKING
+from typing import Any
 
 import backoff
 import httpx
@@ -11,11 +11,8 @@ from aider.litellm import litellm
 
 # from diskcache import Cache
 
-if TYPE_CHECKING:
-    from diskcache import Cache
-
 CACHE_PATH = "~/.aider.send.cache.v1"
-CACHE: Cache | None = None
+CACHE: Any | None = None
 # CACHE = Cache(CACHE_PATH)
 
 
