@@ -45,27 +45,27 @@ def wrap_fence(name):
 
 
 class Coder:
-    abs_fnames = None
-    repo = None
-    last_aider_commit_hash = None
-    aider_edited_files = None
-    last_asked_for_commit_time = 0
-    repo_map = None
-    functions = None
-    total_cost = 0.0
-    num_exhausted_context_windows = 0
-    num_malformed_responses = 0
-    last_keyboard_interrupt = None
-    num_reflections = 0
-    max_reflections = 3
-    edit_format = None
-    yield_stream = False
-    temperature = 0
-    auto_lint = True
-    auto_test = False
-    test_cmd = None
-    lint_outcome = None
-    test_outcome = None
+    abs_fnames: set[str] | None = None
+    repo: GitRepo | None = None
+    last_aider_commit_hash: str | None = None
+    aider_edited_files: set[str] | None = None
+    last_asked_for_commit_time: float = 0
+    repo_map: RepoMap | None = None
+    functions: list[dict] | None = None
+    total_cost: float = 0.0
+    num_exhausted_context_windows: int = 0
+    num_malformed_responses: int = 0
+    last_keyboard_interrupt: float | None = None
+    num_reflections: int = 0
+    max_reflections: int = 3
+    edit_format: str | None = None
+    yield_stream: bool = False
+    temperature: float = 0
+    auto_lint: bool = True
+    auto_test: bool = False
+    test_cmd: str | None = None
+    lint_outcome: str | None = None
+    test_outcome: str | None = None
 
     @classmethod
     def create(
@@ -302,7 +302,11 @@ class Coder:
         if not self.repo:
             self.find_common_root()
 
-        if main_model.use_repo_map and self.repo and self.gpt_prompts.repo_content_prefix:
+        if (
+            main_model.use_repo_map
+            and self.repo
+            and self.gpt_prompts.repo_content_prefix
+        ):
             self.repo_map = RepoMap(
                 map_tokens,
                 self.root,
@@ -550,9 +554,14 @@ class Coder:
         image_messages = []
         for fname, content in self.get_abs_fnames_content():
             if is_image_file(fname):
-                image_url = f"data:image/{Path(fname).suffix.lstrip('.')};base64,{content}"
+                image_url = (
+                    f"data:image/{Path(fname).suffix.lstrip('.')};base64,{content}"
+                )
                 image_messages.append(
-                    {"type": "image_url", "image_url": {"url": image_url, "detail": "high"}}
+                    {
+                        "type": "image_url",
+                        "image_url": {"url": image_url, "detail": "high"},
+                    }
                 )
 
         if not image_messages:
@@ -660,7 +669,9 @@ class Coder:
 
     def summarize_worker(self):
         try:
-            self.summarized_done_messages = self.summarizer.summarize(self.done_messages)
+            self.summarized_done_messages = self.summarizer.summarize(
+                self.done_messages
+            )
         except ValueError as err:
             self.io.tool_error(err.args[0])
 
@@ -738,7 +749,10 @@ class Coder:
         messages += self.get_files_messages()
 
         reminder_message = [
-            dict(role="system", content=self.fmt_system_prompt(self.gpt_prompts.system_reminder)),
+            dict(
+                role="system",
+                content=self.fmt_system_prompt(self.gpt_prompts.system_reminder),
+            ),
         ]
 
         # TODO review impact of token count on image messages
@@ -806,7 +820,9 @@ class Coder:
             self.io.tool_error("The chat session is larger than the context window!\n")
             self.commands.cmd_tokens("")
             self.io.tool_error("\nTo reduce token usage:")
-            self.io.tool_error(" - Use /drop to remove unneeded files from the chat session.")
+            self.io.tool_error(
+                " - Use /drop to remove unneeded files from the chat session."
+            )
             self.io.tool_error(" - Use /clear to clear chat history.")
             return
 
@@ -892,7 +908,9 @@ class Coder:
 
     def update_cur_messages(self, edited):
         if self.partial_response_content:
-            self.cur_messages += [dict(role="assistant", content=self.partial_response_content)]
+            self.cur_messages += [
+                dict(role="assistant", content=self.partial_response_content)
+            ]
         if self.partial_response_function_call:
             self.cur_messages += [
                 dict(
@@ -995,7 +1013,9 @@ class Coder:
         show_func_err = None
         show_content_err = None
         try:
-            self.partial_response_function_call = completion.choices[0].message.function_call
+            self.partial_response_function_call = completion.choices[
+                0
+            ].message.function_call
         except AttributeError as func_err:
             show_func_err = func_err
 
@@ -1021,11 +1041,15 @@ class Coder:
             prompt_tokens = completion.usage.prompt_tokens
             completion_tokens = completion.usage.completion_tokens
 
-            tokens = f"{prompt_tokens} prompt tokens, {completion_tokens} completion tokens"
+            tokens = (
+                f"{prompt_tokens} prompt tokens, {completion_tokens} completion tokens"
+            )
             if self.main_model.info.get("input_cost_per_token"):
                 cost = prompt_tokens * self.main_model.info.get("input_cost_per_token")
                 if self.main_model.info.get("output_cost_per_token"):
-                    cost += completion_tokens * self.main_model.info.get("output_cost_per_token")
+                    cost += completion_tokens * self.main_model.info.get(
+                        "output_cost_per_token"
+                    )
                 tokens += f", ${cost:.6f} cost"
                 self.total_cost += cost
 
@@ -1126,7 +1150,9 @@ class Coder:
         return max(path.stat().st_mtime for path in files)
 
     def get_addable_relative_files(self):
-        return set(self.get_all_relative_files()) - set(self.get_inchat_relative_files())
+        return set(self.get_all_relative_files()) - set(
+            self.get_inchat_relative_files()
+        )
 
     def check_for_dirty_commit(self, path):
         if not self.repo:
@@ -1212,7 +1238,9 @@ class Coder:
         if tokens < warn_number_of_tokens:
             return
 
-        self.io.tool_error("Warning: it's best to only add files that need changes to the chat.")
+        self.io.tool_error(
+            "Warning: it's best to only add files that need changes to the chat."
+        )
         self.io.tool_error(
             "https://aider.chat/docs/faq.html#how-can-i-add-all-the-files-to-the-chat"
         )
