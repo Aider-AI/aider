@@ -1,7 +1,7 @@
 
 # Release history
 
-### main
+## main
 
 - Aider will notice if you paste a URL into the chat, and offer to scrape it.
 - Performance improvements the repo map, especially in large repos.
@@ -19,7 +19,6 @@
   - Run tests with `/test` or from the command line with `--test`.
   - Aider will automatically attempt to fix any test failures.
   
-
 ### v0.35.0
 
 - Aider now uses GPT-4o by default.
@@ -37,7 +36,6 @@
 - Added explicit model settings for `openrouter/anthropic/claude-3-opus`, `gpt-3.5-turbo`
 - Added `--show-prompts` debug switch.
 - Bugfix: catch and retry on all litellm exceptions.
-
 
 ### v0.33.0
 
@@ -118,12 +116,12 @@
 ### v0.25.0
 
 - Issue a warning if user adds too much code to the chat.
-  - https://aider.chat/docs/faq.html#how-can-i-add-all-the-files-to-the-chat
+  - <https://aider.chat/docs/faq.html#how-can-i-add-all-the-files-to-the-chat>
 - Vocally refuse to add files to the chat that match `.aiderignore`
   - Prevents bug where subsequent git commit of those files will fail.
 - Added `--openai-organization-id` argument.
 - Show the user a FAQ link if edits fail to apply.
-- Made past articles part of https://aider.chat/blog/
+- Made past articles part of <https://aider.chat/blog/>
 
 ### v0.24.1
 
@@ -226,7 +224,6 @@
 - Improved handling of malformed edit blocks targeting multiple edits to the same file. [Benchmarked](https://aider.chat/docs/benchmarks.html) at 65.4%, no regression.
 - Bugfix to properly handle malformed `/add` wildcards.
 
-
 ### v0.15.0
 
 - Added support for `.aiderignore` file, which instructs aider to ignore parts of the git repo.
@@ -254,7 +251,6 @@
 - [Support for Claude2 and other LLMs via OpenRouter](https://aider.chat/docs/faq.html#accessing-other-llms-with-openrouter) by @joshuavial
 - Documentation for [running the aider benchmarking suite](https://github.com/paul-gauthier/aider/tree/main/benchmark)
 - Aider now requires Python >= 3.9
-
 
 ### v0.13.0
 
@@ -303,7 +299,6 @@
 - Provide GPT with detailed error if it makes a bad edit block, ask for a retry.
 - Force `--no-pretty` if aider detects it is running inside a VSCode terminal.
 - [Benchmarked](https://aider.chat/docs/benchmarks.html) at 64.7% for gpt-4/diff (no regression)
-
 
 ### v0.9.0
 
@@ -354,15 +349,15 @@
 - Added `--code-theme` switch to control the pygments styling of code blocks (by @kwmiebach)
 - Better status messages explaining the reason when ctags is disabled
 
-### v0.7.2:
+### v0.7.2
 
 - Fixed a bug to allow aider to edit files that contain triple backtick fences.
 
-### v0.7.1:
+### v0.7.1
 
 - Fixed a bug in the display of streaming diffs in GPT-3.5 chats
 
-### v0.7.0:
+### v0.7.0
 
 - Graceful handling of context window exhaustion, including helpful tips.
 - Added `--message` to give GPT that one instruction and then exit after it replies and any edits are performed.
@@ -370,7 +365,7 @@
   - Non-streaming responses include token usage info.
   - Enables display of cost info based on OpenAI advertised pricing.
 - Coding competence benchmarking tool against suite of programming tasks based on Execism's python repo.
-  - https://github.com/exercism/python
+  - <https://github.com/exercism/python>
 - Major refactor in preparation for supporting new function calls api.
 - Initial implementation of a function based code editing backend for 3.5.
   - Initial experiments show that using functions makes 3.5 less competent at coding.
@@ -378,9 +373,9 @@
 
 ### v0.6.2
 
-* Support for `gpt-3.5-turbo-16k`, and all OpenAI chat models
-* Improved ability to correct when gpt-4 omits leading whitespace in code edits
-* Added `--openai-api-base` to support API proxies, etc.
+- Support for `gpt-3.5-turbo-16k`, and all OpenAI chat models
+- Improved ability to correct when gpt-4 omits leading whitespace in code edits
+- Added `--openai-api-base` to support API proxies, etc.
 
 ### v0.5.0
 
