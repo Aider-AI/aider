@@ -236,19 +236,19 @@ MODEL_SETTINGS = [
 
 
 class Model:
-    name = None
+    name: str | None = None
 
     edit_format = "whole"
     use_repo_map = False
     send_undo_reply = False
     accepts_images = False
-    weak_model_name = None
+    weak_model_name: str | None = None
     lazy = False
     reminder_as_sys_msg = False
     examples_as_sys_msg = False
 
     max_chat_history_tokens = 1024
-    weak_model = None
+    weak_model: "Model" | None = None
 
     def __init__(self, model, weak_model=None):
         self.name = model
@@ -358,7 +358,7 @@ class Model:
         if not self.tokenizer:
             return
 
-        if type(messages) is str:
+        if isinstance(messages, str):
             msgs = messages
         else:
             msgs = json.dumps(messages)
@@ -452,7 +452,9 @@ def sanity_check_model(io, model):
             io.tool_error(f"- {key}")
     elif not model.keys_in_environment:
         show = True
-        io.tool_error(f"Model {model}: Unknown which environment variables are required.")
+        io.tool_error(
+            f"Model {model}: Unknown which environment variables are required."
+        )
 
     if not model.info:
         show = True
@@ -471,7 +473,9 @@ def sanity_check_model(io, model):
                     io.tool_error(f"- {m} ({fq})")
 
     if show:
-        io.tool_error("For more info see https://aider.chat/docs/llms.html#model-warnings")
+        io.tool_error(
+            "For more info see https://aider.chat/docs/llms.html#model-warnings"
+        )
 
 
 def fuzzy_match_models(name):
