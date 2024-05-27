@@ -1,9 +1,13 @@
 class CoderPrompts:
-    files_content_gpt_edits = "I committed the changes with git hash {hash} & commit msg: {message}"
+    files_content_gpt_edits = (
+        "I committed the changes with git hash {hash} & commit msg: {message}"
+    )
 
     files_content_gpt_edits_no_repo = "I updated the files."
 
-    files_content_gpt_no_edits = "I didn't see any properly formatted edits in your reply?!"
+    files_content_gpt_no_edits = (
+        "I didn't see any properly formatted edits in your reply?!"
+    )
 
     files_content_local_edits = "I edited the files myself."
 
@@ -12,7 +16,7 @@ You NEVER leave comments describing code without implementing it!
 You always COMPLETELY IMPLEMENT the needed code!
 """
 
-    example_messages = []
+    example_messages: list[str | dict[str, str]] = []
 
     files_content_prefix = """I have *added these files to the chat* so you can go ahead and edit them.
 
@@ -28,7 +32,9 @@ Only include the files that are most likely to actually need to be edited.
 Don't include files that might contain relevant context, just files that will need to be changed.
 """  # noqa: E501
 
-    repo_content_prefix = """Here are summaries of some files present in my git repository.
+    repo_content_prefix: (
+        str | None
+    ) = """Here are summaries of some files present in my git repository.
 Do not propose changes to these files, treat them as *read-only*.
 If you need to edit any of these files, ask me to *add them to the chat* first.
 """
