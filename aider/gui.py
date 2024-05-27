@@ -3,6 +3,7 @@
 import os
 import random
 import sys
+from typing import TYPE_CHECKING
 
 import streamlit as st
 
@@ -12,9 +13,12 @@ from aider.io import InputOutput
 from aider.main import main as cli_main
 from aider.scrape import Scraper
 
+if TYPE_CHECKING:
+    from streamlit.delta_generator import DeltaGenerator
+
 
 class CaptureIO(InputOutput):
-    lines = []
+    lines: list[str] = []
 
     def tool_output(self, msg):
         self.lines.append(msg)
@@ -42,7 +46,7 @@ def search(text=None):
 
 # Keep state as a resource, which survives browser reloads (since Coder does too)
 class State:
-    keys = set()
+    keys: set[str] = set()
 
     def init(self, key, val=None):
         if key in self.keys:
@@ -79,11 +83,11 @@ def get_coder():
 
 
 class GUI:
-    prompt = None
-    prompt_as = "user"
-    last_undo_empty = None
-    recent_msgs_empty = None
-    web_content_empty = None
+    prompt: str | None = None
+    prompt_as: str = "user"
+    last_undo_empty: DeltaGenerator | None = None
+    recent_msgs_empty: DeltaGenerator | None = None
+    web_content_empty: DeltaGenerator | None = None
 
     def announce(self):
         lines = self.coder.get_announcements()
@@ -135,7 +139,9 @@ class GUI:
         undone = self.state.last_undone_commit_hash == commit_hash
         if not undone:
             with self.last_undo_empty:
-                if self.button(f"Undo commit `{commit_hash}`", key=f"undo_{commit_hash}"):
+                if self.button(
+                    f"Undo commit `{commit_hash}`", key=f"undo_{commit_hash}"
+                ):
                     self.do_undo(commit_hash)
 
     def do_sidebar(self):
@@ -168,8 +174,12 @@ class GUI:
                 self.button("Create git repo", key=random.random(), help="?")
 
             with st.popover("Update your `.gitignore` file"):
-                st.write("It's best to keep aider's internal files out of your git repo.")
-                self.button("Add `.aider*` to `.gitignore`", key=random.random(), help="?")
+                st.write(
+                    "It's best to keep aider's internal files out of your git repo."
+                )
+                self.button(
+                    "Add `.aider*` to `.gitignore`", key=random.random(), help="?"
+                )
 
     def do_add_to_chat(self):
         # with st.expander("Add to the chat", expanded=True):
@@ -244,7 +254,9 @@ class GUI:
         if self.button("Clear chat history", help=text):
             self.coder.done_messages = []
             self.coder.cur_messages = []
-            self.info("Cleared chat history. Now the LLM can't see anything before this line.")
+            self.info(
+                "Cleared chat history. Now the LLM can't see anything before this line."
+            )
 
     def do_show_metrics(self):
         st.metric("Cost of last message send & reply", "$0.0019", help="foo")
