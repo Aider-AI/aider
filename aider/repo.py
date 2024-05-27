@@ -11,9 +11,9 @@ from .dump import dump  # noqa: F401
 
 
 class GitRepo:
-    repo = None
-    aider_ignore_file = None
-    aider_ignore_spec = None
+    repo: git.Repo | None = None
+    aider_ignore_file: Path | None = None
+    aider_ignore_spec: pathspec.PathSpec | None = None
     aider_ignore_ts = 0
 
     def __init__(self, io, fnames, git_dname, aider_ignore_file=None, models=None):
