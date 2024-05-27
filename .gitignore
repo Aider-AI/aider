@@ -5,3 +5,7 @@ build
 Gemfile.lock
 _site
 .jekyll-cache/
+
+# rye
+*.lock
+.python-version
