@@ -24,9 +24,9 @@ See https://aider.chat/docs/install.html#enable-playwright-optional for more inf
 
 
 class Scraper:
-    pandoc_available = None
-    playwright_available = None
-    playwright_instructions_shown = False
+    pandoc_available: bool | None = None
+    playwright_available: bool | None = None
+    playwright_instructions_shown: bool = False
 
     # Public API...
     def __init__(self, print_error=None):
