@@ -3,7 +3,9 @@ import os
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
+from typing import TextIO
 
+from git.types import PathLike
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.key_binding import KeyBindings
@@ -66,7 +68,9 @@ class AutoCompleter(Completer):
                 candidates = self.commands.get_commands()
                 candidates = [(cmd, cmd) for cmd in candidates]
             else:
-                for completion in self.commands.get_command_completions(words[0][1:], words[-1]):
+                for completion in self.commands.get_command_completions(
+                    words[0][1:], words[-1]
+                ):
                     yield completion
                 return
         else:
@@ -81,7 +85,9 @@ class AutoCompleter(Completer):
                 if rel_fnames:
                     for rel_fname in rel_fnames:
                         yield Completion(
-                            f"`{rel_fname}`", start_position=-len(last_word), display=rel_fname
+                            f"`{rel_fname}`",
+                            start_position=-len(last_word),
+                            display=rel_fname,
                         )
                 else:
                     yield Completion(
@@ -97,15 +103,15 @@ class InputOutput:
         self,
         pretty=True,
         yes=False,
-        input_history_file=None,
-        chat_history_file=None,
-        input=None,
-        output=None,
-        user_input_color="blue",
-        tool_output_color=None,
-        tool_error_color="red",
-        encoding="utf-8",
-        dry_run=False,
+        input_history_file: PathLike | Path | None = None,
+        chat_history_file: PathLike | Path | None = None,
+        input: TextIO | None = None,
+        output: TextIO | None = None,
+        user_input_color: str | None = "blue",
+        tool_output_color: str | None = None,
+        tool_error_color: str | None = "red",
+        encoding: str = "utf-8",
+        dry_run: bool = False,
     ):
         no_color = os.environ.get("NO_COLOR")
         if no_color is not None and no_color != "":
@@ -128,7 +134,7 @@ class InputOutput:
         if chat_history_file is not None:
             self.chat_history_file = Path(chat_history_file)
         else:
-            self.chat_history_file = None
+            self.chat_history_file = None  # type: ignore
 
         self.encoding = encoding
         self.dry_run = dry_run
@@ -182,7 +188,9 @@ class InputOutput:
 
     def get_input(self, root, rel_fnames, addable_rel_fnames, commands):
         if self.pretty:
-            style = dict(style=self.user_input_color) if self.user_input_color else dict()
+            style = (
+                dict(style=self.user_input_color) if self.user_input_color else dict()
+            )
             self.console.rule(**style)
         else:
             print()
@@ -268,7 +276,9 @@ class InputOutput:
 
     def user_input(self, inp, log_only=True):
         if not log_only:
-            style = dict(style=self.user_input_color) if self.user_input_color else dict()
+            style = (
+                dict(style=self.user_input_color) if self.user_input_color else dict()
+            )
             self.console.print(inp, **style)
 
         prefix = "####"
@@ -329,7 +339,9 @@ class InputOutput:
         if message.strip():
             if "\n" in message:
                 for line in message.splitlines():
-                    self.append_chat_history(line, linebreak=True, blockquote=True, strip=strip)
+                    self.append_chat_history(
+                        line, linebreak=True, blockquote=True, strip=strip
+                    )
             else:
                 if strip:
                     hist = message.strip()
@@ -349,7 +361,9 @@ class InputOutput:
 
         if not log_only:
             messages = list(map(Text, messages))
-            style = dict(style=self.tool_output_color) if self.tool_output_color else dict()
+            style = (
+                dict(style=self.tool_output_color) if self.tool_output_color else dict()
+            )
             self.console.print(*messages, **style)
 
     def append_chat_history(self, text, linebreak=False, blockquote=False, strip=True):
