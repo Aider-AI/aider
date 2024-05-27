@@ -21,7 +21,7 @@ from tree_sitter_languages import get_language, get_parser  # noqa: E402
 
 from aider.dump import dump  # noqa: F402,E402
 
-Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
+Tag = namedtuple("Tag", "rel_fname fname line name kind".split())  # type: ignore
 
 
 class RepoMap:
@@ -30,7 +30,7 @@ class RepoMap:
 
     cache_missing = False
 
-    warned_files = set()
+    warned_files: set[str] = set()
 
     def __init__(
         self,
@@ -57,7 +57,9 @@ class RepoMap:
         self.token_count = main_model.token_count
         self.repo_content_prefix = repo_content_prefix
 
-    def get_repo_map(self, chat_files, other_files, mentioned_fnames=None, mentioned_idents=None):
+    def get_repo_map(
+        self, chat_files, other_files, mentioned_fnames=None, mentioned_idents=None
+    ):
         if self.max_map_tokens <= 0:
             return
         if not other_files:
@@ -81,7 +83,11 @@ class RepoMap:
 
         try:
             files_listing = self.get_ranked_tags_map(
-                chat_files, other_files, max_map_tokens, mentioned_fnames, mentioned_idents
+                chat_files,
+                other_files,
+                max_map_tokens,
+                mentioned_fnames,
+                mentioned_idents,
             )
         except RecursionError:
             self.io.tool_error("Disabling repo map, git repo too large?")
@@ -138,7 +144,10 @@ class RepoMap:
             return []
 
         cache_key = fname
-        if cache_key in self.TAGS_CACHE and self.TAGS_CACHE[cache_key]["mtime"] == file_mtime:
+        if (
+            cache_key in self.TAGS_CACHE
+            and self.TAGS_CACHE[cache_key]["mtime"] == file_mtime
+        ):
             return self.TAGS_CACHE[cache_key]["data"]
 
         # miss!
@@ -228,7 +237,9 @@ class RepoMap:
                 line=-1,
             )
 
-    def get_ranked_tags(self, chat_fnames, other_fnames, mentioned_fnames, mentioned_idents):
+    def get_ranked_tags(
+        self, chat_fnames, other_fnames, mentioned_fnames, mentioned_idents
+    ):
         defines = defaultdict(set)
         references = defaultdict(list)
         definitions = defaultdict(set)
@@ -256,7 +267,9 @@ class RepoMap:
                             f"Repo-map can't include {fname}, it is not a normal file"
                         )
                     else:
-                        self.io.tool_error(f"Repo-map can't include {fname}, it no longer exists")
+                        self.io.tool_error(
+                            f"Repo-map can't include {fname}, it no longer exists"
+                        )
 
                 self.warned_files.add(fname)
                 continue
@@ -325,7 +338,9 @@ class RepoMap:
         ranked_definitions = defaultdict(float)
         for src in G.nodes:
             src_rank = ranked[src]
-            total_weight = sum(data["weight"] for _src, _dst, data in G.out_edges(src, data=True))
+            total_weight = sum(
+                data["weight"] for _src, _dst, data in G.out_edges(src, data=True)
+            )
             # dump(src, src_rank, total_weight)
             for _src, dst, data in G.out_edges(src, data=True):
                 data["rank"] = src_rank * data["weight"] / total_weight
@@ -333,7 +348,9 @@ class RepoMap:
                 ranked_definitions[(dst, ident)] += data["rank"]
 
         ranked_tags = []
-        ranked_definitions = sorted(ranked_definitions.items(), reverse=True, key=lambda x: x[1])
+        ranked_definitions = sorted(
+            ranked_definitions.items(), reverse=True, key=lambda x: x[1]
+        )
 
         # dump(ranked_definitions)
 
@@ -343,11 +360,15 @@ class RepoMap:
                 continue
             ranked_tags += list(definitions.get((fname, ident), []))
 
-        rel_other_fnames_without_tags = set(self.get_rel_fname(fname) for fname in other_fnames)
+        rel_other_fnames_without_tags = set(
+            self.get_rel_fname(fname) for fname in other_fnames
+        )
 
         fnames_already_included = set(rt[0] for rt in ranked_tags)
 
-        top_rank = sorted([(rank, node) for (node, rank) in ranked.items()], reverse=True)
+        top_rank = sorted(
+            [(rank, node) for (node, rank) in ranked.items()], reverse=True
+        )
         for rank, fname in top_rank:
             if fname in rel_other_fnames_without_tags:
                 rel_other_fnames_without_tags.remove(fname)
@@ -410,7 +431,7 @@ class RepoMap:
 
         return best_tree
 
-    tree_cache = dict()
+    tree_cache: dict[str, str] = {}
 
     def render_tree(self, abs_fname, rel_fname, lois):
         key = (rel_fname, tuple(sorted(lois)))
@@ -503,8 +524,8 @@ def get_random_color():
 if __name__ == "__main__":
     fnames = sys.argv[1:]
 
-    chat_fnames = []
-    other_fnames = []
+    chat_fnames: list[str] = []
+    other_fnames: list[str] = []
     for fname in sys.argv[1:]:
         if Path(fname).is_dir():
             chat_fnames += find_src_files(fname)
