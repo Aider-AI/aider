@@ -4,7 +4,7 @@ import math
 import os
 import sys
 from dataclasses import dataclass, fields
-from typing import Optional
+from typing import Optional, Self
 
 from PIL import Image
 
@@ -248,7 +248,7 @@ class Model:
     examples_as_sys_msg = False
 
     max_chat_history_tokens = 1024
-    weak_model: "Model" | None = None
+    weak_model: Self | None = None
 
     def __init__(self, model, weak_model=None):
         self.name = model
