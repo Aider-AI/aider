@@ -8,7 +8,7 @@ import git
 import openai
 from prompt_toolkit.completion import Completion
 
-from aider import models, prompts, voice
+from aider import models, prompts, voice as vce
 from aider.litellm import litellm
 from aider.scrape import Scraper
 from aider.utils import is_image_file
@@ -22,7 +22,7 @@ class SwitchModel(Exception):
 
 
 class Commands:
-    voice: voice.Voice | None = None
+    voice: vce.Voice | None = None
     scraper: Scraper | None = None
 
     def __init__(self, io, coder, voice_language=None):
@@ -671,8 +671,8 @@ class Commands:
                 self.io.tool_error("To use /voice you must provide an OpenAI API key.")
                 return
             try:
-                self.voice = voice.Voice()
-            except voice.SoundDeviceError:
+                self.voice = vce.Voice()
+            except vce.SoundDeviceError:
                 self.io.tool_error(
                     "Unable to import `sounddevice` and/or `soundfile`, is portaudio installed?"
                 )
