@@ -74,12 +74,12 @@ class EditBlockFunctionCoder(Coder):
                 description="New content to replace the `original_lines` with",
             )
 
-            self.functions[0]["parameters"]["properties"]["edits"]["items"]["properties"][
-                "original_lines"
-            ] = original_lines
-            self.functions[0]["parameters"]["properties"]["edits"]["items"]["properties"][
-                "updated_lines"
-            ] = updated_lines
+            self.functions[0]["parameters"]["properties"]["edits"]["items"]["properties"]["original_lines"] = (
+                original_lines
+            )
+            self.functions[0]["parameters"]["properties"]["edits"]["items"]["properties"]["updated_lines"] = (
+                updated_lines
+            )
 
         self.gpt_prompts = EditBlockFunctionPrompts()
         super().__init__(*args, **kwargs)
@@ -111,11 +111,10 @@ class EditBlockFunctionCoder(Coder):
             updated = get_arg(edit, "updated_lines")
 
             # gpt-3.5 returns lists even when instructed to return a string!
-            if self.code_format == "list" or type(original) == list:
+            if self.code_format == "list" or isinstance(original, list):
                 original = "\n".join(original)
-            if self.code_format == "list" or type(updated) == list:
+            if self.code_format == "list" or isinstance(updated, list):
                 updated = "\n".join(updated)
-
             if original and not original.endswith("\n"):
                 original += "\n"
             if updated and not updated.endswith("\n"):

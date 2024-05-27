@@ -8,7 +8,8 @@ import git
 import openai
 from prompt_toolkit.completion import Completion
 
-from aider import models, prompts, voice as vce
+from aider import models, prompts
+from aider import voice as vce
 from aider.litellm import litellm
 from aider.scrape import Scraper
 from aider.utils import is_image_file
@@ -17,7 +18,7 @@ from .dump import dump  # noqa: F401
 
 
 class SwitchModel(Exception):
-    def __init__(self, model):
+    def __init__(self, model: models.Model) -> None:
         self.model = model
 
 
@@ -25,7 +26,7 @@ class Commands:
     voice: vce.Voice | None = None
     scraper: Scraper | None = None
 
-    def __init__(self, io, coder, voice_language=None):
+    def __init__(self, io, coder, voice_language=None) -> None:
         self.io = io
         self.coder = coder
 
@@ -215,16 +216,12 @@ class Commands:
 
         # system messages
         main_sys = self.coder.fmt_system_prompt(self.coder.gpt_prompts.main_system)
-        main_sys += "\n" + self.coder.fmt_system_prompt(
-            self.coder.gpt_prompts.system_reminder
-        )
+        main_sys += "\n" + self.coder.fmt_system_prompt(self.coder.gpt_prompts.system_reminder)
         msgs = [
             dict(role="system", content=main_sys),
             dict(
                 role="system",
-                content=self.coder.fmt_system_prompt(
-                    self.coder.gpt_prompts.system_reminder
-                ),
+                content=self.coder.fmt_system_prompt(self.coder.gpt_prompts.system_reminder),
             ),
         ]
 
@@ -241,9 +238,7 @@ class Commands:
         # repo map
         other_files = set(self.coder.get_all_abs_files()) - set(self.coder.abs_fnames)
         if self.coder.repo_map:
-            repo_content = self.coder.repo_map.get_repo_map(
-                self.coder.abs_fnames, other_files
-            )
+            repo_content = self.coder.repo_map.get_repo_map(self.coder.abs_fnames, other_files)
             if repo_content:
                 tokens = self.coder.main_model.token_count(repo_content)
                 res.append((tokens, "repository map", "use --map-tokens to resize"))
@@ -290,18 +285,14 @@ class Commands:
 
         remaining = limit - total
         if remaining > 1024:
-            self.io.tool_output(
-                f"{cost_pad}{fmt(remaining)} tokens remaining in context window"
-            )
+            self.io.tool_output(f"{cost_pad}{fmt(remaining)} tokens remaining in context window")
         elif remaining > 0:
             self.io.tool_error(
-                f"{cost_pad}{fmt(remaining)} tokens remaining in context window (use /drop or"
-                " /clear to make space)"
+                f"{cost_pad}{fmt(remaining)} tokens remaining in context window (use /drop or" " /clear to make space)"
             )
         else:
             self.io.tool_error(
-                f"{cost_pad}{fmt(remaining)} tokens remaining, window exhausted (use /drop or"
-                " /clear to make space)"
+                f"{cost_pad}{fmt(remaining)} tokens remaining, window exhausted (use /drop or" " /clear to make space)"
             )
         self.io.tool_output(f"{cost_pad}{fmt(limit)} tokens max context window size")
 
@@ -312,14 +303,9 @@ class Commands:
             return
 
         last_commit = self.coder.repo.repo.head.commit
-        changed_files_last_commit = [
-            item.a_path for item in last_commit.diff(last_commit.parents[0])
-        ]
+        changed_files_last_commit = [item.a_path for item in last_commit.diff(last_commit.parents[0])]
 
-        if any(
-            self.coder.repo.repo.is_dirty(path=fname)
-            for fname in changed_files_last_commit
-        ):
+        if any(self.coder.repo.repo.is_dirty(path=fname) for fname in changed_files_last_commit):
             self.io.tool_error(
                 "The repository has uncommitted changes in files that were modified in the last"
                 " commit. Please commit or stash them before undoing."
@@ -336,23 +322,14 @@ class Commands:
 
         if has_origin:
             if local_head == remote_head:
-                self.io.tool_error(
-                    "The last commit has already been pushed to the origin. Undoing is not"
-                    " possible."
-                )
+                self.io.tool_error("The last commit has already been pushed to the origin. Undoing is not" " possible.")
                 return
 
         last_commit = self.coder.repo.repo.head.commit
-        if (
-            not last_commit.message.startswith("aider:")
-            or last_commit.hexsha[:7] != self.coder.last_aider_commit_hash
-        ):
+        if not last_commit.message.startswith("aider:") or last_commit.hexsha[:7] != self.coder.last_aider_commit_hash:
+            self.io.tool_error("The last commit was not made by aider in this chat session.")
             self.io.tool_error(
-                "The last commit was not made by aider in this chat session."
-            )
-            self.io.tool_error(
-                "You could try `/git reset --hard HEAD^` but be aware that this is a destructive"
-                " command!"
+                "You could try `/git reset --hard HEAD^` but be aware that this is a destructive" " command!"
             )
             return
 
@@ -362,9 +339,7 @@ class Commands:
         # Move the HEAD back before the latest commit
         self.coder.repo.repo.git.reset("--soft", "HEAD~1")
 
-        self.io.tool_output(
-            f"Commit `{self.coder.last_aider_commit_hash}` was reset and removed from git.\n"
-        )
+        self.io.tool_output(f"Commit `{self.coder.last_aider_commit_hash}` was reset and removed from git.\n")
 
         if self.coder.main_model.send_undo_reply:
             return prompts.undo_command_reply
@@ -413,9 +388,7 @@ class Commands:
         for fn in raw_matched_files:
             matched_files += expand_subdir(fn)
 
-        matched_files = [
-            str(Path(fn).relative_to(self.coder.root)) for fn in matched_files
-        ]
+        matched_files = [str(Path(fn).relative_to(self.coder.root)) for fn in matched_files]
 
         # if repo, filter against it
         if self.coder.repo:
@@ -455,13 +428,9 @@ class Commands:
                 all_matched_files.update(matched_files)
                 continue
 
-            if self.io.confirm_ask(
-                f"No files matched '{word}'. Do you want to create {fname}?"
-            ):
+            if self.io.confirm_ask(f"No files matched '{word}'. Do you want to create {fname}?"):
                 if "*" in str(fname) or "?" in str(fname):
-                    self.io.tool_error(
-                        f"Cannot create file with wildcard characters: {fname}"
-                    )
+                    self.io.tool_error(f"Cannot create file with wildcard characters: {fname}")
                 else:
                     try:
                         fname.touch()
@@ -472,21 +441,14 @@ class Commands:
         for matched_file in all_matched_files:
             abs_file_path = self.coder.abs_root_path(matched_file)
 
-            if not abs_file_path.startswith(self.coder.root) and not is_image_file(
-                matched_file
-            ):
-                self.io.tool_error(
-                    f"Can not add {abs_file_path}, which is not within {self.coder.root}"
-                )
+            if not abs_file_path.startswith(self.coder.root) and not is_image_file(matched_file):
+                self.io.tool_error(f"Can not add {abs_file_path}, which is not within {self.coder.root}")
                 continue
 
             if abs_file_path in self.coder.abs_fnames:
                 self.io.tool_error(f"{matched_file} is already in the chat")
             else:
-                if (
-                    is_image_file(matched_file)
-                    and not self.coder.main_model.accepts_images
-                ):
+                if is_image_file(matched_file) and not self.coder.main_model.accepts_images:
                     self.io.tool_error(
                         f"Cannot add image file {matched_file} as the"
                         f" {self.coder.main_model.name} does not support image.\nYou can run `aider"
@@ -673,9 +635,7 @@ class Commands:
             try:
                 self.voice = vce.Voice()
             except vce.SoundDeviceError:
-                self.io.tool_error(
-                    "Unable to import `sounddevice` and/or `soundfile`, is portaudio installed?"
-                )
+                self.io.tool_error("Unable to import `sounddevice` and/or `soundfile`, is portaudio installed?")
                 return
 
         history_iter = self.io.get_input_history()
@@ -696,9 +656,7 @@ class Commands:
         history = "\n".join(history)
 
         try:
-            text = self.voice.record_and_transcribe(
-                history, language=self.voice_language
-            )
+            text = self.voice.record_and_transcribe(history, language=self.voice_language)
         except openai.OpenAIError as err:
             self.io.tool_error(f"Unable to use OpenAI whisper model: {err}")
             return

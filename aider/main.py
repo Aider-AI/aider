@@ -3,10 +3,11 @@ import os
 import re
 import sys
 from pathlib import Path
-from git.types import PathLike
+from typing import Any
 
 import git
 from dotenv import load_dotenv
+from git.types import PathLike
 from streamlit.web import cli
 
 from aider import __version__, models, utils
@@ -55,9 +56,7 @@ def setup_git(git_root: PathLike | None, io: InputOutput) -> PathLike | None:
     repo = None
     if git_root:
         repo = git.Repo(git_root)
-    elif io.confirm_ask(
-        "No git repo found, create one to track GPT's changes (recommended)?"
-    ):
+    elif io.confirm_ask("No git repo found, create one to track GPT's changes (recommended)?"):
         git_root = str(Path.cwd().resolve())
         repo = git.Repo.init(git_root)
         io.tool_output("Git repository created in the current working directory.")
@@ -87,16 +86,12 @@ def setup_git(git_root: PathLike | None, io: InputOutput) -> PathLike | None:
             io.tool_error('Update git name with: git config user.name "Your Name"')
         if not user_email:
             git_config.set_value("user", "email", "you@example.com")
-            io.tool_error(
-                'Update git email with: git config user.email "you@example.com"'
-            )
+            io.tool_error('Update git email with: git config user.email "you@example.com"')
 
     return repo.working_tree_dir
 
 
-def check_gitignore(
-    git_root: PathLike | None, io: InputOutput, ask: bool = True
-) -> None:
+def check_gitignore(git_root: PathLike | None, io: InputOutput, ask: bool = True) -> None:
     if not git_root:
         return
 
@@ -130,7 +125,7 @@ def check_gitignore(
     io.tool_output(f"Added {pat} to .gitignore")
 
 
-def format_settings(parser, args):
+def format_settings(parser: Any, args: Any) -> str:
     show = scrub_sensitive_info(args, parser.format_values())
     show += "\n"
     show += "Option settings:\n"
@@ -141,8 +136,14 @@ def format_settings(parser, args):
     return show
 
 
-def scrub_sensitive_info(args, text):
+def scrub_sensitive_info(args: Any, text: str) -> str:
     # Replace sensitive information with placeholder
+    if text and args.openai_api_key:
+        text = text.replace(args.openai_api_key, "***")
+    if text and args.anthropic_api_key:
+        text = text.replace(args.anthropic_api_key, "***")
+    return text
+
     if text and args.openai_api_key:
         text = text.replace(args.openai_api_key, "***")
     if text and args.anthropic_api_key:
@@ -277,9 +278,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 io.tool_error(f"{fname} is a directory, not provided alone.")
                 good = False
         if not good:
-            io.tool_error(
-                "Provide either a single directory of a git repo, or a list of one or more files."
-            )
+            io.tool_error("Provide either a single directory of a git repo, or a list of one or more files.")
             return 1
 
     git_dname = None
@@ -431,14 +430,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         args.pretty = False
         io.tool_output("VSCode terminal detected, pretty output has been disabled.")
 
-    io.tool_output(
-        "Use /help to see in-chat commands, run with --help to see cmd line args"
-    )
+    io.tool_output("Use /help to see in-chat commands, run with --help to see cmd line args")
 
     if git_root and Path.cwd().resolve() != Path(git_root).resolve():
         io.tool_error(
-            "Note: in-chat filenames are always relative to the git working dir, not the current"
-            " working dir."
+            "Note: in-chat filenames are always relative to the git working dir, not the current" " working dir."
         )
 
         io.tool_error(f"Cur working dir: {Path.cwd()}")

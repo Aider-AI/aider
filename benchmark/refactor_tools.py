@@ -21,9 +21,7 @@ class ParentNodeTransformer(ast.NodeTransformer):
 
 
 def verify_full_func_at_top_level(tree, func, func_children):
-    func_nodes = [
-        item for item in ast.walk(tree) if isinstance(item, ast.FunctionDef) and item.name == func
-    ]
+    func_nodes = [item for item in ast.walk(tree) if isinstance(item, ast.FunctionDef) and item.name == func]
     assert func_nodes, f"Function {func} not found"
 
     for func_node in func_nodes:
@@ -32,9 +30,7 @@ def verify_full_func_at_top_level(tree, func, func_children):
 
         num_children = sum(1 for _ in ast.walk(func_node))
         pct_diff_children = abs(num_children - func_children) * 100 / func_children
-        assert (
-            pct_diff_children < 10
-        ), f"Old method had {func_children} children, new method has {num_children}"
+        assert pct_diff_children < 10, f"Old method had {func_children} children, new method has {num_children}"
         return
 
     assert False, f"{func} is not a top level function"
@@ -42,11 +38,7 @@ def verify_full_func_at_top_level(tree, func, func_children):
 
 def verify_old_class_children(tree, old_class, old_class_children):
     node = next(
-        (
-            item
-            for item in ast.walk(tree)
-            if isinstance(item, ast.ClassDef) and item.name == old_class
-        ),
+        (item for item in ast.walk(tree) if isinstance(item, ast.ClassDef) and item.name == old_class),
         None,
     )
     assert node is not None, f"Old class {old_class} not found"
@@ -54,9 +46,7 @@ def verify_old_class_children(tree, old_class, old_class_children):
     num_children = sum(1 for _ in ast.walk(node))
 
     pct_diff_children = abs(num_children - old_class_children) * 100 / old_class_children
-    assert (
-        pct_diff_children < 10
-    ), f"Old class had {old_class_children} children, new class has {num_children}"
+    assert pct_diff_children < 10, f"Old class had {old_class_children} children, new class has {num_children}"
 
 
 def verify_refactor(fname, func, func_children, old_class, old_class_children):
@@ -83,14 +73,10 @@ class SelfUsageChecker(ast.NodeVisitor):
         # Check if the first argument is 'self' and if it's not used
         if node.args.args and node.args.args[0].arg == "self":
             self_used = any(
-                isinstance(expr, ast.Name) and expr.id == "self"
-                for stmt in node.body
-                for expr in ast.walk(stmt)
+                isinstance(expr, ast.Name) and expr.id == "self" for stmt in node.body for expr in ast.walk(stmt)
             )
             super_used = any(
-                isinstance(expr, ast.Name) and expr.id == "super"
-                for stmt in node.body
-                for expr in ast.walk(stmt)
+                isinstance(expr, ast.Name) and expr.id == "super" for stmt in node.body for expr in ast.walk(stmt)
             )
             if not self_used and not super_used:
                 # Calculate the number of child nodes in the function
@@ -132,7 +118,7 @@ def find_non_self_methods(path):
         with open(filename, "r") as file:
             try:
                 node = ast.parse(file.read(), filename=filename)
-            except:
+            except Exception:
                 pass
             checker = SelfUsageChecker()
             checker.visit(node)
