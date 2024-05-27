@@ -113,7 +113,9 @@ def process_fnames(fnames, git_dname):
     total_aider_lines = 0
 
     for fname in fnames:
-        num_lines, num_aider_lines = get_lines_with_commit_hash(fname, aider_commits, git_dname)
+        num_lines, num_aider_lines = get_lines_with_commit_hash(
+            fname, aider_commits, git_dname
+        )
         total_lines += num_lines
         total_aider_lines += num_aider_lines
         percent_modified = (num_aider_lines / num_lines) * 100 if num_lines > 0 else 0
@@ -121,7 +123,9 @@ def process_fnames(fnames, git_dname):
             continue
         print(f"|{fname}| {num_aider_lines} of {num_lines} | {percent_modified:.1f}% |")
 
-    total_percent_modified = (total_aider_lines / total_lines) * 100 if total_lines > 0 else 0
+    total_percent_modified = (
+        (total_aider_lines / total_lines) * 100 if total_lines > 0 else 0
+    )
     print(
         f"| **Total** | **{total_aider_lines} of {total_lines}** | {total_percent_modified:.1f}% |"
     )
@@ -136,7 +140,11 @@ def process_repo(git_dname=None):
         ["git", "-C", git_dname, "ls-files"], capture_output=True, text=True, check=True
     )
     git_dname = Path(git_dname)
-    fnames = [git_dname / fname for fname in result.stdout.splitlines() if fname.endswith(".py")]
+    fnames = [
+        git_dname / fname
+        for fname in result.stdout.splitlines()
+        if fname.endswith(".py")
+    ]
 
     return process_fnames(fnames, git_dname)
 
