@@ -1,0 +1,64 @@
+[project]
+name = "aider"
+version = "0.0.1"
+description = "Shrooms fork of aider"
+authors = [{ name = "Shroominic", email = "contact@shroominic.com" }]
+dependencies = [
+    "configargparse>=1.7",
+    "gitpython>=3.1.43",
+    "jsonschema>=4.22.0",
+    "openai>=1.30.3",
+    "rich>=13.7.1",
+    "tiktoken>=0.7.0",
+    "backoff>=2.2.1",
+    "beautifulsoup4>=4.12.3",
+    "diff-match-patch>=20230430",
+    "diskcache>=5.6.3",
+    "flake8>=7.0.0",
+    "google-generativeai>=0.5.4",
+    "grep-ast>=0.3.2",
+    "litellm>=1.38.10",
+    "numpy>=1.26.4",
+    "packaging>=24.0",
+    "pathspec>=0.12.1",
+    "pillow>=10.3.0",
+    "playwright>=1.44.0",
+    "prompt-toolkit>=3.0.43",
+    "pypandoc>=1.13",
+    "pyyaml>=6.0.1",
+    "scipy>=1.13.1",
+    "sounddevice>=0.4.6",
+    "soundfile>=0.12.1",
+    "streamlit>=1.35.0",
+    "ruff>=0.4.5",
+    "mypy>=1.10.0",
+]
+readme = "README.md"
+requires-python = ">= 3.12"
+license = { text = "MIT" }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = [
+    "imgcat>=0.5.0",
+    "lox>=0.11.0",
+    "matplotlib>=3.9.0",
+    "pandas>=2.2.2",
+    "pip-tools>=7.4.1",
+    "pre-commit>=3.7.1",
+    "pytest>=8.2.1",
+    "typer>=0.12.3",
+]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["aider"]
+
+[tool.mypy]
+ignore_missing_imports = true
