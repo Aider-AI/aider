@@ -3,6 +3,7 @@ import os
 import re
 import sys
 from pathlib import Path
+from git.types import PathLike
 
 import git
 from dotenv import load_dotenv
@@ -20,7 +21,7 @@ from aider.versioncheck import check_version
 from .dump import dump  # noqa: F401
 
 
-def get_git_root():
+def get_git_root() -> PathLike | None:
     """Try and guess the git repo, since the conf.yml can be at the repo root"""
     try:
         repo = git.Repo(search_parent_directories=True)
@@ -29,13 +30,15 @@ def get_git_root():
         return None
 
 
-def guessed_wrong_repo(io, git_root, fnames, git_dname):
+def guessed_wrong_repo(
+    io: InputOutput, git_root: PathLike | None, fnames: list[str], git_dname: str | None
+) -> str | None:
     """After we parse the args, we can determine the real repo. Did we guess wrong?"""
 
     try:
         check_repo = Path(GitRepo(io, fnames, git_dname).root).resolve()
     except FileNotFoundError:
-        return
+        return None
 
     # we had no guess, rely on the "true" repo result
     if not git_root:
@@ -43,23 +46,25 @@ def guessed_wrong_repo(io, git_root, fnames, git_dname):
 
     git_root = Path(git_root).resolve()
     if check_repo == git_root:
-        return
+        return None
 
     return str(check_repo)
 
 
-def setup_git(git_root, io):
+def setup_git(git_root: PathLike | None, io: InputOutput) -> PathLike | None:
     repo = None
     if git_root:
         repo = git.Repo(git_root)
-    elif io.confirm_ask("No git repo found, create one to track GPT's changes (recommended)?"):
+    elif io.confirm_ask(
+        "No git repo found, create one to track GPT's changes (recommended)?"
+    ):
         git_root = str(Path.cwd().resolve())
         repo = git.Repo.init(git_root)
         io.tool_output("Git repository created in the current working directory.")
         check_gitignore(git_root, io, False)
 
     if not repo:
-        return
+        return None
 
     user_name = None
     user_email = None
@@ -82,12 +87,16 @@ def setup_git(git_root, io):
             io.tool_error('Update git name with: git config user.name "Your Name"')
         if not user_email:
             git_config.set_value("user", "email", "you@example.com")
-            io.tool_error('Update git email with: git config user.email "you@example.com"')
+            io.tool_error(
+                'Update git email with: git config user.email "you@example.com"'
+            )
 
     return repo.working_tree_dir
 
 
-def check_gitignore(git_root, io, ask=True):
+def check_gitignore(
+    git_root: PathLike | None, io: InputOutput, ask: bool = True
+) -> None:
     if not git_root:
         return
 
@@ -422,7 +431,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         args.pretty = False
         io.tool_output("VSCode terminal detected, pretty output has been disabled.")
 
-    io.tool_output("Use /help to see in-chat commands, run with --help to see cmd line args")
+    io.tool_output(
+        "Use /help to see in-chat commands, run with --help to see cmd line args"
+    )
 
     if git_root and Path.cwd().resolve() != Path(git_root).resolve():
         io.tool_error(
