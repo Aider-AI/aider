@@ -41,7 +41,7 @@ The end.
 
 
 class MarkdownStream:
-    live = None
+    live: Live | None = None
     when = 0
     min_delay = 0.050
     live_window = 6
