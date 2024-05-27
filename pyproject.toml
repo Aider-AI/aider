@@ -32,6 +32,7 @@ dependencies = [
     "streamlit>=1.35.0",
     "ruff>=0.4.5",
     "mypy>=1.10.0",
+    "networkx>=3.3",
 ]
 readme = "README.md"
 requires-python = ">= 3.12"
@@ -40,6 +41,9 @@ license = { text = "MIT" }
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.scripts]
+aidr = "aider:main"
 
 [tool.rye]
 managed = true
