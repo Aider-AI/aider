@@ -90,6 +90,8 @@ def format_content(role, content):
         formatted_lines.append(f"{role} {line}")
     return "\n".join(formatted_lines)
 
+
+def format_messages(messages, title=None):
     output = []
     if title:
         output.append(f"{title.upper()} {'*' * 50}")
