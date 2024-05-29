@@ -779,7 +779,15 @@ class Coder:
             dict(role="user", content=inp),
         ]
 
+        import datetime
+        from aider.utils import format_messages, format_content
+
         messages = self.format_messages()
+
+        timestamp = datetime.datetime.now().isoformat(timespec='seconds')
+        with open('.aider.llm.history', 'a') as log_file:
+            log_file.write(f"TO LLM {timestamp}\n")
+            log_file.write(format_messages(messages) + "\n")
 
         if self.verbose:
             utils.show_messages(messages, functions=self.functions)
@@ -822,6 +830,11 @@ class Coder:
             content = ""
 
         self.io.tool_output()
+
+        timestamp = datetime.datetime.now().isoformat(timespec='seconds')
+        with open('.aider.llm.history', 'a') as log_file:
+            log_file.write(f"LLM RESPONSE {timestamp}\n")
+            log_file.write(format_content("assistant", content) + "\n")
 
         if interrupted:
             content += "\n^C KeyboardInterrupt"
