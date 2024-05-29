@@ -84,7 +84,12 @@ def safe_abs_path(res):
     return str(res)
 
 
-def format_messages(messages, title=None):
+def format_content(role, content):
+    formatted_lines = []
+    for line in content.splitlines():
+        formatted_lines.append(f"{role} {line}")
+    return "\n".join(formatted_lines)
+
     output = []
     if title:
         output.append(f"{title.upper()} {'*' * 50}")
@@ -98,8 +103,7 @@ def format_messages(messages, title=None):
                 if isinstance(item, dict) and "image_url" in item:
                     output.append(f"{role} Image URL: {item['image_url']['url']}")
         elif isinstance(content, str):  # Handle string content
-            for line in content.splitlines():
-                output.append(f"{role} {line}")
+            output.append(format_content(role, content))
         content = msg.get("function_call")
         if content:
             output.append(f"{role} {content}")
