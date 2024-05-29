@@ -834,7 +834,7 @@ class Coder:
         timestamp = datetime.datetime.now().isoformat(timespec='seconds')
         with open('.aider.llm.history', 'a') as log_file:
             log_file.write(f"LLM RESPONSE {timestamp}\n")
-            log_file.write(format_content("assistant", content) + "\n")
+            log_file.write(format_content("ASSISTANT", content) + "\n")
 
         if interrupted:
             content += "\n^C KeyboardInterrupt"
