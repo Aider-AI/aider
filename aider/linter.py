@@ -130,7 +130,8 @@ def lint_python_compile(fname, code):
         compile(code, fname, "exec")  # USE TRACEBACK BELOW HERE
         return
     except Exception as err:
-        line_numbers = list(range(err.lineno - 1, err.end_lineno))
+        end_lineno = getattr(err, "end_lineno", err.lineno)
+        line_numbers = list(range(err.lineno - 1, end_lineno))
 
         tb_lines = traceback.format_exception(type(err), err, err.__traceback__)
         last_file_i = 0
