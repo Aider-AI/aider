@@ -400,8 +400,9 @@ Below are the references for the SWE-Bench Lite results
 displayed in the graph at the top of this page.
 
 - [25.0% OpenDevin](https://x.com/gneubig/status/1791498953709752405)
-- [22.3% AutoCodeRover](https://github.com/nus-apr/auto-code-rover)
+- [19.0% AutoCodeRover](https://github.com/swe-bench/experiments/pull/11)
 - [20.3% Amazon Q Developer Agent (v20240430-dev)](https://www.swebench.com)
 - [18.0% SWE-Agent + GPT-4](https://www.swebench.com)
 - [11.7% SWE-Agent + Opus](https://www.swebench.com)
 
+Note: Graph updated on 5/30/24 to accurately reflect AutoCodeRover's pass@1 results.
