@@ -22,7 +22,13 @@ def plot_swe_bench_lite(data_file):
     plt.rcParams["hatch.color"] = "#444444"
 
     font_color = "#555"
-    rc("font", **{"family": "sans-serif", "sans-serif": ["Helvetica"], "size": 10})
+    font_params = {
+        "family": "sans-serif",
+        "sans-serif": ["Helvetica"],
+        "size": 10,
+        "weight": "bold",
+    }
+    rc("font", **font_params)
     plt.rcParams["text.color"] = font_color
 
     fig, ax = plt.subplots(figsize=(10, 5))
@@ -34,28 +40,31 @@ def plot_swe_bench_lite(data_file):
     colors = ["#17965A" if "Aider" in model else "#b3d1e6" for model in models]
     bars = []
     for model, pass_rate, color in zip(models, pass_rates, colors):
-        alpha = 0.6 if "Aider" in model else 0.3
+        alpha = 0.9 if "Aider" in model else 0.3
         bar = ax.bar(model, pass_rate, color=color, alpha=alpha, zorder=3)
         bars.append(bar[0])
 
     for model, bar in zip(models, bars):
         yval = bar.get_height()
-        y = yval + 0.75 if "Aider" in model else yval - 1.25
-        va = "bottom" if "Aider" in model else "top"
-
+        y = yval - 1.25
+        va = "top"
+        color = "#eee" if "Aider" in model else "#555"
+        fontfamily = "Helvetica Bold" if "Aider" in model else "Helvetica"
         ax.text(
             bar.get_x() + bar.get_width() / 2,
             y,
             f"{yval}%",
             ha="center",
             va=va,
-            fontsize=14,
+            fontsize=16,
+            color=color,
+            fontfamily=fontfamily,
         )
 
     # ax.set_xlabel("Models", fontsize=18)
     ax.set_ylabel("Instances resolved (%)", fontsize=18, color=font_color)
     ax.set_title("SWE Bench Lite", fontsize=20)
-    ax.set_ylim(0, 29.9)
+    # ax.set_ylim(0, 29.9)
     plt.xticks(
         fontsize=16,
         color=font_color,

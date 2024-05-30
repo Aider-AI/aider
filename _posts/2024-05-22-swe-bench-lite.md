@@ -12,10 +12,16 @@ on the
 achieving a state-of-the-art result. 
 The current top leaderboard entry is 20.3%
 from Amazon Q Developer Agent.
-The best result reported elsewhere seems to be
-[25% from OpenDevin](https://x.com/gneubig/status/1791498953709752405).
 
 [![SWE Bench Lite results](/assets/swe_bench_lite.svg)](https://aider.chat/assets/swe_bench_lite.svg)
+
+Please see the [references](#references)
+for details on the data presented in this chart.
+It was updated 5/30/24 to reflect apples-to-apples comparisons,
+using pass@1 results from AutoCodeRover
+and results from OpenDevin that don't use hints.
+The [official SWE Bench Lite leaderboard](https://www.swebench.com)
+only accepts pass@1 results that do not use hints.
 
 ## Interactive, not agentic
 
@@ -397,14 +403,33 @@ making it faster, easier, and more reliable to run the acceptance tests.
 ## References
 
 Below are the references for the SWE-Bench Lite results
-displayed in the graph at the top of this page.
+displayed in the graph at the beginning of this article.
 
-- [25.0% OpenDevin](https://x.com/gneubig/status/1791498953709752405)
-- [19.0% AutoCodeRover](https://github.com/swe-bench/experiments/pull/11)
 - [20.3% Amazon Q Developer Agent (v20240430-dev)](https://www.swebench.com)
+- [19.0% AutoCodeRover](https://github.com/swe-bench/experiments/pull/11)
 - [18.0% SWE-Agent + GPT-4](https://www.swebench.com)
+- [16.7% OpenDevin](https://github.com/OpenDevin/OpenDevin/issues/2149)
 - [11.7% SWE-Agent + Opus](https://www.swebench.com)
 
-Note: Graph updated on 5/30/24 to accurately reflect AutoCodeRover's pass@1 results.
-The previous graph contained their pass@3 result, which is not comparable
-to the aider results being reported here.
+Note, the graph was updated on 5/30/24 as follows.
+
+The graph now contains AutoCodeRover's pass@1 results.
+Previously it was reporting the pass@3 results, which are
+not comparable
+to the pass@1 aider results being reported here.
+The [AutoCodeRover GitHub page](https://github.com/nus-apr/auto-code-rover)
+features the pass@3 results
+without being clearly labeled.
+
+The graph now contains the best OpenDevin results obtained without using
+the `hints_text` to provide hints to the agent.
+The previous graph contained their hinted result,
+which is not comparable
+to the unhinted aider results being reported here.
+OpenDevin's [hinted result was reported](https://x.com/gneubig/status/1791498953709752405)
+without noting that hints were used.
+
+The [official SWE Bench Lite leaderboard](https://www.swebench.com)
+only accepts pass@1 results that do not use `hints_text`.
+
+
