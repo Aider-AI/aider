@@ -10,7 +10,7 @@ highlight_image: /assets/swe_bench_lite.jpg
 on the
 [SWE Bench Lite benchmark](https://www.swebench.com),
 achieving a state-of-the-art result. 
-The current top leaderboard entry is 20.3%
+The previous top leaderboard entry was 20.3%
 from Amazon Q Developer Agent.
 
 [![SWE Bench Lite results](/assets/swe_bench_lite.svg)](https://aider.chat/assets/swe_bench_lite.svg)
@@ -406,7 +406,7 @@ Below are the references for the SWE-Bench Lite results
 displayed in the graph at the beginning of this article.
 
 - [20.3% Amazon Q Developer Agent (v20240430-dev)](https://www.swebench.com)
-- [19.0% AutoCodeRover](https://github.com/swe-bench/experiments/pull/11)
+- [19.0% AutoCodeRover](https://www.swebench.com/)
 - [18.0% SWE-Agent + GPT-4](https://www.swebench.com)
 - [16.7% OpenDevin](https://github.com/OpenDevin/OpenDevin/issues/2149)
 - [11.7% SWE-Agent + Opus](https://www.swebench.com)
