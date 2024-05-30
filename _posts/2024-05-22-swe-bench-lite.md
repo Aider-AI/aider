@@ -390,7 +390,7 @@ Much thanks to the team behind the
 [SWE Bench](https://www.swebench.com)
 family of AI coding benchmarks.
 Also thanks to Albert Örwall who has
-[dockerized the SWE Bench evaluation scripts](SWE-bench-docker)
+[dockerized the SWE Bench evaluation scripts](https://github.com/aorwall/SWE-bench-docker)
 making it faster, easier, and more reliable to run the acceptance tests.
 
 
