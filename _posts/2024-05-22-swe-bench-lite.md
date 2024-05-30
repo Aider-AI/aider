@@ -406,3 +406,5 @@ displayed in the graph at the top of this page.
 - [11.7% SWE-Agent + Opus](https://www.swebench.com)
 
 Note: Graph updated on 5/30/24 to accurately reflect AutoCodeRover's pass@1 results.
+The previous graph contained their pass@3 result, which is not comparable
+to the aider results being reported here.
