@@ -77,6 +77,19 @@ def plot_swe_bench_lite(data_file):
         fontsize=16,
         color=font_color,
     )
+
+
+    # Add note at the bottom of the graph
+    note = "Note: (570) and (2294) refer to the number of instances that were processed by the agent."
+    plt.figtext(
+        0.5, 0.025,
+        note,
+        wrap=True,
+        horizontalalignment='center',
+        fontsize=12,
+        color=font_color,
+    )
+
     plt.tight_layout(pad=3.0)
 
     out_fname = Path(data_file)
@@ -84,10 +97,6 @@ def plot_swe_bench_lite(data_file):
     plt.savefig(out_fname.with_suffix(".svg").name)
     imgcat(fig)
     ax.xaxis.label.set_color(font_color)
-
-    # Add note at the bottom of the graph
-    note = "(570) and (2294) refer to the number of instances that were processed by the agent."
-    plt.figtext(0.5, 0.01, note, wrap=True, horizontalalignment='center', fontsize=10, color=font_color)
 
     # Note: (570) and (2294) refer to the number of instances that were processed by the agent.
 
