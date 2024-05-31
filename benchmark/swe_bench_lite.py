@@ -52,7 +52,7 @@ def plot_swe_bench_lite(data_file):
 
     for model, bar in zip(models, bars):
         yval = bar.get_height()
-        y = yval - 1.25
+        y = yval - 1
         va = "top"
         color = "#eee" if "Aider" in model else "#555"
         fontfamily = "Helvetica Bold" if "Aider" in model else "Helvetica"
@@ -76,7 +76,7 @@ def plot_swe_bench_lite(data_file):
     ax.set_title(title, fontsize=20)
     # ax.set_ylim(0, 29.9)
     plt.xticks(
-        fontsize=16,
+        fontsize=17,
         color=font_color,
     )
 
