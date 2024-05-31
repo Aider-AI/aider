@@ -17,7 +17,7 @@ from Amazon Q Developer Agent.
 
 Please see the [references](#references)
 for details on the data presented in this chart.
-It was updated 5/30/24 to reflect apples-to-apples comparisons,
+It was corrected on 5/30/24 to reflect apples-to-apples comparisons,
 using pass@1 results from AutoCodeRover
 and results from OpenDevin that don't use hints.
 The [official SWE Bench Lite leaderboard](https://www.swebench.com)
@@ -411,7 +411,7 @@ displayed in the graph at the beginning of this article.
 - [16.7% OpenDevin](https://github.com/OpenDevin/OpenDevin/issues/2149)
 - [11.7% SWE-Agent + Opus](https://www.swebench.com)
 
-Note, the graph was updated on 5/30/24 as follows.
+Note, the graph was corrected on 5/30/24 as follows.
 
 The graph now contains AutoCodeRover's pass@1 results.
 Previously it displayed the pass@3 results, which are
