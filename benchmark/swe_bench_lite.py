@@ -96,7 +96,7 @@ def plot_swe_bench_lite(data_file):
 
     plt.tight_layout(pad=3.0)
 
-    out_fname = Path(data_file)
+    out_fname = Path(data_file.replace("-", "_"))
     plt.savefig(out_fname.with_suffix(".jpg").name)
     plt.savefig(out_fname.with_suffix(".svg").name)
     imgcat(fig)
