@@ -86,7 +86,7 @@ def plot_swe_bench_lite(data_file):
     )
     plt.figtext(
         0.5,
-        0.025,
+        0.05,
         note,
         wrap=True,
         horizontalalignment="center",
@@ -101,8 +101,6 @@ def plot_swe_bench_lite(data_file):
     plt.savefig(out_fname.with_suffix(".svg").name)
     imgcat(fig)
     ax.xaxis.label.set_color(font_color)
-
-    # Note: (570) and (2294) refer to the number of instances that were processed by the agent.
 
 
 fname = sys.argv[1]
