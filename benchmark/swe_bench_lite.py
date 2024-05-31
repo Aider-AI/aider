@@ -90,7 +90,7 @@ def plot_swe_bench_lite(data_file):
         color=font_color,
     )
 
-    plt.tight_layout(pad=3.0)
+    plt.tight_layout(pad=5.0)
 
     out_fname = Path(data_file)
     plt.savefig(out_fname.with_suffix(".jpg").name)
