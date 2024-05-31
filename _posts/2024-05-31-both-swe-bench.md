@@ -13,6 +13,8 @@ on the main
 achieving a state-of-the-art result. 
 The current top leaderboard entry is 13.8%
 from Amazon Q Developer Agent.
+The best result reported elsewhere seems to be
+[13.9% from Devin](https://www.cognition.ai/post/swe-bench-technical-report).
 
 This is in addition to
 [aider's SOTA result on the easier SWE Bench Lite](https://aider.chat/2024/05/22/swe-bench-lite.html)
@@ -48,17 +50,17 @@ avoid wasting time and token costs.
 
 ## Benchmark methodology
 
-For the benchmark, 
-aider with GPT-4o was launched in each problem's git repository
-with the problem statement
-submitted as the opening chat message from "the user."
-After that aider runs as normal, with the following modifications:
+Benchmarking was conducted as follows:
 
-- Aider's suggestions were always accepted without user approval.
+- Aider with GPT-4o was launched in each problem's git repository
+with the problem statement
+submitted as the opening chat message from "the user".
+- After that aider ran as normal, except all of aider's
+suggestions were always accepted without user approval.
 - A simple harness was used to retry the SWE Bench problem if aider produced code that wasn't *plausibly correct*.
 Plausibly correct means that aider reported that it had successfully edited the repo
 without causing syntax errors or breaking any *pre-existing* tests.
-- If the solution isn't plausible, the harness launches aider to try again from scratch,
+- If the solution from aider with GPT-4o isn't plausible, the harness launches aider to try again from scratch,
 this time using Claude 3 Opus.
 - If no plausible solution is found after those two tries, the harness picks the "most plausible" solution with the fewest edit/lint/test problems.
 
@@ -71,7 +73,8 @@ correctly resolved.
 
 This is the same methodology
 that was used for [aider's recent SOTA result on SWE Bench Lite](https://aider.chat/2024/05/22/swe-bench-lite.html).
-The only difference is that at most two tries were attempted instead of six,
+The only difference is that for this result
+at most two tries were attempted instead of six,
 due to the increased token costs involved in this benchmark.
 The SWE Bench problems are more difficult and involve edits to
 more than one source file,
@@ -132,45 +135,83 @@ verified as correctly resolving their issue.
 | 2 | Aider with Opus      | 151 | 26.5% | 20 | 18.7% |  3.5% |
 | **Total** | | **570** | **100%** | **107** | **100%** | **18.8%** |
 
-If we break down the solutions solely by model,
-we can see that aider with GPT-4o outperforms Opus.
-This isn't a fair and direct comparison, because GPT-4o always took the first
-turn and therefore got first crack at all the "easiest" problems.
-Aider with Opus only ever saw problems that GPT-4o failed to
-find proposed solutions for on its first try.
+## Non-plausible but correct solutions?
 
-Aider with GPT-4o was producing higher quality proposed solutions,
-with a greater chance of going on to be accepted as resolving the issue.
-Again, this is biased by the turn ordering.
-But other anecdotal evidence from earlier runs of the benchmark
-also supports the observation that aider with GPT-4o is significantly stronger than Opus
-for this benchmark.
+It's worth noting that the first row of the table above
+only scored 15.3% on the benchmark,
+which differs from the 17.0% result reported above for aider with just GPT-4o.
+This is because making additional attempts is not guaranteed to
+monotonically increase the number of resolved issues.
+Later attempts may propose solutions which
+seem "more plausible" than prior attempts,
+but which are actually worse solutions.
+Luckily the later attempts usually provide a net increase in the overall
+number of resolved solutions, as is the case here.
 
+This table breaks down the plausibility of each solution proposed by
+aider with GPT-4o and with Opus, as well as whether it was actually
+a correct solution.
 
-| Agent      | Number&nbsp;of<br>proposed<br>solutions | Number&nbsp;of<br>correctly<br>resolved<br>solutions | Percent&nbsp;of<br>proposed<br>which<br>correctly<br>resolved<br>| 
-|------------|---------:|---------:|---:|
-| Aider with GPT-4o    | 419 | 87 |20.8% |
-| Aider with Opus      | 151 | 20 |13.2% |
-| **Total** | **570** | **107** |**18.8%** |
+|Row|GPT-4o<br>solution<br>plausible?|GPT-4o<br>solution<br>resolved issue?|Opus<br>solution<br>plausible?|Opus<br>solution<br>resolved issue?|Count|
+|---:|--:|--:|--:|--:|--:|
+|  1 | plausible       | resolved        | n/a             | n/a             |  73 |
+|  2 | plausible       | not resolved    | n/a             | n/a             | 181 |
+|  3 | non-plausible   | resolved        | plausible       | resolved        |   1 |
+|  4 | non-plausible   | resolved        | plausible       | not resolved    |   2 |
+|  5 | non-plausible   | resolved        | non-plausible   | resolved        |  16 |
+|  6 | non-plausible   | resolved        | non-plausible   | not resolved    |   5 |
+|  7 | non-plausible   | not resolved    | plausible       | resolved        |  12 |
+|  8 | non-plausible   | not resolved    | plausible       | not resolved    |  53 |
+|  9 | non-plausible   | not resolved    | non-plausible   | resolved        |   4 |
+| 10 | non-plausible   | not resolved    | non-plausible   | not resolved    | 216 |
+| 11 | non-plausible   | not resolved    | n/a             | n/a             |   7 |
 
+Rows 1-2 show the case where the first solution found
+by aider with GPT-4o was plausible. Of those, 73 went on to be deemed as resolving the issue,
+while 181 were not in fact correct solutions. Opus never got a try
+at solving these problems, because the harness stopped once a
+plausible solution was found.
+
+The remaining rows consider cases where aider with GPT-4o
+did not find a plausible solution, so Opus had a turn to try and solve.
+Rows 3-6 are cases where GPT-4o's non-plausible solutions were
+actually found to be correct in hindsight,
+but in rows 4 we can see that aider with Opus overrides
+2 of them with a plausible-but-incorrect
+solution.
+The original correct solutions from GPT-4o may not have been
+plausible because of pre-existing or otherwise
+unresolved editing, linting or testing errors which were unrelated
+to the SWE Bench issue or which turned out to be non-fatal.
+
+In rows 5-6 & 9-10 we can see that both GPT-4o and Opus
+produced non-plausible solutions,
+and which one was selected has to do with the
+[details about which solution the harness considered "most plausible"]().
+
+Row 11 contains cases where Opus returned errors due to context window
+exhaustion or other problems. 
+In these cases aider with Opus was unable to produce any solutions.
 
 ## Computing the benchmark score
 
-After benchmarking,
-a separate evaluation script was used to
+Benchmarking produced one candidate solution for each of
+the 570 SWE Bench problems.
+
+A separate evaluation script was used to
 test each of these solutions with the full test suite,
 including the held out acceptance tests.
 For this final acceptance testing, any edits that aider made to tests
 were discarded.
 This ensured that the correct,
-unmodified test suite is used for acceptance testing.
-The evaluation script compared the test results
+unmodified test suite was used for acceptance testing.
+The evaluation script compared each candidate solution's test results
 with results from testing
 the "gold" patch that was developed by a human to correctly solve the issue.
 If they matched, the candidate solution correctly resolved the issue.
 
 These acceptance tests were only ever run outside of aider
-and the benchmark harness, and only to compute the number of
+and the benchmark harness, and only to compute statistics about the
 correctly resolved instances.
 They were never run, used, or even visible during aider's attempts to solve the problems.
 
