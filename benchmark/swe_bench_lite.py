@@ -85,6 +85,8 @@ def plot_swe_bench_lite(data_file):
     imgcat(fig)
     ax.xaxis.label.set_color(font_color)
 
+    # Note: (570) and (2294) refer to the number of instances that were processed by the agent.
+
 
 fname = sys.argv[1]
 plot_swe_bench_lite(fname)
