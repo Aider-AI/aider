@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 from imgcat import imgcat
 from matplotlib import rc
-
+import sys
+from pathlib import Path
 
 def plot_swe_bench_lite(data_file):
     with open(data_file, "r") as file:
@@ -41,7 +42,10 @@ def plot_swe_bench_lite(data_file):
     bars = []
     for model, pass_rate, color in zip(models, pass_rates, colors):
         alpha = 0.9 if "Aider" in model else 0.3
-        bar = ax.bar(model, pass_rate, color=color, alpha=alpha, zorder=3)
+        hatch = ""
+        #if "lite" not in data_file:
+        #    hatch = "///" if "(570)" in model else ""
+        bar = ax.bar(model, pass_rate, color=color, alpha=alpha, zorder=3, hatch=hatch)
         bars.append(bar[0])
 
     for model, bar in zip(models, bars):
@@ -63,18 +67,24 @@ def plot_swe_bench_lite(data_file):
 
     # ax.set_xlabel("Models", fontsize=18)
     ax.set_ylabel("Instances resolved (%)", fontsize=18, color=font_color)
-    ax.set_title("SWE Bench Lite", fontsize=20)
+    if "lite" in data_file:
+        title = "SWE Bench Lite"
+    else:
+        title = "SWE Bench"
+    ax.set_title(title, fontsize=20)
     # ax.set_ylim(0, 29.9)
     plt.xticks(
         fontsize=16,
         color=font_color,
     )
     plt.tight_layout(pad=3.0)
-    plt.savefig("swe_bench_lite.jpg")
-    plt.savefig("swe_bench_lite.svg")
+
+    out_fname = Path(data_file)
+    plt.savefig(out_fname.with_suffix(".jpg").name)
+    plt.savefig(out_fname.with_suffix(".svg").name)
     imgcat(fig)
     ax.xaxis.label.set_color(font_color)
 
 
-# Example usage
-plot_swe_bench_lite("benchmark/swe-bench-lite.txt")
+fname = sys.argv[1]
+plot_swe_bench_lite(fname)
