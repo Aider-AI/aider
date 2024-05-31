@@ -85,6 +85,10 @@ def plot_swe_bench_lite(data_file):
     imgcat(fig)
     ax.xaxis.label.set_color(font_color)
 
+    # Add note at the bottom of the graph
+    note = "(570) and (2294) refer to the number of instances that were processed by the agent."
+    plt.figtext(0.5, 0.01, note, wrap=True, horizontalalignment='center', fontsize=10, color=font_color)
+
     # Note: (570) and (2294) refer to the number of instances that were processed by the agent.
 
 
