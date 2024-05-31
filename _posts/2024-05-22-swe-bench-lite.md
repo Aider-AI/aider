@@ -415,12 +415,12 @@ displayed in the graph at the beginning of this article.
 
 Note, the graph was corrected on 5/30/24 as follows.
 
-The graph now contains AutoCodeRover's pass@1 results.
-Previously it displayed the pass@3 results, which are
+The graph now contains AutoCodeRover's average pass@1 results.
+Previously it displayed pass@3 results, which are
 not comparable
 to the pass@1 results for aider being reported here.
 The [AutoCodeRover GitHub page](https://github.com/nus-apr/auto-code-rover)
-features the pass@3 results
+features pass@3 results
 without being clearly labeled.
 
 The graph now contains the best OpenDevin results obtained without using
