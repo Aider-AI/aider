@@ -76,7 +76,7 @@ def plot_swe_bench_lite(data_file):
     ax.set_title(title, fontsize=20)
     # ax.set_ylim(0, 29.9)
     plt.xticks(
-        fontsize=17,
+        fontsize=16,
         color=font_color,
     )
 
