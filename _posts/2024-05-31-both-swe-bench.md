@@ -1,11 +1,11 @@
 ---
-title: Aider is SOTA for both the main SWE Bench and SWE Bench Lite
+title: Aider is SOTA for both SWE Bench and SWE Bench Lite
 excerpt: Aider sets SOTA for the main SWE Bench, after recently setting SOTA for the Lite version.
 highlight_image: /assets/swe_bench.jpg
 draft: true
 ---
 
-# Aider is SOTA for both the main SWE Bench and SWE Bench Lite
+# Aider is SOTA for both SWE Bench and SWE Bench Lite
  
 Aider scored 18.8%
 on the main
@@ -156,38 +156,43 @@ relevant to the acceptance testing.
 The SWE Bench acceptance testing just confirms that tests pass or fail
 in the same pattern as the "gold patch" developed by a human to solve the
 problem.
-Some tests may still fail, and that's ok as long they fail for the gold
+Some tests may fail during acceptance testing,
+and that's ok as long they failed for the gold
 patch too.
 - There may have been pre-existing linting problems in the repo.
-If they were in code paths that are irrelevant to the problem being solved
-they might not affect acceptance testing.
-Even if aider was unable to resolve the linting errors,
-the solution may still be valid and pass acceptance testing.
-- Aider may have reported file editing errors because it didn't think it was
-able to successfully apply all the edits the LLM specified.
-In this scenario, the LLM must have specified edits in an invalid
-format that doesn't comply with its
-system prompt instructions.
-So it may be that the LLM was somewhat confused and was
-asking for redundant or otherwise
-irrelevant edits.
+If they were in code paths that are irrelevant to the problem being solved,
+then aider's failure to resolve them might not affect acceptance testing.
+- Aider may have reported file editing errors because it thought the LLM
+specified edits that it wasn't able to successfully apply.
+In such a scenario, the LLM must have specified edits in
+a way that doesn't comply with the edit format
+specified in its system prompt.
+Aider tries hard to deal with non-compliant LLM edits,
+but still sometimes fails.
+So the LLM may have become confused and
+asked for redundant or otherwise irrelevant edits.
 Such outstanding edit errors might not be fatal for acceptance testing.
 - Etc.
 
-Keeping this in mind, we can understand why
-the first row in the table above
-shows GPT-4o accounting for 15.3% of the benchmark score,
-less than the 17.0% result reported earlier in the article
-for just one attempt of aider with GPT-4o.
-When an Opus attempt is allowed, it may propose some *incorrect* solutions which
+Keeping all this in mind, we can understand why
+GPT-4o accounts for 15.3% of the benchmark score in the table above,
+but we reported that
+just one attempt of aider with GPT-4o scored 17.0%.
+When an Opus attempt is allowed after GPT-4o,
+it may propose some *incorrect* solutions which
 are "more plausible" than some of GPT-4o's non-plausible solutions.
 These more plausible, incorrect solutions can
 eclipse some of
 the earlier non-plausible correct solutions that GPT-4o generated.
+This reduces GPT-4o's score in the table (15.3%) from the combined GPT-4o & Opus
+benchmark,
+as compared to the results from just one try using aider with GPT-4o (17.0%).
 
-For this reason, adding additional attempts is not guaranteed to monotonically
+For these reasons, adding additional attempts is not guaranteed to monotonically
 increase the number of resolved problems.
-Luckily additional attempts usually provide a net increase in the overall
+The new solutions may solve some new problems but they may also
+eclipse and discard some of the previous non-plausible correct solutions.
+Luckily, additional attempts usually provide a net increase in the overall
 number of resolved solutions.
 This was the case for both this main SWE Bench result and the
 earlier Lite result.
