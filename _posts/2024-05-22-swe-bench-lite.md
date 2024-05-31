@@ -414,19 +414,19 @@ displayed in the graph at the beginning of this article.
 Note, the graph was updated on 5/30/24 as follows.
 
 The graph now contains AutoCodeRover's pass@1 results.
-Previously it was reporting the pass@3 results, which are
+Previously it displayed the pass@3 results, which are
 not comparable
-to the pass@1 aider results being reported here.
+to the pass@1 results for aider being reported here.
 The [AutoCodeRover GitHub page](https://github.com/nus-apr/auto-code-rover)
 features the pass@3 results
 without being clearly labeled.
 
 The graph now contains the best OpenDevin results obtained without using
-the `hints_text` to provide hints to the agent.
+the SWE Bench `hints_text` to provide hints to the agent.
 The previous graph contained their hinted result,
 which is not comparable
 to the unhinted aider results being reported here.
-OpenDevin's [hinted result was reported](https://x.com/gneubig/status/1791498953709752405)
+[OpenDevin reported hinted results](https://x.com/gneubig/status/1791498953709752405)
 without noting that hints were used.
 
 The [official SWE Bench Lite leaderboard](https://www.swebench.com)
