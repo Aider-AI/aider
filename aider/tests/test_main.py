@@ -237,3 +237,83 @@ class TestMain(TestCase):
         main(["--message", test_message])
         args, kwargs = MockInputOutput.call_args
         self.assertEqual(args[1], None)
+
+    def test_dark_mode_sets_code_theme(self):
+        # Mock Coder.create to capture the configuration
+        with patch("aider.coders.Coder.create") as MockCoder:
+            main(["--dark-mode", "--no-git"], input=DummyInput(), output=DummyOutput())
+            # Ensure Coder.create was called
+            MockCoder.assert_called_once()
+            # Check if the code_theme setting is for dark mode
+            _, kwargs = MockCoder.call_args
+            self.assertEqual(kwargs["code_theme"], "monokai")
+
+    def test_light_mode_sets_code_theme(self):
+        # Mock Coder.create to capture the configuration
+        with patch("aider.coders.Coder.create") as MockCoder:
+            main(["--light-mode", "--no-git"], input=DummyInput(), output=DummyOutput())
+            # Ensure Coder.create was called
+            MockCoder.assert_called_once()
+            # Check if the code_theme setting is for light mode
+            _, kwargs = MockCoder.call_args
+            self.assertEqual(kwargs["code_theme"], "default")
+
+    def test_env_file_flag_read(self):
+        # Create a temporary .env file
+        env_file_path = Path(self.tempdir) / ".env.test"
+        env_content = "TEST_ENV_VAR=12345"
+        env_file_path.write_text(env_content)
+
+        # Run the main function with the --env-file flag
+        main(
+            ["--env-file", str(env_file_path), "--no-git"], input=DummyInput(), output=DummyOutput()
+        )
+
+        # Check if the environment variable is loaded
+        self.assertEqual(os.getenv("TEST_ENV_VAR"), "12345")
+
+    def test_default_env_file_read(self):
+        # Create a temporary .env file
+        env_file_path = Path(self.tempdir) / ".env"
+        env_content = "TEST_ENV_VAR=12345"
+        env_file_path.write_text(env_content)
+
+        # Run the main function with the --env-file flag
+        main(["--no-git"], input=DummyInput(), output=DummyOutput())
+
+        # Check if the environment variable is loaded
+        self.assertEqual(os.getenv("TEST_ENV_VAR"), "12345")
+
+    def test_env_file_flag_sets_automatic_variable(self):
+        # Create a temporary .env file with custom settings
+        env_file_path = Path(self.tempdir) / ".env.test"
+        env_content = "AIDER_DARK_MODE=True"
+        env_file_path.write_text(env_content)
+
+        # Mock the InputOutput to capture the configuration
+        with patch("aider.coders.Coder.create") as MockCoder:
+            main(
+                ["--env-file", str(env_file_path), "--no-git"],
+                input=DummyInput(),
+                output=DummyOutput(),
+            )
+            # Ensure Coder.create was called
+            MockCoder.assert_called_once()
+            # Check if the color settings are for dark mode
+            _, kwargs = MockCoder.call_args
+            self.assertEqual(kwargs["code_theme"], "monokai")
+
+    def test_default_env_file_sets_automatic_variable(self):
+        # Create a default .env file in the temporary directory
+        env_file_path = Path(self.tempdir) / ".env"
+        env_content = "AIDER_DARK_MODE=True"
+        env_file_path.write_text(env_content)
+
+        # Mock the InputOutput to capture the configuration
+        with patch("aider.coders.Coder.create") as MockCoder:
+            main(["--no-git"], input=DummyInput(), output=DummyOutput())
+            # Ensure Coder.create was called
+            MockCoder.assert_called_once()
+            # Check if the color settings are for dark mode
+            _, kwargs = MockCoder.call_args
+            self.assertEqual(kwargs["code_theme"], "monokai")

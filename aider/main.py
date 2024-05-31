@@ -10,7 +10,7 @@ from prompt_toolkit.enums import EditingMode
 from streamlit.web import cli
 
 from aider import __version__, models, utils
-from aider.args import get_parser
+from aider.args import get_parser, get_preparser
 from aider.coders import Coder
 from aider.commands import SwitchModel
 from aider.io import InputOutput
@@ -129,7 +129,7 @@ def format_settings(parser, args):
     for arg, val in sorted(vars(args).items()):
         if val:
             val = scrub_sensitive_info(args, str(val))
-        show += f"  - {arg}: {val}\n"
+        show += f"  - {arg}: {val}\n"  # noqa: E221
     return show
 
 
@@ -225,6 +225,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     default_config_files.append(Path.home() / conf_fname)  # homedir
     default_config_files = list(map(str, default_config_files))
 
+    preparser = get_preparser(git_root)
+    pre_args, _ = preparser.parse_known_args()
+
+    # Load the .env file specified in the arguments
+    load_dotenv(pre_args.env_file)
+
     parser = get_parser(default_config_files, git_root)
     args = parser.parse_args(argv)
 
@@ -319,9 +325,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     cmd_line = " ".join(sys.argv)
     cmd_line = scrub_sensitive_info(args, cmd_line)
     io.tool_output(cmd_line, log_only=True)
-
-    if args.env_file:
-        load_dotenv(args.env_file)
 
     if args.anthropic_api_key:
         os.environ["ANTHROPIC_API_KEY"] = args.anthropic_api_key
