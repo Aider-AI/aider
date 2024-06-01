@@ -23,8 +23,8 @@ that was reported recently.
 [![SWE Bench results](/assets/swe_bench.svg)](https://aider.chat/assets/swe_bench.svg)
 
 Aider was benchmarked on the same
-[random 570](https://github.com/CognitionAI/devin-swebench-results/tree/main/output_diffs)
-of the 2294 SWE Bench problems that were used in the
+[randomly selected 570](https://github.com/CognitionAI/devin-swebench-results/tree/main/output_diffs)
+of the 2,294 SWE Bench problems that were used in the
 [Devin evaluation](https://www.cognition.ai/post/swe-bench-technical-report).
 Please see the [references](#references)
 for more details on the data presented in this chart.
@@ -187,67 +187,19 @@ are "more plausible" than some of GPT-4o's non-plausible solutions.
 These more plausible, incorrect solutions can
 eclipse some of
 the earlier non-plausible correct solutions that GPT-4o generated.
-This reduces GPT-4o's score in the table (15.3%) from the combined GPT-4o & Opus
-benchmark,
-as compared to the results from just one try using aider with GPT-4o (17.0%).
+This is why GPT-4o's score in the table 
+showing the combined GPT-4o & Opus results (15.3%)
+is lower than the result from just one try using aider with GPT-4o (17.0%).
 
 For these reasons, adding additional attempts is not guaranteed to monotonically
 increase the number of resolved problems.
 New solutions may resolve some new problems but they may also
 eclipse and discard some of the previous non-plausible correct solutions.
+
 Luckily, additional attempts usually provide a net increase in the overall
 number of resolved solutions.
 This was the case for both this main SWE Bench result and the
 earlier Lite result.
-
-The table below breaks down the benchmark outcome of each problem,
-showing whether aider with GPT-4o and with Opus
-produced plausible and/or correct solutions.
-
-|Row|Aider<br>w/GPT-4o<br>solution<br>plausible?|Aider<br>w/GPT-4o<br>solution<br>resolved<br>issue?|Aider<br>w/Opus<br>solution<br>plausible?|Aider<br>w/Opus<br>solution<br>resolved<br>issue?|Number of<br>problems<br>with this<br>outcome|Number of<br>problems<br>resolved|
-|:--:|:--:|:--:|:--:|:--:|--:|--:|
-| A | **plausible**   | **resolved**    | n/a             | n/a             |  73 |  73 |
-| B | **plausible**   | no              | n/a             | n/a             | 181 |   0 |
-| C | no              | no              | **plausible**   | no              |  53 |   0 |
-| D | no              | no              | **plausible**   | **resolved**    |  12 |  12 |
-| E | no              | **resolved**    | **plausible**   | no              |   2 |   0 |
-| F | no              | **resolved**    | **plausible**   | **resolved**    |   1 |   1 |
-| G | no              | no              | no              | no              | 216 |   0 |
-| H | no              | no              | no              | **resolved**    |   4 |   2 |
-| I | no              | **resolved**    | no              | no              |   4 |   3 |
-| J | no              | **resolved**    | no              | **resolved**    |  17 |  17 |
-| K | no              | no              | n/a             | n/a             |   7 |   0 |
-|Total|||||570|108|
-
-Rows A-B show the cases where
-aider with GPT-4o found a plausible solution during the first attempt.
-Of those, 73 went on to be deemed as resolving the issue,
-while 181 were not in fact correct solutions.
-The second attempt with Opus never happened,
-because the harness stopped once a
-plausible solution was found.
-
-Rows C-F consider the straightforward cases where aider with GPT-4o
-didn't find a plausible solution but Opus did.
-So Opus' solutions were adopted and they
-went on to be deemed correct for 13 problems
-and incorrect for 55.
-
-In that group, Row E is an interesting special case, where GPT-4o found 2
-non-plausible but correct solutions.
-We can see that Opus overrides
-them with plausible-but-incorrect
-solutions resulting in 0 resolved problems from that row.
-
-Rows G-K cover the cases where neither model
-produced plausible solutions.
-Which solution was ultimately selected for each problem depends on
-[details about which solution the harness considered "most plausible"](https://aider.chat/2024/05/22/swe-bench-lite.html#finding-a-plausible-solution).
-
-Row K contains cases where Opus returned errors due to context window
-exhaustion or other problems. 
-In these cases aider with Opus was unable to produce any solutions
-so GPT-4o's solutions were adopted.
 
 ## Computing the benchmark score
 
@@ -289,11 +241,11 @@ making it faster, easier, and more reliable to run the acceptance tests.
 Below are the references for the SWE-Bench results
 displayed in the graph at the beginning of this article.
 
-- [13.9% Devin (benchmarked on 570 instances)](https://www.cognition.ai/post/swe-bench-technical-report)
-- [13.8% Amazon Q Developer Agent (benchmarked on 2294 instances)](https://www.swebench.com)
-- [12.5% SWE- Agent + GPT-4 (benchmarked on 2294 instances)](https://www.swebench.com)
-- [10.6% AutoCode Rover (benchmarked on 2294 instances)](https://arxiv.org/pdf/2404.05427v2)
-- [10.5% SWE- Agent + Opus (benchmarked on 2294 instances)](https://www.swebench.com)
+- [13.9% Devin, benchmarked on 570 instances.](https://www.cognition.ai/post/swe-bench-technical-report)
+- [13.8% Amazon Q Developer Agent, benchmarked on 2,294 instances.](https://www.swebench.com)
+- [12.5% SWE- Agent + GPT-4, benchmarked on 2,294 instances.](https://www.swebench.com)
+- [10.6% AutoCode Rover, benchmarked on 2,294 instances.](https://arxiv.org/pdf/2404.05427v2)
+- [10.5% SWE- Agent + Opus, benchmarked on 2,294 instances.](https://www.swebench.com)
 
 The graph contains average pass@1 results for AutoCodeRover.
 The [AutoCodeRover GitHub page](https://github.com/nus-apr/auto-code-rover)
