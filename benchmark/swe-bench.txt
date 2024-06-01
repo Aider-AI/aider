@@ -1,4 +1,4 @@
-18.8% Aider|GPT-4o|& Opus|(570)
+18.9% Aider|GPT-4o|& Opus|(570)
 17.0% Aider|GPT-4o|(570)
 13.9% Devin|(570)
 13.8% Amazon Q|Developer|Agent|(2294)
