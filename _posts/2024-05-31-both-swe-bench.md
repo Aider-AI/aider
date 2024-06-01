@@ -75,22 +75,26 @@ correctly resolved.
 This is the same approach
 that was used for
 [aider's recent SOTA result on SWE Bench Lite](https://aider.chat/2024/05/22/swe-bench-lite.html).
-Aider alternated between GPT-4o and Opus for up to 6 total attempts
-on the Lite benchmark.
+For the Lite benchmark,
+aider alternated between GPT-4o and Opus for up to 6 total attempts.
 Due to the increased token costs involved in running
-the main SWE Bench benchmark, aider was limited to 2 total attempts.
-Problems from the main SWE Bench dataset
-are more difficult and involve edits to
-more than one source file,
-which increased the token costs of solving each problem.
+the main SWE Bench benchmark, aider was limited to 2 total attempts:
+one attempt of aider with GPT-4o and one with Opus.
+
+The problems from the main SWE Bench dataset
+are more difficult and involved edits to
+multiple source files,
+which increased the token costs as compared to Lite.
 Further, aider was benchmarked on 570 SWE Bench problems
 versus only 300 Lite problems,
 adding another factor of ~two to the costs.
 
-For a detailed discussion of the methodology, please see the
+For a detailed discussion of the benchmark
+methodology, please see the
 [article about aider's SWE Bench Lite results](https://aider.chat/2024/05/22/swe-bench-lite.html).
-The [aider SWE Bench repository on GitHub](https://github.com/paul-gauthier/aider-swe-bench) also contains
-the harness and analysis code used for the benchmarks.
+Also, the
+[aider SWE Bench repository on GitHub](https://github.com/paul-gauthier/aider-swe-bench)
+contains the harness and statistics code used for the benchmarks.
 
 The benchmarking process was similar to how a developer might use aider to
 resolve a GitHub issue:
@@ -115,10 +119,11 @@ that used aider with both GPT-4o & Opus.
 
 ## Aider with GPT-4o & Opus
 
-The benchmark harness ran aider with GPT-4o to try
-and solve the problem. If a plausible solution wasn't found,
-it ran aider with Opus
-to try and solve the problem.
+The benchmark harness started by using aider with GPT-4o to try
+and solve each problem.
+For problems where this didn't produce a plausible solution,
+the harness tried again using aider with Opus.
+So at most, two attempts were made for each problem.
 
 The table below breaks down the proposed solutions that
 were found from each attempt at the 570 problems.
@@ -160,24 +165,21 @@ Some tests may fail during acceptance testing,
 and that's ok as long they failed for the gold
 patch too.
 - There may have been pre-existing linting problems in the repo.
-If they were in code paths that are irrelevant to the problem being solved,
-then aider's failure to resolve them might not affect acceptance testing.
+If lingering linting issues affected code paths that are not well tested,
+they may not impact acceptance testing.
 - Aider may have reported file editing errors because it thought the LLM
 specified edits that it wasn't able to successfully apply.
-In such a scenario, the LLM must have specified edits in
-a way that doesn't comply with the edit format
-specified in its system prompt.
-Aider tries hard to deal with non-compliant LLM edits,
-but still sometimes fails.
-So the LLM may have become confused and
+This can only happen when the LLM specified edits in
+a way that doesn't comply with the editing instructions in the system prompt.
+Given that the LLM isn't complying with the system prompt,
+it may have become confused and
 asked for redundant or otherwise irrelevant edits.
 Such outstanding edit errors might not be fatal for acceptance testing.
 - Etc.
 
 Keeping all this in mind, we can understand why
 GPT-4o accounts for 15.3% of the benchmark score in the table above,
-but we reported that
-just one attempt of aider with GPT-4o scored 17.0%.
+but benchmarking with just one attempt of aider with GPT-4o scored 17.0%.
 When an Opus attempt is allowed after GPT-4o,
 it may propose some *incorrect* solutions which
 are "more plausible" than some of GPT-4o's non-plausible solutions.
@@ -190,18 +192,18 @@ as compared to the results from just one try using aider with GPT-4o (17.0%).
 
 For these reasons, adding additional attempts is not guaranteed to monotonically
 increase the number of resolved problems.
-The new solutions may solve some new problems but they may also
+New solutions may solve some new problems but they may also
 eclipse and discard some of the previous non-plausible correct solutions.
 Luckily, additional attempts usually provide a net increase in the overall
 number of resolved solutions.
 This was the case for both this main SWE Bench result and the
 earlier Lite result.
 
-The table below breaks down the plausibility of each solution proposed by
-aider with GPT-4o and with Opus, and indicates which were actually
-correct solutions.
+The table below breaks down the benchmark outcome of each problem,
+show whether aider with GPT-4o and with Opus
+produced plausible and/or correct solutions.
 
-|Row|Aider<br>w/GPT-4o<br>solution<br>plausible?|Aider<br>w/GPT-4o<br>solution<br>resolved<br>issue?|Aider<br>w/Opus<br>solution<br>plausible?|Aider<br>w/Opus<br>solution<br>resolved<br>issue?|Count|
+|Row|Aider<br>w/GPT-4o<br>solution<br>plausible?|Aider<br>w/GPT-4o<br>solution<br>resolved<br>issue?|Aider<br>w/Opus<br>solution<br>plausible?|Aider<br>w/Opus<br>solution<br>resolved<br>issue?|Number of<br>problems<br>with this<br>outcome|
 |:--:|--:|--:|--:|--:|--:|
 |  A | plausible       | resolved        | n/a             | n/a             |  73 |
 |  B | plausible       | not resolved    | n/a             | n/a             | 181 |
@@ -214,6 +216,7 @@ correct solutions.
 |  I | non-plausible   | not resolved    | plausible       | resolved        |  12 |
 |  J | non-plausible   | not resolved    | plausible       | not resolved    |  53 |
 |  K | non-plausible   | not resolved    | n/a             | n/a             |   7 |
+|Total|||||570|
 
 Rows A-B show the cases where
 aider with GPT-4o found a plausible solution during the first attempt.
@@ -227,16 +230,17 @@ The remaining rows consider cases where aider with GPT-4o
 did not find a plausible solution, so Opus got a turn to try and solve.
 Rows C-F are cases where GPT-4o's non-plausible solutions were
 actually found to be correct in hindsight.
-In row D we can see the cases where aider with Opus overrides
+In row D we can see the cases where aider with Opus
+definitely overrides
 2 of them with plausible-but-incorrect
 solutions.
 
 In rows E-H we can see that both GPT-4o and Opus
 produced non-plausible solutions.
-Which one was ultimately selected has to do with the
+Which one was ultimately selected for each problem depends on
 [details about which solution the harness considered "most plausible"](https://aider.chat/2024/05/22/swe-bench-lite.html#finding-a-plausible-solution).
 
-Rows I-J consider the simple cases where aider with GPT-4o
+Rows I-J consider the straightforward cases where aider with GPT-4o
 didn't find a plausible solution but Opus did.
 Of these, Opus' solution went on to be deemed correct for 12 problems
 and incorrect for 53.
@@ -247,7 +251,7 @@ In these cases aider with Opus was unable to produce any solutions.
 
 ## Computing the benchmark score
 
-Benchmarking produced one candidate solution for each of
+Benchmarking produced one proposed solution for each of
 the 570 SWE Bench problems.
 
 A separate evaluation script was used to
@@ -257,10 +261,10 @@ For this final acceptance testing, any edits that aider made to tests
 were discarded.
 This ensured that the correct,
 unmodified test suite was used for acceptance testing.
-The evaluation script compared each candidate solution's test results
+The evaluation script compared each proposed solution's test results
 with results from testing
 the "gold" patch that was developed by a human to correctly solve the issue.
-If they matched, the candidate solution correctly resolved the issue.
+If they matched, the proposed solution correctly resolved the issue.
 
 These acceptance tests were only ever run outside of aider
 and the benchmark harness, and only to compute statistics about the
@@ -299,7 +303,8 @@ Table 2 of their
 [paper](https://arxiv.org/pdf/2404.05427v2)
 reports an `ACR-avg` result of 10.59% which is an average pass@1 result.
 
-The [official SWE Bench Lite leaderboard](https://www.swebench.com)
+The results presented here for aider are all pass@1, as
+the [official SWE Bench Lite leaderboard](https://www.swebench.com)
 only accepts pass@1 results.
 
 
