@@ -239,7 +239,7 @@ We can see that Opus overrides
 them with plausible-but-incorrect
 solutions resulting in 0 resolved problems from that row.
 
-Rows G-K we cover the cases where neither model
+Rows G-K cover the cases where neither model
 produced plausible solutions.
 Which solution was ultimately selected for each problem depends on
 [details about which solution the harness considered "most plausible"](https://aider.chat/2024/05/22/swe-bench-lite.html#finding-a-plausible-solution).

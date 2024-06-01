@@ -54,7 +54,7 @@ def plot_swe_bench(data_file, is_lite):
     if is_lite:
         colors = ["#17965A" if "Aider" in model else "#b3d1e6" for model in models]
     else:
-        colors = ["#155F91" if "Aider" in model else "#b3d1e6" for model in models]
+        colors = ["#1A75C2" if "Aider" in model else "#b3d1e6" for model in models]
 
     bars = []
     for model, pass_rate, color in zip(models, pass_rates, colors):
