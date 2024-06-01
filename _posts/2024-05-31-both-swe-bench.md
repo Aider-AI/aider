@@ -23,7 +23,7 @@ that was reported recently.
 [![SWE Bench results](/assets/swe_bench.svg)](https://aider.chat/assets/swe_bench.svg)
 
 Aider was benchmarked on 570 of the 2294 SWE Bench problems.
-These are the same
+These were the same
 [randomly selected 570 problems](https://github.com/CognitionAI/devin-swebench-results/tree/main/output_diffs) that
 [Devin used in their evaluation](https://www.cognition.ai/post/swe-bench-technical-report).
 Please see the [references](#references)
@@ -251,7 +251,7 @@ In these cases aider with Opus was unable to produce any solutions.
 
 ## Computing the benchmark score
 
-Benchmarking produced one proposed solution for each of
+The benchmark harness produced one proposed solution for each of
 the 570 SWE Bench problems.
 
 A separate evaluation script was used to

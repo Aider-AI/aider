@@ -6,7 +6,7 @@ from imgcat import imgcat
 from matplotlib import rc
 
 
-def plot_swe_bench_lite(data_file):
+def plot_swe_bench(data_file, is_lite):
     with open(data_file, "r") as file:
         lines = file.readlines()
 
@@ -45,7 +45,7 @@ def plot_swe_bench_lite(data_file):
     for model, pass_rate, color in zip(models, pass_rates, colors):
         alpha = 0.9 if "Aider" in model else 0.3
         hatch = ""
-        # if "lite" not in data_file:
+        # if is_lite:
         #    hatch = "///" if "(570)" in model else ""
         bar = ax.bar(model, pass_rate, color=color, alpha=alpha, zorder=3, hatch=hatch)
         bars.append(bar[0])
@@ -69,7 +69,7 @@ def plot_swe_bench_lite(data_file):
 
     # ax.set_xlabel("Models", fontsize=18)
     ax.set_ylabel("Instances resolved (%)", fontsize=18, color=font_color)
-    if "lite" in data_file:
+    if is_lite:
         title = "SWE Bench Lite"
     else:
         title = "SWE Bench"
@@ -80,21 +80,22 @@ def plot_swe_bench_lite(data_file):
         color=font_color,
     )
 
-    # Add note at the bottom of the graph
-    note = (
-        "Note: (570) and (2294) refer to the number of SWE Bench instances that were benchmarked."
-    )
-    plt.figtext(
-        0.5,
-        0.05,
-        note,
-        wrap=True,
-        horizontalalignment="center",
-        fontsize=12,
-        color=font_color,
-    )
+    if is_lite:
+        plt.tight_layout(pad=3.0)
+    else:
+        # Add note at the bottom of the graph
+        note = "(570) and (2294) denote the number of SWE Bench instances benchmarked"
+        plt.figtext(
+            0.5,
+            0.05,
+            note,
+            wrap=True,
+            horizontalalignment="center",
+            fontsize=12,
+            color=font_color,
+        )
 
-    plt.tight_layout(pad=3.0, rect=[0, 0.05, 1, 1])
+        plt.tight_layout(pad=3.0, rect=[0, 0.05, 1, 1])
 
     out_fname = Path(data_file.replace("-", "_"))
     plt.savefig(out_fname.with_suffix(".jpg").name)
@@ -104,4 +105,6 @@ def plot_swe_bench_lite(data_file):
 
 
 fname = sys.argv[1]
-plot_swe_bench_lite(fname)
+is_lite = "lite" in fname
+
+plot_swe_bench(fname, is_lite)
