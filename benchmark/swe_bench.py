@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 from imgcat import imgcat
 from matplotlib import rc
 
+from aider.dump import dump  # noqa: F401
+
 
 def plot_swe_bench(data_file, is_lite):
     with open(data_file, "r") as file:
@@ -49,6 +51,10 @@ def plot_swe_bench(data_file, is_lite):
         #    hatch = "///" if "(570)" in model else ""
         bar = ax.bar(model, pass_rate, color=color, alpha=alpha, zorder=3, hatch=hatch)
         bars.append(bar[0])
+
+    for label in ax.get_xticklabels():
+        if "Aider" in str(label):
+            label.set_fontfamily("Helvetica Bold")
 
     for model, bar in zip(models, bars):
         yval = bar.get_height()
