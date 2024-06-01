@@ -51,7 +51,11 @@ def plot_swe_bench(data_file, is_lite):
         spine.set_edgecolor("#DDDDDD")
         spine.set_linewidth(0.5)
 
-    colors = ["#17965A" if "Aider" in model else "#b3d1e6" for model in models]
+    if is_lite:
+        colors = ["#17965A" if "Aider" in model else "#b3d1e6" for model in models]
+    else:
+        colors = ["#155F91" if "Aider" in model else "#b3e6a8" for model in models]
+
     bars = []
     for model, pass_rate, color in zip(models, pass_rates, colors):
         alpha = 0.9 if "Aider" in model else 0.3

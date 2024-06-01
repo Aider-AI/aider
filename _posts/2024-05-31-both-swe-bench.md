@@ -32,7 +32,8 @@ for more details on the data presented in this chart.
 ## Interactive, not agentic
 
 Aider achieved this result mainly through its existing features that focus on static
-code analysis, reliable LLM code editing, and pragmatic UX for AI pair programming.
+code analysis, reliable LLM code editing, and pragmatic UX for automatically
+fixing linting and testing errors.
 Aider intentionally has quite limited and narrow "agentic behavior"
 to avoid long delays, high token costs
 and the need for users to repeatedly code review incorrect solutions.
@@ -203,20 +204,20 @@ The table below breaks down the benchmark outcome of each problem,
 showing whether aider with GPT-4o and with Opus
 produced plausible and/or correct solutions.
 
-|Row|Aider<br>w/GPT-4o<br>solution<br>plausible?|Aider<br>w/GPT-4o<br>solution<br>resolved<br>issue?|Aider<br>w/Opus<br>solution<br>plausible?|Aider<br>w/Opus<br>solution<br>resolved<br>issue?|Number of<br>problems<br>with this<br>outcome|
-|:--:|--:|--:|--:|--:|--:|
-|  A | plausible       | resolved        | n/a             | n/a             |  73 |
-|  B | plausible       | not resolved    | n/a             | n/a             | 181 |
-|  C | non-plausible   | resolved        | plausible       | resolved        |   1 |
-|  D | non-plausible   | resolved        | plausible       | not resolved    |   2 |
-|  E | non-plausible   | resolved        | non-plausible   | resolved        |  16 |
-|  F | non-plausible   | resolved        | non-plausible   | not resolved    |   5 |
-|  G | non-plausible   | not resolved    | non-plausible   | resolved        |   4 |
-|  H | non-plausible   | not resolved    | non-plausible   | not resolved    | 216 |
-|  I | non-plausible   | not resolved    | plausible       | resolved        |  12 |
-|  J | non-plausible   | not resolved    | plausible       | not resolved    |  53 |
-|  K | non-plausible   | not resolved    | n/a             | n/a             |   7 |
-|Total|||||570|
+|Row|Aider<br>w/GPT-4o<br>solution<br>plausible?|Aider<br>w/GPT-4o<br>solution<br>resolved<br>issue?|Aider<br>w/Opus<br>solution<br>plausible?|Aider<br>w/Opus<br>solution<br>resolved<br>issue?|Number of<br>problems<br>with this<br>outcome|Number of<br>problems<br>resolved|
+|:--:|--:|--:|--:|--:|--:|--:|
+| A | **plausible**       | **resolved**        | n/a             | n/a             |  73 |  73 |
+| B | **plausible**       | not resolved    | n/a             | n/a             | 181 |   0 |
+| C | non-plausible   | **resolved**        | **plausible**       | **resolved**        |   1 |   1 |
+| D | non-plausible   | **resolved**        | **plausible**       | not resolved    |   2 |   0 |
+| E | non-plausible   | **resolved**        | non-plausible   | **resolved**        |  16 |  16 |
+| F | non-plausible   | **resolved**        | non-plausible   | not resolved    |   5 |   3 |
+| G | non-plausible   | not resolved    | non-plausible   | **resolved**        |   4 |   2 |
+| H | non-plausible   | not resolved    | non-plausible   | not resolved    | 216 |   0 |
+| I | non-plausible   | not resolved    | **plausible**       | **resolved**        |  12 |  12 |
+| J | non-plausible   | not resolved    | **plausible**       | not resolved    |  53 |   0 |
+| K | non-plausible   | not resolved    | n/a             | n/a             |   7 |   0 |
+|Total|||||570|107|
 
 Rows A-B show the cases where
 aider with GPT-4o found a plausible solution during the first attempt.
