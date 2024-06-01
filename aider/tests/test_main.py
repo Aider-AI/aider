@@ -1,5 +1,4 @@
 import os
-import shutil
 import subprocess
 import tempfile
 from pathlib import Path
@@ -18,14 +17,18 @@ from aider.utils import GitTemporaryDirectory, make_repo
 
 class TestMain(TestCase):
     def setUp(self):
+        self.original_env = os.environ.copy()
         os.environ["OPENAI_API_KEY"] = "deadbeef"
         self.original_cwd = os.getcwd()
-        self.tempdir = tempfile.mkdtemp()
+        self.tempdir_obj = tempfile.TemporaryDirectory()
+        self.tempdir = self.tempdir_obj.name
         os.chdir(self.tempdir)
 
     def tearDown(self):
         os.chdir(self.original_cwd)
-        shutil.rmtree(self.tempdir, ignore_errors=True)
+        self.tempdir_obj.cleanup()
+        os.environ.clear()
+        os.environ.update(self.original_env)
 
     def test_main_with_empty_dir_no_files_on_command(self):
         main(["--no-git"], input=DummyInput(), output=DummyOutput())
@@ -258,58 +261,26 @@ class TestMain(TestCase):
             _, kwargs = MockCoder.call_args
             self.assertEqual(kwargs["code_theme"], "default")
 
-    def test_env_file_flag_read(self):
-        # Create a temporary .env file
-        env_file_path = Path(self.tempdir) / ".env.test"
-        env_content = "TEST_ENV_VAR=12345"
-        env_file_path.write_text(env_content)
-
-        # Run the main function with the --env-file flag
-        main(
-            ["--env-file", str(env_file_path), "--no-git"], input=DummyInput(), output=DummyOutput()
-        )
-
-        # Check if the environment variable is loaded
-        self.assertEqual(os.getenv("TEST_ENV_VAR"), "12345")
-
-    def test_default_env_file_read(self):
-        # Create a temporary .env file
-        env_file_path = Path(self.tempdir) / ".env"
-        env_content = "TEST_ENV_VAR=12345"
-        env_file_path.write_text(env_content)
-
-        # Run the main function with the --env-file flag
-        main(["--no-git"], input=DummyInput(), output=DummyOutput())
-
-        # Check if the environment variable is loaded
-        self.assertEqual(os.getenv("TEST_ENV_VAR"), "12345")
+    def create_env_file(self, file_name, content):
+        env_file_path = Path(self.tempdir) / file_name
+        env_file_path.write_text(content)
+        return env_file_path
 
     def test_env_file_flag_sets_automatic_variable(self):
-        # Create a temporary .env file with custom settings
-        env_file_path = Path(self.tempdir) / ".env.test"
-        env_content = "AIDER_DARK_MODE=True"
-        env_file_path.write_text(env_content)
-
-        # Mock the InputOutput to capture the configuration
+        env_file_path = self.create_env_file(".env.test", "AIDER_DARK_MODE=True")
         with patch("aider.coders.Coder.create") as MockCoder:
             main(
                 ["--env-file", str(env_file_path), "--no-git"],
                 input=DummyInput(),
                 output=DummyOutput(),
             )
-            # Ensure Coder.create was called
             MockCoder.assert_called_once()
             # Check if the color settings are for dark mode
             _, kwargs = MockCoder.call_args
             self.assertEqual(kwargs["code_theme"], "monokai")
 
     def test_default_env_file_sets_automatic_variable(self):
-        # Create a default .env file in the temporary directory
-        env_file_path = Path(self.tempdir) / ".env"
-        env_content = "AIDER_DARK_MODE=True"
-        env_file_path.write_text(env_content)
-
-        # Mock the InputOutput to capture the configuration
+        self.create_env_file(".env", "AIDER_DARK_MODE=True")
         with patch("aider.coders.Coder.create") as MockCoder:
             main(["--no-git"], input=DummyInput(), output=DummyOutput())
             # Ensure Coder.create was called
@@ -317,3 +288,19 @@ class TestMain(TestCase):
             # Check if the color settings are for dark mode
             _, kwargs = MockCoder.call_args
             self.assertEqual(kwargs["code_theme"], "monokai")
+
+    def test_false_vals_in_env_file(self):
+        self.create_env_file(".env", "AIDER_SHOW_DIFFS=off")
+        with patch("aider.coders.Coder.create") as MockCoder:
+            main(["--no-git"], input=DummyInput(), output=DummyOutput())
+            MockCoder.assert_called_once()
+            _, kwargs = MockCoder.call_args
+            self.assertEqual(kwargs["show_diffs"], False)
+
+    def test_true_vals_in_env_file(self):
+        self.create_env_file(".env", "AIDER_SHOW_DIFFS=on")
+        with patch("aider.coders.Coder.create") as MockCoder:
+            main(["--no-git"], input=DummyInput(), output=DummyOutput())
+            MockCoder.assert_called_once()
+            _, kwargs = MockCoder.call_args
+            self.assertEqual(kwargs["show_diffs"], True)

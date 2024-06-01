@@ -226,7 +226,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     default_config_files = list(map(str, default_config_files))
 
     preparser = get_preparser(git_root)
-    pre_args, _ = preparser.parse_known_args()
+    pre_args, _ = preparser.parse_known_args(argv)
 
     # Load the .env file specified in the arguments
     load_dotenv(pre_args.env_file)
