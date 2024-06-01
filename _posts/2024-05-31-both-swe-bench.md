@@ -162,7 +162,7 @@ The SWE Bench acceptance testing just confirms that tests pass or fail
 in the same pattern as the "gold patch" developed by a human to solve the
 problem.
 Some tests may fail during acceptance testing,
-and that's ok as long they failed for the gold
+and that's ok as long as they failed for the gold
 patch too.
 - There may have been pre-existing linting problems in the repo.
 If lingering linting issues affected code paths that are not well tested,
@@ -200,7 +200,7 @@ This was the case for both this main SWE Bench result and the
 earlier Lite result.
 
 The table below breaks down the benchmark outcome of each problem,
-show whether aider with GPT-4o and with Opus
+showing whether aider with GPT-4o and with Opus
 produced plausible and/or correct solutions.
 
 |Row|Aider<br>w/GPT-4o<br>solution<br>plausible?|Aider<br>w/GPT-4o<br>solution<br>resolved<br>issue?|Aider<br>w/Opus<br>solution<br>plausible?|Aider<br>w/Opus<br>solution<br>resolved<br>issue?|Number of<br>problems<br>with this<br>outcome|
@@ -304,7 +304,7 @@ Table 2 of their
 reports an `ACR-avg` result of 10.59% which is an average pass@1 result.
 
 The results presented here for aider are all pass@1, as
-the [official SWE Bench Lite leaderboard](https://www.swebench.com)
+the [official SWE Bench leaderboard](https://www.swebench.com)
 only accepts pass@1 results.
 
 
