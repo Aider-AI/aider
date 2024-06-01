@@ -9,3 +9,15 @@ pandas
 typer
 imgcat
 pre-commit
+mypy
+
+# mypy stubs
+pandas-stubs
+types-tree-sitter-languages
+types-requests
+types-tqdm
+types-PyYAML
+types-Pygments
+types-beautifulsoup4
+types-jsonschema
+types-networkx
