@@ -1,6 +1,7 @@
 import os
 import subprocess
 import tempfile
+from io import StringIO
 from pathlib import Path
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
@@ -304,3 +305,18 @@ class TestMain(TestCase):
             MockCoder.assert_called_once()
             _, kwargs = MockCoder.call_args
             self.assertEqual(kwargs["show_diffs"], True)
+
+    def test_verbose_mode_lists_env_vars(self):
+        self.create_env_file(".env", "AIDER_DARK_MODE=on")
+        with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
+            main(["--no-git", "--verbose"], input=DummyInput(), output=DummyOutput())
+            output = mock_stdout.getvalue()
+            relevant_output = "\n".join(
+                line
+                for line in output.splitlines()
+                if "AIDER_DARK_MODE" in line or "dark_mode" in line
+            )  # this bit just helps failing assertions to be easier to read
+            self.assertIn("AIDER_DARK_MODE", relevant_output)
+            self.assertIn("dark_mode", relevant_output)
+            self.assertRegex(relevant_output, r"AIDER_DARK_MODE:\s+on")
+            self.assertRegex(relevant_output, r"dark_mode:\s+True")
