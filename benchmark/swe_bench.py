@@ -14,14 +14,23 @@ def plot_swe_bench(data_file, is_lite):
 
     models = []
     pass_rates = []
-
+    instances = []
     for line in lines:
         if line.strip():
             pass_rate, model = line.split("%")
             model = model.strip()
+            if "(" in model:
+                pieces = model.split("(")
+                model = pieces[0]
+                ins = pieces[1].strip(")")
+            else:
+                ins = None
+            instances.insert(0, ins)
             model = model.replace("|", "\n")
             models.insert(0, model.strip())
             pass_rates.insert(0, float(pass_rate.strip()))
+
+    dump(instances)
 
     plt.rcParams["hatch.linewidth"] = 0.5
     plt.rcParams["hatch.color"] = "#444444"
@@ -36,7 +45,7 @@ def plot_swe_bench(data_file, is_lite):
     rc("font", **font_params)
     plt.rcParams["text.color"] = font_color
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(10, 5.5))
     ax.grid(axis="y", zorder=0, lw=0.2)
     for spine in ax.spines.values():
         spine.set_edgecolor("#DDDDDD")
@@ -73,6 +82,23 @@ def plot_swe_bench(data_file, is_lite):
             fontfamily=fontfamily,
         )
 
+    for model, ins, bar in zip(models, instances, bars):
+        if not ins:
+            continue
+        yval = bar.get_height()
+        y = yval - 2.5
+        va = "top"
+        color = "#eee" if "Aider" in model else "#555"
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            y,
+            f"of {ins}",
+            ha="center",
+            va=va,
+            fontsize=12,
+            color=color,
+        )
+
     # ax.set_xlabel("Models", fontsize=18)
     ax.set_ylabel("Instances resolved (%)", fontsize=18, color=font_color)
     if is_lite:
@@ -86,22 +112,7 @@ def plot_swe_bench(data_file, is_lite):
         color=font_color,
     )
 
-    if is_lite:
-        plt.tight_layout(pad=3.0)
-    else:
-        # Add note at the bottom of the graph
-        note = "(570) and (2294) denote the number of SWE Bench instances benchmarked"
-        plt.figtext(
-            0.5,
-            0.05,
-            note,
-            wrap=True,
-            horizontalalignment="center",
-            fontsize=12,
-            color=font_color,
-        )
-
-        plt.tight_layout(pad=3.0, rect=[0, 0.05, 1, 1])
+    plt.tight_layout(pad=3.0)
 
     out_fname = Path(data_file.replace("-", "_"))
     plt.savefig(out_fname.with_suffix(".jpg").name)
