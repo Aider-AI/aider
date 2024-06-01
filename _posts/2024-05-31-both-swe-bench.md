@@ -42,11 +42,11 @@ or unilaterally execute code.
 
 Aider is first and foremost an interactive tool for engineers to get real work done in
 real code bases using a chat interface.
-Aider provides a pair programming UX where users can ask for a change
+Aider provides a pair programming UX where users can ask for a change 
 and see the edits performed in real-time.
 Aider can also offer additional help like fixing lint or test errors,
 but the user is always in full interactive control.
-This lets them quickly steer misunderstandings back on course and
+This allows them to quickly steer misunderstandings back on course and
 avoid wasting time and token costs.
 
 
@@ -156,7 +156,7 @@ acceptance testing:
 
 - There may have been pre-existing failing tests in the repo,
 before aider even started working on the SWE Bench problem.
-Aider may not have resolved such issues, and yet they may not to be
+Aider may not have resolved such issues, and yet they may not be
 relevant to the acceptance testing.
 The SWE Bench acceptance testing just confirms that tests pass or fail
 in the same pattern as the "gold patch" developed by a human to solve the
