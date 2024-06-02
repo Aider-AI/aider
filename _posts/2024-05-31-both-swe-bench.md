@@ -16,16 +16,16 @@ from Amazon Q Developer Agent.
 The best result reported elsewhere seems to be
 [13.9% from Devin](https://www.cognition.ai/post/swe-bench-technical-report).
 
-This result on the main SWE Bench is in addition to
+This result on the main SWE Bench builds on
 [aider's recent SOTA result on the easier SWE Bench Lite](https://aider.chat/2024/05/22/swe-bench-lite.html).
 
 [![SWE Bench results](/assets/swe_bench.svg)](https://aider.chat/assets/swe_bench.svg)
 
 Aider was benchmarked on the same
-[randomly selected 570 problems](https://github.com/CognitionAI/devin-swebench-results/tree/main/output_diffs)
-from SWE Bench that were used in the
+[570 randomly selected SWE Bench problems](https://github.com/CognitionAI/devin-swebench-results/tree/main/output_diffs)
+that were used in the
 [Devin evaluation](https://www.cognition.ai/post/swe-bench-technical-report).
-Please see the [references](#references)
+See the [references](#references)
 for more details on the data presented in this chart.
 
 ## Interactive, not agentic
@@ -76,21 +76,13 @@ This is the same approach
 that was used for
 [aider's recent SOTA result on SWE Bench Lite](https://aider.chat/2024/05/22/swe-bench-lite.html).
 For the Lite benchmark,
-aider alternated between GPT-4o and Opus for up to 6 total attempts.
-Due to the increased token costs involved in running
-the main SWE Bench benchmark, aider was limited to 2 total attempts:
-one attempt of aider with GPT-4o and one with Opus.
-
-The problems from the main SWE Bench dataset
-are more difficult and involved edits to
-multiple source files,
-which increased the token costs as compared to Lite.
-Further, aider was benchmarked on 570 SWE Bench problems
-versus only 300 Lite problems,
-adding another factor of ~two to the costs.
+aider alternated between GPT-4o and Opus for up to six total attempts.
+To manage the cost of running the main SWE Bench benchmark,
+aider was limited to two total attempts:
+one with GPT-4o and one with Opus.
 
 For a detailed discussion of the benchmark
-methodology, please see the
+methodology, see the
 [article about aider's SWE Bench Lite results](https://aider.chat/2024/05/22/swe-bench-lite.html).
 Also, the
 [aider SWE Bench repository on GitHub](https://github.com/paul-gauthier/aider-swe-bench)
@@ -107,7 +99,7 @@ and to use pytest to run tests.
 Aider will pull in the URL's content and then try and resolve the issue.
 - If aider doesn't produce code that lints and tests clean, the user might decide to
 [use git to revert the changes](https://aider.chat/docs/faq.html#how-does-aider-use-git),
-and try again with `aider --opus`. Many aider users employ this strategy.
+and try again with `aider --opus`.
 
 ## Aider with GPT-4o alone was SOTA
 
@@ -195,9 +187,10 @@ increase the number of resolved problems.
 New solutions may resolve some new problems but they may also
 eclipse and discard some of the previous non-plausible correct solutions.
 
-Luckily, additional attempts usually provide a net increase in the overall
+Luckily, the net effect of additional attempts
+usually increases or at least maintains the
 number of resolved solutions.
-This was the case for both this main SWE Bench result and the
+This was the case for all the attempts made in both this main SWE Bench result and the
 earlier Lite result.
 
 ## Computing the benchmark score
