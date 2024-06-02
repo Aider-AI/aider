@@ -22,8 +22,8 @@ This result on the main SWE Bench is in addition to
 [![SWE Bench results](/assets/swe_bench.svg)](https://aider.chat/assets/swe_bench.svg)
 
 Aider was benchmarked on the same
-[randomly selected 570](https://github.com/CognitionAI/devin-swebench-results/tree/main/output_diffs)
-of the 2,294 SWE Bench problems that were used in the
+[randomly selected 570 problems](https://github.com/CognitionAI/devin-swebench-results/tree/main/output_diffs)
+from SWE Bench that were used in the
 [Devin evaluation](https://www.cognition.ai/post/swe-bench-technical-report).
 Please see the [references](#references)
 for more details on the data presented in this chart.
