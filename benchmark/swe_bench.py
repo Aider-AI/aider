@@ -104,7 +104,7 @@ def plot_swe_bench(data_file, is_lite):
         )
 
     # ax.set_xlabel("Models", fontsize=18)
-    ax.set_ylabel("Instances resolved (%)", fontsize=18, color=font_color)
+    ax.set_ylabel("Pass@1 (%)", fontsize=18, color=font_color)
     if is_lite:
         title = "SWE Bench Lite"
     else:
