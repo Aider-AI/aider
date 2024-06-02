@@ -17,8 +17,7 @@ The best result reported elsewhere seems to be
 [13.9% from Devin](https://www.cognition.ai/post/swe-bench-technical-report).
 
 This result on the main SWE Bench is in addition to
-[aider's SOTA result on the easier SWE Bench Lite](https://aider.chat/2024/05/22/swe-bench-lite.html)
-that was reported recently.
+[aider's recent SOTA result on the easier SWE Bench Lite](https://aider.chat/2024/05/22/swe-bench-lite.html).
 
 [![SWE Bench results](/assets/swe_bench.svg)](https://aider.chat/assets/swe_bench.svg)
 
@@ -106,9 +105,9 @@ and to use pytest to run tests.
   - `aider --yes --test-cmd pytest`
 - They could start the chat by pasting in the URL or text of a GitHub issue.
 Aider will pull in the URL's content and then try and resolve the issue.
-- If aider doesn't produce code that lints and tests clean, the user might decide to revert the changes and try again, maybe using aider with a different LLM this time.
-[Aider is tightly integrated with git](https://aider.chat/docs/faq.html#how-does-aider-use-git),
-so it's always easy to revert AI changes that don't pan out.
+- If aider doesn't produce code that lints and tests clean, the user might decide to
+[use git to revert the changes](https://aider.chat/docs/faq.html#how-does-aider-use-git),
+and try again with `aider --opus`. Many aider users employ this strategy.
 
 ## Aider with GPT-4o alone was SOTA
 
@@ -146,7 +145,7 @@ verified as correctly resolving their issue.
 
 ## Non-plausible but correct solutions?
 
-A solution doesn't have to be plausible in order to correctly resolve the issue.
+A solution doesn't actually have to be plausible in order to correctly resolve the issue.
 Recall that plausible is simply defined as aider
 reporting that it successfully completed all file edits,
 repaired and resolved any linting errors
