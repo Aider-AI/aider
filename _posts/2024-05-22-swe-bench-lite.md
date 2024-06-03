@@ -13,17 +13,11 @@ achieving a state-of-the-art result.
 The previous top leaderboard entry was 20.3%
 from Amazon Q Developer Agent.
 
-**To be clear, all of aider's results reported here are pass@1 results.**
-The "aider agent" internally makes multiple "attempts" at solving the problem,
-but it picks and returns one single candidate solution.
-Only that one candidate solution is evaluated with the acceptance tests
-and contributes to the benchmark score.
-This is contrast to a pass@N result for N>1, where N attempts are made
-and all N solutions are evaluated by the acceptance tests.
-If *any* of the N pass, that counts as a pass@N success.
-
 [![SWE Bench Lite results](/assets/swe_bench_lite.svg)](https://aider.chat/assets/swe_bench_lite.svg)
 
+**To be clear, all of aider's results reported here are pass@1 results,
+obtained without using the SWE Bench `hints_text`.**
+All results in the above chart are unhinted pass@1 results.
 Please see the [references](#references)
 for details on the data presented in this chart.
 It was corrected on 5/30/24 to reflect apples-to-apples comparisons,
@@ -413,7 +407,18 @@ making it faster, easier, and more reliable to run the acceptance tests.
 
 ## References
 
-Below are the references for the SWE-Bench Lite results
+To be clear, all of aider's results reported here are pass@1 results,
+obtained without using the SWE Bench `hints_text`.
+
+The "aider agent" internally makes multiple "attempts" at solving the problem,
+but it picks and returns one single candidate solution.
+Only that one candidate solution is evaluated with the acceptance tests
+and contributes to the benchmark score.
+This is contrast to a pass@N result for N>1, where N attempts are made
+and all N solutions are evaluated by the acceptance tests.
+If *any* of the N solution pass, that counts as a pass@N success.
+
+Below are the references for the pass@1 unhinted SWE-Bench results
 displayed in the graph at the beginning of this article.
 
 - [20.3% Amazon Q Developer Agent (v20240430-dev)](https://www.swebench.com)

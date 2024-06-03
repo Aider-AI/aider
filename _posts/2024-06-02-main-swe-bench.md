@@ -18,17 +18,10 @@ The best result reported elsewhere seems to be
 This result on the main SWE Bench builds on
 [aider's recent SOTA result on the easier SWE Bench Lite](https://aider.chat/2024/05/22/swe-bench-lite.html).
 
-**To be clear, all of aider's results reported here are pass@1 results.**
-The "aider agent" internally makes multiple "attempts" at solving the problem,
-but it picks and returns one single candidate solution.
-Only that one candidate solution is evaluated with the acceptance tests
-and contributes to the benchmark score.
-This is contrast to a pass@N result for N>1, where N attempts are made
-and all N solutions are evaluated by the acceptance tests.
-If *any* of the N pass, that counts as a pass@N success.
-
 [![SWE Bench results](/assets/swe_bench.svg)](https://aider.chat/assets/swe_bench.svg)
 
+**To be clear, all of aider's results reported here are pass@1 results,
+obtained without using the SWE Bench `hints_text`.**
 Aider was benchmarked on the same
 [570 randomly selected SWE Bench problems](https://github.com/CognitionAI/devin-swebench-results/tree/main/output_diffs)
 that were used in the
@@ -238,7 +231,18 @@ making it faster, easier, and more reliable to run the acceptance tests.
 
 ## References
 
-Below are the references for the SWE-Bench results
+To be clear, all of aider's results reported here are pass@1 results,
+obtained without using the SWE Bench `hints_text`.
+
+The "aider agent" internally makes multiple "attempts" at solving the problem,
+but it picks and returns one single candidate solution.
+Only that one candidate solution is evaluated with the acceptance tests
+and contributes to the benchmark score.
+This is contrast to a pass@N result for N>1, where N attempts are made
+and all N solutions are evaluated by the acceptance tests.
+If *any* of the N solution pass, that counts as a pass@N success.
+
+Below are the references for the pass@1 unhinted SWE-Bench results
 displayed in the graph at the beginning of this article.
 
 - [13.9% Devin, benchmarked on 570 instances.](https://www.cognition.ai/post/swe-bench-technical-report)
