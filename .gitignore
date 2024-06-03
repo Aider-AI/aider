@@ -5,3 +5,6 @@ build
 Gemfile.lock
 _site
 .jekyll-cache/
+
+*-history.md
+pyproject.toml

@@ -14,7 +14,7 @@ def get_mypy_errors(directory: str) -> List[str]:
 
 
 def get_coder(
-    model: str = "gpt-4o",
+    model: str = "azure/gpt-4o",
     git_dname: str = ".",
     chat_history_file: str = "fix-mypy-history.md",
     test_cmd: str = "pytest",
@@ -27,18 +27,13 @@ def get_coder(
 
     If `oracle_files` are provided, they are added to the aider chat automatically.
     """
-    model = Model(model)
-    io = InputOutput(
-        yes=True,  # Say yes to every suggestion aider makes
-        chat_history_file=chat_history_file,  # Log the chat here
-        input_history_file="/dev/null",  # Don't log the "user input"
-    )
-
-    # dump(git_dname)
-
     coder = Coder.create(
-        main_model=model,
-        io=io,
+        main_model=Model(model),
+        io=InputOutput(
+            yes=True,  # Say yes to every suggestion aider makes
+            chat_history_file=chat_history_file,  # Log the chat here
+            input_history_file="/dev/null",  # Don't log the "user input"
+        ),
         git_dname=git_dname,
         map_tokens=2048,  # Use 2k tokens for the repo map
         stream=False,
@@ -61,10 +56,12 @@ def get_coder(
 
     return coder
 
+
 def fix_mypy_issue(mypy_error: str) -> None:
     file_path = error.split(":")[0]
     coder = get_coder(test_cmd="mypy --follow-imports=skip " + file_path)
     coder.run(error)
+
 
 if __name__ == "__main__":
     directory = "aider"
