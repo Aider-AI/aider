@@ -242,7 +242,7 @@ This is contrast to a pass@N result for N>1, where N attempts are made
 and all N solutions are evaluated by the acceptance tests.
 If *any* of the N solution pass, that counts as a pass@N success.
 
-Below are the references for the pass@1 unhinted SWE-Bench results
+Below are the references for the other pass@1 unhinted SWE-Bench results
 displayed in the graph at the beginning of this article.
 
 - [13.9% Devin, benchmarked on 570 instances.](https://www.cognition.ai/post/swe-bench-technical-report)
