@@ -2,7 +2,6 @@
 title: Aider is SOTA for both SWE Bench and SWE Bench Lite
 excerpt: Aider sets SOTA for the main SWE Bench, after recently setting SOTA for the Lite version.
 highlight_image: /assets/swe_bench.jpg
-draft: true
 ---
 
 # Aider is SOTA for both SWE Bench and SWE Bench Lite
