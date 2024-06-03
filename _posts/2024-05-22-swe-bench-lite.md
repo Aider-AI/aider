@@ -446,8 +446,3 @@ which is not comparable
 to the unhinted aider results being reported here.
 [OpenDevin reported hinted results](https://x.com/gneubig/status/1791498953709752405)
 without noting that hints were used.
-
-The [official SWE Bench Lite leaderboard](https://www.swebench.com)
-only accepts pass@1 results that do not use `hints_text`.
-
-

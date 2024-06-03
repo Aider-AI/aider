@@ -261,8 +261,3 @@ Table 2 of their
 [paper](https://arxiv.org/pdf/2404.05427v2)
 reports an `ACR-avg` result of 10.59% which is an average pass@1 result.
 
-The results presented here for aider are all pass@1, as
-the [official SWE Bench leaderboard](https://www.swebench.com)
-only accepts pass@1 results.
-
-
