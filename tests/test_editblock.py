@@ -3,7 +3,6 @@
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, patch
 
 from aider.coders import Coder
 from aider.coders import editblock_coder as eb
