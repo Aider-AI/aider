@@ -98,7 +98,7 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--models",
         metavar="MODEL",
-        help="list known models which match the (partial) MODEL name",
+        help="List known models which match the (partial) MODEL name",
     )
     group.add_argument(
         "--openai-api-base",
