@@ -1,4 +1,5 @@
 import json
+from typing import Any, Optional
 
 from ..dump import dump  # noqa: F401
 from .base_coder import Coder
@@ -7,7 +8,7 @@ from .editblock_func_prompts import EditBlockFunctionPrompts
 
 
 class EditBlockFunctionCoder(Coder):
-    functions = [
+    functions: Optional[list[dict[str, Any]]] = [
         dict(
             name="replace_lines",
             description="create or update one or more files",

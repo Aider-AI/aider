@@ -2,7 +2,7 @@
 
 import unittest
 
-from benchmark import cleanup_test_output
+from benchmark import cleanup_test_output  # type: ignore
 
 
 class TestCleanupTestOutput(unittest.TestCase):

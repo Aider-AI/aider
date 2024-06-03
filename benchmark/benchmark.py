@@ -152,8 +152,8 @@ def main(
         return 1
 
     updated_dirnames = []
-    for dirname in dirnames:
-        dirname = Path(dirname)
+    for dn in dirnames:
+        dirname = Path(dn)
         dirname = resolve_dirname(dirname, stats_only or cont, make_new)
         if not dirname:
             return 1
@@ -176,6 +176,7 @@ def main(
     original_dname = BENCHMARK_DNAME / exercises_dir
     assert original_dname.exists() and original_dname.is_dir(), original_dname
 
+    assert isinstance(dirname, Path)
     if clean and dirname.exists():
         print("Cleaning up and replacing", dirname)
         dir_files = set(fn.name for fn in dirname.glob("*"))
@@ -199,8 +200,7 @@ def main(
     test_dnames = sorted(os.listdir(dirname))
 
     if keywords:
-        keywords = keywords.split(",")
-        test_dnames = [dn for dn in test_dnames for keyword in keywords if keyword in dn]
+        test_dnames = [dn for dn in test_dnames for keyword in keywords.split(",") if keyword in dn]
 
     random.shuffle(test_dnames)
     if num_tests > 0:

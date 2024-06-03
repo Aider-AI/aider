@@ -3,6 +3,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+from typing import Optional
 
 import git
 import openai
@@ -12,6 +13,7 @@ from aider import models, prompts, voice
 from aider.litellm import litellm
 from aider.scrape import Scraper
 from aider.utils import is_image_file
+from aider.voice import Voice
 
 from .dump import dump  # noqa: F401
 
@@ -22,8 +24,8 @@ class SwitchModel(Exception):
 
 
 class Commands:
-    voice = None
-    scraper = None
+    voice: Optional[Voice] = None
+    scraper: Optional[Scraper] = None
 
     def __init__(self, io, coder, voice_language=None):
         self.io = io

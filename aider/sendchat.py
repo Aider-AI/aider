@@ -1,5 +1,6 @@
 import hashlib
 import json
+from typing import TYPE_CHECKING, Optional
 
 import backoff
 import httpx
@@ -9,10 +10,12 @@ from aider.dump import dump  # noqa: F401
 from aider.litellm import litellm
 
 # from diskcache import Cache
+if TYPE_CHECKING:
+    from diskcache import Cache
 
 
 CACHE_PATH = "~/.aider.send.cache.v1"
-CACHE = None
+CACHE: Optional["Cache"] = None
 # CACHE = Cache(CACHE_PATH)
 
 

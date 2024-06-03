@@ -2,6 +2,7 @@
 
 import re
 import sys
+from typing import Optional
 
 import httpx
 import pypandoc
@@ -24,8 +25,8 @@ See https://aider.chat/docs/install.html#enable-playwright-optional for more inf
 
 
 class Scraper:
-    pandoc_available = None
-    playwright_available = None
+    pandoc_available: Optional[bool] = None
+    playwright_available: Optional[bool] = None
     playwright_instructions_shown = False
 
     # Public API...

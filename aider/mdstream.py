@@ -2,6 +2,7 @@
 
 import io
 import time
+from typing import Optional
 
 from rich.console import Console
 from rich.live import Live
@@ -41,7 +42,7 @@ The end.
 
 
 class MarkdownStream:
-    live = None
+    live: Optional[Live] = None
     when = 0
     min_delay = 0.050
     live_window = 6

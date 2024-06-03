@@ -2,6 +2,7 @@
 
 import sys
 from pathlib import Path
+from typing import List, Optional, Tuple
 
 import git
 from diff_match_patch import diff_match_patch
@@ -186,7 +187,7 @@ class RelativeIndenter:
 #
 
 
-def map_patches(texts, patches, debug):
+def map_patches(texts: Tuple[str, str, str], patches: List, debug: bool) -> List:
     search_text, replace_text, original_text = texts
 
     dmp = diff_match_patch()
@@ -246,7 +247,7 @@ sys.exit()
 """
 
 
-def relative_indent(texts):
+def relative_indent(texts: List[str]) -> Tuple[RelativeIndenter, List[str]]:
     ri = RelativeIndenter(texts)
     texts = list(map(ri.make_relative, texts))
 
@@ -256,18 +257,18 @@ def relative_indent(texts):
 line_padding = 100
 
 
-def line_pad(text):
+def line_pad(text: str) -> str:
     padding = "\n" * line_padding
     return padding + text + padding
 
 
-def line_unpad(text):
+def line_unpad(text: str) -> Optional[str]:
     if set(text[:line_padding] + text[-line_padding:]) != set("\n"):
-        return
+        return None
     return text[line_padding:-line_padding]
 
 
-def dmp_apply(texts, remap=True):
+def dmp_apply(texts: Tuple[str, str, str], remap: bool = True) -> Optional[str]:
     debug = False
     # debug = True
 
@@ -331,21 +332,23 @@ def dmp_apply(texts, remap=True):
         # print(new_text)
 
     if not all_success:
-        return
+        return None
 
     return new_text
 
 
-def lines_to_chars(lines, mapping):
+def lines_to_chars(lines: List[str], mapping: List[str]) -> str:
     new_text = []
     for char in lines:
         new_text.append(mapping[ord(char)])
 
-    new_text = "".join(new_text)
+    new_text_str = "".join(new_text)
+    return new_text_str
+    return new_text
     return new_text
 
 
-def dmp_lines_apply(texts, remap=True):
+def dmp_lines_apply(texts: Tuple[str, str, str], remap: bool = True) -> Optional[str]:
     debug = False
     # debug = True
 
@@ -408,12 +411,12 @@ def dmp_lines_apply(texts, remap=True):
         # print(new_text)
 
     if not all_success:
-        return
+        return None
 
     return new_text
 
 
-def diff_lines(search_text, replace_text):
+def diff_lines(search_text: str, replace_text: str) -> List[str]:
     dmp = diff_match_patch()
     dmp.Diff_Timeout = 5
     # dmp.Diff_EditCost = 16
@@ -441,21 +444,21 @@ def diff_lines(search_text, replace_text):
     return udiff
 
 
-def search_and_replace(texts):
+def search_and_replace(texts: Tuple[str, str, str]) -> Optional[str]:
     search_text, replace_text, original_text = texts
 
     num = original_text.count(search_text)
     # if num > 1:
     #    raise SearchTextNotUnique()
     if num == 0:
-        return
+        return None
 
     new_text = original_text.replace(search_text, replace_text)
 
     return new_text
 
 
-def git_cherry_pick_osr_onto_o(texts):
+def git_cherry_pick_osr_onto_o(texts: Tuple[str, str, str]) -> Optional[str]:
     search_text, replace_text, original_text = texts
 
     with GitTemporaryDirectory() as dname:
@@ -486,13 +489,13 @@ def git_cherry_pick_osr_onto_o(texts):
             repo.git.cherry_pick(replace_hash, "--minimal")
         except git.exc.GitCommandError:
             # merge conflicts!
-            return
+            return None
 
         new_text = fname.read_text()
         return new_text
 
 
-def git_cherry_pick_sr_onto_so(texts):
+def git_cherry_pick_sr_onto_so(texts: Tuple[str, str, str]) -> Optional[str]:
     search_text, replace_text, original_text = texts
 
     with GitTemporaryDirectory() as dname:
@@ -524,7 +527,7 @@ def git_cherry_pick_sr_onto_so(texts):
             repo.git.cherry_pick(replace_hash, "--minimal")
         except git.exc.GitCommandError:
             # merge conflicts!
-            return
+            return None
 
         new_text = fname.read_text()
 
@@ -572,7 +575,7 @@ udiff_strategies = [
 ]
 
 
-def flexible_search_and_replace(texts, strategies):
+def flexible_search_and_replace(texts: Tuple[str, str, str], strategies: List) -> Optional[str]:
     """Try a series of search/replace methods, starting from the most
     literal interpretation of search_text. If needed, progress to more
     flexible methods, which can accommodate divergence between
@@ -585,51 +588,60 @@ def flexible_search_and_replace(texts, strategies):
             res = try_strategy(texts, strategy, preproc)
             if res:
                 return res
+    return None
 
 
-def reverse_lines(text):
+def reverse_lines(text: str) -> str:
     lines = text.splitlines(keepends=True)
     lines.reverse()
     return "".join(lines)
 
 
-def try_strategy(texts, strategy, preproc):
+def try_strategy(
+    texts: Tuple[str, str, str], strategy, preproc: Tuple[bool, bool, bool]
+) -> Optional[str]:
     preproc_strip_blank_lines, preproc_relative_indent, preproc_reverse = preproc
     ri = None
 
-    if preproc_strip_blank_lines:
-        texts = strip_blank_lines(texts)
-    if preproc_relative_indent:
-        ri, texts = relative_indent(texts)
-    if preproc_reverse:
-        texts = list(map(reverse_lines, texts))
+    texts_stripped: List[str] = list(texts)
+    texts_reversed: List[str] = list(texts)
 
-    res = strategy(texts)
+    if preproc_strip_blank_lines:
+        texts_stripped = strip_blank_lines(list(texts))
+
+    if preproc_strip_blank_lines:
+        texts_stripped = strip_blank_lines(list(texts))
+    if preproc_relative_indent:
+        ri, texts_stripped = relative_indent(list(texts_stripped))
+    if preproc_reverse:
+        texts_reversed = list(map(reverse_lines, list(texts_stripped)))
+
+    res = strategy(texts_reversed)
 
     if res and preproc_reverse:
         res = reverse_lines(res)
 
-    if res and preproc_relative_indent:
+    if res and preproc_relative_indent and ri:
         try:
             res = ri.make_absolute(res)
         except ValueError:
-            return
+            return None
 
     return res
 
 
-def strip_blank_lines(texts):
+def strip_blank_lines(texts: List[str]) -> List[str]:
     # strip leading and trailing blank lines
     texts = [text.strip("\n") + "\n" for text in texts]
     return texts
 
 
-def read_text(fname):
+def read_text(fname: Path) -> str:
     text = Path(fname).read_text()
     return text
 
 
-def proc(dname):
+def proc(dname: Path) -> Optional[List[Tuple[str, str]]]:
     dname = Path(dname)
 
     try:
@@ -637,7 +649,7 @@ def proc(dname):
         replace_text = read_text(dname / "replace")
         original_text = read_text(dname / "original")
     except FileNotFoundError:
-        return
+        return None
 
     ####
 
@@ -702,7 +714,7 @@ def proc(dname):
     return results
 
 
-def colorize_result(result):
+def colorize_result(result: str) -> str:
     colors = {
         "pass": "\033[102;30mpass\033[0m",  # Green background, black text
         "WRONG": "\033[101;30mWRONG\033[0m",  # Red background, black text
@@ -711,13 +723,14 @@ def colorize_result(result):
     return colors.get(result, result)  # Default to original result if not found
 
 
-def main(dnames):
+def main(dnames: List[str]) -> None:
     all_results = []
     for dname in tqdm(dnames):
-        dname = Path(dname)
-        results = proc(dname)
-        for method, res in results:
-            all_results.append((dname, method, res))
+        dname = str(dname)
+        results = proc(Path(dname))
+        if results:
+            for method, res in results:
+                all_results.append((dname, method, res))
             # print(dname, method, colorize_result(res))
 
     # Create a 2D table with directories along the right and methods along the top
@@ -765,5 +778,5 @@ def main(dnames):
 
 
 if __name__ == "__main__":
-    status = main(sys.argv[1:])
-    sys.exit(status)
+    main(sys.argv[1:])
+    sys.exit(0)

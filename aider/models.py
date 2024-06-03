@@ -236,19 +236,19 @@ MODEL_SETTINGS = [
 
 
 class Model:
-    name = None
+    name: Optional[str] = None
 
-    edit_format = "whole"
+    edit_format: Optional[str] = "whole"
     use_repo_map = False
     send_undo_reply = False
     accepts_images = False
-    weak_model_name = None
+    weak_model_name: Optional[str] = None
     lazy = False
     reminder_as_sys_msg = False
     examples_as_sys_msg = False
 
     max_chat_history_tokens = 1024
-    weak_model = None
+    weak_model: Optional["Model"] = None
 
     def __init__(self, model, weak_model=None):
         self.name = model

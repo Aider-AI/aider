@@ -3,6 +3,7 @@
 import os
 import random
 import sys
+from typing import Optional
 
 import streamlit as st
 
@@ -14,7 +15,7 @@ from aider.scrape import Scraper
 
 
 class CaptureIO(InputOutput):
-    lines = []
+    lines: list[str] = []
 
     def tool_output(self, msg):
         self.lines.append(msg)
@@ -42,7 +43,7 @@ def search(text=None):
 
 # Keep state as a resource, which survives browser reloads (since Coder does too)
 class State:
-    keys = set()
+    keys: set[str] = set()
 
     def init(self, key, val=None):
         if key in self.keys:
@@ -79,11 +80,11 @@ def get_coder():
 
 
 class GUI:
-    prompt = None
-    prompt_as = "user"
-    last_undo_empty = None
-    recent_msgs_empty = None
-    web_content_empty = None
+    prompt: Optional[str] = None
+    prompt_as: str = "user"
+    last_undo_empty: Optional[st.delta_generator.DeltaGenerator] = None
+    recent_msgs_empty: Optional[st.delta_generator.DeltaGenerator] = None
+    web_content_empty: Optional[st.delta_generator.DeltaGenerator] = None
 
     def announce(self):
         lines = self.coder.get_announcements()

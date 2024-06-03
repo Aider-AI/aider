@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional
+
 from aider import diffs
 
 from ..dump import dump  # noqa: F401
@@ -6,7 +8,7 @@ from .wholefile_func_prompts import WholeFileFunctionPrompts
 
 
 class WholeFileFunctionCoder(Coder):
-    functions = [
+    functions: Optional[List[Dict[str, Any]]] = [
         dict(
             name="write_file",
             description="create or update one or more files",

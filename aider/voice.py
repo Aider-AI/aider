@@ -2,6 +2,7 @@ import os
 import queue
 import tempfile
 import time
+from typing import Optional
 
 import numpy as np
 
@@ -12,9 +13,14 @@ try:
 except (OSError, ModuleNotFoundError):
     sf = None
 
+try:
+    import sounddevice as sd
+except (OSError, ModuleNotFoundError):
+    sd = None
+
 from prompt_toolkit.shortcuts import prompt
 
-from .dump import dump  # noqa: F401
+from .dump import dump  # noqa: F401, F402
 
 
 class SoundDeviceError(Exception):
@@ -24,7 +30,7 @@ class SoundDeviceError(Exception):
 class Voice:
     max_rms = 0
     min_rms = 1e5
-    pct = 0
+    pct = 0.0
 
     threshold = 0.15
 
@@ -39,7 +45,7 @@ class Voice:
         except (OSError, ModuleNotFoundError):
             raise SoundDeviceError
 
-    def callback(self, indata, frames, time, status):
+    def callback(self, indata: np.ndarray, frames: int, time, status) -> None:
         """This is called (from a separate thread) for each audio block."""
         rms = np.sqrt(np.mean(indata**2))
         self.max_rms = max(self.max_rms, rms)
@@ -53,7 +59,7 @@ class Voice:
 
         self.q.put(indata.copy())
 
-    def get_prompt(self):
+    def get_prompt(self) -> str:
         num = 10
         if np.isnan(self.pct) or self.pct < self.threshold:
             cnt = 0
@@ -66,14 +72,18 @@ class Voice:
         dur = time.time() - self.start_time
         return f"Recording, press ENTER when done... {dur:.1f}sec {bar}"
 
-    def record_and_transcribe(self, history=None, language=None):
+    def record_and_transcribe(
+        self, history: Optional[str] = None, language: Optional[str] = None
+    ) -> Optional[str]:
         try:
             return self.raw_record_and_transcribe(history, language)
         except KeyboardInterrupt:
-            return
+            return None
 
-    def raw_record_and_transcribe(self, history, language):
-        self.q = queue.Queue()
+    def raw_record_and_transcribe(
+        self, history: Optional[str], language: Optional[str] = None
+    ) -> str:
+        self.q: queue.Queue[np.ndarray] = queue.Queue()
 
         filename = tempfile.mktemp(suffix=".wav")
 

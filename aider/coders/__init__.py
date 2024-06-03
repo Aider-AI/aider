@@ -8,12 +8,12 @@ from .wholefile_coder import WholeFileCoder
 from .wholefile_func_coder import WholeFileFunctionCoder
 
 __all__ = [
-    Coder,
-    EditBlockCoder,
-    EditBlockFencedCoder,
-    WholeFileCoder,
-    WholeFileFunctionCoder,
-    EditBlockFunctionCoder,
-    SingleWholeFileFunctionCoder,
-    UnifiedDiffCoder,
+    "Coder",
+    "EditBlockCoder",
+    "EditBlockFencedCoder",
+    "WholeFileCoder",
+    "WholeFileFunctionCoder",
+    "EditBlockFunctionCoder",
+    "SingleWholeFileFunctionCoder",
+    "UnifiedDiffCoder",
 ]

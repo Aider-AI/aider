@@ -2,6 +2,7 @@ import math
 import re
 from difflib import SequenceMatcher
 from pathlib import Path
+from typing import Optional
 
 from ..dump import dump  # noqa: F401
 from .base_coder import Coder
@@ -9,7 +10,7 @@ from .editblock_prompts import EditBlockPrompts
 
 
 class EditBlockCoder(Coder):
-    edit_format = "diff"
+    edit_format: Optional[str] = "diff"
 
     def __init__(self, *args, **kwargs):
         self.gpt_prompts = EditBlockPrompts()

@@ -1,3 +1,5 @@
+from typing import Any, Dict, List
+
 from aider import diffs
 
 from ..dump import dump  # noqa: F401
@@ -6,7 +8,7 @@ from .single_wholefile_func_prompts import SingleWholeFileFunctionPrompts
 
 
 class SingleWholeFileFunctionCoder(Coder):
-    functions = [
+    functions: List[Dict[str, Any]] = [
         dict(
             name="write_file",
             description="write new content into the file",

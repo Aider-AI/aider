@@ -10,6 +10,7 @@ import time
 import traceback
 from json.decoder import JSONDecodeError
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Set
 
 import git
 import openai
@@ -45,27 +46,27 @@ def wrap_fence(name):
 
 
 class Coder:
-    abs_fnames = None
-    repo = None
-    last_aider_commit_hash = None
-    aider_edited_files = None
-    last_asked_for_commit_time = 0
-    repo_map = None
-    functions = None
-    total_cost = 0.0
-    num_exhausted_context_windows = 0
-    num_malformed_responses = 0
-    last_keyboard_interrupt = None
-    num_reflections = 0
-    max_reflections = 3
-    edit_format = None
-    yield_stream = False
-    temperature = 0
-    auto_lint = True
-    auto_test = False
-    test_cmd = None
-    lint_outcome = None
-    test_outcome = None
+    abs_fnames: Optional[Set[str]] = None
+    repo: Optional[GitRepo] = None
+    last_aider_commit_hash: Optional[str] = None
+    aider_edited_files: Optional[Set[str]] = None
+    last_asked_for_commit_time: int = 0
+    repo_map: Optional[RepoMap] = None
+    functions: Optional[List[Dict[str, Any]]] = None
+    total_cost: float = 0.0
+    num_exhausted_context_windows: int = 0
+    num_malformed_responses: int = 0
+    last_keyboard_interrupt: Optional[time.struct_time] = None
+    num_reflections: int = 0
+    max_reflections: int = 3
+    edit_format: Optional[str] = None
+    yield_stream: bool = False
+    temperature: float = 0
+    auto_lint: bool = True
+    auto_test: bool = False
+    test_cmd: Optional[str] = None
+    lint_outcome: Optional[str] = None
+    test_outcome: Optional[str] = None
 
     @classmethod
     def create(

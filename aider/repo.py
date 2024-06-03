@@ -1,5 +1,6 @@
 import os
 from pathlib import Path, PurePosixPath
+from typing import Optional
 
 import git
 import pathspec
@@ -11,9 +12,9 @@ from .dump import dump  # noqa: F401
 
 
 class GitRepo:
-    repo = None
-    aider_ignore_file = None
-    aider_ignore_spec = None
+    repo: Optional[git.Repo] = None
+    aider_ignore_file: Optional[Path] = None
+    aider_ignore_spec: Optional[pathspec.PathSpec] = None
     aider_ignore_ts = 0
 
     def __init__(self, io, fnames, git_dname, aider_ignore_file=None, models=None):

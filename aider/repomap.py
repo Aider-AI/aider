@@ -6,10 +6,11 @@ import warnings
 from collections import Counter, defaultdict, namedtuple
 from importlib import resources
 from pathlib import Path
+from typing import Optional
 
 import networkx as nx
 from diskcache import Cache
-from grep_ast import TreeContext, filename_to_lang
+from grep_ast import TreeContext, filename_to_lang  # noqa: F401
 from pygments.lexers import guess_lexer_for_filename
 from pygments.token import Token
 from pygments.util import ClassNotFound
@@ -21,7 +22,7 @@ from tree_sitter_languages import get_language, get_parser  # noqa: E402
 
 from aider.dump import dump  # noqa: F402,E402
 
-Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
+Tag = namedtuple("Tag", ("rel_fname", "fname", "line", "name", "kind"))
 
 
 class RepoMap:
@@ -30,7 +31,7 @@ class RepoMap:
 
     cache_missing = False
 
-    warned_files = set()
+    warned_files: set[str] = set()
 
     def __init__(
         self,
@@ -362,13 +363,13 @@ class RepoMap:
     def get_ranked_tags_map(
         self,
         chat_fnames,
-        other_fnames=None,
+        other_fnames: Optional[list[str]] = None,
         max_map_tokens=None,
         mentioned_fnames=None,
         mentioned_idents=None,
     ):
-        if not other_fnames:
-            other_fnames = list()
+        if other_fnames is None:
+            other_fnames = []
         if not max_map_tokens:
             max_map_tokens = self.max_map_tokens
         if not mentioned_fnames:
@@ -410,7 +411,7 @@ class RepoMap:
 
         return best_tree
 
-    tree_cache = dict()
+    tree_cache: dict[tuple[str, tuple[int]], str] = {}
 
     def render_tree(self, abs_fname, rel_fname, lois):
         key = (rel_fname, tuple(sorted(lois)))
@@ -504,7 +505,7 @@ if __name__ == "__main__":
     fnames = sys.argv[1:]
 
     chat_fnames = []
-    other_fnames = []
+    other_fnames: list[str] = []
     for fname in sys.argv[1:]:
         if Path(fname).is_dir():
             chat_fnames += find_src_files(fname)
