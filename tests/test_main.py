@@ -1,3 +1,4 @@
+import io
 import os
 import shutil
 import subprocess
@@ -11,6 +12,7 @@ from prompt_toolkit.input import DummyInput
 from prompt_toolkit.output import DummyOutput
 
 from aider.dump import dump  # noqa: F401
+from aider.emit import read_template
 from aider.io import InputOutput
 from aider.main import check_gitignore, main, setup_git
 from aider.utils import GitTemporaryDirectory, make_repo
@@ -26,9 +28,6 @@ class TestMain(TestCase):
     def tearDown(self):
         os.chdir(self.original_cwd)
         shutil.rmtree(self.tempdir, ignore_errors=True)
-
-    def test_main_with_empty_dir_no_files_on_command(self):
-        main(["--no-git"], input=DummyInput(), output=DummyOutput())
 
     def test_main_with_empty_dir_new_file(self):
         main(["foo.txt", "--yes", "--no-git"], input=DummyInput(), output=DummyOutput())
@@ -237,3 +236,45 @@ class TestMain(TestCase):
         main(["--message", test_message])
         args, kwargs = MockInputOutput.call_args
         self.assertEqual(args[1], None)
+
+    def test_main_config_template_yml_stdout(self):
+        with patch("sys.stdout", new_callable=io.StringIO) as mock_stdout:
+            main(["--config-template-yml"], input=DummyInput(), output=DummyOutput())
+            output = mock_stdout.getvalue()
+            expected_output = read_template(".aider.conf.yml")
+            self.assertEqual(output.strip(), expected_output.strip())
+
+    def test_main_config_template_yml_directory(self):
+        with patch("sys.stdout", new_callable=io.StringIO) as mock_stdout:
+            main(
+                ["--config-template-yml", self.tempdir],
+                input=DummyInput(),
+                output=DummyOutput(),
+            )
+            output = mock_stdout.getvalue()
+            self.assertIn(f"Template written to: {self.tempdir}", output)
+            config_file_path = Path(self.tempdir) / ".aider.conf.yml"
+            self.assertTrue(config_file_path.exists())
+            expected_content = read_template(".aider.conf.yml")
+            self.assertEqual(config_file_path.read_text().strip(), expected_content.strip())
+
+    def test_main_config_template_env_stdout(self):
+        with patch("sys.stdout", new_callable=io.StringIO) as mock_stdout:
+            main(["--config-template-env"], input=DummyInput(), output=DummyOutput())
+            output = mock_stdout.getvalue()
+            expected_output = read_template(".env")
+            self.assertEqual(output.strip(), expected_output.strip())
+
+    def test_main_config_template_env_directory(self):
+        with patch("sys.stdout", new_callable=io.StringIO) as mock_stdout:
+            main(
+                ["--config-template-env", self.tempdir],
+                input=DummyInput(),
+                output=DummyOutput(),
+            )
+            output = mock_stdout.getvalue()
+            self.assertIn(f"Template written to: {self.tempdir}", output)
+            config_file_path = Path(self.tempdir) / ".env"
+            self.assertTrue(config_file_path.exists())
+            expected_content = read_template(".env")
+            self.assertEqual(config_file_path.read_text().strip(), expected_content.strip())

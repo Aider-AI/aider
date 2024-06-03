@@ -6,6 +6,21 @@ import configargparse
 from aider import __version__, models
 
 
+# custom action used for --config-template
+class EmitAction(argparse.Action):
+    def __init__(self, *args, emit_src=None, **kwargs):
+        super(EmitAction, self).__init__(*args, **kwargs)
+        self.emit_src = emit_src
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        setattr(namespace, self.dest, True)  # The option itself
+        setattr(namespace, "emit_src", self.emit_src)
+        if values is True:
+            setattr(namespace, "emit_dest", None)
+        else:
+            setattr(namespace, "emit_dest", values)
+
+
 def get_parser(default_config_files, git_root):
     parser = configargparse.ArgumentParser(
         description="aider is GPT powered coding in your terminal",
@@ -437,6 +452,26 @@ def get_parser(default_config_files, git_root):
             "Specify the config file (default: search for .aider.conf.yml in git root, cwd"
             " or home directory)"
         ),
+    )
+    group.add_argument(
+        "--config-template-yml",
+        metavar="DIR",
+        nargs="?",
+        default=False,
+        const=True,  # if no dest dir is specified, emit to STDOUT
+        help="Write .aider.conf.yml template to the specified directory or stdout if omitted",
+        action=EmitAction,
+        emit_src=".aider.conf.yml",
+    )
+    group.add_argument(
+        "--config-template-env",
+        metavar="DIR",
+        nargs="?",
+        default=False,
+        const=True,  # if no dest dir is specified, emit to STDOUT
+        help="Write .env template to the specified directory or stdout if omitted",
+        action=EmitAction,
+        emit_src=".env",
     )
     group.add_argument(
         "--gui",

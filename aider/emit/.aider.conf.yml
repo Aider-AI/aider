@@ -1,0 +1,244 @@
+# This file can be used to set the configuration for aider and may
+# be placed in $PROJECT_DIR/.aider.conf.yml or $HOME/.aider.conf.yml
+# In general, precedence is as follows:
+#  - command-line values override... 
+#  - environment variables which override...
+#  - config file values which override... 
+#  - default values
+ 
+# ====================
+# Model selection
+# ====================
+
+# Specify the model to use for the main chat (default: gpt-4o)
+# Many OpenAI and Anthropic models may be specified in a short form.
+# For example:
+# - gpt-4o
+# - gpt-4-1106-preview
+# - gpt-3.5-turbo
+# - claude-3-opus-20240229
+# - claude-3-sonnet-20240229
+# Most models are specified with a provider prefix, e.g.,
+# - gemini/gemini-1.5-pro-latest
+# - groq/llama3-70b-8192
+# - ollama/llama3:70b
+model: gpt-4o
+
+# See https://aider.chat/docs/llms.html for details about supported models.
+# The following commands may also be used to list specific models for various
+# providers:
+# $ aider --models openai/
+# $ aider --models anthropic/
+# $ aider --models gemini/
+# $ aider --models groq/
+# $ aider --models cohere_chat/
+# $ aider --models azure/
+# $ aider --models openrouter/
+
+# Specify the OpenAI API key
+# Required for using OpenAI models like GPT-4o, GPT-4 Turbo, and GPT-3.5 Turbo
+# default: null
+openai-api-key: null
+
+# Specify the Anthropic API key
+# Required for using Anthropic models like Claude 3 Opus and Claude 3 Sonnet
+# default: null
+anthropic-api-key: null
+
+# Specify the Gemini API key
+# Required for using Gemini models like Gemini 1.5 Pro
+# default: null
+gemini-api-key: null
+
+# Specify the Groq API key
+# Required for using Groq models like Llama 3 70B
+# default: null
+groq-api-key: null
+
+# Specify the Cohere API key
+# Required for using Cohere models like Command-R+
+# default: null
+cohere-api-key: null
+
+# Specify the Azure API key
+# Required for using Azure models
+# default: null
+azure-api-key: null
+
+# Specify the OpenRouter API key
+# Required for using OpenRouter models
+# default: null
+openrouter-api-key: null
+
+# Specify the Deepseek API key
+# Required for using Deepseek models like Deepseek Chat v2
+# default: null
+deepseek-api-key: null
+
+# ====================
+# Model Behavior
+# ====================
+
+# Specify what edit format the LLM should use (default depends on model)
+# Options: whole, diff, udiff
+# edit_format: "diff"
+
+# Specify the model to use for commit messages and chat history summarization
+# default: ???
+# weak_model: "gpt-3.5-turbo"
+
+# Only work with models that have meta-data available (default: true)
+show-model-warnings: true
+
+# Max number of tokens to use for repo map, use 0 to disable (default: 1024)
+map-tokens: 1024
+
+# Maximum number of tokens to use for chat history
+# max_chat_history_tokens: 2048
+
+# =======================
+# Model Specific Settings
+# =======================
+
+# Specify the API base URL
+# Required for custom API endpoints, e.g., Azure or OpenRouter
+# openai_api_base: "https://api.openai.com/v1"
+
+# Used for specifying the type of API, e.g., Azure
+# openai_api_type: "azure"
+
+# Used for specifying the version of the API, e.g., Azure API version
+# openai_api_version: "2023-05-15"
+
+# Used for specifying the deployment ID in Azure
+# openai_api_deployment_id: "deployment-id"
+
+# Used for specifying the organization ID in OpenAI
+# openai_organization_id: "org-id"
+
+# Specify the Ollama API base URL
+# Required for using local Ollama models
+# default: "http://127.0.0.1:11434"
+# ollama_api_base: "http://127.0.0.1:11434"
+
+# ====================
+# History files
+# ====================
+
+# Specify the chat input history file
+input-history-file: .aider.input.history
+
+# Specify the chat history file
+chat-history-file: .aider.chat.history.md
+
+# Restore the previous chat history messages (default: false)
+restore-chat-history: false
+
+# Restore the previous chat history messages (default: false)
+restore-chat-history: false
+
+# ====================
+# Output settings
+# ====================
+
+# Use colors suitable for a dark terminal background (default: false)
+dark-mode: false
+
+# Use colors suitable for a light terminal background (default: false)
+light-mode: false
+
+# Enable/disable pretty, colorized output (default: true)
+pretty: true
+
+# Enable/disable streaming responses (default: true)
+stream: true
+
+# Set the color for user input
+# Default: #00cc00 (light mode: green, dark mode: #32FF32)
+user-input-color: "#00cc00"
+
+# Set the color for tool output
+# Default: null
+# tool_output_color: "#FFA500"
+
+# Set the color for tool error messages
+# Default: #FF2222 (light mode: red, dark mode: #FF3333)
+tool-error-color: "#FF2222"
+
+# Set the color for assistant output
+# Default: #0088ff (light mode: blue, dark mode: #00FFFF)
+assistant-output-color: "#0088ff"
+
+# Set the markdown code theme
+# Default: default
+# Other code theme options:
+# - monokai (dark mode)
+# - solarized-dark (dark mode)
+# - solarized-light (light mode)
+code-theme: default
+
+# Show diffs when committing changes (default: false)
+show-diffs: false
+
+# ====================
+# Git settings
+# ====================
+
+# Enable/disable looking for a git repo (default: true)
+git: true
+
+# Enable/disable adding .aider* to .gitignore (default: true)
+gitignore: true
+
+# Specify the aider ignore file (default: .aiderignore in git root)
+aiderignore: .aiderignore
+
+# Enable/disable auto commit of LLM changes (default: true)
+auto-commits: true
+
+# Enable/disable commits when repo is found dirty (default: true)
+dirty-commits: true
+
+# ====================
+# Fixing and committing
+# ====================
+
+# Specify lint commands to run for different languages
+# Example: "python: flake8 --select=E9"
+lint-cmd: ["typescript: cd workspace/llm-swarm-space/cli && npm run lint"]
+
+# Enable/disable automatic linting after changes (default: true)
+auto-lint: true
+
+# Specify command to run tests
+test-cmd: []
+
+# Enable/disable automatic testing after changes (default: false)
+auto-test: false
+
+# Run tests and fix problems found
+test: false
+
+# ====================
+# Other settings
+# ====================
+# Specify the language for voice using ISO 639-1 code (default: auto)
+# voice_language: en
+
+# Check for updates and return status in the exit code
+# check-update: false
+
+# Skips checking for the update when the program runs
+skip-check-update: false
+
+# Always say yes to every confirmation (default: false)
+# yes: true
+
+# Enable verbose output
+verbose: false
+
+# Specify the encoding for input and output (default: utf-8)
+encoding: utf-8
+
+# Run aider in your browser (default: false)
+gui: false
