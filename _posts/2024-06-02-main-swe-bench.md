@@ -238,6 +238,7 @@ The "aider agent" internally makes multiple "attempts" at solving the problem,
 but it picks and returns one single candidate solution.
 Only that one candidate solution is evaluated with the acceptance tests
 and contributes to the benchmark score.
+
 This is contrast to a pass@N result for N>1, where N attempts are made
 and all N solutions are evaluated by the acceptance tests.
 If *any* of the N solution pass, that counts as a pass@N success.
