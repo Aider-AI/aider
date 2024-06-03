@@ -602,7 +602,7 @@ class Commands:
         sys.exit()
 
     def cmd_ls(self, args):
-        "List all known files and indicate which are included in the chat session"
+        "list all known files and indicate which are included in the chat session"
 
         files = self.coder.get_all_relative_files()
 

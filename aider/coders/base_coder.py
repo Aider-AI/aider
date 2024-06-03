@@ -10,7 +10,7 @@ import time
 import traceback
 from json.decoder import JSONDecodeError
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Optional
 
 import git
 import openai
@@ -46,13 +46,13 @@ def wrap_fence(name):
 
 
 class Coder:
-    abs_fnames: Optional[Set[str]] = None
+    abs_fnames: Optional[set[str]] = None
     repo: Optional[GitRepo] = None
     last_aider_commit_hash: Optional[str] = None
-    aider_edited_files: Optional[Set[str]] = None
+    aider_edited_files: Optional[set[str]] = None
     last_asked_for_commit_time: int = 0
     repo_map: Optional[RepoMap] = None
-    functions: Optional[List[Dict[str, Any]]] = None
+    functions: Optional[list[dict[str, Any]]] = None
     total_cost: float = 0.0
     num_exhausted_context_windows: int = 0
     num_malformed_responses: int = 0

@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Optional
 
 
 class CoderPrompts:
@@ -15,7 +15,7 @@ You NEVER leave comments describing code without implementing it!
 You always COMPLETELY IMPLEMENT the needed code!
 """
 
-    example_messages: List[Dict[str, str]] = []
+    example_messages: list[dict[str, str]] = []
 
     files_content_prefix = """I have *added these files to the chat* so you can go ahead and edit them.
 

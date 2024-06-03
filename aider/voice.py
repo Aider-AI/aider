@@ -20,7 +20,7 @@ except (OSError, ModuleNotFoundError):
 
 from prompt_toolkit.shortcuts import prompt
 
-from .dump import dump  # noqa: F401, F402
+from .dump import dump  # noqa: F401
 
 
 class SoundDeviceError(Exception):

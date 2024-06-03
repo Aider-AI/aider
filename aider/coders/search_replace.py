@@ -2,7 +2,7 @@
 
 import sys
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import Optional
 
 import git
 from diff_match_patch import diff_match_patch
@@ -187,7 +187,7 @@ class RelativeIndenter:
 #
 
 
-def map_patches(texts: Tuple[str, str, str], patches: List, debug: bool) -> List:
+def map_patches(texts: tuple[str, str, str], patches: list, debug: bool) -> list:
     search_text, replace_text, original_text = texts
 
     dmp = diff_match_patch()
@@ -247,7 +247,7 @@ sys.exit()
 """
 
 
-def relative_indent(texts: List[str]) -> Tuple[RelativeIndenter, List[str]]:
+def relative_indent(texts: list[str]) -> tuple[RelativeIndenter, list[str]]:
     ri = RelativeIndenter(texts)
     texts = list(map(ri.make_relative, texts))
 
@@ -268,7 +268,7 @@ def line_unpad(text: str) -> Optional[str]:
     return text[line_padding:-line_padding]
 
 
-def dmp_apply(texts: Tuple[str, str, str], remap: bool = True) -> Optional[str]:
+def dmp_apply(texts: tuple[str, str, str], remap: bool = True) -> Optional[str]:
     debug = False
     # debug = True
 
@@ -337,18 +337,15 @@ def dmp_apply(texts: Tuple[str, str, str], remap: bool = True) -> Optional[str]:
     return new_text
 
 
-def lines_to_chars(lines: List[str], mapping: List[str]) -> str:
+def lines_to_chars(lines: list[str], mapping: list[str]) -> list[str]:
     new_text = []
     for char in lines:
         new_text.append(mapping[ord(char)])
 
-    new_text_str = "".join(new_text)
-    return new_text_str
-    return new_text
     return new_text
 
 
-def dmp_lines_apply(texts: Tuple[str, str, str], remap: bool = True) -> Optional[str]:
+def dmp_lines_apply(texts: tuple[str, str, str], remap: bool = True) -> Optional[list[str]]:
     debug = False
     # debug = True
 
@@ -416,7 +413,7 @@ def dmp_lines_apply(texts: Tuple[str, str, str], remap: bool = True) -> Optional
     return new_text
 
 
-def diff_lines(search_text: str, replace_text: str) -> List[str]:
+def diff_lines(search_text: str, replace_text: str) -> list[str]:
     dmp = diff_match_patch()
     dmp.Diff_Timeout = 5
     # dmp.Diff_EditCost = 16
@@ -444,7 +441,7 @@ def diff_lines(search_text: str, replace_text: str) -> List[str]:
     return udiff
 
 
-def search_and_replace(texts: Tuple[str, str, str]) -> Optional[str]:
+def search_and_replace(texts: tuple[str, str, str]) -> Optional[str]:
     search_text, replace_text, original_text = texts
 
     num = original_text.count(search_text)
@@ -458,7 +455,7 @@ def search_and_replace(texts: Tuple[str, str, str]) -> Optional[str]:
     return new_text
 
 
-def git_cherry_pick_osr_onto_o(texts: Tuple[str, str, str]) -> Optional[str]:
+def git_cherry_pick_osr_onto_o(texts: tuple[str, str, str]) -> Optional[str]:
     search_text, replace_text, original_text = texts
 
     with GitTemporaryDirectory() as dname:
@@ -495,7 +492,7 @@ def git_cherry_pick_osr_onto_o(texts: Tuple[str, str, str]) -> Optional[str]:
         return new_text
 
 
-def git_cherry_pick_sr_onto_so(texts: Tuple[str, str, str]) -> Optional[str]:
+def git_cherry_pick_sr_onto_so(texts: tuple[str, str, str]) -> Optional[str]:
     search_text, replace_text, original_text = texts
 
     with GitTemporaryDirectory() as dname:
@@ -575,7 +572,7 @@ udiff_strategies = [
 ]
 
 
-def flexible_search_and_replace(texts: Tuple[str, str, str], strategies: List) -> Optional[str]:
+def flexible_search_and_replace(texts: tuple[str, str, str], strategies: list) -> Optional[str]:
     """Try a series of search/replace methods, starting from the most
     literal interpretation of search_text. If needed, progress to more
     flexible methods, which can accommodate divergence between
@@ -598,13 +595,13 @@ def reverse_lines(text: str) -> str:
 
 
 def try_strategy(
-    texts: Tuple[str, str, str], strategy, preproc: Tuple[bool, bool, bool]
+    texts: tuple[str, str, str], strategy, preproc: tuple[bool, bool, bool]
 ) -> Optional[str]:
     preproc_strip_blank_lines, preproc_relative_indent, preproc_reverse = preproc
     ri = None
 
-    texts_stripped: List[str] = list(texts)
-    texts_reversed: List[str] = list(texts)
+    texts_stripped: list[str] = list(texts)
+    texts_reversed: list[str] = list(texts)
 
     if preproc_strip_blank_lines:
         texts_stripped = strip_blank_lines(list(texts))
@@ -621,8 +618,9 @@ def try_strategy(
     if res and preproc_reverse:
         res = reverse_lines(res)
 
-    if res and preproc_relative_indent and ri:
+    if res and preproc_relative_indent:
         try:
+            assert ri is not None
             res = ri.make_absolute(res)
         except ValueError:
             return None
@@ -630,7 +628,7 @@ def try_strategy(
     return res
 
 
-def strip_blank_lines(texts: List[str]) -> List[str]:
+def strip_blank_lines(texts: list[str]) -> list[str]:
     # strip leading and trailing blank lines
     texts = [text.strip("\n") + "\n" for text in texts]
     return texts
@@ -641,7 +639,7 @@ def read_text(fname: Path) -> str:
     return text
 
 
-def proc(dname: Path) -> Optional[List[Tuple[str, str]]]:
+def proc(dname: Path) -> Optional[list[tuple[str, str]]]:
     dname = Path(dname)
 
     try:
@@ -723,14 +721,13 @@ def colorize_result(result: str) -> str:
     return colors.get(result, result)  # Default to original result if not found
 
 
-def main(dnames: List[str]) -> None:
+def main(dnames: list[str]) -> int:
     all_results = []
-    for dname in tqdm(dnames):
-        dname = str(dname)
-        results = proc(Path(dname))
-        if results:
-            for method, res in results:
-                all_results.append((dname, method, res))
+    for dn in tqdm(dnames):
+        dname = Path(dn)
+        results = proc(dname) or []
+        for method, res in results:
+            all_results.append((dname, method, res))
             # print(dname, method, colorize_result(res))
 
     # Create a 2D table with directories along the right and methods along the top
@@ -766,17 +763,18 @@ def main(dnames: List[str]) -> None:
     print()
 
     # Print the rows with colorized results
-    for dname in directories:
-        print("{:<20}".format(Path(dname).name), end="")
+    for _dname in directories:
+        print("{:<20}".format(Path(_dname).name), end="")
         for method in methods:
-            res = results_matrix[dname][method]
+            res = results_matrix[_dname][method]
             colorized_res = colorize_result(res)
             res_l = 9 + len(colorized_res) - len(res)
             fmt = "{:<" + str(res_l) + "}"
             print(fmt.format(colorized_res), end="")
         print()
+    return 0
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
-    sys.exit(0)
+    status = main(sys.argv[1:])
+    sys.exit(status)

@@ -12,7 +12,6 @@ from collections import defaultdict
 from json.decoder import JSONDecodeError
 from pathlib import Path
 from types import SimpleNamespace
-from typing import List
 
 import git
 import lox
@@ -106,7 +105,7 @@ def resolve_dirname(dirname, use_single_prior, make_new):
 
 @app.command()
 def main(
-    dirnames: List[str] = typer.Argument(..., help="Directory names"),
+    dirnames: list[str] = typer.Argument(..., help="Directory names"),
     graphs: bool = typer.Option(False, "--graphs", help="Generate graphs"),
     model: str = typer.Option("gpt-3.5-turbo", "--model", "-m", help="Model name"),
     edit_format: str = typer.Option(None, "--edit-format", "-e", help="Edit format"),

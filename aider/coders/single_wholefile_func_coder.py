@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any
 
 from aider import diffs
 
@@ -8,7 +8,7 @@ from .single_wholefile_func_prompts import SingleWholeFileFunctionPrompts
 
 
 class SingleWholeFileFunctionCoder(Coder):
-    functions: List[Dict[str, Any]] = [
+    functions: list[dict[str, Any]] = [
         dict(
             name="write_file",
             description="write new content into the file",

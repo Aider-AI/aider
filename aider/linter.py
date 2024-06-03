@@ -6,7 +6,7 @@ import traceback
 import warnings
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Callable, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Callable, Optional, Union
 
 if TYPE_CHECKING:
     from grep_ast import TreeContext
@@ -23,7 +23,7 @@ class Linter:
         self.encoding = encoding
         self.root = root
 
-        self.languages: Dict[str, Union[Callable[[str, str, str], Optional["LintResult"]], str]] = (
+        self.languages: dict[str, Union[Callable[[str, str, str], Optional["LintResult"]], str]] = (
             dict(
                 python=self.py_lint,
             )
@@ -77,7 +77,7 @@ class Linter:
         self,
         fname: str,
         cmd: Optional[
-            Union[Callable[[str, str, str], Optional["LintResult"]], Union[str, List[str]]]
+            Union[Callable[[str, str, str], Optional["LintResult"]], Union[str, list[str]]]
         ] = None,
     ) -> Optional[str]:
         rel_fname = self.get_rel_fname(fname)
@@ -189,7 +189,7 @@ def basic_lint(fname: str, code: str) -> Optional[LintResult]:
     return LintResult(text="", lines=errors)
 
 
-def tree_context(fname: str, code: str, line_nums: List[int]) -> str:
+def tree_context(fname: str, code: str, line_nums: list[int]) -> str:
     context = TreeContext(
         fname,
         code,
@@ -215,8 +215,8 @@ def tree_context(fname: str, code: str, line_nums: List[int]) -> str:
 
 
 # Traverse the tree to find errors
-def traverse_tree(node) -> List[int]:
-    errors: List[int] = []
+def traverse_tree(node) -> list[int]:
+    errors: list[int] = []
     if node.type == "ERROR" or node.is_missing:
         line_no = node.start_point[0]
         errors.append(line_no)
@@ -227,14 +227,14 @@ def traverse_tree(node) -> List[int]:
     return errors
 
 
-def find_filenames_and_linenums(text: str, fnames: List[str]) -> Dict[str, set]:
+def find_filenames_and_linenums(text: str, fnames: list[str]) -> dict[str, set]:
     """
     Search text for all occurrences of <filename>:\\d+ and make a list of them
     where <filename> is one of the filenames in the list `fnames`.
     """
     pattern = re.compile(r"(\b(?:" + "|".join(re.escape(fname) for fname in fnames) + r"):\d+\b)")
     matches = pattern.findall(text)
-    result: Dict[str, set] = {}
+    result: dict[str, set] = {}
     for match in matches:
         fname, linenum = match.rsplit(":", 1)
         if fname not in result:
