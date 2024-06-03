@@ -15,7 +15,7 @@ from Amazon Q Developer Agent.
 
 [![SWE Bench Lite results](/assets/swe_bench_lite.svg)](https://aider.chat/assets/swe_bench_lite.svg)
 
-**To be clear, all of aider's results reported here are pass@1 results,
+**All of aider's results reported here are pass@1 results,
 obtained without using the SWE Bench `hints_text`.**
 All results in the above chart are unhinted pass@1 results.
 Please see the [references](#references)
@@ -407,7 +407,7 @@ making it faster, easier, and more reliable to run the acceptance tests.
 
 ## References
 
-To be clear, all of aider's results reported here are pass@1 results,
+All of aider's results reported here are pass@1 results,
 obtained without using the SWE Bench `hints_text`.
 
 The "aider agent" internally makes multiple "attempts" at solving the problem,

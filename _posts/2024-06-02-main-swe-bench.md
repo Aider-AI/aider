@@ -20,7 +20,7 @@ This result on the main SWE Bench builds on
 
 [![SWE Bench results](/assets/swe_bench.svg)](https://aider.chat/assets/swe_bench.svg)
 
-**To be clear, all of aider's results reported here are pass@1 results,
+**All of aider's results reported here are pass@1 results,
 obtained without using the SWE Bench `hints_text`.**
 Aider was benchmarked on the same
 [570 randomly selected SWE Bench problems](https://github.com/CognitionAI/devin-swebench-results/tree/main/output_diffs)
@@ -231,7 +231,7 @@ making it faster, easier, and more reliable to run the acceptance tests.
 
 ## References
 
-To be clear, all of aider's results reported here are pass@1 results,
+All of aider's results reported here are pass@1 results,
 obtained without using the SWE Bench `hints_text`.
 
 The "aider agent" internally makes multiple "attempts" at solving the problem,
