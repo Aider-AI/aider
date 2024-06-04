@@ -3,9 +3,13 @@
 
 ### main
 
+- Repo map is now optimized based on text of chat history as well as files added to chat.
+- Improved prompts when no files have been added to chat to solicit LLM file suggestions.
 - Aider will notice if you paste a URL into the chat, and offer to scrape it.
 - Performance improvements the repo map, especially in large repos.
 - Aider will not offer to add bare filenames like `make` or `run` which may just be words.
+- Properly override `GIT_EDITOR` env for commits if it is already set.
+- Other small bug fixes.
 
 ### v0.36.0
 
