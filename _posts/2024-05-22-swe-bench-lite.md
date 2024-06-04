@@ -13,6 +13,8 @@ achieving a state-of-the-art result.
 The previous top leaderboard entry was 20.3%
 from Amazon Q Developer Agent.
 
+See also [aider's SOTA result on the main SWE Bench](https://aider.chat/2024/06/02/main-swe-bench.html).
+
 [![SWE Bench Lite results](/assets/swe_bench_lite.svg)](https://aider.chat/assets/swe_bench_lite.svg)
 
 **All of aider's results reported here are pass@1 results,
