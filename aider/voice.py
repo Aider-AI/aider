@@ -77,7 +77,10 @@ class Voice:
 
         filename = tempfile.mktemp(suffix=".wav")
 
-        sample_rate = 16000  # 16kHz
+        try:
+            sample_rate = int(self.sd.query_devices(None, 'input')['default_samplerate'])
+        except (TypeError, ValueError):
+            sample_rate = 16000  # fallback to 16kHz if unable to query device
 
         self.start_time = time.time()
 
