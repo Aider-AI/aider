@@ -4,15 +4,18 @@ nav_order: 70
 ---
 
 # Aider can connect to most LLMs
+{: .no_toc }
 
 [![connecting to many LLMs](/assets/llms.jpg)](https://aider.chat/assets/llms.jpg)
 
 ## Best models
+{: .no_toc }
 
 **Aider works best with [GPT-4o](#openai) and [Claude 3 Opus](#anthropic),**
 as they are the very best models for editing code.
 
 ## Free models
+{: .no_toc }
 
 Aider works with a number of **free** API providers:
 
@@ -23,6 +26,7 @@ code editing capabilities similar to GPT-3.5.
 - Cohere also offers free API access to their [Command-R+ model](#cohere), which works with aider as a *very basic* coding assistant.
 
 ## Local models
+{: .no_toc }
 
 Aider can work also with local models, for example using [Ollama](#ollama).
 It can also access
@@ -30,6 +34,7 @@ local models that provide an
 [Open AI compatible API](#openai-compatible-apis).
 
 ## Use a capable model
+{: .no_toc }
 
 Check
 [Aider's LLM leaderboards](https://aider.chat/docs/leaderboards/)
@@ -43,21 +48,10 @@ returning "code edits".
 Models weaker than GPT 3.5 may have problems working well with aider.
 
 ## Configuring models
+{: .no_toc }
 
-- [OpenAI](#openai)
-- [Anthropic](#anthropic)
-- [Gemini](#gemini)
-- [Groq & Llama3](#groq)
-- [Cohere](#cohere)
-- [Azure](#azure)
-- [OpenRouter](#openrouter)
-- [Ollama](#ollama)
-- [Deepseek](#deepseek)
-- [OpenAI compatible APIs](#openai-compatible-apis)
-- [Other LLMs](#other-llms)
-- [Model warnings](#model-warnings)
-- [Editing format](#editing-format)
-- [Using a .env file](#using-a-env-file)
+- TOC
+{:toc}
 
 Aider uses the LiteLLM package to connect to LLM providers.
 The [LiteLLM provider docs](https://docs.litellm.ai/docs/providers)

@@ -7,8 +7,6 @@ nav_order: 1
 
 Aider lets you pair program with LLMs,
 to edit code in your local git repository.
-Aider edits the code in your local source files,
-and [git commits the changes](https://aider.chat/docs/faq.html#how-does-aider-use-git).
 Start a new project or work with an existing git repo.
 Aider works well with GPT-4o, Claude 3 Opus, GPT-3.5
 and can [connect to almost any LLM](https://aider.chat/docs/llms.html).
