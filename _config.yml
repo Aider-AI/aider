@@ -13,5 +13,18 @@ defaults:
       description: "A command-line chat tool for coding with GPT"
 
 exclude:
-  - tmp.benchmarks
-  - _posts/OLD
+  - "tmp*"
+  - "**/tmp*"
+  - OLD
+  - "**/OLD/**"
+  - aider
+  - benchmark
+  - build
+  - aider_chat.egg_info
+  - "dev-requirements.*"
+  - "requirements.*"
+  - docker
+  - scripts
+  - tests
+  - setup.py
+  - pytest.ini
