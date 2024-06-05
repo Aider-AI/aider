@@ -1,5 +1,8 @@
+#!/usr/bin/env python
+
 import argparse
 import os
+import sys
 
 import configargparse
 
@@ -447,3 +450,18 @@ def get_parser(default_config_files, git_root):
     )
 
     return parser
+
+
+def get_help():
+    os.environ["COLUMNS"] = "100"
+    parser = get_parser([], None)
+    return parser.format_help()
+
+
+def main():
+    print(get_help())
+
+
+if __name__ == "__main__":
+    status = main()
+    sys.exit(status)
