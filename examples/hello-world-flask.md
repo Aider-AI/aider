@@ -1,3 +1,7 @@
+---
+parent: Example chat transcripts
+nav_order: 1
+---
 
 # Create a simple flask app with aider
 

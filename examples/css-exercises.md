@@ -1,3 +1,6 @@
+---
+parent: Example chat transcripts
+---
 
 # Complete a css exercise with aider
 

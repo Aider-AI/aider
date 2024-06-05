@@ -1,3 +1,6 @@
+---
+parent: Example chat transcripts
+---
 
 # Build pong with aider and pygame.
 

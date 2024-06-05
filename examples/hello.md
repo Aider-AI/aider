@@ -1,3 +1,7 @@
+---
+parent: Example chat transcripts
+---
+
 # Hello aider!
 
 Here is the simplest possible "hello world" example of using aider:

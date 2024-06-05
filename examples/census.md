@@ -1,3 +1,6 @@
+---
+parent: Example chat transcripts
+---
 
 # Download, analyze and plot US Census data
 

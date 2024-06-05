@@ -1,3 +1,6 @@
+---
+parent: Example chat transcripts
+---
 
 # Honor the NO_COLOR environment variable
 

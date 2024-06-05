@@ -1,3 +1,6 @@
+---
+parent: Example chat transcripts
+---
 
 # Editing an asciinema cast file with aider
 

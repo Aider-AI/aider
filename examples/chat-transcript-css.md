@@ -1,3 +1,6 @@
+---
+parent: Example chat transcripts
+---
 
 # Improve css styling of chat transcripts
 

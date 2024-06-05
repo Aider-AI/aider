@@ -1,3 +1,7 @@
+---
+parent: Example chat transcripts
+nav_order: 4
+---
 
 # Create a "black box" test case
 

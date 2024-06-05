@@ -1,4 +1,9 @@
-# What's it like to code with aider?
+---
+title: Example chat transcripts
+has_children: true
+---
+
+# Example chat transcripts
 
 Below are some chat transcripts showing what it's like to code with aider.
 In the chats, you'll see a varity of coding tasks like generating new code, editing existing code, debugging, exploring unfamiliar code, etc.

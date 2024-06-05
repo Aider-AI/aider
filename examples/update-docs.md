@@ -1,3 +1,6 @@
+---
+parent: Example chat transcripts
+---
 # Automatically update docs with aider
 
 In this chat transcript, the user asks to automatically update the Usage docs based on the latest version of the main() function in the code.

@@ -1,3 +1,7 @@
+---
+parent: Example chat transcripts
+nav_order: 3
+---
 
 # A complex multi-file change, with debugging
 
