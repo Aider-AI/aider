@@ -12,7 +12,7 @@ Aider works well with GPT-4o, Claude 3 Opus, GPT-3.5
 and supports [connecting to almost any LLM](https://aider.chat/docs/llms.html).
 
 <p align="center">
-  <img src="assets/screencast.svg" alt="aider screencast">
+  <img src="website/assets/screencast.svg" alt="aider screencast">
 </p>
 
 <p align="center">
