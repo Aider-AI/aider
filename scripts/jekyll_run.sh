@@ -5,8 +5,8 @@ docker run \
        --rm \
        -v "$PWD:/site" \
        -p 4000:4000 \
+       -e HISTFILE=/site/.bash_history \
+       --entrypoint /bin/bash \
+       -it \
        my-jekyll-site
 
-#       -e HISTFILE=/srv/jekyll/.bash_history \
-#       --entrypoint /bin/bash \
-#       -it \
