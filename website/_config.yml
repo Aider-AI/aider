@@ -1,6 +1,5 @@
 theme: just-the-docs
 url: "https://aider.chat"
-source: website
 
 plugins:
   - jekyll-redirect-from
@@ -32,3 +31,5 @@ nav_external_links:
     url: "https://github.com/paul-gauthier/aider"
   - title: "Discord"
     url: "https://discord.gg/Tv2uQnR88V"
+
+repository: paul-gauthier/aider
