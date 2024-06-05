@@ -1,7 +1,3 @@
----
-title: Home
-nav_order: 1
----
 
 # Aider is AI pair programming in your terminal
 
