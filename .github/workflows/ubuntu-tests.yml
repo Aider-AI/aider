@@ -9,8 +9,6 @@ on:
   pull_request:
     paths-ignore:
       - 'website/**'
-    paths-ignore:
-      - 'website/**'
     branches:
       - main
 
