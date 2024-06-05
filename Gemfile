@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 gem 'jekyll'
-gem 'jekyll-theme-cayman'
+gem "just-the-docs", "0.8.2"
 gem 'jekyll-redirect-from'
 gem 'jekyll-sitemap'
 gem "webrick"
