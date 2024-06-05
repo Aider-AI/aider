@@ -17,6 +17,7 @@ exclude:
   - "**/tmp*"
   - OLD
   - "**/OLD/**"
+  - vendor
 
 aux_links:
   "GitHub":
