@@ -10,7 +10,7 @@ defaults:
       path: "README.md"
       type: "pages"
     values:
-      description: "A command-line chat tool for coding with GPT"
+      description: "aider is AI pair programming in your terminal"
 
 exclude:
   - "tmp*"
