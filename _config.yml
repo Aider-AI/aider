@@ -28,3 +28,11 @@ exclude:
   - tests
   - setup.py
   - pytest.ini
+
+
+aux_links:
+  "GitHub":
+    - "https://github.com/paul-gauthier/aider"
+  "Discord":
+    - "https://discord.gg/Tv2uQnR88V"
+    
