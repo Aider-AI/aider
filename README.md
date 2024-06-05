@@ -8,7 +8,7 @@ Aider works well with GPT-4o, Claude 3 Opus, GPT-3.5
 and can [connect to almost any LLM](https://aider.chat/docs/llms.html).
 
 <p align="center">
-  <img src="assets/screencast.svg" alt="aider screencast">
+  <img src="https://aider.chat/assets/screencast.svg" alt="aider screencast">
 </p>
 
 <p align="center">
@@ -45,7 +45,7 @@ $ aider --opus
 - Aider works well with GPT-4o, Claude 3 Opus, GPT-3.5 and supports [connecting to almost any LLM](https://aider.chat/docs/llms.html).
 - Request new features, changes, improvements, or bug fixes to your code.
 - Ask for new test cases, updated documentation or code refactors.
-- Paste in GitHub issue URLs and aider will try and solve them.
+- Paste in a GitHub issue url and aider will try to solve it.
 - Aider [automatically git commits changes](https://aider.chat/docs/faq.html#how-does-aider-use-git) These frequent, automatic commits provide a safety net. It's easy to undo changes or use standard git workflows to manage longer sequences of changes.
 - Aider can make coordinated changes across multiple files at once.
 - Aider uses a [map of your entire git repo](https://aider.chat/docs/repomap.html), which helps it work well in larger codebases.
@@ -66,6 +66,15 @@ So you can bounce back and forth between aider and your editor, to collaborative
 - [FAQ](https://aider.chat/docs/faq.html)
 - [Discord](https://discord.gg/Tv2uQnR88V)
 - [Blog](https://aider.chat/blog/)
+
+
+## State of the art
+
+Aider has the highest score on the challenging SWE Bench benchmark.
+
+<p align="center">
+  <img src="https://aider.chat/assets/swe_bench.svg" alt="aider swe bench">
+</p>
 
 
 ## Kind words from users
