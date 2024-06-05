@@ -2,6 +2,7 @@
 title: Drawing graphs with aider, GPT-4o and matplotlib
 excerpt: Use GPT-4o to draw graphs with matplotlib, including adjusting styles and making visual changes. You get the graph, but you also get the code in your repo.
 highlight_image: /assets/models-over-time.png
+nav_exclude: true
 ---
 
 ![LLM coding skill over time](/assets/models-over-time.svg)

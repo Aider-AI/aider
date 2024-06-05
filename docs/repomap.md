@@ -2,6 +2,7 @@
 title: Building a better repository map with tree sitter
 excerpt: Tree-sitter allows aider to build a repo map that better summarizes large code bases.
 highlight_image: /assets/robot-ast.png
+nav_exclude: true
 ---
 # Building a better repository map with tree sitter
 

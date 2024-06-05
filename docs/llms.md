@@ -1,3 +1,7 @@
+---
+title: Connecting to LLMs
+nav_order: 70
+---
 
 # Aider can connect to most LLMs
 

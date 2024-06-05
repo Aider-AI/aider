@@ -1,6 +1,8 @@
 ---
 title: Example chat transcripts
 has_children: true
+nav_order: 80
+has_toc: false
 ---
 
 # Example chat transcripts

@@ -1,17 +1,12 @@
+---
+nav_order: 60
+---
 
 # Frequently asked questions
+{: .no_toc }
 
-- [How does aider use git?](#how-does-aider-use-git)
-- [Can I use aider with other LLMs, local LLMs, etc?](https://aider.chat/docs/llms.html)
-- [Can I run aider in Google Colab?](#can-i-run-aider-in-google-colab)
-- [How can I run aider locally from source code?](#how-can-i-run-aider-locally-from-source-code)
-- [Can I script aider?](#can-i-script-aider)
-- [What code languages does aider support?](#what-code-languages-does-aider-support)
-- [How to use pipx to avoid python package conflicts?](#how-to-use-pipx-to-avoid-python-package-conflicts)
-- [Aider isn't editing my files?](#aider-isnt-editing-my-files)
-- [How can I add ALL the files to the chat?](#how-can-i-add-all-the-files-to-the-chat)
-- [Can I specify guidelines or conventions?](#can-i-specify-guidelines-or-conventions)
-- [Can I change the system prompts that aider uses?](#can-i-change-the-system-prompts-that-aider-uses)
+- TOC
+{:toc}
 
 ## How does aider use git?
 
@@ -63,7 +58,7 @@ pip install -r requirements.txt
 python -m aider.main
 ```
 
-# Can I script aider?
+## Can I script aider?
 
 You can script aider via the command line or python.
 

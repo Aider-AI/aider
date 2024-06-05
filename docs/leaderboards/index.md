@@ -1,5 +1,6 @@
 ---
 highlight_image: /assets/leaderboard.jpg
+nav_order: 900
 ---
 
 # Aider LLM Leaderboards

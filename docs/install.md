@@ -1,12 +1,29 @@
+---
+title: Installation
+nav_order: 20
+---
 
 # Installing aider
+{: .no_toc }
 
-- [Install git](#install-git)
-- [Get your API key](#get-your-api-key)
-- [Windows install](#windows-install)
-- [Mac/Linux install](#maclinux-install)
-- [Working with other LLMs](https://aider.chat/docs/llms.html)
-- [Tutorial videos](#tutorial-videos)
+- TOC
+{:toc}
+
+## Quick start
+
+```
+$ pip install aider-chat
+
+# To work with GPT-4o
+$ export OPENAI_API_KEY=your-key-goes-here
+$ aider 
+
+# To work with Claude 3 Opus:
+$ export ANTHROPIC_API_KEY=your-key-goes-here
+$ aider --opus
+```
+
+Or read on for more detailed installation instructions.
 
 ## Install git
 
@@ -53,17 +70,9 @@ $ aider --anthropic-api-key sk-xxx... --opus
 
 Aider works well with GPT-4o, Claude 3 Opus, GPT-3.5 and supports [connecting to almost any LLM](https://aider.chat/docs/llms.html).
 
-## Tutorial videos
-
-Here are a few tutorial videos:
-
-- [Aider : the production ready AI coding assistant you've been waiting for](https://www.youtube.com/watch?v=zddJofosJuM) -- Learn Code With JV
-- [Holy Grail: FREE Coding Assistant That Can Build From EXISTING CODE BASE](https://www.youtube.com/watch?v=df8afeb1FY8) -- Matthew Berman
-- [Aider: This AI Coder Can Create AND Update Git Codebases](https://www.youtube.com/watch?v=EqLyFT78Sig) -- Ian Wootten
-
 ## You are done!
 
-See the [usage instructions](/#usage) to start coding with aider.
+See the [usage instructions](https://aider.chat/docs/usage.html) to start coding with aider.
 
 ---
 
@@ -78,6 +87,7 @@ The steps below are completely optional.
 - [Install development versions of aider](#install-development-versions-of-aider-optional)
 
 ## Store your api key (optional)
+{: .no_toc }
 
 You can place your api key in an environment variable:
 
@@ -92,6 +102,7 @@ openai-api-key: sk-...
 ```
 
 ## Enable Playwright (optional)
+{: .no_toc }
 
 Aider supports adding web pages to the chat with the `/web <url>` command.
 When you add a url to the chat, aider fetches the page and scrapes its
@@ -116,6 +127,7 @@ for additional information.
 
 
 ## Enable voice coding (optional)
+{: .no_toc }
 
 Aider supports [coding with your voice](https://aider.chat/docs/voice.html)
 using the in-chat `/voice` command.
@@ -128,6 +140,7 @@ Installing PortAudio is completely optional, but can usually be accomplished lik
 - For Linux, do `sudo apt-get install libportaudio2`
 
 ## Add aider to your editor (optional)
+{: .no_toc }
 
 Other projects have integrated aider into some IDE/editors.
 It's not clear if they are tracking the latest
@@ -136,12 +149,14 @@ so it may be best to just run the latest
 aider in a terminal alongside your editor.
 
 ### NeoVim
+{: .no_toc }
 
 [joshuavial](https://github.com/joshuavial) provided a NeoVim plugin for aider:
 
 [https://github.com/joshuavial/aider.nvim](https://github.com/joshuavial/aider.nvim)
 
 ### VS Code
+{: .no_toc }
 
 joshuavial also confirmed that aider works inside a VS Code terminal window.
 Aider detects if it is running inside VSCode and turns off pretty/color output,
@@ -152,6 +167,7 @@ since the VSCode terminal doesn't seem to support it well.
 [https://marketplace.visualstudio.com/items?itemName=MattFlower.aider](https://marketplace.visualstudio.com/items?itemName=MattFlower.aider)
 
 ### Other editors
+{: .no_toc }
 
 If you are interested in creating an aider plugin for your favorite editor,
 please let me know by opening a
@@ -159,6 +175,7 @@ please let me know by opening a
 
 
 ## Install development versions of aider (optional)
+{: .no_toc }
 
 If you want to install the very latest development version of aider:
 

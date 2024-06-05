@@ -35,4 +35,11 @@ aux_links:
     - "https://github.com/paul-gauthier/aider"
   "Discord":
     - "https://discord.gg/Tv2uQnR88V"
-    
+  "Blog":
+    - "/blog"
+
+nav_external_links:
+  - title: "GitHub"
+    url: "https://github.com/paul-gauthier/aider"
+  - title: "Discord"
+    url: "https://discord.gg/Tv2uQnR88V"

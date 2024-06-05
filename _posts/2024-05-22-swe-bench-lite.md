@@ -2,6 +2,7 @@
 title: How aider scored SOTA 26.3% on SWE Bench Lite
 excerpt: Aider achieved this result mainly through its existing features that focus on static code analysis, reliable LLM code editing, and pragmatic UX for AI pair programming.
 highlight_image: /assets/swe_bench_lite.jpg
+nav_exclude: true
 ---
 
 # How aider scored SOTA 26.3% on SWE Bench Lite

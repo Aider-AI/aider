@@ -2,6 +2,7 @@
 title: Aider has written 7% of its own code
 excerpt: Aider has written 7% of its own code, via 600+ commits that inserted 4.8K and deleted 1.5K lines of code.
 highlight_image: /assets/self-assembly.jpg
+nav_exclude: true
 ---
 
 # Aider has written 7% of its own code

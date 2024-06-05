@@ -1,3 +1,6 @@
+---
+nav_exclude: true
+---
 
 # Shared aider chat transcript
 

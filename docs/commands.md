@@ -1,9 +1,19 @@
-# Commands
+---
+nav_order: 50
+---
+# In-chat commands
+
+
+## In-chat commands
+
+Aider supports commands from within the chat, which all start with `/`.
+Here are some of the most useful in-chat commands:
 
 - `/help`: Show help about all commands
 - `/exit`: Exit the application
 
-## context management
+## Context management
+
 - `/add <file>`: Add matching files to the chat session using glob patterns
 - `/drop <file>`: Remove matching files from the chat session
 - `/web <url>`: Add the contents of a webpage to the chat
@@ -11,18 +21,20 @@
 - `/ls`: List all known files and those included in the chat session
 - `/tokens`: Report on the number of tokens used by the current chat context
 
-## git
+## Git
+
 - `/undo`: Undo the last git commit if it was done by aider
 - `/diff`: Display the diff of the last aider commit
 - `/commit <message>`: Commit edits to the repo made outside the chat (commit message optional)
 - `/git <command>`: Run a git command
 
-## other
+## Other
+
 - `/run <command>`: Run a shell command and optionally add the output to the chat, or use `!<command>`.
 - `/test <command>`: Like run, but automatically adds the output to the chat on non-zero exit codes.
 - `/voice`: Speak to aider to [request code changes with your voice](https://aider.chat/docs/voice.html).
 
-# Prompt Toolkit defaults
+# Keybindings
 
 The interactive prompt is built with [prompt-toolkit](https://github.com/prompt-toolkit/python-prompt-toolkit) which provides a lot of Emacs and Vi-style keyboard. Some emacs bindings you may find useful are
 

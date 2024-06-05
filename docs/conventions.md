@@ -1,3 +1,6 @@
+---
+nav_order: 100
+---
 # Specifying coding conventions
 
 Sometimes you want GPT to be aware of certain coding guidelines,

@@ -1,5 +1,8 @@
+---
+nav_order: 100
+---
 
-# Run aider with docker (experimental)
+# Run aider with docker
 
 You can run aider via docker without doing any local installation, like this:
 
