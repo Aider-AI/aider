@@ -93,3 +93,9 @@
     position: relative;
     top: -0.5em;
 }
+
+
+.chat-transcript,
+div.highlighter-rouge pre.highlight, div.highlighter-rouge code {
+    line-height: 1.1;
+}
