@@ -14,4 +14,4 @@ defaults:
 
 exclude:
   - tmp.benchmarks
-  - "**/OLD"
+  - _posts/OLD
