@@ -1,20 +1,16 @@
 # Use the official Jekyll image from Docker Hub
-FROM jekyll/jekyll:latest
+FROM bretfisher/jekyll-serve
 
 # Set the working directory
-WORKDIR /srv/jekyll
+WORKDIR /site
 
 # Copy the current directory contents into the container at /srv/jekyll
-COPY . /srv/jekyll
+COPY . /site
 
 # Install any needed packages specified in Gemfile
-RUN bundle install
+RUN bundle install --retry 5 --jobs 20
 
-# Expose port 4000 to the host
-EXPOSE 4000
+ENTRYPOINT [ "docker-entrypoint.sh" ]
 
-# Health check to ensure the server is running
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s CMD curl -f http://localhost:4000 || exit 1
+CMD [ "bundle", "exec", "jekyll", "serve", "--force_polling", "-H", "0.0.0.0", "-P", "4000" ]
 
-# Run Jekyll server
-CMD ["jekyll", "serve", "--host", "0.0.0.0", "--port", "4000", "--verbose"]
