@@ -2,9 +2,13 @@ name: Docker Build Test
 
 on:
   push:
+    paths-ignore:
+      - 'website/**'
     branches:
       - main
   pull_request:
+    paths-ignore:
+      - 'website/**'
     paths-ignore:
       - 'website/**'
     branches:
