@@ -14,3 +14,4 @@ defaults:
 
 exclude:
   - tmp.benchmarks
+  - "**/OLD"
