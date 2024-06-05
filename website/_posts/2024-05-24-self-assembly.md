@@ -4,6 +4,9 @@ excerpt: Aider has written 7% of its own code, via 600+ commits that inserted 4.
 highlight_image: /assets/self-assembly.jpg
 nav_exclude: true
 ---
+{% if page.date %}
+<p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
+{% endif %}
 
 # Aider has written 7% of its own code
 

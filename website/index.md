@@ -74,10 +74,13 @@ So you can bounce back and forth between aider and your editor, to collaborative
 
 ## State of the art
 
-Aider has the highest score on the challenging SWE Bench benchmark.
+Aider has the highest score on the challenging
+[SWE Bench benchmark](https://aider.chat/2024/06/02/main-swe-bench.html).
 
 <p align="center">
-  <img src="https://aider.chat/assets/swe_bench.svg" alt="aider swe bench">
+   <a href="https://aider.chat/2024/06/02/main-swe-bench.html">
+     <img src="https://aider.chat/assets/swe_bench.svg" alt="aider swe bench">
+   </a>
 </p>
 
 

@@ -5,6 +5,10 @@ canonical_url: https://aider.chat/2023/11/06/benchmarks-speed-1106.html
 highlight_image: /assets/benchmarks-speed-1106.jpg
 nav_exclude: true
 ---
+{% if page.date %}
+<p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
+{% endif %}
+
 # Speed benchmarks of GPT-4 Turbo and gpt-3.5-turbo-1106
 
 <p class="post-date">{{ page.date | date: "%b %-d, %Y" }}</p>

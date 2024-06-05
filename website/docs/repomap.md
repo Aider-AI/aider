@@ -4,6 +4,10 @@ excerpt: Tree-sitter allows aider to build a repo map that better summarizes lar
 highlight_image: /assets/robot-ast.png
 nav_exclude: true
 ---
+{% if page.date %}
+<p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
+{% endif %}
+
 # Building a better repository map with tree sitter
 
 ![robot flowchat](/assets/robot-ast.png)

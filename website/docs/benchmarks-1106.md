@@ -4,6 +4,10 @@ excerpt: A quantitative comparison of the code editing capabilities of the new G
 highlight_image: /assets/benchmarks-1106.jpg
 nav_exclude: true
 ---
+{% if page.date %}
+<p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
+{% endif %}
+
 # Code editing benchmarks for OpenAI's "1106" models
 
 [![benchmark results](/assets/benchmarks-1106.svg)](https://aider.chat/assets/benchmarks-1106.svg)

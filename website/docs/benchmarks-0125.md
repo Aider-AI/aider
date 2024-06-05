@@ -4,6 +4,10 @@ excerpt: The new `gpt-4-0125-preview` model is quantiatively lazier at coding th
 highlight_image: /assets/benchmarks-0125.jpg
 nav_exclude: true
 ---
+{% if page.date %}
+<p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
+{% endif %}
+
 # The January GPT-4 Turbo is lazier than the last version
 
 [![benchmark results](/assets/benchmarks-0125.svg)](https://aider.chat/assets/benchmarks-0125.svg)

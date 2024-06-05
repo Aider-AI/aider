@@ -4,6 +4,9 @@ excerpt: Use GPT-4o to draw graphs with matplotlib, including adjusting styles a
 highlight_image: /assets/models-over-time.png
 nav_exclude: true
 ---
+{% if page.date %}
+<p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
+{% endif %}
 
 ![LLM coding skill over time](/assets/models-over-time.svg)
 

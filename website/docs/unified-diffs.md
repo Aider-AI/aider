@@ -4,6 +4,10 @@ excerpt: GPT-4 Turbo has a problem with lazy coding, which can be signiciantly i
 highlight_image: /assets/benchmarks-udiff.jpg
 nav_exclude: true
 ---
+{% if page.date %}
+<p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
+{% endif %}
+
 # Unified diffs make GPT-4 Turbo 3X less lazy
 
 ![robot flowchart](/assets/benchmarks-udiff.svg)

@@ -4,6 +4,10 @@ excerpt: Benchmarking GPT-3.5 and GPT-4 code editing skill using a new code edit
 highlight_image: /assets/benchmarks.jpg
 nav_exclude: true
 ---
+{% if page.date %}
+<p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
+{% endif %}
+
 # GPT code editing benchmarks
 
 [![benchmark results](/assets/benchmarks.svg)](https://aider.chat/assets/benchmarks.svg)

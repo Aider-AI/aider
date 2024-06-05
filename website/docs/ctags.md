@@ -4,6 +4,10 @@ excerpt: Using ctags to build a "repository map" to increase GPT-4's ability to 
 highlight_image: /assets/robot-flowchart.png
 nav_exclude: true
 ---
+{% if page.date %}
+<p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
+{% endif %}
+
 # Improving GPT-4's codebase understanding with ctags
 
 ![robot flowchat](/assets/robot-flowchart.png)

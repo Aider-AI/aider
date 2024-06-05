@@ -4,6 +4,9 @@ excerpt: Aider sets SOTA for the main SWE Bench, after recently setting SOTA for
 highlight_image: /assets/swe_bench.jpg
 nav_exclude: true
 ---
+{% if page.date %}
+<p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
+{% endif %}
 
 # Aider is SOTA for both SWE Bench and SWE Bench Lite
  
