@@ -23,6 +23,9 @@ class YamlHelpFormatter(argparse.HelpFormatter):
 """
 
     def _format_action(self, action):
+        if not action.option_strings:
+            return ""
+
         parts = [""]
 
         metavar = action.metavar
@@ -44,18 +47,22 @@ class YamlHelpFormatter(argparse.HelpFormatter):
         if action.help:
             parts.append(f"## {action.help}")
 
-        switch = action.dest
+        for switch in action.option_strings:
+            if switch.startswith("--"):
+                break
+        switch = switch.lstrip("-")
+
         if isinstance(action, argparse._StoreTrueAction):
             default = False
         elif isinstance(action, argparse._StoreConstAction):
-            default = action.const
+            default = False
 
         if default is False:
             default = "false"
         if default is True:
             default = "true"
 
-        if default is not None:
+        if default:
             parts.append(f"#{switch}: {default}\n")
         else:
             parts.append(f"#{switch}:\n")
