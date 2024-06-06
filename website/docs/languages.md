@@ -3,15 +3,25 @@ nav_order: 900
 ---
 # Supported languages
 
-Aider will work with most every popular code language,
-because the leading LLMs know most of them.
-Even if your language isn't listed below, aider may still be effective for you.
-The best thing to do is try!
+Aider supports pretty much all the popular coding languages.
+This is partly because top LLMs are fluent in most mainstream languages,
+and familiar with popular libraries, packages and frameworks.
 
-Aider uses a [map of your entire git repo](https://aider.chat/docs/repomap.html),
-which helps it work well in larger codebases.
-Aider uses tree-sitter to understand the language listed below,
-and can analyze them when creating the repo map.
+In fact, coding with aider is sometimes the most magical
+when you're working in a language that you
+are less familiar with.
+the LLM often knows the language better than you,
+and can generate all the boilerplate to get to the heart of your
+problem.
+The LLM will often solve your problem in an elegant way
+using a library or package that you weren't even aware of.
+
+Aider uses tree-sitter to do code analysis and help
+the LLM navigate larger code bases by producing
+a [repository map](https://aider.chat/docs/repomap.html).
+
+Aider can currently produce repository maps for most mainstream languages, listed below.
+But aider should work quite well for other languages, even without repo map support.
 
 <table>
 <tr>

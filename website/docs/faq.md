@@ -58,44 +58,6 @@ pip install -r requirements.txt
 python -m aider.main
 ```
 
-## What code languages does aider support?
-
-Aider supports pretty much all the popular coding languages.
-This is partly because top LLMs are fluent in most mainstream languages,
-and familiar with popular libraries, packages and frameworks.
-
-In fact, coding with aider is sometimes the most magical
-when you're working in a language that you
-are less familiar with.
-the LLM often knows the language better than you,
-and can generate all the boilerplate to get to the heart of your
-problem.
-The LLM will often solve your problem in an elegant way
-using a library or package that you weren't even aware of.
-
-Aider uses tree-sitter to do code analysis and help
-the LLM navigate larger code bases by producing
-a [repository map](https://aider.chat/docs/repomap.html).
-
-Aider can currently produce repository maps for most mainstream languages, listed below.
-But aider should work quite well for other languages, even without repo map support.
-
-- C
-- C#
-- C++
-- Emacs Lisp
-- Elixir
-- Elm
-- Go
-- Java
-- Javascript
-- OCaml
-- PHP
-- Python
-- QL
-- Ruby
-- Rust
-- Typescript
 
 ## How to use pipx to avoid python package conflicts?
 
@@ -175,17 +137,6 @@ If you still wish to add lots of files to the chat, you can:
 - Use a wildcard with the in-chat `/add` command: `/add src/*.py`
 - Give the `/add` command a directory name and it will recurisvely add every file under that dir: `/add src`
 
-## Can I specify guidelines or conventions?
-
-Sometimes you want the LLM to be aware of certain coding guidelines,
-like whether to provide type hints, which libraries or packages
-to prefer, etc.
-
-Just put any extra instructions in a file
-like `CONVENTIONS.md` and then add it to the chat.
-
-For more details, see this documentation on
-[using a conventions file with aider](https://aider.chat/docs/conventions.html).
 
 ## Can I change the system prompts that aider uses?
 
