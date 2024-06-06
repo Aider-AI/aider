@@ -2,7 +2,7 @@
 title: Repository map
 excerpt: Tree-sitter allows aider to build a repo map that better summarizes large code bases.
 highlight_image: /assets/robot-ast.png
-nav_order: 95
+nav_order: 900
 ---
 {% if page.date %}
 <p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
