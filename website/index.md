@@ -49,7 +49,7 @@ $ aider --opus
 
 - Chat with aider about your code: `aider <file1> <file2> ...`
 - Ask for changes:
-  - New features, changes, improvements, or bug fixes to your code.
+  - New features, changes, improvements, or bug fixes.
   - New test cases, updated documentation or code refactors.
   - Paste in a GitHub issue url that needs to be solved.
 - Aider will edit your files to complete your request.
