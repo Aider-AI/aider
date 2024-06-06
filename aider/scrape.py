@@ -19,7 +19,7 @@ For better web scraping, install Playwright chromium with this command in your t
 
     playwright install --with-deps chromium
 
-See https://aider.chat/docs/install.html#enable-playwright-optional for more info.
+See https://aider.chat/docs/install/optional.html#enable-playwright for more info.
 """
 
 

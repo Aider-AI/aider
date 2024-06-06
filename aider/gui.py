@@ -163,7 +163,7 @@ class GUI:
             with st.popover("Create a git repo to track changes"):
                 st.write(
                     "Aider works best when your code is stored in a git repo.  \n[See the FAQ"
-                    " for more info](https://aider.chat/docs/faq.html#how-does-aider-use-git)"
+                    " for more info](https://aider.chat/docs/git.html)"
                 )
                 self.button("Create git repo", key=random.random(), help="?")
 
@@ -515,7 +515,7 @@ def gui_main():
         page_title="Aider",
         page_icon="https://aider.chat/assets/favicon-32x32.png",
         menu_items={
-            "Get Help": "https://aider.chat/docs/faq.html",
+            "Get Help": "https://aider.chat/",
             "Report a bug": "https://github.com/paul-gauthier/aider/issues",
             "About": "# Aider\nAI pair programming in your browser.",
         },

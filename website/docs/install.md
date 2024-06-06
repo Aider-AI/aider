@@ -20,8 +20,11 @@ $ export ANTHROPIC_API_KEY=your-key-goes-here
 $ aider --opus
 ```
 
-Or see the full
-[installation instructions](/docs/install/install.html)
-for more details.
+Or see 
+[full installation instructions](/docs/install/install.html)
+for more details,
+or the
+[usage instructions](https://aider.chat/docs/usage.html) to start coding with aider.
+
 
 

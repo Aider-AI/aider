@@ -471,7 +471,7 @@ def sanity_check_model(io, model):
                     io.tool_error(f"- {m} ({fq})")
 
     if show:
-        io.tool_error("For more info see https://aider.chat/docs/llms.html#model-warnings")
+        io.tool_error("For more info see https://aider.chat/docs/llms/warnings.html")
 
 
 def fuzzy_match_models(name):

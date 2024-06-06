@@ -1,12 +1,14 @@
 ---
-parent: Connecting to LLMs
+parent: Configuration
 nav_order: 900
 ---
 
-# Using a .env file
+# Storing LLM params in .env 
 
 You can use a `.env` file to store various keys and other settings for the
 models you use with aider.
+You currently can not set general aider options
+in the `.env` file, only LLM environment variables.
 
 Aider will look for a `.env` file in the
 root of your git repo or in the current directory.

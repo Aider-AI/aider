@@ -11,6 +11,6 @@ fi
 
 cog $ARG \
     website/index.md \
-    website/docs/usage.md \
     website/docs/commands.md \
-    website/docs/languages.md
+    website/docs/languages.md \
+    website/docs/options_ref.md
