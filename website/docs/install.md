@@ -6,6 +6,8 @@ nav_order: 20
 
 # Quick start
 
+You can get started quickly like this:
+
 ```
 $ pip install aider-chat
 
@@ -18,7 +20,8 @@ $ export ANTHROPIC_API_KEY=your-key-goes-here
 $ aider --opus
 ```
 
-Or read the detailed [installation instructions](/docs/install/install.html).
-
+Or see the full
+[installation instructions](/docs/install/install.html)
+for more details.
 
 

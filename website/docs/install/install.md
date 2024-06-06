@@ -56,5 +56,6 @@ Aider works well with GPT-4o, Claude 3 Opus, GPT-3.5 and supports [connecting to
 
 ## You are done!
 
+There are some [optional install steps](/docs/install/optional.html) you could consider.
 See the [usage instructions](https://aider.chat/docs/usage.html) to start coding with aider.
 

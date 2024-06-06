@@ -93,12 +93,18 @@ please let me know by opening a
 [GitHub issue](https://github.com/paul-gauthier/aider/issues).
 
 
-## Install development versions of aider 
+## Install the development version of aider 
 
-If you want to install the very latest development version of aider:
+If you want the very latest development version of aider
+you can install directly from GitHub:
 
-* GitHub hosts the latest version, which is under active development:
-  * `python -m pip install git+https://github.com/paul-gauthier/aider.git`
-* If you've git cloned the aider repository already, you can install "live" from your local copy. This is mostly useful if you are developing aider and want your current modifications to take effect immediately.
-  * `python -m pip install -e .`
+```
+python -m pip install --upgrade git+https://github.com/paul-gauthier/aider.git
+```
+
+If you've git cloned the aider repository already, you can install "live" from your local copy. This is mostly useful if you are developing aider and want your current modifications to take effect immediately.
+
+```
+python -m pip install -e .
+```
 
