@@ -7,7 +7,7 @@ import sys
 import configargparse
 
 from aider import __version__, models
-from aider.args_formatter import MarkdownHelpFormatter
+from aider.args_formatter import MarkdownHelpFormatter, YamlHelpFormatter
 
 from .dump import dump  # noqa: F401
 
@@ -463,6 +463,20 @@ def get_help():
     parser.parse_known_args()
 
     parser.formatter_class = MarkdownHelpFormatter
+
+    return argparse.ArgumentParser.format_help(parser)
+    return parser.format_help()
+
+
+def get_sample_yaml():
+    os.environ["COLUMNS"] = "100"
+    sys.argv = ["aider"]
+    parser = get_parser([], None)
+
+    # This instantiates all the action.env_var values
+    parser.parse_known_args()
+
+    parser.formatter_class = YamlHelpFormatter
 
     return argparse.ArgumentParser.format_help(parser)
     return parser.format_help()

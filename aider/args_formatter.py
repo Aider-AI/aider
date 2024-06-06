@@ -3,6 +3,53 @@ import argparse
 from .dump import dump  # noqa: F401
 
 
+class YamlHelpFormatter(argparse.HelpFormatter):
+    def start_section(self, heading):
+        res = "\n\n"
+        res += "#" * (len(heading) + 2)
+        res += f"\n# {heading}"
+        super().start_section(res)
+
+    def _format_usage(self, usage, actions, groups, prefix):
+        return ""
+
+    def _format_text(self, text):
+        return """
+##########################################################
+# Sample .aider.conf.yaml
+# Place in your home dir, or at the root of your git repo.
+##########################################################
+
+"""
+
+    def _format_action(self, action):
+        parts = [""]
+
+        metavar = action.metavar
+        if not metavar and isinstance(action, argparse._StoreAction):
+            metavar = "VALUE"
+
+        if action.default not in (argparse.SUPPRESS, None):
+            default = action.default
+        else:
+            default = False
+
+        default = "true" if default else "false"
+
+        if action.help:
+            parts.append(f"# {action.help}")
+
+        parts.append(f"# {action.dest}: {default}\n")
+
+        return "\n".join(parts) + "\n"
+
+    def _format_action_invocation(self, action):
+        return ""
+
+    def _format_args(self, action, default_metavar):
+        return ""
+
+
 class MarkdownHelpFormatter(argparse.HelpFormatter):
     def start_section(self, heading):
         super().start_section(f"## {heading}")

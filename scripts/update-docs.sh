@@ -13,4 +13,5 @@ cog $ARG \
     website/index.md \
     website/docs/commands.md \
     website/docs/languages.md \
-    website/docs/options_ref.md
+    website/docs/options_ref.md \
+    website/docs/aider_conf.md
