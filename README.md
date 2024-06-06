@@ -44,8 +44,8 @@ $ aider --opus
   - New features, changes, improvements, or bug fixes to your code.
   - New test cases, updated documentation or code refactors.
   - Paste in a GitHub issue url that needs to be solved.
-- Aider will edit your files.
-- Aider [automatically git commits changes](https://aider.chat/docs/faq.html#how-does-aider-use-git) with a sensible commit message.
+- Aider will edit your files to complete your request.
+- Aider [automatically git commits](https://aider.chat/docs/faq.html#how-does-aider-use-git) changes with a sensible commit message.
 - Aider works with [most popular languages](https://aider.chat/docs/languages.html): python, javascript, typescript, php, html, css, and more...
 - Aider works well with GPT-4o, Claude 3 Opus, GPT-3.5 and supports [connecting to many LLMs](https://aider.chat/docs/llms.html).
 - Aider can make coordinated changes across multiple files at once.
@@ -55,6 +55,7 @@ Aider will notice and always use the latest version.
 So you can bounce back and forth between aider and your editor, to collaboratively code with AI.
 - Images can be added to the chat (GPT-4o, GPT-4 Turbo, etc).
 - URLs can be added to the chat and aider will read their content.
+- [Code with your voice](https://aider.chat/docs/voice.html) using speech recognition.
 
 
 ## Documentation
