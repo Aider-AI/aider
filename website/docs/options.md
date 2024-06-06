@@ -1,21 +1,39 @@
 ---
-title: Configuration & options
 nav_order: 800
 ---
 
-# Command line reference
+# Configuration & options
 
 Aider has many options which can be set with
 command line switches.
 
 Most command line switches can also be set in an `.aider.conf.yml` file
 which can be placed in your home directory or at the root of
-your git repo.
-A command line switch like `--option-foo VALUE` can be
-added to the yaml file as a line like `option-foo: VALUE`.
-
-Many switches can also be set via environment variables like `AIDER_OPTION_FOO`,
+your git repo. 
+Ot via environment variables like `AIDER_OPTION_FOO`,
 as noted in the help text below.
+
+Here are 3 equivalent ways of setting an option. First, via a command line switch:
+
+```
+$ aider --dark-mode
+```
+
+Or, via an env variable:
+
+```
+export AIDER_DARK_MODE=true
+```
+
+Or in the `.aider.conf.yml` file:
+
+```yaml
+dark-mode: true
+```
+
+## Command line reference
+
+Use `aider --help` to see all the available options.
 
 <!--[[[cog
 from aider.args import get_help
