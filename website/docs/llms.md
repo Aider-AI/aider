@@ -48,31 +48,3 @@ this is usually because the model isn't capable of properly
 returning "code edits".
 Models weaker than GPT 3.5 may have problems working well with aider.
 
-# Using a .env file
-
-Aider will read environment variables from a `.env` file in
-root of your git repo or in current directory.
-You can give it an explicit file to load with the `--env-file <filename>` parameter.
-
-You can use a `.env` file to store various keys and other settings for the
-models you use with aider.
-
-Here is an example `.env` file:
-
-```
-OPENAI_API_KEY=<key>
-ANTHROPIC_API_KEY=<key>
-GROQ_API_KEY=<key>
-OPENROUTER_API_KEY=<key>
-
-AZURE_API_KEY=<key>
-AZURE_API_VERSION=2023-05-15
-AZURE_API_BASE=https://example-endpoint.openai.azure.com
-
-OLLAMA_API_BASE=http://127.0.0.1:11434
-```
-
-
-
-
-
