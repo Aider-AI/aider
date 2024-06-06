@@ -49,9 +49,9 @@ for more details.**
 
 - Chat with aider about your code: `aider <file1> <file2> ...`
 - Ask for changes:
-  - New features, changes, improvements, or bug fixes.
-  - New test cases, updated documentation or code refactors.
-  - Paste in a GitHub issue url that needs to be solved.
+  - New features, changes, test cases, improvements.
+  - Bug fixes, updated docs or code refactors.
+  - Paste in a GitHub issue that needs to be solved.
 - Aider will edit your files to complete your request.
 - Aider [automatically git commits](https://aider.chat/docs/faq.html#how-does-aider-use-git) changes with a sensible commit message.
 - Aider works with [most popular languages](https://aider.chat/docs/languages.html): python, javascript, typescript, php, html, css, and more...
