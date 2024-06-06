@@ -8,32 +8,6 @@ nav_order: 60
 - TOC
 {:toc}
 
-## How does aider use git?
-
-Aider works best with code that is part of a git repo.
-Aider is tightly integrated with git, which makes it easy to:
-
-  - Use git to undo any aider changes that you don't like
-  - Go back in the git history to review the changes that aider made to your code
-  - Manage a series of aider's changes on a git branch
-
-Aider specifically uses git in these ways:
-
-  - It asks to create a git repo if you launch it in a directory without one.
-  - Whenever aider edits a file, it commits those changes with a descriptive commit message. This makes it easy to undo or review aider's changes.
-  - Aider takes special care before editing files that already have uncommitted changes (dirty files). Aider will first commit any preexisting changes with a descriptive commit message. This keeps your edits separate from aider's edits, and makes sure you never lose your work if aider makes an inappropriate change.
-
-Aider also allows you to use in-chat commands to `/diff` or `/undo` the last change.
-To do more complex management of your git history, you cat use raw `git` commands,
-either by using `/git` within the chat, or with standard git tools outside of aider.
-
-While it is not recommended, you can disable aider's use of git in a few ways:
-
-  - `--no-auto-commits` will stop aider from git committing each of its changes.
-  - `--no-dirty-commits` will stop aider from committing dirty files before applying its edits.
-  - `--no-git` will completely stop aider from using git on your files. You should ensure you are keeping sensible backups of the files you are working with.
-
-
 ## Can I run aider in Google Colab?
 
 User [imabutahersiddik](https://github.com/imabutahersiddik)
@@ -59,28 +33,6 @@ python -m aider.main
 ```
 
 
-## How to use pipx to avoid python package conflicts?
-
-If you are using aider to work on a python project, sometimes your project will require
-specific versions of python packages which conflict with the versions that aider
-requires.
-If this happens, the `pip install` command may return errors like these:
-
-```
-aider-chat 0.23.0 requires somepackage==X.Y.Z, but you have somepackage U.W.V which is incompatible.
-```
-
-You can avoid this problem by installing aider using `pipx`,
-which will install it globally on your system
-within its own python environment.
-This way you can use aider to work on any python project,
-even if that project has conflicting dependencies.
-
-Install [pipx](https://pipx.pypa.io/stable/) then just do:
-
-```
-pipx install aider-chat
-```
 
 ## Aider isn't editing my files?
 
