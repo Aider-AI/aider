@@ -19,7 +19,7 @@ Your voice coding instructions will be transcribed
 and sent to GPT, as if you had  typed them into
 the aider chat session.
 
-See the [installation instructions](https://aider.chat/docs/install.html#install-portaudio-optional) for
+See the [installation instructions](https://aider.chat/docs/install/optional.html#enable-voice-coding) for
 information on how to enable the `/voice` command.
 
 <br/>

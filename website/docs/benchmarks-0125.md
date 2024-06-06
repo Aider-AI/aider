@@ -28,7 +28,7 @@ the new `gpt-4-0125-preview` model seems lazier
 than the November `gpt-4-1106-preview` model:
 
 - It gets worse benchmark scores when using the [unified diffs](https://aider.chat/docs/unified-diffs.html) code editing format.
-- Using aider's older [SEARCH/REPLACE block](https://github.com/paul-gauthier/aider/blob/9033be74bf74ae70459013e54b2ae6a97c47c2e6/aider/coders/editblock_prompts.py#L75-L80) editing format, the new January model outperforms the older November model. But it still performs worse than both models using unified diffs.
+- Using aider's older SEARCH/REPLACE block editing format, the new January model outperforms the older November model. But it still performs worse than both models using unified diffs.
 
 ## Related reports
 

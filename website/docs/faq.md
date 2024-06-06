@@ -128,4 +128,4 @@ When experimenting with coder backends, it helps to run aider with `--verbose --
 all the raw information being sent to/from the LLM in the conversation.
 
 You can also refer to the
-[instructions for installing a development version of aider](https://aider.chat/docs/install.html#install-development-versions-of-aider-optional).
+[instructions for installing a development version of aider](https://aider.chat/docs/install/optional.html#install-the-development-version-of-aider).

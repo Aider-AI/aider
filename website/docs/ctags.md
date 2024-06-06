@@ -61,7 +61,7 @@ To code with GPT-4 using the techniques discussed here:
 
 
   - Install [aider](https://aider.chat/docs/install.html).
-  - Install [universal ctags](https://aider.chat/docs/install.html#install-universal-ctags-optional).
+  - Install universal ctags.
   - Run `aider` inside your repo, and it should say "Repo-map: universal-ctags using 1024 tokens".
 
 ## The problem: code context
@@ -246,5 +246,5 @@ specific language(s) of interest.
 To use this experimental repo map feature:
 
   - Install [aider](https://aider.chat/docs/install.html).
-  - Install [universal ctags](https://aider.chat/docs/install.html#install-universal-ctags-optional).
+  - Install ctags.
   - Run `aider` inside your repo, and it should say "Repo-map: universal-ctags using 1024 tokens".

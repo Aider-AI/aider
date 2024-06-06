@@ -307,7 +307,7 @@ radically increases the number of hunks which fail to apply.
 ## Refactoring benchmark
 
 Aider has long used a
-[benchmark suite based on 133 Exercism python exercises]().
+[benchmark suite based on 133 Exercism python exercises](https://aider.chat/2023/07/02/benchmarks.html).
 But these are mostly small coding problems,
 usually requiring only a few dozen lines of code.
 GPT-4 Turbo is typically only lazy on 2-3 of these exercises:
