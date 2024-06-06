@@ -3,7 +3,7 @@ parent: Usage
 nav_order: 25
 ---
 
-## Tips
+# Tips
 
 - Think about which files need to be edited to make your change and add them to the chat.
 Aider can help the LLM figure out which files to edit all by itself, but the most efficient approach is to add the needed files to the chat yourself.

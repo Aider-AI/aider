@@ -4,9 +4,6 @@ nav_order: 50
 ---
 # In-chat commands
 
-
-## In-chat commands
-
 Aider supports commands from within the chat, which all start with `/`.
 
 <!--[[[cog

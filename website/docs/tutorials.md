@@ -3,7 +3,7 @@ parent: Usage
 nav_order: 75
 ---
 
-## Tutorial videos
+# Tutorial videos
 
 Here are a few tutorial videos made by aider users:
 

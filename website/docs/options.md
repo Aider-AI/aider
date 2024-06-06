@@ -3,7 +3,7 @@ parent: Configuration
 nav_order: 10
 ---
 
-## Options reference
+# Options reference
 
 You can use `aider --help` to see all the available options,
 or review them below.
