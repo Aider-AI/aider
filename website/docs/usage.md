@@ -185,9 +185,9 @@ Other Settings:
                         cwd or home directory)
   --gui, --browser      Run aider in your browser
 
-Args that start with '--' can also be set in a config file (specified via -c). The config file
-uses YAML syntax and must represent a YAML 'mapping' (for details, see
-http://learn.getgrav.org/advanced/yaml). In general, command-line values override environment
-variables which override config file values which override defaults.
+Args that start with '--' can also be set in a config file (specified via -c). Config file syntax
+allows: key=value, flag=true, stuff=[a,b,c] (for details, see syntax at https://goo.gl/R74nmi). In
+general, command-line values override environment variables which override config file values
+which override defaults.
 ```
 <!--[[[end]]]-->
