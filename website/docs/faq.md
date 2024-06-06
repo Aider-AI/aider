@@ -8,11 +8,33 @@ nav_order: 60
 - TOC
 {:toc}
 
-## Can I run aider in Google Colab?
+## How can I add ALL the files to the chat?
 
-User [imabutahersiddik](https://github.com/imabutahersiddik)
-has provided this
-[Colab notebook](https://colab.research.google.com/drive/1J9XynhrCqekPL5PR6olHP6eE--rnnjS9?usp=sharing).
+People regularly ask about how to add **many or all of their repo's files** to the chat.
+This is probably not a good idea and will likely do more harm than good.
+
+The best approach is think about which files need to be changed to accomplish
+the task you are working on. Just add those files to the chat.
+
+Usually when people want to add "all the files" it's because they think it
+will give the LLM helpful context about the overall code base.
+Aider will automatically give the LLM a bunch of additional context about
+the rest of your git repo.
+It does this by analyzing your entire codebase in light of the
+current chat to build a compact
+[repository map](https://aider.chat/2023/10/22/repomap.html).
+
+Adding a bunch of files that are mostly irrelevant to the
+task at hand will often distract or confuse the LLM.
+The LLM will give worse coding results, and sometimese even fail to correctly edit files.
+Addings extra files will also increase the token costs on your OpenAI invoice.
+
+Again, it's usually best to just add the files to the chat that will need to be modified.
+If you still wish to add lots of files to the chat, you can:
+
+- Use a wildcard when you launch aider: `aider src/*.py`
+- Use a wildcard with the in-chat `/add` command: `/add src/*.py`
+- Give the `/add` command a directory name and it will recurisvely add every file under that dir: `/add src`
 
 ## How can I run aider locally from source code?
 
@@ -32,6 +54,13 @@ pip install -r requirements.txt
 python -m aider.main
 ```
 
+
+
+## Can I run aider in Google Colab?
+
+User [imabutahersiddik](https://github.com/imabutahersiddik)
+has provided this
+[Colab notebook](https://colab.research.google.com/drive/1J9XynhrCqekPL5PR6olHP6eE--rnnjS9?usp=sharing).
 
 
 ## Aider isn't editing my files?
@@ -60,34 +89,6 @@ In these cases, here are some things you might try:
   - Use `/drop` to remove files from the chat session which aren't needed for the task at hand. This will reduce distractions and may help GPT produce properly formatted edits.
   - Use `/clear` to remove the conversation history, again to help GPT focus.
   - Try the a different LLM.
-
-## How can I add ALL the files to the chat?
-
-People regularly ask about how to add **many or all of their repo's files** to the chat.
-This is probably not a good idea and will likely do more harm than good.
-
-The best approach is think about which files need to be changed to accomplish
-the task you are working on. Just add those files to the chat.
-
-Usually when people want to add "all the files" it's because they think it
-will give the LLM helpful context about the overall code base.
-Aider will automatically give the LLM a bunch of additional context about
-the rest of your git repo.
-It does this by analyzing your entire codebase in light of the
-current chat to build a compact
-[repository map](https://aider.chat/2023/10/22/repomap.html).
-
-Adding a bunch of files that are mostly irrelevant to the
-task at hand will often distract or confuse the LLM.
-The LLM will give worse coding results, and sometimese even fail to correctly edit files.
-Addings extra files will also increase the token costs on your OpenAI invoice.
-
-Again, it's usually best to just add the files to the chat that will need to be modified.
-If you still wish to add lots of files to the chat, you can:
-
-- Use a wildcard when you launch aider: `aider src/*.py`
-- Use a wildcard with the in-chat `/add` command: `/add src/*.py`
-- Give the `/add` command a directory name and it will recurisvely add every file under that dir: `/add src`
 
 
 ## Can I change the system prompts that aider uses?
