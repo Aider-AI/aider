@@ -483,7 +483,7 @@ def get_sample_yaml():
 
 
 def main():
-    print(get_help())
+    print(get_sample_yaml())
 
 
 if __name__ == "__main__":

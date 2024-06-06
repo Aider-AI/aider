@@ -6,7 +6,7 @@ from .dump import dump  # noqa: F401
 class YamlHelpFormatter(argparse.HelpFormatter):
     def start_section(self, heading):
         res = "\n\n"
-        res += "#" * (len(heading) + 2)
+        res += "#" * (len(heading) + 3)
         res += f"\n# {heading}"
         super().start_section(res)
 
@@ -29,17 +29,19 @@ class YamlHelpFormatter(argparse.HelpFormatter):
         if not metavar and isinstance(action, argparse._StoreAction):
             metavar = "VALUE"
 
-        if action.default not in (argparse.SUPPRESS, None):
+        default = action.default
+        if isinstance(default, list) and not default:
+            default = ""
+        elif action.default not in (argparse.SUPPRESS, None):
             default = action.default
+            default = "true" if default else "false"
         else:
-            default = False
-
-        default = "true" if default else "false"
+            default = ""
 
         if action.help:
-            parts.append(f"# {action.help}")
+            parts.append(f"## {action.help}")
 
-        parts.append(f"# {action.dest}: {default}\n")
+        parts.append(f"#{action.dest}: {default}\n")
 
         return "\n".join(parts) + "\n"
 
