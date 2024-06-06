@@ -3,7 +3,7 @@ parent: Configuration
 nav_order: 15
 ---
 
-## Using `.aider.conf.yml`
+# YAML config file
 
 Most options can also be set in an `.aider.conf.yml` file
 which can be placed in your home directory or at the root of
