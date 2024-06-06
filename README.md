@@ -4,7 +4,7 @@
 Aider lets you pair program with LLMs,
 to edit code in your local git repository.
 Start a new project or work with an existing git repo.
-Aider works well with GPT-4o, Claude 3 Opus, GPT-3.5
+Aider works best with GPT-4o, Claude 3 Opus
 and can [connect to almost any LLM](https://aider.chat/docs/llms.html).
 
 <p align="center">
@@ -47,7 +47,8 @@ $ aider --opus
 - Aider will edit your files to complete your request.
 - Aider [automatically git commits](https://aider.chat/docs/faq.html#how-does-aider-use-git) changes with a sensible commit message.
 - Aider works with [most popular languages](https://aider.chat/docs/languages.html): python, javascript, typescript, php, html, css, and more...
-- Aider works well with GPT-4o, Claude 3 Opus, GPT-3.5 and supports [connecting to many LLMs](https://aider.chat/docs/llms.html).
+- Aider works best with GPT-4o, Claude 3 Opus
+and can [connect to almost any LLM](https://aider.chat/docs/llms.html).
 - Aider can make coordinated changes across multiple files at once.
 - Aider uses a [map of your entire git repo](https://aider.chat/docs/repomap.html), which helps it work well in larger codebases.
 - You can also edit files in your editor while chatting with aider.
@@ -72,8 +73,10 @@ So you can bounce back and forth between aider and your editor, to collaborative
 
 ## State of the art
 
-Aider has the highest score on the challenging
-[SWE Bench benchmark](https://aider.chat/2024/06/02/main-swe-bench.html).
+Aider has the
+[highest score on SWE Bench](https://aider.chat/2024/06/02/main-swe-bench.html),
+a challenging sofrware engineering benchmark where aider
+solves GitHub issues.
 
 <p align="center">
    <a href="https://aider.chat/2024/06/02/main-swe-bench.html">
