@@ -27,10 +27,7 @@ and can [connect to almost any LLM](https://aider.chat/docs/llms.html).
 
 ## Getting started
 
-See the
-[installation instructions](https://aider.chat/docs/install.html)
-for more details, but you can
-get started quickly like this:
+You can get started quickly like this:
 
 ```
 $ pip install aider-chat
@@ -44,6 +41,11 @@ $ export ANTHROPIC_API_KEY=your-key-goes-here
 $ aider --opus
 ```
 
+**See the
+[installation instructions](https://aider.chat/docs/install.html)
+and
+[documentation](https://aider.chat/docs/usage.html)
+for more details.**
 
 ## Features
 
@@ -67,6 +69,20 @@ So you can bounce back and forth between aider and your editor, to collaborative
 - [Code with your voice](https://aider.chat/docs/voice.html) using speech recognition.
 
 
+## State of the art
+
+Aider has the
+[top score on SWE Bench](https://aider.chat/2024/06/02/main-swe-bench.html).
+SWE Bench is a challenging software engineering benchmark where aider
+solved *real* GitHub issues from popular open source
+projects like django, scikitlearn, matplotlib, etc.
+
+<p align="center">
+   <a href="https://aider.chat/2024/06/02/main-swe-bench.html">
+     <img src="https://aider.chat/assets/swe_bench.svg" alt="aider swe bench">
+   </a>
+</p>
+
 ## Documentation
 
 - [Installation](https://aider.chat/docs/install.html)
@@ -77,20 +93,6 @@ So you can bounce back and forth between aider and your editor, to collaborative
 - [FAQ](https://aider.chat/docs/faq.html)
 - [Discord](https://discord.gg/Tv2uQnR88V)
 - [Blog](https://aider.chat/blog/)
-
-
-## State of the art
-
-Aider has the
-[highest score on SWE Bench](https://aider.chat/2024/06/02/main-swe-bench.html),
-a challenging software engineering benchmark where aider
-solves GitHub issues.
-
-<p align="center">
-   <a href="https://aider.chat/2024/06/02/main-swe-bench.html">
-     <img src="https://aider.chat/assets/swe_bench.svg" alt="aider swe bench">
-   </a>
-</p>
 
 
 ## Kind words from users
