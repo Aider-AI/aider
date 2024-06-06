@@ -41,14 +41,11 @@ Aliases:
 
 ## Main:
 
-### `--files FILE`
-files to edit with an LLM (optional)  
-
-### `--openai_api_key OPENAI_API_KEY`
+### `--openai-api-key OPENAI_API_KEY`
 Specify the OpenAI API key  
 Environment variable: `OPENAI_API_KEY`  
 
-### `--anthropic_api_key ANTHROPIC_API_KEY`
+### `--anthropic-api-key ANTHROPIC_API_KEY`
 Specify the OpenAI API key  
 Environment variable: `ANTHROPIC_API_KEY`  
 
@@ -57,30 +54,30 @@ Specify the model to use for the main chat (default: gpt-4o)
 Default: gpt-4o  
 Environment variable: `AIDER_MODEL`  
 
-### `--model`
+### `--opus`
 Use claude-3-opus-20240229 model for the main chat  
 Environment variable: `AIDER_OPUS`  
 
-### `--model`
+### `--sonnet`
 Use claude-3-sonnet-20240229 model for the main chat  
 Environment variable: `AIDER_SONNET`  
 
-### `--model`
+### `--4`
 Use gpt-4-0613 model for the main chat  
 Environment variable: `AIDER_4`  
 Aliases:
   - `--4`
   - `-4`
 
-### `--model`
+### `--4o`
 Use gpt-4o model for the main chat  
 Environment variable: `AIDER_4O`  
 
-### `--model`
+### `--4-turbo`
 Use gpt-4-1106-preview model for the main chat  
 Environment variable: `AIDER_4_TURBO`  
 
-### `--model`
+### `--35turbo`
 Use gpt-3.5-turbo model for the main chat  
 Environment variable: `AIDER_35TURBO`  
 Aliases:
@@ -95,35 +92,35 @@ Aliases:
 List known models which match the (partial) MODEL name  
 Environment variable: `AIDER_MODELS`  
 
-### `--openai_api_base OPENAI_API_BASE`
+### `--openai-api-base OPENAI_API_BASE`
 Specify the api base url  
 Environment variable: `OPENAI_API_BASE`  
 
-### `--openai_api_type OPENAI_API_TYPE`
+### `--openai-api-type OPENAI_API_TYPE`
 Specify the api_type  
 Environment variable: `OPENAI_API_TYPE`  
 
-### `--openai_api_version OPENAI_API_VERSION`
+### `--openai-api-version OPENAI_API_VERSION`
 Specify the api_version  
 Environment variable: `OPENAI_API_VERSION`  
 
-### `--openai_api_deployment_id OPENAI_API_DEPLOYMENT_ID`
+### `--openai-api-deployment-id OPENAI_API_DEPLOYMENT_ID`
 Specify the deployment_id  
 Environment variable: `OPENAI_API_DEPLOYMENT_ID`  
 
-### `--openai_organization_id OPENAI_ORGANIZATION_ID`
+### `--openai-organization-id OPENAI_ORGANIZATION_ID`
 Specify the OpenAI organization ID  
 Environment variable: `OPENAI_ORGANIZATION_ID`  
 
-### `--edit_format EDIT_FORMAT`
+### `--edit-format EDIT_FORMAT`
 Specify what edit format the LLM should use (default depends on model)  
 Environment variable: `AIDER_EDIT_FORMAT`  
 
-### `--weak_model WEAK_MODEL`
+### `--weak-model WEAK_MODEL`
 Specify the model to use for commit messages and chat history summarization (default depends on --model)  
 Environment variable: `AIDER_WEAK_MODEL`  
 
-### `--show_model_warnings`
+### `--show-model-warnings`
 Only work with models that have meta-data available (default: True)  
 Default: True  
 Environment variable: `AIDER_SHOW_MODEL_WARNINGS`  
@@ -131,33 +128,33 @@ Aliases:
   - `--show-model-warnings`
   - `--no-show-model-warnings`
 
-### `--map_tokens VALUE`
+### `--map-tokens VALUE`
 Max number of tokens to use for repo map, use 0 to disable (default: 1024)  
 Default: 1024  
 Environment variable: `AIDER_MAP_TOKENS`  
 
-### `--max_chat_history_tokens VALUE`
+### `--max-chat-history-tokens VALUE`
 Maximum number of tokens to use for chat history. If not specified, uses the model's max_chat_history_tokens.  
 Environment variable: `AIDER_MAX_CHAT_HISTORY_TOKENS`  
 
-### `--env_file ENV_FILE`
+### `--env-file ENV_FILE`
 Specify the .env file to load (default: .env in git root)  
 Default: .env  
 Environment variable: `AIDER_ENV_FILE`  
 
 ## History Files:
 
-### `--input_history_file INPUT_HISTORY_FILE`
+### `--input-history-file INPUT_HISTORY_FILE`
 Specify the chat input history file (default: .aider.input.history)  
 Default: .aider.input.history  
 Environment variable: `AIDER_INPUT_HISTORY_FILE`  
 
-### `--chat_history_file CHAT_HISTORY_FILE`
+### `--chat-history-file CHAT_HISTORY_FILE`
 Specify the chat history file (default: .aider.chat.history.md)  
 Default: .aider.chat.history.md  
 Environment variable: `AIDER_CHAT_HISTORY_FILE`  
 
-### `--restore_chat_history`
+### `--restore-chat-history`
 Restore the previous chat history messages (default: False)  
 Default: False  
 Environment variable: `AIDER_RESTORE_CHAT_HISTORY`  
@@ -167,12 +164,12 @@ Aliases:
 
 ## Output Settings:
 
-### `--dark_mode`
+### `--dark-mode`
 Use colors suitable for a dark terminal background (default: False)  
 Default: False  
 Environment variable: `AIDER_DARK_MODE`  
 
-### `--light_mode`
+### `--light-mode`
 Use colors suitable for a light terminal background (default: False)  
 Default: False  
 Environment variable: `AIDER_LIGHT_MODE`  
@@ -193,31 +190,31 @@ Aliases:
   - `--stream`
   - `--no-stream`
 
-### `--user_input_color VALUE`
+### `--user-input-color VALUE`
 Set the color for user input (default: #00cc00)  
 Default: #00cc00  
 Environment variable: `AIDER_USER_INPUT_COLOR`  
 
-### `--tool_output_color VALUE`
+### `--tool-output-color VALUE`
 Set the color for tool output (default: None)  
 Environment variable: `AIDER_TOOL_OUTPUT_COLOR`  
 
-### `--tool_error_color VALUE`
+### `--tool-error-color VALUE`
 Set the color for tool error messages (default: red)  
 Default: #FF2222  
 Environment variable: `AIDER_TOOL_ERROR_COLOR`  
 
-### `--assistant_output_color VALUE`
+### `--assistant-output-color VALUE`
 Set the color for assistant output (default: #0088ff)  
 Default: #0088ff  
 Environment variable: `AIDER_ASSISTANT_OUTPUT_COLOR`  
 
-### `--code_theme VALUE`
+### `--code-theme VALUE`
 Set the markdown code theme (default: default, other options include monokai, solarized-dark, solarized-light)  
 Default: default  
 Environment variable: `AIDER_CODE_THEME`  
 
-### `--show_diffs`
+### `--show-diffs`
 Show diffs when committing changes (default: False)  
 Default: False  
 Environment variable: `AIDER_SHOW_DIFFS`  
@@ -245,7 +242,7 @@ Specify the aider ignore file (default: .aiderignore in git root)
 Default: .aiderignore  
 Environment variable: `AIDER_AIDERIGNORE`  
 
-### `--auto_commits`
+### `--auto-commits`
 Enable/disable auto commit of LLM changes (default: True)  
 Default: True  
 Environment variable: `AIDER_AUTO_COMMITS`  
@@ -253,7 +250,7 @@ Aliases:
   - `--auto-commits`
   - `--no-auto-commits`
 
-### `--dirty_commits`
+### `--dirty-commits`
 Enable/disable commits when repo is found dirty (default: True)  
 Default: True  
 Environment variable: `AIDER_DIRTY_COMMITS`  
@@ -261,7 +258,7 @@ Aliases:
   - `--dirty-commits`
   - `--no-dirty-commits`
 
-### `--dry_run`
+### `--dry-run`
 Perform a dry run without modifying files (default: False)  
 Default: False  
 Environment variable: `AIDER_DRY_RUN`  
@@ -281,12 +278,12 @@ Lint and fix provided files, or dirty files if none provided
 Default: False  
 Environment variable: `AIDER_LINT`  
 
-### `--lint_cmd`
+### `--lint-cmd`
 Specify lint commands to run for different languages, eg: "python: flake8 --select=..." (can be used multiple times)  
 Default: []  
 Environment variable: `AIDER_LINT_CMD`  
 
-### `--auto_lint`
+### `--auto-lint`
 Enable/disable automatic linting after changes (default: True)  
 Default: True  
 Environment variable: `AIDER_AUTO_LINT`  
@@ -294,12 +291,12 @@ Aliases:
   - `--auto-lint`
   - `--no-auto-lint`
 
-### `--test_cmd`
+### `--test-cmd`
 Specify command to run tests  
 Default: []  
 Environment variable: `AIDER_TEST_CMD`  
 
-### `--auto_test`
+### `--auto-test`
 Enable/disable automatic testing after changes (default: False)  
 Default: False  
 Environment variable: `AIDER_AUTO_TEST`  
@@ -314,7 +311,7 @@ Environment variable: `AIDER_TEST`
 
 ## Other Settings:
 
-### `--voice_language VOICE_LANGUAGE`
+### `--voice-language VOICE_LANGUAGE`
 Specify the language for voice using ISO 639-1 code (default: auto)  
 Default: en  
 Environment variable: `AIDER_VOICE_LANGUAGE`  
@@ -322,12 +319,12 @@ Environment variable: `AIDER_VOICE_LANGUAGE`
 ### `--version`
 Show the version number and exit  
 
-### `--check_update`
+### `--check-update`
 Check for updates and return status in the exit code  
 Default: False  
 Environment variable: `AIDER_CHECK_UPDATE`  
 
-### `--skip_check_update`
+### `--skip-check-update`
 Skips checking for the update when the program runs  
 Default: False  
 Environment variable: `AIDER_SKIP_CHECK_UPDATE`  
@@ -348,12 +345,12 @@ Aliases:
   - `-v`
   - `--verbose`
 
-### `--show_repo_map`
+### `--show-repo-map`
 Print the repo map and exit (debug)  
 Default: False  
 Environment variable: `AIDER_SHOW_REPO_MAP`  
 
-### `--show_prompts`
+### `--show-prompts`
 Print the system prompts and exit (debug)  
 Default: False  
 Environment variable: `AIDER_SHOW_PROMPTS`  
@@ -366,7 +363,7 @@ Aliases:
   - `--msg COMMAND`
   - `-m COMMAND`
 
-### `--message_file MESSAGE_FILE`
+### `--message-file MESSAGE_FILE`
 Specify a file containing the message to send the LLM, process reply, then exit (disables chat mode)  
 Environment variable: `AIDER_MESSAGE_FILE`  
 Aliases:

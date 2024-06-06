@@ -30,10 +30,13 @@ class YamlHelpFormatter(argparse.HelpFormatter):
             metavar = "VALUE"
 
         default = action.default
-        if isinstance(default, list) and not default:
+        if default == argparse.SUPPRESS:
             default = ""
-        elif action.default not in (argparse.SUPPRESS, None):
-            default = action.default
+        elif isinstance(default, str):
+            pass
+        elif isinstance(default, list) and not default:
+            default = ""
+        elif action.default is not None:
             default = "true" if default else "false"
         else:
             default = ""
@@ -41,7 +44,24 @@ class YamlHelpFormatter(argparse.HelpFormatter):
         if action.help:
             parts.append(f"## {action.help}")
 
-        parts.append(f"#{action.dest}: {default}\n")
+        switch = action.dest
+        if isinstance(action, argparse._StoreTrueAction):
+            default = False
+        elif isinstance(action, argparse._StoreConstAction):
+            default = action.const
+
+        if default is False:
+            default = "false"
+        if default is True:
+            default = "true"
+
+        if default is not None:
+            parts.append(f"#{switch}: {default}\n")
+        else:
+            parts.append(f"#{switch}:\n")
+
+        ###
+        # parts.append(str(action))
 
         return "\n".join(parts) + "\n"
 
@@ -65,16 +85,23 @@ class MarkdownHelpFormatter(argparse.HelpFormatter):
         return ""
 
     def _format_action(self, action):
+        if not action.option_strings:
+            return ""
+
         parts = [""]
 
         metavar = action.metavar
         if not metavar and isinstance(action, argparse._StoreAction):
             metavar = "VALUE"
 
+        for switch in action.option_strings:
+            if switch.startswith("--"):
+                break
+
         if metavar:
-            parts.append(f"### `--{action.dest} {metavar}`")
+            parts.append(f"### `{switch} {metavar}`")
         else:
-            parts.append(f"### `--{action.dest}`")
+            parts.append(f"### `{switch}`")
         if action.help:
             parts.append(action.help + "  ")
 

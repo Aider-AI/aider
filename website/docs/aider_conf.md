@@ -47,25 +47,25 @@ cog.outl("```")
 #anthropic_api_key: 
 
 ## Specify the model to use for the main chat (default: gpt-4o)
-#model: true
+#model: gpt-4o
 
 ## Use claude-3-opus-20240229 model for the main chat
-#model: 
+#model: claude-3-opus-20240229
 
 ## Use claude-3-sonnet-20240229 model for the main chat
-#model: 
+#model: claude-3-sonnet-20240229
 
 ## Use gpt-4-0613 model for the main chat
-#model: 
+#model: gpt-4-0613
 
 ## Use gpt-4o model for the main chat
-#model: 
+#model: gpt-4o
 
 ## Use gpt-4-1106-preview model for the main chat
-#model: 
+#model: gpt-4-1106-preview
 
 ## Use gpt-3.5-turbo model for the main chat
-#model: 
+#model: gpt-3.5-turbo
 
 #################
 # Model Settings:
@@ -104,16 +104,16 @@ cog.outl("```")
 #max_chat_history_tokens: 
 
 ## Specify the .env file to load (default: .env in git root)
-#env_file: true
+#env_file: .env
 
 ################
 # History Files:
 
 ## Specify the chat input history file (default: .aider.input.history)
-#input_history_file: true
+#input_history_file: .aider.input.history
 
 ## Specify the chat history file (default: .aider.chat.history.md)
-#chat_history_file: true
+#chat_history_file: .aider.chat.history.md
 
 ## Restore the previous chat history messages (default: False)
 #restore_chat_history: false
@@ -134,19 +134,19 @@ cog.outl("```")
 #stream: true
 
 ## Set the color for user input (default: #00cc00)
-#user_input_color: true
+#user_input_color: #00cc00
 
 ## Set the color for tool output (default: None)
 #tool_output_color: 
 
 ## Set the color for tool error messages (default: red)
-#tool_error_color: true
+#tool_error_color: #FF2222
 
 ## Set the color for assistant output (default: #0088ff)
-#assistant_output_color: true
+#assistant_output_color: #0088ff
 
 ## Set the markdown code theme (default: default, other options include monokai, solarized-dark, solarized-light)
-#code_theme: true
+#code_theme: default
 
 ## Show diffs when committing changes (default: False)
 #show_diffs: false
@@ -161,7 +161,7 @@ cog.outl("```")
 #gitignore: true
 
 ## Specify the aider ignore file (default: .aiderignore in git root)
-#aiderignore: true
+#aiderignore: .aiderignore
 
 ## Enable/disable auto commit of LLM changes (default: True)
 #auto_commits: true
@@ -200,7 +200,7 @@ cog.outl("```")
 # Other Settings:
 
 ## Specify the language for voice using ISO 639-1 code (default: auto)
-#voice_language: true
+#voice_language: en
 
 ## Show the version number and exit
 #version: 
@@ -215,7 +215,7 @@ cog.outl("```")
 #apply: 
 
 ## Always say yes to every confirmation
-#yes: 
+#yes: false
 
 ## Enable verbose output
 #verbose: false
@@ -233,7 +233,7 @@ cog.outl("```")
 #message_file: 
 
 ## Specify the encoding for input and output (default: utf-8)
-#encoding: true
+#encoding: utf-8
 
 ## Specify the config file (default: search for .aider.conf.yml in git root, cwd or home directory)
 #config: 

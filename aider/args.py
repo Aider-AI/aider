@@ -483,7 +483,12 @@ def get_sample_yaml():
 
 
 def main():
-    print(get_sample_yaml())
+    arg = sys.argv[1] if len(sys.argv[1:]) else None
+
+    if arg == "md":
+        print(get_help())
+    else:
+        print(get_sample_yaml())
 
 
 if __name__ == "__main__":
