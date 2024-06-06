@@ -28,7 +28,7 @@ and can [connect to almost any LLM](https://aider.chat/docs/llms.html).
   <a href="https://discord.gg/Tv2uQnR88V">
     <img src="https://img.shields.io/badge/Join-Discord-blue.svg"/>
   </a>
-  <a href="https://aider.chat/">
+  <a href="https://aider.chat/docs/install.html">
     <img src="https://img.shields.io/badge/Read-Docs-green.svg"/>
   </a>
 </p>
@@ -52,7 +52,7 @@ $ aider --opus
 **See the
 [installation instructions](https://aider.chat/docs/install.html)
 and other
-[documentation](https://aider.chat/)
+[documentation](https://aider.chat/docs/usage.html)
 for more details.**
 
 ## Features
