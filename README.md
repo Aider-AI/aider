@@ -11,8 +11,6 @@ and can [connect to almost any LLM](https://aider.chat/docs/llms.html).
   <img
     src="https://aider.chat/assets/screencast.svg"
     alt="aider screencast"
-    height="500"
-    width="687"
   >
 </p>
 
