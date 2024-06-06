@@ -49,11 +49,11 @@ for more details.**
 
 - Chat with aider about your code: `aider <file1> <file2> ...`
 - Ask for changes:
-  - New features, changes, test cases, improvements.
+  - New features, test cases, improvements.
   - Bug fixes, updated docs or code refactors.
   - Paste in a GitHub issue that needs to be solved.
 - Aider will edit your files to complete your request.
-- Aider [automatically git commits](https://aider.chat/docs/faq.html#how-does-aider-use-git) changes with a sensible commit message.
+- Aider [automatically git commits](https://aider.chat/docs/git.html) changes with a sensible commit message.
 - Aider works with [most popular languages](https://aider.chat/docs/languages.html): python, javascript, typescript, php, html, css, and more...
 - Aider works best with GPT-4o and Claude 3 Opus
 and can [connect to almost any LLM](https://aider.chat/docs/llms.html).

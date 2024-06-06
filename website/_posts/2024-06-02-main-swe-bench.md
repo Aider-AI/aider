@@ -103,7 +103,7 @@ and to use pytest to run tests.
 - They could start the chat by pasting in the URL or text of a GitHub issue.
 Aider will pull in the URL's content and then try and resolve the issue.
 - If aider doesn't produce code that lints and tests clean, the user might decide to
-[use git to revert the changes](https://aider.chat/docs/faq.html#how-does-aider-use-git),
+[use git to revert the changes](https://aider.chat/docs/git.html),
 and try again with `aider --opus`.
 
 ## Aider with GPT-4o alone was SOTA

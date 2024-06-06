@@ -88,7 +88,7 @@ and to use pytest to run tests.
 - They could start the chat by pasting in the URL or text of a GitHub issue.
 Aider will pull in the URL's content and then try and solve the issue.
 - If aider doesn't produce code that lints and tests clean, the user might decide to revert the changes and try again, maybe using aider with a different LLM this time.
-[Aider is tightly integrated with git](https://aider.chat/docs/faq.html#how-does-aider-use-git),
+[Aider is tightly integrated with git](https://aider.chat/docs/git.html),
 so it's always easy to revert AI changes that don't pan out.
 
 Outside a benchmark setting, it's probably
