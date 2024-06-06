@@ -3,6 +3,10 @@ title: Home
 nav_order: 1
 ---
 
+<!--[[[cog
+cog.out(open("README.md").read())
+]]]-->
+
 # Aider is AI pair programming in your terminal
 
 Aider lets you pair program with LLMs,
@@ -103,3 +107,4 @@ Aider has the highest score on the challenging
 - *I am an aider addict. I'm getting so much more work done, but in less time.* -- [dandandan](https://discord.com/channels/1131200896827654144/1131200896827654149/1135913253483069470)
 - *After wasting $100 on tokens trying to find something better, I'm back to Aider. It blows everything else out of the water hands down, there's no competition whatsoever.* -- [SystemSculpt](https://discord.com/channels/1131200896827654144/1131200896827654149/1178736602797846548)
 - *Best agent for actual dev work in existing codebases.* -- [Nick Dobos](https://twitter.com/NickADobos/status/1690408967963652097?s=20)
+<!--[[[end]]]-->
