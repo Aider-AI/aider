@@ -39,7 +39,7 @@ local models that provide an
 {: .no_toc }
 
 Check
-[Aider's LLM leaderboards](/docs/llms/https://aider.chat/docs/leaderboards/)
+[Aider's LLM leaderboards](https://aider.chat/docs/leaderboards/)
 to see which models work best with aider.
 
 Be aware that aider may not work well with less capable models.

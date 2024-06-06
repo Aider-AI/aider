@@ -7,6 +7,8 @@ WORKDIR /site
 # Copy the current directory contents into the container at /srv/jekyll
 COPY website /site
 
+RUN apt-get update && apt-get install libcurl4
+
 # Install any needed packages specified in Gemfile
 RUN bundle install --retry 5 --jobs 20
 
