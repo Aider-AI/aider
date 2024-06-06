@@ -500,6 +500,19 @@ def get_random_color():
     return res
 
 
+def get_supported_languages_md():
+    from grep_ast.parsers import PARSERS
+
+    res = ""
+    data = sorted((lang, ex) for ex, lang in PARSERS.items())
+    for lang, ext in data:
+        res += "<tr>"
+        res += f'<td style="text-align: center;">{lang:20}</td>\n'
+        res += f'<td style="text-align: center;">{ext:20}</td>\n'
+        res += "</tr>"
+    return res
+
+
 if __name__ == "__main__":
     fnames = sys.argv[1:]
 

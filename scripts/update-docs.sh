@@ -13,3 +13,4 @@ cog $ARG \
     website/index.md \
     website/docs/usage.md \
     website/docs/commands.md \
+    website/docs/languages.md
