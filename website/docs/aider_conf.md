@@ -9,7 +9,9 @@ Most options can also be set in an `.aider.conf.yml` file
 which can be placed in your home directory or at the root of
 your git repo. 
 
-Below is a sample of the file.
+Below is a sample of the file, which you
+can also
+[download from GitHub](https://github.com/paul-gauthier/aider/blob/main/website/assets/sample.aider.conf.yml).
 
 <!--[[[cog
 from aider.args import get_sample_yaml
