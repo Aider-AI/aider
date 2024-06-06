@@ -33,31 +33,37 @@ command line switches, environment variables or via a configuration file.
 
 See `aider --help` below for details.
 
+<!--[[[cog
+from aider.args import get_help
+cog.outl("```")
+cog.out(get_help())
+cog.outl("```")
+]]]-->
 ```
-usage: args.py [-h] [--openai-api-key OPENAI_API_KEY] [--anthropic-api-key ANTHROPIC_API_KEY]
-               [--model MODEL] [--opus] [--sonnet] [--4] [--4o] [--4-turbo] [--35turbo]
-               [--models MODEL] [--openai-api-base OPENAI_API_BASE]
-               [--openai-api-type OPENAI_API_TYPE] [--openai-api-version OPENAI_API_VERSION]
-               [--openai-api-deployment-id OPENAI_API_DEPLOYMENT_ID]
-               [--openai-organization-id OPENAI_ORGANIZATION_ID] [--edit-format EDIT_FORMAT]
-               [--weak-model WEAK_MODEL] [--show-model-warnings | --no-show-model-warnings]
-               [--map-tokens MAP_TOKENS] [--max-chat-history-tokens MAX_CHAT_HISTORY_TOKENS]
-               [--env-file ENV_FILE] [--input-history-file INPUT_HISTORY_FILE]
-               [--chat-history-file CHAT_HISTORY_FILE]
-               [--restore-chat-history | --no-restore-chat-history] [--dark-mode] [--light-mode]
-               [--pretty | --no-pretty] [--stream | --no-stream]
-               [--user-input-color USER_INPUT_COLOR] [--tool-output-color TOOL_OUTPUT_COLOR]
-               [--tool-error-color TOOL_ERROR_COLOR]
-               [--assistant-output-color ASSISTANT_OUTPUT_COLOR] [--code-theme CODE_THEME]
-               [--show-diffs] [--git | --no-git] [--gitignore | --no-gitignore]
-               [--aiderignore AIDERIGNORE] [--auto-commits | --no-auto-commits]
-               [--dirty-commits | --no-dirty-commits] [--dry-run | --no-dry-run] [--commit]
-               [--lint] [--lint-cmd LINT_CMD] [--auto-lint | --no-auto-lint] [--test-cmd TEST_CMD]
-               [--auto-test | --no-auto-test] [--test] [--voice-language VOICE_LANGUAGE]
-               [--version] [--check-update] [--skip-check-update] [--apply FILE] [--yes] [-v]
-               [--show-repo-map] [--show-prompts] [--message COMMAND]
-               [--message-file MESSAGE_FILE] [--encoding ENCODING] [-c CONFIG_FILE] [--gui]
-               [FILE ...]
+usage: aider [-h] [--openai-api-key OPENAI_API_KEY] [--anthropic-api-key ANTHROPIC_API_KEY]
+             [--model MODEL] [--opus] [--sonnet] [--4] [--4o] [--4-turbo] [--35turbo]
+             [--models MODEL] [--openai-api-base OPENAI_API_BASE]
+             [--openai-api-type OPENAI_API_TYPE] [--openai-api-version OPENAI_API_VERSION]
+             [--openai-api-deployment-id OPENAI_API_DEPLOYMENT_ID]
+             [--openai-organization-id OPENAI_ORGANIZATION_ID] [--edit-format EDIT_FORMAT]
+             [--weak-model WEAK_MODEL] [--show-model-warnings | --no-show-model-warnings]
+             [--map-tokens MAP_TOKENS] [--max-chat-history-tokens MAX_CHAT_HISTORY_TOKENS]
+             [--env-file ENV_FILE] [--input-history-file INPUT_HISTORY_FILE]
+             [--chat-history-file CHAT_HISTORY_FILE]
+             [--restore-chat-history | --no-restore-chat-history] [--dark-mode] [--light-mode]
+             [--pretty | --no-pretty] [--stream | --no-stream]
+             [--user-input-color USER_INPUT_COLOR] [--tool-output-color TOOL_OUTPUT_COLOR]
+             [--tool-error-color TOOL_ERROR_COLOR]
+             [--assistant-output-color ASSISTANT_OUTPUT_COLOR] [--code-theme CODE_THEME]
+             [--show-diffs] [--git | --no-git] [--gitignore | --no-gitignore]
+             [--aiderignore AIDERIGNORE] [--auto-commits | --no-auto-commits]
+             [--dirty-commits | --no-dirty-commits] [--dry-run | --no-dry-run] [--commit] [--lint]
+             [--lint-cmd LINT_CMD] [--auto-lint | --no-auto-lint] [--test-cmd TEST_CMD]
+             [--auto-test | --no-auto-test] [--test] [--voice-language VOICE_LANGUAGE] [--version]
+             [--check-update] [--skip-check-update] [--apply FILE] [--yes] [-v] [--show-repo-map]
+             [--show-prompts] [--message COMMAND] [--message-file MESSAGE_FILE]
+             [--encoding ENCODING] [-c CONFIG_FILE] [--gui]
+             [FILE ...]
 
 aider is GPT powered coding in your terminal
 
@@ -185,5 +191,5 @@ Args that start with '--' can also be set in a config file (specified via -c). T
 uses YAML syntax and must represent a YAML 'mapping' (for details, see
 http://learn.getgrav.org/advanced/yaml). In general, command-line values override environment
 variables which override config file values which override defaults.
-
 ```
+<!--[[[end]]]-->

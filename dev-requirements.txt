@@ -20,6 +20,8 @@ click==8.1.7
     # via
     #   pip-tools
     #   typer
+cogapp==3.4.1
+    # via -r dev-requirements.in
 contourpy==1.2.1
     # via matplotlib
 cycler==0.12.1

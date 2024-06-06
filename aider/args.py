@@ -454,6 +454,7 @@ def get_parser(default_config_files, git_root):
 
 def get_help():
     os.environ["COLUMNS"] = "100"
+    sys.argv[0] = "aider"
     parser = get_parser([], None)
     return parser.format_help()
 
