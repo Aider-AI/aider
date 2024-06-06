@@ -16,14 +16,12 @@ Be selective, and just add the files that the LLM will need to edit.
 If you add a bunch of unrelated files, the LLM can get overwhelmed
 and confused (and it costs more tokens).
 Aider will automatically
-share snippets from other, related files with the LLM so it can
+share snippets from related files with the LLM so it can
 [understand the rest of your code base](https://aider.chat/docs/repomap.html).
 
 You can also just launch aider anywhere in a git repo without naming files.
 You can then add and remove files in the chat
 with the `/add` and `/drop` [chat commands](/docs/commands.html).
-If you or the LLM mention any of the repo filenames,
-aider will ask if you'd like to add them to the chat.
 
 See info about how to [connect to LLMs](/docs/llms.html) for information on
 telling aider which model to use.
