@@ -7,11 +7,13 @@ import sys
 import configargparse
 
 from aider import __version__, models
+from aider.args_formatter import CustomHelpFormatter
 
 
 def get_parser(default_config_files, git_root):
     parser = configargparse.ArgumentParser(
         description="aider is GPT powered coding in your terminal",
+        formatter_class=CustomHelpFormatter,
         add_config_file_help=True,
         default_config_files=default_config_files,
         auto_env_var_prefix="AIDER_",
@@ -455,6 +457,7 @@ def get_help():
     os.environ["COLUMNS"] = "100"
     sys.argv[0] = "aider"
     parser = get_parser([], None)
+    parser.formatter_class = CustomHelpFormatter
     return parser.format_help()
 
 
