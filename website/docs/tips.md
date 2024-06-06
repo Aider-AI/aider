@@ -1,5 +1,6 @@
 ---
-nav_order: 50
+parent: Usage
+nav_order: 25
 ---
 
 ## Tips

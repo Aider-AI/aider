@@ -1,5 +1,6 @@
 ---
 nav_order: 30
+has_children: true
 ---
 
 # Usage
@@ -51,8 +52,3 @@ so they are easy to track and undo.
 
 You can always use the `/undo` command to undo changes you don't
 like.
-
-## See also
-
-See also the docs on [in-chat commands](/docs/commands.html)
-and [configuration and options])/docs/options.html).

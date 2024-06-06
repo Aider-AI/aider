@@ -1,6 +1,6 @@
 ---
 title: Connecting to LLMs
-nav_order: 70
+nav_order: 40
 has_children: true
 ---
 

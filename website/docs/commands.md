@@ -1,4 +1,5 @@
 ---
+parent: Usage
 nav_order: 50
 ---
 # In-chat commands

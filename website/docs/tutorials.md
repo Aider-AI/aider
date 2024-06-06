@@ -1,5 +1,6 @@
 ---
-nav_order: 25
+parent: Usage
+nav_order: 75
 ---
 
 ## Tutorial videos
