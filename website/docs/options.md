@@ -6,11 +6,10 @@ nav_order: 800
 
 Aider has many options which can be set with
 command line switches.
-
-Most command line switches can also be set in an `.aider.conf.yml` file
+Most options can also be set in an `.aider.conf.yml` file
 which can be placed in your home directory or at the root of
 your git repo. 
-Ot via environment variables like `AIDER_OPTION_FOO`,
+Or via environment variables like `AIDER_xxx`,
 as noted in the help text below.
 
 Here are 3 equivalent ways of setting an option. First, via a command line switch:
