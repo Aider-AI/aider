@@ -43,7 +43,7 @@ $ aider --opus
 
 **See the
 [installation instructions](https://aider.chat/docs/install.html)
-and
+and other
 [documentation](https://aider.chat/docs/usage.html)
 for more details.**
 
