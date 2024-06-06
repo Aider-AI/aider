@@ -454,8 +454,8 @@ def get_parser(default_config_files, git_root):
     return parser
 
 
-def get_help():
-    os.environ["COLUMNS"] = "100"
+def get_md_help():
+    os.environ["COLUMNS"] = "70"
     sys.argv = ["aider"]
     parser = get_parser([], None)
 
@@ -486,7 +486,7 @@ def main():
     arg = sys.argv[1] if len(sys.argv[1:]) else None
 
     if arg == "md":
-        print(get_help())
+        print(get_md_help())
     else:
         print(get_sample_yaml())
 
