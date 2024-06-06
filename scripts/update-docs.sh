@@ -9,5 +9,7 @@ else
   ARG=$1
 fi
 
-cog $ARG website/index.md
-cog $ARG website/docs/usage.md
+cog $ARG \
+    website/index.md \
+    website/docs/usage.md \
+    website/docs/commands.md \
