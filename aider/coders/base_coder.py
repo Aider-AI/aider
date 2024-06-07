@@ -784,10 +784,7 @@ class Coder:
 
         messages = self.format_messages()
 
-        timestamp = datetime.datetime.now().isoformat(timespec='seconds')
-        with open('.aider.llm.history', 'a') as log_file:
-            log_file.write(f"TO LLM {timestamp}\n")
-            log_file.write(format_messages(messages) + "\n")
+        self.io.log_llm_history("TO LLM", format_messages(messages))
 
         if self.verbose:
             utils.show_messages(messages, functions=self.functions)
@@ -808,6 +805,9 @@ class Coder:
                 exhausted = True
             else:
                 raise err
+        except Exception as err:
+            self.io.tool_error(f"Unexpected error: {err}")
+            return
 
         if exhausted:
             self.num_exhausted_context_windows += 1
@@ -831,10 +831,7 @@ class Coder:
 
         self.io.tool_output()
 
-        timestamp = datetime.datetime.now().isoformat(timespec='seconds')
-        with open('.aider.llm.history', 'a') as log_file:
-            log_file.write(f"LLM RESPONSE {timestamp}\n")
-            log_file.write(format_content("ASSISTANT", content) + "\n")
+        self.io.log_llm_history("LLM RESPONSE", format_content("ASSISTANT", content))
 
         if interrupted:
             content += "\n^C KeyboardInterrupt"

@@ -106,6 +106,7 @@ class InputOutput:
         tool_error_color="red",
         encoding="utf-8",
         dry_run=False,
+        llm_history_file=None,
     ):
         no_color = os.environ.get("NO_COLOR")
         if no_color is not None and no_color != "":
@@ -125,6 +126,7 @@ class InputOutput:
         self.yes = yes
 
         self.input_history_file = input_history_file
+        self.llm_history_file = llm_history_file
         if chat_history_file is not None:
             self.chat_history_file = Path(chat_history_file)
         else:
@@ -206,10 +208,11 @@ class InputOutput:
         else:
             style = None
 
+        completer_instance = AutoCompleter(
+            root, rel_fnames, addable_rel_fnames, commands, self.encoding
+        )
+
         while True:
-            completer_instance = AutoCompleter(
-                root, rel_fnames, addable_rel_fnames, commands, self.encoding
-            )
             if multiline_input:
                 show = ". "
 
@@ -265,6 +268,14 @@ class InputOutput:
 
         fh = FileHistory(self.input_history_file)
         return fh.load_history_strings()
+
+    def log_llm_history(self, role, content):
+        if not self.llm_history_file:
+            return
+        timestamp = datetime.now().isoformat(timespec='seconds')
+        with open(self.llm_history_file, 'a', encoding=self.encoding) as log_file:
+            log_file.write(f"{role.upper()} {timestamp}\n")
+            log_file.write(content + "\n")
 
     def user_input(self, inp, log_only=True):
         if not log_only:
