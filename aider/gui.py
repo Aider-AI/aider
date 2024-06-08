@@ -411,14 +411,22 @@ class GUI:
         prompt = self.state.prompt
         self.state.prompt = None
 
+        # This duplicates logic from within Coder
+        self.num_reflections = 0
+        self.max_reflections = 3
+
         while prompt:
             with self.messages.chat_message("assistant"):
                 res = st.write_stream(self.coder.run_stream(prompt))
                 self.state.messages.append({"role": "assistant", "content": res})
                 # self.cost()
+
+            prompt = None
             if self.coder.reflected_message:
-                self.info(self.coder.reflected_message)
-            prompt = self.coder.reflected_message
+                if self.num_reflections < self.max_reflections:
+                    self.num_reflections += 1
+                    self.info(self.coder.reflected_message)
+                    prompt = self.coder.reflected_message
 
         with self.messages:
             edit = dict(
