@@ -27,5 +27,29 @@ for more details,
 or the
 [usage instructions](https://aider.chat/docs/usage.html) to start coding with aider.
 
+<div class="video-container">
+  <video controls>
+    <source src="/assets/install.mp4" type="video/mp4">
+    <a href="/assets/install.mp4">Installing aider</a>
+  </video>
+</div>
+
+<style>
+.video-container {
+  position: relative;
+  padding-bottom: 101.89%; /* 1080 / 1060 = 1.0189 */
+  height: 0;
+  overflow: hidden;
+}
+
+.video-container video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+</style>
+
 
 
