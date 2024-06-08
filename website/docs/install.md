@@ -21,7 +21,7 @@ $ export ANTHROPIC_API_KEY=your-key-goes-here
 $ aider --opus
 ```
 
-Or see 
+Or see the
 [full installation instructions](/docs/install/install.html)
 for more details,
 or the

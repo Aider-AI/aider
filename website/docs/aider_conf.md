@@ -6,7 +6,7 @@ description: How to configure aider with a yaml config file.
 
 # YAML config file
 
-Most options can also be set in an `.aider.conf.yml` file
+Most of aider's options can be set in an `.aider.conf.yml` file,
 which can be placed in your home directory or at the root of
 your git repo. 
 

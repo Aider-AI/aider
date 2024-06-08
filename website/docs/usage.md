@@ -48,7 +48,7 @@ Or, during your chat you can switch models with the in-chat
 Ask aider to make changes to your code.
 It will show you some diffs of the changes it is making to
 complete you request.
-It will git commit all the changes it makes,
+Aider will git commit all of its changes,
 so they are easy to track and undo.
 
 You can always use the `/undo` command to undo changes you don't
