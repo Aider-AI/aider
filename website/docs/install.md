@@ -2,6 +2,7 @@
 title: Installation
 has_children: true
 nav_order: 20
+description: How to install and get started pair programming with aider.
 ---
 
 # Quick start

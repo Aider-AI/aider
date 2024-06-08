@@ -1,11 +1,12 @@
 ---
 parent: Configuration
 nav_order: 900
+description: Using a .env file to store LLM API keys for aider.
 ---
 
 # Storing LLM params in .env 
 
-You can use a `.env` file to store various keys and other settings for the
+You can use a `.env` file to store API keys and other settings for the
 models you use with aider.
 You currently can not set general aider options
 in the `.env` file, only LLM environment variables.

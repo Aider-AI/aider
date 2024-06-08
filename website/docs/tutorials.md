@@ -1,6 +1,7 @@
 ---
 parent: Usage
 nav_order: 75
+description: Intro and tutorial videos made by aider users.
 ---
 
 # Tutorial videos

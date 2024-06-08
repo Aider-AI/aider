@@ -1,6 +1,7 @@
 ---
 parent: Usage
 nav_order: 800
+description: Tell aider to follow your coding conventions when it works on your code.
 ---
 # Specifying coding conventions
 

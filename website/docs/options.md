@@ -1,6 +1,7 @@
 ---
 parent: Configuration
 nav_order: 10
+description: Details about all of aider's settings.
 ---
 
 # Options reference

@@ -3,6 +3,7 @@ title: Aider in your browser
 highlight_image: /assets/browser.jpg
 parent: Usage
 nav_order: 800
+description: Aider can run in your browser, not just on the command line.
 ---
 {% if page.date %}
 <p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>

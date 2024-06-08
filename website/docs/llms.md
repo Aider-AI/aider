@@ -2,6 +2,7 @@
 title: Connecting to LLMs
 nav_order: 40
 has_children: true
+description: Aider can connect to most LLMs for AI pair programming.
 ---
 
 # Aider can connect to most LLMs

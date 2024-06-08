@@ -1,6 +1,7 @@
 ---
 parent: Usage
 nav_order: 25
+description: Tips for AI pair programming with aider.
 ---
 
 # Tips

@@ -1,5 +1,6 @@
 ---
 nav_order: 85
+description: Frequently asked questions about aider.
 ---
 
 # Frequently asked questions

@@ -1,6 +1,7 @@
 ---
 highlight_image: /assets/robot-ast.png
 nav_order: 900
+description: Aider uses a map of your git repository to provide code context to LLMs.
 ---
 
 # Repository map
@@ -8,7 +9,7 @@ nav_order: 900
 ![robot flowchat](/assets/robot-ast.png)
 
 Aider
-sends the LLM a **concise map of your whole git repository**
+uses a **concise map of your whole git repository**
 that includes
 the most important classes and functions along with their types and call signatures.
 This helps the LLM understand the code it needs to change,
