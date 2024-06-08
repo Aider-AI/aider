@@ -16,7 +16,7 @@ for all the details.
 <div class="video-container">
   <video controls>
     <source src="/assets/codespaces.mp4" type="video/mp4">
-    <a href="/assets/codespaces.mp4">Aider browser UI demo video</a>
+    <a href="/assets/codespaces.mp4">Install aider in GitHub Codespaces</a>
   </video>
 </div>
 

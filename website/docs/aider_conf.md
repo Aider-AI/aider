@@ -1,6 +1,7 @@
 ---
 parent: Configuration
 nav_order: 15
+description: How to configure aider with a yaml config file.
 ---
 
 # YAML config file

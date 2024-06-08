@@ -1,6 +1,7 @@
 ---
 nav_order: 30
 has_children: true
+description: How to use aider to pair program with AI and edit code in your local git repo.
 ---
 
 # Usage
