@@ -586,14 +586,16 @@ class Coder:
                 while new_user_message:
                     self.reflected_message = None
                     list(self.send_new_user_message(new_user_message))
-                    if self.reflected_message and self.num_reflections < self.max_reflections:
-                        self.num_reflections += 1
-                        new_user_message = self.reflected_message
-                    else:
-                        self.io.tool_error(
-                            f"Only {self.max_reflections} reflections allowed, stopping."
-                        )
-                        new_user_message = None
+
+                    new_user_message = None
+                    if self.reflected_message:
+                        if self.num_reflections < self.max_reflections:
+                            self.num_reflections += 1
+                            new_user_message = self.reflected_message
+                        else:
+                            self.io.tool_error(
+                                f"Only {self.max_reflections} reflections allowed, stopping."
+                            )
 
                 if with_message:
                     return self.partial_response_content

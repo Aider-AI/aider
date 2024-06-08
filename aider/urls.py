@@ -3,5 +3,5 @@ add_all_files = "https://aider.chat/docs/faq.html#how-can-i-add-all-the-files-to
 edit_errors = "https://aider.chat/docs/troubleshooting/edit-errors.html"
 git = "https://aider.chat/docs/git.html"
 enable_playwrite = "https://aider.chat/docs/install/optional.html#enable-playwright"
-favicon = "https://aider.chat/assets/favicon-32x32.png"
+favicon = "https://aider.chat/assets/icons/favicon-32x32.png"
 model_warnings = "https://aider.chat/docs/llms/warnings.html"
