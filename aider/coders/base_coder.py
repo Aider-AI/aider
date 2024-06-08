@@ -586,7 +586,7 @@ class Coder:
                 while new_user_message:
                     self.reflected_message = None
                     list(self.send_new_user_message(new_user_message))
-                    if self.num_reflections < self.max_reflections:
+                    if self.reflected_message and self.num_reflections < self.max_reflections:
                         self.num_reflections += 1
                         new_user_message = self.reflected_message
                     else:
