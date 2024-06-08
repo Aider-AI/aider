@@ -37,7 +37,7 @@ or the
 <style>
 .video-container {
   position: relative;
-  padding-bottom: 101.89%; /* 1080 / 1060 = 1.0189 */
+  padding-bottom: 76.2711864407%;
   height: 0;
   overflow: hidden;
 }
