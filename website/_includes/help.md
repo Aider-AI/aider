@@ -1,15 +1,18 @@
-If you need more help, please file a
-[GitHub issue]()
-or drop into our
-[Discord]().
+If you need more help, please check our
+[GitHub issues](https://github.com/paul-gauthier/aider/issues)
+and file a new issue if your problem isn't discussed.
+Or drop into our
+[Discord](https://discord.gg/Tv2uQnR88V)
+to chat with us.
 
 When reporting problems, it is very helpful if you can provide:
 
 - Aider version
 - LLM model you are using
 
-The easiest way to do that is to copy the "announcement" lines that
-aider prints when you run it:
+Including the "announcement" lines that
+aider prints at startup
+is an easy way to share this helpful info.
 
 ```
 Aider v0.37.1-dev
