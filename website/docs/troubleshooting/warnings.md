@@ -1,5 +1,5 @@
 ---
-parent: Connecting to LLMs
+parent: Troubleshooting
 nav_order: 900
 ---
 
