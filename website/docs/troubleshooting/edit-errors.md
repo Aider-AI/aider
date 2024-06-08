@@ -25,10 +25,10 @@ If possible try using GPT-4o or Opus, as they are the strongest and most
 capable models.
 
 Weaker models
-are more pront to
+are more prone to
 disobeying the system prompt instructions.
 Most local models are just barely capable of working with aider,
-so editing errors should be expected.
+so editing errors are probably unavoidable.
 
 ## Reduce distractions
 
