@@ -15,19 +15,6 @@ The leaderboards below report the results from a number of popular LLMs.
 While [aider can connect to almost any LLM](/docs/llms.html),
 it works best with models that score well on the benchmarks.
 
-## GPT-4o takes the #1 & #2 spots
-
-GPT-4o tops the aider LLM code editing leaderboard at 72.9%, versus 68.4% for Opus. GPT-4o takes second on aider's refactoring leaderboard with 62.9%, versus Opus at 72.3%.
-
-GPT-4o did much better than the 4-turbo models, and seems *much* less lazy.
-
-GPT-4o is also able to use aider's established "diff" edit format that uses
-`SEARCH/REPLACE` blocks.
-This diff format is used by all the other capable models, including Opus and
-the original GPT-4 models
-The GPT-4 Turbo models have all required the "udiff" edit format, due to their
-tendancy to lazy coding.
-
 
 ## Code editing leaderboard
 

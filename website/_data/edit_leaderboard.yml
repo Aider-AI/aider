@@ -474,4 +474,26 @@
   versions: 0.28.1-dev
   seconds_per_case: 17.6
   total_cost: 1.6205
-  
+
+- dirname: 2024-06-08-22-37-55--qwen2-72b-instruct-whole
+  test_cases: 133
+  model: Qwen2 72B Instruct
+  edit_format: whole
+  commit_hash: 02c7335-dirty, 1a97498-dirty
+  pass_rate_1: 44.4
+  pass_rate_2: 55.6
+  percent_cases_well_formed: 100.0
+  error_outputs: 3
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 3
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model together_ai/qwen/Qwen2-72B-Instruct
+  date: 2024-06-08
+  versions: 0.37.1-dev
+  seconds_per_case: 14.3
+  total_cost: 0.0000
