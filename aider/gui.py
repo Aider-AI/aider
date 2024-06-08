@@ -19,9 +19,11 @@ class CaptureIO(InputOutput):
 
     def tool_output(self, msg):
         self.lines.append(msg)
+        super().tool_output(msg)
 
     def tool_error(self, msg):
         self.lines.append(msg)
+        super().tool_error(msg)
 
     def get_captured_lines(self):
         lines = self.lines
@@ -75,6 +77,9 @@ def get_coder():
     )
     # coder.io = io # this breaks the input_history
     coder.commands.io = io
+
+    for line in coder.get_announcements():
+        coder.io.tool_output(line)
 
     return coder
 
