@@ -40,3 +40,7 @@ cofuses the model.
 Aider also sends the LLM a [map of your entire git repo](https://aider.chat/docs/repomap.html), so other relevant code will be included automatically.
 - Use `/drop` to remove files from the chat session which aren't needed for the task at hand. This will reduce distractions and may help GPT produce properly formatted edits.
 - Use `/clear` to remove the conversation history, again to help GPT focus.
+
+## More help
+
+{% include help.md %}
