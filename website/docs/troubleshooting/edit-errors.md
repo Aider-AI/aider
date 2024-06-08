@@ -32,7 +32,7 @@ so editing errors should be expected.
 
 ## Reduce distractions
 
-Many models now have very large context windows,
+Many LLM now have very large context windows,
 but filling them with irrelevant code often
 cofuses the model.
 
