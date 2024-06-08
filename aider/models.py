@@ -8,6 +8,7 @@ from typing import Optional
 
 from PIL import Image
 
+from aider import urls
 from aider.dump import dump  # noqa: F401
 from aider.litellm import litellm
 
@@ -471,7 +472,7 @@ def sanity_check_model(io, model):
                     io.tool_error(f"- {m} ({fq})")
 
     if show:
-        io.tool_error("For more info see https://aider.chat/docs/llms/warnings.html")
+        io.tool_error(urls.model_warnings)
 
 
 def fuzzy_match_models(name):

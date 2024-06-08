@@ -17,7 +17,7 @@ from jsonschema import Draft7Validator
 from rich.console import Console, Text
 from rich.markdown import Markdown
 
-from aider import __version__, models, prompts, utils
+from aider import __version__, models, prompts, urls, utils
 from aider.commands import Commands
 from aider.history import ChatSummary
 from aider.io import InputOutput
@@ -1213,9 +1213,7 @@ class Coder:
             return
 
         self.io.tool_error("Warning: it's best to only add files that need changes to the chat.")
-        self.io.tool_error(
-            "https://aider.chat/docs/faq.html#how-can-i-add-all-the-files-to-the-chat"
-        )
+        self.io.tool_error(urls.edit_errors)
         self.warning_given = True
 
     def prepare_to_edit(self, edits):
@@ -1255,9 +1253,7 @@ class Coder:
             err = err.args[0]
 
             self.io.tool_error("The LLM did not conform to the edit format.")
-            self.io.tool_error(
-                "For more info see: https://aider.chat/docs/faq.html#aider-isnt-editing-my-files"
-            )
+            self.io.tool_error(urls.edit_errors)
             self.io.tool_error()
             self.io.tool_error(str(err), strip=False)
 

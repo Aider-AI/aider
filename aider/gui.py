@@ -6,6 +6,7 @@ import sys
 
 import streamlit as st
 
+from aider import urls
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
@@ -159,12 +160,12 @@ class GUI:
         pass
 
     def do_recommended_actions(self):
+        text = "Aider works best when your code is stored in a git repo.  \n"
+        text += f"[See the FAQ for more info]({urls.git})"
+
         with st.expander("Recommended actions", expanded=True):
             with st.popover("Create a git repo to track changes"):
-                st.write(
-                    "Aider works best when your code is stored in a git repo.  \n[See the FAQ"
-                    " for more info](https://aider.chat/docs/git.html)"
-                )
+                st.write(text)
                 self.button("Create git repo", key=random.random(), help="?")
 
             with st.popover("Update your `.gitignore` file"):
@@ -513,9 +514,9 @@ def gui_main():
     st.set_page_config(
         layout="wide",
         page_title="Aider",
-        page_icon="https://aider.chat/assets/favicon-32x32.png",
+        page_icon=urls.favicon,
         menu_items={
-            "Get Help": "https://aider.chat/",
+            "Get Help": urls.website,
             "Report a bug": "https://github.com/paul-gauthier/aider/issues",
             "About": "# Aider\nAI pair programming in your browser.",
         },

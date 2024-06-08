@@ -8,18 +8,18 @@ import pypandoc
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 
-from aider import __version__
+from aider import __version__, urls
 
-aider_user_agent = f"Aider/{__version__} +https://aider.chat"
+aider_user_agent = f"Aider/{__version__} +{urls.website}"
 
 # Playwright is nice because it has a simple way to install dependencies on most
 # platforms.
-PLAYWRIGHT_INFO = """
+PLAYWRIGHT_INFO = f"""
 For better web scraping, install Playwright chromium with this command in your terminal:
 
     playwright install --with-deps chromium
 
-See https://aider.chat/docs/install/optional.html#enable-playwright for more info.
+See {urls.enable_playwrite} for more info.
 """
 
 
