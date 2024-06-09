@@ -520,4 +520,27 @@
   versions: 0.37.1-dev
   seconds_per_case: 7.2
   total_cost: 0.0000
+
+- dirname: 2024-06-09-03-28-21--codestral-whole
+  test_cases: 133
+  model: codestral-2405
+  edit_format: whole
+  commit_hash: effc88a
+  pass_rate_1: 35.3
+  pass_rate_2: 51.1
+  percent_cases_well_formed: 100.0
+  error_outputs: 4
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 4
+  lazy_comments: 1
+  syntax_errors: 0
+  indentation_errors: 1
+  exhausted_context_windows: 0
+  test_timeouts: 4
+  command: aider --model mistral/codestral-2405
+  date: 2024-06-09
+  versions: 0.37.1-dev
+  seconds_per_case: 7.5
+  total_cost: 0.6805
   
