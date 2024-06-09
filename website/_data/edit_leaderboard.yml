@@ -497,3 +497,27 @@
   versions: 0.37.1-dev
   seconds_per_case: 14.3
   total_cost: 0.0000
+
+- dirname: 2024-06-08-23-45-41--gemini-1.5-flash-latest-whole
+  test_cases: 133
+  model: gemini-1.5-flash-latest
+  edit_format: whole
+  commit_hash: 86ea47f-dirty
+  pass_rate_1: 33.8
+  pass_rate_2: 44.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 16
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 12
+  lazy_comments: 0
+  syntax_errors: 9
+  indentation_errors: 1
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: aider --model gemini/gemini-1.5-flash-latest
+  date: 2024-06-08
+  versions: 0.37.1-dev
+  seconds_per_case: 7.2
+  total_cost: 0.0000
+  
