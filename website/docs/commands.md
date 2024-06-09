@@ -1,7 +1,7 @@
 ---
 parent: Usage
 nav_order: 50
-description: Control aider with in-chat commands line /add, /model, etc.
+description: Control aider with in-chat commands like /add, /model, etc.
 ---
 # In-chat commands
 
