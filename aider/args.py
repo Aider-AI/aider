@@ -36,7 +36,7 @@ def get_parser(default_config_files, git_root):
         "--anthropic-api-key",
         metavar="ANTHROPIC_API_KEY",
         env_var="ANTHROPIC_API_KEY",
-        help="Specify the OpenAI API key",
+        help="Specify the Anthropic API key",
     )
     default_model = models.DEFAULT_MODEL_NAME
     group.add_argument(
