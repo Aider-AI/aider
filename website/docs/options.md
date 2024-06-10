@@ -57,7 +57,7 @@ Specify the OpenAI API key
 Environment variable: `OPENAI_API_KEY`  
 
 ### `--anthropic-api-key ANTHROPIC_API_KEY`
-Specify the OpenAI API key  
+Specify the Anthropic API key  
 Environment variable: `ANTHROPIC_API_KEY`  
 
 ### `--model MODEL`

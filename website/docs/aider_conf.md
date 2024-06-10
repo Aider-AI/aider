@@ -41,7 +41,7 @@ cog.outl("```")
 ## Specify the OpenAI API key
 #openai-api-key:
 
-## Specify the OpenAI API key
+## Specify the Anthropic API key
 #anthropic-api-key:
 
 ## Specify the model to use for the main chat (default: gpt-4o)
