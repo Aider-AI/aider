@@ -453,17 +453,17 @@ def sanity_check_model(io, model):
             io.tool_error(f"- {key}")
     elif not model.keys_in_environment:
         show = True
-        io.tool_error(f"Model {model}: Unknown which environment variables are required.")
+        io.tool_output(f"Model {model}: Unknown which environment variables are required.")
 
     if not model.info:
         show = True
-        io.tool_error(
+        io.tool_output(
             f"Model {model}: Unknown model, context window size and token costs unavailable."
         )
 
         possible_matches = fuzzy_match_models(model.name)
         if possible_matches:
-            io.tool_error("Did you mean one of these?")
+            io.tool_output("Did you mean one of these?")
             for match in possible_matches:
                 fq, m = match
                 if fq == m:
