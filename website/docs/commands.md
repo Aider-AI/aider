@@ -32,6 +32,10 @@ cog.out(get_help_md())
 - **/web** Use headless selenium to scrape a webpage and add the content to the chat
 <!--[[[end]]]-->
 
+# Entering multi-line chat messages
+
+{% include multi-line.md %}
+
 # Keybindings
 
 The interactive prompt is built with [prompt-toolkit](https://github.com/prompt-toolkit/python-prompt-toolkit) which provides a lot of Emacs and Vi-style keyboard. Some emacs bindings you may find useful are
@@ -47,5 +51,3 @@ The interactive prompt is built with [prompt-toolkit](https://github.com/prompt-
 - `Ctrl-P` : Move up to the previous history entry.
 - `Ctrl-R` : Reverse search in command history.
 
-Note: aider currently exits vi normal mode after a single command, (maybe something to do with the esc keybinding?).
-Feel free to investigate and make a PR if you would like to see it fully supported.

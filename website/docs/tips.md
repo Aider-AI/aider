@@ -20,10 +20,7 @@ Or just paste the errors into the chat. Let the aider figure out and fix the bug
 - If test are failing, use the `/test` [in-chat command](/docs/commands.html)
 to run tests and
 share the error output with the aider.
-- You can send long, multi-line messages in the chat:
-  - In most environments, you can paste multi-line messages directly into the chat.
-  - Enter `{` alone on the first line to start a multiline message and `}` alone on the last line to end and send it.
-  - You can use Meta-ENTER (Esc+ENTER in some environments) to start a new line without sending the message.
+- {% include multi-line.md %}
 - LLMs know about a lot of standard tools and libraries, but may get some of the fine details wrong about API versions and function arguments.
 You can paste doc snippets into the chat to resolve these issues.
 
