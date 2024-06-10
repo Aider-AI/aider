@@ -66,7 +66,7 @@ def setup_git(git_root, io):
     with repo.config_reader() as config:
         try:
             user_name = config.get_value("user", "name", None)
-        except configparser.NoSectionError:
+        except (configparser.NoSectionError, configparser.NoOptionError):
             pass
         try:
             user_email = config.get_value("user", "email", None)
