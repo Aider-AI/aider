@@ -388,7 +388,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         return
 
     if args.commit:
-        coder.commands.cmd_commit()
+        if args.dry_run:
+            io.tool_output("Dry run enabled, skipping commit.")
+        else:
+            coder.commands.cmd_commit()
         return
 
     if args.lint:
