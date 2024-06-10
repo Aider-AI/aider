@@ -99,7 +99,7 @@ the overall codebase.
 
 ## More info
 
-Please the
+Please check the
 [repo map article on aider's blog](https://aider.chat/2023/10/22/repomap.html)
 for more information on aider's repository map
 and how it is constructed.
