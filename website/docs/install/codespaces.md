@@ -14,7 +14,7 @@ for all the details.
 
 
 <div class="video-container">
-  <video controls>
+  <video controls poster="/assets/codespaces.jpg">
     <source src="/assets/codespaces.mp4" type="video/mp4">
     <a href="/assets/codespaces.mp4">Install aider in GitHub Codespaces</a>
   </video>

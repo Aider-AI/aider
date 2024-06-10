@@ -28,7 +28,7 @@ or the
 [usage instructions](https://aider.chat/docs/usage.html) to start coding with aider.
 
 <div class="video-container">
-  <video controls>
+  <video controls poster="/assets/install.jpg">
     <source src="/assets/install.mp4" type="video/mp4">
     <a href="/assets/install.mp4">Installing aider</a>
   </video>
