@@ -26,6 +26,7 @@ def get_parser(default_config_files, git_root):
         help="Use VI editing mode in the terminal (default: False)",
         default=False,
     )
+    group.add_argument(
         "files",
         metavar="FILE",
         nargs="*",

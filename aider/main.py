@@ -6,6 +6,7 @@ from pathlib import Path
 
 import git
 from dotenv import load_dotenv
+from prompt_toolkit.enums import EditingMode
 from streamlit.web import cli
 
 from aider import __version__, models, utils
@@ -13,8 +14,6 @@ from aider.args import get_parser
 from aider.coders import Coder
 from aider.commands import SwitchModel
 from aider.io import InputOutput
-from prompt_toolkit.shortcuts import EditingMode
-from prompt_toolkit.shortcuts import EditingMode
 from aider.litellm import litellm  # noqa: F401; properly init litellm on launch
 from aider.repo import GitRepo
 from aider.versioncheck import check_version

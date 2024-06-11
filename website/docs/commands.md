@@ -73,5 +73,5 @@ The interactive prompt is built with [prompt-toolkit](https://github.com/prompt-
 - `dd` : Delete the current line.
 - `u` : Undo the last change.
 - `Ctrl-R` : Redo the last undone change.
-- `:` : Enter command mode for ex commands (e.g., `:w` to save).
+
 
