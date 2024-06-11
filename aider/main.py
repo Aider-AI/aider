@@ -342,7 +342,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     model_def_files.append(model_def_fname.resolve())
     model_def_files = list(map(str, model_def_files))
     model_def_files = list(dict.fromkeys(model_def_files))
-    print(f"model_def_files: {model_def_files}")
     try:
         model_files_loaded=models.register_models(model_def_files)
         if len(model_files_loaded) > 0:
