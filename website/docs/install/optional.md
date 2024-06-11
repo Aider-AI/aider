@@ -28,7 +28,7 @@ openai-api-key: sk-...
 
 ## Registering Models not in litellm 
 
-You can register models info and cost with litellm by adding one or more of the following files
+You can register model info and costs with litellm by adding one or more of the following files
 * {HomeDir}/.aider.models.json
 * {GitRoot}/.aider.models.json
 * {CWD}/.aider.models.json
