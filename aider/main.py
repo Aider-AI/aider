@@ -14,6 +14,7 @@ from aider.coders import Coder
 from aider.commands import SwitchModel
 from aider.io import InputOutput
 from prompt_toolkit.shortcuts import EditingMode
+from prompt_toolkit.shortcuts import EditingMode
 from aider.litellm import litellm  # noqa: F401; properly init litellm on launch
 from aider.repo import GitRepo
 from aider.versioncheck import check_version
@@ -245,9 +246,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         args.code_theme = "default"
 
     if return_coder and args.yes is None:
-        args.yes = True
-
-    editing_mode = EditingMode.VI if args.vim else EditingMode.EMACS
         args.yes = True
 
     editing_mode = EditingMode.VI if args.vim else EditingMode.EMACS
