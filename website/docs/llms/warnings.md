@@ -26,15 +26,14 @@ The json file should be a dictionary with an entry for each model, as follows:
 
 ```
 {
-    "gpt-4": {
-        "max_tokens": 4096, 
-        "max_input_tokens": 8192,
-        "max_output_tokens": 4096, 
-        "input_cost_per_token": 0.00003,
-        "output_cost_per_token": 0.00006,
-        "litellm_provider": "openai",
-        "mode": "chat",
-        "supports_function_calling": true
+    "deepseek-chat": {
+        "max_tokens": 4096,
+        "max_input_tokens": 32000,
+        "max_output_tokens": 4096,
+        "input_cost_per_token": 0.00000014,
+        "output_cost_per_token": 0.00000028,
+        "litellm_provider": "deepseek",
+        "mode": "chat"
     }
 }
 ```
