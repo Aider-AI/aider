@@ -89,6 +89,9 @@ cog.outl("```")
 ## Specify the OpenAI organization ID
 #openai-organization-id:
 
+## Specify a file with context window and costs for unknown models
+#model-metadata-file:
+
 ## Specify what edit format the LLM should use (default depends on model)
 #edit-format:
 

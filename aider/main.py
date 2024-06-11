@@ -341,17 +341,17 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     model_def_files.append(Path.home() / model_def_fname)  # homedir
     if git_root:
         model_def_files.append(Path(git_root) / model_def_fname)  # git root
-    if args.model_file:
-        model_def_files.append(args.model_file)
+    if args.model_metadata_file:
+        model_def_files.append(args.model_metadata_file)
     model_def_files.append(model_def_fname.resolve())
     model_def_files = list(map(str, model_def_files))
     model_def_files = list(dict.fromkeys(model_def_files))
     try:
-        model_files_loaded=models.register_models(model_def_files)
-        if len(model_files_loaded) > 0:
-            io.tool_output(f"Loaded {len(model_files_loaded)} model file(s)")
-            for model_file in model_files_loaded:
-                io.tool_output(f"  - {model_file}")
+        model_metadata_files_loaded = models.register_models(model_def_files)
+        if len(model_metadata_files_loaded) > 0:
+            io.tool_output(f"Loaded {len(model_metadata_files_loaded)} model file(s)")
+            for model_metadata_file in model_metadata_files_loaded:
+                io.tool_output(f"  - {model_metadata_file}")
     except Exception as e:
         io.tool_error(f"Error loading model info/cost: {e}")
         return 1
