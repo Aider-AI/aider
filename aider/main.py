@@ -246,6 +246,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if return_coder and args.yes is None:
         args.yes = True
 
+    editing_mode = EditingMode.VI if args.vim else EditingMode.EMACS
+
     io = InputOutput(
         args.pretty,
         args.yes,
@@ -260,8 +262,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         encoding=args.encoding,
         editingmode=editing_mode,
     )
-
-    editing_mode = EditingMode.VI if args.vim else EditingMode.EMACS
 
     fnames = [str(Path(fn).resolve()) for fn in args.files]
     if len(args.files) > 1:
