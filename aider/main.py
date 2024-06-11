@@ -337,8 +337,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     model_def_files.append(Path.home() / model_def_fname)  # homedir
     if git_root:
         model_def_files.append(Path(git_root) / model_def_fname)  # git root
-    if args.models:
-        model_def_files.append(args.models)
+    if args.model_file:
+        model_def_files.append(args.model_file)
     model_def_files = list(map(str, model_def_files))
     models.register_models(model_def_files)
 

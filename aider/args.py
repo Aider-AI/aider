@@ -136,7 +136,7 @@ def get_parser(default_config_files, git_root):
         help="Specify the OpenAI organization ID",
     )
     group.add_argument(
-        "--model_file",
+        "--model-file",
         metavar="MODEL_FILE",
         default=None,
         help={
