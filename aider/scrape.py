@@ -4,6 +4,7 @@ import re
 import sys
 
 import httpx
+import playwright
 import pypandoc
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
@@ -81,7 +82,10 @@ class Scraper:
             user_agent += " " + aider_user_agent
 
             page = browser.new_page(user_agent=user_agent)
-            page.goto(url, wait_until="networkidle", timeout=5000)
+            try:
+                page.goto(url, wait_until="networkidle", timeout=5000)
+            except playwright._impl._errors.TimeoutError:
+                pass
             content = page.content()
             browser.close()
 
