@@ -142,6 +142,23 @@ def get_parser(default_config_files, git_root):
         help="Specify the OpenAI organization ID",
     )
     group.add_argument(
+        "--model-file",
+        metavar="MODEL_FILE",
+        default=None,
+        help={
+            "Specify a file with model definitions (info and cost) to be registered with litellm, json formated",
+            "  {"
+            "    \"gpt-4\": {",
+            "      \"max_tokens\": 8192,",
+            "      \"input_cost_per_token\": 0.00003,",
+            "      \"output_cost_per_token\": 0.00006,",
+            "      \"litellm_provider\": \"openai\",",
+            "      \"mode\": \"chat\"",
+            "    },",
+            "  }"
+        }
+    )
+    group.add_argument(
         "--edit-format",
         metavar="EDIT_FORMAT",
         default=None,
