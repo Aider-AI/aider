@@ -332,6 +332,16 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.openai_organization_id:
         os.environ["OPENAI_ORGANIZATION"] = args.openai_organization_id
 
+    model_def_files = []
+    model_def_fname = Path(".aider.models.json")
+    model_def_files.append(Path.home() / model_def_fname)  # homedir
+    if git_root:
+        model_def_files.append(Path(git_root) / model_def_fname)  # git root
+    if args.models:
+        model_def_files.append(args.models)
+    model_def_files = list(map(str, model_def_files))
+    models.register_models(model_def_files)
+
     main_model = models.Model(args.model, weak_model=args.weak_model)
 
     lint_cmds = parse_lint_cmds(args.lint_cmd, io)

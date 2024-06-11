@@ -426,6 +426,18 @@ class Model:
 
         return res
 
+def register_models(model_def_fnames):
+    for model_def_fname in model_def_fnames:
+        if not os.path.exists(model_def_fname):
+            continue
+        print(f"Registering model definition from {model_def_fname}")
+        try:
+            with open(model_def_fname, "r") as model_def_file:
+                model_def = json.load(model_def_file)
+        except json.JSONDecodeError as e:
+            print(f"Error opening/decoding model definition: {e}")
+
+        litellm.register_model(model_def)
 
 def validate_variables(vars):
     missing = []
