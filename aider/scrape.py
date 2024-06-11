@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 
 from aider import __version__, urls
+from aider.dump import dump
 
 aider_user_agent = f"Aider/{__version__} +{urls.website}"
 
@@ -51,6 +52,7 @@ class Scraper:
         else:
             content = self.scrape_with_httpx(url)
 
+        dump(content)
         if not content:
             return
 
