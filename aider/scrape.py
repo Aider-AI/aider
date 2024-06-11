@@ -81,7 +81,7 @@ class Scraper:
             user_agent += " " + aider_user_agent
 
             page = browser.new_page(user_agent=user_agent)
-            page.goto(url, wait_until="networkidle")
+            page.goto(url, wait_until="networkidle", timeout=5000)
             content = page.content()
             browser.close()
 
