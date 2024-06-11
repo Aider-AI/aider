@@ -38,6 +38,9 @@ cog.outl("```")
 #######
 # Main:
 
+## Use VI editing mode in the terminal (default: False)
+#vim: false
+
 ## Specify the OpenAI API key
 #openai-api-key:
 
