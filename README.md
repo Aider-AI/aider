@@ -25,8 +25,6 @@ and can [connect to almost any LLM](https://aider.chat/docs/llms.html).
 
 ## Getting started
 
-{% include get-started.md %}
-
 **See the
 [installation instructions](https://aider.chat/docs/install.html)
 and other
