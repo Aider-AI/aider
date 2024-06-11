@@ -345,7 +345,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     try:
         model_files_loaded=models.register_models(model_def_files)
         if len(model_files_loaded) > 0:
-            io.tool_output(f"Loaded {len(model_files_loaded)} model files")
+            io.tool_output(f"Loaded {len(model_files_loaded)} model file(s)")
             for model_file in model_files_loaded:
                 io.tool_output(f"  - {model_file}")
     except Exception as e:
