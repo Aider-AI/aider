@@ -38,7 +38,9 @@ cog.out(get_help_md())
 
 # Keybindings
 
-The interactive prompt is built with [prompt-toolkit](https://github.com/prompt-toolkit/python-prompt-toolkit) which provides a lot of Emacs and Vi-style keyboard. Some emacs bindings you may find useful are
+The interactive prompt is built with [prompt-toolkit](https://github.com/prompt-toolkit/python-prompt-toolkit) which provides emacs and vi keybindings. 
+
+## Emacs
 
 - `Ctrl-A` : Move cursor to the start of the line.
 - `Ctrl-B` : Move cursor back one character.
@@ -50,4 +52,7 @@ The interactive prompt is built with [prompt-toolkit](https://github.com/prompt-
 - `Ctrl-N` : Move down to the next history entry.
 - `Ctrl-P` : Move up to the previous history entry.
 - `Ctrl-R` : Reverse search in command history.
+
+
+## Vi
 
