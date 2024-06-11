@@ -1,5 +1,6 @@
 import difflib
 import json
+import yaml
 import math
 import os
 import sys
@@ -425,23 +426,47 @@ class Model:
             return validate_variables(["GROQ_API_KEY"])
 
         return res
-
-
-def register_models(model_def_fnames):
-    model_metadata_files_loaded = []
-    for model_def_fname in model_def_fnames:
-        if not os.path.exists(model_def_fname):
+    
+def register_models(model_settings_fnames):
+    files_loaded = []
+    for model_settings_fname in model_settings_fnames:
+        if not os.path.exists(model_settings_fname):
             continue
-        model_metadata_files_loaded.append(model_def_fname)
+        
         try:
-            with open(model_def_fname, "r") as model_def_file:
+            with open(model_settings_fname, "r") as model_settings_file:
+                model_settings_list = yaml.safe_load(model_settings_file)
+
+            for model_settings_dict in model_settings_list:
+                model_settings = ModelSettings(**model_settings_dict)
+                existing_model_settings = next((ms for ms in MODEL_SETTINGS if ms.name == model_settings.name), None)
+                
+                if existing_model_settings:
+                    MODEL_SETTINGS.remove(existing_model_settings)
+                MODEL_SETTINGS.append(model_settings)
+        except Exception as e:
+            raise Exception(f"Error loading model settings from {model_settings_fname}: {e}")
+        files_loaded.append(model_settings_fname)
+
+    return files_loaded
+
+
+def register_litellm_models(model_fnames):
+    files_loaded = []
+    for model_fname in model_fnames:
+        if not os.path.exists(model_fname):
+            continue
+        
+        try:
+            with open(model_fname, "r") as model_def_file:
                 model_def = json.load(model_def_file)
-        except json.JSONDecodeError as e:
-            raise Exception(f"Error loading model definition from {model_def_fname}: {e}")
+            litellm.register_model(model_def)
+        except Exception as e:
+            raise Exception(f"Error loading model definition from {model_fname}: {e}")
+        
+        files_loaded.append(model_fname)
 
-        litellm.register_model(model_def)
-
-    return model_metadata_files_loaded
+    return files_loaded
 
 
 def validate_variables(vars):

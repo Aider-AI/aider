@@ -19,7 +19,8 @@ usage: aider [-h] [--vim] [--openai-api-key] [--anthropic-api-key]
              [--35turbo] [--models] [--openai-api-base]
              [--openai-api-type] [--openai-api-version]
              [--openai-api-deployment-id] [--openai-organization-id]
-             [--model-metadata-file] [--edit-format] [--weak-model]
+             [--model-settings-file] [--model-metadata-file]
+            [--edit-format] [--weak-model]
              [--show-model-warnings | --no-show-model-warnings]
              [--map-tokens] [--max-chat-history-tokens] [--env-file]
              [--input-history-file] [--chat-history-file]
@@ -127,6 +128,10 @@ Environment variable: `OPENAI_API_DEPLOYMENT_ID`
 ### `--openai-organization-id OPENAI_ORGANIZATION_ID`
 Specify the OpenAI organization ID  
 Environment variable: `OPENAI_ORGANIZATION_ID`  
+
+### `--model-settings-file MODEL_FILE`
+Specify a file with aider model settings for unknown models  
+Environment variable: `AIDER_MODEL_SETTINGS_FILE`  
 
 ### `--model-metadata-file MODEL_FILE`
 Specify a file with context window and costs for unknown models  

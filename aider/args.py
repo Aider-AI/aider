@@ -142,8 +142,14 @@ def get_parser(default_config_files, git_root):
         help="Specify the OpenAI organization ID",
     )
     group.add_argument(
+        "--model-settings-file",
+        metavar="MODEL_SETTINGS_FILE",
+        default=None,
+        help="Specify a file with aider model settings for unknown models",
+    )
+    group.add_argument(
         "--model-metadata-file",
-        metavar="MODEL_FILE",
+        metavar="MODEL_METADATA_FILE",
         default=None,
         help="Specify a file with context window and costs for unknown models",
     )
