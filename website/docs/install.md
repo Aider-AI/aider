@@ -7,19 +7,7 @@ description: How to install and get started pair programming with aider.
 
 # Quick start
 
-You can get started quickly like this:
-
-```
-$ pip install aider-chat
-
-# To work with GPT-4o
-$ export OPENAI_API_KEY=your-key-goes-here
-$ aider 
-
-# To work with Claude 3 Opus:
-$ export ANTHROPIC_API_KEY=your-key-goes-here
-$ aider --opus
-```
+{% include get-started.md %}
 
 Or see the
 [full installation instructions](/docs/install/install.html)
