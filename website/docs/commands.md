@@ -56,3 +56,22 @@ The interactive prompt is built with [prompt-toolkit](https://github.com/prompt-
 
 ## Vi
 
+- `Esc` : Switch to command mode.
+- `i` : Switch to insert mode.
+- `a` : Move cursor one character to the right and switch to insert mode.
+- `A` : Move cursor to the end of the line and switch to insert mode.
+- `I` : Move cursor to the beginning of the line and switch to insert mode.
+- `h` : Move cursor one character to the left.
+- `j` : Move cursor down one line.
+- `k` : Move cursor up one line.
+- `l` : Move cursor one character to the right.
+- `w` : Move cursor forward one word.
+- `b` : Move cursor backward one word.
+- `0` : Move cursor to the beginning of the line.
+- `$` : Move cursor to the end of the line.
+- `x` : Delete the character under the cursor.
+- `dd` : Delete the current line.
+- `u` : Undo the last change.
+- `Ctrl-R` : Redo the last undone change.
+- `:` : Enter command mode for ex commands (e.g., `:w` to save).
+
