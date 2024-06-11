@@ -46,6 +46,7 @@ The json file should be formated as follows
   },
 }
 ```
+see [litellm's model definitions](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json) for examples
 
 ## Enable Playwright 
 
