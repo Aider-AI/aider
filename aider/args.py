@@ -21,6 +21,11 @@ def get_parser(default_config_files, git_root):
     )
     group = parser.add_argument_group("Main")
     group.add_argument(
+        "--vim",
+        action="store_true",
+        help="Use VI editing mode in the terminal (default: False)",
+        default=False,
+    )
         "files",
         metavar="FILE",
         nargs="*",
