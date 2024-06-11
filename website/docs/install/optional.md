@@ -26,6 +26,27 @@ Put a line in it like this to specify your api key:
 openai-api-key: sk-...
 ```
 
+## Registering Models not in litellm 
+
+You can register models info and cost with litellm by adding one or more of the following files
+* {HomeDir}/.aider.models.json
+* {GitRoot}/.aider.models.json
+* {CWD}/.aider.models.json
+* or via the command line argument `model-file`
+If the files above exists, they will be loaded in that order. Files loaded last will take priority.
+The json file should be formated as follows
+```
+{
+  "gpt-4": {
+    "max_tokens": 8192,
+    "input_cost_per_token": 0.00003,
+    "output_cost_per_token": 0.00006,
+    "litellm_provider": "openai",
+    "mode": "chat",
+  },
+}
+```
+
 ## Enable Playwright 
 
 Aider supports adding web pages to the chat with the `/web <url>` command.

@@ -103,6 +103,10 @@ Aliases:
 List known models which match the (partial) MODEL name  
 Environment variable: `AIDER_MODELS`  
 
+### `--model-file FILE`
+Specify a file with model definitions (info and cost) to be registered with litellm, json formated. See [Registering Models not in litellm](install/optional.md#registering_models_not_in_litellm) for the format  
+Environment variable: `AIDER_MODEL_FILE`
+
 ### `--openai-api-base OPENAI_API_BASE`
 Specify the api base url  
 Environment variable: `OPENAI_API_BASE`  

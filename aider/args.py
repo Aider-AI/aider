@@ -140,7 +140,7 @@ def get_parser(default_config_files, git_root):
         metavar="MODEL_FILE",
         default=None,
         help={
-            "File with model definitions to be registered for info/cost, json formated",
+            "Specify a file with model definitions (info and cost) to be registered with litellm, json formated",
             "  {"
             "    \"gpt-4\": {",
             "      \"max_tokens\": 8192,",
