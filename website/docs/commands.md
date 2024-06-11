@@ -56,6 +56,8 @@ The interactive prompt is built with [prompt-toolkit](https://github.com/prompt-
 
 ## Vi
 
+To use vi/vim keybindings, run aider with the `--vim` switch.
+
 - `Esc` : Switch to command mode.
 - `i` : Switch to insert mode.
 - `a` : Move cursor one character to the right and switch to insert mode.
