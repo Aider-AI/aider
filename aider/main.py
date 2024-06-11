@@ -341,6 +341,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         model_def_files.append(args.model_file)
     model_def_files.append(model_def_fname.resolve())
     model_def_files = list(map(str, model_def_files))
+    model_def_files = list(dict.fromkeys(model_def_files))
+    print(f"model_def_files: {model_def_files}")
     models.register_models(model_def_files)
 
     main_model = models.Model(args.model, weak_model=args.weak_model)
