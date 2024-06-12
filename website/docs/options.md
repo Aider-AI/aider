@@ -1,6 +1,7 @@
 ---
 parent: Configuration
 nav_order: 10
+description: Details about all of aider's settings.
 ---
 
 # Options reference
@@ -18,7 +19,7 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--35turbo] [--models] [--openai-api-base]
              [--openai-api-type] [--openai-api-version]
              [--openai-api-deployment-id] [--openai-organization-id]
-             [--edit-format] [--weak-model]
+             [--model-metadata-file] [--edit-format] [--weak-model]
              [--show-model-warnings | --no-show-model-warnings]
              [--map-tokens] [--max-chat-history-tokens] [--env-file]
              [--input-history-file] [--chat-history-file]
@@ -34,7 +35,7 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--dry-run | --no-dry-run] [--commit] [--lint]
              [--lint-cmd] [--auto-lint | --no-auto-lint]
              [--test-cmd] [--auto-test | --no-auto-test] [--test]
-             [--voice-language] [--version] [--check-update]
+             [--vim] [--voice-language] [--version] [--check-update]
              [--skip-check-update] [--apply] [--yes] [-v]
              [--show-repo-map] [--show-prompts] [--message]
              [--message-file] [--encoding] [-c] [--gui]
@@ -56,7 +57,7 @@ Specify the OpenAI API key
 Environment variable: `OPENAI_API_KEY`  
 
 ### `--anthropic-api-key ANTHROPIC_API_KEY`
-Specify the OpenAI API key  
+Specify the Anthropic API key  
 Environment variable: `ANTHROPIC_API_KEY`  
 
 ### `--model MODEL`
@@ -121,6 +122,10 @@ Environment variable: `OPENAI_API_DEPLOYMENT_ID`
 ### `--openai-organization-id OPENAI_ORGANIZATION_ID`
 Specify the OpenAI organization ID  
 Environment variable: `OPENAI_ORGANIZATION_ID`  
+
+### `--model-metadata-file MODEL_FILE`
+Specify a file with context window and costs for unknown models  
+Environment variable: `AIDER_MODEL_METADATA_FILE`  
 
 ### `--edit-format EDIT_FORMAT`
 Specify what edit format the LLM should use (default depends on model)  
@@ -320,6 +325,11 @@ Default: False
 Environment variable: `AIDER_TEST`  
 
 ## Other Settings:
+
+### `--vim`
+Use VI editing mode in the terminal (default: False)  
+Default: False  
+Environment variable: `AIDER_VIM`  
 
 ### `--voice-language VOICE_LANGUAGE`
 Specify the language for voice using ISO 639-1 code (default: auto)  

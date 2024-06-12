@@ -474,4 +474,141 @@
   versions: 0.28.1-dev
   seconds_per_case: 17.6
   total_cost: 1.6205
-  
+
+- dirname: 2024-06-08-22-37-55--qwen2-72b-instruct-whole
+  test_cases: 133
+  model: Qwen2 72B Instruct
+  edit_format: whole
+  commit_hash: 02c7335-dirty, 1a97498-dirty
+  pass_rate_1: 44.4
+  pass_rate_2: 55.6
+  percent_cases_well_formed: 100.0
+  error_outputs: 3
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 3
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model together_ai/qwen/Qwen2-72B-Instruct
+  date: 2024-06-08
+  versions: 0.37.1-dev
+  seconds_per_case: 14.3
+  total_cost: 0.0000
+
+- dirname: 2024-06-08-23-45-41--gemini-1.5-flash-latest-whole
+  test_cases: 133
+  model: gemini-1.5-flash-latest
+  edit_format: whole
+  commit_hash: 86ea47f-dirty
+  pass_rate_1: 33.8
+  pass_rate_2: 44.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 16
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 12
+  lazy_comments: 0
+  syntax_errors: 9
+  indentation_errors: 1
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: aider --model gemini/gemini-1.5-flash-latest
+  date: 2024-06-08
+  versions: 0.37.1-dev
+  seconds_per_case: 7.2
+  total_cost: 0.0000
+
+- dirname: 2024-06-09-03-28-21--codestral-whole
+  test_cases: 133
+  model: codestral-2405
+  edit_format: whole
+  commit_hash: effc88a
+  pass_rate_1: 35.3
+  pass_rate_2: 51.1
+  percent_cases_well_formed: 100.0
+  error_outputs: 4
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 4
+  lazy_comments: 1
+  syntax_errors: 0
+  indentation_errors: 1
+  exhausted_context_windows: 0
+  test_timeouts: 4
+  command: aider --model mistral/codestral-2405
+  date: 2024-06-09
+  versions: 0.37.1-dev
+  seconds_per_case: 7.5
+  total_cost: 0.6805
+
+- dirname: 2024-06-08-19-25-26--codeqwen:7b-chat-v1.5-q8_0-whole
+  test_cases: 133
+  model: codeqwen:7b-chat-v1.5-q8_0
+  edit_format: whole
+  commit_hash: be0520f-dirty
+  pass_rate_1: 32.3
+  pass_rate_2: 34.6
+  percent_cases_well_formed: 100.0
+  error_outputs: 8
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 8
+  lazy_comments: 0
+  syntax_errors: 1
+  indentation_errors: 2
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model ollama/codeqwen:7b-chat-v1.5-q8_0
+  date: 2024-06-08
+  versions: 0.37.1-dev
+  seconds_per_case: 15.6
+  total_cost: 0.0000
+
+- dirname: 2024-06-08-16-12-31--codestral:22b-v0.1-q8_0-whole
+  test_cases: 133
+  model: codestral:22b-v0.1-q8_0
+  edit_format: whole
+  commit_hash: be0520f-dirty
+  pass_rate_1: 35.3
+  pass_rate_2: 48.1
+  percent_cases_well_formed: 100.0
+  error_outputs: 8
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 8
+  lazy_comments: 2
+  syntax_errors: 0
+  indentation_errors: 1
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: aider --model ollama/codestral:22b-v0.1-q8_0
+  date: 2024-06-08
+  versions: 0.37.1-dev
+  seconds_per_case: 46.4
+  total_cost: 0.0000
+
+- dirname: 2024-06-08-17-54-04--qwen2:72b-instruct-q8_0-whole
+  test_cases: 133
+  model: qwen2:72b-instruct-q8_0
+  edit_format: whole
+  commit_hash: 74e51d5-dirty
+  pass_rate_1: 43.6
+  pass_rate_2: 49.6
+  percent_cases_well_formed: 100.0
+  error_outputs: 27
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 27
+  lazy_comments: 0
+  syntax_errors: 5
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model ollama/qwen2:72b-instruct-q8_0
+  date: 2024-06-08
+  versions: 0.37.1-dev
+  seconds_per_case: 280.6
+  total_cost: 0.0000

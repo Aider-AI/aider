@@ -8,6 +8,7 @@ from typing import Optional
 
 from PIL import Image
 
+from aider import urls
 from aider.dump import dump  # noqa: F401
 from aider.litellm import litellm
 
@@ -426,6 +427,23 @@ class Model:
         return res
 
 
+def register_models(model_def_fnames):
+    model_metadata_files_loaded = []
+    for model_def_fname in model_def_fnames:
+        if not os.path.exists(model_def_fname):
+            continue
+        model_metadata_files_loaded.append(model_def_fname)
+        try:
+            with open(model_def_fname, "r") as model_def_file:
+                model_def = json.load(model_def_file)
+        except json.JSONDecodeError as e:
+            raise Exception(f"Error loading model definition from {model_def_fname}: {e}")
+
+        litellm.register_model(model_def)
+
+    return model_metadata_files_loaded
+
+
 def validate_variables(vars):
     missing = []
     for var in vars:
@@ -452,17 +470,17 @@ def sanity_check_model(io, model):
             io.tool_error(f"- {key}")
     elif not model.keys_in_environment:
         show = True
-        io.tool_error(f"Model {model}: Unknown which environment variables are required.")
+        io.tool_output(f"Model {model}: Unknown which environment variables are required.")
 
     if not model.info:
         show = True
-        io.tool_error(
+        io.tool_output(
             f"Model {model}: Unknown model, context window size and token costs unavailable."
         )
 
         possible_matches = fuzzy_match_models(model.name)
         if possible_matches:
-            io.tool_error("Did you mean one of these?")
+            io.tool_output("Did you mean one of these?")
             for match in possible_matches:
                 fq, m = match
                 if fq == m:
@@ -471,7 +489,7 @@ def sanity_check_model(io, model):
                     io.tool_error(f"- {m} ({fq})")
 
     if show:
-        io.tool_error("For more info see https://aider.chat/docs/llms/warnings.html")
+        io.tool_error(urls.model_warnings)
 
 
 def fuzzy_match_models(name):

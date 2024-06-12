@@ -321,6 +321,8 @@ uritemplate==4.1.1
     # via google-api-python-client
 urllib3==2.2.1
     # via requests
+watchdog==4.0.1
+    # via -r requirements.in
 wcwidth==0.2.13
     # via prompt-toolkit
 yarl==1.9.4

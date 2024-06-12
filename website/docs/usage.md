@@ -1,6 +1,7 @@
 ---
 nav_order: 30
 has_children: true
+description: How to use aider to pair program with AI and edit code in your local git repo.
 ---
 
 # Usage
@@ -9,9 +10,29 @@ Run `aider` with the source code files you want to edit.
 These files will be "added to the chat session", so that
 aider can see their
 contents and edit them for you.
+They can be existing files or the name of files you want
+aider to create for you.
 
 ```
 aider <file1> <file2> ...
+```
+
+At the aider `>` prompt, ask for code changes and aider
+will edit those files to accomplish your request.
+
+
+```
+$ aider factorial.py
+
+Aider v0.37.1-dev
+Models: gpt-4o with diff edit format, weak model gpt-3.5-turbo
+Git repo: .git with 258 files
+Repo-map: using 1024 tokens
+Use /help to see in-chat commands, run with --help to see cmd line args
+───────────────────────────────────────────────────────────────────────
+>`Make a program that asks for a number and prints its factorial
+
+...
 ```
 
 ## Adding files
@@ -47,7 +68,7 @@ Or, during your chat you can switch models with the in-chat
 Ask aider to make changes to your code.
 It will show you some diffs of the changes it is making to
 complete you request.
-It will git commit all the changes it makes,
+Aider will git commit all of its changes,
 so they are easy to track and undo.
 
 You can always use the `/undo` command to undo changes you don't

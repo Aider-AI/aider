@@ -4,22 +4,24 @@ import re
 import sys
 
 import httpx
+import playwright
 import pypandoc
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 
-from aider import __version__
+from aider import __version__, urls
+from aider.dump import dump
 
-aider_user_agent = f"Aider/{__version__} +https://aider.chat"
+aider_user_agent = f"Aider/{__version__} +{urls.website}"
 
 # Playwright is nice because it has a simple way to install dependencies on most
 # platforms.
-PLAYWRIGHT_INFO = """
+PLAYWRIGHT_INFO = f"""
 For better web scraping, install Playwright chromium with this command in your terminal:
 
     playwright install --with-deps chromium
 
-See https://aider.chat/docs/install/optional.html#enable-playwright for more info.
+See {urls.enable_playwrite} for more info.
 """
 
 
@@ -51,6 +53,7 @@ class Scraper:
         else:
             content = self.scrape_with_httpx(url)
 
+        dump(content)
         if not content:
             return
 
@@ -79,7 +82,10 @@ class Scraper:
             user_agent += " " + aider_user_agent
 
             page = browser.new_page(user_agent=user_agent)
-            page.goto(url)
+            try:
+                page.goto(url, wait_until="networkidle", timeout=5000)
+            except playwright._impl._errors.TimeoutError:
+                pass
             content = page.content()
             browser.close()
 

@@ -1,22 +1,23 @@
 ---
 parent: Usage
 nav_order: 100
+description: Speak with aider about your code!
 ---
 
 # Voice-to-code with aider
 
-Speak with GPT about your code! Request new features, test cases or bug fixes using your voice and let GPT do the work of editing the files in your local git repo. As with all of aider's capabilities, you can use voice-to-code with an existing repo or to start a new project.
+Speak with aider about your code! Request new features, test cases or bug fixes using your voice and let aider do the work of editing the files in your local git repo. As with all of aider's capabilities, you can use voice-to-code with an existing repo or to start a new project.
 
 Voice support fits quite naturally into aider's AI pair programming
 chat interface. Now you can fluidly switch between voice and text chat
-when you ask GPT to edit your code.
+when you ask aider to edit your code.
 
 ## How to use voice-to-code
 
 Use the in-chat `/voice` command to start recording,
 and press `ENTER` when you're done speaking.
-Your voice coding instructions will be transcribed
-and sent to GPT, as if you had  typed them into
+Your voice coding instructions will be transcribed, 
+as if you had  typed them into
 the aider chat session.
 
 See the [installation instructions](https://aider.chat/docs/install/optional.html#enable-voice-coding) for

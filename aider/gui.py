@@ -6,6 +6,7 @@ import sys
 
 import streamlit as st
 
+from aider import urls
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
@@ -18,9 +19,11 @@ class CaptureIO(InputOutput):
 
     def tool_output(self, msg):
         self.lines.append(msg)
+        super().tool_output(msg)
 
     def tool_error(self, msg):
         self.lines.append(msg)
+        super().tool_error(msg)
 
     def get_captured_lines(self):
         lines = self.lines
@@ -74,6 +77,9 @@ def get_coder():
     )
     # coder.io = io # this breaks the input_history
     coder.commands.io = io
+
+    for line in coder.get_announcements():
+        coder.io.tool_output(line)
 
     return coder
 
@@ -159,12 +165,12 @@ class GUI:
         pass
 
     def do_recommended_actions(self):
+        text = "Aider works best when your code is stored in a git repo.  \n"
+        text += f"[See the FAQ for more info]({urls.git})"
+
         with st.expander("Recommended actions", expanded=True):
             with st.popover("Create a git repo to track changes"):
-                st.write(
-                    "Aider works best when your code is stored in a git repo.  \n[See the FAQ"
-                    " for more info](https://aider.chat/docs/git.html)"
-                )
+                st.write(text)
                 self.button("Create git repo", key=random.random(), help="?")
 
             with st.popover("Update your `.gitignore` file"):
@@ -405,14 +411,22 @@ class GUI:
         prompt = self.state.prompt
         self.state.prompt = None
 
+        # This duplicates logic from within Coder
+        self.num_reflections = 0
+        self.max_reflections = 3
+
         while prompt:
             with self.messages.chat_message("assistant"):
                 res = st.write_stream(self.coder.run_stream(prompt))
                 self.state.messages.append({"role": "assistant", "content": res})
                 # self.cost()
+
+            prompt = None
             if self.coder.reflected_message:
-                self.info(self.coder.reflected_message)
-            prompt = self.coder.reflected_message
+                if self.num_reflections < self.max_reflections:
+                    self.num_reflections += 1
+                    self.info(self.coder.reflected_message)
+                    prompt = self.coder.reflected_message
 
         with self.messages:
             edit = dict(
@@ -513,9 +527,9 @@ def gui_main():
     st.set_page_config(
         layout="wide",
         page_title="Aider",
-        page_icon="https://aider.chat/assets/favicon-32x32.png",
+        page_icon=urls.favicon,
         menu_items={
-            "Get Help": "https://aider.chat/",
+            "Get Help": urls.website,
             "Report a bug": "https://github.com/paul-gauthier/aider/issues",
             "About": "# Aider\nAI pair programming in your browser.",
         },

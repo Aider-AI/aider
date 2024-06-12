@@ -4,8 +4,16 @@ nav_order: 1
 ---
 
 <!--[[[cog
-cog.out(open("README.md").read())
+# This page is a copy of README.md, adding the front matter above.
+# Remove any cog markup before inserting the README text.
+text = open("README.md").read()
+text = text.replace('['*3 + 'cog', ' NOOP ')
+text = text.replace('['*3 + 'end', ' NOOP ')
+text = text.replace(']'*3, '')
+cog.out(text)
 ]]]-->
+
+<!-- Edit README.md, not index.md -->
 
 # Aider is AI pair programming in your terminal
 
@@ -32,47 +40,57 @@ and can [connect to almost any LLM](https://aider.chat/docs/llms.html).
 </p>
 
 ## Getting started
-
+<!-- NOOP 
+# We can't do this here: {% include get-started.md %}
+# Because this page is rendered by GitHub as the repo README
+cog.out(open("website/_includes/get-started.md").read())
+-->
 You can get started quickly like this:
 
 ```
 $ pip install aider-chat
 
-# To work with GPT-4o
+# Change directory into a git repo
+$ cd /to/your/git/repo
+
+# Work with GPT-4o on your repo
 $ export OPENAI_API_KEY=your-key-goes-here
 $ aider 
 
-# To work with Claude 3 Opus:
+# Or, work with Claude 3 Opus on your repo
 $ export ANTHROPIC_API_KEY=your-key-goes-here
 $ aider --opus
 ```
+<!-- NOOP -->
 
-**See the
+See the
 [installation instructions](https://aider.chat/docs/install.html)
 and other
 [documentation](https://aider.chat/docs/usage.html)
-for more details.**
+for more details.
 
 ## Features
 
-- Chat with aider about your code: `aider <file1> <file2> ...`
+- Run aider with the files you want to edit: `aider <file1> <file2> ...`
 - Ask for changes:
-  - New features, test cases, improvements.
-  - Bug fixes, updated docs or code refactors.
-  - Paste in a GitHub issue that needs to be solved.
+  - Add new features or test cases.
+  - Describe a bug.
+  - Paste in an error message or or GitHub issue URL.
+  - Refactor code.
+  - Update docs.
 - Aider will edit your files to complete your request.
 - Aider [automatically git commits](https://aider.chat/docs/git.html) changes with a sensible commit message.
 - Aider works with [most popular languages](https://aider.chat/docs/languages.html): python, javascript, typescript, php, html, css, and more...
 - Aider works best with GPT-4o and Claude 3 Opus
 and can [connect to almost any LLM](https://aider.chat/docs/llms.html).
-- Aider can make coordinated changes across multiple files at once.
+- Aider can edit multiple files at once for complex requests.
 - Aider uses a [map of your entire git repo](https://aider.chat/docs/repomap.html), which helps it work well in larger codebases.
-- You can also edit files in your editor while chatting with aider.
-Aider will notice and always use the latest version.
-So you can bounce back and forth between aider and your editor, to collaboratively code with AI.
-- Images can be added to the chat (GPT-4o, GPT-4 Turbo, etc).
-- URLs can be added to the chat and aider will read their content.
-- [Code with your voice](https://aider.chat/docs/voice.html) using speech recognition.
+- Edit files in your editor while chatting with aider,
+and it will always use the latest version.
+Pair program with AI.
+- Add images to the chat (GPT-4o, GPT-4 Turbo, etc).
+- Add URLs to the chat and aider will read their content.
+- [Code with your voice](https://aider.chat/docs/voice.html).
 
 
 ## State of the art
@@ -89,22 +107,25 @@ projects like django, scikitlearn, matplotlib, etc.
    </a>
 </p>
 
-## Documentation
+## More info
 
+- [Documentation](https://aider.chat/)
 - [Installation](https://aider.chat/docs/install.html)
 - [Usage](https://aider.chat/docs/usage.html)
 - [Tutorial videos](https://aider.chat/docs/tutorials.html)
 - [Connecting to LLMs](https://aider.chat/docs/llms.html)
+- [Configuration](https://aider.chat/docs/config.html)
+- [Troubleshooting](https://aider.chat/docs/troubleshooting.html)
 - [LLM Leaderboards](https://aider.chat/docs/leaderboards/)
-- [FAQ](https://aider.chat/docs/faq.html)
+- [GitHub](https://github.com/paul-gauthier/aider)
 - [Discord](https://discord.gg/Tv2uQnR88V)
 - [Blog](https://aider.chat/blog/)
 
 
 ## Kind words from users
 
+- *The best free open source AI coding assistant.* -- [IndyDevDan](https://youtu.be/YALpX8oOn78)
 - *The best AI coding assistant so far.* -- [Matthew Berman](https://www.youtube.com/watch?v=df8afeb1FY8)
-- *Hands down, this is the best AI coding assistant tool so far.* -- [IndyDevDan](https://www.youtube.com/watch?v=MPYFPvxfGZs)
 - *Aider ... has easily quadrupled my coding productivity.* -- [SOLAR_FIELDS](https://news.ycombinator.com/item?id=36212100)
 - *It's a cool workflow... Aider's ergonomics are perfect for me.* -- [qup](https://news.ycombinator.com/item?id=38185326)
 - *It's really like having your senior developer live right in your Git repo - truly amazing!* -- [rappster](https://github.com/paul-gauthier/aider/issues/124)
@@ -119,5 +140,6 @@ projects like django, scikitlearn, matplotlib, etc.
 - *I have been recovering from multiple shoulder surgeries ... and have used aider extensively. It has allowed me to continue productivity.* -- [codeninja](https://www.reddit.com/r/OpenAI/s/nmNwkHy1zG)
 - *I am an aider addict. I'm getting so much more work done, but in less time.* -- [dandandan](https://discord.com/channels/1131200896827654144/1131200896827654149/1135913253483069470)
 - *After wasting $100 on tokens trying to find something better, I'm back to Aider. It blows everything else out of the water hands down, there's no competition whatsoever.* -- [SystemSculpt](https://discord.com/channels/1131200896827654144/1131200896827654149/1178736602797846548)
+- *Hands down, this is the best AI coding assistant tool so far.* -- [IndyDevDan](https://www.youtube.com/watch?v=MPYFPvxfGZs)
 - *Best agent for actual dev work in existing codebases.* -- [Nick Dobos](https://twitter.com/NickADobos/status/1690408967963652097?s=20)
 <!--[[[end]]]-->

@@ -1,6 +1,7 @@
 ---
 parent: Usage
 nav_order: 50
+description: Control aider with in-chat commands like /add, /model, etc.
 ---
 # In-chat commands
 
@@ -31,9 +32,15 @@ cog.out(get_help_md())
 - **/web** Use headless selenium to scrape a webpage and add the content to the chat
 <!--[[[end]]]-->
 
+# Entering multi-line chat messages
+
+{% include multi-line.md %}
+
 # Keybindings
 
-The interactive prompt is built with [prompt-toolkit](https://github.com/prompt-toolkit/python-prompt-toolkit) which provides a lot of Emacs and Vi-style keyboard. Some emacs bindings you may find useful are
+The interactive prompt is built with [prompt-toolkit](https://github.com/prompt-toolkit/python-prompt-toolkit) which provides emacs and vi keybindings. 
+
+## Emacs
 
 - `Ctrl-A` : Move cursor to the start of the line.
 - `Ctrl-B` : Move cursor back one character.
@@ -46,5 +53,27 @@ The interactive prompt is built with [prompt-toolkit](https://github.com/prompt-
 - `Ctrl-P` : Move up to the previous history entry.
 - `Ctrl-R` : Reverse search in command history.
 
-Note: aider currently exits vi normal mode after a single command, (maybe something to do with the esc keybinding?).
-Feel free to investigate and make a PR if you would like to see it fully supported.
+
+## Vi
+
+To use vi/vim keybindings, run aider with the `--vim` switch.
+
+- `Esc` : Switch to command mode.
+- `i` : Switch to insert mode.
+- `a` : Move cursor one character to the right and switch to insert mode.
+- `A` : Move cursor to the end of the line and switch to insert mode.
+- `I` : Move cursor to the beginning of the line and switch to insert mode.
+- `h` : Move cursor one character to the left.
+- `j` : Move cursor down one line.
+- `k` : Move cursor up one line.
+- `l` : Move cursor one character to the right.
+- `w` : Move cursor forward one word.
+- `b` : Move cursor backward one word.
+- `0` : Move cursor to the beginning of the line.
+- `$` : Move cursor to the end of the line.
+- `x` : Delete the character under the cursor.
+- `dd` : Delete the current line.
+- `u` : Undo the last change.
+- `Ctrl-R` : Redo the last undone change.
+
+

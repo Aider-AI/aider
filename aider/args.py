@@ -42,7 +42,7 @@ def get_parser(default_config_files, git_root):
         "--anthropic-api-key",
         metavar="ANTHROPIC_API_KEY",
         env_var="ANTHROPIC_API_KEY",
-        help="Specify the OpenAI API key",
+        help="Specify the Anthropic API key",
     )
     default_model = models.DEFAULT_MODEL_NAME
     group.add_argument(
@@ -140,6 +140,12 @@ def get_parser(default_config_files, git_root):
         metavar="OPENAI_ORGANIZATION_ID",
         env_var="OPENAI_ORGANIZATION_ID",
         help="Specify the OpenAI organization ID",
+    )
+    group.add_argument(
+        "--model-metadata-file",
+        metavar="MODEL_FILE",
+        default=None,
+        help="Specify a file with context window and costs for unknown models",
     )
     group.add_argument(
         "--edit-format",
@@ -363,6 +369,12 @@ def get_parser(default_config_files, git_root):
 
     ##########
     group = parser.add_argument_group("Other Settings")
+    group.add_argument(
+        "--vim",
+        action="store_true",
+        help="Use VI editing mode in the terminal (default: False)",
+        default=False,
+    )
     group.add_argument(
         "--voice-language",
         metavar="VOICE_LANGUAGE",

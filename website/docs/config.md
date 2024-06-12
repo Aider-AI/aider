@@ -1,6 +1,7 @@
 ---
 nav_order: 55
 has_children: true
+description: Information on all of aider's settings and how to use them.
 ---
 
 # Configuration

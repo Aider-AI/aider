@@ -26,6 +26,7 @@ pypandoc
 litellm
 google-generativeai
 streamlit
+watchdog
 flake8
 
 # v3.3 no longer works on python 3.9

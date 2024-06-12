@@ -1,11 +1,12 @@
 ---
 parent: Configuration
 nav_order: 15
+description: How to configure aider with a yaml config file.
 ---
 
 # YAML config file
 
-Most options can also be set in an `.aider.conf.yml` file
+Most of aider's options can be set in an `.aider.conf.yml` file,
 which can be placed in your home directory or at the root of
 your git repo. 
 
@@ -40,7 +41,7 @@ cog.outl("```")
 ## Specify the OpenAI API key
 #openai-api-key:
 
-## Specify the OpenAI API key
+## Specify the Anthropic API key
 #anthropic-api-key:
 
 ## Specify the model to use for the main chat (default: gpt-4o)
@@ -84,6 +85,9 @@ cog.outl("```")
 
 ## Specify the OpenAI organization ID
 #openai-organization-id:
+
+## Specify a file with context window and costs for unknown models
+#model-metadata-file:
 
 ## Specify what edit format the LLM should use (default depends on model)
 #edit-format:
@@ -195,6 +199,9 @@ cog.outl("```")
 
 #################
 # Other Settings:
+
+## Use VI editing mode in the terminal (default: False)
+#vim: false
 
 ## Specify the language for voice using ISO 639-1 code (default: auto)
 #voice-language: en

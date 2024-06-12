@@ -6,6 +6,7 @@ from pathlib import Path
 
 import git
 from dotenv import load_dotenv
+from prompt_toolkit.enums import EditingMode
 from streamlit.web import cli
 
 from aider import __version__, models, utils
@@ -66,7 +67,7 @@ def setup_git(git_root, io):
     with repo.config_reader() as config:
         try:
             user_name = config.get_value("user", "name", None)
-        except configparser.NoSectionError:
+        except (configparser.NoSectionError, configparser.NoOptionError):
             pass
         try:
             user_email = config.get_value("user", "email", None)
@@ -246,6 +247,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if return_coder and args.yes is None:
         args.yes = True
 
+    editing_mode = EditingMode.VI if args.vim else EditingMode.EMACS
+
     io = InputOutput(
         args.pretty,
         args.yes,
@@ -259,6 +262,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         dry_run=args.dry_run,
         encoding=args.encoding,
         llm_history_file=args.llm_history_file,
+        editingmode=editing_mode,
     )
 
     fnames = [str(Path(fn).resolve()) for fn in args.files]
@@ -333,6 +337,26 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.openai_organization_id:
         os.environ["OPENAI_ORGANIZATION"] = args.openai_organization_id
 
+    model_def_files = []
+    model_def_fname = Path(".aider.models.json")
+    model_def_files.append(Path.home() / model_def_fname)  # homedir
+    if git_root:
+        model_def_files.append(Path(git_root) / model_def_fname)  # git root
+    if args.model_metadata_file:
+        model_def_files.append(args.model_metadata_file)
+    model_def_files.append(model_def_fname.resolve())
+    model_def_files = list(map(str, model_def_files))
+    model_def_files = list(dict.fromkeys(model_def_files))
+    try:
+        model_metadata_files_loaded = models.register_models(model_def_files)
+        if len(model_metadata_files_loaded) > 0:
+            io.tool_output(f"Loaded {len(model_metadata_files_loaded)} model file(s)")
+            for model_metadata_file in model_metadata_files_loaded:
+                io.tool_output(f"  - {model_metadata_file}")
+    except Exception as e:
+        io.tool_error(f"Error loading model info/cost: {e}")
+        return 1
+
     main_model = models.Model(args.model, weak_model=args.weak_model)
 
     lint_cmds = parse_lint_cmds(args.lint_cmd, io)
@@ -389,7 +413,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         return
 
     if args.commit:
-        coder.commands.cmd_commit()
+        if args.dry_run:
+            io.tool_output("Dry run enabled, skipping commit.")
+        else:
+            coder.commands.cmd_commit()
         return
 
     if args.lint:

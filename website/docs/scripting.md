@@ -1,5 +1,6 @@
 ---
 nav_order: 900
+description: You can script aider via the command line or python.
 ---
 
 # Scripting aider
@@ -62,7 +63,7 @@ from aider.models import Model
 # This is a list of files to add to the chat
 fnames = ["greeting.py"]
 
-model = Model("gpt-4-turbo", weak_model="gpt-3.5-turbo")
+model = Model("gpt-4-turbo")
 
 # Create a coder object
 coder = Coder.create(main_model=model, fnames=fnames)
@@ -84,6 +85,6 @@ It can also be helpful to set the equivalend of `--yes` by doing this:
 from aider.io import InputOutput
 io = InputOutput(yes=True)
 # ...
-coder = Coder.create(client=client, fnames=fnames, io=io)
+coder = Coder.create(model=model, fnames=fnames, io=io)
 ```
 

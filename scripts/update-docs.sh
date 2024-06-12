@@ -9,7 +9,9 @@ else
   ARG=$1
 fi
 
+# README.md before index.md, because index.md uses cog to include README.md
 cog $ARG \
+    README.md \
     website/index.md \
     website/docs/commands.md \
     website/docs/languages.md \

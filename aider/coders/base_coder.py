@@ -18,7 +18,7 @@ from jsonschema import Draft7Validator
 from rich.console import Console, Text
 from rich.markdown import Markdown
 
-from aider import __version__, models, prompts, utils
+from aider import __version__, models, prompts, urls, utils
 from aider.commands import Commands
 from aider.history import ChatSummary
 from aider.io import InputOutput
@@ -587,14 +587,16 @@ class Coder:
                 while new_user_message:
                     self.reflected_message = None
                     list(self.send_new_user_message(new_user_message))
-                    if self.num_reflections < self.max_reflections:
-                        self.num_reflections += 1
-                        new_user_message = self.reflected_message
-                    else:
-                        self.io.tool_error(
-                            f"Only {self.max_reflections} reflections allowed, stopping."
-                        )
-                        new_user_message = None
+
+                    new_user_message = None
+                    if self.reflected_message:
+                        if self.num_reflections < self.max_reflections:
+                            self.num_reflections += 1
+                            new_user_message = self.reflected_message
+                        else:
+                            self.io.tool_error(
+                                f"Only {self.max_reflections} reflections allowed, stopping."
+                            )
 
                 if with_message:
                     return self.partial_response_content
@@ -1221,9 +1223,7 @@ class Coder:
             return
 
         self.io.tool_error("Warning: it's best to only add files that need changes to the chat.")
-        self.io.tool_error(
-            "https://aider.chat/docs/faq.html#how-can-i-add-all-the-files-to-the-chat"
-        )
+        self.io.tool_error(urls.edit_errors)
         self.warning_given = True
 
     def prepare_to_edit(self, edits):
@@ -1263,9 +1263,7 @@ class Coder:
             err = err.args[0]
 
             self.io.tool_error("The LLM did not conform to the edit format.")
-            self.io.tool_error(
-                "For more info see: https://aider.chat/docs/faq.html#aider-isnt-editing-my-files"
-            )
+            self.io.tool_error(urls.edit_errors)
             self.io.tool_error()
             self.io.tool_error(str(err), strip=False)
 
@@ -1330,8 +1328,8 @@ class Coder:
         return context
 
     def auto_commit(self, edited):
-        context = self.get_context_from_history(self.cur_messages)
-        res = self.repo.commit(fnames=edited, context=context, prefix="aider: ")
+        # context = self.get_context_from_history(self.cur_messages)
+        res = self.repo.commit(fnames=edited, prefix="aider: ")
         if res:
             commit_hash, commit_message = res
             self.last_aider_commit_hash = commit_hash

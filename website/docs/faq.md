@@ -1,5 +1,6 @@
 ---
 nav_order: 85
+description: Frequently asked questions about aider.
 ---
 
 # Frequently asked questions
@@ -61,34 +62,6 @@ python -m aider.main
 User [imabutahersiddik](https://github.com/imabutahersiddik)
 has provided this
 [Colab notebook](https://colab.research.google.com/drive/1J9XynhrCqekPL5PR6olHP6eE--rnnjS9?usp=sharing).
-
-
-## Aider isn't editing my files?
-
-Sometimes the LLM will reply with some code changes that don't get applied to your local files.
-In these cases, aider might say something like "Failed to apply edit to *filename*".
-
-This usually happens because the LLM is not specifying the edits
-to make in the format that aider expects.
-GPT-3.5 is especially prone to disobeying the system prompt instructions in this manner, but it also happens with stronger models.
-
-Aider makes every effort to get the LLM
-to conform, and works hard to deal with
-replies that are "almost" correctly formatted.
-If Aider detects an improperly formatted reply, it gives
-the LLM feedback to try again.
-Also, before each release new versions of aider are
-[benchmarked](https://aider.chat/docs/benchmarks.html).
-This helps prevent regressions in the code editing
-performance of an LLM that could have been inadvertantly
-introduced.
-
-But sometimes the LLM just won't cooperate.
-In these cases, here are some things you might try:
-
-  - Use `/drop` to remove files from the chat session which aren't needed for the task at hand. This will reduce distractions and may help GPT produce properly formatted edits.
-  - Use `/clear` to remove the conversation history, again to help GPT focus.
-  - Try the a different LLM.
 
 
 ## Can I change the system prompts that aider uses?

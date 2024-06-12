@@ -26,6 +26,7 @@ Put a line in it like this to specify your api key:
 openai-api-key: sk-...
 ```
 
+
 ## Enable Playwright 
 
 Aider supports adding web pages to the chat with the `/web <url>` command.
