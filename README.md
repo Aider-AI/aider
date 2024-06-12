@@ -49,11 +49,11 @@ $ aider --opus
 ```
 <!--[[[end]]]-->
 
-**See the
+See the
 [installation instructions](https://aider.chat/docs/install.html)
 and other
 [documentation](https://aider.chat/docs/usage.html)
-for more details.**
+for more details.
 
 ## Features
 
@@ -91,14 +91,16 @@ projects like django, scikitlearn, matplotlib, etc.
    </a>
 </p>
 
-## Documentation
+## More info
 
+- [Documentation](https://aider.chat/)
 - [Installation](https://aider.chat/docs/install.html)
 - [Usage](https://aider.chat/docs/usage.html)
 - [Tutorial videos](https://aider.chat/docs/tutorials.html)
 - [Connecting to LLMs](https://aider.chat/docs/llms.html)
+- [Configuration](https://aider.chat/docs/config.html)
+- [Troubleshooting](https://aider.chat/docs/troubleshooting.html)
 - [LLM Leaderboards](https://aider.chat/docs/leaderboards/)
-- [FAQ](https://aider.chat/docs/faq.html)
 - [Discord](https://discord.gg/Tv2uQnR88V)
 - [Blog](https://aider.chat/blog/)
 
