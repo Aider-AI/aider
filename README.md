@@ -57,24 +57,26 @@ for more details.
 
 ## Features
 
-- Chat with aider about your code: `aider <file1> <file2> ...`
+- Run aider with the files you want to edit: `aider <file1> <file2> ...`
 - Ask for changes:
-  - New features, test cases, improvements.
-  - Bug fixes, updated docs or code refactors.
-  - Paste in a GitHub issue that needs to be solved.
+  - Add new features or test cases.
+  - Describe a bug.
+  - Paste in an error message or or GitHub issue URL.
+  - Refactor code.
+  - Update docs.
 - Aider will edit your files to complete your request.
 - Aider [automatically git commits](https://aider.chat/docs/git.html) changes with a sensible commit message.
 - Aider works with [most popular languages](https://aider.chat/docs/languages.html): python, javascript, typescript, php, html, css, and more...
 - Aider works best with GPT-4o and Claude 3 Opus
 and can [connect to almost any LLM](https://aider.chat/docs/llms.html).
-- Aider can make coordinated changes across multiple files at once.
+- Aider can edit multiple files at once for complex requests.
 - Aider uses a [map of your entire git repo](https://aider.chat/docs/repomap.html), which helps it work well in larger codebases.
-- You can also edit files in your editor while chatting with aider.
-Aider will notice and always use the latest version.
-So you can bounce back and forth between aider and your editor, to collaboratively code with AI.
-- Images can be added to the chat (GPT-4o, GPT-4 Turbo, etc).
-- URLs can be added to the chat and aider will read their content.
-- [Code with your voice](https://aider.chat/docs/voice.html) using speech recognition.
+- Edit files in your editor while chatting with aider,
+and it will always use the latest version.
+Pair program with AI.
+- Add images to the chat (GPT-4o, GPT-4 Turbo, etc).
+- Add URLs to the chat and aider will read their content.
+- [Code with your voice](https://aider.chat/docs/voice.html).
 
 
 ## State of the art
@@ -101,6 +103,7 @@ projects like django, scikitlearn, matplotlib, etc.
 - [Configuration](https://aider.chat/docs/config.html)
 - [Troubleshooting](https://aider.chat/docs/troubleshooting.html)
 - [LLM Leaderboards](https://aider.chat/docs/leaderboards/)
+- [GitHub](https://github.com/paul-gauthier/aider)
 - [Discord](https://discord.gg/Tv2uQnR88V)
 - [Blog](https://aider.chat/blog/)
 

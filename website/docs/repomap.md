@@ -12,23 +12,22 @@ Aider
 uses a **concise map of your whole git repository**
 that includes
 the most important classes and functions along with their types and call signatures.
-This helps the LLM understand the code it needs to change,
+This helps aider understand the code it's editing
 and how it relates to the other parts of the codebase.
-The repo map also helps the LLM write new code
+The repo map also helps aider write new code
 that respects and utilizes existing libraries, modules and abstractions
 found elsewhere in the codebase.
 
 ## Using a repo map to provide context
 
 Aider sends a **repo map** to the LLM along with
-each request from the user to make a code change.
-The map contains a list of the files in the
+each change request from the user.
+The repo map contains a list of the files in the
 repo, along with the key symbols which are defined in each file.
-It shows how each of these symbols are defined in the
-source code, by including the critical lines of code for each definition.
+It shows how each of these symbols are defined, by including the critical lines of code for each definition.
 
-Here's a
-sample of the map of the aider repo, just showing the maps of
+Here's a part of
+the repo map of aider's repo, for
 [base_coder.py](https://github.com/paul-gauthier/aider/blob/main/aider/coders/base_coder.py)
 and
 [commands.py](https://github.com/paul-gauthier/aider/blob/main/aider/commands.py)
@@ -71,7 +70,7 @@ aider/commands.py:
 Mapping out the repo like this provides some key benefits:
 
   - The LLM can see classes, methods and function signatures from everywhere in the repo. This alone may give it enough context to solve many tasks. For example, it can probably figure out how to use the API exported from a module just based on the details shown in the map.
-  - If it needs to see more code, the LLM can use the map to figure out by itself which files it needs to look at in more detail. The LLM will then ask to see these specific files, and aider will automatically add them to the chat context.
+  - If it needs to see more code, the LLM can use the map to figure out which files it needs to look at. The LLM can ask to see these specific files, and aider will offer to add them to the chat context.
 
 ## Optimizing the map
 
