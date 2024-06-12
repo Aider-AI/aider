@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import datetime
 import hashlib
 import json
 import os
@@ -27,7 +28,7 @@ from aider.mdstream import MarkdownStream
 from aider.repo import GitRepo
 from aider.repomap import RepoMap
 from aider.sendchat import send_with_retries
-from aider.utils import is_image_file
+from aider.utils import is_image_file, format_messages, format_content
 
 from ..dump import dump  # noqa: F401
 
@@ -778,9 +779,6 @@ class Coder:
         self.cur_messages += [
             dict(role="user", content=inp),
         ]
-
-        import datetime
-        from aider.utils import format_messages, format_content
 
         messages = self.format_messages()
 

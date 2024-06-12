@@ -23,8 +23,8 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--llm-history-file",
         metavar="LLM_HISTORY_FILE",
-        default=".aider.llm.history",
-        help="Specify the LLM history file (default: .aider.llm.history)",
+        default=None,
+        help="Log the conversation with the LLM to this file (for example, .aider.llm.history)",
     )
     group.add_argument(
         "files",
