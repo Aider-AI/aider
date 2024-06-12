@@ -21,12 +21,6 @@ def get_parser(default_config_files, git_root):
     )
     group = parser.add_argument_group("Main")
     group.add_argument(
-        "--vim",
-        action="store_true",
-        help="Use VI editing mode in the terminal (default: False)",
-        default=False,
-    )
-    group.add_argument(
         "files",
         metavar="FILE",
         nargs="*",
@@ -369,6 +363,12 @@ def get_parser(default_config_files, git_root):
 
     ##########
     group = parser.add_argument_group("Other Settings")
+    group.add_argument(
+        "--vim",
+        action="store_true",
+        help="Use VI editing mode in the terminal (default: False)",
+        default=False,
+    )
     group.add_argument(
         "--voice-language",
         metavar="VOICE_LANGUAGE",

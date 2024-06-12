@@ -38,9 +38,6 @@ cog.outl("```")
 #######
 # Main:
 
-## Use VI editing mode in the terminal (default: False)
-#vim: false
-
 ## Specify the OpenAI API key
 #openai-api-key:
 
@@ -202,6 +199,9 @@ cog.outl("```")
 
 #################
 # Other Settings:
+
+## Use VI editing mode in the terminal (default: False)
+#vim: false
 
 ## Specify the language for voice using ISO 639-1 code (default: auto)
 #voice-language: en
