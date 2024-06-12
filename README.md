@@ -1,4 +1,6 @@
 
+<!-- Edit README.md, not index.md -->
+
 # Aider is AI pair programming in your terminal
 
 Aider lets you pair program with LLMs,
@@ -24,6 +26,11 @@ and can [connect to almost any LLM](https://aider.chat/docs/llms.html).
 </p>
 
 ## Getting started
+<!--[[[cog
+# We can't do this here: {% include get-started.md %}
+# Because this page is rendered by GitHub as the repo README
+cog.out(open("website/_includes/get-started.md").read())
+]]]-->
 You can get started quickly like this:
 
 ```
@@ -40,6 +47,7 @@ $ aider
 $ export ANTHROPIC_API_KEY=your-key-goes-here
 $ aider --opus
 ```
+<!--[[[end]]]-->
 
 **See the
 [installation instructions](https://aider.chat/docs/install.html)

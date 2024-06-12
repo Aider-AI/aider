@@ -4,8 +4,16 @@ nav_order: 1
 ---
 
 <!--[[[cog
-cog.out(open("README.md").read())
+# This page is a copy of README.md, adding the front matter above.
+# Remove any cog markup before inserting the README text.
+text = open("README.md").read()
+text = text.replace('['*3 + 'cog', ' NOOP ')
+text = text.replace('['*3 + 'end', ' NOOP ')
+text = text.replace(']'*3, '')
+cog.out(text)
 ]]]-->
+
+<!-- Edit README.md, not index.md -->
 
 # Aider is AI pair programming in your terminal
 
@@ -32,8 +40,28 @@ and can [connect to almost any LLM](https://aider.chat/docs/llms.html).
 </p>
 
 ## Getting started
+<!-- NOOP 
+# We can't do this here: {% include get-started.md %}
+# Because this page is rendered by GitHub as the repo README
+cog.out(open("website/_includes/get-started.md").read())
+-->
+You can get started quickly like this:
 
-{% include get-started.md %}
+```
+$ pip install aider-chat
+
+# Change directory into a git repo
+$ cd /to/your/git/repo
+
+# Work with GPT-4o on your repo
+$ export OPENAI_API_KEY=your-key-goes-here
+$ aider 
+
+# Or, work with Claude 3 Opus on your repo
+$ export ANTHROPIC_API_KEY=your-key-goes-here
+$ aider --opus
+```
+<!-- NOOP -->
 
 **See the
 [installation instructions](https://aider.chat/docs/install.html)
