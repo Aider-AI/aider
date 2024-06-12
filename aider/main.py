@@ -392,6 +392,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             auto_test=args.auto_test,
             lint_cmds=lint_cmds,
             test_cmd=args.test_cmd,
+            short_key_1=args.short_key_1,
+            short_key_2=args.short_key_2,
+            short_key_3=args.short_key_3,
+            short_key_4=args.short_key_4,
         )
 
     except ValueError as err:

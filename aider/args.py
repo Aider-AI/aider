@@ -462,6 +462,22 @@ def get_parser(default_config_files, git_root):
         help="Run aider in your browser",
         default=False,
     )
+    group.add_argument(
+        "--short_key_1",
+        help="short key command 1 stored in the config file",
+    )
+    group.add_argument(
+        "--short_key_2",
+        help="short key command 2 stored in the config file",
+    )
+    group.add_argument(
+        "--short_key_3",
+        help="short key command 3 stored in the config file",
+    )
+    group.add_argument(
+        "--short_key_4",
+        help="short key command 4 stored in the config file",
+    )
 
     return parser
 

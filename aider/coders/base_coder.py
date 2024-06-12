@@ -218,6 +218,10 @@ class Coder:
         auto_test=False,
         lint_cmds=None,
         test_cmd=None,
+        short_key_1=None,
+        short_key_2=None,
+        short_key_3=None,
+        short_key_4=None,
     ):
         if not fnames:
             fnames = []
@@ -265,7 +269,12 @@ class Coder:
 
         self.show_diffs = show_diffs
 
-        self.commands = Commands(self.io, self, voice_language)
+        short_key_commands = {
+            str(i): short_key_command
+            for i, short_key_command in enumerate([short_key_1, short_key_2, short_key_3, short_key_4], start=1)
+            if short_key_command
+        }
+        self.commands = Commands(self.io, self, voice_language, short_key_commands)
 
         if use_git:
             try:
@@ -616,6 +625,7 @@ class Coder:
         if not inp:
             return
 
+        inp = self.commands.convert_inpput_if_short_key(inp)
         if self.commands.is_command(inp):
             return self.commands.run(inp)
 

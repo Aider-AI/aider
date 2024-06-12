@@ -25,7 +25,7 @@ class Commands:
     voice = None
     scraper = None
 
-    def __init__(self, io, coder, voice_language=None):
+    def __init__(self, io, coder, voice_language=None, short_key_commands=None):
         self.io = io
         self.coder = coder
 
@@ -33,6 +33,7 @@ class Commands:
             voice_language = None
 
         self.voice_language = voice_language
+        self.short_key_commands = short_key_commands or {}
 
     def cmd_model(self, args):
         "Switch to a new LLM"
@@ -79,6 +80,11 @@ class Commands:
         content = f"{url}:\n\n" + content
 
         return content
+
+    def convert_inpput_if_short_key(self, inp):
+        if len(inp) == 2 and inp[0] == "/" and inp[1] in self.short_key_commands:
+            return self.short_key_commands[inp[1]]
+        return inp
 
     def is_command(self, inp):
         return inp[0] in "/!"
