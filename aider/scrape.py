@@ -21,7 +21,7 @@ For better web scraping, install Playwright chromium with this command in your t
 
     playwright install --with-deps chromium
 
-See {urls.enable_playwrite} for more info.
+See {urls.enable_playwright} for more info.
 """
 
 
