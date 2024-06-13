@@ -116,11 +116,22 @@ def perfect_replace(whole_lines, part_lines, replace_lines):
     part_tup = tuple(part_lines)
     part_len = len(part_lines)
 
+    result_candidates = []
     for i in range(len(whole_lines) - part_len + 1):
         whole_tup = tuple(whole_lines[i : i + part_len])
         if part_tup == whole_tup:
             res = whole_lines[:i] + replace_lines + whole_lines[i + part_len :]
-            return "".join(res)
+            result_candidates.append("".join(res))
+
+    if len(result_candidates) > 1:
+        raise ValueError("""Multiple code matches found.
+Please provide more lines in the SEARCH block to disambiguate.
+Do not forget to include the additional lines in the REPLACE block as well.
+Your goal is to make the code correct after the entire SEARCH block is directly replaced by the REPLACE block.
+""")
+    if len(result_candidates) == 1:
+        return result_candidates[0]
+    return None
 
 
 def replace_most_similar_chunk(whole, part, replace):
