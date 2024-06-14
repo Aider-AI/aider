@@ -17,6 +17,7 @@ class YamlHelpFormatter(argparse.HelpFormatter):
         return """
 ##########################################################
 # Sample .aider.conf.yaml
+# This file lists *all* the valid configuration entries.
 # Place in your home dir, or at the root of your git repo.
 ##########################################################
 

@@ -11,6 +11,8 @@ models you use with aider.
 You currently can not set general aider options
 in the `.env` file, only LLM environment variables.
 
+{% include special-keys.md %}
+
 Aider will look for a `.env` file in the
 root of your git repo or in the current directory.
 You can give it an explicit file to load with the `--env-file <filename>` parameter.

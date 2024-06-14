@@ -10,6 +10,8 @@ Most of aider's options can be set in an `.aider.conf.yml` file,
 which can be placed in your home directory or at the root of
 your git repo. 
 
+{% include special-keys.md %}
+
 Below is a sample of the file, which you
 can also
 [download from GitHub](https://github.com/paul-gauthier/aider/blob/main/website/assets/sample.aider.conf.yml).
@@ -26,6 +28,7 @@ cog.outl("```")
 ```
 ##########################################################
 # Sample .aider.conf.yaml
+# This file lists *all* the valid configuration entries.
 # Place in your home dir, or at the root of your git repo.
 ##########################################################
 
