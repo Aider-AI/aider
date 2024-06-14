@@ -5,9 +5,9 @@ nav_order: 25
 
 # Token limits
 
-Every LLM has limits on how many tokens it can process:
+Every LLM has limits on how many tokens it can process for each request:
 
-- The model's **context window** limits how many tokens of
+- The model's **context window** limits how many total tokens of
 *input and output* it can process.
 - Each model has limit on how many **output tokens** it can
 produce.
