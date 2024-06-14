@@ -795,8 +795,11 @@ class Coder:
         except ExhaustedContextWindow:
             exhausted = True
         except litellm.exceptions.BadRequestError as err:
-            self.io.tool_error(f"BadRequestError: {err}")
-            return
+            if "ContextWindowExceededError" in err.message:
+                exhausted = True
+            else:
+                self.io.tool_error(f"BadRequestError: {err}")
+                return
         except openai.BadRequestError as err:
             if "maximum context length" in str(err):
                 exhausted = True
@@ -804,12 +807,8 @@ class Coder:
                 raise err
 
         if exhausted:
+            self.show_exhausted_error()
             self.num_exhausted_context_windows += 1
-            self.io.tool_error("The chat session is larger than the context window!\n")
-            self.commands.cmd_tokens("")
-            self.io.tool_error("\nTo reduce token usage:")
-            self.io.tool_error(" - Use /drop to remove unneeded files from the chat session.")
-            self.io.tool_error(" - Use /clear to clear chat history.")
             return
 
         if self.partial_response_function_call:
@@ -877,6 +876,63 @@ class Coder:
                 self.reflected_message += "\n\n" + add_rel_files_message
             else:
                 self.reflected_message = add_rel_files_message
+
+    def show_exhausted_error(self):
+        output_tokens = 0
+        if self.partial_response_content:
+            output_tokens = self.main_model.token_count(self.partial_response_content)
+        max_output_tokens = self.main_model.info.get("max_output_tokens", 0)
+
+        input_tokens = self.main_model.token_count(self.format_messages())
+        max_input_tokens = self.main_model.info.get("max_input_tokens", 0)
+
+        total_tokens = input_tokens + output_tokens
+
+        if output_tokens >= max_output_tokens:
+            out_err = " -- exceeded output limit!"
+        else:
+            out_err = ""
+
+        if input_tokens >= max_input_tokens:
+            inp_err = " -- context window exhausted!"
+        else:
+            inp_err = ""
+
+        if total_tokens >= max_input_tokens:
+            tot_err = " -- context window exhausted!"
+        else:
+            tot_err = ""
+
+        res = ["", ""]
+        res.append(f"Model {self.main_model.name} has hit a token limit!")
+        res.append("")
+        res.append(f"Input tokens: {input_tokens} of {max_input_tokens}{inp_err}")
+        res.append(f"Output tokens: {output_tokens} of {max_output_tokens}{out_err}")
+        res.append(f"Total tokens: {total_tokens} of {max_input_tokens}{tot_err}")
+
+        if output_tokens >= max_output_tokens:
+            res.append("")
+            res.append("To reduce output tokens:")
+            res.append("- Ask for smaller changes in each request.")
+            res.append("- Break your code into smaller source files.")
+            if "diff" not in self.main_model.edit_format:
+                res.append(
+                    "- Try using a stronger model like gpt-4o or opus that can return diffs."
+                )
+
+        if input_tokens >= max_input_tokens or total_tokens >= max_input_tokens:
+            res.append("")
+            res.append("To reduce input tokens:")
+            res.append("- Use /tokens to see token usage.")
+            res.append("- Use /drop to remove unneeded files from the chat session.")
+            res.append("- Use /clear to clear the chat history.")
+            res.append("- Break your code into smaller source files.")
+
+        res.append("")
+        res.append(f"For more info: {urls.token_limits}")
+
+        res = "".join([line + "\n" for line in res])
+        self.io.tool_error(res)
 
     def lint_edited(self, fnames):
         res = ""
