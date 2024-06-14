@@ -25,3 +25,6 @@ aider --model azure/<your_deployment_name>
 # List models available from Azure
 aider --models azure/
 ```
+
+Note that aider will also use environment variables
+like `AZURE_OPENAI_API_xxx`.
