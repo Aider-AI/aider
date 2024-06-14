@@ -959,11 +959,12 @@ class Coder:
 
         self.partial_response_content = ""
         self.partial_response_function_call = dict()
+        max_output_tokens = self.main_model.info.get("max_output_tokens", 512)
 
         interrupted = False
         try:
             hash_object, completion = send_with_retries(
-                model, messages, functions, self.stream, self.temperature
+                model, messages, functions, self.stream, self.temperature, max_output_tokens
             )
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
 
