@@ -287,6 +287,26 @@ These changes replace the `subprocess.run` patches with `subprocess.check_output
         result = eb.replace_most_similar_chunk(whole, part, replace)
         self.assertEqual(result, expected_output)
 
+    def test_rejection_of_multiple_perfect_matches(self):
+        """
+        If there are multiple perfect matches, we can't decide which one to replace.
+        Therefore, we should reject the edit.
+        """
+        whole = """
+def alice(self):
+    return None
+
+def bob(self):
+    return None
+"""
+
+        part = "    return None\n"
+        replace = "print('bob is None')\n    return None\n"
+
+        with self.assertRaises(ValueError) as cm:
+            _result = eb.replace_most_similar_chunk(whole, part, replace)
+        self.assertIn("Multiple code matches", str(cm.exception))
+
     def test_full_edit(self):
         # Create a few temporary files
         _, file1 = tempfile.mkstemp()
