@@ -17,7 +17,7 @@ from jsonschema import Draft7Validator
 from rich.console import Console, Text
 from rich.markdown import Markdown
 
-from aider import __version__, models, prompts, urls, utils
+from aider import __version__, env, models, prompts, urls, utils
 from aider.commands import Commands
 from aider.history import ChatSummary
 from aider.io import InputOutput
@@ -66,6 +66,9 @@ class Coder:
     test_cmd = None
     lint_outcome = None
     test_outcome = None
+    task_id = 'codebase'
+    api_key= None
+    base_url = None
 
     @classmethod
     def create(
@@ -74,6 +77,9 @@ class Coder:
         edit_format=None,
         io=None,
         from_coder=None,
+        task_id = 'codebase',
+        api_key = None,
+        base_url = None,
         **kwargs,
     ):
         from . import (
@@ -122,13 +128,13 @@ class Coder:
             kwargs = use_kwargs
 
         if edit_format == "diff":
-            res = EditBlockCoder(main_model, io, **kwargs)
+            res = EditBlockCoder(main_model, io, task_id = task_id,api_key = api_key, base_url = base_url, **kwargs)
         elif edit_format == "diff-fenced":
-            res = EditBlockFencedCoder(main_model, io, **kwargs)
+            res = EditBlockFencedCoder(main_model, io,task_id = task_id ,api_key = api_key, base_url = base_url, **kwargs)
         elif edit_format == "whole":
-            res = WholeFileCoder(main_model, io, **kwargs)
+            res = WholeFileCoder(main_model, io,task_id = task_id,api_key = api_key, base_url = base_url, **kwargs)
         elif edit_format == "udiff":
-            res = UnifiedDiffCoder(main_model, io, **kwargs)
+            res = UnifiedDiffCoder(main_model, io,task_id = task_id, api_key = api_key, base_url = base_url,**kwargs)
         else:
             raise ValueError(f"Unknown edit format {edit_format}")
 
@@ -206,7 +212,7 @@ class Coder:
         verbose=False,
         assistant_output_color="blue",
         code_theme="default",
-        stream=True,
+        stream=False,
         use_git=True,
         voice_language=None,
         aider_ignore_file=None,
@@ -218,13 +224,18 @@ class Coder:
         auto_test=False,
         lint_cmds=None,
         test_cmd=None,
+        task_id='codebase',
+        api_key = None,
+        base_url = None
     ):
         if not fnames:
             fnames = []
 
         if io is None:
             io = InputOutput()
-
+        self.api_key = api_key
+        self.base_url = base_url
+        self.task_id = task_id
         self.chat_completion_call_hashes = []
         self.chat_completion_response_hashes = []
         self.need_commit_before_edits = set()
@@ -357,14 +368,15 @@ class Coder:
             self.io.tool_output(line)
 
     def find_common_root(self):
-        if len(self.abs_fnames) == 1:
+        self.root = env.absolute_path("",codebase_path=self.task_id)
+        '''if len(self.abs_fnames) == 1:
             self.root = os.path.dirname(list(self.abs_fnames)[0])
         elif self.abs_fnames:
             self.root = os.path.commonpath(list(self.abs_fnames))
         else:
             self.root = os.getcwd()
 
-        self.root = utils.safe_abs_path(self.root)
+        self.root = utils.safe_abs_path(self.root)'''
 
     def add_rel_fname(self, rel_fname):
         self.abs_fnames.add(self.abs_root_path(rel_fname))
@@ -859,7 +871,7 @@ class Coder:
 
         self.update_cur_messages(edited)
 
-        if edited:
+        '''if edited:
             self.aider_edited_files = edited
             if self.repo and self.auto_commits and not self.dry_run:
                 saved_message = self.auto_commit(edited)
@@ -868,7 +880,7 @@ class Coder:
             else:
                 saved_message = None
 
-            self.move_back_cur_messages(saved_message)
+            self.move_back_cur_messages(saved_message)'''
 
         add_rel_files_message = self.check_for_file_mentions(content)
         if add_rel_files_message:
@@ -1019,7 +1031,7 @@ class Coder:
         interrupted = False
         try:
             hash_object, completion = send_with_retries(
-                model, messages, functions, self.stream, self.temperature
+                model, messages, functions, self.stream, self.temperature, api_key=self.api_key,base_url=self.base_url
             )
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
 
@@ -1157,6 +1169,7 @@ class Coder:
         return self.partial_response_content
 
     def get_rel_fname(self, fname):
+        return env.relative_path(fname,codebase_path=self.task_id)
         return os.path.relpath(fname, self.root)
 
     def get_inchat_relative_files(self):
@@ -1213,7 +1226,7 @@ class Coder:
             return True
 
         if not Path(full_path).exists():
-            if not self.io.confirm_ask(f"Allow creation of new file {path}?"):
+            if False : #not self.io.confirm_ask(f"Allow creation of new file {path}?"):
                 self.io.tool_error(f"Skipping edits to {path}")
                 return
 
@@ -1231,9 +1244,7 @@ class Coder:
             self.check_added_files()
             return True
 
-        if not self.io.confirm_ask(
-            f"Allow edits to {path} which was not previously added to chat?"
-        ):
+        if False:  #not self.io.confirm_ask(f"Allow edits to {path} which was not previously added to chat?":
             self.io.tool_error(f"Skipping edits to {path}")
             return
 
@@ -1376,6 +1387,7 @@ class Coder:
         return context
 
     def auto_commit(self, edited):
+        return
         # context = self.get_context_from_history(self.cur_messages)
         res = self.repo.commit(fnames=edited, prefix="aider: ")
         if res:
@@ -1401,7 +1413,7 @@ class Coder:
         if not self.repo:
             return
 
-        self.repo.commit(fnames=self.need_commit_before_edits)
+       #self.repo.commit(fnames=self.need_commit_before_edits)
 
         # files changed, move cur messages back behind the files messages
         # self.move_back_cur_messages(self.gpt_prompts.files_content_local_edits)

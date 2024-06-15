@@ -48,12 +48,14 @@ def should_giveup(e):
         f"{details.get('exception','Exception')}\nRetry in {details['wait']:.1f} seconds."
     ),
 )
-def send_with_retries(model_name, messages, functions, stream, temperature=0):
+def send_with_retries(model_name, messages, functions, stream, temperature=0, api_key=None, base_url=None):
     kwargs = dict(
         model=model_name,
         messages=messages,
         temperature=temperature,
         stream=stream,
+        api_key=api_key,
+        api_base=base_url
     )
     if functions is not None:
         kwargs["functions"] = functions
