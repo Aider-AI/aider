@@ -1,3 +1,13 @@
+---
+title: Release history
+nav_order: 999
+---
+
+<!--[[[cog
+# This page is a copy of HISTORY.md, adding the front matter above.
+text = open("HISTORY.md").read()
+cog.out(text)
+]]]-->
 
 # Release history
 
@@ -403,3 +413,4 @@
 - Added `--map-tokens` to set a token budget for the repo map, along with a PageRank based algorithm for prioritizing which files and identifiers to include in the map.
 - Added in-chat command `/tokens` to report on context window token usage.
 - Added in-chat command `/clear` to clear the conversation history.
+<!--[[[end]]]-->
