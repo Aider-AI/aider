@@ -16,13 +16,13 @@ While [aider can connect to almost any LLM](/docs/llms.html),
 it works best with models that score well on the benchmarks.
 
 
-## Deepseek Coder V2 beats GPT-4o, Opus
+## DeepSeek Coder V2 beats GPT-4o, Opus
 
 The new 
-[Deepseek Coder V2](https://aider.chat/docs/llms/deepseek.html)
+[DeepSeek Coder V2](https://aider.chat/docs/llms/deepseek.html)
 model is now atop aider's code editing leaderboard!
 
-It's worth noting that Deepseek Coder V2 is only capable of using aider's "whole" edit format.
+It's worth noting that DeepSeek Coder V2 is only capable of using aider's "whole" edit format.
 This means it returns a modified full copy of each file when it makes changes.
 Most other strong models are able to use aider's "diff" editing format,
 which allows them to return diffs of edits -- saving time and token costs.

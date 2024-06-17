@@ -46,7 +46,7 @@
   
 - dirname: 2024-06-17-14-45-54--deepseek-coder2-whole
   test_cases: 133
-  model: Deepseek Coder V2
+  model: DeepSeek Coder V2
   edit_format: whole
   commit_hash: ca8672b
   pass_rate_1: 63.9
