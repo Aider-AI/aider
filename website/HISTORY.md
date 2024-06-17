@@ -16,6 +16,7 @@ cog.out(text)
 - Use `--vim` for [vim keybindings](https://aider.chat/docs/commands.html#vi) in the chat.
 - [Add LLM metadata](https://aider.chat/docs/llms/warnings.html#specifying-context-window-size-and-token-costs) via `.aider.models.json` file (by @caseymcc).
 - More detailed [error messages on token limit errors](https://aider.chat/docs/troubleshooting/token-limits.html).
+- Single line commit messages, without the recent chat messages.
 - Ensure `--commit --dry-run` does nothing.
 - Have playwright wait for idle network to better scrape js sites.
 - Documentation updates, moved into website/ subdir.
