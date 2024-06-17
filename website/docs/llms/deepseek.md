@@ -6,6 +6,7 @@ nav_order: 500
 # Deepseek
 
 Aider can connect to the Deepseek.com API.
+The Deepseek Coder V2 model gets the top score on aider's code editing benchmark.
 Deepseek appears to grant 5M tokens of free API usage to new accounts.
 
 ```
@@ -14,8 +15,8 @@ pip install aider-chat
 export DEEPSEEK_API_KEY=<key> # Mac/Linux
 setx   DEEPSEEK_API_KEY <key> # Windows
 
-# Use Deepseek Chat v2
-aider --model deepseek/deepseek-chat
+# Use Deepseek Coder V2
+aider --model deepseek/deepseek-coder
 ```
 
 See the [model warnings](warnings.html)
