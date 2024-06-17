@@ -3,7 +3,24 @@ highlight_image: /assets/leaderboard.jpg
 nav_order: 950
 ---
 
-# Aider LLM Leaderboards
+
+# Deepseek Coder V2 beats GPT-4o, Opus on Aider Code Editing Leaderboard
+
+The new 
+[Deepseek Coder V2](https://aider.chat/docs/llms/deepseek.html)
+model is now atop aider's code editing leaderboard!
+
+It's worth noting that it is only capable of using aider's "whole" edit format,
+which means it returns a modified full copy of each file when it makes changes.
+Most other strong models are able to use aider's "diff" editing format,
+which allows them to return diffs of edits -- saving time and token costs.
+Also, models which use the "whole" edit format can only edit files
+which fit within their output token limits.
+These output limits are often as low as 4k tokens, even for models
+with very large context windows.
+
+
+## Aider LLM Leaderboards
 
 Aider works best with LLMs which are good at *editing* code, not just good at writing
 code.
@@ -14,22 +31,6 @@ to successfully edit code.
 The leaderboards below report the results from a number of popular LLMs.
 While [aider can connect to almost any LLM](/docs/llms.html),
 it works best with models that score well on the benchmarks.
-
-
-## Deepseek Coder V2 takes #1
-
-The new 
-[Deepseek Coder V2](https://aider.chat/docs/llms/deepseek.html)
-model is now atop aider's code editing leaderboard!
-
-It's worth noting that it is only capable of using the "whole" edit format,
-which means it returns a modified full copy of each file when it makes changes.
-Most other strong models are able to use aider's "diff" editing format,
-which allows them to return diffs of edits -- saving time and token costs.
-Also, models which use the "whole" edit format can only edit files
-which fit within their output token limits.
-These output limits are often as low as 4k tokens, even for models
-with very large context windows.
 
 
 ## Code editing leaderboard
