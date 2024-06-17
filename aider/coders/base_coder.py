@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import datetime
 import hashlib
 import json
 import os
@@ -27,7 +28,7 @@ from aider.mdstream import MarkdownStream
 from aider.repo import GitRepo
 from aider.repomap import RepoMap
 from aider.sendchat import send_with_retries
-from aider.utils import is_image_file
+from aider.utils import is_image_file, format_messages, format_content
 
 from ..dump import dump  # noqa: F401
 
@@ -783,6 +784,8 @@ class Coder:
 
         messages = self.format_messages()
 
+        self.io.log_llm_history("TO LLM", format_messages(messages))
+
         if self.verbose:
             utils.show_messages(messages, functions=self.functions)
 
@@ -805,6 +808,9 @@ class Coder:
                 exhausted = True
             else:
                 raise err
+        except Exception as err:
+            self.io.tool_error(f"Unexpected error: {err}")
+            return
 
         if exhausted:
             self.show_exhausted_error()
@@ -823,6 +829,8 @@ class Coder:
             content = ""
 
         self.io.tool_output()
+
+        self.io.log_llm_history("LLM RESPONSE", format_content("ASSISTANT", content))
 
         if interrupted:
             content += "\n^C KeyboardInterrupt"

@@ -261,6 +261,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         tool_error_color=args.tool_error_color,
         dry_run=args.dry_run,
         encoding=args.encoding,
+        llm_history_file=args.llm_history_file,
         editingmode=editing_mode,
     )
 

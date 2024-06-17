@@ -22,10 +22,16 @@ def get_parser(default_config_files, git_root):
     )
     group = parser.add_argument_group("Main")
     group.add_argument(
+        "--llm-history-file",
+        metavar="LLM_HISTORY_FILE",
+        default=None,
+        help="Log the conversation with the LLM to this file (for example, .aider.llm.history)",
+    )
+    group.add_argument(
         "files",
         metavar="FILE",
         nargs="*",
-        help="files to edit with an LLM (optional)",
+        help="files to edit with an LLM (optional)"
     )
     group.add_argument(
         "--openai-api-key",
