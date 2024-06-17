@@ -10,11 +10,12 @@ The new
 [Deepseek Coder V2](https://aider.chat/docs/llms/deepseek.html)
 model is now atop aider's code editing leaderboard!
 
-It's worth noting that it is only capable of using aider's "whole" edit format,
-which means it returns a modified full copy of each file when it makes changes.
+It's worth noting that Deepseek Coder V2 is only capable of using aider's "whole" edit format.
+This means it returns a modified full copy of each file when it makes changes.
 Most other strong models are able to use aider's "diff" editing format,
 which allows them to return diffs of edits -- saving time and token costs.
-Also, models which use the "whole" edit format can only edit files
+
+Models which use the "whole" edit format can only edit files
 which fit within their output token limits.
 These output limits are often as low as 4k tokens, even for models
 with very large context windows.
