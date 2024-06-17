@@ -16,6 +16,22 @@ While [aider can connect to almost any LLM](/docs/llms.html),
 it works best with models that score well on the benchmarks.
 
 
+## Deepseek Coder V2 takes #1
+
+The new 
+[Deepseek Coder V2](https://huggingface.co/deepseek-ai/DeepSeek-Coder-V2-Instruct)
+model is now atop aider's code editing leaderboard!
+
+It's worth noting that it is only capable of using the "whole" edit format,
+which means it returns a modified full copy of each file when it makes changes.
+Most other strong models are able to use aider's "diff" editing format,
+which allows them to return diffs of edits -- saving time and token costs.
+Also, models which use the "whole" edit format can only edit files
+which fit within their output token limits.
+These output limits are often as low as 4k tokens, even for models
+with very large context windows.
+
+
 ## Code editing leaderboard
 
 [Aider's code editing benchmark](/docs/benchmarks.html#the-benchmark) asks the LLM to edit python source files to complete 133 small coding exercises. This benchmark measures the LLM's coding ability, but also whether it can consistently emit code edits in the format specified in the system prompt.
