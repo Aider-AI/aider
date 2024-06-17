@@ -19,7 +19,7 @@ it works best with models that score well on the benchmarks.
 ## Deepseek Coder V2 takes #1
 
 The new 
-[Deepseek Coder V2](https://huggingface.co/deepseek-ai/DeepSeek-Coder-V2-Instruct)
+[Deepseek Coder V2](https://aider.chat/docs/llms/deepseek.html)
 model is now atop aider's code editing leaderboard!
 
 It's worth noting that it is only capable of using the "whole" edit format,
