@@ -178,6 +178,9 @@ class TestRepo(unittest.TestCase):
             original_author_name = os.environ.get("GIT_AUTHOR_NAME")
             self.assertIsNone(original_author_name)
 
+            del raw_repo
+            del git_repo
+
     def test_get_tracked_files(self):
         # Create a temporary directory
         tempdir = Path(tempfile.mkdtemp())
