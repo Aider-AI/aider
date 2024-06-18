@@ -13,7 +13,13 @@ on:
       - README.md
     branches:
       - main
-
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch name to run tests on'
+        required: true
+        default: 'main'
+  
 jobs:
   build:
     runs-on: windows-latest
