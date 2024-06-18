@@ -13,7 +13,7 @@ from prompt_toolkit.output import DummyOutput
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.main import check_gitignore, main, setup_git
-from aider.utils import GitTemporaryDirectory, make_repo
+from aider.utils import GitTemporaryDirectory, IgnorantTemporaryDirectory, make_repo
 
 
 class TestMain(TestCase):
@@ -21,7 +21,7 @@ class TestMain(TestCase):
         self.original_env = os.environ.copy()
         os.environ["OPENAI_API_KEY"] = "deadbeef"
         self.original_cwd = os.getcwd()
-        self.tempdir_obj = tempfile.TemporaryDirectory()
+        self.tempdir_obj = IgnorantTemporaryDirectory()
         self.tempdir = self.tempdir_obj.name
         os.chdir(self.tempdir)
 
@@ -34,7 +34,7 @@ class TestMain(TestCase):
     def test_main_with_empty_dir_no_files_on_command(self):
         main(["--no-git"], input=DummyInput(), output=DummyOutput())
 
-    def test_main_with_empty_dir_new_file(self):
+    def test_main_with_emptqy_dir_new_file(self):
         main(["foo.txt", "--yes", "--no-git"], input=DummyInput(), output=DummyOutput())
         self.assertTrue(os.path.exists("foo.txt"))
 
