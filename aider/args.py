@@ -7,7 +7,7 @@ import sys
 import configargparse
 
 from aider import __version__, models
-from aider.args_formatter import MarkdownHelpFormatter, YamlHelpFormatter
+from aider.args_formatter import MarkdownHelpFormatter, YamlHelpFormatter#, DotEnvFormatter
 
 from .dump import dump  # noqa: F401
 
@@ -516,14 +516,29 @@ def get_sample_yaml():
     return argparse.ArgumentParser.format_help(parser)
     return parser.format_help()
 
+def get_sample_dotenv():
+    os.environ["COLUMNS"] = "120"
+    sys.argv = ["aider"]
+    parser = get_parser([], None)
+
+    # This instantiates all the action.env_var values
+    parser.parse_known_args()
+
+    parser.formatter_class = DotEnvFormatter
+
+    return argparse.ArgumentParser.format_help(parser)
+    return parser.format_help()
 
 def main():
     arg = sys.argv[1] if len(sys.argv[1:]) else None
 
     if arg == "md":
         print(get_md_help())
+    elif arg == "dotenv":
+        print(get_sample_dotenv())
     else:
         print(get_sample_yaml())
+
 
 
 if __name__ == "__main__":
