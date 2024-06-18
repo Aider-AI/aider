@@ -14,12 +14,13 @@ from aider.args import get_md_help
 cog.out(get_md_help())
 ]]]-->
 ```
-usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
-             [--opus] [--sonnet] [--4] [--4o] [--4-turbo]
-             [--35turbo] [--models] [--openai-api-base]
-             [--openai-api-type] [--openai-api-version]
-             [--openai-api-deployment-id] [--openai-organization-id]
-             [--model-metadata-file] [--edit-format] [--weak-model]
+usage: aider [-h] [--llm-history-file] [--openai-api-key]
+             [--anthropic-api-key] [--model] [--opus] [--sonnet]
+             [--4] [--4o] [--4-turbo] [--35turbo] [--models]
+             [--openai-api-base] [--openai-api-type]
+             [--openai-api-version] [--openai-api-deployment-id]
+             [--openai-organization-id] [--model-metadata-file]
+             [--edit-format] [--weak-model]
              [--show-model-warnings | --no-show-model-warnings]
              [--map-tokens] [--max-chat-history-tokens] [--env-file]
              [--input-history-file] [--chat-history-file]
@@ -51,6 +52,10 @@ Aliases:
   - `--help`
 
 ## Main:
+
+### `--llm-history-file LLM_HISTORY_FILE`
+Log the conversation with the LLM to this file (for example, .aider.llm.history)  
+Environment variable: `AIDER_LLM_HISTORY_FILE`  
 
 ### `--openai-api-key OPENAI_API_KEY`
 Specify the OpenAI API key  

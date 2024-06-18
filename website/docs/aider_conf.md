@@ -41,6 +41,9 @@ cog.outl("```")
 #######
 # Main:
 
+## Log the conversation with the LLM to this file (for example, .aider.llm.history)
+#llm-history-file:
+
 ## Specify the OpenAI API key
 #openai-api-key:
 
