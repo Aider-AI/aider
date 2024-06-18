@@ -10,6 +10,8 @@ from pathlib import Path
 from grep_ast import TreeContext, filename_to_lang
 from tree_sitter_languages import get_parser  # noqa: E402
 
+from aider.dump import dump  # noqa: E402
+
 # tree_sitter is throwing a FutureWarning
 warnings.simplefilter("ignore", category=FutureWarning)
 
@@ -96,14 +98,21 @@ class Linter:
     def py_lint(self, fname, rel_fname, code):
         basic_res = basic_lint(rel_fname, code)
         compile_res = lint_python_compile(fname, code)
-
         fatal = "E9,F821,F823,F831,F406,F407,F701,F702,F704,F706"
-        flake8 = f"flake8 --select={fatal} --show-source --isolated"
 
-        try:
-            flake_res = self.run_cmd(flake8, rel_fname, code)
-        except FileNotFoundError:
-            flake_res = None
+        from flake8.api import legacy as flake8
+
+        fatal = fatal.split(",")
+        dump(fatal)
+        style_guide = flake8.get_style_guide(select=fatal)
+        dump(style_guide)
+        report = style_guide.check_files([rel_fname])
+        dump(report)
+        dump(report.get_statistics("F"))
+        dump(report.get_statistics("line_numbers"))
+        flake_res = LintResult(
+            text=str(report.get_statistics("E")), lines=list(report.get_statistics("line_numbers"))
+        )
 
         text = ""
         lines = set()
