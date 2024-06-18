@@ -3,6 +3,80 @@ import argparse
 from .dump import dump  # noqa: F401
 
 
+class DotEnvFormatter(argparse.HelpFormatter):
+    def start_section(self, heading):
+        res = "\n\n"
+        res += "#" * (len(heading) + 3)
+        res += f"\n# {heading}"
+        super().start_section(res)
+
+    def _format_usage(self, usage, actions, groups, prefix):
+        return ""
+
+    def _format_text(self, text):
+        return """
+##########################################################
+# Sample .env
+# This file lists *all* the valid configuration entries.
+# Place in your home dir, or at the root of your git repo.
+##########################################################
+
+"""
+
+    def _format_action(self, action):
+        if not action.option_strings:
+            return ""
+
+        parts = [""]
+
+        metavar = action.metavar
+        if not metavar and isinstance(action, argparse._StoreAction):
+            metavar = "VALUE"
+
+        default = action.default
+        if default == argparse.SUPPRESS:
+            default = ""
+        elif isinstance(default, str):
+            pass
+        elif isinstance(default, list) and not default:
+            default = ""
+        elif action.default is not None:
+            default = "true" if default else "false"
+        else:
+            default = ""
+
+        if action.help:
+            parts.append(f"## {action.help}")
+
+        for switch in action.option_strings:
+            if switch.startswith("--"):
+                break
+        switch = switch.lstrip("-")
+
+        if isinstance(action, argparse._StoreTrueAction):
+            default = False
+        elif isinstance(action, argparse._StoreConstAction):
+            default = False
+
+        if default is False:
+            default = "false"
+        if default is True:
+            default = "true"
+
+        if default:
+            parts.append(f"{switch}={default}\n")
+        else:
+            parts.append(f"{switch}=\n")
+
+        return "\n".join(parts) + "\n"
+
+    def _format_action_invocation(self, action):
+        return ""
+
+    def _format_args(self, action, default_metavar):
+        return ""
+
+
 class YamlHelpFormatter(argparse.HelpFormatter):
     def start_section(self, heading):
         res = "\n\n"

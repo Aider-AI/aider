@@ -7,7 +7,7 @@ import sys
 import configargparse
 
 from aider import __version__, models
-from aider.args_formatter import MarkdownHelpFormatter, YamlHelpFormatter#, DotEnvFormatter
+from aider.args_formatter import MarkdownHelpFormatter, YamlHelpFormatter, DotEnvFormatter
 
 from .dump import dump  # noqa: F401
 
