@@ -160,11 +160,23 @@ class TestRepo(unittest.TestCase):
 
             # check the committer name
             commit = raw_repo.head.commit
+            self.assertEqual(commit.author.name, "Test User (aider)")
+            self.assertEqual(commit.committer.name, "Test User (aider)")
+
+            # commit a change without aider_edits
+            fname.write_text("new content again!")
+            git_repo.commit(fnames=[str(fname)], aider_edits=False)
+
+            # check the committer name
+            commit = raw_repo.head.commit
+            self.assertEqual(commit.author.name, "Test User")
             self.assertEqual(commit.committer.name, "Test User (aider)")
 
             # check that the original committer name is restored
             original_committer_name = os.environ.get("GIT_COMMITTER_NAME")
             self.assertIsNone(original_committer_name)
+            original_author_name = os.environ.get("GIT_AUTHOR_NAME")
+            self.assertIsNone(original_author_name)
 
     def test_get_tracked_files(self):
         # Create a temporary directory
