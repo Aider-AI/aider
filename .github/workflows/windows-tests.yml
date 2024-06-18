@@ -13,7 +13,6 @@ on:
       - README.md
     branches:
       - main
-      - issue-630
 
 jobs:
   build:
