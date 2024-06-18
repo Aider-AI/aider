@@ -18,9 +18,9 @@ class DotEnvFormatter(argparse.HelpFormatter):
     def _format_text(self, text):
         return f"""
 ##########################################################
-# Sample aider .env file
-# This file lists *all* the valid configuration entries.
-# Place in your home dir, or at the root of your git repo.
+# Sample aider .env file.
+# Place at the root of your git repo.
+# Or use `aider --env <fname>` to specify.
 ##########################################################
 
 #################
