@@ -4,7 +4,7 @@ nav_order: 900
 description: Using a .env file to store LLM API keys for aider.
 ---
 
-# Config with .env 
+# Config with .env
 
 You can use a `.env` file to store API keys and other settings for the
 models you use with aider
