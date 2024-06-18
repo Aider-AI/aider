@@ -137,7 +137,34 @@ class TestRepo(unittest.TestCase):
         # Assert that the returned message is the expected one
         self.assertEqual(result, 'a good "commit message"')
 
-    def test_get_tracked_files(self):
+    @patch("aider.repo.simple_send_with_retries")
+    def test_commit_with_custom_committer_name(self, mock_send):
+        mock_send.return_value = '"a good commit message"'
+
+        with GitTemporaryDirectory():
+            # new repo
+            raw_repo = git.Repo()
+            raw_repo.config_writer().set_value("user", "name", "Test User").release()
+
+            # add a file and commit it
+            fname = Path("file.txt")
+            fname.touch()
+            raw_repo.git.add(str(fname))
+            raw_repo.git.commit("-m", "initial commit")
+
+            git_repo = GitRepo(InputOutput(), None, None)
+
+            # commit a change
+            fname.write_text("new content")
+            git_repo.commit(fnames=[str(fname)])
+
+            # check the committer name
+            commit = raw_repo.head.commit
+            self.assertEqual(commit.committer.name, "Test User (aider)")
+
+            # check that the original committer name is restored
+            original_committer_name = os.environ.get("GIT_COMMITTER_NAME")
+            self.assertIsNone(original_committer_name)
         # Create a temporary directory
         tempdir = Path(tempfile.mkdtemp())
 
