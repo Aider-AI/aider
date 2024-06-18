@@ -12,6 +12,21 @@ from aider.args_formatter import MarkdownHelpFormatter, YamlHelpFormatter
 from .dump import dump  # noqa: F401
 
 
+def default_env_file(git_root):
+    return os.path.join(git_root, ".env") if git_root else ".env"
+
+
+def get_preparser(git_root):
+    parser = configargparse.ArgumentParser(add_help=False)
+    parser.add_argument(
+        "--env-file",
+        metavar="ENV_FILE",
+        default=default_env_file(git_root),
+        help="Specify the .env file to load (default: .env in git root)",
+    )
+    return parser
+
+
 def get_parser(default_config_files, git_root):
     parser = configargparse.ArgumentParser(
         description="aider is GPT powered coding in your terminal",
@@ -184,11 +199,12 @@ def get_parser(default_config_files, git_root):
             " max_chat_history_tokens."
         ),
     )
-    default_env_file = os.path.join(git_root, ".env") if git_root else ".env"
+    # This is a duplicate of the argument in the preparser and is a no-op by this time of
+    # argument parsing, but it's here so that the help is displayed as expected.
     group.add_argument(
         "--env-file",
         metavar="ENV_FILE",
-        default=default_env_file,
+        default=default_env_file(git_root),
         help="Specify the .env file to load (default: .env in git root)",
     )
 
