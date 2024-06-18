@@ -332,7 +332,7 @@ class Commands:
 
         last_commit = self.coder.repo.repo.head.commit
         if (
-            "(aider)" not in last_commit.committer.name
+            not last_commit.author.name.endswith(" (aider)")
             or last_commit.hexsha[:7] != self.coder.last_aider_commit_hash
         ):
             self.io.tool_error("The last commit was not made by aider in this chat session.")

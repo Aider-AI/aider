@@ -88,11 +88,15 @@ class GitRepo:
         else:
             cmd += ["-a"]
 
+        original_user_name = self.repo.config_reader().get_value("user", "name")
+        original_committer_name_env = os.environ.get("GIT_COMMITTER_NAME")
+
+        committer_name = f"{original_user_name} (aider)"
+        os.environ["GIT_COMMITTER_NAME"] = committer_name
+
         if aider_edits:
-            user_name = self.repo.config_reader().get_value("user", "name")
-            committer_name = f"{user_name} (aider)"
-            original_committer_name = os.environ.get("GIT_COMMITTER_NAME")
-            os.environ["GIT_COMMITTER_NAME"] = committer_name
+            original_auther_name_env = os.environ.get("GIT_AUTHOR_NAME")
+            os.environ["GIT_AUTHOR_NAME"] = committer_name
 
         self.repo.git.commit(cmd)
         commit_hash = self.repo.head.commit.hexsha[:7]
@@ -100,10 +104,15 @@ class GitRepo:
 
         # Restore the original GIT_COMMITTER_NAME
         if aider_edits:
-            if original_committer_name is not None:
-                os.environ["GIT_COMMITTER_NAME"] = original_committer_name
+            if original_auther_name_env is not None:
+                os.environ["GIT_AUTHOR_NAME"] = original_auther_name_env
             else:
-                del os.environ["GIT_COMMITTER_NAME"]
+                del os.environ["GIT_AUTHOR_NAME"]
+
+        if original_committer_name_env is not None:
+            os.environ["GIT_COMMITTER_NAME"] = original_committer_name_env
+        else:
+            del os.environ["GIT_COMMITTER_NAME"]
 
         return commit_hash, commit_message
 
