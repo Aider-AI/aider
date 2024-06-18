@@ -48,6 +48,13 @@ class DotEnvFormatter(argparse.HelpFormatter):
         if action.help:
             parts.append(f"## {action.help}")
 
+        if action.env_var:
+            env_var = action.env_var
+            if default:
+                parts.append(f"{env_var}={default}\n")
+            else:
+                parts.append(f"{env_var}=\n")
+
         for switch in action.option_strings:
             if switch.startswith("--"):
                 break
