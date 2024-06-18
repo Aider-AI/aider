@@ -17,10 +17,16 @@ class IgnorantTemporaryDirectory:
         return self.temp_dir.__enter__()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        self.cleanup()
+
+    def cleanup(self):
         try:
-            self.temp_dir.__exit__(exc_type, exc_val, exc_tb)
+            self.temp_dir.cleanup()
         except (OSError, PermissionError):
             pass  # Ignore errors (Windows)
+
+    def __getattr__(self, item):
+        return getattr(self.temp_dir, item)
 
 
 class ChdirTemporaryDirectory(IgnorantTemporaryDirectory):
