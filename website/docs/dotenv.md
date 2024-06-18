@@ -7,7 +7,7 @@ description: Using a .env file to store LLM API keys for aider.
 # Config with .env
 
 You can use a `.env` file to store API keys and other settings for the
-models you use with aider
+models you use with aider.
 You can also set many general aider options
 in the `.env` file.
 
@@ -32,9 +32,9 @@ cog.outl("```")
 ]]]-->
 ```
 ##########################################################
-# Sample aider .env file
-# This file lists *all* the valid configuration entries.
-# Place in your home dir, or at the root of your git repo.
+# Sample aider .env file.
+# Place at the root of your git repo.
+# Or use `aider --env <fname>` to specify.
 ##########################################################
 
 #################
