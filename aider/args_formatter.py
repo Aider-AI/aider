@@ -1,5 +1,7 @@
 import argparse
 
+from aider import urls
+
 from .dump import dump  # noqa: F401
 
 
@@ -14,24 +16,36 @@ class DotEnvFormatter(argparse.HelpFormatter):
         return ""
 
     def _format_text(self, text):
-        return """
+        return f"""
 ##########################################################
-# Sample .env
+# Sample aider .env file
 # This file lists *all* the valid configuration entries.
 # Place in your home dir, or at the root of your git repo.
 ##########################################################
 
+#################
+# LLM parameters:
+#
+# Include xxx_API_KEY parameters and other params needed for your LLMs.
+# See {urls.llms} for details.
+
+## OpenAI
+#OPENAI_API_KEY=
+
+## Anthropic
+#ANTHROPIC_API_KEY=
+
+##...
 """
 
     def _format_action(self, action):
         if not action.option_strings:
             return ""
 
-        parts = [""]
+        if not action.env_var:
+            return
 
-        metavar = action.metavar
-        if not metavar and isinstance(action, argparse._StoreAction):
-            metavar = "VALUE"
+        parts = [""]
 
         default = action.default
         if default == argparse.SUPPRESS:
@@ -51,29 +65,9 @@ class DotEnvFormatter(argparse.HelpFormatter):
         if action.env_var:
             env_var = action.env_var
             if default:
-                parts.append(f"{env_var}={default}\n")
+                parts.append(f"#{env_var}={default}\n")
             else:
-                parts.append(f"{env_var}=\n")
-
-        for switch in action.option_strings:
-            if switch.startswith("--"):
-                break
-        switch = switch.lstrip("-")
-
-        if isinstance(action, argparse._StoreTrueAction):
-            default = False
-        elif isinstance(action, argparse._StoreConstAction):
-            default = False
-
-        if default is False:
-            default = "false"
-        if default is True:
-            default = "true"
-
-        if default:
-            parts.append(f"{switch}={default}\n")
-        else:
-            parts.append(f"{switch}=\n")
+                parts.append(f"#{env_var}=\n")
 
         return "\n".join(parts) + "\n"
 
