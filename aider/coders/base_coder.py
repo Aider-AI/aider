@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import datetime
 import hashlib
 import json
 import os
@@ -28,7 +27,7 @@ from aider.mdstream import MarkdownStream
 from aider.repo import GitRepo
 from aider.repomap import RepoMap
 from aider.sendchat import send_with_retries
-from aider.utils import is_image_file, format_messages, format_content
+from aider.utils import format_content, format_messages, is_image_file
 
 from ..dump import dump  # noqa: F401
 
@@ -1385,7 +1384,7 @@ class Coder:
 
     def auto_commit(self, edited):
         # context = self.get_context_from_history(self.cur_messages)
-        res = self.repo.commit(fnames=edited, prefix="aider: ")
+        res = self.repo.commit(fnames=edited, aider_edits=True)
         if res:
             commit_hash, commit_message = res
             self.last_aider_commit_hash = commit_hash
