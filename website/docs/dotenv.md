@@ -19,15 +19,9 @@ You can give it an explicit file to load with the `--env-file <filename>` parame
 
 Here is an example `.env` file:
 
-```
-OPENAI_API_KEY=<key>
-ANTHROPIC_API_KEY=<key>
-GROQ_API_KEY=<key>
-OPENROUTER_API_KEY=<key>
-
-AZURE_API_KEY=<key>
-AZURE_API_VERSION=2023-05-15
-AZURE_API_BASE=https://example-endpoint.openai.azure.com
-
-OLLAMA_API_BASE=http://127.0.0.1:11434
+```dotenv
+[[[cog
+from aider.args import get_sample_dotenv
+print(get_sample_dotenv())
+]]]
 ```
