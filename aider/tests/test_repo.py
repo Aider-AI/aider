@@ -1,4 +1,5 @@
 import os
+import platform
 import tempfile
 import unittest
 from pathlib import Path
@@ -138,8 +139,12 @@ class TestRepo(unittest.TestCase):
         self.assertEqual(result, 'a good "commit message"')
 
     @patch("aider.repo.GitRepo.get_commit_message")
-    def notest_commit_with_custom_committer_name(self, mock_send):
+    def test_commit_with_custom_committer_name(self, mock_send):
         mock_send.return_value = '"a good commit message"'
+
+        # Cleanup of the git temp dir explodes on windows
+        if platform.system() == "Windows":
+            return
 
         with GitTemporaryDirectory():
             # new repo
@@ -178,11 +183,6 @@ class TestRepo(unittest.TestCase):
             self.assertIsNone(original_committer_name)
             original_author_name = os.environ.get("GIT_AUTHOR_NAME")
             self.assertIsNone(original_author_name)
-
-            del fname
-            del git_repo
-            del raw_repo
-            del io
 
     def test_get_tracked_files(self):
         # Create a temporary directory
