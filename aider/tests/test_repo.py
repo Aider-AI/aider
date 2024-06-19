@@ -152,7 +152,8 @@ class TestRepo(unittest.TestCase):
             raw_repo.git.add(str(fname))
             raw_repo.git.commit("-m", "initial commit")
 
-            git_repo = GitRepo(InputOutput(), None, None)
+            io = InputOutput()
+            git_repo = GitRepo(io, None, None)
 
             # commit a change
             fname.write_text("new content")
@@ -178,8 +179,10 @@ class TestRepo(unittest.TestCase):
             original_author_name = os.environ.get("GIT_AUTHOR_NAME")
             self.assertIsNone(original_author_name)
 
-            del raw_repo
+            del fname
             del git_repo
+            del raw_repo
+            del io
 
     def test_get_tracked_files(self):
         # Create a temporary directory
