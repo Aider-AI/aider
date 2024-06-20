@@ -61,7 +61,7 @@ class Coder:
     edit_format = None
     yield_stream = False
     temperature = 0
-    auto_lint = True
+    auto_lint = False
     auto_test = False
     test_cmd = None
     lint_outcome = None
