@@ -14,9 +14,8 @@ files=['/Users/metehanoz/FumeData/metehanozdev-ecohabit-main/client/src/componen
 task_id = 'metehanozdev-ecohabit-main'
 
 
-client = OpenAI(api_key=OPENAI_API_KEY,base_url=BASE_URL)
 model = Model(model=BASE_MODEL)
-model.edit_format = 'diff-fenced'
+model.edit_format = 'diff'
 
-coder = Coder.create(fnames=files, main_model=model,use_git= False,task_id=task_id,api_key=OPENAI_API_KEY,base_url=BASE_URL,edit_format='diff-fenced')
+coder = Coder.create(fnames=files, main_model=model,use_git= False,task_id=task_id,api_key=OPENAI_API_KEY,base_url=BASE_URL,edit_format='diff')
 coder.run(task)
