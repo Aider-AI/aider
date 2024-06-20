@@ -630,7 +630,7 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model openrouter/anthropic/claude-3.5-sonnet
+  command: aider --model openrouter/anthropic/claude-3.5-sonnet --edit-format whole
   date: 2024-06-20
   versions: 0.38.1-dev
   seconds_per_case: 15.4
@@ -638,7 +638,7 @@
 
 - dirname: 2024-06-20-15-16-41--claude-3.5-sonnet-diff
   test_cases: 133
-  model: openrouter/anthropic/claude-3.5-sonnet
+  model: claude-3.5-sonnet (diff)
   edit_format: diff
   commit_hash: 068609e-dirty
   pass_rate_1: 57.9
