@@ -948,6 +948,7 @@ class Coder:
 
     def lint_edited(self, fnames):
         res = ""
+        return res
         for fname in fnames:
             errors = self.linter.lint(self.abs_root_path(fname))
             if errors:
