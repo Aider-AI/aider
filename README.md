@@ -6,8 +6,8 @@
 Aider lets you pair program with LLMs,
 to edit code in your local git repository.
 Start a new project or work with an existing git repo.
-Aider works best with GPT-4o and Claude 3 Opus
-and can [connect to almost any LLM](https://aider.chat/docs/llms.html).
+Aider can [connect to almost any LLM](https://aider.chat/docs/llms.html).
+and works best with GPT-4o, Claude 3.5 Sonnet and Claude 3 Opus.
 
 <p align="center">
   <img

@@ -75,7 +75,7 @@ Use claude-3-opus-20240229 model for the main chat
 Environment variable: `AIDER_OPUS`  
 
 ### `--sonnet`
-Use claude-3-sonnet-20240229 model for the main chat  
+Use claude-3-5-sonnet-20240620 model for the main chat  
 Environment variable: `AIDER_SONNET`  
 
 ### `--4`

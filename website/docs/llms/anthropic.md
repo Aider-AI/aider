@@ -22,7 +22,7 @@ setx   ANTHROPIC_API_KEY <key> # Windows
 # Claude 3 Opus
 aider --opus
 
-# Claude 3 Sonnet
+# Claude 3.5 Sonnet
 aider --sonnet
 
 # List models available from Anthropic

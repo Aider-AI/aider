@@ -7,7 +7,11 @@ import sys
 import configargparse
 
 from aider import __version__, models
-from aider.args_formatter import MarkdownHelpFormatter, YamlHelpFormatter, DotEnvFormatter
+from aider.args_formatter import (
+    DotEnvFormatter,
+    MarkdownHelpFormatter,
+    YamlHelpFormatter,
+)
 
 from .dump import dump  # noqa: F401
 
@@ -43,10 +47,7 @@ def get_parser(default_config_files, git_root):
         help="Log the conversation with the LLM to this file (for example, .aider.llm.history)",
     )
     group.add_argument(
-        "files",
-        metavar="FILE",
-        nargs="*",
-        help="files to edit with an LLM (optional)"
+        "files", metavar="FILE", nargs="*", help="files to edit with an LLM (optional)"
     )
     group.add_argument(
         "--openai-api-key",
@@ -75,7 +76,7 @@ def get_parser(default_config_files, git_root):
         const=opus_model,
         help=f"Use {opus_model} model for the main chat",
     )
-    sonnet_model = "claude-3-sonnet-20240229"
+    sonnet_model = "claude-3-5-sonnet-20240620"
     group.add_argument(
         "--sonnet",
         action="store_const",
@@ -516,6 +517,7 @@ def get_sample_yaml():
     return argparse.ArgumentParser.format_help(parser)
     return parser.format_help()
 
+
 def get_sample_dotenv():
     os.environ["COLUMNS"] = "120"
     sys.argv = ["aider"]
@@ -529,6 +531,7 @@ def get_sample_dotenv():
     return argparse.ArgumentParser.format_help(parser)
     return parser.format_help()
 
+
 def main():
     arg = sys.argv[1] if len(sys.argv[1:]) else None
 
@@ -538,7 +541,6 @@ def main():
         print(get_sample_dotenv())
     else:
         print(get_sample_yaml())
-
 
 
 if __name__ == "__main__":

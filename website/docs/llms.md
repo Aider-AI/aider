@@ -14,8 +14,8 @@ description: Aider can connect to most LLMs for AI pair programming.
 ## Best models
 {: .no_toc }
 
-**Aider works best with [GPT-4o](/docs/llms/openai.html) and
-[Claude 3 Opus](/docs/llms/anthropic.html),**
+**Aider works best with [GPT-4o](/docs/llms/openai.html),
+[Claude 3.5 Sonnet and Claude 3 Opus](/docs/llms/anthropic.html),**
 as they are the very best models for editing code.
 
 ## Free models
