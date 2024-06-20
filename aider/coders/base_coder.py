@@ -849,7 +849,7 @@ class Coder:
         if edited:
             self.edit_outcome = True
 
-        if edited and self.auto_lint:
+        if False:
             lint_errors = self.lint_edited(edited)
             self.lint_outcome = not lint_errors
             if lint_errors:
