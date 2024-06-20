@@ -19,7 +19,9 @@ it works best with models that score well on the benchmarks.
 ## Claude 3.5 Sonnet takes the top spot
 
 Claude 3.5 Sonnet is now the top ranked model on aider's code editing leaderboard.
-DeepSeek Coder V2 took the #1 spot only 4 days ago.
+DeepSeek Coder V2 only spent 4 days in the top spot.
+
+The new Sonnet came in 3rd on aider's refactoring leaderboard, behind GPT-4o and Opus.
 
 Sonnet ranked #1 when using the "whole" editing format,
 but it also scored very well with

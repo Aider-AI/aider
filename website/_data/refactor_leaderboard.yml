@@ -143,4 +143,25 @@
   seconds_per_case: 67.8
   total_cost: 20.4889
 
-  
+
+- dirname: 2024-06-20-16-39-18--refac-claude-3.5-sonnet-diff
+  test_cases: 89
+  model: claude-3.5-sonnet (diff)
+  edit_format: diff
+  commit_hash: e5e07f9
+  pass_rate_1: 55.1
+  percent_cases_well_formed: 70.8
+  error_outputs: 240
+  num_malformed_responses: 54
+  num_with_malformed_responses: 26
+  user_asks: 10
+  lazy_comments: 2
+  syntax_errors: 0
+  indentation_errors: 3
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model openrouter/anthropic/claude-3.5-sonnet
+  date: 2024-06-20
+  versions: 0.38.1-dev
+  seconds_per_case: 51.9
+  total_cost: 0.0000
