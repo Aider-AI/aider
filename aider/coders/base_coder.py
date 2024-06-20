@@ -913,9 +913,9 @@ class Coder:
         res = ["", ""]
         res.append(f"Model {self.main_model.name} has hit a token limit!")
         res.append("")
-        res.append(f"Input tokens: {input_tokens} of {max_input_tokens}{inp_err}")
-        res.append(f"Output tokens: {output_tokens} of {max_output_tokens}{out_err}")
-        res.append(f"Total tokens: {total_tokens} of {max_input_tokens}{tot_err}")
+        res.append(f"Input tokens: {input_tokens:,} of {max_input_tokens:,}{inp_err}")
+        res.append(f"Output tokens: {output_tokens:,} of {max_output_tokens:,}{out_err}")
+        res.append(f"Total tokens: {total_tokens:,} of {max_input_tokens:,}{tot_err}")
 
         if output_tokens >= max_output_tokens:
             res.append("")
