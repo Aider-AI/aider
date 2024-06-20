@@ -179,7 +179,13 @@ MODEL_SETTINGS = [
         weak_model_name="claude-3-haiku-20240307",
     ),
     ModelSettings(
-        "anthropic/claude-3.5-sonnet",
+        "claude-3-5-sonnet-20240620",
+        "diff",
+        weak_model_name="claude-3-haiku-20240307",
+        use_repo_map=True,
+    ),
+    ModelSettings(
+        "anthropic/claude-3-5-sonnet-20240620",
         "diff",
         weak_model_name="claude-3-haiku-20240307",
         use_repo_map=True,
