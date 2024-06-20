@@ -178,6 +178,18 @@ MODEL_SETTINGS = [
         "whole",
         weak_model_name="claude-3-haiku-20240307",
     ),
+    ModelSettings(
+        "anthropic/claude-3.5-sonnet",
+        "diff",
+        weak_model_name="claude-3-haiku-20240307",
+        use_repo_map=True,
+    ),
+    ModelSettings(
+        "openrouter/anthropic/claude-3.5-sonnet",
+        "diff",
+        weak_model_name="openrouter/anthropic/claude-3-haiku-20240307",
+        use_repo_map=True,
+    ),
     # Cohere
     ModelSettings(
         "command-r-plus",
