@@ -7,7 +7,7 @@ Aider lets you pair program with LLMs,
 to edit code in your local git repository.
 Start a new project or work with an existing git repo.
 Aider can [connect to almost any LLM](https://aider.chat/docs/llms.html).
-and works best with GPT-4o, Claude 3.5 Sonnet and Claude 3 Opus.
+and works best with GPT-4o, Claude 3.5 Sonnet, Claude 3 Opus and DeepSeek Coder V2.
 
 <p align="center">
   <img
@@ -84,19 +84,12 @@ Pair program with AI.
 - [Code with your voice](https://aider.chat/docs/voice.html).
 
 
-## State of the art
+## Top tier performance
 
-Aider has the
-[top score on SWE Bench](https://aider.chat/2024/06/02/main-swe-bench.html).
+[Aider has the one of the top scores on SWE Bench](https://aider.chat/2024/06/02/main-swe-bench.html).
 SWE Bench is a challenging software engineering benchmark where aider
 solved *real* GitHub issues from popular open source
 projects like django, scikitlearn, matplotlib, etc.
-
-<p align="center">
-   <a href="https://aider.chat/2024/06/02/main-swe-bench.html">
-     <img src="https://aider.chat/assets/swe_bench.svg" alt="aider swe bench">
-   </a>
-</p>
 
 ## More info
 

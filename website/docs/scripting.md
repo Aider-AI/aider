@@ -1,4 +1,5 @@
 ---
+parent: More info
 nav_order: 900
 description: You can script aider via the command line or python.
 ---
