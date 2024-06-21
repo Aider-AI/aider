@@ -14,22 +14,15 @@ from aider.args import get_md_help
 cog.out(get_md_help())
 ]]]-->
 ```
-usage: aider [-h] [--vim] [--openai-api-key] [--anthropic-api-key]
-             [--model] [--opus] [--sonnet] [--4] [--4o] [--4-turbo]
-             [--35turbo] [--models] [--openai-api-base]
-             [--openai-api-type] [--openai-api-version]
-             [--openai-api-deployment-id] [--openai-organization-id]
-             [--model-settings-file] [--model-metadata-file]
-             [--edit-format] [--weak-model]
-=======
 usage: aider [-h] [--llm-history-file] [--openai-api-key]
              [--anthropic-api-key] [--model] [--opus] [--sonnet]
              [--4] [--4o] [--4-turbo] [--35turbo] [--models]
              [--openai-api-base] [--openai-api-type]
              [--openai-api-version] [--openai-api-deployment-id]
-             [--openai-organization-id]
-             [--verify-ssl | --no-verify-ssl]
-             [--model-metadata-file] [--edit-format] [--weak-model]
+             [--openai-organization-id] [--model-settings-file]
+             [--model-metadata-file]
+             [--verify-ssl | --no-verify-ssl] [--edit-format]
+             [--weak-model]
              [--show-model-warnings | --no-show-model-warnings]
              [--map-tokens] [--max-chat-history-tokens] [--env-file]
              [--input-history-file] [--chat-history-file]
@@ -137,10 +130,14 @@ Environment variable: `OPENAI_API_DEPLOYMENT_ID`
 Specify the OpenAI organization ID  
 Environment variable: `OPENAI_ORGANIZATION_ID`  
 
-### `--model-settings-file MODEL_FILE`
+### `--model-settings-file MODEL_SETTINGS_FILE`
 Specify a file with aider model settings for unknown models  
 Environment variable: `AIDER_MODEL_SETTINGS_FILE`  
-=======
+
+### `--model-metadata-file MODEL_METADATA_FILE`
+Specify a file with context window and costs for unknown models  
+Environment variable: `AIDER_MODEL_METADATA_FILE`  
+
 ### `--verify-ssl`
 Verify the SSL cert when connecting to models (default: True)  
 Default: True  
@@ -148,10 +145,6 @@ Environment variable: `AIDER_VERIFY_SSL`
 Aliases:
   - `--verify-ssl`
   - `--no-verify-ssl`
-
-### `--model-metadata-file MODEL_FILE`
-Specify a file with context window and costs for unknown models  
-Environment variable: `AIDER_MODEL_METADATA_FILE`  
 
 ### `--edit-format EDIT_FORMAT`
 Specify what edit format the LLM should use (default depends on model)  

@@ -163,6 +163,7 @@ def get_parser(default_config_files, git_root):
         metavar="MODEL_SETTINGS_FILE",
         default=None,
         help="Specify a file with aider model settings for unknown models",
+    )
     group.add_argument(
         "--model-metadata-file",
         metavar="MODEL_METADATA_FILE",
@@ -174,7 +175,7 @@ def get_parser(default_config_files, git_root):
         action=argparse.BooleanOptionalAction,
         default=True,
         help="Verify the SSL cert when connecting to models (default: True)",
-    )      
+    )
     group.add_argument(
         "--edit-format",
         metavar="EDIT_FORMAT",

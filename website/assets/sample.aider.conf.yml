@@ -64,11 +64,14 @@
 ## Specify the OpenAI organization ID
 #openai-organization-id:
 
-## Verify the SSL cert when connecting to models (default: True)
-#verify-ssl: true
+## Specify a file with aider model settings for unknown models
+#model-settings-file:
 
 ## Specify a file with context window and costs for unknown models
 #model-metadata-file:
+
+## Verify the SSL cert when connecting to models (default: True)
+#verify-ssl: true
 
 ## Specify what edit format the LLM should use (default depends on model)
 #edit-format:
