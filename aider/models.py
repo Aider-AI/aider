@@ -179,6 +179,43 @@ MODEL_SETTINGS = [
         "whole",
         weak_model_name="claude-3-haiku-20240307",
     ),
+    ModelSettings(
+        "claude-3-5-sonnet-20240620",
+        "diff",
+        weak_model_name="claude-3-haiku-20240307",
+        use_repo_map=True,
+    ),
+    ModelSettings(
+        "anthropic/claude-3-5-sonnet-20240620",
+        "diff",
+        weak_model_name="claude-3-haiku-20240307",
+        use_repo_map=True,
+    ),
+    ModelSettings(
+        "openrouter/anthropic/claude-3.5-sonnet",
+        "diff",
+        weak_model_name="openrouter/anthropic/claude-3-haiku-20240307",
+        use_repo_map=True,
+    ),
+    # Vertex AI Claude models
+    ModelSettings(
+        "vertex_ai/claude-3-5-sonnet@20240620",
+        "diff",
+        weak_model_name="vertex_ai/claude-3-haiku@20240307",
+        use_repo_map=True,
+    ),
+    ModelSettings(
+        "vertex_ai/claude-3-opus@20240229",
+        "diff",
+        weak_model_name="vertex_ai/claude-3-haiku@20240307",
+        use_repo_map=True,
+        send_undo_reply=True,
+    ),
+    ModelSettings(
+        "vertex_ai/claude-3-sonnet@20240229",
+        "whole",
+        weak_model_name="vertex_ai/claude-3-haiku@20240307",
+    ),
     # Cohere
     ModelSettings(
         "command-r-plus",
@@ -219,7 +256,7 @@ MODEL_SETTINGS = [
         send_undo_reply=True,
     ),
     ModelSettings(
-        "openai/deepseek-chat",
+        "deepseek/deepseek-chat",
         "diff",
         use_repo_map=True,
         send_undo_reply=True,
@@ -227,7 +264,15 @@ MODEL_SETTINGS = [
         reminder_as_sys_msg=True,
     ),
     ModelSettings(
-        "deepseek/deepseek-chat",
+        "deepseek/deepseek-coder",
+        "diff",
+        use_repo_map=True,
+        send_undo_reply=True,
+        examples_as_sys_msg=True,
+        reminder_as_sys_msg=True,
+    ),
+    ModelSettings(
+        "openrouter/deepseek/deepseek-coder",
         "diff",
         use_repo_map=True,
         send_undo_reply=True,

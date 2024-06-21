@@ -21,6 +21,15 @@ usage: aider [-h] [--vim] [--openai-api-key] [--anthropic-api-key]
              [--openai-api-deployment-id] [--openai-organization-id]
              [--model-settings-file] [--model-metadata-file]
              [--edit-format] [--weak-model]
+=======
+usage: aider [-h] [--llm-history-file] [--openai-api-key]
+             [--anthropic-api-key] [--model] [--opus] [--sonnet]
+             [--4] [--4o] [--4-turbo] [--35turbo] [--models]
+             [--openai-api-base] [--openai-api-type]
+             [--openai-api-version] [--openai-api-deployment-id]
+             [--openai-organization-id]
+             [--verify-ssl | --no-verify-ssl]
+             [--model-metadata-file] [--edit-format] [--weak-model]
              [--show-model-warnings | --no-show-model-warnings]
              [--map-tokens] [--max-chat-history-tokens] [--env-file]
              [--input-history-file] [--chat-history-file]
@@ -36,7 +45,7 @@ usage: aider [-h] [--vim] [--openai-api-key] [--anthropic-api-key]
              [--dry-run | --no-dry-run] [--commit] [--lint]
              [--lint-cmd] [--auto-lint | --no-auto-lint]
              [--test-cmd] [--auto-test | --no-auto-test] [--test]
-             [--voice-language] [--version] [--check-update]
+             [--vim] [--voice-language] [--version] [--check-update]
              [--skip-check-update] [--apply] [--yes] [-v]
              [--show-repo-map] [--show-prompts] [--message]
              [--message-file] [--encoding] [-c] [--gui]
@@ -53,10 +62,9 @@ Aliases:
 
 ## Main:
 
-### `--vim`
-Use VI editing mode in the terminal (default: False)  
-Default: False  
-Environment variable: `AIDER_VIM`  
+### `--llm-history-file LLM_HISTORY_FILE`
+Log the conversation with the LLM to this file (for example, .aider.llm.history)  
+Environment variable: `AIDER_LLM_HISTORY_FILE`  
 
 ### `--openai-api-key OPENAI_API_KEY`
 Specify the OpenAI API key  
@@ -76,7 +84,7 @@ Use claude-3-opus-20240229 model for the main chat
 Environment variable: `AIDER_OPUS`  
 
 ### `--sonnet`
-Use claude-3-sonnet-20240229 model for the main chat  
+Use claude-3-5-sonnet-20240620 model for the main chat  
 Environment variable: `AIDER_SONNET`  
 
 ### `--4`
@@ -132,6 +140,14 @@ Environment variable: `OPENAI_ORGANIZATION_ID`
 ### `--model-settings-file MODEL_FILE`
 Specify a file with aider model settings for unknown models  
 Environment variable: `AIDER_MODEL_SETTINGS_FILE`  
+=======
+### `--verify-ssl`
+Verify the SSL cert when connecting to models (default: True)  
+Default: True  
+Environment variable: `AIDER_VERIFY_SSL`  
+Aliases:
+  - `--verify-ssl`
+  - `--no-verify-ssl`
 
 ### `--model-metadata-file MODEL_FILE`
 Specify a file with context window and costs for unknown models  
@@ -335,6 +351,11 @@ Default: False
 Environment variable: `AIDER_TEST`  
 
 ## Other Settings:
+
+### `--vim`
+Use VI editing mode in the terminal (default: False)  
+Default: False  
+Environment variable: `AIDER_VIM`  
 
 ### `--voice-language VOICE_LANGUAGE`
 Specify the language for voice using ISO 639-1 code (default: auto)  

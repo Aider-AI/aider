@@ -10,6 +10,8 @@ Most of aider's options can be set in an `.aider.conf.yml` file,
 which can be placed in your home directory or at the root of
 your git repo. 
 
+{% include special-keys.md %}
+
 Below is a sample of the file, which you
 can also
 [download from GitHub](https://github.com/paul-gauthier/aider/blob/main/website/assets/sample.aider.conf.yml).
@@ -26,6 +28,7 @@ cog.outl("```")
 ```
 ##########################################################
 # Sample .aider.conf.yaml
+# This file lists *all* the valid configuration entries.
 # Place in your home dir, or at the root of your git repo.
 ##########################################################
 
@@ -38,8 +41,8 @@ cog.outl("```")
 #######
 # Main:
 
-## Use VI editing mode in the terminal (default: False)
-#vim: false
+## Log the conversation with the LLM to this file (for example, .aider.llm.history)
+#llm-history-file:
 
 ## Specify the OpenAI API key
 #openai-api-key:
@@ -53,7 +56,7 @@ cog.outl("```")
 ## Use claude-3-opus-20240229 model for the main chat
 #opus: false
 
-## Use claude-3-sonnet-20240229 model for the main chat
+## Use claude-3-5-sonnet-20240620 model for the main chat
 #sonnet: false
 
 ## Use gpt-4-0613 model for the main chat
@@ -88,6 +91,9 @@ cog.outl("```")
 
 ## Specify the OpenAI organization ID
 #openai-organization-id:
+
+## Verify the SSL cert when connecting to models (default: True)
+#verify-ssl: true
 
 ## Specify a file with context window and costs for unknown models
 #model-metadata-file:
@@ -202,6 +208,9 @@ cog.outl("```")
 
 #################
 # Other Settings:
+
+## Use VI editing mode in the terminal (default: False)
+#vim: false
 
 ## Specify the language for voice using ISO 639-1 code (default: auto)
 #voice-language: en

@@ -17,10 +17,16 @@ class IgnorantTemporaryDirectory:
         return self.temp_dir.__enter__()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        self.cleanup()
+
+    def cleanup(self):
         try:
-            self.temp_dir.__exit__(exc_type, exc_val, exc_tb)
+            self.temp_dir.cleanup()
         except (OSError, PermissionError):
             pass  # Ignore errors (Windows)
+
+    def __getattr__(self, item):
+        return getattr(self.temp_dir, item)
 
 
 class ChdirTemporaryDirectory(IgnorantTemporaryDirectory):
@@ -84,24 +90,38 @@ def safe_abs_path(res):
     return str(res)
 
 
-def show_messages(messages, title=None, functions=None):
+def format_content(role, content):
+    formatted_lines = []
+    for line in content.splitlines():
+        formatted_lines.append(f"{role} {line}")
+    return "\n".join(formatted_lines)
+
+
+def format_messages(messages, title=None):
+    output = []
     if title:
-        print(title.upper(), "*" * 50)
+        output.append(f"{title.upper()} {'*' * 50}")
 
     for msg in messages:
-        print()
+        output.append("")
         role = msg["role"].upper()
         content = msg.get("content")
         if isinstance(content, list):  # Handle list content (e.g., image messages)
             for item in content:
                 if isinstance(item, dict) and "image_url" in item:
-                    print(role, "Image URL:", item["image_url"]["url"])
+                    output.append(f"{role} Image URL: {item['image_url']['url']}")
         elif isinstance(content, str):  # Handle string content
-            for line in content.splitlines():
-                print(role, line)
+            output.append(format_content(role, content))
         content = msg.get("function_call")
         if content:
-            print(role, content)
+            output.append(f"{role} {content}")
+
+    return "\n".join(output)
+
+
+def show_messages(messages, title=None, functions=None):
+    formatted_output = format_messages(messages, title)
+    print(formatted_output)
 
     if functions:
         dump(functions)

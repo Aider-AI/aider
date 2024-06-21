@@ -4,6 +4,7 @@ url: "https://aider.chat"
 plugins:
   - jekyll-redirect-from
   - jekyll-sitemap
+  - jekyll-feed
 
 defaults:
   - scope:
@@ -19,6 +20,7 @@ exclude:
   - "**/OLD/**"
   - "OLD/**"
   - vendor
+  - feed.xml
 
 aux_links:
   "GitHub":

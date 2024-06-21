@@ -10,9 +10,29 @@ Run `aider` with the source code files you want to edit.
 These files will be "added to the chat session", so that
 aider can see their
 contents and edit them for you.
+They can be existing files or the name of files you want
+aider to create for you.
 
 ```
 aider <file1> <file2> ...
+```
+
+At the aider `>` prompt, ask for code changes and aider
+will edit those files to accomplish your request.
+
+
+```
+$ aider factorial.py
+
+Aider v0.37.1-dev
+Models: gpt-4o with diff edit format, weak model gpt-3.5-turbo
+Git repo: .git with 258 files
+Repo-map: using 1024 tokens
+Use /help to see in-chat commands, run with --help to see cmd line args
+───────────────────────────────────────────────────────────────────────
+>`Make a program that asks for a number and prints its factorial
+
+...
 ```
 
 ## Adding files

@@ -110,9 +110,6 @@ class GUI:
         show_undo = False
         res = ""
         if commit_hash:
-            prefix = "aider: "
-            if commit_message.startswith(prefix):
-                commit_message = commit_message[len(prefix) :]
             res += f"Commit `{commit_hash}`: {commit_message}  \n"
             if commit_hash == self.coder.last_aider_commit_hash:
                 show_undo = True

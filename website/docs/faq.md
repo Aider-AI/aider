@@ -1,9 +1,9 @@
 ---
-nav_order: 85
+nav_order: 90
 description: Frequently asked questions about aider.
 ---
 
-# Frequently asked questions
+# FAQ
 {: .no_toc }
 
 - TOC

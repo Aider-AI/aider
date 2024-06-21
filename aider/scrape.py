@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 
 from aider import __version__, urls
-from aider.dump import dump
+from aider.dump import dump  # noqa: F401
 
 aider_user_agent = f"Aider/{__version__} +{urls.website}"
 
@@ -21,7 +21,7 @@ For better web scraping, install Playwright chromium with this command in your t
 
     playwright install --with-deps chromium
 
-See {urls.enable_playwrite} for more info.
+See {urls.enable_playwright} for more info.
 """
 
 
@@ -53,7 +53,6 @@ class Scraper:
         else:
             content = self.scrape_with_httpx(url)
 
-        dump(content)
         if not content:
             return
 
