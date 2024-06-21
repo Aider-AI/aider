@@ -159,6 +159,12 @@ def get_parser(default_config_files, git_root):
         help="Specify the OpenAI organization ID",
     )
     group.add_argument(
+        "--verify-ssl",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Verify the SSL cert when connecting to models (default: True)",
+    )
+    group.add_argument(
         "--model-metadata-file",
         metavar="MODEL_FILE",
         default=None,

@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 
 import git
+import httpx
 from dotenv import load_dotenv
 from prompt_toolkit.enums import EditingMode
 from streamlit.web import cli
@@ -239,6 +240,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     parser = get_parser(default_config_files, git_root)
     args = parser.parse_args(argv)
+
+    if not args.verify_ssl:
+        litellm.client_session = httpx.Client(verify=False)
 
     if args.gui and not return_coder:
         launch_gui(argv)
