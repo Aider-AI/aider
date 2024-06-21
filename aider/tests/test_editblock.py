@@ -398,6 +398,32 @@ Hope you like it!
             ],
         )
 
+    def test_deepseek_coder_v2_filename_mangling(self):
+        edit = """
+Here's the change:
+
+ ```python
+foo.txt
+```
+```python
+<<<<<<< SEARCH
+one
+=======
+two
+>>>>>>> REPLACE
+```
+
+Hope you like it!
+"""
+
+        edits = list(eb.find_original_update_blocks(edit))
+        self.assertEqual(
+            edits,
+            [
+                ("foo.txt", "one\n", "two\n"),
+            ],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

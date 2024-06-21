@@ -414,16 +414,8 @@ def find_original_update_blocks(content, fence=DEFAULT_FENCE):
 
             processed.append(cur)  # original_marker
 
-            filename = strip_filename(processed[-2].splitlines()[-1], fence)
-            try:
-                if not filename:
-                    filename = strip_filename(processed[-2].splitlines()[-2], fence)
-                if not filename:
-                    if current_filename:
-                        filename = current_filename
-                    else:
-                        raise ValueError(missing_filename_err.format(fence=fence))
-            except IndexError:
+            filename = find_filename(processed[-2].splitlines(), fence)
+            if not filename:
                 if current_filename:
                     filename = current_filename
                 else:
@@ -458,6 +450,35 @@ def find_original_update_blocks(content, fence=DEFAULT_FENCE):
     except Exception:
         processed = "".join(processed)
         raise ValueError(f"{processed}\n^^^ Error parsing SEARCH/REPLACE block.")
+
+
+def find_filename(lines, fence):
+    """
+    Deepseek Coder v2 has been doing this:
+
+
+     ```python
+    word_count.py
+    ```
+    ```python
+    <<<<<<< SEARCH
+    ...
+
+    This is a more flexible search back for filenames.
+    """
+    # Go back through the 3 preceding lines
+    lines.reverse()
+    lines = lines[:3]
+
+    for line in lines:
+        # If we find a filename, done
+        filename = strip_filename(line, fence)
+        if filename:
+            return filename
+
+        # Only continue as long as we keep seeing fences
+        if not line.startswith(fence[0]):
+            return
 
 
 if __name__ == "__main__":

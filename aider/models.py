@@ -236,7 +236,7 @@ MODEL_SETTINGS = [
         send_undo_reply=True,
     ),
     ModelSettings(
-        "openai/deepseek-chat",
+        "deepseek/deepseek-chat",
         "diff",
         use_repo_map=True,
         send_undo_reply=True,
@@ -244,7 +244,15 @@ MODEL_SETTINGS = [
         reminder_as_sys_msg=True,
     ),
     ModelSettings(
-        "deepseek/deepseek-chat",
+        "deepseek/deepseek-coder",
+        "diff",
+        use_repo_map=True,
+        send_undo_reply=True,
+        examples_as_sys_msg=True,
+        reminder_as_sys_msg=True,
+    ),
+    ModelSettings(
+        "openrouter/deepseek/deepseek-coder",
         "diff",
         use_repo_map=True,
         send_undo_reply=True,
