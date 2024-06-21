@@ -14,6 +14,14 @@ from aider.args import get_md_help
 cog.out(get_md_help())
 ]]]-->
 ```
+usage: aider [-h] [--vim] [--openai-api-key] [--anthropic-api-key]
+             [--model] [--opus] [--sonnet] [--4] [--4o] [--4-turbo]
+             [--35turbo] [--models] [--openai-api-base]
+             [--openai-api-type] [--openai-api-version]
+             [--openai-api-deployment-id] [--openai-organization-id]
+             [--model-settings-file] [--model-metadata-file]
+             [--edit-format] [--weak-model]
+=======
 usage: aider [-h] [--llm-history-file] [--openai-api-key]
              [--anthropic-api-key] [--model] [--opus] [--sonnet]
              [--4] [--4o] [--4-turbo] [--35turbo] [--models]
@@ -129,6 +137,10 @@ Environment variable: `OPENAI_API_DEPLOYMENT_ID`
 Specify the OpenAI organization ID  
 Environment variable: `OPENAI_ORGANIZATION_ID`  
 
+### `--model-settings-file MODEL_FILE`
+Specify a file with aider model settings for unknown models  
+Environment variable: `AIDER_MODEL_SETTINGS_FILE`  
+=======
 ### `--verify-ssl`
 Verify the SSL cert when connecting to models (default: True)  
 Default: True  
