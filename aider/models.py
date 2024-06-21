@@ -196,6 +196,20 @@ MODEL_SETTINGS = [
         weak_model_name="openrouter/anthropic/claude-3-haiku-20240307",
         use_repo_map=True,
     ),
+    # Vertex AI Claude models
+    ModelSettings(
+        "vertex_ai/claude-3-5-sonnet@20240620",
+        "diff",
+        weak_model_name="vertex_ai/claude-3-haiku@20240307",
+        use_repo_map=True,
+    ),
+    ModelSettings(
+        "vertex_ai/claude-3-opus@20240229",
+        "diff",
+        weak_model_name="vertex_ai/claude-3-haiku@20240307",
+        use_repo_map=True,
+        send_undo_reply=True,
+    ),
     # Cohere
     ModelSettings(
         "command-r-plus",
