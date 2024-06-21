@@ -54,7 +54,7 @@ diskcache==5.6.3
     # via -r requirements.in
 distro==1.9.0
     # via openai
-filelock==3.15.1
+filelock==3.15.3
     # via huggingface-hub
 flake8==7.1.0
     # via -r requirements.in
@@ -70,14 +70,14 @@ gitpython==3.1.43
     # via
     #   -r requirements.in
     #   streamlit
-google-ai-generativelanguage==0.6.4
+google-ai-generativelanguage==0.6.5
     # via google-generativeai
 google-api-core[grpc]==2.19.0
     # via
     #   google-ai-generativelanguage
     #   google-api-python-client
     #   google-generativeai
-google-api-python-client==2.133.0
+google-api-python-client==2.134.0
     # via google-generativeai
 google-auth==2.30.0
     # via
@@ -88,7 +88,7 @@ google-auth==2.30.0
     #   google-generativeai
 google-auth-httplib2==0.2.0
     # via google-api-python-client
-google-generativeai==0.6.0
+google-generativeai==0.7.0
     # via -r requirements.in
 googleapis-common-protos==1.63.1
     # via
@@ -122,7 +122,9 @@ idna==3.7
     #   httpx
     #   requests
     #   yarl
-importlib-metadata==7.1.0
+ijson==3.3.0
+    # via litellm
+importlib-metadata==7.2.0
     # via litellm
 jinja2==3.1.4
     # via
@@ -135,7 +137,7 @@ jsonschema==4.22.0
     #   altair
 jsonschema-specifications==2023.12.1
     # via jsonschema
-litellm==1.40.15
+litellm==1.40.21
     # via -r requirements.in
 markdown-it-py==3.0.0
     # via rich
@@ -151,7 +153,7 @@ multidict==6.0.5
     #   yarl
 networkx==3.2.1
     # via -r requirements.in
-numpy==1.26.4
+numpy==2.0.0
     # via
     #   -r requirements.in
     #   altair
@@ -160,7 +162,7 @@ numpy==1.26.4
     #   pydeck
     #   scipy
     #   streamlit
-openai==1.34.0
+openai==1.35.3
     # via
     #   -r requirements.in
     #   litellm
@@ -186,7 +188,7 @@ playwright==1.44.0
     # via -r requirements.in
 prompt-toolkit==3.0.47
     # via -r requirements.in
-proto-plus==1.23.0
+proto-plus==1.24.0
     # via
     #   google-ai-generativelanguage
     #   google-api-core
@@ -280,9 +282,9 @@ soundfile==0.12.1
     # via -r requirements.in
 soupsieve==2.5
     # via beautifulsoup4
-streamlit==1.35.0
+streamlit==1.36.0
     # via -r requirements.in
-tenacity==8.3.0
+tenacity==8.4.1
     # via streamlit
 tiktoken==0.7.0
     # via
@@ -320,7 +322,7 @@ tzdata==2024.1
     # via pandas
 uritemplate==4.1.1
     # via google-api-python-client
-urllib3==2.2.1
+urllib3==2.2.2
     # via requests
 watchdog==4.0.1
     # via -r requirements.in

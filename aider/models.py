@@ -210,6 +210,11 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         send_undo_reply=True,
     ),
+    ModelSettings(
+        "vertex_ai/claude-3-sonnet@20240229",
+        "whole",
+        weak_model_name="vertex_ai/claude-3-haiku@20240307",
+    ),
     # Cohere
     ModelSettings(
         "command-r-plus",
