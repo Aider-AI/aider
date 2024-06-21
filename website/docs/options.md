@@ -19,8 +19,9 @@ usage: aider [-h] [--llm-history-file] [--openai-api-key]
              [--4] [--4o] [--4-turbo] [--35turbo] [--models]
              [--openai-api-base] [--openai-api-type]
              [--openai-api-version] [--openai-api-deployment-id]
-             [--openai-organization-id] [--model-metadata-file]
-             [--edit-format] [--weak-model]
+             [--openai-organization-id]
+             [--verify-ssl | --no-verify-ssl]
+             [--model-metadata-file] [--edit-format] [--weak-model]
              [--show-model-warnings | --no-show-model-warnings]
              [--map-tokens] [--max-chat-history-tokens] [--env-file]
              [--input-history-file] [--chat-history-file]
@@ -127,6 +128,14 @@ Environment variable: `OPENAI_API_DEPLOYMENT_ID`
 ### `--openai-organization-id OPENAI_ORGANIZATION_ID`
 Specify the OpenAI organization ID  
 Environment variable: `OPENAI_ORGANIZATION_ID`  
+
+### `--verify-ssl`
+Verify the SSL cert when connecting to models (default: True)  
+Default: True  
+Environment variable: `AIDER_VERIFY_SSL`  
+Aliases:
+  - `--verify-ssl`
+  - `--no-verify-ssl`
 
 ### `--model-metadata-file MODEL_FILE`
 Specify a file with context window and costs for unknown models  

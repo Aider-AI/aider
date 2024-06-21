@@ -92,6 +92,9 @@ cog.outl("```")
 ## Specify the OpenAI organization ID
 #openai-organization-id:
 
+## Verify the SSL cert when connecting to models (default: True)
+#verify-ssl: true
+
 ## Specify a file with context window and costs for unknown models
 #model-metadata-file:
 
