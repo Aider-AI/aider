@@ -122,6 +122,8 @@ idna==3.7
     #   httpx
     #   requests
     #   yarl
+ijson==3.3.0
+    # via litellm
 importlib-metadata==7.1.0
     # via litellm
 jinja2==3.1.4
@@ -135,7 +137,7 @@ jsonschema==4.22.0
     #   altair
 jsonschema-specifications==2023.12.1
     # via jsonschema
-litellm==1.40.15
+litellm==1.40.20
     # via -r requirements.in
 markdown-it-py==3.0.0
     # via rich

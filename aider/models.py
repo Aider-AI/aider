@@ -210,6 +210,11 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         send_undo_reply=True,
     ),
+    ModelSettings(
+        "vertex_ai/claude-3-sonnet@20240229",
+        "whole",
+        weak_model_name="vertex_ai/claude-3-haiku@20240307",
+    ),
     # Cohere
     ModelSettings(
         "command-r-plus",
@@ -477,7 +482,9 @@ def register_models(model_def_fnames):
             with open(model_def_fname, "r") as model_def_file:
                 model_def = json.load(model_def_file)
         except json.JSONDecodeError as e:
-            raise Exception(f"Error loading model definition from {model_def_fname}: {e}")
+            raise Exception(
+                f"Error loading model definition from {model_def_fname}: {e}"
+            )
 
         litellm.register_model(model_def)
 
@@ -510,7 +517,9 @@ def sanity_check_model(io, model):
             io.tool_error(f"- {key}")
     elif not model.keys_in_environment:
         show = True
-        io.tool_output(f"Model {model}: Unknown which environment variables are required.")
+        io.tool_output(
+            f"Model {model}: Unknown which environment variables are required."
+        )
 
     if not model.info:
         show = True
