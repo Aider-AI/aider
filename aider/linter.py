@@ -123,7 +123,7 @@ class Linter:
         flake_res = None
         original_argv = sys.argv
         original_stdout = sys.stdout
-        sys.stdout = io.StringIO()
+        sys.stdout = io.TextIOWrapper(io.BytesIO(), encoding='utf-8')
         try:
             sys.argv = flake8.split() + [rel_fname]
             dump(sys.argv)
@@ -132,10 +132,12 @@ class Linter:
                 runpy.run_module("flake8", run_name="__main__")
             except SystemExit as e:
                 if e.code != 0:
-                    errors = sys.stdout.getvalue()
+                    sys.stdout.seek(0)
+                    errors = sys.stdout.read()
                     flake_res = LintResult(text=f"## Running: {' '.join(sys.argv)}\n\n" + errors, lines=[])
         finally:
-            errors = sys.stdout.getvalue()
+            sys.stdout.seek(0)
+            errors = sys.stdout.read()
             sys.stdout = original_stdout
             sys.argv = original_argv
 
