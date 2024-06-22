@@ -182,6 +182,12 @@ cog.outl("```")
 ## Enable/disable commits when repo is found dirty (default: True)
 #dirty-commits: true
 
+## Attribute aider code changes in the git author name (default: True)
+#attribute-author: true
+
+## Attribute aider commits in the git committer name (default: True)
+#attribute-committer: true
+
 ## Perform a dry run without modifying files (default: False)
 #dry-run: false
 

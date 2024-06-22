@@ -9,6 +9,11 @@ description: Details about all of aider's settings.
 You can use `aider --help` to see all the available options,
 or review them below.
 
+- TOC
+{:toc}
+
+## Usage summary
+
 <!--[[[cog
 from aider.args import get_md_help
 cog.out(get_md_help())
@@ -35,6 +40,8 @@ usage: aider [-h] [--llm-history-file] [--openai-api-key]
              [--gitignore | --no-gitignore] [--aiderignore]
              [--auto-commits | --no-auto-commits]
              [--dirty-commits | --no-dirty-commits]
+             [--attribute-author | --no-attribute-author]
+             [--attribute-committer | --no-attribute-committer]
              [--dry-run | --no-dry-run] [--commit] [--lint]
              [--lint-cmd] [--auto-lint | --no-auto-lint]
              [--test-cmd] [--auto-test | --no-auto-test] [--test]
@@ -291,6 +298,22 @@ Environment variable: `AIDER_DIRTY_COMMITS`
 Aliases:
   - `--dirty-commits`
   - `--no-dirty-commits`
+
+### `--attribute-author`
+Attribute aider code changes in the git author name (default: True)  
+Default: True  
+Environment variable: `AIDER_ATTRIBUTE_AUTHOR`  
+Aliases:
+  - `--attribute-author`
+  - `--no-attribute-author`
+
+### `--attribute-committer`
+Attribute aider commits in the git committer name (default: True)  
+Default: True  
+Environment variable: `AIDER_ATTRIBUTE_COMMITTER`  
+Aliases:
+  - `--attribute-committer`
+  - `--no-attribute-committer`
 
 ### `--dry-run`
 Perform a dry run without modifying files (default: False)  
