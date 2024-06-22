@@ -16,9 +16,21 @@ class GitRepo:
     aider_ignore_spec = None
     aider_ignore_ts = 0
 
-    def __init__(self, io, fnames, git_dname, aider_ignore_file=None, models=None):
+    def __init__(
+        self,
+        io,
+        fnames,
+        git_dname,
+        aider_ignore_file=None,
+        models=None,
+        attribute_author=True,
+        attribute_committer=True,
+    ):
         self.io = io
         self.models = models
+
+        self.attribute_author = attribute_author
+        self.attribute_committer = attribute_committer
 
         if git_dname:
             check_fnames = [git_dname]
@@ -90,11 +102,12 @@ class GitRepo:
 
         original_user_name = self.repo.config_reader().get_value("user", "name")
         original_committer_name_env = os.environ.get("GIT_COMMITTER_NAME")
-
         committer_name = f"{original_user_name} (aider)"
-        os.environ["GIT_COMMITTER_NAME"] = committer_name
 
-        if aider_edits:
+        if self.attribute_committer:
+            os.environ["GIT_COMMITTER_NAME"] = committer_name
+
+        if aider_edits and self.attribute_author:
             original_auther_name_env = os.environ.get("GIT_AUTHOR_NAME")
             os.environ["GIT_AUTHOR_NAME"] = committer_name
 
@@ -102,17 +115,19 @@ class GitRepo:
         commit_hash = self.repo.head.commit.hexsha[:7]
         self.io.tool_output(f"Commit {commit_hash} {commit_message}")
 
-        # Restore the original GIT_COMMITTER_NAME
-        if aider_edits:
+        # Restore the env
+
+        if self.attribute_committer:
+            if original_committer_name_env is not None:
+                os.environ["GIT_COMMITTER_NAME"] = original_committer_name_env
+            else:
+                del os.environ["GIT_COMMITTER_NAME"]
+
+        if aider_edits and self.attribute_author:
             if original_auther_name_env is not None:
                 os.environ["GIT_AUTHOR_NAME"] = original_auther_name_env
             else:
                 del os.environ["GIT_AUTHOR_NAME"]
-
-        if original_committer_name_env is not None:
-            os.environ["GIT_COMMITTER_NAME"] = original_committer_name_env
-        else:
-            del os.environ["GIT_COMMITTER_NAME"]
 
         return commit_hash, commit_message
 
