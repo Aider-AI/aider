@@ -5,6 +5,7 @@ description: Details about all of aider's settings.
 ---
 
 # Options reference
+{: .no_toc }
 
 You can use `aider --help` to see all the available options,
 or review them below.
