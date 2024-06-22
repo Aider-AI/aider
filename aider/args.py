@@ -345,6 +345,18 @@ def get_parser(default_config_files, git_root):
         help="Enable/disable commits when repo is found dirty (default: True)",
     )
     group.add_argument(
+        "--attribute-author",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Attribute aider code changes in the git author name (default: True)",
+    )
+    group.add_argument(
+        "--attribute-committer",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Attribute aider commits in the git committer name (default: True)",
+    )
+    group.add_argument(
         "--dry-run",
         action=argparse.BooleanOptionalAction,
         default=False,

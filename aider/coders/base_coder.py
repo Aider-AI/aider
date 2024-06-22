@@ -218,6 +218,8 @@ class Coder:
         auto_test=False,
         lint_cmds=None,
         test_cmd=None,
+        attribute_author=True,
+        attribute_committer=True,
     ):
         if not fnames:
             fnames = []
@@ -275,6 +277,8 @@ class Coder:
                     git_dname,
                     aider_ignore_file,
                     models=main_model.commit_message_models(),
+                    attribute_author=attribute_author,
+                    attribute_committer=attribute_committer,
                 )
                 self.root = self.repo.root
             except FileNotFoundError:

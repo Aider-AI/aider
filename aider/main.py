@@ -212,6 +212,7 @@ def parse_lint_cmds(lint_cmds, io):
         return
     return res
 
+
 def generate_search_path_list(default_fname, git_root, command_line_file):
     files = []
     default_file = Path(default_fname)
@@ -223,12 +224,15 @@ def generate_search_path_list(default_fname, git_root, command_line_file):
     files.append(default_file.resolve())
     files = list(map(str, files))
     files = list(dict.fromkeys(files))
-    
+
     return files
-    
+
+
 def register_models(git_root, model_settings_fname, io):
-    model_settings_files = generate_search_path_list(".aider.models.yml", git_root, model_settings_fname)
-    
+    model_settings_files = generate_search_path_list(
+        ".aider.models.yml", git_root, model_settings_fname
+    )
+
     try:
         files_loaded = models.register_models(model_settings_files)
         if len(files_loaded) > 0:
@@ -238,11 +242,14 @@ def register_models(git_root, model_settings_fname, io):
     except Exception as e:
         io.tool_error(f"Error loading aider model settings: {e}")
         return 1
-    
+
     return None
 
+
 def register_litellm_models(git_root, model_metadata_fname, io):
-    model_metatdata_files = generate_search_path_list(".aider.litellm.models.json", git_root, model_metadata_fname)
+    model_metatdata_files = generate_search_path_list(
+        ".aider.litellm.models.json", git_root, model_metadata_fname
+    )
 
     try:
         model_metadata_files_loaded = models.register_litellm_models(model_metatdata_files)
@@ -253,7 +260,8 @@ def register_litellm_models(git_root, model_metadata_fname, io):
     except Exception as e:
         io.tool_error(f"Error loading litellm models: {e}")
         return 1
-    
+
+
 def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
     if argv is None:
         argv = sys.argv[1:]
@@ -393,7 +401,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     register_models(git_root, args.model_settings_file, io)
     register_litellm_models(git_root, args.model_metadata_file, io)
-    
+
     main_model = models.Model(args.model, weak_model=args.weak_model)
 
     lint_cmds = parse_lint_cmds(args.lint_cmd, io)
@@ -430,6 +438,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             auto_test=args.auto_test,
             lint_cmds=lint_cmds,
             test_cmd=args.test_cmd,
+            attribute_author=args.attribute_author,
+            attribute_committer=args.attribute_committer,
         )
 
     except ValueError as err:
