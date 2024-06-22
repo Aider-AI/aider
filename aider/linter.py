@@ -99,6 +99,7 @@ class Linter:
         basic_res = basic_lint(rel_fname, code)
         compile_res = lint_python_compile(fname, code)
         fatal = "E9,F821,F823,F831,F406,F407,F701,F702,F704,F706"
+        '''
 
         from flake8.api import legacy as flake8
 
@@ -113,6 +114,30 @@ class Linter:
         flake_res = LintResult(
             text=str(report.get_statistics("E")), lines=list(report.get_statistics("line_numbers"))
         )
+        '''
+
+        import io
+        import runpy
+        flake8 = f"flake8 --select={fatal} --show-source --isolated"
+
+        flake_res = None
+        original_argv = sys.argv
+        original_stdout = sys.stdout
+        sys.stdout = io.StringIO()
+        try:
+            sys.argv = flake8.split() + [rel_fname]
+            dump(sys.argv)
+            dump(sys.argv)
+            try:
+                runpy.run_module("flake8", run_name="__main__")
+            except SystemExit as e:
+                if e.code != 0:
+                    errors = sys.stdout.getvalue()
+                    flake_res = LintResult(text=f"## Running: {' '.join(sys.argv)}\n\n" + errors, lines=[])
+        finally:
+            errors = sys.stdout.getvalue()
+            sys.stdout = original_stdout
+            sys.argv = original_argv
 
         text = ""
         lines = set()
