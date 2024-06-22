@@ -28,12 +28,22 @@ def get_preparser(default_config_files, git_root):
         config_file_parser_class=configargparse.YAMLConfigFileParser,
         auto_env_var_prefix="AIDER_",
     )
+
+    add_env_file(parser, git_root)
+    add_config_option(parser)
+    return parser
+
+
+def add_env_file(parser, git_root):
     parser.add_argument(
         "--env-file",
         metavar="ENV_FILE",
         default=default_env_file(git_root),
         help="Specify the .env file to load (default: .env in git root)",
     )
+
+
+def add_config_option(parser):
     parser.add_argument(
         "-c",
         "--config",
@@ -44,7 +54,6 @@ def get_preparser(default_config_files, git_root):
             " or home directory)"
         ),
     )
-    return parser
 
 
 def get_parser(default_config_files, git_root):
@@ -230,12 +239,7 @@ def get_parser(default_config_files, git_root):
     )
     # This is a duplicate of the argument in the preparser and is a no-op by this time of
     # argument parsing, but it's here so that the help is displayed as expected.
-    group.add_argument(
-        "--env-file",
-        metavar="ENV_FILE",
-        default=default_env_file(git_root),
-        help="Specify the .env file to load (default: .env in git root)",
-    )
+    add_env_file(group, git_root)
 
     ##########
     group = parser.add_argument_group("History Files")
@@ -509,16 +513,7 @@ def get_parser(default_config_files, git_root):
         default="utf-8",
         help="Specify the encoding for input and output (default: utf-8)",
     )
-    group.add_argument(
-        "-c",
-        "--config",
-        is_config_file=True,
-        metavar="CONFIG_FILE",
-        help=(
-            "Specify the config file (default: search for .aider.conf.yml in git root, cwd"
-            " or home directory)"
-        ),
-    )
+    add_config_option(group)
     group.add_argument(
         "--gui",
         "--browser",
