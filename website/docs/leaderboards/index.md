@@ -16,22 +16,19 @@ While [aider can connect to almost any LLM](/docs/llms.html),
 it works best with models that score well on the benchmarks.
 
 
-## DeepSeek Coder V2 beats GPT-4o, Opus
+## Claude 3.5 Sonnet takes the top spot
 
-The new 
-[DeepSeek Coder V2](https://aider.chat/docs/llms/deepseek.html)
-model is now atop aider's code editing leaderboard!
+Claude 3.5 Sonnet is now the top ranked model on aider's code editing leaderboard.
+DeepSeek Coder V2 only spent 4 days in the top spot.
 
-It's worth noting that DeepSeek Coder V2 is only capable of using aider's "whole" edit format.
-This means it returns a modified full copy of each file when it makes changes.
-Most other strong models are able to use aider's "diff" editing format,
-which allows them to return diffs of edits -- saving time and token costs.
+The new Sonnet came in 3rd on aider's refactoring leaderboard, behind GPT-4o and Opus.
 
-Models which use the "whole" edit format can only edit files
-which fit within their output token limits.
-These output limits are often as low as 4k tokens, even for models
-with very large context windows.
-
+Sonnet ranked #1 when using the "whole" editing format,
+but it also scored very well with
+aider's "diff" editing format.
+This format allows it to return code changes as diffs -- saving time and token costs,
+and making it practical to work with larger source files.
+As such, aider uses "diff" by default with this new Sonnet model.
 
 ## Code editing leaderboard
 

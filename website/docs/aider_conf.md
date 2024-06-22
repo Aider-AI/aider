@@ -56,7 +56,7 @@ cog.outl("```")
 ## Use claude-3-opus-20240229 model for the main chat
 #opus: false
 
-## Use claude-3-sonnet-20240229 model for the main chat
+## Use claude-3-5-sonnet-20240620 model for the main chat
 #sonnet: false
 
 ## Use gpt-4-0613 model for the main chat
@@ -92,8 +92,14 @@ cog.outl("```")
 ## Specify the OpenAI organization ID
 #openai-organization-id:
 
+## Specify a file with aider model settings for unknown models
+#model-settings-file:
+
 ## Specify a file with context window and costs for unknown models
 #model-metadata-file:
+
+## Verify the SSL cert when connecting to models (default: True)
+#verify-ssl: true
 
 ## Specify what edit format the LLM should use (default depends on model)
 #edit-format:

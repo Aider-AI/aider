@@ -6,3 +6,4 @@ enable_playwright = "https://aider.chat/docs/install/optional.html#enable-playwr
 favicon = "https://aider.chat/assets/icons/favicon-32x32.png"
 model_warnings = "https://aider.chat/docs/llms/warnings.html"
 token_limits = "https://aider.chat/docs/troubleshooting/token-limits.html"
+llms = "https://aider.chat/docs/llms.html"

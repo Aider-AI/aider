@@ -14,17 +14,21 @@ description: Aider can connect to most LLMs for AI pair programming.
 ## Best models
 {: .no_toc }
 
-**Aider works best with [GPT-4o](/docs/llms/openai.html) and
-[Claude 3 Opus](/docs/llms/anthropic.html),**
-as they are the very best models for editing code.
+Aider works best with these models, which are skilled at editing code:
+
+- [GPT-4o](/docs/llms/openai.html)
+- [Claude 3.5 Sonnet](/docs/llms/anthropic.html)
+- [Claude 3 Opus](/docs/llms/anthropic.html)
+- [DeepSeek Coder V2](/docs/llms/deepseek.html)
+
 
 ## Free models
 {: .no_toc }
 
 Aider works with a number of **free** API providers:
 
-- The [DeepSeek Coder V2](/docs/llms/deepseek.html) model gets the top score on aider's code editing benchmark. DeepSeek currently offers 5M free tokens of API usage.
-- Google's [Gemini 1.5 Pro](/docs/llms/gemini.html) is the most capable free model to use with aider, with
+- The [DeepSeek Coder V2](/docs/llms/deepseek.html) model gets the top score on aider's code editing benchmark. DeepSeek has been offering 5M free tokens of API usage.
+- Google's [Gemini 1.5 Pro](/docs/llms/gemini.html) works with aider, with
 code editing capabilities similar to GPT-3.5.
 - You can use [Llama 3 70B on Groq](/docs/llms/groq.html) which is comparable to GPT-3.5 in code editing performance.
 - Cohere also offers free API access to their [Command-R+ model](/docs/llms/cohere.html), which works with aider as a *very basic* coding assistant.

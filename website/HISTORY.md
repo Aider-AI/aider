@@ -1,5 +1,6 @@
 ---
 title: Release history
+parent: More info
 nav_order: 999
 ---
 
@@ -10,6 +11,13 @@ cog.out(text)
 ]]]-->
 
 # Release history
+
+### v0.39.0
+
+- Use `--sonnet` for Claude 3.5 Sonnet, which is the top model on [aider's LLM code editing leaderboard](https://aider.chat/docs/leaderboards/#claude-35-sonnet-takes-the-top-spot).
+- All `AIDER_xxx` environment variables can now be set in `.env` (by @jpshack-at-palomar).
+- Use `--llm-history-file` to log raw messages sent to the LLM (by @daniel-vainsencher).
+- Commit messages are no longer prefixed with "aider:". Instead the git author and committer names have "(aider)" added.
 
 ### v0.38.0
 

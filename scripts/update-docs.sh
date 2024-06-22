@@ -14,6 +14,7 @@ cog $ARG \
     README.md \
     website/index.md \
     website/HISTORY.md \
+    website/docs/dotenv.md \
     website/docs/commands.md \
     website/docs/languages.md \
     website/docs/options.md \

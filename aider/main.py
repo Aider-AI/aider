@@ -5,12 +5,13 @@ import sys
 from pathlib import Path
 
 import git
+import httpx
 from dotenv import load_dotenv
 from prompt_toolkit.enums import EditingMode
 from streamlit.web import cli
 
 from aider import __version__, models, utils
-from aider.args import get_parser
+from aider.args import get_parser, get_preparser
 from aider.coders import Coder
 from aider.commands import SwitchModel
 from aider.io import InputOutput
@@ -124,12 +125,18 @@ def check_gitignore(git_root, io, ask=True):
 
 def format_settings(parser, args):
     show = scrub_sensitive_info(args, parser.format_values())
+    # clean up the headings for consistency w/ new lines
+    heading_env = "Environment Variables:"
+    heading_defaults = "Defaults:"
+    if heading_env in show:
+        show = show.replace(heading_env, "\n" + heading_env)
+        show = show.replace(heading_defaults, "\n" + heading_defaults)
     show += "\n"
     show += "Option settings:\n"
     for arg, val in sorted(vars(args).items()):
         if val:
             val = scrub_sensitive_info(args, str(val))
-        show += f"  - {arg}: {val}\n"
+        show += f"  - {arg}: {val}\n"  # noqa: E221
     return show
 
 
@@ -205,7 +212,48 @@ def parse_lint_cmds(lint_cmds, io):
         return
     return res
 
+def generate_search_path_list(default_fname, git_root, command_line_file):
+    files = []
+    default_file = Path(default_fname)
+    files.append(Path.home() / default_file)  # homedir
+    if git_root:
+        files.append(Path(git_root) / default_file)  # git root
+    if command_line_file:
+        files.append(command_line_file)
+    files.append(default_file.resolve())
+    files = list(map(str, files))
+    files = list(dict.fromkeys(files))
+    
+    return files
+    
+def register_models(git_root, model_settings_fname, io):
+    model_settings_files = generate_search_path_list(".aider.models.yml", git_root, model_settings_fname)
+    
+    try:
+        files_loaded = models.register_models(model_settings_files)
+        if len(files_loaded) > 0:
+            io.tool_output(f"Loaded {len(files_loaded)} model settings file(s)")
+            for file_loaded in files_loaded:
+                io.tool_output(f"  - {file_loaded}")
+    except Exception as e:
+        io.tool_error(f"Error loading aider model settings: {e}")
+        return 1
+    
+    return None
 
+def register_litellm_models(git_root, model_metadata_fname, io):
+    model_metatdata_files = generate_search_path_list(".aider.litellm.models.json", git_root, model_metadata_fname)
+
+    try:
+        model_metadata_files_loaded = models.register_litellm_models(model_metatdata_files)
+        if len(model_metadata_files_loaded) > 0:
+            io.tool_output(f"Loaded {len(model_metadata_files_loaded)} litellm model file(s)")
+            for model_metadata_file in model_metadata_files_loaded:
+                io.tool_output(f"  - {model_metadata_file}")
+    except Exception as e:
+        io.tool_error(f"Error loading litellm models: {e}")
+        return 1
+    
 def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
     if argv is None:
         argv = sys.argv[1:]
@@ -225,8 +273,17 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     default_config_files.append(Path.home() / conf_fname)  # homedir
     default_config_files = list(map(str, default_config_files))
 
+    preparser = get_preparser(git_root)
+    pre_args, _ = preparser.parse_known_args(argv)
+
+    # Load the .env file specified in the arguments
+    load_dotenv(pre_args.env_file)
+
     parser = get_parser(default_config_files, git_root)
     args = parser.parse_args(argv)
+
+    if not args.verify_ssl:
+        litellm.client_session = httpx.Client(verify=False)
 
     if args.gui and not return_coder:
         launch_gui(argv)
@@ -320,9 +377,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     cmd_line = scrub_sensitive_info(args, cmd_line)
     io.tool_output(cmd_line, log_only=True)
 
-    if args.env_file:
-        load_dotenv(args.env_file)
-
     if args.anthropic_api_key:
         os.environ["ANTHROPIC_API_KEY"] = args.anthropic_api_key
 
@@ -337,26 +391,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.openai_organization_id:
         os.environ["OPENAI_ORGANIZATION"] = args.openai_organization_id
 
-    model_def_files = []
-    model_def_fname = Path(".aider.models.json")
-    model_def_files.append(Path.home() / model_def_fname)  # homedir
-    if git_root:
-        model_def_files.append(Path(git_root) / model_def_fname)  # git root
-    if args.model_metadata_file:
-        model_def_files.append(args.model_metadata_file)
-    model_def_files.append(model_def_fname.resolve())
-    model_def_files = list(map(str, model_def_files))
-    model_def_files = list(dict.fromkeys(model_def_files))
-    try:
-        model_metadata_files_loaded = models.register_models(model_def_files)
-        if len(model_metadata_files_loaded) > 0:
-            io.tool_output(f"Loaded {len(model_metadata_files_loaded)} model file(s)")
-            for model_metadata_file in model_metadata_files_loaded:
-                io.tool_output(f"  - {model_metadata_file}")
-    except Exception as e:
-        io.tool_error(f"Error loading model info/cost: {e}")
-        return 1
-
+    register_models(git_root, args.model_settings_file, io)
+    register_litellm_models(git_root, args.model_metadata_file, io)
+    
     main_model = models.Model(args.model, weak_model=args.weak_model)
 
     lint_cmds = parse_lint_cmds(args.lint_cmd, io)

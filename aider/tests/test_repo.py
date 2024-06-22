@@ -1,4 +1,5 @@
 import os
+import platform
 import tempfile
 import unittest
 from pathlib import Path
@@ -141,6 +142,10 @@ class TestRepo(unittest.TestCase):
     def test_commit_with_custom_committer_name(self, mock_send):
         mock_send.return_value = '"a good commit message"'
 
+        # Cleanup of the git temp dir explodes on windows
+        if platform.system() == "Windows":
+            return
+
         with GitTemporaryDirectory():
             # new repo
             raw_repo = git.Repo()
@@ -152,7 +157,8 @@ class TestRepo(unittest.TestCase):
             raw_repo.git.add(str(fname))
             raw_repo.git.commit("-m", "initial commit")
 
-            git_repo = GitRepo(InputOutput(), None, None)
+            io = InputOutput()
+            git_repo = GitRepo(io, None, None)
 
             # commit a change
             fname.write_text("new content")
@@ -160,11 +166,23 @@ class TestRepo(unittest.TestCase):
 
             # check the committer name
             commit = raw_repo.head.commit
+            self.assertEqual(commit.author.name, "Test User (aider)")
+            self.assertEqual(commit.committer.name, "Test User (aider)")
+
+            # commit a change without aider_edits
+            fname.write_text("new content again!")
+            git_repo.commit(fnames=[str(fname)], aider_edits=False)
+
+            # check the committer name
+            commit = raw_repo.head.commit
+            self.assertEqual(commit.author.name, "Test User")
             self.assertEqual(commit.committer.name, "Test User (aider)")
 
             # check that the original committer name is restored
             original_committer_name = os.environ.get("GIT_COMMITTER_NAME")
             self.assertIsNone(original_committer_name)
+            original_author_name = os.environ.get("GIT_AUTHOR_NAME")
+            self.assertIsNone(original_author_name)
 
     def test_get_tracked_files(self):
         # Create a temporary directory

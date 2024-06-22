@@ -1,6 +1,81 @@
 import argparse
 
+from aider import urls
+
 from .dump import dump  # noqa: F401
+
+
+class DotEnvFormatter(argparse.HelpFormatter):
+    def start_section(self, heading):
+        res = "\n\n"
+        res += "#" * (len(heading) + 3)
+        res += f"\n# {heading}"
+        super().start_section(res)
+
+    def _format_usage(self, usage, actions, groups, prefix):
+        return ""
+
+    def _format_text(self, text):
+        return f"""
+##########################################################
+# Sample aider .env file.
+# Place at the root of your git repo.
+# Or use `aider --env <fname>` to specify.
+##########################################################
+
+#################
+# LLM parameters:
+#
+# Include xxx_API_KEY parameters and other params needed for your LLMs.
+# See {urls.llms} for details.
+
+## OpenAI
+#OPENAI_API_KEY=
+
+## Anthropic
+#ANTHROPIC_API_KEY=
+
+##...
+"""
+
+    def _format_action(self, action):
+        if not action.option_strings:
+            return ""
+
+        if not action.env_var:
+            return
+
+        parts = [""]
+
+        default = action.default
+        if default == argparse.SUPPRESS:
+            default = ""
+        elif isinstance(default, str):
+            pass
+        elif isinstance(default, list) and not default:
+            default = ""
+        elif action.default is not None:
+            default = "true" if default else "false"
+        else:
+            default = ""
+
+        if action.help:
+            parts.append(f"## {action.help}")
+
+        if action.env_var:
+            env_var = action.env_var
+            if default:
+                parts.append(f"#{env_var}={default}\n")
+            else:
+                parts.append(f"#{env_var}=\n")
+
+        return "\n".join(parts) + "\n"
+
+    def _format_action_invocation(self, action):
+        return ""
+
+    def _format_args(self, action, default_metavar):
+        return ""
 
 
 class YamlHelpFormatter(argparse.HelpFormatter):
