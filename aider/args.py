@@ -20,13 +20,29 @@ def default_env_file(git_root):
     return os.path.join(git_root, ".env") if git_root else ".env"
 
 
-def get_preparser(git_root):
-    parser = configargparse.ArgumentParser(add_help=False)
+def get_preparser(default_config_files, git_root):
+    parser = configargparse.ArgumentParser(
+        description="aider is GPT powered coding in your terminal",
+        add_config_file_help=True,
+        default_config_files=default_config_files,
+        config_file_parser_class=configargparse.YAMLConfigFileParser,
+        auto_env_var_prefix="AIDER_",
+    )
     parser.add_argument(
         "--env-file",
         metavar="ENV_FILE",
         default=default_env_file(git_root),
         help="Specify the .env file to load (default: .env in git root)",
+    )
+    parser.add_argument(
+        "-c",
+        "--config",
+        is_config_file=True,
+        metavar="CONFIG_FILE",
+        help=(
+            "Specify the config file (default: search for .aider.conf.yml in git root, cwd"
+            " or home directory)"
+        ),
     )
     return parser
 
