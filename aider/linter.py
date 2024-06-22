@@ -1,5 +1,7 @@
+import io
 import os
 import re
+import runpy
 import subprocess
 import sys
 import traceback
@@ -10,7 +12,7 @@ from pathlib import Path
 from grep_ast import TreeContext, filename_to_lang
 from tree_sitter_languages import get_parser  # noqa: E402
 
-from aider.dump import dump  # noqa: E402
+from aider.dump import dump  # noqa: F401
 
 # tree_sitter is throwing a FutureWarning
 warnings.simplefilter("ignore", category=FutureWarning)
@@ -55,13 +57,19 @@ class Linter:
         res = f"## Running: {cmd}\n\n"
         res += errors
 
+        return self.errors_to_lint_result(rel_fname, res)
+
+    def errors_to_lint_result(self, rel_fname, errors):
+        if not errors:
+            return
+
         linenums = []
         filenames_linenums = find_filenames_and_linenums(errors, [rel_fname])
         if filenames_linenums:
             filename, linenums = next(iter(filenames_linenums.items()))
             linenums = [num - 1 for num in linenums]
 
-        return LintResult(text=res, lines=linenums)
+        return LintResult(text=errors, lines=linenums)
 
     def lint(self, fname, cmd=None):
         rel_fname = self.get_rel_fname(fname)
@@ -98,48 +106,7 @@ class Linter:
     def py_lint(self, fname, rel_fname, code):
         basic_res = basic_lint(rel_fname, code)
         compile_res = lint_python_compile(fname, code)
-        fatal = "E9,F821,F823,F831,F406,F407,F701,F702,F704,F706"
-        '''
-
-        from flake8.api import legacy as flake8
-
-        fatal = fatal.split(",")
-        dump(fatal)
-        style_guide = flake8.get_style_guide(select=fatal)
-        dump(style_guide)
-        report = style_guide.check_files([rel_fname])
-        dump(report)
-        dump(report.get_statistics("F"))
-        dump(report.get_statistics("line_numbers"))
-        flake_res = LintResult(
-            text=str(report.get_statistics("E")), lines=list(report.get_statistics("line_numbers"))
-        )
-        '''
-
-        import io
-        import runpy
-        flake8 = f"flake8 --select={fatal} --show-source --isolated"
-
-        flake_res = None
-        original_argv = sys.argv
-        original_stdout = sys.stdout
-        sys.stdout = io.TextIOWrapper(io.BytesIO(), encoding='utf-8')
-        try:
-            sys.argv = flake8.split() + [rel_fname]
-            dump(sys.argv)
-            dump(sys.argv)
-            try:
-                runpy.run_module("flake8", run_name="__main__")
-            except SystemExit as e:
-                if e.code != 0:
-                    sys.stdout.seek(0)
-                    errors = sys.stdout.read()
-                    flake_res = LintResult(text=f"## Running: {' '.join(sys.argv)}\n\n" + errors, lines=[])
-        finally:
-            sys.stdout.seek(0)
-            errors = sys.stdout.read()
-            sys.stdout = original_stdout
-            sys.argv = original_argv
+        flake_res = self.flake8_lint(rel_fname)
 
         text = ""
         lines = set()
@@ -153,6 +120,39 @@ class Linter:
 
         if text or lines:
             return LintResult(text, lines)
+
+    def flake8_lint(self, rel_fname):
+        fatal = "E9,F821,F823,F831,F406,F407,F701,F702,F704,F706"
+        flake8 = f"flake8 --select={fatal} --show-source --isolated"
+
+        original_argv = sys.argv
+        original_stdout = sys.stdout
+
+        sys.argv = flake8.split() + [rel_fname]
+        sys.stdout = io.TextIOWrapper(io.BytesIO(), encoding="utf-8")
+
+        text = f"## Running: {' '.join(sys.argv)}\n\n"
+
+        try:
+            runpy.run_module("flake8", run_name="__main__")
+        except SystemExit as e:
+            if e.code == 0:
+                errors = None
+            else:
+                sys.stdout.seek(0)
+                errors = sys.stdout.read()
+
+            sys.stdout = original_stdout
+            sys.argv = original_argv
+        finally:
+            sys.stdout = original_stdout
+            sys.argv = original_argv
+
+        if not errors:
+            return
+
+        text += errors
+        return self.errors_to_lint_result(rel_fname, text)
 
 
 @dataclass
