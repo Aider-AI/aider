@@ -67,7 +67,7 @@ To avoid hitting output token limits:
 
 - Ask for smaller changes in each request.
 - Break your code into smaller source files.
-- Try using a stronger model like gpt-4o or opus that can return diffs.
+- Use a strong model like gpt-4o, sonnet or opus that can return diffs.
 
 
 ## Other causes

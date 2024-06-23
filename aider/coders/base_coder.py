@@ -899,27 +899,27 @@ class Coder:
 
         total_tokens = input_tokens + output_tokens
 
-        if output_tokens >= max_output_tokens:
-            out_err = " -- exceeded output limit!"
-        else:
-            out_err = ""
+        fudge = 0.7
 
-        if input_tokens >= max_input_tokens:
-            inp_err = " -- context window exhausted!"
-        else:
-            inp_err = ""
+        out_err = ""
+        if output_tokens >= max_output_tokens * fudge:
+            out_err = " -- possibly exceeded output limit!"
 
-        if total_tokens >= max_input_tokens:
-            tot_err = " -- context window exhausted!"
-        else:
-            tot_err = ""
+        inp_err = ""
+        if input_tokens >= max_input_tokens * fudge:
+            inp_err = " -- possibly exhausted context window!"
+
+        tot_err = ""
+        if total_tokens >= max_input_tokens * fudge:
+            tot_err = " -- possibly exhausted context window!"
 
         res = ["", ""]
         res.append(f"Model {self.main_model.name} has hit a token limit!")
+        res.append("Token counts below are approximate.")
         res.append("")
-        res.append(f"Input tokens: {input_tokens:,} of {max_input_tokens:,}{inp_err}")
-        res.append(f"Output tokens: {output_tokens:,} of {max_output_tokens:,}{out_err}")
-        res.append(f"Total tokens: {total_tokens:,} of {max_input_tokens:,}{tot_err}")
+        res.append(f"Input tokens: ~{input_tokens:,} of {max_input_tokens:,}{inp_err}")
+        res.append(f"Output tokens: ~{output_tokens:,} of {max_output_tokens:,}{out_err}")
+        res.append(f"Total tokens: ~{total_tokens:,} of {max_input_tokens:,}{tot_err}")
 
         if output_tokens >= max_output_tokens:
             res.append("")
@@ -928,7 +928,7 @@ class Coder:
             res.append("- Break your code into smaller source files.")
             if "diff" not in self.main_model.edit_format:
                 res.append(
-                    "- Try using a stronger model like gpt-4o or opus that can return diffs."
+                    "- Use a stronger model like gpt-4o, sonnet or opus that can return diffs."
                 )
 
         if input_tokens >= max_input_tokens or total_tokens >= max_input_tokens:
