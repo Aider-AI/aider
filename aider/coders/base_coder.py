@@ -1041,14 +1041,14 @@ class Coder:
         except KeyboardInterrupt:
             self.keyboard_interrupt()
             interrupted = True
-
-        if self.partial_response_content:
-            self.io.ai_output(self.partial_response_content)
-        elif self.partial_response_function_call:
-            # TODO: push this into subclasses
-            args = self.parse_partial_args()
-            if args:
-                self.io.ai_output(json.dumps(args, indent=4))
+        finally:
+            if self.partial_response_content:
+                self.io.ai_output(self.partial_response_content)
+            elif self.partial_response_function_call:
+                # TODO: push this into subclasses
+                args = self.parse_partial_args()
+                if args:
+                    self.io.ai_output(json.dumps(args, indent=4))
 
         if interrupted:
             raise KeyboardInterrupt
