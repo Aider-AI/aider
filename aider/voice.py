@@ -5,7 +5,7 @@ import time
 
 import numpy as np
 
-from aider.litellm import litellm
+from aider.a_litellm import litellm
 
 try:
     import soundfile as sf

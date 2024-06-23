@@ -6,7 +6,7 @@ import httpx
 import openai
 
 from aider.dump import dump  # noqa: F401
-from aider.litellm import litellm
+from aider.a_litellm import litellm
 
 # from diskcache import Cache
 

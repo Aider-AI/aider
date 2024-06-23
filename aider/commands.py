@@ -9,11 +9,11 @@ import openai
 from prompt_toolkit.completion import Completion
 
 from aider import models, prompts, voice
-from aider.litellm import litellm
+from aider.a_litellm import litellm
 from aider.scrape import Scraper
 from aider.utils import is_image_file
 
-from .dump import dump  # noqa: F401
+from aider.dump import dump  # noqa: F401
 
 
 class SwitchModel(Exception):

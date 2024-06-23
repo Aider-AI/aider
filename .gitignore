@@ -1,5 +1,5 @@
 .DS_Store
-.vscode/
+# .vscode/
 aider.code-workspace
 *.pyc
 .aider*
@@ -9,3 +9,6 @@ Gemfile.lock
 _site
 .jekyll-cache/
 .jekyll-metadata
+.venv/
+.mypy_cache/
+.env

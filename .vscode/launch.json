@@ -1,0 +1,21 @@
+{
+  "configurations": [
+    {
+      "name": "Python Debugger: Current File with Arguments",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/aider/main.py",
+      "console": "integratedTerminal",
+      "args": [
+        "--env-file",
+        ".env",
+        "--model",
+        "watsonx/mistralai/mixtral-8x7b-instruct-v01",
+        "-v"
+      ],
+      "env": {
+        "PYTHONPATH":"${workspaceFolder}"
+      }
+    }
+  ]
+}

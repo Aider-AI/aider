@@ -15,11 +15,11 @@ from aider.args import get_parser
 from aider.coders import Coder
 from aider.commands import SwitchModel
 from aider.io import InputOutput
-from aider.litellm import litellm  # noqa: F401; properly init litellm on launch
+from aider.a_litellm import litellm  # noqa: F401; properly init litellm on launch
 from aider.repo import GitRepo
 from aider.versioncheck import check_version
 
-from .dump import dump  # noqa: F401
+from aider.dump import dump  # noqa: F401
 
 
 def get_git_root():

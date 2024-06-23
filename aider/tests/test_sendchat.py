@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 
 import httpx
 
-from aider.litellm import litellm
+from aider.a_litellm import litellm
 from aider.sendchat import send_with_retries
 
 
