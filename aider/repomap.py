@@ -1,4 +1,5 @@
 import colorsys
+import math
 import os
 import random
 import sys
@@ -242,7 +243,7 @@ class RepoMap:
 
         # Default personalization for unspecified files is 1/num_nodes
         # https://networkx.org/documentation/stable/_modules/networkx/algorithms/link_analysis/pagerank_alg.html#pagerank
-        personalize = 10 / len(fnames)
+        personalize = 100 / len(fnames)
 
         if self.cache_missing:
             fnames = tqdm(fnames)
@@ -268,7 +269,7 @@ class RepoMap:
                 personalization[rel_fname] = personalize
                 chat_rel_fnames.add(rel_fname)
 
-            if fname in mentioned_fnames:
+            if rel_fname in mentioned_fnames:
                 personalization[rel_fname] = personalize
 
             tags = list(self.get_tags(fname, rel_fname))
@@ -300,12 +301,20 @@ class RepoMap:
             definers = defines[ident]
             if ident in mentioned_idents:
                 mul = 10
+            elif ident.startswith("_"):
+                mul = 0.1
             else:
                 mul = 1
+
             for referencer, num_refs in Counter(references[ident]).items():
                 for definer in definers:
+                    # dump(referencer, definer, num_refs, mul)
                     # if referencer == definer:
                     #    continue
+
+                    # scale down so high freq (low value) mentions don't dominate
+                    num_refs = math.sqrt(num_refs)
+
                     G.add_edge(referencer, definer, weight=mul * num_refs, ident=ident)
 
         if not references:

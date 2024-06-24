@@ -8,6 +8,7 @@ import sys
 import threading
 import time
 import traceback
+from collections import defaultdict
 from json.decoder import JSONDecodeError
 from pathlib import Path
 
@@ -472,6 +473,21 @@ class Coder:
         words = set(re.split(r"\W+", text))
         return words
 
+    def get_ident_filename_matches(self, idents):
+        all_fnames = defaultdict(set)
+        for fname in self.get_all_relative_files():
+            base = Path(fname).with_suffix("").name.lower()
+            if len(base) >= 5:
+                all_fnames[base].add(fname)
+
+        matches = set()
+        for ident in idents:
+            if len(ident) < 5:
+                continue
+            matches.update(all_fnames[ident.lower()])
+
+        return matches
+
     def get_repo_map(self):
         if not self.repo_map:
             return
@@ -479,6 +495,8 @@ class Coder:
         cur_msg_text = self.get_cur_message_text()
         mentioned_fnames = self.get_file_mentions(cur_msg_text)
         mentioned_idents = self.get_ident_mentions(cur_msg_text)
+
+        mentioned_fnames.update(self.get_ident_filename_matches(mentioned_idents))
 
         other_files = set(self.get_all_abs_files()) - set(self.abs_fnames)
         repo_content = self.repo_map.get_repo_map(
