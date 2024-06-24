@@ -1,7 +1,11 @@
+import difflib
 import math
 import re
+import sys
 from difflib import SequenceMatcher
 from pathlib import Path
+
+from aider import utils
 
 from ..dump import dump  # noqa: F401
 from .base_coder import Coder
@@ -481,24 +485,6 @@ def find_filename(lines, fence):
             return
 
 
-if __name__ == "__main__":
-    edit = """
-Here's the change:
-
-```text
-foo.txt
-<<<<<<< HEAD
-Two
-=======
-Tooooo
->>>>>>> updated
-```
-
-Hope you like it!
-"""
-    print(list(find_original_update_blocks(edit)))
-
-
 def find_similar_lines(search_lines, content_lines, threshold=0.6):
     search_lines = search_lines.splitlines()
     content_lines = content_lines.splitlines()
@@ -526,3 +512,32 @@ def find_similar_lines(search_lines, content_lines, threshold=0.6):
 
     best = content_lines[best_match_i:best_match_end]
     return "\n".join(best)
+
+
+def main():
+    history_md = Path(sys.argv[1]).read_text()
+    if not history_md:
+        return
+
+    messages = utils.split_chat_history_markdown(history_md)
+
+    for msg in messages:
+        msg = msg["content"]
+        edits = list(find_original_update_blocks(msg))
+
+        for fname, before, after in edits:
+            # Compute diff
+            diff = difflib.unified_diff(
+                before.splitlines(keepends=True),
+                after.splitlines(keepends=True),
+                fromfile="before",
+                tofile="after",
+            )
+            diff = "".join(diff)
+            dump(before)
+            dump(after)
+            dump(diff)
+
+
+if __name__ == "__main__":
+    main()
