@@ -1,6 +1,15 @@
 
 # Release history
 
+### v0.40.0
+
+- Improved prompting to discourage Sonnet from wasting tokens emitting unchanging code (#705).
+- Improved error info for token limit errors.
+- Options to suppress adding "(aider)" to the [git author and committer names](https://aider.chat/docs/git.html#commit-attribution).
+- Use `--model-settings-file` to customize per-model settings, like use of repo-map (by @caseymcc).
+- Improved invocation of flake8 linter for python code.
+
+
 ### v0.39.0
 
 - Use `--sonnet` for Claude 3.5 Sonnet, which is the top model on [aider's LLM code editing leaderboard](https://aider.chat/docs/leaderboards/#claude-35-sonnet-takes-the-top-spot).
