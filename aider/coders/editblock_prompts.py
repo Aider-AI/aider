@@ -129,7 +129,9 @@ Every *SEARCH* section must *EXACTLY MATCH* the existing source code, character 
 Include enough lines to make the SEARCH blocks uniquely match the lines to change.
 
 Keep *SEARCH/REPLACE* blocks concise.
+Break large *SEARCH/REPLACE* blocks into a series of smaller blocks that each change a small portion of the file.
 Include just the changing lines, and a few surrounding lines if needed for uniqueness.
+Do not include long runs of unchanging lines in *SEARCH/REPLACE* blocks.
 
 Include *ALL* the code being searched and replaced!
 
