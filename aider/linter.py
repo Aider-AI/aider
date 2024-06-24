@@ -11,6 +11,7 @@ from pathlib import Path
 
 from grep_ast import TreeContext, filename_to_lang
 from tree_sitter_languages import get_parser  # noqa: E402
+from contextlib import redirect_stdout
 
 from aider.dump import dump  # noqa: F401
 
@@ -133,13 +134,20 @@ class Linter:
 
         text = f"## Running: {' '.join(sys.argv)}\n\n"
 
+        original_stdout.write("text:")
+        original_stdout.write(text)
+        original_stdout.write("\n")
+
         try:
             runpy.run_module("flake8", run_name="__main__")
         except SystemExit as e:
+            dump(e.code)
             if e.code == 0:
                 errors = None
             else:
-                sys.stdout.seek(0)
+                dump("wtf")
+                #sys.stdout.seek(0)
+                dump("wtf1")
                 errors = sys.stdout.read()
 
             sys.stdout = original_stdout
@@ -147,6 +155,8 @@ class Linter:
         finally:
             sys.stdout = original_stdout
             sys.argv = original_argv
+
+        dump(errors)
 
         if not errors:
             return
