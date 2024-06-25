@@ -551,7 +551,7 @@ def sanity_check_model(io, model):
     if not model.info:
         show = True
         io.tool_output(
-            f"Model {model}: Unknown model, context window size and token costs unavailable."
+            f"Model {model}: Unknown context window size and costs, using sane defaults."
         )
 
         possible_matches = fuzzy_match_models(model.name)
@@ -560,12 +560,12 @@ def sanity_check_model(io, model):
             for match in possible_matches:
                 fq, m = match
                 if fq == m:
-                    io.tool_error(f"- {m}")
+                    io.tool_output(f"- {m}")
                 else:
-                    io.tool_error(f"- {m} ({fq})")
+                    io.tool_output(f"- {m} ({fq})")
 
     if show:
-        io.tool_error(urls.model_warnings)
+        io.tool_output(f"For more info, see: {urls.model_warnings}\n")
 
 
 def fuzzy_match_models(name):
