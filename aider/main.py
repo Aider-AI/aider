@@ -11,7 +11,7 @@ from prompt_toolkit.enums import EditingMode
 from streamlit.web import cli
 
 from aider import __version__, models, utils
-from aider.args import get_parser, get_preparser
+from aider.args import get_parser
 from aider.coders import Coder
 from aider.commands import SwitchModel
 from aider.io import InputOutput
@@ -281,13 +281,14 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     default_config_files.append(Path.home() / conf_fname)  # homedir
     default_config_files = list(map(str, default_config_files))
 
-    preparser = get_preparser(default_config_files, git_root)
-    pre_args, _ = preparser.parse_known_args(argv)
+    parser = get_parser(default_config_files, git_root)
+    args, unknown = parser.parse_known_args(argv)
 
     # Load the .env file specified in the arguments
-    load_dotenv(pre_args.env_file)
+    if hasattr(args, "env_file"):
+        load_dotenv(args.env_file)
 
-    parser = get_parser(default_config_files, git_root)
+    # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)
 
     if not args.verify_ssl:
