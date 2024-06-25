@@ -124,8 +124,10 @@ idna==3.7
     #   yarl
 ijson==3.3.0
     # via litellm
-importlib-metadata==8.0.0
-    # via litellm
+importlib-metadata==7.2.1
+    # via
+    #   -r requirements.in
+    #   litellm
 jinja2==3.1.4
     # via
     #   altair
