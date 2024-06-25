@@ -1,30 +1,19 @@
 #!/usr/bin/env python
 
-import json
-import os
-import sys
 import time
-from collections import defaultdict
 from pathlib import Path
 
 import litellm
-
-litellm.suppress_debug_info = True
-
-import faiss
 from dump import dump
 from llama_index.core import (
     Document,
-    SimpleDirectoryReader,
     StorageContext,
     VectorStoreIndex,
     load_index_from_storage,
 )
-from llama_index.core.ingestion import IngestionPipeline
 from llama_index.core.node_parser import MarkdownNodeParser
-from llama_index.core.storage.docstore import SimpleDocumentStore
-from llama_index.core.storage.index_store import SimpleIndexStore
-from llama_index.readers.file import FlatReader
+
+litellm.suppress_debug_info = True
 
 
 def should_skip_dir(dirname):
