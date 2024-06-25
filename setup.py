@@ -27,7 +27,7 @@ setup(
             "aider = aider.main:main",
         ],
     },
-    description="aider is GPT powered coding in your terminal",
+    description="Aider is AI pair programming in your terminal",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/paul-gauthier/aider",
