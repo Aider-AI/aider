@@ -1,6 +1,12 @@
 
 # Release history
 
+
+### v0.40.1
+
+- Improved context awareness of repomap.
+- Restored proper `--help` functionality.
+
 ### v0.40.0
 
 - Improved prompting to discourage Sonnet from wasting tokens emitting unchanging code (#705).
