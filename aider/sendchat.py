@@ -54,6 +54,7 @@ def send_with_retries(model_name, messages, functions, stream, temperature=0, ap
         messages=messages,
         temperature=temperature,
         stream=stream,
+        base_url=base_url,
     )
     if functions is not None:
         kwargs["functions"] = functions
