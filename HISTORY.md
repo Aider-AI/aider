@@ -1,7 +1,7 @@
 
 # Release history
 
-### v0.40.2
+### v0.40.5
 
 - Bump versions to pickup latest litellm to fix streaming issue with Gemini
   - https://github.com/BerriAI/litellm/issues/4408
