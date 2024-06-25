@@ -33,7 +33,7 @@ setup(
     url="https://github.com/paul-gauthier/aider",
     project_urls={
         "Homepage": "https://aider.chat",
-        "Documentation": "https://aider.chat/docs/",
+        "Documentation": "https://aider.chat",
         "Repository": "https://github.com/paul-gauthier/aider",
     },
     classifiers=[
