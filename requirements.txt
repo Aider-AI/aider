@@ -54,7 +54,7 @@ diskcache==5.6.3
     # via -r requirements.in
 distro==1.9.0
     # via openai
-filelock==3.15.3
+filelock==3.15.4
     # via huggingface-hub
 flake8==7.1.0
     # via -r requirements.in
@@ -72,7 +72,7 @@ gitpython==3.1.43
     #   streamlit
 google-ai-generativelanguage==0.6.5
     # via google-generativeai
-google-api-core[grpc]==2.19.0
+google-api-core[grpc]==2.19.1
     # via
     #   google-ai-generativelanguage
     #   google-api-python-client
@@ -90,7 +90,7 @@ google-auth-httplib2==0.2.0
     # via google-api-python-client
 google-generativeai==0.7.0
     # via -r requirements.in
-googleapis-common-protos==1.63.1
+googleapis-common-protos==1.63.2
     # via
     #   google-api-core
     #   grpcio-status
@@ -124,7 +124,7 @@ idna==3.7
     #   yarl
 ijson==3.3.0
     # via litellm
-importlib-metadata==7.2.0
+importlib-metadata==8.0.0
     # via litellm
 jinja2==3.1.4
     # via
@@ -137,7 +137,7 @@ jsonschema==4.22.0
     #   altair
 jsonschema-specifications==2023.12.1
     # via jsonschema
-litellm==1.40.21
+litellm==1.40.26
     # via -r requirements.in
 markdown-it-py==3.0.0
     # via rich
@@ -265,7 +265,7 @@ rpds-py==0.18.1
     #   referencing
 rsa==4.9
     # via google-auth
-scipy==1.13.1
+scipy==1.14.0
     # via -r requirements.in
 six==1.16.0
     # via python-dateutil
@@ -284,7 +284,7 @@ soupsieve==2.5
     # via beautifulsoup4
 streamlit==1.36.0
     # via -r requirements.in
-tenacity==8.4.1
+tenacity==8.4.2
     # via streamlit
 tiktoken==0.7.0
     # via
