@@ -265,7 +265,7 @@ rpds-py==0.18.1
     #   referencing
 rsa==4.9
     # via google-auth
-scipy==1.14.0
+scipy==1.13.1
     # via -r requirements.in
 six==1.16.0
     # via python-dateutil

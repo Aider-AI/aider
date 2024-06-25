@@ -9,7 +9,6 @@ jsonschema
 rich
 prompt_toolkit
 numpy
-scipy
 backoff
 pathspec
 diskcache
@@ -34,3 +33,6 @@ networkx<3.3
 
 # v0.22.2 seems to break tree-sitter-languages?
 tree-sitter==0.21.3 
+
+# To retain python 3.9 compatibility
+scipy<1.14
