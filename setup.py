@@ -31,11 +31,6 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/paul-gauthier/aider",
-    project_urls={
-        "Homepage": "https://aider.chat",
-        "Documentation": "https://aider.chat",
-        "Repository": "https://github.com/paul-gauthier/aider",
-    },
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Console",
