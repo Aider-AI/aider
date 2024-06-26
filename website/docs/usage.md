@@ -60,7 +60,7 @@ to edited.
 
 Aider uses GPT-4o by default, but you can
 [connect to many different LLMs](/docs/llms.html).
-Claude 3.5 Sonnet is also works very well with aider,
+Claude 3.5 Sonnet also works very well with aider,
 which you can use by running `aider --sonnet`.
 
 You can run `aider --model XXX` to launch aider with
