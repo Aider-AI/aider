@@ -12,6 +12,10 @@ cog.out(text)
 
 # Release history
 
+### v0.40.6
+
+- Fixed `/undo` so it works with `--no-attribute-author`.
+
 ### v0.40.5
 
 - Bump versions to pickup latest litellm to fix streaming issue with Gemini
