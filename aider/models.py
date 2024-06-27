@@ -27,6 +27,7 @@ class ModelSettings:
     lazy: bool = False
     reminder_as_sys_msg: bool = False
     examples_as_sys_msg: bool = False
+    can_prefill: bool = False
 
 
 # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
@@ -178,6 +179,7 @@ MODEL_SETTINGS = [
         "claude-3-sonnet-20240229",
         "whole",
         weak_model_name="claude-3-haiku-20240307",
+        can_prefill=True,
     ),
     ModelSettings(
         "claude-3-5-sonnet-20240620",
