@@ -25,12 +25,14 @@ class GitRepo:
         models=None,
         attribute_author=True,
         attribute_committer=True,
+        attribute_commit_message=False,
     ):
         self.io = io
         self.models = models
 
         self.attribute_author = attribute_author
         self.attribute_committer = attribute_committer
+        self.attribute_commit_message = attribute_commit_message
 
         if git_dname:
             check_fnames = [git_dname]
