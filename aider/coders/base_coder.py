@@ -13,7 +13,6 @@ from json.decoder import JSONDecodeError
 from pathlib import Path
 
 import git
-import openai
 from jsonschema import Draft7Validator
 from rich.console import Console, Text
 from rich.markdown import Markdown
@@ -37,7 +36,7 @@ class MissingAPIKeyError(ValueError):
     pass
 
 
-class ExhaustedContextWindow(Exception):
+class FinishReasonLength(Exception):
     pass
 
 
@@ -812,28 +811,43 @@ class Coder:
         if self.verbose:
             utils.show_messages(messages, functions=self.functions)
 
+        multi_response_content = ""
         exhausted = False
         interrupted = False
-        try:
-            yield from self.send(messages, functions=self.functions)
-        except KeyboardInterrupt:
-            interrupted = True
-        except ExhaustedContextWindow:
-            exhausted = True
-        except litellm.exceptions.BadRequestError as err:
-            if "ContextWindowExceededError" in err.message:
+        while True:
+            try:
+                yield from self.send(messages, functions=self.functions)
+                break
+            except KeyboardInterrupt:
+                interrupted = True
+                break
+            except litellm.ContextWindowExceededError as cwe_err:
+                # the input is overflowing the context window
                 exhausted = True
-            else:
-                self.io.tool_error(f"BadRequestError: {err}")
+                dump(cwe_err)
+                break
+            except litellm.exceptions.BadRequestError as br_err:
+                dump(br_err)
+                self.io.tool_error(f"BadRequestError: {br_err}")
                 return
-        except openai.BadRequestError as err:
-            if "maximum context length" in str(err):
-                exhausted = True
-            else:
-                raise err
-        except Exception as err:
-            self.io.tool_error(f"Unexpected error: {err}")
-            return
+            except FinishReasonLength as frl_err:
+                # finish_reason=length means 4k output limit?
+                dump(frl_err)
+                # exhausted = True
+
+                multi_response_content += self.partial_response_content
+                if messages[-1]["role"] == "assistant":
+                    messages[-1]["content"] = multi_response_content
+                else:
+                    messages.append(dict(role="assistant", content=multi_response_content))
+            except Exception as err:
+                self.io.tool_error(f"Unexpected error: {err}")
+                traceback.print_exc()
+                return
+
+        if multi_response_content:
+            multi_response_content += self.partial_response_content
+            self.partial_response_content = multi_response_content
 
         if exhausted:
             self.show_exhausted_error()
@@ -1103,7 +1117,7 @@ class Coder:
         if show_func_err and show_content_err:
             self.io.tool_error(show_func_err)
             self.io.tool_error(show_content_err)
-            raise Exception("No data found in openai response!")
+            raise Exception("No data found in LLM response!")
 
         tokens = None
         if hasattr(completion, "usage") and completion.usage is not None:
@@ -1131,6 +1145,12 @@ class Coder:
         if tokens is not None:
             self.io.tool_output(tokens)
 
+        if (
+            hasattr(completion.choices[0], "finish_reason")
+            and completion.choices[0].finish_reason == "length"
+        ):
+            raise FinishReasonLength()
+
     def show_send_output_stream(self, completion):
         if self.show_pretty():
             mdargs = dict(style=self.assistant_output_color, code_theme=self.code_theme)
@@ -1147,7 +1167,7 @@ class Coder:
                     hasattr(chunk.choices[0], "finish_reason")
                     and chunk.choices[0].finish_reason == "length"
                 ):
-                    raise ExhaustedContextWindow()
+                    raise FinishReasonLength()
 
                 try:
                     func = chunk.choices[0].delta.function_call

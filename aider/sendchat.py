@@ -3,7 +3,6 @@ import json
 
 import backoff
 import httpx
-import openai
 
 from aider.dump import dump  # noqa: F401
 from aider.litellm import litellm
@@ -85,5 +84,5 @@ def simple_send_with_retries(model_name, messages):
             stream=False,
         )
         return response.choices[0].message.content
-    except (AttributeError, openai.BadRequestError):
+    except (AttributeError, litellm.exceptions.BadRequestError):
         return
