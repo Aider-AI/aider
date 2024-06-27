@@ -523,8 +523,6 @@ class TestCommands(TestCase):
             other_path.write_text("other content")
             repo.git.add(str(other_path))
 
-            os.environ["GIT_AUTHOR_NAME"] = "Foo (aider)"
-
             # Create and commit a file
             filename = "test_file.txt"
             file_path = Path(repo_dir) / filename
@@ -535,8 +533,6 @@ class TestCommands(TestCase):
             file_path.write_text("second content")
             repo.git.add(filename)
             repo.git.commit("-m", "second commit")
-
-            del os.environ["GIT_AUTHOR_NAME"]
 
             # Store the commit hash
             last_commit_hash = repo.head.commit.hexsha[:7]
