@@ -821,20 +821,20 @@ class Coder:
             except KeyboardInterrupt:
                 interrupted = True
                 break
-            except litellm.ContextWindowExceededError as cwe_err:
-                # the input is overflowing the context window
+            except litellm.ContextWindowExceededError:
+                # The input is overflowing the context window!
                 exhausted = True
-                dump(cwe_err)
                 break
             except litellm.exceptions.BadRequestError as br_err:
-                dump(br_err)
                 self.io.tool_error(f"BadRequestError: {br_err}")
                 return
-            except FinishReasonLength as frl_err:
-                # finish_reason=length means 4k output limit?
-                dump(frl_err)
-                # exhausted = True
+            except FinishReasonLength:
+                # We hit the 4k output limit!
+                if not self.main_model.can_prefill:
+                    exhausted = True
+                    break
 
+                # Use prefill to continue the response
                 multi_response_content += self.partial_response_content
                 if messages[-1]["role"] == "assistant":
                     messages[-1]["content"] = multi_response_content
