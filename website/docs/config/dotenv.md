@@ -54,9 +54,6 @@ cog.outl("```")
 #######
 # Main:
 
-## Log the conversation with the LLM to this file (for example, .aider.llm.history)
-#AIDER_LLM_HISTORY_FILE=
-
 ## Specify the OpenAI API key
 #OPENAI_API_KEY=
 
@@ -143,6 +140,9 @@ cog.outl("```")
 
 ## Restore the previous chat history messages (default: False)
 #AIDER_RESTORE_CHAT_HISTORY=false
+
+## Log the conversation with the LLM to this file (for example, .aider.llm.history)
+#AIDER_LLM_HISTORY_FILE=
 
 ##################
 # Output Settings:
