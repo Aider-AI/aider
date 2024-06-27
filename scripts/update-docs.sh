@@ -14,8 +14,8 @@ cog $ARG \
     README.md \
     website/index.md \
     website/HISTORY.md \
-    website/docs/dotenv.md \
     website/docs/commands.md \
     website/docs/languages.md \
-    website/docs/options.md \
-    website/docs/aider_conf.md
+    website/docs/config/dotenv.md \
+    website/docs/config/options.md \
+    website/docs/config/aider_conf.md
