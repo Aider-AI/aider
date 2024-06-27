@@ -350,6 +350,14 @@ class Model:
 
         model = model.lower()
 
+        # Inject for Watson X
+        if ("watson" in model):
+            self.edit_format = "diff"
+            self.use_repo_map = True
+            # self.send_undo_reply = True
+            # self.examples_as_sys_msg = True
+            return  # <--
+
         if ("llama3" in model or "llama-3" in model) and "70b" in model:
             self.edit_format = "diff"
             self.use_repo_map = True
@@ -474,7 +482,6 @@ class Model:
             return validate_variables(["GROQ_API_KEY"])
 
         return res
-
 
 def register_models(model_settings_fnames):
     files_loaded = []

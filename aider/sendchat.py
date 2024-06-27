@@ -55,6 +55,7 @@ def send_with_retries(model_name, messages, functions, stream, temperature=0):
         temperature=temperature,
         stream=stream,
     )
+    kwargs['max_tokens']=8000
     if functions is not None:
         kwargs["functions"] = functions
 

@@ -6,12 +6,21 @@
       "request": "launch",
       "program": "${workspaceFolder}/aider/main.py",
       "console": "integratedTerminal",
+      "cwd":"/Users/rishabhchakrabarti/code/pilots/alinma-bank/simple-reactjs-app",
       "args": [
         "--env-file",
         ".env",
         "--model",
+        // "watsonx/ibm/granite-13b-chat-v2",
         "watsonx/mistralai/mixtral-8x7b-instruct-v01",
-        "-v"
+        // "watsonx/codellama/codellama-34b-instruct-hf",
+        "--model-metadata-file",
+        ".aider.models.json",
+        // "--map-tokens",
+        // "5000",
+        "-v",
+        "--no-stream",
+        "--show-diff"
       ],
       "env": {
         "PYTHONPATH":"${workspaceFolder}"
