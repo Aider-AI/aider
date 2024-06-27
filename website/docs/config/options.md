@@ -43,6 +43,7 @@ usage: aider [-h] [--llm-history-file] [--openai-api-key]
              [--dirty-commits | --no-dirty-commits]
              [--attribute-author | --no-attribute-author]
              [--attribute-committer | --no-attribute-committer]
+             [--attribute-commit-message | --no-attribute-commit-message]
              [--dry-run | --no-dry-run] [--commit] [--lint]
              [--lint-cmd] [--auto-lint | --no-auto-lint]
              [--test-cmd] [--auto-test | --no-auto-test] [--test]
@@ -315,6 +316,14 @@ Environment variable: `AIDER_ATTRIBUTE_COMMITTER`
 Aliases:
   - `--attribute-committer`
   - `--no-attribute-committer`
+
+### `--attribute-commit-message`
+Prefix commit messages with 'aider: ' (default: False)  
+Default: False  
+Environment variable: `AIDER_ATTRIBUTE_COMMIT_MESSAGE`  
+Aliases:
+  - `--attribute-commit-message`
+  - `--no-attribute-commit-message`
 
 ### `--dry-run`
 Perform a dry run without modifying files (default: False)  

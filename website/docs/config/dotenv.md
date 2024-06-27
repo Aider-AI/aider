@@ -201,6 +201,9 @@ cog.outl("```")
 ## Attribute aider commits in the git committer name (default: True)
 #AIDER_ATTRIBUTE_COMMITTER=true
 
+## Prefix commit messages with 'aider: ' (default: False)
+#AIDER_ATTRIBUTE_COMMIT_MESSAGE=false
+
 ## Perform a dry run without modifying files (default: False)
 #AIDER_DRY_RUN=false
 
