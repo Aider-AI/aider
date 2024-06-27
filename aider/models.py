@@ -393,7 +393,6 @@ class Model:
             self.edit_format = "diff"
             self.use_repo_map = True
             self.examples_as_sys_msg = True
-            self.can_prefill = (True,)
             self.can_prefill = True
 
         # use the defaults
