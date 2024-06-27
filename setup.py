@@ -7,10 +7,10 @@ with open("requirements.txt") as f:
 
 from aider import __version__
 
-with open("website/index.md", "r", encoding="utf-8") as f:
+with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
     long_description = re.sub(r"\n!\[.*\]\(.*\)", "", long_description)
-    long_description = re.sub(r"\n- \[.*\]\(.*\)", "", long_description)
+    # long_description = re.sub(r"\n- \[.*\]\(.*\)", "", long_description)
 
 setup(
     name="aider-chat",

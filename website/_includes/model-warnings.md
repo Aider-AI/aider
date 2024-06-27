@@ -1,17 +1,40 @@
 
+## Unknown context window size and token costs
 
-Aider tries to sanity check that it is configured correctly
-to work with the LLM you specified:
+```
+Model foobar: Unknown context window size and costs, using sane defaults.
+```
 
-- It checks to see that all required environment variables are set for the model. These variables are required to configure things like API keys, API base URLs, etc.
-These settings are required to be correct.
-- It checks a metadata database to look up the context window size and token costs for the model.
-It's usually OK if this extra metadata isn't available.
+*You can probably ignore the unknown context window size and token costs warning.*
 
-Sometimes one or both of these checks will fail, so aider will issue
-some of the following warnings.
+If you specify a model that aider has never heard of, you will get
+this warning.
+This means aider doesn't know the context window size and token costs
+for that model.
+Aider will use an unlimited context window and assume the model is free,
+so this is not usually a significant problem.
+
+See the docs on 
+[configuring advanced model settings](/docs/config/adv-model-settings.html)
+for details on how to remove this warning.
+
+## Did you mean?
+
+If aider isn't familiar with the model you've specified,
+it will suggest similarly named models.
+This helps
+in the case where you made a typo or mistake when specifying the model name.
+
+```
+Model gpt-5o: Unknown context window size and costs, using sane defaults.
+Did you mean one of these?
+- gpt-4o
+```
 
 ## Missing environment variables
+
+You need to set the listed environment variables.
+Otherwise you will get error messages when you start chatting with the model.
 
 ```
 Model azure/gpt-4-turbo: Missing these environment variables:
@@ -20,8 +43,6 @@ Model azure/gpt-4-turbo: Missing these environment variables:
 - AZURE_API_KEY
 ```
 
-You need to set the listed environment variables.
-Otherwise you will get error messages when you start chatting with the model.
 
 
 ## Unknown which environment variables are required
@@ -34,24 +55,8 @@ Aider is unable verify the environment because it doesn't know
 which variables are required for the model.
 If required variables are missing,
 you may get errors when you attempt to chat with the model.
-You can look in the
-[litellm provider documentation](https://docs.litellm.ai/docs/providers)
+You can look in the [aider's LLM documentation](/docs/llms.html)
+or the
+[litellm documentation](https://docs.litellm.ai/docs/providers)
 to see if the required variables are listed there.
-
-## Context window size and token costs unavailable.
-
-```
-Model foobar: Unknown model, context window size and token costs unavailable.
-```
-
-If you specify a model that aider has never heard of, you will get an
-"unknown model" warning.
-This means aider doesn't know the context window size and token costs
-for that model.
-Some minor functionality will be limited when using such models, but
-it's not really a significant problem.
-
-Aider will also try to suggest similarly named models,
-in case you made a typo or mistake when specifying the model name.
-
 

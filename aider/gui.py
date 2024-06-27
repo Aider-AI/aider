@@ -17,9 +17,10 @@ from aider.scrape import Scraper
 class CaptureIO(InputOutput):
     lines = []
 
-    def tool_output(self, msg):
-        self.lines.append(msg)
-        super().tool_output(msg)
+    def tool_output(self, msg, log_only=False):
+        if not log_only:
+            self.lines.append(msg)
+        super().tool_output(msg, log_only=log_only)
 
     def tool_error(self, msg):
         self.lines.append(msg)

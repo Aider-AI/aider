@@ -20,29 +20,29 @@ from aider.args import get_md_help
 cog.out(get_md_help())
 ]]]-->
 ```
-usage: aider [-h] [--llm-history-file] [--openai-api-key]
-             [--anthropic-api-key] [--model] [--opus] [--sonnet]
-             [--4] [--4o] [--4-turbo] [--35turbo] [--models]
-             [--openai-api-base] [--openai-api-type]
-             [--openai-api-version] [--openai-api-deployment-id]
-             [--openai-organization-id] [--model-settings-file]
-             [--model-metadata-file]
+usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
+             [--opus] [--sonnet] [--4] [--4o] [--4-turbo]
+             [--35turbo] [--models] [--openai-api-base]
+             [--openai-api-type] [--openai-api-version]
+             [--openai-api-deployment-id] [--openai-organization-id]
+             [--model-settings-file] [--model-metadata-file]
              [--verify-ssl | --no-verify-ssl] [--edit-format]
              [--weak-model]
              [--show-model-warnings | --no-show-model-warnings]
              [--map-tokens] [--max-chat-history-tokens] [--env-file]
              [--input-history-file] [--chat-history-file]
              [--restore-chat-history | --no-restore-chat-history]
-             [--dark-mode] [--light-mode] [--pretty | --no-pretty]
-             [--stream | --no-stream] [--user-input-color]
-             [--tool-output-color] [--tool-error-color]
-             [--assistant-output-color] [--code-theme]
-             [--show-diffs] [--git | --no-git]
+             [--llm-history-file] [--dark-mode] [--light-mode]
+             [--pretty | --no-pretty] [--stream | --no-stream]
+             [--user-input-color] [--tool-output-color]
+             [--tool-error-color] [--assistant-output-color]
+             [--code-theme] [--show-diffs] [--git | --no-git]
              [--gitignore | --no-gitignore] [--aiderignore]
              [--auto-commits | --no-auto-commits]
              [--dirty-commits | --no-dirty-commits]
              [--attribute-author | --no-attribute-author]
              [--attribute-committer | --no-attribute-committer]
+             [--attribute-commit-message | --no-attribute-commit-message]
              [--dry-run | --no-dry-run] [--commit] [--lint]
              [--lint-cmd] [--auto-lint | --no-auto-lint]
              [--test-cmd] [--auto-test | --no-auto-test] [--test]
@@ -62,10 +62,6 @@ Aliases:
   - `--help`
 
 ## Main:
-
-### `--llm-history-file LLM_HISTORY_FILE`
-Log the conversation with the LLM to this file (for example, .aider.llm.history)  
-Environment variable: `AIDER_LLM_HISTORY_FILE`  
 
 ### `--openai-api-key OPENAI_API_KEY`
 Specify the OpenAI API key  
@@ -204,6 +200,10 @@ Aliases:
   - `--restore-chat-history`
   - `--no-restore-chat-history`
 
+### `--llm-history-file LLM_HISTORY_FILE`
+Log the conversation with the LLM to this file (for example, .aider.llm.history)  
+Environment variable: `AIDER_LLM_HISTORY_FILE`  
+
 ## Output Settings:
 
 ### `--dark-mode`
@@ -315,6 +315,14 @@ Environment variable: `AIDER_ATTRIBUTE_COMMITTER`
 Aliases:
   - `--attribute-committer`
   - `--no-attribute-committer`
+
+### `--attribute-commit-message`
+Prefix commit messages with 'aider: ' (default: False)  
+Default: False  
+Environment variable: `AIDER_ATTRIBUTE_COMMIT_MESSAGE`  
+Aliases:
+  - `--attribute-commit-message`
+  - `--no-attribute-commit-message`
 
 ### `--dry-run`
 Perform a dry run without modifying files (default: False)  

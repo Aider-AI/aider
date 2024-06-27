@@ -13,9 +13,6 @@
 #######
 # Main:
 
-## Log the conversation with the LLM to this file (for example, .aider.llm.history)
-#llm-history-file:
-
 ## Specify the OpenAI API key
 #openai-api-key:
 
@@ -103,6 +100,9 @@
 ## Restore the previous chat history messages (default: False)
 #restore-chat-history: false
 
+## Log the conversation with the LLM to this file (for example, .aider.llm.history)
+#llm-history-file:
+
 ##################
 # Output Settings:
 
@@ -159,6 +159,9 @@
 
 ## Attribute aider commits in the git committer name (default: True)
 #attribute-committer: true
+
+## Prefix commit messages with 'aider: ' (default: False)
+#attribute-commit-message: false
 
 ## Perform a dry run without modifying files (default: False)
 #dry-run: false

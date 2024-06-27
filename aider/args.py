@@ -30,12 +30,6 @@ def get_parser(default_config_files, git_root):
     )
     group = parser.add_argument_group("Main")
     group.add_argument(
-        "--llm-history-file",
-        metavar="LLM_HISTORY_FILE",
-        default=None,
-        help="Log the conversation with the LLM to this file (for example, .aider.llm.history)",
-    )
-    group.add_argument(
         "files", metavar="FILE", nargs="*", help="files to edit with an LLM (optional)"
     )
     group.add_argument(
@@ -236,6 +230,12 @@ def get_parser(default_config_files, git_root):
         default=False,
         help="Restore the previous chat history messages (default: False)",
     )
+    group.add_argument(
+        "--llm-history-file",
+        metavar="LLM_HISTORY_FILE",
+        default=None,
+        help="Log the conversation with the LLM to this file (for example, .aider.llm.history)",
+    )
 
     ##########
     group = parser.add_argument_group("Output Settings")
@@ -344,6 +344,12 @@ def get_parser(default_config_files, git_root):
         action=argparse.BooleanOptionalAction,
         default=True,
         help="Attribute aider commits in the git committer name (default: True)",
+    )
+    group.add_argument(
+        "--attribute-commit-message",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Prefix commit messages with 'aider: ' (default: False)",
     )
     group.add_argument(
         "--dry-run",

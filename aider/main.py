@@ -441,6 +441,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             test_cmd=args.test_cmd,
             attribute_author=args.attribute_author,
             attribute_committer=args.attribute_committer,
+            attribute_commit_message=args.attribute_commit_message,
         )
 
     except ValueError as err:

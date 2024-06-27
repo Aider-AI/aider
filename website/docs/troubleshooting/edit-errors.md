@@ -21,8 +21,8 @@ In these cases, here are some things you might try.
 
 ## Use a capable model
 
-If possible try using GPT-4o or Opus, as they are the strongest and most
-capable models.
+If possible try using GPT-4o, Claude 3.5 Sonnet or Claude 3 Opus, 
+as they are the strongest and most capable models.
 
 Weaker models
 are more prone to
