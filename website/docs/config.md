@@ -12,7 +12,7 @@ Most options can also be set in an `.aider.conf.yml` file
 which can be placed in your home directory or at the root of
 your git repo. 
 Or via environment variables like `AIDER_xxx`,
-as noted in the [options reference](options.html).
+as noted in the [options reference](/docs/config/options.html).
 
 Here are 3 equivalent ways of setting an option. First, via a command line switch:
 
