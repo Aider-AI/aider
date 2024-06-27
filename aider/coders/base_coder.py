@@ -221,6 +221,7 @@ class Coder:
         test_cmd=None,
         attribute_author=True,
         attribute_committer=True,
+        attribute_commit_message=False,
     ):
         if not fnames:
             fnames = []
@@ -280,6 +281,7 @@ class Coder:
                     models=main_model.commit_message_models(),
                     attribute_author=attribute_author,
                     attribute_committer=attribute_committer,
+                    attribute_commit_message=attribute_commit_message,
                 )
                 self.root = self.repo.root
             except FileNotFoundError:

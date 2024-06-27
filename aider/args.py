@@ -346,6 +346,12 @@ def get_parser(default_config_files, git_root):
         help="Attribute aider commits in the git committer name (default: True)",
     )
     group.add_argument(
+        "--attribute-commit-message",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Prefix commit messages with 'aider: ' (default: False)",
+    )
+    group.add_argument(
         "--dry-run",
         action=argparse.BooleanOptionalAction,
         default=False,
