@@ -66,6 +66,7 @@ class Coder:
     test_cmd = None
     lint_outcome = None
     test_outcome = None
+    multi_response_content = ""
 
     @classmethod
     def create(
@@ -857,6 +858,7 @@ class Coder:
         if self.multi_response_content:
             self.multi_response_content += self.partial_response_content
             self.partial_response_content = self.multi_response_content
+            self.multi_response_content = ""
 
         if exhausted:
             self.show_exhausted_error()
