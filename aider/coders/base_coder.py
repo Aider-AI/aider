@@ -812,7 +812,7 @@ class Coder:
             utils.show_messages(messages, functions=self.functions)
 
         self.multi_response_content = ""
-        if self.show_pretty():
+        if self.show_pretty() and self.stream:
             mdargs = dict(style=self.assistant_output_color, code_theme=self.code_theme)
             self.mdstream = MarkdownStream(mdargs=mdargs)
         else:
@@ -850,6 +850,9 @@ class Coder:
                 self.io.tool_error(f"Unexpected error: {err}")
                 traceback.print_exc()
                 return
+
+        if self.mdstream:
+            self.live_incremental_response(True)
 
         if self.multi_response_content:
             self.multi_response_content += self.partial_response_content
@@ -1158,48 +1161,40 @@ class Coder:
             raise FinishReasonLength()
 
     def show_send_output_stream(self, completion):
-        finish_reason_length = False
+        for chunk in completion:
+            if len(chunk.choices) == 0:
+                continue
 
-        try:
-            for chunk in completion:
-                if len(chunk.choices) == 0:
-                    continue
+            if (
+                hasattr(chunk.choices[0], "finish_reason")
+                and chunk.choices[0].finish_reason == "length"
+            ):
+                raise FinishReasonLength()
 
-                if (
-                    hasattr(chunk.choices[0], "finish_reason")
-                    and chunk.choices[0].finish_reason == "length"
-                ):
-                    if self.main_model.can_prefill:
-                        finish_reason_length = True
-                    raise FinishReasonLength()
+            try:
+                func = chunk.choices[0].delta.function_call
+                # dump(func)
+                for k, v in func.items():
+                    if k in self.partial_response_function_call:
+                        self.partial_response_function_call[k] += v
+                    else:
+                        self.partial_response_function_call[k] = v
+            except AttributeError:
+                pass
 
-                try:
-                    func = chunk.choices[0].delta.function_call
-                    # dump(func)
-                    for k, v in func.items():
-                        if k in self.partial_response_function_call:
-                            self.partial_response_function_call[k] += v
-                        else:
-                            self.partial_response_function_call[k] = v
-                except AttributeError:
-                    pass
+            try:
+                text = chunk.choices[0].delta.content
+                if text:
+                    self.partial_response_content += text
+            except AttributeError:
+                text = None
 
-                try:
-                    text = chunk.choices[0].delta.content
-                    if text:
-                        self.partial_response_content += text
-                except AttributeError:
-                    text = None
-
-                if self.show_pretty():
-                    self.live_incremental_response(False)
-                elif text:
-                    sys.stdout.write(text)
-                    sys.stdout.flush()
-                    yield text
-        finally:
-            if self.show_pretty() and not finish_reason_length:
-                self.live_incremental_response(True)
+            if self.show_pretty():
+                self.live_incremental_response(False)
+            elif text:
+                sys.stdout.write(text)
+                sys.stdout.flush()
+                yield text
 
     def live_incremental_response(self, final):
         show_resp = self.render_incremental_response(final)
