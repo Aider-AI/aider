@@ -1,6 +1,6 @@
+from pathlib import Path
 
 from aider import diffs
-from pathlib import Path
 
 from ..dump import dump  # noqa: F401
 from .base_coder import Coder
@@ -26,10 +26,10 @@ class WholeFileCoder(Coder):
         try:
             return self.get_edits(mode="diff")
         except ValueError:
-            return self.partial_response_content
+            return self.get_multi_response_content()
 
     def get_edits(self, mode="update"):
-        content = self.partial_response_content
+        content = self.get_multi_response_content()
 
         chat_files = self.get_inchat_relative_files()
 
