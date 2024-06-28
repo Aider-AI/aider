@@ -71,7 +71,7 @@ class RepoMap:
         max_map_tokens = self.max_map_tokens
 
         # With no files in the chat, give a bigger view of the entire repo
-        MUL = 16
+        MUL = 8
         padding = 4096
         if max_map_tokens and self.max_context_window:
             target = min(max_map_tokens * MUL, self.max_context_window - padding)
