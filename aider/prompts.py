@@ -24,11 +24,15 @@ If you need to propose edits to other existing files not already added to the ch
 
 run_output = """I ran this command:
 
+<command>
 {command}
+</command>
 
 And got this output:
 
+<command_output>
 {output}
+</command_output>
 """
 
 # CHAT HISTORY

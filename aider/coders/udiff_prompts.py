@@ -32,7 +32,7 @@ For each file that needs to be changed, write out the changes similar to a unifi
 
 Here are the diffs for those changes:
 
-```diff
+<diff>
 --- mathweb/flask/app.py
 +++ mathweb/flask/app.py
 @@ ... @@
@@ -67,7 +67,7 @@ Here are the diffs for those changes:
 +        if sympy.isprime(num):
 +            count += 1
 +    return str(num)
-```
+</diff>
 """,
         ),
     ]

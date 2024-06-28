@@ -19,6 +19,7 @@ class EditBlockFencedPrompts(EditBlockPrompts):
 
 Here are the *SEARCH/REPLACE* blocks:
 
+<search_replace_blocks>
 {fence[0]}
 mathweb/flask/app.py
 <<<<<<< SEARCH
@@ -53,6 +54,7 @@ mathweb/flask/app.py
 >>>>>>> REPLACE
 {fence[1]}
 <<<<<<< HEAD
+</search_replace_blocks>
 """,
         ),
         dict(
@@ -68,6 +70,7 @@ mathweb/flask/app.py
 
 Here are the *SEARCH/REPLACE* blocks:
 
+<search_replace_blocks>
 {fence[0]}
 hello.py
 <<<<<<< SEARCH
@@ -90,6 +93,7 @@ def hello():
 from hello import hello
 >>>>>>> REPLACE
 {fence[1]}
+</search_replace_blocks>
 """,
         ),
     ]
