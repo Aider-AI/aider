@@ -1,5 +1,5 @@
 #
-#    pip-compile requirements.in
+#    pip-compile requirements.in --upgrade
 #
 configargparse
 GitPython
