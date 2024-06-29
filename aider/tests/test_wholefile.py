@@ -309,7 +309,6 @@ Do this:
             return []
 
         coder.send = MagicMock(side_effect=mock_send)
-        coder.live_incremental_response = lambda x: x
 
         # Call the run method with a message
         coder.run(with_message="hi")
