@@ -821,39 +821,40 @@ class Coder:
 
         exhausted = False
         interrupted = False
-        while True:
-            try:
-                yield from self.send(messages, functions=self.functions)
-                break
-            except KeyboardInterrupt:
-                interrupted = True
-                break
-            except litellm.ContextWindowExceededError:
-                # The input is overflowing the context window!
-                exhausted = True
-                break
-            except litellm.exceptions.BadRequestError as br_err:
-                self.io.tool_error(f"BadRequestError: {br_err}")
-                return
-            except FinishReasonLength:
-                # We hit the 4k output limit!
-                if not self.main_model.can_prefill:
+        try:
+            while True:
+                try:
+                    yield from self.send(messages, functions=self.functions)
+                    break
+                except KeyboardInterrupt:
+                    interrupted = True
+                    break
+                except litellm.ContextWindowExceededError:
+                    # The input is overflowing the context window!
                     exhausted = True
                     break
+                except litellm.exceptions.BadRequestError as br_err:
+                    self.io.tool_error(f"BadRequestError: {br_err}")
+                    return
+                except FinishReasonLength:
+                    # We hit the 4k output limit!
+                    if not self.main_model.can_prefill:
+                        exhausted = True
+                        break
 
-                # Use prefill to continue the response
-                self.multi_response_content += self.partial_response_content
-                if messages[-1]["role"] == "assistant":
-                    messages[-1]["content"] = self.multi_response_content
-                else:
-                    messages.append(dict(role="assistant", content=self.multi_response_content))
-            except Exception as err:
-                self.io.tool_error(f"Unexpected error: {err}")
-                traceback.print_exc()
-                return
-
-        if self.mdstream:
-            self.live_incremental_response(True)
+                    # Use prefill to continue the response
+                    self.multi_response_content += self.partial_response_content
+                    if messages[-1]["role"] == "assistant":
+                        messages[-1]["content"] = self.multi_response_content
+                    else:
+                        messages.append(dict(role="assistant", content=self.multi_response_content))
+                except Exception as err:
+                    self.io.tool_error(f"Unexpected error: {err}")
+                    traceback.print_exc()
+                    return
+        finally:
+            if self.mdstream:
+                self.live_incremental_response(True)
 
         if self.multi_response_content:
             self.multi_response_content += self.partial_response_content
