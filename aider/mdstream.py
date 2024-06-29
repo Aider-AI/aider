@@ -95,12 +95,7 @@ class MarkdownStream:
             show = lines[num_printed:num_lines]
             show = "".join(show)
             show = Text.from_ansi(show)
-            try:
-                self.live.console.print(show)
-            except UnicodeEncodeError as err:
-                print("unicode error", err)
-                print("show string", repr(show.encode("utf-8")))
-                raise err
+            self.live.console.print(show)
 
             self.printed = lines[:num_lines]
 
