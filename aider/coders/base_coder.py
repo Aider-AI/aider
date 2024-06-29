@@ -856,10 +856,10 @@ class Coder:
             if self.mdstream:
                 self.live_incremental_response(True)
 
-        if self.multi_response_content:
-            self.multi_response_content += self.partial_response_content
-            self.partial_response_content = self.multi_response_content
-            self.multi_response_content = ""
+            if self.multi_response_content:
+                self.multi_response_content += self.partial_response_content
+                self.partial_response_content = self.multi_response_content
+                self.multi_response_content = ""
 
         if exhausted:
             self.show_exhausted_error()
@@ -1201,9 +1201,6 @@ class Coder:
 
     def live_incremental_response(self, final):
         show_resp = self.render_incremental_response(final)
-        if not show_resp:
-            return
-
         self.mdstream.update(show_resp, final=final)
 
     def render_incremental_response(self, final):
