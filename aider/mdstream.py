@@ -99,8 +99,8 @@ class MarkdownStream:
                 self.live.console.print(show)
             except UnicodeEncodeError as err:
                 print(err)
-                print(show)
                 print(repr(show))
+                raise err
 
             self.printed = lines[:num_lines]
 
