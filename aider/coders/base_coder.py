@@ -855,6 +855,7 @@ class Coder:
         finally:
             if self.mdstream:
                 self.live_incremental_response(True)
+                self.mdstream = None
 
             if self.multi_response_content:
                 self.multi_response_content += self.partial_response_content
