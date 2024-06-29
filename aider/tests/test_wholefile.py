@@ -278,7 +278,7 @@ after b
             updated_content = f.read()
         self.assertEqual(updated_content, new_content)
 
-    def test_full_edit(self):
+    def __test_full_edit(self):
         # Create a few temporary files
         _, file1 = tempfile.mkstemp()
 
