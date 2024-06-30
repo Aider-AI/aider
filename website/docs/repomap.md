@@ -86,8 +86,13 @@ files which have dependencies.
 Aider optimizes the repo map by
 selecting the most important parts of the codebase
 which will
-fit into the token budget assigned by the user
-(via the `--map-tokens` switch, which defaults to 1k tokens).
+fit into the active token budget.
+
+The token budget is
+influenced by the `--map-tokens` switch, which defaults to 1k tokens.
+Aider adjusts the size of the repo map dynamically based on the state of the chat. It will usually stay within that setting's value. But it does expand the repo map
+significantly at times, especially when no files have been added to the chat and aider needs to understand the entire repo as best as possible.
+
 
 The sample map shown above doesn't contain *every* class, method and function from those
 files.
