@@ -93,8 +93,8 @@ class GitRepo:
             commit_message = "(no commit message provided)"
 
         full_commit_message = commit_message
-        if context:
-            full_commit_message += "\n\n# Aider chat conversation:\n\n" + context
+        # if context:
+        #    full_commit_message += "\n\n# Aider chat conversation:\n\n" + context
 
         cmd = ["-m", full_commit_message, "--no-verify"]
         if fnames:
