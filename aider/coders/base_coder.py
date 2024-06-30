@@ -807,8 +807,6 @@ class Coder:
 
         messages = self.format_messages()
 
-        self.io.log_llm_history("TO LLM", format_messages(messages))
-
         if self.verbose:
             utils.show_messages(messages, functions=self.functions)
 
@@ -842,8 +840,8 @@ class Coder:
                         exhausted = True
                         break
 
-                    # Use prefill to continue the response
-                    self.multi_response_content += self.partial_response_content
+                    self.multi_response_content = self.get_multi_response_content()
+
                     if messages[-1]["role"] == "assistant":
                         messages[-1]["content"] = self.multi_response_content
                     else:
@@ -857,10 +855,8 @@ class Coder:
                 self.live_incremental_response(True)
                 self.mdstream = None
 
-            if self.multi_response_content:
-                self.multi_response_content += self.partial_response_content
-                self.partial_response_content = self.multi_response_content
-                self.multi_response_content = ""
+            self.partial_response_content = self.get_multi_response_content(True)
+            self.multi_response_content = ""
 
         if exhausted:
             self.show_exhausted_error()
@@ -879,8 +875,6 @@ class Coder:
             content = ""
 
         self.io.tool_output()
-
-        self.io.log_llm_history("LLM RESPONSE", format_content("ASSISTANT", content))
 
         if interrupted:
             content += "\n^C KeyboardInterrupt"
@@ -1074,6 +1068,8 @@ class Coder:
         self.partial_response_content = ""
         self.partial_response_function_call = dict()
 
+        self.io.log_llm_history("TO LLM", format_messages(messages))
+
         interrupted = False
         try:
             hash_object, completion = send_with_retries(
@@ -1089,6 +1085,11 @@ class Coder:
             self.keyboard_interrupt()
             interrupted = True
         finally:
+            self.io.log_llm_history(
+                "LLM RESPONSE",
+                format_content("ASSISTANT", self.partial_response_content),
+            )
+
             if self.partial_response_content:
                 self.io.ai_output(self.partial_response_content)
             elif self.partial_response_function_call:
@@ -1207,8 +1208,13 @@ class Coder:
     def render_incremental_response(self, final):
         return self.get_multi_response_content()
 
-    def get_multi_response_content(self):
-        return self.multi_response_content + self.partial_response_content
+    def get_multi_response_content(self, final=False):
+        cur = self.multi_response_content
+        new = self.partial_response_content
+
+        if new.rstrip() != new and not final:
+            new = new.rstrip()
+        return cur + new
 
     def get_rel_fname(self, fname):
         return os.path.relpath(fname, self.root)
