@@ -12,6 +12,8 @@ nav_exclude: true
 
 # Sonnet is the opposite of lazy
 
+[![sonnet is the opposite of lazy](/assets/sonnet-not-lazy.jpg)](https://aider.chat/assets/sonnet-not-lazy.jpg)
+
 Claude 3.5 Sonnet represents a step change
 in AI coding.
 It is so industrious, diligent and hard working that
