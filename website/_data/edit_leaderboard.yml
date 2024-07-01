@@ -681,4 +681,27 @@
   versions: 0.39.1-dev
   seconds_per_case: 30.2
   total_cost: 0.0857
+
+- dirname: 2024-07-01-21-41-48--haiku-whole
+  test_cases: 133
+  model: openrouter/anthropic/claude-3-haiku
+  edit_format: whole
+  commit_hash: 75f506d
+  pass_rate_1: 40.6
+  pass_rate_2: 47.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 6
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  command: aider --model openrouter/anthropic/claude-3-haiku
+  date: 2024-07-01
+  versions: 0.41.1-dev
+  seconds_per_case: 7.1
+  total_cost: 0.1946
   
