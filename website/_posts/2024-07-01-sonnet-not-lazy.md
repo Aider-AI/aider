@@ -28,8 +28,7 @@ around this 4k limit,
 and the result is surprisingly powerful.
 Sonnet's score on
 [aider's refactoring benchmark](https://aider.chat/docs/leaderboards/#code-refactoring-leaderboard)
-jumped from 55.1% up to 64.0%
-as a result of the changes discussed below.
+jumped from 55.1% up to 64.0%.
 This moved Sonnet into second place, ahead of GPT-4o and
 behind only Opus.
 
