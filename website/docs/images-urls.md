@@ -19,10 +19,11 @@ Adding images to a chat can be helpful in many situations:
 - Screenshot an error message that is otherwise hard to copy & paste as text.
 - Etc.
 
-To add images to the chat:
+You can add images to the chat just like you would
+add any other file:
 
 - Use `/add <image-filename>` from within the chat
-- Launch aider with image filenames on the command line: `aider --sonnet <image-filename>`
+- Launch aider with image filenames on the command line: `aider <image-filename>` along with any other command line arguments you need.
 
 ## URLs
 
