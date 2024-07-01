@@ -40,6 +40,7 @@ def should_giveup(e):
         litellm.exceptions.RateLimitError,
         litellm.exceptions.ServiceUnavailableError,
         litellm.exceptions.Timeout,
+        litellm.llms.anthropic.AnthropicError,
     ),
     giveup=should_giveup,
     max_time=60,

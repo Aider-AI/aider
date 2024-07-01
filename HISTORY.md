@@ -9,6 +9,7 @@
 - Enabled [image support](https://aider.chat/docs/images-urls.html) for 3.5 Sonnet and for GPT-4o & 3.5 Sonnet via OpenRouter (by @yamitzky).
 - Added `--attribute-commit-message` to prefix aider's commit messages with "aider:".
 - Fixed regression in quality of one-line commit messages.
+- Automatically retry on Anthropic `overloaded_error`.
 - Bumped dependency versions.
 
 ### Aider v0.40.6
