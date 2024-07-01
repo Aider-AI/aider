@@ -24,6 +24,14 @@ Note that this is different than being a "ChatGPT Plus" subscriber.
 To work with Anthropic's models like Claude 3 Opus you need a paid
 [Anthropic API key](https://docs.anthropic.com/claude/reference/getting-started-with-the-api).
 
+## Manage your python environment
+
+Using a Python 
+[virtual environment](https://docs.python.org/3/library/venv.html)
+is recommended.
+Or, you could consider 
+[installing aider using pipx](/docs/install/pipx.html).
+
 ## Windows install
 
 ```
