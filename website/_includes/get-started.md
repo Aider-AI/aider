@@ -1,3 +1,4 @@
+
 You can get started quickly like this:
 
 ```
@@ -10,12 +11,7 @@ $ cd /to/your/git/repo
 $ export OPENAI_API_KEY=your-key-goes-here
 $ aider 
 
-# Or, work with Anthropic's models
+# Work with Claude 3.5 Sonnet on your repo
 $ export ANTHROPIC_API_KEY=your-key-goes-here
-
-# Claude 3 Opus
-$ aider --opus
-
-# Claude 3.5 Sonnet
-$ aider --sonnet
+$ aider
 ```

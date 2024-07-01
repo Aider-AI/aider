@@ -45,6 +45,7 @@ and works best with GPT-4o, Claude 3.5 Sonnet, Claude 3 Opus and DeepSeek Coder 
 # Because this page is rendered by GitHub as the repo README
 cog.out(open("website/_includes/get-started.md").read())
 -->
+
 You can get started quickly like this:
 
 ```
@@ -57,14 +58,9 @@ $ cd /to/your/git/repo
 $ export OPENAI_API_KEY=your-key-goes-here
 $ aider 
 
-# Or, work with Anthropic's models
+# Work with Claude 3.5 Sonnet on your repo
 $ export ANTHROPIC_API_KEY=your-key-goes-here
-
-# Claude 3 Opus
-$ aider --opus
-
-# Claude 3.5 Sonnet
-$ aider --sonnet
+$ aider
 ```
 <!-- NOOP -->
 

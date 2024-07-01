@@ -403,6 +403,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     register_models(git_root, args.model_settings_file, io)
     register_litellm_models(git_root, args.model_metadata_file, io)
 
+    if not args.model:
+        args.model = "gpt-4o"
+        if os.environ.get("ANTHROPIC_API_KEY"):
+            args.model = "claude-3-5-sonnet-20240620"
+
     main_model = models.Model(args.model, weak_model=args.weak_model)
 
     lint_cmds = parse_lint_cmds(args.lint_cmd, io)

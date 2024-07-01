@@ -72,8 +72,7 @@ Specify the Anthropic API key
 Environment variable: `ANTHROPIC_API_KEY`  
 
 ### `--model MODEL`
-Specify the model to use for the main chat (default: gpt-4o)  
-Default: gpt-4o  
+Specify the model to use for the main chat  
 Environment variable: `AIDER_MODEL`  
 
 ### `--opus`

@@ -17,6 +17,7 @@ cog.out(text)
 - Allow Claude 3.5 Sonnet to stream back >4k tokens!
   - It is the first model capable of writing such large coherent, useful code edits.
   - Do large refactors or generate multiple files of new code in one go.
+- Aider now uses `claude-3-5-sonnet-20240620` by default if `ANTHROPIC_API_KEY` is set in the environment.
 - Enabled [image support](https://aider.chat/docs/images-urls.html) for 3.5 Sonnet and for GPT-4o & 3.5 Sonnet via OpenRouter (by @yamitzky).
 - Added `--attribute-commit-message` to prefix aider's commit messages with "aider:".
 - Fixed regression in quality of one-line commit messages.

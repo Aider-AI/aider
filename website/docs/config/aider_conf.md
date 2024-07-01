@@ -47,8 +47,8 @@ cog.outl("```")
 ## Specify the Anthropic API key
 #anthropic-api-key:
 
-## Specify the model to use for the main chat (default: gpt-4o)
-#model: gpt-4o
+## Specify the model to use for the main chat
+#model:
 
 ## Use claude-3-opus-20240229 model for the main chat
 #opus: false

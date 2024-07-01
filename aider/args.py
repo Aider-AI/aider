@@ -6,7 +6,7 @@ import sys
 
 import configargparse
 
-from aider import __version__, models
+from aider import __version__
 from aider.args_formatter import (
     DotEnvFormatter,
     MarkdownHelpFormatter,
@@ -44,12 +44,11 @@ def get_parser(default_config_files, git_root):
         env_var="ANTHROPIC_API_KEY",
         help="Specify the Anthropic API key",
     )
-    default_model = models.DEFAULT_MODEL_NAME
     group.add_argument(
         "--model",
         metavar="MODEL",
-        default=default_model,
-        help=f"Specify the model to use for the main chat (default: {default_model})",
+        default=None,
+        help="Specify the model to use for the main chat",
     )
     opus_model = "claude-3-opus-20240229"
     group.add_argument(
