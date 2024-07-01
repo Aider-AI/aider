@@ -30,10 +30,6 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Install universal ctags
-      run: |
-        choco install universal-ctags
-
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
