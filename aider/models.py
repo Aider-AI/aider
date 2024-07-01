@@ -190,6 +190,7 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         examples_as_sys_msg=True,
         can_prefill=True,
+        accepts_images=True,
     ),
     ModelSettings(
         "anthropic/claude-3-5-sonnet-20240620",
@@ -206,6 +207,7 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         examples_as_sys_msg=True,
         can_prefill=True,
+        accepts_images=True,
     ),
     # Vertex AI Claude models
     ModelSettings(
@@ -215,6 +217,7 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         examples_as_sys_msg=True,
         can_prefill=True,
+        accepts_images=True,
     ),
     ModelSettings(
         "vertex_ai/claude-3-opus@20240229",
