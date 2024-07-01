@@ -296,6 +296,16 @@ MODEL_SETTINGS = [
         examples_as_sys_msg=True,
         reminder_as_sys_msg=True,
     ),
+    ModelSettings(
+        "openrouter/openai/gpt-4o",
+        "diff",
+        weak_model_name="openrouter/openai/gpt-3.5-turbo",
+        use_repo_map=True,
+        send_undo_reply=True,
+        accepts_images=True,
+        lazy=True,
+        reminder_as_sys_msg=True,
+    ),
 ]
 
 
