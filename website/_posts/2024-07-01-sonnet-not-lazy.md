@@ -45,7 +45,7 @@ regularly hit this 4k output token
 limit for a few reasons:
 
 1. Sonnet is capable of outputting a very large amount of correct,
-complete code in one response.
+complete new code in one response.
 2. Similarly, Sonnet can specify long sequences of edits in one go, 
 like changing a majority of lines while refactoring a large file.
 3. Sonnet tends to quote large chunks of a
