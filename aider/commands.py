@@ -613,14 +613,14 @@ class Commands:
             self.io.tool_output("\nNo files in chat or git repo.")
             return
 
-        if chat_files:
-            self.io.tool_output("Files in chat:\n")
-        for file in chat_files:
+        if other_files:
+            self.io.tool_output("Repo files not in the chat:\n")
+        for file in other_files:
             self.io.tool_output(f"  {file}")
 
-        if other_files:
-            self.io.tool_output("\nRepo files not in the chat:\n")
-        for file in other_files:
+        if chat_files:
+            self.io.tool_output("\nFiles in chat:\n")
+        for file in chat_files:
             self.io.tool_output(f"  {file}")
 
     def cmd_help(self, args):
