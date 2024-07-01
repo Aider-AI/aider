@@ -15,8 +15,11 @@ nav_exclude: true
 
 Claude 3.5 Sonnet represents a step change
 in AI coding.
-It is so industrious, diligent and hard working that
-it has caused multiple problems for aider.
+It is incredibly industrious, diligent and hard working.
+Unexpectedly,
+this initially presented a few challenges 
+that prevented aider from taking maximum advantage of
+Sonnet's capabilities.
 
 It's been worth the effort to adapt aider to work well
 with Sonnet,
@@ -28,46 +31,53 @@ as a result of the changes discussed below.
 This moved Sonnet into second place, ahead of GPT-4o and
 behind only Opus.
 
-## Problems
+## Hitting the 4k token output limit
 
-Sonnet's amazing work ethic caused a few problems:
+All LLMs have various token limits, the most familiar being their
+context window size.
+But they also have a limit on how many tokens they can output
+in response to a single request.
+Sonnet and the majority of other
+models are limited to returning 4k tokens.
+
+Sonnet's amazing work ethic caused it to
+regularly hit this 4k output token
+limit for a few reasons:
 
 1. Sonnet is capable of outputting a very large amount of correct,
 complete code in one response.
-So much that it can easily blow through the 4k output token limit
-on API responses, which truncates its coding in mid-stream.
-2. Similarly, Sonnet can specify large sequences of edits in one go, 
+2. Similarly, Sonnet can specify long sequences of edits in one go, 
 like changing a majority of lines while refactoring a large file.
-Again, this regularly triggered the 4k output limit
-and resulted in failed edits.
-3. Sonnet is not shy about quoting large chunks of an
-existing file to perform a SEARCH & REPLACE edit across
-a long span of lines.
-This can be wasteful and also trigger the 4k output limit.
-
+3. Sonnet tends to quote large chunks of a
+file when performing a SEARCH & REPLACE edits.
+Beyond token limits, this is very wasteful.
 
 ## Good problems
 
 Problems (1) and (2) are "good problems"
 in the sense that Sonnet is
 able to write more high quality code than any other model!
+We just don't want it to be interrupted prematurely
+by the 4k output limit.
 
 Aider now allows Sonnet to return code in multiple 4k token
 responses.
+Aider seamlessly combines them so that Sonnet can return arbitrarily
+long responses.
 This gets all the upsides of Sonnet's prolific coding skills,
 without being constrained by the 4k output token limit.
 
 
 ## Wasting tokens
 
-Problem (3) does cause some real downsides.
+Problem (3) is more complicated, as Sonnet isn't just
+being stopped early -- it's actually wasting a lot
+of tokens, time and money.
 
 Faced with a few small changes spread far apart in 
 a source file,
 Sonnet would often prefer to do one giant SEARCH/REPLACE
 operation of almost the entire file.
-This wastes a tremendous amount of tokens,
-time and money -- and risks hitting the 4k output limit.
 It would be far faster and less expensive to instead 
 do a few surgical edits.
 
