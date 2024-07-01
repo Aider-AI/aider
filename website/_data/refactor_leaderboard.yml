@@ -143,25 +143,25 @@
   seconds_per_case: 67.8
   total_cost: 20.4889
 
-
-- dirname: 2024-06-20-16-39-18--refac-claude-3.5-sonnet-diff
+- dirname: 2024-07-01-18-30-33--refac-claude-3.5-sonnet-diff-not-lazy
   test_cases: 89
   model: claude-3.5-sonnet (diff)
   edit_format: diff
-  commit_hash: e5e07f9
-  pass_rate_1: 55.1
-  percent_cases_well_formed: 70.8
-  error_outputs: 240
-  num_malformed_responses: 54
-  num_with_malformed_responses: 26
-  user_asks: 10
+  commit_hash: 7396e38-dirty
+  pass_rate_1: 64.0
+  percent_cases_well_formed: 76.4
+  error_outputs: 176
+  num_malformed_responses: 39
+  num_with_malformed_responses: 21
+  user_asks: 11
   lazy_comments: 2
-  syntax_errors: 0
-  indentation_errors: 3
+  syntax_errors: 4
+  indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
   command: aider --model openrouter/anthropic/claude-3.5-sonnet
-  date: 2024-06-20
-  versions: 0.38.1-dev
-  seconds_per_case: 51.9
-  total_cost: 0.0000
+  date: 2024-07-01
+  versions: 0.40.7-dev
+  seconds_per_case: 42.8
+  total_cost: 11.5242
+  
