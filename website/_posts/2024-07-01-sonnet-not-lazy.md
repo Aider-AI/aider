@@ -20,7 +20,7 @@ Unexpectedly,
 this initially presented a few challenges 
 that prevented aider from taking maximum advantage of
 Sonnet's capabilities.
-It was often hitting the 4k output token limit,
+Sonnet was often hitting the 4k output token limit,
 truncating its coding in mid-stream.
 
 It's been worth the effort to adapt aider to work 
