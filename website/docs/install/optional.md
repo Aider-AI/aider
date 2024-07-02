@@ -12,20 +12,10 @@ The steps below are completely optional.
 {:toc}
 
 
-## Store your api key 
+## Store your api keys 
 
-You can place your api key in an environment variable:
-
-* `export OPENAI_API_KEY=sk-...` on Linux or Mac
-* `setx OPENAI_API_KEY sk-...` in Windows PowerShell
-
-Or you can create a `.aider.conf.yml` file in your home directory.
-Put a line in it like this to specify your api key:
-
-```
-openai-api-key: sk-...
-```
-
+You can place your [api keys in a `.env` file](/docs/config/dotenv.html)
+and they will be loaded automatically whenever you run aider.
 
 ## Enable Playwright 
 
