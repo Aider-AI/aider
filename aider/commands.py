@@ -2,7 +2,10 @@ import os
 import re
 import subprocess
 import sys
+
 from pathlib import Path
+from PIL import ImageGrab
+import tempfile
 
 import git
 import openai
@@ -483,6 +486,20 @@ class Commands:
 
         reply = prompts.added_files.format(fnames=", ".join(added_fnames))
         return reply
+    
+    def cmd_addimgclipboard(self, args):
+        exception_text = ""
+        try:
+            image = ImageGrab.grabclipboard()
+            if image:
+                file = tempfile.NamedTemporaryFile(suffix=".png")
+                image.save(file.name, 'PNG')
+                return self.cmd_add(file.name)
+        except Exception as e:
+            exception_text = str(e)
+            pass
+
+        return self.io.tool_error("No image found in clipboard. " + exception_text)
 
     def completions_drop(self, partial):
         files = self.coder.get_inchat_relative_files()
