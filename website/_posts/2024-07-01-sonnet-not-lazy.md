@@ -17,15 +17,16 @@ Claude 3.5 Sonnet represents a step change
 in AI coding.
 It is incredibly industrious, diligent and hard working.
 Unexpectedly,
-this initially presented a few challenges 
-that prevented aider from taking maximum advantage of
-Sonnet's capabilities.
-It was often hitting the 4k output token limit,
+this presented a challenge:
+Sonnet
+was often writing so much code that
+it was hitting the 4k output token limit,
 truncating its coding in mid-stream.
 
-It's been worth the effort to adapt aider to work 
-around this 4k limit,
-and the result is surprisingly powerful.
+Aider now works
+around this 4k limit and allows Sonnet to produce
+as much code as it wants.
+The result is surprisingly powerful.
 Sonnet's score on
 [aider's refactoring benchmark](https://aider.chat/docs/leaderboards/#code-refactoring-leaderboard)
 jumped from 55.1% up to 64.0%.
