@@ -61,7 +61,11 @@ class ChatSummary:
         sized.reverse()
         keep = []
         total = 0
-        model_max_input_tokens = self.model.info.get("max_input_tokens", 4096) - 512
+
+        # These sometimes come set with value = None
+        model_max_input_tokens = self.model.info.get("max_input_tokens") or 4096
+        model_max_input_tokens -= 512
+
         for i in range(split_index):
             total += sized[i][0]
             if total > model_max_input_tokens:
