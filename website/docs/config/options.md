@@ -356,7 +356,7 @@ Aliases:
   - `--auto-lint`
   - `--no-auto-lint`
 
-### `--test-cmd`
+### `--test-cmd VALUE`
 Specify command to run tests  
 Default: []  
 Environment variable: `AIDER_TEST_CMD`  
