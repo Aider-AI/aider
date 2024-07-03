@@ -2,6 +2,7 @@ import configparser
 import os
 import re
 import sys
+import threading
 from pathlib import Path
 
 import git
@@ -536,6 +537,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             return 1
         return
 
+    threading.Thread(target=load_slow_imports).start()
+
     while True:
         try:
             coder.run()
@@ -543,6 +546,17 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         except SwitchModel as switch:
             coder = Coder.create(main_model=switch.model, io=io, from_coder=coder)
             coder.show_announcements()
+
+
+def load_slow_imports():
+    # These imports are deferred in various ways to
+    # improve startup time.
+    # This func is called in a thread to load them in the background
+    # while we wait for the user to type their first message.
+    import httpx  # noqa: F401
+    import litellm  # noqa: F401
+    import networkx  # noqa: F401
+    import numpy  # noqa: F401
 
 
 if __name__ == "__main__":

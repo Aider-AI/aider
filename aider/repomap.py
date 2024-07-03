@@ -58,15 +58,6 @@ class RepoMap:
         self.token_count = main_model.token_count
         self.repo_content_prefix = repo_content_prefix
 
-    def import_nx(self):
-        """Import nx as needed, to avoid 250ms on launch"""
-
-        if self.nx:
-            return
-        import networkx as nx
-
-        self.nx = nx
-
     def get_repo_map(self, chat_files, other_files, mentioned_fnames=None, mentioned_idents=None):
         if self.max_map_tokens <= 0:
             return
@@ -239,7 +230,7 @@ class RepoMap:
             )
 
     def get_ranked_tags(self, chat_fnames, other_fnames, mentioned_fnames, mentioned_idents):
-        self.import_nx()
+        import networkx as nx
 
         defines = defaultdict(set)
         references = defaultdict(list)
@@ -306,7 +297,7 @@ class RepoMap:
 
         idents = set(defines.keys()).intersection(set(references.keys()))
 
-        G = self.nx.MultiDiGraph()
+        G = nx.MultiDiGraph()
 
         for ident in idents:
             definers = defines[ident]
@@ -337,7 +328,7 @@ class RepoMap:
             pers_args = dict()
 
         try:
-            ranked = self.nx.pagerank(G, weight="weight", **pers_args)
+            ranked = nx.pagerank(G, weight="weight", **pers_args)
         except ZeroDivisionError:
             return []
 
