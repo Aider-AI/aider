@@ -31,7 +31,6 @@ class RepoMap:
     cache_missing = False
 
     warned_files = set()
-    nx = None
 
     def __init__(
         self,
