@@ -28,7 +28,7 @@ aux_links:
   "Discord":
     - "https://discord.gg/Tv2uQnR88V"
   "Blog":
-    - "/blog"
+    - "/blog/"
 
 nav_external_links:
   - title: "GitHub"
