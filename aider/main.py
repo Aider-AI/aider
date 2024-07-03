@@ -8,7 +8,6 @@ import git
 import httpx
 from dotenv import load_dotenv
 from prompt_toolkit.enums import EditingMode
-from streamlit.web import cli
 
 from aider import __version__, models, utils
 from aider.args import get_parser
@@ -150,6 +149,8 @@ def scrub_sensitive_info(args, text):
 
 
 def launch_gui(args):
+    from streamlit.web import cli
+
     from aider import gui
 
     print()

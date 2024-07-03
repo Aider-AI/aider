@@ -1,9 +1,11 @@
 import difflib
+import importlib
 import json
 import math
 import os
 import sys
 from dataclasses import dataclass, fields
+from pathlib import Path
 from typing import Optional
 
 import yaml
@@ -40,7 +42,7 @@ gpt-3.5-turbo-16k
 gpt-3.5-turbo-16k-0613
 """
 
-OPENAI_MODELS = [ln.strip for ln in OPENAI_MODELS.splitlines() if ln.strip()]
+OPENAI_MODELS = [ln.strip() for ln in OPENAI_MODELS.splitlines() if ln.strip()]
 
 ANTHROPIC_MODELS = """
 claude-2
@@ -51,7 +53,7 @@ claude-3-sonnet-20240229
 claude-3-5-sonnet-20240620
 """
 
-ANTHROPIC_MODELS = [ln.strip for ln in ANTHROPIC_MODELS.splitlines() if ln.strip()]
+ANTHROPIC_MODELS = [ln.strip() for ln in ANTHROPIC_MODELS.splitlines() if ln.strip()]
 
 
 @dataclass
@@ -365,25 +367,7 @@ class Model:
     def __init__(self, model, weak_model=None):
         self.name = model
 
-        # Do we have the model_info?
-        try:
-            self.info = litellm.get_model_info(model)
-        except Exception:
-            self.info = dict()
-
-        if not self.info and "gpt-4o" in self.name:
-            self.info = {
-                "max_tokens": 4096,
-                "max_input_tokens": 128000,
-                "max_output_tokens": 4096,
-                "input_cost_per_token": 5e-06,
-                "output_cost_per_token": 1.5e-5,
-                "litellm_provider": "openai",
-                "mode": "chat",
-                "supports_function_calling": True,
-                "supports_parallel_function_calling": True,
-                "supports_vision": True,
-            }
+        self.info = self.get_model_info(model)
 
         # Are all needed keys/params available?
         res = self.validate_environment()
@@ -403,6 +387,24 @@ class Model:
             self.weak_model_name = None
         else:
             self.get_weak_model(weak_model)
+
+    def get_model_info(self, model):
+        # Try and do this quickly, without triggering the litellm import
+        spec = importlib.util.find_spec("litellm")
+        if spec:
+            origin = Path(spec.origin)
+            fname = origin.parent / "model_prices_and_context_window_backup.json"
+            if fname.exists():
+                data = json.loads(fname.read_text())
+                info = data.get(model)
+                if info:
+                    return info
+
+        # Do it the slow way...
+        try:
+            self.info = litellm.get_model_info(model)
+        except Exception:
+            self.info = dict()
 
     def configure_model_settings(self, model):
         for ms in MODEL_SETTINGS:
