@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import mimetypes
 import os
 import re
 import sys
@@ -575,11 +576,12 @@ class Coder:
         image_messages = []
         for fname, content in self.get_abs_fnames_content():
             if is_image_file(fname):
-                # todo: use a proper tool to convert fname to media type
-                image_url = f"data:image/{Path(fname).suffix.lstrip('.')};base64,{content}"
-                image_messages.append(
-                    {"type": "image_url", "image_url": {"url": image_url, "detail": "high"}}
-                )
+                mime_type, _ = mimetypes.guess_type(fname)
+                if mime_type and mime_type.startswith("image/"):
+                    image_url = f"data:{mime_type};base64,{content}"
+                    image_messages.append(
+                        {"type": "image_url", "image_url": {"url": image_url, "detail": "high"}}
+                    )
 
         if not image_messages:
             return None
