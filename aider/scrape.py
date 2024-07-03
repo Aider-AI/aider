@@ -3,7 +3,6 @@
 import re
 import sys
 
-import httpx
 import playwright
 import pypandoc
 from bs4 import BeautifulSoup
@@ -111,6 +110,8 @@ class Scraper:
         return PLAYWRIGHT_INFO
 
     def scrape_with_httpx(self, url):
+        import httpx
+
         headers = {"User-Agent": f"Mozilla./5.0 ({aider_user_agent})"}
         try:
             with httpx.Client(headers=headers) as client:

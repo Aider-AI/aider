@@ -2,7 +2,6 @@ import hashlib
 import json
 
 import backoff
-import httpx
 
 from aider.dump import dump  # noqa: F401
 from aider.litellm import litellm
@@ -17,6 +16,8 @@ CACHE = None
 
 def lazy_litellm_retry_decorator(func):
     def wrapper(*args, **kwargs):
+        import httpx
+
         def should_giveup(e):
             if not hasattr(e, "status_code"):
                 return False
