@@ -402,9 +402,9 @@ class Model:
 
         # Do it the slow way...
         try:
-            self.info = litellm.get_model_info(model)
+            return litellm.get_model_info(model)
         except Exception:
-            self.info = dict()
+            return dict()
 
     def configure_model_settings(self, model):
         for ms in MODEL_SETTINGS:
