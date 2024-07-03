@@ -5,7 +5,6 @@ import sys
 from pathlib import Path
 
 import git
-import openai
 from prompt_toolkit.completion import Completion
 
 from aider import models, prompts, voice
@@ -685,7 +684,7 @@ class Commands:
 
         try:
             text = self.voice.record_and_transcribe(history, language=self.voice_language)
-        except openai.OpenAIError as err:
+        except litellm.OpenAIError as err:
             self.io.tool_error(f"Unable to use OpenAI whisper model: {err}")
             return
 
