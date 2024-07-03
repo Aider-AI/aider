@@ -15,40 +15,49 @@ CACHE = None
 # CACHE = Cache(CACHE_PATH)
 
 
-def should_giveup(e):
-    if not hasattr(e, "status_code"):
-        return False
+def lazy_litellm_retry_decorator(func):
+    def wrapper(*args, **kwargs):
+        def should_giveup(e):
+            if not hasattr(e, "status_code"):
+                return False
 
-    if type(e) in (
-        httpx.ConnectError,
-        httpx.RemoteProtocolError,
-        httpx.ReadTimeout,
-    ):
-        return False
+            if type(e) in (
+                httpx.ConnectError,
+                httpx.RemoteProtocolError,
+                httpx.ReadTimeout,
+            ):
+                return False
 
-    return not litellm._should_retry(e.status_code)
+            return not litellm._should_retry(e.status_code)
+
+        decorated_func = backoff.on_exception(
+            backoff.expo,
+            (
+                httpx.ConnectError,
+                httpx.RemoteProtocolError,
+                httpx.ReadTimeout,
+                litellm.exceptions.APIConnectionError,
+                litellm.exceptions.APIError,
+                litellm.exceptions.RateLimitError,
+                litellm.exceptions.ServiceUnavailableError,
+                litellm.exceptions.Timeout,
+                litellm.llms.anthropic.AnthropicError,
+            ),
+            giveup=should_giveup,
+            max_time=60,
+            on_backoff=lambda details: print(
+                f"{details.get('exception','Exception')}\nRetry in {details['wait']:.1f} seconds."
+            ),
+        )(func)
+        return decorated_func(*args, **kwargs)
+
+    return wrapper
 
 
-@backoff.on_exception(
-    backoff.expo,
-    (
-        httpx.ConnectError,
-        httpx.RemoteProtocolError,
-        httpx.ReadTimeout,
-        litellm.exceptions.APIConnectionError,
-        litellm.exceptions.APIError,
-        litellm.exceptions.RateLimitError,
-        litellm.exceptions.ServiceUnavailableError,
-        litellm.exceptions.Timeout,
-        litellm.llms.anthropic.AnthropicError,
-    ),
-    giveup=should_giveup,
-    max_time=60,
-    on_backoff=lambda details: print(
-        f"{details.get('exception','Exception')}\nRetry in {details['wait']:.1f} seconds."
-    ),
-)
+@lazy_litellm_retry_decorator
 def send_with_retries(model_name, messages, functions, stream, temperature=0):
+    from aider.litellm import litellm
+
     kwargs = dict(
         model=model_name,
         messages=messages,

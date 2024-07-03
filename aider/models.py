@@ -15,6 +15,44 @@ from aider.litellm import litellm
 
 DEFAULT_MODEL_NAME = "gpt-4o"
 
+OPENAI_MODELS = """
+gpt-4
+gpt-4o
+gpt-4o-2024-05-13
+gpt-4-turbo-preview
+gpt-4-0314
+gpt-4-0613
+gpt-4-32k
+gpt-4-32k-0314
+gpt-4-32k-0613
+gpt-4-turbo
+gpt-4-turbo-2024-04-09
+gpt-4-1106-preview
+gpt-4-0125-preview
+gpt-4-vision-preview
+gpt-4-1106-vision-preview
+gpt-3.5-turbo
+gpt-3.5-turbo-0301
+gpt-3.5-turbo-0613
+gpt-3.5-turbo-1106
+gpt-3.5-turbo-0125
+gpt-3.5-turbo-16k
+gpt-3.5-turbo-16k-0613
+"""
+
+OPENAI_MODELS = [ln.strip for ln in OPENAI_MODELS.splitlines() if ln.strip()]
+
+ANTHROPIC_MODELS = """
+claude-2
+claude-2.1
+claude-3-haiku-20240307
+claude-3-opus-20240229
+claude-3-sonnet-20240229
+claude-3-5-sonnet-20240620
+"""
+
+ANTHROPIC_MODELS = [ln.strip for ln in ANTHROPIC_MODELS.splitlines() if ln.strip()]
+
 
 @dataclass
 class ModelSettings:
@@ -491,7 +529,25 @@ class Model:
         with Image.open(fname) as img:
             return img.size
 
+    def fast_validate_environment(self):
+        """Fast path for common models. Avoids forcing litellm import."""
+
+        model = self.name
+        if model in OPENAI_MODELS:
+            var = "OPENAI_API_KEY"
+        elif model in ANTHROPIC_MODELS:
+            var = "ANTHROPIC_API_KEY"
+        else:
+            return
+
+        if os.environ.get(var):
+            return dict(keys_in_environment=[var], missing_keys=[])
+
     def validate_environment(self):
+        res = self.fast_validate_environment()
+        if res:
+            return res
+
         # https://github.com/BerriAI/litellm/issues/3190
 
         model = self.name
