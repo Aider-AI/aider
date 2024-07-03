@@ -463,6 +463,12 @@ def get_parser(default_config_files, git_root):
         default=False,
     )
     group.add_argument(
+        "--exit",
+        action="store_true",
+        help="Do all startup activities then exit before accepting user input (debug)",
+        default=False,
+    )
+    group.add_argument(
         "--message",
         "--msg",
         "-m",
