@@ -41,7 +41,7 @@ class Commands:
         raise SwitchModel(model)
 
     def completions_model(self):
-        models = []  # litellm.model_cost.keys()
+        models = litellm.model_cost.keys()
         return models
 
     def cmd_models(self, args):
@@ -79,20 +79,22 @@ class Commands:
     def is_command(self, inp):
         return inp[0] in "/!"
 
-    def get_commands(self, with_completions=False):
-        commands = dict()
+    def get_completions(self, cmd):
+        assert cmd.startswith("/")
+        cmd = cmd[1:]
+
+        fun = getattr(self, f"completions_{cmd}", None)
+        if not fun:
+            return []
+        return sorted(fun())
+
+    def get_commands(self):
+        commands = []
         for attr in dir(self):
             if not attr.startswith("cmd_"):
                 continue
-
             cmd = attr[4:]
-            completions = getattr(self, f"completions_{cmd}", None)
-            if completions and with_completions:
-                completions = sorted(completions())
-            else:
-                completions = []
-
-            commands["/" + cmd] = completions
+            commands.append("/" + cmd)
 
         return commands
 
@@ -112,7 +114,7 @@ class Commands:
         first_word = words[0]
         rest_inp = inp[len(words[0]) :]
 
-        all_commands = self.get_commands().keys()
+        all_commands = self.get_commands()
         matching_commands = [cmd for cmd in all_commands if cmd.startswith(first_word)]
         return matching_commands, first_word, rest_inp
 
@@ -618,7 +620,7 @@ class Commands:
 
     def cmd_help(self, args):
         "Show help about all commands"
-        commands = sorted(self.get_commands().keys())
+        commands = sorted(self.get_commands())
         for cmd in commands:
             cmd_method_name = f"cmd_{cmd[1:]}"
             cmd_method = getattr(self, cmd_method_name, None)
@@ -632,7 +634,7 @@ class Commands:
         "Show help about all commands in markdown"
 
         res = ""
-        commands = sorted(self.get_commands().keys())
+        commands = sorted(self.get_commands())
         for cmd in commands:
             cmd_method_name = f"cmd_{cmd[1:]}"
             cmd_method = getattr(self, cmd_method_name, None)

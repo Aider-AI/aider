@@ -36,12 +36,9 @@ class AutoCompleter(Completer):
 
         self.words = set()
 
-        import time
-
-        start = time.time()
-        self.commands = commands.get_commands(with_completions=True)
-        dur = time.time() - start
-        dump(dur)
+        self.commands = commands
+        self.command_names = self.commands.get_commands()
+        self.command_completions = dict()
 
         for rel_fname in addable_rel_fnames:
             self.words.add(rel_fname)
@@ -71,7 +68,7 @@ class AutoCompleter(Completer):
         if text[0] == "/":
             if len(words) == 1 and not text[-1].isspace():
                 partial = words[0]
-                candidates = self.commands.keys()
+                candidates = self.command_names
                 for cmd in candidates:
                     if cmd.startswith(partial):
                         yield Completion(cmd, start_position=-len(partial))
@@ -79,7 +76,14 @@ class AutoCompleter(Completer):
                 cmd = words[0]
                 partial = words[-1]
 
-                candidates = self.commands.get(cmd, [])
+                if cmd not in self.command_names:
+                    return
+                if cmd not in self.command_completions:
+                    candidates = self.commands.get_completions(cmd)
+                    self.command_completions[cmd] = candidates
+                else:
+                    candidates = self.command_completions[cmd]
+
                 for word in candidates:
                     if partial in word:
                         yield Completion(word, start_position=-len(partial))
