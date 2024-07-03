@@ -13,21 +13,21 @@ with open("README.md", "r", encoding="utf-8") as f:
     # long_description = re.sub(r"\n- \[.*\]\(.*\)", "", long_description)
 
 setup(
-    name="aider-chat",
+    name="razor-genie",
     version=__version__,
     packages=find_packages(),
     include_package_data=True,
     package_data={
-        "aider": ["queries/*"],
+        "razor_genie": ["queries/*"],
     },
     install_requires=requirements,
     python_requires=">=3.9,<3.13",
     entry_points={
         "console_scripts": [
-            "aider = aider.main:main",
+            "razorgenie = aider.main:main",
         ],
     },
-    description="Aider is AI pair programming in your terminal",
+    description="Razorgenie is a AI pair programming in your terminal",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/paul-gauthier/aider",
