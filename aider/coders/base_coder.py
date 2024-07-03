@@ -13,7 +13,6 @@ from json.decoder import JSONDecodeError
 from pathlib import Path
 
 import git
-from jsonschema import Draft7Validator
 from rich.console import Console, Text
 from rich.markdown import Markdown
 
@@ -346,6 +345,8 @@ class Coder:
 
         # validate the functions jsonschema
         if self.functions:
+            from jsonschema import Draft7Validator
+
             for function in self.functions:
                 Draft7Validator.check_schema(function)
 

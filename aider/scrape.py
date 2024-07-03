@@ -5,7 +5,6 @@ import sys
 
 import playwright
 import pypandoc
-from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 
 from aider import __version__, urls
@@ -58,7 +57,6 @@ class Scraper:
         self.try_pandoc()
 
         content = self.html_to_markdown(content)
-        # content = html_to_text(content)
 
         return content
 
@@ -139,6 +137,8 @@ class Scraper:
         self.pandoc_available = True
 
     def html_to_markdown(self, page_source):
+        from bs4 import BeautifulSoup
+
         soup = BeautifulSoup(page_source, "html.parser")
         soup = slimdown_html(soup)
         page_source = str(soup)
@@ -172,24 +172,6 @@ def slimdown_html(soup):
                 tag.attrs.pop(attr, None)
 
     return soup
-
-
-# Adapted from AutoGPT, MIT License
-#
-# https://github.com/Significant-Gravitas/AutoGPT/blob/fe0923ba6c9abb42ac4df79da580e8a4391e0418/autogpts/autogpt/autogpt/commands/web_selenium.py#L173
-
-
-def html_to_text(page_source: str) -> str:
-    soup = BeautifulSoup(page_source, "html.parser")
-
-    for script in soup(["script", "style"]):
-        script.extract()
-
-    text = soup.get_text()
-    lines = (line.strip() for line in text.splitlines())
-    chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
-    text = "\n".join(chunk for chunk in chunks if chunk)
-    return text
 
 
 def main(url):
