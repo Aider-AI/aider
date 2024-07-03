@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 from PIL import ImageGrab
 import tempfile
+import shutil
 
 import git
 import openai
@@ -492,9 +493,15 @@ class Commands:
         try:
             image = ImageGrab.grabclipboard()
             if image:
-                file = tempfile.NamedTemporaryFile(suffix=".png")
-                image.save(file.name, 'PNG')
-                return self.cmd_add(file.name)
+                tmp = tempfile.mkdtemp()
+                f = tempfile.NamedTemporaryFile(mode='w+t', delete=False, suffix='.png')
+                file_name = f.name
+                image.save(file_name, 'PNG')
+                f.close()
+                shutil.copy(file_name, tmp)
+                os.remove(file_name)
+                true_file_name = os.path.join(tmp, os.path.basename(file_name))
+                return self.cmd_add(true_file_name)
         except Exception as e:
             exception_text = str(e)
             pass
