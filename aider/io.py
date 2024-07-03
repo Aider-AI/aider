@@ -23,7 +23,6 @@ from .utils import is_image_file
 
 class AutoCompleter(Completer):
     def __init__(self, root, rel_fnames, addable_rel_fnames, commands, encoding):
-        self.commands = commands
         self.addable_rel_fnames = addable_rel_fnames
         self.rel_fnames = rel_fnames
         self.encoding = encoding
@@ -36,6 +35,13 @@ class AutoCompleter(Completer):
         self.fname_to_rel_fnames = fname_to_rel_fnames
 
         self.words = set()
+
+        import time
+
+        start = time.time()
+        self.commands = commands.get_commands(with_completions=True)
+        dur = time.time() - start
+        dump(dur)
 
         for rel_fname in addable_rel_fnames:
             self.words.add(rel_fname)
@@ -64,16 +70,24 @@ class AutoCompleter(Completer):
 
         if text[0] == "/":
             if len(words) == 1 and not text[-1].isspace():
-                candidates = self.commands.get_commands()
-                candidates = [(cmd, cmd) for cmd in candidates]
-            else:
-                for completion in self.commands.get_command_completions(words[0][1:], words[-1]):
-                    yield completion
-                return
-        else:
-            candidates = self.words
-            candidates.update(set(self.fname_to_rel_fnames))
-            candidates = [(word, f"`{word}`") for word in candidates]
+                partial = words[0]
+                candidates = self.commands.keys()
+                for cmd in candidates:
+                    if cmd.startswith(partial):
+                        yield Completion(cmd, start_position=-len(partial))
+            elif len(words) > 1:
+                cmd = words[0]
+                partial = words[-1]
+
+                candidates = self.commands.get(cmd, [])
+                for word in candidates:
+                    if partial in word:
+                        yield Completion(word, start_position=-len(partial))
+            return
+
+        candidates = self.words
+        candidates.update(set(self.fname_to_rel_fnames))
+        candidates = [(word, f"`{word}`") for word in candidates]
 
         last_word = words[-1]
         for word_match, word_insert in candidates:
@@ -277,8 +291,8 @@ class InputOutput:
     def log_llm_history(self, role, content):
         if not self.llm_history_file:
             return
-        timestamp = datetime.now().isoformat(timespec='seconds')
-        with open(self.llm_history_file, 'a', encoding=self.encoding) as log_file:
+        timestamp = datetime.now().isoformat(timespec="seconds")
+        with open(self.llm_history_file, "a", encoding=self.encoding) as log_file:
             log_file.write(f"{role.upper()} {timestamp}\n")
             log_file.write(content + "\n")
 
