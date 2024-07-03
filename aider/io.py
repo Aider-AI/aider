@@ -72,7 +72,7 @@ class AutoCompleter(Completer):
                 for cmd in candidates:
                     if cmd.startswith(partial):
                         yield Completion(cmd, start_position=-len(partial))
-            elif len(words) > 1:
+            elif len(words) > 1 and not text[-1].isspace():
                 cmd = words[0]
                 partial = words[-1]
 

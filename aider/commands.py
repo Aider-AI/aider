@@ -381,6 +381,7 @@ class Commands:
     def completions_add(self):
         files = set(self.coder.get_all_relative_files())
         files = files - set(self.coder.get_inchat_relative_files())
+        files = [self.quote_fname(fn) for fn in files]
         return files
 
     def glob_filtered_to_repo(self, pattern):
@@ -484,6 +485,7 @@ class Commands:
 
     def completions_drop(self):
         files = self.coder.get_inchat_relative_files()
+        files = [self.quote_fname(fn) for fn in files]
         return files
 
     def cmd_drop(self, args=""):
