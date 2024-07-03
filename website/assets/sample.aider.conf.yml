@@ -223,6 +223,9 @@
 ## Print the system prompts and exit (debug)
 #show-prompts: false
 
+## Do all startup activities then exit before accepting user input (debug)
+#exit: false
+
 ## Specify a single message to send the LLM, process reply then exit (disables chat mode)
 #message:
 

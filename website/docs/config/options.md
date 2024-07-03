@@ -48,7 +48,7 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--test-cmd] [--auto-test | --no-auto-test] [--test]
              [--vim] [--voice-language] [--version] [--check-update]
              [--skip-check-update] [--apply] [--yes] [-v]
-             [--show-repo-map] [--show-prompts] [--message]
+             [--show-repo-map] [--show-prompts] [--exit] [--message]
              [--message-file] [--encoding] [-c] [--gui]
 
 ```
@@ -424,6 +424,11 @@ Environment variable: `AIDER_SHOW_REPO_MAP`
 Print the system prompts and exit (debug)  
 Default: False  
 Environment variable: `AIDER_SHOW_PROMPTS`  
+
+### `--exit`
+Do all startup activities then exit before accepting user input (debug)  
+Default: False  
+Environment variable: `AIDER_EXIT`  
 
 ### `--message COMMAND`
 Specify a single message to send the LLM, process reply then exit (disables chat mode)  
