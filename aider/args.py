@@ -385,7 +385,6 @@ def get_parser(default_config_files, git_root):
     )
     group.add_argument(
         "--test-cmd",
-        action="append",
         help="Specify command to run tests",
         default=[],
     )
