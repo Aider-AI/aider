@@ -39,6 +39,9 @@ def fname_to_url(filepath):
     docid = ""
     if filepath.startswith("website/_includes/"):
         pass
+    elif "HISTORY.html" in filepath:
+        # too much stale info
+        pass
     elif filepath.startswith(website):
         docid = filepath[len(website) :]
 

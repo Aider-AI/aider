@@ -623,8 +623,28 @@ class Commands:
         for file in chat_files:
             self.io.tool_output(f"  {file}")
 
+    def basic_help(self):
+        commands = sorted(self.get_commands())
+        pad = max(len(cmd) for cmd in commands)
+        pad = "{cmd:" + str(pad) + "}"
+        for cmd in commands:
+            cmd_method_name = f"cmd_{cmd[1:]}"
+            cmd_method = getattr(self, cmd_method_name, None)
+            cmd = pad.format(cmd=cmd)
+            if cmd_method:
+                description = cmd_method.__doc__
+                self.io.tool_output(f"{cmd} {description}")
+            else:
+                self.io.tool_output(f"{cmd} No description available.")
+        self.io.tool_output()
+        self.io.tool_output("Use `/help <question>` to ask questions about how to use aider.")
+
     def cmd_help(self, args):
-        "Show help about all commands"
+        "Ask questions about aider"
+
+        if not args.strip():
+            self.basic_help()
+            return
 
         from aider.coders import Coder
 
