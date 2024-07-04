@@ -556,10 +556,13 @@ def load_slow_imports():
     # improve startup time.
     # This func is called in a thread to load them in the background
     # while we wait for the user to type their first message.
-    import httpx  # noqa: F401
-    import litellm  # noqa: F401
-    import networkx  # noqa: F401
-    import numpy  # noqa: F401
+    try:
+        import httpx  # noqa: F401
+        import litellm  # noqa: F401
+        import networkx  # noqa: F401
+        import numpy  # noqa: F401
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":
