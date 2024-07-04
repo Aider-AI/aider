@@ -17,6 +17,7 @@ def get_package_files():
     website_files = importlib_resources.files('website')
     for path in website_files.rglob('*.md'):
         if not any(part.startswith(('OLD', 'tmp')) or part in ('examples', '_posts') for part in path.parts):
+            dump(path)
             yield str(path)
 
 
