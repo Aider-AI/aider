@@ -15,11 +15,10 @@ with open("README.md", "r", encoding="utf-8") as f:
 setup(
     name="aider-chat",
     version=__version__,
-    packages=find_packages() + ['website'],
+    packages=find_packages(),
     include_package_data=True,
     package_data={
         "aider": ["queries/*"],
-        "": ["website/**/*", "!website/_posts/**/*"],
     },
     install_requires=requirements,
     python_requires=">=3.9,<3.13",
