@@ -22,7 +22,7 @@ from aider.commands import Commands
 from aider.history import ChatSummary
 from aider.io import InputOutput
 from aider.linter import Linter
-from aider.litellm import litellm
+from aider.llm import litellm
 from aider.mdstream import MarkdownStream
 from aider.repo import GitRepo
 from aider.repomap import RepoMap

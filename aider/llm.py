@@ -1,3 +1,4 @@
+import importlib
 import os
 import warnings
 
@@ -15,7 +16,7 @@ class LazyLiteLLM:
 
     def __getattr__(self, name):
         if self._lazy_module is None:
-            self._lazy_module = __import__("litellm")
+            self._lazy_module = importlib.import_module("litellm")
 
             self._lazy_module.suppress_debug_info = True
             self._lazy_module.set_verbose = False

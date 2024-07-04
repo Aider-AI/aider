@@ -14,7 +14,7 @@ from aider.args import get_parser
 from aider.coders import Coder
 from aider.commands import SwitchModel
 from aider.io import InputOutput
-from aider.litellm import litellm  # noqa: F401; properly init litellm on launch
+from aider.llm import litellm  # noqa: F401; properly init litellm on launch
 from aider.repo import GitRepo
 from aider.versioncheck import check_version
 
@@ -249,7 +249,7 @@ def register_models(git_root, model_settings_fname, io):
 
 def register_litellm_models(git_root, model_metadata_fname, io):
     model_metatdata_files = generate_search_path_list(
-        ".aider.litellm.models.json", git_root, model_metadata_fname
+        ".aider.llm.models.json", git_root, model_metadata_fname
     )
 
     try:

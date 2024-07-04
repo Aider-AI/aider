@@ -4,7 +4,7 @@ import json
 import backoff
 
 from aider.dump import dump  # noqa: F401
-from aider.litellm import litellm
+from aider.llm import litellm
 
 # from diskcache import Cache
 
@@ -57,7 +57,7 @@ def lazy_litellm_retry_decorator(func):
 
 @lazy_litellm_retry_decorator
 def send_with_retries(model_name, messages, functions, stream, temperature=0):
-    from aider.litellm import litellm
+    from aider.llm import litellm
 
     kwargs = dict(
         model=model_name,

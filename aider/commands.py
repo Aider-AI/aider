@@ -7,7 +7,7 @@ from pathlib import Path
 import git
 
 from aider import models, prompts, voice
-from aider.litellm import litellm
+from aider.llm import litellm
 from aider.scrape import Scraper
 from aider.utils import is_image_file
 
