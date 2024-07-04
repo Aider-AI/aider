@@ -607,35 +607,35 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model openrouter/anthropic/claude-3.5-sonnet --edit-format whole
+  command: aider --sonnet --edit-format whole
   date: 2024-06-20
   versions: 0.38.1-dev
   seconds_per_case: 15.4
   total_cost: 0.0000
 
-- dirname: 2024-06-20-15-16-41--claude-3.5-sonnet-diff
+- dirname: 2024-07-04-14-32-08--claude-3.5-sonnet-diff-continue
   test_cases: 133
-  model: claude-3.5-sonnet (diff)
+  model: openrouter/anthropic/claude-3.5-sonnet
   edit_format: diff
-  commit_hash: 068609e-dirty
-  pass_rate_1: 57.9
-  pass_rate_2: 74.4
-  percent_cases_well_formed: 97.0
-  error_outputs: 48
-  num_malformed_responses: 11
-  num_with_malformed_responses: 4
-  user_asks: 0
+  commit_hash: 35f21b5
+  pass_rate_1: 57.1
+  pass_rate_2: 77.4
+  percent_cases_well_formed: 99.2
+  error_outputs: 23
+  num_malformed_responses: 4
+  num_with_malformed_responses: 1
+  user_asks: 2
   lazy_comments: 0
-  syntax_errors: 0
+  syntax_errors: 1
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openrouter/anthropic/claude-3.5-sonnet
-  date: 2024-06-20
-  versions: 0.38.1-dev
-  seconds_per_case: 21.6
-  total_cost: 0.0000
-
+  command: aider --sonnet
+  date: 2024-07-04
+  versions: 0.42.1-dev
+  seconds_per_case: 17.6
+  total_cost: 3.6346
+  
 - dirname: 2024-06-17-14-45-54--deepseek-coder2-whole
   test_cases: 133
   model: DeepSeek Coder V2 (whole)
