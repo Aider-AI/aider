@@ -231,7 +231,7 @@ def generate_search_path_list(default_fname, git_root, command_line_file):
 
 def register_models(git_root, model_settings_fname, io):
     model_settings_files = generate_search_path_list(
-        ".aider.models.yml", git_root, model_settings_fname
+        ".aider.model.settings.yml", git_root, model_settings_fname
     )
 
     try:
@@ -249,7 +249,7 @@ def register_models(git_root, model_settings_fname, io):
 
 def register_litellm_models(git_root, model_metadata_fname, io):
     model_metatdata_files = generate_search_path_list(
-        ".aider.llm.models.json", git_root, model_metadata_fname
+        ".aider.model.metadata.json", git_root, model_metadata_fname
     )
 
     try:

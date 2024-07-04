@@ -12,7 +12,7 @@ In most cases, you can safely ignore aider's warning about unknown context
 window size and model costs.
 
 But, you can register context window limits and costs for models that aren't known
-to aider. Create a `.aider.litellm.models.json` file in one of these locations:
+to aider. Create a `.aider.model.metadata.json` file in one of these locations:
 
 - Your home directory.
 - The root if your git repo.
@@ -51,7 +51,7 @@ But it can sometimes be helpful to override them or add settings for
 a model that aider doesn't know about.
 
 To do that,
-create a `.aider.models.yml` file in one of these locations:
+create a `.aider.model.settings.yml` file in one of these locations:
 
 - Your home directory.
 - The root if your git repo.
