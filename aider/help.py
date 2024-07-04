@@ -1,19 +1,15 @@
 #!/usr/bin/env python
 
-import time
+import os
+import sys
+import warnings
 from pathlib import Path
 
-import litellm
-from dump import dump
-from llama_index.core import (
-    Document,
-    StorageContext,
-    VectorStoreIndex,
-    load_index_from_storage,
-)
-from llama_index.core.node_parser import MarkdownNodeParser
+from tqdm import tqdm
 
-litellm.suppress_debug_info = True
+from aider.dump import dump  # noqa: F401
+
+warnings.simplefilter("ignore", category=FutureWarning)
 
 
 def should_skip_dir(dirname):
@@ -35,75 +31,38 @@ def walk_subdirs_for_files(root_dir):
         yield str(path)
 
 
-def execute(question, text):
-    sys_content = """Answer questions about how to use the Aider program.
-Give answers about how to use aider to accomplish the user's questions,
-not general advice on how to use other tools or approaches.
-
-Use the provided aider documentation *if it is relevant to the user's questions*.
-
-Include a urls to the aider docs that might be relevant for the user to read
-.
-
-If you don't know the answer, say so and suggest some relevant aider doc urls.
-If the user asks how to do something that aider doesn't support, tell them that.
-
-Be helpful but concise.
-
-Unless the question indicates otherwise, assume the user wants to use
-aider as a CLI tool.
-"""
-
-    usage = Path("website/docs/usage.md").read_text()
-
-    content = f"""# Question:
-
-{question}
-
-
-# Relevant documentation:
-
-{text}
-
-#####
-
-{usage}
-"""
-
-    messages = [
-        dict(
-            role="system",
-            content=sys_content,
-        ),
-        dict(
-            role="user",
-            content=content,
-        ),
-    ]
-
-    res = litellm.completion(
-        messages=messages,
-        # model="gpt-3.5-turbo",
-        model="gpt-4o",
-    )
-
-    return res
-
-
 def fname_to_url(filepath):
+    website = "website/"
+    index = "/index.md"
+    md = ".md"
+
+    docid = ""
     if filepath.startswith("website/_includes/"):
-        docid = ""
-    else:
-        website = "website/"
-        assert filepath.startswith(website), filepath
+        pass
+    elif filepath.startswith(website):
         docid = filepath[len(website) :]
+
+        if filepath.endswith(index):
+            filepath = filepath[: -len(index)] + "/"
+        elif filepath.endswith(md):
+            filepath = filepath[: -len(md)] + ".html"
+
         docid = "https://aider.chat/" + filepath
 
     return docid
 
 
 def get_index():
-    dname = Path("storage")
+    from llama_index.core import (
+        Document,
+        StorageContext,
+        VectorStoreIndex,
+        load_index_from_storage,
+    )
+    from llama_index.core.node_parser import MarkdownNodeParser
+
+    dname = Path.home() / ".aider" / "help"
+
     if dname.exists():
         storage_context = StorageContext.from_defaults(
             persist_dir=dname,
@@ -113,9 +72,7 @@ def get_index():
         parser = MarkdownNodeParser()
 
         nodes = []
-        for fname in walk_subdirs_for_files("website"):
-            dump(fname)
-            # doc = FlatReader().load_data(Path(fname))
+        for fname in tqdm(list(walk_subdirs_for_files("website"))):
             fname = Path(fname)
             doc = Document(
                 text=fname.read_text(),
@@ -128,19 +85,44 @@ def get_index():
             nodes += parser.get_nodes_from_documents([doc])
 
         index = VectorStoreIndex(nodes)
+        dname.parent.mkdir(exist_ok=True)
         index.storage_context.persist(dname)
 
     return index
 
 
-when = time.time()
+class Help:
+    def __init__(self):
+        from llama_index.core import Settings
+        from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 
-index = get_index()
+        os.environ["TOKENIZERS_PARALLELISM"] = "true"
+        Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
 
-print("get_index", time.time() - when)
-when = time.time()
+        index = get_index()
 
-retriever = index.as_retriever(similarity_top_k=20)
+        self.retriever = index.as_retriever(similarity_top_k=20)
+
+    def ask(self, question):
+        nodes = self.retriever.retrieve(question)
+
+        context = f"""# Question: {question}
+
+# Relevant docs:
+
+"""
+
+        for node in nodes:
+            url = node.metadata.get("url", "")
+            if url:
+                url = f' from_url="{url}"'
+
+            context += f"<doc{url}>\n"
+            context += node.text
+            context += "\n</doc>\n\n"
+
+        return context
+
 
 #
 # question = "how can i convert a python script to js"
@@ -148,34 +130,9 @@ retriever = index.as_retriever(similarity_top_k=20)
 # question = "i am getting an error message about exhausted context window"
 # question = "The chat session is larger than the context window!"
 # question = "how do i add deepseek api key to yaml"
-question = (
-    "It would be great if I could give aider an example github PR and instruct it to do the same"
-    " exact thing for another integration."
-)
+# question = (
+#    "It would be great if I could give aider an example github PR and instruct it to do the same"
+#    " exact thing for another integration."
+# )
 
-nodes = retriever.retrieve(question)
-
-print("retrieve", time.time() - when)
-when = time.time()
-
-dump(len(nodes))
-
-context = ""
-for node in nodes:
-    fname = node.metadata["filename"]
-    url = node.metadata.get("url", "")
-    if url:
-        url = f' from_url="{url}"'
-
-    context += f"<doc{url}>\n"
-    context += node.text
-    context += "\n</doc>\n\n"
-
-# dump(context)
-
-res = execute(question, context)
-content = res.choices[0].message.content
-dump(content)
-
-print("llm", time.time() - when)
-when = time.time()
+question = " ".join(sys.argv[1:])

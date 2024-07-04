@@ -80,6 +80,7 @@ class Coder:
         from . import (
             EditBlockCoder,
             EditBlockFencedCoder,
+            HelpCoder,
             UnifiedDiffCoder,
             WholeFileCoder,
         )
@@ -130,6 +131,8 @@ class Coder:
             res = WholeFileCoder(main_model, io, **kwargs)
         elif edit_format == "udiff":
             res = UnifiedDiffCoder(main_model, io, **kwargs)
+        elif edit_format == "help":
+            res = HelpCoder(main_model, io, **kwargs)
         else:
             raise ValueError(f"Unknown edit format {edit_format}")
 

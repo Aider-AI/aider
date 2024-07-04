@@ -7,6 +7,7 @@ from pathlib import Path
 import git
 
 from aider import models, prompts, voice
+from aider.help import Help
 from aider.llm import litellm
 from aider.scrape import Scraper
 from aider.utils import is_image_file
@@ -31,6 +32,8 @@ class Commands:
             voice_language = None
 
         self.voice_language = voice_language
+
+        self.help = None
 
     def cmd_model(self, args):
         "Switch to a new LLM"
@@ -622,15 +625,31 @@ class Commands:
 
     def cmd_help(self, args):
         "Show help about all commands"
-        commands = sorted(self.get_commands())
-        for cmd in commands:
-            cmd_method_name = f"cmd_{cmd[1:]}"
-            cmd_method = getattr(self, cmd_method_name, None)
-            if cmd_method:
-                description = cmd_method.__doc__
-                self.io.tool_output(f"{cmd} {description}")
-            else:
-                self.io.tool_output(f"{cmd} No description available.")
+
+        from aider.coders import Coder
+
+        if not self.help:
+            self.help = Help()
+
+        coder = Coder.create(
+            main_model=self.coder.main_model,
+            io=self.io,
+            from_coder=self.coder,
+            edit_format="help",
+        )
+        user_msg = self.help.ask(args)
+        user_msg += """
+# Announcement lines from when this session of aider was launched:
+
+"""
+        user_msg += "\n".join(self.coder.get_announcements()) + "\n"
+
+        assistant_msg = coder.run(user_msg)
+
+        self.coder.cur_messages += [
+            dict(role="user", content=user_msg),
+            dict(role="assistant", content=assistant_msg),
+        ]
 
     def get_help_md(self):
         "Show help about all commands in markdown"

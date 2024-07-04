@@ -27,6 +27,8 @@ google-generativeai
 streamlit
 watchdog
 flake8
+llama-index-core
+llama-index-embeddings-huggingface
 
 # v3.3 no longer works on python 3.9
 networkx<3.3
