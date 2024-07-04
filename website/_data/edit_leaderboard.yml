@@ -681,4 +681,25 @@
   versions: 0.41.1-dev
   seconds_per_case: 7.1
   total_cost: 0.1946
-  
+
+- dirname: 2024-07-04-15-06-43--refac-deepseek-coder2-128k
+  test_cases: 89
+  model: DeepSeek Coder V2 (128k context)
+  edit_format: diff
+  commit_hash: 08868fd
+  pass_rate_1: 38.2
+  percent_cases_well_formed: 73.0
+  error_outputs: 393
+  num_malformed_responses: 89
+  num_with_malformed_responses: 24
+  user_asks: 4
+  lazy_comments: 2
+  syntax_errors: 1
+  indentation_errors: 5
+  exhausted_context_windows: 3
+  test_timeouts: 0
+  command: aider --model openrouter/deepseek/deepseek-coder
+  date: 2024-07-04
+  versions: 0.42.1-dev
+  seconds_per_case: 82.9
+  total_cost: 0.2601
