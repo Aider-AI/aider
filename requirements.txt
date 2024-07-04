@@ -151,6 +151,8 @@ importlib-metadata==7.2.1
     # via
     #   -r requirements.in
     #   litellm
+importlib-resources==6.4.0
+    # via -r requirements.in
 jinja2==3.1.4
     # via
     #   altair

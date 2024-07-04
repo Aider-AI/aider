@@ -10,14 +10,19 @@ babel==2.15.0
     # via sphinx
 build==1.2.1
     # via pip-tools
-certifi==2024.6.2
-    # via requests
+certifi==2024.7.4
+    # via
+    #   -c requirements.txt
+    #   requests
 cfgv==3.4.0
     # via pre-commit
 charset-normalizer==3.3.2
-    # via requests
+    # via
+    #   -c requirements.txt
+    #   requests
 click==8.1.7
     # via
+    #   -c requirements.txt
     #   pip-tools
     #   typer
 cogapp==3.4.1
@@ -37,13 +42,17 @@ docutils==0.20.1
     #   sphinx
     #   sphinx-rtd-theme
 filelock==3.15.4
-    # via virtualenv
+    # via
+    #   -c requirements.txt
+    #   virtualenv
 fonttools==4.53.0
     # via matplotlib
 identify==2.5.36
     # via pre-commit
 idna==3.7
-    # via requests
+    # via
+    #   -c requirements.txt
+    #   requests
 imagesize==1.4.1
     # via sphinx
 imgcat==0.5.0
@@ -51,40 +60,54 @@ imgcat==0.5.0
 iniconfig==2.0.0
     # via pytest
 jinja2==3.1.4
-    # via sphinx
+    # via
+    #   -c requirements.txt
+    #   sphinx
 kiwisolver==1.4.5
     # via matplotlib
 lox==0.12.0
     # via -r dev-requirements.in
 markdown-it-py==3.0.0
-    # via rich
+    # via
+    #   -c requirements.txt
+    #   rich
 markupsafe==2.1.5
-    # via jinja2
-matplotlib==3.9.0
+    # via
+    #   -c requirements.txt
+    #   jinja2
+matplotlib==3.9.1
     # via -r dev-requirements.in
 mdurl==0.1.2
-    # via markdown-it-py
+    # via
+    #   -c requirements.txt
+    #   markdown-it-py
 multiprocess==0.70.16
     # via pathos
 nodeenv==1.9.1
     # via pre-commit
-numpy==2.0.0
+numpy==1.26.4
     # via
+    #   -c requirements.txt
     #   contourpy
     #   matplotlib
     #   pandas
 packaging==24.1
     # via
+    #   -c requirements.txt
     #   build
     #   matplotlib
     #   pytest
     #   sphinx
 pandas==2.2.2
-    # via -r dev-requirements.in
+    # via
+    #   -c requirements.txt
+    #   -r dev-requirements.in
 pathos==0.3.2
     # via lox
-pillow==10.3.0
-    # via matplotlib
+pillow==10.4.0
+    # via
+    #   -c requirements.txt
+    #   matplotlib
 pip-tools==7.4.1
     # via -r dev-requirements.in
 platformdirs==4.2.2
@@ -99,10 +122,13 @@ pre-commit==3.7.1
     # via -r dev-requirements.in
 pygments==2.18.0
     # via
+    #   -c requirements.txt
     #   rich
     #   sphinx
 pyparsing==3.1.2
-    # via matplotlib
+    # via
+    #   -c requirements.txt
+    #   matplotlib
 pyproject-hooks==1.1.0
     # via
     #   build
@@ -111,20 +137,31 @@ pytest==8.2.2
     # via -r dev-requirements.in
 python-dateutil==2.9.0.post0
     # via
+    #   -c requirements.txt
     #   matplotlib
     #   pandas
 pytz==2024.1
-    # via pandas
+    # via
+    #   -c requirements.txt
+    #   pandas
 pyyaml==6.0.1
-    # via pre-commit
+    # via
+    #   -c requirements.txt
+    #   pre-commit
 requests==2.32.3
-    # via sphinx
+    # via
+    #   -c requirements.txt
+    #   sphinx
 rich==13.7.1
-    # via typer
+    # via
+    #   -c requirements.txt
+    #   typer
 shellingham==1.5.4
     # via typer
 six==1.16.0
-    # via python-dateutil
+    # via
+    #   -c requirements.txt
+    #   python-dateutil
 snowballstemmer==2.2.0
     # via sphinx
 sphinx==7.3.7
@@ -150,11 +187,17 @@ sphinxcontrib-serializinghtml==1.1.10
 typer==0.12.3
     # via -r dev-requirements.in
 typing-extensions==4.12.2
-    # via typer
+    # via
+    #   -c requirements.txt
+    #   typer
 tzdata==2024.1
-    # via pandas
+    # via
+    #   -c requirements.txt
+    #   pandas
 urllib3==2.2.2
-    # via requests
+    # via
+    #   -c requirements.txt
+    #   requests
 virtualenv==20.26.3
     # via pre-commit
 wheel==0.43.0
