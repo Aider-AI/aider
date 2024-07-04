@@ -661,7 +661,7 @@
 
 - dirname: 2024-07-01-21-41-48--haiku-whole
   test_cases: 133
-  model: openrouter/anthropic/claude-3-haiku
+  model: claude-3-haiku-20240307
   edit_format: whole
   commit_hash: 75f506d
   pass_rate_1: 40.6
@@ -676,7 +676,7 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 2
-  command: aider --model openrouter/anthropic/claude-3-haiku
+  command: aider --model claude-3-haiku-20240307
   date: 2024-07-01
   versions: 0.41.1-dev
   seconds_per_case: 7.1
