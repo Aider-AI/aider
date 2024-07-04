@@ -1,6 +1,12 @@
 
 # Release history
 
+### Aider v0.42.0
+
+- Performance release:
+  - 5X faster launch!
+  - Faster auto-complete in large git repos (users report ~100X speedup)!
+
 ### Aider v0.41.0
 
 - [Allow Claude 3.5 Sonnet to stream back >4k tokens!](https://aider.chat/2024/07/01/sonnet-not-lazy.html)
