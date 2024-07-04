@@ -15,10 +15,16 @@ warnings.simplefilter("ignore", category=FutureWarning)
 
 def get_package_files():
     website_files = importlib_resources.files('website')
-    for path in website_files.rglob('*.md'):
-        if not any(part.startswith(('OLD', 'tmp')) or part in ('examples', '_posts') for part in path.parts):
-            dump(path)
-            yield str(path)
+    for path in importlib_resources.files('website').iterdir():
+        if path.is_file() and path.name.endswith('.md'):
+            if not any(part.startswith(('OLD', 'tmp')) or part in ('examples', '_posts') for part in path.parts):
+                dump(path)
+                yield str(path)
+        elif path.is_dir():
+            for subpath in path.rglob('*.md'):
+                if not any(part.startswith(('OLD', 'tmp')) or part in ('examples', '_posts') for part in subpath.parts):
+                    dump(subpath)
+                    yield str(subpath)
 
 
 def fname_to_url(filepath):
