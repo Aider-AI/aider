@@ -223,6 +223,14 @@ def generate_search_path_list(default_fname, git_root, command_line_file):
     if command_line_file:
         files.append(command_line_file)
     files.append(default_file.resolve())
+    files = [Path(fn).resolve() for fn in files]
+    files.reverse()
+    uniq = []
+    for fn in files:
+        if fn not in uniq:
+            uniq.append(fn)
+    uniq.reverse()
+    files = uniq
     files = list(map(str, files))
     files = list(dict.fromkeys(files))
 
@@ -255,11 +263,11 @@ def register_litellm_models(git_root, model_metadata_fname, io):
     try:
         model_metadata_files_loaded = models.register_litellm_models(model_metatdata_files)
         if len(model_metadata_files_loaded) > 0:
-            io.tool_output(f"Loaded {len(model_metadata_files_loaded)} litellm model file(s)")
+            io.tool_output(f"Loaded {len(model_metadata_files_loaded)} model metadata file(s)")
             for model_metadata_file in model_metadata_files_loaded:
                 io.tool_output(f"  - {model_metadata_file}")
     except Exception as e:
-        io.tool_error(f"Error loading litellm models: {e}")
+        io.tool_error(f"Error loading model metadata models: {e}")
         return 1
 
 
