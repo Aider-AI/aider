@@ -28,6 +28,11 @@ Only include the files that are most likely to actually need to be edited.
 Don't include files that might contain relevant context, just files that will need to be changed.
 """  # noqa: E501
 
+    files_no_full_files_with_repo_map_reply = (
+        "Ok, based on your requests I will suggest which files need to be edited and then"
+        " stop and wait for your approval."
+    )
+
     repo_content_prefix = """Here are summaries of some files present in my git repository.
 Do not propose changes to these files, treat them as *read-only*.
 If you need to edit any of these files, ask me to *add them to the chat* first.

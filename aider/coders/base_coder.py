@@ -75,6 +75,7 @@ class Coder:
         edit_format=None,
         io=None,
         from_coder=None,
+        summarize_from_coder=True,
         **kwargs,
     ):
         from . import (
@@ -108,7 +109,7 @@ class Coder:
             # confused the new LLM. It may try and imitate it, disobeying
             # the system prompt.
             done_messages = from_coder.done_messages
-            if edit_format != from_coder.edit_format and done_messages:
+            if edit_format != from_coder.edit_format and done_messages and summarize_from_coder:
                 done_messages = from_coder.summarizer.summarize_all(done_messages)
 
             # Bring along context from the old Coder
@@ -550,18 +551,16 @@ class Coder:
             files_reply = "Ok, any changes I propose will be to those files."
         elif repo_content:
             files_content = self.gpt_prompts.files_no_full_files_with_repo_map
-            files_reply = (
-                "Ok, based on your requests I will suggest which files need to be edited and then"
-                " stop and wait for your approval."
-            )
+            files_reply = self.gpt_prompts.files_no_full_files_with_repo_map_reply
         else:
             files_content = self.gpt_prompts.files_no_full_files
             files_reply = "Ok."
 
-        files_messages += [
-            dict(role="user", content=files_content),
-            dict(role="assistant", content=files_reply),
-        ]
+        if files_content:
+            files_messages += [
+                dict(role="user", content=files_content),
+                dict(role="assistant", content=files_reply),
+            ]
 
         images_message = self.get_images_message()
         if images_message is not None:
@@ -734,7 +733,8 @@ class Coder:
 
         example_messages = []
         if self.main_model.examples_as_sys_msg:
-            main_sys += "\n# Example conversations:\n\n"
+            if self.gpt_prompts.example_messages:
+                main_sys += "\n# Example conversations:\n\n"
             for msg in self.gpt_prompts.example_messages:
                 role = msg["role"]
                 content = self.fmt_system_prompt(msg["content"])

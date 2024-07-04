@@ -29,3 +29,15 @@ Unless the question indicates otherwise, assume the user wants to use aider as a
 
     example_messages = []
     system_reminder = ""
+
+    files_content_prefix = """These are some files we have been discussing that we may want to edit after you answer my questions:
+"""
+
+    files_no_full_files = "I am not sharing any files with you."
+
+    files_no_full_files_with_repo_map = ""
+    files_no_full_files_with_repo_map_reply = ""
+
+    repo_content_prefix = """Here are summaries of some files present in my git repository.
+We may look at these in more detail after you answer my questions.
+"""

@@ -5,8 +5,8 @@ import sys
 import warnings
 from pathlib import Path
 
-from tqdm import tqdm
 import importlib_resources
+from tqdm import tqdm
 
 from aider.dump import dump  # noqa: F401
 
@@ -14,16 +14,20 @@ warnings.simplefilter("ignore", category=FutureWarning)
 
 
 def get_package_files():
-    website_files = importlib_resources.files('website')
-    for path in importlib_resources.files('website').iterdir():
-        if path.is_file() and path.name.endswith('.md'):
-            if not any(part.startswith(('OLD', 'tmp')) or part in ('examples', '_posts') for part in path.parts):
-                dump(path)
+    for path in importlib_resources.files("website").iterdir():
+        dump(path)
+        if path.is_file() and path.name.endswith(".md"):
+            if not any(
+                part.startswith(("OLD", "tmp")) or part in ("examples", "_posts")
+                for part in path.parts
+            ):
                 yield str(path)
         elif path.is_dir():
-            for subpath in path.rglob('*.md'):
-                if not any(part.startswith(('OLD', 'tmp')) or part in ('examples', '_posts') for part in subpath.parts):
-                    dump(subpath)
+            for subpath in path.rglob("*.md"):
+                if not any(
+                    part.startswith(("OLD", "tmp")) or part in ("examples", "_posts")
+                    for part in subpath.parts
+                ):
                     yield str(subpath)
 
 
@@ -34,9 +38,6 @@ def fname_to_url(filepath):
 
     docid = ""
     if filepath.startswith("website/_includes/"):
-        pass
-    elif "HISTORY.html" in filepath:
-        # too much stale info
         pass
     elif filepath.startswith(website):
         docid = filepath[len(website) :]
@@ -73,8 +74,9 @@ def get_index():
         nodes = []
         for fname in tqdm(list(get_package_files())):
             fname = Path(fname)
+            dump(fname)
             doc = Document(
-                text=importlib_resources.files('website').joinpath(fname).read_text(),
+                text=importlib_resources.files("website").joinpath(fname).read_text(),
                 metadata=dict(
                     filename=fname.name,
                     extension=fname.suffix,

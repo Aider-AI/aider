@@ -656,6 +656,7 @@ class Commands:
             io=self.io,
             from_coder=self.coder,
             edit_format="help",
+            summarize_from_coder=False,
         )
         user_msg = self.help.ask(args)
         user_msg += """
