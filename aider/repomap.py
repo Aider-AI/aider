@@ -8,7 +8,6 @@ from collections import Counter, defaultdict, namedtuple
 from importlib import resources
 from pathlib import Path
 
-import networkx as nx
 from diskcache import Cache
 from grep_ast import TreeContext, filename_to_lang
 from pygments.lexers import guess_lexer_for_filename
@@ -71,7 +70,7 @@ class RepoMap:
         max_map_tokens = self.max_map_tokens
 
         # With no files in the chat, give a bigger view of the entire repo
-        MUL = 16
+        MUL = 8
         padding = 4096
         if max_map_tokens and self.max_context_window:
             target = min(max_map_tokens * MUL, self.max_context_window - padding)
@@ -230,6 +229,8 @@ class RepoMap:
             )
 
     def get_ranked_tags(self, chat_fnames, other_fnames, mentioned_fnames, mentioned_idents):
+        import networkx as nx
+
         defines = defaultdict(set)
         references = defaultdict(list)
         definitions = defaultdict(set)

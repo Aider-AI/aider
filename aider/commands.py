@@ -5,11 +5,9 @@ import sys
 from pathlib import Path
 
 import git
-import openai
-from prompt_toolkit.completion import Completion
 
 from aider import models, prompts, voice
-from aider.litellm import litellm
+from aider.llm import litellm
 from aider.scrape import Scraper
 from aider.utils import is_image_file
 
@@ -42,11 +40,9 @@ class Commands:
         models.sanity_check_models(self.io, model)
         raise SwitchModel(model)
 
-    def completions_model(self, partial):
+    def completions_model(self):
         models = litellm.model_cost.keys()
-        for model in models:
-            if partial.lower() in model.lower():
-                yield Completion(model, start_position=-len(partial))
+        return models
 
     def cmd_models(self, args):
         "Search the list of available models"
@@ -83,20 +79,24 @@ class Commands:
     def is_command(self, inp):
         return inp[0] in "/!"
 
+    def get_completions(self, cmd):
+        assert cmd.startswith("/")
+        cmd = cmd[1:]
+
+        fun = getattr(self, f"completions_{cmd}", None)
+        if not fun:
+            return []
+        return sorted(fun())
+
     def get_commands(self):
         commands = []
         for attr in dir(self):
-            if attr.startswith("cmd_"):
-                commands.append("/" + attr[4:])
+            if not attr.startswith("cmd_"):
+                continue
+            cmd = attr[4:]
+            commands.append("/" + cmd)
 
         return commands
-
-    def get_command_completions(self, cmd_name, partial):
-        cmd_completions_method_name = f"completions_{cmd_name}"
-        cmd_completions_method = getattr(self, cmd_completions_method_name, None)
-        if cmd_completions_method:
-            for completion in cmd_completions_method(partial):
-                yield completion
 
     def do_run(self, cmd_name, args):
         cmd_method_name = f"cmd_{cmd_name}"
@@ -331,10 +331,7 @@ class Commands:
                 return
 
         last_commit = self.coder.repo.repo.head.commit
-        if (
-            not last_commit.author.name.endswith(" (aider)")
-            or last_commit.hexsha[:7] != self.coder.last_aider_commit_hash
-        ):
+        if last_commit.hexsha[:7] != self.coder.last_aider_commit_hash:
             self.io.tool_error("The last commit was not made by aider in this chat session.")
             self.io.tool_error(
                 "You could try `/git reset --hard HEAD^` but be aware that this is a destructive"
@@ -381,12 +378,11 @@ class Commands:
             fname = f'"{fname}"'
         return fname
 
-    def completions_add(self, partial):
+    def completions_add(self):
         files = set(self.coder.get_all_relative_files())
         files = files - set(self.coder.get_inchat_relative_files())
-        for fname in files:
-            if partial.lower() in fname.lower():
-                yield Completion(self.quote_fname(fname), start_position=-len(partial))
+        files = [self.quote_fname(fn) for fn in files]
+        return files
 
     def glob_filtered_to_repo(self, pattern):
         try:
@@ -487,12 +483,10 @@ class Commands:
         reply = prompts.added_files.format(fnames=", ".join(added_fnames))
         return reply
 
-    def completions_drop(self, partial):
+    def completions_drop(self):
         files = self.coder.get_inchat_relative_files()
-
-        for fname in files:
-            if partial.lower() in fname.lower():
-                yield Completion(self.quote_fname(fname), start_position=-len(partial))
+        files = [self.quote_fname(fn) for fn in files]
+        return files
 
     def cmd_drop(self, args=""):
         "Remove files from the chat session to free up context space"
@@ -616,14 +610,14 @@ class Commands:
             self.io.tool_output("\nNo files in chat or git repo.")
             return
 
-        if chat_files:
-            self.io.tool_output("Files in chat:\n")
-        for file in chat_files:
+        if other_files:
+            self.io.tool_output("Repo files not in the chat:\n")
+        for file in other_files:
             self.io.tool_output(f"  {file}")
 
-        if other_files:
-            self.io.tool_output("\nRepo files not in the chat:\n")
-        for file in other_files:
+        if chat_files:
+            self.io.tool_output("\nFiles in chat:\n")
+        for file in chat_files:
             self.io.tool_output(f"  {file}")
 
     def cmd_help(self, args):
@@ -688,7 +682,7 @@ class Commands:
 
         try:
             text = self.voice.record_and_transcribe(history, language=self.voice_language)
-        except openai.OpenAIError as err:
+        except litellm.OpenAIError as err:
             self.io.tool_error(f"Unable to use OpenAI whisper model: {err}")
             return
 

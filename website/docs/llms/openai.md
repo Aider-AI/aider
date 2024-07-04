@@ -19,7 +19,7 @@ pip install aider-chat
 export OPENAI_API_KEY=<key> # Mac/Linux
 setx   OPENAI_API_KEY <key> # Windows
 
-# GPT-4o is the best model, used by default
+# Aider uses gpt-4o by default (or use --4o)
 aider
 
 # GPT-4 Turbo (1106)

@@ -25,12 +25,14 @@ class GitRepo:
         models=None,
         attribute_author=True,
         attribute_committer=True,
+        attribute_commit_message=False,
     ):
         self.io = io
         self.models = models
 
         self.attribute_author = attribute_author
         self.attribute_committer = attribute_committer
+        self.attribute_commit_message = attribute_commit_message
 
         if git_dname:
             check_fnames = [git_dname]
@@ -84,12 +86,15 @@ class GitRepo:
         else:
             commit_message = self.get_commit_message(diffs, context)
 
+        if aider_edits and self.attribute_commit_message:
+            commit_message = "aider: " + commit_message
+
         if not commit_message:
             commit_message = "(no commit message provided)"
 
         full_commit_message = commit_message
-        if context:
-            full_commit_message += "\n\n# Aider chat conversation:\n\n" + context
+        # if context:
+        #    full_commit_message += "\n\n# Aider chat conversation:\n\n" + context
 
         cmd = ["-m", full_commit_message, "--no-verify"]
         if fnames:

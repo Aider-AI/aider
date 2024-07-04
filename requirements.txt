@@ -62,7 +62,7 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2024.6.0
+fsspec==2024.6.1
     # via huggingface-hub
 gitdb==4.0.11
     # via gitpython
@@ -70,14 +70,14 @@ gitpython==3.1.43
     # via
     #   -r requirements.in
     #   streamlit
-google-ai-generativelanguage==0.6.5
+google-ai-generativelanguage==0.6.6
     # via google-generativeai
 google-api-core[grpc]==2.19.1
     # via
     #   google-ai-generativelanguage
     #   google-api-python-client
     #   google-generativeai
-google-api-python-client==2.134.0
+google-api-python-client==2.135.0
     # via google-generativeai
 google-auth==2.30.0
     # via
@@ -88,7 +88,7 @@ google-auth==2.30.0
     #   google-generativeai
 google-auth-httplib2==0.2.0
     # via google-api-python-client
-google-generativeai==0.7.0
+google-generativeai==0.7.1
     # via -r requirements.in
 googleapis-common-protos==1.63.2
     # via
@@ -139,7 +139,7 @@ jsonschema==4.22.0
     #   altair
 jsonschema-specifications==2023.12.1
     # via jsonschema
-litellm==1.40.26
+litellm==1.41.0
     # via -r requirements.in
 markdown-it-py==3.0.0
     # via rich
@@ -164,7 +164,7 @@ numpy==2.0.0
     #   pydeck
     #   scipy
     #   streamlit
-openai==1.35.3
+openai==1.35.7
     # via
     #   -r requirements.in
     #   litellm

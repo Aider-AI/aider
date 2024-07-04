@@ -1,12 +1,20 @@
 import sys
+import time
+from pathlib import Path
 
 import packaging.version
-import requests
 
 import aider
 
 
 def check_version(print_cmd):
+    fname = Path.home() / ".aider/versioncheck"
+    day = 60 * 60 * 24
+    if fname.exists() and time.time() - fname.stat().st_mtime < day:
+        return
+
+    import requests
+
     try:
         response = requests.get("https://pypi.org/pypi/aider-chat/json")
         data = response.json()
@@ -27,6 +35,9 @@ def check_version(print_cmd):
             else:
                 print_cmd(f"{py} -m pip install --upgrade aider-chat")
 
+        if not fname.parent.exists():
+            fname.parent.mkdir()
+        fname.touch()
         return is_update_available
     except Exception as err:
         print_cmd(f"Error checking pypi for new version: {err}")

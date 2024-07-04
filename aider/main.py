@@ -2,20 +2,19 @@ import configparser
 import os
 import re
 import sys
+import threading
 from pathlib import Path
 
 import git
-import httpx
 from dotenv import load_dotenv
 from prompt_toolkit.enums import EditingMode
-from streamlit.web import cli
 
 from aider import __version__, models, utils
 from aider.args import get_parser
 from aider.coders import Coder
 from aider.commands import SwitchModel
 from aider.io import InputOutput
-from aider.litellm import litellm  # noqa: F401; properly init litellm on launch
+from aider.llm import litellm  # noqa: F401; properly init litellm on launch
 from aider.repo import GitRepo
 from aider.versioncheck import check_version
 
@@ -150,6 +149,8 @@ def scrub_sensitive_info(args, text):
 
 
 def launch_gui(args):
+    from streamlit.web import cli
+
     from aider import gui
 
     print()
@@ -222,6 +223,14 @@ def generate_search_path_list(default_fname, git_root, command_line_file):
     if command_line_file:
         files.append(command_line_file)
     files.append(default_file.resolve())
+    files = [Path(fn).resolve() for fn in files]
+    files.reverse()
+    uniq = []
+    for fn in files:
+        if fn not in uniq:
+            uniq.append(fn)
+    uniq.reverse()
+    files = uniq
     files = list(map(str, files))
     files = list(dict.fromkeys(files))
 
@@ -230,7 +239,7 @@ def generate_search_path_list(default_fname, git_root, command_line_file):
 
 def register_models(git_root, model_settings_fname, io):
     model_settings_files = generate_search_path_list(
-        ".aider.models.yml", git_root, model_settings_fname
+        ".aider.model.settings.yml", git_root, model_settings_fname
     )
 
     try:
@@ -248,17 +257,17 @@ def register_models(git_root, model_settings_fname, io):
 
 def register_litellm_models(git_root, model_metadata_fname, io):
     model_metatdata_files = generate_search_path_list(
-        ".aider.litellm.models.json", git_root, model_metadata_fname
+        ".aider.model.metadata.json", git_root, model_metadata_fname
     )
 
     try:
         model_metadata_files_loaded = models.register_litellm_models(model_metatdata_files)
         if len(model_metadata_files_loaded) > 0:
-            io.tool_output(f"Loaded {len(model_metadata_files_loaded)} litellm model file(s)")
+            io.tool_output(f"Loaded {len(model_metadata_files_loaded)} model metadata file(s)")
             for model_metadata_file in model_metadata_files_loaded:
                 io.tool_output(f"  - {model_metadata_file}")
     except Exception as e:
-        io.tool_error(f"Error loading litellm models: {e}")
+        io.tool_error(f"Error loading model metadata models: {e}")
         return 1
 
 
@@ -292,6 +301,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     args = parser.parse_args(argv)
 
     if not args.verify_ssl:
+        import httpx
+
         litellm.client_session = httpx.Client(verify=False)
 
     if args.gui and not return_coder:
@@ -403,6 +414,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     register_models(git_root, args.model_settings_file, io)
     register_litellm_models(git_root, args.model_metadata_file, io)
 
+    if not args.model:
+        args.model = "gpt-4o"
+        if os.environ.get("ANTHROPIC_API_KEY"):
+            args.model = "claude-3-5-sonnet-20240620"
+
     main_model = models.Model(args.model, weak_model=args.weak_model)
 
     lint_cmds = parse_lint_cmds(args.lint_cmd, io)
@@ -441,6 +457,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             test_cmd=args.test_cmd,
             attribute_author=args.attribute_author,
             attribute_committer=args.attribute_committer,
+            attribute_commit_message=args.attribute_commit_message,
         )
 
     except ValueError as err:
@@ -528,6 +545,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             return 1
         return
 
+    if args.exit:
+        return
+
+    threading.Thread(target=load_slow_imports).start()
+
     while True:
         try:
             coder.run()
@@ -535,6 +557,20 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         except SwitchModel as switch:
             coder = Coder.create(main_model=switch.model, io=io, from_coder=coder)
             coder.show_announcements()
+
+
+def load_slow_imports():
+    # These imports are deferred in various ways to
+    # improve startup time.
+    # This func is called in a thread to load them in the background
+    # while we wait for the user to type their first message.
+    try:
+        import httpx  # noqa: F401
+        import litellm  # noqa: F401
+        import networkx  # noqa: F401
+        import numpy  # noqa: F401
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":

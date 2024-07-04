@@ -19,11 +19,11 @@ pip install aider-chat
 export ANTHROPIC_API_KEY=<key> # Mac/Linux
 setx   ANTHROPIC_API_KEY <key> # Windows
 
+# Aider uses Claude 3.5 Sonnet by default (or use --sonnet)
+aider
+
 # Claude 3 Opus
 aider --opus
-
-# Claude 3.5 Sonnet
-aider --sonnet
 
 # List models available from Anthropic
 aider --models anthropic/

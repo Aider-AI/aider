@@ -1,11 +1,10 @@
+import math
 import os
 import queue
 import tempfile
 import time
 
-import numpy as np
-
-from aider.litellm import litellm
+from aider.llm import litellm
 
 try:
     import soundfile as sf
@@ -41,6 +40,8 @@ class Voice:
 
     def callback(self, indata, frames, time, status):
         """This is called (from a separate thread) for each audio block."""
+        import numpy as np
+
         rms = np.sqrt(np.mean(indata**2))
         self.max_rms = max(self.max_rms, rms)
         self.min_rms = min(self.min_rms, rms)
@@ -55,7 +56,7 @@ class Voice:
 
     def get_prompt(self):
         num = 10
-        if np.isnan(self.pct) or self.pct < self.threshold:
+        if math.isnan(self.pct) or self.pct < self.threshold:
             cnt = 0
         else:
             cnt = int(self.pct * 10)
@@ -78,7 +79,7 @@ class Voice:
         filename = tempfile.mktemp(suffix=".wav")
 
         try:
-            sample_rate = int(self.sd.query_devices(None, 'input')['default_samplerate'])
+            sample_rate = int(self.sd.query_devices(None, "input")["default_samplerate"])
         except (TypeError, ValueError):
             sample_rate = 16000  # fallback to 16kHz if unable to query device
 

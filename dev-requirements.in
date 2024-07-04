@@ -1,5 +1,5 @@
 #
-#    pip-compile --output-file=dev-requirements.txt dev-requirements.in
+#    pip-compile --output-file=dev-requirements.txt dev-requirements.in --upgrade
 #
 pytest
 pip-tools

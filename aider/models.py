@@ -1,9 +1,11 @@
 import difflib
+import importlib
 import json
 import math
 import os
 import sys
 from dataclasses import dataclass, fields
+from pathlib import Path
 from typing import Optional
 
 import yaml
@@ -11,9 +13,47 @@ from PIL import Image
 
 from aider import urls
 from aider.dump import dump  # noqa: F401
-from aider.litellm import litellm
+from aider.llm import litellm
 
 DEFAULT_MODEL_NAME = "gpt-4o"
+
+OPENAI_MODELS = """
+gpt-4
+gpt-4o
+gpt-4o-2024-05-13
+gpt-4-turbo-preview
+gpt-4-0314
+gpt-4-0613
+gpt-4-32k
+gpt-4-32k-0314
+gpt-4-32k-0613
+gpt-4-turbo
+gpt-4-turbo-2024-04-09
+gpt-4-1106-preview
+gpt-4-0125-preview
+gpt-4-vision-preview
+gpt-4-1106-vision-preview
+gpt-3.5-turbo
+gpt-3.5-turbo-0301
+gpt-3.5-turbo-0613
+gpt-3.5-turbo-1106
+gpt-3.5-turbo-0125
+gpt-3.5-turbo-16k
+gpt-3.5-turbo-16k-0613
+"""
+
+OPENAI_MODELS = [ln.strip() for ln in OPENAI_MODELS.splitlines() if ln.strip()]
+
+ANTHROPIC_MODELS = """
+claude-2
+claude-2.1
+claude-3-haiku-20240307
+claude-3-opus-20240229
+claude-3-sonnet-20240229
+claude-3-5-sonnet-20240620
+"""
+
+ANTHROPIC_MODELS = [ln.strip() for ln in ANTHROPIC_MODELS.splitlines() if ln.strip()]
 
 
 @dataclass
@@ -27,6 +67,7 @@ class ModelSettings:
     lazy: bool = False
     reminder_as_sys_msg: bool = False
     examples_as_sys_msg: bool = False
+    can_prefill: bool = False
 
 
 # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
@@ -166,6 +207,7 @@ MODEL_SETTINGS = [
         weak_model_name="claude-3-haiku-20240307",
         use_repo_map=True,
         send_undo_reply=True,
+        can_prefill=True,
     ),
     ModelSettings(
         "openrouter/anthropic/claude-3-opus",
@@ -173,11 +215,13 @@ MODEL_SETTINGS = [
         weak_model_name="openrouter/anthropic/claude-3-haiku",
         use_repo_map=True,
         send_undo_reply=True,
+        can_prefill=True,
     ),
     ModelSettings(
         "claude-3-sonnet-20240229",
         "whole",
         weak_model_name="claude-3-haiku-20240307",
+        can_prefill=True,
     ),
     ModelSettings(
         "claude-3-5-sonnet-20240620",
@@ -185,6 +229,8 @@ MODEL_SETTINGS = [
         weak_model_name="claude-3-haiku-20240307",
         use_repo_map=True,
         examples_as_sys_msg=True,
+        can_prefill=True,
+        accepts_images=True,
     ),
     ModelSettings(
         "anthropic/claude-3-5-sonnet-20240620",
@@ -192,6 +238,7 @@ MODEL_SETTINGS = [
         weak_model_name="claude-3-haiku-20240307",
         use_repo_map=True,
         examples_as_sys_msg=True,
+        can_prefill=True,
     ),
     ModelSettings(
         "openrouter/anthropic/claude-3.5-sonnet",
@@ -199,6 +246,8 @@ MODEL_SETTINGS = [
         weak_model_name="openrouter/anthropic/claude-3-haiku-20240307",
         use_repo_map=True,
         examples_as_sys_msg=True,
+        can_prefill=True,
+        accepts_images=True,
     ),
     # Vertex AI Claude models
     ModelSettings(
@@ -206,6 +255,9 @@ MODEL_SETTINGS = [
         "diff",
         weak_model_name="vertex_ai/claude-3-haiku@20240307",
         use_repo_map=True,
+        examples_as_sys_msg=True,
+        can_prefill=True,
+        accepts_images=True,
     ),
     ModelSettings(
         "vertex_ai/claude-3-opus@20240229",
@@ -213,11 +265,13 @@ MODEL_SETTINGS = [
         weak_model_name="vertex_ai/claude-3-haiku@20240307",
         use_repo_map=True,
         send_undo_reply=True,
+        can_prefill=True,
     ),
     ModelSettings(
         "vertex_ai/claude-3-sonnet@20240229",
         "whole",
         weak_model_name="vertex_ai/claude-3-haiku@20240307",
+        can_prefill=True,
     ),
     # Cohere
     ModelSettings(
@@ -282,6 +336,16 @@ MODEL_SETTINGS = [
         examples_as_sys_msg=True,
         reminder_as_sys_msg=True,
     ),
+    ModelSettings(
+        "openrouter/openai/gpt-4o",
+        "diff",
+        weak_model_name="openrouter/openai/gpt-3.5-turbo",
+        use_repo_map=True,
+        send_undo_reply=True,
+        accepts_images=True,
+        lazy=True,
+        reminder_as_sys_msg=True,
+    ),
 ]
 
 
@@ -303,32 +367,17 @@ class Model:
     def __init__(self, model, weak_model=None):
         self.name = model
 
-        # Do we have the model_info?
-        try:
-            self.info = litellm.get_model_info(model)
-        except Exception:
-            self.info = dict()
-
-        if not self.info and "gpt-4o" in self.name:
-            self.info = {
-                "max_tokens": 4096,
-                "max_input_tokens": 128000,
-                "max_output_tokens": 4096,
-                "input_cost_per_token": 5e-06,
-                "output_cost_per_token": 1.5e-5,
-                "litellm_provider": "openai",
-                "mode": "chat",
-                "supports_function_calling": True,
-                "supports_parallel_function_calling": True,
-                "supports_vision": True,
-            }
+        self.info = self.get_model_info(model)
 
         # Are all needed keys/params available?
         res = self.validate_environment()
         self.missing_keys = res.get("missing_keys")
         self.keys_in_environment = res.get("keys_in_environment")
 
-        if self.info.get("max_input_tokens", 0) < 32 * 1024:
+        max_input_tokens = self.info.get("max_input_tokens")
+        if not max_input_tokens:
+            max_input_tokens = 0
+        if max_input_tokens < 32 * 1024:
             self.max_chat_history_tokens = 1024
         else:
             self.max_chat_history_tokens = 2 * 1024
@@ -338,6 +387,24 @@ class Model:
             self.weak_model_name = None
         else:
             self.get_weak_model(weak_model)
+
+    def get_model_info(self, model):
+        # Try and do this quickly, without triggering the litellm import
+        spec = importlib.util.find_spec("litellm")
+        if spec:
+            origin = Path(spec.origin)
+            fname = origin.parent / "model_prices_and_context_window_backup.json"
+            if fname.exists():
+                data = json.loads(fname.read_text())
+                info = data.get(model)
+                if info:
+                    return info
+
+        # Do it the slow way...
+        try:
+            return litellm.get_model_info(model)
+        except Exception:
+            return dict()
 
     def configure_model_settings(self, model):
         for ms in MODEL_SETTINGS:
@@ -371,6 +438,15 @@ class Model:
 
         if "gpt-3.5" in model or "gpt-4" in model:
             self.reminder_as_sys_msg = True
+
+        if "anthropic" in model:
+            self.can_prefill = True
+
+        if "3.5-sonnet" in model or "3-5-sonnet" in model:
+            self.edit_format = "diff"
+            self.use_repo_map = True
+            self.examples_as_sys_msg = True
+            self.can_prefill = True
 
         # use the defaults
         if self.edit_format == "diff":
@@ -455,7 +531,25 @@ class Model:
         with Image.open(fname) as img:
             return img.size
 
+    def fast_validate_environment(self):
+        """Fast path for common models. Avoids forcing litellm import."""
+
+        model = self.name
+        if model in OPENAI_MODELS:
+            var = "OPENAI_API_KEY"
+        elif model in ANTHROPIC_MODELS:
+            var = "ANTHROPIC_API_KEY"
+        else:
+            return
+
+        if os.environ.get(var):
+            return dict(keys_in_environment=[var], missing_keys=[])
+
     def validate_environment(self):
+        res = self.fast_validate_environment()
+        if res:
+            return res
+
         # https://github.com/BerriAI/litellm/issues/3190
 
         model = self.name

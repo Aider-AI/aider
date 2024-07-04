@@ -14,6 +14,9 @@ for that model.
 Aider will use an unlimited context window and assume the model is free,
 so this is not usually a significant problem.
 
+See the docs on 
+[configuring advanced model settings](/docs/config/adv-model-settings.html)
+for details on how to remove this warning.
 
 ## Did you mean?
 

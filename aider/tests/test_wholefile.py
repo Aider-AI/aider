@@ -288,7 +288,9 @@ after b
         files = [file1]
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(self.GPT35, "whole", io=InputOutput(), fnames=files)
+        coder = Coder.create(
+            self.GPT35, "whole", io=InputOutput(), fnames=files, stream=False, pretty=False
+        )
 
         # no trailing newline so the response content below doesn't add ANOTHER newline
         new_content = "new\ntwo\nthree"

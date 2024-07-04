@@ -11,24 +11,31 @@ command line switches.
 Most options can also be set in an `.aider.conf.yml` file
 which can be placed in your home directory or at the root of
 your git repo. 
-Or via environment variables like `AIDER_xxx`,
-as noted in the [options reference](options.html).
+Or by setting environment variables like `AIDER_xxx`
+either in your shell or a `.env` file.
 
-Here are 3 equivalent ways of setting an option. First, via a command line switch:
+Here are 4 equivalent ways of setting an option. 
+
+With a command line switch:
 
 ```
 $ aider --dark-mode
 ```
 
-Or, via an env variable:
-
-```
-export AIDER_DARK_MODE=true
-```
-
-Or in the `.aider.conf.yml` file:
+Using a `.aider.conf.yml` file:
 
 ```yaml
 dark-mode: true
 ```
 
+By setting an environgment variable:
+
+```
+export AIDER_DARK_MODE=true
+```
+
+Using an `.env` file:
+
+```
+AIDER_DARK_MODE=true
+```

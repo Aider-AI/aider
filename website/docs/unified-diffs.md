@@ -5,7 +5,8 @@ highlight_image: /assets/benchmarks-udiff.jpg
 nav_exclude: true
 ---
 {% if page.date %}
-<p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
+<p class="post-date">{{ page.date | date: "%B %d, %Y" }}, by Paul Gauthier
+</p>
 {% endif %}
 
 # Unified diffs make GPT-4 Turbo 3X less lazy

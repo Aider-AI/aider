@@ -1,16 +1,15 @@
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import git
-import openai
 
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.models import Model
-from aider.utils import ChdirTemporaryDirectory, GitTemporaryDirectory
+from aider.utils import GitTemporaryDirectory
 
 
 class TestCoder(unittest.TestCase):
@@ -220,7 +219,7 @@ class TestCoder(unittest.TestCase):
         files = [file1, file2]
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(self.GPT35, None, io=InputOutput(), fnames=files)
+        coder = Coder.create(self.GPT35, None, io=InputOutput(), fnames=files, pretty=False)
 
         def mock_send(*args, **kwargs):
             coder.partial_response_content = "ok"
@@ -247,7 +246,7 @@ class TestCoder(unittest.TestCase):
         files = [file1, file2]
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(self.GPT35, None, io=InputOutput(), fnames=files)
+        coder = Coder.create(self.GPT35, None, io=InputOutput(), fnames=files, pretty=False)
 
         def mock_send(*args, **kwargs):
             coder.partial_response_content = "ok"
@@ -330,25 +329,6 @@ class TestCoder(unittest.TestCase):
         # both files should still be here
         self.assertEqual(len(coder.abs_fnames), 2)
 
-    def test_run_with_invalid_request_error(self):
-        with ChdirTemporaryDirectory():
-            # Mock the IO object
-            mock_io = MagicMock()
-
-            # Initialize the Coder object with the mocked IO and mocked repo
-            coder = Coder.create(self.GPT35, None, mock_io)
-
-            # Call the run method and assert that InvalidRequestError is raised
-            with self.assertRaises(openai.BadRequestError):
-                with patch("litellm.completion") as Mock:
-                    Mock.side_effect = openai.BadRequestError(
-                        message="Invalid request",
-                        response=MagicMock(),
-                        body=None,
-                    )
-
-                    coder.run(with_message="hi")
-
     def test_new_file_edit_one_commit(self):
         """A new file shouldn't get pre-committed before the GPT edit commit"""
         with GitTemporaryDirectory():
@@ -357,7 +337,7 @@ class TestCoder(unittest.TestCase):
             fname = Path("file.txt")
 
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)])
+            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)], pretty=False)
 
             self.assertTrue(fname.exists())
 
@@ -414,7 +394,9 @@ new
             fname1.write_text("ONE\n")
 
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname1), str(fname2)])
+            coder = Coder.create(
+                self.GPT35, "diff", io=io, fnames=[str(fname1), str(fname2)], pretty=False
+            )
 
             def mock_send(*args, **kwargs):
                 coder.partial_response_content = f"""
@@ -467,7 +449,7 @@ TWO
             fname2.write_text("OTHER\n")
 
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)])
+            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)], pretty=False)
 
             def mock_send(*args, **kwargs):
                 coder.partial_response_content = f"""
@@ -545,7 +527,7 @@ three
             repo.git.commit("-m", "initial")
 
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)])
+            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)], pretty=False)
 
             def mock_send(*args, **kwargs):
                 coder.partial_response_content = f"""

@@ -10,7 +10,7 @@ babel==2.15.0
     # via sphinx
 build==1.2.1
     # via pip-tools
-certifi==2024.2.2
+certifi==2024.6.2
     # via requests
 cfgv==3.4.0
     # via pre-commit
@@ -36,9 +36,9 @@ docutils==0.20.1
     # via
     #   sphinx
     #   sphinx-rtd-theme
-filelock==3.14.0
+filelock==3.15.4
     # via virtualenv
-fonttools==4.51.0
+fonttools==4.53.0
     # via matplotlib
 identify==2.5.36
     # via pre-commit
@@ -54,7 +54,7 @@ jinja2==3.1.4
     # via sphinx
 kiwisolver==1.4.5
     # via matplotlib
-lox==0.11.0
+lox==0.12.0
     # via -r dev-requirements.in
 markdown-it-py==3.0.0
     # via rich
@@ -66,14 +66,14 @@ mdurl==0.1.2
     # via markdown-it-py
 multiprocess==0.70.16
     # via pathos
-nodeenv==1.8.0
+nodeenv==1.9.1
     # via pre-commit
-numpy==1.26.4
+numpy==2.0.0
     # via
     #   contourpy
     #   matplotlib
     #   pandas
-packaging==24.0
+packaging==24.1
     # via
     #   build
     #   matplotlib
@@ -107,7 +107,7 @@ pyproject-hooks==1.1.0
     # via
     #   build
     #   pip-tools
-pytest==8.2.1
+pytest==8.2.2
     # via -r dev-requirements.in
 python-dateutil==2.9.0.post0
     # via
@@ -117,7 +117,7 @@ pytz==2024.1
     # via pandas
 pyyaml==6.0.1
     # via pre-commit
-requests==2.32.0
+requests==2.32.3
     # via sphinx
 rich==13.7.1
     # via typer
@@ -149,13 +149,13 @@ sphinxcontrib-serializinghtml==1.1.10
     # via sphinx
 typer==0.12.3
     # via -r dev-requirements.in
-typing-extensions==4.11.0
+typing-extensions==4.12.2
     # via typer
 tzdata==2024.1
     # via pandas
-urllib3==2.2.1
+urllib3==2.2.2
     # via requests
-virtualenv==20.26.2
+virtualenv==20.26.3
     # via pre-commit
 wheel==0.43.0
     # via pip-tools

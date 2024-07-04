@@ -13,17 +13,14 @@
 #######
 # Main:
 
-## Log the conversation with the LLM to this file (for example, .aider.llm.history)
-#llm-history-file:
-
 ## Specify the OpenAI API key
 #openai-api-key:
 
 ## Specify the Anthropic API key
 #anthropic-api-key:
 
-## Specify the model to use for the main chat (default: gpt-4o)
-#model: gpt-4o
+## Specify the model to use for the main chat
+#model:
 
 ## Use claude-3-opus-20240229 model for the main chat
 #opus: false
@@ -65,10 +62,10 @@
 #openai-organization-id:
 
 ## Specify a file with aider model settings for unknown models
-#model-settings-file:
+#model-settings-file: .aider.model.settings.yml
 
 ## Specify a file with context window and costs for unknown models
-#model-metadata-file:
+#model-metadata-file: .aider.model.metadata.json
 
 ## Verify the SSL cert when connecting to models (default: True)
 #verify-ssl: true
@@ -102,6 +99,9 @@
 
 ## Restore the previous chat history messages (default: False)
 #restore-chat-history: false
+
+## Log the conversation with the LLM to this file (for example, .aider.llm.history)
+#llm-history-file:
 
 ##################
 # Output Settings:
@@ -159,6 +159,9 @@
 
 ## Attribute aider commits in the git committer name (default: True)
 #attribute-committer: true
+
+## Prefix commit messages with 'aider: ' (default: False)
+#attribute-commit-message: false
 
 ## Perform a dry run without modifying files (default: False)
 #dry-run: false
@@ -219,6 +222,9 @@
 
 ## Print the system prompts and exit (debug)
 #show-prompts: false
+
+## Do all startup activities then exit before accepting user input (debug)
+#exit: false
 
 ## Specify a single message to send the LLM, process reply then exit (disables chat mode)
 #message:

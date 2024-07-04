@@ -45,6 +45,7 @@ and works best with GPT-4o, Claude 3.5 Sonnet, Claude 3 Opus and DeepSeek Coder 
 # Because this page is rendered by GitHub as the repo README
 cog.out(open("website/_includes/get-started.md").read())
 -->
+
 You can get started quickly like this:
 
 ```
@@ -53,18 +54,13 @@ $ pip install aider-chat
 # Change directory into a git repo
 $ cd /to/your/git/repo
 
+# Work with Claude 3.5 Sonnet on your repo
+$ export ANTHROPIC_API_KEY=your-key-goes-here
+$ aider
+
 # Work with GPT-4o on your repo
 $ export OPENAI_API_KEY=your-key-goes-here
 $ aider 
-
-# Or, work with Anthropic's models
-$ export ANTHROPIC_API_KEY=your-key-goes-here
-
-# Claude 3 Opus
-$ aider --opus
-
-# Claude 3.5 Sonnet
-$ aider --sonnet
 ```
 <!-- NOOP -->
 
@@ -93,8 +89,8 @@ and can [connect to almost any LLM](https://aider.chat/docs/llms.html).
 - Edit files in your editor while chatting with aider,
 and it will always use the latest version.
 Pair program with AI.
-- Add images to the chat (GPT-4o, GPT-4 Turbo, etc).
-- Add URLs to the chat and aider will read their content.
+- [Add images to the chat](https://aider.chat/docs/images-urls.html) (GPT-4o, Claude 3.5 Sonnet, etc).
+- [Add URLs to the chat](https://aider.chat/docs/images-urls.html) and aider will read their content.
 - [Code with your voice](https://aider.chat/docs/voice.html).
 
 
@@ -139,5 +135,6 @@ projects like django, scikitlearn, matplotlib, etc.
 - *I am an aider addict. I'm getting so much more work done, but in less time.* -- [dandandan](https://discord.com/channels/1131200896827654144/1131200896827654149/1135913253483069470)
 - *After wasting $100 on tokens trying to find something better, I'm back to Aider. It blows everything else out of the water hands down, there's no competition whatsoever.* -- [SystemSculpt](https://discord.com/channels/1131200896827654144/1131200896827654149/1178736602797846548)
 - *Hands down, this is the best AI coding assistant tool so far.* -- [IndyDevDan](https://www.youtube.com/watch?v=MPYFPvxfGZs)
+- *[Aider] changed my daily coding workflows. It's mind-blowing how a single Python application can change your life.* -- [maledorak](https://discord.com/channels/1131200896827654144/1131200896827654149/1258453375620747264)
 - *Best agent for actual dev work in existing codebases.* -- [Nick Dobos](https://twitter.com/NickADobos/status/1690408967963652097?s=20)
 <!--[[[end]]]-->

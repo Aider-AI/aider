@@ -16,20 +16,6 @@ While [aider can connect to almost any LLM](/docs/llms.html),
 it works best with models that score well on the benchmarks.
 
 
-## Claude 3.5 Sonnet takes the top spot
-
-Claude 3.5 Sonnet is now the top ranked model on aider's code editing leaderboard.
-DeepSeek Coder V2 only spent 4 days in the top spot.
-
-The new Sonnet came in 3rd on aider's refactoring leaderboard, behind GPT-4o and Opus.
-
-Sonnet ranked #1 when using the "whole" editing format,
-but it also scored very well with
-aider's "diff" editing format.
-This format allows it to return code changes as diffs -- saving time and token costs,
-and making it practical to work with larger source files.
-As such, aider uses "diff" by default with this new Sonnet model.
-
 ## Code editing leaderboard
 
 [Aider's code editing benchmark](/docs/benchmarks.html#the-benchmark) asks the LLM to edit python source files to complete 133 small coding exercises. This benchmark measures the LLM's coding ability, but also whether it can consistently emit code edits in the format specified in the system prompt.
