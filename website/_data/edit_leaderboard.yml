@@ -698,7 +698,7 @@
   indentation_errors: 5
   exhausted_context_windows: 3
   test_timeouts: 0
-  command: aider --model openrouter/deepseek/deepseek-coder
+  command: aider --model deepseek/deepseek-coder
   date: 2024-07-04
   versions: 0.42.1-dev
   seconds_per_case: 82.9
