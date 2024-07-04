@@ -19,7 +19,7 @@ setup(
     include_package_data=True,
     package_data={
         "aider": ["queries/*"],
-        "": ["website/**/*.md"],
+        "": ["website/**/*", "!website/_posts/**/*"],
     },
     install_requires=requirements,
     python_requires=">=3.9,<3.13",
