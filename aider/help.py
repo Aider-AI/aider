@@ -6,29 +6,18 @@ import warnings
 from pathlib import Path
 
 from tqdm import tqdm
+import importlib_resources
 
 from aider.dump import dump  # noqa: F401
 
 warnings.simplefilter("ignore", category=FutureWarning)
 
 
-def should_skip_dir(dirname):
-    if dirname.startswith("OLD"):
-        return True
-    if dirname.startswith("tmp"):
-        return True
-    if dirname == "examples":
-        return True
-    if dirname == "_posts":
-        return True
-
-
-def walk_subdirs_for_files(root_dir):
-    root_path = Path(root_dir)
-    for path in root_path.rglob("*.md"):
-        if any(should_skip_dir(part) for part in path.parts):
-            continue
-        yield str(path)
+def get_package_files():
+    website_files = importlib_resources.files('website')
+    for path in website_files.rglob('*.md'):
+        if not any(part.startswith(('OLD', 'tmp')) or part in ('examples', '_posts') for part in path.parts):
+            yield str(path)
 
 
 def fname_to_url(filepath):
@@ -75,10 +64,10 @@ def get_index():
         parser = MarkdownNodeParser()
 
         nodes = []
-        for fname in tqdm(list(walk_subdirs_for_files("website"))):
+        for fname in tqdm(list(get_package_files())):
             fname = Path(fname)
             doc = Document(
-                text=fname.read_text(),
+                text=importlib_resources.files('website').joinpath(fname).read_text(),
                 metadata=dict(
                     filename=fname.name,
                     extension=fname.suffix,
