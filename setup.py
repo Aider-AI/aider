@@ -20,6 +20,10 @@ print("Discovered packages:", packages)
 package_data = {"aider": ["queries/*"]}
 print("Package data:", package_data)
 
+# Note: The 'build' directory is populated when running commands like
+# 'python setup.py sdist bdist_wheel', which use this setup() configuration
+# to build distribution packages.
+
 setup(
     name="aider-chat",
     version=__version__,
