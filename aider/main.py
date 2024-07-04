@@ -548,7 +548,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.exit:
         return
 
-    threading.Thread(target=load_slow_imports).start()
+    thread = threading.Thread(target=load_slow_imports)
+    thread.daemon = True
+    thread.start()
 
     while True:
         try:
@@ -564,6 +566,7 @@ def load_slow_imports():
     # improve startup time.
     # This func is called in a thread to load them in the background
     # while we wait for the user to type their first message.
+
     try:
         import httpx  # noqa: F401
         import litellm  # noqa: F401
