@@ -116,11 +116,11 @@ for more details, but
 you can get started quickly with aider and Sonnet like this:
 
 ```
-pip install aider-chat
+$ pip install aider-chat
 
-export ANTHROPIC_API_KEY=<key> # Mac/Linux
-setx   ANTHROPIC_API_KEY <key> # Windows
+$ export ANTHROPIC_API_KEY=<key> # Mac/Linux
+$ setx   ANTHROPIC_API_KEY <key> # Windows
 
-aider
+$ aider
 ```
 
