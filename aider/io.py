@@ -37,8 +37,9 @@ class AutoCompleter(Completer):
         self.words = set()
 
         self.commands = commands
-        self.command_names = self.commands.get_commands()
         self.command_completions = dict()
+        if commands:
+            self.command_names = self.commands.get_commands()
 
         for rel_fname in addable_rel_fnames:
             self.words.add(rel_fname)
