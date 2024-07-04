@@ -62,10 +62,10 @@
 #openai-organization-id:
 
 ## Specify a file with aider model settings for unknown models
-#model-settings-file:
+#model-settings-file: .aider.model.settings.yml
 
 ## Specify a file with context window and costs for unknown models
-#model-metadata-file:
+#model-metadata-file: .aider.model.metadata.json
 
 ## Verify the SSL cert when connecting to models (default: True)
 #verify-ssl: true

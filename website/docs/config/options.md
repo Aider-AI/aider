@@ -135,10 +135,12 @@ Environment variable: `OPENAI_ORGANIZATION_ID`
 
 ### `--model-settings-file MODEL_SETTINGS_FILE`
 Specify a file with aider model settings for unknown models  
+Default: .aider.model.settings.yml  
 Environment variable: `AIDER_MODEL_SETTINGS_FILE`  
 
 ### `--model-metadata-file MODEL_METADATA_FILE`
 Specify a file with context window and costs for unknown models  
+Default: .aider.model.metadata.json  
 Environment variable: `AIDER_MODEL_METADATA_FILE`  
 
 ### `--verify-ssl`
