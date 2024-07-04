@@ -12,6 +12,14 @@ with open("README.md", "r", encoding="utf-8") as f:
     long_description = re.sub(r"\n!\[.*\]\(.*\)", "", long_description)
     # long_description = re.sub(r"\n- \[.*\]\(.*\)", "", long_description)
 
+# Debug: Print discovered packages
+packages = find_packages()
+print("Discovered packages:", packages)
+
+# Debug: Print package data
+package_data = {"aider": ["queries/*"]}
+print("Package data:", package_data)
+
 setup(
     name="aider-chat",
     version=__version__,
