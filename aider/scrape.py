@@ -91,12 +91,12 @@ class Scraper:
         if self.playwright_available is not None:
             return
 
-        with sync_playwright() as p:
-            try:
+        try:
+            with sync_playwright() as p:
                 p.chromium.launch()
                 self.playwright_available = True
-            except Exception:
-                self.playwright_available = False
+        except Exception:
+            self.playwright_available = False
 
     def get_playwright_instructions(self):
         if self.playwright_available in (True, None):
