@@ -4,6 +4,7 @@ import hashlib
 import json
 import mimetypes
 import os
+import platform
 import re
 import sys
 import threading
@@ -732,7 +733,15 @@ class Coder:
     def fmt_system_prompt(self, prompt):
         lazy_prompt = self.gpt_prompts.lazy_prompt if self.main_model.lazy else ""
 
-        prompt = prompt.format(fence=self.fence, lazy_prompt=lazy_prompt)
+        platform_text = (
+            f"The user's system is `{platform.platform()}` according to python platform.platform()"
+        )
+
+        prompt = prompt.format(
+            fence=self.fence,
+            lazy_prompt=lazy_prompt,
+            platform=platform_text,
+        )
         return prompt
 
     def format_messages(self):

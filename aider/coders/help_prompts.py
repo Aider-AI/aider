@@ -25,6 +25,7 @@ Don't suggest a solution that isn't supported.
 Be helpful but concise.
 
 Unless the question indicates otherwise, assume the user wants to use aider as a CLI tool.
+{platform}
 """
 
     example_messages = []
