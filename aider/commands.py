@@ -331,6 +331,7 @@ class Commands:
                 return
 
         last_commit_hash = self.coder.repo.repo.head.commit.hexsha[:7]
+        last_commit_message = self.coder.repo.repo.head.commit.message.strip()
         if last_commit_hash not in self.coder.aider_commit_hashes:
             self.io.tool_error("The last commit was not made by aider in this chat session.")
             self.io.tool_error(
@@ -346,7 +347,14 @@ class Commands:
         self.coder.repo.repo.git.reset("--soft", "HEAD~1")
 
         self.io.tool_output(
-            f"Commit `{last_commit_hash}` was reset and removed from git.\n"
+            f"Commit `{last_commit_hash}` with message '{last_commit_message}' was reset and removed from git."
+        )
+
+        # Get the current HEAD after undo
+        current_head_hash = self.coder.repo.repo.head.commit.hexsha[:7]
+        current_head_message = self.coder.repo.repo.head.commit.message.strip()
+        self.io.tool_output(
+            f"Current HEAD is now `{current_head_hash}` with message '{current_head_message}'."
         )
 
         if self.coder.main_model.send_undo_reply:
