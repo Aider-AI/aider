@@ -5,8 +5,6 @@
 Model foobar: Unknown context window size and costs, using sane defaults.
 ```
 
-*You can probably ignore the unknown context window size and token costs warning.*
-
 If you specify a model that aider has never heard of, you will get
 this warning.
 This means aider doesn't know the context window size and token costs
@@ -17,6 +15,9 @@ so this is not usually a significant problem.
 See the docs on 
 [configuring advanced model settings](/docs/config/adv-model-settings.html)
 for details on how to remove this warning.
+
+{: .tip }
+You can probably ignore the unknown context window size and token costs warning.
 
 ## Did you mean?
 

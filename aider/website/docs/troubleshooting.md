@@ -9,3 +9,5 @@ description: How to troubleshoot problems with aider and get help.
 Below are some approaches for troubleshooting problems with aider.
 
 {% include help.md %}
+
+{% include help-tip.md %}

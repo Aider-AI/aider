@@ -9,6 +9,8 @@ description: Frequently asked questions about aider.
 - TOC
 {:toc}
 
+{% include help-tip.md %}
+
 ## How can I add ALL the files to the chat?
 
 People regularly ask about how to add **many or all of their repo's files** to the chat.
