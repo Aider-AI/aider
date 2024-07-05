@@ -1,14 +1,12 @@
 import unittest
-from unittest.mock import patch, MagicMock
+
 from aider.help import Help
 
+
 class TestHelp(unittest.TestCase):
-
-    def setUp(self):
-        self.help = Help()
-
     def test_init(self):
-        self.assertIsNotNone(self.help.retriever)
+        help_inst = Help()
+        self.assertIsNotNone(help_inst.retriever)
 
     def test_ask_without_mock(self):
         help_instance = Help()
@@ -28,5 +26,6 @@ class TestHelp(unittest.TestCase):
         # Assert that there are more than 5 <doc> entries
         self.assertGreater(result.count("<doc"), 5)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
