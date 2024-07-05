@@ -17,10 +17,6 @@ with open("README.md", "r", encoding="utf-8") as f:
 packages = find_packages(exclude=["benchmark"]) + ["aider.website"]
 print("Discovered packages:", packages)
 
-# Note: The 'build' directory is populated when running commands like
-# 'python setup.py sdist bdist_wheel', which use this setup() configuration
-# to build distribution packages.
-
 setup(
     name="aider-chat",
     version=__version__,
