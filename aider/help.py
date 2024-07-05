@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import os
-import sys
 import warnings
 from pathlib import Path
 
@@ -127,17 +126,3 @@ class Help:
             context += "\n</doc>\n\n"
 
         return context
-
-
-#
-# question = "how can i convert a python script to js"
-# question = "i am getting an error message about unknown context window"
-# question = "i am getting an error message about exhausted context window"
-# question = "The chat session is larger than the context window!"
-# question = "how do i add deepseek api key to yaml"
-# question = (
-#    "It would be great if I could give aider an example github PR and instruct it to do the same"
-#    " exact thing for another integration."
-# )
-
-question = " ".join(sys.argv[1:])
