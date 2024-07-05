@@ -48,6 +48,7 @@ class Coder:
     abs_fnames = None
     repo = None
     last_aider_commit_hash = None
+    aider_commit_hashes = set()
     aider_edited_files = None
     last_asked_for_commit_time = 0
     repo_map = None
@@ -117,6 +118,7 @@ class Coder:
                 fnames=from_coder.get_inchat_relative_files(),
                 done_messages=done_messages,
                 cur_messages=from_coder.cur_messages,
+                aider_commit_hashes=from_coder.aider_commit_hashes,
             )
 
             use_kwargs.update(update)  # override to complete the switch
@@ -226,12 +228,18 @@ class Coder:
         attribute_author=True,
         attribute_committer=True,
         attribute_commit_message=False,
+        aider_commit_hashes=None,
     ):
         if not fnames:
             fnames = []
 
         if io is None:
             io = InputOutput()
+
+        if aider_commit_hashes:
+            self.aider_commit_hashes = aider_commit_hashes
+        else:
+            self.aider_commit_hashes = set()
 
         self.chat_completion_call_hashes = []
         self.chat_completion_response_hashes = []
@@ -1454,6 +1462,7 @@ class Coder:
         if res:
             commit_hash, commit_message = res
             self.last_aider_commit_hash = commit_hash
+            self.aider_commit_hashes.add(commit_hash)
             self.last_aider_commit_message = commit_message
             if self.show_diffs:
                 self.commands.cmd_diff()

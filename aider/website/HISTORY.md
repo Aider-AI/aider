@@ -12,6 +12,10 @@ cog.out(text)
 
 # Release history
 
+### main branch
+
+- Allow multiple use of `/undo`.
+
 ### Aider v0.42.0
 
 - Performance release:
