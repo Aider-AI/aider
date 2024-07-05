@@ -680,17 +680,21 @@ class Commands:
     def get_help_md(self):
         "Show help about all commands in markdown"
 
-        res = ""
+        res = """
+|Command|Description|
+|:------|:----------|
+"""
         commands = sorted(self.get_commands())
         for cmd in commands:
             cmd_method_name = f"cmd_{cmd[1:]}"
             cmd_method = getattr(self, cmd_method_name, None)
             if cmd_method:
                 description = cmd_method.__doc__
-                res += f"- **{cmd}** {description}\n"
+                res += f"| **{cmd}** | {description} |\n"
             else:
-                res += f"- **{cmd}**\n"
+                res += f"| **{cmd}** | |\n"
 
+        res += "\n"
         return res
 
     def cmd_voice(self, args):

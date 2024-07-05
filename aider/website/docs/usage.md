@@ -30,7 +30,7 @@ Git repo: .git with 258 files
 Repo-map: using 1024 tokens
 Use /help to see in-chat commands, run with --help to see cmd line args
 ───────────────────────────────────────────────────────────────────────
->`Make a program that asks for a number and prints its factorial
+> Make a program that asks for a number and prints its factorial
 
 ...
 ```
