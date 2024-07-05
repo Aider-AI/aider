@@ -76,7 +76,8 @@ def get_index():
         nodes = []
         for fname in tqdm(list(get_package_files())):
             fname = Path(fname)
-            # todo: skip if matches exclude website pats
+            if any(fname.match(pat) for pat in exclude_website_pats):
+                continue
             doc = Document(
                 text=importlib_resources.files("website").joinpath(fname).read_text(),
                 metadata=dict(
