@@ -14,7 +14,7 @@ with open("README.md", "r", encoding="utf-8") as f:
     # long_description = re.sub(r"\n- \[.*\]\(.*\)", "", long_description)
 
 # Debug: Print discovered packages
-packages = find_packages() + ["website"]
+packages = find_packages(exclude=["benchmark"]) + ["website"]
 print("Discovered packages:", packages)
 
 # Note: The 'build' directory is populated when running commands like
