@@ -14,13 +14,13 @@ your git repo.
 
 Below is a sample of the file, which you
 can also
-[download from GitHub](https://github.com/paul-gauthier/aider/blob/main/website/assets/sample.aider.conf.yml).
+[download from GitHub](https://github.com/paul-gauthier/aider/blob/main/aider/website/assets/sample.aider.conf.yml).
 
 <!--[[[cog
 from aider.args import get_sample_yaml
 from pathlib import Path
 text=get_sample_yaml()
-Path("website/assets/sample.aider.conf.yml").write_text(text)
+Path("aider/website/assets/sample.aider.conf.yml").write_text(text)
 cog.outl("```")
 cog.out(text)
 cog.outl("```")

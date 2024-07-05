@@ -18,7 +18,7 @@ cog.out(get_help_md())
 - **/drop** Remove files from the chat session to free up context space
 - **/exit** Exit the application
 - **/git** Run a git command
-- **/help** Show help about all commands
+- **/help** Ask questions about aider
 - **/lint** Lint and fix provided files or in-chat files if none provided
 - **/ls** List all known files and indicate which are included in the chat session
 - **/model** Switch to a new LLM
