@@ -346,16 +346,12 @@ class Commands:
         # Move the HEAD back before the latest commit
         self.coder.repo.repo.git.reset("--soft", "HEAD~1")
 
-        self.io.tool_output(
-            f"Commit `{last_commit_hash}` with message '{last_commit_message}' was reset and removed from git."
-        )
+        self.io.tool_output(f"Removed: {last_commit_hash} {last_commit_message}")
 
         # Get the current HEAD after undo
         current_head_hash = self.coder.repo.repo.head.commit.hexsha[:7]
         current_head_message = self.coder.repo.repo.head.commit.message.strip()
-        self.io.tool_output(
-            f"Current HEAD is now `{current_head_hash}` with message '{current_head_message}'."
-        )
+        self.io.tool_output(f"HEAD is: {current_head_hash} {current_head_message}")
 
         if self.coder.main_model.send_undo_reply:
             return prompts.undo_command_reply
@@ -375,8 +371,8 @@ class Commands:
 
         diff = self.coder.repo.diff_commits(
             self.coder.pretty,
-            'HEAD^',
-            'HEAD',
+            "HEAD^",
+            "HEAD",
         )
 
         # don't use io.tool_output() because we don't want to log or further colorize
