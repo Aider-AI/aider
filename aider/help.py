@@ -12,23 +12,25 @@ from aider.dump import dump  # noqa: F401
 
 warnings.simplefilter("ignore", category=FutureWarning)
 
+exclude_website_pats = [
+    "examples/**",
+    "_posts/**",
+    "HISTORY.md",
+    "docs/benchmarks*md",
+    "docs/ctags.md",
+    "docs/unified-diffs.md",
+    "docs/leaderboards/index.md",
+    "assets/**",
+]
+
 
 def get_package_files():
     for path in importlib_resources.files("website").iterdir():
-        dump(path)
-        if path.is_file() and path.name.endswith(".md"):
-            if not any(
-                part.startswith(("OLD", "tmp")) or part in ("examples", "_posts")
-                for part in path.parts
-            ):
-                yield str(path)
+        if path.is_file():
+            yield path
         elif path.is_dir():
             for subpath in path.rglob("*.md"):
-                if not any(
-                    part.startswith(("OLD", "tmp")) or part in ("examples", "_posts")
-                    for part in subpath.parts
-                ):
-                    yield str(subpath)
+                yield subpath
 
 
 def fname_to_url(filepath):
@@ -74,7 +76,7 @@ def get_index():
         nodes = []
         for fname in tqdm(list(get_package_files())):
             fname = Path(fname)
-            dump(fname)
+            # todo: skip if matches exclude website pats
             doc = Document(
                 text=importlib_resources.files("website").joinpath(fname).read_text(),
                 metadata=dict(
@@ -85,7 +87,7 @@ def get_index():
             )
             nodes += parser.get_nodes_from_documents([doc])
 
-        index = VectorStoreIndex(nodes)
+        index = VectorStoreIndex(nodes, show_progress=True)
         dname.parent.mkdir(exist_ok=True)
         index.storage_context.persist(dname)
 
