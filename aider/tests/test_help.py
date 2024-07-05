@@ -25,5 +25,8 @@ class TestHelp(unittest.TestCase):
         self.assertIn("ai", result.lower())
         self.assertIn("chat", result.lower())
 
+        # Assert that there are more than 5 <doc> entries
+        self.assertGreater(result.count("<doc"), 5)
+
 if __name__ == '__main__':
     unittest.main()
