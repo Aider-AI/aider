@@ -536,7 +536,7 @@ class TestCommands(TestCase):
 
             # Store the commit hash
             last_commit_hash = repo.head.commit.hexsha[:7]
-            coder.last_aider_commit_hash = last_commit_hash
+            coder.aider_commit_hashes.add(last_commit_hash)
 
             file_path.write_text("dirty content")
 
