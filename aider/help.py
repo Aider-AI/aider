@@ -8,19 +8,9 @@ import importlib_resources
 
 from aider import __version__
 from aider.dump import dump  # noqa: F401
+from aider.help_pats import exclude_website_pats
 
 warnings.simplefilter("ignore", category=FutureWarning)
-
-exclude_website_pats = [
-    "examples/**",
-    "_posts/**",
-    "HISTORY.md",
-    "docs/benchmarks*md",
-    "docs/ctags.md",
-    "docs/unified-diffs.md",
-    "docs/leaderboards/index.md",
-    "assets/**",
-]
 
 
 def get_package_files():

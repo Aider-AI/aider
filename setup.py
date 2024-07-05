@@ -6,7 +6,7 @@ with open("requirements.txt") as f:
     requirements = f.read().splitlines()
 
 from aider import __version__
-from aider.help import exclude_website_pats
+from aider.help_pats import exclude_website_pats
 
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
