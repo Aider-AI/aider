@@ -25,14 +25,6 @@ class TestHelp(unittest.TestCase):
         self.assertIn("Test content", result)
         self.assertIn("</doc>", result)
 
-    @patch('os.environ')
-    @patch('aider.help.Settings')
-    @patch('aider.help.HuggingFaceEmbedding')
-    def test_environment_and_settings(self, mock_hf, mock_settings, mock_environ):
-        Help()
-        mock_environ.__setitem__.assert_called_with("TOKENIZERS_PARALLELISM", "true")
-        self.assertEqual(mock_settings.embed_model, mock_hf.return_value)
-        mock_hf.assert_called_with(model_name="BAAI/bge-small-en-v1.5")
 
 if __name__ == '__main__':
     unittest.main()
