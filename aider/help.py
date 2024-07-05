@@ -6,7 +6,6 @@ import warnings
 from pathlib import Path
 
 import importlib_resources
-from tqdm import tqdm
 
 from aider.dump import dump  # noqa: F401
 
@@ -74,10 +73,11 @@ def get_index():
         parser = MarkdownNodeParser()
 
         nodes = []
-        for fname in tqdm(list(get_package_files())):
+        for fname in get_package_files():
             fname = Path(fname)
             if any(fname.match(pat) for pat in exclude_website_pats):
                 continue
+
             doc = Document(
                 text=importlib_resources.files("website").joinpath(fname).read_text(),
                 metadata=dict(

@@ -6,6 +6,7 @@ with open("requirements.txt") as f:
     requirements = f.read().splitlines()
 
 from aider import __version__
+from aider.help import exclude_website_pats
 
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
@@ -13,12 +14,8 @@ with open("README.md", "r", encoding="utf-8") as f:
     # long_description = re.sub(r"\n- \[.*\]\(.*\)", "", long_description)
 
 # Debug: Print discovered packages
-packages = find_packages()
+packages = find_packages() + ["website"]
 print("Discovered packages:", packages)
-
-# Debug: Print package data
-package_data = {"aider": ["queries/*"]}
-print("Package data:", package_data)
 
 # Note: The 'build' directory is populated when running commands like
 # 'python setup.py sdist bdist_wheel', which use this setup() configuration
@@ -27,11 +24,13 @@ print("Package data:", package_data)
 setup(
     name="aider-chat",
     version=__version__,
-    packages=find_packages(),
+    packages=packages,
     include_package_data=True,
     package_data={
-        "aider": ["queries/*"],
+        "aider": ["queries/*.scm"],
+        "website": ["**/*.md"],
     },
+    exclude_package_data={"website": exclude_website_pats},
     install_requires=requirements,
     python_requires=">=3.9,<3.13",
     entry_points={
