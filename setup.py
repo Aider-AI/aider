@@ -14,7 +14,7 @@ with open("README.md", "r", encoding="utf-8") as f:
     # long_description = re.sub(r"\n- \[.*\]\(.*\)", "", long_description)
 
 # Debug: Print discovered packages
-packages = find_packages(exclude=["benchmark"]) + ["website"]
+packages = find_packages(exclude=["benchmark"]) + ["aider.website"]
 print("Discovered packages:", packages)
 
 # Note: The 'build' directory is populated when running commands like
@@ -28,9 +28,9 @@ setup(
     include_package_data=True,
     package_data={
         "aider": ["queries/*.scm"],
-        "website": ["**/*.md"],
+        "aider.website": ["**/*.md"],
     },
-    exclude_package_data={"website": exclude_website_pats},
+    exclude_package_data={"aider.website": exclude_website_pats},
     install_requires=requirements,
     python_requires=">=3.9,<3.13",
     entry_points={

@@ -24,7 +24,7 @@ exclude_website_pats = [
 
 
 def get_package_files():
-    for path in importlib_resources.files("website").iterdir():
+    for path in importlib_resources.files("aider.website").iterdir():
         if path.is_file():
             yield path
         elif path.is_dir():
@@ -79,7 +79,7 @@ def get_index():
                 continue
 
             doc = Document(
-                text=importlib_resources.files("website").joinpath(fname).read_text(),
+                text=importlib_resources.files("aider.website").joinpath(fname).read_text(),
                 metadata=dict(
                     filename=fname.name,
                     extension=fname.suffix,
