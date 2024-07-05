@@ -63,7 +63,7 @@ def get_index():
     )
     from llama_index.core.node_parser import MarkdownNodeParser
 
-    dname = Path.home() / ".aider" / ("help." + __version__)
+    dname = Path.home() / ".aider" / "caches" / ("help." + __version__)
 
     if dname.exists():
         storage_context = StorageContext.from_defaults(
@@ -90,7 +90,7 @@ def get_index():
             nodes += parser.get_nodes_from_documents([doc])
 
         index = VectorStoreIndex(nodes, show_progress=True)
-        dname.parent.mkdir(exist_ok=True)
+        dname.parent.mkdir(parents=True, exist_ok=True)
         index.storage_context.persist(dname)
 
     return index
