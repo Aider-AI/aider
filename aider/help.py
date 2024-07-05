@@ -7,6 +7,7 @@ from pathlib import Path
 
 import importlib_resources
 
+from aider import __version__
 from aider.dump import dump  # noqa: F401
 
 warnings.simplefilter("ignore", category=FutureWarning)
@@ -62,7 +63,7 @@ def get_index():
     )
     from llama_index.core.node_parser import MarkdownNodeParser
 
-    dname = Path.home() / ".aider" / "help"
+    dname = Path.home() / ".aider" / ("help." + __version__)
 
     if dname.exists():
         storage_context = StorageContext.from_defaults(
