@@ -69,7 +69,9 @@ def get_index():
                 continue
 
             doc = Document(
-                text=importlib_resources.files("aider.website").joinpath(fname).read_text(),
+                text=importlib_resources.files("aider.website")
+                .joinpath(fname)
+                .read_text(encoding="utf-8"),
                 metadata=dict(
                     filename=fname.name,
                     extension=fname.suffix,
