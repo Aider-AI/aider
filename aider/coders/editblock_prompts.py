@@ -19,6 +19,10 @@ Once you understand the request you MUST:
 3. Describe each change with a *SEARCH/REPLACE block* per the examples below. All changes to files must use this *SEARCH/REPLACE block* format. ONLY EVER RETURN CODE IN A *SEARCH/REPLACE BLOCK*!
 
 All changes to files must use the *SEARCH/REPLACE block* format.
+
+Keep this info about the user's system in mind:
+{platform}
+
 """
 
     example_messages = [

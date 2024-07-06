@@ -11,6 +11,7 @@ import threading
 import time
 import traceback
 from collections import defaultdict
+from datetime import datetime
 from json.decoder import JSONDecodeError
 from pathlib import Path
 
@@ -733,9 +734,16 @@ class Coder:
     def fmt_system_prompt(self, prompt):
         lazy_prompt = self.gpt_prompts.lazy_prompt if self.main_model.lazy else ""
 
-        platform_text = (
-            f"The user's system is `{platform.platform()}` according to python platform.platform()"
-        )
+        platform_text = f"- The user's system: {platform.platform()}\n"
+        if os.name == "nt":
+            var = "COMSPEC"
+        else:
+            var = "SHELL"
+
+        val = os.getenv(var)
+        platform_text += f"- The user's shell: {var}={val}\n"
+        dt = datetime.now().isoformat()
+        platform_text += f"- The current date/time: {dt}"
 
         prompt = prompt.format(
             fence=self.fence,
