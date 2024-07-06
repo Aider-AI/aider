@@ -32,4 +32,10 @@ setx   OPENROUTER_API_KEY <key> # Windows
 aider --model openrouter/meta-llama/llama-3-70b-instruct
 ```
 
+You can access Claude 3.5 Sonnet via OpenRouter:
+
+```
+aider --model openrouter/anthropic/claude-3.5-sonnet
+```
+
 
