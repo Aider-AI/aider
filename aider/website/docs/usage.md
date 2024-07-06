@@ -60,7 +60,7 @@ on your requests.
 
 {: .tip }
 You'll get the best results if you think about which files need to be
-edited and add them to the chat.
+edited, and add just those files to the chat.
 
 ## LLMs
 
