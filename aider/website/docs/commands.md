@@ -36,6 +36,11 @@ cog.out(get_help_md())
 
 <!--[[[end]]]-->
 
+{: .tip }
+You can easily re-send commands or messages.
+Use the up arrow ⬆ to scroll back
+or CONTROL-R to search your message history.
+
 # Entering multi-line chat messages
 
 {% include multi-line.md %}
