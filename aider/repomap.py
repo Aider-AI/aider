@@ -41,6 +41,7 @@ class RepoMap:
         repo_content_prefix=None,
         verbose=False,
         max_context_window=None,
+        map_mul_no_files=8,
     ):
         self.io = io
         self.verbose = verbose
@@ -52,6 +53,7 @@ class RepoMap:
         self.load_tags_cache()
 
         self.max_map_tokens = map_tokens
+        self.map_mul_no_files = map_mul_no_files
         self.max_context_window = max_context_window
 
         self.token_count = main_model.token_count
@@ -70,10 +72,12 @@ class RepoMap:
         max_map_tokens = self.max_map_tokens
 
         # With no files in the chat, give a bigger view of the entire repo
-        MUL = 8
         padding = 4096
         if max_map_tokens and self.max_context_window:
-            target = min(max_map_tokens * MUL, self.max_context_window - padding)
+            target = min(
+                max_map_tokens * self.map_mul_no_files,
+                self.max_context_window - padding,
+            )
         else:
             target = 0
         if not chat_files and self.max_context_window and target > 0:

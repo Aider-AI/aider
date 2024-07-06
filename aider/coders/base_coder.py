@@ -231,6 +231,7 @@ class Coder:
         attribute_committer=True,
         attribute_commit_message=False,
         aider_commit_hashes=None,
+        map_mul_no_files=8,
     ):
         if not fnames:
             fnames = []
@@ -323,6 +324,7 @@ class Coder:
         if not self.repo:
             self.find_common_root()
 
+        max_inp_tokens = self.main_model.info.get("max_input_tokens") or 0
         if main_model.use_repo_map and self.repo and self.gpt_prompts.repo_content_prefix:
             self.repo_map = RepoMap(
                 map_tokens,
@@ -331,7 +333,8 @@ class Coder:
                 io,
                 self.gpt_prompts.repo_content_prefix,
                 self.verbose,
-                self.main_model.info.get("max_input_tokens"),
+                max_inp_tokens,
+                map_mul_no_files=map_mul_no_files,
             )
 
         if max_chat_history_tokens is None:
