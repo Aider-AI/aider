@@ -33,13 +33,9 @@ aider --model openrouter/meta-llama/llama-3-70b-instruct
 ```
 
 
-## Sonnet via OpenRouter
-
+{: .tip }
 You can access Claude 3.5 Sonnet via OpenRouter, without
 the tight rate limits that Anthropic applies.
-
-```
-aider --model openrouter/anthropic/claude-3.5-sonnet
-```
+Use `aider --model openrouter/anthropic/claude-3.5-sonnet`
 
 
