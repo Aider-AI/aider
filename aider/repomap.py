@@ -517,13 +517,16 @@ def get_random_color():
 def get_supported_languages_md():
     from grep_ast.parsers import PARSERS
 
-    res = ""
+    res = """
+| Language | File extension |
+|:--------:|:--------------:|
+"""
     data = sorted((lang, ex) for ex, lang in PARSERS.items())
     for lang, ext in data:
-        res += "<tr>"
-        res += f'<td style="text-align: center;">{lang:20}</td>\n'
-        res += f'<td style="text-align: center;">{ext:20}</td>\n'
-        res += "</tr>"
+        res += f"| {lang:20} | {ext:20} |\n"
+
+    res += "\n"
+
     return res
 
 
