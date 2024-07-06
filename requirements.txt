@@ -5,7 +5,10 @@
 #    pip-compile requirements.in
 #
 aiohttp==3.9.5
-    # via litellm
+    # via
+    #   huggingface-hub
+    #   litellm
+    #   llama-index-core
 aiosignal==1.3.1
     # via aiohttp
 altair==5.3.0
@@ -31,7 +34,7 @@ cachetools==5.3.3
     # via
     #   google-auth
     #   streamlit
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   httpcore
     #   httpx
@@ -45,17 +48,27 @@ charset-normalizer==3.3.2
 click==8.1.7
     # via
     #   litellm
+    #   nltk
     #   streamlit
 configargparse==1.7
     # via -r requirements.in
+dataclasses-json==0.6.7
+    # via llama-index-core
+deprecated==1.2.14
+    # via llama-index-core
 diff-match-patch==20230430
     # via -r requirements.in
+dirtyjson==1.0.8
+    # via llama-index-core
 diskcache==5.6.3
     # via -r requirements.in
 distro==1.9.0
     # via openai
 filelock==3.15.4
-    # via huggingface-hub
+    # via
+    #   huggingface-hub
+    #   torch
+    #   transformers
 flake8==7.1.0
     # via -r requirements.in
 frozenlist==1.4.1
@@ -63,7 +76,10 @@ frozenlist==1.4.1
     #   aiohttp
     #   aiosignal
 fsspec==2024.6.1
-    # via huggingface-hub
+    # via
+    #   huggingface-hub
+    #   llama-index-core
+    #   torch
 gitdb==4.0.11
     # via gitpython
 gitpython==3.1.43
@@ -77,9 +93,9 @@ google-api-core[grpc]==2.19.1
     #   google-ai-generativelanguage
     #   google-api-python-client
     #   google-generativeai
-google-api-python-client==2.135.0
+google-api-python-client==2.136.0
     # via google-generativeai
-google-auth==2.30.0
+google-auth==2.31.0
     # via
     #   google-ai-generativelanguage
     #   google-api-core
@@ -95,7 +111,9 @@ googleapis-common-protos==1.63.2
     #   google-api-core
     #   grpcio-status
 greenlet==3.0.3
-    # via playwright
+    # via
+    #   playwright
+    #   sqlalchemy
 grep-ast==0.3.2
     # via -r requirements.in
 grpcio==1.64.1
@@ -113,80 +131,126 @@ httplib2==0.22.0
     #   google-api-python-client
     #   google-auth-httplib2
 httpx==0.27.0
-    # via openai
-huggingface-hub==0.23.4
-    # via tokenizers
+    # via
+    #   llama-cloud
+    #   llama-index-core
+    #   openai
+huggingface-hub[inference]==0.23.4
+    # via
+    #   llama-index-embeddings-huggingface
+    #   sentence-transformers
+    #   tokenizers
+    #   transformers
 idna==3.7
     # via
     #   anyio
     #   httpx
     #   requests
     #   yarl
-ijson==3.3.0
-    # via litellm
 importlib-metadata==7.2.1
     # via
     #   -r requirements.in
     #   litellm
+importlib-resources==6.4.0
+    # via -r requirements.in
 jinja2==3.1.4
     # via
     #   altair
     #   litellm
     #   pydeck
+    #   torch
+joblib==1.4.2
+    # via
+    #   nltk
+    #   scikit-learn
 jsonschema==4.22.0
     # via
     #   -r requirements.in
     #   altair
+    #   litellm
 jsonschema-specifications==2023.12.1
     # via jsonschema
-litellm==1.41.0
+litellm==1.41.6
+    # via -r requirements.in
+llama-cloud==0.0.6
+    # via llama-index-core
+llama-index-core==0.10.52.post2
+    # via
+    #   -r requirements.in
+    #   llama-index-embeddings-huggingface
+llama-index-embeddings-huggingface==0.2.2
     # via -r requirements.in
 markdown-it-py==3.0.0
     # via rich
 markupsafe==2.1.5
     # via jinja2
+marshmallow==3.21.3
+    # via dataclasses-json
 mccabe==0.7.0
     # via flake8
 mdurl==0.1.2
     # via markdown-it-py
+minijinja==2.0.1
+    # via huggingface-hub
+mpmath==1.3.0
+    # via sympy
 multidict==6.0.5
     # via
     #   aiohttp
     #   yarl
+mypy-extensions==1.0.0
+    # via typing-inspect
+nest-asyncio==1.6.0
+    # via llama-index-core
 networkx==3.2.1
-    # via -r requirements.in
-numpy==2.0.0
+    # via
+    #   -r requirements.in
+    #   llama-index-core
+    #   torch
+nltk==3.8.1
+    # via llama-index-core
+numpy==1.26.4
     # via
     #   -r requirements.in
     #   altair
+    #   llama-index-core
     #   pandas
     #   pyarrow
     #   pydeck
+    #   scikit-learn
     #   scipy
+    #   sentence-transformers
     #   streamlit
-openai==1.35.7
+    #   transformers
+openai==1.35.10
     # via
     #   -r requirements.in
     #   litellm
+    #   llama-index-core
 packaging==24.1
     # via
     #   -r requirements.in
     #   altair
     #   huggingface-hub
+    #   marshmallow
     #   streamlit
+    #   transformers
 pandas==2.2.2
     # via
     #   altair
+    #   llama-index-core
     #   streamlit
 pathspec==0.12.1
     # via
     #   -r requirements.in
     #   grep-ast
-pillow==10.3.0
+pillow==10.4.0
     # via
     #   -r requirements.in
+    #   llama-index-core
+    #   sentence-transformers
     #   streamlit
-playwright==1.44.0
+playwright==1.45.0
     # via -r requirements.in
 prompt-toolkit==3.0.47
     # via -r requirements.in
@@ -215,12 +279,13 @@ pycodestyle==2.12.0
     # via flake8
 pycparser==2.22
     # via cffi
-pydantic==2.7.4
+pydantic==2.8.2
     # via
     #   google-generativeai
     #   litellm
+    #   llama-cloud
     #   openai
-pydantic-core==2.18.4
+pydantic-core==2.20.1
     # via pydantic
 pydeck==0.9.1
     # via streamlit
@@ -244,19 +309,26 @@ pyyaml==6.0.1
     # via
     #   -r requirements.in
     #   huggingface-hub
+    #   llama-index-core
+    #   transformers
 referencing==0.35.1
     # via
     #   jsonschema
     #   jsonschema-specifications
 regex==2024.5.15
-    # via tiktoken
+    # via
+    #   nltk
+    #   tiktoken
+    #   transformers
 requests==2.32.3
     # via
     #   google-api-core
     #   huggingface-hub
     #   litellm
+    #   llama-index-core
     #   streamlit
     #   tiktoken
+    #   transformers
 rich==13.7.1
     # via
     #   -r requirements.in
@@ -267,8 +339,17 @@ rpds-py==0.18.1
     #   referencing
 rsa==4.9
     # via google-auth
+safetensors==0.4.3
+    # via transformers
+scikit-learn==1.5.1
+    # via sentence-transformers
 scipy==1.13.1
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   scikit-learn
+    #   sentence-transformers
+sentence-transformers==3.0.1
+    # via llama-index-embeddings-huggingface
 six==1.16.0
     # via python-dateutil
 smmap==5.0.1
@@ -284,27 +365,48 @@ soundfile==0.12.1
     # via -r requirements.in
 soupsieve==2.5
     # via beautifulsoup4
+sqlalchemy[asyncio]==2.0.31
+    # via
+    #   llama-index-core
+    #   sqlalchemy
 streamlit==1.36.0
     # via -r requirements.in
+sympy==1.12.1
+    # via torch
 tenacity==8.4.2
-    # via streamlit
+    # via
+    #   llama-index-core
+    #   streamlit
+threadpoolctl==3.5.0
+    # via scikit-learn
 tiktoken==0.7.0
     # via
     #   -r requirements.in
     #   litellm
+    #   llama-index-core
 tokenizers==0.19.1
-    # via litellm
+    # via
+    #   litellm
+    #   transformers
 toml==0.10.2
     # via streamlit
 toolz==0.12.1
     # via altair
+torch==2.2.2
+    # via sentence-transformers
 tornado==6.4.1
     # via streamlit
 tqdm==4.66.4
     # via
     #   google-generativeai
     #   huggingface-hub
+    #   llama-index-core
+    #   nltk
     #   openai
+    #   sentence-transformers
+    #   transformers
+transformers==4.42.3
+    # via sentence-transformers
 tree-sitter==0.21.3
     # via
     #   -r requirements.in
@@ -315,11 +417,19 @@ typing-extensions==4.12.2
     # via
     #   google-generativeai
     #   huggingface-hub
+    #   llama-index-core
     #   openai
     #   pydantic
     #   pydantic-core
     #   pyee
+    #   sqlalchemy
     #   streamlit
+    #   torch
+    #   typing-inspect
+typing-inspect==0.9.0
+    # via
+    #   dataclasses-json
+    #   llama-index-core
 tzdata==2024.1
     # via pandas
 uritemplate==4.1.1
@@ -330,6 +440,10 @@ watchdog==4.0.1
     # via -r requirements.in
 wcwidth==0.2.13
     # via prompt-toolkit
+wrapt==1.16.0
+    # via
+    #   deprecated
+    #   llama-index-core
 yarl==1.9.4
     # via aiohttp
 zipp==3.19.2

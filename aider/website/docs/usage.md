@@ -30,15 +30,23 @@ Git repo: .git with 258 files
 Repo-map: using 1024 tokens
 Use /help to see in-chat commands, run with --help to see cmd line args
 ───────────────────────────────────────────────────────────────────────
->`Make a program that asks for a number and prints its factorial
+> Make a program that asks for a number and prints its factorial
 
 ...
 ```
 
+{% include help-tip.md %}
+
 ## Adding files
 
-Add the files that the aider will need to *edit*.
+To edit files, you need to "add them to the chat".
+Do this
+by naming them on the aider command line.
+Or, you can use the in-chat
+`/add` command to add files.
 
+
+Only add the files that need to be edited for your task.
 Don't add a bunch of extra files.
 If you add too many files, the LLM can get overwhelmed
 and confused (and it costs more tokens).
@@ -46,15 +54,13 @@ Aider will automatically
 pull in content from related files so that it can
 [understand the rest of your code base](https://aider.chat/docs/repomap.html).
 
-You add files to the chat by naming them on the aider command line.
-Or, you can use the in-chat
-`/add` command to add files.
-
 You can use aider without adding any files,
 and it will try to figure out which files need to be edited based
 on your requests.
-But you'll get the best results if you add the files that need
-to edited.
+
+{: .tip }
+You'll get the best results if you think about which files need to be
+edited and add them to the chat.
 
 ## LLMs
 

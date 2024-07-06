@@ -1,242 +1,281 @@
+---
+parent: Configuration
+nav_order: 900
+description: Using a .env file to store LLM API keys for aider.
+---
+
+# Config with .env
+
+You can use a `.env` file to store API keys and other settings for the
+models you use with aider.
+You can also set many general aider options
+in the `.env` file.
+
+{% include special-keys.md %}
+
+Aider will look for a `.env` file in the
+root of your git repo or in the current directory.
+You can give it an explicit file to load with the `--env-file <filename>` parameter.
+
+Below is a sample `.env` file, which you
+can also
+[download from GitHub](https://github.com/paul-gauthier/aider/blob/main/aider/website/assets/sample.env).
+
+<!--[[[cog
+from aider.args import get_sample_dotenv
+from pathlib import Path
+text=get_sample_dotenv()
+Path("aider/website/assets/sample.env").write_text(text)
+cog.outl("```")
+cog.out(text)
+cog.outl("```")
+]]]-->
+```
 ##########################################################
-# Sample .aider.conf.yaml
-# This file lists *all* the valid configuration entries.
-# Place in your home dir, or at the root of your git repo.
+# Sample aider .env file.
+# Place at the root of your git repo.
+# Or use `aider --env <fname>` to specify.
 ##########################################################
 
-##########
-# options:
+#################
+# LLM parameters:
+#
+# Include xxx_API_KEY parameters and other params needed for your LLMs.
+# See https://aider.chat/docs/llms.html for details.
 
-## show this help message and exit
-#help:
+## OpenAI
+#OPENAI_API_KEY=
+
+## Anthropic
+#ANTHROPIC_API_KEY=
+
+##...
 
 #######
 # Main:
 
 ## Specify the OpenAI API key
-#openai-api-key:
+#OPENAI_API_KEY=
 
 ## Specify the Anthropic API key
-#anthropic-api-key:
+#ANTHROPIC_API_KEY=
 
 ## Specify the model to use for the main chat
-#model:
+#AIDER_MODEL=
 
 ## Use claude-3-opus-20240229 model for the main chat
-#opus: false
+#AIDER_OPUS=
 
 ## Use claude-3-5-sonnet-20240620 model for the main chat
-#sonnet: false
+#AIDER_SONNET=
 
 ## Use gpt-4-0613 model for the main chat
-#4: false
+#AIDER_4=
 
 ## Use gpt-4o model for the main chat
-#4o: false
+#AIDER_4O=
 
 ## Use gpt-4-1106-preview model for the main chat
-#4-turbo: false
+#AIDER_4_TURBO=
 
 ## Use gpt-3.5-turbo model for the main chat
-#35turbo: false
+#AIDER_35TURBO=
 
 #################
 # Model Settings:
 
 ## List known models which match the (partial) MODEL name
-#models:
+#AIDER_MODELS=
 
 ## Specify the api base url
-#openai-api-base:
+#OPENAI_API_BASE=
 
 ## Specify the api_type
-#openai-api-type:
+#OPENAI_API_TYPE=
 
 ## Specify the api_version
-#openai-api-version:
+#OPENAI_API_VERSION=
 
 ## Specify the deployment_id
-#openai-api-deployment-id:
+#OPENAI_API_DEPLOYMENT_ID=
 
 ## Specify the OpenAI organization ID
-#openai-organization-id:
+#OPENAI_ORGANIZATION_ID=
 
 ## Specify a file with aider model settings for unknown models
-#model-settings-file: .aider.model.settings.yml
+#AIDER_MODEL_SETTINGS_FILE=.aider.model.settings.yml
 
 ## Specify a file with context window and costs for unknown models
-#model-metadata-file: .aider.model.metadata.json
+#AIDER_MODEL_METADATA_FILE=.aider.model.metadata.json
 
 ## Verify the SSL cert when connecting to models (default: True)
-#verify-ssl: true
+#AIDER_VERIFY_SSL=true
 
 ## Specify what edit format the LLM should use (default depends on model)
-#edit-format:
+#AIDER_EDIT_FORMAT=
 
 ## Specify the model to use for commit messages and chat history summarization (default depends on --model)
-#weak-model:
+#AIDER_WEAK_MODEL=
 
 ## Only work with models that have meta-data available (default: True)
-#show-model-warnings: true
+#AIDER_SHOW_MODEL_WARNINGS=true
 
 ## Max number of tokens to use for repo map, use 0 to disable (default: 1024)
-#map-tokens: true
+#AIDER_MAP_TOKENS=true
 
 ## Maximum number of tokens to use for chat history. If not specified, uses the model's max_chat_history_tokens.
-#max-chat-history-tokens:
+#AIDER_MAX_CHAT_HISTORY_TOKENS=
 
 ## Specify the .env file to load (default: .env in git root)
-#env-file: .env
+#AIDER_ENV_FILE=.env
 
 ################
 # History Files:
 
 ## Specify the chat input history file (default: .aider.input.history)
-#input-history-file: .aider.input.history
+#AIDER_INPUT_HISTORY_FILE=.aider.input.history
 
 ## Specify the chat history file (default: .aider.chat.history.md)
-#chat-history-file: .aider.chat.history.md
+#AIDER_CHAT_HISTORY_FILE=.aider.chat.history.md
 
 ## Restore the previous chat history messages (default: False)
-#restore-chat-history: false
+#AIDER_RESTORE_CHAT_HISTORY=false
 
 ## Log the conversation with the LLM to this file (for example, .aider.llm.history)
-#llm-history-file:
+#AIDER_LLM_HISTORY_FILE=
 
 ##################
 # Output Settings:
 
 ## Use colors suitable for a dark terminal background (default: False)
-#dark-mode: false
+#AIDER_DARK_MODE=false
 
 ## Use colors suitable for a light terminal background (default: False)
-#light-mode: false
+#AIDER_LIGHT_MODE=false
 
 ## Enable/disable pretty, colorized output (default: True)
-#pretty: true
+#AIDER_PRETTY=true
 
 ## Enable/disable streaming responses (default: True)
-#stream: true
+#AIDER_STREAM=true
 
 ## Set the color for user input (default: #00cc00)
-#user-input-color: #00cc00
+#AIDER_USER_INPUT_COLOR=#00cc00
 
 ## Set the color for tool output (default: None)
-#tool-output-color:
+#AIDER_TOOL_OUTPUT_COLOR=
 
 ## Set the color for tool error messages (default: red)
-#tool-error-color: #FF2222
+#AIDER_TOOL_ERROR_COLOR=#FF2222
 
 ## Set the color for assistant output (default: #0088ff)
-#assistant-output-color: #0088ff
+#AIDER_ASSISTANT_OUTPUT_COLOR=#0088ff
 
 ## Set the markdown code theme (default: default, other options include monokai, solarized-dark, solarized-light)
-#code-theme: default
+#AIDER_CODE_THEME=default
 
 ## Show diffs when committing changes (default: False)
-#show-diffs: false
+#AIDER_SHOW_DIFFS=false
 
 ###############
 # Git Settings:
 
 ## Enable/disable looking for a git repo (default: True)
-#git: true
+#AIDER_GIT=true
 
 ## Enable/disable adding .aider* to .gitignore (default: True)
-#gitignore: true
+#AIDER_GITIGNORE=true
 
 ## Specify the aider ignore file (default: .aiderignore in git root)
-#aiderignore: .aiderignore
+#AIDER_AIDERIGNORE=.aiderignore
 
 ## Enable/disable auto commit of LLM changes (default: True)
-#auto-commits: true
+#AIDER_AUTO_COMMITS=true
 
 ## Enable/disable commits when repo is found dirty (default: True)
-#dirty-commits: true
+#AIDER_DIRTY_COMMITS=true
 
 ## Attribute aider code changes in the git author name (default: True)
-#attribute-author: true
+#AIDER_ATTRIBUTE_AUTHOR=true
 
 ## Attribute aider commits in the git committer name (default: True)
-#attribute-committer: true
+#AIDER_ATTRIBUTE_COMMITTER=true
 
 ## Prefix commit messages with 'aider: ' (default: False)
-#attribute-commit-message: false
+#AIDER_ATTRIBUTE_COMMIT_MESSAGE=false
 
 ## Perform a dry run without modifying files (default: False)
-#dry-run: false
+#AIDER_DRY_RUN=false
 
 ########################
 # Fixing and committing:
 
 ## Commit all pending changes with a suitable commit message, then exit
-#commit: false
+#AIDER_COMMIT=false
 
 ## Lint and fix provided files, or dirty files if none provided
-#lint: false
+#AIDER_LINT=false
 
 ## Specify lint commands to run for different languages, eg: "python: flake8 --select=..." (can be used multiple times)
-#lint-cmd:
+#AIDER_LINT_CMD=
 
 ## Enable/disable automatic linting after changes (default: True)
-#auto-lint: true
+#AIDER_AUTO_LINT=true
 
 ## Specify command to run tests
-#test-cmd:
+#AIDER_TEST_CMD=
 
 ## Enable/disable automatic testing after changes (default: False)
-#auto-test: false
+#AIDER_AUTO_TEST=false
 
 ## Run tests and fix problems found
-#test: false
+#AIDER_TEST=false
 
 #################
 # Other Settings:
 
 ## Use VI editing mode in the terminal (default: False)
-#vim: false
+#AIDER_VIM=false
 
 ## Specify the language for voice using ISO 639-1 code (default: auto)
-#voice-language: en
-
-## Show the version number and exit
-#version:
+#AIDER_VOICE_LANGUAGE=en
 
 ## Check for updates and return status in the exit code
-#check-update: false
+#AIDER_CHECK_UPDATE=false
 
 ## Skips checking for the update when the program runs
-#skip-check-update: false
+#AIDER_SKIP_CHECK_UPDATE=false
 
 ## Apply the changes from the given file instead of running the chat (debug)
-#apply:
+#AIDER_APPLY=
 
 ## Always say yes to every confirmation
-#yes: false
+#AIDER_YES=
 
 ## Enable verbose output
-#verbose: false
+#AIDER_VERBOSE=false
 
 ## Print the repo map and exit (debug)
-#show-repo-map: false
+#AIDER_SHOW_REPO_MAP=false
 
 ## Print the system prompts and exit (debug)
-#show-prompts: false
+#AIDER_SHOW_PROMPTS=false
 
 ## Do all startup activities then exit before accepting user input (debug)
-#exit: false
+#AIDER_EXIT=false
 
 ## Specify a single message to send the LLM, process reply then exit (disables chat mode)
-#message:
+#AIDER_MESSAGE=
 
 ## Specify a file containing the message to send the LLM, process reply, then exit (disables chat mode)
-#message-file:
+#AIDER_MESSAGE_FILE=
 
 ## Specify the encoding for input and output (default: utf-8)
-#encoding: utf-8
-
-## Specify the config file (default: search for .aider.conf.yml in git root, cwd or home directory)
-#config:
+#AIDER_ENCODING=utf-8
 
 ## Run aider in your browser
-#gui: false
+#AIDER_GUI=false
+```
+<!--[[[end]]]-->
+
+

@@ -14,13 +14,15 @@ your git repo.
 
 Below is a sample of the file, which you
 can also
-[download from GitHub](https://github.com/paul-gauthier/aider/blob/main/website/assets/sample.aider.conf.yml).
+[download from GitHub](https://github.com/paul-gauthier/aider/blob/main/aider/website/assets/sample.aider.conf.yml).
+
+{% include env-keys-tip.md %}
 
 <!--[[[cog
 from aider.args import get_sample_yaml
 from pathlib import Path
 text=get_sample_yaml()
-Path("website/assets/sample.aider.conf.yml").write_text(text)
+Path("aider/website/assets/sample.aider.conf.yml").write_text(text)
 cog.outl("```")
 cog.out(text)
 cog.outl("```")
@@ -31,6 +33,10 @@ cog.outl("```")
 # This file lists *all* the valid configuration entries.
 # Place in your home dir, or at the root of your git repo.
 ##########################################################
+
+# Note: You can only put OpenAI and Anthropic API keys in the yaml
+# config file. Keys for all APIs can be stored in a .env file
+# https://aider.chat/docs/config/dotenv.html
 
 ##########
 # options:

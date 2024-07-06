@@ -37,3 +37,8 @@ nav_external_links:
     url: "https://discord.gg/Tv2uQnR88V"
 
 repository: paul-gauthier/aider
+
+callouts:
+  tip:
+    title: Tip
+    color: green

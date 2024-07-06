@@ -29,7 +29,7 @@ and works best with GPT-4o, Claude 3.5 Sonnet, Claude 3 Opus and DeepSeek Coder 
 <!--[[[cog
 # We can't do this here: {% include get-started.md %}
 # Because this page is rendered by GitHub as the repo README
-cog.out(open("website/_includes/get-started.md").read())
+cog.out(open("aider/website/_includes/get-started.md").read())
 ]]]-->
 
 You can get started quickly like this:
