@@ -43,7 +43,8 @@ for additional information.
 
 ## Enable voice coding 
 
-Aider supports [coding with your voice](https://aider.chat/docs/voice.html)
+Aider supports 
+[coding with your voice](https://aider.chat/docs/usage/voice.html)
 using the in-chat `/voice` command.
 Aider uses the [PortAudio](http://www.portaudio.com) library to
 capture audio.
