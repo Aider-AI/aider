@@ -1,9 +1,15 @@
 
 # Release history
 
-### main branch
+### Aider v0.43.0
 
+- Use `/help <question>` to ask for help about using aider, customizing settings, troubleshooting, using LLMs, etc.
 - Allow multiple use of `/undo`.
+- All config/env/yml/json files now load from home, git root, cwd and named command line switch.
+- New `$HOME/.aider/caches` dir for app-wide expendable caches.
+- Default `--model-settings-file` is now `.aider.model.settings.yml`.
+- Default `--model-metadata-file` is now `.aider.model.metadata.json`.
+- Bugfix affecting launch with `--no-git`.
 
 ### Aider v0.42.0
 
