@@ -3,6 +3,7 @@
 import subprocess
 import sys
 import tempfile
+import argparse
 from pathlib import Path
 from aider.dump import dump
 
@@ -23,7 +24,17 @@ def get_all_commit_hashes_since_tag(tag):
         return []
 
 def main():
-    pass
+    parser = argparse.ArgumentParser(description="Get commit hashes since a specified tag.")
+    parser.add_argument("tag", help="The tag to start from")
+    args = parser.parse_args()
+
+    commit_hashes = get_all_commit_hashes_since_tag(args.tag)
+    if commit_hashes:
+        print("Commit hashes since tag", args.tag)
+        for hash in commit_hashes:
+            print(hash)
+    else:
+        print("No commit hashes found or an error occurred.")
 
 if __name__ == "__main__":
     main()
