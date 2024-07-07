@@ -20,3 +20,5 @@ Models: gpt-4o with diff edit format, weak model gpt-3.5-turbo
 Git repo: .git with 243 files
 Repo-map: using 1024 tokens
 ```
+
+{% include help-tip.md %}

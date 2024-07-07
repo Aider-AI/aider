@@ -84,3 +84,7 @@ For serving local models,
 Try using aider without an API proxy server
 or directly with one of the recommended cloud APIs
 and see if your token limit problems resolve.
+
+## More help
+
+{% include help.md %}

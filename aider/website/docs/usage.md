@@ -65,14 +65,19 @@ relevant context from the rest of your repo.
 
 ## LLMs
 
-Aider uses GPT-4o by default, but you can
-[connect to many different LLMs](/docs/llms.html).
-Claude 3.5 Sonnet also works very well with aider,
-which you can use by running `aider --sonnet`.
+{% include works-best.md %}
 
-You can run `aider --model XXX` to launch aider with
-a specific model.
-Or, during your chat you can switch models with the in-chat
+```
+# GPT-4o
+$ aider --4o
+
+# Claude 3.5 Sonnet
+$ auder --sonnet
+```
+
+Or you can run `aider --model XXX` to launch aider with
+another model.
+During your chat you can switch models with the in-chat
 `/model` command.
 
 ## Making changes

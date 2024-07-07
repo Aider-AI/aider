@@ -62,7 +62,7 @@ once for your whole system.
 
 ## Working with other LLMs
 
-Aider works well with GPT-4o, Claude 3 Opus, GPT-3.5 and supports [connecting to almost any LLM](https://aider.chat/docs/llms.html).
+{% include works-best.md %}
 
 ## You are done!
 
