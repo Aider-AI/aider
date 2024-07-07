@@ -5,7 +5,8 @@
 
 Aider lets you pair program with LLMs,
 to edit code in your local git repository.
-Start a new project or work with an existing git repo.<!--[[[cog
+Start a new project or work with an existing git
+repo.<!--[[[cog
 # We can't "include" here.
 # Because this page is rendered by GitHub as the repo README
 cog.out(open("aider/website/_includes/works-best.md").read())
