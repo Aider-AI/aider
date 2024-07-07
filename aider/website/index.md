@@ -89,9 +89,9 @@ and can [connect to almost any LLM](https://aider.chat/docs/llms.html).
 - Edit files in your editor while chatting with aider,
 and it will always use the latest version.
 Pair program with AI.
-- [Add images to the chat](https://aider.chat/docs/images-urls.html) (GPT-4o, Claude 3.5 Sonnet, etc).
-- [Add URLs to the chat](https://aider.chat/docs/images-urls.html) and aider will read their content.
-- [Code with your voice](https://aider.chat/docs/voice.html).
+- [Add images to the chat](https://aider.chat/docs/usage/images-urls.html) (GPT-4o, Claude 3.5 Sonnet, etc).
+- [Add URLs to the chat](https://aider.chat/docs/usage/images-urls.html) and aider will read their content.
+- [Code with your voice](https://aider.chat/docs/usage/voice.html).
 
 
 ## Top tier performance
