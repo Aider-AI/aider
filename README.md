@@ -5,15 +5,9 @@
 
 Aider lets you pair program with LLMs,
 to edit code in your local git repository.
-Start a new project or work with an existing git
-repo.<!--[[[cog
-# We can't "include" here.
-# Because this page is rendered by GitHub as the repo README
-cog.out(open("aider/website/_includes/works-best.md").read())
-]]]-->
+Start a new project or work with an existing git repo.
 Aider works best with GPT-4o & Claude 3.5 Sonnet and can 
 [connect to almost any LLM](https://aider.chat/docs/llms.html).
-<!--[[[end]]]-->
 
 <p align="center">
   <img
