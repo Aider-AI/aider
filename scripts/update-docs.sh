@@ -14,7 +14,7 @@ cog $ARG \
     README.md \
     aider/website/index.md \
     aider/website/HISTORY.md \
-    aider/website/docs/commands.md \
+    aider/website/docs/usage/commands.md \
     aider/website/docs/languages.md \
     aider/website/docs/config/dotenv.md \
     aider/website/docs/config/options.md \
