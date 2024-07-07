@@ -106,7 +106,7 @@ projects like django, scikitlearn, matplotlib, etc.
 - [Documentation](https://aider.chat/)
 - [Installation](https://aider.chat/docs/install.html)
 - [Usage](https://aider.chat/docs/usage.html)
-- [Tutorial videos](https://aider.chat/docs/tutorials.html)
+- [Tutorial videos](https://aider.chat/docs/usage/tutorials.html)
 - [Connecting to LLMs](https://aider.chat/docs/llms.html)
 - [Configuration](https://aider.chat/docs/config.html)
 - [Troubleshooting](https://aider.chat/docs/troubleshooting.html)
