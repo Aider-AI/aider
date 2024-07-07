@@ -10,7 +10,7 @@
 - Default `--model-settings-file` is now `.aider.model.settings.yml`.
 - Default `--model-metadata-file` is now `.aider.model.metadata.json`.
 - Bugfix affecting launch with `--no-git`.
-- Aider wrote 17% of the 511 lines edited in this release.
+- Aider wrote 9% of the 424 lines edited in this release.
 
 ### Aider v0.42.0
 
