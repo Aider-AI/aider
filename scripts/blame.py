@@ -4,6 +4,7 @@ import subprocess
 import sys
 import tempfile
 import argparse
+from collections import defaultdict
 from pathlib import Path
 from aider.dump import dump
 
@@ -32,10 +33,12 @@ def run(cmd):
 def get_commit_authors(commits):
     commit_to_author = dict()
     for commit in commits:
-        author = run(["git", "show", "-s", "--format=%an <%ae>", commit]).strip()
+        author = run(["git", "show", "-s", "--format=%an", commit]).strip()
         commit_to_author[commit] = author
     return commit_to_author
 
+
+hash_len = len('44e6fefc2')
 
 def main():
     parser = argparse.ArgumentParser(description="Get commit hashes since a specified tag.")
@@ -43,13 +46,24 @@ def main():
     args = parser.parse_args()
 
     commits = get_all_commit_hashes_since_tag(args.tag)
-    commits = [commit[:len('44e6fefc2')] for commit in commits]
-    dump(commits)
+    commits = [commit[:hash_len] for commit in commits]
 
     authors = get_commit_authors(commits)
-    dump(authors)
 
+    get_counts_for_file(args.tag, authors, "aider/help.py")
 
+def get_counts_for_file(tag, authors, fname):
+    text = run(['git', 'blame', f'{tag}..HEAD', '--', fname])
+    text = text.splitlines()
+    line_counts = defaultdict(int)
+    for line in text:
+        if line.startswith('^'):
+            continue
+        hsh = line[:hash_len]
+        author = authors[hsh]
+        line_counts[author] += 1
+
+    dump(line_counts)
 
 if __name__ == "__main__":
     main()
