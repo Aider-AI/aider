@@ -11,8 +11,6 @@ models you use with aider.
 You can also set many general aider options
 in the `.env` file.
 
-{% include special-keys.md %}
-
 Aider will look for a `.env` file in these locations:
 
 - Your home directory.
@@ -21,6 +19,12 @@ Aider will look for a `.env` file in these locations:
 - As specified with the `--env-file <filename>` parameter.
 
 If the files above exist, they will be loaded in that order. Files loaded last will take priority.
+
+## Storing LLM keys
+
+{% include special-keys.md %}
+
+## Sample .env file
 
 Below is a sample `.env` file, which you
 can also
