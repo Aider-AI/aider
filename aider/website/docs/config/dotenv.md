@@ -13,9 +13,14 @@ in the `.env` file.
 
 {% include special-keys.md %}
 
-Aider will look for a `.env` file in the
-root of your git repo or in the current directory.
-You can give it an explicit file to load with the `--env-file <filename>` parameter.
+Aider will look for a `.env` file in these locations:
+
+- Your home directory.
+- The root of your git repo.
+- The current directory.
+- As specified with the `--env-file <filename>` parameter.
+
+If the files above exist, they will be loaded in that order. Files loaded last will take priority.
 
 Below is a sample `.env` file, which you
 can also

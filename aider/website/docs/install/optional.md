@@ -14,7 +14,7 @@ The steps below are completely optional.
 
 ## Store your api keys 
 
-You can place your [api keys in a `.env` file](/docs/config/dotenv.html)
+You can [store your api keys in a .env file](/docs/config/dotenv.html)
 and they will be loaded automatically whenever you run aider.
 
 ## Enable Playwright 

@@ -12,11 +12,11 @@ your git repo.
 
 {% include special-keys.md %}
 
-Below is a sample of the file, which you
+{% include env-keys-tip.md %}
+
+Below is a sample of the YAML config file, which you
 can also
 [download from GitHub](https://github.com/paul-gauthier/aider/blob/main/aider/website/assets/sample.aider.conf.yml).
-
-{% include env-keys-tip.md %}
 
 <!--[[[cog
 from aider.args import get_sample_yaml

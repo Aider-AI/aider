@@ -220,9 +220,9 @@ def generate_search_path_list(default_fname, git_root, command_line_file):
     files.append(Path.home() / default_file)  # homedir
     if git_root:
         files.append(Path(git_root) / default_file)  # git root
+    files.append(default_file.resolve())
     if command_line_file:
         files.append(command_line_file)
-    files.append(default_file.resolve())
     files = [Path(fn).resolve() for fn in files]
     files.reverse()
     uniq = []
@@ -253,6 +253,20 @@ def register_models(git_root, model_settings_fname, io):
         return 1
 
     return None
+
+
+def load_dotenv_files(git_root, dotenv_fname):
+    dotenv_files = generate_search_path_list(
+        ".env",
+        git_root,
+        dotenv_fname,
+    )
+    loaded = []
+    for fname in dotenv_files:
+        if Path(fname).exists():
+            loaded.append(fname)
+            load_dotenv(fname)
+    return loaded
 
 
 def register_litellm_models(git_root, model_metadata_fname, io):
@@ -294,8 +308,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     args, unknown = parser.parse_known_args(argv)
 
     # Load the .env file specified in the arguments
-    if hasattr(args, "env_file"):
-        load_dotenv(args.env_file)
+    loaded_dotenvs = load_dotenv_files(git_root, args.env_file)
 
     # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)
@@ -341,6 +354,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         llm_history_file=args.llm_history_file,
         editingmode=editing_mode,
     )
+
+    for fname in loaded_dotenvs:
+        io.tool_output(f"Loaded {fname}")
 
     fnames = [str(Path(fn).resolve()) for fn in args.files]
     if len(args.files) > 1:
