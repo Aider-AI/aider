@@ -64,12 +64,12 @@ def main():
                 grand_total[author] += count
 
     dump(all_file_counts)
-    
+
     print("\nGrand Total:")
     total_lines = sum(grand_total.values())
     for author, count in sorted(grand_total.items(), key=itemgetter(1), reverse=True):
         percentage = (count / total_lines) * 100
-        print(f"{author}: {count} lines ({percentage:.2f}%)")
+        print(f"- {author}: {count} lines ({percentage:.2f}%)")
 
 def get_counts_for_file(tag, authors, fname):
     text = run(['git', 'blame', f'{tag}..HEAD', '--', fname])
