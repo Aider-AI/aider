@@ -17,7 +17,7 @@ Aider comes with built in linters for
 [most popular languages](/docs/languages.html)
 and will automatically lint code in these languages.
 
-Or you can specify you favorite linter
+Or you can specify your favorite linter
 with the `--lint-cmd <cmd>` switch.
 The lint command should accept the filenames
 of the files to lint. 
@@ -54,6 +54,6 @@ To do this,
 provide a `--test-cmd` which both builds and tests the project.
 You could create a small shell script for this.
 Or you may be able to do something as simple as
-`--test-cmd dotnet build && dotnet test`.
+`--test-cmd dotnet "build && dotnet test"`.
 
 
