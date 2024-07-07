@@ -17,20 +17,14 @@ Here are
 
 ## Get your API key
 
-To work with OpenAI's GPT 3.5 or GPT-4 models you need a paid
+To work with OpenAI's models like GPT-4o or GPT-3.5 you need a paid
 [OpenAI API key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key).
 Note that this is different than being a "ChatGPT Plus" subscriber.
 
 To work with Anthropic's models like Claude 3 Opus you need a paid
 [Anthropic API key](https://docs.anthropic.com/claude/reference/getting-started-with-the-api).
 
-## Manage your python environment
 
-Using a Python 
-[virtual environment](https://docs.python.org/3/library/venv.html)
-is recommended.
-Or, you could consider 
-[installing aider using pipx](/docs/install/pipx.html).
 
 ## Windows install
 
@@ -57,6 +51,14 @@ $ aider --openai-api-key sk-xxx...
 # To work with Claude 3 Opus:
 $ aider --anthropic-api-key sk-xxx... --opus
 ```
+
+{: .tip }
+Using a Python 
+[virtual environment](https://docs.python.org/3/library/venv.html){:target="_blank"}
+is recommended.
+Or, you could
+[use pipx to install aider](/docs/install/pipx.html)
+once for your whole system.
 
 ## Working with other LLMs
 
