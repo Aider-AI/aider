@@ -7,6 +7,7 @@ import argparse
 from collections import defaultdict
 from pathlib import Path
 from aider.dump import dump
+import os
 
 
 def get_all_commit_hashes_since_tag(tag):
@@ -50,20 +51,30 @@ def main():
 
     authors = get_commit_authors(commits)
 
-    get_counts_for_file(args.tag, authors, "aider/help.py")
+    py_files = run(['git', 'ls-files', '*.py']).strip().split('\n')
+
+    all_file_counts = {}
+    for file in py_files:
+        file_counts = get_counts_for_file(args.tag, authors, file)
+        if file_counts:
+            all_file_counts[file] = file_counts
+
+    dump(all_file_counts)
 
 def get_counts_for_file(tag, authors, fname):
     text = run(['git', 'blame', f'{tag}..HEAD', '--', fname])
+    if not text:
+        return None
     text = text.splitlines()
     line_counts = defaultdict(int)
     for line in text:
         if line.startswith('^'):
             continue
         hsh = line[:hash_len]
-        author = authors[hsh]
+        author = authors.get(hsh, "Unknown")
         line_counts[author] += 1
 
-    dump(line_counts)
+    return dict(line_counts)
 
 if __name__ == "__main__":
     main()
