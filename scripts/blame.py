@@ -31,6 +31,10 @@ def run(cmd):
 
 def get_commit_authors(commits):
     commit_to_author = dict()
+    for commit in commits:
+        author = run(["git", "show", "-s", "--format=%an <%ae>", commit]).strip()
+        commit_to_author[commit] = author
+    return commit_to_author
 
 
 def main():
@@ -43,10 +47,7 @@ def main():
     dump(commits)
 
     authors = get_commit_authors(commits)
-
-
-    #text = run(['git', 'blame', f'{args.tag}..HEAD', '--', 'aider/main.py'])
-    #text = text.splitlines()
+    dump(authors)
 
 
 
