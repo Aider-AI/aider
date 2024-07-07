@@ -9,6 +9,7 @@ from pathlib import Path
 from aider.dump import dump
 import os
 from operator import itemgetter
+import re
 
 
 def get_all_commit_hashes_since_tag(tag):
@@ -56,12 +57,15 @@ def main():
 
     all_file_counts = {}
     grand_total = defaultdict(int)
+    aider_total = 0
     for file in py_files:
         file_counts = get_counts_for_file(args.tag, authors, file)
         if file_counts:
             all_file_counts[file] = file_counts
             for author, count in file_counts.items():
                 grand_total[author] += count
+                if "(aider)" in author.lower():
+                    aider_total += count
 
     dump(all_file_counts)
 
@@ -70,6 +74,9 @@ def main():
     for author, count in sorted(grand_total.items(), key=itemgetter(1), reverse=True):
         percentage = (count / total_lines) * 100
         print(f"- {author}: {count} lines ({percentage:.2f}%)")
+
+    aider_percentage = (aider_total / total_lines) * 100 if total_lines > 0 else 0
+    print(f"\nAider wrote {aider_percentage:.2f}% of {total_lines} lines edited in this release.")
 
 def get_counts_for_file(tag, authors, fname):
     text = run(['git', 'blame', f'{tag}..HEAD', '--', fname])
@@ -82,6 +89,9 @@ def get_counts_for_file(tag, authors, fname):
             continue
         hsh = line[:hash_len]
         author = authors.get(hsh, "Unknown")
+        # Normalize author names with "(aider)" to a single format
+        if "(aider)" in author.lower():
+            author = re.sub(r'\s*\(aider\)', ' (aider)', author, flags=re.IGNORECASE)
         line_counts[author] += 1
 
     return dict(line_counts)
