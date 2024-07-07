@@ -1362,8 +1362,7 @@ class Coder:
 
         tokens = 0
         for fname in self.abs_fnames:
-            relative_fname = self.get_rel_fname(fname)
-            if is_image_file(relative_fname):
+            if is_image_file(fname):
                 continue
             content = self.io.read_text(fname)
             tokens += self.main_model.token_count(content)
