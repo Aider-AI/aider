@@ -8,6 +8,7 @@ from collections import defaultdict
 from pathlib import Path
 from aider.dump import dump
 import os
+from operator import itemgetter
 
 
 def get_all_commit_hashes_since_tag(tag):
@@ -54,12 +55,19 @@ def main():
     py_files = run(['git', 'ls-files', '*.py']).strip().split('\n')
 
     all_file_counts = {}
+    grand_total = defaultdict(int)
     for file in py_files:
         file_counts = get_counts_for_file(args.tag, authors, file)
         if file_counts:
             all_file_counts[file] = file_counts
+            for author, count in file_counts.items():
+                grand_total[author] += count
 
     dump(all_file_counts)
+    
+    print("\nGrand Total:")
+    for author, count in sorted(grand_total.items(), key=itemgetter(1), reverse=True):
+        print(f"{author}: {count}")
 
 def get_counts_for_file(tag, authors, fname):
     text = run(['git', 'blame', f'{tag}..HEAD', '--', fname])
