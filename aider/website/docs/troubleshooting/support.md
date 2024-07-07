@@ -1,5 +1,6 @@
 ---
 parent: Troubleshooting
+excerpt: Use "/help <question>" to ask for help about using aider, customizing settings, troubleshooting, using LLMs, etc.
 nav_order: 30
 ---
 
