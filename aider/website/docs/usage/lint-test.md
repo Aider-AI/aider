@@ -54,6 +54,6 @@ To do this,
 provide a `--test-cmd` which both builds and tests the project.
 You could create a small shell script for this.
 Or you may be able to do something as simple as
-`--test-cmd dotnet "build && dotnet test"`.
+`--test-cmd "dotnet build && dotnet test"`.
 
 
