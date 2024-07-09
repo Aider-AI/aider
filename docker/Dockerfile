@@ -9,5 +9,6 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* && \
     pip install --no-cache-dir /aider && \
     rm -rf /aider
+
 WORKDIR /app
 ENTRYPOINT ["aider"]
