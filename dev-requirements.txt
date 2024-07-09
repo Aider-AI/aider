@@ -4,8 +4,6 @@
 #
 #    pip-compile --output-file=dev-requirements.txt dev-requirements.in
 #
---extra-index-url https://download.pytorch.org/whl/cpu
-
 alabaster==0.7.16
     # via sphinx
 babel==2.15.0
