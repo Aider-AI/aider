@@ -1,4 +1,6 @@
 import re
+import subprocess
+import sys
 
 from setuptools import find_packages, setup
 
@@ -17,31 +19,37 @@ with open("README.md", "r", encoding="utf-8") as f:
 packages = find_packages(exclude=["benchmark"]) + ["aider.website"]
 print("Discovered packages:", packages)
 
-import subprocess
-
-
+torch = "torch==2.2.2"
 cmd = [
+    sys.executable,
+    "-m",
     "pip",
-    "install",
-    "torch<2.2.2",
+    "download",
+    torch,
     "--no-deps",
-    "--dry-run",
-    "--no-cache-dir",
+    "--dest",
+    "/dev/null",
+    # "--no-cache-dir",
+    # "--ignore-installed",
     "--index-url",
     "https://download.pytorch.org/whl/cpu",
 ]
 
 result = subprocess.check_output(cmd, text=True)
+print(result)
 
-url_match = re.search(r'(https://download\.pytorch\.org/[^\s]+)', result)
+url_match = re.search(r"Downloading (https://download\.pytorch\.org/[^\s]+\.whl)", result)
 if url_match:
     pytorch_url = url_match.group(1)
     print(f"PyTorch URL: {pytorch_url}")
+    requirements = [f"torch @ {pytorch_url}"] + requirements
 else:
     print("PyTorch URL not found in the output")
+    requirements = [torch] + requirements
 
-import sys
-sys.exit()
+print(requirements)
+
+# sys.exit()
 
 setup(
     name="aider-chat",
