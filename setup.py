@@ -1,7 +1,7 @@
 import re
 import subprocess
 import sys
-from tempfile import TempNamedDir
+from tempfile import TemporaryDirectory
 
 from setuptools import find_packages, setup
 
@@ -23,7 +23,7 @@ print("Discovered packages:", packages)
 torch = "torch==2.2.2"
 pytorch_url = None
 
-with TempNamedDir(prefix="pytorch_download_") as temp_dir:
+with TemporaryDirectory(prefix="pytorch_download_") as temp_dir:
     cmd = [
         sys.executable,
         "-m",
@@ -32,7 +32,7 @@ with TempNamedDir(prefix="pytorch_download_") as temp_dir:
         torch,
         "--no-deps",
         "--dest",
-        temp_dir.name,
+        temp_dir,
         "--index-url",
         "https://download.pytorch.org/whl/cpu",
     ]
@@ -44,6 +44,10 @@ with TempNamedDir(prefix="pytorch_download_") as temp_dir:
             url_match = re.search(r"Downloading (https://download\.pytorch\.org/[^\s]+\.whl)", line)
             if url_match:
                 pytorch_url = url_match.group(1)
+            url_match = re.search(r"Using cached (https://download\.pytorch\.org/[^\s]+\.whl)", line)
+            if url_match:
+                pytorch_url = url_match.group(1)
+            if pytorch_url:
                 print(f"PyTorch URL: {pytorch_url}")
                 process.terminate()  # Terminate the subprocess
                 break
@@ -57,9 +61,9 @@ else:
     print("PyTorch URL not found in the output")
     requirements = [torch] + requirements
 
-print(requirements)
+#print(requirements)
 
-sys.exit()
+#sys.exit()
 
 setup(
     name="aider-chat",
