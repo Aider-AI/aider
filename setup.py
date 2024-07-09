@@ -17,6 +17,13 @@ with open("README.md", "r", encoding="utf-8") as f:
 packages = find_packages(exclude=["benchmark"]) + ["aider.website"]
 print("Discovered packages:", packages)
 
+import subprocess
+
+# Install torch from the specific URL
+subprocess.check_call([
+    "pip", "install", "torch==2.2.2", "--extra-index-url", "https://download.pytorch.org/whl/cpu"
+])
+
 setup(
     name="aider-chat",
     version=__version__,

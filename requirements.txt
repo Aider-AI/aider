@@ -4,8 +4,6 @@
 #
 #    pip-compile requirements.in
 #
---extra-index-url https://download.pytorch.org/whl/cpu
-
 aiohttp==3.9.5
     # via
     #   huggingface-hub
