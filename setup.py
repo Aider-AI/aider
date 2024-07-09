@@ -56,7 +56,7 @@ else:
 
 print(requirements)
 
-# sys.exit()
+sys.exit()
 
 setup(
     name="aider-chat",
