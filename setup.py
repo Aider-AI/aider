@@ -30,12 +30,12 @@ def get_requirements():
         torch,
         "--no-deps",
         "--dry-run",
-        # "--no-cache-dir",
-        # "--dest",
-        # temp_dir,
+        "--no-cache-dir",  # Find the true URL even if another env has cached it
         "--index-url",
         "https://download.pytorch.org/whl/cpu",
     ]
+
+    # print(' '.join(cmd))
 
     try:
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
