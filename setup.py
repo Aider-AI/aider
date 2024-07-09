@@ -29,19 +29,26 @@ cmd = [
     "--no-deps",
     "--dest",
     "/dev/null",
-    # "--no-cache-dir",
-    # "--ignore-installed",
     "--index-url",
     "https://download.pytorch.org/whl/cpu",
 ]
 
-result = subprocess.check_output(cmd, text=True)
-print(result)
+pytorch_url = None
+try:
+    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+    for line in process.stdout:
+        print(line, end='')  # Print each line of output
+        url_match = re.search(r"Downloading (https://download\.pytorch\.org/[^\s]+\.whl)", line)
+        if url_match:
+            pytorch_url = url_match.group(1)
+            print(f"PyTorch URL: {pytorch_url}")
+            process.terminate()  # Terminate the subprocess
+            break
+    process.wait()  # Wait for the process to finish
+except subprocess.CalledProcessError as e:
+    print(f"Error running pip download: {e}")
 
-url_match = re.search(r"Downloading (https://download\.pytorch\.org/[^\s]+\.whl)", result)
-if url_match:
-    pytorch_url = url_match.group(1)
-    print(f"PyTorch URL: {pytorch_url}")
+if pytorch_url:
     requirements = [f"torch @ {pytorch_url}"] + requirements
 else:
     print("PyTorch URL not found in the output")
