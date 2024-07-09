@@ -8,6 +8,13 @@ from setuptools import find_packages, setup
 with open("requirements.txt") as f:
     requirements = f.read().splitlines()
 
+# Find the torch requirement and remove it from the list
+torch = next((req for req in requirements if req.startswith("torch==")), None)
+if torch:
+    requirements.remove(torch)
+else:
+    torch = "torch==2.2.2"  # Fallback if not found in requirements.txt
+
 from aider import __version__
 from aider.help_pats import exclude_website_pats
 
@@ -19,8 +26,6 @@ with open("README.md", "r", encoding="utf-8") as f:
 # Debug: Print discovered packages
 packages = find_packages(exclude=["benchmark"]) + ["aider.website"]
 print("Discovered packages:", packages)
-
-torch = "torch==2.2.2"
 pytorch_url = None
 
 with TemporaryDirectory(prefix="pytorch_download_") as temp_dir:
