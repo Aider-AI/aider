@@ -9,7 +9,7 @@ import sys
 from packaging import version
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Bump version")
     parser.add_argument("new_version", help="New version in x.y.z format")
     parser.add_argument(
@@ -17,7 +17,7 @@ def main():
     )
 
     # Function to check if we are on the main branch
-    def check_branch():
+    def check_branch() -> None:
         branch = subprocess.run(
             ["git", "rev-parse", "--abbrev-ref", "HEAD"], capture_output=True, text=True
         ).stdout.strip()
@@ -26,7 +26,7 @@ def main():
             sys.exit(1)
 
     # Function to check if the working directory is clean
-    def check_working_directory_clean():
+    def check_working_directory_clean() -> None:
         status = subprocess.run(
             ["git", "status", "--porcelain"], capture_output=True, text=True
         ).stdout
@@ -35,7 +35,7 @@ def main():
             sys.exit(1)
 
     # Function to fetch the latest changes and check if the main branch is up to date
-    def check_main_branch_up_to_date():
+    def check_main_branch_up_to_date() -> None:
         subprocess.run(["git", "fetch", "origin"], check=True)
         local_main = subprocess.run(
             ["git", "rev-parse", "main"], capture_output=True, text=True

@@ -4,7 +4,7 @@ import sys
 from .dump import dump  # noqa: F401
 
 
-def main():
+def main() -> None:
     if len(sys.argv) != 3:
         print("Usage: python diffs.py file1 file")
         sys.exit(1)

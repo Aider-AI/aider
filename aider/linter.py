@@ -6,10 +6,7 @@ import traceback
 import warnings
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Callable, Optional, Union
-
-if TYPE_CHECKING:
-    from grep_ast import TreeContext
+from typing import Callable, Optional, Union
 
 from grep_ast import TreeContext, filename_to_lang
 from tree_sitter_languages import get_parser  # noqa: E402

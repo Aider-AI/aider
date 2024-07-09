@@ -1,8 +1,9 @@
 import json
 import traceback
+from typing import Any
 
 
-def cvt(s):
+def cvt(s: Any) -> str:
     if isinstance(s, str):
         return s
     try:
@@ -11,7 +12,7 @@ def cvt(s):
         return str(s)
 
 
-def dump(*vals):
+def dump(*vals: Any) -> None:
     # http://docs.python.org/library/traceback.html
     stack = traceback.extract_stack()
     vars = stack[-2][3]

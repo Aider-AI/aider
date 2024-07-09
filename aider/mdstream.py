@@ -20,10 +20,10 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
 
 ## Sub header
 
-- list 1
-- list 2
-- list me
-- list you
+- List 1
+- List 2
+- List me
+- List you
 
 
 

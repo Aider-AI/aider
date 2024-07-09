@@ -6,7 +6,7 @@ from benchmark import cleanup_test_output  # type: ignore
 
 
 class TestCleanupTestOutput(unittest.TestCase):
-    def test_cleanup_test_output(self):
+    def test_cleanup_test_output(self) -> None:
         # Test case with timing info
         output = "Ran 5 tests in 0.003s\nOK"
         expected = "\nOK"
@@ -17,7 +17,7 @@ class TestCleanupTestOutput(unittest.TestCase):
         expected = "OK"
         self.assertEqual(cleanup_test_output(output), expected)
 
-    def test_cleanup_test_output_lines(self):
+    def test_cleanup_test_output_lines(self) -> None:
         # Test case with timing info
         output = """F
 ======================================================================

@@ -10,6 +10,8 @@ import openai
 from prompt_toolkit.completion import Completion
 
 from aider import models, prompts, voice
+from aider.coders import Coder
+from aider.io import InputOutput
 from aider.litellm import litellm
 from aider.scrape import Scraper
 from aider.utils import is_image_file
@@ -19,7 +21,7 @@ from .dump import dump  # noqa: F401
 
 
 class SwitchModel(Exception):
-    def __init__(self, model):
+    def __init__(self, model: models.Model) -> None:
         self.model = model
 
 
@@ -27,7 +29,7 @@ class Commands:
     voice: Optional[Voice] = None
     scraper: Optional[Scraper] = None
 
-    def __init__(self, io, coder, voice_language=None):
+    def __init__(self, io: InputOutput, coder: Coder, voice_language: str | None = None) -> None:
         self.io = io
         self.coder = coder
 
@@ -36,7 +38,7 @@ class Commands:
 
         self.voice_language = voice_language
 
-    def cmd_model(self, args):
+    def cmd_model(self, args: str) -> None:
         "Switch to a new LLM"
 
         model_name = args.strip()
@@ -44,13 +46,13 @@ class Commands:
         models.sanity_check_models(self.io, model)
         raise SwitchModel(model)
 
-    def completions_model(self, partial):
+    def completions_model(self, partial: str) -> None:
         models = litellm.model_cost.keys()
         for model in models:
             if partial.lower() in model.lower():
                 yield Completion(model, start_position=-len(partial))
 
-    def cmd_models(self, args):
+    def cmd_models(self, args: str) -> None:
         "Search the list of available models"
 
         args = args.strip()
@@ -60,7 +62,7 @@ class Commands:
         else:
             self.io.tool_output("Please provide a partial model name to search for.")
 
-    def cmd_web(self, args):
+    def cmd_web(self, args: str) -> None:
         "Use headless selenium to scrape a webpage and add the content to the chat"
         url = args.strip()
         if not url:
@@ -82,10 +84,10 @@ class Commands:
 
         return content
 
-    def is_command(self, inp):
+    def is_command(self, inp: str) -> bool:
         return inp[0] in "/!"
 
-    def get_commands(self):
+    def get_commands(self) -> list[str]:
         commands = []
         for attr in dir(self):
             if attr.startswith("cmd_"):
@@ -93,14 +95,14 @@ class Commands:
 
         return commands
 
-    def get_command_completions(self, cmd_name, partial):
+    def get_command_completions(self, cmd_name: str, partial: str) -> None:
         cmd_completions_method_name = f"completions_{cmd_name}"
         cmd_completions_method = getattr(self, cmd_completions_method_name, None)
         if cmd_completions_method:
             for completion in cmd_completions_method(partial):
                 yield completion
 
-    def do_run(self, cmd_name, args):
+    def do_run(self, cmd_name: str, args: str) -> None:
         cmd_method_name = f"cmd_{cmd_name}"
         cmd_method = getattr(self, cmd_method_name, None)
         if cmd_method:
@@ -108,7 +110,7 @@ class Commands:
         else:
             self.io.tool_output(f"Error: Command {cmd_name} not found.")
 
-    def matching_commands(self, inp):
+    def matching_commands(self, inp: str) -> tuple[list[str], str, str]:
         words = inp.strip().split()
         if not words:
             return
@@ -120,10 +122,9 @@ class Commands:
         matching_commands = [cmd for cmd in all_commands if cmd.startswith(first_word)]
         return matching_commands, first_word, rest_inp
 
-    def run(self, inp):
+    def run(self, inp: str) -> None:
         if inp.startswith("!"):
             return self.do_run("run", inp[1:])
-            return
 
         res = self.matching_commands(inp)
         if res is None:
@@ -141,7 +142,7 @@ class Commands:
     # any method called cmd_xxx becomes a command automatically.
     # each one must take an args param.
 
-    def cmd_commit(self, args=None):
+    def cmd_commit(self, args: str | None = None) -> None:
         "Commit edits to the repo made outside the chat (commit message optional)"
 
         if not self.coder.repo:
@@ -155,7 +156,7 @@ class Commands:
         commit_message = args.strip() if args else None
         self.coder.repo.commit(message=commit_message)
 
-    def cmd_lint(self, args="", fnames=None):
+    def cmd_lint(self, args: str = "", fnames: list[str] | None = None) -> None:
         "Lint and fix provided files or in-chat files if none provided"
 
         if not self.coder.repo:
@@ -202,13 +203,13 @@ class Commands:
         if lint_coder and self.coder.repo.is_dirty():
             self.cmd_commit("")
 
-    def cmd_clear(self, args):
+    def cmd_clear(self, args: str = "") -> None:
         "Clear the chat history"
 
         self.coder.done_messages = []
         self.coder.cur_messages = []
 
-    def cmd_tokens(self, args):
+    def cmd_tokens(self, args: str = "") -> None:
         "Report on the number of tokens used by the current chat context"
 
         res = []
@@ -262,7 +263,7 @@ class Commands:
         width = 8
         cost_width = 9
 
-        def fmt(v):
+        def fmt(v: int) -> str:
             return format(int(v), ",").rjust(width)
 
         col_width = max(len(row[1]) for row in res)
@@ -299,7 +300,7 @@ class Commands:
             )
         self.io.tool_output(f"{cost_pad}{fmt(limit)} tokens max context window size")
 
-    def cmd_undo(self, args):
+    def cmd_undo(self, args: str = "") -> None:
         "Undo the last git commit if it was done by aider"
         if not self.coder.repo:
             self.io.tool_error("No git repository found.")
@@ -358,7 +359,7 @@ class Commands:
         if self.coder.main_model.send_undo_reply:
             return prompts.undo_command_reply
 
-    def cmd_diff(self, args=""):
+    def cmd_diff(self, args: str = "") -> None:
         "Display the diff of the last aider commit"
         if not self.coder.repo:
             self.io.tool_error("No git repository found.")
@@ -379,19 +380,19 @@ class Commands:
         # don't use io.tool_output() because we don't want to log or further colorize
         print(diff)
 
-    def quote_fname(self, fname):
+    def quote_fname(self, fname: str) -> str:
         if " " in fname and '"' not in fname:
             fname = f'"{fname}"'
         return fname
 
-    def completions_add(self, partial):
+    def completions_add(self, partial: str) -> None:
         files = set(self.coder.get_all_relative_files())
         files = files - set(self.coder.get_inchat_relative_files())
         for fname in files:
             if partial.lower() in fname.lower():
                 yield Completion(self.quote_fname(fname), start_position=-len(partial))
 
-    def glob_filtered_to_repo(self, pattern):
+    def glob_filtered_to_repo(self, pattern: str) -> list[str]:
         try:
             raw_matched_files = list(Path(self.coder.root).glob(pattern))
         except ValueError as err:
@@ -412,7 +413,7 @@ class Commands:
         res = list(map(str, matched_files))
         return res
 
-    def cmd_add(self, args):
+    def cmd_add(self, args: str) -> None:
         "Add files to the chat so GPT can edit them or review them in detail"
 
         added_fnames = []
@@ -490,14 +491,14 @@ class Commands:
         reply = prompts.added_files.format(fnames=", ".join(added_fnames))
         return reply
 
-    def completions_drop(self, partial):
+    def completions_drop(self, partial: str) -> None:
         files = self.coder.get_inchat_relative_files()
 
         for fname in files:
             if partial.lower() in fname.lower():
                 yield Completion(self.quote_fname(fname), start_position=-len(partial))
 
-    def cmd_drop(self, args=""):
+    def cmd_drop(self, args: str = "") -> None:
         "Remove files from the chat session to free up context space"
 
         if not args.strip():
@@ -517,7 +518,7 @@ class Commands:
                     self.coder.abs_fnames.remove(abs_fname)
                     self.io.tool_output(f"Removed {matched_file} from the chat")
 
-    def cmd_git(self, args):
+    def cmd_git(self, args: str) -> None:
         "Run a git command"
         combined_output = None
         try:
@@ -541,7 +542,7 @@ class Commands:
 
         self.io.tool_output(combined_output)
 
-    def cmd_test(self, args):
+    def cmd_test(self, args: str) -> None:
         "Run a shell command and add the output to the chat on non-zero exit code"
         if not args and self.coder.test_cmd:
             args = self.coder.test_cmd
@@ -556,7 +557,7 @@ class Commands:
         self.io.tool_error(errors, strip=False)
         return errors
 
-    def cmd_run(self, args, add_on_nonzero_exit=False):
+    def cmd_run(self, args: str, add_on_nonzero_exit: bool = False) -> None:
         "Run a shell command and optionally add the output to the chat (alias: !)"
         combined_output = None
         try:
@@ -593,15 +594,15 @@ class Commands:
             )
             return msg
 
-    def cmd_exit(self, args):
+    def cmd_exit(self, args: str) -> None:
         "Exit the application"
         sys.exit()
 
-    def cmd_quit(self, args):
+    def cmd_quit(self, args: str) -> None:
         "Exit the application"
         sys.exit()
 
-    def cmd_ls(self, args):
+    def cmd_ls(self, args: str) -> None:
         "list all known files and indicate which are included in the chat session"
 
         files = self.coder.get_all_relative_files()
@@ -629,7 +630,7 @@ class Commands:
         for file in other_files:
             self.io.tool_output(f"  {file}")
 
-    def cmd_help(self, args):
+    def cmd_help(self, args: str) -> None:
         "Show help about all commands"
         commands = sorted(self.get_commands())
         for cmd in commands:
@@ -641,7 +642,7 @@ class Commands:
             else:
                 self.io.tool_output(f"{cmd} No description available.")
 
-    def cmd_voice(self, args):
+    def cmd_voice(self, args: str) -> None:
         "Record and transcribe voice input"
 
         if not self.voice:
@@ -688,7 +689,7 @@ class Commands:
         return text
 
 
-def expand_subdir(file_path):
+def expand_subdir(file_path: str) -> list[str]:
     file_path = Path(file_path)
     if file_path.is_file():
         yield file_path
@@ -700,7 +701,7 @@ def expand_subdir(file_path):
                 yield str(file)
 
 
-def parse_quoted_filenames(args):
+def parse_quoted_filenames(args: str) -> list[str]:
     filenames = re.findall(r"\"(.+?)\"|(\S+)", args)
     filenames = [name for sublist in filenames for name in sublist if name]
     return filenames

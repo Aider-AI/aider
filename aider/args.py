@@ -6,7 +6,7 @@ import configargparse
 from aider import __version__, models
 
 
-def get_parser(default_config_files, git_root):
+def get_parser(default_config_files: list[str], git_root: str) -> argparse.ArgumentParser:
     parser = configargparse.ArgumentParser(
         description="aider is GPT powered coding in your terminal",
         add_config_file_help=True,

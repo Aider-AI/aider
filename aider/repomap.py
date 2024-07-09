@@ -21,6 +21,8 @@ warnings.simplefilter("ignore", category=FutureWarning)
 from tree_sitter_languages import get_language, get_parser  # noqa: E402
 
 from aider.dump import dump  # noqa: F402,E402
+from aider.io import InputOutput
+from aider.models import Model
 
 Tag = namedtuple("Tag", ("rel_fname", "fname", "line", "name", "kind"))
 
@@ -35,14 +37,14 @@ class RepoMap:
 
     def __init__(
         self,
-        map_tokens=1024,
-        root=None,
-        main_model=None,
-        io=None,
-        repo_content_prefix=None,
-        verbose=False,
-        max_context_window=None,
-    ):
+        map_tokens: int = 1024,
+        root: str | None = None,
+        main_model: Model | None = None,
+        io: InputOutput | None = None,
+        repo_content_prefix: str | None = None,
+        verbose: bool = False,
+        max_context_window: int | None = None,
+    ) -> None:
         self.io = io
         self.verbose = verbose
 
@@ -58,7 +60,13 @@ class RepoMap:
         self.token_count = main_model.token_count
         self.repo_content_prefix = repo_content_prefix
 
-    def get_repo_map(self, chat_files, other_files, mentioned_fnames=None, mentioned_idents=None):
+    def get_repo_map(
+        self,
+        chat_files: list[str],
+        other_files: list[str],
+        mentioned_fnames: set[str] | None = None,
+        mentioned_idents: set[str] | None = None,
+    ) -> str:
         if self.max_map_tokens <= 0:
             return
         if not other_files:
@@ -110,29 +118,29 @@ class RepoMap:
 
         return repo_content
 
-    def get_rel_fname(self, fname):
+    def get_rel_fname(self, fname: str) -> str:
         return os.path.relpath(fname, self.root)
 
-    def split_path(self, path):
+    def split_path(self, path: str) -> list[str]:
         path = os.path.relpath(path, self.root)
         return [path + ":"]
 
-    def load_tags_cache(self):
+    def load_tags_cache(self) -> None:
         path = Path(self.root) / self.TAGS_CACHE_DIR
         if not path.exists():
             self.cache_missing = True
         self.TAGS_CACHE = Cache(path)
 
-    def save_tags_cache(self):
+    def save_tags_cache(self) -> None:
         pass
 
-    def get_mtime(self, fname):
+    def get_mtime(self, fname: str) -> float | None:
         try:
             return os.path.getmtime(fname)
         except FileNotFoundError:
             self.io.tool_error(f"File not found error: {fname}")
 
-    def get_tags(self, fname, rel_fname):
+    def get_tags(self, fname: str, rel_fname: str) -> list[Tag]:
         # Check if the file is in the cache and if the modification time has not changed
         file_mtime = self.get_mtime(fname)
         if file_mtime is None:

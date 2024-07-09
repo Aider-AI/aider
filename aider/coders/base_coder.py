@@ -41,7 +41,7 @@ class ExhaustedContextWindow(Exception):
     pass
 
 
-def wrap_fence(name):
+def wrap_fence(name: str) -> tuple[str, str]:
     return f"<{name}>", f"</{name}>"
 
 
@@ -71,12 +71,12 @@ class Coder:
     @classmethod
     def create(
         self,
-        main_model=None,
-        edit_format=None,
-        io=None,
-        from_coder=None,
-        **kwargs,
-    ):
+        main_model: Optional[models.Model] = None,
+        edit_format: Optional[str] = None,
+        io: Optional[InputOutput] = None,
+        from_coder: Optional["Coder"] = None,
+        **kwargs: Any,
+    ) -> "Coder":
         from . import (
             EditBlockCoder,
             EditBlockFencedCoder,
@@ -194,32 +194,32 @@ class Coder:
 
     def __init__(
         self,
-        main_model,
-        io,
-        fnames=None,
-        git_dname=None,
-        pretty=True,
-        show_diffs=False,
-        auto_commits=True,
-        dirty_commits=True,
-        dry_run=False,
-        map_tokens=1024,
-        verbose=False,
-        assistant_output_color="blue",
-        code_theme="default",
-        stream=True,
-        use_git=True,
-        voice_language=None,
-        aider_ignore_file=None,
-        cur_messages=None,
-        done_messages=None,
-        max_chat_history_tokens=None,
-        restore_chat_history=False,
-        auto_lint=True,
-        auto_test=False,
-        lint_cmds=None,
-        test_cmd=None,
-    ):
+        main_model: models.Model,
+        io: InputOutput,
+        fnames: list[str] | None = None,
+        git_dname: str | None = None,
+        pretty: bool = True,
+        show_diffs: bool = False,
+        auto_commits: bool = True,
+        dirty_commits: bool = True,
+        dry_run: bool = False,
+        map_tokens: int = 1024,
+        verbose: bool = False,
+        assistant_output_color: str = "blue",
+        code_theme: str = "default",
+        stream: bool = True,
+        use_git: bool = True,
+        voice_language: str | None = None,
+        aider_ignore_file: str | None = None,
+        cur_messages: list[dict[str, Any]] | None = None,
+        done_messages: list[dict[str, Any]] | None = None,
+        max_chat_history_tokens: int | None = None,
+        restore_chat_history: bool = False,
+        auto_lint: bool = True,
+        auto_test: bool = False,
+        lint_cmds: dict[str, str] | None = None,
+        test_cmd: str | None = None,
+    ) -> None:
         if not fnames:
             fnames = []
 
@@ -347,17 +347,17 @@ class Coder:
                 self.io.tool_output("JSON Schema:")
                 self.io.tool_output(json.dumps(self.functions, indent=4))
 
-    def setup_lint_cmds(self, lint_cmds):
+    def setup_lint_cmds(self, lint_cmds: dict[str, str] | None = None) -> None:
         if not lint_cmds:
             return
         for lang, cmd in lint_cmds.items():
             self.linter.set_linter(lang, cmd)
 
-    def show_announcements(self):
+    def show_announcements(self) -> None:
         for line in self.get_announcements():
             self.io.tool_output(line)
 
-    def find_common_root(self):
+    def find_common_root(self) -> None:
         if len(self.abs_fnames) == 1:
             self.root = os.path.dirname(list(self.abs_fnames)[0])
         elif self.abs_fnames:

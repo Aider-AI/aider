@@ -14,10 +14,10 @@ from aider.utils import ChdirTemporaryDirectory, GitTemporaryDirectory
 
 
 class TestCoder(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.GPT35 = Model("gpt-3.5-turbo")
 
-    def test_allowed_to_edit(self):
+    def test_allowed_to_edit(self) -> None:
         with GitTemporaryDirectory():
             repo = git.Repo()
 
@@ -44,7 +44,7 @@ class TestCoder(unittest.TestCase):
 
             self.assertFalse(coder.need_commit_before_edits)
 
-    def test_allowed_to_edit_no(self):
+    def test_allowed_to_edit_no(self) -> None:
         with GitTemporaryDirectory():
             repo = git.Repo()
 
@@ -72,7 +72,7 @@ class TestCoder(unittest.TestCase):
 
             self.assertFalse(coder.need_commit_before_edits)
 
-    def test_allowed_to_edit_dirty(self):
+    def test_allowed_to_edit_dirty(self) -> None:
         with GitTemporaryDirectory():
             repo = git.Repo()
 
@@ -94,7 +94,7 @@ class TestCoder(unittest.TestCase):
             self.assertTrue(coder.allowed_to_edit("added.txt"))
             self.assertTrue(coder.need_commit_before_edits)
 
-    def test_get_last_modified(self):
+    def test_get_last_modified(self) -> None:
         # Mock the IO object
         mock_io = MagicMock()
 
@@ -117,7 +117,7 @@ class TestCoder(unittest.TestCase):
             fname.unlink()
             self.assertEqual(coder.get_last_modified(), 0)
 
-    def test_get_files_content(self):
+    def test_get_files_content(self) -> None:
         tempdir = Path(tempfile.mkdtemp())
 
         file1 = tempdir / "file1.txt"
@@ -135,7 +135,7 @@ class TestCoder(unittest.TestCase):
         self.assertIn("file1.txt", content)
         self.assertIn("file2.txt", content)
 
-    def test_check_for_filename_mentions(self):
+    def test_check_for_filename_mentions(self) -> None:
         with GitTemporaryDirectory():
             repo = git.Repo()
 
@@ -167,7 +167,7 @@ class TestCoder(unittest.TestCase):
 
             self.assertEqual(coder.abs_fnames, expected_files)
 
-    def test_check_for_ambiguous_filename_mentions_of_longer_paths(self):
+    def test_check_for_ambiguous_filename_mentions_of_longer_paths(self) -> None:
         with GitTemporaryDirectory():
             io = InputOutput(pretty=False, yes=True)
             coder = Coder.create(self.GPT35, None, io)
@@ -188,7 +188,7 @@ class TestCoder(unittest.TestCase):
 
             self.assertEqual(coder.abs_fnames, set([str(fname.resolve())]))
 
-    def test_check_for_subdir_mention(self):
+    def test_check_for_subdir_mention(self) -> None:
         with GitTemporaryDirectory():
             io = InputOutput(pretty=False, yes=True)
             coder = Coder.create(self.GPT35, None, io)
@@ -206,7 +206,7 @@ class TestCoder(unittest.TestCase):
 
             self.assertEqual(coder.abs_fnames, set([str(fname.resolve())]))
 
-    def test_run_with_file_deletion(self):
+    def test_run_with_file_deletion(self) -> None:
         # Create a few temporary files
 
         tempdir = Path(tempfile.mkdtemp())
@@ -222,7 +222,7 @@ class TestCoder(unittest.TestCase):
         # Initialize the Coder object with the mocked IO and mocked repo
         coder = Coder.create(self.GPT35, None, io=InputOutput(), fnames=files)
 
-        def mock_send(*args, **kwargs):
+        def mock_send(*args: Any, **kwargs: Any) -> list[Any]:
             coder.partial_response_content = "ok"
             coder.partial_response_function_call = dict()
             return []
@@ -239,7 +239,7 @@ class TestCoder(unittest.TestCase):
         coder.run(with_message="hi")
         self.assertEqual(len(coder.abs_fnames), 1)
 
-    def test_run_with_file_unicode_error(self):
+    def test_run_with_file_unicode_error(self) -> None:
         # Create a few temporary files
         _, file1 = tempfile.mkstemp()
         _, file2 = tempfile.mkstemp()
@@ -268,7 +268,7 @@ class TestCoder(unittest.TestCase):
         coder.run(with_message="hi")
         self.assertEqual(len(coder.abs_fnames), 1)
 
-    def test_choose_fence(self):
+    def test_choose_fence(self) -> None:
         # Create a few temporary files
         _, file1 = tempfile.mkstemp()
 
@@ -280,7 +280,7 @@ class TestCoder(unittest.TestCase):
         # Initialize the Coder object with the mocked IO and mocked repo
         coder = Coder.create(self.GPT35, None, io=InputOutput(), fnames=files)
 
-        def mock_send(*args, **kwargs):
+        def mock_send(*args: Any, **kwargs: Any) -> list[Any]:
             coder.partial_response_content = "ok"
             coder.partial_response_function_call = dict()
             return []
@@ -292,7 +292,7 @@ class TestCoder(unittest.TestCase):
 
         self.assertNotEqual(coder.fence[0], "```")
 
-    def test_run_with_file_utf_unicode_error(self):
+    def test_run_with_file_utf_unicode_error(self) -> None:
         "make sure that we honor InputOutput(encoding) and don't just assume utf-8"
         # Create a few temporary files
         _, file1 = tempfile.mkstemp()
@@ -330,7 +330,7 @@ class TestCoder(unittest.TestCase):
         # both files should still be here
         self.assertEqual(len(coder.abs_fnames), 2)
 
-    def test_run_with_invalid_request_error(self):
+    def test_run_with_invalid_request_error(self) -> None:
         with ChdirTemporaryDirectory():
             # Mock the IO object
             mock_io = MagicMock()
@@ -349,7 +349,7 @@ class TestCoder(unittest.TestCase):
 
                     coder.run(with_message="hi")
 
-    def test_new_file_edit_one_commit(self):
+    def test_new_file_edit_one_commit(self) -> None:
         """A new file shouldn't get pre-committed before the GPT edit commit"""
         with GitTemporaryDirectory():
             repo = git.Repo()
@@ -391,7 +391,7 @@ new
             num_commits = len(list(repo.iter_commits(repo.active_branch.name)))
             self.assertEqual(num_commits, 1)
 
-    def test_only_commit_gpt_edited_file(self):
+    def test_only_commit_gpt_edited_file(self) -> None:
         """
         Only commit file that gpt edits, not other dirty files.
         Also ensure commit msg only depends on diffs from the GPT edited file.
@@ -446,7 +446,7 @@ TWO
 
             self.assertTrue(repo.is_dirty(path=str(fname1)))
 
-    def test_gpt_edit_to_dirty_file(self):
+    def test_gpt_edit_to_dirty_file(self) -> None:
         """A dirty file should be committed before the GPT edits are committed"""
 
         with GitTemporaryDirectory():
@@ -531,7 +531,7 @@ three
 
             self.assertEqual(len(saved_diffs), 2)
 
-    def test_gpt_edit_to_existing_file_not_in_repo(self):
+    def test_gpt_edit_to_existing_file_not_in_repo(self) -> None:
         with GitTemporaryDirectory():
             repo = git.Repo()
 
@@ -579,7 +579,7 @@ two
             diff = saved_diffs[0]
             self.assertIn("file.txt", diff)
 
-    def test_skip_aiderignored_files(self):
+    def test_skip_aiderignored_files(self) -> None:
         with GitTemporaryDirectory():
             repo = git.Repo()
 

@@ -103,8 +103,9 @@ class Voice:
                 model="whisper-1", file=fh, prompt=history, language=language
             )
 
-        text = transcript.text
-        return text
+        if (text := transcript.text) and isinstance(text, str):
+            return text
+        return ""
 
 
 if __name__ == "__main__":

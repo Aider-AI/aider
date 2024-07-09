@@ -10,7 +10,7 @@ IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp"}
 
 
 class IgnorantTemporaryDirectory:
-    def __init__(self):
+    def __init__(self) -> None:
         self.temp_dir = tempfile.TemporaryDirectory()
 
     def __enter__(self):
@@ -47,7 +47,7 @@ class ChdirTemporaryDirectory(IgnorantTemporaryDirectory):
 
 
 class GitTemporaryDirectory(ChdirTemporaryDirectory):
-    def __enter__(self):
+    def __enter__(self) -> str:
         dname = super().__enter__()
         self.repo = make_repo(dname)
         return dname
@@ -57,7 +57,7 @@ class GitTemporaryDirectory(ChdirTemporaryDirectory):
         super().__exit__(exc_type, exc_val, exc_tb)
 
 
-def make_repo(path=None):
+def make_repo(path: str | None = None) -> git.Repo:
     if not path:
         path = "."
     repo = git.Repo.init(path)
@@ -67,7 +67,7 @@ def make_repo(path=None):
     return repo
 
 
-def is_image_file(file_name):
+def is_image_file(file_name: str) -> bool:
     """
     Check if the given file name has an image file extension.
 
@@ -78,13 +78,17 @@ def is_image_file(file_name):
     return any(file_name.endswith(ext) for ext in IMAGE_EXTENSIONS)
 
 
-def safe_abs_path(res):
+def safe_abs_path(res: str) -> str:
     "Gives an abs path, which safely returns a full (not 8.3) windows path"
     res = Path(res).resolve()
     return str(res)
 
 
-def show_messages(messages, title=None, functions=None):
+def show_messages(
+    messages: list[dict[str, Any]],
+    title: str | None = None,
+    functions: list[dict[str, Any]] | None = None,
+) -> None:
     if title:
         print(title.upper(), "*" * 50)
 
@@ -107,7 +111,7 @@ def show_messages(messages, title=None, functions=None):
         dump(functions)
 
 
-def split_chat_history_markdown(text, include_tool=False):
+def split_chat_history_markdown(text: str, include_tool: bool = False) -> list[dict[str, Any]]:
     messages = []
     user = []
     assistant = []

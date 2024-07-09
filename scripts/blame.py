@@ -11,7 +11,9 @@ from imgcat import imgcat
 from aider.dump import dump
 
 
-def get_lines_with_commit_hash(filename, aider_commits, git_dname, verbose=False):
+def get_lines_with_commit_hash(
+    filename: str, aider_commits: set[str], git_dname: str, verbose: bool = False
+) -> tuple[int, int]:
     result = subprocess.run(
         ["git", "-C", git_dname, "blame", "-w", "-l", filename],
         capture_output=True,
@@ -38,7 +40,7 @@ def get_lines_with_commit_hash(filename, aider_commits, git_dname, verbose=False
     return num_lines, num_aider_lines
 
 
-def get_aider_commits(git_dname):
+def get_aider_commits(git_dname: str) -> set[str]:
     """Get commit hashes for commits with messages starting with 'aider:'"""
 
     result = subprocess.run(
@@ -62,7 +64,7 @@ def get_aider_commits(git_dname):
     return commits
 
 
-def show_commit_stats(commits):
+def show_commit_stats(commits: list[str]) -> None:
     total_added_lines = 0
     total_deleted_lines = 0
 
@@ -102,7 +104,7 @@ def show_commit_stats(commits):
     print(f"Total: +{total_added_lines} -{total_deleted_lines}")
 
 
-def process_fnames(fnames, git_dname):
+def process_fnames(fnames: list[str], git_dname: str) -> tuple[int, int, float]:
     if not git_dname:
         git_dname = "."
 
@@ -128,7 +130,7 @@ def process_fnames(fnames, git_dname):
     return total_aider_lines, total_lines, total_percent_modified
 
 
-def process_repo(git_dname=None):
+def process_repo(git_dname: str | None = None) -> tuple[int, int, float]:
     if not git_dname:
         git_dname = "."
 
@@ -141,7 +143,7 @@ def process_repo(git_dname=None):
     return process_fnames(fnames, git_dname)
 
 
-def history():
+def history() -> None:
     git_dname = "."
     result = subprocess.run(
         ["git", "-C", git_dname, "log", "--pretty=format:%H %s"],
@@ -198,7 +200,7 @@ def history():
         imgcat(f.read())
 
 
-def main():
+def main() -> None:
     # return history()
 
     if len(sys.argv) < 2:

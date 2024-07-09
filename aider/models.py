@@ -250,7 +250,7 @@ class Model:
     max_chat_history_tokens = 1024
     weak_model: Optional["Model"] = None
 
-    def __init__(self, model, weak_model=None):
+    def __init__(self, model: str, weak_model: Optional[str] = None):
         self.name = model
 
         # Do we have the model_info?
@@ -289,7 +289,7 @@ class Model:
         else:
             self.get_weak_model(weak_model)
 
-    def configure_model_settings(self, model):
+    def configure_model_settings(self, model: str) -> None:
         for ms in MODEL_SETTINGS:
             # direct match, or match "provider/<model>"
             if model == ms.name:
@@ -326,10 +326,10 @@ class Model:
         if self.edit_format == "diff":
             self.use_repo_map = True
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
-    def get_weak_model(self, provided_weak_model_name):
+    def get_weak_model(self, provided_weak_model_name: Optional[str] = None) -> "Model":
         # If weak_model_name is provided, override the model settings
         if provided_weak_model_name:
             self.weak_model_name = provided_weak_model_name
@@ -348,13 +348,13 @@ class Model:
         )
         return self.weak_model
 
-    def commit_message_models(self):
+    def commit_message_models(self) -> list["Model"]:
         return [self.weak_model]
 
-    def tokenizer(self, text):
+    def tokenizer(self, text: str) -> list[str]:
         return litellm.encode(model=self.name, text=text)
 
-    def token_count(self, messages):
+    def token_count(self, messages: Any) -> int:
         if not self.tokenizer:
             return
 
@@ -365,7 +365,7 @@ class Model:
 
         return len(self.tokenizer(msgs))
 
-    def token_count_for_image(self, fname):
+    def token_count_for_image(self, fname: str) -> int:
         """
         Calculate the token cost for an image assuming high detail.
         The token cost is determined by the size of the image.
@@ -396,7 +396,7 @@ class Model:
         token_cost = num_tiles * 170 + 85
         return token_cost
 
-    def get_image_size(self, fname):
+    def get_image_size(self, fname: str) -> tuple[int, int]:
         """
         Retrieve the size of an image.
         :param fname: The filename of the image.
@@ -405,7 +405,7 @@ class Model:
         with Image.open(fname) as img:
             return img.size
 
-    def validate_environment(self):
+    def validate_environment(self) -> dict:
         # https://github.com/BerriAI/litellm/issues/3190
 
         model = self.name
@@ -426,7 +426,7 @@ class Model:
         return res
 
 
-def validate_variables(vars):
+def validate_variables(vars: list[str]) -> dict:
     missing = []
     for var in vars:
         if var not in os.environ:
@@ -436,13 +436,13 @@ def validate_variables(vars):
     return dict(keys_in_environment=True, missing_keys=missing)
 
 
-def sanity_check_models(io, main_model):
+def sanity_check_models(io: InputOutput, main_model: Model) -> None:
     sanity_check_model(io, main_model)
     if main_model.weak_model and main_model.weak_model is not main_model:
         sanity_check_model(io, main_model.weak_model)
 
 
-def sanity_check_model(io, model):
+def sanity_check_model(io: InputOutput, model: Model) -> None:
     show = False
 
     if model.missing_keys:
@@ -474,7 +474,7 @@ def sanity_check_model(io, model):
         io.tool_error("For more info see https://aider.chat/docs/llms.html#model-warnings")
 
 
-def fuzzy_match_models(name):
+def fuzzy_match_models(name: str) -> list[tuple[str, str]]:
     name = name.lower()
 
     chat_models = []
@@ -515,7 +515,7 @@ def fuzzy_match_models(name):
     return list(zip(matching_models, matching_models))
 
 
-def print_matching_models(io, search):
+def print_matching_models(io: InputOutput, search: str) -> None:
     matches = fuzzy_match_models(search)
     if matches:
         io.tool_output(f'Models which match "{search}":')
@@ -529,7 +529,7 @@ def print_matching_models(io, search):
         io.tool_output(f'No models match "{search}".')
 
 
-def main():
+def main() -> None:
     if len(sys.argv) != 2:
         print("Usage: python models.py <model_name>")
         sys.exit(1)

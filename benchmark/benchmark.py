@@ -39,7 +39,7 @@ app = typer.Typer(add_completion=False, pretty_exceptions_enable=False)
 NUM_TESTS = (89, 133)
 
 
-def show_stats(dirnames, graphs):
+def show_stats(dirnames: list[str], graphs: bool) -> None:
     raw_rows = []
     for dirname in dirnames:
         row = summarize_results(dirname)
@@ -78,7 +78,7 @@ def show_stats(dirnames, graphs):
         plot_refactoring(df)
 
 
-def resolve_dirname(dirname, use_single_prior, make_new):
+def resolve_dirname(dirname: Path, use_single_prior: bool, make_new: bool) -> Path:
     if len(dirname.parts) > 1:
         return dirname
 
@@ -140,7 +140,7 @@ def main(
     exercises_dir: str = typer.Option(
         EXERCISES_DIR_DEFAULT, "--exercises-dir", help="Directory with exercise files"
     ),
-):
+) -> int:
     repo = git.Repo(search_parent_directories=True)
     commit_hash = repo.head.object.hexsha[:7]
     if repo.is_dirty():
@@ -250,7 +250,7 @@ def main(
     return 0
 
 
-def show_diffs(dirnames):
+def show_diffs(dirnames: list[str]) -> None:
     dirnames = sorted(dirnames)
 
     all_results = dict((dirname, load_results(dirname)) for dirname in dirnames)
@@ -287,13 +287,13 @@ def show_diffs(dirnames):
     print("unchanged:", len(unchanged), ",".join(sorted(unchanged)))
 
 
-def load_results(dirname):
+def load_results(dirname: Path) -> list:
     dirname = Path(dirname)
     all_results = [json.loads(fname.read_text()) for fname in dirname.glob("*/.aider.results.json")]
     return all_results
 
 
-def summarize_results(dirname):
+def summarize_results(dirname: Path) -> None:
     all_results = load_results(dirname)
 
     res = SimpleNamespace()
@@ -367,7 +367,7 @@ def summarize_results(dirname):
     versions = get_versions(commit_hashes)
     date = dirname.name[:10]
 
-    def show(stat, red="red"):
+    def show(stat: str, red: str = "red") -> None:
         val = getattr(res, stat)
         style = red if val else None
         console.print(f"  {stat}: {val}", style=style)
@@ -435,7 +435,7 @@ def summarize_results(dirname):
     return res
 
 
-def get_versions(commit_hashes):
+def get_versions(commit_hashes: list[str]) -> set[str]:
     versions = set()
     for hsh in commit_hashes:
         if not hsh:
@@ -452,7 +452,7 @@ def get_versions(commit_hashes):
     return versions
 
 
-def get_replayed_content(replay_dname, test_dname):
+def get_replayed_content(replay_dname: Path, test_dname: Path) -> str:
     replay_dname = Path(replay_dname)
     test_dname = Path(test_dname)
     dump(replay_dname, test_dname)
@@ -469,7 +469,7 @@ def get_replayed_content(replay_dname, test_dname):
     return "".join(res)
 
 
-def run_test(original_dname, testdir, *args, **kwargs):
+def run_test(original_dname: Path, testdir: Path, *args, **kwargs) -> int:
     try:
         return run_test_real(original_dname, testdir, *args, **kwargs)
     except Exception as err:
@@ -484,18 +484,18 @@ def run_test(original_dname, testdir, *args, **kwargs):
 
 
 def run_test_real(
-    original_dname,
-    testdir,
-    model_name,
-    edit_format,
-    tries,
-    no_unit_tests,
-    no_aider,
-    verbose,
-    commit_hash,
-    replay,
-    max_apply_update_errors,
-):
+    original_dname: Path,
+    testdir: Path,
+    model_name: str,
+    edit_format: str,
+    tries: int,
+    no_unit_tests: bool,
+    no_aider: bool,
+    verbose: bool,
+    commit_hash: str,
+    replay: Path,
+    max_apply_update_errors: int,
+) -> int:
     if not os.path.isdir(testdir):
         print("Not a dir:", testdir)
         return
