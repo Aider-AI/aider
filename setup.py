@@ -19,10 +19,24 @@ print("Discovered packages:", packages)
 
 import subprocess
 
-# Install torch from the specific URL
-subprocess.check_call([
-    "pip", "install", "torch==2.2.2", "--extra-index-url", "https://download.pytorch.org/whl/cpu"
-])
+
+cmd = [
+    "pip",
+    "install",
+    "torch<2.2.2",
+    "--no-deps",
+    "--dry-run",
+    "--no-cache-dir",
+    "--index-url",
+    "https://download.pytorch.org/whl/cpu",
+]
+
+result = subprocess.check_output(cmd, text=True)
+
+print(result)
+
+import sys
+sys.exit()
 
 setup(
     name="aider-chat",
