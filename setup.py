@@ -1,6 +1,7 @@
 import re
 import subprocess
 import sys
+import tempfile
 
 from setuptools import find_packages, setup
 
@@ -28,7 +29,7 @@ cmd = [
     torch,
     "--no-deps",
     "--dest",
-    "/dev/null",
+    tempfile.mkdtemp(prefix="pytorch_download_"),
     "--index-url",
     "https://download.pytorch.org/whl/cpu",
 ]
