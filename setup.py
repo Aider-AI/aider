@@ -33,7 +33,12 @@ cmd = [
 
 result = subprocess.check_output(cmd, text=True)
 
-print(result)
+url_match = re.search(r'(https://download\.pytorch\.org/[^\s]+)', result)
+if url_match:
+    pytorch_url = url_match.group(1)
+    print(f"PyTorch URL: {pytorch_url}")
+else:
+    print("PyTorch URL not found in the output")
 
 import sys
 sys.exit()
