@@ -1,0 +1,97 @@
+[project]
+name = "aider-chat"
+version = "0.43.1-dev"
+description = "Aider is AI pair programming in your terminal"
+readme = "README.md"
+requires-python = ">=3.9,<3.13"
+license = { text = "Apache-2.0" }
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python",
+    "Topic :: Software Development",
+]
+dependencies = [
+    "configargparse",
+    "GitPython",
+    "openai",
+    "tiktoken",
+    "jsonschema",
+    "rich",
+    "prompt_toolkit",
+    "numpy",
+    "backoff",
+    "pathspec",
+    "diskcache",
+    "grep_ast",
+    "packaging",
+    "sounddevice",
+    "soundfile",
+    "beautifulsoup4",
+    "PyYAML",
+    "Pillow",
+    "diff-match-patch",
+    "playwright",
+    "pypandoc",
+    "litellm",
+    "google-generativeai",
+    "streamlit",
+    "watchdog",
+    "flake8",
+    "llama-index-core",
+    "llama-index-embeddings-huggingface",
+    "importlib_resources",
+    "networkx<3.3",
+    "tree-sitter==0.21.3",
+    "scipy<1.14",
+    "importlib-metadata<8.0.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = [
+    "pytest",
+    "pip-tools",
+    "lox",
+    "matplotlib",
+    "pandas",
+    "typer",
+    "imgcat",
+    "pre-commit",
+    "cogapp",
+]
+
+[project.urls]
+Homepage = "https://github.com/paul-gauthier/aider"
+
+[project.scripts]
+aider = "aider.main:main"
+
+[tool.setuptools.package-data]
+aider = ["queries/*.scm"]
+"aider.website" = ["**/*.md"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["aider"]
+
+[tool.flake8]
+ignore = "E203,W503"
+max-line-length = 100
+
+[tool.pytest.ini_options]
+norecursedirs = "tmp.* build benchmark _site OLD"
+addopts = "-p no:warnings"
