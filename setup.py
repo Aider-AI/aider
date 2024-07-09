@@ -1,7 +1,7 @@
 import re
 import subprocess
 import sys
-import tempfile
+from tempfile import TempNamedDir
 
 from setuptools import find_packages, setup
 
@@ -21,33 +21,35 @@ packages = find_packages(exclude=["benchmark"]) + ["aider.website"]
 print("Discovered packages:", packages)
 
 torch = "torch==2.2.2"
-cmd = [
-    sys.executable,
-    "-m",
-    "pip",
-    "download",
-    torch,
-    "--no-deps",
-    "--dest",
-    tempfile.mkdtemp(prefix="pytorch_download_"),
-    "--index-url",
-    "https://download.pytorch.org/whl/cpu",
-]
-
 pytorch_url = None
-try:
-    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-    for line in process.stdout:
-        print(line, end='')  # Print each line of output
-        url_match = re.search(r"Downloading (https://download\.pytorch\.org/[^\s]+\.whl)", line)
-        if url_match:
-            pytorch_url = url_match.group(1)
-            print(f"PyTorch URL: {pytorch_url}")
-            process.terminate()  # Terminate the subprocess
-            break
-    process.wait()  # Wait for the process to finish
-except subprocess.CalledProcessError as e:
-    print(f"Error running pip download: {e}")
+
+with TempNamedDir(prefix="pytorch_download_") as temp_dir:
+    cmd = [
+        sys.executable,
+        "-m",
+        "pip",
+        "download",
+        torch,
+        "--no-deps",
+        "--dest",
+        temp_dir.name,
+        "--index-url",
+        "https://download.pytorch.org/whl/cpu",
+    ]
+
+    try:
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+        for line in process.stdout:
+            print(line, end='')  # Print each line of output
+            url_match = re.search(r"Downloading (https://download\.pytorch\.org/[^\s]+\.whl)", line)
+            if url_match:
+                pytorch_url = url_match.group(1)
+                print(f"PyTorch URL: {pytorch_url}")
+                process.terminate()  # Terminate the subprocess
+                break
+        process.wait()  # Wait for the process to finish
+    except subprocess.CalledProcessError as e:
+        print(f"Error running pip download: {e}")
 
 if pytorch_url:
     requirements = [f"torch @ {pytorch_url}"] + requirements
