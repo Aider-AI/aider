@@ -43,8 +43,6 @@ def get_requirements():
             url_match = re.search(r"Downloading (https://download\.pytorch\.org/[^\s]+\.whl)", line)
             if url_match:
                 pytorch_url = url_match.group(1)
-
-            if pytorch_url:
                 process.terminate()  # Terminate the subprocess
                 break
 
