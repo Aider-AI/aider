@@ -12,6 +12,10 @@ cog.out(text)
 
 # Release history
 
+### Aider v0.43.1
+
+- Replace the torch requirement with the CPU only version, because the GPU versions are huge
+
 ### Aider v0.43.0
 
 - Use `/help <question>` to [ask for help about using aider](https://aider.chat/docs/troubleshooting/support.html), customizing settings, troubleshooting, using LLMs, etc.
