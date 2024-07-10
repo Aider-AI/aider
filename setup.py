@@ -1,6 +1,4 @@
 import re
-import subprocess
-import sys
 
 from setuptools import find_packages, setup
 
@@ -13,49 +11,6 @@ from aider.help_pats import exclude_website_pats
 def get_requirements():
     with open("requirements.txt") as f:
         requirements = f.read().splitlines()
-
-    requirements = [line for line in requirements if not line.startswith("---extra-index-url")]
-
-    torch = next((req for req in requirements if req.startswith("torch==")), None)
-    if not torch:
-        return requirements
-
-    pytorch_url = None
-
-    cmd = [
-        sys.executable,
-        "-m",
-        "pip",
-        "install",
-        torch,
-        "--no-deps",
-        "--dry-run",
-        "--no-cache-dir",  # Find the true URL even if another env has cached it
-        "--index-url",
-        "https://download.pytorch.org/whl/cpu",
-    ]
-
-    # print(' '.join(cmd))
-
-    try:
-        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        for line in process.stdout:
-            url_match = re.search(r"Downloading (https://download\.pytorch\.org/[^\s]+\.whl)", line)
-            if url_match:
-                pytorch_url = url_match.group(1)
-                process.terminate()  # Terminate the subprocess
-                break
-
-        process.wait()  # Wait for the process to finish
-    except subprocess.CalledProcessError as e:
-        print(f"Error running pip download: {e}")
-
-    # print(pytorch_url)
-    # sys.exit()
-
-    if pytorch_url:
-        requirements.remove(torch)
-        requirements = [f"torch @ {pytorch_url}"] + requirements
 
     return requirements
 
