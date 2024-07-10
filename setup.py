@@ -13,6 +13,7 @@ def get_requirements(suffix=''):
 
 
 requirements = get_requirements()
+dev_requirements = get_requirements('-dev')
 
 # README
 with open("README.md", "r", encoding="utf-8") as f:
@@ -35,6 +36,9 @@ setup(
     },
     exclude_package_data={"aider.website": exclude_website_pats},
     install_requires=requirements,
+    extras_require={
+        'dev': dev_requirements,
+    },
     python_requires=">=3.9,<3.13",
     entry_points={
         "console_scripts": [
