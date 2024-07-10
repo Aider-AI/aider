@@ -5,13 +5,10 @@ from setuptools import find_packages, setup
 from aider import __version__
 from aider.help_pats import exclude_website_pats
 
-
-# Find the torch requirement and replace it with the CPU only version,
-# because the GPU versions are huge
-def get_requirements():
-    with open("requirements.txt") as f:
+def get_requirements(suffix=''):
+    fname = "requirements" + suffix + '.txt'
+    with open(fname) as f:
         requirements = f.read().splitlines()
-
     return requirements
 
 
