@@ -14,6 +14,7 @@ def get_requirements(suffix=''):
 
 requirements = get_requirements()
 dev_requirements = get_requirements('-dev')
+hf_requirements = get_requirements('-hf')
 
 # README
 with open("README.md", "r", encoding="utf-8") as f:
@@ -38,6 +39,7 @@ setup(
     install_requires=requirements,
     extras_require={
         'dev': dev_requirements,
+        'hf': hf_requirements,
     },
     python_requires=">=3.9,<3.13",
     entry_points={
