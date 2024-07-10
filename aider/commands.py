@@ -75,7 +75,7 @@ class Commands:
         if instructions:
             self.io.tool_error(instructions)
 
-        content = f"{url}:\n\n" + content
+        content = f"{url}:\n\n" + content  # noqa: E231
 
         return content
 
@@ -275,10 +275,10 @@ class Commands:
             cost = tk * self.coder.main_model.info.get("input_cost_per_token", 0)
             total_cost += cost
             msg = msg.ljust(col_width)
-            self.io.tool_output(f"${cost:7.4f} {fmt(tk)} {msg} {tip}")
+            self.io.tool_output(f"${cost:7.4f} {fmt(tk)} {msg} {tip}")  # noqa: E231
 
         self.io.tool_output("=" * (width + cost_width + 1))
-        self.io.tool_output(f"${total_cost:7.4f} {fmt(total)} tokens total")
+        self.io.tool_output(f"${total_cost:7.4f} {fmt(total)} tokens total")  # noqa: E231
 
         limit = self.coder.main_model.info.get("max_input_tokens", 0)
         if not limit:
@@ -659,9 +659,14 @@ class Commands:
             except PipInstallHF as err:
                 self.io.tool_error(str(err))
                 if self.io.confirm_ask("Run pip install?", default="y"):
-                    self.help = Help(pip_install=True)
-                else:
-                    return
+                    try:
+                        self.help = Help(pip_install=True)
+                    except PipInstallHF:
+                        pass
+
+        if not self.help:
+            self.io.tool_error("Unable to initialize interactive help.")
+            return
 
         coder = Coder.create(
             main_model=self.coder.main_model,

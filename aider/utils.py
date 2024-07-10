@@ -190,6 +190,8 @@ def pip_install(args):
     cmd += args
 
     try:
-        subprocess.run(cmd)
+        res = subprocess.run(cmd)
     except subprocess.CalledProcessError as e:
         print(f"Error running pip download: {e}")
+
+    return res.returncode == 0
