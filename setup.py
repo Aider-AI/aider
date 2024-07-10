@@ -5,16 +5,17 @@ from setuptools import find_packages, setup
 from aider import __version__
 from aider.help_pats import exclude_website_pats
 
-def get_requirements(suffix=''):
-    fname = "requirements" + suffix + '.txt'
+
+def get_requirements(suffix=""):
+    fname = "requirements" + suffix + ".txt"
     with open(fname) as f:
         requirements = f.read().splitlines()
     return requirements
 
 
 requirements = get_requirements()
-dev_requirements = get_requirements('-dev')
-hf_requirements = get_requirements('-hf')
+dev_requirements = get_requirements("-dev")
+hf_requirements = get_requirements("-hf-embed")
 
 # README
 with open("README.md", "r", encoding="utf-8") as f:
@@ -38,8 +39,8 @@ setup(
     exclude_package_data={"aider.website": exclude_website_pats},
     install_requires=requirements,
     extras_require={
-        'dev': dev_requirements,
-        'hf': hf_requirements,
+        "dev": dev_requirements,
+        "hf-embed": hf_requirements,
     },
     python_requires=">=3.9,<3.13",
     entry_points={

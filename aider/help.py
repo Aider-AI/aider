@@ -92,7 +92,7 @@ class PipInstallHF(Exception):
 
 
 pip_install_cmd = [
-    "aider[hf]",
+    "aider-chat[hf-embed]",
     "--extra-index-url",
     "https://download.pytorch.org/whl/cpu",
 ]
@@ -102,7 +102,7 @@ To use interactive /help you need to install HuggingFace embeddings:
 
 pip install {' '.join(pip_install_cmd)}
 
-"""
+"""  # noqa: E231
 
 
 class Help:
@@ -131,7 +131,7 @@ class Help:
 
 # Relevant docs:
 
-"""
+"""  # noqa: E231
 
         for node in nodes:
             url = node.metadata.get("url", "")
