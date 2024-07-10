@@ -110,9 +110,8 @@ class Help:
         if pip_install:
             utils.pip_install(pip_install_cmd)
 
-        from llama_index.core import Settings
-
         try:
+            from llama_index.core import Settings
             from llama_index.embeddings.huggingface import HuggingFaceEmbedding
         except ImportError:
             raise PipInstallHF(pip_install_error)

@@ -3,6 +3,7 @@
 #    pip-compile --output-file=requirements-hf.txt requirements-hf.in --upgrade
 #
 
+llama-index-core
 llama-index-embeddings-huggingface
 
 # To retain python 3.9 compatibility

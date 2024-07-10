@@ -7,7 +7,7 @@ RUN apt-get update && \
 COPY . /aider
 
 RUN    pip install --no-cache-dir /aider
-RUN    pip install --no-cache-dir /aider[hf] --extra-index-url https://download.pytorch.org/whl/cpu
+RUN    pip install --no-cache-dir /aider[hf-embed] --extra-index-url https://download.pytorch.org/whl/cpu
 
 # Final stage
 FROM python:3.10-slim

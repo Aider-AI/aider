@@ -26,7 +26,6 @@ google-generativeai
 streamlit
 watchdog
 flake8
-llama-index-core
 importlib_resources
 
 # v3.3 no longer works on python 3.9
