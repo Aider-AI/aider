@@ -7,7 +7,7 @@ from pathlib import Path
 import git
 
 from aider import models, prompts, voice
-from aider.help import Help
+from aider.help import Help, PipInstallHF
 from aider.llm import litellm
 from aider.scrape import Scraper
 from aider.utils import is_image_file
@@ -654,7 +654,14 @@ class Commands:
         from aider.coders import Coder
 
         if not self.help:
-            self.help = Help()
+            try:
+                self.help = Help()
+            except PipInstallHF as err:
+                self.io.tool_error(str(err))
+                if self.io.confirm_ask("Run pip install?", default="y"):
+                    self.help = Help(pip_install=True)
+                else:
+                    return
 
         coder = Coder.create(
             main_model=self.coder.main_model,

@@ -1,4 +1,6 @@
 import os
+import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
@@ -176,3 +178,18 @@ def split_chat_history_markdown(text, include_tool=False):
         messages = [m for m in messages if m["role"] != "tool"]
 
     return messages
+
+
+def pip_install(args):
+    cmd = [
+        sys.executable,
+        "-m",
+        "pip",
+        "install",
+    ]
+    cmd += args
+
+    try:
+        subprocess.run(cmd)
+    except subprocess.CalledProcessError as e:
+        print(f"Error running pip download: {e}")

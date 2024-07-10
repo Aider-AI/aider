@@ -228,7 +228,7 @@ scikit-learn==1.5.1
     # via sentence-transformers
 scipy==1.13.1
     # via
-    #   -c requirements.txt
+    #   -r requirements-hf.in
     #   scikit-learn
     #   sentence-transformers
 sentence-transformers==3.0.1

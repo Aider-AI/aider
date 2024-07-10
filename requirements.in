@@ -4,8 +4,6 @@
 
 configargparse
 GitPython
-openai
-tiktoken
 jsonschema
 rich
 prompt_toolkit
@@ -36,9 +34,6 @@ networkx<3.3
 
 # v0.22.2 seems to break tree-sitter-languages?
 tree-sitter==0.21.3 
-
-# To retain python 3.9 compatibility
-scipy<1.14
 
 # GitHub Release action failing on "KeyError: 'home-page'"
 # https://github.com/pypa/twine/blob/6fbf880ee60915cf1666348c4bdd78a10415f2ac/twine/__init__.py#L40
