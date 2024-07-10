@@ -2,9 +2,6 @@
 #    pip-compile requirements.in --upgrade
 #
 
-# To install with the CPU version of torch, because the GPU versions are huge
----extra-index-url https://download.pytorch.org/whl/cpu
-
 configargparse
 GitPython
 openai
@@ -32,7 +29,6 @@ streamlit
 watchdog
 flake8
 llama-index-core
-llama-index-embeddings-huggingface
 importlib_resources
 
 # v3.3 no longer works on python 3.9

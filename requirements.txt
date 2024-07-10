@@ -6,7 +6,6 @@
 #
 aiohttp==3.9.5
     # via
-    #   huggingface-hub
     #   litellm
     #   llama-index-core
 aiosignal==1.3.1
@@ -65,10 +64,7 @@ diskcache==5.6.3
 distro==1.9.0
     # via openai
 filelock==3.15.4
-    # via
-    #   huggingface-hub
-    #   torch
-    #   transformers
+    # via huggingface-hub
 flake8==7.1.0
     # via -r requirements.in
 frozenlist==1.4.1
@@ -79,7 +75,6 @@ fsspec==2024.6.1
     # via
     #   huggingface-hub
     #   llama-index-core
-    #   torch
 gitdb==4.0.11
     # via gitpython
 gitpython==3.1.43
@@ -135,12 +130,8 @@ httpx==0.27.0
     #   llama-cloud
     #   llama-index-core
     #   openai
-huggingface-hub[inference]==0.23.4
-    # via
-    #   llama-index-embeddings-huggingface
-    #   sentence-transformers
-    #   tokenizers
-    #   transformers
+huggingface-hub==0.23.4
+    # via tokenizers
 idna==3.7
     # via
     #   anyio
@@ -158,11 +149,8 @@ jinja2==3.1.4
     #   altair
     #   litellm
     #   pydeck
-    #   torch
 joblib==1.4.2
-    # via
-    #   nltk
-    #   scikit-learn
+    # via nltk
 jsonschema==4.22.0
     # via
     #   -r requirements.in
@@ -175,10 +163,6 @@ litellm==1.41.6
 llama-cloud==0.0.6
     # via llama-index-core
 llama-index-core==0.10.52.post2
-    # via
-    #   -r requirements.in
-    #   llama-index-embeddings-huggingface
-llama-index-embeddings-huggingface==0.2.2
     # via -r requirements.in
 markdown-it-py==3.0.0
     # via rich
@@ -190,10 +174,6 @@ mccabe==0.7.0
     # via flake8
 mdurl==0.1.2
     # via markdown-it-py
-minijinja==2.0.1
-    # via huggingface-hub
-mpmath==1.3.0
-    # via sympy
 multidict==6.0.5
     # via
     #   aiohttp
@@ -206,7 +186,6 @@ networkx==3.2.1
     # via
     #   -r requirements.in
     #   llama-index-core
-    #   torch
 nltk==3.8.1
     # via llama-index-core
 numpy==1.26.4
@@ -217,11 +196,8 @@ numpy==1.26.4
     #   pandas
     #   pyarrow
     #   pydeck
-    #   scikit-learn
     #   scipy
-    #   sentence-transformers
     #   streamlit
-    #   transformers
 openai==1.35.10
     # via
     #   -r requirements.in
@@ -234,7 +210,6 @@ packaging==24.1
     #   huggingface-hub
     #   marshmallow
     #   streamlit
-    #   transformers
 pandas==2.2.2
     # via
     #   altair
@@ -248,7 +223,6 @@ pillow==10.4.0
     # via
     #   -r requirements.in
     #   llama-index-core
-    #   sentence-transformers
     #   streamlit
 playwright==1.45.0
     # via -r requirements.in
@@ -310,7 +284,6 @@ pyyaml==6.0.1
     #   -r requirements.in
     #   huggingface-hub
     #   llama-index-core
-    #   transformers
 referencing==0.35.1
     # via
     #   jsonschema
@@ -319,7 +292,6 @@ regex==2024.5.15
     # via
     #   nltk
     #   tiktoken
-    #   transformers
 requests==2.32.3
     # via
     #   google-api-core
@@ -328,7 +300,6 @@ requests==2.32.3
     #   llama-index-core
     #   streamlit
     #   tiktoken
-    #   transformers
 rich==13.7.1
     # via
     #   -r requirements.in
@@ -339,17 +310,8 @@ rpds-py==0.18.1
     #   referencing
 rsa==4.9
     # via google-auth
-safetensors==0.4.3
-    # via transformers
-scikit-learn==1.5.1
-    # via sentence-transformers
 scipy==1.13.1
-    # via
-    #   -r requirements.in
-    #   scikit-learn
-    #   sentence-transformers
-sentence-transformers==3.0.1
-    # via llama-index-embeddings-huggingface
+    # via -r requirements.in
 six==1.16.0
     # via python-dateutil
 smmap==5.0.1
@@ -371,29 +333,21 @@ sqlalchemy[asyncio]==2.0.31
     #   sqlalchemy
 streamlit==1.36.0
     # via -r requirements.in
-sympy==1.12.1
-    # via torch
 tenacity==8.4.2
     # via
     #   llama-index-core
     #   streamlit
-threadpoolctl==3.5.0
-    # via scikit-learn
 tiktoken==0.7.0
     # via
     #   -r requirements.in
     #   litellm
     #   llama-index-core
 tokenizers==0.19.1
-    # via
-    #   litellm
-    #   transformers
+    # via litellm
 toml==0.10.2
     # via streamlit
 toolz==0.12.1
     # via altair
-torch==2.2.2
-    # via sentence-transformers
 tornado==6.4.1
     # via streamlit
 tqdm==4.66.4
@@ -403,10 +357,6 @@ tqdm==4.66.4
     #   llama-index-core
     #   nltk
     #   openai
-    #   sentence-transformers
-    #   transformers
-transformers==4.42.3
-    # via sentence-transformers
 tree-sitter==0.21.3
     # via
     #   -r requirements.in
@@ -424,7 +374,6 @@ typing-extensions==4.12.2
     #   pyee
     #   sqlalchemy
     #   streamlit
-    #   torch
     #   typing-inspect
 typing-inspect==0.9.0
     # via
