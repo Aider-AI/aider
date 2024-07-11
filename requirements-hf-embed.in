@@ -6,6 +6,3 @@
 llama-index-core
 llama-index-embeddings-huggingface
 
-# To retain python 3.9 compatibility
-scipy<1.14
-

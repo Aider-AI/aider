@@ -211,7 +211,7 @@ scikit-learn==1.5.1
     # via sentence-transformers
 scipy==1.13.1
     # via
-    #   -r requirements-hf-embed.in
+    #   -c requirements.txt
     #   scikit-learn
     #   sentence-transformers
 sentence-transformers==3.0.1

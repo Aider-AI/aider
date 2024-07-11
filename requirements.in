@@ -38,3 +38,6 @@ tree-sitter==0.21.3
 # https://github.com/pypa/twine/blob/6fbf880ee60915cf1666348c4bdd78a10415f2ac/twine/__init__.py#L40
 # Uses importlib-metadata
 importlib-metadata<8.0.0
+
+# To retain python 3.9 compatibility
+scipy<1.14
