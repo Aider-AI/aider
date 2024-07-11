@@ -301,6 +301,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         git_conf = Path(git_root) / conf_fname  # git root
         if git_conf not in default_config_files:
             default_config_files.append(git_conf)
+    xdg_config_home = os.getenv("XDG_CONFIG_HOME")
+    if xdg_config_home:
+        default_config_files.append(Path(xdg_config_home) / "aider" / conf_fname)
+    elif sys.platform.startswith("linux"):
+        default_config_files.append(Path.home() / ".config" / "aider" / conf_fname)
     default_config_files.append(Path.home() / conf_fname)  # homedir
     default_config_files = list(map(str, default_config_files))
 
