@@ -294,7 +294,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     else:
         git_root = get_git_root()
 
-    conf_fname = Path(".aider.conf.yml")
+    conf_fname = Path("conf.yml")
 
     default_config_files = [conf_fname.resolve()]  # CWD
     if git_root:
@@ -303,9 +303,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             default_config_files.append(git_conf)
     xdg_config_home = os.getenv("XDG_CONFIG_HOME")
     if xdg_config_home:
-        default_config_files.append(Path(xdg_config_home) / "aider" / conf_fname)
+        default_config_files.append(Path(xdg_config_home) / "aider" / "conf.yml")
     elif sys.platform.startswith("linux"):
-        default_config_files.append(Path.home() / ".config" / "aider" / conf_fname)
+        default_config_files.append(Path.home() / ".config" / "aider" / "conf.yml")
     default_config_files.append(Path.home() / conf_fname)  # homedir
     default_config_files = list(map(str, default_config_files))
 
