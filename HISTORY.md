@@ -1,9 +1,22 @@
 
 # Release history
 
+### Aider v0.43.4
+
+- Added scipy back to main requirements.txt.
+
+### Aider v0.43.3
+
+- Added build-essentials back to main Dockerfile.
+
+### Aider v0.43.2
+
+- Moved HuggingFace embeddings deps into [hf-embed] extra.
+- Added [dev] extra.
+
 ### Aider v0.43.1
 
-- Replace the torch requirement with the CPU only version, because the GPU versions are huge
+- Replace the torch requirement with the CPU only version, because the GPU versions are huge.
 
 ### Aider v0.43.0
 
