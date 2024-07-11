@@ -294,22 +294,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     else:
         git_root = get_git_root()
 
-    conf_fname = Path("conf.yml")
-
-    default_config_files = [conf_fname.resolve()]  # CWD
-    if git_root:
-        git_conf = Path(git_root) / conf_fname  # git root
-        if git_conf not in default_config_files:
-            default_config_files.append(git_conf)
-    xdg_config_home = os.getenv("XDG_CONFIG_HOME")
-    if xdg_config_home:
-        default_config_files.append(Path(xdg_config_home) / "aider" / "conf.yml")
-    elif sys.platform.startswith("linux"):
-        default_config_files.append(Path.home() / ".config" / "aider" / "conf.yml")
-    default_config_files.append(Path.home() / conf_fname)  # homedir
-    default_config_files = list(map(str, default_config_files))
-
-    parser = get_parser(default_config_files, git_root)
+    parser = get_parser(git_root)
     args, unknown = parser.parse_known_args(argv)
 
     # Load the .env file specified in the arguments
