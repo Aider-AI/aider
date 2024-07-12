@@ -2,6 +2,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import itertools
 from pathlib import Path
 
 import git
@@ -192,15 +193,16 @@ def pip_install(args):
     try:
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1, universal_newlines=True)
         output = []
+        spinner = itertools.cycle(['-', '/', '|', '\\'])
 
         for line in process.stdout:
             output.append(line)
-            # todo output a simple text spinner
+            print(f"\rInstalling... {next(spinner)}", end="", flush=True)
 
         return_code = process.wait()
 
         if return_code == 0:
-            print()
+            print("\rInstallation completed successfully.")
             print()
             return True
 
