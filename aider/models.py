@@ -709,10 +709,7 @@ def print_matching_models(io, search):
         io.tool_output(f'Models which match "{search}":')
         for model in matches:
             fq, m = model
-            if fq == m:
-                io.tool_output(f"- {m}")
-            else:
-                io.tool_output(f"- {m} ({fq})")
+            io.tool_output(f"- {fq}")
     else:
         io.tool_output(f'No models match "{search}".')
 
