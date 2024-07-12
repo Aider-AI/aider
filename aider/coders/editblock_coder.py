@@ -78,7 +78,7 @@ class EditBlockCoder(Coder):
 
 """
 
-            if updated in content:
+            if updated in content and updated:
                 res += f"""Are you sure you need this SEARCH/REPLACE block?
 The REPLACE lines are already in {path}!
 
