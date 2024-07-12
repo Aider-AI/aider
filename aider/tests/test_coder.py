@@ -589,6 +589,50 @@ two
             self.assertNotIn(fname2, str(coder.abs_fnames))
             self.assertNotIn(fname3, str(coder.abs_fnames))
 
+    def test_check_for_urls(self):
+        io = InputOutput(yes=True)
+        coder = Coder.create(self.GPT35, None, io=io, pretty=False)
+
+        # Test various URL formats
+        test_cases = [
+            ("Check http://example.com", "http://example.com"),
+            ("Visit https://www.example.com/page", "https://www.example.com/page"),
+            ("Go to http://subdomain.example.com:8080/path?query=value", "http://subdomain.example.com:8080/path?query=value"),
+            ("See https://example.com/path#fragment", "https://example.com/path#fragment"),
+            ("Look at http://localhost:3000", "http://localhost:3000"),
+            ("View https://example.com/setup#whatever", "https://example.com/setup#whatever"),
+            ("Open http://127.0.0.1:8000/api/v1/", "http://127.0.0.1:8000/api/v1/"),
+            ("Try https://example.com/path/to/page.html?param1=value1&param2=value2", "https://example.com/path/to/page.html?param1=value1&param2=value2"),
+            ("Access http://user:password@example.com", "http://user:password@example.com"),
+            ("Use https://example.com/path_(with_parentheses)", "https://example.com/path_(with_parentheses)"),
+        ]
+
+        for input_text, expected_url in test_cases:
+            with self.subTest(input_text=input_text):
+                result = coder.check_for_urls(input_text)
+                self.assertIn(expected_url, result)
+
+        # Test cases from the GitHub issue
+        issue_cases = [
+            ("check http://localhost:3002, there is an error", "http://localhost:3002"),
+            ("can you check out https://example.com/setup#whatever?", "https://example.com/setup#whatever"),
+        ]
+
+        for input_text, expected_url in issue_cases:
+            with self.subTest(input_text=input_text):
+                result = coder.check_for_urls(input_text)
+                self.assertIn(expected_url, result)
+
+        # Test case with multiple URLs
+        multi_url_input = "Check http://example1.com and https://example2.com/page"
+        result = coder.check_for_urls(multi_url_input)
+        self.assertIn("http://example1.com", result)
+        self.assertIn("https://example2.com/page", result)
+
+        # Test case with no URL
+        no_url_input = "This text contains no URL"
+        result = coder.check_for_urls(no_url_input)
+        self.assertEqual(result, no_url_input)
 
 if __name__ == "__main__":
     unittest.main()
