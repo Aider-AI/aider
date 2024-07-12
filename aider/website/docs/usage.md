@@ -72,7 +72,7 @@ relevant context from the rest of your repo.
 $ aider --4o
 
 # Claude 3.5 Sonnet
-$ auder --sonnet
+$ aider --sonnet
 ```
 
 Or you can run `aider --model XXX` to launch aider with
