@@ -394,7 +394,11 @@ class Commands:
 
     def glob_filtered_to_repo(self, pattern):
         try:
-            raw_matched_files = list(Path(self.coder.root).glob(pattern))
+            if os.path.isabs(pattern):
+                # Handle absolute paths
+                raw_matched_files = [Path(pattern)]
+            else:
+                raw_matched_files = list(Path(self.coder.root).glob(pattern))
         except ValueError as err:
             self.io.tool_error(f"Error matching {pattern}: {err}")
             raw_matched_files = []
@@ -403,7 +407,11 @@ class Commands:
         for fn in raw_matched_files:
             matched_files += expand_subdir(fn)
 
-        matched_files = [str(Path(fn).relative_to(self.coder.root)) for fn in matched_files]
+        matched_files = [
+            str(Path(fn).relative_to(self.coder.root))
+            for fn in matched_files
+            if Path(fn).is_relative_to(self.coder.root)
+        ]
 
         # if repo, filter against it
         if self.coder.repo:
