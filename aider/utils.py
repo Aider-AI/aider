@@ -189,9 +189,26 @@ def pip_install(args):
     ]
     cmd += args
 
+    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1, universal_newlines=True)
+    output = []
+    
     try:
-        res = subprocess.run(cmd)
+        for line in process.stdout:
+            line = line.strip()
+            print(f"\r{line}", end='', flush=True)
+            output.append(line)
+        
+        return_code = process.wait()
+        
+        if return_code != 0:
+            print("\nInstallation failed. Full output:")
+            for line in output:
+                print(line)
+            return False
+        
+        print()  # Print a newline after successful installation
+        return True
+    
     except subprocess.CalledProcessError as e:
-        print(f"Error running pip download: {e}")
-
-    return res.returncode == 0
+        print(f"\nError running pip install: {e}")
+        return False
