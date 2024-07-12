@@ -190,6 +190,9 @@ def pip_install(args):
     ]
     cmd += args
 
+    run_install_with_spinner(cmd)
+
+def run_install_with_spinner(cmd):
     try:
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1, universal_newlines=True)
         output = []
@@ -209,6 +212,7 @@ def pip_install(args):
     except subprocess.CalledProcessError as e:
         print(f"\nError running pip install: {e}")
 
-    print("\nInstallation failed. Full output:")
+    print("\nInstallation failed.\n")
+
     for line in output:
         print(line)
