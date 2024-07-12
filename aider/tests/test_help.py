@@ -4,6 +4,9 @@ from aider.help import Help
 
 
 class TestHelp(unittest.TestCase):
+    def setUp(self):
+        Help(pip_install=True)
+
     def test_init(self):
         help_inst = Help()
         self.assertIsNotNone(help_inst.retriever)
