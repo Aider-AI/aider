@@ -5,14 +5,16 @@ from pathlib import Path
 import packaging.version
 
 import aider
+from aider import utils
 
 
-def check_version(print_cmd):
+def check_version(io, just_check=False):
     fname = Path.home() / ".aider" / "caches" / "versioncheck"
     day = 60 * 60 * 24
     if fname.exists() and time.time() - fname.stat().st_mtime < day:
         return
 
+    # To keep startup fast, avoid importing this unless needed
     import requests
 
     try:
@@ -24,24 +26,31 @@ def check_version(print_cmd):
         is_update_available = packaging.version.parse(latest_version) > packaging.version.parse(
             current_version
         )
-
-        if is_update_available:
-            print_cmd(
-                f"Newer version v{latest_version} is available. To upgrade, run:"  # noqa: E231
-            )
-            py = sys.executable
-            if "pipx" in py:
-                print_cmd("pipx upgrade aider-chat")
-            else:
-                print_cmd(f"{py} -m pip install --upgrade aider-chat")
-
-        fname.parent.mkdir(parents=True, exist_ok=True)
-        fname.touch()
-        return is_update_available
     except Exception as err:
-        print_cmd(f"Error checking pypi for new version: {err}")
+        io.tool_error(f"Error checking pypi for new version: {err}")
         return False
 
+    fname.parent.mkdir(parents=True, exist_ok=True)
+    fname.touch()
 
-if __name__ == "__main__":
-    check_version(print)
+    if just_check:
+        return is_update_available
+
+    if not is_update_available:
+        return False
+
+    cmd = utils.get_pip_install(["--upgrade", "aider-chat"])
+
+    text = f"""
+Newer aider version v{latest_version} is available. To upgrade, run:
+
+    {' '.join(cmd)}
+"""
+    io.tool_error(text)
+
+    if io.confirm_ask("Run pip install?"):
+        if utils.run_install(cmd):
+            io.tool_output("Re-run aider to use new version.")
+            sys.exit()
+
+    return True

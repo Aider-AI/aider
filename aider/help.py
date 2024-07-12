@@ -97,24 +97,25 @@ pip_install_cmd = [
     "https://download.pytorch.org/whl/cpu",
 ]
 
-pip_install_error = f"""
+pip_install_error = """
 To use interactive /help you need to install HuggingFace embeddings:
 
-pip install {' '.join(pip_install_cmd)}
+{cmd}
 
 """  # noqa: E231
 
 
 class Help:
     def __init__(self, pip_install=False):
+        cmd = utils.get_pip_install(pip_install_cmd)
         if pip_install:
-            utils.pip_install(pip_install_cmd)
+            utils.run_install(cmd)
 
         try:
             from llama_index.core import Settings
             from llama_index.embeddings.huggingface import HuggingFaceEmbedding
         except ImportError:
-            raise PipInstallHF(pip_install_error)
+            raise PipInstallHF(pip_install_error.format(cmd=' '.join(cmd)))
 
         os.environ["TOKENIZERS_PARALLELISM"] = "true"
         Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")

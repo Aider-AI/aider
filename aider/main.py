@@ -389,12 +389,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         if right_repo_root:
             return main(argv, input, output, right_repo_root, return_coder=return_coder)
 
-    if not args.skip_check_update:
-        check_version(io.tool_error)
+    if args.just_check_update:
+        update_available = check_version(io, just_check=True)
+        return 0 if not update_available else 1
 
     if args.check_update:
-        update_available = check_version(lambda msg: None)
-        return 0 if not update_available else 1
+        check_version(io)
 
     if args.models:
         models.print_matching_models(io, args.models)

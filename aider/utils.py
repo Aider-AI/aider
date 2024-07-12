@@ -181,7 +181,8 @@ def split_chat_history_markdown(text, include_tool=False):
     return messages
 
 
-def pip_install(args):
+def get_pip_install(args):
+
     cmd = [
         sys.executable,
         "-m",
@@ -189,10 +190,12 @@ def pip_install(args):
         "install",
     ]
     cmd += args
+    return cmd
 
-    run_install_with_spinner(cmd)
+def run_install(cmd):
+    print()
+    print("Installing: ", ' '.join(cmd))
 
-def run_install_with_spinner(cmd):
     try:
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1, universal_newlines=True)
         output = []
@@ -200,7 +203,7 @@ def run_install_with_spinner(cmd):
 
         for line in process.stdout:
             output.append(line)
-            print(f"\rInstalling... {next(spinner)}", end="", flush=True)
+            print(f" Installing... {next(spinner)}", end="\r", flush=True)
 
         return_code = process.wait()
 

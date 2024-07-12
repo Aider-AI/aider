@@ -10,7 +10,7 @@ repos:
       - id: black
         args: ["--line-length", "100", "--preview"]
   - repo: https://github.com/pycqa/flake8
-    rev: 6.0.0
+    rev: 7.1.0
     hooks:
       - id: flake8
         args: ["--show-source"]

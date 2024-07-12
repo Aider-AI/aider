@@ -422,15 +422,16 @@ def get_parser(default_config_files, git_root):
         help="Show the version number and exit",
     )
     group.add_argument(
-        "--check-update",
+        "--just-check-update",
         action="store_true",
         help="Check for updates and return status in the exit code",
         default=False,
     )
     group.add_argument(
-        "--skip-check-update",
-        action="store_true",
-        help="Skips checking for the update when the program runs",
+        "--check-update",
+        action=argparse.BooleanOptionalAction,
+        help="Check for new aider versions on launch",
+        default=True,
     )
     group.add_argument(
         "--apply",
