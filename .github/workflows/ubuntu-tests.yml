@@ -37,4 +37,4 @@ jobs:
 
     - name: Run tests
       run: |
-        pytest aider/tests
+        pytest
