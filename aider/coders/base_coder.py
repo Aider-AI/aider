@@ -669,7 +669,7 @@ class Coder:
 
     def check_for_urls(self, inp):
         url_pattern = re.compile(
-            r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
+            r"(https?://[^\s/$.?#].[^\s]*)"
         )
         urls = url_pattern.findall(inp)
         for url in urls:
