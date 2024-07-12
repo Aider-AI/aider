@@ -595,10 +595,10 @@ two
 
         # Test various URL formats
         test_cases = [
-            ("Check http://example.com", "http://example.com"),
-            ("Visit https://www.example.com/page", "https://www.example.com/page"),
-            ("Go to http://subdomain.example.com:8080/path?query=value", "http://subdomain.example.com:8080/path?query=value"),
-            ("See https://example.com/path#fragment", "https://example.com/path#fragment"),
+            ("Check http://example.com, it's cool", "http://example.com"),
+            ("Visit https://www.example.com/page and see stuff", "https://www.example.com/page"),
+            ("Go to http://subdomain.example.com:8080/path?query=value, or not", "http://subdomain.example.com:8080/path?query=value"),
+            ("See https://example.com/path#fragment for example", "https://example.com/path#fragment"),
             ("Look at http://localhost:3000", "http://localhost:3000"),
             ("View https://example.com/setup#whatever", "https://example.com/setup#whatever"),
             ("Open http://127.0.0.1:8000/api/v1/", "http://127.0.0.1:8000/api/v1/"),
