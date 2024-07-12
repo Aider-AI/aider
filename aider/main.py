@@ -247,7 +247,7 @@ def register_models(git_root, model_settings_fname, io):
         if len(files_loaded) > 0:
             io.tool_output(f"Loaded {len(files_loaded)} model settings file(s)")
             for file_loaded in files_loaded:
-                io.tool_output(f"  - {file_loaded}")
+                io.tool_output(f"  - {file_loaded}")  # noqa: E221
     except Exception as e:
         io.tool_error(f"Error loading aider model settings: {e}")
         return 1
@@ -279,7 +279,7 @@ def register_litellm_models(git_root, model_metadata_fname, io):
         if len(model_metadata_files_loaded) > 0:
             io.tool_output(f"Loaded {len(model_metadata_files_loaded)} model metadata file(s)")
             for model_metadata_file in model_metadata_files_loaded:
-                io.tool_output(f"  - {model_metadata_file}")
+                io.tool_output(f"  - {model_metadata_file}")  # noqa: E221
     except Exception as e:
         io.tool_error(f"Error loading model metadata models: {e}")
         return 1
@@ -531,7 +531,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         args.pretty = False
         io.tool_output("VSCode terminal detected, pretty output has been disabled.")
 
-    io.tool_output("Use /help <question> to ask for help, run with --help to see cmd line args")
+    io.tool_output('Use /help <question> for help, run "aider --help" to see cmd line args')
 
     if git_root and Path.cwd().resolve() != Path(git_root).resolve():
         io.tool_error(
