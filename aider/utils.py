@@ -193,7 +193,7 @@ def pip_install(args):
     try:
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1, universal_newlines=True)
         output = []
-        spinner = itertools.cycle(['-', '/', '|', '\\'])
+        spinner = itertools.cycle(['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'])
 
         for line in process.stdout:
             output.append(line)
