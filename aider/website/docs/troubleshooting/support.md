@@ -6,11 +6,10 @@ nav_order: 30
 
 # Using /help
 
-Aider now has a built in chatbot that 
-you can ask for help about using aider, 
-customizing settings, troubleshooting, using LLMs, etc.
 Type `/help <question>` and
 aider will respond with helpful information.
+You can ask questions about using aider, 
+customizing settings, troubleshooting, using LLMs, etc.
 
 Behind the scenes, aider has indexed all of its
 [documentation](https://aider.chat/).
