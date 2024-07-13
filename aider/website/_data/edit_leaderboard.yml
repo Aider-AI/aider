@@ -681,4 +681,26 @@
   versions: 0.41.1-dev
   seconds_per_case: 7.1
   total_cost: 0.1946
-  
+
+ - dirname: 2024-07-09-10-12-27--gemma2:27b-instruct-q8_0
+  test_cases: 133
+  model: gemma2:27b-instruct-q8_0
+  edit_format: whole
+  commit_hash: f9d96ac-dirty
+  pass_rate_1: 31.6
+  pass_rate_2: 36.1
+  percent_cases_well_formed: 100.0
+  error_outputs: 35
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 35
+  lazy_comments: 2
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: aider --model ollama/gemma2:27b-instruct-q8_0
+  date: 2024-07-09
+  versions: 0.43.0
+  seconds_per_case: 101.3
+  total_cost: 0.0000
