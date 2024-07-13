@@ -51,10 +51,11 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--dry-run | --no-dry-run] [--commit] [--lint]
              [--lint-cmd] [--auto-lint | --no-auto-lint]
              [--test-cmd] [--auto-test | --no-auto-test] [--test]
-             [--vim] [--voice-language] [--version] [--check-update]
-             [--skip-check-update] [--apply] [--yes] [-v]
-             [--show-repo-map] [--show-prompts] [--exit] [--message]
-             [--message-file] [--encoding] [-c] [--gui]
+             [--vim] [--voice-language] [--version]
+             [--just-check-update]
+             [--check-update | --no-check-update] [--apply] [--yes]
+             [-v] [--show-repo-map] [--show-prompts] [--exit]
+             [--message] [--message-file] [--encoding] [-c] [--gui]
 
 ```
 
@@ -396,15 +397,18 @@ Environment variable: `AIDER_VOICE_LANGUAGE`
 ### `--version`
 Show the version number and exit  
 
-### `--check-update`
+### `--just-check-update`
 Check for updates and return status in the exit code  
 Default: False  
-Environment variable: `AIDER_CHECK_UPDATE`  
+Environment variable: `AIDER_JUST_CHECK_UPDATE`  
 
-### `--skip-check-update`
-Skips checking for the update when the program runs  
-Default: False  
-Environment variable: `AIDER_SKIP_CHECK_UPDATE`  
+### `--check-update`
+Check for new aider versions on launch  
+Default: True  
+Environment variable: `AIDER_CHECK_UPDATE`  
+Aliases:
+  - `--check-update`
+  - `--no-check-update`
 
 ### `--apply FILE`
 Apply the changes from the given file instead of running the chat (debug)  

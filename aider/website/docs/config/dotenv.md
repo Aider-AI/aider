@@ -250,10 +250,10 @@ cog.outl("```")
 #AIDER_VOICE_LANGUAGE=en
 
 ## Check for updates and return status in the exit code
-#AIDER_CHECK_UPDATE=false
+#AIDER_JUST_CHECK_UPDATE=false
 
-## Skips checking for the update when the program runs
-#AIDER_SKIP_CHECK_UPDATE=false
+## Check for new aider versions on launch
+#AIDER_CHECK_UPDATE=true
 
 ## Apply the changes from the given file instead of running the chat (debug)
 #AIDER_APPLY=
