@@ -682,7 +682,7 @@
   seconds_per_case: 7.1
   total_cost: 0.1946
 
- - dirname: 2024-07-09-10-12-27--gemma2:27b-instruct-q8_0
+- dirname: 2024-07-09-10-12-27--gemma2:27b-instruct-q8_0
   test_cases: 133
   model: gemma2:27b-instruct-q8_0
   edit_format: whole
