@@ -45,7 +45,7 @@ filelock==3.15.4
     # via
     #   -c requirements.txt
     #   virtualenv
-fonttools==4.53.0
+fonttools==4.53.1
     # via matplotlib
 identify==2.5.36
     # via pre-commit

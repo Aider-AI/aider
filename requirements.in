@@ -28,8 +28,18 @@ watchdog
 flake8
 importlib_resources
 
-# v3.3 no longer works on python 3.9
+# The proper depdendency is networkx[default], but this brings
+# in matplotlib and a bunch of other deps
+# https://github.com/networkx/networkx/blob/d7132daa8588f653eacac7a5bae1ee85a183fa43/pyproject.toml#L57
+# We really only need networkx itself and scipy for the repomap.
+# Pin below v3.3 to retain python 3.9 compatibility.
 networkx<3.3
+
+# This is the one networkx dependency that we need.
+# Including it here explicitly because we
+# didn't specify networkx[default] above.
+# Pin below 1.14 to retain python 3.9 compatibility.
+scipy<1.14
 
 # v0.22.2 seems to break tree-sitter-languages?
 tree-sitter==0.21.3 
@@ -39,5 +49,3 @@ tree-sitter==0.21.3
 # Uses importlib-metadata
 importlib-metadata<8.0.0
 
-# To retain python 3.9 compatibility
-scipy<1.14
