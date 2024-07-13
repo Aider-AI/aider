@@ -3,21 +3,19 @@
 import re
 import sys
 
-import playwright
 import pypandoc
-from playwright.sync_api import sync_playwright
 
-from aider import __version__, urls
+from aider import __version__, urls, utils
 from aider.dump import dump  # noqa: F401
 
 aider_user_agent = f"Aider/{__version__} +{urls.website}"
 
 # Playwright is nice because it has a simple way to install dependencies on most
 # platforms.
-PLAYWRIGHT_INFO = f"""
-For better web scraping, install Playwright chromium with this command in your terminal:
+PLAYWRIGHT_INFO = """
+For better web scraping, install Playwright chromium:
 
-    playwright install --with-deps chromium
+{cmds}
 
 See {urls.enable_playwright} for more info.
 """
@@ -62,6 +60,9 @@ class Scraper:
 
     # Internals...
     def scrape_with_playwright(self, url):
+        import playwright
+        from playwright.sync_api import sync_playwright
+
         with sync_playwright() as p:
             try:
                 browser = p.chromium.launch()
@@ -92,11 +93,32 @@ class Scraper:
             return
 
         try:
+            from playwright.sync_api import sync_playwright
+
+            has_pip = True
+        except ImportError:
+            has_pip = False
+
+        try:
             with sync_playwright() as p:
                 p.chromium.launch()
-                self.playwright_available = True
+                has_chromium = True
         except Exception:
-            self.playwright_available = False
+            has_chromium = False
+
+        if has_pip and has_chromium:
+            self.playwright_available = True
+
+        pip_cmd = utils.get_pip_cmd("playwright")
+        chromium_cmd = "playwright install --with-deps chromium".split()
+
+        cmds = ""
+        if not has_pip:
+            cmds += " ".join(pip_cmd) + "\n"
+        if not has_chromium:
+            cmds += " ".join(chromium_cmd) + "\n"
+
+        text = PLAYWRIGHT_INFO.format(cmds=cmds)
 
     def get_playwright_instructions(self):
         if self.playwright_available in (True, None):
