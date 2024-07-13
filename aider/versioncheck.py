@@ -29,9 +29,9 @@ def check_version(io, just_check=False):
     except Exception as err:
         io.tool_error(f"Error checking pypi for new version: {err}")
         return False
-
-    fname.parent.mkdir(parents=True, exist_ok=True)
-    fname.touch()
+    finally:
+        fname.parent.mkdir(parents=True, exist_ok=True)
+        fname.touch()
 
     if just_check:
         return is_update_available
