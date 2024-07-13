@@ -1,4 +1,4 @@
--c requirements.txt
+-c ../requirements.txt
 #
 #    pip-compile --output-file=requirements-dev.txt requirements-dev.in --upgrade
 #
