@@ -43,10 +43,7 @@ setup(
     exclude_package_data={"aider.website": exclude_website_pats},
     install_requires=requirements,
     extras_require={
-        "dev": get_requirements("dev"),
-        "hf-embed": get_requirements("hf-embed"),
-        "browser": get_requirements("browser"),
-        "playwright": get_requirements("playwright"),
+        extra: get_requirements(extra) for extra in "dev hf-embed browser playwright".split()
     },
     python_requires=">=3.9,<3.13",
     entry_points={
