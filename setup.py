@@ -1,4 +1,5 @@
 import re
+from pathlib import Path
 
 from setuptools import find_packages, setup
 
@@ -7,15 +8,21 @@ from aider.help_pats import exclude_website_pats
 
 
 def get_requirements(suffix=""):
-    fname = "requirements" + suffix + ".txt"
-    with open(fname) as f:
-        requirements = f.read().splitlines()
+    if suffix:
+        fname = "requirements-" + suffix + ".txt"
+        fname = Path("requirements") / fname
+    else:
+        fname = Path("requirements.txt")
+
+    requirements = fname.read_text().splitlines()
+
     return requirements
 
 
 requirements = get_requirements()
-dev_requirements = get_requirements("-dev")
-hf_requirements = get_requirements("-hf-embed")
+dev_requirements = get_requirements("dev")
+hf_requirements = get_requirements("hf-embed")
+browser_requirements = get_requirements("browser")
 
 # README
 with open("README.md", "r", encoding="utf-8") as f:
@@ -41,6 +48,7 @@ setup(
     extras_require={
         "dev": dev_requirements,
         "hf-embed": hf_requirements,
+        "browser": browser_requirements,
     },
     python_requires=">=3.9,<3.13",
     entry_points={

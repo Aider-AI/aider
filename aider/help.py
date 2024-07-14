@@ -13,6 +13,21 @@ from aider.help_pats import exclude_website_pats
 warnings.simplefilter("ignore", category=FutureWarning)
 
 
+def install_help_extra(io):
+    pip_install_cmd = [
+        "aider-chat[hf-embed]",
+        "--extra-index-url",
+        "https://download.pytorch.org/whl/cpu",
+    ]
+    res = utils.check_pip_install_extra(
+        io,
+        "llama_index.embeddings.huggingface",
+        "To use interactive /help you need to install HuggingFace embeddings",
+        pip_install_cmd,
+    )
+    return res
+
+
 def get_package_files():
     for path in importlib_resources.files("aider.website").iterdir():
         if path.is_file():
@@ -87,35 +102,10 @@ def get_index():
     return index
 
 
-class PipInstallHF(Exception):
-    pass
-
-
-pip_install_cmd = [
-    "aider-chat[hf-embed]",
-    "--extra-index-url",
-    "https://download.pytorch.org/whl/cpu",
-]
-
-pip_install_error = """
-To use interactive /help you need to install HuggingFace embeddings:
-
-{cmd}
-
-"""  # noqa: E231
-
-
 class Help:
-    def __init__(self, pip_install=False):
-        cmd = utils.get_pip_install(pip_install_cmd)
-        if pip_install:
-            utils.run_install(cmd)
-
-        try:
-            from llama_index.core import Settings
-            from llama_index.embeddings.huggingface import HuggingFaceEmbedding
-        except ImportError:
-            raise PipInstallHF(pip_install_error.format(cmd=' '.join(cmd)))
+    def __init__(self):
+        from llama_index.core import Settings
+        from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 
         os.environ["TOKENIZERS_PARALLELISM"] = "true"
         Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")

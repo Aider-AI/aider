@@ -3,7 +3,16 @@
 # exit when any command fails
 set -e
 
-pip-compile requirements.in $1
-pip-compile --output-file=requirements-dev.txt requirements-dev.in $1
-pip-compile --output-file=requirements-hf-embed.txt requirements-hf-embed.in $1
+pip-compile \
+    requirements/requirements.in \
+    --output-file=requirements.txt \
+    $1
 
+for SUFFIX in dev hf-embed browser; do
+
+    pip-compile \
+        requirements/requirements-${SUFFIX}.in \
+        --output-file=requirements/requirements-${SUFFIX}.txt \
+        $1
+done
+    

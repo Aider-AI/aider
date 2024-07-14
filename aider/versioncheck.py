@@ -29,9 +29,9 @@ def check_version(io, just_check=False):
     except Exception as err:
         io.tool_error(f"Error checking pypi for new version: {err}")
         return False
-
-    fname.parent.mkdir(parents=True, exist_ok=True)
-    fname.touch()
+    finally:
+        fname.parent.mkdir(parents=True, exist_ok=True)
+        fname.touch()
 
     if just_check:
         return is_update_available
@@ -49,7 +49,8 @@ Newer aider version v{latest_version} is available. To upgrade, run:
     io.tool_error(text)
 
     if io.confirm_ask("Run pip install?"):
-        if utils.run_install(cmd):
+        success, _output = utils.run_install(cmd)
+        if success:
             io.tool_output("Re-run aider to use new version.")
             sys.exit()
 

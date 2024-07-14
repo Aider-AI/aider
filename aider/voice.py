@@ -85,8 +85,12 @@ class Voice:
 
         self.start_time = time.time()
 
-        with self.sd.InputStream(samplerate=sample_rate, channels=1, callback=self.callback):
-            prompt(self.get_prompt, refresh_interval=0.1)
+        try:
+            with self.sd.InputStream(samplerate=sample_rate, channels=1, callback=self.callback):
+                prompt(self.get_prompt, refresh_interval=0.1)
+        except self.sd.PortAudioError as err:
+            print(err)
+            return
 
         with sf.SoundFile(filename, mode="x", samplerate=sample_rate, channels=1) as file:
             while not self.q.empty():

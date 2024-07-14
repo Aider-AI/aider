@@ -1,11 +1,13 @@
 import unittest
 
-from aider.help import Help
+from aider.help import Help, install_help_extra
+from aider.io import InputOutput
 
 
 class TestHelp(unittest.TestCase):
     def setUp(self):
-        Help(pip_install=True)
+        io = InputOutput(yes=True)
+        install_help_extra(io)
 
     def test_init(self):
         help_inst = Help()

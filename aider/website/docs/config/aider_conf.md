@@ -38,7 +38,7 @@ cog.outl("```")
 ]]]-->
 ```
 ##########################################################
-# Sample .aider.conf.yaml
+# Sample .aider.conf.yml
 # This file lists *all* the valid configuration entries.
 # Place in your home dir, or at the root of your git repo.
 ##########################################################
@@ -246,10 +246,10 @@ cog.outl("```")
 #version:
 
 ## Check for updates and return status in the exit code
-#check-update: false
+#just-check-update: false
 
-## Skips checking for the update when the program runs
-#skip-check-update: false
+## Check for new aider versions on launch
+#check-update: true
 
 ## Apply the changes from the given file instead of running the chat (debug)
 #apply:

@@ -1,0 +1,4 @@
+-c ../requirements.txt
+
+streamlit
+watchdog
