@@ -6,8 +6,8 @@ from pathlib import Path
 
 import git
 
-from aider import models, prompts, utils, voice
-from aider.help import Help
+from aider import models, prompts, voice
+from aider.help import Help, install_help_extra
 from aider.llm import litellm
 from aider.scrape import Scraper
 from aider.utils import is_image_file
@@ -662,17 +662,7 @@ class Commands:
         from aider.coders import Coder
 
         if not self.help:
-            pip_install_cmd = [
-                "aider-chat[hf-embed]",
-                "--extra-index-url",
-                "https://download.pytorch.org/whl/cpu",
-            ]
-            res = utils.check_pip_install_extra(
-                self.io,
-                "llama_index.embeddings.huggingface",
-                "To use interactive /help you need to install HuggingFace embeddings",
-                pip_install_cmd,
-            )
+            res = install_help_extra(self.io)
             if not res:
                 self.io.tool_error("Unable to initialize interactive help.")
                 return

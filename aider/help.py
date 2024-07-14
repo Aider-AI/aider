@@ -6,11 +6,26 @@ from pathlib import Path
 
 import importlib_resources
 
-from aider import __version__
+from aider import __version__, utils
 from aider.dump import dump  # noqa: F401
 from aider.help_pats import exclude_website_pats
 
 warnings.simplefilter("ignore", category=FutureWarning)
+
+
+def install_help_extra(io):
+    pip_install_cmd = [
+        "aider-chat[hf-embed]",
+        "--extra-index-url",
+        "https://download.pytorch.org/whl/cpu",
+    ]
+    res = utils.check_pip_install_extra(
+        io,
+        "llama_index.embeddings.huggingface",
+        "To use interactive /help you need to install HuggingFace embeddings",
+        pip_install_cmd,
+    )
+    return res
 
 
 def get_package_files():
@@ -88,7 +103,7 @@ def get_index():
 
 
 class Help:
-    def __init__(self, pip_install=False):
+    def __init__(self):
         from llama_index.core import Settings
         from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 
