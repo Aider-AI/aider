@@ -23,6 +23,7 @@ requirements = get_requirements()
 dev_requirements = get_requirements("dev")
 hf_requirements = get_requirements("hf-embed")
 browser_requirements = get_requirements("browser")
+playwright_requirements = get_requirements("playwright")
 
 # README
 with open("README.md", "r", encoding="utf-8") as f:
@@ -49,6 +50,7 @@ setup(
         "dev": dev_requirements,
         "hf-embed": hf_requirements,
         "browser": browser_requirements,
+        "playwright": playwright_requirements,
     },
     python_requires=">=3.9,<3.13",
     entry_points={

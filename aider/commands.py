@@ -9,7 +9,7 @@ import git
 from aider import models, prompts, voice
 from aider.help import Help, install_help_extra
 from aider.llm import litellm
-from aider.scrape import Scraper
+from aider.scrape import Scraper, install_playwright
 from aider.utils import is_image_file
 
 from .dump import dump  # noqa: F401
@@ -65,17 +65,17 @@ class Commands:
             return
 
         if not self.scraper:
-            self.scraper = Scraper(print_error=self.io.tool_error)
+            res = install_playwright(self.io)
+            if not res:
+                self.io.tool_error("Unable to initialize playwright.")
+
+            self.scraper = Scraper(print_error=self.io.tool_error, playwright_available=res)
 
         content = self.scraper.scrape(url) or ""
         # if content:
         #    self.io.tool_output(content)
 
-        instructions = self.scraper.get_playwright_instructions()
-        if instructions:
-            self.io.tool_error(instructions)
-
-        content = f"{url}:\n\n" + content  # noqa: E231
+        content = f"{url}:\n\n" + content
 
         return content
 

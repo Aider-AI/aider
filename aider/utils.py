@@ -224,18 +224,21 @@ def run_install(cmd):
                 last_update = current_time
 
         return_code = process.wait()
+        output = "".join(output)
+
+        dump(output)
 
         if return_code == 0:
             print("\rInstallation complete.")
             print()
-            return True, ''.join(output)
+            return True, output
 
     except subprocess.CalledProcessError as e:
         print(f"\nError running pip install: {e}")
 
     print("\nInstallation failed.\n")
 
-    return False, ''.join(output)
+    return False, output
 
 
 def check_pip_install_extra(io, module, prompt, pip_install_cmd):
@@ -263,8 +266,7 @@ def check_pip_install_extra(io, module, prompt, pip_install_cmd):
     except (ImportError, ModuleNotFoundError):
         pass
 
-    for line in output:
-        print(line)
+    io.tool_error(output)
 
     print()
     print(f"Failed to install {pip_install_cmd[0]}")

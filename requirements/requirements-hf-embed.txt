@@ -68,9 +68,7 @@ fsspec==2024.6.1
     #   llama-index-core
     #   torch
 greenlet==3.0.3
-    # via
-    #   -c requirements/../requirements.txt
-    #   sqlalchemy
+    # via sqlalchemy
 h11==0.14.0
     # via
     #   -c requirements/../requirements.txt

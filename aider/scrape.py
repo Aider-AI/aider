@@ -12,13 +12,58 @@ aider_user_agent = f"Aider/{__version__} +{urls.website}"
 
 # Playwright is nice because it has a simple way to install dependencies on most
 # platforms.
-PLAYWRIGHT_INFO = """
-For better web scraping, install Playwright chromium:
+
+
+def install_playwright(io):
+    try:
+        from playwright.sync_api import sync_playwright
+
+        has_pip = True
+    except ImportError:
+        has_pip = False
+
+    try:
+        with sync_playwright() as p:
+            p.chromium.launch()
+            has_chromium = True
+    except Exception as err:
+        dump(err)
+        has_chromium = False
+
+    if has_pip and has_chromium:
+        return True
+
+    pip_cmd = utils.get_pip_install(["aider-chat[playwright]"])
+    chromium_cmd = "playwright install --with-deps chromium".split()
+
+    cmds = ""
+    if not has_pip:
+        cmds += " ".join(pip_cmd) + "\n"
+    if not has_chromium:
+        cmds += " ".join(chromium_cmd) + "\n"
+
+    text = f"""For the best web scraping, install Playwright:
 
 {cmds}
-
 See {urls.enable_playwright} for more info.
 """
+
+    io.tool_error(text)
+    if not io.confirm_ask("Install playwright?", default="y"):
+        return
+
+    if not has_pip:
+        success, output = utils.run_install(pip_cmd)
+        if not success:
+            io.tool_error(output)
+            return
+
+    success, output = utils.run_install(chromium_cmd)
+    if not success:
+        io.tool_error(output)
+        return
+
+    return True
 
 
 class Scraper:
@@ -27,7 +72,7 @@ class Scraper:
     playwright_instructions_shown = False
 
     # Public API...
-    def __init__(self, print_error=None):
+    def __init__(self, print_error=None, playwright_available=None):
         """
         `print_error` - a function to call to print error/debug info.
         """
@@ -36,13 +81,14 @@ class Scraper:
         else:
             self.print_error = print
 
+        self.playwright_available = playwright_available
+
     def scrape(self, url):
         """
         Scrape a url and turn it into readable markdown.
 
         `url` - the URLto scrape.
         """
-        self.try_playwright()
 
         if self.playwright_available:
             content = self.scrape_with_playwright(url)
@@ -88,46 +134,8 @@ class Scraper:
 
         return content
 
-    def try_playwright(self):
-        if self.playwright_available is not None:
-            return
-
-        try:
-            from playwright.sync_api import sync_playwright
-
-            has_pip = True
-        except ImportError:
-            has_pip = False
-
-        try:
-            with sync_playwright() as p:
-                p.chromium.launch()
-                has_chromium = True
-        except Exception:
-            has_chromium = False
-
-        if has_pip and has_chromium:
-            self.playwright_available = True
-
-        pip_cmd = utils.get_pip_cmd("playwright")
-        chromium_cmd = "playwright install --with-deps chromium".split()
-
-        cmds = ""
-        if not has_pip:
-            cmds += " ".join(pip_cmd) + "\n"
-        if not has_chromium:
-            cmds += " ".join(chromium_cmd) + "\n"
-
-        text = PLAYWRIGHT_INFO.format(cmds=cmds)
-
     def get_playwright_instructions(self):
-        if self.playwright_available in (True, None):
-            return
-        if self.playwright_instructions_shown:
-            return
-
-        self.playwright_instructions_shown = True
-        return PLAYWRIGHT_INFO
+        return
 
     def scrape_with_httpx(self, url):
         import httpx

@@ -124,9 +124,7 @@ pygments==2.18.0
     #   rich
     #   sphinx
 pyparsing==3.1.2
-    # via
-    #   -c requirements/../requirements.txt
-    #   matplotlib
+    # via matplotlib
 pyproject-hooks==1.1.0
     # via
     #   build

@@ -19,7 +19,6 @@ beautifulsoup4
 PyYAML
 Pillow
 diff-match-patch
-playwright
 pypandoc
 litellm
 flake8
