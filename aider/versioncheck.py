@@ -49,7 +49,8 @@ Newer aider version v{latest_version} is available. To upgrade, run:
     io.tool_error(text)
 
     if io.confirm_ask("Run pip install?"):
-        if utils.run_install(cmd):
+        success, _output = utils.run_install(cmd)
+        if success:
             io.tool_output("Re-run aider to use new version.")
             sys.exit()
 

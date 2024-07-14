@@ -148,6 +148,15 @@ def scrub_sensitive_info(args, text):
     return text
 
 
+def check_streamlit_install(io):
+    return utils.check_pip_install_extra(
+        io,
+        "streamlit",
+        "You need to install the aider browser feature",
+        ["aider-chat[browser]"],
+    )
+
+
 def launch_gui(args):
     from streamlit.web import cli
 
@@ -318,10 +327,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
         litellm.client_session = httpx.Client(verify=False)
 
-    if args.gui and not return_coder:
-        launch_gui(argv)
-        return
-
     if args.dark_mode:
         args.user_input_color = "#32FF32"
         args.tool_error_color = "#FF3333"
@@ -354,6 +359,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         llm_history_file=args.llm_history_file,
         editingmode=editing_mode,
     )
+
+    if args.gui and not return_coder:
+        if not check_streamlit_install(io):
+            return
+        launch_gui(argv)
+        return
 
     for fname in loaded_dotenvs:
         io.tool_output(f"Loaded {fname}")

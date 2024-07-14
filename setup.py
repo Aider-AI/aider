@@ -22,6 +22,7 @@ def get_requirements(suffix=""):
 requirements = get_requirements()
 dev_requirements = get_requirements("dev")
 hf_requirements = get_requirements("hf-embed")
+browser_requirements = get_requirements("browser")
 
 # README
 with open("README.md", "r", encoding="utf-8") as f:
@@ -47,6 +48,7 @@ setup(
     extras_require={
         "dev": dev_requirements,
         "hf-embed": hf_requirements,
+        "browser": browser_requirements,
     },
     python_requires=">=3.9,<3.13",
     entry_points={

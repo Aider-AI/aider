@@ -8,8 +8,8 @@ pip-compile \
     --output-file=requirements.txt \
     $1
 
-for SUFFIX in dev hf-embed ; do
-    echo suffix: ${SUFFIX}
+for SUFFIX in dev hf-embed browser; do
+
     pip-compile \
         requirements/requirements-${SUFFIX}.in \
         --output-file=requirements/requirements-${SUFFIX}.txt \

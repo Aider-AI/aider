@@ -99,9 +99,7 @@ packaging==24.1
     #   pytest
     #   sphinx
 pandas==2.2.2
-    # via
-    #   -c requirements/../requirements.txt
-    #   -r requirements/requirements-dev.in
+    # via -r requirements/requirements-dev.in
 pathos==0.3.2
     # via lox
 pillow==10.4.0
@@ -137,13 +135,10 @@ pytest==8.2.2
     # via -r requirements/requirements-dev.in
 python-dateutil==2.9.0.post0
     # via
-    #   -c requirements/../requirements.txt
     #   matplotlib
     #   pandas
 pytz==2024.1
-    # via
-    #   -c requirements/../requirements.txt
-    #   pandas
+    # via pandas
 pyyaml==6.0.1
     # via
     #   -c requirements/../requirements.txt
@@ -159,9 +154,7 @@ rich==13.7.1
 shellingham==1.5.4
     # via typer
 six==1.16.0
-    # via
-    #   -c requirements/../requirements.txt
-    #   python-dateutil
+    # via python-dateutil
 snowballstemmer==2.2.0
     # via sphinx
 sphinx==7.3.7
@@ -191,9 +184,7 @@ typing-extensions==4.12.2
     #   -c requirements/../requirements.txt
     #   typer
 tzdata==2024.1
-    # via
-    #   -c requirements/../requirements.txt
-    #   pandas
+    # via pandas
 urllib3==2.2.2
     # via
     #   -c requirements/../requirements.txt

@@ -6,7 +6,7 @@ from pathlib import Path
 
 import importlib_resources
 
-from aider import __version__, utils
+from aider import __version__
 from aider.dump import dump  # noqa: F401
 from aider.help_pats import exclude_website_pats
 
@@ -87,35 +87,10 @@ def get_index():
     return index
 
 
-class PipInstallHF(Exception):
-    pass
-
-
-pip_install_cmd = [
-    "aider-chat[hf-embed]",
-    "--extra-index-url",
-    "https://download.pytorch.org/whl/cpu",
-]
-
-pip_install_error = """
-To use interactive /help you need to install HuggingFace embeddings:
-
-{cmd}
-
-"""  # noqa: E231
-
-
 class Help:
     def __init__(self, pip_install=False):
-        cmd = utils.get_pip_install(pip_install_cmd)
-        if pip_install:
-            utils.run_install(cmd)
-
-        try:
-            from llama_index.core import Settings
-            from llama_index.embeddings.huggingface import HuggingFaceEmbedding
-        except ImportError:
-            raise PipInstallHF(pip_install_error.format(cmd=' '.join(cmd)))
+        from llama_index.core import Settings
+        from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 
         os.environ["TOKENIZERS_PARALLELISM"] = "true"
         Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")

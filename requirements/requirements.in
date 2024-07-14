@@ -23,8 +23,6 @@ playwright
 pypandoc
 litellm
 google-generativeai
-streamlit
-watchdog
 flake8
 importlib_resources
 
