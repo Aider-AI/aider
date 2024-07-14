@@ -31,6 +31,8 @@ with open("README.md", "r", encoding="utf-8") as f:
 packages = find_packages(exclude=["benchmark"]) + ["aider.website"]
 print("Discovered packages:", packages)
 
+extras = "dev hf-embed browser playwright".split()
+
 setup(
     name="aider-chat",
     version=__version__,
@@ -42,9 +44,7 @@ setup(
     },
     exclude_package_data={"aider.website": exclude_website_pats},
     install_requires=requirements,
-    extras_require={
-        extra: get_requirements(extra) for extra in "dev hf-embed browser playwright".split()
-    },
+    extras_require={extra: get_requirements(extra) for extra in extras},
     python_requires=">=3.9,<3.13",
     entry_points={
         "console_scripts": [
