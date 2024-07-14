@@ -114,6 +114,9 @@ def perfect_or_whitespace(whole_lines, part_lines, replace_lines):
     res = replace_part_with_missing_leading_whitespace(whole_lines, part_lines, replace_lines)
     if res:
         return res
+    res = replace_strip(whole_lines, part_lines, replace_lines)
+    if res:
+        return res
 
 
 def perfect_replace(whole_lines, part_lines, replace_lines):
@@ -211,6 +214,28 @@ def try_dotdotdots(whole, part, replace):
         whole = whole.replace(part, replace, 1)
 
     return whole
+
+
+def replace_strip(whole_lines, part_lines, replace_lines):
+    match_count = 0
+    res = ""
+    # Find all occurrences of the snippet in the stripped content
+    indexes = [i for i, s in enumerate(whole_lines) if part_lines[0].strip() in s]
+    for index in indexes:
+        assert len(whole_lines[index: index + len(part_lines)]) == len(part_lines)
+        zipped = zip(whole_lines[index: len(part_lines)], part_lines)
+        if all(p in w for w, p in zipped):
+            match_count += 1
+            if match_count > 1:
+                raise ValueError(f"Multiple possible SEARCH blocks. DRY possible?")
+            # WARNING: this might not work for languages with strict indentation
+            # Find the number of missing whitespace
+            missing_whitespace = len(whole_lines[index]) - len(whole_lines[index].lstrip())
+            # Prepend the missing whitespace to each line of replace_lines
+            replace_lines = [' ' * missing_whitespace + line for line in replace_lines]
+            part_len = len(part_lines)
+            res = whole_lines[:index] + replace_lines + whole_lines[index + part_len :]
+    return "".join(res)
 
 
 def replace_part_with_missing_leading_whitespace(whole_lines, part_lines, replace_lines):
