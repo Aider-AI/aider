@@ -20,10 +20,6 @@ def get_requirements(suffix=""):
 
 
 requirements = get_requirements()
-dev_requirements = get_requirements("dev")
-hf_requirements = get_requirements("hf-embed")
-browser_requirements = get_requirements("browser")
-playwright_requirements = get_requirements("playwright")
 
 # README
 with open("README.md", "r", encoding="utf-8") as f:
@@ -47,10 +43,10 @@ setup(
     exclude_package_data={"aider.website": exclude_website_pats},
     install_requires=requirements,
     extras_require={
-        "dev": dev_requirements,
-        "hf-embed": hf_requirements,
-        "browser": browser_requirements,
-        "playwright": playwright_requirements,
+        "dev": get_requirements("dev"),
+        "hf-embed": get_requirements("hf-embed"),
+        "browser": get_requirements("browser"),
+        "playwright": get_requirements("playwright"),
     },
     python_requires=">=3.9,<3.13",
     entry_points={
