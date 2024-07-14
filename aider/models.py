@@ -58,6 +58,7 @@ ANTHROPIC_MODELS = [ln.strip() for ln in ANTHROPIC_MODELS.splitlines() if ln.str
 
 @dataclass
 class ModelSettings:
+    # Model class needs to have each of these as well
     name: str
     edit_format: str
     weak_model_name: Optional[str] = None
@@ -360,6 +361,7 @@ class Model:
     lazy = False
     reminder_as_sys_msg = False
     examples_as_sys_msg = False
+    can_prefill = False
 
     max_chat_history_tokens = 1024
     weak_model = None
