@@ -3,6 +3,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 import git
@@ -207,22 +208,20 @@ def run_install(cmd):
             universal_newlines=True,
         )
         spinner = itertools.cycle(["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"])
-        char_count = 0
-        current_line = ""
+        last_update = time.time()
+        update_interval = 0.2  # 5 times per second
 
         while True:
             char = process.stdout.read(1)
             if not char:
                 break
 
-            current_line += char
-            char_count += 1
             output.append(char)
 
-            if char == '\n' or char_count >= 10:
+            current_time = time.time()
+            if current_time - last_update >= update_interval:
                 print(f" Installing... {next(spinner)}", end="\r", flush=True)
-                char_count = 0
-                current_line = ""
+                last_update = current_time
 
         return_code = process.wait()
 
