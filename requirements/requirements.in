@@ -22,7 +22,6 @@ diff-match-patch
 playwright
 pypandoc
 litellm
-google-generativeai
 flake8
 importlib_resources
 
