@@ -207,24 +207,36 @@ def run_install(cmd):
             universal_newlines=True,
         )
         spinner = itertools.cycle(["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"])
+        char_count = 0
+        current_line = ""
 
-        for line in process.stdout:
-            output.append(line)
-            print(f" Installing... {next(spinner)}", end="\r", flush=True)
+        while True:
+            char = process.stdout.read(1)
+            if not char:
+                break
+            
+            current_line += char
+            char_count += 1
+            output.append(char)
+
+            if char == '\n' or char_count >= 100:
+                print(f" Installing... {next(spinner)}", end="\r", flush=True)
+                char_count = 0
+                current_line = ""
 
         return_code = process.wait()
 
         if return_code == 0:
             print("\rInstallation complete.")
             print()
-            return True, output
+            return True, ''.join(output)
 
     except subprocess.CalledProcessError as e:
         print(f"\nError running pip install: {e}")
 
     print("\nInstallation failed.\n")
 
-    return False, output
+    return False, ''.join(output)
 
 
 def check_pip_install_extra(io, module, prompt, pip_install_cmd):
