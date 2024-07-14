@@ -214,12 +214,12 @@ def run_install(cmd):
             char = process.stdout.read(1)
             if not char:
                 break
-            
+
             current_line += char
             char_count += 1
             output.append(char)
 
-            if char == '\n' or char_count >= 100:
+            if char == '\n' or char_count >= 10:
                 print(f" Installing... {next(spinner)}", end="\r", flush=True)
                 char_count = 0
                 current_line = ""
