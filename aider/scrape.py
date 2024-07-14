@@ -134,9 +134,6 @@ class Scraper:
 
         return content
 
-    def get_playwright_instructions(self):
-        return
-
     def scrape_with_httpx(self, url):
         import httpx
 

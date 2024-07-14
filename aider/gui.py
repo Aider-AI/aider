@@ -482,10 +482,6 @@ class GUI:
         if not self.state.scraper:
             self.scraper = Scraper(print_error=self.info)
 
-        instructions = self.scraper.get_playwright_instructions()
-        if instructions:
-            self.info(instructions)
-
         content = self.scraper.scrape(url) or ""
         if content.strip():
             content = f"{url}\n\n" + content
