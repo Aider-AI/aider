@@ -28,7 +28,7 @@ with open("README.md", "r", encoding="utf-8") as f:
     # long_description = re.sub(r"\n- \[.*\]\(.*\)", "", long_description)
 
 # Discover packages, plus the website
-packages = find_packages(exclude=["benchmark"]) + ["aider.website"]
+packages = find_packages(exclude=["benchmark", "tests"]) + ["aider.website"]
 print("Discovered packages:", packages)
 
 extras = "dev hf-embed browser playwright".split()
