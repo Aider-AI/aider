@@ -38,6 +38,6 @@ jobs:
 
     - name: Run tests
       run: |
-        pytest --ignore=aider/tests/test_help.py
-        pytest aider/tests/test_help.py
+        pytest --ignore=tests/test_help.py
+        pytest tests/test_help.py
         
