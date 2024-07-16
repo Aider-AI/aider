@@ -1,6 +1,20 @@
 
 # Release history
 
+### Aider v0.44.0
+
+- Default pip install size reduced by 3-12x.
+- Added 3 package extras, which aider will offer to install when needed:
+  - `aider-chat[help]`
+  - `aider-chat[browser]`
+  - `aider-chat[playwright]`
+- Improved regex for detecting URLs in user chat messages.
+- Bugfix to globbing logic when absolute paths are included in `/add`.
+- Simplified output of `--models`.
+- The `--check-update` switch was renamed to `--just-check-updated`.
+- The `--skip-check-update` switch was renamed to `--[no-]check-update`.
+- Aider wrote 29% of the code in this release (157/547 lines).
+
 ### Aider v0.43.4
 
 - Added scipy back to main requirements.txt.
