@@ -26,6 +26,9 @@ command to print them on stdout/stderr
 and return a non-zero exit code.
 This is how most linters normally operate.
 
+By default, aider will lint any files which it edits.
+You can disable this with the `--no-auto-lint` switch.
+
 ## Testing
 
 You can configure aider to run your test suite
@@ -37,6 +40,9 @@ If there are test errors, aider expects the
 command to print them on stdout/stderr
 and return a non-zero exit code.
 This is how most test tools normally operate.
+
+To have aider automatically run the test command,
+use the `--auto-test` switch.
 
 ## Compiled languages
 
@@ -55,5 +61,26 @@ provide a `--test-cmd` which both builds and tests the project.
 You could create a small shell script for this.
 Or you may be able to do something as simple as
 `--test-cmd "dotnet build && dotnet test"`.
+
+## Manually running code
+
+You can use the `/run` command in the chat to run your code
+and optionally share the output with aider.
+This can be useful to share error messages or to show aider
+the code's output before asking for changes or corrections.
+
+<div class="chat-transcript" markdown="1">
+> Aider v0.43.5-dev  
+
+#### /run python tmp.py
+
+> Traceback (most recent call last):  
+>  File "myscript.py", line 22, in <module>  
+>    raise ValueError("something bad happened")  
+> ValueError: something bad happened  
+>  
+> Add the output to the chat? y  
+
+</div>
 
 
