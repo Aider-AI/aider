@@ -1,13 +1,30 @@
 import unittest
+from unittest.mock import MagicMock
 
-from aider.help import Help, install_help_extra
+import aider
+from aider.coders import Coder
+from aider.commands import Commands
+from aider.help import Help
 from aider.io import InputOutput
+from aider.models import Model
 
 
 class TestHelp(unittest.TestCase):
-    def setUp(self):
-        io = InputOutput(yes=True)
-        install_help_extra(io)
+    @classmethod
+    def setUpClass(cls):
+        io = InputOutput(pretty=False, yes=True)
+
+        GPT35 = Model("gpt-3.5-turbo")
+
+        coder = Coder.create(GPT35, None, io)
+        commands = Commands(io, coder)
+
+        help_coder_run = MagicMock(return_value="")
+        aider.coders.HelpCoder.run = help_coder_run
+
+        commands.cmd_help("hi")
+
+        help_coder_run.assert_called_once()
 
     def test_init(self):
         help_inst = Help()
