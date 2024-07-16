@@ -1,46 +1,46 @@
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
+import sys
+import io
 
 from aider.commands import Commands
+from aider.io import InputOutput
 
 
 class TestScrape(unittest.TestCase):
-    @patch("aider.commands.install_playwright")
-    @patch("aider.commands.Scraper")
-    def test_cmd_web_imports_playwright(self, mock_scraper, mock_install_playwright):
-        # Mock the necessary objects and methods
-        mock_io = MagicMock()
-        mock_coder = MagicMock()
-        mock_install_playwright.return_value = True
-        mock_scraper_instance = MagicMock()
-        mock_scraper.return_value = mock_scraper_instance
-        mock_scraper_instance.scrape.return_value = "Mocked content"
+    def setUp(self):
+        self.io = InputOutput()
+        self.commands = Commands(self.io, None)
 
-        # Create a Commands instance
-        commands = Commands(mock_io, mock_coder)
+    def test_cmd_web_imports_playwright(self):
+        # Capture stdout to suppress output during the test
+        captured_output = io.StringIO()
+        sys.stdout = captured_output
 
-        # Run the cmd_web command
-        commands.cmd_web("https://example.com")
-
-        # Check that install_playwright was called
-        mock_install_playwright.assert_called_once()
-
-        # Check that Scraper was instantiated
-        mock_scraper.assert_called_once()
-
-        # Try to import playwright
         try:
-            import playwright  # noqa: F401
-            playwright_imported = True
-        except ImportError:
-            playwright_imported = False
+            # Run the cmd_web command
+            self.commands.cmd_web("https://example.com")
 
-        # Assert that playwright was successfully imported
-        self.assertTrue(
-            playwright_imported,
-            "Playwright should be importable after running cmd_web command"
-        )
+            # Try to import playwright
+            try:
+                import playwright
+                playwright_imported = True
+            except ImportError:
+                playwright_imported = False
 
+            # Assert that playwright was successfully imported
+            self.assertTrue(
+                playwright_imported,
+                "Playwright should be importable after running cmd_web"
+            )
+
+            # Check if the content from example.com was scraped
+            output = captured_output.getvalue()
+            self.assertIn("This domain is for use in illustrative examples in documents.", output)
+
+        finally:
+            # Restore stdout
+            sys.stdout = sys.__stdout__
 
 if __name__ == "__main__":
     unittest.main()
