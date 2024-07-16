@@ -119,7 +119,7 @@ you can get started quickly with aider and Sonnet like this:
 $ pip install aider-chat
 
 $ export ANTHROPIC_API_KEY=<key> # Mac/Linux
-$ setx   ANTHROPIC_API_KEY <key> # Windows
+$ setx   ANTHROPIC_API_KEY <key> # Windows, restart shell after setx
 
 $ aider
 ```

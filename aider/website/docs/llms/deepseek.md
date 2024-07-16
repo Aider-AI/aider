@@ -12,7 +12,7 @@ The DeepSeek Coder V2 model gets the top score on aider's code editing benchmark
 pip install aider-chat
 
 export DEEPSEEK_API_KEY=<key> # Mac/Linux
-setx   DEEPSEEK_API_KEY <key> # Windows
+setx   DEEPSEEK_API_KEY <key> # Windows, restart shell after setx
 
 # Use DeepSeek Coder V2
 aider --model deepseek/deepseek-coder

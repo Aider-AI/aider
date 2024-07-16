@@ -17,6 +17,7 @@ export OPENAI_API_KEY=<key>
 # Windows:
 setx OPENAI_API_BASE <endpoint>
 setx OPENAI_API_KEY <key>
+# ... restart shell after setx commands
 
 # Prefix the model name with openai/
 aider --model openai/<model-name>

@@ -17,7 +17,7 @@ has been tested and benchmarked to work well with them:
 pip install aider-chat
 
 export ANTHROPIC_API_KEY=<key> # Mac/Linux
-setx   ANTHROPIC_API_KEY <key> # Windows
+setx   ANTHROPIC_API_KEY <key> # Windows, restart shell after setx
 
 # Aider uses Claude 3.5 Sonnet by default (or use --sonnet)
 aider

@@ -18,7 +18,7 @@ ollama serve
 pip install aider-chat
 
 export OLLAMA_API_BASE=http://127.0.0.1:11434 # Mac/Linux
-setx   OLLAMA_API_BASE http://127.0.0.1:11434 # Windows
+setx   OLLAMA_API_BASE http://127.0.0.1:11434 # Windows, restart shell after setx
 
 aider --model ollama/<model>
 ```
@@ -32,7 +32,7 @@ ollama serve
 
 # In another terminal window...
 export OLLAMA_API_BASE=http://127.0.0.1:11434 # Mac/Linux
-setx   OLLAMA_API_BASE http://127.0.0.1:11434 # Windows
+setx   OLLAMA_API_BASE http://127.0.0.1:11434 # Windows, restart shell after setx
 
 aider --model ollama/llama3:70b 
 ```

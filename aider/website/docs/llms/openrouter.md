@@ -12,7 +12,7 @@ You'll need an [OpenRouter API key](https://openrouter.ai/keys).
 pip install aider-chat
 
 export OPENROUTER_API_KEY=<key> # Mac/Linux
-setx   OPENROUTER_API_KEY <key> # Windows
+setx   OPENROUTER_API_KEY <key> # Windows, restart shell after setx
 
 # Or any other open router model
 aider --model openrouter/<provider>/<model>
@@ -27,7 +27,7 @@ In particular, Llama3 70B works well with aider, at low cost:
 pip install aider-chat
 
 export OPENROUTER_API_KEY=<key> # Mac/Linux
-setx   OPENROUTER_API_KEY <key> # Windows
+setx   OPENROUTER_API_KEY <key> # Windows, restart shell after setx
 
 aider --model openrouter/meta-llama/llama-3-70b-instruct
 ```

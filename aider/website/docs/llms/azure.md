@@ -15,10 +15,11 @@ export AZURE_API_KEY=<key>
 export AZURE_API_VERSION=2023-05-15
 export AZURE_API_BASE=https://myendpt.openai.azure.com
 
-# Windows:
+# Windows
 setx AZURE_API_KEY <key>
 setx AZURE_API_VERSION 2023-05-15
 setx AZURE_API_BASE https://myendpt.openai.azure.com
+# ... restart your shell after setx commands
 
 aider --model azure/<your_deployment_name>
 
