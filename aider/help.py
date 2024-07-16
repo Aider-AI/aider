@@ -15,14 +15,14 @@ warnings.simplefilter("ignore", category=FutureWarning)
 
 def install_help_extra(io):
     pip_install_cmd = [
-        "aider-chat[hf-embed]",
+        "aider-chat[help]",
         "--extra-index-url",
         "https://download.pytorch.org/whl/cpu",
     ]
     res = utils.check_pip_install_extra(
         io,
         "llama_index.embeddings.huggingface",
-        "To use interactive /help you need to install HuggingFace embeddings",
+        "To use interactive /help you need to install the help extras",
         pip_install_cmd,
     )
     return res

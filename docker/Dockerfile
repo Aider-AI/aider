@@ -9,7 +9,7 @@ COPY . /aider
 RUN apt-get update && \
     apt-get install --no-install-recommends -y build-essential git libportaudio2 && \
     rm -rf /var/lib/apt/lists/* && \
-    pip install --no-cache-dir /aider[hf-embed] --extra-index-url https://download.pytorch.org/whl/cpu && \
+    pip install --no-cache-dir /aider --extra-index-url https://download.pytorch.org/whl/cpu && \
     rm -rf /aider
     
 WORKDIR /app

@@ -8,7 +8,7 @@ pip-compile \
     --output-file=requirements.txt \
     $1
 
-for SUFFIX in dev hf-embed browser playwright; do
+for SUFFIX in dev help browser playwright; do
 
     pip-compile \
         requirements/requirements-${SUFFIX}.in \

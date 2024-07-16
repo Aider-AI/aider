@@ -33,7 +33,7 @@ packages += ["aider.website"]
 
 print("Packages:", packages)
 
-extras = "dev hf-embed browser playwright".split()
+extras = "dev help browser playwright".split()
 
 setup(
     name="aider-chat",
