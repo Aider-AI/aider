@@ -72,13 +72,15 @@ the code's output before asking for changes or corrections.
 <div class="chat-transcript" markdown="1">
 > Aider v0.43.5-dev  
 
-#### /run python tmp.py
+#### /run python myscript.py
 
-> Traceback (most recent call last):  
->  File "myscript.py", line 22, in <module>  
->    raise ValueError("something bad happened")  
-> ValueError: something bad happened  
->  
+```
+Traceback (most recent call last):  
+ File "myscript.py", line 22, in \<module\ 
+   raise ValueError("something bad happened")  
+ValueError: something bad happened  
+```
+
 > Add the output to the chat? y  
 
 </div>
