@@ -6,8 +6,13 @@ description: Intro and tutorial videos made by aider users.
 
 # Tutorial videos
 
-Here are a few tutorial videos made by aider users:
+Here are some tutorial videos made by aider users:
 
+- [Generate FULL-STACK Apps with Claude 3.5 Sonnet](https://youtu.be/sKeIZGW8xzg) -- AICodeKing
+- [Creating Games with AI from Start-To-End](https://youtu.be/sOd2YYZFMUs) -- AICodeKing
+- [Claude 3.5 and aider: Use AI Assistants to Build AI Apps](https://youtu.be/0hIisJ3xAdU) -- Coding the Future With AI
+- [Develop a Full-stack App Without Writing ANY Code](https://youtu.be/dzOWn8TI738) -- WorldofAI
+- [Generate Games with AI (w/ Local LLMs)](https://youtu.be/DjVJpGzQbSA) -- AICodeKing
 - [Aider tips and Example use](https://www.youtube.com/watch?v=OsChkvGGDgw) -- techfren
 - [Aider and Claude 3.5: Develop a Full-stack App Without Writing ANY Code!](https://www.youtube.com/watch?v=BtAqHsySdSY) -- Coding the Future With AI
 - [Generate application with just one prompt using Aider](https://www.youtube.com/watch?v=Y-_0VkMUiPc&t=78s) -- AICodeKing
@@ -15,4 +20,5 @@ Here are a few tutorial videos made by aider users:
 - [Holy Grail: FREE Coding Assistant That Can Build From EXISTING CODE BASE](https://www.youtube.com/watch?v=df8afeb1FY8) -- Matthew Berman
 - [Aider: This AI Coder Can Create AND Update Git Codebases](https://www.youtube.com/watch?v=EqLyFT78Sig) -- Ian Wootten
 
-
+Thanks to all these great creators for taking the time
+to share their experiences coding with aider!
