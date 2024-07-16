@@ -76,7 +76,7 @@ def main():
         print(f"- {author}: {count} lines ({percentage:.2f}%)")
 
     aider_percentage = (aider_total / total_lines) * 100 if total_lines > 0 else 0
-    print(f"\nAider wrote {aider_percentage:.0f}% of the {total_lines} lines edited in this release.")
+    print(f"\nAider wrote {aider_percentage:.0f}% of the code in this release ({aider_total}/{total_lines} lines).")
 
 def get_counts_for_file(tag, authors, fname):
     text = run(['git', 'blame', f'{tag}..HEAD', '--', fname])
