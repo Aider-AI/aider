@@ -26,8 +26,7 @@ def install_playwright(io):
         with sync_playwright() as p:
             p.chromium.launch()
             has_chromium = True
-    except Exception as err:
-        dump(err)
+    except Exception:
         has_chromium = False
 
     if has_pip and has_chromium:
