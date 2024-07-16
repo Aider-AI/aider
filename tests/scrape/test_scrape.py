@@ -1,7 +1,5 @@
 import unittest
-from unittest.mock import patch
-import sys
-import io
+from unittest.mock import patch, MagicMock
 
 from aider.commands import Commands
 from aider.io import InputOutput
@@ -12,9 +10,19 @@ class TestScrape(unittest.TestCase):
         self.io = InputOutput()
         self.commands = Commands(self.io, None)
 
-    def test_cmd_web_imports_playwright(self):
+    @patch('aider.scraper.Scraper.scrape')
+    def test_cmd_web_imports_playwright(self, mock_scrape):
+        # Mock the scrape method
+        mock_scrape.return_value = "Mocked webpage content"
+
         # Run the cmd_web command
-        self.commands.cmd_web("https://example.com")
+        result = self.commands.cmd_web("https://example.com")
+
+        # Assert that the scrape method was called with the correct URL
+        mock_scrape.assert_called_once_with("https://example.com")
+
+        # Assert that the result contains the mocked content
+        self.assertIn("Mocked webpage content", result)
 
         # Try to import playwright
         try:
