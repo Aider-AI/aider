@@ -24,6 +24,7 @@
 , sounddevice
 , soundfile
 , beautifulsoup4
+, importlib-resources
 , pyyaml
 , pillow
 , diff-match-patch
@@ -36,7 +37,7 @@
 
 buildPythonApplication rec {
   pname = "aider";
-  version = "0.35.0";
+  version = "0.44.0";
   format = "pyproject";
 
   src = lib.fileset.toSource {
@@ -80,6 +81,7 @@ buildPythonApplication rec {
     sounddevice
     soundfile
     beautifulsoup4
+    importlib-resources
     pyyaml
     pillow
     diff-match-patch
