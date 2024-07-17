@@ -226,8 +226,6 @@ def run_install(cmd):
         return_code = process.wait()
         output = "".join(output)
 
-        dump(output)
-
         if return_code == 0:
             print("\rInstallation complete.")
             print()
