@@ -263,7 +263,7 @@ def register_models(git_root, model_settings_fname, io):
         io.tool_error(f"Error loading aider model settings: {e}")
         return 1
 
-    return None
+    return 0  # Return 0 for success instead of None
 
 
 def load_dotenv_files(git_root, dotenv_fname):
@@ -281,12 +281,12 @@ def load_dotenv_files(git_root, dotenv_fname):
 
 
 def register_litellm_models(git_root, model_metadata_fname, io):
-    model_metatdata_files = generate_search_path_list(
+    model_metadata_files = generate_search_path_list(
         ".aider.model.metadata.json", git_root, model_metadata_fname
     )
 
     try:
-        model_metadata_files_loaded = models.register_litellm_models(model_metatdata_files)
+        model_metadata_files_loaded = models.register_litellm_models(model_metadata_files)
         if len(model_metadata_files_loaded) > 0:
             io.tool_output(f"Loaded {len(model_metadata_files_loaded)} model metadata file(s)")
             for model_metadata_file in model_metadata_files_loaded:
@@ -294,6 +294,8 @@ def register_litellm_models(git_root, model_metadata_fname, io):
     except Exception as e:
         io.tool_error(f"Error loading model metadata models: {e}")
         return 1
+
+    return 0  # Return 0 for success
 
 
 def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
@@ -564,6 +566,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.message_file:
         try:
             message_from_file = io.read_text(args.message_file)
+            if message_from_file is None:
+                io.tool_error(f"Error reading message file: {args.message_file}")
+                return 1
             io.tool_output()
             coder.run(with_message=message_from_file)
         except FileNotFoundError:
@@ -572,7 +577,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         except IOError as e:
             io.tool_error(f"Error reading message file: {e}")
             return 1
-        return
+        return 0  # Return 0 for success
 
     if args.exit:
         return
