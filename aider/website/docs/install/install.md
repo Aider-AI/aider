@@ -21,7 +21,7 @@ To work with OpenAI's models like GPT-4o or GPT-3.5 you need a paid
 [OpenAI API key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key).
 Note that this is different than being a "ChatGPT Plus" subscriber.
 
-To work with Anthropic's models like Claude 3 Opus you need a paid
+To work with Anthropic's models like Claude 3.5 Sonnet you need a paid
 [Anthropic API key](https://docs.anthropic.com/claude/reference/getting-started-with-the-api).
 
 
@@ -33,10 +33,10 @@ To work with Anthropic's models like Claude 3 Opus you need a paid
 py -m pip install aider-chat
 
 # To work with GPT-4o:
-$ aider --openai-api-key sk-xxx...
+$ aider --4o --openai-api-key sk-xxx...
 
-# To work with Claude 3 Opus:
-$ aider --anthropic-api-key sk-xxx... --opus
+# To work with Claude 3.5 Sonnet:
+$ aider --sonnet --anthropic-api-key sk-xxx...
 ```
 
 ## Mac/Linux install
@@ -46,10 +46,10 @@ $ aider --anthropic-api-key sk-xxx... --opus
 python -m pip install aider-chat
 
 # To work with GPT-4o:
-$ aider --openai-api-key sk-xxx...
+$ aider --4o --openai-api-key sk-xxx...
 
-# To work with Claude 3 Opus:
-$ aider --anthropic-api-key sk-xxx... --opus
+# To work with Claude 3.5 Sonnet:
+$ aider --sonnet --anthropic-api-key sk-xxx...
 ```
 
 {: .tip }
