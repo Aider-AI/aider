@@ -9,6 +9,7 @@
 - Now shows last 4 characters of API keys in `--verbose` output.
 - Bugfix to precedence of multiple `.env` files.
 - Bugfix to gracefully handle HTTP errors when installing pandoc.
+- Aider wrote 42% of the code in this release.
 
 ### Aider v0.44.0
 

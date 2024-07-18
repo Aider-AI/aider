@@ -33,6 +33,8 @@ gpt-4-1106-preview
 gpt-4-0125-preview
 gpt-4-vision-preview
 gpt-4-1106-vision-preview
+gpt-4o-mini
+gpt-4o-mini-2024-07-18
 gpt-3.5-turbo
 gpt-3.5-turbo-0301
 gpt-3.5-turbo-0613
@@ -80,38 +82,38 @@ MODEL_SETTINGS = [
     ModelSettings(
         "gpt-3.5-turbo",
         "whole",
-        weak_model_name="gpt-3.5-turbo",
+        weak_model_name="gpt-4o-mini",
         reminder_as_sys_msg=True,
     ),
     ModelSettings(
         "gpt-3.5-turbo-0125",
         "whole",
-        weak_model_name="gpt-3.5-turbo",
+        weak_model_name="gpt-4o-mini",
         reminder_as_sys_msg=True,
     ),
     ModelSettings(
         "gpt-3.5-turbo-1106",
         "whole",
-        weak_model_name="gpt-3.5-turbo",
+        weak_model_name="gpt-4o-mini",
         reminder_as_sys_msg=True,
     ),
     ModelSettings(
         "gpt-3.5-turbo-0613",
         "whole",
-        weak_model_name="gpt-3.5-turbo",
+        weak_model_name="gpt-4o-mini",
         reminder_as_sys_msg=True,
     ),
     ModelSettings(
         "gpt-3.5-turbo-16k-0613",
         "whole",
-        weak_model_name="gpt-3.5-turbo",
+        weak_model_name="gpt-4o-mini",
         reminder_as_sys_msg=True,
     ),
     # gpt-4
     ModelSettings(
         "gpt-4-turbo-2024-04-09",
         "udiff",
-        weak_model_name="gpt-3.5-turbo",
+        weak_model_name="gpt-4o-mini",
         use_repo_map=True,
         send_undo_reply=True,
         accepts_images=True,
@@ -121,7 +123,7 @@ MODEL_SETTINGS = [
     ModelSettings(
         "gpt-4-turbo",
         "udiff",
-        weak_model_name="gpt-3.5-turbo",
+        weak_model_name="gpt-4o-mini",
         use_repo_map=True,
         send_undo_reply=True,
         accepts_images=True,
@@ -131,7 +133,7 @@ MODEL_SETTINGS = [
     ModelSettings(
         "openai/gpt-4o",
         "diff",
-        weak_model_name="gpt-3.5-turbo",
+        weak_model_name="gpt-4o-mini",
         use_repo_map=True,
         send_undo_reply=True,
         accepts_images=True,
@@ -141,7 +143,7 @@ MODEL_SETTINGS = [
     ModelSettings(
         "gpt-4o",
         "diff",
-        weak_model_name="gpt-3.5-turbo",
+        weak_model_name="gpt-4o-mini",
         use_repo_map=True,
         send_undo_reply=True,
         accepts_images=True,
@@ -167,7 +169,7 @@ MODEL_SETTINGS = [
     ModelSettings(
         "gpt-4-0125-preview",
         "udiff",
-        weak_model_name="gpt-3.5-turbo",
+        weak_model_name="gpt-4o-mini",
         use_repo_map=True,
         send_undo_reply=True,
         lazy=True,
@@ -177,7 +179,7 @@ MODEL_SETTINGS = [
     ModelSettings(
         "gpt-4-1106-preview",
         "udiff",
-        weak_model_name="gpt-3.5-turbo",
+        weak_model_name="gpt-4o-mini",
         use_repo_map=True,
         send_undo_reply=True,
         lazy=True,
@@ -186,7 +188,7 @@ MODEL_SETTINGS = [
     ModelSettings(
         "gpt-4-vision-preview",
         "diff",
-        weak_model_name="gpt-3.5-turbo",
+        weak_model_name="gpt-4o-mini",
         use_repo_map=True,
         send_undo_reply=True,
         accepts_images=True,
@@ -195,7 +197,7 @@ MODEL_SETTINGS = [
     ModelSettings(
         "gpt-4-0314",
         "diff",
-        weak_model_name="gpt-3.5-turbo",
+        weak_model_name="gpt-4o-mini",
         use_repo_map=True,
         send_undo_reply=True,
         reminder_as_sys_msg=True,
@@ -204,7 +206,7 @@ MODEL_SETTINGS = [
     ModelSettings(
         "gpt-4-0613",
         "diff",
-        weak_model_name="gpt-3.5-turbo",
+        weak_model_name="gpt-4o-mini",
         use_repo_map=True,
         send_undo_reply=True,
         reminder_as_sys_msg=True,
@@ -212,7 +214,7 @@ MODEL_SETTINGS = [
     ModelSettings(
         "gpt-4-32k-0613",
         "diff",
-        weak_model_name="gpt-3.5-turbo",
+        weak_model_name="gpt-4o-mini",
         use_repo_map=True,
         send_undo_reply=True,
         reminder_as_sys_msg=True,
@@ -356,7 +358,7 @@ MODEL_SETTINGS = [
     ModelSettings(
         "openrouter/openai/gpt-4o",
         "diff",
-        weak_model_name="openrouter/openai/gpt-3.5-turbo",
+        weak_model_name="openrouter/openai/gpt-4o-mini",
         use_repo_map=True,
         send_undo_reply=True,
         accepts_images=True,
