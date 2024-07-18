@@ -1,6 +1,10 @@
 
 # Release history
 
+### Aider v0.45.1
+
+- Use 4o-mini as the weak model wherever 3.5-turbo was used.
+
 ### Aider v0.45.0
 
 - GPT-4o mini scores similar to the original GPT 3.5, using whole edit format.

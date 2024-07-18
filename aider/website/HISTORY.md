@@ -12,6 +12,10 @@ cog.out(text)
 
 # Release history
 
+### Aider v0.45.1
+
+- Use 4o-mini as the weak model wherever 3.5-turbo was used.
+
 ### Aider v0.45.0
 
 - GPT-4o mini scores similar to the original GPT 3.5, using whole edit format.
@@ -20,6 +24,7 @@ cog.out(text)
 - Now shows last 4 characters of API keys in `--verbose` output.
 - Bugfix to precedence of multiple `.env` files.
 - Bugfix to gracefully handle HTTP errors when installing pandoc.
+- Aider wrote 42% of the code in this release.
 
 ### Aider v0.44.0
 
