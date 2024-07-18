@@ -159,7 +159,12 @@ class Scraper:
         except OSError:
             pass
 
-        pypandoc.download_pandoc(delete_installer=True)
+        try:
+            pypandoc.download_pandoc(delete_installer=True)
+        except Exception as err:
+            self.print_error(f"Unable to install pandoc: {err}")
+            return
+
         self.pandoc_available = True
 
     def html_to_markdown(self, page_source):
