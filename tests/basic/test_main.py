@@ -194,7 +194,8 @@ class TestMain(TestCase):
             cwd_env.write_text("A=cwd\nB=cwd")
             named_env.write_text("A=named")
 
-            main(["--yes", "--exit", "--env-file", str(named_env)])
+            with patch('pathlib.Path.home', return_value=fake_home):
+                main(["--yes", "--exit", "--env-file", str(named_env)])
 
             self.assertEqual(os.environ["A"], "named")
             self.assertEqual(os.environ["B"], "cwd")
