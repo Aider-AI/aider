@@ -173,40 +173,34 @@ class TestMain(TestCase):
 
     def test_env_file_override(self):
         with GitTemporaryDirectory() as git_dir:
-            os.chdir(git_dir)
+            git_dir = Path(git_dir)
+            git_env = git_dir / ".env"
 
-            # Create .env files with different priorities
-            Path(git_dir, ".env").write_text("TEST_VAR=home\nAIDER_MODEL=home_model\n")
-            Path(git_dir, "repo_root", ".env").mkdir(parents=True, exist_ok=True)
-            Path(git_dir, "repo_root", ".env").write_text("TEST_VAR=repo\nAIDER_MODEL=repo_model\n")
-            Path(git_dir, "repo_root", "subdir").mkdir(parents=True, exist_ok=True)
-            Path(git_dir, "repo_root", "subdir", ".env").write_text("TEST_VAR=subdir\nAIDER_MODEL=subdir_model\n")
+            fake_home = git_dir / "fake_home"
+            fake_home.mkdir()
+            os.environ["HOME"] = str(fake_home)
+            home_env = fake_home / ".env"
 
-            # Run main with different configurations
-            with patch("aider.main.Coder.create"), \
-                 patch("aider.main.setup_git", return_value=str(Path(git_dir, "repo_root"))), \
-                 patch("os.getcwd", return_value=str(Path(git_dir, "repo_root", "subdir"))):
-                
-                # Test with default .env file (in repo root)
-                main(["--exit"], input=DummyInput(), output=DummyOutput())
-                self.assertEqual(os.environ.get("TEST_VAR"), "repo")
-                self.assertEqual(os.environ.get("AIDER_MODEL"), "repo_model")
+            cwd = git_dir / "subdir"
+            cwd.mkdir()
+            os.chdir(cwd)
+            cwd_env = cwd / ".env"
 
-                # Test with specific .env file
-                main(["--exit", "--env-file", str(Path(git_dir, ".env"))], input=DummyInput(), output=DummyOutput())
-                self.assertEqual(os.environ.get("TEST_VAR"), "home")
-                self.assertEqual(os.environ.get("AIDER_MODEL"), "home_model")
+            named_env = git_dir / "named.env"
 
-                # Test override with command line argument
-                main(["--exit", "--model", "cli_model"], input=DummyInput(), output=DummyOutput())
-                self.assertEqual(os.environ.get("TEST_VAR"), "repo")
-                self.assertEqual(os.environ.get("AIDER_MODEL"), "cli_model")
+            os.environ["E"] = "existing"
+            home_env.write_text("A=home\nB=home\nC=home\nD=home")
+            git_env.write_text("A=git\nB=git\nC=git")
+            cwd_env.write_text("A=cwd\nB=cwd")
+            named_env.write_text("A=named")
 
-            # Clean up environment variables
-            if "TEST_VAR" in os.environ:
-                del os.environ["TEST_VAR"]
-            if "AIDER_MODEL" in os.environ:
-                del os.environ["AIDER_MODEL"]
+            main(["--yes", "--exit", "--env-file", str(named_env)])
+
+            self.assertEqual(os.environ["A"], "named")
+            self.assertEqual(os.environ["B"], "cwd")
+            self.assertEqual(os.environ["C"], "git")
+            self.assertEqual(os.environ["D"], "home")
+            self.assertEqual(os.environ["E"], "existing")
 
     def test_message_file_flag(self):
         message_file_content = "This is a test message from a file."

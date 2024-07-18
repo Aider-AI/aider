@@ -276,7 +276,7 @@ def load_dotenv_files(git_root, dotenv_fname):
     for fname in dotenv_files:
         if Path(fname).exists():
             loaded.append(fname)
-            load_dotenv(fname)
+            load_dotenv(fname, override=True)
     return loaded
 
 
