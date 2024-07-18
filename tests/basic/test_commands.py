@@ -560,6 +560,36 @@ class TestCommands(TestCase):
             del commands
             del repo
 
+    def test_cmd_undo_with_newly_committed_file(self):
+        with GitTemporaryDirectory() as repo_dir:
+            repo = git.Repo(repo_dir)
+            io = InputOutput(pretty=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Create and commit a new file
+            filename = "new_file.txt"
+            file_path = Path(repo_dir) / filename
+            file_path.write_text("new file content")
+            repo.git.add(filename)
+            repo.git.commit("-m", "Add new file")
+
+            # Store the commit hash
+            last_commit_hash = repo.head.commit.hexsha[:7]
+            coder.aider_commit_hashes.add(last_commit_hash)
+
+            # Attempt to undo the last commit
+            with self.assertRaises(git.exc.GitCommandError):
+                commands.cmd_undo("")
+
+            # Check that the last commit is still present
+            self.assertEqual(last_commit_hash, repo.head.commit.hexsha[:7])
+            self.assertTrue(file_path.exists())
+
+            del coder
+            del commands
+            del repo
+
     def test_cmd_add_aiderignored_file(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
