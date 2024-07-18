@@ -174,6 +174,9 @@ class Scraper:
         soup = slimdown_html(soup)
         page_source = str(soup)
 
+        if self.pandoc_available:
+            return page_source
+
         md = pypandoc.convert_text(page_source, "markdown", format="html")
 
         md = re.sub(r"</div>", "      ", md)
