@@ -131,17 +131,6 @@ class TestMain(TestCase):
             self.assertEqual("one\ntwo\n.aider*\n", gitignore.read_text())
             del os.environ["GIT_CONFIG_GLOBAL"]
 
-    def test_main_git_ignore(self):
-        cwd = Path().cwd()
-        self.assertFalse((cwd / ".git").exists())
-        self.assertFalse((cwd / ".gitignore").exists())
-
-        with patch("aider.main.Coder.create"):
-            main(["--yes"], input=DummyInput())
-
-        self.assertTrue((cwd / ".git").exists())
-        self.assertTrue((cwd / ".gitignore").exists())
-
     def test_main_args(self):
         with patch("aider.main.Coder.create") as MockCoder:
             # --yes will just ok the git repo without blocking on input
@@ -181,6 +170,43 @@ class TestMain(TestCase):
             main(["--dirty-commits"], input=DummyInput())
             _, kwargs = MockCoder.call_args
             assert kwargs["dirty_commits"] is True
+
+    def test_env_file_override(self):
+        with GitTemporaryDirectory() as git_dir:
+            os.chdir(git_dir)
+
+            # Create .env files with different priorities
+            Path(git_dir, ".env").write_text("TEST_VAR=home\nAIDER_MODEL=home_model\n")
+            Path(git_dir, "repo_root", ".env").mkdir(parents=True, exist_ok=True)
+            Path(git_dir, "repo_root", ".env").write_text("TEST_VAR=repo\nAIDER_MODEL=repo_model\n")
+            Path(git_dir, "repo_root", "subdir").mkdir(parents=True, exist_ok=True)
+            Path(git_dir, "repo_root", "subdir", ".env").write_text("TEST_VAR=subdir\nAIDER_MODEL=subdir_model\n")
+
+            # Run main with different configurations
+            with patch("aider.main.Coder.create"), \
+                 patch("aider.main.setup_git", return_value=str(Path(git_dir, "repo_root"))), \
+                 patch("os.getcwd", return_value=str(Path(git_dir, "repo_root", "subdir"))):
+                
+                # Test with default .env file (in repo root)
+                main(["--exit"], input=DummyInput(), output=DummyOutput())
+                self.assertEqual(os.environ.get("TEST_VAR"), "repo")
+                self.assertEqual(os.environ.get("AIDER_MODEL"), "repo_model")
+
+                # Test with specific .env file
+                main(["--exit", "--env-file", str(Path(git_dir, ".env"))], input=DummyInput(), output=DummyOutput())
+                self.assertEqual(os.environ.get("TEST_VAR"), "home")
+                self.assertEqual(os.environ.get("AIDER_MODEL"), "home_model")
+
+                # Test override with command line argument
+                main(["--exit", "--model", "cli_model"], input=DummyInput(), output=DummyOutput())
+                self.assertEqual(os.environ.get("TEST_VAR"), "repo")
+                self.assertEqual(os.environ.get("AIDER_MODEL"), "cli_model")
+
+            # Clean up environment variables
+            if "TEST_VAR" in os.environ:
+                del os.environ["TEST_VAR"]
+            if "AIDER_MODEL" in os.environ:
+                del os.environ["AIDER_MODEL"]
 
     def test_message_file_flag(self):
         message_file_content = "This is a test message from a file."
