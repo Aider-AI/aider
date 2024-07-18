@@ -205,6 +205,37 @@ class TestCoder(unittest.TestCase):
 
             self.assertEqual(coder.abs_fnames, set([str(fname.resolve())]))
 
+    def test_get_file_mentions_path_formats(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(pretty=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+
+            # Test cases with different path formats
+            test_cases = [
+                # Unix paths in content, Unix paths in get_addable_relative_files
+                ("Check file1.txt and dir/file2.txt", ["file1.txt", "dir/file2.txt"]),
+                # Windows paths in content, Windows paths in get_addable_relative_files
+                ("Check file1.txt and dir\\file2.txt", ["file1.txt", "dir\\file2.txt"]),
+                # Unix paths in content, Windows paths in get_addable_relative_files
+                ("Check file1.txt and dir/file2.txt", ["file1.txt", "dir\\file2.txt"]),
+                # Windows paths in content, Unix paths in get_addable_relative_files
+                ("Check file1.txt and dir\\file2.txt", ["file1.txt", "dir/file2.txt"]),
+                # Mixed paths in content, Unix paths in get_addable_relative_files
+                ("Check file1.txt, dir/file2.txt, and other\\file3.txt", 
+                 ["file1.txt", "dir/file2.txt", "other/file3.txt"]),
+                # Mixed paths in content, Windows paths in get_addable_relative_files
+                ("Check file1.txt, dir/file2.txt, and other\\file3.txt", 
+                 ["file1.txt", "dir\\file2.txt", "other\\file3.txt"]),
+            ]
+
+            for content, addable_files in test_cases:
+                with self.subTest(content=content, addable_files=addable_files):
+                    coder.get_addable_relative_files = MagicMock(return_value=set(addable_files))
+                    mentioned_files = coder.get_file_mentions(content)
+                    expected_files = set(addable_files)
+                    self.assertEqual(mentioned_files, expected_files, 
+                        f"Failed for content: {content}, addable_files: {addable_files}")
+
     def test_run_with_file_deletion(self):
         # Create a few temporary files
 
