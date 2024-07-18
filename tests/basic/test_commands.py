@@ -386,6 +386,56 @@ class TestCommands(TestCase):
 
             self.assertIn(str(fname.resolve()), coder.abs_fnames)
 
+    def test_cmd_tokens(self):
+        with GitTemporaryDirectory() as repo_dir:
+            # Create a small repository with a few files
+            (Path(repo_dir) / "file1.txt").write_text("Content of file 1")
+            (Path(repo_dir) / "file2.py").write_text("print('Content of file 2')")
+            (Path(repo_dir) / "subdir").mkdir()
+            (Path(repo_dir) / "subdir" / "file3.md").write_text("# Content of file 3")
+
+            repo = git.Repo.init(repo_dir)
+            repo.git.add(A=True)
+            repo.git.commit("-m", "Initial commit")
+
+            io = InputOutput(pretty=False, yes=False)
+            from aider.coders import Coder
+
+            coder = Coder.create(self.GPT35, None, io, repo_path=repo_dir)
+            commands = Commands(io, coder)
+
+            # Add all files to the chat
+            commands.cmd_add("*.txt *.py *.md")
+
+            # Capture the output of cmd_tokens
+            original_tool_output = io.tool_output
+            output_lines = []
+
+            def capture_output(*args, **kwargs):
+                output_lines.extend(args)
+                original_tool_output(*args, **kwargs)
+
+            io.tool_output = capture_output
+
+            # Run cmd_tokens
+            commands.cmd_tokens("")
+
+            # Restore original tool_output
+            io.tool_output = original_tool_output
+
+            # Check if the output includes repository map information
+            repo_map_line = next((line for line in output_lines if "repository map" in line), None)
+            self.assertIsNotNone(repo_map_line, "Repository map information not found in the output")
+
+            # Check if the output includes information about all added files
+            self.assertTrue(any("file1.txt" in line for line in output_lines))
+            self.assertTrue(any("file2.py" in line for line in output_lines))
+            self.assertTrue(any("file3.md" in line for line in output_lines))
+
+            # Check if the total tokens and remaining tokens are reported
+            self.assertTrue(any("tokens total" in line for line in output_lines))
+            self.assertTrue(any("tokens remaining" in line for line in output_lines))
+
     def test_cmd_add_dirname_with_special_chars(self):
         with ChdirTemporaryDirectory():
             io = InputOutput(pretty=False, yes=False)
