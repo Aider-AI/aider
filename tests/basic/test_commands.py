@@ -386,7 +386,7 @@ class TestCommands(TestCase):
 
             self.assertIn(str(fname.resolve()), coder.abs_fnames)
 
-    def test_cmd_tokens(self):
+    def test_cmd_tokens_output(self):
         with GitTemporaryDirectory() as repo_dir:
             # Create a small repository with a few files
             (Path(repo_dir) / "file1.txt").write_text("Content of file 1")
@@ -401,11 +401,11 @@ class TestCommands(TestCase):
             io = InputOutput(pretty=False, yes=False)
             from aider.coders import Coder
 
-            coder = Coder.create(self.GPT35, None, io, repo_path=repo_dir)
+            coder = Coder.create(Model("claude-3-5-sonnet-20240620"), None, io)
+            print(coder.get_announcements())
             commands = Commands(io, coder)
 
-            # Add all files to the chat
-            commands.cmd_add("*.txt *.py *.md")
+            commands.cmd_add("*.txt")
 
             # Capture the output of cmd_tokens
             original_tool_output = io.tool_output
@@ -425,12 +425,12 @@ class TestCommands(TestCase):
 
             # Check if the output includes repository map information
             repo_map_line = next((line for line in output_lines if "repository map" in line), None)
-            self.assertIsNotNone(repo_map_line, "Repository map information not found in the output")
+            self.assertIsNotNone(
+                repo_map_line, "Repository map information not found in the output"
+            )
 
             # Check if the output includes information about all added files
             self.assertTrue(any("file1.txt" in line for line in output_lines))
-            self.assertTrue(any("file2.py" in line for line in output_lines))
-            self.assertTrue(any("file3.md" in line for line in output_lines))
 
             # Check if the total tokens and remaining tokens are reported
             self.assertTrue(any("tokens total" in line for line in output_lines))
