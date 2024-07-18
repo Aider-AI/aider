@@ -221,11 +221,15 @@ class TestCoder(unittest.TestCase):
                 # Windows paths in content, Unix paths in get_addable_relative_files
                 ("Check file1.txt and dir\\file2.txt", ["file1.txt", "dir/file2.txt"]),
                 # Mixed paths in content, Unix paths in get_addable_relative_files
-                ("Check file1.txt, dir/file2.txt, and other\\file3.txt", 
-                 ["file1.txt", "dir/file2.txt", "other/file3.txt"]),
+                (
+                    "Check file1.txt, dir/file2.txt, and other\\file3.txt",
+                    ["file1.txt", "dir/file2.txt", "other/file3.txt"],
+                ),
                 # Mixed paths in content, Windows paths in get_addable_relative_files
-                ("Check file1.txt, dir/file2.txt, and other\\file3.txt", 
-                 ["file1.txt", "dir\\file2.txt", "other\\file3.txt"]),
+                (
+                    "Check file1.txt, dir/file2.txt, and other\\file3.txt",
+                    ["file1.txt", "dir\\file2.txt", "other\\file3.txt"],
+                ),
             ]
 
             for content, addable_files in test_cases:
@@ -233,8 +237,11 @@ class TestCoder(unittest.TestCase):
                     coder.get_addable_relative_files = MagicMock(return_value=set(addable_files))
                     mentioned_files = coder.get_file_mentions(content)
                     expected_files = set(addable_files)
-                    self.assertEqual(mentioned_files, expected_files, 
-                        f"Failed for content: {content}, addable_files: {addable_files}")
+                    self.assertEqual(
+                        mentioned_files,
+                        expected_files,
+                        f"Failed for content: {content}, addable_files: {addable_files}",
+                    )
 
     def test_run_with_file_deletion(self):
         # Create a few temporary files
@@ -361,7 +368,7 @@ class TestCoder(unittest.TestCase):
         self.assertEqual(len(coder.abs_fnames), 2)
 
     def test_new_file_edit_one_commit(self):
-        """A new file shouldn't get pre-committed before the GPT edit commit"""
+        """A new file should get pre-committed before the GPT edit commit"""
         with GitTemporaryDirectory():
             repo = git.Repo()
 
@@ -400,7 +407,7 @@ new
             self.assertEqual(content, "new\n")
 
             num_commits = len(list(repo.iter_commits(repo.active_branch.name)))
-            self.assertEqual(num_commits, 1)
+            self.assertEqual(num_commits, 2)
 
     def test_only_commit_gpt_edited_file(self):
         """
