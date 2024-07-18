@@ -585,11 +585,12 @@ class TestCommands(TestCase):
             last_commit_hash = repo.head.commit.hexsha[:7]
             coder.aider_commit_hashes.add(last_commit_hash)
 
-            # Attempt to undo the last commit
+            # Attempt to undo the last commit, should refuse
             commands.cmd_undo("")
 
-            # Check that the last commit was undone
-            self.assertNotEqual(last_commit_hash, repo.head.commit.hexsha[:7])
+            # Check that the last commit was not undone
+            self.assertEqual(last_commit_hash, repo.head.commit.hexsha[:7])
+            self.assertTrue(file_path.exists())
 
             del coder
             del commands

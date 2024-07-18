@@ -306,16 +306,24 @@ class Commands:
             return
 
         last_commit = self.coder.repo.repo.head.commit
-        changed_files_last_commit = [
-            item.a_path for item in last_commit.diff(last_commit.parents[0])
-        ]
+        prev_commit = last_commit.parents[0]
+        changed_files_last_commit = [item.a_path for item in last_commit.diff(prev_commit)]
 
-        if any(self.coder.repo.repo.is_dirty(path=fname) for fname in changed_files_last_commit):
-            self.io.tool_error(
-                "The repository has uncommitted changes in files that were modified in the last"
-                " commit. Please commit or stash them before undoing."
-            )
-            return
+        for fname in changed_files_last_commit:
+            if self.coder.repo.repo.is_dirty(path=fname):
+                self.io.tool_error(
+                    f"The file {fname} has uncommitted changes. Please stash them before undoing."
+                )
+                return
+
+            # Check if the file was in the repo in the previous commit
+            try:
+                prev_commit.tree[fname]
+            except KeyError:
+                self.io.tool_error(
+                    f"The file {fname} was not in the repository in the previous commit. Cannot undo safely."
+                )
+                return
 
         local_head = self.coder.repo.repo.git.rev_parse("HEAD")
         current_branch = self.coder.repo.repo.active_branch.name
@@ -346,6 +354,7 @@ class Commands:
         # Reset only the files which are part of `last_commit`
         for file_path in changed_files_last_commit:
             self.coder.repo.repo.git.checkout("HEAD~1", file_path)
+
         # Move the HEAD back before the latest commit
         self.coder.repo.repo.git.reset("--soft", "HEAD~1")
 
