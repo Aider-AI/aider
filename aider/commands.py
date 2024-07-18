@@ -306,6 +306,10 @@ class Commands:
             return
 
         last_commit = self.coder.repo.repo.head.commit
+        if not last_commit.parents:
+            self.io.tool_error("This is the first commit in the repository. Cannot undo.")
+            return
+
         prev_commit = last_commit.parents[0]
         changed_files_last_commit = [item.a_path for item in last_commit.diff(prev_commit)]
 

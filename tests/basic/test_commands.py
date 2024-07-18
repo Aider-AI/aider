@@ -617,6 +617,13 @@ class TestCommands(TestCase):
             # Attempt to undo the last commit
             commands.cmd_undo("")
 
+            # Check that the commit is still present
+            self.assertEqual(last_commit_hash, repo.head.commit.hexsha[:7])
+            self.assertTrue(file_path.exists())
+
+            # Check that an error message was displayed
+            self.assertIn("This is the first commit in the repository. Cannot undo.", io.get_last_error())
+
             # Check that the last commit is still present
             self.assertEqual(last_commit_hash, repo.head.commit.hexsha[:7])
             self.assertTrue(file_path.exists())
