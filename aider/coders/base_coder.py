@@ -1063,8 +1063,9 @@ class Coder:
         fname_to_rel_fnames = {}
         for rel_fname in addable_rel_fnames:
             normalized_rel_fname = rel_fname.replace('\\', '/')
-            if normalized_rel_fname in words or rel_fname in words:
-                mentioned_rel_fnames.add(str(rel_fname))
+            normalized_words = set(word.replace('\\', '/') for word in words)
+            if normalized_rel_fname in normalized_words:
+                mentioned_rel_fnames.add(rel_fname)
 
             fname = os.path.basename(rel_fname)
 
