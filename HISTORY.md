@@ -1,6 +1,15 @@
 
 # Release history
 
+### Aider v0.45.0
+
+- GPT-4o mini scores similar to the original GPT 3.5, using whole edit format.
+- Aider is better at offering to add files to the chat on Windows.
+- Bugfix corner cases for `/undo` with new files or new repos.
+- Now shows last 4 characters of API keys in `--verbose` output.
+- Bugfix to precedence of multiple `.env` files.
+- Bugfix to gracefully handle HTTP errors when installing pandoc.
+
 ### Aider v0.44.0
 
 - Default pip install size reduced by 3-12x.
