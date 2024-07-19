@@ -81,7 +81,7 @@ Pair program with AI.
 
 ## Top tier performance
 
-[Aider has the one of the top scores on SWE Bench](https://aider.chat/2024/06/02/main-swe-bench.html).
+[Aider has one of the top scores on SWE Bench](https://aider.chat/2024/06/02/main-swe-bench.html).
 SWE Bench is a challenging software engineering benchmark where aider
 solved *real* GitHub issues from popular open source
 projects like django, scikitlearn, matplotlib, etc.
