@@ -15,6 +15,7 @@ Once you understand the request you MUST:
 1. Determine if any code changes are needed.
 2. Explain any needed changes.
 3. If changes are needed, output a copy of each file that needs changes.
+{custom_prompt}
 """
 
     example_messages = [

@@ -9,6 +9,7 @@ Take requests for changes to the supplied code.
 If the request is ambiguous, ask questions.
 
 Once you understand the request you MUST use the `write_file` function to update the file to make the changes.
+{custom_prompt}
 """
 
     system_reminder = """

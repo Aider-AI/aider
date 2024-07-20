@@ -232,6 +232,7 @@ class Coder:
         attribute_commit_message=False,
         aider_commit_hashes=None,
         map_mul_no_files=8,
+        custom_system_prompt=None,
     ):
         if not fnames:
             fnames = []
@@ -250,6 +251,8 @@ class Coder:
 
         self.verbose = verbose
         self.abs_fnames = set()
+
+        self.custom_system_prompt = custom_system_prompt
 
         if cur_messages:
             self.cur_messages = cur_messages
@@ -735,6 +738,12 @@ class Coder:
     def fmt_system_prompt(self, prompt):
         lazy_prompt = self.gpt_prompts.lazy_prompt if self.main_model.lazy else ""
 
+        if self.custom_system_prompt:
+            custom_prompt_header = "\nOn top of being an expert software developer, you also specialize in the following job:\n"
+            custom_prompt = custom_prompt_header + self.main_model.system_prompt
+        else: 
+            custom_prompt = ""
+
         platform_text = f"- The user's system: {platform.platform()}\n"
         if os.name == "nt":
             var = "COMSPEC"
@@ -750,6 +759,7 @@ class Coder:
             fence=self.fence,
             lazy_prompt=lazy_prompt,
             platform=platform_text,
+            custom_prompt=custom_prompt,
         )
         return prompt
 
