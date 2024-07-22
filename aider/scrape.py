@@ -71,9 +71,10 @@ class Scraper:
     playwright_instructions_shown = False
 
     # Public API...
-    def __init__(self, print_error=None, playwright_available=None):
+    def __init__(self, print_error=None, playwright_available=None, verify_ssl=True):
         """
         `print_error` - a function to call to print error/debug info.
+        `verify_ssl` - if False, disable SSL certificate verification when scraping.
         """
         if print_error:
             self.print_error = print_error
@@ -81,6 +82,7 @@ class Scraper:
             self.print_error = print
 
         self.playwright_available = playwright_available
+        self.verify_ssl = verify_ssl
 
     def scrape(self, url):
         """
@@ -110,13 +112,13 @@ class Scraper:
 
         with sync_playwright() as p:
             try:
-                browser = p.chromium.launch()
+                browser = p.chromium.launch(ignore_https_errors=not self.verify_ssl)
             except Exception as e:
                 self.playwright_available = False
                 self.print_error(e)
                 return
 
-            page = browser.new_page()
+            page = browser.new_page(ignore_https_errors=not self.verify_ssl)
 
             user_agent = page.evaluate("navigator.userAgent")
             user_agent = user_agent.replace("Headless", "")
@@ -138,7 +140,7 @@ class Scraper:
 
         headers = {"User-Agent": f"Mozilla./5.0 ({aider_user_agent})"}
         try:
-            with httpx.Client(headers=headers) as client:
+            with httpx.Client(headers=headers, verify=self.verify_ssl) as client:
                 response = client.get(url)
                 response.raise_for_status()
                 return response.text
