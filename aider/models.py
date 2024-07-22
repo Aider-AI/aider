@@ -672,7 +672,7 @@ def sanity_check_model(io, model):
         if possible_matches:
             io.tool_output("Did you mean one of these?")
             for match in possible_matches:
-                io.tool_output(f"- {model}")
+                io.tool_output(f"- {match}")
 
     if show:
         io.tool_output(f"For more info, see: {urls.model_warnings}\n")
@@ -708,12 +708,13 @@ def fuzzy_match_models(name):
     # Check for model names containing the name
     matching_models = [m for m in chat_models if name in m]
     if matching_models:
-        return matching_models
+        return sorted(set(matching_models))
 
     # Check for slight misspellings
-    models = list(chat_models)
+    models = set(chat_models)
     matching_models = difflib.get_close_matches(name, models, n=3, cutoff=0.8)
-    return sorted(matching_models)
+
+    return sorted(set(matching_models))
 
 
 def print_matching_models(io, search):
