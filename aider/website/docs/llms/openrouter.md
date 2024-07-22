@@ -34,8 +34,10 @@ aider --model openrouter/meta-llama/llama-3-70b-instruct
 
 
 {: .tip }
-You can access Claude 3.5 Sonnet via OpenRouter, without
-the tight rate limits that Anthropic applies.
-Use `aider --model openrouter/anthropic/claude-3.5-sonnet`
+If you get errors, check your
+[OpenRouter privacy settings](https://openrouter.ai/settings/privacy).
+Be sure to "enable providers that may train on inputs"
+to allow use of all models.
+
 
 

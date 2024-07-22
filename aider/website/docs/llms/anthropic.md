@@ -34,6 +34,7 @@ Anthropic has very low rate limits.
 You can access all the Anthropic models via
 [OpenRouter](openrouter.md)
 without rate limits.
+For example: `aider --model openrouter/anthropic/claude-3.5-sonnet`
 
 You can use `aider --model <model-name>` to use any other Anthropic model.
 For example, if you want to use a specific version of Opus
