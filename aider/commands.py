@@ -24,10 +24,11 @@ class Commands:
     voice = None
     scraper = None
 
-    def __init__(self, io, coder, voice_language=None):
+    def __init__(self, io, coder, voice_language=None, verify_ssl=True):
         self.io = io
         self.coder = coder
 
+        self.verify_ssl = verify_ssl
         if voice_language == "auto":
             voice_language = None
 
@@ -69,7 +70,9 @@ class Commands:
             if not res:
                 self.io.tool_error("Unable to initialize playwright.")
 
-            self.scraper = Scraper(print_error=self.io.tool_error, playwright_available=res)
+            self.scraper = Scraper(
+                print_error=self.io.tool_error, playwright_available=res, verify_ssl=self.verify_ssl
+            )
 
         content = self.scraper.scrape(url) or ""
         # if content:
@@ -325,7 +328,8 @@ class Commands:
                 prev_commit.tree[fname]
             except KeyError:
                 self.io.tool_error(
-                    f"The file {fname} was not in the repository in the previous commit. Cannot undo safely."
+                    f"The file {fname} was not in the repository in the previous commit. Cannot"
+                    " undo safely."
                 )
                 return
 

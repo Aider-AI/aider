@@ -232,6 +232,7 @@ class Coder:
         attribute_commit_message=False,
         aider_commit_hashes=None,
         map_mul_no_files=8,
+        verify_ssl=True,
     ):
         if not fnames:
             fnames = []
@@ -284,7 +285,7 @@ class Coder:
 
         self.show_diffs = show_diffs
 
-        self.commands = Commands(self.io, self, voice_language)
+        self.commands = Commands(self.io, self, voice_language, verify_ssl=verify_ssl)
 
         if use_git:
             try:
