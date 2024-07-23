@@ -112,7 +112,7 @@ class Scraper:
 
         with sync_playwright() as p:
             try:
-                browser = p.chromium.launch(ignore_https_errors=not self.verify_ssl)
+                browser = p.chromium.launch()
             except Exception as e:
                 self.playwright_available = False
                 self.print_error(str(e))
