@@ -13,6 +13,10 @@ class TestScrape(unittest.TestCase):
         self.commands = Commands(self.io, None)
 
     def test_cmd_web_imports_playwright(self):
+        # Create a mock print_error function
+        mock_print_error = MagicMock()
+        self.commands.io.tool_error = mock_print_error
+
         # Run the cmd_web command
         result = self.commands.cmd_web("https://example.com")
 
@@ -32,6 +36,9 @@ class TestScrape(unittest.TestCase):
         self.assertTrue(
             playwright_imported, "Playwright should be importable after running cmd_web"
         )
+
+        # Assert that print_error was never called
+        mock_print_error.assert_not_called()
 
     def test_scrape_actual_url_with_playwright(self):
         # Create a Scraper instance with a mock print_error function
