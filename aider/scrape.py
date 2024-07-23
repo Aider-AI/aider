@@ -47,7 +47,7 @@ def install_playwright(io):
 See {urls.enable_playwright} for more info.
 """
 
-    io.tool_error(text)
+    io.tool_output(text)
     if not io.confirm_ask("Install playwright?", default="y"):
         return
 
