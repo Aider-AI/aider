@@ -115,7 +115,7 @@ class Scraper:
                 browser = p.chromium.launch(ignore_https_errors=not self.verify_ssl)
             except Exception as e:
                 self.playwright_available = False
-                self.print_error(e)
+                self.print_error(str(e))
                 return
 
             page = browser.new_page(ignore_https_errors=not self.verify_ssl)
