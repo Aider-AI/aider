@@ -7,7 +7,6 @@ GitPython
 jsonschema
 rich
 prompt_toolkit
-numpy
 backoff
 pathspec
 diskcache
@@ -45,3 +44,5 @@ tree-sitter==0.21.3
 # Uses importlib-metadata
 importlib-metadata<8.0.0
 
+# Because sentence-transformers doesn't like >=2
+numpy<2

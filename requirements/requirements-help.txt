@@ -81,7 +81,6 @@ httpx==0.27.0
     # via
     #   -c requirements/../requirements.txt
     #   llama-index-core
-    #   llamaindex-py-client
     #   openai
 huggingface-hub[inference]==0.24.0
     # via
@@ -105,14 +104,12 @@ joblib==1.4.2
     # via
     #   nltk
     #   scikit-learn
-llama-index-core==0.10.45
+llama-index-core==0.10.57
     # via
     #   -r requirements/requirements-help.in
     #   llama-index-embeddings-huggingface
 llama-index-embeddings-huggingface==0.2.2
     # via -r requirements/requirements-help.in
-llamaindex-py-client==0.1.19
-    # via llama-index-core
 markupsafe==2.1.5
     # via
     #   -c requirements/../requirements.txt
@@ -139,7 +136,7 @@ networkx==3.2.1
     #   torch
 nltk==3.8.1
     # via llama-index-core
-numpy==2.0.1
+numpy==1.26.4
     # via
     #   -c requirements/../requirements.txt
     #   llama-index-core
@@ -168,7 +165,6 @@ pillow==10.4.0
 pydantic==2.8.2
     # via
     #   -c requirements/../requirements.txt
-    #   llamaindex-py-client
     #   openai
 pydantic-core==2.20.1
     # via
@@ -245,7 +241,7 @@ tqdm==4.66.4
     #   openai
     #   sentence-transformers
     #   transformers
-transformers==4.41.2
+transformers==4.42.4
     # via sentence-transformers
 typing-extensions==4.12.2
     # via

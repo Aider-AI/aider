@@ -104,7 +104,7 @@ multidict==6.0.5
     #   yarl
 networkx==3.2.1
     # via -r requirements/requirements.in
-numpy==2.0.1
+numpy==1.26.4
     # via
     #   -r requirements/requirements.in
     #   scipy

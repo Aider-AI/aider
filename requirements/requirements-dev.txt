@@ -85,7 +85,7 @@ multiprocess==0.70.16
     # via pathos
 nodeenv==1.9.1
     # via pre-commit
-numpy==2.0.1
+numpy==1.26.4
     # via
     #   -c requirements/../requirements.txt
     #   contourpy
