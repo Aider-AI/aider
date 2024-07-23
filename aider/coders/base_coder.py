@@ -1233,7 +1233,12 @@ class Coder:
             if self.show_pretty():
                 self.live_incremental_response(False)
             elif text:
-                sys.stdout.write(text)
+                try:
+                    sys.stdout.write(text)
+                except UnicodeEncodeError:
+                    # Safely encode and decode the text
+                    safe_text = text.encode(sys.stdout.encoding, errors='backslashreplace').decode(sys.stdout.encoding)
+                    sys.stdout.write(safe_text)
                 sys.stdout.flush()
                 yield text
 
