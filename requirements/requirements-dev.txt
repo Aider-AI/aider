@@ -47,7 +47,7 @@ filelock==3.15.4
     #   virtualenv
 fonttools==4.53.1
     # via matplotlib
-identify==2.5.36
+identify==2.6.0
     # via pre-commit
 idna==3.7
     # via
@@ -85,7 +85,7 @@ multiprocess==0.70.16
     # via pathos
 nodeenv==1.9.1
     # via pre-commit
-numpy==1.26.4
+numpy==2.0.1
     # via
     #   -c requirements/../requirements.txt
     #   contourpy
@@ -129,7 +129,7 @@ pyproject-hooks==1.1.0
     # via
     #   build
     #   pip-tools
-pytest==8.2.2
+pytest==8.3.1
     # via -r requirements/requirements-dev.in
 python-dateutil==2.9.0.post0
     # via
@@ -155,7 +155,7 @@ six==1.16.0
     # via python-dateutil
 snowballstemmer==2.2.0
     # via sphinx
-sphinx==7.3.7
+sphinx==7.4.7
     # via
     #   sphinx-rtd-theme
     #   sphinxcontrib-jquery
@@ -165,13 +165,13 @@ sphinxcontrib-applehelp==1.0.8
     # via sphinx
 sphinxcontrib-devhelp==1.0.6
     # via sphinx
-sphinxcontrib-htmlhelp==2.0.5
+sphinxcontrib-htmlhelp==2.0.6
     # via sphinx
 sphinxcontrib-jquery==4.1
     # via sphinx-rtd-theme
 sphinxcontrib-jsmath==1.0.1
     # via sphinx
-sphinxcontrib-qthelp==1.0.7
+sphinxcontrib-qthelp==1.0.8
     # via sphinx
 sphinxcontrib-serializinghtml==1.1.10
     # via sphinx

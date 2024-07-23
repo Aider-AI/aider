@@ -66,7 +66,7 @@ httpcore==1.0.5
     # via httpx
 httpx==0.27.0
     # via openai
-huggingface-hub==0.23.4
+huggingface-hub==0.24.0
     # via tokenizers
 idna==3.7
     # via
@@ -82,13 +82,13 @@ importlib-resources==6.4.0
     # via -r requirements/requirements.in
 jinja2==3.1.4
     # via litellm
-jsonschema==4.22.0
+jsonschema==4.23.0
     # via
     #   -r requirements/requirements.in
     #   litellm
 jsonschema-specifications==2023.12.1
     # via jsonschema
-litellm==1.41.6
+litellm==1.41.27
     # via -r requirements/requirements.in
 markdown-it-py==3.0.0
     # via rich
@@ -104,11 +104,11 @@ multidict==6.0.5
     #   yarl
 networkx==3.2.1
     # via -r requirements/requirements.in
-numpy==1.26.4
+numpy==2.0.1
     # via
     #   -r requirements/requirements.in
     #   scipy
-openai==1.35.10
+openai==1.37.0
     # via litellm
 packaging==24.1
     # via
@@ -157,7 +157,7 @@ requests==2.32.3
     #   tiktoken
 rich==13.7.1
     # via -r requirements/requirements.in
-rpds-py==0.18.1
+rpds-py==0.19.0
     # via
     #   jsonschema
     #   referencing

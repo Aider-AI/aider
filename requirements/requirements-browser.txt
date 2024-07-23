@@ -13,7 +13,7 @@ attrs==23.2.0
     #   referencing
 blinker==1.8.2
     # via streamlit
-cachetools==5.3.3
+cachetools==5.4.0
     # via streamlit
 certifi==2024.7.4
     # via
@@ -44,7 +44,7 @@ jinja2==3.1.4
     #   -c requirements/../requirements.txt
     #   altair
     #   pydeck
-jsonschema==4.22.0
+jsonschema==4.23.0
     # via
     #   -c requirements/../requirements.txt
     #   altair
@@ -64,7 +64,7 @@ mdurl==0.1.2
     # via
     #   -c requirements/../requirements.txt
     #   markdown-it-py
-numpy==1.26.4
+numpy==2.0.1
     # via
     #   -c requirements/../requirements.txt
     #   altair
@@ -85,9 +85,9 @@ pillow==10.4.0
     # via
     #   -c requirements/../requirements.txt
     #   streamlit
-protobuf==4.25.3
+protobuf==5.27.2
     # via streamlit
-pyarrow==16.1.0
+pyarrow==17.0.0
     # via streamlit
 pydeck==0.9.1
     # via streamlit
@@ -112,7 +112,7 @@ rich==13.7.1
     # via
     #   -c requirements/../requirements.txt
     #   streamlit
-rpds-py==0.18.1
+rpds-py==0.19.0
     # via
     #   -c requirements/../requirements.txt
     #   jsonschema
@@ -125,7 +125,7 @@ smmap==5.0.1
     #   gitdb
 streamlit==1.36.0
     # via -r requirements/requirements-browser.in
-tenacity==8.4.2
+tenacity==8.5.0
     # via streamlit
 toml==0.10.2
     # via streamlit
