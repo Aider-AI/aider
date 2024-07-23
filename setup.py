@@ -8,15 +8,11 @@ from aider.help_pats import exclude_website_pats
 
 
 def get_requirements(suffix=""):
-    if suffix:
-        fname = "requirements-" + suffix + ".txt"
-        fname = Path("requirements") / fname
-    else:
-        fname = Path("requirements.txt")
+    suffix = "-" + suffix if suffix else ""
+    fname = "requirements" + suffix + ".in"
+    fname = Path("requirements") / fname
 
-    requirements = fname.read_text().splitlines()
-
-    return requirements
+    return fname.read_text().splitlines()
 
 
 requirements = get_requirements()

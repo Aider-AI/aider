@@ -1,4 +1,4 @@
--c ../requirements.txt
+-c requirements.in
 
 streamlit
 watchdog

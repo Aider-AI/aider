@@ -11,18 +11,13 @@ babel==2.15.0
 build==1.2.1
     # via pip-tools
 certifi==2024.7.4
-    # via
-    #   -c requirements/../requirements.txt
-    #   requests
+    # via requests
 cfgv==3.4.0
     # via pre-commit
 charset-normalizer==3.3.2
-    # via
-    #   -c requirements/../requirements.txt
-    #   requests
+    # via requests
 click==8.1.7
     # via
-    #   -c requirements/../requirements.txt
     #   pip-tools
     #   typer
 cogapp==3.4.1
@@ -42,17 +37,13 @@ docutils==0.20.1
     #   sphinx
     #   sphinx-rtd-theme
 filelock==3.15.4
-    # via
-    #   -c requirements/../requirements.txt
-    #   virtualenv
+    # via virtualenv
 fonttools==4.53.1
     # via matplotlib
 identify==2.5.36
     # via pre-commit
 idna==3.7
-    # via
-    #   -c requirements/../requirements.txt
-    #   requests
+    # via requests
 imagesize==1.4.1
     # via sphinx
 imgcat==0.5.0
@@ -60,40 +51,32 @@ imgcat==0.5.0
 iniconfig==2.0.0
     # via pytest
 jinja2==3.1.4
-    # via
-    #   -c requirements/../requirements.txt
-    #   sphinx
+    # via sphinx
 kiwisolver==1.4.5
     # via matplotlib
 lox==0.12.0
     # via -r requirements/requirements-dev.in
 markdown-it-py==3.0.0
-    # via
-    #   -c requirements/../requirements.txt
-    #   rich
+    # via rich
 markupsafe==2.1.5
-    # via
-    #   -c requirements/../requirements.txt
-    #   jinja2
+    # via jinja2
 matplotlib==3.9.1
     # via -r requirements/requirements-dev.in
 mdurl==0.1.2
-    # via
-    #   -c requirements/../requirements.txt
-    #   markdown-it-py
+    # via markdown-it-py
 multiprocess==0.70.16
     # via pathos
 nodeenv==1.9.1
     # via pre-commit
 numpy==1.26.4
     # via
-    #   -c requirements/../requirements.txt
+    #   -c requirements/requirements.in
     #   contourpy
     #   matplotlib
     #   pandas
 packaging==24.1
     # via
-    #   -c requirements/../requirements.txt
+    #   -c requirements/requirements.in
     #   build
     #   matplotlib
     #   pytest
@@ -104,7 +87,7 @@ pathos==0.3.2
     # via lox
 pillow==10.4.0
     # via
-    #   -c requirements/../requirements.txt
+    #   -c requirements/requirements.in
     #   matplotlib
 pip-tools==7.4.1
     # via -r requirements/requirements-dev.in
@@ -120,7 +103,6 @@ pre-commit==3.7.1
     # via -r requirements/requirements-dev.in
 pygments==2.18.0
     # via
-    #   -c requirements/../requirements.txt
     #   rich
     #   sphinx
 pyparsing==3.1.2
@@ -139,15 +121,13 @@ pytz==2024.1
     # via pandas
 pyyaml==6.0.1
     # via
-    #   -c requirements/../requirements.txt
+    #   -c requirements/requirements.in
     #   pre-commit
 requests==2.32.3
-    # via
-    #   -c requirements/../requirements.txt
-    #   sphinx
+    # via sphinx
 rich==13.7.1
     # via
-    #   -c requirements/../requirements.txt
+    #   -c requirements/requirements.in
     #   typer
 shellingham==1.5.4
     # via typer
@@ -178,15 +158,11 @@ sphinxcontrib-serializinghtml==1.1.10
 typer==0.12.3
     # via -r requirements/requirements-dev.in
 typing-extensions==4.12.2
-    # via
-    #   -c requirements/../requirements.txt
-    #   typer
+    # via typer
 tzdata==2024.1
     # via pandas
 urllib3==2.2.2
-    # via
-    #   -c requirements/../requirements.txt
-    #   requests
+    # via requests
 virtualenv==20.26.3
     # via pre-commit
 wheel==0.43.0
