@@ -68,14 +68,14 @@ class AutoCompleter(Completer):
 
         if text[0] == "/":
             if len(words) == 1 and not text[-1].isspace():
-                partial = words[0]
+                partial = words[0].lower()
                 candidates = self.command_names
                 for cmd in candidates:
                     if cmd.startswith(partial):
                         yield Completion(cmd, start_position=-len(partial))
             elif len(words) > 1 and not text[-1].isspace():
                 cmd = words[0]
-                partial = words[-1]
+                partial = words[-1].lower()
 
                 if cmd not in self.command_names:
                     return
@@ -86,7 +86,7 @@ class AutoCompleter(Completer):
                     candidates = self.command_completions[cmd]
 
                 for word in candidates:
-                    if partial in word:
+                    if partial in word.lower():
                         yield Completion(word, start_position=-len(partial))
             return
 
