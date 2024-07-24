@@ -162,14 +162,7 @@ class RepoMap:
         language = get_language(lang)
         parser = get_parser(lang)
 
-        # Load the tags queries
-        try:
-            scm_fname = resources.files(__package__).joinpath(
-                "queries", f"tree-sitter-{lang}-tags.scm"
-            )
-        except KeyError:
-            return
-        query_scm = scm_fname
+        query_scm = get_scm_fname(lang)
         if not query_scm.exists():
             return
         query_scm = query_scm.read_text()
@@ -514,6 +507,14 @@ def get_random_color():
     return res
 
 
+def get_scm_fname(lang):
+    # Load the tags queries
+    try:
+        return resources.files(__package__).joinpath("queries", f"tree-sitter-{lang}-tags.scm")
+    except KeyError:
+        return
+
+
 def get_supported_languages_md():
     from grep_ast.parsers import PARSERS
 
@@ -523,7 +524,9 @@ def get_supported_languages_md():
 """
     data = sorted((lang, ex) for ex, lang in PARSERS.items())
     for lang, ext in data:
-        res += f"| {lang:20} | {ext:20} |\n"
+        fn = get_scm_fname(lang)
+        if Path(fn).exists():
+            res += f"| {lang:20} | {ext:20} |\n"
 
     res += "\n"
 
