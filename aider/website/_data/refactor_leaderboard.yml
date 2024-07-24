@@ -165,26 +165,25 @@
   seconds_per_case: 42.8
   total_cost: 11.5242
 
-
-- dirname: 2024-07-04-15-06-43--refac-deepseek-coder2-128k
+- dirname: 2024-07-24-07-49-39--refac-deepseek-coder-v2-0724
   test_cases: 89
-  model: DeepSeek Coder V2 (128k context)
+  model: DeepSeek Coder V2 0724
   edit_format: diff
-  commit_hash: 08868fd
-  pass_rate_1: 38.2
-  percent_cases_well_formed: 73.0
-  error_outputs: 393
-  num_malformed_responses: 89
-  num_with_malformed_responses: 24
-  user_asks: 4
+  commit_hash: bb6e597
+  pass_rate_1: 32.6
+  percent_cases_well_formed: 59.6
+  error_outputs: 487
+  num_malformed_responses: 113
+  num_with_malformed_responses: 36
+  user_asks: 10
   lazy_comments: 2
   syntax_errors: 1
-  indentation_errors: 5
+  indentation_errors: 12
   exhausted_context_windows: 3
   test_timeouts: 0
   command: aider --model deepseek/deepseek-coder
-  date: 2024-07-04
-  versions: 0.42.1-dev
-  seconds_per_case: 82.9
-  total_cost: 0.2601
+  date: 2024-07-24
+  versions: 0.45.2-dev
+  seconds_per_case: 85.0
+  total_cost: 0.4148
   
