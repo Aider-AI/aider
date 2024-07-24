@@ -729,15 +729,38 @@
   seconds_per_case: 37.1
   total_cost: 0.0000
 
-- dirname: 2024-07-23-21-55-43--llama-205b-whole
+- dirname: 2024-07-23-22-07-08--llama-205b-diff
   test_cases: 133
-  model: openrouter/meta-llama/llama-3.1-405b-instruct
+  model: llama-3.1-405b-instruct (diff)
+  edit_format: diff
+  commit_hash: f7ce78b-dirty
+  pass_rate_1: 46.6
+  pass_rate_2: 63.9
+  percent_cases_well_formed: 92.5
+  error_outputs: 84
+  num_malformed_responses: 19
+  num_with_malformed_responses: 10
+  user_asks: 3
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 1
+  exhausted_context_windows: 0
+  test_timeouts: 4
+  command: aider --model openrouter/meta-llama/llama-3.1-405b-instruct
+  date: 2024-07-23
+  versions: 0.45.2-dev
+  seconds_per_case: 56.8
+  total_cost: 0.0000
+
+- dirname: 2024-07-24-06-30-29--llama-405b-whole
+  test_cases: 133
+  model: llama-3.1-405b-instruct (whole)
   edit_format: whole
-  commit_hash: f7ce78b
-  pass_rate_1: 45.9
-  pass_rate_2: 60.2
+  commit_hash: a362dea-dirty
+  pass_rate_1: 48.9
+  pass_rate_2: 66.2
   percent_cases_well_formed: 100.0
-  error_outputs: 10
+  error_outputs: 0
   num_malformed_responses: 0
   num_with_malformed_responses: 0
   user_asks: 0
@@ -747,8 +770,8 @@
   exhausted_context_windows: 0
   test_timeouts: 2
   command: aider --model openrouter/meta-llama/llama-3.1-405b-instruct
-  date: 2024-07-23
+  date: 2024-07-24
   versions: 0.45.2-dev
-  seconds_per_case: 39.1
+  seconds_per_case: 18.1
   total_cost: 0.0000
   
