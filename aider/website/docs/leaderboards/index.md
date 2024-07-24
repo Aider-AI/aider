@@ -1,6 +1,7 @@
 ---
 highlight_image: /assets/leaderboard.jpg
 nav_order: 950
+description: Quantitative benchmarks of LLM code editing skill.
 ---
 
 # Aider LLM Leaderboards
