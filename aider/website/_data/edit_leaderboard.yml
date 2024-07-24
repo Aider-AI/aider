@@ -590,53 +590,7 @@
   versions: 0.42.1-dev
   seconds_per_case: 17.6
   total_cost: 3.6346
-  
-- dirname: 2024-06-17-14-45-54--deepseek-coder2-whole
-  test_cases: 133
-  model: DeepSeek Coder V2 (whole)
-  edit_format: whole
-  commit_hash: ca8672b
-  pass_rate_1: 63.9
-  pass_rate_2: 75.2
-  percent_cases_well_formed: 100.0
-  error_outputs: 1
-  num_malformed_responses: 0
-  num_with_malformed_responses: 0
-  user_asks: 1
-  lazy_comments: 0
-  syntax_errors: 1
-  indentation_errors: 0
-  exhausted_context_windows: 0
-  test_timeouts: 7
-  command: aider --model deepseek/deepseek-coder
-  date: 2024-06-17
-  versions: 0.38.1-dev
-  seconds_per_case: 21.1
-  total_cost: 0.0537
-  
-- dirname: 2024-06-21-15-29-08--deepseek-coder2-diff-again3
-  test_cases: 133
-  model: DeepSeek Coder V2 (diff)
-  edit_format: diff
-  commit_hash: 515ab3e
-  pass_rate_1: 58.6
-  pass_rate_2: 66.2
-  percent_cases_well_formed: 98.5
-  error_outputs: 23
-  num_malformed_responses: 5
-  num_with_malformed_responses: 2
-  user_asks: 2
-  lazy_comments: 0
-  syntax_errors: 0
-  indentation_errors: 1
-  exhausted_context_windows: 0
-  test_timeouts: 2
-  command: aider --model deepseek/deepseek-coder
-  date: 2024-06-21
-  versions: 0.39.1-dev
-  seconds_per_case: 30.2
-  total_cost: 0.0857
-
+    
 - dirname: 2024-07-01-21-41-48--haiku-whole
   test_cases: 133
   model: claude-3-haiku-20240307
@@ -774,4 +728,26 @@
   versions: 0.45.2-dev
   seconds_per_case: 18.1
   total_cost: 0.0000
-  
+
+- dirname: 2024-07-24-07-10-58--deepseek-coder2-0724-diff-direct
+  test_cases: 133
+  model: DeepSeek Coder V2 0724
+  edit_format: diff
+  commit_hash: 89965bf
+  pass_rate_1: 57.9
+  pass_rate_2: 72.9
+  percent_cases_well_formed: 97.7
+  error_outputs: 13
+  num_malformed_responses: 3
+  num_with_malformed_responses: 3
+  user_asks: 1
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 1
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  command: aider --model deepseek/deepseek-coder
+  date: 2024-07-24
+  versions: 0.45.2-dev
+  seconds_per_case: 36.2
+  total_cost: 0.0981
