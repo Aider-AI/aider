@@ -751,3 +751,27 @@
   versions: 0.45.2-dev
   seconds_per_case: 36.2
   total_cost: 0.0981
+
+- dirname: 2024-07-24-19-08-47--mistral-large-2407-whole
+  test_cases: 133
+  model: Mistral Large 2 (2407)
+  edit_format: whole
+  commit_hash: 859a13e
+  pass_rate_1: 39.8
+  pass_rate_2: 60.2
+  percent_cases_well_formed: 100.0
+  error_outputs: 3
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 3
+  lazy_comments: 0
+  syntax_errors: 1
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: aider --model mistral/mistral-large-2407
+  date: 2024-07-24
+  versions: 0.45.2-dev
+  seconds_per_case: 26.6
+  total_cost: 0.0000
+  
