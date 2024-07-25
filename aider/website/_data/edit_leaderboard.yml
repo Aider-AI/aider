@@ -774,4 +774,49 @@
   versions: 0.45.2-dev
   seconds_per_case: 26.6
   total_cost: 0.0000
-  
+
+- dirname: 2024-07-25-08-12-27--fireworks-llama-8b-whole
+  test_cases: 133
+  model: llama-3.1-8b-instruct
+  edit_format: whole
+  commit_hash: ffcced8
+  pass_rate_1: 26.3
+  pass_rate_2: 37.6
+  percent_cases_well_formed: 100.0
+  error_outputs: 27
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 23
+  lazy_comments: 8
+  syntax_errors: 1
+  indentation_errors: 0
+  exhausted_context_windows: 4
+  test_timeouts: 7
+  command: aider --model fireworks_ai/accounts/fireworks/models/llama-v3p1-8b-instruct
+  date: 2024-07-25
+  versions: 0.45.2-dev
+  seconds_per_case: 3.8
+  total_cost: 0.0000
+
+- dirname: 2024-07-25-08-07-45--fireworks-llama-70b-whole
+  test_cases: 133
+  model: llama-3.1-70b-instruct
+  edit_format: whole
+  commit_hash: ffcced8
+  pass_rate_1: 43.6
+  pass_rate_2: 58.6
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 6
+  command: aider --model fireworks_ai/accounts/fireworks/models/llama-v3p1-70b-instruct
+  date: 2024-07-25
+  versions: 0.45.2-dev
+  seconds_per_case: 7.3
+  total_cost: 0.0000
