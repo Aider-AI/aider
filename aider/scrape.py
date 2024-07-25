@@ -97,7 +97,8 @@ class Scraper:
             content = self.scrape_with_httpx(url)
 
         if not content:
-            return
+            self.print_error(f"Failed to retrieve content from {url}")
+            return None
 
         self.try_pandoc()
 
@@ -130,8 +131,14 @@ class Scraper:
                 page.goto(url, wait_until="networkidle", timeout=5000)
             except playwright._impl._errors.TimeoutError:
                 pass
-            content = page.content()
-            browser.close()
+            
+            try:
+                content = page.content()
+            except playwright._impl._errors.Error as e:
+                self.print_error(f"Error retrieving page content: {str(e)}")
+                content = None
+            finally:
+                browser.close()
 
         return content
 
