@@ -32,26 +32,29 @@ included for scale.
 DeepSeek Coder V2 0724 was by far the biggest surprise
 and strongest code editing model, coming in 2nd on the leaderboard.
 It can
-efficiently edit code with SEARCH/REPLACE, unlike the prior
+efficiently edit code with SEARCH/REPLACE, unlike
 the prior DeepSeek Coder version.
 This unlocks the ability to edit large files. 
-This Coder got 73% on the benchmark,
+
+This new Coder version got 73% on the benchmark,
 very
-close to Sonnet (77%) but 20-50X less expensive!
+close to Sonnet's 77% but 20-50X less expensive!
 
 ## LLama 3.1
 
-Meta released the family of Llama 3.1 models,
+Meta released the
+Llama 3.1 family of models,
 which have performed well on many evals.
 
 The flagship Llama 3.1 405B instruct only 
-securing #7 on aider's leaderboard.
+secured #7 on aider's leaderboard.
 This is well behind frontier models like
 Claude 3.5 Sonnet & GPT-4o. 
 
 The 405B model can use SEARCH/REPLACE to efficiently
-edit code, but at a significant decrease in the benchmark score.
-When using this "diff" editing format, its score dropped to 64%.
+edit code, but with a decrease in the benchmark score.
+When using this "diff" editing format, its score dropped 
+from 66% to 64%.
 
 The smaller 70B model was competitive with GPT-3.5, while
 the 8B model lags far behind.
