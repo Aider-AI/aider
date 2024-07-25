@@ -68,6 +68,31 @@ class TestScrape(unittest.TestCase):
         # Assert that print_error was never called
         mock_print_error.assert_not_called()
 
+    def test_scrape_with_playwright_error_handling(self):
+        # Create a Scraper instance with a mock print_error function
+        mock_print_error = MagicMock()
+        scraper = Scraper(print_error=mock_print_error, playwright_available=True)
+
+        # Mock the playwright module to raise an error
+        import playwright
+        playwright._impl._errors.Error = Exception  # Mock the Error class
+        
+        def mock_content():
+            raise playwright._impl._errors.Error("Test error")
+
+        # Mock the necessary objects and methods
+        scraper.scrape_with_playwright = MagicMock()
+        scraper.scrape_with_playwright.return_value = None
+        
+        # Call the scrape method
+        result = scraper.scrape("https://example.com")
+
+        # Assert that the result is None
+        self.assertIsNone(result)
+
+        # Assert that print_error was called with the expected error message
+        mock_print_error.assert_called_once_with("Failed to retrieve content from https://example.com")
+
 
 if __name__ == "__main__":
     unittest.main()
