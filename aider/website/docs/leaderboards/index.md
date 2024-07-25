@@ -84,7 +84,11 @@ from Exercism. This benchmark measures the LLM's coding ability, but also whethe
       leaderboardData.datasets[0].data = [];
 
       allData.forEach(function(row, index) {
-        if (showAll || document.getElementById('edit-row-' + index).classList.contains('selected')) {
+        var rowElement = document.getElementById('edit-row-' + index);
+        if (showAll) {
+          rowElement.classList.remove('selected');
+        }
+        if (showAll || rowElement.classList.contains('selected')) {
           leaderboardData.labels.push(row.model);
           leaderboardData.datasets[0].data.push(row.pass_rate_2);
         }
@@ -126,7 +130,7 @@ from Exercism. This benchmark measures the LLM's coding ability, but also whethe
 </script>
 <style>
   tr.selected {
-    background-color: #e6f3ff;
+    color: #0056b3;
   }
 </style>
 
@@ -195,7 +199,11 @@ Therefore, results are available for fewer models.
       leaderboardData.datasets[0].data = [];
 
       allData.forEach(function(row, index) {
-        if (showAll || document.getElementById('refac-row-' + index).classList.contains('selected')) {
+        var rowElement = document.getElementById('refac-row-' + index);
+        if (showAll) {
+          rowElement.classList.remove('selected');
+        }
+        if (showAll || rowElement.classList.contains('selected')) {
           leaderboardData.labels.push(row.model);
           leaderboardData.datasets[0].data.push(row.pass_rate_1);
         }
