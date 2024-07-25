@@ -27,6 +27,32 @@ included for scale.
 - **58% gpt-3.5-turbo-0301**
 - 38% llama-3.1-8b-instruct
 
+You can code with all of these models using aider like this:
+
+```
+$ pip install aider-chat
+
+# Change directory into a git repo to work on
+$ cd /to/your/git/repo
+
+$ export DEEPSEEK_API_KEY=your-key-goes-here
+$ aider --model deepseek/deepseek-coder
+
+$ export MISTRAL_API_KEY=your-key-goes-here
+$ aider --model mistral/mistral-large-2407
+
+$ export OPENROUTER_API_KEY=your-key-goes-here
+$ aider --model openrouter/meta-llama/llama-3.1-405b-instruct
+$ aider --model openrouter/meta-llama/llama-3.1-70b-instruct
+$ aider --model openrouter/meta-llama/llama-3.1-8b-instruct
+```
+
+See the
+[installation instructions](https://aider.chat/docs/install.html)
+and other
+[documentation](https://aider.chat/docs/usage.html)
+for more details.
+
 ## DeepSeek Coder V2 0724
 
 DeepSeek Coder V2 0724 was by far the biggest surprise
