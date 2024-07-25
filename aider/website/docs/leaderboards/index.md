@@ -51,6 +51,7 @@ from Exercism. This benchmark measures the LLM's coding ability, but also whethe
   </tbody>
 </table>
 
+<div id="editChartControls"></div>
 <canvas id="editChart" width="800" height="450" style="margin-top: 20px"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -74,11 +75,47 @@ from Exercism. This benchmark measures the LLM's coding ability, but also whethe
       }]
     };
 
+    var allData = [];
     {% for row in edit_sorted %}
-      leaderboardData.labels.push('{{ row.model }}');
-      leaderboardData.datasets[0].data.push({{ row.pass_rate_2 }});
-      leaderboardData.datasets[1].data.push({{ row.percent_cases_well_formed }});
+      allData.push({
+        model: '{{ row.model }}',
+        pass_rate_2: {{ row.pass_rate_2 }},
+        percent_cases_well_formed: {{ row.percent_cases_well_formed }}
+      });
     {% endfor %}
+
+    function updateChart() {
+      leaderboardData.labels = [];
+      leaderboardData.datasets[0].data = [];
+      leaderboardData.datasets[1].data = [];
+
+      allData.forEach(function(row, index) {
+        if (document.getElementById('edit-checkbox-' + index).checked) {
+          leaderboardData.labels.push(row.model);
+          leaderboardData.datasets[0].data.push(row.pass_rate_2);
+          leaderboardData.datasets[1].data.push(row.percent_cases_well_formed);
+        }
+      });
+
+      leaderboardChart.update();
+    }
+
+    var controlsDiv = document.getElementById('editChartControls');
+    allData.forEach(function(row, index) {
+      var checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.id = 'edit-checkbox-' + index;
+      checkbox.checked = true;
+      checkbox.onchange = updateChart;
+
+      var label = document.createElement('label');
+      label.htmlFor = 'edit-checkbox-' + index;
+      label.appendChild(document.createTextNode(row.model));
+
+      controlsDiv.appendChild(checkbox);
+      controlsDiv.appendChild(label);
+      controlsDiv.appendChild(document.createElement('br'));
+    });
 
     var leaderboardChart = new Chart(ctx, {
       type: 'bar',
@@ -96,6 +133,8 @@ from Exercism. This benchmark measures the LLM's coding ability, but also whethe
         }
       }
     });
+
+    updateChart();
   });
 </script>
 
@@ -131,6 +170,7 @@ Therefore, results are available for fewer models.
   </tbody>
 </table>
 
+<div id="refacChartControls"></div>
 <canvas id="refacChart" width="800" height="450" style="margin-top: 20px"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -154,11 +194,47 @@ Therefore, results are available for fewer models.
       }]
     };
 
+    var allData = [];
     {% for row in refac_sorted %}
-      leaderboardData.labels.push('{{ row.model }}');
-      leaderboardData.datasets[0].data.push({{ row.pass_rate_1 }});
-      leaderboardData.datasets[1].data.push({{ row.percent_cases_well_formed }});
+      allData.push({
+        model: '{{ row.model }}',
+        pass_rate_1: {{ row.pass_rate_1 }},
+        percent_cases_well_formed: {{ row.percent_cases_well_formed }}
+      });
     {% endfor %}
+
+    function updateChart() {
+      leaderboardData.labels = [];
+      leaderboardData.datasets[0].data = [];
+      leaderboardData.datasets[1].data = [];
+
+      allData.forEach(function(row, index) {
+        if (document.getElementById('refac-checkbox-' + index).checked) {
+          leaderboardData.labels.push(row.model);
+          leaderboardData.datasets[0].data.push(row.pass_rate_1);
+          leaderboardData.datasets[1].data.push(row.percent_cases_well_formed);
+        }
+      });
+
+      leaderboardChart.update();
+    }
+
+    var controlsDiv = document.getElementById('refacChartControls');
+    allData.forEach(function(row, index) {
+      var checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.id = 'refac-checkbox-' + index;
+      checkbox.checked = true;
+      checkbox.onchange = updateChart;
+
+      var label = document.createElement('label');
+      label.htmlFor = 'refac-checkbox-' + index;
+      label.appendChild(document.createTextNode(row.model));
+
+      controlsDiv.appendChild(checkbox);
+      controlsDiv.appendChild(label);
+      controlsDiv.appendChild(document.createElement('br'));
+    });
 
     var leaderboardChart = new Chart(ctx, {
       type: 'bar',
@@ -176,6 +252,8 @@ Therefore, results are available for fewer models.
         }
       }
     });
+
+    updateChart();
   });
 </script>
 
