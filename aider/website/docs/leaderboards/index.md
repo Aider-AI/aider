@@ -64,13 +64,6 @@ from Exercism. This benchmark measures the LLM's coding ability, but also whethe
         backgroundColor: 'rgba(54, 162, 235, 0.2)',
         borderColor: 'rgba(54, 162, 235, 1)',
         borderWidth: 1
-      },
-      {
-        label: 'Percent using correct edit format',
-        data: [],
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-        borderColor: 'rgba(255, 99, 132, 1)',
-        borderWidth: 1
       }]
     };
 
@@ -89,13 +82,11 @@ from Exercism. This benchmark measures the LLM's coding ability, but also whethe
 
       leaderboardData.labels = [];
       leaderboardData.datasets[0].data = [];
-      leaderboardData.datasets[1].data = [];
 
       allData.forEach(function(row, index) {
         if (showAll || document.getElementById('edit-row-' + index).classList.contains('selected')) {
           leaderboardData.labels.push(row.model);
           leaderboardData.datasets[0].data.push(row.pass_rate_2);
-          leaderboardData.datasets[1].data.push(row.percent_cases_well_formed);
         }
       });
 
@@ -184,13 +175,6 @@ Therefore, results are available for fewer models.
         backgroundColor: 'rgba(54, 162, 235, 0.2)',
         borderColor: 'rgba(54, 162, 235, 1)',
         borderWidth: 1
-      },
-      {
-        label: 'Percent using correct edit format',
-        data: [],
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-        borderColor: 'rgba(255, 99, 132, 1)',
-        borderWidth: 1
       }]
     };
 
@@ -209,13 +193,11 @@ Therefore, results are available for fewer models.
 
       leaderboardData.labels = [];
       leaderboardData.datasets[0].data = [];
-      leaderboardData.datasets[1].data = [];
 
       allData.forEach(function(row, index) {
         if (showAll || document.getElementById('refac-row-' + index).classList.contains('selected')) {
           leaderboardData.labels.push(row.model);
           leaderboardData.datasets[0].data.push(row.pass_rate_1);
-          leaderboardData.datasets[1].data.push(row.percent_cases_well_formed);
         }
       });
 
