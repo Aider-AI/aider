@@ -5,6 +5,7 @@ description: Quantitative benchmarks of LLM code editing skill.
 ---
 
 # Aider LLM Leaderboards
+{: .no_toc }
 
 Aider works best with LLMs which are good at *editing* code, not just good at writing
 code.
@@ -16,10 +17,15 @@ The leaderboards below report the results from a number of popular LLMs.
 While [aider can connect to almost any LLM](/docs/llms.html),
 it works best with models that score well on the benchmarks.
 
+See the following sections for benchmark
+results and additional information:
+- TOC
+{:toc}
 
 ## Code editing leaderboard
 
-[Aider's code editing benchmark](/docs/benchmarks.html#the-benchmark) asks the LLM to edit python source files to complete 133 small coding exercises. This benchmark measures the LLM's coding ability, but also whether it can consistently emit code edits in the format specified in the system prompt.
+[Aider's code editing benchmark](/docs/benchmarks.html#the-benchmark) asks the LLM to edit python source files to complete 133 small coding exercises
+from Exercism. This benchmark measures the LLM's coding ability, but also whether it can consistently emit code edits in the format specified in the system prompt.
 
 <table style="width: 100%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
   <thead style="background-color: #f2f2f2;">
