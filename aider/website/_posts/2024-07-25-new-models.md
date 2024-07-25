@@ -47,8 +47,8 @@ Llama 3.1 family of models,
 which have performed well on many evals.
 
 The flagship Llama 3.1 405B instruct only 
-secured #7 on aider's leaderboard.
-This is well behind frontier models like
+secured #7 on aider's leaderboard, 
+well behind frontier models like
 Claude 3.5 Sonnet & GPT-4o. 
 
 The 405B model can use SEARCH/REPLACE to efficiently
@@ -58,6 +58,9 @@ from 66% to 64%.
 
 The smaller 70B model was competitive with GPT-3.5, while
 the 8B model lags far behind.
+Both seem unable to reliably use SEARCH/REPLACE to edit files.
+This limits them to editing smaller files that can
+fit into their output token limit.
 
 ## Mistral Large 2 (2407)
 
