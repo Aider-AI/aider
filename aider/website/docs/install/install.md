@@ -60,6 +60,16 @@ Or, you could
 [use pipx to install aider](/docs/install/pipx.html)
 once for your whole system.
 
+## Running aider as a module
+
+In some environments the `aider` command may not be available
+on your shell path.
+You can also run aider as a module, like this:
+
+```
+$ python -m aider (...rest of aider args...)
+```
+
 ## Working with other LLMs
 
 {% include works-best.md %}
