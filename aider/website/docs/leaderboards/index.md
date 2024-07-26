@@ -25,7 +25,10 @@ results and additional information:
 ## Code editing leaderboard
 
 [Aider's code editing benchmark](/docs/benchmarks.html#the-benchmark) asks the LLM to edit python source files to complete 133 small coding exercises
-from Exercism. This benchmark measures the LLM's coding ability, but also whether it can consistently emit code edits in the format specified in the system prompt.
+from Exercism. 
+This measures the LLM's coding ability, and whether it can
+write new code that integrates into existing code.
+The model also has to successfully apply all its changes to the source file without human intervention.
 
 <table style="width: 100%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
   <thead style="background-color: #f2f2f2;">
