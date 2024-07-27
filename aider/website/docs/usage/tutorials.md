@@ -8,6 +8,7 @@ description: Intro and tutorial videos made by aider users.
 
 Here are some tutorial videos made by aider users:
 
+- [Step-by-Step Development Environment Setup for AI-Assisted Coding](https://www.youtube.com/watch?v=DnBVgfe6ZQM) -- Coding the Future With AI
 - [Generate FULL-STACK Apps with Claude 3.5 Sonnet](https://youtu.be/sKeIZGW8xzg) -- AICodeKing
 - [Creating Games with AI from Start-To-End](https://youtu.be/sOd2YYZFMUs) -- AICodeKing
 - [Claude 3.5 and aider: Use AI Assistants to Build AI Apps](https://youtu.be/0hIisJ3xAdU) -- Coding the Future With AI
