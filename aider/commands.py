@@ -15,7 +15,7 @@ from aider.utils import is_image_file
 from .dump import dump  # noqa: F401
 
 
-class SwitchModel(Exception):
+class SwitchCoder(Exception):
     def __init__(self, model=None, edit_format=None):
         self.model = model
         self.edit_format = edit_format
@@ -43,7 +43,7 @@ class Commands:
         model_name = args.strip()
         model = models.Model(model_name)
         models.sanity_check_models(self.io, model)
-        raise SwitchModel(model=model)
+        raise SwitchCoder(model=model)
 
     def cmd_mode(self, args):
         "Switch to a new editing mode"
@@ -52,10 +52,12 @@ class Commands:
         valid_formats = "diff udiff whole".split()
 
         if ef not in valid_formats:
-            self.io.tool_error(f"Invalid edit format: {ef}. Valid formats are: {', '.join(valid_formats)}")
+            self.io.tool_error(
+                f"Invalid edit format: {ef}. Valid formats are: {', '.join(valid_formats)}"
+            )
             return
 
-        raise SwitchModel(edit_format=ef)
+        raise SwitchCoder(edit_format=ef)
 
     def completions_model(self):
         models = litellm.model_cost.keys()

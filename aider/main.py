@@ -12,7 +12,7 @@ from prompt_toolkit.enums import EditingMode
 from aider import __version__, models, utils
 from aider.args import get_parser
 from aider.coders import Coder
-from aider.commands import SwitchModel
+from aider.commands import SwitchCoder
 from aider.io import InputOutput
 from aider.llm import litellm  # noqa: F401; properly init litellm on launch
 from aider.repo import GitRepo
@@ -587,8 +587,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         try:
             coder.run()
             return
-        except SwitchModel as switch:
-            coder = Coder.create(main_model=switch.model, io=io, from_coder=coder)
+        except SwitchCoder as switch:
+            coder = Coder.create(
+                main_model=switch.model,
+                edit_format=switch.edit_format,
+                io=io,
+                from_coder=coder,
+            )
             coder.show_announcements()
 
 
