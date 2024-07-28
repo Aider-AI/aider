@@ -619,15 +619,15 @@ class Commands:
         if add_on_nonzero_exit:
             add = result.returncode != 0
         else:
-            response = self.io.prompt(
-                "Add the output to the chat? (yes/y/no/n/instructions): ",
-                default="no"
-            ).lower().strip()
+            response = self.io.prompt_ask(
+                "Add the output to the chat? (y/n/instructions): ",
+                default="y"
+            ).strip()
 
-            if response in ["yes", "y"]:
+            if response.lower() in ["yes", "y"]:
                 add = True
                 instructions = None
-            elif response in ["no", "n"]:
+            elif response.lower() in ["no", "n"]:
                 add = False
                 instructions = None
             else:
@@ -644,7 +644,7 @@ class Commands:
             )
 
             if instructions:
-                msg += f"\n\nAdditional instructions: {instructions}"
+                msg += f"\n\n{instructions}"
 
             return msg
 
