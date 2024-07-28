@@ -619,7 +619,20 @@ class Commands:
         if add_on_nonzero_exit:
             add = result.returncode != 0
         else:
-            add = self.io.confirm_ask("Add the output to the chat?", default="y")
+            response = self.io.prompt(
+                "Add the output to the chat? (yes/no/instructions): ",
+                default="no"
+            ).lower().strip()
+
+            if response == "yes":
+                add = True
+                instructions = None
+            elif response == "no":
+                add = False
+                instructions = None
+            else:
+                add = True
+                instructions = response
 
         if add:
             for line in combined_output.splitlines():
@@ -629,6 +642,10 @@ class Commands:
                 command=args,
                 output=combined_output,
             )
+
+            if instructions:
+                msg += f"\n\nAdditional instructions: {instructions}"
+
             return msg
 
     def cmd_exit(self, args):
