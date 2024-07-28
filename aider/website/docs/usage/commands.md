@@ -41,19 +41,19 @@ You can easily re-send commands or messages.
 Use the up arrow ⬆ to scroll back
 or CONTROL-R to search your message history.
 
-# Entering multi-line chat messages
+## Entering multi-line chat messages
 
 {% include multi-line.md %}
 
-# Interrupting with CONTROL-C
+## Interrupting with CONTROL-C
 
 It's always safe to use Control-C to interrupt aider if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply to the LLM with more information or direction.
 
-# Keybindings
+## Keybindings
 
 The interactive prompt is built with [prompt-toolkit](https://github.com/prompt-toolkit/python-prompt-toolkit) which provides emacs and vi keybindings. 
 
-## Emacs
+### Emacs
 
 - `Ctrl-A` : Move cursor to the start of the line.
 - `Ctrl-B` : Move cursor back one character.
@@ -67,7 +67,7 @@ The interactive prompt is built with [prompt-toolkit](https://github.com/prompt-
 - `Ctrl-R` : Reverse search in command history.
 
 
-## Vi
+### Vi
 
 To use vi/vim keybindings, run aider with the `--vim` switch.
 
