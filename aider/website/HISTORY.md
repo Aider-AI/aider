@@ -12,6 +12,19 @@ cog.out(text)
 
 # Release history
 
+### main branch
+
+- Enhanced token usage and cost reporting. Now works when streaming too.
+- Filename auto-complete for `/add` and `/drop` is case-insensitive now.
+- Updated commit message prompt to use imperative tense.
+- Updates and fixed to `--no-verify-ssl`:
+  - Fixed regression that broke it in v0.42.0.
+  - Disables SSL certificate verification when `/web` scrapes websites.
+- Fixed syntax error in Elm's tree-sitter scm file (by @cjoach).
+- Improved error handling and reporting in `/web` scraping functionality
+- Stop aider from asking to add the same url to the chat multiple times.
+- Updated dependencies to latest versions.
+
 ### Aider v0.45.1
 
 - Use 4o-mini as the weak model wherever 3.5-turbo was used.
