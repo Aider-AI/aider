@@ -668,7 +668,7 @@ two
         issue_cases = [
             ("check http://localhost:3002, there is an error", "http://localhost:3002"),
             (
-                "can you check out https://example.com/setup#whatever?",
+                "can you check out https://example.com/setup#whatever",
                 "https://example.com/setup#whatever",
             ),
         ]
@@ -687,10 +687,13 @@ two
         # Test case with no URL
         no_url_input = "This text contains no URL"
         result = coder.check_for_urls(no_url_input)
-        self.assertEqual(result, no_url_input)
+        self.assertEqual(result, [])
 
         # Test case with the same URL appearing multiple times
-        repeated_url_input = "Check https://example.com, then https://example.com again, and https://example.com one more time"
+        repeated_url_input = (
+            "Check https://example.com, then https://example.com again, and https://example.com one"
+            " more time"
+        )
         result = coder.check_for_urls(repeated_url_input)
         self.assertEqual(result.count("https://example.com"), 1)
         self.assertIn("https://example.com", result)

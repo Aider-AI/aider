@@ -664,7 +664,7 @@ class Coder:
             return self.commands.run(inp)
 
         self.check_for_file_mentions(inp)
-        inp = self.check_for_urls(inp)
+        self.check_for_urls(inp)
 
         return inp
 
@@ -676,7 +676,7 @@ class Coder:
                 inp += "\n\n"
                 inp += self.commands.cmd_web(url)
 
-        return inp
+        return urls
 
     def keyboard_interrupt(self):
         now = time.time()
@@ -1227,11 +1227,12 @@ class Coder:
                     sys.stdout.write(text)
                 except UnicodeEncodeError:
                     # Safely encode and decode the text
-                    safe_text = text.encode(sys.stdout.encoding, errors='backslashreplace').decode(sys.stdout.encoding)
+                    safe_text = text.encode(sys.stdout.encoding, errors="backslashreplace").decode(
+                        sys.stdout.encoding
+                    )
                     sys.stdout.write(safe_text)
                 sys.stdout.flush()
                 yield text
-
 
     def live_incremental_response(self, final):
         show_resp = self.render_incremental_response(final)
