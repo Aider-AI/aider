@@ -124,7 +124,7 @@ class Coder:
             kwargs = use_kwargs
 
         for coder in coders.__all__:
-            if hasattr(coder, 'edit_format') and coder.edit_format == edit_format:
+            if hasattr(coder, "edit_format") and coder.edit_format == edit_format:
                 res = coder(main_model, io, **kwargs)
                 res.original_kwargs = dict(kwargs)
                 return res
@@ -790,10 +790,11 @@ class Coder:
         messages += self.done_messages
         messages += self.get_files_messages()
 
-
         if self.gpt_prompts.system_reminder:
             reminder_message = [
-                dict(role="system", content=self.fmt_system_prompt(self.gpt_prompts.system_reminder)),
+                dict(
+                    role="system", content=self.fmt_system_prompt(self.gpt_prompts.system_reminder)
+                ),
             ]
         else:
             reminder_message = []
@@ -815,7 +816,11 @@ class Coder:
 
         max_input_tokens = self.main_model.info.get("max_input_tokens")
         # Add the reminder prompt if we still have room to include it.
-        if max_input_tokens is None or total_tokens < max_input_tokens and self.gpt_prompts.system_reminder:
+        if (
+            max_input_tokens is None
+            or total_tokens < max_input_tokens
+            and self.gpt_prompts.system_reminder
+        ):
             if self.main_model.reminder_as_sys_msg:
                 messages += reminder_message
             elif final["role"] == "user":
@@ -890,6 +895,8 @@ class Coder:
             self.partial_response_content = self.get_multi_response_content(True)
             self.multi_response_content = ""
 
+        self.io.tool_output()
+
         if self.usage_report:
             self.io.tool_output(self.usage_report)
 
@@ -908,8 +915,6 @@ class Coder:
             content = self.partial_response_content
         else:
             content = ""
-
-        self.io.tool_output()
 
         if interrupted:
             content += "\n^C KeyboardInterrupt"
