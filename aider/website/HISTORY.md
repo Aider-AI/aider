@@ -15,6 +15,13 @@ cog.out(text)
 ### main branch
 
 - New `/ask <question>` command to ask about your code, without making any edits.
+- New `chat-mode <mode>` command to switch modes (edit formats):
+  - diff        A coder that uses search/replace blocks for code modifications.
+  - diff-fenced A coder that uses fenced search/replace blocks for code modifications.
+  - whole       A coder that operates on entire files for code modifications.
+  - udiff       A coder that uses unified diff format for code modifications.
+  - help        Interactive help and documentation about aider.
+  - ask         Ask questions about code without making any changes.
 - Enhanced token usage and cost reporting. Now works when streaming too.
 - Filename auto-complete for `/add` and `/drop` is case-insensitive now.
 - Commit message improvements:
