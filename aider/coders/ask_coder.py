@@ -1,10 +1,5 @@
-from pathlib import Path
-
-from aider import diffs
-
-from ..dump import dump  # noqa: F401
-from .base_coder import Coder
 from .ask_prompts import AskPrompts
+from .base_coder import Coder
 
 
 class AskCoder(Coder):
