@@ -3,14 +3,13 @@
 
 ### main branch
 
-- Add `--verify-ssl` option to disable SSL certificate verification when scraping websites
-- Improve error handling and reporting in web scraping functionality
-- Update commit message prompt to use imperative tense
-- Enhance token usage and cost reporting
-- Refactor and improve code in various modules
-- Update dependencies to latest versions
-- Add new models to the code editing leaderboard
-- Improve documentation and fix typos
+- Filename auto-complete for `/add` and `/drop` is case-insensitive now.
+- Updated `--verify-ssl` option to also disable SSL certificate verification when `/web` scrapes websites.
+- Improved error handling and reporting in `/web` scraping functionality
+- Fixed syntax error in Elm's tree-sitter scm file (by @cjoach).
+- Updated commit message prompt to use imperative tense.
+- Enhanced token usage and cost reporting. Works when streaming too.
+- Updated dependencies to latest versions.
 
 ### Aider v0.45.1
 
