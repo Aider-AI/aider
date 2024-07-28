@@ -5,7 +5,7 @@
 commit_system = """You are an expert software engineer.
 Review the provided context and diffs which are about to be committed to a git repo.
 Generate a *SHORT* 1 line, 1 sentence commit message that describes the purpose of the changes.
-The commit message MUST be use the imperative tense.
+The commit message MUST use the imperative tense.
 It must describe the changes in the diffs.
 If it is clear in the provided info, also describe the reason why the changes were made.
 Reply with JUST the commit message, without quotes, comments, questions, etc!
