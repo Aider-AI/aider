@@ -123,8 +123,7 @@ class Coder:
 
             kwargs = use_kwargs
 
-        for coder_class in coders.__all__:
-            coder = getattr(coders, coder_class)
+        for coder in coders.__all__:
             if hasattr(coder, 'edit_format') and coder.edit_format == edit_format:
                 res = coder(main_model, io, **kwargs)
                 res.original_kwargs = dict(kwargs)
@@ -779,7 +778,9 @@ class Coder:
                     dict(role="assistant", content="Ok."),
                 ]
 
-        main_sys += "\n" + self.fmt_system_prompt(self.gpt_prompts.system_reminder)
+        if self.gpt_prompts.system_reminder:
+            main_sys += "\n" + self.fmt_system_prompt(self.gpt_prompts.system_reminder)
+
         messages = [
             dict(role="system", content=main_sys),
         ]
@@ -789,9 +790,13 @@ class Coder:
         messages += self.done_messages
         messages += self.get_files_messages()
 
-        reminder_message = [
-            dict(role="system", content=self.fmt_system_prompt(self.gpt_prompts.system_reminder)),
-        ]
+
+        if self.gpt_prompts.system_reminder:
+            reminder_message = [
+                dict(role="system", content=self.fmt_system_prompt(self.gpt_prompts.system_reminder)),
+            ]
+        else:
+            reminder_message = []
 
         # TODO review impact of token count on image messages
         messages_tokens = self.main_model.token_count(messages)
@@ -810,7 +815,7 @@ class Coder:
 
         max_input_tokens = self.main_model.info.get("max_input_tokens")
         # Add the reminder prompt if we still have room to include it.
-        if max_input_tokens is None or total_tokens < max_input_tokens:
+        if max_input_tokens is None or total_tokens < max_input_tokens and self.gpt_prompts.system_reminder:
             if self.main_model.reminder_as_sys_msg:
                 messages += reminder_message
             elif final["role"] == "user":
@@ -1520,3 +1525,9 @@ class Coder:
         # files changed, move cur messages back behind the files messages
         # self.move_back_cur_messages(self.gpt_prompts.files_content_local_edits)
         return True
+
+    def get_edits(self, mode="update"):
+        return []
+
+    def apply_edits(self, edits):
+        return

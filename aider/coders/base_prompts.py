@@ -1,4 +1,6 @@
 class CoderPrompts:
+    system_reminder = ""
+
     files_content_gpt_edits = "I committed the changes with git hash {hash} & commit msg: {message}"
 
     files_content_gpt_edits_no_repo = "I updated the files."
