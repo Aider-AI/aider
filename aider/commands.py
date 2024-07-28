@@ -6,7 +6,7 @@ from pathlib import Path
 
 import git
 
-from aider import models, prompts, voice
+from aider import models, prompts, voice, coders
 from aider.help import Help, install_help_extra
 from aider.llm import litellm
 from aider.scrape import Scraper, install_playwright
@@ -48,7 +48,8 @@ class Commands:
         "Switch to a new editing mode"
 
         ef = args.strip()
-        valid_formats = [coder.edit_format for coder in self.coder.__all__ if hasattr(coder, 'edit_format')]
+        valid_formats = [coder.edit_format for coder in coders.__all__ if getattr(coder, 'edit_format', None)]
+        dump(valid_formats)
 
         if ef not in valid_formats:
             self.io.tool_error(
