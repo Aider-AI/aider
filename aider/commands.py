@@ -16,9 +16,8 @@ from .dump import dump  # noqa: F401
 
 
 class SwitchCoder(Exception):
-    def __init__(self, model=None, edit_format=None):
-        self.model = model
-        self.edit_format = edit_format
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
 
 
 class Commands:
@@ -43,7 +42,7 @@ class Commands:
         model_name = args.strip()
         model = models.Model(model_name)
         models.sanity_check_models(self.io, model)
-        raise SwitchCoder(model=model)
+        raise SwitchCoder(main_model=model)
 
     def cmd_mode(self, args):
         "Switch to a new editing mode"

@@ -589,10 +589,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             return
         except SwitchCoder as switch:
             coder = Coder.create(
-                main_model=switch.model,
-                edit_format=switch.edit_format,
                 io=io,
                 from_coder=coder,
+                **switch.kwargs
             )
             coder.show_announcements()
 
