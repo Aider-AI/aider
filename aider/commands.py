@@ -50,16 +50,19 @@ class Commands:
         from aider import coders
 
         ef = args.strip()
-        valid_formats = [coder.edit_format for coder in coders.__all__ if getattr(coder, 'edit_format', None)]
+        valid_formats = [
+            (coder.edit_format, coder.__doc__.strip().split('\n')[0] if coder.__doc__ else "No description")
+            for coder in coders.__all__ if getattr(coder, 'edit_format', None)
+        ]
 
-        if ef not in valid_formats:
+        if ef not in [format[0] for format in valid_formats]:
             if ef:
                 self.io.tool_error(f"Edit format \"{ef}\" must be one of:")
             else:
                 self.io.tool_error(f"Edit format must be one of:")
 
-            for format in valid_formats:
-                self.io.tool_error(f"- {format}")
+            for format, description in valid_formats:
+                self.io.tool_error(f"- {format}: {description}")
             return
 
         raise SwitchCoder(edit_format=ef)
