@@ -1137,6 +1137,8 @@ class Coder:
         if interrupted:
             raise KeyboardInterrupt
 
+    self.calculate_and_show_tokens_and_cost(messages, completion)
+
     def show_send_output(self, completion):
         if self.verbose:
             print(completion)
@@ -1168,8 +1170,6 @@ class Coder:
             self.io.tool_error(show_func_err)
             self.io.tool_error(show_content_err)
             raise Exception("No data found in LLM response!")
-
-        self.calculate_and_show_tokens_and_cost(completion)
 
         show_resp = self.render_incremental_response(True)
         if self.show_pretty():
@@ -1228,7 +1228,6 @@ class Coder:
                 sys.stdout.flush()
                 yield text
 
-        self.calculate_and_show_tokens_and_cost()
 
     def live_incremental_response(self, final):
         show_resp = self.render_incremental_response(final)
