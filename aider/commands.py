@@ -61,8 +61,9 @@ class Commands:
             else:
                 self.io.tool_error(f"Edit format must be one of:")
 
+            max_format_length = max(len(format) for format, _ in valid_formats)
             for format, description in valid_formats:
-                self.io.tool_error(f"- {format}: {description}")
+                self.io.tool_error(f"- {format:<{max_format_length}} : {description}")
             return
 
         raise SwitchCoder(edit_format=ef)
