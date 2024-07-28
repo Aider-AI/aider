@@ -3,6 +3,7 @@
 
 ### main branch
 
+- New `/ask <question>` command to ask about your code, without making any edits.
 - Enhanced token usage and cost reporting. Now works when streaming too.
 - Filename auto-complete for `/add` and `/drop` is case-insensitive now.
 - Commit message improvements:

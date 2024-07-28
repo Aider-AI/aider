@@ -620,8 +620,7 @@ class Commands:
             add = result.returncode != 0
         else:
             response = self.io.prompt_ask(
-                "Add the output to the chat? (y/n/instructions): ",
-                default="y"
+                "Add the output to the chat? (y/n/instructions): ", default="y"
             ).strip()
 
             if response.lower() in ["yes", "y"]:
@@ -644,7 +643,7 @@ class Commands:
             )
 
             if instructions:
-                msg += f"\n\n{instructions}"
+                msg = instructions + "\n\n" + msg
 
             return msg
 
