@@ -7,6 +7,7 @@ from .single_wholefile_func_coder import SingleWholeFileFunctionCoder
 from .udiff_coder import UnifiedDiffCoder
 from .wholefile_coder import WholeFileCoder
 from .wholefile_func_coder import WholeFileFunctionCoder
+from .chat_coder import ChatCoder
 
 __all__ = [
     Coder,
@@ -18,4 +19,5 @@ __all__ = [
     SingleWholeFileFunctionCoder,
     UnifiedDiffCoder,
     HelpCoder,
+    ChatCoder,
 ]
