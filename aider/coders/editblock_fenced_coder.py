@@ -4,5 +4,6 @@ from .editblock_fenced_prompts import EditBlockFencedPrompts
 
 
 class EditBlockFencedCoder(EditBlockCoder):
+    """A coder that uses fenced edit blocks for code modifications."""
     edit_format = "diff-fenced"
     gpt_prompts = EditBlockFencedPrompts()

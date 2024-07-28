@@ -13,6 +13,7 @@ from .editblock_prompts import EditBlockPrompts
 
 
 class EditBlockCoder(Coder):
+    """A coder that uses edit blocks for code modifications."""
     edit_format = "diff"
     gpt_prompts = EditBlockPrompts()
 
