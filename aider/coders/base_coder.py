@@ -670,7 +670,7 @@ class Coder:
 
     def check_for_urls(self, inp):
         url_pattern = re.compile(r"(https?://[^\s/$.?#].[^\s]*[^\s,.])")
-        urls = url_pattern.findall(inp)
+        urls = list(set(url_pattern.findall(inp)))  # Use set to remove duplicates
         for url in urls:
             if self.io.confirm_ask(f"Add {url} to the chat?"):
                 inp += "\n\n"
