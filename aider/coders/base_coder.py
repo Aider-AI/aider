@@ -70,6 +70,7 @@ class Coder:
     lint_outcome = None
     test_outcome = None
     multi_response_content = ""
+    rejected_urls = set()
 
     @classmethod
     def create(
@@ -671,12 +672,17 @@ class Coder:
     def check_for_urls(self, inp):
         url_pattern = re.compile(r"(https?://[^\s/$.?#].[^\s]*[^\s,.])")
         urls = list(set(url_pattern.findall(inp)))  # Use set to remove duplicates
+        added_urls = []
         for url in urls:
-            if self.io.confirm_ask(f"Add {url} to the chat?"):
-                inp += "\n\n"
-                inp += self.commands.cmd_web(url)
+            if url not in self.rejected_urls:
+                if self.io.confirm_ask(f"Add {url} to the chat?"):
+                    inp += "\n\n"
+                    inp += self.commands.cmd_web(url)
+                    added_urls.append(url)
+                else:
+                    self.rejected_urls.add(url)
 
-        return urls
+        return added_urls
 
     def keyboard_interrupt(self):
         now = time.time()
