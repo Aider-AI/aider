@@ -48,7 +48,7 @@ class Commands:
         "Switch to a new editing mode"
 
         ef = args.strip()
-        valid_formats = "diff udiff whole".split()
+        valid_formats = [coder.__name__ for coder in self.coder.__all__ if hasattr(coder, 'edit_format')]
 
         if ef not in valid_formats:
             self.io.tool_error(
