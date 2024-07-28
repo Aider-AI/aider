@@ -564,7 +564,7 @@ class Coder:
             files_content = self.gpt_prompts.files_content_prefix
             files_content += self.get_files_content()
             files_reply = "Ok, any changes I propose will be to those files."
-        elif repo_content:
+        elif repo_content and self.gpt_prompts.files_no_full_files_with_repo_map:
             files_content = self.gpt_prompts.files_no_full_files_with_repo_map
             files_reply = self.gpt_prompts.files_no_full_files_with_repo_map_reply
         else:
