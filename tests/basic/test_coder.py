@@ -689,6 +689,12 @@ two
         result = coder.check_for_urls(no_url_input)
         self.assertEqual(result, no_url_input)
 
+        # Test case with the same URL appearing multiple times
+        repeated_url_input = "Check https://example.com, then https://example.com again, and https://example.com one more time"
+        result = coder.check_for_urls(repeated_url_input)
+        self.assertEqual(result.count("https://example.com"), 1)
+        self.assertIn("https://example.com", result)
+
 
 if __name__ == "__main__":
     unittest.main()
