@@ -1260,7 +1260,7 @@ class Coder:
             tokens += f", ${cost:.6f} cost"
             self.total_cost += cost
 
-        self.usage_report = tokens
+        self.usage_report = f"{tokens}, total cost: ${self.total_cost:.6f}"
 
     def get_multi_response_content(self, final=False):
         cur = self.multi_response_content
