@@ -82,13 +82,7 @@ class Coder:
         summarize_from_coder=True,
         **kwargs,
     ):
-        from . import (
-            EditBlockCoder,
-            EditBlockFencedCoder,
-            HelpCoder,
-            UnifiedDiffCoder,
-            WholeFileCoder,
-        )
+        import aider.coders as coders
 
         if not main_model:
             if from_coder:
@@ -129,22 +123,14 @@ class Coder:
 
             kwargs = use_kwargs
 
-        if edit_format == "diff":
-            res = EditBlockCoder(main_model, io, **kwargs)
-        elif edit_format == "diff-fenced":
-            res = EditBlockFencedCoder(main_model, io, **kwargs)
-        elif edit_format == "whole":
-            res = WholeFileCoder(main_model, io, **kwargs)
-        elif edit_format == "udiff":
-            res = UnifiedDiffCoder(main_model, io, **kwargs)
-        elif edit_format == "help":
-            res = HelpCoder(main_model, io, **kwargs)
-        else:
-            raise ValueError(f"Unknown edit format {edit_format}")
+        for coder_class in coders.__all__:
+            coder = getattr(coders, coder_class)
+            if hasattr(coder, 'edit_format') and coder.edit_format == edit_format:
+                res = coder(main_model, io, **kwargs)
+                res.original_kwargs = dict(kwargs)
+                return res
 
-        res.original_kwargs = dict(kwargs)
-
-        return res
+        raise ValueError(f"Unknown edit format {edit_format}")
 
     def clone(self, **kwargs):
         return Coder.create(from_coder=self, **kwargs)
