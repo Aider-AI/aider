@@ -701,7 +701,6 @@ class Commands:
             self.help = Help()
 
         coder = Coder.create(
-            main_model=self.coder.main_model,
             io=self.io,
             from_coder=self.coder,
             edit_format="help",
@@ -723,8 +722,8 @@ class Commands:
             dict(role="assistant", content=assistant_msg),
         ]
 
-    def cmd_chat(self, args):
-        "Chat with the AI about the current project"
+    def cmd_ask(self, args):
+        "Ask questions about the code base without editing any files"
 
         if not args.strip():
             self.io.tool_error("Please provide a question or topic for the chat.")
@@ -733,10 +732,9 @@ class Commands:
         from aider.coders import Coder
 
         chat_coder = Coder.create(
-            main_model=self.coder.main_model,
             io=self.io,
             from_coder=self.coder,
-            edit_format="chat",
+            edit_format="ask",
             summarize_from_coder=False,
         )
 

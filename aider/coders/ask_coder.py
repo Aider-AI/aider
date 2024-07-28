@@ -4,9 +4,9 @@ from aider import diffs
 
 from ..dump import dump  # noqa: F401
 from .base_coder import Coder
-from .chat_prompts import ChatPrompts
+from .ask_prompts import AskPrompts
 
 
-class ChatCoder(Coder):
-    edit_format = "chat"
-    gpt_prompts = ChatPrompts()
+class AskCoder(Coder):
+    edit_format = "ask"
+    gpt_prompts = AskPrompts()
