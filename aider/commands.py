@@ -44,7 +44,7 @@ class Commands:
         models.sanity_check_models(self.io, model)
         raise SwitchCoder(main_model=model)
 
-    def cmd_mode(self, args):
+    def cmd_edit_format(self, args):
         "Switch to a new editing mode"
 
         ef = args.strip()
@@ -52,7 +52,7 @@ class Commands:
 
         if ef not in valid_formats:
             self.io.tool_error(
-                f"Invalid edit format: {ef}. Valid formats are: {', '.join(valid_formats)}"
+                f"Edit format \"{ef}\" should be one of: {', '.join(valid_formats)}"
             )
             return
 
