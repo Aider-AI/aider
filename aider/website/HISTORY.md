@@ -16,7 +16,9 @@ cog.out(text)
 
 - Enhanced token usage and cost reporting. Now works when streaming too.
 - Filename auto-complete for `/add` and `/drop` is case-insensitive now.
-- Updated commit message prompt to use imperative tense.
+- Commit message improvements:
+  - Updated commit message prompt to use imperative tense.
+  - Fall back to main model if weak model is unable to generate a commit message.
 - Updates and fixed to `--no-verify-ssl`:
   - Fixed regression that broke it in v0.42.0.
   - Disables SSL certificate verification when `/web` scrapes websites.
