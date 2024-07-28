@@ -22,18 +22,18 @@ cog.out(text)
   - udiff: A coder that uses unified diff format for code modifications.
   - help: Interactive help and documentation about aider.
   - ask: Ask questions about code without making any changes.
-  
 - Enhanced token usage and cost reporting. Now works when streaming too.
-- Filename auto-complete for `/add` and `/drop` is case-insensitive now.
+- Filename auto-complete for `/add` and `/drop` is now case-insensitive.
 - Commit message improvements:
   - Updated commit message prompt to use imperative tense.
   - Fall back to main model if weak model is unable to generate a commit message.
-- Updates and fixed to `--no-verify-ssl`:
+- Stop aider from asking to add the same url to the chat multiple times.
+- Updates and fixes to `--no-verify-ssl`:
   - Fixed regression that broke it in v0.42.0.
   - Disables SSL certificate verification when `/web` scrapes websites.
-- Fixed syntax error in Elm's tree-sitter scm file (by @cjoach).
 - Improved error handling and reporting in `/web` scraping functionality
-- Stop aider from asking to add the same url to the chat multiple times.
+- Fixed syntax error in Elm's tree-sitter scm file (by @cjoach).
+- Handle UnicodeEncodeError when streaming text to the terminal.
 - Updated dependencies to latest versions.
 
 ### Aider v0.45.1
