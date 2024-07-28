@@ -495,7 +495,7 @@ class Model:
         return self.weak_model
 
     def commit_message_models(self):
-        return [self.weak_model]
+        return [self.weak_model, self]
 
     def tokenizer(self, text):
         return litellm.encode(model=self.name, text=text)
