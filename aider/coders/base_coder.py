@@ -851,6 +851,7 @@ class Coder:
         else:
             self.mdstream = None
 
+        self.usage_report = None
         exhausted = False
         interrupted = False
         try:
@@ -891,6 +892,9 @@ class Coder:
 
             self.partial_response_content = self.get_multi_response_content(True)
             self.multi_response_content = ""
+
+        if self.usage_report:
+            self.io.tool_output(self.usage_report)
 
         if exhausted:
             self.show_exhausted_error()
@@ -1256,7 +1260,7 @@ class Coder:
             tokens += f", ${cost:.6f} cost"
             self.total_cost += cost
 
-        self.io.tool_output(tokens)
+        self.usage_report = tokens
 
     def get_multi_response_content(self, final=False):
         cur = self.multi_response_content
