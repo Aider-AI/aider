@@ -8,6 +8,19 @@ from aider.scrape import Scraper
 
 
 class TestScrape(unittest.TestCase):
+    def test_scrape_self_signed_ssl(self):
+        # Test with SSL verification
+        scraper_verify = Scraper(print_error=MagicMock(), playwright_available=True, verify_ssl=True)
+        result_verify = scraper_verify.scrape("https://self-signed.badssl.com")
+        self.assertIsNone(result_verify)
+        scraper_verify.print_error.assert_called()
+
+        # Test without SSL verification
+        scraper_no_verify = Scraper(print_error=MagicMock(), playwright_available=True, verify_ssl=False)
+        result_no_verify = scraper_no_verify.scrape("https://self-signed.badssl.com")
+        self.assertIsNotNone(result_no_verify)
+        self.assertIn("self-signed.badssl.com", result_no_verify)
+        scraper_no_verify.print_error.assert_not_called()
     def setUp(self):
         self.io = InputOutput(yes=True)
         self.commands = Commands(self.io, None)
