@@ -1169,18 +1169,7 @@ class Coder:
             self.io.tool_error(show_content_err)
             raise Exception("No data found in LLM response!")
 
-        tokens = None
-        if hasattr(completion, "usage") and completion.usage is not None:
-            prompt_tokens = completion.usage.prompt_tokens
-            completion_tokens = completion.usage.completion_tokens
-
-            tokens = f"{prompt_tokens} prompt tokens, {completion_tokens} completion tokens"
-            if self.main_model.info.get("input_cost_per_token"):
-                cost = prompt_tokens * self.main_model.info.get("input_cost_per_token")
-                if self.main_model.info.get("output_cost_per_token"):
-                    cost += completion_tokens * self.main_model.info.get("output_cost_per_token")
-                tokens += f", ${cost:.6f} cost"
-                self.total_cost += cost
+        self.calculate_and_show_tokens_and_cost(completion)
 
         show_resp = self.render_incremental_response(True)
         if self.show_pretty():
@@ -1191,9 +1180,6 @@ class Coder:
             show_resp = Text(show_resp or "<no response>")
 
         self.io.console.print(show_resp)
-
-        if tokens is not None:
-            self.io.tool_output(tokens)
 
         if (
             hasattr(completion.choices[0], "finish_reason")
@@ -1242,12 +1228,35 @@ class Coder:
                 sys.stdout.flush()
                 yield text
 
+        self.calculate_and_show_tokens_and_cost()
+
     def live_incremental_response(self, final):
         show_resp = self.render_incremental_response(final)
         self.mdstream.update(show_resp, final=final)
 
     def render_incremental_response(self, final):
         return self.get_multi_response_content()
+
+    def calculate_and_show_tokens_and_cost(self, completion=None):
+        prompt_tokens = 0
+        completion_tokens = 0
+        cost = 0
+
+        if completion and hasattr(completion, "usage") and completion.usage is not None:
+            prompt_tokens = completion.usage.prompt_tokens
+            completion_tokens = completion.usage.completion_tokens
+        else:
+            completion_tokens = self.main_model.token_count(self.partial_response_content)
+
+        tokens = f"{prompt_tokens} prompt tokens, {completion_tokens} completion tokens"
+        if self.main_model.info.get("input_cost_per_token"):
+            cost += prompt_tokens * self.main_model.info.get("input_cost_per_token")
+            if self.main_model.info.get("output_cost_per_token"):
+                cost += completion_tokens * self.main_model.info.get("output_cost_per_token")
+            tokens += f", ${cost:.6f} cost"
+            self.total_cost += cost
+
+        self.io.tool_output(tokens)
 
     def get_multi_response_content(self, final=False):
         cur = self.multi_response_content
