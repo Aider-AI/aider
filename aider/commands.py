@@ -8,7 +8,6 @@ import git
 
 from aider import models, prompts, voice
 from aider.help import Help, install_help_extra
-from aider.coders import ChatCoder
 from aider.llm import litellm
 from aider.scrape import Scraper, install_playwright
 from aider.utils import is_image_file
@@ -731,11 +730,13 @@ class Commands:
             self.io.tool_error("Please provide a question or topic for the chat.")
             return
 
-        chat_coder = ChatCoder.create(
+        from aider.coders import Coder
+
+        chat_coder = Coder.create(
             main_model=self.coder.main_model,
             io=self.io,
             from_coder=self.coder,
-            edit_format="whole",
+            edit_format="chat",
             summarize_from_coder=False,
         )
 
