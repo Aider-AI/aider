@@ -165,18 +165,41 @@ class RepoMap:
         query_scm = get_scm_fname(lang)
         if not query_scm.exists():
             return
-        query_scm = query_scm.read_text()
-
-        code = self.io.read_text(fname)
-        if not code:
+        try:
+            query_scm = query_scm.read_text()
+        except Exception as e:
+            self.io.tool_error(f"Warning: Unable to read query file for {lang}: {e}")
             return
-        tree = parser.parse(bytes(code, "utf-8"))
 
-        # Run the tags queries
-        query = language.query(query_scm)
-        captures = query.captures(tree.root_node)
+        try:
+            code = self.io.read_text(fname)
+            if not code:
+                return
+            tree = parser.parse(bytes(code, "utf-8"))
+        except UnicodeDecodeError:
+            self.io.tool_error(f"Warning: Unable to decode {fname} as UTF-8. Attempting ASCII mode.")
+            try:
+                with open(fname, 'r', encoding='ascii', errors='ignore') as f:
+                    code = f.read()
+                if not code:
+                    return
+                tree = parser.parse(bytes(code, "ascii"))
+            except Exception as e:
+                self.io.tool_error(f"Warning: Error processing {fname} in ASCII mode: {e}")
+                return
+        except Exception as e:
+            self.io.tool_error(f"Warning: Error processing {fname}: {e}")
+            return
 
-        captures = list(captures)
+        try:
+            # Run the tags queries
+            query = language.query(query_scm)
+            captures = query.captures(tree.root_node)
+
+            captures = list(captures)
+        except Exception as e:
+            self.io.tool_error(f"Warning: Error querying tags for {fname}: {e}")
+            return
 
         saw = set()
         for node, tag in captures:
