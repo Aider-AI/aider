@@ -3,7 +3,14 @@
 
 ### main branch
 
-- 
+- Add `--verify-ssl` option to disable SSL certificate verification when scraping websites
+- Improve error handling and reporting in web scraping functionality
+- Update commit message prompt to use imperative tense
+- Enhance token usage and cost reporting
+- Refactor and improve code in various modules
+- Update dependencies to latest versions
+- Add new models to the code editing leaderboard
+- Improve documentation and fix typos
 
 ### Aider v0.45.1
 
