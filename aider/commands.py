@@ -49,13 +49,11 @@ class Commands:
 
         ef = args.strip()
         valid_formats = [coder.edit_format for coder in coders.__all__ if getattr(coder, 'edit_format', None)]
-        
-        self.io.tool_output("Valid edit formats:")
-        for format in valid_formats:
-            self.io.tool_output(f"• {format}")
-        
+
         if ef not in valid_formats:
-            self.io.tool_error(f"Edit format \"{ef}\" is not valid.")
+            self.io.tool_error(f"Edit format \"{ef}\" must be one of:")
+            for format in valid_formats:
+                self.io.tool_error(f"- {format}")
             return
 
         raise SwitchCoder(edit_format=ef)
