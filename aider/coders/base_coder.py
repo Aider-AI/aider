@@ -1236,7 +1236,7 @@ class Coder:
     def render_incremental_response(self, final):
         return self.get_multi_response_content()
 
-    def calculate_and_show_tokens_and_cost(self, completion=None):
+    def calculate_and_show_tokens_and_cost(self, messages, completion=None):
         prompt_tokens = 0
         completion_tokens = 0
         cost = 0
@@ -1245,6 +1245,7 @@ class Coder:
             prompt_tokens = completion.usage.prompt_tokens
             completion_tokens = completion.usage.completion_tokens
         else:
+            prompt_tokens = self.main_model.token_count(messages)
             completion_tokens = self.main_model.token_count(self.partial_response_content)
 
         tokens = f"{prompt_tokens} prompt tokens, {completion_tokens} completion tokens"
