@@ -57,13 +57,13 @@ class Commands:
 
         if ef not in [format[0] for format in valid_formats]:
             if ef:
-                self.io.tool_error(f"Edit format \"{ef}\" must be one of:")
+                self.io.tool_error(f"Chat mode \"{ef}\" must be one of:\n")
             else:
-                self.io.tool_error(f"Edit format must be one of:")
+                self.io.tool_output(f"Chat mode must be one of:\n")
 
             max_format_length = max(len(format) for format, _ in valid_formats)
             for format, description in valid_formats:
-                self.io.tool_error(f"- {format:<{max_format_length}} : {description}")
+                self.io.tool_output(f"- {format:<{max_format_length}} {description}")
             return
 
         raise SwitchCoder(edit_format=ef)
