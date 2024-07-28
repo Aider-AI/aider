@@ -620,14 +620,14 @@ class Commands:
             add = result.returncode != 0
         else:
             response = self.io.prompt(
-                "Add the output to the chat? (yes/no/instructions): ",
+                "Add the output to the chat? (yes/y/no/n/instructions): ",
                 default="no"
             ).lower().strip()
 
-            if response == "yes":
+            if response in ["yes", "y"]:
                 add = True
                 instructions = None
-            elif response == "no":
+            elif response in ["no", "n"]:
                 add = False
                 instructions = None
             else:
