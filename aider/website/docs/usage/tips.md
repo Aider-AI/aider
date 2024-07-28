@@ -12,7 +12,7 @@ Aider can help the LLM figure out which files to edit all by itself, but the mos
 Aider also sends the LLM a [map of your entire git repo](https://aider.chat/docs/repomap.html).
 So the LLM can see all the other relevant parts of your code base.
 - Large changes are best performed as a sequence of thoughtful bite sized steps, where you plan out the approach and overall design. Walk the LLM through changes like you might with a junior dev. Ask for a refactor to prepare, then ask for the actual change. Spend the time to ask for code quality/structure improvements.
-- Use Control-C to safely interrupt the LLM if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply to the LLM with more information or direction.
+- It's always safe to use Control-C to interrupt aider if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply to the LLM with more information or direction.
 - If your code is throwing an error, 
 use the `/run` [in-chat command](/docs/usage/commands.html)
 to share the error output with the aider.

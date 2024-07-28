@@ -45,6 +45,10 @@ or CONTROL-R to search your message history.
 
 {% include multi-line.md %}
 
+# Interrupting with CONTROL-C
+
+It's always safe to use Control-C to interrupt aider if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply to the LLM with more information or direction.
+
 # Keybindings
 
 The interactive prompt is built with [prompt-toolkit](https://github.com/prompt-toolkit/python-prompt-toolkit) which provides emacs and vi keybindings. 
