@@ -32,6 +32,9 @@ def get_parser(default_config_files, git_root):
         "files", metavar="FILE", nargs="*", help="files to edit with an LLM (optional)"
     )
     group.add_argument(
+        "--file", action="append", metavar="FILE", help="specify a file to edit (can be used multiple times)"
+    )
+    group.add_argument(
         "--openai-api-key",
         metavar="OPENAI_API_KEY",
         env_var="OPENAI_API_KEY",

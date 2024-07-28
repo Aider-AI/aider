@@ -372,10 +372,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     for fname in loaded_dotenvs:
         io.tool_output(f"Loaded {fname}")
 
-    fnames = [str(Path(fn).resolve()) for fn in args.files]
-    if len(args.files) > 1:
+    all_files = args.files + (args.file or [])
+    fnames = [str(Path(fn).resolve()) for fn in all_files]
+    if len(all_files) > 1:
         good = True
-        for fname in args.files:
+        for fname in all_files:
             if Path(fname).is_dir():
                 io.tool_error(f"{fname} is a directory, not provided alone.")
                 good = False
@@ -386,13 +387,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             return 1
 
     git_dname = None
-    if len(args.files) == 1:
-        if Path(args.files[0]).is_dir():
+    if len(all_files) == 1:
+        if Path(all_files[0]).is_dir():
             if args.git:
-                git_dname = str(Path(args.files[0]).resolve())
+                git_dname = str(Path(all_files[0]).resolve())
                 fnames = []
             else:
-                io.tool_error(f"{args.files[0]} is a directory, but --no-git selected.")
+                io.tool_error(f"{all_files[0]} is a directory, but --no-git selected.")
                 return 1
 
     # We can't know the git repo for sure until after parsing the args.
