@@ -15,7 +15,7 @@ cog.out(text)
 ### main branch
 
 - New `/ask <question>` command to ask about your code, without making any edits.
-- New `chat-mode <mode>` command to switch modes (edit formats):
+- New `/chat-mode <mode>` command to switch chat modes (edit formats):
   - diff        A coder that uses search/replace blocks for code modifications.
   - diff-fenced A coder that uses fenced search/replace blocks for code modifications.
   - whole       A coder that operates on entire files for code modifications.
