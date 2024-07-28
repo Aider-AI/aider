@@ -51,6 +51,10 @@ class Commands:
         ef = args.strip()
         valid_formats = "diff udiff whole".split()
 
+        if ef not in valid_formats:
+            self.io.tool_error(f"Invalid edit format: {ef}. Valid formats are: {', '.join(valid_formats)}")
+            return
+
         raise SwitchModel(edit_format=ef)
 
     def completions_model(self):
