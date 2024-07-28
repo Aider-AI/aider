@@ -6,7 +6,7 @@ from pathlib import Path
 
 import git
 
-from aider import models, prompts, voice, coders
+from aider import models, prompts, voice
 from aider.help import Help, install_help_extra
 from aider.llm import litellm
 from aider.scrape import Scraper, install_playwright
@@ -44,14 +44,20 @@ class Commands:
         models.sanity_check_models(self.io, model)
         raise SwitchCoder(main_model=model)
 
-    def cmd_edit_format(self, args):
-        "Switch to a new editing mode"
+    def cmd_chat_mode(self, args):
+        "Switch to a new chat mode"
+
+        from aider import coders
 
         ef = args.strip()
         valid_formats = [coder.edit_format for coder in coders.__all__ if getattr(coder, 'edit_format', None)]
 
         if ef not in valid_formats:
-            self.io.tool_error(f"Edit format \"{ef}\" must be one of:")
+            if ef:
+                self.io.tool_error(f"Edit format \"{ef}\" must be one of:")
+            else:
+                self.io.tool_error(f"Edit format must be one of:")
+
             for format in valid_formats:
                 self.io.tool_error(f"- {format}")
             return
@@ -114,11 +120,13 @@ class Commands:
             if not attr.startswith("cmd_"):
                 continue
             cmd = attr[4:]
+            cmd = cmd.replace('_', '-')
             commands.append("/" + cmd)
 
         return commands
 
     def do_run(self, cmd_name, args):
+        cmd_name = cmd_name.replace('-', '_')
         cmd_method_name = f"cmd_{cmd_name}"
         cmd_method = getattr(self, cmd_method_name, None)
         if cmd_method:
@@ -688,7 +696,7 @@ class Commands:
         pad = max(len(cmd) for cmd in commands)
         pad = "{cmd:" + str(pad) + "}"
         for cmd in commands:
-            cmd_method_name = f"cmd_{cmd[1:]}"
+            cmd_method_name = f"cmd_{cmd[1:]}".replace("-", "_")
             cmd_method = getattr(self, cmd_method_name, None)
             cmd = pad.format(cmd=cmd)
             if cmd_method:
@@ -771,7 +779,7 @@ class Commands:
 """
         commands = sorted(self.get_commands())
         for cmd in commands:
-            cmd_method_name = f"cmd_{cmd[1:]}"
+            cmd_method_name = f"cmd_{cmd[1:]}".replace("-", "_")
             cmd_method = getattr(self, cmd_method_name, None)
             if cmd_method:
                 description = cmd_method.__doc__

@@ -16,6 +16,7 @@ cog.out(get_help_md())
 |:------|:----------|
 | **/add** | Add files to the chat so GPT can edit them or review them in detail |
 | **/ask** | Ask questions about the code base without editing any files |
+| **/chat-mode** | Switch to a new chat mode |
 | **/clear** | Clear the chat history |
 | **/commit** | Commit edits to the repo made outside the chat (commit message optional) |
 | **/diff** | Display the diff of the last aider commit |
@@ -25,7 +26,6 @@ cog.out(get_help_md())
 | **/help** | Ask questions about aider |
 | **/lint** | Lint and fix provided files or in-chat files if none provided |
 | **/ls** | List all known files and indicate which are included in the chat session |
-| **/mode** | Switch to a new editing mode |
 | **/model** | Switch to a new LLM |
 | **/models** | Search the list of available models |
 | **/quit** | Exit the application |
