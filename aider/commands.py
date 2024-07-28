@@ -16,8 +16,9 @@ from .dump import dump  # noqa: F401
 
 
 class SwitchModel(Exception):
-    def __init__(self, model):
+    def __init__(self, model=None, edit_format=None):
         self.model = model
+        self.edit_format = edit_format
 
 
 class Commands:
@@ -42,7 +43,15 @@ class Commands:
         model_name = args.strip()
         model = models.Model(model_name)
         models.sanity_check_models(self.io, model)
-        raise SwitchModel(model)
+        raise SwitchModel(model=model)
+
+    def cmd_mode(self, args):
+        "Switch to a new editing mode"
+
+        ef = args.strip()
+        valid_formats = "diff udiff whole".split()
+
+        raise SwitchModel(edit_format=ef)
 
     def completions_model(self):
         models = litellm.model_cost.keys()
