@@ -8,6 +8,7 @@ import git
 
 from aider import models, prompts, voice
 from aider.help import Help, install_help_extra
+from aider.coders import ChatCoder
 from aider.llm import litellm
 from aider.scrape import Scraper, install_playwright
 from aider.utils import is_image_file
@@ -717,6 +718,29 @@ class Commands:
         user_msg += "\n".join(self.coder.get_announcements()) + "\n"
 
         assistant_msg = coder.run(user_msg)
+
+        self.coder.cur_messages += [
+            dict(role="user", content=user_msg),
+            dict(role="assistant", content=assistant_msg),
+        ]
+
+    def cmd_chat(self, args):
+        "Chat with the AI about the current project"
+
+        if not args.strip():
+            self.io.tool_error("Please provide a question or topic for the chat.")
+            return
+
+        chat_coder = ChatCoder.create(
+            main_model=self.coder.main_model,
+            io=self.io,
+            from_coder=self.coder,
+            edit_format="whole",
+            summarize_from_coder=False,
+        )
+
+        user_msg = args
+        assistant_msg = chat_coder.run(user_msg)
 
         self.coder.cur_messages += [
             dict(role="user", content=user_msg),
