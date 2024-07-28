@@ -1252,7 +1252,7 @@ class Coder:
             prompt_tokens = self.main_model.token_count(messages)
             completion_tokens = self.main_model.token_count(self.partial_response_content)
 
-        tokens = f"{prompt_tokens} prompt tokens, {completion_tokens} completion tokens"
+        tokens = f"{prompt_tokens:,} prompt tokens, {completion_tokens:,} completion tokens"
         if self.main_model.info.get("input_cost_per_token"):
             cost += prompt_tokens * self.main_model.info.get("input_cost_per_token")
             if self.main_model.info.get("output_cost_per_token"):
