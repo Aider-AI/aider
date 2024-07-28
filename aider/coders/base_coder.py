@@ -1137,7 +1137,7 @@ class Coder:
         if interrupted:
             raise KeyboardInterrupt
 
-    self.calculate_and_show_tokens_and_cost(messages, completion)
+        self.calculate_and_show_tokens_and_cost(messages, completion)
 
     def show_send_output(self, completion):
         if self.verbose:
