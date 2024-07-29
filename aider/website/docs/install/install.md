@@ -25,19 +25,13 @@ To work with Anthropic's models like Claude 3.5 Sonnet you need a paid
 [Anthropic API key](https://docs.anthropic.com/claude/reference/getting-started-with-the-api).
 
 
-
-## Windows install
-
-```
-# Install aider
-python -m pip install aider-chat
-
-# To work with GPT-4o:
-$ aider --4o --openai-api-key sk-xxx...
-
-# To work with Claude 3.5 Sonnet:
-$ aider --sonnet --anthropic-api-key sk-xxx...
-```
+{: .tip }
+Using a Python 
+[virtual environment](https://docs.python.org/3/library/venv.html){:target="_blank"}
+is recommended.
+Or, you could
+[use pipx to install aider](/docs/install/pipx.html)
+once for your whole system.
 
 ## Mac/Linux install
 
@@ -52,23 +46,23 @@ $ aider --4o --openai-api-key sk-xxx...
 $ aider --sonnet --anthropic-api-key sk-xxx...
 ```
 
+## Windows install
+
+```
+# Install aider
+python -m pip install aider-chat
+
+# To work with GPT-4o:
+$ aider --4o --openai-api-key sk-xxx...
+
+# To work with Claude 3.5 Sonnet:
+$ aider --sonnet --anthropic-api-key sk-xxx...
+```
+
 {: .tip }
-Using a Python 
-[virtual environment](https://docs.python.org/3/library/venv.html){:target="_blank"}
-is recommended.
-Or, you could
-[use pipx to install aider](/docs/install/pipx.html)
-once for your whole system.
-
-## Running aider as a module
-
 In some environments the `aider` command may not be available
 on your shell path.
-You can also run aider as a module, like this:
-
-```
-$ python -m aider (...rest of aider args...)
-```
+You can also run aider like this: `python -m aider`
 
 ## Working with other LLMs
 
