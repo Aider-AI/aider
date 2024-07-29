@@ -8,6 +8,7 @@ from operator import itemgetter
 
 import semver
 import yaml
+from tqdm import tqdm
 
 
 def blame(start_tag, end_tag=None):
@@ -74,7 +75,7 @@ def process_all_tags_since(start_tag):
     # tags += ['HEAD']
 
     results = []
-    for i in range(len(tags) - 1):
+    for i in tqdm(range(len(tags) - 1), desc="Processing tags"):
         start_tag, end_tag = tags[i], tags[i + 1]
         _, _, total_lines, aider_total, aider_percentage, end_date = blame(start_tag, end_tag)
         results.append(
