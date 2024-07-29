@@ -6,12 +6,12 @@ import subprocess
 import sys
 import traceback
 import warnings
+from contextlib import redirect_stdout
 from dataclasses import dataclass
 from pathlib import Path
 
 from grep_ast import TreeContext, filename_to_lang
 from tree_sitter_languages import get_parser  # noqa: E402
-from contextlib import redirect_stdout
 
 from aider.dump import dump  # noqa: F401
 
@@ -51,6 +51,7 @@ class Linter:
         )
         stdout, _ = process.communicate()
         errors = stdout.decode()
+        dump(errors)
         if process.returncode == 0:
             return  # zero exit status
 
@@ -88,19 +89,19 @@ class Linter:
                 cmd = self.languages.get(lang)
 
         if callable(cmd):
-            linkres = cmd(fname, rel_fname, code)
+            lintres = cmd(fname, rel_fname, code)
         elif cmd:
-            linkres = self.run_cmd(cmd, rel_fname, code)
+            lintres = self.run_cmd(cmd, rel_fname, code)
         else:
-            linkres = basic_lint(rel_fname, code)
+            lintres = basic_lint(rel_fname, code)
 
-        if not linkres:
+        if not lintres:
             return
 
         res = "# Fix any errors below, if possible.\n\n"
-        res += linkres.text
+        res += lintres.text
         res += "\n"
-        res += tree_context(rel_fname, code, linkres.lines)
+        res += tree_context(rel_fname, code, lintres.lines)
 
         return res
 

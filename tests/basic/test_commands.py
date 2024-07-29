@@ -743,7 +743,7 @@ class TestCommands(TestCase):
                 commands.cmd_lint()
 
                 # Check if the linter was called with the dirty file
-                mock_lint.assert_called_once_with(filename)
+                mock_lint.assert_called_once_with(Path(filename).name)
 
             # Verify that the file is still dirty after linting
             self.assertTrue(repo.is_dirty(filename))
