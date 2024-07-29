@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var ctx = document.getElementById('blameChart').getContext('2d');
     var blameData = {
         datasets: [{
-            label: 'Percent of Each Release Written by Aider',
+            label: 'Aider\'s Contribution to Each Release',
             data: [
                 {% for row in site.data.blame %}
                 {
@@ -48,10 +48,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 y: {
                     title: {
                         display: true,
-                        text: 'Percent of code written by aider'
+                        text: 'Aider Contribution (%)'
                     },
                     beginAtZero: true,
-                    //max: 100
+                    max: 100
                 }
             },
             plugins: {
