@@ -12,8 +12,11 @@ from operator import itemgetter
 import re
 
 
-def get_all_commit_hashes_since_tag(tag):
-    res = run(["git", "rev-list", f"{tag}..HEAD"])
+def get_all_commit_hashes_between_tags(start_tag, end_tag=None):
+    if end_tag:
+        res = run(["git", "rev-list", f"{start_tag}..{end_tag}"])
+    else:
+        res = run(["git", "rev-list", f"{start_tag}..HEAD"])
 
     if res:
         commit_hashes = res.strip().split('\n')
@@ -45,10 +48,11 @@ hash_len = len('44e6fefc2')
 
 def main():
     parser = argparse.ArgumentParser(description="Get aider/non-aider blame stats")
-    parser.add_argument("tag", help="The tag to start from")
+    parser.add_argument("start_tag", help="The tag to start from")
+    parser.add_argument("--end-tag", help="The tag to end at (default: HEAD)", default=None)
     args = parser.parse_args()
 
-    commits = get_all_commit_hashes_since_tag(args.tag)
+    commits = get_all_commit_hashes_between_tags(args.start_tag, args.end_tag)
     commits = [commit[:hash_len] for commit in commits]
 
     authors = get_commit_authors(commits)
@@ -59,7 +63,7 @@ def main():
     grand_total = defaultdict(int)
     aider_total = 0
     for file in py_files:
-        file_counts = get_counts_for_file(args.tag, authors, file)
+        file_counts = get_counts_for_file(args.start_tag, args.end_tag, authors, file)
         if file_counts:
             all_file_counts[file] = file_counts
             for author, count in file_counts.items():
@@ -78,8 +82,11 @@ def main():
     aider_percentage = (aider_total / total_lines) * 100 if total_lines > 0 else 0
     print(f"\nAider wrote {aider_percentage:.0f}% of the code in this release ({aider_total}/{total_lines} lines).")
 
-def get_counts_for_file(tag, authors, fname):
-    text = run(['git', 'blame', f'{tag}..HEAD', '--', fname])
+def get_counts_for_file(start_tag, end_tag, authors, fname):
+    if end_tag:
+        text = run(['git', 'blame', f'{start_tag}..{end_tag}', '--', fname])
+    else:
+        text = run(['git', 'blame', f'{start_tag}..HEAD', '--', fname])
     if not text:
         return None
     text = text.splitlines()
