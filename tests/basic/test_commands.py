@@ -536,6 +536,21 @@ class TestCommands(TestCase):
         commands.cmd_add("file.txt")
         self.assertEqual(coder.abs_fnames, set())
 
+    def test_cmd_run_unbound_local_error(self):
+        with ChdirTemporaryDirectory():
+            io = InputOutput(pretty=False, yes=False)
+            from aider.coders import Coder
+
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Mock the io.prompt_ask method to simulate user input
+            io.prompt_ask = lambda *args, **kwargs: "custom instructions"
+
+            # Test the cmd_run method with a command that should trigger the bug
+            with self.assertRaises(UnboundLocalError):
+                commands.cmd_run("echo test", add_on_nonzero_exit=False)
+
     def test_cmd_add_drop_untracked_files(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
