@@ -7,6 +7,7 @@ from collections import defaultdict
 from aider.dump import dump
 from operator import itemgetter
 import re
+import semver
 
 
 def blame(start_tag, end_tag=None):
@@ -73,18 +74,26 @@ def main():
     parser = argparse.ArgumentParser(description="Get aider/non-aider blame stats")
     parser.add_argument("start_tag", help="The tag to start from")
     parser.add_argument("--end-tag", help="The tag to end at (default: HEAD)", default=None)
+    parser.add_argument("--all-since", action="store_true", help="Find all tags since the specified tag and print aider percentage between each pair of successive tags")
     args = parser.parse_args()
 
-    all_file_counts, grand_total, total_lines, aider_total, aider_percentage = blame(args.start_tag, args.end_tag)
+    if args.all_since:
+        tags = get_all_tags_since(args.start_tag)
+        for i in range(len(tags) - 1):
+            start_tag, end_tag = tags[i], tags[i+1]
+            _, _, total_lines, aider_total, aider_percentage = blame(start_tag, end_tag)
+            print(f"{start_tag} -> {end_tag}: Aider wrote {aider_percentage:.0f}% of the code ({aider_total}/{total_lines} lines)")
+    else:
+        all_file_counts, grand_total, total_lines, aider_total, aider_percentage = blame(args.start_tag, args.end_tag)
 
-    dump(all_file_counts)
+        dump(all_file_counts)
 
-    print("\nGrand Total:")
-    for author, count in sorted(grand_total.items(), key=itemgetter(1), reverse=True):
-        percentage = (count / total_lines) * 100
-        print(f"- {author}: {count} lines ({percentage:.2f}%)")
+        print("\nGrand Total:")
+        for author, count in sorted(grand_total.items(), key=itemgetter(1), reverse=True):
+            percentage = (count / total_lines) * 100
+            print(f"- {author}: {count} lines ({percentage:.2f}%)")
 
-    print(f"\nAider wrote {aider_percentage:.0f}% of the code in this release ({aider_total}/{total_lines} lines).")
+        print(f"\nAider wrote {aider_percentage:.0f}% of the code in this release ({aider_total}/{total_lines} lines).")
 
 def get_counts_for_file(start_tag, end_tag, authors, fname):
     if end_tag:
@@ -106,6 +115,11 @@ def get_counts_for_file(start_tag, end_tag, authors, fname):
         line_counts[author] += 1
 
     return dict(line_counts)
+
+def get_all_tags_since(start_tag):
+    all_tags = run(['git', 'tag', '--sort=v:refname']).strip().split('\n')
+    filtered_tags = [tag for tag in all_tags if semver.VersionInfo.isvalid(tag[1:]) and tag >= start_tag]
+    return [tag for tag in filtered_tags if tag.endswith('.0')]
 
 if __name__ == "__main__":
     main()
