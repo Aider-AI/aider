@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 {% for row in site.data.blame %}
                 {
                     x: '{{ row.end_date }}',
-                    y: {{ row.aider_percentage }},
+                    y: {{ row.aider_lines }},
                     label: '{{ row.end_tag }}'
                 },
                 {% endfor %}
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 y: {
                     title: {
                         display: true,
-                        text: 'Aider Contribution (% of code)'
+                        text: 'Aider Contribution (lines of code)'
                     },
                     beginAtZero: true,
                 }
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return `${context.raw.label}: ${Math.round(context.raw.y)}%`;
+                            return `${context.raw.label}: ${context.raw.y} lines`;
                         }
                     }
                 }
