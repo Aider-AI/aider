@@ -63,6 +63,9 @@ cog.outl("```")
 #######
 # Main:
 
+## specify a file to edit (can be used multiple times)
+#AIDER_FILE=
+
 ## Specify the OpenAI API key
 #OPENAI_API_KEY=
 

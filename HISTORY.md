@@ -11,6 +11,8 @@
   - udiff: A coder that uses unified diff format for code modifications.
   - help: Interactive help and documentation about aider.
   - ask: Ask questions about code without making any changes.
+- Add `file: CONVENTIONS.md` to `.aider.conf.yml` to always load a specific file.
+  - Or `file: [file1, file2, file3]` to always load multiple files.
 - Enhanced token usage and cost reporting. Now works when streaming too.
 - Filename auto-complete for `/add` and `/drop` is now case-insensitive.
 - Commit message improvements:
