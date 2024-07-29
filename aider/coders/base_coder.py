@@ -1255,15 +1255,15 @@ class Coder:
             prompt_tokens = self.main_model.token_count(messages)
             completion_tokens = self.main_model.token_count(self.partial_response_content)
 
-        tokens = f"{prompt_tokens:,} prompt tokens, {completion_tokens:,} completion tokens"
+        self.usage_report = f"Tokens: {prompt_tokens:,} sent, {completion_tokens:,} received."
+
+        cost_report = ""
         if self.main_model.info.get("input_cost_per_token"):
             cost += prompt_tokens * self.main_model.info.get("input_cost_per_token")
             if self.main_model.info.get("output_cost_per_token"):
                 cost += completion_tokens * self.main_model.info.get("output_cost_per_token")
-            tokens += f", ${cost:.6f} cost"
             self.total_cost += cost
-
-        self.usage_report = f"{tokens}, session cost: ${self.total_cost:.6f}"
+            self.usage_report += f" Cost: ${cost:.6f} request, ${self.total_cost:.6f} session."
 
     def get_multi_response_content(self, final=False):
         cur = self.multi_response_content
