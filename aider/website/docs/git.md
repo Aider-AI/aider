@@ -9,11 +9,11 @@ description: Aider is tightly integrated with git.
 Aider works best with code that is part of a git repo.
 Aider is tightly integrated with git, which makes it easy to:
 
-  - Use the `/undo` command to instantly undo and AI changes that you don't like.
+  - Use the `/undo` command to instantly undo any AI changes that you don't like.
   - Go back in the git history to review the changes that aider made to your code
   - Manage a series of aider's changes on a git branch
 
-Aider specifically uses git in these ways:
+Aider uses git in these ways:
 
 - It asks to create a git repo if you launch it in a directory without one.
 - Whenever aider edits a file, it commits those changes with a descriptive commit message. This makes it easy to undo or review aider's changes. 
