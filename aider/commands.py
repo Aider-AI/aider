@@ -2,6 +2,7 @@ import os
 import re
 import subprocess
 import sys
+from collections import OrderedDict
 from pathlib import Path
 
 import git
@@ -50,21 +51,44 @@ class Commands:
         from aider import coders
 
         ef = args.strip()
-        valid_formats = [
-            (coder.edit_format, coder.__doc__.strip().split('\n')[0] if coder.__doc__ else "No description")
-            for coder in coders.__all__ if getattr(coder, 'edit_format', None)
-        ]
+        valid_formats = OrderedDict(
+            sorted(
+                (
+                    coder.edit_format,
+                    coder.__doc__.strip().split("\n")[0] if coder.__doc__ else "No description",
+                )
+                for coder in coders.__all__
+                if getattr(coder, "edit_format", None)
+            )
+        )
 
-        if ef not in [format[0] for format in valid_formats]:
+        show_formats = OrderedDict(
+            [
+                ("help", "Get help about using aider (usage, config, troubleshoot)."),
+                ("ask", "Ask questions about your code without making any changes."),
+                ("code", "Ask for changes to your code (using the best edit format)."),
+            ]
+        )
+
+        if ef not in valid_formats and ef not in show_formats:
             if ef:
-                self.io.tool_error(f"Chat mode \"{ef}\" must be one of:\n")
+                self.io.tool_error(f'Chat mode "{ef}" should be one of these:\n')
             else:
-                self.io.tool_output(f"Chat mode must be one of:\n")
+                self.io.tool_output("Chat mode should be one of these:\n")
 
-            max_format_length = max(len(format) for format, _ in valid_formats)
-            for format, description in valid_formats:
-                self.io.tool_output(f"- {format:<{max_format_length}} {description}")
+            max_format_length = max(len(format) for format in valid_formats.keys())
+            for format, description in show_formats.items():
+                self.io.tool_output(f"- {format:<{max_format_length}} : {description}")
+
+            self.io.tool_output("\nOr a valid edit format:\n")
+            for format, description in valid_formats.items():
+                if format not in show_formats:
+                    self.io.tool_output(f"- {format:<{max_format_length}} : {description}")
+
             return
+
+        if ef == "code":
+            ef = self.coder.main_model.edit_format
 
         raise SwitchCoder(edit_format=ef)
 
@@ -124,13 +148,13 @@ class Commands:
             if not attr.startswith("cmd_"):
                 continue
             cmd = attr[4:]
-            cmd = cmd.replace('_', '-')
+            cmd = cmd.replace("_", "-")
             commands.append("/" + cmd)
 
         return commands
 
     def do_run(self, cmd_name, args):
-        cmd_name = cmd_name.replace('-', '_')
+        cmd_name = cmd_name.replace("-", "_")
         cmd_method_name = f"cmd_{cmd_name}"
         cmd_method = getattr(self, cmd_method_name, None)
         if cmd_method:

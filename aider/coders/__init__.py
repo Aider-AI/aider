@@ -1,23 +1,17 @@
 from .base_coder import Coder
 from .editblock_coder import EditBlockCoder
 from .editblock_fenced_coder import EditBlockFencedCoder
-from .editblock_func_coder import EditBlockFunctionCoder
 from .help_coder import HelpCoder
-from .single_wholefile_func_coder import SingleWholeFileFunctionCoder
 from .udiff_coder import UnifiedDiffCoder
 from .wholefile_coder import WholeFileCoder
-from .wholefile_func_coder import WholeFileFunctionCoder
 from .ask_coder import AskCoder
 
 __all__ = [
+    HelpCoder,
+    AskCoder,
     Coder,
     EditBlockCoder,
     EditBlockFencedCoder,
     WholeFileCoder,
-    WholeFileFunctionCoder,
-    EditBlockFunctionCoder,
-    SingleWholeFileFunctionCoder,
     UnifiedDiffCoder,
-    HelpCoder,
-    AskCoder,
 ]

@@ -22,8 +22,9 @@ Other messages in the chat may contain outdated versions of the files' contents.
     files_no_full_files_with_repo_map = ""
     files_no_full_files_with_repo_map_reply = ""
 
-    repo_content_prefix = """Here are summaries of some files present in my git repository.
-If you need to see more of the contents of these files, ask me to *add them to the chat*.
+    repo_content_prefix = """I am working with you on code in a git repository.
+Here are summaries of some files present in my git repo.
+If you need to see the full contents of any files to answer my questions, ask me to *add them to the chat*.
 """
 
     system_reminder = ""
