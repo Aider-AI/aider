@@ -3,6 +3,7 @@ title: Release history
 parent: More info
 nav_order: 999
 highlight_image: /assets/blame.jpg
+description: Release notes and stats on aider writing its own code.
 ---
 
 {% include blame.md %}
