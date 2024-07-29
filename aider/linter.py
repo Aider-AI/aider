@@ -1,12 +1,9 @@
-import io
 import os
 import re
-import runpy
 import subprocess
 import sys
 import traceback
 import warnings
-from contextlib import redirect_stdout
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -51,7 +48,6 @@ class Linter:
         )
         stdout, _ = process.communicate()
         errors = stdout.decode()
-        dump(errors)
         if process.returncode == 0:
             return  # zero exit status
 
