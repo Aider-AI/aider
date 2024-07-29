@@ -251,11 +251,13 @@ class Commands:
             if not errors:
                 continue
 
+            self.io.tool_error(errors)
+            if not self.io.confirm_ask(f"Fix lint errors in {fname}?", default="y"):
+                continue
+
             # Commit everything before we start fixing lint errors
             if self.coder.repo.is_dirty():
                 self.cmd_commit("")
-
-            self.io.tool_error(errors)
 
             if not lint_coder:
                 lint_coder = self.coder.clone(

@@ -509,16 +509,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         utils.show_messages(messages)
         return
 
-    if args.commit:
-        if args.dry_run:
-            io.tool_output("Dry run enabled, skipping commit.")
-        else:
-            coder.commands.cmd_commit()
-        return
-
     if args.lint:
         coder.commands.cmd_lint(fnames=fnames)
-        return
 
     if args.test:
         if not args.test_cmd:
@@ -527,6 +519,14 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         test_errors = coder.commands.cmd_test(args.test_cmd)
         if test_errors:
             coder.run(test_errors)
+
+    if args.commit:
+        if args.dry_run:
+            io.tool_output("Dry run enabled, skipping commit.")
+        else:
+            coder.commands.cmd_commit()
+
+    if args.lint or args.test or args.commit:
         return
 
     if args.show_repo_map:
@@ -589,11 +589,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             coder.run()
             return
         except SwitchCoder as switch:
-            coder = Coder.create(
-                io=io,
-                from_coder=coder,
-                **switch.kwargs
-            )
+            coder = Coder.create(io=io, from_coder=coder, **switch.kwargs)
             coder.show_announcements()
 
 
