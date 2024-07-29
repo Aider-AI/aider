@@ -79,6 +79,7 @@ def main():
 
     if args.all_since:
         tags = get_all_tags_since(args.start_tag)
+        dump(tags)
         for i in range(len(tags) - 1):
             start_tag, end_tag = tags[i], tags[i+1]
             _, _, total_lines, aider_total, aider_percentage = blame(start_tag, end_tag)
