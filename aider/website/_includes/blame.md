@@ -15,7 +15,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     y: {{ row.aider_percentage }},
                     r: Math.sqrt({{ row.aider_lines }}) * 1.5,
                     label: '{{ row.end_tag }}',
-                    percentage: {{ row.aider_percentage }}
+                    percentage: {{ row.aider_percentage }},
+                    lines: {{ row.aider_lines }}
                 },
                 {% endfor %}
             ],
@@ -61,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return `${context.raw.label}: ${Math.round(context.raw.percentage)}% (${context.raw.r} lines)`;
+                            return `${context.raw.label}: ${Math.round(context.raw.percentage)}% (${context.raw.lines} lines)`;
                         }
                     }
                 },
