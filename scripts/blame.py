@@ -1,17 +1,13 @@
 #!/usr/bin/env python3
 
 import argparse
-import re
 import subprocess
-import sys
 from collections import defaultdict
 from datetime import datetime
 from operator import itemgetter
 
 import semver
 import yaml
-
-from aider.dump import dump
 
 
 def blame(start_tag, end_tag=None):
@@ -152,7 +148,8 @@ def get_counts_for_file(start_tag, end_tag, authors, fname):
 
         return dict(line_counts)
     except subprocess.CalledProcessError:
-        # print(f"Warning: Unable to blame file {fname}. It may have been added after {start_tag} or removed before {end_tag or 'HEAD'}.", file=sys.stderr)
+        # print(f"Warning: Unable to blame file {fname}. It may have been added after {start_tag} "
+        #       f"or removed before {end_tag or 'HEAD'}.", file=sys.stderr)
         return None
 
 
