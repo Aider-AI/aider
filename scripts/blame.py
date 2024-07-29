@@ -2,14 +2,37 @@
 
 import subprocess
 import sys
-import tempfile
 import argparse
 from collections import defaultdict
-from pathlib import Path
 from aider.dump import dump
-import os
 from operator import itemgetter
 import re
+
+
+def blame(start_tag, end_tag=None):
+    commits = get_all_commit_hashes_between_tags(start_tag, end_tag)
+    commits = [commit[:hash_len] for commit in commits]
+
+    authors = get_commit_authors(commits)
+
+    py_files = run(['git', 'ls-files', '*.py']).strip().split('\n')
+
+    all_file_counts = {}
+    grand_total = defaultdict(int)
+    aider_total = 0
+    for file in py_files:
+        file_counts = get_counts_for_file(start_tag, end_tag, authors, file)
+        if file_counts:
+            all_file_counts[file] = file_counts
+            for author, count in file_counts.items():
+                grand_total[author] += count
+                if "(aider)" in author.lower():
+                    aider_total += count
+
+    total_lines = sum(grand_total.values())
+    aider_percentage = (aider_total / total_lines) * 100 if total_lines > 0 else 0
+
+    return all_file_counts, grand_total, total_lines, aider_total, aider_percentage
 
 
 def get_all_commit_hashes_between_tags(start_tag, end_tag=None):
@@ -52,34 +75,15 @@ def main():
     parser.add_argument("--end-tag", help="The tag to end at (default: HEAD)", default=None)
     args = parser.parse_args()
 
-    commits = get_all_commit_hashes_between_tags(args.start_tag, args.end_tag)
-    commits = [commit[:hash_len] for commit in commits]
-
-    authors = get_commit_authors(commits)
-
-    py_files = run(['git', 'ls-files', '*.py']).strip().split('\n')
-
-    all_file_counts = {}
-    grand_total = defaultdict(int)
-    aider_total = 0
-    for file in py_files:
-        file_counts = get_counts_for_file(args.start_tag, args.end_tag, authors, file)
-        if file_counts:
-            all_file_counts[file] = file_counts
-            for author, count in file_counts.items():
-                grand_total[author] += count
-                if "(aider)" in author.lower():
-                    aider_total += count
+    all_file_counts, grand_total, total_lines, aider_total, aider_percentage = blame(args.start_tag, args.end_tag)
 
     dump(all_file_counts)
 
     print("\nGrand Total:")
-    total_lines = sum(grand_total.values())
     for author, count in sorted(grand_total.items(), key=itemgetter(1), reverse=True):
         percentage = (count / total_lines) * 100
         print(f"- {author}: {count} lines ({percentage:.2f}%)")
 
-    aider_percentage = (aider_total / total_lines) * 100 if total_lines > 0 else 0
     print(f"\nAider wrote {aider_percentage:.0f}% of the code in this release ({aider_total}/{total_lines} lines).")
 
 def get_counts_for_file(start_tag, end_tag, authors, fname):
