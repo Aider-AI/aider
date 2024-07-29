@@ -66,7 +66,20 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 },
                 legend: {
-                    display: false
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        generateLabels: function(chart) {
+                            return [{
+                                text: 'Bubble size: Lines of code',
+                                fillStyle: 'rgba(54, 162, 235, 0.2)',
+                                strokeStyle: 'rgba(54, 162, 235, 1)',
+                                lineWidth: 1,
+                                hidden: false,
+                                index: 0
+                            }];
+                        }
+                    }
                 }
             }
         }
