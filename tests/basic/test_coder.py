@@ -713,7 +713,7 @@ two
             repo.git.commit("-m", "Add test file")
 
             # Change directory to the subdirectory
-            os.chdir(subdir)
+            os.chdir(subdir.resolve())
 
             # Create the first coder
             io = InputOutput(yes=True)
@@ -729,6 +729,10 @@ two
             expected_abs_path = os.path.abspath(str(test_file))
             self.assertIn(expected_abs_path, coder1.abs_fnames)
             self.assertIn(expected_abs_path, coder2.abs_fnames)
+
+            # Check that the abs_fnames do not contain duplicate or incorrect paths
+            self.assertEqual(len(coder1.abs_fnames), 1)
+            self.assertEqual(len(coder2.abs_fnames), 1)
 
 
 if __name__ == "__main__":
