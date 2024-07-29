@@ -72,19 +72,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     labels: {
                         generateLabels: function(chart) {
                             return [{
-                                text: chart.data.datasets[0].label,
-                                fillStyle: 'rgba(54, 162, 235, 0.2)',
-                                strokeStyle: 'rgba(54, 162, 235, 1)',
-                                lineWidth: 1,
-                                hidden: false,
-                                index: 0
-                            }, {
                                 text: 'Bubble size: Lines of code',
                                 fillStyle: 'rgba(54, 162, 235, 0.2)',
                                 strokeStyle: 'rgba(54, 162, 235, 1)',
                                 lineWidth: 1,
                                 hidden: false,
-                                index: 1
+                                index: 0
                             }];
                         }
                     }
