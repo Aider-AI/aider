@@ -73,6 +73,24 @@ def get_commit_authors(commits):
 
 hash_len = len('44e6fefc2')
 
+def process_all_tags_since(start_tag):
+    tags = get_all_tags_since(start_tag)
+    tags += ['HEAD']
+
+    results = []
+    for i in range(len(tags) - 1):
+        start_tag, end_tag = tags[i], tags[i+1]
+        _, _, total_lines, aider_total, aider_percentage, end_date = blame(start_tag, end_tag)
+        results.append({
+            'start_tag': start_tag,
+            'end_tag': end_tag,
+            'end_date': end_date.strftime('%Y-%m-%d'),
+            'aider_percentage': round(aider_percentage, 2),
+            'aider_lines': aider_total,
+            'total_lines': total_lines
+        })
+    return results
+
 def main():
     parser = argparse.ArgumentParser(description="Get aider/non-aider blame stats")
     parser.add_argument("start_tag", help="The tag to start from")
@@ -81,21 +99,7 @@ def main():
     args = parser.parse_args()
 
     if args.all_since:
-        tags = get_all_tags_since(args.start_tag)
-        tags += ['HEAD']
-
-        results = []
-        for i in range(len(tags) - 1):
-            start_tag, end_tag = tags[i], tags[i+1]
-            _, _, total_lines, aider_total, aider_percentage, end_date = blame(start_tag, end_tag)
-            results.append({
-                'start_tag': start_tag,
-                'end_tag': end_tag,
-                'end_date': end_date.strftime('%Y-%m-%d'),
-                'aider_percentage': round(aider_percentage, 2),
-                'aider_lines': aider_total,
-                'total_lines': total_lines
-            })
+        results = process_all_tags_since(args.start_tag)
         print(yaml.dump(results, sort_keys=False))
     else:
         all_file_counts, grand_total, total_lines, aider_total, aider_percentage, end_date = blame(args.start_tag, args.end_tag)
