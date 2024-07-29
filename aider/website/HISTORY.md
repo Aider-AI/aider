@@ -2,6 +2,7 @@
 title: Release history
 parent: More info
 nav_order: 999
+highlight_image: /assets/blame.jpg
 ---
 
 {% include blame.md %}
