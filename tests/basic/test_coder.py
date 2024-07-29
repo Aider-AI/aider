@@ -698,6 +698,37 @@ two
         self.assertEqual(result.count("https://example.com"), 1)
         self.assertIn("https://example.com", result)
 
+    def test_coder_from_coder_with_subdir(self):
+        with GitTemporaryDirectory() as root:
+            repo = git.Repo.init(root)
+
+            # Create a file in a subdirectory
+            subdir = Path(root) / "subdir"
+            subdir.mkdir()
+            test_file = subdir / "test_file.txt"
+            test_file.write_text("Test content")
+
+            repo.git.add(str(test_file))
+            repo.git.commit("-m", "Add test file")
+
+            # Change directory to the subdirectory
+            os.chdir(subdir)
+
+            # Create the first coder
+            io = InputOutput(yes=True)
+            coder1 = Coder.create(self.GPT35, None, io=io, fnames=[str(test_file)])
+
+            # Create a new coder from the first coder
+            coder2 = Coder.create(from_coder=coder1)
+
+            # Check if both coders have the same set of abs_fnames
+            self.assertEqual(coder1.abs_fnames, coder2.abs_fnames)
+
+            # Ensure the abs_fnames contain the correct absolute path
+            expected_abs_path = os.path.abspath(str(test_file))
+            self.assertIn(expected_abs_path, coder1.abs_fnames)
+            self.assertIn(expected_abs_path, coder2.abs_fnames)
+
 
 if __name__ == "__main__":
     unittest.main()
