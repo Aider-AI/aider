@@ -1264,7 +1264,7 @@ class Coder:
             if self.main_model.info.get("output_cost_per_token"):
                 cost += completion_tokens * self.main_model.info.get("output_cost_per_token")
             self.total_cost += cost
-            
+
             def format_cost(value):
                 if value == 0:
                     return "0.00"
@@ -1273,7 +1273,7 @@ class Coder:
                     return f"{value:.2f}"
                 else:
                     return f"{value:.{max(2, 2 - int(math.log10(magnitude)))}f}"
-            
+
             self.usage_report += f" Cost: ${format_cost(cost)} request, ${format_cost(self.total_cost)} session."
 
     def get_multi_response_content(self, final=False):
@@ -1520,7 +1520,7 @@ class Coder:
             if self.show_diffs:
                 self.commands.cmd_diff()
 
-            self.io.tool_output("You can use /undo to revert and discard the committed changes.")
+            self.io.tool_output(f"You can use /undo to revert and discard commit {commit_hash}.")
             return self.gpt_prompts.files_content_gpt_edits.format(
                 hash=commit_hash,
                 message=commit_message,
