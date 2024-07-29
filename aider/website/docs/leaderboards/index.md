@@ -5,6 +5,8 @@ description: Quantitative benchmarks of LLM code editing skill.
 ---
 
 <p class="post-date">
+By Paul Gauthier,
+last updated
 <!--[[[cog
 import os
 import datetime
@@ -12,13 +14,11 @@ import datetime
 file_path = 'aider/website/docs/leaderboards/index.md'
 mod_time = os.path.getmtime(file_path)
 mod_date = datetime.datetime.fromtimestamp(mod_time)
-print(f"{mod_date.strftime('%B %d, %Y')},")
+cog.out(f"{mod_date.strftime('%B %d, %Y.')}")
 ]]]-->
+July 29, 2024.
 <!--[[[end]]]-->
-by Paul Gauthier
 </p>
-
-{% endif %}
 
 # Aider LLM Leaderboards
 {: .no_toc }
