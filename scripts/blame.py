@@ -8,6 +8,8 @@ from aider.dump import dump
 from operator import itemgetter
 import re
 import semver
+import yaml
+from datetime import datetime
 
 
 def blame(start_tag, end_tag=None):
@@ -33,7 +35,9 @@ def blame(start_tag, end_tag=None):
     total_lines = sum(grand_total.values())
     aider_percentage = (aider_total / total_lines) * 100 if total_lines > 0 else 0
 
-    return all_file_counts, grand_total, total_lines, aider_total, aider_percentage
+    end_date = get_tag_date(end_tag if end_tag else 'HEAD')
+
+    return all_file_counts, grand_total, total_lines, aider_total, aider_percentage, end_date
 
 
 def get_all_commit_hashes_between_tags(start_tag, end_tag=None):
@@ -80,21 +84,34 @@ def main():
         tags = get_all_tags_since(args.start_tag)
         tags += ['HEAD']
 
+        results = []
         for i in range(len(tags) - 1):
             start_tag, end_tag = tags[i], tags[i+1]
-            _, _, total_lines, aider_total, aider_percentage = blame(start_tag, end_tag)
-            print(f"{start_tag:7} -> {end_tag:7}: Aider wrote {aider_percentage:3.0f}% of the code ({aider_total:3}/{total_lines:3} lines)")
+            _, _, total_lines, aider_total, aider_percentage, end_date = blame(start_tag, end_tag)
+            results.append({
+                'start_tag': start_tag,
+                'end_tag': end_tag,
+                'end_date': end_date.strftime('%Y-%m-%d'),
+                'aider_percentage': round(aider_percentage, 2),
+                'aider_lines': aider_total,
+                'total_lines': total_lines
+            })
+        print(yaml.dump(results, sort_keys=False))
     else:
-        all_file_counts, grand_total, total_lines, aider_total, aider_percentage = blame(args.start_tag, args.end_tag)
+        all_file_counts, grand_total, total_lines, aider_total, aider_percentage, end_date = blame(args.start_tag, args.end_tag)
 
-        dump(all_file_counts)
+        result = {
+            'start_tag': args.start_tag,
+            'end_tag': args.end_tag or 'HEAD',
+            'end_date': end_date.strftime('%Y-%m-%d'),
+            'file_counts': all_file_counts,
+            'grand_total': {author: count for author, count in sorted(grand_total.items(), key=itemgetter(1), reverse=True)},
+            'total_lines': total_lines,
+            'aider_total': aider_total,
+            'aider_percentage': round(aider_percentage, 2)
+        }
 
-        print("\nGrand Total:")
-        for author, count in sorted(grand_total.items(), key=itemgetter(1), reverse=True):
-            percentage = (count / total_lines) * 100
-            print(f"- {author}: {count} lines ({percentage:.2f}%)")
-
-        print(f"\nAider wrote {aider_percentage:.0f}% of the code in this release ({aider_total}/{total_lines} lines).")
+        print(yaml.dump(result, sort_keys=False))
 
 def get_counts_for_file(start_tag, end_tag, authors, fname):
     try:
@@ -126,6 +143,10 @@ def get_all_tags_since(start_tag):
         if semver.Version.is_valid(tag[1:]) and semver.Version.parse(tag[1:]) >= start_version
     ]
     return [tag for tag in filtered_tags if tag.endswith('.0')]
+
+def get_tag_date(tag):
+    date_str = run(['git', 'log', '-1', '--format=%ai', tag]).strip()
+    return datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S %z')
 
 if __name__ == "__main__":
     main()
