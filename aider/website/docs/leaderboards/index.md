@@ -11,9 +11,15 @@ last updated
 import os
 import datetime
 
-file_path = 'aider/website/docs/leaderboards/index.md'
-mod_time = os.path.getmtime(file_path)
-mod_date = datetime.datetime.fromtimestamp(mod_time)
+files = [
+    'aider/website/docs/leaderboards/index.md',
+    'aider/website/_data/edit_leaderboard.yml',
+    'aider/website/_data/refactor_leaderboard.yml'
+]
+
+mod_times = [os.path.getmtime(file) for file in files]
+latest_mod_time = max(mod_times)
+mod_date = datetime.datetime.fromtimestamp(latest_mod_time)
 cog.out(f"{mod_date.strftime('%B %d, %Y.')}")
 ]]]-->
 July 29, 2024.
