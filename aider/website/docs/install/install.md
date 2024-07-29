@@ -30,7 +30,7 @@ To work with Anthropic's models like Claude 3.5 Sonnet you need a paid
 
 ```
 # Install aider
-py -m pip install aider-chat
+python -m pip install aider-chat
 
 # To work with GPT-4o:
 $ aider --4o --openai-api-key sk-xxx...
