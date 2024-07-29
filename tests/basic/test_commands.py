@@ -721,11 +721,17 @@ class TestCommands(TestCase):
 
             # Mock the linter.lint method
             with mock.patch.object(coder.linter, "lint") as mock_lint:
+                # Set up the mock to return an empty string (no lint errors)
+                mock_lint.return_value = ""
+
                 # Run cmd_lint
                 commands.cmd_lint()
 
                 # Check if the linter was called with the dirty file
                 mock_lint.assert_called_once_with(filename)
+
+            # Verify that the file is still dirty after linting
+            self.assertTrue(repo.is_dirty(filename))
 
             del coder
             del commands
