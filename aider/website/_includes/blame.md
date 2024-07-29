@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         text: 'Percent of code written by aider'
                     },
                     beginAtZero: true,
-                    max: 100
+                    //max: 100
                 }
             },
             plugins: {
