@@ -47,18 +47,14 @@ def get_all_commit_hashes_between_tags(start_tag, end_tag=None):
         return commit_hashes
 
 def run(cmd):
-    try:
-        # Get all commit hashes since the specified tag
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            check=True
-        )
-        return result.stdout
-    except subprocess.CalledProcessError as e:
-        print(f"Error: {e}", file=sys.stderr)
-        return
+    # Get all commit hashes since the specified tag
+    result = subprocess.run(
+        cmd,
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    return result.stdout
 
 def get_commit_authors(commits):
     commit_to_author = dict()
@@ -97,25 +93,29 @@ def main():
         print(f"\nAider wrote {aider_percentage:.0f}% of the code in this release ({aider_total}/{total_lines} lines).")
 
 def get_counts_for_file(start_tag, end_tag, authors, fname):
-    if end_tag:
-        text = run(['git', 'blame', f'{start_tag}..{end_tag}', '--', fname])
-    else:
-        text = run(['git', 'blame', f'{start_tag}..HEAD', '--', fname])
-    if not text:
-        return None
-    text = text.splitlines()
-    line_counts = defaultdict(int)
-    for line in text:
-        if line.startswith('^'):
-            continue
-        hsh = line[:hash_len]
-        author = authors.get(hsh, "Unknown")
-        # Normalize author names with "(aider)" to a single format
-        if "(aider)" in author.lower():
-            author = re.sub(r'\s*\(aider\)', ' (aider)', author, flags=re.IGNORECASE)
-        line_counts[author] += 1
+    try:
+        if end_tag:
+            text = run(['git', 'blame', f'{start_tag}..{end_tag}', '--', fname])
+        else:
+            text = run(['git', 'blame', f'{start_tag}..HEAD', '--', fname])
+        if not text:
+            return None
+        text = text.splitlines()
+        line_counts = defaultdict(int)
+        for line in text:
+            if line.startswith('^'):
+                continue
+            hsh = line[:hash_len]
+            author = authors.get(hsh, "Unknown")
+            # Normalize author names with "(aider)" to a single format
+            if "(aider)" in author.lower():
+                author = re.sub(r'\s*\(aider\)', ' (aider)', author, flags=re.IGNORECASE)
+            line_counts[author] += 1
 
-    return dict(line_counts)
+        return dict(line_counts)
+    except subprocess.CalledProcessError:
+        print(f"Warning: Unable to blame file {fname}. It may have been added after {start_tag} or removed before {end_tag or 'HEAD'}.", file=sys.stderr)
+        return None
 
 def get_all_tags_since(start_tag):
     all_tags = run(['git', 'tag', '--sort=v:refname']).strip().split('\n')
