@@ -103,11 +103,17 @@ def main():
             " successive tags"
         ),
     )
+    parser.add_argument(
+        "--output",
+        help="Output file to save the YAML results",
+        type=str,
+        default=None
+    )
     args = parser.parse_args()
 
     if args.all_since:
         results = process_all_tags_since(args.start_tag)
-        print(yaml.dump(results, sort_keys=False))
+        yaml_output = yaml.dump(results, sort_keys=False)
     else:
         all_file_counts, grand_total, total_lines, aider_total, aider_percentage, end_date = blame(
             args.start_tag, args.end_tag
@@ -127,7 +133,13 @@ def main():
             "aider_percentage": round(aider_percentage, 2),
         }
 
-        print(yaml.dump(result, sort_keys=False))
+        yaml_output = yaml.dump(result, sort_keys=False)
+
+    if args.output:
+        with open(args.output, 'w') as f:
+            f.write(yaml_output)
+    else:
+        print(yaml_output)
 
 
 def get_counts_for_file(start_tag, end_tag, authors, fname):
