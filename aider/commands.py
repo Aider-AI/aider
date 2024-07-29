@@ -227,9 +227,11 @@ class Commands:
         if not fnames:
             fnames = self.coder.get_inchat_relative_files()
 
-            if not fnames:
-                self.io.tool_error("No dirty files to lint.")
-                return
+        # todo: if not fnames: get all the dirty files in the repo
+
+        if not fnames:
+            self.io.tool_error("No dirty files to lint.")
+            return
 
         lint_coder = None
         for fname in fnames:
