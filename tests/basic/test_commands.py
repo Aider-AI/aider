@@ -547,9 +547,9 @@ class TestCommands(TestCase):
             # Mock the io.prompt_ask method to simulate user input
             io.prompt_ask = lambda *args, **kwargs: "custom instructions"
 
-            # Test the cmd_run method with a command that should trigger the bug
-            with self.assertRaises(UnboundLocalError):
-                commands.cmd_run("echo test", add_on_nonzero_exit=False)
+            # Test the cmd_run method with a command that should not raise an error
+            result = commands.cmd_run("echo test", add_on_nonzero_exit=False)
+            self.assertIsNone(result, "cmd_run should return None without raising an error")
 
     def test_cmd_add_drop_untracked_files(self):
         with GitTemporaryDirectory():
