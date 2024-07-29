@@ -11,6 +11,7 @@ import threading
 import time
 import traceback
 from collections import defaultdict
+import math
 from datetime import datetime
 from json.decoder import JSONDecodeError
 from pathlib import Path
@@ -1263,7 +1264,17 @@ class Coder:
             if self.main_model.info.get("output_cost_per_token"):
                 cost += completion_tokens * self.main_model.info.get("output_cost_per_token")
             self.total_cost += cost
-            self.usage_report += f" Cost: ${cost:.6f} request, ${self.total_cost:.6f} session."
+            
+            def format_cost(value):
+                if value == 0:
+                    return "0.00"
+                magnitude = abs(value)
+                if magnitude >= 0.01:
+                    return f"{value:.2f}"
+                else:
+                    return f"{value:.{max(2, 2 - int(math.log10(magnitude)))}f}"
+            
+            self.usage_report += f" Cost: ${format_cost(cost)} request, ${format_cost(self.total_cost)} session."
 
     def get_multi_response_content(self, final=False):
         cur = self.multi_response_content
