@@ -33,9 +33,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 x: {
                     type: 'time',
                     time: {
-                        unit: 'day',
+                        unit: 'month',
                         displayFormats: {
-                            day: 'MMM D, YYYY'
+                            month: 'MMM YYYY'
                         }
                     },
                     title: {
@@ -46,7 +46,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         maxRotation: 45,
                         minRotation: 45
                     },
-                    max: moment('{{ site.data.blame | last | map: "end_date" | first }}').add(15, 'days')
+                    min: moment('{{ site.data.blame | first | map: "end_date" | first }}').subtract(1, 'month'),
+                    max: moment('{{ site.data.blame | last | map: "end_date" | first }}').add(1, 'month')
                 },
                 y: {
                     title: {
