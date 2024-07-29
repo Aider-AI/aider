@@ -4,6 +4,18 @@ nav_order: 950
 description: Quantitative benchmarks of LLM code editing skill.
 ---
 
+<p class="post-date">
+<!--[[[cog
+# TODO: write python code in here to print out the last modified date
+of aider/webside/docs/leaderboard.md in the format below ending with ","
+]]]-->
+{{ page.date | date: "%B %d, %Y" }}, 
+<!--[[[end]]]-->
+by Paul Gauthier
+</p>
+
+{% endif %}
+
 # Aider LLM Leaderboards
 {: .no_toc }
 
