@@ -51,7 +51,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         text: 'Aider Contribution (%)'
                     },
                     beginAtZero: true,
-                    max: 100
                 }
             },
             plugins: {
