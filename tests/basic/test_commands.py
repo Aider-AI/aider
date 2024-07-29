@@ -6,7 +6,7 @@ import tempfile
 import unittest
 from io import StringIO
 from pathlib import Path
-from unittest import TestCase
+from unittest import TestCase, mock
 
 import git
 
@@ -721,7 +721,7 @@ class TestCommands(TestCase):
             file_path.write_text("def hello():\n    print('Hello, World!')\n\n# Dirty line\n")
 
             # Mock the linter.lint method
-            with unittest.mock.patch.object(coder.linter, "lint") as mock_lint:
+            with mock.patch.object(coder.linter, "lint") as mock_lint:
                 # Run cmd_lint
                 commands.cmd_lint()
 
