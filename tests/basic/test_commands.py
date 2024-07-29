@@ -549,7 +549,7 @@ class TestCommands(TestCase):
 
             # Test the cmd_run method with a command that should not raise an error
             result = commands.cmd_run("exit 1", add_on_nonzero_exit=True)
-            self.assertTrue("I ran this command" in result)
+            self.assertIn("I ran this command", result)
 
     def test_cmd_add_drop_untracked_files(self):
         with GitTemporaryDirectory():
