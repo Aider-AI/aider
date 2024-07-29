@@ -60,6 +60,9 @@ def get_commit_authors(commits):
     commit_to_author = dict()
     for commit in commits:
         author = run(["git", "show", "-s", "--format=%an", commit]).strip()
+        commit_message = run(["git", "show", "-s", "--format=%s", commit]).strip()
+        if commit_message.lower().startswith("aider:"):
+            author += " (aider)"
         commit_to_author[commit] = author
     return commit_to_author
 
@@ -107,9 +110,6 @@ def get_counts_for_file(start_tag, end_tag, authors, fname):
                 continue
             hsh = line[:hash_len]
             author = authors.get(hsh, "Unknown")
-            # Normalize author names with "(aider)" to a single format
-            if "(aider)" in author.lower():
-                author = re.sub(r'\s*\(aider\)', ' (aider)', author, flags=re.IGNORECASE)
             line_counts[author] += 1
 
         return dict(line_counts)
