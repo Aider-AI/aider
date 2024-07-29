@@ -118,7 +118,7 @@ def get_counts_for_file(start_tag, end_tag, authors, fname):
 
 def get_all_tags_since(start_tag):
     all_tags = run(['git', 'tag', '--sort=v:refname']).strip().split('\n')
-    filtered_tags = [tag for tag in all_tags if semver.VersionInfo.isvalid(tag[1:]) and tag >= start_tag]
+    filtered_tags = [tag for tag in all_tags if semver.Version.is_valid(tag[1:]) and tag >= start_tag]
     return [tag for tag in filtered_tags if tag.endswith('.0')]
 
 if __name__ == "__main__":
