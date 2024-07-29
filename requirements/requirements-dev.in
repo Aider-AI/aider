@@ -11,3 +11,4 @@ typer
 imgcat
 pre-commit
 cogapp
+semver

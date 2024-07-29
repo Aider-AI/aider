@@ -64,7 +64,7 @@ mdurl==0.1.2
     # via
     #   -c requirements/../requirements.txt
     #   markdown-it-py
-numpy==2.0.1
+numpy==1.26.4
     # via
     #   -c requirements/../requirements.txt
     #   altair

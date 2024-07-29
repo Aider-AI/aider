@@ -149,6 +149,8 @@ rich==13.7.1
     # via
     #   -c requirements/../requirements.txt
     #   typer
+semver==3.0.2
+    # via -r requirements/requirements-dev.in
 shellingham==1.5.4
     # via typer
 six==1.16.0
