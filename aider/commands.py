@@ -652,6 +652,7 @@ class Commands:
     def cmd_run(self, args, add_on_nonzero_exit=False):
         "Run a shell command and optionally add the output to the chat (alias: !)"
         combined_output = None
+        instructions = None
         try:
             result = subprocess.run(
                 args,
@@ -680,10 +681,8 @@ class Commands:
 
             if response.lower() in ["yes", "y"]:
                 add = True
-                instructions = None
             elif response.lower() in ["no", "n"]:
                 add = False
-                instructions = None
             else:
                 add = True
                 instructions = response
