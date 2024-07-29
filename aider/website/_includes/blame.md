@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return `${context.raw.label}: ${context.raw.percentage.toFixed(2)}% (${context.raw.y} lines)`;
+                            return `${context.raw.label}: ${Math.round(context.raw.percentage)}% (${context.raw.r} lines)`;
                         }
                     }
                 },
