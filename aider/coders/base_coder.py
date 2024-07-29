@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import math
 import mimetypes
 import os
 import platform
@@ -11,7 +12,6 @@ import threading
 import time
 import traceback
 from collections import defaultdict
-import math
 from datetime import datetime
 from json.decoder import JSONDecodeError
 from pathlib import Path
@@ -113,7 +113,7 @@ class Coder:
 
             # Bring along context from the old Coder
             update = dict(
-                fnames=from_coder.get_inchat_relative_files(),
+                fnames=list(from_coder.abs_fnames),
                 done_messages=done_messages,
                 cur_messages=from_coder.cur_messages,
                 aider_commit_hashes=from_coder.aider_commit_hashes,
@@ -1274,7 +1274,9 @@ class Coder:
                 else:
                     return f"{value:.{max(2, 2 - int(math.log10(magnitude)))}f}"
 
-            self.usage_report += f" Cost: ${format_cost(cost)} request, ${format_cost(self.total_cost)} session."
+            self.usage_report += (
+                f" Cost: ${format_cost(cost)} request, ${format_cost(self.total_cost)} session."
+            )
 
     def get_multi_response_content(self, final=False):
         cur = self.multi_response_content
