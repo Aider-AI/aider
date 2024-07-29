@@ -1258,7 +1258,6 @@ class Coder:
 
         self.usage_report = f"Tokens: {prompt_tokens:,} sent, {completion_tokens:,} received."
 
-        cost_report = ""
         if self.main_model.info.get("input_cost_per_token"):
             cost += prompt_tokens * self.main_model.info.get("input_cost_per_token")
             if self.main_model.info.get("output_cost_per_token"):
