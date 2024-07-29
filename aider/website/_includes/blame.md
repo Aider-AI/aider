@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         maxRotation: 45,
                         minRotation: 45
                     },
-                    max: moment('{{ site.data.blame | last | map: "end_date" | first }}').add(1, 'days')
+                    max: moment('{{ site.data.blame | last | map: "end_date" | first }}').add(15, 'days')
                 },
                 y: {
                     title: {
