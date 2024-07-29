@@ -6,10 +6,14 @@ description: Quantitative benchmarks of LLM code editing skill.
 
 <p class="post-date">
 <!--[[[cog
-# TODO: write python code in here to print out the last modified date
-of aider/webside/docs/leaderboard.md in the format below ending with ","
+import os
+import datetime
+
+file_path = 'aider/website/docs/leaderboards/index.md'
+mod_time = os.path.getmtime(file_path)
+mod_date = datetime.datetime.fromtimestamp(mod_time)
+print(f"{mod_date.strftime('%B %d, %Y')},")
 ]]]-->
-{{ page.date | date: "%B %d, %Y" }}, 
 <!--[[[end]]]-->
 by Paul Gauthier
 </p>
