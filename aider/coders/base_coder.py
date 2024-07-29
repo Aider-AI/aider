@@ -1509,6 +1509,7 @@ class Coder:
             if self.show_diffs:
                 self.commands.cmd_diff()
 
+            self.io.tool_output("You can use /undo to revert and discard the committed changes.")
             return self.gpt_prompts.files_content_gpt_edits.format(
                 hash=commit_hash,
                 message=commit_message,
