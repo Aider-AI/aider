@@ -536,7 +536,7 @@ class TestCommands(TestCase):
         commands.cmd_add("file.txt")
         self.assertEqual(coder.abs_fnames, set())
 
-    def test_cmd_run_unbound_local_error(self):
+    def test_cmd_test_unbound_local_error(self):
         with ChdirTemporaryDirectory():
             io = InputOutput(pretty=False, yes=False)
             from aider.coders import Coder
@@ -545,11 +545,11 @@ class TestCommands(TestCase):
             commands = Commands(io, coder)
 
             # Mock the io.prompt_ask method to simulate user input
-            io.prompt_ask = lambda *args, **kwargs: "custom instructions"
+            io.prompt_ask = lambda *args, **kwargs: "y"
 
             # Test the cmd_run method with a command that should not raise an error
-            result = commands.cmd_run("echo test", add_on_nonzero_exit=False)
-            self.assertIsNone(result, "cmd_run should return None without raising an error")
+            result = commands.cmd_run("exit 1", add_on_nonzero_exit=True)
+            self.assertTrue("I ran this comand" in result)
 
     def test_cmd_add_drop_untracked_files(self):
         with GitTemporaryDirectory():
