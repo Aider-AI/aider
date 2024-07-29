@@ -13,20 +13,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 {
                     x: '{{ row.end_date }}',
                     y: {{ row.aider_lines }},
-                    label: '{{ row.end_tag }}'
+                    r: {{ row.aider_percentage }},
+                    label: '{{ row.end_tag }}',
+                    percentage: {{ row.aider_percentage }}
                 },
                 {% endfor %}
             ],
             backgroundColor: 'rgba(54, 162, 235, 0.2)',
             borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1,
-            pointRadius: 5,
-            pointHoverRadius: 8
+            borderWidth: 1
         }]
     };
 
     var blameChart = new Chart(ctx, {
-        type: 'scatter',
+        type: 'bubble',
         data: blameData,
         options: {
             scales: {
@@ -61,9 +61,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return `${context.raw.label}: ${context.raw.y} lines`;
+                            return `${context.raw.label}: ${context.raw.y} lines (${context.raw.percentage.toFixed(2)}%)`;
                         }
                     }
+                },
+                legend: {
+                    display: false
                 }
             }
         }
