@@ -701,3 +701,39 @@ class TestCommands(TestCase):
             self.assertNotIn(fname1, str(coder.abs_fnames))
             self.assertNotIn(fname2, str(coder.abs_fnames))
             self.assertNotIn(fname3, str(coder.abs_fnames))
+
+    def test_cmd_lint_with_dirty_file(self):
+        with GitTemporaryDirectory() as repo_dir:
+            repo = git.Repo(repo_dir)
+            io = InputOutput(pretty=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Create and commit a file
+            filename = "test_file.py"
+            file_path = Path(repo_dir) / filename
+            file_path.write_text("def hello():\n    print('Hello, World!')\n")
+            repo.git.add(filename)
+            repo.git.commit("-m", "Add test_file.py")
+
+            # Modify the file to make it dirty
+            file_path.write_text("def hello():\n    print('Hello, World!')\n\n# Dirty line\n")
+
+            # Capture the output
+            captured_output = StringIO()
+            sys.stdout = captured_output
+
+            # Run cmd_lint
+            commands.cmd_lint()
+
+            # Restore stdout
+            sys.stdout = sys.__stdout__
+
+            # Check if the dirty file was detected
+            output = captured_output.getvalue()
+            self.assertIn("test_file.py", output)
+            self.assertIn("Dirty files to lint", output)
+
+            del coder
+            del commands
+            del repo
