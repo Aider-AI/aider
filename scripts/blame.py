@@ -78,11 +78,12 @@ def main():
 
     if args.all_since:
         tags = get_all_tags_since(args.start_tag)
-        dump(tags)
+        tags += ['HEAD']
+
         for i in range(len(tags) - 1):
             start_tag, end_tag = tags[i], tags[i+1]
             _, _, total_lines, aider_total, aider_percentage = blame(start_tag, end_tag)
-            print(f"{start_tag} -> {end_tag}: Aider wrote {aider_percentage:.0f}% of the code ({aider_total}/{total_lines} lines)")
+            print(f"{start_tag:7} -> {end_tag:7}: Aider wrote {aider_percentage:3.0f}% of the code ({aider_total:3}/{total_lines:3} lines)")
     else:
         all_file_counts, grand_total, total_lines, aider_total, aider_percentage = blame(args.start_tag, args.end_tag)
 
@@ -114,7 +115,7 @@ def get_counts_for_file(start_tag, end_tag, authors, fname):
 
         return dict(line_counts)
     except subprocess.CalledProcessError:
-        print(f"Warning: Unable to blame file {fname}. It may have been added after {start_tag} or removed before {end_tag or 'HEAD'}.", file=sys.stderr)
+        #print(f"Warning: Unable to blame file {fname}. It may have been added after {start_tag} or removed before {end_tag or 'HEAD'}.", file=sys.stderr)
         return None
 
 def get_all_tags_since(start_tag):
