@@ -717,7 +717,7 @@ two
 
             # Create the first coder
             io = InputOutput(yes=True)
-            coder1 = Coder.create(self.GPT35, None, io=io, fnames=[str(test_file)])
+            coder1 = Coder.create(self.GPT35, None, io=io, fnames=[test_file.name])
 
             # Create a new coder from the first coder
             coder2 = Coder.create(from_coder=coder1)
