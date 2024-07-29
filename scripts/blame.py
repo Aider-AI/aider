@@ -44,7 +44,7 @@ def get_commit_authors(commits):
 hash_len = len('44e6fefc2')
 
 def main():
-    parser = argparse.ArgumentParser(description="Get commit hashes since a specified tag.")
+    parser = argparse.ArgumentParser(description="Get aider/non-aider blame stats")
     parser.add_argument("tag", help="The tag to start from")
     args = parser.parse_args()
 
