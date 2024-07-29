@@ -719,20 +719,13 @@ class TestCommands(TestCase):
             # Modify the file to make it dirty
             file_path.write_text("def hello():\n    print('Hello, World!')\n\n# Dirty line\n")
 
-            # Capture the output
-            captured_output = StringIO()
-            sys.stdout = captured_output
+            # Mock the linter.lint method
+            with unittest.mock.patch.object(coder.linter, "lint") as mock_lint:
+                # Run cmd_lint
+                commands.cmd_lint()
 
-            # Run cmd_lint
-            commands.cmd_lint()
-
-            # Restore stdout
-            sys.stdout = sys.__stdout__
-
-            # Check if the dirty file was detected
-            output = captured_output.getvalue()
-            self.assertIn("test_file.py", output)
-            self.assertIn("Dirty files to lint", output)
+                # Check if the linter was called with the dirty file
+                mock_lint.assert_called_once_with(filename)
 
             del coder
             del commands
