@@ -4,6 +4,8 @@ parent: More info
 nav_order: 999
 ---
 
+{% include blame.md %}
+
 <!--[[[cog
 # This page is a copy of HISTORY.md, adding the front matter above.
 text = open("HISTORY.md").read()
