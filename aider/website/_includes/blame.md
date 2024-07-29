@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 y: {
                     title: {
                         display: true,
-                        text: 'Aider Contribution (%)'
+                        text: 'Aider Contribution (% of code)'
                     },
                     beginAtZero: true,
                 }
