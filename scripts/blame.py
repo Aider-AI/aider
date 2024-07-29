@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 
+import argparse
+import re
 import subprocess
 import sys
-import argparse
 from collections import defaultdict
-from aider.dump import dump
+from datetime import datetime
 from operator import itemgetter
-import re
+
 import semver
 import yaml
-from datetime import datetime
+
+from aider.dump import dump
 
 
 def blame(start_tag, end_tag=None):
@@ -18,7 +20,7 @@ def blame(start_tag, end_tag=None):
 
     authors = get_commit_authors(commits)
 
-    py_files = run(['git', 'ls-files', '*.py']).strip().split('\n')
+    py_files = run(["git", "ls-files", "*.py"]).strip().split("\n")
 
     all_file_counts = {}
     grand_total = defaultdict(int)
@@ -35,7 +37,7 @@ def blame(start_tag, end_tag=None):
     total_lines = sum(grand_total.values())
     aider_percentage = (aider_total / total_lines) * 100 if total_lines > 0 else 0
 
-    end_date = get_tag_date(end_tag if end_tag else 'HEAD')
+    end_date = get_tag_date(end_tag if end_tag else "HEAD")
 
     return all_file_counts, grand_total, total_lines, aider_total, aider_percentage, end_date
 
@@ -47,18 +49,15 @@ def get_all_commit_hashes_between_tags(start_tag, end_tag=None):
         res = run(["git", "rev-list", f"{start_tag}..HEAD"])
 
     if res:
-        commit_hashes = res.strip().split('\n')
+        commit_hashes = res.strip().split("\n")
         return commit_hashes
+
 
 def run(cmd):
     # Get all commit hashes since the specified tag
-    result = subprocess.run(
-        cmd,
-        capture_output=True,
-        text=True,
-        check=True
-    )
+    result = subprocess.run(cmd, capture_output=True, text=True, check=True)
     return result.stdout
+
 
 def get_commit_authors(commits):
     commit_to_author = dict()
@@ -71,64 +70,81 @@ def get_commit_authors(commits):
     return commit_to_author
 
 
-hash_len = len('44e6fefc2')
+hash_len = len("44e6fefc2")
+
 
 def process_all_tags_since(start_tag):
     tags = get_all_tags_since(start_tag)
-    tags += ['HEAD']
+    # tags += ['HEAD']
 
     results = []
     for i in range(len(tags) - 1):
-        start_tag, end_tag = tags[i], tags[i+1]
+        start_tag, end_tag = tags[i], tags[i + 1]
         _, _, total_lines, aider_total, aider_percentage, end_date = blame(start_tag, end_tag)
-        results.append({
-            'start_tag': start_tag,
-            'end_tag': end_tag,
-            'end_date': end_date.strftime('%Y-%m-%d'),
-            'aider_percentage': round(aider_percentage, 2),
-            'aider_lines': aider_total,
-            'total_lines': total_lines
-        })
+        results.append(
+            {
+                "start_tag": start_tag,
+                "end_tag": end_tag,
+                "end_date": end_date.strftime("%Y-%m-%d"),
+                "aider_percentage": round(aider_percentage, 2),
+                "aider_lines": aider_total,
+                "total_lines": total_lines,
+            }
+        )
     return results
+
 
 def main():
     parser = argparse.ArgumentParser(description="Get aider/non-aider blame stats")
     parser.add_argument("start_tag", help="The tag to start from")
     parser.add_argument("--end-tag", help="The tag to end at (default: HEAD)", default=None)
-    parser.add_argument("--all-since", action="store_true", help="Find all tags since the specified tag and print aider percentage between each pair of successive tags")
+    parser.add_argument(
+        "--all-since",
+        action="store_true",
+        help=(
+            "Find all tags since the specified tag and print aider percentage between each pair of"
+            " successive tags"
+        ),
+    )
     args = parser.parse_args()
 
     if args.all_since:
         results = process_all_tags_since(args.start_tag)
         print(yaml.dump(results, sort_keys=False))
     else:
-        all_file_counts, grand_total, total_lines, aider_total, aider_percentage, end_date = blame(args.start_tag, args.end_tag)
+        all_file_counts, grand_total, total_lines, aider_total, aider_percentage, end_date = blame(
+            args.start_tag, args.end_tag
+        )
 
         result = {
-            'start_tag': args.start_tag,
-            'end_tag': args.end_tag or 'HEAD',
-            'end_date': end_date.strftime('%Y-%m-%d'),
-            'file_counts': all_file_counts,
-            'grand_total': {author: count for author, count in sorted(grand_total.items(), key=itemgetter(1), reverse=True)},
-            'total_lines': total_lines,
-            'aider_total': aider_total,
-            'aider_percentage': round(aider_percentage, 2)
+            "start_tag": args.start_tag,
+            "end_tag": args.end_tag or "HEAD",
+            "end_date": end_date.strftime("%Y-%m-%d"),
+            "file_counts": all_file_counts,
+            "grand_total": {
+                author: count
+                for author, count in sorted(grand_total.items(), key=itemgetter(1), reverse=True)
+            },
+            "total_lines": total_lines,
+            "aider_total": aider_total,
+            "aider_percentage": round(aider_percentage, 2),
         }
 
         print(yaml.dump(result, sort_keys=False))
 
+
 def get_counts_for_file(start_tag, end_tag, authors, fname):
     try:
         if end_tag:
-            text = run(['git', 'blame', f'{start_tag}..{end_tag}', '--', fname])
+            text = run(["git", "blame", f"{start_tag}..{end_tag}", "--", fname])
         else:
-            text = run(['git', 'blame', f'{start_tag}..HEAD', '--', fname])
+            text = run(["git", "blame", f"{start_tag}..HEAD", "--", fname])
         if not text:
             return None
         text = text.splitlines()
         line_counts = defaultdict(int)
         for line in text:
-            if line.startswith('^'):
+            if line.startswith("^"):
                 continue
             hsh = line[:hash_len]
             author = authors.get(hsh, "Unknown")
@@ -136,21 +152,25 @@ def get_counts_for_file(start_tag, end_tag, authors, fname):
 
         return dict(line_counts)
     except subprocess.CalledProcessError:
-        #print(f"Warning: Unable to blame file {fname}. It may have been added after {start_tag} or removed before {end_tag or 'HEAD'}.", file=sys.stderr)
+        # print(f"Warning: Unable to blame file {fname}. It may have been added after {start_tag} or removed before {end_tag or 'HEAD'}.", file=sys.stderr)
         return None
 
+
 def get_all_tags_since(start_tag):
-    all_tags = run(['git', 'tag', '--sort=v:refname']).strip().split('\n')
+    all_tags = run(["git", "tag", "--sort=v:refname"]).strip().split("\n")
     start_version = semver.Version.parse(start_tag[1:])  # Remove 'v' prefix
     filtered_tags = [
-        tag for tag in all_tags
+        tag
+        for tag in all_tags
         if semver.Version.is_valid(tag[1:]) and semver.Version.parse(tag[1:]) >= start_version
     ]
-    return [tag for tag in filtered_tags if tag.endswith('.0')]
+    return [tag for tag in filtered_tags if tag.endswith(".0")]
+
 
 def get_tag_date(tag):
-    date_str = run(['git', 'log', '-1', '--format=%ai', tag]).strip()
-    return datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S %z')
+    date_str = run(["git", "log", "-1", "--format=%ai", tag]).strip()
+    return datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S %z")
+
 
 if __name__ == "__main__":
     main()
