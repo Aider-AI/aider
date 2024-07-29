@@ -726,8 +726,9 @@ two
             self.assertEqual(coder1.abs_fnames, coder2.abs_fnames)
 
             # Ensure the abs_fnames contain the correct absolute path
-            expected_abs_path = os.path.abspath(str(test_file))
-            self.assertIn(expected_abs_path, coder1.abs_fnames)
+            expected_abs_path = os.path.realpath(str(test_file))
+            coder1_abs_fnames = set(os.path.realpath(path) for path in coder1.abs_fnames)
+            self.assertIn(expected_abs_path, coder1_abs_fnames)
             self.assertIn(expected_abs_path, coder2.abs_fnames)
 
             # Check that the abs_fnames do not contain duplicate or incorrect paths
