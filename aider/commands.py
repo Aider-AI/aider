@@ -87,10 +87,19 @@ class Commands:
 
             return
 
-        if ef == "code":
-            ef = self.coder.main_model.edit_format
+        summarize_from_coder = True
+        edit_format = ef
 
-        raise SwitchCoder(edit_format=ef)
+        if ef == "code":
+            edit_format = self.coder.main_model.edit_format
+            summarize_from_coder = False
+        elif ef == "ask":
+            summarize_from_coder = False
+
+        raise SwitchCoder(
+            edit_format=edit_format,
+            summarize_from_coder=summarize_from_coder,
+        )
 
     def completions_model(self):
         models = litellm.model_cost.keys()
