@@ -227,13 +227,9 @@ class Commands:
         if not fnames:
             fnames = self.coder.get_inchat_relative_files()
 
-        dump(fnames)
-
         # If still no files, get all dirty files in the repo
         if not fnames and self.coder.repo:
             fnames = [item.a_path for item in self.coder.repo.repo.index.diff(None)]
-
-        dump(fnames)
 
         if not fnames:
             self.io.tool_error("No dirty files to lint.")
