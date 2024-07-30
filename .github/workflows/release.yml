@@ -41,7 +41,7 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-    - name: Build and push Docker image
+    - name: Build and push Docker images
       uses: docker/build-push-action@v5
       with:
         context: .
@@ -51,3 +51,16 @@ jobs:
         tags: |
           ${{ secrets.DOCKERHUB_USERNAME }}/aider:${{ github.ref_name }}
           ${{ secrets.DOCKERHUB_USERNAME }}/aider:latest
+        target: aider
+
+    - name: Build and push Docker full image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./docker/Dockerfile
+        platforms: linux/amd64,linux/arm64
+        push: true
+        tags: |
+          ${{ secrets.DOCKERHUB_USERNAME }}/aider-full:${{ github.ref_name }}
+          ${{ secrets.DOCKERHUB_USERNAME }}/aider-full:latest
+        target: aider-full

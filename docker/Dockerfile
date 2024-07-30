@@ -1,16 +1,23 @@
-FROM python:3.10-slim
-
-COPY . /aider
-
-# Unfortunately to build the multi-arch docker image we need `build-essential` for amd64.
-# Apparently py-tree-sitter-languages doesn't have a pre-built binary wheel?
-# Apparently Playwright needs build-essentials too.
+FROM python:3.10-slim AS base
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y build-essential git libportaudio2 && \
-    rm -rf /var/lib/apt/lists/* && \
-    pip install --no-cache-dir /aider --extra-index-url https://download.pytorch.org/whl/cpu && \
-    rm -rf /aider
-    
+    rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
+
+FROM base AS aider-full
+
+COPY . /aider
+RUN pip install --no-cache-dir /aider[help,browser] --extra-index-url https://download.pytorch.org/whl/cpu && \
+    rm -rf /aider
+
+ENTRYPOINT ["aider"]
+
+FROM base AS aider
+
+COPY . /aider
+RUN pip install --no-cache-dir /aider --extra-index-url https://download.pytorch.org/whl/cpu && \
+    rm -rf /aider
+
 ENTRYPOINT ["aider"]
