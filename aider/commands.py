@@ -227,13 +227,18 @@ class Commands:
         if not fnames:
             fnames = self.coder.get_inchat_relative_files()
 
+        dump(fnames)
+
         # If still no files, get all dirty files in the repo
+        tracked_files = self.coder.repo.get_tracked_files()
         if not fnames and self.coder.repo:
-            fnames = [
-                self.coder.get_rel_fname(f)
-                for f in self.coder.repo.get_tracked_files()
-                if self.coder.repo.is_dirty(f)
+            [
+                fn
+                for fn in tracked_files
+                if self.coder.repo.is_dirty(fn)
             ]
+
+        dump(fnames)
 
         if not fnames:
             self.io.tool_error("No dirty files to lint.")
