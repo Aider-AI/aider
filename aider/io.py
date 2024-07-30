@@ -60,6 +60,26 @@ class AutoCompleter(Completer):
             tokens = list(lexer.get_tokens(content))
             self.words.update(token[1] for token in tokens if token[0] in Token.Name)
 
+    def get_command_completions(self, text, words):
+        candidates = []
+        if len(words) == 1 and not text[-1].isspace():
+            partial = words[0].lower()
+            candidates = [cmd for cmd in self.command_names if cmd.startswith(partial)]
+        elif len(words) > 1 and not text[-1].isspace():
+            cmd = words[0]
+            partial = words[-1].lower()
+
+            if cmd not in self.command_names:
+                return []
+            if cmd not in self.command_completions:
+                candidates = self.commands.get_completions(cmd)
+                self.command_completions[cmd] = candidates
+            else:
+                candidates = self.command_completions[cmd]
+
+            candidates = [word for word in candidates if partial in word.lower()]
+        return candidates
+
     def get_completions(self, document, complete_event):
         text = document.text_before_cursor
         words = text.split()
@@ -67,27 +87,9 @@ class AutoCompleter(Completer):
             return
 
         if text[0] == "/":
-            if len(words) == 1 and not text[-1].isspace():
-                partial = words[0].lower()
-                candidates = self.command_names
-                for cmd in candidates:
-                    if cmd.startswith(partial):
-                        yield Completion(cmd, start_position=-len(partial))
-            elif len(words) > 1 and not text[-1].isspace():
-                cmd = words[0]
-                partial = words[-1].lower()
-
-                if cmd not in self.command_names:
-                    return
-                if cmd not in self.command_completions:
-                    candidates = self.commands.get_completions(cmd)
-                    self.command_completions[cmd] = candidates
-                else:
-                    candidates = self.command_completions[cmd]
-
-                for word in candidates:
-                    if partial in word.lower():
-                        yield Completion(word, start_position=-len(partial))
+            candidates = self.get_command_completions(text, words)
+            for candidate in candidates:
+                yield Completion(candidate, start_position=-len(words[-1]))
             return
 
         candidates = self.words
