@@ -17,12 +17,13 @@ def blame(start_tag, end_tag=None):
 
     authors = get_commit_authors(commits)
 
-    py_files = run(["git", "ls-files", "*.py"]).strip().split("\n")
+    files = run(["git", "ls-files", "*.py"]).strip().split("\n")
+    files += run(["git", "ls-files", "*.scm"]).strip().split("\n")
 
     all_file_counts = {}
     grand_total = defaultdict(int)
     aider_total = 0
-    for file in py_files:
+    for file in files:
         file_counts = get_counts_for_file(start_tag, end_tag, authors, file)
         if file_counts:
             all_file_counts[file] = file_counts
