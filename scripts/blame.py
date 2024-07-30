@@ -77,15 +77,24 @@ def process_all_tags_since(start_tag):
     results = []
     for i in tqdm(range(len(tags) - 1), desc="Processing tags"):
         start_tag, end_tag = tags[i], tags[i + 1]
-        _, _, total_lines, aider_total, aider_percentage, end_date = blame(start_tag, end_tag)
+        all_file_counts, grand_total, total_lines, aider_total, aider_percentage, end_date = blame(
+            start_tag, end_tag
+        )
         results.append(
             {
                 "start_tag": start_tag,
                 "end_tag": end_tag,
                 "end_date": end_date.strftime("%Y-%m-%d"),
-                "aider_percentage": round(aider_percentage, 2),
-                "aider_lines": aider_total,
+                "file_counts": all_file_counts,
+                "grand_total": {
+                    author: count
+                    for author, count in sorted(
+                        grand_total.items(), key=itemgetter(1), reverse=True
+                    )
+                },
                 "total_lines": total_lines,
+                "aider_total": aider_total,
+                "aider_percentage": round(aider_percentage, 2),
             }
         )
     return results
