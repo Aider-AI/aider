@@ -4,27 +4,6 @@ nav_order: 950
 description: Quantitative benchmarks of LLM code editing skill.
 ---
 
-<p class="post-date">
-By Paul Gauthier,
-last updated
-<!--[[[cog
-import os
-import datetime
-
-files = [
-    'aider/website/docs/leaderboards/index.md',
-    'aider/website/_data/edit_leaderboard.yml',
-    'aider/website/_data/refactor_leaderboard.yml'
-]
-
-mod_times = [os.path.getmtime(file) for file in files]
-latest_mod_time = max(mod_times)
-mod_date = datetime.datetime.fromtimestamp(latest_mod_time)
-cog.out(f"{mod_date.strftime('%B %d, %Y.')}")
-]]]-->
-July 29, 2024.
-<!--[[[end]]]-->
-</p>
 
 # Aider LLM Leaderboards
 {: .no_toc }
@@ -306,3 +285,26 @@ See the
 for information on running aider's code editing benchmarks.
 Submit results by opening a PR with edits to the
 [benchmark results data files](https://github.com/paul-gauthier/aider/blob/main/website/_data/).
+
+
+<p class="post-date">
+By Paul Gauthier,
+last updated
+<!--[[[cog
+import os
+import datetime
+
+files = [
+    'aider/website/docs/leaderboards/index.md',
+    'aider/website/_data/edit_leaderboard.yml',
+    'aider/website/_data/refactor_leaderboard.yml'
+]
+
+mod_times = [os.path.getmtime(file) for file in files]
+latest_mod_time = max(mod_times)
+mod_date = datetime.datetime.fromtimestamp(latest_mod_time)
+cog.out(f"{mod_date.strftime('%B %d, %Y.')}")
+]]]-->
+July 30, 2024.
+<!--[[[end]]]-->
+</p>
