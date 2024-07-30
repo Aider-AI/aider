@@ -91,9 +91,17 @@ def process_all_tags_since(start_tag):
     return results
 
 
+def get_latest_version_tag():
+    all_tags = run(["git", "tag", "--sort=-v:refname"]).strip().split("\n")
+    for tag in all_tags:
+        if semver.Version.is_valid(tag[1:]) and tag.endswith(".0"):
+            return tag
+    return None
+
+
 def main():
     parser = argparse.ArgumentParser(description="Get aider/non-aider blame stats")
-    parser.add_argument("start_tag", help="The tag to start from")
+    parser.add_argument("start_tag", nargs="?", help="The tag to start from (optional)")
     parser.add_argument("--end-tag", help="The tag to end at (default: HEAD)", default=None)
     parser.add_argument(
         "--all-since",
@@ -104,12 +112,15 @@ def main():
         ),
     )
     parser.add_argument(
-        "--output",
-        help="Output file to save the YAML results",
-        type=str,
-        default=None
+        "--output", help="Output file to save the YAML results", type=str, default=None
     )
     args = parser.parse_args()
+
+    if not args.start_tag:
+        args.start_tag = get_latest_version_tag()
+        if not args.start_tag:
+            print("Error: No valid vX.Y.0 tag found.")
+            return
 
     if args.all_since:
         results = process_all_tags_since(args.start_tag)
@@ -136,7 +147,7 @@ def main():
         yaml_output = yaml.dump(result, sort_keys=False)
 
     if args.output:
-        with open(args.output, 'w') as f:
+        with open(args.output, "w") as f:
             f.write(yaml_output)
     else:
         print(yaml_output)
