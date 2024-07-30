@@ -44,8 +44,12 @@ class Linter:
         cmd = cmd.split()
 
         process = subprocess.Popen(
-            cmd, cwd=self.root, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-            encoding=self.encoding
+            cmd,
+            cwd=self.root,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            encoding=self.encoding,
+            errors="replace",
         )
         stdout, _ = process.communicate()
         errors = stdout
@@ -141,7 +145,8 @@ class Linter:
                 capture_output=True,
                 text=True,
                 check=False,
-                encoding=self.encoding
+                encoding=self.encoding,
+                errors="replace",
             )
             errors = result.stdout + result.stderr
         except Exception as e:
