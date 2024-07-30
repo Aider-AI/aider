@@ -620,6 +620,8 @@ class Commands:
                 text=True,
                 env=env,
                 shell=True,
+                encoding=self.io.encoding,
+                errors="replace",
             )
             combined_output = result.stdout
         except Exception as e:
