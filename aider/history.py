@@ -11,12 +11,7 @@ class ChatSummary:
             raise ValueError("At least one model must be provided")
         self.models = models if isinstance(models, list) else [models]
         self.max_tokens = max_tokens
-        self.current_model = None
-        self.set_current_model(self.models[0])
-
-    def set_current_model(self, model):
-        self.current_model = model
-        self.token_count = model.token_count
+        self.token_count = self.models[0].token_count
 
     def too_big(self, messages):
         sized = self.tokenize(messages)
@@ -109,7 +104,6 @@ class ChatSummary:
         ]
 
         for model in self.models:
-            self.set_current_model(model)
             try:
                 summary = simple_send_with_retries(model.name, summarize_messages)
                 if summary is not None:
