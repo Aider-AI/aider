@@ -13,10 +13,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 {
                     x: '{{ row.end_date }}',
                     y: {{ row.aider_percentage }},
-                    r: Math.sqrt({{ row.aider_lines }}) * 1.5,
+                    r: Math.sqrt({{ row.aider_total }}) * 1.5,
                     label: '{{ row.end_tag }}',
                     percentage: {{ row.aider_percentage }},
-                    lines: {{ row.aider_lines }}
+                    lines: {{ row.aider_total }}
                 },
                 {% endfor %}
             ],
