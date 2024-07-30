@@ -517,6 +517,7 @@ def get_scm_fname(lang):
 
 def get_supported_languages_md():
     from grep_ast.parsers import PARSERS
+
     from aider.linter import Linter
 
     res = """
@@ -525,11 +526,11 @@ def get_supported_languages_md():
 """
     data = sorted((lang, ex) for ex, lang in PARSERS.items())
     linter = Linter()
-    
+
     for lang, ext in data:
         fn = get_scm_fname(lang)
-        repo_map = "✓" if Path(fn).exists() else "✗"
-        linter_support = "✓" if lang in linter.languages else "✗"
+        repo_map = "✓" if Path(fn).exists() else ""
+        linter_support = "✓"
         res += f"| {lang:20} | {ext:20} | {repo_map:^8} | {linter_support:^6} |\n"
 
     res += "\n"
