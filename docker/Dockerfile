@@ -9,8 +9,9 @@ WORKDIR /app
 FROM base AS aider-full
 
 COPY . /aider
-RUN pip install --no-cache-dir /aider[help,browser] --extra-index-url https://download.pytorch.org/whl/cpu && \
+RUN pip install --no-cache-dir /aider[help,browser,playwright] --extra-index-url https://download.pytorch.org/whl/cpu && \
     rm -rf /aider
+RUN playwright install --with-deps chromium
 
 ENTRYPOINT ["aider"]
 

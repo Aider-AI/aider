@@ -9,6 +9,7 @@
   - Improved performance of `--lint` on all dirty files in repo.
   - Improved lint flow, now doing code edit auto-commit before linting.
   - Bugfix to properly handle subprocess encodings (also for `/run`).
+- New aider-full docker image, which includes all extras.
 - Added strong model as a fallback for commit messages and chat summaries.
 - Added graph of aider's contribution to each release.
 - Generic auto-completions are provided for `/commands` without a completion override.
