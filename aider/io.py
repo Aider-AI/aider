@@ -65,19 +65,29 @@ class AutoCompleter(Completer):
         if len(words) == 1 and not text[-1].isspace():
             partial = words[0].lower()
             candidates = [cmd for cmd in self.command_names if cmd.startswith(partial)]
-        elif len(words) > 1 and not text[-1].isspace():
-            cmd = words[0]
-            partial = words[-1].lower()
+            return candidates
 
-            if cmd not in self.command_names:
-                return []
-            if cmd not in self.command_completions:
-                candidates = self.commands.get_completions(cmd)
-                self.command_completions[cmd] = candidates
-            else:
-                candidates = self.command_completions[cmd]
+        if len(words) <= 1:
+            return []
+        if text[-1].isspace():
+            return []
 
-            candidates = [word for word in candidates if partial in word.lower()]
+        cmd = words[0]
+        partial = words[-1].lower()
+
+        if cmd not in self.command_names:
+            return
+
+        if cmd not in self.command_completions:
+            candidates = self.commands.get_completions(cmd)
+            self.command_completions[cmd] = candidates
+        else:
+            candidates = self.command_completions[cmd]
+
+        if candidates is None:
+            return
+
+        candidates = [word for word in candidates if partial in word.lower()]
         return candidates
 
     def get_completions(self, document, complete_event):
@@ -88,9 +98,10 @@ class AutoCompleter(Completer):
 
         if text[0] == "/":
             candidates = self.get_command_completions(text, words)
-            for candidate in candidates:
-                yield Completion(candidate, start_position=-len(words[-1]))
-            return
+            if candidates is not None:
+                for candidate in candidates:
+                    yield Completion(candidate, start_position=-len(words[-1]))
+                return
 
         candidates = self.words
         candidates.update(set(self.fname_to_rel_fnames))

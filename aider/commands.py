@@ -148,7 +148,7 @@ class Commands:
 
         fun = getattr(self, f"completions_{cmd}", None)
         if not fun:
-            return []
+            return
         return sorted(fun())
 
     def get_commands(self):
