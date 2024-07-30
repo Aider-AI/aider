@@ -118,7 +118,7 @@ class ChatSummary:
             except Exception as e:
                 print(f"Summarization failed for model {model.name}: {str(e)}")
 
-        raise ValueError(f"summarizer unexpectedly failed for all models")
+        raise ValueError("summarizer unexpectedly failed for all models")
 
 
 def main():
