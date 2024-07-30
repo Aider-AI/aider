@@ -3,22 +3,22 @@
 
 (
   (comment)? @doc .
-  (module_definition (module_binding (module_name) @name) @definition.module)
+  (module_definition (module_binding (module_name) @name.definition.module) @definition.module)
   (#strip! @doc "^\\(\\*\\*?\\s*|\\s\\*\\)$")
 )
 
-(module_path (module_name) @name) @reference.module
+(module_path (module_name) @name.reference.module) @reference.module
 
 ; Module types
 ;--------------
 
 (
   (comment)? @doc .
-  (module_type_definition (module_type_name) @name) @definition.interface
+  (module_type_definition (module_type_name) @name.definition.interface) @definition.interface
   (#strip! @doc "^\\(\\*\\*?\\s*|\\s\\*\\)$")
 )
 
-(module_type_path (module_type_name) @name) @reference.implementation
+(module_type_path (module_type_name) @name.reference.implementation) @reference.implementation
 
 ; Functions
 ;----------
@@ -28,10 +28,10 @@
   (value_definition
     [
       (let_binding
-        pattern: (value_name) @name
+        pattern: (value_name) @name.definition.function
         (parameter))
       (let_binding
-        pattern: (value_name) @name
+        pattern: (value_name) @name.definition.function
         body: [(fun_expression) (function_expression)])
     ] @definition.function
   )
@@ -40,21 +40,21 @@
 
 (
   (comment)? @doc .
-  (external (value_name) @name) @definition.function
+  (external (value_name) @name.definition.function) @definition.function
   (#strip! @doc "^\\(\\*\\*?\\s*|\\s\\*\\)$")
 )
 
 (application_expression
-  function: (value_path (value_name) @name)) @reference.call
+  function: (value_path (value_name) @name.reference.call)) @reference.call
 
 (infix_expression
-  left: (value_path (value_name) @name)
+  left: (value_path (value_name) @name.reference.call)
   operator: (concat_operator) @reference.call
   (#eq? @reference.call "@@"))
 
 (infix_expression
   operator: (rel_operator) @reference.call
-  right: (value_path (value_name) @name)
+  right: (value_path (value_name) @name.reference.call)
   (#eq? @reference.call "|>"))
 
 ; Operator
@@ -64,7 +64,7 @@
   (comment)? @doc .
   (value_definition
     (let_binding
-      pattern: (parenthesized_operator (_) @name)) @definition.function)
+      pattern: (parenthesized_operator (_) @name.definition.function)) @definition.function)
   (#strip! @doc "^\\(\\*\\*?\\s*|\\s\\*\\)$")
 )
 
@@ -84,7 +84,7 @@
   (let_operator)
   (let_and_operator)
   (match_operator)
-] @name @reference.call
+] @name.reference.call @reference.call
 
 ; Classes
 ;--------
@@ -92,15 +92,15 @@
 (
   (comment)? @doc .
   [
-    (class_definition (class_binding (class_name) @name) @definition.class)
-    (class_type_definition (class_type_binding (class_type_name) @name) @definition.class)
+    (class_definition (class_binding (class_name) @name.definition.class) @definition.class)
+    (class_type_definition (class_type_binding (class_type_name) @name.definition.class) @definition.class)
   ]
   (#strip! @doc "^\\(\\*\\*?\\s*|\\s\\*\\)$")
 )
 
 [
-  (class_path (class_name) @name)
-  (class_type_path (class_type_name) @name)
+  (class_path (class_name) @name.reference.class)
+  (class_type_path (class_type_name) @name.reference.class)
 ] @reference.class
 
 ; Methods
@@ -108,8 +108,8 @@
 
 (
   (comment)? @doc .
-  (method_definition (method_name) @name) @definition.method
+  (method_definition (method_name) @name.definition.method) @definition.method
   (#strip! @doc "^\\(\\*\\*?\\s*|\\s\\*\\)$")
 )
 
-(method_invocation (method_name) @name) @reference.call
+(method_invocation (method_name) @name.reference.call) @reference.call
