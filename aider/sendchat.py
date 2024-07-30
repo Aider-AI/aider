@@ -48,7 +48,7 @@ def lazy_litellm_retry_decorator(func):
             giveup=should_giveup,
             max_time=60,
             on_backoff=lambda details: print(
-                f"{details.get('exception','Exception')}\nRetry in {details['wait']:.1f} seconds."
+                f"{details.get('exception', 'Exception')}\nRetry in {details['wait']:.1f} seconds."
             ),
         )(func)
         return decorated_func(*args, **kwargs)
