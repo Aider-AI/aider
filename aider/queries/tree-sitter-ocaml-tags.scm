@@ -3,22 +3,22 @@
 
 (
   (comment)? @doc .
-  (module_definition (module_binding (module_name) @name.definition.module) @definition.module)
+  (module_definition (module_binding (module_name) @name) @definition.module)
   (#strip! @doc "^\\(\\*\\*?\\s*|\\s\\*\\)$")
 )
 
-(module_path (module_name) @name.reference.module) @reference.module
+(module_path (module_name) @name) @reference.module
 
-; Modules types
+; Module types
 ;--------------
 
 (
   (comment)? @doc .
-  (module_type_definition (module_type_name) @name.definition.interface) @definition.interface
+  (module_type_definition (module_type_name) @name) @definition.interface
   (#strip! @doc "^\\(\\*\\*?\\s*|\\s\\*\\)$")
 )
 
-(module_type_path (module_type_name) @name.reference.implementation) @reference.implementation
+(module_type_path (module_type_name) @name) @reference.implementation
 
 ; Functions
 ;----------
@@ -28,10 +28,10 @@
   (value_definition
     [
       (let_binding
-        pattern: (value_name) @name.definition.function
+        pattern: (value_name) @name
         (parameter))
       (let_binding
-        pattern: (value_name) @name.definition.function
+        pattern: (value_name) @name
         body: [(fun_expression) (function_expression)])
     ] @definition.function
   )
@@ -40,21 +40,21 @@
 
 (
   (comment)? @doc .
-  (external (value_name) @name.definition.function) @definition.function
+  (external (value_name) @name) @definition.function
   (#strip! @doc "^\\(\\*\\*?\\s*|\\s\\*\\)$")
 )
 
 (application_expression
-  function: (value_path (value_name) @name.reference.call)) @reference.call
+  function: (value_path (value_name) @name)) @reference.call
 
 (infix_expression
-  left: (value_path (value_name) @name.reference.call)
-  (infix_operator) @reference.call
+  left: (value_path (value_name) @name)
+  operator: (concat_operator) @reference.call
   (#eq? @reference.call "@@"))
 
 (infix_expression
-  (infix_operator) @reference.call
-  right: (value_path (value_name) @name.reference.call)
+  operator: (rel_operator) @reference.call
+  right: (value_path (value_name) @name)
   (#eq? @reference.call "|>"))
 
 ; Operator
@@ -64,28 +64,27 @@
   (comment)? @doc .
   (value_definition
     (let_binding
-      pattern: (parenthesized_operator [
-        (prefix_operator)
-        (infix_operator)
-        (hash_operator)
-        (indexing_operator)
-        (let_operator)
-        (and_operator)
-        (match_operator)
-      ] @name.definition.function)) @definition.function)
+      pattern: (parenthesized_operator (_) @name)) @definition.function)
   (#strip! @doc "^\\(\\*\\*?\\s*|\\s\\*\\)$")
 )
 
 [
   (prefix_operator)
   (sign_operator)
-  (infix_operator)
+  (pow_operator)
+  (mult_operator)
+  (add_operator)
+  (concat_operator)
+  (rel_operator)
+  (and_operator)
+  (or_operator)
+  (assign_operator)
   (hash_operator)
   (indexing_operator)
   (let_operator)
-  (and_operator)
+  (let_and_operator)
   (match_operator)
-] @name.reference.call @reference.call
+] @name @reference.call
 
 ; Classes
 ;--------
@@ -93,15 +92,15 @@
 (
   (comment)? @doc .
   [
-    (class_definition (class_binding (class_name) @name.definition.class) @definition.class)
-    (class_type_definition (class_type_binding (class_type_name) @name.definition.class) @definition.class)
+    (class_definition (class_binding (class_name) @name) @definition.class)
+    (class_type_definition (class_type_binding (class_type_name) @name) @definition.class)
   ]
   (#strip! @doc "^\\(\\*\\*?\\s*|\\s\\*\\)$")
 )
 
 [
-  (class_path (class_name) @name.reference.class)
-  (class_type_path (class_type_name) @name.reference.class)
+  (class_path (class_name) @name)
+  (class_type_path (class_type_name) @name)
 ] @reference.class
 
 ; Methods
@@ -109,8 +108,8 @@
 
 (
   (comment)? @doc .
-  (method_definition (method_name) @name.definition.method) @definition.method
+  (method_definition (method_name) @name) @definition.method
   (#strip! @doc "^\\(\\*\\*?\\s*|\\s\\*\\)$")
 )
 
-(method_invocation (method_name) @name.reference.call) @reference.call
+(method_invocation (method_name) @name) @reference.call
