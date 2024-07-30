@@ -42,6 +42,7 @@ def lazy_litellm_retry_decorator(func):
                 litellm.exceptions.RateLimitError,
                 litellm.exceptions.ServiceUnavailableError,
                 litellm.exceptions.Timeout,
+                litellm.exceptions.InternalServerError,
                 litellm.llms.anthropic.AnthropicError,
             ),
             giveup=should_giveup,
