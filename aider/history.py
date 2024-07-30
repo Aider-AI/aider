@@ -26,6 +26,9 @@ class ChatSummary:
         return sized
 
     def summarize(self, messages, depth=0):
+        if not self.models:
+            raise ValueError("No models available for summarization")
+
         sized = self.tokenize(messages)
         total = sum(tokens for tokens, _msg in sized)
         if total <= self.max_tokens and depth == 0:
@@ -65,7 +68,7 @@ class ChatSummary:
         total = 0
 
         # These sometimes come set with value = None
-        model_max_input_tokens = self.model.info.get("max_input_tokens") or 4096
+        model_max_input_tokens = self.models[0].info.get("max_input_tokens") or 4096
         model_max_input_tokens -= 512
 
         for i in range(split_index):
