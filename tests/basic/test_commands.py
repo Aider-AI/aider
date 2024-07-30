@@ -742,7 +742,8 @@ class TestCommands(TestCase):
                 # Run cmd_lint
                 commands.cmd_lint()
 
-                # Check if the linter was called with a filename string whose Path().name matches the expected filename
+                # Check if the linter was called with a filename string
+                # whose Path().name matches the expected filename
                 mock_lint.assert_called_once()
                 called_arg = mock_lint.call_args[0][0]
                 self.assertEqual(Path(called_arg).name, filename)
