@@ -18,9 +18,9 @@ undo_command_reply = (
     " why the changes were reverted."
 )
 
-added_files = """I added these files to the chat: {fnames}.
-
-If you need to propose edits to other existing files not already added to the chat, you *MUST* tell the me their full path names and ask me to *add the files to the chat*. End your reply and wait for my approval. You can keep asking if you then decide you need to edit more files."""
+added_files = (
+    "I added these files to the chat: {fnames}\nLet me know if there are others we should add."
+)
 
 
 run_output = """I ran this command:
