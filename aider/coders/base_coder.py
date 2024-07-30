@@ -930,6 +930,19 @@ class Coder:
         if edited:
             self.edit_outcome = True
 
+        self.update_cur_messages(edited)
+
+        if edited:
+            self.aider_edited_files = edited
+            if self.repo and self.auto_commits and not self.dry_run:
+                saved_message = self.auto_commit(edited)
+            elif hasattr(self.gpt_prompts, "files_content_gpt_edits_no_repo"):
+                saved_message = self.gpt_prompts.files_content_gpt_edits_no_repo
+            else:
+                saved_message = None
+
+            self.move_back_cur_messages(saved_message)
+
         if edited and self.auto_lint:
             lint_errors = self.lint_edited(edited)
             self.lint_outcome = not lint_errors
@@ -949,19 +962,6 @@ class Coder:
                     self.reflected_message = test_errors
                     self.update_cur_messages(set())
                     return
-
-        self.update_cur_messages(edited)
-
-        if edited:
-            self.aider_edited_files = edited
-            if self.repo and self.auto_commits and not self.dry_run:
-                saved_message = self.auto_commit(edited)
-            elif hasattr(self.gpt_prompts, "files_content_gpt_edits_no_repo"):
-                saved_message = self.gpt_prompts.files_content_gpt_edits_no_repo
-            else:
-                saved_message = None
-
-            self.move_back_cur_messages(saved_message)
 
         add_rel_files_message = self.check_for_file_mentions(content)
         if add_rel_files_message:
