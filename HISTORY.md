@@ -1,6 +1,24 @@
 
 # Release history
 
+## main branch
+
+- Switching to code and ask mode no longer summarizes the chat history.
+- Linting improvements:
+  - Ask before fixing lint errors.
+  - Improved performance of `--lint` on all dirty files in repo.
+  - Improved lint flow, now doing code edit auto-commit before linting.
+  - Bugfix to properly handle subprocess encodings (also for `/run`).
+- Added strong model as a fallback for commit messages and chat summaries.
+- Added graph of aider's contribution to each release.
+- Generic auto-completions are provided for `/commands` without a completion override.
+- Fixed broken OCaml tags file.
+- Bugfix in `/run` add to chat approval logic.
+
+## Aider v0.46.1
+
+- Downgraded stray numpy dependency back to 1.26.4.
+
 ### Aider v0.46.0
 
 - New `/ask <question>` command to ask about your code, without making any edits.
