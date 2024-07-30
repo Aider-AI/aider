@@ -230,13 +230,8 @@ class Commands:
         dump(fnames)
 
         # If still no files, get all dirty files in the repo
-        tracked_files = self.coder.repo.get_tracked_files()
         if not fnames and self.coder.repo:
-            [
-                fn
-                for fn in tracked_files
-                if self.coder.repo.is_dirty(fn)
-            ]
+            fnames = [item.a_path for item in self.coder.repo.repo.index.diff(None)]
 
         dump(fnames)
 
