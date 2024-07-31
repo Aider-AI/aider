@@ -16,7 +16,7 @@ cog.out(text)
 
 # Release history
 
-### main branch
+### Aider v0.47.0
 
 - [Commit message](https://aider.chat/docs/git.html#commit-messages) improvements:
   - Added Conventional Commits guidelines to commit message prompt.
