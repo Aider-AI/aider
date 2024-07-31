@@ -4,12 +4,14 @@ RUN apt-get update && \
     apt-get install --no-install-recommends -y build-essential git libportaudio2 && \
     rm -rf /var/lib/apt/lists/*
 
-RUN mkdir /.aider && chmod a+rwx /.aider
+# Permission kludges to support `docker run --user xxx`
+RUN mkdir       /.aider /app /.cache
+RUN chmod a+rwx /.aider /app /.cache
 
-# So git doesn't complain about unusual permissions with `docker run --user xxx`
-RUN mkdir /app && chmod a+rwx /app && git config --system --add safe.directory /app
+# So git doesn't complain about unusual permissions
+RUN git config --system --add safe.directory /app
 
-# So pip installs work even with `docker run --user xxx`
+# So pip installs work
 RUN chmod a+rwx /usr/local/lib/python3.10/site-packages /usr/local/*
 
 WORKDIR /app
