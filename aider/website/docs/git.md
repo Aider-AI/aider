@@ -34,6 +34,16 @@ While it is not recommended, you can disable aider's use of git in a few ways:
   - `--no-dirty-commits` will stop aider from committing dirty files before applying its edits.
   - `--no-git` will completely stop aider from using git on your files. You should ensure you are keeping sensible backups of the files you are working with.
 
+## Commit messages
+
+By default, aider creates commit messages which follow
+[Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
+
+You can customize the
+[commit prompt](https://github.com/paul-gauthier/aider/blob/main/aider/prompts.py#L5)
+with the `--commit-prompt` option.
+You can place that on the command line, or 
+[configure it via a config file or environment variables](https://aider.chat/docs/config.html).
 
 ## Commit attribution
 

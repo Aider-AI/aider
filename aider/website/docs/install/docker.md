@@ -35,7 +35,13 @@ The above command installs the aider core, which is missing some of the extra
 features like interactive help, the browser GUI and Playwright support for
 scraping web pages.
 
+Use `paulgauthier/aider-full` to get all the features, at the expense of a larger
+docker image.
 
+```
+docker pull paulgauthier/aider-full
+docker run -it --volume $(pwd):/app paulgauthier/aider-full --openai-api-key $OPENAI_API_KEY [...other aider args...]
+```
 
 ## Limitations
 
