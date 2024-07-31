@@ -136,7 +136,7 @@ def main():
 
     if args.all_since:
         results = process_all_tags_since(args.start_tag)
-        yaml_output = yaml.dump(results, sort_keys=False)
+        yaml_output = yaml.dump(results, sort_keys=True)
     else:
         all_file_counts, grand_total, total_lines, aider_total, aider_percentage, end_date = blame(
             args.start_tag, args.end_tag
@@ -156,7 +156,7 @@ def main():
             "aider_percentage": round(aider_percentage, 2),
         }
 
-        yaml_output = yaml.dump(result, sort_keys=False)
+        yaml_output = yaml.dump(result, sort_keys=True)
 
     if args.output:
         with open(args.output, "w") as f:
