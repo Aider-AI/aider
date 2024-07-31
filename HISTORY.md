@@ -14,7 +14,7 @@
   - Bugfix to properly handle subprocess encodings (also for `/run`).
 - Improved [docker support](https://aider.chat/docs/install/docker.html):
   - Resolved permission issues when using `docker run --user xxx`.
-  - New paulgauthier/aider-full docker image, which includes all extras.
+  - New `paulgauthier/aider-full` docker image, which includes all extras.
 - Switching to code and ask mode no longer summarizes the chat history.
 - Added graph of aider's contribution to each release.
 - Generic auto-completions are provided for `/commands` without a completion override.
