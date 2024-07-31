@@ -19,6 +19,7 @@ cog.out(text)
 ## main branch
 
 - Switching to code and ask mode no longer summarizes the chat history.
+- Added Conventional Commits guidelines to commit message prompt.
 - Linting improvements:
   - Ask before fixing lint errors.
   - Improved performance of `--lint` on all dirty files in repo.
