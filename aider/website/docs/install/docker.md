@@ -27,7 +27,14 @@ you do the `docker run` command:
 ```
 git config user.email "you@example.com"
 git config user.name "Your Name"
-```  
+```
+
+## Full version
+
+The above command installs the aider core, which is missing some of the extra
+features like interactive help, the browser GUI and Playwright support for
+scraping web pages.
+
 
 
 ## Limitations
