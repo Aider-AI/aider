@@ -353,6 +353,11 @@ def get_parser(default_config_files, git_root):
         help="Prefix commit messages with 'aider: ' (default: False)",
     )
     group.add_argument(
+        "--commit-prompt",
+        metavar="PROMPT",
+        help="Specify a custom prompt for generating commit messages",
+    )
+    group.add_argument(
         "--dry-run",
         action=argparse.BooleanOptionalAction,
         default=False,

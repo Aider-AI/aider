@@ -490,6 +490,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             attribute_committer=args.attribute_committer,
             attribute_commit_message=args.attribute_commit_message,
             verify_ssl=args.verify_ssl,
+            commit_prompt=args.commit_prompt,
         )
 
     except ValueError as err:
