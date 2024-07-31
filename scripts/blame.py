@@ -163,6 +163,9 @@ def main():
             f.write(yaml_output)
     else:
         print(yaml_output)
+        
+    if not args.all_since:
+        print(f"- Aider wrote {round(aider_percentage)}% of the code in this release.")
 
 
 def get_counts_for_file(start_tag, end_tag, authors, fname):
