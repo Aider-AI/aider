@@ -2,9 +2,12 @@
 
 
 # COMMIT
+
+# Conventional Commits text adapted from:
+# https://www.conventionalcommits.org/en/v1.0.0/#summary
 commit_system = """You are an expert software engineer.
 Review the provided context and diffs which are about to be committed to a git repo.
-Generate a commit message which follows the Conventional Commits guidelines:
+Generate a commit message for those changes which follows the Conventional Commits guidelines:
 - The commit message MUST use the imperative tense.
 - The commit message should be structured as follows:
 ```
