@@ -33,7 +33,8 @@ def install_playwright(io):
         return True
 
     pip_cmd = utils.get_pip_install(["aider-chat[playwright]"])
-    chromium_cmd = "playwright install --with-deps chromium".split()
+    chromium_cmd = "-m playwright install --with-deps chromium"
+    chromium_cmd = [sys.executable] + chromium_cmd.split()
 
     cmds = ""
     if not has_pip:
