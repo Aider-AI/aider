@@ -220,6 +220,7 @@ class Coder:
         aider_commit_hashes=None,
         map_mul_no_files=8,
         verify_ssl=True,
+        commit_prompt=None,
     ):
         if not fnames:
             fnames = []
@@ -285,6 +286,7 @@ class Coder:
                     attribute_author=attribute_author,
                     attribute_committer=attribute_committer,
                     attribute_commit_message=attribute_commit_message,
+                    commit_prompt=commit_prompt,
                 )
                 self.root = self.repo.root
             except FileNotFoundError:
