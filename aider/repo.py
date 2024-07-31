@@ -26,6 +26,7 @@ class GitRepo:
         attribute_author=True,
         attribute_committer=True,
         attribute_commit_message=False,
+        commit_prompt=None,
     ):
         self.io = io
         self.models = models
@@ -33,6 +34,7 @@ class GitRepo:
         self.attribute_author = attribute_author
         self.attribute_committer = attribute_committer
         self.attribute_commit_message = attribute_commit_message
+        self.commit_prompt = commit_prompt
 
         if git_dname:
             check_fnames = [git_dname]
@@ -154,8 +156,9 @@ class GitRepo:
             content += context + "\n"
         content += diffs
 
+        system_content = self.commit_prompt or prompts.commit_system
         messages = [
-            dict(role="system", content=prompts.commit_system),
+            dict(role="system", content=system_content),
             dict(role="user", content=content),
         ]
 
