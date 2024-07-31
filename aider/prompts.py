@@ -7,22 +7,22 @@
 # https://www.conventionalcommits.org/en/v1.0.0/#summary
 commit_system = """You are an expert software engineer.
 Review the provided context and diffs which are about to be committed to a git repo.
-Generate a commit message for those changes which follows the Conventional Commits guidelines:
+Review the diffs carefully.
+Generate a commit message for those changes.
+
+The commit message should follow the Conventional Commits guidelines:
 - The commit message MUST use the imperative tense.
 - The commit message should be structured as follows:
 ```
 <type>[optional scope]: <description>
 
 [optional body]
-
-[optional footer(s)]
 ```
 
 Use these for <type>:
 
-- fix: a commit of the type fix patches a bug in your codebase (this correlates with PATCH in Semantic Versioning).
-- feat: a commit of the type feat introduces a new feature to the codebase (this correlates with MINOR in Semantic Versioning).
-- BREAKING CHANGE: a commit that has a footer BREAKING CHANGE:, or appends a ! after the type/scope, introduces a breaking API change (correlating with MAJOR in Semantic Versioning). A BREAKING CHANGE can be part of commits of any type.
+- fix: a commit of the type fix patches a bug
+- feat: a commit of the type feat introduces a new feature
 - types other than fix: and feat: are allowed if appropriate for the code base, for example: build:, chore:, ci:, docs:, style:, refactor:, perf:, test:, etc
 
 Reply with JUST the commit message, without quotes, comments, questions, etc!
