@@ -112,16 +112,16 @@ class TestRepo(unittest.TestCase):
         model1 = Model("gpt-3.5-turbo")
         model2 = Model("gpt-4")
         repo = GitRepo(InputOutput(), None, None, models=[model1, model2])
-        
+
         # Call the get_commit_message method with dummy diff and context
         result = repo.get_commit_message("dummy diff", "dummy context")
 
         # Assert that the returned message is the expected one from the second model
         self.assertEqual(result, "a good commit message")
-        
+
         # Check that simple_send_with_retries was called twice
         self.assertEqual(mock_send.call_count, 2)
-        
+
         # Check that it was called with the correct model names
         mock_send.assert_any_call(model1.name, mock_send.call_args[0][1])
         mock_send.assert_any_call(model2.name, mock_send.call_args[0][1])
@@ -152,14 +152,14 @@ class TestRepo(unittest.TestCase):
     def test_get_commit_message_with_custom_prompt(self, mock_send):
         mock_send.return_value = "Custom commit message"
         custom_prompt = "Generate a commit message in the style of Shakespeare"
-        
+
         repo = GitRepo(InputOutput(), None, None, models=[self.GPT35], commit_prompt=custom_prompt)
         result = repo.get_commit_message("dummy diff", "dummy context")
 
         self.assertEqual(result, "Custom commit message")
         mock_send.assert_called_once()
         _, kwargs = mock_send.call_args
-        self.assertEqual(kwargs['messages'][0]['content'], custom_prompt)
+        self.assertEqual(kwargs["messages"][0]["content"], custom_prompt)
 
     @patch("aider.repo.GitRepo.get_commit_message")
     def test_commit_with_custom_committer_name(self, mock_send):
