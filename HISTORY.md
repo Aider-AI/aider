@@ -1,7 +1,7 @@
 
 # Release history
 
-## main branch
+### main branch
 
 - [Commit message](http://aider.chat/docs/git.html#commit-messages) improvements:
   - Added Conventional Commits guidelines to commit message prompt.
@@ -22,7 +22,7 @@
 - Bugfix in `/run` add to chat approval logic.
 - Aider wrote 58% of the code in this release.
 
-## Aider v0.46.1
+### Aider v0.46.1
 
 - Downgraded stray numpy dependency back to 1.26.4.
 
