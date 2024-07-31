@@ -18,15 +18,19 @@ cog.out(text)
 
 ## main branch
 
-- Switching to code and ask mode no longer summarizes the chat history.
-- Added Conventional Commits guidelines to commit message prompt.
+- Commit message improvements:
+  - Added Conventional Commits guidelines to commit message prompt.
+  - Added `--commit-prompt` to customize the commit message prompt.
+  - Added strong model as a fallback for commit messages (and chat summaries).
 - Linting improvements:
   - Ask before fixing lint errors.
   - Improved performance of `--lint` on all dirty files in repo.
   - Improved lint flow, now doing code edit auto-commit before linting.
   - Bugfix to properly handle subprocess encodings (also for `/run`).
-- New aider-full docker image, which includes all extras.
-- Added strong model as a fallback for commit messages and chat summaries.
+- Improved docker support:
+  - Resolved permission issues when using `docker run --user xxx`.
+  - New paul-gauthier/aider-full docker image, which includes all extras.
+- Switching to code and ask mode no longer summarizes the chat history.
 - Added graph of aider's contribution to each release.
 - Generic auto-completions are provided for `/commands` without a completion override.
 - Fixed broken OCaml tags file.

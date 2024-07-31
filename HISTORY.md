@@ -12,7 +12,9 @@
   - Improved performance of `--lint` on all dirty files in repo.
   - Improved lint flow, now doing code edit auto-commit before linting.
   - Bugfix to properly handle subprocess encodings (also for `/run`).
-- New paul-gauthier/aider-full docker image, which includes all extras.
+- Improved docker support:
+  - Resolved permission issues when using `docker run --user xxx`.
+  - New paul-gauthier/aider-full docker image, which includes all extras.
 - Switching to code and ask mode no longer summarizes the chat history.
 - Added graph of aider's contribution to each release.
 - Generic auto-completions are provided for `/commands` without a completion override.
