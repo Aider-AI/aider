@@ -148,6 +148,19 @@ class TestRepo(unittest.TestCase):
         # Assert that the returned message is the expected one
         self.assertEqual(result, 'a good "commit message"')
 
+    @patch("aider.repo.simple_send_with_retries")
+    def test_get_commit_message_with_custom_prompt(self, mock_send):
+        mock_send.return_value = "Custom commit message"
+        custom_prompt = "Generate a commit message in the style of Shakespeare"
+        
+        repo = GitRepo(InputOutput(), None, None, models=[self.GPT35], commit_prompt=custom_prompt)
+        result = repo.get_commit_message("dummy diff", "dummy context")
+
+        self.assertEqual(result, "Custom commit message")
+        mock_send.assert_called_once()
+        _, kwargs = mock_send.call_args
+        self.assertEqual(kwargs['messages'][0]['content'], custom_prompt)
+
     @patch("aider.repo.GitRepo.get_commit_message")
     def test_commit_with_custom_committer_name(self, mock_send):
         mock_send.return_value = '"a good commit message"'
