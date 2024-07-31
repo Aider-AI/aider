@@ -4,6 +4,9 @@ RUN apt-get update && \
     apt-get install --no-install-recommends -y build-essential git libportaudio2 && \
     rm -rf /var/lib/apt/lists/*
 
+RUN mkdir /.aider && chmod a+rwx /.aider
+RUN mkdir /app && chmod a+rwx /app && git config --system --add safe.directory /app
+
 WORKDIR /app
 
 FROM base AS aider-full
