@@ -20,6 +20,7 @@
 - Generic auto-completions are provided for `/commands` without a completion override.
 - Fixed broken OCaml tags file.
 - Bugfix in `/run` add to chat approval logic.
+- Aider wrote 58% of the code in this release.
 
 ## Aider v0.46.1
 

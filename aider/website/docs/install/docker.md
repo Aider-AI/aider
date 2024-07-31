@@ -14,7 +14,7 @@ The full image has support for features like interactive help, the
 browser GUI and support for using Playwright to scrape web pages.  The
 core image can still use these features, but they will need to be
 installed the first time you access them. Since containers are
-ephemeral, they extras will need to be reinstalled the next time you
+ephemeral, the extras will need to be reinstalled the next time you
 launch the aider core container.
 
 ### Aider core 
