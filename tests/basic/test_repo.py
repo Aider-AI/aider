@@ -158,8 +158,8 @@ class TestRepo(unittest.TestCase):
 
         self.assertEqual(result, "Custom commit message")
         mock_send.assert_called_once()
-        _, kwargs = mock_send.call_args
-        self.assertEqual(kwargs["messages"][0]["content"], custom_prompt)
+        args, _ = mock_send.call_args
+        self.assertEqual(args[1][0]["content"], custom_prompt)
 
     @patch("aider.repo.GitRepo.get_commit_message")
     def test_commit_with_custom_committer_name(self, mock_send):
