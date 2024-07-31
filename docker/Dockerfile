@@ -10,7 +10,7 @@ RUN python -m venv /venv
 ENV PATH="/venv/bin:$PATH"
 
 # Permission kludges to support `docker run --user xxx`
-RUN chmod a+rwx /venv /venv/{bin,include,lib,lib/python3.1/site-packages}
+RUN chmod a+rwx /venv /venv/bin /venv/include /venv/lib /venv/lib/python3.10/site-packages
 
 RUN mkdir       /.aider /.cache
 RUN chmod a+rwx /.aider /.cache
