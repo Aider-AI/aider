@@ -3,7 +3,7 @@
 
 ### main branch
 
-- [Commit message](http://aider.chat/docs/git.html#commit-messages) improvements:
+- [Commit message](https://aider.chat/docs/git.html#commit-messages) improvements:
   - Added Conventional Commits guidelines to commit message prompt.
   - Added `--commit-prompt` to customize the commit message prompt.
   - Added strong model as a fallback for commit messages (and chat summaries).

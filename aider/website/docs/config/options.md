@@ -25,8 +25,8 @@ from aider.args import get_md_help
 cog.out(get_md_help())
 ]]]-->
 ```
-usage: aider [-h] [--file] [--openai-api-key] [--anthropic-api-key]
-             [--model] [--opus] [--sonnet] [--4] [--4o] [--4-turbo]
+usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
+             [--opus] [--sonnet] [--4] [--4o] [--4-turbo]
              [--35turbo] [--models] [--openai-api-base]
              [--openai-api-type] [--openai-api-version]
              [--openai-api-deployment-id] [--openai-organization-id]
@@ -48,10 +48,10 @@ usage: aider [-h] [--file] [--openai-api-key] [--anthropic-api-key]
              [--attribute-author | --no-attribute-author]
              [--attribute-committer | --no-attribute-committer]
              [--attribute-commit-message | --no-attribute-commit-message]
-             [--commit-prompt] [--dry-run | --no-dry-run] [--commit]
+             [--commit] [--commit-prompt] [--dry-run | --no-dry-run]
              [--lint] [--lint-cmd] [--auto-lint | --no-auto-lint]
              [--test-cmd] [--auto-test | --no-auto-test] [--test]
-             [--vim] [--voice-language] [--version]
+             [--file] [--vim] [--voice-language] [--version]
              [--just-check-update]
              [--check-update | --no-check-update] [--apply] [--yes]
              [-v] [--show-repo-map] [--show-prompts] [--exit]
@@ -68,10 +68,6 @@ Aliases:
   - `--help`
 
 ## Main:
-
-### `--file FILE`
-specify a file to edit (can be used multiple times)  
-Environment variable: `AIDER_FILE`  
 
 ### `--openai-api-key OPENAI_API_KEY`
 Specify the OpenAI API key  
@@ -335,6 +331,11 @@ Aliases:
   - `--attribute-commit-message`
   - `--no-attribute-commit-message`
 
+### `--commit`
+Commit all pending changes with a suitable commit message, then exit  
+Default: False  
+Environment variable: `AIDER_COMMIT`  
+
 ### `--commit-prompt PROMPT`
 Specify a custom prompt for generating commit messages  
 Environment variable: `AIDER_COMMIT_PROMPT`  
@@ -348,11 +349,6 @@ Aliases:
   - `--no-dry-run`
 
 ## Fixing and committing:
-
-### `--commit`
-Commit all pending changes with a suitable commit message, then exit  
-Default: False  
-Environment variable: `AIDER_COMMIT`  
 
 ### `--lint`
 Lint and fix provided files, or dirty files if none provided  
@@ -391,6 +387,10 @@ Default: False
 Environment variable: `AIDER_TEST`  
 
 ## Other Settings:
+
+### `--file FILE`
+specify a file to edit (can be used multiple times)  
+Environment variable: `AIDER_FILE`  
 
 ### `--vim`
 Use VI editing mode in the terminal (default: False)  

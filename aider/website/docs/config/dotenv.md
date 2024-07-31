@@ -63,9 +63,6 @@ cog.outl("```")
 #######
 # Main:
 
-## specify a file to edit (can be used multiple times)
-#AIDER_FILE=
-
 ## Specify the OpenAI API key
 #OPENAI_API_KEY=
 
@@ -216,6 +213,9 @@ cog.outl("```")
 ## Prefix commit messages with 'aider: ' (default: False)
 #AIDER_ATTRIBUTE_COMMIT_MESSAGE=false
 
+## Commit all pending changes with a suitable commit message, then exit
+#AIDER_COMMIT=false
+
 ## Specify a custom prompt for generating commit messages
 #AIDER_COMMIT_PROMPT=
 
@@ -224,9 +224,6 @@ cog.outl("```")
 
 ########################
 # Fixing and committing:
-
-## Commit all pending changes with a suitable commit message, then exit
-#AIDER_COMMIT=false
 
 ## Lint and fix provided files, or dirty files if none provided
 #AIDER_LINT=false
@@ -248,6 +245,9 @@ cog.outl("```")
 
 #################
 # Other Settings:
+
+## specify a file to edit (can be used multiple times)
+#AIDER_FILE=
 
 ## Use VI editing mode in the terminal (default: False)
 #AIDER_VIM=false
