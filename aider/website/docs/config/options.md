@@ -48,8 +48,8 @@ usage: aider [-h] [--file] [--openai-api-key] [--anthropic-api-key]
              [--attribute-author | --no-attribute-author]
              [--attribute-committer | --no-attribute-committer]
              [--attribute-commit-message | --no-attribute-commit-message]
-             [--dry-run | --no-dry-run] [--commit] [--lint]
-             [--lint-cmd] [--auto-lint | --no-auto-lint]
+             [--commit-prompt] [--dry-run | --no-dry-run] [--commit]
+             [--lint] [--lint-cmd] [--auto-lint | --no-auto-lint]
              [--test-cmd] [--auto-test | --no-auto-test] [--test]
              [--vim] [--voice-language] [--version]
              [--just-check-update]
@@ -334,6 +334,10 @@ Environment variable: `AIDER_ATTRIBUTE_COMMIT_MESSAGE`
 Aliases:
   - `--attribute-commit-message`
   - `--no-attribute-commit-message`
+
+### `--commit-prompt PROMPT`
+Specify a custom prompt for generating commit messages  
+Environment variable: `AIDER_COMMIT_PROMPT`  
 
 ### `--dry-run`
 Perform a dry run without modifying files (default: False)  

@@ -209,6 +209,9 @@ cog.outl("```")
 ## Prefix commit messages with 'aider: ' (default: False)
 #attribute-commit-message: false
 
+## Specify a custom prompt for generating commit messages
+#commit-prompt:
+
 ## Perform a dry run without modifying files (default: False)
 #dry-run: false
 
