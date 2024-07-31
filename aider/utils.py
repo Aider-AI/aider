@@ -255,14 +255,13 @@ def check_pip_install_extra(io, module, prompt, pip_install_cmd):
         return
 
     success, output = run_install(cmd)
-    if not success:
-        return
-
-    try:
-        __import__(module)
-        return True
-    except (ImportError, ModuleNotFoundError):
-        pass
+    if success:
+        try:
+            __import__(module)
+            return True
+        except (ImportError, ModuleNotFoundError) as err:
+            io.tool_error(str(err))
+            pass
 
     io.tool_error(output)
 
