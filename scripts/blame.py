@@ -17,7 +17,7 @@ def blame(start_tag, end_tag=None):
 
     authors = get_commit_authors(commits)
 
-    pats = "*.py *.scm **Dockerfile".split()
+    pats = "*.py *.scm *.sh **Dockerfile **Gemfile .github/workflows/*.yml".split()
     files = []
     for pat in pats:
         files += run(["git", "ls-files", pat]).strip().split("\n")
