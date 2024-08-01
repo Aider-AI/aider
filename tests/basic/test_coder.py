@@ -10,6 +10,7 @@ from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.models import Model
+from aider.repo import GitRepo
 from aider.utils import GitTemporaryDirectory
 
 
@@ -612,16 +613,25 @@ two
             repo.git.add(str(fname2))
             repo.git.commit("-m", "initial")
 
+            io = InputOutput(yes=True)
+
+            fnames = [fname1, fname2, fname3]
+
             aignore = Path(".aiderignore")
             aignore.write_text(f"{fname1}\n{fname2}\ndir\n")
+            repo = GitRepo(
+                io,
+                fnames,
+                None,
+                aider_ignore_file=str(aignore),
+            )
 
-            io = InputOutput(yes=True)
             coder = Coder.create(
                 self.GPT35,
                 None,
                 io,
-                fnames=[fname1, fname2, fname3],
-                aider_ignore_file=str(aignore),
+                fnames=fnames,
+                repo=repo,
             )
 
             self.assertNotIn(fname1, str(coder.abs_fnames))
