@@ -11,7 +11,9 @@ from prompt_toolkit.enums import EditingMode
 
 from aider import __version__, models, utils
 from aider.args import get_parser
-from aider.commands import SwitchCoder
+from aider.coders import Coder
+from aider.commands import Commands, SwitchCoder
+from aider.history import ChatSummary
 from aider.io import InputOutput
 from aider.llm import litellm  # noqa: F401; properly init litellm on launch
 from aider.repo import GitRepo
@@ -474,10 +476,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             )
         except FileNotFoundError:
             pass
-
-    from aider.coders import Coder
-    from aider.commands import Commands
-    from aider.history import ChatSummary
 
     commands = Commands(io, None, verify_ssl=args.verify_ssl)
 
