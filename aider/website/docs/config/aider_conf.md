@@ -191,6 +191,9 @@ cog.outl("```")
 ## Specify the aider ignore file (default: .aiderignore in git root)
 #aiderignore: .aiderignore
 
+## Only consider files in the current subtree of the git repository
+#subtree-only: false
+
 ## Enable/disable auto commit of LLM changes (default: True)
 #auto-commits: true
 

@@ -43,7 +43,7 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--tool-error-color] [--assistant-output-color]
              [--code-theme] [--show-diffs] [--git | --no-git]
              [--gitignore | --no-gitignore] [--aiderignore]
-             [--auto-commits | --no-auto-commits]
+             [--subtree-only] [--auto-commits | --no-auto-commits]
              [--dirty-commits | --no-dirty-commits]
              [--attribute-author | --no-attribute-author]
              [--attribute-committer | --no-attribute-committer]
@@ -290,6 +290,11 @@ Aliases:
 Specify the aider ignore file (default: .aiderignore in git root)  
 Default: .aiderignore  
 Environment variable: `AIDER_AIDERIGNORE`  
+
+### `--subtree-only`
+Only consider files in the current subtree of the git repository  
+Default: False  
+Environment variable: `AIDER_SUBTREE_ONLY`  
 
 ### `--auto-commits`
 Enable/disable auto commit of LLM changes (default: True)  
