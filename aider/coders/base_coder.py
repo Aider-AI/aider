@@ -191,8 +191,8 @@ class Coder:
         self,
         main_model,
         io,
+        repo=None,
         fnames=None,
-        git_dname=None,
         pretty=True,
         show_diffs=False,
         auto_commits=True,
@@ -205,7 +205,6 @@ class Coder:
         stream=True,
         use_git=True,
         voice_language=None,
-        aider_ignore_file=None,
         cur_messages=None,
         done_messages=None,
         max_chat_history_tokens=None,
@@ -214,13 +213,9 @@ class Coder:
         auto_test=False,
         lint_cmds=None,
         test_cmd=None,
-        attribute_author=True,
-        attribute_committer=True,
-        attribute_commit_message=False,
         aider_commit_hashes=None,
         map_mul_no_files=8,
         verify_ssl=True,
-        commit_prompt=None,
     ):
         if not fnames:
             fnames = []
@@ -275,22 +270,20 @@ class Coder:
 
         self.commands = Commands(self.io, self, voice_language, verify_ssl=verify_ssl)
 
-        if use_git:
+        self.repo = repo
+        if use_git and self.repo is None:
             try:
                 self.repo = GitRepo(
                     self.io,
                     fnames,
-                    git_dname,
-                    aider_ignore_file,
+                    ".",
                     models=main_model.commit_message_models(),
-                    attribute_author=attribute_author,
-                    attribute_committer=attribute_committer,
-                    attribute_commit_message=attribute_commit_message,
-                    commit_prompt=commit_prompt,
                 )
-                self.root = self.repo.root
             except FileNotFoundError:
-                self.repo = None
+                pass
+
+        if self.repo:
+            self.root = self.repo.root
 
         for fname in fnames:
             fname = Path(fname)

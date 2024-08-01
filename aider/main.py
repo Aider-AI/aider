@@ -459,14 +459,27 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.show_model_warnings:
         models.sanity_check_models(io, main_model)
 
+    repo = None
+    if args.git:
+        repo = GitRepo(
+            io,
+            fnames,
+            git_dname or ".",
+            args.aiderignore,
+            models=main_model.commit_message_models(),
+            attribute_author=args.attribute_author,
+            attribute_committer=args.attribute_committer,
+            attribute_commit_message=args.attribute_commit_message,
+            commit_prompt=args.commit_prompt,
+        )
+
     try:
         coder = Coder.create(
             main_model=main_model,
             edit_format=args.edit_format,
             io=io,
-            ##
+            repo=repo,
             fnames=fnames,
-            git_dname=git_dname,
             pretty=args.pretty,
             show_diffs=args.show_diffs,
             auto_commits=args.auto_commits,
@@ -479,18 +492,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             stream=args.stream,
             use_git=args.git,
             voice_language=args.voice_language,
-            aider_ignore_file=args.aiderignore,
             max_chat_history_tokens=args.max_chat_history_tokens,
             restore_chat_history=args.restore_chat_history,
             auto_lint=args.auto_lint,
             auto_test=args.auto_test,
             lint_cmds=lint_cmds,
             test_cmd=args.test_cmd,
-            attribute_author=args.attribute_author,
-            attribute_committer=args.attribute_committer,
-            attribute_commit_message=args.attribute_commit_message,
             verify_ssl=args.verify_ssl,
-            commit_prompt=args.commit_prompt,
         )
 
     except ValueError as err:
