@@ -21,7 +21,7 @@ from rich.console import Console, Text
 from rich.markdown import Markdown
 
 from aider import __version__, models, prompts, urls, utils
-from aider.commands import Commands
+from aider.commands import Commands, SwitchCoder
 from aider.history import ChatSummary
 from aider.io import InputOutput
 from aider.linter import Linter
@@ -204,7 +204,6 @@ class Coder:
         code_theme="default",
         stream=True,
         use_git=True,
-        voice_language=None,
         cur_messages=None,
         done_messages=None,
         max_chat_history_tokens=None,
@@ -216,6 +215,7 @@ class Coder:
         aider_commit_hashes=None,
         map_mul_no_files=8,
         verify_ssl=True,
+        commands=None,
     ):
         if not fnames:
             fnames = []
@@ -268,7 +268,7 @@ class Coder:
 
         self.show_diffs = show_diffs
 
-        self.commands = Commands(self.io, self, voice_language, verify_ssl=verify_ssl)
+        self.commands = commands or Commands(self.io, self)
 
         self.repo = repo
         if use_git and self.repo is None:

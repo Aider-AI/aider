@@ -473,6 +473,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             commit_prompt=args.commit_prompt,
         )
 
+    commands = Commands(io, None, args.voice_language, verify_ssl=args.verify_ssl)
+
     try:
         coder = Coder.create(
             main_model=main_model,
@@ -491,7 +493,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             code_theme=args.code_theme,
             stream=args.stream,
             use_git=args.git,
-            voice_language=args.voice_language,
             max_chat_history_tokens=args.max_chat_history_tokens,
             restore_chat_history=args.restore_chat_history,
             auto_lint=args.auto_lint,
@@ -499,6 +500,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             lint_cmds=lint_cmds,
             test_cmd=args.test_cmd,
             verify_ssl=args.verify_ssl,
+            commands=commands,
         )
 
     except ValueError as err:
