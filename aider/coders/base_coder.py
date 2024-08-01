@@ -866,7 +866,7 @@ class Coder:
                     self.io.tool_error(f"BadRequestError: {br_err}")
                     return
                 except FinishReasonLength:
-                    # We hit the 4k output limit!
+                    # We hit the output limit!
                     if not self.main_model.can_prefill:
                         exhausted = True
                         break
@@ -1108,7 +1108,7 @@ class Coder:
 
     def send(self, messages, model=None, functions=None):
         if not model:
-            model = self.main_model.name
+            model = self.main_model
 
         self.partial_response_content = ""
         self.partial_response_function_call = dict()
@@ -1118,7 +1118,13 @@ class Coder:
         interrupted = False
         try:
             hash_object, completion = send_with_retries(
-                model, messages, functions, self.stream, self.temperature
+                model.name,
+                messages,
+                functions,
+                self.stream,
+                self.temperature,
+                extra_headers=model.extra_headers,
+                max_tokens=model.max_tokens,
             )
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
 

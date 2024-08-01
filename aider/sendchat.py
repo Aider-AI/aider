@@ -57,7 +57,9 @@ def lazy_litellm_retry_decorator(func):
 
 
 @lazy_litellm_retry_decorator
-def send_with_retries(model_name, messages, functions, stream, temperature=0, extra_headers=None):
+def send_with_retries(
+    model_name, messages, functions, stream, temperature=0, extra_headers=None, max_tokens=None
+):
     from aider.llm import litellm
 
     kwargs = dict(
@@ -70,6 +72,8 @@ def send_with_retries(model_name, messages, functions, stream, temperature=0, ex
         kwargs["functions"] = functions
     if extra_headers is not None:
         kwargs["extra_headers"] = extra_headers
+    if max_tokens is not None:
+        kwargs["max_tokens"] = max_tokens
 
     key = json.dumps(kwargs, sort_keys=True).encode()
 

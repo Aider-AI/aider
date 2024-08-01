@@ -62,7 +62,7 @@ ANTHROPIC_MODELS = [ln.strip() for ln in ANTHROPIC_MODELS.splitlines() if ln.str
 class ModelSettings:
     # Model class needs to have each of these as well
     name: str
-    edit_format: str
+    edit_format: str = "whole"
     weak_model_name: Optional[str] = None
     use_repo_map: bool = False
     send_undo_reply: bool = False
@@ -71,6 +71,8 @@ class ModelSettings:
     reminder_as_sys_msg: bool = False
     examples_as_sys_msg: bool = False
     can_prefill: bool = False
+    extra_headers: Optional[dict] = None
+    max_tokens: Optional[int] = None
 
 
 # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
@@ -250,6 +252,8 @@ MODEL_SETTINGS = [
         examples_as_sys_msg=True,
         can_prefill=True,
         accepts_images=True,
+        max_tokens=8192,
+        extra_headers={"anthropic-beta": "max-tokens-3-5-sonnet-2024-07-15"},
     ),
     ModelSettings(
         "anthropic/claude-3-5-sonnet-20240620",
@@ -258,6 +262,8 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         examples_as_sys_msg=True,
         can_prefill=True,
+        max_tokens=8192,
+        extra_headers={"anthropic-beta": "max-tokens-3-5-sonnet-2024-07-15"},
     ),
     ModelSettings(
         "openrouter/anthropic/claude-3.5-sonnet",
@@ -267,6 +273,8 @@ MODEL_SETTINGS = [
         examples_as_sys_msg=True,
         can_prefill=True,
         accepts_images=True,
+        max_tokens=8192,
+        extra_headers={"anthropic-beta": "max-tokens-3-5-sonnet-2024-07-15"},
     ),
     # Vertex AI Claude models
     ModelSettings(
@@ -277,6 +285,8 @@ MODEL_SETTINGS = [
         examples_as_sys_msg=True,
         can_prefill=True,
         accepts_images=True,
+        max_tokens=8192,
+        extra_headers={"anthropic-beta": "max-tokens-3-5-sonnet-2024-07-15"},
     ),
     ModelSettings(
         "vertex_ai/claude-3-opus@20240229",
