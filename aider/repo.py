@@ -269,14 +269,11 @@ class GitRepo:
 
     def ignored_file_raw(self, fname):
         if self.subtree_only:
-            try:
-                fname_path = Path(self.normalize_path(fname)).resolve()
-                cwd_path = Path.cwd().resolve()
-                dump(fname_path)
-                dump(cwd_path)
-                if not fname_path.is_relative_to(cwd_path):
-                    return True
-            except ValueError:
+            fname_path = Path(self.normalize_path(fname)).resolve()
+            cwd_path = Path.cwd().resolve()
+            dump(fname_path)
+            dump(cwd_path)
+            if os.path.commonpath([str(fname_path), str(cwd_path)]) != str(cwd_path):
                 return True
 
         if not self.aider_ignore_file or not self.aider_ignore_file.is_file():
