@@ -1,6 +1,6 @@
 import unittest
-from unittest.mock import patch
 from pathlib import Path
+from unittest.mock import patch
 
 from aider.coders import Coder
 from aider.io import InputOutput
@@ -33,7 +33,8 @@ class TestScriptingAPI(unittest.TestCase):
             # Assertions
             self.assertEqual(mock_send.call_count, 2)
             mock_send.assert_any_call(
-                [{"role": "user", "content": "make a script that prints hello world"}], functions=None
+                [{"role": "user", "content": "make a script that prints hello world"}],
+                functions=None,
             )
             mock_send.assert_any_call(
                 [{"role": "user", "content": "make it say goodbye"}], functions=None
