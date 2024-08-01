@@ -474,6 +474,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         )
 
     from aider.commands import Commands
+
     commands = Commands(io, None, verify_ssl=args.verify_ssl)
 
     try:
