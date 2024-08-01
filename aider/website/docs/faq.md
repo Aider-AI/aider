@@ -50,20 +50,16 @@ git clone git@github.com:paul-gauthier/aider.git
 # Navigate to the project directory:
 cd aider
 
+# It's recommended to make a virtual environment
+
 # Install the dependencies listed in the `requirements.txt` file:
-pip install -r requirements.txt
+pip install -e .
 
 # Run the local version of Aider:
-python -m aider.main
+python -m aider
 ```
 
 
-
-## Can I run aider in Google Colab?
-
-User [imabutahersiddik](https://github.com/imabutahersiddik)
-has provided this
-[Colab notebook](https://colab.research.google.com/drive/1J9XynhrCqekPL5PR6olHP6eE--rnnjS9?usp=sharing).
 
 
 ## Can I change the system prompts that aider uses?
@@ -104,3 +100,24 @@ all the raw information being sent to/from the LLM in the conversation.
 
 You can also refer to the
 [instructions for installing a development version of aider](https://aider.chat/docs/install/optional.html#install-the-development-version-of-aider).
+
+
+## Can I use aider in a large (mono) repo?
+
+Aider will work in any size repo, but is not optimized for quick
+performance and response time in very large repos.
+There are some things you can do to improve performance.
+
+Change into a sub directory of your repo that contains the
+code you want to work on and use the `--subtree-only` switch.
+This will tell aider to ignore the repo outside of the
+directory you start in.
+
+You can also create a `.aiderignore` file to tell aider
+to ignore parts of the repo that aren't relevant to your task.
+This file conforms to `.gitignore` syntax and conventions.
+
+You can use `--aiderignore <filename>` to name a specific file
+to use for ignore patterns.
+You might have a few of these handy for when you want to work on
+frontend, backend, etc portions of your repo.
