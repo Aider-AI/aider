@@ -16,6 +16,7 @@ class GitRepo:
     aider_ignore_spec = None
     aider_ignore_ts = 0
     subtree_only = False
+    ignore_file_cache = {}
 
     def __init__(
         self,
@@ -38,6 +39,7 @@ class GitRepo:
         self.attribute_commit_message = attribute_commit_message
         self.commit_prompt = commit_prompt
         self.subtree_only = subtree_only
+        self.ignore_file_cache = {}
 
         if git_dname:
             check_fnames = [git_dname]
@@ -257,6 +259,9 @@ class GitRepo:
         return str(Path(PurePosixPath((Path(self.root) / path).relative_to(self.root))))
 
     def ignored_file(self, fname):
+        if fname in self.ignore_file_cache:
+            return self.ignore_file_cache[fname]
+
         if self.subtree_only:
             try:
                 fname_path = Path(self.normalize_path(fname)).resolve()
@@ -277,13 +282,16 @@ class GitRepo:
         mtime = self.aider_ignore_file.stat().st_mtime
         if mtime != self.aider_ignore_ts:
             self.aider_ignore_ts = mtime
+            self.ignore_file_cache = {}
             lines = self.aider_ignore_file.read_text().splitlines()
             self.aider_ignore_spec = pathspec.PathSpec.from_lines(
                 pathspec.patterns.GitWildMatchPattern,
                 lines,
             )
 
-        return self.aider_ignore_spec.match_file(fname)
+        result = self.aider_ignore_spec.match_file(fname)
+        self.ignore_file_cache[fname] = result
+        return result
 
     def path_in_repo(self, path):
         if not self.repo:
