@@ -1033,10 +1033,19 @@ class Coder:
         res = ""
         for fname in fnames:
             errors = self.linter.lint(self.abs_root_path(fname))
+
             if errors:
                 res += "\n"
                 res += errors
                 res += "\n"
+
+        # Commit any formatting changes that happened
+        if self.repo and self.auto_commits and not self.dry_run:
+            commit_res = self.repo.commit(
+                fnames=fnames, context="The linter made edits to these files", aider_edits=True
+            )
+            if commit_res:
+                self.show_auto_commit_outcome(commit_res)
 
         if res:
             self.io.tool_error(res)
@@ -1516,14 +1525,8 @@ class Coder:
         context = self.get_context_from_history(self.cur_messages)
         res = self.repo.commit(fnames=edited, context=context, aider_edits=True)
         if res:
+            self.show_auto_commit_outcome(res)
             commit_hash, commit_message = res
-            self.last_aider_commit_hash = commit_hash
-            self.aider_commit_hashes.add(commit_hash)
-            self.last_aider_commit_message = commit_message
-            if self.show_diffs:
-                self.commands.cmd_diff()
-
-            self.io.tool_output(f"You can use /undo to revert and discard commit {commit_hash}.")
             return self.gpt_prompts.files_content_gpt_edits.format(
                 hash=commit_hash,
                 message=commit_message,
@@ -1531,6 +1534,16 @@ class Coder:
 
         self.io.tool_output("No changes made to git tracked files.")
         return self.gpt_prompts.files_content_gpt_no_edits
+
+    def show_auto_commit_outcome(self, res):
+        commit_hash, commit_message = res
+        self.last_aider_commit_hash = commit_hash
+        self.aider_commit_hashes.add(commit_hash)
+        self.last_aider_commit_message = commit_message
+        if self.show_diffs:
+            self.commands.cmd_diff()
+
+        self.io.tool_output(f"You can use /undo to revert and discard commit {commit_hash}.")
 
     def dirty_commit(self):
         if not self.need_commit_before_edits:
