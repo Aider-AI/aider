@@ -480,7 +480,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     summarizer = ChatSummary(
         [main_model, main_model.weak_model],
-        args.max_chat_history_tokens,
+        args.max_chat_history_tokens or main_model.max_chat_history_tokens,
     )
 
     try:
