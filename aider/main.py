@@ -473,7 +473,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             commit_prompt=args.commit_prompt,
         )
 
-    commands = Commands(io, None, args.voice_language, verify_ssl=args.verify_ssl)
+    from aider.commands import Commands
+    commands = Commands(io, None, verify_ssl=args.verify_ssl)
 
     try:
         coder = Coder.create(
