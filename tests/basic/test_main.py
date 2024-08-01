@@ -75,13 +75,13 @@ class TestMain(TestCase):
         make_repo()
 
         Path(".aider.conf.yml").write_text("auto-commits: false\n")
-        with patch("aider.main.Coder.create") as MockCoder:
+        with patch("aider.coders.Coder.create") as MockCoder:
             main(["--yes"], input=DummyInput(), output=DummyOutput())
             _, kwargs = MockCoder.call_args
             assert kwargs["auto_commits"] is False
 
         Path(".aider.conf.yml").write_text("auto-commits: true\n")
-        with patch("aider.main.Coder.create") as MockCoder:
+        with patch("aider.coders.Coder.create") as MockCoder:
             main([], input=DummyInput(), output=DummyOutput())
             _, kwargs = MockCoder.call_args
             assert kwargs["auto_commits"] is True
@@ -132,41 +132,41 @@ class TestMain(TestCase):
             del os.environ["GIT_CONFIG_GLOBAL"]
 
     def test_main_args(self):
-        with patch("aider.main.Coder.create") as MockCoder:
+        with patch("aider.coders.Coder.create") as MockCoder:
             # --yes will just ok the git repo without blocking on input
             # following calls to main will see the new repo already
             main(["--no-auto-commits", "--yes"], input=DummyInput())
             _, kwargs = MockCoder.call_args
             assert kwargs["auto_commits"] is False
 
-        with patch("aider.main.Coder.create") as MockCoder:
+        with patch("aider.coders.Coder.create") as MockCoder:
             main(["--auto-commits"], input=DummyInput())
             _, kwargs = MockCoder.call_args
             assert kwargs["auto_commits"] is True
 
-        with patch("aider.main.Coder.create") as MockCoder:
+        with patch("aider.coders.Coder.create") as MockCoder:
             main([], input=DummyInput())
             _, kwargs = MockCoder.call_args
             assert kwargs["dirty_commits"] is True
             assert kwargs["auto_commits"] is True
             assert kwargs["pretty"] is True
 
-        with patch("aider.main.Coder.create") as MockCoder:
+        with patch("aider.coders.Coder.create") as MockCoder:
             main(["--no-pretty"], input=DummyInput())
             _, kwargs = MockCoder.call_args
             assert kwargs["pretty"] is False
 
-        with patch("aider.main.Coder.create") as MockCoder:
+        with patch("aider.coders.Coder.create") as MockCoder:
             main(["--pretty"], input=DummyInput())
             _, kwargs = MockCoder.call_args
             assert kwargs["pretty"] is True
 
-        with patch("aider.main.Coder.create") as MockCoder:
+        with patch("aider.coders.Coder.create") as MockCoder:
             main(["--no-dirty-commits"], input=DummyInput())
             _, kwargs = MockCoder.call_args
             assert kwargs["dirty_commits"] is False
 
-        with patch("aider.main.Coder.create") as MockCoder:
+        with patch("aider.coders.Coder.create") as MockCoder:
             main(["--dirty-commits"], input=DummyInput())
             _, kwargs = MockCoder.call_args
             assert kwargs["dirty_commits"] is True
@@ -194,7 +194,7 @@ class TestMain(TestCase):
             cwd_env.write_text("A=cwd\nB=cwd")
             named_env.write_text("A=named")
 
-            with patch('pathlib.Path.home', return_value=fake_home):
+            with patch("pathlib.Path.home", return_value=fake_home):
                 main(["--yes", "--exit", "--env-file", str(named_env)])
 
             self.assertEqual(os.environ["A"], "named")
@@ -209,7 +209,7 @@ class TestMain(TestCase):
         with open(message_file_path, "w", encoding="utf-8") as message_file:
             message_file.write(message_file_content)
 
-        with patch("aider.main.Coder.create") as MockCoder:
+        with patch("aider.coders.Coder.create") as MockCoder:
             MockCoder.return_value.run = MagicMock()
             main(
                 ["--yes", "--message-file", message_file_path],
@@ -224,7 +224,7 @@ class TestMain(TestCase):
         fname = "foo.py"
 
         with GitTemporaryDirectory():
-            with patch("aider.main.Coder.create") as MockCoder:  # noqa: F841
+            with patch("aider.coders.Coder.create") as MockCoder:  # noqa: F841
                 with patch("aider.main.InputOutput") as MockSend:
 
                     def side_effect(*args, **kwargs):
