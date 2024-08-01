@@ -10,11 +10,6 @@ class TestScriptingAPI(unittest.TestCase):
     @patch("aider.coders.base_coder.Coder.send")
     def test_basic_scripting(self, mock_send):
         # Setup
-        def mock_send_side_effect(messages):
-            coder.partial_response_content = "Changes applied successfully."
-            return "Changes applied successfully."
-
-        mock_send.side_effect = mock_send_side_effect
 
         # Test script
         fnames = ["greeting.py"]
@@ -23,6 +18,12 @@ class TestScriptingAPI(unittest.TestCase):
 
         result1 = coder.run("make a script that prints hello world")
         result2 = coder.run("make it say goodbye")
+
+        def mock_send_side_effect(messages):
+            coder.partial_response_content = "Changes applied successfully."
+            return "Changes applied successfully."
+
+        mock_send.side_effect = mock_send_side_effect
 
         # Assertions
         self.assertEqual(mock_send.call_count, 2)
