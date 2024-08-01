@@ -327,6 +327,31 @@ class TestMain(TestCase):
             _, kwargs = MockCoder.call_args
             self.assertEqual(kwargs["show_diffs"], True)
 
+    def test_lint_option(self):
+        with GitTemporaryDirectory() as git_dir:
+            # Create a dirty file in the root
+            dirty_file = Path(git_dir) / "dirty_file.py"
+            dirty_file.write_text("def foo():\n    return 'bar'")
+
+            # Create a subdirectory
+            subdir = Path(git_dir) / "subdir"
+            subdir.mkdir()
+
+            # Change to the subdirectory
+            os.chdir(subdir)
+
+            # Mock the Linter class
+            with patch("aider.linter.Linter") as MockLinter:
+                mock_linter_instance = MockLinter.return_value
+                mock_linter_instance.lint.return_value = "Linting results"
+
+                # Run main with --lint option
+                main(["--lint", "--no-git"], input=DummyInput(), output=DummyOutput())
+
+                # Check if the Linter was called with the correct file
+                MockLinter.assert_called_once()
+                mock_linter_instance.lint.assert_called_once_with(str(dirty_file))
+
     def test_verbose_mode_lists_env_vars(self):
         self.create_env_file(".env", "AIDER_DARK_MODE=on")
         with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
