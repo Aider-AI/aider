@@ -1,4 +1,5 @@
 import os
+import os
 import subprocess
 import tempfile
 from io import StringIO
@@ -358,7 +359,7 @@ class TestMain(TestCase):
                 MockLinter.assert_called_once()
                 called_arg = MockLinter.call_args[0][0]
                 self.assertTrue(called_arg.endswith("dirty_file.py"))
-                self.assertFalse(called_arg.endswith("subdir/dirty_file.py"))
+                self.assertFalse(called_arg.endswith(f"subdir{os.path.sep}dirty_file.py"))
 
     def test_verbose_mode_lists_env_vars(self):
         self.create_env_file(".env", "AIDER_DARK_MODE=on")
