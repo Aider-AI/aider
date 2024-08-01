@@ -22,8 +22,10 @@ class TestScriptingAPI(unittest.TestCase):
 
         # Assertions
         self.assertEqual(mock_send.call_count, 2)
-        mock_send.assert_any_call([{'role': 'user', 'content': 'make a script that prints hello world'}])
-        mock_send.assert_any_call([{'role': 'user', 'content': 'make it say goodbye'}])
+        mock_send.assert_any_call(
+            [{"role": "user", "content": "make a script that prints hello world"}]
+        )
+        mock_send.assert_any_call([{"role": "user", "content": "make it say goodbye"}])
         self.assertEqual(result1, "Changes applied successfully.")
         self.assertEqual(result2, "Changes applied successfully.")
 
@@ -41,7 +43,7 @@ class TestScriptingAPI(unittest.TestCase):
         result = coder.run("add a new function")
 
         # Assertions
-        mock_send.assert_called_once_with([{'role': 'user', 'content': 'add a new function'}])
+        mock_send.assert_called_once_with([{"role": "user", "content": "add a new function"}])
         self.assertEqual(result, "New function added successfully.")
         self.assertTrue(io.yes)  # Check that 'yes' is set to True
 
