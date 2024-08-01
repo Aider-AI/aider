@@ -23,6 +23,7 @@ from rich.markdown import Markdown
 from aider import __version__, models, prompts, urls, utils
 from aider.commands import Commands
 from aider.history import ChatSummary
+from aider.coders import Coder
 from aider.io import InputOutput
 from aider.linter import Linter
 from aider.llm import litellm
@@ -206,7 +207,6 @@ class Coder:
         use_git=True,
         cur_messages=None,
         done_messages=None,
-        max_chat_history_tokens=None,
         restore_chat_history=False,
         auto_lint=True,
         auto_test=False,
@@ -215,6 +215,7 @@ class Coder:
         aider_commit_hashes=None,
         map_mul_no_files=8,
         commands=None,
+        summarizer=None,
     ):
         if not fnames:
             fnames = []
@@ -319,11 +320,9 @@ class Coder:
                 map_mul_no_files=map_mul_no_files,
             )
 
-        if max_chat_history_tokens is None:
-            max_chat_history_tokens = self.main_model.max_chat_history_tokens
-        self.summarizer = ChatSummary(
+        self.summarizer = summarizer or ChatSummary(
             [self.main_model, self.main_model.weak_model],
-            max_chat_history_tokens,
+            self.main_model.max_chat_history_tokens,
         )
 
         self.summarizer_thread = None

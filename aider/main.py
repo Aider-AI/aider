@@ -477,6 +477,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     commands = Commands(io, None, verify_ssl=args.verify_ssl)
 
+    summarizer = ChatSummary(
+        [main_model, main_model.weak_model],
+        args.max_chat_history_tokens,
+    )
+
     try:
         coder = Coder.create(
             main_model=main_model,
@@ -495,13 +500,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             code_theme=args.code_theme,
             stream=args.stream,
             use_git=args.git,
-            max_chat_history_tokens=args.max_chat_history_tokens,
             restore_chat_history=args.restore_chat_history,
             auto_lint=args.auto_lint,
             auto_test=args.auto_test,
             lint_cmds=lint_cmds,
             test_cmd=args.test_cmd,
             commands=commands,
+            summarizer=summarizer,
         )
 
     except ValueError as err:
