@@ -2,10 +2,12 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 from collections import OrderedDict
 from pathlib import Path
 
 import git
+from PIL import ImageGrab
 
 from aider import models, prompts, voice
 from aider.help import Help, install_help_extra
@@ -879,6 +881,28 @@ class Commands:
             print()
 
         return text
+
+    def cmd_add_clipboard_image(self, args):
+        "Add an image from the clipboard to the chat"
+        try:
+            image = ImageGrab.grabclipboard()
+            if image is None:
+                self.io.tool_error("No image found in clipboard.")
+                return
+
+            with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as temp_file:
+                image.save(temp_file.name, "PNG")
+                temp_file_path = temp_file.name
+
+            abs_file_path = Path(temp_file_path).resolve()
+            self.coder.abs_fnames.add(str(abs_file_path))
+            self.io.tool_output(f"Added clipboard image to the chat: {abs_file_path}")
+            self.coder.check_added_files()
+
+            return prompts.added_files.format(fnames=str(abs_file_path))
+
+        except Exception as e:
+            self.io.tool_error(f"Error adding clipboard image: {e}")
 
 
 def expand_subdir(file_path):
