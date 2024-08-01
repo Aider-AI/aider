@@ -231,11 +231,13 @@ class Commands:
 
         # If still no files, get all dirty files in the repo
         if not fnames and self.coder.repo:
-            fnames = [item.a_path for item in self.coder.repo.repo.index.diff(None)]
+            fnames = self.coder.repo.get_dirty_files()
 
         if not fnames:
             self.io.tool_error("No dirty files to lint.")
             return
+
+        fnames = [self.coder.abs_root_path(fname) for fname in fnames]
 
         lint_coder = None
         for fname in fnames:
