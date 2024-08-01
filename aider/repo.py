@@ -258,7 +258,29 @@ class GitRepo:
     def normalize_path(self, path):
         return str(Path(PurePosixPath((Path(self.root) / path).relative_to(self.root))))
 
+
+    def refresh_aider_ignore(self):
+        if not self.aider_ignore_file:
+            return
+
+        # todo: only recheck this once / second
+
+        if not self.aider_ignore_file.is_file():
+            return
+
+        mtime = self.aider_ignore_file.stat().st_mtime
+        if mtime != self.aider_ignore_ts:
+            self.aider_ignore_ts = mtime
+            self.ignore_file_cache = {}
+            lines = self.aider_ignore_file.read_text().splitlines()
+            self.aider_ignore_spec = pathspec.PathSpec.from_lines(
+                pathspec.patterns.GitWildMatchPattern,
+                lines,
+            )
+
     def ignored_file(self, fname):
+        self.refresh_aider_ignore()
+
         if fname in self.ignore_file_cache:
             return self.ignore_file_cache[fname]
 
@@ -281,16 +303,6 @@ class GitRepo:
             fname = self.normalize_path(fname)
         except ValueError:
             return True
-
-        mtime = self.aider_ignore_file.stat().st_mtime
-        if mtime != self.aider_ignore_ts:
-            self.aider_ignore_ts = mtime
-            self.ignore_file_cache = {}
-            lines = self.aider_ignore_file.read_text().splitlines()
-            self.aider_ignore_spec = pathspec.PathSpec.from_lines(
-                pathspec.patterns.GitWildMatchPattern,
-                lines,
-            )
 
         return self.aider_ignore_spec.match_file(fname)
 
