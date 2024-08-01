@@ -14,6 +14,7 @@ from aider.commands import Commands
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.models import Model
+from aider.repo import GitRepo
 from aider.utils import ChdirTemporaryDirectory, GitTemporaryDirectory, make_repo
 
 
@@ -706,8 +707,21 @@ class TestCommands(TestCase):
             aignore.write_text(f"{fname1}\n{fname2}\ndir\n")
 
             io = InputOutput(yes=True)
+
+            fnames = [fname1, fname2]
+            repo = GitRepo(
+                io,
+                fnames,
+                None,
+                aider_ignore_file=str(aignore),
+            )
+
             coder = Coder.create(
-                self.GPT35, None, io, fnames=[fname1, fname2], aider_ignore_file=str(aignore)
+                self.GPT35,
+                None,
+                io,
+                fnames=fnames,
+                repo=repo,
             )
             commands = Commands(io, coder)
 
