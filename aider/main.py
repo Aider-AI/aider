@@ -473,9 +473,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             commit_prompt=args.commit_prompt,
         )
 
+    from aider.coders import Coder
     from aider.commands import Commands
     from aider.history import ChatSummary
-    from aider.coders import Coder
 
     commands = Commands(io, None, verify_ssl=args.verify_ssl)
 
