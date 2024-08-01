@@ -263,6 +263,7 @@ class GitRepo:
             return self.ignore_file_cache[fname]
 
         result = self.ignored_file_raw(fname)
+        dump(fname, result)
         self.ignore_file_cache[fname] = result
         return result
 
@@ -271,7 +272,8 @@ class GitRepo:
             try:
                 fname_path = Path(self.normalize_path(fname)).resolve()
                 cwd_path = Path.cwd().resolve()
-
+                dump(fname_path)
+                dump(cwd_path)
                 if not fname_path.is_relative_to(cwd_path):
                     return True
             except ValueError:
