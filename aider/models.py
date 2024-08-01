@@ -369,23 +369,15 @@ MODEL_SETTINGS = [
 
 
 class Model:
-    name = None
-
-    edit_format = "whole"
-    use_repo_map = False
-    send_undo_reply = False
-    accepts_images = False
-    weak_model_name = None
-    lazy = False
-    reminder_as_sys_msg = False
-    examples_as_sys_msg = False
-    can_prefill = False
-
-    max_chat_history_tokens = 1024
-    weak_model = None
-
     def __init__(self, model, weak_model=None):
+        # Set defaults from ModelSettings
+        default_settings = ModelSettings(name="")
+        for field in fields(ModelSettings):
+            setattr(self, field.name, getattr(default_settings, field.name))
+
         self.name = model
+        self.max_chat_history_tokens = 1024
+        self.weak_model = None
 
         self.info = self.get_model_info(model)
 
