@@ -259,10 +259,14 @@ class GitRepo:
         return str(Path(PurePosixPath((Path(self.root) / path).relative_to(self.root))))
 
     def ignored_file(self, fname):
-        orig_fname = fname
         if fname in self.ignore_file_cache:
             return self.ignore_file_cache[fname]
 
+        result = self.ignored_file_raw(fname)
+        self.ignore_file_cache[fname] = result
+        return result
+
+    def ignored_file_raw(self, fname):
         if self.subtree_only:
             try:
                 fname_path = Path(self.normalize_path(fname)).resolve()
@@ -291,9 +295,7 @@ class GitRepo:
                 lines,
             )
 
-        result = self.aider_ignore_spec.match_file(fname)
-        self.ignore_file_cache[orig_fname] = result
-        return result
+        return self.aider_ignore_spec.match_file(fname)
 
     def path_in_repo(self, path):
         if not self.repo:
