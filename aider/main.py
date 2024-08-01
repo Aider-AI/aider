@@ -473,6 +473,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 attribute_committer=args.attribute_committer,
                 attribute_commit_message=args.attribute_commit_message,
                 commit_prompt=args.commit_prompt,
+                subtree_only=args.subtree_only,
             )
         except FileNotFoundError:
             pass
