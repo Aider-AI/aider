@@ -1,6 +1,7 @@
 import os
 import platform
 import tempfile
+import time
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -307,6 +308,7 @@ class TestRepo(unittest.TestCase):
             self.assertIn(str(fname2), fnames)
 
             aiderignore.write_text("new.txt\n")
+            time.sleep(2)
 
             # new.txt should be gone!
             fnames = git_repo.get_tracked_files()
