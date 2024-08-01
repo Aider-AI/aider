@@ -21,9 +21,9 @@ from rich.console import Console, Text
 from rich.markdown import Markdown
 
 from aider import __version__, models, prompts, urls, utils
+from aider.coders import Coder
 from aider.commands import Commands
 from aider.history import ChatSummary
-from aider.coders import Coder
 from aider.io import InputOutput
 from aider.linter import Linter
 from aider.llm import litellm
