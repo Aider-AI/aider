@@ -479,7 +479,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     commands = Commands(io, None, verify_ssl=args.verify_ssl)
 
     summarizer = ChatSummary(
-        [main_model, main_model.weak_model],
+        [main_model.weak_model, main_model],
         args.max_chat_history_tokens or main_model.max_chat_history_tokens,
     )
 
