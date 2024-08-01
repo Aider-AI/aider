@@ -13,6 +13,7 @@ class TestScriptingAPI(unittest.TestCase):
         def mock_send_side_effect(messages):
             coder.partial_response_content = "Changes applied successfully."
             return "Changes applied successfully."
+
         mock_send.side_effect = mock_send_side_effect
 
         # Test script
@@ -39,6 +40,7 @@ class TestScriptingAPI(unittest.TestCase):
         def mock_send_side_effect(messages):
             coder.partial_response_content = "New function added successfully."
             return "New function added successfully."
+
         mock_send.side_effect = mock_send_side_effect
 
         # Test script
