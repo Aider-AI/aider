@@ -37,6 +37,7 @@ class GitRepo:
         self.attribute_committer = attribute_committer
         self.attribute_commit_message = attribute_commit_message
         self.commit_prompt = commit_prompt
+        self.subtree_only = subtree_only
 
         if git_dname:
             check_fnames = [git_dname]
