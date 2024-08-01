@@ -263,17 +263,15 @@ class GitRepo:
             return self.ignore_file_cache[fname]
 
         result = self.ignored_file_raw(fname)
-        dump(fname, result)
         self.ignore_file_cache[fname] = result
         return result
 
     def ignored_file_raw(self, fname):
         if self.subtree_only:
-            fname_path = Path(self.normalize_path(fname)).resolve()
-            cwd_path = Path.cwd().resolve()
-            dump(fname_path)
-            dump(cwd_path)
-            if os.path.commonpath([str(fname_path), str(cwd_path)]) != str(cwd_path):
+            fname_path = Path(self.normalize_path(fname))
+            cwd_path = Path(self.normalize_path(Path.cwd().relative_to(self.root)))
+
+            if cwd_path not in fname_path.parents:
                 return True
 
         if not self.aider_ignore_file or not self.aider_ignore_file.is_file():
