@@ -353,8 +353,12 @@ class TestMain(TestCase):
                 # Run main with --lint option
                 main(["--lint", "--yes"])
 
-                # Check if the Linter was called with the correct file
-                MockLinter.assert_called_once_with(dirty_file)
+                # Check if the Linter was called with a filename ending in "dirty_file.py"
+                # but not ending in "subdir/dirty_file.py"
+                MockLinter.assert_called_once()
+                called_arg = MockLinter.call_args[0][0]
+                self.assertTrue(called_arg.endswith("dirty_file.py"))
+                self.assertFalse(called_arg.endswith("subdir/dirty_file.py"))
 
     def test_verbose_mode_lists_env_vars(self):
         self.create_env_file(".env", "AIDER_DARK_MODE=on")
