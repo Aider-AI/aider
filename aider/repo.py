@@ -10,11 +10,14 @@ from aider.sendchat import simple_send_with_retries
 from .dump import dump  # noqa: F401
 
 
+import time
+
 class GitRepo:
     repo = None
     aider_ignore_file = None
     aider_ignore_spec = None
     aider_ignore_ts = 0
+    aider_ignore_last_check = 0
     subtree_only = False
     ignore_file_cache = {}
 
@@ -263,7 +266,11 @@ class GitRepo:
         if not self.aider_ignore_file:
             return
 
-        # todo: only recheck this once / second
+        current_time = time.time()
+        if current_time - self.aider_ignore_last_check < 1:
+            return
+
+        self.aider_ignore_last_check = current_time
 
         if not self.aider_ignore_file.is_file():
             return
