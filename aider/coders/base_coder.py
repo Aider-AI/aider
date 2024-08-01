@@ -276,7 +276,7 @@ class Coder:
                 self.repo = GitRepo(
                     self.io,
                     fnames,
-                    ".",
+                    None,
                     models=main_model.commit_message_models(),
                 )
             except FileNotFoundError:

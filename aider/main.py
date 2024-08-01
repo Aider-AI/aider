@@ -460,17 +460,20 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     repo = None
     if args.git:
-        repo = GitRepo(
-            io,
-            fnames,
-            git_dname or ".",
-            args.aiderignore,
-            models=main_model.commit_message_models(),
-            attribute_author=args.attribute_author,
-            attribute_committer=args.attribute_committer,
-            attribute_commit_message=args.attribute_commit_message,
-            commit_prompt=args.commit_prompt,
-        )
+        try:
+            repo = GitRepo(
+                io,
+                fnames,
+                git_dname or ".",
+                args.aiderignore,
+                models=main_model.commit_message_models(),
+                attribute_author=args.attribute_author,
+                attribute_committer=args.attribute_committer,
+                attribute_commit_message=args.attribute_commit_message,
+                commit_prompt=args.commit_prompt,
+            )
+        except FileNotFoundError:
+            pass
 
     from aider.coders import Coder
     from aider.commands import Commands
