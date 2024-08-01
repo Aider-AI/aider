@@ -330,8 +330,14 @@ class TestMain(TestCase):
     def test_lint_option(self):
         with GitTemporaryDirectory() as git_dir:
             # Create a dirty file in the root
-            dirty_file = Path(git_dir) / "dirty_file.py"
+            dirty_file = Path("dirty_file.py")
             dirty_file.write_text("def foo():\n    return 'bar'")
+
+            repo = git.Repo(".")
+            repo.git.add(str(dirty_file))
+            repo.git.commit("-m", "new")
+
+            dirty_file.write_text("def foo():\n    return '!!!!!'")
 
             # Create a subdirectory
             subdir = Path(git_dir) / "subdir"
@@ -341,16 +347,14 @@ class TestMain(TestCase):
             os.chdir(subdir)
 
             # Mock the Linter class
-            with patch("aider.linter.Linter") as MockLinter:
-                mock_linter_instance = MockLinter.return_value
-                mock_linter_instance.lint.return_value = "Linting results"
+            with patch("aider.linter.Linter.lint") as MockLinter:
+                MockLinter.return_value = ""
 
                 # Run main with --lint option
-                main(["--lint", "--no-git"], input=DummyInput(), output=DummyOutput())
+                main(["--lint", "--yes"])
 
                 # Check if the Linter was called with the correct file
-                MockLinter.assert_called_once()
-                mock_linter_instance.lint.assert_called_once_with(str(dirty_file))
+                MockLinter.assert_called_once_with(dirty_file)
 
     def test_verbose_mode_lists_env_vars(self):
         self.create_env_file(".env", "AIDER_DARK_MODE=on")
