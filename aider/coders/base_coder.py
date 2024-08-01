@@ -214,7 +214,6 @@ class Coder:
         test_cmd=None,
         aider_commit_hashes=None,
         map_mul_no_files=8,
-        verify_ssl=True,
         commands=None,
     ):
         if not fnames:
