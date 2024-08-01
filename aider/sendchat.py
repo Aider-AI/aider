@@ -29,6 +29,14 @@ def lazy_litellm_retry_decorator(func):
             ):
                 return False
 
+            # These seem to return .status_code = ""
+            # litellm._should_retry() expects an int and throws a TypeError
+            #
+            # litellm.llms.anthropic.AnthropicError
+            # litellm.exceptions.APIError
+            if not e.status_code:
+                return False
+
             return not litellm._should_retry(e.status_code)
 
         decorated_func = backoff.on_exception(
