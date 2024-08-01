@@ -1,4 +1,5 @@
 import os
+import time
 from pathlib import Path, PurePosixPath
 
 import git
@@ -9,8 +10,6 @@ from aider.sendchat import simple_send_with_retries
 
 from .dump import dump  # noqa: F401
 
-
-import time
 
 class GitRepo:
     repo = None
@@ -260,7 +259,6 @@ class GitRepo:
 
     def normalize_path(self, path):
         return str(Path(PurePosixPath((Path(self.root) / path).relative_to(self.root))))
-
 
     def refresh_aider_ignore(self):
         if not self.aider_ignore_file:
