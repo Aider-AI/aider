@@ -10,6 +10,11 @@ class TestScriptingAPI(unittest.TestCase):
     @patch("aider.coders.base_coder.Coder.send")
     def test_basic_scripting(self, mock_send):
         # Setup
+        def mock_send_side_effect(messages, functions=None):
+            coder.partial_response_content = "Changes applied successfully."
+            return "Changes applied successfully."
+
+        mock_send.side_effect = mock_send_side_effect
 
         # Test script
         fnames = ["greeting.py"]
@@ -19,18 +24,16 @@ class TestScriptingAPI(unittest.TestCase):
         result1 = coder.run("make a script that prints hello world")
         result2 = coder.run("make it say goodbye")
 
-        def mock_send_side_effect(messages):
-            coder.partial_response_content = "Changes applied successfully."
-            return "Changes applied successfully."
-
-        mock_send.side_effect = mock_send_side_effect
-
         # Assertions
         self.assertEqual(mock_send.call_count, 2)
         mock_send.assert_any_call(
-            [{"role": "user", "content": "make a script that prints hello world"}]
+            [{"role": "user", "content": "make a script that prints hello world"}],
+            functions=None
         )
-        mock_send.assert_any_call([{"role": "user", "content": "make it say goodbye"}])
+        mock_send.assert_any_call(
+            [{"role": "user", "content": "make it say goodbye"}],
+            functions=None
+        )
         self.assertEqual(result1, "Changes applied successfully.")
         self.assertEqual(result2, "Changes applied successfully.")
         self.assertEqual(coder.partial_response_content, "Changes applied successfully.")
@@ -38,7 +41,7 @@ class TestScriptingAPI(unittest.TestCase):
     @patch("aider.coders.base_coder.Coder.send")
     def test_scripting_with_io(self, mock_send):
         # Setup
-        def mock_send_side_effect(messages):
+        def mock_send_side_effect(messages, functions=None):
             coder.partial_response_content = "New function added successfully."
             return "New function added successfully."
 
@@ -53,7 +56,10 @@ class TestScriptingAPI(unittest.TestCase):
         result = coder.run("add a new function")
 
         # Assertions
-        mock_send.assert_called_once_with([{"role": "user", "content": "add a new function"}])
+        mock_send.assert_called_once_with(
+            [{"role": "user", "content": "add a new function"}],
+            functions=None
+        )
         self.assertEqual(result, "New function added successfully.")
         self.assertTrue(io.yes)  # Check that 'yes' is set to True
         self.assertEqual(coder.partial_response_content, "New function added successfully.")
