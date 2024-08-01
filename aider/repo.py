@@ -15,6 +15,7 @@ class GitRepo:
     aider_ignore_file = None
     aider_ignore_spec = None
     aider_ignore_ts = 0
+    subtree_only = False
 
     def __init__(
         self,
@@ -27,6 +28,7 @@ class GitRepo:
         attribute_committer=True,
         attribute_commit_message=False,
         commit_prompt=None,
+        subtree_only=False,
     ):
         self.io = io
         self.models = models
@@ -254,13 +256,22 @@ class GitRepo:
         return str(Path(PurePosixPath((Path(self.root) / path).relative_to(self.root))))
 
     def ignored_file(self, fname):
+        if self.subtree_only:
+            try:
+                fname_path = Path(self.normalize_path(fname)).resolve()
+                cwd_path = Path.cwd().resolve()
+                if not fname_path.is_relative_to(cwd_path):
+                    return True
+            except ValueError:
+                return True
+
         if not self.aider_ignore_file or not self.aider_ignore_file.is_file():
-            return
+            return False
 
         try:
             fname = self.normalize_path(fname)
         except ValueError:
-            return
+            return True
 
         mtime = self.aider_ignore_file.stat().st_mtime
         if mtime != self.aider_ignore_ts:
