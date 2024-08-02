@@ -260,9 +260,16 @@ def register_models(git_root, model_settings_fname, io):
             io.tool_output(f"Loaded {len(files_loaded)} model settings file(s)")
             for file_loaded in files_loaded:
                 io.tool_output(f"  - {file_loaded}")  # noqa: E221
+        elif args.verbose:
+            io.tool_output("No model settings files loaded")
     except Exception as e:
         io.tool_error(f"Error loading aider model settings: {e}")
         return 1
+
+    if args.verbose:
+        io.tool_output("Searched for model settings files:")
+        for file in model_settings_files:
+            io.tool_output(f"  - {file}")
 
     return None
 
