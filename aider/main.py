@@ -257,7 +257,8 @@ def register_models(git_root, model_settings_fname, io, verbose=False):
     try:
         files_loaded = models.register_models(model_settings_files)
         if len(files_loaded) > 0:
-            io.tool_output(f"Loaded {len(files_loaded)} model settings file(s)")
+            if verbose:
+                io.tool_output(f"Loaded {len(files_loaded)} model settings file(s)")
             for file_loaded in files_loaded:
                 io.tool_output(f"  - {file_loaded}")  # noqa: E221
         elif verbose:
