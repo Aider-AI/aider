@@ -116,7 +116,7 @@ pox==0.3.4
     # via pathos
 ppft==1.7.6.8
     # via pathos
-pre-commit==3.7.1
+pre-commit==3.8.0
     # via -r requirements/requirements-dev.in
 pygments==2.18.0
     # via
@@ -129,7 +129,7 @@ pyproject-hooks==1.1.0
     # via
     #   build
     #   pip-tools
-pytest==8.3.1
+pytest==8.3.2
     # via -r requirements/requirements-dev.in
 python-dateutil==2.9.0.post0
     # via
@@ -163,19 +163,19 @@ sphinx==7.4.7
     #   sphinxcontrib-jquery
 sphinx-rtd-theme==2.0.0
     # via lox
-sphinxcontrib-applehelp==1.0.8
+sphinxcontrib-applehelp==2.0.0
     # via sphinx
-sphinxcontrib-devhelp==1.0.6
+sphinxcontrib-devhelp==2.0.0
     # via sphinx
-sphinxcontrib-htmlhelp==2.0.6
+sphinxcontrib-htmlhelp==2.1.0
     # via sphinx
 sphinxcontrib-jquery==4.1
     # via sphinx-rtd-theme
 sphinxcontrib-jsmath==1.0.1
     # via sphinx
-sphinxcontrib-qthelp==1.0.8
+sphinxcontrib-qthelp==2.0.0
     # via sphinx
-sphinxcontrib-serializinghtml==1.1.10
+sphinxcontrib-serializinghtml==2.0.0
     # via sphinx
 typer==0.12.3
     # via -r requirements/requirements-dev.in

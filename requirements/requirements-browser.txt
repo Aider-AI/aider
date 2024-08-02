@@ -85,7 +85,7 @@ pillow==10.4.0
     # via
     #   -c requirements/../requirements.txt
     #   streamlit
-protobuf==5.27.2
+protobuf==5.27.3
     # via streamlit
 pyarrow==17.0.0
     # via streamlit
@@ -112,7 +112,7 @@ rich==13.7.1
     # via
     #   -c requirements/../requirements.txt
     #   streamlit
-rpds-py==0.19.0
+rpds-py==0.19.1
     # via
     #   -c requirements/../requirements.txt
     #   jsonschema
@@ -123,7 +123,7 @@ smmap==5.0.1
     # via
     #   -c requirements/../requirements.txt
     #   gitdb
-streamlit==1.36.0
+streamlit==1.37.0
     # via -r requirements/requirements-browser.in
 tenacity==8.5.0
     # via streamlit
