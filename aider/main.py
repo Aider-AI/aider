@@ -249,7 +249,7 @@ def generate_search_path_list(default_fname, git_root, command_line_file):
     return files
 
 
-def register_models(git_root, model_settings_fname, io):
+def register_models(git_root, model_settings_fname, io, verbose=False):
     model_settings_files = generate_search_path_list(
         ".aider.model.settings.yml", git_root, model_settings_fname
     )
@@ -260,13 +260,13 @@ def register_models(git_root, model_settings_fname, io):
             io.tool_output(f"Loaded {len(files_loaded)} model settings file(s)")
             for file_loaded in files_loaded:
                 io.tool_output(f"  - {file_loaded}")  # noqa: E221
-        elif args.verbose:
+        elif verbose:
             io.tool_output("No model settings files loaded")
     except Exception as e:
         io.tool_error(f"Error loading aider model settings: {e}")
         return 1
 
-    if args.verbose:
+    if verbose:
         io.tool_output("Searched for model settings files:")
         for file in model_settings_files:
             io.tool_output(f"  - {file}")
@@ -451,7 +451,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.openai_organization_id:
         os.environ["OPENAI_ORGANIZATION"] = args.openai_organization_id
 
-    register_models(git_root, args.model_settings_file, io)
+    register_models(git_root, args.model_settings_file, io, verbose=args.verbose)
     register_litellm_models(git_root, args.model_metadata_file, io)
 
     if not args.model:
