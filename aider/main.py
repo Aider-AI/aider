@@ -289,14 +289,14 @@ def load_dotenv_files(git_root, dotenv_fname):
     return loaded
 
 
-def register_litellm_models(git_root, model_metadata_fname, io):
+def register_litellm_models(git_root, model_metadata_fname, io, verbose=False):
     model_metatdata_files = generate_search_path_list(
         ".aider.model.metadata.json", git_root, model_metadata_fname
     )
 
     try:
         model_metadata_files_loaded = models.register_litellm_models(model_metatdata_files)
-        if len(model_metadata_files_loaded) > 0:
+        if len(model_metadata_files_loaded) > 0 and verbose:
             io.tool_output(f"Loaded model metadata from:")
             for model_metadata_file in model_metadata_files_loaded:
                 io.tool_output(f"  - {model_metadata_file}")  # noqa: E221
@@ -453,7 +453,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         os.environ["OPENAI_ORGANIZATION"] = args.openai_organization_id
 
     register_models(git_root, args.model_settings_file, io, verbose=args.verbose)
-    register_litellm_models(git_root, args.model_metadata_file, io)
+    register_litellm_models(git_root, args.model_metadata_file, io, verbose=args.verbose)
 
     if not args.model:
         args.model = "gpt-4o"
