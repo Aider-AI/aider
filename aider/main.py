@@ -258,7 +258,7 @@ def register_models(git_root, model_settings_fname, io, verbose=False):
         files_loaded = models.register_models(model_settings_files)
         if len(files_loaded) > 0:
             if verbose:
-                io.tool_output(f"Loaded model settings from:")
+                io.tool_output("Loaded model settings from:")
                 for file_loaded in files_loaded:
                     io.tool_output(f"  - {file_loaded}")  # noqa: E221
         elif verbose:
@@ -297,7 +297,7 @@ def register_litellm_models(git_root, model_metadata_fname, io, verbose=False):
     try:
         model_metadata_files_loaded = models.register_litellm_models(model_metatdata_files)
         if len(model_metadata_files_loaded) > 0 and verbose:
-            io.tool_output(f"Loaded model metadata from:")
+            io.tool_output("Loaded model metadata from:")
             for model_metadata_file in model_metadata_files_loaded:
                 io.tool_output(f"  - {model_metadata_file}")  # noqa: E221
     except Exception as e:
