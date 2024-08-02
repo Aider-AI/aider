@@ -34,7 +34,7 @@ class TestChatSummary(TestCase):
         tokenized = self.chat_summary.tokenize(messages)
         self.assertEqual(tokenized, [(2, messages[0]), (2, messages[1])])
 
-    @mock.patch("aider.history.send_with_retries")
+    @mock.patch("aider.history.simple_send_with_retries")
     def test_summarize_all(self, mock_send):
         mock_send.return_value = "This is a summary"
         messages = [
@@ -69,7 +69,7 @@ class TestChatSummary(TestCase):
         self.assertGreater(len(result), 0)
         self.assertLessEqual(len(result), len(messages))
 
-    @mock.patch("aider.history.send_with_retries")
+    @mock.patch("aider.history.simple_send_with_retries")
     def test_fallback_to_second_model(self, mock_send):
         mock_model1 = mock.Mock(spec=Model)
         mock_model1.name = "gpt-4"

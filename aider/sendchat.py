@@ -66,13 +66,7 @@ def lazy_litellm_retry_decorator(func):
 
 @lazy_litellm_retry_decorator
 def send_with_retries(
-    model_name,
-    messages,
-    functions=None,
-    stream=False,
-    temperature=0,
-    extra_headers=None,
-    max_tokens=None,
+    model_name, messages, functions, stream, temperature=0, extra_headers=None, max_tokens=None
 ):
     from aider.llm import litellm
 
@@ -105,3 +99,16 @@ def send_with_retries(
         CACHE[key] = res
 
     return hash_object, res
+
+
+def simple_send_with_retries(model_name, messages):
+    try:
+        _hash, response = send_with_retries(
+            model_name=model_name,
+            messages=messages,
+            functions=None,
+            stream=False,
+        )
+        return response.choices[0].message.content
+    except (AttributeError, litellm.exceptions.BadRequestError):
+        return

@@ -106,7 +106,7 @@ class TestRepo(unittest.TestCase):
             diffs = git_repo.diff_commits(False, "HEAD~1", "HEAD")
             self.assertIn("two", diffs)
 
-    @patch("aider.repo.send_with_retries")
+    @patch("aider.repo.simple_send_with_retries")
     def test_get_commit_message(self, mock_send):
         mock_send.side_effect = ["", "a good commit message"]
 
@@ -120,14 +120,14 @@ class TestRepo(unittest.TestCase):
         # Assert that the returned message is the expected one from the second model
         self.assertEqual(result, "a good commit message")
 
-        # Check that send_with_retries was called twice
+        # Check that simple_send_with_retries was called twice
         self.assertEqual(mock_send.call_count, 2)
 
         # Check that it was called with the correct model names
         mock_send.assert_any_call(model1.name, mock_send.call_args[0][1])
         mock_send.assert_any_call(model2.name, mock_send.call_args[0][1])
 
-    @patch("aider.repo.send_with_retries")
+    @patch("aider.repo.simple_send_with_retries")
     def test_get_commit_message_strip_quotes(self, mock_send):
         mock_send.return_value = '"a good commit message"'
 
@@ -138,7 +138,7 @@ class TestRepo(unittest.TestCase):
         # Assert that the returned message is the expected one
         self.assertEqual(result, "a good commit message")
 
-    @patch("aider.repo.send_with_retries")
+    @patch("aider.repo.simple_send_with_retries")
     def test_get_commit_message_no_strip_unmatched_quotes(self, mock_send):
         mock_send.return_value = 'a good "commit message"'
 
@@ -149,7 +149,7 @@ class TestRepo(unittest.TestCase):
         # Assert that the returned message is the expected one
         self.assertEqual(result, 'a good "commit message"')
 
-    @patch("aider.repo.send_with_retries")
+    @patch("aider.repo.simple_send_with_retries")
     def test_get_commit_message_with_custom_prompt(self, mock_send):
         mock_send.return_value = "Custom commit message"
         custom_prompt = "Generate a commit message in the style of Shakespeare"
@@ -349,7 +349,7 @@ class TestRepo(unittest.TestCase):
             fnames = git_repo.get_tracked_files()
             self.assertIn(str(fname), fnames)
 
-    @patch("aider.repo.send_with_retries")
+    @patch("aider.repo.simple_send_with_retries")
     def test_noop_commit(self, mock_send):
         mock_send.return_value = '"a good commit message"'
 
