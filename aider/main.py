@@ -370,8 +370,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         launch_gui(argv)
         return
 
-    for fname in loaded_dotenvs:
-        io.tool_output(f"Loaded {fname}")
+    if args.verbose:
+        for fname in loaded_dotenvs:
+            io.tool_output(f"Loaded {fname}")
 
     all_files = args.files + (args.file or [])
     fnames = [str(Path(fn).resolve()) for fn in all_files]
