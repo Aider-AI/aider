@@ -277,6 +277,7 @@ MODEL_SETTINGS = [
         extra_headers={"anthropic-beta": "max-tokens-3-5-sonnet-2024-07-15"},
     ),
     # Vertex AI Claude models
+    # Does not yet support 8k token
     ModelSettings(
         "vertex_ai/claude-3-5-sonnet@20240620",
         "diff",
@@ -285,8 +286,6 @@ MODEL_SETTINGS = [
         examples_as_sys_msg=True,
         can_prefill=True,
         accepts_images=True,
-        max_tokens=8192,
-        extra_headers={"anthropic-beta": "max-tokens-3-5-sonnet-2024-07-15"},
     ),
     ModelSettings(
         "vertex_ai/claude-3-opus@20240229",
