@@ -6,7 +6,7 @@ import git
 import pathspec
 
 from aider import prompts, utils
-from aider.sendchat import simple_send_with_retries
+from aider.sendchat import send_with_retries
 
 from .dump import dump  # noqa: F401
 
@@ -170,7 +170,7 @@ class GitRepo:
         ]
 
         for model in self.models:
-            commit_message = simple_send_with_retries(model.name, messages)
+            commit_message = send_with_retries(model.name, messages)
             if commit_message:
                 break
 
