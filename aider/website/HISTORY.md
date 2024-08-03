@@ -16,6 +16,15 @@ cog.out(text)
 
 # Release history
 
+### main branch
+
+- New `/add-clipboard-image` to add images to the chat from your clipboard.
+- Support for Sonnet's 8k output window.
+  - [Aider already supported infinite output from Sonnet.](https://aider.chat/2024/07/01/sonnet-not-lazy.html)
+- Performance improvements for large repos.
+- Workaround litellm bug for retrying API server errors.
+- Upgraded dependencies, to pick up litellm bug fixes.
+
 ### Aider v0.47.0
 
 - [Commit message](https://aider.chat/docs/git.html#commit-messages) improvements:
