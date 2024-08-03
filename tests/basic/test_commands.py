@@ -731,6 +731,30 @@ class TestCommands(TestCase):
             self.assertNotIn(fname2, str(coder.abs_fnames))
             self.assertNotIn(fname3, str(coder.abs_fnames))
 
+    def test_cmd_ask(self):
+        io = InputOutput(pretty=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        question = "What is the meaning of life?"
+        canned_reply = "The meaning of life is 42."
+
+        with mock.patch('aider.coders.Coder.create') as mock_create:
+            mock_chat_coder = mock.MagicMock()
+            mock_chat_coder.run.return_value = canned_reply
+            mock_create.return_value = mock_chat_coder
+
+            commands.cmd_ask(question)
+
+            mock_create.assert_called_once()
+            mock_chat_coder.run.assert_called_once_with(question)
+
+            self.assertEqual(len(coder.cur_messages), 2)
+            self.assertEqual(coder.cur_messages[0]['role'], 'user')
+            self.assertEqual(coder.cur_messages[0]['content'], question)
+            self.assertEqual(coder.cur_messages[1]['role'], 'assistant')
+            self.assertEqual(coder.cur_messages[1]['content'], canned_reply)
+
     def test_cmd_lint_with_dirty_file(self):
         with GitTemporaryDirectory() as repo_dir:
             repo = git.Repo(repo_dir)
