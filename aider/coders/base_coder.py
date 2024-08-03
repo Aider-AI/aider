@@ -118,6 +118,7 @@ class Coder:
                 cur_messages=from_coder.cur_messages,
                 aider_commit_hashes=from_coder.aider_commit_hashes,
                 commands=from_coder.commands.clone(),
+                total_cost=from_coder.total_cost,
             )
 
             use_kwargs.update(update)  # override to complete the switch
@@ -216,6 +217,7 @@ class Coder:
         map_mul_no_files=8,
         commands=None,
         summarizer=None,
+        total_cost=0.0,
     ):
         if not fnames:
             fnames = []
