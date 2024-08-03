@@ -739,7 +739,7 @@ class TestCommands(TestCase):
         question = "What is the meaning of life?"
         canned_reply = "The meaning of life is 42."
 
-        with mock.patch('aider.coders.Coder.create') as mock_create:
+        with mock.patch("aider.coders.Coder.create") as mock_create:
             mock_chat_coder = mock.MagicMock()
             mock_chat_coder.run.return_value = canned_reply
             mock_create.return_value = mock_chat_coder
@@ -750,10 +750,10 @@ class TestCommands(TestCase):
             mock_chat_coder.run.assert_called_once_with(question)
 
             self.assertEqual(len(coder.cur_messages), 2)
-            self.assertEqual(coder.cur_messages[0]['role'], 'user')
-            self.assertEqual(coder.cur_messages[0]['content'], question)
-            self.assertEqual(coder.cur_messages[1]['role'], 'assistant')
-            self.assertEqual(coder.cur_messages[1]['content'], canned_reply)
+            self.assertEqual(coder.cur_messages[0]["role"], "user")
+            self.assertEqual(coder.cur_messages[0]["content"], question)
+            self.assertEqual(coder.cur_messages[1]["role"], "assistant")
+            self.assertEqual(coder.cur_messages[1]["content"], canned_reply)
 
     def test_cmd_lint_with_dirty_file(self):
         with GitTemporaryDirectory() as repo_dir:
