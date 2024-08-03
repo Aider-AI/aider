@@ -739,15 +739,13 @@ class TestCommands(TestCase):
         question = "What is the meaning of life?"
         canned_reply = "The meaning of life is 42."
 
-        with mock.patch("aider.coders.Coder.create") as mock_create:
-            mock_chat_coder = mock.MagicMock()
-            mock_chat_coder.run.return_value = canned_reply
-            mock_create.return_value = mock_chat_coder
+        with mock.patch("aider.coders.Coder.run") as mock_run:
+            mock_run.return_value = canned_reply
 
             commands.cmd_ask(question)
 
-            mock_create.assert_called_once()
-            mock_chat_coder.run.assert_called_once_with(question)
+            mock_run.assert_called_once()
+            mock_run.assert_called_once_with(question)
 
             self.assertEqual(len(coder.cur_messages), 2)
             self.assertEqual(coder.cur_messages[0]["role"], "user")
