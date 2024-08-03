@@ -778,7 +778,6 @@ class Commands:
             edit_format="help",
             summarize_from_coder=False,
             map_tokens=512,
-            commands=self.clone(),
             map_mul_no_files=1,
         )
         user_msg = self.help.ask(args)
@@ -817,7 +816,6 @@ class Commands:
             from_coder=self.coder,
             edit_format="ask",
             summarize_from_coder=False,
-            commands=self.clone(),
         )
 
         user_msg = args

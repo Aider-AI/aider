@@ -117,6 +117,7 @@ class Coder:
                 done_messages=done_messages,
                 cur_messages=from_coder.cur_messages,
                 aider_commit_hashes=from_coder.aider_commit_hashes,
+                commands=from_coder.commands.clone(),
             )
 
             use_kwargs.update(update)  # override to complete the switch
