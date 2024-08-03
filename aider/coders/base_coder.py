@@ -56,7 +56,6 @@ class Coder:
     last_asked_for_commit_time = 0
     repo_map = None
     functions = None
-    total_cost = 0.0
     num_exhausted_context_windows = 0
     num_malformed_responses = 0
     last_keyboard_interrupt = None
@@ -233,6 +232,8 @@ class Coder:
         self.chat_completion_call_hashes = []
         self.chat_completion_response_hashes = []
         self.need_commit_before_edits = set()
+
+        self.total_cost = total_cost
 
         self.verbose = verbose
         self.abs_fnames = set()
