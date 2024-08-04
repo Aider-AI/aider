@@ -26,6 +26,7 @@ cog.out(text)
 - Performance improvements for large repos.
 - Workaround litellm bug for retrying API server errors.
 - Upgraded dependencies, to pick up litellm bug fixes.
+- Aider wrote 48% of the code since the last release.
 
 ### Aider v0.47.0
 
