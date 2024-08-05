@@ -2,6 +2,7 @@ import base64
 import itertools
 import os
 import time
+import traceback
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -40,7 +41,7 @@ class Spinner:
         print(f" {self.text} {next(self.io.spinner_chars)}", end="\r", flush=True)
 
     def end(self):
-        dump('end')
+        traceback.print_stack()
         print(" " * (len(self.text) + 3))
 
 
