@@ -424,15 +424,19 @@ class InputOutput:
                 self.io = io
                 self.text = text
                 self.start_time = time.time()
+                self.last_update = self.start_time
                 print(f"{self.text} {next(self.io.spinner_chars)}", end="\r", flush=True)
 
             def step(self):
-                elapsed = time.time() - self.start_time
-                print(
-                    f"{self.text} {next(self.io.spinner_chars)} ({elapsed:.1f}s)",
-                    end="\r",
-                    flush=True,
-                )
+                current_time = time.time()
+                if current_time - self.last_update >= 0.1:  # Only update every 1/10 second
+                    elapsed = current_time - self.start_time
+                    print(
+                        f"{self.text} {next(self.io.spinner_chars)} ({elapsed:.1f}s)",
+                        end="\r",
+                        flush=True,
+                    )
+                    self.last_update = current_time
 
             def end(self):
                 elapsed = time.time() - self.start_time
