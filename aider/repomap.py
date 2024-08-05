@@ -24,7 +24,6 @@ from aider.dump import dump  # noqa: F402,E402
 Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
 
 
-
 class RepoMap:
     CACHE_VERSION = 3
     TAGS_CACHE_DIR = f".aider.tags.cache.v{CACHE_VERSION}"
