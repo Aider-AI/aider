@@ -6,6 +6,7 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 
+
 class Spinner:
     def __init__(self, io, text):
         self.io = io
@@ -17,6 +18,7 @@ class Spinner:
 
     def end(self):
         print(f"{self.text} Done!")
+
 
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.enums import EditingMode
