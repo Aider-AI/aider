@@ -29,9 +29,10 @@ def print_elapsed(message):
     current_time = time.time()
     if hasattr(print_elapsed, "last_time"):
         elapsed = current_time - print_elapsed.last_time
-        print(f"{message}: {elapsed:.2f} seconds")
+        print(f"... {elapsed:.2f} seconds")
+        print(message)
     else:
-        print(f"{message}: (first measurement)")
+        print(f"{message}:")
     print_elapsed.last_time = current_time
 
 
@@ -42,6 +43,8 @@ class RepoMap:
     cache_missing = False
 
     warned_files = set()
+
+    tokens_per_char = None
 
     def __init__(
         self,
@@ -67,8 +70,21 @@ class RepoMap:
         self.map_mul_no_files = map_mul_no_files
         self.max_context_window = max_context_window
 
-        self.token_count = main_model.token_count
         self.repo_content_prefix = repo_content_prefix
+
+        self.main_model = main_model
+
+    def token_count(self, text):
+        if self.tokens_per_char:
+            return len(text) / self.tokens_per_char
+
+        sample_text = text.splitlines(keepends=True)
+        sample_text = "".join(random.sample(sample_text, 150))
+        tokens = self.main_model.token_count(sample_text)
+        self.tokens_per_char = tokens / len(sample_text)
+
+        return len(text) / self.tokens_per_char
+        return tokens
 
     def get_repo_map(self, chat_files, other_files, mentioned_fnames=None, mentioned_idents=None):
         if self.max_map_tokens <= 0:
@@ -79,6 +95,9 @@ class RepoMap:
             mentioned_fnames = set()
         if not mentioned_idents:
             mentioned_idents = set()
+
+        # reset the estimate
+        self.tokens_per_char = None
 
         max_map_tokens = self.max_map_tokens
 
