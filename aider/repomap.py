@@ -79,7 +79,11 @@ class RepoMap:
             return len(text) / self.tokens_per_char
 
         sample_text = text.splitlines(keepends=True)
-        sample_text = "".join(random.sample(sample_text, 150))
+        samples = 150
+        if len(sample_text) < samples:
+            return self.main_model.token_count(text)
+
+        sample_text = "".join(random.sample(sample_text, samples))
         tokens = self.main_model.token_count(sample_text)
         self.tokens_per_char = tokens / len(sample_text)
 
