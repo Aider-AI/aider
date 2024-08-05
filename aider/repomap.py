@@ -3,7 +3,6 @@ import math
 import os
 import random
 import sys
-import time
 import warnings
 from collections import Counter, defaultdict, namedtuple
 from importlib import resources
@@ -24,16 +23,6 @@ from aider.dump import dump  # noqa: F402,E402
 
 Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
 
-
-def print_elapsed(message):
-    current_time = time.time()
-    if hasattr(print_elapsed, "last_time"):
-        elapsed = current_time - print_elapsed.last_time
-        print(f"... {elapsed:.2f} seconds")
-        print(message)
-    else:
-        print(f"{message}:")
-    print_elapsed.last_time = current_time
 
 
 class RepoMap:
@@ -280,8 +269,6 @@ class RepoMap:
             fnames = tqdm(fnames)
         self.cache_missing = False
 
-        print_elapsed("Starting tags processing")
-
         for fname in fnames:
             if not Path(fname).is_file():
                 if fname not in self.warned_files:
@@ -318,7 +305,6 @@ class RepoMap:
                 elif tag.kind == "ref":
                     references[tag.name].append(rel_fname)
 
-        print_elapsed("Finished tags processing, starting graph creation")
         ##
         # dump(defines)
         # dump(references)
@@ -359,13 +345,10 @@ class RepoMap:
         else:
             pers_args = dict()
 
-        print_elapsed("Starting pagerank calculation")
         try:
             ranked = nx.pagerank(G, weight="weight", **pers_args)
         except ZeroDivisionError:
             return []
-
-        print_elapsed("Starting rank distribution")
 
         # distribute the rank from each source node, across all of its out edges
         ranked_definitions = defaultdict(float)
@@ -383,7 +366,6 @@ class RepoMap:
 
         # dump(ranked_definitions)
 
-        print_elapsed("Starting ranked tags processing")
         for (fname, ident), rank in ranked_definitions:
             # print(f"{rank:.03f} {fname} {ident}")
             if fname in chat_rel_fnames:
@@ -404,7 +386,6 @@ class RepoMap:
         for fname in rel_other_fnames_without_tags:
             ranked_tags.append((fname,))
 
-        print_elapsed("Finished processing")
         return ranked_tags
 
     def get_ranked_tags_map(
