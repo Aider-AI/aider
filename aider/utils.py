@@ -207,9 +207,7 @@ def run_install(cmd):
             bufsize=1,
             universal_newlines=True,
         )
-        spinner = itertools.cycle(["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"])
-        last_update = time.time()
-        update_interval = 0.2  # 5 times per second
+        spinner = Spinner("Installing...")
 
         while True:
             char = process.stdout.read(1)
@@ -217,17 +215,14 @@ def run_install(cmd):
                 break
 
             output.append(char)
+            spinner.step()
 
-            current_time = time.time()
-            if current_time - last_update >= update_interval:
-                print(f" Installing... {next(spinner)}", end="\r", flush=True)
-                last_update = current_time
-
+        spinner.end()
         return_code = process.wait()
         output = "".join(output)
 
         if return_code == 0:
-            print("\rInstallation complete.")
+            print("Installation complete.")
             print()
             return True, output
 
