@@ -1,24 +1,9 @@
 import base64
 import itertools
 import os
-import time
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
-
-
-class Spinner:
-    def __init__(self, io, text):
-        self.io = io
-        self.text = text
-        print(f"{self.text} {next(self.io.spinner_chars)}", end="\r", flush=True)
-
-    def step(self):
-        print(f"{self.text} {next(self.io.spinner_chars)}", end="\r", flush=True)
-
-    def end(self):
-        print(f"{self.text} Done!")
-
 
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.enums import EditingMode
@@ -35,6 +20,19 @@ from rich.text import Text
 
 from .dump import dump  # noqa: F401
 from .utils import is_image_file
+
+
+class Spinner:
+    def __init__(self, io, text):
+        self.io = io
+        self.text = text
+        print(f"{self.text} {next(self.io.spinner_chars)}", end="\r", flush=True)
+
+    def step(self):
+        print(f"{self.text} {next(self.io.spinner_chars)}", end="\r", flush=True)
+
+    def end(self):
+        print(f"{self.text} Done!")
 
 
 class AutoCompleter(Completer):
