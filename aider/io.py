@@ -27,21 +27,26 @@ class Spinner:
     def __init__(self, io, text):
         self.io = io
         self.text = text
+        self.start_time = time.time()
         self.last_update = 0
-        self._step()
+        self.visible = False
 
     def step(self):
         current_time = time.time()
-        if current_time - self.last_update >= 0.1:
+        if not self.visible and current_time - self.start_time >= 0.5:
+            self.visible = True
             self._step()
-            self.last_update = current_time
+        elif self.visible and current_time - self.last_update >= 0.1:
+            self._step()
+        self.last_update = current_time
 
     def _step(self):
-        print(f" {self.text} {next(self.io.spinner_chars)}", end="\r", flush=True)
+        if self.visible:
+            print(f" {self.text} {next(self.io.spinner_chars)}", end="\r", flush=True)
 
     def end(self):
-        # traceback.print_stack()
-        print(" " * (len(self.text) + 3))
+        if self.visible:
+            print(" " * (len(self.text) + 3))
 
 
 class AutoCompleter(Completer):
