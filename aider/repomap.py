@@ -146,7 +146,6 @@ class RepoMap:
             return self.TAGS_CACHE[cache_key]["data"]
 
         # miss!
-
         data = list(self.get_tags_raw(fname, rel_fname))
 
         # Update the cache
@@ -247,6 +246,8 @@ class RepoMap:
             fnames = tqdm(fnames)
         self.cache_missing = False
 
+        print('tags')
+
         for fname in fnames:
             if not Path(fname).is_file():
                 if fname not in self.warned_files:
@@ -280,9 +281,10 @@ class RepoMap:
                     key = (rel_fname, tag.name)
                     definitions[key].add(tag)
 
-                if tag.kind == "ref":
+                elif tag.kind == "ref":
                     references[tag.name].append(rel_fname)
 
+        print('graph')
         ##
         # dump(defines)
         # dump(references)
@@ -323,10 +325,13 @@ class RepoMap:
         else:
             pers_args = dict()
 
+        print('rank')
         try:
             ranked = nx.pagerank(G, weight="weight", **pers_args)
         except ZeroDivisionError:
             return []
+
+        print('dist rank')
 
         # distribute the rank from each source node, across all of its out edges
         ranked_definitions = defaultdict(float)
@@ -344,6 +349,7 @@ class RepoMap:
 
         # dump(ranked_definitions)
 
+        print('ranked_tags')
         for (fname, ident), rank in ranked_definitions:
             # print(f"{rank:.03f} {fname} {ident}")
             if fname in chat_rel_fnames:
@@ -364,6 +370,7 @@ class RepoMap:
         for fname in rel_other_fnames_without_tags:
             ranked_tags.append((fname,))
 
+        print('done')
         return ranked_tags
 
     def get_ranked_tags_map(
