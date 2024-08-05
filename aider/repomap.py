@@ -15,12 +15,12 @@ from pygments.token import Token
 from pygments.util import ClassNotFound
 from tqdm import tqdm
 
+from aider.dump import dump
+from aider.utils import Spinner
+
 # tree_sitter is throwing a FutureWarning
 warnings.simplefilter("ignore", category=FutureWarning)
 from tree_sitter_languages import get_language, get_parser  # noqa: E402
-
-from aider.dump import dump
-from aider.utils import Spinner
 
 Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
 
