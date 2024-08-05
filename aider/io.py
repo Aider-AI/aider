@@ -1,6 +1,7 @@
 import base64
 import itertools
 import os
+import time
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -26,9 +27,16 @@ class Spinner:
     def __init__(self, io, text):
         self.io = io
         self.text = text
-        print(f" {self.text} {next(self.io.spinner_chars)}", end="\r", flush=True)
+        self.last_update = 0
+        self._step()
 
     def step(self):
+        current_time = time.time()
+        if current_time - self.last_update >= 0.1:
+            self._step()
+            self.last_update = current_time
+
+    def _step(self):
         print(f" {self.text} {next(self.io.spinner_chars)}", end="\r", flush=True)
 
     def end(self):
