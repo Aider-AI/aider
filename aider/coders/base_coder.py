@@ -71,6 +71,7 @@ class Coder:
     test_outcome = None
     multi_response_content = ""
     rejected_urls = set()
+    abs_root_path_cache = {}
 
     @classmethod
     def create(
@@ -397,8 +398,10 @@ class Coder:
             return True
 
     def abs_root_path(self, path):
-        res = Path(self.root) / path
-        return utils.safe_abs_path(res)
+        if path not in self.abs_root_path_cache:
+            res = Path(self.root) / path
+            self.abs_root_path_cache[path] = utils.safe_abs_path(res)
+        return self.abs_root_path_cache[path]
 
     fences = [
         ("``" + "`", "``" + "`"),
