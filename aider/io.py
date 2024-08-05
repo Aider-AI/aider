@@ -40,6 +40,7 @@ class Spinner:
         print(f" {self.text} {next(self.io.spinner_chars)}", end="\r", flush=True)
 
     def end(self):
+        dump('end')
         print(" " * (len(self.text) + 3))
 
 
