@@ -417,4 +417,5 @@ class InputOutput:
 
     def spinner(self, text):
         from aider.utils import Spinner
+
         return Spinner(text)
