@@ -26,13 +26,13 @@ class Spinner:
     def __init__(self, io, text):
         self.io = io
         self.text = text
-        print(f"{self.text} {next(self.io.spinner_chars)}", end="\r", flush=True)
+        print(f" {self.text} {next(self.io.spinner_chars)}", end="\r", flush=True)
 
     def step(self):
-        print(f"{self.text} {next(self.io.spinner_chars)}", end="\r", flush=True)
+        print(f" {self.text} {next(self.io.spinner_chars)}", end="\r", flush=True)
 
     def end(self):
-        print(f"{self.text} Done!")
+        print(" " * (len(self.text) + 3))
 
 
 class AutoCompleter(Completer):
