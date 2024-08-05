@@ -489,11 +489,15 @@ class Coder:
         return words
 
     def get_ident_filename_matches(self, idents):
+        dump(idents)
+
         all_fnames = defaultdict(set)
         for fname in self.get_all_relative_files():
             base = Path(fname).with_suffix("").name.lower()
             if len(base) >= 5:
                 all_fnames[base].add(fname)
+
+        dump(len(all_fnames))
 
         matches = set()
         for ident in idents:
@@ -501,6 +505,7 @@ class Coder:
                 continue
             matches.update(all_fnames[ident.lower()])
 
+        dump(matches)
         return matches
 
     def get_repo_map(self):
