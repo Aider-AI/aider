@@ -34,6 +34,10 @@ class RepoMap:
 
     tokens_per_char = None
 
+    # Cache for get_ranked_tags_map
+    _last_ranked_tags_map = None
+    _last_ranked_tags_map_args = None
+
     def __init__(
         self,
         map_tokens=1024,
@@ -409,6 +413,18 @@ class RepoMap:
         mentioned_fnames=None,
         mentioned_idents=None,
     ):
+        # Check if the arguments match the last call
+        current_args = (
+            tuple(chat_fnames),
+            tuple(other_fnames) if other_fnames else None,
+            max_map_tokens,
+            frozenset(mentioned_fnames) if mentioned_fnames else None,
+            frozenset(mentioned_idents) if mentioned_idents else None,
+        )
+
+        if current_args == self._last_ranked_tags_map_args:
+            return self._last_ranked_tags_map
+
         if not other_fnames:
             other_fnames = list()
         if not max_map_tokens:
@@ -473,6 +489,11 @@ class RepoMap:
             middle = (lower_bound + upper_bound) // 2
 
         spin.end()
+
+        # Cache the result
+        self._last_ranked_tags_map = best_tree
+        self._last_ranked_tags_map_args = current_args
+
         return best_tree
 
     tree_cache = dict()
