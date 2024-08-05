@@ -1,7 +1,7 @@
 import base64
+import itertools
 import os
 import time
-import itertools
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -428,7 +428,11 @@ class InputOutput:
 
             def step(self):
                 elapsed = time.time() - self.start_time
-                print(f"{self.text} {next(self.io.spinner_chars)} ({elapsed:.1f}s)", end="\r", flush=True)
+                print(
+                    f"{self.text} {next(self.io.spinner_chars)} ({elapsed:.1f}s)",
+                    end="\r",
+                    flush=True,
+                )
 
             def end(self):
                 elapsed = time.time() - self.start_time
