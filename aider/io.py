@@ -23,7 +23,6 @@ from .dump import dump  # noqa: F401
 from .utils import is_image_file
 
 
-
 class AutoCompleter(Completer):
     def __init__(self, root, rel_fnames, addable_rel_fnames, commands, encoding):
         self.addable_rel_fnames = addable_rel_fnames
