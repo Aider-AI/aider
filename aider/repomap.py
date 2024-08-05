@@ -415,11 +415,11 @@ class RepoMap:
     ):
         # Check if the arguments match the last call
         current_args = (
-            tuple(chat_fnames),
-            tuple(other_fnames) if other_fnames else None,
+            tuple(sorted(chat_fnames)),
+            tuple(sorted(other_fnames)) if other_fnames else None,
             max_map_tokens,
-            frozenset(mentioned_fnames) if mentioned_fnames else None,
-            frozenset(mentioned_idents) if mentioned_idents else None,
+            frozenset(sorted(mentioned_fnames)) if mentioned_fnames else None,
+            frozenset(sorted(mentioned_idents)) if mentioned_idents else None,
         )
 
         if current_args == self._last_ranked_tags_map_args:
