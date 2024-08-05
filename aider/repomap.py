@@ -395,12 +395,16 @@ class RepoMap:
 
         chat_rel_fnames = [self.get_rel_fname(fname) for fname in chat_fnames]
 
+        dump(max_map_tokens)
+
         # Guess a small starting number to help with giant repos
-        middle = min(max_map_tokens // 25, num_tags)
+        middle = min(max_map_tokens // 50, num_tags)
 
         self.tree_cache = dict()
 
         while lower_bound <= upper_bound:
+            dump(lower_bound, middle, upper_bound)
+
             tree = self.to_tree(ranked_tags[:middle], chat_rel_fnames)
             num_tokens = self.token_count(tree)
 
