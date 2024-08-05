@@ -145,7 +145,6 @@ class InputOutput:
         llm_history_file=None,
         editingmode=EditingMode.EMACS,
     ):
-        self.spinner_chars = itertools.cycle(["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"])
         self.editingmode = editingmode
         no_color = os.environ.get("NO_COLOR")
         if no_color is not None and no_color != "":
