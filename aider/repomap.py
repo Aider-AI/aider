@@ -95,8 +95,8 @@ class RepoMap:
         if not files_listing:
             return
 
-        num_tokens = self.token_count(files_listing)
         if self.verbose:
+            num_tokens = self.token_count(files_listing)
             self.io.tool_output(f"Repo-map: {num_tokens / 1024:.1f} k-tokens")
 
         if chat_files:
