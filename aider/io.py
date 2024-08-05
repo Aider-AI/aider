@@ -414,8 +414,3 @@ class InputOutput:
         if self.chat_history_file is not None:
             with self.chat_history_file.open("a", encoding=self.encoding) as f:
                 f.write(text)
-
-    def spinner(self, text):
-        from aider.utils import Spinner
-
-        return Spinner(text)

@@ -239,6 +239,35 @@ def run_install(cmd):
     return False, output
 
 
+class Spinner:
+    spinner_chars = itertools.cycle(["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"])
+
+    def __init__(self, text):
+        self.text = text
+        self.start_time = time.time()
+        self.last_update = 0
+        self.visible = False
+
+    def step(self):
+        current_time = time.time()
+        if not self.visible and current_time - self.start_time >= 0.5:
+            self.visible = True
+            self._step()
+        elif self.visible and current_time - self.last_update >= 0.1:
+            self._step()
+        self.last_update = current_time
+
+    def _step(self):
+        if not self.visible:
+            return
+
+        print(f"\r{self.text} {next(self.spinner_chars)}\r{self.text} ", end="", flush=True)
+
+    def end(self):
+        if self.visible:
+            print("\r" + " " * (len(self.text) + 3))
+
+
 def check_pip_install_extra(io, module, prompt, pip_install_cmd):
     try:
         __import__(module)

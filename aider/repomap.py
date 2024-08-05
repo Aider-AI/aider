@@ -402,7 +402,7 @@ class RepoMap:
         if not mentioned_idents:
             mentioned_idents = set()
 
-        spin = self.io.spinner("Preparing repo map")
+        spin = Spinner("Preparing repo map")
 
         ranked_tags = self.get_ranked_tags(
             chat_fnames,
