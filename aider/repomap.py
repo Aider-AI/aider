@@ -61,7 +61,21 @@ class RepoMap:
 
         self.repo_content_prefix = repo_content_prefix
 
-        self.token_count = main_model.token_count
+        self.main_model = main_model
+
+    def token_count(self, text):
+        len_text = len(text)
+        if len_text < 200:
+            return self.main_model.token_count(text)
+
+        lines = text.splitlines(keepends=True)
+        num_lines = len(lines)
+        step = num_lines // 100 or 1
+        lines = lines[::step]
+        sample_text = "".join(lines)
+        sample_tokens = self.main_model.token_count(sample_text)
+        est_tokens = sample_tokens / len(sample_text) * len_text
+        return est_tokens
 
     def get_repo_map(self, chat_files, other_files, mentioned_fnames=None, mentioned_idents=None):
         if self.max_map_tokens <= 0:
