@@ -530,14 +530,11 @@ def get_scm_fname(lang):
 def get_supported_languages_md():
     from grep_ast.parsers import PARSERS
 
-    from aider.linter import Linter
-
     res = """
 | Language | File extension | Repo map | Linter |
 |:--------:|:--------------:|:--------:|:------:|
 """
     data = sorted((lang, ex) for ex, lang in PARSERS.items())
-    linter = Linter()
 
     for lang, ext in data:
         fn = get_scm_fname(lang)
