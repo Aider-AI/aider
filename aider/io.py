@@ -23,33 +23,6 @@ from .dump import dump  # noqa: F401
 from .utils import is_image_file
 
 
-class Spinner:
-    def __init__(self, io, text):
-        self.io = io
-        self.text = text
-        self.start_time = time.time()
-        self.last_update = 0
-        self.visible = False
-
-    def step(self):
-        current_time = time.time()
-        if not self.visible and current_time - self.start_time >= 0.5:
-            self.visible = True
-            self._step()
-        elif self.visible and current_time - self.last_update >= 0.1:
-            self._step()
-        self.last_update = current_time
-
-    def _step(self):
-        if not self.visible:
-            return
-
-        print(f"\r{self.text} {next(self.io.spinner_chars)}\r{self.text} ", end="", flush=True)
-
-    def end(self):
-        if self.visible:
-            print("\r" + " " * (len(self.text) + 3))
-
 
 class AutoCompleter(Completer):
     def __init__(self, root, rel_fnames, addable_rel_fnames, commands, encoding):
@@ -447,4 +420,4 @@ class InputOutput:
                 f.write(text)
 
     def spinner(self, text):
-        return Spinner(self, text)
+        return Spinner(text)
