@@ -229,6 +229,8 @@ class GitRepo:
 
         return diffs
 
+    tree_files = {}
+
     def get_tracked_files(self):
         if not self.repo:
             return []
@@ -240,25 +242,39 @@ class GitRepo:
 
         files = []
         if commit:
-            for blob in commit.tree.traverse():
-                if blob.type == "blob":  # blob is a file
-                    files.append(blob.path)
+            if commit in self.tree_files:
+                files = self.tree_files[commit]
+            else:
+                for blob in commit.tree.traverse():
+                    if blob.type == "blob":  # blob is a file
+                        files.append(blob.path)
+                files = set(self.normalize_path(path) for path in files)
+                self.tree_files[commit] = set(files)
 
         # Add staged files
         index = self.repo.index
         staged_files = [path for path, _ in index.entries.keys()]
+        files.update(self.normalize_path(path) for path in staged_files)
 
-        files.extend(staged_files)
-
-        # convert to appropriate os.sep, since git always normalizes to /
-        res = set(self.normalize_path(path) for path in files)
-
-        res = [fname for fname in res if not self.ignored_file(fname)]
+        res = [fname for fname in files if not self.ignored_file(fname)]
 
         return res
 
+    normalized_path = {}
+
     def normalize_path(self, path):
-        return str(Path(PurePosixPath((Path(self.root) / path).relative_to(self.root))))
+        orig_path = path
+        res = self.normalized_path.get(orig_path)
+        if res:
+            return res
+
+        path = Path(self.root) / path
+        path = PurePosixPath(path)
+        path = path.relative_to(self.root)
+
+        path = str(path)
+        self.normalized_path[orig_path] = path
+        return path
 
     def refresh_aider_ignore(self):
         if not self.aider_ignore_file:

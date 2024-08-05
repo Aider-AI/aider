@@ -1330,7 +1330,9 @@ class Coder:
         else:
             files = self.get_inchat_relative_files()
 
-        files = [fname for fname in files if self.is_file_safe(fname)]
+        # This is quite slow in large repos
+        # files = [fname for fname in files if self.is_file_safe(fname)]
+
         return sorted(set(files))
 
     def get_all_abs_files(self):
