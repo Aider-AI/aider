@@ -1,7 +1,5 @@
 import base64
-import itertools
 import os
-import time
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -418,4 +416,5 @@ class InputOutput:
                 f.write(text)
 
     def spinner(self, text):
+        from aider.utils import Spinner
         return Spinner(text)
