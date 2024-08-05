@@ -403,22 +403,22 @@ class RepoMap:
         sample_tokens = self.token_count(sample_tree)
 
         if sample_tokens > 0:
-            estimated_tags = int((max_map_tokens / sample_tokens) * sample_size)
+            estimated_tags = int((max_map_tokens / sample_tokens) * sample_size * 1.5)
             middle = min(estimated_tags, num_tags)
         else:
             middle = min(max_map_tokens // 50, num_tags)
 
-        dump(max_map_tokens, sample_size, sample_tokens, estimated_tags, middle)
-
         while lower_bound <= upper_bound:
-            dump(lower_bound, middle, upper_bound)
-
             tree = self.to_tree(ranked_tags[:middle], chat_rel_fnames)
             num_tokens = self.token_count(tree)
 
-            if num_tokens < max_map_tokens and num_tokens > best_tree_tokens:
+            pct_err = abs(num_tokens - max_map_tokens) / max_map_tokens
+            if (num_tokens <= max_map_tokens and num_tokens > best_tree_tokens) or pct_err < 0.1:
                 best_tree = tree
                 best_tree_tokens = num_tokens
+
+                if pct_err < 0.1:
+                    break
 
             if num_tokens < max_map_tokens:
                 lower_bound = middle + 1
