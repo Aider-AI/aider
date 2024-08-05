@@ -435,7 +435,7 @@ class RepoMap:
         best_tree = None
         best_tree_tokens = 0
 
-        chat_rel_fnames = [self.get_rel_fname(fname) for fname in chat_fnames]
+        chat_rel_fnames = set(self.get_rel_fname(fname) for fname in chat_fnames)
 
         self.tree_cache = dict()
 
@@ -503,9 +503,6 @@ class RepoMap:
         if not tags:
             return ""
 
-        tags = [tag for tag in tags if tag[0] not in chat_rel_fnames]
-        tags = sorted(tags)
-
         cur_fname = None
         cur_abs_fname = None
         lois = None
@@ -513,8 +510,10 @@ class RepoMap:
 
         # add a bogus tag at the end so we trip the this_fname != cur_fname...
         dummy_tag = (None,)
-        for tag in tags + [dummy_tag]:
+        for tag in sorted(tags) + [dummy_tag]:
             this_rel_fname = tag[0]
+            if this_rel_fname in chat_rel_fnames:
+                continue
 
             # ... here ... to output the final real entry in the list
             if this_rel_fname != cur_fname:
