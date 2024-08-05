@@ -20,6 +20,7 @@ warnings.simplefilter("ignore", category=FutureWarning)
 from tree_sitter_languages import get_language, get_parser  # noqa: E402
 
 from aider.dump import dump  # noqa: F402,E402
+from aider.utils import Spinner
 
 Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
 
