@@ -34,10 +34,6 @@ class RepoMap:
 
     tokens_per_char = None
 
-    # Cache for get_ranked_tags_map
-    _last_ranked_tags_map = None
-    _last_ranked_tags_map_args = None
-
     def __init__(
         self,
         map_tokens=1024,
@@ -64,23 +60,7 @@ class RepoMap:
 
         self.repo_content_prefix = repo_content_prefix
 
-        self.main_model = main_model
-
-    def token_count(self, text):
-        if self.tokens_per_char:
-            return len(text) / self.tokens_per_char
-
-        sample_text = text.splitlines(keepends=True)
-        samples = 300
-        if len(sample_text) < samples:
-            return self.main_model.token_count(text)
-
-        sample_text = "".join(random.sample(sample_text, samples))
-        tokens = self.main_model.token_count(sample_text)
-        self.tokens_per_char = tokens / len(sample_text)
-
-        return len(text) / self.tokens_per_char
-        return tokens
+        self.token_count = main_model.token_count
 
     def get_repo_map(self, chat_files, other_files, mentioned_fnames=None, mentioned_idents=None):
         if self.max_map_tokens <= 0:
@@ -413,18 +393,6 @@ class RepoMap:
         mentioned_fnames=None,
         mentioned_idents=None,
     ):
-        # Check if the arguments match the last call
-        current_args = (
-            tuple(sorted(chat_fnames)),
-            tuple(sorted(other_fnames)) if other_fnames else None,
-            max_map_tokens,
-            frozenset(sorted(mentioned_fnames)) if mentioned_fnames else None,
-            frozenset(sorted(mentioned_idents)) if mentioned_idents else None,
-        )
-
-        if current_args == self._last_ranked_tags_map_args:
-            return self._last_ranked_tags_map
-
         if not other_fnames:
             other_fnames = list()
         if not max_map_tokens:
@@ -456,29 +424,22 @@ class RepoMap:
 
         self.tree_cache = dict()
 
-        # Estimate initial middle value
-        sample_size = min(100, num_tags)
-        sample_tree = self.to_tree(ranked_tags[:sample_size], chat_rel_fnames)
-        sample_tokens = self.token_count(sample_tree)
-
-        if sample_tokens > 0:
-            estimated_tags = int((max_map_tokens / sample_tokens) * sample_size * 1.5)
-            middle = min(estimated_tags, num_tags)
-        else:
-            middle = min(max_map_tokens // 50, num_tags)
-
+        middle = min(max_map_tokens // 25, num_tags)
         while lower_bound <= upper_bound:
+            # dump(lower_bound, middle, upper_bound)
+
             spin.step()
 
             tree = self.to_tree(ranked_tags[:middle], chat_rel_fnames)
             num_tokens = self.token_count(tree)
 
             pct_err = abs(num_tokens - max_map_tokens) / max_map_tokens
-            if (num_tokens <= max_map_tokens and num_tokens > best_tree_tokens) or pct_err < 0.1:
+            ok_err = 0.15
+            if (num_tokens <= max_map_tokens and num_tokens > best_tree_tokens) or pct_err < ok_err:
                 best_tree = tree
                 best_tree_tokens = num_tokens
 
-                if pct_err < 0.1:
+                if pct_err < ok_err:
                     break
 
             if num_tokens < max_map_tokens:
@@ -489,11 +450,6 @@ class RepoMap:
             middle = (lower_bound + upper_bound) // 2
 
         spin.end()
-
-        # Cache the result
-        self._last_ranked_tags_map = best_tree
-        self._last_ranked_tags_map_args = current_args
-
         return best_tree
 
     tree_cache = dict()
