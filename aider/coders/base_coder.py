@@ -311,8 +311,17 @@ class Coder:
         if not self.repo:
             self.find_common_root()
 
+        if map_tokens is None:
+            use_repo_map = main_model.use_repo_map
+            map_tokens = 1024
+        else:
+            use_repo_map = True
+
         max_inp_tokens = self.main_model.info.get("max_input_tokens") or 0
-        if main_model.use_repo_map and self.repo and self.gpt_prompts.repo_content_prefix:
+
+        has_map_prompt = hasattr(self, "gpt_prompts") and self.gpt_prompts.repo_content_prefix
+
+        if use_repo_map and self.repo and has_map_prompt:
             self.repo_map = RepoMap(
                 map_tokens,
                 self.root,

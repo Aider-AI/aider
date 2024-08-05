@@ -6,6 +6,7 @@
 - Added `--subtree-only` to limit aider to current directory subtree.
   - Should help with large/mono repo performance.
 - New `/add-clipboard-image` to add images to the chat from your clipboard.
+- Use `--map-tokens 1024` to use repo map with any model.
 - Support for Sonnet's 8k output window.
   - [Aider already supported infinite output from Sonnet.](https://aider.chat/2024/07/01/sonnet-not-lazy.html)
 - Performance improvements for large repos.
