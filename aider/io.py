@@ -1,5 +1,7 @@
 import base64
 import os
+import time
+import itertools
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -142,6 +144,7 @@ class InputOutput:
         llm_history_file=None,
         editingmode=EditingMode.EMACS,
     ):
+        self.spinner_chars = itertools.cycle(["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"])
         self.editingmode = editingmode
         no_color = os.environ.get("NO_COLOR")
         if no_color is not None and no_color != "":
@@ -414,3 +417,21 @@ class InputOutput:
         if self.chat_history_file is not None:
             with self.chat_history_file.open("a", encoding=self.encoding) as f:
                 f.write(text)
+
+    def spinner(self, text):
+        class Spinner:
+            def __init__(self, io, text):
+                self.io = io
+                self.text = text
+                self.start_time = time.time()
+                print(f"{self.text} {next(self.io.spinner_chars)}", end="\r", flush=True)
+
+            def step(self):
+                elapsed = time.time() - self.start_time
+                print(f"{self.text} {next(self.io.spinner_chars)} ({elapsed:.1f}s)", end="\r", flush=True)
+
+            def end(self):
+                elapsed = time.time() - self.start_time
+                print(f"{self.text} Done! ({elapsed:.1f}s)")
+
+        return Spinner(self, text)
