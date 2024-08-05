@@ -41,12 +41,14 @@ class Spinner:
         self.last_update = current_time
 
     def _step(self):
-        if self.visible:
-            print(f" {self.text} {next(self.io.spinner_chars)}", end="\r", flush=True)
+        if not self.visible:
+            return
+
+        print(f"\r{self.text} {next(self.io.spinner_chars)}\r{self.text} ", end="", flush=True)
 
     def end(self):
         if self.visible:
-            print(" " * (len(self.text) + 3))
+            print("\r" + " " * (len(self.text) + 3))
 
 
 class AutoCompleter(Completer):
