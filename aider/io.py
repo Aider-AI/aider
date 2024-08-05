@@ -6,6 +6,18 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 
+class Spinner:
+    def __init__(self, io, text):
+        self.io = io
+        self.text = text
+        print(f"{self.text} {next(self.io.spinner_chars)}", end="\r", flush=True)
+
+    def step(self):
+        print(f"{self.text} {next(self.io.spinner_chars)}", end="\r", flush=True)
+
+    def end(self):
+        print(f"{self.text} Done!")
+
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.enums import EditingMode
 from prompt_toolkit.history import FileHistory
@@ -419,27 +431,4 @@ class InputOutput:
                 f.write(text)
 
     def spinner(self, text):
-        class Spinner:
-            def __init__(self, io, text):
-                self.io = io
-                self.text = text
-                self.start_time = time.time()
-                self.last_update = self.start_time
-                print(f"{self.text} {next(self.io.spinner_chars)}", end="\r", flush=True)
-
-            def step(self):
-                current_time = time.time()
-                if current_time - self.last_update >= 0.1:  # Only update every 1/10 second
-                    elapsed = current_time - self.start_time
-                    print(
-                        f"{self.text} {next(self.io.spinner_chars)} ({elapsed:.1f}s)",
-                        end="\r",
-                        flush=True,
-                    )
-                    self.last_update = current_time
-
-            def end(self):
-                elapsed = time.time() - self.start_time
-                print(f"{self.text} Done! ({elapsed:.1f}s)")
-
         return Spinner(self, text)
