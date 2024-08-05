@@ -401,7 +401,7 @@ class RepoMap:
         sample_size = min(100, num_tags)
         sample_tree = self.to_tree(ranked_tags[:sample_size], chat_rel_fnames)
         sample_tokens = self.token_count(sample_tree)
-        
+
         if sample_tokens > 0:
             estimated_tags = int((max_map_tokens / sample_tokens) * sample_size)
             middle = min(estimated_tags, num_tags)
