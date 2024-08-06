@@ -820,3 +820,27 @@
   versions: 0.45.2-dev
   seconds_per_case: 7.3
   total_cost: 0.0000
+
+- dirname: 2024-08-06-18-28-39--gpt-4o-2024-08-06-diff-again
+  test_cases: 133
+  model: openai/gpt-4o-2024-08-06
+  edit_format: diff
+  commit_hash: ed9ed89
+  pass_rate_1: 57.1
+  pass_rate_2: 71.4
+  percent_cases_well_formed: 98.5
+  error_outputs: 18
+  num_malformed_responses: 2
+  num_with_malformed_responses: 2
+  user_asks: 10
+  lazy_comments: 0
+  syntax_errors: 6
+  indentation_errors: 2
+  exhausted_context_windows: 0
+  test_timeouts: 5
+  command: aider --model openai/gpt-4o-2024-08-06
+  date: 2024-08-06
+  versions: 0.48.1-dev
+  seconds_per_case: 6.5
+  total_cost: 0.0000
+  
