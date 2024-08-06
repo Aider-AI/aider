@@ -384,7 +384,7 @@ class TestMain(TestCase):
                     input=DummyInput(),
                     output=DummyOutput(),
                 )
-                MockRepoMap.assert_called_once()
+                MockRepoMap.assert_not_called()
 
     def test_map_tokens_option_with_non_zero_value(self):
         with GitTemporaryDirectory():

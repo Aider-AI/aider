@@ -317,7 +317,7 @@ class Coder:
             use_repo_map = main_model.use_repo_map
             map_tokens = 1024
         else:
-            use_repo_map = True
+            use_repo_map = map_tokens > 0
 
         max_inp_tokens = self.main_model.info.get("max_input_tokens") or 0
 
