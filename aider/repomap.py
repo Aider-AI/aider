@@ -260,10 +260,16 @@ class RepoMap:
         personalize = 100 / len(fnames)
 
         if len(fnames) - len(self.TAGS_CACHE) > 100:
-            fnames = tqdm(fnames, desc="Scanning files")
+            self.io.tool_output(
+                "Initial repo scan can be slow in larger repos, but only happens once."
+            )
+            fnames = tqdm(fnames, desc="Scanning repo")
+            showing_bar = True
+        else:
+            showing_bar = False
 
         for fname in fnames:
-            if progress:
+            if progress and not showing_bar:
                 progress()
 
             if not Path(fname).is_file():
@@ -293,9 +299,6 @@ class RepoMap:
                 continue
 
             for tag in tags:
-                if progress:
-                    progress()
-
                 if tag.kind == "def":
                     defines[tag.name].add(rel_fname)
                     key = (rel_fname, tag.name)
