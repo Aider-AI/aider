@@ -526,6 +526,17 @@ def get_parser(default_config_files, git_root):
         help="Run aider in your browser",
         default=False,
     )
+    group.add_argument(
+        "--prior-message-cmd",
+        help="Execute the cmd prior sending message to model",
+        default=None,
+    )
+    group.add_argument(
+        "--confirm-proceed-message",
+        action="store_true",
+        help="Confirm proceed after execude command prior-message-cmd",
+        default=False,
+    )
 
     return parser
 

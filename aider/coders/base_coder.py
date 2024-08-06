@@ -71,6 +71,8 @@ class Coder:
     test_outcome = None
     multi_response_content = ""
     rejected_urls = set()
+    prior_message_cmd = None
+    confirm_proceed_message = False
 
     @classmethod
     def create(
@@ -217,6 +219,8 @@ class Coder:
         commands=None,
         summarizer=None,
         total_cost=0.0,
+        prior_message_cmd = None,
+        confirm_proceed_message = None
     ):
         if not fnames:
             fnames = []
@@ -356,6 +360,9 @@ class Coder:
             if self.verbose:
                 self.io.tool_output("JSON Schema:")
                 self.io.tool_output(json.dumps(self.functions, indent=4))
+
+        self.prior_message_cmd = prior_message_cmd
+        self.confirm_proceed_message = confirm_proceed_message
 
     def setup_lint_cmds(self, lint_cmds):
         if not lint_cmds:
@@ -610,6 +617,9 @@ class Coder:
                     self.io.user_input(with_message)
                 else:
                     new_user_message = self.run_loop()
+        
+                if self.prior_message_cmd and not self.confirm_proceed_message_post_cmd(self.prior_message_cmd, self.confirm_proceed_message):
+                    continue
 
                 while new_user_message:
                     self.reflected_message = None
@@ -1565,3 +1575,8 @@ class Coder:
 
     def apply_edits(self, edits):
         return
+
+    def confirm_proceed_message_post_cmd(self, command, confirm_proceed=False):
+        if self.commands.is_command(command):
+            self.commands.run(command)
+        return self.io.confirm_ask("\nWould you like to proceed?", default="y") if confirm_proceed else True
