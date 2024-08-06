@@ -11,6 +11,7 @@ import sys
 import threading
 import time
 import traceback
+import locale
 from collections import defaultdict
 from datetime import datetime
 from json.decoder import JSONDecodeError
@@ -739,6 +740,21 @@ class Coder:
             ]
         self.cur_messages = []
 
+    def get_user_language(self):
+        try:
+            lang = locale.getlocale()[0]
+            if lang:
+                return lang.split('_')[0]  # Extract just the language code
+        except:
+            pass
+        
+        for env_var in ['LANG', 'LANGUAGE', 'LC_ALL', 'LC_MESSAGES']:
+            lang = os.environ.get(env_var)
+            if lang:
+                return lang.split('_')[0]  # Extract just the language code
+        
+        return None
+
     def fmt_system_prompt(self, prompt):
         lazy_prompt = self.gpt_prompts.lazy_prompt if self.main_model.lazy else ""
 
@@ -750,6 +766,11 @@ class Coder:
 
         val = os.getenv(var)
         platform_text += f"- The user's shell: {var}={val}\n"
+        
+        user_lang = self.get_user_language()
+        if user_lang:
+            platform_text += f"- The user's language: {user_lang} (detected from locale or environment variables)\n"
+        
         dt = datetime.now().isoformat()
         platform_text += f"- The current date/time: {dt}"
 
