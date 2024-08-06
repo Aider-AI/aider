@@ -36,6 +36,9 @@ class GitRepo:
         self.io = io
         self.models = models
 
+        self.normalized_path = {}
+        self.tree_files = {}
+
         self.attribute_author = attribute_author
         self.attribute_committer = attribute_committer
         self.attribute_commit_message = attribute_commit_message
@@ -229,8 +232,6 @@ class GitRepo:
 
         return diffs
 
-    tree_files = {}
-
     def get_tracked_files(self):
         if not self.repo:
             return []
@@ -259,8 +260,6 @@ class GitRepo:
         res = [fname for fname in files if not self.ignored_file(fname)]
 
         return res
-
-    normalized_path = {}
 
     def normalize_path(self, path):
         orig_path = path

@@ -33,8 +33,6 @@ class RepoMap:
 
     warned_files = set()
 
-    tokens_per_char = None
-
     def __init__(
         self,
         map_tokens=1024,
@@ -86,9 +84,6 @@ class RepoMap:
             mentioned_fnames = set()
         if not mentioned_idents:
             mentioned_idents = set()
-
-        # reset the estimate
-        self.tokens_per_char = None
 
         max_map_tokens = self.max_map_tokens
 
