@@ -83,6 +83,9 @@ class GitRepo:
         # https://github.com/gitpython-developers/GitPython/issues/427
         self.repo = git.Repo(repo_paths.pop(), odbt=git.GitDB)
         self.root = utils.safe_abs_path(self.repo.working_tree_dir)
+        self.aider_ignore_file = Path(aider_ignore_file) if aider_ignore_file else None
+        self.aider_ignore_spec = None
+        self.aider_ignore_ts = 0
 
         if aider_ignore_file:
             self.aider_ignore_file = Path(aider_ignore_file)
