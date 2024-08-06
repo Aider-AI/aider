@@ -90,6 +90,9 @@ cog.outl("```")
 ## Use gpt-4-1106-preview model for the main chat
 #AIDER_4_TURBO=
 
+## Specify the prompt variant to use (default: default)
+#AIDER_PROMPT_VARIANT=
+
 ## Use gpt-3.5-turbo model for the main chat
 #AIDER_35TURBO=
 

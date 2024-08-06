@@ -89,6 +89,9 @@ cog.outl("```")
 ## Use deepseek/deepseek-coder model for the main chat
 #deepseek: false
 
+## Specify the prompt variant to use (default: default)
+#prompt-variant: default
+
 #################
 # Model Settings:
 

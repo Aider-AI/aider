@@ -251,6 +251,9 @@ def get_parser(default_config_files, git_root):
         default=None,
         help="Log the conversation with the LLM to this file (for example, .aider.llm.history)",
     )
+    group.add_argument(
+        "--prompt-variant", default="default", help="Specify the prompt variant to use"
+    )
 
     ##########
     group = parser.add_argument_group("Output Settings")

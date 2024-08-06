@@ -9,13 +9,32 @@ from aider import utils
 
 from ..dump import dump  # noqa: F401
 from .base_coder import Coder
+from .coder_prompts import __all_prompt_variants__
 from .editblock_prompts import EditBlockPrompts
 
 
 class EditBlockCoder(Coder):
     """A coder that uses search/replace blocks for code modifications."""
+
     edit_format = "diff"
     gpt_prompts = EditBlockPrompts()
+
+    def __init__(self, *args, prompt_variant="default", **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if prompt_variant != "default":
+            for prompt_class in __all_prompt_variants__:
+                if (
+                    prompt_class.edit_format == self.edit_format
+                    and prompt_class.prompt_variant == prompt_variant
+                ):
+                    self.gpt_prompts = prompt_class()
+                    break
+            else:
+                raise ValueError(
+                    f"No matching prompt found for edit_format '{self.edit_format}' and"
+                    f" prompt_variant '{prompt_variant}'"
+                )
 
     def get_edits(self):
         content = self.partial_response_content

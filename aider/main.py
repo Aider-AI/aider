@@ -500,6 +500,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         coder = Coder.create(
             main_model=main_model,
             edit_format=args.edit_format,
+            prompt_variant=args.prompt_variant,
             io=io,
             repo=repo,
             fnames=fnames,
