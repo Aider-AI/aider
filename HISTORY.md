@@ -12,7 +12,7 @@
   - [Aider already supported infinite output from Sonnet.](https://aider.chat/2024/07/01/sonnet-not-lazy.html)
 - Workaround litellm bug for retrying API server errors.
 - Upgraded dependencies, to pick up litellm bug fixes.
-- Aider wrote 44% of the code since the last release.
+- Aider wrote 44% of the code in this release.
 
 ### Aider v0.47.1
 
