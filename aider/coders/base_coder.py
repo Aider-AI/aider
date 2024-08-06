@@ -775,7 +775,7 @@ class Coder:
                 f"- The user's language: {user_lang}\n"
             )
 
-        dt = datetime.now().isoformat()
+        dt = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
         platform_text += f"- The current date/time: {dt}"
 
         prompt = prompt.format(
