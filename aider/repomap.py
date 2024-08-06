@@ -261,7 +261,7 @@ class RepoMap:
         personalize = 100 / len(fnames)
 
         if len(fnames) - len(self.TAGS_CACHE) > 100:
-            fnames = tqdm(fnames)
+            fnames = tqdm(fnames, desc="Scanning files")
 
         for fname in fnames:
             if progress:
