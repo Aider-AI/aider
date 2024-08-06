@@ -773,7 +773,7 @@ class Coder:
         if user_lang:
             platform_text += f"- The user's language: {user_lang}\n"
 
-        dt = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+        dt = datetime.now().astimezone().strftime("%Y-%m-%dT%H:%M:%S%z")
         platform_text += f"- The current date/time: {dt}"
 
         prompt = prompt.format(
