@@ -379,7 +379,7 @@ class TestMain(TestCase):
         with GitTemporaryDirectory():
             with patch("aider.repomap.RepoMap") as MockRepoMap:
                 main(
-                    ["--model", "gpt-4", "--map-tokens", "0", "--exit"],
+                    ["--model", "gpt-4", "--map-tokens", "0", "--exit", "--yes"],
                     input=DummyInput(),
                     output=DummyOutput(),
                 )
@@ -389,7 +389,7 @@ class TestMain(TestCase):
         with GitTemporaryDirectory():
             with patch("aider.repomap.RepoMap") as MockRepoMap:
                 main(
-                    ["--model", "gpt-4", "--map-tokens", "1000", "--exit"],
+                    ["--model", "gpt-4", "--map-tokens", "1000", "--exit", "--yes"],
                     input=DummyInput(),
                     output=DummyOutput(),
                 )
