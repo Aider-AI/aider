@@ -745,7 +745,7 @@ class Coder:
             lang = locale.getlocale()[0]
             if lang:
                 return lang.split("_")[0]  # Extract just the language code
-        except:
+        except Exception:
             pass
 
         for env_var in ["LANG", "LANGUAGE", "LC_ALL", "LC_MESSAGES"]:
