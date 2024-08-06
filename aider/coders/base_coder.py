@@ -696,6 +696,7 @@ class Coder:
         
                 if self.prior_message_cmd and not self.confirm_proceed_message_post_cmd(self.prior_message_cmd, self.confirm_proceed_message):
                     continue
+
                 return self.partial_response_content
 
             while True:
