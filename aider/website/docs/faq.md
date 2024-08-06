@@ -39,6 +39,26 @@ If you still wish to add lots of files to the chat, you can:
 - Use a wildcard with the in-chat `/add` command: `/add src/*.py`
 - Give the `/add` command a directory name and it will recurisvely add every file under that dir: `/add src`
 
+## Can I use aider in a large (mono) repo?
+
+Aider will work in any size repo, but is not optimized for quick
+performance and response time in very large repos.
+There are some things you can do to improve performance.
+
+Change into a sub directory of your repo that contains the
+code you want to work on and use the `--subtree-only` switch.
+This will tell aider to ignore the repo outside of the
+directory you start in.
+
+You can also create a `.aiderignore` file to tell aider
+to ignore parts of the repo that aren't relevant to your task.
+This file conforms to `.gitignore` syntax and conventions.
+
+You can use `--aiderignore <filename>` to name a specific file
+to use for ignore patterns.
+You might have a few of these handy for when you want to work on
+frontend, backend, etc portions of your repo.
+
 ## How can I run aider locally from source code?
 
 To run the project locally, follow these steps:
@@ -102,22 +122,3 @@ You can also refer to the
 [instructions for installing a development version of aider](https://aider.chat/docs/install/optional.html#install-the-development-version-of-aider).
 
 
-## Can I use aider in a large (mono) repo?
-
-Aider will work in any size repo, but is not optimized for quick
-performance and response time in very large repos.
-There are some things you can do to improve performance.
-
-Change into a sub directory of your repo that contains the
-code you want to work on and use the `--subtree-only` switch.
-This will tell aider to ignore the repo outside of the
-directory you start in.
-
-You can also create a `.aiderignore` file to tell aider
-to ignore parts of the repo that aren't relevant to your task.
-This file conforms to `.gitignore` syntax and conventions.
-
-You can use `--aiderignore <filename>` to name a specific file
-to use for ignore patterns.
-You might have a few of these handy for when you want to work on
-frontend, backend, etc portions of your repo.

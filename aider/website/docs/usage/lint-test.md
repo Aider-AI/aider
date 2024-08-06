@@ -49,7 +49,7 @@ use the `--auto-test` switch.
 If you want to have aider compile code after each edit, you
 can use the lint and test commands to achieve this.
 
-- You might want want to recompile each file which was modified
+- You might want to recompile each file which was modified
 to check for compile errors.
 To do this,
 provide a `--lint-cmd` which both lints and compiles the file.
