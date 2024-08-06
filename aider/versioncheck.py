@@ -1,6 +1,6 @@
+import os
 import sys
 import time
-import os
 from pathlib import Path
 
 import packaging.version
