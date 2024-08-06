@@ -644,6 +644,9 @@ class Coder:
                         )
                     ):
                         continue
+        
+                if self.prior_message_cmd and not self.confirm_proceed_message_post_cmd(self.prior_message_cmd, self.confirm_proceed_message):
+                    continue
 
                 while new_user_message:
                     self.reflected_message = None
@@ -1627,7 +1630,7 @@ class Coder:
     def confirm_proceed_message_post_cmd(self, command, confirm_proceed=False):
         if self.commands.is_command(command):
             self.commands.run(command)
-            
+
         if(confirm_proceed):
             ok = self.io.confirm_ask("\nWould you like to proceed?", default="y")
             self.io.tool_output("\n") # add breakline
