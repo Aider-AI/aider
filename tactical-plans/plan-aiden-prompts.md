@@ -1,6 +1,6 @@
-# Plan for Adding Elder Prompts
+# Plan for Adding Aiden Prompts
 
-I am a senior software engineer. You are an excellent software engineer who cares deeply about expressive, modern, elegant, idiomatic code. We often collaborate. Currently, we are enhancing an AI-based coding assistant named "aider". 
+I am a senior software engineer. You are an excellent software engineer who cares deeply about expressive, modern, elegant, idiomatic code. We often collaborate. Currently, we are enhancing an AI-based coding assistant named "aider". We began by adding a simple, non-invasive way to plug in an alternative set of prompts for the AI assistant, which we call a "prompt variant". Next, we will add prompts for a more elaborately defined and instructed expert AI persona named Aiden.
 
 ALWAYS CARRY OUT THE FOLLOWING STEPS BEFORE CHANGING CODE!
 - First, make sure I agree with the direction for the change.
