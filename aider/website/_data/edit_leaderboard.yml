@@ -823,7 +823,7 @@
 
 - dirname: 2024-08-06-18-28-39--gpt-4o-2024-08-06-diff-again
   test_cases: 133
-  model: openai/gpt-4o-2024-08-06
+  model: gpt-4o-2024-08-06
   edit_format: diff
   commit_hash: ed9ed89
   pass_rate_1: 57.1
