@@ -378,12 +378,13 @@ class TestMain(TestCase):
     def test_map_tokens_option(self):
         with GitTemporaryDirectory():
             with patch("aider.coders.base_coder.RepoMap") as MockRepoMap:
+                MockRepoMap.return_value.max_map_tokens = 0
                 main(
                     ["--model", "gpt-4", "--map-tokens", "0", "--exit", "--yes"],
                     input=DummyInput(),
                     output=DummyOutput(),
                 )
-                MockRepoMap.assert_not_called()
+                MockRepoMap.assert_called_once()
 
     def test_map_tokens_option_with_non_zero_value(self):
         with GitTemporaryDirectory():
