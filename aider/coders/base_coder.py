@@ -744,14 +744,14 @@ class Coder:
         try:
             lang = locale.getlocale()[0]
             if lang:
-                return lang.split("_")[0]  # Extract just the language code
+                return lang  # Return the full language code, including country
         except Exception:
             pass
 
         for env_var in ["LANG", "LANGUAGE", "LC_ALL", "LC_MESSAGES"]:
             lang = os.environ.get(env_var)
             if lang:
-                return lang.split("_")[0]  # Extract just the language code
+                return lang.split(".")[0]  # Return language and country, but remove encoding if present
 
         return None
 
