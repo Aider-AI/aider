@@ -17,6 +17,14 @@ from aider.utils import GitTemporaryDirectory, IgnorantTemporaryDirectory, make_
 
 
 class TestMain(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        os.environ["AIDER_SKIP_VERSION_CHECK"] = "1"
+
+    @classmethod
+    def tearDownClass(cls):
+        os.environ.pop("AIDER_SKIP_VERSION_CHECK", None)
+
     def setUp(self):
         self.original_env = os.environ.copy()
         os.environ["OPENAI_API_KEY"] = "deadbeef"
