@@ -260,7 +260,7 @@ class RepoMap:
         # https://networkx.org/documentation/stable/_modules/networkx/algorithms/link_analysis/pagerank_alg.html#pagerank
         personalize = 100 / len(fnames)
 
-        if len(self.TAGS_CACHE) < self.cache_threshold * len(fnames):
+        if len(fnames) - len(self.TAGS_CACHE) > 100:
             fnames = tqdm(fnames)
 
         for fname in fnames:
