@@ -349,6 +349,42 @@ class TestRepo(unittest.TestCase):
             fnames = git_repo.get_tracked_files()
             self.assertIn(str(fname), fnames)
 
+    def test_subtree_only(self):
+        with GitTemporaryDirectory():
+            # Create a new repo
+            raw_repo = git.Repo()
+
+            # Create files in different directories
+            root_file = Path("root.txt")
+            subdir_file = Path("subdir/subdir_file.txt")
+            another_subdir_file = Path("another_subdir/another_file.txt")
+
+            root_file.touch()
+            subdir_file.parent.mkdir()
+            subdir_file.touch()
+            another_subdir_file.parent.mkdir()
+            another_subdir_file.touch()
+
+            raw_repo.git.add(str(root_file), str(subdir_file), str(another_subdir_file))
+            raw_repo.git.commit("-m", "Initial commit")
+
+            # Change to the subdir
+            os.chdir(subdir_file.parent)
+
+            # Create GitRepo instance with subtree_only=True
+            git_repo = GitRepo(InputOutput(), None, None, subtree_only=True)
+
+            # Test ignored_file method
+            self.assertFalse(git_repo.ignored_file(str(subdir_file)))
+            self.assertTrue(git_repo.ignored_file(str(root_file)))
+            self.assertTrue(git_repo.ignored_file(str(another_subdir_file)))
+
+            # Test get_tracked_files method
+            tracked_files = git_repo.get_tracked_files()
+            self.assertIn(str(subdir_file), tracked_files)
+            self.assertNotIn(str(root_file), tracked_files)
+            self.assertNotIn(str(another_subdir_file), tracked_files)
+
     @patch("aider.repo.simple_send_with_retries")
     def test_noop_commit(self, mock_send):
         mock_send.return_value = '"a good commit message"'
