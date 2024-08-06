@@ -240,14 +240,14 @@ class GitRepo:
         except ValueError:
             commit = None
 
-        files = []
+        files = set()
         if commit:
             if commit in self.tree_files:
                 files = self.tree_files[commit]
             else:
                 for blob in commit.tree.traverse():
                     if blob.type == "blob":  # blob is a file
-                        files.append(blob.path)
+                        files.add(blob.path)
                 files = set(self.normalize_path(path) for path in files)
                 self.tree_files[commit] = set(files)
 
