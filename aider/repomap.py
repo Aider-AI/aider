@@ -29,7 +29,6 @@ class RepoMap:
     CACHE_VERSION = 3
     TAGS_CACHE_DIR = f".aider.tags.cache.v{CACHE_VERSION}"
 
-
     warned_files = set()
 
     def __init__(
