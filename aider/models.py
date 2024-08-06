@@ -566,9 +566,9 @@ class Model:
         """Fast path for common models. Avoids forcing litellm import."""
 
         model = self.name
-        if model in OPENAI_MODELS:
+        if model in OPENAI_MODELS or model.startswith("openai/"):
             var = "OPENAI_API_KEY"
-        elif model in ANTHROPIC_MODELS:
+        elif model in ANTHROPIC_MODELS or model.startswith("anthropic/"):
             var = "ANTHROPIC_API_KEY"
         else:
             return
