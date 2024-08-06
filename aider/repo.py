@@ -267,11 +267,7 @@ class GitRepo:
         if res:
             return res
 
-        path = Path(self.root) / path
-        path = PurePosixPath(path)
-        path = path.relative_to(self.root)
-
-        path = str(path)
+        path = str(Path(PurePosixPath((Path(self.root) / path).relative_to(self.root))))
         self.normalized_path[orig_path] = path
         return path
 
