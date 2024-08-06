@@ -751,7 +751,9 @@ class Coder:
         for env_var in ["LANG", "LANGUAGE", "LC_ALL", "LC_MESSAGES"]:
             lang = os.environ.get(env_var)
             if lang:
-                return lang.split(".")[0]  # Return language and country, but remove encoding if present
+                return lang.split(".")[
+                    0
+                ]  # Return language and country, but remove encoding if present
 
         return None
 
