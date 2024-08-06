@@ -29,7 +29,6 @@ class RepoMap:
     CACHE_VERSION = 3
     TAGS_CACHE_DIR = f".aider.tags.cache.v{CACHE_VERSION}"
 
-    cache_missing = False
 
     warned_files = set()
 
@@ -52,6 +51,7 @@ class RepoMap:
         self.root = root
 
         self.load_tags_cache()
+        self.cache_threshold = 0.95
 
         self.max_map_tokens = map_tokens
         self.map_mul_no_files = map_mul_no_files
@@ -260,9 +260,8 @@ class RepoMap:
         # https://networkx.org/documentation/stable/_modules/networkx/algorithms/link_analysis/pagerank_alg.html#pagerank
         personalize = 100 / len(fnames)
 
-        if self.cache_missing:
+        if len(self.TAGS_CACHE) < self.cache_threshold * len(fnames):
             fnames = tqdm(fnames)
-        self.cache_missing = False
 
         for fname in fnames:
             if progress:
