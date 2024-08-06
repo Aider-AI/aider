@@ -41,6 +41,7 @@ def check_version(io, just_check=False):
         fname.parent.mkdir(parents=True, exist_ok=True)
         fname.touch()
 
+    is_update_available = True
     if just_check:
         if is_update_available:
             io.tool_output("Update available")

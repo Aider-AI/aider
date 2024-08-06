@@ -21,7 +21,7 @@ RUN git config --system --add safe.directory /app
 #########################
 FROM base AS aider-full
 
-ENV AIDER_DOCKER_IMAGE=true
+ENV AIDER_DOCKER_IMAGE=paulgauthier/aider-full
 
 COPY . /tmp/aider
 RUN /venv/bin/python -m pip install --upgrade --no-cache-dir pip \
@@ -37,7 +37,7 @@ ENTRYPOINT ["/venv/bin/aider"]
 #########################
 FROM base AS aider
 
-ENV AIDER_DOCKER_IMAGE=true
+ENV AIDER_DOCKER_IMAGE=paulgauthier/aider
 
 COPY . /tmp/aider
 RUN /venv/bin/python -m pip install --upgrade --no-cache-dir pip \
