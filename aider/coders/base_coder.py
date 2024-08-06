@@ -772,8 +772,7 @@ class Coder:
         user_lang = self.get_user_language()
         if user_lang:
             platform_text += (
-                f"- The user's language: {user_lang} (detected from locale or environment"
-                " variables)\n"
+                f"- The user's language: {user_lang}\n"
             )
 
         dt = datetime.now().isoformat()
