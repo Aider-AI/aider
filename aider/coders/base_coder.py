@@ -617,9 +617,15 @@ class Coder:
                     self.io.user_input(with_message)
                 else:
                     new_user_message = self.run_loop()
-        
-                if self.prior_message_cmd and not self.confirm_proceed_message_post_cmd(self.prior_message_cmd, self.confirm_proceed_message):
-                    continue
+                    if (
+                        new_user_message 
+                        and self.prior_message_cmd 
+                        and not self.confirm_proceed_message_post_cmd(
+                            self.prior_message_cmd, 
+                            self.confirm_proceed_message
+                        )
+                    ):
+                        continue
 
                 while new_user_message:
                     self.reflected_message = None
