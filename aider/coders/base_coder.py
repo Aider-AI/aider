@@ -771,9 +771,7 @@ class Coder:
 
         user_lang = self.get_user_language()
         if user_lang:
-            platform_text += (
-                f"- The user's language: {user_lang}\n"
-            )
+            platform_text += f"- The user's language: {user_lang}\n"
 
         dt = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
         platform_text += f"- The current date/time: {dt}"
