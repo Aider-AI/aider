@@ -1,5 +1,6 @@
 import sys
 import time
+import os
 from pathlib import Path
 
 import packaging.version
@@ -49,6 +50,16 @@ def check_version(io, just_check=False):
 
     if not is_update_available:
         return False
+
+    docker_image = os.environ.get("AIDER_DOCKER_IMAGE")
+    if docker_image:
+        text = f"""
+Newer aider version v{latest_version} is available. To upgrade, run:
+
+    docker pull {docker_image}
+"""
+        io.tool_error(text)
+        return True
 
     cmd = utils.get_pip_install(["--upgrade", "aider-chat"])
 
