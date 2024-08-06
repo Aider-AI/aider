@@ -51,7 +51,6 @@ class Coder:
     abs_fnames = None
     repo = None
     last_aider_commit_hash = None
-    aider_commit_hashes = set()
     aider_edited_files = None
     last_asked_for_commit_time = 0
     repo_map = None
@@ -70,8 +69,6 @@ class Coder:
     lint_outcome = None
     test_outcome = None
     multi_response_content = ""
-    rejected_urls = set()
-    abs_root_path_cache = {}
 
     @classmethod
     def create(
@@ -219,6 +216,10 @@ class Coder:
         summarizer=None,
         total_cost=0.0,
     ):
+        self.aider_commit_hashes = set()
+        self.rejected_urls = set()
+        self.abs_root_path_cache = {}
+
         if not fnames:
             fnames = []
 
@@ -398,10 +399,14 @@ class Coder:
             return True
 
     def abs_root_path(self, path):
-        if path not in self.abs_root_path_cache:
-            res = Path(self.root) / path
-            self.abs_root_path_cache[path] = utils.safe_abs_path(res)
-        return self.abs_root_path_cache[path]
+        key = path
+        if key in self.abs_root_path_cache:
+            return self.abs_root_path_cache[key]
+
+        res = Path(self.root) / path
+        res = utils.safe_abs_path(res)
+        self.abs_root_path_cache[key] = res
+        return res
 
     fences = [
         ("``" + "`", "``" + "`"),
