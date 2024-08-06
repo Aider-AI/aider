@@ -1579,4 +1579,11 @@ class Coder:
     def confirm_proceed_message_post_cmd(self, command, confirm_proceed=False):
         if self.commands.is_command(command):
             self.commands.run(command)
-        return self.io.confirm_ask("\nWould you like to proceed?", default="y") if confirm_proceed else True
+            
+        if(confirm_proceed):
+            ok = self.io.confirm_ask("\nWould you like to proceed?", default="y")
+            self.io.tool_output("\n") # add breakline
+            return ok;
+
+        # yes by default
+        return True
