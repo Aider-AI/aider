@@ -1743,3 +1743,68 @@
     Paul Gauthier (aider): 415
   start_tag: v0.46.0
   total_lines: 726
+- aider_percentage: 44.09
+  aider_total: 276
+  end_date: '2024-08-06'
+  end_tag: v0.48.0
+  file_counts:
+    .github/workflows/ubuntu-tests.yml:
+      paul-gauthier: 1
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/args.py:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 6
+    aider/coders/base_coder.py:
+      Paul Gauthier: 61
+      Paul Gauthier (aider): 41
+    aider/commands.py:
+      Paul Gauthier: 13
+      Paul Gauthier (aider): 24
+    aider/history.py:
+      Paul Gauthier: 2
+    aider/main.py:
+      Paul Gauthier: 21
+      Paul Gauthier (aider): 30
+    aider/models.py:
+      Paul Gauthier: 9
+      Paul Gauthier (aider): 7
+      Thinh Nguyen: 1
+    aider/prompts.py:
+      Paul Gauthier: 5
+    aider/repo.py:
+      Paul Gauthier: 51
+      Paul Gauthier (aider): 23
+    aider/repomap.py:
+      Paul Gauthier: 62
+      Paul Gauthier (aider): 2
+    aider/sendchat.py:
+      Paul Gauthier: 26
+      Paul Gauthier (aider): 2
+    aider/utils.py:
+      Paul Gauthier: 29
+      Paul Gauthier (aider): 4
+    scripts/blame.py:
+      Paul Gauthier (aider): 2
+    tests/basic/test_coder.py:
+      Paul Gauthier: 13
+    tests/basic/test_commands.py:
+      Paul Gauthier: 19
+      Paul Gauthier (aider): 18
+    tests/basic/test_history.py:
+      Paul Gauthier: 2
+    tests/basic/test_main.py:
+      Paul Gauthier: 25
+      Paul Gauthier (aider): 42
+    tests/basic/test_repo.py:
+      Paul Gauthier: 8
+      Paul Gauthier (aider): 36
+    tests/basic/test_scripting.py:
+      Paul Gauthier (aider): 39
+  grand_total:
+    Paul Gauthier: 348
+    Paul Gauthier (aider): 276
+    Thinh Nguyen: 1
+    paul-gauthier: 1
+  start_tag: v0.47.0
+  total_lines: 626
