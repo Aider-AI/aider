@@ -745,6 +745,107 @@ two
             self.assertEqual(len(coder1.abs_fnames), 1)
             self.assertEqual(len(coder2.abs_fnames), 1)
 
+    def test_executing_cmd_with_confirm_proceeding_message(self):
+        # setup test
+        callingCommand = "/token"
+        confirm_proceed = True
+        mockIo = MagicMock()
+        mockIo.confirm_ask.side_effect = [True]
+        mockCommand = MagicMock()
+        
+        # create coder instance
+        coder = Coder.create(self.GPT35, None, mockIo)
+        
+        # mock coder properties
+        coder.commands=mockCommand
+        coder.prior_message_cmd = callingCommand
+        coder.confirm_proceed_message = confirm_proceed
+        coder.send_new_user_message = MagicMock()
+        coder.partial_response_content = "ok"
+
+        # Call the run method with a message
+        coder.run(with_message="hi")
+
+        # assert
+        mockCommand.is_command.assert_called_with(callingCommand)
+        mockCommand.run.assert_called_with(callingCommand)
+        mockIo.confirm_ask.assert_called_once_with("\nWould you like to proceed?", default="y")
+        
+    def test_executing_cmd_with_confirm_not_proceeding_message(self):
+        # setup test
+        callingCommand = "/token"
+        confirm_proceed = True
+        mockIo = MagicMock()
+        mockIo.confirm_ask.side_effect = [False, True]
+        mockCommand = MagicMock()
+
+        # create coder instance
+        coder = Coder.create(self.GPT35, None, mockIo)
+
+        # mock coder properties
+        coder.commands=mockCommand
+        coder.prior_message_cmd = callingCommand
+        coder.confirm_proceed_message = confirm_proceed
+        coder.send_new_user_message = MagicMock()
+        coder.partial_response_content = "ok"
+
+        # Call the run method with a message
+        coder.run(with_message="hi")
+
+        # assert
+        self.assertEqual(coder.commands.is_command.call_count, 2)
+        self.assertEqual(coder.commands.run.call_count, 2)
+        self.assertEqual(coder.io.confirm_ask.call_count, 2)
+
+    def test_executing_cmd_without_ask_confirm(self):
+        # setup test
+        callingCommand = "/token"
+        confirm_proceed = False
+        mockIo = MagicMock()
+        mockCommand = MagicMock()
+        
+        # create coder instance
+        coder = Coder.create(self.GPT35, None, mockIo)
+        
+        # mock coder properties
+        coder.commands=mockCommand
+        coder.prior_message_cmd = callingCommand
+        coder.confirm_proceed_message = confirm_proceed
+        coder.send_new_user_message = MagicMock()
+        coder.partial_response_content = "ok"
+
+        # Call the run method with a message
+        coder.run(with_message="hi")
+
+        # assert
+        coder.commands.is_command.assert_called_with(callingCommand)
+        coder.commands.run.assert_called_with(callingCommand)
+        coder.io.confirm_ask.assert_not_called()
+
+    def test_no_cmd_is_executed_prior_proceeding_message(self):
+        # setup test
+        callingCommand = None
+        confirm_proceed = False
+        mockIo = MagicMock()
+        mockCommand = MagicMock()
+
+        # create coder instance
+        coder = Coder.create(self.GPT35, None, mockIo)
+
+        # mock coder properties
+        coder.commands=mockCommand
+        coder.prior_message_cmd = callingCommand
+        coder.confirm_proceed_message = confirm_proceed
+        coder.confirm_proceed_message_post_cmd = MagicMock()
+        coder.send_new_user_message = MagicMock()
+        coder.partial_response_content = "ok"
+
+        # Call the run method with a message
+        coder.run(with_message="hi")
+
+        # assert
+        coder.confirm_proceed_message_post_cmd.assert_not_called()
+ 
 
 if __name__ == "__main__":
     unittest.main()
