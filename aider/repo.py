@@ -307,7 +307,7 @@ class GitRepo:
     def ignored_file_raw(self, fname):
         if self.subtree_only:
             fname_path = Path(self.normalize_path(fname))
-            cwd_path = Path(self.normalize_path(Path.cwd().relative_to(self.root)))
+            cwd_path = Path(self.normalize_path(Path.cwd()))
 
             if cwd_path not in fname_path.parents:
                 return True
