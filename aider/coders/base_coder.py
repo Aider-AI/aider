@@ -760,21 +760,21 @@ class Coder:
     def fmt_system_prompt(self, prompt):
         lazy_prompt = self.gpt_prompts.lazy_prompt if self.main_model.lazy else ""
 
-        platform_text = f"- The user's system: {platform.platform()}\n"
+        platform_text = f"- Platform: {platform.platform()}\n"
         if os.name == "nt":
             var = "COMSPEC"
         else:
             var = "SHELL"
 
         val = os.getenv(var)
-        platform_text += f"- The user's shell: {var}={val}\n"
+        platform_text += f"- Shell: {var}={val}\n"
 
         user_lang = self.get_user_language()
         if user_lang:
-            platform_text += f"- The user's language: {user_lang}\n"
+            platform_text += f"- Language: {user_lang}\n"
 
         dt = datetime.now().astimezone().strftime("%Y-%m-%dT%H:%M:%S%z")
-        platform_text += f"- The current date/time: {dt}"
+        platform_text += f"- Current date/time: {dt}"
 
         prompt = prompt.format(
             fence=self.fence,
