@@ -26,6 +26,13 @@ def lazy_litellm_retry_decorator(func):
                 httpx.ConnectError,
                 httpx.RemoteProtocolError,
                 httpx.ReadTimeout,
+                litellm.exceptions.APIConnectionError,
+                litellm.exceptions.APIError,
+                litellm.exceptions.RateLimitError,
+                litellm.exceptions.ServiceUnavailableError,
+                litellm.exceptions.Timeout,
+                litellm.exceptions.InternalServerError,
+                litellm.llms.anthropic.AnthropicError,
             ):
                 return False
 
