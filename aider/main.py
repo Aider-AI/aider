@@ -475,7 +475,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             repo = GitRepo(
                 io,
                 fnames,
-                git_dname or ".",
+                git_dname,
                 args.aiderignore,
                 models=main_model.commit_message_models(),
                 attribute_author=args.attribute_author,
