@@ -405,9 +405,7 @@ class Model:
         self.missing_keys = res.get("missing_keys")
         self.keys_in_environment = res.get("keys_in_environment")
 
-        max_input_tokens = self.info.get("max_input_tokens")
-        if not max_input_tokens:
-            max_input_tokens = 0
+        max_input_tokens = self.info.get("max_input_tokens") or 0
         if max_input_tokens < 32 * 1024:
             self.max_chat_history_tokens = 1024
         else:
