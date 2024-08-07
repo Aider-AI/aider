@@ -1,6 +1,10 @@
 
 # Release history
 
+### Aider v0.48.1
+
+- Added `openai/gpt-4o-2024-08-06`.
+
 ### Aider v0.48.0
 
 - Performance improvements for large/mono repos.
