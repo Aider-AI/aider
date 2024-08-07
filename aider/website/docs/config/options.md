@@ -175,7 +175,6 @@ Aliases:
 
 ### `--map-tokens VALUE`
 Max number of tokens to use for repo map, use 0 to disable (default: 1024)  
-Default: 1024  
 Environment variable: `AIDER_MAP_TOKENS`  
 
 ### `--max-chat-history-tokens VALUE`

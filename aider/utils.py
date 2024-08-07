@@ -207,9 +207,7 @@ def run_install(cmd):
             bufsize=1,
             universal_newlines=True,
         )
-        spinner = itertools.cycle(["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"])
-        last_update = time.time()
-        update_interval = 0.2  # 5 times per second
+        spinner = Spinner("Installing...")
 
         while True:
             char = process.stdout.read(1)
@@ -217,17 +215,14 @@ def run_install(cmd):
                 break
 
             output.append(char)
+            spinner.step()
 
-            current_time = time.time()
-            if current_time - last_update >= update_interval:
-                print(f" Installing... {next(spinner)}", end="\r", flush=True)
-                last_update = current_time
-
+        spinner.end()
         return_code = process.wait()
         output = "".join(output)
 
         if return_code == 0:
-            print("\rInstallation complete.")
+            print("Installation complete.")
             print()
             return True, output
 
@@ -237,6 +232,35 @@ def run_install(cmd):
     print("\nInstallation failed.\n")
 
     return False, output
+
+
+class Spinner:
+    spinner_chars = itertools.cycle(["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"])
+
+    def __init__(self, text):
+        self.text = text
+        self.start_time = time.time()
+        self.last_update = 0
+        self.visible = False
+
+    def step(self):
+        current_time = time.time()
+        if not self.visible and current_time - self.start_time >= 0.5:
+            self.visible = True
+            self._step()
+        elif self.visible and current_time - self.last_update >= 0.1:
+            self._step()
+        self.last_update = current_time
+
+    def _step(self):
+        if not self.visible:
+            return
+
+        print(f"\r{self.text} {next(self.spinner_chars)}\r{self.text} ", end="", flush=True)
+
+    def end(self):
+        if self.visible:
+            print("\r" + " " * (len(self.text) + 3))
 
 
 def check_pip_install_extra(io, module, prompt, pip_install_cmd):

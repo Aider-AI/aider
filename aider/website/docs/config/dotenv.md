@@ -130,7 +130,7 @@ cog.outl("```")
 #AIDER_SHOW_MODEL_WARNINGS=true
 
 ## Max number of tokens to use for repo map, use 0 to disable (default: 1024)
-#AIDER_MAP_TOKENS=true
+#AIDER_MAP_TOKENS=
 
 ## Maximum number of tokens to use for chat history. If not specified, uses the model's max_chat_history_tokens.
 #AIDER_MAX_CHAT_HISTORY_TOKENS=

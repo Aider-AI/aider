@@ -143,6 +143,16 @@ MODEL_SETTINGS = [
         reminder_as_sys_msg=True,
     ),
     ModelSettings(
+        "openai/gpt-4o-2024-08-06",
+        "diff",
+        weak_model_name="gpt-4o-mini",
+        use_repo_map=True,
+        send_undo_reply=True,
+        accepts_images=True,
+        lazy=True,
+        reminder_as_sys_msg=True,
+    ),
+    ModelSettings(
         "gpt-4o",
         "diff",
         weak_model_name="gpt-4o-mini",
@@ -556,9 +566,9 @@ class Model:
         """Fast path for common models. Avoids forcing litellm import."""
 
         model = self.name
-        if model in OPENAI_MODELS:
+        if model in OPENAI_MODELS or model.startswith("openai/"):
             var = "OPENAI_API_KEY"
-        elif model in ANTHROPIC_MODELS:
+        elif model in ANTHROPIC_MODELS or model.startswith("anthropic/"):
             var = "ANTHROPIC_API_KEY"
         else:
             return

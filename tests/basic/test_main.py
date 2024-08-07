@@ -374,3 +374,25 @@ class TestMain(TestCase):
             self.assertIn("dark_mode", relevant_output)
             self.assertRegex(relevant_output, r"AIDER_DARK_MODE:\s+on")
             self.assertRegex(relevant_output, r"dark_mode:\s+True")
+
+    def test_map_tokens_option(self):
+        with GitTemporaryDirectory():
+            with patch("aider.coders.base_coder.RepoMap") as MockRepoMap:
+                MockRepoMap.return_value.max_map_tokens = 0
+                main(
+                    ["--model", "gpt-4", "--map-tokens", "0", "--exit", "--yes"],
+                    input=DummyInput(),
+                    output=DummyOutput(),
+                )
+                MockRepoMap.assert_not_called()
+
+    def test_map_tokens_option_with_non_zero_value(self):
+        with GitTemporaryDirectory():
+            with patch("aider.coders.base_coder.RepoMap") as MockRepoMap:
+                MockRepoMap.return_value.max_map_tokens = 1000
+                main(
+                    ["--model", "gpt-4", "--map-tokens", "1000", "--exit", "--yes"],
+                    input=DummyInput(),
+                    output=DummyOutput(),
+                )
+                MockRepoMap.assert_called_once()

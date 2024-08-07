@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import locale
 import math
 import mimetypes
 import os
@@ -51,7 +52,6 @@ class Coder:
     abs_fnames = None
     repo = None
     last_aider_commit_hash = None
-    aider_commit_hashes = set()
     aider_edited_files = None
     last_asked_for_commit_time = 0
     repo_map = None
@@ -70,7 +70,6 @@ class Coder:
     lint_outcome = None
     test_outcome = None
     multi_response_content = ""
-    rejected_urls = set()
     prior_message_cmd = None
     confirm_proceed_message = False
 
@@ -159,9 +158,9 @@ class Coder:
             lines.append(f"Git repo: {rel_repo_dir} with {num_files:,} files")
             if num_files > 1000:
                 lines.append(
-                    "Warning: For large repos, consider using an .aiderignore file to ignore"
-                    " irrelevant files/dirs."
+                    "Warning: For large repos, consider using --subtree-only and .aiderignore"
                 )
+                lines.append(f"See: {urls.large_repos}")
         else:
             lines.append("Git repo: none")
 
@@ -222,6 +221,10 @@ class Coder:
         prior_message_cmd = None,
         confirm_proceed_message = None
     ):
+        self.aider_commit_hashes = set()
+        self.rejected_urls = set()
+        self.abs_root_path_cache = {}
+
         if not fnames:
             fnames = []
 
@@ -315,8 +318,17 @@ class Coder:
         if not self.repo:
             self.find_common_root()
 
+        if map_tokens is None:
+            use_repo_map = main_model.use_repo_map
+            map_tokens = 1024
+        else:
+            use_repo_map = map_tokens > 0
+
         max_inp_tokens = self.main_model.info.get("max_input_tokens") or 0
-        if main_model.use_repo_map and self.repo and self.gpt_prompts.repo_content_prefix:
+
+        has_map_prompt = hasattr(self, "gpt_prompts") and self.gpt_prompts.repo_content_prefix
+
+        if use_repo_map and self.repo and has_map_prompt:
             self.repo_map = RepoMap(
                 map_tokens,
                 self.root,
@@ -395,8 +407,14 @@ class Coder:
             return True
 
     def abs_root_path(self, path):
+        key = path
+        if key in self.abs_root_path_cache:
+            return self.abs_root_path_cache[key]
+
         res = Path(self.root) / path
-        return utils.safe_abs_path(res)
+        res = utils.safe_abs_path(res)
+        self.abs_root_path_cache[key] = res
+        return res
 
     fences = [
         ("``" + "`", "``" + "`"),
@@ -738,19 +756,41 @@ class Coder:
             ]
         self.cur_messages = []
 
+    def get_user_language(self):
+        try:
+            lang = locale.getlocale()[0]
+            if lang:
+                return lang  # Return the full language code, including country
+        except Exception:
+            pass
+
+        for env_var in ["LANG", "LANGUAGE", "LC_ALL", "LC_MESSAGES"]:
+            lang = os.environ.get(env_var)
+            if lang:
+                return lang.split(".")[
+                    0
+                ]  # Return language and country, but remove encoding if present
+
+        return None
+
     def fmt_system_prompt(self, prompt):
         lazy_prompt = self.gpt_prompts.lazy_prompt if self.main_model.lazy else ""
 
-        platform_text = f"- The user's system: {platform.platform()}\n"
+        platform_text = f"- Platform: {platform.platform()}\n"
         if os.name == "nt":
             var = "COMSPEC"
         else:
             var = "SHELL"
 
         val = os.getenv(var)
-        platform_text += f"- The user's shell: {var}={val}\n"
-        dt = datetime.now().isoformat()
-        platform_text += f"- The current date/time: {dt}"
+        platform_text += f"- Shell: {var}={val}\n"
+
+        user_lang = self.get_user_language()
+        if user_lang:
+            platform_text += f"- Language: {user_lang}\n"
+
+        dt = datetime.now().astimezone().strftime("%Y-%m-%dT%H:%M:%S%z")
+        platform_text += f"- Current date/time: {dt}"
 
         prompt = prompt.format(
             fence=self.fence,
@@ -1332,7 +1372,9 @@ class Coder:
         else:
             files = self.get_inchat_relative_files()
 
-        files = [fname for fname in files if self.is_file_safe(fname)]
+        # This is quite slow in large repos
+        # files = [fname for fname in files if self.is_file_safe(fname)]
+
         return sorted(set(files))
 
     def get_all_abs_files(self):

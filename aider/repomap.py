@@ -15,11 +15,12 @@ from pygments.token import Token
 from pygments.util import ClassNotFound
 from tqdm import tqdm
 
+from aider.dump import dump
+from aider.utils import Spinner
+
 # tree_sitter is throwing a FutureWarning
 warnings.simplefilter("ignore", category=FutureWarning)
 from tree_sitter_languages import get_language, get_parser  # noqa: E402
-
-from aider.dump import dump  # noqa: F402,E402
 
 Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
 
@@ -27,8 +28,6 @@ Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
 class RepoMap:
     CACHE_VERSION = 3
     TAGS_CACHE_DIR = f".aider.tags.cache.v{CACHE_VERSION}"
-
-    cache_missing = False
 
     warned_files = set()
 
@@ -51,13 +50,29 @@ class RepoMap:
         self.root = root
 
         self.load_tags_cache()
+        self.cache_threshold = 0.95
 
         self.max_map_tokens = map_tokens
         self.map_mul_no_files = map_mul_no_files
         self.max_context_window = max_context_window
 
-        self.token_count = main_model.token_count
         self.repo_content_prefix = repo_content_prefix
+
+        self.main_model = main_model
+
+    def token_count(self, text):
+        len_text = len(text)
+        if len_text < 200:
+            return self.main_model.token_count(text)
+
+        lines = text.splitlines(keepends=True)
+        num_lines = len(lines)
+        step = num_lines // 100 or 1
+        lines = lines[::step]
+        sample_text = "".join(lines)
+        sample_tokens = self.main_model.token_count(sample_text)
+        est_tokens = sample_tokens / len(sample_text) * len_text
+        return est_tokens
 
     def get_repo_map(self, chat_files, other_files, mentioned_fnames=None, mentioned_idents=None):
         if self.max_map_tokens <= 0:
@@ -95,8 +110,8 @@ class RepoMap:
         if not files_listing:
             return
 
-        num_tokens = self.token_count(files_listing)
         if self.verbose:
+            num_tokens = self.token_count(files_listing)
             self.io.tool_output(f"Repo-map: {num_tokens / 1024:.1f} k-tokens")
 
         if chat_files:
@@ -146,7 +161,6 @@ class RepoMap:
             return self.TAGS_CACHE[cache_key]["data"]
 
         # miss!
-
         data = list(self.get_tags_raw(fname, rel_fname))
 
         # Update the cache
@@ -225,7 +239,9 @@ class RepoMap:
                 line=-1,
             )
 
-    def get_ranked_tags(self, chat_fnames, other_fnames, mentioned_fnames, mentioned_idents):
+    def get_ranked_tags(
+        self, chat_fnames, other_fnames, mentioned_fnames, mentioned_idents, progress=None
+    ):
         import networkx as nx
 
         defines = defaultdict(set)
@@ -243,11 +259,19 @@ class RepoMap:
         # https://networkx.org/documentation/stable/_modules/networkx/algorithms/link_analysis/pagerank_alg.html#pagerank
         personalize = 100 / len(fnames)
 
-        if self.cache_missing:
-            fnames = tqdm(fnames)
-        self.cache_missing = False
+        if len(fnames) - len(self.TAGS_CACHE) > 100:
+            self.io.tool_output(
+                "Initial repo scan can be slow in larger repos, but only happens once."
+            )
+            fnames = tqdm(fnames, desc="Scanning repo")
+            showing_bar = True
+        else:
+            showing_bar = False
 
         for fname in fnames:
+            if progress and not showing_bar:
+                progress()
+
             if not Path(fname).is_file():
                 if fname not in self.warned_files:
                     if Path(fname).exists():
@@ -280,7 +304,7 @@ class RepoMap:
                     key = (rel_fname, tag.name)
                     definitions[key].add(tag)
 
-                if tag.kind == "ref":
+                elif tag.kind == "ref":
                     references[tag.name].append(rel_fname)
 
         ##
@@ -296,6 +320,9 @@ class RepoMap:
         G = nx.MultiDiGraph()
 
         for ident in idents:
+            if progress:
+                progress()
+
             definers = defines[ident]
             if ident in mentioned_idents:
                 mul = 10
@@ -331,6 +358,9 @@ class RepoMap:
         # distribute the rank from each source node, across all of its out edges
         ranked_definitions = defaultdict(float)
         for src in G.nodes:
+            if progress:
+                progress()
+
             src_rank = ranked[src]
             total_weight = sum(data["weight"] for _src, _dst, data in G.out_edges(src, data=True))
             # dump(src, src_rank, total_weight)
@@ -383,9 +413,17 @@ class RepoMap:
         if not mentioned_idents:
             mentioned_idents = set()
 
+        spin = Spinner("Preparing repo map")
+
         ranked_tags = self.get_ranked_tags(
-            chat_fnames, other_fnames, mentioned_fnames, mentioned_idents
+            chat_fnames,
+            other_fnames,
+            mentioned_fnames,
+            mentioned_idents,
+            progress=spin.step,
         )
+
+        spin.step()
 
         num_tags = len(ranked_tags)
         lower_bound = 0
@@ -393,20 +431,27 @@ class RepoMap:
         best_tree = None
         best_tree_tokens = 0
 
-        chat_rel_fnames = [self.get_rel_fname(fname) for fname in chat_fnames]
-
-        # Guess a small starting number to help with giant repos
-        middle = min(max_map_tokens // 25, num_tags)
+        chat_rel_fnames = set(self.get_rel_fname(fname) for fname in chat_fnames)
 
         self.tree_cache = dict()
 
+        middle = min(max_map_tokens // 25, num_tags)
         while lower_bound <= upper_bound:
+            # dump(lower_bound, middle, upper_bound)
+
+            spin.step()
+
             tree = self.to_tree(ranked_tags[:middle], chat_rel_fnames)
             num_tokens = self.token_count(tree)
 
-            if num_tokens < max_map_tokens and num_tokens > best_tree_tokens:
+            pct_err = abs(num_tokens - max_map_tokens) / max_map_tokens
+            ok_err = 0.15
+            if (num_tokens <= max_map_tokens and num_tokens > best_tree_tokens) or pct_err < ok_err:
                 best_tree = tree
                 best_tree_tokens = num_tokens
+
+                if pct_err < ok_err:
+                    break
 
             if num_tokens < max_map_tokens:
                 lower_bound = middle + 1
@@ -415,6 +460,7 @@ class RepoMap:
 
             middle = (lower_bound + upper_bound) // 2
 
+        spin.end()
         return best_tree
 
     tree_cache = dict()
@@ -453,9 +499,6 @@ class RepoMap:
         if not tags:
             return ""
 
-        tags = [tag for tag in tags if tag[0] not in chat_rel_fnames]
-        tags = sorted(tags)
-
         cur_fname = None
         cur_abs_fname = None
         lois = None
@@ -463,8 +506,10 @@ class RepoMap:
 
         # add a bogus tag at the end so we trip the this_fname != cur_fname...
         dummy_tag = (None,)
-        for tag in tags + [dummy_tag]:
+        for tag in sorted(tags) + [dummy_tag]:
             this_rel_fname = tag[0]
+            if this_rel_fname in chat_rel_fnames:
+                continue
 
             # ... here ... to output the final real entry in the list
             if this_rel_fname != cur_fname:
@@ -518,14 +563,11 @@ def get_scm_fname(lang):
 def get_supported_languages_md():
     from grep_ast.parsers import PARSERS
 
-    from aider.linter import Linter
-
     res = """
 | Language | File extension | Repo map | Linter |
 |:--------:|:--------------:|:--------:|:------:|
 """
     data = sorted((lang, ex) for ex, lang in PARSERS.items())
-    linter = Linter()
 
     for lang, ext in data:
         fn = get_scm_fname(lang)

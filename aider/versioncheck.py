@@ -1,3 +1,4 @@
+import os
 import sys
 import time
 from pathlib import Path
@@ -50,6 +51,16 @@ def check_version(io, just_check=False):
     if not is_update_available:
         return False
 
+    docker_image = os.environ.get("AIDER_DOCKER_IMAGE")
+    if docker_image:
+        text = f"""
+Newer aider version v{latest_version} is available. To upgrade, run:
+
+    docker pull {docker_image}
+"""
+        io.tool_error(text)
+        return True
+
     cmd = utils.get_pip_install(["--upgrade", "aider-chat"])
 
     text = f"""
@@ -60,9 +71,11 @@ Newer aider version v{latest_version} is available. To upgrade, run:
     io.tool_error(text)
 
     if io.confirm_ask("Run pip install?"):
-        success, _output = utils.run_install(cmd)
+        success, output = utils.run_install(cmd)
         if success:
             io.tool_output("Re-run aider to use new version.")
             sys.exit()
+        else:
+            io.tool_error(output)
 
     return True

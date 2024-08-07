@@ -1,10 +1,10 @@
 ---
 parent: Usage
 nav_order: 700
-description: Add images and URLs to the aider coding chat.
+description: Add images and web pages to the aider coding chat.
 ---
 
-# Images & URLs
+# Images & web pages
 
 You can add images and URLs to the aider chat.
 
@@ -23,9 +23,10 @@ You can add images to the chat just like you would
 add any other file:
 
 - Use `/add <image-filename>` from within the chat
+- Use `/add-clipboard-image` to paste an image from your clipboard into the chat.
 - Launch aider with image filenames on the command line: `aider <image-filename>` along with any other command line arguments you need.
 
-## URLs
+## Web pages
 
 Aider can scrape the text from URLs and add it to the chat.
 This can be helpful to:

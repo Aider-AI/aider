@@ -123,7 +123,7 @@ cog.outl("```")
 #show-model-warnings: true
 
 ## Max number of tokens to use for repo map, use 0 to disable (default: 1024)
-#map-tokens: true
+#map-tokens:
 
 ## Maximum number of tokens to use for chat history. If not specified, uses the model's max_chat_history_tokens.
 #max-chat-history-tokens:

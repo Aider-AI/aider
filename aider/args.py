@@ -181,7 +181,7 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--map-tokens",
         type=int,
-        default=1024,
+        default=None,
         help="Max number of tokens to use for repo map, use 0 to disable (default: 1024)",
     )
     group.add_argument(

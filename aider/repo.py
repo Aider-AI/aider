@@ -36,6 +36,9 @@ class GitRepo:
         self.io = io
         self.models = models
 
+        self.normalized_path = {}
+        self.tree_files = {}
+
         self.attribute_author = attribute_author
         self.attribute_committer = attribute_committer
         self.attribute_commit_message = attribute_commit_message
@@ -238,27 +241,35 @@ class GitRepo:
         except ValueError:
             commit = None
 
-        files = []
+        files = set()
         if commit:
-            for blob in commit.tree.traverse():
-                if blob.type == "blob":  # blob is a file
-                    files.append(blob.path)
+            if commit in self.tree_files:
+                files = self.tree_files[commit]
+            else:
+                for blob in commit.tree.traverse():
+                    if blob.type == "blob":  # blob is a file
+                        files.add(blob.path)
+                files = set(self.normalize_path(path) for path in files)
+                self.tree_files[commit] = set(files)
 
         # Add staged files
         index = self.repo.index
         staged_files = [path for path, _ in index.entries.keys()]
+        files.update(self.normalize_path(path) for path in staged_files)
 
-        files.extend(staged_files)
-
-        # convert to appropriate os.sep, since git always normalizes to /
-        res = set(self.normalize_path(path) for path in files)
-
-        res = [fname for fname in res if not self.ignored_file(fname)]
+        res = [fname for fname in files if not self.ignored_file(fname)]
 
         return res
 
     def normalize_path(self, path):
-        return str(Path(PurePosixPath((Path(self.root) / path).relative_to(self.root))))
+        orig_path = path
+        res = self.normalized_path.get(orig_path)
+        if res:
+            return res
+
+        path = str(Path(PurePosixPath((Path(self.root) / path).relative_to(self.root))))
+        self.normalized_path[orig_path] = path
+        return path
 
     def refresh_aider_ignore(self):
         if not self.aider_ignore_file:
@@ -296,9 +307,9 @@ class GitRepo:
     def ignored_file_raw(self, fname):
         if self.subtree_only:
             fname_path = Path(self.normalize_path(fname))
-            cwd_path = Path(self.normalize_path(Path.cwd().relative_to(self.root)))
+            cwd_path = Path.cwd().resolve().relative_to(Path(self.root).resolve())
 
-            if cwd_path not in fname_path.parents:
+            if cwd_path not in fname_path.parents and fname_path != cwd_path:
                 return True
 
         if not self.aider_ignore_file or not self.aider_ignore_file.is_file():

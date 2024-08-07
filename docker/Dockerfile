@@ -21,12 +21,15 @@ RUN git config --system --add safe.directory /app
 #########################
 FROM base AS aider-full
 
+ENV AIDER_DOCKER_IMAGE=paulgauthier/aider-full
+
 COPY . /tmp/aider
 RUN /venv/bin/python -m pip install --upgrade --no-cache-dir pip \
     && /venv/bin/python -m pip install --no-cache-dir /tmp/aider[help,browser,playwright] \
        --extra-index-url https://download.pytorch.org/whl/cpu \
     && rm -rf /tmp/aider
 
+RUN find /venv/lib/python3.10/site-packages \( -type d -exec chmod a+rwx {} + \) -o \( -type f -exec chmod a+rw {} + \)
 RUN playwright install --with-deps chromium
 
 ENTRYPOINT ["/venv/bin/aider"]
@@ -34,10 +37,14 @@ ENTRYPOINT ["/venv/bin/aider"]
 #########################
 FROM base AS aider
 
+ENV AIDER_DOCKER_IMAGE=paulgauthier/aider
+
 COPY . /tmp/aider
 RUN /venv/bin/python -m pip install --upgrade --no-cache-dir pip \
     && /venv/bin/python -m pip install --no-cache-dir /tmp/aider \
        --extra-index-url https://download.pytorch.org/whl/cpu \
     && rm -rf /tmp/aider
+
+RUN find /venv/lib/python3.10/site-packages \( -type d -exec chmod a+rwx {} + \) -o \( -type f -exec chmod a+rw {} + \)
 
 ENTRYPOINT ["/venv/bin/aider"]
