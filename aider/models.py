@@ -13,7 +13,7 @@ from PIL import Image
 
 from aider import urls
 from aider.dump import dump  # noqa: F401
-from aider.llm import litellm
+from aider.llm import litellm, AIDER_SITE_URL, AIDER_APP_NAME
 
 DEFAULT_MODEL_NAME = "gpt-4o"
 
@@ -285,8 +285,8 @@ MODEL_SETTINGS = [
         max_tokens=8192,
         extra_headers={
             "anthropic-beta": "max-tokens-3-5-sonnet-2024-07-15",
-            "HTTP-Referer": "https://aider.chat",
-            "X-Title": "Aider",
+            "HTTP-Referer": AIDER_SITE_URL,
+            "X-Title": AIDER_APP_NAME,
         },
     ),
     ModelSettings(
