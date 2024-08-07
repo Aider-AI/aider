@@ -155,10 +155,6 @@ class GitRepo:
             return self.repo.git_dir
 
     def get_commit_message(self, diffs, context):
-        if len(diffs) >= 4 * 1024 * 4:
-            self.io.tool_error("Diff is too large to generate a commit message.")
-            return
-
         diffs = "# Diffs:\n" + diffs
 
         content = ""
@@ -172,7 +168,12 @@ class GitRepo:
             dict(role="user", content=content),
         ]
 
+        commit_message = None
         for model in self.models:
+            num_tokens = model.token_count(messages)
+            max_tokens = model.info.get("max_input_tokens") or 0
+            if max_tokens and num_tokens > max_tokens:
+                continue
             commit_message = simple_send_with_retries(model.name, messages)
             if commit_message:
                 break
