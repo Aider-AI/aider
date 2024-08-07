@@ -1,3 +1,5 @@
+import json
+
 from aider import diffs
 
 from ..dump import dump  # noqa: F401
@@ -6,6 +8,8 @@ from .single_wholefile_func_prompts import SingleWholeFileFunctionPrompts
 
 
 class SingleWholeFileFunctionCoder(Coder):
+    edit_format = "func"
+
     functions = [
         dict(
             name="write_file",
@@ -31,7 +35,6 @@ class SingleWholeFileFunctionCoder(Coder):
     ]
 
     def __init__(self, *args, **kwargs):
-        raise RuntimeError("Deprecated, needs to be refactored to support get_edits/apply_edits")
         self.gpt_prompts = SingleWholeFileFunctionPrompts()
         super().__init__(*args, **kwargs)
 
@@ -44,12 +47,18 @@ class SingleWholeFileFunctionCoder(Coder):
             self.cur_messages += [dict(role="assistant", content=self.partial_response_content)]
 
     def render_incremental_response(self, final=False):
+        res = ""
         if self.partial_response_content:
-            return self.partial_response_content
+            res += self.partial_response_content
 
         args = self.parse_partial_args()
 
-        return str(args)
+        for k, v in args.items():
+            res += "\n"
+            res += f"{k}:\n"
+            res += v
+
+        return res
 
         if not args:
             return
@@ -95,18 +104,17 @@ class SingleWholeFileFunctionCoder(Coder):
 
         return "\n".join(show_diff)
 
-    def _update_files(self):
-        name = self.partial_response_function_call.get("name")
-        if name and name != "write_file":
-            raise ValueError(f'Unknown function_call name="{name}", use name="write_file"')
+    def get_edits(self):
+        chat_files = self.get_inchat_relative_files()
+        assert len(chat_files) == 1, chat_files
 
         args = self.parse_partial_args()
-        if not args:
-            return
 
-        content = args["content"]
-        path = self.get_inchat_relative_files()[0]
-        if self.allowed_to_edit(path, content):
-            return set([path])
+        res = chat_files[0], args["content"]
+        dump(res)
+        return [res]
 
-        return set()
+    def apply_edits(self, edits):
+        for path, content in edits:
+            full_path = self.abs_root_path(path)
+            self.io.write_text(full_path, content)

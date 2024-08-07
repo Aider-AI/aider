@@ -55,7 +55,7 @@ def send_with_retries(
         stream=stream,
     )
     if functions is not None:
-        kwargs["functions"] = functions
+        kwargs["tools"] = [dict(type="functions", function=functions[0])]
     if extra_headers is not None:
         kwargs["extra_headers"] = extra_headers
     if max_tokens is not None:
