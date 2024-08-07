@@ -273,7 +273,11 @@ MODEL_SETTINGS = [
         examples_as_sys_msg=True,
         can_prefill=True,
         max_tokens=8192,
-        extra_headers={"anthropic-beta": "max-tokens-3-5-sonnet-2024-07-15"},
+        extra_headers={
+            "anthropic-beta": "max-tokens-3-5-sonnet-2024-07-15",
+            "HTTP-Referer": "https://aider.chat",
+            "X-Title": "Aider",
+        },
     ),
     ModelSettings(
         "openrouter/anthropic/claude-3.5-sonnet",
@@ -284,7 +288,11 @@ MODEL_SETTINGS = [
         can_prefill=True,
         accepts_images=True,
         max_tokens=8192,
-        extra_headers={"anthropic-beta": "max-tokens-3-5-sonnet-2024-07-15"},
+        extra_headers={
+            "anthropic-beta": "max-tokens-3-5-sonnet-2024-07-15",
+            "HTTP-Referer": "https://aider.chat",
+            "X-Title": "Aider",
+        },
     ),
     # Vertex AI Claude models
     # Does not yet support 8k token
