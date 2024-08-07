@@ -22,7 +22,7 @@ cog.out(text)
 - Worked around litellm bug that removes OpenRouter app headers when using `extra_headers`.
 - Improved progress indication during repo map processing.
 - Corrected instructions for upgrading the docker container to latest aider version.
-- Removed obsolete limit on 16k token limit on commit diffs.
+- Removed obsolete 16k token limit on commit diffs, use per-model limits.
 
 ### Aider v0.48.0
 
