@@ -3,10 +3,12 @@
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 from aider.coders import Coder
 from aider.coders import editblock_coder as eb
+from aider.coders.editblock_prompts import EditBlockPrompts
+from aider.coders.editblock_prompts_aiden import EditBlockPromptsAiden
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.models import Model
@@ -15,6 +17,19 @@ from aider.models import Model
 class TestUtils(unittest.TestCase):
     def setUp(self):
         self.GPT35 = Model("gpt-3.5-turbo")
+
+    def test_editblock_coder_prompt_variants(self):
+        # Test default prompt variant
+        default_coder = eb.EditBlockCoder(self.GPT35, InputOutput())
+        self.assertIsInstance(default_coder.gpt_prompts, EditBlockPrompts)
+
+        # Test Aiden prompt variant
+        aiden_coder = eb.EditBlockCoder(self.GPT35, InputOutput(), prompt_variant="aiden")
+        self.assertIsInstance(aiden_coder.gpt_prompts, EditBlockPromptsAiden)
+
+        # Test invalid prompt variant
+        with self.assertRaises(ValueError):
+            eb.EditBlockCoder(self.GPT35, InputOutput(), prompt_variant="invalid")
 
     # fuzzy logic disabled v0.11.2-dev
     def __test_replace_most_similar_chunk(self):
