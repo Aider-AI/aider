@@ -528,6 +528,9 @@ class Model:
         return litellm.encode(model=self.name, text=text)
 
     def token_count(self, messages):
+        if type(messages) is list:
+            return litellm.token_counter(model=self.name, messages=messages)
+
         if not self.tokenizer:
             return
 
