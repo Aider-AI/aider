@@ -13,7 +13,7 @@ from PIL import Image
 
 from aider import urls
 from aider.dump import dump  # noqa: F401
-from aider.llm import litellm, AIDER_SITE_URL, AIDER_APP_NAME
+from aider.llm import AIDER_APP_NAME, AIDER_SITE_URL, litellm
 
 DEFAULT_MODEL_NAME = "gpt-4o"
 
