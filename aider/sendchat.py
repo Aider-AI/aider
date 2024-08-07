@@ -18,6 +18,27 @@ def lazy_litellm_retry_decorator(func):
     def wrapper(*args, **kwargs):
         import httpx
 
+        def should_giveup(e):
+            if not hasattr(e, "status_code"):
+                return False
+
+            if type(e) in (
+                httpx.ConnectError,
+                httpx.RemoteProtocolError,
+                httpx.ReadTimeout,
+            ):
+                return False
+
+            # These seem to return .status_code = ""
+            # litellm._should_retry() expects an int and throws a TypeError
+            #
+            # litellm.llms.anthropic.AnthropicError
+            # litellm.exceptions.APIError
+            if not e.status_code:
+                return False
+
+            return not litellm._should_retry(e.status_code)
+
         decorated_func = backoff.on_exception(
             backoff.expo,
             (
@@ -32,6 +53,7 @@ def lazy_litellm_retry_decorator(func):
                 litellm.exceptions.InternalServerError,
                 litellm.llms.anthropic.AnthropicError,
             ),
+            giveup=should_giveup,
             max_time=60,
             on_backoff=lambda details: print(
                 f"{details.get('exception', 'Exception')}\nRetry in {details['wait']:.1f} seconds."
