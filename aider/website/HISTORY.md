@@ -16,6 +16,14 @@ cog.out(text)
 
 # Release history
 
+### Aider v0.48.1
+
+- Added `openai/gpt-4o-2024-08-06`.
+- Worked around litellm bug that removes OpenRouter app headers when using `extra_headers`.
+- Improved progress indication during repo map processing.
+- Corrected instructions for upgrading the docker container to latest aider version.
+- Removed obsolete limit on 16k token limit on commit diffs.
+
 ### Aider v0.48.0
 
 - Performance improvements for large/mono repos.
