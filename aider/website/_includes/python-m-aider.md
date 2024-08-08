@@ -1,4 +1,5 @@
 {: .tip }
-In some environments the `aider` command may not be available
-on your shell path.
-You can also run aider like this: `python -m aider`
+In some environments you may get "aider command not found" errors.
+You can try `python -m aider` or 
+[see here for more info](/docs/troubleshooting/aider-not-found.html).
+
