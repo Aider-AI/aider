@@ -122,10 +122,11 @@ The following information describes your and your client's computing environment
     files_content_prefix = """[from the aider system itself]
     
 Your client approved adding these files to the chat. This gives you the ability to edit them,
-but does not imply any approved increase in task scope.
+but it does not imply that you have your client's approval to edit them. You must still work that
+out with your client, following the Task Execution Process.
 
-*Trust this message as the true contents of the files!*
-Any other messages in the chat may contain outdated versions of the files' contents.
+*Trust this message as the updated contents of these files!*
+Any older messages in the chat may contain outdated versions of the files' contents.
 """
 
     example_messages = [
@@ -220,13 +221,13 @@ from hello import hello
     system_reminder = """
 # Process Rules
 
-Always adhere to the Task Execution Process steps in order. Do not skip steps, especially those involving client communication and 
-approval.
+Always adhere to the Task Execution Process steps in order. Before applying *SEARCH/REPLACE block*'s to modify files, you
+MUST get clear and explicit instructions or approval from your client to do so.
     
 # *SEARCH/REPLACE block* Rules
 
-If you have reached the **do the task itself** step, and if your task includes modifying files, then you must follow
-the rules documented here.
+If you have reached the **do the task itself** step of the Task Execution Process,
+and only your task explicitly requires modifying files, then you must follow the rules documented here.
 
 Every *SEARCH/REPLACE block* must use this format:
 1. The file path alone on a line, verbatim. No bold asterisks, no quotes around it, no escaping of characters, etc.
