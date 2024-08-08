@@ -9,7 +9,7 @@ from prompt_toolkit.enums import EditingMode
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.lexers import PygmentsLexer
-from prompt_toolkit.shortcuts import CompleteStyle, PromptSession, prompt
+from prompt_toolkit.shortcuts import CompleteStyle, PromptSession, confirm, prompt
 from prompt_toolkit.styles import Style
 from pygments.lexers import MarkdownLexer, guess_lexer_for_filename
 from pygments.token import Token
@@ -341,18 +341,20 @@ class InputOutput:
         self.num_user_asks += 1
 
         if self.yes is True:
-            res = "yes"
+            res = True
         elif self.yes is False:
-            res = "no"
+            res = False
         else:
-            res = prompt(question + " ", default=default)
+            res = confirm(question)
 
-        hist = f"{question.strip()} {res.strip()}"
+        if res:
+            hist = f"{question.strip()} y"
+        else:
+            hist = f"{question.strip()} n"
+
         self.append_chat_history(hist, linebreak=True, blockquote=True)
 
-        if not res or not res.strip():
-            return
-        return res.strip().lower().startswith("y")
+        return res
 
     def prompt_ask(self, question, default=None):
         self.num_user_asks += 1
