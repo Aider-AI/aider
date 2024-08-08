@@ -72,8 +72,6 @@ class Coder:
     multi_response_content = ""
     partial_response_content = ""
 
-    partial_response_content = None
-
     @classmethod
     def create(
         self,
