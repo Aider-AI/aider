@@ -907,7 +907,12 @@ class Coder:
                     if retry_delay > 60:
                         break
                     self.io.tool_output(f"Retrying in {retry_delay:.1f} seconds...")
-                    time.sleep(retry_delay)
+                    countdown = retry_delay
+                    while countdown > 0:
+                        print(f"Retrying in {countdown:.1f} seconds...\r", end="")
+                        time.sleep(0.1)
+                        countdown -= 0.1
+                    print(" " * 50 + "\r", end="")  # Clear the line after countdown
                     continue
                 except KeyboardInterrupt:
                     interrupted = True
