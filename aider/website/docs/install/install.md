@@ -25,13 +25,7 @@ To work with Anthropic's models like Claude 3.5 Sonnet you need a paid
 [Anthropic API key](https://docs.anthropic.com/claude/reference/getting-started-with-the-api).
 
 
-{: .tip }
-Using a Python 
-[virtual environment](https://docs.python.org/3/library/venv.html){:target="_blank"}
-is recommended.
-Or, you could
-[use pipx to install aider](/docs/install/pipx.html)
-once for your whole system.
+{% include venv-pipx.md %}
 
 ## Mac/Linux install
 
