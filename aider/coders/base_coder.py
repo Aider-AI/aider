@@ -627,10 +627,11 @@ class Coder:
                 return self.partial_response_content
 
             while True:
-                user_message = self.get_input()
-                self.run_one(user_message)
-        except KeyboardInterrupt:
-            self.keyboard_interrupt()
+                try:
+                    user_message = self.get_input()
+                    self.run_one(user_message)
+                except KeyboardInterrupt:
+                    self.keyboard_interrupt()
         except EOFError:
             return
 
