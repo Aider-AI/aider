@@ -71,6 +71,8 @@ class Coder:
     test_outcome = None
     multi_response_content = ""
 
+    partial_response_content = None
+
     @classmethod
     def create(
         self,
@@ -609,7 +611,7 @@ class Coder:
     def run_stream(self, user_message):
         self.io.user_input(user_message)
         self.init_before_message()
-        yield from self.send_new_user_message(user_message)
+        yield from self.send_message(user_message)
 
     def init_before_message(self):
         self.reflected_message = None
@@ -619,46 +621,29 @@ class Coder:
         self.edit_outcome = None
 
     def run(self, with_message=None):
-        while True:
-            self.init_before_message()
+        try:
+            if with_message:
+                self.io.user_input(with_message)
+                self.run_one(with_message)
+                return self.partial_response_content
 
-            try:
-                if with_message:
-                    new_user_message = with_message
-                    self.io.user_input(with_message)
-                else:
-                    new_user_message = self.run_loop()
+            while True:
+                user_message = self.get_input()
+                self.run_one(user_message)
+        except KeyboardInterrupt:
+            self.keyboard_interrupt()
+        except EOFError:
+            return
 
-                while new_user_message:
-                    self.reflected_message = None
-                    list(self.send_new_user_message(new_user_message))
-
-                    new_user_message = None
-                    if self.reflected_message:
-                        if self.num_reflections < self.max_reflections:
-                            self.num_reflections += 1
-                            new_user_message = self.reflected_message
-                        else:
-                            self.io.tool_error(
-                                f"Only {self.max_reflections} reflections allowed, stopping."
-                            )
-
-                if with_message:
-                    return self.partial_response_content
-
-            except KeyboardInterrupt:
-                self.keyboard_interrupt()
-            except EOFError:
-                return
-
-    def run_loop(self):
-        inp = self.io.get_input(
+    def get_input(self):
+        return self.io.get_input(
             self.root,
             self.get_inchat_relative_files(),
             self.get_addable_relative_files(),
             self.commands,
         )
 
+    def preproc_user_input(self, inp):
         if not inp:
             return
 
@@ -669,6 +654,25 @@ class Coder:
         self.check_for_urls(inp)
 
         return inp
+
+    def run_one(self, user_message):
+        self.init_before_message()
+
+        message = self.preproc_user_input(user_message)
+
+        while message:
+            self.reflected_message = None
+            list(self.send_message(message))
+
+            if not self.reflected_message:
+                break
+
+            if self.num_reflections >= self.max_reflections:
+                self.io.tool_error(f"Only {self.max_reflections} reflections allowed, stopping.")
+                return
+
+            self.num_reflections += 1
+            message = self.reflected_message
 
     def check_for_urls(self, inp):
         url_pattern = re.compile(r"(https?://[^\s/$.?#].[^\s]*[^\s,.])")
@@ -872,7 +876,7 @@ class Coder:
 
         return messages
 
-    def send_new_user_message(self, inp):
+    def send_message(self, inp):
         self.aider_edited_files = None
 
         self.cur_messages += [
