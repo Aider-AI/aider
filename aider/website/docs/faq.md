@@ -73,7 +73,7 @@ cd aider
 # It's recommended to make a virtual environment
 
 # Install the dependencies listed in the `requirements.txt` file:
-pip install -e .
+python -m pip install -e .
 
 # Run the local version of Aider:
 python -m aider

@@ -9,7 +9,7 @@ Aider can connect to the DeepSeek.com API.
 The DeepSeek Coder V2 model gets the top score on aider's code editing benchmark.
 
 ```
-pip install aider-chat
+python -m pip install aider-chat
 
 export DEEPSEEK_API_KEY=<key> # Mac/Linux
 setx   DEEPSEEK_API_KEY <key> # Windows, restart shell after setx

@@ -8,7 +8,7 @@ nav_order: 500
 Aider can connect to the OpenAI models on Azure.
 
 ```
-pip install aider-chat
+python -m pip install aider-chat
 
 # Mac/Linux:                                           
 export AZURE_API_KEY=<key>

@@ -14,7 +14,7 @@ Aider has some built in shortcuts for the most popular OpenAI models and
 has been tested and benchmarked to work well with them:
 
 ```
-pip install aider-chat
+python -m pip install aider-chat
 
 export OPENAI_API_KEY=<key> # Mac/Linux
 setx   OPENAI_API_KEY <key> # Windows, restart shell after setx
