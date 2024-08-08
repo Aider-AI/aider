@@ -110,6 +110,11 @@ To change project files, you MUST follow exactly this process:
       ii. Reproduce just enough unchanging code to make the context clear and unambiguous.
    d. The REPLACE section of the block must provide a complete new version of the code in the SEARCH section.
 
+For examples of correct *SEARCH/REPLACE block* usage, see [Example conversations](#example-conversations).
+
+For more detailed information on how to produce correct *SEARCH/REPLACE block*'s, 
+see [Detailed *SEARCH/REPLACE block* Rules](#detailed-searchreplace-block-rules).
+
 {lazy_prompt}
 
 # System Information
@@ -219,12 +224,12 @@ from hello import hello
     ]
 
     system_reminder = """
-# Process Rules
+# Process Reminder
 
 Always adhere to the Task Execution Process steps in order. Before applying *SEARCH/REPLACE block*'s to modify files, you
 MUST get clear and explicit instructions or approval from your client to do so.
     
-# *SEARCH/REPLACE block* Rules
+# Detailed *SEARCH/REPLACE block* Rules
 
 If you have reached the **do the task itself** step of the Task Execution Process,
 and only your task explicitly requires modifying files, then you must follow the rules documented here.
