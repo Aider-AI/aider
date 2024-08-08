@@ -15,6 +15,8 @@ for more details,
 or the
 [usage instructions](https://aider.chat/docs/usage.html) to start coding with aider.
 
+{% include python-m-aider.md %}
+
 <div class="video-container">
   <video controls poster="/assets/install.jpg">
     <source src="/assets/install.mp4" type="video/mp4">
