@@ -74,8 +74,6 @@ class Coder:
     prior_message_cmd = None
     confirm_proceed_message = False
 
-    partial_response_content = None
-
     @classmethod
     def create(
         self,
