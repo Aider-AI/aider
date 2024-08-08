@@ -59,10 +59,7 @@ $ aider --4o --openai-api-key sk-xxx...
 $ aider --sonnet --anthropic-api-key sk-xxx...
 ```
 
-{: .tip }
-In some environments the `aider` command may not be available
-on your shell path.
-You can also run aider like this: `python -m aider`
+{% include python-m-aider.md %}
 
 ## Working with other LLMs
 
