@@ -30,7 +30,7 @@ from aider.llm import litellm
 from aider.mdstream import MarkdownStream
 from aider.repo import GitRepo
 from aider.repomap import RepoMap
-from aider.sendchat import send_with_retries
+from aider.sendchat import retry_exceptions, send_completion
 from aider.utils import format_content, format_messages, is_image_file
 
 from ..dump import dump  # noqa: F401
@@ -891,6 +891,8 @@ class Coder:
         else:
             self.mdstream = None
 
+        retry_delay = 0.125
+
         self.usage_report = None
         exhausted = False
         interrupted = False
@@ -899,6 +901,14 @@ class Coder:
                 try:
                     yield from self.send(messages, functions=self.functions)
                     break
+                except retry_exceptions() as err:
+                    self.io.tool_error(str(err))
+                    retry_delay *= 2
+                    if retry_delay > 60:
+                        break
+                    self.io.tool_output(f"Retrying in {retry_delay:.1f} seconds...")
+                    time.sleep(retry_delay)
+                    continue
                 except KeyboardInterrupt:
                     interrupted = True
                     break
@@ -1161,7 +1171,7 @@ class Coder:
 
         interrupted = False
         try:
-            hash_object, completion = send_with_retries(
+            hash_object, completion = send_completion(
                 model.name,
                 messages,
                 functions,
