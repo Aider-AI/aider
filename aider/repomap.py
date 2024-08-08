@@ -495,7 +495,7 @@ class RepoMap:
             self.tree_context_cache[rel_fname] = context
 
         context = self.tree_context_cache[rel_fname]
-        context.clear_lines_of_interest()
+        context.lines_of_interest = set()
         context.add_lines_of_interest(lois)
         context.add_context()
         res = context.format()
