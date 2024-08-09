@@ -1662,6 +1662,8 @@ class Coder:
             self.commands.cmd_diff()
 
     def show_undo_hint(self, commit_hash):
+        if not self.commit_before_message:
+            return
         if self.commit_before_message != self.repo.get_head():
             self.io.tool_output(f"You can use /undo to revert and discard commit {commit_hash}.")
 
