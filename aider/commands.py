@@ -485,6 +485,9 @@ class Commands:
             fname = f'"{fname}"'
         return fname
 
+    def completions_read(self):
+        return self.completions_add()
+
     def completions_add(self):
         files = set(self.coder.get_all_relative_files())
         files = files - set(self.coder.get_inchat_relative_files())
@@ -1017,7 +1020,3 @@ def main():
 if __name__ == "__main__":
     status = main()
     sys.exit(status)
-
-
-def completions_read(self):
-    return []  # No auto-completion for now, as it would require listing all files on the system
