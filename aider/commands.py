@@ -609,6 +609,14 @@ class Commands:
 
         filenames = parse_quoted_filenames(args)
         for word in filenames:
+            # Handle read-only files separately
+            read_only_matched = [f for f in self.coder.abs_read_only_fnames if word in f]
+            if read_only_matched:
+                for matched_file in read_only_matched:
+                    self.coder.abs_read_only_fnames.remove(matched_file)
+                    self.io.tool_output(f"Removed read-only file {matched_file} from the chat")
+                continue
+
             matched_files = self.glob_filtered_to_repo(word)
 
             if not matched_files:
@@ -619,9 +627,6 @@ class Commands:
                 if abs_fname in self.coder.abs_fnames:
                     self.coder.abs_fnames.remove(abs_fname)
                     self.io.tool_output(f"Removed {matched_file} from the chat")
-                elif abs_fname in self.coder.abs_read_only_fnames:
-                    self.coder.abs_read_only_fnames.remove(abs_fname)
-                    self.io.tool_output(f"Removed read-only file {matched_file} from the chat")
 
     def cmd_git(self, args):
         "Run a git command"
