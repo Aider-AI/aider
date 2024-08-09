@@ -7,7 +7,8 @@ from collections import OrderedDict
 from pathlib import Path
 
 import git
-from PIL import ImageGrab
+import pyperclip
+from PIL import ImageGrab, Image
 
 from aider import models, prompts, voice
 from aider.help import Help, install_help_extra
@@ -895,26 +896,34 @@ class Commands:
         return text
 
     def cmd_clipboard(self, args):
-        "Add an image from the clipboard to the chat"
+        "Add content from the clipboard to the chat (supports both text and images)"
         try:
+            # Check for image first
             image = ImageGrab.grabclipboard()
-            if image is None:
-                self.io.tool_error("No image found in clipboard.")
-                return
+            if isinstance(image, Image.Image):
+                with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as temp_file:
+                    image.save(temp_file.name, "PNG")
+                    temp_file_path = temp_file.name
 
-            with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as temp_file:
-                image.save(temp_file.name, "PNG")
-                temp_file_path = temp_file.name
+                abs_file_path = Path(temp_file_path).resolve()
+                self.coder.abs_fnames.add(str(abs_file_path))
+                self.io.tool_output(f"Added clipboard image to the chat: {abs_file_path}")
+                self.coder.check_added_files()
 
-            abs_file_path = Path(temp_file_path).resolve()
-            self.coder.abs_fnames.add(str(abs_file_path))
-            self.io.tool_output(f"Added clipboard image to the chat: {abs_file_path}")
-            self.coder.check_added_files()
-
-            return prompts.added_files.format(fnames=str(abs_file_path))
+                return prompts.added_files.format(fnames=str(abs_file_path))
+            
+            # If not an image, try to get text
+            text = pyperclip.paste()
+            if text:
+                self.io.tool_output("Text content found in clipboard:")
+                self.io.tool_output(text)
+                return text
+            
+            self.io.tool_error("No image or text content found in clipboard.")
+            return
 
         except Exception as e:
-            self.io.tool_error(f"Error adding clipboard image: {e}")
+            self.io.tool_error(f"Error processing clipboard content: {e}")
 
 
 def expand_subdir(file_path):
