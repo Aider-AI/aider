@@ -9,8 +9,6 @@ from pathlib import Path
 import git
 import pyperclip
 from PIL import Image, ImageGrab
-from pypager.pager import Pager
-from pypager.source import StringSource
 
 from aider import models, prompts, voice
 from aider.help import Help, install_help_extra
