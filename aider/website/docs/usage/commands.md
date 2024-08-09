@@ -20,7 +20,7 @@ cog.out(get_help_md())
 | **/clear** | Clear the chat history |
 | **/clipboard** | Add image/text from the clipboard to the chat (optionally provide a name for the image) |
 | **/commit** | Commit edits to the repo made outside the chat (commit message optional) |
-| **/diff** | Display the diff of the last aider commit |
+| **/diff** | Display the diff of changes since the last message |
 | **/drop** | Remove files from the chat session to free up context space |
 | **/exit** | Exit the application |
 | **/git** | Run a git command |
