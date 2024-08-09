@@ -323,6 +323,8 @@ class Commands:
                 tokens = self.coder.main_model.token_count(repo_content)
                 res.append((tokens, "repository map", "use --map-tokens to resize"))
 
+        fence = "`" * 3
+
         # files
         for fname in self.coder.abs_fnames:
             relative_fname = self.coder.get_rel_fname(fname)
@@ -331,7 +333,7 @@ class Commands:
                 tokens = self.coder.main_model.token_count_for_image(fname)
             else:
                 # approximate
-                content = f"{relative_fname}\n```\n" + content + "```\n"
+                content = f"{relative_fname}\n{fence}\n" + content + "{fence}\n"
                 tokens = self.coder.main_model.token_count(content)
             res.append((tokens, f"{relative_fname}", "/drop to remove"))
 
@@ -341,7 +343,7 @@ class Commands:
             content = self.io.read_text(fname)
             if content is not None and not is_image_file(relative_fname):
                 # approximate
-                content = f"{relative_fname}\n```\n" + content + "```\n"
+                content = f"{relative_fname}\n{fence}\n" + content + "{fence}\n"
                 tokens = self.coder.main_model.token_count(content)
                 res.append((tokens, f"{relative_fname} (read-only)", "/drop to remove"))
 
