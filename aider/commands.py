@@ -141,7 +141,7 @@ class Commands:
         content = self.scraper.scrape(url) or ""
         content = f"{url}:\n\n" + content
 
-        self.io.tool_output(f"... done.")
+        self.io.tool_output("... done.")
 
         if paginate:
             # Use pypager to show the content
