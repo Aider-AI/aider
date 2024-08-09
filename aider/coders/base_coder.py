@@ -242,6 +242,7 @@ class Coder:
 
         self.verbose = verbose
         self.abs_fnames = set()
+        self.abs_read_only_fnames = set()
 
         if cur_messages:
             self.cur_messages = cur_messages
