@@ -1647,7 +1647,7 @@ class Coder:
         self.aider_commit_hashes.add(commit_hash)
         self.last_aider_commit_message = commit_message
         if self.show_diffs:
-            self.commands.cmd_diff(paginate=False)
+            self.commands.cmd_diff()
 
         self.io.tool_output(f"You can use /undo to revert and discard commit {commit_hash}.")
 

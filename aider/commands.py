@@ -144,11 +144,8 @@ class Commands:
         self.io.tool_output("... done.")
 
         if paginate:
-            # Use pypager to show the content
-            source = StringSource(content)
-            pager = Pager()
-            pager.add_source(source)
-            pager.run()
+            with self.io.console.pager():
+                self.io.console.print(content)
 
         return content
 
@@ -470,7 +467,7 @@ class Commands:
         if self.coder.main_model.send_undo_reply:
             return prompts.undo_command_reply
 
-    def cmd_diff(self, args="", paginate=True):
+    def cmd_diff(self, args=""):
         "Display the diff of the last aider commit"
         if not self.coder.repo:
             self.io.tool_error("No git repository found.")
@@ -489,15 +486,8 @@ class Commands:
             "HEAD",
         )
 
-        if paginate:
-            # Use pypager to show the content
-            source = StringSource(diff)
-            pager = Pager()
-            pager.add_source(source)
-            pager.run()
-        else:
-            # don't use io.tool_output() because we don't want to log or further colorize
-            print(diff)
+        # don't use io.tool_output() because we don't want to log or further colorize
+        print(diff)
 
     def quote_fname(self, fname):
         if " " in fname and '"' not in fname:
