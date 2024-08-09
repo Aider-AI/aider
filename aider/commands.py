@@ -934,6 +934,13 @@ class Commands:
         except Exception as e:
             self.io.tool_error(f"Error processing clipboard content: {e}")
 
+    def cmd_map(self, args):
+        "Print out the current repository map"
+        repo_map = self.coder.get_repo_map()
+        if repo_map:
+            self.io.tool_output(repo_map)
+        else:
+            self.io.tool_output("No repository map available.")
 
 def expand_subdir(file_path):
     file_path = Path(file_path)
