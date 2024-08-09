@@ -50,9 +50,9 @@ class AutoCompleter(Completer):
         for rel_fname in rel_fnames:
             self.words.add(rel_fname)
 
-        all_fnames = [Path(root) / rel_fname for rel_fname in rel_fnames] + list(
-            abs_read_only_fnames
-        )
+        all_fnames = [Path(root) / rel_fname for rel_fname in rel_fnames]
+        if abs_read_only_fnames:
+            all_fnames.extend(abs_read_only_fnames)
 
         for fname in all_fnames:
             try:
