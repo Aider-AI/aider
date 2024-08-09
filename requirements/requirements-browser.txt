@@ -6,7 +6,7 @@
 #
 altair==5.3.0
     # via streamlit
-attrs==23.2.0
+attrs==24.2.0
     # via
     #   -c requirements/../requirements.txt
     #   jsonschema
@@ -112,7 +112,7 @@ rich==13.7.1
     # via
     #   -c requirements/../requirements.txt
     #   streamlit
-rpds-py==0.19.1
+rpds-py==0.20.0
     # via
     #   -c requirements/../requirements.txt
     #   jsonschema
@@ -123,7 +123,7 @@ smmap==5.0.1
     # via
     #   -c requirements/../requirements.txt
     #   gitdb
-streamlit==1.37.0
+streamlit==1.37.1
     # via -r requirements/requirements-browser.in
 tenacity==8.5.0
     # via streamlit
