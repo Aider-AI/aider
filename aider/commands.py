@@ -918,7 +918,6 @@ class Commands:
             # If not an image, try to get text
             text = pyperclip.paste()
             if text:
-                self.io.tool_output("Text content found in clipboard:")
                 self.io.tool_output(text)
                 return text
 
