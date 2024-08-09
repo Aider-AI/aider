@@ -329,7 +329,9 @@ class Commands:
                 tokens = self.coder.main_model.token_count(content)
             res.append((tokens, f"{relative_fname}", "use /drop to drop from chat"))
 
-        self.io.tool_output(f"Approximate context window usage for {self.coder.main_model.name}, in tokens:")
+        self.io.tool_output(
+            f"Approximate context window usage for {self.coder.main_model.name}, in tokens:"
+        )
         self.io.tool_output()
 
         width = 8
