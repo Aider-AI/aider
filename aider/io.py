@@ -224,7 +224,7 @@ class InputOutput:
         with open(str(filename), "w", encoding=self.encoding) as f:
             f.write(content)
 
-    def get_input(self, root, rel_fnames, addable_rel_fnames, commands, abs_read_only_fnames):
+    def get_input(self, root, rel_fnames, addable_rel_fnames, commands, abs_read_only_fnames=None):
         if self.pretty:
             style = dict(style=self.user_input_color) if self.user_input_color else dict()
             self.console.rule(**style)
@@ -251,7 +251,7 @@ class InputOutput:
             style = None
 
         completer_instance = AutoCompleter(
-            root, rel_fnames, addable_rel_fnames, commands, self.encoding, abs_read_only_fnames
+            root, rel_fnames, addable_rel_fnames, commands, self.encoding, abs_read_only_fnames=abs_read_only_fnames
         )
 
         while True:
