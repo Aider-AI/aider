@@ -77,6 +77,9 @@ cog.outl("```")
 ## Use gpt-4o model for the main chat
 #4o: false
 
+## Use gpt-4o-mini model for the main chat
+#mini: false
+
 ## Use gpt-4-1106-preview model for the main chat
 #4-turbo: false
 
