@@ -251,7 +251,12 @@ class InputOutput:
             style = None
 
         completer_instance = AutoCompleter(
-            root, rel_fnames, addable_rel_fnames, commands, self.encoding, abs_read_only_fnames=abs_read_only_fnames
+            root,
+            rel_fnames,
+            addable_rel_fnames,
+            commands,
+            self.encoding,
+            abs_read_only_fnames=abs_read_only_fnames,
         )
 
         while True:
