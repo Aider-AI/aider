@@ -601,7 +601,7 @@ class Coder:
                     rel_fname = self.get_rel_fname(fname)
                     image_messages += [
                         {"type": "text", "text": f"Image file: {rel_fname}"},
-                        {"type": "image_url", "image_url": {"url": image_url, "detail": "high"}}
+                        {"type": "image_url", "image_url": {"url": image_url, "detail": "high"}},
                     ]
 
         if not image_messages:
