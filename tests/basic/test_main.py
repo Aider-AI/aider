@@ -401,12 +401,30 @@ class TestMain(TestCase):
         with GitTemporaryDirectory():
             test_file = "test_file.txt"
             Path(test_file).touch()
-
+            
             coder = main(
                 ["--read", test_file, "--exit", "--yes"],
                 input=DummyInput(),
                 output=DummyOutput(),
                 return_coder=True,
             )
-
+            
             self.assertIn(str(Path(test_file).resolve()), coder.abs_read_only_fnames)
+
+    def test_read_option_with_external_file(self):
+        with tempfile.NamedTemporaryFile(mode='w', delete=False) as external_file:
+            external_file.write("External file content")
+            external_file_path = external_file.name
+
+        try:
+            with GitTemporaryDirectory():
+                coder = main(
+                    ["--read", external_file_path, "--exit", "--yes"],
+                    input=DummyInput(),
+                    output=DummyOutput(),
+                    return_coder=True,
+                )
+                
+                self.assertIn(external_file_path, coder.abs_read_only_fnames)
+        finally:
+            os.unlink(external_file_path)
