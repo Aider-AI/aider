@@ -769,13 +769,25 @@ class TestCommands(TestCase):
 
                 # Check if the external file was added to abs_read_only_fnames
                 real_external_file_path = os.path.realpath(external_file_path)
-                self.assertTrue(any(os.path.samefile(real_external_file_path, fname) for fname in coder.abs_read_only_fnames))
+                self.assertTrue(
+                    any(
+                        os.path.samefile(real_external_file_path, fname)
+                        for fname in coder.abs_read_only_fnames
+                    )
+                )
 
                 # Test dropping the external read-only file
-                commands.cmd_drop(external_file_path)
+                commands.cmd_drop(Path(external_file_path).name)
+
+                print(coder.abs_read_only_fnames)
 
                 # Check if the file was removed from abs_read_only_fnames
-                self.assertNotIn(real_external_file_path, coder.abs_read_only_fnames)
+                self.assertFalse(
+                    any(
+                        os.path.samefile(real_external_file_path, fname)
+                        for fname in coder.abs_read_only_fnames
+                    )
+                )
         finally:
             os.unlink(external_file_path)
 
