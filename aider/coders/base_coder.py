@@ -598,8 +598,9 @@ class Coder:
                 mime_type, _ = mimetypes.guess_type(fname)
                 if mime_type and mime_type.startswith("image/"):
                     image_url = f"data:{mime_type};base64,{content}"
+                    rel_fname = self.get_rel_fname(fname)
                     image_messages += [
-                        {"type": "text", "text": fname},
+                        {"type": "text", "text": f"Image file: {rel_fname}"},
                         {"type": "image_url", "image_url": {"url": image_url, "detail": "high"}}
                     ]
 
