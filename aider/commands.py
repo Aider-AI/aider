@@ -953,18 +953,8 @@ class Commands:
             self.io.tool_error(f"Not a file: {abs_path}")
             return
 
-        if not self.coder.abs_read_only_fnames:
-            self.coder.abs_read_only_fnames = set()
-
         self.coder.abs_read_only_fnames.add(abs_path)
         self.io.tool_output(f"Added {abs_path} to read-only files.")
-
-        content = self.io.read_text(abs_path)
-        if content is not None:
-            self.io.tool_output(f"Contents of {filename}:")
-            self.io.tool_output(content)
-        else:
-            self.io.tool_error(f"Unable to read {filename}")
 
     def cmd_map(self, args):
         "Print out the current repository map"
