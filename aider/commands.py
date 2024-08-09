@@ -901,7 +901,8 @@ class Commands:
             # Check for image first
             image = ImageGrab.grabclipboard()
             if isinstance(image, Image.Image):
-                with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as temp_file:
+                basename = args.strip() if args.strip() else "clipboard_image"
+                with tempfile.NamedTemporaryFile(prefix=f"{basename}_", suffix=".png", delete=False) as temp_file:
                     image.save(temp_file.name, "PNG")
                     temp_file_path = temp_file.name
 
