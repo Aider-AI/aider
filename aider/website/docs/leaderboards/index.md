@@ -305,6 +305,6 @@ latest_mod_time = max(mod_times)
 mod_date = datetime.datetime.fromtimestamp(latest_mod_time)
 cog.out(f"{mod_date.strftime('%B %d, %Y.')}")
 ]]]-->
-August 07, 2024.
+August 09, 2024.
 <!--[[[end]]]-->
 </p>
