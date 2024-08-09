@@ -1662,7 +1662,7 @@ class Coder:
             self.commands.cmd_diff()
 
     def show_undo_hint(self, commit_hash):
-        if self.commit_before_message != self.repo.repo.head.commit.hexsha:
+        if self.commit_before_message != self.repo.get_head():
             self.io.tool_output(f"You can use /undo to revert and discard commit {commit_hash}.")
 
     def dirty_commit(self):
