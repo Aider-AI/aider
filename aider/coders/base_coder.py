@@ -573,17 +573,17 @@ class Coder:
             files_content = self.gpt_prompts.files_no_full_files
             files_reply = "Ok."
 
-        if files_content:
-            files_messages += [
-                dict(role="user", content=files_content),
-                dict(role="assistant", content=files_reply),
-            ]
-
         images_message = self.get_images_message()
         if images_message is not None:
             files_messages += [
                 images_message,
                 dict(role="assistant", content="Ok."),
+            ]
+
+        if files_content:
+            files_messages += [
+                dict(role="user", content=files_content),
+                dict(role="assistant", content=files_reply),
             ]
 
         return files_messages
