@@ -6,7 +6,7 @@
 #
 alabaster==0.7.16
     # via sphinx
-babel==2.15.0
+babel==2.16.0
     # via sphinx
 build==1.2.1
     # via pip-tools
@@ -75,7 +75,7 @@ markupsafe==2.1.5
     # via
     #   -c requirements/../requirements.txt
     #   jinja2
-matplotlib==3.9.1
+matplotlib==3.9.1.post1
     # via -r requirements/requirements-dev.in
 mdurl==0.1.2
     # via
@@ -137,7 +137,7 @@ python-dateutil==2.9.0.post0
     #   pandas
 pytz==2024.1
     # via pandas
-pyyaml==6.0.1
+pyyaml==6.0.2
     # via
     #   -c requirements/../requirements.txt
     #   pre-commit
@@ -191,7 +191,7 @@ urllib3==2.2.2
     #   requests
 virtualenv==20.26.3
     # via pre-commit
-wheel==0.43.0
+wheel==0.44.0
     # via pip-tools
 
 # The following packages are considered to be unsafe in a requirements file:
