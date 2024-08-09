@@ -903,10 +903,20 @@ class Commands:
             # Check for image first
             image = ImageGrab.grabclipboard()
             if isinstance(image, Image.Image):
-                basename = args.strip() if args.strip() else "clipboard_image"
+                if args.strip():
+                    filename = args.strip()
+                    ext = os.path.splitext(filename)[1].lower()
+                    if ext in ('.jpg', '.jpeg', '.png'):
+                        basename = filename
+                    else:
+                        basename = f"{filename}.png"
+                else:
+                    basename = "clipboard_image.png"
+                
                 temp_dir = tempfile.mkdtemp()
-                temp_file_path = os.path.join(temp_dir, f"{basename}.png")
-                image.save(temp_file_path, "PNG")
+                temp_file_path = os.path.join(temp_dir, basename)
+                image_format = 'PNG' if basename.lower().endswith('.png') else 'JPEG'
+                image.save(temp_file_path, image_format)
 
                 abs_file_path = Path(temp_file_path).resolve()
 
