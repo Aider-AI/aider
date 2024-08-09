@@ -578,16 +578,6 @@ class Commands:
                     self.coder.check_added_files()
                     added_fnames.append(matched_file)
 
-        if not added_fnames:
-            return
-
-        # only reply if there's been some chatting since the last edit
-        if not self.coder.cur_messages:
-            return
-
-        reply = prompts.added_files.format(fnames=", ".join(added_fnames))
-        return reply
-
     def completions_drop(self):
         files = self.coder.get_inchat_relative_files()
         files = [self.quote_fname(fn) for fn in files]
@@ -932,7 +922,7 @@ class Commands:
                 self.io.tool_output(f"Added clipboard image to the chat: {abs_file_path}")
                 self.coder.check_added_files()
 
-                return prompts.added_files.format(fnames=str(abs_file_path))
+                return
 
             # If not an image, try to get text
             text = pyperclip.paste()
