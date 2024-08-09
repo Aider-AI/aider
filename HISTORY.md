@@ -1,6 +1,16 @@
 
 # Release history
 
+### main branch
+
+- New `/clipboard` command to paste images or text from the clipboard, replaces `/add-clipboard-image`.
+- Can now send `/commands` when [scripting aider](https://aider.chat/docs/scripting.html).
+- Aider in docker image now provides correct command to update to latest version.
+- Improved retries on API errors (was easy to test during Sonnet outage).
+- Performance improvements for repo map calculation.
+- `/tokens` now shows the active model.
+
+
 ### Aider v0.48.1
 
 - Added `openai/gpt-4o-2024-08-06`.

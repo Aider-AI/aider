@@ -18,7 +18,7 @@ cog.out(get_help_md())
 | **/ask** | Ask questions about the code base without editing any files |
 | **/chat-mode** | Switch to a new chat mode |
 | **/clear** | Clear the chat history |
-| **/clipboard** | Add content from the clipboard to the chat (supports both text and images) |
+| **/clipboard** | Add image/text from the clipboard to the chat (optionally provide a name for the image) |
 | **/commit** | Commit edits to the repo made outside the chat (commit message optional) |
 | **/diff** | Display the diff of the last aider commit |
 | **/drop** | Remove files from the chat session to free up context space |
