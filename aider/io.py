@@ -23,12 +23,12 @@ from .utils import is_image_file
 
 class AutoCompleter(Completer):
     def __init__(
-        self, root, rel_fnames, addable_rel_fnames, commands, encoding, abs_read_only_fnames
+        self, root, rel_fnames, addable_rel_fnames, commands, encoding, abs_read_only_fnames=None
     ):
         self.addable_rel_fnames = addable_rel_fnames
         self.rel_fnames = rel_fnames
         self.encoding = encoding
-        self.abs_read_only_fnames = abs_read_only_fnames
+        self.abs_read_only_fnames = abs_read_only_fnames or []
 
         fname_to_rel_fnames = defaultdict(list)
         for rel_fname in addable_rel_fnames:
