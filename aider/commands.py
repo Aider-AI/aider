@@ -119,7 +119,7 @@ class Commands:
             self.io.tool_output("Please provide a partial model name to search for.")
 
     def cmd_web(self, args):
-        "Use headless selenium to scrape a webpage and add the content to the chat"
+        "Scrape a webpage, convert to markdown and add to the chat"
         url = args.strip()
         if not url:
             self.io.tool_error("Please provide a URL to scrape.")
