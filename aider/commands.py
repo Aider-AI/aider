@@ -120,6 +120,9 @@ class Commands:
 
     def cmd_web(self, args):
         "Scrape a webpage, convert to markdown and add to the chat"
+        from pypager.source import StringSource
+        from pypager.pager import Pager
+
         url = args.strip()
         if not url:
             self.io.tool_error("Please provide a URL to scrape.")
@@ -135,10 +138,13 @@ class Commands:
             )
 
         content = self.scraper.scrape(url) or ""
-        # if content:
-        #    self.io.tool_output(content)
-
         content = f"{url}:\n\n" + content
+
+        # Use pypager to show the content
+        source = StringSource(content)
+        pager = Pager()
+        pager.add_source(source)
+        pager.run()
 
         return content
 
