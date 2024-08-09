@@ -421,6 +421,12 @@ def get_parser(default_config_files, git_root):
         help="specify a file to edit (can be used multiple times)",
     )
     group.add_argument(
+        "--read",
+        action="append",
+        metavar="FILE",
+        help="specify a read-only file (can be used multiple times)",
+    )
+    group.add_argument(
         "--vim",
         action="store_true",
         help="Use VI editing mode in the terminal (default: False)",
