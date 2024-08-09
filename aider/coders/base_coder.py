@@ -72,6 +72,7 @@ class Coder:
     test_outcome = None
     multi_response_content = ""
     partial_response_content = ""
+    commit_before_message = None
 
     @classmethod
     def create(
@@ -668,6 +669,10 @@ class Coder:
         self.lint_outcome = None
         self.test_outcome = None
         self.edit_outcome = None
+        if self.repo:
+            self.commit_before_message = self.repo.repo.head.commit.hexsha
+        else:
+            self.commit_before_message = None
 
     def run(self, with_message=None):
         try:
