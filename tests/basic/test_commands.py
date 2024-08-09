@@ -732,7 +732,7 @@ class TestCommands(TestCase):
             self.assertNotIn(fname3, str(coder.abs_fnames))
 
     def test_cmd_read(self):
-        with ChdirTemporaryDirectory():
+        with GitTemporaryDirectory():
             io = InputOutput(pretty=False, yes=False)
             coder = Coder.create(self.GPT35, None, io)
             commands = Commands(io, coder)
@@ -759,7 +759,7 @@ class TestCommands(TestCase):
             external_file_path = external_file.name
 
         try:
-            with ChdirTemporaryDirectory():
+            with GitTemporaryDirectory():
                 io = InputOutput(pretty=False, yes=False)
                 coder = Coder.create(self.GPT35, None, io)
                 commands = Commands(io, coder)
