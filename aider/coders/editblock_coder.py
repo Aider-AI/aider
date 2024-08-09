@@ -13,11 +13,9 @@ from .editblock_prompts import EditBlockPrompts
 
 
 class EditBlockCoder(Coder):
+    """A coder that uses search/replace blocks for code modifications."""
     edit_format = "diff"
-
-    def __init__(self, *args, **kwargs):
-        self.gpt_prompts = EditBlockPrompts()
-        super().__init__(*args, **kwargs)
+    gpt_prompts = EditBlockPrompts()
 
     def get_edits(self):
         content = self.partial_response_content

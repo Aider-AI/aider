@@ -14,40 +14,31 @@ CACHE = None
 # CACHE = Cache(CACHE_PATH)
 
 
+def retry_exceptions():
+    import httpx
+
+    return (
+        httpx.ConnectError,
+        httpx.RemoteProtocolError,
+        httpx.ReadTimeout,
+        litellm.exceptions.APIConnectionError,
+        litellm.exceptions.APIError,
+        litellm.exceptions.RateLimitError,
+        litellm.exceptions.ServiceUnavailableError,
+        litellm.exceptions.Timeout,
+        litellm.exceptions.InternalServerError,
+        litellm.llms.anthropic.AnthropicError,
+    )
+
+
 def lazy_litellm_retry_decorator(func):
     def wrapper(*args, **kwargs):
-        import httpx
-
-        def should_giveup(e):
-            if not hasattr(e, "status_code"):
-                return False
-
-            if type(e) in (
-                httpx.ConnectError,
-                httpx.RemoteProtocolError,
-                httpx.ReadTimeout,
-            ):
-                return False
-
-            return not litellm._should_retry(e.status_code)
-
         decorated_func = backoff.on_exception(
             backoff.expo,
-            (
-                httpx.ConnectError,
-                httpx.RemoteProtocolError,
-                httpx.ReadTimeout,
-                litellm.exceptions.APIConnectionError,
-                litellm.exceptions.APIError,
-                litellm.exceptions.RateLimitError,
-                litellm.exceptions.ServiceUnavailableError,
-                litellm.exceptions.Timeout,
-                litellm.llms.anthropic.AnthropicError,
-            ),
-            giveup=should_giveup,
+            retry_exceptions(),
             max_time=60,
             on_backoff=lambda details: print(
-                f"{details.get('exception','Exception')}\nRetry in {details['wait']:.1f} seconds."
+                f"{details.get('exception', 'Exception')}\nRetry in {details['wait']:.1f} seconds."
             ),
         )(func)
         return decorated_func(*args, **kwargs)
@@ -55,8 +46,9 @@ def lazy_litellm_retry_decorator(func):
     return wrapper
 
 
-@lazy_litellm_retry_decorator
-def send_with_retries(model_name, messages, functions, stream, temperature=0):
+def send_completion(
+    model_name, messages, functions, stream, temperature=0, extra_headers=None, max_tokens=None
+):
     from aider.llm import litellm
 
     kwargs = dict(
@@ -67,6 +59,10 @@ def send_with_retries(model_name, messages, functions, stream, temperature=0):
     )
     if functions is not None:
         kwargs["functions"] = functions
+    if extra_headers is not None:
+        kwargs["extra_headers"] = extra_headers
+    if max_tokens is not None:
+        kwargs["max_tokens"] = max_tokens
 
     key = json.dumps(kwargs, sort_keys=True).encode()
 
@@ -86,9 +82,10 @@ def send_with_retries(model_name, messages, functions, stream, temperature=0):
     return hash_object, res
 
 
+@lazy_litellm_retry_decorator
 def simple_send_with_retries(model_name, messages):
     try:
-        _hash, response = send_with_retries(
+        _hash, response = send_completion(
             model_name=model_name,
             messages=messages,
             functions=None,

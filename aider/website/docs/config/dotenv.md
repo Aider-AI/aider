@@ -130,7 +130,7 @@ cog.outl("```")
 #AIDER_SHOW_MODEL_WARNINGS=true
 
 ## Max number of tokens to use for repo map, use 0 to disable (default: 1024)
-#AIDER_MAP_TOKENS=true
+#AIDER_MAP_TOKENS=
 
 ## Maximum number of tokens to use for chat history. If not specified, uses the model's max_chat_history_tokens.
 #AIDER_MAX_CHAT_HISTORY_TOKENS=
@@ -198,6 +198,9 @@ cog.outl("```")
 ## Specify the aider ignore file (default: .aiderignore in git root)
 #AIDER_AIDERIGNORE=.aiderignore
 
+## Only consider files in the current subtree of the git repository
+#AIDER_SUBTREE_ONLY=false
+
 ## Enable/disable auto commit of LLM changes (default: True)
 #AIDER_AUTO_COMMITS=true
 
@@ -213,14 +216,17 @@ cog.outl("```")
 ## Prefix commit messages with 'aider: ' (default: False)
 #AIDER_ATTRIBUTE_COMMIT_MESSAGE=false
 
+## Commit all pending changes with a suitable commit message, then exit
+#AIDER_COMMIT=false
+
+## Specify a custom prompt for generating commit messages
+#AIDER_COMMIT_PROMPT=
+
 ## Perform a dry run without modifying files (default: False)
 #AIDER_DRY_RUN=false
 
 ########################
 # Fixing and committing:
-
-## Commit all pending changes with a suitable commit message, then exit
-#AIDER_COMMIT=false
 
 ## Lint and fix provided files, or dirty files if none provided
 #AIDER_LINT=false
@@ -242,6 +248,9 @@ cog.outl("```")
 
 #################
 # Other Settings:
+
+## specify a file to edit (can be used multiple times)
+#AIDER_FILE=
 
 ## Use VI editing mode in the terminal (default: False)
 #AIDER_VIM=false

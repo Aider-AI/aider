@@ -2,7 +2,11 @@
 title: Release history
 parent: More info
 nav_order: 999
+highlight_image: /assets/blame.jpg
+description: Release notes and stats on aider writing its own code.
 ---
+
+{% include blame.md %}
 
 <!--[[[cog
 # This page is a copy of HISTORY.md, adding the front matter above.
@@ -11,6 +15,80 @@ cog.out(text)
 ]]]-->
 
 # Release history
+
+### Aider v0.48.1
+
+- Added `openai/gpt-4o-2024-08-06`.
+- Worked around litellm bug that removes OpenRouter app headers when using `extra_headers`.
+- Improved progress indication during repo map processing.
+- Corrected instructions for upgrading the docker container to latest aider version.
+- Removed obsolete 16k token limit on commit diffs, use per-model limits.
+
+### Aider v0.48.0
+
+- Performance improvements for large/mono repos.
+- Added `--subtree-only` to limit aider to current directory subtree.
+  - Should help with large/mono repo performance.
+- New `/add-clipboard-image` to add images to the chat from your clipboard.
+- Use `--map-tokens 1024` to use repo map with any model.
+- Support for Sonnet's 8k output window.
+  - [Aider already supported infinite output from Sonnet.](https://aider.chat/2024/07/01/sonnet-not-lazy.html)
+- Workaround litellm bug for retrying API server errors.
+- Upgraded dependencies, to pick up litellm bug fixes.
+- Aider wrote 44% of the code in this release.
+
+### Aider v0.47.1
+
+- Improvements to conventional commits prompting.
+
+### Aider v0.47.0
+
+- [Commit message](https://aider.chat/docs/git.html#commit-messages) improvements:
+  - Added Conventional Commits guidelines to commit message prompt.
+  - Added `--commit-prompt` to customize the commit message prompt.
+  - Added strong model as a fallback for commit messages (and chat summaries).
+- [Linting](https://aider.chat/docs/usage/lint-test.html) improvements:
+  - Ask before fixing lint errors.
+  - Improved performance of `--lint` on all dirty files in repo.
+  - Improved lint flow, now doing code edit auto-commit before linting.
+  - Bugfix to properly handle subprocess encodings (also for `/run`).
+- Improved [docker support](https://aider.chat/docs/install/docker.html):
+  - Resolved permission issues when using `docker run --user xxx`.
+  - New `paulgauthier/aider-full` docker image, which includes all extras.
+- Switching to code and ask mode no longer summarizes the chat history.
+- Added graph of aider's contribution to each release.
+- Generic auto-completions are provided for `/commands` without a completion override.
+- Fixed broken OCaml tags file.
+- Bugfix in `/run` add to chat approval logic.
+- Aider wrote 58% of the code in this release.
+
+### Aider v0.46.1
+
+- Downgraded stray numpy dependency back to 1.26.4.
+
+### Aider v0.46.0
+
+- New `/ask <question>` command to ask about your code, without making any edits.
+- New `/chat-mode <mode>` command to switch chat modes:
+  - ask: Ask questions about your code without making any changes.
+  - code: Ask for changes to your code (using the best edit format).
+  - help: Get help about using aider (usage, config, troubleshoot).
+- Add `file: CONVENTIONS.md` to `.aider.conf.yml` to always load a specific file.
+  - Or `file: [file1, file2, file3]` to always load multiple files.
+- Enhanced token usage and cost reporting. Now works when streaming too.
+- Filename auto-complete for `/add` and `/drop` is now case-insensitive.
+- Commit message improvements:
+  - Updated commit message prompt to use imperative tense.
+  - Fall back to main model if weak model is unable to generate a commit message.
+- Stop aider from asking to add the same url to the chat multiple times.
+- Updates and fixes to `--no-verify-ssl`:
+  - Fixed regression that broke it in v0.42.0.
+  - Disables SSL certificate verification when `/web` scrapes websites.
+- Improved error handling and reporting in `/web` scraping functionality
+- Fixed syntax error in Elm's tree-sitter scm file (by @cjoach).
+- Handle UnicodeEncodeError when streaming text to the terminal.
+- Updated dependencies to latest versions.
+- Aider wrote 45% of the code in this release.
 
 ### Aider v0.45.1
 

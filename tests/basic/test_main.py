@@ -75,13 +75,13 @@ class TestMain(TestCase):
         make_repo()
 
         Path(".aider.conf.yml").write_text("auto-commits: false\n")
-        with patch("aider.main.Coder.create") as MockCoder:
+        with patch("aider.coders.Coder.create") as MockCoder:
             main(["--yes"], input=DummyInput(), output=DummyOutput())
             _, kwargs = MockCoder.call_args
             assert kwargs["auto_commits"] is False
 
         Path(".aider.conf.yml").write_text("auto-commits: true\n")
-        with patch("aider.main.Coder.create") as MockCoder:
+        with patch("aider.coders.Coder.create") as MockCoder:
             main([], input=DummyInput(), output=DummyOutput())
             _, kwargs = MockCoder.call_args
             assert kwargs["auto_commits"] is True
@@ -132,41 +132,41 @@ class TestMain(TestCase):
             del os.environ["GIT_CONFIG_GLOBAL"]
 
     def test_main_args(self):
-        with patch("aider.main.Coder.create") as MockCoder:
+        with patch("aider.coders.Coder.create") as MockCoder:
             # --yes will just ok the git repo without blocking on input
             # following calls to main will see the new repo already
             main(["--no-auto-commits", "--yes"], input=DummyInput())
             _, kwargs = MockCoder.call_args
             assert kwargs["auto_commits"] is False
 
-        with patch("aider.main.Coder.create") as MockCoder:
+        with patch("aider.coders.Coder.create") as MockCoder:
             main(["--auto-commits"], input=DummyInput())
             _, kwargs = MockCoder.call_args
             assert kwargs["auto_commits"] is True
 
-        with patch("aider.main.Coder.create") as MockCoder:
+        with patch("aider.coders.Coder.create") as MockCoder:
             main([], input=DummyInput())
             _, kwargs = MockCoder.call_args
             assert kwargs["dirty_commits"] is True
             assert kwargs["auto_commits"] is True
             assert kwargs["pretty"] is True
 
-        with patch("aider.main.Coder.create") as MockCoder:
+        with patch("aider.coders.Coder.create") as MockCoder:
             main(["--no-pretty"], input=DummyInput())
             _, kwargs = MockCoder.call_args
             assert kwargs["pretty"] is False
 
-        with patch("aider.main.Coder.create") as MockCoder:
+        with patch("aider.coders.Coder.create") as MockCoder:
             main(["--pretty"], input=DummyInput())
             _, kwargs = MockCoder.call_args
             assert kwargs["pretty"] is True
 
-        with patch("aider.main.Coder.create") as MockCoder:
+        with patch("aider.coders.Coder.create") as MockCoder:
             main(["--no-dirty-commits"], input=DummyInput())
             _, kwargs = MockCoder.call_args
             assert kwargs["dirty_commits"] is False
 
-        with patch("aider.main.Coder.create") as MockCoder:
+        with patch("aider.coders.Coder.create") as MockCoder:
             main(["--dirty-commits"], input=DummyInput())
             _, kwargs = MockCoder.call_args
             assert kwargs["dirty_commits"] is True
@@ -194,7 +194,7 @@ class TestMain(TestCase):
             cwd_env.write_text("A=cwd\nB=cwd")
             named_env.write_text("A=named")
 
-            with patch('pathlib.Path.home', return_value=fake_home):
+            with patch("pathlib.Path.home", return_value=fake_home):
                 main(["--yes", "--exit", "--env-file", str(named_env)])
 
             self.assertEqual(os.environ["A"], "named")
@@ -209,7 +209,7 @@ class TestMain(TestCase):
         with open(message_file_path, "w", encoding="utf-8") as message_file:
             message_file.write(message_file_content)
 
-        with patch("aider.main.Coder.create") as MockCoder:
+        with patch("aider.coders.Coder.create") as MockCoder:
             MockCoder.return_value.run = MagicMock()
             main(
                 ["--yes", "--message-file", message_file_path],
@@ -224,7 +224,7 @@ class TestMain(TestCase):
         fname = "foo.py"
 
         with GitTemporaryDirectory():
-            with patch("aider.main.Coder.create") as MockCoder:  # noqa: F841
+            with patch("aider.coders.Coder.create") as MockCoder:  # noqa: F841
                 with patch("aider.main.InputOutput") as MockSend:
 
                     def side_effect(*args, **kwargs):
@@ -327,6 +327,39 @@ class TestMain(TestCase):
             _, kwargs = MockCoder.call_args
             self.assertEqual(kwargs["show_diffs"], True)
 
+    def test_lint_option(self):
+        with GitTemporaryDirectory() as git_dir:
+            # Create a dirty file in the root
+            dirty_file = Path("dirty_file.py")
+            dirty_file.write_text("def foo():\n    return 'bar'")
+
+            repo = git.Repo(".")
+            repo.git.add(str(dirty_file))
+            repo.git.commit("-m", "new")
+
+            dirty_file.write_text("def foo():\n    return '!!!!!'")
+
+            # Create a subdirectory
+            subdir = Path(git_dir) / "subdir"
+            subdir.mkdir()
+
+            # Change to the subdirectory
+            os.chdir(subdir)
+
+            # Mock the Linter class
+            with patch("aider.linter.Linter.lint") as MockLinter:
+                MockLinter.return_value = ""
+
+                # Run main with --lint option
+                main(["--lint", "--yes"])
+
+                # Check if the Linter was called with a filename ending in "dirty_file.py"
+                # but not ending in "subdir/dirty_file.py"
+                MockLinter.assert_called_once()
+                called_arg = MockLinter.call_args[0][0]
+                self.assertTrue(called_arg.endswith("dirty_file.py"))
+                self.assertFalse(called_arg.endswith(f"subdir{os.path.sep}dirty_file.py"))
+
     def test_verbose_mode_lists_env_vars(self):
         self.create_env_file(".env", "AIDER_DARK_MODE=on")
         with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
@@ -341,3 +374,25 @@ class TestMain(TestCase):
             self.assertIn("dark_mode", relevant_output)
             self.assertRegex(relevant_output, r"AIDER_DARK_MODE:\s+on")
             self.assertRegex(relevant_output, r"dark_mode:\s+True")
+
+    def test_map_tokens_option(self):
+        with GitTemporaryDirectory():
+            with patch("aider.coders.base_coder.RepoMap") as MockRepoMap:
+                MockRepoMap.return_value.max_map_tokens = 0
+                main(
+                    ["--model", "gpt-4", "--map-tokens", "0", "--exit", "--yes"],
+                    input=DummyInput(),
+                    output=DummyOutput(),
+                )
+                MockRepoMap.assert_not_called()
+
+    def test_map_tokens_option_with_non_zero_value(self):
+        with GitTemporaryDirectory():
+            with patch("aider.coders.base_coder.RepoMap") as MockRepoMap:
+                MockRepoMap.return_value.max_map_tokens = 1000
+                main(
+                    ["--model", "gpt-4", "--map-tokens", "1000", "--exit", "--yes"],
+                    input=DummyInput(),
+                    output=DummyOutput(),
+                )
+                MockRepoMap.assert_called_once()

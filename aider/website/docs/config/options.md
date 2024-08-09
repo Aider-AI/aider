@@ -43,15 +43,15 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--tool-error-color] [--assistant-output-color]
              [--code-theme] [--show-diffs] [--git | --no-git]
              [--gitignore | --no-gitignore] [--aiderignore]
-             [--auto-commits | --no-auto-commits]
+             [--subtree-only] [--auto-commits | --no-auto-commits]
              [--dirty-commits | --no-dirty-commits]
              [--attribute-author | --no-attribute-author]
              [--attribute-committer | --no-attribute-committer]
              [--attribute-commit-message | --no-attribute-commit-message]
-             [--dry-run | --no-dry-run] [--commit] [--lint]
-             [--lint-cmd] [--auto-lint | --no-auto-lint]
+             [--commit] [--commit-prompt] [--dry-run | --no-dry-run]
+             [--lint] [--lint-cmd] [--auto-lint | --no-auto-lint]
              [--test-cmd] [--auto-test | --no-auto-test] [--test]
-             [--vim] [--voice-language] [--version]
+             [--file] [--vim] [--voice-language] [--version]
              [--just-check-update]
              [--check-update | --no-check-update] [--apply] [--yes]
              [-v] [--show-repo-map] [--show-prompts] [--exit]
@@ -175,7 +175,6 @@ Aliases:
 
 ### `--map-tokens VALUE`
 Max number of tokens to use for repo map, use 0 to disable (default: 1024)  
-Default: 1024  
 Environment variable: `AIDER_MAP_TOKENS`  
 
 ### `--max-chat-history-tokens VALUE`
@@ -291,6 +290,11 @@ Specify the aider ignore file (default: .aiderignore in git root)
 Default: .aiderignore  
 Environment variable: `AIDER_AIDERIGNORE`  
 
+### `--subtree-only`
+Only consider files in the current subtree of the git repository  
+Default: False  
+Environment variable: `AIDER_SUBTREE_ONLY`  
+
 ### `--auto-commits`
 Enable/disable auto commit of LLM changes (default: True)  
 Default: True  
@@ -331,6 +335,15 @@ Aliases:
   - `--attribute-commit-message`
   - `--no-attribute-commit-message`
 
+### `--commit`
+Commit all pending changes with a suitable commit message, then exit  
+Default: False  
+Environment variable: `AIDER_COMMIT`  
+
+### `--commit-prompt PROMPT`
+Specify a custom prompt for generating commit messages  
+Environment variable: `AIDER_COMMIT_PROMPT`  
+
 ### `--dry-run`
 Perform a dry run without modifying files (default: False)  
 Default: False  
@@ -340,11 +353,6 @@ Aliases:
   - `--no-dry-run`
 
 ## Fixing and committing:
-
-### `--commit`
-Commit all pending changes with a suitable commit message, then exit  
-Default: False  
-Environment variable: `AIDER_COMMIT`  
 
 ### `--lint`
 Lint and fix provided files, or dirty files if none provided  
@@ -383,6 +391,10 @@ Default: False
 Environment variable: `AIDER_TEST`  
 
 ## Other Settings:
+
+### `--file FILE`
+specify a file to edit (can be used multiple times)  
+Environment variable: `AIDER_FILE`  
 
 ### `--vim`
 Use VI editing mode in the terminal (default: False)  

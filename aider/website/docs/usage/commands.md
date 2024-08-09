@@ -15,6 +15,9 @@ cog.out(get_help_md())
 |Command|Description|
 |:------|:----------|
 | **/add** | Add files to the chat so GPT can edit them or review them in detail |
+| **/add-clipboard-image** | Add an image from the clipboard to the chat |
+| **/ask** | Ask questions about the code base without editing any files |
+| **/chat-mode** | Switch to a new chat mode |
 | **/clear** | Clear the chat history |
 | **/commit** | Commit edits to the repo made outside the chat (commit message optional) |
 | **/diff** | Display the diff of the last aider commit |

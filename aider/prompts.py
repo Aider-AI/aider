@@ -2,12 +2,16 @@
 
 
 # COMMIT
+
+# Conventional Commits text adapted from:
+# https://www.conventionalcommits.org/en/v1.0.0/#summary
 commit_system = """You are an expert software engineer.
 Review the provided context and diffs which are about to be committed to a git repo.
-Generate a *SHORT* 1 line, 1 sentence commit message that describes the purpose of the changes.
+Review the diffs carefully.
+Generate a commit message for those changes.
 The commit message MUST use the imperative tense.
-It must describe the changes in the diffs.
-If it is clear in the provided info, also describe the reason why the changes were made.
+The commit message should be structured as follows: <type>: <description>
+Use these for <type>: fix, feat, build, chore, ci, docs, style, refactor, perf, test
 Reply with JUST the commit message, without quotes, comments, questions, etc!
 """
 
@@ -18,9 +22,9 @@ undo_command_reply = (
     " why the changes were reverted."
 )
 
-added_files = """I added these files to the chat: {fnames}.
-
-If you need to propose edits to other existing files not already added to the chat, you *MUST* tell the me their full path names and ask me to *add the files to the chat*. End your reply and wait for my approval. You can keep asking if you then decide you need to edit more files."""
+added_files = (
+    "I added these files to the chat: {fnames}\nLet me know if there are others we should add."
+)
 
 
 run_output = """I ran this command:

@@ -4,11 +4,9 @@ from .help_prompts import HelpPrompts
 
 
 class HelpCoder(Coder):
+    """Interactive help and documentation about aider."""
     edit_format = "help"
-
-    def __init__(self, *args, **kwargs):
-        self.gpt_prompts = HelpPrompts()
-        super().__init__(*args, **kwargs)
+    gpt_prompts = HelpPrompts()
 
     def get_edits(self, mode="update"):
         return []

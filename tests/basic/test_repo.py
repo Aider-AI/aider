@@ -1,6 +1,7 @@
 import os
 import platform
 import tempfile
+import time
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -107,14 +108,24 @@ class TestRepo(unittest.TestCase):
 
     @patch("aider.repo.simple_send_with_retries")
     def test_get_commit_message(self, mock_send):
-        mock_send.return_value = "a good commit message"
+        mock_send.side_effect = ["", "a good commit message"]
 
-        repo = GitRepo(InputOutput(), None, None, models=[self.GPT35])
+        model1 = Model("gpt-3.5-turbo")
+        model2 = Model("gpt-4")
+        repo = GitRepo(InputOutput(), None, None, models=[model1, model2])
+
         # Call the get_commit_message method with dummy diff and context
         result = repo.get_commit_message("dummy diff", "dummy context")
 
-        # Assert that the returned message is the expected one
+        # Assert that the returned message is the expected one from the second model
         self.assertEqual(result, "a good commit message")
+
+        # Check that simple_send_with_retries was called twice
+        self.assertEqual(mock_send.call_count, 2)
+
+        # Check that it was called with the correct model names
+        mock_send.assert_any_call(model1.name, mock_send.call_args[0][1])
+        mock_send.assert_any_call(model2.name, mock_send.call_args[0][1])
 
     @patch("aider.repo.simple_send_with_retries")
     def test_get_commit_message_strip_quotes(self, mock_send):
@@ -137,6 +148,19 @@ class TestRepo(unittest.TestCase):
 
         # Assert that the returned message is the expected one
         self.assertEqual(result, 'a good "commit message"')
+
+    @patch("aider.repo.simple_send_with_retries")
+    def test_get_commit_message_with_custom_prompt(self, mock_send):
+        mock_send.return_value = "Custom commit message"
+        custom_prompt = "Generate a commit message in the style of Shakespeare"
+
+        repo = GitRepo(InputOutput(), None, None, models=[self.GPT35], commit_prompt=custom_prompt)
+        result = repo.get_commit_message("dummy diff", "dummy context")
+
+        self.assertEqual(result, "Custom commit message")
+        mock_send.assert_called_once()
+        args, _ = mock_send.call_args
+        self.assertEqual(args[1][0]["content"], custom_prompt)
 
     @patch("aider.repo.GitRepo.get_commit_message")
     def test_commit_with_custom_committer_name(self, mock_send):
@@ -284,6 +308,7 @@ class TestRepo(unittest.TestCase):
             self.assertIn(str(fname2), fnames)
 
             aiderignore.write_text("new.txt\n")
+            time.sleep(2)
 
             # new.txt should be gone!
             fnames = git_repo.get_tracked_files()
@@ -323,6 +348,42 @@ class TestRepo(unittest.TestCase):
             raw_repo.git.commit("-m", "new")
             fnames = git_repo.get_tracked_files()
             self.assertIn(str(fname), fnames)
+
+    def test_subtree_only(self):
+        with GitTemporaryDirectory():
+            # Create a new repo
+            raw_repo = git.Repo()
+
+            # Create files in different directories
+            root_file = Path("root.txt")
+            subdir_file = Path("subdir/subdir_file.txt")
+            another_subdir_file = Path("another_subdir/another_file.txt")
+
+            root_file.touch()
+            subdir_file.parent.mkdir()
+            subdir_file.touch()
+            another_subdir_file.parent.mkdir()
+            another_subdir_file.touch()
+
+            raw_repo.git.add(str(root_file), str(subdir_file), str(another_subdir_file))
+            raw_repo.git.commit("-m", "Initial commit")
+
+            # Change to the subdir
+            os.chdir(subdir_file.parent)
+
+            # Create GitRepo instance with subtree_only=True
+            git_repo = GitRepo(InputOutput(), None, None, subtree_only=True)
+
+            # Test ignored_file method
+            self.assertFalse(git_repo.ignored_file(str(subdir_file)))
+            self.assertTrue(git_repo.ignored_file(str(root_file)))
+            self.assertTrue(git_repo.ignored_file(str(another_subdir_file)))
+
+            # Test get_tracked_files method
+            tracked_files = git_repo.get_tracked_files()
+            self.assertIn(str(subdir_file), tracked_files)
+            self.assertNotIn(str(root_file), tracked_files)
+            self.assertNotIn(str(another_subdir_file), tracked_files)
 
     @patch("aider.repo.simple_send_with_retries")
     def test_noop_commit(self, mock_send):

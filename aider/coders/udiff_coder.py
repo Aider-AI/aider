@@ -44,11 +44,9 @@ other_hunks_applied = (
 
 
 class UnifiedDiffCoder(Coder):
+    """A coder that uses unified diff format for code modifications."""
     edit_format = "udiff"
-
-    def __init__(self, *args, **kwargs):
-        self.gpt_prompts = UnifiedDiffPrompts()
-        super().__init__(*args, **kwargs)
+    gpt_prompts = UnifiedDiffPrompts()
 
     def get_edits(self):
         content = self.partial_response_content

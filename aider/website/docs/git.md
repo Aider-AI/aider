@@ -9,11 +9,11 @@ description: Aider is tightly integrated with git.
 Aider works best with code that is part of a git repo.
 Aider is tightly integrated with git, which makes it easy to:
 
-  - Use the `/undo` command to instantly undo and AI changes that you don't like.
+  - Use the `/undo` command to instantly undo any AI changes that you don't like.
   - Go back in the git history to review the changes that aider made to your code
   - Manage a series of aider's changes on a git branch
 
-Aider specifically uses git in these ways:
+Aider uses git in these ways:
 
 - It asks to create a git repo if you launch it in a directory without one.
 - Whenever aider edits a file, it commits those changes with a descriptive commit message. This makes it easy to undo or review aider's changes. 
@@ -34,6 +34,16 @@ While it is not recommended, you can disable aider's use of git in a few ways:
   - `--no-dirty-commits` will stop aider from committing dirty files before applying its edits.
   - `--no-git` will completely stop aider from using git on your files. You should ensure you are keeping sensible backups of the files you are working with.
 
+## Commit messages
+
+By default, aider creates commit messages which follow
+[Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
+
+You can customize the
+[commit prompt](https://github.com/paul-gauthier/aider/blob/main/aider/prompts.py#L5)
+with the `--commit-prompt` option.
+You can place that on the command line, or 
+[configure it via a config file or environment variables](https://aider.chat/docs/config.html).
 
 ## Commit attribution
 

@@ -186,4 +186,26 @@
   versions: 0.45.2-dev
   seconds_per_case: 85.0
   total_cost: 0.4148
+
+- dirname: 2024-08-06-18-44-03--refac-gpt-4o-2024-08-06-diff
+  test_cases: 89
+  model: gpt-4o-2024-08-06
+  edit_format: diff
+  commit_hash: f388061
+  pass_rate_1: 49.4
+  percent_cases_well_formed: 89.9
+  error_outputs: 97
+  num_malformed_responses: 19
+  num_with_malformed_responses: 9
+  user_asks: 16
+  lazy_comments: 2
+  syntax_errors: 0
+  indentation_errors: 13
+  exhausted_context_windows: 2
+  test_timeouts: 0
+  command: aider --model openai/gpt-4o-2024-08-06
+  date: 2024-08-06
+  versions: 0.48.1-dev
+  seconds_per_case: 16.9
+  total_cost: 4.0873
   

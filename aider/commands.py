@@ -2,9 +2,12 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
+from collections import OrderedDict
 from pathlib import Path
 
 import git
+from PIL import ImageGrab
 
 from aider import models, prompts, voice
 from aider.help import Help, install_help_extra
@@ -15,9 +18,9 @@ from aider.utils import is_image_file
 from .dump import dump  # noqa: F401
 
 
-class SwitchModel(Exception):
-    def __init__(self, model):
-        self.model = model
+class SwitchCoder(Exception):
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
 
 
 class Commands:
@@ -42,7 +45,63 @@ class Commands:
         model_name = args.strip()
         model = models.Model(model_name)
         models.sanity_check_models(self.io, model)
-        raise SwitchModel(model)
+        raise SwitchCoder(main_model=model)
+
+    def cmd_chat_mode(self, args):
+        "Switch to a new chat mode"
+
+        from aider import coders
+
+        ef = args.strip()
+        valid_formats = OrderedDict(
+            sorted(
+                (
+                    coder.edit_format,
+                    coder.__doc__.strip().split("\n")[0] if coder.__doc__ else "No description",
+                )
+                for coder in coders.__all__
+                if getattr(coder, "edit_format", None)
+            )
+        )
+
+        show_formats = OrderedDict(
+            [
+                ("help", "Get help about using aider (usage, config, troubleshoot)."),
+                ("ask", "Ask questions about your code without making any changes."),
+                ("code", "Ask for changes to your code (using the best edit format)."),
+            ]
+        )
+
+        if ef not in valid_formats and ef not in show_formats:
+            if ef:
+                self.io.tool_error(f'Chat mode "{ef}" should be one of these:\n')
+            else:
+                self.io.tool_output("Chat mode should be one of these:\n")
+
+            max_format_length = max(len(format) for format in valid_formats.keys())
+            for format, description in show_formats.items():
+                self.io.tool_output(f"- {format:<{max_format_length}} : {description}")
+
+            self.io.tool_output("\nOr a valid edit format:\n")
+            for format, description in valid_formats.items():
+                if format not in show_formats:
+                    self.io.tool_output(f"- {format:<{max_format_length}} : {description}")
+
+            return
+
+        summarize_from_coder = True
+        edit_format = ef
+
+        if ef == "code":
+            edit_format = self.coder.main_model.edit_format
+            summarize_from_coder = False
+        elif ef == "ask":
+            summarize_from_coder = False
+
+        raise SwitchCoder(
+            edit_format=edit_format,
+            summarize_from_coder=summarize_from_coder,
+        )
 
     def completions_model(self):
         models = litellm.model_cost.keys()
@@ -91,7 +150,7 @@ class Commands:
 
         fun = getattr(self, f"completions_{cmd}", None)
         if not fun:
-            return []
+            return
         return sorted(fun())
 
     def get_commands(self):
@@ -100,11 +159,13 @@ class Commands:
             if not attr.startswith("cmd_"):
                 continue
             cmd = attr[4:]
+            cmd = cmd.replace("_", "-")
             commands.append("/" + cmd)
 
         return commands
 
     def do_run(self, cmd_name, args):
+        cmd_name = cmd_name.replace("-", "_")
         cmd_method_name = f"cmd_{cmd_name}"
         cmd_method = getattr(self, cmd_method_name, None)
         if cmd_method:
@@ -168,9 +229,15 @@ class Commands:
         if not fnames:
             fnames = self.coder.get_inchat_relative_files()
 
-            if not fnames:
-                self.io.tool_error("No dirty files to lint.")
-                return
+        # If still no files, get all dirty files in the repo
+        if not fnames and self.coder.repo:
+            fnames = self.coder.repo.get_dirty_files()
+
+        if not fnames:
+            self.io.tool_error("No dirty files to lint.")
+            return
+
+        fnames = [self.coder.abs_root_path(fname) for fname in fnames]
 
         lint_coder = None
         for fname in fnames:
@@ -184,11 +251,13 @@ class Commands:
             if not errors:
                 continue
 
+            self.io.tool_error(errors)
+            if not self.io.confirm_ask(f"Fix lint errors in {fname}?", default="y"):
+                continue
+
             # Commit everything before we start fixing lint errors
             if self.coder.repo.is_dirty():
                 self.cmd_commit("")
-
-            self.io.tool_error(errors)
 
             if not lint_coder:
                 lint_coder = self.coder.clone(
@@ -275,7 +344,7 @@ class Commands:
         total_cost = 0.0
         for tk, msg, tip in res:
             total += tk
-            cost = tk * self.coder.main_model.info.get("input_cost_per_token", 0)
+            cost = tk * (self.coder.main_model.info.get("input_cost_per_token") or 0)
             total_cost += cost
             msg = msg.ljust(col_width)
             self.io.tool_output(f"${cost:7.4f} {fmt(tk)} {msg} {tip}")  # noqa: E231
@@ -283,7 +352,7 @@ class Commands:
         self.io.tool_output("=" * (width + cost_width + 1))
         self.io.tool_output(f"${total_cost:7.4f} {fmt(total)} tokens total")  # noqa: E231
 
-        limit = self.coder.main_model.info.get("max_input_tokens", 0)
+        limit = self.coder.main_model.info.get("max_input_tokens") or 0
         if not limit:
             return
 
@@ -555,6 +624,8 @@ class Commands:
                 text=True,
                 env=env,
                 shell=True,
+                encoding=self.io.encoding,
+                errors="replace",
             )
             combined_output = result.stdout
         except Exception as e:
@@ -583,6 +654,7 @@ class Commands:
     def cmd_run(self, args, add_on_nonzero_exit=False):
         "Run a shell command and optionally add the output to the chat (alias: !)"
         combined_output = None
+        instructions = None
         try:
             result = subprocess.run(
                 args,
@@ -605,7 +677,17 @@ class Commands:
         if add_on_nonzero_exit:
             add = result.returncode != 0
         else:
-            add = self.io.confirm_ask("Add the output to the chat?", default="y")
+            response = self.io.prompt_ask(
+                "Add the output to the chat?\n(y/n/instructions)", default=""
+            ).strip()
+
+            if response.lower() in ["yes", "y"]:
+                add = True
+            elif response.lower() in ["no", "n"]:
+                add = False
+            else:
+                add = True
+                instructions = response
 
         if add:
             for line in combined_output.splitlines():
@@ -615,6 +697,10 @@ class Commands:
                 command=args,
                 output=combined_output,
             )
+
+            if instructions:
+                msg = instructions + "\n\n" + msg
+
             return msg
 
     def cmd_exit(self, args):
@@ -658,7 +744,7 @@ class Commands:
         pad = max(len(cmd) for cmd in commands)
         pad = "{cmd:" + str(pad) + "}"
         for cmd in commands:
-            cmd_method_name = f"cmd_{cmd[1:]}"
+            cmd_method_name = f"cmd_{cmd[1:]}".replace("-", "_")
             cmd_method = getattr(self, cmd_method_name, None)
             cmd = pad.format(cmd=cmd)
             if cmd_method:
@@ -687,7 +773,6 @@ class Commands:
             self.help = Help()
 
         coder = Coder.create(
-            main_model=self.coder.main_model,
             io=self.io,
             from_coder=self.coder,
             edit_format="help",
@@ -708,6 +793,40 @@ class Commands:
             dict(role="user", content=user_msg),
             dict(role="assistant", content=assistant_msg),
         ]
+        self.coder.total_cost += coder.total_cost
+
+    def clone(self):
+        return Commands(
+            self.io,
+            None,
+            voice_language=self.voice_language,
+            verify_ssl=self.verify_ssl,
+        )
+
+    def cmd_ask(self, args):
+        "Ask questions about the code base without editing any files"
+
+        if not args.strip():
+            self.io.tool_error("Please provide a question or topic for the chat.")
+            return
+
+        from aider.coders import Coder
+
+        chat_coder = Coder.create(
+            io=self.io,
+            from_coder=self.coder,
+            edit_format="ask",
+            summarize_from_coder=False,
+        )
+
+        user_msg = args
+        assistant_msg = chat_coder.run(user_msg)
+
+        self.coder.cur_messages += [
+            dict(role="user", content=user_msg),
+            dict(role="assistant", content=assistant_msg),
+        ]
+        self.coder.total_cost += chat_coder.total_cost
 
     def get_help_md(self):
         "Show help about all commands in markdown"
@@ -718,7 +837,7 @@ class Commands:
 """
         commands = sorted(self.get_commands())
         for cmd in commands:
-            cmd_method_name = f"cmd_{cmd[1:]}"
+            cmd_method_name = f"cmd_{cmd[1:]}".replace("-", "_")
             cmd_method = getattr(self, cmd_method_name, None)
             if cmd_method:
                 description = cmd_method.__doc__
@@ -774,6 +893,28 @@ class Commands:
             print()
 
         return text
+
+    def cmd_add_clipboard_image(self, args):
+        "Add an image from the clipboard to the chat"
+        try:
+            image = ImageGrab.grabclipboard()
+            if image is None:
+                self.io.tool_error("No image found in clipboard.")
+                return
+
+            with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as temp_file:
+                image.save(temp_file.name, "PNG")
+                temp_file_path = temp_file.name
+
+            abs_file_path = Path(temp_file_path).resolve()
+            self.coder.abs_fnames.add(str(abs_file_path))
+            self.io.tool_output(f"Added clipboard image to the chat: {abs_file_path}")
+            self.coder.check_added_files()
+
+            return prompts.added_files.format(fnames=str(abs_file_path))
+
+        except Exception as e:
+            self.io.tool_error(f"Error adding clipboard image: {e}")
 
 
 def expand_subdir(file_path):
