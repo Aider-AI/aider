@@ -460,7 +460,7 @@ class Commands:
         # Get the current HEAD after undo
         current_head_hash = self.coder.repo.repo.head.commit.hexsha[:7]
         current_head_message = self.coder.repo.repo.head.commit.message.strip()
-        self.io.tool_output(f"HEAD is: {current_head_hash} {current_head_message}")
+        self.io.tool_output(f"Now at:  {current_head_hash} {current_head_message}")
 
         if self.coder.main_model.send_undo_reply:
             return prompts.undo_command_reply
