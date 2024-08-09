@@ -15,10 +15,10 @@ cog.out(get_help_md())
 |Command|Description|
 |:------|:----------|
 | **/add** | Add files to the chat so GPT can edit them or review them in detail |
-| **/add-clipboard-image** | Add an image from the clipboard to the chat |
 | **/ask** | Ask questions about the code base without editing any files |
 | **/chat-mode** | Switch to a new chat mode |
 | **/clear** | Clear the chat history |
+| **/clipboard** | Add content from the clipboard to the chat (supports both text and images) |
 | **/commit** | Commit edits to the repo made outside the chat (commit message optional) |
 | **/diff** | Display the diff of the last aider commit |
 | **/drop** | Remove files from the chat session to free up context space |
@@ -27,6 +27,7 @@ cog.out(get_help_md())
 | **/help** | Ask questions about aider |
 | **/lint** | Lint and fix provided files or in-chat files if none provided |
 | **/ls** | List all known files and indicate which are included in the chat session |
+| **/map** | Print out the current repository map |
 | **/model** | Switch to a new LLM |
 | **/models** | Search the list of available models |
 | **/quit** | Exit the application |
