@@ -228,6 +228,7 @@ class Coder:
         commands=None,
         summarizer=None,
         total_cost=0.0,
+        prompt_variant="default",
     ):
         self.commit_before_message = []
         self.aider_commit_hashes = set()
@@ -381,6 +382,10 @@ class Coder:
         self.auto_test = auto_test
         self.test_cmd = test_cmd
 
+        # Set up prompt variant
+        self.prompt_variant = prompt_variant
+        self.setup_prompt_variant()
+
         # validate the functions jsonschema
         if self.functions:
             from jsonschema import Draft7Validator
@@ -397,6 +402,25 @@ class Coder:
             return
         for lang, cmd in lint_cmds.items():
             self.linter.set_linter(lang, cmd)
+
+    def setup_prompt_variant(self):
+        if self.prompt_variant == "default":
+            return
+
+        from .coder_prompts import __all_prompt_variants__
+
+        for prompt_class in __all_prompt_variants__:
+            if (
+                prompt_class.edit_format == self.edit_format
+                and prompt_class.prompt_variant == self.prompt_variant
+            ):
+                self.gpt_prompts = prompt_class()
+                break
+        else:
+            raise ValueError(
+                f"No matching prompt found for edit_format '{self.edit_format}' and"
+                f" prompt_variant '{self.prompt_variant}'"
+            )
 
     def show_announcements(self):
         bold = True
