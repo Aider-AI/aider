@@ -1011,5 +1011,6 @@ if __name__ == "__main__":
     status = main()
     sys.exit(status)
 
+
 def completions_read(self):
     return []  # No auto-completion for now, as it would require listing all files on the system
