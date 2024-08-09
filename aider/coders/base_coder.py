@@ -689,6 +689,7 @@ class Coder:
             self.get_inchat_relative_files(),
             self.get_addable_relative_files(),
             self.commands,
+            self.abs_read_only_fnames,
         )
 
     def preproc_user_input(self, inp):
