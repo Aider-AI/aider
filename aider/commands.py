@@ -590,8 +590,10 @@ class Commands:
 
     def completions_drop(self):
         files = self.coder.get_inchat_relative_files()
-        files = [self.quote_fname(fn) for fn in files]
-        return files
+        read_only_files = [self.coder.get_rel_fname(fn) for fn in self.coder.abs_read_only_fnames]
+        all_files = files + read_only_files
+        all_files = [self.quote_fname(fn) for fn in all_files]
+        return all_files
 
     def cmd_drop(self, args=""):
         "Remove files from the chat session to free up context space"
@@ -599,6 +601,8 @@ class Commands:
         if not args.strip():
             self.io.tool_output("Dropping all files from the chat session.")
             self.coder.abs_fnames = set()
+            self.coder.abs_read_only_fnames = set()
+            return
 
         filenames = parse_quoted_filenames(args)
         for word in filenames:
@@ -612,6 +616,9 @@ class Commands:
                 if abs_fname in self.coder.abs_fnames:
                     self.coder.abs_fnames.remove(abs_fname)
                     self.io.tool_output(f"Removed {matched_file} from the chat")
+                elif abs_fname in self.coder.abs_read_only_fnames:
+                    self.coder.abs_read_only_fnames.remove(abs_fname)
+                    self.io.tool_output(f"Removed read-only file {matched_file} from the chat")
 
     def cmd_git(self, args):
         "Run a git command"
