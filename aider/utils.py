@@ -112,13 +112,19 @@ def format_messages(messages, title=None):
         content = msg.get("content")
         if isinstance(content, list):  # Handle list content (e.g., image messages)
             for item in content:
-                if isinstance(item, dict) and "image_url" in item:
-                    output.append(f"{role} Image URL: {item['image_url']['url']}")
+                if isinstance(item, dict):
+                    for key, value in item.items():
+                        if isinstance(value, dict) and "url" in value:
+                            output.append(f"{role} {key.capitalize()} URL: {value['url']}")
+                        else:
+                            output.append(f"{role} {key}: {value}")
+                else:
+                    output.append(f"{role} {item}")
         elif isinstance(content, str):  # Handle string content
             output.append(format_content(role, content))
-        content = msg.get("function_call")
-        if content:
-            output.append(f"{role} {content}")
+        function_call = msg.get("function_call")
+        if function_call:
+            output.append(f"{role} Function Call: {function_call}")
 
     return "\n".join(output)
 
