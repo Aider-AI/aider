@@ -320,7 +320,13 @@ class Coder:
             self.find_common_root()
 
         if read_only_fnames:
-            self.abs_read_only_fnames = set(self.abs_root_path(fname) for fname in read_only_fnames)
+            self.abs_read_only_fnames = set()
+            for fname in read_only_fnames:
+                abs_fname = self.abs_root_path(fname)
+                if os.path.exists(abs_fname):
+                    self.abs_read_only_fnames.add(abs_fname)
+                else:
+                    self.io.tool_error(f"Error: Read-only file {fname} does not exist. Skipping.")
 
         if map_tokens is None:
             use_repo_map = main_model.use_repo_map
