@@ -1665,14 +1665,4 @@ class Coder:
         return []
 
     def apply_edits(self, edits):
-        for edit in edits:
-            path, content = edit
-            full_path = self.abs_root_path(path)
-            if not os.path.exists(full_path):
-                self.io.tool_error(f"Error: File {path} does not exist. Skipping edits.")
-                continue
-
-            if not self.dry_run:
-                with open(full_path, "w", encoding=self.io.encoding) as f:
-                    f.write(content)
         return
