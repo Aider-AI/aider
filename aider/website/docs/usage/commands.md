@@ -31,13 +31,13 @@ cog.out(get_help_md())
 | **/model** | Switch to a new LLM |
 | **/models** | Search the list of available models |
 | **/quit** | Exit the application |
-| **/read** | Load a file from anywhere and add it to abs_read_only_fnames |
+| **/read** | Add a file to the chat that is for reference, not to be edited |
 | **/run** | Run a shell command and optionally add the output to the chat (alias: !) |
 | **/test** | Run a shell command and add the output to the chat on non-zero exit code |
 | **/tokens** | Report on the number of tokens used by the current chat context |
 | **/undo** | Undo the last git commit if it was done by aider |
 | **/voice** | Record and transcribe voice input |
-| **/web** | Use headless selenium to scrape a webpage and add the content to the chat |
+| **/web** | Scrape a webpage, convert to markdown and add to the chat |
 
 <!--[[[end]]]-->
 
