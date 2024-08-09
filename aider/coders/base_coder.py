@@ -50,6 +50,7 @@ def wrap_fence(name):
 
 class Coder:
     abs_fnames = None
+    abs_read_only_fnames = None
     repo = None
     last_aider_commit_hash = None
     aider_edited_files = None

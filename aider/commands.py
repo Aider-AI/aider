@@ -936,6 +936,36 @@ class Commands:
         except Exception as e:
             self.io.tool_error(f"Error processing clipboard content: {e}")
 
+    def cmd_read(self, args):
+        "Load a file from anywhere and add it to abs_read_only_fnames"
+        if not args.strip():
+            self.io.tool_error("Please provide a filename to read.")
+            return
+
+        filename = args.strip()
+        abs_path = os.path.abspath(filename)
+
+        if not os.path.exists(abs_path):
+            self.io.tool_error(f"File not found: {abs_path}")
+            return
+
+        if not os.path.isfile(abs_path):
+            self.io.tool_error(f"Not a file: {abs_path}")
+            return
+
+        if not self.coder.abs_read_only_fnames:
+            self.coder.abs_read_only_fnames = set()
+
+        self.coder.abs_read_only_fnames.add(abs_path)
+        self.io.tool_output(f"Added {abs_path} to read-only files.")
+
+        content = self.io.read_text(abs_path)
+        if content is not None:
+            self.io.tool_output(f"Contents of {filename}:")
+            self.io.tool_output(content)
+        else:
+            self.io.tool_error(f"Unable to read {filename}")
+
     def cmd_map(self, args):
         "Print out the current repository map"
         repo_map = self.coder.get_repo_map()
@@ -980,3 +1010,6 @@ def main():
 if __name__ == "__main__":
     status = main()
     sys.exit(status)
+
+def completions_read(self):
+    return []  # No auto-completion for now, as it would require listing all files on the system
