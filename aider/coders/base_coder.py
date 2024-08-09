@@ -685,6 +685,7 @@ class Coder:
                 try:
                     user_message = self.get_input()
                     self.run_one(user_message)
+                    self.show_undo_hint()
                 except KeyboardInterrupt:
                     self.keyboard_interrupt()
         except EOFError:
@@ -1657,11 +1658,11 @@ class Coder:
         if self.show_diffs:
             self.commands.cmd_diff()
 
-    def show_undo_hint(self, commit_hash):
+    def show_undo_hint(self):
         if not self.commit_before_message:
             return
         if self.commit_before_message != self.repo.get_head():
-            self.io.tool_output(f"You can use /undo to revert and discard commit {commit_hash}.")
+            self.io.tool_output(f"You can use /undo to undo and discard each aider commit.")
 
     def dirty_commit(self):
         if not self.need_commit_before_edits:
