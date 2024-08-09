@@ -726,7 +726,7 @@ class Coder:
             if url not in self.rejected_urls:
                 if self.io.confirm_ask(f"Add {url} to the chat?"):
                     inp += "\n\n"
-                    inp += self.commands.cmd_web(url)
+                    inp += self.commands.cmd_web(url, paginate=False)
                     added_urls.append(url)
                 else:
                     self.rejected_urls.add(url)
@@ -1643,7 +1643,7 @@ class Coder:
         self.aider_commit_hashes.add(commit_hash)
         self.last_aider_commit_message = commit_message
         if self.show_diffs:
-            self.commands.cmd_diff()
+            self.commands.cmd_diff(paginate=False)
 
         self.io.tool_output(f"You can use /undo to revert and discard commit {commit_hash}.")
 
