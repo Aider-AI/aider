@@ -1664,8 +1664,8 @@ class Coder:
             if not os.path.exists(full_path):
                 self.io.tool_error(f"Error: File {path} does not exist. Skipping edits.")
                 continue
-            
+
             if not self.dry_run:
-                with open(full_path, 'w', encoding=self.io.encoding) as f:
+                with open(full_path, "w", encoding=self.io.encoding) as f:
                     f.write(content)
         return
