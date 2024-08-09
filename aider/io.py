@@ -48,7 +48,9 @@ class AutoCompleter(Completer):
         for rel_fname in rel_fnames:
             self.words.add(rel_fname)
 
-            fname = Path(root) / rel_fname
+        all_fnames = [Path(root) / rel_fname for rel_fname in rel_fnames] + list(abs_read_only_fnames)
+
+        for fname in all_fnames:
             try:
                 with open(fname, "r", encoding=self.encoding) as f:
                     content = f.read()
