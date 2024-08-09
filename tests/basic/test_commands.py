@@ -731,6 +731,28 @@ class TestCommands(TestCase):
             self.assertNotIn(fname2, str(coder.abs_fnames))
             self.assertNotIn(fname3, str(coder.abs_fnames))
 
+    def test_cmd_read(self):
+        with ChdirTemporaryDirectory():
+            io = InputOutput(pretty=False, yes=False)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Create a test file
+            test_file = Path("test_read.txt")
+            test_file.write_text("Test content")
+
+            # Test the /read command
+            commands.cmd_read(str(test_file))
+
+            # Check if the file was added to abs_read_only_fnames
+            self.assertIn(str(test_file.resolve()), coder.abs_read_only_fnames)
+
+            # Test dropping the read-only file
+            commands.cmd_drop(str(test_file))
+
+            # Check if the file was removed from abs_read_only_fnames
+            self.assertNotIn(str(test_file.resolve()), coder.abs_read_only_fnames)
+
     def test_cmd_ask(self):
         io = InputOutput(pretty=False, yes=True)
         coder = Coder.create(self.GPT35, None, io)
