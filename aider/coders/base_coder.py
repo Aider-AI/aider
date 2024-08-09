@@ -670,11 +670,7 @@ class Coder:
         self.test_outcome = None
         self.edit_outcome = None
         if self.repo:
-            try:
-                self.commit_before_message = self.repo.repo.head.commit.hexsha
-            except ValueError:
-                # This occurs when the repository is brand new and has no commits
-                self.commit_before_message = None
+            self.commit_before_message = self.repo.get_head()
         else:
             self.commit_before_message = None
 
