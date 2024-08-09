@@ -753,6 +753,32 @@ class TestCommands(TestCase):
             # Check if the file was removed from abs_read_only_fnames
             self.assertNotIn(str(test_file.resolve()), coder.abs_read_only_fnames)
 
+    def test_cmd_read_with_external_file(self):
+        with tempfile.NamedTemporaryFile(mode="w", delete=False) as external_file:
+            external_file.write("External file content")
+            external_file_path = external_file.name
+
+        try:
+            with ChdirTemporaryDirectory():
+                io = InputOutput(pretty=False, yes=False)
+                coder = Coder.create(self.GPT35, None, io)
+                commands = Commands(io, coder)
+
+                # Test the /read command with an external file
+                commands.cmd_read(external_file_path)
+
+                # Check if the external file was added to abs_read_only_fnames
+                real_external_file_path = os.path.realpath(external_file_path)
+                self.assertIn(real_external_file_path, coder.abs_read_only_fnames)
+
+                # Test dropping the external read-only file
+                commands.cmd_drop(external_file_path)
+
+                # Check if the file was removed from abs_read_only_fnames
+                self.assertNotIn(real_external_file_path, coder.abs_read_only_fnames)
+        finally:
+            os.unlink(external_file_path)
+
     def test_cmd_ask(self):
         io = InputOutput(pretty=False, yes=True)
         coder = Coder.create(self.GPT35, None, io)
