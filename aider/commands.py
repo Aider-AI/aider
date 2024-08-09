@@ -9,6 +9,8 @@ from pathlib import Path
 import git
 import pyperclip
 from PIL import Image, ImageGrab
+from pypager.pager import Pager
+from pypager.source import StringSource
 
 from aider import models, prompts, voice
 from aider.help import Help, install_help_extra
@@ -120,8 +122,6 @@ class Commands:
 
     def cmd_web(self, args):
         "Scrape a webpage, convert to markdown and add to the chat"
-        from pypager.pager import Pager
-        from pypager.source import StringSource
 
         url = args.strip()
         if not url:
