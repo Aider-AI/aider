@@ -942,6 +942,7 @@ class Commands:
         else:
             self.io.tool_output("No repository map available.")
 
+
 def expand_subdir(file_path):
     file_path = Path(file_path)
     if file_path.is_file():
