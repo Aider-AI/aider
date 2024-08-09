@@ -8,7 +8,7 @@ from pathlib import Path
 
 import git
 import pyperclip
-from PIL import ImageGrab, Image
+from PIL import Image, ImageGrab
 
 from aider import models, prompts, voice
 from aider.help import Help, install_help_extra
@@ -911,14 +911,14 @@ class Commands:
                 self.coder.check_added_files()
 
                 return prompts.added_files.format(fnames=str(abs_file_path))
-            
+
             # If not an image, try to get text
             text = pyperclip.paste()
             if text:
                 self.io.tool_output("Text content found in clipboard:")
                 self.io.tool_output(text)
                 return text
-            
+
             self.io.tool_error("No image or text content found in clipboard.")
             return
 
