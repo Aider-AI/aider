@@ -128,6 +128,7 @@ class Commands:
             self.io.tool_error("Please provide a URL to scrape.")
             return
 
+        self.io.tool_output(f"Scraping {url}...")
         if not self.scraper:
             res = install_playwright(self.io)
             if not res:
@@ -139,6 +140,8 @@ class Commands:
 
         content = self.scraper.scrape(url) or ""
         content = f"{url}:\n\n" + content
+
+        self.io.tool_output(f"... done.")
 
         if paginate:
             # Use pypager to show the content
