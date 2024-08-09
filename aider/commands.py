@@ -898,7 +898,7 @@ class Commands:
         return text
 
     def cmd_clipboard(self, args):
-        "Add content from the clipboard to the chat (supports both text and images)"
+        "Add image/text from the clipboard to the chat (optionally provide a name for the image)"
         try:
             # Check for image first
             image = ImageGrab.grabclipboard()
