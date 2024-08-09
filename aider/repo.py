@@ -356,3 +356,9 @@ class GitRepo:
             return True
 
         return self.repo.is_dirty(path=path)
+
+    def get_head(self):
+        try:
+            return self.repo.head.commit.hexsha
+        except ValueError:
+            return None
