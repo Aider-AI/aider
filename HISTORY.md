@@ -9,6 +9,7 @@
 - Messages can now contain `/xxx` commands when [scripting aider](https://aider.chat/docs/scripting.html).
 - Aider in docker image now provides the correct command to update to latest version.
 - Improved retries on API errors (was easy to test during Sonnet outage).
+- Bugfix to keep session cost accurate when using `/ask` and `/help`.
 - Performance improvements for repo map calculation.
 - `/tokens` now shows the active model.
 
