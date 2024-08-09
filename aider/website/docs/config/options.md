@@ -26,7 +26,7 @@ cog.out(get_md_help())
 ]]]-->
 ```
 usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
-             [--opus] [--sonnet] [--4] [--4o] [--4-turbo]
+             [--opus] [--sonnet] [--4] [--4o] [--mini] [--4-turbo]
              [--35turbo] [--models] [--openai-api-base]
              [--openai-api-type] [--openai-api-version]
              [--openai-api-deployment-id] [--openai-organization-id]
@@ -99,6 +99,10 @@ Aliases:
 ### `--4o`
 Use gpt-4o model for the main chat  
 Environment variable: `AIDER_4O`  
+
+### `--mini`
+Use gpt-4o-mini model for the main chat  
+Environment variable: `AIDER_MINI`  
 
 ### `--4-turbo`
 Use gpt-4-1106-preview model for the main chat  
