@@ -22,7 +22,9 @@ from .utils import is_image_file
 
 
 class AutoCompleter(Completer):
-    def __init__(self, root, rel_fnames, addable_rel_fnames, commands, encoding, abs_read_only_fnames):
+    def __init__(
+        self, root, rel_fnames, addable_rel_fnames, commands, encoding, abs_read_only_fnames
+    ):
         self.addable_rel_fnames = addable_rel_fnames
         self.rel_fnames = rel_fnames
         self.encoding = encoding
@@ -48,7 +50,9 @@ class AutoCompleter(Completer):
         for rel_fname in rel_fnames:
             self.words.add(rel_fname)
 
-        all_fnames = [Path(root) / rel_fname for rel_fname in rel_fnames] + list(abs_read_only_fnames)
+        all_fnames = [Path(root) / rel_fname for rel_fname in rel_fnames] + list(
+            abs_read_only_fnames
+        )
 
         for fname in all_fnames:
             try:
