@@ -745,13 +745,13 @@ class TestCommands(TestCase):
             commands.cmd_read(str(test_file))
 
             # Check if the file was added to abs_read_only_fnames
-            self.assertIn(str(test_file.resolve()), coder.abs_read_only_fnames)
+            self.assertTrue(any(os.path.samefile(str(test_file.resolve()), fname) for fname in coder.abs_read_only_fnames))
 
             # Test dropping the read-only file
             commands.cmd_drop(str(test_file))
 
             # Check if the file was removed from abs_read_only_fnames
-            self.assertNotIn(str(test_file.resolve()), coder.abs_read_only_fnames)
+            self.assertFalse(any(os.path.samefile(str(test_file.resolve()), fname) for fname in coder.abs_read_only_fnames))
 
     def test_cmd_read_with_external_file(self):
         with tempfile.NamedTemporaryFile(mode="w", delete=False) as external_file:
