@@ -5,6 +5,7 @@
 
 - Add read-only files to the chat context with `/read` and `--read`,  including from outside the git repo.
 - New `/clipboard` command to paste images or text from the clipboard, replaces `/add-clipboard-image`.
+- Output from /web and /diff is now paginated.
 - Messages can now contain `/xxx` commands when [scripting aider](https://aider.chat/docs/scripting.html).
 - Aider in docker image now provides the correct command to update to latest version.
 - Improved retries on API errors (was easy to test during Sonnet outage).
