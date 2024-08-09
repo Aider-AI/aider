@@ -146,8 +146,6 @@ class Commands:
             pager = Pager()
             pager.add_source(source)
             pager.run()
-        else:
-            self.io.tool_output(content)
 
         return content
 
