@@ -401,12 +401,12 @@ class TestMain(TestCase):
         with GitTemporaryDirectory():
             test_file = "test_file.txt"
             Path(test_file).touch()
-            
+
             coder = main(
                 ["--read", test_file, "--exit", "--yes"],
                 input=DummyInput(),
                 output=DummyOutput(),
                 return_coder=True,
             )
-            
+
             self.assertIn(str(Path(test_file).resolve()), coder.abs_read_only_fnames)
