@@ -140,6 +140,8 @@ pygments==2.18.0
     # via rich
 pypandoc==1.13
     # via -r requirements/requirements.in
+pyperclip==1.9.0
+    # via -r requirements/requirements.in
 python-dotenv==1.0.1
     # via litellm
 pyyaml==6.0.1
