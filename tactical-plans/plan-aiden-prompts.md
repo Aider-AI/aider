@@ -19,21 +19,50 @@ Specific goals:
 - So, we need to make it minimally invasive to the code.
 - Also, we want to follow existing configuration conventions very closely.
 - Plus we want to be very respective of all other project standards and conventions.
-- Although our only immediate goal is to customize the prompts for `EditBlockCoder`,
+- Although our only immediate goal is to customize the prompts for `EditBlockCoder` and `AskCoder`,
   we will do it in a way that can be naturally extended to the other `Coder` subclasses.
   We expect separate prompt subclasses must be configured for different `Coder` subclasses, because they likely use different prompts.
-- In the future, we plan to propose how the aider project could support a community-contributed library of prompts.
-  Although we won't propose that now, nor take explicit steps toward it, we'd like our current changes to lead there naturally.
 
-## Designing Our Prompt Configuration
+## Introduce a "prompt_variant" Configuration Option
 
-### Study the Project's Existing Configuration Conventions
+We will introduce a new abstraction: a "variant" prompt class that provides an alternative set of
+prompts for a `Coder` subclass. There will be a registry of such classes. `Coder` classes (initially
+just `EditBlockCoder`) will check for the `prompt_variant` configuration option. If it is set,
+they will look up their prompt class in the registry.
 
-- ( ) Figure out which project files to examine to understand this, and ask me to add them to the chat.
-- ( ) Examine existing project files to understand how other configuration options work, both in config files and in the code.
-- ( ) Take notes in this document on what we discover that is most applicable to this current enhancement.
+- (x) Add an argument "--prompt-variant" to `args.py`. Have it default to "default".
+- (x) Create a class `EditBlockPromptsAiden` in `aider/coders/editblock_prompts_aiden.py`.
+      Initially, this is a copy of `EditBlockPrompts`.
+- (x) Create a list of prompt-variant classes `__all_prompt_variants__` in `aider/coders/coder_prompts.py`.
 
-### Design Our Approach
+## Enhance `EditBlockCoder` to Support `prompt_variant`
 
-- ( ) Write down our planned approach in ths document.
-- ( ) Extend this plan to a full implementation of our approach.
+- (x) Add code to `EditBlockCoder`'s `__init__`:
+  - (x) If `prompt_variant` is "default", use the hardcoded `EditBlockPrompts()`.
+  - (x) Otherwise, search `__all_prompt_variants__` for a class with matching class variables:
+    - Its `edit_format` must match that of `EditBlockCoder`.
+    - Its `prompt_variant` must match the configured `prompt_variant`.
+  - (x) Add tests to `test_editblock.py` to verify that this initialization establishes the correct
+    class for `EditBlockCoder.gpt_prompts`.
+
+## Prepare to support `prompt_variant` for `AskCoder`
+
+Make it possible for any `Coder` subclass to opt in to supporting prompt variants. 
+Let them specify their default prompt class. Perhaps the subclass does both by explicitly initializing 
+their superclasses with their default `gpt_prompts` class as an argument.
+
+- ( ) Move the logic that finds `gpt_prompts` from `EditBlockCoder`'s `__init__` to `Coder`'s `__init__`.
+- ( ) Create a class `AidenPrompts` in `aider/coders/aider_prompts.py`.
+- ( ) Modify `EditBlockPromptsAiden` to delegate its prompt constants to `AidenPrompts`.
+- ( ) Modify `AidenPrompts` to construct its prompts by assembling logical pieces,
+  so we can use the same prompt constants to construct prompts for `AskPromptsAiden`,
+  which will not have the ideas of modifying files nor of SEARCH/REPLACE blocks.
+- ( ) Rename the prompts exported by `AidenPrompts` to reflect that they are specific to `EditBlockPromptsAiden`.
+  (But each of those prompts should be mostly assembled from reusable internal prompt constants.)
+
+## Support `prompt_variant` for `AskCoder`
+
+- ( ) Create a class `AskPromptsAiden` in `aider/coders/ask_prompts_aiden.py`.
+- ( ) Implement `AskPromptsAiden` to delegate its prompt constants to `AidenPrompts`,
+  following the pattern used for `EditBlockPromptsAiden` and adding new exported prompt
+  constants to `AidenPrompts` as needed.
