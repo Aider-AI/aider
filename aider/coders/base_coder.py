@@ -492,6 +492,19 @@ class Coder:
 
         return prompt
 
+    def get_read_only_files_content(self):
+        prompt = ""
+        for fname in self.abs_read_only_fnames:
+            content = self.io.read_text(fname)
+            if content is not None and not is_image_file(fname):
+                relative_fname = self.get_rel_fname(fname)
+                prompt += "\n"
+                prompt += relative_fname
+                prompt += f"\n{self.fence[0]}\n"
+                prompt += content
+                prompt += f"{self.fence[1]}\n"
+        return prompt
+
     def get_cur_message_text(self):
         text = ""
         for msg in self.cur_messages:
