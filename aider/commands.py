@@ -329,6 +329,16 @@ class Commands:
                 tokens = self.coder.main_model.token_count(content)
             res.append((tokens, f"{relative_fname}", "use /drop to drop from chat"))
 
+        # read-only files
+        for fname in self.coder.abs_read_only_fnames:
+            relative_fname = self.coder.get_rel_fname(fname)
+            content = self.io.read_text(fname)
+            if content is not None and not is_image_file(relative_fname):
+                # approximate
+                content = f"{relative_fname}\n```\n" + content + "```\n"
+                tokens = self.coder.main_model.token_count(content)
+                res.append((tokens, f"{relative_fname} (read-only)", ""))
+
         self.io.tool_output(
             f"Approximate context window usage for {self.coder.main_model.name}, in tokens:"
         )
