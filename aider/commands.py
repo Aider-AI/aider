@@ -830,7 +830,7 @@ class Commands:
             dict(role="user", content=user_msg),
             dict(role="assistant", content=assistant_msg),
         ]
-        self.coder.total_cost += coder.total_cost
+        self.coder.total_cost = coder.total_cost
 
     def clone(self):
         return Commands(
@@ -863,7 +863,7 @@ class Commands:
             dict(role="user", content=user_msg),
             dict(role="assistant", content=assistant_msg),
         ]
-        self.coder.total_cost += chat_coder.total_cost
+        self.coder.total_cost = chat_coder.total_cost
 
     def get_help_md(self):
         "Show help about all commands in markdown"
