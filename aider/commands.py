@@ -120,8 +120,8 @@ class Commands:
 
     def cmd_web(self, args):
         "Scrape a webpage, convert to markdown and add to the chat"
-        from pypager.source import StringSource
         from pypager.pager import Pager
+        from pypager.source import StringSource
 
         url = args.strip()
         if not url:
