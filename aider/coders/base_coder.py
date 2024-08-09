@@ -599,6 +599,18 @@ class Coder:
                 dict(role="assistant", content="Ok."),
             ]
 
+        read_only_content = self.get_read_only_files_content()
+        if read_only_content:
+            files_messages += [
+                dict(
+                    role="user", content=self.gpt_prompts.read_only_files_prefix + read_only_content
+                ),
+                dict(
+                    role="assistant",
+                    content="Ok, I will use these files as references.",
+                ),
+            ]
+
         if files_content:
             files_messages += [
                 dict(role="user", content=files_content),
@@ -851,12 +863,6 @@ class Coder:
 
         self.summarize_end()
         messages += self.done_messages
-        read_only_content = self.get_read_only_files_content()
-        if read_only_content:
-            messages += [
-                dict(role="user", content=self.gpt_prompts.read_only_files_prefix + read_only_content),
-                dict(role="assistant", content="Ok, I won't try and edit those files without asking first."),
-            ]
 
         messages += self.get_files_messages()
 
