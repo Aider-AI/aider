@@ -425,6 +425,7 @@ class TestMain(TestCase):
                     return_coder=True,
                 )
 
-                self.assertIn(external_file_path, coder.abs_read_only_fnames)
+                real_external_file_path = os.path.realpath(external_file_path)
+                self.assertIn(real_external_file_path, coder.abs_read_only_fnames)
         finally:
             os.unlink(external_file_path)
