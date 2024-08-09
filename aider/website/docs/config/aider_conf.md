@@ -245,6 +245,9 @@ cog.outl("```")
 ## specify a file to edit (can be used multiple times)
 #file:
 
+## specify a read-only file (can be used multiple times)
+#read:
+
 ## Use VI editing mode in the terminal (default: False)
 #vim: false
 

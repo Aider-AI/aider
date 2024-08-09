@@ -31,6 +31,7 @@ cog.out(get_help_md())
 | **/model** | Switch to a new LLM |
 | **/models** | Search the list of available models |
 | **/quit** | Exit the application |
+| **/read** | Load a file from anywhere and add it to abs_read_only_fnames |
 | **/run** | Run a shell command and optionally add the output to the chat (alias: !) |
 | **/test** | Run a shell command and add the output to the chat on non-zero exit code |
 | **/tokens** | Report on the number of tokens used by the current chat context |

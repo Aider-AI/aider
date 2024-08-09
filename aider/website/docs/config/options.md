@@ -51,8 +51,8 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--commit] [--commit-prompt] [--dry-run | --no-dry-run]
              [--lint] [--lint-cmd] [--auto-lint | --no-auto-lint]
              [--test-cmd] [--auto-test | --no-auto-test] [--test]
-             [--file] [--vim] [--voice-language] [--version]
-             [--just-check-update]
+             [--file] [--read] [--vim] [--voice-language]
+             [--version] [--just-check-update]
              [--check-update | --no-check-update] [--apply] [--yes]
              [-v] [--show-repo-map] [--show-prompts] [--exit]
              [--message] [--message-file] [--encoding] [-c] [--gui]
@@ -395,6 +395,10 @@ Environment variable: `AIDER_TEST`
 ### `--file FILE`
 specify a file to edit (can be used multiple times)  
 Environment variable: `AIDER_FILE`  
+
+### `--read FILE`
+specify a read-only file (can be used multiple times)  
+Environment variable: `AIDER_READ`  
 
 ### `--vim`
 Use VI editing mode in the terminal (default: False)  

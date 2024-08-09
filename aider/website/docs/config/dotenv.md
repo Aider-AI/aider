@@ -252,6 +252,9 @@ cog.outl("```")
 ## specify a file to edit (can be used multiple times)
 #AIDER_FILE=
 
+## specify a read-only file (can be used multiple times)
+#AIDER_READ=
+
 ## Use VI editing mode in the terminal (default: False)
 #AIDER_VIM=false
 
