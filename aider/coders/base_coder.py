@@ -114,7 +114,7 @@ class Coder:
             # Bring along context from the old Coder
             update = dict(
                 fnames=list(from_coder.abs_fnames),
-                abs_read_only_fnames=list(from_coder.abs_read_only_fnames),  # Copy read-only files
+                read_only_fnames=list(from_coder.abs_read_only_fnames),  # Copy read-only files
                 done_messages=done_messages,
                 cur_messages=from_coder.cur_messages,
                 aider_commit_hashes=from_coder.aider_commit_hashes,
@@ -196,6 +196,7 @@ class Coder:
         io,
         repo=None,
         fnames=None,
+        read_only_fnames=None,
         pretty=True,
         show_diffs=False,
         auto_commits=True,
