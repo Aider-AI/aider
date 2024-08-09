@@ -327,7 +327,7 @@ class Commands:
                 # approximate
                 content = f"{relative_fname}\n```\n" + content + "```\n"
                 tokens = self.coder.main_model.token_count(content)
-            res.append((tokens, f"{relative_fname}", "use /drop to drop from chat"))
+            res.append((tokens, f"{relative_fname}", "/drop to remove"))
 
         # read-only files
         for fname in self.coder.abs_read_only_fnames:
@@ -337,7 +337,7 @@ class Commands:
                 # approximate
                 content = f"{relative_fname}\n```\n" + content + "```\n"
                 tokens = self.coder.main_model.token_count(content)
-                res.append((tokens, f"{relative_fname} (read-only)", ""))
+                res.append((tokens, f"{relative_fname} (read-only)", "/drop to remove"))
 
         self.io.tool_output(
             f"Approximate context window usage for {self.coder.main_model.name}, in tokens:"
@@ -954,7 +954,7 @@ class Commands:
             self.io.tool_error(f"Error processing clipboard content: {e}")
 
     def cmd_read(self, args):
-        "Load a file from anywhere and add it to abs_read_only_fnames"
+        "Add a file to the chat that is for reference, not to be edited"
         if not args.strip():
             self.io.tool_error("Please provide a filename to read.")
             return
