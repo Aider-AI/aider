@@ -22,6 +22,7 @@ pypandoc
 litellm
 flake8
 importlib_resources
+pyperclip
 
 # The proper depdendency is networkx[default], but this brings
 # in matplotlib and a bunch of other deps
