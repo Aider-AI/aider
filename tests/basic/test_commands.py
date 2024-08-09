@@ -779,8 +779,6 @@ class TestCommands(TestCase):
                 # Test dropping the external read-only file
                 commands.cmd_drop(Path(external_file_path).name)
 
-                print(coder.abs_read_only_fnames)
-
                 # Check if the file was removed from abs_read_only_fnames
                 self.assertFalse(
                     any(
