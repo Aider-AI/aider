@@ -120,7 +120,7 @@ class Commands:
         else:
             self.io.tool_output("Please provide a partial model name to search for.")
 
-    def cmd_web(self, args):
+    def cmd_web(self, args, paginate=True):
         "Scrape a webpage, convert to markdown and add to the chat"
 
         url = args.strip()
@@ -140,11 +140,14 @@ class Commands:
         content = self.scraper.scrape(url) or ""
         content = f"{url}:\n\n" + content
 
-        # Use pypager to show the content
-        source = StringSource(content)
-        pager = Pager()
-        pager.add_source(source)
-        pager.run()
+        if paginate:
+            # Use pypager to show the content
+            source = StringSource(content)
+            pager = Pager()
+            pager.add_source(source)
+            pager.run()
+        else:
+            self.io.tool_output(content)
 
         return content
 
