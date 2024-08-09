@@ -907,13 +907,15 @@ class Commands:
                 image.save(temp_file_path, "PNG")
 
                 abs_file_path = Path(temp_file_path).resolve()
-                
+
                 # Check if a file with the same name already exists in the chat
-                existing_file = next((f for f in self.coder.abs_fnames if Path(f).name == abs_file_path.name), None)
+                existing_file = next(
+                    (f for f in self.coder.abs_fnames if Path(f).name == abs_file_path.name), None
+                )
                 if existing_file:
                     self.coder.abs_fnames.remove(existing_file)
                     self.io.tool_output(f"Replaced existing image in the chat: {existing_file}")
-                
+
                 self.coder.abs_fnames.add(str(abs_file_path))
                 self.io.tool_output(f"Added clipboard image to the chat: {abs_file_path}")
                 self.coder.check_added_files()
