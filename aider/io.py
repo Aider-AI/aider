@@ -22,10 +22,11 @@ from .utils import is_image_file
 
 
 class AutoCompleter(Completer):
-    def __init__(self, root, rel_fnames, addable_rel_fnames, commands, encoding):
+    def __init__(self, root, rel_fnames, addable_rel_fnames, commands, encoding, abs_read_only_fnames):
         self.addable_rel_fnames = addable_rel_fnames
         self.rel_fnames = rel_fnames
         self.encoding = encoding
+        self.abs_read_only_fnames = abs_read_only_fnames
 
         fname_to_rel_fnames = defaultdict(list)
         for rel_fname in addable_rel_fnames:
@@ -217,7 +218,7 @@ class InputOutput:
         with open(str(filename), "w", encoding=self.encoding) as f:
             f.write(content)
 
-    def get_input(self, root, rel_fnames, addable_rel_fnames, commands):
+    def get_input(self, root, rel_fnames, addable_rel_fnames, commands, abs_read_only_fnames):
         if self.pretty:
             style = dict(style=self.user_input_color) if self.user_input_color else dict()
             self.console.rule(**style)
@@ -244,7 +245,7 @@ class InputOutput:
             style = None
 
         completer_instance = AutoCompleter(
-            root, rel_fnames, addable_rel_fnames, commands, self.encoding
+            root, rel_fnames, addable_rel_fnames, commands, self.encoding, abs_read_only_fnames
         )
 
         while True:
