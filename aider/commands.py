@@ -609,13 +609,13 @@ class Commands:
 
         filenames = parse_quoted_filenames(args)
         for word in filenames:
-            # Handle read-only files separately
+            # Handle read-only files separately, without glob_filtered_to_repo
             read_only_matched = [f for f in self.coder.abs_read_only_fnames if word in f]
+
             if read_only_matched:
                 for matched_file in read_only_matched:
                     self.coder.abs_read_only_fnames.remove(matched_file)
                     self.io.tool_output(f"Removed read-only file {matched_file} from the chat")
-                continue
 
             matched_files = self.glob_filtered_to_repo(word)
 
