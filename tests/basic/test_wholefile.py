@@ -8,7 +8,7 @@ from unittest.mock import MagicMock
 from aider.coders import Coder
 from aider.coders.wholefile_coder import WholeFileCoder
 from aider.dump import dump  # noqa: F401
-from aider.io import InputOutput
+from aider.terminal import Terminal
 from aider.models import Model
 
 
@@ -26,7 +26,7 @@ class TestWholeFileCoder(unittest.TestCase):
 
     def test_no_files(self):
         # Initialize WholeFileCoder with the temporary directory
-        io = InputOutput(yes=True)
+        io = Terminal(yes=True)
 
         coder = WholeFileCoder(main_model=self.GPT35, io=io, fnames=[])
         coder.partial_response_content = (
@@ -39,7 +39,7 @@ class TestWholeFileCoder(unittest.TestCase):
         coder.render_incremental_response(True)
 
     def test_no_files_new_file_should_ask(self):
-        io = InputOutput(yes=False)  # <- yes=FALSE
+        io = Terminal(yes=False)  # <- yes=FALSE
         coder = WholeFileCoder(main_model=self.GPT35, io=io, fnames=[])
         coder.partial_response_content = (
             'To print "Hello, World!" in most programming languages, you can use the following'
@@ -56,7 +56,7 @@ class TestWholeFileCoder(unittest.TestCase):
             f.write("Original content\n")
 
         # Initialize WholeFileCoder with the temporary directory
-        io = InputOutput(yes=True)
+        io = Terminal(yes=True)
         coder = WholeFileCoder(main_model=self.GPT35, io=io, fnames=[sample_file])
 
         # Set the partial response content with the updated content
@@ -80,7 +80,7 @@ class TestWholeFileCoder(unittest.TestCase):
             f.write("\n".join(map(str, range(0, 100))))
 
         # Initialize WholeFileCoder with the temporary directory
-        io = InputOutput(yes=True)
+        io = Terminal(yes=True)
         coder = WholeFileCoder(main_model=self.GPT35, io=io, fnames=[sample_file])
 
         # Set the partial response content with the updated content
@@ -104,7 +104,7 @@ Quote!
             f.write(original_content)
 
         # Initialize WholeFileCoder with the temporary directory
-        io = InputOutput(yes=True)
+        io = Terminal(yes=True)
         coder = WholeFileCoder(main_model=self.GPT35, io=io, fnames=[sample_file])
 
         coder.choose_fence()
@@ -134,7 +134,7 @@ Quote!
             f.write("Original content\n")
 
         # Initialize WholeFileCoder with the temporary directory
-        io = InputOutput(yes=True)
+        io = Terminal(yes=True)
         coder = WholeFileCoder(main_model=self.GPT35, io=io, fnames=[sample_file])
 
         # Set the partial response content with the updated content
@@ -159,7 +159,7 @@ Quote!
             f.write("Original content\n")
 
         # Initialize WholeFileCoder with the temporary directory
-        io = InputOutput(yes=True)
+        io = Terminal(yes=True)
         coder = WholeFileCoder(main_model=self.GPT35, io=io)
 
         # Set the partial response content with the updated content
@@ -187,7 +187,7 @@ Quote!
             f.write("Original content\n")
 
         # Initialize WholeFileCoder with the temporary directory
-        io = InputOutput(yes=True)
+        io = Terminal(yes=True)
         coder = WholeFileCoder(main_model=self.GPT35, io=io, fnames=[sample_file])
 
         # Set the partial response content with the updated content
@@ -230,7 +230,7 @@ after b
 ```
 """
         # Initialize WholeFileCoder with the temporary directory
-        io = InputOutput(yes=True)
+        io = Terminal(yes=True)
         coder = WholeFileCoder(main_model=self.GPT35, io=io, fnames=[fname_a, fname_b])
 
         # Set the partial response content with the updated content
@@ -254,7 +254,7 @@ after b
             f.write("Original content\n")
 
         # Initialize WholeFileCoder with the temporary directory
-        io = InputOutput(yes=True)
+        io = Terminal(yes=True)
         coder = WholeFileCoder(main_model=self.GPT35, io=io, fnames=[sample_file])
 
         # Set the partial response content with the updated content
@@ -289,7 +289,7 @@ after b
 
         # Initialize the Coder object with the mocked IO and mocked repo
         coder = Coder.create(
-            self.GPT35, "whole", io=InputOutput(), fnames=files, stream=False, pretty=False
+            self.GPT35, "whole", io=Terminal(), fnames=files, stream=False, pretty=False
         )
 
         # no trailing newline so the response content below doesn't add ANOTHER newline

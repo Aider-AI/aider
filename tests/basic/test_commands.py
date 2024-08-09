@@ -12,7 +12,7 @@ import git
 from aider.coders import Coder
 from aider.commands import Commands
 from aider.dump import dump  # noqa: F401
-from aider.io import InputOutput
+from aider.terminal import Terminal
 from aider.models import Model
 from aider.repo import GitRepo
 from aider.utils import ChdirTemporaryDirectory, GitTemporaryDirectory, make_repo
@@ -31,8 +31,8 @@ class TestCommands(TestCase):
         shutil.rmtree(self.tempdir, ignore_errors=True)
 
     def test_cmd_add(self):
-        # Initialize the Commands and InputOutput objects
-        io = InputOutput(pretty=False, yes=True)
+        # Initialize the Commands and Terminal objects
+        io = Terminal(pretty=False, yes=True)
         from aider.coders import Coder
 
         coder = Coder.create(self.GPT35, None, io)
@@ -48,7 +48,7 @@ class TestCommands(TestCase):
     def test_cmd_add_bad_glob(self):
         # https://github.com/paul-gauthier/aider/issues/293
 
-        io = InputOutput(pretty=False, yes=False)
+        io = Terminal(pretty=False, yes=False)
         from aider.coders import Coder
 
         coder = Coder.create(self.GPT35, None, io)
@@ -57,8 +57,8 @@ class TestCommands(TestCase):
         commands.cmd_add("**.txt")
 
     def test_cmd_add_with_glob_patterns(self):
-        # Initialize the Commands and InputOutput objects
-        io = InputOutput(pretty=False, yes=True)
+        # Initialize the Commands and Terminal objects
+        io = Terminal(pretty=False, yes=True)
         from aider.coders import Coder
 
         coder = Coder.create(self.GPT35, None, io)
@@ -84,7 +84,7 @@ class TestCommands(TestCase):
 
     def test_cmd_add_no_match(self):
         # yes=False means we will *not* create the file when it is not found
-        io = InputOutput(pretty=False, yes=False)
+        io = Terminal(pretty=False, yes=False)
         from aider.coders import Coder
 
         coder = Coder.create(self.GPT35, None, io)
@@ -98,7 +98,7 @@ class TestCommands(TestCase):
 
     def test_cmd_add_no_match_but_make_it(self):
         # yes=True means we *will* create the file when it is not found
-        io = InputOutput(pretty=False, yes=True)
+        io = Terminal(pretty=False, yes=True)
         from aider.coders import Coder
 
         coder = Coder.create(self.GPT35, None, io)
@@ -114,8 +114,8 @@ class TestCommands(TestCase):
         self.assertTrue(fname.exists())
 
     def test_cmd_add_drop_directory(self):
-        # Initialize the Commands and InputOutput objects
-        io = InputOutput(pretty=False, yes=False)
+        # Initialize the Commands and Terminal objects
+        io = Terminal(pretty=False, yes=False)
         from aider.coders import Coder
 
         coder = Coder.create(self.GPT35, None, io)
@@ -165,8 +165,8 @@ class TestCommands(TestCase):
         self.assertNotIn(abs_fname, coder.abs_fnames)
 
     def test_cmd_drop_with_glob_patterns(self):
-        # Initialize the Commands and InputOutput objects
-        io = InputOutput(pretty=False, yes=True)
+        # Initialize the Commands and Terminal objects
+        io = Terminal(pretty=False, yes=True)
         from aider.coders import Coder
 
         coder = Coder.create(self.GPT35, None, io)
@@ -192,8 +192,8 @@ class TestCommands(TestCase):
         self.assertNotIn(str(Path("test2.py").resolve()), coder.abs_fnames)
 
     def test_cmd_add_bad_encoding(self):
-        # Initialize the Commands and InputOutput objects
-        io = InputOutput(pretty=False, yes=True)
+        # Initialize the Commands and Terminal objects
+        io = Terminal(pretty=False, yes=True)
         from aider.coders import Coder
 
         coder = Coder.create(self.GPT35, None, io)
@@ -208,8 +208,8 @@ class TestCommands(TestCase):
         self.assertEqual(coder.abs_fnames, set())
 
     def test_cmd_git(self):
-        # Initialize the Commands and InputOutput objects
-        io = InputOutput(pretty=False, yes=True)
+        # Initialize the Commands and Terminal objects
+        io = Terminal(pretty=False, yes=True)
 
         with GitTemporaryDirectory() as tempdir:
             # Create a file in the temporary directory
@@ -229,8 +229,8 @@ class TestCommands(TestCase):
             self.assertIn("test.txt", files_in_repo)
 
     def test_cmd_tokens(self):
-        # Initialize the Commands and InputOutput objects
-        io = InputOutput(pretty=False, yes=True)
+        # Initialize the Commands and Terminal objects
+        io = Terminal(pretty=False, yes=True)
 
         coder = Coder.create(self.GPT35, None, io)
         commands = Commands(io, coder)
@@ -272,7 +272,7 @@ class TestCommands(TestCase):
 
         os.chdir("subdir")
 
-        io = InputOutput(pretty=False, yes=True)
+        io = Terminal(pretty=False, yes=True)
         coder = Coder.create(self.GPT35, None, io)
         commands = Commands(io, coder)
 
@@ -288,7 +288,7 @@ class TestCommands(TestCase):
 
     def test_cmd_add_from_subdir_again(self):
         with GitTemporaryDirectory():
-            io = InputOutput(pretty=False, yes=False)
+            io = Terminal(pretty=False, yes=False)
             from aider.coders import Coder
 
             coder = Coder.create(self.GPT35, None, io)
@@ -314,7 +314,7 @@ class TestCommands(TestCase):
             repo.git.add(fname)
             repo.git.commit("-m", "initial")
 
-            io = InputOutput(pretty=False, yes=True)
+            io = Terminal(pretty=False, yes=True)
             coder = Coder.create(self.GPT35, None, io)
             commands = Commands(io, coder)
 
@@ -333,7 +333,7 @@ class TestCommands(TestCase):
             root.mkdir()
             os.chdir(str(root))
 
-            io = InputOutput(pretty=False, yes=False)
+            io = Terminal(pretty=False, yes=False)
             from aider.coders import Coder
 
             coder = Coder.create(self.GPT35, None, io)
@@ -356,7 +356,7 @@ class TestCommands(TestCase):
 
             make_repo()
 
-            io = InputOutput(pretty=False, yes=False)
+            io = Terminal(pretty=False, yes=False)
             from aider.coders import Coder
 
             coder = Coder.create(self.GPT35, None, io)
@@ -374,7 +374,7 @@ class TestCommands(TestCase):
 
     def test_cmd_add_filename_with_special_chars(self):
         with ChdirTemporaryDirectory():
-            io = InputOutput(pretty=False, yes=False)
+            io = Terminal(pretty=False, yes=False)
             from aider.coders import Coder
 
             coder = Coder.create(self.GPT35, None, io)
@@ -399,7 +399,7 @@ class TestCommands(TestCase):
             repo.git.add(A=True)
             repo.git.commit("-m", "Initial commit")
 
-            io = InputOutput(pretty=False, yes=False)
+            io = Terminal(pretty=False, yes=False)
             from aider.coders import Coder
 
             coder = Coder.create(Model("claude-3-5-sonnet-20240620"), None, io)
@@ -439,7 +439,7 @@ class TestCommands(TestCase):
 
     def test_cmd_add_dirname_with_special_chars(self):
         with ChdirTemporaryDirectory():
-            io = InputOutput(pretty=False, yes=False)
+            io = Terminal(pretty=False, yes=False)
             from aider.coders import Coder
 
             coder = Coder.create(self.GPT35, None, io)
@@ -456,7 +456,7 @@ class TestCommands(TestCase):
 
     def test_cmd_add_abs_filename(self):
         with ChdirTemporaryDirectory():
-            io = InputOutput(pretty=False, yes=False)
+            io = Terminal(pretty=False, yes=False)
             from aider.coders import Coder
 
             coder = Coder.create(self.GPT35, None, io)
@@ -471,7 +471,7 @@ class TestCommands(TestCase):
 
     def test_cmd_add_quoted_filename(self):
         with ChdirTemporaryDirectory():
-            io = InputOutput(pretty=False, yes=False)
+            io = Terminal(pretty=False, yes=False)
             from aider.coders import Coder
 
             coder = Coder.create(self.GPT35, None, io)
@@ -499,7 +499,7 @@ class TestCommands(TestCase):
             # leave a dirty `git rm`
             repo.git.rm("one.txt")
 
-            io = InputOutput(pretty=False, yes=True)
+            io = Terminal(pretty=False, yes=True)
             from aider.coders import Coder
 
             coder = Coder.create(self.GPT35, None, io)
@@ -521,8 +521,8 @@ class TestCommands(TestCase):
             del repo
 
     def test_cmd_add_unicode_error(self):
-        # Initialize the Commands and InputOutput objects
-        io = InputOutput(pretty=False, yes=True)
+        # Initialize the Commands and Terminal objects
+        io = Terminal(pretty=False, yes=True)
         from aider.coders import Coder
 
         coder = Coder.create(self.GPT35, None, io)
@@ -539,7 +539,7 @@ class TestCommands(TestCase):
 
     def test_cmd_test_unbound_local_error(self):
         with ChdirTemporaryDirectory():
-            io = InputOutput(pretty=False, yes=False)
+            io = Terminal(pretty=False, yes=False)
             from aider.coders import Coder
 
             coder = Coder.create(self.GPT35, None, io)
@@ -556,7 +556,7 @@ class TestCommands(TestCase):
         with GitTemporaryDirectory():
             repo = git.Repo()
 
-            io = InputOutput(pretty=False, yes=False)
+            io = Terminal(pretty=False, yes=False)
             from aider.coders import Coder
 
             coder = Coder.create(self.GPT35, None, io)
@@ -581,7 +581,7 @@ class TestCommands(TestCase):
     def test_cmd_undo_with_dirty_files_not_in_last_commit(self):
         with GitTemporaryDirectory() as repo_dir:
             repo = git.Repo(repo_dir)
-            io = InputOutput(pretty=False, yes=True)
+            io = Terminal(pretty=False, yes=True)
             coder = Coder.create(self.GPT35, None, io)
             commands = Commands(io, coder)
 
@@ -629,7 +629,7 @@ class TestCommands(TestCase):
     def test_cmd_undo_with_newly_committed_file(self):
         with GitTemporaryDirectory() as repo_dir:
             repo = git.Repo(repo_dir)
-            io = InputOutput(pretty=False, yes=True)
+            io = Terminal(pretty=False, yes=True)
             coder = Coder.create(self.GPT35, None, io)
             commands = Commands(io, coder)
 
@@ -665,7 +665,7 @@ class TestCommands(TestCase):
     def test_cmd_undo_on_first_commit(self):
         with GitTemporaryDirectory() as repo_dir:
             repo = git.Repo(repo_dir)
-            io = InputOutput(pretty=False, yes=True)
+            io = Terminal(pretty=False, yes=True)
             coder = Coder.create(self.GPT35, None, io)
             commands = Commands(io, coder)
 
@@ -706,7 +706,7 @@ class TestCommands(TestCase):
             aignore = Path(".aiderignore")
             aignore.write_text(f"{fname1}\n{fname2}\ndir\n")
 
-            io = InputOutput(yes=True)
+            io = Terminal(yes=True)
 
             fnames = [fname1, fname2]
             repo = GitRepo(
@@ -732,7 +732,7 @@ class TestCommands(TestCase):
             self.assertNotIn(fname3, str(coder.abs_fnames))
 
     def test_cmd_ask(self):
-        io = InputOutput(pretty=False, yes=True)
+        io = Terminal(pretty=False, yes=True)
         coder = Coder.create(self.GPT35, None, io)
         commands = Commands(io, coder)
 
@@ -756,7 +756,7 @@ class TestCommands(TestCase):
     def test_cmd_lint_with_dirty_file(self):
         with GitTemporaryDirectory() as repo_dir:
             repo = git.Repo(repo_dir)
-            io = InputOutput(pretty=False, yes=True)
+            io = Terminal(pretty=False, yes=True)
             coder = Coder.create(self.GPT35, None, io)
             commands = Commands(io, coder)
 

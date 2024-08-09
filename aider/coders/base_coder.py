@@ -24,7 +24,7 @@ from rich.markdown import Markdown
 from aider import __version__, models, prompts, urls, utils
 from aider.commands import Commands
 from aider.history import ChatSummary
-from aider.io import InputOutput
+from aider.terminal import Terminal
 from aider.linter import Linter
 from aider.llm import litellm
 from aider.mdstream import MarkdownStream
@@ -226,7 +226,7 @@ class Coder:
             fnames = []
 
         if io is None:
-            io = InputOutput()
+            io = Terminal()
 
         if aider_commit_hashes:
             self.aider_commit_hashes = aider_commit_hashes

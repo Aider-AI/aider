@@ -9,7 +9,7 @@ from unittest.mock import patch
 import git
 
 from aider.dump import dump  # noqa: F401
-from aider.io import InputOutput
+from aider.terminal import Terminal
 from aider.models import Model
 from aider.repo import GitRepo
 from aider.utils import GitTemporaryDirectory
@@ -31,7 +31,7 @@ class TestRepo(unittest.TestCase):
             # Make a change in the working dir
             fname.write_text("workingdir\n")
 
-            git_repo = GitRepo(InputOutput(), None, ".")
+            git_repo = GitRepo(Terminal(), None, ".")
             diffs = git_repo.get_diffs()
             self.assertIn("index", diffs)
             self.assertIn("workingdir", diffs)
@@ -54,7 +54,7 @@ class TestRepo(unittest.TestCase):
 
             fname2.write_text("workingdir\n")
 
-            git_repo = GitRepo(InputOutput(), None, ".")
+            git_repo = GitRepo(Terminal(), None, ".")
             diffs = git_repo.get_diffs()
             self.assertIn("index", diffs)
             self.assertIn("workingdir", diffs)
@@ -84,7 +84,7 @@ class TestRepo(unittest.TestCase):
 
             fname2.write_text("workingdir\n")
 
-            git_repo = GitRepo(InputOutput(), None, ".")
+            git_repo = GitRepo(Terminal(), None, ".")
             diffs = git_repo.get_diffs()
             self.assertIn("index", diffs)
             self.assertIn("workingdir", diffs)
@@ -102,7 +102,7 @@ class TestRepo(unittest.TestCase):
             repo.git.add(str(fname))
             repo.git.commit("-m", "second")
 
-            git_repo = GitRepo(InputOutput(), None, ".")
+            git_repo = GitRepo(Terminal(), None, ".")
             diffs = git_repo.diff_commits(False, "HEAD~1", "HEAD")
             self.assertIn("two", diffs)
 
@@ -112,7 +112,7 @@ class TestRepo(unittest.TestCase):
 
         model1 = Model("gpt-3.5-turbo")
         model2 = Model("gpt-4")
-        repo = GitRepo(InputOutput(), None, None, models=[model1, model2])
+        repo = GitRepo(Terminal(), None, None, models=[model1, model2])
 
         # Call the get_commit_message method with dummy diff and context
         result = repo.get_commit_message("dummy diff", "dummy context")
@@ -131,7 +131,7 @@ class TestRepo(unittest.TestCase):
     def test_get_commit_message_strip_quotes(self, mock_send):
         mock_send.return_value = '"a good commit message"'
 
-        repo = GitRepo(InputOutput(), None, None, models=[self.GPT35])
+        repo = GitRepo(Terminal(), None, None, models=[self.GPT35])
         # Call the get_commit_message method with dummy diff and context
         result = repo.get_commit_message("dummy diff", "dummy context")
 
@@ -142,7 +142,7 @@ class TestRepo(unittest.TestCase):
     def test_get_commit_message_no_strip_unmatched_quotes(self, mock_send):
         mock_send.return_value = 'a good "commit message"'
 
-        repo = GitRepo(InputOutput(), None, None, models=[self.GPT35])
+        repo = GitRepo(Terminal(), None, None, models=[self.GPT35])
         # Call the get_commit_message method with dummy diff and context
         result = repo.get_commit_message("dummy diff", "dummy context")
 
@@ -154,7 +154,7 @@ class TestRepo(unittest.TestCase):
         mock_send.return_value = "Custom commit message"
         custom_prompt = "Generate a commit message in the style of Shakespeare"
 
-        repo = GitRepo(InputOutput(), None, None, models=[self.GPT35], commit_prompt=custom_prompt)
+        repo = GitRepo(Terminal(), None, None, models=[self.GPT35], commit_prompt=custom_prompt)
         result = repo.get_commit_message("dummy diff", "dummy context")
 
         self.assertEqual(result, "Custom commit message")
@@ -181,7 +181,7 @@ class TestRepo(unittest.TestCase):
             raw_repo.git.add(str(fname))
             raw_repo.git.commit("-m", "initial commit")
 
-            io = InputOutput()
+            io = Terminal()
             git_repo = GitRepo(io, None, None)
 
             # commit a change
@@ -236,7 +236,7 @@ class TestRepo(unittest.TestCase):
 
         repo.git.commit("-m", "added")
 
-        tracked_files = GitRepo(InputOutput(), [tempdir], None).get_tracked_files()
+        tracked_files = GitRepo(Terminal(), [tempdir], None).get_tracked_files()
 
         # On windows, paths will come back \like\this, so normalize them back to Paths
         tracked_files = [Path(fn) for fn in tracked_files]
@@ -254,7 +254,7 @@ class TestRepo(unittest.TestCase):
             fname.touch()
             raw_repo.git.add(str(fname))
 
-            git_repo = GitRepo(InputOutput(), None, None)
+            git_repo = GitRepo(Terminal(), None, None)
 
             # better be there
             fnames = git_repo.get_tracked_files()
@@ -286,7 +286,7 @@ class TestRepo(unittest.TestCase):
             raw_repo.git.add(str(fname))
 
             aiderignore = Path(".aiderignore")
-            git_repo = GitRepo(InputOutput(), None, None, str(aiderignore))
+            git_repo = GitRepo(Terminal(), None, None, str(aiderignore))
 
             # better be there
             fnames = git_repo.get_tracked_files()
@@ -338,7 +338,7 @@ class TestRepo(unittest.TestCase):
 
             os.chdir(fname.parent)
 
-            git_repo = GitRepo(InputOutput(), None, None)
+            git_repo = GitRepo(Terminal(), None, None)
 
             # better be there
             fnames = git_repo.get_tracked_files()
@@ -399,6 +399,6 @@ class TestRepo(unittest.TestCase):
             raw_repo.git.add(str(fname))
             raw_repo.git.commit("-m", "new")
 
-            git_repo = GitRepo(InputOutput(), None, None)
+            git_repo = GitRepo(Terminal(), None, None)
 
             git_repo.commit(fnames=[str(fname)])

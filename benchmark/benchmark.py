@@ -26,7 +26,7 @@ from rich.console import Console
 from aider import models
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
-from aider.io import InputOutput
+from aider.terminal import Terminal
 
 load_dotenv()
 
@@ -543,7 +543,7 @@ def run_test_real(
 
     instructions += prompts.instructions_addendum.format(file_list=file_list)
 
-    io = InputOutput(
+    io = Terminal(
         pretty=True,
         yes=False,
         chat_history_file=history_fname,

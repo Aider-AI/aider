@@ -14,7 +14,7 @@ from aider.args import get_parser
 from aider.coders import Coder
 from aider.commands import Commands, SwitchCoder
 from aider.history import ChatSummary
-from aider.io import InputOutput
+from aider.terminal import Terminal
 from aider.llm import litellm  # noqa: F401; properly init litellm on launch
 from aider.repo import GitRepo
 from aider.versioncheck import check_version
@@ -356,7 +356,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     editing_mode = EditingMode.VI if args.vim else EditingMode.EMACS
 
-    io = InputOutput(
+    io = Terminal(
         args.pretty,
         args.yes,
         args.input_history_file,

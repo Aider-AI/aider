@@ -5,14 +5,14 @@ import aider
 from aider.coders import Coder
 from aider.commands import Commands
 from aider.help import Help
-from aider.io import InputOutput
+from aider.terminal import Terminal
 from aider.models import Model
 
 
 class TestHelp(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        io = InputOutput(pretty=False, yes=True)
+        io = Terminal(pretty=False, yes=True)
 
         GPT35 = Model("gpt-3.5-turbo")
 

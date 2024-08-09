@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from aider.commands import Commands
-from aider.io import InputOutput
+from aider.terminal import Terminal
 from aider.scrape import Scraper
 
 
@@ -26,7 +26,7 @@ class TestScrape(unittest.TestCase):
         scraper_no_verify.print_error.assert_not_called()
 
     def setUp(self):
-        self.io = InputOutput(yes=True)
+        self.io = Terminal(yes=True)
         self.commands = Commands(self.io, None)
 
     def test_cmd_web_imports_playwright(self):

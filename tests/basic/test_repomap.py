@@ -2,7 +2,7 @@ import os
 import unittest
 
 from aider.dump import dump  # noqa: F401
-from aider.io import InputOutput
+from aider.terminal import Terminal
 from aider.models import Model
 from aider.repomap import RepoMap
 from aider.utils import IgnorantTemporaryDirectory
@@ -26,7 +26,7 @@ class TestRepoMap(unittest.TestCase):
                 with open(os.path.join(temp_dir, file), "w") as f:
                     f.write("")
 
-            io = InputOutput()
+            io = Terminal()
             repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
             other_files = [os.path.join(temp_dir, file) for file in test_files]
             result = repo_map.get_repo_map([], other_files)
@@ -74,7 +74,7 @@ print(my_function(3, 4))
             with open(os.path.join(temp_dir, test_file3), "w") as f:
                 f.write(file_content3)
 
-            io = InputOutput()
+            io = Terminal()
             repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
             other_files = [
                 os.path.join(temp_dir, test_file1),
@@ -109,7 +109,7 @@ print(my_function(3, 4))
                 with open(os.path.join(temp_dir, file), "w") as f:
                     f.write("")
 
-            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=InputOutput())
+            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=Terminal())
 
             other_files = [os.path.join(temp_dir, file) for file in test_files]
             result = repo_map.get_repo_map([], other_files)
@@ -137,7 +137,7 @@ print(my_function(3, 4))
                 with open(os.path.join(temp_dir, file), "w") as f:
                     f.write("def foo(): pass\n")
 
-            io = InputOutput()
+            io = Terminal()
             repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
             test_files = [os.path.join(temp_dir, file) for file in test_files]
             result = repo_map.get_repo_map(test_files[:2], test_files[2:])
@@ -195,7 +195,7 @@ export function myFunction(input: number): number {
             with open(os.path.join(temp_dir, test_file_ts), "w") as f:
                 f.write(file_content_ts)
 
-            io = InputOutput()
+            io = Terminal()
             repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
             other_files = [os.path.join(temp_dir, test_file_ts)]
             result = repo_map.get_repo_map([], other_files)
@@ -293,7 +293,7 @@ class TestRepoMapAllLanguages(unittest.TestCase):
                 with open(os.path.join(temp_dir, filename), "w") as f:
                     f.write(content)
 
-            io = InputOutput()
+            io = Terminal()
             repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
             other_files = [
                 os.path.join(temp_dir, filename) for filename, _ in language_files.values()

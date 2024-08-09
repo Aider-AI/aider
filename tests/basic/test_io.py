@@ -3,14 +3,14 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from aider.io import AutoCompleter, InputOutput
+from aider.terminal import AutoCompleter, Terminal
 from aider.utils import ChdirTemporaryDirectory
 
 
-class TestInputOutput(unittest.TestCase):
+class TestTerminal(unittest.TestCase):
     def test_no_color_environment_variable(self):
         with patch.dict(os.environ, {"NO_COLOR": "1"}):
-            io = InputOutput()
+            io = Terminal()
             self.assertFalse(io.pretty)
 
     def test_autocompleter_with_non_existent_file(self):
@@ -49,7 +49,7 @@ class TestInputOutput(unittest.TestCase):
         mock_session = MockPromptSession.return_value
         mock_session.prompt.return_value = "test input"
 
-        io = InputOutput(pretty=False)  # Windows tests throw UnicodeDecodeError
+        io = Terminal(pretty=False)  # Windows tests throw UnicodeDecodeError
         root = "/"
         rel_fnames = ["existing_file.txt"]
         addable_rel_fnames = ["new_file.txt"]

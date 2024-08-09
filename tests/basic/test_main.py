@@ -11,7 +11,7 @@ from prompt_toolkit.input import DummyInput
 from prompt_toolkit.output import DummyOutput
 
 from aider.dump import dump  # noqa: F401
-from aider.io import InputOutput
+from aider.terminal import Terminal
 from aider.main import check_gitignore, main, setup_git
 from aider.utils import GitTemporaryDirectory, IgnorantTemporaryDirectory, make_repo
 
@@ -101,7 +101,7 @@ class TestMain(TestCase):
         main(["--yes", str(fname)], input=DummyInput(), output=DummyOutput())
 
     def test_setup_git(self):
-        io = InputOutput(pretty=False, yes=True)
+        io = Terminal(pretty=False, yes=True)
         git_root = setup_git(None, io)
         git_root = Path(git_root).resolve()
         self.assertEqual(git_root, Path(self.tempdir).resolve())
@@ -116,7 +116,7 @@ class TestMain(TestCase):
         with GitTemporaryDirectory():
             os.environ["GIT_CONFIG_GLOBAL"] = "globalgitconfig"
 
-            io = InputOutput(pretty=False, yes=True)
+            io = Terminal(pretty=False, yes=True)
             cwd = Path.cwd()
             gitignore = cwd / ".gitignore"
 
@@ -225,7 +225,7 @@ class TestMain(TestCase):
 
         with GitTemporaryDirectory():
             with patch("aider.coders.Coder.create") as MockCoder:  # noqa: F841
-                with patch("aider.main.InputOutput") as MockSend:
+                with patch("aider.main.Terminal") as MockSend:
 
                     def side_effect(*args, **kwargs):
                         self.assertEqual(kwargs["encoding"], "iso-8859-15")
@@ -235,32 +235,32 @@ class TestMain(TestCase):
 
                     main(["--yes", fname, "--encoding", "iso-8859-15"])
 
-    @patch("aider.main.InputOutput")
+    @patch("aider.main.Terminal")
     @patch("aider.coders.base_coder.Coder.run")
-    def test_main_message_adds_to_input_history(self, mock_run, MockInputOutput):
+    def test_main_message_adds_to_input_history(self, mock_run, MockTerminal):
         test_message = "test message"
-        mock_io_instance = MockInputOutput.return_value
+        mock_io_instance = MockTerminal.return_value
 
         main(["--message", test_message], input=DummyInput(), output=DummyOutput())
 
         mock_io_instance.add_to_input_history.assert_called_once_with(test_message)
 
-    @patch("aider.main.InputOutput")
+    @patch("aider.main.Terminal")
     @patch("aider.coders.base_coder.Coder.run")
-    def test_yes(self, mock_run, MockInputOutput):
+    def test_yes(self, mock_run, MockTerminal):
         test_message = "test message"
 
         main(["--yes", "--message", test_message])
-        args, kwargs = MockInputOutput.call_args
+        args, kwargs = MockTerminal.call_args
         self.assertTrue(args[1])
 
-    @patch("aider.main.InputOutput")
+    @patch("aider.main.Terminal")
     @patch("aider.coders.base_coder.Coder.run")
-    def test_default_yes(self, mock_run, MockInputOutput):
+    def test_default_yes(self, mock_run, MockTerminal):
         test_message = "test message"
 
         main(["--message", test_message])
-        args, kwargs = MockInputOutput.call_args
+        args, kwargs = MockTerminal.call_args
         self.assertEqual(args[1], None)
 
     def test_dark_mode_sets_code_theme(self):

@@ -9,12 +9,12 @@ import streamlit as st
 from aider import urls
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
-from aider.io import InputOutput
+from aider.io import Terminal
 from aider.main import main as cli_main
 from aider.scrape import Scraper
 
 
-class CaptureIO(InputOutput):
+class CaptureIO(Terminal):
     lines = []
 
     def tool_output(self, msg, log_only=False):
