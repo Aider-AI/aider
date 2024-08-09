@@ -471,7 +471,12 @@ class Commands:
             self.io.tool_error("No git repository found.")
             return
 
-        current_head = self.coder.repo.repo.head.commit.hexsha
+        try:
+            current_head = self.coder.repo.repo.head.commit.hexsha
+        except ValueError:
+            self.io.tool_error("Unable to get current commit. The repository might be empty.")
+            return
+
         commit_before_message = self.coder.commit_before_message
 
         if not commit_before_message or commit_before_message == current_head:
