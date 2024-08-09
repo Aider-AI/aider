@@ -390,8 +390,10 @@ class Coder:
             self.linter.set_linter(lang, cmd)
 
     def show_announcements(self):
+        bold = True
         for line in self.get_announcements():
-            self.io.tool_output(line)
+            self.io.tool_output(line, bold=bold)
+            bold = False
 
     def find_common_root(self):
         if len(self.abs_fnames) == 1:

@@ -130,7 +130,7 @@ class GitRepo:
 
         self.repo.git.commit(cmd)
         commit_hash = self.repo.head.commit.hexsha[:7]
-        self.io.tool_output(f"Commit {commit_hash} {commit_message}")
+        self.io.tool_output(f"Commit {commit_hash} {commit_message}", bold=True)
 
         # Restore the env
 

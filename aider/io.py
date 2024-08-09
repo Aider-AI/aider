@@ -15,6 +15,7 @@ from pygments.lexers import MarkdownLexer, guess_lexer_for_filename
 from pygments.token import Token
 from pygments.util import ClassNotFound
 from rich.console import Console
+from rich.style import Style as RichStyle
 from rich.text import Text
 
 from .dump import dump  # noqa: F401
@@ -402,7 +403,7 @@ class InputOutput:
         style = dict(style=self.tool_error_color) if self.tool_error_color else dict()
         self.console.print(message, **style)
 
-    def tool_output(self, *messages, log_only=False):
+    def tool_output(self, *messages, log_only=False, bold=False):
         if messages:
             hist = " ".join(messages)
             hist = f"{hist.strip()}"
@@ -410,8 +411,10 @@ class InputOutput:
 
         if not log_only:
             messages = list(map(Text, messages))
-            style = dict(style=self.tool_output_color) if self.tool_output_color else dict()
-            self.console.print(*messages, **style)
+            style = dict(color=self.tool_output_color) if self.tool_output_color else dict()
+            style["reverse"] = bold
+            style = RichStyle(**style)
+            self.console.print(*messages, style=style)
 
     def append_chat_history(self, text, linebreak=False, blockquote=False, strip=True):
         if blockquote:
