@@ -447,6 +447,10 @@ class Coder:
         all_content = ""
         for _fname, content in self.get_abs_fnames_content():
             all_content += content + "\n"
+        for _fname in self.abs_read_only_fnames:
+            content = self.io.read_text(_fname)
+            if content is not None:
+                all_content += content + "\n"
 
         good = False
         for fence_open, fence_close in self.fences:
