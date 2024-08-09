@@ -466,21 +466,21 @@ class Commands:
             return prompts.undo_command_reply
 
     def cmd_diff(self, args=""):
-        "Display the diff of the last aider commit"
+        "Display the diff of changes since the last message"
         if not self.coder.repo:
             self.io.tool_error("No git repository found.")
             return
 
-        last_commit_hash = self.coder.repo.repo.head.commit.hexsha[:7]
+        current_head = self.coder.repo.repo.head.commit.hexsha
+        commit_before_message = self.coder.commit_before_message
 
-        if last_commit_hash not in self.coder.aider_commit_hashes:
-            self.io.tool_error(f"Last commit {last_commit_hash} was not an aider commit.")
-            self.io.tool_error("You could try `/git diff` or `/git diff HEAD^`.")
+        if not commit_before_message or commit_before_message == current_head:
+            self.io.tool_error("No changes to display since the last message.")
             return
 
         diff = self.coder.repo.diff_commits(
             self.coder.pretty,
-            "HEAD^",
+            commit_before_message,
             "HEAD",
         )
 
