@@ -809,9 +809,9 @@ class TestCommands(TestCase):
             # Create and commit a file
             filename = "test_file.txt"
             file_path = Path(repo_dir) / filename
-            file_path.write_text("Initial content")
+            file_path.write_text("Initial content\n")
             repo.git.add(filename)
-            repo.git.commit("-m", "Initial commit")
+            repo.git.commit("-m", "Initial commit\n")
 
             # Modify the file to make it dirty
             file_path.write_text("Modified content")
@@ -832,6 +832,7 @@ class TestCommands(TestCase):
             diff_output = mock_print.call_args[0][0]
             self.assertIn("-Initial content", diff_output)
             self.assertIn("+Modified content", diff_output)
+            dump(diff_output)
 
     def test_cmd_ask(self):
         io = InputOutput(pretty=False, yes=True)
