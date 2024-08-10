@@ -672,17 +672,17 @@ class Coder:
         if self.repo:
             self.commit_before_message.append(self.repo.get_head())
 
-    def run(self, with_message=None):
+    def run(self, with_message=None, preproc=True):
         try:
             if with_message:
                 self.io.user_input(with_message)
-                self.run_one(with_message)
+                self.run_one(with_message, preproc)
                 return self.partial_response_content
 
             while True:
                 try:
                     user_message = self.get_input()
-                    self.run_one(user_message)
+                    self.run_one(user_message, preproc)
                     self.show_undo_hint()
                 except KeyboardInterrupt:
                     self.keyboard_interrupt()
@@ -710,10 +710,13 @@ class Coder:
 
         return inp
 
-    def run_one(self, user_message):
+    def run_one(self, user_message, preproc):
         self.init_before_message()
 
-        message = self.preproc_user_input(user_message)
+        if preproc:
+            message = self.preproc_user_input(user_message)
+        else:
+            message = user_message
 
         while message:
             self.reflected_message = None

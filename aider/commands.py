@@ -821,7 +821,7 @@ class Commands:
 """
         user_msg += "\n".join(self.coder.get_announcements()) + "\n"
 
-        assistant_msg = coder.run(user_msg)
+        assistant_msg = coder.run(user_msg, preproc=False)
 
         self.coder.cur_messages += [
             dict(role="user", content=user_msg),
