@@ -33,7 +33,8 @@ Then you can run aider with the `--model` command line switch, like this:
 aider --model vertex_ai/claude-3-5-sonnet@20240620
 ```
 
-Or you can use the [yaml config](/docs/config/aider_conf.html) to set the model to any of the Anthropic models supported by Vertex AI.
+Or you can use the [yaml config](/docs/config/aider_conf.html) to set the model to any of the 
+models supported by Vertex AI.
 
 Example `.aider.conf.yml` file:
 
