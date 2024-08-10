@@ -823,6 +823,12 @@ class TestCommands(TestCase):
                 # Run cmd_commit
                 commands.cmd_commit()
 
+            # Modify the file again
+            file_path.write_text("Further modified content")
+
+            # Run cmd_commit again
+            commands.cmd_commit()
+
             # Capture the output of cmd_diff
             with mock.patch("builtins.print") as mock_print:
                 commands.cmd_diff("")
@@ -830,9 +836,8 @@ class TestCommands(TestCase):
             # Check if the diff output is correct
             mock_print.assert_called_with(mock.ANY)
             diff_output = mock_print.call_args[0][0]
-            self.assertIn("-Initial content", diff_output)
-            self.assertIn("+Modified content", diff_output)
-            dump(diff_output)
+            self.assertIn("-Modified content", diff_output)
+            self.assertIn("+Further modified content", diff_output)
 
     def test_cmd_ask(self):
         io = InputOutput(pretty=False, yes=True)
