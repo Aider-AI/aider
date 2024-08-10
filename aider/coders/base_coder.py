@@ -222,6 +222,7 @@ class Coder:
         summarizer=None,
         total_cost=0.0,
     ):
+        self.commit_before_message = []
         self.aider_commit_hashes = set()
         self.rejected_urls = set()
         self.abs_root_path_cache = {}
