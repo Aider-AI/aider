@@ -87,9 +87,10 @@ class Scraper:
 
     def scrape(self, url):
         """
-        Scrape a url and turn it into readable markdown.
+        Scrape a url and turn it into readable markdown if it's HTML.
+        If it's plain text or non-HTML, return it as-is.
 
-        `url` - the URLto scrape.
+        `url` - the URL to scrape.
         """
 
         if self.playwright_available:
@@ -101,9 +102,10 @@ class Scraper:
             self.print_error(f"Failed to retrieve content from {url}")
             return None
 
-        self.try_pandoc()
-
-        content = self.html_to_markdown(content)
+        # Check if the content is HTML
+        if content.strip().startswith(('<html', '<!DOCTYPE html')):
+            self.try_pandoc()
+            content = self.html_to_markdown(content)
 
         return content
 
