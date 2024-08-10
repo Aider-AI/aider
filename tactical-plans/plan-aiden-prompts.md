@@ -57,20 +57,11 @@ Let them specify their default prompt class. We will do this by moving the promp
   - Add a `prompt_variant` parameter to `Coder.__init__`.
   - Create a `setup_prompt_variant` method in the `Coder` class.
   - Update `EditBlockCoder.__init__` to pass the `prompt_variant` to `Coder.__init__`.
-- ( ) Create a class `AidenPrompts` in `aider/coders/aiden_prompts.py`.
-- ( ) Modify `EditBlockPromptsAiden` to explicitly delegate its prompt constants to `AidenPrompts`.
-  I.e. the text for `EditBlockPromptsAiden` prompts should be moved to `AidenPrompts`, and the former should initialize
-  its prompt constants by referencing the latter.
-- ( ) Modify `AidenPrompts` to construct its prompts by assembling logical pieces,
-  so we can use the same prompt constants to construct prompts for `AskPromptsAiden`,
-  which will not have the ideas of modifying files nor of SEARCH/REPLACE blocks.
-- ( ) Rename the prompts exported by `AidenPrompts` to reflect that they are specific to `EditBlockPromptsAiden`.
-  (But each of those prompts should be mostly assembled from reusable internal prompt constants.)
+- (x) Create `aider/coders/aiden_prompts.py`.
+- (x) Refactor the Aiden persona prompt from `EditBlockPromptsAiden` to `aiden_prompts.py`.
 
 ### Support `prompt_variant` for `AskCoder`
 
-- ( ) Create a class `AskPromptsAiden` in `aider/coders/ask_prompts_aiden.py`.
-- ( ) Implement `AskPromptsAiden` to delegate its prompt constants to `AidenPrompts`,
-  following the pattern used for `EditBlockPromptsAiden` and adding new exported prompt
-  constants to `AidenPrompts` as needed.
-- ( ) Update `AskCoder` to support the `prompt_variant` option, similar to how `EditBlockCoder` was updated.
+- (x) Create a class `AskPromptsAiden` in `aider/coders/ask_prompts_aiden.py`.
+- (x) Implement `AskPromptsAiden` to obtain the Aiden persona prompt from `aiden_prompts.py`.
+- ( ) Add a test for `AskCoder` to verify that it uses the correct prompt class, as we did in `test_editblock.py`.

@@ -1,15 +1,12 @@
 # flake8: noqa: E501
 
-from aider.coders.aiden_prompts import AidenPrompts
-
+from . import aiden_prompts
 from .base_prompts import CoderPrompts
 
 
 class EditBlockPromptsAiden(CoderPrompts):
     edit_format = "diff"
     prompt_variant = "aiden"
-
-    aiden_prompts = AidenPrompts()
 
     task_execution_process = """
 # Task Execution Process
