@@ -4,15 +4,17 @@
 ### main branch
 
 - Add read-only files to the chat context with `/read` and `--read`,  including from outside the git repo.
+- `/diff` now shows diffs of all changes resulting from your request, including lint and test fixes.
 - New `/clipboard` command to paste images or text from the clipboard, replaces `/add-clipboard-image`.
-- Output from /web and /diff is now paginated.
-- Messages can now contain `/xxx` commands when [scripting aider](https://aider.chat/docs/scripting.html).
-- Aider in docker image now provides the correct command to update to latest version.
+- Now shows the markdown scraped when you add a url with `/web`.
+- When [scripting aider](https://aider.chat/docs/scripting.html) messages can now contain in-chat `/` commands.
+- Aider in docker image now suggests the correct command to update to latest version.
 - Improved retries on API errors (was easy to test during Sonnet outage).
+- Added `--mini` for `gpt-4o-mini`.
 - Bugfix to keep session cost accurate when using `/ask` and `/help`.
 - Performance improvements for repo map calculation.
 - `/tokens` now shows the active model.
-
+- Aider wrote 57% of the code since the last release.
 
 ### Aider v0.48.1
 
