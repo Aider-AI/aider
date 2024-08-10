@@ -170,7 +170,7 @@
 ## Attribute aider commits in the git committer name (default: True)
 #attribute-committer: true
 
-## Prefix commit messages with 'aider: ' (default: False)
+## Prefix commit messages with 'aider: ' if aider authored the changes (default: False)
 #attribute-commit-message: false
 
 ## Commit all pending changes with a suitable commit message, then exit

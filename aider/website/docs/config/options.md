@@ -332,7 +332,7 @@ Aliases:
   - `--no-attribute-committer`
 
 ### `--attribute-commit-message`
-Prefix commit messages with 'aider: ' (default: False)  
+Prefix commit messages with 'aider: ' if aider authored the changes (default: False)  
 Default: False  
 Environment variable: `AIDER_ATTRIBUTE_COMMIT_MESSAGE`  
 Aliases:

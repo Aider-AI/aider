@@ -361,7 +361,7 @@ def get_parser(default_config_files, git_root):
         "--attribute-commit-message",
         action=argparse.BooleanOptionalAction,
         default=False,
-        help="Prefix commit messages with 'aider: ' (default: False)",
+        help="Prefix commit messages with 'aider: ' if aider authored the changes (default: False)",
     )
     group.add_argument(
         "--commit",
