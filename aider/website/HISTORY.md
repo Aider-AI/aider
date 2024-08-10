@@ -29,7 +29,11 @@ cog.out(text)
 - Bugfix to keep session cost accurate when using `/ask` and `/help`.
 - Performance improvements for repo map calculation.
 - `/tokens` now shows the active model.
-- Aider wrote 57% of the code since the last release.
+- Enhanced commit message attribution options:
+  - New `--attribute-commit-message-author` to prefix commit messages with 'aider: ' if aider authored the changes, replaces `--attribute-commit-message`.
+  - New `--attribute-commit-message-committer` to prefix all commit messages with 'aider: '.
+  - These replace the previous `--attribute-commit-message` option.
+- Aider wrote 61% of the code since the last release.
 
 ### Aider v0.48.1
 

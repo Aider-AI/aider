@@ -47,7 +47,8 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--dirty-commits | --no-dirty-commits]
              [--attribute-author | --no-attribute-author]
              [--attribute-committer | --no-attribute-committer]
-             [--attribute-commit-message | --no-attribute-commit-message]
+             [--attribute-commit-message-author | --no-attribute-commit-message-author]
+             [--attribute-commit-message-committer | --no-attribute-commit-message-committer]
              [--commit] [--commit-prompt] [--dry-run | --no-dry-run]
              [--lint] [--lint-cmd] [--auto-lint | --no-auto-lint]
              [--test-cmd] [--auto-test | --no-auto-test] [--test]
@@ -331,13 +332,21 @@ Aliases:
   - `--attribute-committer`
   - `--no-attribute-committer`
 
-### `--attribute-commit-message`
+### `--attribute-commit-message-author`
 Prefix commit messages with 'aider: ' if aider authored the changes (default: False)  
 Default: False  
-Environment variable: `AIDER_ATTRIBUTE_COMMIT_MESSAGE`  
+Environment variable: `AIDER_ATTRIBUTE_COMMIT_MESSAGE_AUTHOR`  
 Aliases:
-  - `--attribute-commit-message`
-  - `--no-attribute-commit-message`
+  - `--attribute-commit-message-author`
+  - `--no-attribute-commit-message-author`
+
+### `--attribute-commit-message-committer`
+Prefix all commit messages with 'aider: ' (default: False)  
+Default: False  
+Environment variable: `AIDER_ATTRIBUTE_COMMIT_MESSAGE_COMMITTER`  
+Aliases:
+  - `--attribute-commit-message-committer`
+  - `--no-attribute-commit-message-committer`
 
 ### `--commit`
 Commit all pending changes with a suitable commit message, then exit  

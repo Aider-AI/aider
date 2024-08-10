@@ -217,7 +217,10 @@ cog.outl("```")
 #AIDER_ATTRIBUTE_COMMITTER=true
 
 ## Prefix commit messages with 'aider: ' if aider authored the changes (default: False)
-#AIDER_ATTRIBUTE_COMMIT_MESSAGE=false
+#AIDER_ATTRIBUTE_COMMIT_MESSAGE_AUTHOR=false
+
+## Prefix all commit messages with 'aider: ' (default: False)
+#AIDER_ATTRIBUTE_COMMIT_MESSAGE_COMMITTER=false
 
 ## Commit all pending changes with a suitable commit message, then exit
 #AIDER_COMMIT=false
