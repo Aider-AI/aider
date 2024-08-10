@@ -799,6 +799,40 @@ class TestCommands(TestCase):
         finally:
             os.unlink(external_file_path)
 
+    def test_cmd_diff(self):
+        with GitTemporaryDirectory() as repo_dir:
+            repo = git.Repo(repo_dir)
+            io = InputOutput(pretty=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Create and commit a file
+            filename = "test_file.txt"
+            file_path = Path(repo_dir) / filename
+            file_path.write_text("Initial content")
+            repo.git.add(filename)
+            repo.git.commit("-m", "Initial commit")
+
+            # Modify the file to make it dirty
+            file_path.write_text("Modified content")
+
+            # Mock simple_send_with_retries to return a canned commit message
+            with mock.patch("aider.sendchat.simple_send_with_retries") as mock_send:
+                mock_send.return_value = [{"content": "Canned commit message"}]
+
+                # Run cmd_commit
+                commands.cmd_commit()
+
+            # Capture the output of cmd_diff
+            with mock.patch("builtins.print") as mock_print:
+                commands.cmd_diff("")
+
+            # Check if the diff output is correct
+            mock_print.assert_called_with(mock.ANY)
+            diff_output = mock_print.call_args[0][0]
+            self.assertIn("-Initial content", diff_output)
+            self.assertIn("+Modified content", diff_output)
+
     def test_cmd_ask(self):
         io = InputOutput(pretty=False, yes=True)
         coder = Coder.create(self.GPT35, None, io)
