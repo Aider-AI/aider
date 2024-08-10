@@ -259,7 +259,7 @@ class TestCoder(unittest.TestCase):
         files = [file1, file2]
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(self.GPT35, None, io=InputOutput(), fnames=files, pretty=False)
+        coder = Coder.create(self.GPT35, None, io=InputOutput(), fnames=files)
 
         def mock_send(*args, **kwargs):
             coder.partial_response_content = "ok"
@@ -377,7 +377,7 @@ class TestCoder(unittest.TestCase):
             fname = Path("file.txt")
 
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)], pretty=False)
+            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)])
 
             self.assertTrue(fname.exists())
 
@@ -435,7 +435,7 @@ new
 
             io = InputOutput(yes=True)
             coder = Coder.create(
-                self.GPT35, "diff", io=io, fnames=[str(fname1), str(fname2)], pretty=False
+                self.GPT35, "diff", io=io, fnames=[str(fname1), str(fname2)]
             )
 
             def mock_send(*args, **kwargs):
@@ -489,7 +489,7 @@ TWO
             fname2.write_text("OTHER\n")
 
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)], pretty=False)
+            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)])
 
             def mock_send(*args, **kwargs):
                 coder.partial_response_content = f"""
@@ -640,7 +640,7 @@ two
 
     def test_check_for_urls(self):
         io = InputOutput(yes=True)
-        coder = Coder.create(self.GPT35, None, io=io, pretty=False)
+        coder = Coder.create(self.GPT35, None, io=io)
         coder.commands.scraper = MagicMock()
         coder.commands.scraper.scrape = MagicMock(return_value="some content")
 
