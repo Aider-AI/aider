@@ -16,7 +16,7 @@ cog.out(text)
 
 # Release history
 
-### main branch
+### Aider v0.49.0
 
 - Add read-only files to the chat context with `/read` and `--read`,  including from outside the git repo.
 - `/diff` now shows diffs of all changes resulting from your request, including lint and test fixes.
@@ -32,7 +32,7 @@ cog.out(text)
 - Enhanced commit message attribution options:
   - New `--attribute-commit-message-author` to prefix commit messages with 'aider: ' if aider authored the changes, replaces `--attribute-commit-message`.
   - New `--attribute-commit-message-committer` to prefix all commit messages with 'aider: '.
-- Aider wrote 61% of the code since the last release.
+- Aider wrote 61% of the code in this release.
 
 ### Aider v0.48.1
 
