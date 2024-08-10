@@ -126,6 +126,41 @@ class TestScrape(unittest.TestCase):
         # Assert that print_error was not called
         mock_print_error.assert_not_called()
 
+    def test_scrape_text_plain(self):
+        # Create a Scraper instance
+        scraper = Scraper(print_error=MagicMock(), playwright_available=True)
+
+        # Mock the scrape_with_playwright method
+        plain_text = "This is plain text content."
+        scraper.scrape_with_playwright = MagicMock(return_value=(plain_text, "text/plain"))
+
+        # Call the scrape method
+        result = scraper.scrape("https://example.com")
+
+        # Assert that the result is the same as the input plain text
+        self.assertEqual(result, plain_text)
+
+    def test_scrape_text_html(self):
+        # Create a Scraper instance
+        scraper = Scraper(print_error=MagicMock(), playwright_available=True)
+
+        # Mock the scrape_with_playwright method
+        html_content = "<html><body><h1>Test</h1><p>This is HTML content.</p></body></html>"
+        scraper.scrape_with_playwright = MagicMock(return_value=(html_content, "text/html"))
+
+        # Mock the html_to_markdown method
+        expected_markdown = "# Test\n\nThis is HTML content."
+        scraper.html_to_markdown = MagicMock(return_value=expected_markdown)
+
+        # Call the scrape method
+        result = scraper.scrape("https://example.com")
+
+        # Assert that the result is the expected markdown
+        self.assertEqual(result, expected_markdown)
+
+        # Assert that html_to_markdown was called with the HTML content
+        scraper.html_to_markdown.assert_called_once_with(html_content)
+
 
 if __name__ == "__main__":
     unittest.main()
