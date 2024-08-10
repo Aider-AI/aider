@@ -4,7 +4,10 @@ from . import aiden_prompts
 from .base_prompts import CoderPrompts
 
 
-class AskPrompts(CoderPrompts):
+class AskPromptsAiden(CoderPrompts):
+    edit_format = "ask"
+    prompt_variant = "aiden"
+
     code_analyst = """Act as an expert code analyst.
 Answer questions about the supplied code.
 """
