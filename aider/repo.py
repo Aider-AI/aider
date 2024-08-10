@@ -30,6 +30,7 @@ class GitRepo:
         attribute_author=True,
         attribute_committer=True,
         attribute_commit_message=False,
+        attribute_commit_message_committer=False,
         commit_prompt=None,
         subtree_only=False,
     ):
@@ -42,6 +43,7 @@ class GitRepo:
         self.attribute_author = attribute_author
         self.attribute_committer = attribute_committer
         self.attribute_commit_message = attribute_commit_message
+        self.attribute_commit_message_committer = attribute_commit_message_committer
         self.commit_prompt = commit_prompt
         self.subtree_only = subtree_only
         self.ignore_file_cache = {}
@@ -99,6 +101,8 @@ class GitRepo:
             commit_message = self.get_commit_message(diffs, context)
 
         if aider_edits and self.attribute_commit_message:
+            commit_message = "aider: " + commit_message
+        elif self.attribute_commit_message_committer:
             commit_message = "aider: " + commit_message
 
         if not commit_message:
