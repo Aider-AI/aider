@@ -94,16 +94,16 @@ class Scraper:
         """
 
         if self.playwright_available:
-            content = self.scrape_with_playwright(url)
+            content, mime_type = self.scrape_with_playwright(url)
         else:
-            content = self.scrape_with_httpx(url)
+            content, mime_type = self.scrape_with_httpx(url)
 
         if not content:
             self.print_error(f"Failed to retrieve content from {url}")
             return None
 
-        # Check if the content is HTML
-        if content.strip().startswith(('<html', '<!DOCTYPE html')):
+        # Check if the content is HTML based on MIME type
+        if mime_type and mime_type.startswith('text/html'):
             self.try_pandoc()
             content = self.html_to_markdown(content)
 
@@ -120,7 +120,7 @@ class Scraper:
             except Exception as e:
                 self.playwright_available = False
                 self.print_error(str(e))
-                return
+                return None, None
 
             try:
                 context = browser.new_context(ignore_https_errors=not self.verify_ssl)
@@ -134,22 +134,24 @@ class Scraper:
                 page.set_extra_http_headers({"User-Agent": user_agent})
 
                 try:
-                    page.goto(url, wait_until="networkidle", timeout=5000)
+                    response = page.goto(url, wait_until="networkidle", timeout=5000)
                 except playwright._impl._errors.TimeoutError:
                     self.print_error(f"Timeout while loading {url}")
                 except playwright._impl._errors.Error as e:
                     self.print_error(f"Error navigating to {url}: {str(e)}")
-                    return None
+                    return None, None
 
                 try:
                     content = page.content()
+                    mime_type = response.header_value("content-type").split(';')[0]
                 except playwright._impl._errors.Error as e:
                     self.print_error(f"Error retrieving page content: {str(e)}")
                     content = None
+                    mime_type = None
             finally:
                 browser.close()
 
-        return content
+        return content, mime_type
 
     def scrape_with_httpx(self, url):
         import httpx
@@ -159,12 +161,12 @@ class Scraper:
             with httpx.Client(headers=headers, verify=self.verify_ssl) as client:
                 response = client.get(url)
                 response.raise_for_status()
-                return response.text
+                return response.text, response.headers.get('content-type', '').split(';')[0]
         except httpx.HTTPError as http_err:
             self.print_error(f"HTTP error occurred: {http_err}")
         except Exception as err:
             self.print_error(f"An error occurred: {err}")
-        return None
+        return None, None
 
     def try_pandoc(self):
         if self.pandoc_available:
