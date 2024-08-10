@@ -72,7 +72,7 @@ class Coder:
     test_outcome = None
     multi_response_content = ""
     partial_response_content = ""
-    commit_before_message = None
+    commit_before_message = []
 
     @classmethod
     def create(
@@ -670,9 +670,7 @@ class Coder:
         self.test_outcome = None
         self.edit_outcome = None
         if self.repo:
-            self.commit_before_message = self.repo.get_head()
-        else:
-            self.commit_before_message = None
+            self.commit_before_message.append(self.repo.get_head())
 
     def run(self, with_message=None):
         try:
@@ -1661,7 +1659,7 @@ class Coder:
     def show_undo_hint(self):
         if not self.commit_before_message:
             return
-        if self.commit_before_message != self.repo.get_head():
+        if self.commit_before_message[-1] != self.repo.get_head():
             self.io.tool_output("You can use /undo to undo and discard each aider commit.")
 
     def dirty_commit(self):
