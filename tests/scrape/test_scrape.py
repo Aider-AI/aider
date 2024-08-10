@@ -100,7 +100,7 @@ class TestScrape(unittest.TestCase):
 
         # Mock the necessary objects and methods
         scraper.scrape_with_playwright = MagicMock()
-        scraper.scrape_with_playwright.return_value = None
+        scraper.scrape_with_playwright.return_value = (None, None)
 
         # Call the scrape method
         result = scraper.scrape("https://example.com")
@@ -112,6 +112,19 @@ class TestScrape(unittest.TestCase):
         mock_print_error.assert_called_once_with(
             "Failed to retrieve content from https://example.com"
         )
+
+        # Reset the mock
+        mock_print_error.reset_mock()
+
+        # Test with a different return value
+        scraper.scrape_with_playwright.return_value = ("Some content", "text/html")
+        result = scraper.scrape("https://example.com")
+
+        # Assert that the result is not None
+        self.assertIsNotNone(result)
+
+        # Assert that print_error was not called
+        mock_print_error.assert_not_called()
 
 
 if __name__ == "__main__":
