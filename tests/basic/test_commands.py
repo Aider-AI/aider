@@ -876,16 +876,17 @@ class TestCommands(TestCase):
         with mock.patch("aider.coders.Coder.run") as mock_run:
             mock_run.return_value = canned_reply
 
-            commands.cmd_ask(question)
+            with self.assertRaises(SwitchCoder):
+                commands.cmd_ask(question)
 
             mock_run.assert_called_once()
             mock_run.assert_called_once_with(question)
 
-            self.assertEqual(len(coder.cur_messages), 2)
-            self.assertEqual(coder.cur_messages[0]["role"], "user")
-            self.assertEqual(coder.cur_messages[0]["content"], question)
-            self.assertEqual(coder.cur_messages[1]["role"], "assistant")
-            self.assertEqual(coder.cur_messages[1]["content"], canned_reply)
+        self.assertEqual(len(coder.cur_messages), 2)
+        self.assertEqual(coder.cur_messages[0]["role"], "user")
+        self.assertEqual(coder.cur_messages[0]["content"], question)
+        self.assertEqual(coder.cur_messages[1]["role"], "assistant")
+        self.assertEqual(coder.cur_messages[1]["content"], canned_reply)
 
     def test_cmd_lint_with_dirty_file(self):
         with GitTemporaryDirectory() as repo_dir:
