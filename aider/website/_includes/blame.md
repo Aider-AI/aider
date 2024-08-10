@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     labels: {
                         generateLabels: function(chart) {
                             return [{
-                                text: 'Bubble size: Lines of code contributed by aider',
+                                text: 'Y-axis is percent of code, bubble size is lines of code',
                                 fillStyle: 'rgba(54, 162, 235, 0.2)',
                                 strokeStyle: 'rgba(54, 162, 235, 1)',
                                 lineWidth: 1,
