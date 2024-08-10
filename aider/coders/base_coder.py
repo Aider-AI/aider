@@ -22,6 +22,7 @@ from rich.console import Console, Text
 from rich.markdown import Markdown
 
 from aider import __version__, models, prompts, urls, utils
+from aider.coders.coder_prompts import __all_prompt_variants__
 from aider.commands import Commands
 from aider.history import ChatSummary
 from aider.io import InputOutput
@@ -406,8 +407,6 @@ class Coder:
     def setup_prompt_variant(self):
         if self.prompt_variant == "default":
             return
-
-        from .coder_prompts import __all_prompt_variants__
 
         for prompt_class in __all_prompt_variants__:
             if (
