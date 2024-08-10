@@ -53,12 +53,14 @@ they look up their prompt class in the registry.
 Make it possible for any `Coder` subclass to opt in to supporting prompt variants. 
 Let them specify their default prompt class. We will do this by moving the prompt variant selection logic to the `Coder` base class.
 
-- ( ) Move the logic that finds `gpt_prompts` from `EditBlockCoder`'s `__init__` to `Coder`'s `__init__`.
+- (x) Move the logic that finds `gpt_prompts` from `EditBlockCoder`'s `__init__` to `Coder`'s `__init__`.
   - Add a `prompt_variant` parameter to `Coder.__init__`.
   - Create a `setup_prompt_variant` method in the `Coder` class.
   - Update `EditBlockCoder.__init__` to pass the `prompt_variant` to `Coder.__init__`.
 - ( ) Create a class `AidenPrompts` in `aider/coders/aiden_prompts.py`.
-- ( ) Modify `EditBlockPromptsAiden` to delegate its prompt constants to `AidenPrompts`.
+- ( ) Modify `EditBlockPromptsAiden` to explicitly delegate its prompt constants to `AidenPrompts`.
+  I.e. the text for `EditBlockPromptsAiden` prompts should be moved to `AidenPrompts`, and the former should initialize
+  its prompt constants by referencing the latter.
 - ( ) Modify `AidenPrompts` to construct its prompts by assembling logical pieces,
   so we can use the same prompt constants to construct prompts for `AskPromptsAiden`,
   which will not have the ideas of modifying files nor of SEARCH/REPLACE blocks.
