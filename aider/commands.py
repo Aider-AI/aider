@@ -477,9 +477,9 @@ class Commands:
             return
 
         if len(self.coder.commit_before_message) < 2:
-            return
-
-        commit_before_message = self.coder.commit_before_message[-2]
+            commit_before_message = current_head + "^"
+        else:
+            commit_before_message = self.coder.commit_before_message[-2]
 
         if not commit_before_message or commit_before_message == current_head:
             self.io.tool_error("No changes to display since the last message.")
