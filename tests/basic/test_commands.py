@@ -10,7 +10,7 @@ from unittest import TestCase, mock
 import git
 
 from aider.coders import Coder
-from aider.commands import Commands
+from aider.commands import Commands, SwitchCoder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.models import Model
@@ -881,12 +881,6 @@ class TestCommands(TestCase):
 
             mock_run.assert_called_once()
             mock_run.assert_called_once_with(question)
-
-        self.assertEqual(len(coder.cur_messages), 2)
-        self.assertEqual(coder.cur_messages[0]["role"], "user")
-        self.assertEqual(coder.cur_messages[0]["content"], question)
-        self.assertEqual(coder.cur_messages[1]["role"], "assistant")
-        self.assertEqual(coder.cur_messages[1]["content"], canned_reply)
 
     def test_cmd_lint_with_dirty_file(self):
         with GitTemporaryDirectory() as repo_dir:

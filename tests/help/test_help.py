@@ -22,7 +22,13 @@ class TestHelp(unittest.TestCase):
         help_coder_run = MagicMock(return_value="")
         aider.coders.HelpCoder.run = help_coder_run
 
-        commands.cmd_help("hi")
+        try:
+            commands.cmd_help("hi")
+        except aider.commands.SwitchCoder:
+            pass
+        else:
+            # If no exception was raised, fail the test
+            assert False, "SwitchCoder exception was not raised"
 
         help_coder_run.assert_called_once()
 
