@@ -9,7 +9,6 @@ from aider import utils
 
 from ..dump import dump  # noqa: F401
 from .base_coder import Coder
-from .coder_prompts import __all_prompt_variants__
 from .editblock_prompts import EditBlockPrompts
 
 
