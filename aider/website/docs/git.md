@@ -55,5 +55,6 @@ Aider marks commits that it either authored or committed.
 You can use `--no-attribute-author` and `--no-attribute-committer` to disable
 modification of the git author and committer name fields.
 
-Additionally, you can use `--attribute-commit-message` to prefix commit messages with 'aider: '.
-This option is disabled by default, but can be useful for easily identifying commits made by aider.
+Additionally, you can use `--attribute-commit-message` to have
+aider prefix commit messages with 'aider: ' if it has authored the changes.
+This option is disabled by default, but can be useful for easily identifying changes made by aider.
