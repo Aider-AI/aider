@@ -816,10 +816,8 @@ class TestCommands(TestCase):
             # Modify the file to make it dirty
             file_path.write_text("Modified content")
 
-            # Mock simple_send_with_retries to return a canned commit message
-            with mock.patch("aider.sendchat.simple_send_with_retries") as mock_send:
-                mock_send.return_value = [{"content": "Canned commit message"}]
-
+            # Mock repo.get_commit_message to return a canned commit message
+            with mock.patch.object(repo, "get_commit_message", return_value="Canned commit message"):
                 # Run cmd_commit
                 commands.cmd_commit()
 
