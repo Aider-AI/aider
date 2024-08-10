@@ -434,9 +434,7 @@ new
             fname1.write_text("ONE\n")
 
             io = InputOutput(yes=True)
-            coder = Coder.create(
-                self.GPT35, "diff", io=io, fnames=[str(fname1), str(fname2)]
-            )
+            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname1), str(fname2)])
 
             def mock_send(*args, **kwargs):
                 coder.partial_response_content = f"""
