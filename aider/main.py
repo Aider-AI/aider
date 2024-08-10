@@ -481,7 +481,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 models=main_model.commit_message_models(),
                 attribute_author=args.attribute_author,
                 attribute_committer=args.attribute_committer,
-                attribute_commit_message=args.attribute_commit_message,
+                attribute_commit_message_author=args.attribute_commit_message_author,
+                attribute_commit_message_committer=args.attribute_commit_message_committer,
                 commit_prompt=args.commit_prompt,
                 subtree_only=args.subtree_only,
             )
