@@ -64,5 +64,9 @@ Let them specify their default prompt class. We will do this by moving the promp
 
 - (x) Create a class `AskPromptsAiden` in `aider/coders/ask_prompts_aiden.py`.
 - (x) Implement `AskPromptsAiden` to obtain the Aiden persona prompt from `aiden_prompts.py`.
-- ( ) Create an `AskCoder.__init__` that passes `prompt_variant` to `Coder.__init__`.
+- (x) Create an `AskCoder.__init__` that passes `prompt_variant` to `Coder.__init__`.
 - (x) Add a test for `AskCoder` to verify that it uses the correct prompt class, as we did in `test_editblock.py`.
+
+### Add Optional LangFuse Support
+
+### Add Heuristics
