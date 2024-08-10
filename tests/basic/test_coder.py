@@ -286,7 +286,7 @@ class TestCoder(unittest.TestCase):
         files = [file1, file2]
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(self.GPT35, None, io=InputOutput(), fnames=files, pretty=False)
+        coder = Coder.create(self.GPT35, None, io=InputOutput(), fnames=files)
 
         def mock_send(*args, **kwargs):
             coder.partial_response_content = "ok"
@@ -565,7 +565,7 @@ three
             repo.git.commit("-m", "initial")
 
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)], pretty=False)
+            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)])
 
             def mock_send(*args, **kwargs):
                 coder.partial_response_content = f"""
