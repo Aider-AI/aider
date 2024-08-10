@@ -200,7 +200,6 @@ class Coder:
         repo=None,
         fnames=None,
         read_only_fnames=None,
-        pretty=True,
         show_diffs=False,
         auto_commits=True,
         dirty_commits=True,
@@ -274,9 +273,9 @@ class Coder:
         self.code_theme = code_theme
 
         self.dry_run = dry_run
-        self.pretty = pretty
+        self.pretty = self.io.pretty
 
-        if pretty:
+        if self.pretty:
             self.console = Console()
         else:
             self.console = Console(force_terminal=False, no_color=True)
