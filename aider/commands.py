@@ -476,11 +476,16 @@ class Commands:
             self.io.tool_error("Unable to get current commit. The repository might be empty.")
             return
 
-        commit_before_message = self.coder.commit_before_message
+        if len(self.coder.commit_before_message) < 2:
+            return
+
+        commit_before_message = self.coder.commit_before_message[-2]
 
         if not commit_before_message or commit_before_message == current_head:
             self.io.tool_error("No changes to display since the last message.")
             return
+
+        self.io.tool_output(f"Diff since {commit_before_message[:7]}...")
 
         diff = self.coder.repo.diff_commits(
             self.coder.pretty,
