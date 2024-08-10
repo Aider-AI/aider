@@ -818,7 +818,7 @@ class TestCommands(TestCase):
 
             # Mock repo.get_commit_message to return a canned commit message
             with mock.patch.object(
-                repo, "get_commit_message", return_value="Canned commit message"
+                coder.repo, "get_commit_message", return_value="Canned commit message"
             ):
                 # Run cmd_commit
                 commands.cmd_commit()

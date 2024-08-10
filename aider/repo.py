@@ -227,6 +227,8 @@ class GitRepo:
         args = []
         if pretty:
             args += ["--color"]
+        else:
+            args += ["--color=never"]
 
         args += [from_commit, to_commit]
         diffs = self.repo.git.diff(*args)
