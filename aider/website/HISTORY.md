@@ -16,6 +16,10 @@ cog.out(text)
 
 # Release history
 
+### Aider v0.49.1
+
+- Bugfix to `/help`.
+
 ### Aider v0.49.0
 
 - Add read-only files to the chat context with `/read` and `--read`,  including from outside the git repo.
