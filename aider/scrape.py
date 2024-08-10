@@ -103,7 +103,7 @@ class Scraper:
             return None
 
         # Check if the content is HTML based on MIME type
-        if mime_type and mime_type.startswith('text/html'):
+        if mime_type and mime_type.startswith("text/html"):
             self.try_pandoc()
             content = self.html_to_markdown(content)
 
@@ -143,7 +143,7 @@ class Scraper:
 
                 try:
                     content = page.content()
-                    mime_type = response.header_value("content-type").split(';')[0]
+                    mime_type = response.header_value("content-type").split(";")[0]
                 except playwright._impl._errors.Error as e:
                     self.print_error(f"Error retrieving page content: {str(e)}")
                     content = None
@@ -161,7 +161,7 @@ class Scraper:
             with httpx.Client(headers=headers, verify=self.verify_ssl) as client:
                 response = client.get(url)
                 response.raise_for_status()
-                return response.text, response.headers.get('content-type', '').split(';')[0]
+                return response.text, response.headers.get("content-type", "").split(";")[0]
         except httpx.HTTPError as http_err:
             self.print_error(f"HTTP error occurred: {http_err}")
         except Exception as err:
