@@ -503,7 +503,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             repo=repo,
             fnames=fnames,
             read_only_fnames=read_only_fnames,
-            pretty=args.pretty,
             show_diffs=args.show_diffs,
             auto_commits=args.auto_commits,
             dirty_commits=args.dirty_commits,
