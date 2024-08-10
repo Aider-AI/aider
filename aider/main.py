@@ -620,8 +620,15 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             coder.run()
             return
         except SwitchCoder as switch:
-            coder = Coder.create(io=io, from_coder=coder, **switch.kwargs)
-            coder.show_announcements()
+            kwargs = dict(io=io, from_coder=coder)
+            kwargs.update(switch.kwargs)
+            if "show_announcements" in kwargs:
+                del kwargs["show_announcements"]
+
+            coder = Coder.create(**kwargs)
+
+            if switch.kwargs.get("show_announcements") is not False:
+                coder.show_announcements()
 
 
 def load_slow_imports():
