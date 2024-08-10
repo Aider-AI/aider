@@ -136,6 +136,16 @@ The model also has to successfully apply all its changes to the source file with
   tr.selected {
     color: #0056b3;
   }
+  table {
+    table-layout: fixed;
+  }
+  td, th {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  td:nth-child(3), td:nth-child(4) {
+    font-size: 12px;
+  }
 </style>
 
 ## Code refactoring leaderboard
