@@ -849,6 +849,22 @@ class TestCommands(TestCase):
                 self.assertIn("-Modified content", diff_output)
                 self.assertIn("+Further modified content", diff_output)
 
+                # Modify the file a third time
+                file_path.write_text("Final modified content")
+
+                # Run cmd_commit again
+                commands.cmd_commit()
+
+                # Capture the output of cmd_diff
+                with mock.patch("builtins.print") as mock_print:
+                    commands.cmd_diff("")
+
+                # Check if the diff output is correct
+                mock_print.assert_called_with(mock.ANY)
+                diff_output = mock_print.call_args[0][0]
+                self.assertIn("-Further modified content", diff_output)
+                self.assertIn("+Final modified content", diff_output)
+
     def test_cmd_ask(self):
         io = InputOutput(pretty=False, yes=True)
         coder = Coder.create(self.GPT35, None, io)
