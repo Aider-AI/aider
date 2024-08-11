@@ -143,7 +143,7 @@ class Commands:
 
         if paginate:
             with self.io.console.pager():
-                self.io.console.print(content)
+                self.io.console.print(Text(content))
 
         return content
 
