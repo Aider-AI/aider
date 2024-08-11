@@ -330,7 +330,7 @@ class InputOutput:
     def user_input(self, inp, log_only=True):
         if not log_only:
             style = dict(style=self.user_input_color) if self.user_input_color else dict()
-            self.console.print(inp, **style)
+            self.console.print(Text(inp), **style)
 
         prefix = "####"
         if inp:
