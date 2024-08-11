@@ -19,7 +19,7 @@ from aider.llm import litellm  # noqa: F401; properly init litellm on launch
 from aider.repo import GitRepo
 from aider.versioncheck import check_version
 
-from .dump import dump  # noqa: F401
+from aider.dump import dump  # noqa: F401
 
 
 def get_git_root():
