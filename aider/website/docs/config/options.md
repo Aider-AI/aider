@@ -165,6 +165,9 @@ Aliases:
 ### `--edit-format EDIT_FORMAT`
 Specify what edit format the LLM should use (default depends on model)  
 Environment variable: `AIDER_EDIT_FORMAT`  
+Aliases:
+  - `--edit-format EDIT_FORMAT`
+  - `--chat-mode EDIT_FORMAT`
 
 ### `--weak-model WEAK_MODEL`
 Specify the model to use for commit messages and chat history summarization (default depends on --model)  

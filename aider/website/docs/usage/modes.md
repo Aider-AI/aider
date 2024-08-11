@@ -13,7 +13,7 @@ Aider has 3 different chat modes:
 - `help` - Aider will answer questions about using aider, configuring, troubleshooting, etc.
 
 By default, aider starts in "code" mode. As you are talking, you can
-send messages in other modes using `/code`, `/ask`, and `/help` commands:
+send individual messages in a specific mode using `/code`, `/ask`, and `/help` commands:
 
 <div class="chat-transcript" markdown="1">
 
@@ -53,7 +53,7 @@ This function uses recursion to calculate the factorial. It's been added to your
 </div>
 
 Using `/code`, `/ask`, and `/help` applies just to that particular message.
-Your next message will go back to code mode.
+Your next message will go back to the active mode (usually "code" mode by default).
 
 You can switch between the modes in a sticky way
 with the `/chat-mode <mode>` command:
@@ -65,4 +65,3 @@ with the `/chat-mode <mode>` command:
 ```
 
 Or you can launch aider in one of the modes with the `--chat-mode <mode>` switch.
-

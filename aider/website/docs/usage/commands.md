@@ -19,6 +19,7 @@ cog.out(get_help_md())
 | **/chat-mode** | Switch to a new chat mode |
 | **/clear** | Clear the chat history |
 | **/clipboard** | Add image/text from the clipboard to the chat (optionally provide a name for the image) |
+| **/code** | Ask for changes to your code |
 | **/commit** | Commit edits to the repo made outside the chat (commit message optional) |
 | **/diff** | Display the diff of changes since the last message |
 | **/drop** | Remove files from the chat session to free up context space |
