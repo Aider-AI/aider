@@ -861,9 +861,15 @@ class Commands:
 
     def cmd_ask(self, args):
         "Ask questions about the code base without editing any files"
+        return self._generic_chat_command(args, "ask")
 
+    def cmd_code(self, args):
+        "Ask for changes to your code using the best edit format"
+        return self._generic_chat_command(args, "code")
+
+    def _generic_chat_command(self, args, edit_format):
         if not args.strip():
-            self.io.tool_error("Please provide a question or topic for the chat.")
+            self.io.tool_error(f"Please provide a question or topic for the {edit_format} chat.")
             return
 
         from aider.coders import Coder
@@ -871,7 +877,7 @@ class Commands:
         coder = Coder.create(
             io=self.io,
             from_coder=self.coder,
-            edit_format="ask",
+            edit_format=edit_format,
             summarize_from_coder=False,
         )
 
