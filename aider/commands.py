@@ -9,6 +9,7 @@ from pathlib import Path
 import git
 import pyperclip
 from PIL import Image, ImageGrab
+from rich.text import Text
 
 from aider import models, prompts, voice
 from aider.help import Help, install_help_extra
