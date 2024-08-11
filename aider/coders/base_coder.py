@@ -692,9 +692,12 @@ class Coder:
             return
 
     def get_input(self):
+        inchat_files = self.get_inchat_relative_files()
+        read_only_files = [self.get_rel_fname(fname) for fname in self.abs_read_only_fnames]
+        all_files = sorted(set(inchat_files + read_only_files))
         return self.io.get_input(
             self.root,
-            self.get_inchat_relative_files(),
+            all_files,
             self.get_addable_relative_files(),
             self.commands,
             self.abs_read_only_fnames,
