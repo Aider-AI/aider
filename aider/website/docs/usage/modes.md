@@ -47,3 +47,5 @@ with the `/chat-mode <mode>` command:
 /chat-mode help
 ```
 
+Or you can launch aider in one of the modes with the `--chat-mode <mode>` switch.
+
