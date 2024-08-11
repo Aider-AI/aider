@@ -865,7 +865,7 @@ class Commands:
 
     def cmd_code(self, args):
         "Ask for changes to your code using the best edit format"
-        return self._generic_chat_command(args, "code")
+        return self._generic_chat_command(args, self.coder.main_model.edit_format)
 
     def _generic_chat_command(self, args, edit_format):
         if not args.strip():
