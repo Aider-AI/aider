@@ -166,7 +166,8 @@ def get_parser(default_config_files, git_root):
         help="Verify the SSL cert when connecting to models (default: True)",
     )
     group.add_argument(
-        "--edit-format", "--chat-mode",
+        "--edit-format",
+        "--chat-mode",
         metavar="EDIT_FORMAT",
         default=None,
         help="Specify what edit format the LLM should use (default depends on model)",
