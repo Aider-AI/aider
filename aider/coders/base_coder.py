@@ -92,6 +92,8 @@ class Coder:
             else:
                 main_model = models.Model(models.DEFAULT_MODEL_NAME)
 
+        if edit_format == "code":
+            edit_format = None
         if edit_format is None:
             if from_coder:
                 edit_format = from_coder.edit_format
