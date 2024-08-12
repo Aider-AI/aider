@@ -16,7 +16,6 @@ IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp"}
 class IgnorantTemporaryDirectory:
     def __init__(self):
         self.temp_dir = tempfile.TemporaryDirectory()
-        self.temp_dir = str(Path(self.temp_dir).resolve())
 
     def __enter__(self):
         return self.temp_dir.__enter__()
@@ -45,7 +44,7 @@ class ChdirTemporaryDirectory(IgnorantTemporaryDirectory):
 
     def __enter__(self):
         res = super().__enter__()
-        os.chdir(self.temp_dir.name)
+        os.chdir(Path(self.temp_dir.name).resolve())
         return res
 
     def __exit__(self, exc_type, exc_val, exc_tb):

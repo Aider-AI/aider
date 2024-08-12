@@ -575,7 +575,6 @@ class TestCommands(TestCase):
                 )
             )
 
-
             repo = git.Repo()
             repo.git.add(str(test_file))
             repo.git.commit("-m", "initial")
