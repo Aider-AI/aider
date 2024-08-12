@@ -1411,6 +1411,14 @@ class Coder:
                 f" Cost: ${format_cost(cost)} request, ${format_cost(self.total_cost)} session."
             )
 
+        self.event("token_usage", 
+                   prompt_tokens=prompt_tokens, 
+                   completion_tokens=completion_tokens, 
+                   total_tokens=prompt_tokens + completion_tokens,
+                   cost=cost,
+                   total_cost=self.total_cost,
+                   model=self.main_model.name)
+
     def get_multi_response_content(self, final=False):
         cur = self.multi_response_content or ""
         new = self.partial_response_content or ""
