@@ -133,6 +133,7 @@ class Scraper:
 
                 page.set_extra_http_headers({"User-Agent": user_agent})
 
+                response = None
                 try:
                     response = page.goto(url, wait_until="networkidle", timeout=5000)
                 except playwright._impl._errors.TimeoutError:
@@ -143,7 +144,7 @@ class Scraper:
 
                 try:
                     content = page.content()
-                    mime_type = response.header_value("content-type").split(";")[0]
+                    mime_type = response.header_value("content-type").split(";")[0] if response else None
                 except playwright._impl._errors.Error as e:
                     self.print_error(f"Error retrieving page content: {str(e)}")
                     content = None
