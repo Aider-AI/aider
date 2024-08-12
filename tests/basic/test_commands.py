@@ -538,48 +538,46 @@ class TestCommands(TestCase):
         self.assertEqual(coder.abs_fnames, set())
 
     def test_cmd_add_read_only_file(self):
-        # Initialize the Commands and InputOutput objects
-        io = InputOutput(pretty=False, yes=True)
-        from aider.coders import Coder
+        with GitTemporaryDirectory():
+            # Initialize the Commands and InputOutput objects
+            io = InputOutput(pretty=False, yes=True)
+            from aider.coders import Coder
 
-        coder = Coder.create(self.GPT35, None, io)
-        commands = Commands(io, coder)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
 
-        # Create a test file
-        test_file = Path("test_read_only.txt")
-        test_file.write_text("Test content")
+            # Create a test file
+            test_file = Path("test_read_only.txt")
+            test_file.write_text("Test content")
 
-        # Add the file as read-only
-        commands.cmd_read(str(test_file))
+            # Add the file as read-only
+            commands.cmd_read(str(test_file))
 
-        # Verify it's in abs_read_only_fnames
-        self.assertTrue(
-            any(
-                os.path.samefile(str(test_file.resolve()), fname)
-                for fname in coder.abs_read_only_fnames
+            # Verify it's in abs_read_only_fnames
+            self.assertTrue(
+                any(
+                    os.path.samefile(str(test_file.resolve()), fname)
+                    for fname in coder.abs_read_only_fnames
+                )
             )
-        )
 
-        # Mock the repo to simulate a tracked file
-        coder.repo = mock.MagicMock()
-        coder.repo.is_tracked_file.return_value = True
+            # Mock the repo to simulate a tracked file
+            coder.repo = mock.MagicMock()
+            coder.repo.is_tracked_file.return_value = True
 
-        # Try to add the read-only file
-        commands.cmd_add(str(test_file))
+            # Try to add the read-only file
+            commands.cmd_add(str(test_file))
 
-        # Verify it's now in abs_fnames and not in abs_read_only_fnames
-        self.assertTrue(
-            any(os.path.samefile(str(test_file.resolve()), fname) for fname in coder.abs_fnames)
-        )
-        self.assertFalse(
-            any(
-                os.path.samefile(str(test_file.resolve()), fname)
-                for fname in coder.abs_read_only_fnames
+            # Verify it's now in abs_fnames and not in abs_read_only_fnames
+            self.assertTrue(
+                any(os.path.samefile(str(test_file.resolve()), fname) for fname in coder.abs_fnames)
             )
-        )
-
-        # Clean up
-        test_file.unlink()
+            self.assertFalse(
+                any(
+                    os.path.samefile(str(test_file.resolve()), fname)
+                    for fname in coder.abs_read_only_fnames
+                )
+            )
 
     def test_cmd_test_unbound_local_error(self):
         with ChdirTemporaryDirectory():
