@@ -989,7 +989,7 @@ class Coder:
                     return
                 except FinishReasonLength:
                     # We hit the output limit!
-                    if not self.main_model.can_prefill:
+                    if not self.main_model.info.get("supports_assistant_prefill"):
                         exhausted = True
                         break
 
@@ -998,7 +998,9 @@ class Coder:
                     if messages[-1]["role"] == "assistant":
                         messages[-1]["content"] = self.multi_response_content
                     else:
-                        messages.append(dict(role="assistant", content=self.multi_response_content))
+                        messages.append(
+                            dict(role="assistant", content=self.multi_response_content, prefix=True)
+                        )
                 except Exception as err:
                     self.io.tool_error(f"Unexpected error: {err}")
                     traceback.print_exc()
