@@ -591,6 +591,14 @@ class Commands:
 
             if abs_file_path in self.coder.abs_fnames:
                 self.io.tool_error(f"{matched_file} is already in the chat")
+            elif abs_file_path in self.coder.abs_read_only_fnames:
+                if self.coder.repo and self.coder.repo.is_tracked_file(matched_file):
+                    self.coder.abs_read_only_fnames.remove(abs_file_path)
+                    self.coder.abs_fnames.add(abs_file_path)
+                    self.io.tool_output(f"Moved {matched_file} from read-only to editable files in the chat")
+                    added_fnames.append(matched_file)
+                else:
+                    self.io.tool_error(f"Cannot add {matched_file} as it's not part of the repository")
             else:
                 if is_image_file(matched_file) and not self.coder.main_model.accepts_images:
                     self.io.tool_error(
