@@ -311,7 +311,6 @@ class Commands:
         # chat history
         msgs = self.coder.done_messages + self.coder.cur_messages
         if msgs:
-            msgs = [dict(role="dummy", content=msg) for msg in msgs]
             tokens = self.coder.main_model.token_count(msgs)
             res.append((tokens, "chat history", "use /clear to clear"))
 
