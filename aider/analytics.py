@@ -36,13 +36,13 @@ class Analytics:
             if properties is None:
                 properties = {}
             properties.update(kwargs)
-            
+
             # Handle numeric values
             for key, value in properties.items():
                 if isinstance(value, (int, float)):
                     properties[key] = value
                 else:
                     properties[key] = str(value)
-            
+
             properties["aider_version"] = __version__
             self.mp.track(self.user_id, event_name, properties)
