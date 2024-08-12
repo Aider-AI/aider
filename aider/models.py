@@ -60,6 +60,17 @@ claude-3-5-sonnet-20240620
 ANTHROPIC_MODELS = [ln.strip() for ln in ANTHROPIC_MODELS.splitlines() if ln.strip()]
 
 
+GEMINI_MODELS = """
+gemini/gemini-pro
+gemini/gemini-1.5-pro
+gemini/gemini-1.5-pro-latest
+gemini/gemini-1.5-flash
+gemini/gemini-1.5-flash-latest
+"""
+
+GEMINI_MODELS = [ln.strip() for ln in GEMINI_MODELS.splitlines() if ln.strip()]
+
+
 @dataclass
 class ModelSettings:
     # Model class needs to have each of these as well
@@ -352,6 +363,12 @@ MODEL_SETTINGS = [
     ),
     # Gemini
     ModelSettings(
+        "gemini/gemini-pro",
+        "diff-fenced",
+        use_repo_map=True,
+        send_undo_reply=True,
+    ),
+    ModelSettings(
         "gemini/gemini-1.5-pro",
         "diff-fenced",
         use_repo_map=True,
@@ -359,6 +376,18 @@ MODEL_SETTINGS = [
     ),
     ModelSettings(
         "gemini/gemini-1.5-pro-latest",
+        "diff-fenced",
+        use_repo_map=True,
+        send_undo_reply=True,
+    ),
+    ModelSettings(
+        "gemini/gemini-1.5-flash",
+        "diff-fenced",
+        use_repo_map=True,
+        send_undo_reply=True,
+    ),
+    ModelSettings(
+        "gemini/gemini-1.5-flash-latest",
         "diff-fenced",
         use_repo_map=True,
         send_undo_reply=True,
@@ -584,6 +613,8 @@ class Model:
             var = "OPENAI_API_KEY"
         elif model in ANTHROPIC_MODELS or model.startswith("anthropic/"):
             var = "ANTHROPIC_API_KEY"
+        elif model in GEMINI_MODELS or model.startswith("gemini/"):
+            var = "GEMINI_API_KEY"
         else:
             return
 
@@ -628,7 +659,8 @@ def register_models(model_settings_fnames):
             for model_settings_dict in model_settings_list:
                 model_settings = ModelSettings(**model_settings_dict)
                 existing_model_settings = next(
-                    (ms for ms in MODEL_SETTINGS if ms.name == model_settings.name), None
+                    (ms for ms in MODEL_SETTINGS if ms.name == model_settings.name),
+                    None,
                 )
 
                 if existing_model_settings:

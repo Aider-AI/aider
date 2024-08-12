@@ -44,6 +44,12 @@ def get_parser(default_config_files, git_root):
         help="Specify the Anthropic API key",
     )
     group.add_argument(
+        "--gemini-api-key",
+        metavar="GEMINI_API_KEY",
+        env_var="GEMINI_API_KEY",
+        help="Specify the Gemini API key",
+    )
+    group.add_argument(
         "--model",
         metavar="MODEL",
         default=None,
@@ -116,6 +122,29 @@ def get_parser(default_config_files, git_root):
         dest="model",
         const=deepseek_model,
         help=f"Use {deepseek_model} model for the main chat",
+    )
+    gemini_pro_model = "gemini/gemini-1.5-pro"
+    group.add_argument(
+        "--gemini-pro",
+        action="store_const",
+        dest="model",
+        const=gemini_pro_model,
+        help=f"Use {gemini_pro_model} model for the main chat",
+    )
+    gemini_flash_model = "gemini/gemini-1.5-flash"
+    group.add_argument(
+        "--gemini-flash",
+        action="store_const",
+        dest="model",
+        const=gemini_flash_model,
+        help=f"Use {gemini_flash_model} model for the main chat",
+    )
+    group.add_argument(
+        "--gemini",
+        action="store_const",
+        dest="model",
+        const=gemini_pro_model,
+        help=f"Use {gemini_flash_model} model for the main chat",
     )
 
     ##########
