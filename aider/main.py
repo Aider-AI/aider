@@ -461,6 +461,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         if os.environ.get("ANTHROPIC_API_KEY"):
             args.model = "claude-3-5-sonnet-20240620"
 
+    if args.deepseek_beta:
+        args.model = "deepseek-coder"
+        os.environ["DEEPSEEK_API_BASE"] = "https://api.deepseek.com/beta"
+
     main_model = models.Model(args.model, weak_model=args.weak_model)
 
     lint_cmds = parse_lint_cmds(args.lint_cmd, io)
