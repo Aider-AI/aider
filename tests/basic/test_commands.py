@@ -561,9 +561,24 @@ class TestCommands(TestCase):
                 )
             )
 
-            # Mock the repo to simulate a tracked file
-            coder.repo = mock.MagicMock()
-            coder.repo.is_tracked_file.return_value = True
+            # Try to add the read-only file
+            commands.cmd_add(str(test_file))
+
+            # It's not in the repo, should not do anything
+            self.assertFalse(
+                any(os.path.samefile(str(test_file.resolve()), fname) for fname in coder.abs_fnames)
+            )
+            self.assertTrue(
+                any(
+                    os.path.samefile(str(test_file.resolve()), fname)
+                    for fname in coder.abs_read_only_fnames
+                )
+            )
+
+
+            repo = git.Repo()
+            repo.git.add(str(test_file))
+            repo.git.commit("-m", "initial")
 
             # Try to add the read-only file
             commands.cmd_add(str(test_file))

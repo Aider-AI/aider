@@ -592,7 +592,7 @@ class Commands:
             if abs_file_path in self.coder.abs_fnames:
                 self.io.tool_error(f"{matched_file} is already in the chat")
             elif abs_file_path in self.coder.abs_read_only_fnames:
-                if self.coder.repo and matched_file in self.coder.repo.get_tracked_files():
+                if self.coder.repo and self.coder.repo.path_in_repo(matched_file):
                     self.coder.abs_read_only_fnames.remove(abs_file_path)
                     self.coder.abs_fnames.add(abs_file_path)
                     self.io.tool_output(
