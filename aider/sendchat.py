@@ -1,6 +1,5 @@
 import hashlib
 import json
-import os
 
 import backoff
 
@@ -59,11 +58,6 @@ def send_completion(
         stream=stream,
     )
 
-    if model_name.startswith("deepseek/"):
-        if "DEEPSEEK_API_BASE" in os.environ:
-            kwargs["base_url"] = os.environ["DEEPSEEK_API_BASE"]
-        elif getattr(kwargs.get('extra_headers', {}), 'deepseek_beta', False):
-            kwargs["base_url"] = "https://api.deepseek.com/v1"
     if functions is not None:
         kwargs["functions"] = functions
     if extra_headers is not None:
