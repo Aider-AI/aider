@@ -13,7 +13,7 @@ class Analytics:
             self.mp = None
             return
 
-        project_token = "3f9ad6b9d7b7e8e5a1a5a9a7b0b0b0b0"
+        project_token = "6da9a43058a5d1b9f3353153921fb04d"
         self.mp = Mixpanel(project_token) if project_token else None
         self.user_id = self.get_or_create_uuid()
 
