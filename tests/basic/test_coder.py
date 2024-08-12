@@ -191,7 +191,9 @@ class TestCoder(unittest.TestCase):
 
     def test_check_for_file_mentions_read_only(self):
         with GitTemporaryDirectory():
-            io = InputOutput(pretty=False, yes=False)  # Set yes=False to simulate user not confirming
+            io = InputOutput(
+                pretty=False, yes=False
+            )  # Set yes=False to simulate user not confirming
             coder = Coder.create(self.GPT35, None, io)
 
             fname = Path("readonly_file.txt")
