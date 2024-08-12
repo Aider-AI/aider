@@ -117,6 +117,12 @@ def get_parser(default_config_files, git_root):
         const=deepseek_model,
         help=f"Use {deepseek_model} model for the main chat",
     )
+    group.add_argument(
+        "--deepseek-beta",
+        action="store_true",
+        help="Uses DeepSeek Coder via the beta API endpoint",
+        default=False,
+    )
 
     ##########
     group = parser.add_argument_group("Model Settings")
