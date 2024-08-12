@@ -1,7 +1,7 @@
 import json
-import uuid
-import sys
 import platform
+import sys
+import uuid
 from pathlib import Path
 
 from mixpanel import Mixpanel
@@ -24,7 +24,7 @@ class Analytics:
             "python_version": sys.version.split()[0],
             "os_platform": platform.system(),
             "os_release": platform.release(),
-            "machine": platform.machine()
+            "machine": platform.machine(),
         }
 
     def get_or_create_uuid(self):
