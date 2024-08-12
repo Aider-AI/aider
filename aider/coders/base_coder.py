@@ -225,6 +225,8 @@ class Coder:
         analytics=None,
     ):
         self.analytics = analytics
+        self.event = analytics.event
+
         self.commit_before_message = []
         self.aider_commit_hashes = set()
         self.rejected_urls = set()
