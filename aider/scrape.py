@@ -2,7 +2,6 @@
 
 import re
 import sys
-import re
 
 import pypandoc
 
@@ -104,7 +103,9 @@ class Scraper:
             return None
 
         # Check if the content is HTML based on MIME type or content
-        if (mime_type and mime_type.startswith("text/html")) or (mime_type is None and self.looks_like_html(content)):
+        if (mime_type and mime_type.startswith("text/html")) or (
+            mime_type is None and self.looks_like_html(content)
+        ):
             self.try_pandoc()
             content = self.html_to_markdown(content)
 
@@ -117,13 +118,13 @@ class Scraper:
         if isinstance(content, str):
             # Check for common HTML tags
             html_patterns = [
-                r'<!DOCTYPE\s+html',
-                r'<html',
-                r'<head',
-                r'<body',
-                r'<div',
-                r'<p>',
-                r'<a\s+href=',
+                r"<!DOCTYPE\s+html",
+                r"<html",
+                r"<head",
+                r"<body",
+                r"<div",
+                r"<p>",
+                r"<a\s+href=",
             ]
             return any(re.search(pattern, content, re.IGNORECASE) for pattern in html_patterns)
         return False
