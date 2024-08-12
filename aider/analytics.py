@@ -42,18 +42,20 @@ class Analytics:
         return new_uuid
 
     def event(self, event_name, properties=None, **kwargs):
-        if self.mp:
-            if properties is None:
-                properties = {}
-            properties.update(kwargs)
-            properties.update(self.get_system_info())  # Add system info to all events
+        if not self.mp:
+            return
 
-            # Handle numeric values
-            for key, value in properties.items():
-                if isinstance(value, (int, float)):
-                    properties[key] = value
-                else:
-                    properties[key] = str(value)
+        if properties is None:
+            properties = {}
+        properties.update(kwargs)
+        properties.update(self.get_system_info())  # Add system info to all events
 
-            properties["aider_version"] = __version__
-            self.mp.track(self.user_id, event_name, properties)
+        # Handle numeric values
+        for key, value in properties.items():
+            if isinstance(value, (int, float)):
+                properties[key] = value
+            else:
+                properties[key] = str(value)
+
+        properties["aider_version"] = __version__
+        self.mp.track(self.user_id, event_name, properties)
