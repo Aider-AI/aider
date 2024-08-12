@@ -1019,12 +1019,17 @@ class Commands:
             self.io.tool_error(f"File not found: {abs_path}")
             return
 
-        if not os.path.isfile(abs_path):
-            self.io.tool_error(f"Not a file: {abs_path}")
+        if os.path.isfile(abs_path):
+            self.coder.abs_read_only_fnames.add(abs_path)
+            self.io.tool_output(f"Added {abs_path} to read-only files.")
             return
 
-        self.coder.abs_read_only_fnames.add(abs_path)
-        self.io.tool_output(f"Added {abs_path} to read-only files.")
+        # If it's a directory, add all files in the directory
+        for root, _, files in os.walk(abs_path):
+            for file in files:
+                abs_file_path = os.path.join(root, file)
+                self.coder.abs_read_only_fnames.add(abs_file_path)
+                self.io.tool_output(f"Added {abs_file_path} to read-only files.")
 
     def cmd_map(self, args):
         "Print out the current repository map"
