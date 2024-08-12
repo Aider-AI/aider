@@ -6,7 +6,12 @@ from mixpanel import Mixpanel
 
 
 class Analytics:
-    def __init__(self, project_token="3f9ad6b9d7b7e8e5a1a5a9a7b0b0b0b0"):
+    def __init__(self, track):
+        if not track:
+            self.mp = None
+            return
+
+        project_token = "3f9ad6b9d7b7e8e5a1a5a9a7b0b0b0b0"
         self.mp = Mixpanel(project_token) if project_token else None
         self.user_id = self.get_or_create_uuid()
 

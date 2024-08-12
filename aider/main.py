@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 from prompt_toolkit.enums import EditingMode
 
 from aider import __version__, models, utils
+from aider.analytics import Analytics
 from aider.args import get_parser
 from aider.coders import Coder
 from aider.commands import Commands, SwitchCoder
@@ -496,6 +497,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         args.max_chat_history_tokens or main_model.max_chat_history_tokens,
     )
 
+    analytics = Analytics(args.analytics)
+
     try:
         coder = Coder.create(
             main_model=main_model,
@@ -521,6 +524,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             test_cmd=args.test_cmd,
             commands=commands,
             summarizer=summarizer,
+            analytics=analytics,
         )
 
     except ValueError as err:

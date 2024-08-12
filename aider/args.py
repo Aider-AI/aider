@@ -547,6 +547,12 @@ def get_parser(default_config_files, git_root):
         help="Run aider in your browser",
         default=False,
     )
+    group.add_argument(
+        "--analytics",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable/disable analytics tracking (default: True)",
+    )
 
     return parser
 
