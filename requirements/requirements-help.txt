@@ -8,7 +8,7 @@ aiohappyeyeballs==2.3.5
     # via
     #   -c requirements/../requirements.txt
     #   aiohttp
-aiohttp==3.10.2
+aiohttp==3.10.3
     # via
     #   -c requirements/../requirements.txt
     #   huggingface-hub
@@ -112,11 +112,11 @@ joblib==1.4.2
     # via
     #   nltk
     #   scikit-learn
-llama-index-core==0.10.63
+llama-index-core==0.10.65
     # via
     #   -r requirements/requirements-help.in
     #   llama-index-embeddings-huggingface
-llama-index-embeddings-huggingface==0.2.2
+llama-index-embeddings-huggingface==0.2.3
     # via -r requirements/requirements-help.in
 markupsafe==2.1.5
     # via
@@ -142,7 +142,7 @@ networkx==3.2.1
     #   -c requirements/../requirements.txt
     #   llama-index-core
     #   torch
-nltk==3.8.1
+nltk==3.8.2
     # via llama-index-core
 numpy==1.26.4
     # via
@@ -153,7 +153,7 @@ numpy==1.26.4
     #   scipy
     #   sentence-transformers
     #   transformers
-openai==1.40.2
+openai==1.40.6
     # via
     #   -c requirements/../requirements.txt
     #   llama-index-core
@@ -224,7 +224,7 @@ sqlalchemy[asyncio]==2.0.32
     # via
     #   llama-index-core
     #   sqlalchemy
-sympy==1.13.1
+sympy==1.13.2
     # via torch
 tenacity==8.5.0
     # via llama-index-core
