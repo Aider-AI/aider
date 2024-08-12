@@ -16,6 +16,7 @@ IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp"}
 class IgnorantTemporaryDirectory:
     def __init__(self):
         self.temp_dir = tempfile.TemporaryDirectory()
+        self.temp_dir = str(Path(self.temp_dir).resolve())
 
     def __enter__(self):
         return self.temp_dir.__enter__()
