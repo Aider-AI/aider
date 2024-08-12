@@ -222,7 +222,9 @@ class Coder:
         commands=None,
         summarizer=None,
         total_cost=0.0,
+        analytics=None,
     ):
+        self.analytics = analytics
         self.commit_before_message = []
         self.aider_commit_hashes = set()
         self.rejected_urls = set()
