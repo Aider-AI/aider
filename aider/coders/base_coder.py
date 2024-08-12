@@ -150,6 +150,8 @@ class Coder:
         weak_model = main_model.weak_model
         prefix = "Model:"
         output = f" {main_model.name} with {self.edit_format} edit format"
+        if main_model.info.get("supports_assistant_prefill"):
+            output += " ∞"
         if weak_model is not main_model:
             prefix = "Models:"
             output += f", weak model {weak_model.name}"
