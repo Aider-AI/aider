@@ -3,6 +3,7 @@ import uuid
 from pathlib import Path
 
 from mixpanel import Mixpanel
+
 from aider import __version__
 
 
@@ -34,5 +35,5 @@ class Analytics:
         if self.mp:
             if properties is None:
                 properties = {}
-            properties['aider_version'] = __version__
+            properties["aider_version"] = __version__
             self.mp.track(self.user_id, event_name, properties)
