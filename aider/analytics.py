@@ -31,7 +31,7 @@ class Analytics:
 
         return new_uuid
 
-    def track_event(self, event_name, properties=None):
+    def event(self, event_name, properties=None):
         if self.mp:
             if properties is None:
                 properties = {}
