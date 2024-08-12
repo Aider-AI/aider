@@ -2,6 +2,7 @@
 
 import re
 import sys
+import re
 
 import pypandoc
 
@@ -102,12 +103,30 @@ class Scraper:
             self.print_error(f"Failed to retrieve content from {url}")
             return None
 
-        # Check if the content is HTML based on MIME type
-        if mime_type and mime_type.startswith("text/html"):
+        # Check if the content is HTML based on MIME type or content
+        if (mime_type and mime_type.startswith("text/html")) or (mime_type is None and self.looks_like_html(content)):
             self.try_pandoc()
             content = self.html_to_markdown(content)
 
         return content
+
+    def looks_like_html(self, content):
+        """
+        Check if the content looks like HTML.
+        """
+        if isinstance(content, str):
+            # Check for common HTML tags
+            html_patterns = [
+                r'<!DOCTYPE\s+html',
+                r'<html',
+                r'<head',
+                r'<body',
+                r'<div',
+                r'<p>',
+                r'<a\s+href=',
+            ]
+            return any(re.search(pattern, content, re.IGNORECASE) for pattern in html_patterns)
+        return False
 
     # Internals...
     def scrape_with_playwright(self, url):
