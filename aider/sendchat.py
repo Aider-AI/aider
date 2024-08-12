@@ -58,7 +58,7 @@ def send_completion(
         temperature=temperature,
         stream=stream,
     )
-    
+
     if model_name.startswith("deepseek/") and "DEEPSEEK_API_BASE" in os.environ:
         kwargs["base_url"] = os.environ["DEEPSEEK_API_BASE"]
     if functions is not None:
