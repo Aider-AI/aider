@@ -1292,7 +1292,7 @@ class Coder:
             show_func_err = func_err
 
         try:
-            self.partial_response_content = completion.choices[0].message.content
+            self.partial_response_content = completion.choices[0].message.content or ""
         except AttributeError as content_err:
             show_content_err = content_err
 
@@ -1408,8 +1408,8 @@ class Coder:
             )
 
     def get_multi_response_content(self, final=False):
-        cur = self.multi_response_content
-        new = self.partial_response_content
+        cur = self.multi_response_content or ""
+        new = self.partial_response_content or ""
 
         if new.rstrip() != new and not final:
             new = new.rstrip()
