@@ -31,9 +31,10 @@ class Analytics:
 
         return new_uuid
 
-    def event(self, event_name, properties=None):
+    def event(self, event_name, properties=None, **kwargs):
         if self.mp:
             if properties is None:
                 properties = {}
+            properties.update(kwargs)
             properties["aider_version"] = __version__
             self.mp.track(self.user_id, event_name, properties)
