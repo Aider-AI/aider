@@ -16,6 +16,17 @@ cog.out(text)
 
 # Release history
 
+### main branch
+
+- Infinite output for DeepSeek Coder, Mistral models in addition to Anthropic's models.
+- New `--chat-mode <mode>` switch to launch in ask/help/code modes.
+- New `/code <message>` command request a code edit while in `ask` mode.
+- Web scraper is more robust if page never idles.
+- Improvements and bug fixes for `/read` only files.
+- Bug fix to persist files added during `/ask`.
+- Bug fix for chat history size in `/tokens`.
+
+
 ### Aider v0.49.1
 
 - Bugfix to `/help`.
