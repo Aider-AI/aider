@@ -1451,7 +1451,10 @@ class Coder:
         return max(path.stat().st_mtime for path in files)
 
     def get_addable_relative_files(self):
-        return set(self.get_all_relative_files()) - set(self.get_inchat_relative_files())
+        all_files = set(self.get_all_relative_files())
+        inchat_files = set(self.get_inchat_relative_files())
+        read_only_files = set(self.get_rel_fname(fname) for fname in self.abs_read_only_fnames)
+        return all_files - inchat_files - read_only_files
 
     def check_for_dirty_commit(self, path):
         if not self.repo:
