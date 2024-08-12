@@ -553,7 +553,12 @@ class TestCommands(TestCase):
         commands.cmd_read(str(test_file))
 
         # Verify it's in abs_read_only_fnames
-        self.assertTrue(any(os.path.samefile(str(test_file.resolve()), fname) for fname in coder.abs_read_only_fnames))
+        self.assertTrue(
+            any(
+                os.path.samefile(str(test_file.resolve()), fname)
+                for fname in coder.abs_read_only_fnames
+            )
+        )
 
         # Mock the repo to simulate a tracked file
         coder.repo = mock.MagicMock()
@@ -563,8 +568,15 @@ class TestCommands(TestCase):
         commands.cmd_add(str(test_file))
 
         # Verify it's now in abs_fnames and not in abs_read_only_fnames
-        self.assertTrue(any(os.path.samefile(str(test_file.resolve()), fname) for fname in coder.abs_fnames))
-        self.assertFalse(any(os.path.samefile(str(test_file.resolve()), fname) for fname in coder.abs_read_only_fnames))
+        self.assertTrue(
+            any(os.path.samefile(str(test_file.resolve()), fname) for fname in coder.abs_fnames)
+        )
+        self.assertFalse(
+            any(
+                os.path.samefile(str(test_file.resolve()), fname)
+                for fname in coder.abs_read_only_fnames
+            )
+        )
 
         # Clean up
         test_file.unlink()
