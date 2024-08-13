@@ -44,7 +44,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return `${context.raw.label}: ${Math.round(context.raw.percentage)}% (${context.raw.lines} lines)`;
+                            var label = context.dataset.label || '';
+                            var value = context.parsed.y || 0;
+                            var lines = context.raw || 0;
+                            return `${label}: ${Math.round(value)}% (${lines} lines)`;
                         }
                     }
                 },
