@@ -57,6 +57,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             },
             plugins: {
+                legend: {
+                    display: false
+                },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
@@ -103,6 +106,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             },
             plugins: {
+                legend: {
+                    display: false
+                },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
