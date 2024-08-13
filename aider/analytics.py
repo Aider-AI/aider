@@ -7,10 +7,10 @@ from pathlib import Path
 
 from mixpanel import Mixpanel
 
-DATA_FILE_NAME = "mixpanel.json"
-
 from aider import __version__
 from aider.dump import dump  # noqa: F401
+
+DATA_FILE_NAME = "mixpanel.json"
 
 
 class Analytics:
