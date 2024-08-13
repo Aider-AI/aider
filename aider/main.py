@@ -334,6 +334,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)
 
+    if args.analytics_disable:
+        analytics = Analytics(track=False, disable=True)
+        print("Analytics have been permanently disabled.")
+        return
+
     if not args.verify_ssl:
         import httpx
 

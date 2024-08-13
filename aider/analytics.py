@@ -10,10 +10,15 @@ from mixpanel import Mixpanel
 from aider import __version__
 from aider.dump import dump  # noqa: F401
 
-DATA_FILE_NAME = "mixpanel.json"
+project_token = "6da9a43058a5d1b9f3353153921fb04d"
 
 
 class Analytics:
+    mp = None
+    user_id = None
+    disable = None
+    logfile = None
+
     def __init__(self, track, logfile=None, disable=False):
         self.logfile = logfile
         self.disable = disable
@@ -23,12 +28,13 @@ class Analytics:
                 self.mark_as_disabled()
             return
 
-        project_token = "6da9a43058a5d1b9f3353153921fb04d"
-        self.mp = Mixpanel(project_token) if project_token else None
         self.user_id = self.get_or_create_uuid()
 
+        if self.user_id and not self.disable:
+            self.mp = Mixpanel(project_token)
+
     def get_data_file_path(self):
-        data_file = Path.home() / ".aider" / "caches" / DATA_FILE_NAME
+        data_file = Path.home() / ".aider" / "analytics.json"
         data_file.parent.mkdir(parents=True, exist_ok=True)
         return data_file
 
@@ -44,9 +50,11 @@ class Analytics:
         if data_file.exists():
             with open(data_file, "r") as f:
                 data = json.load(f)
+                dump(data)
                 if "disabled" in data and data["disabled"]:
                     self.disable = True
                     self.mp = None
+                    return
                 return data["uuid"]
 
         new_uuid = str(uuid.uuid4())

@@ -7,7 +7,8 @@ nav_order: 500
 
 Aider uses MixPanel to collect anonymous analytics that are used to help
 improve aider. 
-**Analytics is currently turned off by default**, but expected to be turned on by default in
+**Analytics are currently turned off by default**, but are
+expected to be turned on by default in
 a future release.
 
 ## Anonymous, no personal info
@@ -35,7 +36,7 @@ personal use of aider.
 
 ## Enabling & disabling analytics
 
-You can easily opt out of analytics forever by running this command one time:
+You can opt out of analytics forever by running this command one time:
 
 ```
 aider --analytics-disable
