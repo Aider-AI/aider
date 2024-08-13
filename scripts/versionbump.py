@@ -2,11 +2,9 @@
 
 import argparse
 import datetime
-import filecmp
 import re
 import subprocess
 import sys
-import tempfile
 
 from packaging import version
 
