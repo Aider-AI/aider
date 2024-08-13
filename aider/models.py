@@ -676,15 +676,12 @@ def sanity_check_model(io, model):
         for key in model.missing_keys:
             io.tool_error(f"- {key}")
 
-        if platform.system() == "Windows":
+        if platform.system() == "Windows" or True:
             io.tool_output(
-                "\nNote for Windows users: If you've just set these environment variables using"
-                " 'setx',"
+                "If you just set these environment variables using `setx` you may need to restart"
+                " your terminal or command prompt for the changes to take effect."
             )
-            io.tool_output(
-                "you may need to restart your terminal or command prompt for the changes to take"
-                " effect."
-            )
+
     elif not model.keys_in_environment:
         show = True
         io.tool_output(f"Model {model}: Unknown which environment variables are required.")
