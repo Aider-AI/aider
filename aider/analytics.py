@@ -12,15 +12,44 @@ from aider.dump import dump  # noqa: F401
 
 
 class Analytics:
-    def __init__(self, track, logfile=None):
+    def __init__(self, track, logfile=None, disable=False):
         self.logfile = logfile
-        if not track:
+        self.disable = disable
+        if not track or disable:
             self.mp = None
+            if disable:
+                self.mark_as_disabled()
             return
 
         project_token = "6da9a43058a5d1b9f3353153921fb04d"
         self.mp = Mixpanel(project_token) if project_token else None
         self.user_id = self.get_or_create_uuid()
+
+    def mark_as_disabled(self):
+        uuid_file = Path.home() / ".aider" / "caches" / "mixpanel.json"
+        uuid_file.parent.mkdir(parents=True, exist_ok=True)
+
+        data = {"uuid": str(uuid.uuid4()), "disabled": True}
+        with open(uuid_file, "w") as f:
+            json.dump(data, f)
+
+    def get_or_create_uuid(self):
+        uuid_file = Path.home() / ".aider" / "caches" / "mixpanel.json"
+        uuid_file.parent.mkdir(parents=True, exist_ok=True)
+
+        if uuid_file.exists():
+            with open(uuid_file, "r") as f:
+                data = json.load(f)
+                if "disabled" in data and data["disabled"]:
+                    self.disable = True
+                    self.mp = None
+                return data["uuid"]
+
+        new_uuid = str(uuid.uuid4())
+        with open(uuid_file, "w") as f:
+            json.dump({"uuid": new_uuid}, f)
+
+        return new_uuid
 
     def get_system_info(self):
         return {

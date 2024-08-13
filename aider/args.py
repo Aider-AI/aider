@@ -558,6 +558,12 @@ def get_parser(default_config_files, git_root):
         metavar="ANALYTICS_LOG_FILE",
         help="Specify a file to log analytics events",
     )
+    group.add_argument(
+        "--analytics-disable",
+        action="store_true",
+        help="Disable analytics tracking and mark as disabled in mixpanel.json",
+        default=False,
+    )
 
     return parser
 
