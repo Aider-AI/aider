@@ -194,6 +194,7 @@ class Commands:
 
     def run(self, inp):
         if inp.startswith("!"):
+            self.coder.event("command_run")
             return self.do_run("run", inp[1:])
 
         res = self.matching_commands(inp)
@@ -201,8 +202,10 @@ class Commands:
             return
         matching_commands, first_word, rest_inp = res
         if len(matching_commands) == 1:
+            self.coder.event(f"command_{matching_commands[0][1:]}")
             return self.do_run(matching_commands[0][1:], rest_inp)
         elif first_word in matching_commands:
+            self.coder.event(f"command_{first_word[1:]}")
             return self.do_run(first_word[1:], rest_inp)
         elif len(matching_commands) > 1:
             self.io.tool_error(f"Ambiguous command: {', '.join(matching_commands)}")
