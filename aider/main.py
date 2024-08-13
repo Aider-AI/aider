@@ -416,11 +416,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             return main(argv, input, output, right_repo_root, return_coder=return_coder)
 
     if args.just_check_update:
-        update_available = check_version(io, just_check=True)
+        update_available = check_version(io, just_check=True, verbose=args.verbose)
         return 0 if not update_available else 1
 
     if args.check_update:
-        check_version(io)
+        check_version(io, verbose=args.verbose)
 
     if args.models:
         models.print_matching_models(io, args.models)
