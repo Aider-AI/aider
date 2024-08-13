@@ -4,6 +4,7 @@
 ### main branch
 
 - Infinite output for DeepSeek Coder, Mistral models in addition to Anthropic's models.
+- New `--deepseek` switch to use DeepSeek Coder.
 - New `--chat-mode <mode>` switch to launch in ask/help/code modes.
 - New `/code <message>` command request a code edit while in `ask` mode.
 - Web scraper is more robust if page never idles.
