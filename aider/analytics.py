@@ -1,6 +1,7 @@
 import json
 import platform
 import sys
+import time
 import uuid
 from pathlib import Path
 
@@ -11,7 +12,8 @@ from aider.dump import dump  # noqa: F401
 
 
 class Analytics:
-    def __init__(self, track):
+    def __init__(self, track, logfile=None):
+        self.logfile = logfile
         if not track:
             self.mp = None
             return
@@ -43,7 +45,7 @@ class Analytics:
         return new_uuid
 
     def event(self, event_name, main_model=None, **kwargs):
-        if not self.mp:
+        if not self.mp and not self.logfile:
             return
 
         properties = {}
@@ -65,4 +67,17 @@ class Analytics:
                 properties[key] = str(value)
 
         properties["aider_version"] = __version__
-        self.mp.track(self.user_id, event_name, properties)
+
+        if self.mp:
+            self.mp.track(self.user_id, event_name, properties)
+
+        if self.logfile:
+            log_entry = {
+                "event": event_name,
+                "properties": properties,
+                "user_id": self.user_id,
+                "time": int(time.time())
+            }
+            with open(self.logfile, "a") as f:
+                json.dump(log_entry, f)
+                f.write("\n")
