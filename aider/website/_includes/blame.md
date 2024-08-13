@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
         labels: [{% for row in site.data.blame %}'{{ row.end_tag }}',{% endfor %}],
         datasets: [{
             label: 'Aider\'s Contribution to Each Release',
-            data: [{% for row in site.data.blame %}{{ row.aider_percentage }},{% endfor %}],
+            data: [{% for row in site.data.blame %}{ x: '{{ row.end_tag }}', y: {{ row.aider_percentage }}, lines: {{ row.aider_total }} },{% endfor %}],
             backgroundColor: 'rgba(54, 162, 235, 0.8)',
             borderColor: 'rgba(54, 162, 235, 1)',
             borderWidth: 1
@@ -44,10 +44,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            console.log(context);
                             var label = context.dataset.label || '';
                             var value = context.parsed.y || 0;
-                            var lines = context.raw || 0;
+                            var lines = context.raw.lines || 0;
                             return `${label}: ${Math.round(value)}% (${lines} lines)`;
                         }
                     }
