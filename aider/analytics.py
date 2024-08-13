@@ -31,7 +31,7 @@ class Analytics:
         }
 
     def get_or_create_uuid(self):
-        uuid_file = Path.home() / ".aider" / "caches" / "mixpanel-uuid.json"
+        uuid_file = Path.home() / ".aider" / "caches" / "mixpanel.json"
         uuid_file.parent.mkdir(parents=True, exist_ok=True)
 
         if uuid_file.exists():
