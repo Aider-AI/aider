@@ -17,10 +17,10 @@ def blame(start_tag, end_tag=None):
 
     authors = get_commit_authors(commits)
 
-    pats = "*.py *.scm *.sh **Dockerfile **Gemfile .github/workflows/*.yml".split()
-    files = []
-    for pat in pats:
-        files += run(["git", "ls-files", pat]).strip().split("\n")
+    revision = end_tag if end_tag else "HEAD"
+    files = run(["git", "ls-tree", "-r", "--name-only", revision]).strip().split("\n")
+    files = [f for f in files if f.endswith(('.py', '.scm', '.sh', 'Dockerfile', 'Gemfile')) or 
+             (f.startswith('.github/workflows/') and f.endswith('.yml'))]
 
     all_file_counts = {}
     grand_total = defaultdict(int)
@@ -186,10 +186,14 @@ def get_counts_for_file(start_tag, end_tag, authors, fname):
             line_counts[author] += 1
 
         return dict(line_counts)
-    except subprocess.CalledProcessError:
-        # print(f"Warning: Unable to blame file {fname}. It may have been added after {start_tag} "
-        #       f"or removed before {end_tag or 'HEAD'}.", file=sys.stderr)
-        return None
+    except subprocess.CalledProcessError as e:
+        if "no such path" in str(e).lower():
+            # File doesn't exist in this revision range, which is okay
+            return None
+        else:
+            # Some other error occurred
+            print(f"Warning: Unable to blame file {fname}. Error: {e}", file=sys.stderr)
+            return None
 
 
 def get_all_tags_since(start_tag):
