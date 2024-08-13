@@ -11,6 +11,7 @@
 - Web scraper is more robust if page never idles.
 - Improved token and cost reporting for infinite output.
 - Improvements and bug fixes for `/read` only files.
+- Switched from `setup.py` to `pyproject.toml`, by @branchvincent.
 - Bug fix to persist files added during `/ask`.
 - Bug fix for chat history size in `/tokens`.
 
