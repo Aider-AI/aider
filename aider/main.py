@@ -373,9 +373,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         editingmode=editing_mode,
     )
 
+    analytics = Analytics(args.analytics)
+    analytics.event("launched")
+
     if args.gui and not return_coder:
         if not check_streamlit_install(io):
             return
+        analytics.event("gui session")
         launch_gui(argv)
         return
 
@@ -497,8 +501,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         args.max_chat_history_tokens or main_model.max_chat_history_tokens,
     )
 
-    analytics = Analytics(args.analytics)
-
     try:
         coder = Coder.create(
             main_model=main_model,
@@ -614,6 +616,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     if args.exit:
         return
+
+    analytics.event("cli session", main_model=main_model)
 
     thread = threading.Thread(target=load_slow_imports)
     thread.daemon = True

@@ -1412,13 +1412,13 @@ class Coder:
             )
 
         self.event(
-            "token_usage",
+            "message_send",
+            main_model=self.main_model,
             prompt_tokens=prompt_tokens,
             completion_tokens=completion_tokens,
             total_tokens=prompt_tokens + completion_tokens,
             cost=cost,
             total_cost=self.total_cost,
-            model=self.main_model.name,
         )
 
     def get_multi_response_content(self, final=False):

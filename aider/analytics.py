@@ -7,6 +7,7 @@ from pathlib import Path
 from mixpanel import Mixpanel
 
 from aider import __version__
+from aider.dump import dump  # noqa: F401
 
 
 class Analytics:
@@ -46,6 +47,13 @@ class Analytics:
             return
 
         properties = {}
+
+        if main_model:
+            if main_model.info:
+                properties["main_model"] = main_model.name
+            elif "/" in main_model.name:
+                properties["main_model"] = main_model.name.split("/")[0] + "/REDACTED"
+
         properties.update(kwargs)
         properties.update(self.get_system_info())  # Add system info to all events
 
