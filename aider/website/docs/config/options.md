@@ -411,10 +411,10 @@ Run tests and fix problems found
 Default: False  
 Environment variable: `AIDER_TEST`  
 
-## Analytics Settings:
+## Analytics:
 
 ### `--analytics`
-Enable/disable analytics tracking (default: True)  
+Enable/disable analytics for one session (default: False)  
 Default: False  
 Environment variable: `AIDER_ANALYTICS`  
 Aliases:
@@ -426,7 +426,7 @@ Specify a file to log analytics events
 Environment variable: `AIDER_ANALYTICS_LOG`  
 
 ### `--analytics-disable`
-Disable analytics tracking and mark as disabled in mixpanel.json  
+Disable analytics forever  
 Default: False  
 Environment variable: `AIDER_ANALYTICS_DISABLE`  
 

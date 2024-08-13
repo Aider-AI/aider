@@ -436,12 +436,12 @@ def get_parser(default_config_files, git_root):
     )
 
     ##########
-    group = parser.add_argument_group("Analytics Settings")
+    group = parser.add_argument_group("Analytics")
     group.add_argument(
         "--analytics",
         action=argparse.BooleanOptionalAction,
         default=False,
-        help="Enable/disable analytics tracking (default: True)",
+        help="Enable/disable analytics for one session (default: False)",
     )
     group.add_argument(
         "--analytics-log",
@@ -451,7 +451,7 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--analytics-disable",
         action="store_true",
-        help="Disable analytics tracking and mark as disabled in mixpanel.json",
+        help="Disable analytics forever",
         default=False,
     )
 

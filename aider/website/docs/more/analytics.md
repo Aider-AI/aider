@@ -32,7 +32,7 @@ in upcoming releases.
 To get a better sense of what type of data is collected, you can review some
 [sample analytics logs](https://github.com/paul-gauthier/aider/blob/main/aider/website/assets/sample-analytics.jsonl).
 These are the last 1,000 analytics events from the author's
-personal use of aider.
+personal use of aider, updated regularly.
 
 ## Enabling & disabling analytics
 
@@ -56,7 +56,7 @@ aider --no-analytics
 
 ## Logging and inspecting analytics
 
-You can get a full log of all the data that aider is collecting,
+You can get a full log of the analytics that aider is collecting,
 in case you would like to audit or inspect this data.
 
 ```
@@ -87,7 +87,9 @@ Aider is committed to complying with applicable data protection and privacy laws
 
 3. Data Retention: Anonymous usage data is retained for a period of 5 years, after which it is automatically deleted.
 
-4. User Rights: As we do not collect personal data, individual data subject rights (such as access, rectification, erasure) are not applicable. However, users have the right to opt-out of data collection entirely (see "Disabling analytics" section).
+4. User Rights: As we do not collect personal data, individual data subject rights (such as access, rectification, erasure) are not applicable. However, users have the right to opt-out of data collection entirely. See 
+[Enabling & disabling analytics](#enabling--disabling-analytics) 
+above.
 
 5. Data Protection: We implement appropriate technical and organizational measures to ensure a level of security appropriate to the risk.
 
