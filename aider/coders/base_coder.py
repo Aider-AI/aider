@@ -1259,9 +1259,9 @@ class Coder:
                 yield from self.show_send_output_stream(completion)
             else:
                 self.show_send_output(completion)
-        except KeyboardInterrupt:
+        except KeyboardInterrupt as kbi:
             self.keyboard_interrupt()
-            interrupted = True
+            raise kbi
         finally:
             self.io.log_llm_history(
                 "LLM RESPONSE",
@@ -1276,10 +1276,7 @@ class Coder:
                 if args:
                     self.io.ai_output(json.dumps(args, indent=4))
 
-        if interrupted:
-            raise KeyboardInterrupt
-
-        self.calculate_and_show_tokens_and_cost(messages, completion)
+            self.calculate_and_show_tokens_and_cost(messages, completion)
 
     def show_send_output(self, completion):
         if self.verbose:
