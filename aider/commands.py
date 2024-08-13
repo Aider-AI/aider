@@ -202,8 +202,9 @@ class Commands:
             return
         matching_commands, first_word, rest_inp = res
         if len(matching_commands) == 1:
-            self.coder.event(f"command_{matching_commands[0][1:]}")
-            return self.do_run(matching_commands[0][1:], rest_inp)
+            command = matching_commands[0][1:]
+            self.coder.event(f"command_{command}")
+            return self.do_run(command, rest_inp)
         elif first_word in matching_commands:
             self.coder.event(f"command_{first_word[1:]}")
             return self.do_run(first_word[1:], rest_inp)
