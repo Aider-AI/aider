@@ -226,8 +226,9 @@ class TestMain(TestCase):
 
     def test_main_exit_calls_version_check(self):
         with GitTemporaryDirectory():
-            with patch("aider.main.check_version") as mock_check_version, \
-                 patch("aider.main.InputOutput") as mock_input_output:
+            with patch("aider.main.check_version") as mock_check_version, patch(
+                "aider.main.InputOutput"
+            ) as mock_input_output:
                 main(["--exit"], input=DummyInput(), output=DummyOutput())
                 mock_check_version.assert_called_once()
                 mock_input_output.assert_called_once()
