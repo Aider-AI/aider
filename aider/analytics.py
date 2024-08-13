@@ -46,7 +46,12 @@ class Analytics:
 
     def mark_as_disabled(self):
         data_file = self.get_data_file_path()
-        data = {"uuid": str(uuid.uuid4()), "disabled": True}
+        if data_file.exists():
+            with open(data_file, "r") as f:
+                data = json.load(f)
+        else:
+            data = {"uuid": str(uuid.uuid4())}
+        data["disabled"] = True
         with open(data_file, "w") as f:
             json.dump(data, f)
 
