@@ -1,6 +1,6 @@
 ---
 parent: More info
-nav_order: 900
+nav_order: 200
 description: Aider supports pretty much all popular coding languages.
 ---
 # Supported languages

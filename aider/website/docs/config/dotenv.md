@@ -255,6 +255,18 @@ cog.outl("```")
 ## Run tests and fix problems found
 #AIDER_TEST=false
 
+#####################
+# Analytics Settings:
+
+## Enable/disable analytics tracking (default: True)
+#AIDER_ANALYTICS=false
+
+## Specify a file to log analytics events
+#AIDER_ANALYTICS_LOG=
+
+## Disable analytics tracking and mark as disabled in mixpanel.json
+#AIDER_ANALYTICS_DISABLE=false
+
 #################
 # Other Settings:
 

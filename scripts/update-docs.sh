@@ -9,6 +9,8 @@ else
   ARG=$1
 fi
 
+tail -1000 ~/.aider/analytics.jsonl > aider/website/assets/sample-analytics.jsonl
+
 # README.md before index.md, because index.md uses cog to include README.md
 cog $ARG \
     README.md \

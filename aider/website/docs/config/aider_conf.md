@@ -248,6 +248,18 @@ cog.outl("```")
 ## Run tests and fix problems found
 #test: false
 
+#####################
+# Analytics Settings:
+
+## Enable/disable analytics tracking (default: True)
+#analytics: false
+
+## Specify a file to log analytics events
+#analytics-log:
+
+## Disable analytics tracking and mark as disabled in mixpanel.json
+#analytics-disable: false
+
 #################
 # Other Settings:
 

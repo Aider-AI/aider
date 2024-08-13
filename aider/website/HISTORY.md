@@ -1,7 +1,7 @@
 ---
 title: Release history
 parent: More info
-nav_order: 999
+nav_order: 900
 highlight_image: /assets/blame.jpg
 description: Release notes and stats on aider writing its own code.
 ---
@@ -20,6 +20,7 @@ cog.out(text)
 
 - Infinite output for DeepSeek Coder, Mistral models in addition to Anthropic's models.
 - New `--deepseek` switch to use DeepSeek Coder.
+- DeepSeek Coder uses 8k token output.
 - New `--chat-mode <mode>` switch to launch in ask/help/code modes.
 - New `/code <message>` command request a code edit while in `ask` mode.
 - Web scraper is more robust if page never idles.

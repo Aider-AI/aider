@@ -52,8 +52,9 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--commit] [--commit-prompt] [--dry-run | --no-dry-run]
              [--lint] [--lint-cmd] [--auto-lint | --no-auto-lint]
              [--test-cmd] [--auto-test | --no-auto-test] [--test]
-             [--file] [--read] [--vim] [--voice-language]
-             [--version] [--just-check-update]
+             [--analytics | --no-analytics] [--analytics-log]
+             [--analytics-disable] [--file] [--read] [--vim]
+             [--voice-language] [--version] [--just-check-update]
              [--check-update | --no-check-update] [--apply] [--yes]
              [-v] [--show-repo-map] [--show-prompts] [--exit]
              [--message] [--message-file] [--encoding] [-c] [--gui]
@@ -409,6 +410,25 @@ Aliases:
 Run tests and fix problems found  
 Default: False  
 Environment variable: `AIDER_TEST`  
+
+## Analytics Settings:
+
+### `--analytics`
+Enable/disable analytics tracking (default: True)  
+Default: False  
+Environment variable: `AIDER_ANALYTICS`  
+Aliases:
+  - `--analytics`
+  - `--no-analytics`
+
+### `--analytics-log ANALYTICS_LOG_FILE`
+Specify a file to log analytics events  
+Environment variable: `AIDER_ANALYTICS_LOG`  
+
+### `--analytics-disable`
+Disable analytics tracking and mark as disabled in mixpanel.json  
+Default: False  
+Environment variable: `AIDER_ANALYTICS_DISABLE`  
 
 ## Other Settings:
 
