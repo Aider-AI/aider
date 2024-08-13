@@ -73,6 +73,7 @@ class Coder:
     multi_response_content = ""
     partial_response_content = ""
     commit_before_message = []
+    message_cost = 0.0
 
     @classmethod
     def create(
@@ -1276,6 +1277,7 @@ class Coder:
                     self.io.ai_output(json.dumps(args, indent=4))
 
             self.calculate_and_show_tokens_and_cost(messages, completion)
+            self.show_usage_report()
 
     def show_send_output(self, completion):
         if self.verbose:
@@ -1387,13 +1389,14 @@ class Coder:
             prompt_tokens = self.main_model.token_count(messages)
             completion_tokens = self.main_model.token_count(self.partial_response_content)
 
-        self.usage_report = f"Tokens: {prompt_tokens:,} sent, {completion_tokens:,} received."
+        tokens_report = f"Tokens: {prompt_tokens:,} sent, {completion_tokens:,} received."
 
         if self.main_model.info.get("input_cost_per_token"):
             cost += prompt_tokens * self.main_model.info.get("input_cost_per_token")
             if self.main_model.info.get("output_cost_per_token"):
                 cost += completion_tokens * self.main_model.info.get("output_cost_per_token")
             self.total_cost += cost
+            self.message_cost += cost
 
             def format_cost(value):
                 if value == 0:
@@ -1404,9 +1407,17 @@ class Coder:
                 else:
                     return f"{value:.{max(2, 2 - int(math.log10(magnitude)))}f}"
 
-            self.usage_report += (
-                f" Cost: ${format_cost(cost)} request, ${format_cost(self.total_cost)} session."
+            cost_report = (
+                f" Cost: ${format_cost(self.message_cost)} message, ${format_cost(self.total_cost)} session."
             )
+            self.usage_report = tokens_report + cost_report
+        else:
+            self.usage_report = tokens_report
+
+    def show_usage_report(self):
+        if self.usage_report:
+            self.io.tool_output(self.usage_report)
+            self.message_cost = 0.0
 
     def get_multi_response_content(self, final=False):
         cur = self.multi_response_content or ""
