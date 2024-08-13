@@ -10,7 +10,7 @@ from aider import utils
 from aider.dump import dump  # noqa: F401
 
 
-def check_version(io, just_check=False):
+def check_version(io, just_check=False, verbose=False):
     fname = Path.home() / ".aider" / "caches" / "versioncheck"
     if not just_check and fname.exists():
         day = 60 * 60 * 24
