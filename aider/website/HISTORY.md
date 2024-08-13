@@ -16,7 +16,7 @@ cog.out(text)
 
 # Release history
 
-### main branch
+### v0.50.0
 
 - Infinite output for DeepSeek Coder, Mistral models in addition to Anthropic's models.
 - New `--deepseek` switch to use DeepSeek Coder.
@@ -29,7 +29,7 @@ cog.out(text)
 - Switched from `setup.py` to `pyproject.toml`, by @branchvincent.
 - Bug fix to persist files added during `/ask`.
 - Bug fix for chat history size in `/tokens`.
-
+- Aider wrote 66% of the code in this release.
 
 ### Aider v0.49.1
 
