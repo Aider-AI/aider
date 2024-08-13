@@ -6,49 +6,31 @@
 document.addEventListener('DOMContentLoaded', function () {
     var ctx = document.getElementById('blameChart').getContext('2d');
     var blameData = {
+        labels: [{% for row in site.data.blame %}'{{ row.end_tag }}',{% endfor %}],
         datasets: [{
             label: 'Aider\'s Contribution to Each Release',
-            data: [
-                {% for row in site.data.blame %}
-                {
-                    x: '{{ row.end_date }}',
-                    y: {{ row.aider_percentage }},
-                    r: Math.sqrt({{ row.aider_total }}) * 1.5,
-                    label: '{{ row.end_tag }}',
-                    percentage: {{ row.aider_percentage }},
-                    lines: {{ row.aider_total }}
-                },
-                {% endfor %}
-            ],
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            data: [{% for row in site.data.blame %}{{ row.aider_percentage }},{% endfor %}],
+            backgroundColor: 'rgba(54, 162, 235, 0.8)',
             borderColor: 'rgba(54, 162, 235, 1)',
             borderWidth: 1
         }]
     };
 
     var blameChart = new Chart(ctx, {
-        type: 'bubble',
+        type: 'bar',
         data: blameData,
         options: {
             scales: {
                 x: {
-                    type: 'time',
-                    time: {
-                        unit: 'month',
-                        displayFormats: {
-                            month: 'MMM YYYY'
-                        }
-                    },
+                    type: 'category',
                     title: {
                         display: true,
-                        text: 'Release date'
+                        text: 'Version'
                     },
                     ticks: {
                         maxRotation: 45,
                         minRotation: 45
-                    },
-                    min: moment('{{ site.data.blame | first | map: "end_date" | first }}').subtract(1, 'month'),
-                    max: moment('{{ site.data.blame | last | map: "end_date" | first }}').add(1, 'month')
+                    }
                 },
                 y: {
                     title: {
