@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            var label = context.dataset.label || '';
+                            var label = 'Aider\'s contribution';
                             var value = context.parsed.y || 0;
                             var lines = context.raw.lines || 0;
                             return `${label}: ${Math.round(value)}% (${lines} lines)`;
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     labels: {
                         generateLabels: function(chart) {
                             return [{
-                                text: 'Y-axis is percent of code, bubble size is lines of code',
+                                text: 'Percent of new code written',
                                 fillStyle: 'rgba(54, 162, 235, 0.2)',
                                 strokeStyle: 'rgba(54, 162, 235, 1)',
                                 lineWidth: 1,
