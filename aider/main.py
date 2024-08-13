@@ -373,7 +373,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         editingmode=editing_mode,
     )
 
-    analytics = Analytics(args.analytics, logfile=args.analytics_log, disable=args.analytics_disable)
+    analytics = Analytics(
+        args.analytics, logfile=args.analytics_log, disable=args.analytics_disable
+    )
     analytics.event("launched")
 
     if args.gui and not return_coder:
