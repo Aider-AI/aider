@@ -824,6 +824,7 @@ class Commands:
             self.basic_help()
             return
 
+        self.coder.event("interactive help")
         from aider.coders import Coder
 
         if not self.help:
