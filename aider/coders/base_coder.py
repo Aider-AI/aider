@@ -232,7 +232,7 @@ class Coder:
         analytics=None,
     ):
         self.analytics = analytics if analytics is not None else Analytics(track=False)
-        self.event = analytics.event
+        self.event = self.analytics.event
 
         self.commit_before_message = []
         self.aider_commit_hashes = set()
