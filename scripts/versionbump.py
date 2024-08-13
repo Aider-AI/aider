@@ -2,28 +2,32 @@
 
 import argparse
 import datetime
+import filecmp
 import re
 import subprocess
 import sys
 import tempfile
-import filecmp
+
 from packaging import version
 
 
 def check_cog_pyproject():
-    with tempfile.NamedTemporaryFile(mode='w+', delete=False) as temp_file:
-        with open('pyproject.toml', 'r') as original_file:
+    with tempfile.NamedTemporaryFile(mode="w+", delete=False) as temp_file:
+        with open("pyproject.toml", "r") as original_file:
             temp_file.write(original_file.read())
-    
+
     result = subprocess.run(["cog", "-r", "pyproject.toml"], capture_output=True, text=True)
-    
+
     if result.returncode != 0:
         print("Error: cog -r pyproject.toml failed with the following output:")
         print(result.stderr)
         sys.exit(1)
-    
-    if not filecmp.cmp('pyproject.toml', temp_file.name):
-        print("Error: cog -r pyproject.toml has changed the file. Please run cog -r pyproject.toml and commit the changes.")
+
+    if not filecmp.cmp("pyproject.toml", temp_file.name):
+        print(
+            "Error: cog -r pyproject.toml has changed the file. Please run cog -r pyproject.toml"
+            " and commit the changes."
+        )
         sys.exit(1)
 
 
@@ -33,16 +37,21 @@ def main():
     parser.add_argument(
         "--dry-run", action="store_true", help="Print each step without actually executing them"
     )
+
     # Function to check if we are on the main branch
     def check_branch():
-        branch = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"], capture_output=True, text=True).stdout.strip()
+        branch = subprocess.run(
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"], capture_output=True, text=True
+        ).stdout.strip()
         if branch != "main":
             print("Error: Not on the main branch.")
             sys.exit(1)
 
     # Function to check if the working directory is clean
     def check_working_directory_clean():
-        status = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True).stdout
+        status = subprocess.run(
+            ["git", "status", "--porcelain"], capture_output=True, text=True
+        ).stdout
         if status:
             print("Error: Working directory is not clean.")
             sys.exit(1)
@@ -50,19 +59,33 @@ def main():
     # Function to fetch the latest changes and check if the main branch is up to date
     def check_main_branch_up_to_date():
         subprocess.run(["git", "fetch", "origin"], check=True)
-        local_main = subprocess.run(["git", "rev-parse", "main"], capture_output=True, text=True).stdout.strip()
+        local_main = subprocess.run(
+            ["git", "rev-parse", "main"], capture_output=True, text=True
+        ).stdout.strip()
         print(f"Local main commit hash: {local_main}")
-        origin_main = subprocess.run(["git", "rev-parse", "origin/main"], capture_output=True, text=True).stdout.strip()
+        origin_main = subprocess.run(
+            ["git", "rev-parse", "origin/main"], capture_output=True, text=True
+        ).stdout.strip()
         print(f"Origin main commit hash: {origin_main}")
         if local_main != origin_main:
-            local_date = subprocess.run(["git", "show", "-s", "--format=%ci", "main"], capture_output=True, text=True).stdout.strip()
-            origin_date = subprocess.run(["git", "show", "-s", "--format=%ci", "origin/main"], capture_output=True, text=True).stdout.strip()
+            local_date = subprocess.run(
+                ["git", "show", "-s", "--format=%ci", "main"], capture_output=True, text=True
+            ).stdout.strip()
+            origin_date = subprocess.run(
+                ["git", "show", "-s", "--format=%ci", "origin/main"], capture_output=True, text=True
+            ).stdout.strip()
             local_date = datetime.datetime.strptime(local_date, "%Y-%m-%d %H:%M:%S %z")
             origin_date = datetime.datetime.strptime(origin_date, "%Y-%m-%d %H:%M:%S %z")
             if local_date < origin_date:
-                print("Error: The local main branch is behind origin/main. Please pull the latest changes.")
+                print(
+                    "Error: The local main branch is behind origin/main. Please pull the latest"
+                    " changes."
+                )
             elif local_date > origin_date:
-                print("Error: The origin/main branch is behind the local main branch. Please push your changes.")
+                print(
+                    "Error: The origin/main branch is behind the local main branch. Please push"
+                    " your changes."
+                )
             else:
                 print("Error: The main branch and origin/main have diverged.")
             sys.exit(1)
