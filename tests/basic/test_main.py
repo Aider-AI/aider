@@ -224,6 +224,11 @@ class TestMain(TestCase):
 
                     main(["--yes", fname, "--encoding", "iso-8859-15"])
 
+    def test_main_exit_calls_version_check(self):
+        with patch("aider.main.check_version") as mock_check_version:
+            main(["--exit"])
+            mock_check_version.assert_called_once()
+
     @patch("aider.main.InputOutput")
     @patch("aider.coders.base_coder.Coder.run")
     def test_main_message_adds_to_input_history(self, mock_run, MockInputOutput):
