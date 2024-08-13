@@ -1242,7 +1242,6 @@ class Coder:
 
         self.io.log_llm_history("TO LLM", format_messages(messages))
 
-        interrupted = False
         try:
             hash_object, completion = send_completion(
                 model.name,
