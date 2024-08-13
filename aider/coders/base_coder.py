@@ -1392,7 +1392,9 @@ class Coder:
         self.message_tokens_sent += prompt_tokens
         self.message_tokens_received += completion_tokens
 
-        tokens_report = f"Tokens: {self.message_tokens_sent:,} sent, {self.message_tokens_received:,} received."
+        tokens_report = (
+            f"Tokens: {self.message_tokens_sent:,} sent, {self.message_tokens_received:,} received."
+        )
 
         if self.main_model.info.get("input_cost_per_token"):
             cost += prompt_tokens * self.main_model.info.get("input_cost_per_token")
