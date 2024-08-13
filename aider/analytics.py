@@ -41,12 +41,11 @@ class Analytics:
 
         return new_uuid
 
-    def event(self, event_name, properties=None, main_model=None, **kwargs):
+    def event(self, event_name, main_model=None, **kwargs):
         if not self.mp:
             return
 
-        if properties is None:
-            properties = {}
+        properties = {}
         properties.update(kwargs)
         properties.update(self.get_system_info())  # Add system info to all events
 
