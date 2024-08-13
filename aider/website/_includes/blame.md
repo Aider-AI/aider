@@ -44,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
+                            console.log(context);
                             var label = context.dataset.label || '';
                             var value = context.parsed.y || 0;
                             var lines = context.raw || 0;
