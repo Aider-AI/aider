@@ -41,7 +41,7 @@ class Analytics:
 
         return new_uuid
 
-    def event(self, event_name, properties=None, **kwargs):
+    def event(self, event_name, properties=None, main_model=None, **kwargs):
         if not self.mp:
             return
 
