@@ -1425,21 +1425,26 @@ class Coder:
             self.usage_report = tokens_report
 
     def show_usage_report(self):
-        if self.usage_report:
-            self.io.tool_output(self.usage_report)
-            self.message_cost = 0.0
-            self.message_tokens_sent = 0
-            self.message_tokens_received = 0
+        if not self.usage_report:
+            return
 
+        self.io.tool_output(self.usage_report)
+
+        prompt_tokens = self.message_tokens_sent
+        completion_tokens = self.message_tokens_received
         self.event(
             "message_send",
             main_model=self.main_model,
             prompt_tokens=prompt_tokens,
             completion_tokens=completion_tokens,
             total_tokens=prompt_tokens + completion_tokens,
-            cost=cost,
+            cost=self.message_cost,
             total_cost=self.total_cost,
         )
+
+        self.message_cost = 0.0
+        self.message_tokens_sent = 0
+        self.message_tokens_received = 0
 
     def get_multi_response_content(self, final=False):
         cur = self.multi_response_content or ""
