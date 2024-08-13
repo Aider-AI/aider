@@ -12,22 +12,11 @@ from packaging import version
 
 
 def check_cog_pyproject():
-    with tempfile.NamedTemporaryFile(mode="w+", delete=False) as temp_file:
-        with open("pyproject.toml", "r") as original_file:
-            temp_file.write(original_file.read())
-
-    result = subprocess.run(["cog", "-r", "pyproject.toml"], capture_output=True, text=True)
+    result = subprocess.run(["cog", "--check", "pyproject.toml"], capture_output=True, text=True)
 
     if result.returncode != 0:
-        print("Error: cog -r pyproject.toml failed with the following output:")
-        print(result.stderr)
-        sys.exit(1)
-
-    if not filecmp.cmp("pyproject.toml", temp_file.name):
-        print(
-            "Error: cog -r pyproject.toml has changed the file. Please run cog -r pyproject.toml"
-            " and commit the changes."
-        )
+        print("Error: cog --check pyproject.toml failed, updating.")
+        subprocess.run(["cog", "-r", "pyproject.toml"])
         sys.exit(1)
 
 
@@ -94,10 +83,10 @@ def main():
     dry_run = args.dry_run
 
     # Perform checks before proceeding
+    check_cog_pyproject()
     check_branch()
     check_working_directory_clean()
     check_main_branch_up_to_date()
-    check_cog_pyproject()
 
     new_version_str = args.new_version
     if not re.match(r"^\d+\.\d+\.\d+$", new_version_str):
