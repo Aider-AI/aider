@@ -5,6 +5,7 @@ aider.code-workspace
 .aider*
 aider_chat.egg-info/
 build
+dist/
 Gemfile.lock
 _site
 .jekyll-cache/
