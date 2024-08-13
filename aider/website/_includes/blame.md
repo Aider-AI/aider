@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var blameData = {
         labels: labels,
         datasets: [{
-            label: 'Aider\'s Contribution to Each Release',
+            label: 'Aider\'s percent of new code by release',
             data: [{% for row in site.data.blame %}{ x: '{{ row.end_tag }}', y: {{ row.aider_percentage }}, lines: {{ row.aider_total }} },{% endfor %}],
             backgroundColor: 'rgba(54, 162, 235, 0.8)',
             borderColor: 'rgba(54, 162, 235, 1)',
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var linesData = {
         labels: labels,
         datasets: [{
-            label: 'Aider\'s Total Lines of Code',
+            label: 'Aider\'s lines of new code',
             data: [{% for row in site.data.blame %}{ x: '{{ row.end_tag }}', y: {{ row.aider_total }} },{% endfor %}],
             backgroundColor: 'rgba(255, 99, 132, 0.8)',
             borderColor: 'rgba(255, 99, 132, 1)',
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 y: {
                     title: {
                         display: true,
-                        text: 'Aider Contribution (% of code)'
+                        text: 'Percent of new code'
                     },
                     beginAtZero: true
                 }
@@ -67,25 +67,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                     }
                 },
-                legend: {
-                    display: true,
-                    position: 'top',
-                    labels: {
-                        generateLabels: function(chart) {
-                            return [{
-                                text: 'Percent of new code written',
-                                fillStyle: 'rgba(54, 162, 235, 0.2)',
-                                strokeStyle: 'rgba(54, 162, 235, 1)',
-                                lineWidth: 1,
-                                hidden: false,
-                                index: 0
-                            }];
-                        }
-                    }
-                },
                 title: {
                     display: true,
-                    text: 'Aider\'s Contribution to Each Release',
+                    text: 'Percent of new code written by aider, by release',
                     font: {
                         size: 16
                     }
@@ -113,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 y: {
                     title: {
                         display: true,
-                        text: 'Total Lines of Code'
+                        text: 'Lines of new code'
                     },
                     beginAtZero: true
                 }
@@ -122,31 +106,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            var label = 'Aider\'s total lines';
+                            var label = 'New lines of code by aider';
                             var value = context.parsed.y || 0;
                             return `${label}: ${value}`;
                         }
                     }
                 },
-                legend: {
-                    display: true,
-                    position: 'top',
-                    labels: {
-                        generateLabels: function(chart) {
-                            return [{
-                                text: 'Total lines of code written',
-                                fillStyle: 'rgba(255, 99, 132, 0.2)',
-                                strokeStyle: 'rgba(255, 99, 132, 1)',
-                                lineWidth: 1,
-                                hidden: false,
-                                index: 0
-                            }];
-                        }
-                    }
-                },
                 title: {
                     display: true,
-                    text: 'Aider\'s Total Lines of Code by Release',
+                    text: 'Lines of new code written by aider, by release',
                     font: {
                         size: 16
                     }
