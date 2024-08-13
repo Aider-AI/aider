@@ -50,7 +50,6 @@ class Analytics:
         if data_file.exists():
             with open(data_file, "r") as f:
                 data = json.load(f)
-                dump(data)
                 if "disabled" in data and data["disabled"]:
                     self.disable = True
                     self.mp = None
