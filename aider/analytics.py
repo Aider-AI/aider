@@ -7,6 +7,8 @@ from pathlib import Path
 
 from mixpanel import Mixpanel
 
+DATA_FILE_NAME = "mixpanel.json"
+
 from aider import __version__
 from aider.dump import dump  # noqa: F401
 
@@ -25,17 +27,19 @@ class Analytics:
         self.mp = Mixpanel(project_token) if project_token else None
         self.user_id = self.get_or_create_uuid()
 
-    def mark_as_disabled(self):
-        data_file = Path.home() / ".aider" / "caches" / "mixpanel.json"
+    def get_data_file_path(self):
+        data_file = Path.home() / ".aider" / "caches" / DATA_FILE_NAME
         data_file.parent.mkdir(parents=True, exist_ok=True)
+        return data_file
 
+    def mark_as_disabled(self):
+        data_file = self.get_data_file_path()
         data = {"uuid": str(uuid.uuid4()), "disabled": True}
         with open(data_file, "w") as f:
             json.dump(data, f)
 
     def get_or_create_uuid(self):
-        data_file = Path.home() / ".aider" / "caches" / "mixpanel.json"
-        data_file.parent.mkdir(parents=True, exist_ok=True)
+        data_file = self.get_data_file_path()
 
         if data_file.exists():
             with open(data_file, "r") as f:
