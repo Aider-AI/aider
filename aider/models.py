@@ -3,6 +3,7 @@ import importlib
 import json
 import math
 import os
+import platform
 import sys
 from dataclasses import dataclass, fields
 from pathlib import Path
@@ -674,6 +675,10 @@ def sanity_check_model(io, model):
         io.tool_error(f"Model {model}: Missing these environment variables:")
         for key in model.missing_keys:
             io.tool_error(f"- {key}")
+        
+        if platform.system() == "Windows":
+            io.tool_output("\nNote for Windows users: If you've just set these environment variables using 'setx',")
+            io.tool_output("you may need to restart your terminal or command prompt for the changes to take effect.")
     elif not model.keys_in_environment:
         show = True
         io.tool_output(f"Model {model}: Unknown which environment variables are required.")
