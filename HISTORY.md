@@ -1,7 +1,7 @@
 
 # Release history
 
-### v0.50.0
+### Aider v0.50.0
 
 - Infinite output for DeepSeek Coder, Mistral models in addition to Anthropic's models.
 - New `--deepseek` switch to use DeepSeek Coder.
