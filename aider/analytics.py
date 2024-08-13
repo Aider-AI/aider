@@ -26,19 +26,19 @@ class Analytics:
         self.user_id = self.get_or_create_uuid()
 
     def mark_as_disabled(self):
-        uuid_file = Path.home() / ".aider" / "caches" / "mixpanel.json"
-        uuid_file.parent.mkdir(parents=True, exist_ok=True)
+        data_file = Path.home() / ".aider" / "caches" / "mixpanel.json"
+        data_file.parent.mkdir(parents=True, exist_ok=True)
 
         data = {"uuid": str(uuid.uuid4()), "disabled": True}
-        with open(uuid_file, "w") as f:
+        with open(data_file, "w") as f:
             json.dump(data, f)
 
     def get_or_create_uuid(self):
-        uuid_file = Path.home() / ".aider" / "caches" / "mixpanel.json"
-        uuid_file.parent.mkdir(parents=True, exist_ok=True)
+        data_file = Path.home() / ".aider" / "caches" / "mixpanel.json"
+        data_file.parent.mkdir(parents=True, exist_ok=True)
 
-        if uuid_file.exists():
-            with open(uuid_file, "r") as f:
+        if data_file.exists():
+            with open(data_file, "r") as f:
                 data = json.load(f)
                 if "disabled" in data and data["disabled"]:
                     self.disable = True
@@ -46,7 +46,7 @@ class Analytics:
                 return data["uuid"]
 
         new_uuid = str(uuid.uuid4())
-        with open(uuid_file, "w") as f:
+        with open(data_file, "w") as f:
             json.dump({"uuid": new_uuid}, f)
 
         return new_uuid
