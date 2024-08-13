@@ -154,7 +154,9 @@ semver==3.0.2
 shellingham==1.5.4
     # via typer
 six==1.16.0
-    # via python-dateutil
+    # via
+    #   -c requirements/../requirements.txt
+    #   python-dateutil
 snowballstemmer==2.2.0
     # via sphinx
 sphinx==7.4.7

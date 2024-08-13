@@ -117,7 +117,9 @@ rpds-py==0.20.0
     #   jsonschema
     #   referencing
 six==1.16.0
-    # via python-dateutil
+    # via
+    #   -c requirements/../requirements.txt
+    #   python-dateutil
 smmap==5.0.1
     # via
     #   -c requirements/../requirements.txt
