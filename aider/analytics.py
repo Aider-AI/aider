@@ -59,20 +59,6 @@ class Analytics:
             "machine": platform.machine(),
         }
 
-    def get_or_create_uuid(self):
-        uuid_file = Path.home() / ".aider" / "caches" / "mixpanel.json"
-        uuid_file.parent.mkdir(parents=True, exist_ok=True)
-
-        if uuid_file.exists():
-            with open(uuid_file, "r") as f:
-                return json.load(f)["uuid"]
-
-        new_uuid = str(uuid.uuid4())
-        with open(uuid_file, "w") as f:
-            json.dump({"uuid": new_uuid}, f)
-
-        return new_uuid
-
     def event(self, event_name, main_model=None, **kwargs):
         if not self.mp and not self.logfile:
             return
