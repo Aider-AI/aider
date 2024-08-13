@@ -1019,8 +1019,7 @@ class Coder:
 
         self.io.tool_output()
 
-        if self.usage_report:
-            self.io.tool_output(self.usage_report)
+        self.show_usage_report()
 
         if exhausted:
             self.show_exhausted_error()
@@ -1277,7 +1276,6 @@ class Coder:
                     self.io.ai_output(json.dumps(args, indent=4))
 
             self.calculate_and_show_tokens_and_cost(messages, completion)
-            self.show_usage_report()
 
     def show_send_output(self, completion):
         if self.verbose:
