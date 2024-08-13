@@ -27,7 +27,7 @@ cog.out(get_md_help())
 ```
 usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--opus] [--sonnet] [--4] [--4o] [--mini] [--4-turbo]
-             [--35turbo] [--models] [--openai-api-base]
+             [--35turbo] [--deepseek] [--models] [--openai-api-base]
              [--openai-api-type] [--openai-api-version]
              [--openai-api-deployment-id] [--openai-organization-id]
              [--model-settings-file] [--model-metadata-file]
@@ -117,6 +117,10 @@ Aliases:
   - `--35-turbo`
   - `--3`
   - `-3`
+
+### `--deepseek`
+Use deepseek/deepseek-coder model for the main chat  
+Environment variable: `AIDER_DEEPSEEK`  
 
 ## Model Settings:
 

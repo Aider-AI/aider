@@ -57,6 +57,7 @@ def send_completion(
         temperature=temperature,
         stream=stream,
     )
+
     if functions is not None:
         kwargs["functions"] = functions
     if extra_headers is not None:

@@ -6,7 +6,7 @@
 #
 greenlet==3.0.3
     # via playwright
-playwright==1.45.1
+playwright==1.46.0
     # via -r requirements/requirements-playwright.in
 pyee==11.1.0
     # via playwright

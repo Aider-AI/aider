@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=requirements/requirements-browser.txt requirements/requirements-browser.in
 #
-altair==5.3.0
+altair==5.4.0
     # via streamlit
 attrs==24.2.0
     # via
@@ -64,10 +64,11 @@ mdurl==0.1.2
     # via
     #   -c requirements/../requirements.txt
     #   markdown-it-py
+narwhals==1.3.0
+    # via altair
 numpy==1.26.4
     # via
     #   -c requirements/../requirements.txt
-    #   altair
     #   pandas
     #   pyarrow
     #   pydeck
@@ -78,9 +79,7 @@ packaging==24.1
     #   altair
     #   streamlit
 pandas==2.2.2
-    # via
-    #   altair
-    #   streamlit
+    # via streamlit
 pillow==10.4.0
     # via
     #   -c requirements/../requirements.txt
@@ -129,13 +128,12 @@ tenacity==8.5.0
     # via streamlit
 toml==0.10.2
     # via streamlit
-toolz==0.12.1
-    # via altair
 tornado==6.4.1
     # via streamlit
 typing-extensions==4.12.2
     # via
     #   -c requirements/../requirements.txt
+    #   altair
     #   streamlit
 tzdata==2024.1
     # via pandas
@@ -143,5 +141,5 @@ urllib3==2.2.2
     # via
     #   -c requirements/../requirements.txt
     #   requests
-watchdog==4.0.1
+watchdog==4.0.2
     # via -r requirements/requirements-browser.in
