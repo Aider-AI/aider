@@ -75,7 +75,7 @@ markupsafe==2.1.5
     # via
     #   -c requirements/../requirements.txt
     #   jinja2
-matplotlib==3.9.1.post1
+matplotlib==3.9.2
     # via -r requirements/requirements-dev.in
 mdurl==0.1.2
     # via
