@@ -8,6 +8,7 @@
 - New `--chat-mode <mode>` switch to launch in ask/help/code modes.
 - New `/code <message>` command request a code edit while in `ask` mode.
 - Web scraper is more robust if page never idles.
+- Improved token and cost reporting for infinite output.
 - Improvements and bug fixes for `/read` only files.
 - Bug fix to persist files added during `/ask`.
 - Bug fix for chat history size in `/tokens`.
