@@ -76,7 +76,7 @@ class Analytics:
                 "event": event_name,
                 "properties": properties,
                 "user_id": self.user_id,
-                "time": int(time.time())
+                "time": int(time.time()),
             }
             with open(self.logfile, "a") as f:
                 json.dump(log_entry, f)
