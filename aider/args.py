@@ -553,6 +553,11 @@ def get_parser(default_config_files, git_root):
         default=False,
         help="Enable/disable analytics tracking (default: True)",
     )
+    group.add_argument(
+        "--analytics-log",
+        metavar="ANALYTICS_LOG_FILE",
+        help="Specify a file to log analytics events",
+    )
 
     return parser
 
