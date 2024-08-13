@@ -1436,6 +1436,7 @@ class Coder:
         self.event(
             "message_send",
             main_model=self.main_model,
+            edit_format=self.edit_format,
             prompt_tokens=prompt_tokens,
             completion_tokens=completion_tokens,
             total_tokens=prompt_tokens + completion_tokens,
