@@ -6,15 +6,18 @@ import uuid
 from pathlib import Path
 
 from mixpanel import Mixpanel
+from posthog import Posthog
 
 from aider import __version__
 from aider.dump import dump  # noqa: F401
 
-project_token = "6da9a43058a5d1b9f3353153921fb04d"
-
+mixpanel_project_token = "6da9a43058a5d1b9f3353153921fb04d"
+posthog_project_api_key = 'phc_99T7muzafUMMZX15H8XePbMSreEUzahHbtWjy3l5Qbv'
+posthog_host = 'https://us.i.posthog.com'
 
 class Analytics:
     mp = None
+    ph = None
     user_id = None
     disable = None
     logfile = None
@@ -24,6 +27,7 @@ class Analytics:
         self.disable = disable
         if not track or disable:
             self.mp = None
+            self.ph = None
             if disable:
                 self.mark_as_disabled()
             return
@@ -31,7 +35,8 @@ class Analytics:
         self.user_id = self.get_or_create_uuid()
 
         if self.user_id and not self.disable:
-            self.mp = Mixpanel(project_token)
+            self.mp = Mixpanel(mixpanel_project_token)
+            self.ph = Posthog(project_api_key=posthog_project_api_key, host=posthog_host)
 
     def get_data_file_path(self):
         data_file = Path.home() / ".aider" / "analytics.json"
@@ -71,7 +76,7 @@ class Analytics:
         }
 
     def event(self, event_name, main_model=None, **kwargs):
-        if not self.mp and not self.logfile:
+        if not (self.mp or self.ph) and not self.logfile:
             return
 
         properties = {}
@@ -97,6 +102,9 @@ class Analytics:
         if self.mp:
             self.mp.track(self.user_id, event_name, properties)
 
+        if self.ph:
+            self.ph.capture(self.user_id, event_name, properties)
+
         if self.logfile:
             log_entry = {
                 "event": event_name,
@@ -107,3 +115,7 @@ class Analytics:
             with open(self.logfile, "a") as f:
                 json.dump(log_entry, f)
                 f.write("\n")
+
+    def __del__(self):
+        if self.ph:
+            self.ph.shutdown()
