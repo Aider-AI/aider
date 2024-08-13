@@ -206,8 +206,9 @@ class Commands:
             self.coder.event(f"command_{command}")
             return self.do_run(command, rest_inp)
         elif first_word in matching_commands:
-            self.coder.event(f"command_{first_word}")
-            return self.do_run(first_word[1:], rest_inp)
+            command = first_word[1:]
+            self.coder.event(f"command_{command}")
+            return self.do_run(command, rest_inp)
         elif len(matching_commands) > 1:
             self.io.tool_error(f"Ambiguous command: {', '.join(matching_commands)}")
         else:
