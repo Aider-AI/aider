@@ -74,6 +74,8 @@ class Coder:
     partial_response_content = ""
     commit_before_message = []
     message_cost = 0.0
+    message_tokens_sent = 0
+    message_tokens_received = 0
 
     @classmethod
     def create(
@@ -1387,7 +1389,10 @@ class Coder:
             prompt_tokens = self.main_model.token_count(messages)
             completion_tokens = self.main_model.token_count(self.partial_response_content)
 
-        tokens_report = f"Tokens: {prompt_tokens:,} sent, {completion_tokens:,} received."
+        self.message_tokens_sent += prompt_tokens
+        self.message_tokens_received += completion_tokens
+
+        tokens_report = f"Tokens: {self.message_tokens_sent:,} sent, {self.message_tokens_received:,} received."
 
         if self.main_model.info.get("input_cost_per_token"):
             cost += prompt_tokens * self.main_model.info.get("input_cost_per_token")
@@ -1417,6 +1422,8 @@ class Coder:
         if self.usage_report:
             self.io.tool_output(self.usage_report)
             self.message_cost = 0.0
+            self.message_tokens_sent = 0
+            self.message_tokens_received = 0
 
     def get_multi_response_content(self, final=False):
         cur = self.multi_response_content or ""
