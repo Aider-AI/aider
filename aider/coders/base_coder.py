@@ -1264,8 +1264,6 @@ class Coder:
         except KeyboardInterrupt as kbi:
             self.keyboard_interrupt()
             raise kbi
-        except Exception as e:
-            self.io.tool_error(f"Error during API call: {str(e)}")
         finally:
             self.io.log_llm_history(
                 "LLM RESPONSE",
