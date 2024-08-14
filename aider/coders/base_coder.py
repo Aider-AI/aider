@@ -1291,10 +1291,11 @@ class Coder:
         show_func_err = None
         show_content_err = None
         try:
-            self.partial_response_function_call = (
-                completion.choices[0].message.tool_calls[0].function
-            )
-            dump(str(self.partial_response_function_call))
+            if completion.choices[0].message.tool_calls:
+                self.partial_response_function_call = (
+                    completion.choices[0].message.tool_calls[0].function
+                )
+                dump(str(self.partial_response_function_call))
         except AttributeError as func_err:
             dump(func_err)
             show_func_err = func_err
