@@ -52,7 +52,7 @@ def plot_over_time(yaml_file):
     colors = [
         (
             "orange"
-            if "-4o-" in model and "gpt-4o-mini" not in model
+            if "-4o" in model and "gpt-4o-mini" not in model
             else "red" if "gpt-4" in model else "green" if "gpt-3.5" in model else "blue"
         )
         for model in models
@@ -63,7 +63,7 @@ def plot_over_time(yaml_file):
         ax.annotate(
             model,
             (dates[i], pass_rates[i]),
-            fontsize=12,
+            fontsize=8,
             alpha=0.75,
             xytext=(5, 5),
             textcoords="offset points",
