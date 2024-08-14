@@ -226,9 +226,10 @@ class TestMain(TestCase):
 
     def test_main_exit_calls_version_check(self):
         with GitTemporaryDirectory():
-            with patch("aider.main.check_version") as mock_check_version, patch(
-                "aider.main.InputOutput"
-            ) as mock_input_output:
+            with (
+                patch("aider.main.check_version") as mock_check_version,
+                patch("aider.main.InputOutput") as mock_input_output,
+            ):
                 main(["--exit"], input=DummyInput(), output=DummyOutput())
                 mock_check_version.assert_called_once()
                 mock_input_output.assert_called_once()
@@ -376,53 +377,58 @@ class TestMain(TestCase):
     def test_yaml_config_file_loading(self):
         with GitTemporaryDirectory() as git_dir:
             git_dir = Path(git_dir)
-            
+
             # Create fake home directory
             fake_home = git_dir / "fake_home"
             fake_home.mkdir()
             os.environ["HOME"] = str(fake_home)
-            
+
             # Create subdirectory as current working directory
             cwd = git_dir / "subdir"
             cwd.mkdir()
             os.chdir(cwd)
-            
+
             # Create .aider.conf.yml files in different locations
             home_config = fake_home / ".aider.conf.yml"
             git_config = git_dir / ".aider.conf.yml"
             cwd_config = cwd / ".aider.conf.yml"
             named_config = git_dir / "named.aider.conf.yml"
-            
+
             home_config.write_text("model: gpt-3.5-turbo\nmap-tokens: 1024\n")
             git_config.write_text("model: gpt-4\nmap-tokens: 2048\n")
             cwd_config.write_text("model: gpt-4-32k\nmap-tokens: 4096\n")
             named_config.write_text("model: gpt-4-1106-preview\nmap-tokens: 8192\n")
-            
-            with patch("pathlib.Path.home", return_value=fake_home), \
-                 patch("aider.coders.Coder.create") as MockCoder:
-                
+
+            with (
+                patch("pathlib.Path.home", return_value=fake_home),
+                patch("aider.coders.Coder.create") as MockCoder,
+            ):
                 # Test loading from current working directory
                 main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
                 _, kwargs = MockCoder.call_args
                 self.assertEqual(kwargs["model"], "gpt-4-32k")
                 self.assertEqual(kwargs["map_tokens"], 4096)
-                
+
                 # Test loading from git root
                 cwd_config.unlink()
                 main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
                 _, kwargs = MockCoder.call_args
                 self.assertEqual(kwargs["model"], "gpt-4")
                 self.assertEqual(kwargs["map_tokens"], 2048)
-                
+
                 # Test loading from home directory
                 git_config.unlink()
                 main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
                 _, kwargs = MockCoder.call_args
                 self.assertEqual(kwargs["model"], "gpt-3.5-turbo")
                 self.assertEqual(kwargs["map_tokens"], 1024)
-                
+
                 # Test loading from specified config file
-                main(["--yes", "--exit", "--config", str(named_config)], input=DummyInput(), output=DummyOutput())
+                main(
+                    ["--yes", "--exit", "--config", str(named_config)],
+                    input=DummyInput(),
+                    output=DummyOutput(),
+                )
                 _, kwargs = MockCoder.call_args
                 self.assertEqual(kwargs["model"], "gpt-4-1106-preview")
                 self.assertEqual(kwargs["map_tokens"], 8192)
