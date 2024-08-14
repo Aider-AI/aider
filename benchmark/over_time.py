@@ -51,7 +51,7 @@ def plot_over_time(yaml_file):
 
     colors = [
         (
-            "orange"
+            "purple"
             if "-4o" in model and "gpt-4o-mini" not in model
             else "red" if "gpt-4" in model else "green" if "gpt-3.5" in model else "blue"
         )
@@ -59,14 +59,14 @@ def plot_over_time(yaml_file):
     ]
 
     # Separate data points by color
-    orange_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "orange"]
+    purple_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "purple"]
     red_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "red"]
     green_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "green"]
 
-    # Plot lines for orange, red, and green points
-    if orange_points:
-        orange_dates, orange_rates = zip(*sorted(orange_points))
-        ax.plot(orange_dates, orange_rates, c="orange", alpha=0.5, linewidth=1)
+    # Plot lines for purple, red, and green points
+    if purple_points:
+        purple_dates, purple_rates = zip(*sorted(purple_points))
+        ax.plot(purple_dates, purple_rates, c="purple", alpha=0.5, linewidth=1)
     if red_points:
         red_dates, red_rates = zip(*sorted(red_points))
         ax.plot(red_dates, red_rates, c="red", alpha=0.5, linewidth=1)
