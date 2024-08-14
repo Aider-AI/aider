@@ -62,7 +62,6 @@ def plot_over_time(yaml_file):
     orange_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "orange"]
     red_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "red"]
     green_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "green"]
-    blue_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "blue"]
 
     # Plot lines for orange, red, and green points
     if orange_points:
