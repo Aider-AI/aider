@@ -324,6 +324,14 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     default_config_files.append(Path.home() / conf_fname)  # homedir
     default_config_files = list(map(str, default_config_files))
 
+    parser = get_parser(default_config_files, git_root)
+    args, unknown = parser.parse_known_args(argv)
+
+    if args.verbose:
+        print("Default config files before reversing:")
+        for file in default_config_files:
+            print(f"  - {file}")
+
     default_config_files.reverse()
 
     parser = get_parser(default_config_files, git_root)
