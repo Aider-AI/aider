@@ -1,3 +1,25 @@
+- dirname: 2024-08-14-18-26-18--json-gpt-4o-2024-08-06-whole
+  test_cases: 133
+  model: gpt-4o-2024-08-06
+  edit_format: Markdown
+  commit_hash: 94a2601-dirty
+  pass_rate_1: 62.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: aider --model gpt-4o-2024-08-06
+  date: 2024-08-14
+  versions: 0.50.2-dev
+  seconds_per_case: 6.8
+  total_cost: 1.2717
+
 - dirname: 2024-08-14-18-38-25--json-gpt-4o-2024-08-06-non-strict-func
   test_cases: 133
   model: gpt-4o-2024-08-06
@@ -42,53 +64,9 @@
   seconds_per_case: 12.7
   total_cost: 1.3652
 
-- dirname: 2024-08-14-18-26-18--json-gpt-4o-2024-08-06-whole
-  test_cases: 133
-  model: gpt-4o-2024-08-06
-  edit_format: Markdown
-  commit_hash: 94a2601-dirty
-  pass_rate_1: 62.4
-  percent_cases_well_formed: 100.0
-  error_outputs: 0
-  num_malformed_responses: 0
-  num_with_malformed_responses: 0
-  user_asks: 0
-  lazy_comments: 0
-  syntax_errors: 0
-  indentation_errors: 0
-  exhausted_context_windows: 0
-  test_timeouts: 3
-  command: aider --model gpt-4o-2024-08-06
-  date: 2024-08-14
-  versions: 0.50.2-dev
-  seconds_per_case: 6.8
-  total_cost: 1.2717
-
-- dirname: 2024-08-14-20-19-23--json-sonnet-non-strict-func
-  test_cases: 133
-  model: openrouter/anthropic/claude-3.5-sonnet
-  edit_format: Tool call
-  commit_hash: e2f14a2
-  pass_rate_1: 52.6
-  percent_cases_well_formed: 100.0
-  error_outputs: 1
-  num_malformed_responses: 0
-  num_with_malformed_responses: 0
-  user_asks: 1
-  lazy_comments: 0
-  syntax_errors: 1
-  indentation_errors: 0
-  exhausted_context_windows: 0
-  test_timeouts: 0
-  command: aider --model openrouter/anthropic/claude-3.5-sonnet
-  date: 2024-08-14
-  versions: 0.50.2-dev
-  seconds_per_case: 18.9
-  total_cost: 2.6341
-
 - dirname: 2024-08-14-20-15-19--json-sonnet-whole
   test_cases: 133
-  model: openrouter/anthropic/claude-3.5-sonnet
+  model: claude-3.5-sonnet
   edit_format: Markdown
   commit_hash: e2f14a2
   pass_rate_1: 58.6
@@ -102,37 +80,37 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model openrouter/anthropic/claude-3.5-sonnet
+  command: aider --model claude-3.5-sonnet
   date: 2024-08-14
   versions: 0.50.2-dev
   seconds_per_case: 19.7
   total_cost: 2.5335
 
-- dirname: 2024-08-14-21-20-46--json-deepseek-non-strict-func
+- dirname: 2024-08-14-20-19-23--json-sonnet-non-strict-func
   test_cases: 133
-  model: openrouter/deepseek/deepseek-coder
+  model: claude-3.5-sonnet
   edit_format: Tool call
   commit_hash: e2f14a2
-  pass_rate_1: 54.1
+  pass_rate_1: 52.6
   percent_cases_well_formed: 100.0
-  error_outputs: 9
+  error_outputs: 1
   num_malformed_responses: 0
   num_with_malformed_responses: 0
-  user_asks: 5
+  user_asks: 1
   lazy_comments: 0
-  syntax_errors: 2
+  syntax_errors: 1
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model openrouter/deepseek/deepseek-coder
+  command: aider --model claude-3.5-sonnet
   date: 2024-08-14
   versions: 0.50.2-dev
-  seconds_per_case: 17.4
-  total_cost: 0.0332
+  seconds_per_case: 18.9
+  total_cost: 2.6341
 
 - dirname: 2024-08-14-21-23-27--json-deepseek-whole
   test_cases: 133
-  model: openrouter/deepseek/deepseek-coder
+  model: deepseek-coder
   edit_format: Markdown
   commit_hash: e2f14a2
   pass_rate_1: 61.7
@@ -146,9 +124,31 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openrouter/deepseek/deepseek-coder
+  command: aider --model deepseek-coder
   date: 2024-08-14
   versions: 0.50.2-dev
   seconds_per_case: 23.0
   total_cost: 0.0439
+
+- dirname: 2024-08-14-21-20-46--json-deepseek-non-strict-func
+  test_cases: 133
+  model: deepseek-coder
+  edit_format: Tool call
+  commit_hash: e2f14a2
+  pass_rate_1: 54.1
+  percent_cases_well_formed: 100.0
+  error_outputs: 9
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 5
+  lazy_comments: 0
+  syntax_errors: 2
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model deepseek-coder
+  date: 2024-08-14
+  versions: 0.50.2-dev
+  seconds_per_case: 17.4
+  total_cost: 0.0332
 

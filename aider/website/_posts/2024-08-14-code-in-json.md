@@ -9,6 +9,9 @@ nav_exclude: true
 <p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
 {% endif %}
 
+# LLMs are bad at returning code in json
+
+
 <canvas id="passRateChart" width="800" height="400" style="margin-bottom: 20px"></canvas>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -55,13 +58,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         display: true,
                         text: 'Pass Rate (%)'
                     },
-                    max: 100
+                    max: 70
                 }
             },
             plugins: {
                 title: {
                     display: true,
-                    text: 'Pass Rate by Model and Edit Format',
+                    text: 'Pass rate by model and code return strategy',
                     font: {
                         size: 16
                     }
@@ -76,8 +79,6 @@ document.addEventListener('DOMContentLoaded', function () {
     new Chart(ctx, config);
 });
 </script>
-
-# LLMs are bad at returning code in json
 
 
 A lot of people wonder why aider doesn't have LLMs use tools or function calls to
