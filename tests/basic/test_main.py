@@ -394,15 +394,25 @@ class TestMain(TestCase):
             cwd_config = cwd / ".aider.conf.yml"
             named_config = git_dir / "named.aider.conf.yml"
 
-            home_config.write_text("model: gpt-3.5-turbo\nmap-tokens: 1024\n")
-            git_config.write_text("model: gpt-4\nmap-tokens: 2048\n")
             cwd_config.write_text("model: gpt-4-32k\nmap-tokens: 4096\n")
+            git_config.write_text("model: gpt-4\nmap-tokens: 2048\n")
+            home_config.write_text("model: gpt-3.5-turbo\nmap-tokens: 1024\n")
             named_config.write_text("model: gpt-4-1106-preview\nmap-tokens: 8192\n")
 
             with (
                 patch("pathlib.Path.home", return_value=fake_home),
                 patch("aider.coders.Coder.create") as MockCoder,
             ):
+                # Test loading from specified config file
+                main(
+                    ["--yes", "--exit", "--config", str(named_config)],
+                    input=DummyInput(),
+                    output=DummyOutput(),
+                )
+                _, kwargs = MockCoder.call_args
+                self.assertEqual(kwargs["main_model"].name, "gpt-4-1106-preview")
+                self.assertEqual(kwargs["map_tokens"], 8192)
+
                 # Test loading from current working directory
                 main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
                 _, kwargs = MockCoder.call_args
@@ -424,16 +434,6 @@ class TestMain(TestCase):
                 _, kwargs = MockCoder.call_args
                 self.assertEqual(kwargs["main_model"].name, "gpt-3.5-turbo")
                 self.assertEqual(kwargs["map_tokens"], 1024)
-
-                # Test loading from specified config file
-                main(
-                    ["--yes", "--exit", "--config", str(named_config)],
-                    input=DummyInput(),
-                    output=DummyOutput(),
-                )
-                _, kwargs = MockCoder.call_args
-                self.assertEqual(kwargs["main_model"].name, "gpt-4-1106-preview")
-                self.assertEqual(kwargs["map_tokens"], 8192)
 
     def test_map_tokens_option(self):
         with GitTemporaryDirectory():
