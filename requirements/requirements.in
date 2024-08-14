@@ -22,6 +22,8 @@ pypandoc
 litellm
 flake8
 importlib_resources
+pyperclip
+pypager
 
 # The proper depdendency is networkx[default], but this brings
 # in matplotlib and a bunch of other deps
@@ -46,3 +48,7 @@ importlib-metadata<8.0.0
 
 # Because sentence-transformers doesn't like >=2
 numpy<2
+
+# Going past this makes dependencies unresolvable
+# Seems to be caused by sentence-transformers
+tokenizers==0.19.1

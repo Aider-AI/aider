@@ -25,13 +25,7 @@ To work with Anthropic's models like Claude 3.5 Sonnet you need a paid
 [Anthropic API key](https://docs.anthropic.com/claude/reference/getting-started-with-the-api).
 
 
-{: .tip }
-Using a Python 
-[virtual environment](https://docs.python.org/3/library/venv.html){:target="_blank"}
-is recommended.
-Or, you could
-[use pipx to install aider](/docs/install/pipx.html)
-once for your whole system.
+{% include venv-pipx.md %}
 
 ## Mac/Linux install
 
@@ -59,10 +53,7 @@ $ aider --4o --openai-api-key sk-xxx...
 $ aider --sonnet --anthropic-api-key sk-xxx...
 ```
 
-{: .tip }
-In some environments the `aider` command may not be available
-on your shell path.
-You can also run aider like this: `python -m aider`
+{% include python-m-aider.md %}
 
 ## Working with other LLMs
 

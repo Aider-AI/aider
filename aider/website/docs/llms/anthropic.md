@@ -14,7 +14,7 @@ Aider has some built in shortcuts for the most popular Anthropic models and
 has been tested and benchmarked to work well with them:
 
 ```
-pip install aider-chat
+python -m pip install aider-chat
 
 export ANTHROPIC_API_KEY=<key> # Mac/Linux
 setx   ANTHROPIC_API_KEY <key> # Windows, restart shell after setx
@@ -33,8 +33,8 @@ aider --models anthropic/
 Anthropic has very low rate limits. 
 You can access all the Anthropic models via
 [OpenRouter](openrouter.md)
-without rate limits.
-For example: `aider --model openrouter/anthropic/claude-3.5-sonnet`
+or [Google Vertex AI](vertex.md)
+with more generous rate limits.
 
 You can use `aider --model <model-name>` to use any other Anthropic model.
 For example, if you want to use a specific version of Opus

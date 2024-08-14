@@ -84,11 +84,17 @@ cog.outl("```")
 ## Use gpt-4o model for the main chat
 #AIDER_4O=
 
+## Use gpt-4o-mini model for the main chat
+#AIDER_MINI=
+
 ## Use gpt-4-1106-preview model for the main chat
 #AIDER_4_TURBO=
 
 ## Use gpt-3.5-turbo model for the main chat
 #AIDER_35TURBO=
+
+## Use deepseek/deepseek-coder model for the main chat
+#AIDER_DEEPSEEK=
 
 #################
 # Model Settings:
@@ -213,8 +219,11 @@ cog.outl("```")
 ## Attribute aider commits in the git committer name (default: True)
 #AIDER_ATTRIBUTE_COMMITTER=true
 
-## Prefix commit messages with 'aider: ' (default: False)
-#AIDER_ATTRIBUTE_COMMIT_MESSAGE=false
+## Prefix commit messages with 'aider: ' if aider authored the changes (default: False)
+#AIDER_ATTRIBUTE_COMMIT_MESSAGE_AUTHOR=false
+
+## Prefix all commit messages with 'aider: ' (default: False)
+#AIDER_ATTRIBUTE_COMMIT_MESSAGE_COMMITTER=false
 
 ## Commit all pending changes with a suitable commit message, then exit
 #AIDER_COMMIT=false
@@ -251,6 +260,9 @@ cog.outl("```")
 
 ## specify a file to edit (can be used multiple times)
 #AIDER_FILE=
+
+## specify a read-only file (can be used multiple times)
+#AIDER_READ=
 
 ## Use VI editing mode in the terminal (default: False)
 #AIDER_VIM=false

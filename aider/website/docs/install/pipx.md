@@ -8,7 +8,7 @@ nav_order: 100
 If you are using aider to work on a python project, sometimes your project will require
 specific versions of python packages which conflict with the versions that aider
 requires.
-If this happens, the `pip install` command may return errors like these:
+If this happens, the `python -m pip install` command may return errors like these:
 
 ```
 aider-chat 0.23.0 requires somepackage==X.Y.Z, but you have somepackage U.W.V which is incompatible.

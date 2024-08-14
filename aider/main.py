@@ -384,6 +384,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     all_files = args.files + (args.file or [])
     fnames = [str(Path(fn).resolve()) for fn in all_files]
+    read_only_fnames = [str(Path(fn).resolve()) for fn in (args.read or [])]
     if len(all_files) > 1:
         good = True
         for fname in all_files:
@@ -415,11 +416,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             return main(argv, input, output, right_repo_root, return_coder=return_coder)
 
     if args.just_check_update:
-        update_available = check_version(io, just_check=True)
+        update_available = check_version(io, just_check=True, verbose=args.verbose)
         return 0 if not update_available else 1
 
     if args.check_update:
-        check_version(io)
+        check_version(io, verbose=args.verbose)
 
     if args.models:
         models.print_matching_models(io, args.models)
@@ -475,12 +476,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             repo = GitRepo(
                 io,
                 fnames,
-                git_dname or ".",
+                git_dname,
                 args.aiderignore,
                 models=main_model.commit_message_models(),
                 attribute_author=args.attribute_author,
                 attribute_committer=args.attribute_committer,
-                attribute_commit_message=args.attribute_commit_message,
+                attribute_commit_message_author=args.attribute_commit_message_author,
+                attribute_commit_message_committer=args.attribute_commit_message_committer,
                 commit_prompt=args.commit_prompt,
                 subtree_only=args.subtree_only,
             )
@@ -501,7 +503,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             io=io,
             repo=repo,
             fnames=fnames,
-            pretty=args.pretty,
+            read_only_fnames=read_only_fnames,
             show_diffs=args.show_diffs,
             auto_commits=args.auto_commits,
             dirty_commits=args.dirty_commits,
@@ -618,8 +620,15 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             coder.run()
             return
         except SwitchCoder as switch:
-            coder = Coder.create(io=io, from_coder=coder, **switch.kwargs)
-            coder.show_announcements()
+            kwargs = dict(io=io, from_coder=coder)
+            kwargs.update(switch.kwargs)
+            if "show_announcements" in kwargs:
+                del kwargs["show_announcements"]
+
+            coder = Coder.create(**kwargs)
+
+            if switch.kwargs.get("show_announcements") is not False:
+                coder.show_announcements()
 
 
 def load_slow_imports():

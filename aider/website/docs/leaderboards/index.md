@@ -136,6 +136,16 @@ The model also has to successfully apply all its changes to the source file with
   tr.selected {
     color: #0056b3;
   }
+  table {
+    table-layout: fixed;
+  }
+  td, th {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  td:nth-child(3), td:nth-child(4) {
+    font-size: 12px;
+  }
 </style>
 
 ## Code refactoring leaderboard
@@ -291,7 +301,7 @@ Submit results by opening a PR with edits to the
 By Paul Gauthier,
 last updated
 <!--[[[cog
-import os
+import subprocess
 import datetime
 
 files = [
@@ -300,11 +310,17 @@ files = [
     'aider/website/_data/refactor_leaderboard.yml'
 ]
 
-mod_times = [os.path.getmtime(file) for file in files]
-latest_mod_time = max(mod_times)
-mod_date = datetime.datetime.fromtimestamp(latest_mod_time)
-cog.out(f"{mod_date.strftime('%B %d, %Y.')}")
+def get_last_modified_date(file):
+    result = subprocess.run(['git', 'log', '-1', '--format=%ct', file], capture_output=True, text=True)
+    if result.returncode == 0:
+        timestamp = int(result.stdout.strip())
+        return datetime.datetime.fromtimestamp(timestamp)
+    return datetime.datetime.min
+
+mod_dates = [get_last_modified_date(file) for file in files]
+latest_mod_date = max(mod_dates)
+cog.out(f"{latest_mod_date.strftime('%B %d, %Y.')}")
 ]]]-->
-August 06, 2024.
+August 10, 2024.
 <!--[[[end]]]-->
 </p>

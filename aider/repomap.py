@@ -60,6 +60,9 @@ class RepoMap:
 
         self.main_model = main_model
 
+        self.tree_cache = {}
+        self.tree_context_cache = {}
+
     def token_count(self, text):
         len_text = len(text)
         if len_text < 200:
@@ -471,24 +474,28 @@ class RepoMap:
         if key in self.tree_cache:
             return self.tree_cache[key]
 
-        code = self.io.read_text(abs_fname) or ""
-        if not code.endswith("\n"):
-            code += "\n"
+        if rel_fname not in self.tree_context_cache:
+            code = self.io.read_text(abs_fname) or ""
+            if not code.endswith("\n"):
+                code += "\n"
 
-        context = TreeContext(
-            rel_fname,
-            code,
-            color=False,
-            line_number=False,
-            child_context=False,
-            last_line=False,
-            margin=0,
-            mark_lois=False,
-            loi_pad=0,
-            # header_max=30,
-            show_top_of_file_parent_scope=False,
-        )
+            context = TreeContext(
+                rel_fname,
+                code,
+                color=False,
+                line_number=False,
+                child_context=False,
+                last_line=False,
+                margin=0,
+                mark_lois=False,
+                loi_pad=0,
+                # header_max=30,
+                show_top_of_file_parent_scope=False,
+            )
+            self.tree_context_cache[rel_fname] = context
 
+        context = self.tree_context_cache[rel_fname]
+        context.lines_of_interest = set()
         context.add_lines_of_interest(lois)
         context.add_context()
         res = context.format()

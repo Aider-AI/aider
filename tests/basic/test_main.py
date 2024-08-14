@@ -149,17 +149,6 @@ class TestMain(TestCase):
             _, kwargs = MockCoder.call_args
             assert kwargs["dirty_commits"] is True
             assert kwargs["auto_commits"] is True
-            assert kwargs["pretty"] is True
-
-        with patch("aider.coders.Coder.create") as MockCoder:
-            main(["--no-pretty"], input=DummyInput())
-            _, kwargs = MockCoder.call_args
-            assert kwargs["pretty"] is False
-
-        with patch("aider.coders.Coder.create") as MockCoder:
-            main(["--pretty"], input=DummyInput())
-            _, kwargs = MockCoder.call_args
-            assert kwargs["pretty"] is True
 
         with patch("aider.coders.Coder.create") as MockCoder:
             main(["--no-dirty-commits"], input=DummyInput())
@@ -234,6 +223,15 @@ class TestMain(TestCase):
                     MockSend.side_effect = side_effect
 
                     main(["--yes", fname, "--encoding", "iso-8859-15"])
+
+    def test_main_exit_calls_version_check(self):
+        with GitTemporaryDirectory():
+            with patch("aider.main.check_version") as mock_check_version, patch(
+                "aider.main.InputOutput"
+            ) as mock_input_output:
+                main(["--exit"], input=DummyInput(), output=DummyOutput())
+                mock_check_version.assert_called_once()
+                mock_input_output.assert_called_once()
 
     @patch("aider.main.InputOutput")
     @patch("aider.coders.base_coder.Coder.run")
@@ -396,3 +394,36 @@ class TestMain(TestCase):
                     output=DummyOutput(),
                 )
                 MockRepoMap.assert_called_once()
+
+    def test_read_option(self):
+        with GitTemporaryDirectory():
+            test_file = "test_file.txt"
+            Path(test_file).touch()
+
+            coder = main(
+                ["--read", test_file, "--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+            )
+
+            self.assertIn(str(Path(test_file).resolve()), coder.abs_read_only_fnames)
+
+    def test_read_option_with_external_file(self):
+        with tempfile.NamedTemporaryFile(mode="w", delete=False) as external_file:
+            external_file.write("External file content")
+            external_file_path = external_file.name
+
+        try:
+            with GitTemporaryDirectory():
+                coder = main(
+                    ["--read", external_file_path, "--exit", "--yes"],
+                    input=DummyInput(),
+                    output=DummyOutput(),
+                    return_coder=True,
+                )
+
+                real_external_file_path = os.path.realpath(external_file_path)
+                self.assertIn(real_external_file_path, coder.abs_read_only_fnames)
+        finally:
+            os.unlink(external_file_path)

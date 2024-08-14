@@ -189,6 +189,33 @@ class TestCoder(unittest.TestCase):
 
             self.assertEqual(coder.abs_fnames, set([str(fname.resolve())]))
 
+    def test_check_for_file_mentions_read_only(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(
+                pretty=False,
+                yes=True,
+            )
+            coder = Coder.create(self.GPT35, None, io)
+
+            fname = Path("readonly_file.txt")
+            fname.touch()
+
+            coder.abs_read_only_fnames.add(str(fname.resolve()))
+
+            # Mock the get_tracked_files method
+            mock = MagicMock()
+            mock.return_value = set([str(fname)])
+            coder.repo.get_tracked_files = mock
+
+            # Call the check_for_file_mentions method
+            result = coder.check_for_file_mentions(f"Please check {fname}!")
+
+            # Assert that the method returns None (user not asked to add the file)
+            self.assertIsNone(result)
+
+            # Assert that abs_fnames is still empty (file not added)
+            self.assertEqual(coder.abs_fnames, set())
+
     def test_check_for_subdir_mention(self):
         with GitTemporaryDirectory():
             io = InputOutput(pretty=False, yes=True)
@@ -259,7 +286,7 @@ class TestCoder(unittest.TestCase):
         files = [file1, file2]
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(self.GPT35, None, io=InputOutput(), fnames=files, pretty=False)
+        coder = Coder.create(self.GPT35, None, io=InputOutput(), fnames=files)
 
         def mock_send(*args, **kwargs):
             coder.partial_response_content = "ok"
@@ -286,7 +313,7 @@ class TestCoder(unittest.TestCase):
         files = [file1, file2]
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(self.GPT35, None, io=InputOutput(), fnames=files, pretty=False)
+        coder = Coder.create(self.GPT35, None, io=InputOutput(), fnames=files)
 
         def mock_send(*args, **kwargs):
             coder.partial_response_content = "ok"
@@ -377,7 +404,7 @@ class TestCoder(unittest.TestCase):
             fname = Path("file.txt")
 
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)], pretty=False)
+            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)])
 
             self.assertTrue(fname.exists())
 
@@ -434,9 +461,7 @@ new
             fname1.write_text("ONE\n")
 
             io = InputOutput(yes=True)
-            coder = Coder.create(
-                self.GPT35, "diff", io=io, fnames=[str(fname1), str(fname2)], pretty=False
-            )
+            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname1), str(fname2)])
 
             def mock_send(*args, **kwargs):
                 coder.partial_response_content = f"""
@@ -489,7 +514,7 @@ TWO
             fname2.write_text("OTHER\n")
 
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)], pretty=False)
+            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)])
 
             def mock_send(*args, **kwargs):
                 coder.partial_response_content = f"""
@@ -567,7 +592,7 @@ three
             repo.git.commit("-m", "initial")
 
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)], pretty=False)
+            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)])
 
             def mock_send(*args, **kwargs):
                 coder.partial_response_content = f"""
@@ -640,7 +665,7 @@ two
 
     def test_check_for_urls(self):
         io = InputOutput(yes=True)
-        coder = Coder.create(self.GPT35, None, io=io, pretty=False)
+        coder = Coder.create(self.GPT35, None, io=io)
         coder.commands.scraper = MagicMock()
         coder.commands.scraper.scrape = MagicMock(return_value="some content")
 

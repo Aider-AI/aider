@@ -10,7 +10,7 @@ from unittest import TestCase, mock
 import git
 
 from aider.coders import Coder
-from aider.commands import Commands
+from aider.commands import Commands, SwitchCoder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.models import Model
@@ -537,6 +537,62 @@ class TestCommands(TestCase):
         commands.cmd_add("file.txt")
         self.assertEqual(coder.abs_fnames, set())
 
+    def test_cmd_add_read_only_file(self):
+        with GitTemporaryDirectory():
+            # Initialize the Commands and InputOutput objects
+            io = InputOutput(pretty=False, yes=True)
+            from aider.coders import Coder
+
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Create a test file
+            test_file = Path("test_read_only.txt")
+            test_file.write_text("Test content")
+
+            # Add the file as read-only
+            commands.cmd_read(str(test_file))
+
+            # Verify it's in abs_read_only_fnames
+            self.assertTrue(
+                any(
+                    os.path.samefile(str(test_file.resolve()), fname)
+                    for fname in coder.abs_read_only_fnames
+                )
+            )
+
+            # Try to add the read-only file
+            commands.cmd_add(str(test_file))
+
+            # It's not in the repo, should not do anything
+            self.assertFalse(
+                any(os.path.samefile(str(test_file.resolve()), fname) for fname in coder.abs_fnames)
+            )
+            self.assertTrue(
+                any(
+                    os.path.samefile(str(test_file.resolve()), fname)
+                    for fname in coder.abs_read_only_fnames
+                )
+            )
+
+            repo = git.Repo()
+            repo.git.add(str(test_file))
+            repo.git.commit("-m", "initial")
+
+            # Try to add the read-only file
+            commands.cmd_add(str(test_file))
+
+            # Verify it's now in abs_fnames and not in abs_read_only_fnames
+            self.assertTrue(
+                any(os.path.samefile(str(test_file.resolve()), fname) for fname in coder.abs_fnames)
+            )
+            self.assertFalse(
+                any(
+                    os.path.samefile(str(test_file.resolve()), fname)
+                    for fname in coder.abs_read_only_fnames
+                )
+            )
+
     def test_cmd_test_unbound_local_error(self):
         with ChdirTemporaryDirectory():
             io = InputOutput(pretty=False, yes=False)
@@ -731,6 +787,140 @@ class TestCommands(TestCase):
             self.assertNotIn(fname2, str(coder.abs_fnames))
             self.assertNotIn(fname3, str(coder.abs_fnames))
 
+    def test_cmd_read(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(pretty=False, yes=False)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Create a test file
+            test_file = Path("test_read.txt")
+            test_file.write_text("Test content")
+
+            # Test the /read command
+            commands.cmd_read(str(test_file))
+
+            # Check if the file was added to abs_read_only_fnames
+            self.assertTrue(
+                any(
+                    os.path.samefile(str(test_file.resolve()), fname)
+                    for fname in coder.abs_read_only_fnames
+                )
+            )
+
+            # Test dropping the read-only file
+            commands.cmd_drop(str(test_file))
+
+            # Check if the file was removed from abs_read_only_fnames
+            self.assertFalse(
+                any(
+                    os.path.samefile(str(test_file.resolve()), fname)
+                    for fname in coder.abs_read_only_fnames
+                )
+            )
+
+    def test_cmd_read_with_external_file(self):
+        with tempfile.NamedTemporaryFile(mode="w", delete=False) as external_file:
+            external_file.write("External file content")
+            external_file_path = external_file.name
+
+        try:
+            with GitTemporaryDirectory():
+                io = InputOutput(pretty=False, yes=False)
+                coder = Coder.create(self.GPT35, None, io)
+                commands = Commands(io, coder)
+
+                # Test the /read command with an external file
+                commands.cmd_read(external_file_path)
+
+                # Check if the external file was added to abs_read_only_fnames
+                real_external_file_path = os.path.realpath(external_file_path)
+                self.assertTrue(
+                    any(
+                        os.path.samefile(real_external_file_path, fname)
+                        for fname in coder.abs_read_only_fnames
+                    )
+                )
+
+                # Test dropping the external read-only file
+                commands.cmd_drop(Path(external_file_path).name)
+
+                # Check if the file was removed from abs_read_only_fnames
+                self.assertFalse(
+                    any(
+                        os.path.samefile(real_external_file_path, fname)
+                        for fname in coder.abs_read_only_fnames
+                    )
+                )
+        finally:
+            os.unlink(external_file_path)
+
+    def test_cmd_diff(self):
+        with GitTemporaryDirectory() as repo_dir:
+            repo = git.Repo(repo_dir)
+            io = InputOutput(pretty=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Create and commit a file
+            filename = "test_file.txt"
+            file_path = Path(repo_dir) / filename
+            file_path.write_text("Initial content\n")
+            repo.git.add(filename)
+            repo.git.commit("-m", "Initial commit\n")
+
+            # Modify the file to make it dirty
+            file_path.write_text("Modified content")
+
+            # Mock repo.get_commit_message to return a canned commit message
+            with mock.patch.object(
+                coder.repo, "get_commit_message", return_value="Canned commit message"
+            ):
+                # Run cmd_commit
+                commands.cmd_commit()
+
+                # Capture the output of cmd_diff
+                with mock.patch("builtins.print") as mock_print:
+                    commands.cmd_diff("")
+
+                # Check if the diff output is correct
+                mock_print.assert_called_with(mock.ANY)
+                diff_output = mock_print.call_args[0][0]
+                self.assertIn("-Initial content", diff_output)
+                self.assertIn("+Modified content", diff_output)
+
+                # Modify the file again
+                file_path.write_text("Further modified content")
+
+                # Run cmd_commit again
+                commands.cmd_commit()
+
+                # Capture the output of cmd_diff
+                with mock.patch("builtins.print") as mock_print:
+                    commands.cmd_diff("")
+
+                # Check if the diff output is correct
+                mock_print.assert_called_with(mock.ANY)
+                diff_output = mock_print.call_args[0][0]
+                self.assertIn("-Modified content", diff_output)
+                self.assertIn("+Further modified content", diff_output)
+
+                # Modify the file a third time
+                file_path.write_text("Final modified content")
+
+                # Run cmd_commit again
+                commands.cmd_commit()
+
+                # Capture the output of cmd_diff
+                with mock.patch("builtins.print") as mock_print:
+                    commands.cmd_diff("")
+
+                # Check if the diff output is correct
+                mock_print.assert_called_with(mock.ANY)
+                diff_output = mock_print.call_args[0][0]
+                self.assertIn("-Further modified content", diff_output)
+                self.assertIn("+Final modified content", diff_output)
+
     def test_cmd_ask(self):
         io = InputOutput(pretty=False, yes=True)
         coder = Coder.create(self.GPT35, None, io)
@@ -742,16 +932,11 @@ class TestCommands(TestCase):
         with mock.patch("aider.coders.Coder.run") as mock_run:
             mock_run.return_value = canned_reply
 
-            commands.cmd_ask(question)
+            with self.assertRaises(SwitchCoder):
+                commands.cmd_ask(question)
 
             mock_run.assert_called_once()
             mock_run.assert_called_once_with(question)
-
-            self.assertEqual(len(coder.cur_messages), 2)
-            self.assertEqual(coder.cur_messages[0]["role"], "user")
-            self.assertEqual(coder.cur_messages[0]["content"], question)
-            self.assertEqual(coder.cur_messages[1]["role"], "assistant")
-            self.assertEqual(coder.cur_messages[1]["content"], canned_reply)
 
     def test_cmd_lint_with_dirty_file(self):
         with GitTemporaryDirectory() as repo_dir:

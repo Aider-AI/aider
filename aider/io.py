@@ -15,6 +15,7 @@ from pygments.lexers import MarkdownLexer, guess_lexer_for_filename
 from pygments.token import Token
 from pygments.util import ClassNotFound
 from rich.console import Console
+from rich.style import Style as RichStyle
 from rich.text import Text
 
 from .dump import dump  # noqa: F401
@@ -22,10 +23,13 @@ from .utils import is_image_file
 
 
 class AutoCompleter(Completer):
-    def __init__(self, root, rel_fnames, addable_rel_fnames, commands, encoding):
+    def __init__(
+        self, root, rel_fnames, addable_rel_fnames, commands, encoding, abs_read_only_fnames=None
+    ):
         self.addable_rel_fnames = addable_rel_fnames
         self.rel_fnames = rel_fnames
         self.encoding = encoding
+        self.abs_read_only_fnames = abs_read_only_fnames or []
 
         fname_to_rel_fnames = defaultdict(list)
         for rel_fname in addable_rel_fnames:
@@ -47,7 +51,11 @@ class AutoCompleter(Completer):
         for rel_fname in rel_fnames:
             self.words.add(rel_fname)
 
-            fname = Path(root) / rel_fname
+        all_fnames = [Path(root) / rel_fname for rel_fname in rel_fnames]
+        if abs_read_only_fnames:
+            all_fnames.extend(abs_read_only_fnames)
+
+        for fname in all_fnames:
             try:
                 with open(fname, "r", encoding=self.encoding) as f:
                     content = f.read()
@@ -217,7 +225,7 @@ class InputOutput:
         with open(str(filename), "w", encoding=self.encoding) as f:
             f.write(content)
 
-    def get_input(self, root, rel_fnames, addable_rel_fnames, commands):
+    def get_input(self, root, rel_fnames, addable_rel_fnames, commands, abs_read_only_fnames=None):
         if self.pretty:
             style = dict(style=self.user_input_color) if self.user_input_color else dict()
             self.console.rule(**style)
@@ -244,7 +252,12 @@ class InputOutput:
             style = None
 
         completer_instance = AutoCompleter(
-            root, rel_fnames, addable_rel_fnames, commands, self.encoding
+            root,
+            rel_fnames,
+            addable_rel_fnames,
+            commands,
+            self.encoding,
+            abs_read_only_fnames=abs_read_only_fnames,
         )
 
         while True:
@@ -317,7 +330,7 @@ class InputOutput:
     def user_input(self, inp, log_only=True):
         if not log_only:
             style = dict(style=self.user_input_color) if self.user_input_color else dict()
-            self.console.print(inp, **style)
+            self.console.print(Text(inp), **style)
 
         prefix = "####"
         if inp:
@@ -341,18 +354,19 @@ class InputOutput:
         self.num_user_asks += 1
 
         if self.yes is True:
-            res = "yes"
+            res = "y"
         elif self.yes is False:
-            res = "no"
+            res = "n"
         else:
             res = prompt(question + " ", default=default)
 
-        hist = f"{question.strip()} {res.strip()}"
+        res = res.lower().strip()
+        is_yes = res in ("y", "yes")
+
+        hist = f"{question.strip()} {'y' if is_yes else 'n'}"
         self.append_chat_history(hist, linebreak=True, blockquote=True)
 
-        if not res or not res.strip():
-            return
-        return res.strip().lower().startswith("y")
+        return is_yes
 
     def prompt_ask(self, question, default=None):
         self.num_user_asks += 1
@@ -389,7 +403,7 @@ class InputOutput:
         style = dict(style=self.tool_error_color) if self.tool_error_color else dict()
         self.console.print(message, **style)
 
-    def tool_output(self, *messages, log_only=False):
+    def tool_output(self, *messages, log_only=False, bold=False):
         if messages:
             hist = " ".join(messages)
             hist = f"{hist.strip()}"
@@ -397,8 +411,10 @@ class InputOutput:
 
         if not log_only:
             messages = list(map(Text, messages))
-            style = dict(style=self.tool_output_color) if self.tool_output_color else dict()
-            self.console.print(*messages, **style)
+            style = dict(color=self.tool_output_color) if self.tool_output_color else dict()
+            style["reverse"] = bold
+            style = RichStyle(**style)
+            self.console.print(*messages, style=style)
 
     def append_chat_history(self, text, linebreak=False, blockquote=False, strip=True):
         if blockquote:

@@ -29,7 +29,8 @@ class GitRepo:
         models=None,
         attribute_author=True,
         attribute_committer=True,
-        attribute_commit_message=False,
+        attribute_commit_message_author=False,
+        attribute_commit_message_committer=False,
         commit_prompt=None,
         subtree_only=False,
     ):
@@ -41,7 +42,8 @@ class GitRepo:
 
         self.attribute_author = attribute_author
         self.attribute_committer = attribute_committer
-        self.attribute_commit_message = attribute_commit_message
+        self.attribute_commit_message_author = attribute_commit_message_author
+        self.attribute_commit_message_committer = attribute_commit_message_committer
         self.commit_prompt = commit_prompt
         self.subtree_only = subtree_only
         self.ignore_file_cache = {}
@@ -98,7 +100,9 @@ class GitRepo:
         else:
             commit_message = self.get_commit_message(diffs, context)
 
-        if aider_edits and self.attribute_commit_message:
+        if aider_edits and self.attribute_commit_message_author:
+            commit_message = "aider: " + commit_message
+        elif self.attribute_commit_message_committer:
             commit_message = "aider: " + commit_message
 
         if not commit_message:
@@ -130,7 +134,7 @@ class GitRepo:
 
         self.repo.git.commit(cmd)
         commit_hash = self.repo.head.commit.hexsha[:7]
-        self.io.tool_output(f"Commit {commit_hash} {commit_message}")
+        self.io.tool_output(f"Commit {commit_hash} {commit_message}", bold=True)
 
         # Restore the env
 
@@ -155,10 +159,6 @@ class GitRepo:
             return self.repo.git_dir
 
     def get_commit_message(self, diffs, context):
-        if len(diffs) >= 4 * 1024 * 4:
-            self.io.tool_error("Diff is too large to generate a commit message.")
-            return
-
         diffs = "# Diffs:\n" + diffs
 
         content = ""
@@ -172,7 +172,12 @@ class GitRepo:
             dict(role="user", content=content),
         ]
 
+        commit_message = None
         for model in self.models:
+            num_tokens = model.token_count(messages)
+            max_tokens = model.info.get("max_input_tokens") or 0
+            if max_tokens and num_tokens > max_tokens:
+                continue
             commit_message = simple_send_with_retries(model.name, messages)
             if commit_message:
                 break
@@ -226,6 +231,8 @@ class GitRepo:
         args = []
         if pretty:
             args += ["--color"]
+        else:
+            args += ["--color=never"]
 
         args += [from_commit, to_commit]
         diffs = self.repo.git.diff(*args)
@@ -355,3 +362,9 @@ class GitRepo:
             return True
 
         return self.repo.is_dirty(path=path)
+
+    def get_head(self):
+        try:
+            return self.repo.head.commit.hexsha
+        except ValueError:
+            return None

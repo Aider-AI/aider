@@ -14,24 +14,28 @@ CACHE = None
 # CACHE = Cache(CACHE_PATH)
 
 
+def retry_exceptions():
+    import httpx
+
+    return (
+        httpx.ConnectError,
+        httpx.RemoteProtocolError,
+        httpx.ReadTimeout,
+        litellm.exceptions.APIConnectionError,
+        litellm.exceptions.APIError,
+        litellm.exceptions.RateLimitError,
+        litellm.exceptions.ServiceUnavailableError,
+        litellm.exceptions.Timeout,
+        litellm.exceptions.InternalServerError,
+        litellm.llms.anthropic.AnthropicError,
+    )
+
+
 def lazy_litellm_retry_decorator(func):
     def wrapper(*args, **kwargs):
-        import httpx
-
         decorated_func = backoff.on_exception(
             backoff.expo,
-            (
-                httpx.ConnectError,
-                httpx.RemoteProtocolError,
-                httpx.ReadTimeout,
-                litellm.exceptions.APIConnectionError,
-                litellm.exceptions.APIError,
-                litellm.exceptions.RateLimitError,
-                litellm.exceptions.ServiceUnavailableError,
-                litellm.exceptions.Timeout,
-                litellm.exceptions.InternalServerError,
-                litellm.llms.anthropic.AnthropicError,
-            ),
+            retry_exceptions(),
             max_time=60,
             on_backoff=lambda details: print(
                 f"{details.get('exception', 'Exception')}\nRetry in {details['wait']:.1f} seconds."
@@ -42,8 +46,7 @@ def lazy_litellm_retry_decorator(func):
     return wrapper
 
 
-@lazy_litellm_retry_decorator
-def send_with_retries(
+def send_completion(
     model_name, messages, functions, stream, temperature=0, extra_headers=None, max_tokens=None
 ):
     from aider.llm import litellm
@@ -54,6 +57,7 @@ def send_with_retries(
         temperature=temperature,
         stream=stream,
     )
+
     if functions is not None:
         kwargs["tools"] = [dict(type="functions", function=functions[0])]
     if extra_headers is not None:
@@ -79,9 +83,10 @@ def send_with_retries(
     return hash_object, res
 
 
+@lazy_litellm_retry_decorator
 def simple_send_with_retries(model_name, messages):
     try:
-        _hash, response = send_with_retries(
+        _hash, response = send_completion(
             model_name=model_name,
             messages=messages,
             functions=None,

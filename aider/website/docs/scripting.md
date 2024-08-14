@@ -74,6 +74,10 @@ coder.run("make a script that prints hello world")
 
 # Send another instruction
 coder.run("make it say goodbye")
+
+# You can run in-chat "/" commands too
+coder.run("/tokens")
+
 ```
 
 See the

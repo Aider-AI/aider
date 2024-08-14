@@ -38,11 +38,17 @@
 ## Use gpt-4o model for the main chat
 #4o: false
 
+## Use gpt-4o-mini model for the main chat
+#mini: false
+
 ## Use gpt-4-1106-preview model for the main chat
 #4-turbo: false
 
 ## Use gpt-3.5-turbo model for the main chat
 #35turbo: false
+
+## Use deepseek/deepseek-coder model for the main chat
+#deepseek: false
 
 #################
 # Model Settings:
@@ -167,8 +173,11 @@
 ## Attribute aider commits in the git committer name (default: True)
 #attribute-committer: true
 
-## Prefix commit messages with 'aider: ' (default: False)
-#attribute-commit-message: false
+## Prefix commit messages with 'aider: ' if aider authored the changes (default: False)
+#attribute-commit-message-author: false
+
+## Prefix all commit messages with 'aider: ' (default: False)
+#attribute-commit-message-committer: false
 
 ## Commit all pending changes with a suitable commit message, then exit
 #commit: false
@@ -205,6 +214,9 @@
 
 ## specify a file to edit (can be used multiple times)
 #file:
+
+## specify a read-only file (can be used multiple times)
+#read:
 
 ## Use VI editing mode in the terminal (default: False)
 #vim: false

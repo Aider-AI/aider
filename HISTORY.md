@@ -1,6 +1,51 @@
 
 # Release history
 
+### Aider v0.50.0
+
+- Infinite output for DeepSeek Coder, Mistral models in addition to Anthropic's models.
+- New `--deepseek` switch to use DeepSeek Coder.
+- DeepSeek Coder uses 8k token output.
+- New `--chat-mode <mode>` switch to launch in ask/help/code modes.
+- New `/code <message>` command request a code edit while in `ask` mode.
+- Web scraper is more robust if page never idles.
+- Improved token and cost reporting for infinite output.
+- Improvements and bug fixes for `/read` only files.
+- Switched from `setup.py` to `pyproject.toml`, by @branchvincent.
+- Bug fix to persist files added during `/ask`.
+- Bug fix for chat history size in `/tokens`.
+- Aider wrote 66% of the code in this release.
+
+### Aider v0.49.1
+
+- Bugfix to `/help`.
+
+### Aider v0.49.0
+
+- Add read-only files to the chat context with `/read` and `--read`,  including from outside the git repo.
+- `/diff` now shows diffs of all changes resulting from your request, including lint and test fixes.
+- New `/clipboard` command to paste images or text from the clipboard, replaces `/add-clipboard-image`.
+- Now shows the markdown scraped when you add a url with `/web`.
+- When [scripting aider](https://aider.chat/docs/scripting.html) messages can now contain in-chat `/` commands.
+- Aider in docker image now suggests the correct command to update to latest version.
+- Improved retries on API errors (was easy to test during Sonnet outage).
+- Added `--mini` for `gpt-4o-mini`.
+- Bugfix to keep session cost accurate when using `/ask` and `/help`.
+- Performance improvements for repo map calculation.
+- `/tokens` now shows the active model.
+- Enhanced commit message attribution options:
+  - New `--attribute-commit-message-author` to prefix commit messages with 'aider: ' if aider authored the changes, replaces `--attribute-commit-message`.
+  - New `--attribute-commit-message-committer` to prefix all commit messages with 'aider: '.
+- Aider wrote 61% of the code in this release.
+
+### Aider v0.48.1
+
+- Added `openai/gpt-4o-2024-08-06`.
+- Worked around litellm bug that removes OpenRouter app headers when using `extra_headers`.
+- Improved progress indication during repo map processing.
+- Corrected instructions for upgrading the docker container to latest aider version.
+- Removed obsolete 16k token limit on commit diffs, use per-model limits.
+
 ### Aider v0.48.0
 
 - Performance improvements for large/mono repos.

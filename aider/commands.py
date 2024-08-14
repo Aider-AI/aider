@@ -7,7 +7,9 @@ from collections import OrderedDict
 from pathlib import Path
 
 import git
-from PIL import ImageGrab
+import pyperclip
+from PIL import Image, ImageGrab
+from rich.text import Text
 
 from aider import models, prompts, voice
 from aider.help import Help, install_help_extra
@@ -117,13 +119,15 @@ class Commands:
         else:
             self.io.tool_output("Please provide a partial model name to search for.")
 
-    def cmd_web(self, args):
-        "Use headless selenium to scrape a webpage and add the content to the chat"
+    def cmd_web(self, args, paginate=True):
+        "Scrape a webpage, convert to markdown and add to the chat"
+
         url = args.strip()
         if not url:
             self.io.tool_error("Please provide a URL to scrape.")
             return
 
+        self.io.tool_output(f"Scraping {url}...")
         if not self.scraper:
             res = install_playwright(self.io)
             if not res:
@@ -134,10 +138,13 @@ class Commands:
             )
 
         content = self.scraper.scrape(url) or ""
-        # if content:
-        #    self.io.tool_output(content)
-
         content = f"{url}:\n\n" + content
+
+        self.io.tool_output("... done.")
+
+        if paginate:
+            with self.io.console.pager():
+                self.io.console.print(Text(content))
 
         return content
 
@@ -304,7 +311,6 @@ class Commands:
         # chat history
         msgs = self.coder.done_messages + self.coder.cur_messages
         if msgs:
-            msgs = [dict(role="dummy", content=msg) for msg in msgs]
             tokens = self.coder.main_model.token_count(msgs)
             res.append((tokens, "chat history", "use /clear to clear"))
 
@@ -316,6 +322,8 @@ class Commands:
                 tokens = self.coder.main_model.token_count(repo_content)
                 res.append((tokens, "repository map", "use --map-tokens to resize"))
 
+        fence = "`" * 3
+
         # files
         for fname in self.coder.abs_fnames:
             relative_fname = self.coder.get_rel_fname(fname)
@@ -324,11 +332,23 @@ class Commands:
                 tokens = self.coder.main_model.token_count_for_image(fname)
             else:
                 # approximate
-                content = f"{relative_fname}\n```\n" + content + "```\n"
+                content = f"{relative_fname}\n{fence}\n" + content + "{fence}\n"
                 tokens = self.coder.main_model.token_count(content)
-            res.append((tokens, f"{relative_fname}", "use /drop to drop from chat"))
+            res.append((tokens, f"{relative_fname}", "/drop to remove"))
 
-        self.io.tool_output("Approximate context window usage, in tokens:")
+        # read-only files
+        for fname in self.coder.abs_read_only_fnames:
+            relative_fname = self.coder.get_rel_fname(fname)
+            content = self.io.read_text(fname)
+            if content is not None and not is_image_file(relative_fname):
+                # approximate
+                content = f"{relative_fname}\n{fence}\n" + content + "{fence}\n"
+                tokens = self.coder.main_model.token_count(content)
+                res.append((tokens, f"{relative_fname} (read-only)", "/drop to remove"))
+
+        self.io.tool_output(
+            f"Approximate context window usage for {self.coder.main_model.name}, in tokens:"
+        )
         self.io.tool_output()
 
         width = 8
@@ -344,7 +364,7 @@ class Commands:
         total_cost = 0.0
         for tk, msg, tip in res:
             total += tk
-            cost = tk * self.coder.main_model.info.get("input_cost_per_token", 0)
+            cost = tk * (self.coder.main_model.info.get("input_cost_per_token") or 0)
             total_cost += cost
             msg = msg.ljust(col_width)
             self.io.tool_output(f"${cost:7.4f} {fmt(tk)} {msg} {tip}")  # noqa: E231
@@ -352,7 +372,7 @@ class Commands:
         self.io.tool_output("=" * (width + cost_width + 1))
         self.io.tool_output(f"${total_cost:7.4f} {fmt(total)} tokens total")  # noqa: E231
 
-        limit = self.coder.main_model.info.get("max_input_tokens", 0)
+        limit = self.coder.main_model.info.get("max_input_tokens") or 0
         if not limit:
             return
 
@@ -440,27 +460,36 @@ class Commands:
         # Get the current HEAD after undo
         current_head_hash = self.coder.repo.repo.head.commit.hexsha[:7]
         current_head_message = self.coder.repo.repo.head.commit.message.strip()
-        self.io.tool_output(f"HEAD is: {current_head_hash} {current_head_message}")
+        self.io.tool_output(f"Now at:  {current_head_hash} {current_head_message}")
 
         if self.coder.main_model.send_undo_reply:
             return prompts.undo_command_reply
 
     def cmd_diff(self, args=""):
-        "Display the diff of the last aider commit"
+        "Display the diff of changes since the last message"
         if not self.coder.repo:
             self.io.tool_error("No git repository found.")
             return
 
-        last_commit_hash = self.coder.repo.repo.head.commit.hexsha[:7]
-
-        if last_commit_hash not in self.coder.aider_commit_hashes:
-            self.io.tool_error(f"Last commit {last_commit_hash} was not an aider commit.")
-            self.io.tool_error("You could try `/git diff` or `/git diff HEAD^`.")
+        current_head = self.coder.repo.get_head()
+        if current_head is None:
+            self.io.tool_error("Unable to get current commit. The repository might be empty.")
             return
+
+        if len(self.coder.commit_before_message) < 2:
+            commit_before_message = current_head + "^"
+        else:
+            commit_before_message = self.coder.commit_before_message[-2]
+
+        if not commit_before_message or commit_before_message == current_head:
+            self.io.tool_error("No changes to display since the last message.")
+            return
+
+        self.io.tool_output(f"Diff since {commit_before_message[:7]}...")
 
         diff = self.coder.repo.diff_commits(
             self.coder.pretty,
-            "HEAD^",
+            commit_before_message,
             "HEAD",
         )
 
@@ -471,6 +500,9 @@ class Commands:
         if " " in fname and '"' not in fname:
             fname = f'"{fname}"'
         return fname
+
+    def completions_read(self):
+        return self.completions_add()
 
     def completions_add(self):
         files = set(self.coder.get_all_relative_files())
@@ -558,6 +590,18 @@ class Commands:
 
             if abs_file_path in self.coder.abs_fnames:
                 self.io.tool_error(f"{matched_file} is already in the chat")
+            elif abs_file_path in self.coder.abs_read_only_fnames:
+                if self.coder.repo and self.coder.repo.path_in_repo(matched_file):
+                    self.coder.abs_read_only_fnames.remove(abs_file_path)
+                    self.coder.abs_fnames.add(abs_file_path)
+                    self.io.tool_output(
+                        f"Moved {matched_file} from read-only to editable files in the chat"
+                    )
+                    added_fnames.append(matched_file)
+                else:
+                    self.io.tool_error(
+                        f"Cannot add {matched_file} as it's not part of the repository"
+                    )
             else:
                 if is_image_file(matched_file) and not self.coder.main_model.accepts_images:
                     self.io.tool_error(
@@ -575,20 +619,12 @@ class Commands:
                     self.coder.check_added_files()
                     added_fnames.append(matched_file)
 
-        if not added_fnames:
-            return
-
-        # only reply if there's been some chatting since the last edit
-        if not self.coder.cur_messages:
-            return
-
-        reply = prompts.added_files.format(fnames=", ".join(added_fnames))
-        return reply
-
     def completions_drop(self):
         files = self.coder.get_inchat_relative_files()
-        files = [self.quote_fname(fn) for fn in files]
-        return files
+        read_only_files = [self.coder.get_rel_fname(fn) for fn in self.coder.abs_read_only_fnames]
+        all_files = files + read_only_files
+        all_files = [self.quote_fname(fn) for fn in all_files]
+        return all_files
 
     def cmd_drop(self, args=""):
         "Remove files from the chat session to free up context space"
@@ -596,9 +632,19 @@ class Commands:
         if not args.strip():
             self.io.tool_output("Dropping all files from the chat session.")
             self.coder.abs_fnames = set()
+            self.coder.abs_read_only_fnames = set()
+            return
 
         filenames = parse_quoted_filenames(args)
         for word in filenames:
+            # Handle read-only files separately, without glob_filtered_to_repo
+            read_only_matched = [f for f in self.coder.abs_read_only_fnames if word in f]
+
+            if read_only_matched:
+                for matched_file in read_only_matched:
+                    self.coder.abs_read_only_fnames.remove(matched_file)
+                    self.io.tool_output(f"Removed read-only file {matched_file} from the chat")
+
             matched_files = self.glob_filtered_to_repo(word)
 
             if not matched_files:
@@ -678,7 +724,7 @@ class Commands:
             add = result.returncode != 0
         else:
             response = self.io.prompt_ask(
-                "Add the output to the chat? (y/n/instructions): ", default="y"
+                "Add the output to the chat?\n(y/n/instructions)", default=""
             ).strip()
 
             if response.lower() in ["yes", "y"]:
@@ -718,6 +764,7 @@ class Commands:
 
         other_files = []
         chat_files = []
+        read_only_files = []
         for file in files:
             abs_file_path = self.coder.abs_root_path(file)
             if abs_file_path in self.coder.abs_fnames:
@@ -725,13 +772,23 @@ class Commands:
             else:
                 other_files.append(file)
 
-        if not chat_files and not other_files:
-            self.io.tool_output("\nNo files in chat or git repo.")
+        # Add read-only files
+        for abs_file_path in self.coder.abs_read_only_fnames:
+            rel_file_path = self.coder.get_rel_fname(abs_file_path)
+            read_only_files.append(rel_file_path)
+
+        if not chat_files and not other_files and not read_only_files:
+            self.io.tool_output("\nNo files in chat, git repo, or read-only list.")
             return
 
         if other_files:
             self.io.tool_output("Repo files not in the chat:\n")
         for file in other_files:
+            self.io.tool_output(f"  {file}")
+
+        if read_only_files:
+            self.io.tool_output("\nRead-only files:\n")
+        for file in read_only_files:
             self.io.tool_output(f"  {file}")
 
         if chat_files:
@@ -787,13 +844,23 @@ class Commands:
 """
         user_msg += "\n".join(self.coder.get_announcements()) + "\n"
 
-        assistant_msg = coder.run(user_msg)
+        coder.run(user_msg, preproc=False)
 
-        self.coder.cur_messages += [
-            dict(role="user", content=user_msg),
-            dict(role="assistant", content=assistant_msg),
-        ]
-        self.coder.total_cost += coder.total_cost
+        if self.coder.repo_map:
+            map_tokens = self.coder.repo_map.max_map_tokens
+            map_mul_no_files = self.coder.repo_map.map_mul_no_files
+        else:
+            map_tokens = 0
+            map_mul_no_files = 1
+
+        raise SwitchCoder(
+            edit_format=self.coder.edit_format,
+            summarize_from_coder=False,
+            from_coder=coder,
+            map_tokens=map_tokens,
+            map_mul_no_files=map_mul_no_files,
+            show_announcements=False,
+        )
 
     def clone(self):
         return Commands(
@@ -805,28 +872,35 @@ class Commands:
 
     def cmd_ask(self, args):
         "Ask questions about the code base without editing any files"
+        return self._generic_chat_command(args, "ask")
 
+    def cmd_code(self, args):
+        "Ask for changes to your code"
+        return self._generic_chat_command(args, self.coder.main_model.edit_format)
+
+    def _generic_chat_command(self, args, edit_format):
         if not args.strip():
-            self.io.tool_error("Please provide a question or topic for the chat.")
+            self.io.tool_error(f"Please provide a question or topic for the {edit_format} chat.")
             return
 
         from aider.coders import Coder
 
-        chat_coder = Coder.create(
+        coder = Coder.create(
             io=self.io,
             from_coder=self.coder,
-            edit_format="ask",
+            edit_format=edit_format,
             summarize_from_coder=False,
         )
 
         user_msg = args
-        assistant_msg = chat_coder.run(user_msg)
+        coder.run(user_msg)
 
-        self.coder.cur_messages += [
-            dict(role="user", content=user_msg),
-            dict(role="assistant", content=assistant_msg),
-        ]
-        self.coder.total_cost += chat_coder.total_cost
+        raise SwitchCoder(
+            edit_format=self.coder.edit_format,
+            summarize_from_coder=False,
+            from_coder=coder,
+            show_announcements=False,
+        )
 
     def get_help_md(self):
         "Show help about all commands in markdown"
@@ -894,27 +968,82 @@ class Commands:
 
         return text
 
-    def cmd_add_clipboard_image(self, args):
-        "Add an image from the clipboard to the chat"
+    def cmd_clipboard(self, args):
+        "Add image/text from the clipboard to the chat (optionally provide a name for the image)"
         try:
+            # Check for image first
             image = ImageGrab.grabclipboard()
-            if image is None:
-                self.io.tool_error("No image found in clipboard.")
+            if isinstance(image, Image.Image):
+                if args.strip():
+                    filename = args.strip()
+                    ext = os.path.splitext(filename)[1].lower()
+                    if ext in (".jpg", ".jpeg", ".png"):
+                        basename = filename
+                    else:
+                        basename = f"{filename}.png"
+                else:
+                    basename = "clipboard_image.png"
+
+                temp_dir = tempfile.mkdtemp()
+                temp_file_path = os.path.join(temp_dir, basename)
+                image_format = "PNG" if basename.lower().endswith(".png") else "JPEG"
+                image.save(temp_file_path, image_format)
+
+                abs_file_path = Path(temp_file_path).resolve()
+
+                # Check if a file with the same name already exists in the chat
+                existing_file = next(
+                    (f for f in self.coder.abs_fnames if Path(f).name == abs_file_path.name), None
+                )
+                if existing_file:
+                    self.coder.abs_fnames.remove(existing_file)
+                    self.io.tool_output(f"Replaced existing image in the chat: {existing_file}")
+
+                self.coder.abs_fnames.add(str(abs_file_path))
+                self.io.tool_output(f"Added clipboard image to the chat: {abs_file_path}")
+                self.coder.check_added_files()
+
                 return
 
-            with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as temp_file:
-                image.save(temp_file.name, "PNG")
-                temp_file_path = temp_file.name
+            # If not an image, try to get text
+            text = pyperclip.paste()
+            if text:
+                self.io.tool_output(text)
+                return text
 
-            abs_file_path = Path(temp_file_path).resolve()
-            self.coder.abs_fnames.add(str(abs_file_path))
-            self.io.tool_output(f"Added clipboard image to the chat: {abs_file_path}")
-            self.coder.check_added_files()
-
-            return prompts.added_files.format(fnames=str(abs_file_path))
+            self.io.tool_error("No image or text content found in clipboard.")
+            return
 
         except Exception as e:
-            self.io.tool_error(f"Error adding clipboard image: {e}")
+            self.io.tool_error(f"Error processing clipboard content: {e}")
+
+    def cmd_read(self, args):
+        "Add a file to the chat that is for reference, not to be edited"
+        if not args.strip():
+            self.io.tool_error("Please provide a filename to read.")
+            return
+
+        filename = args.strip()
+        abs_path = os.path.abspath(filename)
+
+        if not os.path.exists(abs_path):
+            self.io.tool_error(f"File not found: {abs_path}")
+            return
+
+        if not os.path.isfile(abs_path):
+            self.io.tool_error(f"Not a file: {abs_path}")
+            return
+
+        self.coder.abs_read_only_fnames.add(abs_path)
+        self.io.tool_output(f"Added {abs_path} to read-only files.")
+
+    def cmd_map(self, args):
+        "Print out the current repository map"
+        repo_map = self.coder.get_repo_map()
+        if repo_map:
+            self.io.tool_output(repo_map)
+        else:
+            self.io.tool_output("No repository map available.")
 
 
 def expand_subdir(file_path):

@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 import httpx
 
 from aider.llm import litellm
-from aider.sendchat import send_with_retries
+from aider.sendchat import simple_send_with_retries
 
 
 class PrintCalled(Exception):
@@ -14,7 +14,7 @@ class PrintCalled(Exception):
 class TestSendChat(unittest.TestCase):
     @patch("litellm.completion")
     @patch("builtins.print")
-    def test_send_with_retries_rate_limit_error(self, mock_print, mock_completion):
+    def test_simple_send_with_retries_rate_limit_error(self, mock_print, mock_completion):
         mock = MagicMock()
         mock.status_code = 500
 
@@ -29,19 +29,19 @@ class TestSendChat(unittest.TestCase):
             None,
         ]
 
-        # Call the send_with_retries method
-        send_with_retries("model", ["message"], None, False)
+        # Call the simple_send_with_retries method
+        simple_send_with_retries("model", ["message"])
         mock_print.assert_called_once()
 
     @patch("litellm.completion")
     @patch("builtins.print")
-    def test_send_with_retries_connection_error(self, mock_print, mock_completion):
+    def test_simple_send_with_retries_connection_error(self, mock_print, mock_completion):
         # Set up the mock to raise
         mock_completion.side_effect = [
             httpx.ConnectError("Connection error"),
             None,
         ]
 
-        # Call the send_with_retries method
-        send_with_retries("model", ["message"], None, False)
+        # Call the simple_send_with_retries method
+        simple_send_with_retries("model", ["message"])
         mock_print.assert_called_once()
