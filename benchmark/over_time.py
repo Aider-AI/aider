@@ -57,7 +57,7 @@ def plot_over_time(yaml_file):
         )
         for model in models
     ]
-    
+
     # Separate data points by color
     orange_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "orange"]
     red_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "red"]
