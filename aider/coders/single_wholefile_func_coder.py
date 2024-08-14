@@ -1,5 +1,3 @@
-import json
-
 from aider import diffs
 
 from ..dump import dump  # noqa: F401
@@ -14,9 +12,9 @@ class SingleWholeFileFunctionCoder(Coder):
         dict(
             name="write_file",
             description="write new content into the file",
+            strict=True,
             parameters=dict(
                 type="object",
-                required=["explanation", "content"],
                 properties=dict(
                     explanation=dict(
                         type="string",
@@ -27,9 +25,11 @@ class SingleWholeFileFunctionCoder(Coder):
                     ),
                     content=dict(
                         type="string",
-                        description="Content to write to the file",
+                        # description="Content to write to the file",
                     ),
                 ),
+                required=["explanation", "content"],
+                additionalProperties=False,
             ),
         ),
     ]

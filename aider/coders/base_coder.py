@@ -1031,7 +1031,7 @@ class Coder:
         if self.partial_response_function_call:
             args = self.parse_partial_args()
             if args:
-                content = args["explanation"]
+                content = args.get("explanation") or ""
             else:
                 content = ""
         elif self.partial_response_content:
