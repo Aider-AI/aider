@@ -9,6 +9,74 @@ nav_exclude: true
 <p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
 {% endif %}
 
+<canvas id="passRateChart" width="800" height="400" style="margin-bottom: 20px"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var ctx = document.getElementById('passRateChart').getContext('2d');
+    
+    var data = {
+        labels: ['gpt-4o-2024-08-06', 'claude-3.5-sonnet', 'deepseek-coder'],
+        datasets: [
+            {
+                label: 'Markdown',
+                data: [62.4, 58.6, 61.7],
+                backgroundColor: 'rgba(54, 162, 235, 0.8)',
+            },
+            {
+                label: 'Tool call',
+                data: [54.1, 52.6, 54.1],
+                backgroundColor: 'rgba(255, 99, 132, 0.8)',
+            },
+            {
+                label: 'Tool call (strict)',
+                data: [56.4, null, null],
+                backgroundColor: 'rgba(75, 192, 192, 0.8)',
+            }
+        ]
+    };
+
+    var config = {
+        type: 'bar',
+        data: data,
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Model'
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Pass Rate (%)'
+                    },
+                    max: 100
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Pass Rate by Model and Edit Format',
+                    font: {
+                        size: 16
+                    }
+                },
+                legend: {
+                    position: 'top',
+                }
+            }
+        }
+    };
+
+    new Chart(ctx, config);
+});
+</script>
+
 # LLMs are bad at returning code in json
 
 
