@@ -41,7 +41,9 @@ def plot_over_time(yaml_file):
     rc("font", **{"family": "sans-serif", "sans-serif": ["Helvetica"], "size": 10})
     plt.rcParams["text.color"] = "#444444"
 
-    fig, ax = plt.subplots(figsize=(10, 5))
+    fig, ax = plt.subplots(figsize=(12, 6))  # Increase figure size for better visibility
+    
+    print("Debug: Figure created. Plotting data...")
     ax.grid(axis="y", zorder=0, lw=0.2)
     for spine in ax.spines.values():
         spine.set_edgecolor("#DDDDDD")
@@ -67,12 +69,18 @@ def plot_over_time(yaml_file):
         "Aider code editing benchmark,\npercent completed correctly", fontsize=18, color="#555"
     )
     ax.set_title("LLM code editing skill by model release date", fontsize=20)
-    ax.set_ylim(0, 30)
-    plt.xticks(fontsize=14)
+    ax.set_ylim(0, 100)  # Adjust y-axis limit to accommodate higher values
+    plt.xticks(fontsize=14, rotation=45, ha='right')  # Rotate x-axis labels for better readability
     plt.tight_layout(pad=3.0)
+    
+    print("Debug: Saving figures...")
     plt.savefig("tmp_over_time.png")
     plt.savefig("tmp_over_time.svg")
+    
+    print("Debug: Displaying figure with imgcat...")
     imgcat(fig)
+    
+    print("Debug: Figure generation complete.")
 
 
 # Example usage
