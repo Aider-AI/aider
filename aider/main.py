@@ -327,6 +327,17 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     parser = get_parser(default_config_files, git_root)
     args, unknown = parser.parse_known_args(argv)
 
+    if args.verbose:
+        print("Config files search order, if no --config:")
+        for file in default_config_files:
+            exists = "(exists)" if Path(file).exists() else ""
+            print(f"  - {file} {exists}")
+
+    default_config_files.reverse()
+
+    parser = get_parser(default_config_files, git_root)
+    args, unknown = parser.parse_known_args(argv)
+
     # Load the .env file specified in the arguments
     loaded_dotenvs = load_dotenv_files(git_root, args.env_file)
 

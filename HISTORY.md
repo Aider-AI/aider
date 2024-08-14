@@ -1,6 +1,10 @@
 
 # Release history
 
+### Aider v0.50.1
+
+- Bugfix for provider API exceptions.
+
 ### Aider v0.50.0
 
 - Infinite output for DeepSeek Coder, Mistral models in addition to Anthropic's models.
