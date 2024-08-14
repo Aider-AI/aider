@@ -53,7 +53,7 @@ def plot_over_time(yaml_file):
         (
             "purple"
             if "-4o" in model and "gpt-4o-mini" not in model
-            else "red" if "gpt-4" in model else "green" if "gpt-3.5" in model else "blue"
+            else "red" if "gpt-4" in model else "green" if "gpt-3.5" in model else "lightblue"
         )
         for model in models
     ]
