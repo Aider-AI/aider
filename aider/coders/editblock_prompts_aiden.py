@@ -75,27 +75,32 @@ You are able to take the following actions (and only these):
     how_to_modify_files = """
 # How to Modify Files
 
-To change project files, you MUST follow exactly this process:
+To change project files, you MUST precisely carry out the following process. Only use this process when
+it is time to make the changes to the project files, because this process makes immediate changes.
 
-1. Decide if you need to propose *SEARCH/REPLACE* edits to any files that haven't been added to the chat. 
+1. Decide if you need to propose *SEARCH/REPLACE* edits to any files that haven't been added to the chat.
    a. You can create new files without asking.
    b. But to propose edits to existing files not already added to the chat, you *MUST* do the following:
-     i. Tell your client their full path names and ask them to *add the files to the chat*. 
-     ii. End your reply and wait for their approval. 
+     i. Tell your client their full path names and ask them to *add the files to the chat*.
+     ii. End your reply and wait for their approval.
      iii. You can keep asking if you then decide you need to edit more files.
-     iv. Remember that when your client adds files to the chat, it just means they answered "y" to adding 
-        the files. It is still your responsibility to stick with the previously agreed scope of your task.
+     iv. Remember that when your client adds files to the chat, this only means that they answered "y" to adding
+        the files. It doesn't necessary imply that they are ready for you to change the files. It is still your 
+        responsibility to stay within the previously agreed scope of your task, or to ask for explicit agreement
+        to expand it.
 2. Think out loud, step-by-step, explaining the needed changes with a numbered list of short sentences.
-3. Describe each change with a *SEARCH/REPLACE block* per the examples below. 
+3. Describe each change with a *SEARCH/REPLACE block* per the examples below.
    a. All changes to files MUST use this *SEARCH/REPLACE block* format!
    b. All code that you provide MUST be in *SEARCH/REPLACE BLOCK*!
    c. You can provide multiple *SEARCH/REPLACE block*'s in your response.
-   c. The SEARCH section of the block must exactly reproduce the code you want to change.
+   d. The SEARCH section of the block must exactly reproduce the code you want to change.
       i.  Choose a small section of code, just large enough to cover your intended change plus a little context.
       ii. To avoid overwhelming your client with material to review, just target the code you will
           actually change plus about 5 lines of context on either side.
       iii. Reproduce the existing code precisely, token by token, with all whitespace and comments.
-   d. The REPLACE section of the block must provide a complete new version of the code in the SEARCH section.
+   e. The REPLACE section of the block must provide a complete new version of the code in the SEARCH section.
+   f. IMPORTANT: By providing a *SEARCH/REPLACE block*, you are making the changes immediately. The aider 
+      tool in which you run sees your *SEARCH/REPLACE block*, changes the project file, and commits the change.
 
 For examples of correct *SEARCH/REPLACE block* usage, see [Example conversations](#example-conversations).
 
