@@ -12,11 +12,23 @@ def plot_over_time(yaml_file):
     pass_rates = []
     models = []
 
+    print("Debug: Raw data from YAML file:")
+    print(data)
+
     for entry in data:
         if "released" in entry and "pass_rate_2" in entry:
             dates.append(entry["released"])
             pass_rates.append(entry["pass_rate_2"])
             models.append(entry["model"].split("(")[0].strip())
+    
+    print("Debug: Processed data:")
+    print("Dates:", dates)
+    print("Pass rates:", pass_rates)
+    print("Models:", models)
+
+    if not dates or not pass_rates:
+        print("Error: No data to plot. Check if the YAML file is empty or if the data is in the expected format.")
+        return
 
     plt.rcParams["hatch.linewidth"] = 0.5
     plt.rcParams["hatch.color"] = "#444444"
