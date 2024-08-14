@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import yaml
 from imgcat import imgcat
 from matplotlib import rc
-
+from aider.dump import dump # noqa: 401
 
 def plot_over_time(yaml_file):
     with open(yaml_file, "r") as file:
@@ -57,4 +57,4 @@ def plot_over_time(yaml_file):
 
 
 # Example usage
-plot_over_time("_data/edit_leaderboard.yml")
+plot_over_time("aider/website/_data/edit_leaderboard.yml")
