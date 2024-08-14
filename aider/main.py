@@ -328,7 +328,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     args, unknown = parser.parse_known_args(argv)
 
     if args.verbose:
-        print("Default config files before reversing:")
+        print("Config files search order, if no --config:")
         for file in default_config_files:
             print(f"  - {file}")
 
