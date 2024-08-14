@@ -406,6 +406,8 @@ class TestMain(TestCase):
                 # Test loading from current working directory
                 main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
                 _, kwargs = MockCoder.call_args
+                print("kwargs:", kwargs)  # Add this line for debugging
+                self.assertIn("model", kwargs, "model key not found in kwargs")
                 self.assertEqual(kwargs["model"], "gpt-4-32k")
                 self.assertEqual(kwargs["map_tokens"], 4096)
 
