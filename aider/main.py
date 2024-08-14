@@ -330,7 +330,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.verbose:
         print("Config files search order, if no --config:")
         for file in default_config_files:
-            print(f"  - {file}")
+            exists = "[EXISTS]" if Path(file).exists() else ""
+            print(f"  - {file} {exists}")
 
     default_config_files.reverse()
 
