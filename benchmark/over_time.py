@@ -2,7 +2,9 @@ import matplotlib.pyplot as plt
 import yaml
 from imgcat import imgcat
 from matplotlib import rc
-from aider.dump import dump # noqa: 401
+
+from aider.dump import dump  # noqa: 401
+
 
 def plot_over_time(yaml_file):
     with open(yaml_file, "r") as file:
@@ -20,14 +22,17 @@ def plot_over_time(yaml_file):
             dates.append(entry["released"])
             pass_rates.append(entry["pass_rate_2"])
             models.append(entry["model"].split("(")[0].strip())
-    
+
     print("Debug: Processed data:")
     print("Dates:", dates)
     print("Pass rates:", pass_rates)
     print("Models:", models)
 
     if not dates or not pass_rates:
-        print("Error: No data to plot. Check if the YAML file is empty or if the data is in the expected format.")
+        print(
+            "Error: No data to plot. Check if the YAML file is empty or if the data is in the"
+            " expected format."
+        )
         return
 
     plt.rcParams["hatch.linewidth"] = 0.5
@@ -58,7 +63,9 @@ def plot_over_time(yaml_file):
         )
 
     ax.set_xlabel("Model release date", fontsize=18, color="#555")
-    ax.set_ylabel("Aider code editing benchmark,\npercent completed correctly", fontsize=18, color="#555")
+    ax.set_ylabel(
+        "Aider code editing benchmark,\npercent completed correctly", fontsize=18, color="#555"
+    )
     ax.set_title("LLM code editing skill by model release date", fontsize=20)
     ax.set_ylim(0, 30)
     plt.xticks(fontsize=14)
