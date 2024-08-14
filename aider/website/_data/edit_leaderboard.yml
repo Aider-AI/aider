@@ -843,4 +843,27 @@
   versions: 0.48.1-dev
   seconds_per_case: 6.5
   total_cost: 0.0000
+
+- dirname: 2024-08-14-13-07-12--chatgpt-4o-latest-diff
+  test_cases: 133
+  model: chatgpt-4o-latest
+  edit_format: diff
+  commit_hash: b1c3769
+  pass_rate_1: 53.4
+  pass_rate_2: 69.2
+  percent_cases_well_formed: 97.7
+  error_outputs: 27
+  num_malformed_responses: 5
+  num_with_malformed_responses: 3
+  user_asks: 7
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model openai/chatgpt-4o-latest
+  date: 2024-08-14
+  versions: 0.50.2-dev
+  seconds_per_case: 26.3
+  total_cost: 3.6113
   
