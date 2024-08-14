@@ -28,8 +28,6 @@ from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 
-load_dotenv()
-
 BENCHMARK_DNAME = Path(os.environ.get("AIDER_BENCHMARK_DIR", "tmp.benchmarks"))
 
 EXERCISES_DIR_DEFAULT = "exercism-python"
@@ -38,6 +36,8 @@ app = typer.Typer(add_completion=False, pretty_exceptions_enable=False)
 
 
 NUM_TESTS = (89, 133)
+
+load_dotenv(override=True)
 
 
 def show_stats(dirnames, graphs):
@@ -590,7 +590,7 @@ def run_test_real(
 
             coder.apply_updates()
         else:
-            response = coder.run(with_message=instructions)
+            response = coder.run(with_message=instructions, preproc=False)
         dur += time.time() - start
 
         if not no_aider:
