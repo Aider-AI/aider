@@ -25,7 +25,7 @@ class SingleWholeFileFunctionCoder(Coder):
                     ),
                     content=dict(
                         type="string",
-                        # description="Content to write to the file",
+                        description="Content to write to the file",
                     ),
                 ),
                 required=["explanation", "content"],
