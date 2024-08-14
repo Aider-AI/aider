@@ -407,22 +407,22 @@ class TestMain(TestCase):
                 main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
                 _, kwargs = MockCoder.call_args
                 print("kwargs:", kwargs)  # Add this line for debugging
-                self.assertIn("model", kwargs, "model key not found in kwargs")
-                self.assertEqual(kwargs["model"], "gpt-4-32k")
+                self.assertIn("main_model", kwargs, "main_model key not found in kwargs")
+                self.assertEqual(kwargs["main_model"].name, "gpt-4-32k")
                 self.assertEqual(kwargs["map_tokens"], 4096)
 
                 # Test loading from git root
                 cwd_config.unlink()
                 main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
                 _, kwargs = MockCoder.call_args
-                self.assertEqual(kwargs["model"], "gpt-4")
+                self.assertEqual(kwargs["main_model"].name, "gpt-4")
                 self.assertEqual(kwargs["map_tokens"], 2048)
 
                 # Test loading from home directory
                 git_config.unlink()
                 main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
                 _, kwargs = MockCoder.call_args
-                self.assertEqual(kwargs["model"], "gpt-3.5-turbo")
+                self.assertEqual(kwargs["main_model"].name, "gpt-3.5-turbo")
                 self.assertEqual(kwargs["map_tokens"], 1024)
 
                 # Test loading from specified config file
@@ -432,7 +432,7 @@ class TestMain(TestCase):
                     output=DummyOutput(),
                 )
                 _, kwargs = MockCoder.call_args
-                self.assertEqual(kwargs["model"], "gpt-4-1106-preview")
+                self.assertEqual(kwargs["main_model"].name, "gpt-4-1106-preview")
                 self.assertEqual(kwargs["map_tokens"], 8192)
 
     def test_map_tokens_option(self):
