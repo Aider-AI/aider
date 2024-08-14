@@ -378,7 +378,7 @@ def summarize_results(dirname):
         pass_rate = 100 * passed_tests[i] / res.completed_tests
         percents[i] = pass_rate
         # console.print(f"{pass_rate:.1f}% correct after try {i+1}")
-        setattr(res, f"pass_rate_{i+1}", f"{pass_rate:.1f}")
+        setattr(res, f"pass_rate_{i + 1}", f"{pass_rate:.1f}")
 
     print(f"- dirname: {dirname.name}")
     style = None if res.completed_tests in NUM_TESTS else "red"
@@ -393,10 +393,10 @@ def summarize_results(dirname):
         console.print(f"  {key}: {val}", style=style)
 
     for i in range(tries):
-        print(f"  pass_rate_{i+1}: {percents[i]:.1f}")
+        print(f"  pass_rate_{i + 1}: {percents[i]:.1f}")
 
     pct_well_formed = 1.0 - res.num_with_malformed_responses / res.completed_tests
-    print(f"  percent_cases_well_formed: {pct_well_formed*100:.1f}")
+    print(f"  percent_cases_well_formed: {pct_well_formed * 100:.1f}")
 
     show("error_outputs")
     show("num_malformed_responses")
@@ -564,7 +564,6 @@ def run_test_real(
         fnames=fnames,
         use_git=False,
         stream=False,
-        pretty=False,
         verbose=verbose,
     )
     coder.max_apply_update_errors = max_apply_update_errors
