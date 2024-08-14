@@ -16,25 +16,25 @@ nav_exclude: true
 document.addEventListener('DOMContentLoaded', function () {
     var ctx = document.getElementById('passRateChart').getContext('2d');
     
+    var yamlData = {{ site.data.code-in-json | jsonify }};
+    
+    var models = [...new Set(yamlData.map(item => item.model))];
+    var editFormats = [...new Set(yamlData.map(item => item.edit_format))];
+    
+    var datasets = editFormats.map(format => ({
+        label: format,
+        data: models.map(model => {
+            var item = yamlData.find(d => d.model === model && d.edit_format === format);
+            return item ? item.pass_rate_1 : null;
+        }),
+        backgroundColor: format === 'Markdown' ? 'rgba(54, 162, 235, 0.8)' :
+                         format === 'Tool call' ? 'rgba(255, 99, 132, 0.8)' :
+                         'rgba(75, 192, 192, 0.8)',
+    }));
+
     var data = {
-        labels: ['gpt-4o-2024-08-06', 'claude-3.5-sonnet', 'deepseek-coder'],
-        datasets: [
-            {
-                label: 'Markdown',
-                data: [62.4, 58.6, 61.7],
-                backgroundColor: 'rgba(54, 162, 235, 0.8)',
-            },
-            {
-                label: 'Tool call',
-                data: [54.1, 52.6, 54.1],
-                backgroundColor: 'rgba(255, 99, 132, 0.8)',
-            },
-            {
-                label: 'Tool call (strict)',
-                data: [56.4, null, null],
-                backgroundColor: 'rgba(75, 192, 192, 0.8)',
-            }
-        ]
+        labels: models,
+        datasets: datasets
     };
 
     var config = {
