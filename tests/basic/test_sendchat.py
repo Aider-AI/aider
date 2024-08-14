@@ -30,7 +30,7 @@ class TestSendChat(unittest.TestCase):
         ]
 
         # Call the simple_send_with_retries method
-        simple_send_with_retries("model", ["message"])
+        simple_send_with_retries("model", ["message"], extra_headers={})
         mock_print.assert_called_once()
 
     @patch("litellm.completion")
@@ -43,5 +43,5 @@ class TestSendChat(unittest.TestCase):
         ]
 
         # Call the simple_send_with_retries method
-        simple_send_with_retries("model", ["message"])
+        simple_send_with_retries("model", ["message"], extra_headers={})
         mock_print.assert_called_once()
