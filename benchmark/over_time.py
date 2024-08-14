@@ -50,10 +50,12 @@ def plot_over_time(yaml_file):
         spine.set_linewidth(0.5)
 
     colors = [
-        "orange" if "-4o-" in model and "gpt-4o-mini" not in model
-        else "red" if "gpt-4" in model
-        else "green" if "gpt-3.5" in model
-        else "blue" for model in models
+        (
+            "orange"
+            if "-4o-" in model and "gpt-4o-mini" not in model
+            else "red" if "gpt-4" in model else "green" if "gpt-3.5" in model else "blue"
+        )
+        for model in models
     ]
     ax.scatter(dates, pass_rates, c=colors, alpha=0.5, s=120)
 
