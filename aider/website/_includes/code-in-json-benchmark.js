@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function getAspectRatio() {
         var width = chartContainer.offsetWidth;
         // Gradually change aspect ratio from 2 (landscape) to 1 (square)
-        return Math.max(1, Math.min(2, width / 400));
+        return Math.max(1, Math.min(2, width / 300));
     }
 
     var config = {
