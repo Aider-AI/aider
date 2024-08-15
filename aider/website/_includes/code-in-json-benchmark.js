@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             ctx.fillStyle = '#000000';
                             ctx.textAlign = 'center';
                             ctx.textBaseline = 'bottom';
-                            ctx.fillText(data.toFixed(1) + '%', bar.x, bar.y - 5);
+                            ctx.fillText(Math.round(data) + '%', bar.x, bar.y - 5);
                         }
                     });
                 });
