@@ -7,14 +7,21 @@ from aider.dump import dump  # noqa: 401
 
 
 def get_model_color(model):
-    if "-4o" in model and "gpt-4o-mini" not in model:
+    default = "lightblue"
+
+    if model == "gpt-4o-mini":
+        return default
+
+    if "-4o" in model:
         return "purple"
-    elif "gpt-4" in model:
+
+    if "gpt-4" in model:
         return "red"
-    elif "gpt-3.5" in model:
+
+    if "gpt-3.5" in model:
         return "green"
-    else:
-        return "lightblue"
+
+    return default
 
 
 def plot_over_time(yaml_file):
