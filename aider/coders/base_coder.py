@@ -654,7 +654,7 @@ class Coder:
         for fname, content in self.get_abs_fnames_content():
             if is_image_file(fname):
                 with open(fname, "rb") as image_file:
-                    encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+                    encoded_string = base64.b64encode(image_file.read()).decode("utf-8")
                 mime_type, _ = mimetypes.guess_type(fname)
                 if mime_type and mime_type.startswith("image/"):
                     image_url = f"data:{mime_type};base64,{encoded_string}"
