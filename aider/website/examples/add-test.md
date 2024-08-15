@@ -52,15 +52,16 @@ I will add a new test method called `test_cmd_add` in the `tests/test_commands.p
 Here's the code change:
 
 ```python
-tests/test_commands.py
-<<<<<<< ORIGINAL
-=======
+tests / test_commands.py
+<< << << < ORIGINAL
+== == == =
 import os
 import tempfile
 from unittest import TestCase
 from unittest.mock import MagicMock
 from aider.commands import Commands
-from aider.io import InputOutput
+from aider.input_output import InputOutput
+
 
 class TestCommands(TestCase):
     def test_cmd_add(self):
@@ -79,7 +80,8 @@ class TestCommands(TestCase):
             # Check if both files have been created in the temporary directory
             self.assertTrue(os.path.exists("foo.txt"))
             self.assertTrue(os.path.exists("bar.txt"))
->>>>>>> UPDATED
+
+>> >> >> > UPDATED
 ```
 
 This test will ensure that the `cmd_add` method creates the specified files in the current working directory.

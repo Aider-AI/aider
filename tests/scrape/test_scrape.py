@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from aider.commands import Commands
-from aider.io import InputOutput
+from aider.input_output import InputOutput
 from aider.scrape import Scraper
 
 

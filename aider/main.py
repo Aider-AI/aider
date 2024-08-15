@@ -14,7 +14,7 @@ from aider.args import get_parser
 from aider.coders import Coder
 from aider.commands import Commands, SwitchCoder
 from aider.history import ChatSummary
-from aider.io import InputOutput
+from aider.input_output import InputOutput
 from aider.llm import litellm  # noqa: F401; properly init litellm on launch
 from aider.repo import GitRepo
 from aider.versioncheck import check_version

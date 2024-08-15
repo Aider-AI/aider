@@ -5,7 +5,7 @@ import aider
 from aider.coders import Coder
 from aider.commands import Commands
 from aider.help import Help
-from aider.io import InputOutput
+from aider.input_output import InputOutput
 from aider.models import Model
 
 
