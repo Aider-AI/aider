@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (isStrict) {
             patternContext.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-            patternContext.lineWidth = 2;
+            patternContext.lineWidth = 0.75;
             patternContext.beginPath();
             patternContext.moveTo(0, 0);
             patternContext.lineTo(size, size);
@@ -111,6 +111,21 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
+
+## Abstract
+
+The newest LLMs have explicit tooling and
+support for returning properly formatted json responses.
+While it is tempting to have LLMs use json tool or function calls to
+return code or code edits, this is unwise.
+LLMs write worse code when asked to wrap it in json, harming their ability
+to correctly solve coding tasks.
+Returning code as plain (markdown) text results in 6% higher scores
+on a variant of the aider code editing benchmark.
+Even OpenAI's newest gpt-4o-2024-08-06 with "strict" json support
+suffers from this code-in-json handicap.
+
+## Introduction
 
 A lot of people wonder why aider doesn't have LLMs use tools or function calls to
 specify code edits.
