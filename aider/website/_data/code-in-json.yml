@@ -1,7 +1,7 @@
 - dirname: 2024-08-15-13-17-11--json-no-lint-gpt-4o-2024-08-06-whole
   test_cases: 133
-  model: openai/gpt-4o-2024-08-06
-  edit_format: whole
+  model: gpt-4o-2024-08-06
+  edit_format: Markdown
   commit_hash: bac04a2
   pass_rate_1: 60.2
   percent_cases_well_formed: 100.0
@@ -14,15 +14,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openai/gpt-4o-2024-08-06
+  command: aider --model gpt-4o-2024-08-06
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 4.3
   total_cost: 0.7965
 - dirname: 2024-08-15-13-18-36--json-no-lint-gpt-4o-2024-08-06-func
   test_cases: 133
-  model: openai/gpt-4o-2024-08-06
-  edit_format: func
+  model: gpt-4o-2024-08-06
+  edit_format: JSON
   commit_hash: bac04a2
   pass_rate_1: 57.9
   percent_cases_well_formed: 100.0
@@ -35,15 +35,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openai/gpt-4o-2024-08-06
+  command: aider --model gpt-4o-2024-08-06
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 5.7
   total_cost: 0.8417
 - dirname: 2024-08-15-13-20-11--json-no-lint-gpt-4o-2024-05-13-whole
   test_cases: 133
-  model: openai/gpt-4o-2024-05-13
-  edit_format: whole
+  model: gpt-4o-2024-05-13
+  edit_format: Markdown
   commit_hash: bac04a2
   pass_rate_1: 56.4
   percent_cases_well_formed: 100.0
@@ -56,15 +56,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openai/gpt-4o-2024-05-13
+  command: aider --model gpt-4o-2024-05-13
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 8.0
   total_cost: 1.5034
 - dirname: 2024-08-15-13-21-55--json-no-lint-gpt-4o-2024-05-13-func
   test_cases: 133
-  model: openai/gpt-4o-2024-05-13
-  edit_format: func
+  model: gpt-4o-2024-05-13
+  edit_format: JSON
   commit_hash: bac04a2
   pass_rate_1: 60.2
   percent_cases_well_formed: 100.0
@@ -77,15 +77,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model openai/gpt-4o-2024-05-13
+  command: aider --model gpt-4o-2024-05-13
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 7.1
   total_cost: 1.2285
 - dirname: 2024-08-15-13-23-33--json-no-lint-claude-3.5-sonnet-whole
   test_cases: 133
-  model: openrouter/anthropic/claude-3.5-sonnet
-  edit_format: whole
+  model: claude-3.5-sonnet
+  edit_format: Markdown
   commit_hash: bac04a2
   pass_rate_1: 60.2
   percent_cases_well_formed: 100.0
@@ -98,15 +98,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model openrouter/anthropic/claude-3.5-sonnet
+  command: aider --model claude-3.5-sonnet
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 10.5
   total_cost: 1.6714
 - dirname: 2024-08-15-13-24-56--json-no-lint-claude-3.5-sonnet-func
   test_cases: 133
-  model: openrouter/anthropic/claude-3.5-sonnet
-  edit_format: func
+  model: claude-3.5-sonnet
+  edit_format: JSON
   commit_hash: bac04a2
   pass_rate_1: 53.4
   percent_cases_well_formed: 100.0
@@ -119,15 +119,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openrouter/anthropic/claude-3.5-sonnet
+  command: aider --model claude-3.5-sonnet
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 9.7
   total_cost: 1.5980
 - dirname: 2024-08-15-13-26-38--json-no-lint-deepseek-coder-whole
   test_cases: 133
-  model: openrouter/deepseek/deepseek-coder
-  edit_format: whole
+  model: deepseek-coder V2 0724
+  edit_format: Markdown
   commit_hash: bac04a2
   pass_rate_1: 59.4
   percent_cases_well_formed: 100.0
@@ -140,15 +140,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model openrouter/deepseek/deepseek-coder
+  command: aider --model deepseek-coder
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 27.9
   total_cost: 0.0438
 - dirname: 2024-08-15-13-29-55--json-no-lint-deepseek-coder-func
   test_cases: 133
-  model: openrouter/deepseek/deepseek-coder
-  edit_format: func
+  model: deepseek-coder V2 0724
+  edit_format: JSON
   commit_hash: bac04a2
   pass_rate_1: 49.6
   percent_cases_well_formed: 100.0
@@ -161,15 +161,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openrouter/deepseek/deepseek-coder
+  command: aider --model deepseek-coder
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 20.5
   total_cost: 0.0329
 - dirname: 2024-08-15-13-50-03--json-no-lint-gpt-4o-2024-08-06-whole-2
   test_cases: 133
-  model: openai/gpt-4o-2024-08-06
-  edit_format: whole
+  model: gpt-4o-2024-08-06
+  edit_format: Markdown
   commit_hash: bac04a2
   pass_rate_1: 61.7
   percent_cases_well_formed: 100.0
@@ -182,15 +182,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openai/gpt-4o-2024-08-06
+  command: aider --model gpt-4o-2024-08-06
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 4.2
   total_cost: 0.7946
 - dirname: 2024-08-15-13-51-36--json-no-lint-gpt-4o-2024-08-06-func-2
   test_cases: 133
-  model: openai/gpt-4o-2024-08-06
-  edit_format: func
+  model: gpt-4o-2024-08-06
+  edit_format: JSON
   commit_hash: bac04a2
   pass_rate_1: 56.4
   percent_cases_well_formed: 100.0
@@ -203,15 +203,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openai/gpt-4o-2024-08-06
+  command: aider --model gpt-4o-2024-08-06
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 6.4
   total_cost: 0.8390
 - dirname: 2024-08-15-13-53-23--json-no-lint-gpt-4o-2024-05-13-whole-2
   test_cases: 133
-  model: openai/gpt-4o-2024-05-13
-  edit_format: whole
+  model: gpt-4o-2024-05-13
+  edit_format: Markdown
   commit_hash: bac04a2
   pass_rate_1: 59.4
   percent_cases_well_formed: 100.0
@@ -224,15 +224,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model openai/gpt-4o-2024-05-13
+  command: aider --model gpt-4o-2024-05-13
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 7.4
   total_cost: 1.4996
 - dirname: 2024-08-15-13-54-53--json-no-lint-gpt-4o-2024-05-13-func-2
   test_cases: 133
-  model: openai/gpt-4o-2024-05-13
-  edit_format: func
+  model: gpt-4o-2024-05-13
+  edit_format: JSON
   commit_hash: bac04a2
   pass_rate_1: 60.2
   percent_cases_well_formed: 100.0
@@ -245,15 +245,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model openai/gpt-4o-2024-05-13
+  command: aider --model gpt-4o-2024-05-13
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 7.7
   total_cost: 1.2210
 - dirname: 2024-08-15-13-56-21--json-no-lint-claude-3.5-sonnet-whole-2
   test_cases: 133
-  model: openrouter/anthropic/claude-3.5-sonnet
-  edit_format: whole
+  model: claude-3.5-sonnet
+  edit_format: Markdown
   commit_hash: bac04a2
   pass_rate_1: 60.9
   percent_cases_well_formed: 100.0
@@ -266,15 +266,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model openrouter/anthropic/claude-3.5-sonnet
+  command: aider --model claude-3.5-sonnet
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 16.5
   total_cost: 1.6556
 - dirname: 2024-08-15-14-02-15--json-no-lint-claude-3.5-sonnet-func-2
   test_cases: 133
-  model: openrouter/anthropic/claude-3.5-sonnet
-  edit_format: func
+  model: claude-3.5-sonnet
+  edit_format: JSON
   commit_hash: bac04a2
   pass_rate_1: 51.9
   percent_cases_well_formed: 100.0
@@ -287,15 +287,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openrouter/anthropic/claude-3.5-sonnet
+  command: aider --model claude-3.5-sonnet
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 14.3
   total_cost: 1.5835
 - dirname: 2024-08-15-14-06-12--json-no-lint-deepseek-coder-whole-2
   test_cases: 133
-  model: openrouter/deepseek/deepseek-coder
-  edit_format: whole
+  model: deepseek-coder V2 0724
+  edit_format: Markdown
   commit_hash: bac04a2
   pass_rate_1: 60.9
   percent_cases_well_formed: 100.0
@@ -308,15 +308,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model openrouter/deepseek/deepseek-coder
+  command: aider --model deepseek-coder
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 25.8
   total_cost: 0.0439
 - dirname: 2024-08-15-14-09-22--json-no-lint-deepseek-coder-func-2
   test_cases: 133
-  model: openrouter/deepseek/deepseek-coder
-  edit_format: func
+  model: deepseek-coder V2 0724
+  edit_format: JSON
   commit_hash: bac04a2
   pass_rate_1: 53.4
   percent_cases_well_formed: 100.0
@@ -329,15 +329,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openrouter/deepseek/deepseek-coder
+  command: aider --model deepseek-coder
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 18.8
   total_cost: 0.0333
 - dirname: 2024-08-15-14-11-45--json-no-lint-gpt-4o-2024-08-06-whole-3
   test_cases: 133
-  model: openai/gpt-4o-2024-08-06
-  edit_format: whole
+  model: gpt-4o-2024-08-06
+  edit_format: Markdown
   commit_hash: bac04a2
   pass_rate_1: 60.9
   percent_cases_well_formed: 100.0
@@ -350,15 +350,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openai/gpt-4o-2024-08-06
+  command: aider --model gpt-4o-2024-08-06
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 4.3
   total_cost: 0.7945
 - dirname: 2024-08-15-14-13-11--json-no-lint-gpt-4o-2024-08-06-func-3
   test_cases: 133
-  model: openai/gpt-4o-2024-08-06
-  edit_format: func
+  model: gpt-4o-2024-08-06
+  edit_format: JSON
   commit_hash: bac04a2
   pass_rate_1: 56.4
   percent_cases_well_formed: 100.0
@@ -371,15 +371,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openai/gpt-4o-2024-08-06
+  command: aider --model gpt-4o-2024-08-06
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 5.6
   total_cost: 0.8220
 - dirname: 2024-08-15-14-14-40--json-no-lint-gpt-4o-2024-05-13-whole-3
   test_cases: 133
-  model: openai/gpt-4o-2024-05-13
-  edit_format: whole
+  model: gpt-4o-2024-05-13
+  edit_format: Markdown
   commit_hash: bac04a2
   pass_rate_1: 61.7
   percent_cases_well_formed: 100.0
@@ -392,15 +392,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openai/gpt-4o-2024-05-13
+  command: aider --model gpt-4o-2024-05-13
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 8.8
   total_cost: 1.4993
 - dirname: 2024-08-15-14-16-34--json-no-lint-gpt-4o-2024-05-13-func-3
   test_cases: 133
-  model: openai/gpt-4o-2024-05-13
-  edit_format: func
+  model: gpt-4o-2024-05-13
+  edit_format: JSON
   commit_hash: bac04a2
   pass_rate_1: 58.6
   percent_cases_well_formed: 100.0
@@ -413,15 +413,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model openai/gpt-4o-2024-05-13
+  command: aider --model gpt-4o-2024-05-13
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 8.7
   total_cost: 1.2064
 - dirname: 2024-08-15-14-17-51--json-no-lint-claude-3.5-sonnet-whole-3
   test_cases: 133
-  model: openrouter/anthropic/claude-3.5-sonnet
-  edit_format: whole
+  model: claude-3.5-sonnet
+  edit_format: Markdown
   commit_hash: bac04a2
   pass_rate_1: 60.2
   percent_cases_well_formed: 100.0
@@ -434,15 +434,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model openrouter/anthropic/claude-3.5-sonnet
+  command: aider --model claude-3.5-sonnet
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 11.0
   total_cost: 1.6555
 - dirname: 2024-08-15-14-19-19--json-no-lint-claude-3.5-sonnet-func-3
   test_cases: 133
-  model: openrouter/anthropic/claude-3.5-sonnet
-  edit_format: func
+  model: claude-3.5-sonnet
+  edit_format: JSON
   commit_hash: bac04a2
   pass_rate_1: 51.1
   percent_cases_well_formed: 100.0
@@ -455,15 +455,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openrouter/anthropic/claude-3.5-sonnet
+  command: aider --model claude-3.5-sonnet
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 10.3
   total_cost: 1.5614
 - dirname: 2024-08-15-14-21-06--json-no-lint-deepseek-coder-whole-3
   test_cases: 133
-  model: openrouter/deepseek/deepseek-coder
-  edit_format: whole
+  model: deepseek-coder V2 0724
+  edit_format: Markdown
   commit_hash: bac04a2
   pass_rate_1: 61.7
   percent_cases_well_formed: 100.0
@@ -476,15 +476,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 3
-  command: aider --model openrouter/deepseek/deepseek-coder
+  command: aider --model deepseek-coder
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 24.4
   total_cost: 0.0439
 - dirname: 2024-08-15-14-24-46--json-no-lint-deepseek-coder-func-3
   test_cases: 133
-  model: openrouter/deepseek/deepseek-coder
-  edit_format: func
+  model: deepseek-coder V2 0724
+  edit_format: JSON
   commit_hash: bac04a2
   pass_rate_1: 52.6
   percent_cases_well_formed: 100.0
@@ -497,15 +497,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openrouter/deepseek/deepseek-coder
+  command: aider --model deepseek-coder
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 19.0
   total_cost: 0.0334
 - dirname: 2024-08-15-14-27-17--json-no-lint-gpt-4o-2024-08-06-whole-4
   test_cases: 133
-  model: openai/gpt-4o-2024-08-06
-  edit_format: whole
+  model: gpt-4o-2024-08-06
+  edit_format: Markdown
   commit_hash: bac04a2
   pass_rate_1: 60.2
   percent_cases_well_formed: 100.0
@@ -518,15 +518,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openai/gpt-4o-2024-08-06
+  command: aider --model gpt-4o-2024-08-06
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 4.3
   total_cost: 0.8015
 - dirname: 2024-08-15-14-28-58--json-no-lint-gpt-4o-2024-08-06-func-4
   test_cases: 133
-  model: openai/gpt-4o-2024-08-06
-  edit_format: func
+  model: gpt-4o-2024-08-06
+  edit_format: JSON
   commit_hash: bac04a2
   pass_rate_1: 60.2
   percent_cases_well_formed: 100.0
@@ -539,15 +539,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openai/gpt-4o-2024-08-06
+  command: aider --model gpt-4o-2024-08-06
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 6.0
   total_cost: 0.8394
 - dirname: 2024-08-15-14-30-48--json-no-lint-gpt-4o-2024-05-13-whole-4
   test_cases: 133
-  model: openai/gpt-4o-2024-05-13
-  edit_format: whole
+  model: gpt-4o-2024-05-13
+  edit_format: Markdown
   commit_hash: bac04a2
   pass_rate_1: 61.7
   percent_cases_well_formed: 100.0
@@ -560,15 +560,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model openai/gpt-4o-2024-05-13
+  command: aider --model gpt-4o-2024-05-13
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 12.3
   total_cost: 1.4919
 - dirname: 2024-08-15-14-32-58--json-no-lint-gpt-4o-2024-05-13-func-4
   test_cases: 133
-  model: openai/gpt-4o-2024-05-13
-  edit_format: func
+  model: gpt-4o-2024-05-13
+  edit_format: JSON
   commit_hash: bac04a2
   pass_rate_1: 59.4
   percent_cases_well_formed: 100.0
@@ -581,15 +581,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model openai/gpt-4o-2024-05-13
+  command: aider --model gpt-4o-2024-05-13
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 11.1
   total_cost: 1.2120
 - dirname: 2024-08-15-14-34-39--json-no-lint-claude-3.5-sonnet-whole-4
   test_cases: 133
-  model: openrouter/anthropic/claude-3.5-sonnet
-  edit_format: whole
+  model: claude-3.5-sonnet
+  edit_format: Markdown
   commit_hash: bac04a2
   pass_rate_1: 60.9
   percent_cases_well_formed: 100.0
@@ -602,15 +602,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model openrouter/anthropic/claude-3.5-sonnet
+  command: aider --model claude-3.5-sonnet
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 11.3
   total_cost: 1.6635
 - dirname: 2024-08-15-14-36-18--json-no-lint-claude-3.5-sonnet-func-4
   test_cases: 133
-  model: openrouter/anthropic/claude-3.5-sonnet
-  edit_format: func
+  model: claude-3.5-sonnet
+  edit_format: JSON
   commit_hash: bac04a2
   pass_rate_1: 55.6
   percent_cases_well_formed: 100.0
@@ -623,15 +623,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openrouter/anthropic/claude-3.5-sonnet
+  command: aider --model claude-3.5-sonnet
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 10.5
   total_cost: 1.5768
 - dirname: 2024-08-15-14-38-35--json-no-lint-deepseek-coder-whole-4
   test_cases: 133
-  model: openrouter/deepseek/deepseek-coder
-  edit_format: whole
+  model: deepseek-coder V2 0724
+  edit_format: Markdown
   commit_hash: bac04a2
   pass_rate_1: 59.4
   percent_cases_well_formed: 100.0
@@ -644,15 +644,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model openrouter/deepseek/deepseek-coder
+  command: aider --model deepseek-coder
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 24.5
   total_cost: 0.0438
 - dirname: 2024-08-15-14-41-36--json-no-lint-deepseek-coder-func-4
   test_cases: 133
-  model: openrouter/deepseek/deepseek-coder
-  edit_format: func
+  model: deepseek-coder V2 0724
+  edit_format: JSON
   commit_hash: bac04a2
   pass_rate_1: 49.6
   percent_cases_well_formed: 100.0
@@ -665,15 +665,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openrouter/deepseek/deepseek-coder
+  command: aider --model deepseek-coder
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 18.7
   total_cost: 0.0333
 - dirname: 2024-08-15-14-44-11--json-no-lint-gpt-4o-2024-08-06-whole-5
   test_cases: 133
-  model: openai/gpt-4o-2024-08-06
-  edit_format: whole
+  model: gpt-4o-2024-08-06
+  edit_format: Markdown
   commit_hash: bac04a2
   pass_rate_1: 60.9
   percent_cases_well_formed: 100.0
@@ -686,15 +686,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openai/gpt-4o-2024-08-06
+  command: aider --model gpt-4o-2024-08-06
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 4.6
   total_cost: 0.8023
 - dirname: 2024-08-15-14-45-40--json-no-lint-gpt-4o-2024-08-06-func-5
   test_cases: 133
-  model: openai/gpt-4o-2024-08-06
-  edit_format: func
+  model: gpt-4o-2024-08-06
+  edit_format: JSON
   commit_hash: bac04a2
   pass_rate_1: 57.1
   percent_cases_well_formed: 100.0
@@ -707,15 +707,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 3
-  command: aider --model openai/gpt-4o-2024-08-06
+  command: aider --model gpt-4o-2024-08-06
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 6.3
   total_cost: 0.8354
 - dirname: 2024-08-15-14-47-39--json-no-lint-gpt-4o-2024-05-13-whole-5
   test_cases: 133
-  model: openai/gpt-4o-2024-05-13
-  edit_format: whole
+  model: gpt-4o-2024-05-13
+  edit_format: Markdown
   commit_hash: bac04a2
   pass_rate_1: 60.2
   percent_cases_well_formed: 100.0
@@ -728,15 +728,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openai/gpt-4o-2024-05-13
+  command: aider --model gpt-4o-2024-05-13
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 10.7
   total_cost: 1.4982
 - dirname: 2024-08-15-14-49-44--json-no-lint-gpt-4o-2024-05-13-func-5
   test_cases: 133
-  model: openai/gpt-4o-2024-05-13
-  edit_format: func
+  model: gpt-4o-2024-05-13
+  edit_format: JSON
   commit_hash: bac04a2
   pass_rate_1: 59.4
   percent_cases_well_formed: 100.0
@@ -749,15 +749,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model openai/gpt-4o-2024-05-13
+  command: aider --model gpt-4o-2024-05-13
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 10.5
   total_cost: 1.2099
 - dirname: 2024-08-15-14-51-18--json-no-lint-claude-3.5-sonnet-whole-5
   test_cases: 133
-  model: openrouter/anthropic/claude-3.5-sonnet
-  edit_format: whole
+  model: claude-3.5-sonnet
+  edit_format: Markdown
   commit_hash: bac04a2
   pass_rate_1: 60.2
   percent_cases_well_formed: 100.0
@@ -770,15 +770,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model openrouter/anthropic/claude-3.5-sonnet
+  command: aider --model claude-3.5-sonnet
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 11.4
   total_cost: 1.6685
 - dirname: 2024-08-15-14-52-48--json-no-lint-claude-3.5-sonnet-func-5
   test_cases: 133
-  model: openrouter/anthropic/claude-3.5-sonnet
-  edit_format: func
+  model: claude-3.5-sonnet
+  edit_format: JSON
   commit_hash: bac04a2
   pass_rate_1: 53.4
   percent_cases_well_formed: 100.0
@@ -791,15 +791,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openrouter/anthropic/claude-3.5-sonnet
+  command: aider --model claude-3.5-sonnet
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 10.8
   total_cost: 1.5786
 - dirname: 2024-08-15-14-54-41--json-no-lint-deepseek-coder-whole-5
   test_cases: 133
-  model: openrouter/deepseek/deepseek-coder
-  edit_format: whole
+  model: deepseek-coder V2 0724
+  edit_format: Markdown
   commit_hash: bac04a2
   pass_rate_1: 61.7
   percent_cases_well_formed: 100.0
@@ -812,15 +812,15 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model openrouter/deepseek/deepseek-coder
+  command: aider --model deepseek-coder
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 24.5
   total_cost: 0.0439
 - dirname: 2024-08-15-14-57-51--json-no-lint-deepseek-coder-func-5
   test_cases: 133
-  model: openrouter/deepseek/deepseek-coder
-  edit_format: func
+  model: deepseek-coder V2 0724
+  edit_format: JSON
   commit_hash: bac04a2
   pass_rate_1: 53.4
   percent_cases_well_formed: 100.0
@@ -833,8 +833,92 @@
   indentation_errors: 1
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model openrouter/deepseek/deepseek-coder
+  command: aider --model deepseek-coder
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 18.5
   total_cost: 0.0330
+- dirname: 2024-08-15-15-12-55--json-no-lint-strict-gpt-4o-2024-08-06-func-2
+  test_cases: 133
+  model: gpt-4o-2024-08-06
+  edit_format: JSON (strict)
+  commit_hash: bf2d5fe
+  pass_rate_1: 57.1
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model gpt-4o-2024-08-06
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 5.9
+  total_cost: 0.8216
+- dirname: 2024-08-15-15-14-31--json-no-lint-strict-gpt-4o-2024-08-06-func-3
+  test_cases: 133
+  model: gpt-4o-2024-08-06
+  edit_format: JSON (strict)
+  commit_hash: bf2d5fe
+  pass_rate_1: 54.1
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 2
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model gpt-4o-2024-08-06
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 6.3
+  total_cost: 0.8410
+- dirname: 2024-08-15-15-16-14--json-no-lint-strict-gpt-4o-2024-08-06-func-4
+  test_cases: 133
+  model: gpt-4o-2024-08-06
+  edit_format: JSON (strict)
+  commit_hash: bf2d5fe
+  pass_rate_1: 59.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model gpt-4o-2024-08-06
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 5.9
+  total_cost: 0.8203
+- dirname: 2024-08-15-15-17-50--json-no-lint-strict-gpt-4o-2024-08-06-func-5
+  test_cases: 133
+  model: gpt-4o-2024-08-06
+  edit_format: JSON (strict)
+  commit_hash: bf2d5fe
+  pass_rate_1: 57.1
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 1
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model gpt-4o-2024-08-06
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 6.1
+  total_cost: 0.8415
