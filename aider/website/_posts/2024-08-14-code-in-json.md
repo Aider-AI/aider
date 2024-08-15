@@ -12,7 +12,9 @@ nav_exclude: true
 # LLMs are bad at returning code in JSON
 
 
-<canvas id="passRateChart" width="800" height="400" style="margin-bottom: 20px"></canvas>
+<div id="chartContainer" style="position: relative; height: 0; padding-bottom: 50%; margin-bottom: 20px;">
+    <canvas id="passRateChart" style="position: absolute; width: 100%; height: 100%;"></canvas>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -56,6 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
         data: data,
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             scales: {
                 x: {
                     title: {
@@ -86,6 +89,20 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     };
+
+    // Adjust chart height based on screen width
+    function adjustChartHeight() {
+        var container = document.getElementById('chartContainer');
+        if (window.innerWidth < 600) {
+            container.style.paddingBottom = '75%'; // Increase height on small screens
+        } else {
+            container.style.paddingBottom = '50%'; // Default height
+        }
+    }
+
+    // Call the function initially and on window resize
+    adjustChartHeight();
+    window.addEventListener('resize', adjustChartHeight);
 
     function createStripedCanvas(isStrict) {
         const patternCanvas = document.createElement('canvas');
