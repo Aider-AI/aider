@@ -33,9 +33,6 @@ document.addEventListener('DOMContentLoaded', function () {
         backgroundColor: format === 'Markdown' ? 'rgba(54, 162, 235, 0.8)' :
                          format.startsWith('Tool call') ? 'rgba(255, 99, 132, 0.8)' :
                          'rgba(75, 192, 192, 0.8)',
-        borderColor: format === 'Tool call (strict)' ? 'rgba(255, 255, 255, 0.8)' : null,
-        borderWidth: format === 'Tool call (strict)' ? 2 : 0,
-        borderDash: format === 'Tool call (strict)' ? [5, 5] : null,
     }));
 
     var data = {
