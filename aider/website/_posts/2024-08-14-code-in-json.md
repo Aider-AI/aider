@@ -13,8 +13,9 @@ nav_exclude: true
 
 
 AI coding applications should avoid asking LLMs to return code as part of a structured
-JSON response,
-even though many LLMs have special support for returning JSON.
+JSON response.
+Even though many LLMs have special support for returning JSON,
+using it with code often causes lower quality code generation.
 A variant of the aider code editing benchmark clearly demonstrates that
 asking for JSON-wrapped code
 often harms coding performance.
