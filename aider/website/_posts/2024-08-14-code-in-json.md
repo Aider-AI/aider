@@ -12,12 +12,11 @@ nav_exclude: true
 # LLMs are bad at returning code in JSON
 
 
-Current LLMs have support for returning properly formatted JSON,
-making it easier for clients to reliably parse complex responses.
-It therefore seems attractive for
-AI coding applications ask LLMs to return code in structured JSON replies.
-Unfortunately, 
-LLMs write worse code when asked to wrap it in JSON, harming their ability
+AI coding applications should avoid asking LLMs to return code as part of a structured
+JSON response.
+Even though many current LLMs have special support for returning JSON,
+it causes LLMs to write worse code and
+harms their ability
 to correctly solve coding tasks.
 On a variant of the aider code editing benchmark, 
 asking for JSON-wrapped code

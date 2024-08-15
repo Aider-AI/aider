@@ -1,4 +1,4 @@
-<canvas id="passRateChart" width="800" height="400" style="margin-bottom: 20px"></canvas>
+<canvas id="syntaxErrorsChart" width="800" height="400" style="margin-bottom: 20px"></canvas>
   
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -41,7 +41,6 @@ document.addEventListener('DOMContentLoaded', function () {
         data: data,
         options: {
             responsive: true,
-            maintainAspectRatio: false,
             scales: {
                 x: {
                     title: {
@@ -103,16 +102,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }]
     };
-
-    // Adjust chart height based on screen width
-    function adjustChartHeight() {
-      var container = document.getElementById('passRateChart');
-      container.height = 600;
-    }
-
-    // Call the function initially and on window resize
-    adjustChartHeight();
-    window.addEventListener('resize', adjustChartHeight);
 
     new Chart(ctx, config);
 });
