@@ -69,9 +69,40 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 legend: {
                     position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += context.parsed.y;
+                            }
+                            return label;
+                        }
+                    }
                 }
             }
-        }
+        },
+        plugins: [{
+            afterDraw: function(chart) {
+                var ctx = chart.ctx;
+                chart.data.datasets.forEach(function(dataset, i) {
+                    var meta = chart.getDatasetMeta(i);
+                    meta.data.forEach(function(bar, index) {
+                        var data = dataset.data[index];
+                        if (data !== null) {
+                            ctx.fillStyle = '#000000';
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'bottom';
+                            ctx.fillText(data, bar.x, bar.y - 5);
+                        }
+                    });
+                });
+            }
+        }]
     };
 
     // Adjust chart height based on screen width
