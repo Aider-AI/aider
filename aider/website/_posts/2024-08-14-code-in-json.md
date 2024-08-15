@@ -13,12 +13,9 @@ nav_exclude: true
 
 
 AI coding applications should avoid asking LLMs to return code as part of a structured
-JSON response.
-Even though many current LLMs have special support for returning JSON,
-it causes LLMs to write worse code and
-harms their ability
-to correctly solve coding tasks.
-On a variant of the aider code editing benchmark, 
+JSON response,
+even though many LLMs have special support for returning JSON.
+A variant of the aider code editing benchmark clearly demonstrates that
 asking for JSON-wrapped code
 often harms coding performance.
 This holds true across many top coding LLMs, 
@@ -34,7 +31,7 @@ which has strong JSON support.
 
 ## Background
 
-A lot of people wonder why aider doesn't use LLM tools for code editing.
+A lot of people wonder why aider does not use LLM tools for code editing.
 Instead, aider asks for code edits in plain text, like this:
 
 ````
@@ -70,7 +67,7 @@ strictly enforce that JSON responses will be syntactically correct
 and conform to a specified schema.
 
 
-But producing valid (schema compliant) JSON is not sufficient for working with AI generated code.
+But producing valid JSON is not sufficient for working with AI generated code.
 The code inside the JSON has to correctly solve the requested task
 and be free from syntax errors.
 Unfortunately, 
@@ -102,17 +99,16 @@ showed
 the superiority of returning code
 as plain text compared to JSON-wrapped function calls.
 Those results were obtained
-over a year ago, against far less
-capable models.
+over a year ago, against models far less capable than those available today.
 OpenAI's newly announced support for "strict" JSON seemed like a good reason to
-investigate whether the newest models are still handicapped by JSON-wrapping code.
+investigate whether the newest models are still handicapped when JSON-wrapping code.
 
 The results presented here were based on
 the 
 [aider "code editing" benchmark](/2023/07/02/benchmarks.html#the-benchmark)
 of 133 practice exercises from the Exercism python repository.
 Models were 
-restricted to a single attempt,
+restricted to a single attempt to solve each task,
 without a second try to fix errors as is normal in the aider benchmark.
 
 The performance of each model was compared across different strategies for returning code:
@@ -156,7 +152,7 @@ than correctly formulating
 instructions to edit
 portions of a file.
 
-This experimental setup is designed to quantify
+This experimental setup was designed to quantify
 the effects of JSON-wrapping on the LLMs ability to write code to solve a task.
 
 ## Results
@@ -176,7 +172,7 @@ Each combination of model and code wrapping strategy was benchmarked 5 times.
 As shown in Figure 1, 
 all of the models did worse on the benchmark when asked to
 return JSON-wrapped code in a tool function call.
-Most did significantly worse, performing far below
+Most did significantly worse, performing well below
 the result obtained with the markdown strategy.
 
 Some noteworthy observations:
