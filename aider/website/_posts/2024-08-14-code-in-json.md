@@ -27,8 +27,10 @@ document.addEventListener('DOMContentLoaded', function () {
     var datasets = editFormats.map(format => ({
         label: format,
         data: models.map(model => {
-            var item = yamlData.find(d => d.model === model && d.edit_format === format);
-            return item ? item.pass_rate_1 : null;
+            var items = yamlData.filter(d => d.model === model && d.edit_format === format);
+            if (items.length === 0) return null;
+            var average = items.reduce((sum, item) => sum + item.pass_rate_1, 0) / items.length;
+            return parseFloat(average.toFixed(1));
         }),
         backgroundColor: function(context) {
             const format = context.dataset.label;
