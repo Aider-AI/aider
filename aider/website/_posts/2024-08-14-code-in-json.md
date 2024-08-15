@@ -36,9 +36,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const format = context.dataset.label;
             if (format === 'Markdown') {
                 return 'rgba(54, 162, 235, 0.8)';
-            } else if (format.startsWith('Tool call')) {
+            } else if (format.startsWith('JSON')) {
                 const ctx = context.chart.ctx;
-                const gradient = ctx.createPattern(createStripedCanvas(format === 'Tool call (strict)'), 'repeat');
+                const gradient = ctx.createPattern(createStripedCanvas(format === 'JSON (strict)'), 'repeat');
                 return gradient;
             } else {
                 return 'rgba(75, 192, 192, 0.8)';
@@ -124,8 +124,9 @@ receive code from LLMs.
 Unfortunately, 
 LLMs write worse code when asked to wrap it in json, harming their ability
 to correctly solve coding tasks.
-Returning code as plain (markdown) text results in an average of 6% higher scores
-on a variant of the aider code editing benchmark.
+Returning code as plain (markdown) text results in lower scores
+on a variant of the aider code editing benchmark, often significantly harming coding
+performance.
 This holds true across many top coding LLMs, 
 and even OpenAI's newest gpt-4o-2024-08-06 with "strict" json support
 suffers from this code-in-json handicap.
