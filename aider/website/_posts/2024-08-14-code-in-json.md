@@ -134,9 +134,9 @@ document.addEventListener('DOMContentLoaded', function () {
 ## Abstract
 
 The newest LLMs have support for returning properly formatted JSON responses,
-making it easy for client applications to parse complex responses.
+making it easier for clients to parse complex responses.
 This makes it tempting for AI coding applications to
-use tool function calls or other structured reply formats to
+use JSON replies to
 receive code from LLMs.
 Unfortunately, 
 LLMs write worse code when asked to wrap it in JSON, harming their ability
@@ -145,21 +145,19 @@ On a variant of the aider code editing benchmark,
 JSON-wrapping code
 often significantly harms coding
 performance
-compared to returning code as plain (markdown) text.
+compared to returning code as plain text.
 This holds true across many top coding LLMs, 
-and even OpenAI's newest gpt-4o-2024-08-06 with "strict" JSON support
-suffers from this code-in-JSON handicap.
+including OpenAI's new gpt-4o-2024-08-06 
+which has strong JSON support.
 
 ## Introduction
 
-A lot of people wonder why aider doesn't tell LLMs to
-use tools or function calls to
-specify code edits.
+A lot of people wonder why aider doesn't use LLM tools for code editing.
 Instead, aider asks for code edits in plain text, like this:
 
 ````
 greeting.py
-```python
+```
 <<<<<<< SEARCH
 def greeting():
     print("Hello")
@@ -173,7 +171,7 @@ def greeting():
 People expect that it would be easier and more reliable to use tool calls,
 which would return a structured JSON response:
 
-```
+```json
 {
     "filename": "greeting.py",
     "search": "def greeting():\n    print(\"Hello\")\n"
@@ -188,8 +186,8 @@ For example, OpenAI recently announced the ability to
 [strictly enforce that JSON responses will be syntactically correct 
 and conform to a specified schema](https://openai.com/index/introducing-structured-outputs-in-the-api/).
 
-But producing valid (schema compliant) JSON is not sufficient for this use case.
-The JSON also has to contain valid, high quality code.
+But producing valid (schema compliant) JSON is not sufficient for working with AI generated code.
+The code inside the JSON has to be valid and high quality too.
 Unfortunately, 
 LLMs write worse code when they're asked to 
 wrap it in JSON.
@@ -202,7 +200,7 @@ newlines `\n`
 mixed into the code.
 Imagine the additional
 complexity
-if the code itself contained JSON or other quoted strings,
+if the code itself contained quoted strings
 with their
 own escape sequences.
 
@@ -264,7 +262,7 @@ two parameters, as shown below.
 For maximum simplicity, the LLM didn't have to specify the filename,
 since the benchmark operates on one source file at a time.
 
-```
+```json
 {
     "explanation": "Here is the program you asked for which prints \"Hello\"",
     "content": "def greeting():\n    print(\"Hello\")\n"
