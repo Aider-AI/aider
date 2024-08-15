@@ -1,11 +1,10 @@
-<div id="chartContainer" style="position: relative; height: 0; padding-bottom: 50%; margin-bottom: 20px;">
-    <canvas id="passRateChart" style="position: absolute; width: 100%; height: 100%;"></canvas>
+<div id="syntaxErrorsContainer" style="position: relative; height: 0; padding-bottom: 50%; margin-bottom: 20px;">
+    <canvas id="syntaxErrorsChart" style="position: absolute; width: 100%; height: 100%;"></canvas>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    var ctx = document.getElementById('passRateChart').getContext('2d');
+    var ctx = document.getElementById('syntaxErrorsChart').getContext('2d');
     
     var yamlData = {{ site.data.code-in-json | jsonify }};
     
@@ -17,8 +16,8 @@ document.addEventListener('DOMContentLoaded', function () {
         data: models.map(model => {
             var items = yamlData.filter(d => d.model === model && d.edit_format === format);
             if (items.length === 0) return null;
-            var average = items.reduce((sum, item) => sum + item.pass_rate_1, 0) / items.length;
-            return parseFloat(average.toFixed(1));
+            var totalErrors = items.reduce((sum, item) => sum + item.syntax_errors + item.indentation_errors, 0);
+            return totalErrors;
         }),
         backgroundColor: function(context) {
             const format = context.dataset.label;
@@ -56,15 +55,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Pass Rate (%, average of 5 runs)'
-                    },
-                    max: 70
+                        text: 'Total syntactic errors from 5 runs'
+                    }
                 }
             },
             plugins: {
                 title: {
                     display: true,
-                    text: 'Pass rate by model and code wrapping strategy',
+                    text: 'Syntactic errors by model and code wrapping strategy',
                     font: {
                         size: 16
                     }
@@ -78,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Adjust chart height based on screen width
     function adjustChartHeight() {
-        var container = document.getElementById('chartContainer');
+        var container = document.getElementById('syntaxErrorsContainer');
         if (window.innerWidth < 600) {
             container.style.paddingBottom = '75%'; // Increase height on small screens
         } else {
@@ -90,50 +88,6 @@ document.addEventListener('DOMContentLoaded', function () {
     adjustChartHeight();
     window.addEventListener('resize', adjustChartHeight);
 
-    function createStripedCanvas(isStrict) {
-        const patternCanvas = document.createElement('canvas');
-        const patternContext = patternCanvas.getContext('2d');
-        const size = 10;
-        patternCanvas.width = size;
-        patternCanvas.height = size;
-
-        patternContext.fillStyle = 'rgba(255, 99, 132, 0.8)';
-        patternContext.fillRect(0, 0, size, size);
-
-        if (isStrict) {
-            patternContext.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-            patternContext.lineWidth = 0.75;
-            patternContext.beginPath();
-            patternContext.moveTo(0, 0);
-            patternContext.lineTo(size, size);
-            patternContext.stroke();
-        }
-
-        return patternCanvas;
-    }
-
     new Chart(ctx, config);
 });
-
-function createStripedCanvas(isStrict) {
-    const patternCanvas = document.createElement('canvas');
-    const patternContext = patternCanvas.getContext('2d');
-    const size = 10;
-    patternCanvas.width = size;
-    patternCanvas.height = size;
-
-    patternContext.fillStyle = 'rgba(255, 99, 132, 0.8)';
-    patternContext.fillRect(0, 0, size, size);
-
-    if (isStrict) {
-        patternContext.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-        patternContext.lineWidth = 0.75;
-        patternContext.beginPath();
-        patternContext.moveTo(0, 0);
-        patternContext.lineTo(size, size);
-        patternContext.stroke();
-    }
-
-    return patternCanvas;
-}
 </script>
