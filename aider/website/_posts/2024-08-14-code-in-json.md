@@ -157,21 +157,19 @@ function createStripedCanvas(isStrict) {
 
 ## Abstract
 
-The newest LLMs have support for returning properly formatted JSON responses,
-making it easier for clients to parse complex responses.
-This makes it tempting for AI coding applications to
-use JSON replies to
-receive code from LLMs.
+Current LLMs have support for returning properly formatted JSON,
+making it easier for clients to reliably parse complex responses.
+It therefore seems attractive for
+AI coding applications ask LLMs to return code in structure JSON replies.
 Unfortunately, 
 LLMs write worse code when asked to wrap it in JSON, harming their ability
 to correctly solve coding tasks.
 On a variant of the aider code editing benchmark, 
-JSON-wrapping code
+asking for JSON-wrapped code
 often significantly harms coding
-performance
-compared to returning code as plain text.
+performance.
 This holds true across many top coding LLMs, 
-including OpenAI's new gpt-4o-2024-08-06 
+including OpenAI's latest model gpt-4o-2024-08-06 
 which has strong JSON support.
 
 ## Introduction
