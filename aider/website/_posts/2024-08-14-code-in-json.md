@@ -26,7 +26,9 @@ which has strong JSON support.
 
 > Figure 1: Benchmark scores of models using either plain markdown text or JSON to return code,
 > averaged over 5 runs.
-> Models produce better code when they return it as plain markdown text, as compared to wrapping it in JSON for a tool function call.
+> Models produce better code when they return it as plain markdown text,
+> as compared to wrapping it in JSON for a tool function call.
+> Except for gpt-4o-2024-05-13.
 
 
 ## Background
