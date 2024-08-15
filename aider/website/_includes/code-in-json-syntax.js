@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Total syntactic errors from 5 runs'
+                        text: 'Total syntax errors from 5 runs'
                     },
                     max: 35
                 }
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
             plugins: {
                 title: {
                     display: true,
-                    text: 'Syntactic errors by model and code wrapping strategy',
+                    text: 'Syntax errors by model and code wrapping strategy',
                     font: {
                         size: 16
                     }
