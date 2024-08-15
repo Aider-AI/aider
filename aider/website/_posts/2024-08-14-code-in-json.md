@@ -30,9 +30,18 @@ document.addEventListener('DOMContentLoaded', function () {
             var item = yamlData.find(d => d.model === model && d.edit_format === format);
             return item ? item.pass_rate_1 : null;
         }),
-        backgroundColor: format === 'Markdown' ? 'rgba(54, 162, 235, 0.8)' :
-                         format.startsWith('Tool call') ? 'rgba(255, 99, 132, 0.8)' :
-                         'rgba(75, 192, 192, 0.8)',
+        backgroundColor: function(context) {
+            const format = context.dataset.label;
+            if (format === 'Markdown') {
+                return 'rgba(54, 162, 235, 0.8)';
+            } else if (format.startsWith('Tool call')) {
+                const ctx = context.chart.ctx;
+                const gradient = ctx.createPattern(createStripedCanvas(format === 'Tool call (strict)'), 'repeat');
+                return gradient;
+            } else {
+                return 'rgba(75, 192, 192, 0.8)';
+            }
+        },
     }));
 
     var data = {
