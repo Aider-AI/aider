@@ -124,27 +124,6 @@
   versions: 0.50.2-dev
   seconds_per_case: 27.9
   total_cost: 0.0438
-- dirname: 2024-08-15-13-29-55--json-no-lint-deepseek-coder-func
-  test_cases: 133
-  model: deepseek-coder V2 0724
-  edit_format: JSON
-  commit_hash: bac04a2
-  pass_rate_1: 49.6
-  percent_cases_well_formed: 100.0
-  error_outputs: 3
-  num_malformed_responses: 0
-  num_with_malformed_responses: 0
-  user_asks: 0
-  lazy_comments: 0
-  syntax_errors: 4
-  indentation_errors: 0
-  exhausted_context_windows: 0
-  test_timeouts: 1
-  command: aider --model deepseek-coder
-  date: 2024-08-15
-  versions: 0.50.2-dev
-  seconds_per_case: 20.5
-  total_cost: 0.0329
 - dirname: 2024-08-15-13-50-03--json-no-lint-gpt-4o-2024-08-06-whole-2
   test_cases: 133
   model: gpt-4o-2024-08-06
@@ -271,27 +250,6 @@
   versions: 0.50.2-dev
   seconds_per_case: 25.8
   total_cost: 0.0439
-- dirname: 2024-08-15-14-09-22--json-no-lint-deepseek-coder-func-2
-  test_cases: 133
-  model: deepseek-coder V2 0724
-  edit_format: JSON
-  commit_hash: bac04a2
-  pass_rate_1: 53.4
-  percent_cases_well_formed: 100.0
-  error_outputs: 5
-  num_malformed_responses: 0
-  num_with_malformed_responses: 0
-  user_asks: 0
-  lazy_comments: 0
-  syntax_errors: 6
-  indentation_errors: 0
-  exhausted_context_windows: 0
-  test_timeouts: 1
-  command: aider --model deepseek-coder
-  date: 2024-08-15
-  versions: 0.50.2-dev
-  seconds_per_case: 18.8
-  total_cost: 0.0333
 - dirname: 2024-08-15-14-11-45--json-no-lint-gpt-4o-2024-08-06-whole-3
   test_cases: 133
   model: gpt-4o-2024-08-06
@@ -418,27 +376,6 @@
   versions: 0.50.2-dev
   seconds_per_case: 24.4
   total_cost: 0.0439
-- dirname: 2024-08-15-14-24-46--json-no-lint-deepseek-coder-func-3
-  test_cases: 133
-  model: deepseek-coder V2 0724
-  edit_format: JSON
-  commit_hash: bac04a2
-  pass_rate_1: 52.6
-  percent_cases_well_formed: 100.0
-  error_outputs: 3
-  num_malformed_responses: 0
-  num_with_malformed_responses: 0
-  user_asks: 0
-  lazy_comments: 0
-  syntax_errors: 12
-  indentation_errors: 0
-  exhausted_context_windows: 0
-  test_timeouts: 1
-  command: aider --model deepseek-coder
-  date: 2024-08-15
-  versions: 0.50.2-dev
-  seconds_per_case: 19.0
-  total_cost: 0.0334
 - dirname: 2024-08-15-14-27-17--json-no-lint-gpt-4o-2024-08-06-whole-4
   test_cases: 133
   model: gpt-4o-2024-08-06
@@ -565,27 +502,6 @@
   versions: 0.50.2-dev
   seconds_per_case: 24.5
   total_cost: 0.0438
-- dirname: 2024-08-15-14-41-36--json-no-lint-deepseek-coder-func-4
-  test_cases: 133
-  model: deepseek-coder V2 0724
-  edit_format: JSON
-  commit_hash: bac04a2
-  pass_rate_1: 49.6
-  percent_cases_well_formed: 100.0
-  error_outputs: 7
-  num_malformed_responses: 0
-  num_with_malformed_responses: 0
-  user_asks: 0
-  lazy_comments: 0
-  syntax_errors: 2
-  indentation_errors: 0
-  exhausted_context_windows: 0
-  test_timeouts: 1
-  command: aider --model deepseek-coder
-  date: 2024-08-15
-  versions: 0.50.2-dev
-  seconds_per_case: 18.7
-  total_cost: 0.0333
 - dirname: 2024-08-15-14-44-11--json-no-lint-gpt-4o-2024-08-06-whole-5
   test_cases: 133
   model: gpt-4o-2024-08-06
@@ -712,27 +628,6 @@
   versions: 0.50.2-dev
   seconds_per_case: 24.5
   total_cost: 0.0439
-- dirname: 2024-08-15-14-57-51--json-no-lint-deepseek-coder-func-5
-  test_cases: 133
-  model: deepseek-coder V2 0724
-  edit_format: JSON
-  commit_hash: bac04a2
-  pass_rate_1: 53.4
-  percent_cases_well_formed: 100.0
-  error_outputs: 5
-  num_malformed_responses: 0
-  num_with_malformed_responses: 0
-  user_asks: 0
-  lazy_comments: 0
-  syntax_errors: 4
-  indentation_errors: 1
-  exhausted_context_windows: 0
-  test_timeouts: 0
-  command: aider --model deepseek-coder
-  date: 2024-08-15
-  versions: 0.50.2-dev
-  seconds_per_case: 18.5
-  total_cost: 0.0330
 - dirname: 2024-08-15-15-12-55--json-no-lint-strict-gpt-4o-2024-08-06-func-2
   test_cases: 133
   model: gpt-4o-2024-08-06
@@ -922,3 +817,110 @@
   versions: 0.50.2-dev
   seconds_per_case: 7.6
   total_cost: 1.4948
+
+- dirname: 2024-08-15-19-35-32--json-no-lint-again-deepseek-coder-func-1
+  test_cases: 133
+  model: deepseek-coder V2 0724
+  edit_format: JSON
+  commit_hash: 3a2ac02-dirty
+  pass_rate_1: 50.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 2
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model deepseek-coder
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 17.8
+  total_cost: 0.0330
+- dirname: 2024-08-15-19-37-50--json-no-lint-again-deepseek-coder-func-2
+  test_cases: 133
+  model: deepseek-coder V2 0724
+  edit_format: JSON
+  commit_hash: 1a98c28
+  pass_rate_1: 49.6
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 5
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model deepseek-coder
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 18.3
+  total_cost: 0.0336
+- dirname: 2024-08-15-19-40-20--json-no-lint-again-deepseek-coder-func-3
+  test_cases: 133
+  model: deepseek-coder V2 0724
+  edit_format: JSON
+  commit_hash: 1a98c28
+  pass_rate_1: 48.9
+  percent_cases_well_formed: 100.0
+  error_outputs: 1
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 5
+  indentation_errors: 1
+  exhausted_context_windows: 1
+  test_timeouts: 2
+  command: aider --model deepseek-coder
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 18.4
+  total_cost: 0.0337
+- dirname: 2024-08-15-19-44-07--json-no-lint-again-deepseek-coder-func-4
+  test_cases: 133
+  model: deepseek-coder V2 0724
+  edit_format: JSON
+  commit_hash: 1a98c28
+  pass_rate_1: 53.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 2
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  command: aider --model deepseek-coder
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 17.6
+  total_cost: 0.0330
+- dirname: 2024-08-15-19-46-48--json-no-lint-again-deepseek-coder-func-5
+  test_cases: 133
+  model: deepseek-coder V2 0724
+  edit_format: JSON
+  commit_hash: 1a98c28-dirty
+  pass_rate_1: 53.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 11
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  command: aider --model deepseek-coder
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 18.0
+  total_cost: 0.0332
+  
