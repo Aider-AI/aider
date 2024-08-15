@@ -53,33 +53,13 @@ class SingleWholeFileFunctionCoder(Coder):
 
         args = self.parse_partial_args()
 
+        if not args:
+            return ""
+
         for k, v in args.items():
             res += "\n"
             res += f"{k}:\n"
             res += v
-
-        return res
-
-        if not args:
-            return
-
-        explanation = args.get("explanation")
-        files = args.get("files", [])
-
-        res = ""
-        if explanation:
-            res += f"{explanation}\n\n"
-
-        for i, file_upd in enumerate(files):
-            path = file_upd.get("path")
-            if not path:
-                continue
-            content = file_upd.get("content")
-            if not content:
-                continue
-
-            this_final = (i < len(files) - 1) or final
-            res += self.live_diffs(path, content, this_final)
 
         return res
 
@@ -109,6 +89,8 @@ class SingleWholeFileFunctionCoder(Coder):
         assert len(chat_files) == 1, chat_files
 
         args = self.parse_partial_args()
+        if not args:
+            return []
 
         res = chat_files[0], args["content"]
         dump(res)
