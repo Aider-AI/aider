@@ -1,7 +1,7 @@
+import json
 import os
 import subprocess
 import tempfile
-import json
 from io import StringIO
 from pathlib import Path
 from unittest import TestCase
@@ -494,15 +494,18 @@ class TestMain(TestCase):
     def test_model_metadata_file(self):
         with GitTemporaryDirectory():
             metadata_file = Path(".aider.model.metadata.json")
-            metadata_content = {
-                "deepseek-chat": {
-                    "max_input_tokens": 1234
-                }
-            }
+            metadata_content = {"deepseek-chat": {"max_input_tokens": 1234}}
             metadata_file.write_text(json.dumps(metadata_content))
 
             coder = main(
-                ["--model", "deepseek-chat", "--model-metadata-file", str(metadata_file), "--exit", "--yes"],
+                [
+                    "--model",
+                    "deepseek-chat",
+                    "--model-metadata-file",
+                    str(metadata_file),
+                    "--exit",
+                    "--yes",
+                ],
                 input=DummyInput(),
                 output=DummyOutput(),
                 return_coder=True,
