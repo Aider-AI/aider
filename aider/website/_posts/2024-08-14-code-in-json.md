@@ -128,6 +128,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
     new Chart(ctx, config);
 });
+
+function createStripedCanvas(isStrict) {
+    const patternCanvas = document.createElement('canvas');
+    const patternContext = patternCanvas.getContext('2d');
+    const size = 10;
+    patternCanvas.width = size;
+    patternCanvas.height = size;
+
+    patternContext.fillStyle = 'rgba(255, 99, 132, 0.8)';
+    patternContext.fillRect(0, 0, size, size);
+
+    if (isStrict) {
+        patternContext.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+        patternContext.lineWidth = 0.75;
+        patternContext.beginPath();
+        patternContext.moveTo(0, 0);
+        patternContext.lineTo(size, size);
+        patternContext.stroke();
+    }
+
+    return patternCanvas;
+}
 </script>
 
 
