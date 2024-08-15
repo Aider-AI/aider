@@ -1009,7 +1009,8 @@ class Coder:
                         )
                 except Exception as err:
                     self.io.tool_error(f"Unexpected error: {err}")
-                    traceback.print_exc()
+                    lines = traceback.format_exception(type(err), err, err.__traceback__)
+                    self.io.tool_error("".join(lines))
                     return
         finally:
             if self.mdstream:
