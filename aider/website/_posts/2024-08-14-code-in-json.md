@@ -114,22 +114,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
 ## Abstract
 
-The newest LLMs have explicit tooling and
-support for returning properly formatted json responses.
-While it is tempting to have LLMs use json tool or function calls to
-return code or code edits, this is unwise.
+The newest LLMs have support for returning properly formatted json responses,
+making it easy for client applications to parse complex responses.
+This makes it tempting for AI coding applications to
+use tool function calls or other structured reply formats to
+receive code from LLMs.
+Unfortunately, 
 LLMs write worse code when asked to wrap it in json, harming their ability
 to correctly solve coding tasks.
-Returning code as plain (markdown) text results in 6% higher scores
+Returning code as plain (markdown) text results in an average of 6% higher scores
 on a variant of the aider code editing benchmark.
-Even OpenAI's newest gpt-4o-2024-08-06 with "strict" json support
+This holds true across many top coding LLMs, 
+and even OpenAI's newest gpt-4o-2024-08-06 with "strict" json support
 suffers from this code-in-json handicap.
 
 ## Introduction
 
-A lot of people wonder why aider doesn't have LLMs use tools or function calls to
+A lot of people wonder why aider doesn't tell LLMs to
+use tools or function calls to
 specify code edits.
-Instead, aider asks LLMs to return code edits in plain text, like this:
+Instead, aider asks for code edits in plain text, like this:
 
 ````
 greeting.py
@@ -144,31 +148,30 @@ def greeting():
 ```
 ````
 
-People expect that it would be easier and more reliable
-for aider to parse a nicely formatted json 
-response, like this:
+People expect that it would be easier and more reliable to use tool calls,
+and parse a nicely formatted json 
+response:
 
 ```
 {
     "filename": "greeting.py",
-    "start_line": 6,
-    "end_line": 7,
-    "new_content": "def greeting():\n    print(\"Goodbye\")\n"
+    "search": "def greeting():\n    print(\"Hello\")\n"
+    "replace": "def greeting():\n    print(\"Goodbye\")\n"
 }
 ```
 
-This seems even more tempting as LLMs 
-get better tooling for reliably generating
-valid json, or even enforcing that it meets a specific schema.
-For example, OpenAI recently announced
-[strict enforcement of json responses]().
+This has become even more tempting as LLM providers
+continue to improve their tooling for reliably generating
+valid json.
+For example, OpenAI recently announced the ability to
+[strictly enforce that json responses will be syntactically correct 
+and conform to a specified schema](https://openai.com/index/introducing-structured-outputs-in-the-api/).
 
-But it's not sufficient to just produce 
-valid json, it also 
-has to contain quality code. 
-Unfortunately, 
+But producing valid (schema compliant) json is not sufficient for this use case.
+The json also has to contain valid, high quality code.
+And unfortunately, 
 LLMs write worse code when they're asked to 
-emit it wrapped in json.
+wrap it in json.
 
 In some sense this shouldn't be surprising.
 Just look at the very simple
@@ -176,24 +179,26 @@ json example above, with the escaped
 quotes `\"` and
 newlines `\n`
 mixed into the code.
-Coding is complicated enough without having to escape all the special characters too.
+Imagine if the code itself contained json or other quoted strings,
+with their
+own escape sequences.
 
 If you tried to write a program, 
 would you do a better job
-typing it normally
+typing it out normally
 or as a properly escaped 
 json string?
 
+
 ## Quantifying the benefits of plain text
 
-
-Previous [benchmark results](/2023/07/02/benchmarks.html)
+Previous [aider benchmark results](/2023/07/02/benchmarks.html)
 showed
 the superiority of returning code
-as  plain text coding compared to json-wrapped function calls.
-But those results were obtained
+as plain text coding compared to json-wrapped function calls.
+Those results were obtained
 over a year ago, against far less
-capable models. 
+capable models.
 OpenAI's newly announced support for "strict" json seemed like a good reason to
 investigate whether the newest models are still handicapped by json-wrapping code.
 
@@ -207,17 +212,18 @@ results from
 
 Each model was given one try to solve 
 [133 practice exercises from the Exercism python repository](/2023/07/02/benchmarks.html#the-benchmark).
-This is the standard aider "code editing" benchmark, except restricted to a single attempt.
+This is the standard aider "code editing" benchmark, but restricted to a single attempt
+without a second try to "fix" any errors.
 
-Each model was assessed by the benchmark with two 
+Each model was assessed by the benchmark using two 
 different strategies for returning code:
 
-- **Markdown** -- where the model simply returned the whole source code file in standard markdown triple-backtick fences.
-- **Tool call** -- where the model is told to use a function to return the whole source code file. This requires the LLM to wrap the code in json.
+- **Markdown** -- the model returned the whole source code file in standard markdown triple-backtick fences.
+- **Tool call** -- the model used a tool function call to return the whole source code file. This requires the LLM to wrap the code in json.
 
 The markdown strategy is the same as
-aider's "whole" edit format. 
-It asks the LLM to return a program like this:
+aider's "whole" edit format, where the
+LLM would return a source file like this:
 
 ````
 Here is the program you asked for which prints "Hello":
@@ -230,7 +236,9 @@ def greeting():
 ````
 
 The tool strategy requires the LLM to call the `write_file` function with
-two parameters, like this:
+two parameters, as shown below.
+For maximum simplicity, the LLM didn't even have to specify the filename,
+since the benchmark operates only on a single source file.
 
 ```
 {
@@ -242,13 +250,14 @@ two parameters, like this:
 Both of these formats avoid actually *editing* source files, to keep
 the task as
 simple as possible.
-The LLM can emit the whole source file intact,
+The LLM is able to emit the whole source file intact,
 which is much easier
 than correctly formulating
 instructions to edit
 portions of a file.
 
-We are simply testing the effects of json-wrapping on the LLMs ability to write code to solve a task.
+This experimental setup is designed to highlight
+the effects of json-wrapping on the LLMs ability to write code to solve a task.
 
 ## Results
 
