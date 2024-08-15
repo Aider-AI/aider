@@ -494,13 +494,15 @@ class TestMain(TestCase):
     def test_model_metadata_file(self):
         with GitTemporaryDirectory():
             metadata_file = Path(".aider.model.metadata.json")
-            metadata_content = {"deepseek-chat": {"max_input_tokens": 1234}}
+
+            # must be a fully qualified model name: provider/...
+            metadata_content = {"deepseek/deepseek-chat": {"max_input_tokens": 1234}}
             metadata_file.write_text(json.dumps(metadata_content))
 
             coder = main(
                 [
                     "--model",
-                    "deepseek-chat",
+                    "deepseek/deepseek-chat",
                     "--model-metadata-file",
                     str(metadata_file),
                     "--exit",
