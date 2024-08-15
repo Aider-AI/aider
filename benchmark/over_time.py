@@ -6,6 +6,24 @@ from matplotlib import rc
 from aider.dump import dump  # noqa: 401
 
 
+def get_model_color(model):
+    default = "lightblue"
+
+    if model == "gpt-4o-mini":
+        return default
+
+    if "-4o" in model:
+        return "purple"
+
+    if "gpt-4" in model:
+        return "red"
+
+    if "gpt-3.5" in model:
+        return "green"
+
+    return default
+
+
 def plot_over_time(yaml_file):
     with open(yaml_file, "r") as file:
         data = yaml.safe_load(file)
@@ -49,14 +67,7 @@ def plot_over_time(yaml_file):
         spine.set_edgecolor("#DDDDDD")
         spine.set_linewidth(0.5)
 
-    colors = [
-        (
-            "purple"
-            if "-4o" in model and "gpt-4o-mini" not in model
-            else "red" if "gpt-4" in model else "green" if "gpt-3.5" in model else "lightblue"
-        )
-        for model in models
-    ]
+    colors = [get_model_color(model) for model in models]
 
     # Separate data points by color
     purple_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "purple"]
