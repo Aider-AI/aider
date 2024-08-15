@@ -1,6 +1,6 @@
 ---
 title: LLMs are bad at returning code in json
-excerpt: LLMs write worse code if you ask them to return the code wrapped in json via a tool/function call.
+excerpt: LLMs write worse code if you ask them to return the code wrapped in json (via a tool or function call).
 highlight_image: /assets/code-in-json.jpg
 draft: true
 nav_exclude: true
