@@ -16,6 +16,11 @@ cog.out(text)
 
 # Release history
 
+### main branch
+
+- Improved editing performance on Jupyter Notebook `.ipynb` files.
+- Work around litellm tokenizer bug for images.
+
 ### Aider v0.50.1
 
 - Bugfix for provider API exceptions.
