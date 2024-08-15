@@ -1,9 +1,9 @@
-- dirname: 2024-08-14-18-26-18--json-gpt-4o-2024-08-06-whole
+- dirname: 2024-08-15-13-17-11--json-no-lint-gpt-4o-2024-08-06-whole
   test_cases: 133
-  model: gpt-4o-2024-08-06
-  edit_format: Markdown
-  commit_hash: 94a2601-dirty
-  pass_rate_1: 62.4
+  model: openai/gpt-4o-2024-08-06
+  edit_format: whole
+  commit_hash: bac04a2
+  pass_rate_1: 60.2
   percent_cases_well_formed: 100.0
   error_outputs: 0
   num_malformed_responses: 0
@@ -13,62 +13,395 @@
   syntax_errors: 0
   indentation_errors: 0
   exhausted_context_windows: 0
-  test_timeouts: 3
-  command: aider --model gpt-4o-2024-08-06
-  date: 2024-08-14
+  test_timeouts: 1
+  command: aider --model openai/gpt-4o-2024-08-06
+  date: 2024-08-15
   versions: 0.50.2-dev
-  seconds_per_case: 6.8
-  total_cost: 1.2717
-
-- dirname: 2024-08-14-18-38-25--json-gpt-4o-2024-08-06-non-strict-func
+  seconds_per_case: 4.3
+  total_cost: 0.7965
+- dirname: 2024-08-15-13-18-36--json-no-lint-gpt-4o-2024-08-06-func
   test_cases: 133
-  model: gpt-4o-2024-08-06
-  edit_format: Tool call
-  commit_hash: 2eb1946-dirty
-  pass_rate_1: 54.1
+  model: openai/gpt-4o-2024-08-06
+  edit_format: func
+  commit_hash: bac04a2
+  pass_rate_1: 57.9
   percent_cases_well_formed: 100.0
-  error_outputs: 7
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 1
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model openai/gpt-4o-2024-08-06
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 5.7
+  total_cost: 0.8417
+- dirname: 2024-08-15-13-20-11--json-no-lint-gpt-4o-2024-05-13-whole
+  test_cases: 133
+  model: openai/gpt-4o-2024-05-13
+  edit_format: whole
+  commit_hash: bac04a2
+  pass_rate_1: 56.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model openai/gpt-4o-2024-05-13
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 8.0
+  total_cost: 1.5034
+- dirname: 2024-08-15-13-21-55--json-no-lint-gpt-4o-2024-05-13-func
+  test_cases: 133
+  model: openai/gpt-4o-2024-05-13
+  edit_format: func
+  commit_hash: bac04a2
+  pass_rate_1: 60.2
+  percent_cases_well_formed: 100.0
+  error_outputs: 2
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 1
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model openai/gpt-4o-2024-05-13
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 7.1
+  total_cost: 1.2285
+- dirname: 2024-08-15-13-23-33--json-no-lint-claude-3.5-sonnet-whole
+  test_cases: 133
+  model: openrouter/anthropic/claude-3.5-sonnet
+  edit_format: whole
+  commit_hash: bac04a2
+  pass_rate_1: 60.2
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model openrouter/anthropic/claude-3.5-sonnet
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 10.5
+  total_cost: 1.6714
+- dirname: 2024-08-15-13-24-56--json-no-lint-claude-3.5-sonnet-func
+  test_cases: 133
+  model: openrouter/anthropic/claude-3.5-sonnet
+  edit_format: func
+  commit_hash: bac04a2
+  pass_rate_1: 53.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model openrouter/anthropic/claude-3.5-sonnet
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 9.7
+  total_cost: 1.5980
+- dirname: 2024-08-15-13-26-38--json-no-lint-deepseek-coder-whole
+  test_cases: 133
+  model: openrouter/deepseek/deepseek-coder
+  edit_format: whole
+  commit_hash: bac04a2
+  pass_rate_1: 59.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 2
   num_malformed_responses: 0
   num_with_malformed_responses: 0
   user_asks: 2
   lazy_comments: 0
-  syntax_errors: 2
+  syntax_errors: 0
   indentation_errors: 0
   exhausted_context_windows: 0
-  test_timeouts: 4
-  command: aider --model gpt-4o-2024-08-06
-  date: 2024-08-14
+  test_timeouts: 0
+  command: aider --model openrouter/deepseek/deepseek-coder
+  date: 2024-08-15
   versions: 0.50.2-dev
-  seconds_per_case: 11.5
-  total_cost: 1.3819
-  
-- dirname: 2024-08-14-18-32-02--json-gpt-4o-2024-08-06-strict-func
+  seconds_per_case: 27.9
+  total_cost: 0.0438
+- dirname: 2024-08-15-13-29-55--json-no-lint-deepseek-coder-func
   test_cases: 133
-  model: gpt-4o-2024-08-06
-  edit_format: Tool call (strict)
-  commit_hash: 2eb1946
+  model: openrouter/deepseek/deepseek-coder
+  edit_format: func
+  commit_hash: bac04a2
+  pass_rate_1: 49.6
+  percent_cases_well_formed: 100.0
+  error_outputs: 3
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 4
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model openrouter/deepseek/deepseek-coder
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 20.5
+  total_cost: 0.0329
+- dirname: 2024-08-15-13-50-03--json-no-lint-gpt-4o-2024-08-06-whole-2
+  test_cases: 133
+  model: openai/gpt-4o-2024-08-06
+  edit_format: whole
+  commit_hash: bac04a2
+  pass_rate_1: 61.7
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model openai/gpt-4o-2024-08-06
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 4.2
+  total_cost: 0.7946
+- dirname: 2024-08-15-13-51-36--json-no-lint-gpt-4o-2024-08-06-func-2
+  test_cases: 133
+  model: openai/gpt-4o-2024-08-06
+  edit_format: func
+  commit_hash: bac04a2
   pass_rate_1: 56.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 1
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model openai/gpt-4o-2024-08-06
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 6.4
+  total_cost: 0.8390
+- dirname: 2024-08-15-13-53-23--json-no-lint-gpt-4o-2024-05-13-whole-2
+  test_cases: 133
+  model: openai/gpt-4o-2024-05-13
+  edit_format: whole
+  commit_hash: bac04a2
+  pass_rate_1: 59.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model openai/gpt-4o-2024-05-13
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 7.4
+  total_cost: 1.4996
+- dirname: 2024-08-15-13-54-53--json-no-lint-gpt-4o-2024-05-13-func-2
+  test_cases: 133
+  model: openai/gpt-4o-2024-05-13
+  edit_format: func
+  commit_hash: bac04a2
+  pass_rate_1: 60.2
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 1
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model openai/gpt-4o-2024-05-13
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 7.7
+  total_cost: 1.2210
+- dirname: 2024-08-15-13-56-21--json-no-lint-claude-3.5-sonnet-whole-2
+  test_cases: 133
+  model: openrouter/anthropic/claude-3.5-sonnet
+  edit_format: whole
+  commit_hash: bac04a2
+  pass_rate_1: 60.9
   percent_cases_well_formed: 100.0
   error_outputs: 1
   num_malformed_responses: 0
   num_with_malformed_responses: 0
   user_asks: 0
   lazy_comments: 0
-  syntax_errors: 7
+  syntax_errors: 0
   indentation_errors: 0
   exhausted_context_windows: 0
-  test_timeouts: 4
-  command: aider --model gpt-4o-2024-08-06
-  date: 2024-08-14
+  test_timeouts: 0
+  command: aider --model openrouter/anthropic/claude-3.5-sonnet
+  date: 2024-08-15
   versions: 0.50.2-dev
-  seconds_per_case: 12.7
-  total_cost: 1.3652
-
-- dirname: 2024-08-14-20-15-19--json-sonnet-whole
+  seconds_per_case: 16.5
+  total_cost: 1.6556
+- dirname: 2024-08-15-14-02-15--json-no-lint-claude-3.5-sonnet-func-2
   test_cases: 133
-  model: claude-3.5-sonnet
-  edit_format: Markdown
-  commit_hash: e2f14a2
+  model: openrouter/anthropic/claude-3.5-sonnet
+  edit_format: func
+  commit_hash: bac04a2
+  pass_rate_1: 51.9
+  percent_cases_well_formed: 100.0
+  error_outputs: 1
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model openrouter/anthropic/claude-3.5-sonnet
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 14.3
+  total_cost: 1.5835
+- dirname: 2024-08-15-14-06-12--json-no-lint-deepseek-coder-whole-2
+  test_cases: 133
+  model: openrouter/deepseek/deepseek-coder
+  edit_format: whole
+  commit_hash: bac04a2
+  pass_rate_1: 60.9
+  percent_cases_well_formed: 100.0
+  error_outputs: 2
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 1
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model openrouter/deepseek/deepseek-coder
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 25.8
+  total_cost: 0.0439
+- dirname: 2024-08-15-14-09-22--json-no-lint-deepseek-coder-func-2
+  test_cases: 133
+  model: openrouter/deepseek/deepseek-coder
+  edit_format: func
+  commit_hash: bac04a2
+  pass_rate_1: 53.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 5
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 6
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model openrouter/deepseek/deepseek-coder
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 18.8
+  total_cost: 0.0333
+- dirname: 2024-08-15-14-11-45--json-no-lint-gpt-4o-2024-08-06-whole-3
+  test_cases: 133
+  model: openai/gpt-4o-2024-08-06
+  edit_format: whole
+  commit_hash: bac04a2
+  pass_rate_1: 60.9
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model openai/gpt-4o-2024-08-06
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 4.3
+  total_cost: 0.7945
+- dirname: 2024-08-15-14-13-11--json-no-lint-gpt-4o-2024-08-06-func-3
+  test_cases: 133
+  model: openai/gpt-4o-2024-08-06
+  edit_format: func
+  commit_hash: bac04a2
+  pass_rate_1: 56.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 1
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model openai/gpt-4o-2024-08-06
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 5.6
+  total_cost: 0.8220
+- dirname: 2024-08-15-14-14-40--json-no-lint-gpt-4o-2024-05-13-whole-3
+  test_cases: 133
+  model: openai/gpt-4o-2024-05-13
+  edit_format: whole
+  commit_hash: bac04a2
+  pass_rate_1: 61.7
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 6
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model openai/gpt-4o-2024-05-13
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 8.8
+  total_cost: 1.4993
+- dirname: 2024-08-15-14-16-34--json-no-lint-gpt-4o-2024-05-13-func-3
+  test_cases: 133
+  model: openai/gpt-4o-2024-05-13
+  edit_format: func
+  commit_hash: bac04a2
   pass_rate_1: 58.6
   percent_cases_well_formed: 100.0
   error_outputs: 0
@@ -80,75 +413,428 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model claude-3.5-sonnet
-  date: 2024-08-14
+  command: aider --model openai/gpt-4o-2024-05-13
+  date: 2024-08-15
   versions: 0.50.2-dev
-  seconds_per_case: 19.7
-  total_cost: 2.5335
-
-- dirname: 2024-08-14-20-19-23--json-sonnet-non-strict-func
+  seconds_per_case: 8.7
+  total_cost: 1.2064
+- dirname: 2024-08-15-14-17-51--json-no-lint-claude-3.5-sonnet-whole-3
   test_cases: 133
-  model: claude-3.5-sonnet
-  edit_format: Tool call
-  commit_hash: e2f14a2
-  pass_rate_1: 52.6
+  model: openrouter/anthropic/claude-3.5-sonnet
+  edit_format: whole
+  commit_hash: bac04a2
+  pass_rate_1: 60.2
   percent_cases_well_formed: 100.0
-  error_outputs: 1
+  error_outputs: 0
   num_malformed_responses: 0
   num_with_malformed_responses: 0
-  user_asks: 1
+  user_asks: 0
   lazy_comments: 0
-  syntax_errors: 1
+  syntax_errors: 0
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model claude-3.5-sonnet
-  date: 2024-08-14
+  command: aider --model openrouter/anthropic/claude-3.5-sonnet
+  date: 2024-08-15
   versions: 0.50.2-dev
-  seconds_per_case: 18.9
-  total_cost: 2.6341
-
-- dirname: 2024-08-14-21-23-27--json-deepseek-whole
+  seconds_per_case: 11.0
+  total_cost: 1.6555
+- dirname: 2024-08-15-14-19-19--json-no-lint-claude-3.5-sonnet-func-3
   test_cases: 133
-  model: deepseek-coder
-  edit_format: Markdown
-  commit_hash: e2f14a2
-  pass_rate_1: 61.7
+  model: openrouter/anthropic/claude-3.5-sonnet
+  edit_format: func
+  commit_hash: bac04a2
+  pass_rate_1: 51.1
   percent_cases_well_formed: 100.0
-  error_outputs: 1
+  error_outputs: 3
   num_malformed_responses: 0
   num_with_malformed_responses: 0
-  user_asks: 1
+  user_asks: 0
   lazy_comments: 0
   syntax_errors: 0
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model deepseek-coder
-  date: 2024-08-14
+  command: aider --model openrouter/anthropic/claude-3.5-sonnet
+  date: 2024-08-15
   versions: 0.50.2-dev
-  seconds_per_case: 23.0
-  total_cost: 0.0439
-
-- dirname: 2024-08-14-21-20-46--json-deepseek-non-strict-func
+  seconds_per_case: 10.3
+  total_cost: 1.5614
+- dirname: 2024-08-15-14-21-06--json-no-lint-deepseek-coder-whole-3
   test_cases: 133
-  model: deepseek-coder
-  edit_format: Tool call
-  commit_hash: e2f14a2
-  pass_rate_1: 54.1
+  model: openrouter/deepseek/deepseek-coder
+  edit_format: whole
+  commit_hash: bac04a2
+  pass_rate_1: 61.7
   percent_cases_well_formed: 100.0
-  error_outputs: 9
+  error_outputs: 3
   num_malformed_responses: 0
   num_with_malformed_responses: 0
-  user_asks: 5
+  user_asks: 2
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: aider --model openrouter/deepseek/deepseek-coder
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 24.4
+  total_cost: 0.0439
+- dirname: 2024-08-15-14-24-46--json-no-lint-deepseek-coder-func-3
+  test_cases: 133
+  model: openrouter/deepseek/deepseek-coder
+  edit_format: func
+  commit_hash: bac04a2
+  pass_rate_1: 52.6
+  percent_cases_well_formed: 100.0
+  error_outputs: 3
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 12
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model openrouter/deepseek/deepseek-coder
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 19.0
+  total_cost: 0.0334
+- dirname: 2024-08-15-14-27-17--json-no-lint-gpt-4o-2024-08-06-whole-4
+  test_cases: 133
+  model: openai/gpt-4o-2024-08-06
+  edit_format: whole
+  commit_hash: bac04a2
+  pass_rate_1: 60.2
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model openai/gpt-4o-2024-08-06
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 4.3
+  total_cost: 0.8015
+- dirname: 2024-08-15-14-28-58--json-no-lint-gpt-4o-2024-08-06-func-4
+  test_cases: 133
+  model: openai/gpt-4o-2024-08-06
+  edit_format: func
+  commit_hash: bac04a2
+  pass_rate_1: 60.2
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model openai/gpt-4o-2024-08-06
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 6.0
+  total_cost: 0.8394
+- dirname: 2024-08-15-14-30-48--json-no-lint-gpt-4o-2024-05-13-whole-4
+  test_cases: 133
+  model: openai/gpt-4o-2024-05-13
+  edit_format: whole
+  commit_hash: bac04a2
+  pass_rate_1: 61.7
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 6
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model openai/gpt-4o-2024-05-13
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 12.3
+  total_cost: 1.4919
+- dirname: 2024-08-15-14-32-58--json-no-lint-gpt-4o-2024-05-13-func-4
+  test_cases: 133
+  model: openai/gpt-4o-2024-05-13
+  edit_format: func
+  commit_hash: bac04a2
+  pass_rate_1: 59.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
   lazy_comments: 0
   syntax_errors: 2
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model deepseek-coder
-  date: 2024-08-14
+  command: aider --model openai/gpt-4o-2024-05-13
+  date: 2024-08-15
   versions: 0.50.2-dev
-  seconds_per_case: 17.4
-  total_cost: 0.0332
-
+  seconds_per_case: 11.1
+  total_cost: 1.2120
+- dirname: 2024-08-15-14-34-39--json-no-lint-claude-3.5-sonnet-whole-4
+  test_cases: 133
+  model: openrouter/anthropic/claude-3.5-sonnet
+  edit_format: whole
+  commit_hash: bac04a2
+  pass_rate_1: 60.9
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model openrouter/anthropic/claude-3.5-sonnet
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 11.3
+  total_cost: 1.6635
+- dirname: 2024-08-15-14-36-18--json-no-lint-claude-3.5-sonnet-func-4
+  test_cases: 133
+  model: openrouter/anthropic/claude-3.5-sonnet
+  edit_format: func
+  commit_hash: bac04a2
+  pass_rate_1: 55.6
+  percent_cases_well_formed: 100.0
+  error_outputs: 1
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model openrouter/anthropic/claude-3.5-sonnet
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 10.5
+  total_cost: 1.5768
+- dirname: 2024-08-15-14-38-35--json-no-lint-deepseek-coder-whole-4
+  test_cases: 133
+  model: openrouter/deepseek/deepseek-coder
+  edit_format: whole
+  commit_hash: bac04a2
+  pass_rate_1: 59.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 2
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 2
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model openrouter/deepseek/deepseek-coder
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 24.5
+  total_cost: 0.0438
+- dirname: 2024-08-15-14-41-36--json-no-lint-deepseek-coder-func-4
+  test_cases: 133
+  model: openrouter/deepseek/deepseek-coder
+  edit_format: func
+  commit_hash: bac04a2
+  pass_rate_1: 49.6
+  percent_cases_well_formed: 100.0
+  error_outputs: 7
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 2
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model openrouter/deepseek/deepseek-coder
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 18.7
+  total_cost: 0.0333
+- dirname: 2024-08-15-14-44-11--json-no-lint-gpt-4o-2024-08-06-whole-5
+  test_cases: 133
+  model: openai/gpt-4o-2024-08-06
+  edit_format: whole
+  commit_hash: bac04a2
+  pass_rate_1: 60.9
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model openai/gpt-4o-2024-08-06
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 4.6
+  total_cost: 0.8023
+- dirname: 2024-08-15-14-45-40--json-no-lint-gpt-4o-2024-08-06-func-5
+  test_cases: 133
+  model: openai/gpt-4o-2024-08-06
+  edit_format: func
+  commit_hash: bac04a2
+  pass_rate_1: 57.1
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: aider --model openai/gpt-4o-2024-08-06
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 6.3
+  total_cost: 0.8354
+- dirname: 2024-08-15-14-47-39--json-no-lint-gpt-4o-2024-05-13-whole-5
+  test_cases: 133
+  model: openai/gpt-4o-2024-05-13
+  edit_format: whole
+  commit_hash: bac04a2
+  pass_rate_1: 60.2
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 9
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model openai/gpt-4o-2024-05-13
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 10.7
+  total_cost: 1.4982
+- dirname: 2024-08-15-14-49-44--json-no-lint-gpt-4o-2024-05-13-func-5
+  test_cases: 133
+  model: openai/gpt-4o-2024-05-13
+  edit_format: func
+  commit_hash: bac04a2
+  pass_rate_1: 59.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 4
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model openai/gpt-4o-2024-05-13
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 10.5
+  total_cost: 1.2099
+- dirname: 2024-08-15-14-51-18--json-no-lint-claude-3.5-sonnet-whole-5
+  test_cases: 133
+  model: openrouter/anthropic/claude-3.5-sonnet
+  edit_format: whole
+  commit_hash: bac04a2
+  pass_rate_1: 60.2
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model openrouter/anthropic/claude-3.5-sonnet
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 11.4
+  total_cost: 1.6685
+- dirname: 2024-08-15-14-52-48--json-no-lint-claude-3.5-sonnet-func-5
+  test_cases: 133
+  model: openrouter/anthropic/claude-3.5-sonnet
+  edit_format: func
+  commit_hash: bac04a2
+  pass_rate_1: 53.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 2
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model openrouter/anthropic/claude-3.5-sonnet
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 10.8
+  total_cost: 1.5786
+- dirname: 2024-08-15-14-54-41--json-no-lint-deepseek-coder-whole-5
+  test_cases: 133
+  model: openrouter/deepseek/deepseek-coder
+  edit_format: whole
+  commit_hash: bac04a2
+  pass_rate_1: 61.7
+  percent_cases_well_formed: 100.0
+  error_outputs: 2
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 2
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model openrouter/deepseek/deepseek-coder
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 24.5
+  total_cost: 0.0439
+- dirname: 2024-08-15-14-57-51--json-no-lint-deepseek-coder-func-5
+  test_cases: 133
+  model: openrouter/deepseek/deepseek-coder
+  edit_format: func
+  commit_hash: bac04a2
+  pass_rate_1: 53.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 5
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 4
+  indentation_errors: 1
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model openrouter/deepseek/deepseek-coder
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 18.5
+  total_cost: 0.0330
