@@ -368,3 +368,15 @@ class GitRepo:
             return self.repo.head.commit.hexsha
         except ValueError:
             return None
+
+    def remove_file_from_tracking(self, rel_fname):
+        try:
+            self.repo.git.rm([rel_fname], cached=True, force=True)
+            self.repo.index.remove([rel_fname], working_tree=True, force=True)
+        except git.exc.GitCommandError as e:
+            pass
+
+        # Update the tracked files list
+        tracked_files = self.get_tracked_files()
+        tracked_files = [f for f in tracked_files if f != rel_fname]
+        self.tree_files[self.repo.head.commit] = set(tracked_files)
