@@ -1,9 +1,21 @@
-<canvas id="passRateChart" width="800" height="400" style="margin-bottom: 20px"></canvas>
+<style>
+    .chart-container {
+        position: relative;
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+</style>
+
+<div class="chart-container">
+    <canvas id="passRateChart"></canvas>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     var ctx = document.getElementById('passRateChart').getContext('2d');
+    var chartContainer = document.querySelector('.chart-container');
     
     var yamlData = {{ site.data.code-in-json | jsonify }};
     
@@ -37,11 +49,19 @@ document.addEventListener('DOMContentLoaded', function () {
         datasets: datasets
     };
 
+    function getAspectRatio() {
+        var width = chartContainer.offsetWidth;
+        // Gradually change aspect ratio from 2 (landscape) to 1 (square)
+        return Math.max(1, Math.min(2, width / 400));
+    }
+
     var config = {
         type: 'bar',
         data: data,
         options: {
             responsive: true,
+            maintainAspectRatio: true,
+            aspectRatio: getAspectRatio(),
             scales: {
                 x: {
                     title: {
@@ -104,29 +124,17 @@ document.addEventListener('DOMContentLoaded', function () {
         }]
     };
 
-    function createStripedCanvas(isStrict) {
-        const patternCanvas = document.createElement('canvas');
-        const patternContext = patternCanvas.getContext('2d');
-        const size = 10;
-        patternCanvas.width = size;
-        patternCanvas.height = size;
+    var chart = new Chart(ctx, config);
 
-        patternContext.fillStyle = 'rgba(255, 99, 132, 0.8)';
-        patternContext.fillRect(0, 0, size, size);
-
-        if (isStrict) {
-            patternContext.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-            patternContext.lineWidth = 0.75;
-            patternContext.beginPath();
-            patternContext.moveTo(0, 0);
-            patternContext.lineTo(size, size);
-            patternContext.stroke();
-        }
-
-        return patternCanvas;
+    function resizeChart() {
+        chart.options.aspectRatio = getAspectRatio();
+        chart.resize();
     }
 
-    new Chart(ctx, config);
+    window.addEventListener('resize', resizeChart);
+
+    // Initial resize to set correct size
+    resizeChart();
 });
 
 function createStripedCanvas(isStrict) {
