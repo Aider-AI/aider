@@ -270,6 +270,9 @@ model & strategy combination.
 
 ## Results
 
+
+## Overall coding skill
+
 All of the models did worse on the benchmark when asked to
 return JSON-wrapped code in a tool function call.
 Most did significantly worse, performing far below
@@ -284,6 +287,9 @@ probably within the margin of error for 5 trials.
 as compared to non-strict JSON. 
 Of course, both JSON results were well below the markdown result.
 - The results from Sonnet and DeepSeek Coder suffered the worst harm from JSON wrapping.
+
+## Syntax errors
+
 
 ## Conclusions
 
