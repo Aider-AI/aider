@@ -152,6 +152,8 @@ function createStripedCanvas(isStrict) {
 }
 </script>
 
+> Figure 1: Benchmark scores of models using either plain markdown text or JSON to return code.
+> Models produce better code when they return it as plain markdown text, as compared to wrapping it in JSON for a tool function call.
 
 ## Abstract
 
@@ -420,6 +422,9 @@ document.addEventListener('DOMContentLoaded', function () {
     new Chart(ctx, config);
 });
 </script>
+
+> Figure 2: Number of `SyntaxError` and `IndentationError` errors found in model generated code.
+> Models tend to make more syntactic errors when asked to wrap code in JSON.
 
 
 ## Conclusions
