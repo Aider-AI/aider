@@ -100,7 +100,7 @@ def greeting():
 
 People expect that it would be easier and more reliable
 for aider to parse a nicely formatted json 
-response more like this:
+response, like this:
 
 ```
 {
@@ -111,7 +111,8 @@ response more like this:
 }
 ```
 
-This seems even more tempting as LLMs get better tooling for reliably generating
+This seems even more tempting as LLMs 
+get better tooling for reliably generating
 valid json, or even enforcing that it meets a specific schema.
 For example, OpenAI recently announced
 [strict enforcement of json responses]().
@@ -126,13 +127,16 @@ emit it wrapped in json.
 In some sense this shouldn't be surprising.
 Just look at the very simple
 json example above, with the escaped 
-quotes `\"` quotes
+quotes `\"` and
 newlines `\n`
 mixed into the code.
 Coding is complicated enough without having to escape all the special characters too.
 
-If I asked you to write me a program, would you do a better job
-typing it into a text file or hand typing it as a properly escaped json string?
+If you tried to write a program, 
+would you do a better job
+typing it normally
+or as a properly escaped 
+json string?
 
 ## Quantifying the benefits of plain text
 
