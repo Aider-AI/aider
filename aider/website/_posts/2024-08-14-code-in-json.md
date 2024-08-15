@@ -12,155 +12,12 @@ nav_exclude: true
 # LLMs are bad at returning code in JSON
 
 
-<div id="chartContainer" style="position: relative; height: 0; padding-bottom: 50%; margin-bottom: 20px;">
-    <canvas id="passRateChart" style="position: absolute; width: 100%; height: 100%;"></canvas>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    var ctx = document.getElementById('passRateChart').getContext('2d');
-    
-    var yamlData = {{ site.data.code-in-json | jsonify }};
-    
-    var models = [...new Set(yamlData.map(item => item.model))].sort();
-    var editFormats = [...new Set(yamlData.map(item => item.edit_format))];
-    
-    var datasets = editFormats.map(format => ({
-        label: format,
-        data: models.map(model => {
-            var items = yamlData.filter(d => d.model === model && d.edit_format === format);
-            if (items.length === 0) return null;
-            var average = items.reduce((sum, item) => sum + item.pass_rate_1, 0) / items.length;
-            return parseFloat(average.toFixed(1));
-        }),
-        backgroundColor: function(context) {
-            const format = context.dataset.label;
-            if (format === 'Markdown') {
-                return 'rgba(54, 162, 235, 0.8)';
-            } else if (format.startsWith('JSON')) {
-                const ctx = context.chart.ctx;
-                const gradient = ctx.createPattern(createStripedCanvas(format === 'JSON (strict)'), 'repeat');
-                return gradient;
-            } else {
-                return 'rgba(75, 192, 192, 0.8)';
-            }
-        },
-    }));
-
-    var data = {
-        labels: models,
-        datasets: datasets
-    };
-
-    var config = {
-        type: 'bar',
-        data: data,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Model'
-                    }
-                },
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Pass Rate (%, average of 5 runs)'
-                    },
-                    max: 70
-                }
-            },
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Pass rate by model and code wrapping strategy',
-                    font: {
-                        size: 16
-                    }
-                },
-                legend: {
-                    position: 'top',
-                }
-            }
-        }
-    };
-
-    // Adjust chart height based on screen width
-    function adjustChartHeight() {
-        var container = document.getElementById('chartContainer');
-        if (window.innerWidth < 600) {
-            container.style.paddingBottom = '75%'; // Increase height on small screens
-        } else {
-            container.style.paddingBottom = '50%'; // Default height
-        }
-    }
-
-    // Call the function initially and on window resize
-    adjustChartHeight();
-    window.addEventListener('resize', adjustChartHeight);
-
-    function createStripedCanvas(isStrict) {
-        const patternCanvas = document.createElement('canvas');
-        const patternContext = patternCanvas.getContext('2d');
-        const size = 10;
-        patternCanvas.width = size;
-        patternCanvas.height = size;
-
-        patternContext.fillStyle = 'rgba(255, 99, 132, 0.8)';
-        patternContext.fillRect(0, 0, size, size);
-
-        if (isStrict) {
-            patternContext.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-            patternContext.lineWidth = 0.75;
-            patternContext.beginPath();
-            patternContext.moveTo(0, 0);
-            patternContext.lineTo(size, size);
-            patternContext.stroke();
-        }
-
-        return patternCanvas;
-    }
-
-    new Chart(ctx, config);
-});
-
-function createStripedCanvas(isStrict) {
-    const patternCanvas = document.createElement('canvas');
-    const patternContext = patternCanvas.getContext('2d');
-    const size = 10;
-    patternCanvas.width = size;
-    patternCanvas.height = size;
-
-    patternContext.fillStyle = 'rgba(255, 99, 132, 0.8)';
-    patternContext.fillRect(0, 0, size, size);
-
-    if (isStrict) {
-        patternContext.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-        patternContext.lineWidth = 0.75;
-        patternContext.beginPath();
-        patternContext.moveTo(0, 0);
-        patternContext.lineTo(size, size);
-        patternContext.stroke();
-    }
-
-    return patternCanvas;
-}
-</script>
-
-> Figure 1: Benchmark scores of models using either plain markdown text or JSON to return code.
-> Models produce better code when they return it as plain markdown text, as compared to wrapping it in JSON for a tool function call.
-
 ## Abstract
 
 Current LLMs have support for returning properly formatted JSON,
 making it easier for clients to reliably parse complex responses.
 It therefore seems attractive for
-AI coding applications ask LLMs to return code in structure JSON replies.
+AI coding applications ask LLMs to return code in structured JSON replies.
 Unfortunately, 
 LLMs write worse code when asked to wrap it in JSON, harming their ability
 to correctly solve coding tasks.
@@ -171,6 +28,13 @@ performance.
 This holds true across many top coding LLMs, 
 including OpenAI's latest model gpt-4o-2024-08-06 
 which has strong JSON support.
+
+{% include code-in-json-benchmark.js %}
+
+> Figure 1: Benchmark scores of models using either plain markdown text or JSON to return code,
+> averaged over 5 runs.
+> Models produce better code when they return it as plain markdown text, as compared to wrapping it in JSON for a tool function call.
+
 
 ## Introduction
 
@@ -244,9 +108,8 @@ capable models.
 OpenAI's newly announced support for "strict" JSON seemed like a good reason to
 investigate whether the newest models are still handicapped by JSON-wrapping code.
 
-The graph above shows benchmark
-results from 
-4 of the strongest code editing models:
+Four of the strongest code editing models were benchmarked
+to assess the impact of JSON-wrapping code:
 
 - claude-3-5-sonnet-20240620
 - deepseek-coder (V2 0724)
@@ -302,15 +165,16 @@ portions of a file.
 
 This experimental setup is designed to highlight
 the effects of JSON-wrapping on the LLMs ability to write code to solve a task.
-The results in the graph are the average of 5 runs for each
-model & strategy combination.
 
 ## Results
 
+Each of the 4 models was benchmarked 5 times using the different
+strategies for returning code.
 
 ## Overall coding skill
 
-All of the models did worse on the benchmark when asked to
+As shown in Figure 1, 
+all of the models did worse on the benchmark when asked to
 return JSON-wrapped code in a tool function call.
 Most did significantly worse, performing far below
 the result obtained with the markdown strategy.
@@ -319,109 +183,29 @@ Some noteworthy observations:
 
 - OpenAI's gpt-4o-2024-05-13 was the only model where the markdown and JSON results were
 close. Using JSON only dropped the score by 0.3 percent, a difference which is
-probably within the margin of error for 5 trials.
-- The use of OpenAI's new strict mode seemed to harm the results for gpt-4o-2024-08-06
-as compared to non-strict JSON. 
+within the margin of error for 5 trials.
+- The use of OpenAI's new strict mode offered no improvement
+as compared to non-strict JSON.
 Of course, both JSON results were well below the markdown result.
 - The results from Sonnet and DeepSeek Coder suffered the worst harm from JSON wrapping.
 
 ## Syntax errors
 
-<div id="syntaxErrorsContainer" style="position: relative; height: 0; padding-bottom: 50%; margin-bottom: 20px;">
-    <canvas id="syntaxErrorsChart" style="position: absolute; width: 100%; height: 100%;"></canvas>
-</div>
+Figure 2 shows the number of syntactic errors found in the code produced by each
+model and code wrapping strategy.
+Models tend to make more syntactic errors when asked to wrap code in JSON.
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    var ctx = document.getElementById('syntaxErrorsChart').getContext('2d');
-    
-    var yamlData = {{ site.data.code-in-json | jsonify }};
-    
-    var models = [...new Set(yamlData.map(item => item.model))].sort();
-    var editFormats = [...new Set(yamlData.map(item => item.edit_format))];
-    
-    var datasets = editFormats.map(format => ({
-        label: format,
-        data: models.map(model => {
-            var items = yamlData.filter(d => d.model === model && d.edit_format === format);
-            if (items.length === 0) return null;
-            var totalErrors = items.reduce((sum, item) => sum + item.syntax_errors + item.indentation_errors, 0);
-            return totalErrors;
-        }),
-        backgroundColor: function(context) {
-            const format = context.dataset.label;
-            if (format === 'Markdown') {
-                return 'rgba(54, 162, 235, 0.8)';
-            } else if (format.startsWith('JSON')) {
-                const ctx = context.chart.ctx;
-                const gradient = ctx.createPattern(createStripedCanvas(format === 'JSON (strict)'), 'repeat');
-                return gradient;
-            } else {
-                return 'rgba(75, 192, 192, 0.8)';
-            }
-        },
-    }));
+Sonnet avoided syntactic errors regardless of the code wrapping strategy,
+but its benchmark scores in Figure 1 were lower with JSON.
+This seems to indicate that JSON-wrapping 
+does more than simply raise the syntactic difficulty in coding.
+It may distract or challenge the model in a way that
+reduces its ability to reason about coding problems.
 
-    var data = {
-        labels: models,
-        datasets: datasets
-    };
+{% include code-in-json-syntax.js %}
 
-    var config = {
-        type: 'bar',
-        data: data,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Model'
-                    }
-                },
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Total Syntax + Indentation Errors'
-                    }
-                }
-            },
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Syntax and Indentation Errors by Model and Code Wrapping Strategy',
-                    font: {
-                        size: 16
-                    }
-                },
-                legend: {
-                    position: 'top',
-                }
-            }
-        }
-    };
-
-    // Adjust chart height based on screen width
-    function adjustChartHeight() {
-        var container = document.getElementById('syntaxErrorsContainer');
-        if (window.innerWidth < 600) {
-            container.style.paddingBottom = '75%'; // Increase height on small screens
-        } else {
-            container.style.paddingBottom = '50%'; // Default height
-        }
-    }
-
-    // Call the function initially and on window resize
-    adjustChartHeight();
-    window.addEventListener('resize', adjustChartHeight);
-
-    new Chart(ctx, config);
-});
-</script>
-
-> Figure 2: Number of `SyntaxError` and `IndentationError` errors found in model generated code.
+> Figure 2: Number of `SyntaxError` and `IndentationError` errors found in model generated code,
+> totaled from 5 runs.
 > Models tend to make more syntactic errors when asked to wrap code in JSON.
 
 

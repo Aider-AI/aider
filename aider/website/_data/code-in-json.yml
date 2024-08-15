@@ -40,27 +40,6 @@
   versions: 0.50.2-dev
   seconds_per_case: 5.7
   total_cost: 0.8417
-- dirname: 2024-08-15-13-20-11--json-no-lint-gpt-4o-2024-05-13-whole
-  test_cases: 133
-  model: gpt-4o-2024-05-13
-  edit_format: Markdown
-  commit_hash: bac04a2
-  pass_rate_1: 56.4
-  percent_cases_well_formed: 100.0
-  error_outputs: 0
-  num_malformed_responses: 0
-  num_with_malformed_responses: 0
-  user_asks: 0
-  lazy_comments: 0
-  syntax_errors: 0
-  indentation_errors: 0
-  exhausted_context_windows: 0
-  test_timeouts: 1
-  command: aider --model gpt-4o-2024-05-13
-  date: 2024-08-15
-  versions: 0.50.2-dev
-  seconds_per_case: 8.0
-  total_cost: 1.5034
 - dirname: 2024-08-15-13-21-55--json-no-lint-gpt-4o-2024-05-13-func
   test_cases: 133
   model: gpt-4o-2024-05-13
@@ -208,27 +187,6 @@
   versions: 0.50.2-dev
   seconds_per_case: 6.4
   total_cost: 0.8390
-- dirname: 2024-08-15-13-53-23--json-no-lint-gpt-4o-2024-05-13-whole-2
-  test_cases: 133
-  model: gpt-4o-2024-05-13
-  edit_format: Markdown
-  commit_hash: bac04a2
-  pass_rate_1: 59.4
-  percent_cases_well_formed: 100.0
-  error_outputs: 0
-  num_malformed_responses: 0
-  num_with_malformed_responses: 0
-  user_asks: 0
-  lazy_comments: 0
-  syntax_errors: 0
-  indentation_errors: 0
-  exhausted_context_windows: 0
-  test_timeouts: 0
-  command: aider --model gpt-4o-2024-05-13
-  date: 2024-08-15
-  versions: 0.50.2-dev
-  seconds_per_case: 7.4
-  total_cost: 1.4996
 - dirname: 2024-08-15-13-54-53--json-no-lint-gpt-4o-2024-05-13-func-2
   test_cases: 133
   model: gpt-4o-2024-05-13
@@ -376,27 +334,6 @@
   versions: 0.50.2-dev
   seconds_per_case: 5.6
   total_cost: 0.8220
-- dirname: 2024-08-15-14-14-40--json-no-lint-gpt-4o-2024-05-13-whole-3
-  test_cases: 133
-  model: gpt-4o-2024-05-13
-  edit_format: Markdown
-  commit_hash: bac04a2
-  pass_rate_1: 61.7
-  percent_cases_well_formed: 100.0
-  error_outputs: 0
-  num_malformed_responses: 0
-  num_with_malformed_responses: 0
-  user_asks: 0
-  lazy_comments: 0
-  syntax_errors: 6
-  indentation_errors: 0
-  exhausted_context_windows: 0
-  test_timeouts: 1
-  command: aider --model gpt-4o-2024-05-13
-  date: 2024-08-15
-  versions: 0.50.2-dev
-  seconds_per_case: 8.8
-  total_cost: 1.4993
 - dirname: 2024-08-15-14-16-34--json-no-lint-gpt-4o-2024-05-13-func-3
   test_cases: 133
   model: gpt-4o-2024-05-13
@@ -544,27 +481,6 @@
   versions: 0.50.2-dev
   seconds_per_case: 6.0
   total_cost: 0.8394
-- dirname: 2024-08-15-14-30-48--json-no-lint-gpt-4o-2024-05-13-whole-4
-  test_cases: 133
-  model: gpt-4o-2024-05-13
-  edit_format: Markdown
-  commit_hash: bac04a2
-  pass_rate_1: 61.7
-  percent_cases_well_formed: 100.0
-  error_outputs: 0
-  num_malformed_responses: 0
-  num_with_malformed_responses: 0
-  user_asks: 0
-  lazy_comments: 0
-  syntax_errors: 6
-  indentation_errors: 0
-  exhausted_context_windows: 0
-  test_timeouts: 0
-  command: aider --model gpt-4o-2024-05-13
-  date: 2024-08-15
-  versions: 0.50.2-dev
-  seconds_per_case: 12.3
-  total_cost: 1.4919
 - dirname: 2024-08-15-14-32-58--json-no-lint-gpt-4o-2024-05-13-func-4
   test_cases: 133
   model: gpt-4o-2024-05-13
@@ -712,27 +628,6 @@
   versions: 0.50.2-dev
   seconds_per_case: 6.3
   total_cost: 0.8354
-- dirname: 2024-08-15-14-47-39--json-no-lint-gpt-4o-2024-05-13-whole-5
-  test_cases: 133
-  model: gpt-4o-2024-05-13
-  edit_format: Markdown
-  commit_hash: bac04a2
-  pass_rate_1: 60.2
-  percent_cases_well_formed: 100.0
-  error_outputs: 0
-  num_malformed_responses: 0
-  num_with_malformed_responses: 0
-  user_asks: 0
-  lazy_comments: 0
-  syntax_errors: 9
-  indentation_errors: 0
-  exhausted_context_windows: 0
-  test_timeouts: 1
-  command: aider --model gpt-4o-2024-05-13
-  date: 2024-08-15
-  versions: 0.50.2-dev
-  seconds_per_case: 10.7
-  total_cost: 1.4982
 - dirname: 2024-08-15-14-49-44--json-no-lint-gpt-4o-2024-05-13-func-5
   test_cases: 133
   model: gpt-4o-2024-05-13
@@ -922,3 +817,108 @@
   versions: 0.50.2-dev
   seconds_per_case: 6.1
   total_cost: 0.8415
+- dirname: 2024-08-15-17-36-22--json-no-lint-again-gpt-4o-2024-05-13-whole-1
+  test_cases: 133
+  model: gpt-4o-2024-05-13
+  edit_format: Markdown
+  commit_hash: ed94379
+  pass_rate_1: 60.2
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 7
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model gpt-4o-2024-05-13
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 6.8
+  total_cost: 1.5110
+- dirname: 2024-08-15-17-38-13--json-no-lint-again-gpt-4o-2024-05-13-whole-2
+  test_cases: 133
+  model: gpt-4o-2024-05-13
+  edit_format: Markdown
+  commit_hash: ed94379
+  pass_rate_1: 60.9
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model gpt-4o-2024-05-13
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 7.0
+  total_cost: 1.4954
+- dirname: 2024-08-15-17-40-10--json-no-lint-again-gpt-4o-2024-05-13-whole-3
+  test_cases: 133
+  model: gpt-4o-2024-05-13
+  edit_format: Markdown
+  commit_hash: ed94379
+  pass_rate_1: 60.9
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model gpt-4o-2024-05-13
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 6.8
+  total_cost: 1.4999
+- dirname: 2024-08-15-17-41-30--json-no-lint-again-gpt-4o-2024-05-13-whole-4
+  test_cases: 133
+  model: gpt-4o-2024-05-13
+  edit_format: Markdown
+  commit_hash: ed94379
+  pass_rate_1: 58.6
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model gpt-4o-2024-05-13
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 7.4
+  total_cost: 1.4848
+- dirname: 2024-08-15-17-43-12--json-no-lint-again-gpt-4o-2024-05-13-whole-5
+  test_cases: 133
+  model: gpt-4o-2024-05-13
+  edit_format: Markdown
+  commit_hash: ed94379
+  pass_rate_1: 59.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model gpt-4o-2024-05-13
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 7.6
+  total_cost: 1.4948

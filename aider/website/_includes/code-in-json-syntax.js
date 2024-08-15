@@ -56,7 +56,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     title: {
                         display: true,
                         text: 'Total syntactic errors from 5 runs'
-                    }
+                    },
+                    max: 35
                 }
             },
             plugins: {
