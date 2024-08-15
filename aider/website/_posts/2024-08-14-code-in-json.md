@@ -1,5 +1,5 @@
 ---
-title: LLMs are bad at returning code in JSON
+title: LLMs are bad at wrapping code in JSON
 excerpt: LLMs write worse code if you ask them to return the code wrapped in JSON (via a tool or function call).
 highlight_image: /assets/code-in-json.jpg
 draft: true
@@ -9,7 +9,7 @@ nav_exclude: true
 <p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
 {% endif %}
 
-# LLMs are bad at returning code in JSON
+# LLMs are bad at wrapping code in JSON
 
 
 AI coding applications should avoid asking LLMs to return code as part of a structured
@@ -28,7 +28,6 @@ which has strong JSON support.
 > averaged over 5 runs.
 > Models produce better code when they return it as plain markdown text,
 > as compared to wrapping it in JSON for a tool function call.
-> Except for gpt-4o-2024-05-13.
 
 
 ## Background
@@ -180,11 +179,11 @@ the result obtained with the markdown strategy.
 Some noteworthy observations:
 
 - OpenAI's gpt-4o-2024-05-13 was the only model where the markdown and JSON results were
-close. Using JSON only dropped the score by 0.3 percent, a difference which is
+close. Using JSON only dropped the score by 0.4 percent, a difference which is
 within the margin of error for 5 trials.
 - The use of OpenAI's new strict mode offered no improvement
 as compared to non-strict JSON.
-Of course, both JSON results were well below the markdown result.
+Both JSON results were well below the markdown result.
 - The results from Sonnet and DeepSeek Coder suffered the worst harm from JSON wrapping.
 
 ## Syntax errors
@@ -213,7 +212,7 @@ reduces their ability to reason about solving coding problems.
 
 While the quantitative results differ from the similar
 [July 2023 experiments](/2023/07/02/benchmarks.html),
-the conclusion seems unchanged: LLMs are bad at returning code in JSON.
+the conclusion seems unchanged: LLMs are bad at wrapping code in JSON.
 
 OpenAI appears to be making progress in allowing LLMs to return code in
 structured JSON responses without harming the code quality.
