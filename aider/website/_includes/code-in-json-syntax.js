@@ -1,8 +1,21 @@
-<canvas id="syntaxErrorsChart" width="800" height="400" style="margin-bottom: 20px"></canvas>
-  
+<style>
+    .chart-container {
+        position: relative;
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+</style>
+
+<div class="chart-container">
+    <canvas id="syntaxErrorsChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     var ctx = document.getElementById('syntaxErrorsChart').getContext('2d');
+    var chartContainer = document.querySelector('.chart-container');
     
     var yamlData = {{ site.data.code-in-json | jsonify }};
     
@@ -36,11 +49,19 @@ document.addEventListener('DOMContentLoaded', function () {
         datasets: datasets
     };
 
+    function getAspectRatio() {
+        var width = chartContainer.offsetWidth;
+        // Gradually change aspect ratio from 2 (landscape) to 1 (square)
+        return Math.max(1, Math.min(2, width / 300));
+    }
+
     var config = {
         type: 'bar',
         data: data,
         options: {
             responsive: true,
+            maintainAspectRatio: true,
+            aspectRatio: getAspectRatio(),
             scales: {
                 x: {
                     title: {
@@ -103,6 +124,16 @@ document.addEventListener('DOMContentLoaded', function () {
         }]
     };
 
-    new Chart(ctx, config);
+    var chart = new Chart(ctx, config);
+
+    function resizeChart() {
+        chart.options.aspectRatio = getAspectRatio();
+        chart.resize();
+    }
+
+    window.addEventListener('resize', resizeChart);
+
+    // Initial resize to set correct size
+    resizeChart();
 });
 </script>
