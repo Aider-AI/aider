@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
     var yamlData = {{ site.data.code-in-json | jsonify }};
     
-    var models = [...new Set(yamlData.map(item => item.model))];
+    var models = [...new Set(yamlData.map(item => item.model))].sort();
     var editFormats = [...new Set(yamlData.map(item => item.edit_format))];
     
     var datasets = editFormats.map(format => ({
