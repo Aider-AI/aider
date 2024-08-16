@@ -224,7 +224,7 @@ OpenAI appears to be making progress in allowing LLMs to
 return JSON-wrapped code
 without harming the code quality.
 But it seems premature to consider switching from plain text
-to JSON-wrapped code.
+to JSON-wrapped code at this time.
 
 ---------
 
