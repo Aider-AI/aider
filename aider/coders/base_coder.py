@@ -14,8 +14,9 @@ import threading
 import time
 import traceback
 from collections import defaultdict
-from dataclasses import dataclass, fields
+from dataclasses import dataclass, field
 from datetime import datetime
+from typing import List
 from json.decoder import JSONDecodeError
 from pathlib import Path
 
@@ -52,12 +53,12 @@ def wrap_fence(name):
 
 @dataclass
 class ChatChunks:
-    system: list = field(default_factory=list)
-    examples: list = field(default_factory=list)
-    done: list = field(default_factory=list)
-    files: list = field(default_factory=list)
-    cur: list = field(default_factory=list)
-    reminder: list = field(default_factory=list)
+    system: List = field(default_factory=list)
+    examples: List = field(default_factory=list)
+    done: List = field(default_factory=list)
+    files: List = field(default_factory=list)
+    cur: List = field(default_factory=list)
+    reminder: List = field(default_factory=list)
 
 
 class Coder:
