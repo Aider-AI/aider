@@ -16,9 +16,9 @@ import traceback
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import List
 from json.decoder import JSONDecodeError
 from pathlib import Path
+from typing import List
 
 import git
 from rich.console import Console, Text
