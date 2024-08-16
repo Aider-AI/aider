@@ -13,7 +13,7 @@ a future release.
 
 ## Anonymous, no personal info
 
-No personal information is collected: no user identity, none of your code,
+No personal information is collected: no user identity, none of your code, keys,
 prompts or chat messages.
 
 Aider collects information on:
@@ -32,13 +32,6 @@ features and commands are most used.
 It also helps uncover bugs that users are experiencing, so that they can be fixed
 in upcoming releases.
 
-## Sample analytics data
-
-To get a better sense of what type of data is collected, you can review some
-[sample analytics logs](https://github.com/paul-gauthier/aider/blob/main/aider/website/assets/sample-analytics.jsonl).
-These are the last 1,000 analytics events from the author's
-personal use of aider, updated regularly.
-
 ## Enabling & disabling analytics
 
 You can opt out of analytics forever by running this command one time:
@@ -48,7 +41,7 @@ aider --analytics-disable
 ```
 
 To enable analytics for a single session, you can run the command below. 
-This will *not* do anything if you have permanently disabled analytics with the previous
+This will *not* have any effect if you have permanently disabled analytics with the previous
 command.
 
 ```
@@ -61,7 +54,25 @@ To disable analytics for a single session, you can run:
 aider --no-analytics
 ```
 
-## Logging and inspecting analytics
+## Details about data being collected
+
+### Sample analytics data
+
+To get a better sense of what type of data is collected, you can review some
+[sample analytics logs](https://github.com/paul-gauthier/aider/blob/main/aider/website/assets/sample-analytics.jsonl).
+These are the last 1,000 analytics events from the author's
+personal use of aider, updated regularly.
+
+
+### Analytics code
+
+Since aider is open source, all the places where aider collects analytics
+are visible in the source code.
+They can be viewed using 
+[GitHub search](https://github.com/search?q=repo%3Apaul-gauthier%2Faider+%22.event%28%22&type=code).
+
+
+### Logging and inspecting analytics
 
 You can get a full log of the analytics that aider is collecting,
 in case you would like to audit or inspect this data.
@@ -75,11 +86,6 @@ If you want to just log analytics without reporting them, you can do:
 ```
 aider --analytics-log filename.jsonl --no-analytics
 ```
-
-Since aider is open source, all the places where aider reports analytics
-are visible in the source code.
-They can be easily viewed using 
-[GitHub search](https://github.com/search?q=repo%3Apaul-gauthier%2Faider+%22.event%28%22&type=code).
 
 
 ## Reporting issues

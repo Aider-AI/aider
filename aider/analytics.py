@@ -25,15 +25,16 @@ class Analytics:
 
     def __init__(self, enable=False, logfile=None, permanently_disable=False):
         self.logfile = logfile
-        self.permanently_disable = permanently_disable
-        if not enable or permanently_disable:
+
+        self.get_or_create_uuid()
+
+        if not enable or self.permanently_disable or permanently_disable:
             self.mp = None
             self.ph = None
-            if permanently_disable:
-                self.mark_as_permanently_disabled()
+            if permanently_disable and not self.permanently_disable:
+                self.permanently_disable = True
+                self.save_data()
             return
-
-        self.user_id = self.get_or_create_uuid()
 
         if self.user_id and not self.permanently_disable:
             self.mp = Mixpanel(mixpanel_project_token)
@@ -44,35 +45,29 @@ class Analytics:
         data_file.parent.mkdir(parents=True, exist_ok=True)
         return data_file
 
-    def mark_as_permanently_disabled(self):
-        data_file = self.get_data_file_path()
-        if data_file.exists():
-            with open(data_file, "r") as f:
-                data = json.load(f)
-        else:
-            data = {"uuid": str(uuid.uuid4())}
-        data["permanently_disabled"] = True
-        with open(data_file, "w") as f:
-            json.dump(data, f)
-
     def get_or_create_uuid(self):
+        self.load_data()
+        if self.user_id:
+            return
+
+        self.user_id = str(uuid.uuid4())
+        self.save_data()
+
+    def load_data(self):
         data_file = self.get_data_file_path()
-
         if data_file.exists():
-            with open(data_file, "r") as f:
-                data = json.load(f)
-                if "permanently_disabled" in data and data["permanently_disabled"]:
-                    self.permanently_disable = True
-                    self.mp = None
-                    self.ph = None
-                    return
-                return data["uuid"]
+            try:
+                data = json.loads(data_file.read_text())
+                self.permanently_disable = data.get("permanently_disable")
+                self.user_id = data.get("uuid")
+            except json.decoder.JSONDecodeError:
+                pass
 
-        new_uuid = str(uuid.uuid4())
-        with open(data_file, "w") as f:
-            json.dump({"uuid": new_uuid}, f)
+    def save_data(self):
+        data_file = self.get_data_file_path()
+        data = dict(uuid=self.user_id, permanently_disable=self.permanently_disable)
 
-        return new_uuid
+        data_file.write_text(json.dumps(data, indent=4))
 
     def get_system_info(self):
         return {
