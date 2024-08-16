@@ -61,14 +61,7 @@ class ChatChunks:
     reminder: List = field(default_factory=list)
 
     def all_messages(self):
-        return (
-            self.system
-            + self.examples
-            + self.done
-            + self.files
-            + self.cur
-            + self.reminder
-        )
+        return self.system + self.examples + self.done + self.files + self.cur + self.reminder
 
 
 class Coder:
