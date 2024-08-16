@@ -14,6 +14,7 @@ import threading
 import time
 import traceback
 from collections import defaultdict
+from dataclasses import dataclass, fields
 from datetime import datetime
 from json.decoder import JSONDecodeError
 from pathlib import Path
@@ -21,7 +22,6 @@ from pathlib import Path
 import git
 from rich.console import Console, Text
 from rich.markdown import Markdown
-from dataclasses import dataclass, fields
 
 from aider import __version__, models, prompts, urls, utils
 from aider.commands import Commands
@@ -931,7 +931,7 @@ class Coder:
         chunks.reminder = []
 
         # TODO review impact of token count on image messages
-        messages_tokens = 0 # self.main_model.token_count(messages)
+        messages_tokens = 0  # self.main_model.token_count(messages)
         reminder_tokens = self.main_model.token_count(reminder_message)
         cur_tokens = self.main_model.token_count(chunks.cur)
 
