@@ -11,7 +11,8 @@ nav_exclude: true
 # LLMs are bad at returning code in JSON
 
 
-LLMs produce lower quality code if they’re asked to return it as part of a structured JSON response. This seems to be true for many top models, including those with specialized support for JSON. Benchmarks show that models struggle with syntactic issues related to quoting and escaping. 
+LLMs produce lower quality code if they’re asked to return it as part of a structured JSON response. This seems to be true for many top models, including those with specialized support for JSON. Benchmarks show that models struggle with syntax errors in the code
+they write, related to quoting and escaping it into JSON.
 The benchmark results also imply a decreased capacity for solving coding problems due to the burden of JSON formatting. 
 
 {% include code-in-json-benchmark.js %}
@@ -172,7 +173,11 @@ Both JSON results were well below the markdown result.
 
 ### Syntax errors
 
-Models tend to make more syntax errors when asked to wrap code in JSON.
+Models tend to make more syntax errors *in the code they write*
+when asked to wrap it in JSON.
+The models can reliably 
+produce valid JSON, but code inside is more prone to syntax errors.
+
 Figure 2 shows the number of syntax errors found in the code produced by each
 model and code wrapping strategy.
 It totals up the `SyntaxError` and `IndentationError` errors from all 5 runs,
