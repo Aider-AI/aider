@@ -52,7 +52,12 @@ def wrap_fence(name):
 
 @dataclass
 class ChatChunks:
-    pass
+    system: list = field(default_factory=list)
+    examples: list = field(default_factory=list)
+    done: list = field(default_factory=list)
+    files: list = field(default_factory=list)
+    cur: list = field(default_factory=list)
+    reminder: list = field(default_factory=list)
 
 
 class Coder:
