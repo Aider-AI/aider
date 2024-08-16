@@ -932,7 +932,7 @@ class Coder:
         chunks.reminder = []
 
         # TODO review impact of token count on image messages
-        messages_tokens = 0  # self.main_model.token_count(messages)
+        messages_tokens = self.main_model.token_count(chunks.all_messages())
         reminder_tokens = self.main_model.token_count(reminder_message)
         cur_tokens = self.main_model.token_count(chunks.cur)
 
