@@ -1,6 +1,6 @@
 ---
-title: LLMs are bad at wrapping code in JSON
-excerpt: LLMs write worse code if you ask them to return the code wrapped in JSON (via a tool or function call).
+title: LLMs are bad at returning code in JSON
+excerpt: LLMs write worse code if you ask them to return the code wrapped in JSON via a tool function call.
 highlight_image: /assets/code-in-json.jpg
 draft: true
 nav_exclude: true
@@ -9,36 +9,27 @@ nav_exclude: true
 <p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
 {% endif %}
 
-# LLMs are bad at wrapping code in JSON
+# LLMs are bad at returning code in JSON
 
 
-AI coding applications should avoid asking LLMs to return code as part of a structured
-JSON response.
-Even though many LLMs have special support for returning JSON,
-using it with code often causes lower quality code generation.
-A variant of the aider code editing benchmark clearly demonstrates that
-asking for JSON-wrapped code
-often harms coding performance.
-This holds true across many top coding LLMs, 
-including OpenAI's latest model gpt-4o-2024-08-06 
-which has strong JSON support.
+LLMs produce lower quality code if they’re asked to return it as part of a structured JSON response. This seems to be true for many top models, including those with specialized support for JSON. Benchmarks show that models struggle with syntactic issues related to quoting and escaping. 
+The benchmark results also imply a decreased capacity for solving coding problems due to the burden of JSON formatting. 
 
 {% include code-in-json-benchmark.js %}
 
-> Figure 1: Benchmark scores of models using either plain markdown text or JSON to return code,
-> averaged over 5 runs.
-> Models produce better code when they return it as plain markdown text,
-> as compared to wrapping it in JSON for a tool function call.
+> Figure 1: Aider coding benchmark scores of models using either plain markdown text or JSON to return code.
+> Pass rate (%) averaged over 5 runs.
+> Models produce better code when they return it as markdown text,
+> as compared to returning code in a structured JSON response.
 
 
 ## Background
 
-A lot of people wonder why aider does not use LLM tools for code editing.
-Instead, aider asks for code edits in plain text, like this:
+People often ask why aider uses a plain text format for LLMs to specify code edits (below),
+rather than relying on LLM tools and structured JSON responses.
 
-````
+```python
 greeting.py
-```
 <<<<<<< SEARCH
 def greeting():
     print("Hello")
@@ -47,10 +38,9 @@ def greeting():
     print("Goodbye")
 >>>>>>> REPLACE
 ```
-````
 
 People expect that it would be easier and more reliable to use tool calls,
-which would return a structured JSON response:
+which would involve a structured JSON response more like this:
 
 ```json
 {
@@ -60,7 +50,7 @@ which would return a structured JSON response:
 }
 ```
 
-This has become even more tempting as LLM providers
+This question becomes increasingly relevant as LLM providers
 continue to improve their tooling for reliably generating JSON.
 For example, 
 [OpenAI recently announced](https://openai.com/index/introducing-structured-outputs-in-the-api/)
@@ -68,10 +58,9 @@ the ability to
 strictly enforce that JSON responses will be syntactically correct 
 and conform to a specified schema.
 
-
-But producing valid JSON is not sufficient for working with AI generated code.
-The code inside the JSON has to correctly solve the requested task
-and be free from syntax errors.
+But just producing valid JSON is not sufficient for AI code generation --
+the code inside the JSON matters too.
+It has to be high quality code that solves the assigned coding task without errors or bugs.
 Unfortunately, 
 LLMs write worse code when they're asked to 
 wrap it in JSON.
@@ -90,7 +79,7 @@ own escape sequences.
 
 Would *you* write better code by
 typing it out normally
-or as a properly escaped 
+or typing it as a properly escaped 
 JSON string?
 
 
@@ -102,26 +91,29 @@ the superiority of returning code
 as plain text compared to JSON-wrapped function calls.
 Those results were obtained
 over a year ago, against models far less capable than those available today.
-OpenAI's newly announced support for "strict" JSON seemed like a good reason to
-investigate whether the newest models are still handicapped when JSON-wrapping code.
+OpenAI's newly announced support for "strict" JSON
+suggests the possibility that modern models might be able
+to return quality code inside a structured JSON response.
 
-The results presented here were based on
+The results presented here are based on
 the 
 [aider "code editing" benchmark](/2023/07/02/benchmarks.html#the-benchmark)
 of 133 practice exercises from the Exercism python repository.
-Models were 
-restricted to a single attempt to solve each task,
-without a second try to fix errors as is normal in the aider benchmark.
+The benchmark was simplified somewhat to focus on the differences between
+plain text and JSON responses.
+In particular, models were 
+restricted to a single attempt to solve each task
+without a second try to fix errors.
 
 The performance of each model was compared across different strategies for returning code:
 
 - **Markdown** -- the model returned the whole source code file in standard markdown triple-backtick fences.
-- **JSON** -- the model used a tool function call to return the whole source code file. This required the LLM to wrap the code in JSON.
-- **JSON (strict)** -- the same as the "JSON" strategy, but with `strict=True`. Only gpt-4o-2024-08-06 supports this setting.
+- **JSON** -- the model used a tool function call to return the whole source code file in a structured JSON response.
+- **JSON (strict)** -- the same as the "JSON" strategy, but with `strict=True`. Only gpt-4o-2024-08-06 supported this setting.
 
-The markdown strategy is the same as
+The markdown strategy was the same as
 aider's "whole" edit format, where the
-LLM returns a source file like this:
+LLM returns an entire updated copy of the source file like this:
 
 ````
 Here is the program you asked for which prints "Hello":
@@ -133,9 +125,10 @@ def greeting():
 ```
 ````
 
-The JSON and JSON (strict) strategies required the LLM to call the `write_file` function with
-two parameters, as shown below.
-For maximum simplicity, the LLM didn't have to specify the filename,
+Both JSON strategies required the LLM to call the `write_file` function with
+an explanation/plan and
+the entire updated copy of the source file.
+The LLM didn't have to specify the filename,
 since the benchmark operates on one source file at a time.
 
 ```json
@@ -144,15 +137,6 @@ since the benchmark operates on one source file at a time.
     "content": "def greeting():\n    print(\"Hello\")\n"
 }
 ```
-
-These strategies avoid actually *editing* source files, to keep
-the task as
-simple as possible.
-The LLM is able to emit the whole source file intact,
-which is much easier
-than correctly formulating
-instructions to edit
-portions of a file.
 
 This experimental setup was designed to quantify
 the effects of JSON-wrapping on the LLMs ability to write code to solve a task.
@@ -169,13 +153,13 @@ to assess the impact of JSON-wrapping code:
 
 Each combination of model and code wrapping strategy was benchmarked 5 times.
 
-## Overall coding skill
+### Overall coding skill
 
 As shown in Figure 1, 
 all of the models did worse on the benchmark when asked to
-return JSON-wrapped code in a tool function call.
+return code in a structured JSON response.
 Most did significantly worse, performing well below
-the result obtained with the markdown strategy.
+their result with the markdown strategy.
 
 Some noteworthy observations:
 
@@ -187,20 +171,30 @@ as compared to non-strict JSON.
 Both JSON results were well below the markdown result.
 - The results from Sonnet and DeepSeek Coder suffered the worst harm from JSON wrapping.
 
-## Syntax errors
+### Syntax errors
 
 Models tend to make more syntax errors when asked to wrap code in JSON.
 Figure 2 shows the number of syntax errors found in the code produced by each
-model and code wrapping strategy,
-totaling up `SyntaxError` and `IndentationError` errors from all 5 runs.
+model and code wrapping strategy.
+It totals up the `SyntaxError` and `IndentationError` errors from all 5 runs,
+for each model and strategy combination.
 
+Below is an example of a `SyntaxError` created by gpt-4o-2024-05-13 using the
+JSON code wrapping strategy.
+It appears that the model got confused about escaping and quoting while trying
+to format the JSON response.
+The source code contains a single-quoted string which also
+contains a single-quote character.
+The word `There'll` should have been escaped as `There\'ll`.
 
-Sonnet's results seems to indicate that the negative effects of JSON-wrapping 
-go beyond syntactic difficulties.
-Sonnet avoided syntax errors regardless of the code wrapping strategy,
-but its benchmark scores in Figure 1 were nonetheless lower with JSON.
-This implies that JSON-wrapping may distract or challenge models in a way that
-reduces their ability to reason about solving coding problems.
+```python
+Traceback (most recent call last):
+  ...   
+  File "bottle-song/bottle_song.py", line 9
+    lyrics.append(f'There'll be {i - 1} green bottles hanging on the wall.')
+                                                                          ^
+SyntaxError: unterminated string literal (detected at line 9)
+```
 
 {% include code-in-json-syntax.js %}
 
@@ -208,23 +202,36 @@ reduces their ability to reason about solving coding problems.
 > totaled from 5 runs.
 > Models tend to make more syntax and formatting errors when asked to wrap code in JSON.
 
+### Beyond syntax errors
+
+Sonnet's results seems to indicate that the negative effects of JSON-wrapping 
+go beyond just syntactic difficulties.
+Sonnet avoided syntax errors regardless of the code wrapping strategy,
+but its benchmark scores in Figure 1 were nonetheless lower with JSON.
+This implies that JSON-wrapping may distract or challenge models in a way that
+reduces their ability to reason about solving coding problems.
+
+
 
 ## Conclusions
 
-While the quantitative results differ from the similar
+While the specific results differ from the similar
 [July 2023 experiments](/2023/07/02/benchmarks.html),
-the conclusion seems unchanged: LLMs are bad at wrapping code in JSON.
+the conclusion remains unchanged: LLMs are bad at returning code in
+structured JSON responses.
 
-OpenAI appears to be making progress in allowing LLMs to return code in
-structured JSON responses without harming the code quality.
-But it still seems premature to consider switching from plain text
+OpenAI appears to be making progress in allowing LLMs to
+return JSON-wrapped code
+without harming the code quality.
+But it seems premature to consider switching from plain text
 to JSON-wrapped code.
 
+---------
 
-## Notes on the aider leaderboard
+#### Notes on the aider leaderboard
 
-The results presented here are not directly comparable to results
+*The results presented here are not directly comparable to results
 from the main
 [aider LLM leaderboard](https://aider.chat/docs/leaderboards/).
 A number of settings were changed to simplify the benchmark
-in order to focus on comparing plain text and JSON-wrapped code.
+in order to focus on comparing plain text and JSON-wrapped code.*

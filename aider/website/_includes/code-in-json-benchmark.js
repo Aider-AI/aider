@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function () {
             plugins: {
                 title: {
                     display: true,
-                    text: 'Pass rate by model and code wrapping strategy',
+                    text: 'Coding skill by model and code wrapping strategy',
                     font: {
                         size: 16
                     }
