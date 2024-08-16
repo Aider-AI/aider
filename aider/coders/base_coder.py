@@ -976,17 +976,7 @@ class Coder:
 
     def format_messages(self):
         chunks = self.format_chat_chunks()
-
-        msgs = (
-            chunks.system
-            + chunks.examples
-            + chunks.done
-            + chunks.files
-            + chunks.cur
-            + chunks.reminder
-        )
-
-        return msgs
+        return chunks.all_messages()
 
     def send_message(self, inp):
         self.aider_edited_files = None
