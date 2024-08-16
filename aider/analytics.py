@@ -23,10 +23,10 @@ class Analytics:
     disable = None
     logfile = None
 
-    def __init__(self, track=False, logfile=None, disable=False):
+    def __init__(self, enable=False, logfile=None, disable=False):
         self.logfile = logfile
         self.disable = disable
-        if not track or disable:
+        if not enable or disable:
             self.mp = None
             self.ph = None
             if disable:

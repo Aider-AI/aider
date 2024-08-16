@@ -6,7 +6,7 @@ nav_order: 500
 # Analytics
 
 Aider collects anonymous analytics that are used to help
-improve aider.
+improve aider's ability to work with LLMs, edit code and complete user requests.
 **Analytics are currently turned off by default**, but are
 expected to be turned on by default in
 a future release.
@@ -16,9 +16,14 @@ a future release.
 No personal information is collected: no user identity, none of your code,
 prompts or chat messages.
 
-Aider collects information on which models are used and with how many tokens,
-which edit formats are used, how often features and commands are used,
-information about exceptions, etc.
+Aider collects information on:
+
+- which LLMs are used and with how many tokens,
+- which of aider's edit formats are used,
+- how often features and commands are used,
+- information about exceptions and errors,
+- etc
+
 These analytics are associated with an anonymous,
 randomly generated UUID4 user identifier.
 
@@ -34,6 +39,11 @@ To get a better sense of what type of data is collected, you can review some
 These are the last 1,000 analytics events from the author's
 personal use of aider, updated regularly.
 
+Since aider is open source, all the places where aider reports analytics
+are visible in the source code.
+They can be easily viewed using 
+[GitHub search](https://github.com/search?q=repo%3Apaul-gauthier%2Faider+%22.event%28%22&type=code).
+
 ## Enabling & disabling analytics
 
 You can opt out of analytics forever by running this command one time:
@@ -42,7 +52,9 @@ You can opt out of analytics forever by running this command one time:
 aider --analytics-disable
 ```
 
-To enable analytics for a single session, you can run:
+To enable analytics for a single session, you can run the command below. 
+This will *not* do anything if you have permanently disabled analytics with the previous
+command.
 
 ```
 aider --analytics

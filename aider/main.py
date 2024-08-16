@@ -346,7 +346,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     args = parser.parse_args(argv)
 
     if args.analytics_disable:
-        analytics = Analytics(track=False, disable=True)
+        analytics = Analytics(enable=False, disable=True)
         print("Analytics have been permanently disabled.")
         return
 

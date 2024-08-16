@@ -232,7 +232,7 @@ class Coder:
         total_cost=0.0,
         analytics=None,
     ):
-        self.analytics = analytics if analytics is not None else Analytics(track=False)
+        self.analytics = analytics if analytics is not None else Analytics(enable=False)
         self.event = self.analytics.event
 
         self.commit_before_message = []
