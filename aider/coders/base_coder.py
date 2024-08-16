@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import base64
 import hashlib
 import json
 import locale
@@ -657,9 +658,11 @@ class Coder:
         image_messages = []
         for fname, content in self.get_abs_fnames_content():
             if is_image_file(fname):
+                with open(fname, "rb") as image_file:
+                    encoded_string = base64.b64encode(image_file.read()).decode("utf-8")
                 mime_type, _ = mimetypes.guess_type(fname)
                 if mime_type and mime_type.startswith("image/"):
-                    image_url = f"data:{mime_type};base64,{content}"
+                    image_url = f"data:{mime_type};base64,{encoded_string}"
                     rel_fname = self.get_rel_fname(fname)
                     image_messages += [
                         {"type": "text", "text": f"Image file: {rel_fname}"},
@@ -1014,7 +1017,8 @@ class Coder:
                         )
                 except Exception as err:
                     self.io.tool_error(f"Unexpected error: {err}")
-                    traceback.print_exc()
+                    lines = traceback.format_exception(type(err), err, err.__traceback__)
+                    self.io.tool_error("".join(lines))
                     return
         finally:
             if self.mdstream:
@@ -1249,6 +1253,7 @@ class Coder:
 
         self.io.log_llm_history("TO LLM", format_messages(messages))
 
+        completion = None
         try:
             hash_object, completion = send_completion(
                 model.name,

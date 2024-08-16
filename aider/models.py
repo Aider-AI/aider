@@ -516,7 +516,11 @@ class Model:
 
     def token_count(self, messages):
         if type(messages) is list:
-            return litellm.token_counter(model=self.name, messages=messages)
+            try:
+                return litellm.token_counter(model=self.name, messages=messages)
+            except Exception as err:
+                print(f"Unable to count tokens: {err}")
+                return 0
 
         if not self.tokenizer:
             return

@@ -577,6 +577,7 @@
   pass_rate_2: 77.4
   percent_cases_well_formed: 99.2
   error_outputs: 23
+  released: 2024-06-20
   num_malformed_responses: 4
   num_with_malformed_responses: 1
   user_asks: 2
@@ -603,6 +604,7 @@
   num_malformed_responses: 0
   num_with_malformed_responses: 0
   user_asks: 0
+  released: 2024-03-13
   lazy_comments: 0
   syntax_errors: 0
   indentation_errors: 0
@@ -644,6 +646,7 @@
   commit_hash: d31eef3-dirty
   pass_rate_1: 40.6
   pass_rate_2: 55.6
+  released: 2024-07-18
   percent_cases_well_formed: 100.0
   error_outputs: 1
   num_malformed_responses: 0
@@ -668,6 +671,7 @@
   pass_rate_1: 60.9
   pass_rate_2: 69.9
   percent_cases_well_formed: 97.7
+  released: 2024-06-28
   error_outputs: 58
   num_malformed_responses: 13
   num_with_malformed_responses: 3
@@ -690,6 +694,7 @@
   commit_hash: f7ce78b-dirty
   pass_rate_1: 46.6
   pass_rate_2: 63.9
+  released: 2024-07-23
   percent_cases_well_formed: 92.5
   error_outputs: 84
   num_malformed_responses: 19
@@ -716,6 +721,7 @@
   percent_cases_well_formed: 100.0
   error_outputs: 0
   num_malformed_responses: 0
+  released: 2024-07-23
   num_with_malformed_responses: 0
   user_asks: 0
   lazy_comments: 0
@@ -738,6 +744,7 @@
   pass_rate_2: 72.9
   percent_cases_well_formed: 97.7
   error_outputs: 13
+  released: 2024-07-24
   num_malformed_responses: 3
   num_with_malformed_responses: 3
   user_asks: 1
@@ -763,6 +770,7 @@
   error_outputs: 3
   num_malformed_responses: 0
   num_with_malformed_responses: 0
+  released: 2024-07-24
   user_asks: 3
   lazy_comments: 0
   syntax_errors: 1
@@ -785,6 +793,7 @@
   percent_cases_well_formed: 100.0
   error_outputs: 27
   num_malformed_responses: 0
+  released: 2024-07-23
   num_with_malformed_responses: 0
   user_asks: 23
   lazy_comments: 8
@@ -810,6 +819,7 @@
   num_malformed_responses: 0
   num_with_malformed_responses: 0
   user_asks: 0
+  released: 2024-07-23
   lazy_comments: 0
   syntax_errors: 0
   indentation_errors: 0
@@ -838,9 +848,34 @@
   indentation_errors: 2
   exhausted_context_windows: 0
   test_timeouts: 5
+  released: 2024-08-06
   command: aider --model openai/gpt-4o-2024-08-06
   date: 2024-08-06
   versions: 0.48.1-dev
   seconds_per_case: 6.5
   total_cost: 0.0000
+
+- dirname: 2024-08-14-13-07-12--chatgpt-4o-latest-diff
+  test_cases: 133
+  model: chatgpt-4o-latest
+  edit_format: diff
+  commit_hash: b1c3769
+  pass_rate_1: 53.4
+  pass_rate_2: 69.2
+  percent_cases_well_formed: 97.7
+  error_outputs: 27
+  num_malformed_responses: 5
+  num_with_malformed_responses: 3
+  user_asks: 7
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model openai/chatgpt-4o-latest
+  date: 2024-08-14
+  released: 2024-08-08
+  versions: 0.50.2-dev
+  seconds_per_case: 26.3
+  total_cost: 3.6113
   
