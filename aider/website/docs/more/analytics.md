@@ -39,11 +39,6 @@ To get a better sense of what type of data is collected, you can review some
 These are the last 1,000 analytics events from the author's
 personal use of aider, updated regularly.
 
-Since aider is open source, all the places where aider reports analytics
-are visible in the source code.
-They can be easily viewed using 
-[GitHub search](https://github.com/search?q=repo%3Apaul-gauthier%2Faider+%22.event%28%22&type=code).
-
 ## Enabling & disabling analytics
 
 You can opt out of analytics forever by running this command one time:
@@ -80,6 +75,11 @@ If you want to just log analytics without reporting them, you can do:
 ```
 aider --analytics-log filename.jsonl --no-analytics
 ```
+
+Since aider is open source, all the places where aider reports analytics
+are visible in the source code.
+They can be easily viewed using 
+[GitHub search](https://github.com/search?q=repo%3Apaul-gauthier%2Faider+%22.event%28%22&type=code).
 
 
 ## Reporting issues
