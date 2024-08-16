@@ -151,7 +151,8 @@ to assess the impact of JSON-wrapping code:
 - gpt-4o-2024-05-13
 - gpt-4o-2024-08-06
 
-Each combination of model and code wrapping strategy was benchmarked 5 times.
+Each combination of model and code wrapping strategy was benchmarked 5 times
+on all 133 problems.
 
 ### Overall coding skill
 
