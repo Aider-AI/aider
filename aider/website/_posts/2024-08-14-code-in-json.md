@@ -182,9 +182,6 @@ Below is an example of a `SyntaxError` created by gpt-4o-2024-05-13 using the
 JSON code wrapping strategy.
 It appears that the model got confused about escaping and quoting while trying
 to format the JSON response.
-The source code contains a single-quoted string which also
-contains a single-quote character.
-The word `There'll` should have been escaped as `There\'ll`.
 
 ```python
 Traceback (most recent call last):
@@ -194,6 +191,21 @@ Traceback (most recent call last):
                                                                           ^
 SyntaxError: unterminated string literal (detected at line 9)
 ```
+
+The problematic line of code contains a single-quoted string which also
+contains a single-quote character.
+It should have been output as the following chunk of JSON, with
+a double slash in `There\\'ll`.
+That is needed to JSON-escape the `\` so that it survives
+JSON-decoding to 
+produce `There\'ll` in the resulting code.
+That would correctly escape the single-quote inside the single-quoted string.
+
+```
+...lyrics.append(f'There\\'ll be {i - 1} green bottles hanging on the wall.')\n...
+```
+
+
 
 {% include code-in-json-syntax.js %}
 
