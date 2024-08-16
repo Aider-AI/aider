@@ -5,8 +5,8 @@ nav_order: 500
 
 # Analytics
 
-Aider uses MixPanel to collect anonymous analytics that are used to help
-improve aider. 
+Aider collects anonymous analytics that are used to help
+improve aider.
 **Analytics are currently turned off by default**, but are
 expected to be turned on by default in
 a future release.
@@ -63,7 +63,7 @@ in case you would like to audit or inspect this data.
 aider --analytics-log filename.jsonl
 ```
 
-If you want to just log analytics without reporting them to MixPanel, you can do:
+If you want to just log analytics without reporting them, you can do:
 
 ```
 aider --analytics-log filename.jsonl --no-analytics
