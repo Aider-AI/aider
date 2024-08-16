@@ -56,12 +56,15 @@ class ChatChunks:
     system: List = field(default_factory=list)
     examples: List = field(default_factory=list)
     done: List = field(default_factory=list)
-    files: List = field(default_factory=list)
+    repo: List = field(default_factory=list)
+    readonly_files: List = field(default_factory=list)
+    chat_files: List = field(default_factory=list)
     cur: List = field(default_factory=list)
     reminder: List = field(default_factory=list)
 
     def all_messages(self):
-        return self.system + self.examples + self.done + self.files + self.cur + self.reminder
+        return (self.system + self.examples + self.done + self.repo +
+                self.readonly_files + self.chat_files + self.cur + self.reminder)
 
 
 class Coder:
@@ -610,40 +613,24 @@ class Coder:
 
         return repo_content
 
-    def get_files_messages(self):
-        files_messages = []
-
+    def get_repo_messages(self):
+        repo_messages = []
         repo_content = self.get_repo_map()
         if repo_content:
-            files_messages += [
+            repo_messages += [
                 dict(role="user", content=repo_content),
                 dict(
                     role="assistant",
                     content="Ok, I won't try and edit those files without asking first.",
                 ),
             ]
+        return repo_messages
 
-        if self.abs_fnames:
-            files_content = self.gpt_prompts.files_content_prefix
-            files_content += self.get_files_content()
-            files_reply = "Ok, any changes I propose will be to those files."
-        elif repo_content and self.gpt_prompts.files_no_full_files_with_repo_map:
-            files_content = self.gpt_prompts.files_no_full_files_with_repo_map
-            files_reply = self.gpt_prompts.files_no_full_files_with_repo_map_reply
-        else:
-            files_content = self.gpt_prompts.files_no_full_files
-            files_reply = "Ok."
-
-        images_message = self.get_images_message()
-        if images_message is not None:
-            files_messages += [
-                images_message,
-                dict(role="assistant", content="Ok."),
-            ]
-
+    def get_readonly_files_messages(self):
+        readonly_messages = []
         read_only_content = self.get_read_only_files_content()
         if read_only_content:
-            files_messages += [
+            readonly_messages += [
                 dict(
                     role="user", content=self.gpt_prompts.read_only_files_prefix + read_only_content
                 ),
@@ -652,14 +639,35 @@ class Coder:
                     content="Ok, I will use these files as references.",
                 ),
             ]
+        return readonly_messages
+
+    def get_chat_files_messages(self):
+        chat_files_messages = []
+        if self.abs_fnames:
+            files_content = self.gpt_prompts.files_content_prefix
+            files_content += self.get_files_content()
+            files_reply = "Ok, any changes I propose will be to those files."
+        elif self.get_repo_map() and self.gpt_prompts.files_no_full_files_with_repo_map:
+            files_content = self.gpt_prompts.files_no_full_files_with_repo_map
+            files_reply = self.gpt_prompts.files_no_full_files_with_repo_map_reply
+        else:
+            files_content = self.gpt_prompts.files_no_full_files
+            files_reply = "Ok."
 
         if files_content:
-            files_messages += [
+            chat_files_messages += [
                 dict(role="user", content=files_content),
                 dict(role="assistant", content=files_reply),
             ]
 
-        return files_messages
+        images_message = self.get_images_message()
+        if images_message is not None:
+            chat_files_messages += [
+                images_message,
+                dict(role="assistant", content="Ok."),
+            ]
+
+        return chat_files_messages
 
     def get_images_message(self):
         if not self.main_model.accepts_images:
@@ -920,7 +928,9 @@ class Coder:
         self.summarize_end()
         chunks.done = self.done_messages
 
-        chunks.files = self.get_files_messages()
+        chunks.repo = self.get_repo_messages()
+        chunks.readonly_files = self.get_readonly_files_messages()
+        chunks.chat_files = self.get_chat_files_messages()
 
         if self.gpt_prompts.system_reminder:
             reminder_message = [
