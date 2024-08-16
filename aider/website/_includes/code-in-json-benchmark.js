@@ -1,11 +1,21 @@
-<div id="chartContainer" style="position: relative; height: 0; padding-bottom: 50%; margin-bottom: 20px;">
-    <canvas id="passRateChart" style="position: absolute; width: 100%; height: 100%;"></canvas>
+<style>
+    .chart-container {
+        position: relative;
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+</style>
+
+<div class="chart-container">
+    <canvas id="passRateChart"></canvas>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     var ctx = document.getElementById('passRateChart').getContext('2d');
+    var chartContainer = document.querySelector('.chart-container');
     
     var yamlData = {{ site.data.code-in-json | jsonify }};
     
@@ -39,12 +49,19 @@ document.addEventListener('DOMContentLoaded', function () {
         datasets: datasets
     };
 
+    function getAspectRatio() {
+        var width = chartContainer.offsetWidth;
+        // Gradually change aspect ratio from 2 (landscape) to 1 (square)
+        return Math.max(1, Math.min(2, width / 300));
+    }
+
     var config = {
         type: 'bar',
         data: data,
         options: {
             responsive: true,
-            maintainAspectRatio: false,
+            maintainAspectRatio: true,
+            aspectRatio: getAspectRatio(),
             scales: {
                 x: {
                     title: {
@@ -64,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function () {
             plugins: {
                 title: {
                     display: true,
-                    text: 'Pass rate by model and code wrapping strategy',
+                    text: 'Coding skill by model and code wrapping strategy',
                     font: {
                         size: 16
                     }
@@ -91,59 +108,37 @@ document.addEventListener('DOMContentLoaded', function () {
         plugins: [{
             afterDraw: function(chart) {
                 var ctx = chart.ctx;
-                chart.data.datasets.forEach(function(dataset, i) {
-                    var meta = chart.getDatasetMeta(i);
-                    meta.data.forEach(function(bar, index) {
-                        var data = dataset.data[index];
-                        if (data !== null) {
-                            ctx.fillStyle = '#000000';
-                            ctx.textAlign = 'center';
-                            ctx.textBaseline = 'bottom';
-                            ctx.fillText(data.toFixed(1) + '%', bar.x, bar.y - 5);
-                        }
+                var isWideScreen = window.innerWidth > 768; // Assuming 768px as the breakpoint for wide screens
+                if (isWideScreen) {
+                    chart.data.datasets.forEach(function(dataset, i) {
+                        var meta = chart.getDatasetMeta(i);
+                        meta.data.forEach(function(bar, index) {
+                            var data = dataset.data[index];
+                            if (data !== null) {
+                                ctx.fillStyle = '#000000';
+                                ctx.textAlign = 'center';
+                                ctx.textBaseline = 'bottom';
+                                var displayText = data.toFixed(1) + '%';
+                                ctx.fillText(displayText, bar.x, bar.y - 5);
+                            }
+                        });
                     });
-                });
+                }
             }
         }]
     };
 
-    // Adjust chart height based on screen width
-    function adjustChartHeight() {
-        var container = document.getElementById('chartContainer');
-        if (window.innerWidth < 600) {
-            container.style.paddingBottom = '75%'; // Increase height on small screens
-        } else {
-            container.style.paddingBottom = '50%'; // Default height
-        }
+    var chart = new Chart(ctx, config);
+
+    function resizeChart() {
+        chart.options.aspectRatio = getAspectRatio();
+        chart.resize();
     }
 
-    // Call the function initially and on window resize
-    adjustChartHeight();
-    window.addEventListener('resize', adjustChartHeight);
+    window.addEventListener('resize', resizeChart);
 
-    function createStripedCanvas(isStrict) {
-        const patternCanvas = document.createElement('canvas');
-        const patternContext = patternCanvas.getContext('2d');
-        const size = 10;
-        patternCanvas.width = size;
-        patternCanvas.height = size;
-
-        patternContext.fillStyle = 'rgba(255, 99, 132, 0.8)';
-        patternContext.fillRect(0, 0, size, size);
-
-        if (isStrict) {
-            patternContext.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-            patternContext.lineWidth = 0.75;
-            patternContext.beginPath();
-            patternContext.moveTo(0, 0);
-            patternContext.lineTo(size, size);
-            patternContext.stroke();
-        }
-
-        return patternCanvas;
-    }
-
-    new Chart(ctx, config);
+    // Initial resize to set correct size
+    resizeChart();
 });
 
 function createStripedCanvas(isStrict) {

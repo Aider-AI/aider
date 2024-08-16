@@ -1,10 +1,21 @@
-<div id="syntaxErrorsContainer" style="position: relative; height: 0; padding-bottom: 50%; margin-bottom: 20px;">
-    <canvas id="syntaxErrorsChart" style="position: absolute; width: 100%; height: 100%;"></canvas>
+<style>
+    .chart-container {
+        position: relative;
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+</style>
+
+<div class="chart-container">
+    <canvas id="syntaxErrorsChart"></canvas>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     var ctx = document.getElementById('syntaxErrorsChart').getContext('2d');
+    var chartContainer = document.querySelector('.chart-container');
     
     var yamlData = {{ site.data.code-in-json | jsonify }};
     
@@ -38,12 +49,19 @@ document.addEventListener('DOMContentLoaded', function () {
         datasets: datasets
     };
 
+    function getAspectRatio() {
+        var width = chartContainer.offsetWidth;
+        // Gradually change aspect ratio from 2 (landscape) to 1 (square)
+        return Math.max(1, Math.min(2, width / 300));
+    }
+
     var config = {
         type: 'bar',
         data: data,
         options: {
             responsive: true,
-            maintainAspectRatio: false,
+            maintainAspectRatio: true,
+            aspectRatio: getAspectRatio(),
             scales: {
                 x: {
                     title: {
@@ -106,20 +124,16 @@ document.addEventListener('DOMContentLoaded', function () {
         }]
     };
 
-    // Adjust chart height based on screen width
-    function adjustChartHeight() {
-        var container = document.getElementById('syntaxErrorsContainer');
-        if (window.innerWidth < 600) {
-            container.style.paddingBottom = '75%'; // Increase height on small screens
-        } else {
-            container.style.paddingBottom = '50%'; // Default height
-        }
+    var chart = new Chart(ctx, config);
+
+    function resizeChart() {
+        chart.options.aspectRatio = getAspectRatio();
+        chart.resize();
     }
 
-    // Call the function initially and on window resize
-    adjustChartHeight();
-    window.addEventListener('resize', adjustChartHeight);
+    window.addEventListener('resize', resizeChart);
 
-    new Chart(ctx, config);
+    // Initial resize to set correct size
+    resizeChart();
 });
 </script>

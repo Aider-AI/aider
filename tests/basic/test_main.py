@@ -1,3 +1,4 @@
+import json
 import os
 import subprocess
 import tempfile
@@ -489,3 +490,27 @@ class TestMain(TestCase):
                 self.assertIn(real_external_file_path, coder.abs_read_only_fnames)
         finally:
             os.unlink(external_file_path)
+
+    def test_model_metadata_file(self):
+        with GitTemporaryDirectory():
+            metadata_file = Path(".aider.model.metadata.json")
+
+            # must be a fully qualified model name: provider/...
+            metadata_content = {"deepseek/deepseek-chat": {"max_input_tokens": 1234}}
+            metadata_file.write_text(json.dumps(metadata_content))
+
+            coder = main(
+                [
+                    "--model",
+                    "deepseek/deepseek-chat",
+                    "--model-metadata-file",
+                    str(metadata_file),
+                    "--exit",
+                    "--yes",
+                ],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+            )
+
+            self.assertEqual(coder.main_model.info["max_input_tokens"], 1234)
