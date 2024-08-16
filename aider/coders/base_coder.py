@@ -1749,3 +1749,14 @@ class Coder:
 
     def apply_edits(self, edits):
         return
+
+    def all_messages(self):
+        chunks = self.format_chat_chunks()
+        return (
+            chunks.system
+            + chunks.examples
+            + chunks.done
+            + chunks.files
+            + chunks.cur
+            + chunks.reminder
+        )
