@@ -2,7 +2,6 @@
 title: LLMs are bad at returning code in JSON
 excerpt: LLMs write worse code if you ask them to return the code wrapped in JSON via a tool function call.
 highlight_image: /assets/code-in-json.jpg
-draft: true
 nav_exclude: true
 ---
 {% if page.date %}
