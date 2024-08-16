@@ -451,7 +451,7 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--analytics-disable",
         action="store_true",
-        help="Disable analytics forever",
+        help="Permanently disable analytics",
         default=False,
     )
 

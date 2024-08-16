@@ -20,22 +20,22 @@ class Analytics:
     mp = None
     ph = None
     user_id = None
-    disable = None
+    permanently_disable = None
     logfile = None
 
-    def __init__(self, enable=False, logfile=None, disable=False):
+    def __init__(self, enable=False, logfile=None, permanently_disable=False):
         self.logfile = logfile
-        self.disable = disable
-        if not enable or disable:
+        self.permanently_disable = permanently_disable
+        if not enable or permanently_disable:
             self.mp = None
             self.ph = None
-            if disable:
-                self.mark_as_disabled()
+            if permanently_disable:
+                self.mark_as_permanently_disabled()
             return
 
         self.user_id = self.get_or_create_uuid()
 
-        if self.user_id and not self.disable:
+        if self.user_id and not self.permanently_disable:
             self.mp = Mixpanel(mixpanel_project_token)
             self.ph = Posthog(project_api_key=posthog_project_api_key, host=posthog_host)
 
@@ -44,14 +44,14 @@ class Analytics:
         data_file.parent.mkdir(parents=True, exist_ok=True)
         return data_file
 
-    def mark_as_disabled(self):
+    def mark_as_permanently_disabled(self):
         data_file = self.get_data_file_path()
         if data_file.exists():
             with open(data_file, "r") as f:
                 data = json.load(f)
         else:
             data = {"uuid": str(uuid.uuid4())}
-        data["disabled"] = True
+        data["permanently_disabled"] = True
         with open(data_file, "w") as f:
             json.dump(data, f)
 
@@ -61,9 +61,10 @@ class Analytics:
         if data_file.exists():
             with open(data_file, "r") as f:
                 data = json.load(f)
-                if "disabled" in data and data["disabled"]:
-                    self.disable = True
+                if "permanently_disabled" in data and data["permanently_disabled"]:
+                    self.permanently_disable = True
                     self.mp = None
+                    self.ph = None
                     return
                 return data["uuid"]
 

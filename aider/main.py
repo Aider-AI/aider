@@ -346,7 +346,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     args = parser.parse_args(argv)
 
     if args.analytics_disable:
-        analytics = Analytics(enable=False, disable=True)
+        analytics = Analytics(enable=False, permanently_disable=True)
         print("Analytics have been permanently disabled.")
         return
 
@@ -390,7 +390,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     )
 
     analytics = Analytics(
-        args.analytics, logfile=args.analytics_log, disable=args.analytics_disable
+        args.analytics, logfile=args.analytics_log, permanently_disable=args.analytics_disable
     )
     analytics.event("launched")
 
