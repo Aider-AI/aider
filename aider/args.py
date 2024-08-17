@@ -208,6 +208,12 @@ def get_parser(default_config_files, git_root):
         help="Control when the repo map is refreshed (default: auto)",
     )
     group.add_argument(
+        "--cache-prompts",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable caching of prompts (forces map_refresh='files') (default: False)",
+    )
+    group.add_argument(
         "--max-chat-history-tokens",
         type=int,
         default=None,

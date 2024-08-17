@@ -508,6 +508,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     )
 
     try:
+        if args.cache_prompts:
+            args.map_refresh = "files"
+
         coder = Coder.create(
             main_model=main_model,
             edit_format=args.edit_format,
@@ -533,6 +536,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             commands=commands,
             summarizer=summarizer,
             map_refresh=args.map_refresh,
+            cache_prompts=args.cache_prompts,
         )
 
     except ValueError as err:
