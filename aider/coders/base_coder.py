@@ -255,6 +255,7 @@ class Coder:
         commands=None,
         summarizer=None,
         total_cost=0.0,
+        map_refresh="auto",
     ):
         self.commit_before_message = []
         self.aider_commit_hashes = set()
@@ -384,6 +385,7 @@ class Coder:
                 self.verbose,
                 max_inp_tokens,
                 map_mul_no_files=map_mul_no_files,
+                refresh=map_refresh,
             )
 
         self.summarizer = summarizer or ChatSummary(
