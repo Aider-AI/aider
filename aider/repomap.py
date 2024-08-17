@@ -423,6 +423,7 @@ class RepoMap:
 
         # If not in cache, generate the map
         import time
+
         start_time = time.time()
         result = self.get_ranked_tags_map_uncached(
             chat_fnames, other_fnames, max_map_tokens, mentioned_fnames, mentioned_idents
