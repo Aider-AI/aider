@@ -1461,11 +1461,13 @@ class Coder:
     def calculate_and_show_tokens_and_cost(self, messages, completion=None):
         prompt_tokens = 0
         completion_tokens = 0
+        cached_tokens = 0
         cost = 0
 
         if completion and hasattr(completion, "usage") and completion.usage is not None:
             prompt_tokens = completion.usage.prompt_tokens
             completion_tokens = completion.usage.completion_tokens
+            cached_tokens = getattr(completion.usage, "prompt_cache_hit_tokens", 0) or getattr(completion.usage, "cache_read_input_tokens", 0)
         else:
             prompt_tokens = self.main_model.token_count(messages)
             completion_tokens = self.main_model.token_count(self.partial_response_content)
@@ -1473,9 +1475,15 @@ class Coder:
         self.message_tokens_sent += prompt_tokens
         self.message_tokens_received += completion_tokens
 
-        tokens_report = (
-            f"Tokens: {self.message_tokens_sent:,} sent, {self.message_tokens_received:,} received."
-        )
+        if cached_tokens:
+            tokens_report = (
+                f"Tokens: {self.message_tokens_sent:,} sent, {cached_tokens:,} cached, "
+                f"{self.message_tokens_received:,} received."
+            )
+        else:
+            tokens_report = (
+                f"Tokens: {self.message_tokens_sent:,} sent, {self.message_tokens_received:,} received."
+            )
 
         if self.main_model.info.get("input_cost_per_token"):
             cost += prompt_tokens * self.main_model.info.get("input_cost_per_token")
