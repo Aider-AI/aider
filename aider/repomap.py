@@ -83,7 +83,14 @@ class RepoMap:
         est_tokens = sample_tokens / len(sample_text) * len_text
         return est_tokens
 
-    def get_repo_map(self, chat_files, other_files, mentioned_fnames=None, mentioned_idents=None, force_refresh=False):
+    def get_repo_map(
+        self,
+        chat_files,
+        other_files,
+        mentioned_fnames=None,
+        mentioned_idents=None,
+        force_refresh=False,
+    ):
         if self.max_map_tokens <= 0:
             return
         if not other_files:
@@ -109,7 +116,12 @@ class RepoMap:
 
         try:
             files_listing = self.get_ranked_tags_map(
-                chat_files, other_files, max_map_tokens, mentioned_fnames, mentioned_idents, force_refresh
+                chat_files,
+                other_files,
+                max_map_tokens,
+                mentioned_fnames,
+                mentioned_idents,
+                force_refresh,
             )
         except RecursionError:
             self.io.tool_error("Disabling repo map, git repo too large?")
@@ -430,7 +442,7 @@ class RepoMap:
             elif self.refresh == "files":
                 use_cache = True
             elif self.refresh == "auto":
-                use_cache = (self.map_processing_time > 1.0)
+                use_cache = self.map_processing_time > 1.0
 
             # Check if the result is in the cache
             if use_cache and cache_key in self.map_cache:
