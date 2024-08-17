@@ -83,7 +83,7 @@ class RepoMap:
         est_tokens = sample_tokens / len(sample_text) * len_text
         return est_tokens
 
-    def get_repo_map(self, chat_files, other_files, mentioned_fnames=None, mentioned_idents=None):
+    def get_repo_map(self, chat_files, other_files, mentioned_fnames=None, mentioned_idents=None, force_refresh=False):
         if self.max_map_tokens <= 0:
             return
         if not other_files:
@@ -109,7 +109,7 @@ class RepoMap:
 
         try:
             files_listing = self.get_ranked_tags_map(
-                chat_files, other_files, max_map_tokens, mentioned_fnames, mentioned_idents
+                chat_files, other_files, max_map_tokens, mentioned_fnames, mentioned_idents, force_refresh
             )
         except RecursionError:
             self.io.tool_error("Disabling repo map, git repo too large?")
@@ -412,6 +412,7 @@ class RepoMap:
         max_map_tokens=None,
         mentioned_fnames=None,
         mentioned_idents=None,
+        force_refresh=False,
     ):
         # Create a cache key
         cache_key = (
@@ -420,21 +421,22 @@ class RepoMap:
             max_map_tokens,
         )
 
-        if self.refresh == "manual" and self.last_map:
-            return self.last_map
+        if not force_refresh:
+            if self.refresh == "manual" and self.last_map:
+                return self.last_map
 
-        if self.refresh == "always":
-            use_cache = False
-        elif self.refresh == "files":
-            use_cache = True
-        elif self.refresh == "auto":
-            use_cache = (self.map_processing_time > 1.0)
+            if self.refresh == "always":
+                use_cache = False
+            elif self.refresh == "files":
+                use_cache = True
+            elif self.refresh == "auto":
+                use_cache = (self.map_processing_time > 1.0)
 
-        # Check if the result is in the cache
-        if use_cache and cache_key in self.map_cache:
-            return self.map_cache[cache_key]
+            # Check if the result is in the cache
+            if use_cache and cache_key in self.map_cache:
+                return self.map_cache[cache_key]
 
-        # If not in cache, generate the map
+        # If not in cache or force_refresh is True, generate the map
         start_time = time.time()
         result = self.get_ranked_tags_map_uncached(
             chat_fnames, other_fnames, max_map_tokens, mentioned_fnames, mentioned_idents
