@@ -1045,6 +1045,14 @@ class Commands:
         else:
             self.io.tool_output("No repository map available.")
 
+    def cmd_map_refresh(self, args):
+        "Force a refresh of the repository map and print it out"
+        repo_map = self.coder.get_repo_map(force_refresh=True)
+        if repo_map:
+            self.io.tool_output(repo_map)
+        else:
+            self.io.tool_output("No repository map available.")
+
 
 def expand_subdir(file_path):
     file_path = Path(file_path)
