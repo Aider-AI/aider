@@ -91,13 +91,15 @@ class ChatChunks:
         if not messages:
             return
 
-        content = messages[-1]
+        content = messages[-1]["content"]
         if type(content) is str:
             content = dict(
                 type="text",
                 text=content,
             )
         content["cache_control"] = {"type": "ephemeral"}
+
+        messages[-1]["content"] = [content]
 
 
 class Coder:
@@ -910,8 +912,12 @@ class Coder:
         if user_lang:
             platform_text += f"- Language: {user_lang}\n"
 
-        dt = datetime.now().astimezone().strftime("%Y-%m-%dT%H:%M:%S%z")
-        platform_text += f"- Current date/time: {dt}"
+        if self.cache_prompts:
+            dt = datetime.now().astimezone().strftime("%Y-%m-%d")
+            platform_text += f"- Current date: {dt}"
+        else:
+            dt = datetime.now().astimezone().strftime("%Y-%m-%dT%H:%M:%S%z")
+            platform_text += f"- Current date/time: {dt}"
 
         prompt = prompt.format(
             fence=self.fence,
@@ -1020,7 +1026,8 @@ class Coder:
         if self.cache_prompts and self.main_model.cache_control:
             chunks.add_cache_control_headers()
 
-        return chunks.all_messages()
+        msgs = chunks.all_messages()
+        return msgs
 
     def send_message(self, inp):
         self.aider_edited_files = None
