@@ -73,6 +73,7 @@ class ModelSettings:
     examples_as_sys_msg: bool = False
     extra_headers: Optional[dict] = None
     max_tokens: Optional[int] = None
+    cache_control_enabled: bool = False
 
 
 # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
