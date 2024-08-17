@@ -177,7 +177,7 @@ sphinxcontrib-qthelp==2.0.0
     # via sphinx
 sphinxcontrib-serializinghtml==2.0.0
     # via sphinx
-typer==0.12.3
+typer==0.12.4
     # via -r requirements/requirements-dev.in
 typing-extensions==4.12.2
     # via

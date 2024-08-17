@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=requirements/requirements-help.txt requirements/requirements-help.in
 #
-aiohappyeyeballs==2.3.5
+aiohappyeyeballs==2.3.7
     # via
     #   -c requirements/../requirements.txt
     #   aiohttp
@@ -112,7 +112,7 @@ joblib==1.4.2
     # via
     #   nltk
     #   scikit-learn
-llama-index-core==0.10.65
+llama-index-core==0.10.66
     # via
     #   -r requirements/requirements-help.in
     #   llama-index-embeddings-huggingface
@@ -142,7 +142,7 @@ networkx==3.2.1
     #   -c requirements/../requirements.txt
     #   llama-index-core
     #   torch
-nltk==3.8.2
+nltk==3.8.1
     # via llama-index-core
 numpy==1.26.4
     # via
@@ -153,7 +153,7 @@ numpy==1.26.4
     #   scipy
     #   sentence-transformers
     #   transformers
-openai==1.40.6
+openai==1.41.0
     # via
     #   -c requirements/../requirements.txt
     #   llama-index-core

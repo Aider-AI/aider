@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=requirements.txt requirements/requirements.in
 #
-aiohappyeyeballs==2.3.5
+aiohappyeyeballs==2.3.7
     # via aiohttp
 aiohttp==3.10.3
     # via litellm
@@ -80,7 +80,7 @@ importlib-metadata==7.2.1
     # via
     #   -r requirements/requirements.in
     #   litellm
-importlib-resources==6.4.0
+importlib-resources==6.4.3
     # via -r requirements/requirements.in
 jinja2==3.1.4
     # via litellm
@@ -92,7 +92,7 @@ jsonschema==4.23.0
     #   litellm
 jsonschema-specifications==2023.12.1
     # via jsonschema
-litellm==1.43.9
+litellm==1.43.17
     # via -r requirements/requirements.in
 markdown-it-py==3.0.0
     # via rich
@@ -112,7 +112,7 @@ numpy==1.26.4
     # via
     #   -r requirements/requirements.in
     #   scipy
-openai==1.40.6
+openai==1.41.0
     # via litellm
 packaging==24.1
     # via
@@ -186,7 +186,7 @@ sounddevice==0.5.0
     # via -r requirements/requirements.in
 soundfile==0.12.1
     # via -r requirements/requirements.in
-soupsieve==2.5
+soupsieve==2.6
     # via beautifulsoup4
 tiktoken==0.7.0
     # via litellm
