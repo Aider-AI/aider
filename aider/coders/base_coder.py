@@ -1467,7 +1467,9 @@ class Coder:
         if completion and hasattr(completion, "usage") and completion.usage is not None:
             prompt_tokens = completion.usage.prompt_tokens
             completion_tokens = completion.usage.completion_tokens
-            cached_tokens = getattr(completion.usage, "prompt_cache_hit_tokens", 0) or getattr(completion.usage, "cache_read_input_tokens", 0)
+            cached_tokens = getattr(completion.usage, "prompt_cache_hit_tokens", 0) or getattr(
+                completion.usage, "cache_read_input_tokens", 0
+            )
         else:
             prompt_tokens = self.main_model.token_count(messages)
             completion_tokens = self.main_model.token_count(self.partial_response_content)
@@ -1482,7 +1484,8 @@ class Coder:
             )
         else:
             tokens_report = (
-                f"Tokens: {self.message_tokens_sent:,} sent, {self.message_tokens_received:,} received."
+                f"Tokens: {self.message_tokens_sent:,} sent,"
+                f" {self.message_tokens_received:,} received."
             )
 
         if self.main_model.info.get("input_cost_per_token"):
