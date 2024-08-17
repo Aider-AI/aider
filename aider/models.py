@@ -74,7 +74,7 @@ class ModelSettings:
     examples_as_sys_msg: bool = False
     extra_headers: Optional[dict] = None
     max_tokens: Optional[int] = None
-    cache_control_enabled: bool = False
+    cache_control: bool = False
 
 
 # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
@@ -274,6 +274,7 @@ MODEL_SETTINGS = [
         extra_headers={
             "anthropic-beta": ANTHROPIC_BETA_HEADER,
         },
+        cache_control=True,
     ),
     ModelSettings(
         "anthropic/claude-3-5-sonnet-20240620",
@@ -285,6 +286,7 @@ MODEL_SETTINGS = [
         extra_headers={
             "anthropic-beta": ANTHROPIC_BETA_HEADER,
         },
+        cache_control=True,
     ),
     ModelSettings(
         "openrouter/anthropic/claude-3.5-sonnet",
@@ -296,8 +298,8 @@ MODEL_SETTINGS = [
         max_tokens=8192,
         extra_headers={
             "anthropic-beta": "max-tokens-3-5-sonnet-2024-07-15",
-            "HTTP-Referer": "https://aider.chat",
-            "X-Title": "Aider",
+            "HTTP-Referer": AIDER_SITE_URL,
+            "X-Title": AIDER_APP_NAME,
         },
     ),
     # Vertex AI Claude models

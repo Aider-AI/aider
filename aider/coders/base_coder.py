@@ -66,13 +66,38 @@ class ChatChunks:
         return (
             self.system
             + self.examples
-            + self.done
             + self.repo
             + self.readonly_files
+            + self.done
             + self.chat_files
             + self.cur
             + self.reminder
         )
+
+    def add_cache_control_headers(self):
+        if self.examples:
+            self.add_cache_control(self.examples)
+        else:
+            self.add_cache_control(self.system)
+
+        if self.readonly_files:
+            self.add_cache_control(self.readonly_files)
+        else:
+            self.add_cache_control(self.repo)
+
+        self.add_cache_control(self.chat_files)
+
+    def add_cache_control(self, messages):
+        if not messages:
+            return
+
+        content = messages[-1]
+        if type(content) is str:
+            content = dict(
+                type="text",
+                text=content,
+            )
+        content["cache_control"] = {"type": "ephemeral"}
 
 
 class Coder:
@@ -257,12 +282,12 @@ class Coder:
         total_cost=0.0,
         map_refresh="auto",
         cache_prompts=False,
-        cache_prompts=False,
     ):
         self.commit_before_message = []
         self.aider_commit_hashes = set()
         self.rejected_urls = set()
         self.abs_root_path_cache = {}
+        self.cache_prompts = cache_prompts
 
         if not fnames:
             fnames = []
@@ -991,6 +1016,9 @@ class Coder:
 
     def format_messages(self):
         chunks = self.format_chat_chunks()
+        if self.cache_prompts and self.main_model.cache_control:
+            chunks.add_cache_control_headers()
+
         return chunks.all_messages()
 
     def send_message(self, inp):
