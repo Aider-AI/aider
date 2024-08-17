@@ -3,6 +3,7 @@ import math
 import os
 import random
 import sys
+import time
 import warnings
 from collections import Counter, defaultdict, namedtuple
 from importlib import resources
@@ -65,6 +66,7 @@ class RepoMap:
         self.tree_cache = {}
         self.tree_context_cache = {}
         self.map_cache = {}
+        self.map_processing_time = 0
 
     def token_count(self, text):
         len_text = len(text)
@@ -422,8 +424,6 @@ class RepoMap:
             return self.map_cache[cache_key]
 
         # If not in cache, generate the map
-        import time
-
         start_time = time.time()
         result = self.get_ranked_tags_map_uncached(
             chat_fnames, other_fnames, max_map_tokens, mentioned_fnames, mentioned_idents
