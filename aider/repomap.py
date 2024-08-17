@@ -67,6 +67,7 @@ class RepoMap:
         self.tree_context_cache = {}
         self.map_cache = {}
         self.map_processing_time = 0
+        self.last_map = None
 
     def token_count(self, text):
         len_text = len(text)
@@ -419,8 +420,18 @@ class RepoMap:
             max_map_tokens,
         )
 
+        if self.refresh == "manual" and self.last_map:
+            return self.last_map
+
+        if self.refresh == "always":
+            use_cache = False
+        elif self.refresh == "files":
+            use_cache = True
+        elif self.refresh == "auto":
+            use_cache = (self.map_processing_time > 1.0)
+
         # Check if the result is in the cache
-        if cache_key in self.map_cache:
+        if use_cache and cache_key in self.map_cache:
             return self.map_cache[cache_key]
 
         # If not in cache, generate the map
@@ -433,6 +444,7 @@ class RepoMap:
 
         # Store the result in the cache
         self.map_cache[cache_key] = result
+        self.last_map = result
 
         return result
 
