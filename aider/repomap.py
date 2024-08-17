@@ -64,6 +64,7 @@ class RepoMap:
 
         self.tree_cache = {}
         self.tree_context_cache = {}
+        self.map_cache = {}
 
     def token_count(self, text):
         len_text = len(text)
@@ -409,7 +410,26 @@ class RepoMap:
         mentioned_fnames=None,
         mentioned_idents=None,
     ):
-        pass
+        # Create a cache key
+        cache_key = (
+            tuple(sorted(chat_fnames)),
+            tuple(sorted(other_fnames)) if other_fnames else None,
+            max_map_tokens
+        )
+
+        # Check if the result is in the cache
+        if cache_key in self.map_cache:
+            return self.map_cache[cache_key]
+
+        # If not in cache, generate the map
+        result = self.get_ranked_tags_map_uncached(
+            chat_fnames, other_fnames, max_map_tokens, mentioned_fnames, mentioned_idents
+        )
+
+        # Store the result in the cache
+        self.map_cache[cache_key] = result
+
+        return result
 
     def get_ranked_tags_map_uncached(
         self,
