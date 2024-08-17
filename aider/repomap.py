@@ -412,7 +412,7 @@ class RepoMap:
     ):
         # Create a cache key
         cache_key = (
-            tuple(sorted(chat_fnames)),
+            tuple(sorted(chat_fnames)) if chat_fnames else None,
             tuple(sorted(other_fnames)) if other_fnames else None,
             max_map_tokens,
         )
