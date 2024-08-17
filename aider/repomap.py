@@ -422,9 +422,13 @@ class RepoMap:
             return self.map_cache[cache_key]
 
         # If not in cache, generate the map
+        import time
+        start_time = time.time()
         result = self.get_ranked_tags_map_uncached(
             chat_fnames, other_fnames, max_map_tokens, mentioned_fnames, mentioned_idents
         )
+        end_time = time.time()
+        self.map_processing_time = end_time - start_time
 
         # Store the result in the cache
         self.map_cache[cache_key] = result
