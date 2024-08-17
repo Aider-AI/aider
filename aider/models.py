@@ -17,6 +17,7 @@ from aider.dump import dump  # noqa: F401
 from aider.llm import AIDER_APP_NAME, AIDER_SITE_URL, litellm
 
 DEFAULT_MODEL_NAME = "gpt-4o"
+ANTHROPIC_BETA_HEADER = "max-tokens-3-5-sonnet-2024-07-15, prompt-caching-2024-07-31"
 
 OPENAI_MODELS = """
 gpt-4
@@ -271,7 +272,7 @@ MODEL_SETTINGS = [
         accepts_images=True,
         max_tokens=8192,
         extra_headers={
-            "anthropic-beta": "max-tokens-3-5-sonnet-2024-07-15, prompt-caching-2024-07-31",
+            "anthropic-beta": ANTHROPIC_BETA_HEADER,
         },
     ),
     ModelSettings(
@@ -282,7 +283,7 @@ MODEL_SETTINGS = [
         examples_as_sys_msg=True,
         max_tokens=8192,
         extra_headers={
-            "anthropic-beta": "max-tokens-3-5-sonnet-2024-07-15, prompt-caching-2024-07-31",
+            "anthropic-beta": ANTHROPIC_BETA_HEADER,
         },
     ),
     ModelSettings(
