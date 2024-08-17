@@ -138,6 +138,12 @@ cog.outl("```")
 ## Max number of tokens to use for repo map, use 0 to disable (default: 1024)
 #AIDER_MAP_TOKENS=
 
+## Control when the repo map is refreshed (default: auto)
+#AIDER_MAP_REFRESH=auto
+
+## Enable caching of prompts (forces map_refresh='files') (default: False)
+#AIDER_CACHE_PROMPTS=false
+
 ## Maximum number of tokens to use for chat history. If not specified, uses the model's max_chat_history_tokens.
 #AIDER_MAX_CHAT_HISTORY_TOKENS=
 

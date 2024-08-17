@@ -34,7 +34,9 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--verify-ssl | --no-verify-ssl] [--edit-format]
              [--weak-model]
              [--show-model-warnings | --no-show-model-warnings]
-             [--map-tokens] [--max-chat-history-tokens] [--env-file]
+             [--map-tokens] [--map-refresh]
+             [--cache-prompts | --no-cache-prompts]
+             [--max-chat-history-tokens] [--env-file]
              [--input-history-file] [--chat-history-file]
              [--restore-chat-history | --no-restore-chat-history]
              [--llm-history-file] [--dark-mode] [--light-mode]
@@ -188,6 +190,19 @@ Aliases:
 ### `--map-tokens VALUE`
 Max number of tokens to use for repo map, use 0 to disable (default: 1024)  
 Environment variable: `AIDER_MAP_TOKENS`  
+
+### `--map-refresh VALUE`
+Control when the repo map is refreshed (default: auto)  
+Default: auto  
+Environment variable: `AIDER_MAP_REFRESH`  
+
+### `--cache-prompts`
+Enable caching of prompts (forces map_refresh='files') (default: False)  
+Default: False  
+Environment variable: `AIDER_CACHE_PROMPTS`  
+Aliases:
+  - `--cache-prompts`
+  - `--no-cache-prompts`
 
 ### `--max-chat-history-tokens VALUE`
 Maximum number of tokens to use for chat history. If not specified, uses the model's max_chat_history_tokens.  
