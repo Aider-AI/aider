@@ -507,10 +507,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         args.max_chat_history_tokens or main_model.max_chat_history_tokens,
     )
 
-    try:
-        if args.cache_prompts:
-            args.map_refresh = "files"
+    if args.cache_prompts:
+        args.map_refresh = "files"
 
+    try:
         coder = Coder.create(
             main_model=main_model,
             edit_format=args.edit_format,
@@ -538,7 +538,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             map_refresh=args.map_refresh,
             cache_prompts=args.cache_prompts,
         )
-
     except ValueError as err:
         io.tool_error(str(err))
         return 1
