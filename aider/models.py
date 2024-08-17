@@ -270,7 +270,9 @@ MODEL_SETTINGS = [
         examples_as_sys_msg=True,
         accepts_images=True,
         max_tokens=8192,
-        extra_headers={"anthropic-beta": "max-tokens-3-5-sonnet-2024-07-15"},
+        extra_headers={
+            "anthropic-beta": "max-tokens-3-5-sonnet-2024-07-15, prompt-caching-2024-07-31",
+        },
     ),
     ModelSettings(
         "anthropic/claude-3-5-sonnet-20240620",
@@ -280,9 +282,7 @@ MODEL_SETTINGS = [
         examples_as_sys_msg=True,
         max_tokens=8192,
         extra_headers={
-            "anthropic-beta": "max-tokens-3-5-sonnet-2024-07-15",
-            "HTTP-Referer": AIDER_SITE_URL,
-            "X-Title": AIDER_APP_NAME,
+            "anthropic-beta": "max-tokens-3-5-sonnet-2024-07-15, prompt-caching-2024-07-31",
         },
     ),
     ModelSettings(
