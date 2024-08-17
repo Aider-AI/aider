@@ -41,9 +41,11 @@ class RepoMap:
         verbose=False,
         max_context_window=None,
         map_mul_no_files=8,
+        refresh="auto",
     ):
         self.io = io
         self.verbose = verbose
+        self.refresh = refresh
 
         if not root:
             root = os.getcwd()
@@ -407,6 +409,16 @@ class RepoMap:
         mentioned_fnames=None,
         mentioned_idents=None,
     ):
+        pass
+
+    def get_ranked_tags_map_uncached(
+        self,
+        chat_fnames,
+        other_fnames=None,
+        max_map_tokens=None,
+        mentioned_fnames=None,
+        mentioned_idents=None,
+    ):
         if not other_fnames:
             other_fnames = list()
         if not max_map_tokens:
@@ -416,7 +428,7 @@ class RepoMap:
         if not mentioned_idents:
             mentioned_idents = set()
 
-        spin = Spinner("Preparing repo map")
+        spin = Spinner("Updating repo map")
 
         ranked_tags = self.get_ranked_tags(
             chat_fnames,
