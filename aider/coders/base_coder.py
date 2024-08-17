@@ -230,7 +230,8 @@ class Coder:
         if self.repo_map:
             map_tokens = self.repo_map.max_map_tokens
             if map_tokens > 0:
-                lines.append(f"Repo-map: using {map_tokens} tokens")
+                refresh = self.repo_map.refresh
+                lines.append(f"Repo-map: using {map_tokens} tokens, {refresh} refresh")
                 max_map_tokens = 2048
                 if map_tokens > max_map_tokens:
                     lines.append(
