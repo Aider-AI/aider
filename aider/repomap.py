@@ -414,7 +414,7 @@ class RepoMap:
         cache_key = (
             tuple(sorted(chat_fnames)),
             tuple(sorted(other_fnames)) if other_fnames else None,
-            max_map_tokens
+            max_map_tokens,
         )
 
         # Check if the result is in the cache
