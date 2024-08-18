@@ -613,7 +613,7 @@ class Coder:
 
         return matches
 
-    def get_repo_map(self):
+    def get_repo_map(self, force_refresh=False):
         if not self.repo_map:
             return
 
@@ -633,6 +633,7 @@ class Coder:
             other_files,
             mentioned_fnames=mentioned_fnames,
             mentioned_idents=mentioned_idents,
+            force_refresh=force_refresh,
         )
 
         # fall back to global repo map if files in chat are disjoint from rest of repo
