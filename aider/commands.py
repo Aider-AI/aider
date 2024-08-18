@@ -311,7 +311,6 @@ class Commands:
         # chat history
         msgs = self.coder.done_messages + self.coder.cur_messages
         if msgs:
-            msgs = [dict(role="dummy", content=msg) for msg in msgs]
             tokens = self.coder.main_model.token_count(msgs)
             res.append((tokens, "chat history", "use /clear to clear"))
 
@@ -591,6 +590,18 @@ class Commands:
 
             if abs_file_path in self.coder.abs_fnames:
                 self.io.tool_error(f"{matched_file} is already in the chat")
+            elif abs_file_path in self.coder.abs_read_only_fnames:
+                if self.coder.repo and self.coder.repo.path_in_repo(matched_file):
+                    self.coder.abs_read_only_fnames.remove(abs_file_path)
+                    self.coder.abs_fnames.add(abs_file_path)
+                    self.io.tool_output(
+                        f"Moved {matched_file} from read-only to editable files in the chat"
+                    )
+                    added_fnames.append(matched_file)
+                else:
+                    self.io.tool_error(
+                        f"Cannot add {matched_file} as it's not part of the repository"
+                    )
             else:
                 if is_image_file(matched_file) and not self.coder.main_model.accepts_images:
                     self.io.tool_error(
@@ -721,7 +732,7 @@ class Commands:
             add = result.returncode != 0
         else:
             response = self.io.prompt_ask(
-                "Add the output to the chat?\n(y/n/instructions)", default=""
+                "Add the output to the chat?\n(Y/n/instructions)", default=""
             ).strip()
 
             if response.lower() in ["yes", "y"]:
@@ -1037,6 +1048,14 @@ class Commands:
     def cmd_map(self, args):
         "Print out the current repository map"
         repo_map = self.coder.get_repo_map()
+        if repo_map:
+            self.io.tool_output(repo_map)
+        else:
+            self.io.tool_output("No repository map available.")
+
+    def cmd_map_refresh(self, args):
+        "Force a refresh of the repository map and print it out"
+        repo_map = self.coder.get_repo_map(force_refresh=True)
         if repo_map:
             self.io.tool_output(repo_map)
         else:

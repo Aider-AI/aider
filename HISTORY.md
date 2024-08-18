@@ -1,6 +1,30 @@
 
 # Release history
 
+### main branch
+
+- Improved editing performance on Jupyter Notebook `.ipynb` files.
+- Work around litellm tokenizer bug for images.
+
+### Aider v0.50.1
+
+- Bugfix for provider API exceptions.
+
+### Aider v0.50.0
+
+- Infinite output for DeepSeek Coder, Mistral models in addition to Anthropic's models.
+- New `--deepseek` switch to use DeepSeek Coder.
+- DeepSeek Coder uses 8k token output.
+- New `--chat-mode <mode>` switch to launch in ask/help/code modes.
+- New `/code <message>` command request a code edit while in `ask` mode.
+- Web scraper is more robust if page never idles.
+- Improved token and cost reporting for infinite output.
+- Improvements and bug fixes for `/read` only files.
+- Switched from `setup.py` to `pyproject.toml`, by @branchvincent.
+- Bug fix to persist files added during `/ask`.
+- Bug fix for chat history size in `/tokens`.
+- Aider wrote 66% of the code in this release.
+
 ### Aider v0.49.1
 
 - Bugfix to `/help`.

@@ -1,0 +1,67 @@
+# [[[cog
+# from aider.help_pats import exclude_website_pats
+# ]]]
+# [[[end]]]
+
+[project]
+name = "aider-chat"
+description = "Aider is AI pair programming in your terminal"
+readme = "README.md"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python",
+    "Topic :: Software Development",
+]
+requires-python = ">=3.9,<3.13"
+dynamic = ["dependencies", "optional-dependencies", "version"]
+
+[project.urls]
+Homepage = "https://github.com/paul-gauthier/aider"
+
+[project.scripts]
+aider = "aider.main:main"
+
+[tool.setuptools.dynamic]
+version = { attr = "aider.__init__.__version__" }
+dependencies = { file = "requirements.txt" }
+
+[tool.setuptools.dynamic.optional-dependencies]
+dev = { file = "requirements/requirements-dev.txt" }
+help = { file = "requirements/requirements-help.txt" }
+browser = { file = "requirements/requirements-browser.txt" }
+playwright = { file = "requirements/requirements-playwright.txt" }
+
+[tool.setuptools.packages.find]
+include = ["aider*", "aider.website"]
+
+[tool.setuptools.package-data]
+"aider" = ["queries/*.scm"]
+"aider.website" = ["**/*.md"]
+
+[tool.setuptools.exclude-package-data]
+"aider.website" = [
+# [[[cog
+# cog.out("\n".join(f'    "{pat}",' for pat in exclude_website_pats))
+# ]]]
+"examples/**",
+"_posts/**",
+"HISTORY.md",
+"docs/benchmarks*md",
+"docs/ctags.md",
+"docs/unified-diffs.md",
+"docs/leaderboards/index.md",
+"assets/**",
+# [[[end]]]
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"

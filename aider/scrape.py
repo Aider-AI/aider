@@ -102,12 +102,32 @@ class Scraper:
             self.print_error(f"Failed to retrieve content from {url}")
             return None
 
-        # Check if the content is HTML based on MIME type
-        if mime_type and mime_type.startswith("text/html"):
+        # Check if the content is HTML based on MIME type or content
+        if (mime_type and mime_type.startswith("text/html")) or (
+            mime_type is None and self.looks_like_html(content)
+        ):
             self.try_pandoc()
             content = self.html_to_markdown(content)
 
         return content
+
+    def looks_like_html(self, content):
+        """
+        Check if the content looks like HTML.
+        """
+        if isinstance(content, str):
+            # Check for common HTML tags
+            html_patterns = [
+                r"<!DOCTYPE\s+html",
+                r"<html",
+                r"<head",
+                r"<body",
+                r"<div",
+                r"<p>",
+                r"<a\s+href=",
+            ]
+            return any(re.search(pattern, content, re.IGNORECASE) for pattern in html_patterns)
+        return False
 
     # Internals...
     def scrape_with_playwright(self, url):
@@ -133,6 +153,7 @@ class Scraper:
 
                 page.set_extra_http_headers({"User-Agent": user_agent})
 
+                response = None
                 try:
                     response = page.goto(url, wait_until="networkidle", timeout=5000)
                 except playwright._impl._errors.TimeoutError:
@@ -143,7 +164,9 @@ class Scraper:
 
                 try:
                     content = page.content()
-                    mime_type = response.header_value("content-type").split(";")[0]
+                    mime_type = (
+                        response.header_value("content-type").split(";")[0] if response else None
+                    )
                 except playwright._impl._errors.Error as e:
                     self.print_error(f"Error retrieving page content: {str(e)}")
                     content = None

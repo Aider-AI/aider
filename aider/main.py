@@ -327,6 +327,17 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     parser = get_parser(default_config_files, git_root)
     args, unknown = parser.parse_known_args(argv)
 
+    if args.verbose:
+        print("Config files search order, if no --config:")
+        for file in default_config_files:
+            exists = "(exists)" if Path(file).exists() else ""
+            print(f"  - {file} {exists}")
+
+    default_config_files.reverse()
+
+    parser = get_parser(default_config_files, git_root)
+    args, unknown = parser.parse_known_args(argv)
+
     # Load the .env file specified in the arguments
     loaded_dotenvs = load_dotenv_files(git_root, args.env_file)
 
@@ -416,11 +427,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             return main(argv, input, output, right_repo_root, return_coder=return_coder)
 
     if args.just_check_update:
-        update_available = check_version(io, just_check=True)
+        update_available = check_version(io, just_check=True, verbose=args.verbose)
         return 0 if not update_available else 1
 
     if args.check_update:
-        check_version(io)
+        check_version(io, verbose=args.verbose)
 
     if args.models:
         models.print_matching_models(io, args.models)
@@ -496,6 +507,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         args.max_chat_history_tokens or main_model.max_chat_history_tokens,
     )
 
+    if args.cache_prompts:
+        args.map_refresh = "files"
+
     try:
         coder = Coder.create(
             main_model=main_model,
@@ -521,8 +535,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             test_cmd=args.test_cmd,
             commands=commands,
             summarizer=summarizer,
+            map_refresh=args.map_refresh,
+            cache_prompts=args.cache_prompts,
         )
-
     except ValueError as err:
         io.tool_error(str(err))
         return 1
@@ -530,6 +545,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if return_coder:
         return coder
 
+    io.tool_output()
     coder.show_announcements()
 
     if args.show_prompts:

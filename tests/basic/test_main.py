@@ -1,3 +1,4 @@
+import json
 import os
 import subprocess
 import tempfile
@@ -224,6 +225,16 @@ class TestMain(TestCase):
 
                     main(["--yes", fname, "--encoding", "iso-8859-15"])
 
+    def test_main_exit_calls_version_check(self):
+        with GitTemporaryDirectory():
+            with (
+                patch("aider.main.check_version") as mock_check_version,
+                patch("aider.main.InputOutput") as mock_input_output,
+            ):
+                main(["--exit"], input=DummyInput(), output=DummyOutput())
+                mock_check_version.assert_called_once()
+                mock_input_output.assert_called_once()
+
     @patch("aider.main.InputOutput")
     @patch("aider.coders.base_coder.Coder.run")
     def test_main_message_adds_to_input_history(self, mock_run, MockInputOutput):
@@ -364,6 +375,67 @@ class TestMain(TestCase):
             self.assertRegex(relevant_output, r"AIDER_DARK_MODE:\s+on")
             self.assertRegex(relevant_output, r"dark_mode:\s+True")
 
+    def test_yaml_config_file_loading(self):
+        with GitTemporaryDirectory() as git_dir:
+            git_dir = Path(git_dir)
+
+            # Create fake home directory
+            fake_home = git_dir / "fake_home"
+            fake_home.mkdir()
+            os.environ["HOME"] = str(fake_home)
+
+            # Create subdirectory as current working directory
+            cwd = git_dir / "subdir"
+            cwd.mkdir()
+            os.chdir(cwd)
+
+            # Create .aider.conf.yml files in different locations
+            home_config = fake_home / ".aider.conf.yml"
+            git_config = git_dir / ".aider.conf.yml"
+            cwd_config = cwd / ".aider.conf.yml"
+            named_config = git_dir / "named.aider.conf.yml"
+
+            cwd_config.write_text("model: gpt-4-32k\nmap-tokens: 4096\n")
+            git_config.write_text("model: gpt-4\nmap-tokens: 2048\n")
+            home_config.write_text("model: gpt-3.5-turbo\nmap-tokens: 1024\n")
+            named_config.write_text("model: gpt-4-1106-preview\nmap-tokens: 8192\n")
+
+            with (
+                patch("pathlib.Path.home", return_value=fake_home),
+                patch("aider.coders.Coder.create") as MockCoder,
+            ):
+                # Test loading from specified config file
+                main(
+                    ["--yes", "--exit", "--config", str(named_config)],
+                    input=DummyInput(),
+                    output=DummyOutput(),
+                )
+                _, kwargs = MockCoder.call_args
+                self.assertEqual(kwargs["main_model"].name, "gpt-4-1106-preview")
+                self.assertEqual(kwargs["map_tokens"], 8192)
+
+                # Test loading from current working directory
+                main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
+                _, kwargs = MockCoder.call_args
+                print("kwargs:", kwargs)  # Add this line for debugging
+                self.assertIn("main_model", kwargs, "main_model key not found in kwargs")
+                self.assertEqual(kwargs["main_model"].name, "gpt-4-32k")
+                self.assertEqual(kwargs["map_tokens"], 4096)
+
+                # Test loading from git root
+                cwd_config.unlink()
+                main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
+                _, kwargs = MockCoder.call_args
+                self.assertEqual(kwargs["main_model"].name, "gpt-4")
+                self.assertEqual(kwargs["map_tokens"], 2048)
+
+                # Test loading from home directory
+                git_config.unlink()
+                main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
+                _, kwargs = MockCoder.call_args
+                self.assertEqual(kwargs["main_model"].name, "gpt-3.5-turbo")
+                self.assertEqual(kwargs["map_tokens"], 1024)
+
     def test_map_tokens_option(self):
         with GitTemporaryDirectory():
             with patch("aider.coders.base_coder.RepoMap") as MockRepoMap:
@@ -418,3 +490,27 @@ class TestMain(TestCase):
                 self.assertIn(real_external_file_path, coder.abs_read_only_fnames)
         finally:
             os.unlink(external_file_path)
+
+    def test_model_metadata_file(self):
+        with GitTemporaryDirectory():
+            metadata_file = Path(".aider.model.metadata.json")
+
+            # must be a fully qualified model name: provider/...
+            metadata_content = {"deepseek/deepseek-chat": {"max_input_tokens": 1234}}
+            metadata_file.write_text(json.dumps(metadata_content))
+
+            coder = main(
+                [
+                    "--model",
+                    "deepseek/deepseek-chat",
+                    "--model-metadata-file",
+                    str(metadata_file),
+                    "--exit",
+                    "--yes",
+                ],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+            )
+
+            self.assertEqual(coder.main_model.info["max_input_tokens"], 1234)

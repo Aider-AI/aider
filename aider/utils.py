@@ -44,7 +44,7 @@ class ChdirTemporaryDirectory(IgnorantTemporaryDirectory):
 
     def __enter__(self):
         res = super().__enter__()
-        os.chdir(self.temp_dir.name)
+        os.chdir(Path(self.temp_dir.name).resolve())
         return res
 
     def __exit__(self, exc_type, exc_val, exc_tb):

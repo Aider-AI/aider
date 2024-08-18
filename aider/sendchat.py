@@ -57,8 +57,11 @@ def send_completion(
         temperature=temperature,
         stream=stream,
     )
+
     if functions is not None:
-        kwargs["functions"] = functions
+        function = functions[0]
+        kwargs["tools"] = [dict(type="function", function=function)]
+        kwargs["tool_choice"] = {"type": "function", "function": {"name": function["name"]}}
     if extra_headers is not None:
         kwargs["extra_headers"] = extra_headers
     if max_tokens is not None:

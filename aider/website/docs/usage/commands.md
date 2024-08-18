@@ -29,6 +29,7 @@ cog.out(get_help_md())
 | **/lint** | Lint and fix provided files or in-chat files if none provided |
 | **/ls** | List all known files and indicate which are included in the chat session |
 | **/map** | Print out the current repository map |
+| **/map-refresh** | Force a refresh of the repository map and print it out |
 | **/model** | Switch to a new LLM |
 | **/models** | Search the list of available models |
 | **/quit** | Exit the application |
