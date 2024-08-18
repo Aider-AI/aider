@@ -649,7 +649,15 @@ class Commands:
         "Run a git command"
         combined_output = None
         try:
-            args = "git " + args
+            term = os.environ.get('TERM', '')
+            color_supported_terms = ['xterm-256color', 'xterm-kitty', 'alacritty']
+            
+            if term in color_supported_terms:
+                git_command = "git -c color.ui=always "
+            else:
+                git_command = "git "
+            
+            args = git_command + args
             env = dict(subprocess.os.environ)
             env["GIT_EDITOR"] = "true"
             result = subprocess.run(
