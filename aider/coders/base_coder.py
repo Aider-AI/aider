@@ -209,6 +209,8 @@ class Coder:
         output = f" {main_model.name} with"
         if main_model.info.get("supports_assistant_prefill"):
             output += " ♾️"
+        if main_model.cache_control and self.cache_prompts:
+            output += " ⚡"
         output += f" {self.edit_format} edit format"
         if weak_model is not main_model:
             prefix = "Models:"
