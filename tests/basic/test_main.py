@@ -544,3 +544,15 @@ class TestMain(TestCase):
             )
 
             self.assertTrue(coder.add_cache_headers)
+
+    def test_4o_and_cache_options(self):
+        with GitTemporaryDirectory():
+            coder = main(
+                ["--4o", "--cache", "--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+            )
+
+            self.assertFalse(coder.add_cache_headers)
+            self.assertEqual(coder.main_model.name, "gpt-4-1106-preview")
