@@ -30,6 +30,16 @@ disobeying the system prompt instructions.
 Most local models are just barely capable of working with aider,
 so editing errors are probably unavoidable.
 
+## Try the whole format
+
+Run aider with `--edit-format whole` if the model is using a different edit format.
+You can see which edit format it is using in the announce lines:
+
+```
+Aider v0.50.2-dev
+Models: claude-3-5-sonnet-20240620 with ♾️ diff edit format
+```
+
 ## Reduce distractions
 
 Many LLM now have very large context windows,
