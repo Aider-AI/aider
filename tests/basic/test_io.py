@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from aider.io import AutoCompleter, InputOutput
+from aider.input_output import AutoCompleter, InputOutput
 from aider.utils import ChdirTemporaryDirectory
 
 

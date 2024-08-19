@@ -117,13 +117,14 @@ These changes will make the software check for the `NO_COLOR` environment variab
 To add a test for the `NO_COLOR` environment variable, we will create a new test function in the `tests/test_io.py` file. Since this file does not exist, we will create it first.
 
 ```python
-tests/test_io.py
-<<<<<<< ORIGINAL
-=======
+tests / test_io.py
+<< << << < ORIGINAL
+== == == =
 import os
 import unittest
 from unittest.mock import patch
-from aider.io import InputOutput
+from aider.input_output import InputOutput
+
 
 class TestInputOutput(unittest.TestCase):
     def test_no_color_environment_variable(self):
@@ -131,9 +132,10 @@ class TestInputOutput(unittest.TestCase):
             io = InputOutput()
             self.assertFalse(io.pretty)
 
+
 if __name__ == "__main__":
     unittest.main()
->>>>>>> UPDATED
+>> >> >> > UPDATED
 ```
 
 This test function checks if the `pretty` attribute of the `InputOutput` class is set to `False` when the `NO_COLOR` environment variable is set.

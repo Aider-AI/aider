@@ -8,7 +8,7 @@ import git
 
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
-from aider.io import InputOutput
+from aider.input_output import InputOutput
 from aider.models import Model
 from aider.repo import GitRepo
 from aider.utils import GitTemporaryDirectory

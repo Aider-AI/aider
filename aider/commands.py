@@ -392,7 +392,59 @@ class Commands:
         self.io.tool_output(f"{cost_pad}{fmt(limit)} tokens max context window size")
 
     def cmd_undo(self, args):
-        "Undo the last git commit if it was done by aider"
+        "Undo last git commit if it's done by aider; undo last prompt & changes if --no-auto-commit is enabled"
+
+        if not self.coder.auto_commit:
+            state = self.coder.pop_undo_state()
+            if state is None:
+                self.io.tool_error("No more actions to undo.")
+                return
+
+            chat_history, cur_messages, file_contents = state
+            self.coder.done_messages = chat_history
+            self.coder.cur_messages = cur_messages
+
+            for fname, content in file_contents.items():
+                if content is None or content == '' or content == {str}:
+                    rel_fname = self.coder.get_rel_fname(fname)
+
+                    # This file was created during the last prompt, so we should delete it
+                    if rel_fname in self.coder.created_by_aider:
+                        try:
+                            # Use drop_rel_fname to drop the deleted file
+                            self.coder.drop_rel_fname(rel_fname)
+
+                            # Remove the file from git and untrack it
+                            if self.coder.repo:
+                                self.coder.repo.remove_file_from_tracking(rel_fname)
+
+                            if os.path.exists(fname):
+                                os.remove(fname)
+                                self.io.tool_output(f"Deleted file: {fname}")
+
+                                # Recursively delete empty parent directories
+                                parent_dir = os.path.dirname(fname)
+                                while parent_dir and parent_dir != self.coder.root:
+                                    if not os.listdir(parent_dir):
+                                        os.rmdir(parent_dir)
+                                        parent_dir = os.path.dirname(parent_dir)
+                                    else:
+                                        break
+                            else:
+                                self.io.tool_output(f"File {fname} was already deleted.")
+
+                            # Remove the file from the created_by_aider set
+                            self.coder.created_by_aider.remove(rel_fname)
+
+                        except OSError as e:
+                            self.io.tool_error(f"Error deleting file or directory: {e}")
+                else:
+                    with open(fname, 'w') as f:
+                        f.write(content)
+
+            self.io.tool_output("Undid the last prompt and its changes.")
+            return
+
         if not self.coder.repo:
             self.io.tool_error("No git repository found.")
             return

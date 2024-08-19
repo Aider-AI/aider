@@ -26,7 +26,7 @@ from rich.console import Console
 from aider import models
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
-from aider.io import InputOutput
+from aider.input_output import InputOutput
 
 BENCHMARK_DNAME = Path(os.environ.get("AIDER_BENCHMARK_DIR", "tmp.benchmarks"))
 

@@ -27,7 +27,7 @@ from rich.markdown import Markdown
 from aider import __version__, models, prompts, urls, utils
 from aider.commands import Commands
 from aider.history import ChatSummary
-from aider.io import InputOutput
+from aider.input_output import InputOutput
 from aider.linter import Linter
 from aider.llm import litellm
 from aider.mdstream import MarkdownStream
@@ -130,6 +130,9 @@ class Coder:
     message_cost = 0.0
     message_tokens_sent = 0
     message_tokens_received = 0
+    undo_stack = None
+    auto_commit = True
+    created_by_aider = set()
 
     @classmethod
     def create(
@@ -289,6 +292,8 @@ class Coder:
         map_refresh="auto",
         cache_prompts=False,
     ):
+        self.undo_stack = []
+        self.auto_commit = auto_commits
         self.commit_before_message = []
         self.aider_commit_hashes = set()
         self.rejected_urls = set()
@@ -766,6 +771,30 @@ class Coder:
                     self.keyboard_interrupt()
         except EOFError:
             return
+
+    def push_undo_state(self):
+        done_messages = list(self.done_messages)
+        cur_messages = list(self.cur_messages)
+        file_contents = {}
+        for fname in self.abs_fnames:
+            if os.path.exists(fname):
+                with open(fname, 'r') as f:
+                    file_contents[fname] = f.read()
+            else:
+                file_contents[fname] = None  # Indicate that the file doesn't exist yet
+
+        if not self.undo_stack:
+            self.undo_stack.append(([], [], file_contents))
+        else:
+            if cur_messages and len(cur_messages) > 1:
+                self.undo_stack.append((done_messages, cur_messages, file_contents))
+            else:
+                self.undo_stack.append((done_messages, [], file_contents))
+
+    def pop_undo_state(self):
+        if not self.undo_stack:
+            return None
+        return self.undo_stack.pop()
 
     def get_input(self):
         inchat_files = self.get_inchat_relative_files()
@@ -1622,6 +1651,7 @@ class Coder:
                     self.repo.repo.git.add(full_path)
 
             self.abs_fnames.add(full_path)
+            self.created_by_aider.add(path)
             self.check_added_files()
             return True
 
@@ -1692,6 +1722,9 @@ class Coder:
     def update_files(self):
         edits = self.get_edits()
         edits = self.prepare_to_edit(edits)
+
+        self.push_undo_state()
+
         self.apply_edits(edits)
         return set(edit[0] for edit in edits)
 
