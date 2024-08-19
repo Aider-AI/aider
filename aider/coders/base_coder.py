@@ -66,8 +66,8 @@ class ChatChunks:
         return (
             self.system
             + self.examples
-            + self.repo
             + self.readonly_files
+            + self.repo
             + self.done
             + self.chat_files
             + self.cur
@@ -130,6 +130,7 @@ class Coder:
     message_cost = 0.0
     message_tokens_sent = 0
     message_tokens_received = 0
+    add_cache_headers = False
 
     @classmethod
     def create(
@@ -205,18 +206,22 @@ class Coder:
         # Model
         main_model = self.main_model
         weak_model = main_model.weak_model
-        prefix = "Model:"
-        output = f" {main_model.name}"
-        if main_model.cache_control and self.cache_prompts:
-            output += "⚡"
-        output += " with"
-        if main_model.info.get("supports_assistant_prefill"):
-            output += " ♾️"
-        output += f" {self.edit_format} edit format"
+
         if weak_model is not main_model:
-            prefix = "Models:"
-            output += f", weak model {weak_model.name}"
-        lines.append(prefix + output)
+            prefix = "Main model"
+        else:
+            prefix = "Model"
+
+        output = f"{prefix}: {main_model.name} with {self.edit_format} edit format"
+        if self.add_cache_headers:
+            output += ", prompt cache"
+        if main_model.info.get("supports_assistant_prefill"):
+            output += ", infinite output"
+        lines.append(output)
+
+        if weak_model is not main_model:
+            output = f"Weak model: {weak_model.name}"
+            lines.append(output)
 
         # Repo
         if self.repo:
@@ -293,7 +298,6 @@ class Coder:
         self.aider_commit_hashes = set()
         self.rejected_urls = set()
         self.abs_root_path_cache = {}
-        self.cache_prompts = cache_prompts
 
         if not fnames:
             fnames = []
@@ -346,6 +350,9 @@ class Coder:
             self.console = Console(force_terminal=False, no_color=True)
 
         self.main_model = main_model
+
+        if cache_prompts and self.main_model.cache_control:
+            self.add_cache_headers = True
 
         self.show_diffs = show_diffs
 
@@ -916,12 +923,8 @@ class Coder:
         if user_lang:
             platform_text += f"- Language: {user_lang}\n"
 
-        if self.cache_prompts:
-            dt = datetime.now().astimezone().strftime("%Y-%m-%d")
-            platform_text += f"- Current date: {dt}"
-        else:
-            dt = datetime.now().astimezone().strftime("%Y-%m-%dT%H:%M:%S%z")
-            platform_text += f"- Current date/time: {dt}"
+        dt = datetime.now().astimezone().strftime("%Y-%m-%d")
+        platform_text += f"- Current date: {dt}"
 
         prompt = prompt.format(
             fence=self.fence,
@@ -1027,7 +1030,7 @@ class Coder:
 
     def format_messages(self):
         chunks = self.format_chat_chunks()
-        if self.cache_prompts and self.main_model.cache_control:
+        if self.add_cache_headers:
             chunks.add_cache_control_headers()
 
         msgs = chunks.all_messages()
@@ -1476,6 +1479,7 @@ class Coder:
         cost = 0
 
         if completion and hasattr(completion, "usage") and completion.usage is not None:
+            dump(completion.usage)
             prompt_tokens = completion.usage.prompt_tokens
             completion_tokens = completion.usage.completion_tokens
             cached_tokens = getattr(completion.usage, "prompt_cache_hit_tokens", 0) or getattr(
