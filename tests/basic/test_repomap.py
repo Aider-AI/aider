@@ -137,7 +137,9 @@ class TestRepoMap(unittest.TestCase):
 
             # Get another repo map without force_refresh
             second_map = repo_map.get_repo_map(chat_files, other_files)
-            self.assertEqual(initial_map, second_map, "RepoMap should not change without force_refresh")
+            self.assertEqual(
+                initial_map, second_map, "RepoMap should not change without force_refresh"
+            )
 
             # Get a new repo map with force_refresh
             final_map = repo_map.get_repo_map(chat_files, other_files, force_refresh=True)
