@@ -533,3 +533,15 @@ class TestMain(TestCase):
                 self.assertEqual(
                     call_kwargs.get("refresh"), "files"
                 )  # Check the 'refresh' keyword argument
+
+    def test_sonnet_and_cache_prompts_options(self):
+        with GitTemporaryDirectory():
+            coder = main(
+                ["--sonnet", "--cache-prompts", "--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+            )
+
+            self.assertTrue(coder.add_cache_headers)
+            self.assertEqual(coder.main_model.name, "gpt-4-1106-preview")
