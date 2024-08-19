@@ -519,6 +519,7 @@ class TestMain(TestCase):
         with GitTemporaryDirectory():
             with patch("aider.coders.base_coder.RepoMap") as MockRepoMap:
                 mock_repo_map = MagicMock()
+                mock_repo_map.max_map_tokens = 1000  # Set a specific value
                 MockRepoMap.return_value = mock_repo_map
 
                 main(
