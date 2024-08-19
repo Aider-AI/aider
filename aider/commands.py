@@ -517,6 +517,37 @@ class Commands:
         if self.coder.main_model.send_undo_reply:
             return prompts.undo_command_reply
 
+    def cmd_redo(self, args):
+        "Redo the last undone action (only works in --no-auto-commit mode)"
+
+        if self.coder.auto_commit:
+            self.io.tool_error("Redo is only available in --no-auto-commit mode.")
+            return
+
+        if not self.coder.redo_stack:
+            self.io.tool_error("No actions to redo.")
+            return
+
+        state = self.coder.redo_stack.pop()
+        chat_history, cur_messages, file_contents = state
+
+        # Push the current state to the undo stack
+        self.coder.push_undo_state()
+
+        self.coder.done_messages = chat_history
+        self.coder.cur_messages = cur_messages
+
+        for fname, content in file_contents.items():
+            if content is None:
+                if os.path.exists(fname):
+                    os.remove(fname)
+                    self.io.tool_output(f"Deleted file: {fname}")
+            else:
+                with open(fname, 'w') as f:
+                    f.write(content)
+
+        self.io.tool_output("Redid the last undone action.")
+
     def cmd_diff(self, args=""):
         "Display the diff of changes since the last message"
         if not self.coder.repo:

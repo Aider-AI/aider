@@ -77,6 +77,7 @@ class Coder:
     message_tokens_sent = 0
     message_tokens_received = 0
     undo_stack = None
+    redo_stack = None
     auto_commit = True
     created_by_aider = set()
 
@@ -233,6 +234,7 @@ class Coder:
         total_cost=0.0,
     ):
         self.undo_stack = []
+        self.redo_stack = []
         self.auto_commit = auto_commits
         self.commit_before_message = []
         self.aider_commit_hashes = set()
@@ -720,11 +722,20 @@ class Coder:
                 self.undo_stack.append((done_messages, cur_messages, file_contents))
             else:
                 self.undo_stack.append((done_messages, [], file_contents))
+        
+        # Clear the redo stack when a new action is performed
+        self.redo_stack.clear()
 
     def pop_undo_state(self):
         if not self.undo_stack:
             return None
-        return self.undo_stack.pop()
+        state = self.undo_stack.pop()
+        self.redo_stack.append((
+            list(self.done_messages),
+            list(self.cur_messages),
+            {fname: self.io.read_text(fname) for fname in self.abs_fnames}
+        ))
+        return state
 
     def get_input(self):
         inchat_files = self.get_inchat_relative_files()
