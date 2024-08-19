@@ -192,12 +192,12 @@ Max number of tokens to use for repo map, use 0 to disable (default: 1024)
 Environment variable: `AIDER_MAP_TOKENS`  
 
 ### `--map-refresh VALUE`
-Control when the repo map is refreshed (default: auto)  
+Control how often the repo map is refreshed (default: auto)  
 Default: auto  
 Environment variable: `AIDER_MAP_REFRESH`  
 
 ### `--cache-prompts`
-Enable caching of prompts (forces map_refresh='files') (default: False)  
+Enable caching of prompts (default: False)  
 Default: False  
 Environment variable: `AIDER_CACHE_PROMPTS`  
 Aliases:

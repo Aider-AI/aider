@@ -131,10 +131,10 @@ cog.outl("```")
 ## Max number of tokens to use for repo map, use 0 to disable (default: 1024)
 #map-tokens:
 
-## Control when the repo map is refreshed (default: auto)
+## Control how often the repo map is refreshed (default: auto)
 #map-refresh: auto
 
-## Enable caching of prompts (forces map_refresh='files') (default: False)
+## Enable caching of prompts (default: False)
 #cache-prompts: false
 
 ## Maximum number of tokens to use for chat history. If not specified, uses the model's max_chat_history_tokens.

@@ -18,8 +18,18 @@ cog.out(text)
 
 ### main branch
 
+- Prompt caching for Anthropic models with `--cache-prompts`.
+  - Caches the system prompt, repo map and `/read-only` files.
+- Repo map recomputes less often in large/mono repos or when caching enabled.
+  - Use `--map-refresh <always|files|manual|auto>` to configure.
+- Improved cost estimate logic for caching.
 - Improved editing performance on Jupyter Notebook `.ipynb` files.
-- Work around litellm tokenizer bug for images.
+- Show which config yaml file is loaded with `--verbose`.
+- Bumped dependency versions.
+- Bugfix: properly load `.aider.models.metadata.json` data.
+- Bugfix: Using `--msg /ask ...` caused an exception.
+- Bugfix: litellm tokenizer bug for images.
+- Aider wrote 55% of the code in this release.
 
 ### Aider v0.50.1
 

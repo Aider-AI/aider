@@ -33,7 +33,7 @@ cog.out(get_help_md())
 | **/model** | Switch to a new LLM |
 | **/models** | Search the list of available models |
 | **/quit** | Exit the application |
-| **/read** | Add a file to the chat that is for reference, not to be edited |
+| **/read-only** | Add a file to the chat that is for reference, not to be edited |
 | **/run** | Run a shell command and optionally add the output to the chat (alias: !) |
 | **/test** | Run a shell command and add the output to the chat on non-zero exit code |
 | **/tokens** | Report on the number of tokens used by the current chat context |
