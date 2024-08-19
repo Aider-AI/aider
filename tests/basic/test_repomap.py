@@ -40,6 +40,54 @@ class TestRepoMap(unittest.TestCase):
             # close the open cache files, so Windows won't error
             del repo_map
 
+    def test_repo_map_refresh_files(self):
+        with IgnorantTemporaryDirectory() as temp_dir:
+            # Create a small git repo
+            os.system(f"git init {temp_dir}")
+
+            # Create two source files with one function each
+            file1_content = "def function1():\n    return 'Hello from file1'\n"
+            file2_content = "def function2():\n    return 'Hello from file2'\n"
+
+            with open(os.path.join(temp_dir, "file1.py"), "w") as f:
+                f.write(file1_content)
+            with open(os.path.join(temp_dir, "file2.py"), "w") as f:
+                f.write(file2_content)
+
+            # Add files to git
+            os.system(f"cd {temp_dir} && git add . && git commit -m 'Initial commit'")
+
+            # Initialize RepoMap with refresh="files" and one source file
+            io = InputOutput()
+            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io, refresh="files")
+            chat_files = [os.path.join(temp_dir, "file1.py")]
+            other_files = [os.path.join(temp_dir, "file2.py")]
+
+            # Get initial repo map
+            initial_map = repo_map.get_repo_map(chat_files, other_files)
+            self.assertIn("function1", initial_map)
+            self.assertNotIn("function2", initial_map)
+
+            # Add a 2nd function to file1.py
+            with open(os.path.join(temp_dir, "file1.py"), "a") as f:
+                f.write("\ndef function3():\n    return 'Hello from function3'\n")
+
+            # Get another repo map
+            second_map = repo_map.get_repo_map(chat_files, other_files)
+            self.assertEqual(initial_map, second_map, "RepoMap should not change without refresh")
+
+            # Add the 2nd file to the chat
+            chat_files.append(os.path.join(temp_dir, "file2.py"))
+
+            # Get a new repo map
+            final_map = repo_map.get_repo_map(chat_files, [])
+            self.assertIn("function1", final_map)
+            self.assertIn("function2", final_map)
+            self.assertIn("function3", final_map)
+
+            # close the open cache files, so Windows won't error
+            del repo_map
+
     def test_get_repo_map_with_identifiers(self):
         # Create a temporary directory with a sample Python file containing identifiers
         test_file1 = "test_file_with_identifiers.py"
