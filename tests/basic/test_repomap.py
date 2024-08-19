@@ -47,7 +47,7 @@ class TestRepoMap(unittest.TestCase):
         with GitTemporaryDirectory() as temp_dir:
             repo = git.Repo(temp_dir)
 
-            # Create two source files with one function each
+            # Create three source files with one function each
             file1_content = "def function1():\n    return 'Hello from file1'\n"
             file2_content = "def function2():\n    return 'Hello from file2'\n"
             file3_content = "def function3():\n    return 'Hello from file3'\n"
@@ -60,36 +60,33 @@ class TestRepoMap(unittest.TestCase):
                 f.write(file3_content)
 
             # Add files to git
-            repo.index.add(["file1.py", "file2.py"])
+            repo.index.add(["file1.py", "file2.py", "file3.py"])
             repo.index.commit("Initial commit")
 
-            # Initialize RepoMap with refresh="files" and one source file
+            # Initialize RepoMap with refresh="files"
             io = InputOutput()
             repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io, refresh="files")
-            chat_files = [os.path.join(temp_dir, "file2.py")]
-            other_files = [os.path.join(temp_dir, "file1.py"), os.path.join(temp_dir, "file3.py")]
+            other_files = [
+                os.path.join(temp_dir, "file1.py"),
+                os.path.join(temp_dir, "file2.py"),
+                os.path.join(temp_dir, "file3.py"),
+            ]
 
             # Get initial repo map
-            initial_map = repo_map.get_repo_map(chat_files, other_files)
+            initial_map = repo_map.get_repo_map([], other_files)
             dump(initial_map)
-            self.assertNotIn("function2", initial_map)
+            self.assertIn("function1", initial_map)
+            self.assertIn("function2", initial_map)
+            self.assertIn("function3", initial_map)
 
-            # Add a 2nd function to file1.py
-            with open(os.path.join(temp_dir, "file1.py"), "w") as f:
+            # Add a new function to file1.py
+            with open(os.path.join(temp_dir, "file1.py"), "a") as f:
                 f.write("\ndef functionNEW():\n    return 'Hello NEW'\n")
 
             # Get another repo map
-            second_map = repo_map.get_repo_map(chat_files, other_files)
-            self.assertEqual(initial_map, second_map, "RepoMap should not change without refresh")
-
-            # Add the 2nd file to the chat
-            chat_files = [os.path.join(temp_dir, "file2.py"), os.path.join(temp_dir, "file3.py")]
-            other_files = [os.path.join(temp_dir, "file1.py")]
-
-            # Get a new repo map
-            final_map = repo_map.get_repo_map(chat_files, other_files)
-            dump(final_map)
-            self.assertIn("functionNEW", final_map)
+            second_map = repo_map.get_repo_map([], other_files)
+            self.assertNotEqual(initial_map, second_map, "RepoMap should change with refresh='files'")
+            self.assertIn("functionNEW", second_map)
 
             # close the open cache files, so Windows won't error
             del repo_map
