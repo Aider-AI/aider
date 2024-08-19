@@ -102,7 +102,7 @@ class GitRepo:
 
         original_user_name = self.repo.config_reader().get_value("user", "name")
         original_committer_name_env = os.environ.get("GIT_COMMITTER_NAME")
-        committer_name = f"{original_user_name} (aider)"
+        committer_name = f"{original_user_name} (wx-coder)"
 
         if self.attribute_committer:
             os.environ["GIT_COMMITTER_NAME"] = committer_name

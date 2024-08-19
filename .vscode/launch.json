@@ -19,8 +19,11 @@
         // "--map-tokens",
         // "5000",
         "-v",
-        "--no-stream",
-        "--show-diff"
+        // "--no-stream",
+        // "--auto-test",
+        // "--no-auto-commits",
+        "--show-diff",
+        "--yes"
       ],
       "env": {
         "PYTHONPATH":"${workspaceFolder}"

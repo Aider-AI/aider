@@ -332,10 +332,10 @@ class Commands:
 
         last_commit = self.coder.repo.repo.head.commit
         if (
-            not last_commit.author.name.endswith(" (aider)")
+            not last_commit.author.name.endswith(" (wx-coder)")
             or last_commit.hexsha[:7] != self.coder.last_aider_commit_hash
         ):
-            self.io.tool_error("The last commit was not made by aider in this chat session.")
+            self.io.tool_error("The last commit was not made by wx-coder in this chat session.")
             self.io.tool_error(
                 "You could try `/git reset --hard HEAD^` but be aware that this is a destructive"
                 " command!"
