@@ -1479,7 +1479,6 @@ class Coder:
         cache_write_tokens = 0
 
         if completion and hasattr(completion, "usage") and completion.usage is not None:
-            dump(completion.usage)
             prompt_tokens = completion.usage.prompt_tokens
             completion_tokens = completion.usage.completion_tokens
             cache_hit_tokens = getattr(completion.usage, "prompt_cache_hit_tokens", 0) or getattr(
