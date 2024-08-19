@@ -527,3 +527,5 @@ class TestMain(TestCase):
                     input=DummyInput(),
                     output=DummyOutput(),
                 )
+
+                MockRepoMap.assert_called_once_with(refresh="files")
