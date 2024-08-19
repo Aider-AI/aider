@@ -321,7 +321,7 @@ class TestRepoMapAllLanguages(unittest.TestCase):
                 "test.js",
                 "function greet(name) {\n    console.log(`Hello, ${name}!`);\n}\n",
             ),
-            "ocaml": ("test.ml", "let greet name =\n  Printf.printf \"Hello, %s!\\n\" name\n"),
+            "ocaml": ("test.ml", 'let greet name =\n  Printf.printf "Hello, %s!\\n" name\n'),
             "php": (
                 "test.php",
                 '<?php\nfunction greet($name) {\n    echo "Hello, $name!";\n}\n?>\n',
