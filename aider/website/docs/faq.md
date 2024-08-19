@@ -122,3 +122,18 @@ You can also refer to the
 [instructions for installing a development version of aider](https://aider.chat/docs/install/optional.html#install-the-development-version-of-aider).
 
 
+## Can I share my aider chat transcript?
+
+Yes, you can now share aider chat logs in a pretty way.
+
+1. Copy the markdown logs you want to share from `.aider.chat.history.md` and make a github gist. Or publish the raw markdown logs on the web any way you'd like.
+
+https://gist.github.com/paul-gauthier/2087ab8b64034a078c0a209440ac8be0
+
+2. Take the gist URL and append it to:
+
+https://aider.chat/share/?mdurl=
+
+This will give you a URL like this, which shows the chat history like you'd see in a terminal:
+
+https://aider.chat/share/?mdurl=https://gist.github.com/paul-gauthier/2087ab8b64034a078c0a209440ac8be0
