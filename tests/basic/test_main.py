@@ -514,3 +514,17 @@ class TestMain(TestCase):
             )
 
             self.assertEqual(coder.main_model.info["max_input_tokens"], 1234)
+
+    def test_sonnet_and_cache_options(self):
+        with GitTemporaryDirectory():
+            with patch("aider.coders.base_coder.RepoMap") as MockRepoMap:
+                mock_repo_map = MagicMock()
+                MockRepoMap.return_value = mock_repo_map
+
+                main(
+                    ["--sonnet", "--cache", "--exit", "--yes"],
+                    input=DummyInput(),
+                    output=DummyOutput(),
+                )
+
+                mock_repo_map.refresh.assert_called_once_with("files")
