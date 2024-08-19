@@ -507,7 +507,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         args.max_chat_history_tokens or main_model.max_chat_history_tokens,
     )
 
-    if args.cache_prompts:
+    if args.cache_prompts and args.map_refresh == "auto":
         args.map_refresh = "files"
 
     try:
