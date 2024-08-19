@@ -85,9 +85,15 @@ class TestRepoMap(unittest.TestCase):
 
             # Get another repo map
             second_map = repo_map.get_repo_map([], other_files)
-            self.assertNotEqual(
-                initial_map, second_map, "RepoMap should change with refresh='files'"
+            self.assertEqual(
+                initial_map, second_map, "RepoMap should not change with refresh='files'"
             )
+
+            other_files = [
+                os.path.join(temp_dir, "file1.py"),
+                os.path.join(temp_dir, "file2.py"),
+            ]
+            second_map = repo_map.get_repo_map([], other_files)
             self.assertIn("functionNEW", second_map)
 
             # close the open cache files, so Windows won't error
