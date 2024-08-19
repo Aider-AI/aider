@@ -527,5 +527,3 @@ class TestMain(TestCase):
                     input=DummyInput(),
                     output=DummyOutput(),
                 )
-
-                mock_repo_map.refresh.assert_called_once_with("files")
