@@ -1,11 +1,13 @@
 import os
 import unittest
 
+import git
+
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.models import Model
 from aider.repomap import RepoMap
-from aider.utils import IgnorantTemporaryDirectory
+from aider.utils import GitTemporaryDirectory, IgnorantTemporaryDirectory
 
 
 class TestRepoMap(unittest.TestCase):
@@ -41,9 +43,8 @@ class TestRepoMap(unittest.TestCase):
             del repo_map
 
     def test_repo_map_refresh_files(self):
-        with IgnorantTemporaryDirectory() as temp_dir:
-            # Create a small git repo
-            os.system(f"git init {temp_dir}")
+        with GitTemporaryDirectory() as temp_dir:
+            repo = git.Repo(temp_dir)
 
             # Create two source files with one function each
             file1_content = "def function1():\n    return 'Hello from file1'\n"
@@ -55,7 +56,8 @@ class TestRepoMap(unittest.TestCase):
                 f.write(file2_content)
 
             # Add files to git
-            os.system(f"cd {temp_dir} && git add . && git commit -m 'Initial commit'")
+            repo.index.add(["file1.py", "file2.py"])
+            repo.index.commit("Initial commit")
 
             # Initialize RepoMap with refresh="files" and one source file
             io = InputOutput()
