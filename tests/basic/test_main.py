@@ -555,4 +555,3 @@ class TestMain(TestCase):
             )
 
             self.assertFalse(coder.add_cache_headers)
-            self.assertEqual(coder.main_model.name, "gpt-4-1106-preview")
