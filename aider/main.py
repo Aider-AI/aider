@@ -608,7 +608,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.message:
         io.add_to_input_history(args.message)
         io.tool_output()
-        coder.run(with_message=args.message)
+        try:
+            coder.run(with_message=args.message)
+        except SwitchCoder:
+            pass
         return
 
     if args.message_file:
