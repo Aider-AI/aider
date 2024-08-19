@@ -93,6 +93,60 @@ class TestRepoMap(unittest.TestCase):
             # close the open cache files, so Windows won't error
             del repo_map
 
+    def test_repo_map_refresh_auto(self):
+        with GitTemporaryDirectory() as temp_dir:
+            repo = git.Repo(temp_dir)
+
+            # Create two source files with one function each
+            file1_content = "def function1():\n    return 'Hello from file1'\n"
+            file2_content = "def function2():\n    return 'Hello from file2'\n"
+
+            with open(os.path.join(temp_dir, "file1.py"), "w") as f:
+                f.write(file1_content)
+            with open(os.path.join(temp_dir, "file2.py"), "w") as f:
+                f.write(file2_content)
+
+            # Add files to git
+            repo.index.add(["file1.py", "file2.py"])
+            repo.index.commit("Initial commit")
+
+            # Initialize RepoMap with refresh="auto"
+            io = InputOutput()
+            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io, refresh="auto")
+            chat_files = []
+            other_files = [os.path.join(temp_dir, "file1.py"), os.path.join(temp_dir, "file2.py")]
+
+            # Force the RepoMap computation to take more than 1 second
+            original_get_ranked_tags = repo_map.get_ranked_tags
+
+            def slow_get_ranked_tags(*args, **kwargs):
+                time.sleep(1.1)  # Sleep for 1.1 seconds to ensure it's over 1 second
+                return original_get_ranked_tags(*args, **kwargs)
+
+            repo_map.get_ranked_tags = slow_get_ranked_tags
+
+            # Get initial repo map
+            initial_map = repo_map.get_repo_map(chat_files, other_files)
+            self.assertIn("function1", initial_map)
+            self.assertIn("function2", initial_map)
+            self.assertNotIn("functionNEW", initial_map)
+
+            # Add a new function to file1.py
+            with open(os.path.join(temp_dir, "file1.py"), "a") as f:
+                f.write("\ndef functionNEW():\n    return 'Hello NEW'\n")
+
+            # Get another repo map without force_refresh
+            second_map = repo_map.get_repo_map(chat_files, other_files)
+            self.assertEqual(initial_map, second_map, "RepoMap should not change without force_refresh")
+
+            # Get a new repo map with force_refresh
+            final_map = repo_map.get_repo_map(chat_files, other_files, force_refresh=True)
+            self.assertIn("functionNEW", final_map)
+            self.assertNotEqual(initial_map, final_map, "RepoMap should change with force_refresh")
+
+            # close the open cache files, so Windows won't error
+            del repo_map
+
     def test_get_repo_map_with_identifiers(self):
         # Create a temporary directory with a sample Python file containing identifiers
         test_file1 = "test_file_with_identifiers.py"
