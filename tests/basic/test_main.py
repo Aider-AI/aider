@@ -516,7 +516,7 @@ class TestMain(TestCase):
             self.assertEqual(coder.main_model.info["max_input_tokens"], 1234)
 
     def test_sonnet_and_cache_options(self):
-        with GitTemporaryDirectory() as temp_dir:
+        with GitTemporaryDirectory():
             with patch("aider.coders.base_coder.RepoMap") as MockRepoMap:
                 mock_repo_map = MagicMock()
                 mock_repo_map.max_map_tokens = 1000  # Set a specific value
