@@ -532,12 +532,13 @@ class RepoMap:
     tree_cache = dict()
 
     def render_tree(self, abs_fname, rel_fname, lois):
-        key = (rel_fname, tuple(sorted(lois)))
+        mtime = self.get_mtime(abs_fname)
+        key = (rel_fname, tuple(sorted(lois)), mtime)
 
         if key in self.tree_cache:
             return self.tree_cache[key]
 
-        if rel_fname not in self.tree_context_cache:
+        if rel_fname not in self.tree_context_cache or self.tree_context_cache[rel_fname]['mtime'] != mtime:
             code = self.io.read_text(abs_fname) or ""
             if not code.endswith("\n"):
                 code += "\n"
@@ -555,9 +556,9 @@ class RepoMap:
                 # header_max=30,
                 show_top_of_file_parent_scope=False,
             )
-            self.tree_context_cache[rel_fname] = context
+            self.tree_context_cache[rel_fname] = {'context': context, 'mtime': mtime}
 
-        context = self.tree_context_cache[rel_fname]
+        context = self.tree_context_cache[rel_fname]['context']
         context.lines_of_interest = set()
         context.add_lines_of_interest(lois)
         context.add_context()
