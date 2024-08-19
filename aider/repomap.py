@@ -538,7 +538,10 @@ class RepoMap:
         if key in self.tree_cache:
             return self.tree_cache[key]
 
-        if rel_fname not in self.tree_context_cache or self.tree_context_cache[rel_fname]['mtime'] != mtime:
+        if (
+            rel_fname not in self.tree_context_cache
+            or self.tree_context_cache[rel_fname]["mtime"] != mtime
+        ):
             code = self.io.read_text(abs_fname) or ""
             if not code.endswith("\n"):
                 code += "\n"
@@ -556,9 +559,9 @@ class RepoMap:
                 # header_max=30,
                 show_top_of_file_parent_scope=False,
             )
-            self.tree_context_cache[rel_fname] = {'context': context, 'mtime': mtime}
+            self.tree_context_cache[rel_fname] = {"context": context, "mtime": mtime}
 
-        context = self.tree_context_cache[rel_fname]['context']
+        context = self.tree_context_cache[rel_fname]["context"]
         context.lines_of_interest = set()
         context.add_lines_of_interest(lois)
         context.add_context()
