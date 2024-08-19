@@ -17,6 +17,8 @@ class LazyLiteLLM:
     _lazy_module = None
 
     def __getattr__(self, name):
+        if name == "_lazy_module":
+            return super()
         self._load_litellm()
         return getattr(self._lazy_module, name)
 

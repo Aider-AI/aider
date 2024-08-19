@@ -451,16 +451,17 @@ class Model:
             self.get_weak_model(weak_model)
 
     def get_model_info(self, model):
-        # Try and do this quickly, without triggering the litellm import
-        spec = importlib.util.find_spec("litellm")
-        if spec:
-            origin = Path(spec.origin)
-            fname = origin.parent / "model_prices_and_context_window_backup.json"
-            if fname.exists():
-                data = json.loads(fname.read_text())
-                info = data.get(model)
-                if info:
-                    return info
+        if not litellm._lazy_module:
+            # Try and do this quickly, without triggering the litellm import
+            spec = importlib.util.find_spec("litellm")
+            if spec:
+                origin = Path(spec.origin)
+                fname = origin.parent / "model_prices_and_context_window_backup.json"
+                if fname.exists():
+                    data = json.loads(fname.read_text())
+                    info = data.get(model)
+                    if info:
+                        return info
 
         # Do it the slow way...
         try:
@@ -670,6 +671,7 @@ def register_litellm_models(model_fnames):
         try:
             with open(model_fname, "r") as model_def_file:
                 model_def = json.load(model_def_file)
+            litellm._load_litellm()
             litellm.register_model(model_def)
         except Exception as e:
             raise Exception(f"Error loading model definition from {model_fname}: {e}")
