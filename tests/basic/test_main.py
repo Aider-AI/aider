@@ -516,7 +516,7 @@ class TestMain(TestCase):
             self.assertEqual(coder.main_model.info["max_input_tokens"], 1234)
 
     def test_sonnet_and_cache_options(self):
-        with GitTemporaryDirectory():
+        with GitTemporaryDirectory() as temp_dir:
             with patch("aider.coders.base_coder.RepoMap") as MockRepoMap:
                 mock_repo_map = MagicMock()
                 mock_repo_map.max_map_tokens = 1000  # Set a specific value
@@ -528,4 +528,8 @@ class TestMain(TestCase):
                     output=DummyOutput(),
                 )
 
-                MockRepoMap.assert_called_once_with(refresh="files")
+                MockRepoMap.assert_called_once()
+                call_args, call_kwargs = MockRepoMap.call_args
+                self.assertEqual(call_args[0], 1024)  # Check the first positional argument
+                self.assertEqual(call_args[1], temp_dir)  # Check the second positional argument
+                self.assertEqual(call_kwargs.get('refresh'), 'files')  # Check the 'refresh' keyword argument
