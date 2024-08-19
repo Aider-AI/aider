@@ -532,4 +532,6 @@ class TestMain(TestCase):
                 call_args, call_kwargs = MockRepoMap.call_args
                 self.assertEqual(call_args[0], 1024)  # Check the first positional argument
                 self.assertEqual(call_args[1], temp_dir)  # Check the second positional argument
-                self.assertEqual(call_kwargs.get('refresh'), 'files')  # Check the 'refresh' keyword argument
+                self.assertEqual(
+                    call_kwargs.get("refresh"), "files"
+                )  # Check the 'refresh' keyword argument
