@@ -407,14 +407,16 @@ def find_original_update_blocks(content, fence=DEFAULT_FENCE):
         while pieces:
             cur = pieces.pop()
 
-            # Check for ```bash blocks
-            if cur.strip().startswith("```bash"):
-                bash_content = []
+            # Check for various shell code blocks
+            shell_starts = ["```bash", "```cmd", "```powershell", "```ps1", "```bat"]
+            if any(cur.strip().startswith(start) for start in shell_starts):
+                shell_content = []
                 while pieces and not pieces[-1].strip().startswith("```"):
-                    bash_content.append(pieces.pop())
+                    shell_content.append(pieces.pop())
                 if pieces and pieces[-1].strip().startswith("```"):
                     pieces.pop()  # Remove the closing ```
-                yield "bash_command", "".join(bash_content), ""
+                shell_type = cur.strip().split("```")[1]
+                yield f"{shell_type}_command", "".join(shell_content), ""
                 continue
 
             if cur in (DIVIDER, UPDATED):
