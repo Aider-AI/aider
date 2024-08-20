@@ -199,7 +199,7 @@ def get_parser(default_config_files, git_root):
         "--map-tokens",
         type=int,
         default=None,
-        help="Max number of tokens to use for repo map, use 0 to disable (default: 1024)",
+        help="Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)",
     )
     group.add_argument(
         "--map-refresh",
@@ -212,6 +212,12 @@ def get_parser(default_config_files, git_root):
         action=argparse.BooleanOptionalAction,
         default=False,
         help="Enable caching of prompts (default: False)",
+    )
+    group.add_argument(
+        "--map-multiplier-no-files",
+        type=float,
+        default=2,
+        help="Multiplier for map tokens when no files are specified (default: 2)",
     )
     group.add_argument(
         "--max-chat-history-tokens",

@@ -89,7 +89,7 @@
 ## Only work with models that have meta-data available (default: True)
 #show-model-warnings: true
 
-## Max number of tokens to use for repo map, use 0 to disable (default: 1024)
+## Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)
 #map-tokens:
 
 ## Control how often the repo map is refreshed (default: auto)

@@ -188,7 +188,7 @@ Aliases:
   - `--no-show-model-warnings`
 
 ### `--map-tokens VALUE`
-Max number of tokens to use for repo map, use 0 to disable (default: 1024)  
+Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)  
 Environment variable: `AIDER_MAP_TOKENS`  
 
 ### `--map-refresh VALUE`
