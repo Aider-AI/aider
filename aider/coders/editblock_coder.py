@@ -30,23 +30,34 @@ class EditBlockCoder(Coder):
         failed = []
         passed = []
         for edit in edits:
-            path, original, updated = edit
-            full_path = self.abs_root_path(path)
-            content = self.io.read_text(full_path)
-            new_content = do_replace(full_path, content, original, updated, self.fence)
-            if not new_content:
-                # try patching any of the other files in the chat
-                for full_path in self.abs_fnames:
-                    content = self.io.read_text(full_path)
-                    new_content = do_replace(full_path, content, original, updated, self.fence)
-                    if new_content:
-                        break
-
-            if new_content:
-                self.io.write_text(full_path, new_content)
-                passed.append(edit)
+            if isinstance(edit, str):
+                # This is a shell command
+                self.io.tool_output(f"Shell command: {edit}")
+                if self.io.confirm_ask("Do you want to run this command?"):
+                    # Here you would add logic to run the shell command
+                    self.io.tool_output("Command execution placeholder")
+                    passed.append(edit)
+                else:
+                    self.io.tool_output("Command execution skipped.")
+                    failed.append(edit)
             else:
-                failed.append(edit)
+                path, original, updated = edit
+                full_path = self.abs_root_path(path)
+                content = self.io.read_text(full_path)
+                new_content = do_replace(full_path, content, original, updated, self.fence)
+                if not new_content:
+                    # try patching any of the other files in the chat
+                    for full_path in self.abs_fnames:
+                        content = self.io.read_text(full_path)
+                        new_content = do_replace(full_path, content, original, updated, self.fence)
+                        if new_content:
+                            break
+
+                if new_content:
+                    self.io.write_text(full_path, new_content)
+                    passed.append(edit)
+                else:
+                    failed.append(edit)
 
         if not failed:
             return
