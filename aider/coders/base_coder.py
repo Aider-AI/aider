@@ -295,6 +295,7 @@ class Coder:
         map_refresh="auto",
         cache_prompts=False,
     ):
+        self.map_multiplier_no_files = map_mul_no_files
         self.commit_before_message = []
         self.aider_commit_hashes = set()
         self.rejected_urls = set()
