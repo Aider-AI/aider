@@ -1015,9 +1015,9 @@ class Coder:
             or total_tokens < max_input_tokens
             and self.gpt_prompts.system_reminder
         ):
-            if self.main_model.reminder_as_sys_msg:
+            if self.main_model.reminder == "sys":
                 chunks.reminder = reminder_message
-            elif final["role"] == "user":
+            elif self.main_model.reminder == "user" and final["role"] == "user":
                 # stuff it into the user message
                 new_content = (
                     final["content"]

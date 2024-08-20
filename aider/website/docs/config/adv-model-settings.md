@@ -76,7 +76,7 @@ The yaml file should be a a list of dictionary objects for each model, as follow
   send_undo_reply: false
   accepts_images: false
   lazy: false
-  reminder_as_sys_msg: true
+  reminder: sys
   examples_as_sys_msg: false
 - name: "gpt-4-turbo-2024-04-09"
   edit_format: "udiff"
@@ -85,7 +85,7 @@ The yaml file should be a a list of dictionary objects for each model, as follow
   send_undo_reply: true
   accepts_images: true
   lazy: true
-  reminder_as_sys_msg: true
+  reminder: sys
   examples_as_sys_msg: false
 ```
 
