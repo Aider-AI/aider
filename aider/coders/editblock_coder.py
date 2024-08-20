@@ -409,13 +409,18 @@ def find_original_update_blocks(content, fence=DEFAULT_FENCE):
 
             # Check for various shell code blocks
             shell_starts = [
-                "```bash", "```sh", "```shell",  # Unix-like shells
-                "```cmd", "```batch",  # Windows Command Prompt
-                "```powershell", "```ps1",  # Windows PowerShell
+                "```bash",
+                "```sh",
+                "```shell",  # Unix-like shells
+                "```cmd",
+                "```batch",  # Windows Command Prompt
+                "```powershell",
+                "```ps1",  # Windows PowerShell
                 "```zsh",  # Z shell
                 "```fish",  # Friendly Interactive Shell
                 "```ksh",  # Korn Shell
-                "```csh", "```tcsh",  # C Shell and TENEX C Shell
+                "```csh",
+                "```tcsh",  # C Shell and TENEX C Shell
             ]
             if any(cur.strip().startswith(start) for start in shell_starts):
                 shell_content = []
