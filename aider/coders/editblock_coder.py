@@ -429,7 +429,7 @@ def find_original_update_blocks(content, fence=DEFAULT_FENCE):
                 if pieces and pieces[-1].strip().startswith("```"):
                     pieces.pop()  # Remove the closing ```
                 shell_type = cur.strip().split("```")[1]
-                yield f"{shell_type}_command", "".join(shell_content), ""
+                yield "".join(shell_content)
                 continue
 
             if cur in (DIVIDER, UPDATED):
