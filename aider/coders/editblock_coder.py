@@ -14,6 +14,7 @@ from .editblock_prompts import EditBlockPrompts
 
 class EditBlockCoder(Coder):
     """A coder that uses search/replace blocks for code modifications."""
+
     edit_format = "diff"
     gpt_prompts = EditBlockPrompts()
 
