@@ -24,6 +24,8 @@ class EditBlockCoder(Coder):
         # might raise ValueError for malformed ORIG/UPD blocks
         edits = list(find_original_update_blocks(content, self.fence))
 
+        dump(edits)
+
         return edits
 
     def apply_edits(self, edits):
@@ -417,6 +419,7 @@ def find_original_update_blocks(content, fence=DEFAULT_FENCE):
     try:
         while pieces:
             cur = pieces.pop()
+            dump(repr(cur))
 
             # Check for various shell code blocks
             shell_starts = [
