@@ -1,7 +1,7 @@
 
 # Release history
 
-### v0.51.0
+### Aider v0.51.0
 
 - Prompt caching for Anthropic models with `--cache-prompts`.
   - Caches the system prompt, repo map and `/read-only` files.

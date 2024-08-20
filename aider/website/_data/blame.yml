@@ -2241,3 +2241,62 @@
     Paul Gauthier (aider): 201
   start_tag: v0.49.0
   total_lines: 324
+- aider_percentage: 56.11
+  aider_total: 450
+  end_date: '2024-08-20'
+  end_tag: v0.51.0
+  file_counts:
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/args.py:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 10
+    aider/coders/__init__.py:
+      Paul Gauthier: 4
+    aider/coders/base_coder.py:
+      Paul Gauthier: 172
+      Paul Gauthier (aider): 60
+    aider/coders/editblock_prompts.py:
+      Paul Gauthier: 2
+    aider/coders/single_wholefile_func_coder.py:
+      Paul Gauthier: 29
+    aider/commands.py:
+      Paul Gauthier: 3
+      Paul Gauthier (aider): 5
+    aider/llm.py:
+      Paul Gauthier: 2
+    aider/main.py:
+      Paul Gauthier: 6
+      Paul Gauthier (aider): 16
+    aider/models.py:
+      Paul Gauthier: 45
+      Paul Gauthier (aider): 2
+    aider/repomap.py:
+      Paul Gauthier: 16
+      Paul Gauthier (aider): 58
+    aider/sendchat.py:
+      Paul Gauthier: 3
+    aider/utils.py:
+      Paul Gauthier (aider): 6
+    benchmark/benchmark.py:
+      Paul Gauthier: 7
+    benchmark/over_time.py:
+      Paul Gauthier: 14
+      Paul Gauthier (aider): 57
+    docker/Dockerfile:
+      Paul Gauthier: 10
+    scripts/blame.py:
+      Paul Gauthier (aider): 17
+    tests/basic/test_commands.py:
+      Paul Gauthier: 5
+    tests/basic/test_main.py:
+      Paul Gauthier: 16
+      Paul Gauthier (aider): 115
+    tests/basic/test_repomap.py:
+      Paul Gauthier: 15
+      Paul Gauthier (aider): 104
+  grand_total:
+    Paul Gauthier: 352
+    Paul Gauthier (aider): 450
+  start_tag: v0.50.0
+  total_lines: 802
