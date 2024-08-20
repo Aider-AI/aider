@@ -98,10 +98,49 @@ collecting stats not executing unsafe python.
 ./benchmark/benchmark.py --stats tmp.benchmarks/YYYY-MM-DD-HH-MM-SS--a-helpful-name-for-this-run
 ```
 
+The benchmark report is a yaml record with statistics about the run:
+
+```yaml
+- dirname: 2024-08-15-13-26-38--json-no-lint-deepseek-coder-whole
+  test_cases: 133
+  model: deepseek-coder V2 0724
+  edit_format: Markdown
+  commit_hash: bac04a2
+  pass_rate_1: 59.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 2
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 2
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model deepseek-coder
+  date: 2024-08-15
+  versions: 0.50.2-dev
+  seconds_per_case: 27.9
+  total_cost: 0.0438
+```
+
+The key statistics are the `pass_rate_#` entries, which report the
+percent of the tasks which had all tests passing.
+There will be multiple of these pass rate stats,
+depending on the value of the `--tries` parameter.
+
+The yaml also includes all the settings which were in effect for the benchmark and
+the git hash of the repo. The `model`, `edit_format` and `commit_hash`
+should be enough to reliably reproduce any benchmark run.
+
+You can see examples of the benchmark report yaml in the
+[aider leaderboard data files](https://github.com/paul-gauthier/aider/blob/main/website/_data/).
+
+
 ## Limitations, notes
 
-- If you're experimenting with non-OpenAI models, the benchmarking harness may not provide enough switches/control to specify the integration to such models. You probably need to edit `benchmark.py` to instantiate `Coder()` appropriately. You can just hack this in or add new switches/config.
-- Benchmarking all 133 exercises against GPT-4 will cost about $10-20.
-- Benchmarking aider is intended for folks who are actively developing aider or doing experimental work adapting it for use with [new LLM models](https://github.com/paul-gauthier/aider/issues/172).
-- These scripts are not intended for use by typical aider users.
-- Some of the tools are written as `bash` scripts, so it will be hard to use them on Windows.
+- Benchmarking all 133 exercises against Claude 3.5 Sonnet will cost about $4.
+- Contributions of benchmark results are welcome! Submit results by opening a PR with edits to the
+[benchmark results data files](https://github.com/paul-gauthier/aider/blob/main/website/_data/).
+- These scripts are not intended for use by typical aider end users.
+- Some of these tools are written as `bash` scripts, so it will be hard to use them on Windows.
