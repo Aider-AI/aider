@@ -131,6 +131,7 @@ class Coder:
     message_tokens_sent = 0
     message_tokens_received = 0
     add_cache_headers = False
+    map_multiplier_no_files = 8
 
     @classmethod
     def create(
@@ -424,7 +425,7 @@ class Coder:
                 self.gpt_prompts.repo_content_prefix,
                 self.verbose,
                 max_inp_tokens,
-                map_mul_no_files=map_multiplier_no_files,
+                map_mul_no_files=self.map_multiplier_no_files,
                 refresh=map_refresh,
             )
 
