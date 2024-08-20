@@ -26,8 +26,8 @@ class IgnorantTemporaryDirectory:
     def cleanup(self):
         try:
             self.temp_dir.cleanup()
-        except (OSError, PermissionError):
-            pass  # Ignore errors (Windows)
+        except (OSError, PermissionError, RecursionError):
+            pass  # Ignore errors (Windows and potential recursion)
 
     def __getattr__(self, item):
         return getattr(self.temp_dir, item)
