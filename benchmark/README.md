@@ -87,7 +87,7 @@ You can run `./benchmark/benchmark.py --help` for a list of all the arguments, b
 - `--num-tests` specifies how many of the 133 tests to run before stopping. This is another way to start gently as you debug your benchmarking setup.
 - `--keywords` filters the tests to run to only the ones whose name match the supplied argument (similar to `pytest -k xxxx`).
 
-### Generating a benchmark report
+### Benchmark report
 
 You can generate stats about any benchmark, including ones which are still running.
 You don't need to run this inside the docker container, as it is just
