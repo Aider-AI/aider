@@ -1508,7 +1508,7 @@ class Coder:
             elif count < 10000:
                 return f"{count / 1000:.1f}k"
             else:
-                return f"{count // 1000}k"
+                return f"{round(count / 1000)}k"
 
         tokens_report = f"Tokens: {format_tokens(self.message_tokens_sent)} sent"
 
