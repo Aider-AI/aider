@@ -1502,13 +1502,21 @@ class Coder:
 
         self.message_tokens_received += completion_tokens
 
-        tokens_report = f"Tokens: {self.message_tokens_sent:,} sent"
+        def format_tokens(count):
+            if count < 1000:
+                return f"{count}"
+            elif count < 10000:
+                return f"{count/1000:.1f}k"
+            else:
+                return f"{count//1000}k"
+
+        tokens_report = f"Tokens: {format_tokens(self.message_tokens_sent)} sent"
 
         if cache_write_tokens:
-            tokens_report += f", {cache_write_tokens:,} cache write"
+            tokens_report += f", {format_tokens(cache_write_tokens)} cache write"
         if cache_hit_tokens:
-            tokens_report += f", {cache_hit_tokens:,} cache hit"
-        tokens_report += f", {self.message_tokens_received:,} received."
+            tokens_report += f", {format_tokens(cache_hit_tokens)} cache hit"
+        tokens_report += f", {format_tokens(self.message_tokens_received)} received."
 
         if not self.main_model.info.get("input_cost_per_token"):
             self.usage_report = tokens_report
