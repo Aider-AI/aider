@@ -16,7 +16,7 @@ cog.out(text)
 
 # Release history
 
-### main branch
+### v0.51.0
 
 - Prompt caching for Anthropic models with `--cache-prompts`.
   - Caches the system prompt, repo map and `/read-only` files.
@@ -29,7 +29,7 @@ cog.out(text)
 - Bugfix: properly load `.aider.models.metadata.json` data.
 - Bugfix: Using `--msg /ask ...` caused an exception.
 - Bugfix: litellm tokenizer bug for images.
-- Aider wrote 55% of the code in this release.
+- Aider wrote 56% of the code in this release.
 
 ### Aider v0.50.1
 
