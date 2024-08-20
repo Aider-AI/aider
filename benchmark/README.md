@@ -110,7 +110,6 @@ The benchmark report is a yaml record with statistics about the run:
   pass_rate_2: 77.4
   percent_cases_well_formed: 99.2
   error_outputs: 23
-  released: 2024-06-20
   num_malformed_responses: 4
   num_with_malformed_responses: 1
   user_asks: 2
@@ -131,9 +130,11 @@ percent of the tasks which had all tests passing.
 There will be multiple of these pass rate stats,
 depending on the value of the `--tries` parameter.
 
-The yaml also includes all the settings which were in effect for the benchmark run and
-the git hash of the repo used to run it.
-The `model`, `edit_format` and `commit_hash`
+The yaml also includes all the settings which were in effect for the benchmark run.
+It also reports the git hash of the repo at the time that the benchmark was
+run, with `(dirty)` if there were uncommitted changes.
+It's good practice to commit the repo before starting a benchmark run.
+This way the `model`, `edit_format` and `commit_hash`
 should be enough to reliably reproduce any benchmark run.
 
 You can see examples of the benchmark report yaml in the
