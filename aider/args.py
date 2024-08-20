@@ -199,7 +199,7 @@ def get_parser(default_config_files, git_root):
         "--map-tokens",
         type=int,
         default=None,
-        help="Max number of tokens to use for repo map, use 0 to disable (default: 1024)",
+        help="Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)",
     )
     group.add_argument(
         "--map-refresh",
