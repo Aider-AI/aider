@@ -98,6 +98,7 @@ class TestRepoMap(unittest.TestCase):
 
             # close the open cache files, so Windows won't error
             del repo_map
+            del repo
 
     def test_repo_map_refresh_auto(self):
         with GitTemporaryDirectory() as temp_dir:
@@ -154,6 +155,7 @@ class TestRepoMap(unittest.TestCase):
 
             # close the open cache files, so Windows won't error
             del repo_map
+            del repo
 
     def test_get_repo_map_with_identifiers(self):
         # Create a temporary directory with a sample Python file containing identifiers
