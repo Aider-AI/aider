@@ -15,7 +15,10 @@ IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp"}
 
 class IgnorantTemporaryDirectory:
     def __init__(self):
-        self.temp_dir = tempfile.TemporaryDirectory(ignore_cleanup_errors=True)
+        if sys.version_info >= (3, 10):
+            self.temp_dir = tempfile.TemporaryDirectory(ignore_cleanup_errors=True)
+        else:
+            self.temp_dir = tempfile.TemporaryDirectory()
 
     def __enter__(self):
         return self.temp_dir.__enter__()
