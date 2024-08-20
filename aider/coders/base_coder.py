@@ -131,7 +131,6 @@ class Coder:
     message_tokens_sent = 0
     message_tokens_received = 0
     add_cache_headers = False
-    map_multiplier_no_files = 8
 
     @classmethod
     def create(
@@ -295,7 +294,6 @@ class Coder:
         map_refresh="auto",
         cache_prompts=False,
     ):
-        self.map_multiplier_no_files = map_mul_no_files
         self.commit_before_message = []
         self.aider_commit_hashes = set()
         self.rejected_urls = set()
@@ -426,7 +424,7 @@ class Coder:
                 self.gpt_prompts.repo_content_prefix,
                 self.verbose,
                 max_inp_tokens,
-                map_mul_no_files=self.map_multiplier_no_files,
+                map_mul_no_files=map_mul_no_files,
                 refresh=map_refresh,
             )
 

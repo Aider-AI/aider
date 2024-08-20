@@ -106,7 +106,7 @@ class RepoMap:
         padding = 4096
         if max_map_tokens and self.max_context_window:
             target = min(
-                max_map_tokens * self.map_mul_no_files,
+                int(max_map_tokens * self.map_mul_no_files),
                 self.max_context_window - padding,
             )
         else:
