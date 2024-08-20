@@ -406,6 +406,16 @@ def find_original_update_blocks(content, fence=DEFAULT_FENCE):
         while pieces:
             cur = pieces.pop()
 
+            # Check for ```bash blocks
+            if cur.strip().startswith("```bash"):
+                bash_content = []
+                while pieces and not pieces[-1].strip().startswith("```"):
+                    bash_content.append(pieces.pop())
+                if pieces and pieces[-1].strip().startswith("```"):
+                    pieces.pop()  # Remove the closing ```
+                yield "bash_command", "".join(bash_content), ""
+                continue
+
             if cur in (DIVIDER, UPDATED):
                 processed.append(cur)
                 raise ValueError(f"Unexpected {cur}")
