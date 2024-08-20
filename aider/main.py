@@ -537,6 +537,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             summarizer=summarizer,
             map_refresh=args.map_refresh,
             cache_prompts=args.cache_prompts,
+            map_multiplier_no_files=args.map_multiplier_no_files,
         )
     except ValueError as err:
         io.tool_error(str(err))

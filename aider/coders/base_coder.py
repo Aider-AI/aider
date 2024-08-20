@@ -424,7 +424,7 @@ class Coder:
                 self.gpt_prompts.repo_content_prefix,
                 self.verbose,
                 max_inp_tokens,
-                map_mul_no_files=map_mul_no_files,
+                map_mul_no_files=map_multiplier_no_files,
                 refresh=map_refresh,
             )
 
