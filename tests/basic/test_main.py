@@ -15,6 +15,7 @@ from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.main import check_gitignore, main, setup_git
 from aider.utils import GitTemporaryDirectory, IgnorantTemporaryDirectory, make_repo
+from aider.coders import Coder
 
 
 class TestMain(TestCase):
@@ -555,3 +556,21 @@ class TestMain(TestCase):
             )
 
             self.assertFalse(coder.add_cache_headers)
+
+    def test_return_coder(self):
+        with GitTemporaryDirectory():
+            result = main(
+                ["--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+            )
+            self.assertIsInstance(result, Coder)
+
+            result = main(
+                ["--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=False,
+            )
+            self.assertIsNone(result)
