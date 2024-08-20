@@ -101,27 +101,29 @@ collecting stats not executing unsafe python.
 The benchmark report is a yaml record with statistics about the run:
 
 ```yaml
-- dirname: 2024-08-15-13-26-38--json-no-lint-deepseek-coder-whole
+- dirname: 2024-07-04-14-32-08--claude-3.5-sonnet-diff-continue
   test_cases: 133
-  model: deepseek-coder V2 0724
-  edit_format: Markdown
-  commit_hash: bac04a2
-  pass_rate_1: 59.4
-  percent_cases_well_formed: 100.0
-  error_outputs: 2
-  num_malformed_responses: 0
-  num_with_malformed_responses: 0
+  model: claude-3.5-sonnet
+  edit_format: diff
+  commit_hash: 35f21b5
+  pass_rate_1: 57.1
+  pass_rate_2: 77.4
+  percent_cases_well_formed: 99.2
+  error_outputs: 23
+  released: 2024-06-20
+  num_malformed_responses: 4
+  num_with_malformed_responses: 1
   user_asks: 2
   lazy_comments: 0
-  syntax_errors: 0
+  syntax_errors: 1
   indentation_errors: 0
   exhausted_context_windows: 0
-  test_timeouts: 0
-  command: aider --model deepseek-coder
-  date: 2024-08-15
-  versions: 0.50.2-dev
-  seconds_per_case: 27.9
-  total_cost: 0.0438
+  test_timeouts: 1
+  command: aider --sonnet
+  date: 2024-07-04
+  versions: 0.42.1-dev
+  seconds_per_case: 17.6
+  total_cost: 3.6346
 ```
 
 The key statistics are the `pass_rate_#` entries, which report the
@@ -129,8 +131,9 @@ percent of the tasks which had all tests passing.
 There will be multiple of these pass rate stats,
 depending on the value of the `--tries` parameter.
 
-The yaml also includes all the settings which were in effect for the benchmark and
-the git hash of the repo. The `model`, `edit_format` and `commit_hash`
+The yaml also includes all the settings which were in effect for the benchmark run and
+the git hash of the repo used to run it.
+The `model`, `edit_format` and `commit_hash`
 should be enough to reliably reproduce any benchmark run.
 
 You can see examples of the benchmark report yaml in the
