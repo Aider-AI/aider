@@ -282,7 +282,7 @@ def check_pip_install_extra(io, module, prompt, pip_install_cmd):
     cmd = get_pip_install(pip_install_cmd)
 
     io.tool_error(prompt)
-    if not io.confirm_ask("Run pip install?", default="y", subject=' '.join(cmd)):
+    if not io.confirm_ask("Run pip install?", default="y", subject=" ".join(cmd)):
         return
 
     success, output = run_install(cmd)
