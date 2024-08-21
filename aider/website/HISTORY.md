@@ -29,7 +29,7 @@ cog.out(text)
   - Reduced default multiplier to 2.
 - Improved formatting of token reports and confirmation dialogs.
 - Default OpenAI model is now `gpt-4o-2024-08-06`.
-- Bump dependencies to pickup litellm bugfixes.
+- Bumped dependencies to pickup litellm bugfixes.
 
 ### Aider v0.51.0
 
