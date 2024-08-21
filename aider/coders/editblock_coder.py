@@ -40,19 +40,14 @@ class EditBlockCoder(Coder):
                 if self.io.confirm_ask("Do you want to run this suggested shell command?"):
                     try:
                         result = subprocess.run(
-                            edit, shell=True, check=True, text=True, capture_output=True
+                            edit, shell=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
                         )
-                        self.io.tool_output(
-                            f"Command executed successfully. Output:\n{result.stdout}"
-                        )
-                        if result.stderr:
-                            self.io.tool_output(f"Errors:\n{result.stderr}")
+                        self.io.tool_output(result.stdout)
                         passed.append(edit)
                     except subprocess.CalledProcessError as e:
-                        self.io.tool_error(f"Command execution failed. Error:\n{e.stderr}")
+                        self.io.tool_output(e.output)
                         failed.append(edit)
                 else:
-                    self.io.tool_output("Command execution skipped.")
                     failed.append(edit)
             else:
                 path, original, updated = edit
