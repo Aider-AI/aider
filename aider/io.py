@@ -404,7 +404,7 @@ class InputOutput:
 
         return is_yes
 
-    def prompt_ask(self, question, default=None, subject=None):
+    def prompt_ask(self, question, default="", subject=None):
         self.num_user_asks += 1
 
         if subject:
