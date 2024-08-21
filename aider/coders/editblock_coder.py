@@ -29,14 +29,33 @@ class EditBlockCoder(Coder):
         return edits
 
     def run_interactive_subprocess(self, command):
+        dump(repr(command))
         if os.name == "posix":  # Unix-like systems (Linux, macOS)
-            import pty
-
-            return pty.spawn(command)
+            return subprocess.run(command, shell=True)
+            # return pty.spawn(command)
         elif os.name == "nt":  # Windows
             return subprocess.run(command, shell=True)
         else:
             raise OSError("Unsupported operating system")
+
+    def handle_shell_commands(self, commands_str):
+        commands = commands_str.strip().splitlines()
+        if not self.io.confirm_ask("Run shell command(s)?", subject="\n".join(commands)):
+            return
+
+        for command in commands:
+            command = command.strip()
+            if not command or command.startswith("#"):
+                continue
+
+            self.io.tool_output()
+            self.io.tool_output(f"Running {command}")
+            try:
+                # Add the command to input history
+                self.io.add_to_input_history(f"/run {command.strip()}")
+                self.run_interactive_subprocess(command)
+            except Exception as e:
+                self.io.tool_error(f"Error running command '{command}': {str(e)}")
 
     def apply_edits(self, edits):
         failed = []
@@ -67,6 +86,8 @@ class EditBlockCoder(Coder):
                 else:
                     failed.append(edit)
 
+        dump(failed)
+        dump(passed)
         if not failed:
             return
 
@@ -568,20 +589,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-    def handle_shell_commands(self, commands_str):
-        commands = commands_str.strip().splitlines()
-        if self.io.confirm_ask("Run shell command(s)?", subject="\n".join(commands)):
-            for command in commands:
-                command = command.strip()
-                if not command or command.startswith("#"):
-                    continue
-
-                self.io.tool_output()
-                self.io.tool_output(f"Running {command}")
-                try:
-                    # Add the command to input history
-                    self.io.add_to_input_history(f"/run {command.strip()}")
-                    self.run_interactive_subprocess(command.split())
-                except Exception as e:
-                    self.io.tool_error(f"Error running command '{command}': {str(e)}")
