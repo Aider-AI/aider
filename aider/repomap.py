@@ -69,6 +69,9 @@ class RepoMap:
         self.map_processing_time = 0
         self.last_map = None
 
+        if self.verbose:
+            self.io.tool_output(f"RepoMap initialized with map_mul_no_files: {self.map_mul_no_files}")
+
     def token_count(self, text):
         len_text = len(text)
         if len_text < 200:
