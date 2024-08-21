@@ -26,6 +26,7 @@ def blame(start_tag, end_tag=None):
         if f.endswith((".py", ".scm", ".sh", "Dockerfile", "Gemfile"))
         or (f.startswith(".github/workflows/") and f.endswith(".yml"))
     ]
+    files = [f for f in files if not f.endswith("prompts.py")]
 
     all_file_counts = {}
     grand_total = defaultdict(int)
