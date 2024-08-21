@@ -784,6 +784,7 @@ class Coder:
             self.get_addable_relative_files(),
             self.commands,
             self.abs_read_only_fnames,
+            edit_format=self.edit_format,
         )
 
     def preproc_user_input(self, inp):
