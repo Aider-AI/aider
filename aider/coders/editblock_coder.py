@@ -13,6 +13,8 @@ from .base_coder import Coder
 from .editblock_prompts import EditBlockPrompts
 
 
+import os
+
 class EditBlockCoder(Coder):
     """A coder that uses search/replace blocks for code modifications."""
 
@@ -27,6 +29,15 @@ class EditBlockCoder(Coder):
 
         return edits
 
+    def run_interactive_subprocess(self, command):
+        if os.name == 'posix':  # Unix-like systems (Linux, macOS)
+            import pty
+            return pty.spawn(command)
+        elif os.name == 'nt':  # Windows
+            return subprocess.run(command, shell=True)
+        else:
+            raise OSError("Unsupported operating system")
+
     def apply_edits(self, edits):
         failed = []
         passed = []
@@ -39,17 +50,9 @@ class EditBlockCoder(Coder):
                 self.io.tool_output(f"{edit.strip()}", bold=True)
                 if self.io.confirm_ask("Do you want to run this suggested shell command?"):
                     try:
-                        result = subprocess.run(
-                            edit,
-                            shell=True,
-                            text=True,
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.STDOUT,
-                            stdin=subprocess.DEVNULL,
-                        )
-                        self.io.tool_output(result.stdout)
-                    except subprocess.CalledProcessError as e:
-                        self.io.tool_error(e.output)
+                        self.run_interactive_subprocess(edit.split())
+                    except Exception as e:
+                        self.io.tool_error(str(e))
             else:
                 path, original, updated = edit
                 full_path = self.abs_root_path(path)
