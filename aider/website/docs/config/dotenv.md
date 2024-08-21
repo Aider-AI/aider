@@ -81,7 +81,7 @@ cog.outl("```")
 ## Use gpt-4-0613 model for the main chat
 #AIDER_4=
 
-## Use gpt-4o model for the main chat
+## Use gpt-4o-2024-08-06 model for the main chat
 #AIDER_4O=
 
 ## Use gpt-4o-mini model for the main chat

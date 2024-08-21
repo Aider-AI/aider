@@ -74,7 +74,7 @@ cog.outl("```")
 ## Use gpt-4-0613 model for the main chat
 #4: false
 
-## Use gpt-4o model for the main chat
+## Use gpt-4o-2024-08-06 model for the main chat
 #4o: false
 
 ## Use gpt-4o-mini model for the main chat
