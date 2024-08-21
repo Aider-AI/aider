@@ -468,7 +468,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     register_litellm_models(git_root, args.model_metadata_file, io, verbose=args.verbose)
 
     if not args.model:
-        args.model = "gpt-4o"
+        args.model = "gpt-4o-2024-08-06"
         if os.environ.get("ANTHROPIC_API_KEY"):
             args.model = "claude-3-5-sonnet-20240620"
 
