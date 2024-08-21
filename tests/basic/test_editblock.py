@@ -134,7 +134,7 @@ oops!
 
         with self.assertRaises(ValueError) as cm:
             list(eb.find_original_update_blocks(edit))
-        self.assertIn("Incomplete", str(cm.exception))
+        self.assertIn("Expected `>>>>>>> REPLACE` or `=======`", str(cm.exception))
 
     def test_find_original_update_blocks_missing_filename(self):
         edit = """
