@@ -246,8 +246,12 @@ class InputOutput:
             print()
 
         rel_fnames = list(rel_fnames)
-        show = " ".join(rel_fnames)
-        show += f"\n{edit_format}\n> "
+        show = ""
+        if rel_fnames:
+            show = " ".join(rel_fnames) + "\n"
+        if edit_format:
+            show += edit_format
+        show += "> "
 
         inp = ""
         multiline_input = False
