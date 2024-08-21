@@ -387,7 +387,7 @@
 
 - dirname: 2024-05-13-17-39-05--gpt-4o-diff
   test_cases: 133
-  model: gpt-4o
+  model: gpt-4o-2024-05-13
   released: 2024-05-13
   edit_format: diff
   commit_hash: b6cd852

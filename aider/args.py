@@ -74,7 +74,7 @@ def get_parser(default_config_files, git_root):
         const=gpt_4_model,
         help=f"Use {gpt_4_model} model for the main chat",
     )
-    gpt_4o_model = "gpt-4o"
+    gpt_4o_model = "gpt-4o-2024-08-06"
     group.add_argument(
         "--4o",
         action="store_const",
