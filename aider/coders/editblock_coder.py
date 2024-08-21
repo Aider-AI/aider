@@ -46,25 +46,7 @@ class EditBlockCoder(Coder):
         for edit in edits:
             dump(edit)
             if edit[0] is None:
-                edit = edit[1]
-                # This is a shell command
-                commands = edit.strip().splitlines()
-                if self.io.confirm_ask("Run shell command(s)?", subject="\n".join(commands)):
-                    for command in commands:
-                        command = command.strip()
-                        if not command:
-                            continue
-                        if command.startswith('#'):
-                            continue
-
-                        self.io.tool_output()
-                        self.io.tool_output(f"Running {command}")
-                        try:
-                            # Add the command to input history
-                            self.io.add_to_input_history(f"/run {command.strip()}")
-                            self.run_interactive_subprocess(command.split())
-                        except Exception as e:
-                            self.io.tool_error(f"Error running command '{command}': {str(e)}")
+                self.handle_shell_commands(edit[1])
                 continue
             else:
                 path, original, updated = edit
@@ -586,3 +568,19 @@ def main():
 
 if __name__ == "__main__":
     main()
+    def handle_shell_commands(self, commands_str):
+        commands = commands_str.strip().splitlines()
+        if self.io.confirm_ask("Run shell command(s)?", subject="\n".join(commands)):
+            for command in commands:
+                command = command.strip()
+                if not command or command.startswith('#'):
+                    continue
+
+                self.io.tool_output()
+                self.io.tool_output(f"Running {command}")
+                try:
+                    # Add the command to input history
+                    self.io.add_to_input_history(f"/run {command.strip()}")
+                    self.run_interactive_subprocess(command.split())
+                except Exception as e:
+                    self.io.tool_error(f"Error running command '{command}': {str(e)}")
