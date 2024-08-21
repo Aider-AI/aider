@@ -14,7 +14,7 @@ This usually happens because the LLM is disobeying the system prompts
 and trying to make edits in a format that aider doesn't expect.
 Aider makes every effort to get the LLM
 to conform, and works hard to deal with
-LLMM edits that are "almost" correctly formatted.
+LLM edits that are "almost" correctly formatted.
 
 But sometimes the LLM just won't cooperate.
 In these cases, here are some things you might try.
@@ -42,14 +42,14 @@ Models: claude-3-5-sonnet-20240620 with ♾️ diff edit format
 
 ## Reduce distractions
 
-Many LLM now have very large context windows,
+Many LLMs now have very large context windows,
 but filling them with irrelevant code or conversation 
-can cofuse the model.
+can confuse the model.
 
 - Don't add too many files to the chat, *just* add the files you think need to be edited.
 Aider also sends the LLM a [map of your entire git repo](https://aider.chat/docs/repomap.html), so other relevant code will be included automatically.
-- Use `/drop` to remove files from the chat session which aren't needed for the task at hand. This will reduce distractions and may help GPT produce properly formatted edits.
-- Use `/clear` to remove the conversation history, again to help GPT focus.
+- Use `/drop` to remove files from the chat session which aren't needed for the task at hand. This will reduce distractions and may help the LLM produce properly formatted edits.
+- Use `/clear` to remove the conversation history, again to help the LLM focus.
 
 ## More help
 
