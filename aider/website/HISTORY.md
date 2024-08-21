@@ -24,12 +24,14 @@ cog.out(text)
   - Run DB migration tools.
   - Run the program to exercise changes.
   - Run the new test cases.
+- Show active chat mode at aider prompt.
 - New `/reset` command to `/drop` files and `/clear` chat history.
 - New `--map-multiplier-no-files` to control repo map size multiplier when no files are in the chat.
   - Reduced default multiplier to 2.
 - Improved formatting of token reports and confirmation dialogs.
 - Default OpenAI model is now `gpt-4o-2024-08-06`.
 - Bumped dependencies to pickup litellm bugfixes.
+- Aider wrote 61% of the code in this release.
 
 ### Aider v0.51.0
 
