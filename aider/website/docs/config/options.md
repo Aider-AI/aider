@@ -36,8 +36,9 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--show-model-warnings | --no-show-model-warnings]
              [--map-tokens] [--map-refresh]
              [--cache-prompts | --no-cache-prompts]
-             [--max-chat-history-tokens] [--env-file]
-             [--input-history-file] [--chat-history-file]
+             [--map-multiplier-no-files] [--max-chat-history-tokens]
+             [--env-file] [--input-history-file]
+             [--chat-history-file]
              [--restore-chat-history | --no-restore-chat-history]
              [--llm-history-file] [--dark-mode] [--light-mode]
              [--pretty | --no-pretty] [--stream | --no-stream]
@@ -203,6 +204,11 @@ Environment variable: `AIDER_CACHE_PROMPTS`
 Aliases:
   - `--cache-prompts`
   - `--no-cache-prompts`
+
+### `--map-multiplier-no-files VALUE`
+Multiplier for map tokens when no files are specified (default: 2)  
+Default: 2  
+Environment variable: `AIDER_MAP_MULTIPLIER_NO_FILES`  
 
 ### `--max-chat-history-tokens VALUE`
 Maximum number of tokens to use for chat history. If not specified, uses the model's max_chat_history_tokens.  
