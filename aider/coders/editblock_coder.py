@@ -31,8 +31,10 @@ class EditBlockCoder(Coder):
     def apply_edits(self, edits):
         failed = []
         passed = []
+
         for edit in edits:
-            if isinstance(edit, str):
+            if edit[0] is None:
+                edit = edit[1]
                 # This is a shell command
                 self.io.tool_output(f"Shell command: {edit}")
                 if self.io.confirm_ask("Do you want to run this command?"):
@@ -413,9 +415,18 @@ def find_original_update_blocks(content, fence=DEFAULT_FENCE):
 
         # Check for shell code blocks
         shell_starts = [
-            "```bash", "```sh", "```shell", "```cmd", "```batch",
-            "```powershell", "```ps1", "```zsh", "```fish", "```ksh",
-            "```csh", "```tcsh"
+            "```bash",
+            "```sh",
+            "```shell",
+            "```cmd",
+            "```batch",
+            "```powershell",
+            "```ps1",
+            "```zsh",
+            "```fish",
+            "```ksh",
+            "```csh",
+            "```tcsh",
         ]
         if any(line.strip().startswith(start) for start in shell_starts):
             shell_type = line.strip().split("```")[1]
@@ -426,13 +437,13 @@ def find_original_update_blocks(content, fence=DEFAULT_FENCE):
                 i += 1
             if i < len(lines) and lines[i].strip().startswith("```"):
                 i += 1  # Skip the closing ```
-            yield f"{shell_type}_command", "".join(shell_content)
+            yield None, "".join(shell_content)
             continue
 
         # Check for SEARCH/REPLACE blocks
         if line.strip() == HEAD:
             try:
-                filename = find_filename(lines[max(0, i-3):i], fence)
+                filename = find_filename(lines[max(0, i - 3) : i], fence)
                 if not filename:
                     if current_filename:
                         filename = current_filename
@@ -462,7 +473,7 @@ def find_original_update_blocks(content, fence=DEFAULT_FENCE):
                 yield filename, "".join(original_text), "".join(updated_text)
 
             except ValueError as e:
-                processed = "".join(lines[:i+1])
+                processed = "".join(lines[: i + 1])
                 err = e.args[0]
                 raise ValueError(f"{processed}\n^^^ {err}")
 

@@ -1731,6 +1731,9 @@ class Coder:
 
         for edit in edits:
             path = edit[0]
+            if path is None:
+                res.append(edit)
+                continue
             if path in seen:
                 allowed = seen[path]
             else:
