@@ -567,7 +567,7 @@ class Commands:
                 fname = Path(self.coder.root) / word
 
             if self.coder.repo and self.coder.repo.ignored_file(fname):
-                self.io.tool_error(f"Skipping {fname} that matches aiderignore spec.")
+                self.io.tool_error(f"Skipping {fname} due to aiderignore or --subtree-only.")
                 continue
 
             if fname.exists():
