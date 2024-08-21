@@ -35,15 +35,15 @@ class EditBlockCoder(Coder):
                 shell=True,
                 encoding=self.io.encoding,
                 errors="replace",
-                capture_output=True,
             )
-            if result.returncode != 0:
-                self.io.tool_error(f"Command '{command}' exited with status {result.returncode}")
-                self.io.tool_error(result.stderr)
-            return result
+            if result.returncode == 0:
+                return
+            self.io.tool_error(f"Command '{command}' exited with status {result.returncode}")
         except Exception as e:
             self.io.tool_error(f"Error running command '{command}': {str(e)}")
-            return None
+
+        self.io.tool_output(f"To retry and share output with the LLM: /run {command}")
+        self.io.tool_output(f"You can find this command in your input history with up-arrow.")
 
     def handle_shell_commands(self, commands_str):
         commands = commands_str.strip().splitlines()
