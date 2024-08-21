@@ -46,8 +46,8 @@ class EditBlockCoder(Coder):
             if edit[0] is None:
                 edit = edit[1]
                 # This is a shell command
-                commands = edit.strip().split('\n')
-                if self.io.confirm_ask("Run shell command(s)?", subject='\n'.join(commands)):
+                commands = edit.strip().split("\n")
+                if self.io.confirm_ask("Run shell command(s)?", subject="\n".join(commands)):
                     self.io.tool_output()
                     for command in commands:
                         try:
