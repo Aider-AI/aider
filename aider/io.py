@@ -370,11 +370,11 @@ class InputOutput:
 
         if subject:
             self.tool_output()
-            if '\n' in subject:
+            if "\n" in subject:
                 lines = subject.splitlines()
                 max_length = max(len(line) for line in lines)
                 padded_lines = [line.ljust(max_length) for line in lines]
-                padded_subject = '\n'.join(padded_lines)
+                padded_subject = "\n".join(padded_lines)
                 self.tool_output(padded_subject, bold=True)
             else:
                 self.tool_output(subject, bold=True)
