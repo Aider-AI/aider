@@ -52,9 +52,9 @@ class EditBlockCoder(Coder):
 
             self.io.tool_output()
             self.io.tool_output(f"Running {command}")
+            # Add the command to input history
+            self.io.add_to_input_history(f"/run {command.strip()}")
             try:
-                # Add the command to input history
-                self.io.add_to_input_history(f"/run {command.strip()}")
                 self.run_interactive_subprocess(command)
             except Exception as e:
                 self.io.tool_error(f"Error running command '{command}': {str(e)}")
