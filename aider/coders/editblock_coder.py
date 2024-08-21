@@ -568,12 +568,13 @@ def main():
 
 if __name__ == "__main__":
     main()
+
     def handle_shell_commands(self, commands_str):
         commands = commands_str.strip().splitlines()
         if self.io.confirm_ask("Run shell command(s)?", subject="\n".join(commands)):
             for command in commands:
                 command = command.strip()
-                if not command or command.startswith('#'):
+                if not command or command.startswith("#"):
                     continue
 
                 self.io.tool_output()
