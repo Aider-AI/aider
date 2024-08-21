@@ -5,7 +5,7 @@ from datetime import datetime
 from pathlib import Path
 
 from prompt_toolkit import prompt
-from prompt_toolkit.completion import Completer, Completion, WordCompleter
+from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.enums import EditingMode
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.key_binding import KeyBindings
@@ -377,8 +377,6 @@ class InputOutput:
         else:
             style = dict()
 
-        completer = WordCompleter(["yes", "no"])
-
         def is_yesno(text):
             return "yes".startswith(text.lower()) or "no".startswith(text.lower())
 
@@ -394,7 +392,9 @@ class InputOutput:
             res = "n"
         else:
             res = prompt(
-                question, style=Style.from_dict(style), completer=completer, validator=validator
+                question,
+                style=Style.from_dict(style),
+                validator=validator,
             )
             if not res and default:
                 res = default
