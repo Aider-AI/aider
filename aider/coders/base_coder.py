@@ -778,13 +778,14 @@ class Coder:
         inchat_files = self.get_inchat_relative_files()
         read_only_files = [self.get_rel_fname(fname) for fname in self.abs_read_only_fnames]
         all_files = sorted(set(inchat_files + read_only_files))
+        edit_format = "code" if self.edit_format == self.main_model.edit_format else self.edit_format
         return self.io.get_input(
             self.root,
             all_files,
             self.get_addable_relative_files(),
             self.commands,
             self.abs_read_only_fnames,
-            edit_format=self.edit_format,
+            edit_format=edit_format,
         )
 
     def preproc_user_input(self, inp):
