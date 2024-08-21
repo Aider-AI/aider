@@ -333,7 +333,7 @@ class InputOutput:
             log_file.write(content + "\n")
 
     def user_input(self, inp, log_only=True):
-        if not log_only:
+        if not log_only and self.pretty:
             style = dict(style=self.user_input_color) if self.user_input_color else dict()
             self.console.print(Text(inp), **style)
 
