@@ -239,9 +239,7 @@ class InputOutput:
 
         rel_fnames = list(rel_fnames)
         show = " ".join(rel_fnames)
-        if len(show) > 10:
-            show += "\n"
-        show += "> "
+        show += "\n> "
 
         inp = ""
         multiline_input = False
