@@ -46,7 +46,7 @@ class EditBlockCoder(Coder):
             if edit[0] is None:
                 edit = edit[1]
                 # This is a shell command
-                if self.io.confirm_ask("Run this shell command?", subject=edit.strip()):
+                if self.io.confirm_ask("Run shell command?", subject=edit.strip()):
                     self.io.tool_output()
                     try:
                         # Add the command to input history

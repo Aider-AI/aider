@@ -1661,7 +1661,7 @@ class Coder:
             return True
 
         if not Path(full_path).exists():
-            if not self.io.confirm_ask("Allow creation of new file?", subject=path):
+            if not self.io.confirm_ask("Create new file?", subject=path):
                 self.io.tool_error(f"Skipping edits to {path}")
                 return
 

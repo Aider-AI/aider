@@ -356,16 +356,48 @@ class InputOutput:
     def confirm_ask(self, question, default="y", subject=None):
         self.num_user_asks += 1
 
+        if default == "y":
+            question += " [Y/n] "
+        elif default == "n":
+            question += " [y/N] "
+        else:
+            question += " [y/n] "
+
         if subject:
             self.tool_output()
             self.tool_output(subject, bold=True)
+
+        if self.pretty and self.user_input_color:
+            style = {"": self.user_input_color}
+        else:
+            style = dict()
+
+        from prompt_toolkit.completion import WordCompleter
+
+        completer = WordCompleter(["yes", "no"])
+
+        from prompt_toolkit import prompt
+        from prompt_toolkit.validation import Validator
+
+        def is_yesno(text):
+            return "yes".startswith(text.lower()) or "no".startswith(text.lower())
+
+        validator = Validator.from_callable(
+            is_yesno,
+            error_message="Answer yes or no.",
+            move_cursor_to_end=True,
+        )
 
         if self.yes is True:
             res = "y"
         elif self.yes is False:
             res = "n"
         else:
-            res = prompt(question + " ", default=default)
+            res = prompt(
+                question, style=Style.from_dict(style), completer=completer, validator=validator
+            )
+            if not res and default:
+                res = default
 
         res = res.lower().strip()
         is_yes = res in ("y", "yes")
