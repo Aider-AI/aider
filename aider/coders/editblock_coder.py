@@ -46,14 +46,16 @@ class EditBlockCoder(Coder):
             if edit[0] is None:
                 edit = edit[1]
                 # This is a shell command
-                if self.io.confirm_ask("Run shell command?", subject=edit.strip()):
+                commands = edit.strip().split('\n')
+                if self.io.confirm_ask("Run shell command(s)?", subject='\n'.join(commands)):
                     self.io.tool_output()
-                    try:
-                        # Add the command to input history
-                        self.io.add_to_input_history(f"/run {edit.strip()}")
-                        self.run_interactive_subprocess(edit.split())
-                    except Exception as e:
-                        self.io.tool_error(str(e))
+                    for command in commands:
+                        try:
+                            # Add the command to input history
+                            self.io.add_to_input_history(f"/run {command.strip()}")
+                            self.run_interactive_subprocess(command.split())
+                        except Exception as e:
+                            self.io.tool_error(f"Error running command '{command}': {str(e)}")
             else:
                 path, original, updated = edit
                 full_path = self.abs_root_path(path)
