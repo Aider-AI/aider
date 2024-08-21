@@ -29,7 +29,7 @@
     Paul Gauthier (aider): 47
   start_tag: v0.5.0
   total_lines: 150
-- aider_percentage: 9.67
+- aider_percentage: 10.35
   aider_total: 182
   end_date: '2023-06-25'
   end_tag: v0.7.0
@@ -43,22 +43,14 @@
       Paul Gauthier: 6
     aider/coders/base_coder.py:
       Paul Gauthier: 314
-    aider/coders/base_prompts.py:
-      Paul Gauthier: 6
     aider/coders/editblock_coder.py:
       Paul Gauthier: 338
-    aider/coders/editblock_prompts.py:
-      Paul Gauthier: 56
     aider/coders/wholefile_coder.py:
       Paul Gauthier: 115
       Paul Gauthier (aider): 3
     aider/coders/wholefile_func_coder.py:
       Paul Gauthier: 120
       Paul Gauthier (aider): 11
-    aider/coders/wholefile_func_prompts.py:
-      Paul Gauthier: 24
-    aider/coders/wholefile_prompts.py:
-      Paul Gauthier: 38
     aider/commands.py:
       Paul Gauthier: 28
     aider/diffs.py:
@@ -95,11 +87,11 @@
       Paul Gauthier: 113
       Paul Gauthier (aider): 38
   grand_total:
-    Paul Gauthier: 1700
+    Paul Gauthier: 1576
     Paul Gauthier (aider): 182
   start_tag: v0.6.0
-  total_lines: 1882
-- aider_percentage: 7.61
+  total_lines: 1758
+- aider_percentage: 7.97
   aider_total: 150
   end_date: '2023-07-06'
   end_tag: v0.8.0
@@ -116,26 +108,16 @@
     aider/coders/base_coder.py:
       Paul Gauthier: 161
       Paul Gauthier (aider): 5
-    aider/coders/base_prompts.py:
-      Paul Gauthier: 2
     aider/coders/editblock_coder.py:
       Paul Gauthier: 26
     aider/coders/editblock_func_coder.py:
       Paul Gauthier: 144
       Paul Gauthier (aider): 8
-    aider/coders/editblock_func_prompts.py:
-      Paul Gauthier: 27
     aider/coders/single_wholefile_func_coder.py:
       Paul Gauthier: 122
-    aider/coders/single_wholefile_func_prompts.py:
-      Paul Gauthier: 27
     aider/coders/wholefile_coder.py:
       Paul Gauthier: 24
     aider/coders/wholefile_func_coder.py:
-      Paul Gauthier: 14
-    aider/coders/wholefile_func_prompts.py:
-      Paul Gauthier: 3
-    aider/coders/wholefile_prompts.py:
       Paul Gauthier: 14
     aider/commands.py:
       Paul Gauthier: 18
@@ -164,8 +146,6 @@
       Paul Gauthier: 8
     benchmark/plot.sh:
       Paul Gauthier: 29
-    benchmark/prompts.py:
-      Paul Gauthier: 16
     benchmark/rungrid.py:
       Paul Gauthier: 60
     benchmark/test_benchmark.py:
@@ -188,12 +168,12 @@
     tests/test_wholefile.py:
       Paul Gauthier: 193
   grand_total:
-    Paul Gauthier: 1815
+    Paul Gauthier: 1726
     Paul Gauthier (aider): 150
     kwmiebach: 5
   start_tag: v0.7.0
-  total_lines: 1970
-- aider_percentage: 16.7
+  total_lines: 1881
+- aider_percentage: 16.75
   aider_total: 161
   end_date: '2023-07-16'
   end_tag: v0.9.0
@@ -204,8 +184,6 @@
       Paul Gauthier: 75
     aider/coders/editblock_coder.py:
       Paul Gauthier: 8
-    aider/coders/editblock_prompts.py:
-      Paul Gauthier: 3
     aider/coders/single_wholefile_func_coder.py:
       Paul Gauthier: 1
     aider/coders/wholefile_coder.py:
@@ -251,11 +229,11 @@
     tests/utils.py:
       Paul Gauthier: 46
   grand_total:
-    Paul Gauthier: 803
+    Paul Gauthier: 800
     Paul Gauthier (aider): 161
   start_tag: v0.8.0
-  total_lines: 964
-- aider_percentage: 13.17
+  total_lines: 961
+- aider_percentage: 13.21
   aider_total: 44
   end_date: '2023-07-22'
   end_tag: v0.10.0
@@ -266,8 +244,6 @@
       Paul Gauthier: 34
     aider/coders/editblock_coder.py:
       Paul Gauthier: 11
-    aider/coders/editblock_prompts.py:
-      Paul Gauthier: 1
     aider/coders/single_wholefile_func_coder.py:
       Paul Gauthier: 2
     aider/coders/wholefile_coder.py:
@@ -303,11 +279,11 @@
       Paul Gauthier: 6
   grand_total:
     Amer Amayreh: 4
-    Paul Gauthier: 286
+    Paul Gauthier: 285
     Paul Gauthier (aider): 44
   start_tag: v0.9.0
-  total_lines: 334
-- aider_percentage: 4.95
+  total_lines: 333
+- aider_percentage: 5.09
   aider_total: 48
   end_date: '2023-08-02'
   end_tag: v0.11.0
@@ -316,12 +292,8 @@
       Paul Gauthier: 1
     aider/coders/base_coder.py:
       Paul Gauthier: 148
-    aider/coders/editblock_prompts.py:
-      Paul Gauthier: 7
     aider/coders/wholefile_coder.py:
       Paul Gauthier: 2
-    aider/coders/wholefile_prompts.py:
-      Paul Gauthier: 1
     aider/commands.py:
       Paul Gauthier: 38
       Paul Gauthier (aider): 2
@@ -331,8 +303,6 @@
     aider/main.py:
       Paul Gauthier: 86
       Paul Gauthier (aider): 3
-    aider/prompts.py:
-      Paul Gauthier: 18
     aider/repo.py:
       Paul Gauthier: 164
       Paul Gauthier (aider): 13
@@ -356,11 +326,11 @@
     tests/utils.py:
       Paul Gauthier: 6
   grand_total:
-    Paul Gauthier: 921
+    Paul Gauthier: 895
     Paul Gauthier (aider): 48
   start_tag: v0.10.0
-  total_lines: 969
-- aider_percentage: 5.05
+  total_lines: 943
+- aider_percentage: 5.16
   aider_total: 28
   end_date: '2023-08-11'
   end_tag: v0.12.0
@@ -372,8 +342,6 @@
       Paul Gauthier: 4
     aider/coders/editblock_coder.py:
       Paul Gauthier: 130
-    aider/coders/editblock_prompts.py:
-      Paul Gauthier: 12
     aider/commands.py:
       Joshua Vial: 2
       Paul Gauthier: 17
@@ -409,10 +377,10 @@
   grand_total:
     Arseniy Pavlenko: 3
     Joshua Vial: 2
-    Paul Gauthier: 522
+    Paul Gauthier: 510
     Paul Gauthier (aider): 28
   start_tag: v0.11.0
-  total_lines: 555
+  total_lines: 543
 - aider_percentage: 4.07
   aider_total: 24
   end_date: '2023-08-22'
@@ -569,7 +537,7 @@
     Thinh Nguyen: 9
   start_tag: v0.14.0
   total_lines: 423
-- aider_percentage: 1.68
+- aider_percentage: 1.71
   aider_total: 16
   end_date: '2023-10-29'
   end_tag: v0.16.0
@@ -580,8 +548,6 @@
       Paul Gauthier: 7
     aider/coders/editblock_coder.py:
       Paul Gauthier: 13
-    aider/coders/editblock_prompts.py:
-      Paul Gauthier: 19
     aider/commands.py:
       Paul Gauthier: 5
     aider/queries/tree-sitter-c-sharp-tags.scm:
@@ -638,12 +604,12 @@
     tests/test_repomap.py:
       Paul Gauthier: 5
   grand_total:
-    Paul Gauthier: 937
+    Paul Gauthier: 918
     Paul Gauthier (aider): 16
     paul-gauthier: 1
   start_tag: v0.15.0
-  total_lines: 954
-- aider_percentage: 7.38
+  total_lines: 935
+- aider_percentage: 7.46
   aider_total: 22
   end_date: '2023-11-06'
   end_tag: v0.17.0
@@ -659,8 +625,6 @@
       Paul Gauthier: 21
     aider/coders/editblock_coder.py:
       Paul Gauthier: 29
-    aider/coders/editblock_prompts.py:
-      Paul Gauthier: 3
     aider/commands.py:
       Omri Bloch: 1
       Paul Gauthier: 5
@@ -695,11 +659,11 @@
   grand_total:
     Jack Hallam: 3
     Omri Bloch: 1
-    Paul Gauthier: 272
+    Paul Gauthier: 269
     Paul Gauthier (aider): 22
   start_tag: v0.16.0
-  total_lines: 298
-- aider_percentage: 23.57
+  total_lines: 295
+- aider_percentage: 35.43
   aider_total: 107
   end_date: '2023-11-17'
   end_tag: v0.18.0
@@ -708,8 +672,6 @@
       Paul Gauthier: 1
     aider/coders/base_coder.py:
       Paul Gauthier: 33
-    aider/coders/editblock_prompts.py:
-      Paul Gauthier: 152
     aider/commands.py:
       Paul Gauthier: 12
       Paul Gauthier (aider): 3
@@ -736,11 +698,11 @@
     tests/test_repomap.py:
       Paul Gauthier: 30
   grand_total:
-    Paul Gauthier: 347
+    Paul Gauthier: 195
     Paul Gauthier (aider): 107
   start_tag: v0.17.0
-  total_lines: 454
-- aider_percentage: 0.67
+  total_lines: 302
+- aider_percentage: 0.72
   aider_total: 14
   end_date: '2023-12-19'
   end_tag: v0.19.0
@@ -753,14 +715,10 @@
       Paul Gauthier: 66
     aider/coders/editblock_coder.py:
       Paul Gauthier: 2
-    aider/coders/editblock_prompts.py:
-      Paul Gauthier: 11
     aider/coders/search_replace.py:
       Paul Gauthier: 769
     aider/coders/udiff_coder.py:
       Paul Gauthier: 395
-    aider/coders/udiff_prompts.py:
-      Paul Gauthier: 115
     aider/coders/wholefile_coder.py:
       Paul Gauthier: 2
     aider/commands.py:
@@ -789,8 +747,6 @@
       Paul Gauthier: 7
     benchmark/benchmark.py:
       Paul Gauthier: 235
-    benchmark/prompts.py:
-      Paul Gauthier: 2
     benchmark/refactor_tools.py:
       Paul Gauthier: 209
     tests/test_coder.py:
@@ -813,11 +769,11 @@
     tests/test_wholefile.py:
       Paul Gauthier: 10
   grand_total:
-    Paul Gauthier: 2041
+    Paul Gauthier: 1913
     Your Name: 21
     Your Name (aider): 14
   start_tag: v0.18.0
-  total_lines: 2076
+  total_lines: 1948
 - aider_percentage: 11.3
   aider_total: 40
   end_date: '2024-01-04'
@@ -912,12 +868,10 @@
       Paul Gauthier: 48
     aider/main.py:
       Paul Gauthier: 2
-    aider/prompts.py:
-      Paul Gauthier: 5
   grand_total:
-    Paul Gauthier: 63
+    Paul Gauthier: 58
   start_tag: v0.21.0
-  total_lines: 63
+  total_lines: 58
 - aider_percentage: 1.11
   aider_total: 2
   end_date: '2024-02-03'
@@ -1133,8 +1087,6 @@
       Paul Gauthier: 1
     aider/coders/base_coder.py:
       Paul Gauthier: 11
-    aider/coders/wholefile_prompts.py:
-      Paul Gauthier: 4
     aider/history.py:
       Paul Gauthier: 2
     aider/main.py:
@@ -1162,9 +1114,9 @@
     tests/test_wholefile.py:
       Paul Gauthier: 1
   grand_total:
-    Paul Gauthier: 237
+    Paul Gauthier: 233
   start_tag: v0.29.0
-  total_lines: 237
+  total_lines: 233
 - aider_percentage: 0.15
   aider_total: 2
   end_date: '2024-05-02'
@@ -1176,12 +1128,6 @@
       Paul Gauthier: 375
     aider/coders/base_coder.py:
       Paul Gauthier: 153
-    aider/coders/editblock_prompts.py:
-      Paul Gauthier: 2
-    aider/coders/udiff_prompts.py:
-      Paul Gauthier: 1
-    aider/coders/wholefile_prompts.py:
-      Paul Gauthier: 2
     aider/commands.py:
       Paul Gauthier: 45
     aider/gui.py:
@@ -1204,11 +1150,11 @@
     tests/test_wholefile.py:
       Paul Gauthier: 1
   grand_total:
-    Paul Gauthier: 1333
+    Paul Gauthier: 1328
     Paul Gauthier (aider): 2
   start_tag: v0.30.0
-  total_lines: 1335
-- aider_percentage: 0.35
+  total_lines: 1330
+- aider_percentage: 0.44
   aider_total: 3
   end_date: '2024-05-07'
   end_tag: v0.32.0
@@ -1221,20 +1167,10 @@
       Paul Gauthier: 2
     aider/coders/base_coder.py:
       Paul Gauthier: 55
-    aider/coders/base_prompts.py:
-      Paul Gauthier: 4
     aider/coders/editblock_coder.py:
       Paul Gauthier: 4
     aider/coders/editblock_fenced_coder.py:
       Paul Gauthier: 11
-    aider/coders/editblock_fenced_prompts.py:
-      Paul Gauthier: 95
-    aider/coders/editblock_prompts.py:
-      Paul Gauthier: 42
-    aider/coders/udiff_prompts.py:
-      Paul Gauthier: 13
-    aider/coders/wholefile_prompts.py:
-      Paul Gauthier: 27
     aider/gui.py:
       Paul Gauthier: 1
     aider/main.py:
@@ -1255,10 +1191,10 @@
     tests/test_sendchat.py:
       Paul Gauthier: 4
   grand_total:
-    Paul Gauthier: 857
+    Paul Gauthier: 676
     Paul Gauthier (aider): 3
   start_tag: v0.31.0
-  total_lines: 860
+  total_lines: 679
 - aider_percentage: 0.0
   aider_total: 0
   end_date: '2024-05-08'
@@ -1295,14 +1231,6 @@
       Paul Gauthier: 6
     aider/coders/base_coder.py:
       Paul Gauthier: 18
-    aider/coders/base_prompts.py:
-      Paul Gauthier: 15
-    aider/coders/editblock_prompts.py:
-      Paul Gauthier: 4
-    aider/coders/udiff_prompts.py:
-      Paul Gauthier: 4
-    aider/coders/wholefile_prompts.py:
-      Paul Gauthier: 6
     aider/main.py:
       Paul Gauthier: 9
     aider/models.py:
@@ -1314,10 +1242,10 @@
     tests/test_sendchat.py:
       Paul Gauthier: 4
   grand_total:
-    Paul Gauthier: 91
+    Paul Gauthier: 62
   start_tag: v0.33.0
-  total_lines: 91
-- aider_percentage: 6.39
+  total_lines: 62
+- aider_percentage: 6.42
   aider_total: 17
   end_date: '2024-05-13'
   end_tag: v0.35.0
@@ -1342,8 +1270,6 @@
       Paul Gauthier (aider): 1
     aider/models.py:
       Paul Gauthier: 25
-    aider/prompts.py:
-      Paul Gauthier: 1
     aider/sendchat.py:
       Paul Gauthier: 8
     aider/utils.py:
@@ -1351,11 +1277,11 @@
     aider/versioncheck.py:
       Paul Gauthier: 10
   grand_total:
-    Paul Gauthier: 249
+    Paul Gauthier: 248
     Paul Gauthier (aider): 17
   start_tag: v0.34.0
-  total_lines: 266
-- aider_percentage: 14.35
+  total_lines: 265
+- aider_percentage: 14.42
   aider_total: 89
   end_date: '2024-05-22'
   end_tag: v0.36.0
@@ -1370,8 +1296,6 @@
     aider/coders/base_coder.py:
       Paul Gauthier: 113
       Paul Gauthier (aider): 3
-    aider/coders/editblock_prompts.py:
-      Paul Gauthier: 3
     aider/coders/wholefile_coder.py:
       Paul Gauthier (aider): 2
     aider/commands.py:
@@ -1403,11 +1327,11 @@
       Paul Gauthier: 1
       Paul Gauthier (aider): 3
   grand_total:
-    Paul Gauthier: 531
+    Paul Gauthier: 528
     Paul Gauthier (aider): 89
   start_tag: v0.35.0
-  total_lines: 620
-- aider_percentage: 18.17
+  total_lines: 617
+- aider_percentage: 18.65
   aider_total: 113
   end_date: '2024-06-04'
   end_tag: v0.37.0
@@ -1417,12 +1341,8 @@
     aider/coders/base_coder.py:
       Paul Gauthier: 73
       Paul Gauthier (aider): 3
-    aider/coders/base_prompts.py:
-      Paul Gauthier: 11
     aider/coders/editblock_coder.py:
       Paul Gauthier: 1
-    aider/coders/editblock_prompts.py:
-      Paul Gauthier: 2
     aider/commands.py:
       Aleksandr Bobrov: 1
       Aleksandr Bobrov (aider): 1
@@ -1434,8 +1354,6 @@
       Paul Gauthier: 4
     aider/litellm.py:
       Paul Gauthier: 1
-    aider/prompts.py:
-      Paul Gauthier: 3
     aider/repomap.py:
       Paul Gauthier: 115
     aider/sendchat.py:
@@ -1456,11 +1374,11 @@
   grand_total:
     Aleksandr Bobrov: 1
     Aleksandr Bobrov (aider): 1
-    Paul Gauthier: 508
+    Paul Gauthier: 492
     Paul Gauthier (aider): 112
   start_tag: v0.36.0
-  total_lines: 622
-- aider_percentage: 6.31
+  total_lines: 606
+- aider_percentage: 7.8
   aider_total: 44
   end_date: '2024-06-16'
   end_tag: v0.38.0
@@ -1487,8 +1405,6 @@
       Paul Gauthier (aider): 11
     aider/coders/base_coder.py:
       Paul Gauthier: 78
-    aider/coders/editblock_prompts.py:
-      Paul Gauthier: 133
     aider/commands.py:
       Paul Gauthier: 35
     aider/gui.py:
@@ -1523,11 +1439,11 @@
       Paul Gauthier: 4
   grand_total:
     Krazer: 28
-    Paul Gauthier: 624
+    Paul Gauthier: 491
     Paul Gauthier (aider): 44
     develmusa: 1
   start_tag: v0.37.0
-  total_lines: 697
+  total_lines: 564
 - aider_percentage: 24.93
   aider_total: 95
   end_date: '2024-06-20'
@@ -1586,7 +1502,7 @@
     Paul Gauthier (aider): 79
   start_tag: v0.38.0
   total_lines: 381
-- aider_percentage: 5.47
+- aider_percentage: 5.57
   aider_total: 21
   end_date: '2024-06-24'
   end_tag: v0.40.0
@@ -1601,8 +1517,6 @@
       Paul Gauthier: 28
     aider/coders/editblock_coder.py:
       Paul Gauthier: 64
-    aider/coders/editblock_prompts.py:
-      Paul Gauthier: 7
     aider/linter.py:
       Paul Gauthier: 24
       Paul Gauthier (aider): 21
@@ -1620,11 +1534,11 @@
   grand_total:
     Dustin Miller: 14
     Krazer: 73
-    Paul Gauthier: 271
+    Paul Gauthier: 264
     Paul Gauthier (aider): 21
     paul-gauthier: 5
   start_tag: v0.39.0
-  total_lines: 384
+  total_lines: 377
 - aider_percentage: 5.54
   aider_total: 15
   end_date: '2024-07-01'
@@ -1723,7 +1637,7 @@
     Paul Gauthier (aider): 7
   start_tag: v0.41.0
   total_lines: 306
-- aider_percentage: 8.6
+- aider_percentage: 9.82
   aider_total: 38
   end_date: '2024-07-07'
   end_tag: v0.43.0
@@ -1746,14 +1660,8 @@
       Paul Gauthier: 2
     aider/coders/base_coder.py:
       Paul Gauthier: 45
-    aider/coders/base_prompts.py:
-      Paul Gauthier: 5
-    aider/coders/editblock_prompts.py:
-      Paul Gauthier: 4
     aider/coders/help_coder.py:
       Paul Gauthier: 17
-    aider/coders/help_prompts.py:
-      Paul Gauthier: 46
     aider/commands.py:
       Paul Gauthier: 69
       Paul Gauthier (aider): 5
@@ -1783,10 +1691,10 @@
       Paul Gauthier: 6
       Paul Gauthier (aider): 3
   grand_total:
-    Paul Gauthier: 404
+    Paul Gauthier: 349
     Paul Gauthier (aider): 38
   start_tag: v0.42.0
-  total_lines: 442
+  total_lines: 387
 - aider_percentage: 26.86
   aider_total: 159
   end_date: '2024-07-16'
@@ -1893,7 +1801,7 @@
     Paul Gauthier (aider): 113
   start_tag: v0.44.0
   total_lines: 266
-- aider_percentage: 44.17
+- aider_percentage: 47.04
   aider_total: 254
   end_date: '2024-07-29'
   end_tag: v0.46.0
@@ -1907,15 +1815,11 @@
       Your Name: 1
     aider/coders/ask_coder.py:
       Your Name: 9
-    aider/coders/ask_prompts.py:
-      Paul Gauthier: 30
     aider/coders/base_coder.py:
       Paul Gauthier: 17
       Paul Gauthier (aider): 45
       Your Name: 27
       Your Name (aider): 6
-    aider/coders/base_prompts.py:
-      Your Name: 2
     aider/coders/editblock_coder.py:
       Your Name (aider): 2
     aider/coders/editblock_fenced_coder.py:
@@ -1942,9 +1846,6 @@
       Your Name (aider): 1
     aider/models.py:
       Paul Gauthier: 24
-    aider/prompts.py:
-      Paul Gauthier: 2
-      Titusz: 1
     aider/queries/tree-sitter-elm-tags.scm:
       Charles Joachim: 4
     aider/repomap.py:
@@ -1967,14 +1868,13 @@
       Paul Gauthier (aider): 73
   grand_total:
     Charles Joachim: 4
-    Paul Gauthier: 241
+    Paul Gauthier: 209
     Paul Gauthier (aider): 204
-    Titusz: 1
-    Your Name: 75
+    Your Name: 73
     Your Name (aider): 50
   start_tag: v0.45.0
-  total_lines: 575
-- aider_percentage: 57.16
+  total_lines: 540
+- aider_percentage: 59.12
   aider_total: 415
   end_date: '2024-07-31'
   end_tag: v0.47.0
@@ -2006,8 +1906,6 @@
     aider/main.py:
       Paul Gauthier: 9
       Paul Gauthier (aider): 1
-    aider/prompts.py:
-      Paul Gauthier: 24
     aider/queries/tree-sitter-ocaml-tags.scm:
       Paul Gauthier: 12
       Paul Gauthier (aider): 18
@@ -2046,11 +1944,11 @@
     tests/basic/test_repomap.py:
       Paul Gauthier: 1
   grand_total:
-    Paul Gauthier: 311
+    Paul Gauthier: 287
     Paul Gauthier (aider): 415
   start_tag: v0.46.0
-  total_lines: 726
-- aider_percentage: 44.09
+  total_lines: 702
+- aider_percentage: 44.44
   aider_total: 276
   end_date: '2024-08-06'
   end_tag: v0.48.0
@@ -2077,8 +1975,6 @@
       Paul Gauthier: 9
       Paul Gauthier (aider): 7
       Thinh Nguyen: 1
-    aider/prompts.py:
-      Paul Gauthier: 5
     aider/repo.py:
       Paul Gauthier: 51
       Paul Gauthier (aider): 23
@@ -2109,13 +2005,13 @@
     tests/basic/test_scripting.py:
       Paul Gauthier (aider): 39
   grand_total:
-    Paul Gauthier: 348
+    Paul Gauthier: 343
     Paul Gauthier (aider): 276
     Thinh Nguyen: 1
     paul-gauthier: 1
   start_tag: v0.47.0
-  total_lines: 626
-- aider_percentage: 61.13
+  total_lines: 621
+- aider_percentage: 61.52
   aider_total: 478
   end_date: '2024-08-10'
   end_tag: v0.49.0
@@ -2128,8 +2024,6 @@
     aider/coders/base_coder.py:
       Paul Gauthier: 91
       Paul Gauthier (aider): 44
-    aider/coders/base_prompts.py:
-      Paul Gauthier: 5
     aider/commands.py:
       Paul Gauthier: 34
       Paul Gauthier (aider): 108
@@ -2181,10 +2075,10 @@
       Paul Gauthier: 1
       Paul Gauthier (aider): 49
   grand_total:
-    Paul Gauthier: 304
+    Paul Gauthier: 299
     Paul Gauthier (aider): 478
   start_tag: v0.48.0
-  total_lines: 782
+  total_lines: 777
 - aider_percentage: 66.05
   aider_total: 214
   end_date: '2024-08-13'
@@ -2241,7 +2135,7 @@
     Paul Gauthier (aider): 201
   start_tag: v0.49.0
   total_lines: 324
-- aider_percentage: 56.11
+- aider_percentage: 56.25
   aider_total: 450
   end_date: '2024-08-20'
   end_tag: v0.51.0
@@ -2256,8 +2150,6 @@
     aider/coders/base_coder.py:
       Paul Gauthier: 172
       Paul Gauthier (aider): 60
-    aider/coders/editblock_prompts.py:
-      Paul Gauthier: 2
     aider/coders/single_wholefile_func_coder.py:
       Paul Gauthier: 29
     aider/commands.py:
@@ -2296,7 +2188,7 @@
       Paul Gauthier: 15
       Paul Gauthier (aider): 104
   grand_total:
-    Paul Gauthier: 352
+    Paul Gauthier: 350
     Paul Gauthier (aider): 450
   start_tag: v0.50.0
-  total_lines: 802
+  total_lines: 800
