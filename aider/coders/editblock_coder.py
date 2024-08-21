@@ -32,6 +32,8 @@ class EditBlockCoder(Coder):
         failed = []
         passed = []
 
+        dump(edits)
+
         for edit in edits:
             if edit[0] is None:
                 edit = edit[1]
