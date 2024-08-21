@@ -1,6 +1,5 @@
 import difflib
 import math
-import os
 import re
 import subprocess
 import sys
