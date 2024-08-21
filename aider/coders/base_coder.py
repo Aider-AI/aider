@@ -826,7 +826,7 @@ class Coder:
         added_urls = []
         for url in urls:
             if url not in self.rejected_urls:
-                if self.io.confirm_ask(f"Add {url} to the chat?"):
+                if self.io.confirm_ask(f"Add URL to the chat?", subject=url):
                     inp += "\n\n"
                     inp += self.commands.cmd_web(url, paginate=False)
                     added_urls.append(url)
@@ -1315,10 +1315,8 @@ class Coder:
         if not mentioned_rel_fnames:
             return
 
-        for rel_fname in mentioned_rel_fnames:
-            self.io.tool_output(rel_fname)
-
-        if not self.io.confirm_ask("Add these files to the chat?"):
+        add_files = "\n".join(mentioned_rel_fnames) + "\n"
+        if not self.io.confirm_ask("Add these files to the chat?", subject=add_files):
             return
 
         for rel_fname in mentioned_rel_fnames:
@@ -1663,7 +1661,7 @@ class Coder:
             return True
 
         if not Path(full_path).exists():
-            if not self.io.confirm_ask(f"Allow creation of new file {path}?"):
+            if not self.io.confirm_ask(f"Allow creation of new file?", subject=path):
                 self.io.tool_error(f"Skipping edits to {path}")
                 return
 
@@ -1682,7 +1680,8 @@ class Coder:
             return True
 
         if not self.io.confirm_ask(
-            f"Allow edits to {path} which was not previously added to chat?"
+            "Allow edits to file that has not been added to the chat?",
+            subject=path,
         ):
             self.io.tool_error(f"Skipping edits to {path}")
             return

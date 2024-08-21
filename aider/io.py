@@ -357,6 +357,7 @@ class InputOutput:
         self.num_user_asks += 1
 
         if subject:
+            self.tool_output()
             self.tool_output(subject, bold=True)
 
         if self.yes is True:
@@ -378,6 +379,7 @@ class InputOutput:
         self.num_user_asks += 1
 
         if subject:
+            self.tool_output()
             self.tool_output(subject, bold=True)
 
         if self.yes is True:

@@ -68,14 +68,10 @@ Newer aider version v{latest_version} is available. To upgrade, run:
 
     cmd = utils.get_pip_install(["--upgrade", "aider-chat"])
 
-    text = f"""
-Newer aider version v{latest_version} is available. To upgrade, run:
+    text = f"Newer aider version v{latest_version} is available. To upgrade, run:"
 
-    {' '.join(cmd)}
-"""
     io.tool_error(text)
-
-    if io.confirm_ask("Run pip install?"):
+    if io.confirm_ask("Run pip install?", subject=' '.join(cmd)):
         success, output = utils.run_install(cmd)
         if success:
             io.tool_output("Re-run aider to use new version.")
