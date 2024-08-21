@@ -25,22 +25,19 @@ class EditBlockCoder(Coder):
         # might raise ValueError for malformed ORIG/UPD blocks
         edits = list(find_original_update_blocks(content, self.fence))
 
-        dump(edits)
-
         return edits
 
     def apply_edits(self, edits):
         failed = []
         passed = []
 
-        dump(edits)
-
         for edit in edits:
             if edit[0] is None:
                 edit = edit[1]
                 # This is a shell command
-                self.io.tool_output(f"Shell command: {edit}")
-                if self.io.confirm_ask("Do you want to run this command?"):
+                self.io.tool_output()
+                self.io.tool_output(f"Command: {edit.strip()}")
+                if self.io.confirm_ask("Do you want to run this suggested shell command?"):
                     try:
                         result = subprocess.run(
                             edit, shell=True, check=True, text=True, capture_output=True
