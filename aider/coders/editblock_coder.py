@@ -50,6 +50,8 @@ class EditBlockCoder(Coder):
                 self.io.tool_output(f"{edit.strip()}", bold=True)
                 if self.io.confirm_ask("Do you want to run this suggested shell command?"):
                     try:
+                        # Add the command to input history
+                        self.io.add_to_input_history(f"/run {edit.strip()}")
                         self.run_interactive_subprocess(edit.split())
                     except Exception as e:
                         self.io.tool_error(str(e))

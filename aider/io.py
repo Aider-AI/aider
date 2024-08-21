@@ -311,6 +311,9 @@ class InputOutput:
         if not self.input_history_file:
             return
         FileHistory(self.input_history_file).append_string(inp)
+        # Also add to the in-memory history if it exists
+        if hasattr(self, 'session') and hasattr(self.session, 'history'):
+            self.session.history.append_string(inp)
 
     def get_input_history(self):
         if not self.input_history_file:
