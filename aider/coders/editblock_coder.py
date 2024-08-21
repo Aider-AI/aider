@@ -40,7 +40,11 @@ class EditBlockCoder(Coder):
                 if self.io.confirm_ask("Do you want to run this suggested shell command?"):
                     try:
                         result = subprocess.run(
-                            edit, shell=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+                            edit,
+                            shell=True,
+                            text=True,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT,
                         )
                         self.io.tool_output(result.stdout)
                         passed.append(edit)
