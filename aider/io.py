@@ -230,7 +230,7 @@ class InputOutput:
         with open(str(filename), "w", encoding=self.encoding) as f:
             f.write(content)
 
-    def get_input(self, root, rel_fnames, addable_rel_fnames, commands, abs_read_only_fnames=None):
+    def get_input(self, root, rel_fnames, addable_rel_fnames, commands, abs_read_only_fnames=None, edit_format=None):
         if self.pretty:
             style = dict(style=self.user_input_color) if self.user_input_color else dict()
             self.console.rule(**style)
@@ -239,7 +239,7 @@ class InputOutput:
 
         rel_fnames = list(rel_fnames)
         show = " ".join(rel_fnames)
-        show += "\n> "
+        show += f"\n{edit_format}\n> "
 
         inp = ""
         multiline_input = False
