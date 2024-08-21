@@ -1,5 +1,6 @@
 import difflib
 import math
+import os
 import re
 import subprocess
 import sys
@@ -12,8 +13,6 @@ from ..dump import dump  # noqa: F401
 from .base_coder import Coder
 from .editblock_prompts import EditBlockPrompts
 
-
-import os
 
 class EditBlockCoder(Coder):
     """A coder that uses search/replace blocks for code modifications."""
@@ -30,10 +29,11 @@ class EditBlockCoder(Coder):
         return edits
 
     def run_interactive_subprocess(self, command):
-        if os.name == 'posix':  # Unix-like systems (Linux, macOS)
+        if os.name == "posix":  # Unix-like systems (Linux, macOS)
             import pty
+
             return pty.spawn(command)
-        elif os.name == 'nt':  # Windows
+        elif os.name == "nt":  # Windows
             return subprocess.run(command, shell=True)
         else:
             raise OSError("Unsupported operating system")
