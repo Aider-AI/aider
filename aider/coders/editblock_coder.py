@@ -45,6 +45,7 @@ class EditBlockCoder(Coder):
                             text=True,
                             stdout=subprocess.PIPE,
                             stderr=subprocess.STDOUT,
+                            stdin=subprocess.DEVNULL,
                         )
                         self.io.tool_output(result.stdout)
                     except subprocess.CalledProcessError as e:
