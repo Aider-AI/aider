@@ -43,7 +43,7 @@ class EditBlockCoder(Coder):
             self.io.tool_error(f"Error running command '{command}': {str(e)}")
 
         self.io.tool_output(f"To retry and share output with the LLM: /run {command}")
-        self.io.tool_output(f"You can find this command in your input history with up-arrow.")
+        self.io.tool_output("You can find this command in your input history with up-arrow.")
 
     def handle_shell_commands(self, commands_str):
         commands = commands_str.strip().splitlines()
