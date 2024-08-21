@@ -826,7 +826,7 @@ class Coder:
         added_urls = []
         for url in urls:
             if url not in self.rejected_urls:
-                if self.io.confirm_ask(f"Add URL to the chat?", subject=url):
+                if self.io.confirm_ask("Add URL to the chat?", subject=url):
                     inp += "\n\n"
                     inp += self.commands.cmd_web(url, paginate=False)
                     added_urls.append(url)
@@ -1661,7 +1661,7 @@ class Coder:
             return True
 
         if not Path(full_path).exists():
-            if not self.io.confirm_ask(f"Allow creation of new file?", subject=path):
+            if not self.io.confirm_ask("Allow creation of new file?", subject=path):
                 self.io.tool_error(f"Skipping edits to {path}")
                 return
 
