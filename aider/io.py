@@ -411,12 +411,17 @@ class InputOutput:
             self.tool_output()
             self.tool_output(subject, bold=True)
 
+        if self.pretty and self.user_input_color:
+            style = Style.from_dict({"": self.user_input_color})
+        else:
+            style = None
+
         if self.yes is True:
             res = "yes"
         elif self.yes is False:
             res = "no"
         else:
-            res = prompt(question + " ", default=default)
+            res = prompt(question + " ", default=default, style=style)
 
         hist = f"{question.strip()} {res.strip()}"
         self.append_chat_history(hist, linebreak=True, blockquote=True)
