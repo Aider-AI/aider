@@ -4,11 +4,11 @@
 #
 #    pip-compile --output-file=requirements/requirements-help.txt requirements/requirements-help.in
 #
-aiohappyeyeballs==2.3.7
+aiohappyeyeballs==2.4.0
     # via
     #   -c requirements/../requirements.txt
     #   aiohttp
-aiohttp==3.10.3
+aiohttp==3.10.5
     # via
     #   -c requirements/../requirements.txt
     #   huggingface-hub
@@ -86,7 +86,7 @@ httpx==0.27.0
     #   -c requirements/../requirements.txt
     #   llama-index-core
     #   openai
-huggingface-hub[inference]==0.24.5
+huggingface-hub[inference]==0.24.6
     # via
     #   -c requirements/../requirements.txt
     #   llama-index-embeddings-huggingface
@@ -112,7 +112,7 @@ joblib==1.4.2
     # via
     #   nltk
     #   scikit-learn
-llama-index-core==0.10.66
+llama-index-core==0.10.67
     # via
     #   -r requirements/requirements-help.in
     #   llama-index-embeddings-huggingface
@@ -122,7 +122,7 @@ markupsafe==2.1.5
     # via
     #   -c requirements/../requirements.txt
     #   jinja2
-marshmallow==3.21.3
+marshmallow==3.22.0
     # via dataclasses-json
 minijinja==2.0.1
     # via huggingface-hub
@@ -142,7 +142,7 @@ networkx==3.2.1
     #   -c requirements/../requirements.txt
     #   llama-index-core
     #   torch
-nltk==3.8.1
+nltk==3.9.1
     # via llama-index-core
 numpy==1.26.4
     # via
@@ -153,7 +153,7 @@ numpy==1.26.4
     #   scipy
     #   sentence-transformers
     #   transformers
-openai==1.41.0
+openai==1.42.0
     # via
     #   -c requirements/../requirements.txt
     #   llama-index-core
@@ -249,7 +249,7 @@ tqdm==4.66.5
     #   openai
     #   sentence-transformers
     #   transformers
-transformers==4.44.0
+transformers==4.44.1
     # via sentence-transformers
 typing-extensions==4.12.2
     # via

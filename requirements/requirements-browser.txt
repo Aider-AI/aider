@@ -13,7 +13,7 @@ attrs==24.2.0
     #   referencing
 blinker==1.8.2
     # via streamlit
-cachetools==5.4.0
+cachetools==5.5.0
     # via streamlit
 certifi==2024.7.4
     # via
@@ -64,7 +64,7 @@ mdurl==0.1.2
     # via
     #   -c requirements/../requirements.txt
     #   markdown-it-py
-narwhals==1.4.2
+narwhals==1.5.0
     # via altair
 numpy==1.26.4
     # via
