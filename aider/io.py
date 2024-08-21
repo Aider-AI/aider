@@ -4,13 +4,15 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 
-from prompt_toolkit.completion import Completer, Completion
+from prompt_toolkit import prompt
+from prompt_toolkit.completion import Completer, Completion, WordCompleter
 from prompt_toolkit.enums import EditingMode
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.lexers import PygmentsLexer
-from prompt_toolkit.shortcuts import CompleteStyle, PromptSession, prompt
+from prompt_toolkit.shortcuts import CompleteStyle, PromptSession
 from prompt_toolkit.styles import Style
+from prompt_toolkit.validation import Validator
 from pygments.lexers import MarkdownLexer, guess_lexer_for_filename
 from pygments.token import Token
 from pygments.util import ClassNotFound
@@ -372,12 +374,7 @@ class InputOutput:
         else:
             style = dict()
 
-        from prompt_toolkit.completion import WordCompleter
-
         completer = WordCompleter(["yes", "no"])
-
-        from prompt_toolkit import prompt
-        from prompt_toolkit.validation import Validator
 
         def is_yesno(text):
             return "yes".startswith(text.lower()) or "no".startswith(text.lower())
