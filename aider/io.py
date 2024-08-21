@@ -353,8 +353,11 @@ class InputOutput:
         hist = "\n" + content.strip() + "\n\n"
         self.append_chat_history(hist)
 
-    def confirm_ask(self, question, default="y"):
+    def confirm_ask(self, question, default="y", subject=None):
         self.num_user_asks += 1
+
+        if subject:
+            self.tool_output(subject, bold=True)
 
         if self.yes is True:
             res = "y"
