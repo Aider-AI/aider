@@ -41,7 +41,7 @@ Examples of when to suggest shell commands:
 - If you changed a CLI program, suggest the command to run it to see the new behavior.
 - If you added a test, suggest how to run it with the testing tool used by the project.
 - Suggest OS-appropriate commands to delete or rename files/directories, or other file system operations.
-- Suggest commands to install needed dependencies.
+- If your code changes add new dependencies, suggest the command to install them.
 - Etc.
 """
 
@@ -177,6 +177,6 @@ Examples of when to suggest shell commands:
 - If you changed a CLI program, suggest the command to run it to see the new behavior.
 - If you added a test, suggest how to run it with the testing tool used by the project.
 - Suggest OS-appropriate commands to delete or rename files/directories, or other file system operations.
-- Suggest commands to install needed dependencies.
+- If your code changes add new dependencies, suggest the command to install them.
 - Etc.
 """
