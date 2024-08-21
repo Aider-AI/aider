@@ -2,6 +2,7 @@ import difflib
 import math
 import re
 import sys
+import subprocess
 from difflib import SequenceMatcher
 from pathlib import Path
 
@@ -40,9 +41,15 @@ class EditBlockCoder(Coder):
                 # This is a shell command
                 self.io.tool_output(f"Shell command: {edit}")
                 if self.io.confirm_ask("Do you want to run this command?"):
-                    # Here you would add logic to run the shell command
-                    self.io.tool_output("Command execution placeholder")
-                    passed.append(edit)
+                    try:
+                        result = subprocess.run(edit, shell=True, check=True, text=True, capture_output=True)
+                        self.io.tool_output(f"Command executed successfully. Output:\n{result.stdout}")
+                        if result.stderr:
+                            self.io.tool_output(f"Errors:\n{result.stderr}")
+                        passed.append(edit)
+                    except subprocess.CalledProcessError as e:
+                        self.io.tool_error(f"Command execution failed. Error:\n{e.stderr}")
+                        failed.append(edit)
                 else:
                     self.io.tool_output("Command execution skipped.")
                     failed.append(edit)
