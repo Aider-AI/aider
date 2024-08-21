@@ -47,12 +47,8 @@ class EditBlockCoder(Coder):
                             stderr=subprocess.STDOUT,
                         )
                         self.io.tool_output(result.stdout)
-                        passed.append(edit)
                     except subprocess.CalledProcessError as e:
-                        self.io.tool_output(e.output)
-                        failed.append(edit)
-                else:
-                    failed.append(edit)
+                        self.io.tool_error(e.output)
             else:
                 path, original, updated = edit
                 full_path = self.abs_root_path(path)
