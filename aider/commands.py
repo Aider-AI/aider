@@ -284,8 +284,22 @@ class Commands:
     def cmd_clear(self, args):
         "Clear the chat history"
 
+        self._clear_chat_history()
+
+    def _drop_all_files(self):
+        self.io.tool_output("Dropping all files from the chat session.")
+        self.coder.abs_fnames = set()
+        self.coder.abs_read_only_fnames = set()
+
+    def _clear_chat_history(self):
         self.coder.done_messages = []
         self.coder.cur_messages = []
+
+    def cmd_reset(self, args):
+        "Drop all files and clear the chat history"
+        self._drop_all_files()
+        self._clear_chat_history()
+        self.io.tool_output("Reset complete: all files dropped and chat history cleared.")
 
     def cmd_tokens(self, args):
         "Report on the number of tokens used by the current chat context"
@@ -630,9 +644,7 @@ class Commands:
         "Remove files from the chat session to free up context space"
 
         if not args.strip():
-            self.io.tool_output("Dropping all files from the chat session.")
-            self.coder.abs_fnames = set()
-            self.coder.abs_read_only_fnames = set()
+            self._drop_all_files()
             return
 
         filenames = parse_quoted_filenames(args)
