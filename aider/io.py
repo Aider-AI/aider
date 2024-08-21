@@ -113,7 +113,10 @@ class AutoCompleter(Completer):
 
         candidates = self.words
         candidates.update(set(self.fname_to_rel_fnames))
-        candidates = [(word, f"`{word}`" if word not in self.fname_to_rel_fnames else word) for word in candidates]
+        candidates = [
+            (word, f"`{word}`" if word not in self.fname_to_rel_fnames else word)
+            for word in candidates
+        ]
 
         last_word = words[-1]
         for word_match, word_insert in candidates:
