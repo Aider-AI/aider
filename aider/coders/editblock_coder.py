@@ -472,12 +472,12 @@ def find_original_update_blocks(content, fence=DEFAULT_FENCE):
 
                 updated_text = []
                 i += 1
-                while i < len(lines) and not lines[i].strip() == UPDATED:
+                while i < len(lines) and not lines[i].strip() in (UPDATED, DIVIDER):
                     updated_text.append(lines[i])
                     i += 1
 
-                if i >= len(lines) or lines[i].strip() != UPDATED:
-                    raise ValueError(f"Expected `{UPDATED}`")
+                if i >= len(lines) or lines[i].strip() not in (UPDATED, DIVIDER):
+                    raise ValueError(f"Expected `{UPDATED}` or `{DIVIDER}`")
 
                 yield filename, "".join(original_text), "".join(updated_text)
 
