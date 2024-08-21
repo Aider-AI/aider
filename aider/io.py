@@ -384,7 +384,7 @@ class InputOutput:
         else:
             res = prompt(question + " ", default=default)
 
-        hist = f"{subject + ': ' if subject else ''}{question.strip()} {res.strip()}"
+        hist = f"{question.strip()} {res.strip()}"
         self.append_chat_history(hist, linebreak=True, blockquote=True)
         if self.yes in (True, False):
             self.tool_output(hist)
