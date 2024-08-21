@@ -28,13 +28,22 @@ class EditBlockCoder(Coder):
         return edits
 
     def run_interactive_subprocess(self, command):
-        return subprocess.run(
-            command,
-            text=True,
-            shell=True,
-            encoding=self.io.encoding,
-            errors="replace",
-        )
+        try:
+            result = subprocess.run(
+                command,
+                text=True,
+                shell=True,
+                encoding=self.io.encoding,
+                errors="replace",
+                capture_output=True,
+            )
+            if result.returncode != 0:
+                self.io.tool_error(f"Command '{command}' exited with status {result.returncode}")
+                self.io.tool_error(result.stderr)
+            return result
+        except Exception as e:
+            self.io.tool_error(f"Error running command '{command}': {str(e)}")
+            return None
 
     def handle_shell_commands(self, commands_str):
         commands = commands_str.strip().splitlines()
@@ -54,10 +63,9 @@ class EditBlockCoder(Coder):
             self.io.tool_output(f"Running {command}")
             # Add the command to input history
             self.io.add_to_input_history(f"/run {command.strip()}")
-            try:
-                self.run_interactive_subprocess(command)
-            except Exception as e:
-                self.io.tool_error(f"Error running command '{command}': {str(e)}")
+            result = self.run_interactive_subprocess(command)
+            if result and result.stdout:
+                self.io.tool_output(result.stdout)
 
     def apply_edits(self, edits):
         failed = []
