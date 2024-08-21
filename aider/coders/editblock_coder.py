@@ -29,14 +29,13 @@ class EditBlockCoder(Coder):
         return edits
 
     def run_interactive_subprocess(self, command):
-        dump(repr(command))
-        if os.name == "posix":  # Unix-like systems (Linux, macOS)
-            return subprocess.run(command, shell=True)
-            # return pty.spawn(command)
-        elif os.name == "nt":  # Windows
-            return subprocess.run(command, shell=True)
-        else:
-            raise OSError("Unsupported operating system")
+        return subprocess.run(
+            command,
+            text=True,
+            shell=True,
+            encoding=self.io.encoding,
+            errors="replace",
+        )
 
     def handle_shell_commands(self, commands_str):
         commands = commands_str.strip().splitlines()
@@ -61,9 +60,7 @@ class EditBlockCoder(Coder):
         failed = []
         passed = []
 
-        dump(edits)
         for edit in edits:
-            dump(edit)
             if edit[0] is None:
                 self.handle_shell_commands(edit[1])
                 continue
@@ -86,8 +83,6 @@ class EditBlockCoder(Coder):
                 else:
                     failed.append(edit)
 
-        dump(failed)
-        dump(passed)
         if not failed:
             return
 
