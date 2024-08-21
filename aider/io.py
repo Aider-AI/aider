@@ -371,8 +371,11 @@ class InputOutput:
 
         return is_yes
 
-    def prompt_ask(self, question, default=None):
+    def prompt_ask(self, question, default=None, subject=None):
         self.num_user_asks += 1
+
+        if subject:
+            self.tool_output(subject, bold=True)
 
         if self.yes is True:
             res = "yes"
@@ -381,7 +384,7 @@ class InputOutput:
         else:
             res = prompt(question + " ", default=default)
 
-        hist = f"{question.strip()} {res.strip()}"
+        hist = f"{subject + ': ' if subject else ''}{question.strip()} {res.strip()}"
         self.append_chat_history(hist, linebreak=True, blockquote=True)
         if self.yes in (True, False):
             self.tool_output(hist)
