@@ -38,7 +38,9 @@ class EditBlockCoder(Coder):
 
     def handle_shell_commands(self, commands_str):
         commands = commands_str.strip().splitlines()
-        if not self.io.confirm_ask("Run shell command(s)?", subject="\n".join(commands)):
+        command_count = sum(1 for cmd in commands if cmd.strip() and not cmd.strip().startswith("#"))
+        prompt = "Run shell command?" if command_count == 1 else "Run shell commands?"
+        if not self.io.confirm_ask(prompt, subject="\n".join(commands)):
             return
 
         for command in commands:
