@@ -1752,7 +1752,7 @@ class Coder:
         edits = self.get_edits()
         edits = self.prepare_to_edit(edits)
         self.apply_edits(edits)
-        return set(edit[0] for edit in edits)
+        return set(edit[0] for edit in edits if edit[0])
 
     def apply_updates(self):
         try:

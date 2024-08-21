@@ -275,7 +275,7 @@ MODEL_SETTINGS = [
             "anthropic-beta": ANTHROPIC_BETA_HEADER,
         },
         cache_control=True,
-        reminder=None,
+        reminder="user",
     ),
     ModelSettings(
         "anthropic/claude-3-5-sonnet-20240620",
