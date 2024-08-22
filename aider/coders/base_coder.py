@@ -60,9 +60,6 @@ all_fences = [
 ]
 
 
-from .chat_chunks import ChatChunks
-
-
 class Coder:
     abs_fnames = None
     abs_read_only_fnames = None
