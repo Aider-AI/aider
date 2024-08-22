@@ -9,16 +9,9 @@ from .wholefile_prompts import WholeFilePrompts
 
 class WholeFileCoder(Coder):
     """A coder that operates on entire files for code modifications."""
+
     edit_format = "whole"
     gpt_prompts = WholeFilePrompts()
-
-    def update_cur_messages(self, edited):
-        if edited:
-            self.cur_messages += [
-                dict(role="assistant", content=self.gpt_prompts.redacted_edit_message)
-            ]
-        else:
-            self.cur_messages += [dict(role="assistant", content=self.partial_response_content)]
 
     def render_incremental_response(self, final):
         try:
