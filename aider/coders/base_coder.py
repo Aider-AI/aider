@@ -1737,6 +1737,8 @@ class Coder:
             if path is None:
                 res.append(edit)
                 continue
+            if path == "python":
+                dump(edits)
             if path in seen:
                 allowed = seen[path]
             else:

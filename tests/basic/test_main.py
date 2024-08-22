@@ -597,4 +597,5 @@ class TestMain(TestCase):
                 output=DummyOutput(),
             )
 
-            self.assertTrue(Path("file.txt").exists())
+            # shell commands require explicit approval, not just --yes
+            self.assertFalse(Path("file.txt").exists())
