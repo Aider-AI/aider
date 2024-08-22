@@ -29,7 +29,7 @@ def process_markdown(filename):
         content = "\n".join(section.split("\n")[1:]).strip()
 
         for fence in all_fences:
-            if '\n' + fence[0] in content:
+            if "\n" + fence[0] in content:
                 break
 
         # Process the content with find_original_update_blocks
