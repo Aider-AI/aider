@@ -60,6 +60,38 @@ class TestInputOutput(unittest.TestCase):
             result = io.get_input(root, rel_fnames, addable_rel_fnames, commands)
             self.assertEqual(result, "test input")
 
+    @patch('aider.io.prompt')
+    def test_confirm_ask_explicit_yes_required(self, mock_prompt):
+        io = InputOutput(pretty=False)
+
+        # Test case 1: explicit_yes_required=True, self.yes=True
+        io.yes = True
+        result = io.confirm_ask("Are you sure?", explicit_yes_required=True)
+        self.assertFalse(result)
+        mock_prompt.assert_not_called()
+
+        # Test case 2: explicit_yes_required=True, self.yes=False
+        io.yes = False
+        result = io.confirm_ask("Are you sure?", explicit_yes_required=True)
+        self.assertFalse(result)
+        mock_prompt.assert_not_called()
+
+        # Test case 3: explicit_yes_required=True, user input required
+        io.yes = None
+        mock_prompt.return_value = 'y'
+        result = io.confirm_ask("Are you sure?", explicit_yes_required=True)
+        self.assertTrue(result)
+        mock_prompt.assert_called_once()
+
+        # Reset mock_prompt
+        mock_prompt.reset_mock()
+
+        # Test case 4: explicit_yes_required=False, self.yes=True
+        io.yes = True
+        result = io.confirm_ask("Are you sure?", explicit_yes_required=False)
+        self.assertTrue(result)
+        mock_prompt.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main()
