@@ -60,7 +60,7 @@ class TestInputOutput(unittest.TestCase):
             result = io.get_input(root, rel_fnames, addable_rel_fnames, commands)
             self.assertEqual(result, "test input")
 
-    @patch('aider.io.prompt')
+    @patch("aider.io.prompt")
     def test_confirm_ask_explicit_yes_required(self, mock_prompt):
         io = InputOutput(pretty=False)
 
@@ -78,7 +78,7 @@ class TestInputOutput(unittest.TestCase):
 
         # Test case 3: explicit_yes_required=True, user input required
         io.yes = None
-        mock_prompt.return_value = 'y'
+        mock_prompt.return_value = "y"
         result = io.confirm_ask("Are you sure?", explicit_yes_required=True)
         self.assertTrue(result)
         mock_prompt.assert_called_once()
