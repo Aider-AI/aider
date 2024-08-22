@@ -46,7 +46,7 @@ class TestWholeFileCoder(unittest.TestCase):
             ' code:\n\nfoo.js\n```python\nprint("Hello, World!")\n```\n\nThis code will output'
             ' "Hello, World!" to the console.'
         )
-        coder.update_files()
+        coder.apply_updates()
         self.assertFalse(Path("foo.js").exists())
 
     def test_update_files(self):
@@ -63,7 +63,7 @@ class TestWholeFileCoder(unittest.TestCase):
         coder.partial_response_content = f"{sample_file}\n```\nUpdated content\n```"
 
         # Call update_files method
-        edited_files = coder.update_files()
+        edited_files = coder.apply_updates()
 
         # Check if the sample file was updated
         self.assertIn("sample.txt", edited_files)
@@ -117,7 +117,7 @@ Quote!
         )
 
         # Call update_files method
-        edited_files = coder.update_files()
+        edited_files = coder.apply_updates()
 
         # Check if the sample file was updated
         self.assertIn("sample.txt", edited_files)
@@ -142,7 +142,7 @@ Quote!
         coder.partial_response_content = f"path/to/{sample_file}\n```\nUpdated content\n```"
 
         # Call update_files method
-        edited_files = coder.update_files()
+        edited_files = coder.apply_updates()
 
         # Check if the sample file was updated
         self.assertIn("sample.txt", edited_files)
@@ -166,7 +166,7 @@ Quote!
         coder.partial_response_content = f"{sample_file}\n```\nUpdated content\n```"
 
         # Call update_files method
-        edited_files = coder.update_files()
+        edited_files = coder.apply_updates()
 
         # Check if the sample file was updated
         self.assertIn("sample.txt", edited_files)
@@ -199,7 +199,7 @@ Quote!
         )
 
         # Call update_files method
-        edited_files = coder.update_files()
+        edited_files = coder.apply_updates()
 
         # Check if the sample file was updated
         self.assertIn(sample_file, edited_files)
@@ -237,7 +237,7 @@ after b
         coder.partial_response_content = response
 
         # Call update_files method
-        edited_files = coder.update_files()
+        edited_files = coder.apply_updates()
 
         # Check if the sample file was updated
         self.assertIn(str(fname_a), edited_files)
@@ -268,7 +268,7 @@ after b
         )
 
         # Call update_files method
-        edited_files = coder.update_files()
+        edited_files = coder.apply_updates()
 
         # Check if the sample file was updated
         self.assertIn(sample_file, edited_files)
