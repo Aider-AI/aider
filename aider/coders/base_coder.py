@@ -291,6 +291,8 @@ class Coder:
         self.io = io
         self.stream = stream
 
+        self.shell_commands = []
+
         if not auto_commits:
             dirty_commits = False
 
