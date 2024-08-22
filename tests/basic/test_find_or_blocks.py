@@ -9,7 +9,7 @@ import unittest
 
 from aider.coders.base_coder import all_fences
 from aider.coders.editblock_coder import find_original_update_blocks
-
+from aider.dump import dump # noqa: F401
 
 def process_markdown(filename, fh):
     try:
@@ -21,6 +21,8 @@ def process_markdown(filename, fh):
 
     # Split the content into sections based on '####' headers
     sections = re.split(r"(?=####\s)", content)
+
+    dump(sections)
 
     for section in sections:
         if "editblock_coder.py" in section or "test_editblock.py" in section:
@@ -101,9 +103,7 @@ class TestFindOrBlocks(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python testsr.py <markdown_filename>")
-    else:
+    if len(sys.argv) == 2:
         process_markdown(sys.argv[1], sys.stdout)
-
-    unittest.main()
+    else:
+        unittest.main()
