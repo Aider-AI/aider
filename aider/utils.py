@@ -272,9 +272,6 @@ class Spinner:
             print("\r" + " " * (len(self.text) + 3))
 
 
-import os
-
-
 def find_common_root(abs_fnames):
     if len(abs_fnames) == 1:
         return os.path.dirname(list(abs_fnames)[0])
