@@ -51,6 +51,16 @@ def wrap_fence(name):
     return f"<{name}>", f"</{name}>"
 
 
+all_fences = [
+    ("``" + "`", "``" + "`"),
+    wrap_fence("source"),
+    wrap_fence("code"),
+    wrap_fence("pre"),
+    wrap_fence("codeblock"),
+    wrap_fence("sourcecode"),
+]
+
+
 @dataclass
 class ChatChunks:
     system: List = field(default_factory=list)
@@ -503,14 +513,7 @@ class Coder:
         self.abs_root_path_cache[key] = res
         return res
 
-    fences = [
-        ("``" + "`", "``" + "`"),
-        wrap_fence("source"),
-        wrap_fence("code"),
-        wrap_fence("pre"),
-        wrap_fence("codeblock"),
-        wrap_fence("sourcecode"),
-    ]
+    fences = all_fences
     fence = fences[0]
 
     def show_pretty(self):
