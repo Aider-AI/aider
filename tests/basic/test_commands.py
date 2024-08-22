@@ -855,6 +855,37 @@ class TestCommands(TestCase):
         finally:
             os.unlink(external_file_path)
 
+    def test_cmd_read_only_with_multiple_files(self):
+        with GitTemporaryDirectory() as repo_dir:
+            io = InputOutput(pretty=False, yes=False)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Create multiple test files
+            test_files = ["test_file1.txt", "test_file2.txt", "test_file3.txt"]
+            for file_name in test_files:
+                file_path = Path(repo_dir) / file_name
+                file_path.write_text(f"Content of {file_name}")
+
+            # Test the /read-only command with multiple files
+            commands.cmd_read_only(" ".join(test_files))
+
+            # Check if all test files were added to abs_read_only_fnames
+            for file_name in test_files:
+                file_path = Path(repo_dir) / file_name
+                self.assertTrue(
+                    any(
+                        os.path.samefile(str(file_path), fname)
+                        for fname in coder.abs_read_only_fnames
+                    )
+                )
+
+            # Test dropping all read-only files
+            commands.cmd_drop(" ".join(test_files))
+
+            # Check if all files were removed from abs_read_only_fnames
+            self.assertEqual(len(coder.abs_read_only_fnames), 0)
+
     def test_cmd_diff(self):
         with GitTemporaryDirectory() as repo_dir:
             repo = git.Repo(repo_dir)
