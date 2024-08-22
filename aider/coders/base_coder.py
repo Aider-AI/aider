@@ -1112,7 +1112,7 @@ class Coder:
 
         if edited and self.auto_lint:
             lint_errors = self.lint_edited(edited)
-            self.auto_commit(edited)
+            self.auto_commit(edited, context="Ran the linter")
             self.lint_outcome = not lint_errors
             if lint_errors:
                 ok = self.io.confirm_ask("Attempt to fix lint errors?")
@@ -1204,14 +1204,6 @@ class Coder:
                 res += "\n"
                 res += errors
                 res += "\n"
-
-        # Commit any formatting changes that happened
-        if self.repo and self.auto_commits and not self.dry_run:
-            commit_res = self.repo.commit(
-                fnames=fnames, context="The linter made edits to these files", aider_edits=True
-            )
-            if commit_res:
-                self.show_auto_commit_outcome(commit_res)
 
         if res:
             self.io.tool_error(res)
@@ -1780,11 +1772,13 @@ class Coder:
 
         return context
 
-    def auto_commit(self, edited):
+    def auto_commit(self, edited, context=None):
         if not self.repo or not self.auto_commits or self.dry_run:
             return
 
-        context = self.get_context_from_history(self.cur_messages)
+        if not context:
+            context = self.get_context_from_history(self.cur_messages)
+
         res = self.repo.commit(fnames=edited, context=context, aider_edits=True)
         if res:
             self.show_auto_commit_outcome(res)
