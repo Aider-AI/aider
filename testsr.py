@@ -48,7 +48,7 @@ def process_markdown(filename):
     except FileNotFoundError:
         print(json.dumps({"error": f"File '{filename}' not found."}, indent=4))
     except Exception as e:
-        print(json.dumps({"error": f"An error occurred: {str(e)}"}, indent=4))
+        print(e)
 
 
 if __name__ == "__main__":
