@@ -6,10 +6,10 @@
 - Aider now offers to run shell commands related to changes it makes:
   - Launch a browser to view updated html/css/js.
   - Install new dependencies.
-  - Run DB migration tools.
+  - Run DB migrations. 
   - Run the program to exercise changes.
-  - Run the new test cases.
-- Show active chat mode at aider prompt.
+  - Run new test cases.
+- Show the active chat mode at aider prompt.
 - New `/reset` command to `/drop` files and `/clear` chat history.
 - New `--map-multiplier-no-files` to control repo map size multiplier when no files are in the chat.
   - Reduced default multiplier to 2.
