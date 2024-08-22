@@ -20,8 +20,6 @@ from pathlib import Path
 
 import git
 from rich.console import Console, Text
-
-from .chat_chunks import ChatChunks
 from rich.markdown import Markdown
 
 from aider import __version__, models, prompts, urls, utils
@@ -37,6 +35,7 @@ from aider.sendchat import retry_exceptions, send_completion
 from aider.utils import format_content, format_messages, is_image_file
 
 from ..dump import dump  # noqa: F401
+from .chat_chunks import ChatChunks
 
 
 class MissingAPIKeyError(ValueError):
