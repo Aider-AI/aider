@@ -124,8 +124,8 @@ class TestRepo(unittest.TestCase):
         self.assertEqual(mock_send.call_count, 2)
 
         # Check that it was called with the correct model names
-        mock_send.assert_any_call(model1.name, mock_send.call_args[0][1])
-        mock_send.assert_any_call(model2.name, mock_send.call_args[0][1])
+        mock_send.assert_any_call(model1.name, *mock_send.call_args[0][1:])
+        mock_send.assert_any_call(model2.name, *mock_send.call_args[0][1:])
 
     @patch("aider.repo.simple_send_with_retries")
     def test_get_commit_message_strip_quotes(self, mock_send):

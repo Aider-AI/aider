@@ -10,6 +10,7 @@ class TestChatSummary(TestCase):
         self.mock_model.name = "gpt-3.5-turbo"
         self.mock_model.token_count = lambda msg: len(msg["content"].split())
         self.mock_model.info = {"max_input_tokens": 4096}
+        self.mock_model.extra_headers = {}
         self.chat_summary = ChatSummary(self.mock_model, max_tokens=100)
 
     def test_initialization(self):
@@ -73,8 +74,10 @@ class TestChatSummary(TestCase):
     def test_fallback_to_second_model(self, mock_send):
         mock_model1 = mock.Mock(spec=Model)
         mock_model1.name = "gpt-4"
+        mock_model1.extra_headers = {}
         mock_model2 = mock.Mock(spec=Model)
         mock_model2.name = "gpt-3.5-turbo"
+        mock_model2.extra_headers = {}
 
         chat_summary = ChatSummary([mock_model1, mock_model2], max_tokens=100)
 
