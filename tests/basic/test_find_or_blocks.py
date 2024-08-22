@@ -7,12 +7,12 @@ import sys
 from aider.coders.base_coder import all_fences
 from aider.coders.editblock_coder import find_original_update_blocks
 
-def process_markdown(filename):
+def process_markdown(filename, fh):
     try:
         with open(filename, "r") as file:
             content = file.read()
     except FileNotFoundError:
-        print(f"@@@ File '{filename}' not found.", "@" * 20)
+        print(f"@@@ File '{filename}' not found.", "@" * 20, file=fh, flush=True)
         return
 
     # Split the content into sections based on '####' headers
@@ -37,29 +37,29 @@ def process_markdown(filename):
         try:
             blocks = list(find_original_update_blocks(content, fence))
         except ValueError as e:
-            print("\n\n@@@", header, "@" * 20)
-            print(str(e))
+            print("\n\n@@@", header, "@" * 20, file=fh, flush=True)
+            print(str(e), file=fh, flush=True)
             continue
 
         if blocks:
-            print("\n\n@@@", header, "@" * 20)
+            print("\n\n@@@", header, "@" * 20, file=fh, flush=True)
 
         for block in blocks:
             if block[0] is None:  # This is a shell command block
-                print("@@@ SHELL", "@" * 20)
-                print(block[1], end="")
-                print("@@@ ENDSHELL", "@" * 20)
+                print("@@@ SHELL", "@" * 20, file=fh, flush=True)
+                print(block[1], end="", file=fh, flush=True)
+                print("@@@ ENDSHELL", "@" * 20, file=fh, flush=True)
 
             else:  # This is a SEARCH/REPLACE block
-                print("@@@ SEARCH:", block[0], "@" * 20)
-                print(block[1], end="")
-                print("@" * 20)
-                print(block[2], end="")
-                print("@@@ REPLACE", "@" * 20)
+                print("@@@ SEARCH:", block[0], "@" * 20, file=fh, flush=True)
+                print(block[1], end="", file=fh, flush=True)
+                print("@" * 20, file=fh, flush=True)
+                print(block[2], end="", file=fh, flush=True)
+                print("@@@ REPLACE", "@" * 20, file=fh, flush=True)
 
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print(json.dumps({"error": "Usage: python testsr.py <markdown_filename>"}, indent=4))
+        print(json.dumps({"error": "Usage: python testsr.py <markdown_filename>"}, indent=4), file=sys.stdout, flush=True)
     else:
-        process_markdown(sys.argv[1])
+        process_markdown(sys.argv[1], sys.stdout)
