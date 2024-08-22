@@ -14,14 +14,14 @@ import threading
 import time
 import traceback
 from collections import defaultdict
-from dataclasses import dataclass, field
 from datetime import datetime
 from json.decoder import JSONDecodeError
 from pathlib import Path
-from typing import List
 
 import git
 from rich.console import Console, Text
+
+from .chat_chunks import ChatChunks
 from rich.markdown import Markdown
 
 from aider import __version__, models, prompts, urls, utils
