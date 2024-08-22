@@ -25,6 +25,9 @@ class EditBlockCoder(Coder):
         # might raise ValueError for malformed ORIG/UPD blocks
         edits = list(find_original_update_blocks(content, self.fence))
 
+        self.shell_commands += [edit[1] for edit in edits if edit[0] is None]
+        edits = [edit for edit in edits if edit[0] is not None]
+
         return edits
 
     def run_interactive_subprocess(self, command):
@@ -45,55 +48,29 @@ class EditBlockCoder(Coder):
         self.io.tool_output(f"To retry and share output with the LLM: /run {command}")
         self.io.tool_output("You can find this command in your input history with up-arrow.")
 
-    def handle_shell_commands(self, commands_str):
-        commands = commands_str.strip().splitlines()
-        command_count = sum(
-            1 for cmd in commands if cmd.strip() and not cmd.strip().startswith("#")
-        )
-        prompt = "Run shell command?" if command_count == 1 else "Run shell commands?"
-        if not self.io.confirm_ask(prompt, subject="\n".join(commands), explicit_yes_required=True):
-            return
-
-        for command in commands:
-            command = command.strip()
-            if not command or command.startswith("#"):
-                continue
-
-            self.io.tool_output()
-            self.io.tool_output(f"Running {command}")
-            # Add the command to input history
-            self.io.add_to_input_history(f"/run {command.strip()}")
-            result = self.run_interactive_subprocess(command)
-            if result and result.stdout:
-                self.io.tool_output(result.stdout)
-
     def apply_edits(self, edits):
         failed = []
         passed = []
 
         for edit in edits:
-            if edit[0] is None:
-                self.handle_shell_commands(edit[1])
-                continue
-            else:
-                path, original, updated = edit
-                full_path = self.abs_root_path(path)
-                content = self.io.read_text(full_path)
-                new_content = do_replace(full_path, content, original, updated, self.fence)
-                if not new_content:
-                    # try patching any of the other files in the chat
-                    dump(self.abs_fnames)
-                    for full_path in self.abs_fnames:
-                        content = self.io.read_text(full_path)
-                        new_content = do_replace(full_path, content, original, updated, self.fence)
-                        if new_content:
-                            break
+            path, original, updated = edit
+            full_path = self.abs_root_path(path)
+            content = self.io.read_text(full_path)
+            new_content = do_replace(full_path, content, original, updated, self.fence)
+            if not new_content:
+                # try patching any of the other files in the chat
+                dump(self.abs_fnames)
+                for full_path in self.abs_fnames:
+                    content = self.io.read_text(full_path)
+                    new_content = do_replace(full_path, content, original, updated, self.fence)
+                    if new_content:
+                        break
 
-                if new_content:
-                    self.io.write_text(full_path, new_content)
-                    passed.append(edit)
-                else:
-                    failed.append(edit)
+            if new_content:
+                self.io.write_text(full_path, new_content)
+                passed.append(edit)
+            else:
+                failed.append(edit)
 
         if not failed:
             return
@@ -470,6 +447,7 @@ def find_original_update_blocks(content, fence=DEFAULT_FENCE):
                 i += 1
             if i < len(lines) and lines[i].strip().startswith("```"):
                 i += 1  # Skip the closing ```
+
             yield None, "".join(shell_content)
             continue
 

@@ -705,6 +705,7 @@ class Coder:
         self.num_reflections = 0
         self.lint_outcome = None
         self.test_outcome = None
+        self.shell_commands = []
 
         if self.repo:
             self.commit_before_message.append(self.repo.get_head())
@@ -1105,6 +1106,8 @@ class Coder:
 
         if self.reflected_message:
             return
+
+        self.run_shell_commands()
 
         if edited and self.auto_lint:
             lint_errors = self.lint_edited(edited)
@@ -1704,8 +1707,7 @@ class Coder:
         try:
             edits = self.get_edits()
             edits = self.prepare_to_edit(edits)
-
-            edited = set(edit[0] for edit in edits if edit[0])
+            edited = set(edit[0] for edit in edits)
             self.apply_edits(edits)
         except ValueError as err:
             self.num_malformed_responses += 1
@@ -1827,3 +1829,33 @@ class Coder:
 
     def apply_edits(self, edits):
         return
+
+    def run_shell_commands(self):
+        done = set()
+        for command in self.shell_commands:
+            if command in done:
+                continue
+            done.add(command)
+            self.handle_shell_commands(command)
+
+    def handle_shell_commands(self, commands_str):
+        commands = commands_str.strip().splitlines()
+        command_count = sum(
+            1 for cmd in commands if cmd.strip() and not cmd.strip().startswith("#")
+        )
+        prompt = "Run shell command?" if command_count == 1 else "Run shell commands?"
+        if not self.io.confirm_ask(prompt, subject="\n".join(commands), explicit_yes_required=True):
+            return
+
+        for command in commands:
+            command = command.strip()
+            if not command or command.startswith("#"):
+                continue
+
+            self.io.tool_output()
+            self.io.tool_output(f"Running {command}")
+            # Add the command to input history
+            self.io.add_to_input_history(f"/run {command.strip()}")
+            result = self.run_interactive_subprocess(command)
+            if result and result.stdout:
+                self.io.tool_output(result.stdout)
