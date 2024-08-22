@@ -60,6 +60,6 @@ def process_markdown(filename, fh):
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python testsr.py <markdown_filename>", file=sys.stdout, flush=True)
+        print("Usage: python testsr.py <markdown_filename>")
     else:
         process_markdown(sys.argv[1], sys.stdout)
