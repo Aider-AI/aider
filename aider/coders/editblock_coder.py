@@ -459,7 +459,9 @@ def find_original_update_blocks(content, fence=DEFAULT_FENCE):
             "```csh",
             "```tcsh",
         ]
-        if any(line.strip().startswith(start) for start in shell_starts):
+        next_is_editblock = i + 1 < len(lines) and lines[i + 1].rstrip() == HEAD
+
+        if any(line.strip().startswith(start) for start in shell_starts) and not next_is_editblock:
             shell_content = []
             i += 1
             while i < len(lines) and not lines[i].strip().startswith("```"):
