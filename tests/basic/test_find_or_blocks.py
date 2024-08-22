@@ -19,7 +19,12 @@ def process_markdown(filename, fh):
         print(f"@@@ File '{filename}' not found.", "@" * 20, file=fh, flush=True)
         return
     except UnicodeDecodeError:
-        print(f"@@@ File '{filename}' has an encoding issue. Make sure it's UTF-8 encoded.", "@" * 20, file=fh, flush=True)
+        print(
+            f"@@@ File '{filename}' has an encoding issue. Make sure it's UTF-8 encoded.",
+            "@" * 20,
+            file=fh,
+            flush=True,
+        )
         return
 
     # Split the content into sections based on '####' headers
