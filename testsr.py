@@ -33,7 +33,6 @@ def process_markdown(filename):
     # Split the content into sections based on '####' headers
     sections = re.split(r"(?=####\s)", content)
 
-    results = []
     for section in sections:
         if "editblock_coder.py" in section or "test_editblock.py" in section:
             continue
@@ -53,9 +52,12 @@ def process_markdown(filename):
         try:
             blocks = list(find_original_update_blocks(content, fence))
         except ValueError as e:
-            # If an error occurs, add it to the results for this section
-            results.append({"header": header, "error": str(e)})
+            print("***", header, "*" * 20)
+            print(str(e))
             continue
+
+        if blocks:
+            print("***", header, "*" * 20)
 
         for block in blocks:
             if block[0] is None:  # This is a shell command block
@@ -65,7 +67,6 @@ def process_markdown(filename):
 
             else:  # This is a SEARCH/REPLACE block
                 print("*** SEARCH:", block[0], "*" * 20)
-                print("***", header, "*" * 20)
                 print(block[1], end="")
                 print("*" * 20)
                 print(block[2], end="")
