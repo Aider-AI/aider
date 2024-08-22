@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import json
 import re
 import sys
 
@@ -61,10 +60,6 @@ def process_markdown(filename, fh):
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print(
-            json.dumps({"error": "Usage: python testsr.py <markdown_filename>"}, indent=4),
-            file=sys.stdout,
-            flush=True,
-        )
+        print("Usage: python testsr.py <markdown_filename>", file=sys.stdout, flush=True)
     else:
         process_markdown(sys.argv[1], sys.stdout)
