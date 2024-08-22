@@ -7,6 +7,7 @@ import sys
 from aider.coders.base_coder import all_fences
 from aider.coders.editblock_coder import find_original_update_blocks
 
+
 def process_markdown(filename, fh):
     try:
         with open(filename, "r") as file:
@@ -60,6 +61,10 @@ def process_markdown(filename, fh):
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print(json.dumps({"error": "Usage: python testsr.py <markdown_filename>"}, indent=4), file=sys.stdout, flush=True)
+        print(
+            json.dumps({"error": "Usage: python testsr.py <markdown_filename>"}, indent=4),
+            file=sys.stdout,
+            flush=True,
+        )
     else:
         process_markdown(sys.argv[1], sys.stdout)
