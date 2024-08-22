@@ -51,7 +51,7 @@ class EditBlockCoder(Coder):
             1 for cmd in commands if cmd.strip() and not cmd.strip().startswith("#")
         )
         prompt = "Run shell command?" if command_count == 1 else "Run shell commands?"
-        if not self.io.confirm_ask(prompt, subject="\n".join(commands)):
+        if not self.io.confirm_ask(prompt, subject="\n".join(commands), explicit_yes_required=True):
             return
 
         for command in commands:
