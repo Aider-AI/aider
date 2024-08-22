@@ -28,6 +28,9 @@ def process_markdown(filename):
         # Get the content (everything after the header)
         content = "\n".join(section.split("\n")[1:]).strip()
 
+        if "editblock" in content:
+            continue
+
         for fence in all_fences:
             if "\n" + fence[0] in content:
                 break
