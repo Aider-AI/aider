@@ -1752,17 +1752,13 @@ class Coder:
 
         return res
 
-    def update_files(self):
-        edits = self.get_edits()
-        dump("get", edits)
-        edits = self.prepare_to_edit(edits)
-        dump("prep", edits)
-        self.apply_edits(edits)
-        return set(edit[0] for edit in edits if edit[0])
-
     def apply_updates(self):
         try:
-            edited = self.update_files()
+            edits = self.get_edits()
+            edits = self.prepare_to_edit(edits)
+
+            edited = set(edit[0] for edit in edits if edit[0])
+            self.apply_edits(edits)
         except ValueError as err:
             self.num_malformed_responses += 1
 
