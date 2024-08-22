@@ -1030,24 +1030,38 @@ class Commands:
             self.io.tool_error(f"Error processing clipboard content: {e}")
 
     def cmd_read_only(self, args):
-        "Add a file to the chat that is for reference, not to be edited"
+        "Add files to the chat that are for reference, not to be edited"
         if not args.strip():
-            self.io.tool_error("Please provide a filename to read.")
+            self.io.tool_error("Please provide filenames to read.")
             return
 
-        filename = args.strip()
-        abs_path = os.path.abspath(filename)
+        filenames = parse_quoted_filenames(args)
+        for word in filenames:
+            matched_files = self.glob_filtered_to_repo(word)
+            if not matched_files:
+                self.io.tool_error(f"No files matched '{word}'.")
+                continue
 
-        if not os.path.exists(abs_path):
-            self.io.tool_error(f"File not found: {abs_path}")
-            return
+            for matched_file in matched_files:
+                abs_path = self.coder.abs_root_path(matched_file)
+                if not os.path.exists(abs_path):
+                    self.io.tool_error(f"File not found: {abs_path}")
+                    continue
 
-        if not os.path.isfile(abs_path):
-            self.io.tool_error(f"Not a file: {abs_path}")
-            return
+                if not os.path.isfile(abs_path):
+                    self.io.tool_error(f"Not a file: {abs_path}")
+                    continue
 
-        self.coder.abs_read_only_fnames.add(abs_path)
-        self.io.tool_output(f"Added {abs_path} to read-only files.")
+                if abs_path in self.coder.abs_fnames:
+                    self.io.tool_error(f"{matched_file} is already in the chat as an editable file")
+                    continue
+
+                if abs_path in self.coder.abs_read_only_fnames:
+                    self.io.tool_error(f"{matched_file} is already in the chat as a read-only file")
+                    continue
+
+                self.coder.abs_read_only_fnames.add(abs_path)
+                self.io.tool_output(f"Added {matched_file} to read-only files.")
 
     def cmd_map(self, args):
         "Print out the current repository map"
