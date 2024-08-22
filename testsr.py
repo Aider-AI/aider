@@ -27,7 +27,7 @@ def process_markdown(filename):
         with open(filename, "r") as file:
             content = file.read()
     except FileNotFoundError:
-        print(f"*** File '{filename}' not found.", "*" * 20)
+        print(f"@@@ File '{filename}' not found.", "@" * 20)
         return
 
     # Split the content into sections based on '####' headers
@@ -52,25 +52,25 @@ def process_markdown(filename):
         try:
             blocks = list(find_original_update_blocks(content, fence))
         except ValueError as e:
-            print("***", header, "*" * 20)
+            print("\n\n@@@", header, "@" * 20)
             print(str(e))
             continue
 
         if blocks:
-            print("***", header, "*" * 20)
+            print("\n\n@@@", header, "@" * 20)
 
         for block in blocks:
             if block[0] is None:  # This is a shell command block
-                print("*** SHELL", "*" * 20)
+                print("@@@ SHELL", "@" * 20)
                 print(block[1], end="")
-                print("*** ENDSHELL", "*" * 20)
+                print("@@@ ENDSHELL", "@" * 20)
 
             else:  # This is a SEARCH/REPLACE block
-                print("*** SEARCH:", block[0], "*" * 20)
+                print("@@@ SEARCH:", block[0], "@" * 20)
                 print(block[1], end="")
-                print("*" * 20)
+                print("@" * 20)
                 print(block[2], end="")
-                print("*** REPLACE", "*" * 20)
+                print("@@@ REPLACE", "@" * 20)
 
 
 if __name__ == "__main__":
