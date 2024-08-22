@@ -752,11 +752,12 @@ class Coder:
         yield from self.send_message(user_message)
 
     def init_before_message(self):
+        self.aider_edited_files = set()
         self.reflected_message = None
         self.num_reflections = 0
         self.lint_outcome = None
         self.test_outcome = None
-        self.edit_outcome = None
+
         if self.repo:
             self.commit_before_message.append(self.repo.get_head())
 
@@ -1044,8 +1045,6 @@ class Coder:
         return msgs
 
     def send_message(self, inp):
-        self.aider_edited_files = None
-
         self.cur_messages += [
             dict(role="user", content=inp),
         ]
@@ -1143,34 +1142,30 @@ class Coder:
             return
 
         edited = self.apply_updates()
-        if self.reflected_message:
-            self.edit_outcome = False
-            self.update_cur_messages(set())
-            return
-        if edited:
-            self.edit_outcome = True
 
-        self.update_cur_messages(edited)
+        self.update_cur_messages()
 
         if edited:
-            self.aider_edited_files = edited
-            if self.repo and self.auto_commits and not self.dry_run:
-                saved_message = self.auto_commit(edited)
-            elif hasattr(self.gpt_prompts, "files_content_gpt_edits_no_repo"):
+            self.aider_edited_files.update(edited)
+            saved_message = self.auto_commit(edited)
+
+            if not saved_message and hasattr(self.gpt_prompts, "files_content_gpt_edits_no_repo"):
                 saved_message = self.gpt_prompts.files_content_gpt_edits_no_repo
-            else:
-                saved_message = None
 
             self.move_back_cur_messages(saved_message)
 
+        if self.reflected_message:
+            return
+
         if edited and self.auto_lint:
             lint_errors = self.lint_edited(edited)
+            self.auto_commit(edited)
             self.lint_outcome = not lint_errors
             if lint_errors:
                 ok = self.io.confirm_ask("Attempt to fix lint errors?")
                 if ok:
                     self.reflected_message = lint_errors
-                    self.update_cur_messages(set())
+                    self.update_cur_messages()
                     return
 
         if edited and self.auto_test:
@@ -1180,7 +1175,7 @@ class Coder:
                 ok = self.io.confirm_ask("Attempt to fix test errors?")
                 if ok:
                     self.reflected_message = test_errors
-                    self.update_cur_messages(set())
+                    self.update_cur_messages()
                     return
 
         add_rel_files_message = self.check_for_file_mentions(content)
@@ -1270,7 +1265,7 @@ class Coder:
 
         return res
 
-    def update_cur_messages(self, edited):
+    def update_cur_messages(self):
         if self.partial_response_content:
             self.cur_messages += [dict(role="assistant", content=self.partial_response_content)]
         if self.partial_response_function_call:
@@ -1836,6 +1831,9 @@ class Coder:
         return context
 
     def auto_commit(self, edited):
+        if not self.repo or not self.auto_commits or self.dry_run:
+            return
+
         context = self.get_context_from_history(self.cur_messages)
         res = self.repo.commit(fnames=edited, context=context, aider_edits=True)
         if res:
