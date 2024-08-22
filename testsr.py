@@ -16,14 +16,15 @@ def process_markdown(filename):
 
         results = []
         for section in sections:
-            if section.strip():  # Ignore empty sections
-                # Extract the header (if present)
-                header = section.split("\n")[0].strip()
-                # Get the content (everything after the header)
-                content = "\n".join(section.split("\n")[1:]).strip()
+            if not section.strip():  # Ignore empty sections
+                continue
+            # Extract the header (if present)
+            header = section.split("\n")[0].strip()
+            # Get the content (everything after the header)
+            content = "\n".join(section.split("\n")[1:]).strip()
 
-                # Process the content with find_original_update_blocks
-                try:
+            # Process the content with find_original_update_blocks
+            try:
                     blocks = list(find_original_update_blocks(content, DEFAULT_FENCE))
 
                     # Create a dictionary for this section
