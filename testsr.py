@@ -21,48 +21,45 @@ def process_markdown(filename):
 
     results = []
     for section in sections:
-            if not section.strip():  # Ignore empty sections
-                continue
-            # Extract the header (if present)
-            header = section.split("\n")[0].strip()
-            # Get the content (everything after the header)
-            content = "\n".join(section.split("\n")[1:]).strip()
+        if not section.strip():  # Ignore empty sections
+            continue
+        # Extract the header (if present)
+        header = section.split("\n")[0].strip()
+        # Get the content (everything after the header)
+        content = "\n".join(section.split("\n")[1:]).strip()
 
-            for fence in all_fences:
-                if '\n' + fence[0] in content:
-                    break
+        for fence in all_fences:
+            if '\n' + fence[0] in content:
+                break
 
-            # Process the content with find_original_update_blocks
-            try:
-                blocks = list(find_original_update_blocks(content, fence))
-            except ValueError as e:
-                # If an error occurs, add it to the results for this section
-                results.append({"header": header, "error": str(e)})
-                continue
+        # Process the content with find_original_update_blocks
+        try:
+            blocks = list(find_original_update_blocks(content, fence))
+        except ValueError as e:
+            # If an error occurs, add it to the results for this section
+            results.append({"header": header, "error": str(e)})
+            continue
 
-            # Create a dictionary for this section
-            section_result = {"header": header, "blocks": []}
+        # Create a dictionary for this section
+        section_result = {"header": header, "blocks": []}
 
-            for block in blocks:
-                if block[0] is None:  # This is a shell command block
-                    section_result["blocks"].append({"type": "shell", "content": block[1]})
-                else:  # This is a SEARCH/REPLACE block
-                    section_result["blocks"].append(
-                        {
-                            "type": "search_replace",
-                            "filename": block[0],
-                            "original": block[1],
-                            "updated": block[2],
-                        }
-                    )
+        for block in blocks:
+            if block[0] is None:  # This is a shell command block
+                section_result["blocks"].append({"type": "shell", "content": block[1]})
+            else:  # This is a SEARCH/REPLACE block
+                section_result["blocks"].append(
+                    {
+                        "type": "search_replace",
+                        "filename": block[0],
+                        "original": block[1],
+                        "updated": block[2],
+                    }
+                )
 
-            results.append(section_result)
+        results.append(section_result)
 
-        # Output the results as JSON
-        print(json.dumps(results, indent=4))
-
-    except FileNotFoundError:
-        print(json.dumps({"error": f"File '{filename}' not found."}, indent=4))
+    # Output the results as JSON
+    print(json.dumps(results, indent=4))
 
 
 if __name__ == "__main__":
