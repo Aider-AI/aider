@@ -13,10 +13,13 @@ from aider.dump import dump  # noqa: F401
 
 def process_markdown(filename, fh):
     try:
-        with open(filename, "r") as file:
+        with open(filename, "r", encoding="utf-8") as file:
             content = file.read()
     except FileNotFoundError:
         print(f"@@@ File '{filename}' not found.", "@" * 20, file=fh, flush=True)
+        return
+    except UnicodeDecodeError:
+        print(f"@@@ File '{filename}' has an encoding issue. Make sure it's UTF-8 encoded.", "@" * 20, file=fh, flush=True)
         return
 
     # Split the content into sections based on '####' headers
@@ -82,7 +85,7 @@ class TestFindOrBlocks(unittest.TestCase):
         actual_output = output.getvalue()
 
         # Read the expected output
-        with open(expected_output_file, "r") as f:
+        with open(expected_output_file, "r", encoding="utf-8") as f:
             expected_output = f.read()
 
         # Compare the actual and expected outputs
