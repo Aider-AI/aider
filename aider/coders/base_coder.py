@@ -1142,6 +1142,7 @@ class Coder:
             return
 
         edited = self.apply_updates()
+        dump(edited)
 
         self.update_cur_messages()
 
@@ -1753,7 +1754,9 @@ class Coder:
 
     def update_files(self):
         edits = self.get_edits()
+        dump("get", edits)
         edits = self.prepare_to_edit(edits)
+        dump("prep", edits)
         self.apply_edits(edits)
         return set(edit[0] for edit in edits if edit[0])
 
@@ -1771,11 +1774,11 @@ class Coder:
             self.io.tool_error(str(err), strip=False)
 
             self.reflected_message = str(err)
-            return
+            return edited
 
         except git.exc.GitCommandError as err:
             self.io.tool_error(str(err))
-            return
+            return edited
         except Exception as err:
             self.io.tool_error("Exception while updating files:")
             self.io.tool_error(str(err), strip=False)
@@ -1783,7 +1786,7 @@ class Coder:
             traceback.print_exc()
 
             self.reflected_message = str(err)
-            return
+            return edited
 
         for path in edited:
             if self.dry_run:
