@@ -272,6 +272,16 @@ class Spinner:
             print("\r" + " " * (len(self.text) + 3))
 
 
+import os
+
+def find_common_root(abs_fnames):
+    if len(abs_fnames) == 1:
+        return os.path.dirname(list(abs_fnames)[0])
+    elif abs_fnames:
+        return os.path.commonpath(list(abs_fnames))
+    else:
+        return os.getcwd()
+
 def check_pip_install_extra(io, module, prompt, pip_install_cmd):
     try:
         __import__(module)

@@ -434,13 +434,7 @@ class Coder:
             bold = False
 
     def find_common_root(self):
-        if len(self.abs_fnames) == 1:
-            self.root = os.path.dirname(list(self.abs_fnames)[0])
-        elif self.abs_fnames:
-            self.root = os.path.commonpath(list(self.abs_fnames))
-        else:
-            self.root = os.getcwd()
-
+        self.root = utils.find_common_root(self.abs_fnames)
         self.root = utils.safe_abs_path(self.root)
 
     def add_rel_fname(self, rel_fname):
