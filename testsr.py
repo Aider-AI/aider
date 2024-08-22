@@ -44,10 +44,7 @@ def process_markdown(filename):
                     results.append(section_result)
                 except ValueError as e:
                     # If an error occurs, add it to the results for this section
-                    results.append({
-                        "header": header,
-                        "error": str(e)
-                    })
+                    results.append({"header": header, "error": str(e)})
 
         # Output the results as JSON
         print(json.dumps(results, indent=4))
