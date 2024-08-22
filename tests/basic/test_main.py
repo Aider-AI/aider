@@ -591,11 +591,10 @@ class TestMain(TestCase):
             shell_md = Path("shell.md")
             shell_md.write_text("```bash\ntouch file.txt\n```")
 
-            with self.assertRaises(ApplyShellCommandsError):
-                main(
-                    ["--apply", "shell.md", "--yes"],
-                    input=DummyInput(),
-                    output=DummyOutput(),
-                )
+            main(
+                ["--apply", "shell.md", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+            )
 
-            self.assertFalse(Path("file.txt").exists())
+            self.assertTrue(Path("file.txt").exists())
