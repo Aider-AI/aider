@@ -6,9 +6,9 @@ import sys
 
 from aider.coders.editblock_coder import (
     DEFAULT_FENCE,
-    all_fences,
     find_original_update_blocks,
 )
+from aider.coders.base_coder import all_fences
 
 
 def process_markdown(filename):
@@ -28,9 +28,13 @@ def process_markdown(filename):
             # Get the content (everything after the header)
             content = "\n".join(section.split("\n")[1:]).strip()
 
+            for fence in all_fences:
+                if '\n' + fence[0] in content:
+                    break
+
             # Process the content with find_original_update_blocks
             try:
-                blocks = list(find_original_update_blocks(content, DEFAULT_FENCE))
+                blocks = list(find_original_update_blocks(content, fence))
             except ValueError as e:
                 # If an error occurs, add it to the results for this section
                 results.append({"header": header, "error": str(e)})
@@ -59,8 +63,6 @@ def process_markdown(filename):
 
     except FileNotFoundError:
         print(json.dumps({"error": f"File '{filename}' not found."}, indent=4))
-    except Exception as e:
-        print(e)
 
 
 if __name__ == "__main__":
