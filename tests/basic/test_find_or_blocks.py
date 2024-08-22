@@ -4,23 +4,8 @@ import json
 import re
 import sys
 
-# from aider.coders.base_coder import all_fences
+from aider.coders.base_coder import all_fences
 from aider.coders.editblock_coder import find_original_update_blocks
-
-
-def wrap_fence(name):
-    return f"<{name}>", f"</{name}>"
-
-
-all_fences = [
-    ("``" + "`", "``" + "`"),
-    wrap_fence("source"),
-    wrap_fence("code"),
-    wrap_fence("pre"),
-    wrap_fence("codeblock"),
-    wrap_fence("sourcecode"),
-]
-
 
 def process_markdown(filename):
     try:
