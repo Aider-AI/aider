@@ -22,25 +22,32 @@ def process_markdown(filename):
                 content = "\n".join(section.split("\n")[1:]).strip()
 
                 # Process the content with find_original_update_blocks
-                blocks = list(find_original_update_blocks(content, DEFAULT_FENCE))
+                try:
+                    blocks = list(find_original_update_blocks(content, DEFAULT_FENCE))
 
-                # Create a dictionary for this section
-                section_result = {"header": header, "blocks": []}
+                    # Create a dictionary for this section
+                    section_result = {"header": header, "blocks": []}
 
-                for block in blocks:
-                    if block[0] is None:  # This is a shell command block
-                        section_result["blocks"].append({"type": "shell", "content": block[1]})
-                    else:  # This is a SEARCH/REPLACE block
-                        section_result["blocks"].append(
-                            {
-                                "type": "search_replace",
-                                "filename": block[0],
-                                "original": block[1],
-                                "updated": block[2],
-                            }
-                        )
+                    for block in blocks:
+                        if block[0] is None:  # This is a shell command block
+                            section_result["blocks"].append({"type": "shell", "content": block[1]})
+                        else:  # This is a SEARCH/REPLACE block
+                            section_result["blocks"].append(
+                                {
+                                    "type": "search_replace",
+                                    "filename": block[0],
+                                    "original": block[1],
+                                    "updated": block[2],
+                                }
+                            )
 
-                results.append(section_result)
+                    results.append(section_result)
+                except ValueError as e:
+                    # If an error occurs, add it to the results for this section
+                    results.append({
+                        "header": header,
+                        "error": str(e)
+                    })
 
         # Output the results as JSON
         print(json.dumps(results, indent=4))
