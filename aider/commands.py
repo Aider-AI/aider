@@ -1039,8 +1039,12 @@ class Commands:
         for word in filenames:
             matched_files = self.glob_filtered_to_repo(word)
             if not matched_files:
-                self.io.tool_error(f"No files matched '{word}'.")
-                continue
+                # If no files matched, try to use the word as a direct file path
+                if os.path.exists(word) and os.path.isfile(word):
+                    matched_files = [word]
+                else:
+                    self.io.tool_error(f"No files matched '{word}'.")
+                    continue
 
             for matched_file in matched_files:
                 abs_path = self.coder.abs_root_path(matched_file)
