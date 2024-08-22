@@ -27,7 +27,7 @@ def process_markdown(filename):
         with open(filename, "r") as file:
             content = file.read()
     except FileNotFoundError:
-        print(json.dumps({"error": f"File '{filename}' not found."}, indent=4))
+        print(f"*** File '{filename}' not found.", "*" * 20)
         return
 
     # Split the content into sections based on '####' headers
@@ -45,7 +45,7 @@ def process_markdown(filename):
         # Get the content (everything after the header)
         content = "".join(section.splitlines(keepends=True)[1:])
 
-        for fence in all_fences:
+        for fence in all_fences[1:] + all_fences[:1]:
             if "\n" + fence[0] in content:
                 break
 
@@ -62,21 +62,16 @@ def process_markdown(filename):
 
         for block in blocks:
             if block[0] is None:  # This is a shell command block
-                section_result["blocks"].append({"type": "shell", "content": block[1]})
+                print("*** SHELL", "*" * 20)
+                print(block[1], end="")
+                print("*** ENDSHELL", "*" * 20)
+
             else:  # This is a SEARCH/REPLACE block
-                section_result["blocks"].append(
-                    {
-                        "type": "search_replace",
-                        "filename": block[0],
-                        "original": block[1],
-                        "updated": block[2],
-                    }
-                )
-
-        results.append(section_result)
-
-    # Output the results as JSON
-    print(json.dumps(results, indent=4))
+                print("*** SEARCH:", block[0], "*" * 20)
+                print(block[1], end="")
+                print("*" * 20)
+                print(block[2], end="")
+                print("*** REPLACE", "*" * 20)
 
 
 if __name__ == "__main__":
