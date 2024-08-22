@@ -2,6 +2,10 @@
 
 import re
 import sys
+import io
+import os
+import difflib
+import unittest
 
 from aider.coders.base_coder import all_fences
 from aider.coders.editblock_coder import find_original_update_blocks
@@ -58,8 +62,47 @@ def process_markdown(filename, fh):
                 print("@@@ REPLACE", "@" * 20, file=fh, flush=True)
 
 
+class TestFindOrBlocks(unittest.TestCase):
+    def test_process_markdown(self):
+        # Path to the input markdown file
+        input_file = 'tests/fixtures/chat-history.md'
+        
+        # Path to the expected output file
+        expected_output_file = 'tests/fixtures/chat-history-search-replace-gold.txt'
+        
+        # Create a StringIO object to capture the output
+        output = io.StringIO()
+        
+        # Run process_markdown
+        process_markdown(input_file, output)
+        
+        # Get the actual output
+        actual_output = output.getvalue()
+        
+        # Read the expected output
+        with open(expected_output_file, 'r') as f:
+            expected_output = f.read()
+        
+        # Compare the actual and expected outputs
+        if actual_output != expected_output:
+            # If they're different, create a diff
+            diff = difflib.unified_diff(
+                expected_output.splitlines(keepends=True),
+                actual_output.splitlines(keepends=True),
+                fromfile=expected_output_file,
+                tofile='actual output'
+            )
+            
+            # Join the diff lines into a string
+            diff_text = ''.join(diff)
+            
+            # Fail the test and show the diff
+            self.fail(f"Output doesn't match expected output. Diff:\n{diff_text}")
+
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: python testsr.py <markdown_filename>")
     else:
         process_markdown(sys.argv[1], sys.stdout)
+
+    unittest.main()
