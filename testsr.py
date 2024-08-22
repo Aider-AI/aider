@@ -21,15 +21,15 @@ def process_markdown(filename):
 
     results = []
     for section in sections:
+        if "editblock_coder.py" in section or "test_editblock.py" in section:
+            continue
+
         if not section.strip():  # Ignore empty sections
             continue
         # Extract the header (if present)
         header = section.split("\n")[0].strip()
         # Get the content (everything after the header)
-        content = "\n".join(section.split("\n")[1:]).strip()
-
-        if "editblock" in content:
-            continue
+        content = "".join(section.splitlines(keepends=True)[1:])
 
         for fence in all_fences:
             if "\n" + fence[0] in content:
