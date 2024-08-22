@@ -4,7 +4,12 @@ import json
 import re
 import sys
 
-from aider.coders.editblock_coder import DEFAULT_FENCE, find_original_update_blocks, all_fences
+from aider.coders.editblock_coder import (
+    DEFAULT_FENCE,
+    all_fences,
+    find_original_update_blocks,
+)
+
 
 def process_markdown(filename):
     try:
