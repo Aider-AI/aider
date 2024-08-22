@@ -14,7 +14,7 @@ from prompt_toolkit.output import DummyOutput
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
-from aider.main import check_gitignore, main, setup_git
+from aider.main import check_gitignore, main, setup_git, ApplyShellCommandsError
 from aider.utils import GitTemporaryDirectory, IgnorantTemporaryDirectory, make_repo
 
 
@@ -585,3 +585,17 @@ class TestMain(TestCase):
             )
             self.assertIsInstance(coder, Coder)
             self.assertEqual(coder.repo_map.map_mul_no_files, 5)
+
+    def test_apply_shell_commands(self):
+        with GitTemporaryDirectory():
+            shell_md = Path("shell.md")
+            shell_md.write_text("```bash\ntouch file.txt\n```")
+
+            with self.assertRaises(ApplyShellCommandsError):
+                main(
+                    ["--apply", "shell.md", "--yes"],
+                    input=DummyInput(),
+                    output=DummyOutput(),
+                )
+
+            self.assertFalse(Path("file.txt").exists())
