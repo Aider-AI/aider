@@ -354,7 +354,7 @@ class Coder:
             self.check_added_files()
 
         if not self.repo:
-            self.find_common_root()
+            self.root = utils.find_common_root(self.abs_fnames)
 
         if read_only_fnames:
             self.abs_read_only_fnames = set()
@@ -432,10 +432,6 @@ class Coder:
         for line in self.get_announcements():
             self.io.tool_output(line, bold=bold)
             bold = False
-
-    def find_common_root(self):
-        self.root = utils.find_common_root(self.abs_fnames)
-        self.root = utils.safe_abs_path(self.root)
 
     def add_rel_fname(self, rel_fname):
         self.abs_fnames.add(self.abs_root_path(rel_fname))
