@@ -975,3 +975,38 @@ class TestCommands(TestCase):
             del coder
             del commands
             del repo
+
+    def test_cmd_reset(self):
+        with GitTemporaryDirectory() as repo_dir:
+            io = InputOutput(pretty=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Add some files to the chat
+            file1 = Path(repo_dir) / "file1.txt"
+            file2 = Path(repo_dir) / "file2.txt"
+            file1.write_text("Content of file 1")
+            file2.write_text("Content of file 2")
+            commands.cmd_add(f"{file1} {file2}")
+
+            # Add some messages to the chat history
+            coder.cur_messages = [{"role": "user", "content": "Test message 1"}]
+            coder.done_messages = [{"role": "assistant", "content": "Test message 2"}]
+
+            # Run the reset command
+            commands.cmd_reset("")
+
+            # Check that all files have been dropped
+            self.assertEqual(len(coder.abs_fnames), 0)
+            self.assertEqual(len(coder.abs_read_only_fnames), 0)
+
+            # Check that the chat history has been cleared
+            self.assertEqual(len(coder.cur_messages), 0)
+            self.assertEqual(len(coder.done_messages), 0)
+
+            # Verify that the files still exist in the repository
+            self.assertTrue(file1.exists())
+            self.assertTrue(file2.exists())
+
+            del coder
+            del commands
