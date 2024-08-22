@@ -1093,7 +1093,6 @@ class Coder:
             return
 
         edited = self.apply_updates()
-        dump(edited)
 
         self.update_cur_messages()
 
