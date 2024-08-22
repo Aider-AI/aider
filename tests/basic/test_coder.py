@@ -95,29 +95,6 @@ class TestCoder(unittest.TestCase):
             self.assertTrue(coder.allowed_to_edit("added.txt"))
             self.assertTrue(coder.need_commit_before_edits)
 
-    def test_get_last_modified(self):
-        # Mock the IO object
-        mock_io = MagicMock()
-
-        with GitTemporaryDirectory():
-            repo = git.Repo(Path.cwd())
-            fname = Path("new.txt")
-            fname.touch()
-            repo.git.add(str(fname))
-            repo.git.commit("-m", "new")
-
-            # Initialize the Coder object with the mocked IO and mocked repo
-            coder = Coder.create(self.GPT35, None, mock_io)
-
-            mod = coder.get_last_modified()
-
-            fname.write_text("hi")
-            mod_newer = coder.get_last_modified()
-            self.assertLess(mod, mod_newer)
-
-            fname.unlink()
-            self.assertEqual(coder.get_last_modified(), 0)
-
     def test_get_files_content(self):
         tempdir = Path(tempfile.mkdtemp())
 
