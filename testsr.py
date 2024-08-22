@@ -15,12 +15,15 @@ def process_markdown(filename):
     try:
         with open(filename, "r") as file:
             content = file.read()
+    except FileNotFoundError:
+        print(json.dumps({"error": f"File '{filename}' not found."}, indent=4))
+        return
 
-        # Split the content into sections based on '####' headers
-        sections = re.split(r"(?=####\s)", content)
+    # Split the content into sections based on '####' headers
+    sections = re.split(r"(?=####\s)", content)
 
-        results = []
-        for section in sections:
+    results = []
+    for section in sections:
             if not section.strip():  # Ignore empty sections
                 continue
             # Extract the header (if present)
