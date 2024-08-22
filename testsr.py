@@ -43,16 +43,16 @@ def process_markdown(filename):
                 results.append(section_result)
 
         # Output the results as JSON
-        print(json.dumps(results, indent=2))
+        print(json.dumps(results, indent=4))
 
     except FileNotFoundError:
-        print(json.dumps({"error": f"File '{filename}' not found."}))
+        print(json.dumps({"error": f"File '{filename}' not found."}, indent=4))
     except Exception as e:
-        print(json.dumps({"error": f"An error occurred: {str(e)}"}))
+        print(json.dumps({"error": f"An error occurred: {str(e)}"}, indent=4))
 
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print(json.dumps({"error": "Usage: python testsr.py <markdown_filename>"}))
+        print(json.dumps({"error": "Usage: python testsr.py <markdown_filename>"}, indent=4))
     else:
         process_markdown(sys.argv[1])
