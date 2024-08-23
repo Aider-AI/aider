@@ -1028,6 +1028,9 @@ class Commands:
         for root, _, files in os.walk(abs_path):
             for file in files:
                 abs_file_path = os.path.join(root, file)
+                if self.coder.repo and self.coder.repo.ignored_file(abs_file_path):
+                    self.io.tool_error(f"Skipped {abs_file_path} matching aiderignore spec.")
+                    continue
                 self.coder.abs_read_only_fnames.add(abs_file_path)
                 self.io.tool_output(f"Added {abs_file_path} to read-only files.")
 
