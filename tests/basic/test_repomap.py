@@ -2,6 +2,8 @@ import os
 import time
 import unittest
 from pathlib import Path
+import re
+import difflib
 
 import git
 
