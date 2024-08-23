@@ -1037,7 +1037,10 @@ class Commands:
 
         filenames = parse_quoted_filenames(args)
         for word in filenames:
-            abs_path = self.coder.abs_root_path(word)
+            # Expand the home directory if the path starts with "~"
+            expanded_path = os.path.expanduser(word)
+            abs_path = self.coder.abs_root_path(expanded_path)
+            
             if not os.path.exists(abs_path):
                 self.io.tool_error(f"File not found: {abs_path}")
                 continue
