@@ -886,6 +886,39 @@ class TestCommands(TestCase):
             # Check if all files were removed from abs_read_only_fnames
             self.assertEqual(len(coder.abs_read_only_fnames), 0)
 
+    def test_cmd_read_only_with_tilde_path(self):
+        with GitTemporaryDirectory() as repo_dir:
+            io = InputOutput(pretty=False, yes=False)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Create a test file in the user's home directory
+            home_dir = os.path.expanduser("~")
+            test_file = Path(home_dir) / "test_read_only_file.txt"
+            test_file.write_text("Test content")
+
+            try:
+                # Test the /read-only command with a path containing a tilde
+                commands.cmd_read_only(f"~/test_read_only_file.txt")
+
+                # Check if the file was added to abs_read_only_fnames
+                self.assertTrue(
+                    any(
+                        os.path.samefile(str(test_file), fname)
+                        for fname in coder.abs_read_only_fnames
+                    )
+                )
+
+                # Test dropping the read-only file
+                commands.cmd_drop("~/test_read_only_file.txt")
+
+                # Check if the file was removed from abs_read_only_fnames
+                self.assertEqual(len(coder.abs_read_only_fnames), 0)
+
+            finally:
+                # Clean up: remove the test file from the home directory
+                test_file.unlink()
+
     def test_cmd_diff(self):
         with GitTemporaryDirectory() as repo_dir:
             repo = git.Repo(repo_dir)
