@@ -18,7 +18,7 @@
 - Improved formatting of token reports and confirmation dialogs.
 - Default OpenAI model is now `gpt-4o-2024-08-06`.
 - Bumped dependencies to pickup litellm bugfixes.
-- Aider wrote 64% of the code in this release.
+- Aider wrote 68% of the code in this release.
 
 ### Aider v0.51.0
 
