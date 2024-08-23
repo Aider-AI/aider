@@ -379,12 +379,12 @@ class InputOutput:
     ):
         self.num_user_asks += 1
 
-        if explicit_yes_required:
-            question += " (Y)es/(N)o [Y]: "
-        elif group is None:
-            question += " (Y)es/(N)o [Y]: "
-        else:
-            question += " (Y)es/(N)o/(A)ll/(S)kip all [Y]: "
+        question += " (Y)es/(N)o"
+        if group:
+            if not explicit_yes_required:
+                question += "/(A)ll"
+            question += "/(S)kip all"
+        question += " [Y]: "
 
         if subject:
             self.tool_output()
@@ -403,6 +403,8 @@ class InputOutput:
             style = dict()
 
         def is_valid_response(text):
+            if not text:
+                return
             if explicit_yes_required or group is None:
                 valid_responses = ["y", "n", ""]
             else:
