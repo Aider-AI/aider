@@ -379,6 +379,10 @@ class InputOutput:
     ):
         self.num_user_asks += 1
 
+        valid_responses = ["y", "n", ""]
+        if group and not explicit_yes_required:
+            valid_responses.extend(["a", "s"])
+
         question += " (Y)es/(N)o"
         if group:
             if not explicit_yes_required:
@@ -404,11 +408,7 @@ class InputOutput:
 
         def is_valid_response(text):
             if not text:
-                return
-            if explicit_yes_required or group is None:
-                valid_responses = ["y", "n", ""]
-            else:
-                valid_responses = ["y", "n", "a", "s", ""]
+                return True
             return text.lower()[0] in valid_responses
 
         error_message = (
