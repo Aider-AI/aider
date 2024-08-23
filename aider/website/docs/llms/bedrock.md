@@ -29,43 +29,36 @@ Alternatively, you can set the following environment variables:
 export AWS_ACCESS_KEY_ID=your_access_key
 export AWS_SECRET_ACCESS_KEY=your_secret_key
 export AWS_DEFAULT_REGION=your_preferred_region
+
+export AWS_PROFILE=your-profile  # if you need a profile
 ```
 
-You can add these to your `.env` file or your shell's configuration file (e.g., `.bashrc` or `.zshrc`).
+You can add these to your 
+[.env file](/docs/config/dotenv.html).
+
 
 ## Running Aider with Bedrock
 
 Once your AWS credentials are set up, you can run Aider with the `--model` command line switch, specifying the Bedrock model you want to use:
 
 ```bash
-aider --model bedrock/anthropic.claude-v2
+aider --model bedrock/anthropic.claude-3-5-sonnet-20240620-v1:0
 ```
 
-Or you can use the [yaml config](/docs/config/aider_conf.html) to set the model to any of the 
-models supported by Amazon Bedrock.
-
-Example `.aider.conf.yml` file:
-
-```yaml
-model: bedrock/anthropic.claude-v2
-```
 
 ## Available Models
 
-As of now, Aider supports the following Bedrock models:
+To see some models available via Bedrock, run:
 
-- `bedrock/anthropic.claude-v2`
-- `bedrock/anthropic.claude-v1`
-- `bedrock/anthropic.claude-instant-v1`
+```
+aider --models bedrock/
+```
 
 Make sure you have access to these models in your AWS account before attempting to use them with Aider.
 
-## Troubleshooting
-
-If you encounter any issues, ensure that:
-
-1. Your AWS credentials are correctly set up and have the necessary permissions to access Bedrock.
-2. You're in a region where the Bedrock service and the specific model you're trying to use are available.
-3. Your AWS account has been granted access to the Bedrock service and the specific model you're attempting to use.
+# More info
 
 For more information on Amazon Bedrock and its models, refer to the [official AWS documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html).
+
+Also, see the 
+[litellm docs on Bedrock](https://litellm.vercel.app/docs/providers/bedrock).
