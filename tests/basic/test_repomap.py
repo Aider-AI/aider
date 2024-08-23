@@ -448,17 +448,6 @@ class TestRepoMapAllLanguages(unittest.TestCase):
         # Generate the repo map
         generated_map = repo_map.get_repo_map([], other_files)
 
-        # Convert the generated map to a string representation
-        generated_map_str = "\n".join(f"{k}: {v}" for k, v in sorted(generated_map.items()))
-
-        # Write the generated map to the file
-        with open(expected_map_file, "w") as f:
-            f.write(generated_map_str)
-
-        # Clean up
-        del repo_map
-
-        self.fail("Written generated map to file. Please review and update the test.")
 
 
 if __name__ == "__main__":
