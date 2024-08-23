@@ -424,13 +424,8 @@ MODEL_SETTINGS = [
 ]
 
 
-class Model:
+class Model(ModelSettings):
     def __init__(self, model, weak_model=None):
-        # Set defaults from ModelSettings
-        default_settings = ModelSettings(name="")
-        for field in fields(ModelSettings):
-            setattr(self, field.name, getattr(default_settings, field.name))
-
         self.name = model
         self.max_chat_history_tokens = 1024
         self.weak_model = None
