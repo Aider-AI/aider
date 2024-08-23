@@ -117,7 +117,7 @@ def main():
         ["git", "commit", "-m", f"version bump to {new_version}"],
         ["git", "tag", f"v{new_version}"],
         ["git", "push", "origin"],
-        ["git", "push", "origin", f"v{new_version}"],
+        ["git", "push", "origin", f"v{new_version}", "--no-verify"],
     ]
 
     for cmd in git_commands:
@@ -139,7 +139,6 @@ def main():
     git_commands_dev = [
         ["git", "add", "aider/__init__.py"],
         ["git", "commit", "-m", f"set version to {incremented_version}-dev"],
-        ["git", "push", "origin"],
     ]
 
     for cmd in git_commands_dev:
