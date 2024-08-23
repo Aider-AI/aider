@@ -18,18 +18,16 @@ from pygments.lexers import MarkdownLexer, guess_lexer_for_filename
 from pygments.token import Token
 from pygments.util import ClassNotFound
 from rich.console import Console
-
-
-@dataclass
-class ConfirmGroup:
-    preference: str = None
-
-
 from rich.style import Style as RichStyle
 from rich.text import Text
 
 from .dump import dump  # noqa: F401
 from .utils import is_image_file
+
+
+@dataclass
+class ConfirmGroup:
+    preference: str = None
 
 
 class AutoCompleter(Completer):
