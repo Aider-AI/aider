@@ -371,12 +371,7 @@ class InputOutput:
     def confirm_ask(self, question, default="y", subject=None, explicit_yes_required=False):
         self.num_user_asks += 1
 
-        if default == "y":
-            question += " [Y/n] "
-        elif default == "n":
-            question += " [y/N] "
-        else:
-            question += " [y/n] "
+        question += " (Y)es/(N)o/(A)ll/(S)kip all [Y]: "
 
         if subject:
             self.tool_output()
@@ -394,12 +389,12 @@ class InputOutput:
         else:
             style = dict()
 
-        def is_yesno(text):
-            return "yes".startswith(text.lower()) or "no".startswith(text.lower())
+        def is_valid_response(text):
+            return text.lower()[0] in ['y', 'n', 'a', 's', '']
 
         validator = Validator.from_callable(
-            is_yesno,
-            error_message="Answer yes or no.",
+            is_valid_response,
+            error_message="Please answer Yes, No, All, or Skip all.",
             move_cursor_to_end=True,
         )
 
@@ -413,13 +408,15 @@ class InputOutput:
                 style=Style.from_dict(style),
                 validator=validator,
             )
-            if not res and default:
-                res = default
+            if not res:
+                res = "y"  # Default to Yes if no input
 
-        res = res.lower().strip()
-        is_yes = res in ("y", "yes")
+        res = res.lower()[0]
+        is_yes = res in ("y", "a")
+        is_all = res == "a"
+        is_skip = res == "s"
 
-        hist = f"{question.strip()} {'y' if is_yes else 'n'}"
+        hist = f"{question.strip()} {res}"
         self.append_chat_history(hist, linebreak=True, blockquote=True)
 
         return is_yes
