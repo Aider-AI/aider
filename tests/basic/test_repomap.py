@@ -446,14 +446,11 @@ class TestRepoMapAllLanguages(unittest.TestCase):
         other_files = [str(f) for f in sample_code_base.rglob("*") if f.is_file()]
 
         # Generate the repo map
-        generated_map = repo_map.get_repo_map([], other_files)
+        generated_map_str = repo_map.get_repo_map([], other_files)
 
         # Read the expected map from the file
         with open(expected_map_file, "r") as f:
             expected_map = f.read().strip()
-
-        # Convert the generated map to a string representation
-        generated_map_str = repo_map.map_to_string(generated_map).strip()
 
         # Compare the generated map with the expected map
         if generated_map_str != expected_map:
