@@ -449,7 +449,7 @@ class TestRepoMapAllLanguages(unittest.TestCase):
         generated_map = repo_map.get_repo_map([], other_files)
 
         # Read the expected map from the file
-        with open(expected_map_file, 'r') as f:
+        with open(expected_map_file, "r") as f:
             expected_map = f.read().strip()
 
         # Convert the generated map to a string representation
@@ -459,19 +459,21 @@ class TestRepoMapAllLanguages(unittest.TestCase):
         if generated_map_str != expected_map:
             # If they differ, show the differences and fail the test
             import difflib
-            diff = list(difflib.unified_diff(
-                expected_map.splitlines(),
-                generated_map_str.splitlines(),
-                fromfile='expected',
-                tofile='generated',
-                lineterm=''
-            ))
-            diff_str = '\n'.join(diff)
+
+            diff = list(
+                difflib.unified_diff(
+                    expected_map.splitlines(),
+                    generated_map_str.splitlines(),
+                    fromfile="expected",
+                    tofile="generated",
+                    lineterm="",
+                )
+            )
+            diff_str = "\n".join(diff)
             self.fail(f"Generated map differs from expected map:\n{diff_str}")
 
         # If we reach here, the maps are identical
         self.assertEqual(generated_map_str, expected_map, "Generated map matches expected map")
-
 
 
 if __name__ == "__main__":
