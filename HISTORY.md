@@ -1,14 +1,15 @@
 
 # Release history
 
-### main branch
+### Aider v0.52.0
 
-- Aider now offers to run shell commands related to changes it makes:
+- Aider now offers to run shell commands:
   - Launch a browser to view updated html/css/js.
   - Install new dependencies.
   - Run DB migrations. 
   - Run the program to exercise changes.
   - Run new test cases.
+- `/read` and `/drop` now expand `~` to the home dir.
 - Show the active chat mode at aider prompt.
 - New `/reset` command to `/drop` files and `/clear` chat history.
 - New `--map-multiplier-no-files` to control repo map size multiplier when no files are in the chat.
