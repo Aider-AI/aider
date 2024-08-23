@@ -227,7 +227,7 @@ class Commands:
         self.coder.repo.commit(message=commit_message)
 
     def cmd_lint(self, args="", fnames=None):
-        "Lint and fix provided files or in-chat files if none provided"
+        "Lint and fix in-chat files or all dirty files if none in chat"
 
         if not self.coder.repo:
             self.io.tool_error("No git repository found.")
@@ -263,7 +263,7 @@ class Commands:
                 continue
 
             # Commit everything before we start fixing lint errors
-            if self.coder.repo.is_dirty():
+            if self.coder.repo.is_dirty() and self.coder.dirty_commits:
                 self.cmd_commit("")
 
             if not lint_coder:
@@ -278,7 +278,7 @@ class Commands:
             lint_coder.run(errors)
             lint_coder.abs_fnames = set()
 
-        if lint_coder and self.coder.repo.is_dirty():
+        if lint_coder and self.coder.repo.is_dirty() and self.coder.auto_commits:
             self.cmd_commit("")
 
     def cmd_clear(self, args):
