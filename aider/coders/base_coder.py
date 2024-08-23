@@ -1252,7 +1252,8 @@ class Coder:
             return
 
         add_files = "\n".join(mentioned_rel_fnames) + "\n"
-        if not self.io.confirm_ask("Add these files to the chat?", subject=add_files):
+        group = ConfirmGroup(mentioned_rel_fnames)
+        if not self.io.confirm_ask("Add these files to the chat?", subject=add_files, group=group):
             return
 
         for rel_fname in mentioned_rel_fnames:
@@ -1811,19 +1812,22 @@ class Coder:
 
     def run_shell_commands(self):
         done = set()
+        group = ConfirmGroup(set(self.shell_commands))
         for command in self.shell_commands:
             if command in done:
                 continue
             done.add(command)
-            self.handle_shell_commands(command)
+            self.handle_shell_commands(command, group)
 
-    def handle_shell_commands(self, commands_str):
+    def handle_shell_commands(self, commands_str, group):
         commands = commands_str.strip().splitlines()
         command_count = sum(
             1 for cmd in commands if cmd.strip() and not cmd.strip().startswith("#")
         )
         prompt = "Run shell command?" if command_count == 1 else "Run shell commands?"
-        if not self.io.confirm_ask(prompt, subject="\n".join(commands), explicit_yes_required=True):
+        if not self.io.confirm_ask(
+            prompt, subject="\n".join(commands), explicit_yes_required=True, group=group
+        ):
             return
 
         for command in commands:
