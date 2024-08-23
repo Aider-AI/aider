@@ -148,7 +148,7 @@ class InputOutput:
     def __init__(
         self,
         pretty=True,
-        yes=False,
+        yes=None,
         input_history_file=None,
         chat_history_file=None,
         input=None,
@@ -379,16 +379,15 @@ class InputOutput:
     ):
         self.num_user_asks += 1
 
-        valid_responses = ["y", "n", ""]
-        if group and not explicit_yes_required:
-            valid_responses.extend(["a", "s"])
-
-        question += " (Y)es/(N)o"
+        valid_responses = "yn"
+        options = " (Y)es/(N)o"
         if group:
             if not explicit_yes_required:
-                question += "/(A)ll"
-            question += "/(S)kip all"
-        question += " [Y]: "
+                options += "/(A)ll"
+                valid_responses += "a"
+            options += "/(S)kip all"
+            valid_responses += "s"
+        question += options + " [Y]: "
 
         if subject:
             self.tool_output()
@@ -411,11 +410,7 @@ class InputOutput:
                 return True
             return text.lower()[0] in valid_responses
 
-        error_message = (
-            "Please answer Yes or No."
-            if explicit_yes_required or group is None
-            else "Please answer Yes, No, All, or Skip all."
-        )
+        error_message = f"Please answer one of {options}"
         validator = Validator.from_callable(
             is_valid_response,
             error_message=error_message,
@@ -426,7 +421,7 @@ class InputOutput:
             res = "n" if explicit_yes_required else "y"
         elif self.yes is False:
             res = "n"
-        elif group and group.preference and not explicit_yes_required:
+        elif group and group.preference:
             res = group.preference
         else:
             res = prompt(
@@ -438,12 +433,17 @@ class InputOutput:
                 res = "y"  # Default to Yes if no input
 
         res = res.lower()[0]
-        is_yes = res in ("y", "a")
-        is_all = res == "a" and group is not None and not explicit_yes_required
-        is_skip = res == "s" and group is not None and not explicit_yes_required
 
-        if group and not explicit_yes_required:
-            if is_all:
+        if explicit_yes_required:
+            is_yes = res == "y"
+        else:
+            is_yes = res in ("y", "a")
+
+        is_all = res == "a" and group is not None and not explicit_yes_required
+        is_skip = res == "s" and group is not None
+
+        if group:
+            if is_all and not explicit_yes_required:
                 group.preference = "a"
             elif is_skip:
                 group.preference = "s"
