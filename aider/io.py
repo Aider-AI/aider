@@ -376,7 +376,9 @@ class InputOutput:
         hist = "\n" + content.strip() + "\n\n"
         self.append_chat_history(hist)
 
-    def confirm_ask(self, question, default="y", subject=None, explicit_yes_required=False, group=None):
+    def confirm_ask(
+        self, question, default="y", subject=None, explicit_yes_required=False, group=None
+    ):
         self.num_user_asks += 1
 
         question += " (Y)es/(N)o/(A)ll/(S)kip all [Y]: "
