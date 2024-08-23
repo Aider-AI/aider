@@ -379,7 +379,10 @@ class InputOutput:
     ):
         self.num_user_asks += 1
 
-        question += " (Y)es/(N)o/(A)ll/(S)kip all [Y]: "
+        if explicit_yes_required:
+            question += " (Y)es/(N)o/(S)kip all [Y]: "
+        else:
+            question += " (Y)es/(N)o/(A)ll/(S)kip all [Y]: "
 
         if subject:
             self.tool_output()
@@ -398,11 +401,13 @@ class InputOutput:
             style = dict()
 
         def is_valid_response(text):
-            return text.lower()[0] in ["y", "n", "a", "s", ""]
+            valid_responses = ["y", "n", "s", ""] if explicit_yes_required else ["y", "n", "a", "s", ""]
+            return text.lower()[0] in valid_responses
 
+        error_message = "Please answer Yes, No, or Skip all." if explicit_yes_required else "Please answer Yes, No, All, or Skip all."
         validator = Validator.from_callable(
             is_valid_response,
-            error_message="Please answer Yes, No, All, or Skip all.",
+            error_message=error_message,
             move_cursor_to_end=True,
         )
 
@@ -410,7 +415,7 @@ class InputOutput:
             res = "n" if explicit_yes_required else "y"
         elif self.yes is False:
             res = "n"
-        elif group and group.preference:
+        elif group and group.preference and not explicit_yes_required:
             res = group.preference
         else:
             res = prompt(
@@ -423,10 +428,10 @@ class InputOutput:
 
         res = res.lower()[0]
         is_yes = res in ("y", "a")
-        is_all = res == "a"
+        is_all = res == "a" and not explicit_yes_required
         is_skip = res == "s"
 
-        if group:
+        if group and not explicit_yes_required:
             if is_all:
                 group.preference = "a"
             elif is_skip:
