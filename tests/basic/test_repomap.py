@@ -1,6 +1,7 @@
 import os
 import time
 import unittest
+from pathlib import Path
 
 import git
 
@@ -423,6 +424,58 @@ class TestRepoMapAllLanguages(unittest.TestCase):
 
             # close the open cache files, so Windows won't error
             del repo_map
+
+    def test_repo_map_sample_code_base(self):
+        # Path to the sample code base
+        sample_code_base = Path(__file__).parent.parent / "fixtures" / "sample-code-base"
+
+        # Path to the expected repo map file
+        expected_map_file = (
+            Path(__file__).parent.parent / "fixtures" / "sample-code-base-repo-map.txt"
+        )
+
+        # Ensure the paths exist
+        self.assertTrue(sample_code_base.exists(), "Sample code base directory not found")
+        self.assertTrue(expected_map_file.exists(), "Expected repo map file not found")
+
+        # Initialize RepoMap with the sample code base as root
+        io = InputOutput()
+        repomap_root = Path(__file__).parent.parent.parent
+        repo_map = RepoMap(
+            main_model=self.GPT35,
+            root=str(repomap_root),
+            io=io,
+        )
+
+        # Get all files in the sample code base
+        other_files = [str(f) for f in sample_code_base.rglob("*") if f.is_file()]
+
+        # Generate the repo map
+        generated_map_str = repo_map.get_repo_map([], other_files).strip()
+
+        # Read the expected map from the file
+        with open(expected_map_file, "r") as f:
+            expected_map = f.read().strip()
+
+        # Compare the generated map with the expected map
+        if generated_map_str != expected_map:
+            # If they differ, show the differences and fail the test
+            import difflib
+
+            diff = list(
+                difflib.unified_diff(
+                    expected_map.splitlines(),
+                    generated_map_str.splitlines(),
+                    fromfile="expected",
+                    tofile="generated",
+                    lineterm="",
+                )
+            )
+            diff_str = "\n".join(diff)
+            self.fail(f"Generated map differs from expected map:\n{diff_str}")
+
+        # If we reach here, the maps are identical
+        self.assertEqual(generated_map_str, expected_map, "Generated map matches expected map")
 
 
 if __name__ == "__main__":
