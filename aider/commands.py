@@ -651,7 +651,7 @@ class Commands:
         for word in filenames:
             # Expand tilde in the path
             expanded_word = os.path.expanduser(word)
-            
+
             # Handle read-only files separately, without glob_filtered_to_repo
             read_only_matched = [f for f in self.coder.abs_read_only_fnames if expanded_word in f]
 
