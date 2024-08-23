@@ -898,8 +898,9 @@ class TestCommands(TestCase):
             test_file.write_text("Test content")
 
             try:
-                # Test the /read-only command with a path containing a tilde
-                commands.cmd_read_only("~/test_read_only_file.txt")
+                # Test the /read-only command with a path in the user's home directory
+                relative_path = os.path.join("~", "test_read_only_file.txt")
+                commands.cmd_read_only(relative_path)
 
                 # Check if the file was added to abs_read_only_fnames
                 self.assertTrue(
@@ -910,7 +911,7 @@ class TestCommands(TestCase):
                 )
 
                 # Test dropping the read-only file
-                commands.cmd_drop("~/test_read_only_file.txt")
+                commands.cmd_drop(relative_path)
 
                 # Check if the file was removed from abs_read_only_fnames
                 self.assertEqual(len(coder.abs_read_only_fnames), 0)
