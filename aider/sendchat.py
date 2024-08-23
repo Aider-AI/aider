@@ -96,7 +96,7 @@ def simple_send_with_retries(model_name, messages, extra_headers=None):
         }
         if extra_headers is not None:
             kwargs["extra_headers"] = extra_headers
-        
+
         _hash, response = send_completion(**kwargs)
         return response.choices[0].message.content
     except (AttributeError, litellm.exceptions.BadRequestError):
