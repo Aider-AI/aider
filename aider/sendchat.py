@@ -86,13 +86,14 @@ def send_completion(
 
 
 @lazy_litellm_retry_decorator
-def simple_send_with_retries(model_name, messages):
+def simple_send_with_retries(model_name, messages, extra_headers=None):
     try:
         _hash, response = send_completion(
             model_name=model_name,
             messages=messages,
             functions=None,
             stream=False,
+            extra_headers=extra_headers,
         )
         return response.choices[0].message.content
     except (AttributeError, litellm.exceptions.BadRequestError):
