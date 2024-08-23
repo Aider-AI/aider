@@ -1096,8 +1096,6 @@ class Coder:
         if self.reflected_message:
             return
 
-        self.run_shell_commands()
-
         if edited and self.auto_lint:
             lint_errors = self.lint_edited(edited)
             self.auto_commit(edited, context="Ran the linter")
@@ -1108,6 +1106,8 @@ class Coder:
                     self.reflected_message = lint_errors
                     self.update_cur_messages()
                     return
+
+        self.run_shell_commands()
 
         if edited and self.auto_test:
             test_errors = self.commands.cmd_test(self.test_cmd)
