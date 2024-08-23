@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from aider.io import AutoCompleter, InputOutput
+from aider.io import AutoCompleter, InputOutput, ConfirmGroup
 from aider.utils import ChdirTemporaryDirectory
 
 
@@ -91,6 +91,73 @@ class TestInputOutput(unittest.TestCase):
         result = io.confirm_ask("Are you sure?", explicit_yes_required=False)
         self.assertTrue(result)
         mock_prompt.assert_not_called()
+
+    @patch("aider.io.prompt")
+    def test_confirm_ask_with_group(self, mock_prompt):
+        io = InputOutput(pretty=False)
+        group = ConfirmGroup()
+
+        # Test case 1: No group preference, user selects 'All'
+        mock_prompt.return_value = "a"
+        result = io.confirm_ask("Are you sure?", group=group)
+        self.assertTrue(result)
+        self.assertEqual(group.preference, "a")
+        mock_prompt.assert_called_once()
+        mock_prompt.reset_mock()
+
+        # Test case 2: Group preference is 'All', should not prompt
+        result = io.confirm_ask("Are you sure?", group=group)
+        self.assertTrue(result)
+        mock_prompt.assert_not_called()
+
+        # Test case 3: No group preference, user selects 'Skip all'
+        group.preference = None
+        mock_prompt.return_value = "s"
+        result = io.confirm_ask("Are you sure?", group=group)
+        self.assertFalse(result)
+        self.assertEqual(group.preference, "s")
+        mock_prompt.assert_called_once()
+        mock_prompt.reset_mock()
+
+        # Test case 4: Group preference is 'Skip all', should not prompt
+        result = io.confirm_ask("Are you sure?", group=group)
+        self.assertFalse(result)
+        mock_prompt.assert_not_called()
+
+        # Test case 5: explicit_yes_required=True, should not offer 'All' option
+        group.preference = None
+        mock_prompt.return_value = "y"
+        result = io.confirm_ask("Are you sure?", group=group, explicit_yes_required=True)
+        self.assertTrue(result)
+        self.assertIsNone(group.preference)
+        mock_prompt.assert_called_once()
+        self.assertNotIn("(A)ll", mock_prompt.call_args[0][0])
+        mock_prompt.reset_mock()
+
+    @patch("aider.io.prompt")
+    def test_confirm_ask_yes_no(self, mock_prompt):
+        io = InputOutput(pretty=False)
+
+        # Test case 1: User selects 'Yes'
+        mock_prompt.return_value = "y"
+        result = io.confirm_ask("Are you sure?")
+        self.assertTrue(result)
+        mock_prompt.assert_called_once()
+        mock_prompt.reset_mock()
+
+        # Test case 2: User selects 'No'
+        mock_prompt.return_value = "n"
+        result = io.confirm_ask("Are you sure?")
+        self.assertFalse(result)
+        mock_prompt.assert_called_once()
+        mock_prompt.reset_mock()
+
+        # Test case 3: Empty input (default to Yes)
+        mock_prompt.return_value = ""
+        result = io.confirm_ask("Are you sure?")
+        self.assertTrue(result)
+        mock_prompt.assert_called_once()
+        mock_prompt.reset_mock()
 
 
 if __name__ == "__main__":
