@@ -442,14 +442,16 @@ class TestRepoMapAllLanguages(unittest.TestCase):
         io = InputOutput()
         repomap_root = Path(__file__).parent.parent.parent
         repo_map = RepoMap(
-            main_model=self.GPT35, root=str(sample_code_base), io=io, repomap_root=str(repomap_root)
+            main_model=self.GPT35,
+            root=str(repomap_root),
+            io=io,
         )
 
         # Get all files in the sample code base
         other_files = [str(f) for f in sample_code_base.rglob("*") if f.is_file()]
 
         # Generate the repo map
-        generated_map_str = repo_map.get_repo_map([], other_files)
+        generated_map_str = repo_map.get_repo_map([], other_files).strip()
 
         # Read the expected map from the file
         with open(expected_map_file, "r") as f:
