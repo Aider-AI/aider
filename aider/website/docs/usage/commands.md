@@ -26,7 +26,7 @@ cog.out(get_help_md())
 | **/exit** | Exit the application |
 | **/git** | Run a git command |
 | **/help** | Ask questions about aider |
-| **/lint** | Lint and fix provided files or in-chat files if none provided |
+| **/lint** | Lint and fix in-chat files or all dirty files if none in chat |
 | **/ls** | List all known files and indicate which are included in the chat session |
 | **/map** | Print out the current repository map |
 | **/map-refresh** | Force a refresh of the repository map |
