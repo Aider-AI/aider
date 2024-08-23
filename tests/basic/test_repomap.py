@@ -461,8 +461,6 @@ class TestRepoMapAllLanguages(unittest.TestCase):
 
         # Normalize path separators for Windows
         if os.name == "nt":  # Check if running on Windows
-            import re
-
             expected_map = re.sub(
                 r"tests/fixtures/sample-code-base/([^:]+)",
                 r"tests\\fixtures\\sample-code-base\\\1",
@@ -477,8 +475,6 @@ class TestRepoMapAllLanguages(unittest.TestCase):
         # Compare the generated map with the expected map
         if generated_map_str != expected_map:
             # If they differ, show the differences and fail the test
-            import difflib
-
             diff = list(
                 difflib.unified_diff(
                     expected_map.splitlines(),
