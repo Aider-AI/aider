@@ -1,9 +1,9 @@
 import base64
 import os
 from collections import defaultdict
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from dataclasses import dataclass
 
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import Completer, Completion
@@ -19,9 +19,12 @@ from pygments.token import Token
 from pygments.util import ClassNotFound
 from rich.console import Console
 
+
 @dataclass
 class ConfirmGroup:
     preference: str = None
+
+
 from rich.style import Style as RichStyle
 from rich.text import Text
 
