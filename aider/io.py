@@ -376,7 +376,7 @@ class InputOutput:
         hist = "\n" + content.strip() + "\n\n"
         self.append_chat_history(hist)
 
-    def confirm_ask(self, question, default="y", subject=None, explicit_yes_required=False):
+    def confirm_ask(self, question, default="y", subject=None, explicit_yes_required=False, group=None):
         self.num_user_asks += 1
 
         question += " (Y)es/(N)o/(A)ll/(S)kip all [Y]: "
@@ -410,6 +410,8 @@ class InputOutput:
             res = "n" if explicit_yes_required else "y"
         elif self.yes is False:
             res = "n"
+        elif group and group.preference:
+            res = group.preference
         else:
             res = prompt(
                 question,
@@ -423,6 +425,12 @@ class InputOutput:
         is_yes = res in ("y", "a")
         is_all = res == "a"
         is_skip = res == "s"
+
+        if group:
+            if is_all:
+                group.preference = "a"
+            elif is_skip:
+                group.preference = "s"
 
         hist = f"{question.strip()} {res}"
         self.append_chat_history(hist, linebreak=True, blockquote=True)
