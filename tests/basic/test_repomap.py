@@ -453,8 +453,8 @@ class TestRepoMapAllLanguages(unittest.TestCase):
         # Generate the repo map
         generated_map_str = repo_map.get_repo_map([], other_files).strip()
 
-        # Read the expected map from the file
-        with open(expected_map_file, "r") as f:
+        # Read the expected map from the file using UTF-8 encoding
+        with open(expected_map_file, "r", encoding="utf-8") as f:
             expected_map = f.read().strip()
 
         # Compare the generated map with the expected map
