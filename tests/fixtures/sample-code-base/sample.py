@@ -16,6 +16,7 @@ class Car:
     def honk(self):
         print(f"{self.make} {self.model}: Beep beep!")
 
+
 class Garage:
     def __init__(self):
         self.cars = []
@@ -39,6 +40,7 @@ class Garage:
         else:
             print("The garage is empty.")
 
+
 def main():
     # Create some cars
     car1 = Car("Toyota", "Corolla", 2020)
@@ -60,6 +62,7 @@ def main():
     # Remove a car and list again
     my_garage.remove_car(car1)
     my_garage.list_cars()
+
 
 if __name__ == "__main__":
     main()
