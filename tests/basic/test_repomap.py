@@ -458,10 +458,19 @@ class TestRepoMapAllLanguages(unittest.TestCase):
             expected_map = f.read().strip()
 
         # Normalize path separators for Windows
-        if os.name == 'nt':  # Check if running on Windows
+        if os.name == "nt":  # Check if running on Windows
             import re
-            expected_map = re.sub(r'tests/fixtures/sample-code-base/([^:]+)', r'tests\\fixtures\\sample-code-base\\\1', expected_map)
-            generated_map_str = re.sub(r'tests/fixtures/sample-code-base/([^:]+)', r'tests\\fixtures\\sample-code-base\\\1', generated_map_str)
+
+            expected_map = re.sub(
+                r"tests/fixtures/sample-code-base/([^:]+)",
+                r"tests\\fixtures\\sample-code-base\\\1",
+                expected_map,
+            )
+            generated_map_str = re.sub(
+                r"tests/fixtures/sample-code-base/([^:]+)",
+                r"tests\\fixtures\\sample-code-base\\\1",
+                generated_map_str,
+            )
 
         # Compare the generated map with the expected map
         if generated_map_str != expected_map:
