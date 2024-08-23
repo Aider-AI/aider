@@ -440,7 +440,8 @@ class TestRepoMapAllLanguages(unittest.TestCase):
 
         # Initialize RepoMap with the sample code base as root
         io = InputOutput()
-        repo_map = RepoMap(main_model=self.GPT35, root=str(sample_code_base), io=io)
+        repomap_root = Path(__file__).parent.parent.parent
+        repo_map = RepoMap(main_model=self.GPT35, root=str(sample_code_base), io=io, repomap_root=str(repomap_root))
 
         # Get all files in the sample code base
         other_files = [str(f) for f in sample_code_base.rglob("*") if f.is_file()]
