@@ -112,6 +112,8 @@ class TestRepo(unittest.TestCase):
 
         model1 = Model("gpt-3.5-turbo")
         model2 = Model("gpt-4")
+        dump(model1)
+        dump(model2)
         repo = GitRepo(InputOutput(), None, None, models=[model1, model2])
 
         # Call the get_commit_message method with dummy diff and context
@@ -122,6 +124,8 @@ class TestRepo(unittest.TestCase):
 
         # Check that simple_send_with_retries was called twice
         self.assertEqual(mock_send.call_count, 2)
+
+        dump(mock_send.call_args)
 
         # Check that it was called with the correct model names
         mock_send.assert_any_call(model1.name, mock_send.call_args[0][1])
