@@ -425,5 +425,38 @@ class TestRepoMapAllLanguages(unittest.TestCase):
             del repo_map
 
 
+    def test_repo_map_sample_code_base(self):
+        # Path to the sample code base
+        sample_code_base = Path(__file__).parent.parent / "fixtures" / "sample-code-base"
+        
+        # Path to the expected repo map file
+        expected_map_file = Path(__file__).parent.parent / "fixtures" / "sample-code-base-repo-map.txt"
+        
+        # Ensure the paths exist
+        self.assertTrue(sample_code_base.exists(), "Sample code base directory not found")
+        self.assertTrue(expected_map_file.exists(), "Expected repo map file not found")
+
+        # Initialize RepoMap with the sample code base as root
+        io = InputOutput()
+        repo_map = RepoMap(main_model=self.GPT35, root=str(sample_code_base), io=io)
+
+        # Get all files in the sample code base
+        other_files = [str(f) for f in sample_code_base.rglob('*') if f.is_file()]
+
+        # Generate the repo map
+        generated_map = repo_map.get_repo_map([], other_files)
+
+        # Convert the generated map to a string representation
+        generated_map_str = '\n'.join(f"{k}: {v}" for k, v in sorted(generated_map.items()))
+
+        # Write the generated map to the file
+        with open(expected_map_file, 'w') as f:
+            f.write(generated_map_str)
+        
+        # Clean up
+        del repo_map
+
+        self.fail("Written generated map to file. Please review and update the test.")
+
 if __name__ == "__main__":
     unittest.main()
