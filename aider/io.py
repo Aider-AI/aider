@@ -30,8 +30,9 @@ class ConfirmGroup:
     preference: str = None
     show_group: bool = True
 
-    def __init__(self, items):
-        self.show_group = len(items) > 1
+    def __init__(self, items=None):
+        if items is not None:
+            self.show_group = len(items) > 1
 
 
 class AutoCompleter(Completer):
@@ -383,6 +384,9 @@ class InputOutput:
     ):
         self.num_user_asks += 1
 
+        if group and not group.show_group:
+            group = None
+
         valid_responses = "yn"
         options = " (Y)es/(N)o"
         if group:
@@ -427,6 +431,7 @@ class InputOutput:
             res = "n"
         elif group and group.preference:
             res = group.preference
+            self.user_input(f"{question}{res}", log_only=False)
         else:
             res = prompt(
                 question,

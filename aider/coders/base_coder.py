@@ -25,7 +25,7 @@ from rich.markdown import Markdown
 from aider import __version__, models, prompts, urls, utils
 from aider.commands import Commands
 from aider.history import ChatSummary
-from aider.io import InputOutput
+from aider.io import ConfirmGroup, InputOutput
 from aider.linter import Linter
 from aider.llm import litellm
 from aider.mdstream import MarkdownStream
@@ -771,9 +771,10 @@ class Coder:
         url_pattern = re.compile(r"(https?://[^\s/$.?#].[^\s]*[^\s,.])")
         urls = list(set(url_pattern.findall(inp)))  # Use set to remove duplicates
         added_urls = []
+        group = ConfirmGroup(urls)
         for url in urls:
             if url not in self.rejected_urls:
-                if self.io.confirm_ask("Add URL to the chat?", subject=url):
+                if self.io.confirm_ask("Add URL to the chat?", subject=url, group=group):
                     inp += "\n\n"
                     inp += self.commands.cmd_web(url, paginate=False)
                     added_urls.append(url)
