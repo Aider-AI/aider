@@ -134,6 +134,16 @@ class TestInputOutput(unittest.TestCase):
         self.assertNotIn("(A)ll", mock_prompt.call_args[0][0])
         mock_prompt.reset_mock()
 
+        # Test case 6: explicit_yes_required=True, user tries to select 'All'
+        group.preference = None
+        mock_prompt.return_value = "a"
+        result = io.confirm_ask("Are you sure?", group=group, explicit_yes_required=True)
+        self.assertFalse(result)
+        self.assertIsNone(group.preference)
+        mock_prompt.assert_called_once()
+        self.assertNotIn("(A)ll", mock_prompt.call_args[0][0])
+        mock_prompt.reset_mock()
+
     @patch("aider.io.prompt")
     def test_confirm_ask_yes_no(self, mock_prompt):
         io = InputOutput(pretty=False)
