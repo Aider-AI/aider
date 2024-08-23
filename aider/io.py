@@ -28,6 +28,10 @@ from .utils import is_image_file
 @dataclass
 class ConfirmGroup:
     preference: str = None
+    show_group: bool = True
+
+    def __init__(self, items):
+        self.show_group = len(items) > 1
 
 
 class AutoCompleter(Completer):
