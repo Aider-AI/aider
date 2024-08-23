@@ -887,7 +887,7 @@ class TestCommands(TestCase):
             self.assertEqual(len(coder.abs_read_only_fnames), 0)
 
     def test_cmd_read_only_with_tilde_path(self):
-        with GitTemporaryDirectory() as repo_dir:
+        with GitTemporaryDirectory():
             io = InputOutput(pretty=False, yes=False)
             coder = Coder.create(self.GPT35, None, io)
             commands = Commands(io, coder)
@@ -899,7 +899,7 @@ class TestCommands(TestCase):
 
             try:
                 # Test the /read-only command with a path containing a tilde
-                commands.cmd_read_only(f"~/test_read_only_file.txt")
+                commands.cmd_read_only("~/test_read_only_file.txt")
 
                 # Check if the file was added to abs_read_only_fnames
                 self.assertTrue(
