@@ -1679,6 +1679,7 @@ class Coder:
         return res
 
     def apply_updates(self):
+        edited = set()
         try:
             edits = self.get_edits()
             edits = self.prepare_to_edit(edits)
