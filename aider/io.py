@@ -390,7 +390,7 @@ class InputOutput:
             style = dict()
 
         def is_valid_response(text):
-            return text.lower()[0] in ['y', 'n', 'a', 's', '']
+            return text.lower()[0] in ["y", "n", "a", "s", ""]
 
         validator = Validator.from_callable(
             is_valid_response,
