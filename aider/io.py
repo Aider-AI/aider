@@ -401,10 +401,16 @@ class InputOutput:
             style = dict()
 
         def is_valid_response(text):
-            valid_responses = ["y", "n", "s", ""] if explicit_yes_required else ["y", "n", "a", "s", ""]
+            valid_responses = (
+                ["y", "n", "s", ""] if explicit_yes_required else ["y", "n", "a", "s", ""]
+            )
             return text.lower()[0] in valid_responses
 
-        error_message = "Please answer Yes, No, or Skip all." if explicit_yes_required else "Please answer Yes, No, All, or Skip all."
+        error_message = (
+            "Please answer Yes, No, or Skip all."
+            if explicit_yes_required
+            else "Please answer Yes, No, All, or Skip all."
+        )
         validator = Validator.from_callable(
             is_valid_response,
             error_message=error_message,
