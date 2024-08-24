@@ -387,15 +387,15 @@ class InputOutput:
         if group and not group.show_group:
             group = None
 
-        valid_responses = "yn"
+        valid_responses = ["yes", "no"]
         options = " (Y)es/(N)o"
         if group:
             if not explicit_yes_required:
                 options += "/(A)ll"
-                valid_responses += "a"
+                valid_responses.append("all")
             options += "/(S)kip all"
-            valid_responses += "s"
-        question += options + " [Y]: "
+            valid_responses.append("skip")
+        question += options + " [Yes]: "
 
         if subject:
             self.tool_output()
@@ -416,9 +416,9 @@ class InputOutput:
         def is_valid_response(text):
             if not text:
                 return True
-            return text.lower()[0] in valid_responses
+            return text.lower() in valid_responses
 
-        error_message = f"Please answer one of {options}"
+        error_message = f"Please answer with one of: {', '.join(valid_responses)}"
         validator = Validator.from_callable(
             is_valid_response,
             error_message=error_message,
@@ -441,21 +441,21 @@ class InputOutput:
             if not res:
                 res = "y"  # Default to Yes if no input
 
-        res = res.lower()[0]
+        res = res.lower()
 
         if explicit_yes_required:
-            is_yes = res == "y"
+            is_yes = res == "yes"
         else:
-            is_yes = res in ("y", "a")
+            is_yes = res in ("yes", "all")
 
-        is_all = res == "a" and group is not None and not explicit_yes_required
-        is_skip = res == "s" and group is not None
+        is_all = res == "all" and group is not None and not explicit_yes_required
+        is_skip = res == "skip" and group is not None
 
         if group:
             if is_all and not explicit_yes_required:
-                group.preference = "a"
+                group.preference = "all"
             elif is_skip:
-                group.preference = "s"
+                group.preference = "skip"
 
         hist = f"{question.strip()} {res}"
         self.append_chat_history(hist, linebreak=True, blockquote=True)
