@@ -419,11 +419,6 @@ class InputOutput:
             return text.lower() in valid_responses
 
         error_message = f"Please answer with one of: {', '.join(valid_responses)}"
-        validator = Validator.from_callable(
-            is_valid_response,
-            error_message=error_message,
-            move_cursor_to_end=True,
-        )
 
         if self.yes is True:
             res = "n" if explicit_yes_required else "y"
@@ -433,23 +428,26 @@ class InputOutput:
             res = group.preference
             self.user_input(f"{question}{res}", log_only=False)
         else:
-            res = prompt(
-                question,
-                style=Style.from_dict(style),
-                validator=validator,
-            )
-            if not res:
-                res = "y"  # Default to Yes if no input
+            while True:
+                res = prompt(
+                    question,
+                    style=Style.from_dict(style),
+                    validator=validator,
+                )
+                if not res:
+                    res = "y"  # Default to Yes if no input
+                    break
+                # todo: break if res.lower() is a prefix a `valid_responses`
 
-        res = res.lower()
+        res = res.lower()[0]
 
         if explicit_yes_required:
-            is_yes = res == "yes"
+            is_yes = res == "y"
         else:
-            is_yes = res in ("yes", "all")
+            is_yes = res in ("y", "a")
 
-        is_all = res == "all" and group is not None and not explicit_yes_required
-        is_skip = res == "skip" and group is not None
+        is_all = res == "a" and group is not None and not explicit_yes_required
+        is_skip = res == "s" and group is not None
 
         if group:
             if is_all and not explicit_yes_required:
