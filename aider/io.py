@@ -418,8 +418,6 @@ class InputOutput:
                 return True
             return text.lower() in valid_responses
 
-        error_message = f"Please answer with one of: {', '.join(valid_responses)}"
-
         if self.yes is True:
             res = "n" if explicit_yes_required else "y"
         elif self.yes is False:
@@ -432,12 +430,17 @@ class InputOutput:
                 res = prompt(
                     question,
                     style=Style.from_dict(style),
-                    validator=validator,
                 )
                 if not res:
                     res = "y"  # Default to Yes if no input
                     break
-                # todo: break if res.lower() is a prefix a `valid_responses`
+                res = res.lower()
+                good = any(valid_response.startswith(res) for valid_response in valid_responses)
+                if good:
+                    break
+
+                error_message = f"Please answer with one of: {', '.join(valid_responses)}"
+                self.tool_error(error_message)
 
         res = res.lower()[0]
 
