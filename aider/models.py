@@ -454,6 +454,7 @@ class Model(ModelSettings):
             try:
                 # First, attempt to fetch from GitHub
                 import requests
+
                 url = "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
                 response = requests.get(url, timeout=5)
                 if response.status_code == 200:
