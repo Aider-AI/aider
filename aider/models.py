@@ -4,6 +4,7 @@ import json
 import math
 import os
 import platform
+import requests
 import sys
 import time
 from dataclasses import dataclass, fields
@@ -433,6 +434,7 @@ class Model(ModelSettings):
         self.weak_model = None
 
         self.info = self.get_model_info(model)
+        dump(self.info)
 
         # Are all needed keys/params available?
         res = self.validate_environment()
