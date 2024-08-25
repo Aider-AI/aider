@@ -181,6 +181,31 @@ class TestCommands(TestCase):
         # Check if the text file has not been added to the chat session
         self.assertNotIn(str(Path("test.txt").resolve()), coder.abs_fnames)
 
+    def test_cmd_read_only_with_glob_patterns(self):
+        # Initialize the Commands and InputOutput objects
+        io = InputOutput(pretty=False, yes=True)
+
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # Create some test files
+        with open("test1.py", "w") as f:
+            f.write("print('test1')")
+        with open("test2.py", "w") as f:
+            f.write("print('test2')")
+        with open("test.txt", "w") as f:
+            f.write("test")
+
+        # Call the cmd_read_only method with a glob pattern
+        commands.cmd_read_only("*.py")
+
+        # Check if the Python files have been added to the read-only files
+        self.assertIn(str(Path("test1.py").resolve()), coder.abs_read_only_fnames)
+        self.assertIn(str(Path("test2.py").resolve()), coder.abs_read_only_fnames)
+
+        # Check if the text file has not been added to the read-only files
+        self.assertNotIn(str(Path("test.txt").resolve()), coder.abs_read_only_fnames)
+
     def test_cmd_add_no_match(self):
         # yes=False means we will *not* create the file when it is not found
         io = InputOutput(pretty=False, yes=False)
