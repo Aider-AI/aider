@@ -92,23 +92,6 @@ def is_image_file(file_name):
     return any(file_name.endswith(ext) for ext in IMAGE_EXTENSIONS)
 
 
-def safe_read_json(file_path):
-    try:
-        with open(file_path, "r") as f:
-            return json.load(f)
-    except Exception:
-        return None
-
-
-def safe_write_json(file_path, data):
-    try:
-        with open(file_path, "w") as f:
-            json.dump(data, f)
-        return True
-    except Exception:
-        return False
-
-
 def safe_abs_path(res):
     "Gives an abs path, which safely returns a full (not 8.3) windows path"
     res = Path(res).resolve()

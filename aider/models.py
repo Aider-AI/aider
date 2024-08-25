@@ -16,7 +16,6 @@ from PIL import Image
 from aider import urls
 from aider.dump import dump  # noqa: F401
 from aider.llm import AIDER_APP_NAME, AIDER_SITE_URL, litellm
-from aider.utils import safe_read_json, safe_write_json
 
 DEFAULT_MODEL_NAME = "gpt-4o"
 ANTHROPIC_BETA_HEADER = "max-tokens-3-5-sonnet-2024-07-15,prompt-caching-2024-07-31"
@@ -427,58 +426,44 @@ MODEL_SETTINGS = [
 
 
 def get_model_info(model):
-    if litellm._lazy_module:
-        # Do it the slow way...
-        try:
-            return litellm.get_model_info(model)
-        except Exception:
-            return dict()
+    if not litellm._lazy_module:
+        cache_dir = Path.home() / ".aider" / "caches"
+        cache_file = cache_dir / "model_prices_and_context_window.json"
+        cache_dir.mkdir(parents=True, exist_ok=True)
 
-    cache_dir = Path.home() / ".aider" / "caches"
-    cache_file = cache_dir / "model_prices_and_context_window.json"
-    cache_dir.mkdir(parents=True, exist_ok=True)
+        current_time = time.time()
+        cache_age = (
+            current_time - cache_file.stat().st_mtime if cache_file.exists() else float("inf")
+        )
 
-    current_time = time.time()
-    cache_age = current_time - cache_file.stat().st_mtime if cache_file.exists() else float("inf")
-
-    if cache_file.exists() and cache_age < 86400:  # 86400 seconds = 1 day
-        content = safe_read_json(cache_file)
-        if content:
-            info = content.get(model)
-            if info:
+        if cache_age < 60 * 60 * 24:
+            try:
+                content = json.loads(cache_file.read_text())
+                info = content.get(model, dict())
                 return info
+            except Exception as ex:
+                print(str(ex))
 
-    # If cache doesn't exist or is old, fetch from GitHub
-    try:
         import requests
 
         url = (
             "https://raw.githubusercontent.com/BerriAI/litellm/main/"
             "model_prices_and_context_window.json"
         )
-        response = requests.get(url, timeout=5)
-        if response.status_code == 200:
-            content = response.json()
-            safe_write_json(cache_file, content)
-            info = content.get(model)
-            if info:
-                return info
-    except Exception:
-        # If fetching from GitHub fails, fall back to local resource
         try:
-            with importlib.resources.open_text(
-                "litellm", "model_prices_and_context_window_backup.json"
-            ) as f:
-                content = json.load(f)
-                info = content.get(model)
-                if info:
-                    return info
-        except Exception:
-            pass  # If there's any error, fall back to the slow way
+            response = requests.get(url, timeout=5)
+            if response.status_code == 200:
+                content = response.json()
+                cache_file.write_text(json.dumps(content, indent=4))
+                info = content.get(model, dict())
+                return info
+        except Exception as ex:
+            print(str(ex))
 
     # If all else fails, do it the slow way...
     try:
-        return litellm.get_model_info(model)
+        info = litellm.get_model_info(model)
+        return info
     except Exception:
         return dict()
 
@@ -490,7 +475,6 @@ class Model(ModelSettings):
         self.weak_model = None
 
         self.info = self.get_model_info(model)
-        dump(self.info)
 
         # Are all needed keys/params available?
         res = self.validate_environment()
