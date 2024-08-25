@@ -30,6 +30,5 @@ class TestModels(unittest.TestCase):
         self.assertEqual(model.info["max_input_tokens"], 8 * 1024)
 
 
-
 if __name__ == "__main__":
     unittest.main()
