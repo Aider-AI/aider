@@ -6,7 +6,6 @@ import os
 import platform
 import sys
 from dataclasses import dataclass, fields
-from pathlib import Path
 from typing import Optional
 
 import yaml
