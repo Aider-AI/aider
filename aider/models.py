@@ -452,15 +452,16 @@ class Model(ModelSettings):
     def get_model_info(self, model):
         if not litellm._lazy_module:
             # Try and do this quickly, without triggering the litellm import
-            spec = importlib.util.find_spec("litellm")
-            if spec:
-                origin = Path(spec.origin)
-                fname = origin.parent / "model_prices_and_context_window_backup.json"
-                if fname.exists():
-                    data = json.loads(fname.read_text())
-                    info = data.get(model)
+            try:
+                with importlib.resources.open_text(
+                    "litellm", "model_prices_and_context_window_backup.json"
+                ) as f:
+                    content = json.load(f)
+                    info = content.get(model)
                     if info:
                         return info
+            except Exception:
+                pass  # If there's any error, fall back to the slow way
 
         # Do it the slow way...
         try:
