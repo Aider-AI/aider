@@ -10,7 +10,6 @@ from dataclasses import dataclass, fields
 from pathlib import Path
 from typing import Optional
 
-import requests
 import yaml
 from PIL import Image
 

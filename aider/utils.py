@@ -81,9 +81,6 @@ def make_repo(path=None):
     return repo
 
 
-import json
-
-
 def is_image_file(file_name):
     """
     Check if the given file name has an image file extension.
