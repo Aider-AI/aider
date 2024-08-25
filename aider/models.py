@@ -424,6 +424,11 @@ MODEL_SETTINGS = [
 ]
 
 
+model_info_url = (
+    "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+)
+
+
 def get_model_info(model):
     if not litellm._lazy_module:
         cache_dir = Path.home() / ".aider" / "caches"
@@ -445,12 +450,8 @@ def get_model_info(model):
 
         import requests
 
-        url = (
-            "https://raw.githubusercontent.com/BerriAI/litellm/main/"
-            "model_prices_and_context_window.json"
-        )
         try:
-            response = requests.get(url, timeout=5)
+            response = requests.get(model_info_url, timeout=5)
             if response.status_code == 200:
                 content = response.json()
                 cache_file.write_text(json.dumps(content, indent=4))
