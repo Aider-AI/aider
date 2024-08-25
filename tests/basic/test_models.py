@@ -1,7 +1,4 @@
-import json
 import unittest
-from pathlib import Path
-from unittest.mock import patch
 
 from aider.models import Model, get_model_info
 
