@@ -452,15 +452,27 @@ class Model(ModelSettings):
         if not litellm._lazy_module:
             # Try and do this quickly, without triggering the litellm import
             try:
-                with importlib.resources.open_text(
-                    "litellm", "model_prices_and_context_window_backup.json"
-                ) as f:
-                    content = json.load(f)
+                # First, attempt to fetch from GitHub
+                import requests
+                url = "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+                response = requests.get(url, timeout=5)
+                if response.status_code == 200:
+                    content = response.json()
                     info = content.get(model)
                     if info:
                         return info
             except Exception:
-                pass  # If there's any error, fall back to the slow way
+                # If fetching from GitHub fails, fall back to local resource
+                try:
+                    with importlib.resources.open_text(
+                        "litellm", "model_prices_and_context_window_backup.json"
+                    ) as f:
+                        content = json.load(f)
+                        info = content.get(model)
+                        if info:
+                            return info
+                except Exception:
+                    pass  # If there's any error, fall back to the slow way
 
         # Do it the slow way...
         try:
