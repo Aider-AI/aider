@@ -4,13 +4,13 @@ import json
 import math
 import os
 import platform
-import requests
 import sys
 import time
 from dataclasses import dataclass, fields
 from pathlib import Path
 from typing import Optional
 
+import requests
 import yaml
 from PIL import Image
 
@@ -440,9 +440,7 @@ def get_model_info(model):
     cache_dir.mkdir(parents=True, exist_ok=True)
 
     current_time = time.time()
-    cache_age = (
-        current_time - cache_file.stat().st_mtime if cache_file.exists() else float("inf")
-    )
+    cache_age = current_time - cache_file.stat().st_mtime if cache_file.exists() else float("inf")
 
     if cache_file.exists() and cache_age < 86400:  # 86400 seconds = 1 day
         content = safe_read_json(cache_file)
