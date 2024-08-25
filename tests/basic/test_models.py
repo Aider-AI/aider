@@ -1,12 +1,6 @@
-import json
-import time
 import unittest
-from pathlib import Path
-from unittest.mock import mock_open, patch
 
-import requests
-
-from aider.models import Model, get_model_info
+from aider.models import Model
 
 
 class TestModels(unittest.TestCase):
