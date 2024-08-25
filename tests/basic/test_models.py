@@ -3,6 +3,7 @@ import time
 import unittest
 from pathlib import Path
 from unittest.mock import mock_open, patch
+import requests
 
 from aider.models import Model, get_model_info
 
@@ -32,7 +33,7 @@ class TestModels(unittest.TestCase):
     @patch("aider.models.Path.stat")
     @patch("aider.models.safe_read_json")
     @patch("aider.models.safe_write_json")
-    @patch("aider.models.requests.get")
+    @patch("requests.get")
     def test_get_model_info(self, mock_get, mock_write_json, mock_read_json, mock_stat, mock_home):
         # Setup
         mock_home.return_value = Path("/mock/home")
