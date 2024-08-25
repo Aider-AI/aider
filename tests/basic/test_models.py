@@ -35,10 +35,12 @@ class TestModels(unittest.TestCase):
     @patch("aider.models.safe_read_json")
     @patch("aider.models.safe_write_json")
     @patch("requests.get")
-    def test_get_model_info(self, mock_get, mock_write_json, mock_read_json, mock_stat, mock_home):
+    @patch("aider.models.Path.mkdir")
+    def test_get_model_info(self, mock_mkdir, mock_get, mock_write_json, mock_read_json, mock_stat, mock_home):
         # Setup
         mock_home.return_value = Path("/mock/home")
-        mock_stat.return_value.st_mtime = time.time() - 86400 * 2  # 2 days old
+        mock_stat.return_value = unittest.mock.Mock(st_mtime=time.time() - 86400 * 2)  # 2 days old
+        mock_mkdir.return_value = None  # Ensure mkdir doesn't raise an exception
 
         # Test case 1: Cache exists and is fresh
         mock_read_json.return_value = {"test_model": {"info": "cached"}}
