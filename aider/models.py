@@ -450,9 +450,22 @@ class Model(ModelSettings):
 
     def get_model_info(self, model):
         if not litellm._lazy_module:
-            # Try and do this quickly, without triggering the litellm import
+            cache_dir = Path.home() / ".aider" / "caches"
+            cache_file = cache_dir / "model_prices_and_context_window.json"
+            cache_dir.mkdir(parents=True, exist_ok=True)
+
+            current_time = time.time()
+            cache_age = current_time - cache_file.stat().st_mtime if cache_file.exists() else float('inf')
+
+            if cache_file.exists() and cache_age < 86400:  # 86400 seconds = 1 day
+                content = safe_read_json(cache_file)
+                if content:
+                    info = content.get(model)
+                    if info:
+                        return info
+
+            # If cache doesn't exist or is old, fetch from GitHub
             try:
-                # First, attempt to fetch from GitHub
                 import requests
 
                 url = (
@@ -462,6 +475,7 @@ class Model(ModelSettings):
                 response = requests.get(url, timeout=5)
                 if response.status_code == 200:
                     content = response.json()
+                    safe_write_json(cache_file, content)
                     info = content.get(model)
                     if info:
                         return info
