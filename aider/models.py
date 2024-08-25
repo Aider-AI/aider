@@ -5,7 +5,9 @@ import math
 import os
 import platform
 import sys
+import time
 from dataclasses import dataclass, fields
+from pathlib import Path
 from typing import Optional
 
 import yaml
@@ -14,6 +16,7 @@ from PIL import Image
 from aider import urls
 from aider.dump import dump  # noqa: F401
 from aider.llm import AIDER_APP_NAME, AIDER_SITE_URL, litellm
+from aider.utils import safe_read_json, safe_write_json
 
 DEFAULT_MODEL_NAME = "gpt-4o"
 ANTHROPIC_BETA_HEADER = "max-tokens-3-5-sonnet-2024-07-15,prompt-caching-2024-07-31"
