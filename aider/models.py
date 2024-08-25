@@ -275,7 +275,7 @@ MODEL_SETTINGS = [
             "anthropic-beta": ANTHROPIC_BETA_HEADER,
         },
         cache_control=True,
-        reminder=None,
+        reminder="user",
     ),
     ModelSettings(
         "anthropic/claude-3-5-sonnet-20240620",
@@ -288,7 +288,7 @@ MODEL_SETTINGS = [
             "anthropic-beta": ANTHROPIC_BETA_HEADER,
         },
         cache_control=True,
-        reminder=None,
+        reminder="user",
     ),
     ModelSettings(
         "anthropic/claude-3-haiku-20240307",
@@ -323,7 +323,7 @@ MODEL_SETTINGS = [
             "HTTP-Referer": AIDER_SITE_URL,
             "X-Title": AIDER_APP_NAME,
         },
-        reminder=None,
+        reminder="user",
     ),
     # Vertex AI Claude models
     # Does not yet support 8k token
@@ -334,7 +334,7 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         examples_as_sys_msg=True,
         accepts_images=True,
-        reminder=None,
+        reminder="user",
     ),
     ModelSettings(
         "vertex_ai/claude-3-opus@20240229",
