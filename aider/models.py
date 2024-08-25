@@ -458,7 +458,9 @@ class Model(ModelSettings):
             cache_dir.mkdir(parents=True, exist_ok=True)
 
             current_time = time.time()
-            cache_age = current_time - cache_file.stat().st_mtime if cache_file.exists() else float('inf')
+            cache_age = (
+                current_time - cache_file.stat().st_mtime if cache_file.exists() else float("inf")
+            )
 
             if cache_file.exists() and cache_age < 86400:  # 86400 seconds = 1 day
                 content = safe_read_json(cache_file)

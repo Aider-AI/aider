@@ -82,6 +82,7 @@ def make_repo(path=None):
 
 import json
 
+
 def is_image_file(file_name):
     """
     Check if the given file name has an image file extension.
@@ -92,16 +93,18 @@ def is_image_file(file_name):
     file_name = str(file_name)  # Convert file_name to string
     return any(file_name.endswith(ext) for ext in IMAGE_EXTENSIONS)
 
+
 def safe_read_json(file_path):
     try:
-        with open(file_path, 'r') as f:
+        with open(file_path, "r") as f:
             return json.load(f)
     except Exception:
         return None
 
+
 def safe_write_json(file_path, data):
     try:
-        with open(file_path, 'w') as f:
+        with open(file_path, "w") as f:
             json.dump(data, f)
         return True
     except Exception:
