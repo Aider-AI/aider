@@ -1252,8 +1252,7 @@ class Coder:
             return
 
         add_files = "\n".join(mentioned_rel_fnames) + "\n"
-        group = ConfirmGroup(mentioned_rel_fnames)
-        if not self.io.confirm_ask("Add these files to the chat?", subject=add_files, group=group):
+        if not self.io.confirm_ask("Add these files to the chat?", subject=add_files):
             return
 
         for rel_fname in mentioned_rel_fnames:
