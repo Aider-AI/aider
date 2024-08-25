@@ -452,6 +452,29 @@ class TestCommands(TestCase):
 
             commands.cmd_add(str(dname))
 
+            dump(coder.abs_fnames)
+            self.assertIn(str(fname.resolve()), coder.abs_fnames)
+
+    def test_cmd_add_dirname_with_special_chars_git(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(pretty=False, yes=False)
+            from aider.coders import Coder
+
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            dname = Path("with[brackets]")
+            dname.mkdir()
+            fname = dname / "filename.txt"
+            fname.touch()
+
+            repo = git.Repo()
+            repo.git.add(str(fname))
+            repo.git.commit("-m", "init")
+
+            commands.cmd_add(str(dname))
+
+            dump(coder.abs_fnames)
             self.assertIn(str(fname.resolve()), coder.abs_fnames)
 
     def test_cmd_add_abs_filename(self):
