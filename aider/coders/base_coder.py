@@ -23,7 +23,6 @@ from rich.console import Console, Text
 from rich.markdown import Markdown
 
 from aider import __version__, models, prompts, urls
-from aider.utils import format_tokens, utils
 from aider.commands import Commands
 from aider.history import ChatSummary
 from aider.io import ConfirmGroup, InputOutput
@@ -33,7 +32,13 @@ from aider.mdstream import MarkdownStream
 from aider.repo import GitRepo
 from aider.repomap import RepoMap
 from aider.sendchat import retry_exceptions, send_completion
-from aider.utils import format_content, format_messages, is_image_file
+from aider.utils import (
+    format_content,
+    format_messages,
+    format_tokens,
+    is_image_file,
+    utils,
+)
 
 from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
