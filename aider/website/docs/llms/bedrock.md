@@ -26,11 +26,14 @@ This will prompt you to enter your AWS Access Key ID, Secret Access Key, and def
 Alternatively, you can set the following environment variables:
 
 ```bash
+export AWS_REGION=your_preferred_region
+
+# For user authentication
 export AWS_ACCESS_KEY_ID=your_access_key
 export AWS_SECRET_ACCESS_KEY=your_secret_key
-export AWS_DEFAULT_REGION=your_preferred_region
 
-export AWS_PROFILE=your-profile  # if you need a profile
+# For profile authentication
+export AWS_PROFILE=your-profile
 ```
 
 You can add these to your 
