@@ -23,6 +23,7 @@ from rich.console import Console, Text
 from rich.markdown import Markdown
 
 from aider import __version__, models, prompts, urls, utils
+from aider.sendchat import retry_exceptions
 from aider.commands import Commands
 from aider.history import ChatSummary
 from aider.io import ConfirmGroup, InputOutput
@@ -981,6 +982,26 @@ class Coder:
         chunks = self.format_chat_chunks()
         if self.add_cache_headers:
             chunks.add_cache_control_headers()
+
+        return chunks
+
+    def warm_cache(self, chunks):
+        if self.add_cache_headers:
+            chunks.add_cache_control_headers()
+
+        if self.cache_warming_thread and self.cache_warming_thread.is_alive():
+            self.cache_warming_thread.cancel()
+
+        def warm_cache_worker():
+            for _ in range(5):
+                try:
+                    self.send(chunks.cacheable_messages(), stream=False)
+                except retry_exceptions() as err:
+                    self.io.tool_error(f"Cache warming error: {str(err)}")
+                time.sleep(290)  # 4 minutes and 50 seconds
+
+        self.cache_warming_thread = threading.Timer(0, warm_cache_worker)
+        self.cache_warming_thread.start()
 
         return chunks
 
