@@ -253,7 +253,7 @@ class Coder:
         total_cost=0.0,
         map_refresh="auto",
         cache_prompts=False,
-        num_cache_warming_pings=5,
+        num_cache_warming_pings=0,
     ):
         self.commit_before_message = []
         self.aider_commit_hashes = set()
@@ -989,13 +989,15 @@ class Coder:
     def warm_cache(self, chunks):
         if not self.add_cache_headers:
             return
+        if not self.num_cache_warming_pings:
+            return
 
         if self.cache_warming_thread and self.cache_warming_thread.is_alive():
             self.cache_warming_thread.cancel()
 
         def warm_cache_worker():
             for _ in range(self.num_cache_warming_pings):
-                time.sleep(10)  # 290 == 4 minutes and 50 seconds
+                time.sleep(20)  # 290 == 4 minutes and 50 seconds
                 try:
                     completion = litellm.completion(
                         model=self.main_model.name,
