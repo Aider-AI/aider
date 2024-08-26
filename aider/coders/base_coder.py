@@ -14,7 +14,7 @@ import threading
 import time
 import traceback
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timedelta
 from json.decoder import JSONDecodeError
 from pathlib import Path
 
@@ -992,16 +992,30 @@ class Coder:
         if not self.num_cache_warming_pings:
             return
 
-        if self.cache_warming_thread and self.cache_warming_thread.is_alive():
-            self.cache_warming_thread.cancel()
+        delay = 20
+        self.next_cache_warm = time.time() + delay
+        self.warming_pings_left = self.num_cache_warming_pings
+        self.cache_warming_chunks = chunks
+
+        if self.cache_warming_thread:
+            return
 
         def warm_cache_worker():
-            for i in range(self.num_cache_warming_pings):
-                time.sleep(20)  # 290 == 4 minutes and 50 seconds
+            while True:
+                time.sleep(1)
+                if self.warming_pings_left <= 0:
+                    continue
+                now = time.time()
+                if now < self.next_cache_warm:
+                    continue
+
+                self.warming_pings_left -= 1
+                self.next_cache_warm = time.time() + delay
+
                 try:
                     completion = litellm.completion(
                         model=self.main_model.name,
-                        messages=chunks.cacheable_messages(),
+                        messages=self.cache_warming_chunks.cacheable_messages(),
                         stream=False,
                         max_tokens=1,
                         extra_headers=self.main_model.extra_headers,
@@ -1014,12 +1028,8 @@ class Coder:
                     completion.usage, "prompt_cache_hit_tokens", 0
                 ) or getattr(completion.usage, "cache_read_input_tokens", 0)
 
-                self.io.tool_output(
-                    f"Warmed {format_tokens(cache_hit_tokens)} cached tokens."
-                    f" ({i + 1}/{self.num_cache_warming_pings})"
-                )
-
-            self.io.tool_output("Stopped warming.")
+                # if self.verbose:
+                self.io.tool_output(f"Warmed {format_tokens(cache_hit_tokens)} cached tokens.")
 
         self.cache_warming_thread = threading.Timer(0, warm_cache_worker)
         self.cache_warming_thread.start()
