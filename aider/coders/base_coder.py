@@ -14,7 +14,7 @@ import threading
 import time
 import traceback
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import datetime
 from json.decoder import JSONDecodeError
 from pathlib import Path
 
