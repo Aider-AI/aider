@@ -997,7 +997,7 @@ class Coder:
 
         def warm_cache_worker():
             for i in range(self.num_cache_warming_pings):
-                time.sleep(20)  # 290 == 4 minutes and 50 seconds
+                time.sleep(10)  # 290 == 4 minutes and 50 seconds
                 try:
                     completion = litellm.completion(
                         model=self.main_model.name,
