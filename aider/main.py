@@ -543,6 +543,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             map_refresh=args.map_refresh,
             cache_prompts=args.cache_prompts,
             map_mul_no_files=args.map_multiplier_no_files,
+            num_cache_warming_pings=args.cache_warming_pings,
         )
     except ValueError as err:
         io.tool_error(str(err))
