@@ -90,6 +90,7 @@ class Coder:
     message_tokens_received = 0
     add_cache_headers = False
     cache_warming_thread = None
+    num_cache_warming_pings = 5
 
     @classmethod
     def create(
@@ -252,6 +253,7 @@ class Coder:
         total_cost=0.0,
         map_refresh="auto",
         cache_prompts=False,
+        num_cache_warming_pings=5,
     ):
         self.commit_before_message = []
         self.aider_commit_hashes = set()
@@ -992,7 +994,7 @@ class Coder:
             self.cache_warming_thread.cancel()
 
         def warm_cache_worker():
-            for _ in range(5):
+            for _ in range(self.num_cache_warming_pings):
                 time.sleep(10)  # 290 == 4 minutes and 50 seconds
                 try:
                     completion = litellm.completion(
