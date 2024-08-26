@@ -217,7 +217,7 @@ def get_parser(default_config_files, git_root):
         "--cache-warming-pings",
         type=int,
         default=0,
-        help="Number of pings to warm up the cache (default: 0)",
+        help="Number of times to ping every 5min to keep prompt cache warm (default: 0)",
     )
     group.add_argument(
         "--map-multiplier-no-files",

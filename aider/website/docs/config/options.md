@@ -206,7 +206,7 @@ Aliases:
   - `--no-cache-prompts`
 
 ### `--cache-warming-pings VALUE`
-Number of pings to warm up the cache (default: 0)  
+Number of times to ping every 5min to keep prompt cache warm (default: 0)  
 Default: 0  
 Environment variable: `AIDER_CACHE_WARMING_PINGS`  
 

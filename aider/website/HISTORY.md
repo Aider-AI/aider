@@ -18,6 +18,7 @@ cog.out(text)
 
 ### main branch
 
+- Prompt cache warming, via `--cache-warming-pings`.
 - You can now bulk accept/reject a series of add url and run shell confirmations.
 - Improved matching of filenames from S/R blocks with files in chat.
 - Stronger prompting for Sonnet to make edits in code chat mode.

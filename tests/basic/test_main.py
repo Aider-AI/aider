@@ -524,7 +524,7 @@ class TestMain(TestCase):
                 MockRepoMap.return_value = mock_repo_map
 
                 main(
-                    ["--sonnet", "--cache", "--exit", "--yes"],
+                    ["--sonnet", "--cache-prompts", "--exit", "--yes"],
                     input=DummyInput(),
                     output=DummyOutput(),
                 )
@@ -549,7 +549,7 @@ class TestMain(TestCase):
     def test_4o_and_cache_options(self):
         with GitTemporaryDirectory():
             coder = main(
-                ["--4o", "--cache", "--exit", "--yes"],
+                ["--4o", "--cache-prompts", "--exit", "--yes"],
                 input=DummyInput(),
                 output=DummyOutput(),
                 return_coder=True,
