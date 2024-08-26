@@ -551,11 +551,13 @@ def find_filename(lines, fence, valid_fnames):
             if fname == vfn.name:
                 return vfn
 
+    # Perform fuzzy matching with valid_fnames
     for fname in filenames:
-        # todo: do a fuzzt match with the valid_fnames
-        pass
+        close_matches = difflib.get_close_matches(fname, valid_fnames, n=1, cutoff=0.6)
+        if close_matches:
+            return close_matches[0]
 
-    # look for a file w/extension
+    # If no fuzzy match, look for a file w/extension
     for fname in filenames:
         if "." in fname:
             return fname
