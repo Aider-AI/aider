@@ -53,8 +53,17 @@ class ChatChunks:
         messages[-1]["content"] = [content]
 
     def cacheable_messages(self):
-        chunks = self.system + self.examples + self.readonly_files + self.repo + self.done + self.chat_files
+        chunks = (
+            self.system
+            + self.examples
+            + self.readonly_files
+            + self.repo
+            + self.done
+            + self.chat_files
+        )
         for i, message in enumerate(reversed(chunks)):
-            if isinstance(message.get('content'), list) and message['content'][0].get('cache_control'):
-                return chunks[:len(chunks)-i]
+            if isinstance(message.get("content"), list) and message["content"][0].get(
+                "cache_control"
+            ):
+                return chunks[: len(chunks) - i]
         return chunks
