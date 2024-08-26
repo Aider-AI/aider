@@ -551,6 +551,10 @@ def find_filename(lines, fence, valid_fnames):
             if fname == vfn.name:
                 return vfn
 
+    for fname in filenames:
+        # todo: do a fuzzt match with the valid_fnames
+        pass
+
     # look for a file w/extension
     for fname in filenames:
         if "." in fname:
