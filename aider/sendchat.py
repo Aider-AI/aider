@@ -47,7 +47,13 @@ def lazy_litellm_retry_decorator(func):
 
 
 def send_completion(
-    model_name, messages, functions, stream, temperature=0, extra_headers=None, max_tokens=None
+    model_name,
+    messages,
+    functions,
+    stream,
+    temperature=0,
+    extra_headers=None,
+    max_tokens=None,
 ):
     from aider.llm import litellm
 

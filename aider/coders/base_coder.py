@@ -22,7 +22,7 @@ import git
 from rich.console import Console, Text
 from rich.markdown import Markdown
 
-from aider import __version__, models, prompts, urls
+from aider import __version__, models, prompts, urls, utils
 from aider.commands import Commands
 from aider.history import ChatSummary
 from aider.io import ConfirmGroup, InputOutput
@@ -32,13 +32,7 @@ from aider.mdstream import MarkdownStream
 from aider.repo import GitRepo
 from aider.repomap import RepoMap
 from aider.sendchat import retry_exceptions, send_completion
-from aider.utils import (
-    format_content,
-    format_messages,
-    format_tokens,
-    is_image_file,
-    utils,
-)
+from aider.utils import format_content, format_messages, format_tokens, is_image_file
 
 from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
@@ -1003,7 +997,7 @@ class Coder:
 
         def warm_cache_worker():
             for i in range(self.num_cache_warming_pings):
-                time.sleep(10)  # 290 == 4 minutes and 50 seconds
+                time.sleep(20)  # 290 == 4 minutes and 50 seconds
                 try:
                     completion = litellm.completion(
                         model=self.main_model.name,
@@ -1021,8 +1015,8 @@ class Coder:
                 ) or getattr(completion.usage, "cache_read_input_tokens", 0)
 
                 self.io.tool_output(
-                    f"Warmed {utils.format_tokens(cache_hit_tokens)} cached tokens."
-                    f" ({i+1}/{self.num_cache_warming_pings})"
+                    f"Warmed {format_tokens(cache_hit_tokens)} cached tokens."
+                    f" ({i + 1}/{self.num_cache_warming_pings})"
                 )
 
             self.io.tool_output("Stopped warming.")
