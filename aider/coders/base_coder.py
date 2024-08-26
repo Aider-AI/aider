@@ -89,6 +89,7 @@ class Coder:
     message_tokens_sent = 0
     message_tokens_received = 0
     add_cache_headers = False
+    cache_warming_thread = None
 
     @classmethod
     def create(
