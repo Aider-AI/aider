@@ -30,8 +30,6 @@ def process_markdown(filename, fh):
     # Split the content into sections based on '####' headers
     sections = re.split(r"(?=####\s)", content)
 
-    dump(sections)
-
     for section in sections:
         if "editblock_coder.py" in section or "test_editblock.py" in section:
             continue

@@ -27799,3 +27799,12 @@ echo "$message"
 @@@ SHELL @@@@@@@@@@@@@@@@@@@@
 bash example.sh
 @@@ ENDSHELL @@@@@@@@@@@@@@@@@@@@
+
+
+@@@ #### make the change from https://github.com/paul-gauthier/aider/issues/1158 @@@@@@@@@@@@@@@@@@@@
+@@@ SEARCH: src\mycli\dev\__init__.py @@@@@@@@@@@@@@@@@@@@
+from .tools import *
+@@@@@@@@@@@@@@@@@@@@
+from .tools import *
+from .project import newpy
+@@@ REPLACE @@@@@@@@@@@@@@@@@@@@
