@@ -985,19 +985,34 @@ class Coder:
         return chunks
 
     def warm_cache(self, chunks):
-        if self.add_cache_headers:
-            chunks.add_cache_control_headers()
+        if not self.add_cache_headers:
+            return
 
         if self.cache_warming_thread and self.cache_warming_thread.is_alive():
             self.cache_warming_thread.cancel()
 
         def warm_cache_worker():
             for _ in range(5):
+                time.sleep(10)  # 290 == 4 minutes and 50 seconds
                 try:
-                    self.send(chunks.cacheable_messages(), stream=False)
-                except retry_exceptions() as err:
+                    completion = litellm.completion(
+                        model=self.main_model.name,
+                        messages=chunks.cacheable_messages(),
+                        stream=False,
+                        max_tokens=1,
+                        extra_headers=self.main_model.extra_headers,
+                    )
+                except Exception as err:
                     self.io.tool_error(f"Cache warming error: {str(err)}")
-                time.sleep(290)  # 4 minutes and 50 seconds
+                    continue
+
+                cache_hit_tokens = getattr(completion.usage, "prompt_cache_hit_tokens", 0) or getattr(
+                    completion.usage, "cache_read_input_tokens", 0
+                )
+                self.io.tool_output(f"Warmed {cache_hit_tokens} cached tokens.")
+
+            self.io.tool_output("Stopped warming.")
+
 
         self.cache_warming_thread = threading.Timer(0, warm_cache_worker)
         self.cache_warming_thread.start()
