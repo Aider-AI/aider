@@ -540,15 +540,15 @@ def find_filename(lines, fence, valid_fnames):
 
     # pick the *best* filename found
 
-    # pick a valid fname
+    # Check for exact match first
     for fname in filenames:
         if fname in valid_fnames:
             return fname
 
-    # match just on basename, return full valid fname
+    # Check for partial match (basename match)
     for fname in filenames:
         for vfn in valid_fnames:
-            if fname == vfn.name:
+            if fname == Path(vfn).name:
                 return vfn
 
     # Perform fuzzy matching with valid_fnames
@@ -562,7 +562,7 @@ def find_filename(lines, fence, valid_fnames):
         if "." in fname:
             return fname
 
-    return filenames[0]
+    return filenames[0] if filenames else None
 
 
 def find_similar_lines(search_lines, content_lines, threshold=0.6):
