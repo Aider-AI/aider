@@ -36,9 +36,9 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--show-model-warnings | --no-show-model-warnings]
              [--map-tokens] [--map-refresh]
              [--cache-prompts | --no-cache-prompts]
-             [--map-multiplier-no-files] [--max-chat-history-tokens]
-             [--env-file] [--input-history-file]
-             [--chat-history-file]
+             [--cache-warming-pings] [--map-multiplier-no-files]
+             [--max-chat-history-tokens] [--env-file]
+             [--input-history-file] [--chat-history-file]
              [--restore-chat-history | --no-restore-chat-history]
              [--llm-history-file] [--dark-mode] [--light-mode]
              [--pretty | --no-pretty] [--stream | --no-stream]
@@ -204,6 +204,11 @@ Environment variable: `AIDER_CACHE_PROMPTS`
 Aliases:
   - `--cache-prompts`
   - `--no-cache-prompts`
+
+### `--cache-warming-pings VALUE`
+Number of pings to warm up the cache (default: 0)  
+Default: 0  
+Environment variable: `AIDER_CACHE_WARMING_PINGS`  
 
 ### `--map-multiplier-no-files VALUE`
 Multiplier for map tokens when no files are specified (default: 2)  

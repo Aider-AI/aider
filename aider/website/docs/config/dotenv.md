@@ -144,6 +144,9 @@ cog.outl("```")
 ## Enable caching of prompts (default: False)
 #AIDER_CACHE_PROMPTS=false
 
+## Number of pings to warm up the cache (default: 0)
+#AIDER_CACHE_WARMING_PINGS=false
+
 ## Multiplier for map tokens when no files are specified (default: 2)
 #AIDER_MAP_MULTIPLIER_NO_FILES=true
 

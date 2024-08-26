@@ -137,6 +137,9 @@ cog.outl("```")
 ## Enable caching of prompts (default: False)
 #cache-prompts: false
 
+## Number of pings to warm up the cache (default: 0)
+#cache-warming-pings: false
+
 ## Multiplier for map tokens when no files are specified (default: 2)
 #map-multiplier-no-files: true
 
