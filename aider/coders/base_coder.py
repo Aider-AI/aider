@@ -1015,16 +1015,8 @@ class Coder:
                     completion.usage, "prompt_cache_hit_tokens", 0
                 ) or getattr(completion.usage, "cache_read_input_tokens", 0)
 
-                def format_tokens(count):
-                    if count < 1000:
-                        return f"{count}"
-                    elif count < 10000:
-                        return f"{count / 1000:.1f}k"
-                    else:
-                        return f"{round(count / 1000)}k"
-
                 self.io.tool_output(
-                    f"Warmed {format_tokens(cache_hit_tokens)} cached tokens."
+                    f"Warmed {utils.format_tokens(cache_hit_tokens)} cached tokens."
                     f" ({i+1}/{self.num_cache_warming_pings})"
                 )
 
