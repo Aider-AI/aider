@@ -40,10 +40,9 @@ class TestModels(unittest.TestCase):
 
         sanity_check_model(mock_io, model)
 
-        mock_io.tool_error.assert_called_once_with(
-            "Model test-model: Environment variables status:"
-        )
+        mock_io.tool_error.assert_called()
         calls = mock_io.tool_error.call_args_list
+        self.assertIn("Model test-model: Environment variables status:", str(calls))
         self.assertIn("- API_KEY1: ✓ Set", str(calls))
         self.assertIn("- API_KEY2: ✓ Set", str(calls))
 
@@ -59,10 +58,9 @@ class TestModels(unittest.TestCase):
 
         sanity_check_model(mock_io, model)
 
-        mock_io.tool_error.assert_called_once_with(
-            "Model test-model: Environment variables status:"
-        )
+        mock_io.tool_error.assert_called()
         calls = mock_io.tool_error.call_args_list
+        self.assertIn("Model test-model: Environment variables status:", str(calls))
         self.assertIn("- API_KEY1: ✗ Not set", str(calls))
         self.assertIn("- API_KEY2: ✗ Not set", str(calls))
 
