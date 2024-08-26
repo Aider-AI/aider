@@ -728,9 +728,11 @@ def sanity_check_model(io, model):
 
     if model.missing_keys:
         show = True
-        io.tool_error(f"Model {model}: Missing these environment variables:")
+        io.tool_error(f"Model {model}: Environment variables status:")
         for key in model.missing_keys:
-            io.tool_error(f"- {key}")
+            value = os.environ.get(key, '')
+            status = "✓ Set" if value else "✗ Not set"
+            io.tool_error(f"- {key}: {status}")
 
         if platform.system() == "Windows" or True:
             io.tool_output(
