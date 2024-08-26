@@ -532,11 +532,8 @@ def find_filename(lines, fence, valid_fnames):
         if not line.startswith(fence[0]):
             break
 
-    if not len(filenames):
+    if not filenames:
         return
-
-    if len(filenames) == 1:
-        return filenames[0]
 
     # pick the *best* filename found
 
@@ -553,7 +550,7 @@ def find_filename(lines, fence, valid_fnames):
 
     # Perform fuzzy matching with valid_fnames
     for fname in filenames:
-        close_matches = difflib.get_close_matches(fname, valid_fnames, n=1, cutoff=0.6)
+        close_matches = difflib.get_close_matches(fname, valid_fnames, n=1, cutoff=0.8)
         if len(close_matches) == 1:
             return close_matches[0]
 
@@ -562,7 +559,8 @@ def find_filename(lines, fence, valid_fnames):
         if "." in fname:
             return fname
 
-    return filenames[0] if filenames else None
+    if filenames:
+        return filenames[0]
 
 
 def find_similar_lines(search_lines, content_lines, threshold=0.6):
