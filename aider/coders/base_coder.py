@@ -981,15 +981,16 @@ class Coder:
         if self.add_cache_headers:
             chunks.add_cache_control_headers()
 
-        msgs = chunks.all_messages()
-        return msgs
+        return chunks
 
     def send_message(self, inp):
         self.cur_messages += [
             dict(role="user", content=inp),
         ]
 
-        messages = self.format_messages()
+        chunks = self.format_messages()
+        messages = chunks.all_messages()
+        self.warm_cache(chunks)
 
         if self.verbose:
             utils.show_messages(messages, functions=self.functions)
