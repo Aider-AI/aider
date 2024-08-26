@@ -1008,13 +1008,12 @@ class Coder:
                     self.io.tool_error(f"Cache warming error: {str(err)}")
                     continue
 
-                cache_hit_tokens = getattr(completion.usage, "prompt_cache_hit_tokens", 0) or getattr(
-                    completion.usage, "cache_read_input_tokens", 0
-                )
+                cache_hit_tokens = getattr(
+                    completion.usage, "prompt_cache_hit_tokens", 0
+                ) or getattr(completion.usage, "cache_read_input_tokens", 0)
                 self.io.tool_output(f"Warmed {cache_hit_tokens} cached tokens.")
 
             self.io.tool_output("Stopped warming.")
-
 
         self.cache_warming_thread = threading.Timer(0, warm_cache_worker)
         self.cache_warming_thread.start()
