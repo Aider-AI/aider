@@ -11,7 +11,9 @@
 - Weak model now uses `extra_headers`, to support Anthropic beta features.
 - Improved error messages on attempt to add not-git subdir to chat.
 - Show model metadata info on `--verbose`.
+- Improved warnings when LLMs env variables aren't set.
 - Bugfix to windows filenames which contain `\_`.
+- Aider wrote 64% of the code in this release.
 
 ### Aider v0.52.0
 
