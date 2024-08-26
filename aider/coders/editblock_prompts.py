@@ -138,7 +138,7 @@ from hello import hello
     system_reminder = """# *SEARCH/REPLACE block* Rules:
 
 Every *SEARCH/REPLACE block* must use this format:
-1. The file path alone on a line, verbatim. No bold asterisks, no quotes around it, no escaping of characters, etc.
+1. The *FULL* file path alone on a line, verbatim. No bold asterisks, no quotes around it, no escaping of characters, etc.
 2. The opening fence and code language, eg: {fence[0]}python
 3. The start of search block: <<<<<<< SEARCH
 4. A contiguous chunk of lines to search for in the existing source code
@@ -146,6 +146,8 @@ Every *SEARCH/REPLACE block* must use this format:
 6. The lines to replace into the source code
 7. The end of the replace block: >>>>>>> REPLACE
 8. The closing fence: {fence[1]}
+
+Use the *FULL* file path, as shown to you by the user.
 
 Every *SEARCH* section must *EXACTLY MATCH* the existing file content, character for character, including all comments, docstrings, etc.
 If the file contains code or other data wrapped/escaped in json/xml/quotes or other containers, you need to propose edits to the literal contents of the file, including the container markup.
