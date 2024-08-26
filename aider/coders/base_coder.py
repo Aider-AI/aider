@@ -1032,6 +1032,7 @@ class Coder:
                 self.io.tool_output(f"Warmed {format_tokens(cache_hit_tokens)} cached tokens.")
 
         self.cache_warming_thread = threading.Timer(0, warm_cache_worker)
+        self.cache_warming_thread.daemon = True
         self.cache_warming_thread.start()
 
         return chunks
