@@ -554,7 +554,7 @@ def find_filename(lines, fence, valid_fnames):
     # Perform fuzzy matching with valid_fnames
     for fname in filenames:
         close_matches = difflib.get_close_matches(fname, valid_fnames, n=1, cutoff=0.6)
-        if close_matches:
+        if len(close_matches) == 1:
             return close_matches[0]
 
     # If no fuzzy match, look for a file w/extension
