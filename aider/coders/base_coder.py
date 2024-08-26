@@ -90,7 +90,7 @@ class Coder:
     message_tokens_received = 0
     add_cache_headers = False
     cache_warming_thread = None
-    num_cache_warming_pings = 5
+    num_cache_warming_pings = 0
 
     @classmethod
     def create(
@@ -259,6 +259,8 @@ class Coder:
         self.aider_commit_hashes = set()
         self.rejected_urls = set()
         self.abs_root_path_cache = {}
+
+        self.num_cache_warming_pings = num_cache_warming_pings
 
         if not fnames:
             fnames = []
@@ -992,7 +994,7 @@ class Coder:
         if not self.num_cache_warming_pings:
             return
 
-        delay = 5 * 60 - 10
+        delay = 5 * 60 - 5
         self.next_cache_warm = time.time() + delay
         self.warming_pings_left = self.num_cache_warming_pings
         self.cache_warming_chunks = chunks
