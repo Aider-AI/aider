@@ -730,7 +730,7 @@ def sanity_check_model(io, model):
         show = True
         io.tool_error(f"Model {model}: Environment variables status:")
         for key in model.missing_keys:
-            value = os.environ.get(key, '')
+            value = os.environ.get(key, "")
             status = "✓ Set" if value else "✗ Not set"
             io.tool_error(f"- {key}: {status}")
 
