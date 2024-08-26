@@ -280,6 +280,14 @@ def find_common_root(abs_fnames):
     else:
         return safe_abs_path(os.getcwd())
 
+def format_tokens(count):
+    if count < 1000:
+        return f"{count}"
+    elif count < 10000:
+        return f"{count / 1000:.1f}k"
+    else:
+        return f"{round(count / 1000)}k"
+
 
 def check_pip_install_extra(io, module, prompt, pip_install_cmd):
     try:

@@ -22,7 +22,8 @@ import git
 from rich.console import Console, Text
 from rich.markdown import Markdown
 
-from aider import __version__, models, prompts, urls, utils
+from aider import __version__, models, prompts, urls
+from aider.utils import format_tokens, utils
 from aider.commands import Commands
 from aider.history import ChatSummary
 from aider.io import ConfirmGroup, InputOutput
@@ -1487,14 +1488,6 @@ class Coder:
             self.message_tokens_sent += prompt_tokens
 
         self.message_tokens_received += completion_tokens
-
-        def format_tokens(count):
-            if count < 1000:
-                return f"{count}"
-            elif count < 10000:
-                return f"{count / 1000:.1f}k"
-            else:
-                return f"{round(count / 1000)}k"
 
         tokens_report = f"Tokens: {format_tokens(self.message_tokens_sent)} sent"
 
