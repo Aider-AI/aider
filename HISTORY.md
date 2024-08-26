@@ -1,6 +1,18 @@
 
 # Release history
 
+### main branch
+
+- You can now bulk accept/reject a series of add url and run shell confirmations.
+- Improved matching of filenames from S/R blocks with files in chat.
+- Stronger prompting for Sonnet to make edits in code chat mode.
+- Stronger prompting for the LLM to specify full file paths.
+- Improved shell command prompting.
+- Weak model now uses `extra_headers`, to support Anthropic beta features.
+- Improved error messages on attempt to add not-git subdir to chat.
+- Show model metadata info on `--verbose`.
+- Bugfix to windows filenames which contain `\_`.
+
 ### Aider v0.52.0
 
 - Aider now offers to run shell commands:
