@@ -14,7 +14,7 @@ cog.out(get_help_md())
 
 |Command|Description|
 |:------|:----------|
-| **/add** | Add files to the chat so GPT can edit them or review them in detail |
+| **/add** | Add files to the chat so aider can edit them or review them in detail |
 | **/ask** | Ask questions about the code base without editing any files |
 | **/chat-mode** | Switch to a new chat mode |
 | **/clear** | Clear the chat history |
