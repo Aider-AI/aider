@@ -3,6 +3,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+from aider.dump import dump  # noqa: F401
 from aider.io import AutoCompleter, ConfirmGroup, InputOutput
 from aider.utils import ChdirTemporaryDirectory
 
@@ -33,7 +34,8 @@ class TestInputOutput(unittest.TestCase):
 
             Path(fname).write_text("def hello(): pass\n")
             autocompleter = AutoCompleter(root, rel_fnames, addable_rel_fnames, commands, "utf-8")
-            self.assertEqual(autocompleter.words, set(rel_fnames + ["hello"]))
+            dump(autocompleter.words)
+            self.assertEqual(autocompleter.words, set(rel_fnames + [("hello", "`hello`")]))
 
             encoding = "utf-16"
             some_content_which_will_error_if_read_with_encoding_utf8 = "ÅÍÎÏ".encode(encoding)

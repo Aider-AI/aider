@@ -78,7 +78,9 @@ class AutoCompleter(Completer):
             except ClassNotFound:
                 continue
             tokens = list(lexer.get_tokens(content))
-            self.words.update(token[1] for token in tokens if token[0] in Token.Name)
+            self.words.update(
+                (token[1], f"`{token[1]}`") for token in tokens if token[0] in Token.Name
+            )
 
     def get_command_completions(self, text, words):
         candidates = []
@@ -125,10 +127,7 @@ class AutoCompleter(Completer):
 
         candidates = self.words
         candidates.update(set(self.fname_to_rel_fnames))
-        candidates = [
-            (word, f"`{word}`" if word not in self.fname_to_rel_fnames else word)
-            for word in candidates
-        ]
+        candidates = [word if type(word) is tuple else (word, word) for word in candidates]
 
         last_word = words[-1]
         for word_match, word_insert in candidates:
