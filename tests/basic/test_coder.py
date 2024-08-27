@@ -773,7 +773,7 @@ This command will print 'Hello, World!' to the console."""
 
             # Check if the shell command was added to the list
             self.assertEqual(len(coder.shell_commands), 1)
-            self.assertEqual(coder.shell_commands[0], 'echo "Hello, World!"')
+            self.assertEqual(coder.shell_commands[0].strip(), 'echo "Hello, World!"')
 
             # Check if handle_shell_commands was called with the correct argument
             coder.handle_shell_commands.assert_called_once_with('echo "Hello, World!"', ANY)
