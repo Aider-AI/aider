@@ -49,18 +49,20 @@ document.addEventListener('DOMContentLoaded', function() {
     })).sort((a, b) => a.x - b.x);
 
     new Chart(ctx, {
-        type: 'line',
+        type: 'scatter',
         data: {
             datasets: [{
                 label: 'Pass Rate 1',
                 data: chartData.map(item => ({ x: item.x, y: item.y1 })),
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
+                backgroundColor: 'rgb(75, 192, 192)',
+                pointRadius: 5,
+                pointHoverRadius: 7
             }, {
                 label: 'Pass Rate 2',
                 data: chartData.map(item => ({ x: item.x, y: item.y2 })),
-                borderColor: 'rgb(255, 99, 132)',
-                tension: 0.1
+                backgroundColor: 'rgb(255, 99, 132)',
+                pointRadius: 5,
+                pointHoverRadius: 7
             }]
         },
         options: {
@@ -89,6 +91,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 title: {
                     display: true,
                     text: 'Claude 3.5 Sonnet Performance Over Time'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += context.parsed.y.toFixed(1) + '%';
+                            }
+                            return label;
+                        }
+                    }
                 }
             }
         }
