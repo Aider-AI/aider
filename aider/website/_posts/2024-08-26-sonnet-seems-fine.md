@@ -20,7 +20,7 @@ It shows every clean, comparable benchmark run performed since Sonnet launched.
 Benchmarks were performed for various reasons, usually
 to evaluate the effects of small changes to aider's system prompts.
 
-The graph shows variance, but I don't see any indication of a noteworthy
+The graph shows variance, but no indication of a noteworthy
 degradation.
 There is always some variance in benchmark results, typically +/- 2%
 between runs with identical prompts.
