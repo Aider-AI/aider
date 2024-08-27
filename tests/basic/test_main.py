@@ -635,7 +635,9 @@ class TestMain(TestCase):
             shell_md = Path("shell.md")
             shell_md.write_text("```bash\ntouch no_suggest_file.txt\n```")
 
-            with patch("aider.coders.base_coder.Coder.handle_shell_commands") as mock_handle_shell_commands:
+            with patch(
+                "aider.coders.base_coder.Coder.handle_shell_commands"
+            ) as mock_handle_shell_commands:
                 main(
                     ["--apply", "shell.md", "--no-git"],
                     input=DummyInput(),
@@ -645,7 +647,9 @@ class TestMain(TestCase):
                 # Make sure handle_shell_commands IS called when --no-suggest-shell-commands is not used
                 mock_handle_shell_commands.assert_called_once()
 
-            with patch("aider.coders.base_coder.Coder.handle_shell_commands") as mock_handle_shell_commands:
+            with patch(
+                "aider.coders.base_coder.Coder.handle_shell_commands"
+            ) as mock_handle_shell_commands:
                 main(
                     ["--apply", "shell.md", "--no-suggest-shell-commands", "--no-git"],
                     input=DummyInput(),
