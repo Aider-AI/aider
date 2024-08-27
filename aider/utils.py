@@ -56,8 +56,8 @@ def run_interactive_command_pexpect(command):
 
     try:
         # Use the SHELL environment variable, falling back to /bin/sh if not set
-        shell = os.environ.get('SHELL', '/bin/sh')
-        
+        shell = os.environ.get("SHELL", "/bin/sh")
+
         if os.path.exists(shell):
             # Use the shell from SHELL environment variable
             child = pexpect.spawn(shell, args=["-c", command], encoding="utf-8")
