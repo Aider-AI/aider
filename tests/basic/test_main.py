@@ -644,6 +644,7 @@ class TestMain(TestCase):
 
                 # Make sure confirm_ask is not called when --no-suggest-shell-commands is used
                 mock_confirm_ask.assert_called_once()
+                print("confirm_ask args (with --no-suggest-shell-commands):", mock_confirm_ask.call_args)
 
             with patch("aider.io.InputOutput.confirm_ask") as mock_confirm_ask:
                 main(
@@ -654,6 +655,7 @@ class TestMain(TestCase):
 
                 # Make sure confirm_ask IS called when --no-suggest-shell-commands is not used
                 mock_confirm_ask.assert_called_once()
+                print("confirm_ask args (without --no-suggest-shell-commands):", mock_confirm_ask.call_args)
 
             # Check that the file was not created in either case
             self.assertFalse(Path("no_suggest_file.txt").exists())
