@@ -15,6 +15,11 @@ IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp"}
 
 
 def run_interactive_command(command):
+    import sys
+
+    if not sys.stdin.isatty():
+        return run_interactive_command_subprocess(command)
+
     try:
         import pexpect  # noqa: F401
     except ImportError:
