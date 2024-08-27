@@ -26,27 +26,30 @@ Here's a graph showing the performance of Claude 3.5 Sonnet over time:
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.1/dist/chartjs-adapter-moment.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var ctx = document.getElementById('sonnetPerformanceChart').getContext('2d');
     var sonnetData = {{ site.data.sonnet-fine | jsonify }};
 
-    var dates = sonnetData.map(item => item.date);
-    var passRate1 = sonnetData.map(item => item.pass_rate_1);
-    var passRate2 = sonnetData.map(item => item.pass_rate_2);
+    var chartData = sonnetData.map(item => ({
+        x: moment(item.date).toDate(),
+        y1: item.pass_rate_1,
+        y2: item.pass_rate_2
+    }));
 
     new Chart(ctx, {
         type: 'line',
         data: {
-            labels: dates,
             datasets: [{
                 label: 'Pass Rate 1',
-                data: passRate1,
+                data: chartData.map(item => ({ x: item.x, y: item.y1 })),
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1
             }, {
                 label: 'Pass Rate 2',
-                data: passRate2,
+                data: chartData.map(item => ({ x: item.x, y: item.y2 })),
                 borderColor: 'rgb(255, 99, 132)',
                 tension: 0.1
             }]
@@ -63,6 +66,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 },
                 x: {
+                    type: 'time',
+                    time: {
+                        unit: 'day'
+                    },
                     title: {
                         display: true,
                         text: 'Date'
