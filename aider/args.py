@@ -504,6 +504,12 @@ def get_parser(default_config_files, git_root):
         default=True,
     )
     group.add_argument(
+        "--install-main-branch",
+        action="store_true",
+        help="Install the latest version from the main branch",
+        default=False,
+    )
+    group.add_argument(
         "--apply",
         metavar="FILE",
         help="Apply the changes from the given file instead of running the chat (debug)",

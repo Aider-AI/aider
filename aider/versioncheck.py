@@ -16,8 +16,8 @@ def install_from_main_branch(io):
     """
     return utils.check_pip_install_extra(
         io,
-        None
-        "Install the latest version from the main branch?",
+        "aider",
+        "Installing the latest version from the main branch...",
         ["--upgrade", "git+https://github.com/paul-gauthier/aider.git"],
     )
 
