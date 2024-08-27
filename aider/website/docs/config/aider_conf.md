@@ -284,6 +284,9 @@ cog.outl("```")
 ## Check for new aider versions on launch
 #check-update: true
 
+## Install the latest version from the main branch
+#install-main-branch: false
+
 ## Apply the changes from the given file instead of running the chat (debug)
 #apply:
 

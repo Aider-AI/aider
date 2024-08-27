@@ -57,9 +57,10 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--test-cmd] [--auto-test | --no-auto-test] [--test]
              [--file] [--read] [--vim] [--voice-language]
              [--version] [--just-check-update]
-             [--check-update | --no-check-update] [--apply] [--yes]
-             [-v] [--show-repo-map] [--show-prompts] [--exit]
-             [--message] [--message-file] [--encoding] [-c] [--gui]
+             [--check-update | --no-check-update]
+             [--install-main-branch] [--apply] [--yes] [-v]
+             [--show-repo-map] [--show-prompts] [--exit] [--message]
+             [--message-file] [--encoding] [-c] [--gui]
 
 ```
 
@@ -471,6 +472,11 @@ Environment variable: `AIDER_CHECK_UPDATE`
 Aliases:
   - `--check-update`
   - `--no-check-update`
+
+### `--install-main-branch`
+Install the latest version from the main branch  
+Default: False  
+Environment variable: `AIDER_INSTALL_MAIN_BRANCH`  
 
 ### `--apply FILE`
 Apply the changes from the given file instead of running the chat (debug)  

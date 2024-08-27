@@ -21,10 +21,29 @@ For example, say we want our python code to:
 
 We would simply create a file like `CONVENTIONS.md` with those lines
 and then we can add it to the aider chat, along with the file(s)
-that we want to edit:
+that we want to edit.
+
+It's best to load the conventions file with `/read CONVENTIONS.md` 
+or `aider --read CONVENTIONS.md`. 
+This way it is marked as read-only, and cached if prompt caching
+is enabled.
+
+You can also configure aider to always load your conventions file
+in the [`.aider.conf.yml` config file](https://aider.chat/docs/config/aider_conf.html):
+
+See below for an example of how the conventions can affect the code
+that aider writes.
+
+```yaml
+# alone
+read: CONVENTIONS.md
+
+# multiple files
+read: [CONVENTIONS.md, anotherfile.txt]
+```
 
 <div class="chat-transcript" markdown="1">
-> $ aider CONVENTIONS.md useragent.py  
+> $ aider --read CONVENTIONS.md useragent.py  
 >  
 > Aider v0.24.2-dev  
 > Added CONVENTIONS.md to the chat.  
@@ -85,3 +104,5 @@ which is perhaps more typical in small python scripts.
 
 > Applied edit to useragent.py  
 </div>
+
+

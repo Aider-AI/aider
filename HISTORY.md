@@ -10,11 +10,12 @@
 - Stronger prompting for the LLM to specify full file paths.
 - Improved shell command prompting.
 - Weak model now uses `extra_headers`, to support Anthropic beta features.
+- New `--install-main-branch` to update to the latest dev version of aider.
 - Improved error messages on attempt to add not-git subdir to chat.
 - Show model metadata info on `--verbose`.
 - Improved warnings when LLMs env variables aren't set.
 - Bugfix to windows filenames which contain `\_`.
-- Aider wrote 64% of the code in this release.
+- Aider wrote 60% of the code in this release.
 
 ### Aider v0.52.1
 
