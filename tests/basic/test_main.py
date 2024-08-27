@@ -26,10 +26,14 @@ class TestMain(TestCase):
         self.tempdir_obj = IgnorantTemporaryDirectory()
         self.tempdir = self.tempdir_obj.name
         os.chdir(self.tempdir)
+        # Fake home directory prevents tests from using the real ~/.aider.conf.yml file:
+        self.homedir_obj = IgnorantTemporaryDirectory()
+        os.environ["HOME"] = self.homedir_obj.name
 
     def tearDown(self):
         os.chdir(self.original_cwd)
         self.tempdir_obj.cleanup()
+        self.homedir_obj.cleanup()
         os.environ.clear()
         os.environ.update(self.original_env)
 
