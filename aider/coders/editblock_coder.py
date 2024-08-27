@@ -1,7 +1,6 @@
 import difflib
 import math
 import re
-import subprocess
 import sys
 from difflib import SequenceMatcher
 from pathlib import Path
