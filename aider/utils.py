@@ -15,7 +15,7 @@ from aider.dump import dump  # noqa: F401
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp"}
 
 
-def run_interactive_command(command):
+def run_interactive_command_pexpect(command):
     """
     Run a shell command interactively using pexpect, capturing all output.
 
