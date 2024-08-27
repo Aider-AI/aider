@@ -13,6 +13,7 @@ The commit message MUST use the imperative tense.
 The commit message should be structured as follows: <type>: <description>
 Use these for <type>: fix, feat, build, chore, ci, docs, style, refactor, perf, test
 Reply with JUST the commit message, without quotes, comments, questions, etc!
+Reply with one line only!
 """
 
 # COMMANDS
