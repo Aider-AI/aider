@@ -40,7 +40,7 @@ cog.out(get_help_md())
 | **/tokens** | Report on the number of tokens used by the current chat context |
 | **/undo** | Undo the last git commit if it was done by aider |
 | **/voice** | Record and transcribe voice input |
-| **/web** | Scrape a webpage, convert to markdown and add to the chat |
+| **/web** | Scrape a webpage, convert to markdown and send in a message |
 
 <!--[[[end]]]-->
 

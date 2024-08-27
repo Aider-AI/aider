@@ -296,6 +296,9 @@ cog.outl("```")
 ## Install the latest version from the main branch
 #install-main-branch: false
 
+## Upgrade aider to the latest version from PyPI
+#upgrade: false
+
 ## Apply the changes from the given file instead of running the chat (debug)
 #apply:
 
