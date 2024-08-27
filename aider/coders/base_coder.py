@@ -207,7 +207,7 @@ class Coder:
                 if map_tokens > max_map_tokens:
                     lines.append(
                         f"Warning: map-tokens > {max_map_tokens} is not recommended as too much"
-                        " irrelevant code can confuse GPT."
+                        " irrelevant code can confuse LLMs."
                     )
             else:
                 lines.append("Repo-map: disabled because map_tokens == 0")

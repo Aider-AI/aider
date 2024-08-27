@@ -554,7 +554,7 @@ class Commands:
         return res
 
     def cmd_add(self, args):
-        "Add files to the chat so GPT can edit them or review them in detail"
+        "Add files to the chat so aider can edit them or review them in detail"
 
         added_fnames = []
 
@@ -628,8 +628,7 @@ class Commands:
                 if is_image_file(matched_file) and not self.coder.main_model.accepts_images:
                     self.io.tool_error(
                         f"Cannot add image file {matched_file} as the"
-                        f" {self.coder.main_model.name} does not support image.\nYou can run `aider"
-                        " --4-turbo-vision` to use GPT-4 Turbo with Vision."
+                        f" {self.coder.main_model.name} does not support images."
                     )
                     continue
                 content = self.io.read_text(abs_file_path)

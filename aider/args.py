@@ -22,7 +22,7 @@ def default_env_file(git_root):
 
 def get_parser(default_config_files, git_root):
     parser = configargparse.ArgumentParser(
-        description="aider is GPT powered coding in your terminal",
+        description="aider is AI pair programming in your terminal",
         add_config_file_help=True,
         default_config_files=default_config_files,
         auto_env_var_prefix="AIDER_",
