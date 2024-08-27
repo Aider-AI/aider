@@ -55,12 +55,14 @@ def run_interactive_command_pexpect(command):
         return b
 
     try:
-        # Check if /bin/sh exists
-        if os.path.exists("/bin/sh"):
-            # Use /bin/sh -c if it exists
-            child = pexpect.spawn("/bin/sh", args=["-c", command], encoding="utf-8")
+        # Use the SHELL environment variable, falling back to /bin/sh if not set
+        shell = os.environ.get('SHELL', '/bin/sh')
+        
+        if os.path.exists(shell):
+            # Use the shell from SHELL environment variable
+            child = pexpect.spawn(shell, args=["-c", command], encoding="utf-8")
         else:
-            # Fall back to the original behavior
+            # Fall back to spawning the command directly
             child = pexpect.spawn(command, encoding="utf-8")
 
         # Transfer control to the user, capturing output
