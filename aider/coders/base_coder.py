@@ -1898,5 +1898,8 @@ class Coder:
                 self.io.tool_error(error_message)
                 accumulated_output += f"{error_message}\n"
 
-        if accumulated_output and self.io.confirm_ask("Add command output to the chat?"):
-            return accumulated_output.strip()
+        accumulated_output = accumulated_output.strip()
+        if accumulated_output and not self.io.confirm_ask("Add command output to the chat?"):
+            accumulated_output = ""
+
+        return accumulated_output
