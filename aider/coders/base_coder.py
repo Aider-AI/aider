@@ -255,6 +255,7 @@ class Coder:
         map_refresh="auto",
         cache_prompts=False,
         num_cache_warming_pings=0,
+        suggest_shell_commands=True,
     ):
         self.commit_before_message = []
         self.aider_commit_hashes = set()
@@ -1865,6 +1866,9 @@ class Coder:
         return
 
     def run_shell_commands(self):
+        if not self.suggest_shell_commands:
+            return ""
+        
         done = set()
         group = ConfirmGroup(set(self.shell_commands))
         accumulated_output = ""
