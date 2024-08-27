@@ -1166,7 +1166,12 @@ class Coder:
                     self.update_cur_messages()
                     return
 
-        self.run_shell_commands()
+        shared_output = self.run_shell_commands()
+        if shared_output:
+            self.cur_messages += [
+                dict(role="user", content=shared_output),
+                dict(role="assistant", content="Ok"),
+            ]
 
         if edited and self.auto_test:
             test_errors = self.commands.cmd_test(self.test_cmd)
@@ -1870,7 +1875,7 @@ class Coder:
             output = self.handle_shell_commands(command, group)
             if output:
                 accumulated_output += output + "\n\n"
-        return accumulated_output.strip()
+        return accumulated_output
 
     def handle_shell_commands(self, commands_str, group):
         commands = commands_str.strip().splitlines()
@@ -1895,15 +1900,11 @@ class Coder:
             self.io.add_to_input_history(f"/run {command.strip()}")
             exit_status, output = run_cmd(command)
             if output:
-                self.io.tool_output(output)
-                accumulated_output += f"$ {command}\n{output}\n"
-            if exit_status != 0:
-                error_message = f"Command exited with status {exit_status}"
-                self.io.tool_error(error_message)
-                accumulated_output += f"{error_message}\n"
+                accumulated_output += f"Output from {command}\n{output}\n"
 
-        accumulated_output = accumulated_output.strip()
-        if accumulated_output and not self.io.confirm_ask("Add command output to the chat?"):
+        if accumulated_output.strip() and not self.io.confirm_ask(
+            "Add command output to the chat?"
+        ):
             accumulated_output = ""
 
         return accumulated_output
