@@ -357,13 +357,15 @@ def check_pip_install_extra(io, module, prompt, pip_install_cmd):
 
 if __name__ == "__main__":
     import sys
+    from aider.dump import dump
 
     if len(sys.argv) > 1:
         command = " ".join(sys.argv[1:])
         exit_status, output = run_interactive_command(command)
-        print(f"Command exited with status {exit_status}")
-        print("Full output:")
-        print(output)
+        print("Exit status:")
+        dump(exit_status)
+        print("\nFull output:")
+        dump(output)
     else:
         print("Usage: python -m aider.utils <command>")
         sys.exit(1)
