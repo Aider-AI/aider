@@ -635,25 +635,25 @@ class TestMain(TestCase):
             shell_md = Path("shell.md")
             shell_md.write_text("```bash\ntouch no_suggest_file.txt\n```")
 
-            with patch("aider.io.InputOutput.confirm_ask") as mock_confirm_ask:
+            with patch("aider.coders.base_coder.Coder.handle_shell_commands") as mock_handle_shell_commands:
                 main(
                     ["--apply", "shell.md", "--no-git"],
-                    # input=DummyInput(),
-                    # output=DummyOutput(),
+                    input=DummyInput(),
+                    output=DummyOutput(),
                 )
 
-                # Make sure confirm_ask IS called when --no-suggest-shell-commands is not used
-                mock_confirm_ask.assert_called_once()
+                # Make sure handle_shell_commands IS called when --no-suggest-shell-commands is not used
+                mock_handle_shell_commands.assert_called_once()
 
-            with patch("aider.io.InputOutput.confirm_ask") as mock_confirm_ask:
+            with patch("aider.coders.base_coder.Coder.handle_shell_commands") as mock_handle_shell_commands:
                 main(
                     ["--apply", "shell.md", "--no-suggest-shell-commands", "--no-git"],
-                    # input=DummyInput(),
-                    # output=DummyOutput(),
+                    input=DummyInput(),
+                    output=DummyOutput(),
                 )
 
-                # Make sure confirm_ask is not called when --no-suggest-shell-commands is used
-                mock_confirm_ask.assert_not_called()
+                # Make sure handle_shell_commands is not called when --no-suggest-shell-commands is used
+                mock_handle_shell_commands.assert_not_called()
 
             # Check that the file was not created in either case
             self.assertFalse(Path("no_suggest_file.txt").exists())
