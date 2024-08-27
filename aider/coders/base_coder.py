@@ -92,6 +92,7 @@ class Coder:
     add_cache_headers = False
     cache_warming_thread = None
     num_cache_warming_pings = 0
+    suggest_shell_commands = True
 
     @classmethod
     def create(
@@ -261,6 +262,8 @@ class Coder:
         self.aider_commit_hashes = set()
         self.rejected_urls = set()
         self.abs_root_path_cache = {}
+
+        self.suggest_shell_commands = suggest_shell_commands
 
         self.num_cache_warming_pings = num_cache_warming_pings
 

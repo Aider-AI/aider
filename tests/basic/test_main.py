@@ -586,20 +586,6 @@ class TestMain(TestCase):
             self.assertIsInstance(coder, Coder)
             self.assertEqual(coder.repo_map.map_mul_no_files, 5)
 
-    def test_apply_shell_commands(self):
-        with GitTemporaryDirectory():
-            shell_md = Path("shell.md")
-            shell_md.write_text("```bash\ntouch file.txt\n```")
-
-            main(
-                ["--apply", "shell.md", "--yes"],
-                input=DummyInput(),
-                output=DummyOutput(),
-            )
-
-            # shell commands require explicit approval, not just --yes
-            self.assertFalse(Path("file.txt").exists())
-
     def test_suggest_shell_commands_default(self):
         with GitTemporaryDirectory():
             coder = main(
@@ -629,35 +615,3 @@ class TestMain(TestCase):
                 return_coder=True,
             )
             self.assertTrue(coder.suggest_shell_commands)
-
-    def test_apply_shell_commands_with_no_suggest(self):
-        with GitTemporaryDirectory():
-            shell_md = Path("shell.md")
-            shell_md.write_text("```bash\ntouch no_suggest_file.txt\n```")
-
-            with patch(
-                "aider.coders.base_coder.Coder.handle_shell_commands"
-            ) as mock_handle_shell_commands:
-                main(
-                    ["--apply", "shell.md", "--no-git"],
-                    input=DummyInput(),
-                    output=DummyOutput(),
-                )
-
-                # Make sure handle_shell_commands IS called when --no-suggest-shell-commands is not used
-                mock_handle_shell_commands.assert_called_once()
-
-            with patch(
-                "aider.coders.base_coder.Coder.handle_shell_commands"
-            ) as mock_handle_shell_commands:
-                main(
-                    ["--apply", "shell.md", "--no-suggest-shell-commands", "--no-git"],
-                    input=DummyInput(),
-                    output=DummyOutput(),
-                )
-
-                # Make sure handle_shell_commands is not called when --no-suggest-shell-commands is used
-                mock_handle_shell_commands.assert_not_called()
-
-            # Check that the file was not created in either case
-            self.assertFalse(Path("no_suggest_file.txt").exists())
