@@ -1868,7 +1868,7 @@ class Coder:
     def run_shell_commands(self):
         if not self.suggest_shell_commands:
             return ""
-        
+
         done = set()
         group = ConfirmGroup(set(self.shell_commands))
         accumulated_output = ""
