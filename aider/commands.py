@@ -555,8 +555,6 @@ class Commands:
     def cmd_add(self, args):
         "Add files to the chat so aider can edit them or review them in detail"
 
-        added_fnames = []
-
         all_matched_files = set()
 
         filenames = parse_quoted_filenames(args)
@@ -618,7 +616,6 @@ class Commands:
                     self.io.tool_output(
                         f"Moved {matched_file} from read-only to editable files in the chat"
                     )
-                    added_fnames.append(matched_file)
                 else:
                     self.io.tool_error(
                         f"Cannot add {matched_file} as it's not part of the repository"
@@ -637,7 +634,6 @@ class Commands:
                     self.coder.abs_fnames.add(abs_file_path)
                     self.io.tool_output(f"Added {matched_file} to the chat")
                     self.coder.check_added_files()
-                    added_fnames.append(matched_file)
 
     def completions_drop(self):
         files = self.coder.get_inchat_relative_files()
