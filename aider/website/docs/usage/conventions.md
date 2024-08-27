@@ -28,11 +28,11 @@ or `aider --read CONVENTIONS.md`.
 This way it is marked as read-only, and cached if prompt caching
 is enabled.
 
+## Always load conventions
+
 You can also configure aider to always load your conventions file
 in the [`.aider.conf.yml` config file](https://aider.chat/docs/config/aider_conf.html):
 
-See below for an example of how the conventions can affect the code
-that aider writes.
 
 ```yaml
 # alone
@@ -41,6 +41,12 @@ read: CONVENTIONS.md
 # multiple files
 read: [CONVENTIONS.md, anotherfile.txt]
 ```
+
+
+## Example
+
+See below for an example of how the conventions can affect the code
+that aider writes.
 
 <div class="chat-transcript" markdown="1">
 > $ aider --read CONVENTIONS.md useragent.py  
