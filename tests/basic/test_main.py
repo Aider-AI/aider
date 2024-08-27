@@ -635,19 +635,25 @@ class TestMain(TestCase):
             shell_md = Path("shell.md")
             shell_md.write_text("```bash\ntouch no_suggest_file.txt\n```")
 
-            main(
-                ["--apply", "shell.md", "--yes", "--no-suggest-shell-commands"],
-                input=DummyInput(),
-                output=DummyOutput(),
-            )
+            with patch("aider.io.InputOutput.confirm_ask") as mock_confirm_ask:
+                main(
+                    ["--apply", "shell.md", "--no-suggest-shell-commands"],
+                    #input=DummyInput(),
+                    #output=DummyOutput(),
+                )
 
-            # TODO: make sure confirm_ask is not called
+                # Make sure confirm_ask is not called when --no-suggest-shell-commands is used
+                mock_confirm_ask.assert_called_once()
 
+            with patch("aider.io.InputOutput.confirm_ask") as mock_confirm_ask:
+                main(
+                    ["--apply", "shell.md"],
+                    #input=DummyInput(),
+                    #output=DummyOutput(),
+                )
 
-            main(
-                ["--apply", "shell.md", "--yes"],
-                input=DummyInput(),
-                output=DummyOutput(),
-            )
+                # Make sure confirm_ask IS called when --no-suggest-shell-commands is not used
+                mock_confirm_ask.assert_called_once()
 
-            # TODO: make sure confirm_ask IS called
+            # Check that the file was not created in either case
+            self.assertFalse(Path("no_suggest_file.txt").exists())
