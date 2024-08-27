@@ -1879,6 +1879,7 @@ class Coder:
         ):
             return
 
+        accumulated_output = ""
         for command in commands:
             command = command.strip()
             if not command or command.startswith("#"):
@@ -1891,5 +1892,11 @@ class Coder:
             exit_status, output = run_cmd(command)
             if output:
                 self.io.tool_output(output)
+                accumulated_output += f"$ {command}\n{output}\n"
             if exit_status != 0:
-                self.io.tool_error(f"Command exited with status {exit_status}")
+                error_message = f"Command exited with status {exit_status}"
+                self.io.tool_error(error_message)
+                accumulated_output += f"{error_message}\n"
+
+        if accumulated_output and self.io.confirm_ask("Add command output to the chat?"):
+            return accumulated_output.strip()
