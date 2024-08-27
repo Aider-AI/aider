@@ -1,4 +1,4 @@
-exclude_website_pats = [
+exclude_website_pats: List[str] = [
     "examples/**",
     "_posts/**",
     "HISTORY.md",
