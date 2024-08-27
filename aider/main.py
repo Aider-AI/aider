@@ -17,7 +17,7 @@ from aider.history import ChatSummary
 from aider.io import InputOutput
 from aider.llm import litellm  # noqa: F401; properly init litellm on launch
 from aider.repo import GitRepo
-from aider.versioncheck import check_version
+from aider.versioncheck import check_version, install_from_main_branch
 
 from .dump import dump  # noqa: F401
 
@@ -431,8 +431,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         return 0 if not update_available else 1
 
     if args.install_main_branch:
-        from aider.versioncheck import install_from_main_branch
-
         success = install_from_main_branch(io)
         return 0 if success else 1
 
