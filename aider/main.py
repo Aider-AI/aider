@@ -432,6 +432,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     if args.install_main_branch:
         from aider.versioncheck import install_from_main_branch
+
         success = install_from_main_branch(io)
         return 0 if success else 1
 
