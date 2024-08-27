@@ -882,7 +882,10 @@ class Coder:
             platform_text += f"- Language: {user_lang}\n"
 
         dt = datetime.now().astimezone().strftime("%Y-%m-%d")
-        platform_text += f"- Current date: {dt}"
+        platform_text += f"- Current date: {dt}\n"
+
+        if self.repo:
+            platform_text += "- The user is operating inside a git repository\n"
 
         prompt = prompt.format(
             fence=self.fence,
