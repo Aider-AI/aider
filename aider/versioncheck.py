@@ -9,6 +9,7 @@ import aider
 from aider import utils
 from aider.dump import dump  # noqa: F401
 
+
 def install_from_main_branch(io):
     """
     Install the latest version of aider from the main branch of the GitHub repository.
@@ -17,7 +18,7 @@ def install_from_main_branch(io):
         io,
         "aider",
         "Installing the latest version from the main branch...",
-        ["--upgrade", "git+https://github.com/paul-gauthier/aider.git"]
+        ["--upgrade", "git+https://github.com/paul-gauthier/aider.git"],
     )
 
 
