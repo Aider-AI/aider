@@ -31,7 +31,7 @@ cog.out(text)
 - Show model metadata info on `--verbose`.
 - Improved warnings when LLMs env variables aren't set.
 - Bugfix to windows filenames which contain `\_`.
-- Aider wrote 60% of the code in this release.
+- Aider wrote 59% of the code in this release.
 
 ### Aider v0.52.1
 
