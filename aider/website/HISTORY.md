@@ -18,7 +18,7 @@ cog.out(text)
 
 ### main branch
 
-- Prompt cache warming, via `--cache-warming-pings`.
+- Prompt cache keepalives, via `--cache-keepalive-pings`.
 - You can now bulk accept/reject a series of add url and run shell confirmations.
 - Improved matching of filenames from S/R blocks with files in chat.
 - Stronger prompting for Sonnet to make edits in code chat mode.
@@ -30,6 +30,10 @@ cog.out(text)
 - Improved warnings when LLMs env variables aren't set.
 - Bugfix to windows filenames which contain `\_`.
 - Aider wrote 64% of the code in this release.
+
+### Aider v0.52.1
+
+- Bugfix for NameError when applying edits.
 
 ### Aider v0.52.0
 
