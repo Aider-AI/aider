@@ -510,6 +510,12 @@ def get_parser(default_config_files, git_root):
         default=False,
     )
     group.add_argument(
+        "--upgrade",
+        action="store_true",
+        help="Upgrade aider to the latest version from PyPI",
+        default=False,
+    )
+    group.add_argument(
         "--apply",
         metavar="FILE",
         help="Apply the changes from the given file instead of running the chat (debug)",

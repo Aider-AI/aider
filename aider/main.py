@@ -434,6 +434,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         success = install_from_main_branch(io)
         return 0 if success else 1
 
+    if args.upgrade:
+        success = install_upgrade(io)
+        return 0 if success else 1
+
     if args.check_update:
         check_version(io, verbose=args.verbose)
 
