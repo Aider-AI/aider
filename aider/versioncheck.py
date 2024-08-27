@@ -27,7 +27,7 @@ def check_version(io, just_check=False, verbose=False):
     if not just_check and fname.exists():
         day = 60 * 60 * 24
         since = time.time() - fname.stat().st_mtime
-        if since < day:
+        if 0 < since < day:
             if verbose:
                 hours = since / 60 / 60
                 io.tool_output(f"Too soon to check version: {hours:.1f} hours")
