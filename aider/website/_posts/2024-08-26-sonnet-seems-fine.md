@@ -71,7 +71,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Pass Rate (%)'
+                        text: 'Pass Rate (%)',
+                        font: {
+                            size: 14
+                        }
+                    },
+                    ticks: {
+                        font: {
+                            size: 12
+                        }
                     }
                 },
                 x: {
@@ -81,14 +89,32 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     title: {
                         display: true,
-                        text: 'Date'
+                        text: 'Date',
+                        font: {
+                            size: 14
+                        }
+                    },
+                    ticks: {
+                        font: {
+                            size: 12
+                        }
                     }
                 }
             },
             plugins: {
                 title: {
                     display: true,
-                    text: 'Claude 3.5 Sonnet Performance Over Time'
+                    text: 'Claude 3.5 Sonnet Performance Over Time',
+                    font: {
+                        size: 18
+                    }
+                },
+                legend: {
+                    labels: {
+                        font: {
+                            size: 14
+                        }
+                    }
                 },
                 tooltip: {
                     callbacks: {
