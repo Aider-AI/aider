@@ -2255,3 +2255,76 @@
     pcamp: 1
   start_tag: v0.51.0
   total_lines: 764
+- aider_percentage: 58.61
+  aider_total: 405
+  end_date: '2024-08-27'
+  end_tag: v0.53.0
+  file_counts:
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/args.py:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 10
+    aider/coders/base_coder.py:
+      Paul Gauthier: 57
+      Paul Gauthier (aider): 18
+    aider/coders/chat_chunks.py:
+      Paul Gauthier (aider): 9
+    aider/coders/editblock_coder.py:
+      Paul Gauthier: 44
+      Paul Gauthier (aider): 6
+    aider/commands.py:
+      Paul Gauthier: 19
+    aider/history.py:
+      Paul Gauthier (aider): 3
+    aider/io.py:
+      Paul Gauthier: 44
+      Paul Gauthier (aider): 22
+    aider/main.py:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 9
+    aider/models.py:
+      Paul Gauthier: 50
+      Paul Gauthier (aider): 21
+    aider/repo.py:
+      Paul Gauthier (aider): 3
+    aider/repomap.py:
+      Paul Gauthier: 5
+      Paul Gauthier (aider): 1
+    aider/sendchat.py:
+      Paul Gauthier: 7
+      Paul Gauthier (aider): 11
+    aider/utils.py:
+      Paul Gauthier: 12
+      Paul Gauthier (aider): 9
+    aider/versioncheck.py:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 10
+    scripts/versionbump.py:
+      Paul Gauthier: 1
+    tests/basic/test_commands.py:
+      Paul Gauthier: 23
+    tests/basic/test_editblock.py:
+      Paul Gauthier: 6
+      Paul Gauthier (aider): 26
+    tests/basic/test_io.py:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 66
+    tests/basic/test_main.py:
+      Paul Gauthier: 2
+    tests/basic/test_models.py:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 42
+    tests/basic/test_repo.py:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 8
+    tests/basic/test_repomap.py:
+      Paul Gauthier: 4
+      Paul Gauthier (aider): 63
+    tests/fixtures/sample-code-base/sample.py:
+      Paul Gauthier (aider): 68
+  grand_total:
+    Paul Gauthier: 286
+    Paul Gauthier (aider): 405
+  start_tag: v0.52.0
+  total_lines: 691
