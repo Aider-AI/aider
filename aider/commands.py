@@ -120,7 +120,7 @@ class Commands:
             self.io.tool_output("Please provide a partial model name to search for.")
 
     def cmd_web(self, args, paginate=True):
-        "Scrape a webpage, convert to markdown and add to the chat"
+        "Scrape a webpage, convert to markdown and send in a message"
 
         url = args.strip()
         if not url:
