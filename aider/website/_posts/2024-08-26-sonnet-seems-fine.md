@@ -11,19 +11,23 @@ nav_exclude: true
 
 # Sonnet seems as good as ever
 
+Recently there has been a lot of speculation that Sonnet has been
+dumbed-down, nerfed or is otherwise performing worse.
+
+Sonnet seems as good as ever, at least when accessed via
+the API.
 As part of developing aider, I benchmark the top LLMs regularly.
 I have not noticed
 any degradation in Claude 3.5 Sonnet's performance at code editing.
-There has been a lot of speculation that Sonnet has been
-dumbed-down, nerfed or otherwise performing worse lately.
-Sonnet seems as good as ever, at least when accessed via
-the API.
 
-Here's a graph showing the performance of Claude 3.5 Sonnet over time.
-It shows every benchmark run performed since Sonnet launched.
+Below is a graph showing the performance of Claude 3.5 Sonnet over time.
+It shows every clean, comparable benchmark run performed since Sonnet launched.
 Benchmarks were performed for various reasons, usually
 to evaluate the effects of small changes to aider's system prompts.
-There is always some variance in benchmark results, typically +/- 1-2%
+
+The graph shows variance, but I don't see any indication of a noteworthy
+degradation.
+There is always some variance in benchmark results, typically +/- 2%
 between runs with identical prompts.
 
 <div class="chart-container" style="position: relative; height:400px; width:100%">
@@ -93,7 +97,9 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 This graph shows the performance of Claude 3.5 Sonnet on the 
-[aider code editing benchmark](https://aider.chat/docs/leaderboards/)
+[Aider's code editing benchmark](/docs/benchmarks.html#the-benchmark)
 over time. 'Pass Rate 1' represents the initial success rate, while 'Pass Rate 2' shows the success rate after a second attempt with a chance to fix testing errors. 
-
+The 
+[aider LLM code editing leaderboard](https://aider.chat/docs/leaderboards/)
+ranks models based on Pass Rate 2.
 
