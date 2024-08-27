@@ -17,10 +17,10 @@ IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp"}
 def run_interactive_command(command):
     try:
         import pexpect
-
-        return run_interactive_command_pexpect(command)
     except ImportError:
         return run_interactive_command_subprocess(command)
+
+    return run_interactive_command_pexpect(command)
 
 
 def run_interactive_command_subprocess(command):
@@ -46,6 +46,8 @@ def run_interactive_command_pexpect(command):
     :param command: The command to run as a string.
     :return: A tuple containing (exit_status, output)
     """
+    import pexpect
+
     output = BytesIO()
 
     def output_callback(b):
@@ -70,7 +72,6 @@ def run_interactive_command_pexpect(command):
 
     except pexpect.ExceptionPexpect as e:
         error_msg = f"Error running command: {e}"
-        print(error_msg, file=sys.stderr)
         return 1, error_msg
 
 
