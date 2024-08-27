@@ -5,12 +5,43 @@ import sys
 import tempfile
 import time
 from pathlib import Path
+import pexpect
+from io import BytesIO
 
 import git
 
 from aider.dump import dump  # noqa: F401
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp"}
+
+def run_interactive_command(command):
+    """
+    Run a shell command interactively using pexpect, capturing all output.
+    
+    :param command: The command to run as a string.
+    :return: A tuple containing (exit_status, output)
+    """
+    output = BytesIO()
+
+    def output_callback(b):
+        output.write(b)
+        return b
+
+    try:
+        # Spawn the command
+        child = pexpect.spawn(command, encoding=None)
+        
+        # Transfer control to the user, capturing output
+        child.interact(output_filter=output_callback)
+        
+        # Wait for the command to finish and get the exit status
+        child.close()
+        return child.exitstatus, output.getvalue().decode('utf-8', errors='replace')
+    
+    except pexpect.ExceptionPexpect as e:
+        error_msg = f"Error running command: {e}"
+        print(error_msg, file=sys.stderr)
+        return 1, error_msg
 
 
 class IgnorantTemporaryDirectory:
