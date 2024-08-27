@@ -629,3 +629,54 @@ class TestMain(TestCase):
                 return_coder=True,
             )
             self.assertTrue(coder.suggest_shell_commands)
+
+    def test_apply_shell_commands_with_no_suggest(self):
+        with GitTemporaryDirectory():
+            shell_md = Path("shell.md")
+            shell_md.write_text("```bash\ntouch no_suggest_file.txt\n```")
+
+            main(
+                ["--apply", "shell.md", "--yes", "--no-suggest-shell-commands"],
+                input=DummyInput(),
+                output=DummyOutput(),
+            )
+
+            # Shell commands should not run with --no-suggest-shell-commands
+            self.assertFalse(Path("no_suggest_file.txt").exists())
+
+    def test_apply_shell_commands_with_no_suggest_explicit_approval(self):
+        with GitTemporaryDirectory():
+            shell_md = Path("shell.md")
+            shell_md.write_text("```bash\ntouch explicit_approval_file.txt\n```")
+
+            # Simulate user input for explicit approval
+            input_stream = StringIO("y\n")
+
+            main(
+                ["--apply", "shell.md", "--no-suggest-shell-commands"],
+                input=input_stream,
+                output=DummyOutput(),
+            )
+
+            # Shell commands should still not run even with explicit approval
+            self.assertFalse(Path("explicit_approval_file.txt").exists())
+
+    def test_suggest_shell_commands_in_interactive_mode(self):
+        with GitTemporaryDirectory():
+            # Create a file with some content
+            test_file = Path("test_file.txt")
+            test_file.write_text("Hello, world!")
+
+            # Simulate user input
+            input_stream = StringIO("ls\nexit\n")
+
+            # Capture stdout to check if shell command suggestion is printed
+            with patch("sys.stdout", new=StringIO()) as fake_out:
+                main(
+                    ["--no-suggest-shell-commands"],
+                    input=input_stream,
+                    output=fake_out,
+                )
+
+            # Check that the shell command suggestion is not in the output
+            self.assertNotIn("Here's how you can run that shell command:", fake_out.getvalue())
