@@ -15,7 +15,8 @@ from aider import models, prompts, voice
 from aider.help import Help, install_help_extra
 from aider.llm import litellm
 from aider.scrape import Scraper, install_playwright
-from aider.utils import is_image_file, run_interactive_command
+from aider.utils import is_image_file
+from aider.run_cmd import run_cmd
 
 from .dump import dump  # noqa: F401
 
@@ -722,7 +723,7 @@ class Commands:
 
     def cmd_run(self, args, add_on_nonzero_exit=False):
         "Run a shell command and optionally add the output to the chat (alias: !)"
-        exit_status, combined_output = run_interactive_command(args)
+        exit_status, combined_output = run_cmd(args)
         instructions = None
 
         if combined_output is None:
