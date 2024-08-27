@@ -23,7 +23,6 @@ from rich.console import Console, Text
 from rich.markdown import Markdown
 
 from aider import __version__, models, prompts, urls
-from aider.run_cmd import run_cmd
 from aider.commands import Commands
 from aider.history import ChatSummary
 from aider.io import ConfirmGroup, InputOutput
@@ -32,6 +31,7 @@ from aider.llm import litellm
 from aider.mdstream import MarkdownStream
 from aider.repo import GitRepo
 from aider.repomap import RepoMap
+from aider.run_cmd import run_cmd
 from aider.sendchat import retry_exceptions, send_completion
 from aider.utils import format_content, format_messages, format_tokens, is_image_file
 
