@@ -136,8 +136,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-> This graph shows the performance of Claude 3.5 Sonnet on the 
-[Aider's code editing benchmark](/docs/benchmarks.html#the-benchmark)
+> This graph shows the performance of Claude 3.5 Sonnet on 
+[aider's code editing benchmark](/docs/benchmarks.html#the-benchmark)
 > over time. 'Pass Rate 1' represents the initial success rate, while 'Pass Rate 2' shows the success rate after a second attempt with a chance to fix testing errors. 
 > The 
 > [aider LLM code editing leaderboard](https://aider.chat/docs/leaderboards/)
