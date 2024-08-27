@@ -47,7 +47,7 @@ Aider works best with GPT-4o & Claude 3.5 Sonnet and can
 
 <!-- -->
 <p align="center">
-  <video width="664" height="540" autoplay loop muted playsinline>
+  <video style="max-width: 100%; height: auto;" autoplay loop muted playsinline>
     <source src="/assets/shell-cmds-small.mp4" type="video/mp4">
     Your browser does not support the video tag.
   </video>
