@@ -9,12 +9,23 @@ Start a new project or work with an existing git repo.
 Aider works best with GPT-4o & Claude 3.5 Sonnet and can 
 [connect to almost any LLM](https://aider.chat/docs/llms.html).
 
+<!-- SCREENCAST START -->
 <p align="center">
   <img
     src="https://aider.chat/assets/screencast.svg"
     alt="aider screencast"
   >
 </p>
+<!-- SCREENCAST END -->
+
+<!-- VIDEO START
+<p align="center">
+  <video width="664" height="540" autoplay loop muted playsinline>
+    <source src="/assets/shell-cmds-small.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</p>
+VIDEO END -->
 
 <p align="center">
   <a href="https://discord.gg/Tv2uQnR88V">
