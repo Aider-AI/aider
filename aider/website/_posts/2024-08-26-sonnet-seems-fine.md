@@ -11,11 +11,13 @@ nav_exclude: true
 
 # Sonnet seems as good as ever
 
-As part of developing aider, I benchmark it regularly and have noticed
-no degradation in its performance at code editing.
+As part of developing aider, I benchmark the top LLMs regularly.
+I have not noticed
+any degradation in Claude 3.5 Sonnet's performance at code editing.
 There has been a lot of speculation that Sonnet has been
 dumbed-down, nerfed or otherwise performing worse lately.
-Sonnet seems as good as ever.
+Sonnet seems as good as ever, at least when accessed via
+the API.
 
 Here's a graph showing the performance of Claude 3.5 Sonnet over time:
 
