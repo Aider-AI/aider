@@ -1862,11 +1862,15 @@ class Coder:
     def run_shell_commands(self):
         done = set()
         group = ConfirmGroup(set(self.shell_commands))
+        accumulated_output = ""
         for command in self.shell_commands:
             if command in done:
                 continue
             done.add(command)
-            self.handle_shell_commands(command, group)
+            output = self.handle_shell_commands(command, group)
+            if output:
+                accumulated_output += output + "\n\n"
+        return accumulated_output.strip()
 
     def handle_shell_commands(self, commands_str, group):
         commands = commands_str.strip().splitlines()
