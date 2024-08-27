@@ -2,8 +2,6 @@
 title: Sonnet seems as good as ever
 excerpt: Sonnet's score on the aider code editing benchmark has been stable since it launched.
 highlight_image: /assets/linting.jpg
-draft: true
-nav_exclude: true
 ---
 {% if page.date %}
 <p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
