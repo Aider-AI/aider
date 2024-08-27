@@ -22,6 +22,18 @@ def install_from_main_branch(io):
     )
 
 
+def install_upgrade(io):
+    """
+    Install the latest version of aider from PyPI.
+    """
+    return utils.check_pip_install_extra(
+        io,
+        None,
+        "Install the latest version of aider from PyPI?",
+        ["--upgrade", "aider-chat"],
+    )
+
+
 def check_version(io, just_check=False, verbose=False):
     fname = Path.home() / ".aider" / "caches" / "versioncheck"
     if not just_check and fname.exists():
