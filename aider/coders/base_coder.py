@@ -22,7 +22,8 @@ import git
 from rich.console import Console, Text
 from rich.markdown import Markdown
 
-from aider import __version__, models, prompts, urls, utils
+from aider import __version__, models, prompts, urls
+from aider.run_cmd import run_cmd
 from aider.commands import Commands
 from aider.history import ChatSummary
 from aider.io import ConfirmGroup, InputOutput
@@ -1887,7 +1888,7 @@ class Coder:
             self.io.tool_output(f"Running {command}")
             # Add the command to input history
             self.io.add_to_input_history(f"/run {command.strip()}")
-            exit_status, output = utils.run_interactive_command(command)
+            exit_status, output = run_cmd(command)
             if output:
                 self.io.tool_output(output)
             if exit_status != 0:
