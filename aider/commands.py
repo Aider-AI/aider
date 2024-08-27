@@ -151,6 +151,7 @@ class Commands:
         assert cmd.startswith("/")
         cmd = cmd[1:]
 
+        cmd = cmd.replace("-", "_")
         fun = getattr(self, f"completions_{cmd}", None)
         if not fun:
             return
@@ -510,7 +511,7 @@ class Commands:
             fname = f'"{fname}"'
         return fname
 
-    def completions_read(self):
+    def completions_read_only(self):
         return self.completions_add()
 
     def completions_add(self):

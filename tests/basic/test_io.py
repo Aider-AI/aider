@@ -34,6 +34,7 @@ class TestInputOutput(unittest.TestCase):
 
             Path(fname).write_text("def hello(): pass\n")
             autocompleter = AutoCompleter(root, rel_fnames, addable_rel_fnames, commands, "utf-8")
+            autocompleter.tokenize()
             dump(autocompleter.words)
             self.assertEqual(autocompleter.words, set(rel_fnames + [("hello", "`hello`")]))
 
