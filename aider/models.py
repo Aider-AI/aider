@@ -427,6 +427,20 @@ model_info_url = (
 )
 
 
+def get_model_flexible(model, content):
+    info = content.get(model, dict())
+    if info:
+        return info
+
+    pieces = model.split("/")
+    if len(pieces) == 2:
+        info = content.get(pieces[1])
+        if info and info.get("litellm_provider") == pieces[0]:
+            return info
+
+    return dict()
+
+
 def get_model_info(model):
     if not litellm._lazy_module:
         cache_dir = Path.home() / ".aider" / "caches"
@@ -441,8 +455,7 @@ def get_model_info(model):
         if cache_age < 60 * 60 * 24:
             try:
                 content = json.loads(cache_file.read_text())
-                info = content.get(model, dict())
-                return info
+                return get_model_flexible(model, content)
             except Exception as ex:
                 print(str(ex))
 
@@ -453,8 +466,7 @@ def get_model_info(model):
             if response.status_code == 200:
                 content = response.json()
                 cache_file.write_text(json.dumps(content, indent=4))
-                info = content.get(model, dict())
-                return info
+                return get_model_flexible(model, content)
         except Exception as ex:
             print(str(ex))
 
