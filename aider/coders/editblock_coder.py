@@ -36,24 +36,6 @@ class EditBlockCoder(Coder):
 
         return edits
 
-    def run_interactive_subprocess(self, command):
-        try:
-            result = subprocess.run(
-                command,
-                text=True,
-                shell=True,
-                encoding=self.io.encoding,
-                errors="replace",
-            )
-            if result.returncode == 0:
-                return
-            self.io.tool_error(f"Command '{command}' exited with status {result.returncode}")
-        except Exception as e:
-            self.io.tool_error(f"Error running command '{command}': {str(e)}")
-
-        self.io.tool_output(f"To retry and share output with the LLM: /run {command}")
-        self.io.tool_output("You can find this command in your input history with up-arrow.")
-
     def apply_edits(self, edits):
         failed = []
         passed = []

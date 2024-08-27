@@ -16,7 +16,7 @@ IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp"}
 
 def run_interactive_command(command):
     try:
-        import pexpect
+        import pexpect  # noqa: F401
     except ImportError:
         return run_interactive_command_subprocess(command)
 
@@ -391,9 +391,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         command = " ".join(sys.argv[1:])
         exit_status, output = run_interactive_command(command)
-        print("Exit status:")
         dump(exit_status)
-        print("\nFull output:")
         dump(output)
     else:
         print("Usage: python -m aider.utils <command>")

@@ -24,6 +24,7 @@ flake8
 importlib_resources
 pyperclip
 pypager
+pexpect
 
 # The proper depdendency is networkx[default], but this brings
 # in matplotlib and a bunch of other deps
