@@ -1,85 +1,16 @@
 import itertools
 import os
-import subprocess
 import sys
 import tempfile
 import time
-from io import BytesIO
 from pathlib import Path
 
 import git
 
 from aider.dump import dump  # noqa: F401
+from aider.run_cmd import run_cmd
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp"}
-
-
-def run_interactive_command(command):
-    import sys
-
-    if not sys.stdin.isatty():
-        return run_interactive_command_subprocess(command)
-
-    try:
-        import pexpect  # noqa: F401
-    except ImportError:
-        return run_interactive_command_subprocess(command)
-
-    return run_interactive_command_pexpect(command)
-
-
-def run_interactive_command_subprocess(command):
-    try:
-        result = subprocess.run(
-            command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-            shell=True,
-            encoding=sys.stdout.encoding,
-            errors="replace",
-        )
-        return result.returncode, result.stdout
-    except Exception as e:
-        return 1, str(e)
-
-
-def run_interactive_command_pexpect(command):
-    """
-    Run a shell command interactively using pexpect, capturing all output.
-
-    :param command: The command to run as a string.
-    :return: A tuple containing (exit_status, output)
-    """
-    import pexpect
-
-    output = BytesIO()
-
-    def output_callback(b):
-        output.write(b)
-        return b
-
-    try:
-        # Use the SHELL environment variable, falling back to /bin/sh if not set
-        shell = os.environ.get("SHELL", "/bin/sh")
-
-        if os.path.exists(shell):
-            # Use the shell from SHELL environment variable
-            child = pexpect.spawn(shell, args=["-c", command], encoding="utf-8")
-        else:
-            # Fall back to spawning the command directly
-            child = pexpect.spawn(command, encoding="utf-8")
-
-        # Transfer control to the user, capturing output
-        child.interact(output_filter=output_callback)
-
-        # Wait for the command to finish and get the exit status
-        child.close()
-        return child.exitstatus, output.getvalue().decode("utf-8", errors="replace")
-
-    except pexpect.ExceptionPexpect as e:
-        error_msg = f"Error running command: {e}"
-        return 1, error_msg
 
 
 class IgnorantTemporaryDirectory:
@@ -395,7 +326,7 @@ def check_pip_install_extra(io, module, prompt, pip_install_cmd):
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         command = " ".join(sys.argv[1:])
-        exit_status, output = run_interactive_command(command)
+        exit_status, output = run_cmd(command)
         dump(exit_status)
         dump(output)
     else:
