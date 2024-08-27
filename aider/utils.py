@@ -17,6 +17,7 @@ IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp"}
 def run_interactive_command(command):
     try:
         import pexpect
+
         return run_interactive_command_pexpect(command)
     except ImportError:
         return run_interactive_command_subprocess(command)
@@ -31,7 +32,7 @@ def run_interactive_command_subprocess(command):
             text=True,
             shell=True,
             encoding=sys.stdout.encoding,
-            errors="replace"
+            errors="replace",
         )
         return result.returncode, result.stdout
     except Exception as e:
