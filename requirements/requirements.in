@@ -23,7 +23,6 @@ litellm
 flake8
 importlib_resources
 pyperclip
-pypager
 pexpect
 
 # The proper depdendency is networkx[default], but this brings

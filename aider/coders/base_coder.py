@@ -782,7 +782,7 @@ class Coder:
             if url not in self.rejected_urls:
                 if self.io.confirm_ask("Add URL to the chat?", subject=url, group=group):
                     inp += "\n\n"
-                    inp += self.commands.cmd_web(url, paginate=False)
+                    inp += self.commands.cmd_web(url)
                     added_urls.append(url)
                 else:
                     self.rejected_urls.add(url)

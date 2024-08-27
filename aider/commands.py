@@ -120,7 +120,7 @@ class Commands:
         else:
             self.io.tool_output("Please provide a partial model name to search for.")
 
-    def cmd_web(self, args, paginate=True):
+    def cmd_web(self, args):
         "Scrape a webpage, convert to markdown and send in a message"
 
         url = args.strip()
@@ -142,10 +142,6 @@ class Commands:
         content = f"{url}:\n\n" + content
 
         self.io.tool_output("... done.")
-
-        if paginate:
-            with self.io.console.pager():
-                self.io.console.print(Text(content))
 
         return content
 
