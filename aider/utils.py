@@ -357,6 +357,7 @@ def check_pip_install_extra(io, module, prompt, pip_install_cmd):
 
 if __name__ == "__main__":
     import sys
+
     from aider.dump import dump
 
     if len(sys.argv) > 1:
