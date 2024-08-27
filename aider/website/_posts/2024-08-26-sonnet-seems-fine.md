@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
         x: moment(item.date).toDate(),
         y1: item.pass_rate_1,
         y2: item.pass_rate_2
-    }));
+    })).sort((a, b) => a.x - b.x);
 
     new Chart(ctx, {
         type: 'line',
