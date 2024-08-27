@@ -323,6 +323,9 @@ cog.outl("```")
 
 ## Run aider in your browser
 #AIDER_GUI=false
+
+## Enable/disable suggesting shell commands (default: True)
+#AIDER_SUGGEST_SHELL_COMMANDS=true
 ```
 <!--[[[end]]]-->
 

@@ -61,6 +61,7 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--install-main-branch] [--upgrade] [--apply] [--yes]
              [-v] [--show-repo-map] [--show-prompts] [--exit]
              [--message] [--message-file] [--encoding] [-c] [--gui]
+             [--suggest-shell-commands | --no-suggest-shell-commands]
 
 ```
 
@@ -547,4 +548,12 @@ Environment variable: `AIDER_GUI`
 Aliases:
   - `--gui`
   - `--browser`
+
+### `--suggest-shell-commands`
+Enable/disable suggesting shell commands (default: True)  
+Default: True  
+Environment variable: `AIDER_SUGGEST_SHELL_COMMANDS`  
+Aliases:
+  - `--suggest-shell-commands`
+  - `--no-suggest-shell-commands`
 <!--[[[end]]]-->
