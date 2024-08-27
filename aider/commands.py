@@ -15,7 +15,7 @@ from aider import models, prompts, voice
 from aider.help import Help, install_help_extra
 from aider.llm import litellm
 from aider.scrape import Scraper, install_playwright
-from aider.utils import is_image_file
+from aider.utils import is_image_file, run_interactive_command
 
 from .dump import dump  # noqa: F401
 
@@ -722,21 +722,8 @@ class Commands:
 
     def cmd_run(self, args, add_on_nonzero_exit=False):
         "Run a shell command and optionally add the output to the chat (alias: !)"
-        combined_output = None
+        exit_status, combined_output = run_interactive_command(args)
         instructions = None
-        try:
-            result = subprocess.run(
-                args,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                text=True,
-                shell=True,
-                encoding=self.io.encoding,
-                errors="replace",
-            )
-            combined_output = result.stdout
-        except Exception as e:
-            self.io.tool_error(f"Error running command: {e}")
 
         if combined_output is None:
             return
@@ -744,7 +731,7 @@ class Commands:
         self.io.tool_output(combined_output)
 
         if add_on_nonzero_exit:
-            add = result.returncode != 0
+            add = exit_status != 0
         else:
             response = self.io.prompt_ask(
                 "Add the output to the chat?\n[Y/n/instructions]",
