@@ -591,6 +591,12 @@ def get_parser(default_config_files, git_root):
         help="Run aider in your browser",
         default=False,
     )
+    group.add_argument(
+        "--suggest-shell-commands",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Enable/disable suggesting shell commands (default: True)",
+    )
 
     return parser
 
