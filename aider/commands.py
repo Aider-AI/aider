@@ -729,14 +729,14 @@ class Commands:
         if combined_output is None:
             return
 
-        self.io.tool_output(combined_output)
-
         if add_on_nonzero_exit:
             add = exit_status != 0
         else:
+            self.io.tool_output()
             response = self.io.prompt_ask(
-                "Add the output to the chat?\n[Y/n/instructions]",
+                "Add the output to the chat?\n(Y)es/(n)o/message with instructions:",
             ).strip()
+            self.io.tool_output()
 
             if response.lower() in ["yes", "y"]:
                 add = True
