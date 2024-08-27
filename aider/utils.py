@@ -8,11 +8,34 @@ from io import BytesIO
 from pathlib import Path
 
 import git
-import pexpect
 
 from aider.dump import dump  # noqa: F401
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp"}
+
+
+def run_interactive_command(command):
+    try:
+        import pexpect
+        return run_interactive_command_pexpect(command)
+    except ImportError:
+        return run_interactive_command_subprocess(command)
+
+
+def run_interactive_command_subprocess(command):
+    try:
+        result = subprocess.run(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            shell=True,
+            encoding=sys.stdout.encoding,
+            errors="replace"
+        )
+        return result.returncode, result.stdout
+    except Exception as e:
+        return 1, str(e)
 
 
 def run_interactive_command_pexpect(command):
