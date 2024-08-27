@@ -1,7 +1,7 @@
 
 # Release history
 
-### main branch
+### Aider v0.53.0
 
 - [Keep your prompt cache from expiring](https://aider.chat/docs/usage/caching.html#preventing-cache-expiration) with `--cache-keepalive-pings`.
   - Pings the API every 5min to keep the cache warm.
