@@ -18,7 +18,7 @@ and DeepSeek provides caching for Coder.
 
 ## Usage
 
-Run aider with `--prompt-caching` or add that setting to your 
+Run aider with `--cache-prompts` or add that setting to your 
 [configuration files](/docs/config.html).
 
 Due to limitations in the provider APIs, caching statistics and costs
