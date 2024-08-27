@@ -16,6 +16,10 @@
 - Bugfix to windows filenames which contain `\_`.
 - Aider wrote 64% of the code in this release.
 
+### Aider v0.52.1
+
+- Bugfix for NameError when applying edits.
+
 ### Aider v0.52.0
 
 - Aider now offers to run shell commands:
