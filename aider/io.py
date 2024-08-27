@@ -6,7 +6,7 @@ from datetime import datetime
 from pathlib import Path
 
 from prompt_toolkit import prompt
-from prompt_toolkit.completion import Completer, Completion
+from prompt_toolkit.completion import Completer, Completion, ThreadedCompleter
 from prompt_toolkit.enums import EditingMode
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.key_binding import KeyBindings
@@ -67,7 +67,15 @@ class AutoCompleter(Completer):
         if abs_read_only_fnames:
             all_fnames.extend(abs_read_only_fnames)
 
-        for fname in all_fnames:
+        self.all_fnames = all_fnames
+        self.tokenized = False
+
+    def tokenize(self):
+        if self.tokenized:
+            return
+        self.tokenized = True
+
+        for fname in self.all_fnames:
             try:
                 with open(fname, "r", encoding=self.encoding) as f:
                     content = f.read()
@@ -113,6 +121,8 @@ class AutoCompleter(Completer):
         return candidates
 
     def get_completions(self, document, complete_event):
+        self.tokenize()
+
         text = document.text_before_cursor
         words = text.split()
         if not words:
@@ -275,13 +285,15 @@ class InputOutput:
         else:
             style = None
 
-        completer_instance = AutoCompleter(
-            root,
-            rel_fnames,
-            addable_rel_fnames,
-            commands,
-            self.encoding,
-            abs_read_only_fnames=abs_read_only_fnames,
+        completer_instance = ThreadedCompleter(
+            AutoCompleter(
+                root,
+                rel_fnames,
+                addable_rel_fnames,
+                commands,
+                self.encoding,
+                abs_read_only_fnames=abs_read_only_fnames,
+            )
         )
 
         while True:
