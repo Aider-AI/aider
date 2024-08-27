@@ -568,7 +568,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         coder.cur_messages += [
             dict(role="user", content="Hello!"),
         ]
-        messages = coder.format_messages()
+        messages = coder.format_messages().all_messages()
         utils.show_messages(messages)
         return
 
