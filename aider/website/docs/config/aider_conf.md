@@ -21,6 +21,15 @@ load whichever is found first.
 
 {% include env-keys-tip.md %}
 
+## A note on lists
+
+The syntax for specifying a list of values is not standard yaml.
+Instead, use this format:
+
+```
+read: [CONVENTIONS.md, anotherfile.txt, thirdfile.py]
+```
+
 ## Sample YAML config file
 
 Below is a sample of the YAML config file, which you
