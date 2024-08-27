@@ -18,7 +18,7 @@ cog.out(text)
 
 ### main branch
 
-- Keep your prompt cache from expiring with `--cache-keepalive-pings`.
+- [Keep your prompt cache from expiring](https://aider.chat/docs/usage/caching.html#preventing-cache-expiration) with `--cache-keepalive-pings`.
   - Pings the API every 5min to keep the cache warm.
 - You can now bulk accept/reject a series of add url and run shell confirmations.
 - Improved matching of filenames from S/R blocks with files in chat.
