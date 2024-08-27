@@ -739,6 +739,9 @@ class Commands:
             else:
                 add = True
                 instructions = response
+                if response.strip():
+                    self.io.user_input(response, log_only=True)
+                    self.io.add_to_input_history(response)
 
         if add:
             for line in combined_output.splitlines():
