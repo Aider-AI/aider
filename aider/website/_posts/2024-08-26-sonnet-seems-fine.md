@@ -11,12 +11,9 @@ highlight_image: /assets/sonnet-seems-fine.jpg
 
 Recently there has been a lot of speculation that Sonnet has been
 dumbed-down, nerfed or is otherwise performing worse.
-
-Sonnet seems as good as ever, at least when accessed via
-the API.
-As part of developing aider, I benchmark the top LLMs regularly.
-I have not noticed
-any degradation in Claude 3.5 Sonnet's performance at code editing.
+Sonnet seems as good as ever, when performing the
+[aider code editing benchmark](/docs/benchmarks.html#the-benchmark)
+via the API.
 
 Below is a graph showing the performance of Claude 3.5 Sonnet over time.
 It shows every clean, comparable benchmark run performed since Sonnet launched.
@@ -27,6 +24,9 @@ The graph shows variance, but I don't see any indication of a noteworthy
 degradation.
 There is always some variance in benchmark results, typically +/- 2%
 between runs with identical prompts.
+
+It's worth noting that these results would not capture any changes
+made to how Sonnet is presented in Anthropic's web chat UI.
 
 <div class="chart-container" style="position: relative; height:400px; width:100%">
     <canvas id="sonnetPerformanceChart"></canvas>
@@ -136,10 +136,10 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-This graph shows the performance of Claude 3.5 Sonnet on the 
+> This graph shows the performance of Claude 3.5 Sonnet on the 
 [Aider's code editing benchmark](/docs/benchmarks.html#the-benchmark)
-over time. 'Pass Rate 1' represents the initial success rate, while 'Pass Rate 2' shows the success rate after a second attempt with a chance to fix testing errors. 
-The 
-[aider LLM code editing leaderboard](https://aider.chat/docs/leaderboards/)
-ranks models based on Pass Rate 2.
+> over time. 'Pass Rate 1' represents the initial success rate, while 'Pass Rate 2' shows the success rate after a second attempt with a chance to fix testing errors. 
+> The 
+> [aider LLM code editing leaderboard](https://aider.chat/docs/leaderboards/)
+> ranks models based on Pass Rate 2.
 
