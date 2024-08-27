@@ -1,5 +1,6 @@
 import os
 import sys
+import os
 import time
 from pathlib import Path
 
@@ -26,7 +27,7 @@ def check_version(io, just_check=False, verbose=False):
     fname = Path.home() / ".aider" / "caches" / "versioncheck"
     if not just_check and fname.exists():
         day = 60 * 60 * 24
-        since = time.time() - fname.stat().st_mtime
+        since = time.time() - os.path.getmtime(fname)
         if 0 < since < day:
             if verbose:
                 hours = since / 60 / 60
