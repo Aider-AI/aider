@@ -14,9 +14,9 @@ from rich.text import Text
 from aider import models, prompts, voice
 from aider.help import Help, install_help_extra
 from aider.llm import litellm
+from aider.run_cmd import run_cmd
 from aider.scrape import Scraper, install_playwright
 from aider.utils import is_image_file
-from aider.run_cmd import run_cmd
 
 from .dump import dump  # noqa: F401
 
