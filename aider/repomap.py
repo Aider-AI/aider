@@ -2,6 +2,7 @@ import colorsys
 import math
 import os
 import random
+import sqlite3
 import sys
 import time
 import warnings
