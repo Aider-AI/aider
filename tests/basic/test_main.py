@@ -599,3 +599,33 @@ class TestMain(TestCase):
 
             # shell commands require explicit approval, not just --yes
             self.assertFalse(Path("file.txt").exists())
+
+    def test_suggest_shell_commands_default(self):
+        with GitTemporaryDirectory():
+            coder = main(
+                ["--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+            )
+            self.assertTrue(coder.suggest_shell_commands)
+
+    def test_suggest_shell_commands_disabled(self):
+        with GitTemporaryDirectory():
+            coder = main(
+                ["--no-suggest-shell-commands", "--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+            )
+            self.assertFalse(coder.suggest_shell_commands)
+
+    def test_suggest_shell_commands_enabled(self):
+        with GitTemporaryDirectory():
+            coder = main(
+                ["--suggest-shell-commands", "--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+            )
+            self.assertTrue(coder.suggest_shell_commands)
