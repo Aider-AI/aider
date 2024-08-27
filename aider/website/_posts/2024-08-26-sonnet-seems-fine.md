@@ -26,7 +26,7 @@ There is always some variance in benchmark results, typically +/- 2%
 between runs with identical prompts.
 
 It's worth noting that these results would not capture any changes
-made to the Anthropic web chat's use of Sonnet.
+made to Anthropic web chat's use of Sonnet.
 
 <div class="chart-container" style="position: relative; height:400px; width:100%">
     <canvas id="sonnetPerformanceChart"></canvas>
