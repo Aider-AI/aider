@@ -19,7 +19,12 @@ dumbed-down, nerfed or otherwise performing worse lately.
 Sonnet seems as good as ever, at least when accessed via
 the API.
 
-Here's a graph showing the performance of Claude 3.5 Sonnet over time:
+Here's a graph showing the performance of Claude 3.5 Sonnet over time.
+It shows every benchmark run performed since Sonnet launched.
+Benchmarks were performed for various reasons, usually
+to evaluate the effects of small changes to aider's system prompts.
+There is always some variance in benchmark results, typically +/- 1-2%
+between runs with identical prompts.
 
 <div class="chart-container" style="position: relative; height:400px; width:100%">
     <canvas id="sonnetPerformanceChart"></canvas>
@@ -87,6 +92,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-This graph shows the performance of Claude 3.5 Sonnet on the aider code editing benchmark over time. 'Pass Rate 1' represents the initial success rate, while 'Pass Rate 2' shows the success rate after a second attempt. As you can see, there's no significant decline in performance, suggesting that Sonnet's capabilities have remained stable since its launch.
+This graph shows the performance of Claude 3.5 Sonnet on the 
+[aider code editing benchmark](https://aider.chat/docs/leaderboards/)
+over time. 'Pass Rate 1' represents the initial success rate, while 'Pass Rate 2' shows the success rate after a second attempt with a chance to fix testing errors. 
 
 
