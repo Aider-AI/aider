@@ -353,3 +353,17 @@ def check_pip_install_extra(io, module, prompt, pip_install_cmd):
 
     print()
     print(f"Failed to install {pip_install_cmd[0]}")
+
+
+if __name__ == "__main__":
+    import sys
+
+    if len(sys.argv) > 1:
+        command = " ".join(sys.argv[1:])
+        exit_status, output = run_interactive_command(command)
+        print(f"Command exited with status {exit_status}")
+        print("Full output:")
+        print(output)
+    else:
+        print("Usage: python -m aider.utils <command>")
+        sys.exit(1)
