@@ -32,11 +32,9 @@ def run_interactive_command(command):
         # Check if /bin/sh exists
         if os.path.exists("/bin/sh"):
             # Use /bin/sh -c if it exists
-            spawn_command = ["/bin/sh", "-c", command]
             child = pexpect.spawn("/bin/sh", args=["-c", command], encoding="utf-8")
         else:
             # Fall back to the original behavior
-            spawn_command = command
             child = pexpect.spawn(command, encoding="utf-8")
 
         # Transfer control to the user, capturing output
