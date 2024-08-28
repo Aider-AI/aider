@@ -21,6 +21,25 @@ from aider.versioncheck import check_version, install_from_main_branch, install_
 
 from .dump import dump  # noqa: F401
 
+def setup_git_home(io):
+    home = Path.home()
+    git_repos = list(home.glob("*/.git"))
+    
+    if git_repos:
+        io.tool_output("Found existing Git repositories in your home directory:")
+        for i, repo in enumerate(git_repos, 1):
+            io.tool_output(f"{i}. {repo.parent.name}")
+        
+        choice = io.user_input("Enter the number of the repository you want to work on, or 'n' for a new project: ")
+        
+        if choice.isdigit() and 1 <= int(choice) <= len(git_repos):
+            return str(git_repos[int(choice) - 1].parent)
+    
+    project_name = io.user_input("Enter a name for your new project: ")
+    new_dir = home / project_name
+    new_dir.mkdir(exist_ok=True)
+    return str(new_dir)
+
 
 def get_git_root():
     """Try and guess the git repo, since the conf.yml can be at the repo root"""
@@ -54,14 +73,20 @@ def setup_git(git_root, io):
     repo = None
     if git_root:
         repo = git.Repo(git_root)
-    elif io.confirm_ask("No git repo found, create one to track aider's changes (recommended)?"):
-        git_root = str(Path.cwd().resolve())
-        repo = git.Repo.init(git_root)
-        io.tool_output("Git repository created in the current working directory.")
-        check_gitignore(git_root, io, False)
+    else:
+        cwd = Path.cwd()
+        if cwd == Path.home():
+            git_root = setup_git_home(io)
+        elif io.confirm_ask("No git repo found, create one to track aider's changes (recommended)?"):
+            git_root = str(cwd.resolve())
+            repo = git.Repo.init(git_root)
+            io.tool_output("Git repository created in the current working directory.")
+            check_gitignore(git_root, io, False)
+        else:
+            return
 
-    if not repo:
-        return
+    if not repo and git_root:
+        repo = git.Repo(git_root)
 
     user_name = None
     user_email = None
