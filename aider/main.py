@@ -25,6 +25,7 @@ from .dump import dump  # noqa: F401
 def setup_git_home(io):
     home = Path.home()
     git_repos = sorted(home.glob("*/.git"))
+    git_repos = []
     git_root = None
 
     if git_repos:
@@ -38,7 +39,7 @@ def setup_git_home(io):
         while True:
             choice = io.prompt_ask(
                 "Enter the number or name of the repository you want to work on,\n"
-                "or enter the name of a new project to create:"
+                "or enter the name of a new directory to create:"
             )
             choice = choice.strip()
             try:
@@ -61,6 +62,11 @@ def setup_git_home(io):
                     break
                 else:
                     return  # no response
+    else:
+        choice = io.prompt_ask("Enter a directory name to create a new project:")
+        choice = choice.strip()
+        if choice:
+            git_root = home / choice
 
     if not git_root:
         return
@@ -125,6 +131,8 @@ def setup_git(git_root, io):
 
     if not git_root and Path.cwd() == Path.home():
         git_root = setup_git_home(io)
+        if not git_root:
+            return  # don't make a .git in $HOME
 
     if not git_root:
         git_root = Path.cwd()
