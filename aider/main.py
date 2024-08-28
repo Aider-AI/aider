@@ -58,13 +58,13 @@ def setup_git_home(io):
                     # Assume it's a new project name
                     project_name = choice
                     new_dir = home / project_name
-                    new_dir.mkdir(exist_ok=True)
+                    new_dir.mkdir(parents=True, exist_ok=True)
                     os.chdir(new_dir)
                     return str(new_dir)
 
     project_name = io.user_input("Enter a name for your new project directory:")
     new_dir = home / project_name
-    new_dir.mkdir(exist_ok=True)
+    new_dir.mkdir(parents=True, exist_ok=True)
     os.chdir(new_dir)
     return str(new_dir)
 
