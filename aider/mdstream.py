@@ -2,6 +2,7 @@
 
 import io
 import time
+from typing import List, Optional
 
 from rich.console import Console
 from rich.live import Live
@@ -41,21 +42,16 @@ The end.
 
 
 class MarkdownStream:
-    live = None
-    when = 0
-    min_delay = 0.050
-    live_window = 6
+    """A class for streaming and rendering markdown content."""
 
-    def __init__(self, mdargs=None):
-        self.printed = []
-
-        if mdargs:
-            self.mdargs = mdargs
-        else:
-            self.mdargs = dict()
-
-        self.live = Live(Text(""), refresh_per_second=1.0 / self.min_delay)
+    def __init__(self, mdargs: Optional[dict] = None):
+        self.printed: List[str] = []
+        self.mdargs = mdargs or {}
+        self.live: Optional[Live] = Live(Text(""), refresh_per_second=1.0 / self.min_delay)
         self.live.start()
+        self.when = 0
+        self.min_delay = 0.050
+        self.live_window = 6
 
     def __del__(self):
         if self.live:
@@ -64,7 +60,7 @@ class MarkdownStream:
             except Exception:
                 pass
 
-    def update(self, text, final=False):
+    def update(self, text: str, final: bool = False) -> None:
         now = time.time()
         if not final and now - self.when < self.min_delay:
             return
@@ -72,9 +68,7 @@ class MarkdownStream:
 
         string_io = io.StringIO()
         console = Console(file=string_io, force_terminal=True)
-
         markdown = Markdown(text, **self.mdargs)
-
         console.print(markdown)
         output = string_io.getvalue()
 
@@ -86,18 +80,14 @@ class MarkdownStream:
 
         if final or num_lines > 0:
             num_printed = len(self.printed)
-
             show = num_lines - num_printed
 
-            if show <= 0:
-                return
-
-            show = lines[num_printed:num_lines]
-            show = "".join(show)
-            show = Text.from_ansi(show)
-            self.live.console.print(show)
-
-            self.printed = lines[:num_lines]
+            if show > 0:
+                show_lines = lines[num_printed:num_lines]
+                show_text = "".join(show_lines)
+                show_text = Text.from_ansi(show_text)
+                self.live.console.print(show_text)
+                self.printed = lines[:num_lines]
 
         if final:
             self.live.update(Text(""))
@@ -105,10 +95,9 @@ class MarkdownStream:
             self.live = None
         else:
             rest = lines[num_lines:]
-            rest = "".join(rest)
-            # rest = '...\n' + rest
-            rest = Text.from_ansi(rest)
-            self.live.update(rest)
+            rest_text = "".join(rest)
+            rest_text = Text.from_ansi(rest_text)
+            self.live.update(rest_text)
 
 
 if __name__ == "__main__":

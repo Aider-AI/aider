@@ -3,6 +3,7 @@
 import argparse
 import os
 import sys
+from typing import List, Optional
 
 import configargparse
 
@@ -15,12 +16,10 @@ from aider.args_formatter import (
 
 from .dump import dump  # noqa: F401
 
-
-def default_env_file(git_root):
+def default_env_file(git_root: Optional[str]) -> str:
     return os.path.join(git_root, ".env") if git_root else ".env"
 
-
-def get_parser(default_config_files, git_root):
+def get_parser(default_config_files: List[str], git_root: Optional[str]) -> configargparse.ArgumentParser:
     parser = configargparse.ArgumentParser(
         description="aider is AI pair programming in your terminal",
         add_config_file_help=True,
@@ -600,50 +599,37 @@ def get_parser(default_config_files, git_root):
 
     return parser
 
-
-def get_md_help():
+def get_md_help() -> str:
     os.environ["COLUMNS"] = "70"
     sys.argv = ["aider"]
     parser = get_parser([], None)
 
-    # This instantiates all the action.env_var values
     parser.parse_known_args()
-
     parser.formatter_class = MarkdownHelpFormatter
 
     return argparse.ArgumentParser.format_help(parser)
-    return parser.format_help()
 
-
-def get_sample_yaml():
+def get_sample_yaml() -> str:
     os.environ["COLUMNS"] = "100"
     sys.argv = ["aider"]
     parser = get_parser([], None)
 
-    # This instantiates all the action.env_var values
     parser.parse_known_args()
-
     parser.formatter_class = YamlHelpFormatter
 
     return argparse.ArgumentParser.format_help(parser)
-    return parser.format_help()
 
-
-def get_sample_dotenv():
+def get_sample_dotenv() -> str:
     os.environ["COLUMNS"] = "120"
     sys.argv = ["aider"]
     parser = get_parser([], None)
 
-    # This instantiates all the action.env_var values
     parser.parse_known_args()
-
     parser.formatter_class = DotEnvFormatter
 
     return argparse.ArgumentParser.format_help(parser)
-    return parser.format_help()
 
-
-def main():
+def main() -> int:
     arg = sys.argv[1] if len(sys.argv[1:]) else None
 
     if arg == "md":
@@ -653,6 +639,7 @@ def main():
     else:
         print(get_sample_yaml())
 
+    return 0
 
 if __name__ == "__main__":
     status = main()
