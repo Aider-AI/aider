@@ -16,6 +16,11 @@ cog.out(text)
 
 # Release history
 
+### Aider v0.54.4
+
+- Bugfix to completions for `/model` command.
+- Bugfix: revert home dir special case.
+
 ### Aider v0.54.3
 
 - Dependency `watchdog<5` for docker image.
