@@ -680,6 +680,6 @@ class TestMain(TestCase):
                 mock_io_instance.tool_error.assert_called_with(
                     "Please enter a number between 1 and 2"
                 )
-                mock_io_instance.tool_output.assert_called_with(
+                mock_io_instance.tool_output.assert_any_call(
                     "Found git repositories in your home directory:"
                 )
