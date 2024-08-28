@@ -1,12 +1,17 @@
 
 # Release history
 
-### main branch
+### Aider v0.54.0
 
-- Shell commands and `/run` can not be interactive in environments where a pty is available
+- Added model settings for `gemini/gemini-1.5-pro-exp-0827` and `gemini/gemini-1.5-flash-exp-0827`.
+- Shell and `/run` commands can now be interactive in environments where a pty is available.
 - Optionally share output of suggested shell commands back to the LLM.
 - New `--[no-]suggest-shell-commands` switch to configure shell commands.
 - Performance improvements for autocomplete in large/mono repos.
+- New `--upgrade` switch to install latest version of aider from pypi.
+- Bugfix to `--show-prompt`.
+- Disabled automatic reply to the LLM on `/undo` for all models.
+- Removed pager from `/web` output.
 
 ### Aider v0.53.0
 
