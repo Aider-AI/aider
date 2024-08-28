@@ -549,6 +549,10 @@ class Commands:
                 # Write content to the file
                 with open(fname, 'w') as f:
                     f.write(content)
+                
+                # Add the file to git
+                if self.coder.repo:
+                    self.coder.repo.repo.git.add(fname)
 
         self.io.tool_output("Redid the last undone action.")
 
