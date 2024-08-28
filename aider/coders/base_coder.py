@@ -713,7 +713,7 @@ class Coder:
                 with open(fname, 'r') as f:
                     file_contents[fname] = f.read()
             else:
-                file_contents[fname] = None  # Indicate that the file doesn't exist yet
+                file_contents[fname] = ''  # Indicate that the file doesn't exist yet
 
         if not self.undo_stack:
             self.undo_stack.append(([], [], file_contents))

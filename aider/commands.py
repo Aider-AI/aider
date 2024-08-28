@@ -405,7 +405,7 @@ class Commands:
             self.coder.cur_messages = cur_messages
 
             for fname, content in file_contents.items():
-                if content is None or content == '' or content == {str}:
+                if content == '':
                     rel_fname = self.coder.get_rel_fname(fname)
 
                     # This file was created during the last prompt, so we should delete it
