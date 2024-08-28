@@ -647,7 +647,9 @@ class TestMain(TestCase):
                 result = setup_git_home(mock_io_instance)
 
                 self.assertEqual(result, Path(temp_home) / "new_project")
-                mock_make_new_repo.assert_called_with(Path(temp_home) / "new_project", mock_io_instance)
+                mock_make_new_repo.assert_called_with(
+                    Path(temp_home) / "new_project", mock_io_instance
+                )
 
     @patch("aider.main.InputOutput")
     @patch("aider.main.Path")
