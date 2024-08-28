@@ -31,12 +31,22 @@ def setup_git_home(io):
         for i, repo in enumerate(git_repos, 1):
             io.tool_output(f"{i}. {repo.parent.name}")
 
-        choice = io.prompt_ask(
-            "Enter the number of the repository you want to work on, or 'n' for a new project: "
-        )
+        while True:
+            choice = io.prompt_ask(
+                "Enter the number of the repository you want to work on, or 'n' for a new project: "
+            )
 
-        if choice.isdigit() and 1 <= int(choice) <= len(git_repos):
-            return str(git_repos[int(choice) - 1].parent)
+            if choice.lower() == 'n':
+                break
+
+            try:
+                choice_num = int(choice)
+                if 1 <= choice_num <= len(git_repos):
+                    return str(git_repos[choice_num - 1].parent)
+                else:
+                    io.tool_error(f"Please enter a number between 1 and {len(git_repos)}")
+            except ValueError:
+                io.tool_error("Please enter a valid number or 'n'")
 
     project_name = io.user_input("Enter a name for your new project: ")
     new_dir = home / project_name
