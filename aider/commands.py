@@ -433,9 +433,6 @@ class Commands:
                             else:
                                 self.io.tool_output(f"File {fname} was already deleted.")
 
-                            # Remove the file from the created_by_aider set
-                            self.coder.created_by_aider.remove(rel_fname)
-
                         except OSError as e:
                             self.io.tool_error(f"Error deleting file or directory: {e}")
                 else:
