@@ -405,7 +405,7 @@ class Commands:
             self.coder.cur_messages = cur_messages
 
             for fname, content in file_contents.items():
-                if content == '':
+                if content is None or content == '':
                     rel_fname = self.coder.get_rel_fname(fname)
 
                     # This file was created during the last prompt, so we should delete it
@@ -535,7 +535,7 @@ class Commands:
         self.coder.cur_messages = cur_messages
 
         for fname, content in file_contents.items():
-            if content is None:
+            if content == '':
                 if os.path.exists(fname):
                     os.remove(fname)
                     self.io.tool_output(f"Deleted file: {fname}")
