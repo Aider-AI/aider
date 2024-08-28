@@ -127,12 +127,12 @@ class TestMain(TestCase):
     ):
         mock_home.return_value = Path("/home/user")
         mock_glob.return_value = []
-        mock_io.return_value.user_input.return_value = "new_project"
+        mock_io.return_value.prompt_ask.return_value = "new_project"
 
         result = setup_git_home(mock_io.return_value)
 
         mock_io.return_value.tool_output.assert_not_called()
-        mock_io.return_value.user_input.assert_called_once_with(
+        mock_io.return_value.prompt_ask.assert_called_once_with(
             "Enter a name for your new project directory:"
         )
         mock_mkdir.assert_called_once_with(parents=True, exist_ok=True)
@@ -149,13 +149,13 @@ class TestMain(TestCase):
     ):
         mock_home.return_value = Path("/home/user")
         mock_glob.return_value = []
-        mock_io.return_value.user_input.return_value = "new_project"
+        mock_io.return_value.prompt_ask.return_value = "new_project"
         mock_mkdir.side_effect = OSError("Permission denied")
 
         result = setup_git_home(mock_io.return_value)
 
         mock_io.return_value.tool_output.assert_not_called()
-        mock_io.return_value.user_input.assert_called_once_with(
+        mock_io.return_value.prompt_ask.assert_called_once_with(
             "Enter a name for your new project directory:"
         )
         mock_mkdir.assert_called_once_with(parents=True, exist_ok=True)

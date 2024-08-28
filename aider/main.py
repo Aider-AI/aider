@@ -39,42 +39,46 @@ def setup_git_home(io):
                 "Enter the number or name of the repository you want to work on,\n"
                 "or enter the name of a new project to create:"
             )
-
+            choice = choice.strip()
             try:
                 choice_num = int(choice)
                 if 1 <= choice_num <= len(git_repos):
                     chosen_repo = git_repos[choice_num - 1]
-                    os.chdir(chosen_repo.parent)
-                    return str(chosen_repo.parent)
+                    git_root = chosen_repo.parent
+                    break
                 else:
                     io.tool_error(f"Please enter a number between 1 and {len(git_repos)}")
             except ValueError:
                 choice_lower = choice.lower()
                 if choice_lower in repo_dict:
                     chosen_repo = repo_dict[choice_lower]
-                    os.chdir(chosen_repo.parent)
-                    return str(chosen_repo.parent)
-                else:
+                    git_root = chosen_repo.parent
+                    break
+                elif choice:
                     # Assume it's a new project name
-                    project_name = choice
-                    new_dir = home / project_name
-                    try:
-                        new_dir.mkdir(parents=True, exist_ok=True)
-                        os.chdir(new_dir)
-                        return str(new_dir)
-                    except OSError as e:
-                        io.tool_error(f"Error creating directory: {e}")
-                        return None
+                    git_root = home / choice
+                    break
+                else:
+                    return  # no response
 
-    project_name = io.user_input("Enter a name for your new project directory:")
-    new_dir = home / project_name
+    if git_root.exists():
+        if git_root.is_dir():
+            os.chdir(git_root)
+            return git_root
+        else:
+            io.tool_error(f"{git_root} exists, and is not a directory.")
+            return
+
     try:
-        new_dir.mkdir(parents=True, exist_ok=True)
-        os.chdir(new_dir)
-        return str(new_dir)
+        io.tool_output(f"Making directory {git_root}")
+        git_root.mkdir()
     except OSError as e:
-        io.tool_error(f"Error creating directory: {e}")
+        io.tool_error(f"Error creating directory {git_root}: {e}")
         return None
+
+    make_new_repo(git_root, io)
+    os.chdir(git_root)
+    return git_root
 
 
 def get_git_root():
@@ -105,26 +109,34 @@ def guessed_wrong_repo(io, git_root, fnames, git_dname):
     return str(check_repo)
 
 
+def make_new_repo(git_root, io):
+    repo = git.Repo.init(git_root)
+    io.tool_output(f"Git repository created in {git_root}")
+    check_gitignore(git_root, io, False)
+    return repo
+
+
 def setup_git(git_root, io):
     repo = None
-    if git_root:
-        repo = git.Repo(git_root)
-    else:
-        cwd = Path.cwd()
-        if cwd == Path.home():
-            git_root = setup_git_home(io)
-        elif io.confirm_ask(
-            "No git repo found, create one to track aider's changes (recommended)?"
-        ):
-            git_root = str(cwd.resolve())
-            repo = git.Repo.init(git_root)
-            io.tool_output("Git repository created in the current working directory.")
-            check_gitignore(git_root, io, False)
-        else:
-            return
 
-    if not repo and git_root:
+    if not git_root and Path.cwd() == Path.home():
+        git_root = setup_git_home(io)
+
+    if not git_root:
+        git_root = Path.cwd()
+
+    try:
         repo = git.Repo(git_root)
+    except git.exc.InvalidGitRepositoryError:
+        pass
+
+    if not repo and io.confirm_ask(
+        "No git repo found, create one to track aider's changes (recommended)?"
+    ):
+        repo = make_new_repo(git_root, io)
+
+    if not repo:
+        return
 
     user_name = None
     user_email = None
