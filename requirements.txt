@@ -66,11 +66,11 @@ h11==0.14.0
     # via httpcore
 httpcore==1.0.5
     # via httpx
-httpx==0.27.0
+httpx==0.27.2
     # via openai
 huggingface-hub==0.24.6
     # via tokenizers
-idna==3.7
+idna==3.8
     # via
     #   anyio
     #   httpx
@@ -80,7 +80,7 @@ importlib-metadata==7.2.1
     # via
     #   -r requirements/requirements.in
     #   litellm
-importlib-resources==6.4.3
+importlib-resources==6.4.4
     # via -r requirements/requirements.in
 jinja2==3.1.4
     # via litellm
@@ -92,7 +92,7 @@ jsonschema==4.23.0
     #   litellm
 jsonschema-specifications==2023.12.1
     # via jsonschema
-litellm==1.43.19
+litellm==1.44.7
     # via -r requirements/requirements.in
 markdown-it-py==3.0.0
     # via rich
@@ -122,12 +122,14 @@ pathspec==0.12.1
     # via
     #   -r requirements/requirements.in
     #   grep-ast
+pexpect==4.9.0
+    # via -r requirements/requirements.in
 pillow==10.4.0
     # via -r requirements/requirements.in
 prompt-toolkit==3.0.47
-    # via
-    #   -r requirements/requirements.in
-    #   pypager
+    # via -r requirements/requirements.in
+ptyprocess==0.7.0
+    # via pexpect
 pycodestyle==2.12.1
     # via flake8
 pycparser==2.22
@@ -141,11 +143,7 @@ pydantic-core==2.20.1
 pyflakes==3.2.0
     # via flake8
 pygments==2.18.0
-    # via
-    #   pypager
-    #   rich
-pypager==3.0.1
-    # via -r requirements/requirements.in
+    # via rich
 pypandoc==1.13
     # via -r requirements/requirements.in
 pyperclip==1.9.0
@@ -167,7 +165,7 @@ requests==2.32.3
     #   huggingface-hub
     #   litellm
     #   tiktoken
-rich==13.7.1
+rich==13.8.0
     # via -r requirements/requirements.in
 rpds-py==0.20.0
     # via
@@ -216,5 +214,5 @@ wcwidth==0.2.13
     # via prompt-toolkit
 yarl==1.9.4
     # via aiohttp
-zipp==3.20.0
+zipp==3.20.1
     # via importlib-metadata

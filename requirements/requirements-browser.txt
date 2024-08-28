@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=requirements/requirements-browser.txt requirements/requirements-browser.in
 #
-altair==5.4.0
+altair==5.4.1
     # via streamlit
 attrs==24.2.0
     # via
@@ -35,7 +35,7 @@ gitpython==3.1.43
     # via
     #   -c requirements/../requirements.txt
     #   streamlit
-idna==3.7
+idna==3.8
     # via
     #   -c requirements/../requirements.txt
     #   requests
@@ -64,7 +64,7 @@ mdurl==0.1.2
     # via
     #   -c requirements/../requirements.txt
     #   markdown-it-py
-narwhals==1.5.0
+narwhals==1.5.5
     # via altair
 numpy==1.26.4
     # via
@@ -84,7 +84,7 @@ pillow==10.4.0
     # via
     #   -c requirements/../requirements.txt
     #   streamlit
-protobuf==5.27.3
+protobuf==5.27.4
     # via streamlit
 pyarrow==17.0.0
     # via streamlit
@@ -107,7 +107,7 @@ requests==2.32.3
     # via
     #   -c requirements/../requirements.txt
     #   streamlit
-rich==13.7.1
+rich==13.8.0
     # via
     #   -c requirements/../requirements.txt
     #   streamlit
@@ -122,7 +122,7 @@ smmap==5.0.1
     # via
     #   -c requirements/../requirements.txt
     #   gitdb
-streamlit==1.37.1
+streamlit==1.38.0
     # via -r requirements/requirements-browser.in
 tenacity==8.5.0
     # via streamlit
@@ -141,5 +141,5 @@ urllib3==2.2.2
     # via
     #   -c requirements/../requirements.txt
     #   requests
-watchdog==4.0.2
+watchdog==5.0.0
     # via -r requirements/requirements-browser.in
