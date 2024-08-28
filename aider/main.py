@@ -58,15 +58,23 @@ def setup_git_home(io):
                     # Assume it's a new project name
                     project_name = choice
                     new_dir = home / project_name
-                    new_dir.mkdir(parents=True, exist_ok=True)
-                    os.chdir(new_dir)
-                    return str(new_dir)
+                    try:
+                        new_dir.mkdir(parents=True, exist_ok=True)
+                        os.chdir(new_dir)
+                        return str(new_dir)
+                    except OSError as e:
+                        io.tool_error(f"Error creating directory: {e}")
+                        return None
 
     project_name = io.user_input("Enter a name for your new project directory:")
     new_dir = home / project_name
-    new_dir.mkdir(parents=True, exist_ok=True)
-    os.chdir(new_dir)
-    return str(new_dir)
+    try:
+        new_dir.mkdir(parents=True, exist_ok=True)
+        os.chdir(new_dir)
+        return str(new_dir)
+    except OSError as e:
+        io.tool_error(f"Error creating directory: {e}")
+        return None
 
 
 def get_git_root():

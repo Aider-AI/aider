@@ -99,7 +99,8 @@ class TestMain(TestCase):
     @patch("aider.main.Path.glob")
     @patch("aider.main.os.chdir")
     @patch("aider.main.InputOutput")
-    def test_setup_git_home_new_project(self, mock_io, mock_chdir, mock_glob, mock_home):
+    @patch("pathlib.Path.mkdir")
+    def test_setup_git_home_new_project(self, mock_mkdir, mock_io, mock_chdir, mock_glob, mock_home):
         mock_home.return_value = Path("/home/user")
         mock_glob.return_value = [Path("/home/user/repo1/.git"), Path("/home/user/repo2/.git")]
         mock_io.return_value.prompt_ask.return_value = "new_project"
@@ -110,6 +111,7 @@ class TestMain(TestCase):
             "Found git repositories in your home directory:"
         )
         mock_io.return_value.prompt_ask.assert_called_once()
+        mock_mkdir.assert_called_once_with(parents=True, exist_ok=True)
         mock_chdir.assert_called_once_with(Path("/home/user/new_project"))
         self.assertEqual(result, str(Path("/home/user/new_project")))
 
@@ -117,7 +119,8 @@ class TestMain(TestCase):
     @patch("aider.main.Path.glob")
     @patch("aider.main.os.chdir")
     @patch("aider.main.InputOutput")
-    def test_setup_git_home_no_existing_repos(self, mock_io, mock_chdir, mock_glob, mock_home):
+    @patch("pathlib.Path.mkdir")
+    def test_setup_git_home_no_existing_repos(self, mock_mkdir, mock_io, mock_chdir, mock_glob, mock_home):
         mock_home.return_value = Path("/home/user")
         mock_glob.return_value = []
         mock_io.return_value.user_input.return_value = "new_project"
@@ -128,8 +131,31 @@ class TestMain(TestCase):
         mock_io.return_value.user_input.assert_called_once_with(
             "Enter a name for your new project directory:"
         )
+        mock_mkdir.assert_called_once_with(parents=True, exist_ok=True)
         mock_chdir.assert_called_once_with(Path("/home/user/new_project"))
         self.assertEqual(result, str(Path("/home/user/new_project")))
+
+    @patch("aider.main.Path.home")
+    @patch("aider.main.Path.glob")
+    @patch("aider.main.os.chdir")
+    @patch("aider.main.InputOutput")
+    @patch("pathlib.Path.mkdir")
+    def test_setup_git_home_directory_creation_error(self, mock_mkdir, mock_io, mock_chdir, mock_glob, mock_home):
+        mock_home.return_value = Path("/home/user")
+        mock_glob.return_value = []
+        mock_io.return_value.user_input.return_value = "new_project"
+        mock_mkdir.side_effect = OSError("Permission denied")
+
+        result = setup_git_home(mock_io.return_value)
+
+        mock_io.return_value.tool_output.assert_not_called()
+        mock_io.return_value.user_input.assert_called_once_with(
+            "Enter a name for your new project directory:"
+        )
+        mock_mkdir.assert_called_once_with(parents=True, exist_ok=True)
+        mock_chdir.assert_not_called()
+        mock_io.return_value.tool_error.assert_called_once_with("Error creating directory: Permission denied")
+        self.assertIsNone(result)
 
     def test_main_with_git_config_yml(self):
         make_repo()
