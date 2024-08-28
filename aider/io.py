@@ -106,9 +106,10 @@ class AutoCompleter(Completer):
         partial = words[-1].lower()
 
         matches, _, _ = self.commands.matching_commands(cmd)
-        if len(matches) != 1:
+        if len(matches) == 1:
+            cmd = matches[0]
+        elif cmd not in matches:
             return
-        cmd = matches[0]
 
         if cmd not in self.command_completions:
             candidates = self.commands.get_completions(cmd)
