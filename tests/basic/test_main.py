@@ -621,19 +621,22 @@ class TestMain(TestCase):
             self.assertTrue(coder.suggest_shell_commands)
 
     @patch("aider.main.InputOutput")
-    @patch("aider.main.Path")
-    def test_setup_git_home_existing_repo(self, mock_path, mock_io):
+    def test_setup_git_home_existing_repo(self, mock_io):
         mock_io_instance = mock_io.return_value
         mock_io_instance.prompt_ask.return_value = "1"
-        mock_path.home.return_value.glob.return_value = [Path("/home/user/repo1/.git")]
 
-        result = setup_git_home(mock_io_instance)
+        with IgnorantTemporaryDirectory() as temp_home:
+            with patch("aider.main.Path.home", return_value=Path(temp_home)):
+                # Create actual repo1 subdirectory with .git folder
+                Path(temp_home, "repo1", ".git").mkdir(parents=True)
 
-        self.assertEqual(result, Path("/home/user/repo1"))
-        mock_io_instance.tool_output.assert_called_with(
-            "Found git repositories in your home directory:"
-        )
-        mock_io_instance.prompt_ask.assert_called()
+                result = setup_git_home(mock_io_instance)
+
+                self.assertEqual(result, Path(temp_home) / "repo1")
+                mock_io_instance.tool_output.assert_any_call(
+                    "Found git repositories in your home directory:"
+                )
+                mock_io_instance.prompt_ask.assert_called()
 
     @patch("aider.main.InputOutput")
     @patch("aider.main.make_new_repo")
