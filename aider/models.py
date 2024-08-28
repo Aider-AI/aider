@@ -387,6 +387,12 @@ MODEL_SETTINGS = [
         send_undo_reply=True,
     ),
     ModelSettings(
+        "gemini/gemini-1.5-pro-exp-0827",
+        "diff-fenced",
+        use_repo_map=True,
+        send_undo_reply=True,
+    ),
+    ModelSettings(
         "deepseek/deepseek-chat",
         "diff",
         use_repo_map=True,
