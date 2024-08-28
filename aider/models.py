@@ -447,7 +447,9 @@ def get_model_info(model):
         if cache_age < 60 * 60 * 24:
             try:
                 content = json.loads(cache_file.read_text())
-                return get_model_flexible(model, content)
+                res = get_model_flexible(model, content)
+                if res:
+                    return res
             except Exception as ex:
                 print(str(ex))
 
@@ -458,7 +460,9 @@ def get_model_info(model):
             if response.status_code == 200:
                 content = response.json()
                 cache_file.write_text(json.dumps(content, indent=4))
-                return get_model_flexible(model, content)
+                res = get_model_flexible(model, content)
+                if res:
+                    return res
         except Exception as ex:
             print(str(ex))
 
