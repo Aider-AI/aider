@@ -636,17 +636,18 @@ class TestMain(TestCase):
         mock_io_instance.prompt_ask.assert_called()
 
     @patch("aider.main.InputOutput")
-    @patch("aider.main.Path")
     @patch("aider.main.make_new_repo")
-    def test_setup_git_home_new_repo(self, mock_make_new_repo, mock_path, mock_io):
+    def test_setup_git_home_new_repo(self, mock_make_new_repo, mock_io):
         mock_io_instance = mock_io.return_value
         mock_io_instance.prompt_ask.return_value = "new_project"
-        mock_path.home.return_value.glob.return_value = [Path("/home/user/repo1/.git")]
 
-        result = setup_git_home(mock_io_instance)
+        with IgnorantTemporaryDirectory() as temp_home:
+            with patch("aider.main.Path.home", return_value=Path(temp_home)):
+                Path(temp_home, "repo1", ".git").mkdir(parents=True)
+                result = setup_git_home(mock_io_instance)
 
-        self.assertEqual(result, Path("/home/user/new_project"))
-        mock_make_new_repo.assert_called_with(Path("/home/user/new_project"), mock_io_instance)
+                self.assertEqual(result, Path(temp_home) / "new_project")
+                mock_make_new_repo.assert_called_with(Path(temp_home) / "new_project", mock_io_instance)
 
     @patch("aider.main.InputOutput")
     @patch("aider.main.Path")
