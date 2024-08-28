@@ -141,5 +141,5 @@ urllib3==2.2.2
     # via
     #   -c requirements/../requirements.txt
     #   requests
-watchdog==5.0.0
+watchdog==4.0.2
     # via -r requirements/requirements-browser.in
