@@ -16,6 +16,10 @@ cog.out(text)
 
 # Release history
 
+### Aider v0.54.3
+
+- Dependency `watchdog<5` for docker image.
+
 ### Aider v0.54.2
 
 - When users launch aider in their home dir, help them find/create a repo in a subdir.
