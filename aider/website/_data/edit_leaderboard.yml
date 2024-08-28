@@ -881,7 +881,7 @@
 
 - dirname: 2024-08-28-07-10-50--gemini-1.5-pro-exp-0827-diff-fenced
   test_cases: 133
-  model: gemini/gemini-1.5-pro-exp-0827
+  model: gemini-1.5-pro-exp-0827
   edit_format: diff-fenced
   commit_hash: d8adc75
   pass_rate_1: 54.9
@@ -904,7 +904,7 @@
 
 - dirname: 2024-08-27-19-20-19--gemini-1.5-flash-exp-0827
   test_cases: 133
-  model: gemini/gemini-1.5-flash-exp-0827
+  model: gemini-1.5-flash-exp-0827
   edit_format: whole
   commit_hash: d8adc75
   pass_rate_1: 40.6
@@ -927,7 +927,7 @@
 
 - dirname: 2024-08-27-19-42-05--gemini-1.5-flash-8b-exp-0827
   test_cases: 133
-  model: gemini/gemini-1.5-flash-8b-exp-0827
+  model: gemini-1.5-flash-8b-exp-0827
   edit_format: whole
   commit_hash: d8adc75
   pass_rate_1: 31.6
@@ -947,5 +947,3 @@
   versions: 0.53.1-dev
   seconds_per_case: 7.2
   total_cost: 0.0000
-
-  
