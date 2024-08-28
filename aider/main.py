@@ -24,20 +24,18 @@ from .dump import dump  # noqa: F401
 
 def setup_git_home(io):
     home = Path.home()
-    home_git = home / ".git"
-    git_repos = [home_git] if home_git.exists() else []
-    git_repos.extend(home.glob("*/.git"))
+    git_repos = home.glob("*/.git")
 
     if git_repos:
         io.tool_output("Found existing Git repositories in your home directory:")
         for i, repo in enumerate(git_repos, 1):
-            repo_name = "Home directory" if repo == home_git else repo.parent.name
+            repo_name = repo.parent.name
             io.tool_output(f"{i}. {repo_name}")
 
         while True:
             choice = io.prompt_ask(
                 "Enter the number of the repository you want to work on, or ENTER for a new"
-                " project: "
+                " project:"
             )
 
             if not choice.strip():
@@ -53,7 +51,7 @@ def setup_git_home(io):
             except ValueError:
                 io.tool_error("Please enter a valid number")
 
-    project_name = io.user_input("Enter a name for your new project directory: ")
+    project_name = io.user_input("Enter a name for your new project directory:")
     new_dir = home / project_name
     new_dir.mkdir(exist_ok=True)
     os.chdir(new_dir)
