@@ -27,7 +27,7 @@ Adjust the files added to the chat as you go: `/drop` files that don't need any 
 
 ## For complex changes, discuss a plan first
 
-Use [the `/ask` command](modes.html) to make a plan with aider.
+Use the [`/ask` command](modes.html) to make a plan with aider.
 Once you are happy with the approach, just say "go ahead" without the `/ask` prefix.
 
 ## If aider gets stuck
