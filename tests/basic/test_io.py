@@ -171,11 +171,12 @@ class TestInputOutput(unittest.TestCase):
         commands.get_completions.return_value = ["gpt-3.5-turbo", "gpt-4"]
 
         autocompleter = AutoCompleter(root, rel_fnames, addable_rel_fnames, commands, "utf-8")
-        
+
         # Test case for "/model gpt"
         result = autocompleter.get_command_completions("/model gpt", ["/model", "gpt"])
         self.assertEqual(result, ["gpt-3.5-turbo", "gpt-4"])
         commands.get_completions.assert_called_once_with("model")
+
 
 if __name__ == "__main__":
     unittest.main()
