@@ -36,7 +36,7 @@ def setup_git_home(io):
                 "Enter the number of the repository you want to work on, or 'n' for a new project: "
             )
 
-            if choice.lower() == 'n':
+            if choice.lower() == "n":
                 break
 
             try:
