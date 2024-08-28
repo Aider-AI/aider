@@ -393,6 +393,12 @@ MODEL_SETTINGS = [
         send_undo_reply=True,
     ),
     ModelSettings(
+        "gemini/gemini-1.5-flash-exp-0827",
+        "whole",
+        use_repo_map=False,
+        send_undo_reply=False,
+    ),
+    ModelSettings(
         "deepseek/deepseek-chat",
         "diff",
         use_repo_map=True,
