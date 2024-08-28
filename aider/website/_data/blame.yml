@@ -2328,3 +2328,55 @@
     Paul Gauthier (aider): 405
   start_tag: v0.52.0
   total_lines: 691
+- aider_percentage: 63.95
+  aider_total: 204
+  end_date: '2024-08-28'
+  end_tag: v0.54.0
+  file_counts:
+    .github/workflows/docker-build-test.yml:
+      Paul Gauthier (aider): 1
+    .github/workflows/ubuntu-tests.yml:
+      Paul Gauthier (aider): 1
+    .github/workflows/windows-tests.yml:
+      Paul Gauthier (aider): 1
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/args.py:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 12
+    aider/coders/base_coder.py:
+      Paul Gauthier: 25
+      Paul Gauthier (aider): 12
+    aider/commands.py:
+      Paul Gauthier: 12
+      Paul Gauthier (aider): 4
+    aider/io.py:
+      Paul Gauthier: 28
+    aider/main.py:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 6
+    aider/models.py:
+      Paul Gauthier (aider): 11
+    aider/run_cmd.py:
+      Paul Gauthier (aider): 72
+    aider/utils.py:
+      Paul Gauthier (aider): 15
+    aider/versioncheck.py:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 13
+    tests/basic/test_coder.py:
+      Paul Gauthier: 36
+      Paul Gauthier (aider): 27
+    tests/basic/test_io.py:
+      Paul Gauthier: 4
+    tests/basic/test_main.py:
+      Antti Kaihola: 4
+      Paul Gauthier (aider): 29
+    tests/scrape/test_scrape.py:
+      Paul Gauthier: 1
+  grand_total:
+    Antti Kaihola: 4
+    Paul Gauthier: 111
+    Paul Gauthier (aider): 204
+  start_tag: v0.53.0
+  total_lines: 319
