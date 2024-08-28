@@ -47,6 +47,7 @@ def setup_git_home(io):
                 choice_num = int(choice)
                 if 1 <= choice_num <= len(git_repos):
                     chosen_repo = git_repos[choice_num - 1]
+                    os.chdir(chosen_repo.parent)
                     return str(chosen_repo.parent)
                 else:
                     io.tool_error(f"Please enter a number between 1 and {len(git_repos)}")
@@ -54,6 +55,7 @@ def setup_git_home(io):
                 choice_lower = choice.lower()
                 if choice_lower in repo_dict:
                     chosen_repo = repo_dict[choice_lower]
+                    os.chdir(chosen_repo.parent)
                     return str(chosen_repo.parent)
                 else:
                     io.tool_error("Please enter a valid number or repository name")
