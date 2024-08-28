@@ -36,7 +36,8 @@ def setup_git_home(io):
 
         while True:
             choice = io.prompt_ask(
-                "Enter the number of the repository you want to work on, or ENTER for a new project: "
+                "Enter the number of the repository you want to work on, or ENTER for a new"
+                " project: "
             )
 
             if not choice.strip():
