@@ -27,7 +27,7 @@ def setup_git_home(io):
     git_repos = list(home.glob("*/.git"))
 
     if git_repos:
-        io.tool_output("Found existing Git repositories in your home directory:")
+        io.tool_output("Found git repositories in your home directory:")
         repo_dict = {}
         for i, repo in enumerate(git_repos, 1):
             repo_name = repo.parent.name
@@ -36,8 +36,8 @@ def setup_git_home(io):
 
         while True:
             choice = io.prompt_ask(
-                "Enter the number or name of the repository you want to work on, or ENTER for a new"
-                " project:"
+                "Enter the number or name of the repository you want to work on,\nor ENTER for a"
+                " new project:"
             )
 
             if not choice.strip():
