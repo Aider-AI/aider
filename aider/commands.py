@@ -543,6 +543,10 @@ class Commands:
                     os.remove(fname)
                     self.io.tool_output(f"Deleted file: {fname}")
             else:
+                # Create parent directories if they don't exist
+                os.makedirs(os.path.dirname(fname), exist_ok=True)
+                
+                # Write content to the file
                 with open(fname, 'w') as f:
                     f.write(content)
 
