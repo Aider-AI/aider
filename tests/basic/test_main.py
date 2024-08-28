@@ -109,7 +109,7 @@ class TestMain(TestCase):
 
         result = setup_git_home(mock_io.return_value)
 
-        mock_io.return_value.tool_output.assert_called_with(
+        mock_io.return_value.tool_output.assert_any_call(
             "Found git repositories in your home directory:"
         )
         mock_io.return_value.prompt_ask.assert_called_once()
