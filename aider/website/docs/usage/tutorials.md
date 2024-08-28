@@ -8,7 +8,7 @@ description: Intro and tutorial videos made by aider users.
 
 Here are some tutorial videos made by aider users:
 
-- [Using aider in replit to make a Trello clone](https://x.com/itsPaulAi/status/1828472273260683627) -- Paul Couvert
+- [Installing aider in replit and making a Trello clone](https://x.com/itspaulai/status/1828834199597633724) -- Paul Couvert
 - [Step-by-Step Development Environment Setup for AI-Assisted Coding](https://www.youtube.com/watch?v=DnBVgfe6ZQM) -- Coding the Future With AI
 - [Generate FULL-STACK Apps with Claude 3.5 Sonnet](https://youtu.be/sKeIZGW8xzg) -- AICodeKing
 - [Creating Games with AI from Start-To-End](https://youtu.be/sOd2YYZFMUs) -- AICodeKing
