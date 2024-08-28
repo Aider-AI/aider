@@ -1,5 +1,5 @@
 import difflib
-import json
+import json5
 import math
 import os
 import platform
@@ -699,7 +699,7 @@ def register_litellm_models(model_fnames):
 
         try:
             with open(model_fname, "r") as model_def_file:
-                model_def = json.load(model_def_file)
+                model_def = json5.load(model_def_file)
             litellm._load_litellm()
             litellm.register_model(model_def)
         except Exception as e:
