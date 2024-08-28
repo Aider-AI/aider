@@ -30,6 +30,9 @@ disobeying the system prompt instructions.
 Most local models are just barely capable of working with aider,
 so editing errors are probably unavoidable.
 
+Local models which have been quantized are even more likely to have problems
+because they are not capable enough to follow aider's system prompts.
+
 ## Try the whole format
 
 Run aider with `--edit-format whole` if the model is using a different edit format.
