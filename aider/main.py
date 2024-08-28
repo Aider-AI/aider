@@ -25,15 +25,12 @@ from .dump import dump  # noqa: F401
 def setup_git_home(io):
     home = Path.home()
     git_repos = list(home.glob("*/.git"))
-    home_git = home / ".git"
-    if home_git.exists():
-        git_repos.insert(0, home_git)
 
     if git_repos:
         io.tool_output("Found existing Git repositories in your home directory:")
         repo_dict = {}
         for i, repo in enumerate(git_repos, 1):
-            repo_name = "Home directory" if repo == home_git else repo.parent.name
+            repo_name = repo.parent.name
             io.tool_output(f"{i}. {repo_name}")
             repo_dict[repo_name.lower()] = repo
 
@@ -50,14 +47,14 @@ def setup_git_home(io):
                 choice_num = int(choice)
                 if 1 <= choice_num <= len(git_repos):
                     chosen_repo = git_repos[choice_num - 1]
-                    return str(home if chosen_repo == home_git else chosen_repo.parent)
+                    return str(chosen_repo.parent)
                 else:
                     io.tool_error(f"Please enter a number between 1 and {len(git_repos)}")
             except ValueError:
                 choice_lower = choice.lower()
                 if choice_lower in repo_dict:
                     chosen_repo = repo_dict[choice_lower]
-                    return str(home if chosen_repo == home_git else chosen_repo.parent)
+                    return str(chosen_repo.parent)
                 else:
                     io.tool_error("Please enter a valid number or repository name")
 
