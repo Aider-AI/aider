@@ -22,75 +22,6 @@ from aider.versioncheck import check_version, install_from_main_branch, install_
 from .dump import dump  # noqa: F401
 
 
-def setup_git_home(io):
-    home = Path.home()
-    git_repos = sorted(home.glob("*/.git"))
-    git_repos = []
-    git_root = None
-
-    if git_repos:
-        io.tool_output("Found git repositories in your home directory:")
-        repo_dict = {}
-        for i, repo in enumerate(git_repos, 1):
-            repo_name = repo.parent.name
-            io.tool_output(f"{i}. {repo_name}")
-            repo_dict[repo_name.lower()] = repo
-
-        while True:
-            choice = io.prompt_ask(
-                "Enter the number or name of the repository you want to work on,\n"
-                "or enter the name of a new directory to create:"
-            )
-            choice = choice.strip()
-            try:
-                choice_num = int(choice)
-                if 1 <= choice_num <= len(git_repos):
-                    chosen_repo = git_repos[choice_num - 1]
-                    git_root = chosen_repo.parent
-                    break
-                else:
-                    io.tool_error(f"Please enter a number between 1 and {len(git_repos)}")
-            except ValueError:
-                choice_lower = choice.lower()
-                if choice_lower in repo_dict:
-                    chosen_repo = repo_dict[choice_lower]
-                    git_root = chosen_repo.parent
-                    break
-                elif choice:
-                    # Assume it's a new project name
-                    git_root = home / choice
-                    break
-                else:
-                    return  # no response
-    else:
-        choice = io.prompt_ask("Enter a directory name to create a new project:")
-        choice = choice.strip()
-        if choice:
-            git_root = home / choice
-
-    if not git_root:
-        return
-
-    if git_root.exists():
-        if git_root.is_dir():
-            os.chdir(git_root)
-            return git_root
-        else:
-            io.tool_error(f"{git_root} exists, and is not a directory.")
-            return
-
-    try:
-        io.tool_output(f"Making directory {git_root}")
-        git_root.mkdir()
-    except OSError as e:
-        io.tool_error(f"Error creating directory {git_root}: {e}")
-        return None
-
-    make_new_repo(git_root, io)
-    os.chdir(git_root)
-    return git_root
-
-
 def get_git_root():
     """Try and guess the git repo, since the conf.yml can be at the repo root"""
     try:
@@ -129,22 +60,10 @@ def make_new_repo(git_root, io):
 def setup_git(git_root, io):
     repo = None
 
-    if not git_root and Path.cwd() == Path.home():
-        git_root = setup_git_home(io)
-        if not git_root:
-            return  # don't make a .git in $HOME
-
-    if not git_root:
-        git_root = Path.cwd()
-
-    try:
+    if git_root:
         repo = git.Repo(git_root)
-    except git.exc.InvalidGitRepositoryError:
-        pass
-
-    if not repo and io.confirm_ask(
-        "No git repo found, create one to track aider's changes (recommended)?"
-    ):
+    elif io.confirm_ask("No git repo found, create one to track aider's changes (recommended)?"):
+        git_root = str(Path.cwd().resolve())
         repo = make_new_repo(git_root, io)
 
     if not repo:

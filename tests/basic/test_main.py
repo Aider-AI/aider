@@ -14,7 +14,7 @@ from prompt_toolkit.output import DummyOutput
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
-from aider.main import check_gitignore, main, setup_git, setup_git_home
+from aider.main import check_gitignore, main, setup_git
 from aider.utils import GitTemporaryDirectory, IgnorantTemporaryDirectory, make_repo
 
 
@@ -619,70 +619,3 @@ class TestMain(TestCase):
                 return_coder=True,
             )
             self.assertTrue(coder.suggest_shell_commands)
-
-    @patch("aider.main.InputOutput")
-    def test_setup_git_home_existing_repo(self, mock_io):
-        mock_io_instance = mock_io.return_value
-        mock_io_instance.prompt_ask.return_value = "1"
-
-        with IgnorantTemporaryDirectory() as temp_home:
-            with patch("aider.main.Path.home", return_value=Path(temp_home)):
-                # Create actual repo1 subdirectory with .git folder
-                Path(temp_home, "repo1", ".git").mkdir(parents=True)
-
-                result = setup_git_home(mock_io_instance)
-
-                self.assertEqual(result, Path(temp_home) / "repo1")
-                mock_io_instance.tool_output.assert_any_call(
-                    "Found git repositories in your home directory:"
-                )
-                mock_io_instance.prompt_ask.assert_called()
-
-    @patch("aider.main.InputOutput")
-    @patch("aider.main.make_new_repo")
-    def test_setup_git_home_new_repo(self, mock_make_new_repo, mock_io):
-        mock_io_instance = mock_io.return_value
-        mock_io_instance.prompt_ask.return_value = "new_project"
-
-        with IgnorantTemporaryDirectory() as temp_home:
-            with patch("aider.main.Path.home", return_value=Path(temp_home)):
-                Path(temp_home, "repo1", ".git").mkdir(parents=True)
-                result = setup_git_home(mock_io_instance)
-
-                self.assertEqual(result, Path(temp_home) / "new_project")
-                mock_make_new_repo.assert_called_with(
-                    Path(temp_home) / "new_project", mock_io_instance
-                )
-
-    @patch("aider.main.InputOutput")
-    @patch("aider.main.Path")
-    def test_setup_git_home_no_repos(self, mock_path, mock_io):
-        mock_io_instance = mock_io.return_value
-        mock_path.home.return_value.glob.return_value = []
-
-        result = setup_git_home(mock_io_instance)
-
-        self.assertIsNone(result)
-        mock_io_instance.tool_output.assert_not_called()
-        mock_io_instance.prompt_ask.assert_not_called()
-
-    @patch("aider.main.InputOutput")
-    def test_setup_git_home_invalid_choice(self, mock_io):
-        mock_io_instance = mock_io.return_value
-        mock_io_instance.prompt_ask.side_effect = ["3", "1"]
-
-        with IgnorantTemporaryDirectory() as temp_home:
-            with patch("aider.main.Path.home", return_value=Path(temp_home)):
-                # Create actual repo1 and repo2 subdirectories with .git folders
-                Path(temp_home, "repo1", ".git").mkdir(parents=True)
-                Path(temp_home, "repo2", ".git").mkdir(parents=True)
-
-                result = setup_git_home(mock_io_instance)
-
-                self.assertEqual(result, Path(temp_home) / "repo1")
-                mock_io_instance.tool_error.assert_called_with(
-                    "Please enter a number between 1 and 2"
-                )
-                mock_io_instance.tool_output.assert_any_call(
-                    "Found git repositories in your home directory:"
-                )
