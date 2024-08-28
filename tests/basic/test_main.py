@@ -619,3 +619,53 @@ class TestMain(TestCase):
                 return_coder=True,
             )
             self.assertTrue(coder.suggest_shell_commands)
+
+    @patch('aider.main.InputOutput')
+    @patch('aider.main.Path')
+    def test_setup_git_home_existing_repo(self, mock_path, mock_io):
+        mock_io_instance = mock_io.return_value
+        mock_io_instance.prompt_ask.return_value = "1"
+        mock_path.home.return_value.glob.return_value = [Path("/home/user/repo1/.git")]
+        
+        result = setup_git_home(mock_io_instance)
+        
+        self.assertEqual(result, Path("/home/user/repo1"))
+        mock_io_instance.tool_output.assert_called_with("Found git repositories in your home directory:")
+        mock_io_instance.prompt_ask.assert_called()
+
+    @patch('aider.main.InputOutput')
+    @patch('aider.main.Path')
+    @patch('aider.main.make_new_repo')
+    def test_setup_git_home_new_repo(self, mock_make_new_repo, mock_path, mock_io):
+        mock_io_instance = mock_io.return_value
+        mock_io_instance.prompt_ask.return_value = "new_project"
+        mock_path.home.return_value.glob.return_value = [Path("/home/user/repo1/.git")]
+        
+        result = setup_git_home(mock_io_instance)
+        
+        self.assertEqual(result, Path("/home/user/new_project"))
+        mock_make_new_repo.assert_called_with(Path("/home/user/new_project"), mock_io_instance)
+
+    @patch('aider.main.InputOutput')
+    @patch('aider.main.Path')
+    def test_setup_git_home_no_repos(self, mock_path, mock_io):
+        mock_io_instance = mock_io.return_value
+        mock_path.home.return_value.glob.return_value = []
+        
+        result = setup_git_home(mock_io_instance)
+        
+        self.assertIsNone(result)
+        mock_io_instance.tool_output.assert_not_called()
+        mock_io_instance.prompt_ask.assert_not_called()
+
+    @patch('aider.main.InputOutput')
+    @patch('aider.main.Path')
+    def test_setup_git_home_invalid_choice(self, mock_path, mock_io):
+        mock_io_instance = mock_io.return_value
+        mock_io_instance.prompt_ask.side_effect = ["3", "1"]
+        mock_path.home.return_value.glob.return_value = [Path("/home/user/repo1/.git"), Path("/home/user/repo2/.git")]
+        
+        result = setup_git_home(mock_io_instance)
+        
+        self.assertEqual(result, Path("/home/user/repo1"))
+        mock_io_instance.tool_error.assert_called_with("Please enter a number between 1 and 2")
