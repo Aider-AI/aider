@@ -33,10 +33,10 @@ def setup_git_home(io):
 
         while True:
             choice = io.prompt_ask(
-                "Enter the number of the repository you want to work on, or 'n' for a new project: "
+                "Enter the number of the repository you want to work on, or ENTER for a new project: "
             )
 
-            if choice.lower() == "n":
+            if not choice.strip():
                 break
 
             try:
@@ -48,9 +48,10 @@ def setup_git_home(io):
             except ValueError:
                 io.tool_error("Please enter a valid number or 'n'")
 
-    project_name = io.user_input("Enter a name for your new project: ")
+    project_name = io.user_input("Enter a name for your new project directory: ")
     new_dir = home / project_name
     new_dir.mkdir(exist_ok=True)
+    os.chdir(new_dir)
     return str(new_dir)
 
 
