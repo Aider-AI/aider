@@ -16,6 +16,11 @@ cog.out(text)
 
 # Release history
 
+### Aider v0.54.2
+
+- When users launch aider in their home dir, help them find/create a repo in a subdir.
+- Added missing `pexpect` dependency.
+
 ### Aider v0.54.0
 
 - Added model settings for `gemini/gemini-1.5-pro-exp-0827` and `gemini/gemini-1.5-flash-exp-0827`.
