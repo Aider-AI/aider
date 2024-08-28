@@ -1,5 +1,4 @@
 import difflib
-import json5
 import math
 import os
 import platform
@@ -9,6 +8,7 @@ from dataclasses import dataclass, fields
 from pathlib import Path
 from typing import Optional
 
+import json5
 import yaml
 from PIL import Image
 
