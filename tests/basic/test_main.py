@@ -677,5 +677,9 @@ class TestMain(TestCase):
                 result = setup_git_home(mock_io_instance)
 
                 self.assertEqual(result, Path(temp_home) / "repo1")
-                mock_io_instance.tool_error.assert_called_with("Please enter a number between 1 and 2")
-                mock_io_instance.tool_output.assert_called_with("Found git repositories in your home directory:")
+                mock_io_instance.tool_error.assert_called_with(
+                    "Please enter a number between 1 and 2"
+                )
+                mock_io_instance.tool_output.assert_called_with(
+                    "Found git repositories in your home directory:"
+                )
