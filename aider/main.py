@@ -25,6 +25,7 @@ from .dump import dump  # noqa: F401
 def setup_git_home(io):
     home = Path.home()
     git_repos = list(home.glob("*/.git"))
+    git_root = None
 
     if git_repos:
         io.tool_output("Found git repositories in your home directory:")
@@ -60,6 +61,9 @@ def setup_git_home(io):
                     break
                 else:
                     return  # no response
+
+    if not git_root:
+        return
 
     if git_root.exists():
         if git_root.is_dir():
