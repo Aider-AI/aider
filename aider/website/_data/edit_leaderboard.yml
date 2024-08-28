@@ -878,4 +878,72 @@
   versions: 0.50.2-dev
   seconds_per_case: 26.3
   total_cost: 3.6113
-  
+
+- dirname: 2024-08-28-07-10-50--gemini-1.5-pro-exp-0827-diff-fenced
+  test_cases: 133
+  model: gemini-1.5-pro-exp-0827
+  edit_format: diff-fenced
+  commit_hash: d8adc75
+  pass_rate_1: 54.9
+  pass_rate_2: 66.9
+  percent_cases_well_formed: 94.7
+  error_outputs: 112
+  num_malformed_responses: 26
+  num_with_malformed_responses: 7
+  user_asks: 38
+  lazy_comments: 0
+  syntax_errors: 1
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model gemini/gemini-1.5-pro-exp-0827
+  date: 2024-08-28
+  versions: 0.53.1-dev
+  seconds_per_case: 14.5
+  total_cost: 0.0000
+
+- dirname: 2024-08-27-19-20-19--gemini-1.5-flash-exp-0827
+  test_cases: 133
+  model: gemini-1.5-flash-exp-0827
+  edit_format: whole
+  commit_hash: d8adc75
+  pass_rate_1: 40.6
+  pass_rate_2: 52.6
+  percent_cases_well_formed: 100.0
+  error_outputs: 1
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 1
+  lazy_comments: 3
+  syntax_errors: 1
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 4
+  command: aider --model gemini/gemini-1.5-flash-exp-0827
+  date: 2024-08-27
+  versions: 0.53.1-dev
+  seconds_per_case: 6.3
+  total_cost: 0.0000
+
+- dirname: 2024-08-27-19-42-05--gemini-1.5-flash-8b-exp-0827
+  test_cases: 133
+  model: gemini-1.5-flash-8b-exp-0827
+  edit_format: whole
+  commit_hash: d8adc75
+  pass_rate_1: 31.6
+  pass_rate_2: 38.3
+  percent_cases_well_formed: 100.0
+  error_outputs: 12
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 10
+  lazy_comments: 250
+  syntax_errors: 6
+  indentation_errors: 1
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model gemini/gemini-1.5-flash-8b-exp-0827
+  date: 2024-08-27
+  versions: 0.53.1-dev
+  seconds_per_case: 7.2
+  total_cost: 0.0000
