@@ -16,6 +16,13 @@ cog.out(text)
 
 # Release history
 
+### main branch
+
+- Shell commands and `/run` can not be interactive in environments where a pty is available
+- Optionally share output of suggested shell commands back to the LLM.
+- New `--[no-]suggest-shell-commands` switch to configure shell commands.
+- Performance improvements for autocomplete in large/mono repos.
+
 ### Aider v0.53.0
 
 - [Keep your prompt cache from expiring](https://aider.chat/docs/usage/caching.html#preventing-cache-expiration) with `--cache-keepalive-pings`.
