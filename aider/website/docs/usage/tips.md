@@ -35,6 +35,7 @@ Once you are happy with the approach, just say "go ahead" without the `/ask` pre
 - Use `/clear` to discard the chat history and make a fresh start.
 - Can you `/drop` any extra files?
 - Use `/ask` to discuss a plan before aider starts editing code.
+- Use the [`/model` command](commands.html) to switch to a different model and try again. Switching between GPT-4o and Sonnet will often get past problems.
 - If aider is hopelessly stuck,
 just code the next step yourself and try having aider code some more after that.
 Take turns and pair program with aider.

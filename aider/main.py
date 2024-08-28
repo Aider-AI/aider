@@ -24,7 +24,7 @@ from .dump import dump  # noqa: F401
 
 def setup_git_home(io):
     home = Path.home()
-    git_repos = list(home.glob("*/.git"))
+    git_repos = sorted(home.glob("*/.git"))
     git_root = None
 
     if git_repos:
