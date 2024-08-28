@@ -528,6 +528,14 @@ class Commands:
         state = self.coder.redo_stack.pop()
         chat_history, cur_messages, file_contents = state
 
+        for fname, content in file_contents.items():
+            rel_fname = self.coder.get_rel_fname(fname)
+            if rel_fname in self.coder.created_by_aider:
+                os.makedirs(os.path.dirname(fname), exist_ok=True)
+                with open(fname, 'w') as f:
+                    f.write('')
+                self.coder.abs_fnames.add(fname)
+
         # Push the current state to the undo stack
         self.coder.push_undo_state()
 
@@ -539,6 +547,8 @@ class Commands:
                 if os.path.exists(fname):
                     os.remove(fname)
                     self.io.tool_output(f"Deleted file: {fname}")
+                    if fname in self.coder.abs_fnames:
+                        self.coder.abs_fnames.remove(fname)
             else:
                 # Create parent directories if they don't exist
                 os.makedirs(os.path.dirname(fname), exist_ok=True)
@@ -547,9 +557,10 @@ class Commands:
                 with open(fname, 'w') as f:
                     f.write(content)
                 
-                # Add the file to git
+                # Add the file to git and to abs_fnames
                 if self.coder.repo:
                     self.coder.repo.repo.git.add(fname)
+                self.coder.abs_fnames.add(fname)
 
         self.io.tool_output("Redid the last undone action.")
 
