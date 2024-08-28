@@ -27,6 +27,7 @@ cog.out(text)
 - Bugfix to `--show-prompt`.
 - Disabled automatic reply to the LLM on `/undo` for all models.
 - Removed pager from `/web` output.
+- Aider wrote 64% of the code in this release.
 
 ### Aider v0.53.0
 
