@@ -72,6 +72,9 @@ def report_uncaught_exceptions():
 
 
 def main():
+    report_uncaught_exceptions()
+    raise ValueError("boo")
+
     title = None
     if len(sys.argv) > 2:
         # Use the first command-line argument as the title and the second as the issue text
