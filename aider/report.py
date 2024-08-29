@@ -1,7 +1,7 @@
 import sys
+import traceback
 import urllib.parse
 import webbrowser
-import traceback
 
 from aider import __version__
 
@@ -52,7 +52,7 @@ def report_github_issue(issue_text, title=None):
 def exception_handler(exc_type, exc_value, exc_traceback):
     # Format the traceback
     tb_lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
-    tb_text = ''.join(tb_lines)
+    tb_text = "".join(tb_lines)
 
     # Prepare the issue text
     issue_text = f"An uncaught exception occurred:\n\n```\n{tb_text}\n```"
