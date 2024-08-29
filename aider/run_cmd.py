@@ -9,13 +9,10 @@ import pexpect
 def run_cmd(command):
     import sys
 
-    if not sys.stdin.isatty():
-        return run_cmd_subprocess(command)
+    if sys.stdin.isatty() and hasattr(pexpect, "spawn"):
+        return run_cmd_pexpect(command)
 
-    if hasattr(pexpect, "spawn"):
-        return run_cmd_subprocess(command)
-
-    return run_cmd_pexpect(command)
+    return run_cmd_subprocess(command)
 
 
 def run_cmd_subprocess(command):
