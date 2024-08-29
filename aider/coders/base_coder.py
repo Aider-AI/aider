@@ -1320,10 +1320,11 @@ class Coder:
     def check_for_file_mentions(self, content):
         mentioned_rel_fnames = self.get_file_mentions(content)
 
-        if not mentioned_rel_fnames:
+        new_mentions = mentioned_rel_fnames - self.ignore_mentions
+
+        if not new_mentions:
             return
 
-        new_mentions = mentioned_rel_fnames - self.ignore_mentions
         added_fnames = []
         group = ConfirmGroup(new_mentions)
         for rel_fname in new_mentions:
