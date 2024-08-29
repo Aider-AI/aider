@@ -118,8 +118,11 @@ def dummy_function1():
     def dummy_function2():
         def dummy_function3():
             raise ValueError("boo")
+
         dummy_function3()
+
     dummy_function2()
+
 
 def main():
     report_uncaught_exceptions()
