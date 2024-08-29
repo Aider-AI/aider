@@ -854,9 +854,23 @@ This command will print 'Hello, World!' to the console."""
             # Set up some real done_messages and cur_messages
             coder.done_messages = [
                 {"role": "user", "content": "Hello, can you help me with a Python problem?"},
-                {"role": "assistant", "content": "Of course! I'd be happy to help. What's the problem you're facing?"},
-                {"role": "user", "content": "I need to write a function that calculates the factorial of a number."},
-                {"role": "assistant", "content": "Sure, I can help you with that. Here's a simple Python function to calculate the factorial of a number:"},
+                {
+                    "role": "assistant",
+                    "content": "Of course! I'd be happy to help. What's the problem you're facing?",
+                },
+                {
+                    "role": "user",
+                    "content": (
+                        "I need to write a function that calculates the factorial of a number."
+                    ),
+                },
+                {
+                    "role": "assistant",
+                    "content": (
+                        "Sure, I can help you with that. Here's a simple Python function to"
+                        " calculate the factorial of a number:"
+                    ),
+                },
             ]
 
             coder.cur_messages = [
@@ -869,7 +883,9 @@ This command will print 'Hello, World!' to the console."""
                 "max_input_tokens": 4000,
                 "max_output_tokens": 1000,
             }
-            coder.partial_response_content = "Here's an optimized version of the factorial function:"
+            coder.partial_response_content = (
+                "Here's an optimized version of the factorial function:"
+            )
             coder.io.tool_error = MagicMock()
 
             # Call the method
@@ -878,12 +894,13 @@ This command will print 'Hello, World!' to the console."""
             # Check if tool_error was called with the expected message
             coder.io.tool_error.assert_called()
             error_message = coder.io.tool_error.call_args[0][0]
-            
+
             # Assert that the error message contains the expected information
             self.assertIn("Model gpt-3.5-turbo has hit a token limit!", error_message)
             self.assertIn("Input tokens: ~1,000 of 4,000", error_message)
             self.assertIn("Output tokens: ~1,000 of 1,000", error_message)
             self.assertIn("Total tokens: ~2,000 of 4,000", error_message)
+
 
 if __name__ == "__main__":
     unittest.main()
