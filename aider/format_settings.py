@@ -1,5 +1,6 @@
 from aider.utils import scrub_sensitive_info
 
+
 def format_settings(parser, args):
     show = scrub_sensitive_info(args, parser.format_values())
     # clean up the headings for consistency w/ new lines
