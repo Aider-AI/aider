@@ -5,7 +5,6 @@ import sys
 import tempfile
 from collections import OrderedDict
 from pathlib import Path
-from typing import Generator
 
 import git
 import pyperclip
@@ -528,16 +527,16 @@ class Commands:
         try:
             if os.path.isabs(pattern):
                 # Handle absolute paths
-                raw_matched_files: list[Path] = [Path(pattern)]
+                raw_matched_files = [Path(pattern)]
             else:
-                raw_matched_files: list[Path] = list(
+                raw_matched_files = list(
                     Path(self.coder.root).glob(pattern)
                 )
         except ValueError as err:
             self.io.tool_error(f"Error matching {pattern}: {err}")
-            raw_matched_files: list[Path] = []
+            raw_matched_files = []
 
-        matched_files: list[Path] = []
+        matched_files = []
         for fn in raw_matched_files:
             matched_files += expand_subdir(fn)
 
@@ -1079,7 +1078,7 @@ class Commands:
         self.io.tool_output(settings)
 
 
-def expand_subdir(file_path: Path) -> Generator[Path, None, None]:
+def expand_subdir(file_path):
     if file_path.is_file():
         yield file_path
         return
