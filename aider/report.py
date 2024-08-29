@@ -5,6 +5,7 @@ import urllib.parse
 import webbrowser
 
 from aider import __version__
+from aider.urls import github_issues
 
 
 def report_github_issue(issue_text, title=None):
@@ -18,12 +19,11 @@ def report_github_issue(issue_text, title=None):
     """
     version_info = f"Aider version: {__version__}\n\n"
     issue_text = version_info + issue_text
-    base_url = "https://github.com/paul-gauthier/aider/issues/new"
     params = {"body": issue_text}
     if title is None:
         title = "Bug report"
     params["title"] = title
-    issue_url = f"{base_url}?{urllib.parse.urlencode(params)}"
+    issue_url = f"{github_issues}?{urllib.parse.urlencode(params)}"
 
     print(f"\n# {title}\n")
     print(issue_text.strip())
