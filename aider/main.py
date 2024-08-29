@@ -18,6 +18,7 @@ from aider.history import ChatSummary
 from aider.io import InputOutput
 from aider.llm import litellm  # noqa: F401; properly init litellm on launch
 from aider.repo import GitRepo
+from aider.report import report_uncaught_exceptions
 from aider.versioncheck import check_version, install_from_main_branch, install_upgrade
 
 from .dump import dump  # noqa: F401
@@ -288,8 +289,6 @@ def register_litellm_models(git_root, model_metadata_fname, io, verbose=False):
 
 
 def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
-    from aider.report import report_uncaught_exceptions
-
     report_uncaught_exceptions()
 
     if argv is None:
