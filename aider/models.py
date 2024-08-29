@@ -30,7 +30,7 @@ request_timeout = 600
 DEFAULT_MODEL_NAME = "gpt-4o"
 ANTHROPIC_BETA_HEADER = "prompt-caching-2024-07-31,pdfs-2024-09-25"
 
-OPENAI_MODELS = """
+_OPENAI_MODELS = """
 o1
 o1-preview
 o1-mini
@@ -61,9 +61,9 @@ gpt-3.5-turbo-16k
 gpt-3.5-turbo-16k-0613
 """
 
-OPENAI_MODELS = [ln.strip() for ln in OPENAI_MODELS.splitlines() if ln.strip()]
+OPENAI_MODELS = [ln.strip() for ln in _OPENAI_MODELS.splitlines() if ln.strip()]
 
-ANTHROPIC_MODELS = """
+_ANTHROPIC_MODELS = """
 claude-2
 claude-2.1
 claude-3-haiku-20240307
@@ -76,7 +76,7 @@ claude-sonnet-4-20250514
 claude-opus-4-20250514
 """
 
-ANTHROPIC_MODELS = [ln.strip() for ln in ANTHROPIC_MODELS.splitlines() if ln.strip()]
+ANTHROPIC_MODELS = [ln.strip() for ln in _ANTHROPIC_MODELS.splitlines() if ln.strip()]
 
 # Mapping of model aliases to their canonical names
 MODEL_ALIASES = {
