@@ -11,7 +11,7 @@ import pyperclip
 from PIL import Image, ImageGrab
 
 from aider import models, prompts, voice
-from aider.format_settings import format_settings, scrub_sensitive_info
+from aider.format_settings import format_settings
 from aider.help import Help, install_help_extra
 from aider.llm import litellm
 from aider.run_cmd import run_cmd
