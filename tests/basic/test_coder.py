@@ -193,6 +193,43 @@ class TestCoder(unittest.TestCase):
             # Assert that abs_fnames is still empty (file not added)
             self.assertEqual(coder.abs_fnames, set())
 
+    def test_check_for_file_mentions_with_mocked_confirm(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(pretty=False)
+            coder = Coder.create(self.GPT35, None, io)
+
+            # Mock get_file_mentions to return two file names
+            coder.get_file_mentions = MagicMock(return_value=["file1.txt", "file2.txt"])
+
+            # Mock confirm_ask to return False for the first call and True for the second
+            io.confirm_ask = MagicMock(side_effect=[False, True])
+
+            # First call to check_for_file_mentions
+            coder.check_for_file_mentions("Please check file1.txt and file2.txt")
+
+            # Assert that confirm_ask was called twice
+            self.assertEqual(io.confirm_ask.call_count, 2)
+
+            # Assert that only file2.txt was added to abs_fnames
+            self.assertEqual(len(coder.abs_fnames), 1)
+            self.assertIn("file2.txt", str(coder.abs_fnames))
+
+            # Reset the mock
+            io.confirm_ask.reset_mock()
+
+            # Second call to check_for_file_mentions
+            coder.check_for_file_mentions("Please check file1.txt and file2.txt again")
+
+            # Assert that confirm_ask was called only once (for file1.txt)
+            self.assertEqual(io.confirm_ask.call_count, 1)
+
+            # Assert that abs_fnames still contains only file2.txt
+            self.assertEqual(len(coder.abs_fnames), 1)
+            self.assertIn("file2.txt", str(coder.abs_fnames))
+
+            # Assert that file1.txt is in ignore_mentions
+            self.assertIn("file1.txt", coder.ignore_mentions)
+
     def test_check_for_subdir_mention(self):
         with GitTemporaryDirectory():
             io = InputOutput(pretty=False, yes=True)
