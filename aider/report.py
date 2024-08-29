@@ -23,17 +23,27 @@ def report_github_issue(issue_text, title=None):
     params["title"] = title
     issue_url = f"{base_url}?{urllib.parse.urlencode(params)}"
 
-    try:
-        print("Attempting to open the issue URL in your default web browser...")
-        if webbrowser.open(issue_url):
-            print("Browser window should be opened.")
-        else:
-            print("Unable to open browser window automatically.")
-    except Exception:
-        print()
-        print("Please use this URL to file a GitHub issue:")
-        print()
-        print(issue_url)
+    print("\nIssue Title:")
+    print(title)
+    print("\nIssue Body:")
+    print(issue_text)
+    print("\nDo you want to open this issue in your browser? (y/n)")
+    confirmation = input().strip().lower()
+
+    if confirmation == 'y':
+        try:
+            print("Attempting to open the issue URL in your default web browser...")
+            if webbrowser.open(issue_url):
+                print("Browser window should be opened.")
+            else:
+                print("Unable to open browser window automatically.")
+        except Exception:
+            print()
+            print("Please use this URL to file a GitHub issue:")
+            print()
+            print(issue_url)
+    else:
+        print("Issue creation cancelled.")
 
 
 if __name__ == "__main__":
