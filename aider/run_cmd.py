@@ -3,6 +3,8 @@ import subprocess
 import sys
 from io import BytesIO
 
+import pexpect
+
 
 def run_cmd(command):
     import sys
@@ -10,9 +12,7 @@ def run_cmd(command):
     if not sys.stdin.isatty():
         return run_cmd_subprocess(command)
 
-    try:
-        import pexpect  # noqa: F401
-    except ImportError:
+    if hasattr(pexpect, "spawn"):
         return run_cmd_subprocess(command)
 
     return run_cmd_pexpect(command)

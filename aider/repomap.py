@@ -14,7 +14,6 @@ from diskcache import Cache
 from grep_ast import TreeContext, filename_to_lang
 from pygments.lexers import guess_lexer_for_filename
 from pygments.token import Token
-from pygments.util import ClassNotFound
 from tqdm import tqdm
 
 from aider.dump import dump
@@ -253,7 +252,7 @@ class RepoMap:
 
         try:
             lexer = guess_lexer_for_filename(fname, code)
-        except ClassNotFound:
+        except Exception:  # On Windows, bad ref to time.clock which is deprecated
             return
 
         tokens = list(lexer.get_tokens(code))

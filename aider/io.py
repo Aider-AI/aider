@@ -15,7 +15,6 @@ from prompt_toolkit.shortcuts import CompleteStyle, PromptSession
 from prompt_toolkit.styles import Style
 from pygments.lexers import MarkdownLexer, guess_lexer_for_filename
 from pygments.token import Token
-from pygments.util import ClassNotFound
 from rich.console import Console
 from rich.style import Style as RichStyle
 from rich.text import Text
@@ -83,7 +82,7 @@ class AutoCompleter(Completer):
                 continue
             try:
                 lexer = guess_lexer_for_filename(fname, content)
-            except ClassNotFound:
+            except Exception:  # On Windows, bad ref to time.clock which is deprecated
                 continue
             tokens = list(lexer.get_tokens(content))
             self.words.update(
