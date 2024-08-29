@@ -27,7 +27,7 @@ Adjust the files added to the chat as you go: `/drop` files that don't need any 
 
 ## Creating new files
 
-If you want aider to create a new file, add it to the repository first with `/add <file>`, so aider knows this file exists and will write to it. Without this, aider might write the changes to an existing files, even when explicitly asked not to do this.
+If you want aider to create a new file, add it to the repository first with `/add <file>`, so aider knows this file exists and will write to it. Without this, aider might write the changes to an existing file, even when explicitly asked not to do this.
 
 ## For complex changes, discuss a plan first
 
