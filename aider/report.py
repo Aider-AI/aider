@@ -65,7 +65,10 @@ def exception_handler(exc_type, exc_value, exc_traceback):
             parts = line.split('"')
             if len(parts) > 1:
                 full_path = parts[1]
-                basename = os.path.basename(full_path)
+                try:
+                    basename = os.path.basename(full_path)
+                except Exception:
+                    basename = full_path
                 line = line.replace(full_path, basename)
         tb_lines_with_basenames.append(line)
 
