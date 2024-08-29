@@ -1073,6 +1073,12 @@ class Commands:
         if repo_map:
             self.io.tool_output("The repo map has been refreshed, use /map to view it.")
 
+    def cmd_settings(self, args):
+        "Print out the current settings"
+        from aider.format_settings import format_settings
+        settings = format_settings(self.parser, self.args)
+        self.io.tool_output(settings)
+
 
 def expand_subdir(file_path):
     file_path = Path(file_path)
