@@ -529,7 +529,9 @@ class Commands:
                 # Handle absolute paths
                 raw_matched_files = [Path(pattern)]
             else:
-                raw_matched_files = list(Path(self.coder.root).glob(pattern))
+                raw_matched_files = list(
+                    Path(self.coder.root).glob(pattern)
+                )
         except ValueError as err:
             self.io.tool_error(f"Error matching {pattern}: {err}")
             raw_matched_files = []
@@ -539,9 +541,9 @@ class Commands:
             matched_files += expand_subdir(fn)
 
         matched_files = [
-            str(Path(fn).relative_to(self.coder.root))
+            fn.relative_to(self.coder.root)
             for fn in matched_files
-            if Path(fn).is_relative_to(self.coder.root)
+            if fn.is_relative_to(self.coder.root)
         ]
 
         # if repo, filter against it
@@ -554,8 +556,6 @@ class Commands:
 
     def cmd_add(self, args):
         "Add files to the chat so aider can edit them or review them in detail"
-
-        added_fnames = []
 
         all_matched_files = set()
 
@@ -618,7 +618,6 @@ class Commands:
                     self.io.tool_output(
                         f"Moved {matched_file} from read-only to editable files in the chat"
                     )
-                    added_fnames.append(matched_file)
                 else:
                     self.io.tool_error(
                         f"Cannot add {matched_file} as it's not part of the repository"
@@ -637,7 +636,6 @@ class Commands:
                     self.coder.abs_fnames.add(abs_file_path)
                     self.io.tool_output(f"Added {matched_file} to the chat")
                     self.coder.check_added_files()
-                    added_fnames.append(matched_file)
 
     def completions_drop(self):
         files = self.coder.get_inchat_relative_files()
@@ -1081,7 +1079,6 @@ class Commands:
 
 
 def expand_subdir(file_path):
-    file_path = Path(file_path)
     if file_path.is_file():
         yield file_path
         return
@@ -1089,7 +1086,7 @@ def expand_subdir(file_path):
     if file_path.is_dir():
         for file in file_path.rglob("*"):
             if file.is_file():
-                yield str(file)
+                yield file
 
 
 def parse_quoted_filenames(args):
