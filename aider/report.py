@@ -58,7 +58,7 @@ def exception_handler(exc_type, exc_value, exc_traceback):
     # Find the first non-frozen frame
     while exc_traceback:
         filename = exc_traceback.tb_frame.f_code.co_filename
-        if not filename.startswith('<frozen '):
+        if not filename.startswith("<frozen "):
             break
         exc_traceback = exc_traceback.tb_next
 
