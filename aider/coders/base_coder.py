@@ -1315,7 +1315,7 @@ class Coder:
             if len(rel_fnames) == 1 and fname in words:
                 mentioned_rel_fnames.add(rel_fnames[0])
 
-        return mentioned_rel_fnames
+        return set(mentioned_rel_fnames)
 
     def check_for_file_mentions(self, content):
         mentioned_rel_fnames = self.get_file_mentions(content)
