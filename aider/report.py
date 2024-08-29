@@ -85,7 +85,10 @@ def exception_handler(exc_type, exc_value, exc_traceback):
     # Get the filename and line number from the innermost frame
     filename = innermost_tb.tb_frame.f_code.co_filename
     line_number = innermost_tb.tb_lineno
-    basename = os.path.basename(filename)
+    try:
+        basename = os.path.basename(filename)
+    except Exception:
+        basename = filename
 
     # Get the exception type name
     exception_type = exc_type.__name__
