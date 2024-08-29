@@ -1205,7 +1205,7 @@ class Coder:
             output_tokens = self.main_model.token_count(self.partial_response_content)
         max_output_tokens = self.main_model.info.get("max_output_tokens") or 0
 
-        input_tokens = self.main_model.token_count(self.format_messages())
+        input_tokens = self.main_model.token_count(self.format_messages().all_messages())
         max_input_tokens = self.main_model.info.get("max_input_tokens") or 0
 
         total_tokens = input_tokens + output_tokens
