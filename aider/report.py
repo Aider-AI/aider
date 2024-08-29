@@ -7,6 +7,8 @@ import webbrowser
 from aider import __version__
 from aider.urls import github_issues
 
+FENCE = "```"
+
 
 def report_github_issue(issue_text, title=None):
     """
@@ -93,7 +95,7 @@ def exception_handler(exc_type, exc_value, exc_traceback):
     exception_type = exc_type.__name__
 
     # Prepare the issue text
-    issue_text = f"An uncaught exception occurred:\n\n```\n{tb_text}\n```"
+    issue_text = f"An uncaught exception occurred:\n\n{FENCE}\n{tb_text}\n{FENCE}"
 
     # Prepare the title
     title = f"Uncaught {exception_type} in {basename} line {line_number}"
