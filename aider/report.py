@@ -7,7 +7,7 @@ import webbrowser
 from aider import __version__
 from aider.urls import github_issues
 
-FENCE = "```"
+FENCE = "`"*3
 
 
 def report_github_issue(issue_text, title=None):
