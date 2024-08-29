@@ -1076,6 +1076,7 @@ class Commands:
     def cmd_settings(self, args):
         "Print out the current settings"
         from aider.format_settings import format_settings
+
         settings = format_settings(self.parser, self.args)
         self.io.tool_output(settings)
 
