@@ -199,13 +199,13 @@ class TestCoder(unittest.TestCase):
             coder = Coder.create(self.GPT35, None, io)
 
             # Mock get_file_mentions to return two file names
-            coder.get_file_mentions = MagicMock(return_value=["file1.txt", "file2.txt"])
+            coder.get_file_mentions = MagicMock(return_value=set(["file1.txt", "file2.txt"]))
 
             # Mock confirm_ask to return False for the first call and True for the second
-            io.confirm_ask = MagicMock(side_effect=[False, True])
+            io.confirm_ask = MagicMock(side_effect=[False, True, True])
 
             # First call to check_for_file_mentions
-            coder.check_for_file_mentions("Please check file1.txt and file2.txt")
+            coder.check_for_file_mentions("Please check file1.txt for the info")
 
             # Assert that confirm_ask was called twice
             self.assertEqual(io.confirm_ask.call_count, 2)

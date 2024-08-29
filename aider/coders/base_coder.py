@@ -1327,7 +1327,7 @@ class Coder:
 
         added_fnames = []
         group = ConfirmGroup(new_mentions)
-        for rel_fname in new_mentions:
+        for rel_fname in sorted(new_mentions):
             if self.io.confirm_ask(f"Add {rel_fname} to the chat?", group=group):
                 self.add_rel_fname(rel_fname)
                 added_fnames.append(rel_fname)
