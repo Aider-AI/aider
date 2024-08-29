@@ -7,7 +7,7 @@ import webbrowser
 from aider import __version__
 from aider.urls import github_issues
 
-FENCE = "`"*3
+FENCE = "`" * 3
 
 
 def report_github_issue(issue_text, title=None):
@@ -31,7 +31,7 @@ def report_github_issue(issue_text, title=None):
     print(issue_text.strip())
     print()
     print("Please consider reporting this bug to help improve aider!")
-    prompt = "Report this as a GitHub Issue using your browser? (Y/n) "
+    prompt = "Open a GitHub Issue pre-filled with the above error in your browser? (Y/n) "
     confirmation = input(prompt).strip().lower()
 
     yes = not confirmation or confirmation.startswith("y")
