@@ -71,7 +71,7 @@ def report_uncaught_exceptions():
     sys.excepthook = exception_handler
 
 
-if __name__ == "__main__":
+def main():
     title = None
     if len(sys.argv) > 2:
         # Use the first command-line argument as the title and the second as the issue text
@@ -90,3 +90,6 @@ if __name__ == "__main__":
         issue_text = sys.stdin.read().strip()
 
     report_github_issue(issue_text, title)
+
+if __name__ == "__main__":
+    main()
