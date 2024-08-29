@@ -1,0 +1,6 @@
+-c ../requirements.txt
+
+playwright
+
+# requirement-help and requirements-playwright choose different versions
+greenlet==3.0.3
