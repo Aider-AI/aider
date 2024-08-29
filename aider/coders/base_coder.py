@@ -1327,6 +1327,8 @@ class Coder:
             if self.io.confirm_ask(f"Add {rel_fname} to the chat?", group=group):
                 self.add_rel_fname(rel_fname)
                 added_fnames.append(rel_fname)
+            else:
+                self.ignore_mentions.add(rel_fname)
 
         if added_fnames:
             return prompts.added_files.format(fnames=", ".join(added_fnames))
