@@ -75,10 +75,11 @@ You could then run aider in repo-A and
 use `/read ../path/to/repo-B/map.md` to share
 a high level map of the other repo.
 - You can use aider to write documentation about a repo.
-Inside repo-B, you could run `aider docs.md`
+Inside each repo, you could run `aider docs.md`
 and work with aider to write some markdown docs.
-You can then `/read ../path/to/repo-B/docs.md` those docs in while using aider to
-edit repo-A.
+Then while using aider to edit repo-A
+you can then `/read ../path/to/repo-B/docs.md` to
+read in those docs from the other repo.
 
 
 ## How can I run aider locally from source code?
