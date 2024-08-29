@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
+import time
 
 from aider.commands import Commands
 from aider.io import InputOutput
@@ -8,11 +9,19 @@ from aider.scrape import Scraper
 
 class TestScrape(unittest.TestCase):
     def test_scrape_self_signed_ssl(self):
+        def scrape_with_retries(scraper, url, max_retries=5, delay=0.5):
+            for _ in range(max_retries):
+                result = scraper.scrape(url)
+                if result is not None:
+                    return result
+                time.sleep(delay)
+            return None
+
         # Test with SSL verification
         scraper_verify = Scraper(
             print_error=MagicMock(), playwright_available=True, verify_ssl=True
         )
-        result_verify = scraper_verify.scrape("https://self-signed.badssl.com")
+        result_verify = scrape_with_retries(scraper_verify, "https://self-signed.badssl.com")
         self.assertIsNone(result_verify)
         scraper_verify.print_error.assert_called()
 
@@ -20,7 +29,7 @@ class TestScrape(unittest.TestCase):
         scraper_no_verify = Scraper(
             print_error=MagicMock(), playwright_available=True, verify_ssl=False
         )
-        result_no_verify = scraper_no_verify.scrape("https://self-signed.badssl.com")
+        result_no_verify = scrape_with_retries(scraper_no_verify, "https://self-signed.badssl.com")
         self.assertIsNotNone(result_no_verify)
         self.assertIn("self-signed", result_no_verify)
         scraper_no_verify.print_error.assert_not_called()
