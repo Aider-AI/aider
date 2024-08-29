@@ -61,15 +61,15 @@ def exception_handler(exc_type, exc_value, exc_traceback):
     # Replace full paths with basenames in the traceback
     tb_lines_with_basenames = []
     for line in tb_lines:
-        if "File " in line:
-            parts = line.split('"')
-            if len(parts) > 1:
-                full_path = parts[1]
-                try:
+        try:
+            if "File " in line:
+                parts = line.split('"')
+                if len(parts) > 1:
+                    full_path = parts[1]
                     basename = os.path.basename(full_path)
-                except Exception:
-                    basename = full_path
-                line = line.replace(full_path, basename)
+                    line = line.replace(full_path, basename)
+        except Exception:
+            pass
         tb_lines_with_basenames.append(line)
 
     tb_text = "".join(tb_lines_with_basenames)
@@ -83,7 +83,10 @@ def exception_handler(exc_type, exc_value, exc_traceback):
 
     # Get the filename and line number
     line_number = exc_traceback.tb_lineno
-    basename = os.path.basename(filename)
+    try:
+        basename = os.path.basename(filename)
+    except Exception:
+        basename = filename
 
     # Get the exception type name
     exception_type = exc_type.__name__
