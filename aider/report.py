@@ -40,15 +40,16 @@ def report_github_issue(issue_text, title=None):
     try:
         if webbrowser.open(issue_url):
             print("Browser window should be opened.")
-            return
     except Exception:
         pass
 
     print()
-    print("Unable to open browser window automatically.")
-    print("Please use this URL to file a GitHub issue:")
+    print()
+    print("You can also use this URL to file the GitHub Issue:")
     print()
     print(issue_url)
+    print()
+    print()
 
 
 def exception_handler(exc_type, exc_value, exc_traceback):
