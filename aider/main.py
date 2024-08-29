@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 from prompt_toolkit.enums import EditingMode
 
 from aider import __version__, models, utils
+from aider.format_settings import format_settings
 from aider.args import get_parser
 from aider.coders import Coder
 from aider.commands import Commands, SwitchCoder
@@ -131,22 +132,6 @@ def check_gitignore(git_root, io, ask=True):
 
     io.tool_output(f"Added {pat} to .gitignore")
 
-
-def format_settings(parser, args):
-    show = scrub_sensitive_info(args, parser.format_values())
-    # clean up the headings for consistency w/ new lines
-    heading_env = "Environment Variables:"
-    heading_defaults = "Defaults:"
-    if heading_env in show:
-        show = show.replace(heading_env, "\n" + heading_env)
-        show = show.replace(heading_defaults, "\n" + heading_defaults)
-    show += "\n"
-    show += "Option settings:\n"
-    for arg, val in sorted(vars(args).items()):
-        if val:
-            val = scrub_sensitive_info(args, str(val))
-        show += f"  - {arg}: {val}\n"  # noqa: E221
-    return show
 
 
 def scrub_sensitive_info(args, text):
