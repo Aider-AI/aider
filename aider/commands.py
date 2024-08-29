@@ -29,9 +29,10 @@ class Commands:
     voice = None
     scraper = None
 
-    def __init__(self, io, coder, voice_language=None, verify_ssl=True, args=None):
+    def __init__(self, io, coder, voice_language=None, verify_ssl=True, args=None, parser=None):
         self.io = io
         self.coder = coder
+        self.parser = parser
 
         self.verify_ssl = verify_ssl
         if voice_language == "auto":
