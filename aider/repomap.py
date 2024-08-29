@@ -25,7 +25,7 @@ from aider.waiting import Spinner
 warnings.simplefilter("ignore", category=FutureWarning)
 from grep_ast.tsl import USING_TSL_PACK, get_language, get_parser  # noqa: E402
 
-Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
+Tag = namedtuple("Tag", ("rel_fname", "fname", "line", "name", "kind"))
 
 
 SQLITE_ERRORS = (sqlite3.OperationalError, sqlite3.DatabaseError, OSError)
