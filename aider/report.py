@@ -116,6 +116,7 @@ def report_uncaught_exceptions():
 
 def main():
     report_uncaught_exceptions()
+
     raise ValueError("boo")
 
     title = None
