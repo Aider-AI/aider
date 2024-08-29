@@ -289,6 +289,7 @@ def register_litellm_models(git_root, model_metadata_fname, io, verbose=False):
 
 def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
     from aider.report import report_uncaught_exceptions
+
     report_uncaught_exceptions()
 
     if argv is None:
