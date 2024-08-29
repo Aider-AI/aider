@@ -77,19 +77,15 @@ def exception_handler(exc_type, exc_value, exc_traceback):
 
     tb_text = "".join(tb_lines_with_basenames)
 
-    # Find the first non-frozen frame
-    while exc_traceback:
-        filename = exc_traceback.tb_frame.f_code.co_filename
-        if not filename.startswith("<frozen "):
-            break
-        exc_traceback = exc_traceback.tb_next
+    # Find the innermost frame
+    innermost_tb = exc_traceback
+    while innermost_tb.tb_next:
+        innermost_tb = innermost_tb.tb_next
 
-    # Get the filename and line number
-    line_number = exc_traceback.tb_lineno
-    try:
-        basename = os.path.basename(filename)
-    except Exception:
-        basename = filename
+    # Get the filename and line number from the innermost frame
+    filename = innermost_tb.tb_frame.f_code.co_filename
+    line_number = innermost_tb.tb_lineno
+    basename = os.path.basename(filename)
 
     # Get the exception type name
     exception_type = exc_type.__name__
