@@ -522,7 +522,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         except FileNotFoundError:
             pass
 
-    commands = Commands(io, None, verify_ssl=args.verify_ssl)
+    commands = Commands(io, None, verify_ssl=args.verify_ssl, args=args)
 
     summarizer = ChatSummary(
         [main_model.weak_model, main_model],

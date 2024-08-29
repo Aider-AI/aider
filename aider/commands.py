@@ -29,7 +29,7 @@ class Commands:
     voice = None
     scraper = None
 
-    def __init__(self, io, coder, voice_language=None, verify_ssl=True):
+    def __init__(self, io, coder, voice_language=None, verify_ssl=True, args=None):
         self.io = io
         self.coder = coder
 
