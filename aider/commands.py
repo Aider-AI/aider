@@ -33,6 +33,7 @@ class Commands:
         self.io = io
         self.coder = coder
         self.parser = parser
+        self.args = args
 
         self.verify_ssl = verify_ssl
         if voice_language == "auto":
