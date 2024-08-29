@@ -1,6 +1,6 @@
+import time
 import unittest
 from unittest.mock import MagicMock
-import time
 
 from aider.commands import Commands
 from aider.io import InputOutput
