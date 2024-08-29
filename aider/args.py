@@ -511,6 +511,7 @@ def get_parser(default_config_files, git_root):
     )
     group.add_argument(
         "--upgrade",
+        "--update",
         action="store_true",
         help="Upgrade aider to the latest version from PyPI",
         default=False,
