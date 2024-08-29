@@ -28,6 +28,7 @@ def report_github_issue(issue_text, title=None):
     print(f"\n# {title}\n")
     print(issue_text.strip())
     print()
+    print("Please consider reporting this bug to help improve aider!")
     prompt = "Report this as a GitHub Issue using your browser? (Y/n) "
     confirmation = input(prompt).strip().lower()
 
@@ -51,6 +52,9 @@ def report_github_issue(issue_text, title=None):
 
 
 def exception_handler(exc_type, exc_value, exc_traceback):
+    # We don't want any more exceptions
+    sys.excepthook = None
+
     # Format the traceback
     tb_lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
     tb_text = "".join(tb_lines)
