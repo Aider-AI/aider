@@ -1323,9 +1323,10 @@ class Coder:
         if not mentioned_rel_fnames:
             return
 
+        new_mentions = mentioned_rel_fnames - self.ignore_mentions
         added_fnames = []
-        group = ConfirmGroup(mentioned_rel_fnames - self.ignore_mentions)
-        for rel_fname in mentioned_rel_fnames - self.ignore_mentions:
+        group = ConfirmGroup(new_mentions)
+        for rel_fname in new_mentions:
             if self.io.confirm_ask(f"Add {rel_fname} to the chat?", group=group):
                 self.add_rel_fname(rel_fname)
                 added_fnames.append(rel_fname)
