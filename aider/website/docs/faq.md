@@ -59,23 +59,46 @@ to use for ignore patterns.
 You might have a few of these handy for when you want to work on
 frontend, backend, etc portions of your repo.
 
+## Can I use aider with multiple git repos at once?
+
+Currently aider can only work with one repo at a time.
+
+There are some things you can try if you need to work with
+multiple interrelated repos:
+
+- You can run aider in repo-A where you need to make a change
+and use `/read` to add some files read-only from another repo-B.
+This can let aider see key functions or docs from the other repo.
+- You can run `aider --show-repo-map > map.md` within each
+repo to create repo maps.
+You could then run aider in repo-A and 
+use `/read ../path/to/repo-B/map.md` to share
+a high level map of the other repo.
+- You can use aider to write documentation about a repo.
+Inside repo-B, you could run `aider docs.md`
+and work with aider to write some markdown docs.
+You can then `/read ../path/to/repo-B/docs.md` those docs in while using aider to
+edit repo-A.
+
+
 ## How can I run aider locally from source code?
 
 To run the project locally, follow these steps:
 
 ```
-# Clone the repository:
+# Clone the repository
 git clone git@github.com:paul-gauthier/aider.git
 
-# Navigate to the project directory:
+# Navigate to the project directory
 cd aider
 
 # It's recommended to make a virtual environment
 
-# Install the dependencies listed in the `requirements.txt` file:
+# Install aider in editable/development mode, 
+# so it runs from the latest copy of these source files
 python -m pip install -e .
 
-# Run the local version of Aider:
+# Run the local version of aider
 python -m aider
 ```
 
