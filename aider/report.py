@@ -1,9 +1,12 @@
 import sys
 import urllib.parse
 import webbrowser
+from aider import __version__
 
 
 def report_github_issue(issue_text, title=None):
+    version_info = f"Aider version: {__version__}\n\n"
+    issue_text = version_info + issue_text
     """
     Compose a URL to open a new GitHub issue with the given text prefilled,
     and attempt to launch it in the default web browser.
