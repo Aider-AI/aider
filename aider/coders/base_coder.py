@@ -1321,14 +1321,15 @@ class Coder:
         if not mentioned_rel_fnames:
             return
 
-        add_files = "\n".join(mentioned_rel_fnames) + "\n"
-        if not self.io.confirm_ask("Add these files to the chat?", subject=add_files):
-            return
-
+        added_fnames = []
+        group = ConfirmGroup(mentioned_rel_fnames)
         for rel_fname in mentioned_rel_fnames:
-            self.add_rel_fname(rel_fname)
+            if self.io.confirm_ask(f"Add {rel_fname} to the chat?", group=group):
+                self.add_rel_fname(rel_fname)
+                added_fnames.append(rel_fname)
 
-        return prompts.added_files.format(fnames=", ".join(mentioned_rel_fnames))
+        if added_fnames:
+            return prompts.added_files.format(fnames=", ".join(added_fnames))
 
     def send(self, messages, model=None, functions=None):
         if not model:
