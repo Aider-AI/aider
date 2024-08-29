@@ -1,6 +1,7 @@
 import sys
 import urllib.parse
 import webbrowser
+
 from aider import __version__
 
 
@@ -33,7 +34,6 @@ def report_github_issue(issue_text, title=None):
         print("Please use this URL to file a GitHub issue:")
         print()
         print(issue_url)
-
 
 
 if __name__ == "__main__":
