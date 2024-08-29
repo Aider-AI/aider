@@ -82,8 +82,10 @@ class AutoCompleter(Completer):
                 continue
             try:
                 lexer = guess_lexer_for_filename(fname, content)
-            except Exception:  # On Windows, bad ref to time.clock which is deprecated
+            except Exception as ex:  # On Windows, bad ref to time.clock which is deprecated
+                self.tool_error(f"Error lexing {fname}: {ex}")
                 continue
+
             tokens = list(lexer.get_tokens(content))
             self.words.update(
                 (token[1], f"`{token[1]}`") for token in tokens if token[0] in Token.Name

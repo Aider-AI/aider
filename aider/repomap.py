@@ -252,7 +252,8 @@ class RepoMap:
 
         try:
             lexer = guess_lexer_for_filename(fname, code)
-        except Exception:  # On Windows, bad ref to time.clock which is deprecated
+        except Exception as ex:  # On Windows, bad ref to time.clock which is deprecated?
+            self.io.tool_error(f"Error lexing {fname}: {ex}")
             return
 
         tokens = list(lexer.get_tokens(code))
