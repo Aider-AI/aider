@@ -114,10 +114,17 @@ def report_uncaught_exceptions():
     sys.excepthook = exception_handler
 
 
+def dummy_function1():
+    def dummy_function2():
+        def dummy_function3():
+            raise ValueError("boo")
+        dummy_function3()
+    dummy_function2()
+
 def main():
     report_uncaught_exceptions()
 
-    raise ValueError("boo")
+    dummy_function1()
 
     title = None
     if len(sys.argv) > 2:
