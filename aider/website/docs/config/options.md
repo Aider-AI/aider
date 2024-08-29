@@ -483,6 +483,9 @@ Environment variable: `AIDER_INSTALL_MAIN_BRANCH`
 Upgrade aider to the latest version from PyPI  
 Default: False  
 Environment variable: `AIDER_UPGRADE`  
+Aliases:
+  - `--upgrade`
+  - `--update`
 
 ### `--apply FILE`
 Apply the changes from the given file instead of running the chat (debug)  
