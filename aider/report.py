@@ -30,7 +30,7 @@ def report_github_issue(issue_text, title=None):
     print("\nDo you want to open this issue in your browser? (y/n)")
     confirmation = input().strip().lower()
 
-    if confirmation == 'y':
+    if confirmation == "y":
         try:
             print("Attempting to open the issue URL in your default web browser...")
             if webbrowser.open(issue_url):
