@@ -13,7 +13,7 @@ from aider import __version__, models, utils
 from aider.args import get_parser
 from aider.coders import Coder
 from aider.commands import Commands, SwitchCoder
-from aider.format_settings import format_settings
+from aider.format_settings import format_settings, scrub_sensitive_info
 from aider.history import ChatSummary
 from aider.io import InputOutput
 from aider.llm import litellm  # noqa: F401; properly init litellm on launch
@@ -131,17 +131,6 @@ def check_gitignore(git_root, io, ask=True):
     io.write_text(gitignore_file, content)
 
     io.tool_output(f"Added {pat} to .gitignore")
-
-
-def scrub_sensitive_info(args, text):
-    # Replace sensitive information with last 4 characters
-    if text and args.openai_api_key:
-        last_4 = args.openai_api_key[-4:]
-        text = text.replace(args.openai_api_key, f"...{last_4}")
-    if text and args.anthropic_api_key:
-        last_4 = args.anthropic_api_key[-4:]
-        text = text.replace(args.anthropic_api_key, f"...{last_4}")
-    return text
 
 
 def check_streamlit_install(io):

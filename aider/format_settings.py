@@ -1,4 +1,12 @@
-from aider.utils import scrub_sensitive_info
+def scrub_sensitive_info(args, text):
+    # Replace sensitive information with last 4 characters
+    if text and args.openai_api_key:
+        last_4 = args.openai_api_key[-4:]
+        text = text.replace(args.openai_api_key, f"...{last_4}")
+    if text and args.anthropic_api_key:
+        last_4 = args.anthropic_api_key[-4:]
+        text = text.replace(args.anthropic_api_key, f"...{last_4}")
+    return text
 
 
 def format_settings(parser, args):
