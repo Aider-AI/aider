@@ -1,6 +1,7 @@
 import sys
 import urllib.parse
 import webbrowser
+import traceback
 
 from aider import __version__
 
@@ -46,6 +47,28 @@ def report_github_issue(issue_text, title=None):
     print("Please use this URL to file a GitHub issue:")
     print()
     print(issue_url)
+
+
+def exception_handler(exc_type, exc_value, exc_traceback):
+    # Format the traceback
+    tb_lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
+    tb_text = ''.join(tb_lines)
+
+    # Prepare the issue text
+    issue_text = f"An uncaught exception occurred:\n\n```\n{tb_text}\n```"
+
+    # Report the issue
+    report_github_issue(issue_text, title="Uncaught Exception")
+
+    # Call the default exception handler
+    sys.__excepthook__(exc_type, exc_value, exc_traceback)
+
+
+def report_uncaught_exceptions():
+    """
+    Set up the global exception handler to report uncaught exceptions.
+    """
+    sys.excepthook = exception_handler
 
 
 if __name__ == "__main__":
