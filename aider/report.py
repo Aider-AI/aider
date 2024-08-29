@@ -60,11 +60,14 @@ def exception_handler(exc_type, exc_value, exc_traceback):
     line_number = exc_traceback.tb_lineno
     basename = os.path.basename(filename)
 
+    # Get the exception type name
+    exception_type = exc_type.__name__
+
     # Prepare the issue text
     issue_text = f"An uncaught exception occurred:\n\n```\n{tb_text}\n```"
 
     # Prepare the title
-    title = f"Uncaught exception in {basename} line {line_number}"
+    title = f"Uncaught {exception_type} in {basename} line {line_number}"
 
     # Report the issue
     report_github_issue(issue_text, title=title)
