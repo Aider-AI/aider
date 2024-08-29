@@ -18,7 +18,7 @@ class TestUtils(unittest.TestCase):
 
     def test_find_filename(self):
         fence = ("```", "```")
-        valid_fnames = ["file1.py", "file2.py", "dir/file3.py", "\windows\__init__.py"]
+        valid_fnames = ["file1.py", "file2.py", "dir/file3.py", r"\windows\__init__.py"]
 
         # Test with filename on a single line
         lines = ["file1.py", "```"]
@@ -45,8 +45,8 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(eb.find_filename(lines, fence, valid_fnames), "file1.py")
 
         # Test with fuzzy matching
-        lines = ["\windows__init__.py", "```"]
-        self.assertEqual(eb.find_filename(lines, fence, valid_fnames), "\windows\__init__.py")
+        lines = [r"\windows__init__.py", "```"]
+        self.assertEqual(eb.find_filename(lines, fence, valid_fnames), r"\windows\__init__.py")
 
     # fuzzy logic disabled v0.11.2-dev
     def __test_replace_most_similar_chunk(self):
