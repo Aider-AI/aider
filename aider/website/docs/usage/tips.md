@@ -25,10 +25,6 @@ but be selective.
 Do them one at a time. 
 Adjust the files added to the chat as you go: `/drop` files that don't need any more changes, `/add` files that need changes for the next step.
 
-## Creating new files
-
-If you want aider to create a new file, add it to the repository first with `/add <file>`, so aider knows this file exists and will write to it. Without this, aider might write the changes to an existing files, even when explicitly asked not to do this.
-
 ## For complex changes, discuss a plan first
 
 Use the [`/ask` command](modes.html) to make a plan with aider.
@@ -43,6 +39,14 @@ Once you are happy with the approach, just say "go ahead" without the `/ask` pre
 - If aider is hopelessly stuck,
 just code the next step yourself and try having aider code some more after that.
 Take turns and pair program with aider.
+
+## Creating new files
+
+If you want aider to create a new file, add it to the repository first with `/add <file>`.
+This way aider knows this file exists and will write to it. 
+Otherwise, aider might write the changes to an existing file.
+This can happen even if you ask for a new file, as LLMs tend to focus a lot
+on the existing information in their contexts.
 
 ## Fixing bugs and errors
 
