@@ -1,8 +1,8 @@
+import os
 import sys
 import traceback
 import urllib.parse
 import webbrowser
-import os
 
 from aider import __version__
 
