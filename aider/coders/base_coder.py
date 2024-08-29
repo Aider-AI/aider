@@ -93,6 +93,7 @@ class Coder:
     cache_warming_thread = None
     num_cache_warming_pings = 0
     suggest_shell_commands = True
+    ignore_mentions = None
 
     @classmethod
     def create(
@@ -262,6 +263,7 @@ class Coder:
         self.aider_commit_hashes = set()
         self.rejected_urls = set()
         self.abs_root_path_cache = {}
+        self.ignore_mentions = set()
 
         self.suggest_shell_commands = suggest_shell_commands
 
@@ -1322,8 +1324,8 @@ class Coder:
             return
 
         added_fnames = []
-        group = ConfirmGroup(mentioned_rel_fnames)
-        for rel_fname in mentioned_rel_fnames:
+        group = ConfirmGroup(mentioned_rel_fnames - self.ignore_mentions)
+        for rel_fname in mentioned_rel_fnames - self.ignore_mentions:
             if self.io.confirm_ask(f"Add {rel_fname} to the chat?", group=group):
                 self.add_rel_fname(rel_fname)
                 added_fnames.append(rel_fname)
