@@ -57,7 +57,7 @@ def exception_handler(exc_type, exc_value, exc_traceback):
 
     # Format the traceback
     tb_lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
-    
+
     # Replace full paths with basenames in the traceback
     tb_lines_with_basenames = []
     for line in tb_lines:
@@ -68,7 +68,7 @@ def exception_handler(exc_type, exc_value, exc_traceback):
                 basename = os.path.basename(full_path)
                 line = line.replace(full_path, basename)
         tb_lines_with_basenames.append(line)
-    
+
     tb_text = "".join(tb_lines_with_basenames)
 
     # Find the first non-frozen frame
