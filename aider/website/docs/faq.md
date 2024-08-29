@@ -78,7 +78,7 @@ a high level map of the other repo.
 Inside each repo, you could run `aider docs.md`
 and work with aider to write some markdown docs.
 Then while using aider to edit repo-A
-you can then `/read ../path/to/repo-B/docs.md` to
+you can `/read ../path/to/repo-B/docs.md` to
 read in those docs from the other repo.
 
 
