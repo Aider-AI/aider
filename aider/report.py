@@ -55,8 +55,14 @@ def exception_handler(exc_type, exc_value, exc_traceback):
     tb_lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
     tb_text = "".join(tb_lines)
 
+    # Find the first non-frozen frame
+    while exc_traceback:
+        filename = exc_traceback.tb_frame.f_code.co_filename
+        if not filename.startswith('<frozen '):
+            break
+        exc_traceback = exc_traceback.tb_next
+
     # Get the filename and line number
-    filename = exc_traceback.tb_frame.f_code.co_filename
     line_number = exc_traceback.tb_lineno
     basename = os.path.basename(filename)
 
