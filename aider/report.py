@@ -2,6 +2,7 @@ import sys
 import traceback
 import urllib.parse
 import webbrowser
+import os
 
 from aider import __version__
 
@@ -54,11 +55,19 @@ def exception_handler(exc_type, exc_value, exc_traceback):
     tb_lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
     tb_text = "".join(tb_lines)
 
+    # Get the filename and line number
+    filename = exc_traceback.tb_frame.f_code.co_filename
+    line_number = exc_traceback.tb_lineno
+    basename = os.path.basename(filename)
+
     # Prepare the issue text
     issue_text = f"An uncaught exception occurred:\n\n```\n{tb_text}\n```"
 
+    # Prepare the title
+    title = f"Uncaught exception in {basename} line {line_number}"
+
     # Report the issue
-    report_github_issue(issue_text, title="Uncaught Exception")
+    report_github_issue(issue_text, title=title)
 
     # Call the default exception handler
     sys.__excepthook__(exc_type, exc_value, exc_traceback)
