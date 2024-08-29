@@ -29,7 +29,7 @@ def report_github_issue(issue_text, title=None):
             print("Browser window should be opened.")
         else:
             print("Unable to open browser window automatically.")
-    except Exception as e:
+    except Exception:
         print()
         print("Please use this URL to file a GitHub issue:")
         print()
