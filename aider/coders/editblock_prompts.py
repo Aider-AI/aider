@@ -164,12 +164,14 @@ Only create *SEARCH/REPLACE* blocks for files that the user has added to the cha
 
 To move code within a file, use 2 *SEARCH/REPLACE* blocks: 1 to delete it from its current location, 1 to insert it in the new location.
 
+Pay attention to which files the user wants you to edit, especially if they are asking you to create a new file.
+
 If you want to put code in a new file, use a *SEARCH/REPLACE block* with:
 - A new file path, including dir name if needed
 - An empty `SEARCH` section
 - The new file's contents in the `REPLACE` section
 
-To rename files which have been added to the chat, use shell commands.
+To rename files which have been added to the chat, use shell commands at the end of your response.
 
 {lazy_prompt}
 ONLY EVER RETURN CODE IN A *SEARCH/REPLACE BLOCK*!
