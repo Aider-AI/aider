@@ -6,8 +6,6 @@ import traceback
 import urllib.parse
 import webbrowser
 
-import pkg_resources
-
 from aider import __version__
 from aider.urls import github_issues
 
@@ -39,14 +37,6 @@ def get_git_info():
         return "Git information unavailable"
 
 
-def get_dependencies():
-    deps = [
-        f"{pkg.key}=={pkg.version}"
-        for pkg in pkg_resources.working_set
-        if pkg.key.lower() in ["openai", "tiktoken", "litellm"]  # Add other relevant packages
-    ]
-    return "Relevant installed packages:\n" + "\n".join(deps)
-
 
 def report_github_issue(issue_text, title=None):
     """
@@ -63,7 +53,6 @@ def report_github_issue(issue_text, title=None):
     python_info = get_python_info() + "\n"
     os_info = get_os_info() + "\n"
     git_info = get_git_info() + "\n"
-    dependencies = get_dependencies() + "\n"
 
     system_info = (
         version_info
@@ -72,7 +61,6 @@ def report_github_issue(issue_text, title=None):
         + python_info
         + os_info
         + git_info
-        + dependencies
         + "\n"
     )
 
