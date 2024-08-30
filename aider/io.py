@@ -545,5 +545,12 @@ class InputOutput:
         if not text.endswith("\n"):
             text += "\n"
         if self.chat_history_file is not None:
-            with self.chat_history_file.open("a", encoding=self.encoding) as f:
-                f.write(text)
+            try:
+                with self.chat_history_file.open("a", encoding=self.encoding) as f:
+                    f.write(text)
+            except PermissionError:
+                self.tool_error(
+                    f"Warning: Unable to write to chat history file {self.chat_history_file}."
+                    " Permission denied."
+                )
+                self.chat_history_file = None  # Disable further attempts to write
