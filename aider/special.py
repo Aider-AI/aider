@@ -209,9 +209,13 @@ def is_important(file_path):
     if file_name == "migrations" and os.path.isdir(file_path):
         return True
 
-    return file_name in IMPORTANT_FILES or any(
-        file_path.endswith(os.path.join("", name)) for name in IMPORTANT_FILES
-    )
+    # Check if the file_path matches any of the IMPORTANT_FILES
+    normalized_path = os.path.normpath(file_path)
+    for important_file in IMPORTANT_FILES:
+        if normalized_path.endswith(os.path.normpath(important_file)):
+            return True
+
+    return False
 
 
 def filter_important_files(file_paths):
