@@ -294,28 +294,26 @@ def register_litellm_models(git_root, model_metadata_fname, io, verbose=False):
         return 1
 
 
-def sanity_check_repo(repo):
+def sanity_check_repo(repo, io):
     if not repo:
         return True
 
     try:
         repo.get_tracked_files()
         return True
-    except UnableToCountRepoFiles as e:
-        pass
+    except UnableToCountRepoFiles as exc:
+        error_msg = str(exc)
 
-    error_msg = str(e)
+        if "version in (1, 2)" in error_msg:
+            io.tool_error("Aider only works with git repos with version number 1 or 2.")
+            io.tool_error("You may be able to convert your repo: git update-index --index-version=2")
+            io.tool_error("Or run aider --no-git to proceed without using git.")
+            io.tool_error("https://github.com/paul-gauthier/aider/issues/211")
+            return False
 
-    if "version in (1, 2)" in error_msg:
-        io.tool_error("Aider only works with git repos with version number 1 or 2.")
-        io.tool_error("You may be able to convert your repo: git update-index --index-version=2")
-        io.tool_error("Or run aider --no-git to proceed without using git.")
-        io.tool_error("https://github.com/paul-gauthier/aider/issues/211")
-        return
-
-    io.tool_error("Unable to read git repository, it may be corrupt?")
-    io.tool_error(error_msg)
-    return
+        io.tool_error("Unable to read git repository, it may be corrupt?")
+        io.tool_error(error_msg)
+        return False
 
 
 def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
@@ -528,7 +526,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         except FileNotFoundError:
             pass
 
-    if not sanity_check_repo(repo):
+    if not sanity_check_repo(repo, io):
         return 1
 
     commands = Commands(io, None, verify_ssl=args.verify_ssl, args=args, parser=parser)
