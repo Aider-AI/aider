@@ -28,11 +28,7 @@ def get_os_info():
 def get_git_info():
     try:
         git_version = subprocess.check_output(["git", "--version"]).decode().strip()
-        branch = (
-            subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).decode().strip()
-        )
-        commit = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip()
-        return f"Git version: {git_version}\nBranch: {branch}\nCommit: {commit}"
+        return f"Git version: {git_version}"
     except Exception:
         return "Git information unavailable"
 
