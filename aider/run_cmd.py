@@ -10,7 +10,12 @@ import pexpect
 def run_cmd(command):
     import sys
 
-    if False and sys.stdin.isatty() and hasattr(pexpect, "spawn") and platform.system() != "Windows":
+    if (
+        False
+        and sys.stdin.isatty()
+        and hasattr(pexpect, "spawn")
+        and platform.system() != "Windows"
+    ):
         return run_cmd_pexpect(command)
 
     return run_cmd_subprocess(command)
@@ -27,16 +32,16 @@ def run_cmd_subprocess(command):
             encoding=sys.stdout.encoding,
             errors="replace",
             bufsize=1,
-            universal_newlines=True
+            universal_newlines=True,
         )
 
         output = []
         for line in process.stdout:
-            print(line, end='')  # Print the line in real-time
+            print(line, end="")  # Print the line in real-time
             output.append(line)  # Store the line for later use
 
         process.wait()
-        return process.returncode, ''.join(output)
+        return process.returncode, "".join(output)
     except Exception as e:
         return 1, str(e)
 
