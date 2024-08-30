@@ -13,7 +13,7 @@ except subprocess.CalledProcessError:
 
 cog.out(f'git_hash = "{git_hash}"')
 ]]]"""
-git_hash = "42f3881"
+git_hash = "e891278"
 """[[[end]]]"""
 
 if "-dev" in __version__ and git_hash:
