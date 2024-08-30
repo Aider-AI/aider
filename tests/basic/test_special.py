@@ -1,6 +1,9 @@
 import os
+
 import pytest
-from aider.special import is_important, filter_important_files
+
+from aider.special import filter_important_files, is_important
+
 
 def test_is_important():
     # Test common important files
@@ -17,6 +20,7 @@ def test_is_important():
     assert not is_important("random_file.txt")
     assert not is_important("src/main.py")
     assert not is_important("tests/test_app.py")
+
 
 def test_filter_important_files():
     files = [
@@ -38,6 +42,7 @@ def test_filter_important_files():
         ".github/workflows/test.yml",
     }
 
+
 def test_is_important_case_sensitivity():
     # Test case sensitivity
     assert is_important("README.md")
@@ -45,22 +50,27 @@ def test_is_important_case_sensitivity():
     assert is_important(".gitignore")
     assert not is_important(".GITIGNORE")
 
+
 def test_is_important_with_paths():
     # Test with different path formats
     assert is_important("project/README.md")
     assert is_important("./README.md")
     assert is_important("/absolute/path/to/README.md")
 
-@pytest.mark.parametrize("file_path", [
-    "README",
-    "README.txt",
-    "README.rst",
-    "LICENSE",
-    "LICENSE.md",
-    "LICENSE.txt",
-    "Dockerfile",
-    "package.json",
-    "pyproject.toml",
-])
+
+@pytest.mark.parametrize(
+    "file_path",
+    [
+        "README",
+        "README.txt",
+        "README.rst",
+        "LICENSE",
+        "LICENSE.md",
+        "LICENSE.txt",
+        "Dockerfile",
+        "package.json",
+        "pyproject.toml",
+    ],
+)
 def test_is_important_various_files(file_path):
     assert is_important(file_path)
