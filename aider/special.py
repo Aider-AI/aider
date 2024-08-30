@@ -2,83 +2,200 @@ import os
 
 ROOT_IMPORTANT_FILES = [
     # Version Control
-    ".gitignore", ".gitattributes",
+    ".gitignore",
+    ".gitattributes",
     # Documentation
-    "README", "README.md", "README.txt", "README.rst",
-    "CONTRIBUTING", "CONTRIBUTING.md", "CONTRIBUTING.txt", "CONTRIBUTING.rst",
-    "LICENSE", "LICENSE.md", "LICENSE.txt",
-    "CHANGELOG", "CHANGELOG.md", "CHANGELOG.txt", "CHANGELOG.rst",
-    "SECURITY", "SECURITY.md", "SECURITY.txt",
+    "README",
+    "README.md",
+    "README.txt",
+    "README.rst",
+    "CONTRIBUTING",
+    "CONTRIBUTING.md",
+    "CONTRIBUTING.txt",
+    "CONTRIBUTING.rst",
+    "LICENSE",
+    "LICENSE.md",
+    "LICENSE.txt",
+    "CHANGELOG",
+    "CHANGELOG.md",
+    "CHANGELOG.txt",
+    "CHANGELOG.rst",
+    "SECURITY",
+    "SECURITY.md",
+    "SECURITY.txt",
     "CODEOWNERS",
     # Package Management and Dependencies
-    "requirements.txt", "Pipfile", "Pipfile.lock", "pyproject.toml",
-    "setup.py", "setup.cfg", "package.json", "package-lock.json",
-    "yarn.lock", "npm-shrinkwrap.json", "Gemfile", "Gemfile.lock",
-    "composer.json", "composer.lock", "pom.xml", "build.gradle",
-    "build.sbt", "go.mod", "go.sum", "Cargo.toml", "Cargo.lock",
-    "mix.exs", "rebar.config", "project.clj", "Podfile", "Cartfile",
-    "dub.json", "dub.sdl",
+    "requirements.txt",
+    "Pipfile",
+    "Pipfile.lock",
+    "pyproject.toml",
+    "setup.py",
+    "setup.cfg",
+    "package.json",
+    "package-lock.json",
+    "yarn.lock",
+    "npm-shrinkwrap.json",
+    "Gemfile",
+    "Gemfile.lock",
+    "composer.json",
+    "composer.lock",
+    "pom.xml",
+    "build.gradle",
+    "build.sbt",
+    "go.mod",
+    "go.sum",
+    "Cargo.toml",
+    "Cargo.lock",
+    "mix.exs",
+    "rebar.config",
+    "project.clj",
+    "Podfile",
+    "Cartfile",
+    "dub.json",
+    "dub.sdl",
     # Configuration and Settings
-    ".env", ".env.example", ".editorconfig", "tsconfig.json", "jsconfig.json",
-    ".babelrc", "babel.config.js", ".eslintrc", ".eslintignore", ".prettierrc",
-    ".stylelintrc", "tslint.json", ".pylintrc", ".flake8", ".rubocop.yml",
-    ".scalafmt.conf", ".dockerignore", ".gitpod.yml", "sonar-project.properties",
-    "renovate.json", "dependabot.yml", ".pre-commit-config.yaml", "mypy.ini",
-    "tox.ini", ".yamllint", "pyrightconfig.json",
+    ".env",
+    ".env.example",
+    ".editorconfig",
+    "tsconfig.json",
+    "jsconfig.json",
+    ".babelrc",
+    "babel.config.js",
+    ".eslintrc",
+    ".eslintignore",
+    ".prettierrc",
+    ".stylelintrc",
+    "tslint.json",
+    ".pylintrc",
+    ".flake8",
+    ".rubocop.yml",
+    ".scalafmt.conf",
+    ".dockerignore",
+    ".gitpod.yml",
+    "sonar-project.properties",
+    "renovate.json",
+    "dependabot.yml",
+    ".pre-commit-config.yaml",
+    "mypy.ini",
+    "tox.ini",
+    ".yamllint",
+    "pyrightconfig.json",
     # Build and Compilation
-    "webpack.config.js", "rollup.config.js", "parcel.config.js", "gulpfile.js",
-    "Gruntfile.js", "build.xml", "build.boot", "project.json", "build.cake",
+    "webpack.config.js",
+    "rollup.config.js",
+    "parcel.config.js",
+    "gulpfile.js",
+    "Gruntfile.js",
+    "build.xml",
+    "build.boot",
+    "project.json",
+    "build.cake",
     "MANIFEST.in",
     # Testing
-    "pytest.ini", "phpunit.xml", "karma.conf.js", "jest.config.js", "cypress.json",
-    ".nycrc", ".nycrc.json",
+    "pytest.ini",
+    "phpunit.xml",
+    "karma.conf.js",
+    "jest.config.js",
+    "cypress.json",
+    ".nycrc",
+    ".nycrc.json",
     # CI/CD
-    ".travis.yml", ".gitlab-ci.yml", "Jenkinsfile", "azure-pipelines.yml",
-    "bitbucket-pipelines.yml", "appveyor.yml", "circle.yml", ".circleci/config.yml",
-    ".github/dependabot.yml", "codecov.yml", ".coveragerc",
+    ".travis.yml",
+    ".gitlab-ci.yml",
+    "Jenkinsfile",
+    "azure-pipelines.yml",
+    "bitbucket-pipelines.yml",
+    "appveyor.yml",
+    "circle.yml",
+    ".circleci/config.yml",
+    ".github/dependabot.yml",
+    "codecov.yml",
+    ".coveragerc",
     # Docker and Containers
-    "Dockerfile", "docker-compose.yml", "docker-compose.override.yml",
+    "Dockerfile",
+    "docker-compose.yml",
+    "docker-compose.override.yml",
     # Cloud and Serverless
-    "serverless.yml", "firebase.json", "now.json", "netlify.toml", "vercel.json",
-    "app.yaml", "terraform.tf", "main.tf", "cloudformation.yaml", "cloudformation.json",
-    "ansible.cfg", "kubernetes.yaml", "k8s.yaml",
+    "serverless.yml",
+    "firebase.json",
+    "now.json",
+    "netlify.toml",
+    "vercel.json",
+    "app.yaml",
+    "terraform.tf",
+    "main.tf",
+    "cloudformation.yaml",
+    "cloudformation.json",
+    "ansible.cfg",
+    "kubernetes.yaml",
+    "k8s.yaml",
     # Database
-    "schema.sql", "liquibase.properties", "flyway.conf",
+    "schema.sql",
+    "liquibase.properties",
+    "flyway.conf",
     # Framework-specific
-    "next.config.js", "nuxt.config.js", "vue.config.js", "angular.json",
-    "gatsby-config.js", "gridsome.config.js",
+    "next.config.js",
+    "nuxt.config.js",
+    "vue.config.js",
+    "angular.json",
+    "gatsby-config.js",
+    "gridsome.config.js",
     # API Documentation
-    "swagger.yaml", "swagger.json", "openapi.yaml", "openapi.json",
+    "swagger.yaml",
+    "swagger.json",
+    "openapi.yaml",
+    "openapi.json",
     # Development environment
-    ".nvmrc", ".ruby-version", ".python-version", "Vagrantfile",
+    ".nvmrc",
+    ".ruby-version",
+    ".python-version",
+    "Vagrantfile",
     # Quality and metrics
-    ".codeclimate.yml", "codecov.yml",
+    ".codeclimate.yml",
+    "codecov.yml",
     # Documentation
-    "mkdocs.yml", "_config.yml", "book.toml", "readthedocs.yml", ".readthedocs.yaml",
+    "mkdocs.yml",
+    "_config.yml",
+    "book.toml",
+    "readthedocs.yml",
+    ".readthedocs.yaml",
     # Package registries
-    ".npmrc", ".yarnrc",
+    ".npmrc",
+    ".yarnrc",
     # Linting and formatting
-    ".isort.cfg", ".markdownlint.json", ".markdownlint.yaml",
+    ".isort.cfg",
+    ".markdownlint.json",
+    ".markdownlint.yaml",
     # Security
-    ".bandit", ".secrets.baseline",
+    ".bandit",
+    ".secrets.baseline",
     # Misc
-    ".pypirc", ".gitkeep", ".npmignore",
+    ".pypirc",
+    ".gitkeep",
+    ".npmignore",
 ]
 
 ANYWHERE_IMPORTANT_FILES = [
     # Build and Compilation
-    "Makefile", "CMakeLists.txt",
+    "Makefile",
+    "CMakeLists.txt",
     # Framework-specific
-    "manage.py", "settings.py",  # Django
-    "config/routes.rb", "Rakefile",  # Ruby on Rails
+    "manage.py",
+    "settings.py",  # Django
+    "config/routes.rb",
+    "Rakefile",  # Ruby on Rails
     # Language-specific
     "__init__.py",  # Python
-    "stack.yaml", "package.yaml",  # Haskell
+    "stack.yaml",
+    "package.yaml",  # Haskell
     ".htaccess",  # Apache
     ".bowerrc",  # Bower
     # IDE and Editor
-    ".vscode/settings.json", ".idea/workspace.xml", ".sublime-project",
-    ".vim", "_vimrc",
+    ".vscode/settings.json",
+    ".idea/workspace.xml",
+    ".sublime-project",
+    ".vim",
+    "_vimrc",
     # Testing
     "conftest.py",
     # Documentation
@@ -89,15 +206,18 @@ ANYWHERE_IMPORTANT_FILES = [
 NORMALIZED_ROOT_IMPORTANT_FILES = [os.path.normpath(path) for path in ROOT_IMPORTANT_FILES]
 NORMALIZED_ANYWHERE_IMPORTANT_FILES = [os.path.normpath(path) for path in ANYWHERE_IMPORTANT_FILES]
 
+
 def is_important(file_path):
     file_name = os.path.basename(file_path)
     dir_name = os.path.dirname(file_path)
     normalized_path = os.path.normpath(file_path)
 
     # Check for GitHub Actions workflow files
-    if (os.path.basename(dir_name) == "workflows"
+    if (
+        os.path.basename(dir_name) == "workflows"
         and os.path.basename(os.path.dirname(dir_name)) == ".github"
-        and file_name.endswith(".yml")):
+        and file_name.endswith(".yml")
+    ):
         return True
 
     # Check for IDE-specific directories
@@ -105,11 +225,17 @@ def is_important(file_path):
         return True
 
     # Check if the file is in the root directory and matches ROOT_IMPORTANT_FILES
-    if os.path.dirname(normalized_path) == '':
-        return any(normalized_path == important_file for important_file in NORMALIZED_ROOT_IMPORTANT_FILES)
+    if os.path.dirname(normalized_path) == "":
+        return any(
+            normalized_path == important_file for important_file in NORMALIZED_ROOT_IMPORTANT_FILES
+        )
 
     # Check if the file matches ANYWHERE_IMPORTANT_FILES
-    return any(normalized_path.endswith(os.sep + important_file) for important_file in NORMALIZED_ANYWHERE_IMPORTANT_FILES)
+    return any(
+        normalized_path.endswith(os.sep + important_file)
+        for important_file in NORMALIZED_ANYWHERE_IMPORTANT_FILES
+    )
+
 
 def filter_important_files(file_paths):
     """
