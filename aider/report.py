@@ -89,6 +89,10 @@ def report_github_issue(issue_text, title=None):
 
 
 def exception_handler(exc_type, exc_value, exc_traceback):
+    # If it's a KeyboardInterrupt, just call the default handler
+    if issubclass(exc_type, KeyboardInterrupt):
+        return sys.__excepthook__(exc_type, exc_value, exc_traceback)
+
     # We don't want any more exceptions
     sys.excepthook = None
 
