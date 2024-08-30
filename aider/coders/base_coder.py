@@ -47,6 +47,10 @@ class FinishReasonLength(Exception):
     pass
 
 
+class UnableToCountRepoFiles(Exception):
+    pass
+
+
 def wrap_fence(name):
     return f"<{name}>", f"</{name}>"
 
