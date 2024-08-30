@@ -534,6 +534,8 @@ class Commands:
         return files
 
     def glob_filtered_to_repo(self, pattern):
+        if not pattern:
+            return []
         try:
             if os.path.isabs(pattern):
                 # Handle absolute paths
