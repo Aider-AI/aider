@@ -1,7 +1,7 @@
 
 # Release history
 
-### main branch
+### Aider v0.54.8
 
 - Startup QOL improvements:
   - Sanity check the git repo and exit gracefully on problems.
@@ -10,7 +10,7 @@
 - Do not fuzzy match filenames when LLM is creating a new file, by @ozapinq
 - Numerous corner case bug fixes submitted via new crash report -> GitHub Issue feature.
 - Crash reports now include python version, OS, etc.
-- Aider wrote 58% of the code in this release.
+- Aider wrote 56% of the code in this release.
 
 ### Aider v0.54.7
 
