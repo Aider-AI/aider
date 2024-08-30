@@ -78,6 +78,12 @@ def filter_important_files(file_paths):
 
     def is_important(file_path):
         file_name = os.path.basename(file_path)
+        dir_name = os.path.dirname(file_path)
+        
+        # Check for GitHub Actions workflow files
+        if dir_name.endswith('.github/workflows') and file_name.endswith('.yml'):
+            return True
+        
         return file_name in important_files or any(
             file_path.endswith(f"/{name}") for name in important_files
         )
