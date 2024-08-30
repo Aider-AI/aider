@@ -72,6 +72,10 @@ class Voice:
             return self.raw_record_and_transcribe(history, language)
         except KeyboardInterrupt:
             return
+        except SoundDeviceError as e:
+            print(f"Error: {e}")
+            print("Please ensure you have a working audio input device connected and try again.")
+            return
 
     def raw_record_and_transcribe(self, history, language):
         self.q = queue.Queue()
@@ -82,6 +86,8 @@ class Voice:
             sample_rate = int(self.sd.query_devices(None, "input")["default_samplerate"])
         except (TypeError, ValueError):
             sample_rate = 16000  # fallback to 16kHz if unable to query device
+        except self.sd.PortAudioError:
+            raise SoundDeviceError("No audio input device detected. Please check your audio settings and try again.")
 
         self.start_time = time.time()
 
@@ -89,8 +95,7 @@ class Voice:
             with self.sd.InputStream(samplerate=sample_rate, channels=1, callback=self.callback):
                 prompt(self.get_prompt, refresh_interval=0.1)
         except self.sd.PortAudioError as err:
-            print(err)
-            return
+            raise SoundDeviceError(f"Error accessing audio input device: {err}")
 
         with sf.SoundFile(filename, mode="x", samplerate=sample_rate, channels=1) as file:
             while not self.q.empty():
