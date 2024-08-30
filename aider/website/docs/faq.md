@@ -45,7 +45,14 @@ Aider will work in any size repo, but is not optimized for quick
 performance and response time in very large repos.
 There are some things you can do to improve performance.
 
-Change into a sub directory of your repo that contains the
+Be sure to check the
+[general usage tips](/docs/usage/tips.html)
+before considering this large-repo specific advice.
+To get the best results from aider you want to 
+be thoughtful about how you add files to the chat,
+regardless of your repo size.
+
+You can change into a sub directory of your repo that contains the
 code you want to work on and use the `--subtree-only` switch.
 This will tell aider to ignore the repo outside of the
 directory you start in.
