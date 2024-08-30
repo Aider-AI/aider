@@ -59,6 +59,10 @@ class WholeFileCoder(Coder):
                     fname = fname.rstrip(":")
                     fname = fname.strip("`")
 
+                    # Issue #1232
+                    if len(fname) > 250:
+                        fname = ""
+
                     # Did gpt prepend a bogus dir? It especially likes to
                     # include the path/to prefix from the one-shot example in
                     # the prompt.
