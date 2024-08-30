@@ -190,7 +190,11 @@ def is_important(file_path):
     dir_name = os.path.dirname(file_path)
 
     # Check for GitHub Actions workflow files
-    if os.path.basename(dir_name) == "workflows" and os.path.basename(os.path.dirname(dir_name)) == ".github" and file_name.endswith(".yml"):
+    if (
+        os.path.basename(dir_name) == "workflows"
+        and os.path.basename(os.path.dirname(dir_name)) == ".github"
+        and file_name.endswith(".yml")
+    ):
         return True
 
     # Check for IDE-specific directories
@@ -206,7 +210,7 @@ def is_important(file_path):
         return True
 
     return file_name in IMPORTANT_FILES or any(
-        file_path.endswith(os.path.join('', name)) for name in IMPORTANT_FILES
+        file_path.endswith(os.path.join("", name)) for name in IMPORTANT_FILES
     )
 
 
