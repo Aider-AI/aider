@@ -558,7 +558,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         coder.show_announcements()
     except UnableToCountRepoFiles as e:
         io.tool_error(f"Unable to count repository files: {str(e)}")
-        io.tool_error("Some repository information may be incomplete.")
+        io.tool_error("Git repository may be corrupt?")
+        return 1
 
     if args.show_prompts:
         coder.cur_messages += [
