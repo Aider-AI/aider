@@ -14,8 +14,10 @@ IMPORTANT_FILES = [
     # Package Management and Dependencies
     "requirements.txt",
     "Pipfile",
+    "Pipfile.lock",
     "pyproject.toml",
     "setup.py",
+    "setup.cfg",
     "package.json",
     "package-lock.json",
     "yarn.lock",
@@ -60,6 +62,11 @@ IMPORTANT_FILES = [
     "sonar-project.properties",
     "renovate.json",
     "dependabot.yml",
+    ".pre-commit-config.yaml",
+    "mypy.ini",
+    "tox.ini",
+    ".yamllint",
+    "pyrightconfig.json",
     # Build and Compilation
     "Makefile",
     "CMakeLists.txt",
@@ -72,12 +79,16 @@ IMPORTANT_FILES = [
     "build.boot",
     "project.json",
     "build.cake",
+    "MANIFEST.in",
     # Testing
     "pytest.ini",
     "phpunit.xml",
     "karma.conf.js",
     "jest.config.js",
     "cypress.json",
+    "conftest.py",
+    ".nycrc",
+    ".nycrc.json",
     # CI/CD
     ".travis.yml",
     ".gitlab-ci.yml",
@@ -87,6 +98,9 @@ IMPORTANT_FILES = [
     "appveyor.yml",
     "circle.yml",
     ".circleci/config.yml",
+    ".github/dependabot.yml",
+    "codecov.yml",
+    ".coveragerc",
     # Docker and Containers
     "Dockerfile",
     "docker-compose.yml",
@@ -130,6 +144,7 @@ IMPORTANT_FILES = [
     "stack.yaml",
     "package.yaml",  # Haskell
     ".htaccess",  # Apache
+    ".bowerrc",  # Bower
     # Development environment
     ".nvmrc",
     ".ruby-version",
@@ -143,6 +158,9 @@ IMPORTANT_FILES = [
     "mkdocs.yml",
     "_config.yml",
     "book.toml",
+    "docs/conf.py",
+    "readthedocs.yml",
+    ".readthedocs.yaml",
     # Package registries
     ".npmrc",
     ".yarnrc",
@@ -152,9 +170,18 @@ IMPORTANT_FILES = [
     ".sublime-project",
     ".vim",
     "_vimrc",
+    # Linting and formatting
+    ".isort.cfg",
+    ".markdownlint.json",
+    ".markdownlint.yaml",
+    # Security
+    ".bandit",
+    ".secrets.baseline",
     # Misc
     "CODEOWNERS",
     ".pypirc",
+    ".gitkeep",
+    ".npmignore",
 ]
 
 
