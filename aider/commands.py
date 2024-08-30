@@ -30,6 +30,16 @@ class Commands:
     voice = None
     scraper = None
 
+    def clone(self):
+        return Commands(
+            self.io,
+            None,
+            voice_language=self.voice_language,
+            verify_ssl=self.verify_ssl,
+            args=self.args,
+            parser=self.parser,
+        )
+
     def __init__(self, io, coder, voice_language=None, verify_ssl=True, args=None, parser=None):
         self.io = io
         self.coder = coder
@@ -529,9 +539,7 @@ class Commands:
                 # Handle absolute paths
                 raw_matched_files = [Path(pattern)]
             else:
-                raw_matched_files = list(
-                    Path(self.coder.root).glob(pattern)
-                )
+                raw_matched_files = list(Path(self.coder.root).glob(pattern))
         except ValueError as err:
             self.io.tool_error(f"Error matching {pattern}: {err}")
             raw_matched_files = []
@@ -870,14 +878,6 @@ class Commands:
             map_tokens=map_tokens,
             map_mul_no_files=map_mul_no_files,
             show_announcements=False,
-        )
-
-    def clone(self):
-        return Commands(
-            self.io,
-            None,
-            voice_language=self.voice_language,
-            verify_ssl=self.verify_ssl,
         )
 
     def cmd_ask(self, args):
