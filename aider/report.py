@@ -20,6 +20,7 @@ def report_github_issue(issue_text, title=None):
     :return: None
     """
     import platform
+
     version_info = f"Aider version: {__version__}\n"
     platform_info = f"Platform: {platform.platform()}\n\n"
     issue_text = version_info + platform_info + issue_text
