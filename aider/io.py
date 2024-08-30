@@ -138,7 +138,7 @@ class AutoCompleter(Completer):
         if text[0] == "/":
             candidates = self.get_command_completions(text, words)
             if candidates is not None:
-                for candidate in candidates:
+                for candidate in sorted(candidates):
                     yield Completion(candidate, start_position=-len(words[-1]))
                 return
 
@@ -147,16 +147,18 @@ class AutoCompleter(Completer):
         candidates = [word if type(word) is tuple else (word, word) for word in candidates]
 
         last_word = words[-1]
+        completions = []
         for word_match, word_insert in candidates:
             if word_match.lower().startswith(last_word.lower()):
-                rel_fnames = self.fname_to_rel_fnames.get(word_match, [])
-                yield Completion(word_insert, start_position=-len(last_word), display=word_match)
+                completions.append((word_insert, -len(last_word), word_match))
 
+                rel_fnames = self.fname_to_rel_fnames.get(word_match, [])
                 if rel_fnames:
                     for rel_fname in rel_fnames:
-                        yield Completion(
-                            rel_fname, start_position=-len(last_word), display=rel_fname
-                        )
+                        completions.append((rel_fname, -len(last_word), rel_fname))
+
+        for ins, pos, match in sorted(completions):
+            yield Completion(ins, start_position=pos, display=match)
 
 
 class InputOutput:
