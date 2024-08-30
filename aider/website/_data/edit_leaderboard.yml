@@ -947,3 +947,26 @@
   versions: 0.53.1-dev
   seconds_per_case: 7.2
   total_cost: 0.0000
+
+- dirname: 2024-08-30-15-02-05--nous405b-whole
+  test_cases: 133
+  model: nousresearch/hermes-3-llama-3.1-405b
+  edit_format: whole
+  commit_hash: 2d9d605
+  pass_rate_1: 51.1
+  pass_rate_2: 63.9
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model openrouter/nousresearch/hermes-3-llama-3.1-405b
+  date: 2024-08-30
+  versions: 0.54.8-dev
+  seconds_per_case: 38.3
+  total_cost: 0.0000
