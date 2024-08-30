@@ -589,7 +589,11 @@ class Model(ModelSettings):
         else:
             msgs = json.dumps(messages)
 
-        return len(self.tokenizer(msgs))
+        try:
+            return len(self.tokenizer(msgs))
+        except Exception as err:
+            print(f"Unable to count tokens: {err}")
+            return 0
 
     def token_count_for_image(self, fname):
         """
