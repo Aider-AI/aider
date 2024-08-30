@@ -201,6 +201,7 @@ IMPORTANT_FILES = [
 # Normalize IMPORTANT_FILES once
 NORMALIZED_IMPORTANT_FILES = [os.path.normpath(path) for path in IMPORTANT_FILES]
 
+
 def is_important(file_path):
     file_name = os.path.basename(file_path)
     dir_name = os.path.dirname(file_path)
@@ -217,7 +218,7 @@ def is_important(file_path):
     if file_name in [".idea", ".vscode"]:
         return True
 
-    '''
+    """
     # Check for Kubernetes config files
     if "kubernetes" in os.path.normpath(dir_name).split(os.sep) and file_name.endswith(".yaml"):
         return True
@@ -225,11 +226,13 @@ def is_important(file_path):
     # Check for migration directories
     if file_name == "migrations" and os.path.isdir(file_path):
         return True
-    '''
+    """
 
     # Check if the file_path matches any of the NORMALIZED_IMPORTANT_FILES
     normalized_path = os.path.normpath(file_path)
-    return any(normalized_path.endswith(important_file) for important_file in NORMALIZED_IMPORTANT_FILES)
+    return any(
+        normalized_path.endswith(important_file) for important_file in NORMALIZED_IMPORTANT_FILES
+    )
 
 
 def filter_important_files(file_paths):
