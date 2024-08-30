@@ -158,6 +158,31 @@ IMPORTANT_FILES = [
 ]
 
 
+def is_important(file_path):
+    file_name = os.path.basename(file_path)
+    dir_name = os.path.dirname(file_path)
+
+    # Check for GitHub Actions workflow files
+    if dir_name.endswith(".github/workflows") and file_name.endswith(".yml"):
+        return True
+
+    # Check for IDE-specific directories
+    if file_name in [".idea", ".vscode"]:
+        return True
+
+    # Check for Kubernetes config files
+    if "kubernetes" in dir_name.split(os.path.sep) and file_name.endswith(".yaml"):
+        return True
+
+    # Check for migration directories
+    if file_name == "migrations" and os.path.isdir(file_path):
+        return True
+
+    return file_name in IMPORTANT_FILES or any(
+        file_path.endswith(f"/{name}") for name in IMPORTANT_FILES
+    )
+
+
 def filter_important_files(file_paths):
     """
     Filter a list of file paths to return only those that are commonly important in codebases.
@@ -165,29 +190,4 @@ def filter_important_files(file_paths):
     :param file_paths: List of file paths to check
     :return: List of file paths that match important file patterns
     """
-
-    def is_important(file_path):
-        file_name = os.path.basename(file_path)
-        dir_name = os.path.dirname(file_path)
-
-        # Check for GitHub Actions workflow files
-        if dir_name.endswith(".github/workflows") and file_name.endswith(".yml"):
-            return True
-
-        # Check for IDE-specific directories
-        if file_name in [".idea", ".vscode"]:
-            return True
-
-        # Check for Kubernetes config files
-        if "kubernetes" in dir_name.split(os.path.sep) and file_name.endswith(".yaml"):
-            return True
-
-        # Check for migration directories
-        if file_name == "migrations" and os.path.isdir(file_path):
-            return True
-
-        return file_name in IMPORTANT_FILES or any(
-            file_path.endswith(f"/{name}") for name in IMPORTANT_FILES
-        )
-
     return list(filter(is_important, file_paths))
