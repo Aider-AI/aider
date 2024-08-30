@@ -442,7 +442,14 @@ def find_original_update_blocks(content, fence=DEFAULT_FENCE, valid_fnames=None)
         # Check for SEARCH/REPLACE blocks
         if line.strip() == HEAD:
             try:
-                filename = find_filename(lines[max(0, i - 3) : i], fence, valid_fnames)
+                # if next line after HEAD exists and is DIVIDER, it's a new file
+                if i + 1 < len(lines) and lines[i + 1].strip() == DIVIDER:
+                    filename = find_filename(lines[max(0, i - 3) : i], fence, None)
+                else:
+                    filename = find_filename(
+                        lines[max(0, i - 3) : i], fence, valid_fnames
+                    )
+
                 if not filename:
                     if current_filename:
                         filename = current_filename
