@@ -62,6 +62,13 @@ IMPORTANT_FILES = [
     "CODEOWNERS", ".pypirc",
 ]
 
+def filter_important_files(file_paths):
+    """
+    Filter a list of file paths to return only those that are commonly important in codebases.
+
+    :param file_paths: List of file paths to check
+    :return: List of file paths that match important file patterns
+    """
     def is_important(file_path):
         file_name = os.path.basename(file_path)
         dir_name = os.path.dirname(file_path)
@@ -82,8 +89,8 @@ IMPORTANT_FILES = [
         if file_name == "migrations" and os.path.isdir(file_path):
             return True
 
-        return file_name in important_files or any(
-            file_path.endswith(f"/{name}") for name in important_files
+        return file_name in IMPORTANT_FILES or any(
+            file_path.endswith(f"/{name}") for name in IMPORTANT_FILES
         )
 
     return list(filter(is_important, file_paths))
