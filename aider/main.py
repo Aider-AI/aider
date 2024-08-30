@@ -507,7 +507,14 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         return 1
 
     if args.show_model_warnings:
-        models.sanity_check_models(io, main_model)
+        problem = models.sanity_check_models(io, main_model)
+        if problem:
+            io.tool_output("You can skip this sanity check with --no-show-model-warnings")
+            try:
+                if not io.confirm_ask("Proceed anyway?"):
+                    return 1
+            except KeyboardInterrupt:
+                return 1
 
     repo = None
     if args.git:
