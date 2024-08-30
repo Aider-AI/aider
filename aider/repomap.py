@@ -17,6 +17,7 @@ from pygments.token import Token
 from tqdm import tqdm
 
 from aider.dump import dump
+from aider.special import filter_important_files
 from aider.utils import Spinner
 
 # tree_sitter is throwing a FutureWarning
@@ -500,6 +501,12 @@ class RepoMap:
             mentioned_idents,
             progress=spin.step,
         )
+
+        other_rel_fnames = sorted(set(self.get_rel_fname(fname) for fname in other_fnames))
+        special_fnames = filter_important_files(other_rel_fnames)
+        special_fnames = [(fn,) for fn in special_fnames]
+
+        ranked_tags = special_fnames + ranked_tags
 
         spin.step()
 
