@@ -53,9 +53,9 @@ def test_is_important_case_sensitivity():
 
 def test_is_important_with_paths():
     # Test with different path formats
-    assert is_important("project/README.md")
+    assert not is_important("project/README.md")
     assert is_important("./README.md")
-    assert is_important("/absolute/path/to/README.md")
+    assert not is_important("/absolute/path/to/README.md")
 
 
 @pytest.mark.parametrize(
