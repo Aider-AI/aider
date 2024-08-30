@@ -175,37 +175,9 @@ ROOT_IMPORTANT_FILES = [
     ".npmignore",
 ]
 
-ANYWHERE_IMPORTANT_FILES = [
-    # Build and Compilation
-    "Makefile",
-    "CMakeLists.txt",
-    # Framework-specific
-    "manage.py",
-    "settings.py",  # Django
-    "config/routes.rb",
-    "Rakefile",  # Ruby on Rails
-    # Language-specific
-    "__init__.py",  # Python
-    "stack.yaml",
-    "package.yaml",  # Haskell
-    ".htaccess",  # Apache
-    ".bowerrc",  # Bower
-    # IDE and Editor
-    ".vscode/settings.json",
-    ".idea/workspace.xml",
-    ".sublime-project",
-    ".vim",
-    "_vimrc",
-    # Testing
-    "conftest.py",
-    # Documentation
-    "docs/conf.py",
-]
 
 # Normalize the lists once
-NORMALIZED_ROOT_IMPORTANT_FILES = [os.path.normpath(path) for path in ROOT_IMPORTANT_FILES]
-NORMALIZED_ANYWHERE_IMPORTANT_FILES = [os.path.normpath(path) for path in ANYWHERE_IMPORTANT_FILES]
-
+NORMALIZED_ROOT_IMPORTANT_FILES = set(os.path.normpath(path) for path in ROOT_IMPORTANT_FILES)
 
 def is_important(file_path):
     file_name = os.path.basename(file_path)
@@ -213,28 +185,10 @@ def is_important(file_path):
     normalized_path = os.path.normpath(file_path)
 
     # Check for GitHub Actions workflow files
-    if (
-        os.path.basename(dir_name) == "workflows"
-        and os.path.basename(os.path.dirname(dir_name)) == ".github"
-        and file_name.endswith(".yml")
-    ):
+    if dir_name == os.path.normpath(".github/workflows")  and file_name.endswith(".yml"):
         return True
 
-    # Check for IDE-specific directories
-    if file_name in [".idea", ".vscode"]:
-        return True
-
-    # Check if the file is in the root directory and matches ROOT_IMPORTANT_FILES
-    if os.path.dirname(normalized_path) == "":
-        return any(
-            normalized_path == important_file for important_file in NORMALIZED_ROOT_IMPORTANT_FILES
-        )
-
-    # Check if the file matches ANYWHERE_IMPORTANT_FILES
-    return any(
-        normalized_path.endswith(os.sep + important_file)
-        for important_file in NORMALIZED_ANYWHERE_IMPORTANT_FILES
-    )
+    return normalized_path in NORMALIZED_ROOT_IMPORTANT_FILES
 
 
 def filter_important_files(file_paths):
