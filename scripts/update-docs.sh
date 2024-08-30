@@ -21,7 +21,3 @@ cog $ARG \
     aider/website/docs/config/aider_conf.md \
     aider/website/docs/leaderboards/index.md \
     aider/website/docs/llms/other.md
-
-
-cog -r aider/__init__.py && git add aider/__init__.py && git commit -m "updating version hash"
-
