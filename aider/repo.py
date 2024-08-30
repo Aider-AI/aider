@@ -11,6 +11,10 @@ from aider.sendchat import simple_send_with_retries
 from .dump import dump  # noqa: F401
 
 
+class UnableToCountRepoFiles(Exception):
+    pass
+
+
 class GitRepo:
     repo = None
     aider_ignore_file = None
@@ -255,16 +259,22 @@ class GitRepo:
             if commit in self.tree_files:
                 files = self.tree_files[commit]
             else:
-                for blob in commit.tree.traverse():
-                    if blob.type == "blob":  # blob is a file
-                        files.add(blob.path)
-                files = set(self.normalize_path(path) for path in files)
-                self.tree_files[commit] = set(files)
+                try:
+                    for blob in commit.tree.traverse():
+                        if blob.type == "blob":  # blob is a file
+                            files.add(blob.path)
+                    files = set(self.normalize_path(path) for path in files)
+                    self.tree_files[commit] = set(files)
+                except Exception as e:
+                    raise UnableToCountRepoFiles(f"Error traversing commit tree: {str(e)}")
 
         # Add staged files
-        index = self.repo.index
-        staged_files = [path for path, _ in index.entries.keys()]
-        files.update(self.normalize_path(path) for path in staged_files)
+        try:
+            index = self.repo.index
+            staged_files = [path for path, _ in index.entries.keys()]
+            files.update(self.normalize_path(path) for path in staged_files)
+        except Exception as e:
+            raise UnableToCountRepoFiles(f"Error getting staged files: {str(e)}")
 
         res = [fname for fname in files if not self.ignored_file(fname)]
 

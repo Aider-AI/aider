@@ -12,7 +12,7 @@ from prompt_toolkit.enums import EditingMode
 from aider import __version__, models, utils
 from aider.args import get_parser
 from aider.coders import Coder
-from aider.coders.base_coder import UnableToCountRepoFiles
+from aider.repo import UnableToCountRepoFiles
 from aider.commands import Commands, SwitchCoder
 from aider.format_settings import format_settings, scrub_sensitive_info
 from aider.history import ChatSummary
