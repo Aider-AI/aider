@@ -12,6 +12,7 @@ from prompt_toolkit.enums import EditingMode
 from aider import __version__, models, utils
 from aider.args import get_parser
 from aider.coders import Coder
+from aider.coders.base_coder import UnableToCountRepoFiles
 from aider.commands import Commands, SwitchCoder
 from aider.format_settings import format_settings, scrub_sensitive_info
 from aider.history import ChatSummary
@@ -553,7 +554,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         return coder
 
     io.tool_output()
-    coder.show_announcements()
+    try:
+        coder.show_announcements()
+    except UnableToCountRepoFiles as e:
+        io.tool_error(f"Unable to count repository files: {str(e)}")
+        io.tool_error("Some repository information may be incomplete.")
 
     if args.show_prompts:
         coder.cur_messages += [
