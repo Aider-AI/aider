@@ -189,7 +189,11 @@ class Coder:
         # Repo
         if self.repo:
             rel_repo_dir = self.repo.get_rel_repo_dir()
-            num_files = len(self.repo.get_tracked_files())
+            try:
+                num_files = len(self.repo.get_tracked_files())
+            except Exception as err:
+                raise UnableToCountRepoFiles(str(err))
+
             lines.append(f"Git repo: {rel_repo_dir} with {num_files:,} files")
             if num_files > 1000:
                 lines.append(
