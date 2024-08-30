@@ -246,39 +246,36 @@ class GitRepo:
         return diffs
 
     def get_tracked_files(self):
-        if not self.repo:
-            return []
-
         try:
-            commit = self.repo.head.commit
-        except ValueError:
-            commit = None
+            if not self.repo:
+                return []
 
-        files = set()
-        if commit:
-            if commit in self.tree_files:
-                files = self.tree_files[commit]
-            else:
-                try:
+            try:
+                commit = self.repo.head.commit
+            except ValueError:
+                commit = None
+
+            files = set()
+            if commit:
+                if commit in self.tree_files:
+                    files = self.tree_files[commit]
+                else:
                     for blob in commit.tree.traverse():
                         if blob.type == "blob":  # blob is a file
                             files.add(blob.path)
                     files = set(self.normalize_path(path) for path in files)
                     self.tree_files[commit] = set(files)
-                except Exception as e:
-                    raise UnableToCountRepoFiles(f"Error traversing commit tree: {str(e)}")
 
-        # Add staged files
-        try:
+            # Add staged files
             index = self.repo.index
             staged_files = [path for path, _ in index.entries.keys()]
             files.update(self.normalize_path(path) for path in staged_files)
+
+            res = [fname for fname in files if not self.ignored_file(fname)]
+
+            return res
         except Exception as e:
-            raise UnableToCountRepoFiles(f"Error getting staged files: {str(e)}")
-
-        res = [fname for fname in files if not self.ignored_file(fname)]
-
-        return res
+            raise UnableToCountRepoFiles(f"Error getting tracked files: {str(e)}")
 
     def normalize_path(self, path):
         orig_path = path
