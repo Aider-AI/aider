@@ -1,4 +1,5 @@
 import os
+import platform
 import subprocess
 import sys
 from io import BytesIO
@@ -9,7 +10,7 @@ import pexpect
 def run_cmd(command):
     import sys
 
-    if sys.stdin.isatty() and hasattr(pexpect, "spawn"):
+    if sys.stdin.isatty() and hasattr(pexpect, "spawn") and platform.system() != "Windows":
         return run_cmd_pexpect(command)
 
     return run_cmd_subprocess(command)
