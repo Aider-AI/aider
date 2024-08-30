@@ -33,7 +33,6 @@ def get_git_info():
         return "Git information unavailable"
 
 
-
 def report_github_issue(issue_text, title=None):
     """
     Compose a URL to open a new GitHub issue with the given text prefilled,
@@ -51,13 +50,7 @@ def report_github_issue(issue_text, title=None):
     git_info = get_git_info() + "\n"
 
     system_info = (
-        version_info
-        + python_version
-        + platform_info
-        + python_info
-        + os_info
-        + git_info
-        + "\n"
+        version_info + python_version + platform_info + python_info + os_info + git_info + "\n"
     )
 
     issue_text = system_info + issue_text
