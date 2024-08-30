@@ -10,12 +10,7 @@ import pexpect
 def run_cmd(command):
     import sys
 
-    if (
-        False
-        and sys.stdin.isatty()
-        and hasattr(pexpect, "spawn")
-        and platform.system() != "Windows"
-    ):
+    if sys.stdin.isatty() and hasattr(pexpect, "spawn") and platform.system() != "Windows":
         return run_cmd_pexpect(command)
 
     return run_cmd_subprocess(command)
