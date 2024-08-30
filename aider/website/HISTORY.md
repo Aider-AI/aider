@@ -16,6 +16,34 @@ cog.out(text)
 
 # Release history
 
+### main branch
+
+- Startup QOL improvements:
+  - Sanity check the git repo and exit gracefully on problems.
+  - Pause for confirmation after model sanity check to allow user to review warnings.
+- Bugfix for shell commands on Windows.
+- Do not fuzzy match filenames when LLM is creating a new file, by @ozapinq
+- Numerous corner case bug fixes submitted via new crash report -> GitHub Issue feature.
+- Crash reports now include python version, OS, etc.
+- Aider wrote 58% of the code in this release.
+
+### Aider v0.54.7
+
+- Offer to submit a GitHub issue pre-filled with uncaught exception info.
+- Bugfix for infinite output.
+
+### Aider v0.54.6
+
+- New `/settings` command to show active settings.
+- Only show cache warming status update if `--verbose`.
+
+### Aider v0.54.5
+
+- Bugfix for shell commands on Windows.
+- Refuse to make git repo in $HOME, warn user.
+- Don't ask again in current session about a file the user has said not to add to the chat.
+- Added `--update` as an alias for `--upgrade`.
+
 ### Aider v0.54.4
 
 - Bugfix to completions for `/model` command.
