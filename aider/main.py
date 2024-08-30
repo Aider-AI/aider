@@ -306,7 +306,9 @@ def sanity_check_repo(repo, io):
 
         if "version in (1, 2)" in error_msg:
             io.tool_error("Aider only works with git repos with version number 1 or 2.")
-            io.tool_error("You may be able to convert your repo: git update-index --index-version=2")
+            io.tool_error(
+                "You may be able to convert your repo: git update-index --index-version=2"
+            )
             io.tool_error("Or run aider --no-git to proceed without using git.")
             io.tool_error("https://github.com/paul-gauthier/aider/issues/211")
             return False
