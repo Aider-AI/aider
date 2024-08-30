@@ -87,7 +87,9 @@ class Voice:
         except (TypeError, ValueError):
             sample_rate = 16000  # fallback to 16kHz if unable to query device
         except self.sd.PortAudioError:
-            raise SoundDeviceError("No audio input device detected. Please check your audio settings and try again.")
+            raise SoundDeviceError(
+                "No audio input device detected. Please check your audio settings and try again."
+            )
 
         self.start_time = time.time()
 
