@@ -12,13 +12,12 @@ from prompt_toolkit.enums import EditingMode
 from aider import __version__, models, utils
 from aider.args import get_parser
 from aider.coders import Coder
-from aider.repo import UnableToCountRepoFiles
 from aider.commands import Commands, SwitchCoder
 from aider.format_settings import format_settings, scrub_sensitive_info
 from aider.history import ChatSummary
 from aider.io import InputOutput
 from aider.llm import litellm  # noqa: F401; properly init litellm on launch
-from aider.repo import GitRepo
+from aider.repo import GitRepo, UnableToCountRepoFiles
 from aider.report import report_uncaught_exceptions
 from aider.versioncheck import check_version, install_from_main_branch, install_upgrade
 
