@@ -35,7 +35,7 @@ def get_git_info():
         )
         commit = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip()
         return f"Git version: {git_version}\nBranch: {branch}\nCommit: {commit}"
-    except:
+    except Exception:
         return "Git information unavailable"
 
 
