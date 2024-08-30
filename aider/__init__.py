@@ -1,4 +1,4 @@
-__version__ = "0.54.8-dev"
+__version__ = "0.54.8"
 
 
 # This is disabled. Git pre-push hooks won't pick up a new commit with the hash.
