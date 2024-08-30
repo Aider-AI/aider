@@ -201,8 +201,12 @@ class RepoMap:
         if not lang:
             return
 
-        language = get_language(lang)
-        parser = get_parser(lang)
+        try:
+            language = get_language(lang)
+            parser = get_parser(lang)
+        except Exception as err:
+            print(f"Skipping file {fname}: {err}")
+            return
 
         query_scm = get_scm_fname(lang)
         if not query_scm.exists():
