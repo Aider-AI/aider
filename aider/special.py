@@ -5,11 +5,24 @@ IMPORTANT_FILES = [
     ".gitignore",
     ".gitattributes",
     # Documentation
+    "README",
     "README.md",
+    "README.txt",
+    "README.rst",
+    "CONTRIBUTING",
     "CONTRIBUTING.md",
+    "CONTRIBUTING.txt",
+    "CONTRIBUTING.rst",
     "LICENSE",
+    "LICENSE.md",
+    "LICENSE.txt",
+    "CHANGELOG",
     "CHANGELOG.md",
+    "CHANGELOG.txt",
+    "CHANGELOG.rst",
+    "SECURITY",
     "SECURITY.md",
+    "SECURITY.txt",
     "CODEOWNERS",
     # Package Management and Dependencies
     "requirements.txt",
@@ -185,7 +198,8 @@ IMPORTANT_FILES = [
 ]
 
 
-IMPORTANT_FILES = [os.path.normpath(path) for path in IMPORTANT_FILES]
+# Normalize IMPORTANT_FILES once
+NORMALIZED_IMPORTANT_FILES = [os.path.normpath(path) for path in IMPORTANT_FILES]
 
 def is_important(file_path):
     file_name = os.path.basename(file_path)
@@ -213,13 +227,9 @@ def is_important(file_path):
         return True
     '''
 
-    # Check if the file_path matches any of the IMPORTANT_FILES
+    # Check if the file_path matches any of the NORMALIZED_IMPORTANT_FILES
     normalized_path = os.path.normpath(file_path)
-    for important_file in IMPORTANT_FILES:
-        if normalized_path.endswith(important_file):
-            return True
-
-    return False
+    return any(normalized_path.endswith(important_file) for important_file in NORMALIZED_IMPORTANT_FILES)
 
 
 def filter_important_files(file_paths):
