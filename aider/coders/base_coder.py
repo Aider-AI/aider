@@ -47,10 +47,6 @@ class FinishReasonLength(Exception):
     pass
 
 
-class UnableToCountRepoFiles(Exception):
-    pass
-
-
 def wrap_fence(name):
     return f"<{name}>", f"</{name}>"
 
@@ -193,10 +189,7 @@ class Coder:
         # Repo
         if self.repo:
             rel_repo_dir = self.repo.get_rel_repo_dir()
-            try:
-                num_files = len(self.repo.get_tracked_files())
-            except Exception as err:
-                raise UnableToCountRepoFiles(str(err))
+            num_files = len(self.repo.get_tracked_files())
 
             lines.append(f"Git repo: {rel_repo_dir} with {num_files:,} files")
             if num_files > 1000:

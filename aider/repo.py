@@ -246,10 +246,10 @@ class GitRepo:
         return diffs
 
     def get_tracked_files(self):
-        try:
-            if not self.repo:
-                return []
+        if not self.repo:
+            return []
 
+        try:
             try:
                 commit = self.repo.head.commit
             except ValueError:
