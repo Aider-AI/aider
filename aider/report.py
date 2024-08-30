@@ -19,8 +19,10 @@ def report_github_issue(issue_text, title=None):
     :param title: The title of the issue (optional)
     :return: None
     """
-    version_info = f"Aider version: {__version__}\n\n"
-    issue_text = version_info + issue_text
+    import platform
+    version_info = f"Aider version: {__version__}\n"
+    platform_info = f"Platform: {platform.platform()}\n\n"
+    issue_text = version_info + platform_info + issue_text
     params = {"body": issue_text}
     if title is None:
         title = "Bug report"
