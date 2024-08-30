@@ -131,6 +131,10 @@ class AutoCompleter(Completer):
         if not words:
             return
 
+        if text and text[-1].isspace():
+            # don't keep completing after a space
+            return
+
         if text[0] == "/":
             candidates = self.get_command_completions(text, words)
             if candidates is not None:
