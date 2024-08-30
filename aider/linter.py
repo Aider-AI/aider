@@ -76,11 +76,7 @@ class Linter:
 
     def lint(self, fname, cmd=None):
         rel_fname = self.get_rel_fname(fname)
-        try:
-            code = Path(fname).read_text(encoding=self.encoding, errors="replace")
-        except Exception as e:
-            print(f"Error reading file {fname}: {str(e)}")
-            return
+        code = Path(fname).read_text(encoding=self.encoding, errors="replace")
 
         if cmd:
             cmd = cmd.strip()
