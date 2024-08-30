@@ -294,6 +294,30 @@ def register_litellm_models(git_root, model_metadata_fname, io, verbose=False):
         return 1
 
 
+def sanity_check_repo(repo):
+    if not repo:
+        return True
+
+    try:
+        repo.get_tracked_files()
+        return True
+    except UnableToCountRepoFiles as e:
+        pass
+
+    error_msg = str(e)
+
+    if "version in (1, 2)" in error_msg:
+        io.tool_error("Aider only works with git repos with version number 1 or 2.")
+        io.tool_error("You may be able to convert your repo: git update-index --index-version=2")
+        io.tool_error("Or run aider --no-git to proceed without using git.")
+        io.tool_error("https://github.com/paul-gauthier/aider/issues/211")
+        return
+
+    io.tool_error("Unable to read git repository, it may be corrupt?")
+    io.tool_error(error_msg)
+    return
+
+
 def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
     report_uncaught_exceptions()
 
@@ -504,6 +528,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         except FileNotFoundError:
             pass
 
+    if not sanity_check_repo(repo):
+        return 1
+
     commands = Commands(io, None, verify_ssl=args.verify_ssl, args=args, parser=parser)
 
     summarizer = ChatSummary(
@@ -553,12 +580,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         return coder
 
     io.tool_output()
-    try:
-        coder.show_announcements()
-    except UnableToCountRepoFiles as e:
-        io.tool_error(f"Unable to count repository files: {str(e)}")
-        io.tool_error("Git repository may be corrupt?")
-        return 1
+    coder.show_announcements()
 
     if args.show_prompts:
         coder.cur_messages += [
