@@ -1,10 +1,11 @@
 import os
+import platform
+import subprocess
 import sys
 import traceback
 import urllib.parse
 import webbrowser
-import platform
-import subprocess
+
 import pkg_resources
 
 from aider import __version__
@@ -12,30 +13,40 @@ from aider.urls import github_issues
 
 FENCE = "`" * 3
 
+
 def get_python_info():
     implementation = platform.python_implementation()
     is_venv = sys.prefix != sys.base_prefix
-    return f"Python implementation: {implementation}\nVirtual environment: {'Yes' if is_venv else 'No'}"
+    return (
+        f"Python implementation: {implementation}\nVirtual environment:"
+        f" {'Yes' if is_venv else 'No'}"
+    )
+
 
 def get_os_info():
     return f"OS: {platform.system()} {platform.release()} ({platform.architecture()[0]})"
 
+
 def get_git_info():
     try:
         git_version = subprocess.check_output(["git", "--version"]).decode().strip()
-        branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).decode().strip()
+        branch = (
+            subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).decode().strip()
+        )
         commit = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip()
         return f"Git version: {git_version}\nBranch: {branch}\nCommit: {commit}"
     except:
         return "Git information unavailable"
 
+
 def get_dependencies():
     deps = [
         f"{pkg.key}=={pkg.version}"
         for pkg in pkg_resources.working_set
-        if pkg.key.lower() in ['openai', 'tiktoken', 'litellm']  # Add other relevant packages
+        if pkg.key.lower() in ["openai", "tiktoken", "litellm"]  # Add other relevant packages
     ]
     return "Relevant installed packages:\n" + "\n".join(deps)
+
 
 def report_github_issue(issue_text, title=None):
     """
@@ -53,12 +64,18 @@ def report_github_issue(issue_text, title=None):
     os_info = get_os_info() + "\n"
     git_info = get_git_info() + "\n"
     dependencies = get_dependencies() + "\n"
-    
+
     system_info = (
-        version_info + python_version + platform_info + 
-        python_info + os_info + git_info + dependencies + "\n"
+        version_info
+        + python_version
+        + platform_info
+        + python_info
+        + os_info
+        + git_info
+        + dependencies
+        + "\n"
     )
-    
+
     issue_text = system_info + issue_text
     params = {"body": issue_text}
     if title is None:
