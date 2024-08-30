@@ -231,7 +231,8 @@ def is_important(file_path):
     # Check if the file_path matches any of the NORMALIZED_IMPORTANT_FILES
     normalized_path = os.path.normpath(file_path)
     return any(
-        normalized_path.endswith(important_file) for important_file in NORMALIZED_IMPORTANT_FILES
+        normalized_path == important_file or normalized_path.endswith(os.sep + important_file)
+        for important_file in NORMALIZED_IMPORTANT_FILES
     )
 
 
