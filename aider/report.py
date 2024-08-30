@@ -8,6 +8,7 @@ import webbrowser
 
 from aider import __version__
 from aider.urls import github_issues
+from aider.versioncheck import VERSION_CHECK_FNAME
 
 FENCE = "`" * 3
 
@@ -90,6 +91,13 @@ def report_github_issue(issue_text, title=None):
 def exception_handler(exc_type, exc_value, exc_traceback):
     # We don't want any more exceptions
     sys.excepthook = None
+
+    # Check if VERSION_CHECK_FNAME exists and delete it if so
+    try:
+        if VERSION_CHECK_FNAME.exists():
+            VERSION_CHECK_FNAME.unlink()
+    except Exception:
+        pass  # Swallow any errors
 
     # Format the traceback
     tb_lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
