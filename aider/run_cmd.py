@@ -18,7 +18,7 @@ def run_cmd(command):
 
 def run_cmd_subprocess(command):
     try:
-        result = subprocess.run(
+        process = subprocess.Popen(
             command,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
@@ -26,8 +26,17 @@ def run_cmd_subprocess(command):
             shell=True,
             encoding=sys.stdout.encoding,
             errors="replace",
+            bufsize=1,
+            universal_newlines=True
         )
-        return result.returncode, result.stdout
+
+        output = []
+        for line in process.stdout:
+            print(line, end='')  # Print the line in real-time
+            output.append(line)  # Store the line for later use
+
+        process.wait()
+        return process.returncode, ''.join(output)
     except Exception as e:
         return 1, str(e)
 
