@@ -1,5 +1,8 @@
 __version__ = "0.54.8-dev"
 
+
+# This is disabled. Git pre-push hooks won't pick up a new commit with the hash.
+
 """[[[cog
 import subprocess
 
@@ -13,7 +16,7 @@ except subprocess.CalledProcessError:
 
 cog.out(f'git_hash = "{git_hash}"')
 ]]]"""
-git_hash = "36c41bf"
+git_hash = None
 """[[[end]]]"""
 
 if "-dev" in __version__ and git_hash:
