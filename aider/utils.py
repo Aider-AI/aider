@@ -315,6 +315,8 @@ def check_pip_install_extra(io, module, prompt, pip_install_cmd):
     if prompt:
         io.tool_error(prompt)
 
+    print(cmd)
+    print(shlex.join(cmd))
     if not io.confirm_ask("Run pip install?", default="y", subject=shlex.join(cmd)):
         return
 
