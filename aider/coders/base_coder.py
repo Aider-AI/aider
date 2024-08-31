@@ -891,7 +891,7 @@ class Coder:
                     platform_text += f"  - Default: {cmd}\n"
                 else:
                     platform_text += f"  - {lang}: {cmd}\n"
-        
+
         if self.test_cmd:
             platform_text += f"- Test command: {self.test_cmd}\n"
 
