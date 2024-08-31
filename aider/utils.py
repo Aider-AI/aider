@@ -291,6 +291,15 @@ def format_tokens(count):
         return f"{round(count / 1000)}k"
 
 
+def touch_file(fname):
+    try:
+        fname.parent.mkdir(parents=True, exist_ok=True)
+        fname.touch()
+        return True
+    except OSError:
+        return False
+
+
 def check_pip_install_extra(io, module, prompt, pip_install_cmd):
     if module:
         try:
