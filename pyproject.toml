@@ -30,7 +30,6 @@ Homepage = "https://github.com/paul-gauthier/aider"
 aider = "aider.main:main"
 
 [tool.setuptools.dynamic]
-version = { attr = "aider.__init__.__version__" }
 dependencies = { file = "requirements.txt" }
 
 [tool.setuptools.dynamic.optional-dependencies]
@@ -63,5 +62,8 @@ include = ["aider*", "aider.website"]
 ]
 
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=68", "setuptools_scm[toml]>=6.2"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+write_to = "aider/__version__.py"
