@@ -199,7 +199,7 @@ class Commands:
             return
 
         first_word = words[0]
-        rest_inp = inp[len(words[0]) :]
+        rest_inp = inp[len(words[0]) :].strip()
 
         all_commands = self.get_commands()
         matching_commands = [cmd for cmd in all_commands if cmd.startswith(first_word)]
