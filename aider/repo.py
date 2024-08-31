@@ -71,7 +71,7 @@ class GitRepo:
                 repo_path = git.Repo(fname, search_parent_directories=True).working_dir
                 repo_path = utils.safe_abs_path(repo_path)
                 repo_paths.append(repo_path)
-            except git.exc.ODBError:
+            except (git.exc.ODBError, git.exc.GitError):
                 pass
 
         num_repos = len(set(repo_paths))
@@ -205,7 +205,7 @@ class GitRepo:
             try:
                 commits = self.repo.iter_commits(active_branch)
                 current_branch_has_commits = any(commits)
-            except git.exc.ODBError:
+            except (git.exc.ODBError, git.exc.GitError):
                 pass
         except TypeError:
             pass
@@ -373,7 +373,7 @@ class GitRepo:
     def get_head_commit(self):
         try:
             return self.repo.head.commit
-        except (ValueError, git.exc.ODBError):
+        except (ValueError, git.exc.ODBError, git.exc.GitError):
             return None
 
     def get_head_commit_sha(self, short=False):

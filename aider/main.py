@@ -56,8 +56,7 @@ def make_new_repo(git_root, io):
     try:
         repo = git.Repo.init(git_root)
         check_gitignore(git_root, io, False)
-    except (git.exc.ODBError, git.exc.GitCommandNotFound) as err:  # issue #1233
-        # git.exc.GitCommandNotFound is not a subclass of git.exc.ODBError
+    except (git.exc.ODBError, git.exc.GitError) as err:  # issue #1233
         io.tool_error(f"Unable to create git repo in {git_root}")
         io.tool_error(str(err))
         return
@@ -115,8 +114,7 @@ def check_gitignore(git_root, io, ask=True):
         repo = git.Repo(git_root)
         if repo.ignored(".aider"):
             return
-    except (git.exc.ODBError, git.exc.GitCommandNotFound):
-        # git.exc.GitCommandNotFound is not a subclass of git.exc.ODBError
+    except (git.exc.ODBError, git.exc.GitError):
         pass
 
     pat = ".aider*"

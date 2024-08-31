@@ -1784,7 +1784,7 @@ class Coder:
             self.reflected_message = str(err)
             return edited
 
-        except git.exc.ODBError as err:
+        except (git.exc.ODBError, git.exc.GitError) as err:
             self.io.tool_error(str(err))
             return edited
         except Exception as err:

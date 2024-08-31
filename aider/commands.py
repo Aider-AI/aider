@@ -450,7 +450,7 @@ class Commands:
         try:
             remote_head = self.coder.repo.repo.git.rev_parse(f"origin/{current_branch}")
             has_origin = True
-        except git.exc.ODBError:
+        except (git.exc.ODBError, git.exc.GitError):
             has_origin = False
 
         if has_origin:
