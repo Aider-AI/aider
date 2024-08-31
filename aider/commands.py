@@ -420,7 +420,7 @@ class Commands:
             self.io.tool_error("No git repository found.")
             return
 
-        last_commit = self.coder.repo.get_head()
+        last_commit = self.coder.repo.get_head_commit()
         if last_commit and not last_commit.parents:
             self.io.tool_error("This is the first commit in the repository. Cannot undo.")
             return
@@ -461,8 +461,8 @@ class Commands:
                 )
                 return
 
-        last_commit_hash = self.coder.repo.get_head_sha(short=True)
-        last_commit_message = self.coder.repo.get_head_message("(unknown)")
+        last_commit_hash = self.coder.repo.get_head_commit_sha(short=True)
+        last_commit_message = self.coder.repo.get_head_commit_message("(unknown)")
 
         if last_commit_hash not in self.coder.aider_commit_hashes:
             self.io.tool_error("The last commit was not made by aider in this chat session.")
@@ -482,8 +482,8 @@ class Commands:
         self.io.tool_output(f"Removed: {last_commit_hash} {last_commit_message}")
 
         # Get the current HEAD after undo
-        current_head_hash = self.coder.repo.get_head_sha(short=True)
-        current_head_message = self.coder.repo.get_head_message("(unknown)")
+        current_head_hash = self.coder.repo.get_head_commit_sha(short=True)
+        current_head_message = self.coder.repo.get_head_commit_message("(unknown)")
         self.io.tool_output(f"Now at:  {current_head_hash} {current_head_message}")
 
         if self.coder.main_model.send_undo_reply:
@@ -495,7 +495,7 @@ class Commands:
             self.io.tool_error("No git repository found.")
             return
 
-        current_head = self.coder.repo.get_head_sha()
+        current_head = self.coder.repo.get_head_commit_sha()
         if current_head is None:
             self.io.tool_error("Unable to get current commit. The repository might be empty.")
             return

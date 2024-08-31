@@ -138,7 +138,7 @@ class GitRepo:
             os.environ["GIT_AUTHOR_NAME"] = committer_name
 
         self.repo.git.commit(cmd)
-        commit_hash = self.get_head_sha(short=True)
+        commit_hash = self.get_head_commit_sha(short=True)
         self.io.tool_output(f"Commit {commit_hash} {commit_message}", bold=True)
 
         # Restore the env
@@ -373,22 +373,22 @@ class GitRepo:
 
         return self.repo.is_dirty(path=path)
 
-    def get_head(self):
+    def get_head_commit(self):
         try:
             return self.repo.head.commit
         except (ValueError, gitdb.exc.ODBError):
             return None
 
-    def get_head_sha(self, short=False):
-        commit = self.get_head()
+    def get_head_commit_sha(self, short=False):
+        commit = self.get_head_commit()
         if not commit:
             return
         if short:
             return commit.hexsha[:7]
         return commit.hexsha
 
-    def get_head_message(self, default=None):
-        commit = self.get_head()
+    def get_head_commit_message(self, default=None):
+        commit = self.get_head_commit()
         if not commit:
             return default
         return commit.message

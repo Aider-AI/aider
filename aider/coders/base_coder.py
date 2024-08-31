@@ -713,7 +713,7 @@ class Coder:
         self.shell_commands = []
 
         if self.repo:
-            self.commit_before_message.append(self.repo.get_head_sha())
+            self.commit_before_message.append(self.repo.get_head_commit_sha())
 
     def run(self, with_message=None, preproc=True):
         try:
@@ -1867,7 +1867,7 @@ class Coder:
     def show_undo_hint(self):
         if not self.commit_before_message:
             return
-        if self.commit_before_message[-1] != self.repo.get_head_sha():
+        if self.commit_before_message[-1] != self.repo.get_head_commit_sha():
             self.io.tool_output("You can use /undo to undo and discard each aider commit.")
 
     def dirty_commit(self):
