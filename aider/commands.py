@@ -425,6 +425,12 @@ class Commands:
             self.io.tool_error("This is the first commit in the repository. Cannot undo.")
             return
 
+        if len(last_commit.parents) > 1:
+            self.io.tool_error(
+                f"The last commit {last_commit.hexsha} has more than 1 parent, can't undo."
+            )
+            return
+
         prev_commit = last_commit.parents[0]
         changed_files_last_commit = [item.a_path for item in last_commit.diff(prev_commit)]
 
@@ -473,8 +479,14 @@ class Commands:
             return
 
         # Reset only the files which are part of `last_commit`
+        modified = set()
         for file_path in changed_files_last_commit:
-            self.coder.repo.repo.git.checkout("HEAD~1", file_path)
+            try:
+                self.coder.repo.repo.git.checkout("HEAD~1", file_path)
+                modified.add(file_path)
+            except ANY_GIT_ERROR:
+                self.io.tool_error(f"Error restoring {file_path}, aborting undo.")
+                return
 
         # Move the HEAD back before the latest commit
         self.coder.repo.repo.git.reset("--soft", "HEAD~1")
