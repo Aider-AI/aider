@@ -884,6 +884,12 @@ class Coder:
         if self.repo:
             platform_text += "- The user is operating inside a git repository\n"
 
+        if self.lint_cmds:
+            platform_text += f"- Lint commands: {self.lint_cmds}\n"
+        
+        if self.test_cmd:
+            platform_text += f"- Test command: {self.test_cmd}\n"
+
         return platform_text
 
     def fmt_system_prompt(self, prompt):
