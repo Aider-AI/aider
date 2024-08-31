@@ -479,20 +479,24 @@ class Commands:
             return
 
         # Reset only the files which are part of `last_commit`
-        modified = set()
+        restored = set()
+        unrestored = set()
         for file_path in changed_files_last_commit:
             try:
                 self.coder.repo.repo.git.checkout("HEAD~1", file_path)
-                modified.add(file_path)
+                restored.add(file_path)
             except ANY_GIT_ERROR:
-                self.io.tool_error(f"Error restoring {file_path}, aborting undo.")
-                self.io.tool_error("Modified files:")
-                for file in modified:
-                    self.io.tool_error(f"  {file}")
-                self.io.tool_error("Unmodified files:")
-                for file in set(changed_files_last_commit) - modified:
-                    self.io.tool_error(f"  {file}")
-                return
+                unrestored.add(file_path)
+
+        if unrestored:
+            self.io.tool_error(f"Error restoring {file_path}, aborting undo.")
+            self.io.tool_error("Restored files:")
+            for file in restored:
+                self.io.tool_error(f"  {file}")
+            self.io.tool_error("Unable to restore files:")
+            for file in unrestored:
+                self.io.tool_error(f"  {file}")
+            return
 
         # Move the HEAD back before the latest commit
         self.coder.repo.repo.git.reset("--soft", "HEAD~1")
