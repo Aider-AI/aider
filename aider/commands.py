@@ -486,6 +486,12 @@ class Commands:
                 modified.add(file_path)
             except ANY_GIT_ERROR:
                 self.io.tool_error(f"Error restoring {file_path}, aborting undo.")
+                self.io.tool_error("Modified files:")
+                for file in modified:
+                    self.io.tool_error(f"  {file}")
+                self.io.tool_error("Unmodified files:")
+                for file in set(changed_files_last_commit) - modified:
+                    self.io.tool_error(f"  {file}")
                 return
 
         # Move the HEAD back before the latest commit
