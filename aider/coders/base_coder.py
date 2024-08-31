@@ -352,7 +352,7 @@ class Coder:
             if not fname.exists():
                 self.io.tool_output(f"Creating empty file {fname}")
                 fname.parent.mkdir(parents=True, exist_ok=True)
-                fname.touch()
+                utils.touch_file(fname)
 
             if not fname.is_file():
                 raise ValueError(f"{fname} is not a file")
@@ -1678,7 +1678,7 @@ class Coder:
 
             if not self.dry_run:
                 Path(full_path).parent.mkdir(parents=True, exist_ok=True)
-                Path(full_path).touch()
+                utils.touch_file(Path(full_path))
 
                 # Seems unlikely that we needed to create the file, but it was
                 # actually already part of the repo.
