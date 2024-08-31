@@ -17,6 +17,8 @@ def run_cmd(command, verbose=False):
 
 
 def run_cmd_subprocess(command, verbose=False):
+    if verbose:
+        print("run_cmd_subprocess:", command)
     try:
         process = subprocess.Popen(
             command,
@@ -32,8 +34,7 @@ def run_cmd_subprocess(command, verbose=False):
 
         output = []
         for line in process.stdout:
-            if verbose:
-                print(line, end="")  # Print the line in real-time only if verbose is True
+            print(line, end="")  # Print the line in real-time
             output.append(line)  # Store the line for later use
 
         process.wait()
@@ -50,25 +51,30 @@ def run_cmd_pexpect(command, verbose=False):
     :param verbose: If True, print output in real-time.
     :return: A tuple containing (exit_status, output)
     """
-    import pexpect
+    if verbose:
+        print("run_cmd_pexpect:", command)
 
     output = BytesIO()
 
     def output_callback(b):
         output.write(b)
-        if verbose:
-            print(b.decode("utf-8", errors="replace"), end="", flush=True)
         return b
 
     try:
         # Use the SHELL environment variable, falling back to /bin/sh if not set
         shell = os.environ.get("SHELL", "/bin/sh")
+        if verbose:
+            print("shell:", shell)
 
         if os.path.exists(shell):
             # Use the shell from SHELL environment variable
+            if verbose:
+                print("pexpect.spawn with shell:", shell)
             child = pexpect.spawn(shell, args=["-c", command], encoding="utf-8")
         else:
             # Fall back to spawning the command directly
+            if verbose:
+                print("pexpect.spawn without shell")
             child = pexpect.spawn(command, encoding="utf-8")
 
         # Transfer control to the user, capturing output
