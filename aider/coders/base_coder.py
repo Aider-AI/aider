@@ -903,10 +903,10 @@ class Coder:
         if self.test_cmd:
             if self.auto_test:
                 platform_text += (
-                    f"- The user's pre-commit runs this test command, don't suggest running them: "
+                    "- The user's pre-commit runs this test command, don't suggest running them: "
                 )
             else:
-                platform_text += f"- The user prefers this test command: "
+                platform_text += "- The user prefers this test command: "
             platform_text += self.testcmd + "\n"
 
         return platform_text
