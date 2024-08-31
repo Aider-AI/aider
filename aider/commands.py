@@ -40,7 +40,9 @@ class Commands:
             parser=self.parser,
         )
 
-    def __init__(self, io, coder, voice_language=None, verify_ssl=True, args=None, parser=None, verbose=False):
+    def __init__(
+        self, io, coder, voice_language=None, verify_ssl=True, args=None, parser=None, verbose=False
+    ):
         self.io = io
         self.coder = coder
         self.parser = parser
