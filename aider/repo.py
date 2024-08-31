@@ -71,9 +71,7 @@ class GitRepo:
                 repo_path = git.Repo(fname, search_parent_directories=True).working_dir
                 repo_path = utils.safe_abs_path(repo_path)
                 repo_paths.append(repo_path)
-            except git.exc.InvalidGitRepositoryError:
-                pass
-            except git.exc.NoSuchPathError:
+            except git.exc.ODBError:
                 pass
 
         num_repos = len(set(repo_paths))
@@ -207,7 +205,7 @@ class GitRepo:
             try:
                 commits = self.repo.iter_commits(active_branch)
                 current_branch_has_commits = any(commits)
-            except git.exc.GitCommandError:
+            except git.exc.ODBError:
                 pass
         except TypeError:
             pass

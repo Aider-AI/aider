@@ -484,7 +484,7 @@ def git_cherry_pick_osr_onto_o(texts):
         # cherry pick R onto original
         try:
             repo.git.cherry_pick(replace_hash, "--minimal")
-        except git.exc.GitCommandError:
+        except git.exc.ODBError:
             # merge conflicts!
             return
 
@@ -522,7 +522,7 @@ def git_cherry_pick_sr_onto_so(texts):
         # cherry pick replace onto original
         try:
             repo.git.cherry_pick(replace_hash, "--minimal")
-        except git.exc.GitCommandError:
+        except git.exc.ODBError:
             # merge conflicts!
             return
 
