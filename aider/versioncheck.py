@@ -17,7 +17,6 @@ def install_from_main_branch(io):
     Install the latest version of aider from the main branch of the GitHub repository.
     """
 
-    print("1")
     return utils.check_pip_install_extra(
         io,
         None,
