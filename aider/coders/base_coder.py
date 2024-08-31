@@ -868,17 +868,11 @@ class Coder:
 
         return None
 
-    def fmt_system_prompt(self, prompt):
-        lazy_prompt = self.gpt_prompts.lazy_prompt if self.main_model.lazy else ""
-
+    def get_platform_info(self):
         platform_text = f"- Platform: {platform.platform()}\n"
-        if os.name == "nt":
-            var = "COMSPEC"
-        else:
-            var = "SHELL"
-
-        val = os.getenv(var)
-        platform_text += f"- Shell: {var}={val}\n"
+        shell_var = "COMSPEC" if os.name == "nt" else "SHELL"
+        shell_val = os.getenv(shell_var)
+        platform_text += f"- Shell: {shell_var}={shell_val}\n"
 
         user_lang = self.get_user_language()
         if user_lang:
@@ -889,6 +883,12 @@ class Coder:
 
         if self.repo:
             platform_text += "- The user is operating inside a git repository\n"
+
+        return platform_text
+
+    def fmt_system_prompt(self, prompt):
+        lazy_prompt = self.gpt_prompts.lazy_prompt if self.main_model.lazy else ""
+        platform_text = self.get_platform_info()
 
         prompt = prompt.format(
             fence=self.fence,
