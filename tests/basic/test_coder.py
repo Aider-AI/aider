@@ -846,6 +846,22 @@ This command will print 'Hello, World!' to the console."""
             # Check if handle_shell_commands was called with the correct argument
             coder.handle_shell_commands.assert_not_called()
 
+    def test_coder_create_with_new_file_oserror(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            new_file = "new_file.txt"
+
+            # Mock Path.touch() to raise OSError
+            with patch('pathlib.Path.touch', side_effect=OSError("Permission denied")):
+                # Create the coder with a new file
+                coder = Coder.create(self.GPT35, "diff", io=io, fnames=[new_file])
+
+            # Check if the coder was created successfully
+            self.assertIsInstance(coder, Coder)
+            
+            # Check if the new file is not in abs_fnames
+            self.assertNotIn(new_file, [os.path.basename(f) for f in coder.abs_fnames])
+
     def test_show_exhausted_error(self):
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
