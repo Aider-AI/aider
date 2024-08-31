@@ -622,7 +622,7 @@ class TestMain(TestCase):
 
     @patch("git.Repo.init")
     def test_main_exit_with_git_command_not_found(self, mock_git_init):
-        mock_git_init.side_effect = git.exc.GitCommandNotFound("git")
+        mock_git_init.side_effect = git.exc.GitCommandNotFound("git", "Command 'git' not found")
 
         try:
             result = main(["--exit"], input=DummyInput(), output=DummyOutput())
