@@ -332,6 +332,40 @@ export function myFunction(input: number): number {
             # close the open cache files, so Windows won't error
             del repo_map
 
+    def test_get_repo_map_tsx(self):
+        # Create a temporary directory with a sample TSX file
+        test_file_tsx = "test_file.tsx"
+        file_content_tsx = """\
+import React from 'react';
+
+interface GreetingProps {
+    name: string;
+}
+
+const Greeting: React.FC<GreetingProps> = ({ name }) => {
+    return <h1>Hello, {name}!</h1>;
+};
+
+export default Greeting;
+"""
+
+        with IgnorantTemporaryDirectory() as temp_dir:
+            with open(os.path.join(temp_dir, test_file_tsx), "w") as f:
+                f.write(file_content_tsx)
+
+            io = InputOutput()
+            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
+            other_files = [os.path.join(temp_dir, test_file_tsx)]
+            result = repo_map.get_repo_map([], other_files)
+
+            # Check if the result contains the expected tags map with TSX identifiers
+            self.assertIn("test_file.tsx", result)
+            self.assertIn("GreetingProps", result)
+            self.assertIn("Greeting", result)
+
+            # close the open cache files, so Windows won't error
+            del repo_map
+
 
 class TestRepoMapAllLanguages(unittest.TestCase):
     def setUp(self):
@@ -405,6 +439,10 @@ class TestRepoMapAllLanguages(unittest.TestCase):
             "typescript": (
                 "test.ts",
                 "function greet(name: string): void {\n    console.log(`Hello, ${name}!`);\n}\n",
+            ),
+            "tsx": (
+                "test.tsx",
+                "import React from 'react';\n\nconst Greeting: React.FC<{ name: string }> = ({ name }) => {\n    return <h1>Hello, {name}!</h1>;\n};\n\nexport default Greeting;\n",
             ),
         }
 
