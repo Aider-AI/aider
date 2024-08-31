@@ -886,7 +886,7 @@ class Coder:
 
         if self.lint_cmds:
             platform_text += f"- Lint commands: {self.lint_cmds}\n"
-        
+
         if self.test_cmd:
             platform_text += f"- Test command: {self.test_cmd}\n"
 
