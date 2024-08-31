@@ -32,6 +32,7 @@ ONLY EVER RETURN CODE IN A *SEARCH/REPLACE BLOCK*!
 
 Just suggest shell commands this way, not example code.
 Only suggest complete shell commands that area ready to execute, without placeholders.
+Only suggest at most a few shell commands at a time, not more than 1-3.
 
 Use the appropriate shell based on the user's system info:
 {platform}
