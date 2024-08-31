@@ -7,16 +7,16 @@ from io import BytesIO
 import pexpect
 
 
-def run_cmd(command):
+def run_cmd(command, verbose=False):
     import sys
 
     if sys.stdin.isatty() and hasattr(pexpect, "spawn") and platform.system() != "Windows":
-        return run_cmd_pexpect(command)
+        return run_cmd_pexpect(command, verbose)
 
-    return run_cmd_subprocess(command)
+    return run_cmd_subprocess(command, verbose)
 
 
-def run_cmd_subprocess(command):
+def run_cmd_subprocess(command, verbose=False):
     try:
         process = subprocess.Popen(
             command,
@@ -32,7 +32,8 @@ def run_cmd_subprocess(command):
 
         output = []
         for line in process.stdout:
-            print(line, end="")  # Print the line in real-time
+            if verbose:
+                print(line, end="")  # Print the line in real-time only if verbose is True
             output.append(line)  # Store the line for later use
 
         process.wait()
@@ -41,11 +42,12 @@ def run_cmd_subprocess(command):
         return 1, str(e)
 
 
-def run_cmd_pexpect(command):
+def run_cmd_pexpect(command, verbose=False):
     """
     Run a shell command interactively using pexpect, capturing all output.
 
     :param command: The command to run as a string.
+    :param verbose: If True, print output in real-time.
     :return: A tuple containing (exit_status, output)
     """
     import pexpect
@@ -54,6 +56,8 @@ def run_cmd_pexpect(command):
 
     def output_callback(b):
         output.write(b)
+        if verbose:
+            print(b.decode("utf-8", errors="replace"), end="", flush=True)
         return b
 
     try:
