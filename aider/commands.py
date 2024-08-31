@@ -421,8 +421,17 @@ class Commands:
             return
 
         last_commit = self.coder.repo.get_head_commit()
-        if last_commit and not last_commit.parents:
+        if not last_commit or not last_commit.parents:
             self.io.tool_error("This is the first commit in the repository. Cannot undo.")
+            return
+
+        last_commit_hash = self.coder.repo.get_head_commit_sha(short=True)
+        if last_commit_hash not in self.coder.aider_commit_hashes:
+            self.io.tool_error("The last commit was not made by aider in this chat session.")
+            self.io.tool_error(
+                "You could try `/git reset --hard HEAD^` but be aware that this is a destructive"
+                " command!"
+            )
             return
 
         if len(last_commit.parents) > 1:
@@ -467,17 +476,6 @@ class Commands:
                 )
                 return
 
-        last_commit_hash = self.coder.repo.get_head_commit_sha(short=True)
-        last_commit_message = self.coder.repo.get_head_commit_message("(unknown)").strip()
-
-        if last_commit_hash not in self.coder.aider_commit_hashes:
-            self.io.tool_error("The last commit was not made by aider in this chat session.")
-            self.io.tool_error(
-                "You could try `/git reset --hard HEAD^` but be aware that this is a destructive"
-                " command!"
-            )
-            return
-
         # Reset only the files which are part of `last_commit`
         restored = set()
         unrestored = set()
@@ -501,6 +499,7 @@ class Commands:
         # Move the HEAD back before the latest commit
         self.coder.repo.repo.git.reset("--soft", "HEAD~1")
 
+        last_commit_message = self.coder.repo.get_head_commit_message("(unknown)").strip()
         self.io.tool_output(f"Removed: {last_commit_hash} {last_commit_message}")
 
         # Get the current HEAD after undo
