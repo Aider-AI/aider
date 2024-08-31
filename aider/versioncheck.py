@@ -1,4 +1,5 @@
 import os
+import shlex
 import sys
 import time
 from pathlib import Path
@@ -96,7 +97,7 @@ Newer aider version v{latest_version} is available. To upgrade, run:
     text = f"Newer aider version v{latest_version} is available. To upgrade, run:"
 
     io.tool_error(text)
-    if io.confirm_ask("Run pip install?", subject=" ".join(cmd)):
+    if io.confirm_ask("Run pip install?", subject=shlex.join(cmd)):
         success, output = utils.run_install(cmd)
         if success:
             io.tool_output("Re-run aider to use new version.")
