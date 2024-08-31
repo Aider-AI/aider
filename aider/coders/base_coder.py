@@ -29,7 +29,7 @@ from aider.io import ConfirmGroup, InputOutput
 from aider.linter import Linter
 from aider.llm import litellm
 from aider.mdstream import MarkdownStream
-from aider.repo import GitRepo
+from aider.repo import GitRepo, ANY_GIT_ERROR
 from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
 from aider.sendchat import retry_exceptions, send_completion
@@ -1784,7 +1784,7 @@ class Coder:
             self.reflected_message = str(err)
             return edited
 
-        except (git.exc.ODBError, git.exc.GitError) as err:
+        except ANY_GIT_ERROR as err:
             self.io.tool_error(str(err))
             return edited
         except Exception as err:

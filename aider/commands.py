@@ -14,6 +14,7 @@ from aider import models, prompts, voice
 from aider.format_settings import format_settings
 from aider.help import Help, install_help_extra
 from aider.llm import litellm
+from aider.repo import ANY_GIT_ERROR
 from aider.run_cmd import run_cmd
 from aider.scrape import Scraper, install_playwright
 from aider.utils import is_image_file
@@ -450,7 +451,7 @@ class Commands:
         try:
             remote_head = self.coder.repo.repo.git.rev_parse(f"origin/{current_branch}")
             has_origin = True
-        except (git.exc.ODBError, git.exc.GitError):
+        except ANY_GIT_ERROR:
             has_origin = False
 
         if has_origin:

@@ -15,6 +15,9 @@ class UnableToCountRepoFiles(Exception):
     pass
 
 
+ANY_GIT_ERROR = (git.exc.ODBError, git.exc.GitError)
+
+
 class GitRepo:
     repo = None
     aider_ignore_file = None
@@ -71,7 +74,7 @@ class GitRepo:
                 repo_path = git.Repo(fname, search_parent_directories=True).working_dir
                 repo_path = utils.safe_abs_path(repo_path)
                 repo_paths.append(repo_path)
-            except (git.exc.ODBError, git.exc.GitError):
+            except ANY_GIT_ERROR:
                 pass
 
         num_repos = len(set(repo_paths))
@@ -205,7 +208,7 @@ class GitRepo:
             try:
                 commits = self.repo.iter_commits(active_branch)
                 current_branch_has_commits = any(commits)
-            except (git.exc.ODBError, git.exc.GitError):
+            except ANY_GIT_ERROR:
                 pass
         except TypeError:
             pass
@@ -373,7 +376,7 @@ class GitRepo:
     def get_head_commit(self):
         try:
             return self.repo.head.commit
-        except (ValueError, git.exc.ODBError, git.exc.GitError):
+        except (ValueError,) + ANY_GIT_ERROR:
             return None
 
     def get_head_commit_sha(self, short=False):

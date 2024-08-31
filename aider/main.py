@@ -17,7 +17,7 @@ from aider.format_settings import format_settings, scrub_sensitive_info
 from aider.history import ChatSummary
 from aider.io import InputOutput
 from aider.llm import litellm  # noqa: F401; properly init litellm on launch
-from aider.repo import GitRepo, UnableToCountRepoFiles
+from aider.repo import ANY_GIT_ERROR, GitRepo, UnableToCountRepoFiles
 from aider.report import report_uncaught_exceptions
 from aider.versioncheck import check_version, install_from_main_branch, install_upgrade
 
@@ -56,7 +56,7 @@ def make_new_repo(git_root, io):
     try:
         repo = git.Repo.init(git_root)
         check_gitignore(git_root, io, False)
-    except (git.exc.ODBError, git.exc.GitError) as err:  # issue #1233
+    except ANY_GIT_ERROR as err:  # issue #1233
         io.tool_error(f"Unable to create git repo in {git_root}")
         io.tool_error(str(err))
         return
@@ -114,7 +114,7 @@ def check_gitignore(git_root, io, ask=True):
         repo = git.Repo(git_root)
         if repo.ignored(".aider"):
             return
-    except (git.exc.ODBError, git.exc.GitError):
+    except ANY_GIT_ERROR:
         pass
 
     pat = ".aider*"
