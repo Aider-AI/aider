@@ -620,13 +620,13 @@ class TestMain(TestCase):
             )
             self.assertTrue(coder.suggest_shell_commands)
 
-    @patch('git.Repo.init')
+    @patch("git.Repo.init")
     def test_main_exit_with_git_command_not_found(self, mock_git_init):
-        mock_git_init.side_effect = git.exc.GitCommandNotFound('git')
-        
+        mock_git_init.side_effect = git.exc.GitCommandNotFound("git")
+
         try:
             result = main(["--exit"], input=DummyInput(), output=DummyOutput())
         except Exception as e:
             self.fail(f"main() raised an unexpected exception: {e}")
-        
+
         self.assertIsNone(result, "main() should return None when called with --exit")
