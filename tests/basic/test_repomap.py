@@ -442,7 +442,11 @@ class TestRepoMapAllLanguages(unittest.TestCase):
             ),
             "tsx": (
                 "test.tsx",
-                "import React from 'react';\n\nconst Greeting: React.FC<{ name: string }> = ({ name }) => {\n    return <h1>Hello, {name}!</h1>;\n};\n\nexport default Greeting;\n",
+                (
+                    "import React from 'react';\n\nconst Greeting: React.FC<{ name: string }> = ({"
+                    " name }) => {\n    return <h1>Hello, {name}!</h1>;\n};\n\nexport default"
+                    " Greeting;\n"
+                ),
             ),
         }
 
