@@ -6,7 +6,6 @@ import threading
 from pathlib import Path
 
 import git
-import gitdb
 from dotenv import load_dotenv
 from prompt_toolkit.enums import EditingMode
 
@@ -57,7 +56,7 @@ def make_new_repo(git_root, io):
     try:
         repo = git.Repo.init(git_root)
         check_gitignore(git_root, io, False)
-    except (gitdb.exc.ODBError, git.exc.GitCommandNotFound) as err:  # issue #1233
+    except (git.exc.ODBError, git.exc.GitCommandNotFound) as err:  # issue #1233
         io.tool_error(f"Unable to create git repo in {git_root}")
         io.tool_error(str(err))
         return

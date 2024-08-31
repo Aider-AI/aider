@@ -3,7 +3,6 @@ import time
 from pathlib import Path, PurePosixPath
 
 import git
-import gitdb
 import pathspec
 
 from aider import prompts, utils
@@ -376,7 +375,7 @@ class GitRepo:
     def get_head_commit(self):
         try:
             return self.repo.head.commit
-        except (ValueError, gitdb.exc.ODBError):
+        except (ValueError, git.exc.ODBError):
             return None
 
     def get_head_commit_sha(self, short=False):
