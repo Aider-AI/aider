@@ -6,7 +6,6 @@ import tempfile
 from collections import OrderedDict
 from pathlib import Path
 
-import git
 import pyperclip
 from PIL import Image, ImageGrab
 
