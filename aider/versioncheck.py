@@ -69,6 +69,9 @@ def check_version(io, just_check=False, verbose=False):
         VERSION_CHECK_FNAME.parent.mkdir(parents=True, exist_ok=True)
         VERSION_CHECK_FNAME.touch()
 
+    ###
+    # is_update_available = True
+
     if just_check or verbose:
         if is_update_available:
             io.tool_output("Update available")
@@ -94,7 +97,7 @@ Newer aider version v{latest_version} is available. To upgrade, run:
     success = utils.check_pip_install_extra(
         io,
         None,
-        f"Newer aider version v{latest_version} is available. To upgrade, run:",
+        f"Newer aider version v{latest_version} is available.",
         ["--upgrade", "aider-chat"],
     )
 
