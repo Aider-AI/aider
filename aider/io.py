@@ -552,7 +552,7 @@ class InputOutput:
             try:
                 with self.chat_history_file.open("a", encoding=self.encoding) as f:
                     f.write(text)
-            except PermissionError:
+            except (PermissionError, OSError):
                 self.tool_error(
                     f"Warning: Unable to write to chat history file {self.chat_history_file}."
                     " Permission denied."
