@@ -35,6 +35,7 @@ Only suggest complete shell commands that area ready to execute, without placeho
 
 Use the appropriate shell based on the user's system info:
 {platform}
+Don't offer to run the lint and test commands that are already part of the user's pre-commit.
 
 Examples of when to suggest shell commands:
 

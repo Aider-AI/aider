@@ -885,15 +885,15 @@ class Coder:
             platform_text += "- The user is operating inside a git repository\n"
 
         if self.lint_cmds:
-            platform_text += "- Lint commands:\n"
+            platform_text += "- The user's pre-commit runs these lint commands:\n"
             for lang, cmd in self.lint_cmds.items():
                 if lang is None:
-                    platform_text += f"  - Default: {cmd}\n"
+                    platform_text += f"  - {cmd}\n"
                 else:
                     platform_text += f"  - {lang}: {cmd}\n"
 
         if self.test_cmd:
-            platform_text += f"- Test command: {self.test_cmd}\n"
+            platform_text += f"- The user's pre-commit runs this test command: {self.test_cmd}\n"
 
         return platform_text
 
