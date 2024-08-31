@@ -179,13 +179,14 @@ ROOT_IMPORTANT_FILES = [
 # Normalize the lists once
 NORMALIZED_ROOT_IMPORTANT_FILES = set(os.path.normpath(path) for path in ROOT_IMPORTANT_FILES)
 
+
 def is_important(file_path):
     file_name = os.path.basename(file_path)
-    dir_name = os.path.dirname(file_path)
+    dir_name = os.path.normpath(os.path.dirname(file_path))
     normalized_path = os.path.normpath(file_path)
 
     # Check for GitHub Actions workflow files
-    if dir_name == os.path.normpath(".github/workflows")  and file_name.endswith(".yml"):
+    if dir_name == os.path.normpath(".github/workflows") and file_name.endswith(".yml"):
         return True
 
     return normalized_path in NORMALIZED_ROOT_IMPORTANT_FILES
