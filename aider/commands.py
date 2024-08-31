@@ -40,11 +40,12 @@ class Commands:
             parser=self.parser,
         )
 
-    def __init__(self, io, coder, voice_language=None, verify_ssl=True, args=None, parser=None):
+    def __init__(self, io, coder, voice_language=None, verify_ssl=True, args=None, parser=None, verbose=False):
         self.io = io
         self.coder = coder
         self.parser = parser
         self.args = args
+        self.verbose = verbose
 
         self.verify_ssl = verify_ssl
         if voice_language == "auto":

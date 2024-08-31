@@ -538,7 +538,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if not sanity_check_repo(repo, io):
         return 1
 
-    commands = Commands(io, None, verify_ssl=args.verify_ssl, args=args, parser=parser)
+    commands = Commands(io, None, verify_ssl=args.verify_ssl, args=args, parser=parser, verbose=args.verbose)
 
     summarizer = ChatSummary(
         [main_model.weak_model, main_model],
