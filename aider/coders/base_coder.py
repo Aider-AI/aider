@@ -887,7 +887,13 @@ class Coder:
             platform_text += "- The user is operating inside a git repository\n"
 
         if self.lint_cmds:
-            platform_text += "- The user's pre-commit runs these lint commands:\n"
+            if self.auto_lint:
+                platform_text += (
+                    "- The user's pre-commit runs these lint commands, don't suggest running"
+                    " them:\n"
+                )
+            else:
+                platform_text += "- The user prefers these lint commands:\n"
             for lang, cmd in self.lint_cmds.items():
                 if lang is None:
                     platform_text += f"  - {cmd}\n"
@@ -895,7 +901,13 @@ class Coder:
                     platform_text += f"  - {lang}: {cmd}\n"
 
         if self.test_cmd:
-            platform_text += f"- The user's pre-commit runs this test command: {self.test_cmd}\n"
+            if self.auto_test:
+                platform_text += (
+                    f"- The user's pre-commit runs this test command, don't suggest running them: "
+                )
+            else:
+                platform_text += f"- The user prefers this test command: "
+            platform_text += self.testcmd + "\n"
 
         return platform_text
 

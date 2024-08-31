@@ -36,7 +36,6 @@ Only suggest at most a few shell commands at a time, not more than 1-3.
 
 Use the appropriate shell based on the user's system info:
 {platform}
-Don't offer to run the lint and test commands that are already part of the user's pre-commit.
 
 Examples of when to suggest shell commands:
 
