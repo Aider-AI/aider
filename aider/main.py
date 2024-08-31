@@ -6,6 +6,7 @@ import threading
 from pathlib import Path
 
 import git
+import gitdb
 from dotenv import load_dotenv
 from prompt_toolkit.enums import EditingMode
 
