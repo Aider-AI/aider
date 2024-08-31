@@ -92,17 +92,15 @@ Newer aider version v{latest_version} is available. To upgrade, run:
         io.tool_error(text)
         return True
 
-    cmd = utils.get_pip_install(["--upgrade", "aider-chat"])
+    success = utils.check_pip_install_extra(
+        io,
+        None,
+        f"Newer aider version v{latest_version} is available. To upgrade, run:",
+        ["--upgrade", "aider-chat"],
+    )
 
-    text = f"Newer aider version v{latest_version} is available. To upgrade, run:"
-
-    io.tool_error(text)
-    if io.confirm_ask("Run pip install?", subject=shlex.join(cmd)):
-        success, output = utils.run_install(cmd)
-        if success:
-            io.tool_output("Re-run aider to use new version.")
-            sys.exit()
-        else:
-            io.tool_error(output)
+    if success:
+        io.tool_output("Re-run aider to use new version.")
+        sys.exit()
 
     return True

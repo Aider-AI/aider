@@ -206,7 +206,7 @@ def get_pip_install(args):
 
 def run_install(cmd):
     print()
-    print("Installing: ", " ".join(cmd))
+    print("Installing:", shlex.join(cmd))
 
     try:
         output = []
@@ -332,7 +332,8 @@ def check_pip_install_extra(io, module, prompt, pip_install_cmd):
     io.tool_error(output)
 
     print()
-    print(f"Failed to install {pip_install_cmd[0]}")
+    print("Install failed, try running this command manually:")
+    print(shlex.join(cmd))
 
 
 if __name__ == "__main__":
