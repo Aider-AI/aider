@@ -18,7 +18,6 @@ from datetime import datetime
 from json.decoder import JSONDecodeError
 from pathlib import Path
 
-import git
 from rich.console import Console, Text
 from rich.markdown import Markdown
 
