@@ -625,7 +625,7 @@ class TestMain(TestCase):
         mock_git_init.side_effect = git.exc.GitCommandNotFound("git", "Command 'git' not found")
 
         try:
-            result = main(["--exit"], input=DummyInput(), output=DummyOutput())
+            result = main(["--exit", "--yes"], input=DummyInput(), output=DummyOutput())
         except Exception as e:
             self.fail(f"main() raised an unexpected exception: {e}")
 
