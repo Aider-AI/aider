@@ -349,19 +349,22 @@ class Coder:
 
         for fname in fnames:
             fname = Path(fname)
-            if not fname.exists():
-                self.io.tool_output(f"Creating empty file {fname}")
-                fname.parent.mkdir(parents=True, exist_ok=True)
-                utils.touch_file(fname)
-
-            if not fname.is_file():
-                raise ValueError(f"{fname} is not a file")
-
-            fname = str(fname.resolve())
-
             if self.repo and self.repo.ignored_file(fname):
                 self.io.tool_error(f"Skipping {fname} that matches aiderignore spec.")
                 continue
+
+            if not fname.exists():
+                if utils.touch_file(fname):
+                    self.io.tool_output(f"Creating empty file {fname}")
+                else:
+                    self.io.tool_error(f"Can not create {fname}, skipping.")
+                    continue
+
+            if not fname.is_file():
+                self.io.tool_error(f"Skipping {fname} that is not a normal file.")
+                continue
+
+            fname = str(fname.resolve())
 
             self.abs_fnames.add(fname)
             self.check_added_files()
@@ -1677,8 +1680,9 @@ class Coder:
                 return
 
             if not self.dry_run:
-                Path(full_path).parent.mkdir(parents=True, exist_ok=True)
-                utils.touch_file(Path(full_path))
+                if not utils.touch_file(full_path):
+                    self.io.tool_error(f"Unable to create {path}, skipping edits.")
+                    return
 
                 # Seems unlikely that we needed to create the file, but it was
                 # actually already part of the repo.

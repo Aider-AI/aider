@@ -292,6 +292,7 @@ def format_tokens(count):
 
 
 def touch_file(fname):
+    fname = Path(fname)
     try:
         fname.parent.mkdir(parents=True, exist_ok=True)
         fname.touch()
