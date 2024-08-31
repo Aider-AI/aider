@@ -852,13 +852,13 @@ This command will print 'Hello, World!' to the console."""
             new_file = "new_file.txt"
 
             # Mock Path.touch() to raise OSError
-            with patch('pathlib.Path.touch', side_effect=OSError("Permission denied")):
+            with patch("pathlib.Path.touch", side_effect=OSError("Permission denied")):
                 # Create the coder with a new file
                 coder = Coder.create(self.GPT35, "diff", io=io, fnames=[new_file])
 
             # Check if the coder was created successfully
             self.assertIsInstance(coder, Coder)
-            
+
             # Check if the new file is not in abs_fnames
             self.assertNotIn(new_file, [os.path.basename(f) for f in coder.abs_fnames])
 
