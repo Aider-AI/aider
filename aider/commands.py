@@ -462,7 +462,7 @@ class Commands:
                 return
 
         last_commit_hash = self.coder.repo.get_head_commit_sha(short=True)
-        last_commit_message = self.coder.repo.get_head_commit_message("(unknown)")
+        last_commit_message = self.coder.repo.get_head_commit_message("(unknown)").strip()
 
         if last_commit_hash not in self.coder.aider_commit_hashes:
             self.io.tool_error("The last commit was not made by aider in this chat session.")
@@ -483,7 +483,7 @@ class Commands:
 
         # Get the current HEAD after undo
         current_head_hash = self.coder.repo.get_head_commit_sha(short=True)
-        current_head_message = self.coder.repo.get_head_commit_message("(unknown)")
+        current_head_message = self.coder.repo.get_head_commit_message("(unknown)").strip()
         self.io.tool_output(f"Now at:  {current_head_hash} {current_head_message}")
 
         if self.coder.main_model.send_undo_reply:
