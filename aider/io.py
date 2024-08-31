@@ -222,6 +222,9 @@ class InputOutput:
             with open(str(filename), "rb") as image_file:
                 encoded_string = base64.b64encode(image_file.read())
                 return encoded_string.decode("utf-8")
+        except OSError as err:
+            self.tool_error(f"{filename}: unable to read: {err}")
+            return
         except FileNotFoundError:
             self.tool_error(f"{filename}: file not found error")
             return
@@ -239,6 +242,9 @@ class InputOutput:
         try:
             with open(str(filename), "r", encoding=self.encoding) as f:
                 return f.read()
+        except OSError as err:
+            self.tool_error(f"{filename}: unable to read: {err}")
+            return
         except FileNotFoundError:
             self.tool_error(f"{filename}: file not found error")
             return
