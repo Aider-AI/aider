@@ -1,5 +1,6 @@
 import itertools
 import os
+import platform
 import shlex
 import subprocess
 import sys
@@ -8,7 +9,6 @@ import time
 from pathlib import Path
 
 import git
-import platform
 
 from aider.dump import dump  # noqa: F401
 from aider.run_cmd import run_cmd
@@ -336,17 +336,18 @@ def check_pip_install_extra(io, module, prompt, pip_install_cmd):
     print("Install failed, try running this command manually:")
     print(printable_shell_command(cmd))
 
+
 def printable_shell_command(cmd_list):
     """
     Convert a list of command arguments to a properly shell-escaped string.
-    
+
     Args:
         cmd_list (list): List of command arguments.
-    
+
     Returns:
         str: Shell-escaped command string.
     """
-    if platform.system() == 'Windows':
+    if platform.system() == "Windows":
         return subprocess.list2cmdline(cmd_list)
     else:
         return shlex.join(cmd_list)
