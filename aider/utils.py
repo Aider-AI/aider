@@ -207,7 +207,7 @@ def get_pip_install(args):
 
 def run_install(cmd):
     print()
-    print("Installing:", shlex.join(cmd))
+    print("Installing:", printable_shell_command(cmd))
 
     try:
         output = []
@@ -316,7 +316,7 @@ def check_pip_install_extra(io, module, prompt, pip_install_cmd):
     if prompt:
         io.tool_error(prompt)
 
-    if not io.confirm_ask("Run pip install?", default="y", subject=shlex.join(cmd)):
+    if not io.confirm_ask("Run pip install?", default="y", subject=printable_shell_command(cmd)):
         return
 
     success, output = run_install(cmd)
