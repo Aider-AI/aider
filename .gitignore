@@ -10,3 +10,4 @@ Gemfile.lock
 _site
 .jekyll-cache/
 .jekyll-metadata
+aider/__version__.py

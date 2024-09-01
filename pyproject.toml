@@ -62,7 +62,7 @@ include = ["aider*", "aider.website"]
 ]
 
 [build-system]
-requires = ["setuptools>=68", "setuptools_scm[toml]>=6.2"]
+requires = ["setuptools>=68", "setuptools_scm[toml]>=8"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]

@@ -25,7 +25,7 @@ importlib_resources
 pyperclip
 pexpect
 json5
-setuptools_scm>=6.2
+setuptools_scm>=8
 
 # The proper depdendency is networkx[default], but this brings
 # in matplotlib and a bunch of other deps
