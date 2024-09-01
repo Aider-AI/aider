@@ -907,7 +907,7 @@ class Coder:
                 )
             else:
                 platform_text += "- The user prefers this test command: "
-            platform_text += self.testcmd + "\n"
+            platform_text += self.test_cmd + "\n"
 
         return platform_text
 
