@@ -6,6 +6,6 @@ except Exception:
     try:
         from aider.__version__ import __version__
     except Exception:
-        __version__ = "0.54.10-dev"
+        __version__ = "0.54.10"
 
 __all__ = [__version__]
