@@ -125,8 +125,9 @@ def main():
         if not dry_run:
             subprocess.run(cmd, check=True)
 
+    new_dev_version = f"{incremented_version}.dev"
     updated_dev_content = re.sub(
-        r'__version__ = ".+?"', f'__version__ = "{incremented_version}-dev"', content
+        r'__version__ = ".+?"', f'__version__ = "{new_dev_version}"', content
     )
 
     print()
@@ -138,7 +139,10 @@ def main():
 
     git_commands_dev = [
         ["git", "add", "aider/__init__.py"],
-        ["git", "commit", "-m", f"set version to {incremented_version}-dev"],
+        ["git", "commit", "-m", f"set version to {new_dev_version}"],
+        ["git", "tag", f"v{new_dev_version}"],
+        ["git", "push", "origin"],
+        ["git", "push", "origin", f"v{new_dev_version}", "--no-verify"],
     ]
 
     for cmd in git_commands_dev:
