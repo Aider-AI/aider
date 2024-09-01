@@ -307,7 +307,7 @@ def check_pip_install_extra(io, module, prompt, pip_install_cmd):
         try:
             __import__(module)
             return True
-        except (ImportError, ModuleNotFoundError):
+        except (ImportError, ModuleNotFoundError, RuntimeError):
             pass
 
     cmd = get_pip_install(pip_install_cmd)
@@ -325,7 +325,7 @@ def check_pip_install_extra(io, module, prompt, pip_install_cmd):
         try:
             __import__(module)
             return True
-        except (ImportError, ModuleNotFoundError) as err:
+        except (ImportError, ModuleNotFoundError, RuntimeError) as err:
             io.tool_error(str(err))
             pass
 
