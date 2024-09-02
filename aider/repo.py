@@ -121,7 +121,10 @@ class GitRepo:
         if fnames:
             fnames = [str(self.abs_root_path(fn)) for fn in fnames]
             for fname in fnames:
-                self.repo.git.add(fname)
+                try:
+                    self.repo.git.add(fname)
+                except ANY_GIT_ERROR as err:
+                    self.io.tool_error(f"Unable to add {fname}: {err}")
             cmd += ["--"] + fnames
         else:
             cmd += ["-a"]
@@ -137,25 +140,27 @@ class GitRepo:
             original_auther_name_env = os.environ.get("GIT_AUTHOR_NAME")
             os.environ["GIT_AUTHOR_NAME"] = committer_name
 
-        self.repo.git.commit(cmd)
-        commit_hash = self.get_head_commit_sha(short=True)
-        self.io.tool_output(f"Commit {commit_hash} {commit_message}", bold=True)
+        try:
+            self.repo.git.commit(cmd)
+            commit_hash = self.get_head_commit_sha(short=True)
+            self.io.tool_output(f"Commit {commit_hash} {commit_message}", bold=True)
+            return commit_hash, commit_message
+        except ANY_GIT_ERROR as err:
+            self.io.tool_error(f"Unable to commit: {err}")
+        finally:
+            # Restore the env
 
-        # Restore the env
+            if self.attribute_committer:
+                if original_committer_name_env is not None:
+                    os.environ["GIT_COMMITTER_NAME"] = original_committer_name_env
+                else:
+                    del os.environ["GIT_COMMITTER_NAME"]
 
-        if self.attribute_committer:
-            if original_committer_name_env is not None:
-                os.environ["GIT_COMMITTER_NAME"] = original_committer_name_env
-            else:
-                del os.environ["GIT_COMMITTER_NAME"]
-
-        if aider_edits and self.attribute_author:
-            if original_auther_name_env is not None:
-                os.environ["GIT_AUTHOR_NAME"] = original_auther_name_env
-            else:
-                del os.environ["GIT_AUTHOR_NAME"]
-
-        return commit_hash, commit_message
+            if aider_edits and self.attribute_author:
+                if original_auther_name_env is not None:
+                    os.environ["GIT_AUTHOR_NAME"] = original_auther_name_env
+                else:
+                    del os.environ["GIT_AUTHOR_NAME"]
 
     def get_rel_repo_dir(self):
         try:
@@ -210,7 +215,7 @@ class GitRepo:
                 current_branch_has_commits = any(commits)
             except ANY_GIT_ERROR:
                 pass
-        except TypeError:
+        except (TypeError,) + ANY_GIT_ERROR:
             pass
 
         if not fnames:
@@ -221,18 +226,21 @@ class GitRepo:
             if not self.path_in_repo(fname):
                 diffs += f"Added {fname}\n"
 
-        if current_branch_has_commits:
-            args = ["HEAD", "--"] + list(fnames)
-            diffs += self.repo.git.diff(*args)
+        try:
+            if current_branch_has_commits:
+                args = ["HEAD", "--"] + list(fnames)
+                diffs += self.repo.git.diff(*args)
+                return diffs
+
+            wd_args = ["--"] + list(fnames)
+            index_args = ["--cached"] + wd_args
+
+            diffs += self.repo.git.diff(*index_args)
+            diffs += self.repo.git.diff(*wd_args)
+
             return diffs
-
-        wd_args = ["--"] + list(fnames)
-        index_args = ["--cached"] + wd_args
-
-        diffs += self.repo.git.diff(*index_args)
-        diffs += self.repo.git.diff(*wd_args)
-
-        return diffs
+        except ANY_GIT_ERROR as err:
+            self.io.tool_error(f"Unable to diff: {err}")
 
     def diff_commits(self, pretty, from_commit, to_commit):
         args = []
