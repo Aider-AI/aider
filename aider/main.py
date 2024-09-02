@@ -398,6 +398,16 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         editingmode=editing_mode,
     )
 
+    try:
+        io.tool_output()
+        io.rule()
+    except UnicodeEncodeError as err:
+        if io.pretty:
+            io.pretty = False
+            io.tool_error("Terminal does not support pretty output (UnicodeDecodeError)")
+        else:
+            raise err
+
     if args.gui and not return_coder:
         if not check_streamlit_install(io):
             return
@@ -588,7 +598,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if return_coder:
         return coder
 
-    io.tool_output()
     coder.show_announcements()
 
     if args.show_prompts:
