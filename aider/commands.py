@@ -188,10 +188,14 @@ class Commands:
         cmd_name = cmd_name.replace("-", "_")
         cmd_method_name = f"cmd_{cmd_name}"
         cmd_method = getattr(self, cmd_method_name, None)
-        if cmd_method:
-            return cmd_method(args)
-        else:
+        if not cmd_method:
             self.io.tool_output(f"Error: Command {cmd_name} not found.")
+            return
+
+        try:
+            return cmd_method(args)
+        except ANY_GIT_ERROR as err:
+            self.io.tool_error(f"Unable to complete {cmd_name}: {err}")
 
     def matching_commands(self, inp):
         words = inp.strip().split()
