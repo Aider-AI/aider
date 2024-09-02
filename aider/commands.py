@@ -559,14 +559,17 @@ class Commands:
         return files
 
     def glob_filtered_to_repo(self, pattern):
-        if not pattern:
+        if not pattern.strip():
             return []
         try:
             if os.path.isabs(pattern):
                 # Handle absolute paths
                 raw_matched_files = [Path(pattern)]
             else:
-                raw_matched_files = list(Path(self.coder.root).glob(pattern))
+                try:
+                    raw_matched_files = list(Path(self.coder.root).glob(pattern))
+                except IndexError:
+                    raw_matched_files = []
         except ValueError as err:
             self.io.tool_error(f"Error matching {pattern}: {err}")
             raw_matched_files = []
