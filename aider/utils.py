@@ -302,7 +302,7 @@ def touch_file(fname):
         return False
 
 
-def check_pip_install_extra(io, module, prompt, pip_install_cmd):
+def check_pip_install_extra(io, module, prompt, pip_install_cmd, self_update=False):
     if module:
         try:
             __import__(module)
@@ -314,6 +314,11 @@ def check_pip_install_extra(io, module, prompt, pip_install_cmd):
 
     if prompt:
         io.tool_error(prompt)
+
+    if self_update and platform.system() == "Windows":
+        io.tool_output("Run this command to update:")
+        io.tool_output(printable_shell_command(cmd))
+        return
 
     if not io.confirm_ask("Run pip install?", default="y", subject=printable_shell_command(cmd)):
         return

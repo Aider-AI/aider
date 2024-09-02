@@ -22,19 +22,43 @@ def install_from_main_branch(io):
         None,
         "Install the development version of aider from the main branch?",
         ["--upgrade", "git+https://github.com/paul-gauthier/aider.git"],
+        self_update=True,
     )
 
 
-def install_upgrade(io):
+def install_upgrade(io, latest_version=None):
     """
     Install the latest version of aider from PyPI.
     """
-    return utils.check_pip_install_extra(
+
+    if latest_version:
+        new_ver_text = f"Newer aider version v{latest_version} is available."
+    else:
+        new_ver_text = f"Install latest version of aider from PyPI?"
+
+    docker_image = os.environ.get("AIDER_DOCKER_IMAGE")
+    if docker_image:
+        text = f"""
+{new_ver_text} To upgrade, run:
+
+    docker pull {docker_image}
+"""
+        io.tool_error(text)
+        return True
+
+    success = utils.check_pip_install_extra(
         io,
         None,
-        "Install the latest version of aider from PyPI?",
+        new_ver_text,
         ["--upgrade", "aider-chat"],
+        self_update=True,
     )
+
+    if success:
+        io.tool_output("Re-run aider to use new version.")
+        sys.exit()
+
+    return
 
 
 def check_version(io, just_check=False, verbose=False):
@@ -85,25 +109,5 @@ def check_version(io, just_check=False, verbose=False):
     if not is_update_available:
         return False
 
-    docker_image = os.environ.get("AIDER_DOCKER_IMAGE")
-    if docker_image:
-        text = f"""
-Newer aider version v{latest_version} is available. To upgrade, run:
-
-    docker pull {docker_image}
-"""
-        io.tool_error(text)
-        return True
-
-    success = utils.check_pip_install_extra(
-        io,
-        None,
-        f"Newer aider version v{latest_version} is available.",
-        ["--upgrade", "aider-chat"],
-    )
-
-    if success:
-        io.tool_output("Re-run aider to use new version.")
-        sys.exit()
-
+    install_upgrade(io, latest_version)
     return True
