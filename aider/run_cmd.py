@@ -84,6 +84,6 @@ def run_cmd_pexpect(command, verbose=False):
         child.close()
         return child.exitstatus, output.getvalue().decode("utf-8", errors="replace")
 
-    except pexpect.ExceptionPexpect as e:
-        error_msg = f"Error running command: {e}"
+    except (pexpect.ExceptionPexpect, TypeError) as e:
+        error_msg = f"Error running command {command}: {e}"
         return 1, error_msg
