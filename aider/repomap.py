@@ -156,11 +156,12 @@ class RepoMap:
         return repo_content
 
     def get_rel_fname(self, fname):
-        return os.path.relpath(fname, self.root)
-
-    def split_path(self, path):
-        path = os.path.relpath(path, self.root)
-        return [path + ":"]
+        try:
+            return os.path.relpath(fname, self.root)
+        except ValueError:
+            # Issue #1288: ValueError: path is on mount 'C:', start on mount 'D:'
+            # Just return the full fname.
+            return fname
 
     def load_tags_cache(self):
         path = Path(self.root) / self.TAGS_CACHE_DIR
