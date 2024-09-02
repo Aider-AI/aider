@@ -11,7 +11,6 @@ from pathlib import Path
 import git
 
 from aider.dump import dump  # noqa: F401
-from aider.run_cmd import run_cmd
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp"}
 
@@ -351,14 +350,3 @@ def printable_shell_command(cmd_list):
         return subprocess.list2cmdline(cmd_list)
     else:
         return shlex.join(cmd_list)
-
-
-if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        command = " ".join(sys.argv[1:])
-        exit_status, output = run_cmd(command)
-        dump(exit_status)
-        dump(output)
-    else:
-        print("Usage: python -m aider.utils <command>")
-        sys.exit(1)
