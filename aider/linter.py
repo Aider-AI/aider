@@ -198,6 +198,10 @@ def basic_lint(fname, code):
     if not lang:
         return
 
+    # Tree-sitter linter is not capable of working with typescript #1132
+    if lang == "typescript":
+        return
+
     parser = get_parser(lang)
     tree = parser.parse(bytes(code, "utf-8"))
 
