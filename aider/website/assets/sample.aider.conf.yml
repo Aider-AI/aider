@@ -146,8 +146,11 @@
 ## Set the color for tool output (default: None)
 #tool-output-color:
 
-## Set the color for tool error messages (default: red)
+## Set the color for tool error messages (default: #FF2222)
 #tool-error-color: #FF2222
+
+## Set the color for tool warning messages (default: #FFA500)
+#tool-warning-color: #FFA500
 
 ## Set the color for assistant output (default: #0088ff)
 #assistant-output-color: #0088ff
