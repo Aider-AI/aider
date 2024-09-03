@@ -222,7 +222,10 @@ class Scraper:
         if not self.pandoc_available:
             return page_source
 
-        md = pypandoc.convert_text(page_source, "markdown", format="html")
+        try:
+            md = pypandoc.convert_text(page_source, "markdown", format="html")
+        except OSError:
+            return page_source
 
         md = re.sub(r"</div>", "      ", md)
         md = re.sub(r"<div>", "     ", md)
