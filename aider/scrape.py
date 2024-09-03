@@ -4,8 +4,6 @@ import re
 import sys
 
 import pypandoc
-from playwright.sync_api import Error as PlaywrightError
-from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 
 from aider import __version__, urls, utils
 from aider.dump import dump  # noqa: F401
@@ -133,7 +131,9 @@ class Scraper:
 
     # Internals...
     def scrape_with_playwright(self, url):
-        import playwright
+        import playwright  # noqa: F401
+        from playwright.sync_api import Error as PlaywrightError
+        from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
         from playwright.sync_api import sync_playwright
 
         with sync_playwright() as p:
