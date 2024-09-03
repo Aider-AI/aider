@@ -40,4 +40,9 @@ To add URLs to the chat:
 - Use `/web <url>`
 - Just paste the URL into the chat and aider will ask if you want to add it.
 
+You can also scrape web pages from the command line to see the markdown version that aider produces:
 
+
+```
+python -m aider.scrape https://aider.chat/docs/usage/tips.html
+```
