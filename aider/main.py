@@ -521,7 +521,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.show_model_warnings:
         problem = models.sanity_check_models(io, main_model)
         if problem:
-            io.tool_output("You can skip this sanity check with --no-show-model-warnings")
+            io.tool_output("You can skip this check with --no-show-model-warnings")
+            io.tool_output()
             try:
                 if not io.confirm_ask("Proceed anyway?"):
                     return 1
