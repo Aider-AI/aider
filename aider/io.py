@@ -176,7 +176,7 @@ class InputOutput:
         user_input_color="blue",
         tool_output_color=None,
         tool_error_color="red",
-        tool_warning_color="yellow",
+        tool_warning_color="#FFA500",
         encoding="utf-8",
         dry_run=False,
         llm_history_file=None,
