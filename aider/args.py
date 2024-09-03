@@ -291,12 +291,6 @@ def get_parser(default_config_files, git_root):
         default=False,
     )
     group.add_argument(
-        "--light-mode",
-        action="store_true",
-        help="Use colors suitable for a light terminal background (default: False)",
-        default=False,
-    )
-    group.add_argument(
         "--pretty",
         action=argparse.BooleanOptionalAction,
         default=True,
