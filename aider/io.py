@@ -259,8 +259,11 @@ class InputOutput:
     def write_text(self, filename, content):
         if self.dry_run:
             return
-        with open(str(filename), "w", encoding=self.encoding) as f:
-            f.write(content)
+        try:
+            with open(str(filename), "w", encoding=self.encoding) as f:
+                f.write(content)
+        except OSError as err:
+            self.tool_error(f"Unable to write file {filename}: {err}")
 
     def rule(self):
         if self.pretty:
