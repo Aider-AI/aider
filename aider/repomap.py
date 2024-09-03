@@ -507,11 +507,8 @@ class RepoMap:
         other_rel_fnames = sorted(set(self.get_rel_fname(fname) for fname in other_fnames))
         special_fnames = filter_important_files(other_rel_fnames)
         ranked_tags_fnames = set(tag[0] for tag in ranked_tags)
-        special_fnames = [
-            fn for fn in special_fnames if fn not in ranked_tags_fnames
-        ]
+        special_fnames = [fn for fn in special_fnames if fn not in ranked_tags_fnames]
         special_fnames = [(fn,) for fn in special_fnames]
-
 
         ranked_tags = special_fnames + ranked_tags
 
