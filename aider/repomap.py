@@ -307,16 +307,15 @@ class RepoMap:
             if progress and not showing_bar:
                 progress()
 
-            if not Path(fname).is_file():
-                if fname not in self.warned_files:
-                    if Path(fname).exists():
-                        self.io.tool_error(
-                            f"Repo-map can't include {fname}, it is not a normal file"
-                        )
-                    else:
-                        self.io.tool_error(f"Repo-map can't include {fname}, it no longer exists")
+            try:
+                file_ok = Path(fname).is_file()
+            except OSError:
+                file_ok = False
 
-                self.warned_files.add(fname)
+            if not file_ok:
+                if fname not in self.warned_files:
+                    self.io.tool_error(f"Repo-map can't include {fname}")
+                    self.warned_files.add(fname)
                 continue
 
             # dump(fname)
