@@ -4,7 +4,8 @@ import re
 import sys
 
 import pypandoc
-from playwright.sync_api import TimeoutError as PlaywrightTimeoutError, Error as PlaywrightError
+from playwright.sync_api import Error as PlaywrightError
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 
 from aider import __version__, urls, utils
 from aider.dump import dump  # noqa: F401
