@@ -53,6 +53,7 @@ can confuse the model.
 Aider also sends the LLM a [map of your entire git repo](https://aider.chat/docs/repomap.html), so other relevant code will be included automatically.
 - Use `/drop` to remove files from the chat session which aren't needed for the task at hand. This will reduce distractions and may help the LLM produce properly formatted edits.
 - Use `/clear` to remove the conversation history, again to help the LLM focus.
+- Use `/tokens` to see how many tokens you are using for each message.
 
 ## More help
 
