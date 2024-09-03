@@ -187,7 +187,8 @@ class RepoMap:
             return []
 
         cache_key = fname
-        if cache_key in self.TAGS_CACHE and self.TAGS_CACHE[cache_key]["mtime"] == file_mtime:
+        val = self.TAGS_CACHE.get(cache_key)  # Issue #1308
+        if val is not None and val.get("mtime") == file_mtime:
             return self.TAGS_CACHE[cache_key]["data"]
 
         # miss!
