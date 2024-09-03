@@ -4,6 +4,7 @@ import re
 import sys
 
 import pypandoc
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError, Error as PlaywrightError
 
 from aider import __version__, urls, utils
 from aider.dump import dump  # noqa: F401
@@ -156,9 +157,9 @@ class Scraper:
                 response = None
                 try:
                     response = page.goto(url, wait_until="networkidle", timeout=5000)
-                except playwright._impl._errors.TimeoutError:
+                except PlaywrightTimeoutError:
                     self.print_error(f"Timeout while loading {url}")
-                except playwright._impl._errors.Error as e:
+                except PlaywrightError as e:
                     self.print_error(f"Error navigating to {url}: {str(e)}")
                     return None, None
 
@@ -169,7 +170,7 @@ class Scraper:
                         content_type = response.header_value("content-type")
                         if content_type:
                             mime_type = content_type.split(";")[0]
-                except playwright._impl._errors.Error as e:
+                except PlaywrightError as e:
                     self.print_error(f"Error retrieving page content: {str(e)}")
                     content = None
                     mime_type = None
