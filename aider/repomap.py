@@ -307,9 +307,18 @@ class RepoMap:
             if progress and not showing_bar:
                 progress()
 
-            if not Path(fname).is_file():
+            abs_fname = os.path.abspath(fname)
+            if not abs_fname.startswith(self.root):
                 if fname not in self.warned_files:
-                    if Path(fname).exists():
+                    self.io.tool_error(
+                        f"Repo-map can't include {fname}, it is outside the project directory"
+                    )
+                self.warned_files.add(fname)
+                continue
+
+            if not os.path.isfile(abs_fname):
+                if fname not in self.warned_files:
+                    if os.path.exists(abs_fname):
                         self.io.tool_error(
                             f"Repo-map can't include {fname}, it is not a normal file"
                         )
