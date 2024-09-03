@@ -104,9 +104,13 @@ class Voice:
                 file.write(self.q.get())
 
         with open(filename, "rb") as fh:
-            transcript = litellm.transcription(
-                model="whisper-1", file=fh, prompt=history, language=language
-            )
+            try:
+                transcript = litellm.transcription(
+                    model="whisper-1", file=fh, prompt=history, language=language
+                )
+            except Exception as err:
+                print(f"Unable to transcribe {filename}: {err}")
+                return
 
         text = transcript.text
         return text
