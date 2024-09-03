@@ -147,7 +147,7 @@ class Commands:
         if not self.scraper:
             res = install_playwright(self.io)
             if not res:
-                self.io.tool_error("Unable to initialize playwright.")
+                self.io.tool_warning("Unable to initialize playwright.")
 
             self.scraper = Scraper(
                 print_error=self.io.tool_error, playwright_available=res, verify_ssl=self.verify_ssl
@@ -237,7 +237,7 @@ class Commands:
             return
 
         if not self.coder.repo.is_dirty():
-            self.io.tool_error("No more changes to commit.")
+            self.io.tool_warning("No more changes to commit.")
             return
 
         commit_message = args.strip() if args else None
@@ -258,7 +258,7 @@ class Commands:
             fnames = self.coder.repo.get_dirty_files()
 
         if not fnames:
-            self.io.tool_error("No dirty files to lint.")
+            self.io.tool_warning("No dirty files to lint.")
             return
 
         fnames = [self.coder.abs_root_path(fname) for fname in fnames]
@@ -269,13 +269,13 @@ class Commands:
                 errors = self.coder.linter.lint(fname)
             except FileNotFoundError as err:
                 self.io.tool_error(f"Unable to lint {fname}")
-                self.io.tool_error(str(err))
+                self.io.tool_output(str(err))
                 continue
 
             if not errors:
                 continue
 
-            self.io.tool_error(errors)
+            self.io.tool_output(errors)
             if not self.io.confirm_ask(f"Fix lint errors in {fname}?", default="y"):
                 continue
 
@@ -436,7 +436,7 @@ class Commands:
         last_commit_message = self.coder.repo.get_head_commit_message("(unknown)").strip()
         if last_commit_hash not in self.coder.aider_commit_hashes:
             self.io.tool_error("The last commit was not made by aider in this chat session.")
-            self.io.tool_error(
+            self.io.tool_output(
                 "You could try `/git reset --hard HEAD^` but be aware that this is a destructive"
                 " command!"
             )
@@ -496,12 +496,12 @@ class Commands:
 
         if unrestored:
             self.io.tool_error(f"Error restoring {file_path}, aborting undo.")
-            self.io.tool_error("Restored files:")
+            self.io.tool_output("Restored files:")
             for file in restored:
-                self.io.tool_error(f"  {file}")
-            self.io.tool_error("Unable to restore files:")
+                self.io.tool_output(f"  {file}")
+            self.io.tool_output("Unable to restore files:")
             for file in unrestored:
-                self.io.tool_error(f"  {file}")
+                self.io.tool_output(f"  {file}")
             return
 
         # Move the HEAD back before the latest commit
@@ -534,7 +534,7 @@ class Commands:
             commit_before_message = self.coder.commit_before_message[-2]
 
         if not commit_before_message or commit_before_message == current_head:
-            self.io.tool_error("No changes to display since the last message.")
+            self.io.tool_warning("No changes to display since the last message.")
             return
 
         self.io.tool_output(f"Diff since {commit_before_message[:7]}...")
@@ -609,7 +609,7 @@ class Commands:
                 fname = Path(self.coder.root) / word
 
             if self.coder.repo and self.coder.repo.ignored_file(fname):
-                self.io.tool_error(f"Skipping {fname} due to aiderignore or --subtree-only.")
+                self.io.tool_warning(f"Skipping {fname} due to aiderignore or --subtree-only.")
                 continue
 
             if fname.exists():
@@ -632,7 +632,7 @@ class Commands:
 
             if fname.exists() and fname.is_dir() and self.coder.repo:
                 self.io.tool_error(f"Directory {fname} is not in git.")
-                self.io.tool_error(f"You can add to git with: /git add {fname}")
+                self.io.tool_output(f"You can add to git with: /git add {fname}")
                 continue
 
             if self.io.confirm_ask(f"No files matched '{word}'. Do you want to create {fname}?"):
@@ -652,7 +652,7 @@ class Commands:
                 continue
 
             if abs_file_path in self.coder.abs_fnames:
-                self.io.tool_error(f"{matched_file} is already in the chat")
+                self.io.tool_warning(f"{matched_file} is already in the chat")
             elif abs_file_path in self.coder.abs_read_only_fnames:
                 if self.coder.repo and self.coder.repo.path_in_repo(matched_file):
                     self.coder.abs_read_only_fnames.remove(abs_file_path)
@@ -756,7 +756,7 @@ class Commands:
         if not errors:
             return
 
-        self.io.tool_error(errors, strip=False)
+        self.io.tool_output(errors, strip=False)
         return errors
 
     def cmd_run(self, args, add_on_nonzero_exit=False):

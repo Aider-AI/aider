@@ -58,7 +58,7 @@ def make_new_repo(git_root, io):
         check_gitignore(git_root, io, False)
     except ANY_GIT_ERROR as err:  # issue #1233
         io.tool_error(f"Unable to create git repo in {git_root}")
-        io.tool_error(str(err))
+        io.tool_output(str(err))
         return
 
     io.tool_output(f"Git repository created in {git_root}")
@@ -71,7 +71,7 @@ def setup_git(git_root, io):
     if git_root:
         repo = git.Repo(git_root)
     elif Path.cwd() == Path.home():
-        io.tool_error("You should probably run aider in a directory, not your home dir.")
+        io.tool_warning("You should probably run aider in a directory, not your home dir.")
         return
     elif io.confirm_ask("No git repo found, create one to track aider's changes (recommended)?"):
         git_root = str(Path.cwd().resolve())
@@ -98,10 +98,10 @@ def setup_git(git_root, io):
     with repo.config_writer() as git_config:
         if not user_name:
             git_config.set_value("user", "name", "Your Name")
-            io.tool_error('Update git name with: git config user.name "Your Name"')
+            io.tool_warning('Update git name with: git config user.name "Your Name"')
         if not user_email:
             git_config.set_value("user", "email", "you@example.com")
-            io.tool_error('Update git email with: git config user.email "you@example.com"')
+            io.tool_warning('Update git email with: git config user.email "you@example.com"')
 
     return repo.working_tree_dir
 
@@ -207,8 +207,8 @@ def parse_lint_cmds(lint_cmds, io):
             res[lang] = cmd
         else:
             io.tool_error(f'Unable to parse --lint-cmd "{lint_cmd}"')
-            io.tool_error('The arg should be "language: cmd --args ..."')
-            io.tool_error('For example: --lint-cmd "python: flake8 --select=E9"')
+            io.tool_output('The arg should be "language: cmd --args ..."')
+            io.tool_output('For example: --lint-cmd "python: flake8 --select=E9"')
             err = True
     if err:
         return
@@ -306,15 +306,15 @@ def sanity_check_repo(repo, io):
 
         if "version in (1, 2)" in error_msg:
             io.tool_error("Aider only works with git repos with version number 1 or 2.")
-            io.tool_error(
+            io.tool_output(
                 "You may be able to convert your repo: git update-index --index-version=2"
             )
-            io.tool_error("Or run aider --no-git to proceed without using git.")
-            io.tool_error("https://github.com/paul-gauthier/aider/issues/211")
+            io.tool_output("Or run aider --no-git to proceed without using git.")
+            io.tool_output("https://github.com/paul-gauthier/aider/issues/211")
             return False
 
         io.tool_error("Unable to read git repository, it may be corrupt?")
-        io.tool_error(error_msg)
+        io.tool_output(error_msg)
         return False
 
 
@@ -406,7 +406,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     except UnicodeEncodeError as err:
         if io.pretty:
             io.pretty = False
-            io.tool_error("Terminal does not support pretty output (UnicodeDecodeError)")
+            io.tool_warning("Terminal does not support pretty output (UnicodeDecodeError)")
         else:
             raise err
 
@@ -430,7 +430,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 io.tool_error(f"{fname} is a directory, not provided alone.")
                 good = False
         if not good:
-            io.tool_error(
+            io.tool_output(
                 "Provide either a single directory of a git repo, or a list of one or more files."
             )
             return 1
@@ -651,13 +651,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     io.tool_output('Use /help <question> for help, run "aider --help" to see cmd line args')
 
     if git_root and Path.cwd().resolve() != Path(git_root).resolve():
-        io.tool_error(
+        io.tool_warning(
             "Note: in-chat filenames are always relative to the git working dir, not the current"
             " working dir."
         )
 
-        io.tool_error(f"Cur working dir: {Path.cwd()}")
-        io.tool_error(f"Git working dir: {git_root}")
+        io.tool_output(f"Cur working dir: {Path.cwd()}")
+        io.tool_output(f"Git working dir: {git_root}")
 
     if args.message:
         io.add_to_input_history(args.message)

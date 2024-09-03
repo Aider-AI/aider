@@ -168,7 +168,7 @@ class RepoMap:
         try:
             self.TAGS_CACHE = Cache(path)
         except sqlite3.OperationalError:
-            self.io.tool_error(f"Unable to use tags cache, delete {path} to resolve.")
+            self.io.tool_warning(f"Unable to use tags cache, delete {path} to resolve.")
             self.TAGS_CACHE = dict()
 
     def save_tags_cache(self):
@@ -178,7 +178,7 @@ class RepoMap:
         try:
             return os.path.getmtime(fname)
         except FileNotFoundError:
-            self.io.tool_error(f"File not found error: {fname}")
+            self.io.tool_warning(f"File not found error: {fname}")
 
     def get_tags(self, fname, rel_fname):
         # Check if the file is in the cache and if the modification time has not changed
@@ -315,7 +315,7 @@ class RepoMap:
 
             if not file_ok:
                 if fname not in self.warned_files:
-                    self.io.tool_error(f"Repo-map can't include {fname}")
+                    self.io.tool_warning(f"Repo-map can't include {fname}")
                     self.warned_files.add(fname)
                 continue
 

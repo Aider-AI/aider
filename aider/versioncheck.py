@@ -43,7 +43,7 @@ def install_upgrade(io, latest_version=None):
 
     docker pull {docker_image}
 """
-        io.tool_error(text)
+        io.tool_warning(text)
         return True
 
     success = utils.check_pip_install_extra(

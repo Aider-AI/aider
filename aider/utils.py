@@ -330,7 +330,7 @@ def check_pip_install_extra(io, module, prompt, pip_install_cmd, self_update=Fal
     cmd = get_pip_install(pip_install_cmd)
 
     if prompt:
-        io.tool_error(prompt)
+        io.tool_warning(prompt)
 
     if self_update and platform.system() == "Windows":
         io.tool_output("Run this command to update:")

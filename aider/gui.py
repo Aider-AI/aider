@@ -26,6 +26,10 @@ class CaptureIO(InputOutput):
         self.lines.append(msg)
         super().tool_error(msg)
 
+    def tool_warning(self, msg):
+        self.lines.append(msg)
+        super().tool_warning(msg)
+
     def get_captured_lines(self):
         lines = self.lines
         self.lines = []
