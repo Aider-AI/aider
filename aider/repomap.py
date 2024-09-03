@@ -447,6 +447,7 @@ class RepoMap:
             max_map_tokens,
         )
 
+        use_cache = False
         if not force_refresh:
             if self.refresh == "manual" and self.last_map:
                 return self.last_map
