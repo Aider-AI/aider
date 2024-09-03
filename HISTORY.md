@@ -1,6 +1,41 @@
 
 # Release history
 
+### main branch
+
+- Only print the pip command when self updating on Windows.
+- Converted many error messages to warning messages.
+- Added `--tool-warning-color` setting.
+- Blanket catch and handle git errors in any `/command`.
+- Catch and handle glob errors in `/add`, errors writing files.
+- Disabled built in linter for typescript.
+- Catch and handle terminals which don't support pretty output.
+- Catch and handle playwright and pandoc errors.
+- Catch `/voice` transcription exceptions, show the WAV file so the user can recover it.
+- Aider wrote 53% of the code in this release.
+
+### Aider v0.54.12
+
+- Switched to `vX.Y.Z.dev` version naming.
+
+### Aider v0.54.11
+
+- Improved printed pip command output on Windows.
+
+### Aider v0.54.10
+
+- Bugfix to test command in platform info.
+
+### Aider v0.54.9
+
+- List important devops files in the repomap.
+- Print quoted pip install commands to the user.
+- Adopt setuptools_scm to provide dev versions with git hashes.
+- Share active test and lint commands with the LLM.
+- Catch and handle most errors creating new files, reading existing files.
+- Catch and handle most git errors.
+- Added --verbose debug output for shell commands.
+
 ### Aider v0.54.8
 
 - Startup QOL improvements:
@@ -10,7 +45,6 @@
 - Do not fuzzy match filenames when LLM is creating a new file, by @ozapinq
 - Numerous corner case bug fixes submitted via new crash report -> GitHub Issue feature.
 - Crash reports now include python version, OS, etc.
-- Aider wrote 56% of the code in this release.
 
 ### Aider v0.54.7
 
