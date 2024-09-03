@@ -176,6 +176,7 @@ class InputOutput:
         user_input_color="blue",
         tool_output_color=None,
         tool_error_color="red",
+        tool_warning_color="yellow",
         encoding="utf-8",
         dry_run=False,
         llm_history_file=None,
@@ -189,6 +190,7 @@ class InputOutput:
         self.user_input_color = user_input_color if pretty else None
         self.tool_output_color = tool_output_color if pretty else None
         self.tool_error_color = tool_error_color if pretty else None
+        self.tool_warning_color = tool_warning_color if pretty else None
 
         self.input = input
         self.output = output
@@ -539,6 +541,25 @@ class InputOutput:
         message = Text(message)
         if self.pretty and self.tool_error_color:
             style = dict(style=self.tool_error_color)
+        else:
+            style = dict()
+        self.console.print(message, **style)
+
+    def tool_warning(self, message="", strip=True):
+        if message.strip():
+            if "\n" in message:
+                for line in message.splitlines():
+                    self.append_chat_history(line, linebreak=True, blockquote=True, strip=strip)
+            else:
+                if strip:
+                    hist = message.strip()
+                else:
+                    hist = message
+                self.append_chat_history(hist, linebreak=True, blockquote=True)
+
+        message = Text(message)
+        if self.pretty and self.tool_warning_color:
+            style = dict(style=self.tool_warning_color)
         else:
             style = dict()
         self.console.print(message, **style)
