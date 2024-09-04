@@ -970,3 +970,50 @@
   versions: 0.54.8-dev
   seconds_per_case: 38.3
   total_cost: 0.0000
+
+- dirname: 2024-09-04-16-08-09--yi-coder-9b-whole
+  test_cases: 133
+  model: openai/hf:01-ai/Yi-Coder-9B-Chat
+  edit_format: whole
+  commit_hash: c4e4967
+  pass_rate_1: 46.6
+  pass_rate_2: 54.1
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 9
+  lazy_comments: 0
+  syntax_errors: 14
+  indentation_errors: 2
+  exhausted_context_windows: 0
+  test_timeouts: 4
+  command: aider --model openai/hf:01-ai/Yi-Coder-9B-Chat --openai-api-base https://glhf.chat/api/openai/v1
+  date: 2024-09-04
+  versions: 0.54.13.dev
+  seconds_per_case: 8.3
+  total_cost: 0.0000
+  released: 2024-09-04
+
+- dirname: 2024-09-04-16-17-33--yi-coder-9b-chat-q4_0-whole
+  test_cases: 133
+  model: ollama/yi-coder:9b-chat-q4_0
+  edit_format: whole
+  commit_hash: c4e4967
+  pass_rate_1: 41.4
+  pass_rate_2: 45.1
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 48
+  lazy_comments: 1
+  syntax_errors: 1
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model ollama/yi-coder:9b-chat-q4_0
+  date: 2024-09-04
+  versions: 0.54.13.dev
+  seconds_per_case: 125.3
+  total_cost: 0.0000
