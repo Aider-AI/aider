@@ -1872,8 +1872,8 @@ class Coder:
             self.io.tool_output("No changes made to git tracked files.")
             return self.gpt_prompts.files_content_gpt_no_edits
         except ANY_GIT_ERROR as err:
-            self.io.tool_error(f"Git error during auto-commit: {str(err)}")
-            return None
+            self.io.tool_error(f"Unable to commit: {str(err)}")
+            return
 
     def show_auto_commit_outcome(self, res):
         commit_hash, commit_message = res
