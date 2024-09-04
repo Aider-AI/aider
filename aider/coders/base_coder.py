@@ -1859,17 +1859,21 @@ class Coder:
         if not context:
             context = self.get_context_from_history(self.cur_messages)
 
-        res = self.repo.commit(fnames=edited, context=context, aider_edits=True)
-        if res:
-            self.show_auto_commit_outcome(res)
-            commit_hash, commit_message = res
-            return self.gpt_prompts.files_content_gpt_edits.format(
-                hash=commit_hash,
-                message=commit_message,
-            )
+        try:
+            res = self.repo.commit(fnames=edited, context=context, aider_edits=True)
+            if res:
+                self.show_auto_commit_outcome(res)
+                commit_hash, commit_message = res
+                return self.gpt_prompts.files_content_gpt_edits.format(
+                    hash=commit_hash,
+                    message=commit_message,
+                )
 
-        self.io.tool_output("No changes made to git tracked files.")
-        return self.gpt_prompts.files_content_gpt_no_edits
+            self.io.tool_output("No changes made to git tracked files.")
+            return self.gpt_prompts.files_content_gpt_no_edits
+        except ANY_GIT_ERROR as err:
+            self.io.tool_error(f"Git error during auto-commit: {str(err)}")
+            return None
 
     def show_auto_commit_outcome(self, res):
         commit_hash, commit_message = res
