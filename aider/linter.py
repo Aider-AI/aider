@@ -26,6 +26,19 @@ class Linter:
         )
         self.all_lint_cmd = None
 
+        self._check_eslint()
+
+    def _check_eslint(self):
+        eslint_paths = [
+            "./node_modules/.bin/eslint",
+            f"{self.root}/node_modules/.bin/eslint" if self.root else None
+        ]
+        
+        for path in eslint_paths:
+            if path and os.path.isfile(path):
+                self.languages["typescript"] = f"{path} --format unix"
+                break
+
     def set_linter(self, lang, cmd):
         if lang:
             self.languages[lang] = cmd
