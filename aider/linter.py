@@ -30,13 +30,13 @@ class Linter:
 
     def _check_eslint(self):
         eslint_paths = [
-            "./node_modules/.bin/eslint",
-            f"{self.root}/node_modules/.bin/eslint" if self.root else None,
+            Path("node_modules") / ".bin" / "eslint",
+            Path(self.root) / "node_modules" / ".bin" / "eslint" if self.root else None,
         ]
 
         for path in eslint_paths:
-            if path and os.path.isfile(path):
-                self.languages["typescript"] = f"{path} --format unix"
+            if path and path.is_file():
+                self.languages["typescript"] = f'"{path}" --format unix'
                 break
 
     def set_linter(self, lang, cmd):
