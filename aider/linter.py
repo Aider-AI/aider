@@ -43,6 +43,9 @@ class Linter:
                         self.languages["typescript"] = f'"{eslint_file}" --format unix'
                         return
 
+        # If no ESLint is found, set typescript to None
+        self.languages["typescript"] = None
+
     def set_linter(self, lang, cmd):
         if lang:
             self.languages[lang] = cmd
