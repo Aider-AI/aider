@@ -159,7 +159,9 @@ class Coder:
         raise ValueError(f"Unknown edit format {edit_format}")
 
     def clone(self, **kwargs):
-        return Coder.create(from_coder=self, **kwargs)
+        new_coder = Coder.create(from_coder=self, **kwargs)
+        new_coder.ignore_mentions = self.ignore_mentions
+        return new_coder
 
     def get_announcements(self):
         lines = []
