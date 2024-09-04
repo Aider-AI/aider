@@ -29,15 +29,19 @@ class Linter:
         self._check_eslint()
 
     def _check_eslint(self):
+        eslint_names = ["eslint", "eslint.cmd", "eslint.exe"]
         eslint_paths = [
-            Path("node_modules") / ".bin" / "eslint",
-            Path(self.root) / "node_modules" / ".bin" / "eslint" if self.root else None,
+            Path("node_modules") / ".bin",
+            Path(self.root) / "node_modules" / ".bin" if self.root else None,
         ]
 
         for path in eslint_paths:
-            if path and path.is_file():
-                self.languages["typescript"] = f'"{path}" --format unix'
-                break
+            if path:
+                for name in eslint_names:
+                    eslint_file = path / name
+                    if eslint_file.is_file():
+                        self.languages["typescript"] = f'"{eslint_file}" --format unix'
+                        return
 
     def set_linter(self, lang, cmd):
         if lang:
