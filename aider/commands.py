@@ -517,8 +517,16 @@ class Commands:
         if self.coder.main_model.send_undo_reply:
             return prompts.undo_command_reply
 
-    def cmd_diff(self, args=""):
+    def cmd_diff(self, *args, **kwargs):
         "Display the diff of changes since the last message"
+        try:
+            # todo
+            pass
+        except ANY_GIT_ERROR as err:
+            self.io.tool_error(f"Unable to complete {cmd_name}: {err}")
+
+
+    def cmd_diff_raw(self, args=""):
         if not self.coder.repo:
             self.io.tool_error("No git repository found.")
             return
