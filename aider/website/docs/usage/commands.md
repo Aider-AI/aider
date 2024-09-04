@@ -34,6 +34,7 @@ cog.out(get_help_md())
 | **/models** | Search the list of available models |
 | **/quit** | Exit the application |
 | **/read-only** | Add files to the chat that are for reference, not to be edited |
+| **/report** | Report a problem by opening a GitHub Issue |
 | **/reset** | Drop all files and clear the chat history |
 | **/run** | Run a shell command and optionally add the output to the chat (alias: !) |
 | **/settings** | Print out the current settings |
