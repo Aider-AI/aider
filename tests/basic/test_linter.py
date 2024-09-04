@@ -26,10 +26,11 @@ class TestLinter(unittest.TestCase):
         self.assertEqual(self.linter.languages["javascript"], "eslint")
 
     def test_get_rel_fname(self):
+        import os
         self.assertEqual(self.linter.get_rel_fname("/test/root/file.py"), "file.py")
-        self.assertEqual(
-            self.linter.get_rel_fname("/other/path/file.py"), "../../other/path/file.py"
-        )
+        expected_path = os.path.normpath("../../other/path/file.py")
+        actual_path = os.path.normpath(self.linter.get_rel_fname("/other/path/file.py"))
+        self.assertEqual(actual_path, expected_path)
 
     @patch("subprocess.Popen")
     def test_run_cmd(self, mock_popen):
