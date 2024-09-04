@@ -27,7 +27,7 @@ class TestLinter(unittest.TestCase):
         self.linter._check_eslint()
         self.assertIn("typescript", self.linter.languages)
         dump(self.linter.languages)
-        self.assertTrue(self.linter.languages["typescript"].endswith('eslint.cmd" --format unix'))
+        self.assertTrue(self.linter.languages["typescript"].endswith('eslint" --format unix'))
 
     def test_set_linter(self):
         self.linter.set_linter("javascript", "eslint")
