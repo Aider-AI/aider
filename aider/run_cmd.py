@@ -14,7 +14,7 @@ def run_cmd(command, verbose=False, error_print=None):
 
         return run_cmd_subprocess(command, verbose)
     except OSError as e:
-        error_message = f"OSError occurred while running command '{command}': {str(e)}"
+        error_message = f"Error occurred while running command '{command}': {str(e)}"
         if error_print is None:
             print(error_message)
         else:
