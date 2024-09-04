@@ -40,8 +40,8 @@ class TestModels(unittest.TestCase):
 
         sanity_check_model(mock_io, model)
 
-        mock_io.tool_warning.assert_called()
-        calls = mock_io.tool_warning.call_args_list
+        mock_io.tool_output.assert_called()
+        calls = mock_io.tool_output.call_args_list
         self.assertIn("- API_KEY1: ✓ Set", str(calls))
         self.assertIn("- API_KEY2: ✓ Set", str(calls))
 
@@ -57,8 +57,8 @@ class TestModels(unittest.TestCase):
 
         sanity_check_model(mock_io, model)
 
-        mock_io.tool_warning.assert_called()
-        calls = mock_io.tool_warning.call_args_list
+        mock_io.tool_output.assert_called()
+        calls = mock_io.tool_output.call_args_list
         self.assertIn("- API_KEY1: ✗ Not set", str(calls))
         self.assertIn("- API_KEY2: ✗ Not set", str(calls))
 
