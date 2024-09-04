@@ -31,7 +31,7 @@ class Linter:
     def _check_eslint(self):
         eslint_names = ["eslint", "eslint.cmd", "eslint.exe"]
         eslint_paths = [
-            Path("node_modules") / ".bin",
+            Path(".") / "node_modules" / ".bin",
             Path(self.root) / "node_modules" / ".bin" if self.root else None,
         ]
 
