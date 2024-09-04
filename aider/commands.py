@@ -232,7 +232,7 @@ class Commands:
     def cmd_commit(self, args=None):
         "Commit edits to the repo made outside the chat (commit message optional)"
         try:
-            self.cmd_commit_raw(args)
+            self.raw_cmd_commit(args)
         except ANY_GIT_ERROR as err:
             self.io.tool_error(f"Unable to complete commit: {err}")
 
@@ -429,7 +429,7 @@ class Commands:
     def cmd_undo(self, args):
         "Undo the last git commit if it was done by aider"
         try:
-            self.cmd_undo_raw(args)
+            self.raw_cmd_undo(args)
         except ANY_GIT_ERROR as err:
             self.io.tool_error(f"Unable to complete undo: {err}")
 
@@ -531,7 +531,7 @@ class Commands:
     def cmd_diff(self, args=""):
         "Display the diff of changes since the last message"
         try:
-            self.cmd_diff_raw(args)
+            self.raw_cmd_diff(args)
         except ANY_GIT_ERROR as err:
             self.io.tool_error(f"Unable to complete diff: {err}")
 
