@@ -8,8 +8,6 @@ import pexpect
 
 
 def run_cmd(command, verbose=False):
-    import sys
-
     if sys.stdin.isatty() and hasattr(pexpect, "spawn") and platform.system() != "Windows":
         return run_cmd_pexpect(command, verbose)
 
