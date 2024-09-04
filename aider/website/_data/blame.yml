@@ -2380,3 +2380,105 @@
     Paul Gauthier (aider): 204
   start_tag: v0.53.0
   total_lines: 319
+- aider_percentage: 52.9
+  aider_total: 811
+  end_date: '2024-09-04'
+  end_tag: v0.55.0
+  file_counts:
+    aider/__init__.py:
+      Paul Gauthier: 4
+      Paul Gauthier (aider): 2
+    aider/args.py:
+      Paul Gauthier (aider): 7
+    aider/coders/base_coder.py:
+      Paul Gauthier: 63
+      Paul Gauthier (aider): 42
+    aider/coders/editblock_coder.py:
+      Nikolay Sedelnikov: 8
+    aider/coders/editblock_func_coder.py:
+      Antti Kaihola: 2
+    aider/coders/search_replace.py:
+      Paul Gauthier: 2
+    aider/coders/wholefile_coder.py:
+      Paul Gauthier: 16
+    aider/commands.py:
+      Antti Kaihola: 7
+      Paul Gauthier: 85
+      Paul Gauthier (aider): 27
+    aider/format_settings.py:
+      Paul Gauthier (aider): 26
+    aider/gui.py:
+      Paul Gauthier: 4
+    aider/io.py:
+      Paul Gauthier: 63
+      Paul Gauthier (aider): 13
+    aider/linter.py:
+      Paul Gauthier: 5
+    aider/llm.py:
+      Paul Gauthier: 2
+    aider/main.py:
+      Paul Gauthier: 86
+      Paul Gauthier (aider): 22
+    aider/models.py:
+      Paul Gauthier: 24
+      Paul Gauthier (aider): 2
+    aider/repo.py:
+      Paul Gauthier: 85
+    aider/repomap.py:
+      Paul Gauthier: 32
+      Paul Gauthier (aider): 4
+    aider/report.py:
+      Paul Gauthier: 77
+      Paul Gauthier (aider): 120
+    aider/run_cmd.py:
+      Paul Gauthier: 17
+      Paul Gauthier (aider): 24
+    aider/scrape.py:
+      Paul Gauthier: 7
+      Paul Gauthier (aider): 8
+    aider/special.py:
+      Paul Gauthier: 5
+      Paul Gauthier (aider): 197
+    aider/urls.py:
+      Paul Gauthier (aider): 1
+    aider/utils.py:
+      Paul Gauthier: 31
+      Paul Gauthier (aider): 29
+    aider/versioncheck.py:
+      Paul Gauthier: 32
+      Paul Gauthier (aider): 6
+    aider/voice.py:
+      Paul Gauthier: 7
+      Paul Gauthier (aider): 9
+    scripts/versionbump.py:
+      Paul Gauthier: 9
+    tests/basic/test_coder.py:
+      Paul Gauthier: 3
+      Paul Gauthier (aider): 105
+    tests/basic/test_editblock.py:
+      Antti Kaihola: 3
+      Nikolay Sedelnikov: 37
+    tests/basic/test_io.py:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 15
+    tests/basic/test_main.py:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 10
+    tests/basic/test_models.py:
+      Paul Gauthier (aider): 4
+    tests/basic/test_repomap.py:
+      Paul Gauthier (aider): 42
+    tests/basic/test_run_cmd.py:
+      Paul Gauthier (aider): 11
+    tests/basic/test_special.py:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 74
+    tests/scrape/test_scrape.py:
+      Paul Gauthier (aider): 11
+  grand_total:
+    Antti Kaihola: 12
+    Nikolay Sedelnikov: 45
+    Paul Gauthier: 665
+    Paul Gauthier (aider): 811
+  start_tag: v0.54.0
+  total_lines: 1533
