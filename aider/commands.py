@@ -1136,7 +1136,7 @@ class Commands:
         self.io.tool_output(settings)
 
     def cmd_report(self, args):
-        "Report an issue to the aider GitHub repository"
+        "Report an problem by opening a GitHub Issue"
         from aider.report import report_github_issue
 
         announcements = "\n".join(self.coder.get_announcements())
