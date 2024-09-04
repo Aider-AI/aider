@@ -517,13 +517,12 @@ class Commands:
         if self.coder.main_model.send_undo_reply:
             return prompts.undo_command_reply
 
-    def cmd_diff(self, *args, **kwargs):
+    def cmd_diff(self, args=""):
         "Display the diff of changes since the last message"
         try:
-            # todo
-            pass
+            self.cmd_diff_raw(args)
         except ANY_GIT_ERROR as err:
-            self.io.tool_error(f"Unable to complete {cmd_name}: {err}")
+            self.io.tool_error(f"Unable to complete diff: {err}")
 
 
     def cmd_diff_raw(self, args=""):
