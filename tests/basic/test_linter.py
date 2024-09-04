@@ -1,8 +1,9 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from aider.linter import Linter
 from aider.dump import dump
+from aider.linter import Linter
+
 
 class TestLinter(unittest.TestCase):
     def setUp(self):
