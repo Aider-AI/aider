@@ -18,7 +18,7 @@ cog.out(text)
 
 ### main branch
 
-- Only print the pip command when self updating on Windows.
+- Only print the pip command when self updating on Windows, without running it.
 - Converted many error messages to warning messages.
 - Added `--tool-warning-color` setting.
 - Blanket catch and handle git errors in any `/command`.
@@ -43,7 +43,7 @@ cog.out(text)
 
 ### Aider v0.54.9
 
-- List important devops files in the repomap.
+- Include important devops files in the repomap.
 - Print quoted pip install commands to the user.
 - Adopt setuptools_scm to provide dev versions with git hashes.
 - Share active test and lint commands with the LLM.
