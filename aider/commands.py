@@ -524,7 +524,6 @@ class Commands:
         except ANY_GIT_ERROR as err:
             self.io.tool_error(f"Unable to complete diff: {err}")
 
-
     def cmd_diff_raw(self, args=""):
         if not self.coder.repo:
             self.io.tool_error("No git repository found.")
