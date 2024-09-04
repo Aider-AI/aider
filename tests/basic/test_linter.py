@@ -1,7 +1,9 @@
 import unittest
-from unittest.mock import patch, MagicMock
 from pathlib import Path
+from unittest.mock import MagicMock, patch
+
 from aider.linter import Linter
+
 
 class TestLinter(unittest.TestCase):
     def setUp(self):
@@ -12,7 +14,7 @@ class TestLinter(unittest.TestCase):
         self.assertEqual(self.linter.root, "/test/root")
         self.assertIn("python", self.linter.languages)
 
-    @patch('pathlib.Path.is_file')
+    @patch("pathlib.Path.is_file")
     def test_check_eslint_unix(self, mock_is_file):
         mock_is_file.return_value = True
         self.linter._check_eslint()
@@ -20,10 +22,11 @@ class TestLinter(unittest.TestCase):
         self.assertTrue(self.linter.languages["typescript"].startswith('"'))
         self.assertTrue(self.linter.languages["typescript"].endswith('" --format unix'))
 
-    @patch('pathlib.Path.is_file')
+    @patch("pathlib.Path.is_file")
     def test_check_eslint_windows(self, mock_is_file):
         def side_effect(path):
-            return str(path).endswith('eslint.cmd')
+            return str(path).endswith("eslint.cmd")
+
         mock_is_file.side_effect = side_effect
         self.linter._check_eslint()
         self.assertIn("typescript", self.linter.languages)
@@ -37,7 +40,7 @@ class TestLinter(unittest.TestCase):
         self.assertEqual(self.linter.get_rel_fname("/test/root/file.py"), "file.py")
         self.assertEqual(self.linter.get_rel_fname("/other/path/file.py"), "/other/path/file.py")
 
-    @patch('subprocess.Popen')
+    @patch("subprocess.Popen")
     def test_run_cmd(self, mock_popen):
         mock_process = MagicMock()
         mock_process.returncode = 0
@@ -47,7 +50,7 @@ class TestLinter(unittest.TestCase):
         result = self.linter.run_cmd("test_cmd", "test_file.py", "code")
         self.assertIsNone(result)
 
-    @patch('subprocess.Popen')
+    @patch("subprocess.Popen")
     def test_run_cmd_with_errors(self, mock_popen):
         mock_process = MagicMock()
         mock_process.returncode = 1
@@ -58,5 +61,6 @@ class TestLinter(unittest.TestCase):
         self.assertIsNotNone(result)
         self.assertIn("Error message", result.text)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
