@@ -766,7 +766,12 @@ class Commands:
         if not args and self.coder.test_cmd:
             args = self.coder.test_cmd
 
+        if not args:
+            return
+
         if not callable(args):
+            if type(args) is not str:
+                raise ValueError(repr(args))
             return self.cmd_run(args, True)
 
         errors = args()
