@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from aider.linter import Linter
-
+from aider.dump import dump
 
 class TestLinter(unittest.TestCase):
     def setUp(self):
@@ -26,6 +26,7 @@ class TestLinter(unittest.TestCase):
         mock_is_file.return_value = True
         self.linter._check_eslint()
         self.assertIn("typescript", self.linter.languages)
+        dump(self.linter.languages)
         self.assertTrue(self.linter.languages["typescript"].endswith('eslint.cmd" --format unix'))
 
     def test_set_linter(self):
