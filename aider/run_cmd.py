@@ -7,11 +7,19 @@ from io import BytesIO
 import pexpect
 
 
-def run_cmd(command, verbose=False):
-    if sys.stdin.isatty() and hasattr(pexpect, "spawn") and platform.system() != "Windows":
-        return run_cmd_pexpect(command, verbose)
+def run_cmd(command, verbose=False, error_print=None):
+    try:
+        if sys.stdin.isatty() and hasattr(pexpect, "spawn") and platform.system() != "Windows":
+            return run_cmd_pexpect(command, verbose)
 
-    return run_cmd_subprocess(command, verbose)
+        return run_cmd_subprocess(command, verbose)
+    except OSError as e:
+        error_message = f"OSError occurred while running command '{command}': {str(e)}"
+        if error_print is None:
+            print(error_message)
+        else:
+            error_print(error_message)
+        return 1, error_message
 
 
 def run_cmd_subprocess(command, verbose=False):
