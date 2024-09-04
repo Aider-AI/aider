@@ -74,12 +74,10 @@ def report_github_issue(issue_text, title=None, confirm=True):
         if not yes:
             return
 
-    if confirm:
-        print("Attempting to open the issue URL in your default web browser...")
+    print("Attempting to open the issue URL in your default web browser...")
     try:
         if webbrowser.open(issue_url):
-            if confirm:
-                print("Browser window should be opened.")
+            print("Browser window should be opened.")
     except Exception:
         pass
 
