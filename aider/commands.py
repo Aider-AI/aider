@@ -1135,6 +1135,14 @@ class Commands:
         settings = format_settings(self.parser, self.args)
         self.io.tool_output(settings)
 
+    def cmd_report(self, args):
+        "Report an issue to the aider GitHub repository"
+        from aider.report import report_github_issue
+
+        announcements = "\n".join(self.coder.get_announcements())
+        issue_text = f"User report:\n\n{args}\n\nAnnouncements:\n{announcements}"
+        report_github_issue(issue_text)
+
 
 def expand_subdir(file_path):
     if file_path.is_file():
