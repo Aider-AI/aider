@@ -384,31 +384,31 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     editing_mode = EditingMode.VI if args.vim else EditingMode.EMACS
 
-    io = InputOutput(
-        args.pretty,
-        args.yes,
-        args.input_history_file,
-        args.chat_history_file,
-        input=input,
-        output=output,
-        user_input_color=args.user_input_color,
-        tool_output_color=args.tool_output_color,
-        tool_error_color=args.tool_error_color,
-        dry_run=args.dry_run,
-        encoding=args.encoding,
-        llm_history_file=args.llm_history_file,
-        editingmode=editing_mode,
-    )
+    def get_io(pretty):
+        return InputOutput(
+            pretty,
+            args.yes,
+            args.input_history_file,
+            args.chat_history_file,
+            input=input,
+            output=output,
+            user_input_color=args.user_input_color,
+            tool_output_color=args.tool_output_color,
+            tool_error_color=args.tool_error_color,
+            dry_run=args.dry_run,
+            encoding=args.encoding,
+            llm_history_file=args.llm_history_file,
+            editingmode=editing_mode,
+        )
 
+    io = get_io(args.pretty)
     try:
-        io.tool_output()
         io.rule()
     except UnicodeEncodeError as err:
-        if io.pretty:
-            io.pretty = False
-            io.tool_warning("Terminal does not support pretty output (UnicodeDecodeError)")
-        else:
+        if not io.pretty:
             raise err
+        io = get_io(False)
+        io.tool_warning("Terminal does not support pretty output (UnicodeDecodeError)")
 
     if args.gui and not return_coder:
         if not check_streamlit_install(io):
