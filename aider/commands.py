@@ -756,7 +756,7 @@ class Commands:
         if not errors:
             return
 
-        self.io.tool_output(errors, strip=False)
+        self.io.tool_output(errors)
         return errors
 
     def cmd_run(self, args, add_on_nonzero_exit=False):

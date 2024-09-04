@@ -1790,7 +1790,7 @@ class Coder:
             self.io.tool_error("The LLM did not conform to the edit format.")
             self.io.tool_output(urls.edit_errors)
             self.io.tool_output()
-            self.io.tool_output(str(err), strip=False)
+            self.io.tool_output(str(err))
 
             self.reflected_message = str(err)
             return edited
