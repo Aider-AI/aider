@@ -236,7 +236,7 @@ class Commands:
         except ANY_GIT_ERROR as err:
             self.io.tool_error(f"Unable to complete commit: {err}")
 
-    def cmd_commit_raw(self, args=None):
+    def raw_cmd_commit(self, args=None):
         if not self.coder.repo:
             self.io.tool_error("No git repository found.")
             return
@@ -433,7 +433,7 @@ class Commands:
         except ANY_GIT_ERROR as err:
             self.io.tool_error(f"Unable to complete undo: {err}")
 
-    def cmd_undo_raw(self, args):
+    def raw_cmd_undo(self, args):
         if not self.coder.repo:
             self.io.tool_error("No git repository found.")
             return
@@ -535,7 +535,7 @@ class Commands:
         except ANY_GIT_ERROR as err:
             self.io.tool_error(f"Unable to complete diff: {err}")
 
-    def cmd_diff_raw(self, args=""):
+    def raw_cmd_diff(self, args=""):
         if not self.coder.repo:
             self.io.tool_error("No git repository found.")
             return
