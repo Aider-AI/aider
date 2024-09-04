@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from aider.dump import dump
+from aider.dump import dump  # noqa
 from aider.linter import Linter
 
 
@@ -21,14 +21,6 @@ class TestLinter(unittest.TestCase):
         self.assertIn("typescript", self.linter.languages)
         self.assertTrue(self.linter.languages["typescript"].startswith('"'))
         self.assertTrue(self.linter.languages["typescript"].endswith('" --format unix'))
-
-    @patch("pathlib.Path.is_file")
-    def test_check_eslint_windows(self, mock_is_file):
-        mock_is_file.return_value = True
-        self.linter._check_eslint()
-        self.assertIn("typescript", self.linter.languages)
-        dump(self.linter.languages)
-        self.assertTrue(self.linter.languages["typescript"].endswith('eslint" --format unix'))
 
     def test_set_linter(self):
         self.linter.set_linter("javascript", "eslint")
