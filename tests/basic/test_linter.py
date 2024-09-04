@@ -19,8 +19,7 @@ class TestLinter(unittest.TestCase):
         mock_is_file.return_value = True
         self.linter._check_eslint()
         self.assertIn("typescript", self.linter.languages)
-        self.assertTrue(self.linter.languages["typescript"].startswith('"'))
-        self.assertTrue(self.linter.languages["typescript"].endswith('" --format unix'))
+        self.assertTrue(self.linter.languages["typescript"].endswith(" --format unix"))
 
     def test_set_linter(self):
         self.linter.set_linter("javascript", "eslint")

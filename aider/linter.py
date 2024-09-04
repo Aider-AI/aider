@@ -39,7 +39,7 @@ class Linter:
             if path:
                 for name in eslint_names:
                     eslint_file = path / name
-                    if eslint_file.is_file() and " " not in eslint_file:
+                    if eslint_file.is_file() and " " not in str(eslint_file):
                         self.languages["typescript"] = f"{eslint_file} --format unix"
                         return
 
