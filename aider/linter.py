@@ -52,7 +52,10 @@ class Linter:
 
     def get_rel_fname(self, fname):
         if self.root:
-            return os.path.relpath(fname, self.root)
+            try:
+                return os.path.relpath(fname, self.root)
+            except ValueError:
+                return fname
         else:
             return fname
 

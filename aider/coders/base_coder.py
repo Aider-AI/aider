@@ -1624,7 +1624,10 @@ class Coder:
         return cur + new
 
     def get_rel_fname(self, fname):
-        return os.path.relpath(fname, self.root)
+        try:
+            return os.path.relpath(fname, self.root)
+        except ValueError:
+            return fname
 
     def get_inchat_relative_files(self):
         files = [self.get_rel_fname(fname) for fname in self.abs_fnames]
