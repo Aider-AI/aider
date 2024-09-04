@@ -1140,7 +1140,9 @@ class Commands:
         from aider.report import report_github_issue
 
         announcements = "\n".join(self.coder.get_announcements())
-        issue_text = f"{'User report:\n\n' if args.strip() else ''}{args}\n\nAnnouncements:\n{announcements}"
+        issue_text = (
+            f"{'User report:\n\n' if args.strip() else ''}{args}\n\nAnnouncements:\n{announcements}"
+        )
         report_github_issue(issue_text, confirm=False)
 
 
