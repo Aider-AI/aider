@@ -23,10 +23,7 @@ class TestLinter(unittest.TestCase):
 
     @patch("pathlib.Path.is_file")
     def test_check_eslint_windows(self, mock_is_file):
-        def side_effect(path):
-            return str(path).endswith("eslint.cmd")
-
-        mock_is_file.side_effect = side_effect
+        mock_is_file.return_value = True
         self.linter._check_eslint()
         self.assertIn("typescript", self.linter.languages)
         self.assertTrue(self.linter.languages["typescript"].endswith('eslint.cmd" --format unix'))
