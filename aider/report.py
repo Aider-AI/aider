@@ -34,13 +34,14 @@ def get_git_info():
         return "Git information unavailable"
 
 
-def report_github_issue(issue_text, title=None):
+def report_github_issue(issue_text, title=None, confirm=True):
     """
     Compose a URL to open a new GitHub issue with the given text prefilled,
     and attempt to launch it in the default web browser.
 
     :param issue_text: The text of the issue to file
     :param title: The title of the issue (optional)
+    :param confirm: Whether to ask for confirmation before opening the browser (default: True)
     :return: None
     """
     version_info = f"Aider version: {__version__}\n"
@@ -61,31 +62,35 @@ def report_github_issue(issue_text, title=None):
     params["title"] = title
     issue_url = f"{github_issues}?{urllib.parse.urlencode(params)}"
 
-    print(f"\n# {title}\n")
-    print(issue_text.strip())
-    print()
-    print("Please consider reporting this bug to help improve aider!")
-    prompt = "Open a GitHub Issue pre-filled with the above error in your browser? (Y/n) "
-    confirmation = input(prompt).strip().lower()
+    if confirm:
+        print(f"\n# {title}\n")
+        print(issue_text.strip())
+        print()
+        print("Please consider reporting this bug to help improve aider!")
+        prompt = "Open a GitHub Issue pre-filled with the above error in your browser? (Y/n) "
+        confirmation = input(prompt).strip().lower()
 
-    yes = not confirmation or confirmation.startswith("y")
-    if not yes:
-        return
+        yes = not confirmation or confirmation.startswith("y")
+        if not yes:
+            return
 
-    print("Attempting to open the issue URL in your default web browser...")
+    if confirm:
+        print("Attempting to open the issue URL in your default web browser...")
     try:
         if webbrowser.open(issue_url):
-            print("Browser window should be opened.")
+            if confirm:
+                print("Browser window should be opened.")
     except Exception:
         pass
 
-    print()
-    print()
-    print("You can also use this URL to file the GitHub Issue:")
-    print()
-    print(issue_url)
-    print()
-    print()
+    if confirm:
+        print()
+        print()
+        print("You can also use this URL to file the GitHub Issue:")
+        print()
+        print(issue_url)
+        print()
+        print()
 
 
 def exception_handler(exc_type, exc_value, exc_traceback):

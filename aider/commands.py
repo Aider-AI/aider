@@ -1136,12 +1136,12 @@ class Commands:
         self.io.tool_output(settings)
 
     def cmd_report(self, args):
-        "Report an problem by opening a GitHub Issue"
+        "Report a problem by opening a GitHub Issue"
         from aider.report import report_github_issue
 
         announcements = "\n".join(self.coder.get_announcements())
         issue_text = f"User report:\n\n{args}\n\nAnnouncements:\n{announcements}"
-        report_github_issue(issue_text)
+        report_github_issue(issue_text, confirm=True)
 
 
 def expand_subdir(file_path):
