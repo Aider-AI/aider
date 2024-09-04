@@ -89,7 +89,7 @@ def setup_git(git_root, io):
             pass
         try:
             user_email = config.get_value("user", "email", None)
-        except configparser.NoSectionError:
+        except (configparser.NoSectionError, configparser.NoOptionError):
             pass
 
     if user_name and user_email:
