@@ -1,7 +1,7 @@
 
 # Release history
 
-### main branch
+### Aider v0.55.0
 
 - Only print the pip command when self updating on Windows, without running it.
 - Converted many error messages to warning messages.
