@@ -39,8 +39,8 @@ class Linter:
             if path:
                 for name in eslint_names:
                     eslint_file = path / name
-                    if eslint_file.is_file():
-                        self.languages["typescript"] = f'"{eslint_file}" --format unix'
+                    if eslint_file.is_file() and " " not in eslint_file:
+                        self.languages["typescript"] = f"{eslint_file} --format unix"
                         return
 
     def set_linter(self, lang, cmd):
