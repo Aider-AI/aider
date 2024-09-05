@@ -1,4 +1,5 @@
 import configparser
+import json
 import os
 import re
 import sys
@@ -510,8 +511,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     main_model = models.Model(args.model, weak_model=args.weak_model)
 
     if args.verbose:
-        import json
-
         io.tool_output("Model info:")
         io.tool_output(json.dumps(main_model.info, indent=4))
 
