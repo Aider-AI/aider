@@ -620,6 +620,16 @@ class TestMain(TestCase):
             )
             self.assertTrue(coder.suggest_shell_commands)
 
+    def test_chat_language_spanish(self):
+        with GitTemporaryDirectory():
+            coder = main(
+                ["--chat-language", "Spanish", "--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+            )
+            self.assertIn("Spanish", coder.get_system_info())
+
     @patch("git.Repo.init")
     def test_main_exit_with_git_command_not_found(self, mock_git_init):
         mock_git_init.side_effect = git.exc.GitCommandNotFound("git", "Command 'git' not found")
