@@ -549,18 +549,21 @@ def run_test_real(
         chat_history_file=history_fname,
     )
 
-    main_model = models.Model(model_name)
-    edit_format = edit_format or main_model.edit_format
+    # ask_model = models.Model("openrouter/anthropic/claude-3.5-sonnet")
+    # ask_model = models.Model("openrouter/anthropic/claude-3.5-sonnet")
+    ask_model = models.Model("openrouter/deepseek/deepseek-chat")
+    whole_model = models.Model("openrouter/deepseek/deepseek-chat")
+
+    main_model = ask_model
+    edit_format = "ask-whole"
 
     dump(main_model)
     dump(edit_format)
     show_fnames = ",".join(map(str, fnames))
     print("fnames:", show_fnames)
 
-    coder = Coder.create(
-        main_model,
-        edit_format,
-        io,
+    coder_kwargs = dict(
+        io=io,
         fnames=fnames,
         use_git=False,
         stream=False,
@@ -568,6 +571,12 @@ def run_test_real(
         # auto_lint=False,  # disabled for code-in-json experiments
         cache_prompts=True,
     )
+    coder = Coder.create(
+        main_model=ask_model,
+        edit_format="ask",
+        **coder_kwargs,
+    )
+
     coder.max_apply_update_errors = max_apply_update_errors
 
     timeouts = 0
@@ -592,7 +601,21 @@ def run_test_real(
 
             coder.apply_updates()
         else:
+            coder = Coder.create(
+                from_coder=coder,
+                main_model=ask_model,
+                edit_format="ask",
+                **coder_kwargs,
+            )
             response = coder.run(with_message=instructions, preproc=False)
+            coder = Coder.create(
+                from_coder=coder,
+                main_model=whole_model,
+                edit_format="whole",
+                **coder_kwargs,
+            )
+            response = coder.run(with_message="make those changes", preproc=False)
+
         dur += time.time() - start
 
         if not no_aider:
