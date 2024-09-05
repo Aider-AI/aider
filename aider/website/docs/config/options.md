@@ -130,9 +130,11 @@ Environment variable: `AIDER_DEEPSEEK`
 
 ## Model Settings:
 
-### `--models MODEL`
-List known models which match the (partial) MODEL name  
-Environment variable: `AIDER_MODELS`  
+### `--list-models MODEL`
+List known models which match the (partial) MODEL name
+Environment variable: `AIDER_MODELS`
+Aliases:
+  - `--models`
 
 ### `--openai-api-base OPENAI_API_BASE`
 Specify the api base url  
