@@ -593,6 +593,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             map_mul_no_files=args.map_multiplier_no_files,
             num_cache_warming_pings=args.cache_keepalive_pings,
             suggest_shell_commands=args.suggest_shell_commands,
+            chat_language=args.chat_language,
         )
     except ValueError as err:
         io.tool_error(str(err))
