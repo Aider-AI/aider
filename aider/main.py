@@ -510,9 +510,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     main_model = models.Model(args.model, weak_model=args.weak_model)
 
     if args.verbose:
+        import json
         io.tool_output("Model info:")
-        for key, value in main_model.info.items():
-            io.tool_output(f"  {key}: {value}")
+        io.tool_output(json.dumps(main_model.info, indent=4))
 
     lint_cmds = parse_lint_cmds(args.lint_cmd, io)
     if lint_cmds is None:
