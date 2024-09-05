@@ -919,6 +919,12 @@ class Coder:
 
         return platform_text
 
+    def get_system_info(self):
+        system_info = self.get_platform_info()
+        if self.chat_language:
+            system_info += f"- Chat language: {self.chat_language}\n"
+        return system_info
+
     def fmt_system_prompt(self, prompt):
         lazy_prompt = self.gpt_prompts.lazy_prompt if self.main_model.lazy else ""
         platform_text = self.get_platform_info()

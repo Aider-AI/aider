@@ -628,7 +628,8 @@ class TestMain(TestCase):
                 output=DummyOutput(),
                 return_coder=True,
             )
-            self.assertIn("Spanish", coder.get_system_info())
+            system_info = coder.get_system_info()
+            self.assertIn("Chat language: Spanish", system_info)
 
     @patch("git.Repo.init")
     def test_main_exit_with_git_command_not_found(self, mock_git_init):
