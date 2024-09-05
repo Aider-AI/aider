@@ -511,6 +511,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     if args.verbose:
         import json
+
         io.tool_output("Model info:")
         io.tool_output(json.dumps(main_model.info, indent=4))
 
