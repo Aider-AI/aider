@@ -386,6 +386,7 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         examples_as_sys_msg=True,
         reminder="sys",
+        max_tokens=8192,
     ),
     ModelSettings(
         "deepseek/deepseek-coder",
@@ -394,6 +395,7 @@ MODEL_SETTINGS = [
         examples_as_sys_msg=True,
         reminder="sys",
         caches_by_default=True,
+        max_tokens=8192,
     ),
     ModelSettings(
         "openrouter/deepseek/deepseek-coder",
