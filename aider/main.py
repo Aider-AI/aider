@@ -502,6 +502,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     if args.git:
         git_root = setup_git(git_root, io, include_all_files=None if args.include_all_files else False)
+        repo.scan_repo_changes()  # Scan for changes and update repository state
         if args.gitignore:
             check_gitignore(git_root, io)
 
@@ -720,6 +721,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     while True:
         try:
             coder.run()
+            coder.repo.scan_repo_changes()  # Scan for changes after each run
             return
         except SwitchCoder as switch:
             kwargs = dict(io=io, from_coder=coder)
