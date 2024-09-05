@@ -86,6 +86,7 @@ def make_new_repo(git_root, io, include_all_files=None, gitignore_content=None):
 
 
 def setup_git(git_root, io, include_all_files=None):
+def setup_git(git_root, io, include_all_files=False, fnames=None):
     repo = None
 
     if git_root:
@@ -102,7 +103,8 @@ def setup_git(git_root, io, include_all_files=None):
         repo = make_new_repo(git_root, io, include_all_files=include_all_files, 
                              gitignore_content=gitignore_content)
 
-    if not repo:
+    if repo:
+        return GitRepo(io, fnames, git_root, include_all_files=include_all_files)
         return
 
     user_name = None
@@ -501,8 +503,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         return 0
 
     if args.git:
-        git_root = setup_git(git_root, io, include_all_files=None if args.include_all_files else False)
-        repo.scan_repo_changes()  # Scan for changes and update repository state
+        repo = setup_git(git_root, io, include_all_files=None if args.include_all_files else False, fnames=fnames)
+        if repo:
+            repo.scan_repo_changes()  # Scan for changes and update repository state
         if args.gitignore:
             check_gitignore(git_root, io)
 
