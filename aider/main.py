@@ -52,10 +52,14 @@ def guessed_wrong_repo(io, git_root, fnames, git_dname):
     return str(check_repo)
 
 
-def make_new_repo(git_root, io, include_all_files=False, gitignore_content=None):
+def make_new_repo(git_root, io, include_all_files=None, gitignore_content=None):
     try:
         repo = git.Repo.init(git_root)
         check_gitignore(git_root, io, False)
+
+        if include_all_files is None:
+            # Check if the folder contains any non-hidden files
+            include_all_files = any(not item.name.startswith('.') for item in Path(git_root).iterdir() if item.is_file())
 
         if include_all_files:
             # Add all non-hidden files in the directory
@@ -81,7 +85,7 @@ def make_new_repo(git_root, io, include_all_files=False, gitignore_content=None)
     return repo
 
 
-def setup_git(git_root, io, include_all_files=False):
+def setup_git(git_root, io, include_all_files=None):
     repo = None
 
     if git_root:
@@ -91,7 +95,7 @@ def setup_git(git_root, io, include_all_files=False):
         return
     elif io.confirm_ask("No git repo found, create one to track aider's changes (recommended)?"):
         gitignore_content = None
-        if not include_all_files:
+        if include_all_files is False:
             gitignore_content = ".aider*\n"
 
         git_root = str(Path.cwd().resolve())
@@ -497,7 +501,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         return 0
 
     if args.git:
-        git_root = setup_git(git_root, io, include_all_files=args.include_all_files)
+        git_root = setup_git(git_root, io, include_all_files=None if args.include_all_files else False)
         if args.gitignore:
             check_gitignore(git_root, io)
 
