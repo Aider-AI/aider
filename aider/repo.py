@@ -35,6 +35,7 @@ class GitRepo:
         attribute_commit_message_committer=False,
         commit_prompt=None,
         subtree_only=False,
+        include_all_files=None,
     ):
         self.io = io
         self.models = models
@@ -49,7 +50,9 @@ class GitRepo:
         self.commit_prompt = commit_prompt
         self.subtree_only = subtree_only
         self.ignore_file_cache = {}
+        self.include_all_files = include_all_files
 
+        self.scan_repo_changes()
         if git_dname:
             check_fnames = [git_dname]
         elif fnames:
@@ -86,6 +89,40 @@ class GitRepo:
 
         if aider_ignore_file:
             self.aider_ignore_file = Path(aider_ignore_file)
+
+    def scan_repo_changes(self):
+        if not self.repo:
+            return
+
+        # Get all files in the working directory
+        all_files = set(self.repo.git.ls_files("--others", "--exclude-standard").splitlines())
+        all_files.update(self.repo.git.ls_files().splitlines())
+
+        # Get tracked files
+        tracked_files = set(self.get_tracked_files())
+
+        # New files
+        new_files = all_files - tracked_files
+        for file in new_files:
+            if not self.ignored_file(file):
+                self.repo.git.add(file)
+                self.io.tool_output(f"Added new file: {file}")
+
+        # Changed files
+        changed_files = set(self.get_dirty_files())
+        for file in changed_files:
+            if not self.ignored_file(file):
+                self.repo.git.add(file)
+                self.io.tool_output(f"Staged changes in file: {file}")
+
+        # Deleted files
+        deleted_files = tracked_files - all_files
+        for file in deleted_files:
+            self.repo.git.rm(file)
+            self.io.tool_output(f"Removed deleted file: {file}")
+
+        if new_files or changed_files or deleted_files:
+            self.commit(message="Auto-commit: Update repository state", aider_edits=True)
 
     def commit(self, fnames=None, context=None, message=None, aider_edits=False):
         if not fnames and not self.repo.is_dirty():

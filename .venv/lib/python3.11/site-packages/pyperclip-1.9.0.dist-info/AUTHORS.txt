@@ -1,0 +1,56 @@
+Here is an inevitably incomplete list of MUCH-APPRECIATED CONTRIBUTORS --
+people who have submitted patches, reported bugs, added translations, helped
+answer newbie questions, and generally made Pyperclip that much better:
+
+Al Sweigart
+Alexander Cobleigh ‏@cblgh
+Andrea Scarpino https://github.com/ilpianista
+Aniket Pandey https://github.com/lordaniket06
+Anton Yakutovich https://github.com/drakulavich
+Brian Levin https://github.com/bnice5000
+Carvell Scott https://github.com/CarvellScott
+Cees Timmerman https://github.com/CTimmerman
+Chris Clark
+Christopher Lambert https://github.com/XN137
+Chris Woerz https://github.com/erendrake
+Corey Bryant https://github.com/coreycb
+Daniel Shimon https://github.com/daniel-shimon
+Edd Barrett https://github.com/vext01
+Eugene Yang https://github.com/eugene-yang
+Felix Yan https://github.com/felixonmars
+Fredrik Borg https://github.com/frbor
+fthoma https://github.com/fthoma
+Greg Witt https://github.com/GoodGuyGregory
+hinlader https://github.com/hinlader
+Hugo van Kemenade https://github.com/hugovk
+Hynek Cernoch https://github.com/hynekcer
+Jason R. Coombs https://github.com/jaraco
+Jon Crall https://github.com/Erotemic
+Jonathan Slenders https://github.com/jonathanslenders
+JustAShoeMaker https://github.com/JustAShoeMaker
+Marcelo Glezer https://github.com/gato
+masajxxx https://github.com/masajxxx
+Maximilian Hils https://github.com/mhils
+mgunyho https://github.com/mgunyho 
+Michał Górny https://github.com/mgorny
+Nicola Guerrera https://github.com/nik012003
+Nikolaos-Digenis Karagiannis https://github.com/Digenis
+Nils Ohlmeier https://github.com/nils-ohlmeier
+Orson Peters https://github.com/orlp
+pgajdos https://github.com/pgajdos
+PirateOfAndaman https://github.com/PirateOfAndaman
+Six https://github.com/brbsix
+Stefan Devai https://github.com/stefandevai
+Stephen Finucane https://github.com/stephenfin
+Stefan Scherfke https://github.com/sscherfke
+Steve Elam
+Tamir Bahar https://github.com/tmr232
+Terrel Shumway https://github.com/lernisto
+Tim Cuthbertson https://github.com/timbertson
+Tim Gates https://github.com/timgates42
+Todd Leonhardt https://github.com/tleonhardt
+Troy Sankey https://github.com/pwnage101
+utagawa kiki https://github.com/utgwkk
+Vertliba V.V. https://github.com/vertliba
+Vince West https://github.com/dvincentwest
+ZEDGR https://github.com/ZEDGR

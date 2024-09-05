@@ -1,0 +1,2 @@
+[networkx.backends]
+nx-loopback = networkx.classes.tests.dispatch_interface:dispatcher

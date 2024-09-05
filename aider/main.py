@@ -52,10 +52,30 @@ def guessed_wrong_repo(io, git_root, fnames, git_dname):
     return str(check_repo)
 
 
-def make_new_repo(git_root, io):
+def make_new_repo(git_root, io, include_all_files=None, gitignore_content=None):
     try:
         repo = git.Repo.init(git_root)
         check_gitignore(git_root, io, False)
+
+        if include_all_files is None:
+            # Check if the folder contains any non-hidden files
+            include_all_files = any(not item.name.startswith('.') for item in Path(git_root).iterdir() if item.is_file())
+
+        if include_all_files:
+            # Add all non-hidden files in the directory
+            for item in Path(git_root).iterdir():
+                if not item.name.startswith('.') and not item.is_dir():
+                    repo.git.add(str(item))
+
+            # Commit the added files
+            if repo.is_dirty(untracked_files=True):
+                repo.git.commit('-m', 'Initial commit: Add existing files')
+                io.tool_output("Added existing files to the new git repository")
+
+        if gitignore_content:
+            with open(os.path.join(git_root, '.gitignore'), 'w') as f:
+                f.write(gitignore_content)
+
     except ANY_GIT_ERROR as err:  # issue #1233
         io.tool_error(f"Unable to create git repo in {git_root}")
         io.tool_output(str(err))
@@ -65,7 +85,7 @@ def make_new_repo(git_root, io):
     return repo
 
 
-def setup_git(git_root, io):
+def setup_git(git_root, io, include_all_files=None, fnames=None):
     repo = None
 
     if git_root:
@@ -74,10 +94,16 @@ def setup_git(git_root, io):
         io.tool_warning("You should probably run aider in a directory, not your home dir.")
         return
     elif io.confirm_ask("No git repo found, create one to track aider's changes (recommended)?"):
-        git_root = str(Path.cwd().resolve())
-        repo = make_new_repo(git_root, io)
+        gitignore_content = None
+        if include_all_files is False:
+            gitignore_content = ".aider*\n"
 
-    if not repo:
+        git_root = str(Path.cwd().resolve())
+        repo = make_new_repo(git_root, io, include_all_files=include_all_files, 
+                             gitignore_content=gitignore_content)
+
+    if repo:
+        return GitRepo(io, fnames, git_root, subtree_only=False, include_all_files=include_all_files)
         return
 
     user_name = None
@@ -353,6 +379,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     parser = get_parser(default_config_files, git_root)
     args, unknown = parser.parse_known_args(argv)
 
+    # Add a new argument for including all files when creating a new repo
+    parser.add_argument('--include-all-files', action='store_true', help='Include all non-hidden files when creating a new git repository')
+
     # Load the .env file specified in the arguments
     loaded_dotenvs = load_dotenv_files(git_root, args.env_file)
 
@@ -473,7 +502,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         return 0
 
     if args.git:
-        git_root = setup_git(git_root, io)
+        git_repo = setup_git(git_root, io, include_all_files=None if args.include_all_files else False, fnames=fnames)
+        if git_repo:
+            git_repo.scan_repo_changes()  # Scan for changes and update repository state
+            repo = git_repo  # Assign git_repo to repo for use in other parts of the code
         if args.gitignore:
             check_gitignore(git_root, io)
 
@@ -692,6 +724,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     while True:
         try:
             coder.run()
+            if args.git and coder.repo:
+                coder.repo.scan_repo_changes()  # Scan for changes after each run
+                coder.repo.commit(message="Auto-commit: Update after coder run", aider_edits=True)
             return
         except SwitchCoder as switch:
             kwargs = dict(io=io, from_coder=coder)

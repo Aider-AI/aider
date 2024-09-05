@@ -1,0 +1,631 @@
+Metadata-Version: 2.1
+Name: ConfigArgParse
+Version: 1.7
+Summary: A drop-in replacement for argparse that allows options to also be set via config files and/or environment variables.
+Home-page: https://github.com/bw2/ConfigArgParse
+License: MIT
+Keywords: options,argparse,ConfigArgParse,config,environment variables,envvars,ENV,environment,optparse,YAML,INI
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Natural Language :: English
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: Implementation :: CPython
+Classifier: Programming Language :: Python :: Implementation :: PyPy
+Requires-Python: >=3.5
+License-File: LICENSE
+Provides-Extra: test
+Requires-Dist: mock ; extra == 'test'
+Requires-Dist: PyYAML ; extra == 'test'
+Requires-Dist: pytest ; extra == 'test'
+Provides-Extra: yaml
+Requires-Dist: PyYAML ; extra == 'yaml'
+
+ConfigArgParse
+--------------
+
+.. image:: https://img.shields.io/pypi/v/ConfigArgParse.svg?style=flat
+    :alt: PyPI version
+    :target: https://pypi.python.org/pypi/ConfigArgParse
+
+.. image:: https://img.shields.io/pypi/pyversions/ConfigArgParse.svg
+    :alt: Supported Python versions
+    :target: https://pypi.python.org/pypi/ConfigArgParse
+
+.. image:: https://static.pepy.tech/badge/configargparse/week
+    :alt: Downloads per week
+    :target: https://pepy.tech/project/configargparse
+
+.. image:: https://img.shields.io/badge/-API_Documentation-blue
+    :alt: API Documentation
+    :target: https://bw2.github.io/ConfigArgParse/
+
+	     
+Overview
+~~~~~~~~
+
+Applications with more than a handful of user-settable options are best
+configured through a combination of command line args, config files,
+hard-coded defaults, and in some cases, environment variables.
+
+Python's command line parsing modules such as argparse have very limited
+support for config files and environment variables, so this module
+extends argparse to add these features.
+
+Available on PyPI: http://pypi.python.org/pypi/ConfigArgParse
+
+
+Features
+~~~~~~~~
+
+-  command-line, config file, env var, and default settings can now be
+   defined, documented, and parsed in one go using a single API (if a
+   value is specified in more than one way then: command line >
+   environment variables > config file values > defaults)
+-  config files can have .ini or .yaml style syntax (eg. key=value or
+   key: value)
+-  user can provide a config file via a normal-looking command line arg
+   (eg. -c path/to/config.txt) rather than the argparse-style @config.txt
+-  one or more default config file paths can be specified
+   (eg. ['/etc/bla.conf', '~/.my_config'] )
+-  all argparse functionality is fully supported, so this module can
+   serve as a drop-in replacement (verified by argparse unittests).
+-  env vars and config file keys & syntax are automatically documented
+   in the -h help message
+-  new method :code:`print_values()` can report keys & values and where
+   they were set (eg. command line, env var, config file, or default).
+-  lite-weight (no 3rd-party library dependencies except (optionally) PyYAML)
+-  extensible (:code:`ConfigFileParser` can be subclassed to define a new
+   config file format)
+-  unittested by running the unittests that came with argparse but on
+   configargparse, and using tox to test with Python 3.5+
+
+Example
+~~~~~~~
+
+*config_test.py*:
+
+Script that defines 4 options and a positional arg and then parses and prints the values. Also,
+it prints out the help message as well as the string produced by :code:`format_values()` to show
+what they look like.
+
+.. code:: py
+
+   import configargparse
+
+   p = configargparse.ArgParser(default_config_files=['/etc/app/conf.d/*.conf', '~/.my_settings'])
+   p.add('-c', '--my-config', required=True, is_config_file=True, help='config file path')
+   p.add('--genome', required=True, help='path to genome file')  # this option can be set in a config file because it starts with '--'
+   p.add('-v', help='verbose', action='store_true')
+   p.add('-d', '--dbsnp', help='known variants .vcf', env_var='DBSNP_PATH')  # this option can be set in a config file because it starts with '--'
+   p.add('vcf', nargs='+', help='variant file(s)')
+
+   options = p.parse_args()
+
+   print(options)
+   print("----------")
+   print(p.format_help())
+   print("----------")
+   print(p.format_values())    # useful for logging where different settings came from
+
+
+*config.txt:*
+
+Since the script above set the config file as required=True, lets create a config file to give it:
+
+.. code:: py
+
+    # settings for config_test.py
+    genome = HCMV     # cytomegalovirus genome
+    dbsnp = /data/dbsnp/variants.vcf
+
+
+*command line:*
+
+Now run the script and pass it the config file:
+
+.. code:: bash
+
+    DBSNP_PATH=/data/dbsnp/variants_v2.vcf python config_test.py --my-config config.txt f1.vcf f2.vcf
+
+*output:*
+
+Here is the result:
+
+.. code:: bash
+
+    Namespace(dbsnp='/data/dbsnp/variants_v2.vcf', genome='HCMV', my_config='config.txt', v=False, vcf=['f1.vcf', 'f2.vcf'])
+    ----------
+    usage: config_test.py [-h] -c MY_CONFIG --genome GENOME [-v] [-d DBSNP]
+                          vcf [vcf ...]
+    
+    Args that start with '--' (eg. --genome) can also be set in a config file
+    (/etc/app/conf.d/*.conf or ~/.my_settings or specified via -c). Config file
+    syntax allows: key=value, flag=true, stuff=[a,b,c] (for details, see syntax at
+    https://goo.gl/R74nmi). If an arg is specified in more than one place, then
+    commandline values override environment variables which override config file
+    values which override defaults.
+    
+    positional arguments:
+      vcf                   variant file(s)
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -c MY_CONFIG, --my-config MY_CONFIG
+                            config file path
+      --genome GENOME       path to genome file
+      -v                    verbose
+      -d DBSNP, --dbsnp DBSNP
+                            known variants .vcf [env var: DBSNP_PATH]
+    
+    ----------
+    Command Line Args:   --my-config config.txt f1.vcf f2.vcf
+    Environment Variables:
+      DBSNP_PATH:        /data/dbsnp/variants_v2.vcf
+    Config File (config.txt):
+      genome:            HCMV
+
+Special Values
+~~~~~~~~~~~~~~
+
+Under the hood, configargparse handles environment variables and config file
+values by converting them to their corresponding command line arg. For
+example, "key = value" will be processed as if "--key value" was specified
+on the command line.
+
+Also, the following special values (whether in a config file or an environment
+variable) are handled in a special way to support booleans and lists:
+
+-  :code:`key = true` is handled as if "--key" was specified on the command line.
+   In your python code this key must be defined as a boolean flag
+   (eg. action="store_true" or similar).
+
+-  :code:`key = [value1, value2, ...]` is handled as if "--key value1 --key value2"
+   etc. was specified on the command line. In your python code this key must
+   be defined as a list (eg. action="append").
+
+Config File Syntax
+~~~~~~~~~~~~~~~~~~
+
+Only command line args that have a long version (eg. one that starts with '--')
+can be set in a config file. For example, "--color" can be set by putting
+"color=green" in a config file. The config file syntax depends on the constructor
+arg: :code:`config_file_parser_class` which can be set to one of the provided
+classes: :code:`DefaultConfigFileParser`, :code:`YAMLConfigFileParser`,
+:code:`ConfigparserConfigFileParser` or to your own subclass of the
+:code:`ConfigFileParser` abstract class.
+
+*DefaultConfigFileParser*  - the full range of valid syntax is:
+
+.. code:: yaml
+
+        # this is a comment
+        ; this is also a comment (.ini style)
+        ---            # lines that start with --- are ignored (yaml style)
+        -------------------
+        [section]      # .ini-style section names are treated as comments
+
+        # how to specify a key-value pair (all of these are equivalent):
+        name value     # key is case sensitive: "Name" isn't "name"
+        name = value   # (.ini style)  (white space is ignored, so name = value same as name=value)
+        name: value    # (yaml style)
+        --name value   # (argparse style)
+
+        # how to set a flag arg (eg. arg which has action="store_true")
+        --name
+        name
+        name = True    # "True" and "true" are the same
+
+        # how to specify a list arg (eg. arg which has action="append")
+        fruit = [apple, orange, lemon]
+        indexes = [1, 12, 35 , 40]
+
+
+*YAMLConfigFileParser*  - allows a subset of YAML syntax (http://goo.gl/VgT2DU)
+
+.. code:: yaml
+
+        # a comment
+        name1: value
+        name2: true    # "True" and "true" are the same
+
+        fruit: [apple, orange, lemon]
+        indexes: [1, 12, 35, 40]
+        colors:
+          - green
+          - red
+          - blue
+
+*ConfigparserConfigFileParser*  - allows a subset of python's configparser
+module syntax (https://docs.python.org/3.7/library/configparser.html). In
+particular the following configparser options are set:
+
+.. code:: py
+
+        config = configparser.ArgParser(
+            delimiters=("=",":"),
+            allow_no_value=False,
+            comment_prefixes=("#",";"),
+            inline_comment_prefixes=("#",";"),
+            strict=True,
+            empty_lines_in_values=False,
+        )
+
+Once configparser parses the config file all section names are removed, thus all
+keys must have unique names regardless of which INI section they are defined
+under. Also, any keys which have python list syntax are converted to lists by
+evaluating them as python code using ast.literal_eval
+(https://docs.python.org/3/library/ast.html#ast.literal_eval). To facilitate
+this all multi-line values are converted to single-line values. Thus multi-line
+string values will have all new-lines converted to spaces. Note, since key-value
+pairs that have python dictionary syntax are saved as single-line strings, even
+if formatted across multiple lines in the config file, dictionaries can be read
+in and converted to valid python dictionaries with PyYAML's safe_load. Example
+given below:
+
+.. code:: py
+
+        # inside your config file (e.g. config.ini)
+        [section1]  # INI sections treated as comments
+        system1_settings: { # start of multi-line dictionary
+            'a':True,
+            'b':[2, 4, 8, 16],
+            'c':{'start':0, 'stop':1000},
+            'd':'experiment 32 testing simulation with parameter a on'
+            } # end of multi-line dictionary value
+
+        .......
+
+        # in your configargparse setup
+        import configargparse
+        import yaml
+
+        parser = configargparse.ArgParser(
+            config_file_parser_class=configargparse.ConfigparserConfigFileParser
+        )
+        parser.add_argument('--system1_settings', type=yaml.safe_load)
+        
+        args = parser.parse_args() # now args.system1 is a valid python dict
+
+*IniConfigParser*  - INI parser with support for sections.
+
+This parser somewhat ressembles ``ConfigparserConfigFileParser``. It uses configparser and apply the same kind of processing to 
+values written with python list syntax. 
+
+With the following additions: 
+   - Must be created with argument to bind the parser to a list of sections.
+   - Does not convert multiline strings to single line.
+   - Optional support for converting multiline strings to list (if ``split_ml_text_to_list=True``). 
+   - Optional support for quoting strings in config file 
+      (useful when text must not be converted to list or when text 
+      should contain trailing whitespaces).
+
+This config parser can be used to integrate with ``setup.cfg`` files.
+
+Example::
+
+      # this is a comment
+      ; also a comment
+      [my_super_tool]
+      # how to specify a key-value pair
+      format-string: restructuredtext 
+      # white space are ignored, so name = value same as name=value
+      # this is why you can quote strings 
+      quoted-string = '\thello\tmom...  '
+      # how to set an arg which has action="store_true"
+      warnings-as-errors = true
+      # how to set an arg which has action="count" or type=int
+      verbosity = 1
+      # how to specify a list arg (eg. arg which has action="append")
+      repeatable-option = ["https://docs.python.org/3/objects.inv",
+                     "https://twistedmatrix.com/documents/current/api/objects.inv"]
+      # how to specify a multiline text:
+      multi-line-text = 
+         Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+         Vivamus tortor odio, dignissim non ornare non, laoreet quis nunc. 
+         Maecenas quis dapibus leo, a pellentesque leo. 
+
+If you use ``IniConfigParser(sections, split_ml_text_to_list=True)``::
+
+      # the same rules are applicable with the following changes:
+      [my-software]
+      # how to specify a list arg (eg. arg which has action="append")
+      repeatable-option = # Just enter one value per line (the list literal format can also be used)
+         https://docs.python.org/3/objects.inv
+         https://twistedmatrix.com/documents/current/api/objects.inv
+      # how to specify a multiline text (you have to quote it):
+      multi-line-text = '''
+         Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+         Vivamus tortor odio, dignissim non ornare non, laoreet quis nunc. 
+         Maecenas quis dapibus leo, a pellentesque leo. 
+         '''
+
+Usage:
+
+.. code:: py
+
+   import configargparse
+   parser = configargparse.ArgParser(
+            default_config_files=['setup.cfg', 'my_super_tool.ini'],
+            config_file_parser_class=configargparse.IniConfigParser(['tool:my_super_tool', 'my_super_tool']),
+        )
+   ...
+
+*TomlConfigParser*  - TOML parser with support for sections.
+
+`TOML <https://github.com/toml-lang/toml/blob/main/toml.md>`_ parser. This config parser can be used to integrate with ``pyproject.toml`` files.
+
+Example::
+
+   # this is a comment
+   [tool.my-software] # TOML section table.
+   # how to specify a key-value pair
+   format-string = "restructuredtext" # strings must be quoted
+   # how to set an arg which has action="store_true"
+   warnings-as-errors = true
+   # how to set an arg which has action="count" or type=int
+   verbosity = 1
+   # how to specify a list arg (eg. arg which has action="append")
+   repeatable-option = ["https://docs.python.org/3/objects.inv",
+                  "https://twistedmatrix.com/documents/current/api/objects.inv"]
+   # how to specify a multiline text:
+   multi-line-text = '''
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+      Vivamus tortor odio, dignissim non ornare non, laoreet quis nunc. 
+      Maecenas quis dapibus leo, a pellentesque leo. 
+      '''
+
+Usage:
+
+.. code:: py
+
+   import configargparse
+   parser = configargparse.ArgParser(
+            default_config_files=['pyproject.toml', 'my_super_tool.toml'],
+            config_file_parser_class=configargparse.TomlConfigParser(['tool.my_super_tool']),
+        )
+   ...
+
+*CompositeConfigParser*  - Create a config parser to understand multiple formats.
+
+This parser will successively try to parse the file with each parser, until it succeeds, 
+else fail showing all encountered error messages.
+
+The following code will make configargparse understand both TOML and INI formats. 
+Making it easy to integrate in both ``pyproject.toml`` and ``setup.cfg``.
+
+.. code:: py
+
+   import configargparse
+   my_tool_sections = ['tool.my_super_tool', 'tool:my_super_tool', 'my_super_tool']
+                    # pyproject.toml like section, setup.cfg like section, custom section
+   parser = configargparse.ArgParser(
+            default_config_files=['setup.cfg', 'my_super_tool.ini'],
+            config_file_parser_class=configargparse.CompositeConfigParser(
+               [configargparse.TomlConfigParser(my_tool_sections), 
+                configargparse.IniConfigParser(my_tool_sections, split_ml_text_to_list=True)]
+               ),
+        )
+   ...
+
+Note that it's required to put the TOML parser first because the INI syntax basically would accept anything whereas TOML. 
+
+ArgParser Singletons
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To make it easier to configure different modules in an application,
+configargparse provides globally-available ArgumentParser instances
+via configargparse.get_argument_parser('name') (similar to
+logging.getLogger('name')).
+
+Here is an example of an application with a utils module that also
+defines and retrieves its own command-line args.
+
+*main.py*
+
+.. code:: py
+
+    import configargparse
+    import utils
+
+    p = configargparse.get_argument_parser()
+    p.add_argument("-x", help="Main module setting")
+    p.add_argument("--m-setting", help="Main module setting")
+    options = p.parse_known_args()   # using p.parse_args() here may raise errors.
+
+*utils.py*
+
+.. code:: py
+
+    import configargparse
+    p = configargparse.get_argument_parser()
+    p.add_argument("--utils-setting", help="Config-file-settable option for utils")
+
+    if __name__ == "__main__":
+       options = p.parse_known_args()
+
+Help Formatters
+~~~~~~~~~~~~~~~
+
+:code:`ArgumentDefaultsRawHelpFormatter` is a new HelpFormatter that both adds
+default values AND disables line-wrapping. It can be passed to the constructor:
+:code:`ArgParser(.., formatter_class=ArgumentDefaultsRawHelpFormatter)`
+
+
+Aliases
+~~~~~~~
+
+The configargparse.ArgumentParser API inherits its class and method
+names from argparse and also provides the following shorter names for
+convenience:
+
+-  p = configargparse.get_arg_parser()  # get global singleton instance
+-  p = configargparse.get_parser()
+-  p = configargparse.ArgParser()  # create a new instance
+-  p = configargparse.Parser()
+-  p.add_arg(..)
+-  p.add(..)
+-  options = p.parse(..)
+
+HelpFormatters:
+
+- RawFormatter = RawDescriptionHelpFormatter
+- DefaultsFormatter = ArgumentDefaultsHelpFormatter
+- DefaultsRawFormatter = ArgumentDefaultsRawHelpFormatter
+
+API Documentation
+~~~~~~~~~~~~~~~~~
+
+You can review the generated API Documentation for the ``configargparse`` module: `HERE <https://bw2.github.io/ConfigArgParse/>`_
+
+Design Notes
+~~~~~~~~~~~~
+
+Unit tests:
+
+tests/test_configargparse.py contains custom unittests for features
+specific to this module (such as config file and env-var support), as
+well as a hook to load and run argparse unittests (see the built-in
+test.test_argparse module) but on configargparse in place of argparse.
+This ensures that configargparse will work as a drop in replacement for
+argparse in all usecases.
+
+Previously existing modules (PyPI search keywords: config argparse):
+
+-  argparse (built-in module Python v2.7+)
+
+   -  Good:
+
+      -  fully featured command line parsing
+      -  can read args from files using an easy to understand mechanism
+
+   -  Bad:
+
+      -  syntax for specifying config file path is unusual (eg.
+         @file.txt)and not described in the user help message.
+      -  default config file syntax doesn't support comments and is
+         unintuitive (eg. --namevalue)
+      -  no support for environment variables
+
+-  ConfArgParse v1.0.15
+   (https://pypi.python.org/pypi/ConfArgParse)
+
+   -  Good:
+
+      -  extends argparse with support for config files parsed by
+         ConfigParser
+      -  clear documentation in README
+
+   -  Bad:
+
+      -  config file values are processed using
+         ArgumentParser.set_defaults(..) which means "required" and
+         "choices" are not handled as expected. For example, if you
+         specify a required value in a config file, you still have to
+         specify it again on the command line.
+      -  doesn't work with Python 3 yet
+      -  no unit tests, code not well documented
+
+-  appsettings v0.5 (https://pypi.python.org/pypi/appsettings)
+
+   -  Good:
+
+      -  supports config file (yaml format) and env_var parsing
+      -  supports config-file-only setting for specifying lists and
+         dicts
+
+   -  Bad:
+
+      -  passes in config file and env settings via parse_args
+         namespace param
+      -  tests not finished and don't work with Python 3 (import
+         StringIO)
+
+-  argparse_config v0.5.1
+   (https://pypi.python.org/pypi/argparse_config)
+
+   -  Good:
+
+      -  similar features to ConfArgParse v1.0.15
+
+   -  Bad:
+
+      -  doesn't work with Python 3 (error during pip install)
+
+-  yconf v0.3.2 - (https://pypi.python.org/pypi/yconf) - features
+   and interface not that great
+-  hieropt v0.3 - (https://pypi.python.org/pypi/hieropt) - doesn't
+   appear to be maintained, couldn't find documentation
+
+-  configurati v0.2.3 - (https://pypi.python.org/pypi/configurati)
+
+   -  Good:
+
+      -  JSON, YAML, or Python configuration files
+      -  handles rich data structures such as dictionaries
+      -  can group configuration names into sections (like .ini files)
+
+   -  Bad:
+
+      -  doesn't work with Python 3
+      -  2+ years since last release to PyPI
+      -  apparently unmaintained
+
+
+Design choices:
+
+1. all options must be settable via command line. Having options that
+   can only be set using config files or env. vars adds complexity to
+   the API, and is not a useful enough feature since the developer can
+   split up options into sections and call a section "config file keys",
+   with command line args that are just "--" plus the config key.
+2. config file and env. var settings should be processed by appending
+   them to the command line (another benefit of #1). This is an
+   easy-to-implement solution and implicitly takes care of checking that
+   all "required" args are provided, etc., plus the behavior should be
+   easy for users to understand.
+3. configargparse shouldn't override argparse's
+   convert_arg_line_to_args method so that all argparse unit tests
+   can be run on configargparse.
+4. in terms of what to allow for config file keys, the "dest" value of
+   an option can't serve as a valid config key because many options can
+   have the same dest. Instead, since multiple options can't use the
+   same long arg (eg. "--long-arg-x"), let the config key be either
+   "--long-arg-x" or "long-arg-x". This means the developer can allow
+   only a subset of the command-line args to be specified via config
+   file (eg. short args like -x would be excluded). Also, that way
+   config keys are automatically documented whenever the command line
+   args are documented in the help message.
+5. don't force users to put config file settings in the right .ini [sections].
+   This doesn't have a clear benefit since all options are command-line settable,
+   and so have a globally unique key anyway.
+   Enforcing sections just makes things harder for the user and adds complexity to the implementation.
+   NOTE: This design choice was preventing configargparse from integrating with common Python project
+   config files like setup.cfg or pyproject.toml,
+   so additional parser classes were added that parse only a subset of the values defined in INI or
+   TOML config files.
+6. if necessary, config-file-only args can be added later by
+   implementing a separate add method and using the namespace arg as in
+   appsettings_v0.5
+
+Relevant sites:
+
+-  http://stackoverflow.com/questions/6133517/parse-config-file-environment-and-command-line-arguments-to-get-a-single-coll
+-  http://tricksntweaks.blogspot.com/2013_05_01_archive.html
+-  http://www.youtube.com/watch?v=vvCwqHgZJc8#t=35
+
+
+
+Versioning
+~~~~~~~~~~
+
+This software follows `Semantic Versioning`_
+
+.. _Semantic Versioning: http://semver.org/

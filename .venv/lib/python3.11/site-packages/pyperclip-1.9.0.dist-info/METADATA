@@ -1,0 +1,63 @@
+Metadata-Version: 2.1
+Name: pyperclip
+Version: 1.9.0
+Summary: A cross-platform clipboard module for Python. (Only handles plain text for now.)
+Home-page: https://github.com/asweigart/pyperclip
+Author: Al Sweigart
+Author-email: al@inventwithpython.com
+License: BSD
+Keywords: clipboard copy paste clip xsel xclip
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Environment :: Win32 (MS Windows)
+Classifier: Environment :: X11 Applications
+Classifier: Environment :: MacOS X
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+License-File: LICENSE.txt
+License-File: AUTHORS.txt
+
+Pyperclip is a cross-platform Python module for copy and paste clipboard functions. It works with Python 2 and 3.
+
+Install on Windows: `pip install pyperclip`
+
+Install on Linux/macOS: `pip3 install pyperclip`
+
+Al Sweigart al@inventwithpython.com
+BSD License
+
+Example Usage
+=============
+
+    >>> import pyperclip
+    >>> pyperclip.copy('The text to be copied to the clipboard.')
+    >>> pyperclip.paste()
+    'The text to be copied to the clipboard.'
+
+
+Currently only handles plaintext.
+
+On Windows, no additional modules are needed.
+
+On Mac, this module makes use of the pbcopy and pbpaste commands, which should come with the os.
+
+On Linux, this module makes use of the xclip or xsel commands, which should come with the os. Otherwise run "sudo apt-get install xclip" or "sudo apt-get install xsel" (Note: xsel does not always seem to work.)
+
+Otherwise on Linux, you will need the qtpy or PyQT5 modules installed.
+
+Support
+-------
+
+If you find this project helpful and would like to support its development, [consider donating to its creator on Patreon](https://www.patreon.com/AlSweigart).

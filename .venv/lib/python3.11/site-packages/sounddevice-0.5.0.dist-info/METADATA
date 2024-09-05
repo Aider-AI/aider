@@ -1,0 +1,42 @@
+Metadata-Version: 2.1
+Name: sounddevice
+Version: 0.5.0
+Summary: Play and Record Sound with Python
+Home-page: http://python-sounddevice.readthedocs.io/
+Author: Matthias Geier
+Author-email: Matthias.Geier@gmail.com
+License: MIT
+Project-URL: Source, https://github.com/spatialaudio/python-sounddevice
+Keywords: sound,audio,PortAudio,play,record,playrec
+Platform: any
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Topic :: Multimedia :: Sound/Audio
+Requires-Python: >=3.7
+License-File: LICENSE
+Requires-Dist: CFFI >=1.0
+Provides-Extra: numpy
+Requires-Dist: NumPy ; extra == 'numpy'
+
+Play and Record Sound with Python
+=================================
+
+This Python_ module provides bindings for the PortAudio_ library and a few
+convenience functions to play and record NumPy_ arrays containing audio signals.
+
+The ``sounddevice`` module is available for Linux, macOS and Windows.
+
+Documentation:
+   https://python-sounddevice.readthedocs.io/
+
+Source code repository and issue tracker:
+   https://github.com/spatialaudio/python-sounddevice/
+
+License:
+   MIT -- see the file ``LICENSE`` for details.
+
+.. _Python: https://www.python.org/
+.. _PortAudio: http://www.portaudio.com/
+.. _NumPy: https://numpy.org/
