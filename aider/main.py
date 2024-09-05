@@ -102,7 +102,7 @@ def setup_git(git_root, io, include_all_files=None, fnames=None):
         repo = make_new_repo(git_root, io, include_all_files=include_all_files, 
                              gitignore_content=gitignore_content)
 
-    if repo is not None:
+    if repo:
         return GitRepo(io, fnames, git_root, include_all_files=include_all_files)
         return
 
@@ -502,9 +502,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         return 0
 
     if args.git:
-        repo = setup_git(git_root, io, include_all_files=None if args.include_all_files else False, fnames=fnames)
-        if repo:
-            repo.scan_repo_changes()  # Scan for changes and update repository state
+        git_repo = setup_git(git_root, io, include_all_files=None if args.include_all_files else False, fnames=fnames)
+        if git_repo:
+            git_repo.scan_repo_changes()  # Scan for changes and update repository state
+            repo = git_repo  # Assign git_repo to repo for use in other parts of the code
         if args.gitignore:
             check_gitignore(git_root, io)
 
@@ -723,7 +724,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     while True:
         try:
             coder.run()
-            coder.repo.scan_repo_changes()  # Scan for changes after each run
+            if args.git and coder.repo:
+                coder.repo.scan_repo_changes()  # Scan for changes after each run
+                coder.repo.commit(message="Auto-commit: Update after coder run", aider_edits=True)
             return
         except SwitchCoder as switch:
             kwargs = dict(io=io, from_coder=coder)

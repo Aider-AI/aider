@@ -119,7 +119,8 @@ class GitRepo:
             self.repo.git.rm(file)
             self.io.tool_output(f"Removed deleted file: {file}")
 
-        self.commit(message="Auto-commit: Update repository state", aider_edits=True)
+        if new_files or changed_files or deleted_files:
+            self.commit(message="Auto-commit: Update repository state", aider_edits=True)
 
     def commit(self, fnames=None, context=None, message=None, aider_edits=False):
         if not fnames and not self.repo.is_dirty():
