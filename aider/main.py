@@ -85,8 +85,7 @@ def make_new_repo(git_root, io, include_all_files=None, gitignore_content=None):
     return repo
 
 
-def setup_git(git_root, io, include_all_files=None):
-def setup_git(git_root, io, include_all_files=False, fnames=None):
+def setup_git(git_root, io, include_all_files=None, fnames=None):
     repo = None
 
     if git_root:
@@ -103,7 +102,7 @@ def setup_git(git_root, io, include_all_files=False, fnames=None):
         repo = make_new_repo(git_root, io, include_all_files=include_all_files, 
                              gitignore_content=gitignore_content)
 
-    if repo:
+    if repo is not None:
         return GitRepo(io, fnames, git_root, include_all_files=include_all_files)
         return
 
