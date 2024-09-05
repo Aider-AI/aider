@@ -29,7 +29,7 @@ aider --4-turbo
 aider --35-turbo
 
 # List models available from OpenAI
-aider --models openai/
+aider --list-models openai/
 ```
 
 You can use `aider --model <model-name>` to use any other OpenAI model.

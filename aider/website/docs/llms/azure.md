@@ -24,7 +24,7 @@ setx AZURE_API_BASE https://myendpt.openai.azure.com
 aider --model azure/<your_deployment_name>
 
 # List models available from Azure
-aider --models azure/
+aider --list-models azure/
 ```
 
 Note that aider will also use environment variables

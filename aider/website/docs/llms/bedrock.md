@@ -54,7 +54,7 @@ aider --model bedrock/anthropic.claude-3-5-sonnet-20240620-v1:0
 To see some models available via Bedrock, run:
 
 ```
-aider --models bedrock/
+aider --list-models bedrock/
 ```
 
 Make sure you have access to these models in your AWS account before attempting to use them with Aider.

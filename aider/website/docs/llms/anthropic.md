@@ -26,7 +26,7 @@ aider
 aider --opus
 
 # List models available from Anthropic
-aider --models anthropic/
+aider --list-models anthropic/
 ```
 
 {: .tip }

@@ -18,7 +18,7 @@ setx   OPENROUTER_API_KEY <key> # Windows, restart shell after setx
 aider --model openrouter/<provider>/<model>
 
 # List models available from OpenRouter
-aider --models openrouter/
+aider --list-models openrouter/
 ```
 
 In particular, many aider users access Sonnet via OpenRouter:

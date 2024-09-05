@@ -21,7 +21,7 @@ setx   GROQ_API_KEY <key> # Windows, restart shell after setx
 aider --model groq/llama3-70b-8192
 
 # List models available from Groq
-aider --models groq/
+aider --list-models groq/
 ```
 
 
