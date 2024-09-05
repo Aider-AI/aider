@@ -549,9 +549,9 @@ def run_test_real(
         chat_history_file=history_fname,
     )
 
+    ask_model = models.Model("openrouter/anthropic/claude-3.5-sonnet")
     # ask_model = models.Model("openrouter/anthropic/claude-3.5-sonnet")
-    # ask_model = models.Model("openrouter/anthropic/claude-3.5-sonnet")
-    ask_model = models.Model("openrouter/deepseek/deepseek-chat")
+    # ask_model = models.Model("openrouter/deepseek/deepseek-chat")
     whole_model = models.Model("openrouter/deepseek/deepseek-chat")
 
     main_model = ask_model
