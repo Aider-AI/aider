@@ -52,7 +52,7 @@ def guessed_wrong_repo(io, git_root, fnames, git_dname):
     return str(check_repo)
 
 
-def make_new_repo(git_root, io, include_all_files=False):
+def make_new_repo(git_root, io, include_all_files=False, gitignore_content=None):
     try:
         repo = git.Repo.init(git_root)
         check_gitignore(git_root, io, False)
@@ -68,6 +68,10 @@ def make_new_repo(git_root, io, include_all_files=False):
                 repo.git.commit('-m', 'Initial commit: Add existing files')
                 io.tool_output("Added existing files to the new git repository")
 
+        if gitignore_content:
+            with open(os.path.join(git_root, '.gitignore'), 'w') as f:
+                f.write(gitignore_content)
+
     except ANY_GIT_ERROR as err:  # issue #1233
         io.tool_error(f"Unable to create git repo in {git_root}")
         io.tool_output(str(err))
@@ -77,7 +81,7 @@ def make_new_repo(git_root, io, include_all_files=False):
     return repo
 
 
-def setup_git(git_root, io):
+def setup_git(git_root, io, include_all_files=False):
     repo = None
 
     if git_root:
@@ -86,8 +90,13 @@ def setup_git(git_root, io):
         io.tool_warning("You should probably run aider in a directory, not your home dir.")
         return
     elif io.confirm_ask("No git repo found, create one to track aider's changes (recommended)?"):
+        gitignore_content = None
+        if not include_all_files:
+            gitignore_content = ".aider*\n"
+
         git_root = str(Path.cwd().resolve())
-        repo = make_new_repo(git_root, io)
+        repo = make_new_repo(git_root, io, include_all_files=include_all_files, 
+                             gitignore_content=gitignore_content)
 
     if not repo:
         return
@@ -488,8 +497,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         return 0
 
     if args.git:
-        git_root = setup_git(git_root, io)
-        if args.gitignore and not args.include_all_files:
+        git_root = setup_git(git_root, io, include_all_files=args.include_all_files)
+        if args.gitignore:
             check_gitignore(git_root, io)
 
     if args.verbose:
