@@ -1,0 +1,13 @@
+model_list:
+  - model_name: fake-openai-endpoint
+    litellm_params:
+      model: openai/fake
+      api_key: fake-key
+      api_base: https://exampleopenaiendpoint-production.up.railway.app/
+
+# default off mode
+litellm_settings:
+  set_verbose: True
+  cache: True
+  cache_params:
+    mode: default_off

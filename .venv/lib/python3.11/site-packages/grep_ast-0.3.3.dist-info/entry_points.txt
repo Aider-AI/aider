@@ -1,0 +1,3 @@
+[console_scripts]
+gast = grep_ast.main:main
+grep-ast = grep_ast.main:main

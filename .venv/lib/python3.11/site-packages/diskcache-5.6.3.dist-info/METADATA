@@ -1,0 +1,430 @@
+Metadata-Version: 2.1
+Name: diskcache
+Version: 5.6.3
+Summary: Disk Cache -- Disk and file backed persistent cache.
+Home-page: http://www.grantjenks.com/docs/diskcache/
+Author: Grant Jenks
+Author-email: contact@grantjenks.com
+License: Apache 2.0
+Project-URL: Documentation, http://www.grantjenks.com/docs/diskcache/
+Project-URL: Funding, https://gum.co/diskcache
+Project-URL: Source, https://github.com/grantjenks/python-diskcache
+Project-URL: Tracker, https://github.com/grantjenks/python-diskcache/issues
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Natural Language :: English
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: Implementation :: CPython
+Requires-Python: >=3
+License-File: LICENSE
+
+DiskCache: Disk Backed Cache
+============================
+
+`DiskCache`_ is an Apache2 licensed disk and file backed cache library, written
+in pure-Python, and compatible with Django.
+
+The cloud-based computing of 2023 puts a premium on memory. Gigabytes of empty
+space is left on disks as processes vie for memory. Among these processes is
+Memcached (and sometimes Redis) which is used as a cache. Wouldn't it be nice
+to leverage empty disk space for caching?
+
+Django is Python's most popular web framework and ships with several caching
+backends. Unfortunately the file-based cache in Django is essentially
+broken. The culling method is random and large caches repeatedly scan a cache
+directory which slows linearly with growth. Can you really allow it to take
+sixty milliseconds to store a key in a cache with a thousand items?
+
+In Python, we can do better. And we can do it in pure-Python!
+
+::
+
+   In [1]: import pylibmc
+   In [2]: client = pylibmc.Client(['127.0.0.1'], binary=True)
+   In [3]: client[b'key'] = b'value'
+   In [4]: %timeit client[b'key']
+
+   10000 loops, best of 3: 25.4 µs per loop
+
+   In [5]: import diskcache as dc
+   In [6]: cache = dc.Cache('tmp')
+   In [7]: cache[b'key'] = b'value'
+   In [8]: %timeit cache[b'key']
+
+   100000 loops, best of 3: 11.8 µs per loop
+
+**Note:** Micro-benchmarks have their place but are not a substitute for real
+measurements. DiskCache offers cache benchmarks to defend its performance
+claims. Micro-optimizations are avoided but your mileage may vary.
+
+DiskCache efficiently makes gigabytes of storage space available for
+caching. By leveraging rock-solid database libraries and memory-mapped files,
+cache performance can match and exceed industry-standard solutions. There's no
+need for a C compiler or running another process. Performance is a feature and
+testing has 100% coverage with unit tests and hours of stress.
+
+Testimonials
+------------
+
+`Daren Hasenkamp`_, Founder --
+
+    "It's a useful, simple API, just like I love about Redis. It has reduced
+    the amount of queries hitting my Elasticsearch cluster by over 25% for a
+    website that gets over a million users/day (100+ hits/second)."
+
+`Mathias Petermann`_, Senior Linux System Engineer --
+
+    "I implemented it into a wrapper for our Ansible lookup modules and we were
+    able to speed up some Ansible runs by almost 3 times. DiskCache is saving
+    us a ton of time."
+
+Does your company or website use `DiskCache`_? Send us a `message
+<contact@grantjenks.com>`_ and let us know.
+
+.. _`Daren Hasenkamp`: https://www.linkedin.com/in/daren-hasenkamp-93006438/
+.. _`Mathias Petermann`: https://www.linkedin.com/in/mathias-petermann-a8aa273b/
+
+Features
+--------
+
+- Pure-Python
+- Fully Documented
+- Benchmark comparisons (alternatives, Django cache backends)
+- 100% test coverage
+- Hours of stress testing
+- Performance matters
+- Django compatible API
+- Thread-safe and process-safe
+- Supports multiple eviction policies (LRU and LFU included)
+- Keys support "tag" metadata and eviction
+- Developed on Python 3.10
+- Tested on CPython 3.6, 3.7, 3.8, 3.9, 3.10
+- Tested on Linux, Mac OS X, and Windows
+- Tested using GitHub Actions
+
+.. image:: https://github.com/grantjenks/python-diskcache/workflows/integration/badge.svg
+   :target: https://github.com/grantjenks/python-diskcache/actions?query=workflow%3Aintegration
+
+.. image:: https://github.com/grantjenks/python-diskcache/workflows/release/badge.svg
+   :target: https://github.com/grantjenks/python-diskcache/actions?query=workflow%3Arelease
+
+Quickstart
+----------
+
+Installing `DiskCache`_ is simple with `pip <http://www.pip-installer.org/>`_::
+
+  $ pip install diskcache
+
+You can access documentation in the interpreter with Python's built-in help
+function::
+
+  >>> import diskcache
+  >>> help(diskcache)                             # doctest: +SKIP
+
+The core of `DiskCache`_ is three data types intended for caching. `Cache`_
+objects manage a SQLite database and filesystem directory to store key and
+value pairs. `FanoutCache`_ provides a sharding layer to utilize multiple
+caches and `DjangoCache`_ integrates that with `Django`_::
+
+  >>> from diskcache import Cache, FanoutCache, DjangoCache
+  >>> help(Cache)                                 # doctest: +SKIP
+  >>> help(FanoutCache)                           # doctest: +SKIP
+  >>> help(DjangoCache)                           # doctest: +SKIP
+
+Built atop the caching data types, are `Deque`_ and `Index`_ which work as a
+cross-process, persistent replacements for Python's ``collections.deque`` and
+``dict``. These implement the sequence and mapping container base classes::
+
+  >>> from diskcache import Deque, Index
+  >>> help(Deque)                                 # doctest: +SKIP
+  >>> help(Index)                                 # doctest: +SKIP
+
+Finally, a number of `recipes`_ for cross-process synchronization are provided
+using an underlying cache. Features like memoization with cache stampede
+prevention, cross-process locking, and cross-process throttling are available::
+
+  >>> from diskcache import memoize_stampede, Lock, throttle
+  >>> help(memoize_stampede)                      # doctest: +SKIP
+  >>> help(Lock)                                  # doctest: +SKIP
+  >>> help(throttle)                              # doctest: +SKIP
+
+Python's docstrings are a quick way to get started but not intended as a
+replacement for the `DiskCache Tutorial`_ and `DiskCache API Reference`_.
+
+.. _`Cache`: http://www.grantjenks.com/docs/diskcache/tutorial.html#cache
+.. _`FanoutCache`: http://www.grantjenks.com/docs/diskcache/tutorial.html#fanoutcache
+.. _`DjangoCache`: http://www.grantjenks.com/docs/diskcache/tutorial.html#djangocache
+.. _`Django`: https://www.djangoproject.com/
+.. _`Deque`: http://www.grantjenks.com/docs/diskcache/tutorial.html#deque
+.. _`Index`: http://www.grantjenks.com/docs/diskcache/tutorial.html#index
+.. _`recipes`: http://www.grantjenks.com/docs/diskcache/tutorial.html#recipes
+
+User Guide
+----------
+
+For those wanting more details, this part of the documentation describes
+tutorial, benchmarks, API, and development.
+
+* `DiskCache Tutorial`_
+* `DiskCache Cache Benchmarks`_
+* `DiskCache DjangoCache Benchmarks`_
+* `Case Study: Web Crawler`_
+* `Case Study: Landing Page Caching`_
+* `Talk: All Things Cached - SF Python 2017 Meetup`_
+* `DiskCache API Reference`_
+* `DiskCache Development`_
+
+.. _`DiskCache Tutorial`: http://www.grantjenks.com/docs/diskcache/tutorial.html
+.. _`DiskCache Cache Benchmarks`: http://www.grantjenks.com/docs/diskcache/cache-benchmarks.html
+.. _`DiskCache DjangoCache Benchmarks`: http://www.grantjenks.com/docs/diskcache/djangocache-benchmarks.html
+.. _`Talk: All Things Cached - SF Python 2017 Meetup`: http://www.grantjenks.com/docs/diskcache/sf-python-2017-meetup-talk.html
+.. _`Case Study: Web Crawler`: http://www.grantjenks.com/docs/diskcache/case-study-web-crawler.html
+.. _`Case Study: Landing Page Caching`: http://www.grantjenks.com/docs/diskcache/case-study-landing-page-caching.html
+.. _`DiskCache API Reference`: http://www.grantjenks.com/docs/diskcache/api.html
+.. _`DiskCache Development`: http://www.grantjenks.com/docs/diskcache/development.html
+
+Comparisons
+-----------
+
+Comparisons to popular projects related to `DiskCache`_.
+
+Key-Value Stores
+................
+
+`DiskCache`_ is mostly a simple key-value store. Feature comparisons with four
+other projects are shown in the tables below.
+
+* `dbm`_ is part of Python's standard library and implements a generic
+  interface to variants of the DBM database — dbm.gnu or dbm.ndbm. If none of
+  these modules is installed, the slow-but-simple dbm.dumb is used.
+* `shelve`_ is part of Python's standard library and implements a “shelf” as a
+  persistent, dictionary-like object. The difference with “dbm” databases is
+  that the values can be anything that the pickle module can handle.
+* `sqlitedict`_ is a lightweight wrapper around Python's sqlite3 database with
+  a simple, Pythonic dict-like interface and support for multi-thread
+  access. Keys are arbitrary strings, values arbitrary pickle-able objects.
+* `pickleDB`_ is a lightweight and simple key-value store. It is built upon
+  Python's simplejson module and was inspired by Redis. It is licensed with the
+  BSD three-clause license.
+
+.. _`dbm`: https://docs.python.org/3/library/dbm.html
+.. _`shelve`: https://docs.python.org/3/library/shelve.html
+.. _`sqlitedict`: https://github.com/RaRe-Technologies/sqlitedict
+.. _`pickleDB`: https://pythonhosted.org/pickleDB/
+
+**Features**
+
+================ ============= ========= ========= ============ ============
+Feature          diskcache     dbm       shelve    sqlitedict   pickleDB
+================ ============= ========= ========= ============ ============
+Atomic?          Always        Maybe     Maybe     Maybe        No
+Persistent?      Yes           Yes       Yes       Yes          Yes
+Thread-safe?     Yes           No        No        Yes          No
+Process-safe?    Yes           No        No        Maybe        No
+Backend?         SQLite        DBM       DBM       SQLite       File
+Serialization?   Customizable  None      Pickle    Customizable JSON
+Data Types?      Mapping/Deque Mapping   Mapping   Mapping      Mapping
+Ordering?        Insert/Sorted None      None      None         None
+Eviction?        LRU/LFU/more  None      None      None         None
+Vacuum?          Automatic     Maybe     Maybe     Manual       Automatic
+Transactions?    Yes           No        No        Maybe        No
+Multiprocessing? Yes           No        No        No           No
+Forkable?        Yes           No        No        No           No
+Metadata?        Yes           No        No        No           No
+================ ============= ========= ========= ============ ============
+
+**Quality**
+
+================ ============= ========= ========= ============ ============
+Project          diskcache     dbm       shelve    sqlitedict   pickleDB
+================ ============= ========= ========= ============ ============
+Tests?           Yes           Yes       Yes       Yes          Yes
+Coverage?        Yes           Yes       Yes       Yes          No
+Stress?          Yes           No        No        No           No
+CI Tests?        Linux/Windows Yes       Yes       Linux        No
+Python?          2/3/PyPy      All       All       2/3          2/3
+License?         Apache2       Python    Python    Apache2      3-Clause BSD
+Docs?            Extensive     Summary   Summary   Readme       Summary
+Benchmarks?      Yes           No        No        No           No
+Sources?         GitHub        GitHub    GitHub    GitHub       GitHub
+Pure-Python?     Yes           Yes       Yes       Yes          Yes
+Server?          No            No        No        No           No
+Integrations?    Django        None      None      None         None
+================ ============= ========= ========= ============ ============
+
+**Timings**
+
+These are rough measurements. See `DiskCache Cache Benchmarks`_ for more
+rigorous data.
+
+================ ============= ========= ========= ============ ============
+Project          diskcache     dbm       shelve    sqlitedict   pickleDB
+================ ============= ========= ========= ============ ============
+get                      25 µs     36 µs     41 µs       513 µs        92 µs
+set                     198 µs    900 µs    928 µs       697 µs     1,020 µs
+delete                  248 µs    740 µs    702 µs     1,717 µs     1,020 µs
+================ ============= ========= ========= ============ ============
+
+Caching Libraries
+.................
+
+* `joblib.Memory`_ provides caching functions and works by explicitly saving
+  the inputs and outputs to files. It is designed to work with non-hashable and
+  potentially large input and output data types such as numpy arrays.
+* `klepto`_ extends Python’s `lru_cache` to utilize different keymaps and
+  alternate caching algorithms, such as `lfu_cache` and `mru_cache`. Klepto
+  uses a simple dictionary-sytle interface for all caches and archives.
+
+.. _`klepto`: https://pypi.org/project/klepto/
+.. _`joblib.Memory`: https://joblib.readthedocs.io/en/latest/memory.html
+
+Data Structures
+...............
+
+* `dict`_ is a mapping object that maps hashable keys to arbitrary
+  values. Mappings are mutable objects. There is currently only one standard
+  Python mapping type, the dictionary.
+* `pandas`_ is a Python package providing fast, flexible, and expressive data
+  structures designed to make working with “relational” or “labeled” data both
+  easy and intuitive.
+* `Sorted Containers`_ is an Apache2 licensed sorted collections library,
+  written in pure-Python, and fast as C-extensions. Sorted Containers
+  implements sorted list, sorted dictionary, and sorted set data types.
+
+.. _`dict`: https://docs.python.org/3/library/stdtypes.html#typesmapping
+.. _`pandas`: https://pandas.pydata.org/
+.. _`Sorted Containers`: http://www.grantjenks.com/docs/sortedcontainers/
+
+Pure-Python Databases
+.....................
+
+* `ZODB`_ supports an isomorphic interface for database operations which means
+  there's little impact on your code to make objects persistent and there's no
+  database mapper that partially hides the datbase.
+* `CodernityDB`_ is an open source, pure-Python, multi-platform, schema-less,
+  NoSQL database and includes an HTTP server version, and a Python client
+  library that aims to be 100% compatible with the embedded version.
+* `TinyDB`_ is a tiny, document oriented database optimized for your
+  happiness. If you need a simple database with a clean API that just works
+  without lots of configuration, TinyDB might be the right choice for you.
+
+.. _`ZODB`: http://www.zodb.org/
+.. _`CodernityDB`: https://pypi.org/project/CodernityDB/
+.. _`TinyDB`: https://tinydb.readthedocs.io/
+
+Object Relational Mappings (ORM)
+................................
+
+* `Django ORM`_ provides models that are the single, definitive source of
+  information about data and contains the essential fields and behaviors of the
+  stored data. Generally, each model maps to a single SQL database table.
+* `SQLAlchemy`_ is the Python SQL toolkit and Object Relational Mapper that
+  gives application developers the full power and flexibility of SQL. It
+  provides a full suite of well known enterprise-level persistence patterns.
+* `Peewee`_ is a simple and small ORM. It has few (but expressive) concepts,
+  making it easy to learn and intuitive to use. Peewee supports Sqlite, MySQL,
+  and PostgreSQL with tons of extensions.
+* `SQLObject`_ is a popular Object Relational Manager for providing an object
+  interface to your database, with tables as classes, rows as instances, and
+  columns as attributes.
+* `Pony ORM`_ is a Python ORM with beautiful query syntax. Use Python syntax
+  for interacting with the database. Pony translates such queries into SQL and
+  executes them in the database in the most efficient way.
+
+.. _`Django ORM`: https://docs.djangoproject.com/en/dev/topics/db/
+.. _`SQLAlchemy`: https://www.sqlalchemy.org/
+.. _`Peewee`: http://docs.peewee-orm.com/
+.. _`SQLObject`: http://sqlobject.org/
+.. _`Pony ORM`: https://ponyorm.com/
+
+SQL Databases
+.............
+
+* `SQLite`_ is part of Python's standard library and provides a lightweight
+  disk-based database that doesn’t require a separate server process and allows
+  accessing the database using a nonstandard variant of the SQL query language.
+* `MySQL`_ is one of the world’s most popular open source databases and has
+  become a leading database choice for web-based applications. MySQL includes a
+  standardized database driver for Python platforms and development.
+* `PostgreSQL`_ is a powerful, open source object-relational database system
+  with over 30 years of active development. Psycopg is the most popular
+  PostgreSQL adapter for the Python programming language.
+* `Oracle DB`_ is a relational database management system (RDBMS) from the
+  Oracle Corporation. Originally developed in 1977, Oracle DB is one of the
+  most trusted and widely used enterprise relational database engines.
+* `Microsoft SQL Server`_ is a relational database management system developed
+  by Microsoft. As a database server, it stores and retrieves data as requested
+  by other software applications.
+
+.. _`SQLite`: https://docs.python.org/3/library/sqlite3.html
+.. _`MySQL`: https://dev.mysql.com/downloads/connector/python/
+.. _`PostgreSQL`: http://initd.org/psycopg/
+.. _`Oracle DB`: https://pypi.org/project/cx_Oracle/
+.. _`Microsoft SQL Server`: https://pypi.org/project/pyodbc/
+
+Other Databases
+...............
+
+* `Memcached`_ is free and open source, high-performance, distributed memory
+  object caching system, generic in nature, but intended for use in speeding up
+  dynamic web applications by alleviating database load.
+* `Redis`_ is an open source, in-memory data structure store, used as a
+  database, cache and message broker. It supports data structures such as
+  strings, hashes, lists, sets, sorted sets with range queries, and more.
+* `MongoDB`_ is a cross-platform document-oriented database program. Classified
+  as a NoSQL database program, MongoDB uses JSON-like documents with
+  schema. PyMongo is the recommended way to work with MongoDB from Python.
+* `LMDB`_ is a lightning-fast, memory-mapped database. With memory-mapped
+  files, it has the read performance of a pure in-memory database while
+  retaining the persistence of standard disk-based databases.
+* `BerkeleyDB`_ is a software library intended to provide a high-performance
+  embedded database for key/value data. Berkeley DB is a programmatic toolkit
+  that provides built-in database support for desktop and server applications.
+* `LevelDB`_ is a fast key-value storage library written at Google that
+  provides an ordered mapping from string keys to string values. Data is stored
+  sorted by key and users can provide a custom comparison function.
+
+.. _`Memcached`: https://pypi.org/project/python-memcached/
+.. _`MongoDB`: https://api.mongodb.com/python/current/
+.. _`Redis`: https://redis.io/clients#python
+.. _`LMDB`: https://lmdb.readthedocs.io/
+.. _`BerkeleyDB`: https://pypi.org/project/bsddb3/
+.. _`LevelDB`: https://plyvel.readthedocs.io/
+
+Reference
+---------
+
+* `DiskCache Documentation`_
+* `DiskCache at PyPI`_
+* `DiskCache at GitHub`_
+* `DiskCache Issue Tracker`_
+
+.. _`DiskCache Documentation`: http://www.grantjenks.com/docs/diskcache/
+.. _`DiskCache at PyPI`: https://pypi.python.org/pypi/diskcache/
+.. _`DiskCache at GitHub`: https://github.com/grantjenks/python-diskcache/
+.. _`DiskCache Issue Tracker`: https://github.com/grantjenks/python-diskcache/issues/
+
+License
+-------
+
+Copyright 2016-2023 Grant Jenks
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License.  You may obtain a copy of the
+License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+.. _`DiskCache`: http://www.grantjenks.com/docs/diskcache/
