@@ -35,6 +35,7 @@ class GitRepo:
         attribute_commit_message_committer=False,
         commit_prompt=None,
         subtree_only=False,
+        include_all_files=None,
     ):
         self.io = io
         self.models = models
@@ -49,6 +50,7 @@ class GitRepo:
         self.commit_prompt = commit_prompt
         self.subtree_only = subtree_only
         self.ignore_file_cache = {}
+        self.include_all_files = include_all_files
 
         self.scan_repo_changes()
         if git_dname:

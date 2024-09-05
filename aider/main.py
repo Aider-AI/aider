@@ -103,7 +103,7 @@ def setup_git(git_root, io, include_all_files=None, fnames=None):
                              gitignore_content=gitignore_content)
 
     if repo:
-        return GitRepo(io, fnames, git_root, include_all_files=include_all_files)
+        return GitRepo(io, fnames, git_root, subtree_only=False, include_all_files=include_all_files)
         return
 
     user_name = None
