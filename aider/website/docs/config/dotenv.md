@@ -100,7 +100,7 @@ cog.outl("```")
 # Model Settings:
 
 ## List known models which match the (partial) MODEL name
-#AIDER_MODELS=
+#AIDER_LIST_MODELS=
 
 ## Specify the api base url
 #OPENAI_API_BASE=

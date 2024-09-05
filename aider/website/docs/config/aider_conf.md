@@ -102,7 +102,7 @@ cog.outl("```")
 # Model Settings:
 
 ## List known models which match the (partial) MODEL name
-#models:
+#list-models:
 
 ## Specify the api base url
 #openai-api-base:

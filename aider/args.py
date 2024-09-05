@@ -121,7 +121,8 @@ def get_parser(default_config_files, git_root):
     ##########
     group = parser.add_argument_group("Model Settings")
     group.add_argument(
-        "--models", "--list-models",
+        "--list-models",
+        "--models",
         metavar="MODEL",
         help="List known models which match the (partial) MODEL name",
     )

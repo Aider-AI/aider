@@ -468,8 +468,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.check_update:
         check_version(io, verbose=args.verbose)
 
-    if args.models:
-        models.print_matching_models(io, args.models)
+    if args.list_models:
+        models.print_matching_models(io, args.list_models)
         return 0
 
     if args.git:
