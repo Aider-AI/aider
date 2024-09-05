@@ -52,10 +52,22 @@ def guessed_wrong_repo(io, git_root, fnames, git_dname):
     return str(check_repo)
 
 
-def make_new_repo(git_root, io):
+def make_new_repo(git_root, io, include_all_files=False):
     try:
         repo = git.Repo.init(git_root)
         check_gitignore(git_root, io, False)
+
+        if include_all_files:
+            # Add all non-hidden files in the directory
+            for item in Path(git_root).iterdir():
+                if not item.name.startswith('.') and not item.is_dir():
+                    repo.git.add(str(item))
+
+            # Commit the added files
+            if repo.is_dirty(untracked_files=True):
+                repo.git.commit('-m', 'Initial commit: Add existing files')
+                io.tool_output("Added existing files to the new git repository")
+
     except ANY_GIT_ERROR as err:  # issue #1233
         io.tool_error(f"Unable to create git repo in {git_root}")
         io.tool_output(str(err))
@@ -353,6 +365,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     parser = get_parser(default_config_files, git_root)
     args, unknown = parser.parse_known_args(argv)
 
+    # Add a new argument for including all files when creating a new repo
+    parser.add_argument('--include-all-files', action='store_true', help='Include all non-hidden files when creating a new git repository')
+
     # Load the .env file specified in the arguments
     loaded_dotenvs = load_dotenv_files(git_root, args.env_file)
 
@@ -474,7 +489,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     if args.git:
         git_root = setup_git(git_root, io)
-        if args.gitignore:
+        if args.gitignore and not args.include_all_files:
             check_gitignore(git_root, io)
 
     if args.verbose:
