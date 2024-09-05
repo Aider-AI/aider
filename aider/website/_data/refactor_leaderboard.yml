@@ -167,7 +167,7 @@
 
 - dirname: 2024-07-24-07-49-39--refac-deepseek-coder-v2-0724
   test_cases: 89
-  model: DeepSeek Coder V2 0724
+  model: DeepSeek Coder V2 0724 (deprecated)
   edit_format: diff
   commit_hash: bb6e597
   pass_rate_1: 32.6
@@ -208,4 +208,25 @@
   versions: 0.48.1-dev
   seconds_per_case: 16.9
   total_cost: 4.0873
-  
+
+- dirname: 2024-09-05-15-19-05--refac-deepseek-v2.5-no-shell
+  test_cases: 89
+  model: DeepSeek Chat V2.5
+  edit_format: diff
+  commit_hash: 1279c86, 1279c86-dirty
+  pass_rate_1: 31.5
+  percent_cases_well_formed: 67.4
+  error_outputs: 90
+  num_malformed_responses: 88
+  num_with_malformed_responses: 29
+  user_asks: 8
+  lazy_comments: 7
+  syntax_errors: 0
+  indentation_errors: 6
+  exhausted_context_windows: 2
+  test_timeouts: 0
+  command: aider --deepseek
+  date: 2024-09-05
+  versions: 0.55.1.dev
+  seconds_per_case: 225.4
+  total_cost: 1.0338
