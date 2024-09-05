@@ -93,6 +93,7 @@ class Coder:
     num_cache_warming_pings = 0
     suggest_shell_commands = True
     ignore_mentions = None
+    chat_language = None
 
     @classmethod
     def create(
@@ -260,7 +261,9 @@ class Coder:
         cache_prompts=False,
         num_cache_warming_pings=0,
         suggest_shell_commands=True,
+        chat_language=None,
     ):
+        self.chat_language = chat_language
         self.commit_before_message = []
         self.aider_commit_hashes = set()
         self.rejected_urls = set()
@@ -856,6 +859,9 @@ class Coder:
         self.cur_messages = []
 
     def get_user_language(self):
+        if self.chat_language:
+            return self.chat_language
+
         try:
             lang = locale.getlocale()[0]
             if lang:
