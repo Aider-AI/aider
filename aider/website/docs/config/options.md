@@ -58,7 +58,7 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--lint] [--lint-cmd] [--auto-lint | --no-auto-lint]
              [--test-cmd] [--auto-test | --no-auto-test] [--test]
              [--file] [--read] [--vim] [--voice-language]
-             [--version] [--just-check-update]
+             [--chat-language] [--version] [--just-check-update]
              [--check-update | --no-check-update]
              [--install-main-branch] [--upgrade] [--apply] [--yes]
              [-v] [--show-repo-map] [--show-prompts] [--exit]
@@ -467,6 +467,10 @@ Environment variable: `AIDER_VIM`
 Specify the language for voice using ISO 639-1 code (default: auto)  
 Default: en  
 Environment variable: `AIDER_VOICE_LANGUAGE`  
+
+### `--chat-language CHAT_LANGUAGE`
+Specify the language to use in the chat (default: None, uses system settings)  
+Environment variable: `AIDER_CHAT_LANGUAGE`  
 
 ### `--version`
 Show the version number and exit  

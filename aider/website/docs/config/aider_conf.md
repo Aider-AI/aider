@@ -287,6 +287,9 @@ cog.outl("```")
 ## Specify the language for voice using ISO 639-1 code (default: auto)
 #voice-language: en
 
+## Specify the language to use in the chat (default: None, uses system settings)
+#chat-language:
+
 ## Show the version number and exit
 #version:
 
