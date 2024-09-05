@@ -492,6 +492,12 @@ def get_parser(default_config_files, git_root):
         help="Specify the language for voice using ISO 639-1 code (default: auto)",
     )
     group.add_argument(
+        "--chat-language",
+        metavar="CHAT_LANGUAGE",
+        default=None,
+        help="Specify the language to use in the chat (default: None, uses system settings)",
+    )
+    group.add_argument(
         "--version",
         action="version",
         version=f"%(prog)s {__version__}",
