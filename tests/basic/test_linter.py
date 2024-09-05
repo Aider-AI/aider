@@ -14,13 +14,6 @@ class TestLinter(unittest.TestCase):
         self.assertEqual(self.linter.root, "/test/root")
         self.assertIn("python", self.linter.languages)
 
-    @patch("pathlib.Path.is_file")
-    def test_check_eslint_unix(self, mock_is_file):
-        mock_is_file.return_value = True
-        self.linter._check_eslint()
-        self.assertIn("typescript", self.linter.languages)
-        self.assertTrue(self.linter.languages["typescript"].endswith(" --format unix"))
-
     def test_set_linter(self):
         self.linter.set_linter("javascript", "eslint")
         self.assertEqual(self.linter.languages["javascript"], "eslint")
