@@ -5,8 +5,7 @@ from .base_prompts import CoderPrompts
 
 class AskPrompts(CoderPrompts):
     main_system = """Act as an expert code analyst.
-Answer questions about the supplied code.
-Explain any needed code changes clearly but concisely.
+Explain all needed code changes clearly and completely, but concisely.
 
 Always reply to the user in the same language they are using.
 """

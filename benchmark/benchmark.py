@@ -550,9 +550,9 @@ def run_test_real(
     )
 
     ask_model = models.Model("openrouter/anthropic/claude-3.5-sonnet")
-    # ask_model = models.Model("openrouter/anthropic/claude-3.5-sonnet")
+    whole_model = models.Model("openrouter/anthropic/claude-3.5-sonnet")
     # ask_model = models.Model("openrouter/deepseek/deepseek-chat")
-    whole_model = models.Model("openrouter/deepseek/deepseek-chat")
+    # whole_model = models.Model("openrouter/deepseek/deepseek-chat")
 
     main_model = ask_model
     edit_format = "ask-whole"
@@ -601,20 +601,22 @@ def run_test_real(
 
             coder.apply_updates()
         else:
+            """
             coder = Coder.create(
                 from_coder=coder,
                 main_model=ask_model,
                 edit_format="ask",
                 **coder_kwargs,
             )
+            """
             response = coder.run(with_message=instructions, preproc=False)
-            coder = Coder.create(
+            whole_coder = Coder.create(
                 from_coder=coder,
                 main_model=whole_model,
                 edit_format="whole",
                 **coder_kwargs,
             )
-            response = coder.run(with_message="make those changes", preproc=False)
+            response = whole_coder.run(with_message="make those changes", preproc=False)
 
         dur += time.time() - start
 

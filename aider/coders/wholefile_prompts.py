@@ -4,7 +4,7 @@ from .base_prompts import CoderPrompts
 
 
 class WholeFilePrompts(CoderPrompts):
-    main_system = """Act as an expert software developer.
+    main_system = """Act as an expert software developer and make changes to source code.
 {lazy_prompt}
 Output a copy of each file that needs changes.
 """
