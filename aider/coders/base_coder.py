@@ -313,11 +313,6 @@ class Coder:
         self.dry_run = dry_run
         self.pretty = self.io.pretty
 
-        if self.pretty:
-            self.console = Console()
-        else:
-            self.console = Console(force_terminal=False, no_color=True)
-
         self.main_model = main_model
 
         if cache_prompts and self.main_model.cache_control:
