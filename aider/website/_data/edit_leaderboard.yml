@@ -997,7 +997,7 @@
 
 - dirname: 2024-09-05-14-50-11--deepseek-sep5-no-shell
   test_cases: 133
-  model: DeepSeek Chat V2.5
+  model: DeepSeek V2.5
   edit_format: diff
   commit_hash: 1279c86
   pass_rate_1: 54.9
