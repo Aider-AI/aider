@@ -90,6 +90,7 @@ MODEL_SETTINGS = [
         "whole",
         weak_model_name="gpt-4o-mini",
         reminder="sys",
+    ),
     ModelSettings(
         "gpt-3.5-turbo-0125",
         "whole",
