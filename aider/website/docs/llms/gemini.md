@@ -20,6 +20,6 @@ setx   GEMINI_API_KEY <key> # Windows, restart shell after setx
 aider --model gemini/gemini-1.5-pro-latest
 
 # List models available from Gemini
-aider --models gemini/
+aider --list-models gemini/
 ```
 

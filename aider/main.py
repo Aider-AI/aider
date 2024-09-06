@@ -1,6 +1,7 @@
 from typing import List, Optional, Tuple
 from aider.repo import GitRepo, GitRepoError
 import configparser
+import json
 import os
 import re
 import sys
@@ -510,8 +511,8 @@ def main(argv: Optional[List[str]] = None, input_func=None, output_func=None, fo
     if args.check_update:
         check_version(io, verbose=args.verbose)
 
-    if args.models:
-        models.print_matching_models(io, args.models)
+    if args.list_models:
+        models.print_matching_models(io, args.list_models)
         return 0
 
     if args.git:
@@ -553,8 +554,7 @@ def main(argv: Optional[List[str]] = None, input_func=None, output_func=None, fo
 
     if args.verbose:
         io.tool_output("Model info:")
-        for key, value in main_model.info.items():
-            io.tool_output(f"  {key}: {value}")
+        io.tool_output(json.dumps(main_model.info, indent=4))
 
     lint_cmds = parse_lint_cmds(args.lint_cmd, io)
     if lint_cmds is None:
@@ -635,6 +635,7 @@ def main(argv: Optional[List[str]] = None, input_func=None, output_func=None, fo
             map_mul_no_files=args.map_multiplier_no_files,
             num_cache_warming_pings=args.cache_keepalive_pings,
             suggest_shell_commands=args.suggest_shell_commands,
+            chat_language=args.chat_language,
         )
     except ValueError as err:
         io.tool_error(str(err))

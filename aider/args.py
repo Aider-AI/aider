@@ -121,6 +121,7 @@ def get_parser(default_config_files, git_root):
     ##########
     group = parser.add_argument_group("Model Settings")
     group.add_argument(
+        "--list-models",
         "--models",
         metavar="MODEL",
         help="List known models which match the (partial) MODEL name",
@@ -489,6 +490,12 @@ def get_parser(default_config_files, git_root):
         metavar="VOICE_LANGUAGE",
         default="en",
         help="Specify the language for voice using ISO 639-1 code (default: auto)",
+    )
+    group.add_argument(
+        "--chat-language",
+        metavar="CHAT_LANGUAGE",
+        default=None,
+        help="Specify the language to use in the chat (default: None, uses system settings)",
     )
     group.add_argument(
         "--version",

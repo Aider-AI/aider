@@ -27,10 +27,11 @@ cog.out(get_md_help())
 ```
 usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--opus] [--sonnet] [--4] [--4o] [--mini] [--4-turbo]
-             [--35turbo] [--deepseek] [--models] [--openai-api-base]
-             [--openai-api-type] [--openai-api-version]
-             [--openai-api-deployment-id] [--openai-organization-id]
-             [--model-settings-file] [--model-metadata-file]
+             [--35turbo] [--deepseek] [--list-models]
+             [--openai-api-base] [--openai-api-type]
+             [--openai-api-version] [--openai-api-deployment-id]
+             [--openai-organization-id] [--model-settings-file]
+             [--model-metadata-file]
              [--verify-ssl | --no-verify-ssl] [--edit-format]
              [--weak-model]
              [--show-model-warnings | --no-show-model-warnings]
@@ -57,7 +58,7 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--lint] [--lint-cmd] [--auto-lint | --no-auto-lint]
              [--test-cmd] [--auto-test | --no-auto-test] [--test]
              [--file] [--read] [--vim] [--voice-language]
-             [--version] [--just-check-update]
+             [--chat-language] [--version] [--just-check-update]
              [--check-update | --no-check-update]
              [--install-main-branch] [--upgrade] [--apply] [--yes]
              [-v] [--show-repo-map] [--show-prompts] [--exit]
@@ -130,9 +131,12 @@ Environment variable: `AIDER_DEEPSEEK`
 
 ## Model Settings:
 
-### `--models MODEL`
+### `--list-models MODEL`
 List known models which match the (partial) MODEL name  
-Environment variable: `AIDER_MODELS`  
+Environment variable: `AIDER_LIST_MODELS`  
+Aliases:
+  - `--list-models MODEL`
+  - `--models MODEL`
 
 ### `--openai-api-base OPENAI_API_BASE`
 Specify the api base url  
@@ -463,6 +467,10 @@ Environment variable: `AIDER_VIM`
 Specify the language for voice using ISO 639-1 code (default: auto)  
 Default: en  
 Environment variable: `AIDER_VOICE_LANGUAGE`  
+
+### `--chat-language CHAT_LANGUAGE`
+Specify the language to use in the chat (default: None, uses system settings)  
+Environment variable: `AIDER_CHAT_LANGUAGE`  
 
 ### `--version`
 Show the version number and exit  

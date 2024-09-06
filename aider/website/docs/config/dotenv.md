@@ -100,7 +100,7 @@ cog.outl("```")
 # Model Settings:
 
 ## List known models which match the (partial) MODEL name
-#AIDER_MODELS=
+#AIDER_LIST_MODELS=
 
 ## Specify the api base url
 #OPENAI_API_BASE=
@@ -284,6 +284,9 @@ cog.outl("```")
 
 ## Specify the language for voice using ISO 639-1 code (default: auto)
 #AIDER_VOICE_LANGUAGE=en
+
+## Specify the language to use in the chat (default: None, uses system settings)
+#AIDER_CHAT_LANGUAGE=
 
 ## Check for updates and return status in the exit code
 #AIDER_JUST_CHECK_UPDATE=false
