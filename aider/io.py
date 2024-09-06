@@ -587,7 +587,7 @@ class InputOutput:
         self.console.print(show_resp)
         return mdStream
         
-    def print(self, message):
+    def print(self, message=""):
         print(message)
         
     def append_chat_history(self, text, linebreak=False, blockquote=False, strip=True):
