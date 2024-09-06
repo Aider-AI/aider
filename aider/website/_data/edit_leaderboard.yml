@@ -950,7 +950,7 @@
 
 - dirname: 2024-09-04-16-08-09--yi-coder-9b-whole
   test_cases: 133
-  model: openai/hf:01-ai/Yi-Coder-9B-Chat
+  model: Yi Coder 9B Chat
   edit_format: whole
   commit_hash: c4e4967
   pass_rate_1: 46.6
@@ -974,7 +974,7 @@
 
 - dirname: 2024-09-04-16-17-33--yi-coder-9b-chat-q4_0-whole
   test_cases: 133
-  model: ollama/yi-coder:9b-chat-q4_0
+  model: yi-coder:9b-chat-q4_0
   edit_format: whole
   commit_hash: c4e4967
   pass_rate_1: 41.4
