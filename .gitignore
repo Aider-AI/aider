@@ -11,3 +11,5 @@ _site
 .jekyll-cache/
 .jekyll-metadata
 aider/__version__.py
+aider-agg
+fileagg.py

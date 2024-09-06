@@ -1,14 +1,14 @@
+from typing import List, Optional, Tuple
+from aider.repo import GitRepo, GitRepoError
 import configparser
 import os
 import re
 import sys
 import threading
 from pathlib import Path
-
 import git
 from dotenv import load_dotenv
 from prompt_toolkit.enums import EditingMode
-
 from aider import __version__, models, utils
 from aider.args import get_parser
 from aider.coders import Coder
@@ -24,8 +24,13 @@ from aider.versioncheck import check_version, install_from_main_branch, install_
 from .dump import dump  # noqa: F401
 
 
-def get_git_root():
-    """Try and guess the git repo, since the conf.yml can be at the repo root"""
+def get_git_root() -> Optional[str]:
+    """
+    Try to guess the git repo root directory.
+
+    Returns:
+        Optional[str]: The path to the git repo root, or None if not found.
+    """
     try:
         repo = git.Repo(search_parent_directories=True)
         return repo.working_tree_dir
@@ -33,53 +38,100 @@ def get_git_root():
         return None
 
 
-def guessed_wrong_repo(io, git_root, fnames, git_dname):
-    """After we parse the args, we can determine the real repo. Did we guess wrong?"""
+def guessed_wrong_repo(io: InputOutput, git_root: Optional[str], fnames: List[str], git_dname: Optional[str]) -> Optional[str]:
+    """
+    Check if we guessed the wrong git repository.
 
+    Args:
+        io: InputOutput object for handling I/O operations.
+        git_root: The guessed git root directory.
+        fnames: List of file names.
+        git_dname: Git directory name.
+
+    Returns:
+        Optional[str]: The correct git root if guessed wrong, None otherwise.
+    """
     try:
         check_repo = Path(GitRepo(io, fnames, git_dname).root).resolve()
     except FileNotFoundError:
-        return
+        return None
 
-    # we had no guess, rely on the "true" repo result
     if not git_root:
         return str(check_repo)
 
     git_root = Path(git_root).resolve()
     if check_repo == git_root:
-        return
+        return None
 
     return str(check_repo)
 
 
-def make_new_repo(git_root, io):
+
+def make_new_repo(git_root: str, io: InputOutput) -> Optional[git.Repo]:
+    """
+    Create a new git repository.
+
+    Args:
+        git_root: The root directory for the new repository.
+        io: InputOutput object for handling I/O operations.
+
+    Returns:
+        Optional[git.Repo]: The newly created repository, or None if creation failed.
+    """
     try:
         repo = git.Repo.init(git_root)
         check_gitignore(git_root, io, False)
-    except ANY_GIT_ERROR as err:  # issue #1233
-        io.tool_error(f"Unable to create git repo in {git_root}")
-        io.tool_output(str(err))
-        return
-
-    io.tool_output(f"Git repository created in {git_root}")
-    return repo
+        io.tool_output(f"Git repository created in {git_root}")
+        return repo
+    except GitRepoError as err:
+        io.tool_error(f"Unable to create git repo in {git_root}: {err}")
+        return None
 
 
-def setup_git(git_root, io):
+
+def setup_git(git_root: Optional[str], io: InputOutput) -> Optional[str]:
+    """
+    Set up the git repository.
+
+    Args:
+        git_root: The root directory of the git repository.
+        io: InputOutput object for handling I/O operations.
+
+    Returns:
+        Optional[str]: The path to the git working directory, or None if setup failed.
+    """
     repo = None
 
     if git_root:
         repo = git.Repo(git_root)
     elif Path.cwd() == Path.home():
         io.tool_warning("You should probably run aider in a directory, not your home dir.")
-        return
+        return None
     elif io.confirm_ask("No git repo found, create one to track aider's changes (recommended)?"):
         git_root = str(Path.cwd().resolve())
         repo = make_new_repo(git_root, io)
 
     if not repo:
-        return
+        return None
 
+    user_name, user_email = get_git_user_info(repo)
+
+    if user_name and user_email:
+        return repo.working_tree_dir
+
+    set_git_user_info(repo, user_name, user_email, io)
+    return repo.working_tree_dir
+
+def get_git_user_info(repo: git.Repo) -> Tuple[Optional[str], Optional[str]]:
+    """
+    Get git user name and email from the repository configuration.
+
+    Args:
+        repo: The git repository object.
+
+    Returns:
+        Tuple[Optional[str], Optional[str]]: A tuple containing the user name and email.
+    """
     user_name = None
     user_email = None
     with repo.config_reader() as config:
@@ -91,19 +143,9 @@ def setup_git(git_root, io):
             user_email = config.get_value("user", "email", None)
         except (configparser.NoSectionError, configparser.NoOptionError):
             pass
+    return user_name, user_email
 
-    if user_name and user_email:
-        return repo.working_tree_dir
 
-    with repo.config_writer() as git_config:
-        if not user_name:
-            git_config.set_value("user", "name", "Your Name")
-            io.tool_warning('Update git name with: git config user.name "Your Name"')
-        if not user_email:
-            git_config.set_value("user", "email", "you@example.com")
-            io.tool_warning('Update git email with: git config user.email "you@example.com"')
-
-    return repo.working_tree_dir
 
 
 def check_gitignore(git_root, io, ask=True):
@@ -318,7 +360,7 @@ def sanity_check_repo(repo, io):
         return False
 
 
-def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
+def main(argv: Optional[List[str]] = None, input_func=None, output_func=None, force_git_root: Optional[str] = None) -> int:
     report_uncaught_exceptions()
 
     if argv is None:
@@ -718,6 +760,25 @@ def load_slow_imports():
         import numpy  # noqa: F401
     except Exception:
         pass
+
+def set_git_user_info(repo: git.Repo, user_name: Optional[str], user_email: Optional[str], io: InputOutput) -> None:
+    """
+    Set git user name and email in the repository configuration.
+
+    Args:
+        repo: The git repository object.
+        user_name: The user name to set.
+        user_email: The user email to set.
+        io: InputOutput object for handling I/O operations.
+    """
+    with repo.config_writer() as git_config:
+        if not user_name:
+            git_config.set_value("user", "name", "Your Name")
+            io.tool_warning('Update git name with: git config user.name "Your Name"')
+        if not user_email:
+            git_config.set_value("user", "email", "you@example.com")
+            io.tool_warning('Update git email with: git config user.email "you@example.com"')
+
 
 
 if __name__ == "__main__":
