@@ -1017,4 +1017,26 @@
   versions: 0.55.1.dev
   seconds_per_case: 49.6
   total_cost: 0.0998
-  
+
+- dirname: 2024-09-06-19-55-17--reflection-hyperbolic-whole-output2
+  test_cases: 133
+  model: Reflection-70B
+  edit_format: whole
+  commit_hash: 74631ee-dirty, 2aef59e-dirty
+  pass_rate_1: 33.1
+  pass_rate_2: 42.1
+  percent_cases_well_formed: 100.0
+  error_outputs: 2
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 10
+  lazy_comments: 26
+  syntax_errors: 1
+  indentation_errors: 3
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: (not currently supported)
+  date: 2024-09-06
+  versions: 0.55.1.dev
+  seconds_per_case: 61.6
+  total_cost: 0.0000
