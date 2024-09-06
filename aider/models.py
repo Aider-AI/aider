@@ -91,6 +91,19 @@ MODEL_SETTINGS = [
         weak_model_name="gpt-4o-mini",
         reminder="sys",
     ),
+    # New Cohere models
+    ModelSettings(
+        "command-r-08-2024",
+        "whole",
+        weak_model_name="command-r-08-2024",
+        use_repo_map=True,
+    ),
+    ModelSettings(
+        "command-r-plus-08-2024",
+        "whole",
+        weak_model_name="command-r-plus-08-2024",
+        use_repo_map=True,
+    ),
     ModelSettings(
         "gpt-3.5-turbo-0125",
         "whole",
