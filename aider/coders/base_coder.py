@@ -923,10 +923,21 @@ class Coder:
         lazy_prompt = self.gpt_prompts.lazy_prompt if self.main_model.lazy else ""
         platform_text = self.get_platform_info()
 
+        if self.suggest_shell_commands:
+            shell_cmd_prompt = self.gpt_prompts.shell_cmd_prompt.format(platform=platform_text)
+            shell_cmd_reminder = self.gpt_prompts.shell_cmd_reminder.format(platform=platform_text)
+        else:
+            shell_cmd_prompt = self.gpt_prompts.no_shell_cmd_prompt.format(platform=platform_text)
+            shell_cmd_reminder = self.gpt_prompts.no_shell_cmd_reminder.format(
+                platform=platform_text
+            )
+
         prompt = prompt.format(
             fence=self.fence,
             lazy_prompt=lazy_prompt,
             platform=platform_text,
+            shell_cmd_prompt=shell_cmd_prompt,
+            shell_cmd_reminder=shell_cmd_reminder,
         )
         return prompt
 
