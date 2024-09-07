@@ -10,6 +10,8 @@ from aider.sendchat import simple_send_with_retries
 
 from .dump import dump  # noqa: F401
 
+ANY_GIT_ERROR = (git.exc.ODBError, git.exc.GitError)
+
 
 class GitRepo:
     repo = None
@@ -29,7 +31,8 @@ class GitRepo:
         models=None,
         attribute_author=True,
         attribute_committer=True,
-        attribute_commit_message=False,
+        attribute_commit_message_author=False,
+        attribute_commit_message_committer=False,
         commit_prompt=None,
         subtree_only=False,
     ):
@@ -41,7 +44,8 @@ class GitRepo:
 
         self.attribute_author = attribute_author
         self.attribute_committer = attribute_committer
-        self.attribute_commit_message = attribute_commit_message
+        self.attribute_commit_message_author = attribute_commit_message_author
+        self.attribute_commit_message_committer = attribute_commit_message_committer
         self.commit_prompt = commit_prompt
         self.subtree_only = subtree_only
         self.ignore_file_cache = {}
@@ -65,9 +69,7 @@ class GitRepo:
                 repo_path = git.Repo(fname, search_parent_directories=True).working_dir
                 repo_path = utils.safe_abs_path(repo_path)
                 repo_paths.append(repo_path)
-            except git.exc.InvalidGitRepositoryError:
-                pass
-            except git.exc.NoSuchPathError:
+            except ANY_GIT_ERROR:
                 pass
 
         num_repos = len(set(repo_paths))
@@ -98,7 +100,9 @@ class GitRepo:
         else:
             commit_message = self.get_commit_message(diffs, context)
 
-        if aider_edits and self.attribute_commit_message:
+        if aider_edits and self.attribute_commit_message_author:
+            commit_message = "aider: " + commit_message
+        elif self.attribute_commit_message_committer:
             commit_message = "aider: " + commit_message
 
         if not commit_message:
@@ -112,7 +116,10 @@ class GitRepo:
         if fnames:
             fnames = [str(self.abs_root_path(fn)) for fn in fnames]
             for fname in fnames:
-                self.repo.git.add(fname)
+                try:
+                    self.repo.git.add(fname)
+                except ANY_GIT_ERROR as err:
+                    self.io.tool_error(f"Unable to add {fname}: {err}")
             cmd += ["--"] + fnames
         else:
             cmd += ["-a"]
@@ -128,25 +135,27 @@ class GitRepo:
             original_auther_name_env = os.environ.get("GIT_AUTHOR_NAME")
             os.environ["GIT_AUTHOR_NAME"] = committer_name
 
-        self.repo.git.commit(cmd)
-        commit_hash = self.repo.head.commit.hexsha[:7]
-        self.io.tool_output(f"Commit {commit_hash} {commit_message}")
+        try:
+            self.repo.git.commit(cmd)
+            commit_hash = self.get_head_commit_sha(short=True)
+            self.io.tool_output(f"Commit {commit_hash} {commit_message}", bold=True)
+            return commit_hash, commit_message
+        except ANY_GIT_ERROR as err:
+            self.io.tool_error(f"Unable to commit: {err}")
+        finally:
+            # Restore the env
 
-        # Restore the env
+            if self.attribute_committer:
+                if original_committer_name_env is not None:
+                    os.environ["GIT_COMMITTER_NAME"] = original_committer_name_env
+                else:
+                    del os.environ["GIT_COMMITTER_NAME"]
 
-        if self.attribute_committer:
-            if original_committer_name_env is not None:
-                os.environ["GIT_COMMITTER_NAME"] = original_committer_name_env
-            else:
-                del os.environ["GIT_COMMITTER_NAME"]
-
-        if aider_edits and self.attribute_author:
-            if original_auther_name_env is not None:
-                os.environ["GIT_AUTHOR_NAME"] = original_auther_name_env
-            else:
-                del os.environ["GIT_AUTHOR_NAME"]
-
-        return commit_hash, commit_message
+            if aider_edits and self.attribute_author:
+                if original_auther_name_env is not None:
+                    os.environ["GIT_AUTHOR_NAME"] = original_auther_name_env
+                else:
+                    del os.environ["GIT_AUTHOR_NAME"]
 
     def get_rel_repo_dir(self):
         try:
@@ -174,7 +183,9 @@ class GitRepo:
             max_tokens = model.info.get("max_input_tokens") or 0
             if max_tokens and num_tokens > max_tokens:
                 continue
-            commit_message = simple_send_with_retries(model.name, messages)
+            commit_message = simple_send_with_retries(
+                model.name, messages, extra_headers=model.extra_headers
+            )
             if commit_message:
                 break
 
@@ -197,9 +208,9 @@ class GitRepo:
             try:
                 commits = self.repo.iter_commits(active_branch)
                 current_branch_has_commits = any(commits)
-            except git.exc.GitCommandError:
+            except ANY_GIT_ERROR:
                 pass
-        except TypeError:
+        except (TypeError,) + ANY_GIT_ERROR:
             pass
 
         if not fnames:
@@ -210,23 +221,28 @@ class GitRepo:
             if not self.path_in_repo(fname):
                 diffs += f"Added {fname}\n"
 
-        if current_branch_has_commits:
-            args = ["HEAD", "--"] + list(fnames)
-            diffs += self.repo.git.diff(*args)
+        try:
+            if current_branch_has_commits:
+                args = ["HEAD", "--"] + list(fnames)
+                diffs += self.repo.git.diff(*args)
+                return diffs
+
+            wd_args = ["--"] + list(fnames)
+            index_args = ["--cached"] + wd_args
+
+            diffs += self.repo.git.diff(*index_args)
+            diffs += self.repo.git.diff(*wd_args)
+
             return diffs
-
-        wd_args = ["--"] + list(fnames)
-        index_args = ["--cached"] + wd_args
-
-        diffs += self.repo.git.diff(*index_args)
-        diffs += self.repo.git.diff(*wd_args)
-
-        return diffs
+        except ANY_GIT_ERROR as err:
+            self.io.tool_error(f"Unable to diff: {err}")
 
     def diff_commits(self, pretty, from_commit, to_commit):
         args = []
         if pretty:
             args += ["--color"]
+        else:
+            args += ["--color=never"]
 
         args += [from_commit, to_commit]
         diffs = self.repo.git.diff(*args)
@@ -356,3 +372,23 @@ class GitRepo:
             return True
 
         return self.repo.is_dirty(path=path)
+
+    def get_head_commit(self):
+        try:
+            return self.repo.head.commit
+        except (ValueError,) + ANY_GIT_ERROR:
+            return None
+
+    def get_head_commit_sha(self, short=False):
+        commit = self.get_head_commit()
+        if not commit:
+            return
+        if short:
+            return commit.hexsha[:7]
+        return commit.hexsha
+
+    def get_head_commit_message(self, default=None):
+        commit = self.get_head_commit()
+        if not commit:
+            return default
+        return commit.message

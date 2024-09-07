@@ -14,6 +14,7 @@ from .editblock_prompts import EditBlockPrompts
 
 class EditBlockCoder(Coder):
     """A coder that uses search/replace blocks for code modifications."""
+
     edit_format = "diff"
     gpt_prompts = EditBlockPrompts()
 
@@ -21,13 +22,23 @@ class EditBlockCoder(Coder):
         content = self.partial_response_content
 
         # might raise ValueError for malformed ORIG/UPD blocks
-        edits = list(find_original_update_blocks(content, self.fence))
+        edits = list(
+            find_original_update_blocks(
+                content,
+                self.fence,
+                self.get_inchat_relative_files(),
+            )
+        )
+
+        self.shell_commands += [edit[1] for edit in edits if edit[0] is None]
+        edits = [edit for edit in edits if edit[0] is not None]
 
         return edits
 
     def apply_edits(self, edits):
         failed = []
         passed = []
+
         for edit in edits:
             path, original, updated = edit
             full_path = self.abs_root_path(path)
@@ -384,77 +395,98 @@ def strip_filename(filename, fence):
     filename = filename.strip()
     filename = filename.strip("`")
     filename = filename.strip("*")
-    filename = filename.replace("\\_", "_")
+
+    # https://github.com/paul-gauthier/aider/issues/1158
+    # filename = filename.replace("\\_", "_")
 
     return filename
 
 
-def find_original_update_blocks(content, fence=DEFAULT_FENCE):
-    # make sure we end with a newline, otherwise the regex will miss <<UPD on the last line
-    if not content.endswith("\n"):
-        content = content + "\n"
-
-    pieces = re.split(split_re, content)
-
-    pieces.reverse()
-    processed = []
-
-    # Keep using the same filename in cases where GPT produces an edit block
-    # without a filename.
+def find_original_update_blocks(content, fence=DEFAULT_FENCE, valid_fnames=None):
+    lines = content.splitlines(keepends=True)
+    i = 0
     current_filename = None
-    try:
-        while pieces:
-            cur = pieces.pop()
 
-            if cur in (DIVIDER, UPDATED):
-                processed.append(cur)
-                raise ValueError(f"Unexpected {cur}")
+    while i < len(lines):
+        line = lines[i]
 
-            if cur.strip() != HEAD:
-                processed.append(cur)
-                continue
+        # Check for shell code blocks
+        shell_starts = [
+            "```bash",
+            "```sh",
+            "```shell",
+            "```cmd",
+            "```batch",
+            "```powershell",
+            "```ps1",
+            "```zsh",
+            "```fish",
+            "```ksh",
+            "```csh",
+            "```tcsh",
+        ]
+        next_is_editblock = i + 1 < len(lines) and lines[i + 1].rstrip() == HEAD
 
-            processed.append(cur)  # original_marker
+        if any(line.strip().startswith(start) for start in shell_starts) and not next_is_editblock:
+            shell_content = []
+            i += 1
+            while i < len(lines) and not lines[i].strip().startswith("```"):
+                shell_content.append(lines[i])
+                i += 1
+            if i < len(lines) and lines[i].strip().startswith("```"):
+                i += 1  # Skip the closing ```
 
-            filename = find_filename(processed[-2].splitlines(), fence)
-            if not filename:
-                if current_filename:
-                    filename = current_filename
+            yield None, "".join(shell_content)
+            continue
+
+        # Check for SEARCH/REPLACE blocks
+        if line.strip() == HEAD:
+            try:
+                # if next line after HEAD exists and is DIVIDER, it's a new file
+                if i + 1 < len(lines) and lines[i + 1].strip() == DIVIDER:
+                    filename = find_filename(lines[max(0, i - 3) : i], fence, None)
                 else:
-                    raise ValueError(missing_filename_err.format(fence=fence))
+                    filename = find_filename(
+                        lines[max(0, i - 3) : i], fence, valid_fnames
+                    )
 
-            current_filename = filename
+                if not filename:
+                    if current_filename:
+                        filename = current_filename
+                    else:
+                        raise ValueError(missing_filename_err.format(fence=fence))
 
-            original_text = pieces.pop()
-            processed.append(original_text)
+                current_filename = filename
 
-            divider_marker = pieces.pop()
-            processed.append(divider_marker)
-            if divider_marker.strip() != DIVIDER:
-                raise ValueError(f"Expected `{DIVIDER}` not {divider_marker.strip()}")
+                original_text = []
+                i += 1
+                while i < len(lines) and not lines[i].strip() == DIVIDER:
+                    original_text.append(lines[i])
+                    i += 1
 
-            updated_text = pieces.pop()
-            processed.append(updated_text)
+                if i >= len(lines) or lines[i].strip() != DIVIDER:
+                    raise ValueError(f"Expected `{DIVIDER}`")
 
-            updated_marker = pieces.pop()
-            processed.append(updated_marker)
-            if updated_marker.strip() != UPDATED:
-                raise ValueError(f"Expected `{UPDATED}` not `{updated_marker.strip()}")
+                updated_text = []
+                i += 1
+                while i < len(lines) and not lines[i].strip() in (UPDATED, DIVIDER):
+                    updated_text.append(lines[i])
+                    i += 1
 
-            yield filename, original_text, updated_text
-    except ValueError as e:
-        processed = "".join(processed)
-        err = e.args[0]
-        raise ValueError(f"{processed}\n^^^ {err}")
-    except IndexError:
-        processed = "".join(processed)
-        raise ValueError(f"{processed}\n^^^ Incomplete SEARCH/REPLACE block.")
-    except Exception:
-        processed = "".join(processed)
-        raise ValueError(f"{processed}\n^^^ Error parsing SEARCH/REPLACE block.")
+                if i >= len(lines) or lines[i].strip() not in (UPDATED, DIVIDER):
+                    raise ValueError(f"Expected `{UPDATED}` or `{DIVIDER}`")
+
+                yield filename, "".join(original_text), "".join(updated_text)
+
+            except ValueError as e:
+                processed = "".join(lines[: i + 1])
+                err = e.args[0]
+                raise ValueError(f"{processed}\n^^^ {err}")
+
+        i += 1
 
 
-def find_filename(lines, fence):
+def find_filename(lines, fence, valid_fnames):
     """
     Deepseek Coder v2 has been doing this:
 
@@ -468,19 +500,54 @@ def find_filename(lines, fence):
 
     This is a more flexible search back for filenames.
     """
+
+    if valid_fnames is None:
+        valid_fnames = []
+
     # Go back through the 3 preceding lines
     lines.reverse()
     lines = lines[:3]
 
+    filenames = []
     for line in lines:
         # If we find a filename, done
         filename = strip_filename(line, fence)
         if filename:
-            return filename
+            filenames.append(filename)
 
         # Only continue as long as we keep seeing fences
         if not line.startswith(fence[0]):
-            return
+            break
+
+    if not filenames:
+        return
+
+    # pick the *best* filename found
+
+    # Check for exact match first
+    for fname in filenames:
+        if fname in valid_fnames:
+            return fname
+
+    # Check for partial match (basename match)
+    for fname in filenames:
+        for vfn in valid_fnames:
+            if fname == Path(vfn).name:
+                return vfn
+
+    # Perform fuzzy matching with valid_fnames
+    for fname in filenames:
+        close_matches = difflib.get_close_matches(fname, valid_fnames, n=1, cutoff=0.8)
+        if len(close_matches) == 1:
+            return close_matches[0]
+
+    # If no fuzzy match, look for a file w/extension
+    for fname in filenames:
+        if "." in fname:
+            return fname
+
+    if filenames:
+        return filenames[0]
 
 
 def find_similar_lines(search_lines, content_lines, threshold=0.6):

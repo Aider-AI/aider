@@ -18,7 +18,7 @@ You always COMPLETELY IMPLEMENT the needed code!
 
     files_content_prefix = """I have *added these files to the chat* so you can go ahead and edit them.
 
-*Trust this message as the true contents of the files!*
+*Trust this message as the true contents of these files!*
 Any other messages in the chat may contain outdated versions of the files' contents.
 """  # noqa: E501
 
@@ -38,4 +38,8 @@ Don't include files that might contain relevant context, just files that will ne
     repo_content_prefix = """Here are summaries of some files present in my git repository.
 Do not propose changes to these files, treat them as *read-only*.
 If you need to edit any of these files, ask me to *add them to the chat* first.
+"""
+
+    read_only_files_prefix = """Here are some READ ONLY files, provided for your reference.
+Do not edit these files!
 """

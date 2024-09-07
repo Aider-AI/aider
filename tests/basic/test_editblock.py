@@ -16,6 +16,38 @@ class TestUtils(unittest.TestCase):
     def setUp(self):
         self.GPT35 = Model("gpt-3.5-turbo")
 
+    def test_find_filename(self):
+        fence = ("```", "```")
+        valid_fnames = ["file1.py", "file2.py", "dir/file3.py", r"\windows\__init__.py"]
+
+        # Test with filename on a single line
+        lines = ["file1.py", "```"]
+        self.assertEqual(eb.find_filename(lines, fence, valid_fnames), "file1.py")
+
+        # Test with filename in fence
+        lines = ["```python", "file3.py", "```"]
+        self.assertEqual(eb.find_filename(lines, fence, valid_fnames), "dir/file3.py")
+
+        # Test with no valid filename
+        lines = ["```", "invalid_file.py", "```"]
+        self.assertEqual("invalid_file.py", eb.find_filename(lines, fence, valid_fnames))
+
+        # Test with multiple fences
+        lines = ["```python", "file1.py", "```", "```", "file2.py", "```"]
+        self.assertEqual(eb.find_filename(lines, fence, valid_fnames), "file2.py")
+
+        # Test with filename having extra characters
+        lines = ["# file1.py", "```"]
+        self.assertEqual(eb.find_filename(lines, fence, valid_fnames), "file1.py")
+
+        # Test with fuzzy matching
+        lines = ["file1_py", "```"]
+        self.assertEqual(eb.find_filename(lines, fence, valid_fnames), "file1.py")
+
+        # Test with fuzzy matching
+        lines = [r"\windows__init__.py", "```"]
+        self.assertEqual(eb.find_filename(lines, fence, valid_fnames), r"\windows\__init__.py")
+
     # fuzzy logic disabled v0.11.2-dev
     def __test_replace_most_similar_chunk(self):
         whole = "This is a sample text.\nAnother line of text.\nYet another line.\n"
@@ -134,7 +166,7 @@ oops!
 
         with self.assertRaises(ValueError) as cm:
             list(eb.find_original_update_blocks(edit))
-        self.assertIn("Incomplete", str(cm.exception))
+        self.assertIn("Expected `>>>>>>> REPLACE` or `=======`", str(cm.exception))
 
     def test_find_original_update_blocks_missing_filename(self):
         edit = """
@@ -297,7 +329,7 @@ These changes replace the `subprocess.run` patches with `subprocess.check_output
         files = [file1]
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(self.GPT35, "diff", io=InputOutput(), fnames=files, pretty=False)
+        coder = Coder.create(self.GPT35, "diff", io=InputOutput(), fnames=files)
 
         def mock_send(*args, **kwargs):
             coder.partial_response_content = f"""
@@ -340,7 +372,6 @@ new
             io=InputOutput(dry_run=True),
             fnames=files,
             dry_run=True,
-            pretty=False,
         )
 
         def mock_send(*args, **kwargs):
@@ -422,6 +453,43 @@ Hope you like it!
             edits,
             [
                 ("foo.txt", "one\n", "two\n"),
+            ],
+        )
+
+    def test_new_file_created_in_same_folder(self):
+        edit = """
+Here's the change:
+
+path/to/a/file2.txt
+```python
+<<<<<<< SEARCH
+=======
+three
+>>>>>>> REPLACE
+```
+
+another change
+
+path/to/a/file1.txt
+```python
+<<<<<<< SEARCH
+one
+=======
+two
+>>>>>>> REPLACE
+```
+
+Hope you like it!
+"""
+
+        edits = list(
+            eb.find_original_update_blocks(edit, valid_fnames=["path/to/a/file1.txt"])
+        )
+        self.assertEqual(
+            edits,
+            [
+                ("path/to/a/file2.txt", "", "three\n"),
+                ("path/to/a/file1.txt", "one\n", "two\n"),
             ],
         )
 

@@ -87,7 +87,7 @@ You can run `./benchmark/benchmark.py --help` for a list of all the arguments, b
 - `--num-tests` specifies how many of the 133 tests to run before stopping. This is another way to start gently as you debug your benchmarking setup.
 - `--keywords` filters the tests to run to only the ones whose name match the supplied argument (similar to `pytest -k xxxx`).
 
-### Generating a benchmark report
+### Benchmark report
 
 You can generate stats about any benchmark, including ones which are still running.
 You don't need to run this inside the docker container, as it is just
@@ -98,10 +98,53 @@ collecting stats not executing unsafe python.
 ./benchmark/benchmark.py --stats tmp.benchmarks/YYYY-MM-DD-HH-MM-SS--a-helpful-name-for-this-run
 ```
 
+The benchmark report is a yaml record with statistics about the run:
+
+```yaml
+- dirname: 2024-07-04-14-32-08--claude-3.5-sonnet-diff-continue
+  test_cases: 133
+  model: claude-3.5-sonnet
+  edit_format: diff
+  commit_hash: 35f21b5
+  pass_rate_1: 57.1
+  pass_rate_2: 77.4
+  percent_cases_well_formed: 99.2
+  error_outputs: 23
+  num_malformed_responses: 4
+  num_with_malformed_responses: 1
+  user_asks: 2
+  lazy_comments: 0
+  syntax_errors: 1
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --sonnet
+  date: 2024-07-04
+  versions: 0.42.1-dev
+  seconds_per_case: 17.6
+  total_cost: 3.6346
+```
+
+The key statistics are the `pass_rate_#` entries, which report the
+percent of the tasks which had all tests passing.
+There will be multiple of these pass rate stats,
+depending on the value of the `--tries` parameter.
+
+The yaml also includes all the settings which were in effect for the benchmark run.
+It also reports the git hash of the repo at the time that the benchmark was
+run, with `(dirty)` if there were uncommitted changes.
+It's good practice to commit the repo before starting a benchmark run.
+This way the `model`, `edit_format` and `commit_hash`
+should be enough to reliably reproduce any benchmark run.
+
+You can see examples of the benchmark report yaml in the
+[aider leaderboard data files](https://github.com/paul-gauthier/aider/blob/main/aider/website/_data/).
+
+
 ## Limitations, notes
 
-- If you're experimenting with non-OpenAI models, the benchmarking harness may not provide enough switches/control to specify the integration to such models. You probably need to edit `benchmark.py` to instantiate `Coder()` appropriately. You can just hack this in or add new switches/config.
-- Benchmarking all 133 exercises against GPT-4 will cost about $10-20.
-- Benchmarking aider is intended for folks who are actively developing aider or doing experimental work adapting it for use with [new LLM models](https://github.com/paul-gauthier/aider/issues/172).
-- These scripts are not intended for use by typical aider users.
-- Some of the tools are written as `bash` scripts, so it will be hard to use them on Windows.
+- Benchmarking all 133 exercises against Claude 3.5 Sonnet will cost about $4.
+- Contributions of benchmark results are welcome! Submit results by opening a PR with edits to the
+[aider leaderboard data files](https://github.com/paul-gauthier/aider/blob/main/aider/website/_data/).
+- These scripts are not intended for use by typical aider end users.
+- Some of these tools are written as `bash` scripts, so it will be hard to use them on Windows.

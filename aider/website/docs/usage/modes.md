@@ -13,7 +13,20 @@ Aider has 3 different chat modes:
 - `help` - Aider will answer questions about using aider, configuring, troubleshooting, etc.
 
 By default, aider starts in "code" mode. As you are talking, you can
-send messages in other modes using `/ask` and `/help` commands:
+send individual messages in a specific mode using `/code`, `/ask`, and `/help` commands:
+Using `/code`, `/ask`, and `/help` applies just to that particular message.
+Your next message will go back to the active mode (usually "code" mode by default).
+
+You can switch the active mode in a sticky way
+with the `/chat-mode <mode>` command:
+
+```
+/chat-mode code
+/chat-mode ask
+/chat-mode help
+```
+
+Or you can launch aider in one of the modes with the `--chat-mode <mode>` switch.
 
 <div class="chat-transcript" markdown="1">
 
@@ -33,17 +46,22 @@ This is the source code to the popular django package.
 Run `aider --model ollama/<ollama-model>`.
 See these docs for more info: https://aider.chat/docs/llms/ollama.html
 
+#### /code Add a function to calculate the factorial of a number
+
+Certainly! I'll add a function to calculate the factorial of a number. Here's the change:
+
+```python
+def factorial(n):
+    if n == 0 or n == 1:
+        return 1
+    else:
+        return n * factorial(n - 1)
+
+# Example usage
+print(factorial(5))  # Output: 120
+```
+
+This function uses recursion to calculate the factorial. It's been added to your code.
+
 </div>
-
-Using `/ask` and `/help` applies just to that particular message.
-Your next message will go back to code mode.
-
-You can switch between the modes in a sticky way
-with the `/chat-mode <mode>` command:
-
-```
-/chat-mode code
-/chat-mode ask
-/chat-mode help
-```
 

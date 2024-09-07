@@ -44,6 +44,10 @@ Model azure/gpt-4-turbo: Missing these environment variables:
 - AZURE_API_KEY
 ```
 
+{: .tip }
+On Windows, 
+if you just set these environment variables using `setx` you may need to restart your terminal or
+command prompt for the changes to take effect.
 
 
 ## Unknown which environment variables are required

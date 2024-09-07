@@ -1,3 +1,4 @@
+import json
 import os
 import subprocess
 import tempfile
@@ -10,6 +11,7 @@ import git
 from prompt_toolkit.input import DummyInput
 from prompt_toolkit.output import DummyOutput
 
+from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.main import check_gitignore, main, setup_git
@@ -24,10 +26,14 @@ class TestMain(TestCase):
         self.tempdir_obj = IgnorantTemporaryDirectory()
         self.tempdir = self.tempdir_obj.name
         os.chdir(self.tempdir)
+        # Fake home directory prevents tests from using the real ~/.aider.conf.yml file:
+        self.homedir_obj = IgnorantTemporaryDirectory()
+        os.environ["HOME"] = self.homedir_obj.name
 
     def tearDown(self):
         os.chdir(self.original_cwd)
         self.tempdir_obj.cleanup()
+        self.homedir_obj.cleanup()
         os.environ.clear()
         os.environ.update(self.original_env)
 
@@ -149,17 +155,6 @@ class TestMain(TestCase):
             _, kwargs = MockCoder.call_args
             assert kwargs["dirty_commits"] is True
             assert kwargs["auto_commits"] is True
-            assert kwargs["pretty"] is True
-
-        with patch("aider.coders.Coder.create") as MockCoder:
-            main(["--no-pretty"], input=DummyInput())
-            _, kwargs = MockCoder.call_args
-            assert kwargs["pretty"] is False
-
-        with patch("aider.coders.Coder.create") as MockCoder:
-            main(["--pretty"], input=DummyInput())
-            _, kwargs = MockCoder.call_args
-            assert kwargs["pretty"] is True
 
         with patch("aider.coders.Coder.create") as MockCoder:
             main(["--no-dirty-commits"], input=DummyInput())
@@ -234,6 +229,16 @@ class TestMain(TestCase):
                     MockSend.side_effect = side_effect
 
                     main(["--yes", fname, "--encoding", "iso-8859-15"])
+
+    def test_main_exit_calls_version_check(self):
+        with GitTemporaryDirectory():
+            with (
+                patch("aider.main.check_version") as mock_check_version,
+                patch("aider.main.InputOutput") as mock_input_output,
+            ):
+                main(["--exit"], input=DummyInput(), output=DummyOutput())
+                mock_check_version.assert_called_once()
+                mock_input_output.assert_called_once()
 
     @patch("aider.main.InputOutput")
     @patch("aider.coders.base_coder.Coder.run")
@@ -375,6 +380,67 @@ class TestMain(TestCase):
             self.assertRegex(relevant_output, r"AIDER_DARK_MODE:\s+on")
             self.assertRegex(relevant_output, r"dark_mode:\s+True")
 
+    def test_yaml_config_file_loading(self):
+        with GitTemporaryDirectory() as git_dir:
+            git_dir = Path(git_dir)
+
+            # Create fake home directory
+            fake_home = git_dir / "fake_home"
+            fake_home.mkdir()
+            os.environ["HOME"] = str(fake_home)
+
+            # Create subdirectory as current working directory
+            cwd = git_dir / "subdir"
+            cwd.mkdir()
+            os.chdir(cwd)
+
+            # Create .aider.conf.yml files in different locations
+            home_config = fake_home / ".aider.conf.yml"
+            git_config = git_dir / ".aider.conf.yml"
+            cwd_config = cwd / ".aider.conf.yml"
+            named_config = git_dir / "named.aider.conf.yml"
+
+            cwd_config.write_text("model: gpt-4-32k\nmap-tokens: 4096\n")
+            git_config.write_text("model: gpt-4\nmap-tokens: 2048\n")
+            home_config.write_text("model: gpt-3.5-turbo\nmap-tokens: 1024\n")
+            named_config.write_text("model: gpt-4-1106-preview\nmap-tokens: 8192\n")
+
+            with (
+                patch("pathlib.Path.home", return_value=fake_home),
+                patch("aider.coders.Coder.create") as MockCoder,
+            ):
+                # Test loading from specified config file
+                main(
+                    ["--yes", "--exit", "--config", str(named_config)],
+                    input=DummyInput(),
+                    output=DummyOutput(),
+                )
+                _, kwargs = MockCoder.call_args
+                self.assertEqual(kwargs["main_model"].name, "gpt-4-1106-preview")
+                self.assertEqual(kwargs["map_tokens"], 8192)
+
+                # Test loading from current working directory
+                main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
+                _, kwargs = MockCoder.call_args
+                print("kwargs:", kwargs)  # Add this line for debugging
+                self.assertIn("main_model", kwargs, "main_model key not found in kwargs")
+                self.assertEqual(kwargs["main_model"].name, "gpt-4-32k")
+                self.assertEqual(kwargs["map_tokens"], 4096)
+
+                # Test loading from git root
+                cwd_config.unlink()
+                main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
+                _, kwargs = MockCoder.call_args
+                self.assertEqual(kwargs["main_model"].name, "gpt-4")
+                self.assertEqual(kwargs["map_tokens"], 2048)
+
+                # Test loading from home directory
+                git_config.unlink()
+                main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
+                _, kwargs = MockCoder.call_args
+                self.assertEqual(kwargs["main_model"].name, "gpt-3.5-turbo")
+                self.assertEqual(kwargs["map_tokens"], 1024)
+
     def test_map_tokens_option(self):
         with GitTemporaryDirectory():
             with patch("aider.coders.base_coder.RepoMap") as MockRepoMap:
@@ -396,3 +462,182 @@ class TestMain(TestCase):
                     output=DummyOutput(),
                 )
                 MockRepoMap.assert_called_once()
+
+    def test_read_option(self):
+        with GitTemporaryDirectory():
+            test_file = "test_file.txt"
+            Path(test_file).touch()
+
+            coder = main(
+                ["--read", test_file, "--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+            )
+
+            self.assertIn(str(Path(test_file).resolve()), coder.abs_read_only_fnames)
+
+    def test_read_option_with_external_file(self):
+        with tempfile.NamedTemporaryFile(mode="w", delete=False) as external_file:
+            external_file.write("External file content")
+            external_file_path = external_file.name
+
+        try:
+            with GitTemporaryDirectory():
+                coder = main(
+                    ["--read", external_file_path, "--exit", "--yes"],
+                    input=DummyInput(),
+                    output=DummyOutput(),
+                    return_coder=True,
+                )
+
+                real_external_file_path = os.path.realpath(external_file_path)
+                self.assertIn(real_external_file_path, coder.abs_read_only_fnames)
+        finally:
+            os.unlink(external_file_path)
+
+    def test_model_metadata_file(self):
+        with GitTemporaryDirectory():
+            metadata_file = Path(".aider.model.metadata.json")
+
+            # must be a fully qualified model name: provider/...
+            metadata_content = {"deepseek/deepseek-chat": {"max_input_tokens": 1234}}
+            metadata_file.write_text(json.dumps(metadata_content))
+
+            coder = main(
+                [
+                    "--model",
+                    "deepseek/deepseek-chat",
+                    "--model-metadata-file",
+                    str(metadata_file),
+                    "--exit",
+                    "--yes",
+                ],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+            )
+
+            self.assertEqual(coder.main_model.info["max_input_tokens"], 1234)
+
+    def test_sonnet_and_cache_options(self):
+        with GitTemporaryDirectory():
+            with patch("aider.coders.base_coder.RepoMap") as MockRepoMap:
+                mock_repo_map = MagicMock()
+                mock_repo_map.max_map_tokens = 1000  # Set a specific value
+                MockRepoMap.return_value = mock_repo_map
+
+                main(
+                    ["--sonnet", "--cache-prompts", "--exit", "--yes"],
+                    input=DummyInput(),
+                    output=DummyOutput(),
+                )
+
+                MockRepoMap.assert_called_once()
+                call_args, call_kwargs = MockRepoMap.call_args
+                self.assertEqual(
+                    call_kwargs.get("refresh"), "files"
+                )  # Check the 'refresh' keyword argument
+
+    def test_sonnet_and_cache_prompts_options(self):
+        with GitTemporaryDirectory():
+            coder = main(
+                ["--sonnet", "--cache-prompts", "--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+            )
+
+            self.assertTrue(coder.add_cache_headers)
+
+    def test_4o_and_cache_options(self):
+        with GitTemporaryDirectory():
+            coder = main(
+                ["--4o", "--cache-prompts", "--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+            )
+
+            self.assertFalse(coder.add_cache_headers)
+
+    def test_return_coder(self):
+        with GitTemporaryDirectory():
+            result = main(
+                ["--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+            )
+            self.assertIsInstance(result, Coder)
+
+            result = main(
+                ["--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=False,
+            )
+            self.assertIsNone(result)
+
+    def test_map_mul_option(self):
+        with GitTemporaryDirectory():
+            coder = main(
+                ["--map-mul", "5", "--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+            )
+            self.assertIsInstance(coder, Coder)
+            self.assertEqual(coder.repo_map.map_mul_no_files, 5)
+
+    def test_suggest_shell_commands_default(self):
+        with GitTemporaryDirectory():
+            coder = main(
+                ["--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+            )
+            self.assertTrue(coder.suggest_shell_commands)
+
+    def test_suggest_shell_commands_disabled(self):
+        with GitTemporaryDirectory():
+            coder = main(
+                ["--no-suggest-shell-commands", "--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+            )
+            self.assertFalse(coder.suggest_shell_commands)
+
+    def test_suggest_shell_commands_enabled(self):
+        with GitTemporaryDirectory():
+            coder = main(
+                ["--suggest-shell-commands", "--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+            )
+            self.assertTrue(coder.suggest_shell_commands)
+
+    def test_chat_language_spanish(self):
+        with GitTemporaryDirectory():
+            coder = main(
+                ["--chat-language", "Spanish", "--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+            )
+            system_info = coder.get_platform_info()
+            self.assertIn("Spanish", system_info)
+
+    @patch("git.Repo.init")
+    def test_main_exit_with_git_command_not_found(self, mock_git_init):
+        mock_git_init.side_effect = git.exc.GitCommandNotFound("git", "Command 'git' not found")
+
+        try:
+            result = main(["--exit", "--yes"], input=DummyInput(), output=DummyOutput())
+        except Exception as e:
+            self.fail(f"main() raised an unexpected exception: {e}")
+
+        self.assertIsNone(result, "main() should return None when called with --exit")

@@ -27,7 +27,7 @@ The json file should be a dictionary with an entry for each model, as follows:
 
 ```
 {
-    "deepseek-chat": {
+    "deepseek/deepseek-chat": {
         "max_tokens": 4096,
         "max_input_tokens": 32000,
         "max_output_tokens": 4096,
@@ -41,6 +41,11 @@ The json file should be a dictionary with an entry for each model, as follows:
 
 See 
 [litellm's model_prices_and_context_window.json file](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json) for more examples.
+
+{: .tip }
+Use a fully qualified model name with a `provider/` at the front
+in the `.aider.model.metadata.json` file.
+For example, use `deepseek/deepseek-chat`, not just `deepseek-chat`.
 
 ## Model settings
 
@@ -71,7 +76,7 @@ The yaml file should be a a list of dictionary objects for each model, as follow
   send_undo_reply: false
   accepts_images: false
   lazy: false
-  reminder_as_sys_msg: true
+  reminder: sys
   examples_as_sys_msg: false
 - name: "gpt-4-turbo-2024-04-09"
   edit_format: "udiff"
@@ -80,7 +85,7 @@ The yaml file should be a a list of dictionary objects for each model, as follow
   send_undo_reply: true
   accepts_images: true
   lazy: true
-  reminder_as_sys_msg: true
+  reminder: sys
   examples_as_sys_msg: false
 ```
 

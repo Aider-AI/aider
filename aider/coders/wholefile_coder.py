@@ -9,16 +9,9 @@ from .wholefile_prompts import WholeFilePrompts
 
 class WholeFileCoder(Coder):
     """A coder that operates on entire files for code modifications."""
+
     edit_format = "whole"
     gpt_prompts = WholeFilePrompts()
-
-    def update_cur_messages(self, edited):
-        if edited:
-            self.cur_messages += [
-                dict(role="assistant", content=self.gpt_prompts.redacted_edit_message)
-            ]
-        else:
-            self.cur_messages += [dict(role="assistant", content=self.partial_response_content)]
 
     def render_incremental_response(self, final):
         try:
@@ -65,6 +58,10 @@ class WholeFileCoder(Coder):
                     fname = fname.strip("*")  # handle **filename.py**
                     fname = fname.rstrip(":")
                     fname = fname.strip("`")
+
+                    # Issue #1232
+                    if len(fname) > 250:
+                        fname = ""
 
                     # Did gpt prepend a bogus dir? It especially likes to
                     # include the path/to prefix from the one-shot example in
@@ -130,15 +127,16 @@ class WholeFileCoder(Coder):
 
     def do_live_diff(self, full_path, new_lines, final):
         if Path(full_path).exists():
-            orig_lines = self.io.read_text(full_path).splitlines(keepends=True)
+            orig_lines = self.io.read_text(full_path)
+            if orig_lines is not None:
+                orig_lines = orig_lines.splitlines(keepends=True)
 
-            show_diff = diffs.diff_partial_update(
-                orig_lines,
-                new_lines,
-                final=final,
-            ).splitlines()
-            output = show_diff
-        else:
-            output = ["```"] + new_lines + ["```"]
+                show_diff = diffs.diff_partial_update(
+                    orig_lines,
+                    new_lines,
+                    final=final,
+                ).splitlines()
+                return show_diff
 
+        output = ["```"] + new_lines + ["```"]
         return output

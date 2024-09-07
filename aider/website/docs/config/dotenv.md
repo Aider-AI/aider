@@ -81,8 +81,11 @@ cog.outl("```")
 ## Use gpt-4-0613 model for the main chat
 #AIDER_4=
 
-## Use gpt-4o model for the main chat
+## Use gpt-4o-2024-08-06 model for the main chat
 #AIDER_4O=
+
+## Use gpt-4o-mini model for the main chat
+#AIDER_MINI=
 
 ## Use gpt-4-1106-preview model for the main chat
 #AIDER_4_TURBO=
@@ -90,11 +93,14 @@ cog.outl("```")
 ## Use gpt-3.5-turbo model for the main chat
 #AIDER_35TURBO=
 
+## Use deepseek/deepseek-coder model for the main chat
+#AIDER_DEEPSEEK=
+
 #################
 # Model Settings:
 
 ## List known models which match the (partial) MODEL name
-#AIDER_MODELS=
+#AIDER_LIST_MODELS=
 
 ## Specify the api base url
 #OPENAI_API_BASE=
@@ -129,8 +135,20 @@ cog.outl("```")
 ## Only work with models that have meta-data available (default: True)
 #AIDER_SHOW_MODEL_WARNINGS=true
 
-## Max number of tokens to use for repo map, use 0 to disable (default: 1024)
+## Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)
 #AIDER_MAP_TOKENS=
+
+## Control how often the repo map is refreshed (default: auto)
+#AIDER_MAP_REFRESH=auto
+
+## Enable caching of prompts (default: False)
+#AIDER_CACHE_PROMPTS=false
+
+## Number of times to ping at 5min intervals to keep prompt cache warm (default: 0)
+#AIDER_CACHE_KEEPALIVE_PINGS=false
+
+## Multiplier for map tokens when no files are specified (default: 2)
+#AIDER_MAP_MULTIPLIER_NO_FILES=true
 
 ## Maximum number of tokens to use for chat history. If not specified, uses the model's max_chat_history_tokens.
 #AIDER_MAX_CHAT_HISTORY_TOKENS=
@@ -174,8 +192,11 @@ cog.outl("```")
 ## Set the color for tool output (default: None)
 #AIDER_TOOL_OUTPUT_COLOR=
 
-## Set the color for tool error messages (default: red)
+## Set the color for tool error messages (default: #FF2222)
 #AIDER_TOOL_ERROR_COLOR=#FF2222
+
+## Set the color for tool warning messages (default: #FFA500)
+#AIDER_TOOL_WARNING_COLOR=#FFA500
 
 ## Set the color for assistant output (default: #0088ff)
 #AIDER_ASSISTANT_OUTPUT_COLOR=#0088ff
@@ -213,8 +234,11 @@ cog.outl("```")
 ## Attribute aider commits in the git committer name (default: True)
 #AIDER_ATTRIBUTE_COMMITTER=true
 
-## Prefix commit messages with 'aider: ' (default: False)
-#AIDER_ATTRIBUTE_COMMIT_MESSAGE=false
+## Prefix commit messages with 'aider: ' if aider authored the changes (default: False)
+#AIDER_ATTRIBUTE_COMMIT_MESSAGE_AUTHOR=false
+
+## Prefix all commit messages with 'aider: ' (default: False)
+#AIDER_ATTRIBUTE_COMMIT_MESSAGE_COMMITTER=false
 
 ## Commit all pending changes with a suitable commit message, then exit
 #AIDER_COMMIT=false
@@ -252,17 +276,29 @@ cog.outl("```")
 ## specify a file to edit (can be used multiple times)
 #AIDER_FILE=
 
+## specify a read-only file (can be used multiple times)
+#AIDER_READ=
+
 ## Use VI editing mode in the terminal (default: False)
 #AIDER_VIM=false
 
 ## Specify the language for voice using ISO 639-1 code (default: auto)
 #AIDER_VOICE_LANGUAGE=en
 
+## Specify the language to use in the chat (default: None, uses system settings)
+#AIDER_CHAT_LANGUAGE=
+
 ## Check for updates and return status in the exit code
 #AIDER_JUST_CHECK_UPDATE=false
 
 ## Check for new aider versions on launch
 #AIDER_CHECK_UPDATE=true
+
+## Install the latest version from the main branch
+#AIDER_INSTALL_MAIN_BRANCH=false
+
+## Upgrade aider to the latest version from PyPI
+#AIDER_UPGRADE=false
 
 ## Apply the changes from the given file instead of running the chat (debug)
 #AIDER_APPLY=
@@ -293,6 +329,9 @@ cog.outl("```")
 
 ## Run aider in your browser
 #AIDER_GUI=false
+
+## Enable/disable suggesting shell commands (default: True)
+#AIDER_SUGGEST_SHELL_COMMANDS=true
 ```
 <!--[[[end]]]-->
 

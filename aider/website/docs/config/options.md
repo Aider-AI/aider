@@ -26,36 +26,44 @@ cog.out(get_md_help())
 ]]]-->
 ```
 usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
-             [--opus] [--sonnet] [--4] [--4o] [--4-turbo]
-             [--35turbo] [--models] [--openai-api-base]
-             [--openai-api-type] [--openai-api-version]
-             [--openai-api-deployment-id] [--openai-organization-id]
-             [--model-settings-file] [--model-metadata-file]
+             [--opus] [--sonnet] [--4] [--4o] [--mini] [--4-turbo]
+             [--35turbo] [--deepseek] [--list-models]
+             [--openai-api-base] [--openai-api-type]
+             [--openai-api-version] [--openai-api-deployment-id]
+             [--openai-organization-id] [--model-settings-file]
+             [--model-metadata-file]
              [--verify-ssl | --no-verify-ssl] [--edit-format]
              [--weak-model]
              [--show-model-warnings | --no-show-model-warnings]
-             [--map-tokens] [--max-chat-history-tokens] [--env-file]
+             [--map-tokens] [--map-refresh]
+             [--cache-prompts | --no-cache-prompts]
+             [--cache-keepalive-pings] [--map-multiplier-no-files]
+             [--max-chat-history-tokens] [--env-file]
              [--input-history-file] [--chat-history-file]
              [--restore-chat-history | --no-restore-chat-history]
              [--llm-history-file] [--dark-mode] [--light-mode]
              [--pretty | --no-pretty] [--stream | --no-stream]
              [--user-input-color] [--tool-output-color]
-             [--tool-error-color] [--assistant-output-color]
-             [--code-theme] [--show-diffs] [--git | --no-git]
+             [--tool-error-color] [--tool-warning-color]
+             [--assistant-output-color] [--code-theme]
+             [--show-diffs] [--git | --no-git]
              [--gitignore | --no-gitignore] [--aiderignore]
              [--subtree-only] [--auto-commits | --no-auto-commits]
              [--dirty-commits | --no-dirty-commits]
              [--attribute-author | --no-attribute-author]
              [--attribute-committer | --no-attribute-committer]
-             [--attribute-commit-message | --no-attribute-commit-message]
+             [--attribute-commit-message-author | --no-attribute-commit-message-author]
+             [--attribute-commit-message-committer | --no-attribute-commit-message-committer]
              [--commit] [--commit-prompt] [--dry-run | --no-dry-run]
              [--lint] [--lint-cmd] [--auto-lint | --no-auto-lint]
              [--test-cmd] [--auto-test | --no-auto-test] [--test]
-             [--file] [--vim] [--voice-language] [--version]
-             [--just-check-update]
-             [--check-update | --no-check-update] [--apply] [--yes]
+             [--file] [--read] [--vim] [--voice-language]
+             [--chat-language] [--version] [--just-check-update]
+             [--check-update | --no-check-update]
+             [--install-main-branch] [--upgrade] [--apply] [--yes]
              [-v] [--show-repo-map] [--show-prompts] [--exit]
              [--message] [--message-file] [--encoding] [-c] [--gui]
+             [--suggest-shell-commands | --no-suggest-shell-commands]
 
 ```
 
@@ -97,8 +105,12 @@ Aliases:
   - `-4`
 
 ### `--4o`
-Use gpt-4o model for the main chat  
+Use gpt-4o-2024-08-06 model for the main chat  
 Environment variable: `AIDER_4O`  
+
+### `--mini`
+Use gpt-4o-mini model for the main chat  
+Environment variable: `AIDER_MINI`  
 
 ### `--4-turbo`
 Use gpt-4-1106-preview model for the main chat  
@@ -113,11 +125,18 @@ Aliases:
   - `--3`
   - `-3`
 
+### `--deepseek`
+Use deepseek/deepseek-coder model for the main chat  
+Environment variable: `AIDER_DEEPSEEK`  
+
 ## Model Settings:
 
-### `--models MODEL`
+### `--list-models MODEL`
 List known models which match the (partial) MODEL name  
-Environment variable: `AIDER_MODELS`  
+Environment variable: `AIDER_LIST_MODELS`  
+Aliases:
+  - `--list-models MODEL`
+  - `--models MODEL`
 
 ### `--openai-api-base OPENAI_API_BASE`
 Specify the api base url  
@@ -160,6 +179,9 @@ Aliases:
 ### `--edit-format EDIT_FORMAT`
 Specify what edit format the LLM should use (default depends on model)  
 Environment variable: `AIDER_EDIT_FORMAT`  
+Aliases:
+  - `--edit-format EDIT_FORMAT`
+  - `--chat-mode EDIT_FORMAT`
 
 ### `--weak-model WEAK_MODEL`
 Specify the model to use for commit messages and chat history summarization (default depends on --model)  
@@ -174,8 +196,31 @@ Aliases:
   - `--no-show-model-warnings`
 
 ### `--map-tokens VALUE`
-Max number of tokens to use for repo map, use 0 to disable (default: 1024)  
+Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)  
 Environment variable: `AIDER_MAP_TOKENS`  
+
+### `--map-refresh VALUE`
+Control how often the repo map is refreshed (default: auto)  
+Default: auto  
+Environment variable: `AIDER_MAP_REFRESH`  
+
+### `--cache-prompts`
+Enable caching of prompts (default: False)  
+Default: False  
+Environment variable: `AIDER_CACHE_PROMPTS`  
+Aliases:
+  - `--cache-prompts`
+  - `--no-cache-prompts`
+
+### `--cache-keepalive-pings VALUE`
+Number of times to ping at 5min intervals to keep prompt cache warm (default: 0)  
+Default: 0  
+Environment variable: `AIDER_CACHE_KEEPALIVE_PINGS`  
+
+### `--map-multiplier-no-files VALUE`
+Multiplier for map tokens when no files are specified (default: 2)  
+Default: 2  
+Environment variable: `AIDER_MAP_MULTIPLIER_NO_FILES`  
 
 ### `--max-chat-history-tokens VALUE`
 Maximum number of tokens to use for chat history. If not specified, uses the model's max_chat_history_tokens.  
@@ -248,9 +293,14 @@ Set the color for tool output (default: None)
 Environment variable: `AIDER_TOOL_OUTPUT_COLOR`  
 
 ### `--tool-error-color VALUE`
-Set the color for tool error messages (default: red)  
+Set the color for tool error messages (default: #FF2222)  
 Default: #FF2222  
 Environment variable: `AIDER_TOOL_ERROR_COLOR`  
+
+### `--tool-warning-color VALUE`
+Set the color for tool warning messages (default: #FFA500)  
+Default: #FFA500  
+Environment variable: `AIDER_TOOL_WARNING_COLOR`  
 
 ### `--assistant-output-color VALUE`
 Set the color for assistant output (default: #0088ff)  
@@ -327,13 +377,21 @@ Aliases:
   - `--attribute-committer`
   - `--no-attribute-committer`
 
-### `--attribute-commit-message`
-Prefix commit messages with 'aider: ' (default: False)  
+### `--attribute-commit-message-author`
+Prefix commit messages with 'aider: ' if aider authored the changes (default: False)  
 Default: False  
-Environment variable: `AIDER_ATTRIBUTE_COMMIT_MESSAGE`  
+Environment variable: `AIDER_ATTRIBUTE_COMMIT_MESSAGE_AUTHOR`  
 Aliases:
-  - `--attribute-commit-message`
-  - `--no-attribute-commit-message`
+  - `--attribute-commit-message-author`
+  - `--no-attribute-commit-message-author`
+
+### `--attribute-commit-message-committer`
+Prefix all commit messages with 'aider: ' (default: False)  
+Default: False  
+Environment variable: `AIDER_ATTRIBUTE_COMMIT_MESSAGE_COMMITTER`  
+Aliases:
+  - `--attribute-commit-message-committer`
+  - `--no-attribute-commit-message-committer`
 
 ### `--commit`
 Commit all pending changes with a suitable commit message, then exit  
@@ -396,6 +454,10 @@ Environment variable: `AIDER_TEST`
 specify a file to edit (can be used multiple times)  
 Environment variable: `AIDER_FILE`  
 
+### `--read FILE`
+specify a read-only file (can be used multiple times)  
+Environment variable: `AIDER_READ`  
+
 ### `--vim`
 Use VI editing mode in the terminal (default: False)  
 Default: False  
@@ -405,6 +467,10 @@ Environment variable: `AIDER_VIM`
 Specify the language for voice using ISO 639-1 code (default: auto)  
 Default: en  
 Environment variable: `AIDER_VOICE_LANGUAGE`  
+
+### `--chat-language CHAT_LANGUAGE`
+Specify the language to use in the chat (default: None, uses system settings)  
+Environment variable: `AIDER_CHAT_LANGUAGE`  
 
 ### `--version`
 Show the version number and exit  
@@ -421,6 +487,19 @@ Environment variable: `AIDER_CHECK_UPDATE`
 Aliases:
   - `--check-update`
   - `--no-check-update`
+
+### `--install-main-branch`
+Install the latest version from the main branch  
+Default: False  
+Environment variable: `AIDER_INSTALL_MAIN_BRANCH`  
+
+### `--upgrade`
+Upgrade aider to the latest version from PyPI  
+Default: False  
+Environment variable: `AIDER_UPGRADE`  
+Aliases:
+  - `--upgrade`
+  - `--update`
 
 ### `--apply FILE`
 Apply the changes from the given file instead of running the chat (debug)  
@@ -486,4 +565,12 @@ Environment variable: `AIDER_GUI`
 Aliases:
   - `--gui`
   - `--browser`
+
+### `--suggest-shell-commands`
+Enable/disable suggesting shell commands (default: True)  
+Default: True  
+Environment variable: `AIDER_SUGGEST_SHELL_COMMANDS`  
+Aliases:
+  - `--suggest-shell-commands`
+  - `--no-suggest-shell-commands`
 <!--[[[end]]]-->

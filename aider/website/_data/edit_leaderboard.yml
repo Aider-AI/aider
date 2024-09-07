@@ -317,29 +317,6 @@
   seconds_per_case: 22.9
   total_cost: 2.7494
   
-- dirname: 2024-05-09-18-57-52--deepseek-chat-v2-diff-reverted-and-helpful-assistant2
-  test_cases: 133
-  model: DeepSeek Chat V2 (original)
-  released: 2024-05-06
-  edit_format: diff
-  commit_hash: 80a3f6d
-  pass_rate_1: 44.4
-  pass_rate_2: 60.9
-  percent_cases_well_formed: 97.0
-  error_outputs: 14
-  num_malformed_responses: 4
-  user_asks: 2
-  lazy_comments: 0
-  syntax_errors: 13
-  indentation_errors: 0
-  exhausted_context_windows: 0
-  test_timeouts: 3
-  command: aider --model deepseek/deepseek-chat
-  date: 2024-05-09
-  versions: 0.33.1-dev
-  seconds_per_case: 86.8
-  total_cost: 0.0941
-  
 - dirname: 2024-05-07-20-32-37--qwen1.5-110b-chat-whole
   test_cases: 133
   model: qwen1.5-110b-chat
@@ -387,7 +364,7 @@
 
 - dirname: 2024-05-13-17-39-05--gpt-4o-diff
   test_cases: 133
-  model: gpt-4o
+  model: gpt-4o-2024-05-13
   released: 2024-05-13
   edit_format: diff
   commit_hash: b6cd852
@@ -577,6 +554,7 @@
   pass_rate_2: 77.4
   percent_cases_well_formed: 99.2
   error_outputs: 23
+  released: 2024-06-20
   num_malformed_responses: 4
   num_with_malformed_responses: 1
   user_asks: 2
@@ -603,6 +581,7 @@
   num_malformed_responses: 0
   num_with_malformed_responses: 0
   user_asks: 0
+  released: 2024-03-13
   lazy_comments: 0
   syntax_errors: 0
   indentation_errors: 0
@@ -644,6 +623,7 @@
   commit_hash: d31eef3-dirty
   pass_rate_1: 40.6
   pass_rate_2: 55.6
+  released: 2024-07-18
   percent_cases_well_formed: 100.0
   error_outputs: 1
   num_malformed_responses: 0
@@ -662,12 +642,13 @@
 
 - dirname: 2024-07-19-08-57-13--openrouter-deepseek-chat-v2-0628
   test_cases: 133
-  model: DeepSeek Chat V2 0628
+  model: DeepSeek Chat V2 0628 (deprecated)
   edit_format: diff
   commit_hash: 96ff06e-dirty
   pass_rate_1: 60.9
   pass_rate_2: 69.9
   percent_cases_well_formed: 97.7
+  released: 2024-06-28
   error_outputs: 58
   num_malformed_responses: 13
   num_with_malformed_responses: 3
@@ -690,6 +671,7 @@
   commit_hash: f7ce78b-dirty
   pass_rate_1: 46.6
   pass_rate_2: 63.9
+  released: 2024-07-23
   percent_cases_well_formed: 92.5
   error_outputs: 84
   num_malformed_responses: 19
@@ -716,6 +698,7 @@
   percent_cases_well_formed: 100.0
   error_outputs: 0
   num_malformed_responses: 0
+  released: 2024-07-23
   num_with_malformed_responses: 0
   user_asks: 0
   lazy_comments: 0
@@ -731,13 +714,14 @@
 
 - dirname: 2024-07-24-07-10-58--deepseek-coder2-0724-diff-direct
   test_cases: 133
-  model: DeepSeek Coder V2 0724
+  model: DeepSeek Coder V2 0724 (deprecated)
   edit_format: diff
   commit_hash: 89965bf
   pass_rate_1: 57.9
   pass_rate_2: 72.9
   percent_cases_well_formed: 97.7
   error_outputs: 13
+  released: 2024-07-24
   num_malformed_responses: 3
   num_with_malformed_responses: 3
   user_asks: 1
@@ -763,6 +747,7 @@
   error_outputs: 3
   num_malformed_responses: 0
   num_with_malformed_responses: 0
+  released: 2024-07-24
   user_asks: 3
   lazy_comments: 0
   syntax_errors: 1
@@ -785,6 +770,7 @@
   percent_cases_well_formed: 100.0
   error_outputs: 27
   num_malformed_responses: 0
+  released: 2024-07-23
   num_with_malformed_responses: 0
   user_asks: 23
   lazy_comments: 8
@@ -810,6 +796,7 @@
   num_malformed_responses: 0
   num_with_malformed_responses: 0
   user_asks: 0
+  released: 2024-07-23
   lazy_comments: 0
   syntax_errors: 0
   indentation_errors: 0
@@ -838,9 +825,218 @@
   indentation_errors: 2
   exhausted_context_windows: 0
   test_timeouts: 5
+  released: 2024-08-06
   command: aider --model openai/gpt-4o-2024-08-06
   date: 2024-08-06
   versions: 0.48.1-dev
   seconds_per_case: 6.5
   total_cost: 0.0000
-  
+
+- dirname: 2024-08-14-13-07-12--chatgpt-4o-latest-diff
+  test_cases: 133
+  model: chatgpt-4o-latest
+  edit_format: diff
+  commit_hash: b1c3769
+  pass_rate_1: 53.4
+  pass_rate_2: 69.2
+  percent_cases_well_formed: 97.7
+  error_outputs: 27
+  num_malformed_responses: 5
+  num_with_malformed_responses: 3
+  user_asks: 7
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model openai/chatgpt-4o-latest
+  date: 2024-08-14
+  released: 2024-08-08
+  versions: 0.50.2-dev
+  seconds_per_case: 26.3
+  total_cost: 3.6113
+
+- dirname: 2024-08-28-07-10-50--gemini-1.5-pro-exp-0827-diff-fenced
+  test_cases: 133
+  model: gemini-1.5-pro-exp-0827
+  edit_format: diff-fenced
+  commit_hash: d8adc75
+  pass_rate_1: 54.9
+  pass_rate_2: 66.9
+  percent_cases_well_formed: 94.7
+  error_outputs: 112
+  num_malformed_responses: 26
+  num_with_malformed_responses: 7
+  user_asks: 38
+  lazy_comments: 0
+  syntax_errors: 1
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model gemini/gemini-1.5-pro-exp-0827
+  date: 2024-08-28
+  versions: 0.53.1-dev
+  seconds_per_case: 14.5
+  total_cost: 0.0000
+
+- dirname: 2024-08-27-19-20-19--gemini-1.5-flash-exp-0827
+  test_cases: 133
+  model: gemini-1.5-flash-exp-0827
+  edit_format: whole
+  commit_hash: d8adc75
+  pass_rate_1: 40.6
+  pass_rate_2: 52.6
+  percent_cases_well_formed: 100.0
+  error_outputs: 1
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 1
+  lazy_comments: 3
+  syntax_errors: 1
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 4
+  command: aider --model gemini/gemini-1.5-flash-exp-0827
+  date: 2024-08-27
+  versions: 0.53.1-dev
+  seconds_per_case: 6.3
+  total_cost: 0.0000
+
+- dirname: 2024-08-27-19-42-05--gemini-1.5-flash-8b-exp-0827
+  test_cases: 133
+  model: gemini-1.5-flash-8b-exp-0827
+  edit_format: whole
+  commit_hash: d8adc75
+  pass_rate_1: 31.6
+  pass_rate_2: 38.3
+  percent_cases_well_formed: 100.0
+  error_outputs: 12
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 10
+  lazy_comments: 250
+  syntax_errors: 6
+  indentation_errors: 1
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model gemini/gemini-1.5-flash-8b-exp-0827
+  date: 2024-08-27
+  versions: 0.53.1-dev
+  seconds_per_case: 7.2
+  total_cost: 0.0000
+
+- dirname: 2024-08-30-15-02-05--nous405b-whole
+  test_cases: 133
+  model: nousresearch/hermes-3-llama-3.1-405b
+  edit_format: whole
+  commit_hash: 2d9d605
+  pass_rate_1: 51.1
+  pass_rate_2: 63.9
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model openrouter/nousresearch/hermes-3-llama-3.1-405b
+  date: 2024-08-30
+  versions: 0.54.8-dev
+  seconds_per_case: 38.3
+  total_cost: 0.0000
+
+- dirname: 2024-09-04-16-08-09--yi-coder-9b-whole
+  test_cases: 133
+  model: Yi Coder 9B Chat
+  edit_format: whole
+  commit_hash: c4e4967
+  pass_rate_1: 46.6
+  pass_rate_2: 54.1
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 9
+  lazy_comments: 0
+  syntax_errors: 14
+  indentation_errors: 2
+  exhausted_context_windows: 0
+  test_timeouts: 4
+  command: aider --model openai/hf:01-ai/Yi-Coder-9B-Chat --openai-api-base https://glhf.chat/api/openai/v1
+  date: 2024-09-04
+  versions: 0.54.13.dev
+  seconds_per_case: 8.3
+  total_cost: 0.0000
+  released: 2024-09-04
+
+- dirname: 2024-09-04-16-17-33--yi-coder-9b-chat-q4_0-whole
+  test_cases: 133
+  model: yi-coder:9b-chat-q4_0
+  edit_format: whole
+  commit_hash: c4e4967
+  pass_rate_1: 41.4
+  pass_rate_2: 45.1
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 48
+  lazy_comments: 1
+  syntax_errors: 1
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model ollama/yi-coder:9b-chat-q4_0
+  date: 2024-09-04
+  versions: 0.54.13.dev
+  seconds_per_case: 125.3
+  total_cost: 0.0000
+
+- dirname: 2024-09-05-14-50-11--deepseek-sep5-no-shell
+  test_cases: 133
+  model: DeepSeek V2.5
+  edit_format: diff
+  commit_hash: 1279c86
+  pass_rate_1: 54.9
+  pass_rate_2: 72.2
+  percent_cases_well_formed: 96.2
+  error_outputs: 5
+  num_malformed_responses: 5
+  num_with_malformed_responses: 5
+  user_asks: 4
+  lazy_comments: 0
+  syntax_errors: 1
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  command: aider --deepseek
+  date: 2024-09-05
+  versions: 0.55.1.dev
+  seconds_per_case: 49.6
+  total_cost: 0.0998
+
+- dirname: 2024-09-06-19-55-17--reflection-hyperbolic-whole-output2
+  test_cases: 133
+  model: Reflection-70B
+  edit_format: whole
+  commit_hash: 74631ee-dirty, 2aef59e-dirty
+  pass_rate_1: 33.1
+  pass_rate_2: 42.1
+  percent_cases_well_formed: 100.0
+  error_outputs: 2
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 10
+  lazy_comments: 26
+  syntax_errors: 1
+  indentation_errors: 3
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: (not currently supported)
+  date: 2024-09-06
+  versions: 0.55.1.dev
+  seconds_per_case: 61.6
+  total_cost: 0.0000

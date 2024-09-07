@@ -21,6 +21,15 @@ load whichever is found first.
 
 {% include env-keys-tip.md %}
 
+## A note on lists
+
+The syntax for specifying a list of values is not standard yaml.
+Instead, use this format:
+
+```
+read: [CONVENTIONS.md, anotherfile.txt, thirdfile.py]
+```
+
 ## Sample YAML config file
 
 Below is a sample of the YAML config file, which you
@@ -74,8 +83,11 @@ cog.outl("```")
 ## Use gpt-4-0613 model for the main chat
 #4: false
 
-## Use gpt-4o model for the main chat
+## Use gpt-4o-2024-08-06 model for the main chat
 #4o: false
+
+## Use gpt-4o-mini model for the main chat
+#mini: false
 
 ## Use gpt-4-1106-preview model for the main chat
 #4-turbo: false
@@ -83,11 +95,14 @@ cog.outl("```")
 ## Use gpt-3.5-turbo model for the main chat
 #35turbo: false
 
+## Use deepseek/deepseek-coder model for the main chat
+#deepseek: false
+
 #################
 # Model Settings:
 
 ## List known models which match the (partial) MODEL name
-#models:
+#list-models:
 
 ## Specify the api base url
 #openai-api-base:
@@ -122,8 +137,20 @@ cog.outl("```")
 ## Only work with models that have meta-data available (default: True)
 #show-model-warnings: true
 
-## Max number of tokens to use for repo map, use 0 to disable (default: 1024)
+## Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)
 #map-tokens:
+
+## Control how often the repo map is refreshed (default: auto)
+#map-refresh: auto
+
+## Enable caching of prompts (default: False)
+#cache-prompts: false
+
+## Number of times to ping at 5min intervals to keep prompt cache warm (default: 0)
+#cache-keepalive-pings: false
+
+## Multiplier for map tokens when no files are specified (default: 2)
+#map-multiplier-no-files: true
 
 ## Maximum number of tokens to use for chat history. If not specified, uses the model's max_chat_history_tokens.
 #max-chat-history-tokens:
@@ -167,8 +194,11 @@ cog.outl("```")
 ## Set the color for tool output (default: None)
 #tool-output-color:
 
-## Set the color for tool error messages (default: red)
+## Set the color for tool error messages (default: #FF2222)
 #tool-error-color: #FF2222
+
+## Set the color for tool warning messages (default: #FFA500)
+#tool-warning-color: #FFA500
 
 ## Set the color for assistant output (default: #0088ff)
 #assistant-output-color: #0088ff
@@ -206,8 +236,11 @@ cog.outl("```")
 ## Attribute aider commits in the git committer name (default: True)
 #attribute-committer: true
 
-## Prefix commit messages with 'aider: ' (default: False)
-#attribute-commit-message: false
+## Prefix commit messages with 'aider: ' if aider authored the changes (default: False)
+#attribute-commit-message-author: false
+
+## Prefix all commit messages with 'aider: ' (default: False)
+#attribute-commit-message-committer: false
 
 ## Commit all pending changes with a suitable commit message, then exit
 #commit: false
@@ -245,11 +278,17 @@ cog.outl("```")
 ## specify a file to edit (can be used multiple times)
 #file:
 
+## specify a read-only file (can be used multiple times)
+#read:
+
 ## Use VI editing mode in the terminal (default: False)
 #vim: false
 
 ## Specify the language for voice using ISO 639-1 code (default: auto)
 #voice-language: en
+
+## Specify the language to use in the chat (default: None, uses system settings)
+#chat-language:
 
 ## Show the version number and exit
 #version:
@@ -259,6 +298,12 @@ cog.outl("```")
 
 ## Check for new aider versions on launch
 #check-update: true
+
+## Install the latest version from the main branch
+#install-main-branch: false
+
+## Upgrade aider to the latest version from PyPI
+#upgrade: false
 
 ## Apply the changes from the given file instead of running the chat (debug)
 #apply:
@@ -292,5 +337,8 @@ cog.outl("```")
 
 ## Run aider in your browser
 #gui: false
+
+## Enable/disable suggesting shell commands (default: True)
+#suggest-shell-commands: true
 ```
 <!--[[[end]]]-->

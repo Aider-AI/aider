@@ -35,7 +35,10 @@ class Linter:
 
     def get_rel_fname(self, fname):
         if self.root:
-            return os.path.relpath(fname, self.root)
+            try:
+                return os.path.relpath(fname, self.root)
+            except ValueError:
+                return fname
         else:
             return fname
 
@@ -76,7 +79,7 @@ class Linter:
 
     def lint(self, fname, cmd=None):
         rel_fname = self.get_rel_fname(fname)
-        code = Path(fname).read_text(self.encoding)
+        code = Path(fname).read_text(encoding=self.encoding, errors="replace")
 
         if cmd:
             cmd = cmd.strip()
@@ -196,6 +199,10 @@ def basic_lint(fname, code):
 
     lang = filename_to_lang(fname)
     if not lang:
+        return
+
+    # Tree-sitter linter is not capable of working with typescript #1132
+    if lang == "typescript":
         return
 
     parser = get_parser(lang)

@@ -45,7 +45,14 @@ Aider will work in any size repo, but is not optimized for quick
 performance and response time in very large repos.
 There are some things you can do to improve performance.
 
-Change into a sub directory of your repo that contains the
+Be sure to check the
+[general usage tips](/docs/usage/tips.html)
+before considering this large-repo specific advice.
+To get the best results from aider you want to 
+be thoughtful about how you add files to the chat,
+regardless of your repo size.
+
+You can change into a sub directory of your repo that contains the
 code you want to work on and use the `--subtree-only` switch.
 This will tell aider to ignore the repo outside of the
 directory you start in.
@@ -59,23 +66,51 @@ to use for ignore patterns.
 You might have a few of these handy for when you want to work on
 frontend, backend, etc portions of your repo.
 
+## Can I use aider with multiple git repos at once?
+
+Currently aider can only work with one repo at a time.
+
+There are some things you can try if you need to work with
+multiple interrelated repos:
+
+- You can run aider in repo-A where you need to make a change
+and use `/read` to add some files read-only from another repo-B.
+This can let aider see key functions or docs from the other repo.
+- You can run `aider --show-repo-map > map.md` within each
+repo to create repo maps.
+You could then run aider in repo-A and 
+use `/read ../path/to/repo-B/map.md` to share
+a high level map of the other repo.
+- You can use aider to write documentation about a repo.
+Inside each repo, you could run `aider docs.md`
+and work with aider to write some markdown docs.
+Then while using aider to edit repo-A
+you can `/read ../path/to/repo-B/docs.md` to
+read in those docs from the other repo.
+- In repo A, ask aider to write a small script that demonstrates
+the functionality you want to use in repo B.
+Then when you're using aider in repo B, you can 
+`/read` in that script.
+
+
 ## How can I run aider locally from source code?
 
 To run the project locally, follow these steps:
 
 ```
-# Clone the repository:
+# Clone the repository
 git clone git@github.com:paul-gauthier/aider.git
 
-# Navigate to the project directory:
+# Navigate to the project directory
 cd aider
 
 # It's recommended to make a virtual environment
 
-# Install the dependencies listed in the `requirements.txt` file:
+# Install aider in editable/development mode, 
+# so it runs from the latest copy of these source files
 python -m pip install -e .
 
-# Run the local version of Aider:
+# Run the local version of aider
 python -m aider
 ```
 
@@ -122,3 +157,18 @@ You can also refer to the
 [instructions for installing a development version of aider](https://aider.chat/docs/install/optional.html#install-the-development-version-of-aider).
 
 
+## Can I share my aider chat transcript?
+
+Yes, you can now share aider chat logs in a pretty way.
+
+1. Copy the markdown logs you want to share from `.aider.chat.history.md` and make a github gist. Or publish the raw markdown logs on the web any way you'd like.
+
+https://gist.github.com/paul-gauthier/2087ab8b64034a078c0a209440ac8be0
+
+2. Take the gist URL and append it to:
+
+https://aider.chat/share/?mdurl=
+
+This will give you a URL like this, which shows the chat history like you'd see in a terminal:
+
+https://aider.chat/share/?mdurl=https://gist.github.com/paul-gauthier/2087ab8b64034a078c0a209440ac8be0
