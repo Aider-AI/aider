@@ -257,6 +257,9 @@ class GitRepo:
             commit = self.repo.head.commit
         except ValueError:
             commit = None
+        except ANY_GIT_ERROR as err:
+            commit = None
+            self.io.tool_error(f"Unable to get tracked files: {err}")
 
         files = set()
         if commit:
