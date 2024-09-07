@@ -1,5 +1,6 @@
 import hashlib
 import json
+import sys
 
 import backoff
 
@@ -83,7 +84,11 @@ def send_completion(
 
     # del kwargs['stream']
 
-    res = litellm.completion(**kwargs)
+    try:
+        res = litellm.completion(**kwargs)
+    except ImportError as err:
+        print("Error while loading necessary module: {err}")
+        sys.exit(1)
 
     if not stream and CACHE is not None:
         CACHE[key] = res

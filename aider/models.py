@@ -658,7 +658,13 @@ class Model(ModelSettings):
         # https://github.com/BerriAI/litellm/issues/3190
 
         model = self.name
-        res = litellm.validate_environment(model)
+
+        try:
+            res = litellm.validate_environment(model)
+        except ImportError as err:
+            self.io.tool_error("Error while loading necessary module: {err}")
+            sys.exit(1)
+
         if res["keys_in_environment"]:
             return res
         if res["missing_keys"]:

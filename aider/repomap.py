@@ -389,6 +389,9 @@ class RepoMap:
             ranked = nx.pagerank(G, weight="weight", **pers_args)
         except ZeroDivisionError:
             return []
+        except ImportError as err:
+            self.io.tool_error("Error while loading necessary module: {err}")
+            sys.exit(1)
 
         # distribute the rank from each source node, across all of its out edges
         ranked_definitions = defaultdict(float)
