@@ -20,7 +20,7 @@ See the
 [benchmark README](https://github.com/paul-gauthier/aider/blob/main/benchmark/README.md)
 for information on running aider's code editing benchmarks.
 Submit results by opening a PR with edits to the
-[benchmark results data files](https://github.com/paul-gauthier/aider/blob/main/_data/).
+[benchmark results data files](https://github.com/paul-gauthier/aider/blob/main/aider/website/_data/).
 
 
 ## Pull Requests
