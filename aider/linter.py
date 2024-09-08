@@ -46,14 +46,18 @@ class Linter:
         cmd += " " + rel_fname
         cmd = cmd.split()
 
-        process = subprocess.Popen(
-            cmd,
-            cwd=self.root,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            encoding=self.encoding,
-            errors="replace",
-        )
+        try:
+            process = subprocess.Popen(
+                cmd,
+                cwd=self.root,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                encoding=self.encoding,
+                errors="replace",
+            )
+        except OSError as err:
+            print(f"Unable to execute lint command: {err}")
+            return
         stdout, _ = process.communicate()
         errors = stdout
         if process.returncode == 0:
