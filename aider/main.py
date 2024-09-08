@@ -4,6 +4,7 @@ import os
 import re
 import sys
 import threading
+import traceback
 from pathlib import Path
 
 import git
@@ -686,7 +687,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.exit:
         return
 
-    check_and_load_imports(io)
+    check_and_load_imports(io, verbose=args.verbose)
 
     while True:
         try:
@@ -706,30 +707,45 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
 
 
-def check_and_load_imports(io):
-
+def check_and_load_imports(io, verbose=False):
     installs_file = Path.home() / ".aider" / "installs.json"
     key = (__version__, sys.executable)
+
+    if verbose:
+        io.tool_output(f"Checking imports for version {__version__} and executable {sys.executable}")
+        io.tool_output(f"Installs file: {installs_file}")
 
     try:
         if installs_file.exists():
             with open(installs_file, "r") as f:
                 installs = json.load(f)
+            if verbose:
+                io.tool_output("Installs file exists and loaded")
         else:
             installs = {}
+            if verbose:
+                io.tool_output("Installs file does not exist, creating new dictionary")
 
         if str(key) not in installs:
+            if verbose:
+                io.tool_output("First run for this version and executable, loading imports synchronously")
             load_slow_imports()
             installs[str(key)] = True
             installs_file.parent.mkdir(parents=True, exist_ok=True)
             with open(installs_file, "w") as f:
                 json.dump(installs, f, indent=4)
+            if verbose:
+                io.tool_output("Imports loaded and installs file updated")
         else:
+            if verbose:
+                io.tool_output("Not first run, loading imports in background thread")
             thread = threading.Thread(target=load_slow_imports)
             thread.daemon = True
             thread.start()
     except Exception as e:
         io.tool_warning(f"Error in check_and_load_imports: {e}", file=sys.stderr)
+        if verbose:
+            io.tool_output(f"Full exception details: {traceback.format_exc()}")
 
 
 def load_slow_imports():
