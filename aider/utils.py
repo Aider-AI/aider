@@ -1,4 +1,5 @@
 import itertools
+import json
 import os
 import platform
 import shlex
@@ -373,3 +374,20 @@ def printable_shell_command(cmd_list):
         return subprocess.list2cmdline(cmd_list)
     else:
         return shlex.join(cmd_list)
+
+
+def invoke_callback(callback, params):
+    callback_params = json.dumps(params)
+
+    if sys.platform.startswith("win"):
+        callback_parts = callback.split()
+    else:
+        callback_parts = shlex.split(callback)
+
+    cmd = callback_parts + [callback_params]
+
+    try:
+        result = subprocess.run(cmd, check=True, text=True, capture_output=True)
+        return result.stdout, result.stderr
+    except subprocess.CalledProcessError as e:
+        return None, e.stderr

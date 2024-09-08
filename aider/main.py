@@ -596,6 +596,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             map_mul_no_files=args.map_multiplier_no_files,
             num_cache_warming_pings=args.cache_keepalive_pings,
             suggest_shell_commands=args.suggest_shell_commands,
+            callback=args.callback,
             chat_language=args.chat_language,
         )
     except ValueError as err:
@@ -639,6 +640,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         repo_map = coder.get_repo_map()
         if repo_map:
             io.tool_output(repo_map)
+        return
+
+    if args.callback and args.callback_debug:
+        coder.run_callback(callback_debug=True)
+        return
+    elif args.callback_debug:
+        io.tool_error("--callback-debug requires --callback to be set")
         return
 
     if args.apply:

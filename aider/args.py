@@ -611,6 +611,23 @@ def get_parser(default_config_files, git_root):
         help="Enable/disable suggesting shell commands (default: True)",
     )
 
+    group.add_argument(
+        "--callback",
+        type=str,
+        default=None,
+        help=(
+            "Specify callback script to receive updates on every LLM response, eg: "
+            '--callback "python callback.py" or --callback "./callback.sh"'
+        ),
+    )
+
+    group.add_argument(
+        "--callback-debug",
+        action="store_true",
+        help="Run callback and exit (debug)",
+        default=False,
+    )
+
     return parser
 
 

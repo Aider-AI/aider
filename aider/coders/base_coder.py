@@ -32,7 +32,13 @@ from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
 from aider.sendchat import retry_exceptions, send_completion
-from aider.utils import format_content, format_messages, format_tokens, is_image_file
+from aider.utils import (
+    format_content,
+    format_messages,
+    format_tokens,
+    invoke_callback,
+    is_image_file,
+)
 
 from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
@@ -261,6 +267,7 @@ class Coder:
         cache_prompts=False,
         num_cache_warming_pings=0,
         suggest_shell_commands=True,
+        callback=None,
         chat_language=None,
     ):
         self.chat_language = chat_language
@@ -271,7 +278,7 @@ class Coder:
         self.ignore_mentions = set()
 
         self.suggest_shell_commands = suggest_shell_commands
-
+        self.callback = callback
         self.num_cache_warming_pings = num_cache_warming_pings
 
         if not fnames:
@@ -1171,6 +1178,7 @@ class Coder:
         self.io.tool_output()
 
         self.show_usage_report()
+        self.run_callback()
 
         if exhausted:
             self.show_exhausted_error()
@@ -1426,6 +1434,28 @@ class Coder:
                     self.io.ai_output(json.dumps(args, indent=4))
 
             self.calculate_and_show_tokens_and_cost(messages, completion)
+
+    def run_callback(self, callback_debug=False):
+        if not self.callback:
+            return
+
+        callback_params = {
+            "root": self.root,
+            "name": os.path.basename(self.root),
+        }
+
+        is_callback_verbose = self.verbose or callback_debug
+        if is_callback_verbose:
+            self.io.tool_output(
+                f"Running callback: '{self.callback}' with params: '{callback_params}'"
+            )
+
+        callback_stdout, callback_stderr = invoke_callback(self.callback, callback_params)
+
+        if callback_stdout and is_callback_verbose:
+            self.io.tool_output(callback_stdout)
+        if callback_stderr:
+            self.io.tool_error(f"Callback error: {callback_stderr}")
 
     def show_send_output(self, completion):
         if self.verbose:
