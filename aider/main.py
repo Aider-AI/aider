@@ -686,9 +686,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.exit:
         return
 
-    thread = threading.Thread(target=load_slow_imports)
-    thread.daemon = True
-    thread.start()
+    launch_slow_imports_thread()
 
     while True:
         try:
@@ -704,6 +702,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
             if switch.kwargs.get("show_announcements") is not False:
                 coder.show_announcements()
+
+
+def launch_slow_imports_thread():
+    thread = threading.Thread(target=load_slow_imports)
+    thread.daemon = True
+    thread.start()
 
 
 def load_slow_imports():
