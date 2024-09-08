@@ -686,7 +686,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.exit:
         return
 
-    launch_slow_imports_thread()
+    check_and_load_imports(io)
 
     while True:
         try:
@@ -704,15 +704,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 coder.show_announcements()
 
 
-def launch_slow_imports_thread():
-    thread = threading.Thread(target=check_and_load_imports)
-    thread.daemon = True
-    thread.start()
 
 
-def check_and_load_imports():
-    import json
-    from pathlib import Path
+def check_and_load_imports(io):
 
     installs_file = Path.home() / ".aider" / "installs.json"
     key = (__version__, sys.executable)
@@ -729,13 +723,13 @@ def check_and_load_imports():
             installs[str(key)] = True
             installs_file.parent.mkdir(parents=True, exist_ok=True)
             with open(installs_file, "w") as f:
-                json.dump(installs, f)
+                json.dump(installs, f, indent=4)
         else:
             thread = threading.Thread(target=load_slow_imports)
             thread.daemon = True
             thread.start()
     except Exception as e:
-        print(f"Error in check_and_load_imports: {e}", file=sys.stderr)
+        io.tool_warning(f"Error in check_and_load_imports: {e}", file=sys.stderr)
 
 
 def load_slow_imports():
