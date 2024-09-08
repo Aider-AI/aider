@@ -731,7 +731,14 @@ def check_and_load_imports(io, verbose=False):
                 io.tool_output(
                     "First run for this version and executable, loading imports synchronously"
                 )
-            load_slow_imports()
+            try:
+                load_slow_imports(swallow=False)
+            except Exception as err:
+                io.tool_error(str(err))
+                io.tool_output("Error loading required imports. Did you install aider properly?")
+                io.tool_output("https://aider.chat/docs/install.html")
+                sys.exit(1)
+
             installs[str(key)] = True
             installs_file.parent.mkdir(parents=True, exist_ok=True)
             with open(installs_file, "w") as f:
@@ -745,12 +752,12 @@ def check_and_load_imports(io, verbose=False):
             thread.daemon = True
             thread.start()
     except Exception as e:
-        io.tool_warning(f"Error in check_and_load_imports: {e}", file=sys.stderr)
+        io.tool_warning(f"Error in checking imports: {e}")
         if verbose:
             io.tool_output(f"Full exception details: {traceback.format_exc()}")
 
 
-def load_slow_imports():
+def load_slow_imports(swallow=True):
     # These imports are deferred in various ways to
     # improve startup time.
     # This func is called either synchronously or in a thread
@@ -762,7 +769,8 @@ def load_slow_imports():
         import networkx  # noqa: F401
         import numpy  # noqa: F401
     except Exception as e:
-        print(f"Error in load_slow_imports: {e}", file=sys.stderr)
+        if not swallow:
+            raise e
 
 
 if __name__ == "__main__":
