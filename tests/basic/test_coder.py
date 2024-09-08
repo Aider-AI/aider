@@ -2,7 +2,7 @@ import os
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, call, patch
 
 import git
 
@@ -14,7 +14,12 @@ from aider.repo import GitRepo
 from aider.utils import GitTemporaryDirectory
 
 
-class TestCoder(unittest.TestCase):
+class BaseCoderTestCase(unittest.TestCase):
+    def setUp(self):
+        self.GPT35 = Model("gpt-3.5-turbo")
+
+
+class TestCoder(BaseCoderTestCase):
     def setUp(self):
         self.GPT35 = Model("gpt-3.5-turbo")
 
@@ -915,6 +920,65 @@ This command will print 'Hello, World!' to the console."""
             self.assertIn("Input tokens:", error_message)
             self.assertIn("Output tokens:", error_message)
             self.assertIn("Total tokens:", error_message)
+
+
+class TestCoderCallback(BaseCoderTestCase):
+    def test_coder_run_callback_if_no_callback_set(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            coder = Coder.create(self.GPT35, None, io, callback=None)
+            self.assertIsNone(coder.run_callback())
+
+    def test_coder_run_callback_if_callback_set_no_error_no_verbose(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            repo = git.Repo()
+            callback_params = {"root": repo.working_dir, "name": os.path.basename(repo.working_dir)}
+
+            with patch("aider.coders.base_coder.invoke_callback") as invoke_callback:
+                invoke_callback.return_value = "stdout", None
+                coder = Coder.create(self.GPT35, None, io, callback="echo 'callback called'")
+                coder.io.tool_output = MagicMock()
+                coder.run_callback()
+                invoke_callback.assert_called_once_with(coder.callback, callback_params)
+                coder.io.tool_output.assert_not_called()
+
+    def test_coder_run_callback_if_callback_set_no_error_verbose(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            repo = git.Repo()
+            callback_params = {"root": repo.working_dir, "name": os.path.basename(repo.working_dir)}
+
+            with patch("aider.coders.base_coder.invoke_callback") as invoke_callback:
+                invoke_callback.return_value = "stdout", None
+                coder = Coder.create(
+                    self.GPT35, None, io, callback="echo 'callback called'", verbose=True
+                )
+                coder.io.tool_output = MagicMock()
+                coder.run_callback()
+                invoke_callback.assert_called_once_with(coder.callback, callback_params)
+                coder.io.tool_output.assert_has_calls(
+                    [
+                        call(
+                            f"Running callback: '{coder.callback}' with params: '{callback_params}'"
+                        ),
+                        call("stdout"),
+                    ]
+                )
+
+    def test_coder_run_callback_if_callback_set_and_error_occurs(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            repo = git.Repo()
+            callback_params = {"root": repo.working_dir, "name": os.path.basename(repo.working_dir)}
+
+            with patch("aider.coders.base_coder.invoke_callback") as invoke_callback:
+                invoke_callback.return_value = None, "stderr"
+                coder = Coder.create(self.GPT35, None, io, callback="echo 'callback called'")
+                coder.io.tool_error = MagicMock()
+                coder.run_callback()
+                invoke_callback.assert_called_once_with(coder.callback, callback_params)
+                coder.io.tool_error.assert_called_once_with("stderr")
 
 
 if __name__ == "__main__":

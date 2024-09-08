@@ -2,6 +2,7 @@ import json
 import os
 import subprocess
 import tempfile
+from abc import ABC
 from io import StringIO
 from pathlib import Path
 from unittest import TestCase
@@ -18,7 +19,27 @@ from aider.main import check_gitignore, main, setup_git
 from aider.utils import GitTemporaryDirectory, IgnorantTemporaryDirectory, make_repo
 
 
-class TestMain(TestCase):
+class BaseMainTestCase(TestCase, ABC):
+    def setUp(self):
+        self.original_env = os.environ.copy()
+        os.environ["OPENAI_API_KEY"] = "deadbeef"
+        self.original_cwd = os.getcwd()
+        self.tempdir_obj = IgnorantTemporaryDirectory()
+        self.tempdir = self.tempdir_obj.name
+        os.chdir(self.tempdir)
+        # Fake home directory prevents tests from using the real ~/.aider.conf.yml file:
+        self.homedir_obj = IgnorantTemporaryDirectory()
+        os.environ["HOME"] = self.homedir_obj.name
+
+    def tearDown(self):
+        os.chdir(self.original_cwd)
+        self.tempdir_obj.cleanup()
+        self.homedir_obj.cleanup()
+        os.environ.clear()
+        os.environ.update(self.original_env)
+
+
+class TestMain(BaseMainTestCase):
     def setUp(self):
         self.original_env = os.environ.copy()
         os.environ["OPENAI_API_KEY"] = "deadbeef"
@@ -641,3 +662,35 @@ class TestMain(TestCase):
             self.fail(f"main() raised an unexpected exception: {e}")
 
         self.assertIsNone(result, "main() should return None when called with --exit")
+
+
+class TestMainCallback(BaseMainTestCase):
+    def test_main_callback_with_callback_debug(self):
+        with GitTemporaryDirectory():
+            with (
+                patch("aider.coders.base_coder.Coder.run_callback") as mock_run_callback,
+                patch("aider.io.InputOutput.tool_error") as mock_tool_error,
+            ):
+                main(
+                    ["--exit", "--yes", "--callback", "mock_script.sh", "--callback-debug"],
+                    input=DummyInput(),
+                    output=DummyOutput(),
+                )
+                mock_run_callback.assert_called_once()
+                mock_tool_error.assert_not_called()
+
+    def test_main_callback_with_callback_debug_when_callback_is_not_used(self):
+        with GitTemporaryDirectory():
+            with (
+                patch("aider.coders.base_coder.Coder.run_callback") as mock_run_callback,
+                patch("aider.io.InputOutput.tool_error") as mock_tool_error,
+            ):
+                main(
+                    ["--exit", "--yes", "--callback-debug"],
+                    input=DummyInput(),
+                    output=DummyOutput(),
+                )
+                mock_run_callback.assert_not_called()
+                mock_tool_error.assert_called_once_with(
+                    "--callback-debug requires --callback to be set"
+                )
