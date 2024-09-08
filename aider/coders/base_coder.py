@@ -1455,7 +1455,7 @@ class Coder:
         if callback_stdout and is_callback_verbose:
             self.io.tool_output(callback_stdout)
         if callback_stderr:
-            self.io.tool_error(f"Callback error: {callback_stderr}")
+            self.io.tool_error(callback_stderr)
 
     def show_send_output(self, completion):
         if self.verbose:

@@ -390,4 +390,8 @@ def invoke_callback(callback, params):
         result = subprocess.run(cmd, check=True, text=True, capture_output=True)
         return result.stdout, result.stderr
     except subprocess.CalledProcessError as e:
-        return None, e.stderr
+        return None, f"Callback error (subprocess): {e.stderr}"
+    except FileNotFoundError:
+        return None, f"Callback error (file not found): {callback}"
+    except Exception as e:
+        return None, f"Callback error (other): {e}"
