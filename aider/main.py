@@ -487,6 +487,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     cmd_line = scrub_sensitive_info(args, cmd_line)
     io.tool_output(cmd_line, log_only=True)
 
+    check_and_load_imports(io, verbose=args.verbose)
+
     if args.anthropic_api_key:
         os.environ["ANTHROPIC_API_KEY"] = args.anthropic_api_key
 
@@ -686,8 +688,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     if args.exit:
         return
-
-    check_and_load_imports(io, verbose=args.verbose)
 
     while True:
         try:
