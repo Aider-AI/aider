@@ -705,14 +705,14 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 coder.show_announcements()
 
 
-
-
 def check_and_load_imports(io, verbose=False):
     installs_file = Path.home() / ".aider" / "installs.json"
     key = (__version__, sys.executable)
 
     if verbose:
-        io.tool_output(f"Checking imports for version {__version__} and executable {sys.executable}")
+        io.tool_output(
+            f"Checking imports for version {__version__} and executable {sys.executable}"
+        )
         io.tool_output(f"Installs file: {installs_file}")
 
     try:
@@ -728,7 +728,9 @@ def check_and_load_imports(io, verbose=False):
 
         if str(key) not in installs:
             if verbose:
-                io.tool_output("First run for this version and executable, loading imports synchronously")
+                io.tool_output(
+                    "First run for this version and executable, loading imports synchronously"
+                )
             load_slow_imports()
             installs[str(key)] = True
             installs_file.parent.mkdir(parents=True, exist_ok=True)
