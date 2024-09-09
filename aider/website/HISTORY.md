@@ -18,13 +18,13 @@ cog.out(text)
 
 ### Aider v0.56.0
 
-- Enables prompt caching for Sonnet via OpenRouter.
+- Enables prompt caching for Sonnet via OpenRouter by @fry69
 - Enables 8k output tokens for Sonnet via VertexAI and DeepSeek V2.5.
 - New `/report` command to open your browser with a pre-populated GitHub Issue.
 - New `--chat-language` switch to set the spoken language.
 - Now `--[no-]suggest-shell-commands` controls both prompting for and offering to execute shell commands.
 - Check key imports on launch, provide helpful error message if dependencies aren't available.
-- Renamed `--models` to `--list-models`.
+- Renamed `--models` to `--list-models` by @fry69.
 - Numerous bug fixes for corner case crashes.
 - Aider wrote 56% of the code in this release.
 
