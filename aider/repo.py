@@ -10,7 +10,7 @@ from aider.sendchat import simple_send_with_retries
 
 from .dump import dump  # noqa: F401
 
-ANY_GIT_ERROR = (git.exc.ODBError, git.exc.GitError, OSError)
+ANY_GIT_ERROR = (git.exc.ODBError, git.exc.GitError, OSError, AssertionError)
 
 
 class GitRepo:
