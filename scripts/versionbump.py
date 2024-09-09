@@ -161,5 +161,6 @@ def main():
             subprocess.run(["git", "commit", "-m", f"Remove {version_file}"], check=True)
             subprocess.run(["git", "push", "origin", "--no-verify"], check=True)
 
+
 if __name__ == "__main__":
     main()
