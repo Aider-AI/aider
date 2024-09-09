@@ -10,7 +10,7 @@ from aider.sendchat import simple_send_with_retries
 
 from .dump import dump  # noqa: F401
 
-ANY_GIT_ERROR = (git.exc.ODBError, git.exc.GitError)
+ANY_GIT_ERROR = (git.exc.ODBError, git.exc.GitError, OSError)
 
 
 class GitRepo:
@@ -257,7 +257,7 @@ class GitRepo:
             commit = self.repo.head.commit
         except ValueError:
             commit = None
-        except (OSError,) + ANY_GIT_ERROR as err:
+        except ANY_GIT_ERROR as err:
             self.io.tool_error(f"Unable to list files in git repo: {err}")
             self.io.tool_output("Is your git repo corrupted?")
             return []
@@ -267,9 +267,14 @@ class GitRepo:
             if commit in self.tree_files:
                 files = self.tree_files[commit]
             else:
-                for blob in commit.tree.traverse():
-                    if blob.type == "blob":  # blob is a file
-                        files.add(blob.path)
+                try:
+                    for blob in commit.tree.traverse():
+                        if blob.type == "blob":  # blob is a file
+                            files.add(blob.path)
+                except ANY_GIT_ERROR as err:
+                    self.io.tool_error(f"Unable to list files in git repo: {err}")
+                    self.io.tool_output("Is your git repo corrupted?")
+                    return []
                 files = set(self.normalize_path(path) for path in files)
                 self.tree_files[commit] = set(files)
 
