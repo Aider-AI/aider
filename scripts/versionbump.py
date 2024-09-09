@@ -157,9 +157,6 @@ def main():
         print(f"Removing {version_file}")
         if not dry_run:
             os.remove(version_file)
-            subprocess.run(["git", "add", version_file], check=True)
-            subprocess.run(["git", "commit", "-m", f"Remove {version_file}"], check=True)
-            subprocess.run(["git", "push", "origin", "--no-verify"], check=True)
 
 
 if __name__ == "__main__":
