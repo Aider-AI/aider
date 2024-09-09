@@ -16,7 +16,7 @@ cog.out(text)
 
 # Release history
 
-### main branch
+### Aider v0.56.0
 
 - New `/report` command to open your browser with a pre-populated GitHub Issue.
 - New `--chat-language` switch to set the spoken language.
