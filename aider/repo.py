@@ -257,7 +257,7 @@ class GitRepo:
             commit = self.repo.head.commit
         except ValueError:
             commit = None
-        except ANY_GIT_ERROR as err:
+        except (OSError,) + ANY_GIT_ERROR as err:
             self.io.tool_error(f"Unable to list files in git repo: {err}")
             self.io.tool_output("Is your git repo corrupted?")
             return []
