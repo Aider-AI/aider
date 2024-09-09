@@ -345,7 +345,11 @@ class InputOutput:
             session = PromptSession(
                 key_bindings=kb, editing_mode=self.editingmode, **session_kwargs
             )
-            line = session.prompt()
+            try:
+                line = session.prompt()
+            except UnicodeEncodeError as err:
+                self.io.tool_error(str(err))
+                return ""
 
             if line and line[0] == "{" and not multiline_input:
                 multiline_input = True
