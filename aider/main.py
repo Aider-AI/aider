@@ -302,22 +302,22 @@ def sanity_check_repo(repo, io):
 
     try:
         repo.get_tracked_files()
-        return True
+        if not repo.git_repo_error:
+            return True
+        error_msg = str(repo.git_repo_error)
     except ANY_GIT_ERROR as exc:
         error_msg = str(exc)
 
-        if "version in (1, 2)" in error_msg:
-            io.tool_error("Aider only works with git repos with version number 1 or 2.")
-            io.tool_output(
-                "You may be able to convert your repo: git update-index --index-version=2"
-            )
-            io.tool_output("Or run aider --no-git to proceed without using git.")
-            io.tool_output("https://github.com/paul-gauthier/aider/issues/211")
-            return False
-
-        io.tool_error("Unable to read git repository, it may be corrupt?")
-        io.tool_output(error_msg)
+    if "version in (1, 2)" in error_msg:
+        io.tool_error("Aider only works with git repos with version number 1 or 2.")
+        io.tool_output("You may be able to convert your repo: git update-index --index-version=2")
+        io.tool_output("Or run aider --no-git to proceed without using git.")
+        io.tool_output("https://github.com/paul-gauthier/aider/issues/211")
         return False
+
+    io.tool_error("Unable to read git repository, it may be corrupt?")
+    io.tool_output(error_msg)
+    return False
 
 
 def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):

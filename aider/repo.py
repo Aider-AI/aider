@@ -21,6 +21,7 @@ class GitRepo:
     aider_ignore_last_check = 0
     subtree_only = False
     ignore_file_cache = {}
+    git_repo_error = None
 
     def __init__(
         self,
@@ -258,6 +259,7 @@ class GitRepo:
         except ValueError:
             commit = None
         except ANY_GIT_ERROR as err:
+            self.git_repo_error = err
             self.io.tool_error(f"Unable to list files in git repo: {err}")
             self.io.tool_output("Is your git repo corrupted?")
             return []
@@ -272,6 +274,7 @@ class GitRepo:
                         if blob.type == "blob":  # blob is a file
                             files.add(blob.path)
                 except ANY_GIT_ERROR as err:
+                    self.git_repo_error = err
                     self.io.tool_error(f"Unable to list files in git repo: {err}")
                     self.io.tool_output("Is your git repo corrupted?")
                     return []
