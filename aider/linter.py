@@ -209,7 +209,12 @@ def basic_lint(fname, code):
     if lang == "typescript":
         return
 
-    parser = get_parser(lang)
+    try:
+        parser = get_parser(lang)
+    except OSError as err:
+        print(f"Unable to load parser: {err}")
+        return
+
     tree = parser.parse(bytes(code, "utf-8"))
 
     errors = traverse_tree(tree.root_node)
