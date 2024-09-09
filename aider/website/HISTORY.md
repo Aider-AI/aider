@@ -16,6 +16,17 @@ cog.out(text)
 
 # Release history
 
+### main branch
+
+- New `/report` command to open your browser with a pre-populated GitHub Issue.
+- New `--chat-language` switch to set the spoken language.
+- Now `--no-suggest-shell-commands` removes the prompts that ask for shell commands.
+- DeepSeek models use 8192 output tokens now.
+- Check key imports on launch, provide helpful error message if dependencies aren't available.
+- Renamed `--models` to `--list-models`.
+- Numerous bug fixes for corner case crashes.
+- Aider wrote 70% of the code in this release.
+
 ### Aider v0.55.0
 
 - Only print the pip command when self updating on Windows, without running it.

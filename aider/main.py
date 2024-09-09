@@ -736,7 +736,7 @@ def check_and_load_imports(io, verbose=False):
             except Exception as err:
                 io.tool_error(str(err))
                 io.tool_output("Error loading required imports. Did you install aider properly?")
-                io.tool_output("https://aider.chat/docs/install.html")
+                io.tool_output("https://aider.chat/docs/install/install.html")
                 sys.exit(1)
 
             installs[str(key)] = True
