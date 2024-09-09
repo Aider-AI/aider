@@ -307,8 +307,12 @@ def sanity_check_repo(repo, io):
         error_msg = str(repo.git_repo_error)
     except ANY_GIT_ERROR as exc:
         error_msg = str(exc)
+        bad_ver = "version in (1, 2)" in error_msg
+    except AssertionError as exc:
+        error_msg = str(exc)
+        bad_ver = True
 
-    if "version in (1, 2)" in error_msg:
+    if bad_ver:
         io.tool_error("Aider only works with git repos with version number 1 or 2.")
         io.tool_output("You may be able to convert your repo: git update-index --index-version=2")
         io.tool_output("Or run aider --no-git to proceed without using git.")
