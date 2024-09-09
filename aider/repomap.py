@@ -316,6 +316,9 @@ class RepoMap:
             if not file_ok:
                 if fname not in self.warned_files:
                     self.io.tool_warning(f"Repo-map can't include {fname}")
+                    self.io.tool_output(
+                        "Has it been deleted from the file system but not from git?"
+                    )
                     self.warned_files.add(fname)
                 continue
 
