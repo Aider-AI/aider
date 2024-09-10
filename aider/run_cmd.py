@@ -3,6 +3,8 @@ import platform
 import subprocess
 import sys
 from io import BytesIO
+import psutil
+import ctypes
 
 import pexpect
 
@@ -22,21 +24,40 @@ def run_cmd(command, verbose=False, error_print=None):
         return 1, error_message
 
 
+def get_parent_process_name():
+    try:
+        if platform.system() == "Windows":
+            kernel32 = ctypes.windll.kernel32
+            h_process = kernel32.OpenProcess(0x0400, False, os.getppid())
+            exe_path = ctypes.create_unicode_buffer(260)
+            kernel32.QueryFullProcessImageNameW(h_process, 0, exe_path, ctypes.byref(ctypes.c_ulong(260)))
+            kernel32.CloseHandle(h_process)
+            return os.path.basename(exe_path.value).lower()
+        else:
+            return psutil.Process(os.getppid()).name().lower()
+    except:
+        return None
+
 def run_cmd_subprocess(command, verbose=False):
     if verbose:
         print("Using run_cmd_subprocess:", command)
 
     try:
         shell = os.environ.get("SHELL", "/bin/sh")
-        PSModulePath = os.environ.get("PSModulePath", "")
+        parent_process = get_parent_process_name()
+
         # Determine the appropriate shell
-        if platform.system() == "Windows" and "powershell" in PSModulePath.lower():
-            command = f"powershell -Command {command}"
+        if platform.system() == "Windows":
+            if parent_process == "powershell.exe":
+                command = f"powershell -Command {command}"
+            else:
+                # Assume cmd.exe or other Windows shell
+                pass  # Use the command as-is
 
         if verbose:
             print("Running command:", command)
             print("SHELL:", shell)
-            print("PSModulePath:", PSModulePath)
+            print("Parent process:", parent_process)
 
         process = subprocess.Popen(
             command,
