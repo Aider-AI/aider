@@ -226,14 +226,12 @@ class InputOutput:
                 session_kwargs["history"] = FileHistory(self.input_history_file)
             try:
                 self.prompt_session = PromptSession(**session_kwargs)
+                self.console = Console()  # pretty console
             except Exception as err:
-                self.tool_error(f"Can't initialize prompt toolkit: {err}")
-                self.pretty = False
-
-        if self.pretty:
-            self.console = Console()
+                self.console = Console(force_terminal=False, no_color=True)
+                self.tool_error(f"Can't initialize prompt toolkit: {err}")  # non-pretty
         else:
-            self.console = Console(force_terminal=False, no_color=True)
+            self.console = Console(force_terminal=False, no_color=True)  # non-pretty
 
     def read_image(self, filename):
         try:
