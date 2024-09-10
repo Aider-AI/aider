@@ -17,6 +17,8 @@ from pygments.token import Token
 from rich.console import Console
 from rich.style import Style as RichStyle
 from rich.text import Text
+from rich.markdown import Markdown
+from aider.mdstream import MarkdownStream
 
 from .dump import dump  # noqa: F401
 from .utils import is_image_file
@@ -176,6 +178,8 @@ class InputOutput:
         tool_output_color=None,
         tool_error_color="red",
         tool_warning_color="#FFA500",
+        assistant_output_color="blue",
+        code_theme="default",
         encoding="utf-8",
         dry_run=False,
         llm_history_file=None,
@@ -190,6 +194,8 @@ class InputOutput:
         self.tool_output_color = tool_output_color if pretty else None
         self.tool_error_color = tool_error_color if pretty else None
         self.tool_warning_color = tool_warning_color if pretty else None
+        self.assistant_output_color = assistant_output_color
+        self.code_theme = code_theme
 
         self.input = input
         self.output = output
@@ -580,6 +586,27 @@ class InputOutput:
         style = RichStyle(**style)
         self.console.print(*messages, style=style)
 
+    def assistant_output(self, message, stream=False):
+        mdStream = None
+        show_resp = message
+        
+        if self.pretty:
+            if stream:
+                mdargs = dict(style=self.assistant_output_color, code_theme=self.code_theme)
+                mdStream = MarkdownStream(mdargs=mdargs)
+            else:
+                show_resp = Markdown(
+                    message, style=self.assistant_output_color, code_theme=self.code_theme
+                )
+        else:
+            show_resp = Text(message or "<no response>")
+
+        self.console.print(show_resp)
+        return mdStream
+        
+    def print(self, message=""):
+        print(message)
+        
     def append_chat_history(self, text, linebreak=False, blockquote=False, strip=True):
         if blockquote:
             if strip:

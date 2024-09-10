@@ -18,16 +18,12 @@ from datetime import datetime
 from json.decoder import JSONDecodeError
 from pathlib import Path
 
-from rich.console import Console, Text
-from rich.markdown import Markdown
-
 from aider import __version__, models, prompts, urls, utils
 from aider.commands import Commands
 from aider.history import ChatSummary
 from aider.io import ConfirmGroup, InputOutput
 from aider.linter import Linter
 from aider.llm import litellm
-from aider.mdstream import MarkdownStream
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
@@ -241,8 +237,6 @@ class Coder:
         dry_run=False,
         map_tokens=1024,
         verbose=False,
-        assistant_output_color="blue",
-        code_theme="default",
         stream=True,
         use_git=True,
         cur_messages=None,
@@ -315,16 +309,9 @@ class Coder:
 
         self.auto_commits = auto_commits
         self.dirty_commits = dirty_commits
-        self.assistant_output_color = assistant_output_color
-        self.code_theme = code_theme
 
         self.dry_run = dry_run
         self.pretty = self.io.pretty
-
-        if self.pretty:
-            self.console = Console()
-        else:
-            self.console = Console(force_terminal=False, no_color=True)
 
         self.main_model = main_model
 
@@ -1107,11 +1094,7 @@ class Coder:
             utils.show_messages(messages, functions=self.functions)
 
         self.multi_response_content = ""
-        if self.show_pretty() and self.stream:
-            mdargs = dict(style=self.assistant_output_color, code_theme=self.code_theme)
-            self.mdstream = MarkdownStream(mdargs=mdargs)
-        else:
-            self.mdstream = None
+        self.mdstream=self.io.assistant_output("", self.stream)
 
         retry_delay = 0.125
 
@@ -1463,14 +1446,7 @@ class Coder:
             raise Exception("No data found in LLM response!")
 
         show_resp = self.render_incremental_response(True)
-        if self.show_pretty():
-            show_resp = Markdown(
-                show_resp, style=self.assistant_output_color, code_theme=self.code_theme
-            )
-        else:
-            show_resp = Text(show_resp or "<no response>")
-
-        self.io.console.print(show_resp)
+        self.io.assistant_output(show_resp)
 
         if (
             hasattr(completion.choices[0], "finish_reason")

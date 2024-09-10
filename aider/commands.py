@@ -562,8 +562,7 @@ class Commands:
             "HEAD",
         )
 
-        # don't use io.tool_output() because we don't want to log or further colorize
-        print(diff)
+        self.io.print(diff)
 
     def quote_fname(self, fname):
         if " " in fname and '"' not in fname:
@@ -1030,9 +1029,9 @@ class Commands:
 
         if text:
             self.io.add_to_input_history(text)
-            print()
+            self.io.print()
             self.io.user_input(text, log_only=False)
-            print()
+            self.io.print()
 
         return text
 
