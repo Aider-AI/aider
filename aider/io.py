@@ -219,6 +219,17 @@ class InputOutput:
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
 
+        # Initialize PromptSession
+        session_kwargs = {
+            "input": self.input,
+            "output": self.output,
+            "lexer": PygmentsLexer(MarkdownLexer),
+            "editing_mode": self.editingmode,
+        }
+        if self.input_history_file is not None:
+            session_kwargs["history"] = FileHistory(self.input_history_file)
+        self.prompt_session = PromptSession(**session_kwargs)
+
     def read_image(self, filename):
         try:
             with open(str(filename), "rb") as image_file:
@@ -317,38 +328,27 @@ class InputOutput:
             )
         )
 
+        kb = KeyBindings()
+
+        @kb.add("escape", "c-m", eager=True)
+        def _(event):
+            event.current_buffer.insert_text("\n")
+
         while True:
             if multiline_input:
                 show = ". "
 
-            session_kwargs = {
-                "message": show,
-                "completer": completer_instance,
-                "reserve_space_for_menu": 4,
-                "complete_style": CompleteStyle.MULTI_COLUMN,
-                "input": self.input,
-                "output": self.output,
-                "lexer": PygmentsLexer(MarkdownLexer),
-            }
-            if style:
-                session_kwargs["style"] = style
-
-            if self.input_history_file is not None:
-                session_kwargs["history"] = FileHistory(self.input_history_file)
-
-            kb = KeyBindings()
-
-            @kb.add("escape", "c-m", eager=True)
-            def _(event):
-                event.current_buffer.insert_text("\n")
-
-            session = PromptSession(
-                key_bindings=kb, editing_mode=self.editingmode, **session_kwargs
-            )
             try:
-                line = session.prompt()
+                line = self.prompt_session.prompt(
+                    show,
+                    completer=completer_instance,
+                    reserve_space_for_menu=4,
+                    complete_style=CompleteStyle.MULTI_COLUMN,
+                    style=style,
+                    key_bindings=kb,
+                )
             except UnicodeEncodeError as err:
-                self.io.tool_error(str(err))
+                self.tool_error(str(err))
                 return ""
 
             if line and line[0] == "{" and not multiline_input:
