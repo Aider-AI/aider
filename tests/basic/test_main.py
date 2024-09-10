@@ -5,7 +5,7 @@ import tempfile
 from io import StringIO
 from pathlib import Path
 from unittest import TestCase
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch, mock_open
 
 import git
 from prompt_toolkit.input import DummyInput
@@ -29,6 +29,8 @@ class TestMain(TestCase):
         # Fake home directory prevents tests from using the real ~/.aider.conf.yml file:
         self.homedir_obj = IgnorantTemporaryDirectory()
         os.environ["HOME"] = self.homedir_obj.name
+        self.input_patcher = patch('builtins.input', return_value='')
+        self.mock_input = self.input_patcher.start()
 
     def tearDown(self):
         os.chdir(self.original_cwd)
@@ -36,6 +38,7 @@ class TestMain(TestCase):
         self.homedir_obj.cleanup()
         os.environ.clear()
         os.environ.update(self.original_env)
+        self.input_patcher.stop()
 
     def test_main_with_empty_dir_no_files_on_command(self):
         main(["--no-git"], input=DummyInput(), output=DummyOutput())
