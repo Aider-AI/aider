@@ -169,6 +169,16 @@ def get_parser(default_config_files, git_root):
         help="Specify a file with context window and costs for unknown models",
     )
     group.add_argument(
+        "--bos-token",
+        metavar="BOS_TOKEN",
+        help="Specify the beginning of sentence token",
+    )
+    group.add_argument(
+        "--eos-token",
+        metavar="EOS_TOKEN",
+        help="Specify the end of sentence token",
+    )
+    group.add_argument(
         "--verify-ssl",
         action=argparse.BooleanOptionalAction,
         default=True,
