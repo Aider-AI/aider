@@ -549,15 +549,15 @@ def run_test_real(
         chat_history_file=history_fname,
     )
 
-    # ask_model = models.Model("gpt-4o")
-    ask_model = models.Model("openrouter/anthropic/claude-3.5-sonnet")
+    ask_model = models.Model("gpt-4o")
+    # ask_model = models.Model("openrouter/anthropic/claude-3.5-sonnet")
     # ask_model = models.Model("openrouter/deepseek/deepseek-coder")
 
     # whole_model = models.Model("gpt-4o")
     # whole_model = models.Model("openrouter/anthropic/claude-3.5-sonnet")
     # whole_model = models.Model("openrouter/deepseek/deepseek-coder")
-    whole_model = models.Model("openrouter/anthropic/claude-3-haiku-20240307")
-    # whole_model = models.Model("gpt-4o-mini")
+    # whole_model = models.Model("openrouter/anthropic/claude-3-haiku-20240307")
+    whole_model = models.Model("gpt-4o-mini")
 
     main_model = ask_model
     edit_format = "ask-whole"
@@ -618,7 +618,7 @@ def run_test_real(
             whole_coder = Coder.create(
                 from_coder=coder,
                 main_model=whole_model,
-                edit_format="diff",
+                edit_format="whole",
                 **coder_kwargs,
             )
             response = whole_coder.run(with_message="make those changes", preproc=False)
