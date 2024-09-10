@@ -272,23 +272,23 @@ class TestMain(TestCase):
         self.assertEqual(args[1], None)
 
     def test_dark_mode_sets_code_theme(self):
-        # Mock Coder.create to capture the configuration
-        with patch("aider.coders.Coder.create") as MockCoder:
+        # Mock InputOutput to capture the configuration
+        with patch("aider.main.InputOutput") as MockInputOutput:
             main(["--dark-mode", "--no-git"], input=DummyInput(), output=DummyOutput())
-            # Ensure Coder.create was called
-            MockCoder.assert_called_once()
+            # Ensure InputOutput was called
+            MockInputOutput.assert_called_once()
             # Check if the code_theme setting is for dark mode
-            _, kwargs = MockCoder.call_args
+            _, kwargs = MockInputOutput.call_args
             self.assertEqual(kwargs["code_theme"], "monokai")
 
     def test_light_mode_sets_code_theme(self):
-        # Mock Coder.create to capture the configuration
-        with patch("aider.coders.Coder.create") as MockCoder:
+        # Mock InputOutput to capture the configuration
+        with patch("aider.main.InputOutput") as MockInputOutput:
             main(["--light-mode", "--no-git"], input=DummyInput(), output=DummyOutput())
-            # Ensure Coder.create was called
-            MockCoder.assert_called_once()
+            # Ensure InputOutput was called
+            MockInputOutput.assert_called_once()
             # Check if the code_theme setting is for light mode
-            _, kwargs = MockCoder.call_args
+            _, kwargs = MockInputOutput.call_args
             self.assertEqual(kwargs["code_theme"], "default")
 
     def create_env_file(self, file_name, content):
@@ -298,25 +298,25 @@ class TestMain(TestCase):
 
     def test_env_file_flag_sets_automatic_variable(self):
         env_file_path = self.create_env_file(".env.test", "AIDER_DARK_MODE=True")
-        with patch("aider.coders.Coder.create") as MockCoder:
+        with patch("aider.main.InputOutput") as MockInputOutput:
             main(
                 ["--env-file", str(env_file_path), "--no-git"],
                 input=DummyInput(),
                 output=DummyOutput(),
             )
-            MockCoder.assert_called_once()
+            MockInputOutput.assert_called_once()
             # Check if the color settings are for dark mode
-            _, kwargs = MockCoder.call_args
+            _, kwargs = MockInputOutput.call_args
             self.assertEqual(kwargs["code_theme"], "monokai")
 
     def test_default_env_file_sets_automatic_variable(self):
         self.create_env_file(".env", "AIDER_DARK_MODE=True")
-        with patch("aider.coders.Coder.create") as MockCoder:
+        with patch("aider.main.InputOutput") as MockInputOutput:
             main(["--no-git"], input=DummyInput(), output=DummyOutput())
-            # Ensure Coder.create was called
-            MockCoder.assert_called_once()
+            # Ensure InputOutput was called
+            MockInputOutput.assert_called_once()
             # Check if the color settings are for dark mode
-            _, kwargs = MockCoder.call_args
+            _, kwargs = MockInputOutput.call_args
             self.assertEqual(kwargs["code_theme"], "monokai")
 
     def test_false_vals_in_env_file(self):
