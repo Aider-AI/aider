@@ -213,9 +213,9 @@ aider/coder.py
 
 aider/coder.py
 <<<<<<< SEARCH
-            self.console.print("[red]Skipped commmit.")
+            self.console.print("[red]Skipped commit.")
 =======
-            self.io.tool_error("Skipped commmit.")
+            self.io.tool_error("Skipped commit.")
 >>>>>>> REPLACE"""
 
         # Should not raise a ValueError

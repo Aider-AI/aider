@@ -37,7 +37,7 @@ If you still wish to add lots of files to the chat, you can:
 
 - Use a wildcard when you launch aider: `aider src/*.py`
 - Use a wildcard with the in-chat `/add` command: `/add src/*.py`
-- Give the `/add` command a directory name and it will recurisvely add every file under that dir: `/add src`
+- Give the `/add` command a directory name and it will recursively add every file under that dir: `/add src`
 
 ## Can I use aider in a large (mono) repo?
 
