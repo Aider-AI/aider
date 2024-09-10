@@ -28,6 +28,15 @@ class TestModels(unittest.TestCase):
         model = Model("gpt-4-0613")
         self.assertEqual(model.info["max_input_tokens"], 8 * 1024)
 
+    def test_model_bos_eos_tokens(self):
+        model = Model("gpt-4", bos_token="<BOS>", eos_token="<EOS>")
+        self.assertEqual(model.bos_token, "<BOS>")
+        self.assertEqual(model.eos_token, "<EOS>")
+
+        model = Model("gpt-4")
+        self.assertIsNone(model.bos_token)
+        self.assertIsNone(model.eos_token)
+
     @patch("os.environ")
     def test_sanity_check_model_all_set(self, mock_environ):
         mock_environ.get.return_value = "dummy_value"
@@ -37,6 +46,8 @@ class TestModels(unittest.TestCase):
         model.missing_keys = ["API_KEY1", "API_KEY2"]
         model.keys_in_environment = True
         model.info = {"some": "info"}
+        model.bos_token = "<BOS>"
+        model.eos_token = "<EOS>"
 
         sanity_check_model(mock_io, model)
 
@@ -44,6 +55,8 @@ class TestModels(unittest.TestCase):
         calls = mock_io.tool_output.call_args_list
         self.assertIn("- API_KEY1: ✓ Set", str(calls))
         self.assertIn("- API_KEY2: ✓ Set", str(calls))
+        self.assertIn("BOS token: <BOS>", str(calls))
+        self.assertIn("EOS token: <EOS>", str(calls))
 
     @patch("os.environ")
     def test_sanity_check_model_not_set(self, mock_environ):
@@ -54,6 +67,8 @@ class TestModels(unittest.TestCase):
         model.missing_keys = ["API_KEY1", "API_KEY2"]
         model.keys_in_environment = True
         model.info = {"some": "info"}
+        model.bos_token = None
+        model.eos_token = None
 
         sanity_check_model(mock_io, model)
 
@@ -61,6 +76,8 @@ class TestModels(unittest.TestCase):
         calls = mock_io.tool_output.call_args_list
         self.assertIn("- API_KEY1: ✗ Not set", str(calls))
         self.assertIn("- API_KEY2: ✗ Not set", str(calls))
+        self.assertIn("BOS token: Not set", str(calls))
+        self.assertIn("EOS token: Not set", str(calls))
 
 
 if __name__ == "__main__":

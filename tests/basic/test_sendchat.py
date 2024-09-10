@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 import httpx
 
 from aider.llm import litellm
-from aider.sendchat import simple_send_with_retries
+from aider.sendchat import simple_send_with_retries, send_completion
 
 
 class PrintCalled(Exception):
@@ -45,3 +45,40 @@ class TestSendChat(unittest.TestCase):
         # Call the simple_send_with_retries method
         simple_send_with_retries("model", ["message"])
         mock_print.assert_called_once()
+
+    @patch("litellm.completion")
+    def test_send_completion_with_bos_eos_tokens(self, mock_completion):
+        model_name = "test-model"
+        messages = [{"role": "user", "content": "Hello"}]
+        functions = None
+        stream = False
+        bos_token = "<BOS>"
+        eos_token = "<EOS>"
+
+        send_completion(
+            model_name,
+            messages,
+            functions,
+            stream,
+            bos_token=bos_token,
+            eos_token=eos_token,
+        )
+
+        mock_completion.assert_called_once()
+        kwargs = mock_completion.call_args[1]
+        self.assertEqual(kwargs["bos_token"], "<BOS>")
+        self.assertEqual(kwargs["eos_token"], "<EOS>")
+
+    @patch("litellm.completion")
+    def test_send_completion_without_bos_eos_tokens(self, mock_completion):
+        model_name = "test-model"
+        messages = [{"role": "user", "content": "Hello"}]
+        functions = None
+        stream = False
+
+        send_completion(model_name, messages, functions, stream)
+
+        mock_completion.assert_called_once()
+        kwargs = mock_completion.call_args[1]
+        self.assertNotIn("bos_token", kwargs)
+        self.assertNotIn("eos_token", kwargs)
