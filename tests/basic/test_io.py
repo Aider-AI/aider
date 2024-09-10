@@ -1,3 +1,4 @@
+import builtins
 import os
 import unittest
 from pathlib import Path
@@ -5,7 +6,6 @@ from unittest.mock import MagicMock, patch
 
 from aider.dump import dump  # noqa: F401
 from aider.io import AutoCompleter, ConfirmGroup, InputOutput
-import builtins
 from aider.utils import ChdirTemporaryDirectory
 
 
