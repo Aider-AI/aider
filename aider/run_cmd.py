@@ -26,12 +26,27 @@ def run_cmd_subprocess(command, verbose=False):
     if verbose:
         print("Using run_cmd_subprocess:", command)
     try:
+        # Determine the appropriate shell
+        if platform.system() == "Windows":
+            # Use PowerShell if it's the parent process
+            if "powershell" in os.environ.get("PSModulePath", "").lower():
+                shell = "powershell"
+                command = f"powershell -Command {command}"
+            else:
+                shell = "cmd"
+        else:
+            shell = os.environ.get("SHELL", "/bin/sh")
+
+        if verbose:
+            print(f"Using shell: {shell}")
+
         process = subprocess.Popen(
             command,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
             shell=True,
+            executable=shell,
             encoding=sys.stdout.encoding,
             errors="replace",
             bufsize=1,
