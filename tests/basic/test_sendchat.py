@@ -82,3 +82,70 @@ class TestSendChat(unittest.TestCase):
         kwargs = mock_completion.call_args[1]
         self.assertNotIn("bos_token", kwargs)
         self.assertNotIn("eos_token", kwargs)
+
+    @patch("litellm.completion")
+    def test_send_completion_with_only_bos_token(self, mock_completion):
+        model_name = "test-model"
+        messages = [{"role": "user", "content": "Hello"}]
+        functions = None
+        stream = False
+        bos_token = "<BOS>"
+
+        send_completion(
+            model_name,
+            messages,
+            functions,
+            stream,
+            bos_token=bos_token,
+        )
+
+        mock_completion.assert_called_once()
+        kwargs = mock_completion.call_args[1]
+        self.assertEqual(kwargs["bos_token"], "<BOS>")
+        self.assertNotIn("eos_token", kwargs)
+
+    @patch("litellm.completion")
+    def test_send_completion_with_only_eos_token(self, mock_completion):
+        model_name = "test-model"
+        messages = [{"role": "user", "content": "Hello"}]
+        functions = None
+        stream = False
+        eos_token = "<EOS>"
+
+        send_completion(
+            model_name,
+            messages,
+            functions,
+            stream,
+            eos_token=eos_token,
+        )
+
+        mock_completion.assert_called_once()
+        kwargs = mock_completion.call_args[1]
+        self.assertNotIn("bos_token", kwargs)
+        self.assertEqual(kwargs["eos_token"], "<EOS>")
+
+    @patch("litellm.completion")
+    def test_send_completion_bos_eos_tokens_passed_to_litellm(self, mock_completion):
+        model_name = "test-model"
+        messages = [{"role": "user", "content": "Hello"}]
+        functions = None
+        stream = False
+        bos_token = "<BOS>"
+        eos_token = "<EOS>"
+
+        send_completion(
+            model_name,
+            messages,
+            functions,
+            stream,
+            bos_token=bos_token,
+            eos_token=eos_token,
+        )
+
+        mock_completion.assert_called_once()
+        _, kwargs = mock_completion.call_args
+        self.assertEqual(kwargs["bos_token"], "<BOS>")
+        self.assertEqual(kwargs["eos_token"], "<EOS>")
+        self.assertIn("bos_token", kwargs)
+        self.assertIn("eos_token", kwargs)
