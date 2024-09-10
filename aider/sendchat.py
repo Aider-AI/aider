@@ -54,6 +54,8 @@ def send_completion(
     temperature=0,
     extra_headers=None,
     max_tokens=None,
+    bos_token=None,
+    eos_token=None,
 ):
     from aider.llm import litellm
 
@@ -63,6 +65,10 @@ def send_completion(
         temperature=temperature,
         stream=stream,
     )
+    if bos_token is not None:
+        kwargs["bos_token"] = bos_token
+    if eos_token is not None:
+        kwargs["eos_token"] = eos_token
 
     if functions is not None:
         function = functions[0]

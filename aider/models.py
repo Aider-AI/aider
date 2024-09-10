@@ -77,6 +77,8 @@ class ModelSettings:
     max_tokens: Optional[int] = None
     cache_control: bool = False
     caches_by_default: bool = False
+    bos_token: Optional[str] = None
+    eos_token: Optional[str] = None
 
 
 # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
@@ -476,10 +478,12 @@ def get_model_info(model):
 
 
 class Model(ModelSettings):
-    def __init__(self, model, weak_model=None):
+    def __init__(self, model, weak_model=None, bos_token=None, eos_token=None):
         self.name = model
         self.max_chat_history_tokens = 1024
         self.weak_model = None
+        self.bos_token = bos_token
+        self.eos_token = eos_token
 
         self.info = self.get_model_info(model)
 

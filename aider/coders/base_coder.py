@@ -99,6 +99,8 @@ class Coder:
         io=None,
         from_coder=None,
         summarize_from_coder=True,
+        bos_token=None,
+        eos_token=None,
         **kwargs,
     ):
         import aider.coders as coders
@@ -107,7 +109,7 @@ class Coder:
             if from_coder:
                 main_model = from_coder.main_model
             else:
-                main_model = models.Model(models.DEFAULT_MODEL_NAME)
+                main_model = models.Model(models.DEFAULT_MODEL_NAME, bos_token=bos_token, eos_token=eos_token)
 
         if edit_format == "code":
             edit_format = None

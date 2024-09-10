@@ -517,7 +517,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         if os.environ.get("ANTHROPIC_API_KEY"):
             args.model = "claude-3-5-sonnet-20240620"
 
-    main_model = models.Model(args.model, weak_model=args.weak_model)
+    main_model = models.Model(args.model, weak_model=args.weak_model, bos_token=args.bos_token, eos_token=args.eos_token)
 
     if args.verbose:
         io.tool_output("Model info:")
