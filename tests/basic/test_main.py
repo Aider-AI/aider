@@ -41,22 +41,22 @@ class TestMain(TestCase):
         self.input_patcher.stop()
 
     def test_main_with_empty_dir_no_files_on_command(self):
-        main(["--no-git"], input=DummyInput(), output=DummyOutput())
+        main(["--no-git", "--exit"], input=DummyInput(), output=DummyOutput())
 
     def test_main_with_emptqy_dir_new_file(self):
-        main(["foo.txt", "--yes", "--no-git"], input=DummyInput(), output=DummyOutput())
+        main(["foo.txt", "--yes", "--no-git", "--exit"], input=DummyInput(), output=DummyOutput())
         self.assertTrue(os.path.exists("foo.txt"))
 
     @patch("aider.repo.GitRepo.get_commit_message", return_value="mock commit message")
     def test_main_with_empty_git_dir_new_file(self, _):
         make_repo()
-        main(["--yes", "foo.txt"], input=DummyInput(), output=DummyOutput())
+        main(["--yes", "foo.txt", "--exit"], input=DummyInput(), output=DummyOutput())
         self.assertTrue(os.path.exists("foo.txt"))
 
     @patch("aider.repo.GitRepo.get_commit_message", return_value="mock commit message")
     def test_main_with_empty_git_dir_new_files(self, _):
         make_repo()
-        main(["--yes", "foo.txt", "bar.txt"], input=DummyInput(), output=DummyOutput())
+        main(["--yes", "foo.txt", "bar.txt", "--exit"], input=DummyInput(), output=DummyOutput())
         self.assertTrue(os.path.exists("foo.txt"))
         self.assertTrue(os.path.exists("bar.txt"))
 
@@ -73,7 +73,7 @@ class TestMain(TestCase):
         subdir.mkdir()
         make_repo(str(subdir))
         main(
-            ["--yes", str(subdir / "foo.txt"), str(subdir / "bar.txt")],
+            ["--yes", str(subdir / "foo.txt"), str(subdir / "bar.txt"), "--exit"],
             input=DummyInput(),
             output=DummyOutput(),
         )
@@ -107,7 +107,7 @@ class TestMain(TestCase):
         # This will throw a git error on windows if get_tracked_files doesn't
         # properly convert git/posix/paths to git\posix\paths.
         # Because aider will try and `git add` a file that's already in the repo.
-        main(["--yes", str(fname)], input=DummyInput(), output=DummyOutput())
+        main(["--yes", str(fname), "--exit"], input=DummyInput(), output=DummyOutput())
 
     def test_setup_git(self):
         io = InputOutput(pretty=False, yes=True)
@@ -371,7 +371,7 @@ class TestMain(TestCase):
     def test_verbose_mode_lists_env_vars(self):
         self.create_env_file(".env", "AIDER_DARK_MODE=on")
         with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
-            main(["--no-git", "--verbose"], input=DummyInput(), output=DummyOutput())
+            main(["--no-git", "--verbose", "--exit"], input=DummyInput(), output=DummyOutput())
             output = mock_stdout.getvalue()
             relevant_output = "\n".join(
                 line
