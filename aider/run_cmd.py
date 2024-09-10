@@ -25,22 +25,18 @@ def run_cmd(command, verbose=False, error_print=None):
 def run_cmd_subprocess(command, verbose=False):
     if verbose:
         print("Using run_cmd_subprocess:", command)
+
     try:
+        shell = os.environ.get("SHELL", "/bin/sh")
+        PSModulePath = os.environ.get("PSModulePath", "")
         # Determine the appropriate shell
-        if platform.system() == "Windows":
-            # Use PowerShell if it's the parent process
-            if "powershell" in os.environ.get("PSModulePath", "").lower():
-                shell = "powershell"
-                command = (
-                    f'powershell -ExecutionPolicy Bypass -Command "& {{({command}) | Out-String}}"'
-                )
-            else:
-                shell = "cmd"
-        else:
-            shell = os.environ.get("SHELL", "/bin/sh")
+        if platform.system() == "Windows" and "powershell" in PSModulePath.lower():
+            command = f"powershell -Command {command}"
 
         if verbose:
-            print(f"Using shell: {shell}")
+            print("Running command:", command)
+            print("SHELL:", shell)
+            print("PSModulePath:", PSModulePath)
 
         process = subprocess.Popen(
             command,
@@ -48,7 +44,6 @@ def run_cmd_subprocess(command, verbose=False):
             stderr=subprocess.STDOUT,
             text=True,
             shell=True,
-            executable=shell,
             encoding=sys.stdout.encoding,
             errors="replace",
             bufsize=1,
