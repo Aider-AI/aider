@@ -1122,12 +1122,17 @@ class Commands:
         for root, _, files in os.walk(abs_path):
             for file in files:
                 file_path = os.path.join(root, file)
-                if file_path not in self.coder.abs_fnames and file_path not in self.coder.abs_read_only_fnames:
+                if (
+                    file_path not in self.coder.abs_fnames
+                    and file_path not in self.coder.abs_read_only_fnames
+                ):
                     self.coder.abs_read_only_fnames.add(file_path)
                     added_files += 1
-        
+
         if added_files > 0:
-            self.io.tool_output(f"Added {added_files} files from directory {original_name} to read-only files.")
+            self.io.tool_output(
+                f"Added {added_files} files from directory {original_name} to read-only files."
+            )
         else:
             self.io.tool_output(f"No new files added from directory {original_name}.")
 
