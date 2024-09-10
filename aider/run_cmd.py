@@ -31,7 +31,7 @@ def run_cmd_subprocess(command, verbose=False):
             # Use PowerShell if it's the parent process
             if "powershell" in os.environ.get("PSModulePath", "").lower():
                 shell = "powershell"
-                command = f"powershell -Command {command}"
+                command = f'powershell -ExecutionPolicy Bypass -Command "& {{({command}) | Out-String}}"'
             else:
                 shell = "cmd"
         else:
