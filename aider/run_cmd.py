@@ -71,7 +71,7 @@ def run_cmd_subprocess(command, verbose=False):
 
         output = []
         while True:
-            chunk = process.stdout.read(1024)  # Read in 1KB chunks
+            chunk = process.stdout.read(1)
             if not chunk:
                 break
             print(chunk, end="", flush=True)  # Print the chunk in real-time
