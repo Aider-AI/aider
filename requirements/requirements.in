@@ -25,6 +25,7 @@ importlib_resources
 pyperclip
 pexpect
 json5
+psutil
 
 # The proper depdendency is networkx[default], but this brings
 # in matplotlib and a bunch of other deps
