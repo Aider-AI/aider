@@ -478,7 +478,7 @@ class InputOutput:
                     )
                 else:
                     res = input(question)
-                
+
                 if not res:
                     res = "y"  # Default to Yes if no input
                     break
