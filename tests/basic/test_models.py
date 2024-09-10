@@ -38,7 +38,7 @@ class TestModels(unittest.TestCase):
         self.assertIsNone(model.eos_token)
 
     @patch("os.environ")
-    def test_sanity_check_model_all_set(self, mock_environ):
+    def test_sanity_check_model_with_bos_eos(self, mock_environ):
         mock_environ.get.return_value = "dummy_value"
         mock_io = MagicMock()
         model = MagicMock()
@@ -52,14 +52,14 @@ class TestModels(unittest.TestCase):
         sanity_check_model(mock_io, model)
 
         mock_io.tool_output.assert_called()
-        calls = mock_io.tool_output.call_args_list
-        self.assertIn("- API_KEY1: ✓ Set", str(calls))
-        self.assertIn("- API_KEY2: ✓ Set", str(calls))
-        self.assertIn("BOS token: <BOS>", str(calls))
-        self.assertIn("EOS token: <EOS>", str(calls))
+        calls = [call[0][0] for call in mock_io.tool_output.call_args_list]
+        self.assertIn("- API_KEY1: ✓ Set", calls)
+        self.assertIn("- API_KEY2: ✓ Set", calls)
+        self.assertIn("BOS token: <BOS>", calls)
+        self.assertIn("EOS token: <EOS>", calls)
 
     @patch("os.environ")
-    def test_sanity_check_model_not_set(self, mock_environ):
+    def test_sanity_check_model_without_bos_eos(self, mock_environ):
         mock_environ.get.return_value = ""
         mock_io = MagicMock()
         model = MagicMock()
@@ -73,11 +73,11 @@ class TestModels(unittest.TestCase):
         sanity_check_model(mock_io, model)
 
         mock_io.tool_output.assert_called()
-        calls = mock_io.tool_output.call_args_list
-        self.assertIn("- API_KEY1: ✗ Not set", str(calls))
-        self.assertIn("- API_KEY2: ✗ Not set", str(calls))
-        self.assertIn("BOS token: Not set", str(calls))
-        self.assertIn("EOS token: Not set", str(calls))
+        calls = [call[0][0] for call in mock_io.tool_output.call_args_list]
+        self.assertIn("- API_KEY1: ✗ Not set", calls)
+        self.assertIn("- API_KEY2: ✗ Not set", calls)
+        self.assertNotIn("BOS token:", " ".join(calls))
+        self.assertNotIn("EOS token:", " ".join(calls))
 
 
 if __name__ == "__main__":

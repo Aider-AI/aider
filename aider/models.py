@@ -775,6 +775,12 @@ def sanity_check_model(io, model):
             for match in possible_matches:
                 io.tool_output(f"- {match}")
 
+    if model.bos_token:
+        io.tool_output(f"BOS token: {model.bos_token}")
+
+    if model.eos_token:
+        io.tool_output(f"EOS token: {model.eos_token}")
+
     if show:
         io.tool_output(f"For more info, see: {urls.model_warnings}")
 
