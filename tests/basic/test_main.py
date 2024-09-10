@@ -5,7 +5,7 @@ import tempfile
 from io import StringIO
 from pathlib import Path
 from unittest import TestCase
-from unittest.mock import MagicMock, patch, mock_open
+from unittest.mock import MagicMock, mock_open, patch
 
 import git
 from prompt_toolkit.input import DummyInput
@@ -29,7 +29,7 @@ class TestMain(TestCase):
         # Fake home directory prevents tests from using the real ~/.aider.conf.yml file:
         self.homedir_obj = IgnorantTemporaryDirectory()
         os.environ["HOME"] = self.homedir_obj.name
-        self.input_patcher = patch('builtins.input', return_value='')
+        self.input_patcher = patch("builtins.input", return_value="")
         self.mock_input = self.input_patcher.start()
 
     def tearDown(self):
