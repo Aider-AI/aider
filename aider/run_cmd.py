@@ -6,7 +6,6 @@ import sys
 from io import BytesIO
 
 import pexpect
-import psutil
 
 
 def run_cmd(command, verbose=False, error_print=None):
@@ -24,7 +23,7 @@ def run_cmd(command, verbose=False, error_print=None):
         return 1, error_message
 
 
-def get_parent_process_name():
+def get_windows_parent_process_name():
     try:
         if platform.system() == "Windows":
             kernel32 = ctypes.windll.kernel32
@@ -37,7 +36,7 @@ def get_parent_process_name():
             return os.path.basename(exe_path.value).lower()
         else:
             return psutil.Process(os.getppid()).name().lower()
-    except:
+    except Exception:
         return None
 
 
