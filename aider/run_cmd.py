@@ -6,6 +6,7 @@ import sys
 from io import BytesIO
 
 import pexpect
+import psutil
 
 
 def run_cmd(command, verbose=False, error_print=None):
@@ -25,14 +26,16 @@ def run_cmd(command, verbose=False, error_print=None):
 
 def get_windows_parent_process_name():
     try:
-        kernel32 = ctypes.windll.kernel32
-        h_process = kernel32.OpenProcess(0x0400, False, os.getppid())
-        exe_path = ctypes.create_unicode_buffer(260)
-        kernel32.QueryFullProcessImageNameW(
-            h_process, 0, exe_path, ctypes.byref(ctypes.c_ulong(260))
-        )
-        kernel32.CloseHandle(h_process)
-        return os.path.basename(exe_path.value).lower()
+        current_process = psutil.Process()
+        while True:
+            parent = current_process.parent()
+            if parent is None:
+                break
+            parent_name = parent.name().lower()
+            if parent_name in ['powershell.exe', 'cmd.exe']:
+                return parent_name
+            current_process = parent
+        return None
     except Exception:
         return None
 
