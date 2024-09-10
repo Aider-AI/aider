@@ -50,7 +50,6 @@ def run_cmd_subprocess(command, verbose=False):
             parent_process = get_windows_parent_process_name()
             if parent_process == "powershell.exe":
                 command = f"powershell -Command {command}"
-            # else: Assume cmd.exe or other Windows shell, use the command as-is
 
         if verbose:
             print("Running command:", command)
@@ -66,14 +65,17 @@ def run_cmd_subprocess(command, verbose=False):
             shell=True,
             encoding=sys.stdout.encoding,
             errors="replace",
-            bufsize=1,
+            bufsize=0,  # Set bufsize to 0 for unbuffered output
             universal_newlines=True,
         )
 
         output = []
-        for line in process.stdout:
-            print(line, end="")  # Print the line in real-time
-            output.append(line)  # Store the line for later use
+        while True:
+            chunk = process.stdout.read(1024)  # Read in 1KB chunks
+            if not chunk:
+                break
+            print(chunk, end="", flush=True)  # Print the chunk in real-time
+            output.append(chunk)  # Store the chunk for later use
 
         process.wait()
         return process.returncode, "".join(output)
