@@ -219,16 +219,18 @@ class InputOutput:
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
 
-        # Initialize PromptSession
-        session_kwargs = {
-            "input": self.input,
-            "output": self.output,
-            "lexer": PygmentsLexer(MarkdownLexer),
-            "editing_mode": self.editingmode,
-        }
-        if self.input_history_file is not None:
-            session_kwargs["history"] = FileHistory(self.input_history_file)
-        self.prompt_session = PromptSession(**session_kwargs)
+        self.prompt_session = None
+        if self.pretty:
+            # Initialize PromptSession
+            session_kwargs = {
+                "input": self.input,
+                "output": self.output,
+                "lexer": PygmentsLexer(MarkdownLexer),
+                "editing_mode": self.editingmode,
+            }
+            if self.input_history_file is not None:
+                session_kwargs["history"] = FileHistory(self.input_history_file)
+            self.prompt_session = PromptSession(**session_kwargs)
 
     def read_image(self, filename):
         try:
@@ -339,14 +341,17 @@ class InputOutput:
                 show = ". "
 
             try:
-                line = self.prompt_session.prompt(
-                    show,
-                    completer=completer_instance,
-                    reserve_space_for_menu=4,
-                    complete_style=CompleteStyle.MULTI_COLUMN,
-                    style=style,
-                    key_bindings=kb,
-                )
+                if self.prompt_session:
+                    line = self.prompt_session.prompt(
+                        show,
+                        completer=completer_instance,
+                        reserve_space_for_menu=4,
+                        complete_style=CompleteStyle.MULTI_COLUMN,
+                        style=style,
+                        key_bindings=kb,
+                    )
+                else:
+                    line = input(show)
             except UnicodeEncodeError as err:
                 self.tool_error(str(err))
                 return ""
@@ -519,7 +524,10 @@ class InputOutput:
         elif self.yes is False:
             res = "no"
         else:
-            res = self.prompt_session.prompt(question + " ", default=default, style=style)
+            if self.prompt_session:
+                res = self.prompt_session.prompt(question + " ", default=default, style=style)
+            else:
+                res = input(question + " ")
 
         hist = f"{question.strip()} {res.strip()}"
         self.append_chat_history(hist, linebreak=True, blockquote=True)
