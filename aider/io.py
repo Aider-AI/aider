@@ -210,11 +210,6 @@ class InputOutput:
         self.encoding = encoding
         self.dry_run = dry_run
 
-        if pretty:
-            self.console = Console()
-        else:
-            self.console = Console(force_terminal=False, no_color=True)
-
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
 
@@ -229,7 +224,16 @@ class InputOutput:
             }
             if self.input_history_file is not None:
                 session_kwargs["history"] = FileHistory(self.input_history_file)
-            self.prompt_session = PromptSession(**session_kwargs)
+            try:
+                self.prompt_session = PromptSession(**session_kwargs)
+            except Exception as err:
+                self.tool_error(f"Can't initialize prompt toolkit: {err}")
+                self.pretty = False
+
+        if self.pretty:
+            self.console = Console()
+        else:
+            self.console = Console(force_terminal=False, no_color=True)
 
     def read_image(self, filename):
         try:
