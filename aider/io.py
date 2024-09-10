@@ -471,10 +471,14 @@ class InputOutput:
             self.user_input(f"{question}{res}", log_only=False)
         else:
             while True:
-                res = prompt(
-                    question,
-                    style=Style.from_dict(style),
-                )
+                if self.prompt_session:
+                    res = self.prompt_session.prompt(
+                        question,
+                        style=Style.from_dict(style),
+                    )
+                else:
+                    res = input(question)
+                
                 if not res:
                     res = "y"  # Default to Yes if no input
                     break
