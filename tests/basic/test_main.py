@@ -29,7 +29,7 @@ class TestMain(TestCase):
         # Fake home directory prevents tests from using the real ~/.aider.conf.yml file:
         self.homedir_obj = IgnorantTemporaryDirectory()
         os.environ["HOME"] = self.homedir_obj.name
-        self.input_patcher = patch("builtins.input", return_value="")
+        self.input_patcher = patch("builtins.input", return_value=None)
         self.mock_input = self.input_patcher.start()
 
     def tearDown(self):
@@ -274,7 +274,8 @@ class TestMain(TestCase):
     def test_dark_mode_sets_code_theme(self):
         # Mock InputOutput to capture the configuration
         with patch("aider.main.InputOutput") as MockInputOutput:
-            main(["--dark-mode", "--no-git"], input=DummyInput(), output=DummyOutput())
+            MockInputOutput.return_value.get_input.return_value = None
+            main(["--dark-mode", "--no-git", "--exit"], input=DummyInput(), output=DummyOutput())
             # Ensure InputOutput was called
             MockInputOutput.assert_called_once()
             # Check if the code_theme setting is for dark mode
@@ -284,7 +285,8 @@ class TestMain(TestCase):
     def test_light_mode_sets_code_theme(self):
         # Mock InputOutput to capture the configuration
         with patch("aider.main.InputOutput") as MockInputOutput:
-            main(["--light-mode", "--no-git"], input=DummyInput(), output=DummyOutput())
+            MockInputOutput.return_value.get_input.return_value = None
+            main(["--light-mode", "--no-git", "--exit"], input=DummyInput(), output=DummyOutput())
             # Ensure InputOutput was called
             MockInputOutput.assert_called_once()
             # Check if the code_theme setting is for light mode
@@ -299,8 +301,10 @@ class TestMain(TestCase):
     def test_env_file_flag_sets_automatic_variable(self):
         env_file_path = self.create_env_file(".env.test", "AIDER_DARK_MODE=True")
         with patch("aider.main.InputOutput") as MockInputOutput:
+            MockInputOutput.return_value.get_input.return_value = None
+            MockInputOutput.return_value.get_input.confirm_ask = True
             main(
-                ["--env-file", str(env_file_path), "--no-git"],
+                ["--env-file", str(env_file_path), "--no-git", "--exit"],
                 input=DummyInput(),
                 output=DummyOutput(),
             )
@@ -312,7 +316,9 @@ class TestMain(TestCase):
     def test_default_env_file_sets_automatic_variable(self):
         self.create_env_file(".env", "AIDER_DARK_MODE=True")
         with patch("aider.main.InputOutput") as MockInputOutput:
-            main(["--no-git"], input=DummyInput(), output=DummyOutput())
+            MockInputOutput.return_value.get_input.return_value = None
+            MockInputOutput.return_value.get_input.confirm_ask = True
+            main(["--no-git", "--exit"], input=DummyInput(), output=DummyOutput())
             # Ensure InputOutput was called
             MockInputOutput.assert_called_once()
             # Check if the color settings are for dark mode
