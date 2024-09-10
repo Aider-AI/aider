@@ -65,10 +65,29 @@ def send_completion(
         temperature=temperature,
         stream=stream,
     )
-    if bos_token is not None:
+    if bos_token is not None and eos_token is not None:
+        litellm.register_prompt_template(
+            model=model_name,
+            initial_prompt_value="\n",
+            roles={
+                "system": {"pre_message": f'"{bos_token}system\n"', "post_message": eos_token},
+                "assistant": {
+                    "pre_message": f'"{bos_token}assistant\n"',
+                    "post_message": eos_token,
+                },
+                "user": {"pre_message": f'"{bos_token}user\n"', "post_message": eos_token},
+            },
+            final_prompt_value="\n",
+        )
         kwargs["bos_token"] = bos_token
-    if eos_token is not None:
         kwargs["eos_token"] = eos_token
+        kwargs["roles"] = {
+            "system": {"pre_message": f'"{bos_token}system\n"', "post_message": eos_token},
+            "assistant": {"pre_message": f'"{bos_token}assistant\n"', "post_message": eos_token},
+            "user": {"pre_message": f'"{bos_token}user\n"', "post_message": eos_token},
+        }
+        kwargs["initial_prompt_value"] = "\n"
+        kwargs["final_prompt_value"] = "\n"
 
     if functions is not None:
         function = functions[0]

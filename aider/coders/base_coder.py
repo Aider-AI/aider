@@ -109,7 +109,9 @@ class Coder:
             if from_coder:
                 main_model = from_coder.main_model
             else:
-                main_model = models.Model(models.DEFAULT_MODEL_NAME, bos_token=bos_token, eos_token=eos_token)
+                main_model = models.Model(
+                    models.DEFAULT_MODEL_NAME, bos_token=bos_token, eos_token=eos_token
+                )
 
         if edit_format == "code":
             edit_format = None
@@ -1386,6 +1388,8 @@ class Coder:
                 self.temperature,
                 extra_headers=model.extra_headers,
                 max_tokens=model.max_tokens,
+                bos_token=model.bos_token,
+                eos_token=model.eos_token,
             )
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
 
