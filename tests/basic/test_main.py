@@ -5,7 +5,7 @@ import tempfile
 from io import StringIO
 from pathlib import Path
 from unittest import TestCase
-from unittest.mock import MagicMock, mock_open, patch
+from unittest.mock import MagicMock, patch
 
 import git
 from prompt_toolkit.input import DummyInput
