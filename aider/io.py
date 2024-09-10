@@ -519,7 +519,11 @@ class InputOutput:
         elif self.yes is False:
             res = "no"
         else:
-            res = prompt(question + " ", default=default, style=style)
+            res = self.prompt_session.prompt(
+                question + " ",
+                default=default,
+                style=style
+            )
 
         hist = f"{question.strip()} {res.strip()}"
         self.append_chat_history(hist, linebreak=True, blockquote=True)
