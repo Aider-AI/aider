@@ -32,7 +32,7 @@ def get_windows_parent_process_name():
             if parent is None:
                 break
             parent_name = parent.name().lower()
-            if parent_name in ['powershell.exe', 'cmd.exe']:
+            if parent_name in ["powershell.exe", "cmd.exe"]:
                 return parent_name
             current_process = parent
         return None
