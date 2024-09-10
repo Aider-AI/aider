@@ -70,3 +70,4 @@ write_to = "aider/__version__.py"
 
 [tool.codespell]
 skip = "*.svg,Gemfile.lock"
+write-changes = true
