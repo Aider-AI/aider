@@ -339,6 +339,19 @@ MODEL_SETTINGS = [
         weak_model_name="command-r-plus",
         use_repo_map=True,
     ),
+    # New Cohere models
+    ModelSettings(
+        "command-r-08-2024",
+        "whole",
+        weak_model_name="command-r-08-2024",
+        use_repo_map=True,
+    ),
+    ModelSettings(
+        "command-r-plus-08-2024",
+        "whole",
+        weak_model_name="command-r-plus-08-2024",
+        use_repo_map=True,
+    ),
     # Groq llama3
     ModelSettings(
         "groq/llama3-70b-8192",
