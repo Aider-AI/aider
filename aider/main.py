@@ -300,6 +300,10 @@ def sanity_check_repo(repo, io):
     if not repo:
         return True
 
+    if not repo.repo.working_tree_dir:
+        io.tool_error("The git repo does not seem to have a working tree?")
+        return False
+
     try:
         repo.get_tracked_files()
         if not repo.git_repo_error:
