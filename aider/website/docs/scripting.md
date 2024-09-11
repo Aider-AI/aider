@@ -26,7 +26,7 @@ for FILE in *.py ; do
 done
 ```
 
-User `aider --help` to see all the 
+Use `aider --help` to see all the 
 [command line options](/docs/config/options.html),
 but these are useful for scripting:
 
