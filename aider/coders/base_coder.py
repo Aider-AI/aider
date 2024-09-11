@@ -1094,7 +1094,7 @@ class Coder:
             utils.show_messages(messages, functions=self.functions)
 
         self.multi_response_content = ""
-        self.mdstream=self.io.assistant_output("", self.stream)
+        self.mdstream = self.io.assistant_output("", self.stream)
 
         retry_delay = 0.125
 
@@ -1867,7 +1867,6 @@ class Coder:
                     message=commit_message,
                 )
 
-            self.io.tool_output("No changes made to git tracked files.")
             return self.gpt_prompts.files_content_gpt_no_edits
         except ANY_GIT_ERROR as err:
             self.io.tool_error(f"Unable to commit: {str(err)}")
@@ -1886,6 +1885,8 @@ class Coder:
             return
         if self.commit_before_message[-1] != self.repo.get_head_commit_sha():
             self.io.tool_output("You can use /undo to undo and discard each aider commit.")
+        else:
+            self.io.tool_output("No changes made to git tracked files.")
 
     def dirty_commit(self):
         if not self.need_commit_before_edits:
