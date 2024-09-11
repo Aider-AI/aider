@@ -70,21 +70,21 @@ def send_completion(
             model=model_name,
             initial_prompt_value="\n",
             roles={
-                "system": {"pre_message": f'"{bos_token}system\n"', "post_message": eos_token},
+                "system": {"pre_message": f"{bos_token}### System:\n", "post_message": eos_token},
                 "assistant": {
-                    "pre_message": f'"{bos_token}assistant\n"',
+                    "pre_message": f"{bos_token}### Assistant:\n",
                     "post_message": eos_token,
                 },
-                "user": {"pre_message": f'"{bos_token}user\n"', "post_message": eos_token},
+                "user": {"pre_message": f"{bos_token}### User:\n", "post_message": eos_token},
             },
             final_prompt_value="\n",
         )
         kwargs["bos_token"] = bos_token
         kwargs["eos_token"] = eos_token
         kwargs["roles"] = {
-            "system": {"pre_message": f'"{bos_token}system\n"', "post_message": eos_token},
-            "assistant": {"pre_message": f'"{bos_token}assistant\n"', "post_message": eos_token},
-            "user": {"pre_message": f'"{bos_token}user\n"', "post_message": eos_token},
+            "system": {"pre_message": f"{bos_token}### System:\n", "post_message": eos_token},
+            "assistant": {"pre_message": f"{bos_token}### Assistant:\n", "post_message": eos_token},
+            "user": {"pre_message": f"{bos_token}### User:\n", "post_message": eos_token},
         }
         kwargs["initial_prompt_value"] = "\n"
         kwargs["final_prompt_value"] = "\n"
