@@ -1043,7 +1043,7 @@
 
 - dirname: 2024-09-11-15-42-17--command-r-plus-08-2024-whole
   test_cases: 133
-  model: openrouter/cohere/command-r-plus-08-2024
+  model: Command R+ (08-24)
   edit_format: whole
   commit_hash: b43ed20
   pass_rate_1: 27.1
@@ -1058,7 +1058,7 @@
   indentation_errors: 3
   exhausted_context_windows: 0
   test_timeouts: 4
-  command: aider --model openrouter/cohere/command-r-plus-08-2024
+  command: aider --model cohere_chat/command-r-plus-08-2024
   date: 2024-09-11
   versions: 0.56.1.dev
   seconds_per_case: 20.3
@@ -1066,7 +1066,7 @@
 
 - dirname: 2024-09-11-15-47-02--command-r-08-2024-whole
   test_cases: 133
-  model: openrouter/cohere/command-r-08-2024
+  model: Command R (08-24)
   edit_format: whole
   commit_hash: b43ed20-dirty
   pass_rate_1: 30.1
@@ -1081,7 +1081,7 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 2
-  command: aider --model openrouter/cohere/command-r-08-2024
+  command: aider --model cohere_chat/command-r-08-2024
   date: 2024-09-11
   versions: 0.56.1.dev
   seconds_per_case: 7.6
