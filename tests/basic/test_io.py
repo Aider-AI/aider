@@ -227,23 +227,6 @@ class TestInputOutput(unittest.TestCase):
         self.assertFalse(io.is_quit_command("hello"))
         self.assertFalse(io.is_quit_command("quitter"))
 
-    def test_hidden_quit_commands(self):
-        from aider.commands import Commands
-        
-        io = InputOutput(pretty=False)
-        commands = Commands(io, None)
-        
-        visible_commands = commands.get_commands()
-        self.assertIn("/quit", visible_commands)
-        self.assertNotIn("/q", visible_commands)
-        self.assertNotIn("/exit", visible_commands)
-        self.assertNotIn("/bye", visible_commands)
-        self.assertNotIn("/goodbye", visible_commands)
-        
-        all_matching = commands.matching_commands("/q")[0]
-        self.assertIn("/q", all_matching)
-        self.assertIn("/quit", all_matching)
-
 
 if __name__ == "__main__":
     unittest.main()

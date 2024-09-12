@@ -387,6 +387,35 @@ class TestCommands(TestCase):
 
             self.assertIn(str(fname.resolve()), coder.abs_fnames)
 
+    def test_hidden_quit_commands(self):
+        io = InputOutput(pretty=False, yes=False)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+        
+        # Check that hidden commands are not in the visible command list
+        visible_commands = commands.get_commands()
+        self.assertIn("/quit", visible_commands)
+        self.assertNotIn("/q", visible_commands)
+        self.assertNotIn("/exit", visible_commands)
+        self.assertNotIn("/bye", visible_commands)
+        self.assertNotIn("/goodbye", visible_commands)
+        
+        # Check that hidden commands are recognized and treated as quit
+        for cmd in ["/q", "/exit", "/bye", "/goodbye", "/quit"]:
+            with self.assertRaises(SystemExit):
+                commands.run(cmd)
+
+        # Check that partial matches work for visible and hidden commands
+        matching_commands = commands.matching_commands("/q")
+        self.assertIn("/q", matching_commands[0])
+        self.assertIn("/quit", matching_commands[0])
+
+        # Check that the aliases are properly set up
+        self.assertEqual(commands.cmd_q, commands.cmd_quit)
+        self.assertEqual(commands.cmd_exit, commands.cmd_quit)
+        self.assertEqual(commands.cmd_bye, commands.cmd_quit)
+        self.assertEqual(commands.cmd_goodbye, commands.cmd_quit)
+
     def test_cmd_tokens_output(self):
         with GitTemporaryDirectory() as repo_dir:
             # Create a small repository with a few files
