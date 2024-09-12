@@ -56,6 +56,19 @@ class Commands:
         self.voice_language = voice_language
 
         self.help = None
+        self.hidden_commands = set()  # New attribute to store hidden commands
+
+        # Add hidden aliases for quit
+        self.hidden_commands.add("/q")
+        self.hidden_commands.add("/exit")
+        self.hidden_commands.add("/bye")
+        self.hidden_commands.add("/goodbye")
+
+        # Create hidden alias methods
+        self.cmd_q = self.cmd_quit
+        self.cmd_exit = self.cmd_quit
+        self.cmd_bye = self.cmd_quit
+        self.cmd_goodbye = self.cmd_quit
 
     def cmd_model(self, args):
         "Switch to a new LLM"
@@ -180,7 +193,8 @@ class Commands:
                 continue
             cmd = attr[4:]
             cmd = cmd.replace("_", "-")
-            commands.append("/" + cmd)
+            if f"/{cmd}" not in self.hidden_commands:  # Only add if not hidden
+                commands.append("/" + cmd)
 
         return commands
 
@@ -203,9 +217,9 @@ class Commands:
             return
 
         first_word = words[0]
-        rest_inp = inp[len(words[0]) :].strip()
+        rest_inp = inp[len(words[0]):].strip()
 
-        all_commands = self.get_commands()
+        all_commands = self.get_commands() + list(self.hidden_commands)
         matching_commands = [cmd for cmd in all_commands if cmd.startswith(first_word)]
         return matching_commands, first_word, rest_inp
 
@@ -827,11 +841,6 @@ class Commands:
     def cmd_quit(self, args):
         "Exit the application"
         sys.exit()
-
-    cmd_q = cmd_quit
-    cmd_exit = cmd_quit
-    cmd_bye = cmd_quit
-    cmd_goodbye = cmd_quit
 
     def cmd_ls(self, args):
         "List all known files and indicate which are included in the chat session"
