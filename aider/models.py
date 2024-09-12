@@ -78,6 +78,7 @@ class ModelSettings:
     cache_control: bool = False
     caches_by_default: bool = False
     use_system_prompt: bool = True
+    use_temperature: bool = True
 
 
 # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
@@ -433,6 +434,7 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         reminder="user",
         use_system_prompt=False,
+        use_temperature=False,
     ),
     ModelSettings(
         "o1-mini",
@@ -441,6 +443,7 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         reminder="user",
         use_system_prompt=False,
+        use_temperature=False,
     ),
 ]
 

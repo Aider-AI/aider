@@ -1381,6 +1381,11 @@ class Coder:
 
         self.io.log_llm_history("TO LLM", format_messages(messages))
 
+        if self.main_model.use_temperature:
+            temp = self.temperature
+        else:
+            temp = None
+
         completion = None
         try:
             hash_object, completion = send_completion(
@@ -1388,7 +1393,7 @@ class Coder:
                 messages,
                 functions,
                 self.stream,
-                self.temperature,
+                temp,
                 extra_headers=model.extra_headers,
                 max_tokens=model.max_tokens,
             )
