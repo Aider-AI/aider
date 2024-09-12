@@ -380,7 +380,7 @@ class InputOutput:
         self.user_input(inp)
 
         if self.check_quit_command(inp):
-            return "/quit"  # Return "/quit" to indicate that the user wants to exit
+            return self.get_input(root, rel_fnames, addable_rel_fnames, commands, abs_read_only_fnames, edit_format)  # Prompt again
 
         return inp
 
