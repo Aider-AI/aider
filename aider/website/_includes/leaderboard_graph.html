@@ -41,12 +41,26 @@
           leaderboardData.labels.push(row.model);
           leaderboardData.datasets[0].data.push(row.pass_rate);
           
-          if (row.edit_format === 'whole') {
-            leaderboardData.datasets[0].backgroundColor.push('rgba(255, 99, 132, 0.2)');
-            leaderboardData.datasets[0].borderColor.push('rgba(255, 99, 132, 1)');
-          } else {
-            leaderboardData.datasets[0].backgroundColor.push('rgba(54, 162, 235, 0.2)');
-            leaderboardData.datasets[0].borderColor.push('rgba(54, 162, 235, 1)');
+          switch (row.edit_format) {
+            case 'whole':
+              leaderboardData.datasets[0].backgroundColor.push('rgba(255, 99, 132, 0.2)');
+              leaderboardData.datasets[0].borderColor.push('rgba(255, 99, 132, 1)');
+              break;
+            case 'diff':
+              leaderboardData.datasets[0].backgroundColor.push('rgba(54, 162, 235, 0.2)');
+              leaderboardData.datasets[0].borderColor.push('rgba(54, 162, 235, 1)');
+              break;
+            case 'udiff':
+              leaderboardData.datasets[0].backgroundColor.push('rgba(75, 192, 192, 0.2)');
+              leaderboardData.datasets[0].borderColor.push('rgba(75, 192, 192, 1)');
+              break;
+            case 'diff-fenced':
+              leaderboardData.datasets[0].backgroundColor.push('rgba(153, 102, 255, 0.2)');
+              leaderboardData.datasets[0].borderColor.push('rgba(153, 102, 255, 1)');
+              break;
+            default:
+              leaderboardData.datasets[0].backgroundColor.push('rgba(201, 203, 207, 0.2)');
+              leaderboardData.datasets[0].borderColor.push('rgba(201, 203, 207, 1)');
           }
         }
       });
@@ -111,9 +125,23 @@
                     hidden: false
                   },
                   {
-                    text: 'diff/udiff/diff-fenced',
+                    text: 'diff',
                     fillStyle: 'rgba(54, 162, 235, 0.2)',
                     strokeStyle: 'rgba(54, 162, 235, 1)',
+                    lineWidth: 1,
+                    hidden: false
+                  },
+                  {
+                    text: 'udiff',
+                    fillStyle: 'rgba(75, 192, 192, 0.2)',
+                    strokeStyle: 'rgba(75, 192, 192, 1)',
+                    lineWidth: 1,
+                    hidden: false
+                  },
+                  {
+                    text: 'diff-fenced',
+                    fillStyle: 'rgba(153, 102, 255, 0.2)',
+                    strokeStyle: 'rgba(153, 102, 255, 1)',
                     lineWidth: 1,
                     hidden: false
                   }
@@ -123,13 +151,11 @@
             onClick: function(e, legendItem, legend) {
               var index = legendItem.index;
               var ci = legend.chart;
-              var alreadyHidden = (ci.getDatasetMeta(0).data[0].hidden === true);
+              var clickedFormat = legendItem.text;
               
               ci.data.datasets[0].data.forEach(function(dataPoint, i) {
                 var meta = ci.getDatasetMeta(0);
-                var shouldBeHidden = (index === 0 && allData[i].edit_format !== 'whole') || 
-                                     (index === 1 && allData[i].edit_format === 'whole');
-                meta.data[i].hidden = shouldBeHidden;
+                meta.data[i].hidden = allData[i].edit_format !== clickedFormat;
               });
               
               ci.update();
