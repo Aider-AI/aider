@@ -995,28 +995,28 @@
   seconds_per_case: 125.3
   total_cost: 0.0000
 
-- dirname: 2024-09-05-14-50-11--deepseek-sep5-no-shell
+- dirname: 2024-09-12-07-57-46--hyperbolic-deepseek
   test_cases: 133
-  model: DeepSeek V2.5
-  edit_format: diff
-  commit_hash: 1279c86
-  pass_rate_1: 54.9
-  pass_rate_2: 72.2
-  percent_cases_well_formed: 96.2
-  error_outputs: 5
-  num_malformed_responses: 5
-  num_with_malformed_responses: 5
+  model: openai/deepseek-ai/DeepSeek-V2.5
+  edit_format: whole
+  commit_hash: 05b3b3d
+  pass_rate_1: 54.1
+  pass_rate_2: 71.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
   user_asks: 4
   lazy_comments: 0
-  syntax_errors: 1
+  syntax_errors: 0
   indentation_errors: 0
   exhausted_context_windows: 0
-  test_timeouts: 2
-  command: aider --deepseek
-  date: 2024-09-05
-  versions: 0.55.1.dev
-  seconds_per_case: 49.6
-  total_cost: 0.0998
+  test_timeouts: 3
+  command: aider --model openai/deepseek-ai/DeepSeek-V2.5
+  date: 2024-09-12
+  versions: 0.56.1.dev
+  seconds_per_case: 246.3
+  total_cost: 0.0000
 
 - dirname: 2024-09-06-19-55-17--reflection-hyperbolic-whole-output2
   test_cases: 133
