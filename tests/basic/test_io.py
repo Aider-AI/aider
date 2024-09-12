@@ -184,12 +184,14 @@ class TestInputOutput(unittest.TestCase):
         addable_rel_fnames = []
         commands = MagicMock()
 
-        with patch.object(io, 'tool_warning') as mock_warning:
+        with patch.object(io, "tool_warning") as mock_warning:
             result = io.get_input(root, rel_fnames, addable_rel_fnames, commands)
-            
+
             # Check that the warning was called
-            mock_warning.assert_called_once_with('To exit aider, please use the "/quit" command instead of "quit".')
-            
+            mock_warning.assert_called_once_with(
+                'To exit aider, please use the "/quit" command instead of "quit".'
+            )
+
             # Check that the result is "/quit"
             self.assertEqual(result, "/quit")
 
@@ -204,25 +206,25 @@ class TestInputOutput(unittest.TestCase):
         addable_rel_fnames = []
         commands = MagicMock()
 
-        with patch.object(io, 'tool_warning') as mock_warning:
+        with patch.object(io, "tool_warning") as mock_warning:
             result = io.get_input(root, rel_fnames, addable_rel_fnames, commands)
-            
+
             # Check that the warning was not called
             mock_warning.assert_not_called()
-            
+
             # Check that the result is "hello"
             self.assertEqual(result, "hello")
 
     def test_is_quit_command(self):
         io = InputOutput(pretty=False)
-        
+
         # Test with various quit commands
-        quit_commands = ['q', 'quit', 'exit', 'bye', 'goodbye']
+        quit_commands = ["q", "quit", "exit", "bye", "goodbye"]
         for cmd in quit_commands:
             self.assertTrue(io.is_quit_command(cmd), f"Failed for '{cmd}'")
             self.assertTrue(io.is_quit_command(cmd.upper()), f"Failed for '{cmd.upper()}'")
             self.assertTrue(io.is_quit_command(f" {cmd} "), f"Failed for ' {cmd} '")
-        
+
         # Test with non-quit input
         self.assertFalse(io.is_quit_command("hello"))
         self.assertFalse(io.is_quit_command("quitter"))

@@ -15,9 +15,10 @@ from prompt_toolkit.styles import Style
 from pygments.lexers import MarkdownLexer, guess_lexer_for_filename
 from pygments.token import Token
 from rich.console import Console
+from rich.markdown import Markdown
 from rich.style import Style as RichStyle
 from rich.text import Text
-from rich.markdown import Markdown
+
 from aider.mdstream import MarkdownStream
 
 from .dump import dump  # noqa: F401
@@ -313,19 +314,6 @@ class InputOutput:
             show += edit_format
         show += "> "
 
-        inp = ""
-        multiline_input = False
-
-        if self.user_input_color and self.pretty:
-            style = Style.from_dict(
-                {
-                    "": self.user_input_color,
-                    "pygments.literal.string": f"bold italic {self.user_input_color}",
-                }
-            )
-        else:
-            style = None
-
         completer_instance = ThreadedCompleter(
             AutoCompleter(
                 root,
@@ -344,49 +332,65 @@ class InputOutput:
             event.current_buffer.insert_text("\n")
 
         while True:
-            if multiline_input:
-                show = ". "
+            inp = ""
+            multiline_input = False
 
-            try:
-                if self.prompt_session:
-                    line = self.prompt_session.prompt(
-                        show,
-                        completer=completer_instance,
-                        reserve_space_for_menu=4,
-                        complete_style=CompleteStyle.MULTI_COLUMN,
-                        style=style,
-                        key_bindings=kb,
-                    )
+            while True:
+                if multiline_input:
+                    show = ". "
+
+                try:
+                    if self.prompt_session:
+                        line = self.prompt_session.prompt(
+                            show,
+                            completer=completer_instance,
+                            reserve_space_for_menu=4,
+                            complete_style=CompleteStyle.MULTI_COLUMN,
+                            style=self.get_input_style(),
+                            key_bindings=kb,
+                        )
+                    else:
+                        line = input(show)
+                except UnicodeEncodeError as err:
+                    self.tool_error(str(err))
+                    return ""
+
+                if line and line[0] == "{" and not multiline_input:
+                    multiline_input = True
+                    inp += line[1:] + "\n"
+                    continue
+                elif line and line[-1] == "}" and multiline_input:
+                    inp += line[:-1] + "\n"
+                    break
+                elif multiline_input:
+                    inp += line + "\n"
                 else:
-                    line = input(show)
-            except UnicodeEncodeError as err:
-                self.tool_error(str(err))
-                return ""
+                    inp = line
+                    break
 
-            if line and line[0] == "{" and not multiline_input:
-                multiline_input = True
-                inp += line[1:] + "\n"
-                continue
-            elif line and line[-1] == "}" and multiline_input:
-                inp += line[:-1] + "\n"
-                break
-            elif multiline_input:
-                inp += line + "\n"
-            else:
-                inp = line
-                break
+            print()
+            self.user_input(inp)
 
-        print()
-        self.user_input(inp)
+            if self.is_quit_command(inp):
+                self.tool_warning(
+                    f'To exit aider, please use the "/quit" command instead of "{inp}".'
+                )
+                continue  # This will prompt the user again
 
-        if self.is_quit_command(inp):
-            self.tool_warning(f'To exit aider, please use the "/quit" command instead of "{inp}".')
-            return self.get_input(root, rel_fnames, addable_rel_fnames, commands, abs_read_only_fnames, edit_format)  # Prompt again
+            return inp  # Valid input, return it
 
-        return inp
+    def get_input_style(self):
+        if self.user_input_color and self.pretty:
+            return Style.from_dict(
+                {
+                    "": self.user_input_color,
+                    "pygments.literal.string": f"bold italic {self.user_input_color}",
+                }
+            )
+        return None
 
     def is_quit_command(self, inp):
-        quit_commands = ['q', 'quit', 'exit', 'bye', 'goodbye']
+        quit_commands = ["q", "quit", "exit", "bye", "goodbye"]
         return inp.strip().lower() in quit_commands
 
     def add_to_input_history(self, inp):
@@ -598,7 +602,7 @@ class InputOutput:
     def assistant_output(self, message, stream=False):
         mdStream = None
         show_resp = message
-        
+
         if self.pretty:
             if stream:
                 mdargs = dict(style=self.assistant_output_color, code_theme=self.code_theme)
@@ -612,10 +616,10 @@ class InputOutput:
 
         self.console.print(show_resp)
         return mdStream
-        
+
     def print(self, message=""):
         print(message)
-        
+
     def append_chat_history(self, text, linebreak=False, blockquote=False, strip=True):
         if blockquote:
             if strip:

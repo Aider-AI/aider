@@ -391,7 +391,7 @@ class TestCommands(TestCase):
         io = InputOutput(pretty=False, yes=False)
         coder = Coder.create(self.GPT35, None, io)
         commands = Commands(io, coder)
-        
+
         # Check that hidden commands are not in the visible command list
         visible_commands = commands.get_commands()
         self.assertIn("/quit", visible_commands)
@@ -399,7 +399,7 @@ class TestCommands(TestCase):
         self.assertNotIn("/exit", visible_commands)
         self.assertNotIn("/bye", visible_commands)
         self.assertNotIn("/goodbye", visible_commands)
-        
+
         # Check that hidden commands are recognized and treated as quit
         for cmd in ["/q", "/exit", "/bye", "/goodbye", "/quit"]:
             with self.assertRaises(SystemExit):
