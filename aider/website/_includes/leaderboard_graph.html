@@ -51,6 +51,17 @@
         }
       });
 
+      // Apply legend filtering
+      var meta = leaderboardChart.getDatasetMeta(0);
+      meta.data.forEach(function(bar, index) {
+        if (leaderboardData.labels.includes(allData[index].model)) {
+          bar.hidden = (allData[index].edit_format === 'whole' && meta.data[0].hidden) ||
+                       (allData[index].edit_format !== 'whole' && meta.data[1].hidden);
+        } else {
+          bar.hidden = true;
+        }
+      });
+
       leaderboardChart.update();
     }
 
@@ -72,6 +83,46 @@
         scales: {
           y: {
             beginAtZero: true
+          }
+        },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            labels: {
+              generateLabels: function(chart) {
+                return [
+                  {
+                    text: 'whole',
+                    fillStyle: 'rgba(255, 99, 132, 0.2)',
+                    strokeStyle: 'rgba(255, 99, 132, 1)',
+                    lineWidth: 1,
+                    hidden: false
+                  },
+                  {
+                    text: 'diff/udiff/diff-fenced',
+                    fillStyle: 'rgba(54, 162, 235, 0.2)',
+                    strokeStyle: 'rgba(54, 162, 235, 1)',
+                    lineWidth: 1,
+                    hidden: false
+                  }
+                ];
+              }
+            },
+            onClick: function(e, legendItem, legend) {
+              var index = legendItem.index;
+              var ci = legend.chart;
+              var alreadyHidden = (ci.getDatasetMeta(0).data[0].hidden === true);
+              
+              ci.data.datasets[0].data.forEach(function(dataPoint, i) {
+                var meta = ci.getDatasetMeta(0);
+                var shouldBeHidden = (index === 0 && allData[i].edit_format !== 'whole') || 
+                                     (index === 1 && allData[i].edit_format === 'whole');
+                meta.data[i].hidden = shouldBeHidden;
+              });
+              
+              ci.update();
+            }
           }
         }
       }
