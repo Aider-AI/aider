@@ -579,7 +579,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     try:
         if not main_model.streaming:
             if args.stream:
-                io.tool_warning("Warning: Streaming is not supported by the selected model. Disabling streaming.")
+                io.tool_warning(
+                    "Warning: Streaming is not supported by the selected model. Disabling"
+                    " streaming."
+                )
             args.stream = False
 
         coder = Coder.create(
