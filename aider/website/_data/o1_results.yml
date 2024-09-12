@@ -77,7 +77,7 @@
   commit_hash: 36fa773-dirty, 291b456
   pass_rate_1: 49.6
   pass_rate_2: 70.7
-  percent_cases_well_formed: 100.0
+  percent_cases_well_formed: 90.0
   error_outputs: 0
   num_malformed_responses: 0
   num_with_malformed_responses: 0
