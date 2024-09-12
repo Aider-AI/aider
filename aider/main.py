@@ -576,15 +576,14 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.cache_prompts and args.map_refresh == "auto":
         args.map_refresh = "files"
 
-    try:
-        if not main_model.streaming:
-            if args.stream:
-                io.tool_warning(
-                    "Warning: Streaming is not supported by the selected model. Disabling"
-                    " streaming."
-                )
-            args.stream = False
+    if not main_model.streaming:
+        if args.stream:
+            io.tool_warning(
+                "Warning: Streaming is not supported by the selected model. Disabling streaming."
+            )
+        args.stream = False
 
+    try:
         coder = Coder.create(
             main_model=main_model,
             edit_format=args.edit_format,
