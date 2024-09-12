@@ -176,6 +176,55 @@ class TestInputOutput(unittest.TestCase):
         commands.get_completions.assert_called_once_with("/model")
         commands.matching_commands.assert_called_once_with("/model")
 
+    @patch("builtins.input", side_effect=["quit", "/quit"])
+    def test_get_input_quit_warning(self, mock_input):
+        io = InputOutput(pretty=False)
+        root = ""
+        rel_fnames = []
+        addable_rel_fnames = []
+        commands = MagicMock()
+
+        with patch.object(io, 'tool_warning') as mock_warning:
+            result = io.get_input(root, rel_fnames, addable_rel_fnames, commands)
+            
+            # Check that the warning was called
+            mock_warning.assert_called_once_with('To exit aider, please use the "/quit" command instead of "quit".')
+            
+            # Check that the result is "/quit"
+            self.assertEqual(result, "/quit")
+
+    @patch("builtins.input", return_value="hello")
+    def test_get_input_non_quit(self, mock_input):
+        io = InputOutput(pretty=False)
+        root = ""
+        rel_fnames = []
+        addable_rel_fnames = []
+        commands = MagicMock()
+
+        with patch.object(io, 'tool_warning') as mock_warning:
+            result = io.get_input(root, rel_fnames, addable_rel_fnames, commands)
+            
+            # Check that the warning was not called
+            mock_warning.assert_not_called()
+            
+            # Check that the result is "hello"
+            self.assertEqual(result, "hello")
+
+    def test_check_quit_command(self):
+        io = InputOutput(pretty=False)
+        
+        # Test with "quit" input
+        self.assertTrue(io.check_quit_command("quit"))
+        
+        # Test with "QUIT" input (case-insensitive)
+        self.assertTrue(io.check_quit_command("QUIT"))
+        
+        # Test with "quit " input (with whitespace)
+        self.assertTrue(io.check_quit_command("quit "))
+        
+        # Test with non-quit input
+        self.assertFalse(io.check_quit_command("hello"))
+
 
 if __name__ == "__main__":
     unittest.main()

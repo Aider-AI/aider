@@ -376,9 +376,18 @@ class InputOutput:
                 inp = line
                 break
 
+            if self.check_quit_command(inp):
+                continue
+
         print()
         self.user_input(inp)
         return inp
+
+    def check_quit_command(self, inp):
+        if inp.strip().lower() == "quit":
+            self.tool_warning('To exit aider, please use the "/quit" command instead of "quit".')
+            return True
+        return False
 
     def add_to_input_history(self, inp):
         if not self.input_history_file:
