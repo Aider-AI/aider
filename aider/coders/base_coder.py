@@ -966,10 +966,16 @@ class Coder:
 
         chunks = ChatChunks()
 
-        chunks.system = [
-            dict(role="user", content=main_sys),
-            dict(role="assistant", content="Ok."),
-        ]
+        if self.main_model.use_system_prompt:
+            chunks.system = [
+                dict(role="system", content=main_sys),
+            ]
+        else:
+            chunks.system = [
+                dict(role="user", content=main_sys),
+                dict(role="assistant", content="Ok."),
+            ]
+
         chunks.examples = example_messages
 
         self.summarize_end()

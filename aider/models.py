@@ -77,6 +77,7 @@ class ModelSettings:
     max_tokens: Optional[int] = None
     cache_control: bool = False
     caches_by_default: bool = False
+    use_system_prompt: bool = True
 
 
 # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
@@ -424,6 +425,22 @@ MODEL_SETTINGS = [
         accepts_images=True,
         lazy=True,
         reminder="sys",
+    ),
+    ModelSettings(
+        "openai/o1-mini",
+        "whole",
+        weak_model_name="openai/gpt-4o-mini",
+        use_repo_map=True,
+        reminder="user",
+        use_system_prompt=False,
+    ),
+    ModelSettings(
+        "o1-mini",
+        "whole",
+        weak_model_name="gpt-4o-mini",
+        use_repo_map=True,
+        reminder="user",
+        use_system_prompt=False,
     ),
 ]
 
