@@ -79,6 +79,7 @@ class ModelSettings:
     caches_by_default: bool = False
     use_system_prompt: bool = True
     use_temperature: bool = True
+    streaming: bool = True
 
 
 # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
@@ -435,6 +436,7 @@ MODEL_SETTINGS = [
         reminder="user",
         use_system_prompt=False,
         use_temperature=False,
+        streaming=False,
     ),
     ModelSettings(
         "o1-mini",
@@ -444,6 +446,7 @@ MODEL_SETTINGS = [
         reminder="user",
         use_system_prompt=False,
         use_temperature=False,
+        streaming=False,
     ),
     ModelSettings(
         "openai/o1-preview",
@@ -453,6 +456,7 @@ MODEL_SETTINGS = [
         reminder="user",
         use_system_prompt=False,
         use_temperature=False,
+        streaming=False,
     ),
     ModelSettings(
         "o1-preview",
@@ -462,6 +466,7 @@ MODEL_SETTINGS = [
         reminder="user",
         use_system_prompt=False,
         use_temperature=False,
+        streaming=False,
     ),
 ]
 
