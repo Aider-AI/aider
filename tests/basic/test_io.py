@@ -213,20 +213,19 @@ class TestInputOutput(unittest.TestCase):
             # Check that the result is "hello"
             self.assertEqual(result, "hello")
 
-    def test_check_quit_command(self):
+    def test_is_quit_command(self):
         io = InputOutput(pretty=False)
         
-        # Test with "quit" input
-        self.assertTrue(io.check_quit_command("quit"))
-        
-        # Test with "QUIT" input (case-insensitive)
-        self.assertTrue(io.check_quit_command("QUIT"))
-        
-        # Test with "quit " input (with whitespace)
-        self.assertTrue(io.check_quit_command("quit "))
+        # Test with various quit commands
+        quit_commands = ['q', 'quit', 'exit', 'bye', 'goodbye']
+        for cmd in quit_commands:
+            self.assertTrue(io.is_quit_command(cmd), f"Failed for '{cmd}'")
+            self.assertTrue(io.is_quit_command(cmd.upper()), f"Failed for '{cmd.upper()}'")
+            self.assertTrue(io.is_quit_command(f" {cmd} "), f"Failed for ' {cmd} '")
         
         # Test with non-quit input
-        self.assertFalse(io.check_quit_command("hello"))
+        self.assertFalse(io.is_quit_command("hello"))
+        self.assertFalse(io.is_quit_command("quitter"))
 
 
 if __name__ == "__main__":

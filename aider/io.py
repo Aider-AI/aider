@@ -379,16 +379,15 @@ class InputOutput:
         print()
         self.user_input(inp)
 
-        if self.check_quit_command(inp):
+        if self.is_quit_command(inp):
+            self.tool_warning(f'To exit aider, please use the "/quit" command instead of "{inp}".')
             return self.get_input(root, rel_fnames, addable_rel_fnames, commands, abs_read_only_fnames, edit_format)  # Prompt again
 
         return inp
 
-    def check_quit_command(self, inp):
-        if inp.strip().lower() == "quit":
-            self.tool_warning('To exit aider, please use the "/quit" command instead of "quit".')
-            return True
-        return False
+    def is_quit_command(self, inp):
+        quit_commands = ['q', 'quit', 'exit', 'bye', 'goodbye']
+        return inp.strip().lower() in quit_commands
 
     def add_to_input_history(self, inp):
         if not self.input_history_file:

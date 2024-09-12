@@ -824,13 +824,14 @@ class Commands:
 
             return msg
 
-    def cmd_exit(self, args):
-        "Exit the application"
-        sys.exit()
-
     def cmd_quit(self, args):
         "Exit the application"
         sys.exit()
+
+    cmd_q = cmd_quit
+    cmd_exit = cmd_quit
+    cmd_bye = cmd_quit
+    cmd_goodbye = cmd_quit
 
     def cmd_ls(self, args):
         "List all known files and indicate which are included in the chat session"
