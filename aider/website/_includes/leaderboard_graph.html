@@ -116,46 +116,46 @@
             position: 'top',
             labels: {
               generateLabels: function(chart) {
-                return [
-                  {
-                    text: 'whole',
-                    fillStyle: 'rgba(255, 99, 132, 0.2)',
-                    strokeStyle: 'rgba(255, 99, 132, 1)',
-                    lineWidth: 1,
-                    hidden: false
-                  },
-                  {
-                    text: 'diff',
-                    fillStyle: 'rgba(54, 162, 235, 0.2)',
-                    strokeStyle: 'rgba(54, 162, 235, 1)',
-                    lineWidth: 1,
-                    hidden: false
-                  },
-                  {
-                    text: 'udiff',
-                    fillStyle: 'rgba(75, 192, 192, 0.2)',
-                    strokeStyle: 'rgba(75, 192, 192, 1)',
-                    lineWidth: 1,
-                    hidden: false
-                  },
-                  {
-                    text: 'diff-fenced',
-                    fillStyle: 'rgba(153, 102, 255, 0.2)',
-                    strokeStyle: 'rgba(153, 102, 255, 1)',
-                    lineWidth: 1,
-                    hidden: false
+                var uniqueFormats = [...new Set(allData.map(item => item.edit_format))];
+                return uniqueFormats.map(format => {
+                  var color;
+                  switch (format) {
+                    case 'whole':
+                      color = { fill: 'rgba(255, 99, 132, 0.2)', stroke: 'rgba(255, 99, 132, 1)' };
+                      break;
+                    case 'diff':
+                      color = { fill: 'rgba(54, 162, 235, 0.2)', stroke: 'rgba(54, 162, 235, 1)' };
+                      break;
+                    case 'udiff':
+                      color = { fill: 'rgba(75, 192, 192, 0.2)', stroke: 'rgba(75, 192, 192, 1)' };
+                      break;
+                    case 'diff-fenced':
+                      color = { fill: 'rgba(153, 102, 255, 0.2)', stroke: 'rgba(153, 102, 255, 1)' };
+                      break;
+                    default:
+                      color = { fill: 'rgba(201, 203, 207, 0.2)', stroke: 'rgba(201, 203, 207, 1)' };
                   }
-                ];
+                  return {
+                    text: format,
+                    fillStyle: color.fill,
+                    strokeStyle: color.stroke,
+                    lineWidth: 1,
+                    hidden: false
+                  };
+                });
               }
             },
             onClick: function(e, legendItem, legend) {
-              var index = legendItem.index;
               var ci = legend.chart;
               var clickedFormat = legendItem.text;
               
+              legendItem.hidden = !legendItem.hidden;
+              
               ci.data.datasets[0].data.forEach(function(dataPoint, i) {
                 var meta = ci.getDatasetMeta(0);
-                meta.data[i].hidden = allData[i].edit_format !== clickedFormat;
+                if (allData[i].edit_format === clickedFormat) {
+                  meta.data[i].hidden = legendItem.hidden;
+                }
               });
               
               ci.update();
