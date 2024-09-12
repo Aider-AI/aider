@@ -1,6 +1,6 @@
 - dirname: 2024-07-18-18-57-46--gpt-4o-mini-whole
   test_cases: 133
-  model: gpt-4o-mini
+  model: gpt-4o-mini (whole)
   edit_format: whole
   commit_hash: d31eef3-dirty
   pass_rate_1: 40.6
@@ -24,7 +24,7 @@
   
 - dirname: 2024-07-04-14-32-08--claude-3.5-sonnet-diff-continue
   test_cases: 133
-  model: claude-3.5-sonnet
+  model: claude-3.5-sonnet (diff)
   edit_format: diff
   commit_hash: 35f21b5
   pass_rate_1: 57.1
@@ -48,7 +48,7 @@
 
 - dirname: 2024-08-06-18-28-39--gpt-4o-2024-08-06-diff-again
   test_cases: 133
-  model: gpt-4o-2024-08-06
+  model: gpt-4o-2024-08-06 (diff)
   edit_format: diff
   commit_hash: ed9ed89
   pass_rate_1: 57.1
@@ -72,7 +72,7 @@
   
 - dirname: 2024-09-12-19-57-35--o1-mini-whole
   test_cases: 133
-  model: o1-mini
+  model: o1-mini (whole)
   edit_format: whole
   commit_hash: 36fa773-dirty, 291b456
   pass_rate_1: 49.6
