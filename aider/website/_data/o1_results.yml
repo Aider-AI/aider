@@ -87,7 +87,7 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model openai/o1-mini --no-stream
+  command: aider --model o1-mini
   date: 2024-09-12
   versions: 0.56.1.dev
   seconds_per_case: 103.0
