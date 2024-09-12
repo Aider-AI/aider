@@ -445,6 +445,24 @@ MODEL_SETTINGS = [
         use_system_prompt=False,
         use_temperature=False,
     ),
+    ModelSettings(
+        "openai/o1-preview",
+        "whole",
+        weak_model_name="openai/gpt-4o-mini",
+        use_repo_map=True,
+        reminder="user",
+        use_system_prompt=False,
+        use_temperature=False,
+    ),
+    ModelSettings(
+        "o1-preview",
+        "whole",
+        weak_model_name="gpt-4o-mini",
+        use_repo_map=True,
+        reminder="user",
+        use_system_prompt=False,
+        use_temperature=False,
+    ),
 ]
 
 
