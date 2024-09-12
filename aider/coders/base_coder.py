@@ -967,7 +967,8 @@ class Coder:
         chunks = ChatChunks()
 
         chunks.system = [
-            dict(role="system", content=main_sys),
+            dict(role="user", content=main_sys),
+            dict(role="assistant", content="Ok."),
         ]
         chunks.examples = example_messages
 

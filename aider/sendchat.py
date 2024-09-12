@@ -60,7 +60,7 @@ def send_completion(
     kwargs = dict(
         model=model_name,
         messages=messages,
-        temperature=temperature,
+        # temperature=temperature,
         stream=stream,
     )
 
