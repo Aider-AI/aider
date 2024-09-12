@@ -7,8 +7,8 @@
       datasets: [{
         label: 'Percent completed correctly',
         data: [],
-        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-        borderColor: 'rgba(54, 162, 235, 1)',
+        backgroundColor: [],
+        borderColor: [],
         borderWidth: 1
       }]
     };
@@ -18,7 +18,8 @@
       allData.push({
         model: '{{ row.model }}',
         pass_rate: {{ row[include.pass_rate_key] }},
-        percent_cases_well_formed: {{ row.percent_cases_well_formed }}
+        percent_cases_well_formed: {{ row.percent_cases_well_formed }},
+        edit_format: '{{ row.edit_format }}'
       });
     {% endfor %}
 
@@ -28,6 +29,8 @@
 
       leaderboardData.labels = [];
       leaderboardData.datasets[0].data = [];
+      leaderboardData.datasets[0].backgroundColor = [];
+      leaderboardData.datasets[0].borderColor = [];
 
       allData.forEach(function(row, index) {
         var rowElement = document.getElementById('{{ include.row_prefix }}-' + index);
@@ -37,6 +40,14 @@
         if (showAll || rowElement.classList.contains('selected')) {
           leaderboardData.labels.push(row.model);
           leaderboardData.datasets[0].data.push(row.pass_rate);
+          
+          if (row.edit_format === 'whole') {
+            leaderboardData.datasets[0].backgroundColor.push('rgba(255, 99, 132, 0.2)');
+            leaderboardData.datasets[0].borderColor.push('rgba(255, 99, 132, 1)');
+          } else {
+            leaderboardData.datasets[0].backgroundColor.push('rgba(54, 162, 235, 0.2)');
+            leaderboardData.datasets[0].borderColor.push('rgba(54, 162, 235, 1)');
+          }
         }
       });
 
