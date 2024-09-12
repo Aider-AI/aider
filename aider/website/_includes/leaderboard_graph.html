@@ -1,0 +1,76 @@
+<canvas id="{{ include.chart_id }}" width="800" height="450" style="margin-top: 20px"></canvas>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var ctx = document.getElementById('{{ include.chart_id }}').getContext('2d');
+    var leaderboardData = {
+      labels: [],
+      datasets: [{
+        label: 'Percent completed correctly',
+        data: [],
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1
+      }]
+    };
+
+    var allData = [];
+    {% for row in include.data %}
+      allData.push({
+        model: '{{ row.model }}',
+        pass_rate: {{ row[include.pass_rate_key] }},
+        percent_cases_well_formed: {{ row.percent_cases_well_formed }}
+      });
+    {% endfor %}
+
+    function updateChart() {
+      var selectedRows = document.querySelectorAll('tr.selected');
+      var showAll = selectedRows.length === 0;
+
+      leaderboardData.labels = [];
+      leaderboardData.datasets[0].data = [];
+
+      allData.forEach(function(row, index) {
+        var rowElement = document.getElementById('{{ include.row_prefix }}-' + index);
+        if (showAll) {
+          rowElement.classList.remove('selected');
+        }
+        if (showAll || rowElement.classList.contains('selected')) {
+          leaderboardData.labels.push(row.model);
+          leaderboardData.datasets[0].data.push(row.pass_rate);
+        }
+      });
+
+      leaderboardChart.update();
+    }
+
+    var tableBody = document.querySelector('table tbody');
+    allData.forEach(function(row, index) {
+      var tr = tableBody.children[index];
+      tr.id = '{{ include.row_prefix }}-' + index;
+      tr.style.cursor = 'pointer';
+      tr.onclick = function() {
+        this.classList.toggle('selected');
+        updateChart();
+      };
+    });
+
+    var leaderboardChart = new Chart(ctx, {
+      type: 'bar',
+      data: leaderboardData,
+      options: {
+        scales: {
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+            },
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    });
+
+    updateChart();
+  });
+</script>
