@@ -28,6 +28,12 @@ class TestModels(unittest.TestCase):
         model = Model("gpt-4-0613")
         self.assertEqual(model.info["max_input_tokens"], 8 * 1024)
 
+        model = Model("o1-preview")
+        self.assertEqual(model.info["max_input_tokens"], 128000)
+
+        model = Model("o1-mini")
+        self.assertEqual(model.info["max_input_tokens"], 128000)
+
     @patch("os.environ")
     def test_sanity_check_model_all_set(self, mock_environ):
         mock_environ.get.return_value = "dummy_value"

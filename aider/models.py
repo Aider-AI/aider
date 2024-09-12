@@ -21,6 +21,10 @@ DEFAULT_MODEL_NAME = "gpt-4o"
 ANTHROPIC_BETA_HEADER = "prompt-caching-2024-07-31"
 
 OPENAI_MODELS = """
+o1-preview
+o1-preview-2024-09-12
+o1-mini
+o1-mini-2024-09-12
 gpt-4
 gpt-4o
 gpt-4o-2024-05-13
@@ -233,6 +237,25 @@ MODEL_SETTINGS = [
         "diff",
         weak_model_name="gpt-4o-mini",
         use_repo_map=True,
+        reminder="sys",
+    ),
+    # o1-preview
+    ModelSettings(
+        "o1-preview",
+        "diff",
+        weak_model_name="o1-mini",
+        use_repo_map=True,
+        accepts_images=False,
+        lazy=True,
+        reminder="sys",
+    ),
+    ModelSettings(
+        "o1-mini",
+        "diff",
+        weak_model_name="o1-mini",
+        use_repo_map=True,
+        accepts_images=False,
+        lazy=True,
         reminder="sys",
     ),
     # Claude
