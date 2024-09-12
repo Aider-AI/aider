@@ -181,6 +181,6 @@ mod_dates = [get_last_modified_date(file) for file in files]
 latest_mod_date = max(mod_dates)
 cog.out(f"{latest_mod_date.strftime('%B %d, %Y.')}")
 ]]]-->
-September 11, 2024.
+September 12, 2024.
 <!--[[[end]]]-->
 </p>
