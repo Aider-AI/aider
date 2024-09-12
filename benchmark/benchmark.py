@@ -549,8 +549,7 @@ def run_test_real(
         chat_history_file=history_fname,
     )
 
-    weak_model = "gpt-4o-mini"
-    main_model = models.Model(model_name, weak_model)
+    main_model = models.Model(model_name)
     edit_format = edit_format or main_model.edit_format
 
     dump(main_model)
