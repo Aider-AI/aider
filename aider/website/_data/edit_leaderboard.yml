@@ -1086,3 +1086,26 @@
   versions: 0.56.1.dev
   seconds_per_case: 7.6
   total_cost: 0.0000
+
+- dirname: 2024-09-12-19-57-35--o1-mini-whole
+  test_cases: 133
+  model: o1-mini
+  edit_format: whole
+  commit_hash: 36fa773-dirty, 291b456
+  pass_rate_1: 49.6
+  pass_rate_2: 70.7
+  percent_cases_well_formed: 90.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 17
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: (not currently supported)
+  date: 2024-09-12
+  versions: 0.56.1.dev
+  seconds_per_case: 103.0
+  total_cost: 5.3725  
