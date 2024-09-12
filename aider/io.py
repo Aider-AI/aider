@@ -376,11 +376,12 @@ class InputOutput:
                 inp = line
                 break
 
-            if self.check_quit_command(inp):
-                continue
-
         print()
         self.user_input(inp)
+
+        if self.check_quit_command(inp):
+            return "/quit"  # Return "/quit" to indicate that the user wants to exit
+
         return inp
 
     def check_quit_command(self, inp):

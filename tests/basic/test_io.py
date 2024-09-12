@@ -193,6 +193,9 @@ class TestInputOutput(unittest.TestCase):
             # Check that the result is "/quit"
             self.assertEqual(result, "/quit")
 
+        # Check that input was called twice
+        self.assertEqual(mock_input.call_count, 2)
+
     @patch("builtins.input", return_value="hello")
     def test_get_input_non_quit(self, mock_input):
         io = InputOutput(pretty=False)
