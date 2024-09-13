@@ -450,7 +450,7 @@ MODEL_SETTINGS = [
     ),
     ModelSettings(
         "openai/o1-preview",
-        "whole",
+        "diff",
         weak_model_name="openai/gpt-4o-mini",
         use_repo_map=True,
         reminder="user",
@@ -460,7 +460,7 @@ MODEL_SETTINGS = [
     ),
     ModelSettings(
         "o1-preview",
-        "whole",
+        "diff",
         weak_model_name="gpt-4o-mini",
         use_repo_map=True,
         reminder="user",
