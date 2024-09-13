@@ -16,13 +16,46 @@ classifiers = [
     "Topic :: Software Development",
 ]
 requires-python = ">=3.10,<3.13"
-dynamic = ["dependencies", "optional-dependencies", "version"]
+dynamic = ["optional-dependencies", "version"]
+dependencies = [
+    "configargparse",
+    "GitPython",
+    "jsonschema",
+    "rich",
+    "prompt_toolkit",
+    "backoff",
+    "pathspec",
+    "diskcache",
+    "grep_ast",
+    "packaging",
+    "sounddevice",
+    "soundfile",
+    "beautifulsoup4",
+    "PyYAML",
+    "Pillow",
+    "diff-match-patch",
+    "pypandoc",
+    "litellm",
+    "flake8",
+    "importlib_resources",
+    "pyperclip",
+    "pexpect",
+    "json5",
+    "psutil",
+    "networkx<3.3",
+    "scipy<1.14",
+    "tree-sitter==0.21.3",
+    "importlib-metadata<8.0.0",
+    "numpy<2",
+    "tokenizers==0.19.1",
+]
 
 [project.urls]
 Homepage = "https://github.com/Aider-AI/aider"
 
 [project.scripts]
 aider = "aider.main:main"
+
 
 [tool.setuptools.dynamic]
 dependencies = { file = "requirements.in" }
