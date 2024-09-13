@@ -468,6 +468,26 @@ MODEL_SETTINGS = [
         use_temperature=False,
         streaming=False,
     ),
+    ModelSettings(
+        "openrouter/openai/o1-mini",
+        "whole",
+        weak_model_name="openrouter/openai/gpt-4o-mini",
+        use_repo_map=True,
+        reminder="user",
+        use_system_prompt=False,
+        use_temperature=False,
+        streaming=False,
+    ),
+    ModelSettings(
+        "openrouter/openai/o1-preview",
+        "diff",
+        weak_model_name="openrouter/openai/gpt-4o-mini",
+        use_repo_map=True,
+        reminder="user",
+        use_system_prompt=False,
+        use_temperature=False,
+        streaming=False,
+    ),
 ]
 
 
