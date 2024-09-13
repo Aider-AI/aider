@@ -60,19 +60,19 @@ cog.outl("```")
 # options:
 
 ## show this help message and exit
-#help:
+#help: xxx
 
 #######
 # Main:
 
 ## Specify the OpenAI API key
-#openai-api-key:
+#openai-api-key: xxx
 
 ## Specify the Anthropic API key
-#anthropic-api-key:
+#anthropic-api-key: xxx
 
 ## Specify the model to use for the main chat
-#model:
+#model: xxx
 
 ## Use claude-3-opus-20240229 model for the main chat
 #opus: false
@@ -102,22 +102,22 @@ cog.outl("```")
 # Model Settings:
 
 ## List known models which match the (partial) MODEL name
-#list-models:
+#list-models: xxx
 
 ## Specify the api base url
-#openai-api-base:
+#openai-api-base: xxx
 
 ## Specify the api_type
-#openai-api-type:
+#openai-api-type: xxx
 
 ## Specify the api_version
-#openai-api-version:
+#openai-api-version: xxx
 
 ## Specify the deployment_id
-#openai-api-deployment-id:
+#openai-api-deployment-id: xxx
 
 ## Specify the OpenAI organization ID
-#openai-organization-id:
+#openai-organization-id: xxx
 
 ## Specify a file with aider model settings for unknown models
 #model-settings-file: .aider.model.settings.yml
@@ -129,16 +129,16 @@ cog.outl("```")
 #verify-ssl: true
 
 ## Specify what edit format the LLM should use (default depends on model)
-#edit-format:
+#edit-format: xxx
 
 ## Specify the model to use for commit messages and chat history summarization (default depends on --model)
-#weak-model:
+#weak-model: xxx
 
 ## Only work with models that have meta-data available (default: True)
 #show-model-warnings: true
 
 ## Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)
-#map-tokens:
+#map-tokens: xxx
 
 ## Control how often the repo map is refreshed (default: auto)
 #map-refresh: auto
@@ -153,7 +153,7 @@ cog.outl("```")
 #map-multiplier-no-files: true
 
 ## Maximum number of tokens to use for chat history. If not specified, uses the model's max_chat_history_tokens.
-#max-chat-history-tokens:
+#max-chat-history-tokens: xxx
 
 ## Specify the .env file to load (default: .env in git root)
 #env-file: .env
@@ -171,7 +171,7 @@ cog.outl("```")
 #restore-chat-history: false
 
 ## Log the conversation with the LLM to this file (for example, .aider.llm.history)
-#llm-history-file:
+#llm-history-file: xxx
 
 ##################
 # Output Settings:
@@ -192,7 +192,7 @@ cog.outl("```")
 #user-input-color: #00cc00
 
 ## Set the color for tool output (default: None)
-#tool-output-color:
+#tool-output-color: xxx
 
 ## Set the color for tool error messages (default: #FF2222)
 #tool-error-color: #FF2222
@@ -246,7 +246,7 @@ cog.outl("```")
 #commit: false
 
 ## Specify a custom prompt for generating commit messages
-#commit-prompt:
+#commit-prompt: xxx
 
 ## Perform a dry run without modifying files (default: False)
 #dry-run: false
@@ -258,13 +258,15 @@ cog.outl("```")
 #lint: false
 
 ## Specify lint commands to run for different languages, eg: "python: flake8 --select=..." (can be used multiple times)
-#lint-cmd:
+#lint-cmd: xxx
+## Specify multiple values like this:
+#lint-cmd: [xxx,yyyy,zzz]
 
 ## Enable/disable automatic linting after changes (default: True)
 #auto-lint: true
 
 ## Specify command to run tests
-#test-cmd:
+#test-cmd: xxx
 
 ## Enable/disable automatic testing after changes (default: False)
 #auto-test: false
@@ -276,10 +278,14 @@ cog.outl("```")
 # Other Settings:
 
 ## specify a file to edit (can be used multiple times)
-#file:
+#file: xxx
+## Specify multiple values like this:
+#file: [xxx,yyyy,zzz]
 
 ## specify a read-only file (can be used multiple times)
-#read:
+#read: xxx
+## Specify multiple values like this:
+#read: [xxx,yyyy,zzz]
 
 ## Use VI editing mode in the terminal (default: False)
 #vim: false
@@ -288,10 +294,10 @@ cog.outl("```")
 #voice-language: en
 
 ## Specify the language to use in the chat (default: None, uses system settings)
-#chat-language:
+#chat-language: xxx
 
 ## Show the version number and exit
-#version:
+#version: xxx
 
 ## Check for updates and return status in the exit code
 #just-check-update: false
@@ -306,7 +312,7 @@ cog.outl("```")
 #upgrade: false
 
 ## Apply the changes from the given file instead of running the chat (debug)
-#apply:
+#apply: xxx
 
 ## Always say yes to every confirmation
 #yes: false
@@ -324,16 +330,16 @@ cog.outl("```")
 #exit: false
 
 ## Specify a single message to send the LLM, process reply then exit (disables chat mode)
-#message:
+#message: xxx
 
 ## Specify a file containing the message to send the LLM, process reply, then exit (disables chat mode)
-#message-file:
+#message-file: xxx
 
 ## Specify the encoding for input and output (default: utf-8)
 #encoding: utf-8
 
 ## Specify the config file (default: search for .aider.conf.yml in git root, cwd or home directory)
-#config:
+#config: xxx
 
 ## Run aider in your browser
 #gui: false

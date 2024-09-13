@@ -29,6 +29,8 @@ class TestMain(TestCase):
         # Fake home directory prevents tests from using the real ~/.aider.conf.yml file:
         self.homedir_obj = IgnorantTemporaryDirectory()
         os.environ["HOME"] = self.homedir_obj.name
+        self.input_patcher = patch("builtins.input", return_value=None)
+        self.mock_input = self.input_patcher.start()
 
     def tearDown(self):
         os.chdir(self.original_cwd)
@@ -36,24 +38,25 @@ class TestMain(TestCase):
         self.homedir_obj.cleanup()
         os.environ.clear()
         os.environ.update(self.original_env)
+        self.input_patcher.stop()
 
     def test_main_with_empty_dir_no_files_on_command(self):
-        main(["--no-git"], input=DummyInput(), output=DummyOutput())
+        main(["--no-git", "--exit"], input=DummyInput(), output=DummyOutput())
 
     def test_main_with_emptqy_dir_new_file(self):
-        main(["foo.txt", "--yes", "--no-git"], input=DummyInput(), output=DummyOutput())
+        main(["foo.txt", "--yes", "--no-git", "--exit"], input=DummyInput(), output=DummyOutput())
         self.assertTrue(os.path.exists("foo.txt"))
 
     @patch("aider.repo.GitRepo.get_commit_message", return_value="mock commit message")
     def test_main_with_empty_git_dir_new_file(self, _):
         make_repo()
-        main(["--yes", "foo.txt"], input=DummyInput(), output=DummyOutput())
+        main(["--yes", "foo.txt", "--exit"], input=DummyInput(), output=DummyOutput())
         self.assertTrue(os.path.exists("foo.txt"))
 
     @patch("aider.repo.GitRepo.get_commit_message", return_value="mock commit message")
     def test_main_with_empty_git_dir_new_files(self, _):
         make_repo()
-        main(["--yes", "foo.txt", "bar.txt"], input=DummyInput(), output=DummyOutput())
+        main(["--yes", "foo.txt", "bar.txt", "--exit"], input=DummyInput(), output=DummyOutput())
         self.assertTrue(os.path.exists("foo.txt"))
         self.assertTrue(os.path.exists("bar.txt"))
 
@@ -70,7 +73,7 @@ class TestMain(TestCase):
         subdir.mkdir()
         make_repo(str(subdir))
         main(
-            ["--yes", str(subdir / "foo.txt"), str(subdir / "bar.txt")],
+            ["--yes", str(subdir / "foo.txt"), str(subdir / "bar.txt"), "--exit"],
             input=DummyInput(),
             output=DummyOutput(),
         )
@@ -104,7 +107,7 @@ class TestMain(TestCase):
         # This will throw a git error on windows if get_tracked_files doesn't
         # properly convert git/posix/paths to git\posix\paths.
         # Because aider will try and `git add` a file that's already in the repo.
-        main(["--yes", str(fname)], input=DummyInput(), output=DummyOutput())
+        main(["--yes", str(fname), "--exit"], input=DummyInput(), output=DummyOutput())
 
     def test_setup_git(self):
         io = InputOutput(pretty=False, yes=True)
@@ -269,23 +272,25 @@ class TestMain(TestCase):
         self.assertEqual(args[1], None)
 
     def test_dark_mode_sets_code_theme(self):
-        # Mock Coder.create to capture the configuration
-        with patch("aider.coders.Coder.create") as MockCoder:
-            main(["--dark-mode", "--no-git"], input=DummyInput(), output=DummyOutput())
-            # Ensure Coder.create was called
-            MockCoder.assert_called_once()
+        # Mock InputOutput to capture the configuration
+        with patch("aider.main.InputOutput") as MockInputOutput:
+            MockInputOutput.return_value.get_input.return_value = None
+            main(["--dark-mode", "--no-git", "--exit"], input=DummyInput(), output=DummyOutput())
+            # Ensure InputOutput was called
+            MockInputOutput.assert_called_once()
             # Check if the code_theme setting is for dark mode
-            _, kwargs = MockCoder.call_args
+            _, kwargs = MockInputOutput.call_args
             self.assertEqual(kwargs["code_theme"], "monokai")
 
     def test_light_mode_sets_code_theme(self):
-        # Mock Coder.create to capture the configuration
-        with patch("aider.coders.Coder.create") as MockCoder:
-            main(["--light-mode", "--no-git"], input=DummyInput(), output=DummyOutput())
-            # Ensure Coder.create was called
-            MockCoder.assert_called_once()
+        # Mock InputOutput to capture the configuration
+        with patch("aider.main.InputOutput") as MockInputOutput:
+            MockInputOutput.return_value.get_input.return_value = None
+            main(["--light-mode", "--no-git", "--exit"], input=DummyInput(), output=DummyOutput())
+            # Ensure InputOutput was called
+            MockInputOutput.assert_called_once()
             # Check if the code_theme setting is for light mode
-            _, kwargs = MockCoder.call_args
+            _, kwargs = MockInputOutput.call_args
             self.assertEqual(kwargs["code_theme"], "default")
 
     def create_env_file(self, file_name, content):
@@ -295,25 +300,29 @@ class TestMain(TestCase):
 
     def test_env_file_flag_sets_automatic_variable(self):
         env_file_path = self.create_env_file(".env.test", "AIDER_DARK_MODE=True")
-        with patch("aider.coders.Coder.create") as MockCoder:
+        with patch("aider.main.InputOutput") as MockInputOutput:
+            MockInputOutput.return_value.get_input.return_value = None
+            MockInputOutput.return_value.get_input.confirm_ask = True
             main(
-                ["--env-file", str(env_file_path), "--no-git"],
+                ["--env-file", str(env_file_path), "--no-git", "--exit"],
                 input=DummyInput(),
                 output=DummyOutput(),
             )
-            MockCoder.assert_called_once()
+            MockInputOutput.assert_called_once()
             # Check if the color settings are for dark mode
-            _, kwargs = MockCoder.call_args
+            _, kwargs = MockInputOutput.call_args
             self.assertEqual(kwargs["code_theme"], "monokai")
 
     def test_default_env_file_sets_automatic_variable(self):
         self.create_env_file(".env", "AIDER_DARK_MODE=True")
-        with patch("aider.coders.Coder.create") as MockCoder:
-            main(["--no-git"], input=DummyInput(), output=DummyOutput())
-            # Ensure Coder.create was called
-            MockCoder.assert_called_once()
+        with patch("aider.main.InputOutput") as MockInputOutput:
+            MockInputOutput.return_value.get_input.return_value = None
+            MockInputOutput.return_value.get_input.confirm_ask = True
+            main(["--no-git", "--exit"], input=DummyInput(), output=DummyOutput())
+            # Ensure InputOutput was called
+            MockInputOutput.assert_called_once()
             # Check if the color settings are for dark mode
-            _, kwargs = MockCoder.call_args
+            _, kwargs = MockInputOutput.call_args
             self.assertEqual(kwargs["code_theme"], "monokai")
 
     def test_false_vals_in_env_file(self):
@@ -368,7 +377,7 @@ class TestMain(TestCase):
     def test_verbose_mode_lists_env_vars(self):
         self.create_env_file(".env", "AIDER_DARK_MODE=on")
         with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
-            main(["--no-git", "--verbose"], input=DummyInput(), output=DummyOutput())
+            main(["--no-git", "--verbose", "--exit"], input=DummyInput(), output=DummyOutput())
             output = mock_stdout.getvalue()
             relevant_output = "\n".join(
                 line

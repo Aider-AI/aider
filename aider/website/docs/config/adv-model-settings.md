@@ -89,3 +89,8 @@ The yaml file should be a a list of dictionary objects for each model, as follow
   examples_as_sys_msg: false
 ```
 
+You can look at the `ModelSettings` class in
+[models.py](https://github.com/paul-gauthier/aider/blob/main/aider/models.py)
+file for details about all of the model setting that aider supports.
+That file also contains the settings for many popular models.
+

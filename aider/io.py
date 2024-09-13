@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
-from prompt_toolkit import prompt
 from prompt_toolkit.completion import Completer, Completion, ThreadedCompleter
 from prompt_toolkit.enums import EditingMode
 from prompt_toolkit.history import FileHistory
@@ -18,6 +17,8 @@ from pygments.token import Token
 from rich.console import Console
 from rich.style import Style as RichStyle
 from rich.text import Text
+from rich.markdown import Markdown
+from aider.mdstream import MarkdownStream
 
 from .dump import dump  # noqa: F401
 from .utils import is_image_file
@@ -177,6 +178,8 @@ class InputOutput:
         tool_output_color=None,
         tool_error_color="red",
         tool_warning_color="#FFA500",
+        assistant_output_color="blue",
+        code_theme="default",
         encoding="utf-8",
         dry_run=False,
         llm_history_file=None,
@@ -191,6 +194,8 @@ class InputOutput:
         self.tool_output_color = tool_output_color if pretty else None
         self.tool_error_color = tool_error_color if pretty else None
         self.tool_warning_color = tool_warning_color if pretty else None
+        self.assistant_output_color = assistant_output_color
+        self.code_theme = code_theme
 
         self.input = input
         self.output = output
@@ -211,13 +216,28 @@ class InputOutput:
         self.encoding = encoding
         self.dry_run = dry_run
 
-        if pretty:
-            self.console = Console()
-        else:
-            self.console = Console(force_terminal=False, no_color=True)
-
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
+
+        self.prompt_session = None
+        if self.pretty:
+            # Initialize PromptSession
+            session_kwargs = {
+                "input": self.input,
+                "output": self.output,
+                "lexer": PygmentsLexer(MarkdownLexer),
+                "editing_mode": self.editingmode,
+            }
+            if self.input_history_file is not None:
+                session_kwargs["history"] = FileHistory(self.input_history_file)
+            try:
+                self.prompt_session = PromptSession(**session_kwargs)
+                self.console = Console()  # pretty console
+            except Exception as err:
+                self.console = Console(force_terminal=False, no_color=True)
+                self.tool_error(f"Can't initialize prompt toolkit: {err}")  # non-pretty
+        else:
+            self.console = Console(force_terminal=False, no_color=True)  # non-pretty
 
     def read_image(self, filename):
         try:
@@ -317,35 +337,31 @@ class InputOutput:
             )
         )
 
+        kb = KeyBindings()
+
+        @kb.add("escape", "c-m", eager=True)
+        def _(event):
+            event.current_buffer.insert_text("\n")
+
         while True:
             if multiline_input:
                 show = ". "
 
-            session_kwargs = {
-                "message": show,
-                "completer": completer_instance,
-                "reserve_space_for_menu": 4,
-                "complete_style": CompleteStyle.MULTI_COLUMN,
-                "input": self.input,
-                "output": self.output,
-                "lexer": PygmentsLexer(MarkdownLexer),
-            }
-            if style:
-                session_kwargs["style"] = style
-
-            if self.input_history_file is not None:
-                session_kwargs["history"] = FileHistory(self.input_history_file)
-
-            kb = KeyBindings()
-
-            @kb.add("escape", "c-m", eager=True)
-            def _(event):
-                event.current_buffer.insert_text("\n")
-
-            session = PromptSession(
-                key_bindings=kb, editing_mode=self.editingmode, **session_kwargs
-            )
-            line = session.prompt()
+            try:
+                if self.prompt_session:
+                    line = self.prompt_session.prompt(
+                        show,
+                        completer=completer_instance,
+                        reserve_space_for_menu=4,
+                        complete_style=CompleteStyle.MULTI_COLUMN,
+                        style=style,
+                        key_bindings=kb,
+                    )
+                else:
+                    line = input(show)
+            except UnicodeEncodeError as err:
+                self.tool_error(str(err))
+                return ""
 
             if line and line[0] == "{" and not multiline_input:
                 multiline_input = True
@@ -462,10 +478,14 @@ class InputOutput:
             self.user_input(f"{question}{res}", log_only=False)
         else:
             while True:
-                res = prompt(
-                    question,
-                    style=Style.from_dict(style),
-                )
+                if self.prompt_session:
+                    res = self.prompt_session.prompt(
+                        question,
+                        style=Style.from_dict(style),
+                    )
+                else:
+                    res = input(question)
+
                 if not res:
                     res = "y"  # Default to Yes if no input
                     break
@@ -515,7 +535,10 @@ class InputOutput:
         elif self.yes is False:
             res = "no"
         else:
-            res = prompt(question + " ", default=default, style=style)
+            if self.prompt_session:
+                res = self.prompt_session.prompt(question + " ", default=default, style=style)
+            else:
+                res = input(question + " ")
 
         hist = f"{question.strip()} {res.strip()}"
         self.append_chat_history(hist, linebreak=True, blockquote=True)
@@ -563,6 +586,27 @@ class InputOutput:
         style = RichStyle(**style)
         self.console.print(*messages, style=style)
 
+    def assistant_output(self, message, stream=False):
+        mdStream = None
+        show_resp = message
+        
+        if self.pretty:
+            if stream:
+                mdargs = dict(style=self.assistant_output_color, code_theme=self.code_theme)
+                mdStream = MarkdownStream(mdargs=mdargs)
+            else:
+                show_resp = Markdown(
+                    message, style=self.assistant_output_color, code_theme=self.code_theme
+                )
+        else:
+            show_resp = Text(message or "<no response>")
+
+        self.console.print(show_resp)
+        return mdStream
+        
+    def print(self, message=""):
+        print(message)
+        
     def append_chat_history(self, text, linebreak=False, blockquote=False, strip=True):
         if blockquote:
             if strip:

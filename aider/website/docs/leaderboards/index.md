@@ -55,83 +55,14 @@ The model also has to successfully apply all its changes to the source file with
   </tbody>
 </table>
 
-<canvas id="editChart" width="800" height="450" style="margin-top: 20px"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    var ctx = document.getElementById('editChart').getContext('2d');
-    var leaderboardData = {
-      labels: [],
-      datasets: [{
-        label: 'Percent completed correctly',
-        data: [],
-        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-        borderColor: 'rgba(54, 162, 235, 1)',
-        borderWidth: 1
-      }]
-    };
 
-    var allData = [];
-    {% for row in edit_sorted %}
-      allData.push({
-        model: '{{ row.model }}',
-        pass_rate_2: {{ row.pass_rate_2 }},
-        percent_cases_well_formed: {{ row.percent_cases_well_formed }}
-      });
-    {% endfor %}
-
-    function updateChart() {
-      var selectedRows = document.querySelectorAll('tr.selected');
-      var showAll = selectedRows.length === 0;
-
-      leaderboardData.labels = [];
-      leaderboardData.datasets[0].data = [];
-
-      allData.forEach(function(row, index) {
-        var rowElement = document.getElementById('edit-row-' + index);
-        if (showAll) {
-          rowElement.classList.remove('selected');
-        }
-        if (showAll || rowElement.classList.contains('selected')) {
-          leaderboardData.labels.push(row.model);
-          leaderboardData.datasets[0].data.push(row.pass_rate_2);
-        }
-      });
-
-      leaderboardChart.update();
-    }
-
-    var tableBody = document.querySelector('table tbody');
-    allData.forEach(function(row, index) {
-      var tr = tableBody.children[index];
-      tr.id = 'edit-row-' + index;
-      tr.style.cursor = 'pointer';
-      tr.onclick = function() {
-        this.classList.toggle('selected');
-        updateChart();
-      };
-    });
-
-    var leaderboardChart = new Chart(ctx, {
-      type: 'bar',
-      data: leaderboardData,
-      options: {
-        scales: {
-          yAxes: [{
-            scaleLabel: {
-              display: true,
-            },
-            ticks: {
-              beginAtZero: true
-            }
-          }]
-        }
-      }
-    });
-
-    updateChart();
-  });
-</script>
+{% include leaderboard_graph.html 
+  chart_id="editChart" 
+  data=edit_sorted 
+  row_prefix="edit-row" 
+  pass_rate_key="pass_rate_2"
+%}
 <style>
   tr.selected {
     color: #0056b3;
@@ -180,83 +111,12 @@ Therefore, results are available for fewer models.
   </tbody>
 </table>
 
-<canvas id="refacChart" width="800" height="450" style="margin-top: 20px"></canvas>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    var ctx = document.getElementById('refacChart').getContext('2d');
-    var leaderboardData = {
-      labels: [],
-      datasets: [{
-        label: 'Percent completed correctly',
-        data: [],
-        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-        borderColor: 'rgba(54, 162, 235, 1)',
-        borderWidth: 1
-      }]
-    };
-
-    var allData = [];
-    {% for row in refac_sorted %}
-      allData.push({
-        model: '{{ row.model }}',
-        pass_rate_1: {{ row.pass_rate_1 }},
-        percent_cases_well_formed: {{ row.percent_cases_well_formed }}
-      });
-    {% endfor %}
-
-    function updateChart() {
-      var selectedRows = document.querySelectorAll('tr.selected');
-      var showAll = selectedRows.length === 0;
-
-      leaderboardData.labels = [];
-      leaderboardData.datasets[0].data = [];
-
-      allData.forEach(function(row, index) {
-        var rowElement = document.getElementById('refac-row-' + index);
-        if (showAll) {
-          rowElement.classList.remove('selected');
-        }
-        if (showAll || rowElement.classList.contains('selected')) {
-          leaderboardData.labels.push(row.model);
-          leaderboardData.datasets[0].data.push(row.pass_rate_1);
-        }
-      });
-
-      leaderboardChart.update();
-    }
-
-    var tableBody = document.querySelectorAll('table tbody')[1];
-    allData.forEach(function(row, index) {
-      var tr = tableBody.children[index];
-      tr.id = 'refac-row-' + index;
-      tr.style.cursor = 'pointer';
-      tr.onclick = function() {
-        this.classList.toggle('selected');
-        updateChart();
-      };
-    });
-
-    var leaderboardChart = new Chart(ctx, {
-      type: 'bar',
-      data: leaderboardData,
-      options: {
-        scales: {
-          yAxes: [{
-            scaleLabel: {
-              display: true,
-            },
-            ticks: {
-              beginAtZero: true
-            }
-          }]
-        }
-      }
-    });
-
-    updateChart();
-  });
-</script>
+{% include leaderboard_graph.html 
+  chart_id="refacChart" 
+  data=refac_sorted 
+  row_prefix="refac-row" 
+  pass_rate_key="pass_rate_1"
+%}
 
 
 ## LLM code editing skill by model release date
@@ -321,6 +181,6 @@ mod_dates = [get_last_modified_date(file) for file in files]
 latest_mod_date = max(mod_dates)
 cog.out(f"{latest_mod_date.strftime('%B %d, %Y.')}")
 ]]]-->
-September 05, 2024.
+September 12, 2024.
 <!--[[[end]]]-->
 </p>

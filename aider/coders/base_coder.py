@@ -18,16 +18,12 @@ from datetime import datetime
 from json.decoder import JSONDecodeError
 from pathlib import Path
 
-from rich.console import Console, Text
-from rich.markdown import Markdown
-
 from aider import __version__, models, prompts, urls, utils
 from aider.commands import Commands
 from aider.history import ChatSummary
 from aider.io import ConfirmGroup, InputOutput
 from aider.linter import Linter
 from aider.llm import litellm
-from aider.mdstream import MarkdownStream
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
@@ -241,8 +237,6 @@ class Coder:
         dry_run=False,
         map_tokens=1024,
         verbose=False,
-        assistant_output_color="blue",
-        code_theme="default",
         stream=True,
         use_git=True,
         cur_messages=None,
@@ -315,16 +309,9 @@ class Coder:
 
         self.auto_commits = auto_commits
         self.dirty_commits = dirty_commits
-        self.assistant_output_color = assistant_output_color
-        self.code_theme = code_theme
 
         self.dry_run = dry_run
         self.pretty = self.io.pretty
-
-        if self.pretty:
-            self.console = Console()
-        else:
-            self.console = Console(force_terminal=False, no_color=True)
 
         self.main_model = main_model
 
@@ -923,10 +910,21 @@ class Coder:
         lazy_prompt = self.gpt_prompts.lazy_prompt if self.main_model.lazy else ""
         platform_text = self.get_platform_info()
 
+        if self.suggest_shell_commands:
+            shell_cmd_prompt = self.gpt_prompts.shell_cmd_prompt.format(platform=platform_text)
+            shell_cmd_reminder = self.gpt_prompts.shell_cmd_reminder.format(platform=platform_text)
+        else:
+            shell_cmd_prompt = self.gpt_prompts.no_shell_cmd_prompt.format(platform=platform_text)
+            shell_cmd_reminder = self.gpt_prompts.no_shell_cmd_reminder.format(
+                platform=platform_text
+            )
+
         prompt = prompt.format(
             fence=self.fence,
             lazy_prompt=lazy_prompt,
             platform=platform_text,
+            shell_cmd_prompt=shell_cmd_prompt,
+            shell_cmd_reminder=shell_cmd_reminder,
         )
         return prompt
 
@@ -968,9 +966,16 @@ class Coder:
 
         chunks = ChatChunks()
 
-        chunks.system = [
-            dict(role="system", content=main_sys),
-        ]
+        if self.main_model.use_system_prompt:
+            chunks.system = [
+                dict(role="system", content=main_sys),
+            ]
+        else:
+            chunks.system = [
+                dict(role="user", content=main_sys),
+                dict(role="assistant", content="Ok."),
+            ]
+
         chunks.examples = example_messages
 
         self.summarize_end()
@@ -1096,11 +1101,7 @@ class Coder:
             utils.show_messages(messages, functions=self.functions)
 
         self.multi_response_content = ""
-        if self.show_pretty() and self.stream:
-            mdargs = dict(style=self.assistant_output_color, code_theme=self.code_theme)
-            self.mdstream = MarkdownStream(mdargs=mdargs)
-        else:
-            self.mdstream = None
+        self.mdstream = self.io.assistant_output("", self.stream)
 
         retry_delay = 0.125
 
@@ -1380,6 +1381,11 @@ class Coder:
 
         self.io.log_llm_history("TO LLM", format_messages(messages))
 
+        if self.main_model.use_temperature:
+            temp = self.temperature
+        else:
+            temp = None
+
         completion = None
         try:
             hash_object, completion = send_completion(
@@ -1387,7 +1393,7 @@ class Coder:
                 messages,
                 functions,
                 self.stream,
-                self.temperature,
+                temp,
                 extra_headers=model.extra_headers,
                 max_tokens=model.max_tokens,
             )
@@ -1452,14 +1458,7 @@ class Coder:
             raise Exception("No data found in LLM response!")
 
         show_resp = self.render_incremental_response(True)
-        if self.show_pretty():
-            show_resp = Markdown(
-                show_resp, style=self.assistant_output_color, code_theme=self.code_theme
-            )
-        else:
-            show_resp = Text(show_resp or "<no response>")
-
-        self.io.console.print(show_resp)
+        self.io.assistant_output(show_resp)
 
         if (
             hasattr(completion.choices[0], "finish_reason")
@@ -1880,7 +1879,6 @@ class Coder:
                     message=commit_message,
                 )
 
-            self.io.tool_output("No changes made to git tracked files.")
             return self.gpt_prompts.files_content_gpt_no_edits
         except ANY_GIT_ERROR as err:
             self.io.tool_error(f"Unable to commit: {str(err)}")
@@ -1899,6 +1897,8 @@ class Coder:
             return
         if self.commit_before_message[-1] != self.repo.get_head_commit_sha():
             self.io.tool_output("You can use /undo to undo and discard each aider commit.")
+        else:
+            self.io.tool_output("No changes made to git tracked files.")
 
     def dirty_commit(self):
         if not self.need_commit_before_edits:

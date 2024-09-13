@@ -8,6 +8,7 @@ description: Intro and tutorial videos made by aider users.
 
 Here are some tutorial videos made by aider users:
 
+- [Using aider to incrementally build a non-trivial app](https://youtu.be/QlUt06XLbJE) -- IndyDevDan
 - [Aider and Replit on mobile with your voice](https://x.com/itsPaulAi/status/1830987090617831810) -- Paul Couvert
 - [Aider is the OG AI Coding King (Mermaid Diagram AI Agent)](https://www.youtube.com/watch?v=ag-KxYS8Vuw) -- IndyDevDan
 - [Installing aider in replit and making a Trello clone](https://x.com/itspaulai/status/1828834199597633724) -- Paul Couvert

@@ -562,8 +562,7 @@ class Commands:
             "HEAD",
         )
 
-        # don't use io.tool_output() because we don't want to log or further colorize
-        print(diff)
+        self.io.print(diff)
 
     def quote_fname(self, fname):
         if " " in fname and '"' not in fname:
@@ -1030,9 +1029,9 @@ class Commands:
 
         if text:
             self.io.add_to_input_history(text)
-            print()
+            self.io.print()
             self.io.user_input(text, log_only=False)
-            print()
+            self.io.print()
 
         return text
 
@@ -1088,7 +1087,7 @@ class Commands:
     def cmd_read_only(self, args):
         "Add files to the chat that are for reference, not to be edited"
         if not args.strip():
-            self.io.tool_error("Please provide filenames to read.")
+            self.io.tool_error("Please provide filenames or directories to read.")
             return
 
         filenames = parse_quoted_filenames(args)
@@ -1098,23 +1097,43 @@ class Commands:
             abs_path = self.coder.abs_root_path(expanded_path)
 
             if not os.path.exists(abs_path):
-                self.io.tool_error(f"File not found: {abs_path}")
+                self.io.tool_error(f"Path not found: {abs_path}")
                 continue
 
-            if not os.path.isfile(abs_path):
-                self.io.tool_error(f"Not a file: {abs_path}")
-                continue
+            if os.path.isfile(abs_path):
+                self._add_read_only_file(abs_path, word)
+            elif os.path.isdir(abs_path):
+                self._add_read_only_directory(abs_path, word)
+            else:
+                self.io.tool_error(f"Not a file or directory: {abs_path}")
 
-            if abs_path in self.coder.abs_fnames:
-                self.io.tool_error(f"{word} is already in the chat as an editable file")
-                continue
-
-            if abs_path in self.coder.abs_read_only_fnames:
-                self.io.tool_error(f"{word} is already in the chat as a read-only file")
-                continue
-
+    def _add_read_only_file(self, abs_path, original_name):
+        if abs_path in self.coder.abs_fnames:
+            self.io.tool_error(f"{original_name} is already in the chat as an editable file")
+        elif abs_path in self.coder.abs_read_only_fnames:
+            self.io.tool_error(f"{original_name} is already in the chat as a read-only file")
+        else:
             self.coder.abs_read_only_fnames.add(abs_path)
-            self.io.tool_output(f"Added {word} to read-only files.")
+            self.io.tool_output(f"Added {original_name} to read-only files.")
+
+    def _add_read_only_directory(self, abs_path, original_name):
+        added_files = 0
+        for root, _, files in os.walk(abs_path):
+            for file in files:
+                file_path = os.path.join(root, file)
+                if (
+                    file_path not in self.coder.abs_fnames
+                    and file_path not in self.coder.abs_read_only_fnames
+                ):
+                    self.coder.abs_read_only_fnames.add(file_path)
+                    added_files += 1
+
+        if added_files > 0:
+            self.io.tool_output(
+                f"Added {added_files} files from directory {original_name} to read-only files."
+            )
+        else:
+            self.io.tool_output(f"No new files added from directory {original_name}.")
 
     def cmd_map(self, args):
         "Print out the current repository map"
@@ -1168,11 +1187,7 @@ def parse_quoted_filenames(args):
 
 
 def get_help_md():
-    from aider.coders import Coder
-    from aider.models import Model
-
-    coder = Coder(Model("gpt-3.5-turbo"), None)
-    md = coder.commands.get_help_md()
+    md = Commands(None, None).get_help_md()
     return md
 
 

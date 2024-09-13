@@ -950,7 +950,7 @@
 
 - dirname: 2024-09-04-16-08-09--yi-coder-9b-whole
   test_cases: 133
-  model: openai/hf:01-ai/Yi-Coder-9B-Chat
+  model: Yi Coder 9B Chat
   edit_format: whole
   commit_hash: c4e4967
   pass_rate_1: 46.6
@@ -974,7 +974,7 @@
 
 - dirname: 2024-09-04-16-17-33--yi-coder-9b-chat-q4_0-whole
   test_cases: 133
-  model: ollama/yi-coder:9b-chat-q4_0
+  model: yi-coder:9b-chat-q4_0
   edit_format: whole
   commit_hash: c4e4967
   pass_rate_1: 41.4
@@ -997,7 +997,7 @@
 
 - dirname: 2024-09-05-14-50-11--deepseek-sep5-no-shell
   test_cases: 133
-  model: DeepSeek Chat V2.5
+  model: DeepSeek V2.5
   edit_format: diff
   commit_hash: 1279c86
   pass_rate_1: 54.9
@@ -1017,4 +1017,119 @@
   versions: 0.55.1.dev
   seconds_per_case: 49.6
   total_cost: 0.0998
+
+- dirname: 2024-09-06-19-55-17--reflection-hyperbolic-whole-output2
+  test_cases: 133
+  model: Reflection-70B
+  edit_format: whole
+  commit_hash: 74631ee-dirty, 2aef59e-dirty
+  pass_rate_1: 33.1
+  pass_rate_2: 42.1
+  percent_cases_well_formed: 100.0
+  error_outputs: 2
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 10
+  lazy_comments: 26
+  syntax_errors: 1
+  indentation_errors: 3
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: (not currently supported)
+  date: 2024-09-06
+  versions: 0.55.1.dev
+  seconds_per_case: 61.6
+  total_cost: 0.0000
+
+- dirname: 2024-09-11-15-42-17--command-r-plus-08-2024-whole
+  test_cases: 133
+  model: Command R+ (08-24)
+  edit_format: whole
+  commit_hash: b43ed20
+  pass_rate_1: 27.1
+  pass_rate_2: 38.3
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 7
+  lazy_comments: 10
+  syntax_errors: 0
+  indentation_errors: 3
+  exhausted_context_windows: 0
+  test_timeouts: 4
+  command: aider --model command-r-plus-08-2024
+  date: 2024-09-11
+  versions: 0.56.1.dev
+  seconds_per_case: 20.3
+  total_cost: 0.0000
+
+- dirname: 2024-09-11-15-47-02--command-r-08-2024-whole
+  test_cases: 133
+  model: Command R (08-24)
+  edit_format: whole
+  commit_hash: b43ed20-dirty
+  pass_rate_1: 30.1
+  pass_rate_2: 38.3
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 4
+  lazy_comments: 0
+  syntax_errors: 1
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  command: aider --model command-r-08-2024
+  date: 2024-09-11
+  versions: 0.56.1.dev
+  seconds_per_case: 7.6
+  total_cost: 0.0000
+
+- dirname: 2024-09-12-19-57-35--o1-mini-whole
+  test_cases: 133
+  model: o1-mini (whole)
+  edit_format: whole
+  commit_hash: 36fa773-dirty, 291b456
+  pass_rate_1: 49.6
+  pass_rate_2: 70.7
+  percent_cases_well_formed: 90.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 17
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model o1-mini
+  date: 2024-09-12
+  versions: 0.56.1.dev
+  seconds_per_case: 103.0
+  total_cost: 5.3725
+
+- dirname: 2024-09-12-20-56-22--o1-mini-diff
+  test_cases: 133
+  model: o1-mini (diff)
+  edit_format: diff
+  commit_hash: 4598a37-dirty, 291b456, 752e823-dirty
+  pass_rate_1: 45.1
+  pass_rate_2: 62.4
+  percent_cases_well_formed: 85.7
+  error_outputs: 26
+  num_malformed_responses: 26
+  num_with_malformed_responses: 19
+  user_asks: 2
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model o1-mini --edit-format diff
+  date: 2024-09-12
+  versions: 0.56.1.dev
+  seconds_per_case: 177.7
+  total_cost: 11.1071
   

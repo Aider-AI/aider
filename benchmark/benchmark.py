@@ -577,6 +577,7 @@ def run_test_real(
         verbose=verbose,
         # auto_lint=False,  # disabled for code-in-json experiments
         cache_prompts=True,
+        suggest_shell_commands=False,
     )
     coder = Coder.create(
         main_model=ask_model,

@@ -43,3 +43,8 @@ If you need to edit any of these files, ask me to *add them to the chat* first.
     read_only_files_prefix = """Here are some READ ONLY files, provided for your reference.
 Do not edit these files!
 """
+
+    shell_cmd_prompt = ""
+    shell_cmd_reminder = ""
+    no_shell_cmd_prompt = ""
+    no_shell_cmd_reminder = ""
