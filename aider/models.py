@@ -922,3 +922,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+from sqlalchemy.orm import Session
+
+def get_all_users(db: Session):
+    return db.query(User).all()
