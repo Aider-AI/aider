@@ -925,4 +925,7 @@ if __name__ == "__main__":
 from sqlalchemy.orm import Session
 
 def get_all_users(db: Session):
-    return db.query(User).all()
+    return db.query(User).all()  # Ensure User is defined
+from sqlalchemy import Column, Integer, String
+from database import Base
+from aider.models import User  # Import User class
