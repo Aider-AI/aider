@@ -396,7 +396,7 @@ MODEL_SETTINGS = [
         send_undo_reply=False,
     ),
     ModelSettings(
-        "deepseek/deepseek-chat",
+        "deepseek-chat",
         "diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
@@ -404,7 +404,7 @@ MODEL_SETTINGS = [
         max_tokens=8192,
     ),
     ModelSettings(
-        "deepseek/deepseek-coder",
+        "deepseek-coder",
         "diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
