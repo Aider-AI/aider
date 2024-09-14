@@ -175,7 +175,8 @@ MODEL_SETTINGS = [
     ),
     ModelSettings(
         "gpt-4o-mini",
-        "whole",
+        "udiff",
+        use_repo_map=True,
         weak_model_name="gpt-4o-mini",
         accepts_images=True,
         lazy=True,
@@ -183,7 +184,8 @@ MODEL_SETTINGS = [
     ),
     ModelSettings(
         "openai/gpt-4o-mini",
-        "whole",
+        "udiff",
+        use_repo_map=True,
         weak_model_name="openai/gpt-4o-mini",
         accepts_images=True,
         lazy=True,
