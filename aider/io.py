@@ -92,11 +92,9 @@ class AutoCompleter(Completer):
             )
 
     def get_command_completions(self, text, words):
-        candidates = []
         if len(words) == 1 and not text[-1].isspace():
             partial = words[0].lower()
-            candidates = [cmd for cmd in self.command_names if cmd.startswith(partial)]
-            return candidates
+            return [cmd for cmd in self.command_names if cmd.startswith(partial)]
 
         if len(words) <= 1:
             return []
@@ -112,17 +110,16 @@ class AutoCompleter(Completer):
         elif cmd not in matches:
             return
 
-        if cmd not in self.command_completions:
+        candidates = None
+        if cmd in self.command_completions:
+            candidates = self.command_completions[cmd]
+        else:
             candidates = self.commands.get_completions(cmd)
             self.command_completions[cmd] = candidates
-        else:
-            candidates = self.command_completions[cmd]
-
         if candidates is None:
             return
 
-        candidates = [word for word in candidates if partial in word.lower()]
-        return candidates
+        return [word for word in candidates if partial in word.lower()]
 
     def get_completions(self, document, complete_event):
         self.tokenize()
