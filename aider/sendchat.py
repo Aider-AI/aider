@@ -60,9 +60,10 @@ def send_completion(
     kwargs = dict(
         model=model_name,
         messages=messages,
-        temperature=temperature,
         stream=stream,
     )
+    if temperature is not None:
+        kwargs["temperature"] = temperature
 
     if functions is not None:
         function = functions[0]

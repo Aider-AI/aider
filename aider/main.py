@@ -300,6 +300,10 @@ def sanity_check_repo(repo, io):
     if not repo:
         return True
 
+    if not repo.repo.working_tree_dir:
+        io.tool_error("The git repo does not seem to have a working tree?")
+        return False
+
     try:
         repo.get_tracked_files()
         if not repo.git_repo_error:
@@ -571,6 +575,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     if args.cache_prompts and args.map_refresh == "auto":
         args.map_refresh = "files"
+
+    if not main_model.streaming:
+        if args.stream:
+            io.tool_warning(
+                "Warning: Streaming is not supported by the selected model. Disabling streaming."
+            )
+        args.stream = False
 
     try:
         coder = Coder.create(

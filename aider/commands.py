@@ -1187,11 +1187,7 @@ def parse_quoted_filenames(args):
 
 
 def get_help_md():
-    from aider.coders import Coder
-    from aider.models import Model
-
-    coder = Coder(Model("gpt-3.5-turbo"), None)
-    md = coder.commands.get_help_md()
+    md = Commands(None, None).get_help_md()
     return md
 
 
