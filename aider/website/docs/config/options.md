@@ -168,6 +168,10 @@ Specify a file with context window and costs for unknown models
 Default: .aider.model.metadata.json  
 Environment variable: `AIDER_MODEL_METADATA_FILE`  
 
+### `--request-timeout REQUEST_TIMEOUT`
+Set a custom timeout in seconds for requests to the model (default: 600)
+Environment variable: `AIDER_REQUEST_TIMEOUT`
+
 ### `--verify-ssl`
 Verify the SSL cert when connecting to models (default: True)  
 Default: True  

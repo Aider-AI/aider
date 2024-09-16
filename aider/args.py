@@ -169,6 +169,13 @@ def get_parser(default_config_files, git_root):
         help="Specify a file with context window and costs for unknown models",
     )
     group.add_argument(
+        "--request-timeout",
+        type=int,
+        metavar="REQUEST_TIMEOUT",
+        default=600,
+        help="Set a custom timeout in seconds for requests to the model"
+    )
+    group.add_argument(
         "--verify-ssl",
         action=argparse.BooleanOptionalAction,
         default=True,

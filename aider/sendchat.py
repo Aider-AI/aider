@@ -84,7 +84,8 @@ def send_completion(
 
     # del kwargs['stream']
 
-    res = litellm.completion(**kwargs)
+    request_timeout = litellm.request_timeout
+    res = litellm.completion(**kwargs, timeout=request_timeout)
 
     if not stream and CACHE is not None:
         CACHE[key] = res

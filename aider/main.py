@@ -369,10 +369,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)
 
+    litellm._load_litellm()
+    litellm.request_timeout = args.request_timeout
+
     if not args.verify_ssl:
         import httpx
-
-        litellm._load_litellm()
         litellm._lazy_module.client_session = httpx.Client(verify=False)
 
     if args.dark_mode:
