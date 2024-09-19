@@ -6,6 +6,7 @@ from datetime import datetime
 from pathlib import Path
 
 from prompt_toolkit.completion import Completer, Completion, ThreadedCompleter
+from prompt_toolkit.cursor_shapes import ModalCursorShapeConfig
 from prompt_toolkit.enums import EditingMode
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.key_binding import KeyBindings
@@ -15,9 +16,10 @@ from prompt_toolkit.styles import Style
 from pygments.lexers import MarkdownLexer, guess_lexer_for_filename
 from pygments.token import Token
 from rich.console import Console
+from rich.markdown import Markdown
 from rich.style import Style as RichStyle
 from rich.text import Text
-from rich.markdown import Markdown
+
 from aider.mdstream import MarkdownStream
 
 from .dump import dump  # noqa: F401
@@ -227,6 +229,7 @@ class InputOutput:
                 "output": self.output,
                 "lexer": PygmentsLexer(MarkdownLexer),
                 "editing_mode": self.editingmode,
+                "cursor": ModalCursorShapeConfig(),
             }
             if self.input_history_file is not None:
                 session_kwargs["history"] = FileHistory(self.input_history_file)
@@ -589,7 +592,7 @@ class InputOutput:
     def assistant_output(self, message, stream=False):
         mdStream = None
         show_resp = message
-        
+
         if self.pretty:
             if stream:
                 mdargs = dict(style=self.assistant_output_color, code_theme=self.code_theme)
@@ -603,10 +606,10 @@ class InputOutput:
 
         self.console.print(show_resp)
         return mdStream
-        
+
     def print(self, message=""):
         print(message)
-        
+
     def append_chat_history(self, text, linebreak=False, blockquote=False, strip=True):
         if blockquote:
             if strip:
