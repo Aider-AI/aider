@@ -74,6 +74,7 @@ class ModelSettings:
     reminder: str = "user"
     examples_as_sys_msg: bool = False
     extra_headers: Optional[dict] = None
+    extra_body: Optional[dict] = None
     max_tokens: Optional[int] = None
     cache_control: bool = False
     caches_by_default: bool = False
