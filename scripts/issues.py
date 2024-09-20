@@ -39,6 +39,7 @@ def get_issues(state="open"):
 
 import re
 
+
 def group_issues_by_subject(issues):
     grouped_issues = defaultdict(list)
     pattern = r"Uncaught .+ in .+ line \d+"
@@ -81,8 +82,7 @@ def main():
         oldest_issue = find_oldest_issue(subject, all_issues)
         if oldest_issue:
             print(
-                f"Oldest issue: #{oldest_issue['number']} (created on"
-                f" {oldest_issue['created_at']})"
+                f"Oldest issue: #{oldest_issue['number']} (created on {oldest_issue['created_at']})"
             )
         else:
             print("No oldest issue found")
