@@ -78,7 +78,8 @@ def main():
             oldest_issue = find_oldest_issue(subject, all_issues)
             if oldest_issue:
                 print(
-                    f"Oldest issue: #{oldest_issue['number']} (created on {oldest_issue['created_at']})"
+                    f"Oldest issue: #{oldest_issue['number']} (created on"
+                    f" {oldest_issue['created_at']})"
                 )
             else:
                 print("No oldest issue found")
