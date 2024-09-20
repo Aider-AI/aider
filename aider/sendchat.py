@@ -96,7 +96,7 @@ def send_completion(
 
 
 @lazy_litellm_retry_decorator
-def simple_send_with_retries(model_name, messages, extra_headers=None):
+def simple_send_with_retries(model_name, messages, extra_headers=None, extra_body=None):
     try:
         kwargs = {
             "model_name": model_name,
