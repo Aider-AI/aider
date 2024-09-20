@@ -108,10 +108,10 @@ def main():
         print(f"Open issues: {len(issues)}")
         sorted_issues = sorted(issues, key=lambda x: x["number"], reverse=True)
         for issue in sorted_issues:
-            print(f"  - #{issue['number']}: {issue['html_url']}")
+            print(f"  - #{issue['number']}: {issue['comments']} comments {issue['html_url']}")
 
         print(
-            f"Oldest issue: #{oldest_issue['number']}: {oldest_issue['html_url']} (created on"
+            f"Oldest issue: #{oldest_issue['number']}: {oldest_issue['comments']} comments {oldest_issue['html_url']} (created on"
             f" {oldest_issue['created_at']})"
         )
 
