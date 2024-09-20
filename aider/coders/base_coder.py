@@ -584,8 +584,7 @@ class Coder:
         mentioned_fnames.update(self.get_ident_filename_matches(mentioned_idents))
 
         all_abs_files = set(self.get_all_abs_files())
-        repo_abs_read_only_fnames = set(self.abs_read_only_fnames) & all_abs_files
-        chat_files = set(self.abs_fnames) | repo_abs_read_only_fnames
+        chat_files = set(self.abs_fnames)
         other_files = all_abs_files - chat_files
 
         repo_content = self.repo_map.get_repo_map(
