@@ -514,7 +514,7 @@ def get_model_info(model):
     if not litellm._lazy_module:
         cache_dir = Path.home() / ".aider" / "caches"
         cache_file = cache_dir / "model_prices_and_context_window.json"
-        
+
         try:
             cache_dir.mkdir(parents=True, exist_ok=True)
             use_cache = True
