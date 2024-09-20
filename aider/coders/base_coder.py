@@ -1897,8 +1897,6 @@ class Coder:
             return
         if self.commit_before_message[-1] != self.repo.get_head_commit_sha():
             self.io.tool_output("You can use /undo to undo and discard each aider commit.")
-        else:
-            self.io.tool_output("No changes made to git tracked files.")
 
     def dirty_commit(self):
         if not self.need_commit_before_edits:
