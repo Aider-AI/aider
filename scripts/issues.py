@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import re
 from collections import defaultdict
 from datetime import datetime
 
@@ -35,9 +36,6 @@ def get_issues(state="open"):
         issues.extend(page_issues)
         page += 1
     return issues
-
-
-import re
 
 
 def group_issues_by_subject(issues):
