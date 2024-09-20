@@ -12,8 +12,8 @@ load_dotenv()
 
 # GitHub API configuration
 GITHUB_API_URL = "https://api.github.com"
-REPO_OWNER = os.getenv("GITHUB_REPO_OWNER")
-REPO_NAME = os.getenv("GITHUB_REPO_NAME")
+REPO_OWNER = "paul-gauthier"
+REPO_NAME = "aider"
 TOKEN = os.getenv("GITHUB_TOKEN")
 
 headers = {"Authorization": f"token {TOKEN}", "Accept": "application/vnd.github.v3+json"}
@@ -61,8 +61,8 @@ def find_oldest_issue(subject):
 
 
 def main():
-    if not all([REPO_OWNER, REPO_NAME, TOKEN]):
-        print("Error: Missing environment variables. Please check your .env file.")
+    if not TOKEN:
+        print("Error: Missing GITHUB_TOKEN environment variable. Please check your .env file.")
         return
 
     open_issues = get_issues()
