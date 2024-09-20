@@ -112,7 +112,7 @@ def main():
 
         print(
             f"Oldest issue: #{oldest_issue['number']}: {oldest_issue['comments']} comments"
-            f" {oldest_issue['html_url']} (created on {oldest_issue['created_at']})"
+            f" {oldest_issue['html_url']} ({oldest_issue['state']})"
         )
 
         # Confirmation prompt
