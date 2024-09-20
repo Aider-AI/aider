@@ -63,19 +63,25 @@ def find_oldest_issue(subject, all_issues):
 
 
 def comment_and_close_duplicate(issue, oldest_issue):
-    comment_url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/comments"
+    comment_url = (
+        f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/comments"
+    )
     close_url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}"
-    
-    comment_body = f"This looks like a duplicate of #{oldest_issue['number']}, so I'm going to close it so discussion can happen there. Please let me know if you think it's actually a distinct issue."
-    
+
+    comment_body = (
+        f"This looks like a duplicate of #{oldest_issue['number']}, so I'm going to close it so"
+        " discussion can happen there. Please let me know if you think it's actually a distinct"
+        " issue."
+    )
+
     # Post comment
     response = requests.post(comment_url, headers=headers, json={"body": comment_body})
     response.raise_for_status()
-    
+
     # Close issue
     response = requests.patch(close_url, headers=headers, json={"state": "closed"})
     response.raise_for_status()
-    
+
     print(f"  - Commented and closed issue #{issue['number']}")
 
 
@@ -93,10 +99,8 @@ def main():
         if not oldest_issue:
             continue
 
-        related_issues = set(
-            issue['number'] for issue in issues
-        )
-        related_issues.add(oldest_issue['number'])
+        related_issues = set(issue["number"] for issue in issues)
+        related_issues.add(oldest_issue["number"])
         if len(related_issues) <= 1:
             continue
 
@@ -105,20 +109,17 @@ def main():
         for issue in issues:
             print(f"  - {issue['html_url']}")
 
-        print(
-            f"Oldest issue: {oldest_issue['html_url']} (created on"
-            f" {oldest_issue['created_at']})"
-        )
+        print(f"Oldest issue: {oldest_issue['html_url']} (created on {oldest_issue['created_at']})")
 
         # Confirmation prompt
         confirm = input("Do you want to comment and close duplicate issues? (y/n): ")
-        if confirm.lower() != 'y':
+        if confirm.lower() != "y":
             print("Skipping this group of issues.")
             continue
 
         # Comment and close duplicate issues
         for issue in issues:
-            if issue['number'] != oldest_issue['number']:
+            if issue["number"] != oldest_issue["number"]:
                 comment_and_close_duplicate(issue, oldest_issue)
 
         print(f"Oldest issue #{oldest_issue['number']} left open")
