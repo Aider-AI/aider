@@ -1201,3 +1201,26 @@
   versions: 0.56.0
   seconds_per_case: 9.3
   total_cost: 0.0000
+
+- dirname: 2024-09-20-20-07-27--qwen-2.5-72b-instruct
+  test_cases: 133
+  model: qwen-2.5-72b-instruct (bf16)
+  edit_format: whole
+  commit_hash: d7051ce
+  pass_rate_1: 52.6
+  pass_rate_2: 64.7
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 2
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model openrouter/qwen/qwen-2.5-72b-instruct
+  date: 2024-09-20
+  versions: 0.56.1.dev
+  seconds_per_case: 53.9
+  total_cost: 0.0000
