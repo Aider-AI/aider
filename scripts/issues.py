@@ -45,8 +45,7 @@ def group_issues_by_subject(issues):
     return grouped_issues
 
 
-def find_oldest_issue(subject):
-    all_issues = get_issues("all")
+def find_oldest_issue(subject, all_issues):
     oldest_issue = None
     oldest_date = datetime.now()
 
@@ -65,7 +64,8 @@ def main():
         print("Error: Missing GITHUB_TOKEN environment variable. Please check your .env file.")
         return
 
-    open_issues = get_issues()
+    all_issues = get_issues("all")
+    open_issues = [issue for issue in all_issues if issue["state"] == "open"]
     grouped_open_issues = group_issues_by_subject(open_issues)
 
     for subject, issues in grouped_open_issues.items():
@@ -74,7 +74,7 @@ def main():
         for issue in issues:
             print(f"  - #{issue['number']}: {issue['title']}")
 
-        oldest_issue = find_oldest_issue(subject)
+        oldest_issue = find_oldest_issue(subject, all_issues)
         if oldest_issue:
             print(
                 f"Oldest issue: #{oldest_issue['number']} (created on {oldest_issue['created_at']})"
