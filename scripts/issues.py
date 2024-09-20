@@ -72,19 +72,26 @@ def main():
     grouped_open_issues = group_issues_by_subject(open_issues)
 
     for subject, issues in grouped_open_issues.items():
+        oldest_issue = find_oldest_issue(subject, all_issues)
+        if not oldest_issue:
+            continue
+
+        related_issues = set(
+            issue['number'] for issue in issues
+        )
+        related_issues.add(oldest_issue['number'])
+        if len(related_issues) <= 1:
+            continue
+
         print(f"\nIssue: {subject}")
         print(f"Open issues: {len(issues)}")
         for issue in issues:
             print(f"  - {issue['html_url']}")
 
-        oldest_issue = find_oldest_issue(subject, all_issues)
-        if oldest_issue:
-            print(
-                f"Oldest issue: {oldest_issue['html_url']} (created on"
-                f" {oldest_issue['created_at']})"
-            )
-        else:
-            print("No oldest issue found")
+        print(
+            f"Oldest issue: {oldest_issue['html_url']} (created on"
+            f" {oldest_issue['created_at']})"
+        )
 
 
 if __name__ == "__main__":
