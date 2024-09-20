@@ -354,6 +354,8 @@ class GitRepo:
     def path_in_repo(self, path):
         if not self.repo:
             return
+        if not path:
+            return
 
         tracked_files = set(self.get_tracked_files())
         return self.normalize_path(path) in tracked_files
