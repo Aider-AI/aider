@@ -31,7 +31,7 @@ def get_git_root():
     try:
         repo = git.Repo(search_parent_directories=True)
         return repo.working_tree_dir
-    except git.InvalidGitRepositoryError:
+    except (git.InvalidGitRepositoryError, FileNotFoundError):
         return None
 
 
