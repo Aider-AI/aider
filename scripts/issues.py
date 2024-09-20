@@ -37,11 +37,15 @@ def get_issues(state="open"):
     return issues
 
 
+import re
+
 def group_issues_by_subject(issues):
     grouped_issues = defaultdict(list)
+    pattern = r"Uncaught .+ in .+ line \d+"
     for issue in issues:
-        subject = issue["title"].split(":")[0].strip()  # Assuming subject is before the first colon
-        grouped_issues[subject].append(issue)
+        if re.search(pattern, issue["title"]):
+            subject = issue["title"]
+            grouped_issues[subject].append(issue)
     return grouped_issues
 
 
@@ -50,7 +54,7 @@ def find_oldest_issue(subject, all_issues):
     oldest_date = datetime.now()
 
     for issue in all_issues:
-        if issue["title"].split(":")[0].strip() == subject:
+        if issue["title"] == subject:
             created_at = datetime.strptime(issue["created_at"], "%Y-%m-%dT%H:%M:%SZ")
             if created_at < oldest_date:
                 oldest_date = created_at
@@ -69,13 +73,10 @@ def main():
     grouped_open_issues = group_issues_by_subject(open_issues)
 
     for subject, issues in grouped_open_issues.items():
-        if len(issues) <= 1:
-            continue
-
-        print(f"\nSubject: {subject}")
+        print(f"\nIssue: {subject}")
         print(f"Open issues: {len(issues)}")
         for issue in issues:
-            print(f"  - #{issue['number']}: {issue['title']}")
+            print(f"  - #{issue['number']}")
 
         oldest_issue = find_oldest_issue(subject, all_issues)
         if oldest_issue:
