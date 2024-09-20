@@ -1178,3 +1178,26 @@
   versions: 0.56.1.dev
   seconds_per_case: 47.4
   total_cost: 38.0612
+
+- dirname: 2024-09-19-16-58-29--qwen2.5-coder:7b-instruct-q8_0
+  test_cases: 133
+  model: qwen2.5-coder:7b-instruct-q8_0
+  edit_format: whole
+  commit_hash: 6f2b064-dirty
+  pass_rate_1: 45.1
+  pass_rate_2: 51.9
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 4
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  command: aider --model ollama/qwen2.5-coder:7b-instruct-q8_0
+  date: 2024-09-19
+  versions: 0.56.0
+  seconds_per_case: 9.3
+  total_cost: 0.0000
