@@ -454,9 +454,7 @@ def find_original_update_blocks(content, fence=DEFAULT_FENCE, valid_fnames=None)
                 if i + 1 < len(lines) and divider_pattern.match(lines[i + 1].strip()):
                     filename = find_filename(lines[max(0, i - 3) : i], fence, None)
                 else:
-                    filename = find_filename(
-                        lines[max(0, i - 3) : i], fence, valid_fnames
-                    )
+                    filename = find_filename(lines[max(0, i - 3) : i], fence, valid_fnames)
 
                 if not filename:
                     if current_filename:
@@ -477,11 +475,17 @@ def find_original_update_blocks(content, fence=DEFAULT_FENCE, valid_fnames=None)
 
                 updated_text = []
                 i += 1
-                while i < len(lines) and not (updated_pattern.match(lines[i].strip()) or divider_pattern.match(lines[i].strip())):
+                while i < len(lines) and not (
+                    updated_pattern.match(lines[i].strip())
+                    or divider_pattern.match(lines[i].strip())
+                ):
                     updated_text.append(lines[i])
                     i += 1
 
-                if i >= len(lines) or not (updated_pattern.match(lines[i].strip()) or divider_pattern.match(lines[i].strip())):
+                if i >= len(lines) or not (
+                    updated_pattern.match(lines[i].strip())
+                    or divider_pattern.match(lines[i].strip())
+                ):
                     raise ValueError(f"Expected `{UPDATED_ERR}` or `{DIVIDER_ERR}`")
 
                 yield filename, "".join(original_text), "".join(updated_text)
