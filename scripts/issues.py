@@ -106,10 +106,11 @@ def main():
 
         print(f"\nIssue: {subject}")
         print(f"Open issues: {len(issues)}")
-        for issue in issues:
-            print(f"  - {issue['html_url']}")
+        sorted_issues = sorted(issues, key=lambda x: x['number'], reverse=True)
+        for issue in sorted_issues:
+            print(f"  - #{issue['number']}: {issue['html_url']}")
 
-        print(f"Oldest issue: {oldest_issue['html_url']} (created on {oldest_issue['created_at']})")
+        print(f"Oldest issue: #{oldest_issue['number']}: {oldest_issue['html_url']} (created on {oldest_issue['created_at']})")
 
         # Confirmation prompt
         confirm = input("Do you want to comment and close duplicate issues? (y/n): ")
