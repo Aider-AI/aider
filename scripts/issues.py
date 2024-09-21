@@ -24,12 +24,24 @@ headers = {"Authorization": f"token {TOKEN}", "Accept": "application/vnd.github.
 def get_issues(state="open"):
     issues = []
     page = 1
-    with tqdm(desc="Collecting issues", unit="page") as pbar:
+    per_page = 100
+
+    # First, get the total count of issues
+    response = requests.get(
+        f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues",
+        headers=headers,
+        params={"state": state, "per_page": 1},
+    )
+    response.raise_for_status()
+    total_count = int(response.headers.get('Link', '').split('page=')[-1].split('>')[0])
+    total_pages = (total_count + per_page - 1) // per_page
+
+    with tqdm(total=total_pages, desc="Collecting issues", unit="page") as pbar:
         while True:
             response = requests.get(
                 f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues",
                 headers=headers,
-                params={"state": state, "page": page, "per_page": 100},
+                params={"state": state, "page": page, "per_page": per_page},
             )
             response.raise_for_status()
             page_issues = response.json()
