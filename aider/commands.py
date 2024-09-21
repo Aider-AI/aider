@@ -41,7 +41,7 @@ class Commands:
         )
 
     def __init__(
-            self, io, coder, voice_language=None, verify_ssl=True, args=None, parser=None, verbose=False
+        self, io, coder, voice_language=None, verify_ssl=True, args=None, parser=None, verbose=False
     ):
         self.io = io
         self.coder = coder
@@ -203,7 +203,7 @@ class Commands:
             return
 
         first_word = words[0]
-        rest_inp = inp[len(words[0]):].strip()
+        rest_inp = inp[len(words[0]) :].strip()
 
         all_commands = self.get_commands()
         matching_commands = [cmd for cmd in all_commands if cmd.startswith(first_word)]
