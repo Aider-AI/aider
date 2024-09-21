@@ -1135,9 +1135,31 @@ class Commands:
         settings = format_settings(self.parser, self.args)
         self.io.tool_output(settings)
 
-    def cmd_echo(self, args):
-        "Echo the user's input back to them"
-        self.io.tool_output(f"You said: {args}")
+    def cmd_save(self, args):
+        """save the currently-editable files to a .aider.stack.md file"""
+        stack_file = os.path.join(self.coder.root,".aider.edit.md")
+        with open(stack_file, "w") as f:
+            for fname in self.coder.abs_fnames:
+                f.write(f"{fname}\n")
+
+        self.io.tool_output(f"Saved the current chat to {stack_file}")
+
+    def cmd_load(self, args):
+        """load file list from .aider.stack.md file"""
+        stack_file = os.path.join(self.coder.root,".aider.edit.md")
+        # check if this file exists at all:
+        if not os.path.exists(stack_file):
+            self.io.tool_error(f"File not found: {stack_file}")
+            return
+        with open(stack_file, "r") as f:
+            for line in f:
+                fname = line.strip()
+                # check if this file exists at all:
+                if not os.path.exists(fname):
+                    self.io.tool_error(f"File not found: {fname}")
+                    continue
+                self.coder.abs_fnames.add(fname)
+
 
     def cmd_report(self, args):
         "Report a problem by opening a GitHub Issue"
