@@ -16,13 +16,13 @@ cog.out(text)
 
 # Release history
 
-### main branch
+### Aider v0.57.0
 
 - Support for OpenAI o1 models:
-  - `aider --model o1-mini`
-  - `aider --model o1-preview`
   - o1-preview now works well with diff edit format.
   - o1-preview with diff now matches SOTA leaderboard result with whole edit format.
+  - `aider --model o1-mini`
+  - `aider --model o1-preview`
 - On Windows, `/run` correctly uses PowerShell or cmd.exe.
 - Support for new 08-2024 Cohere models, by @jalammar.
 - Can now recursively add directories with `/read-only`.
@@ -31,6 +31,7 @@ cog.out(text)
 - Improvements to prompt cache chunking strategy.
 - Removed "No changes made to git tracked files".
 - Numerous bug fixes for corner case crashes.
+- Aider wrote 70% of the code in this release.
 
 ### Aider v0.56.0
 
