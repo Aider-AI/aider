@@ -19,7 +19,7 @@ cog.out(get_help_md())
 | **/add**         | Add files to the chat so aider can edit them or review them in detail                   |
 | **/read-only**   | Add files to the chat that are for reference, not to be edited                          |
 | **/drop**        | Remove files from the chat session to free up context space                             |
-| **/save**        | Save the currently-editable files for later reuse                                       |
+| **/save**        | Save the list of currently loaded workspace files for later reuse                       |
 | **/load**        | Load file list from .aider.edit.md and .aider.readonly.md files (symmetric to `/save` ) |
 | **/ask**         | Ask questions about the code base without editing any files                             |
 | **/test**        | Run a shell command and add the output to the chat on non-zero exit code                |
