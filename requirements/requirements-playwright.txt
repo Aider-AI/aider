@@ -5,7 +5,9 @@
 #    pip-compile --output-file=requirements/requirements-playwright.txt requirements/requirements-playwright.in
 #
 greenlet==3.0.3
-    # via playwright
+    # via
+    #   -r requirements/requirements-playwright.in
+    #   playwright
 playwright==1.47.0
     # via -r requirements/requirements-playwright.in
 pyee==12.0.0

@@ -66,8 +66,10 @@ fsspec==2024.9.0
     #   huggingface-hub
     #   llama-index-core
     #   torch
-greenlet==3.1.1
-    # via sqlalchemy
+greenlet==3.0.3
+    # via
+    #   -r requirements/requirements-help.in
+    #   sqlalchemy
 h11==0.14.0
     # via
     #   -c requirements/../requirements.txt
