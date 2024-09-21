@@ -110,7 +110,7 @@ def main():
     grouped_open_issues = group_issues_by_subject(open_issues)
 
     print("Analyzing issues...")
-    for subject, issues in tqdm(grouped_open_issues.items(), desc="Processing issue groups"):
+    for subject, issues in grouped_open_issues.items():
         oldest_issue = find_oldest_issue(subject, all_issues)
         if not oldest_issue:
             continue
