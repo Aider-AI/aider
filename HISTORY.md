@@ -1,6 +1,10 @@
 
 # Release history
 
+### Aider v0.57.1
+
+- Fixed dependency conflict between aider-chat[help] and [playwright].
+
 ### Aider v0.57.0
 
 - Support for OpenAI o1 models:
