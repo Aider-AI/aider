@@ -543,6 +543,52 @@ class TestCommands(TestCase):
             del commands
             del repo
 
+    def test_cmd_save_and_load(self):
+        with GitTemporaryDirectory() as repo_dir:
+            io = InputOutput(pretty=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Create some test files
+            file1 = Path(repo_dir) / "file1.txt"
+            file2 = Path(repo_dir) / "file2.txt"
+            file1.write_text("Content of file 1")
+            file2.write_text("Content of file 2")
+
+            # Add files to the chat
+            commands.cmd_add(f"{file1} {file2}")
+
+            # Save the current chat
+            commands.cmd_save("")
+
+            # Check if the .aider.edit.md file was created
+            stack_file = Path(repo_dir) / ".aider.edit.md"
+            self.assertTrue(stack_file.exists())
+
+            # Read the content of the stack file
+            stack_content = stack_file.read_text().splitlines()
+
+            # Check if both files are in the stack file
+            self.assertIn(str(file1), stack_content)
+            self.assertIn(str(file2), stack_content)
+
+            # Clear the current chat
+            commands.cmd_reset("")
+
+            # Verify that the chat is empty
+            self.assertEqual(len(coder.abs_fnames), 0)
+
+            # Load the saved chat
+            commands.cmd_load("")
+
+            # Verify that the files are loaded back into the chat
+            self.assertEqual(len(coder.abs_fnames), 2)
+            self.assertIn(str(file1), coder.abs_fnames)
+            self.assertIn(str(file2), coder.abs_fnames)
+
+            del coder
+            del commands
+
     def test_cmd_add_unicode_error(self):
         # Initialize the Commands and InputOutput objects
         io = InputOutput(pretty=False, yes=True)
