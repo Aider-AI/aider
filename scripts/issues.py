@@ -4,6 +4,7 @@ import os
 import re
 from collections import defaultdict
 from datetime import datetime
+from tqdm import tqdm
 
 import requests
 from dotenv import load_dotenv
@@ -94,7 +95,8 @@ def main():
     open_issues = [issue for issue in all_issues if issue["state"] == "open"]
     grouped_open_issues = group_issues_by_subject(open_issues)
 
-    for subject, issues in grouped_open_issues.items():
+    print("Analyzing issues...")
+    for subject, issues in tqdm(grouped_open_issues.items(), desc="Processing issue groups"):
         oldest_issue = find_oldest_issue(subject, all_issues)
         if not oldest_issue:
             continue
@@ -122,7 +124,7 @@ def main():
             continue
 
         # Comment and close duplicate issues
-        for issue in issues:
+        for issue in tqdm(issues, desc="Closing duplicate issues"):
             if issue["number"] != oldest_issue["number"]:
                 comment_and_close_duplicate(issue, oldest_issue)
 
