@@ -37,12 +37,14 @@ cog.out(get_help_md())
 | **/report** | Report a problem by opening a GitHub Issue |
 | **/reset** | Drop all files and clear the chat history |
 | **/run** | Run a shell command and optionally add the output to the chat (alias: !) |
+| **/save** | Save the currently-editable files to a .aider.stack.md file |
 | **/settings** | Print out the current settings |
 | **/test** | Run a shell command and add the output to the chat on non-zero exit code |
 | **/tokens** | Report on the number of tokens used by the current chat context |
 | **/undo** | Undo the last git commit if it was done by aider |
 | **/voice** | Record and transcribe voice input |
 | **/web** | Scrape a webpage, convert to markdown and send in a message |
+| **/load** | Load file list from .aider.edit.md and .aider.readonly.md files |
 
 <!--[[[end]]]-->
 
