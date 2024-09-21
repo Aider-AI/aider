@@ -22,12 +22,13 @@ cog.out(text)
   - `aider --model o1-mini`
   - `aider --model o1-preview`
 - On Windows, `/run` correctly uses PowerShell or cmd.exe.
-- Support for new 08-2024 Cohere models.
+- Support for new 08-2024 Cohere models, by @jalammar.
 - Can now recursively add directories with `/read-only`.
 - User input prompts now fall back to simple `input()` if `--no-pretty` or a Windows console is not available.
 - Improved sanity check of git repo on startup.
 - Improvements to prompt cache chunking strategy.
-- Bugfix to remove spurious "No changes made to git tracked files."
+- Removed "No changes made to git tracked files".
+- Numerous bug fixes for corner case crashes.
 
 ### Aider v0.56.0
 
