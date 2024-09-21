@@ -1135,6 +1135,10 @@ class Commands:
         settings = format_settings(self.parser, self.args)
         self.io.tool_output(settings)
 
+    def cmd_echo(self, args):
+        "Echo the user's input back to them"
+        self.io.tool_output(f"You said: {args}")
+
     def cmd_report(self, args):
         "Report a problem by opening a GitHub Issue"
         from aider.report import report_github_issue
