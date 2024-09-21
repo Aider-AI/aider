@@ -329,6 +329,30 @@ def get_parser(default_config_files, git_root):
         help="Set the color for assistant output (default: #0088ff)",
     )
     group.add_argument(
+        "--completion-menu-color",
+        metavar="COLOR",
+        default="default",
+        help="Set the color for the completion menu (default: terminal's default text color)",
+    )
+    group.add_argument(
+        "--completion-menu-bg-color",
+        metavar="COLOR",
+        default="default",
+        help="Set the background color for the completion menu (default: terminal's default background color)",
+    )
+    group.add_argument(
+        "--completion-menu-current-color",
+        metavar="COLOR",
+        default="default",
+        help="Set the color for the current item in the completion menu (default: terminal's default background color)",
+    )
+    group.add_argument(
+        "--completion-menu-current-bg-color",
+        metavar="COLOR",
+        default="default",
+        help="Set the background color for the current item in the completion menu (default: terminal's default text color)",
+    )
+    group.add_argument(
         "--code-theme",
         default="default",
         help=(
