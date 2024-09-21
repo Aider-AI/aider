@@ -2531,3 +2531,72 @@
     fry69: 15
   start_tag: v0.55.0
   total_lines: 277
+- aider_percentage: 69.98
+  aider_total: 394
+  end_date: '2024-09-21'
+  end_tag: v0.57.0
+  file_counts:
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/args_formatter.py:
+      Paul Gauthier: 4
+      Paul Gauthier (aider): 1
+    aider/coders/base_coder.py:
+      Krazer: 1
+      Paul Gauthier: 17
+      Paul Gauthier (aider): 2
+    aider/coders/chat_chunks.py:
+      Paul Gauthier: 5
+    aider/coders/editblock_coder.py:
+      Paul Gauthier (aider): 27
+    aider/commands.py:
+      Krazer: 3
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 34
+    aider/io.py:
+      Krazer: 27
+      Paul Gauthier: 8
+      Paul Gauthier (aider): 42
+    aider/main.py:
+      Krazer: 2
+      Paul Gauthier: 5
+      Paul Gauthier (aider): 8
+    aider/models.py:
+      Jay Alammar: 1
+      Jay Alammar (aider): 13
+      Paul Gauthier: 43
+      Paul Gauthier (aider): 46
+    aider/repo.py:
+      Paul Gauthier: 3
+    aider/run_cmd.py:
+      Paul Gauthier: 8
+      Paul Gauthier (aider): 33
+    aider/sendchat.py:
+      Paul Gauthier: 3
+    aider/utils.py:
+      Paul Gauthier: 2
+    benchmark/benchmark.py:
+      Paul Gauthier: 4
+    scripts/issues.py:
+      Paul Gauthier: 10
+      Paul Gauthier (aider): 123
+    scripts/versionbump.py:
+      Paul Gauthier (aider): 8
+    tests/basic/test_coder.py:
+      Paul Gauthier: 1
+    tests/basic/test_editblock.py:
+      Christian Clauss: 2
+    tests/basic/test_io.py:
+      Paul Gauthier (aider): 37
+    tests/basic/test_main.py:
+      Paul Gauthier: 18
+      Paul Gauthier (aider): 20
+  grand_total:
+    Christian Clauss: 2
+    Jay Alammar: 1
+    Jay Alammar (aider): 13
+    Krazer: 33
+    Paul Gauthier: 133
+    Paul Gauthier (aider): 381
+  start_tag: v0.56.0
+  total_lines: 563
