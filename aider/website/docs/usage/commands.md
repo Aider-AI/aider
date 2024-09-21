@@ -26,7 +26,7 @@ cog.out(get_help_md())
 | **/commit**      | Commit edits to the repo made outside the chat (commit message optional)                |
 | **/undo**        | Undo the last git commit if it was done by aider                                        |
 | **/clear**       | Clear the chat history                                                                  |
-| ==other==       | --                                                                                      |
+| ==other==        | --                                                                                      |
 | **/chat-mode**   | Switch to a new chat mode                                                               |
 | **/code**        | Ask for changes to your code                                                            |
 | **/clipboard**   | Add image/text from the clipboard to the chat (optionally provide a name for the image) |
