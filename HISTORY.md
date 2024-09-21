@@ -16,6 +16,7 @@
 - Improvements to prompt cache chunking strategy.
 - Removed "No changes made to git tracked files".
 - Numerous bug fixes for corner case crashes.
+- Updated all dependency versions.
 - Aider wrote 70% of the code in this release.
 
 ### Aider v0.56.0

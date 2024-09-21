@@ -15,7 +15,7 @@ blinker==1.8.2
     # via streamlit
 cachetools==5.5.0
     # via streamlit
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c requirements/../requirements.txt
     #   requests
@@ -35,7 +35,7 @@ gitpython==3.1.43
     # via
     #   -c requirements/../requirements.txt
     #   streamlit
-idna==3.8
+idna==3.10
     # via
     #   -c requirements/../requirements.txt
     #   requests
@@ -64,7 +64,7 @@ mdurl==0.1.2
     # via
     #   -c requirements/../requirements.txt
     #   markdown-it-py
-narwhals==1.5.5
+narwhals==1.8.2
     # via altair
 numpy==1.26.4
     # via
@@ -78,13 +78,13 @@ packaging==24.1
     #   -c requirements/../requirements.txt
     #   altair
     #   streamlit
-pandas==2.2.2
+pandas==2.2.3
     # via streamlit
 pillow==10.4.0
     # via
     #   -c requirements/../requirements.txt
     #   streamlit
-protobuf==5.27.4
+protobuf==5.28.2
     # via streamlit
 pyarrow==17.0.0
     # via streamlit
@@ -96,7 +96,7 @@ pygments==2.18.0
     #   rich
 python-dateutil==2.9.0.post0
     # via pandas
-pytz==2024.1
+pytz==2024.2
     # via pandas
 referencing==0.35.1
     # via
@@ -107,7 +107,7 @@ requests==2.32.3
     # via
     #   -c requirements/../requirements.txt
     #   streamlit
-rich==13.8.0
+rich==13.8.1
     # via
     #   -c requirements/../requirements.txt
     #   streamlit
@@ -137,7 +137,7 @@ typing-extensions==4.12.2
     #   streamlit
 tzdata==2024.1
     # via pandas
-urllib3==2.2.2
+urllib3==2.2.3
     # via
     #   -c requirements/../requirements.txt
     #   requests
