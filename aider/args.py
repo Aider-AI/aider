@@ -109,7 +109,7 @@ def get_parser(default_config_files, git_root):
         const=gpt_3_model_name,
         help=f"Use {gpt_3_model_name} model for the main chat",
     )
-    deepseek_model = "deepseek/deepseek-coder"
+    deepseek_model = "deepseek-coder"
     group.add_argument(
         "--deepseek",
         action="store_const",
