@@ -12,39 +12,41 @@ from aider.commands import get_help_md
 cog.out(get_help_md())
 ]]]-->
 
-|Command|Description|
-|:------|:----------|
-| **/add** | Add files to the chat so aider can edit them or review them in detail |
-| **/ask** | Ask questions about the code base without editing any files |
-| **/chat-mode** | Switch to a new chat mode |
-| **/clear** | Clear the chat history |
-| **/clipboard** | Add image/text from the clipboard to the chat (optionally provide a name for the image) |
-| **/code** | Ask for changes to your code |
-| **/commit** | Commit edits to the repo made outside the chat (commit message optional) |
-| **/diff** | Display the diff of changes since the last message |
-| **/drop** | Remove files from the chat session to free up context space |
-| **/exit** | Exit the application |
-| **/git** | Run a git command |
-| **/help** | Ask questions about aider |
-| **/lint** | Lint and fix in-chat files or all dirty files if none in chat |
-| **/ls** | List all known files and indicate which are included in the chat session |
-| **/map** | Print out the current repository map |
+| Command          |Description|
+|:-----------------|:----------|
+| **/help**        | Ask questions about aider |
+| ==common==       | -- |
+| **/add**         | Add files to the chat so aider can edit them or review them in detail |
+| **/read-only**   | Add files to the chat that are for reference, not to be edited |
+| **/drop**        | Remove files from the chat session to free up context space |
+| **/save**        | Save the currently-editable files to a .aider.stack.md file |
+| **/load**        | Load file list from .aider.edit.md and .aider.readonly.md files |
+| **/ask**         | Ask questions about the code base without editing any files |
+| **/test**        | Run a shell command and add the output to the chat on non-zero exit code |
+| **/commit**      | Commit edits to the repo made outside the chat (commit message optional) |
+| **/undo**        | Undo the last git commit if it was done by aider |
+| **/clear**       | Clear the chat history |
+| ==other==       | -- |
+| **/chat-mode**   | Switch to a new chat mode |
+| **/code**        | Ask for changes to your code |
+| **/clipboard**   | Add image/text from the clipboard to the chat (optionally provide a name for the image) |
+| **/diff**        | Display the diff of changes since the last message |
+| **/git**         | Run a git command |
+| **/lint**        | Lint and fix in-chat files or all dirty files if none in chat |
+| **/ls**          | List all known files and indicate which are included in the chat session |
+| **/map**         | Print out the current repository map |
 | **/map-refresh** | Force a refresh of the repository map |
-| **/model** | Switch to a new LLM |
-| **/models** | Search the list of available models |
-| **/quit** | Exit the application |
-| **/read-only** | Add files to the chat that are for reference, not to be edited |
-| **/report** | Report a problem by opening a GitHub Issue |
-| **/reset** | Drop all files and clear the chat history |
-| **/run** | Run a shell command and optionally add the output to the chat (alias: !) |
-| **/save** | Save the currently-editable files to a .aider.stack.md file |
-| **/settings** | Print out the current settings |
-| **/test** | Run a shell command and add the output to the chat on non-zero exit code |
-| **/tokens** | Report on the number of tokens used by the current chat context |
-| **/undo** | Undo the last git commit if it was done by aider |
-| **/voice** | Record and transcribe voice input |
-| **/web** | Scrape a webpage, convert to markdown and send in a message |
-| **/load** | Load file list from .aider.edit.md and .aider.readonly.md files |
+| **/model**       | Switch to a new LLM |
+| **/models**      | Search the list of available models |
+| **/report**      | Report a problem by opening a GitHub Issue |
+| **/run**         | Run a shell command and optionally add the output to the chat (alias: !) |
+| **/settings**    | Print out the current settings |
+| **/tokens**      | Report on the number of tokens used by the current chat context |
+| **/voice**       | Record and transcribe voice input |
+| **/web**         | Scrape a webpage, convert to markdown and send in a message |
+| **/reset**       | Drop all files and clear the chat history |
+| **/exit**        | Exit the application |
+| **/quit**        | Exit the application |
 
 <!--[[[end]]]-->
 
