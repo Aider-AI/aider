@@ -1137,28 +1137,63 @@ class Commands:
 
     def cmd_save(self, args):
         """save the currently-editable files to a .aider.stack.md file"""
-        stack_file = os.path.join(self.coder.root,".aider.edit.md")
-        with open(stack_file, "w") as f:
-            for fname in self.coder.abs_fnames:
-                f.write(f"{fname}\n")
+        stack_file = os.path.join(self.coder.root, ".aider.edit.md")
+        read_only_stack_file = os.path.join(self.coder.root, ".aider.readonly.md")
+
+        try:
+            if any(self.coder.abs_fnames):
+                with open(stack_file, "w") as f:
+                    for fname in self.coder.abs_fnames:
+                        f.write(f"{fname}\n")
+            if any(self.coder.abs_read_only_fnames):
+
+                with open(read_only_stack_file, "w") as f:
+                    for fname in self.coder.abs_read_only_fnames:
+                        f.write(f"{fname}\n")
+        except Exception as e:
+            self.io.tool_error(f"Error saving the current chat: {e}")
+            return
 
         self.io.tool_output(f"Saved the current chat to {stack_file}")
 
     def cmd_load(self, args):
-        """load file list from .aider.stack.md file"""
-        stack_file = os.path.join(self.coder.root,".aider.edit.md")
-        # check if this file exists at all:
-        if not os.path.exists(stack_file):
-            self.io.tool_error(f"File not found: {stack_file}")
-            return
-        with open(stack_file, "r") as f:
-            for line in f:
-                fname = line.strip()
+        """load file list from .aider.edit.md and .aider.readonly.md files"""
+        try:
+            class NoFileError(Exception):
+                pass
+            try:
+                editable_file_list = os.path.join(self.coder.root, ".aider.edit.md")
                 # check if this file exists at all:
-                if not os.path.exists(fname):
-                    self.io.tool_error(f"File not found: {fname}")
-                    continue
-                self.coder.abs_fnames.add(fname)
+                if not os.path.exists(editable_file_list):
+                    self.io.tool_error(f"requested file not found: {editable_file_list}")
+                    raise NoFileError()
+                read_only_file_list = os.path.join(self.coder.root, ".aider.readonly.md")
+                with open(editable_file_list, "r") as f:
+                    for line in f:
+                        fname = line.strip()
+                        # check if this file exists at all:
+                        if not os.path.exists(fname):
+                            self.io.tool_error(f"requested file not found: {fname}")
+                            continue
+                        self.coder.abs_fnames.add(fname)
+            except NoFileError:
+                pass
+
+            try:
+                with open(read_only_file_list, "r") as f:
+                    for line in f:
+                        fname = line.strip()
+                        # check if this file exists at all:
+                        if not os.path.exists(fname):
+                            self.io.tool_error(f"File not found: {fname}")
+                            raise NoFileError()
+                        self.coder.abs_read_only_fnames.add(fname)
+            except NoFileError:
+                pass
+            self.io.tool_output(f"files loaded.")
+        except Exception as e:
+            self.io.tool_error(f"Error loading the file list: {e}")
+            return
 
 
     def cmd_report(self, args):
