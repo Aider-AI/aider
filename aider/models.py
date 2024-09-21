@@ -413,6 +413,23 @@ MODEL_SETTINGS = [
         max_tokens=8192,
     ),
     ModelSettings(
+        "deepseek-chat",
+        "diff",
+        use_repo_map=True,
+        examples_as_sys_msg=True,
+        reminder="sys",
+        max_tokens=8192,
+    ),
+    ModelSettings(
+        "deepseek-coder",
+        "diff",
+        use_repo_map=True,
+        examples_as_sys_msg=True,
+        reminder="sys",
+        caches_by_default=True,
+        max_tokens=8192,
+    ),
+    ModelSettings(
         "openrouter/deepseek/deepseek-coder",
         "diff",
         use_repo_map=True,
