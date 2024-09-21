@@ -41,7 +41,7 @@ class Commands:
         )
 
     def __init__(
-        self, io, coder, voice_language=None, verify_ssl=True, args=None, parser=None, verbose=False
+            self, io, coder, voice_language=None, verify_ssl=True, args=None, parser=None, verbose=False
     ):
         self.io = io
         self.coder = coder
@@ -203,7 +203,7 @@ class Commands:
             return
 
         first_word = words[0]
-        rest_inp = inp[len(words[0]) :].strip()
+        rest_inp = inp[len(words[0]):].strip()
 
         all_commands = self.get_commands()
         matching_commands = [cmd for cmd in all_commands if cmd.startswith(first_word)]
@@ -1137,37 +1137,39 @@ class Commands:
 
     def cmd_save(self, args):
         """save the currently-editable files to a .aider.stack.md file"""
-        stack_file = os.path.join(self.coder.root, ".aider.edit.md")
-        read_only_stack_file = os.path.join(self.coder.root, ".aider.readonly.md")
+        editable_workspace_files_file = os.path.join(self.coder.root, ".aider.edit.md")
+        read_only_workspace_files_file = os.path.join(self.coder.root, ".aider.readonly.md")
 
         try:
             if any(self.coder.abs_fnames):
-                with open(stack_file, "w") as f:
+                with open(editable_workspace_files_file, "w") as f:
                     for fname in self.coder.abs_fnames:
                         f.write(f"{fname}\n")
+                self.io.tool_output(f"Saved {len(self.coder.abs_fnames)} file names to {editable_workspace_files_file}")
             if any(self.coder.abs_read_only_fnames):
 
-                with open(read_only_stack_file, "w") as f:
+                with open(read_only_workspace_files_file, "w") as f:
                     for fname in self.coder.abs_read_only_fnames:
                         f.write(f"{fname}\n")
+                self.io.tool_output(
+                    f"Saved {len(self.coder.abs_read_only_fnames)} file names to {read_only_workspace_files_file}")
         except Exception as e:
             self.io.tool_error(f"Error saving the current chat: {e}")
             return
 
-        self.io.tool_output(f"Saved the current chat to {stack_file}")
-
     def cmd_load(self, args):
         """load file list from .aider.edit.md and .aider.readonly.md files"""
+        editable_file_list = os.path.join(self.coder.root, ".aider.edit.md")
+        read_only_file_list = os.path.join(self.coder.root, ".aider.readonly.md")
         try:
             class NoFileError(Exception):
                 pass
+
             try:
-                editable_file_list = os.path.join(self.coder.root, ".aider.edit.md")
-                # check if this file exists at all:
                 if not os.path.exists(editable_file_list):
-                    self.io.tool_error(f"requested file not found: {editable_file_list}")
+                    self.io.tool_error("editable workspace file list not found - possibly never got stored.")
                     raise NoFileError()
-                read_only_file_list = os.path.join(self.coder.root, ".aider.readonly.md")
+
                 with open(editable_file_list, "r") as f:
                     for line in f:
                         fname = line.strip()
@@ -1180,10 +1182,12 @@ class Commands:
                 pass
 
             try:
+                if not os.path.exists(read_only_file_list):
+                    self.io.tool_error("read-only workspace file list not found - possibly never got stored.")
+                    raise NoFileError()
                 with open(read_only_file_list, "r") as f:
                     for line in f:
                         fname = line.strip()
-                        # check if this file exists at all:
                         if not os.path.exists(fname):
                             self.io.tool_error(f"File not found: {fname}")
                             raise NoFileError()
@@ -1194,7 +1198,6 @@ class Commands:
         except Exception as e:
             self.io.tool_error(f"Error loading the file list: {e}")
             return
-
 
     def cmd_report(self, args):
         "Report a problem by opening a GitHub Issue"
