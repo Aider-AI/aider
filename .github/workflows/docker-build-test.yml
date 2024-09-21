@@ -39,10 +39,20 @@ jobs:
         dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
       if: ${{ env.dockerhub_username }} && ${{ env.dockerhub_password }}
 
-    - name: Build Docker image
+    - name: Build Docker standard image
       uses: docker/build-push-action@v5
       with:
         context: .
         file: ./docker/Dockerfile
         platforms: linux/amd64,linux/arm64
         push: false
+        target: aider
+
+    - name: Build Docker full image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./docker/Dockerfile
+        platforms: linux/amd64,linux/arm64
+        push: false
+        target: aider-full
