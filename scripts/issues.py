@@ -24,18 +24,20 @@ headers = {"Authorization": f"token {TOKEN}", "Accept": "application/vnd.github.
 def get_issues(state="open"):
     issues = []
     page = 1
-    while True:
-        response = requests.get(
-            f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues",
-            headers=headers,
-            params={"state": state, "page": page, "per_page": 100},
-        )
-        response.raise_for_status()
-        page_issues = response.json()
-        if not page_issues:
-            break
-        issues.extend(page_issues)
-        page += 1
+    with tqdm(desc="Collecting issues", unit="page") as pbar:
+        while True:
+            response = requests.get(
+                f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues",
+                headers=headers,
+                params={"state": state, "page": page, "per_page": 100},
+            )
+            response.raise_for_status()
+            page_issues = response.json()
+            if not page_issues:
+                break
+            issues.extend(page_issues)
+            page += 1
+            pbar.update(1)
     return issues
 
 
