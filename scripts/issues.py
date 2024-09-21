@@ -4,10 +4,10 @@ import os
 import re
 from collections import defaultdict
 from datetime import datetime
-from tqdm import tqdm
 
 import requests
 from dotenv import load_dotenv
+from tqdm import tqdm
 
 # Load environment variables from .env file
 load_dotenv()
