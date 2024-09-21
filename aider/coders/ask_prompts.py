@@ -1,10 +1,12 @@
 # flake8: noqa: E501
 
+import re
 from .base_prompts import CoderPrompts
 
 
 class AskPrompts(CoderPrompts):
     main_system = """Act as an expert code analyst.
+You must structure your responses using the following tags: <thinking>, <reasoning>, <reflection>, and <output>. Use each tag to organize your thoughts as described.
 Answer questions about the supplied code.
 
 Always reply to the user in the same language they are using.
@@ -69,3 +71,27 @@ If you need to see the full contents of any files to answer my questions, ask me
 """
 
     system_reminder = ""
+
+    def validate_response_structure(self, response):
+        required_tags = ['<thinking>', '<reasoning>', '<reflection>', '<output>']
+        pattern = r'.*?'.join(map(re.escape, required_tags))
+        return bool(re.search(pattern, response, re.DOTALL))
+
+    def enforce_response_structure(self, response_func):
+        max_attempts = 3
+        for attempt in range(max_attempts):
+            response = response_func()
+            if self.validate_response_structure(response):
+                return response
+            
+            if attempt < max_attempts - 1:
+                correction_prompt = (
+                    "Your previous response did not follow the required structure. "
+                    "Please reformulate your response using the following tags in order: "
+                    "<thinking>, <reasoning>, <reflection>, and <output>."
+                )
+                response_func = lambda: self.get_response(correction_prompt)
+        
+        return "I apologize, but I'm having trouble formatting the response correctly. " \
+               "Please refer to my previous response for the content, " \
+               "and feel free to ask for clarification on any part of it."

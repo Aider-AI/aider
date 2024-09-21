@@ -15,6 +15,7 @@ from aider import __version__, models, utils
 from aider.args import get_parser
 from aider.coders import Coder
 from aider.commands import Commands, SwitchCoder
+from aider.coders.ask_prompts import AskPrompts
 from aider.format_settings import format_settings, scrub_sensitive_info
 from aider.history import ChatSummary
 from aider.io import InputOutput
@@ -573,6 +574,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         args.max_chat_history_tokens or main_model.max_chat_history_tokens,
     )
 
+    ask_prompts = AskPrompts()
+
     if args.cache_prompts and args.map_refresh == "auto":
         args.map_refresh = "files"
 
@@ -612,6 +615,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             num_cache_warming_pings=args.cache_keepalive_pings,
             suggest_shell_commands=args.suggest_shell_commands,
             chat_language=args.chat_language,
+            ask_prompts=ask_prompts,
         )
     except ValueError as err:
         io.tool_error(str(err))
