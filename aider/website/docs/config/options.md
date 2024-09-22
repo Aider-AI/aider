@@ -57,8 +57,9 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--commit] [--commit-prompt] [--dry-run | --no-dry-run]
              [--lint] [--lint-cmd] [--auto-lint | --no-auto-lint]
              [--test-cmd] [--auto-test | --no-auto-test] [--test]
-             [--file] [--read] [--vim] [--voice-language]
-             [--chat-language] [--version] [--just-check-update]
+             [--file] [--read] [--vim] [--voice-format]
+             [--voice-language] [--chat-language] [--version]
+             [--just-check-update]
              [--check-update | --no-check-update]
              [--install-main-branch] [--upgrade] [--apply] [--yes]
              [-v] [--show-repo-map] [--show-prompts] [--exit]
@@ -462,6 +463,11 @@ Environment variable: `AIDER_READ`
 Use VI editing mode in the terminal (default: False)  
 Default: False  
 Environment variable: `AIDER_VIM`  
+
+### `--voice-format VOICE_FORMAT`
+Audio format for voice recording (default: wav). webm and mp3 require ffmpeg  
+Default: wav  
+Environment variable: `AIDER_VOICE_FORMAT`  
 
 ### `--voice-language VOICE_LANGUAGE`
 Specify the language for voice using ISO 639-1 code (default: auto)  
