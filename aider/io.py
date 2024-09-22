@@ -471,7 +471,11 @@ class InputOutput:
                 self.tool_output(subject, bold=True)
 
         if self.pretty and self.user_input_color:
-            style = {"": self.user_input_color}
+            style = {
+                    "": self.user_input_color,
+                    "completion-menu": f"bg:{self.completion_menu_bg_color} {self.completion_menu_color}",
+                    "completion-menu.completion.current": f"bg:{self.completion_menu_current_bg_color} {self.completion_menu_current_color}",
+                    }
         else:
             style = dict()
 
