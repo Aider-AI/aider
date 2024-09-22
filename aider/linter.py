@@ -83,7 +83,11 @@ class Linter:
 
     def lint(self, fname, cmd=None):
         rel_fname = self.get_rel_fname(fname)
-        code = Path(fname).read_text(encoding=self.encoding, errors="replace")
+        try:
+            code = Path(fname).read_text(encoding=self.encoding, errors="replace")
+        except OSError as err:
+            print(f"Unable to read {fname}: {err}")
+            return
 
         if cmd:
             cmd = cmd.strip()
