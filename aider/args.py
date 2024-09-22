@@ -324,6 +324,11 @@ def get_parser(default_config_files, git_root):
         help="Set the color for tool warning messages (default: #FFA500)",
     )
     group.add_argument(
+        "--tool-completion-color",
+        default=None,
+        help="Set the colors for tool command completion (default: None)",
+    )
+    group.add_argument(
         "--assistant-output-color",
         default="#0088ff",
         help="Set the color for assistant output (default: #0088ff)",

@@ -15,9 +15,10 @@ from prompt_toolkit.styles import Style
 from pygments.lexers import MarkdownLexer, guess_lexer_for_filename
 from pygments.token import Token
 from rich.console import Console
+from rich.markdown import Markdown
 from rich.style import Style as RichStyle
 from rich.text import Text
-from rich.markdown import Markdown
+
 from aider.mdstream import MarkdownStream
 
 from .dump import dump  # noqa: F401
@@ -36,7 +37,14 @@ class ConfirmGroup:
 
 class AutoCompleter(Completer):
     def __init__(
-        self, root, rel_fnames, addable_rel_fnames, commands, encoding, abs_read_only_fnames=None
+        self,
+        root,
+        rel_fnames,
+        addable_rel_fnames,
+        commands,
+        encoding,
+        abs_read_only_fnames=None,
+        style=None,
     ):
         self.addable_rel_fnames = addable_rel_fnames
         self.rel_fnames = rel_fnames
@@ -69,6 +77,10 @@ class AutoCompleter(Completer):
 
         self.all_fnames = all_fnames
         self.tokenized = False
+        if not style:
+            self.style = ""
+        else:
+            self.style = style
 
     def tokenize(self):
         if self.tokenized:
@@ -140,7 +152,7 @@ class AutoCompleter(Completer):
             candidates = self.get_command_completions(text, words)
             if candidates is not None:
                 for candidate in sorted(candidates):
-                    yield Completion(candidate, start_position=-len(words[-1]))
+                    yield Completion(candidate, start_position=-len(words[-1]), style=self.style)
                 return
 
         candidates = self.words
@@ -159,7 +171,7 @@ class AutoCompleter(Completer):
                         completions.append((rel_fname, -len(last_word), rel_fname))
 
         for ins, pos, match in sorted(completions):
-            yield Completion(ins, start_position=pos, display=match)
+            yield Completion(ins, start_position=pos, display=match, style=self.style)
 
 
 class InputOutput:
@@ -178,6 +190,7 @@ class InputOutput:
         tool_output_color=None,
         tool_error_color="red",
         tool_warning_color="#FFA500",
+        tool_completion_color=None,
         assistant_output_color="blue",
         code_theme="default",
         encoding="utf-8",
@@ -194,6 +207,7 @@ class InputOutput:
         self.tool_output_color = tool_output_color if pretty else None
         self.tool_error_color = tool_error_color if pretty else None
         self.tool_warning_color = tool_warning_color if pretty else None
+        self.tool_completion_color = tool_completion_color if pretty else None
         self.assistant_output_color = assistant_output_color
         self.code_theme = code_theme
 
@@ -334,6 +348,7 @@ class InputOutput:
                 commands,
                 self.encoding,
                 abs_read_only_fnames=abs_read_only_fnames,
+                style=self.tool_completion_color,
             )
         )
 
@@ -431,7 +446,12 @@ class InputOutput:
         self.append_chat_history(hist)
 
     def confirm_ask(
-        self, question, default="y", subject=None, explicit_yes_required=False, group=None
+        self,
+        question,
+        default="y",
+        subject=None,
+        explicit_yes_required=False,
+        group=None,
     ):
         self.num_user_asks += 1
 
@@ -589,24 +609,26 @@ class InputOutput:
     def assistant_output(self, message, stream=False):
         mdStream = None
         show_resp = message
-        
+
         if self.pretty:
             if stream:
                 mdargs = dict(style=self.assistant_output_color, code_theme=self.code_theme)
                 mdStream = MarkdownStream(mdargs=mdargs)
             else:
                 show_resp = Markdown(
-                    message, style=self.assistant_output_color, code_theme=self.code_theme
+                    message,
+                    style=self.assistant_output_color,
+                    code_theme=self.code_theme,
                 )
         else:
             show_resp = Text(message or "<no response>")
 
         self.console.print(show_resp)
         return mdStream
-        
+
     def print(self, message=""):
         print(message)
-        
+
     def append_chat_history(self, text, linebreak=False, blockquote=False, strip=True):
         if blockquote:
             if strip:

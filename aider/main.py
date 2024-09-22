@@ -405,6 +405,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             user_input_color=args.user_input_color,
             tool_output_color=args.tool_output_color,
             tool_error_color=args.tool_error_color,
+            tool_completion_color=args.tool_completion_color,
             assistant_output_color=args.assistant_output_color,
             code_theme=args.code_theme,
             dry_run=args.dry_run,
@@ -565,7 +566,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         return 1
 
     commands = Commands(
-        io, None, verify_ssl=args.verify_ssl, args=args, parser=parser, verbose=args.verbose
+        io,
+        None,
+        verify_ssl=args.verify_ssl,
+        args=args,
+        parser=parser,
+        verbose=args.verbose,
     )
 
     summarizer = ChatSummary(
