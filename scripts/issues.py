@@ -84,6 +84,7 @@ def comment_and_close_duplicate(issue, oldest_issue):
     close_url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}"
 
     comment_body = (
+        "Thanks for trying aider and filing this issue.\n\n"
         f"This looks like a duplicate of #{oldest_issue['number']}, so I'm going to close it so"
         " discussion can happen there. Please let me know if you think it's actually a distinct"
         " issue."
