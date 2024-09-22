@@ -266,7 +266,7 @@ def register_models(git_root, model_settings_fname, io, verbose=False):
     return None
 
 
-def load_dotenv_files(git_root, dotenv_fname, encoding):
+def load_dotenv_files(git_root, dotenv_fname, encoding="utf-8"):
     dotenv_files = generate_search_path_list(
         ".env",
         git_root,
@@ -276,7 +276,7 @@ def load_dotenv_files(git_root, dotenv_fname, encoding):
     for fname in dotenv_files:
         if Path(fname).exists():
             try:
-                load_dotenv(fname, override=True, encoding=encoding, errors="ignore")
+                load_dotenv(fname, override=True, encoding=encoding)
                 loaded.append(fname)
             except Exception as e:
                 print(f"Error loading {fname}: {e}")
