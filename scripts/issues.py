@@ -142,7 +142,8 @@ def main():
             if issue["number"] != oldest_issue["number"]:
                 comment_and_close_duplicate(issue, oldest_issue)
 
-        print(f"Oldest issue #{oldest_issue['number']} left open")
+        if oldest_issue['state'] == 'open':
+            print(f"Oldest issue #{oldest_issue['number']} left open")
 
 
 if __name__ == "__main__":
