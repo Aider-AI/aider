@@ -14,7 +14,9 @@ load_dotenv()
 
 DUPLICATE_COMMENT = """Thanks for trying aider and filing this issue.
 
-This looks like a duplicate of #{oldest_issue_number}, so I'm going to close it so discussion can happen there. Please let me know if you think it's actually a distinct issue."""
+This looks like a duplicate of #{oldest_issue_number}. Please see the comments there for more information, and feel free to continue the discussion within that issue.
+
+I'm going to close this issue for now. But please let me know if you think this is actually a distinct issue and I will reopen this issue."""  # noqa
 
 # GitHub API configuration
 GITHUB_API_URL = "https://api.github.com"
