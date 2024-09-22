@@ -140,7 +140,7 @@ def main():
             continue
 
         # Comment and close duplicate issues
-        for issue in tqdm(issues, desc="Closing duplicate issues"):
+        for issue in issues:
             if issue["number"] != oldest_issue["number"]:
                 comment_and_close_duplicate(issue, oldest_issue)
 
