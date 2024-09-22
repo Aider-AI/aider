@@ -952,12 +952,16 @@ def main():
 
 def print_model_settings_as_yaml():
     import yaml
+
     model_settings_list = []
     for ms in MODEL_SETTINGS:
-        model_settings_dict = {field.name: getattr(ms, field.name) for field in fields(ModelSettings)}
+        model_settings_dict = {
+            field.name: getattr(ms, field.name) for field in fields(ModelSettings)
+        }
         model_settings_list.append(model_settings_dict)
-    
+
     print(yaml.dump(model_settings_list, default_flow_style=False))
+
 
 if __name__ == "__main__":
     main()
