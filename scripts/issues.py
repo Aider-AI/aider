@@ -87,7 +87,7 @@ def comment_and_close_duplicate(issue, oldest_issue):
     )
     close_url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}"
 
-    comment_body = DUPLICATE_COMMENT.format(oldest_issue_number=oldest_issue['number'])
+    comment_body = DUPLICATE_COMMENT.format(oldest_issue_number=oldest_issue["number"])
 
     # Post comment
     response = requests.post(comment_url, headers=headers, json={"body": comment_body})
