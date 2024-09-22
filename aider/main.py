@@ -266,7 +266,7 @@ def register_models(git_root, model_settings_fname, io, verbose=False):
     return None
 
 
-def load_dotenv_files(git_root, dotenv_fname):
+def load_dotenv_files(git_root, dotenv_fname, encoding):
     dotenv_files = generate_search_path_list(
         ".env",
         git_root,
@@ -275,8 +275,11 @@ def load_dotenv_files(git_root, dotenv_fname):
     loaded = []
     for fname in dotenv_files:
         if Path(fname).exists():
-            loaded.append(fname)
-            load_dotenv(fname, override=True)
+            try:
+                load_dotenv(fname, override=True, encoding=encoding, errors='ignore')
+                loaded.append(fname)
+            except Exception as e:
+                print(f"Error loading {fname}: {e}")
     return loaded
 
 
@@ -364,7 +367,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     args, unknown = parser.parse_known_args(argv)
 
     # Load the .env file specified in the arguments
-    loaded_dotenvs = load_dotenv_files(git_root, args.env_file)
+    loaded_dotenvs = load_dotenv_files(git_root, args.env_file, args.encoding)
 
     # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)
