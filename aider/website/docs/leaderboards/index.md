@@ -154,7 +154,7 @@ See the
 [benchmark README](https://github.com/paul-gauthier/aider/blob/main/benchmark/README.md)
 for information on running aider's code editing benchmarks.
 Submit results by opening a PR with edits to the
-[benchmark results data files](https://github.com/paul-gauthier/aider/blob/main/website/_data/).
+[benchmark results data files](https://github.com/paul-gauthier/aider/blob/main/aider/website/_data/).
 
 
 <p class="post-date">
@@ -181,6 +181,6 @@ mod_dates = [get_last_modified_date(file) for file in files]
 latest_mod_date = max(mod_dates)
 cog.out(f"{latest_mod_date.strftime('%B %d, %Y.')}")
 ]]]-->
-September 12, 2024.
+September 21, 2024.
 <!--[[[end]]]-->
 </p>

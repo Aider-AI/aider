@@ -27,7 +27,7 @@ def retry_exceptions():
         litellm.exceptions.ServiceUnavailableError,
         litellm.exceptions.Timeout,
         litellm.exceptions.InternalServerError,
-        litellm.llms.anthropic.AnthropicError,
+        litellm.llms.anthropic.chat.AnthropicError,
     )
 
 

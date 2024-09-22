@@ -234,6 +234,8 @@ def run_install(cmd):
             text=True,
             bufsize=1,
             universal_newlines=True,
+            encoding=sys.stdout.encoding,
+            errors="replace",
         )
         spinner = Spinner("Installing...")
 

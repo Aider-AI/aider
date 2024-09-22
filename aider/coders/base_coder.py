@@ -493,9 +493,10 @@ class Coder:
             if content is not None:
                 all_content += content + "\n"
 
+        lines = all_content.splitlines()
         good = False
         for fence_open, fence_close in self.fences:
-            if fence_open in all_content or fence_close in all_content:
+            if any(line.startswith(fence_open) or line.startswith(fence_close) for line in lines):
                 continue
             good = True
             break
@@ -1897,8 +1898,6 @@ class Coder:
             return
         if self.commit_before_message[-1] != self.repo.get_head_commit_sha():
             self.io.tool_output("You can use /undo to undo and discard each aider commit.")
-        else:
-            self.io.tool_output("No changes made to git tracked files.")
 
     def dirty_commit(self):
         if not self.need_commit_before_edits:
