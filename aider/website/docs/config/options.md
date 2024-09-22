@@ -126,7 +126,7 @@ Aliases:
   - `-3`
 
 ### `--deepseek`
-Use deepseek-coder model for the main chat  
+Use deepseek/deepseek-coder model for the main chat  
 Environment variable: `AIDER_DEEPSEEK`  
 
 ## Model Settings:
