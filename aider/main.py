@@ -276,7 +276,7 @@ def load_dotenv_files(git_root, dotenv_fname, encoding):
     for fname in dotenv_files:
         if Path(fname).exists():
             try:
-                load_dotenv(fname, override=True, encoding=encoding, errors='ignore')
+                load_dotenv(fname, override=True, encoding=encoding, errors="ignore")
                 loaded.append(fname)
             except Exception as e:
                 print(f"Error loading {fname}: {e}")
