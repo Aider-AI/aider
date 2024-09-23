@@ -348,7 +348,8 @@ class GitRepo:
                 cwd_path = Path.cwd().resolve().relative_to(Path(self.root).resolve())
             except ValueError:
                 # Issue #1524
-                # ValueError: 'C:\\dev\\squid-certbot' is not in the subpath of 'C:\\dev\\squid-certbot
+                # ValueError: 'C:\\dev\\squid-certbot' is not in the subpath of
+                # 'C:\\dev\\squid-certbot'
                 # Clearly, fname is not under cwd... so ignore it
                 return True
 
