@@ -274,12 +274,16 @@ def load_dotenv_files(git_root, dotenv_fname, encoding="utf-8"):
     )
     loaded = []
     for fname in dotenv_files:
-        if Path(fname).exists():
-            try:
+        try:
+            if Path(fname).is_file():
                 load_dotenv(fname, override=True, encoding=encoding)
                 loaded.append(fname)
-            except Exception as e:
-                print(f"Error loading {fname}: {e}")
+            else:
+                print(f"File not found: {fname}")
+        except PermissionError as pe:
+            print(f"Permission denied for {fname}: {pe}")
+        except Exception as e:
+            print(f"Error loading {fname}: {e}")
     return loaded
 
 
