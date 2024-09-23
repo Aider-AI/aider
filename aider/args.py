@@ -197,18 +197,6 @@ def get_parser(default_config_files, git_root):
         help="Only work with models that have meta-data available (default: True)",
     )
     group.add_argument(
-        "--cache-prompts",
-        action=argparse.BooleanOptionalAction,
-        default=False,
-        help="Enable caching of prompts (default: False)",
-    )
-    group.add_argument(
-        "--cache-keepalive-pings",
-        type=int,
-        default=0,
-        help="Number of times to ping at 5min intervals to keep prompt cache warm (default: 0)",
-    )
-    group.add_argument(
         "--max-chat-history-tokens",
         type=int,
         default=None,
@@ -224,6 +212,21 @@ def get_parser(default_config_files, git_root):
         metavar="ENV_FILE",
         default=default_env_file(git_root),
         help="Specify the .env file to load (default: .env in git root)",
+    )
+
+    ##########
+    group = parser.add_argument_group("Cache Settings")
+    group.add_argument(
+        "--cache-prompts",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable caching of prompts (default: False)",
+    )
+    group.add_argument(
+        "--cache-keepalive-pings",
+        type=int,
+        default=0,
+        help="Number of times to ping at 5min intervals to keep prompt cache warm (default: 0)",
     )
 
     ##########
