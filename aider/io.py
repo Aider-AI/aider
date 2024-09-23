@@ -626,7 +626,7 @@ class InputOutput:
             text += "\n"
         if self.chat_history_file is not None:
             try:
-                with self.chat_history_file.open("a", encoding=self.encoding) as f:
+                with self.chat_history_file.open("a", encoding=self.encoding, errors="ignore") as f:
                     f.write(text)
             except (PermissionError, OSError):
                 self.tool_error(
