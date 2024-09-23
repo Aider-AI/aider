@@ -495,6 +495,21 @@ def get_parser(default_config_files, git_root):
         default=False,
     )
     group.add_argument(
+        "--chat-language",
+        metavar="CHAT_LANGUAGE",
+        default=None,
+        help="Specify the language to use in the chat (default: None, uses system settings)",
+    )
+    group.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {__version__}",
+        help="Show the version number and exit",
+    )
+
+    ##########
+    group = parser.add_argument_group("Voice Settings")
+    group.add_argument(
         "--voice-format",
         metavar="VOICE_FORMAT",
         default="wav",
@@ -506,18 +521,6 @@ def get_parser(default_config_files, git_root):
         metavar="VOICE_LANGUAGE",
         default="en",
         help="Specify the language for voice using ISO 639-1 code (default: auto)",
-    )
-    group.add_argument(
-        "--chat-language",
-        metavar="CHAT_LANGUAGE",
-        default=None,
-        help="Specify the language to use in the chat (default: None, uses system settings)",
-    )
-    group.add_argument(
-        "--version",
-        action="version",
-        version=f"%(prog)s {__version__}",
-        help="Show the version number and exit",
     )
     group.add_argument(
         "--just-check-update",
