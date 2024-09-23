@@ -197,21 +197,6 @@ def get_parser(default_config_files, git_root):
         help="Only work with models that have meta-data available (default: True)",
     )
     group.add_argument(
-        "--map-tokens",
-        type=int,
-        default=None,
-        help="Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)",
-    )
-    group.add_argument(
-        "--map-refresh",
-        choices=["auto", "always", "files", "manual"],
-        default="auto",
-        help=(
-            "Control how often the repo map is refreshed. Options: auto, always, files, manual"
-            " (default: auto)"
-        ),
-    )
-    group.add_argument(
         "--cache-prompts",
         action=argparse.BooleanOptionalAction,
         default=False,
@@ -222,12 +207,6 @@ def get_parser(default_config_files, git_root):
         type=int,
         default=0,
         help="Number of times to ping at 5min intervals to keep prompt cache warm (default: 0)",
-    )
-    group.add_argument(
-        "--map-multiplier-no-files",
-        type=float,
-        default=2,
-        help="Multiplier for map tokens when no files are specified (default: 2)",
     )
     group.add_argument(
         "--max-chat-history-tokens",
@@ -245,6 +224,30 @@ def get_parser(default_config_files, git_root):
         metavar="ENV_FILE",
         default=default_env_file(git_root),
         help="Specify the .env file to load (default: .env in git root)",
+    )
+
+    ##########
+    group = parser.add_argument_group("Repomap Settings")
+    group.add_argument(
+        "--map-tokens",
+        type=int,
+        default=None,
+        help="Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)",
+    )
+    group.add_argument(
+        "--map-refresh",
+        choices=["auto", "always", "files", "manual"],
+        default="auto",
+        help=(
+            "Control how often the repo map is refreshed. Options: auto, always, files, manual"
+            " (default: auto)"
+        ),
+    )
+    group.add_argument(
+        "--map-multiplier-no-files",
+        type=float,
+        default=2,
+        help="Multiplier for map tokens when no files are specified (default: 2)",
     )
 
     ##########
