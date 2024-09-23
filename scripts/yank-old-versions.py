@@ -2,17 +2,16 @@ import requests
 from packaging import version
 from packaging.specifiers import SpecifierSet
 
-
-def get_versions_supporting_python38(package_name):
+def get_python_support_for_versions(package_name):
     # Fetch package information from PyPI
     url = f"https://pypi.org/pypi/{package_name}/json"
     response = requests.get(url)
     if response.status_code != 200:
         print(f"Failed to fetch data for {package_name}")
-        return []
+        return {}
 
     data = response.json()
-    compatible_versions = []
+    version_support = {}
 
     for release, release_data in data["releases"].items():
         if not release_data:  # Skip empty releases
@@ -22,28 +21,27 @@ def get_versions_supporting_python38(package_name):
         requires_python = release_data[0].get("requires_python")
 
         if requires_python is None:
-            # If 'requires_python' is not specified, assume it's compatible
-            compatible_versions.append(release)
+            version_support[release] = "Unspecified (assumed compatible with all versions)"
         else:
-            # Parse the requires_python specifier
             try:
                 spec = SpecifierSet(requires_python)
-                if version.parse("3.8") in spec:
-                    compatible_versions.append(release)
+                supported_versions = []
+                for py_version in ["3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]:
+                    if version.parse(py_version) in spec:
+                        supported_versions.append(py_version)
+                version_support[release] = ", ".join(supported_versions) if supported_versions else "No supported versions found"
             except ValueError:
-                print(f"Invalid requires_python specifier for version {release}: {requires_python}")
+                version_support[release] = f"Invalid specifier: {requires_python}"
 
-    return compatible_versions
-
+    return version_support
 
 def main():
     package_name = "aider-chat"  # Replace with your package name
-    compatible_versions = get_versions_supporting_python38(package_name)
+    version_support = get_python_support_for_versions(package_name)
 
-    print(f"Versions of {package_name} compatible with Python 3.8 or lower:")
-    for v in compatible_versions:
-        print(v)
-
+    print(f"Python version support for each release of {package_name}:")
+    for release, support in sorted(version_support.items(), key=lambda x: version.parse(x[0]), reverse=True):
+        print(f"{release}: {support}")
 
 if __name__ == "__main__":
     main()
