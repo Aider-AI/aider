@@ -206,7 +206,7 @@ def get_parser(default_config_files, git_root):
         "--map-refresh",
         choices=["auto", "always", "files", "manual"],
         default="auto",
-        help="Control how often the repo map is refreshed (default: auto)",
+        help="Control how often the repo map is refreshed. Options: auto, always, files, manual (default: auto)",
     )
     group.add_argument(
         "--cache-prompts",
