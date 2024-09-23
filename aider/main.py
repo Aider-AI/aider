@@ -274,14 +274,14 @@ def load_dotenv_files(git_root, dotenv_fname, encoding="utf-8"):
     )
     loaded = []
     for fname in dotenv_files:
-        if Path(fname).exists():
-            try:
+        try:
+            if Path(fname).exists():
                 load_dotenv(fname, override=True, encoding=encoding)
                 loaded.append(fname)
-            except OSError as e:
-                print(f"OSError loading {fname}: {e}")
-            except Exception as e:
-                print(f"Error loading {fname}: {e}")
+        except OSError as e:
+            print(f"OSError loading {fname}: {e}")
+        except Exception as e:
+            print(f"Error loading {fname}: {e}")
     return loaded
 
 
