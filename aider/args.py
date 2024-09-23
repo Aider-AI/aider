@@ -486,6 +486,13 @@ def get_parser(default_config_files, git_root):
         default=False,
     )
     group.add_argument(
+        "--voice-format",
+        metavar="VOICE_FORMAT",
+        default="wav",
+        choices=["wav", "mp3", "webm"],
+        help="Audio format for voice recording (default: wav). webm and mp3 require ffmpeg",
+    )
+    group.add_argument(
         "--voice-language",
         metavar="VOICE_LANGUAGE",
         default="en",

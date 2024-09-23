@@ -290,6 +290,9 @@ cog.outl("```")
 ## Use VI editing mode in the terminal (default: False)
 #vim: false
 
+## Audio format for voice recording (default: wav). webm and mp3 require ffmpeg
+#voice-format: wav
+
 ## Specify the language for voice using ISO 639-1 code (default: auto)
 #voice-language: en
 

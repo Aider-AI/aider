@@ -15,9 +15,10 @@ from prompt_toolkit.styles import Style
 from pygments.lexers import MarkdownLexer, guess_lexer_for_filename
 from pygments.token import Token
 from rich.console import Console
+from rich.markdown import Markdown
 from rich.style import Style as RichStyle
 from rich.text import Text
-from rich.markdown import Markdown
+
 from aider.mdstream import MarkdownStream
 
 from .dump import dump  # noqa: F401
@@ -339,6 +340,11 @@ class InputOutput:
 
         kb = KeyBindings()
 
+        @kb.add("c-space")
+        def _(event):
+            "Ignore Ctrl when pressing space bar"
+            event.current_buffer.insert_text(" ")
+
         @kb.add("escape", "c-m", eager=True)
         def _(event):
             event.current_buffer.insert_text("\n")
@@ -589,7 +595,7 @@ class InputOutput:
     def assistant_output(self, message, stream=False):
         mdStream = None
         show_resp = message
-        
+
         if self.pretty:
             if stream:
                 mdargs = dict(style=self.assistant_output_color, code_theme=self.code_theme)
@@ -603,10 +609,10 @@ class InputOutput:
 
         self.console.print(show_resp)
         return mdStream
-        
+
     def print(self, message=""):
         print(message)
-        
+
     def append_chat_history(self, text, linebreak=False, blockquote=False, strip=True):
         if blockquote:
             if strip:

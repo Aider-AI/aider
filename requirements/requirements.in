@@ -2,6 +2,7 @@
 #    pip-compile requirements.in --upgrade
 #
 
+pydub
 configargparse
 GitPython
 jsonschema

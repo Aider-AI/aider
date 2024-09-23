@@ -931,20 +931,37 @@ def print_matching_models(io, search):
         io.tool_output(f'No models match "{search}".')
 
 
+def get_model_settings_as_yaml():
+    import yaml
+
+    model_settings_list = []
+    for ms in MODEL_SETTINGS:
+        model_settings_dict = {
+            field.name: getattr(ms, field.name) for field in fields(ModelSettings)
+        }
+        model_settings_list.append(model_settings_dict)
+
+    return yaml.dump(model_settings_list, default_flow_style=False)
+
+
 def main():
-    if len(sys.argv) != 2:
-        print("Usage: python models.py <model_name>")
+    if len(sys.argv) < 2:
+        print("Usage: python models.py <model_name> or python models.py --yaml")
         sys.exit(1)
 
-    model_name = sys.argv[1]
-    matching_models = fuzzy_match_models(model_name)
-
-    if matching_models:
-        print(f"Matching models for '{model_name}':")
-        for model in matching_models:
-            print(model)
+    if sys.argv[1] == "--yaml":
+        yaml_string = get_model_settings_as_yaml()
+        print(yaml_string)
     else:
-        print(f"No matching models found for '{model_name}'.")
+        model_name = sys.argv[1]
+        matching_models = fuzzy_match_models(model_name)
+
+        if matching_models:
+            print(f"Matching models for '{model_name}':")
+            for model in matching_models:
+                print(model)
+        else:
+            print(f"No matching models found for '{model_name}'.")
 
 
 if __name__ == "__main__":

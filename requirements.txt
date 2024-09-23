@@ -144,6 +144,8 @@ pydantic==2.9.2
     #   openai
 pydantic-core==2.23.4
     # via pydantic
+pydub==0.25.1
+    # via -r requirements/requirements.in
 pyflakes==3.2.0
     # via flake8
 pygments==2.18.0

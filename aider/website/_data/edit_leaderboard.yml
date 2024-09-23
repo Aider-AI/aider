@@ -1201,3 +1201,26 @@
   versions: 0.56.1.dev
   seconds_per_case: 39.8
   total_cost: 0.0000
+
+- dirname: 2024-09-21-11-56-43--Codestral-22B-v0.1-Q4_K_M.gguf_whole
+  test_cases: 133
+  model: Codestral-22B-v0.1-Q4_K_M
+  edit_format: whole
+  commit_hash: 2753ac6-dirty
+  pass_rate_1: 36.1
+  pass_rate_2: 48.1
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 8
+  lazy_comments: 6
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 4
+  command: aider --model Codestral-22B-v0.1-Q4_K_M
+  date: 2024-09-21
+  versions: 0.56.1.dev
+  seconds_per_case: 656.4
+  total_cost: 0.9108
