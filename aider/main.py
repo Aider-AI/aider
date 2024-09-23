@@ -278,6 +278,8 @@ def load_dotenv_files(git_root, dotenv_fname, encoding="utf-8"):
             try:
                 load_dotenv(fname, override=True, encoding=encoding)
                 loaded.append(fname)
+            except OSError as e:
+                print(f"OSError loading {fname}: {e}")
             except Exception as e:
                 print(f"Error loading {fname}: {e}")
     return loaded
