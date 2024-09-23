@@ -344,7 +344,13 @@ class GitRepo:
     def ignored_file_raw(self, fname):
         if self.subtree_only:
             fname_path = Path(self.normalize_path(fname))
-            cwd_path = Path.cwd().resolve().relative_to(Path(self.root).resolve())
+            try:
+                cwd_path = Path.cwd().resolve().relative_to(Path(self.root).resolve())
+            except ValueError:
+                # Issue #1524
+                # ValueError: 'C:\\dev\\squid-certbot' is not in the subpath of 'C:\\dev\\squid-certbot
+                # Clearly, fname is not under cwd... so ignore it
+                return True
 
             if cwd_path not in fname_path.parents and fname_path != cwd_path:
                 return True
