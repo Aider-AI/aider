@@ -101,7 +101,7 @@ Repo-map: disabled
 ```
 
 This is because weaker models get easily overwhelmed and confused by the content of the
-repo map. They sometimes mistakenly think its ok to try and edit the code in the repo map.
+repo map. They sometimes mistakenly try to edit the code in the repo map.
 The repo map is usually disabled for a good reason.
 
 If you would like to force it on, you can run aider with `--map-tokens 1024`.
