@@ -506,22 +506,6 @@ def get_parser(default_config_files, git_root):
         version=f"%(prog)s {__version__}",
         help="Show the version number and exit",
     )
-
-    ##########
-    group = parser.add_argument_group("Voice Settings")
-    group.add_argument(
-        "--voice-format",
-        metavar="VOICE_FORMAT",
-        default="wav",
-        choices=["wav", "mp3", "webm"],
-        help="Audio format for voice recording (default: wav). webm and mp3 require ffmpeg",
-    )
-    group.add_argument(
-        "--voice-language",
-        metavar="VOICE_LANGUAGE",
-        default="en",
-        help="Specify the language for voice using ISO 639-1 code (default: auto)",
-    )
     group.add_argument(
         "--just-check-update",
         action="store_true",
@@ -628,6 +612,22 @@ def get_parser(default_config_files, git_root):
         action=argparse.BooleanOptionalAction,
         default=True,
         help="Enable/disable suggesting shell commands (default: True)",
+    )
+
+    ##########
+    group = parser.add_argument_group("Voice Settings")
+    group.add_argument(
+        "--voice-format",
+        metavar="VOICE_FORMAT",
+        default="wav",
+        choices=["wav", "mp3", "webm"],
+        help="Audio format for voice recording (default: wav). webm and mp3 require ffmpeg",
+    )
+    group.add_argument(
+        "--voice-language",
+        metavar="VOICE_LANGUAGE",
+        default="en",
+        help="Specify the language for voice using ISO 639-1 code (default: auto)",
     )
 
     return parser
