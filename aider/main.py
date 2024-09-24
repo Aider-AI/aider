@@ -15,6 +15,7 @@ from aider import __version__, models, utils
 from aider.args import get_parser
 from aider.coders import Coder
 from aider.commands import Commands, SwitchCoder
+from aider.config import Config
 from aider.format_settings import format_settings, scrub_sensitive_info
 from aider.history import ChatSummary
 from aider.io import InputOutput
@@ -374,6 +375,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)
+
+    # Initialize system wide config object with arguments
+    Config.initialize(args)
 
     if not args.verify_ssl:
         import httpx

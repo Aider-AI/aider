@@ -6,7 +6,8 @@ from pathlib import Path
 import packaging.version
 
 import aider
-from aider import args, utils
+from aider import utils
+from aider.config import Config
 from aider.dump import dump  # noqa: F401
 
 VERSION_CHECK_FNAME = Path.home() / ".aider" / "caches" / "versioncheck"
@@ -26,11 +27,11 @@ def install_from_main_branch(io):
 
     if success:
         io.tool_output("Development version installed. Re-run aider to use the new version.")
-        if not args.exit:
+        if not Config.args.exit:
             sys.exit()
     else:
         io.tool_error("Failed to install the development version. Exiting.")
-        if not args.exit:
+        if not Config.args.exit:
             sys.exit(1)
 
 
@@ -65,11 +66,11 @@ def install_upgrade(io, latest_version=None):
 
     if success:
         io.tool_output("Upgrade successful. Re-run aider to use the new version.")
-        if not args.exit:
+        if not Config.args.exit:
             sys.exit()
     else:
         io.tool_error("Failed to upgrade the main application. Exiting.")
-        if not args.exit:
+        if not Config.args.exit:
             sys.exit(1)
 
 
