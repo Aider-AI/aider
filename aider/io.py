@@ -180,6 +180,10 @@ class InputOutput:
         tool_error_color="red",
         tool_warning_color="#FFA500",
         assistant_output_color="blue",
+        completion_menu_color="default",
+        completion_menu_bg_color="default",
+        completion_menu_current_color="default",
+        completion_menu_current_bg_color="default",
         code_theme="default",
         encoding="utf-8",
         dry_run=False,
@@ -196,6 +200,11 @@ class InputOutput:
         self.tool_error_color = tool_error_color if pretty else None
         self.tool_warning_color = tool_warning_color if pretty else None
         self.assistant_output_color = assistant_output_color
+        self.completion_menu_color = completion_menu_color if pretty else None
+        self.completion_menu_bg_color = completion_menu_bg_color if pretty else None
+        self.completion_menu_current_color = completion_menu_current_color if pretty else None
+        self.completion_menu_current_bg_color = completion_menu_current_bg_color if pretty else None
+
         self.code_theme = code_theme
 
         self.input = input
@@ -322,6 +331,8 @@ class InputOutput:
                 {
                     "": self.user_input_color,
                     "pygments.literal.string": f"bold italic {self.user_input_color}",
+                    "completion-menu": f"bg:{self.completion_menu_bg_color} {self.completion_menu_color}",
+                    "completion-menu.completion.current": f"bg:{self.completion_menu_current_bg_color} {self.completion_menu_current_color}",
                 }
             )
         else:
@@ -466,7 +477,11 @@ class InputOutput:
                 self.tool_output(subject, bold=True)
 
         if self.pretty and self.user_input_color:
-            style = {"": self.user_input_color}
+            style = {
+                    "": self.user_input_color,
+                    "completion-menu": f"bg:{self.completion_menu_bg_color} {self.completion_menu_color}",
+                    "completion-menu.completion.current": f"bg:{self.completion_menu_current_bg_color} {self.completion_menu_current_color}",
+                    }
         else:
             style = dict()
 
