@@ -28,37 +28,39 @@ def install_from_main_branch(io):
 
 def install_upgrade(io, latest_version=None):
     """
-    Install the latest version of aider from PyPI.
+    Install the latest version of aider from PyPI or provide Docker upgrade instructions.
+    Exits the application gracefully if the upgrade fails.
     """
-
     if latest_version:
         new_ver_text = f"Newer aider version v{latest_version} is available."
     else:
-        new_ver_text = "Install latest version of aider?"
+        new_ver_text = "Install the latest version of aider?"
 
     docker_image = os.environ.get("AIDER_DOCKER_IMAGE")
     if docker_image:
-        text = f"""
+        upgrade_instructions = f"""
 {new_ver_text} To upgrade, run:
 
     docker pull {docker_image}
 """
-        io.tool_warning(text)
-        return True
+        io.tool_warning(upgrade_instructions)
+        return
 
+    # Attempt to upgrade the main application via pip
     success = utils.check_pip_install_extra(
         io,
-        None,
-        new_ver_text,
-        ["--upgrade", "aider-chat"],
+        module=None,
+        prompt=new_ver_text,
+        pip_install_args=["--upgrade", "aider-chat"],
         self_update=True,
     )
 
     if success:
-        io.tool_output("Re-run aider to use new version.")
+        io.tool_output("Upgrade successful. Re-run aider to use the new version.")
         sys.exit()
-
-    return
+    else:
+        io.tool_error("Failed to upgrade the main application. Exiting.")
+        sys.exit(1)
 
 
 def check_version(io, just_check=False, verbose=False):

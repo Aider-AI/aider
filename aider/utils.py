@@ -321,7 +321,21 @@ def touch_file(fname):
         return False
 
 
-def check_pip_install_extra(io, module, prompt, pip_install_cmd, self_update=False):
+def check_pip_install_extra(io, module, prompt, pip_install_args, self_update=False):
+    """
+    Check if a module is installed. If not, optionally prompt the user to install it via pip.
+
+    Args:
+        io: IO handler for input/output operations.
+        module: Module name to check and install. If None, only run the pip command.
+        prompt: Message to display before installation.
+        pip_install_args: List of arguments for the pip install command.
+        self_update: Flag indicating if this is a self-update operation.
+
+    Returns:
+        bool: True if the module is installed successfully or already present, False otherwise.
+    """
+    # Check if the module is already installed
     if module:
         try:
             __import__(module)
@@ -329,36 +343,44 @@ def check_pip_install_extra(io, module, prompt, pip_install_cmd, self_update=Fal
         except (ImportError, ModuleNotFoundError, RuntimeError):
             pass
 
-    cmd = get_pip_install(pip_install_cmd)
+    # Build the pip install command
+    cmd = get_pip_install(pip_install_args)
 
+    # Display the prompt message
     if prompt:
         io.tool_warning(prompt)
 
+    # Handle self-update scenarios on Windows where automatic updates may not be possible
     if self_update and platform.system() == "Windows":
-        io.tool_output("Run this command to update:")
+        io.tool_output("Please run the following command to update:")
         print()
-        print(printable_shell_command(cmd))  # plain print so it doesn't line-wrap
-        return
+        print(printable_shell_command(cmd))
+        return False
 
+    # Ask the user for confirmation to proceed with pip installation
     if not io.confirm_ask("Run pip install?", default="y", subject=printable_shell_command(cmd)):
-        return
+        return False
 
+    # Execute the pip install command
     success, output = run_install(cmd)
     if success:
-        if not module:
-            return
-        try:
-            __import__(module)
-            return True
-        except (ImportError, ModuleNotFoundError, RuntimeError) as err:
-            io.tool_error(str(err))
-            pass
+        if module:
+            try:
+                __import__(module)
+                return True
+            except (ImportError, ModuleNotFoundError, RuntimeError) as err:
+                io.tool_error(
+                    f"Module '{module}' installation succeeded but failed to import: {err}"
+                )
+                return False
+        return True
 
+    # If installation failed, display the error and suggest manual installation
     io.tool_error(output)
-
     print()
-    print("Install failed, try running this command manually:")
+    print("Installation failed. Please try running the following command manually:")
     print(printable_shell_command(cmd))
+    return False
 
 
 def printable_shell_command(cmd_list):
