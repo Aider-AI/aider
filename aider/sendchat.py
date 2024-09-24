@@ -84,7 +84,10 @@ def send_completion(
 
     # del kwargs['stream']
 
-    res = litellm.completion(**kwargs)
+    try:
+        res = litellm.completion(**kwargs)
+    except Exception as err:
+        print(f"LiteLLM completion error: {str(err)}")
 
     if not stream and CACHE is not None:
         CACHE[key] = res
