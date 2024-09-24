@@ -25,6 +25,8 @@ from aider.versioncheck import check_version, install_from_main_branch, install_
 
 from .dump import dump  # noqa: F401
 
+# White space change for testing.
+
 
 def get_git_root():
     """Try and guess the git repo, since the conf.yml can be at the repo root"""
