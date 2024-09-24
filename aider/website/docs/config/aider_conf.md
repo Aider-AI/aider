@@ -209,6 +209,18 @@ cog.outl("```")
 ## Set the color for assistant output (default: #0088ff)
 #assistant-output-color: #0088ff
 
+## Set the color for the completion menu (default: terminal's default text color)
+#completion-menu-color: default
+
+## Set the background color for the completion menu (default: terminal's default background color)
+#completion-menu-bg-color: default
+
+## Set the color for the current item in the completion menu (default: terminal's default background color)
+#completion-menu-current-color: default
+
+## Set the background color for the current item in the completion menu (default: terminal's default text color)
+#completion-menu-current-bg-color: default
+
 ## Set the markdown code theme (default: default, other options include monokai, solarized-dark, solarized-light)
 #code-theme: default
 

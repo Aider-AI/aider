@@ -45,7 +45,10 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--pretty | --no-pretty] [--stream | --no-stream]
              [--user-input-color] [--tool-output-color]
              [--tool-error-color] [--tool-warning-color]
-             [--assistant-output-color] [--code-theme]
+             [--assistant-output-color] [--completion-menu-color]
+             [--completion-menu-bg-color]
+             [--completion-menu-current-color]
+             [--completion-menu-current-bg-color] [--code-theme]
              [--show-diffs] [--git | --no-git]
              [--gitignore | --no-gitignore] [--aiderignore]
              [--subtree-only] [--auto-commits | --no-auto-commits]
@@ -311,6 +314,26 @@ Environment variable: `AIDER_TOOL_WARNING_COLOR`
 Set the color for assistant output (default: #0088ff)  
 Default: #0088ff  
 Environment variable: `AIDER_ASSISTANT_OUTPUT_COLOR`  
+
+### `--completion-menu-color COLOR`
+Set the color for the completion menu (default: terminal's default text color)  
+Default: default  
+Environment variable: `AIDER_COMPLETION_MENU_COLOR`  
+
+### `--completion-menu-bg-color COLOR`
+Set the background color for the completion menu (default: terminal's default background color)  
+Default: default  
+Environment variable: `AIDER_COMPLETION_MENU_BG_COLOR`  
+
+### `--completion-menu-current-color COLOR`
+Set the color for the current item in the completion menu (default: terminal's default background color)  
+Default: default  
+Environment variable: `AIDER_COMPLETION_MENU_CURRENT_COLOR`  
+
+### `--completion-menu-current-bg-color COLOR`
+Set the background color for the current item in the completion menu (default: terminal's default text color)  
+Default: default  
+Environment variable: `AIDER_COMPLETION_MENU_CURRENT_BG_COLOR`  
 
 ### `--code-theme VALUE`
 Set the markdown code theme (default: default, other options include monokai, solarized-dark, solarized-light)  

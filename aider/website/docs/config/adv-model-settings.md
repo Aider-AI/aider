@@ -86,6 +86,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: whole
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -102,6 +103,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: whole
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -118,6 +120,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: whole
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -134,6 +137,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: whole
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -150,6 +154,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: whole
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -166,6 +171,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: udiff
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: true
   max_tokens: null
@@ -182,6 +188,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: udiff
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: true
   max_tokens: null
@@ -198,6 +205,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: true
   max_tokens: null
@@ -214,6 +222,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: true
   max_tokens: null
@@ -230,6 +239,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: true
   max_tokens: null
@@ -246,6 +256,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: true
   max_tokens: null
@@ -262,6 +273,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: whole
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: true
   max_tokens: null
@@ -278,6 +290,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: whole
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: true
   max_tokens: null
@@ -294,6 +307,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: udiff
   examples_as_sys_msg: true
+  extra_body: null
   extra_headers: null
   lazy: true
   max_tokens: null
@@ -310,6 +324,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: udiff
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: true
   max_tokens: null
@@ -326,6 +341,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -342,6 +358,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   examples_as_sys_msg: true
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -358,6 +375,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -374,6 +392,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -390,6 +409,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -406,6 +426,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -422,6 +443,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: whole
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -438,6 +460,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   examples_as_sys_msg: true
+  extra_body: null
   extra_headers:
     anthropic-beta: prompt-caching-2024-07-31
   lazy: false
@@ -455,6 +478,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   examples_as_sys_msg: true
+  extra_body: null
   extra_headers:
     anthropic-beta: prompt-caching-2024-07-31
   lazy: false
@@ -472,6 +496,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: whole
   examples_as_sys_msg: true
+  extra_body: null
   extra_headers:
     anthropic-beta: prompt-caching-2024-07-31
   lazy: false
@@ -489,6 +514,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: whole
   examples_as_sys_msg: true
+  extra_body: null
   extra_headers:
     anthropic-beta: prompt-caching-2024-07-31
   lazy: false
@@ -506,6 +532,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   examples_as_sys_msg: true
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: 8192
@@ -522,6 +549,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   examples_as_sys_msg: true
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: 8192
@@ -538,6 +566,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -554,6 +583,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: whole
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -570,6 +600,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: whole
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -586,6 +617,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: whole
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -602,6 +634,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: whole
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -618,6 +651,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   examples_as_sys_msg: true
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -634,6 +668,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   examples_as_sys_msg: true
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -650,6 +685,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -666,6 +702,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: whole
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -682,6 +719,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff-fenced
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -698,6 +736,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff-fenced
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -714,6 +753,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff-fenced
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -730,6 +770,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: whole
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -746,6 +787,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   examples_as_sys_msg: true
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: 8192
@@ -762,6 +804,7 @@ cog.out("```\n")
   caches_by_default: true
   edit_format: diff
   examples_as_sys_msg: true
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: 8192
@@ -778,6 +821,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   examples_as_sys_msg: true
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: 8192
@@ -794,6 +838,7 @@ cog.out("```\n")
   caches_by_default: true
   edit_format: diff
   examples_as_sys_msg: true
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: 8192
@@ -810,6 +855,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   examples_as_sys_msg: true
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -826,6 +872,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: true
   max_tokens: null
@@ -842,6 +889,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: whole
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -858,6 +906,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: whole
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -874,6 +923,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -890,6 +940,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -906,6 +957,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: whole
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
@@ -922,6 +974,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   examples_as_sys_msg: false
+  extra_body: null
   extra_headers: null
   lazy: false
   max_tokens: null
