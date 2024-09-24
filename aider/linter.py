@@ -215,7 +215,7 @@ def basic_lint(fname, code):
 
     try:
         parser = get_parser(lang)
-    except OSError as err:
+    except Exception as err:
         print(f"Unable to load parser: {err}")
         return
 
