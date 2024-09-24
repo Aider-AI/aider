@@ -9,6 +9,13 @@ import requests
 from dotenv import load_dotenv
 from tqdm import tqdm
 
+def has_been_reopened(issue_number):
+    timeline_url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue_number}/timeline"
+    response = requests.get(timeline_url, headers=headers)
+    response.raise_for_status()
+    events = response.json()
+    return any(event['event'] == 'reopened' for event in events if 'event' in event)
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -63,7 +70,7 @@ def group_issues_by_subject(issues):
     grouped_issues = defaultdict(list)
     pattern = r"Uncaught .+ in .+ line \d+"
     for issue in issues:
-        if re.search(pattern, issue["title"]):
+        if re.search(pattern, issue["title"]) and not has_been_reopened(issue["number"]):
             subject = issue["title"]
             grouped_issues[subject].append(issue)
     return grouped_issues
@@ -74,7 +81,7 @@ def find_oldest_issue(subject, all_issues):
     oldest_date = datetime.now()
 
     for issue in all_issues:
-        if issue["title"] == subject:
+        if issue["title"] == subject and not has_been_reopened(issue["number"]):
             created_at = datetime.strptime(issue["created_at"], "%Y-%m-%dT%H:%M:%SZ")
             if created_at < oldest_date:
                 oldest_date = created_at
@@ -111,7 +118,7 @@ def main():
     open_issues = [issue for issue in all_issues if issue["state"] == "open"]
     grouped_open_issues = group_issues_by_subject(open_issues)
 
-    print("Analyzing issues...")
+    print("Analyzing issues (skipping reopened issues)...")
     for subject, issues in grouped_open_issues.items():
         oldest_issue = find_oldest_issue(subject, all_issues)
         if not oldest_issue:
