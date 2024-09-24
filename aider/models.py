@@ -375,6 +375,15 @@ MODEL_SETTINGS = [
     ),
     # Gemini
     ModelSettings(
+        "gemini/gemini-1.5-pro-002",
+        "diff",
+        use_repo_map=True,
+    ),
+    ModelSettings(
+        "gemini/gemini-1.5-flash-002",
+        "whole",
+    ),
+    ModelSettings(
         "gemini/gemini-1.5-pro",
         "diff-fenced",
         use_repo_map=True,
