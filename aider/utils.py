@@ -222,6 +222,15 @@ def get_pip_install(args):
 
 
 def run_install(cmd):
+    """
+    Execute the pip install command and provide real-time feedback.
+
+    Args:
+        cmd (list): The pip install command to execute.
+
+    Returns:
+        tuple: (success: bool, output: str)
+    """
     print()
     print("Installing:", printable_shell_command(cmd))
 
@@ -243,25 +252,22 @@ def run_install(cmd):
             char = process.stdout.read(1)
             if not char:
                 break
-
             output.append(char)
             spinner.step()
 
         spinner.end()
         return_code = process.wait()
-        output = "".join(output)
+        output_str = "".join(output)
 
         if return_code == 0:
-            print("Installation complete.")
-            print()
-            return True, output
+            print("Installation complete.\n")
+            return True, output_str
 
     except subprocess.CalledProcessError as e:
         print(f"\nError running pip install: {e}")
 
     print("\nInstallation failed.\n")
-
-    return False, output
+    return False, "".join(output)
 
 
 class Spinner:
