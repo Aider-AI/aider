@@ -3,8 +3,11 @@ import os
 import queue
 import tempfile
 import time
+import warnings
 
 from aider.llm import litellm
+
+warnings.filterwarnings("ignore", message="Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work")
 
 try:
     import soundfile as sf
