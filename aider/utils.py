@@ -346,7 +346,7 @@ def check_pip_install_extra(io, module, prompt, pip_install_cmd, self_update=Fal
     success, output = run_install(cmd)
     if success:
         if not module:
-            return
+            return True
         try:
             __import__(module)
             return True
