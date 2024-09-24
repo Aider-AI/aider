@@ -1250,7 +1250,7 @@
 
 - dirname: 2024-09-24-16-33-23--gemini-1.5-flash-002-whole
   test_cases: 133
-  model: gemini/gemini-1.5-flash-002
+  model: gemini-1.5-flash-002
   edit_format: whole
   commit_hash: 3edcd71
   pass_rate_1: 37.6
@@ -1273,7 +1273,7 @@
 
 - dirname: 2024-09-24-15-18-59--gemini-1.5-flash-8b-exp-0924-whole
   test_cases: 133
-  model: gemini/gemini-1.5-flash-8b-exp-0924
+  model: gemini-1.5-flash-8b-exp-0924
   edit_format: whole
   commit_hash: 86faaa6
   pass_rate_1: 33.1
