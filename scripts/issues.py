@@ -9,12 +9,14 @@ import requests
 from dotenv import load_dotenv
 from tqdm import tqdm
 
+
 def has_been_reopened(issue_number):
     timeline_url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue_number}/timeline"
     response = requests.get(timeline_url, headers=headers)
     response.raise_for_status()
     events = response.json()
-    return any(event['event'] == 'reopened' for event in events if 'event' in event)
+    return any(event["event"] == "reopened" for event in events if "event" in event)
+
 
 # Load environment variables from .env file
 load_dotenv()
