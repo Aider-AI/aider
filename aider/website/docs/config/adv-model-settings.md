@@ -648,6 +648,38 @@ cog.out("```\n")
 - accepts_images: false
   cache_control: false
   caches_by_default: false
+  edit_format: diff
+  examples_as_sys_msg: false
+  extra_headers: null
+  lazy: false
+  max_tokens: null
+  name: gemini/gemini-1.5-pro-002
+  reminder: user
+  send_undo_reply: false
+  streaming: true
+  use_repo_map: true
+  use_system_prompt: true
+  use_temperature: true
+  weak_model_name: null
+- accepts_images: false
+  cache_control: false
+  caches_by_default: false
+  edit_format: whole
+  examples_as_sys_msg: false
+  extra_headers: null
+  lazy: false
+  max_tokens: null
+  name: gemini/gemini-1.5-flash-002
+  reminder: user
+  send_undo_reply: false
+  streaming: true
+  use_repo_map: false
+  use_system_prompt: true
+  use_temperature: true
+  weak_model_name: null
+- accepts_images: false
+  cache_control: false
+  caches_by_default: false
   edit_format: diff-fenced
   examples_as_sys_msg: false
   extra_headers: null
