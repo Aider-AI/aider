@@ -6,6 +6,7 @@ from datetime import datetime
 from pathlib import Path
 
 from prompt_toolkit.completion import Completer, Completion, ThreadedCompleter
+from prompt_toolkit.cursor_shapes import ModalCursorShapeConfig
 from prompt_toolkit.enums import EditingMode
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.key_binding import KeyBindings
@@ -237,6 +238,7 @@ class InputOutput:
                 "output": self.output,
                 "lexer": PygmentsLexer(MarkdownLexer),
                 "editing_mode": self.editingmode,
+                "cursor": ModalCursorShapeConfig(),
             }
             if self.input_history_file is not None:
                 session_kwargs["history"] = FileHistory(self.input_history_file)
@@ -331,8 +333,12 @@ class InputOutput:
                 {
                     "": self.user_input_color,
                     "pygments.literal.string": f"bold italic {self.user_input_color}",
-                    "completion-menu": f"bg:{self.completion_menu_bg_color} {self.completion_menu_color}",
-                    "completion-menu.completion.current": f"bg:{self.completion_menu_current_bg_color} {self.completion_menu_current_color}",
+                    "completion-menu": (
+                        f"bg:{self.completion_menu_bg_color} {self.completion_menu_color}"
+                    ),
+                    "completion-menu.completion.current": (
+                        f"bg:{self.completion_menu_current_bg_color} {self.completion_menu_current_color}"
+                    ),
                 }
             )
         else:
@@ -478,10 +484,14 @@ class InputOutput:
 
         if self.pretty and self.user_input_color:
             style = {
-                    "": self.user_input_color,
-                    "completion-menu": f"bg:{self.completion_menu_bg_color} {self.completion_menu_color}",
-                    "completion-menu.completion.current": f"bg:{self.completion_menu_current_bg_color} {self.completion_menu_current_color}",
-                    }
+                "": self.user_input_color,
+                "completion-menu": (
+                    f"bg:{self.completion_menu_bg_color} {self.completion_menu_color}"
+                ),
+                "completion-menu.completion.current": (
+                    f"bg:{self.completion_menu_current_bg_color} {self.completion_menu_current_color}"
+                ),
+            }
         else:
             style = dict()
 
