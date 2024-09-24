@@ -1270,4 +1270,26 @@
   versions: 0.57.2.dev
   seconds_per_case: 5.1
   total_cost: 0.0515
-  
+
+- dirname: 2024-09-24-15-18-59--gemini-1.5-flash-8b-exp-0924-whole
+  test_cases: 133
+  model: gemini/gemini-1.5-flash-8b-exp-0924
+  edit_format: whole
+  commit_hash: 86faaa6
+  pass_rate_1: 33.1
+  pass_rate_2: 38.3
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 9
+  lazy_comments: 6
+  syntax_errors: 8
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model gemini/gemini-1.5-flash-8b-exp-0924
+  date: 2024-09-24
+  versions: 0.57.2.dev
+  seconds_per_case: 6.6
+  total_cost: 0.0000
