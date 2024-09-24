@@ -3,16 +3,19 @@ parent: Troubleshooting
 nav_order: 28
 ---
 
-# Import errors
+# Dependency versions
 
 Aider expects to be installed via `pip` or `pipx`, which will install
-all of its required dependencies.
-If aider reports `ImportErrors`, this probably means it has been installed
-incorrectly.
+correct versions of all of its required dependencies.
+
+If you've been linked to this doc from a GitHub issue, 
+or if aider is reporting `ImportErrors`
+it is likely that your
+aider install is using incorrect dependencies.
 
 ## Install with pipx
 
-If you are having problems with import errors you should consider
+If you are having dependency problems you should consider
 [installing aider using pipx](/docs/install/pipx.html).
 This will ensure that aider is installed in its own python environment,
 with the correct set of dependencies.
@@ -21,9 +24,11 @@ with the correct set of dependencies.
 
 Package managers often install aider with the wrong dependencies, leading
 to import errors and other problems.
-It is not recommended to install aider with these tools.
-Instead, consider
-[installing aider using pipx](/docs/install/pipx.html).
+The recommended way to 
+install aider is with 
+[pip](/docs/install/install.html)
+or
+[pipx](/docs/install/pipx.html).
 
 ## Dependency versions matter
 

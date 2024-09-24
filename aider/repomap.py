@@ -398,7 +398,11 @@ class RepoMap:
         try:
             ranked = nx.pagerank(G, weight="weight", **pers_args)
         except ZeroDivisionError:
-            return []
+            # Issue #1536
+            try:
+                ranked = nx.pagerank(G, weight="weight")
+            except ZeroDivisionError:
+                return []
 
         # distribute the rank from each source node, across all of its out edges
         ranked_definitions = defaultdict(float)
