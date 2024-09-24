@@ -5,9 +5,11 @@ import tempfile
 import time
 import warnings
 
-from aider.llm import litellm
 from prompt_toolkit.shortcuts import prompt
 from pydub import AudioSegment
+
+from aider.llm import litellm
+
 from .dump import dump  # noqa: F401
 
 warnings.filterwarnings(
