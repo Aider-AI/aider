@@ -14,16 +14,22 @@ VERSION_CHECK_FNAME = Path.home() / ".aider" / "caches" / "versioncheck"
 
 def install_from_main_branch(io):
     """
-    Install the latest version of aider from the main branch of the GitHub repository.
+    Install the latest development version of aider from the main branch of the GitHub repository.
+    Exits the application gracefully if the installation fails.
     """
+    prompt = "Install the development version of aider from the main branch?"
+    pip_install_args = ["--upgrade", "git+https://github.com/paul-gauthier/aider.git"]
 
-    return utils.check_pip_install_extra(
-        io,
-        None,
-        "Install the development version of aider from the main branch?",
-        ["--upgrade", "git+https://github.com/paul-gauthier/aider.git"],
-        self_update=True,
+    success = utils.check_pip_install_extra(
+        io=io, module=None, prompt=prompt, pip_install_args=pip_install_args, self_update=True
     )
+
+    if success:
+        io.tool_output("Development version installed. Re-run aider to use the new version.")
+        sys.exit()
+    else:
+        io.tool_error("Failed to install the development version. Exiting.")
+        sys.exit(1)
 
 
 def install_upgrade(io, latest_version=None):
