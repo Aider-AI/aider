@@ -592,23 +592,26 @@ class InputOutput:
         style = RichStyle(**style)
         self.console.print(*messages, style=style)
 
-    def assistant_output(self, message, stream=False):
-        mdStream = None
+    def get_assistant_mdstream(self):
+        mdargs = dict(style=self.assistant_output_color, code_theme=self.code_theme)
+        mdStream = MarkdownStream(mdargs=mdargs)
+        return mdStream
+
+    def assistant_output(self, message, pretty=None):
         show_resp = message
 
-        if self.pretty:
-            if stream:
-                mdargs = dict(style=self.assistant_output_color, code_theme=self.code_theme)
-                mdStream = MarkdownStream(mdargs=mdargs)
-            else:
-                show_resp = Markdown(
-                    message, style=self.assistant_output_color, code_theme=self.code_theme
-                )
+        # Coder will force pretty off if fence is not triple-backticks
+        if pretty is None:
+            pretty = self.pretty
+
+        if pretty:
+            show_resp = Markdown(
+                message, style=self.assistant_output_color, code_theme=self.code_theme
+            )
         else:
             show_resp = Text(message or "<no response>")
 
         self.console.print(show_resp)
-        return mdStream
 
     def print(self, message=""):
         print(message)

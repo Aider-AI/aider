@@ -1102,7 +1102,10 @@ class Coder:
             utils.show_messages(messages, functions=self.functions)
 
         self.multi_response_content = ""
-        self.mdstream = self.io.assistant_output("", self.stream)
+        if self.show_pretty() and self.stream:
+            self.mdstream = self.io.get_assistant_mdstream()
+        else:
+            self.mdstream = None
 
         retry_delay = 0.125
 
@@ -1459,7 +1462,7 @@ class Coder:
             raise Exception("No data found in LLM response!")
 
         show_resp = self.render_incremental_response(True)
-        self.io.assistant_output(show_resp)
+        self.io.assistant_output(show_resp, pretty=self.show_pretty())
 
         if (
             hasattr(completion.choices[0], "finish_reason")
