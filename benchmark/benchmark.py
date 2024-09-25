@@ -6,13 +6,14 @@ import random
 import re
 import shutil
 import subprocess
+import sys
 import time
 import traceback
 from collections import defaultdict
 from json.decoder import JSONDecodeError
 from pathlib import Path
 from types import SimpleNamespace
-from typing import List
+from typing import List, Optional
 
 import git
 import lox
@@ -38,6 +39,20 @@ app = typer.Typer(add_completion=False, pretty_exceptions_enable=False)
 NUM_TESTS = (89, 133)
 
 load_dotenv(override=True)
+
+
+def find_latest_benchmark_dir():
+    benchmark_dirs = [d for d in BENCHMARK_DNAME.iterdir() if d.is_dir()]
+    if not benchmark_dirs:
+        print("Error: No benchmark directories found under tmp.benchmarks.")
+        sys.exit(1)
+
+    latest_dir = max(
+        benchmark_dirs,
+        key=lambda d: max(f.stat().st_mtime for f in d.rglob('*') if f.is_file()),
+    )
+    print(f"Using the most recently updated benchmark directory: {latest_dir.name}")
+    return latest_dir
 
 
 def show_stats(dirnames, graphs):
@@ -106,7 +121,9 @@ def resolve_dirname(dirname, use_single_prior, make_new):
 
 @app.command()
 def main(
-    dirnames: List[str] = typer.Argument(..., help="Directory names"),
+    dirnames: Optional[List[str]] = typer.Argument(
+        None, help="Directory names"
+    ),
     graphs: bool = typer.Option(False, "--graphs", help="Generate graphs"),
     model: str = typer.Option("gpt-3.5-turbo", "--model", "-m", help="Model name"),
     edit_format: str = typer.Option(None, "--edit-format", "-e", help="Edit format"),
@@ -148,6 +165,13 @@ def main(
     commit_hash = repo.head.object.hexsha[:7]
     if repo.is_dirty():
         commit_hash += "-dirty"
+
+    if stats_only and not dirnames:
+        latest_dir = find_latest_benchmark_dir()
+        dirnames = [str(latest_dir)]
+
+    if dirnames is None:
+        dirnames = []
 
     if len(dirnames) > 1 and not (stats_only or diffs_only):
         print("Only provide 1 dirname unless running with --stats or --diffs")
