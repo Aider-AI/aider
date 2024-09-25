@@ -711,18 +711,13 @@ class Model(ModelSettings):
         if junior_edit_format:
             self.junior_edit_format = junior_edit_format
 
-        if not self.junior_model_name:
+        if not self.junior_model_name or self.junior_model_name == self.name:
             self.junior_model = self
-            return
-
-        if self.junior_model_name == self.name:
-            self.junior_model = self
-            return
-
-        self.junior_model = Model(
-            self.junior_model_name,
-            junior_model=False,
-        )
+        else:
+            self.junior_model = Model(
+                self.junior_model_name,
+                junior_model=False,
+            )
 
         if not self.junior_edit_format:
             self.junior_edit_format = self.junior_model.edit_format
