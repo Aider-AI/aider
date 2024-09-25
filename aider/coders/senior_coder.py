@@ -1,5 +1,3 @@
-from aider.models import Model
-
 from .ask_coder import AskCoder
 from .base_coder import Coder
 from .senior_prompts import SeniorPrompts
