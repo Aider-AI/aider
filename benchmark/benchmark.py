@@ -549,29 +549,26 @@ def run_test_real(
         chat_history_file=history_fname,
     )
 
-    ask_model = models.Model("o1-preview")
-    # ask_model = models.Model("gpt-4o")
-    # ask_model = models.Model("openrouter/anthropic/claude-3.5-sonnet")
-    # ask_model = models.Model("openrouter/deepseek/deepseek-coder")
+    # senior_model = models.Model("o1-mini")
+    # senior_model = models.Model("o1-preview")
+    # senior_model = models.Model("gpt-4o")
+    senior_model = models.Model("openrouter/anthropic/claude-3.5-sonnet")
+    # senior_model = models.Model("openrouter/deepseek/deepseek-chat")
 
-    # whole_model = models.Model("gpt-4o")
-    # whole_model = models.Model("openrouter/anthropic/claude-3.5-sonnet")
-    whole_model = models.Model("openrouter/deepseek/deepseek-coder")
-    # whole_model = models.Model("openrouter/anthropic/claude-3-haiku-20240307")
-    # whole_model = models.Model("gpt-4o-mini")
-    # whole_model = models.Model("openrouter/meta-llama/llama-3.1-8b-instruct")
-    # whole_model = models.Model("openrouter/meta-llama/llama-3-70b-instruct")
+    # junior_model = models.Model("gpt-4o")
+    # junior_model = models.Model("openrouter/anthropic/claude-3.5-sonnet")
+    junior_model = models.Model("openrouter/deepseek/deepseek-chat")
+    # junior_model = models.Model("openrouter/anthropic/claude-3-haiku-20240307")
+    # junior_model = models.Model("gpt-4o")
+    # junior_model = models.Model("gpt-4o-mini")
+    # junior_model = models.Model("openrouter/meta-llama/llama-3.1-8b-instruct")
+    # junior_model = models.Model("openrouter/meta-llama/llama-3-70b-instruct")
 
-    main_model = ask_model
-    edit_format = "ask-whole"
+    junior_edit_format = "whole"
 
-    # weak_model_name = model_name
-    weak_model_name = None
-    main_model = models.Model(model_name, weak_model=weak_model_name)
-    edit_format = edit_format or main_model.edit_format
+    edit_format = "senior-junior-" + junior_edit_format
+    show_model_name = senior_model.name + "--" + junior_model.name
 
-    dump(main_model)
-    dump(edit_format)
     show_fnames = ",".join(map(str, fnames))
     print("fnames:", show_fnames)
 
@@ -586,7 +583,7 @@ def run_test_real(
         suggest_shell_commands=False,
     )
     coder = Coder.create(
-        main_model=ask_model,
+        main_model=senior_model,
         edit_format="ask",
         **coder_kwargs,
     )
@@ -618,19 +615,19 @@ def run_test_real(
             """
             coder = Coder.create(
                 from_coder=coder,
-                main_model=ask_model,
+                main_model=senior_model,
                 edit_format="ask",
                 **coder_kwargs,
             )
             """
             response = coder.run(with_message=instructions, preproc=False)
-            whole_coder = Coder.create(
+            junior_coder = Coder.create(
                 from_coder=coder,
-                main_model=whole_model,
-                edit_format="whole",
+                main_model=junior_model,
+                edit_format=junior_edit_format,
                 **coder_kwargs,
             )
-            response = whole_coder.run(with_message="make those changes", preproc=False)
+            response = junior_coder.run(with_message="make those changes", preproc=False)
 
         dur += time.time() - start
 
@@ -676,7 +673,7 @@ def run_test_real(
     results = dict(
         testdir=str(testdir),
         testcase=testdir.name,
-        model=main_model.name,
+        model=show_model_name,
         edit_format=edit_format,
         tests_outcomes=test_outcomes,
         cost=coder.total_cost,
