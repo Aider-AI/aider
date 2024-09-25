@@ -49,7 +49,7 @@ def find_latest_benchmark_dir():
 
     latest_dir = max(
         benchmark_dirs,
-        key=lambda d: max(f.stat().st_mtime for f in d.rglob('*') if f.is_file()),
+        key=lambda d: max(f.stat().st_mtime for f in d.rglob("*") if f.is_file()),
     )
     print(f"Using the most recently updated benchmark directory: {latest_dir.name}")
     return latest_dir
@@ -121,9 +121,7 @@ def resolve_dirname(dirname, use_single_prior, make_new):
 
 @app.command()
 def main(
-    dirnames: Optional[List[str]] = typer.Argument(
-        None, help="Directory names"
-    ),
+    dirnames: Optional[List[str]] = typer.Argument(None, help="Directory names"),
     graphs: bool = typer.Option(False, "--graphs", help="Generate graphs"),
     model: str = typer.Option("gpt-3.5-turbo", "--model", "-m", help="Model name"),
     edit_format: str = typer.Option(None, "--edit-format", "-e", help="Edit format"),
