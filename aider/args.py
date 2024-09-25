@@ -191,6 +191,14 @@ def get_parser(default_config_files, git_root):
         ),
     )
     group.add_argument(
+        "--junior-model",
+        metavar="JUNIOR_MODEL",
+        default=None,
+        help=(
+            "Specify the model to use for junior tasks (default depends on --model)"
+        ),
+    )
+    group.add_argument(
         "--show-model-warnings",
         action=argparse.BooleanOptionalAction,
         default=True,
