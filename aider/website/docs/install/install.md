@@ -36,6 +36,9 @@ python -m pip install aider-chat
 # To work with GPT-4o:
 $ aider --4o --openai-api-key sk-xxx...
 
+# To work with o1:
+$ aider --o1 --openai-api-key sk-xxx...
+
 # To work with Claude 3.5 Sonnet:
 $ aider --sonnet --anthropic-api-key sk-xxx...
 ```

@@ -22,6 +22,9 @@ setx   OPENAI_API_KEY <key> # Windows, restart shell after setx
 # Aider uses gpt-4o by default (or use --4o)
 aider
 
+# o1
+aider --o1
+
 # GPT-4 Turbo (1106)
 aider --4-turbo
 

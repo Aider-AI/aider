@@ -73,6 +73,9 @@ $ aider --4o
 
 # Claude 3.5 Sonnet
 $ aider --sonnet
+
+# o1
+$ aider --o1
 ```
 
 Or you can run `aider --model XXX` to launch aider with

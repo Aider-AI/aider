@@ -27,7 +27,7 @@ cog.out(get_md_help())
 ```
 usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--opus] [--sonnet] [--4] [--4o] [--mini] [--4-turbo]
-             [--35turbo] [--deepseek] [--list-models]
+             [--35turbo] [--deepseek] [--o1] [--o1-mini] [--list-models]
              [--openai-api-base] [--openai-api-type]
              [--openai-api-version] [--openai-api-deployment-id]
              [--openai-organization-id] [--model-settings-file]
