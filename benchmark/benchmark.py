@@ -110,6 +110,8 @@ def main(
     graphs: bool = typer.Option(False, "--graphs", help="Generate graphs"),
     model: str = typer.Option("gpt-3.5-turbo", "--model", "-m", help="Model name"),
     edit_format: str = typer.Option(None, "--edit-format", "-e", help="Edit format"),
+    junior_model: str = typer.Option(None, "--junior-model", help="Junior model name"),
+    junior_edit_format: str = typer.Option(None, "--junior-edit-format", help="Junior edit format"),
     replay: str = typer.Option(
         None,
         "--replay",
@@ -221,6 +223,8 @@ def main(
                 commit_hash,
                 replay,
                 max_apply_update_errors,
+                junior_model,
+                junior_edit_format,
             )
 
             all_results.append(results)
@@ -240,6 +244,8 @@ def main(
                 commit_hash,
                 replay,
                 max_apply_update_errors,
+                junior_model,
+                junior_edit_format,
             )
         all_results = run_test_threaded.gather(tqdm=True)
 
@@ -496,6 +502,8 @@ def run_test_real(
     commit_hash,
     replay,
     max_apply_update_errors,
+    junior_model,
+    junior_edit_format,
 ):
     if not os.path.isdir(testdir):
         print("Not a dir:", testdir)
@@ -552,7 +560,12 @@ def run_test_real(
     # weak_model_name = model_name
     weak_model_name = None
 
-    main_model = models.Model(model_name, weak_model=weak_model_name)
+    main_model = models.Model(
+        model_name,
+        weak_model=weak_model_name,
+        junior_model=junior_model,
+        junior_edit_format=junior_edit_format,
+    )
     edit_format = edit_format or main_model.edit_format
 
     dump(main_model)
@@ -644,6 +657,8 @@ def run_test_real(
         testcase=testdir.name,
         model=main_model.name,
         edit_format=edit_format,
+        junior_model=junior_model,
+        junior_edit_format=junior_edit_format,
         tests_outcomes=test_outcomes,
         cost=coder.total_cost,
         duration=dur,
