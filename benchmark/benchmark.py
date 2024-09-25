@@ -49,7 +49,7 @@ def find_latest_benchmark_dir():
 
     latest_dir = max(
         benchmark_dirs,
-        key=lambda d: max(f.stat().st_mtime for f in d.rglob("*") if f.is_file()),
+        key=lambda d: next((f.stat().st_mtime for f in d.rglob("*.md") if f.is_file()), 0),
     )
     print(f"Using the most recently updated benchmark directory: {latest_dir.name}")
     return latest_dir
