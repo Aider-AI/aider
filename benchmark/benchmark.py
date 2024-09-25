@@ -378,7 +378,7 @@ def summarize_results(dirname):
         res.syntax_errors += results.get("syntax_errors", 0)
         res.indentation_errors += results.get("indentation_errors", 0)
 
-        for key in "model edit_format commit_hash".split():
+        for key in "model edit_format commit_hash junior_model junior_edit_format".split():
             val = results.get(key)
             if val:
                 variants[key].add(val)
@@ -679,8 +679,8 @@ def run_test_real(
         testcase=testdir.name,
         model=main_model.name,
         edit_format=edit_format,
-        junior_model=junior_model,
-        junior_edit_format=junior_edit_format,
+        junior_model=main_model.junior_model.name if main_model.junior_model else None,
+        junior_edit_format=main_model.junior_edit_format,
         tests_outcomes=test_outcomes,
         cost=coder.total_cost,
         duration=dur,
