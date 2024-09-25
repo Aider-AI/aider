@@ -148,6 +148,7 @@ MODEL_SETTINGS = [
         accepts_images=True,
         lazy=True,
         reminder="sys",
+        junior_edit_format="junior-diff",
     ),
     ModelSettings(
         "openai/gpt-4o-2024-08-06",
@@ -175,6 +176,7 @@ MODEL_SETTINGS = [
         accepts_images=True,
         lazy=True,
         reminder="sys",
+        junior_edit_format="junior-diff",
     ),
     ModelSettings(
         "gpt-4o-mini",
@@ -464,6 +466,7 @@ MODEL_SETTINGS = [
         accepts_images=True,
         lazy=True,
         reminder="sys",
+        junior_edit_format="junior-diff",
     ),
     ModelSettings(
         "openai/o1-mini",
