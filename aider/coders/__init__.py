@@ -4,10 +4,12 @@ from .editblock_coder import EditBlockCoder
 from .editblock_fenced_coder import EditBlockFencedCoder
 from .help_coder import HelpCoder
 from .senior_coder import SeniorCoder
-
-# from .single_wholefile_func_coder import SingleWholeFileFunctionCoder
 from .udiff_coder import UnifiedDiffCoder
 from .wholefile_coder import WholeFileCoder
+from .junior_editblock_coder import JuniorEditBlockCoder
+from .junior_wholefile_coder import JuniorWholeFileCoder
+
+# from .single_wholefile_func_coder import SingleWholeFileFunctionCoder
 
 __all__ = [
     HelpCoder,
@@ -19,4 +21,6 @@ __all__ = [
     UnifiedDiffCoder,
     #    SingleWholeFileFunctionCoder,
     SeniorCoder,
+    JuniorEditBlockCoder,
+    JuniorWholeFileCoder,
 ]
