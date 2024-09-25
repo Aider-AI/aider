@@ -545,36 +545,25 @@ def run_test_real(
 
     io = InputOutput(
         pretty=True,
-        yes=False,
+        yes=True,
         chat_history_file=history_fname,
     )
 
-    # senior_model = models.Model("o1-mini")
-    # senior_model = models.Model("o1-preview")
-    # senior_model = models.Model("gpt-4o")
-    senior_model = models.Model("openrouter/anthropic/claude-3.5-sonnet")
-    # senior_model = models.Model("openrouter/deepseek/deepseek-chat")
+    # weak_model_name = model_name
+    weak_model_name = None
 
-    # junior_model = models.Model("gemini/gemini-1.5-flash-8b-exp-0924")
-    # junior_model = models.Model("gpt-4o")
-    # junior_model = models.Model("openrouter/anthropic/claude-3.5-sonnet")
-    # junior_model = models.Model("openrouter/deepseek/deepseek-chat")
-    junior_model = models.Model("openrouter/anthropic/claude-3-haiku-20240307")
-    # junior_model = models.Model("gpt-4o")
-    # junior_model = models.Model("gpt-4o-mini")
-    # junior_model = models.Model("openrouter/meta-llama/llama-3.1-8b-instruct")
-    # junior_model = models.Model("openrouter/meta-llama/llama-3-70b-instruct")
+    main_model = models.Model(model_name, weak_model=weak_model_name)
+    edit_format = edit_format or main_model.edit_format
 
-    junior_edit_format = "whole"
-
-    edit_format = "senior-junior-" + junior_edit_format
-    show_model_name = senior_model.name + "--" + junior_model.name
-
+    dump(main_model)
+    dump(edit_format)
     show_fnames = ",".join(map(str, fnames))
     print("fnames:", show_fnames)
 
-    coder_kwargs = dict(
-        io=io,
+    coder = Coder.create(
+        main_model,
+        edit_format,
+        io,
         fnames=fnames,
         use_git=False,
         stream=False,
@@ -583,13 +572,8 @@ def run_test_real(
         cache_prompts=True,
         suggest_shell_commands=False,
     )
-    coder = Coder.create(
-        main_model=senior_model,
-        edit_format="ask",
-        **coder_kwargs,
-    )
-
     coder.max_apply_update_errors = max_apply_update_errors
+    coder.show_announcements()
 
     timeouts = 0
 
@@ -613,24 +597,7 @@ def run_test_real(
 
             coder.apply_updates()
         else:
-            """
-            coder = Coder.create(
-                from_coder=coder,
-                main_model=senior_model,
-                edit_format="ask",
-                **coder_kwargs,
-            )
-            """
             response = coder.run(with_message=instructions, preproc=False)
-            junior_coder = Coder.create(
-                # from_coder=coder,
-                main_model=junior_model,
-                edit_format=junior_edit_format,
-                **coder_kwargs,
-            )
-            response = junior_coder.run(with_message=response, preproc=False)
-            coder.move_back_cur_messages("I made those changes to the files.")
-
         dur += time.time() - start
 
         if not no_aider:
@@ -675,7 +642,7 @@ def run_test_real(
     results = dict(
         testdir=str(testdir),
         testcase=testdir.name,
-        model=show_model_name,
+        model=main_model.name,
         edit_format=edit_format,
         tests_outcomes=test_outcomes,
         cost=coder.total_cost,

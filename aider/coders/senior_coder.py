@@ -19,7 +19,7 @@ class SeniorCoder(AskCoder):
         junior_model = self.main_model.junior_model or self.main_model
 
         kwargs["main_model"] = junior_model
-        kwargs["edit_format"] = junior_model.edit_format
+        kwargs["edit_format"] = self.main_model.junior_edit_format
         kwargs["suggest_shell_commands"] = False
         kwargs["map_tokens"] = 0
         kwargs["total_cost"] = self.total_cost
