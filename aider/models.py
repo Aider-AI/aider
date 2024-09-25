@@ -621,7 +621,7 @@ class Model(ModelSettings):
             self.weak_model_name = None
         else:
             self.get_weak_model(weak_model)
-        
+
         if junior_model is False:
             self.junior_model_name = None
         else:

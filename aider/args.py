@@ -194,9 +194,7 @@ def get_parser(default_config_files, git_root):
         "--junior-model",
         metavar="JUNIOR_MODEL",
         default=None,
-        help=(
-            "Specify the model to use for junior tasks (default depends on --model)"
-        ),
+        help="Specify the model to use for junior tasks (default depends on --model)",
     )
     group.add_argument(
         "--show-model-warnings",
@@ -355,19 +353,28 @@ def get_parser(default_config_files, git_root):
         "--completion-menu-bg-color",
         metavar="COLOR",
         default="default",
-        help="Set the background color for the completion menu (default: terminal's default background color)",
+        help=(
+            "Set the background color for the completion menu (default: terminal's default"
+            " background color)"
+        ),
     )
     group.add_argument(
         "--completion-menu-current-color",
         metavar="COLOR",
         default="default",
-        help="Set the color for the current item in the completion menu (default: terminal's default background color)",
+        help=(
+            "Set the color for the current item in the completion menu (default: terminal's default"
+            " background color)"
+        ),
     )
     group.add_argument(
         "--completion-menu-current-bg-color",
         metavar="COLOR",
         default="default",
-        help="Set the background color for the current item in the completion menu (default: terminal's default text color)",
+        help=(
+            "Set the background color for the current item in the completion menu (default:"
+            " terminal's default text color)"
+        ),
     )
     group.add_argument(
         "--code-theme",
