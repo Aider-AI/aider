@@ -1,4 +1,4 @@
-from .base_coder import Coder
+from .whole_coder import WholeCoder
 from .junior_whole_prompts import JuniorWholePrompts
 
 
