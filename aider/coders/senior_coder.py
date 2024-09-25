@@ -30,6 +30,8 @@ class SeniorCoder(AskCoder):
         new_kwargs.update(kwargs)
 
         junior_coder = Coder.create(**new_kwargs)
+        junior_coder.cur_messages = []
+        junior_coder.done_messages = []
         junior_coder.show_announcements()
 
         junior_coder.run(with_message=content, preproc=False)
