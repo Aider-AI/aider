@@ -537,7 +537,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         args.model,
         weak_model=args.weak_model,
         junior_model=args.junior_model,
-        junior_edit_format=args.junior_edit_format
+        junior_edit_format=args.junior_edit_format,
     )
 
     if args.verbose:

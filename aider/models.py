@@ -717,11 +717,11 @@ class Model(ModelSettings):
             weak_model=False,
             junior_model=False,
         )
-        
+
         # Use the provided junior_edit_format if available, otherwise use the ModelSettings value
         if self.junior_edit_format is None:
             self.junior_edit_format = self.junior_edit_format or self.junior_model.edit_format
-        
+
         return self.junior_model
 
     def tokenizer(self, text):
