@@ -479,6 +479,8 @@ MODEL_SETTINGS = [
         "o1-mini",
         "whole",
         weak_model_name="gpt-4o-mini",
+        junior_model_name="gpt-4o",
+        junior_edit_format="junior-diff",
         use_repo_map=True,
         reminder="user",
         use_system_prompt=False,
