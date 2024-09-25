@@ -184,6 +184,10 @@ class Coder:
             output = f"Weak model: {weak_model.name}"
             lines.append(output)
 
+        if self.edit_format == "senior":
+            output = f"Junior model: {main_model.junior_model.name} with {main_model.junior_edit_format} edit format"
+            lines.append(output)
+
         # Repo
         if self.repo:
             rel_repo_dir = self.repo.get_rel_repo_dir()
