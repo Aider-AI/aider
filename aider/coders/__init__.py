@@ -3,6 +3,7 @@ from .base_coder import Coder
 from .editblock_coder import EditBlockCoder
 from .editblock_fenced_coder import EditBlockFencedCoder
 from .help_coder import HelpCoder
+from .senior_coder import SeniorCoder
 
 # from .single_wholefile_func_coder import SingleWholeFileFunctionCoder
 from .udiff_coder import UnifiedDiffCoder
@@ -17,4 +18,5 @@ __all__ = [
     WholeFileCoder,
     UnifiedDiffCoder,
     #    SingleWholeFileFunctionCoder,
+    SeniorCoder,
 ]

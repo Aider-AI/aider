@@ -81,6 +81,8 @@ class ModelSettings:
     use_system_prompt: bool = True
     use_temperature: bool = True
     streaming: bool = True
+    junior_model_name: Optional[str] = None
+    junior_edit_format: Optional[str] = None
 
 
 # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
@@ -259,6 +261,8 @@ MODEL_SETTINGS = [
         "claude-3-5-sonnet-20240620",
         "diff",
         weak_model_name="claude-3-haiku-20240307",
+        junior_model_name="claude-3-haiku-20240307",
+        junior_edit_format="whole",
         use_repo_map=True,
         examples_as_sys_msg=True,
         accepts_images=True,
