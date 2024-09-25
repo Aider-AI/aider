@@ -16,10 +16,10 @@ class SeniorCoder(AskCoder):
             return
 
         kwargs = dict()
-        
+
         # Use the junior_model from the main_model if it exists, otherwise use the main_model itself
         junior_model = self.main_model.junior_model or self.main_model
-        
+
         kwargs["main_model"] = junior_model
         kwargs["edit_format"] = junior_model.edit_format
         kwargs["suggest_shell_commands"] = False
