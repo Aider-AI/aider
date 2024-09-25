@@ -12,6 +12,9 @@ class SeniorCoder(AskCoder):
     def reply_completed(self):
         content = self.partial_response_content
 
+        if not self.io.confirm_ask("Edit the files?"):
+            return
+
         kwargs = dict(self.original_kwargs)
         kwargs["edit_format"] = self.main_model.junior_edit_format
         kwargs["suggest_shell_commands"] = False
