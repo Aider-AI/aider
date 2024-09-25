@@ -550,9 +550,9 @@ def run_test_real(
     )
 
     # senior_model = models.Model("o1-mini")
-    # senior_model = models.Model("o1-preview")
+    senior_model = models.Model("o1-preview")
     # senior_model = models.Model("gpt-4o")
-    senior_model = models.Model("openrouter/anthropic/claude-3.5-sonnet")
+    # senior_model = models.Model("openrouter/anthropic/claude-3.5-sonnet")
     # senior_model = models.Model("openrouter/deepseek/deepseek-chat")
 
     # junior_model = models.Model("gpt-4o")
@@ -622,12 +622,13 @@ def run_test_real(
             """
             response = coder.run(with_message=instructions, preproc=False)
             junior_coder = Coder.create(
-                from_coder=coder,
+                # from_coder=coder,
                 main_model=junior_model,
                 edit_format=junior_edit_format,
                 **coder_kwargs,
             )
-            response = junior_coder.run(with_message="make those changes", preproc=False)
+            response = junior_coder.run(with_message=response, preproc=False)
+            coder.move_back_cur_messages("I made those changes to the files.")
 
         dur += time.time() - start
 
