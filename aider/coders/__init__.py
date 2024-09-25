@@ -4,7 +4,7 @@ from .editblock_coder import EditBlockCoder
 from .editblock_fenced_coder import EditBlockFencedCoder
 from .help_coder import HelpCoder
 from .junior_editblock_coder import JuniorEditBlockCoder
-from .junior_wholefile_coder import JuniorWholeFileCoder
+from .junior_whole_coder import JuniorWholeFileCoder
 from .senior_coder import SeniorCoder
 from .udiff_coder import UnifiedDiffCoder
 from .wholefile_coder import WholeFileCoder

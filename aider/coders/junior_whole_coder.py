@@ -1,7 +1,7 @@
-from .junior_whole_prompts import JuniorWholePrompts
-from .whole_coder import WholeCoder
+from .junior_whole_prompts import JuniorWholeFilePrompts
+from .wholefile_coder import WholeFileCoder
 
 
-class JuniorWholeCoder(WholeCoder):
+class JuniorWholeFileCoder(WholeFileCoder):
     edit_format = "junior-whole"
-    gpt_prompts = JuniorWholePrompts()
+    gpt_prompts = JuniorWholeFilePrompts()
