@@ -1,4 +1,4 @@
-from .base_coder import Coder
+from .editblock_coder import EditBlockCoder
 from .junior_editblock_prompts import JuniorEditBlockPrompts
 
 
