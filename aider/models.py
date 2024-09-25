@@ -491,8 +491,10 @@ MODEL_SETTINGS = [
     ),
     ModelSettings(
         "o1-preview",
-        "diff",
+        "senior",
         weak_model_name="gpt-4o-mini",
+        junior_model_name="gpt-4o",
+        junior_edit_format="diff",
         use_repo_map=True,
         reminder="user",
         use_system_prompt=False,
