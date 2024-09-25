@@ -180,15 +180,15 @@ class Coder:
             output += ", infinite output"
         lines.append(output)
 
-        if weak_model is not main_model:
-            output = f"Weak model: {weak_model.name}"
-            lines.append(output)
-
         if self.edit_format == "senior":
             output = (
                 f"Junior model: {main_model.junior_model.name} with"
                 f" {main_model.junior_edit_format} edit format"
             )
+            lines.append(output)
+
+        if weak_model is not main_model:
+            output = f"Weak model: {weak_model.name}"
             lines.append(output)
 
         # Repo
