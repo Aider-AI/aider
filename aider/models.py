@@ -724,6 +724,9 @@ class Model(ModelSettings):
             junior_model=False,
         )
 
+        if not self.junior_edit_format:
+            self.junior_edit_format = self.junior_model.edit_format
+
         return self.junior_model
 
     def tokenizer(self, text):
