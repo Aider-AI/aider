@@ -12,6 +12,7 @@ from aider.args_formatter import (
     MarkdownHelpFormatter,
     YamlHelpFormatter,
 )
+import parser
 
 from .dump import dump  # noqa: F401
 
@@ -117,7 +118,16 @@ def get_parser(default_config_files, git_root):
         const=deepseek_model,
         help=f"Use {deepseek_model} model for the main chat",
     )
-
+    o1_model_name = "o1-preview"
+    group.add_argument(
+        "--o1",
+        "--o1-preview",
+        "-o1",
+        action="store_const",
+        dest="model",
+        const=o1_model_name,
+        help=f"Use {o1_model_name} model for the main chat",
+    )
     ##########
     group = parser.add_argument_group("Model Settings")
     group.add_argument(
