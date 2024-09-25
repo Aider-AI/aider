@@ -197,6 +197,12 @@ def get_parser(default_config_files, git_root):
         help="Specify the model to use for junior tasks (default depends on --model)",
     )
     group.add_argument(
+        "--junior-edit-format",
+        metavar="JUNIOR_EDIT_FORMAT",
+        default=None,
+        help="Specify the edit format for the junior model (default: depends on junior model)",
+    )
+    group.add_argument(
         "--show-model-warnings",
         action=argparse.BooleanOptionalAction,
         default=True,

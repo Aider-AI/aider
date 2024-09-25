@@ -597,11 +597,12 @@ def get_model_info(model):
 
 
 class Model(ModelSettings):
-    def __init__(self, model, weak_model=None, junior_model=None):
+    def __init__(self, model, weak_model=None, junior_model=None, junior_edit_format=None):
         self.name = model
         self.max_chat_history_tokens = 1024
         self.weak_model = None
         self.junior_model = None
+        self.junior_edit_format = junior_edit_format
 
         self.info = self.get_model_info(model)
 
@@ -716,6 +717,11 @@ class Model(ModelSettings):
             weak_model=False,
             junior_model=False,
         )
+        
+        # Use the provided junior_edit_format if available, otherwise use the ModelSettings value
+        if self.junior_edit_format is None:
+            self.junior_edit_format = self.junior_edit_format or self.junior_model.edit_format
+        
         return self.junior_model
 
     def tokenizer(self, text):
