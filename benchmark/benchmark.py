@@ -565,6 +565,11 @@ def run_test_real(
     main_model = ask_model
     edit_format = "ask-whole"
 
+    # weak_model_name = model_name
+    weak_model_name = None
+    main_model = models.Model(model_name, weak_model=weak_model_name)
+    edit_format = edit_format or main_model.edit_format
+
     dump(main_model)
     dump(edit_format)
     show_fnames = ",".join(map(str, fnames))

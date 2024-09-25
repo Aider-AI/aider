@@ -185,7 +185,9 @@ class Scraper:
 
         headers = {"User-Agent": f"Mozilla./5.0 ({aider_user_agent})"}
         try:
-            with httpx.Client(headers=headers, verify=self.verify_ssl) as client:
+            with httpx.Client(
+                headers=headers, verify=self.verify_ssl, follow_redirects=True
+            ) as client:
                 response = client.get(url)
                 response.raise_for_status()
                 return response.text, response.headers.get("content-type", "").split(";")[0]

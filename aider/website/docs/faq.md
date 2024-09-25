@@ -92,6 +92,19 @@ the functionality you want to use in repo B.
 Then when you're using aider in repo B, you can 
 `/read` in that script.
 
+## How do I turn on the repository map?
+
+Depending on the LLM you are using, aider may launch with the repo map disabled by default:
+
+```
+Repo-map: disabled
+```
+
+This is because weaker models get easily overwhelmed and confused by the content of the
+repo map. They sometimes mistakenly try to edit the code in the repo map.
+The repo map is usually disabled for a good reason.
+
+If you would like to force it on, you can run aider with `--map-tokens 1024`.
 
 ## How can I run aider locally from source code?
 

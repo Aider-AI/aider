@@ -353,7 +353,7 @@ class TestCoder(unittest.TestCase):
         _, file1 = tempfile.mkstemp()
 
         with open(file1, "wb") as f:
-            f.write(b"this contains ``` backticks")
+            f.write(b"this contains\n```\nbackticks")
 
         files = [file1]
 

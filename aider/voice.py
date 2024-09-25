@@ -3,17 +3,24 @@ import os
 import queue
 import tempfile
 import time
+import warnings
+
+from prompt_toolkit.shortcuts import prompt
 
 from aider.llm import litellm
+
+from .dump import dump  # noqa: F401
+
+warnings.filterwarnings(
+    "ignore", message="Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work"
+)
+
+from pydub import AudioSegment  # noqa
 
 try:
     import soundfile as sf
 except (OSError, ModuleNotFoundError):
     sf = None
-
-from prompt_toolkit.shortcuts import prompt
-
-from .dump import dump  # noqa: F401
 
 
 class SoundDeviceError(Exception):
@@ -27,7 +34,7 @@ class Voice:
 
     threshold = 0.15
 
-    def __init__(self):
+    def __init__(self, audio_format="wav"):
         if sf is None:
             raise SoundDeviceError
         try:
@@ -37,6 +44,9 @@ class Voice:
             self.sd = sd
         except (OSError, ModuleNotFoundError):
             raise SoundDeviceError
+        if audio_format not in ["wav", "mp3", "webm"]:
+            raise ValueError(f"Unsupported audio format: {audio_format}")
+        self.audio_format = audio_format
 
     def callback(self, indata, frames, time, status):
         """This is called (from a separate thread) for each audio block."""
@@ -80,7 +90,7 @@ class Voice:
     def raw_record_and_transcribe(self, history, language):
         self.q = queue.Queue()
 
-        filename = tempfile.mktemp(suffix=".wav")
+        temp_wav = tempfile.mktemp(suffix=".wav")
 
         try:
             sample_rate = int(self.sd.query_devices(None, "input")["default_samplerate"])
@@ -99,9 +109,17 @@ class Voice:
         except self.sd.PortAudioError as err:
             raise SoundDeviceError(f"Error accessing audio input device: {err}")
 
-        with sf.SoundFile(filename, mode="x", samplerate=sample_rate, channels=1) as file:
+        with sf.SoundFile(temp_wav, mode="x", samplerate=sample_rate, channels=1) as file:
             while not self.q.empty():
                 file.write(self.q.get())
+
+        if self.audio_format != "wav":
+            filename = tempfile.mktemp(suffix=f".{self.audio_format}")
+            audio = AudioSegment.from_wav(temp_wav)
+            audio.export(filename, format=self.audio_format)
+            os.remove(temp_wav)
+        else:
+            filename = temp_wav
 
         with open(filename, "rb") as fh:
             try:
@@ -111,6 +129,9 @@ class Voice:
             except Exception as err:
                 print(f"Unable to transcribe {filename}: {err}")
                 return
+
+        if self.audio_format != "wav":
+            os.remove(filename)
 
         text = transcript.text
         return text

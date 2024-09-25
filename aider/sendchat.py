@@ -27,7 +27,7 @@ def retry_exceptions():
         litellm.exceptions.ServiceUnavailableError,
         litellm.exceptions.Timeout,
         litellm.exceptions.InternalServerError,
-        litellm.llms.anthropic.AnthropicError,
+        litellm.llms.anthropic.chat.AnthropicError,
     )
 
 
@@ -53,6 +53,7 @@ def send_completion(
     stream,
     temperature=0,
     extra_headers=None,
+    extra_body=None,
     max_tokens=None,
 ):
     from aider.llm import litellm
@@ -71,6 +72,8 @@ def send_completion(
         kwargs["tool_choice"] = {"type": "function", "function": {"name": function["name"]}}
     if extra_headers is not None:
         kwargs["extra_headers"] = extra_headers
+    if extra_body is not None:
+        kwargs["extra_body"] = extra_body
     if max_tokens is not None:
         kwargs["max_tokens"] = max_tokens
 
@@ -93,7 +96,7 @@ def send_completion(
 
 
 @lazy_litellm_retry_decorator
-def simple_send_with_retries(model_name, messages, extra_headers=None):
+def simple_send_with_retries(model_name, messages, extra_headers=None, extra_body=None):
     try:
         kwargs = {
             "model_name": model_name,
@@ -103,6 +106,8 @@ def simple_send_with_retries(model_name, messages, extra_headers=None):
         }
         if extra_headers is not None:
             kwargs["extra_headers"] = extra_headers
+        if extra_body is not None:
+            kwargs["extra_body"] = extra_body
 
         _hash, response = send_completion(**kwargs)
         return response.choices[0].message.content

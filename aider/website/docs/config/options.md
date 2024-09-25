@@ -35,17 +35,20 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--verify-ssl | --no-verify-ssl] [--edit-format]
              [--weak-model]
              [--show-model-warnings | --no-show-model-warnings]
-             [--map-tokens] [--map-refresh]
-             [--cache-prompts | --no-cache-prompts]
-             [--cache-keepalive-pings] [--map-multiplier-no-files]
              [--max-chat-history-tokens] [--env-file]
+             [--cache-prompts | --no-cache-prompts]
+             [--cache-keepalive-pings] [--map-tokens]
+             [--map-refresh] [--map-multiplier-no-files]
              [--input-history-file] [--chat-history-file]
              [--restore-chat-history | --no-restore-chat-history]
              [--llm-history-file] [--dark-mode] [--light-mode]
              [--pretty | --no-pretty] [--stream | --no-stream]
              [--user-input-color] [--tool-output-color]
              [--tool-error-color] [--tool-warning-color]
-             [--assistant-output-color] [--code-theme]
+             [--assistant-output-color] [--completion-menu-color]
+             [--completion-menu-bg-color]
+             [--completion-menu-current-color]
+             [--completion-menu-current-bg-color] [--code-theme]
              [--show-diffs] [--git | --no-git]
              [--gitignore | --no-gitignore] [--aiderignore]
              [--subtree-only] [--auto-commits | --no-auto-commits]
@@ -57,13 +60,14 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--commit] [--commit-prompt] [--dry-run | --no-dry-run]
              [--lint] [--lint-cmd] [--auto-lint | --no-auto-lint]
              [--test-cmd] [--auto-test | --no-auto-test] [--test]
-             [--file] [--read] [--vim] [--voice-language]
-             [--chat-language] [--version] [--just-check-update]
+             [--file] [--read] [--vim] [--chat-language] [--version]
+             [--just-check-update]
              [--check-update | --no-check-update]
              [--install-main-branch] [--upgrade] [--apply] [--yes]
              [-v] [--show-repo-map] [--show-prompts] [--exit]
              [--message] [--message-file] [--encoding] [-c] [--gui]
              [--suggest-shell-commands | --no-suggest-shell-commands]
+             [--voice-format] [--voice-language]
 
 ```
 
@@ -195,14 +199,16 @@ Aliases:
   - `--show-model-warnings`
   - `--no-show-model-warnings`
 
-### `--map-tokens VALUE`
-Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)  
-Environment variable: `AIDER_MAP_TOKENS`  
+### `--max-chat-history-tokens VALUE`
+Maximum number of tokens to use for chat history. If not specified, uses the model's max_chat_history_tokens.  
+Environment variable: `AIDER_MAX_CHAT_HISTORY_TOKENS`  
 
-### `--map-refresh VALUE`
-Control how often the repo map is refreshed (default: auto)  
-Default: auto  
-Environment variable: `AIDER_MAP_REFRESH`  
+### `--env-file ENV_FILE`
+Specify the .env file to load (default: .env in git root)  
+Default: .env  
+Environment variable: `AIDER_ENV_FILE`  
+
+## Cache Settings:
 
 ### `--cache-prompts`
 Enable caching of prompts (default: False)  
@@ -217,19 +223,21 @@ Number of times to ping at 5min intervals to keep prompt cache warm (default: 0)
 Default: 0  
 Environment variable: `AIDER_CACHE_KEEPALIVE_PINGS`  
 
+## Repomap Settings:
+
+### `--map-tokens VALUE`
+Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)  
+Environment variable: `AIDER_MAP_TOKENS`  
+
+### `--map-refresh VALUE`
+Control how often the repo map is refreshed. Options: auto, always, files, manual (default: auto)  
+Default: auto  
+Environment variable: `AIDER_MAP_REFRESH`  
+
 ### `--map-multiplier-no-files VALUE`
 Multiplier for map tokens when no files are specified (default: 2)  
 Default: 2  
 Environment variable: `AIDER_MAP_MULTIPLIER_NO_FILES`  
-
-### `--max-chat-history-tokens VALUE`
-Maximum number of tokens to use for chat history. If not specified, uses the model's max_chat_history_tokens.  
-Environment variable: `AIDER_MAX_CHAT_HISTORY_TOKENS`  
-
-### `--env-file ENV_FILE`
-Specify the .env file to load (default: .env in git root)  
-Default: .env  
-Environment variable: `AIDER_ENV_FILE`  
 
 ## History Files:
 
@@ -306,6 +314,26 @@ Environment variable: `AIDER_TOOL_WARNING_COLOR`
 Set the color for assistant output (default: #0088ff)  
 Default: #0088ff  
 Environment variable: `AIDER_ASSISTANT_OUTPUT_COLOR`  
+
+### `--completion-menu-color COLOR`
+Set the color for the completion menu (default: terminal's default text color)  
+Default: default  
+Environment variable: `AIDER_COMPLETION_MENU_COLOR`  
+
+### `--completion-menu-bg-color COLOR`
+Set the background color for the completion menu (default: terminal's default background color)  
+Default: default  
+Environment variable: `AIDER_COMPLETION_MENU_BG_COLOR`  
+
+### `--completion-menu-current-color COLOR`
+Set the color for the current item in the completion menu (default: terminal's default background color)  
+Default: default  
+Environment variable: `AIDER_COMPLETION_MENU_CURRENT_COLOR`  
+
+### `--completion-menu-current-bg-color COLOR`
+Set the background color for the current item in the completion menu (default: terminal's default text color)  
+Default: default  
+Environment variable: `AIDER_COMPLETION_MENU_CURRENT_BG_COLOR`  
 
 ### `--code-theme VALUE`
 Set the markdown code theme (default: default, other options include monokai, solarized-dark, solarized-light)  
@@ -463,11 +491,6 @@ Use VI editing mode in the terminal (default: False)
 Default: False  
 Environment variable: `AIDER_VIM`  
 
-### `--voice-language VOICE_LANGUAGE`
-Specify the language for voice using ISO 639-1 code (default: auto)  
-Default: en  
-Environment variable: `AIDER_VOICE_LANGUAGE`  
-
 ### `--chat-language CHAT_LANGUAGE`
 Specify the language to use in the chat (default: None, uses system settings)  
 Environment variable: `AIDER_CHAT_LANGUAGE`  
@@ -573,4 +596,16 @@ Environment variable: `AIDER_SUGGEST_SHELL_COMMANDS`
 Aliases:
   - `--suggest-shell-commands`
   - `--no-suggest-shell-commands`
+
+## Voice Settings:
+
+### `--voice-format VOICE_FORMAT`
+Audio format for voice recording (default: wav). webm and mp3 require ffmpeg  
+Default: wav  
+Environment variable: `AIDER_VOICE_FORMAT`  
+
+### `--voice-language VOICE_LANGUAGE`
+Specify the language for voice using ISO 639-1 code (default: auto)  
+Default: en  
+Environment variable: `AIDER_VOICE_LANGUAGE`  
 <!--[[[end]]]-->

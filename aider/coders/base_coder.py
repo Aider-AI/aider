@@ -493,9 +493,10 @@ class Coder:
             if content is not None:
                 all_content += content + "\n"
 
+        lines = all_content.splitlines()
         good = False
         for fence_open, fence_close in self.fences:
-            if fence_open in all_content or fence_close in all_content:
+            if any(line.startswith(fence_open) or line.startswith(fence_close) for line in lines):
                 continue
             good = True
             break
@@ -1101,7 +1102,10 @@ class Coder:
             utils.show_messages(messages, functions=self.functions)
 
         self.multi_response_content = ""
-        self.mdstream = self.io.assistant_output("", self.stream)
+        if self.show_pretty() and self.stream:
+            self.mdstream = self.io.get_assistant_mdstream()
+        else:
+            self.mdstream = None
 
         retry_delay = 0.125
 
@@ -1395,6 +1399,7 @@ class Coder:
                 self.stream,
                 temp,
                 extra_headers=model.extra_headers,
+                extra_body=model.extra_body,
                 max_tokens=model.max_tokens,
             )
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
@@ -1458,7 +1463,7 @@ class Coder:
             raise Exception("No data found in LLM response!")
 
         show_resp = self.render_incremental_response(True)
-        self.io.assistant_output(show_resp)
+        self.io.assistant_output(show_resp, pretty=self.show_pretty())
 
         if (
             hasattr(completion.choices[0], "finish_reason")
@@ -1897,8 +1902,6 @@ class Coder:
             return
         if self.commit_before_message[-1] != self.repo.get_head_commit_sha():
             self.io.tool_output("You can use /undo to undo and discard each aider commit.")
-        else:
-            self.io.tool_output("No changes made to git tracked files.")
 
     def dirty_commit(self):
         if not self.need_commit_before_edits:
