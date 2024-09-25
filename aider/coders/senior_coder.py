@@ -15,7 +15,8 @@ class SeniorCoder(AskCoder):
         if not self.io.confirm_ask("Edit the files?"):
             return
 
-        kwargs = dict(self.original_kwargs)
+        kwargs = dict()
+        kwargs["main_model"] = Model(self.main_model.junior_model_name)
         kwargs["edit_format"] = self.main_model.junior_edit_format
         kwargs["suggest_shell_commands"] = False
         kwargs["map_tokens"] = 0
@@ -23,11 +24,10 @@ class SeniorCoder(AskCoder):
         kwargs["cache_prompts"] = False
         kwargs["num_cache_warming_pings"] = 0
 
-        junior_coder = Coder.create(
-            main_model=Model(self.main_model.junior_model_name),
-            io=self.io,
-            **kwargs,
-        )
+        new_kwargs = dict(io=self.io, from_coder=self)
+        new_kwargs.update(kwargs)
+
+        junior_coder = Coder.create(**new_kwargs)
         junior_coder.show_announcements()
 
         junior_coder.run(with_message=content, preproc=False)
