@@ -198,6 +198,13 @@ def get_parser(default_config_files, git_root):
         help="Specify what edit format the LLM should use (default depends on model)",
     )
     group.add_argument(
+        "--senior",
+        action="store_const",
+        dest="edit_format",
+        const="senior",
+        help="Use senior edit format for the main chat",
+    )
+    group.add_argument(
         "--weak-model",
         metavar="WEAK_MODEL",
         default=None,
