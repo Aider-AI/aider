@@ -99,7 +99,6 @@ Splitting up "code reasoning" and "code editing" has produced SOTA results on
               text: 'Junior model and edit format'
             }
           }
-          }
         },
         plugins: {
           legend: {
