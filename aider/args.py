@@ -117,6 +117,22 @@ def get_parser(default_config_files, git_root):
         const=deepseek_model,
         help=f"Use {deepseek_model} model for the main chat",
     )
+    o1_mini_model = "o1-mini"
+    group.add_argument(
+        "--o1-mini",
+        action="store_const",
+        dest="model",
+        const=o1_mini_model,
+        help=f"Use {o1_mini_model} model for the main chat",
+    )
+    o1_preview_model = "o1-preview"
+    group.add_argument(
+        "--o1-preview",
+        action="store_const",
+        dest="model",
+        const=o1_preview_model,
+        help=f"Use {o1_preview_model} model for the main chat",
+    )
 
     ##########
     group = parser.add_argument_group("Model Settings")
