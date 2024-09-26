@@ -698,7 +698,7 @@ def run_test_real(
             )
         ),
     )
-    
+
     if edit_format == "senior":
         results["junior_model"] = main_model.junior_model.name if main_model.junior_model else None
         results["junior_edit_format"] = main_model.junior_edit_format
