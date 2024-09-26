@@ -40,6 +40,7 @@ Splitting up "code reasoning" and "code editing" has produced SOTA results on
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
 {% assign sorted_data = site.data.senior | sort: "pass_rate_2" | reverse %}
 <canvas id="passRateChart" width="400" height="200"></canvas>
 <script>
@@ -101,6 +102,23 @@ Splitting up "code reasoning" and "code editing" has produced SOTA results on
           }
         },
         plugins: {
+          annotation: {
+            annotations: {
+              line1: {
+                type: 'line',
+                yMin: 79.7,
+                yMax: 79.7,
+                borderColor: 'rgba(255, 99, 132, 0.8)',
+                borderWidth: 2,
+                borderDash: [6, 6],
+                label: {
+                  content: 'Previous SOTA',
+                  enabled: true,
+                  position: 'end'
+                }
+              }
+            }
+          },
           legend: {
             display: true,
             labels: {
