@@ -85,11 +85,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: whole
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: gpt-3.5-turbo
@@ -104,11 +104,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: whole
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: gpt-3.5-turbo-0125
@@ -123,11 +123,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: whole
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: gpt-3.5-turbo-1106
@@ -142,11 +142,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: whole
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: gpt-3.5-turbo-0613
@@ -161,11 +161,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: whole
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: gpt-3.5-turbo-16k-0613
@@ -180,11 +180,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: udiff
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: true
   max_tokens: null
   name: gpt-4-turbo-2024-04-09
@@ -199,11 +199,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: udiff
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: true
   max_tokens: null
   name: gpt-4-turbo
@@ -218,11 +218,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: diff
+  editor_edit_format: editor-diff
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: junior-diff
-  junior_model_name: null
   lazy: true
   max_tokens: null
   name: openai/gpt-4o
@@ -237,11 +237,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: true
   max_tokens: null
   name: openai/gpt-4o-2024-08-06
@@ -256,11 +256,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: true
   max_tokens: null
   name: gpt-4o-2024-08-06
@@ -275,11 +275,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: diff
+  editor_edit_format: editor-diff
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: junior-diff
-  junior_model_name: null
   lazy: true
   max_tokens: null
   name: gpt-4o
@@ -294,11 +294,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: whole
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: true
   max_tokens: null
   name: gpt-4o-mini
@@ -313,11 +313,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: whole
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: true
   max_tokens: null
   name: openai/gpt-4o-mini
@@ -332,11 +332,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: udiff
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: true
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: true
   max_tokens: null
   name: gpt-4-0125-preview
@@ -351,11 +351,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: udiff
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: true
   max_tokens: null
   name: gpt-4-1106-preview
@@ -370,11 +370,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: gpt-4-vision-preview
@@ -389,11 +389,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: true
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: gpt-4-0314
@@ -408,11 +408,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: gpt-4-0613
@@ -427,11 +427,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: gpt-4-32k-0613
@@ -446,11 +446,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: claude-3-opus-20240229
@@ -465,11 +465,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: openrouter/anthropic/claude-3-opus
@@ -484,11 +484,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: whole
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: claude-3-sonnet-20240229
@@ -503,12 +503,12 @@ cog.out("```\n")
   cache_control: true
   caches_by_default: false
   edit_format: diff
+  editor_edit_format: editor-diff
+  editor_model_name: claude-3-5-sonnet-20240620
   examples_as_sys_msg: true
   extra_body: null
   extra_headers:
     anthropic-beta: prompt-caching-2024-07-31
-  junior_edit_format: junior-diff
-  junior_model_name: claude-3-5-sonnet-20240620
   lazy: false
   max_tokens: 8192
   name: claude-3-5-sonnet-20240620
@@ -523,12 +523,12 @@ cog.out("```\n")
   cache_control: true
   caches_by_default: false
   edit_format: diff
+  editor_edit_format: editor-diff
+  editor_model_name: anthropic/claude-3-5-sonnet-20240620
   examples_as_sys_msg: true
   extra_body: null
   extra_headers:
     anthropic-beta: prompt-caching-2024-07-31
-  junior_edit_format: junior-diff
-  junior_model_name: anthropic/claude-3-5-sonnet-20240620
   lazy: false
   max_tokens: 8192
   name: anthropic/claude-3-5-sonnet-20240620
@@ -543,12 +543,12 @@ cog.out("```\n")
   cache_control: true
   caches_by_default: false
   edit_format: whole
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: true
   extra_body: null
   extra_headers:
     anthropic-beta: prompt-caching-2024-07-31
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: anthropic/claude-3-haiku-20240307
@@ -563,12 +563,12 @@ cog.out("```\n")
   cache_control: true
   caches_by_default: false
   edit_format: whole
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: true
   extra_body: null
   extra_headers:
     anthropic-beta: prompt-caching-2024-07-31
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: claude-3-haiku-20240307
@@ -583,11 +583,11 @@ cog.out("```\n")
   cache_control: true
   caches_by_default: false
   edit_format: diff
+  editor_edit_format: editor-diff
+  editor_model_name: openrouter/anthropic/claude-3.5-sonnet
   examples_as_sys_msg: true
   extra_body: null
   extra_headers: null
-  junior_edit_format: junior-diff
-  junior_model_name: openrouter/anthropic/claude-3.5-sonnet
   lazy: false
   max_tokens: 8192
   name: openrouter/anthropic/claude-3.5-sonnet
@@ -602,11 +602,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: diff
+  editor_edit_format: editor-diff
+  editor_model_name: vertex_ai/claude-3-5-sonnet@20240620
   examples_as_sys_msg: true
   extra_body: null
   extra_headers: null
-  junior_edit_format: junior-diff
-  junior_model_name: vertex_ai/claude-3-5-sonnet@20240620
   lazy: false
   max_tokens: 8192
   name: vertex_ai/claude-3-5-sonnet@20240620
@@ -621,11 +621,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: vertex_ai/claude-3-opus@20240229
@@ -640,11 +640,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: whole
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: vertex_ai/claude-3-sonnet@20240229
@@ -659,11 +659,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: whole
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: command-r-plus
@@ -678,11 +678,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: whole
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: command-r-08-2024
@@ -697,11 +697,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: whole
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: command-r-plus-08-2024
@@ -716,11 +716,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: true
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: groq/llama3-70b-8192
@@ -735,11 +735,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: true
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: openrouter/meta-llama/llama-3-70b-instruct
@@ -754,11 +754,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: gemini/gemini-1.5-pro-002
@@ -773,11 +773,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: whole
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: gemini/gemini-1.5-flash-002
@@ -792,11 +792,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: diff-fenced
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: gemini/gemini-1.5-pro
@@ -811,11 +811,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: diff-fenced
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: gemini/gemini-1.5-pro-latest
@@ -830,11 +830,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: diff-fenced
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: gemini/gemini-1.5-pro-exp-0827
@@ -849,11 +849,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: whole
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: gemini/gemini-1.5-flash-exp-0827
@@ -868,11 +868,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: true
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: 8192
   name: deepseek/deepseek-chat
@@ -887,11 +887,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: true
   edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: true
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: 8192
   name: deepseek/deepseek-coder
@@ -906,11 +906,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: true
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: 8192
   name: deepseek-chat
@@ -925,11 +925,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: true
   edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: true
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: 8192
   name: deepseek-coder
@@ -944,11 +944,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
   examples_as_sys_msg: true
   extra_body: null
   extra_headers: null
-  junior_edit_format: null
-  junior_model_name: null
   lazy: false
   max_tokens: null
   name: openrouter/deepseek/deepseek-coder
@@ -963,11 +963,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: diff
+  editor_edit_format: editor-diff
+  editor_model_name: null
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: junior-diff
-  junior_model_name: null
   lazy: true
   max_tokens: null
   name: openrouter/openai/gpt-4o
@@ -982,11 +982,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: whole
+  editor_edit_format: editor-diff
+  editor_model_name: openai/gpt-4o
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: junior-diff
-  junior_model_name: openai/gpt-4o
   lazy: false
   max_tokens: null
   name: openai/o1-mini
@@ -1001,11 +1001,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: whole
+  editor_edit_format: editor-diff
+  editor_model_name: gpt-4o
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: junior-diff
-  junior_model_name: gpt-4o
   lazy: false
   max_tokens: null
   name: o1-mini
@@ -1020,11 +1020,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: diff
+  editor_edit_format: editor-diff
+  editor_model_name: openai/gpt-4o
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: junior-diff
-  junior_model_name: openai/gpt-4o
   lazy: false
   max_tokens: null
   name: openai/o1-preview
@@ -1038,12 +1038,12 @@ cog.out("```\n")
 - accepts_images: false
   cache_control: false
   caches_by_default: false
-  edit_format: senior
+  edit_format: architect
+  editor_edit_format: editor-diff
+  editor_model_name: gpt-4o
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: junior-diff
-  junior_model_name: gpt-4o
   lazy: false
   max_tokens: null
   name: o1-preview
@@ -1058,11 +1058,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: whole
+  editor_edit_format: editor-diff
+  editor_model_name: openrouter/openai/gpt-4o
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: junior-diff
-  junior_model_name: openrouter/openai/gpt-4o
   lazy: false
   max_tokens: null
   name: openrouter/openai/o1-mini
@@ -1077,11 +1077,11 @@ cog.out("```\n")
   cache_control: false
   caches_by_default: false
   edit_format: diff
+  editor_edit_format: editor-diff
+  editor_model_name: openrouter/openai/gpt-4o
   examples_as_sys_msg: false
   extra_body: null
   extra_headers: null
-  junior_edit_format: junior-diff
-  junior_model_name: openrouter/openai/gpt-4o
   lazy: false
   max_tokens: null
   name: openrouter/openai/o1-preview

@@ -198,11 +198,11 @@ def get_parser(default_config_files, git_root):
         help="Specify what edit format the LLM should use (default depends on model)",
     )
     group.add_argument(
-        "--senior",
+        "--architect",
         action="store_const",
         dest="edit_format",
-        const="senior",
-        help="Use senior edit format for the main chat",
+        const="architect",
+        help="Use architect edit format for the main chat",
     )
     group.add_argument(
         "--weak-model",
@@ -214,16 +214,16 @@ def get_parser(default_config_files, git_root):
         ),
     )
     group.add_argument(
-        "--junior-model",
+        "--editor-model",
         metavar="JUNIOR_MODEL",
         default=None,
-        help="Specify the model to use for junior tasks (default depends on --model)",
+        help="Specify the model to use for editor tasks (default depends on --model)",
     )
     group.add_argument(
-        "--junior-edit-format",
+        "--editor-edit-format",
         metavar="JUNIOR_EDIT_FORMAT",
         default=None,
-        help="Specify the edit format for the junior model (default: depends on junior model)",
+        help="Specify the edit format for the editor model (default: depends on editor model)",
     )
     group.add_argument(
         "--show-model-warnings",

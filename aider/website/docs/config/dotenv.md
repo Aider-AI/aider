@@ -135,17 +135,17 @@ cog.outl("```")
 ## Specify what edit format the LLM should use (default depends on model)
 #AIDER_EDIT_FORMAT=
 
-## Use senior edit format for the main chat
-#AIDER_SENIOR=
+## Use architect edit format for the main chat
+#AIDER_ARCHITECT=
 
 ## Specify the model to use for commit messages and chat history summarization (default depends on --model)
 #AIDER_WEAK_MODEL=
 
-## Specify the model to use for junior tasks (default depends on --model)
-#AIDER_JUNIOR_MODEL=
+## Specify the model to use for editor tasks (default depends on --model)
+#AIDER_EDITOR_MODEL=
 
-## Specify the edit format for the junior model (default: depends on junior model)
-#AIDER_JUNIOR_EDIT_FORMAT=
+## Specify the edit format for the editor model (default: depends on editor model)
+#AIDER_EDITOR_EDIT_FORMAT=
 
 ## Only work with models that have meta-data available (default: True)
 #AIDER_SHOW_MODEL_WARNINGS=true

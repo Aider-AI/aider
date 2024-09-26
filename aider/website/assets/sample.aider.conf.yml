@@ -89,17 +89,17 @@
 ## Specify what edit format the LLM should use (default depends on model)
 #edit-format: xxx
 
-## Use senior edit format for the main chat
-#senior: false
+## Use architect edit format for the main chat
+#architect: false
 
 ## Specify the model to use for commit messages and chat history summarization (default depends on --model)
 #weak-model: xxx
 
-## Specify the model to use for junior tasks (default depends on --model)
-#junior-model: xxx
+## Specify the model to use for editor tasks (default depends on --model)
+#editor-model: xxx
 
-## Specify the edit format for the junior model (default: depends on junior model)
-#junior-edit-format: xxx
+## Specify the edit format for the editor model (default: depends on editor model)
+#editor-edit-format: xxx
 
 ## Only work with models that have meta-data available (default: True)
 #show-model-warnings: true

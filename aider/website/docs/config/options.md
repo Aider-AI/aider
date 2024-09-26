@@ -33,8 +33,8 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--openai-organization-id] [--model-settings-file]
              [--model-metadata-file]
              [--verify-ssl | --no-verify-ssl] [--edit-format]
-             [--senior] [--weak-model] [--junior-model]
-             [--junior-edit-format]
+             [--architect] [--weak-model] [--editor-model]
+             [--editor-edit-format]
              [--show-model-warnings | --no-show-model-warnings]
              [--max-chat-history-tokens] [--env-file]
              [--cache-prompts | --no-cache-prompts]
@@ -196,21 +196,21 @@ Aliases:
   - `--edit-format EDIT_FORMAT`
   - `--chat-mode EDIT_FORMAT`
 
-### `--senior`
-Use senior edit format for the main chat  
-Environment variable: `AIDER_SENIOR`  
+### `--architect`
+Use architect edit format for the main chat  
+Environment variable: `AIDER_ARCHITECT`  
 
 ### `--weak-model WEAK_MODEL`
 Specify the model to use for commit messages and chat history summarization (default depends on --model)  
 Environment variable: `AIDER_WEAK_MODEL`  
 
-### `--junior-model JUNIOR_MODEL`
-Specify the model to use for junior tasks (default depends on --model)  
-Environment variable: `AIDER_JUNIOR_MODEL`  
+### `--editor-model JUNIOR_MODEL`
+Specify the model to use for editor tasks (default depends on --model)  
+Environment variable: `AIDER_EDITOR_MODEL`  
 
-### `--junior-edit-format JUNIOR_EDIT_FORMAT`
-Specify the edit format for the junior model (default: depends on junior model)  
-Environment variable: `AIDER_JUNIOR_EDIT_FORMAT`  
+### `--editor-edit-format JUNIOR_EDIT_FORMAT`
+Specify the edit format for the editor model (default: depends on editor model)  
+Environment variable: `AIDER_EDITOR_EDIT_FORMAT`  
 
 ### `--show-model-warnings`
 Only work with models that have meta-data available (default: True)  

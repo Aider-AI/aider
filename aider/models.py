@@ -81,8 +81,8 @@ class ModelSettings:
     use_system_prompt: bool = True
     use_temperature: bool = True
     streaming: bool = True
-    junior_model_name: Optional[str] = None
-    junior_edit_format: Optional[str] = None
+    editor_model_name: Optional[str] = None
+    editor_edit_format: Optional[str] = None
 
 
 # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
@@ -148,7 +148,7 @@ MODEL_SETTINGS = [
         accepts_images=True,
         lazy=True,
         reminder="sys",
-        junior_edit_format="junior-diff",
+        editor_edit_format="editor-diff",
     ),
     ModelSettings(
         "openai/gpt-4o-2024-08-06",
@@ -176,7 +176,7 @@ MODEL_SETTINGS = [
         accepts_images=True,
         lazy=True,
         reminder="sys",
-        junior_edit_format="junior-diff",
+        editor_edit_format="editor-diff",
     ),
     ModelSettings(
         "gpt-4o-mini",
@@ -263,8 +263,8 @@ MODEL_SETTINGS = [
         "claude-3-5-sonnet-20240620",
         "diff",
         weak_model_name="claude-3-haiku-20240307",
-        junior_model_name="claude-3-5-sonnet-20240620",
-        junior_edit_format="junior-diff",
+        editor_model_name="claude-3-5-sonnet-20240620",
+        editor_edit_format="editor-diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
         accepts_images=True,
@@ -279,8 +279,8 @@ MODEL_SETTINGS = [
         "anthropic/claude-3-5-sonnet-20240620",
         "diff",
         weak_model_name="claude-3-haiku-20240307",
-        junior_model_name="anthropic/claude-3-5-sonnet-20240620",
-        junior_edit_format="junior-diff",
+        editor_model_name="anthropic/claude-3-5-sonnet-20240620",
+        editor_edit_format="editor-diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
         max_tokens=8192,
@@ -314,8 +314,8 @@ MODEL_SETTINGS = [
         "openrouter/anthropic/claude-3.5-sonnet",
         "diff",
         weak_model_name="openrouter/anthropic/claude-3-haiku-20240307",
-        junior_model_name="openrouter/anthropic/claude-3.5-sonnet",
-        junior_edit_format="junior-diff",
+        editor_model_name="openrouter/anthropic/claude-3.5-sonnet",
+        editor_edit_format="editor-diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
         accepts_images=True,
@@ -329,8 +329,8 @@ MODEL_SETTINGS = [
         "vertex_ai/claude-3-5-sonnet@20240620",
         "diff",
         weak_model_name="vertex_ai/claude-3-haiku@20240307",
-        junior_model_name="vertex_ai/claude-3-5-sonnet@20240620",
-        junior_edit_format="junior-diff",
+        editor_model_name="vertex_ai/claude-3-5-sonnet@20240620",
+        editor_edit_format="editor-diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
         accepts_images=True,
@@ -466,14 +466,14 @@ MODEL_SETTINGS = [
         accepts_images=True,
         lazy=True,
         reminder="sys",
-        junior_edit_format="junior-diff",
+        editor_edit_format="editor-diff",
     ),
     ModelSettings(
         "openai/o1-mini",
         "whole",
         weak_model_name="openai/gpt-4o-mini",
-        junior_model_name="openai/gpt-4o",
-        junior_edit_format="junior-diff",
+        editor_model_name="openai/gpt-4o",
+        editor_edit_format="editor-diff",
         use_repo_map=True,
         reminder="user",
         use_system_prompt=False,
@@ -484,8 +484,8 @@ MODEL_SETTINGS = [
         "o1-mini",
         "whole",
         weak_model_name="gpt-4o-mini",
-        junior_model_name="gpt-4o",
-        junior_edit_format="junior-diff",
+        editor_model_name="gpt-4o",
+        editor_edit_format="editor-diff",
         use_repo_map=True,
         reminder="user",
         use_system_prompt=False,
@@ -496,8 +496,8 @@ MODEL_SETTINGS = [
         "openai/o1-preview",
         "diff",
         weak_model_name="openai/gpt-4o-mini",
-        junior_model_name="openai/gpt-4o",
-        junior_edit_format="junior-diff",
+        editor_model_name="openai/gpt-4o",
+        editor_edit_format="editor-diff",
         use_repo_map=True,
         reminder="user",
         use_system_prompt=False,
@@ -506,10 +506,10 @@ MODEL_SETTINGS = [
     ),
     ModelSettings(
         "o1-preview",
-        "senior",
+        "architect",
         weak_model_name="gpt-4o-mini",
-        junior_model_name="gpt-4o",
-        junior_edit_format="junior-diff",
+        editor_model_name="gpt-4o",
+        editor_edit_format="editor-diff",
         use_repo_map=True,
         reminder="user",
         use_system_prompt=False,
@@ -520,8 +520,8 @@ MODEL_SETTINGS = [
         "openrouter/openai/o1-mini",
         "whole",
         weak_model_name="openrouter/openai/gpt-4o-mini",
-        junior_model_name="openrouter/openai/gpt-4o",
-        junior_edit_format="junior-diff",
+        editor_model_name="openrouter/openai/gpt-4o",
+        editor_edit_format="editor-diff",
         use_repo_map=True,
         reminder="user",
         use_system_prompt=False,
@@ -532,8 +532,8 @@ MODEL_SETTINGS = [
         "openrouter/openai/o1-preview",
         "diff",
         weak_model_name="openrouter/openai/gpt-4o-mini",
-        junior_model_name="openrouter/openai/gpt-4o",
-        junior_edit_format="junior-diff",
+        editor_model_name="openrouter/openai/gpt-4o",
+        editor_edit_format="editor-diff",
         use_repo_map=True,
         reminder="user",
         use_system_prompt=False,
@@ -616,11 +616,11 @@ def get_model_info(model):
 
 
 class Model(ModelSettings):
-    def __init__(self, model, weak_model=None, junior_model=None, junior_edit_format=None):
+    def __init__(self, model, weak_model=None, editor_model=None, editor_edit_format=None):
         self.name = model
         self.max_chat_history_tokens = 1024
         self.weak_model = None
-        self.junior_model = None
+        self.editor_model = None
 
         self.info = self.get_model_info(model)
 
@@ -641,10 +641,10 @@ class Model(ModelSettings):
         else:
             self.get_weak_model(weak_model)
 
-        if junior_model is False:
-            self.junior_model_name = None
+        if editor_model is False:
+            self.editor_model_name = None
         else:
-            self.get_junior_model(junior_model, junior_edit_format)
+            self.get_editor_model(editor_model, editor_edit_format)
 
     def get_model_info(self, model):
         return get_model_info(model)
@@ -717,25 +717,25 @@ class Model(ModelSettings):
     def commit_message_models(self):
         return [self.weak_model, self]
 
-    def get_junior_model(self, provided_junior_model_name, junior_edit_format):
-        # If junior_model_name is provided, override the model settings
-        if provided_junior_model_name:
-            self.junior_model_name = provided_junior_model_name
-        if junior_edit_format:
-            self.junior_edit_format = junior_edit_format
+    def get_editor_model(self, provided_editor_model_name, editor_edit_format):
+        # If editor_model_name is provided, override the model settings
+        if provided_editor_model_name:
+            self.editor_model_name = provided_editor_model_name
+        if editor_edit_format:
+            self.editor_edit_format = editor_edit_format
 
-        if not self.junior_model_name or self.junior_model_name == self.name:
-            self.junior_model = self
+        if not self.editor_model_name or self.editor_model_name == self.name:
+            self.editor_model = self
         else:
-            self.junior_model = Model(
-                self.junior_model_name,
-                junior_model=False,
+            self.editor_model = Model(
+                self.editor_model_name,
+                editor_model=False,
             )
 
-        if not self.junior_edit_format:
-            self.junior_edit_format = self.junior_model.edit_format
+        if not self.editor_edit_format:
+            self.editor_edit_format = self.editor_model.edit_format
 
-        return self.junior_model
+        return self.editor_model
 
     def tokenizer(self, text):
         return litellm.encode(model=self.name, text=text)

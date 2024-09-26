@@ -1,7 +1,7 @@
 ---
 title: Separating code reasoning and editing
-excerpt: A Senior model describes how to solve the coding problem, and a Junior model translates that into file edits. This Senior/Junior approach produces SOTA benchmark results.
-highlight_image: /assets/senior.jpg
+excerpt: A Architect model describes how to solve the coding problem, and a Editor model translates that into file edits. This Architect/Editor approach produces SOTA benchmark results.
+highlight_image: /assets/architect.jpg
 draft: true
 nav_exclude: true
 ---
@@ -13,8 +13,8 @@ nav_exclude: true
 
 Aider now has experimental support for using two models to complete each coding task:
 
-- A Senior model is asked to describe how to solve the coding problem.
-- A Junior model is given the Senior's solution and asked to produce specific code editing instructions to apply those changes to source files.
+- A Architect model is asked to describe how to solve the coding problem.
+- A Editor model is given the Architect's solution and asked to produce specific code editing instructions to apply those changes to source files.
 
 Splitting up "code reasoning" and "code editing" has produced SOTA results on
 [aider's code editing benchmark](/docs/benchmarks.html#the-benchmark).
@@ -70,9 +70,9 @@ top coding models, as compared to their previous "solo" scores (striped bars).
     {% assign grouped_data = sorted_data | group_by: "model" %}
     {% for group in grouped_data %}
       {% for item in group.items %}
-        labels.push("{{ item.junior_model | default: "(No Junior)" }} {{ item.junior_edit_format | default: item.edit_format }}");
+        labels.push("{{ item.editor_model | default: "(No Editor)" }} {{ item.editor_edit_format | default: item.edit_format }}");
         data.push({{ item.pass_rate_2 }});
-        if ("{{ item.junior_model }}" == "") {
+        if ("{{ item.editor_model }}" == "") {
           backgroundColors.push(patterns["{{ item.model }}"]);
         } else {
           backgroundColors.push(colorMapping["{{ item.model }}"]);
@@ -114,7 +114,7 @@ top coding models, as compared to their previous "solo" scores (striped bars).
           x: {
             title: {
               display: true,
-              text: 'Junior model and edit format',
+              text: 'Editor model and edit format',
               font: {
                 size: 18
               }
@@ -201,7 +201,7 @@ They are strong at reasoning, but often fail to output properly formatted
 code editing instructions.
 It helps to instead let them describe the solution
 however they prefer and then pass that output to a more traditional LLM.
-This Junior LLM can then interpret the solution description and
+This Editor LLM can then interpret the solution description and
 produce the code editing instructions needed to update
 the existing source code file.
 
@@ -209,7 +209,7 @@ Traditional frontier models like gpt-4o and Sonnet also
 seem to benefit from separating code reasoning and editing like this.
 A pair of gpt-4o
 or a pair of Sonnet models
-in Senior/Junior configuration outperform their previous solo benchmark results.
+in Architect/Editor configuration outperform their previous solo benchmark results.
 
 Another reason why this approach is newly viable is that the
 speed and costs of frontier models have been rapidly improving.
@@ -233,41 +233,41 @@ But this all happens in a single prompt/response round trip to the LLM,
 and the model has to split its attention between 
 solving the coding problem and confirming to the edit format.
 
-The Senior/Junior approach splits this into two round trips, possibly
+The Architect/Editor approach splits this into two round trips, possibly
 using two different LLMs:
 
-- Ask how to solve the coding problem (Senior).
-- Turn the proposed solution into a series of well formed code edits (Junior).
+- Ask how to solve the coding problem (Architect).
+- Turn the proposed solution into a series of well formed code edits (Editor).
 
-The Senior/Junior approach allows the Senior to focus on solving the coding problem
+The Architect/Editor approach allows the Architect to focus on solving the coding problem
 and describe the solution however comes naturally to it.
-This gives the Senior more reasoning capacity to focus just on solving the coding
+This gives the Architect more reasoning capacity to focus just on solving the coding
 task.
-We can also assign the Senior task to a strong reasoning model like o1-preview,
+We can also assign the Architect task to a strong reasoning model like o1-preview,
 and give the editing task to an appropriate model based on cost, editing skill, etc.
-Similarly, the Junior can focus all of its attention on properly formatting the edits
+Similarly, the Editor can focus all of its attention on properly formatting the edits
 without needing to reason much about how to solve the coding problem.
 
 ## Results
 
 The graph above and the table below show the
 [aider's code editing benchmark](/docs/benchmarks.html#the-benchmark)
-score for various combinations of Senior and Junior models.
+score for various combinations of Architect and Editor models.
 
 
 Some noteworthy observations:
 
-- Pairing o1-preview as Senior with Deepseek as Junior sets a SOTA significantly above the previous best score. This result is obtained with Deepseek using the "whole" editing format, requiring it to output a full update copy of each edited source file. Both of these steps are therefore quite slow, so probably not practical for interactive use with aider.
-- Pairing OpenAI's o1-preview with Anthropic's Sonnet as the Junior produces the second best result. This is an entirely practical configuration for users able to work with both providers.
+- Pairing o1-preview as Architect with Deepseek as Editor sets a SOTA significantly above the previous best score. This result is obtained with Deepseek using the "whole" editing format, requiring it to output a full update copy of each edited source file. Both of these steps are therefore quite slow, so probably not practical for interactive use with aider.
+- Pairing OpenAI's o1-preview with Anthropic's Sonnet as the Editor produces the second best result. This is an entirely practical configuration for users able to work with both providers.
 - Pairing Sonnet/Sonnet and GPT-4o/GPT-4o provides significant lift for both models compared to their solo results, especially for GPT-4o.
-- Deepseek is surprisingly effective as a Junior model. It seems remarkably capable at turning proposed coding solutions into new, updated versions of the source files. Using the efficient "diff" editing format, Deepseek helps all the Senior models except for Sonnet.
+- Deepseek is surprisingly effective as a Editor model. It seems remarkably capable at turning proposed coding solutions into new, updated versions of the source files. Using the efficient "diff" editing format, Deepseek helps all the Architect models except for Sonnet.
 
 ## Try it!
 
 The development version of aider 
-has built in defaults to support Senior/Junior coding with
+has built in defaults to support Architect/Editor coding with
 OpenAI's o1 models, gpt-4o and Anthropic's Claude 3.5 Sonnet.
-Run aider with `--senior` or get started quickly like this:
+Run aider with `--architect` or get started quickly like this:
 
 ```
 pip install -U git+https://github.com/paul-gauthier/aider.git
@@ -275,15 +275,15 @@ pip install -U git+https://github.com/paul-gauthier/aider.git
 # Change directory into a git repo
 cd /to/your/git/repo
 
-# Work with Claude 3.5 Sonnet as the Senior and Junior
+# Work with Claude 3.5 Sonnet as the Architect and Editor
 export ANTHROPIC_API_KEY=your-key-goes-here
-aider --sonnet --senior
+aider --sonnet --architect
 
-# Work with OpenAI models, using gpt-4o as the Junior
+# Work with OpenAI models, using gpt-4o as the Editor
 export OPENAI_API_KEY=your-key-goes-here
-aider --4o --senior
-aider --o1-mini --senior
-aider --o1-preview --senior
+aider --4o --architect
+aider --o1-mini --architect
+aider --o1-preview --architect
 ```
 
 ## Full results
@@ -292,8 +292,8 @@ aider --o1-preview --senior
 <table>
   <thead>
     <tr>
-      <th>Senior</th>
-      <th>Junior</th>
+      <th>Architect</th>
+      <th>Editor</th>
       <th>Edit Format</th>
       <th>Pass Rate</th>
     </tr>
@@ -304,8 +304,8 @@ aider --o1-preview --senior
       {% for item in group.items %}
         <tr class="{% if group_class == 1 %}shaded{% endif %}">
           <td>{{ item.model }}</td>
-          <td>{{ item.junior_model }}</td>
-          <td style="text-align: center;">{{ item.junior_edit_format | default: item.edit_format }}</td>
+          <td>{{ item.editor_model }}</td>
+          <td style="text-align: center;">{{ item.editor_edit_format | default: item.edit_format }}</td>
           <td style="text-align: right;">{{ item.pass_rate_2 }}%</td>
           <!-- <td style="text-align: right;">${{ item.total_cost | round: 2 }}</td> -->
         </tr>

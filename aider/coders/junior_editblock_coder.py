@@ -1,7 +1,7 @@
 from .editblock_coder import EditBlockCoder
-from .junior_editblock_prompts import JuniorEditBlockPrompts
+from .editor_editblock_prompts import EditorEditBlockPrompts
 
 
-class JuniorEditBlockCoder(EditBlockCoder):
-    edit_format = "junior-diff"
-    gpt_prompts = JuniorEditBlockPrompts()
+class EditorEditBlockCoder(EditBlockCoder):
+    edit_format = "editor-diff"
+    gpt_prompts = EditorEditBlockPrompts()

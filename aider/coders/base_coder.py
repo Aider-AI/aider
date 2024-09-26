@@ -180,10 +180,10 @@ class Coder:
             output += ", infinite output"
         lines.append(output)
 
-        if self.edit_format == "senior":
+        if self.edit_format == "architect":
             output = (
-                f"Junior model: {main_model.junior_model.name} with"
-                f" {main_model.junior_edit_format} edit format"
+                f"Editor model: {main_model.editor_model.name} with"
+                f" {main_model.editor_edit_format} edit format"
             )
             lines.append(output)
 

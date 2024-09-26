@@ -125,8 +125,8 @@ def main(
     graphs: bool = typer.Option(False, "--graphs", help="Generate graphs"),
     model: str = typer.Option("gpt-3.5-turbo", "--model", "-m", help="Model name"),
     edit_format: str = typer.Option(None, "--edit-format", "-e", help="Edit format"),
-    junior_model: str = typer.Option(None, "--junior-model", help="Junior model name"),
-    junior_edit_format: str = typer.Option(None, "--junior-edit-format", help="Junior edit format"),
+    editor_model: str = typer.Option(None, "--editor-model", help="Junior model name"),
+    editor_edit_format: str = typer.Option(None, "--editor-edit-format", help="Junior edit format"),
     replay: str = typer.Option(
         None,
         "--replay",
@@ -245,8 +245,8 @@ def main(
                 commit_hash,
                 replay,
                 max_apply_update_errors,
-                junior_model,
-                junior_edit_format,
+                editor_model,
+                editor_edit_format,
             )
 
             all_results.append(results)
@@ -266,8 +266,8 @@ def main(
                 commit_hash,
                 replay,
                 max_apply_update_errors,
-                junior_model,
-                junior_edit_format,
+                editor_model,
+                editor_edit_format,
             )
         all_results = run_test_threaded.gather(tqdm=True)
 
@@ -378,7 +378,7 @@ def summarize_results(dirname):
         res.syntax_errors += results.get("syntax_errors", 0)
         res.indentation_errors += results.get("indentation_errors", 0)
 
-        for key in "model edit_format commit_hash junior_model junior_edit_format".split():
+        for key in "model edit_format commit_hash editor_model editor_edit_format".split():
             val = results.get(key)
             if val:
                 variants[key].add(val)
@@ -524,8 +524,8 @@ def run_test_real(
     commit_hash,
     replay,
     max_apply_update_errors,
-    junior_model,
-    junior_edit_format,
+    editor_model,
+    editor_edit_format,
 ):
     if not os.path.isdir(testdir):
         print("Not a dir:", testdir)
@@ -585,8 +585,8 @@ def run_test_real(
     main_model = models.Model(
         model_name,
         weak_model=weak_model_name,
-        junior_model=junior_model,
-        junior_edit_format=junior_edit_format,
+        editor_model=editor_model,
+        editor_edit_format=editor_edit_format,
     )
     edit_format = edit_format or main_model.edit_format
 
@@ -700,8 +700,8 @@ def run_test_real(
     )
 
     if edit_format == "senior":
-        results["junior_model"] = main_model.junior_model.name if main_model.junior_model else None
-        results["junior_edit_format"] = main_model.junior_edit_format
+        results["editor_model"] = main_model.editor_model.name if main_model.editor_model else None
+        results["editor_edit_format"] = main_model.editor_edit_format
     dump(results)
 
     results_fname.write_text(json.dumps(results, indent=4))

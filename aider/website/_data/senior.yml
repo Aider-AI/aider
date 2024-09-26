@@ -1,9 +1,9 @@
-- dirname: 2024-09-25-21-17-19--senior-sonnet-sonnet-diff
+- dirname: 2024-09-25-21-17-19--architect-sonnet-sonnet-diff
   test_cases: 133
   model: claude-3.5-sonnet
-  junior_model: claude-3.5-sonnet
-  junior_edit_format: diff
-  edit_format: senior
+  editor_model: claude-3.5-sonnet
+  editor_edit_format: diff
+  edit_format: architect
   commit_hash: c18d6a8-dirty
   pass_rate_1: 62.4
   pass_rate_2: 80.5
@@ -47,12 +47,12 @@
   seconds_per_case: 17.6
   total_cost: 3.6346
     
-- dirname: 2024-09-25-21-25-01--senior-o1mini-4o-jr-diff
+- dirname: 2024-09-25-21-25-01--architect-o1mini-4o-jr-diff
   test_cases: 133
   model: o1-mini
-  junior_model: gpt-4o
-  junior_edit_format: diff
-  edit_format: senior
+  editor_model: gpt-4o
+  editor_edit_format: diff
+  edit_format: architect
   commit_hash: 3f682ed-dirty, 25e833b
   pass_rate_1: 51.1
   pass_rate_2: 70.7
@@ -72,13 +72,13 @@
   seconds_per_case: 23.7
   total_cost: 9.3158
 
-- dirname: 2024-09-26-15-05-58--senior-o1mini-deep-jr-whole
+- dirname: 2024-09-26-15-05-58--architect-o1mini-deep-jr-whole
   test_cases: 133
   model: o1-mini
-  edit_format: senior
+  edit_format: architect
   commit_hash: 1676653-dirty
-  junior_model: deepseek
-  junior_edit_format: whole
+  editor_model: deepseek
+  editor_edit_format: whole
   pass_rate_1: 51.9
   pass_rate_2: 71.4
   percent_cases_well_formed: 100.0
@@ -97,12 +97,12 @@
   seconds_per_case: 48.2
   total_cost: 5.6069
                                                 
-- dirname: 2024-09-25-21-33-40--senior-4o-4o-jr-diff
+- dirname: 2024-09-25-21-33-40--architect-4o-4o-jr-diff
   test_cases: 133
   model: gpt-4o
-  junior_model: gpt-4o
-  junior_edit_format: diff
-  edit_format: senior
+  editor_model: gpt-4o
+  editor_edit_format: diff
+  edit_format: architect
   commit_hash: 9f3cd92
   pass_rate_1: 56.4
   pass_rate_2: 75.2
@@ -145,12 +145,12 @@
   seconds_per_case: 80.9
   total_cost: 63.9190
   
-- dirname: 2024-09-25-21-39-05--senior-o1preview-4o-jr-diff
+- dirname: 2024-09-25-21-39-05--architect-o1preview-4o-jr-diff
   test_cases: 133
   model: o1-preview
-  junior_model: gpt-4o
-  junior_edit_format: diff
-  edit_format: senior
+  editor_model: gpt-4o
+  editor_edit_format: diff
+  edit_format: architect
   commit_hash: 9f3cd92
   pass_rate_1: 63.2
   pass_rate_2: 80.5
@@ -170,14 +170,14 @@
   seconds_per_case: 42.3
   total_cost: 39.3766
   
-- dirname: 2024-09-25-21-52-42--senior-o1preview-sonnet-jr-diff
+- dirname: 2024-09-25-21-52-42--architect-o1preview-sonnet-jr-diff
   test_cases: 133
   model: o1-preview
-  junior_model: claude-3.5-sonnet
-  junior_edit_format: diff
-  edit_format: senior
+  editor_model: claude-3.5-sonnet
+  editor_edit_format: diff
+  edit_format: architect
   commit_hash: 9f3cd92
-  junior_model: claude-3-5-sonnet
+  editor_model: claude-3-5-sonnet
   pass_rate_1: 60.9
   pass_rate_2: 82.7
   percent_cases_well_formed: 100.0
@@ -219,13 +219,13 @@
   seconds_per_case: 26.7
   total_cost: 2.4226
                                             
-- dirname: 2024-09-25-23-12-14--senior-o1mini-deep-jr-diff
+- dirname: 2024-09-25-23-12-14--architect-o1mini-deep-jr-diff
   test_cases: 133
   model: o1-mini
-  edit_format: senior
+  edit_format: architect
   commit_hash: 9f3cd92-dirty
-  junior_model: deepseek
-  junior_edit_format: diff
+  editor_model: deepseek
+  editor_edit_format: diff
   pass_rate_1: 48.9
   pass_rate_2: 69.2
   percent_cases_well_formed: 100.0
@@ -244,13 +244,13 @@
   seconds_per_case: 52.2
   total_cost: 5.7927
   
-- dirname: 2024-09-25-23-18-16--senior-o1preview-deep-jr-diff
+- dirname: 2024-09-25-23-18-16--architect-o1preview-deep-jr-diff
   test_cases: 133
   model: o1-preview
-  edit_format: senior
+  edit_format: architect
   commit_hash: 9f3cd92-dirty
-  junior_model: deepseek
-  junior_edit_format: diff
+  editor_model: deepseek
+  editor_edit_format: diff
   pass_rate_1: 64.7
   pass_rate_2: 80.5
   percent_cases_well_formed: 100.0
@@ -269,13 +269,13 @@
   seconds_per_case: 73.2
   total_cost: 35.7887
   
-- dirname: 2024-09-25-23-30-36--senior-o1preview-deep-jr-whole
+- dirname: 2024-09-25-23-30-36--architect-o1preview-deep-jr-whole
   test_cases: 133
   model: o1-preview
-  edit_format: senior
+  edit_format: architect
   commit_hash: 9f3cd92-dirty
-  junior_model: deepseek
-  junior_edit_format: whole
+  editor_model: deepseek
+  editor_edit_format: whole
   pass_rate_1: 63.9
   pass_rate_2: 85.0
   percent_cases_well_formed: 100.0
@@ -294,13 +294,13 @@
   seconds_per_case: 67.4
   total_cost: 35.3152
 
-- dirname: 2024-09-26-15-15-17--senior-sonnet-deep-jr-whole
+- dirname: 2024-09-26-15-15-17--architect-sonnet-deep-jr-whole
   test_cases: 133
   model: claude-3.5-sonnet
-  edit_format: senior
+  edit_format: architect
   commit_hash: bc1559f-dirty
-  junior_model: deepseek
-  junior_edit_format: whole
+  editor_model: deepseek
+  editor_edit_format: whole
   pass_rate_1: 61.7
   pass_rate_2: 78.9
   percent_cases_well_formed: 100.0
@@ -342,13 +342,13 @@
   seconds_per_case: 9.7
   total_cost: 3.8088
 
-- dirname: 2024-09-26-15-41-08--senior-4o-deep-jr-whole
+- dirname: 2024-09-26-15-41-08--architect-4o-deep-jr-whole
   test_cases: 133
   model: gpt-4o
-  edit_format: senior
+  edit_format: architect
   commit_hash: 89aa385-dirty
-  junior_model: deepseek
-  junior_edit_format: whole
+  editor_model: deepseek
+  editor_edit_format: whole
   pass_rate_1: 60.9
   pass_rate_2: 73.7
   percent_cases_well_formed: 100.0
@@ -367,13 +367,13 @@
   seconds_per_case: 38.0
   total_cost: 2.4737
 
-- dirname: 2024-09-26-15-54-08--senior-4o-deep-jr-diff
+- dirname: 2024-09-26-15-54-08--architect-4o-deep-jr-diff
   test_cases: 133
   model: gpt-4o
-  edit_format: senior
+  edit_format: architect
   commit_hash: 89aa385-dirty
-  junior_model: deepseek
-  junior_edit_format: diff
+  editor_model: deepseek
+  editor_edit_format: diff
   pass_rate_1: 57.1
   pass_rate_2: 74.4
   percent_cases_well_formed: 100.0
@@ -392,13 +392,13 @@
   seconds_per_case: 44.0
   total_cost: 2.5498
 
-- dirname: 2024-09-26-16-06-39--senior-sonnet-deep-jr-diff
+- dirname: 2024-09-26-16-06-39--architect-sonnet-deep-jr-diff
   test_cases: 133
   model: claude-3.5-sonnet
-  edit_format: senior
+  edit_format: architect
   commit_hash: 89aa385-dirty
-  junior_model: deepseek
-  junior_edit_format: diff
+  editor_model: deepseek
+  editor_edit_format: diff
   pass_rate_1: 61.7
   pass_rate_2: 78.9
   percent_cases_well_formed: 100.0

@@ -18,9 +18,9 @@ cog.out(text)
 
 ### main branch
 
-- [Use a pair of Senior/Junior models for improved coding](https://aider.chat/2024/09/26/senior-junior.html)
-  - Use a strong reasoning model like o1-preview as your Senior coder.
-  - Use a cheaper, faster model like gpt-4o as your Junior coder.
+- [Use a pair of Architect/Editor models for improved coding](https://aider.chat/2024/09/26/senior-editor.html)
+  - Use a strong reasoning model like o1-preview as your Architect.
+  - Use a cheaper, faster model like gpt-4o as your Editor.
 - New `--o1-preview` and `--o1-mini` shortcuts.
 - New settings for completion menu colors, by @smh.
 - New `--voice-format` switch to send voice audio as wav/mp3/webm, by @mbailey.
