@@ -1,6 +1,6 @@
 ---
 title: Separating code reasoning and editing
-excerpt: A Architect model describes how to solve the coding problem, and a Editor model translates that into file edits. This Architect/Editor approach produces SOTA benchmark results.
+excerpt: An Architect model describes how to solve the coding problem, and an Editor model translates that into file edits. This Architect/Editor approach produces SOTA benchmark results.
 highlight_image: /assets/architect.jpg
 draft: true
 nav_exclude: true
@@ -13,8 +13,8 @@ nav_exclude: true
 
 Aider now has experimental support for using two models to complete each coding task:
 
-- A Architect model is asked to describe how to solve the coding problem.
-- A Editor model is given the Architect's solution and asked to produce specific code editing instructions to apply those changes to source files.
+- An Architect model is asked to describe how to solve the coding problem.
+- An Editor model is given the Architect's solution and asked to produce specific code editing instructions to apply those changes to source files.
 
 Splitting up "code reasoning" and "code editing" has produced SOTA results on
 [aider's code editing benchmark](/docs/benchmarks.html#the-benchmark).
@@ -260,7 +260,7 @@ Some noteworthy observations:
 - Pairing o1-preview as Architect with Deepseek as Editor sets a SOTA significantly above the previous best score. This result is obtained with Deepseek using the "whole" editing format, requiring it to output a full update copy of each edited source file. Both of these steps are therefore quite slow, so probably not practical for interactive use with aider.
 - Pairing OpenAI's o1-preview with Anthropic's Sonnet as the Editor produces the second best result. This is an entirely practical configuration for users able to work with both providers.
 - Pairing Sonnet/Sonnet and GPT-4o/GPT-4o provides significant lift for both models compared to their solo results, especially for GPT-4o.
-- Deepseek is surprisingly effective as a Editor model. It seems remarkably capable at turning proposed coding solutions into new, updated versions of the source files. Using the efficient "diff" editing format, Deepseek helps all the Architect models except for Sonnet.
+- Deepseek is surprisingly effective as an Editor model. It seems remarkably capable at turning proposed coding solutions into new, updated versions of the source files. Using the efficient "diff" editing format, Deepseek helps all the Architect models except for Sonnet.
 
 ## Try it!
 
