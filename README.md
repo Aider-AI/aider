@@ -46,7 +46,7 @@ cog.out(open("aider/website/_includes/get-started.md").read())
 You can get started quickly like this:
 
 ```
-python -m pip install aider-chat
+python -m pip install -U aider-chat
 
 # Change directory into a git repo
 cd /to/your/git/repo
