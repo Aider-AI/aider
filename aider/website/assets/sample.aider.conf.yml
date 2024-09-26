@@ -50,6 +50,12 @@
 ## Use deepseek/deepseek-coder model for the main chat
 #deepseek: false
 
+## Use o1-mini model for the main chat
+#o1-mini: false
+
+## Use o1-preview model for the main chat
+#o1-preview: false
+
 #################
 # Model Settings:
 
@@ -83,8 +89,17 @@
 ## Specify what edit format the LLM should use (default depends on model)
 #edit-format: xxx
 
+## Use senior edit format for the main chat
+#senior: false
+
 ## Specify the model to use for commit messages and chat history summarization (default depends on --model)
 #weak-model: xxx
+
+## Specify the model to use for junior tasks (default depends on --model)
+#junior-model: xxx
+
+## Specify the edit format for the junior model (default: depends on junior model)
+#junior-edit-format: xxx
 
 ## Only work with models that have meta-data available (default: True)
 #show-model-warnings: true
