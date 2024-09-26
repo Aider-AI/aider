@@ -63,20 +63,22 @@ document.addEventListener('DOMContentLoaded', function() {
   {% assign sorted_data = site.data.senior | sort: "pass_rate_2" | reverse %}
   {% assign grouped_data = sorted_data | group_by: "model" %}
 
+  const datasets = [];
+
   {% for group in grouped_data %}
-    const dataset = {
+    datasets.push({
       label: '{{ group.name }}',
       data: [],
       backgroundColor: getRandomColor(),
-    };
+    });
 
     {% for item in group.items %}
       data.labels.push('{{ item.junior_model }} ({{ item.junior_edit_format | default: item.edit_format }})');
-      dataset.data.push({{ item.pass_rate_2 }});
+      datasets[datasets.length - 1].data.push({{ item.pass_rate_2 }});
     {% endfor %}
-
-    data.datasets.push(dataset);
   {% endfor %}
+
+  data.datasets = datasets;
 
   new Chart(ctx, {
     type: 'bar',
