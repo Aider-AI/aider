@@ -71,24 +71,6 @@ and aider will scrape and read it. For example: `Add a submit button like this h
 - Use the [`/read` command](commands.html) to read doc files into the chat from anywhere on your filesystem.
 - If you have coding conventions or standing instructions you want aider to follow, consider using a [conventions file](conventions.html).
 
-## Including git history in the context
-
-When starting a fresh aider session, you can include recent git history in the chat context. This can be useful for providing the LLM with information about recent changes. To do this:
-
-1. Use the `/run` command with `git diff` to show recent changes:
-   ```
-   /run git diff HEAD~1
-   ```
-   This will include the diff of the last commit in the chat history.
-
-2. To include diffs from multiple commits, increase the number after the tilde:
-   ```
-   /run git diff HEAD~3
-   ```
-   This will show changes from the last three commits.
-
-Remember, the chat history already includes recent changes made during the current session, so this tip is most useful when starting a new aider session and you want to provide context about recent work.
-
 ## Interrupting & inputting
 
 Use Control-C to interrupt aider if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply with more information or direction.
