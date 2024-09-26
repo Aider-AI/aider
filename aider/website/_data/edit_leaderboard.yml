@@ -361,30 +361,7 @@
   versions: 0.31.2-dev
   seconds_per_case: 36.6
   total_cost: 0.0000
-
-- dirname: 2024-05-13-17-39-05--gpt-4o-diff
-  test_cases: 133
-  model: gpt-4o-2024-05-13
-  released: 2024-05-13
-  edit_format: diff
-  commit_hash: b6cd852
-  pass_rate_1: 60.2
-  pass_rate_2: 72.9
-  percent_cases_well_formed: 96.2
-  error_outputs: 103
-  num_malformed_responses: 5
-  user_asks: 0
-  lazy_comments: 0
-  syntax_errors: 0
-  indentation_errors: 2
-  exhausted_context_windows: 0
-  test_timeouts: 1
-  command: aider
-  date: 2024-05-13
-  versions: 0.34.1-dev
-  seconds_per_case: 6.0
-  total_cost: 0.0000
-
+                                                
 - dirname: 2024-04-12-22-18-20--gpt-4-turbo-2024-04-09-plain-diff
   test_cases: 33
   model: gpt-4-turbo-2024-04-09 (diff)
@@ -1110,28 +1087,28 @@
   seconds_per_case: 103.0
   total_cost: 5.3725
 
-- dirname: 2024-09-12-20-56-22--o1-mini-diff
-  test_cases: 133
-  model: o1-mini (diff)
+- dirname: 2024-09-21-16-40-56--o1-mini-flex-sr-markers
+  test_cases: 36
+  model: o1-mini
   edit_format: diff
-  commit_hash: 4598a37-dirty, 291b456, 752e823-dirty
-  pass_rate_1: 45.1
-  pass_rate_2: 62.4
-  percent_cases_well_formed: 85.7
-  error_outputs: 26
-  num_malformed_responses: 26
-  num_with_malformed_responses: 19
-  user_asks: 2
+  commit_hash: 5493654
+  pass_rate_1: 50.0
+  pass_rate_2: 61.1
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 3
   lazy_comments: 0
   syntax_errors: 0
-  indentation_errors: 0
+  indentation_errors: 1
   exhausted_context_windows: 0
-  test_timeouts: 1
-  command: aider --model o1-mini --edit-format diff
-  date: 2024-09-12
+  test_timeouts: 0
+  command: aider --model o1-mini
+  date: 2024-09-21
   versions: 0.56.1.dev
-  seconds_per_case: 177.7
-  total_cost: 11.1071
+  seconds_per_case: 26.7
+  total_cost: 2.4226
 
 - dirname: 2024-09-21-16-45-11--o1-preview-flex-sr-markers
   test_cases: 133
