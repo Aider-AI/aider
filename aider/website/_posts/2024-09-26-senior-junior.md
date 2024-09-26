@@ -54,9 +54,9 @@ Here's a table containing the benchmark data for different model configurations:
           <td>{{ item.model }}</td>
           <td>{{ item.junior_model }}</td>
           <td>{{ item.junior_edit_format | default: item.edit_format }}</td>
-          <td>{{ item.pass_rate_2 }}%</td>
-          <td>{{ item.seconds_per_case }} sec</td>
-          <td>${{ item.total_cost | round: 2 }}</td>
+          <td style="text-align: right;">{{ item.pass_rate_2 }}%</td>
+          <td style="text-align: right;">{{ item.seconds_per_case }} sec</td>
+          <td style="text-align: right;">${{ item.total_cost | round: 2 }}</td>
         </tr>
       {% endfor %}
     {% endfor %}
