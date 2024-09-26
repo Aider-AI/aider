@@ -216,6 +216,8 @@ def get_pip_install(args):
         "-m",
         "pip",
         "install",
+        "--upgrade",
+        "--ignore-installed",
     ]
     cmd += args
     return cmd
