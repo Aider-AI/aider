@@ -77,9 +77,8 @@ def get_index():
             )
             index = load_index_from_storage(storage_context)
             return index
-    except JSONDecodeError as err:
-        print(f"Help file cache {dname} is corrupt: {err}")
-        print("Deleting file")
+    except JSONDecodeError:
+        print(f"Error: Corrupted help file cache at {dname}. Deleting and recreating.")
         os.remove(dname)
         # Fall through to create index new
 
