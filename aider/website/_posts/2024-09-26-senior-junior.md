@@ -13,6 +13,12 @@ nav_exclude: true
 
 Here's a table containing the benchmark data for different model configurations:
 
+<style>
+  .shaded {
+    background-color: #f0f0f0;
+  }
+</style>
+
 {% assign sorted_data = site.data.senior | sort: "pass_rate_2" | reverse %}
 {% assign grouped_data = sorted_data | group_by: "model" %}
 
@@ -29,8 +35,9 @@ Here's a table containing the benchmark data for different model configurations:
   </thead>
   <tbody>
     {% for group in grouped_data %}
+      {% assign group_class = forloop.index | modulo: 2 | plus: 1 %}
       {% for item in group.items %}
-        <tr>
+        <tr class="{% if group_class == 2 %}shaded{% endif %}">
           <td>{{ item.model }}</td>
           <td>{{ item.junior_model }}</td>
           <td>{{ item.junior_edit_format }}</td>
