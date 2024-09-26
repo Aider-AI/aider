@@ -100,10 +100,10 @@ document.addEventListener('DOMContentLoaded', function() {
       },
       scales: {
         x: {
-          stacked: true,
+          stacked: false,
         },
         y: {
-          stacked: true,
+          stacked: false,
           beginAtZero: true,
           max: 100,
           title: {
