@@ -86,7 +86,7 @@ Splitting up "code reasoning" and "code editing" has produced SOTA results on
       },
       options: {
         scales: {
-          y: {
+          y: { 
             beginAtZero: true,
             title: {
               display: true,
