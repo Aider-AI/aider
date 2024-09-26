@@ -98,6 +98,12 @@ cog.outl("```")
 ## Use deepseek/deepseek-coder model for the main chat
 #deepseek: false
 
+## Use o1-mini model for the main chat
+#o1-mini: false
+
+## Use o1-preview model for the main chat
+#o1-preview: false
+
 #################
 # Model Settings:
 
@@ -131,17 +137,29 @@ cog.outl("```")
 ## Specify what edit format the LLM should use (default depends on model)
 #edit-format: xxx
 
+## Use senior edit format for the main chat
+#senior: false
+
 ## Specify the model to use for commit messages and chat history summarization (default depends on --model)
 #weak-model: xxx
+
+## Specify the model to use for junior tasks (default depends on --model)
+#junior-model: xxx
+
+## Specify the edit format for the junior model (default: depends on junior model)
+#junior-edit-format: xxx
 
 ## Only work with models that have meta-data available (default: True)
 #show-model-warnings: true
 
-## Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)
-#map-tokens: xxx
+## Maximum number of tokens to use for chat history. If not specified, uses the model's max_chat_history_tokens.
+#max-chat-history-tokens: xxx
 
-## Control how often the repo map is refreshed (default: auto)
-#map-refresh: auto
+## Specify the .env file to load (default: .env in git root)
+#env-file: .env
+
+#################
+# Cache Settings:
 
 ## Enable caching of prompts (default: False)
 #cache-prompts: false
@@ -149,14 +167,17 @@ cog.outl("```")
 ## Number of times to ping at 5min intervals to keep prompt cache warm (default: 0)
 #cache-keepalive-pings: false
 
+###################
+# Repomap Settings:
+
+## Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)
+#map-tokens: xxx
+
+## Control how often the repo map is refreshed. Options: auto, always, files, manual (default: auto)
+#map-refresh: auto
+
 ## Multiplier for map tokens when no files are specified (default: 2)
 #map-multiplier-no-files: true
-
-## Maximum number of tokens to use for chat history. If not specified, uses the model's max_chat_history_tokens.
-#max-chat-history-tokens: xxx
-
-## Specify the .env file to load (default: .env in git root)
-#env-file: .env
 
 ################
 # History Files:
@@ -202,6 +223,18 @@ cog.outl("```")
 
 ## Set the color for assistant output (default: #0088ff)
 #assistant-output-color: #0088ff
+
+## Set the color for the completion menu (default: terminal's default text color)
+#completion-menu-color: default
+
+## Set the background color for the completion menu (default: terminal's default background color)
+#completion-menu-bg-color: default
+
+## Set the color for the current item in the completion menu (default: terminal's default background color)
+#completion-menu-current-color: default
+
+## Set the background color for the current item in the completion menu (default: terminal's default text color)
+#completion-menu-current-bg-color: default
 
 ## Set the markdown code theme (default: default, other options include monokai, solarized-dark, solarized-light)
 #code-theme: default
@@ -290,9 +323,6 @@ cog.outl("```")
 ## Use VI editing mode in the terminal (default: False)
 #vim: false
 
-## Specify the language for voice using ISO 639-1 code (default: auto)
-#voice-language: en
-
 ## Specify the language to use in the chat (default: None, uses system settings)
 #chat-language: xxx
 
@@ -346,5 +376,14 @@ cog.outl("```")
 
 ## Enable/disable suggesting shell commands (default: True)
 #suggest-shell-commands: true
+
+#################
+# Voice Settings:
+
+## Audio format for voice recording (default: wav). webm and mp3 require ffmpeg
+#voice-format: wav
+
+## Specify the language for voice using ISO 639-1 code (default: auto)
+#voice-language: en
 ```
 <!--[[[end]]]-->
