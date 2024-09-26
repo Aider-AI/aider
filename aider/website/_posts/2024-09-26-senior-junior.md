@@ -94,13 +94,29 @@ o1-preview as Senior and Deepseek as Junior, raising the SOTA from 79.7% up to 8
             beginAtZero: true,
             title: {
               display: true,
-              text: 'Pass Rate (%)'
+              text: 'Pass Rate (%)',
+              font: {
+                size: 14
+              }
+            },
+            ticks: {
+              font: {
+                size: 12
+              }
             }
           },
           x: {
             title: {
               display: true,
-              text: 'Junior model and edit format'
+              text: 'Junior model and edit format',
+              font: {
+                size: 14
+              }
+            },
+            ticks: {
+              font: {
+                size: 12
+              }
             }
           }
         },
@@ -117,7 +133,10 @@ o1-preview as Senior and Deepseek as Junior, raising the SOTA from 79.7% up to 8
                 label: {
                   content: 'Previous SOTA',
                   enabled: true,
-                  position: 'end'
+                  position: 'end',
+                  font: {
+                    size: 12
+                  }
                 }
               }
             }
@@ -125,6 +144,9 @@ o1-preview as Senior and Deepseek as Junior, raising the SOTA from 79.7% up to 8
           legend: {
             display: true,
             labels: {
+              font: {
+                size: 12
+              },
               generateLabels: function(chart) {
                 var colorMapping = {
                   "o1-preview": "rgba(255, 206, 86, 0.2)",
