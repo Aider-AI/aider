@@ -15,14 +15,11 @@ Here's a table containing the benchmark data for different model configurations:
 
 {% assign sorted_data = site.data.senior | sort: "pass_rate_2" | reverse %}
 {% assign grouped_data = sorted_data | group_by: "model" %}
-{% assign sorted_groups = grouped_data | sort: "items" | reverse %}
 
 | Senior | Junior | Junior Edit Format | Pass Rate (%) | Average Time (sec) | Total Cost ($) |
 |--------|--------|---------------------|----------------|---------------------|----------------|
-{% for group in sorted_groups %}
-{% assign top_pass_rate = group.items | map: "pass_rate_2" | sort | last %}
-{% assign sorted_items = group.items | sort: "pass_rate_2" | reverse %}
-{% for item in sorted_items %}
+{% for group in grouped_data %}
+{% for item in group.items %}
 | {{ item.model }} | {{ item.junior_model }} | {{ item.junior_edit_format }} | {{ item.pass_rate_2 }} | {{ item.seconds_per_case }} | {{ item.total_cost }} |
 {% endfor %}
 {% unless forloop.last %}
