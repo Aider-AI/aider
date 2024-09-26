@@ -171,15 +171,9 @@ o1-preview as Senior and Deepseek as Junior, raising the SOTA from 79.7% up to 8
                   "o1-mini": "rgba(255, 99, 132, 0.2)"
                 };
                 return Object.keys(colorMapping).map(function(key) {
-                  var fillStyle = colorMapping[key];
-                  if (chart.data.labels.some(label => label.includes('deepseek whole'))) {
-                    fillStyle = createStripedPattern(fillStyle);
-                  } else if (chart.data.labels.some(label => label.includes('deepseek diff'))) {
-                    fillStyle = createPolkaDotPattern(fillStyle);
-                  }
                   return {
                     text: key,
-                    fillStyle: fillStyle,
+                    fillStyle: colorMapping[key],
                     strokeStyle: colorMapping[key].replace('0.2', '1'),
                     lineWidth: 1
                   };
