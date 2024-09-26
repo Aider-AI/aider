@@ -1,6 +1,6 @@
 ---
 parent: More info
-nav_order: 1000
+nav_order: 960
 description: Aider uses various "edit formats" to let LLMs edit source files.
 ---
 
@@ -17,6 +17,9 @@ the `--edit-format` switch.
 The "whole" edit format is the simplest possible editing format.
 The LLM is instructed to return a full, updated
 copy of each source file that needs changes.
+While simple, it can be slow and costly because the LLM has to return
+the *entire file* even if just a few lines are edited.
+
 The format expects the file path just before the fenced file content:
 
 ````
@@ -36,6 +39,9 @@ if __name__ == '__main__':
 ## diff
 
 The "diff" edit format asks the LLM to specify file edits as a series of search/replace blocks.
+This is an efficient format, because the model only needs to return parts of the file
+which have changes.
+
 They are formatted using a syntax similar to the git merge conflict resolution markings,
 with the file path right before a fenced block:
 
@@ -74,6 +80,9 @@ from flask import Flask
 
 The "udiff" edit format is based on the widely used unified diff format,
 but [modified and simplified](/2023/12/21/unified-diffs.html).
+This is an efficient format, because the model only needs to return parts of the file
+which have changes.
+
 It was mainly used to the GPT-4 Turbo family of models,
 to reduce their "lazy coding" tendencies with other edit formats.
 

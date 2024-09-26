@@ -219,6 +219,36 @@ In particular, chaining older LLMs would have been quite slow and
 contrary to aider's goal of providing a rapid, interactive,
 pair programming AI coding experience.
 
+## Code reasoning and code editing
+
+Aider uses a variety of 
+[edit formats](/docs/more/edit-formats.html)
+to allow LLMs to specify edits to local source files.
+All of aider's editing formats require the LLM to return source code edits in a specific text
+format, so that aider can process the edits and apply them to the local source files.
+
+Normally, aider asks the model to solve the coding problem by returning a well
+formatted series of file edits.
+Aider encourages "chain of thought" by asking the model to explain the solution
+before diving into code edits.
+But this all happens in a single prompt/response round trip to the LLM,
+and the model has to spend some attention on confirming to the edit format.
+
+The Senior/Junior approach splits this into two round trips, possible
+using two different LLMs:
+
+- Ask how to solve the coding problem (Senior).
+- Ask for the solution as a series of well formed code edits (Junior).
+
+The Senior/Junior approach allows the Senior to focus on solving the coding problem
+and leaves the task of turning that into properly formatted edits to the Junior.
+This gives the Senior more reasoning capacity to focus just on solving the coding
+task.
+We can also assign the Senior task to a strong reasoning model like o1-preview,
+and give the editing task to an appropriate model based on cost, editing skill, etc.
+Similarly, the Junior can focus all of its attention on properly formatting the edits
+without needing to reason much about how to solve the coding problem.
+
 ## Results
 
 The graph above and the table below show the
