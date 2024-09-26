@@ -162,7 +162,29 @@ aider --o1-preview --senior
               text: 'Pass Rate (%)'
             }
           }
-        }
+        },
+        plugins: {
+          legend: {
+            display: true,
+            labels: {
+              generateLabels: function(chart) {
+                var colorMapping = {
+                  "claude-3.5-sonnet": "rgba(75, 192, 192, 0.2)",
+                  "o1-mini": "rgba(255, 99, 132, 0.2)",
+                  "gpt-4o": "rgba(54, 162, 235, 0.2)",
+                  "o1-preview": "rgba(255, 206, 86, 0.2)"
+                };
+                return Object.keys(colorMapping).map(function(key) {
+                  return {
+                    text: key,
+                    fillStyle: colorMapping[key],
+                    strokeStyle: colorMapping[key].replace('0.2', '1'),
+                    lineWidth: 1
+                  };
+                });
+              }
+            }
+          }
       }
     });
   });
