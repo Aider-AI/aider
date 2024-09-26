@@ -679,8 +679,6 @@ def run_test_real(
         testcase=testdir.name,
         model=main_model.name,
         edit_format=edit_format,
-        junior_model=main_model.junior_model.name if main_model.junior_model else None,
-        junior_edit_format=main_model.junior_edit_format,
         tests_outcomes=test_outcomes,
         cost=coder.total_cost,
         duration=dur,
@@ -700,6 +698,10 @@ def run_test_real(
             )
         ),
     )
+    
+    if edit_format == "senior":
+        results["junior_model"] = main_model.junior_model.name if main_model.junior_model else None
+        results["junior_edit_format"] = main_model.junior_edit_format
     dump(results)
 
     results_fname.write_text(json.dumps(results, indent=4))
