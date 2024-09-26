@@ -14,22 +14,21 @@ nav_exclude: true
 Here's a table containing the benchmark data for different model configurations:
 
 <style>
-  .shaded {
-    background-color: #e0e0e0;
+  .shaded td {
+    background-color: #f2f2f2;
     border-top: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
   }
   table {
     border-collapse: collapse;
     width: 100%;
   }
-  th, td {
+  th {
     padding: 8px;
     text-align: left;
     border-bottom: 1px solid #ddd;
   }
   th {
-    background-color: #f2f2f2;
+    background-color: #e2e2e2;
   }
 </style>
 
@@ -41,7 +40,7 @@ Here's a table containing the benchmark data for different model configurations:
     <tr>
       <th>Senior</th>
       <th>Junior</th>
-      <th>Junior Edit Format</th>
+      <th>Edit Format</th>
       <th>Pass Rate (%)</th>
       <th>Average Time (sec)</th>
       <th>Total Cost ($)</th>
@@ -51,7 +50,7 @@ Here's a table containing the benchmark data for different model configurations:
     {% for group in grouped_data %}
       {% assign group_class = forloop.index | modulo: 2 | plus: 1 %}
       {% for item in group.items %}
-        <tr class="{% if group_class == 2 %}shaded{% endif %}">
+        <tr class="{% if group_class == 1 %}shaded{% endif %}">
           <td>{{ item.model }}</td>
           <td>{{ item.junior_model }}</td>
           <td>{{ item.junior_edit_format }}</td>
