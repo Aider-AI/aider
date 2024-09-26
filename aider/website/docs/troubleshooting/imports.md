@@ -48,7 +48,7 @@ and sometimes introduces bugs or backwards incompatible changes.
 
 ## Replit
 
-You can `pip install aider-chat` on replit.
+You can `pip install -U aider-chat` on replit.
 
 Or you can install aider with
 pipx as follows:

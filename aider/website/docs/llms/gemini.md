@@ -12,7 +12,7 @@ with code editing capability that's comparable to GPT-3.5.
 You'll need a [Gemini API key](https://aistudio.google.com/app/u/2/apikey).
 
 ```
-python -m pip install aider-chat
+python -m pip install -U aider-chat
 
 export GEMINI_API_KEY=<key> # Mac/Linux
 setx   GEMINI_API_KEY <key> # Windows, restart shell after setx

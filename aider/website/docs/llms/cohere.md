@@ -13,7 +13,7 @@ You'll need a [Cohere API key](https://dashboard.cohere.com/welcome/login).
 To use **Command-R+**:
 
 ```
-python -m pip install aider-chat
+python -m pip install -U aider-chat
 
 export COHERE_API_KEY=<key> # Mac/Linux
 setx   COHERE_API_KEY <key> # Windows, restart shell after setx
