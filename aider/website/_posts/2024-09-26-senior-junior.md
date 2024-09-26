@@ -65,12 +65,17 @@ o1-preview as Senior and Deepseek as Junior, raising the SOTA from 79.7% up to 8
     };
     var backgroundColors = [];
     var borderColors = [];
+    var pattern = ctx.createPattern(createStripePattern(), 'repeat');
     {% assign grouped_data = sorted_data | group_by: "model" %}
     {% for group in grouped_data %}
       {% for item in group.items %}
         labels.push("{{ item.junior_model | default: "(No Junior)" }} {{ item.junior_edit_format | default: item.edit_format }}");
         data.push({{ item.pass_rate_2 }});
-        backgroundColors.push(colorMapping["{{ item.model }}"]);
+        if ("{{ item.junior_model }}" == "(No Junior)") {
+          backgroundColors.push(pattern);
+        } else {
+          backgroundColors.push(colorMapping["{{ item.model }}"]);
+        }
         borderColors.push(borderColorMapping["{{ item.model }}"]);
       {% endfor %}
     {% endfor %}
@@ -168,6 +173,22 @@ o1-preview as Senior and Deepseek as Junior, raising the SOTA from 79.7% up to 8
       }
     }});
   });
+
+  function createStripePattern() {
+    var canvas = document.createElement('canvas');
+    canvas.width = 10;
+    canvas.height = 10;
+    var ctx = canvas.getContext('2d');
+
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(10, 10);
+    ctx.stroke();
+
+    return canvas;
+  }
 </script>
 
 ## Motivation
