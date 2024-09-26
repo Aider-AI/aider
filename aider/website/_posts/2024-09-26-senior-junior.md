@@ -46,7 +46,7 @@ The graph below and table show the
 [aider's code editing benchmark](/docs/benchmarks.html#the-benchmark)
 score for various combinations of Senior and Junior models.
 
-<div>
+<div style="height: 500px;">
   <canvas id="seniorJuniorChart"></canvas>
 </div>
 
@@ -89,7 +89,10 @@ document.addEventListener('DOMContentLoaded', function() {
       plugins: {
         title: {
           display: true,
-          text: 'Pass Rate for Senior/Junior/EditFormat Combinations'
+          text: 'Pass Rate for Senior/Junior/EditFormat Combinations',
+          font: {
+            size: 18
+          }
         },
         legend: {
           position: 'top',
@@ -105,7 +108,10 @@ document.addEventListener('DOMContentLoaded', function() {
           max: 100,
           title: {
             display: true,
-            text: 'Pass Rate (%)'
+            text: 'Pass Rate (%)',
+            font: {
+              size: 14
+            }
           }
         }
       }
