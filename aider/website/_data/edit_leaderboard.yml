@@ -361,7 +361,30 @@
   versions: 0.31.2-dev
   seconds_per_case: 36.6
   total_cost: 0.0000
-                                                
+
+- dirname: 2024-05-13-17-39-05--gpt-4o-diff
+  test_cases: 133
+  model: gpt-4o-2024-05-13
+  released: 2024-05-13
+  edit_format: diff
+  commit_hash: b6cd852
+  pass_rate_1: 60.2
+  pass_rate_2: 72.9
+  percent_cases_well_formed: 96.2
+  error_outputs: 103
+  num_malformed_responses: 5
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 2
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider
+  date: 2024-05-13
+  versions: 0.34.1-dev
+  seconds_per_case: 6.0
+  total_cost: 0.0000
+                                          
 - dirname: 2024-04-12-22-18-20--gpt-4-turbo-2024-04-09-plain-diff
   test_cases: 33
   model: gpt-4-turbo-2024-04-09 (diff)
