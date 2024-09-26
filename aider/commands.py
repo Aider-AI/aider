@@ -1088,7 +1088,7 @@ class Commands:
         except Exception as e:
             self.io.tool_error(f"Error processing clipboard content: {e}")
 
-    def cmd_read_only(self, args):
+    def cmd_read(self, args):
         "Add files to the chat that are for reference, not to be edited"
         if not args.strip():
             self.io.tool_error("Please provide filenames or directories to read.")

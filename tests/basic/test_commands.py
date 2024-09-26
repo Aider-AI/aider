@@ -574,7 +574,7 @@ class TestCommands(TestCase):
             test_file.write_text("Test content")
 
             # Add the file as read-only
-            commands.cmd_read_only(str(test_file))
+            commands.cmd_read(str(test_file))
 
             # Verify it's in abs_read_only_fnames
             self.assertTrue(
@@ -810,7 +810,7 @@ class TestCommands(TestCase):
             self.assertNotIn(fname2, str(coder.abs_fnames))
             self.assertNotIn(fname3, str(coder.abs_fnames))
 
-    def test_cmd_read_only(self):
+    def test_cmd_read(self):
         with GitTemporaryDirectory():
             io = InputOutput(pretty=False, yes=False)
             coder = Coder.create(self.GPT35, None, io)
@@ -821,7 +821,7 @@ class TestCommands(TestCase):
             test_file.write_text("Test content")
 
             # Test the /read command
-            commands.cmd_read_only(str(test_file))
+            commands.cmd_read(str(test_file))
 
             # Check if the file was added to abs_read_only_fnames
             self.assertTrue(
@@ -842,7 +842,7 @@ class TestCommands(TestCase):
                 )
             )
 
-    def test_cmd_read_only_with_external_file(self):
+    def test_cmd_read_with_external_file(self):
         with tempfile.NamedTemporaryFile(mode="w", delete=False) as external_file:
             external_file.write("External file content")
             external_file_path = external_file.name
@@ -854,7 +854,7 @@ class TestCommands(TestCase):
                 commands = Commands(io, coder)
 
                 # Test the /read command with an external file
-                commands.cmd_read_only(external_file_path)
+                commands.cmd_read(external_file_path)
 
                 # Check if the external file was added to abs_read_only_fnames
                 real_external_file_path = os.path.realpath(external_file_path)
@@ -878,7 +878,7 @@ class TestCommands(TestCase):
         finally:
             os.unlink(external_file_path)
 
-    def test_cmd_read_only_with_multiple_files(self):
+    def test_cmd_read_with_multiple_files(self):
         with GitTemporaryDirectory() as repo_dir:
             io = InputOutput(pretty=False, yes=False)
             coder = Coder.create(self.GPT35, None, io)
@@ -890,8 +890,8 @@ class TestCommands(TestCase):
                 file_path = Path(repo_dir) / file_name
                 file_path.write_text(f"Content of {file_name}")
 
-            # Test the /read-only command with multiple files
-            commands.cmd_read_only(" ".join(test_files))
+            # Test the /read command with multiple files
+            commands.cmd_read(" ".join(test_files))
 
             # Check if all test files were added to abs_read_only_fnames
             for file_name in test_files:
@@ -909,7 +909,7 @@ class TestCommands(TestCase):
             # Check if all files were removed from abs_read_only_fnames
             self.assertEqual(len(coder.abs_read_only_fnames), 0)
 
-    def test_cmd_read_only_with_tilde_path(self):
+    def test_cmd_read_with_tilde_path(self):
         with GitTemporaryDirectory():
             io = InputOutput(pretty=False, yes=False)
             coder = Coder.create(self.GPT35, None, io)
@@ -921,9 +921,9 @@ class TestCommands(TestCase):
             test_file.write_text("Test content")
 
             try:
-                # Test the /read-only command with a path in the user's home directory
+                # Test the /read command with a path in the user's home directory
                 relative_path = os.path.join("~", "test_read_only_file.txt")
-                commands.cmd_read_only(relative_path)
+                commands.cmd_read(relative_path)
 
                 # Check if the file was added to abs_read_only_fnames
                 self.assertTrue(

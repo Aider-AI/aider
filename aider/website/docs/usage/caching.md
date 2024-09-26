@@ -16,7 +16,7 @@ and DeepSeek provides caching for Coder.
 Aider organizes the chat history to try and cache:
 
 - The system prompt.
-- Read only files added with `--read` or `/read-only`.
+- Read only files added with `--read` or `/read`.
 - The repository map.
 - The editable files that have been added to the chat.
 
