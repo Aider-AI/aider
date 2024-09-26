@@ -71,8 +71,12 @@ o1-preview as Senior and Deepseek as Junior, raising the SOTA from 79.7% up to 8
         labels.push("{{ item.junior_model | default: "(No Junior)" }} {{ item.junior_edit_format | default: item.edit_format }}");
         data.push({{ item.pass_rate_2 }});
         var bgColor = colorMapping["{{ item.model }}"];
-        if ("{{ item.junior_model }}" === "deepseek" && "{{ item.junior_edit_format }}" === "whole") {
-          bgColor = createStripedPattern(bgColor);
+        if ("{{ item.junior_model }}" === "deepseek") {
+          if ("{{ item.junior_edit_format }}" === "whole") {
+            bgColor = createStripedPattern(bgColor);
+          } else if ("{{ item.junior_edit_format }}" === "diff") {
+            bgColor = createPolkaDotPattern(bgColor);
+          }
         }
         backgroundColors.push(bgColor);
         borderColors.push(borderColorMapping["{{ item.model }}"]);
@@ -92,6 +96,20 @@ o1-preview as Senior and Deepseek as Junior, raising the SOTA from 79.7% up to 8
       ctx.moveTo(0, 0);
       ctx.lineTo(10, 10);
       ctx.stroke();
+      return ctx.createPattern(canvas, 'repeat');
+    }
+
+    function createPolkaDotPattern(color) {
+      var canvas = document.createElement('canvas');
+      var ctx = canvas.getContext('2d');
+      canvas.width = 10;
+      canvas.height = 10;
+      ctx.fillStyle = color;
+      ctx.fillRect(0, 0, 10, 10);
+      ctx.fillStyle = 'white';
+      ctx.beginPath();
+      ctx.arc(5, 5, 2, 0, Math.PI * 2);
+      ctx.fill();
       return ctx.createPattern(canvas, 'repeat');
     }
     new Chart(ctx, {
@@ -156,6 +174,8 @@ o1-preview as Senior and Deepseek as Junior, raising the SOTA from 79.7% up to 8
                   var fillStyle = colorMapping[key];
                   if (chart.data.labels.some(label => label.includes('deepseek whole'))) {
                     fillStyle = createStripedPattern(fillStyle);
+                  } else if (chart.data.labels.some(label => label.includes('deepseek diff'))) {
+                    fillStyle = createPolkaDotPattern(fillStyle);
                   }
                   return {
                     text: key,
