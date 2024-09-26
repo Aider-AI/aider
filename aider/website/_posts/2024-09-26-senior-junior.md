@@ -39,9 +39,6 @@ Here's a table containing the benchmark data for different model configurations:
           <td>{{ item.total_cost }}</td>
         </tr>
       {% endfor %}
-      {% unless forloop.last %}
-        <tr><td colspan="6"><hr></td></tr>
-      {% endunless %}
     {% endfor %}
   </tbody>
 </table>
