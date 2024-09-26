@@ -65,14 +65,17 @@ o1-preview as Senior and Deepseek as Junior, raising the SOTA from 79.7% up to 8
     };
     var backgroundColors = [];
     var borderColors = [];
-    var pattern = ctx.createPattern(createStripePattern(), 'repeat');
+    var patterns = {};
+    for (var key in colorMapping) {
+      patterns[key] = ctx.createPattern(createStripePattern(colorMapping[key]), 'repeat');
+    }
     {% assign grouped_data = sorted_data | group_by: "model" %}
     {% for group in grouped_data %}
       {% for item in group.items %}
         labels.push("{{ item.junior_model | default: "(No Junior)" }} {{ item.junior_edit_format | default: item.edit_format }}");
         data.push({{ item.pass_rate_2 }});
         if ("{{ item.junior_model }}" == "") {
-          backgroundColors.push(pattern);
+          backgroundColors.push(patterns["{{ item.model }}"]);
         } else {
           backgroundColors.push(colorMapping["{{ item.model }}"]);
         }
@@ -174,12 +177,14 @@ o1-preview as Senior and Deepseek as Junior, raising the SOTA from 79.7% up to 8
     }});
   });
 
-  function createStripePattern() {
+  function createStripePattern(baseColor) {
     var canvas = document.createElement('canvas');
     canvas.width = 10;
     canvas.height = 10;
     var ctx = canvas.getContext('2d');
 
+    ctx.fillStyle = baseColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
     ctx.lineWidth = 2;
     ctx.beginPath();
