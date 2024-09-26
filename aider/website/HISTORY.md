@@ -16,6 +16,20 @@ cog.out(text)
 
 # Release history
 
+### main branch
+
+- [Use a pair of Senior/Junior models for improved coding](https://aider.chat/2024/09/26/senior-junior.html)
+  - Use a strong reasoning model like o1-preview as your Senior coder.
+  - Use a cheaper, faster model like gpt-4o as your Junior coder.
+- New `--o1-preview` and `--o1-mini` shortcuts.
+- New settings for completion menu colors, by @smh.
+- New `--voice-format` switch to send voice audio as wav/mp3/webm, by @mbailey.
+- Support for new Gemini 002 models.
+- Will now follow HTTP redirects when scraping urls.
+- Support for litellm's `extra_body` parameter, by @hypn4.
+- Support for cursor shapes when in vim mode.
+- Numerous bug fixes.
+
 ### Aider v0.57.1
 
 - Fixed dependency conflict between aider-chat[help] and [playwright].
