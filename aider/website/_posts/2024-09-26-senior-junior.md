@@ -18,7 +18,10 @@ Aider now has experimental support for using two models to complete each coding 
 
 Splitting up "code reasoning" and "code editing" has produced SOTA results on
 [aider's code editing benchmark](/docs/benchmarks.html#the-benchmark).
-
+Both Sonnet and o1-preview exceed the preivous SOTA when using this
+new Senior/Junior approach.
+The best result was obtained with
+o1-preview as Senior and Deepseek as Junior, raising the SOTA from 79.7% up to 85%!
 
 <style>
   .shaded td {
@@ -147,38 +150,40 @@ Splitting up "code reasoning" and "code editing" has produced SOTA results on
 
 ## Motivation
 
-This approach was motivated by OpenAI's recently release o1 models.
+This approach was motivated by OpenAI's o1 models.
 They are strong at reasoning, but often fail to output well formed
 code editing instructions.
-It helps to pass their solutions to a more traditional LLM,
-which can produce the specific code edits needed to update
+It helps to instead let them describe the solution
+however they prefer and then pass that output to a more traditional LLM.
+The traditional LLM can then
+produce the specific code edits needed to update
 the existing source code file.
 
 Traditional frontier models like gpt-4o and Sonnet also
 seem to benefit from separating code reasoning and editing.
-It helps to use a pair of gpt-4o
+A pair of gpt-4o
 or a pair of Sonnet models
-in Senior/Junior configuration.
+in Senior/Junior configuration outperform their previous benchmark results.
 
-The speed and costs of frontier models have been rapidly improving,
-making it more attractive to chain a pair of modern models like this.
-Chaining older LLMs would have been quite slow,
-significantly harming aider's goal of providing a rapid, interactive,
+Another reason why this approach is newly viable is that the
+speed and costs of frontier models have been rapidly improving.
+In particular, chaining older LLMs would have been quite slow and
+contrary to aider's goal of providing a rapid, interactive,
 pair programming AI coding experience.
 
 ## Results
 
-The graph below and table show the
+The graph above and the table below show the
 [aider's code editing benchmark](/docs/benchmarks.html#the-benchmark)
 score for various combinations of Senior and Junior models.
 
 
 Some noteworthy observations:
 
-- o1-preview with Deepseek as the Junior surprises as the SOTA result, beating other stronger Junior models. This result is obtained with Deepseek using the "whole" editing format, requiring it to output a full update copy of each edited source file. This is quite slow, and so probably not practical for interactive use with aider.
+- Pairing o1-preview as Senior with Deepseek as Junior sets a SOTA significantly above the previous best. This result is obtained with Deepseek using the "whole" editing format, requiring it to output a full update copy of each edited source file. This is quite slow, and so probably not practical for interactive use with aider.
 - Pairing OpenAI's o1-preview with Anthropic's Sonnet as the Junior produces the second best result, and is an entirely practical configuration for users able to work with both providers.
-- Pairing Sonnet+Sonnet and GPT-4o+GPT-4o provides significant lift for both models, especially for GPT-4o.
-- Deepseek is surprisingly effective as a Junior model, responsible for turning proposed coding solutions into new, updated versions of the source files. Using the efficient "diff" editing format, Deepseek helps all the Senior models except for Sonnet.
+- Pairing Sonnet/Sonnet and GPT-4o/GPT-4o provides significant lift for both models, especially for GPT-4o.
+- Deepseek is surprisingly effective as a Junior model. It seems remarkably capable at turning proposed coding solutions into new, updated versions of the source files. Using the efficient "diff" editing format, Deepseek helps all the Senior models except for Sonnet.
 
 ## Related work
 
