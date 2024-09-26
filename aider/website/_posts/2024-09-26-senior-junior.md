@@ -19,6 +19,108 @@ Aider now has experimental support for using two models to complete each coding 
 Splitting up "code reasoning" and "code editing" has produced SOTA results on
 [aider's code editing benchmark](/docs/benchmarks.html#the-benchmark).
 
+
+<style>
+  .shaded td {
+    background-color: #f2f2f2;
+    border-top: 1px solid #ccc;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  th {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  th {
+    background-color: #e2e2e2;
+  }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% assign sorted_data = site.data.senior | sort: "pass_rate_2" | reverse %}
+<canvas id="passRateChart" width="400" height="200"></canvas>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var ctx = document.getElementById('passRateChart').getContext('2d');
+    var labels = [];
+    var data = [];
+    var colorMapping = {
+      "claude-3.5-sonnet": "rgba(75, 192, 192, 0.2)",
+      "o1-mini": "rgba(255, 99, 132, 0.2)",
+      "gpt-4o": "rgba(54, 162, 235, 0.2)",
+      "o1-preview": "rgba(255, 206, 86, 0.2)"
+    };
+    var borderColorMapping = {
+      "claude-3.5-sonnet": "rgba(75, 192, 192, 1)",
+      "o1-mini": "rgba(255, 99, 132, 1)",
+      "gpt-4o": "rgba(54, 162, 235, 1)",
+      "o1-preview": "rgba(255, 206, 86, 1)"
+    };
+    var backgroundColors = [];
+    var borderColors = [];
+    {% assign grouped_data = sorted_data | group_by: "model" %}
+    {% for group in grouped_data %}
+      {% for item in group.items %}
+        labels.push("{{ item.junior_model | default: "(No Junior)" }} {{ item.junior_edit_format | default: item.edit_format }}");
+        data.push({{ item.pass_rate_2 }});
+        backgroundColors.push(colorMapping["{{ item.model }}"]);
+        borderColors.push(borderColorMapping["{{ item.model }}"]);
+      {% endfor %}
+    {% endfor %}
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Pass Rate',
+          data: data,
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1,
+          backgroundColor: backgroundColors,
+          borderColor: borderColors
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Pass Rate (%)'
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: true,
+            labels: {
+              generateLabels: function(chart) {
+                var colorMapping = {
+                  "o1-preview": "rgba(255, 206, 86, 0.2)",
+                  "claude-3.5-sonnet": "rgba(75, 192, 192, 0.2)",
+                  "gpt-4o": "rgba(54, 162, 235, 0.2)",
+                  "o1-mini": "rgba(255, 99, 132, 0.2)"
+                };
+                return Object.keys(colorMapping).map(function(key) {
+                  return {
+                    text: key,
+                    fillStyle: colorMapping[key],
+                    strokeStyle: colorMapping[key].replace('0.2', '1'),
+                    lineWidth: 1
+                  };
+                });
+              }
+            }
+          }
+      }
+    }});
+  });
+</script>
+
 ## Motivation
 
 This approach was motivated by OpenAI's recently release o1 models.
@@ -89,106 +191,6 @@ aider --o1-preview --senior
 
 ## Full results
 
-<style>
-  .shaded td {
-    background-color: #f2f2f2;
-    border-top: 1px solid #ccc;
-  }
-  table {
-    border-collapse: collapse;
-    width: 100%;
-  }
-  th {
-    padding: 8px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
-  th {
-    background-color: #e2e2e2;
-  }
-</style>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-{% assign sorted_data = site.data.senior | sort: "pass_rate_2" | reverse %}
-<canvas id="passRateChart" width="400" height="200"></canvas>
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    var ctx = document.getElementById('passRateChart').getContext('2d');
-    var labels = [];
-    var data = [];
-    var colorMapping = {
-      "claude-3.5-sonnet": "rgba(75, 192, 192, 0.2)",
-      "o1-mini": "rgba(255, 99, 132, 0.2)",
-      "gpt-4o": "rgba(54, 162, 235, 0.2)",
-      "o1-preview": "rgba(255, 206, 86, 0.2)"
-    };
-    var borderColorMapping = {
-      "claude-3.5-sonnet": "rgba(75, 192, 192, 1)",
-      "o1-mini": "rgba(255, 99, 132, 1)",
-      "gpt-4o": "rgba(54, 162, 235, 1)",
-      "o1-preview": "rgba(255, 206, 86, 1)"
-    };
-    var backgroundColors = [];
-    var borderColors = [];
-    {% assign grouped_data = sorted_data | group_by: "model" %}
-    {% for group in grouped_data %}
-      {% for item in group.items %}
-        labels.push("{{ item.model }} - {{ item.junior_model }}");
-        data.push({{ item.pass_rate_2 }});
-        backgroundColors.push(colorMapping["{{ item.model }}"]);
-        borderColors.push(borderColorMapping["{{ item.model }}"]);
-      {% endfor %}
-    {% endfor %}
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: 'Pass Rate',
-          data: data,
-          backgroundColor: 'rgba(75, 192, 192, 0.2)',
-          borderColor: 'rgba(75, 192, 192, 1)',
-          borderWidth: 1,
-          backgroundColor: backgroundColors,
-          borderColor: borderColors
-        }]
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Pass Rate (%)'
-            }
-          }
-        },
-        plugins: {
-          legend: {
-            display: true,
-            labels: {
-              generateLabels: function(chart) {
-                var colorMapping = {
-                  "claude-3.5-sonnet": "rgba(75, 192, 192, 0.2)",
-                  "o1-mini": "rgba(255, 99, 132, 0.2)",
-                  "gpt-4o": "rgba(54, 162, 235, 0.2)",
-                  "o1-preview": "rgba(255, 206, 86, 0.2)"
-                };
-                return Object.keys(colorMapping).map(function(key) {
-                  return {
-                    text: key,
-                    fillStyle: colorMapping[key],
-                    strokeStyle: colorMapping[key].replace('0.2', '1'),
-                    lineWidth: 1
-                  };
-                });
-              }
-            }
-          }
-      }
-    });
-  });
-</script>
 
 <table>
   <thead>
