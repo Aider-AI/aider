@@ -1,0 +1,14 @@
+---
+title: A draft post.
+excerpt: With a draft summary.
+highlight_image: /assets/linting.jpg
+draft: true
+nav_exclude: true
+---
+{% if page.date %}
+<p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
+{% endif %}
+
+# Separating code reasoning and editing
+
+
