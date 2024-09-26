@@ -40,7 +40,7 @@ Here's a table containing the benchmark data for different model configurations:
     <tr>
       <th>Senior</th>
       <th>Junior</th>
-      <th>Edit Format (Junior/Senior)</th>
+      <th>Edit Format</th>
       <th>Pass Rate (%)</th>
       <th>Average Time (sec)</th>
       <th>Total Cost ($)</th>
