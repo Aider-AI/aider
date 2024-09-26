@@ -70,10 +70,30 @@ o1-preview as Senior and Deepseek as Junior, raising the SOTA from 79.7% up to 8
       {% for item in group.items %}
         labels.push("{{ item.junior_model | default: "(No Junior)" }} {{ item.junior_edit_format | default: item.edit_format }}");
         data.push({{ item.pass_rate_2 }});
-        backgroundColors.push(colorMapping["{{ item.model }}"]);
+        var bgColor = colorMapping["{{ item.model }}"];
+        if ("{{ item.junior_model }}" === "deepseek" && "{{ item.junior_edit_format }}" === "whole") {
+          bgColor = createStripedPattern(bgColor);
+        }
+        backgroundColors.push(bgColor);
         borderColors.push(borderColorMapping["{{ item.model }}"]);
       {% endfor %}
     {% endfor %}
+
+    function createStripedPattern(color) {
+      var canvas = document.createElement('canvas');
+      var ctx = canvas.getContext('2d');
+      canvas.width = 10;
+      canvas.height = 10;
+      ctx.fillStyle = color;
+      ctx.fillRect(0, 0, 10, 10);
+      ctx.strokeStyle = 'white';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(10, 10);
+      ctx.stroke();
+      return ctx.createPattern(canvas, 'repeat');
+    }
     new Chart(ctx, {
       type: 'bar',
       data: {
@@ -133,9 +153,13 @@ o1-preview as Senior and Deepseek as Junior, raising the SOTA from 79.7% up to 8
                   "o1-mini": "rgba(255, 99, 132, 0.2)"
                 };
                 return Object.keys(colorMapping).map(function(key) {
+                  var fillStyle = colorMapping[key];
+                  if (chart.data.labels.some(label => label.includes('deepseek whole'))) {
+                    fillStyle = createStripedPattern(fillStyle);
+                  }
                   return {
                     text: key,
-                    fillStyle: colorMapping[key],
+                    fillStyle: fillStyle,
                     strokeStyle: colorMapping[key].replace('0.2', '1'),
                     lineWidth: 1
                   };
