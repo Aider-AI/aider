@@ -13,18 +13,24 @@ nav_exclude: true
 
 Here's a table containing the benchmark data for different model configurations:
 
-| Senior | Junior | Junior Edit Format | Pass Rate (%) | Average Time (sec) | Total Cost ($) |
-|-------|--------------|---------------------|-----------------|-------------------|----------------|
-| o1-preview | deepseek | junior-whole | 85.0 | 67.4 | 35.32 |
-| o1-preview | claude-3.5-sonnet | junior-diff | 82.7 | 44.9 | 37.62 |
-| o1-preview | gpt-4o | junior-diff | 80.5 | 42.3 | 39.38 |
-| o1-preview | deepseek | junior-diff | 80.5 | 73.2 | 35.79 |
-| claude-3.5-sonnet | claude-3.5-sonnet | junior-diff | 80.5 | 25.1 | 4.95 |
-| gpt-4o | gpt-4o | junior-diff | 75.2 | 18.2 | 6.09 |
-| o1-mini | gpt-4o | junior-diff | 70.7 | 23.7 | 9.32 |
-| o1-mini | deepseek | junior-diff | 69.2 | 52.2 | 5.79 |
-|-------|--------------|---------------------|-----------------|-------------------|----------------|
+{% assign sorted_data = site.data.senior | sort: "pass_rate_2" | reverse %}
+{% assign grouped_data = sorted_data | group_by: "model" %}
+{% assign sorted_groups = grouped_data | sort: "items" | reverse %}
 
-This table provides a comparison of different model configurations, showing their performance in terms of pass rate, processing time, and cost.
+| Senior | Junior | Junior Edit Format | Pass Rate (%) | Average Time (sec) | Total Cost ($) |
+|--------|--------|---------------------|----------------|---------------------|----------------|
+{% for group in sorted_groups %}
+{% assign top_pass_rate = group.items | map: "pass_rate_2" | sort | last %}
+{% assign sorted_items = group.items | sort: "pass_rate_2" | reverse %}
+{% for item in sorted_items %}
+| {{ item.model }} | {{ item.junior_model }} | {{ item.junior_edit_format }} | {{ item.pass_rate_2 }} | {{ item.seconds_per_case }} | {{ item.total_cost }} |
+{% endfor %}
+{% unless forloop.last %}
+|--------|--------|---------------------|----------------|---------------------|----------------|
+{% endunless %}
+{% endfor %}
+|--------|--------|---------------------|----------------|---------------------|----------------|
+
+This table provides a comparison of different model configurations, showing their performance in terms of pass rate, processing time, and cost. The data is grouped by the Senior model and sorted by the highest Pass Rate within each group (in descending order). Within groups, rows are sorted by decreasing Pass Rate.
 
 
