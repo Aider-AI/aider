@@ -185,14 +185,15 @@ Some noteworthy observations:
 - Pairing Sonnet/Sonnet and GPT-4o/GPT-4o provides significant lift for both models, especially for GPT-4o.
 - Deepseek is surprisingly effective as a Junior model. It seems remarkably capable at turning proposed coding solutions into new, updated versions of the source files. Using the efficient "diff" editing format, Deepseek helps all the Senior models except for Sonnet.
 
-## Try it
+## Try it!
 
-Aider has built in defaults to support Senior/Junior coding with
+The development version of aider 
+has built in defaults to support Senior/Junior coding with
 OpenAI's o1 models, gpt-4o and Anthropic's Claude 3.5 Sonnet.
 Run aider with `--senior` or get started quickly like this:
 
 ```
-pip install -U aider-chat
+pip install --upgrade git+https://github.com/paul-gauthier/aider.git
 
 # Change directory into a git repo
 cd /to/your/git/repo
