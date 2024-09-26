@@ -56,7 +56,7 @@ Here's a table containing the benchmark data for different model configurations:
           <td>{{ item.junior_edit_format | default: item.edit_format }}</td>
           <td>{{ item.pass_rate_2 }}</td>
           <td>{{ item.seconds_per_case }}</td>
-          <td>${{ item.total_cost }}</td>
+          <td>${{ item.total_cost | number_format: 2 }}</td>
         </tr>
       {% endfor %}
     {% endfor %}
