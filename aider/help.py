@@ -2,6 +2,7 @@
 
 import os
 import warnings
+from json.decoder import JSONDecodeError
 from pathlib import Path
 
 import importlib_resources
@@ -69,35 +70,42 @@ def get_index():
 
     dname = Path.home() / ".aider" / "caches" / ("help." + __version__)
 
-    if dname.exists():
-        storage_context = StorageContext.from_defaults(
-            persist_dir=dname,
-        )
-        index = load_index_from_storage(storage_context)
-    else:
-        parser = MarkdownNodeParser()
-
-        nodes = []
-        for fname in get_package_files():
-            fname = Path(fname)
-            if any(fname.match(pat) for pat in exclude_website_pats):
-                continue
-
-            doc = Document(
-                text=importlib_resources.files("aider.website")
-                .joinpath(fname)
-                .read_text(encoding="utf-8"),
-                metadata=dict(
-                    filename=fname.name,
-                    extension=fname.suffix,
-                    url=fname_to_url(str(fname)),
-                ),
+    try:
+        if dname.exists():
+            storage_context = StorageContext.from_defaults(
+                persist_dir=dname,
             )
-            nodes += parser.get_nodes_from_documents([doc])
+            index = load_index_from_storage(storage_context)
+            return index
+    except JSONDecodeError as err:
+        print(f"Help file cache {dname} is corrupt: {err}")
+        print("Deleting file")
+        os.remove(dname)
+        # Fall through to create index new
 
-        index = VectorStoreIndex(nodes, show_progress=True)
-        dname.parent.mkdir(parents=True, exist_ok=True)
-        index.storage_context.persist(dname)
+    parser = MarkdownNodeParser()
+
+    nodes = []
+    for fname in get_package_files():
+        fname = Path(fname)
+        if any(fname.match(pat) for pat in exclude_website_pats):
+            continue
+
+        doc = Document(
+            text=importlib_resources.files("aider.website")
+            .joinpath(fname)
+            .read_text(encoding="utf-8"),
+            metadata=dict(
+                filename=fname.name,
+                extension=fname.suffix,
+                url=fname_to_url(str(fname)),
+            ),
+        )
+        nodes += parser.get_nodes_from_documents([doc])
+
+    index = VectorStoreIndex(nodes, show_progress=True)
+    dname.parent.mkdir(parents=True, exist_ok=True)
+    index.storage_context.persist(dname)
 
     return index
 
