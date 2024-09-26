@@ -18,7 +18,7 @@ Aider now has experimental support for using two models to complete each coding 
 
 Splitting up "code reasoning" and "code editing" has produced SOTA results on
 [aider's code editing benchmark](/docs/benchmarks.html#the-benchmark).
-Both Sonnet and o1-preview exceed the preivous SOTA when using this
+Both Sonnet and o1-preview exceed the previous SOTA when using this
 new Senior/Junior approach.
 The best result was obtained with
 o1-preview as Senior and Deepseek as Junior, raising the SOTA from 79.7% up to 85%!
@@ -70,48 +70,10 @@ o1-preview as Senior and Deepseek as Junior, raising the SOTA from 79.7% up to 8
       {% for item in group.items %}
         labels.push("{{ item.junior_model | default: "(No Junior)" }} {{ item.junior_edit_format | default: item.edit_format }}");
         data.push({{ item.pass_rate_2 }});
-        var bgColor = colorMapping["{{ item.model }}"];
-        if ("{{ item.junior_model }}" === "deepseek") {
-          if ("{{ item.junior_edit_format }}" === "whole") {
-            bgColor = createStripedPattern(bgColor);
-          } else if ("{{ item.junior_edit_format }}" === "diff") {
-            bgColor = createPolkaDotPattern(bgColor);
-          }
-        }
-        backgroundColors.push(bgColor);
+        backgroundColors.push(colorMapping["{{ item.model }}"]);
         borderColors.push(borderColorMapping["{{ item.model }}"]);
       {% endfor %}
     {% endfor %}
-
-    function createStripedPattern(color) {
-      var canvas = document.createElement('canvas');
-      var ctx = canvas.getContext('2d');
-      canvas.width = 10;
-      canvas.height = 10;
-      ctx.fillStyle = color;
-      ctx.fillRect(0, 0, 10, 10);
-      ctx.strokeStyle = 'white';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.lineTo(10, 10);
-      ctx.stroke();
-      return ctx.createPattern(canvas, 'repeat');
-    }
-
-    function createPolkaDotPattern(color) {
-      var canvas = document.createElement('canvas');
-      var ctx = canvas.getContext('2d');
-      canvas.width = 10;
-      canvas.height = 10;
-      ctx.fillStyle = color;
-      ctx.fillRect(0, 0, 10, 10);
-      ctx.fillStyle = 'white';
-      ctx.beginPath();
-      ctx.arc(5, 5, 2, 0, Math.PI * 2);
-      ctx.fill();
-      return ctx.createPattern(canvas, 'repeat');
-    }
     new Chart(ctx, {
       type: 'bar',
       data: {
