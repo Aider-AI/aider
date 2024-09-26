@@ -108,8 +108,47 @@ aider --o1-preview --senior
   }
 </style>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% assign sorted_data = site.data.senior | sort: "pass_rate_2" | reverse %}
-{% assign grouped_data = sorted_data | group_by: "model" %}
+<canvas id="passRateChart" width="400" height="200"></canvas>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var ctx = document.getElementById('passRateChart').getContext('2d');
+    var labels = [];
+    var data = [];
+    {% assign grouped_data = sorted_data | group_by: "model" %}
+    {% for group in grouped_data %}
+      {% for item in group.items %}
+        labels.push("{{ item.model }} - {{ item.junior_model }}");
+        data.push({{ item.pass_rate_2 }});
+      {% endfor %}
+    {% endfor %}
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Pass Rate',
+          data: data,
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Pass Rate (%)'
+            }
+          }
+        }
+      }
+    });
+  });
+</script>
 
 <table>
   <thead>
