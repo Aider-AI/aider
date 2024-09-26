@@ -13,15 +13,13 @@ nav_exclude: true
 
 Aider now has experimental support for using two models to complete each coding task:
 
-- A Senior model is asked to describe how to solve the coding problem in detail.
+- A Senior model is asked to describe how to solve the coding problem.
 - A Junior model is given the Senior's solution and asked to produce specific code editing instructions to apply those changes to source files.
 
 Splitting up "code reasoning" and "code editing" has produced SOTA results on
 [aider's code editing benchmark](/docs/benchmarks.html#the-benchmark).
-Both Sonnet and o1-preview exceed the previous SOTA when using this
-new Senior/Junior approach.
-The best result was obtained with
-o1-preview as Senior and Deepseek as Junior, raising the SOTA from 79.7% up to 85%!
+It also significantly improved the benchmark scores of four of the
+top coding models, as compared to their previous "solo" scores (striped bars).
 
 <style>
   .shaded td {
@@ -199,7 +197,7 @@ o1-preview as Senior and Deepseek as Junior, raising the SOTA from 79.7% up to 8
 ## Motivation
 
 This approach was motivated by OpenAI's o1 models.
-They are strong at reasoning, but often fail to output well formed
+They are strong at reasoning, but often fail to output properly formatted
 code editing instructions.
 It helps to instead let them describe the solution
 however they prefer and then pass that output to a more traditional LLM.
@@ -208,7 +206,7 @@ produce the code editing instructions needed to update
 the existing source code file.
 
 Traditional frontier models like gpt-4o and Sonnet also
-seem to benefit from separating code reasoning and editing.
+seem to benefit from separating code reasoning and editing like this.
 A pair of gpt-4o
 or a pair of Sonnet models
 in Senior/Junior configuration outperform their previous solo benchmark results.
@@ -227,21 +225,22 @@ to allow LLMs to specify edits to local source files.
 All of aider's editing formats require the LLM to return source code edits in a specific text
 format, so that aider can process the edits and apply them to the local source files.
 
-Normally, aider asks the model to solve the coding problem by returning a well
+Normally, aider asks the model to solve a coding problem by returning a well
 formatted series of file edits.
 Aider encourages "chain of thought" by asking the model to explain the solution
 before diving into code edits.
 But this all happens in a single prompt/response round trip to the LLM,
-and the model has to spend some attention on confirming to the edit format.
+and the model has to split its attention between 
+solving the coding problem and confirming to the edit format.
 
-The Senior/Junior approach splits this into two round trips, possible
+The Senior/Junior approach splits this into two round trips, possibly
 using two different LLMs:
 
 - Ask how to solve the coding problem (Senior).
-- Ask for the solution as a series of well formed code edits (Junior).
+- Turn the proposed solution into a series of well formed code edits (Junior).
 
 The Senior/Junior approach allows the Senior to focus on solving the coding problem
-and leaves the task of turning that into properly formatted edits to the Junior.
+and describe the solution however comes naturally to it.
 This gives the Senior more reasoning capacity to focus just on solving the coding
 task.
 We can also assign the Senior task to a strong reasoning model like o1-preview,
@@ -258,7 +257,7 @@ score for various combinations of Senior and Junior models.
 
 Some noteworthy observations:
 
-- Pairing o1-preview as Senior with Deepseek as Junior sets a SOTA significantly above the previous best score. This result is obtained with Deepseek using the "whole" editing format, requiring it to output a full update copy of each edited source file. This is quite slow, so probably not practical for interactive use with aider.
+- Pairing o1-preview as Senior with Deepseek as Junior sets a SOTA significantly above the previous best score. This result is obtained with Deepseek using the "whole" editing format, requiring it to output a full update copy of each edited source file. Both of these steps are therefore quite slow, so probably not practical for interactive use with aider.
 - Pairing OpenAI's o1-preview with Anthropic's Sonnet as the Junior produces the second best result. This is an entirely practical configuration for users able to work with both providers.
 - Pairing Sonnet/Sonnet and GPT-4o/GPT-4o provides significant lift for both models compared to their solo results, especially for GPT-4o.
 - Deepseek is surprisingly effective as a Junior model. It seems remarkably capable at turning proposed coding solutions into new, updated versions of the source files. Using the efficient "diff" editing format, Deepseek helps all the Senior models except for Sonnet.
@@ -271,7 +270,7 @@ OpenAI's o1 models, gpt-4o and Anthropic's Claude 3.5 Sonnet.
 Run aider with `--senior` or get started quickly like this:
 
 ```
-pip install --upgrade git+https://github.com/paul-gauthier/aider.git
+pip install -U git+https://github.com/paul-gauthier/aider.git
 
 # Change directory into a git repo
 cd /to/your/git/repo
