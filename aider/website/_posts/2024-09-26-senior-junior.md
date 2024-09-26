@@ -116,11 +116,27 @@ aider --o1-preview --senior
     var ctx = document.getElementById('passRateChart').getContext('2d');
     var labels = [];
     var data = [];
+    var colorMapping = {
+      "claude-3.5-sonnet": "rgba(75, 192, 192, 0.2)",
+      "o1-mini": "rgba(255, 99, 132, 0.2)",
+      "gpt-4o": "rgba(54, 162, 235, 0.2)",
+      "o1-preview": "rgba(255, 206, 86, 0.2)"
+    };
+    var borderColorMapping = {
+      "claude-3.5-sonnet": "rgba(75, 192, 192, 1)",
+      "o1-mini": "rgba(255, 99, 132, 1)",
+      "gpt-4o": "rgba(54, 162, 235, 1)",
+      "o1-preview": "rgba(255, 206, 86, 1)"
+    };
+    var backgroundColors = [];
+    var borderColors = [];
     {% assign grouped_data = sorted_data | group_by: "model" %}
     {% for group in grouped_data %}
       {% for item in group.items %}
         labels.push("{{ item.model }} - {{ item.junior_model }}");
         data.push({{ item.pass_rate_2 }});
+        backgroundColors.push(colorMapping["{{ item.model }}"]);
+        borderColors.push(borderColorMapping["{{ item.model }}"]);
       {% endfor %}
     {% endfor %}
     new Chart(ctx, {
@@ -132,7 +148,9 @@ aider --o1-preview --senior
           data: data,
           backgroundColor: 'rgba(75, 192, 192, 0.2)',
           borderColor: 'rgba(75, 192, 192, 1)',
-          borderWidth: 1
+          borderWidth: 1,
+          backgroundColor: backgroundColors,
+          borderColor: borderColors
         }]
       },
       options: {
