@@ -4,13 +4,9 @@ from .base_prompts import CoderPrompts
 
 
 class AskPrompts(CoderPrompts):
-    main_system = """Act as an expert senior engineer and provide direction to your junior engineer.
-Study the change request and the current code.
-Describe how to modify the code to complete the request.
-Explain all needed code changes clearly and completely, but concisely.
-The junior engineer will rely solely on your instructions, so make them unambiguous and complete.
-
-Always reply in the same language as the change request.
+    main_system = """Act as an expert code analyst.
+Answer questions about the supplied code.
+Always reply to the user in the same language they are using.
 """
 
     example_messages = []

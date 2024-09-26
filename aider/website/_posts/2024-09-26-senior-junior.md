@@ -155,15 +155,15 @@ They are strong at reasoning, but often fail to output well formed
 code editing instructions.
 It helps to instead let them describe the solution
 however they prefer and then pass that output to a more traditional LLM.
-The traditional LLM can then
-produce the specific code edits needed to update
+This Junior LLM can then interpret the solution description and
+produce the code editing instructions needed to update
 the existing source code file.
 
 Traditional frontier models like gpt-4o and Sonnet also
 seem to benefit from separating code reasoning and editing.
 A pair of gpt-4o
 or a pair of Sonnet models
-in Senior/Junior configuration outperform their previous benchmark results.
+in Senior/Junior configuration outperform their previous solo benchmark results.
 
 Another reason why this approach is newly viable is that the
 speed and costs of frontier models have been rapidly improving.
@@ -184,16 +184,6 @@ Some noteworthy observations:
 - Pairing OpenAI's o1-preview with Anthropic's Sonnet as the Junior produces the second best result, and is an entirely practical configuration for users able to work with both providers.
 - Pairing Sonnet/Sonnet and GPT-4o/GPT-4o provides significant lift for both models, especially for GPT-4o.
 - Deepseek is surprisingly effective as a Junior model. It seems remarkably capable at turning proposed coding solutions into new, updated versions of the source files. Using the efficient "diff" editing format, Deepseek helps all the Senior models except for Sonnet.
-
-## Related work
-
-This approach is somewhat similar to 
-[Cursor's "Instant Apply"](https://fireworks.ai/blog/cursor) feature.
-The main differences are:
-
-- Aider can flexibly use any off the shelf model as the Junior.
-- Aider' Junior model can use the efficient "diff" editing format to specify source code changes as a series of search/replace operations. Cursor's instant apply models essentially use the "whole" edit format, asking the model to output a full, updated copy of each edited source file.
-- Cursor's apply model is highly optimized for speed and reaches 1,000 tokens/second, which mitigates the delays associated with outputting whole copies of edited files.
 
 ## Try it
 
