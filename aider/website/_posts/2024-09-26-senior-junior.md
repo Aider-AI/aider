@@ -71,7 +71,7 @@ o1-preview as Senior and Deepseek as Junior, raising the SOTA from 79.7% up to 8
       {% for item in group.items %}
         labels.push("{{ item.junior_model | default: "(No Junior)" }} {{ item.junior_edit_format | default: item.edit_format }}");
         data.push({{ item.pass_rate_2 }});
-        if ("{{ item.junior_model }}" == "(No Junior)") {
+        if ("{{ item.junior_model }}" == "") {
           backgroundColors.push(pattern);
         } else {
           backgroundColors.push(colorMapping["{{ item.model }}"]);
