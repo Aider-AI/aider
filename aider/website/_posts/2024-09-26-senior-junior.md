@@ -91,13 +91,14 @@ Splitting up "code reasoning" and "code editing" has produced SOTA results on
             title: {
               display: true,
               text: 'Pass Rate (%)'
-            },
-            x: {
-              title: {
-                display: true,
-                text: 'Junior model and edit format'
-              }
             }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Junior model and edit format'
+            }
+          }
           }
         },
         plugins: {
