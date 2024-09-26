@@ -42,9 +42,84 @@ pair programming AI coding experience.
 
 ## Results
 
-The graph above and table below show the
+The graph below and table show the
 [aider's code editing benchmark](/docs/benchmarks.html#the-benchmark)
 score for various combinations of Senior and Junior models.
+
+<div>
+  <canvas id="seniorJuniorChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const ctx = document.getElementById('seniorJuniorChart').getContext('2d');
+  
+  const data = {
+    labels: [],
+    datasets: []
+  };
+
+  {% assign sorted_data = site.data.senior | sort: "pass_rate_2" | reverse %}
+  {% assign grouped_data = sorted_data | group_by: "model" %}
+
+  {% for group in grouped_data %}
+    const dataset = {
+      label: '{{ group.name }}',
+      data: [],
+      backgroundColor: getRandomColor(),
+    };
+
+    {% for item in group.items %}
+      data.labels.push('{{ item.junior_model }} ({{ item.junior_edit_format | default: item.edit_format }})');
+      dataset.data.push({{ item.pass_rate_2 }});
+    {% endfor %}
+
+    data.datasets.push(dataset);
+  {% endfor %}
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: data,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Pass Rate for Senior/Junior/EditFormat Combinations'
+        },
+        legend: {
+          position: 'top',
+        }
+      },
+      scales: {
+        x: {
+          stacked: true,
+        },
+        y: {
+          stacked: true,
+          beginAtZero: true,
+          max: 100,
+          title: {
+            display: true,
+            text: 'Pass Rate (%)'
+          }
+        }
+      }
+    }
+  });
+});
+
+function getRandomColor() {
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+</script>
 
 Some noteworthy observations:
 
