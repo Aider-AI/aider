@@ -570,7 +570,10 @@ class Commands:
         return fname
 
     def completions_read_only(self):
-        return self.completions_add()
+        files = set(self.coder.get_all_relative_files(include_nonrepo=True))
+        files = files - set(self.coder.get_inchat_relative_files())
+        files = [self.quote_fname(fn) for fn in files]
+        return files
 
     def completions_add(self):
         files = set(self.coder.get_all_relative_files())
