@@ -1,7 +1,7 @@
 ---
-title: A draft post.
-excerpt: With a draft summary.
-highlight_image: /assets/linting.jpg
+title: Separating code reasoning and editing
+excerpt: A Senior model describes how to solve the coding problem, and a Junior model translates that into file edits. This Senior/Junior approach produces SOTA benchmark results.
+highlight_image: /assets/senior.jpg
 draft: true
 nav_exclude: true
 ---
@@ -180,9 +180,9 @@ score for various combinations of Senior and Junior models.
 
 Some noteworthy observations:
 
-- Pairing o1-preview as Senior with Deepseek as Junior sets a SOTA significantly above the previous best. This result is obtained with Deepseek using the "whole" editing format, requiring it to output a full update copy of each edited source file. This is quite slow, and so probably not practical for interactive use with aider.
-- Pairing OpenAI's o1-preview with Anthropic's Sonnet as the Junior produces the second best result, and is an entirely practical configuration for users able to work with both providers.
-- Pairing Sonnet/Sonnet and GPT-4o/GPT-4o provides significant lift for both models, especially for GPT-4o.
+- Pairing o1-preview as Senior with Deepseek as Junior sets a SOTA significantly above the previous best score. This result is obtained with Deepseek using the "whole" editing format, requiring it to output a full update copy of each edited source file. This is quite slow, so probably not practical for interactive use with aider.
+- Pairing OpenAI's o1-preview with Anthropic's Sonnet as the Junior produces the second best result. This is an entirely practical configuration for users able to work with both providers.
+- Pairing Sonnet/Sonnet and GPT-4o/GPT-4o provides significant lift for both models compared to their solo results, especially for GPT-4o.
 - Deepseek is surprisingly effective as a Junior model. It seems remarkably capable at turning proposed coding solutions into new, updated versions of the source files. Using the efficient "diff" editing format, Deepseek helps all the Senior models except for Sonnet.
 
 ## Try it!
