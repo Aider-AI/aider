@@ -24,11 +24,20 @@ with the correct set of dependencies.
 
 Package managers often install aider with the wrong dependencies, leading
 to import errors and other problems.
+
 The recommended way to 
 install aider is with 
-[pip](/docs/install/install.html)
-or
-[pipx](/docs/install/pipx.html).
+[pip](/docs/install/install.html).
+Be sure to use the `--ignore-installed` switch so that the correct
+versions of dependencies will be installed.
+
+```
+python -m pip install -U --ignore-installed aider-chat
+```
+
+A very safe way is to
+[install aider using pipx](/docs/install/pipx.html),
+which will ensure it is installed in a stand alone virtual environment.
 
 ## Dependency versions matter
 
