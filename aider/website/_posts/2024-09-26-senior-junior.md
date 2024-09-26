@@ -15,7 +15,21 @@ Here's a table containing the benchmark data for different model configurations:
 
 <style>
   .shaded {
-    background-color: #f0f0f0;
+    background-color: #e0e0e0;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  th {
+    background-color: #f2f2f2;
   }
 </style>
 
