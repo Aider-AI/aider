@@ -40,7 +40,7 @@ Here's a table containing the benchmark data for different model configurations:
     <tr>
       <th>Senior</th>
       <th>Junior</th>
-      <th>Edit Format</th>
+      <th>Edit Format (Junior/Senior)</th>
       <th>Pass Rate (%)</th>
       <th>Average Time (sec)</th>
       <th>Total Cost ($)</th>
@@ -53,7 +53,7 @@ Here's a table containing the benchmark data for different model configurations:
         <tr class="{% if group_class == 1 %}shaded{% endif %}">
           <td>{{ item.model }}</td>
           <td>{{ item.junior_model }}</td>
-          <td>{{ item.junior_edit_format }}</td>
+          <td>{{ item.junior_edit_format | default: item.edit_format }}</td>
           <td>{{ item.pass_rate_2 }}</td>
           <td>{{ item.seconds_per_case }}</td>
           <td>{{ item.total_cost }}</td>
