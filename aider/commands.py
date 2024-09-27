@@ -163,6 +163,11 @@ class Commands:
     def is_command(self, inp):
         return inp[0] in "/!"
 
+    def get_raw_completions(self, cmd):
+        cmd = cmd.replace("-", "_")
+        raw_completer = getattr(self, f"completions_raw_{cmd}", None)
+        return raw_completer
+
     def get_completions(self, cmd):
         assert cmd.startswith("/")
         cmd = cmd[1:]
