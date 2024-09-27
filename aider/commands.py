@@ -1161,16 +1161,20 @@ class Commands:
     def cmd_copy(self, args):
         "Copy the last assistant message to the clipboard"
         all_messages = self.coder.done_messages + self.coder.cur_messages
-        assistant_messages = [msg for msg in reversed(all_messages) if msg['role'] == 'assistant']
-        
+        assistant_messages = [msg for msg in reversed(all_messages) if msg["role"] == "assistant"]
+
         if not assistant_messages:
             self.io.tool_error("No assistant messages found to copy.")
             return
-        
-        last_assistant_message = assistant_messages[0]['content']
+
+        last_assistant_message = assistant_messages[0]["content"]
         pyperclip.copy(last_assistant_message)
-        
-        preview = last_assistant_message[:50] + "..." if len(last_assistant_message) > 50 else last_assistant_message
+
+        preview = (
+            last_assistant_message[:50] + "..."
+            if len(last_assistant_message) > 50
+            else last_assistant_message
+        )
         self.io.tool_output(f"Copied last assistant message to clipboard. Preview: {preview}")
 
     def cmd_report(self, args):
