@@ -54,10 +54,18 @@ top coding models, as compared to their previous "solo" scores (striped bars).
   document.addEventListener("DOMContentLoaded", function() {
     var ctx = document.getElementById('passRateChart').getContext('2d');
     
-    // Function to determine aspect ratio based on screen width
-    function getAspectRatio() {
-      return window.innerWidth < 600 ? 1 : 1.5;
+    // Function to determine aspect ratio and base font size based on screen width
+    function getChartSettings() {
+      if (window.innerWidth < 600) {
+        return { aspectRatio: 1.5, baseFontSize: 8 };
+      } else {
+        return { aspectRatio: 2, baseFontSize: 12 };
+      }
     }
+
+    var chartSettings = getChartSettings();
+    var baseFontSize = chartSettings.baseFontSize;
+
     var labels = [];
     var data = [];
     var colorMapping = {
@@ -110,7 +118,7 @@ top coding models, as compared to their previous "solo" scores (striped bars).
       options: {
         responsive: true,
         maintainAspectRatio: true,
-        aspectRatio: getAspectRatio(),
+        aspectRatio: chartSettings.aspectRatio,
         scales: {
           y: { 
             beginAtZero: true,
@@ -118,12 +126,12 @@ top coding models, as compared to their previous "solo" scores (striped bars).
               display: true,
               text: 'Pass Rate (%)',
               font: {
-                size: 18
+                size: baseFontSize + 6
               }
             },
             ticks: {
               font: {
-                size: 12
+                size: baseFontSize
               }
             }
           },
@@ -132,12 +140,12 @@ top coding models, as compared to their previous "solo" scores (striped bars).
               display: true,
               text: 'Editor model and edit format',
               font: {
-                size: 18
+                size: baseFontSize + 6
               }
             },
             ticks: {
               font: {
-                size: 16
+                size: baseFontSize + 4
               }
             }
           }
@@ -158,7 +166,7 @@ top coding models, as compared to their previous "solo" scores (striped bars).
                   position: 'start',
                   xAdjust: 10,
                   font: {
-                    size: 12
+                    size: baseFontSize
                   }
                 }
               }
@@ -170,13 +178,13 @@ top coding models, as compared to their previous "solo" scores (striped bars).
               display: true,
               text: 'Architect model',
               font: {
-                size: 16,
+                size: baseFontSize + 4,
                 weight: 'bold'
               }
             },
             labels: {
               font: {
-                size: 16
+                size: baseFontSize + 4
               },
               generateLabels: function(chart) {
                 var colorMapping = {
@@ -196,13 +204,26 @@ top coding models, as compared to their previous "solo" scores (striped bars).
               }
             }
           }
+        }
       }
-    }});
+    });
 
-    // Update aspect ratio on window resize
+    // Update aspect ratio and font sizes on window resize
     window.addEventListener('resize', function() {
-      chart.options.aspectRatio = getAspectRatio();
-      chart.resize();
+      var newSettings = getChartSettings();
+      chart.options.aspectRatio = newSettings.aspectRatio;
+      baseFontSize = newSettings.baseFontSize;
+      
+      // Update font sizes
+      chart.options.scales.y.title.font.size = baseFontSize + 6;
+      chart.options.scales.y.ticks.font.size = baseFontSize;
+      chart.options.scales.x.title.font.size = baseFontSize + 6;
+      chart.options.scales.x.ticks.font.size = baseFontSize + 4;
+      chart.options.plugins.annotation.annotations.line1.label.font.size = baseFontSize;
+      chart.options.plugins.legend.title.font.size = baseFontSize + 4;
+      chart.options.plugins.legend.labels.font.size = baseFontSize + 4;
+      
+      chart.update();
     });
   });
 
