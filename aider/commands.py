@@ -580,7 +580,20 @@ class Commands:
         return fname
 
     def completions_raw_read_only(self, document, complete_event):
-        pass
+        path_completer = PathCompleter(
+            only_directories=False,
+            get_paths=lambda: [self.coder.root],
+            file_filter=lambda fname: (
+                self.coder.repo is None
+                or not self.coder.repo.ignored_file(fname)
+            ),
+        )
+        
+        word_before_cursor = document.get_word_before_cursor(WORD=True)
+        
+        for completion in path_completer.get_completions(document, complete_event):
+            if completion.text.startswith(word_before_cursor):
+                yield completion
 
     def completions_add(self):
         files = set(self.coder.get_all_relative_files())
