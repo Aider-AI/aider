@@ -416,3 +416,52 @@
   versions: 0.57.2.dev
   seconds_per_case: 43.2
   total_cost: 2.1488
+
+- dirname: 2024-09-27-18-15-32--architect-4omini-4omini
+  test_cases: 133
+  model: gpt-4o-mini
+  edit_format: architect
+  commit_hash: 0bd8058-dirty
+  editor_model: gpt-4o-mini
+  editor_edit_format: whole
+  pass_rate_1: 43.6
+  pass_rate_2: 60.2
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 208
+  lazy_comments: 2
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: aider --model gpt-4o-mini
+  date: 2024-09-27
+  versions: 0.57.2.dev
+  seconds_per_case: 21.0
+  total_cost: 0.1527
+
+- dirname: 2024-07-18-18-57-46--gpt-4o-mini-whole
+  test_cases: 133
+  model: gpt-4o-mini
+  edit_format: whole
+  commit_hash: d31eef3-dirty
+  pass_rate_1: 40.6
+  pass_rate_2: 55.6
+  released: 2024-07-18
+  percent_cases_well_formed: 100.0
+  error_outputs: 1
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 1
+  lazy_comments: 0
+  syntax_errors: 1
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  command: aider --model gpt-4o-mini
+  date: 2024-07-18
+  versions: 0.44.1-dev
+  seconds_per_case: 7.8
+  total_cost: 0.0916

@@ -14,12 +14,12 @@ nav_exclude: true
 Aider now has experimental support for using two models to complete each coding task:
 
 - An Architect model is asked to describe how to solve the coding problem.
-- An Editor model is given the Architect's solution and asked to produce specific code editing instructions to apply those changes to source files.
+- An Editor model is given the Architect's solution and asked to produce specific code editing instructions to apply those changes to existing source files.
 
 Splitting up "code reasoning" and "code editing" has produced SOTA results on
 [aider's code editing benchmark](/docs/benchmarks.html#the-benchmark).
-It also significantly improved the benchmark scores of four of the
-top coding models, as compared to their previous "solo" scores (striped bars).
+It also significantly improved the benchmark scores of many
+models, compared to their previous "solo" baseline scores (striped bars).
 
 <style>
   .shaded td {
@@ -118,7 +118,11 @@ top coding models, as compared to their previous "solo" scores (striped bars).
     {% assign grouped_data = sorted_data | group_by: "model" %}
     {% for group in grouped_data %}
       {% for item in group.items %}
-        labels.push("{{ item.editor_model | default: "No architect/editor" }}: {{ item.editor_edit_format | default: item.edit_format }}");
+        if ("{{ item.editor_model }}" == "") {
+          labels.push("Baseline");
+        } else {       
+          labels.push("{{ item.editor_model }}: {{ item.editor_edit_format | default: item.edit_format }}");
+        }
         data.push({{ item.pass_rate_2 }});
         if ("{{ item.editor_model }}" == "") {
           backgroundColors.push(patterns["{{ item.model }}"]);
@@ -280,25 +284,19 @@ top coding models, as compared to their previous "solo" scores (striped bars).
 
 ## Motivation
 
-This approach was motivated by OpenAI's o1 models.
+This approach was motivated by the release of OpenAI's o1 models.
 They are strong at reasoning, but often fail to output properly formatted
 code editing instructions.
 It helps to instead let them describe the solution
 however they prefer and then pass that output to a more traditional LLM.
-This Editor LLM can then interpret the solution description and
+This second Editor LLM can then interpret the solution description and
 produce the code editing instructions needed to update
-the existing source code file.
+the existing source code.
 
-Traditional frontier models like GPT-4o and Sonnet also
-seem to benefit from separating code reasoning and editing like this.
-A pair of GPT-4o
-or a pair of Sonnet models
-in Architect/Editor configuration outperform their previous solo benchmark results.
-
-Another reason why this approach is newly viable is that the
-speed and costs of frontier models have been rapidly improving.
+This approach has recently become attractive for aider due to the
+rapid improvements in the speed and costs of frontier models.
 In particular, chaining older LLMs would have been quite slow and
-contrary to aider's goal of providing a rapid, interactive,
+incompatible with aider's goal of providing a rapid, interactive,
 pair programming AI coding experience.
 
 ## Code reasoning and code editing
@@ -324,12 +322,13 @@ using two different LLMs:
 
 The Architect/Editor approach allows the Architect to focus on solving the coding problem
 and describe the solution however comes naturally to it.
-This gives the Architect more reasoning capacity to focus just on solving the coding
-task.
-We can also assign the Architect task to a strong reasoning model like o1-preview,
-and give the editing task to an appropriate model based on cost, editing skill, etc.
 Similarly, the Editor can focus all of its attention on properly formatting the edits
 without needing to reason much about how to solve the coding problem.
+
+We can assign the Architect and Editor roles to LLMs which are well suited to their needs.
+Strong reasoning model like o1-preview make excellent Architects, while
+the Editor role can be assigned to an appropriate model based on cost, speed
+and code editing skill.
 
 ## Results
 
@@ -342,7 +341,9 @@ Some noteworthy observations:
 
 - Pairing o1-preview as Architect with Deepseek as Editor sets a SOTA significantly above the previous best score. This result is obtained with Deepseek using the "whole" editing format, requiring it to output a full update copy of each edited source file. Both of these steps are therefore quite slow, so probably not practical for interactive use with aider.
 - Pairing OpenAI's o1-preview with Anthropic's Sonnet as the Editor produces the second best result. This is an entirely practical configuration for users able to work with both providers.
-- Pairing Sonnet/Sonnet and GPT-4o/GPT-4o provides significant lift for both models compared to their solo results, especially for GPT-4o.
+- Pairing many models with themselves in the Architect/Editor configuration can provide
+significant benefits. 
+Sonnet, GPT-4o and GPT-4o-mini all scored higher when used as an Architect/Editor pair.
 - Deepseek is surprisingly effective as an Editor model. It seems remarkably capable at turning proposed coding solutions into new, updated versions of the source files. Using the efficient "diff" editing format, Deepseek helps all the Architect models except for Sonnet.
 
 ## Try it!
@@ -379,6 +380,14 @@ For more details, see documentation on
 
 ## Full results
 
+Below are the benchmark results using various models as the Architect, paired with
+various models as the Editor.
+Each section includes a "baseline" result,
+where the model
+by itself with aider's normal "code" editing mode
+(not as part of an Architect/Editor configuration).
+This baseline represents the performance previously available when using
+this model with aider.
 
 <div class="table-container">
   <table class="responsive-table">
@@ -396,7 +405,7 @@ For more details, see documentation on
         {% for item in group.items %}
           <tr class="{% if group_class == 1 %}shaded{% endif %}">
             <td>{{ item.model }}</td>
-            <td>{{ item.editor_model }}</td>
+            <td>{{ item.editor_model | default: "<b>Baseline<b>" }}</td>
             <td style="text-align: center;">{{ item.editor_edit_format | default: item.edit_format }}</td>
             <td style="text-align: right;">{{ item.pass_rate_2 }}%</td>
           </tr>
