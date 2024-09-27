@@ -1078,7 +1078,7 @@ class Coder:
                         stream=False,
                         max_tokens=1,
                         extra_headers=self.main_model.extra_headers,
-                        **self.main_model.extra_params  # Use **kwargs here
+                        **self.main_model.extra_params,  # Use **kwargs here
                     )
                 except Exception as err:
                     self.io.tool_warning(f"Cache warming error: {str(err)}")
