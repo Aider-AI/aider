@@ -3,7 +3,7 @@
 
 ### main branch
 
-- [Use a pair of Architect/Editor models for improved coding](https://aider.chat/2024/09/26/senior-editor.html)
+- [Use a pair of Architect/Editor models for improved coding](https://aider.chat/2024/09/26/architect.html)
   - Use a strong reasoning model like o1-preview as your Architect.
   - Use a cheaper, faster model like gpt-4o as your Editor.
 - New `--o1-preview` and `--o1-mini` shortcuts.
