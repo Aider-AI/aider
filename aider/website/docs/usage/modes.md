@@ -50,8 +50,14 @@ This probably makes it slower and more expensive than using code mode.
 
 Architect mode is especially useful with OpenAI's o1 models, which are strong at
 reasoning but less capable at editing files.
-Using an o1 architect with an editor model like GPT-4o or Sonnet will
+Pairing an o1 architect with an editor model like GPT-4o or Sonnet will
 give the best results.
+
+But architect mode is also quite helpful when you use GPT-4o or Sonnet
+at both the architect and the editor.
+Allowing the model two requests to solve the problem and edit the files
+usually provides a better result.
+
 See this article on 
 [aider's architect/editor mode](/2024/09/26/architect.html)
 for more details.
