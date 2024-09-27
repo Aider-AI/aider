@@ -6,15 +6,17 @@ description: Using the chat, ask and help chat modes.
 
 # Chat modes
 
-Aider has 3 different chat modes:
+Aider has a few different chat modes:
 
 - `code` - Aider will make changes to your code to satisfy your requests.
+- `architect` - Aider will first propose a solution, then ask if you want it to turn that proposal into edits to your files.
 - `ask` - Aider will answer questions about your code, but never edit it.
 - `help` - Aider will answer questions about using aider, configuring, troubleshooting, etc.
 
 By default, aider starts in "code" mode. As you are talking, you can
-send individual messages in a specific mode using `/code`, `/ask`, and `/help` commands:
-Using `/code`, `/ask`, and `/help` applies just to that particular message.
+send individual messages in a specific mode using 
+`/code`, `/architect`, `/ask`, and `/help` commands:
+Using these `/`-commands applies just to that particular message.
 Your next message will go back to the active mode (usually "code" mode by default).
 
 You can switch the active mode in a sticky way
@@ -22,11 +24,40 @@ with the `/chat-mode <mode>` command:
 
 ```
 /chat-mode code
+/chat-mode architect
 /chat-mode ask
 /chat-mode help
 ```
 
 Or you can launch aider in one of the modes with the `--chat-mode <mode>` switch.
+There is also a special shortcut `--architect` to launch in `--chat-mode architect`.
+
+## Architect mode and the editor model
+
+When you are in architect mode, aider sends you request to two models:
+
+1. First, it sends your request to the main active model.
+This model is set by `/model`, `--model` or the shortcut switches like `--sonnet`. 
+After it replies, aider will offer to edit the files based on the response.
+
+2. To edit the files, aider sends a second LLM request, asking for specific code editing instructions.
+This request goes to the "editor" model.
+Aider has built in defaults to select an editor model based on your main model.
+Or, you can choose an editor model yourself with `--editor-model <model>`.
+
+Architect mode produces better results than code mode, but uses two LLM requests.
+This probably makes it slower and more expensive than using code mode.
+
+Architect mode is especially useful with OpenAI's o1 models, which are strong at
+reasoning but less capable at editing files.
+Using an o1 architect with an editor model like GPT-4o or Sonnet will
+give the best results.
+See this article on 
+[aider's architect/editor mode](/2024/09/26/architect.html)
+for more details.
+
+
+## Examples
 
 <div class="chat-transcript" markdown="1">
 
@@ -62,6 +93,27 @@ print(factorial(5))  # Output: 120
 ```
 
 This function uses recursion to calculate the factorial. It's been added to your code.
+
+#### /architect Can we make this simpler?
+
+Yes, you could replace the `factorial()` function with a call to the `math.factorial()`
+builtin. 
+This way you don't have to maintain a custom factorial implementation,
+and the builtin function is well optimized.
+
+> Edit the files? (Y)es/(N)o [Yes]: Yes
+
+```python
+<<<<<<< SEARCH
+def factorial(n):
+    if n == 0 or n == 1:
+        return 1
+    else:
+        return n * factorial(n - 1)
+=======
+from math import factorial
+>>>>>>> REPLACE
+```
 
 </div>
 

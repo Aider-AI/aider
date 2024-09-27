@@ -72,15 +72,15 @@ top coding models, as compared to their previous "solo" scores (striped bars).
     var data = [];
     var colorMapping = {
       "claude-3.5-sonnet": "rgba(75, 192, 192, 0.2)",
-      "o1-mini": "rgba(255, 99, 132, 0.2)",
-      "gpt-4o": "rgba(54, 162, 235, 0.2)",
-      "o1-preview": "rgba(255, 206, 86, 0.2)"
+      "gpt-4o": "rgba(255, 99, 132, 0.2)",
+      "o1-preview": "rgba(54, 162, 235, 0.2)",
+      "o1-mini": "rgba(255, 206, 86, 0.2)"
     };
     var borderColorMapping = {
       "claude-3.5-sonnet": "rgba(75, 192, 192, 1)",
-      "o1-mini": "rgba(255, 99, 132, 1)",
-      "gpt-4o": "rgba(54, 162, 235, 1)",
-      "o1-preview": "rgba(255, 206, 86, 1)"
+      "gpt-4o": "rgba(255, 99, 132, 1)",
+      "o1-preview": "rgba(54, 162, 235, 1)",
+      "o1-mini": "rgba(255, 206, 86, 1)"
     };
     var backgroundColors = [];
     var borderColors = [];
@@ -261,9 +261,9 @@ This Editor LLM can then interpret the solution description and
 produce the code editing instructions needed to update
 the existing source code file.
 
-Traditional frontier models like gpt-4o and Sonnet also
+Traditional frontier models like GPT-4o and Sonnet also
 seem to benefit from separating code reasoning and editing like this.
-A pair of gpt-4o
+A pair of GPT-4o
 or a pair of Sonnet models
 in Architect/Editor configuration outperform their previous solo benchmark results.
 
@@ -321,7 +321,7 @@ Some noteworthy observations:
 
 The development version of aider 
 has built in defaults to support Architect/Editor coding with
-OpenAI's o1 models, gpt-4o and Anthropic's Claude 3.5 Sonnet.
+o1-preview, o1-mini, GPT-4o and Claude 3.5 Sonnet.
 Run aider with `--architect` or get started quickly like this:
 
 ```
@@ -340,6 +340,14 @@ aider --4o --architect
 aider --o1-mini --architect
 aider --o1-preview --architect
 ```
+
+## More info
+
+Aider has a number of "chat modes", and "architect" is available as a new chat mode.
+The `--architect` switch is a shortcut for `--chat-mode architect`.
+For more details, see documentation on 
+[aider's chat modes](/docs/usage/modes.html).
+
 
 ## Full results
 
