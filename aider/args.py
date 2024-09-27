@@ -215,13 +215,13 @@ def get_parser(default_config_files, git_root):
     )
     group.add_argument(
         "--editor-model",
-        metavar="JUNIOR_MODEL",
+        metavar="EDITOR_MODEL",
         default=None,
         help="Specify the model to use for editor tasks (default depends on --model)",
     )
     group.add_argument(
         "--editor-edit-format",
-        metavar="JUNIOR_EDIT_FORMAT",
+        metavar="EDITOR_EDIT_FORMAT",
         default=None,
         help="Specify the edit format for the editor model (default: depends on editor model)",
     )

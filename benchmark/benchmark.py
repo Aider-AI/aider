@@ -125,8 +125,8 @@ def main(
     graphs: bool = typer.Option(False, "--graphs", help="Generate graphs"),
     model: str = typer.Option("gpt-3.5-turbo", "--model", "-m", help="Model name"),
     edit_format: str = typer.Option(None, "--edit-format", "-e", help="Edit format"),
-    editor_model: str = typer.Option(None, "--editor-model", help="Junior model name"),
-    editor_edit_format: str = typer.Option(None, "--editor-edit-format", help="Junior edit format"),
+    editor_model: str = typer.Option(None, "--editor-model", help="Editor model name"),
+    editor_edit_format: str = typer.Option(None, "--editor-edit-format", help="Editor edit format"),
     replay: str = typer.Option(
         None,
         "--replay",
