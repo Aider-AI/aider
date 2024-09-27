@@ -42,7 +42,7 @@ top coding models, as compared to their previous "solo" scores (striped bars).
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
-{% assign sorted_data = site.data.senior | sort: "pass_rate_2" | reverse %}
+{% assign sorted_data = site.data.architect | sort: "pass_rate_2" | reverse %}
 <canvas id="passRateChart" width="400" height="250"></canvas>
 <script>
   document.addEventListener("DOMContentLoaded", function() {
