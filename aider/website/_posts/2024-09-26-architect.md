@@ -80,6 +80,10 @@ top coding models, as compared to their previous "solo" scores (striped bars).
         borderColors.push(borderColorMapping["{{ item.model }}"]);
       {% endfor %}
     {% endfor %}
+    labels.reverse();
+    data.reverse();
+    backgroundColors.reverse();
+    borderColors.reverse();
     new Chart(ctx, {
       type: 'bar',
       data: {
@@ -160,7 +164,7 @@ top coding models, as compared to their previous "solo" scores (striped bars).
                   "gpt-4o": "rgba(54, 162, 235, 0.2)",
                   "o1-mini": "rgba(255, 99, 132, 0.2)"
                 };
-                return Object.keys(colorMapping).map(function(key) {
+                return Object.keys(colorMapping).reverse().map(function(key) {
                   return {
                     text: key,
                     fillStyle: colorMapping[key],
