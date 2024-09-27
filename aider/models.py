@@ -73,9 +73,7 @@ class ModelSettings:
     lazy: bool = False
     reminder: str = "user"
     examples_as_sys_msg: bool = False
-    extra_headers: Optional[dict] = None
-    extra_body: Optional[dict] = None
-    max_tokens: Optional[int] = None
+    extra_params: Optional[dict] = None
     cache_control: bool = False
     caches_by_default: bool = False
     use_system_prompt: bool = True
