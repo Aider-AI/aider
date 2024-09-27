@@ -68,7 +68,7 @@ def send_completion(
         function = functions[0]
         kwargs["tools"] = [dict(type="function", function=function)]
         kwargs["tool_choice"] = {"type": "function", "function": {"name": function["name"]}}
-    
+
     if extra_params is not None:
         kwargs.update(extra_params)
 
