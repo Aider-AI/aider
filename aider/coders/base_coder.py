@@ -1071,14 +1071,15 @@ class Coder:
                 self.warming_pings_left -= 1
                 self.next_cache_warm = time.time() + delay
 
+                kwargs = self.main_model.extra_params or dict()
+                kwargs["max_tokens"] = 1
+
                 try:
                     completion = litellm.completion(
                         model=self.main_model.name,
                         messages=self.cache_warming_chunks.cacheable_messages(),
                         stream=False,
-                        max_tokens=1,
-                        extra_headers=self.main_model.extra_headers,
-                        **self.main_model.extra_params,  # Use **kwargs here
+                        **kwargs,
                     )
                 except Exception as err:
                     self.io.tool_warning(f"Cache warming error: {str(err)}")
