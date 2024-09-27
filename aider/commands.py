@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pyperclip
 from PIL import Image, ImageGrab
-from prompt_toolkit.completion import PathCompleter
+from prompt_toolkit.completion import PathCompleter, Completion
 from prompt_toolkit.document import Document
 
 from aider import models, prompts, voice
@@ -609,8 +609,16 @@ class Commands:
             expanduser=True,
         )
 
-        # Use the new document for completions
-        yield from path_completer.get_completions(new_document, complete_event)
+        # Iterate over the completions and modify them
+        for completion in path_completer.get_completions(new_document, complete_event):
+            quoted_text = self.quote_fname(completion.text)
+            yield Completion(
+                text=quoted_text,
+                start_position=completion.start_position,
+                display=completion.display,
+                style=completion.style,
+                selected_style=completion.selected_style,
+            )
 
     def _old_completions_add(self):
         files = set(self.coder.get_all_relative_files())
