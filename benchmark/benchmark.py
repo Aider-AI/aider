@@ -699,7 +699,7 @@ def run_test_real(
         ),
     )
 
-    if edit_format == "senior":
+    if edit_format == "architect":
         results["editor_model"] = main_model.editor_model.name if main_model.editor_model else None
         results["editor_edit_format"] = main_model.editor_edit_format
     dump(results)
