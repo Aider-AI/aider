@@ -586,17 +586,14 @@ class Commands:
         text = document.text_before_cursor.lstrip()
 
         # Identify the command and extract text after it
-        command = '/read-only'
+        command = "/read-only"
         if text.startswith(command):
-            after_command = text[len(command):].lstrip()
+            after_command = text[len(command) :].lstrip()
         else:
             after_command = text
 
         # Create a new Document object with the text after the command
-        new_document = Document(
-            after_command,
-            cursor_position=len(after_command)
-        )
+        new_document = Document(after_command, cursor_position=len(after_command))
 
         path_completer = PathCompleter(
             only_directories=False,
