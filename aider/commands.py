@@ -608,12 +608,15 @@ class Commands:
             expanduser=True,
         )
 
+        # Adjust the start_position to replace all of 'after_command'
+        adjusted_start_position = -len(after_command)
+
         # Iterate over the completions and modify them
         for completion in path_completer.get_completions(new_document, complete_event):
             quoted_text = self.quote_fname(completion.text)
             yield Completion(
                 text=quoted_text,
-                start_position=completion.start_position,
+                start_position=adjusted_start_position,
                 display=completion.display,
                 style=completion.style,
                 selected_style=completion.selected_style,
