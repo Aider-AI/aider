@@ -19,7 +19,6 @@ cog.out(get_help_md())
 | **/ask** | Ask questions about the code base without editing any files |
 | **/chat-mode** | Switch to a new chat mode |
 | **/clear** | Clear the chat history |
-| **/paste** | Add image/text from the clipboard to the chat (optionally provide a name for the image) |
 | **/code** | Ask for changes to your code |
 | **/commit** | Commit edits to the repo made outside the chat (commit message optional) |
 | **/diff** | Display the diff of changes since the last message |
@@ -33,6 +32,7 @@ cog.out(get_help_md())
 | **/map-refresh** | Force a refresh of the repository map |
 | **/model** | Switch to a new LLM |
 | **/models** | Search the list of available models |
+| **/paste** | Paste image/text from the clipboard into the chat (optionally provide a name for the image) |
 | **/quit** | Exit the application |
 | **/read-only** | Add files to the chat that are for reference, not to be edited |
 | **/report** | Report a problem by opening a GitHub Issue |

@@ -11,6 +11,7 @@
 - New `--voice-format` switch to send voice audio as wav/mp3/webm, by @mbailey.
 - Support for new Gemini 002 models.
 - Will now follow HTTP redirects when scraping urls.
+- Renamed `/clipboard` to `/paste`.
 - Support for litellm's `extra_body` parameter, by @hypn4.
 - Support for cursor shapes when in vim mode.
 - Numerous bug fixes.
