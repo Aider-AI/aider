@@ -266,9 +266,11 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         examples_as_sys_msg=True,
         accepts_images=True,
-        max_tokens=8192,
-        extra_headers={
-            "anthropic-beta": ANTHROPIC_BETA_HEADER,
+        extra_params={
+            "extra_headers": {
+                "anthropic-beta": ANTHROPIC_BETA_HEADER,
+            },
+            "max_tokens": 8192,
         },
         cache_control=True,
         reminder="user",
@@ -281,9 +283,11 @@ MODEL_SETTINGS = [
         editor_edit_format="editor-diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
-        max_tokens=8192,
-        extra_headers={
-            "anthropic-beta": ANTHROPIC_BETA_HEADER,
+        extra_params={
+            "extra_headers": {
+                "anthropic-beta": ANTHROPIC_BETA_HEADER,
+            },
+            "max_tokens": 8192,
         },
         cache_control=True,
         reminder="user",
@@ -293,8 +297,10 @@ MODEL_SETTINGS = [
         "whole",
         weak_model_name="anthropic/claude-3-haiku-20240307",
         examples_as_sys_msg=True,
-        extra_headers={
-            "anthropic-beta": ANTHROPIC_BETA_HEADER,
+        extra_params={
+            "extra_headers": {
+                "anthropic-beta": ANTHROPIC_BETA_HEADER,
+            },
         },
         cache_control=True,
     ),
@@ -303,8 +309,10 @@ MODEL_SETTINGS = [
         "whole",
         weak_model_name="claude-3-haiku-20240307",
         examples_as_sys_msg=True,
-        extra_headers={
-            "anthropic-beta": ANTHROPIC_BETA_HEADER,
+        extra_params={
+            "extra_headers": {
+                "anthropic-beta": ANTHROPIC_BETA_HEADER,
+            },
         },
         cache_control=True,
     ),
@@ -317,7 +325,9 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         examples_as_sys_msg=True,
         accepts_images=True,
-        max_tokens=8192,
+        extra_params={
+            "max_tokens": 8192,
+        },
         reminder="user",
         cache_control=True,
     ),
