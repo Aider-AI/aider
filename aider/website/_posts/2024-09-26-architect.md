@@ -170,7 +170,7 @@ top coding models, as compared to their previous "solo" scores (striped bars).
                   position: 'start',
                   xAdjust: 10,
                   font: {
-                    size: baseFontSize-4
+                    size: baseFontSize
                   }
                 }
               }
