@@ -154,6 +154,14 @@ top coding models, as compared to their previous "solo" scores (striped bars).
           },
           legend: {
             display: true,
+            title: {
+              display: true,
+              text: 'Architect model',
+              font: {
+                size: 16,
+                weight: 'bold'
+              }
+            },
             labels: {
               font: {
                 size: 16
