@@ -588,13 +588,7 @@ class Commands:
             # ),
         )
 
-        word_before_cursor = document.get_word_before_cursor(WORD=True)
-        dump(word_before_cursor)
-
-        for completion in path_completer.get_completions(document, complete_event):
-            dump(completion)
-            if completion.text.startswith(word_before_cursor):
-                yield completion
+        yield from path_completer.get_completions(document, complete_event)
 
     def completions_add(self):
         files = set(self.coder.get_all_relative_files())
