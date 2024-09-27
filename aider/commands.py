@@ -9,6 +9,7 @@ from pathlib import Path
 import pyperclip
 from PIL import Image, ImageGrab
 from prompt_toolkit.completion import Completion, PathCompleter
+from prompt_toolkit.document import Document
 
 from aider import models, prompts, voice
 from aider.format_settings import format_settings
@@ -579,31 +580,7 @@ class Commands:
         return fname
 
     def completions_raw_read_only(self, document, complete_event):
-        # Extract the part of the input after the command
-        text = document.text[len("/read-only") :].lstrip()
-
-        # Create a PathCompleter
-        path_completer = PathCompleter(
-            only_directories=False,
-            expanduser=True,
-            get_paths=lambda: [self.coder.root],
-        )
-
-        # Create a new Document object with the modified text
-        new_document = Document(text, cursor_position=len(text))
-
-        # Get completions from the PathCompleter
-        completions = path_completer.get_completions(new_document, complete_event)
-
-        # Yield the completions
-        for completion in completions:
-            # Adjust the start position to account for the command
-            yield Completion(
-                completion.text,
-                start_position=completion.start_position - len(document.text) + len(text),
-                display=completion.display,
-                display_meta=completion.display_meta,
-            )
+        pass
 
     def completions_add(self):
         files = set(self.coder.get_all_relative_files())
