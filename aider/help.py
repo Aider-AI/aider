@@ -61,6 +61,7 @@ def fname_to_url(filepath):
 import json
 import shutil
 
+
 def get_index():
     from llama_index.core import (
         Document,
