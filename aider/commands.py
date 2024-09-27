@@ -584,6 +584,7 @@ class Commands:
 
         # Get the text before the cursor and strip leading spaces
         text = document.text_before_cursor.lstrip()
+        dump(text)
 
         # Identify the command and extract text after it
         command = "/read-only"
@@ -598,7 +599,7 @@ class Commands:
         path_completer = PathCompleter(
             only_directories=False,
             expanduser=True,
-            get_paths=[self.coder.root],
+            #get_paths=[self.coder.root],
         )
 
         # Use the new document for completions
