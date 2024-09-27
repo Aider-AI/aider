@@ -93,7 +93,7 @@ class AutoCompleter(Completer):
                 (token[1], f"`{token[1]}`") for token in tokens if token[0] in Token.Name
             )
 
-    def get_command_completions(self, text, words):
+    def get_command_completions(self, document, complete_event, text, words):
         if len(words) == 1 and not text[-1].isspace():
             partial = words[0].lower()
             candidates = [cmd for cmd in self.command_names if cmd.startswith(partial)]
@@ -115,8 +115,7 @@ class AutoCompleter(Completer):
 
         raw_completer = self.commands.get_raw_completions(cmd)
         if raw_completer:
-            for comp in raw_completer(document, complete_event):
-                yield comp
+            yield from raw_completer(document, complete_event)
             return
 
         if cmd not in self.command_completions:
@@ -145,7 +144,7 @@ class AutoCompleter(Completer):
             return
 
         if text[0] == "/":
-            yield from self.get_command_completions(text, words)
+            yield from self.get_command_completions(document, complete_event, text, words)
             return
 
         candidates = self.words
