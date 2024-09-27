@@ -583,14 +583,16 @@ class Commands:
         path_completer = PathCompleter(
             only_directories=False,
             get_paths=lambda: [self.coder.root],
-            file_filter=lambda fname: (
-                self.coder.repo is None or not self.coder.repo.ignored_file(fname)
-            ),
+            # file_filter=lambda fname: (
+            #    self.coder.repo is None or not self.coder.repo.ignored_file(fname)
+            # ),
         )
 
         word_before_cursor = document.get_word_before_cursor(WORD=True)
+        dump(word_before_cursor)
 
         for completion in path_completer.get_completions(document, complete_event):
+            dump(completion)
             if completion.text.startswith(word_before_cursor):
                 yield completion
 
