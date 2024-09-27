@@ -26,17 +26,32 @@ top coding models, as compared to their previous "solo" scores (striped bars).
     background-color: #f2f2f2;
     border-top: 1px solid #ccc;
   }
-  table {
+  .table-container {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+  .responsive-table {
     border-collapse: collapse;
     width: 100%;
+    font-size: 16px;
   }
-  th {
+  .responsive-table th, .responsive-table td {
     padding: 8px;
     text-align: left;
     border-bottom: 1px solid #ddd;
+    word-break: break-word;
   }
-  th {
+  .responsive-table th {
     background-color: #e2e2e2;
+  }
+  
+  @media screen and (max-width: 600px) {
+    .responsive-table {
+      font-size: 12px;
+    }
+    .responsive-table th, .responsive-table td {
+      padding: 4px;
+    }
   }
 </style>
 
@@ -355,29 +370,30 @@ For more details, see documentation on
 ## Full results
 
 
-<table>
-  <thead>
-    <tr>
-      <th>Architect</th>
-      <th>Editor</th>
-      <th>Edit Format</th>
-      <th>Pass Rate</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for group in grouped_data %}
-      {% assign group_class = forloop.index | modulo: 2 | plus: 1 %}
-      {% for item in group.items %}
-        <tr class="{% if group_class == 1 %}shaded{% endif %}">
-          <td>{{ item.model }}</td>
-          <td>{{ item.editor_model }}</td>
-          <td style="text-align: center;">{{ item.editor_edit_format | default: item.edit_format }}</td>
-          <td style="text-align: right;">{{ item.pass_rate_2 }}%</td>
-          <!-- <td style="text-align: right;">${{ item.total_cost | round: 2 }}</td> -->
-        </tr>
+<div class="table-container">
+  <table class="responsive-table">
+    <thead>
+      <tr>
+        <th>Architect</th>
+        <th>Editor</th>
+        <th>Edit Format</th>
+        <th>Pass Rate</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for group in grouped_data %}
+        {% assign group_class = forloop.index | modulo: 2 | plus: 1 %}
+        {% for item in group.items %}
+          <tr class="{% if group_class == 1 %}shaded{% endif %}">
+            <td>{{ item.model }}</td>
+            <td>{{ item.editor_model }}</td>
+            <td style="text-align: center;">{{ item.editor_edit_format | default: item.edit_format }}</td>
+            <td style="text-align: right;">{{ item.pass_rate_2 }}%</td>
+          </tr>
+        {% endfor %}
       {% endfor %}
-    {% endfor %}
-  </tbody>
-</table>
+    </tbody>
+  </table>
+</div>
 
 
