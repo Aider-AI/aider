@@ -122,7 +122,7 @@ models, compared to their previous "solo" baseline scores (striped bars).
         if ("{{ item.editor_model }}" == "") {
           labels.push("Baseline");
         } else {       
-          labels.push("{{ item.editor_model }}: {{ item.editor_edit_format | default: item.edit_format }}");
+          labels.push("{{ item.editor_model }}/{{ item.editor_edit_format | default: item.edit_format }}");
         }
         data.push({{ item.pass_rate_2 }});
         if ("{{ item.editor_model }}" == "") {
