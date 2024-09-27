@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pyperclip
 from PIL import Image, ImageGrab
-from prompt_toolkit.completion import PathCompleter, Completion
+from prompt_toolkit.completion import Completion, PathCompleter
 from prompt_toolkit.document import Document
 
 from aider import models, prompts, voice
