@@ -584,12 +584,18 @@ class Commands:
 
         # Get the text before the cursor and strip leading spaces
         text = document.text_before_cursor.lstrip()
-        dump(text)
 
         # Identify the command and extract text after it
         command = "/read-only"
-        if text.startswith(command):
-            after_command = text[len(command) :].lstrip()
+        if text.startswith("/"):
+            # Find the longest matching prefix of "/read-only"
+            for i in range(len(command), 0, -1):
+                if text.startswith(command[:i]):
+                    after_command = text[i:].lstrip()
+                    break
+            else:
+                # If no prefix matches, return no completions
+                return
         else:
             after_command = text
 
@@ -599,7 +605,6 @@ class Commands:
         path_completer = PathCompleter(
             only_directories=False,
             expanduser=True,
-            #get_paths=[self.coder.root],
         )
 
         # Use the new document for completions
