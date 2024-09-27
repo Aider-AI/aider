@@ -601,7 +601,7 @@ class Commands:
         new_document = Document(after_command, cursor_position=len(after_command))
 
         def get_paths():
-            return [self.root] if self.root else None
+            return [self.coder.root] if self.coder.root else None
 
         path_completer = PathCompleter(
             get_paths=get_paths,
