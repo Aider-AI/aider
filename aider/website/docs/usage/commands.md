@@ -21,6 +21,7 @@ cog.out(get_help_md())
 | **/clear** | Clear the chat history |
 | **/code** | Ask for changes to your code |
 | **/commit** | Commit edits to the repo made outside the chat (commit message optional) |
+| **/copy** | Copy the last assistant message to the clipboard |
 | **/diff** | Display the diff of changes since the last message |
 | **/drop** | Remove files from the chat session to free up context space |
 | **/exit** | Exit the application |
@@ -32,7 +33,8 @@ cog.out(get_help_md())
 | **/map-refresh** | Force a refresh of the repository map |
 | **/model** | Switch to a new LLM |
 | **/models** | Search the list of available models |
-| **/paste** | Paste image/text from the clipboard into the chat (optionally provide a name for the image) |
+| **/paste** | Paste image/text from the clipboard into the chat.
+        Optionally provide a name for the image. |
 | **/quit** | Exit the application |
 | **/read-only** | Add files to the chat that are for reference, not to be edited |
 | **/report** | Report a problem by opening a GitHub Issue |
