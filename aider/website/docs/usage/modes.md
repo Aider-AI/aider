@@ -34,13 +34,13 @@ There is also a special shortcut `--architect` to launch in `--chat-mode archite
 
 ## Architect mode and the editor model
 
-When you are in architect mode, aider sends you request to two models:
+When you are in architect mode, aider sends your request to two models:
 
 1. First, it sends your request to the main active model.
-This model is set by `/model`, `--model` or the shortcut switches like `--sonnet`. 
-After it replies, aider will offer to edit the files based on the response.
+The main model is configured with `/model`, `--model` or the shortcut switches like `--sonnet`. 
+After the main model replies, aider will offer to edit the files based on the response.
 
-2. To edit the files, aider sends a second LLM request, asking for specific code editing instructions.
+2. To edit the files, aider sends a second LLM request asking for specific code editing instructions.
 This request goes to the "editor" model.
 Aider has built in defaults to select an editor model based on your main model.
 Or, you can choose an editor model yourself with `--editor-model <model>`.
