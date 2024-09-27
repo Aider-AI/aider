@@ -145,7 +145,6 @@ top coding models, as compared to their previous "solo" scores (striped bars).
                   enabled: true,
                   position: 'start',
                   xAdjust: 10,
-                  yAdjust: -10,
                   font: {
                     size: 14
                   }
