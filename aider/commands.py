@@ -165,7 +165,10 @@ class Commands:
         return inp[0] in "/!"
 
     def get_raw_completions(self, cmd):
+        assert cmd.startswith("/")
+        cmd = cmd[1:]
         cmd = cmd.replace("-", "_")
+
         raw_completer = getattr(self, f"completions_raw_{cmd}", None)
         return raw_completer
 
