@@ -89,7 +89,7 @@ def get_index():
         )
         index = load_index_from_storage(storage_context)
     else:
-    if index is None:
+        if index is None:
         parser = MarkdownNodeParser()
 
         nodes = [] 
