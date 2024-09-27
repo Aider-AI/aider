@@ -16,7 +16,8 @@ Aider now has experimental support for using two models to complete each coding 
 - An Architect model is asked to describe how to solve the coding problem.
 - An Editor model is given the Architect's solution and asked to produce specific code editing instructions to apply those changes to existing source files.
 
-Splitting up "code reasoning" and "code editing" has produced SOTA results on
+Splitting up "code reasoning" and "code editing" in this manner
+has produced SOTA results on
 [aider's code editing benchmark](/docs/benchmarks.html#the-benchmark).
 It also significantly improved the benchmark scores of many
 models, compared to their previous "solo" baseline scores (striped bars).
@@ -293,23 +294,21 @@ This second Editor LLM can then interpret the solution description and
 produce the code editing instructions needed to update
 the existing source code.
 
-This approach has recently become attractive for aider due to the
+This approach has recently become attractive for aider due to 
 rapid improvements in the speed and costs of frontier models.
 In particular, chaining older LLMs would have been quite slow and
-incompatible with aider's goal of providing a rapid, interactive,
+incompatible with aider's goal of providing an interactive,
 pair programming AI coding experience.
 
 ## Code reasoning and code editing
 
-Aider uses a variety of 
-[edit formats](/docs/more/edit-formats.html)
-to allow LLMs to specify edits to local source files.
-All of aider's editing formats require the LLM to return source code edits in a specific text
-format, so that aider can process the edits and apply them to the local source files.
-
 Normally aider asks the model to solve a coding problem in one prompt,
 asking the LLM to explain the solution and return 
 a well formatted series of file edits.
+All of [aider's editing formats](/docs/more/edit-formats.html)
+require the LLM to return source code edits in a specific text
+format, so that aider can process the edits and apply them to the local source files.
+
 Because this all happens in a single prompt/response round trip to the LLM,
 the model has to split its attention between 
 solving the coding problem and conforming to the edit format.
@@ -317,11 +316,11 @@ solving the coding problem and conforming to the edit format.
 The Architect/Editor approach splits this into two inference steps, possibly
 using two different LLMs:
 
-1. Ask how to solve the coding problem (Architect).
+1. Solve the coding problem (Architect).
 2. Turn the proposed solution into a series of well formed code edits (Editor).
 
 The Architect/Editor approach allows the Architect to focus on solving the coding problem
-and describe the solution however comes naturally to it.
+and *describe the solution however comes naturally to it*.
 Similarly, the Editor can focus all of its attention on properly formatting the edits
 without needing to reason much about how to solve the coding problem.
 
@@ -383,10 +382,10 @@ For more details, see documentation on
 Below are the benchmark results using various models as the Architect, paired with
 various models as the Editor.
 Each section includes a "baseline" result,
-where the model
-by itself with aider's normal "code" editing mode
+where the model works
+by itself in aider's normal "code" editing mode
 (not as part of an Architect/Editor configuration).
-This baseline represents the performance previously available when using
+This "solo" baseline represents the performance previously available when using
 this model with aider.
 
 <div class="table-container">
