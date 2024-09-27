@@ -1409,9 +1409,7 @@ class Coder:
                 functions,
                 self.stream,
                 temp,
-                extra_headers=model.extra_headers,
-                extra_body=model.extra_body,
-                max_tokens=model.max_tokens,
+                extra_params=model.extra_params,
             )
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
 

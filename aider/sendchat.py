@@ -96,9 +96,8 @@ def simple_send_with_retries(model_name, messages, extra_params=None):
             "messages": messages,
             "functions": None,
             "stream": False,
+            "extra_params": extra_params,
         }
-        if extra_params is not None:
-            kwargs["extra_params"] = extra_params
 
         _hash, response = send_completion(**kwargs)
         return response.choices[0].message.content
