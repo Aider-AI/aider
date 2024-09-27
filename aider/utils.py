@@ -217,7 +217,7 @@ def get_pip_install(args):
         "pip",
         "install",
         "--upgrade",
-        "--ignore-installed",
+        "--upgrade-strategy only-if-needed",
     ]
     cmd += args
     return cmd
