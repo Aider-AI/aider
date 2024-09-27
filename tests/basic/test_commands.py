@@ -8,6 +8,7 @@ from pathlib import Path
 from unittest import TestCase, mock
 
 import git
+import pyperclip
 
 from aider.coders import Coder
 from aider.commands import Commands, SwitchCoder
@@ -1098,3 +1099,66 @@ class TestCommands(TestCase):
 
             del coder
             del commands
+
+    def test_cmd_copy_successful(self):
+        io = InputOutput(pretty=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        coder.cur_messages = [
+            {"role": "user", "content": "Test message"},
+            {"role": "assistant", "content": "Test reply"},
+        ]
+
+        with mock.patch("pyperclip.copy") as mock_copy:
+            with mock.patch.object(io, "tool_output") as mock_output:
+                commands.cmd_copy("")
+
+                mock_copy.assert_called_once_with("Test reply")
+                mock_output.assert_called_once_with("Last assistant reply copied to clipboard.")
+
+    def test_cmd_copy_no_messages(self):
+        io = InputOutput(pretty=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        coder.cur_messages = []
+
+        with mock.patch("pyperclip.copy") as mock_copy:
+            with mock.patch.object(io, "tool_error") as mock_error:
+                commands.cmd_copy("")
+
+                mock_copy.assert_not_called()
+                mock_error.assert_called_once_with("No messages to copy.")
+
+    def test_cmd_copy_no_assistant_messages(self):
+        io = InputOutput(pretty=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        coder.cur_messages = [{"role": "user", "content": "Test message"}]
+
+        with mock.patch("pyperclip.copy") as mock_copy:
+            with mock.patch.object(io, "tool_error") as mock_error:
+                commands.cmd_copy("")
+
+                mock_copy.assert_not_called()
+                mock_error.assert_called_once_with("No assistant reply to copy.")
+
+    def test_cmd_copy_pyperclip_exception(self):
+        io = InputOutput(pretty=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        coder.cur_messages = [
+            {"role": "user", "content": "Test message"},
+            {"role": "assistant", "content": "Test reply"},
+        ]
+
+        with mock.patch(
+            "pyperclip.copy", side_effect=pyperclip.PyperclipException("Test exception")
+        ):
+            with mock.patch.object(io, "tool_error") as mock_error:
+                commands.cmd_copy("")
+
+                mock_error.assert_called_once_with("Failed to copy to clipboard: Test exception")
