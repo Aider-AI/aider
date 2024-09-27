@@ -1077,7 +1077,7 @@ class Coder:
                         messages=self.cache_warming_chunks.cacheable_messages(),
                         stream=False,
                         max_tokens=1,
-                        extra_params=self.main_model.extra_params,
+                        extra_headers=self.main_model.extra_headers,
                     )
                 except Exception as err:
                     self.io.tool_warning(f"Cache warming error: {str(err)}")
