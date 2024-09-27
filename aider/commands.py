@@ -606,14 +606,6 @@ class Commands:
 
         # Use the new document for completions
         yield from path_completer.get_completions(new_document, complete_event)
-            only_directories=False,
-            get_paths=lambda: [self.coder.root],
-            # file_filter=lambda fname: (
-            #    self.coder.repo is None or not self.coder.repo.ignored_file(fname)
-            # ),
-        )
-
-        yield from path_completer.get_completions(document, complete_event)
 
     def completions_add(self):
         files = set(self.coder.get_all_relative_files())
