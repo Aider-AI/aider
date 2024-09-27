@@ -88,10 +88,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: gpt-3.5-turbo
   reminder: sys
   send_undo_reply: false
@@ -107,10 +105,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: gpt-3.5-turbo-0125
   reminder: sys
   send_undo_reply: false
@@ -126,10 +122,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: gpt-3.5-turbo-1106
   reminder: sys
   send_undo_reply: false
@@ -145,10 +139,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: gpt-3.5-turbo-0613
   reminder: sys
   send_undo_reply: false
@@ -164,10 +156,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: gpt-3.5-turbo-16k-0613
   reminder: sys
   send_undo_reply: false
@@ -183,10 +173,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: true
-  max_tokens: null
   name: gpt-4-turbo-2024-04-09
   reminder: sys
   send_undo_reply: false
@@ -202,10 +190,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: true
-  max_tokens: null
   name: gpt-4-turbo
   reminder: sys
   send_undo_reply: false
@@ -221,10 +207,8 @@ cog.out("```\n")
   editor_edit_format: editor-diff
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: true
-  max_tokens: null
   name: openai/gpt-4o
   reminder: sys
   send_undo_reply: false
@@ -240,10 +224,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: true
-  max_tokens: null
   name: openai/gpt-4o-2024-08-06
   reminder: sys
   send_undo_reply: false
@@ -259,10 +241,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: true
-  max_tokens: null
   name: gpt-4o-2024-08-06
   reminder: sys
   send_undo_reply: false
@@ -278,10 +258,8 @@ cog.out("```\n")
   editor_edit_format: editor-diff
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: true
-  max_tokens: null
   name: gpt-4o
   reminder: sys
   send_undo_reply: false
@@ -297,10 +275,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: true
-  max_tokens: null
   name: gpt-4o-mini
   reminder: sys
   send_undo_reply: false
@@ -316,10 +292,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: true
-  max_tokens: null
   name: openai/gpt-4o-mini
   reminder: sys
   send_undo_reply: false
@@ -335,10 +309,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: true
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: true
-  max_tokens: null
   name: gpt-4-0125-preview
   reminder: sys
   send_undo_reply: false
@@ -354,10 +326,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: true
-  max_tokens: null
   name: gpt-4-1106-preview
   reminder: sys
   send_undo_reply: false
@@ -373,10 +343,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: gpt-4-vision-preview
   reminder: sys
   send_undo_reply: false
@@ -392,10 +360,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: true
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: gpt-4-0314
   reminder: sys
   send_undo_reply: false
@@ -411,10 +377,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: gpt-4-0613
   reminder: sys
   send_undo_reply: false
@@ -430,10 +394,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: gpt-4-32k-0613
   reminder: sys
   send_undo_reply: false
@@ -449,10 +411,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: claude-3-opus-20240229
   reminder: user
   send_undo_reply: false
@@ -468,10 +428,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: openrouter/anthropic/claude-3-opus
   reminder: user
   send_undo_reply: false
@@ -487,10 +445,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: claude-3-sonnet-20240229
   reminder: user
   send_undo_reply: false
@@ -506,11 +462,11 @@ cog.out("```\n")
   editor_edit_format: editor-diff
   editor_model_name: claude-3-5-sonnet-20240620
   examples_as_sys_msg: true
-  extra_body: null
-  extra_headers:
-    anthropic-beta: prompt-caching-2024-07-31
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31
+    max_tokens: 8192
   lazy: false
-  max_tokens: 8192
   name: claude-3-5-sonnet-20240620
   reminder: user
   send_undo_reply: false
@@ -526,11 +482,11 @@ cog.out("```\n")
   editor_edit_format: editor-diff
   editor_model_name: anthropic/claude-3-5-sonnet-20240620
   examples_as_sys_msg: true
-  extra_body: null
-  extra_headers:
-    anthropic-beta: prompt-caching-2024-07-31
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31
+    max_tokens: 8192
   lazy: false
-  max_tokens: 8192
   name: anthropic/claude-3-5-sonnet-20240620
   reminder: user
   send_undo_reply: false
@@ -546,11 +502,10 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: true
-  extra_body: null
-  extra_headers:
-    anthropic-beta: prompt-caching-2024-07-31
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31
   lazy: false
-  max_tokens: null
   name: anthropic/claude-3-haiku-20240307
   reminder: user
   send_undo_reply: false
@@ -566,11 +521,10 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: true
-  extra_body: null
-  extra_headers:
-    anthropic-beta: prompt-caching-2024-07-31
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31
   lazy: false
-  max_tokens: null
   name: claude-3-haiku-20240307
   reminder: user
   send_undo_reply: false
@@ -586,10 +540,9 @@ cog.out("```\n")
   editor_edit_format: editor-diff
   editor_model_name: openrouter/anthropic/claude-3.5-sonnet
   examples_as_sys_msg: true
-  extra_body: null
-  extra_headers: null
+  extra_params:
+    max_tokens: 8192
   lazy: false
-  max_tokens: 8192
   name: openrouter/anthropic/claude-3.5-sonnet
   reminder: user
   send_undo_reply: false
@@ -605,10 +558,9 @@ cog.out("```\n")
   editor_edit_format: editor-diff
   editor_model_name: vertex_ai/claude-3-5-sonnet@20240620
   examples_as_sys_msg: true
-  extra_body: null
-  extra_headers: null
+  extra_params:
+    max_tokens: 8192
   lazy: false
-  max_tokens: 8192
   name: vertex_ai/claude-3-5-sonnet@20240620
   reminder: user
   send_undo_reply: false
@@ -624,10 +576,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: vertex_ai/claude-3-opus@20240229
   reminder: user
   send_undo_reply: false
@@ -643,10 +593,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: vertex_ai/claude-3-sonnet@20240229
   reminder: user
   send_undo_reply: false
@@ -662,10 +610,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: command-r-plus
   reminder: user
   send_undo_reply: false
@@ -681,10 +627,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: command-r-08-2024
   reminder: user
   send_undo_reply: false
@@ -700,10 +644,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: command-r-plus-08-2024
   reminder: user
   send_undo_reply: false
@@ -719,10 +661,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: true
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: groq/llama3-70b-8192
   reminder: user
   send_undo_reply: false
@@ -738,10 +678,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: true
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: openrouter/meta-llama/llama-3-70b-instruct
   reminder: user
   send_undo_reply: false
@@ -757,10 +695,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: gemini/gemini-1.5-pro-002
   reminder: user
   send_undo_reply: false
@@ -776,10 +712,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: gemini/gemini-1.5-flash-002
   reminder: user
   send_undo_reply: false
@@ -795,10 +729,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: gemini/gemini-1.5-pro
   reminder: user
   send_undo_reply: false
@@ -814,10 +746,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: gemini/gemini-1.5-pro-latest
   reminder: user
   send_undo_reply: false
@@ -833,10 +763,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: gemini/gemini-1.5-pro-exp-0827
   reminder: user
   send_undo_reply: false
@@ -852,10 +780,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: gemini/gemini-1.5-flash-exp-0827
   reminder: user
   send_undo_reply: false
@@ -871,10 +797,9 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: true
-  extra_body: null
-  extra_headers: null
+  extra_params:
+    max_tokens: 8192
   lazy: false
-  max_tokens: 8192
   name: deepseek/deepseek-chat
   reminder: sys
   send_undo_reply: false
@@ -890,10 +815,9 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: true
-  extra_body: null
-  extra_headers: null
+  extra_params:
+    max_tokens: 8192
   lazy: false
-  max_tokens: 8192
   name: deepseek/deepseek-coder
   reminder: sys
   send_undo_reply: false
@@ -909,10 +833,9 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: true
-  extra_body: null
-  extra_headers: null
+  extra_params:
+    max_tokens: 8192
   lazy: false
-  max_tokens: 8192
   name: deepseek-chat
   reminder: sys
   send_undo_reply: false
@@ -928,10 +851,9 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: true
-  extra_body: null
-  extra_headers: null
+  extra_params:
+    max_tokens: 8192
   lazy: false
-  max_tokens: 8192
   name: deepseek-coder
   reminder: sys
   send_undo_reply: false
@@ -947,10 +869,8 @@ cog.out("```\n")
   editor_edit_format: null
   editor_model_name: null
   examples_as_sys_msg: true
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: openrouter/deepseek/deepseek-coder
   reminder: sys
   send_undo_reply: false
@@ -966,10 +886,8 @@ cog.out("```\n")
   editor_edit_format: editor-diff
   editor_model_name: null
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: true
-  max_tokens: null
   name: openrouter/openai/gpt-4o
   reminder: sys
   send_undo_reply: false
@@ -985,10 +903,8 @@ cog.out("```\n")
   editor_edit_format: editor-diff
   editor_model_name: openai/gpt-4o
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: openai/o1-mini
   reminder: user
   send_undo_reply: false
@@ -1004,10 +920,8 @@ cog.out("```\n")
   editor_edit_format: editor-diff
   editor_model_name: gpt-4o
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: o1-mini
   reminder: user
   send_undo_reply: false
@@ -1023,10 +937,8 @@ cog.out("```\n")
   editor_edit_format: editor-diff
   editor_model_name: openai/gpt-4o
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: openai/o1-preview
   reminder: user
   send_undo_reply: false
@@ -1042,10 +954,8 @@ cog.out("```\n")
   editor_edit_format: editor-diff
   editor_model_name: gpt-4o
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: o1-preview
   reminder: user
   send_undo_reply: false
@@ -1061,10 +971,8 @@ cog.out("```\n")
   editor_edit_format: editor-diff
   editor_model_name: openrouter/openai/gpt-4o
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: openrouter/openai/o1-mini
   reminder: user
   send_undo_reply: false
@@ -1080,10 +988,8 @@ cog.out("```\n")
   editor_edit_format: editor-diff
   editor_model_name: openrouter/openai/gpt-4o
   examples_as_sys_msg: false
-  extra_body: null
-  extra_headers: null
+  extra_params: null
   lazy: false
-  max_tokens: null
   name: openrouter/openai/o1-preview
   reminder: user
   send_undo_reply: false

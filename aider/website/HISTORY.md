@@ -26,6 +26,8 @@ cog.out(text)
 - New `--voice-format` switch to send voice audio as wav/mp3/webm, by @mbailey.
 - Support for new Gemini 002 models.
 - Will now follow HTTP redirects when scraping urls.
+- ModelSettings takes `extra_params` dict to specify any extras to pass to `litellm.completion()`.
+- Renamed `/clipboard` to `/paste`.
 - Support for litellm's `extra_body` parameter, by @hypn4.
 - Support for cursor shapes when in vim mode.
 - Numerous bug fixes.
