@@ -1169,14 +1169,16 @@ class Commands:
             return
 
         last_assistant_message = assistant_messages[0]["content"]
-        pyperclip.copy(last_assistant_message)
 
-        preview = (
-            last_assistant_message[:50] + "..."
-            if len(last_assistant_message) > 50
-            else last_assistant_message
-        )
-        self.io.tool_output(f"Copied last assistant message to clipboard. Preview: {preview}")
+        try:
+            pyperclip.copy(last_assistant_message)
+            preview = last_assistant_message[:50] + "..." if len(last_assistant_message) > 50 else last_assistant_message
+            self.io.tool_output(f"Copied last assistant message to clipboard. Preview: {preview}")
+        except pyperclip.PyperclipException as e:
+            self.io.tool_error(f"Failed to copy to clipboard: {str(e)}")
+            self.io.tool_output("You may need to install xclip or xsel on Linux, or pbcopy on macOS.")
+        except Exception as e:
+            self.io.tool_error(f"An unexpected error occurred while copying to clipboard: {str(e)}")
 
     def cmd_report(self, args):
         "Report a problem by opening a GitHub Issue"
