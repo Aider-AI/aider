@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pyperclip
 from PIL import Image, ImageGrab
-from prompt_toolkit.completion import Completion, PathCompleter
+from prompt_toolkit.completion import PathCompleter
 from prompt_toolkit.document import Document
 
 from aider import models, prompts, voice
@@ -580,7 +580,6 @@ class Commands:
         return fname
 
     def completions_raw_read_only(self, document, complete_event):
-        from prompt_toolkit.document import Document
 
         # Get the text before the cursor and strip leading spaces
         text = document.text_before_cursor.lstrip()
