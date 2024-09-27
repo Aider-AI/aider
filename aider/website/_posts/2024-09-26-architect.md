@@ -74,13 +74,15 @@ top coding models, as compared to their previous "solo" scores (striped bars).
       "claude-3.5-sonnet": "rgba(75, 192, 192, 0.2)",
       "gpt-4o": "rgba(255, 99, 132, 0.2)",
       "o1-preview": "rgba(54, 162, 235, 0.2)",
-      "o1-mini": "rgba(255, 206, 86, 0.2)"
+      "o1-mini": "rgba(255, 206, 86, 0.2)",
+      "gpt-4o-mini": "rgba(153, 102, 255, 0.2)"
     };
     var borderColorMapping = {
       "claude-3.5-sonnet": "rgba(75, 192, 192, 1)",
       "gpt-4o": "rgba(255, 99, 132, 1)",
       "o1-preview": "rgba(54, 162, 235, 1)",
-      "o1-mini": "rgba(255, 206, 86, 1)"
+      "o1-mini": "rgba(255, 206, 86, 1)",
+      "gpt-4o-mini": "rgba(153, 102, 255, 1)"
     };
     var backgroundColors = [];
     var borderColors = [];
@@ -195,7 +197,8 @@ top coding models, as compared to their previous "solo" scores (striped bars).
                   "o1-preview": "rgba(255, 206, 86, 0.2)",
                   "claude-3.5-sonnet": "rgba(75, 192, 192, 0.2)",
                   "gpt-4o": "rgba(54, 162, 235, 0.2)",
-                  "o1-mini": "rgba(255, 99, 132, 0.2)"
+                  "o1-mini": "rgba(255, 99, 132, 0.2)",
+                  "gpt-4o-mini": "rgba(153, 102, 255, 0.2)"
                 };
                 return Object.keys(colorMapping).reverse().map(function(key) {
                   return {
