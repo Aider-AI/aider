@@ -3,6 +3,7 @@ import re
 import subprocess
 import sys
 import tempfile
+import shlex
 from collections import OrderedDict
 from pathlib import Path
 
@@ -575,9 +576,7 @@ class Commands:
         self.io.print(diff)
 
     def quote_fname(self, fname):
-        if " " in fname and '"' not in fname:
-            fname = f'"{fname}"'
-        return fname
+        return shlex.quote(fname)
 
     def completions_raw_read_only(self, document, complete_event):
         # Get the text before the cursor and strip leading spaces
