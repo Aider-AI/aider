@@ -281,19 +281,18 @@ to allow LLMs to specify edits to local source files.
 All of aider's editing formats require the LLM to return source code edits in a specific text
 format, so that aider can process the edits and apply them to the local source files.
 
-Normally, aider asks the model to solve a coding problem by returning a well
-formatted series of file edits.
-Aider encourages "chain of thought" by asking the model to explain the solution
-before diving into code edits.
-But this all happens in a single prompt/response round trip to the LLM,
-and the model has to split its attention between 
-solving the coding problem and confirming to the edit format.
+Normally aider asks the model to solve a coding problem in one prompt,
+asking the LLM to explain the solution and return 
+a well formatted series of file edits.
+Because this all happens in a single prompt/response round trip to the LLM,
+the model has to split its attention between 
+solving the coding problem and conforming to the edit format.
 
-The Architect/Editor approach splits this into two round trips, possibly
+The Architect/Editor approach splits this into two inference steps, possibly
 using two different LLMs:
 
-- Ask how to solve the coding problem (Architect).
-- Turn the proposed solution into a series of well formed code edits (Editor).
+1. Ask how to solve the coding problem (Architect).
+2. Turn the proposed solution into a series of well formed code edits (Editor).
 
 The Architect/Editor approach allows the Architect to focus on solving the coding problem
 and describe the solution however comes naturally to it.
