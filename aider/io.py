@@ -94,16 +94,15 @@ class AutoCompleter(Completer):
             )
 
     def get_command_completions(self, text, words):
-        candidates = []
         if len(words) == 1 and not text[-1].isspace():
             partial = words[0].lower()
             candidates = [cmd for cmd in self.command_names if cmd.startswith(partial)]
-            return candidates
+            for candidate in sorted(candidates):
+                yield Completion(candidate, start_position=-len(words[-1]))
+            return
 
-        if len(words) <= 1:
-            return []
-        if text[-1].isspace():
-            return []
+        if len(words) <= 1 or text[-1].isspace():
+            return
 
         cmd = words[0]
         partial = words[-1].lower()
@@ -124,7 +123,8 @@ class AutoCompleter(Completer):
             return
 
         candidates = [word for word in candidates if partial in word.lower()]
-        return candidates
+        for candidate in sorted(candidates):
+            yield Completion(candidate, start_position=-len(words[-1]))
 
     def get_completions(self, document, complete_event):
         self.tokenize()
@@ -139,11 +139,8 @@ class AutoCompleter(Completer):
             return
 
         if text[0] == "/":
-            candidates = self.get_command_completions(text, words)
-            if candidates is not None:
-                for candidate in sorted(candidates):
-                    yield Completion(candidate, start_position=-len(words[-1]))
-                return
+            yield from self.get_command_completions(text, words)
+            return
 
         candidates = self.words
         candidates.update(set(self.fname_to_rel_fnames))
