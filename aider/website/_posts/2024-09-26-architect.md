@@ -40,6 +40,12 @@ top coding models, as compared to their previous "solo" scores (striped bars).
   }
 </style>
 
+<style>
+  #passRateChart {
+    max-width: 100%;
+    height: auto !important;
+  }
+</style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
 {% assign sorted_data = site.data.architect | sort: "pass_rate_2" | reverse %}
@@ -47,6 +53,11 @@ top coding models, as compared to their previous "solo" scores (striped bars).
 <script>
   document.addEventListener("DOMContentLoaded", function() {
     var ctx = document.getElementById('passRateChart').getContext('2d');
+    
+    // Function to determine aspect ratio based on screen width
+    function getAspectRatio() {
+      return window.innerWidth < 600 ? 1.5 : 2;
+    }
     var labels = [];
     var data = [];
     var colorMapping = {
@@ -84,21 +95,22 @@ top coding models, as compared to their previous "solo" scores (striped bars).
     data.reverse();
     backgroundColors.reverse();
     borderColors.reverse();
-    new Chart(ctx, {
+    var chart = new Chart(ctx, {
       type: 'bar',
       data: {
         labels: labels,
         datasets: [{
           label: 'Pass Rate',
           data: data,
-          backgroundColor: 'rgba(75, 192, 192, 0.2)',
-          borderColor: 'rgba(75, 192, 192, 1)',
-          borderWidth: 1,
           backgroundColor: backgroundColors,
-          borderColor: borderColors
+          borderColor: borderColors,
+          borderWidth: 1
         }]
       },
       options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: getAspectRatio(),
         scales: {
           y: { 
             beginAtZero: true,
@@ -186,6 +198,12 @@ top coding models, as compared to their previous "solo" scores (striped bars).
           }
       }
     }});
+
+    // Update aspect ratio on window resize
+    window.addEventListener('resize', function() {
+      chart.options.aspectRatio = getAspectRatio();
+      chart.resize();
+    });
   });
 
   function createStripePattern(baseColor) {
