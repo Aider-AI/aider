@@ -57,9 +57,9 @@ top coding models, as compared to their previous "solo" scores (striped bars).
     // Function to determine aspect ratio and base font size based on screen width
     function getChartSettings() {
       if (window.innerWidth < 600) {
-        return { aspectRatio: 1, baseFontSize: 8 };
+        return { aspectRatio: 1.2, baseFontSize: 8 }; // Slightly taller for small screens
       } else {
-        return { aspectRatio: 1.5, baseFontSize: 12 };
+        return { aspectRatio: 1.7, baseFontSize: 12 }; // Slightly taller for larger screens
       }
     }
 
@@ -146,7 +146,9 @@ top coding models, as compared to their previous "solo" scores (striped bars).
             ticks: {
               font: {
                 size: baseFontSize + 4
-              }
+              },
+              maxRotation: 90, // Allow full rotation if needed
+              minRotation: 45  // Start rotating at 45 degrees to fit more labels
             }
           }
         },
