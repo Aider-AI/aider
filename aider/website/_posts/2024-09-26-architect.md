@@ -57,9 +57,9 @@ top coding models, as compared to their previous "solo" scores (striped bars).
     // Function to determine aspect ratio and base font size based on screen width
     function getChartSettings() {
       if (window.innerWidth < 600) {
-        return { aspectRatio: 1.5, baseFontSize: 8 };
+        return { aspectRatio: 1, baseFontSize: 8 };
       } else {
-        return { aspectRatio: 2, baseFontSize: 12 };
+        return { aspectRatio: 1.5, baseFontSize: 12 };
       }
     }
 
