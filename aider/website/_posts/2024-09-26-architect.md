@@ -143,7 +143,9 @@ top coding models, as compared to their previous "solo" scores (striped bars).
                 label: {
                   content: 'Previous SOTA',
                   enabled: true,
-                  position: 'end',
+                  position: 'start',
+                  xAdjust: 10,
+                  yAdjust: -10,
                   font: {
                     size: 14
                   }
