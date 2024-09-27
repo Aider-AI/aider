@@ -31,9 +31,11 @@ top coding models, as compared to their previous "solo" scores (striped bars).
     overflow-x: auto;
   }
   .responsive-table {
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     width: 100%;
     font-size: 16px;
+    border: 1px solid #ddd;
   }
   .responsive-table th, .responsive-table td {
     padding: 8px;
@@ -43,6 +45,14 @@ top coding models, as compared to their previous "solo" scores (striped bars).
   }
   .responsive-table th {
     background-color: #e2e2e2;
+  }
+  .responsive-table th:first-child,
+  .responsive-table td:first-child {
+    border-left: 1px solid #ddd;
+  }
+  .responsive-table th:last-child,
+  .responsive-table td:last-child {
+    border-right: 1px solid #ddd;
   }
   
   @media screen and (max-width: 600px) {
