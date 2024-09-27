@@ -945,6 +945,10 @@ class Commands:
         "Ask for changes to your code"
         return self._generic_chat_command(args, self.coder.main_model.edit_format)
 
+    def cmd_architect(self, args):
+        "Enter architect mode to discuss high-level design and architecture"
+        return self._generic_chat_command(args, "architect")
+
     def _generic_chat_command(self, args, edit_format):
         if not args.strip():
             self.io.tool_error(f"Please provide a question or topic for the {edit_format} chat.")
