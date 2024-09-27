@@ -74,45 +74,39 @@ def get_index():
     dname = Path.home() / ".aider" / "caches" / ("help." + __version__)
 
     index = None
-
-    if dname.exists():
-        try:
+    try:
+        if dname.exists():
             storage_context = StorageContext.from_defaults(
                 persist_dir=dname,
             )
             index = load_index_from_storage(storage_context)
-        except (OSError, json.JSONDecodeError):
-            shutil.rmtree(dname)
-            pass
-        storage_context = StorageContext.from_defaults(
-            persist_dir=dname,
-        )
-        index = load_index_from_storage(storage_context)
-    else:
-        if index is None:
+    except (OSError, json.JSONDecodeError):
+        shutil.rmtree(dname)
+
+    if index is None:
         parser = MarkdownNodeParser()
 
-        nodes = [] 
-        for fname in get_package_files(): 
-            fname = Path(fname) 
-            if any(fname.match(pat) for pat in exclude_website_pats): 
-                continue 
+        nodes = []
+        for fname in get_package_files():
+            fname = Path(fname)
+            if any(fname.match(pat) for pat in exclude_website_pats):
+                continue
 
-            doc = Document( 
-                text=importlib_resources.files("aider.website") 
-                .joinpath(fname) 
-                .read_text(encoding="utf-8"), 
-                metadata=dict( 
-                    filename=fname.name, 
-                    extension=fname.suffix, 
-                    url=fname_to_url(str(fname)), 
-                ), 
-            ) 
-            nodes += parser.get_nodes_from_documents([doc]) 
+            doc = Document(
+                text=importlib_resources.files("aider.website")
+                .joinpath(fname)
+                .read_text(encoding="utf-8"),
+                metadata=dict(
+                    filename=fname.name,
+                    extension=fname.suffix,
+                    url=fname_to_url(str(fname)),
+                ),
+            )
+            nodes += parser.get_nodes_from_documents([doc])
 
-        index = VectorStoreIndex(nodes, show_progress=True) 
-        dname.parent.mkdir(parents=True, exist_ok=True) 
-        index.storage_context.persist(dname) 
+        index = VectorStoreIndex(nodes, show_progress=True)
+        dname.parent.mkdir(parents=True, exist_ok=True)
+        index.storage_context.persist(dname)
 
     return index
 
