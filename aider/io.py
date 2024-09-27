@@ -113,6 +113,12 @@ class AutoCompleter(Completer):
         elif cmd not in matches:
             return
 
+        raw_completer = self.commands.get_raw_completions(cmd)
+        if raw_completer:
+            for comp in raw_completer(document, complete_event):
+                yield comp
+            return
+
         if cmd not in self.command_completions:
             candidates = self.commands.get_completions(cmd)
             self.command_completions[cmd] = candidates
