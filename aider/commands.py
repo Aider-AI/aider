@@ -612,7 +612,7 @@ class Commands:
         # Use the new document for completions
         yield from path_completer.get_completions(new_document, complete_event)
 
-    def completions_add(self):
+    def _old_completions_add(self):
         files = set(self.coder.get_all_relative_files())
         files = files - set(self.coder.get_inchat_relative_files())
         files = [self.quote_fname(fn) for fn in files]
