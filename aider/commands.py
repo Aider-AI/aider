@@ -1042,8 +1042,29 @@ class Commands:
 
         return text
 
+    def cmd_copy(self, args):
+        "Copy the last reply from the LLM to the clipboard"
+        if not self.coder.cur_messages:
+            self.io.tool_error("No messages to copy.")
+            return
+
+        last_assistant_message = next(
+            (msg for msg in reversed(self.coder.cur_messages) if msg["role"] == "assistant"), None
+        )
+        if not last_assistant_message:
+            self.io.tool_error("No assistant reply to copy.")
+            return
+
+        content = last_assistant_message["content"]
+        try:
+            pyperclip.copy(content)
+            self.io.tool_output("Last assistant reply copied to clipboard.")
+        except pyperclip.PyperclipException as e:
+            self.io.tool_error(f"Failed to copy to clipboard: {e}")
+
     def cmd_paste(self, args):
-        "Paste image/text from the clipboard into the chat (optionally provide a name for the image)"
+        "Paste image/text from the clipboard into the chat"
+        "(optionally provide a name for the image)"
         try:
             # Check for image first
             image = ImageGrab.grabclipboard()
