@@ -56,7 +56,7 @@ top coding models, as compared to their previous "solo" scores (striped bars).
     
     // Function to determine aspect ratio based on screen width
     function getAspectRatio() {
-      return window.innerWidth < 600 ? 1.5 : 2;
+      return window.innerWidth < 600 ? 1 : 1.5;
     }
     var labels = [];
     var data = [];
@@ -158,7 +158,7 @@ top coding models, as compared to their previous "solo" scores (striped bars).
                   position: 'start',
                   xAdjust: 10,
                   font: {
-                    size: 14
+                    size: 12
                   }
                 }
               }
