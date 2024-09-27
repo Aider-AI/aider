@@ -1660,14 +1660,11 @@ class Coder:
         except OSError:
             return
 
-    def get_all_relative_files(self, include_nonrepo=False):
-        if not self.repo or include_nonrepo:
-            files = []
-            for root, _, fnames in os.walk(self.root):
-                for fname in fnames:
-                    files.append(os.path.relpath(os.path.join(root, fname), self.root))
-        else:
+    def get_all_relative_files(self):
+        if self.repo:
             files = self.repo.get_tracked_files()
+        else:
+            files = self.get_inchat_relative_files()
 
         # This is quite slow in large repos
         # files = [fname for fname in files if self.is_file_safe(fname)]
