@@ -91,7 +91,7 @@ top coding models, as compared to their previous "solo" scores (striped bars).
     {% assign grouped_data = sorted_data | group_by: "model" %}
     {% for group in grouped_data %}
       {% for item in group.items %}
-        labels.push("{{ item.editor_model | default: "(No Editor)" }} {{ item.editor_edit_format | default: item.edit_format }}");
+        labels.push("{{ item.editor_model | default: "No architect/editor" }}: {{ item.editor_edit_format | default: item.edit_format }}");
         data.push({{ item.pass_rate_2 }});
         if ("{{ item.editor_model }}" == "") {
           backgroundColors.push(patterns["{{ item.model }}"]);
