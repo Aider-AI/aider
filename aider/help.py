@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
+import json
 import os
+import shutil
 import warnings
 from pathlib import Path
 
@@ -56,10 +58,6 @@ def fname_to_url(filepath):
         docid = "https://aider.chat/" + filepath
 
     return docid
-
-
-import json
-import shutil
 
 
 def get_index():
