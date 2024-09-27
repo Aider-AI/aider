@@ -589,8 +589,11 @@ class Commands:
             get_paths=lambda: [self.coder.root],
         )
 
+        # Create a new Document object with the modified text
+        new_document = Document(text, cursor_position=len(text))
+
         # Get completions from the PathCompleter
-        completions = path_completer.get_completions(document.replace(text=text), complete_event)
+        completions = path_completer.get_completions(new_document, complete_event)
 
         # Yield the completions
         for completion in completions:
