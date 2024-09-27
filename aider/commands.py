@@ -580,7 +580,6 @@ class Commands:
         return fname
 
     def completions_raw_read_only(self, document, complete_event):
-
         # Get the text before the cursor and strip leading spaces
         text = document.text_before_cursor.lstrip()
 
