@@ -204,11 +204,11 @@ Environment variable: `AIDER_ARCHITECT`
 Specify the model to use for commit messages and chat history summarization (default depends on --model)  
 Environment variable: `AIDER_WEAK_MODEL`  
 
-### `--editor-model JUNIOR_MODEL`
+### `--editor-model EDITOR_MODEL`
 Specify the model to use for editor tasks (default depends on --model)  
 Environment variable: `AIDER_EDITOR_MODEL`  
 
-### `--editor-edit-format JUNIOR_EDIT_FORMAT`
+### `--editor-edit-format EDITOR_EDIT_FORMAT`
 Specify the edit format for the editor model (default: depends on editor model)  
 Environment variable: `AIDER_EDITOR_EDIT_FORMAT`  
 
