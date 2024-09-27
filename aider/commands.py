@@ -580,7 +580,32 @@ class Commands:
         return fname
 
     def completions_raw_read_only(self, document, complete_event):
+        from prompt_toolkit.document import Document
+
+        # Get the text before the cursor and strip leading spaces
+        text = document.text_before_cursor.lstrip()
+
+        # Identify the command and extract text after it
+        command = '/read-only'
+        if text.startswith(command):
+            after_command = text[len(command):].lstrip()
+        else:
+            after_command = text
+
+        # Create a new Document object with the text after the command
+        new_document = Document(
+            after_command,
+            cursor_position=len(after_command)
+        )
+
         path_completer = PathCompleter(
+            only_directories=False,
+            expanduser=True,
+            get_paths=[self.coder.root],
+        )
+
+        # Use the new document for completions
+        yield from path_completer.get_completions(new_document, complete_event)
             only_directories=False,
             get_paths=lambda: [self.coder.root],
             # file_filter=lambda fname: (
