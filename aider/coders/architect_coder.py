@@ -32,7 +32,9 @@ class ArchitectCoder(AskCoder):
         editor_coder = Coder.create(**new_kwargs)
         editor_coder.cur_messages = []
         editor_coder.done_messages = []
-        editor_coder.show_announcements()
+
+        if self.verbose:
+            editor_coder.show_announcements()
 
         editor_coder.run(with_message=content, preproc=False)
 
