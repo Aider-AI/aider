@@ -193,10 +193,10 @@ class TestInputOutput(unittest.TestCase):
 
         # Test that allow_never=False does not add to never_prompts
         mock_input.reset_mock()
-        mock_input.side_effect = ["d"]
+        mock_input.side_effect = ["d", "n"]
         result = io.confirm_ask("Do you want to proceed?", allow_never=False)
         self.assertFalse(result)
-        mock_input.assert_called_once()
+        self.assertEqual(mock_input.call_count, 2)
         self.assertNotIn(("Do you want to proceed?", None), io.never_prompts)
 
     def test_get_command_completions(self):
