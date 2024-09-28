@@ -284,6 +284,7 @@ class InputOutput:
                 completion_menu_current_style
             )
 
+        dump(style_dict)
         return Style.from_dict(style_dict)
 
     def read_image(self, filename):
