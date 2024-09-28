@@ -264,8 +264,9 @@ class InputOutput:
                         f"bg:{self.completion_menu_bg_color} {self.completion_menu_color}"
                     ),
                     "completion-menu.completion.current": (
-                        f"bg:{self.completion_menu_current_bg_color} {self.completion_menu_current_color}"
-                    ),
+                        f"bg:{self.completion_menu_current_bg_color} "
+                        f"{self.completion_menu_current_color}"
+                    )
                 }
             )
             return Style.from_dict(style_dict)
