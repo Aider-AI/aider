@@ -188,10 +188,10 @@ class InputOutput:
         tool_error_color="red",
         tool_warning_color="#FFA500",
         assistant_output_color="blue",
-        completion_menu_color="default",
-        completion_menu_bg_color="default",
-        completion_menu_current_color="default",
-        completion_menu_current_bg_color="default",
+        completion_menu_color=None,
+        completion_menu_bg_color=None,
+        completion_menu_current_color=None,
+        completion_menu_current_bg_color=None,
         code_theme="default",
         encoding="utf-8",
         dry_run=False,
@@ -257,6 +257,41 @@ class InputOutput:
                 self.tool_error(f"Can't initialize prompt toolkit: {err}")  # non-pretty
         else:
             self.console = Console(force_terminal=False, no_color=True)  # non-pretty
+
+    def _get_style(self):
+        style_dict = {}
+        if not self.pretty:
+            return Style.from_dict(style_dict)
+
+        if self.user_input_color:
+            style_dict.setdefault("", self.user_input_color)
+            style_dict.update(
+                {
+                    "pygments.literal.string": f"bold italic {self.user_input_color}",
+                }
+            )
+
+        # Conditionally add 'completion-menu' style
+        completion_menu_style = []
+        if self.completion_menu_bg_color:
+            completion_menu_style.append(f"bg:{self.completion_menu_bg_color}")
+        if self.completion_menu_color:
+            completion_menu_style.append(self.completion_menu_color)
+        if completion_menu_style:
+            style_dict["completion-menu"] = " ".join(completion_menu_style)
+
+        # Conditionally add 'completion-menu.completion.current' style
+        completion_menu_current_style = []
+        if self.completion_menu_current_bg_color:
+            completion_menu_current_style.append(f"bg:{self.completion_menu_current_bg_color}")
+        if self.completion_menu_current_color:
+            completion_menu_current_style.append(self.completion_menu_current_color)
+        if completion_menu_current_style:
+            style_dict["completion-menu.completion.current"] = " ".join(
+                completion_menu_current_style
+            )
+
+        return Style.from_dict(style_dict)
 
     def read_image(self, filename):
         try:
@@ -335,22 +370,7 @@ class InputOutput:
         inp = ""
         multiline_input = False
 
-        if self.user_input_color and self.pretty:
-            style = Style.from_dict(
-                {
-                    "": self.user_input_color,
-                    "pygments.literal.string": f"bold italic {self.user_input_color}",
-                    "completion-menu": (
-                        f"bg:{self.completion_menu_bg_color} {self.completion_menu_color}"
-                    ),
-                    "completion-menu.completion.current": (
-                        f"bg:{self.completion_menu_current_bg_color} "
-                        f"{self.completion_menu_current_color}"
-                    ),
-                }
-            )
-        else:
-            style = None
+        style = self._get_style()
 
         completer_instance = ThreadedCompleter(
             AutoCompleter(
@@ -490,19 +510,7 @@ class InputOutput:
             else:
                 self.tool_output(subject, bold=True)
 
-        if self.pretty and self.user_input_color:
-            style = {
-                "": self.user_input_color,
-                "completion-menu": (
-                    f"bg:{self.completion_menu_bg_color} {self.completion_menu_color}"
-                ),
-                "completion-menu.completion.current": (
-                    f"bg:{self.completion_menu_current_bg_color} "
-                    f"{self.completion_menu_current_color}"
-                ),
-            }
-        else:
-            style = dict()
+        style = self._get_style()
 
         def is_valid_response(text):
             if not text:
@@ -521,7 +529,7 @@ class InputOutput:
                 if self.prompt_session:
                     res = self.prompt_session.prompt(
                         question,
-                        style=Style.from_dict(style),
+                        style=style,
                     )
                 else:
                     res = input(question)
@@ -565,10 +573,7 @@ class InputOutput:
             self.tool_output()
             self.tool_output(subject, bold=True)
 
-        if self.pretty and self.user_input_color:
-            style = Style.from_dict({"": self.user_input_color})
-        else:
-            style = None
+        style = self._get_style()
 
         if self.yes is True:
             res = "yes"

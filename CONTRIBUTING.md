@@ -154,6 +154,10 @@ The project's documentation is built using Jekyll and hosted on GitHub Pages. To
    ```
    bundle exec jekyll build
    ```
+5. Preview the website while editing (optional):
+   ```
+   bundle exec jekyll serve
+   ```
 
 The built documentation will be available in the `aider/website/_site` directory.
 

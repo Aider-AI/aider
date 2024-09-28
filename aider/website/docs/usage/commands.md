@@ -25,7 +25,7 @@ cog.out(get_help_md())
 | **/diff** | Display the diff of changes since the last message |
 | **/drop** | Remove files from the chat session to free up context space |
 | **/exit** | Exit the application |
-| **/git** | Run a git command |
+| **/git** | Run a git command (output excluded from chat) |
 | **/help** | Ask questions about aider |
 | **/lint** | Lint and fix in-chat files or all dirty files if none in chat |
 | **/ls** | List all known files and indicate which are included in the chat session |
@@ -33,8 +33,7 @@ cog.out(get_help_md())
 | **/map-refresh** | Force a refresh of the repository map |
 | **/model** | Switch to a new LLM |
 | **/models** | Search the list of available models |
-| **/paste** | Paste image/text from the clipboard into the chat.
-        Optionally provide a name for the image. |
+| **/paste** | Paste image/text from the clipboard into the chat.        Optionally provide a name for the image. |
 | **/quit** | Exit the application |
 | **/read-only** | Add files to the chat that are for reference, not to be edited |
 | **/report** | Report a problem by opening a GitHub Issue |
