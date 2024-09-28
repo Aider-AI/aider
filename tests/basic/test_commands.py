@@ -76,7 +76,37 @@ class TestCommands(TestCase):
             )
             mock_tool_output.assert_any_call(expected_preview)
 
-    def test_cmd_copy_no_assistant_messages(self):
+    def test_cmd_copy_with_cur_messages(self):
+        # Initialize InputOutput and Coder instances
+        io = InputOutput(pretty=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # Add messages to done_messages and cur_messages
+        coder.done_messages = [
+            {"role": "assistant", "content": "First assistant message in done_messages"},
+            {"role": "user", "content": "User message in done_messages"},
+        ]
+        coder.cur_messages = [
+            {"role": "assistant", "content": "Latest assistant message in cur_messages"},
+        ]
+
+        # Mock pyperclip.copy and io.tool_output
+        with (
+            mock.patch("pyperclip.copy") as mock_copy,
+            mock.patch.object(io, "tool_output") as mock_tool_output,
+        ):
+            # Invoke the /copy command
+            commands.cmd_copy("")
+
+            # Assert pyperclip.copy was called with the last assistant message in cur_messages
+            mock_copy.assert_called_once_with("Latest assistant message in cur_messages")
+
+            # Assert that tool_output was called with the expected preview
+            expected_preview = (
+                "Copied last assistant message to clipboard. Preview: Latest assistant message in cur_messages"
+            )
+            mock_tool_output.assert_any_call(expected_preview)
         io = InputOutput(pretty=False, yes=True)
         coder = Coder.create(self.GPT35, None, io)
         commands = Commands(io, coder)
