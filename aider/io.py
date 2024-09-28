@@ -264,17 +264,23 @@ class InputOutput:
                 }
             )
 
-        style_dict.update(
-            {
-                "completion-menu": (
-                    f"bg:{self.completion_menu_bg_color} {self.completion_menu_color}"
-                ),
-                "completion-menu.completion.current": (
-                    f"bg:{self.completion_menu_current_bg_color} "
-                    f"{self.completion_menu_current_color}"
-                ),
-            }
-        )
+        # Conditionally add 'completion-menu' style
+        completion_menu_style = []
+        if self.completion_menu_bg_color:
+            completion_menu_style.append(f"bg:{self.completion_menu_bg_color}")
+        if self.completion_menu_color:
+            completion_menu_style.append(self.completion_menu_color)
+        if completion_menu_style:
+            style_dict["completion-menu"] = " ".join(completion_menu_style)
+
+        # Conditionally add 'completion-menu.completion.current' style
+        completion_menu_current_style = []
+        if self.completion_menu_current_bg_color:
+            completion_menu_current_style.append(f"bg:{self.completion_menu_current_bg_color}")
+        if self.completion_menu_current_color:
+            completion_menu_current_style.append(self.completion_menu_current_color)
+        if completion_menu_current_style:
+            style_dict["completion-menu.completion.current"] = " ".join(completion_menu_current_style)
 
         return Style.from_dict(style_dict)
 
