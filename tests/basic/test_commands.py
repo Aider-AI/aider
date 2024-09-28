@@ -104,7 +104,8 @@ class TestCommands(TestCase):
 
             # Assert that tool_output was called with the expected preview
             expected_preview = (
-                "Copied last assistant message to clipboard. Preview: Latest assistant message in cur_messages"
+                "Copied last assistant message to clipboard. Preview: Latest assistant message in"
+                " cur_messages"
             )
             mock_tool_output.assert_any_call(expected_preview)
         io = InputOutput(pretty=False, yes=True)
