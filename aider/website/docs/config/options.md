@@ -338,22 +338,18 @@ Environment variable: `AIDER_ASSISTANT_OUTPUT_COLOR`
 
 ### `--completion-menu-color COLOR`
 Set the color for the completion menu (default: terminal's default text color)  
-Default: default  
 Environment variable: `AIDER_COMPLETION_MENU_COLOR`  
 
 ### `--completion-menu-bg-color COLOR`
 Set the background color for the completion menu (default: terminal's default background color)  
-Default: default  
 Environment variable: `AIDER_COMPLETION_MENU_BG_COLOR`  
 
 ### `--completion-menu-current-color COLOR`
 Set the color for the current item in the completion menu (default: terminal's default background color)  
-Default: default  
 Environment variable: `AIDER_COMPLETION_MENU_CURRENT_COLOR`  
 
 ### `--completion-menu-current-bg-color COLOR`
 Set the background color for the current item in the completion menu (default: terminal's default text color)  
-Default: default  
 Environment variable: `AIDER_COMPLETION_MENU_CURRENT_BG_COLOR`  
 
 ### `--code-theme VALUE`
