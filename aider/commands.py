@@ -584,7 +584,7 @@ class Commands:
         text = document.text_before_cursor
 
         # Skip the first word and the space after it
-        after_command = ' '.join(text.split()[1:])
+        after_command = " ".join(text.split()[1:])
 
         # Create a new Document object with the text after the command
         new_document = Document(after_command, cursor_position=len(after_command))
