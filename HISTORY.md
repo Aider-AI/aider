@@ -14,6 +14,7 @@
 - ModelSettings takes `extra_params` dict to specify any extras to pass to `litellm.completion()`.
 - Renamed `/clipboard` to `/paste`.
 - New `/copy` command to copy the last LLM response to the clipboard.
+- Autocomplete for `/read-only` supports the entire filesystem.
 - Support for litellm's `extra_body` parameter.
 - Support for cursor shapes when in vim mode.
 - Numerous bug fixes.

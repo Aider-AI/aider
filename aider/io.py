@@ -488,11 +488,15 @@ class InputOutput:
     ):
         self.num_user_asks += 1
 
-        if question in self.never_prompts:
+        question_id = (question, subject)
+
+        if question_id in self.never_prompts:
             return False
 
         if group and not group.show_group:
             group = None
+        if group:
+            allow_never = True
 
         valid_responses = ["yes", "no"]
         options = " (Y)es/(N)o"
@@ -503,8 +507,9 @@ class InputOutput:
             options += "/(S)kip all"
             valid_responses.append("skip")
         if allow_never:
-            options += "/(X)Never"
-            valid_responses.append("never")
+            options += "/(D)on't ask again"
+            valid_responses.append("don't")
+
         question += options + " [Yes]: "
 
         if subject:
@@ -555,8 +560,8 @@ class InputOutput:
 
         res = res.lower()[0]
 
-        if res == "x" and allow_never:
-            self.never_prompts.add(question)
+        if res == "d" and allow_never:
+            self.never_prompts.add(question_id)
             hist = f"{question.strip()} {res}"
             self.append_chat_history(hist, linebreak=True, blockquote=True)
             return False
