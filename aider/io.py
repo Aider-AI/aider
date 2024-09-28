@@ -505,7 +505,7 @@ class InputOutput:
                 if self.prompt_session:
                     res = self.prompt_session.prompt(
                         question,
-                        style=Style.from_dict(style),
+                        style=style,
                     )
                 else:
                     res = input(question)
