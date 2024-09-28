@@ -252,26 +252,19 @@ class InputOutput:
             self.console = Console(force_terminal=False, no_color=True)  # non-pretty
 
     def _get_style(self, style_dict=None):
+        if style_dict is None:
+            style_dict = {}
         if self.pretty and self.user_input_color:
-            if style_dict is None:
-                style_dict = {"": self.user_input_color}
-            else:
-                style_dict.setdefault("", self.user_input_color)
-            # Add the completion menu styles
-            style_dict.update(
-                {
-                    "completion-menu": (
-                        f"bg:{self.completion_menu_bg_color} {self.completion_menu_color}"
-                    ),
-                    "completion-menu.completion.current": (
-                        f"bg:{self.completion_menu_current_bg_color} "
-                        f"{self.completion_menu_current_color}"
-                    ),
-                }
-            )
+            style_dict.setdefault("", self.user_input_color)
+            style_dict.update({
+                "completion-menu": f"bg:{self.completion_menu_bg_color} {self.completion_menu_color}",
+                "completion-menu.completion.current": (
+                    f"bg:{self.completion_menu_current_bg_color} {self.completion_menu_current_color}"
+                ),
+            })
             return Style.from_dict(style_dict)
         else:
-            return None
+            return {}
 
     def read_image(self, filename):
         try:
@@ -494,8 +487,6 @@ class InputOutput:
                 self.tool_output(subject, bold=True)
 
         style = self._get_style()
-        if style is None:
-            style = {}
 
         def is_valid_response(text):
             if not text:
