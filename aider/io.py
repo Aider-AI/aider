@@ -251,6 +251,16 @@ class InputOutput:
         else:
             self.console = Console(force_terminal=False, no_color=True)  # non-pretty
 
+    def _get_style(self, style_dict=None):
+        if self.pretty and self.user_input_color:
+            if style_dict is None:
+                style_dict = {"": self.user_input_color}
+            else:
+                style_dict.setdefault("", self.user_input_color)
+            return Style.from_dict(style_dict)
+        else:
+            return None
+
     def read_image(self, filename):
         try:
             with open(str(filename), "rb") as image_file:
@@ -328,22 +338,17 @@ class InputOutput:
         inp = ""
         multiline_input = False
 
-        if self.user_input_color and self.pretty:
-            style = Style.from_dict(
-                {
-                    "": self.user_input_color,
-                    "pygments.literal.string": f"bold italic {self.user_input_color}",
-                    "completion-menu": (
-                        f"bg:{self.completion_menu_bg_color} {self.completion_menu_color}"
-                    ),
-                    "completion-menu.completion.current": (
-                        f"bg:{self.completion_menu_current_bg_color} "
-                        f"{self.completion_menu_current_color}"
-                    ),
-                }
-            )
-        else:
-            style = None
+        style_dict = {
+            "pygments.literal.string": f"bold italic {self.user_input_color}",
+            "completion-menu": (
+                f"bg:{self.completion_menu_bg_color} {self.completion_menu_color}"
+            ),
+            "completion-menu.completion.current": (
+                f"bg:{self.completion_menu_current_bg_color} "
+                f"{self.completion_menu_current_color}"
+            ),
+        }
+        style = self._get_style(style_dict)
 
         completer_instance = ThreadedCompleter(
             AutoCompleter(
@@ -483,19 +488,18 @@ class InputOutput:
             else:
                 self.tool_output(subject, bold=True)
 
-        if self.pretty and self.user_input_color:
-            style = {
-                "": self.user_input_color,
-                "completion-menu": (
-                    f"bg:{self.completion_menu_bg_color} {self.completion_menu_color}"
-                ),
-                "completion-menu.completion.current": (
-                    f"bg:{self.completion_menu_current_bg_color} "
-                    f"{self.completion_menu_current_color}"
-                ),
-            }
-        else:
-            style = dict()
+        style_dict = {
+            "completion-menu": (
+                f"bg:{self.completion_menu_bg_color} {self.completion_menu_color}"
+            ),
+            "completion-menu.completion.current": (
+                f"bg:{self.completion_menu_current_bg_color} "
+                f"{self.completion_menu_current_color}"
+            ),
+        }
+        style = self._get_style(style_dict)
+        if style is None:
+            style = {}
 
         def is_valid_response(text):
             if not text:
@@ -558,10 +562,7 @@ class InputOutput:
             self.tool_output()
             self.tool_output(subject, bold=True)
 
-        if self.pretty and self.user_input_color:
-            style = Style.from_dict({"": self.user_input_color})
-        else:
-            style = None
+        style = self._get_style()
 
         if self.yes is True:
             res = "yes"
