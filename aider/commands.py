@@ -708,18 +708,13 @@ class Commands:
                 continue
 
             if abs_file_path in self.coder.abs_fnames:
-                self.io.tool_warning(f"{matched_file} is already in the chat")
+                self.io.tool_error(f"{matched_file} is already in the chat as an editable file")
+                continue
             elif abs_file_path in self.coder.abs_read_only_fnames:
-                if self.coder.repo and self.coder.repo.path_in_repo(matched_file):
-                    self.coder.abs_read_only_fnames.remove(abs_file_path)
-                    self.coder.abs_fnames.add(abs_file_path)
-                    self.io.tool_output(
-                        f"Moved {matched_file} from read-only to editable files in the chat"
-                    )
-                else:
-                    self.io.tool_error(
-                        f"Cannot add {matched_file} as it's not part of the repository"
-                    )
+                self.coder.abs_read_only_fnames.remove(abs_file_path)
+                self.coder.abs_fnames.add(abs_file_path)
+                self.io.tool_output(
+                    f"Moved {matched_file} from read-only to editable files in the chat"
             else:
                 if is_image_file(matched_file) and not self.coder.main_model.accepts_images:
                     self.io.tool_error(
@@ -1153,10 +1148,15 @@ class Commands:
                 self.io.tool_error(f"Not a file or directory: {abs_path}")
 
     def _add_read_only_file(self, abs_path, original_name):
-        if abs_path in self.coder.abs_fnames:
-            self.io.tool_error(f"{original_name} is already in the chat as an editable file")
-        elif abs_path in self.coder.abs_read_only_fnames:
+        if abs_path in self.coder.abs_read_only_fnames:
             self.io.tool_error(f"{original_name} is already in the chat as a read-only file")
+            return
+        elif abs_path in self.coder.abs_fnames:
+            self.coder.abs_fnames.remove(abs_path)
+            self.coder.abs_read_only_fnames.add(abs_path)
+            self.io.tool_output(
+                f"Moved {original_name} from editable to read-only files in the chat"
+            )
         else:
             self.coder.abs_read_only_fnames.add(abs_path)
             self.io.tool_output(f"Added {original_name} to read-only files.")
