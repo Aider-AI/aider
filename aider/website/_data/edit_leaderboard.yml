@@ -1293,3 +1293,26 @@
   versions: 0.57.2.dev
   seconds_per_case: 6.6
   total_cost: 0.0000
+
+- dirname: 2024-09-28-18-30-20--codestral-whole
+  test_cases: 133
+  model: ollama/codestral
+  edit_format: whole
+  commit_hash: 1971285-dirty
+  pass_rate_1: 33.8
+  pass_rate_2: 45.9
+  percent_cases_well_formed: 98.5
+  error_outputs: 8
+  num_malformed_responses: 8
+  num_with_malformed_responses: 2
+  user_asks: 12
+  lazy_comments: 6
+  syntax_errors: 5
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 4
+  command: aider --model ollama/codestral
+  date: 2024-09-28
+  versions: 0.57.2.dev
+  seconds_per_case: 67.2
+  total_cost: 0.0000
