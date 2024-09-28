@@ -280,7 +280,9 @@ class InputOutput:
         if self.completion_menu_current_color:
             completion_menu_current_style.append(self.completion_menu_current_color)
         if completion_menu_current_style:
-            style_dict["completion-menu.completion.current"] = " ".join(completion_menu_current_style)
+            style_dict["completion-menu.completion.current"] = " ".join(
+                completion_menu_current_style
+            )
 
         return Style.from_dict(style_dict)
 
