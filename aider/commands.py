@@ -715,6 +715,7 @@ class Commands:
                 self.coder.abs_fnames.add(abs_file_path)
                 self.io.tool_output(
                     f"Moved {matched_file} from read-only to editable files in the chat"
+                )
             else:
                 if is_image_file(matched_file) and not self.coder.main_model.accepts_images:
                     self.io.tool_error(
