@@ -7,13 +7,14 @@
   - Use a strong reasoning model like o1-preview as your Architect.
   - Use a cheaper, faster model like gpt-4o as your Editor.
 - New `--o1-preview` and `--o1-mini` shortcuts.
-- New settings for completion menu colors, by @smh.
+- New settings for completion menu colors.
 - New `--voice-format` switch to send voice audio as wav/mp3/webm, by @mbailey.
 - Support for new Gemini 002 models.
 - Will now follow HTTP redirects when scraping urls.
 - ModelSettings takes `extra_params` dict to specify any extras to pass to `litellm.completion()`.
 - Renamed `/clipboard` to `/paste`.
-- Support for litellm's `extra_body` parameter, by @hypn4.
+- New `/copy` command to copy the last LLM response to the clipboard.
+- Support for litellm's `extra_body` parameter.
 - Support for cursor shapes when in vim mode.
 - Numerous bug fixes.
 
