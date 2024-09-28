@@ -112,6 +112,8 @@ class TestCommands(TestCase):
 
             # Assert that tool_error was called with the clipboard error message
             mock_tool_error.assert_called_once_with("Failed to copy to clipboard: Clipboard error")
+
+    def test_cmd_add_bad_glob(self):
         # https://github.com/paul-gauthier/aider/issues/293
 
         io = InputOutput(pretty=False, yes=False)
