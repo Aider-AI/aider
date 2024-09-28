@@ -735,7 +735,7 @@ class Commands:
                     self.io.tool_output(f"Removed {matched_file} from the chat")
 
     def cmd_git(self, args):
-        "Run a git command"
+        "Run a git command (output excluded from chat)"
         combined_output = None
         try:
             args = "git " + args
@@ -1040,7 +1040,7 @@ class Commands:
         return text
 
     def cmd_paste(self, args):
-        """Paste image/text from the clipboard into the chat.
+        """Paste image/text from the clipboard into the chat.\
         Optionally provide a name for the image."""
         try:
             # Check for image first
