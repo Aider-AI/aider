@@ -171,7 +171,7 @@ class TestInputOutput(unittest.TestCase):
 
         # Reset the mock to check for further calls
         mock_input.reset_mock()
-        
+
         # Second call: should not prompt, immediately return False
         result = io.confirm_ask("Are you sure?", allow_never=True)
         self.assertFalse(result)
