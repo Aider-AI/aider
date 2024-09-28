@@ -20,17 +20,19 @@ class TestInputOutput(unittest.TestCase):
     def test_autocompleter_get_command_completions(self):
         # Step 3: Mock the commands object
         commands = MagicMock()
-        commands.get_commands.return_value = ['/help', '/add', '/drop']
+        commands.get_commands.return_value = ["/help", "/add", "/drop"]
         commands.matching_commands.side_effect = lambda inp: (
             [cmd for cmd in commands.get_commands() if cmd.startswith(inp.strip().split()[0])],
             inp.strip().split()[0],
-            ' '.join(inp.strip().split()[1:]),
+            " ".join(inp.strip().split()[1:]),
         )
         commands.get_raw_completions.return_value = None
-        commands.get_completions.side_effect = lambda cmd: ['file1.txt', 'file2.txt'] if cmd == '/add' else None
+        commands.get_completions.side_effect = lambda cmd: (
+            ["file1.txt", "file2.txt"] if cmd == "/add" else None
+        )
 
         # Step 4: Create an instance of AutoCompleter
-        root = ''
+        root = ""
         rel_fnames = []
         addable_rel_fnames = []
         autocompleter = AutoCompleter(
@@ -38,15 +40,15 @@ class TestInputOutput(unittest.TestCase):
             rel_fnames=rel_fnames,
             addable_rel_fnames=addable_rel_fnames,
             commands=commands,
-            encoding='utf-8',
+            encoding="utf-8",
         )
 
         # Step 5: Set up test cases
         test_cases = [
             # Input text, Expected completion texts
-            ('/', ['/help', '/add', '/drop']),
-            ('/a', ['/add']),
-            ('/add ', ['file1.txt', 'file2.txt']),
+            ("/", ["/help", "/add", "/drop"]),
+            ("/a", ["/add"]),
+            ("/add ", ["file1.txt", "file2.txt"]),
         ]
 
         # Step 6: Iterate through test cases
@@ -56,12 +58,14 @@ class TestInputOutput(unittest.TestCase):
             words = text.strip().split()
 
             # Call get_command_completions
-            completions = list(autocompleter.get_command_completions(
-                document,
-                complete_event,
-                text,
-                words,
-            ))
+            completions = list(
+                autocompleter.get_command_completions(
+                    document,
+                    complete_event,
+                    text,
+                    words,
+                )
+            )
 
             # Extract completion texts
             completion_texts = [comp.text for comp in completions]
@@ -253,7 +257,6 @@ class TestInputOutput(unittest.TestCase):
         self.assertFalse(result)
         self.assertEqual(mock_input.call_count, 2)
         self.assertNotIn(("Do you want to proceed?", None), io.never_prompts)
-
 
 
 if __name__ == "__main__":
