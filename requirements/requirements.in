@@ -27,6 +27,7 @@ pyperclip
 pexpect
 json5
 psutil
+watchdog
 
 # The proper dependency is networkx[default], but this brings
 # in matplotlib and a bunch of other deps

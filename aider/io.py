@@ -4,6 +4,10 @@ from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
+from threading import Lock
+
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 
 from prompt_toolkit.completion import Completer, Completion, ThreadedCompleter
 from prompt_toolkit.cursor_shapes import ModalCursorShapeConfig
@@ -36,6 +40,15 @@ class ConfirmGroup:
             self.show_group = len(items) > 1
 
 
+class FileChangeHandler(FileSystemEventHandler):
+    def __init__(self, auto_completer):
+        self.auto_completer = auto_completer
+
+    def on_modified(self, event):
+        abs_path = os.path.abspath(event.src_path)
+        if abs_path in (os.path.abspath(fname) for fname in self.auto_completer.all_fnames):
+            self.auto_completer.invalidate()
+
 class AutoCompleter(Completer):
     def __init__(
         self, root, rel_fnames, addable_rel_fnames, commands, encoding, abs_read_only_fnames=None
@@ -45,37 +58,46 @@ class AutoCompleter(Completer):
         self.encoding = encoding
         self.abs_read_only_fnames = abs_read_only_fnames or []
 
-        fname_to_rel_fnames = defaultdict(list)
-        for rel_fname in addable_rel_fnames:
-            fname = os.path.basename(rel_fname)
-            if fname != rel_fname:
-                fname_to_rel_fnames[fname].append(rel_fname)
-        self.fname_to_rel_fnames = fname_to_rel_fnames
-
-        self.words = set()
-
+        self.fname_to_rel_fnames = defaultdict(list)
         self.commands = commands
         self.command_completions = dict()
         if commands:
             self.command_names = self.commands.get_commands()
 
-        for rel_fname in addable_rel_fnames:
-            self.words.add(rel_fname)
-
-        for rel_fname in rel_fnames:
-            self.words.add(rel_fname)
-
-        all_fnames = [Path(root) / rel_fname for rel_fname in rel_fnames]
+        self.all_fnames = [Path(root) / rel_fname for rel_fname in rel_fnames]
         if abs_read_only_fnames:
-            all_fnames.extend(abs_read_only_fnames)
+            self.all_fnames.extend(abs_read_only_fnames)
 
-        self.all_fnames = all_fnames
-        self.tokenized = False
+        self.words = set()
+        self.populate_words()
 
-    def tokenize(self):
-        if self.tokenized:
+        self.lock = Lock()
+        self.observer = Observer()
+        # start the file change observer if we have an actual project root (some tests don't)
+        if root:
+            event_handler = FileChangeHandler(self)
+            self.observer.schedule(event_handler, root, recursive=True)
+            try:
+                self.observer.start()
+            except OSError:
+                # handle test that sets root to '/' which exceeds inotify watch limit
+                pass
+
+    def invalidate(self):
+        self.words = set()
+
+    def populate_words(self):
+        if self.words:
             return
-        self.tokenized = True
+
+        for rel_fname in self.addable_rel_fnames:
+            fname = os.path.basename(rel_fname)
+            if fname != rel_fname:
+                self.fname_to_rel_fnames[fname].append(rel_fname)
+            self.words.add(rel_fname)
+
+        for rel_fname in self.rel_fnames:
+            self.words.add(rel_fname)
 
         for fname in self.all_fnames:
             try:
@@ -94,11 +116,9 @@ class AutoCompleter(Completer):
             )
 
     def get_command_completions(self, text, words):
-        candidates = []
         if len(words) == 1 and not text[-1].isspace():
             partial = words[0].lower()
-            candidates = [cmd for cmd in self.command_names if cmd.startswith(partial)]
-            return candidates
+            return [cmd for cmd in self.command_names if cmd.startswith(partial)]
 
         if len(words) <= 1:
             return []
@@ -114,54 +134,61 @@ class AutoCompleter(Completer):
         elif cmd not in matches:
             return
 
-        if cmd not in self.command_completions:
+        candidates = None
+        if cmd in self.command_completions:
+            candidates = self.command_completions[cmd]
+        else:
             candidates = self.commands.get_completions(cmd)
             self.command_completions[cmd] = candidates
-        else:
-            candidates = self.command_completions[cmd]
-
         if candidates is None:
             return
 
-        candidates = [word for word in candidates if partial in word.lower()]
-        return candidates
+        return [word for word in candidates if partial in word.lower()]
 
     def get_completions(self, document, complete_event):
-        self.tokenize()
+        with self.lock:
+            if not self.words:
+                self.populate_words()
 
-        text = document.text_before_cursor
-        words = text.split()
-        if not words:
-            return
-
-        if text and text[-1].isspace():
-            # don't keep completing after a space
-            return
-
-        if text[0] == "/":
-            candidates = self.get_command_completions(text, words)
-            if candidates is not None:
-                for candidate in sorted(candidates):
-                    yield Completion(candidate, start_position=-len(words[-1]))
+            text = document.text_before_cursor
+            words = text.split()
+            if not words:
                 return
 
-        candidates = self.words
-        candidates.update(set(self.fname_to_rel_fnames))
-        candidates = [word if type(word) is tuple else (word, word) for word in candidates]
+            if text and text[-1].isspace():
+                # don't keep completing after a space
+                return
 
-        last_word = words[-1]
-        completions = []
-        for word_match, word_insert in candidates:
-            if word_match.lower().startswith(last_word.lower()):
-                completions.append((word_insert, -len(last_word), word_match))
+            if text[0] == "/":
+                candidates = self.get_command_completions(text, words)
+                if candidates is not None:
+                    for candidate in sorted(candidates):
+                        yield Completion(candidate, start_position=-len(words[-1]))
+                    return
 
-                rel_fnames = self.fname_to_rel_fnames.get(word_match, [])
-                if rel_fnames:
-                    for rel_fname in rel_fnames:
-                        completions.append((rel_fname, -len(last_word), rel_fname))
+            candidates = self.words
+            candidates.update(set(self.fname_to_rel_fnames))
+            candidates = [word if type(word) is tuple else (word, word) for word in candidates]
 
-        for ins, pos, match in sorted(completions):
-            yield Completion(ins, start_position=pos, display=match)
+            last_word = words[-1]
+            completions = []
+            for word_match, word_insert in candidates:
+                if word_match.lower().startswith(last_word.lower()):
+                    completions.append((word_insert, -len(last_word), word_match))
+
+                    rel_fnames = self.fname_to_rel_fnames.get(word_match, [])
+                    if rel_fnames:
+                        for rel_fname in rel_fnames:
+                            completions.append((rel_fname, -len(last_word), rel_fname))
+
+            for ins, pos, match in sorted(completions):
+                yield Completion(ins, start_position=pos, display=match)
+
+    def __del__(self):
+        # the check here is for when the AutoCompleter is deleted before the observer finishes starting,
+        # which happens in some of the automated tests
+        if self.observer.is_alive():
+            self.observer.stop()
 
 
 class InputOutput:
