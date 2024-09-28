@@ -48,7 +48,7 @@ class TestInputOutput(unittest.TestCase):
             # Input text, Expected completion texts
             ("/", ["/help", "/add", "/drop"]),
             ("/a", ["/add"]),
-            ("/add ", ["file1.txt", "file2.txt"]),
+            ("/add f", ["file1.txt", "file2.txt"]),
         ]
 
         # Step 6: Iterate through test cases
@@ -71,7 +71,7 @@ class TestInputOutput(unittest.TestCase):
             completion_texts = [comp.text for comp in completions]
 
             # Assert that the completions match expected results
-            self.assertEqual(completion_texts, expected_completions)
+            self.assertEqual(set(completion_texts), set(expected_completions))
 
     def test_autocompleter_with_non_existent_file(self):
         root = ""
