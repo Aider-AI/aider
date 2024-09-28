@@ -258,12 +258,16 @@ class InputOutput:
             else:
                 style_dict.setdefault("", self.user_input_color)
             # Add the completion menu styles
-            style_dict.update({
-                "completion-menu": f"bg:{self.completion_menu_bg_color} {self.completion_menu_color}",
-                "completion-menu.completion.current": (
-                    f"bg:{self.completion_menu_current_bg_color} {self.completion_menu_current_color}"
-                ),
-            })
+            style_dict.update(
+                {
+                    "completion-menu": (
+                        f"bg:{self.completion_menu_bg_color} {self.completion_menu_color}"
+                    ),
+                    "completion-menu.completion.current": (
+                        f"bg:{self.completion_menu_current_bg_color} {self.completion_menu_current_color}"
+                    ),
+                }
+            )
             return Style.from_dict(style_dict)
         else:
             return None
