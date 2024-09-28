@@ -198,6 +198,7 @@ class InputOutput:
         llm_history_file=None,
         editingmode=EditingMode.EMACS,
     ):
+        self.never_prompts = set()
         self.editingmode = editingmode
         no_color = os.environ.get("NO_COLOR")
         if no_color is not None and no_color != "":
@@ -482,9 +483,12 @@ class InputOutput:
         self.append_chat_history(hist)
 
     def confirm_ask(
-        self, question, default="y", subject=None, explicit_yes_required=False, group=None
+        self, question, default="y", subject=None, explicit_yes_required=False, group=None, allow_never=False
     ):
         self.num_user_asks += 1
+
+        if question in self.never_prompts:
+            return False
 
         if group and not group.show_group:
             group = None
@@ -497,6 +501,9 @@ class InputOutput:
                 valid_responses.append("all")
             options += "/(S)kip all"
             valid_responses.append("skip")
+        if allow_never:
+            options += "/(X)Never"
+            valid_responses.append("never")
         question += options + " [Yes]: "
 
         if subject:
@@ -546,6 +553,12 @@ class InputOutput:
                 self.tool_error(error_message)
 
         res = res.lower()[0]
+
+        if res == 'x' and allow_never:
+            self.never_prompts.add(question)
+            hist = f"{question.strip()} {res}"
+            self.append_chat_history(hist, linebreak=True, blockquote=True)
+            return False
 
         if explicit_yes_required:
             is_yes = res == "y"
