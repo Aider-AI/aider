@@ -375,13 +375,13 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--completion-menu-color",
         metavar="COLOR",
-        default="default",
+        default=None,
         help="Set the color for the completion menu (default: terminal's default text color)",
     )
     group.add_argument(
         "--completion-menu-bg-color",
         metavar="COLOR",
-        default="default",
+        default=None,
         help=(
             "Set the background color for the completion menu (default: terminal's default"
             " background color)"
@@ -390,7 +390,7 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--completion-menu-current-color",
         metavar="COLOR",
-        default="default",
+        default=None,
         help=(
             "Set the color for the current item in the completion menu (default: terminal's default"
             " background color)"
@@ -399,7 +399,7 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--completion-menu-current-bg-color",
         metavar="COLOR",
-        default="default",
+        default=None,
         help=(
             "Set the background color for the current item in the completion menu (default:"
             " terminal's default text color)"
