@@ -623,7 +623,7 @@ class Commands:
                 selected_style=completion.selected_style,
             )
 
-    def _old_completions_add(self):
+    def completions_add(self):
         files = set(self.coder.get_all_relative_files())
         files = files - set(self.coder.get_inchat_relative_files())
         files = [self.quote_fname(fn) for fn in files]
