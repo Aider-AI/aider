@@ -257,6 +257,13 @@ class InputOutput:
                 style_dict = {"": self.user_input_color}
             else:
                 style_dict.setdefault("", self.user_input_color)
+            # Add the completion menu styles
+            style_dict.update({
+                "completion-menu": f"bg:{self.completion_menu_bg_color} {self.completion_menu_color}",
+                "completion-menu.completion.current": (
+                    f"bg:{self.completion_menu_current_bg_color} {self.completion_menu_current_color}"
+                ),
+            })
             return Style.from_dict(style_dict)
         else:
             return None
@@ -340,10 +347,6 @@ class InputOutput:
 
         style_dict = {
             "pygments.literal.string": f"bold italic {self.user_input_color}",
-            "completion-menu": f"bg:{self.completion_menu_bg_color} {self.completion_menu_color}",
-            "completion-menu.completion.current": (
-                f"bg:{self.completion_menu_current_bg_color} {self.completion_menu_current_color}"
-            ),
         }
         style = self._get_style(style_dict)
 
@@ -485,13 +488,7 @@ class InputOutput:
             else:
                 self.tool_output(subject, bold=True)
 
-        style_dict = {
-            "completion-menu": f"bg:{self.completion_menu_bg_color} {self.completion_menu_color}",
-            "completion-menu.completion.current": (
-                f"bg:{self.completion_menu_current_bg_color} {self.completion_menu_current_color}"
-            ),
-        }
-        style = self._get_style(style_dict)
+        style = self._get_style()
         if style is None:
             style = {}
 
