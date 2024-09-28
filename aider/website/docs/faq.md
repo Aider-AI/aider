@@ -124,6 +124,9 @@ When starting a fresh aider session, you can include recent git history in the c
 
 Remember, the chat history already includes recent changes made during the current session, so this tip is most useful when starting a new aider session and you want to provide context about recent work.
 
+{: .tip }
+The `/git` command will not work for this purpose, as its output is not included in the chat. 
+
 ## How can I run aider locally from source code?
 
 To run the project locally, follow these steps:
@@ -194,12 +197,18 @@ Yes, you can now share aider chat logs in a pretty way.
 
 1. Copy the markdown logs you want to share from `.aider.chat.history.md` and make a github gist. Or publish the raw markdown logs on the web any way you'd like.
 
-https://gist.github.com/paul-gauthier/2087ab8b64034a078c0a209440ac8be0
+   ```
+   https://gist.github.com/paul-gauthier/2087ab8b64034a078c0a209440ac8be0
+   ```
 
 2. Take the gist URL and append it to:
 
-https://aider.chat/share/?mdurl=
+   ```
+   https://aider.chat/share/?mdurl=
+   ```
 
 This will give you a URL like this, which shows the chat history like you'd see in a terminal:
 
+```
 https://aider.chat/share/?mdurl=https://gist.github.com/paul-gauthier/2087ab8b64034a078c0a209440ac8be0
+```
