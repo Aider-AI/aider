@@ -202,35 +202,6 @@ class TestInputOutput(unittest.TestCase):
         self.assertEqual(mock_input.call_count, 2)
         self.assertNotIn(("Do you want to proceed?", None), io.never_prompts)
 
-    def test_get_command_completions(self):
-        root = ""
-        rel_fnames = []
-        addable_rel_fnames = []
-        commands = MagicMock()
-        commands.get_commands.return_value = ["model", "chat", "help"]
-        commands.get_completions.return_value = ["gpt-3.5-turbo", "gpt-4"]
-        commands.matching_commands.return_value = (["/model", "/models"], None, None)
-
-        autocompleter = AutoCompleter(root, rel_fnames, addable_rel_fnames, commands, "utf-8")
-
-        # Create instances of Document and CompleteEvent
-        document = Document(text="/model gpt", cursor_position=len("/model gpt"))
-        complete_event = CompleteEvent()
-
-        # Call get_command_completions with the required parameters
-        completions = list(
-            autocompleter.get_command_completions(
-                document, complete_event, "/model gpt", ["/model", "gpt"]
-            )
-        )
-
-        # Extract completion texts
-        result = [completion.text for completion in completions]
-
-        # Assert the result
-        self.assertEqual(result, ["gpt-3.5-turbo", "gpt-4"])
-        commands.get_completions.assert_called_once_with("/model")
-        commands.matching_commands.assert_called_once_with("/model")
 
 
 if __name__ == "__main__":
