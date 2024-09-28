@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from prompt_toolkit.completion import CompleteEvent
+from prompt_toolkit.completion import CompleteEvent, Completion
 from prompt_toolkit.document import Document
 
 from aider.dump import dump  # noqa: F401
@@ -16,6 +16,58 @@ class TestInputOutput(unittest.TestCase):
         with patch.dict(os.environ, {"NO_COLOR": "1"}):
             io = InputOutput()
             self.assertFalse(io.pretty)
+
+    def test_autocompleter_get_command_completions(self):
+        # Step 3: Mock the commands object
+        commands = MagicMock()
+        commands.get_commands.return_value = ['/help', '/add', '/drop']
+        commands.matching_commands.side_effect = lambda inp: (
+            [cmd for cmd in commands.get_commands() if cmd.startswith(inp.strip().split()[0])],
+            inp.strip().split()[0],
+            ' '.join(inp.strip().split()[1:]),
+        )
+        commands.get_raw_completions.return_value = None
+        commands.get_completions.side_effect = lambda cmd: ['file1.txt', 'file2.txt'] if cmd == '/add' else None
+
+        # Step 4: Create an instance of AutoCompleter
+        root = ''
+        rel_fnames = []
+        addable_rel_fnames = []
+        autocompleter = AutoCompleter(
+            root=root,
+            rel_fnames=rel_fnames,
+            addable_rel_fnames=addable_rel_fnames,
+            commands=commands,
+            encoding='utf-8',
+        )
+
+        # Step 5: Set up test cases
+        test_cases = [
+            # Input text, Expected completion texts
+            ('/', ['/help', '/add', '/drop']),
+            ('/a', ['/add']),
+            ('/add ', ['file1.txt', 'file2.txt']),
+        ]
+
+        # Step 6: Iterate through test cases
+        for text, expected_completions in test_cases:
+            document = Document(text=text)
+            complete_event = CompleteEvent()
+            words = text.strip().split()
+
+            # Call get_command_completions
+            completions = list(autocompleter.get_command_completions(
+                document,
+                complete_event,
+                text,
+                words,
+            ))
+
+            # Extract completion texts
+            completion_texts = [comp.text for comp in completions]
+
+            # Assert that the completions match expected results
+            self.assertEqual(completion_texts, expected_completions)
 
     def test_autocompleter_with_non_existent_file(self):
         root = ""
