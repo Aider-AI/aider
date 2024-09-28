@@ -3,12 +3,12 @@ import os
 import shutil
 import sys
 import tempfile
-import pyperclip
 from io import StringIO
 from pathlib import Path
 from unittest import TestCase, mock
 
 import git
+import pyperclip
 
 from aider.coders import Coder
 from aider.commands import Commands, SwitchCoder
@@ -60,9 +60,10 @@ class TestCommands(TestCase):
         ]
 
         # Mock pyperclip.copy and io.tool_output
-        with mock.patch("pyperclip.copy") as mock_copy, \
-             mock.patch.object(io, 'tool_output') as mock_tool_output:
-
+        with (
+            mock.patch("pyperclip.copy") as mock_copy,
+            mock.patch.object(io, "tool_output") as mock_tool_output,
+        ):
             # Invoke the /copy command
             commands.cmd_copy("")
 
@@ -70,7 +71,9 @@ class TestCommands(TestCase):
             mock_copy.assert_called_once_with("Second assistant message")
 
             # Assert that tool_output was called with the expected preview
-            expected_preview = "Copied last assistant message to clipboard. Preview: Second assistant message"
+            expected_preview = (
+                "Copied last assistant message to clipboard. Preview: Second assistant message"
+            )
             mock_tool_output.assert_any_call(expected_preview)
 
     def test_cmd_copy_no_assistant_messages(self):
@@ -84,7 +87,7 @@ class TestCommands(TestCase):
         ]
 
         # Mock io.tool_error
-        with mock.patch.object(io, 'tool_error') as mock_tool_error:
+        with mock.patch.object(io, "tool_error") as mock_tool_error:
             commands.cmd_copy("")
             # Assert tool_error was called indicating no assistant messages
             mock_tool_error.assert_called_once_with("No assistant messages found to copy.")
@@ -99,9 +102,12 @@ class TestCommands(TestCase):
         ]
 
         # Mock pyperclip.copy to raise an exception
-        with mock.patch("pyperclip.copy", side_effect=pyperclip.PyperclipException("Clipboard error")), \
-             mock.patch.object(io, 'tool_error') as mock_tool_error:
-
+        with (
+            mock.patch(
+                "pyperclip.copy", side_effect=pyperclip.PyperclipException("Clipboard error")
+            ),
+            mock.patch.object(io, "tool_error") as mock_tool_error,
+        ):
             commands.cmd_copy("")
 
             # Assert that tool_error was called with the clipboard error message
