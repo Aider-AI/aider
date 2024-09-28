@@ -11,6 +11,7 @@
 - New `--voice-format` switch to send voice audio as wav/mp3/webm, by @mbailey.
 - Support for new Gemini 002 models.
 - Will now follow HTTP redirects when scraping urls.
+- Many confirmation questions can be skipped for the rest of the session with "(D)on't ask again" response.
 - ModelSettings takes `extra_params` dict to specify any extras to pass to `litellm.completion()`.
 - Renamed `/clipboard` to `/paste`.
 - New `/copy` command to copy the last LLM response to the clipboard.
