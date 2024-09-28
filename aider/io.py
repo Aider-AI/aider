@@ -8,7 +8,6 @@ from pathlib import Path
 from prompt_toolkit.completion import (
     Completer,
     Completion,
-    PathCompleter,
     ThreadedCompleter,
 )
 from prompt_toolkit.cursor_shapes import ModalCursorShapeConfig
