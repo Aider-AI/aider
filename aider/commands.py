@@ -580,22 +580,11 @@ class Commands:
         return fname
 
     def completions_raw_read_only(self, document, complete_event):
-        # Get the text before the cursor and strip leading spaces
-        text = document.text_before_cursor.lstrip()
+        # Get the text before the cursor
+        text = document.text_before_cursor
 
-        # Identify the command and extract text after it
-        command = "/read-only"
-        if text.startswith("/"):
-            # Find the longest matching prefix of "/read-only"
-            for i in range(len(command), 0, -1):
-                if text.startswith(command[:i]):
-                    after_command = text[i:].lstrip()
-                    break
-            else:
-                # If no prefix matches, return no completions
-                return
-        else:
-            after_command = text
+        # Skip the first word and the space after it
+        after_command = ' '.join(text.split()[1:])
 
         # Create a new Document object with the text after the command
         new_document = Document(after_command, cursor_position=len(after_command))
