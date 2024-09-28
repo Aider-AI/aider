@@ -483,7 +483,13 @@ class InputOutput:
         self.append_chat_history(hist)
 
     def confirm_ask(
-        self, question, default="y", subject=None, explicit_yes_required=False, group=None, allow_never=False
+        self,
+        question,
+        default="y",
+        subject=None,
+        explicit_yes_required=False,
+        group=None,
+        allow_never=False,
     ):
         self.num_user_asks += 1
 
@@ -554,7 +560,7 @@ class InputOutput:
 
         res = res.lower()[0]
 
-        if res == 'x' and allow_never:
+        if res == "x" and allow_never:
             self.never_prompts.add(question)
             hist = f"{question.strip()} {res}"
             self.append_chat_history(hist, linebreak=True, blockquote=True)
