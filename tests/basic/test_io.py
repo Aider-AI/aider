@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from prompt_toolkit.completion import CompleteEvent, Completion
+from prompt_toolkit.completion import CompleteEvent
 from prompt_toolkit.document import Document
 
 from aider.dump import dump  # noqa: F401
