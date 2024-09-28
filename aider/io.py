@@ -258,6 +258,7 @@ class InputOutput:
             style_dict.setdefault("", self.user_input_color)
             style_dict.update(
                 {
+                    "pygments.literal.string": f"bold italic {self.user_input_color}",
                     "completion-menu": (
                         f"bg:{self.completion_menu_bg_color} {self.completion_menu_color}"
                     ),
@@ -347,10 +348,7 @@ class InputOutput:
         inp = ""
         multiline_input = False
 
-        style_dict = {
-            "pygments.literal.string": f"bold italic {self.user_input_color}",
-        }
-        style = self._get_style(style_dict)
+        style = self._get_style()
 
         completer_instance = ThreadedCompleter(
             AutoCompleter(
