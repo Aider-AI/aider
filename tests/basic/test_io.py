@@ -2,6 +2,8 @@ import os
 import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
+from prompt_toolkit.document import Document
+from prompt_toolkit.completion import CompleteEvent
 
 from aider.dump import dump  # noqa: F401
 from aider.io import AutoCompleter, ConfirmGroup, InputOutput
@@ -210,8 +212,19 @@ class TestInputOutput(unittest.TestCase):
 
         autocompleter = AutoCompleter(root, rel_fnames, addable_rel_fnames, commands, "utf-8")
 
-        # Test case for "/model gpt"
-        result = autocompleter.get_command_completions("/model gpt", ["/model", "gpt"])
+        # Create instances of Document and CompleteEvent
+        document = Document(text="/model gpt", cursor_position=len("/model gpt"))
+        complete_event = CompleteEvent()
+
+        # Call get_command_completions with the required parameters
+        completions = list(autocompleter.get_command_completions(
+            document, complete_event, "/model gpt", ["/model", "gpt"]
+        ))
+
+        # Extract completion texts
+        result = [completion.text for completion in completions]
+
+        # Assert the result
         self.assertEqual(result, ["gpt-3.5-turbo", "gpt-4"])
         commands.get_completions.assert_called_once_with("/model")
         commands.matching_commands.assert_called_once_with("/model")
