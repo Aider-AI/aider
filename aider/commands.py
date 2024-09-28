@@ -1040,7 +1040,7 @@ class Commands:
         return text
 
     def cmd_paste(self, args):
-        """Paste image/text from the clipboard into the chat.
+        """Paste image/text from the clipboard into the chat.\
         Optionally provide a name for the image."""
         try:
             # Check for image first
