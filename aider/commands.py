@@ -576,7 +576,9 @@ class Commands:
         self.io.print(diff)
 
     def quote_fname(self, fname):
-        return shlex.quote(fname)
+        if " " in fname and '"' not in fname:
+            fname = f'"{fname}"'
+        return fname
 
     def completions_raw_read_only(self, document, complete_event):
         # Get the text before the cursor and strip leading spaces
@@ -613,7 +615,7 @@ class Commands:
 
         # Iterate over the completions and modify them
         for completion in path_completer.get_completions(new_document, complete_event):
-            quoted_text = self.quote_fname(completion.text)
+            quoted_text = self.quote_fname(after_command + completion.text)
             yield Completion(
                 text=quoted_text,
                 start_position=adjusted_start_position,
