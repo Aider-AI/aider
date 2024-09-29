@@ -2600,3 +2600,115 @@
     Paul Gauthier (aider): 381
   start_tag: v0.56.0
   total_lines: 563
+- aider_percentage: 53.45
+  aider_total: 712
+  end_date: '2024-09-29'
+  end_tag: v0.58.0
+  file_counts:
+    .github/workflows/docker-build-test.yml:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 11
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/args.py:
+      Paul Gauthier: 8
+      Paul Gauthier (aider): 109
+      Stein Martin Hustad: 17
+      fry69: 2
+    aider/coders/__init__.py:
+      Paul Gauthier: 6
+      Paul Gauthier (aider): 2
+    aider/coders/architect_coder.py:
+      Paul Gauthier: 40
+      Paul Gauthier (aider): 3
+    aider/coders/base_coder.py:
+      Jonathan Ellis: 1
+      Paul Gauthier: 32
+      Paul Gauthier (aider): 8
+    aider/coders/editor_editblock_coder.py:
+      Paul Gauthier: 6
+      Paul Gauthier (aider): 1
+    aider/coders/editor_whole_coder.py:
+      Paul Gauthier: 7
+    aider/coders/wholefile_coder.py:
+      Paul Gauthier: 2
+    aider/commands.py:
+      Jonathan Ellis: 1
+      Mike Bailey: 1
+      Paul Gauthier: 20
+      Paul Gauthier (aider): 78
+      fry69: 2
+    aider/help.py:
+      Paul Gauthier: 27
+      Paul Gauthier (aider): 7
+    aider/history.py:
+      Paul Gauthier: 1
+    aider/io.py:
+      Paul Gauthier: 39
+      Paul Gauthier (aider): 62
+      Stein Martin Hustad: 5
+      fry69: 10
+    aider/linter.py:
+      Paul Gauthier: 6
+    aider/main.py:
+      Paul Gauthier: 13
+      Paul Gauthier (aider): 6
+      Stein Martin Hustad: 4
+      fry69: 1
+      rti: 1
+    aider/models.py:
+      Paul Gauthier: 58
+      Paul Gauthier (aider): 85
+    aider/repo.py:
+      Paul Gauthier: 16
+      Paul Gauthier (aider): 2
+    aider/repomap.py:
+      Paul Gauthier: 5
+    aider/scrape.py:
+      Paul Gauthier (aider): 3
+    aider/sendchat.py:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 5
+    aider/utils.py:
+      Paul Gauthier: 4
+    aider/versioncheck.py:
+      Paul Gauthier: 2
+    aider/voice.py:
+      Mike Bailey: 17
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 10
+    benchmark/benchmark.py:
+      Paul Gauthier: 25
+      Paul Gauthier (aider): 29
+      fry69: 3
+    scripts/issues.py:
+      Paul Gauthier: 5
+      Paul Gauthier (aider): 45
+    scripts/update-docs.sh:
+      Paul Gauthier: 1
+    scripts/yank-old-versions.py:
+      Paul Gauthier (aider): 51
+    tests/basic/test_commands.py:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 98
+    tests/basic/test_io.py:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 97
+    tests/basic/test_main.py:
+      Paul Gauthier: 2
+    tests/basic/test_models.py:
+      Paul Gauthier: 4
+    tests/basic/test_sanity_check_repo.py:
+      fry69: 179
+    tests/basic/test_wholefile.py:
+      Paul Gauthier: 38
+  grand_total:
+    Jonathan Ellis: 2
+    Mike Bailey: 18
+    Paul Gauthier: 376
+    Paul Gauthier (aider): 712
+    Stein Martin Hustad: 26
+    fry69: 197
+    rti: 1
+  start_tag: v0.57.0
+  total_lines: 1332
