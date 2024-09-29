@@ -1038,6 +1038,11 @@ class Coder:
         return platform_text
 
     def fmt_system_prompt(self, prompt):
+        kwargs = self.get_system_prompt_kwargs()
+        prompt = prompt.format(**kwargs)
+        return prompt
+
+    def get_system_prompt_kwargs(self):
         lazy_prompt = self.gpt_prompts.lazy_prompt if self.main_model.lazy else ""
         platform_text = self.get_platform_info()
 
@@ -1055,15 +1060,14 @@ class Coder:
         else:
             language = "the same language they are using"
 
-        prompt = prompt.format(
-            fence=self.fence,
-            lazy_prompt=lazy_prompt,
-            platform=platform_text,
-            shell_cmd_prompt=shell_cmd_prompt,
-            shell_cmd_reminder=shell_cmd_reminder,
-            language=language,
-        )
-        return prompt
+        return {
+            "fence": self.fence,
+            "lazy_prompt": lazy_prompt,
+            "platform": platform_text,
+            "shell_cmd_prompt": shell_cmd_prompt,
+            "shell_cmd_reminder": shell_cmd_reminder,
+            "language": language,
+        }
 
     def format_chat_chunks(self):
         self.choose_fence()
