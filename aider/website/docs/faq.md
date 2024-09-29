@@ -106,7 +106,7 @@ The repo map is usually disabled for a good reason.
 
 If you would like to force it on, you can run aider with `--map-tokens 1024`.
 
-## How do I include the git history in the context?
+## How do I include the git history in the chat?
 
 When starting a fresh aider session, you can include recent git history in the chat context. This can be useful for providing the LLM with information about recent changes. To do this:
 
@@ -148,9 +148,6 @@ python -m pip install -e .
 python -m aider
 ```
 
-
-
-
 ## Can I change the system prompts that aider uses?
 
 Aider is set up to support different system prompts and edit formats
@@ -190,6 +187,9 @@ all the raw information being sent to/from the LLM in the conversation.
 You can also refer to the
 [instructions for installing a development version of aider](https://aider.chat/docs/install/optional.html#install-the-development-version-of-aider).
 
+## Can I use aider as a library in my own application?
+
+Aider is designed as a standalone interactive console application and is not intended to be used as a library. If you want to incorporate aider's functionality into your own application, you'll need to fork the aider repository and maintain your own version of the code.
 
 ## Can I share my aider chat transcript?
 
