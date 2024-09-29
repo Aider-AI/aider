@@ -189,7 +189,7 @@ You can also refer to the
 
 ## Can I use aider as a library in my own application?
 
-Aider is designed as a standalone interactive console application and is not intended to be used as a library. If you want to incorporate aider's functionality into your own application, you'll need to fork the aider repository and maintain your own version of the code.
+While aider supports [scripting](/docs/scripting), it is primarily designed as a standalone interactive console application and is not intended to be used as a library. Aider does not offer or maintain a stable Python API. If you want to incorporate aider's functionality into your own application, it is recommended that you fork the aider repository and maintain your own version of the code.
 
 ## Can I share my aider chat transcript?
 
