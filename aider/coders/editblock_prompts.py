@@ -34,7 +34,7 @@ ONLY EVER RETURN CODE IN A *SEARCH/REPLACE BLOCK*!
 4. *Concisely* suggest any shell commands the user might want to run in ```bash blocks.
 
 Just suggest shell commands this way, not example code.
-Only suggest complete shell commands that area ready to execute, without placeholders.
+Only suggest complete shell commands that are ready to execute, without placeholders.
 Only suggest at most a few shell commands at a time, not more than 1-3.
 
 Use the appropriate shell based on the user's system info:
