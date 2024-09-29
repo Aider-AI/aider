@@ -105,7 +105,9 @@ Tooooo
 Hope you like it!
 """
 
-        edits = list(eb.find_original_update_blocks(edit))
+        edits = list(
+            eb.find_original_update_blocks(edit, **eb.EditBlockCoder.edit_block_config)
+        )
         self.assertEqual(edits, [("foo.txt", "Two\n", "Tooooo\n")])
 
     def test_find_original_update_blocks_mangled_filename_w_source_tag(self):
@@ -128,7 +130,11 @@ Hope you like it!
         fence = ("<%s>" % source, "</%s>" % source)
 
         with self.assertRaises(ValueError) as cm:
-            _edits = list(eb.find_original_update_blocks(edit, fence))
+            _edits = list(
+                eb.find_original_update_blocks(
+                    edit, fence, **eb.EditBlockCoder.edit_block_config
+                )
+            )
         self.assertIn("missing filename", str(cm.exception))
 
     def test_find_original_update_blocks_quote_below_filename(self):
@@ -147,7 +153,9 @@ Tooooo
 Hope you like it!
 """
 
-        edits = list(eb.find_original_update_blocks(edit))
+        edits = list(
+            eb.find_original_update_blocks(edit, **eb.EditBlockCoder.edit_block_config)
+        )
         self.assertEqual(edits, [("foo.txt", "Two\n", "Tooooo\n")])
 
     def test_find_original_update_blocks_unclosed(self):
@@ -166,7 +174,11 @@ oops!
 """
 
         with self.assertRaises(ValueError) as cm:
-            list(eb.find_original_update_blocks(edit))
+            list(
+                eb.find_original_update_blocks(
+                    edit, **eb.EditBlockCoder.edit_block_config
+                )
+            )
         self.assertIn("Expected `>>>>>>> REPLACE` or `=======`", str(cm.exception))
 
     def test_find_original_update_blocks_missing_filename(self):
@@ -184,7 +196,11 @@ oops!
 """
 
         with self.assertRaises(ValueError) as cm:
-            list(eb.find_original_update_blocks(edit))
+            list(
+                eb.find_original_update_blocks(
+                    edit, **eb.EditBlockCoder.edit_block_config
+                )
+            )
         self.assertIn("filename", str(cm.exception))
 
     def test_find_original_update_blocks_no_final_newline(self):
@@ -220,7 +236,9 @@ aider/coder.py
 >>>>>>> REPLACE"""
 
         # Should not raise a ValueError
-        list(eb.find_original_update_blocks(edit))
+        list(
+            eb.find_original_update_blocks(edit, **eb.EditBlockCoder.edit_block_config)
+        )
 
     def test_incomplete_edit_block_missing_filename(self):
         edit = """
@@ -263,7 +281,9 @@ tests/test_repomap.py
 
 These changes replace the `subprocess.run` patches with `subprocess.check_output` patches in both `test_check_for_ctags_failure` and `test_check_for_ctags_success` tests.
 """
-        edit_blocks = list(eb.find_original_update_blocks(edit))
+        edit_blocks = list(
+            eb.find_original_update_blocks(edit, **eb.EditBlockCoder.edit_block_config)
+        )
         self.assertEqual(len(edit_blocks), 2)  # 2 edits
         self.assertEqual(edit_blocks[0][0], "tests/test_repomap.py")
         self.assertEqual(edit_blocks[1][0], "tests/test_repomap.py")
@@ -484,7 +504,9 @@ four
 Hope you like it!
 """
 
-        edits = list(eb.find_original_update_blocks(edit))
+        edits = list(
+            eb.find_original_update_blocks(edit, **eb.EditBlockCoder.edit_block_config)
+        )
         self.assertEqual(
             edits,
             [
@@ -511,7 +533,9 @@ two
 Hope you like it!
 """
 
-        edits = list(eb.find_original_update_blocks(edit))
+        edits = list(
+            eb.find_original_update_blocks(edit, **eb.EditBlockCoder.edit_block_config)
+        )
         self.assertEqual(
             edits,
             [
@@ -545,7 +569,13 @@ two
 Hope you like it!
 """
 
-        edits = list(eb.find_original_update_blocks(edit, valid_fnames=["path/to/a/file1.txt"]))
+        edits = list(
+            eb.find_original_update_blocks(
+                edit,
+                valid_fnames=["path/to/a/file1.txt"],
+                **eb.EditBlockCoder.edit_block_config,
+            )
+        )
         self.assertEqual(
             edits,
             [

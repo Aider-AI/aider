@@ -7,7 +7,7 @@ import sys
 import unittest
 
 from aider.coders.base_coder import all_fences
-from aider.coders.editblock_coder import find_original_update_blocks
+from aider.coders.editblock_coder import EditBlockCoder, find_original_update_blocks
 from aider.dump import dump  # noqa: F401
 
 
@@ -47,7 +47,11 @@ def process_markdown(filename, fh):
 
         # Process the content with find_original_update_blocks
         try:
-            blocks = list(find_original_update_blocks(content, fence))
+            blocks = list(
+                find_original_update_blocks(
+                    content, fence, **EditBlockCoder.edit_block_config
+                )
+            )
         except ValueError as e:
             print("\n\n@@@", header, "@" * 20, file=fh, flush=True)
             print(str(e), file=fh, flush=True)
