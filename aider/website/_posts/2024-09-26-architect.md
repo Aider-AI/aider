@@ -404,7 +404,7 @@ this model with aider.
         {% for item in group.items %}
           <tr class="{% if group_class == 1 %}shaded{% endif %}">
             <td>{{ item.model }}</td>
-            <td>{{ item.editor_model | default: "<b>Baseline<b>" }}</td>
+            <td>{% if item.editor_model %}{{ item.editor_model }}{% else %}<b>Baseline</b>{% endif %}</td>
             <td style="text-align: center;">{{ item.editor_edit_format | default: item.edit_format }}</td>
             <td style="text-align: right;">{{ item.pass_rate_2 }}%</td>
           </tr>
@@ -413,5 +413,3 @@ this model with aider.
     </tbody>
   </table>
 </div>
-
-
