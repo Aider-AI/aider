@@ -2,7 +2,7 @@
 title: Separating code reasoning and editing
 excerpt: An Architect model describes how to solve the coding problem, and an Editor model translates that into file edits. This Architect/Editor approach produces SOTA benchmark results.
 highlight_image: /assets/architect.jpg
-draft: true
+draft: false
 nav_exclude: true
 ---
 {% if page.date %}
@@ -353,7 +353,7 @@ o1-preview, o1-mini, GPT-4o and Claude 3.5 Sonnet.
 Run aider with `--architect` or get started quickly like this:
 
 ```
-pip install -U git+https://github.com/paul-gauthier/aider.git
+pip install -U aider-chat
 
 # Change directory into a git repo
 cd /to/your/git/repo
