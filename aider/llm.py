@@ -42,4 +42,4 @@ class LazyLiteLLM:
 
 litellm = LazyLiteLLM()
 
-__all__ = [litellm]
+__all__ = ["litellm"]
