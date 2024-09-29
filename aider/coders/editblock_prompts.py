@@ -149,11 +149,11 @@ from hello import hello
 Every *SEARCH/REPLACE block* must use this format:
 1. The *FULL* file path alone on a line, verbatim. No bold asterisks, no quotes around it, no escaping of characters, etc.
 2. The opening fence and code language, eg: {fence[0]}python
-3. The start of search block: {EditBlockCoder.edit_block_config['search_divider']}
+3. The start of search block: {search_divider}
 4. A contiguous chunk of lines to search for in the existing source code
-5. The dividing line: {EditBlockCoder.edit_block_config['middle_divider']}
+5. The dividing line: {middle_divider}
 6. The lines to replace into the source code
-7. The end of the replace block: {EditBlockCoder.edit_block_config['replace_divider']}
+7. The end of the replace block: {replace_divider}
 8. The closing fence: {fence[1]}
 
 Use the *FULL* file path, as shown to you by the user.
