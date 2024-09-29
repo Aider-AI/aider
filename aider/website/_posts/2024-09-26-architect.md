@@ -19,7 +19,10 @@ Aider now has experimental support for using two models to complete each coding 
 Splitting up "code reasoning" and "code editing" in this manner
 has produced SOTA results on
 [aider's code editing benchmark](/docs/benchmarks.html#the-benchmark).
-It also significantly improved the benchmark scores of many
+Using o1-preview as the Architect with either DeepSeek or o1-mini as the
+Editor produced the SOTA score of 85%.
+Using the Architect/Editor approach
+also significantly improved the benchmark scores of many
 models, compared to their previous "solo" baseline scores (striped bars).
 
 <style>

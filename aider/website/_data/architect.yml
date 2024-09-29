@@ -465,3 +465,28 @@
   versions: 0.44.1-dev
   seconds_per_case: 7.8
   total_cost: 0.0916
+
+- dirname: 2024-09-29-22-35-36--architect-o1preview-o1mini-whole
+  test_cases: 133
+  model: o1-preview
+  edit_format: architect
+  commit_hash: 53ca83b
+  editor_model: o1-mini
+  editor_edit_format: whole
+  pass_rate_1: 65.4
+  pass_rate_2: 85.0
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 179
+  lazy_comments: 4
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model o1-preview
+  date: 2024-09-29
+  versions: 0.58.1.dev
+  seconds_per_case: 39.7
+  total_cost: 36.2078
