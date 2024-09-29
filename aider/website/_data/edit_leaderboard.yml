@@ -1316,3 +1316,26 @@
   versions: 0.57.2.dev
   seconds_per_case: 67.2
   total_cost: 0.0000
+
+- dirname: 2024-09-29-17-51-11--codegeex4-whole-2
+  test_cases: 133
+  model: ollama/codegeex4
+  edit_format: whole
+  commit_hash: 228ae24
+  pass_rate_1: 28.6
+  pass_rate_2: 32.3
+  percent_cases_well_formed: 97.0
+  error_outputs: 20
+  num_malformed_responses: 20
+  num_with_malformed_responses: 4
+  user_asks: 56
+  lazy_comments: 5
+  syntax_errors: 5
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 4
+  command: aider --model ollama/codegeex4
+  date: 2024-09-29
+  versions: 0.57.2.dev
+  seconds_per_case: 128.1
+  total_cost: 0.0000
