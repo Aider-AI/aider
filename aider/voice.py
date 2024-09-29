@@ -47,6 +47,10 @@ class Voice:
         if audio_format not in ["wav", "mp3", "webm"]:
             raise ValueError(f"Unsupported audio format: {audio_format}")
         self.audio_format = audio_format
+        if self.audio_format == "wav":
+            print("Using default WAV format. Use --voice-format webm (or mp3) for 90% smaller uploads.")
+        else:
+            print(f"Using audio format: {self.audio_format}")
 
     def callback(self, indata, frames, time, status):
         """This is called (from a separate thread) for each audio block."""
