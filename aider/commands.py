@@ -1140,9 +1140,7 @@ class Commands:
 
         all_matched_files = set()
 
-        parsed_args = parse_quoted_filenames(args)
-        force = "--force" in parsed_args
-        filenames = [fn for fn in parsed_args if fn != "--force"]
+        filenames = parse_quoted_filenames(args)
         for word in filenames:
             # Expand the home directory if the path starts with "~"
             expanded_path = os.path.expanduser(word)
@@ -1150,25 +1148,18 @@ class Commands:
 
             if Path(abs_path).exists():
                 if Path(abs_path).is_file():
-                    # add individually listed files outside repo even without --force
+                    # add individually listed files outside repo
                     all_matched_files.add(abs_path)
                     continue
                 # an existing dir, escape any special chars so they won't be globs
                 abs_path = re.sub(r"([\*\?\[\]])", r"[\1]", abs_path)
 
-            if force:
-                # with a --force option, glob all, not only non-ignored repository files
-                matched_files: list[str] = [
-                    str(path)
-                    for match in Path("/").glob(os.path.relpath(abs_path, "/"))
-                    for path in expand_subdir(match)
-                ]
-            else:
-                # without a --force option, glob only non-ignored repository files
-                matched_files: list[str] = [
-                    self.coder.abs_root_path(path)
-                    for path in self.glob_filtered_to_repo(word)
-                ]
+            # glob only non-ignored repository files
+            # note: there's no way to force globbing all files in the repository
+            matched_files: list[str] = [
+                self.coder.abs_root_path(path)
+                for path in self.glob_filtered_to_repo(word)
+            ]
             if matched_files:
                 all_matched_files.update(matched_files)
                 continue
