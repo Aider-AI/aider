@@ -98,3 +98,9 @@ to reduce their "lazy coding" tendencies with other edit formats.
 +class MathWeb:
 ```
 ````
+
+## editor-diff and editor-whole
+
+These are streamlined versions of the diff and whole formats, intended to be used
+with `--editor-edit-format` when using
+[architect mode](/docs/usage/modes.html).

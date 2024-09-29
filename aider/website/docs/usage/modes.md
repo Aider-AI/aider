@@ -44,6 +44,10 @@ After the main model replies, aider will offer to edit the files based on the re
 This request goes to the "editor" model.
 Aider has built in defaults to select an editor model based on your main model.
 Or, you can choose an editor model yourself with `--editor-model <model>`.
+The 
+["editor-diff" and "editor-whole" edit formats](/docs/more/edit-formats.html#editor-diff-and-editor-whole)
+are recommended for use
+by an Editor model.
 
 Architect mode produces better results than code mode, but uses two LLM requests.
 This probably makes it slower and more expensive than using code mode.
