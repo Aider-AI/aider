@@ -72,17 +72,17 @@ Here are the *SEARCH/REPLACE* blocks:
 
 mathweb/flask/app.py
 {fence[0]}python
-<<<<<<< SEARCH
+{search_divider}
 from flask import Flask
-=======
+{middle_divider}
 import math
 from flask import Flask
->>>>>>> REPLACE
+{replace_divider}
 {fence[1]}
 
 mathweb/flask/app.py
 {fence[0]}python
-<<<<<<< SEARCH
+{search_divider}
 def factorial(n):
     "compute factorial"
 
@@ -91,17 +91,17 @@ def factorial(n):
     else:
         return n * factorial(n-1)
 
-=======
->>>>>>> REPLACE
+{middle_divider}
+{replace_divider}
 {fence[1]}
 
 mathweb/flask/app.py
 {fence[0]}python
-<<<<<<< SEARCH
+{search_divider}
     return str(factorial(n))
-=======
+{middle_divider}
     return str(math.factorial(n))
->>>>>>> REPLACE
+{replace_divider}
 {fence[1]}
 """,
         ),
@@ -120,25 +120,25 @@ Here are the *SEARCH/REPLACE* blocks:
 
 hello.py
 {fence[0]}python
-<<<<<<< SEARCH
-=======
+{search_divider}
+{middle_divider}
 def hello():
     "print a greeting"
 
     print("hello")
->>>>>>> REPLACE
+{replace_divider}
 {fence[1]}
 
 main.py
 {fence[0]}python
-<<<<<<< SEARCH
+{search_divider}
 def hello():
     "print a greeting"
 
     print("hello")
-=======
+{middle_divider}
 from hello import hello
->>>>>>> REPLACE
+{replace_divider}
 {fence[1]}
 """,
         ),
