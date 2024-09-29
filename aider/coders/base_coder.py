@@ -187,7 +187,8 @@ class Coder:
             kwargs = use_kwargs
             from_coder.ok_to_warm_cache = False
 
-        for coder in coders.__all__:
+        all_coders = [getattr(coders, coder) for coder in coders.__all__]
+        for coder in all_coders:
             if hasattr(coder, "edit_format") and coder.edit_format == edit_format:
                 res = coder(main_model, io, **kwargs)
                 res.original_kwargs = dict(kwargs)
@@ -195,7 +196,7 @@ class Coder:
 
         valid_formats = [
             str(c.edit_format)
-            for c in coders.__all__
+            for c in all_coders
             if hasattr(c, "edit_format") and c.edit_format is not None
         ]
         raise UnknownEditFormat(edit_format, valid_formats)
