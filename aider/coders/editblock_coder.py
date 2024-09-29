@@ -25,6 +25,11 @@ class EditBlockCoder(Coder):
         "replace_divider": ">>>>>>> REPLACE"
     }
 
+    def get_system_prompt_kwargs(self):
+        kwargs = super().get_system_prompt_kwargs()
+        kwargs.update(self.edit_block_config)
+        return kwargs
+
     def get_edits(self):
         content = self.partial_response_content
 
