@@ -74,10 +74,6 @@ joshuavial also confirmed that aider works inside a VS Code terminal window.
 Aider detects if it is running inside VSCode and turns off pretty/color output,
 since the VSCode terminal doesn't seem to support it well.
 
-[MattFlower](https://github.com/MattFlower) provided a VSCode plugin for aider:
-
-[https://marketplace.visualstudio.com/items?itemName=MattFlower.aider](https://marketplace.visualstudio.com/items?itemName=MattFlower.aider)
-
 ### Other editors
 
 If you are interested in creating an aider plugin for your favorite editor,
