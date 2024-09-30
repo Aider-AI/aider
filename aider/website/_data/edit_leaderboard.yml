@@ -1362,3 +1362,26 @@
   versions: 0.58.1.dev
   seconds_per_case: 59.3
   total_cost: 0.0000
+
+- dirname: 2024-09-30-03-49-01--mistral-nemo-12b-instruct-2407-q4_K_M-whole-1
+  test_cases: 133
+  model: ollama/mistral-nemo:12b-instruct-2407-q4_K_M
+  edit_format: whole
+  commit_hash: ba4dec8
+  pass_rate_1: 22.6
+  pass_rate_2: 33.1
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 53
+  lazy_comments: 37
+  syntax_errors: 2
+  indentation_errors: 2
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  command: aider --model ollama/mistral-nemo:12b-instruct-2407-q4_K_M
+  date: 2024-09-30
+  versions: 0.58.1.dev
+  seconds_per_case: 34.7
+  total_cost: 0.0000
