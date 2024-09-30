@@ -1,11 +1,8 @@
-# [[[cog
-# from aider.help_pats import exclude_website_pats
-# ]]]
-# [[[end]]]
-
-[project]
+[tool.poetry]
 name = "aider-chat"
+version = "0.1.0"
 description = "Aider is AI pair programming in your terminal"
+authors = ["Your Name <your.email@example.com>"]
 readme = "README.md"
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -13,61 +10,80 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python",
     "Topic :: Software Development",
 ]
-requires-python = ">=3.9,<3.13"
-dynamic = ["dependencies", "optional-dependencies", "version"]
-
-[project.urls]
-Homepage = "https://github.com/paul-gauthier/aider"
-
-[project.scripts]
-aider = "aider.main:main"
-
-[tool.setuptools.dynamic]
-dependencies = { file = "requirements.txt" }
-
-[tool.setuptools.dynamic.optional-dependencies]
-dev = { file = "requirements/requirements-dev.txt" }
-help = { file = "requirements/requirements-help.txt" }
-browser = { file = "requirements/requirements-browser.txt" }
-playwright = { file = "requirements/requirements-playwright.txt" }
-
-[tool.setuptools.packages.find]
-include = ["aider*", "aider.website"]
-
-[tool.setuptools.package-data]
-"aider" = ["queries/*.scm"]
-"aider.website" = ["**/*.md"]
-
-[tool.setuptools.exclude-package-data]
-"aider.website" = [
-# [[[cog
-# cog.out("\n".join(f'    "{pat}",' for pat in exclude_website_pats))
-# ]]]
-"examples/**",
-"_posts/**",
-"HISTORY.md",
-"docs/benchmarks*md",
-"docs/ctags.md",
-"docs/unified-diffs.md",
-"docs/leaderboards/index.md",
-"assets/**",
-# [[[end]]]
+packages = [
+    { include = "aider" },
 ]
 
-[build-system]
-requires = ["setuptools>=68", "setuptools_scm[toml]>=8"]
-build-backend = "setuptools.build_meta"
+[tool.poetry.dependencies]
+python = ">=3.9,<3.13"
+aiohappyeyeballs = "^2.4.0"
+aiohttp = "^3.10.5"
+annotated-types = "^0.7.0"
+anyio = "^4.6.0"
+attrs = "^24.2.0"
+backoff = "^2.2.1"
+beautifulsoup4 = "^4.12.3"
+certifi = "^2024.8.30"
+cffi = "^1.17.1"
+charset-normalizer = "^3.3.2"
+click = "^8.1.7"
+configargparse = "^1.7"
+diff-match-patch = "^20230430"
+diskcache = "^5.6.3"
+distro = "^1.9.0"
+filelock = "^3.16.1"
+gitpython = "^3.1.43"
+grep-ast = "^0.3.3"
+huggingface-hub = "^0.25.0"
+importlib-metadata = "^7.2.1"
+importlib-resources = "^6.4.5"
+jinja2 = "^3.1.4"
+json5 = "^0.9.25"
+jsonschema = "^4.23.0"
+litellm = "^1.47.0"
+networkx = "^3.2.1"
+numpy = "^1.26.4"
+openai = "^1.47.0"
+packaging = "^24.1"
+pathspec = "^0.12.1"
+pexpect = "^4.9.0"
+pillow = "^10.4.0"
+prompt-toolkit = "^3.0.47"
+psutil = "^6.0.0"
+pydantic = "^2.9.2"
+pydub = "^0.25.1"
+pypandoc = "^1.13"
+pyperclip = "^1.9.0"
+python-dotenv = "^1.0.1"
+pyyaml = "^6.0.2"
+requests = "^2.32.3"
+rich = "^13.8.1"
+scipy = "^1.13.1"
+sounddevice = "^0.5.0"
+soundfile = "^0.12.1"
+tiktoken = "^0.7.0"
+tokenizers = "^0.19.1"
+tree-sitter = "^0.21.3"
+tree-sitter-languages = "^1.10.2"
 
-[tool.setuptools_scm]
-write_to = "aider/__version__.py"
+[tool.poetry.group.dev.dependencies]
+flake8 = "^7.1.1"
+
+[tool.poetry.scripts]
+aider = "aider.main:main"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.codespell]
 skip = "*.svg,Gemfile.lock"
 write-changes = true
+
