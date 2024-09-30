@@ -3,7 +3,7 @@
 #
 
 pydub
-configargparse
+configargparse[yaml]
 GitPython
 jsonschema
 rich

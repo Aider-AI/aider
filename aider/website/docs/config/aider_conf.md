@@ -21,15 +21,6 @@ load whichever is found first.
 
 {% include env-keys-tip.md %}
 
-## A note on lists
-
-The syntax for specifying a list of values is not standard yaml.
-Instead, use this format:
-
-```
-read: [CONVENTIONS.md, anotherfile.txt, thirdfile.py]
-```
-
 ## Sample YAML config file
 
 Below is a sample of the YAML config file, which you
@@ -293,7 +284,10 @@ cog.outl("```")
 ## Specify lint commands to run for different languages, eg: "python: flake8 --select=..." (can be used multiple times)
 #lint-cmd: xxx
 ## Specify multiple values like this:
-#lint-cmd: [xxx,yyyy,zzz]
+#lint-cmd:
+#- xxx
+#- yyyy
+#- zzz
 
 ## Enable/disable automatic linting after changes (default: True)
 #auto-lint: true
@@ -313,12 +307,18 @@ cog.outl("```")
 ## specify a file to edit (can be used multiple times)
 #file: xxx
 ## Specify multiple values like this:
-#file: [xxx,yyyy,zzz]
+#file:
+#- xxx
+#- yyyy
+#- zzz
 
 ## specify a read-only file (can be used multiple times)
 #read: xxx
 ## Specify multiple values like this:
-#read: [xxx,yyyy,zzz]
+#read:
+#- xxx
+#- yyyy
+#- zzz
 
 ## Use VI editing mode in the terminal (default: False)
 #vim: false
