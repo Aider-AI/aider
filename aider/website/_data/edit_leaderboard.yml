@@ -1385,3 +1385,26 @@
   versions: 0.58.1.dev
   seconds_per_case: 34.7
   total_cost: 0.0000
+
+- dirname: 2024-09-30-14-09-43--qwen2.5-32b-whole-2
+  test_cases: 133
+  model: ollama/qwen2.5:32b
+  edit_format: whole
+  commit_hash: 765c4cb
+  pass_rate_1: 44.4
+  pass_rate_2: 54.1
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 9
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: aider --model ollama/qwen2.5:32b
+  date: 2024-09-30
+  versions: 0.58.1.dev
+  seconds_per_case: 134.9
+  total_cost: 0.0000
