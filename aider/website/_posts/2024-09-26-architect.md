@@ -341,7 +341,7 @@ score for various combinations of Architect and Editor models.
 
 Some noteworthy observations:
 
-- Pairing o1-preview as Architect with Deepseek as Editor sets a SOTA significantly above the previous best score. This result is obtained with Deepseek using the "whole" editing format, requiring it to output a full update copy of each edited source file. Both of these steps are therefore quite slow, so probably not practical for interactive use with aider.
+- Pairing o1-preview as Architect with either Deepseek or o1-mini as Editor sets a SOTA significantly above the previous best score. This result is obtained with the "whole" editing format, requiring the Editor to output a full update copy of each edited source file. Both of these steps are therefore quite slow, so probably not practical for interactive use with aider.
 - Pairing OpenAI's o1-preview with Anthropic's Sonnet as the Editor produces the second best result. This is an entirely practical configuration for users able to work with both providers.
 - Pairing many models with themselves in the Architect/Editor configuration can provide
 significant benefits. 
