@@ -16,6 +16,10 @@ cog.out(text)
 
 # Release history
 
+### Aider v0.58.1
+
+- Fixed bug where cache warming pings caused subsequent user messages to trigger a tight loop of LLM requests.
+
 ### Aider v0.58.0
 
 - [Use a pair of Architect/Editor models for improved coding](https://aider.chat/2024/09/26/architect.html)
