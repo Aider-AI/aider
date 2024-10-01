@@ -39,8 +39,21 @@ Aider supports "infinite output" for models that support "prefill",
 such as:
 
 <!--[[[cog
-# TODO: list the models
-cog.out(text)
+import requests
+import json
+
+# Fetch the JSON data
+url = "https://raw.githubusercontent.com/BerriAI/litellm/refs/heads/main/model_prices_and_context_window.json"
+response = requests.get(url)
+data = json.loads(response.text)
+
+# Process the JSON to find models with supports_assistant_prefill=true
+prefill_models = [model for model, info in data.items() if info.get('supports_assistant_prefill') == True]
+
+# Generate the list of models
+model_list = "\n".join(f"- {model}" for model in prefill_models)
+
+cog.out(f"Models that support prefill:\n\n{model_list}")
 ]]]-->
 
 <!--[[[end]]]-->
