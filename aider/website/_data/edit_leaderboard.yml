@@ -1431,3 +1431,19 @@
   versions: 0.58.1.dev
   seconds_per_case: 66.6
   total_cost: 0.0000
+- dirname: 2024-09-30-23-01-24--hermes3-8b-llama3.1-fp16-whole-2
+  test_cases: 133
+  model: ollama/hermes3:8b-llama3.1-fp16
+  edit_format: whole
+  commit_hash: c5ba4f7
+  pass_rate_1: 24.1
+  pass_rate_2: 30.1
+  percent_cases_well_formed: 98.5
+  syntax_errors: 0
+  exhausted_context_windows: 0
+  command: aider --model ollama/hermes3:8b-llama3.1-fp16
+  date: 2024-09-30
+  versions: 0.58.1.dev
+  seconds_per_case: 64.7
+  total_cost: 0.0000
+
