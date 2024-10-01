@@ -459,6 +459,8 @@ class RepoMap:
             tuple(sorted(chat_fnames)) if chat_fnames else None,
             tuple(sorted(other_fnames)) if other_fnames else None,
             max_map_tokens,
+            tuple(sorted(mentioned_fnames)) if mentioned_fnames else None,
+            tuple(sorted(mentioned_idents)) if mentioned_idents else None,
         )
 
         use_cache = False
