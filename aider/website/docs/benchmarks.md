@@ -55,7 +55,7 @@ about prompting GPT for complex tasks like coding. It's beneficial to
 minimize the "cognitive overhead" of formatting the response, allowing
 GPT to concentrate on the coding task at hand.
 
-As a thought experiment, imagine a slack conversation with a junior developer where
+As a thought experiment, imagine a slack conversation with a editor developer where
 you ask them to write the code to add some new feature to your app.
 They're going to type the response back to you by hand in the chat.
 Should they type out the

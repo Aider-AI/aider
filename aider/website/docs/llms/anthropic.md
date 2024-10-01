@@ -14,7 +14,7 @@ Aider has some built in shortcuts for the most popular Anthropic models and
 has been tested and benchmarked to work well with them:
 
 ```
-python -m pip install aider-chat
+python -m pip install -U aider-chat
 
 export ANTHROPIC_API_KEY=<key> # Mac/Linux
 setx   ANTHROPIC_API_KEY <key> # Windows, restart shell after setx

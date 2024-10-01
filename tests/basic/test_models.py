@@ -42,8 +42,8 @@ class TestModels(unittest.TestCase):
 
         mock_io.tool_output.assert_called()
         calls = mock_io.tool_output.call_args_list
-        self.assertIn("- API_KEY1: ✓ Set", str(calls))
-        self.assertIn("- API_KEY2: ✓ Set", str(calls))
+        self.assertIn("- API_KEY1: Set", str(calls))
+        self.assertIn("- API_KEY2: Set", str(calls))
 
     @patch("os.environ")
     def test_sanity_check_model_not_set(self, mock_environ):
@@ -59,8 +59,8 @@ class TestModels(unittest.TestCase):
 
         mock_io.tool_output.assert_called()
         calls = mock_io.tool_output.call_args_list
-        self.assertIn("- API_KEY1: ✗ Not set", str(calls))
-        self.assertIn("- API_KEY2: ✗ Not set", str(calls))
+        self.assertIn("- API_KEY1: Not set", str(calls))
+        self.assertIn("- API_KEY2: Not set", str(calls))
 
 
 if __name__ == "__main__":

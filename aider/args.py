@@ -117,6 +117,22 @@ def get_parser(default_config_files, git_root):
         const=deepseek_model,
         help=f"Use {deepseek_model} model for the main chat",
     )
+    o1_mini_model = "o1-mini"
+    group.add_argument(
+        "--o1-mini",
+        action="store_const",
+        dest="model",
+        const=o1_mini_model,
+        help=f"Use {o1_mini_model} model for the main chat",
+    )
+    o1_preview_model = "o1-preview"
+    group.add_argument(
+        "--o1-preview",
+        action="store_const",
+        dest="model",
+        const=o1_preview_model,
+        help=f"Use {o1_preview_model} model for the main chat",
+    )
 
     ##########
     group = parser.add_argument_group("Model Settings")
@@ -182,6 +198,13 @@ def get_parser(default_config_files, git_root):
         help="Specify what edit format the LLM should use (default depends on model)",
     )
     group.add_argument(
+        "--architect",
+        action="store_const",
+        dest="edit_format",
+        const="architect",
+        help="Use architect edit format for the main chat",
+    )
+    group.add_argument(
         "--weak-model",
         metavar="WEAK_MODEL",
         default=None,
@@ -191,40 +214,22 @@ def get_parser(default_config_files, git_root):
         ),
     )
     group.add_argument(
+        "--editor-model",
+        metavar="EDITOR_MODEL",
+        default=None,
+        help="Specify the model to use for editor tasks (default depends on --model)",
+    )
+    group.add_argument(
+        "--editor-edit-format",
+        metavar="EDITOR_EDIT_FORMAT",
+        default=None,
+        help="Specify the edit format for the editor model (default: depends on editor model)",
+    )
+    group.add_argument(
         "--show-model-warnings",
         action=argparse.BooleanOptionalAction,
         default=True,
         help="Only work with models that have meta-data available (default: True)",
-    )
-    group.add_argument(
-        "--map-tokens",
-        type=int,
-        default=None,
-        help="Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)",
-    )
-    group.add_argument(
-        "--map-refresh",
-        choices=["auto", "always", "files", "manual"],
-        default="auto",
-        help="Control how often the repo map is refreshed (default: auto)",
-    )
-    group.add_argument(
-        "--cache-prompts",
-        action=argparse.BooleanOptionalAction,
-        default=False,
-        help="Enable caching of prompts (default: False)",
-    )
-    group.add_argument(
-        "--cache-keepalive-pings",
-        type=int,
-        default=0,
-        help="Number of times to ping at 5min intervals to keep prompt cache warm (default: 0)",
-    )
-    group.add_argument(
-        "--map-multiplier-no-files",
-        type=float,
-        default=2,
-        help="Multiplier for map tokens when no files are specified (default: 2)",
     )
     group.add_argument(
         "--max-chat-history-tokens",
@@ -242,6 +247,45 @@ def get_parser(default_config_files, git_root):
         metavar="ENV_FILE",
         default=default_env_file(git_root),
         help="Specify the .env file to load (default: .env in git root)",
+    )
+
+    ##########
+    group = parser.add_argument_group("Cache Settings")
+    group.add_argument(
+        "--cache-prompts",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable caching of prompts (default: False)",
+    )
+    group.add_argument(
+        "--cache-keepalive-pings",
+        type=int,
+        default=0,
+        help="Number of times to ping at 5min intervals to keep prompt cache warm (default: 0)",
+    )
+
+    ##########
+    group = parser.add_argument_group("Repomap Settings")
+    group.add_argument(
+        "--map-tokens",
+        type=int,
+        default=None,
+        help="Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)",
+    )
+    group.add_argument(
+        "--map-refresh",
+        choices=["auto", "always", "files", "manual"],
+        default="auto",
+        help=(
+            "Control how often the repo map is refreshed. Options: auto, always, files, manual"
+            " (default: auto)"
+        ),
+    )
+    group.add_argument(
+        "--map-multiplier-no-files",
+        type=float,
+        default=2,
+        help="Multiplier for map tokens when no files are specified (default: 2)",
     )
 
     ##########
@@ -327,6 +371,39 @@ def get_parser(default_config_files, git_root):
         "--assistant-output-color",
         default="#0088ff",
         help="Set the color for assistant output (default: #0088ff)",
+    )
+    group.add_argument(
+        "--completion-menu-color",
+        metavar="COLOR",
+        default=None,
+        help="Set the color for the completion menu (default: terminal's default text color)",
+    )
+    group.add_argument(
+        "--completion-menu-bg-color",
+        metavar="COLOR",
+        default=None,
+        help=(
+            "Set the background color for the completion menu (default: terminal's default"
+            " background color)"
+        ),
+    )
+    group.add_argument(
+        "--completion-menu-current-color",
+        metavar="COLOR",
+        default=None,
+        help=(
+            "Set the color for the current item in the completion menu (default: terminal's default"
+            " background color)"
+        ),
+    )
+    group.add_argument(
+        "--completion-menu-current-bg-color",
+        metavar="COLOR",
+        default=None,
+        help=(
+            "Set the background color for the current item in the completion menu (default:"
+            " terminal's default text color)"
+        ),
     )
     group.add_argument(
         "--code-theme",
@@ -486,12 +563,6 @@ def get_parser(default_config_files, git_root):
         default=False,
     )
     group.add_argument(
-        "--voice-language",
-        metavar="VOICE_LANGUAGE",
-        default="en",
-        help="Specify the language for voice using ISO 639-1 code (default: auto)",
-    )
-    group.add_argument(
         "--chat-language",
         metavar="CHAT_LANGUAGE",
         default=None,
@@ -609,6 +680,22 @@ def get_parser(default_config_files, git_root):
         action=argparse.BooleanOptionalAction,
         default=True,
         help="Enable/disable suggesting shell commands (default: True)",
+    )
+
+    ##########
+    group = parser.add_argument_group("Voice Settings")
+    group.add_argument(
+        "--voice-format",
+        metavar="VOICE_FORMAT",
+        default="wav",
+        choices=["wav", "mp3", "webm"],
+        help="Audio format for voice recording (default: wav). webm and mp3 require ffmpeg",
+    )
+    group.add_argument(
+        "--voice-language",
+        metavar="VOICE_LANGUAGE",
+        default="en",
+        help="Specify the language for voice using ISO 639-1 code (default: auto)",
     )
 
     return parser

@@ -22,6 +22,8 @@ You always COMPLETELY IMPLEMENT the needed code!
 Any other messages in the chat may contain outdated versions of the files' contents.
 """  # noqa: E501
 
+    files_content_assistant_reply = "Ok, any changes I propose will be to those files."
+
     files_no_full_files = "I am not sharing any files that you can edit yet."
 
     files_no_full_files_with_repo_map = """Don't try and edit any existing code without asking me to add the files to the chat!
@@ -43,3 +45,8 @@ If you need to edit any of these files, ask me to *add them to the chat* first.
     read_only_files_prefix = """Here are some READ ONLY files, provided for your reference.
 Do not edit these files!
 """
+
+    shell_cmd_prompt = ""
+    shell_cmd_reminder = ""
+    no_shell_cmd_prompt = ""
+    no_shell_cmd_reminder = ""

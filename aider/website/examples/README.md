@@ -8,7 +8,7 @@ has_toc: false
 # Example chat transcripts
 
 Below are some chat transcripts showing what it's like to code with aider.
-In the chats, you'll see a varity of coding tasks like generating new code, editing existing code, debugging, exploring unfamiliar code, etc.
+In the chats, you'll see a variety of coding tasks like generating new code, editing existing code, debugging, exploring unfamiliar code, etc.
 
 * [**Hello World Flask App**](https://aider.chat/examples/hello-world-flask.html): Start from scratch and have aider create a simple Flask app with various endpoints, such as adding two numbers and calculating the Fibonacci sequence.
 

@@ -12,7 +12,7 @@ aiosignal==1.3.1
     # via aiohttp
 annotated-types==0.7.0
     # via pydantic
-anyio==4.4.0
+anyio==4.6.0
     # via
     #   httpx
     #   openai
@@ -25,12 +25,12 @@ backoff==2.2.1
     # via -r requirements/requirements.in
 beautifulsoup4==4.12.3
     # via -r requirements/requirements.in
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   httpcore
     #   httpx
     #   requests
-cffi==1.17.0
+cffi==1.17.1
     # via
     #   sounddevice
     #   soundfile
@@ -46,7 +46,7 @@ diskcache==5.6.3
     # via -r requirements/requirements.in
 distro==1.9.0
     # via openai
-filelock==3.15.4
+filelock==3.16.1
     # via huggingface-hub
 flake8==7.1.1
     # via -r requirements/requirements.in
@@ -54,7 +54,7 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2024.6.1
+fsspec==2024.9.0
     # via huggingface-hub
 gitdb==4.0.11
     # via gitpython
@@ -68,9 +68,9 @@ httpcore==1.0.5
     # via httpx
 httpx==0.27.2
     # via openai
-huggingface-hub==0.24.6
+huggingface-hub==0.25.0
     # via tokenizers
-idna==3.8
+idna==3.10
     # via
     #   anyio
     #   httpx
@@ -80,7 +80,7 @@ importlib-metadata==7.2.1
     # via
     #   -r requirements/requirements.in
     #   litellm
-importlib-resources==6.4.4
+importlib-resources==6.4.5
     # via -r requirements/requirements.in
 jinja2==3.1.4
     # via litellm
@@ -94,7 +94,7 @@ jsonschema==4.23.0
     #   litellm
 jsonschema-specifications==2023.12.1
     # via jsonschema
-litellm==1.44.7
+litellm==1.47.0
     # via -r requirements/requirements.in
 markdown-it-py==3.0.0
     # via rich
@@ -104,7 +104,7 @@ mccabe==0.7.0
     # via flake8
 mdurl==0.1.2
     # via markdown-it-py
-multidict==6.0.5
+multidict==6.1.0
     # via
     #   aiohttp
     #   yarl
@@ -114,13 +114,12 @@ numpy==1.26.4
     # via
     #   -r requirements/requirements.in
     #   scipy
-openai==1.42.0
+openai==1.47.0
     # via litellm
 packaging==24.1
     # via
     #   -r requirements/requirements.in
     #   huggingface-hub
-    #   setuptools-scm
 pathspec==0.12.1
     # via
     #   -r requirements/requirements.in
@@ -131,18 +130,22 @@ pillow==10.4.0
     # via -r requirements/requirements.in
 prompt-toolkit==3.0.47
     # via -r requirements/requirements.in
+psutil==6.0.0
+    # via -r requirements/requirements.in
 ptyprocess==0.7.0
     # via pexpect
 pycodestyle==2.12.1
     # via flake8
 pycparser==2.22
     # via cffi
-pydantic==2.8.2
+pydantic==2.9.2
     # via
     #   litellm
     #   openai
-pydantic-core==2.20.1
+pydantic-core==2.23.4
     # via pydantic
+pydub==0.25.1
+    # via -r requirements/requirements.in
 pyflakes==3.2.0
     # via flake8
 pygments==2.18.0
@@ -161,22 +164,20 @@ referencing==0.35.1
     # via
     #   jsonschema
     #   jsonschema-specifications
-regex==2024.7.24
+regex==2024.9.11
     # via tiktoken
 requests==2.32.3
     # via
     #   huggingface-hub
     #   litellm
     #   tiktoken
-rich==13.8.0
+rich==13.8.1
     # via -r requirements/requirements.in
 rpds-py==0.20.0
     # via
     #   jsonschema
     #   referencing
 scipy==1.13.1
-    # via -r requirements/requirements.in
-setuptools-scm==8.1.0
     # via -r requirements/requirements.in
 smmap==5.0.1
     # via gitdb
@@ -213,14 +214,11 @@ typing-extensions==4.12.2
     #   openai
     #   pydantic
     #   pydantic-core
-urllib3==2.2.2
+urllib3==2.2.3
     # via requests
 wcwidth==0.2.13
     # via prompt-toolkit
-yarl==1.9.4
+yarl==1.11.1
     # via aiohttp
-zipp==3.20.1
+zipp==3.20.2
     # via importlib-metadata
-
-# The following packages are considered to be unsafe in a requirements file:
-# setuptools

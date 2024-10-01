@@ -15,16 +15,17 @@ cog.out(get_help_md())
 |Command|Description|
 |:------|:----------|
 | **/add** | Add files to the chat so aider can edit them or review them in detail |
+| **/architect** | Enter architect mode to discuss high-level design and architecture |
 | **/ask** | Ask questions about the code base without editing any files |
 | **/chat-mode** | Switch to a new chat mode |
 | **/clear** | Clear the chat history |
-| **/clipboard** | Add image/text from the clipboard to the chat (optionally provide a name for the image) |
 | **/code** | Ask for changes to your code |
 | **/commit** | Commit edits to the repo made outside the chat (commit message optional) |
+| **/copy** | Copy the last assistant message to the clipboard |
 | **/diff** | Display the diff of changes since the last message |
 | **/drop** | Remove files from the chat session to free up context space |
 | **/exit** | Exit the application |
-| **/git** | Run a git command |
+| **/git** | Run a git command (output excluded from chat) |
 | **/help** | Ask questions about aider |
 | **/lint** | Lint and fix in-chat files or all dirty files if none in chat |
 | **/ls** | List all known files and indicate which are included in the chat session |
@@ -32,6 +33,7 @@ cog.out(get_help_md())
 | **/map-refresh** | Force a refresh of the repository map |
 | **/model** | Switch to a new LLM |
 | **/models** | Search the list of available models |
+| **/paste** | Paste image/text from the clipboard into the chat.        Optionally provide a name for the image. |
 | **/quit** | Exit the application |
 | **/read-only** | Add files to the chat that are for reference, not to be edited |
 | **/report** | Report a problem by opening a GitHub Issue |

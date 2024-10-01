@@ -42,3 +42,7 @@ callouts:
   tip:
     title: Tip
     color: green
+  note:
+    title: Note
+    color: yellow
+    

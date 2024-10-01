@@ -8,6 +8,7 @@ from pathlib import Path
 from unittest import TestCase, mock
 
 import git
+import pyperclip
 
 from aider.coders import Coder
 from aider.commands import Commands, SwitchCoder
@@ -44,6 +45,104 @@ class TestCommands(TestCase):
         # Check if both files have been created in the temporary directory
         self.assertTrue(os.path.exists("foo.txt"))
         self.assertTrue(os.path.exists("bar.txt"))
+
+    def test_cmd_copy(self):
+        # Initialize InputOutput and Coder instances
+        io = InputOutput(pretty=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # Add some assistant messages to the chat history
+        coder.done_messages = [
+            {"role": "assistant", "content": "First assistant message"},
+            {"role": "user", "content": "User message"},
+            {"role": "assistant", "content": "Second assistant message"},
+        ]
+
+        # Mock pyperclip.copy and io.tool_output
+        with (
+            mock.patch("pyperclip.copy") as mock_copy,
+            mock.patch.object(io, "tool_output") as mock_tool_output,
+        ):
+            # Invoke the /copy command
+            commands.cmd_copy("")
+
+            # Assert pyperclip.copy was called with the last assistant message
+            mock_copy.assert_called_once_with("Second assistant message")
+
+            # Assert that tool_output was called with the expected preview
+            expected_preview = (
+                "Copied last assistant message to clipboard. Preview: Second assistant message"
+            )
+            mock_tool_output.assert_any_call(expected_preview)
+
+    def test_cmd_copy_with_cur_messages(self):
+        # Initialize InputOutput and Coder instances
+        io = InputOutput(pretty=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # Add messages to done_messages and cur_messages
+        coder.done_messages = [
+            {"role": "assistant", "content": "First assistant message in done_messages"},
+            {"role": "user", "content": "User message in done_messages"},
+        ]
+        coder.cur_messages = [
+            {"role": "assistant", "content": "Latest assistant message in cur_messages"},
+        ]
+
+        # Mock pyperclip.copy and io.tool_output
+        with (
+            mock.patch("pyperclip.copy") as mock_copy,
+            mock.patch.object(io, "tool_output") as mock_tool_output,
+        ):
+            # Invoke the /copy command
+            commands.cmd_copy("")
+
+            # Assert pyperclip.copy was called with the last assistant message in cur_messages
+            mock_copy.assert_called_once_with("Latest assistant message in cur_messages")
+
+            # Assert that tool_output was called with the expected preview
+            expected_preview = (
+                "Copied last assistant message to clipboard. Preview: Latest assistant message in"
+                " cur_messages"
+            )
+            mock_tool_output.assert_any_call(expected_preview)
+        io = InputOutput(pretty=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # Add only user messages
+        coder.done_messages = [
+            {"role": "user", "content": "User message"},
+        ]
+
+        # Mock io.tool_error
+        with mock.patch.object(io, "tool_error") as mock_tool_error:
+            commands.cmd_copy("")
+            # Assert tool_error was called indicating no assistant messages
+            mock_tool_error.assert_called_once_with("No assistant messages found to copy.")
+
+    def test_cmd_copy_pyperclip_exception(self):
+        io = InputOutput(pretty=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        coder.done_messages = [
+            {"role": "assistant", "content": "Assistant message"},
+        ]
+
+        # Mock pyperclip.copy to raise an exception
+        with (
+            mock.patch(
+                "pyperclip.copy", side_effect=pyperclip.PyperclipException("Clipboard error")
+            ),
+            mock.patch.object(io, "tool_error") as mock_tool_error,
+        ):
+            commands.cmd_copy("")
+
+            # Assert that tool_error was called with the clipboard error message
+            mock_tool_error.assert_called_once_with("Failed to copy to clipboard: Clipboard error")
 
     def test_cmd_add_bad_glob(self):
         # https://github.com/paul-gauthier/aider/issues/293
