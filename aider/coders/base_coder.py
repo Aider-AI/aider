@@ -1194,8 +1194,9 @@ class Coder:
             content = ""
 
         if interrupted:
-            content += "\n^C KeyboardInterrupt"
-            self.cur_messages += [dict(role="assistant", content=content)]
+            if content:
+                content += "\n[message generation stopped by ^C KeyboardInterrupt]"
+                self.cur_messages += [dict(role="assistant", content=content)]
             return
 
         self.reply_completed()
