@@ -457,13 +457,18 @@ class RepoMap:
         force_refresh=False,
     ):
         # Create a cache key
-        cache_key = (
+        cache_key = [
             tuple(sorted(chat_fnames)) if chat_fnames else None,
             tuple(sorted(other_fnames)) if other_fnames else None,
             max_map_tokens,
-            tuple(sorted(mentioned_fnames)) if mentioned_fnames else None,
-            tuple(sorted(mentioned_idents)) if mentioned_idents else None,
-        )
+        ]
+
+        if self.refresh == "auto":
+            cache_key += [
+                tuple(sorted(mentioned_fnames)) if mentioned_fnames else None,
+                tuple(sorted(mentioned_idents)) if mentioned_idents else None,
+            ]
+        cache_key = tuple(cache_key)
 
         use_cache = False
         if not force_refresh:
