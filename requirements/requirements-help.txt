@@ -21,7 +21,7 @@ annotated-types==0.7.0
     # via
     #   -c requirements/../requirements.txt
     #   pydantic
-anyio==4.4.0
+anyio==4.6.0
     # via
     #   -c requirements/../requirements.txt
     #   httpx
@@ -29,7 +29,7 @@ attrs==24.2.0
     # via
     #   -c requirements/../requirements.txt
     #   aiohttp
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c requirements/../requirements.txt
     #   httpcore
@@ -49,7 +49,7 @@ deprecated==1.2.14
     # via llama-index-core
 dirtyjson==1.0.8
     # via llama-index-core
-filelock==3.15.4
+filelock==3.16.1
     # via
     #   -c requirements/../requirements.txt
     #   huggingface-hub
@@ -60,14 +60,16 @@ frozenlist==1.4.1
     #   -c requirements/../requirements.txt
     #   aiohttp
     #   aiosignal
-fsspec==2024.6.1
+fsspec==2024.9.0
     # via
     #   -c requirements/../requirements.txt
     #   huggingface-hub
     #   llama-index-core
     #   torch
 greenlet==3.0.3
-    # via sqlalchemy
+    # via
+    #   -r requirements/requirements-help.in
+    #   sqlalchemy
 h11==0.14.0
     # via
     #   -c requirements/../requirements.txt
@@ -80,14 +82,14 @@ httpx==0.27.2
     # via
     #   -c requirements/../requirements.txt
     #   llama-index-core
-huggingface-hub[inference]==0.24.6
+huggingface-hub[inference]==0.25.0
     # via
     #   -c requirements/../requirements.txt
     #   llama-index-embeddings-huggingface
     #   sentence-transformers
     #   tokenizers
     #   transformers
-idna==3.8
+idna==3.10
     # via
     #   -c requirements/../requirements.txt
     #   anyio
@@ -102,7 +104,7 @@ joblib==1.4.2
     # via
     #   nltk
     #   scikit-learn
-llama-index-core==0.11.2
+llama-index-core==0.11.11
     # via
     #   -r requirements/requirements-help.in
     #   llama-index-embeddings-huggingface
@@ -118,7 +120,7 @@ minijinja==2.2.0
     # via huggingface-hub
 mpmath==1.3.0
     # via sympy
-multidict==6.0.5
+multidict==6.1.0
     # via
     #   -c requirements/../requirements.txt
     #   aiohttp
@@ -140,7 +142,6 @@ numpy==1.26.4
     #   llama-index-core
     #   scikit-learn
     #   scipy
-    #   sentence-transformers
     #   transformers
 packaging==24.1
     # via
@@ -153,11 +154,11 @@ pillow==10.4.0
     #   -c requirements/../requirements.txt
     #   llama-index-core
     #   sentence-transformers
-pydantic==2.8.2
+pydantic==2.9.2
     # via
     #   -c requirements/../requirements.txt
     #   llama-index-core
-pydantic-core==2.20.1
+pydantic-core==2.23.4
     # via
     #   -c requirements/../requirements.txt
     #   pydantic
@@ -167,7 +168,7 @@ pyyaml==6.0.2
     #   huggingface-hub
     #   llama-index-core
     #   transformers
-regex==2024.7.24
+regex==2024.9.11
     # via
     #   -c requirements/../requirements.txt
     #   nltk
@@ -180,27 +181,27 @@ requests==2.32.3
     #   llama-index-core
     #   tiktoken
     #   transformers
-safetensors==0.4.4
+safetensors==0.4.5
     # via transformers
-scikit-learn==1.5.1
+scikit-learn==1.5.2
     # via sentence-transformers
 scipy==1.13.1
     # via
     #   -c requirements/../requirements.txt
     #   scikit-learn
     #   sentence-transformers
-sentence-transformers==3.0.1
+sentence-transformers==3.1.1
     # via llama-index-embeddings-huggingface
 sniffio==1.3.1
     # via
     #   -c requirements/../requirements.txt
     #   anyio
     #   httpx
-sqlalchemy[asyncio]==2.0.32
+sqlalchemy[asyncio]==2.0.35
     # via
     #   llama-index-core
     #   sqlalchemy
-sympy==1.13.2
+sympy==1.13.3
     # via torch
 tenacity==8.5.0
     # via llama-index-core
@@ -240,7 +241,7 @@ typing-inspect==0.9.0
     # via
     #   dataclasses-json
     #   llama-index-core
-urllib3==2.2.2
+urllib3==2.2.3
     # via
     #   -c requirements/../requirements.txt
     #   requests
@@ -248,7 +249,7 @@ wrapt==1.16.0
     # via
     #   deprecated
     #   llama-index-core
-yarl==1.9.4
+yarl==1.11.1
     # via
     #   -c requirements/../requirements.txt
     #   aiohttp

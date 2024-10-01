@@ -31,10 +31,12 @@ class ChatChunks:
         else:
             self.add_cache_control(self.system)
 
-        if self.readonly_files:
-            self.add_cache_control(self.readonly_files)
-        else:
+        if self.repo:
+            # this will mark both the readonly_files and repomap chunk as cacheable
             self.add_cache_control(self.repo)
+        else:
+            # otherwise, just cache readonly_files if there are any
+            self.add_cache_control(self.readonly_files)
 
         self.add_cache_control(self.chat_files)
 

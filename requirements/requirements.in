@@ -2,6 +2,7 @@
 #    pip-compile requirements.in --upgrade
 #
 
+pydub
 configargparse
 GitPython
 jsonschema
@@ -25,8 +26,9 @@ importlib_resources
 pyperclip
 pexpect
 json5
+psutil
 
-# The proper depdendency is networkx[default], but this brings
+# The proper dependency is networkx[default], but this brings
 # in matplotlib and a bunch of other deps
 # https://github.com/networkx/networkx/blob/d7132daa8588f653eacac7a5bae1ee85a183fa43/pyproject.toml#L57
 # We really only need networkx itself and scipy for the repomap.

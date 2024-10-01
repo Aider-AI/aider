@@ -15,7 +15,7 @@ ollama pull <model>
 ollama serve
 
 # In another terminal window...
-python -m pip install aider-chat
+python -m pip install -U aider-chat
 
 export OLLAMA_API_BASE=http://127.0.0.1:11434 # Mac/Linux
 setx   OLLAMA_API_BASE http://127.0.0.1:11434 # Windows, restart shell after setx

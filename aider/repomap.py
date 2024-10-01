@@ -27,6 +27,9 @@ from tree_sitter_languages import get_language, get_parser  # noqa: E402
 Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
 
 
+SQLITE_ERRORS = (sqlite3.OperationalError, sqlite3.DatabaseError)
+
+
 class RepoMap:
     CACHE_VERSION = 3
     TAGS_CACHE_DIR = f".aider.tags.cache.v{CACHE_VERSION}"
@@ -167,7 +170,7 @@ class RepoMap:
         path = Path(self.root) / self.TAGS_CACHE_DIR
         try:
             self.TAGS_CACHE = Cache(path)
-        except sqlite3.OperationalError:
+        except SQLITE_ERRORS:
             self.io.tool_warning(f"Unable to use tags cache, delete {path} to resolve.")
             self.TAGS_CACHE = dict()
 
@@ -195,8 +198,12 @@ class RepoMap:
         data = list(self.get_tags_raw(fname, rel_fname))
 
         # Update the cache
-        self.TAGS_CACHE[cache_key] = {"mtime": file_mtime, "data": data}
-        self.save_tags_cache()
+        try:
+            self.TAGS_CACHE[cache_key] = {"mtime": file_mtime, "data": data}
+            self.save_tags_cache()
+        except SQLITE_ERRORS:
+            pass
+
         return data
 
     def get_tags_raw(self, fname, rel_fname):
@@ -316,6 +323,9 @@ class RepoMap:
             if not file_ok:
                 if fname not in self.warned_files:
                     self.io.tool_warning(f"Repo-map can't include {fname}")
+                    self.io.tool_output(
+                        "Has it been deleted from the file system but not from git?"
+                    )
                     self.warned_files.add(fname)
                 continue
 
@@ -388,7 +398,11 @@ class RepoMap:
         try:
             ranked = nx.pagerank(G, weight="weight", **pers_args)
         except ZeroDivisionError:
-            return []
+            # Issue #1536
+            try:
+                ranked = nx.pagerank(G, weight="weight")
+            except ZeroDivisionError:
+                return []
 
         # distribute the rank from each source node, across all of its out edges
         ranked_definitions = defaultdict(float)

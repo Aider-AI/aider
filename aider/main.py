@@ -4,6 +4,7 @@ import os
 import re
 import sys
 import threading
+import traceback
 from pathlib import Path
 
 import git
@@ -30,7 +31,7 @@ def get_git_root():
     try:
         repo = git.Repo(search_parent_directories=True)
         return repo.working_tree_dir
-    except git.InvalidGitRepositoryError:
+    except (git.InvalidGitRepositoryError, FileNotFoundError):
         return None
 
 
@@ -265,7 +266,7 @@ def register_models(git_root, model_settings_fname, io, verbose=False):
     return None
 
 
-def load_dotenv_files(git_root, dotenv_fname):
+def load_dotenv_files(git_root, dotenv_fname, encoding="utf-8"):
     dotenv_files = generate_search_path_list(
         ".env",
         git_root,
@@ -273,9 +274,14 @@ def load_dotenv_files(git_root, dotenv_fname):
     )
     loaded = []
     for fname in dotenv_files:
-        if Path(fname).exists():
-            loaded.append(fname)
-            load_dotenv(fname, override=True)
+        try:
+            if Path(fname).exists():
+                load_dotenv(fname, override=True, encoding=encoding)
+                loaded.append(fname)
+        except OSError as e:
+            print(f"OSError loading {fname}: {e}")
+        except Exception as e:
+            print(f"Error loading {fname}: {e}")
     return loaded
 
 
@@ -299,24 +305,33 @@ def sanity_check_repo(repo, io):
     if not repo:
         return True
 
+    if not repo.repo.working_tree_dir:
+        io.tool_error("The git repo does not seem to have a working tree?")
+        return False
+
+    bad_ver = False
     try:
         repo.get_tracked_files()
-        return True
+        if not repo.git_repo_error:
+            return True
+        error_msg = str(repo.git_repo_error)
     except ANY_GIT_ERROR as exc:
         error_msg = str(exc)
+        bad_ver = "version in (1, 2)" in error_msg
+    except AssertionError as exc:
+        error_msg = str(exc)
+        bad_ver = True
 
-        if "version in (1, 2)" in error_msg:
-            io.tool_error("Aider only works with git repos with version number 1 or 2.")
-            io.tool_output(
-                "You may be able to convert your repo: git update-index --index-version=2"
-            )
-            io.tool_output("Or run aider --no-git to proceed without using git.")
-            io.tool_output("https://github.com/paul-gauthier/aider/issues/211")
-            return False
-
-        io.tool_error("Unable to read git repository, it may be corrupt?")
-        io.tool_output(error_msg)
+    if bad_ver:
+        io.tool_error("Aider only works with git repos with version number 1 or 2.")
+        io.tool_output("You may be able to convert your repo: git update-index --index-version=2")
+        io.tool_output("Or run aider --no-git to proceed without using git.")
+        io.tool_output("https://github.com/paul-gauthier/aider/issues/211")
         return False
+
+    io.tool_error("Unable to read git repository, it may be corrupt?")
+    io.tool_output(error_msg)
+    return False
 
 
 def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
@@ -355,7 +370,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     args, unknown = parser.parse_known_args(argv)
 
     # Load the .env file specified in the arguments
-    loaded_dotenvs = load_dotenv_files(git_root, args.env_file)
+    loaded_dotenvs = load_dotenv_files(git_root, args.env_file, args.encoding)
 
     # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)
@@ -363,8 +378,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if not args.verify_ssl:
         import httpx
 
+        os.environ["SSL_VERIFY"] = ""
         litellm._load_litellm()
         litellm._lazy_module.client_session = httpx.Client(verify=False)
+        litellm._lazy_module.aclient_session = httpx.AsyncClient(verify=False)
 
     if args.dark_mode:
         args.user_input_color = "#32FF32"
@@ -395,7 +412,14 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             output=output,
             user_input_color=args.user_input_color,
             tool_output_color=args.tool_output_color,
+            tool_warning_color=args.tool_warning_color,
             tool_error_color=args.tool_error_color,
+            completion_menu_color=args.completion_menu_color,
+            completion_menu_bg_color=args.completion_menu_bg_color,
+            completion_menu_current_color=args.completion_menu_current_color,
+            completion_menu_current_bg_color=args.completion_menu_current_bg_color,
+            assistant_output_color=args.assistant_output_color,
+            code_theme=args.code_theme,
             dry_run=args.dry_run,
             encoding=args.encoding,
             llm_history_file=args.llm_history_file,
@@ -486,6 +510,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     cmd_line = scrub_sensitive_info(args, cmd_line)
     io.tool_output(cmd_line, log_only=True)
 
+    check_and_load_imports(io, verbose=args.verbose)
+
     if args.anthropic_api_key:
         os.environ["ANTHROPIC_API_KEY"] = args.anthropic_api_key
 
@@ -508,7 +534,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         if os.environ.get("ANTHROPIC_API_KEY"):
             args.model = "claude-3-5-sonnet-20240620"
 
-    main_model = models.Model(args.model, weak_model=args.weak_model)
+    main_model = models.Model(
+        args.model,
+        weak_model=args.weak_model,
+        editor_model=args.editor_model,
+        editor_edit_format=args.editor_edit_format,
+    )
 
     if args.verbose:
         io.tool_output("Model info:")
@@ -563,6 +594,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.cache_prompts and args.map_refresh == "auto":
         args.map_refresh = "files"
 
+    if not main_model.streaming:
+        if args.stream:
+            io.tool_warning(
+                f"Warning: Streaming is not supported by {main_model.name}. Disabling streaming."
+            )
+        args.stream = False
+
     try:
         coder = Coder.create(
             main_model=main_model,
@@ -577,8 +615,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             dry_run=args.dry_run,
             map_tokens=args.map_tokens,
             verbose=args.verbose,
-            assistant_output_color=args.assistant_output_color,
-            code_theme=args.code_theme,
             stream=args.stream,
             use_git=args.git,
             restore_chat_history=args.restore_chat_history,
@@ -686,10 +722,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.exit:
         return
 
-    thread = threading.Thread(target=load_slow_imports)
-    thread.daemon = True
-    thread.start()
-
     while True:
         try:
             coder.run()
@@ -706,19 +738,72 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 coder.show_announcements()
 
 
-def load_slow_imports():
+def check_and_load_imports(io, verbose=False):
+    installs_file = Path.home() / ".aider" / "installs.json"
+    key = (__version__, sys.executable)
+
+    if verbose:
+        io.tool_output(
+            f"Checking imports for version {__version__} and executable {sys.executable}"
+        )
+        io.tool_output(f"Installs file: {installs_file}")
+
+    try:
+        if installs_file.exists():
+            with open(installs_file, "r") as f:
+                installs = json.load(f)
+            if verbose:
+                io.tool_output("Installs file exists and loaded")
+        else:
+            installs = {}
+            if verbose:
+                io.tool_output("Installs file does not exist, creating new dictionary")
+
+        if str(key) not in installs:
+            if verbose:
+                io.tool_output(
+                    "First run for this version and executable, loading imports synchronously"
+                )
+            try:
+                load_slow_imports(swallow=False)
+            except Exception as err:
+                io.tool_error(str(err))
+                io.tool_output("Error loading required imports. Did you install aider properly?")
+                io.tool_output("https://aider.chat/docs/install/install.html")
+                sys.exit(1)
+
+            installs[str(key)] = True
+            installs_file.parent.mkdir(parents=True, exist_ok=True)
+            with open(installs_file, "w") as f:
+                json.dump(installs, f, indent=4)
+            if verbose:
+                io.tool_output("Imports loaded and installs file updated")
+        else:
+            if verbose:
+                io.tool_output("Not first run, loading imports in background thread")
+            thread = threading.Thread(target=load_slow_imports)
+            thread.daemon = True
+            thread.start()
+    except Exception as e:
+        io.tool_warning(f"Error in checking imports: {e}")
+        if verbose:
+            io.tool_output(f"Full exception details: {traceback.format_exc()}")
+
+
+def load_slow_imports(swallow=True):
     # These imports are deferred in various ways to
     # improve startup time.
-    # This func is called in a thread to load them in the background
-    # while we wait for the user to type their first message.
+    # This func is called either synchronously or in a thread
+    # depending on whether it's been run before for this version and executable.
 
     try:
         import httpx  # noqa: F401
         import litellm  # noqa: F401
         import networkx  # noqa: F401
         import numpy  # noqa: F401
-    except Exception:
-        pass
+    except Exception as e:
+        if not swallow:
+            raise e
 
 
 if __name__ == "__main__":

@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
+import json
 import os
+import shutil
 import warnings
 from pathlib import Path
 
@@ -69,12 +71,17 @@ def get_index():
 
     dname = Path.home() / ".aider" / "caches" / ("help." + __version__)
 
-    if dname.exists():
-        storage_context = StorageContext.from_defaults(
-            persist_dir=dname,
-        )
-        index = load_index_from_storage(storage_context)
-    else:
+    index = None
+    try:
+        if dname.exists():
+            storage_context = StorageContext.from_defaults(
+                persist_dir=dname,
+            )
+            index = load_index_from_storage(storage_context)
+    except (OSError, json.JSONDecodeError):
+        shutil.rmtree(dname)
+
+    if index is None:
         parser = MarkdownNodeParser()
 
         nodes = []

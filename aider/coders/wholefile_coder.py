@@ -58,6 +58,8 @@ class WholeFileCoder(Coder):
                     fname = fname.strip("*")  # handle **filename.py**
                     fname = fname.rstrip(":")
                     fname = fname.strip("`")
+                    fname = fname.lstrip("#")
+                    fname = fname.strip()
 
                     # Issue #1232
                     if len(fname) > 250:

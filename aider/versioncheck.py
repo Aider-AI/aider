@@ -21,7 +21,7 @@ def install_from_main_branch(io):
         io,
         None,
         "Install the development version of aider from the main branch?",
-        ["--upgrade", "git+https://github.com/paul-gauthier/aider.git"],
+        ["git+https://github.com/paul-gauthier/aider.git"],
         self_update=True,
     )
 
@@ -50,7 +50,7 @@ def install_upgrade(io, latest_version=None):
         io,
         None,
         new_ver_text,
-        ["--upgrade", "aider-chat"],
+        ["aider-chat"],
         self_update=True,
     )
 

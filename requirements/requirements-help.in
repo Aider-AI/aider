@@ -6,3 +6,5 @@
 llama-index-core
 llama-index-embeddings-huggingface
 
+# requirement-help and requirements-playwright choose different versions
+greenlet==3.0.3

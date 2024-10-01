@@ -23,7 +23,7 @@ You can add images to the chat just like you would
 add any other file:
 
 - Use `/add <image-filename>` from within the chat
-- Use `/clipboard` to paste an image from your clipboard into the chat.
+- Use `/paste` to paste an image from your clipboard into the chat.
 - Launch aider with image filenames on the command line: `aider <image-filename>` along with any other command line arguments you need.
 
 ## Web pages

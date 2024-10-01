@@ -19,5 +19,6 @@ cog $ARG \
     aider/website/docs/config/dotenv.md \
     aider/website/docs/config/options.md \
     aider/website/docs/config/aider_conf.md \
+    aider/website/docs/config/adv-model-settings.md \
     aider/website/docs/leaderboards/index.md \
     aider/website/docs/llms/other.md

@@ -13,6 +13,13 @@ Aider supports prompt caching for cost savings and faster coding.
 Currently Anthropic provides caching for Sonnet and Haiku,
 and DeepSeek provides caching for Coder.
 
+Aider organizes the chat history to try and cache:
+
+- The system prompt.
+- Read only files added with `--read` or `/read-only`.
+- The repository map.
+- The editable files that have been added to the chat.
+
 ![Prompt caching](/assets/prompt-caching.jpg)
 
 

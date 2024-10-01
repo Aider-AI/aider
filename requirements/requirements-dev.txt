@@ -8,9 +8,9 @@ alabaster==0.7.16
     # via sphinx
 babel==2.16.0
     # via sphinx
-build==1.2.1
+build==1.2.2
     # via pip-tools
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c requirements/../requirements.txt
     #   requests
@@ -25,6 +25,8 @@ click==8.1.7
     #   -c requirements/../requirements.txt
     #   pip-tools
     #   typer
+codespell==2.3.0
+    # via -r requirements/requirements-dev.in
 cogapp==3.4.1
     # via -r requirements/requirements-dev.in
 contourpy==1.3.0
@@ -41,15 +43,15 @@ docutils==0.20.1
     # via
     #   sphinx
     #   sphinx-rtd-theme
-filelock==3.15.4
+filelock==3.16.1
     # via
     #   -c requirements/../requirements.txt
     #   virtualenv
 fonttools==4.53.1
     # via matplotlib
-identify==2.6.0
+identify==2.6.1
     # via pre-commit
-idna==3.8
+idna==3.10
     # via
     #   -c requirements/../requirements.txt
     #   requests
@@ -63,7 +65,7 @@ jinja2==3.1.4
     # via
     #   -c requirements/../requirements.txt
     #   sphinx
-kiwisolver==1.4.5
+kiwisolver==1.4.7
     # via matplotlib
 lox==0.12.0
     # via -r requirements/requirements-dev.in
@@ -98,7 +100,7 @@ packaging==24.1
     #   matplotlib
     #   pytest
     #   sphinx
-pandas==2.2.2
+pandas==2.2.3
     # via -r requirements/requirements-dev.in
 pathos==0.3.2
     # via lox
@@ -108,7 +110,7 @@ pillow==10.4.0
     #   matplotlib
 pip-tools==7.4.1
     # via -r requirements/requirements-dev.in
-platformdirs==4.2.2
+platformdirs==4.3.6
     # via virtualenv
 pluggy==1.5.0
     # via pytest
@@ -129,13 +131,13 @@ pyproject-hooks==1.1.0
     # via
     #   build
     #   pip-tools
-pytest==8.3.2
+pytest==8.3.3
     # via -r requirements/requirements-dev.in
 python-dateutil==2.9.0.post0
     # via
     #   matplotlib
     #   pandas
-pytz==2024.1
+pytz==2024.2
     # via pandas
 pyyaml==6.0.2
     # via
@@ -145,7 +147,7 @@ requests==2.32.3
     # via
     #   -c requirements/../requirements.txt
     #   sphinx
-rich==13.8.0
+rich==13.8.1
     # via
     #   -c requirements/../requirements.txt
     #   typer
@@ -185,11 +187,11 @@ typing-extensions==4.12.2
     #   typer
 tzdata==2024.1
     # via pandas
-urllib3==2.2.2
+urllib3==2.2.3
     # via
     #   -c requirements/../requirements.txt
     #   requests
-virtualenv==20.26.3
+virtualenv==20.26.5
     # via pre-commit
 wheel==0.44.0
     # via pip-tools

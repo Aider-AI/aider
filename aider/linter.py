@@ -46,14 +46,18 @@ class Linter:
         cmd += " " + rel_fname
         cmd = cmd.split()
 
-        process = subprocess.Popen(
-            cmd,
-            cwd=self.root,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            encoding=self.encoding,
-            errors="replace",
-        )
+        try:
+            process = subprocess.Popen(
+                cmd,
+                cwd=self.root,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                encoding=self.encoding,
+                errors="replace",
+            )
+        except OSError as err:
+            print(f"Unable to execute lint command: {err}")
+            return
         stdout, _ = process.communicate()
         errors = stdout
         if process.returncode == 0:
@@ -79,7 +83,11 @@ class Linter:
 
     def lint(self, fname, cmd=None):
         rel_fname = self.get_rel_fname(fname)
-        code = Path(fname).read_text(encoding=self.encoding, errors="replace")
+        try:
+            code = Path(fname).read_text(encoding=self.encoding, errors="replace")
+        except OSError as err:
+            print(f"Unable to read {fname}: {err}")
+            return
 
         if cmd:
             cmd = cmd.strip()
@@ -205,7 +213,12 @@ def basic_lint(fname, code):
     if lang == "typescript":
         return
 
-    parser = get_parser(lang)
+    try:
+        parser = get_parser(lang)
+    except Exception as err:
+        print(f"Unable to load parser: {err}")
+        return
+
     tree = parser.parse(bytes(code, "utf-8"))
 
     errors = traverse_tree(tree.root_node)
