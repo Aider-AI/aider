@@ -419,7 +419,7 @@ class RepoMap:
                 ranked_definitions[(dst, ident)] += data["rank"]
 
         ranked_tags = []
-        ranked_definitions = sorted(ranked_definitions.items(), reverse=True, key=lambda x: x[1])
+        ranked_definitions = sorted(ranked_definitions.items(), reverse=True, key=lambda x: (x[1], x[0]))
 
         # dump(ranked_definitions)
 
