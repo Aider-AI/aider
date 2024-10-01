@@ -53,7 +53,7 @@ prefill_models = [model for model, info in data.items() if info.get('supports_as
 # Generate the list of models
 model_list = "\n".join(f"- {model}" for model in sorted(prefill_models))
 
-cog.out(f"Models that support prefill:\n\n{model_list}")
+cog.out(model_list)
 ]]]-->
 Models that support prefill:
 
