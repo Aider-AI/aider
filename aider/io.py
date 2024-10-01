@@ -1,6 +1,5 @@
 import base64
 import os
-import re
 import sqlite3
 import subprocess
 import uuid
@@ -28,14 +27,6 @@ from aider.mdstream import MarkdownStream
 
 from .dump import dump  # noqa: F401
 from .utils import is_image_file
-
-try:
-    import datasette
-
-    DATASETTE_AVAILABLE = True
-except ImportError:
-    DATASETTE_AVAILABLE = False
-
 
 @dataclass
 class ConfirmGroup:

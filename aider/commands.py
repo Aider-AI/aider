@@ -22,6 +22,7 @@ from aider.utils import is_image_file
 
 from .dump import dump  # noqa: F401
 
+
 class SwitchCoder(Exception):
     def __init__(self, **kwargs):
         self.kwargs = kwargs
