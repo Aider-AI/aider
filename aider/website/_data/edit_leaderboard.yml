@@ -1447,3 +1447,20 @@
   seconds_per_case: 64.7
   total_cost: 0.0000
 
+- dirname: 2024-10-01-02-33-11--mistral-small-whole-1
+  test_cases: 133
+  model: ollama/mistral-small
+  edit_format: whole
+  commit_hash: 8a908fa
+  pass_rate_1: 30.1
+  pass_rate_2: 38.3
+  percent_cases_well_formed: 99.2
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  command: aider --model ollama/mistral-small
+  date: 2024-10-01
+  versions: 0.58.1.dev
+  seconds_per_case: 84.6
+  total_cost: 0.0000
