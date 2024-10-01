@@ -28,6 +28,11 @@ class SwitchCoder(Exception):
         self.kwargs = kwargs
 
 
+def cmd_report(args):
+    "Report a problem by opening a GitHub Issue"
+    from aider.report import report_github_issue
+
+
 class Commands:
     voice = None
     scraper = None
@@ -1206,111 +1211,69 @@ class Commands:
         self.io.tool_output(settings)
 
 
-
-    def cmd_copy(self, args):
-        "Copy the last assistant message to the clipboard"
-        all_messages = self.coder.done_messages + self.coder.cur_messages
-        assistant_messages = [msg for msg in reversed(all_messages) if msg["role"] == "assistant"]
-
-        if not assistant_messages:
-            self.io.tool_error("No assistant messages found to copy.")
-            return
-
-        last_assistant_message = assistant_messages[0]["content"]
+    def cmd_save(self, args):
+        """save the currently-editable files to a .aider.stack.md file"""
+        editable_workspace_files_file = os.path.join(self.coder.root, ".aider.edit.md")
+        read_only_workspace_files_file = os.path.join(self.coder.root, ".aider.readonly.md")
 
         try:
-            pyperclip.copy(last_assistant_message)
-            preview = (
-                last_assistant_message[:50] + "..."
-                if len(last_assistant_message) > 50
-                else last_assistant_message
-            )
-            self.io.tool_output(f"Copied last assistant message to clipboard. Preview: {preview}")
-        except pyperclip.PyperclipException as e:
-            self.io.tool_error(f"Failed to copy to clipboard: {str(e)}")
-            self.io.tool_output(
-                "You may need to install xclip or xsel on Linux, or pbcopy on macOS."
-            )
+            if any(self.coder.abs_fnames):
+                with open(editable_workspace_files_file, "w") as f:
+                    for fname in self.coder.abs_fnames:
+                        f.write(f"{fname}\n")
+                self.io.tool_output(f"Saved {len(self.coder.abs_fnames)} file names to {editable_workspace_files_file}")
+            if any(self.coder.abs_read_only_fnames):
+
+                with open(read_only_workspace_files_file, "w") as f:
+                    for fname in self.coder.abs_read_only_fnames:
+                        f.write(f"{fname}\n")
+                self.io.tool_output(
+                    f"Saved {len(self.coder.abs_read_only_fnames)} file names to {read_only_workspace_files_file}")
         except Exception as e:
-            self.io.tool_error(f"An unexpected error occurred while copying to clipboard: {str(e)}")
+            self.io.tool_error(f"Error saving the current chat: {e}")
+            return
 
-    def cmd_report(self, args):
-        "Report a problem by opening a GitHub Issue"
-        from aider.report import report_github_issue
-
-        def cmd_save(self, args):
-            """save the currently-editable files to a .aider.stack.md file"""
-            editable_workspace_files_file = os.path.join(self.coder.root, ".aider.edit.md")
-            read_only_workspace_files_file = os.path.join(self.coder.root, ".aider.readonly.md")
+    def cmd_load(self, args):
+        """load file list from .aider.edit.md and .aider.readonly.md files"""
+        editable_file_list = os.path.join(self.coder.root, ".aider.edit.md")
+        read_only_file_list = os.path.join(self.coder.root, ".aider.readonly.md")
+        try:
+            class NoFileError(Exception):
+                pass
 
             try:
-                if any(self.coder.abs_fnames):
-                    with open(editable_workspace_files_file, "w") as f:
-                        for fname in self.coder.abs_fnames:
-                            f.write(f"{fname}\n")
-                    self.io.tool_output(f"Saved {len(self.coder.abs_fnames)} file names to {editable_workspace_files_file}")
-                if any(self.coder.abs_read_only_fnames):
+                if not os.path.exists(editable_file_list):
+                    self.io.tool_error("editable workspace file list not found - possibly never got stored.")
+                    raise NoFileError()
 
-                    with open(read_only_workspace_files_file, "w") as f:
-                        for fname in self.coder.abs_read_only_fnames:
-                            f.write(f"{fname}\n")
-                    self.io.tool_output(
-                        f"Saved {len(self.coder.abs_read_only_fnames)} file names to {read_only_workspace_files_file}")
-            except Exception as e:
-                self.io.tool_error(f"Error saving the current chat: {e}")
-                return
+                with open(editable_file_list, "r") as f:
+                    for line in f:
+                        fname = line.strip()
+                        # check if this file exists at all:
+                        if not os.path.exists(fname):
+                            self.io.tool_error(f"requested file not found: {fname}")
+                            continue
+                        self.coder.abs_fnames.add(fname)
+            except NoFileError:
+                pass
 
-        def cmd_load(self, args):
-            """load file list from .aider.edit.md and .aider.readonly.md files"""
-            editable_file_list = os.path.join(self.coder.root, ".aider.edit.md")
-            read_only_file_list = os.path.join(self.coder.root, ".aider.readonly.md")
             try:
-                class NoFileError(Exception):
-                    pass
-
-                try:
-                    if not os.path.exists(editable_file_list):
-                        self.io.tool_error("editable workspace file list not found - possibly never got stored.")
-                        raise NoFileError()
-
-                    with open(editable_file_list, "r") as f:
-                        for line in f:
-                            fname = line.strip()
-                            # check if this file exists at all:
-                            if not os.path.exists(fname):
-                                self.io.tool_error(f"requested file not found: {fname}")
-                                continue
-                            self.coder.abs_fnames.add(fname)
-                except NoFileError:
-                    pass
-
-                try:
-                    if not os.path.exists(read_only_file_list):
-                        self.io.tool_error("read-only workspace file list not found - possibly never got stored.")
-                        raise NoFileError()
-                    with open(read_only_file_list, "r") as f:
-                        for line in f:
-                            fname = line.strip()
-                            if not os.path.exists(fname):
-                                self.io.tool_error(f"File not found: {fname}")
-                                raise NoFileError()
-                            self.coder.abs_read_only_fnames.add(fname)
-                except NoFileError:
-                    pass
-                self.io.tool_output(f"files loaded.")
-            except Exception as e:
-                self.io.tool_error(f"Error loading the file list: {e}")
-                return
-
-        announcements = "\n".join(self.coder.get_announcements())
-        issue_text = announcements
-
-        if args.strip():
-            title = args.strip()
-        else:
-            title = None
-
-        report_github_issue(issue_text, title=title, confirm=False)
+                if not os.path.exists(read_only_file_list):
+                    self.io.tool_error("read-only workspace file list not found - possibly never got stored.")
+                    raise NoFileError()
+                with open(read_only_file_list, "r") as f:
+                    for line in f:
+                        fname = line.strip()
+                        if not os.path.exists(fname):
+                            self.io.tool_error(f"File not found: {fname}")
+                            raise NoFileError()
+                        self.coder.abs_read_only_fnames.add(fname)
+            except NoFileError:
+                pass
+            self.io.tool_output(f"files loaded.")
+        except Exception as e:
+            self.io.tool_error(f"Error loading the file list: {e}")
+            return
 
 
 def expand_subdir(file_path):
