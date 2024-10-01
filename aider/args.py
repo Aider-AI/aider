@@ -3,6 +3,7 @@
 import argparse
 import os
 import sys
+from pathlib import Path
 
 import configargparse
 
@@ -20,11 +21,35 @@ def default_env_file(git_root):
     return os.path.join(git_root, ".env") if git_root else ".env"
 
 
-def get_parser(default_config_files, git_root):
+def get_default_config_files(git_root):
+    conf_fname = Path(".aider.conf.yml")
+    conf_path = "aider/conf.yml"
+
+    files = [conf_fname.resolve()]  # CWD
+    if git_root:
+        git_conf = Path(git_root) / conf_fname  # git root
+        if git_conf not in files:
+            files.append(git_conf)
+
+    # Add XDG_CONFIG_HOME or default Linux/macOS config path
+    xdg_config_home = os.getenv("XDG_CONFIG_HOME")
+    if xdg_config_home:
+        files.append(Path(xdg_config_home) / conf_path)
+    elif sys.platform.startswith("linux"):
+        files.append(Path.home() / ".config" / conf_path)
+    elif sys.platform == "darwin":
+        files.append(Path.home() / "Library" / "Application Support" / conf_path)
+
+    files.append(Path.home() / conf_fname)  # homedir
+
+    return list(map(str, files))
+
+
+def get_parser(git_root):
     parser = configargparse.ArgumentParser(
         description="aider is AI pair programming in your terminal",
         add_config_file_help=True,
-        default_config_files=default_config_files,
+        default_config_files=get_default_config_files(git_root),
         auto_env_var_prefix="AIDER_",
     )
     group = parser.add_argument_group("Main")
@@ -665,7 +690,7 @@ def get_parser(default_config_files, git_root):
         metavar="CONFIG_FILE",
         help=(
             "Specify the config file (default: search for .aider.conf.yml in git root, cwd"
-            " or home directory)"
+            " or home directory, or for aider/conf.yml in $XDG_CONFIG_HOME or Linux/macOS config paths)"
         ),
     )
     group.add_argument(
