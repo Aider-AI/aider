@@ -1431,6 +1431,7 @@
   versions: 0.58.1.dev
   seconds_per_case: 66.6
   total_cost: 0.0000
+
 - dirname: 2024-09-30-23-01-24--hermes3-8b-llama3.1-fp16-whole-2
   test_cases: 133
   model: ollama/hermes3:8b-llama3.1-fp16
@@ -1463,4 +1464,21 @@
   date: 2024-10-01
   versions: 0.58.1.dev
   seconds_per_case: 84.6
+  total_cost: 0.0000
+
+- dirname: 2024-10-01-07-05-40--yi-coder-9b-chat-fp16-whole-1
+  test_cases: 133
+  model: ollama/yi-coder:9b-chat-fp16
+  edit_format: whole
+  commit_hash: 52c6632-dirty
+  pass_rate_1: 39.8
+  pass_rate_2: 43.6
+  percent_cases_well_formed: 99.2
+  lazy_comments: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  command: aider --model ollama/yi-coder:9b-chat-fp16
+  date: 2024-10-01
+  versions: 0.58.1.dev
+  seconds_per_case: 63.7
   total_cost: 0.0000
