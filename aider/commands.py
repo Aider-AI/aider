@@ -1203,7 +1203,9 @@ class Commands:
     def cmd_settings(self, args):
         "Print out the current settings"
         settings = format_settings(self.parser, self.args)
-        self.io.tool_output(settings)
+        announcements = "\n".join(self.coder.get_announcements())
+        output = f"{settings}\n\nAnnouncements:\n{announcements}"
+        self.io.tool_output(output)
 
     def cmd_copy(self, args):
         "Copy the last assistant message to the clipboard"
