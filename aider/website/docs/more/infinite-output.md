@@ -55,8 +55,6 @@ model_list = "\n".join(f"- {model}" for model in sorted(prefill_models))
 
 cog.out(model_list)
 ]]]-->
-Models that support prefill:
-
 - claude-3-5-sonnet-20240620
 - claude-3-haiku-20240307
 - claude-3-opus-20240229
