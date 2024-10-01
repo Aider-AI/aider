@@ -68,7 +68,7 @@ To avoid hitting output token limits:
 - Ask for smaller changes in each request.
 - Break your code into smaller source files.
 - Use a strong model like gpt-4o, sonnet or opus that can return diffs.
-
+- Use a model that supports [infinite output](/docs/more/infinite-output.html).
 
 ## Other causes
 

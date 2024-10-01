@@ -51,11 +51,43 @@ data = json.loads(response.text)
 prefill_models = [model for model, info in data.items() if info.get('supports_assistant_prefill') == True]
 
 # Generate the list of models
-model_list = "\n".join(f"- {model}" for model in prefill_models)
+model_list = "\n".join(f"- {model}" for model in sorted(prefill_models))
 
 cog.out(f"Models that support prefill:\n\n{model_list}")
 ]]]-->
 
+- mistral/mistral-tiny
+- mistral/mistral-small
+- mistral/mistral-small-latest
+- mistral/mistral-medium
+- mistral/mistral-medium-latest
+- mistral/mistral-medium-2312
+- mistral/mistral-large-latest
+- mistral/mistral-large-2402
+- mistral/mistral-large-2407
+- mistral/pixtral-12b-2409
+- mistral/open-mistral-7b
+- mistral/open-mixtral-8x7b
+- mistral/open-mixtral-8x22b
+- mistral/codestral-latest
+- mistral/codestral-2405
+- mistral/open-mistral-nemo
+- mistral/open-mistral-nemo-2407
+- mistral/open-codestral-mamba
+- mistral/codestral-mamba-latest
+- deepseek-chat
+- codestral/codestral-latest
+- codestral/codestral-2405
+- deepseek-coder
+- claude-3-haiku-20240307
+- claude-3-opus-20240229
+- claude-3-sonnet-20240229
+- claude-3-5-sonnet-20240620
+- vertex_ai/claude-3-sonnet@20240229
+- vertex_ai/claude-3-5-sonnet@20240620
+- vertex_ai/claude-3-haiku@20240307
+- vertex_ai/claude-3-opus@20240229
+- openrouter/anthropic/claude-3.5-sonnet
 <!--[[[end]]]-->
 
 
