@@ -1204,7 +1204,7 @@ class Commands:
         "Print out the current settings"
         settings = format_settings(self.parser, self.args)
         announcements = "\n".join(self.coder.get_announcements())
-        output = f"{settings}\n\nAnnouncements:\n{announcements}"
+        output = f"{announcements}\n{settings}"
         self.io.tool_output(output)
 
     def cmd_copy(self, args):
