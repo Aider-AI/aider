@@ -347,7 +347,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     conf_fname = Path(".aider.conf.yml")
 
-    default_config_files = [conf_fname.resolve()]  # CWD
+    default_config_files = []
+    try:
+        default_config_files += [conf_fname.resolve()]  # CWD
+    except OSError:
+        pass
+
     if git_root:
         git_conf = Path(git_root) / conf_fname  # git root
         if git_conf not in default_config_files:

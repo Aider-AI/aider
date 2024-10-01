@@ -22,6 +22,8 @@ Reply only with the one-line commit message, without any additional text, explan
 or line breaks.
 """
 
+print(commit_system)
+
 # COMMANDS
 undo_command_reply = (
     "I did `git reset --hard HEAD~1` to discard the last edits. Please wait for further"
