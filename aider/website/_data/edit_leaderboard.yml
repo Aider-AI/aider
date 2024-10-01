@@ -1316,3 +1316,184 @@
   versions: 0.57.2.dev
   seconds_per_case: 67.2
   total_cost: 0.0000
+
+- dirname: 2024-09-29-17-51-11--codegeex4-whole-2
+  test_cases: 133
+  model: ollama/codegeex4
+  edit_format: whole
+  commit_hash: 228ae24
+  pass_rate_1: 28.6
+  pass_rate_2: 32.3
+  percent_cases_well_formed: 97.0
+  error_outputs: 20
+  num_malformed_responses: 20
+  num_with_malformed_responses: 4
+  user_asks: 56
+  lazy_comments: 5
+  syntax_errors: 5
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 4
+  command: aider --model ollama/codegeex4
+  date: 2024-09-29
+  versions: 0.57.2.dev
+  seconds_per_case: 128.1
+  total_cost: 0.0000
+
+- dirname: 2024-09-30-00-09-00--wojtek-opencodeinterpreter-6.7b-whole-2
+  test_cases: 133
+  model: ollama/wojtek/opencodeinterpreter:6.7b
+  edit_format: whole
+  commit_hash: 6d586fd
+  pass_rate_1: 26.3
+  pass_rate_2: 30.1
+  percent_cases_well_formed: 91.0
+  error_outputs: 18
+  num_malformed_responses: 18
+  num_with_malformed_responses: 12
+  user_asks: 79
+  lazy_comments: 7
+  syntax_errors: 0
+  indentation_errors: 1
+  exhausted_context_windows: 0
+  test_timeouts: 6
+  command: aider --model ollama/wojtek/opencodeinterpreter:6.7b
+  date: 2024-09-30
+  versions: 0.58.1.dev
+  seconds_per_case: 59.3
+  total_cost: 0.0000
+
+- dirname: 2024-09-30-03-49-01--mistral-nemo-12b-instruct-2407-q4_K_M-whole-1
+  test_cases: 133
+  model: ollama/mistral-nemo:12b-instruct-2407-q4_K_M
+  edit_format: whole
+  commit_hash: ba4dec8
+  pass_rate_1: 22.6
+  pass_rate_2: 33.1
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 53
+  lazy_comments: 37
+  syntax_errors: 2
+  indentation_errors: 2
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  command: aider --model ollama/mistral-nemo:12b-instruct-2407-q4_K_M
+  date: 2024-09-30
+  versions: 0.58.1.dev
+  seconds_per_case: 34.7
+  total_cost: 0.0000
+
+- dirname: 2024-09-30-14-09-43--qwen2.5-32b-whole-2
+  test_cases: 133
+  model: ollama/qwen2.5:32b
+  edit_format: whole
+  commit_hash: 765c4cb
+  pass_rate_1: 44.4
+  pass_rate_2: 54.1
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 9
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: aider --model ollama/qwen2.5:32b
+  date: 2024-09-30
+  versions: 0.58.1.dev
+  seconds_per_case: 134.9
+  total_cost: 0.0000
+
+- dirname: 2024-09-30-19-35-40--llama3.2-3b-instruct-fp16-whole-1
+  test_cases: 133
+  model: ollama/llama3.2:3b-instruct-fp16
+  edit_format: whole
+  commit_hash: 3f12290
+  pass_rate_1: 20.3
+  pass_rate_2: 26.3
+  percent_cases_well_formed: 97.0
+  error_outputs: 21
+  num_malformed_responses: 21
+  num_with_malformed_responses: 4
+  user_asks: 73
+  lazy_comments: 11
+  syntax_errors: 1
+  indentation_errors: 3
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model ollama/llama3.2:3b-instruct-fp16
+  date: 2024-09-30
+  versions: 0.58.1.dev
+  seconds_per_case: 66.6
+  total_cost: 0.0000
+
+- dirname: 2024-09-30-23-01-24--hermes3-8b-llama3.1-fp16-whole-2
+  test_cases: 133
+  model: ollama/hermes3:8b-llama3.1-fp16
+  edit_format: whole
+  commit_hash: c5ba4f7
+  pass_rate_1: 24.1
+  pass_rate_2: 30.1
+  percent_cases_well_formed: 98.5
+  syntax_errors: 0
+  exhausted_context_windows: 0
+  command: aider --model ollama/hermes3:8b-llama3.1-fp16
+  date: 2024-09-30
+  versions: 0.58.1.dev
+  seconds_per_case: 64.7
+  total_cost: 0.0000
+
+- dirname: 2024-10-01-02-33-11--mistral-small-whole-1
+  test_cases: 133
+  model: ollama/mistral-small
+  edit_format: whole
+  commit_hash: 8a908fa
+  pass_rate_1: 30.1
+  pass_rate_2: 38.3
+  percent_cases_well_formed: 99.2
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  command: aider --model ollama/mistral-small
+  date: 2024-10-01
+  versions: 0.58.1.dev
+  seconds_per_case: 84.6
+  total_cost: 0.0000
+
+- dirname: 2024-10-01-07-05-40--yi-coder-9b-chat-fp16-whole-1
+  test_cases: 133
+  model: ollama/yi-coder:9b-chat-fp16
+  edit_format: whole
+  commit_hash: 52c6632-dirty
+  pass_rate_1: 39.8
+  pass_rate_2: 43.6
+  percent_cases_well_formed: 99.2
+  lazy_comments: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  command: aider --model ollama/yi-coder:9b-chat-fp16
+  date: 2024-10-01
+  versions: 0.58.1.dev
+  seconds_per_case: 63.7
+  total_cost: 0.0000
+  
+- dirname: 2024-10-01-16-50-09--hermes3-whole-4
+  test_cases: 133
+  model: ollama/hermes3
+  edit_format: whole
+  commit_hash: 415e898
+  pass_rate_1: 21.1
+  pass_rate_2: 22.6
+  percent_cases_well_formed: 98.5
+  exhausted_context_windows: 0
+  command: aider --model ollama/hermes3
+  date: 2024-10-01
+  versions: 0.58.1.dev
+  seconds_per_case: 24.8
+  total_cost: 0.0000
