@@ -1482,3 +1482,18 @@
   versions: 0.58.1.dev
   seconds_per_case: 63.7
   total_cost: 0.0000
+  
+- dirname: 2024-10-01-16-50-09--hermes3-whole-4
+  test_cases: 133
+  model: ollama/hermes3
+  edit_format: whole
+  commit_hash: 415e898
+  pass_rate_1: 21.1
+  pass_rate_2: 22.6
+  percent_cases_well_formed: 98.5
+  exhausted_context_windows: 0
+  command: aider --model ollama/hermes3
+  date: 2024-10-01
+  versions: 0.58.1.dev
+  seconds_per_case: 24.8
+  total_cost: 0.0000
