@@ -667,7 +667,7 @@ class TestCommands(TestCase):
                         for fname in coder.abs_read_only_fnames
                     )
                 )
-            
+
             # Check that other_file.txt was not added
             other_file_path = Path(repo_dir) / "other_file.txt"
             self.assertFalse(
@@ -685,11 +685,7 @@ class TestCommands(TestCase):
 
             # Create a directory structure with files
             (Path(repo_dir) / "subdir").mkdir()
-            test_files = [
-                "test_file1.txt",
-                "subdir/test_file2.txt",
-                "subdir/other_file.txt"
-            ]
+            test_files = ["test_file1.txt", "subdir/test_file2.txt", "subdir/other_file.txt"]
             for file_name in test_files:
                 file_path = Path(repo_dir) / file_name
                 file_path.write_text(f"Content of {file_name}")
