@@ -69,11 +69,15 @@ class TestModels(unittest.TestCase):
 
         result = sanity_check_models(mock_io, main_model)
 
-        self.assertTrue(result)  # Should return True because there's a problem with the editor model
+        self.assertTrue(
+            result
+        )  # Should return True because there's a problem with the editor model
         mock_io.tool_warning.assert_called_with(ANY)  # Ensure a warning was issued
         self.assertEqual(mock_io.tool_warning.call_count, 2)  # Expect two warnings
         warning_messages = [call.args[0] for call in mock_io.tool_warning.call_args_list]
-        self.assertTrue(any("bogus-model" in msg for msg in warning_messages))  # Check that one of the warnings mentions the bogus model
+        self.assertTrue(
+            any("bogus-model" in msg for msg in warning_messages)
+        )  # Check that one of the warnings mentions the bogus model
 
 
 if __name__ == "__main__":
