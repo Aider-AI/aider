@@ -1,9 +1,9 @@
+import glob
 import os
 import re
 import subprocess
 import sys
 import tempfile
-import glob
 from collections import OrderedDict
 from pathlib import Path
 
