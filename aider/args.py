@@ -502,6 +502,12 @@ def get_parser(default_config_files, git_root):
         default=False,
         help="Perform a dry run without modifying files (default: False)",
     )
+    group.add_argument(
+        "--skip-sanity-check-repo",
+        action="store_true",
+        help="Skip the sanity check for the git repository (default: False)",
+        default=False,
+    )
     group = parser.add_argument_group("Fixing and committing")
     group.add_argument(
         "--lint",

@@ -584,8 +584,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         except FileNotFoundError:
             pass
 
-    if not sanity_check_repo(repo, io):
-        return 1
+    if not args.skip_sanity_check_repo:
+        if not sanity_check_repo(repo, io):
+            return 1
 
     commands = Commands(
         io, None, verify_ssl=args.verify_ssl, args=args, parser=parser, verbose=args.verbose
