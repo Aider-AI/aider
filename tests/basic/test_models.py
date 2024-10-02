@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from aider.models import Model, get_model_info, sanity_check_model, sanity_check_models
+from aider.models import Model, get_model_info, sanity_check_model
 
 
 class TestModels(unittest.TestCase):
@@ -74,7 +74,7 @@ class TestModels(unittest.TestCase):
         # Set up mock to return False for main model and True (problem) for editor model
         mock_sanity_check_model.side_effect = [False, True]
 
-        result = models.sanity_check_models(mock_io, main_model)
+        result = sanity_check_models(mock_io, main_model)
 
         self.assertTrue(
             result
