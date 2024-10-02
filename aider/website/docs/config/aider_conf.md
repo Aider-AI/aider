@@ -23,8 +23,16 @@ load whichever is found first.
 
 ## A note on lists
 
-The syntax for specifying a list of values is not standard yaml.
-Instead, use this format:
+Lists of values can be specified either as a bulleted list:
+
+```
+read:
+  - CONVENTIONS.md
+  - anotherfile.txt
+  - thirdfile.py
+```
+
+Or lists can be specified using commas and square brackets:
 
 ```
 read: [CONVENTIONS.md, anotherfile.txt, thirdfile.py]
@@ -296,7 +304,10 @@ cog.outl("```")
 ## Specify lint commands to run for different languages, eg: "python: flake8 --select=..." (can be used multiple times)
 #lint-cmd: xxx
 ## Specify multiple values like this:
-#lint-cmd: [xxx,yyyy,zzz]
+#lint-cmd:
+#  - xxx
+#  - yyy
+#  - zzz
 
 ## Enable/disable automatic linting after changes (default: True)
 #auto-lint: true
@@ -316,12 +327,18 @@ cog.outl("```")
 ## specify a file to edit (can be used multiple times)
 #file: xxx
 ## Specify multiple values like this:
-#file: [xxx,yyyy,zzz]
+#file:
+#  - xxx
+#  - yyy
+#  - zzz
 
 ## specify a read-only file (can be used multiple times)
 #read: xxx
 ## Specify multiple values like this:
-#read: [xxx,yyyy,zzz]
+#read:
+#  - xxx
+#  - yyy
+#  - zzz
 
 ## Use VI editing mode in the terminal (default: False)
 #vim: false
@@ -348,7 +365,7 @@ cog.outl("```")
 #apply: xxx
 
 ## Always say yes to every confirmation
-#yes: false
+#yes-always: false
 
 ## Enable verbose output
 #verbose: false

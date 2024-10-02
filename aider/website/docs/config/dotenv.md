@@ -337,7 +337,7 @@ cog.outl("```")
 #AIDER_APPLY=
 
 ## Always say yes to every confirmation
-#AIDER_YES=
+#AIDER_YES_ALWAYS=
 
 ## Enable verbose output
 #AIDER_VERBOSE=false

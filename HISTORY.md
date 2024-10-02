@@ -1,6 +1,13 @@
 
 # Release history
 
+### main branch
+
+- Renamed `--yes` to `--yes-always`.
+  - Now uses `AIDER_YES_ALWAYS` env var and `yes-always:` yaml key.
+  - Can still abbreviate to `--yes` on the command line.
+- Config file now uses standard YAML list syntax with `  - list entries`, one per line.  
+
 ### Aider v0.58.1
 
 - Fixed bug where cache warming pings caused subsequent user messages to trigger a tight loop of LLM requests.

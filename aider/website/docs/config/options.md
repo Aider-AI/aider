@@ -65,9 +65,10 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--read] [--vim] [--chat-language] [--version]
              [--just-check-update]
              [--check-update | --no-check-update]
-             [--install-main-branch] [--upgrade] [--apply] [--yes]
-             [-v] [--show-repo-map] [--show-prompts] [--exit]
-             [--message] [--message-file] [--encoding] [-c] [--gui]
+             [--install-main-branch] [--upgrade] [--apply]
+             [--yes-always] [-v] [--show-repo-map] [--show-prompts]
+             [--exit] [--message] [--message-file] [--encoding] [-c]
+             [--gui]
              [--suggest-shell-commands | --no-suggest-shell-commands]
              [--voice-format] [--voice-language]
 
@@ -551,9 +552,9 @@ Aliases:
 Apply the changes from the given file instead of running the chat (debug)  
 Environment variable: `AIDER_APPLY`  
 
-### `--yes`
+### `--yes-always`
 Always say yes to every confirmation  
-Environment variable: `AIDER_YES`  
+Environment variable: `AIDER_YES_ALWAYS`  
 
 ### `--verbose`
 Enable verbose output  
