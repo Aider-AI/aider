@@ -282,6 +282,9 @@ cog.outl("```")
 ## Perform a dry run without modifying files (default: False)
 #AIDER_DRY_RUN=false
 
+## Skip the sanity check for the git repository (default: False)
+#AIDER_SKIP_SANITY_CHECK_REPO=false
+
 ########################
 # Fixing and committing:
 

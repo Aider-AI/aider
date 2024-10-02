@@ -59,9 +59,10 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--attribute-commit-message-author | --no-attribute-commit-message-author]
              [--attribute-commit-message-committer | --no-attribute-commit-message-committer]
              [--commit] [--commit-prompt] [--dry-run | --no-dry-run]
-             [--lint] [--lint-cmd] [--auto-lint | --no-auto-lint]
-             [--test-cmd] [--auto-test | --no-auto-test] [--test]
-             [--file] [--read] [--vim] [--chat-language] [--version]
+             [--skip-sanity-check-repo] [--lint] [--lint-cmd]
+             [--auto-lint | --no-auto-lint] [--test-cmd]
+             [--auto-test | --no-auto-test] [--test] [--file]
+             [--read] [--vim] [--chat-language] [--version]
              [--just-check-update]
              [--check-update | --no-check-update]
              [--install-main-branch] [--upgrade] [--apply] [--yes]
@@ -454,6 +455,11 @@ Environment variable: `AIDER_DRY_RUN`
 Aliases:
   - `--dry-run`
   - `--no-dry-run`
+
+### `--skip-sanity-check-repo`
+Skip the sanity check for the git repository (default: False)  
+Default: False  
+Environment variable: `AIDER_SKIP_SANITY_CHECK_REPO`  
 
 ## Fixing and committing:
 

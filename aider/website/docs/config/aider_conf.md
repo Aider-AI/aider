@@ -284,6 +284,9 @@ cog.outl("```")
 ## Perform a dry run without modifying files (default: False)
 #dry-run: false
 
+## Skip the sanity check for the git repository (default: False)
+#skip-sanity-check-repo: false
+
 ########################
 # Fixing and committing:
 
