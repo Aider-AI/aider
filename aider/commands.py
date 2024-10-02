@@ -5,8 +5,8 @@ import subprocess
 import sys
 import tempfile
 from collections import OrderedDict
-from pathlib import Path
 from os.path import expanduser
+from pathlib import Path
 
 import pyperclip
 from PIL import Image, ImageGrab
@@ -1142,7 +1142,7 @@ class Commands:
         for pattern in filenames:
             # Expand tilde for home directory
             expanded_pattern = expanduser(pattern)
-            
+
             expanded_paths = glob.glob(expanded_pattern, recursive=True)
             if not expanded_paths:
                 self.io.tool_error(f"No matches found for: {pattern}")
