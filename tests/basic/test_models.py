@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from aider.models import Model, get_model_info, sanity_check_model, sanity_check_models
+from aider.models import Model, get_model_info, sanity_check_models
 
 
 class TestModels(unittest.TestCase):
@@ -64,10 +64,10 @@ class TestModels(unittest.TestCase):
 
     def test_sanity_check_models_bogus_editor(self):
         mock_io = MagicMock()
-        main_model = models.Model("gpt-4")
-        main_model.editor_model = models.Model("bogus-model")
+        main_model = Model("gpt-4")
+        main_model.editor_model = Model("bogus-model")
 
-        result = models.sanity_check_models(mock_io, main_model)
+        result = sanity_check_models(mock_io, main_model)
 
         self.assertTrue(
             result
