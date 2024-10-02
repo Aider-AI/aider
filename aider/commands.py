@@ -6,6 +6,7 @@ import sys
 import tempfile
 from collections import OrderedDict
 from pathlib import Path
+from os.path import expanduser
 
 import pyperclip
 from PIL import Image, ImageGrab
@@ -1139,7 +1140,10 @@ class Commands:
 
         filenames = parse_quoted_filenames(args)
         for pattern in filenames:
-            expanded_paths = glob.glob(pattern, recursive=True)
+            # Expand tilde for home directory
+            expanded_pattern = expanduser(pattern)
+            
+            expanded_paths = glob.glob(expanded_pattern, recursive=True)
             if not expanded_paths:
                 self.io.tool_error(f"No matches found for: {pattern}")
                 continue
