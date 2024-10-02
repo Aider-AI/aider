@@ -69,10 +69,14 @@ class TestModels(unittest.TestCase):
 
         result = models.sanity_check_models(mock_io, main_model)
 
-        self.assertTrue(result)  # Should return True because there's a problem with the editor model
+        self.assertTrue(
+            result
+        )  # Should return True because there's a problem with the editor model
         mock_io.tool_warning.assert_called_once()  # Ensure a warning was issued
         warning_message = mock_io.tool_warning.call_args[0][0]
-        self.assertIn("bogus-model", warning_message)  # Check that the warning mentions the bogus model
+        self.assertIn(
+            "bogus-model", warning_message
+        )  # Check that the warning mentions the bogus model
 
 
 if __name__ == "__main__":
