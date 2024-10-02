@@ -712,10 +712,10 @@ class TestCommands(TestCase):
 
             # Test the /read-only command with a non-existent glob pattern
             with mock.patch.object(io, "tool_error") as mock_tool_error:
-                commands.cmd_read_only("nonexistent*.txt")
+                commands.cmd_read_only(str(Path(repo_dir) / "nonexistent*.txt"))
 
             # Check if the appropriate error message was displayed
-            mock_tool_error.assert_called_once_with("No matches found for: nonexistent*.txt")
+            mock_tool_error.assert_called_once_with(f"No matches found for: {Path(repo_dir) / 'nonexistent*.txt'}")
 
             # Ensure no files were added to abs_read_only_fnames
             self.assertEqual(len(coder.abs_read_only_fnames), 0)
