@@ -402,15 +402,15 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         args.assistant_output_color = "blue"
         args.code_theme = "default"
 
-    if return_coder and args.yes is None:
-        args.yes = True
+    if return_coder and args.yes_always is None:
+        args.yes_always = True
 
     editing_mode = EditingMode.VI if args.vim else EditingMode.EMACS
 
     def get_io(pretty):
         return InputOutput(
             pretty,
-            args.yes,
+            args.yes_always,
             args.input_history_file,
             args.chat_history_file,
             input=input,
