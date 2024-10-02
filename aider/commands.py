@@ -3,6 +3,7 @@ import re
 import subprocess
 import sys
 import tempfile
+import glob
 from collections import OrderedDict
 from pathlib import Path
 
@@ -1137,21 +1138,20 @@ class Commands:
             return
 
         filenames = parse_quoted_filenames(args)
-        for word in filenames:
-            # Expand the home directory if the path starts with "~"
-            expanded_path = os.path.expanduser(word)
-            abs_path = self.coder.abs_root_path(expanded_path)
-
-            if not os.path.exists(abs_path):
-                self.io.tool_error(f"Path not found: {abs_path}")
+        for pattern in filenames:
+            expanded_paths = glob.glob(pattern, recursive=True)
+            if not expanded_paths:
+                self.io.tool_error(f"No matches found for: {pattern}")
                 continue
 
-            if os.path.isfile(abs_path):
-                self._add_read_only_file(abs_path, word)
-            elif os.path.isdir(abs_path):
-                self._add_read_only_directory(abs_path, word)
-            else:
-                self.io.tool_error(f"Not a file or directory: {abs_path}")
+            for path in expanded_paths:
+                abs_path = self.coder.abs_root_path(path)
+                if os.path.isfile(abs_path):
+                    self._add_read_only_file(abs_path, path)
+                elif os.path.isdir(abs_path):
+                    self._add_read_only_directory(abs_path, path)
+                else:
+                    self.io.tool_error(f"Not a file or directory: {abs_path}")
 
     def _add_read_only_file(self, abs_path, original_name):
         if abs_path in self.coder.abs_read_only_fnames:
