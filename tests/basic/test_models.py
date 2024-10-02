@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from aider.models import Model, get_model_info, sanity_check_models
+from aider.models import Model, get_model_info, sanity_check_model, sanity_check_models
 
 
 class TestModels(unittest.TestCase):
