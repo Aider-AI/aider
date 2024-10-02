@@ -76,7 +76,9 @@ class TestModels(unittest.TestCase):
 
         result = models.sanity_check_models(mock_io, main_model)
 
-        self.assertTrue(result)  # Should return True because there's a problem with the editor model
+        self.assertTrue(
+            result
+        )  # Should return True because there's a problem with the editor model
         mock_sanity_check_model.assert_called_with(mock_io, main_model.editor_model)
         mock_io.tool_warning.assert_called_once()  # Ensure a warning was issued
 
