@@ -916,17 +916,19 @@ def validate_variables(vars):
 
 def sanity_check_models(io, main_model):
     problem_main = sanity_check_model(io, main_model)
-    
+
     problem_weak = None
     if main_model.weak_model and main_model.weak_model is not main_model:
         problem_weak = sanity_check_model(io, main_model.weak_model)
-    
+
     problem_editor = None
-    if (main_model.editor_model and 
-        main_model.editor_model is not main_model and 
-        main_model.editor_model is not main_model.weak_model):
+    if (
+        main_model.editor_model
+        and main_model.editor_model is not main_model
+        and main_model.editor_model is not main_model.weak_model
+    ):
         problem_editor = sanity_check_model(io, main_model.editor_model)
-    
+
     return problem_main or problem_weak or problem_editor
 
 
