@@ -614,6 +614,16 @@ class Commands:
                 selected_style=completion.selected_style,
             )
 
+        # Add completions from the 'add' command
+        add_completions = self.completions_add()
+        for completion in add_completions:
+            if completion.startswith(after_command):
+                yield Completion(
+                    text=completion,
+                    start_position=adjusted_start_position,
+                    display=completion,
+                )
+
     def completions_add(self):
         files = set(self.coder.get_all_relative_files())
         files = files - set(self.coder.get_inchat_relative_files())
