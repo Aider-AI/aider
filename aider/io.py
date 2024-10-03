@@ -35,61 +35,39 @@ class ConfirmGroup:
         if items is not None:
             self.show_group = len(items) > 1
 
+import re
+
 class AbbreviationMatcher:
-    input_parts: list = None
-    def __init__(self, input):
-        # in input, uppercase means next part. If only lowercase found, then they are treated as all uppercase
-        # if starts with lowercase, but uppercase exists, first letter is uppercased.
-        if (input.lower() == input):
-            input = input.upper()
-        elif (input[0].islower()):
-            input = input.capitalize()
-        self.input_parts = []
-        prev_index = 0
-        for z in range(len(input)):
-            if z == 0:
-                if len(input) == 1:
-                    self.input_parts.append(input)
-                continue
-            if input[z].isupper():
-                self.input_parts.append(input[prev_index:z])
-                prev_index = z
-            elif (input[z-1] == '_' or input[z-1] == '-' or input[z-1] == '.'):
-                self.input_parts.append(input[prev_index:z-1])
-                prev_index = z
-            if z == len(input)-1:
-                self.input_parts.append(input[prev_index:z+1])
+    def __init__(self, input_str):
+        self.input_parts = self._split_input(input_str)
+
+    @staticmethod
+    def _split_input(input_str):
+        if input_str.islower():
+            input_str = input_str.upper()
+        elif input_str[0].islower():
+            input_str = input_str.capitalize()
+
+        return re.findall(r'[A-Z][a-z]*|[0-9]+', input_str)
+
+    @staticmethod
+    def _split_target(target):
+        # Handle path-like strings
+        target = target.split('/')[-1]
+        
+        # Split on camelCase, snake_case, kebab-case, and PascalCase
+        return re.findall(r'[A-Z]?[a-z]+|[A-Z]+(?=[A-Z][a-z]|\d|\W|$)|\d+', target)
 
     def test(self, target):
-        ix = target.find("/")
-        if ix != -1:
-            target = target[ix+1]
-        parts = [];
-        # try to split target into parts:
-        # some_long_name => [some, long, name]
-        # SomeLongName => [some, long, name]
-        # someLongName => [some, long, name]
-        prev_index = 0
-        for z in range(len(target)):
-            if z == 0:
-                if (len(target) == 1):
-                    parts.append(target)
-                continue
-            if target[z].isupper() and target[z-1].islower():
-                parts.append(target[prev_index:z])
-                prev_index = z
-            elif target[z].islower() and (target[z-1] == '_' or target[z-1] == '-' or target[z-1] == '.'):
-                parts.append(target[prev_index:z-1])
-                prev_index = z
-            if z == len(target)-1:
-                parts.append(target[prev_index:z+1])
-        # now try to match input parts and target parts
-        for i in range(len(self.input_parts)):
-            if i >= len(parts):
-                return False # too many parts in input
-            if not parts[i].lower().startswith(self.input_parts[i].lower()):
-                return False # mismatch
-        return True
+        target_parts = self._split_target(target)
+        
+        if len(self.input_parts) > len(target_parts):
+            return False
+
+        return all(
+            target_part.lower().startswith(input_part.lower())
+            for input_part, target_part in zip(self.input_parts, target_parts)
+        )
 
 
 class AutoCompleter(Completer):
