@@ -617,7 +617,7 @@ class Commands:
         # Add completions from the 'add' command
         add_completions = self.completions_add()
         for completion in add_completions:
-            if completion.startswith(after_command):
+            if after_command in completion:
                 yield Completion(
                     text=completion,
                     start_position=adjusted_start_position,
