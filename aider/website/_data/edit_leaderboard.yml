@@ -1276,27 +1276,20 @@
   seconds_per_case: 6.6
   total_cost: 0.0000
 
-- dirname: 2024-09-28-18-30-20--codestral-whole
+- dirname: 2024-10-02-23-43-05--codestral-whole-1
   test_cases: 133
   model: ollama/codestral
   edit_format: whole
-  commit_hash: 1971285-dirty
-  pass_rate_1: 33.8
-  pass_rate_2: 45.9
-  percent_cases_well_formed: 98.5
-  error_outputs: 8
-  num_malformed_responses: 8
-  num_with_malformed_responses: 2
-  user_asks: 12
-  lazy_comments: 6
-  syntax_errors: 5
-  indentation_errors: 0
+  commit_hash: 72cb5db-dirty
+  pass_rate_1: 35.3
+  pass_rate_2: 48.9
+  percent_cases_well_formed: 99.2
+  syntax_errors: 0
   exhausted_context_windows: 0
-  test_timeouts: 4
   command: aider --model ollama/codestral
-  date: 2024-09-28
-  versions: 0.57.2.dev
-  seconds_per_case: 67.2
+  date: 2024-10-02
+  versions: 0.58.2.dev
+  seconds_per_case: 54.2
   total_cost: 0.0000
 
 - dirname: 2024-09-29-17-51-11--codegeex4-whole-2
@@ -1946,3 +1939,40 @@
   date: 2024-11-15
   versions: 0.63.2.dev
   seconds_per_case: 38.6
+
+- dirname: 2024-10-02-02-12-34--starcoder2-15b-instruct-v0.1-q8_0-whole-2
+  model: ollama/starcoder2:15b-instruct-v0.1-q8_0
+  edit_format: whole
+  commit_hash: d621d16
+  pass_rate_1: 34.8
+  pass_rate_2: 34.8
+  percent_cases_well_formed: 95.7
+  lazy_comments: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model ollama/starcoder2:15b-instruct-v0.1-q8_0
+  date: 2024-10-02
+  versions: 0.58.2.dev
+  seconds_per_case: 85.9
+  total_cost: 0.0000
+
+- dirname: 2024-10-02-15-36-20--codegeex4-9b-all-q6_K-whole-1
+  test_cases: 133
+  model: ollama/codegeex4:9b-all-q6_K
+  edit_format: whole
+  commit_hash: 72cb5db-dirty
+  pass_rate_1: 30.1
+  pass_rate_2: 33.8
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  command: aider --model ollama/codegeex4:9b-all-q6_K
+  date: 2024-10-02
+  versions: 0.58.2.dev
+  seconds_per_case: 102.8
+  total_cost: 0.0000
