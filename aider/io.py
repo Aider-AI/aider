@@ -35,6 +35,62 @@ class ConfirmGroup:
         if items is not None:
             self.show_group = len(items) > 1
 
+class AbbreviationMatcher:
+    input_parts: list = None
+    def __init__(self, input):
+        # in input, uppercase means next part. If only lowercase found, then they are treated as all uppercase
+        # if starts with lowercase, but uppercase exists, first letter is uppercased.
+        if (input.lower() == input):
+            input = input.upper()
+        elif (input[0].islower()):
+            input = input.capitalize()
+        self.input_parts = []
+        prev_index = 0
+        for z in range(len(input)):
+            if z == 0:
+                if len(input) == 1:
+                    self.input_parts.append(input)
+                continue
+            if input[z].isupper():
+                self.input_parts.append(input[prev_index:z])
+                prev_index = z
+            elif (input[z-1] == '_' or input[z-1] == '-' or input[z-1] == '.'):
+                self.input_parts.append(input[prev_index:z-1])
+                prev_index = z
+            if z == len(input)-1:
+                self.input_parts.append(input[prev_index:z+1])
+
+    def test(self, target):
+        ix = target.find("/")
+        if ix != -1:
+            target = target[ix+1]
+        parts = [];
+        # try to split target into parts:
+        # some_long_name => [some, long, name]
+        # SomeLongName => [some, long, name]
+        # someLongName => [some, long, name]
+        prev_index = 0
+        for z in range(len(target)):
+            if z == 0:
+                if (len(target) == 1):
+                    parts.append(target)
+                continue
+            if target[z].isupper() and target[z-1].islower():
+                parts.append(target[prev_index:z])
+                prev_index = z
+            elif target[z].islower() and (target[z-1] == '_' or target[z-1] == '-' or target[z-1] == '.'):
+                parts.append(target[prev_index:z-1])
+                prev_index = z
+            if z == len(target)-1:
+                parts.append(target[prev_index:z+1])
+        # now try to match input parts and target parts
+        for i in range(len(self.input_parts)):
+            if i >= len(parts):
+                return False # too many parts in input
+            if not parts[i].lower().startswith(self.input_parts[i].lower()):
+                return False # mismatch
+        return True
+
 
 class AutoCompleter(Completer):
     def __init__(
@@ -153,8 +209,9 @@ class AutoCompleter(Completer):
 
         last_word = words[-1]
         completions = []
+        abbrev_matcher = AbbreviationMatcher(last_word)
         for word_match, word_insert in candidates:
-            if word_match.lower().startswith(last_word.lower()):
+            if word_match.lower().startswith(last_word.lower()) or abbrev_matcher.test(word_match):
                 completions.append((word_insert, -len(last_word), word_match))
 
                 rel_fnames = self.fname_to_rel_fnames.get(word_match, [])
