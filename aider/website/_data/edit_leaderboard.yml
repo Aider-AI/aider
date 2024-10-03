@@ -2018,3 +2018,22 @@
   seconds_per_case: 17.3
   total_cost: 0.0000
 
+
+- dirname: 2024-10-03-05-13-17--qwen2.5-32b-instruct-q2_K-whole-1
+  test_cases: 133
+  model: ollama/qwen2.5:32b-instruct-q2_K
+  edit_format: whole
+  commit_hash: 408cb0b
+  pass_rate_1: 31.6
+  pass_rate_2: 40.6
+  percent_cases_well_formed: 99.2
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  command: aider --model ollama/qwen2.5:32b-instruct-q2_K
+  date: 2024-10-03
+  versions: 0.58.2.dev
+  seconds_per_case: 89.4
+  total_cost: 0.0000
+
