@@ -1976,3 +1976,26 @@
   versions: 0.58.2.dev
   seconds_per_case: 102.8
   total_cost: 0.0000
+
+- dirname: 2024-10-03-04-03-37--deepseek-coder-v2-16b-lite-instruct-q4_K_M-whole-4
+  model: ollama/deepseek-coder-v2:16b-lite-instruct-q4_K_M
+  edit_format: whole
+  commit_hash: c208826
+  pass_rate_1: 50.0
+  pass_rate_2: 50.0
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model ollama/deepseek-coder-v2:16b-lite-instruct-q4_K_M
+  date: 2024-10-03
+  versions: 0.58.2.dev
+  seconds_per_case: 30.6
+  total_cost: 0.0000
+
