@@ -327,6 +327,7 @@ def sanity_check_repo(repo, io):
         io.tool_output("You may be able to convert your repo: git update-index --index-version=2")
         io.tool_output("Or run aider --no-git to proceed without using git.")
         from aider import urls
+
         io.tool_output(urls.git_index_version)
         return False
 
