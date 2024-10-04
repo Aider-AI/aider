@@ -44,7 +44,7 @@ These steps only need to be done once.
 
 ```
 # Clone the aider repo
-git clone git@github.com:paul-gauthier/aider.git
+git clone git@github.com:Aider-AI/aider.git
 
 # Create the scratch dir to hold benchmarking results inside the main aider dir:
 cd aider
