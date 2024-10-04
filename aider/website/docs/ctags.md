@@ -112,9 +112,9 @@ like functions and methods also include their signatures.
 
 Here's a
 sample of the map of the aider repo, just showing the maps of
-[main.py](https://github.com/paul-gauthier/aider/blob/main/aider/main.py)
+[main.py](https://github.com/Aider-AI/aider/blob/main/aider/main.py)
 and
-[io.py](https://github.com/paul-gauthier/aider/blob/main/aider/io.py)
+[io.py](https://github.com/Aider-AI/aider/blob/main/aider/io.py)
 :
 
 ```

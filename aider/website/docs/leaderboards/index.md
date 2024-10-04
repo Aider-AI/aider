@@ -150,7 +150,7 @@ The model also has to successfully apply all its changes to the source file with
 
 ## Code refactoring leaderboard
 
-[Aider's refactoring benchmark](https://github.com/paul-gauthier/refactor-benchmark) asks the LLM to refactor 89 large methods from large python classes. This is a more challenging benchmark, which tests the model's ability to output long chunks of code without skipping sections or making mistakes. It was developed to provoke and measure [GPT-4 Turbo's "lazy coding" habit](/2023/12/21/unified-diffs.html).
+[Aider's refactoring benchmark](https://github.com/Aider-AI/refactor-benchmark) asks the LLM to refactor 89 large methods from large python classes. This is a more challenging benchmark, which tests the model's ability to output long chunks of code without skipping sections or making mistakes. It was developed to provoke and measure [GPT-4 Turbo's "lazy coding" habit](/2023/12/21/unified-diffs.html).
 
 The refactoring benchmark requires a large context window to
 work with large source files.
@@ -291,10 +291,10 @@ since it is the easiest format for an LLM to use.
 
 Contributions of benchmark results are welcome!
 See the
-[benchmark README](https://github.com/paul-gauthier/aider/blob/main/benchmark/README.md)
+[benchmark README](https://github.com/Aider-AI/aider/blob/main/benchmark/README.md)
 for information on running aider's code editing benchmarks.
 Submit results by opening a PR with edits to the
-[benchmark results data files](https://github.com/paul-gauthier/aider/blob/main/aider/website/_data/).
+[benchmark results data files](https://github.com/Aider-AI/aider/blob/main/aider/website/_data/).
 
 
 <p class="post-date">

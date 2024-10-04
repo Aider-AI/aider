@@ -28,7 +28,7 @@ If the files above exist, they will be loaded in that order. Files loaded last w
 
 Below is a sample `.env` file, which you
 can also
-[download from GitHub](https://github.com/paul-gauthier/aider/blob/main/aider/website/assets/sample.env).
+[download from GitHub](https://github.com/Aider-AI/aider/blob/main/aider/website/assets/sample.env).
 
 <!--[[[cog
 from aider.args import get_sample_dotenv

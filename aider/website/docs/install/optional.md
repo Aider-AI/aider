@@ -78,7 +78,7 @@ since the VSCode terminal doesn't seem to support it well.
 
 If you are interested in creating an aider plugin for your favorite editor,
 please let me know by opening a
-[GitHub issue](https://github.com/paul-gauthier/aider/issues).
+[GitHub issue](https://github.com/Aider-AI/aider/issues).
 
 
 ## Install the development version of aider 
@@ -87,7 +87,7 @@ If you want the very latest development version of aider
 you can install directly from GitHub:
 
 ```
-python -m pip install --upgrade git+https://github.com/paul-gauthier/aider.git
+python -m pip install --upgrade git+https://github.com/Aider-AI/aider.git
 ```
 
 If you've git cloned the aider repository already, you can install "live" from your local copy. This is mostly useful if you are developing aider and want your current modifications to take effect immediately.

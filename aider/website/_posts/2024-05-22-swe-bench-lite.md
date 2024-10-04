@@ -76,7 +76,7 @@ The held out "acceptance tests" were *only* used
 after benchmarking to compute statistics on which problems aider
 correctly resolved.
 
-The [full harness to run aider on SWE Bench Lite is available on GitHub](https://github.com/paul-gauthier/aider-swe-bench).
+The [full harness to run aider on SWE Bench Lite is available on GitHub](https://github.com/Aider-AI/aider-swe-bench).
 
 The benchmarking process was similar to how a developer might use aider to
 resolve a GitHub issue:

@@ -64,7 +64,7 @@ with the problem statement
 submitted as the opening chat message from "the user".
 - After that aider ran as normal, except all of aider's
 suggestions were always accepted without user approval.
-- A [simple harness](https://github.com/paul-gauthier/aider-swe-bench#the-aider-agent) was used to retry the SWE Bench problem if aider produced code that wasn't *plausibly correct*.
+- A [simple harness](https://github.com/Aider-AI/aider-swe-bench#the-aider-agent) was used to retry the SWE Bench problem if aider produced code that wasn't *plausibly correct*.
 Plausibly correct means that aider reported that it had successfully edited the repo
 without causing syntax errors or breaking any *pre-existing* tests.
 - If the solution from aider with GPT-4o wasn't plausible, the harness launched aider to try again from scratch using Claude 3 Opus.
@@ -90,7 +90,7 @@ For a detailed discussion of the benchmark
 methodology, see the
 [article about aider's SWE Bench Lite results](https://aider.chat/2024/05/22/swe-bench-lite.html).
 Also, the
-[aider SWE Bench repository on GitHub](https://github.com/paul-gauthier/aider-swe-bench)
+[aider SWE Bench repository on GitHub](https://github.com/Aider-AI/aider-swe-bench)
 contains the harness and statistics code used for the benchmarks.
 
 The benchmarking process was similar to how a developer might use aider to

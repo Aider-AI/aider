@@ -24,7 +24,7 @@ exclude:
 
 aux_links:
   "GitHub":
-    - "https://github.com/paul-gauthier/aider"
+    - "https://github.com/Aider-AI/aider"
   "Discord":
     - "https://discord.gg/Tv2uQnR88V"
   "Blog":
@@ -32,7 +32,7 @@ aux_links:
 
 nav_external_links:
   - title: "GitHub"
-    url: "https://github.com/paul-gauthier/aider"
+    url: "https://github.com/Aider-AI/aider"
   - title: "Discord"
     url: "https://discord.gg/Tv2uQnR88V"
 

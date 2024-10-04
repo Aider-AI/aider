@@ -134,7 +134,7 @@ projects like django, scikitlearn, matplotlib, etc.
 - [Configuration](https://aider.chat/docs/config.html)
 - [Troubleshooting](https://aider.chat/docs/troubleshooting.html)
 - [LLM Leaderboards](https://aider.chat/docs/leaderboards/)
-- [GitHub](https://github.com/paul-gauthier/aider)
+- [GitHub](https://github.com/Aider-AI/aider)
 - [Discord](https://discord.gg/Tv2uQnR88V)
 - [Blog](https://aider.chat/blog/)
 
