@@ -133,7 +133,7 @@ To run the project locally, follow these steps:
 
 ```
 # Clone the repository
-git clone git@github.com:paul-gauthier/aider.git
+git clone git@github.com:Aider-AI/aider.git
 
 # Navigate to the project directory
 cd aider
