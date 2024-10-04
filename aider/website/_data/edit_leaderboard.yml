@@ -832,30 +832,6 @@
   seconds_per_case: 6.5
   total_cost: 0.0000
 
-- dirname: 2024-08-14-13-07-12--chatgpt-4o-latest-diff
-  test_cases: 133
-  model: chatgpt-4o-latest
-  edit_format: diff
-  commit_hash: b1c3769
-  pass_rate_1: 53.4
-  pass_rate_2: 69.2
-  percent_cases_well_formed: 97.7
-  error_outputs: 27
-  num_malformed_responses: 5
-  num_with_malformed_responses: 3
-  user_asks: 7
-  lazy_comments: 0
-  syntax_errors: 0
-  indentation_errors: 0
-  exhausted_context_windows: 0
-  test_timeouts: 0
-  command: aider --model openai/chatgpt-4o-latest
-  date: 2024-08-14
-  released: 2024-08-08
-  versions: 0.50.2-dev
-  seconds_per_case: 26.3
-  total_cost: 3.6113
-
 - dirname: 2024-08-28-07-10-50--gemini-1.5-pro-exp-0827-diff-fenced
   test_cases: 133
   model: gemini-1.5-pro-exp-0827
@@ -1497,3 +1473,26 @@
   versions: 0.58.1.dev
   seconds_per_case: 24.8
   total_cost: 0.0000
+
+- dirname: 2024-10-04-16-30-08--chatgpt-4o-latest-diff-oct4
+  test_cases: 133
+  model: openai/chatgpt-4o-latest
+  edit_format: diff
+  commit_hash: af10953
+  pass_rate_1: 56.4
+  pass_rate_2: 72.2
+  percent_cases_well_formed: 97.0
+  error_outputs: 4
+  num_malformed_responses: 4
+  num_with_malformed_responses: 4
+  user_asks: 21
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model openai/chatgpt-4o-latest
+  date: 2024-10-04
+  versions: 0.58.2.dev
+  seconds_per_case: 23.7
+  total_cost: 4.0641
