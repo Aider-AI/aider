@@ -1,6 +1,9 @@
 import unittest
 from unittest.mock import MagicMock
 
+from prompt_toolkit.input import DummyInput
+from prompt_toolkit.output import DummyOutput
+
 import aider
 from aider.coders import Coder
 from aider.commands import Commands
@@ -12,7 +15,7 @@ from aider.models import Model
 class TestHelp(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        io = InputOutput(pretty=False, yes=True)
+        io = InputOutput(pretty=False, yes=True, input=DummyInput(), output=DummyOutput())
 
         GPT35 = Model("gpt-3.5-turbo")
 
