@@ -66,29 +66,30 @@
   seconds_per_case: 21.3
   total_cost: 0.0000
 
-- dirname: 2024-10-03-20-57-13--CEDARScript-Gemini
+
+- dirname: 2024-10-04-22-59-58--CEDARScript-Gemini-small
   test_cases: 133
   model: gemini/gemini-1.5-pro-latest
   edit_format: cedarscript-g
-  commit_hash: d729483-dirty
-  pass_rate_1: 34.6
-  pass_rate_2: 45.1
-  pass_rate_3: 48.9
-  percent_cases_well_formed: 73.7
-  error_outputs: 271
-  num_malformed_responses: 133
-  num_with_malformed_responses: 35
-  user_asks: 74
+  commit_hash: 772710b-dirty
+  pass_rate_1: 38.3
+  pass_rate_2: 42.9
+  pass_rate_3: 47.4
+  percent_cases_well_formed: 76.7
+  error_outputs: 297
+  num_malformed_responses: 121
+  num_with_malformed_responses: 31
+  user_asks: 87
   lazy_comments: 0
-  syntax_errors: 9
-  indentation_errors: 64
+  syntax_errors: 14
+  indentation_errors: 74
   exhausted_context_windows: 0
-  test_timeouts: 2
+  test_timeouts: 3
   command: aider --model gemini/gemini-1.5-pro-latest
-  date: 2024-10-03
+  date: 2024-10-04
   versions: 0.57.2.dev
-  seconds_per_case: 23.4
-  total_cost: 15.7045
+  seconds_per_case: 24.3
+  total_cost: 18.0759
 
 - dirname: 2024-05-08-20-59-15--may-gpt-3.5-turbo-whole
   test_cases: 133
