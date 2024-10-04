@@ -6,15 +6,18 @@ highlight_image: /assets/blame.jpg
 description: Release notes and stats on aider writing its own code.
 ---
 
+# Release history
+
 {% include blame.md %}
 
 <!--[[[cog
 # This page is a copy of HISTORY.md, adding the front matter above.
 text = open("HISTORY.md").read()
+text = text.replace("# Release history", "")
 cog.out(text)
 ]]]-->
 
-# Release history
+
 
 ### v0.59.0
 

@@ -1,5 +1,5 @@
-<canvas id="blameChart" width="800" height="360" style="margin-top: 20px"></canvas>
 <canvas id="linesChart" width="800" height="360" style="margin-top: 20px"></canvas>
+<canvas id="blameChart" width="800" height="360" style="margin-top: 20px"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/moment"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment"></script>
