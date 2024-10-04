@@ -1,7 +1,7 @@
 
 # Release history
 
-### main branch
+### v0.59.0
 
 - Improvements to `/read-only`:
   - Supports shell-style auto-complete of the full file system.
@@ -14,10 +14,11 @@
 - Config file now uses standard YAML list syntax with `  - list entries`, one per line.  
 - `/settings` now includes the same announcement lines that would print at launch.
 - Sanity checks the `--editor-model` on launch now, same as main and weak models.
-- Added `--skip-sanity-check-repo` switch to speedup launch in large repos that are known to work with aider.
+- Added `--skip-sanity-check-repo` switch to speedup launch in large repos.
 - Bugfix so architect mode handles Control-C properly.
 - Repo-map is deterministic now, with improved caching logic.
 - Improved commit message prompt.
+- Aider wrote 77% of the code in this release.
 
 ### Aider v0.58.1
 
