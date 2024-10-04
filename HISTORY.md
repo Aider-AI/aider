@@ -18,7 +18,7 @@
 - Bugfix so architect mode handles Control-C properly.
 - Repo-map is deterministic now, with improved caching logic.
 - Improved commit message prompt.
-- Aider wrote 76% of the code in this release.
+- Aider wrote 77% of the code in this release.
 
 ### Aider v0.58.1
 
