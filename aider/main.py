@@ -326,7 +326,8 @@ def sanity_check_repo(repo, io):
         io.tool_error("Aider only works with git repos with version number 1 or 2.")
         io.tool_output("You may be able to convert your repo: git update-index --index-version=2")
         io.tool_output("Or run aider --no-git to proceed without using git.")
-        io.tool_output("https://github.com/paul-gauthier/aider/issues/211")
+        from aider import urls
+        io.tool_output(urls.git_index_version)
         return False
 
     io.tool_error("Unable to read git repository, it may be corrupt?")
