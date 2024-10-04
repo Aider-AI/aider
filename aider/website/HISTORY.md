@@ -19,9 +19,9 @@ cog.out(text)
 ### v0.59.0
 
 - Improvements to `/read-only`:
-  - Supports shell-style auto-complete of the full file system.
+  - Now supports shell-style auto-complete of the full file system.
   - Still auto-completes the full paths of the repo files like `/add`.
-  - Supports globs like `src/**/*.py`
+  - Now supports globs like `src/**/*.py`
 - Renamed `--yes` to `--yes-always`.
   - Now uses `AIDER_YES_ALWAYS` env var and `yes-always:` yaml key.
   - Existing YAML and .env files will need to be updated.
