@@ -2712,3 +2712,57 @@
     rti: 1
   start_tag: v0.57.0
   total_lines: 1332
+- aider_percentage: 76.79
+  aider_total: 172
+  end_date: '2024-10-04'
+  end_tag: v0.59.0
+  file_counts:
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/args.py:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 6
+    aider/args_formatter.py:
+      Paul Gauthier: 4
+    aider/coders/architect_coder.py:
+      Paul Gauthier: 1
+    aider/coders/base_coder.py:
+      Paul Gauthier: 6
+    aider/coders/editblock_coder.py:
+      Paul Gauthier: 1
+    aider/commands.py:
+      Paul Gauthier: 3
+      Paul Gauthier (aider): 49
+    aider/gui.py:
+      Paul Gauthier: 2
+    aider/main.py:
+      Paul Gauthier: 10
+      Paul Gauthier (aider): 4
+    aider/models.py:
+      Paul Gauthier (aider): 12
+    aider/repomap.py:
+      Paul Gauthier: 9
+      Paul Gauthier (aider): 3
+    aider/urls.py:
+      Paul Gauthier: 2
+    aider/versioncheck.py:
+      Paul Gauthier: 1
+    scripts/issues.py:
+      Paul Gauthier: 1
+    scripts/update-docs.sh:
+      Paul Gauthier: 2
+    tests/basic/test_commands.py:
+      Paul Gauthier: 4
+      Paul Gauthier (aider): 80
+    tests/basic/test_models.py:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 18
+    tests/basic/test_sanity_check_repo.py:
+      Paul Gauthier: 1
+    tests/help/test_help.py:
+      Paul Gauthier: 1
+  grand_total:
+    Paul Gauthier: 52
+    Paul Gauthier (aider): 172
+  start_tag: v0.58.0
+  total_lines: 224
