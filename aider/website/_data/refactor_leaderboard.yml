@@ -18,27 +18,30 @@
   versions: 0.31.2-dev
   seconds_per_case: 55.7
   total_cost: 0.0000
-- dirname: 2024-10-03-16-10-03--CEDARScript-Gemini-Refactoring
+
+- dirname: 2024-10-04-20-44-50--CEDARScript-Gemini-Refactoring-fixes
   test_cases: 89
   model: gemini/gemini-1.5-pro-latest
   edit_format: cedarscript-g
-  commit_hash: 6dcd143-dirty
-  pass_rate_1: 0.0
-  percent_cases_well_formed: 79.8
-  error_outputs: 352
-  num_malformed_responses: 26
-  num_with_malformed_responses: 18
-  user_asks: 13
+  commit_hash: 772710b-dirty
+  pass_rate_1: 55.1
+  pass_rate_2: 58.4
+  pass_rate_3: 62.9
+  percent_cases_well_formed: 75.3
+  error_outputs: 616
+  num_malformed_responses: 68
+  num_with_malformed_responses: 22
+  user_asks: 44
   lazy_comments: 0
-  syntax_errors: 0
-  indentation_errors: 0
+  syntax_errors: 42
+  indentation_errors: 40
   exhausted_context_windows: 0
   test_timeouts: 0
   command: aider --model gemini/gemini-1.5-pro-latest
-  date: 2024-10-03
+  date: 2024-10-04
   versions: 0.57.2.dev
-  seconds_per_case: 28.1
-  total_cost: 20.8455
+  seconds_per_case: 69.4
+  total_cost: 43.5816
 - dirname: 2024-05-04-17-45-53--refac-opus
   test_cases: 83
   model: claude-3-opus-20240229
