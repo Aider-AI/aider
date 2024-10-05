@@ -27,6 +27,7 @@ from .dump import dump  # noqa: F401
 
 
 def check_config_files_for_yes(config_files):
+    found = False
     for config_file in config_files:
         if Path(config_file).exists():
             try:
@@ -36,17 +37,10 @@ def check_config_files_for_yes(config_files):
                             print("Configuration error detected.")
                             print(f"The file {config_file} contains a line starting with 'yes:'")
                             print("Please replace 'yes:' with 'yes-always:' in this file.")
-                            print("Configuration files are searched for in this order:")
-                            for cf in config_files:
-                                print(f"  - {cf}")
-                            print(
-                                "For more information, refer to the aider documentation on"
-                                " configuration."
-                            )
-                            return True
+                            found = True
             except Exception as e:
-                print(f"Error reading config file {config_file}: {e}")
-    return False
+                pass
+    return found
 
 
 def get_git_root():
@@ -390,7 +384,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         if "'bool' object has no attribute 'strip'" in str(e):
             if check_config_files_for_yes(default_config_files):
                 return 1
-        raise
+        raise e
 
     if args.verbose:
         print("Config files search order, if no --config:")
@@ -408,24 +402,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     loaded_dotenvs = load_dotenv_files(git_root, args.env_file, args.encoding)
 
     # Parse again to include any arguments that might have been defined in .env
-    try:
-        args = parser.parse_args(argv)
-    except AttributeError as e:
-        if "'bool' object has no attribute 'strip'" in str(e):
-            io.tool_error("Configuration error detected.")
-            io.tool_output("It seems you have 'yes:' in one of your configuration files.")
-            io.tool_output(
-                "Please replace 'yes:' with 'yes-always:' in the relevant .aider.conf.yml file."
-            )
-            io.tool_output("Configuration files are searched for in this order:")
-            for config_file in default_config_files:
-                io.tool_output(f"  - {config_file}")
-            io.tool_output(
-                "For more information, refer to the aider documentation on configuration."
-            )
-            return 1
-        else:
-            raise
+    args = parser.parse_args(argv)
 
     if not args.verify_ssl:
         import httpx
