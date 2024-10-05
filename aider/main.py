@@ -26,6 +26,26 @@ from aider.versioncheck import check_version, install_from_main_branch, install_
 from .dump import dump  # noqa: F401
 
 
+def check_config_files_for_yes(config_files):
+    for config_file in config_files:
+        if Path(config_file).exists():
+            try:
+                with open(config_file, 'r') as f:
+                    for line in f:
+                        if line.strip().startswith('yes:'):
+                            print("Configuration error detected.")
+                            print(f"The file {config_file} contains a line starting with 'yes:'")
+                            print("Please replace 'yes:' with 'yes-always:' in this file.")
+                            print("Configuration files are searched for in this order:")
+                            for cf in config_files:
+                                print(f"  - {cf}")
+                            print("For more information, refer to the aider documentation on configuration.")
+                            return True
+            except Exception as e:
+                print(f"Error reading config file {config_file}: {e}")
+    return False
+
+
 def get_git_root():
     """Try and guess the git repo, since the conf.yml can be at the repo root"""
     try:
@@ -365,16 +385,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         args, unknown = parser.parse_known_args(argv)
     except AttributeError as e:
         if "'bool' object has no attribute 'strip'" in str(e):
-            print("Configuration error detected.")
-            print("It seems you have 'yes:' in one of your configuration files.")
-            print("Please replace 'yes:' with 'yes-always:' in the relevant .aider.conf.yml file.")
-            print("Configuration files are searched for in this order:")
-            for config_file in default_config_files:
-                print(f"  - {config_file}")
-            print("For more information, refer to the aider documentation on configuration.")
-            return 1
-        else:
-            raise e
+            if check_config_files_for_yes(default_config_files):
+                return 1
+        raise
 
     if args.verbose:
         print("Config files search order, if no --config:")
