@@ -365,13 +365,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         args, unknown = parser.parse_known_args(argv)
     except AttributeError as e:
         if "'bool' object has no attribute 'strip'" in str(e):
-            io.tool_error("Configuration error detected.")
-            io.tool_output("It seems you have 'yes:' in one of your configuration files.")
-            io.tool_output("Please replace 'yes:' with 'yes-always:' in the relevant .aider.conf.yml file.")
-            io.tool_output("Configuration files are searched for in this order:")
+            print("Configuration error detected.")
+            print("It seems you have 'yes:' in one of your configuration files.")
+            print("Please replace 'yes:' with 'yes-always:' in the relevant .aider.conf.yml file.")
+            print("Configuration files are searched for in this order:")
             for config_file in default_config_files:
-                io.tool_output(f"  - {config_file}")
-            io.tool_output("For more information, refer to the aider documentation on configuration.")
+                print(f"  - {config_file}")
+            print("For more information, refer to the aider documentation on configuration.")
             return 1
         else:
             raise
