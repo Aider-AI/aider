@@ -400,7 +400,7 @@ def strip_filename(filename, fence):
     filename = filename.strip("`")
     filename = filename.strip("*")
 
-    # https://github.com/paul-gauthier/aider/issues/1158
+    # https://github.com/Aider-AI/aider/issues/1158
     # filename = filename.replace("\\_", "_")
 
     return filename

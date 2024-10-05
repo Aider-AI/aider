@@ -586,7 +586,7 @@ class Commands:
         text = document.text_before_cursor
 
         # Skip the first word and the space after it
-        after_command = " ".join(text.split()[1:])
+        after_command = text.split()[-1]
 
         # Create a new Document object with the text after the command
         new_document = Document(after_command, cursor_position=len(after_command))
@@ -603,16 +603,40 @@ class Commands:
         # Adjust the start_position to replace all of 'after_command'
         adjusted_start_position = -len(after_command)
 
+        # Collect all completions
+        all_completions = []
+
         # Iterate over the completions and modify them
         for completion in path_completer.get_completions(new_document, complete_event):
             quoted_text = self.quote_fname(after_command + completion.text)
-            yield Completion(
-                text=quoted_text,
-                start_position=adjusted_start_position,
-                display=completion.display,
-                style=completion.style,
-                selected_style=completion.selected_style,
+            all_completions.append(
+                Completion(
+                    text=quoted_text,
+                    start_position=adjusted_start_position,
+                    display=completion.display,
+                    style=completion.style,
+                    selected_style=completion.selected_style,
+                )
             )
+
+        # Add completions from the 'add' command
+        add_completions = self.completions_add()
+        for completion in add_completions:
+            if after_command in completion:
+                all_completions.append(
+                    Completion(
+                        text=completion,
+                        start_position=adjusted_start_position,
+                        display=completion,
+                    )
+                )
+
+        # Sort all completions based on their text
+        sorted_completions = sorted(all_completions, key=lambda c: c.text)
+
+        # Yield the sorted completions
+        for completion in sorted_completions:
+            yield completion
 
     def completions_add(self):
         files = set(self.coder.get_all_relative_files())

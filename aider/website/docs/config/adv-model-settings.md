@@ -71,7 +71,7 @@ For example, below are all the pre-configured model settings
 to give a sense for the settings which are supported.
 
 You can also look at the `ModelSettings` class in
-[models.py](https://github.com/paul-gauthier/aider/blob/main/aider/models.py)
+[models.py](https://github.com/Aider-AI/aider/blob/main/aider/models.py)
 file for more details about all of the model setting that aider supports.
 
 <!--[[[cog

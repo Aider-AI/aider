@@ -33,7 +33,7 @@ then it should be possible to add repo map support.
 To build a repo map, aider needs the `tags.scm` file
 from the given language's tree-sitter grammar.
 If you can find and share that file in a 
-[GitHub issue](https://github.com/paul-gauthier/aider/issues),
+[GitHub issue](https://github.com/Aider-AI/aider/issues),
 then it may be possible to add repo map support.
 
 If aider doesn't support linting, it will be complicated to

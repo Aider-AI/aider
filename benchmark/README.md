@@ -44,7 +44,7 @@ These steps only need to be done once.
 
 ```
 # Clone the aider repo
-git clone git@github.com:paul-gauthier/aider.git
+git clone git@github.com:Aider-AI/aider.git
 
 # Create the scratch dir to hold benchmarking results inside the main aider dir:
 cd aider
@@ -138,13 +138,13 @@ This way the `model`, `edit_format` and `commit_hash`
 should be enough to reliably reproduce any benchmark run.
 
 You can see examples of the benchmark report yaml in the
-[aider leaderboard data files](https://github.com/paul-gauthier/aider/blob/main/aider/website/_data/).
+[aider leaderboard data files](https://github.com/Aider-AI/aider/blob/main/aider/website/_data/).
 
 
 ## Limitations, notes
 
 - Benchmarking all 133 exercises against Claude 3.5 Sonnet will cost about $4.
 - Contributions of benchmark results are welcome! Submit results by opening a PR with edits to the
-[aider leaderboard data files](https://github.com/paul-gauthier/aider/blob/main/aider/website/_data/).
+[aider leaderboard data files](https://github.com/Aider-AI/aider/blob/main/aider/website/_data/).
 - These scripts are not intended for use by typical aider end users.
 - Some of these tools are written as `bash` scripts, so it will be hard to use them on Windows.

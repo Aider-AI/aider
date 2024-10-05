@@ -55,7 +55,7 @@ aider uses.
 
 In particular, be careful with the packages with pinned versions 
 noted at the end of
-[aider's requirements.in file](https://github.com/paul-gauthier/aider/blob/main/requirements/requirements.in).
+[aider's requirements.in file](https://github.com/Aider-AI/aider/blob/main/requirements/requirements.in).
 These versions are pinned because aider is known not to work with the
 latest versions of these libraries.
 

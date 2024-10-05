@@ -13,7 +13,7 @@ nav_exclude: true
 [![self assembly](/assets/self-assembly.jpg)](https://aider.chat/assets/self-assembly.jpg)
 
 The
-[aider git repo](https://github.com/paul-gauthier/aider)
+[aider git repo](https://github.com/Aider-AI/aider)
 currently contains about 4K commits and 14K lines of code.
 
 Aider made 15% of the commits, inserting 4.8K and deleting 1.5K lines of code.

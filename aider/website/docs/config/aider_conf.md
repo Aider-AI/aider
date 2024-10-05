@@ -42,7 +42,7 @@ read: [CONVENTIONS.md, anotherfile.txt, thirdfile.py]
 
 Below is a sample of the YAML config file, which you
 can also
-[download from GitHub](https://github.com/paul-gauthier/aider/blob/main/aider/website/assets/sample.aider.conf.yml).
+[download from GitHub](https://github.com/Aider-AI/aider/blob/main/aider/website/assets/sample.aider.conf.yml).
 
 <!--[[[cog
 from aider.args import get_sample_yaml
