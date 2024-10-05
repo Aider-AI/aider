@@ -365,9 +365,9 @@ def do_replace(fname, content, before_text, after_text, fence=None):
     return new_content
 
 
-HEAD = r"<{5,9} SEARCH"
-DIVIDER = r"={5,9}"
-UPDATED = r">{5,9} REPLACE"
+HEAD = r"^<{5,9} SEARCH\s*$"
+DIVIDER = r"^={5,9}\s*$"
+UPDATED = r"^>{5,9} REPLACE\s*$"
 
 HEAD_ERR = "<<<<<<< SEARCH"
 DIVIDER_ERR = "======="
