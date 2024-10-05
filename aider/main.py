@@ -30,16 +30,19 @@ def check_config_files_for_yes(config_files):
     for config_file in config_files:
         if Path(config_file).exists():
             try:
-                with open(config_file, 'r') as f:
+                with open(config_file, "r") as f:
                     for line in f:
-                        if line.strip().startswith('yes:'):
+                        if line.strip().startswith("yes:"):
                             print("Configuration error detected.")
                             print(f"The file {config_file} contains a line starting with 'yes:'")
                             print("Please replace 'yes:' with 'yes-always:' in this file.")
                             print("Configuration files are searched for in this order:")
                             for cf in config_files:
                                 print(f"  - {cf}")
-                            print("For more information, refer to the aider documentation on configuration.")
+                            print(
+                                "For more information, refer to the aider documentation on"
+                                " configuration."
+                            )
                             return True
             except Exception as e:
                 print(f"Error reading config file {config_file}: {e}")
