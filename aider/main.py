@@ -381,7 +381,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     try:
         args, unknown = parser.parse_known_args(argv)
     except AttributeError as e:
-        if "'bool' object has no attribute 'strip'" in str(e):
+        if all(word in str(e) for word in ["bool", "object", "has", "no", "attribute", "strip"]):
             if check_config_files_for_yes(default_config_files):
                 return 1
         raise e
