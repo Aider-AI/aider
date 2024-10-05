@@ -161,7 +161,8 @@ class AutoCompleter(Completer):
         if candidates is None:
             return
 
-        candidates = [word for word in candidates if partial in word.lower()]
+        abbrev_matcher = AbbreviationMatcher(partial)
+        candidates = [word for word in candidates if partial in word.lower() or abbrev_matcher.test(word)]
         for candidate in sorted(candidates):
             yield Completion(candidate, start_position=-len(words[-1]))
 
