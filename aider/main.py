@@ -38,7 +38,7 @@ def check_config_files_for_yes(config_files):
                             print(f"The file {config_file} contains a line starting with 'yes:'")
                             print("Please replace 'yes:' with 'yes-always:' in this file.")
                             found = True
-            except Exception as e:
+            except Exception:
                 pass
     return found
 
