@@ -1496,3 +1496,26 @@
   versions: 0.58.2.dev
   seconds_per_case: 23.7
   total_cost: 4.0641
+
+- dirname: 2024-10-05-20-03-10--dracarys-glhf-whole
+  test_cases: 133
+  model: Dracarys2-72B-Instruct
+  edit_format: whole
+  commit_hash: 04a2cbb
+  pass_rate_1: 55.6
+  pass_rate_2: 66.9
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 1
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: (via glhf.chat)
+  date: 2024-10-05
+  versions: 0.59.2.dev
+  seconds_per_case: 46.7
+  total_cost: 0.0000
