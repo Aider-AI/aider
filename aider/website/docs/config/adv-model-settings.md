@@ -552,6 +552,24 @@ cog.out("```\n")
   use_temperature: true
   weak_model_name: openrouter/anthropic/claude-3-haiku-20240307
 - accepts_images: true
+  cache_control: true
+  caches_by_default: false
+  edit_format: diff
+  editor_edit_format: editor-diff
+  editor_model_name: openrouter/anthropic/claude-3.5-sonnet:beta
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 8192
+  lazy: false
+  name: openrouter/anthropic/claude-3.5-sonnet:beta
+  reminder: user
+  send_undo_reply: false
+  streaming: true
+  use_repo_map: true
+  use_system_prompt: true
+  use_temperature: true
+  weak_model_name: openrouter/anthropic/claude-3-haiku-20240307
+- accepts_images: true
   cache_control: false
   caches_by_default: false
   edit_format: diff
