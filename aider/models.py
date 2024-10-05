@@ -331,6 +331,21 @@ MODEL_SETTINGS = [
         reminder="user",
         cache_control=True,
     ),
+    ModelSettings(
+        "openrouter/anthropic/claude-3.5-sonnet:beta",
+        "diff",
+        weak_model_name="openrouter/anthropic/claude-3-haiku-20240307",
+        editor_model_name="openrouter/anthropic/claude-3.5-sonnet:beta",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        examples_as_sys_msg=True,
+        accepts_images=True,
+        extra_params={
+            "max_tokens": 8192,
+        },
+        reminder="user",
+        cache_control=True,
+    ),
     # Vertex AI Claude models
     # Does not yet support 8k token
     ModelSettings(
