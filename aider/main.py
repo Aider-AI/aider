@@ -57,7 +57,7 @@ def guessed_wrong_repo(io, git_root, fnames, git_dname):
 
     try:
         check_repo = Path(GitRepo(io, fnames, git_dname).root).resolve()
-    except FileNotFoundError:
+    except (OSError,) + ANY_GIT_ERROR:
         return
 
     # we had no guess, rely on the "true" repo result
