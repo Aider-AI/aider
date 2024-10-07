@@ -131,32 +131,39 @@ def check_gitignore(git_root, io, ask=True):
 
     try:
         repo = git.Repo(git_root)
-        if repo.ignored(".aider"):
+        if repo.ignored(".aider") and repo.ignored(".env"):
             return
     except ANY_GIT_ERROR:
         pass
 
-    pat = ".aider*"
+    patterns = [".aider*", ".env"]
+    patterns_to_add = []
 
     gitignore_file = Path(git_root) / ".gitignore"
     if gitignore_file.exists():
         content = io.read_text(gitignore_file)
         if content is None:
             return
-        if pat in content.splitlines():
-            return
+        existing_lines = content.splitlines()
+        for pat in patterns:
+            if pat not in existing_lines:
+                patterns_to_add.append(pat)
     else:
         content = ""
+        patterns_to_add = patterns
 
-    if ask and not io.confirm_ask(f"Add {pat} to .gitignore (recommended)?"):
+    if not patterns_to_add:
+        return
+
+    if ask and not io.confirm_ask(f"Add {', '.join(patterns_to_add)} to .gitignore (recommended)?"):
         return
 
     if content and not content.endswith("\n"):
         content += "\n"
-    content += pat + "\n"
+    content += "\n".join(patterns_to_add) + "\n"
     io.write_text(gitignore_file, content)
 
-    io.tool_output(f"Added {pat} to .gitignore")
+    io.tool_output(f"Added {', '.join(patterns_to_add)} to .gitignore")
 
 
 def check_streamlit_install(io):
