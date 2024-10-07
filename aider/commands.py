@@ -654,7 +654,7 @@ class Commands:
             else:
                 try:
                     raw_matched_files = list(Path(self.coder.root).glob(pattern))
-                except IndexError:
+                except (IndexError, AttributeError):
                     raw_matched_files = []
         except ValueError as err:
             self.io.tool_error(f"Error matching {pattern}: {err}")
