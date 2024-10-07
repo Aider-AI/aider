@@ -241,16 +241,23 @@ def parse_lint_cmds(lint_cmds, io):
     return res
 
 
-def generate_search_path_list(default_fname, git_root, command_line_file):
+def generate_search_path_list(default_file, git_root, command_line_file):
     files = []
-    default_file = Path(default_fname)
     files.append(Path.home() / default_file)  # homedir
     if git_root:
         files.append(Path(git_root) / default_file)  # git root
-    files.append(default_file.resolve())
+    files.append(default_file)
     if command_line_file:
         files.append(command_line_file)
-    files = [Path(fn).resolve() for fn in files]
+
+    resolved_files = []
+    for fn in files:
+        try:
+            resolved_files.append(Path(fn).resolve())
+        except OSError:
+            pass
+
+    files = resolved_files
     files.reverse()
     uniq = []
     for fn in files:
