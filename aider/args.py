@@ -237,10 +237,8 @@ def get_parser(default_config_files, git_root):
         type=int,
         default=None,
         help=(
-            (
-                "Soft limit on tokens for chat history, after which summarization begins."
-                " If unspecified, defaults to the model's max_chat_history_tokens."
-            ),
+            "Soft limit on tokens for chat history, after which summarization begins."
+            " If unspecified, defaults to the model's max_chat_history_tokens."
         ),
     )
     # This is a duplicate of the argument in the preparser and is a no-op by this time of
