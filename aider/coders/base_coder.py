@@ -1128,6 +1128,10 @@ class Coder:
                 try:
                     yield from self.send(messages, functions=self.functions)
                     break
+                except litellm.exceptions.AuthenticationError as err:
+                    dump(dir(err))
+                    dump(err.message)
+                    break
                 except retry_exceptions() as err:
                     self.io.tool_warning(str(err))
                     retry_delay *= 2

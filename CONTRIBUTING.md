@@ -33,12 +33,8 @@ ensure that your contributions can be integrated smoothly.
 
 ## Licensing
 
-By contributing to this project, you agree that your contributions
-will be licensed under the Apache License 2.0. Additionally, you
-understand and agree that contributions may be subject to a different
-license, should the project maintainers decide to change the licensing
-terms.
-
+Before contributing a PR, please review and complete our 
+[Individual Contributor License Agreement](/docs/contributor-agreement.html).
 
 ## Setting up a Development Environment
 
