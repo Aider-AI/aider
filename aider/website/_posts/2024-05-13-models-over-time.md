@@ -15,7 +15,7 @@ nav_exclude: true
 I recently wanted to draw a graph showing how LLM code editing skill has been
 changing over time as new models have been released by OpenAI, Anthropic and others.
 I have all the
-[data in a yaml file](https://github.com/paul-gauthier/aider/blob/main/website/_data/edit_leaderboard.yml) that is used to render
+[data in a yaml file](https://github.com/Aider-AI/aider/blob/main/website/_data/edit_leaderboard.yml) that is used to render
 [aider's LLM leaderboards](https://aider.chat/docs/leaderboards/).
 
 Below is the aider chat transcript, which shows:

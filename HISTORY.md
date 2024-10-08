@@ -1,6 +1,25 @@
 
 # Release history
 
+### v0.59.0
+
+- Improvements to `/read-only`:
+  - Now supports shell-style auto-complete of the full file system.
+  - Still auto-completes the full paths of the repo files like `/add`.
+  - Now supports globs like `src/**/*.py`
+- Renamed `--yes` to `--yes-always`.
+  - Now uses `AIDER_YES_ALWAYS` env var and `yes-always:` yaml key.
+  - Existing YAML and .env files will need to be updated.
+  - Can still abbreviate to `--yes` on the command line.
+- Config file now uses standard YAML list syntax with `  - list entries`, one per line.  
+- `/settings` now includes the same announcement lines that would print at launch.
+- Sanity checks the `--editor-model` on launch now, same as main and weak models.
+- Added `--skip-sanity-check-repo` switch to speedup launch in large repos.
+- Bugfix so architect mode handles Control-C properly.
+- Repo-map is deterministic now, with improved caching logic.
+- Improved commit message prompt.
+- Aider wrote 77% of the code in this release.
+
 ### Aider v0.58.1
 
 - Fixed bug where cache warming pings caused subsequent user messages to trigger a tight loop of LLM requests.
@@ -689,7 +708,7 @@
 ### Aider v0.14.0
 
 - [Support for Claude2 and other LLMs via OpenRouter](https://aider.chat/docs/faq.html#accessing-other-llms-with-openrouter) by @joshuavial
-- Documentation for [running the aider benchmarking suite](https://github.com/paul-gauthier/aider/tree/main/benchmark)
+- Documentation for [running the aider benchmarking suite](https://github.com/Aider-AI/aider/tree/main/benchmark)
 - Aider now requires Python >= 3.9
 
 

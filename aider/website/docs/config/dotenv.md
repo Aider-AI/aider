@@ -28,7 +28,7 @@ If the files above exist, they will be loaded in that order. Files loaded last w
 
 Below is a sample `.env` file, which you
 can also
-[download from GitHub](https://github.com/paul-gauthier/aider/blob/main/aider/website/assets/sample.env).
+[download from GitHub](https://github.com/Aider-AI/aider/blob/main/aider/website/assets/sample.env).
 
 <!--[[[cog
 from aider.args import get_sample_dotenv
@@ -150,7 +150,7 @@ cog.outl("```")
 ## Only work with models that have meta-data available (default: True)
 #AIDER_SHOW_MODEL_WARNINGS=true
 
-## Maximum number of tokens to use for chat history. If not specified, uses the model's max_chat_history_tokens.
+## Soft limit on tokens for chat history, after which summarization begins. If unspecified, defaults to the model's max_chat_history_tokens.
 #AIDER_MAX_CHAT_HISTORY_TOKENS=
 
 ## Specify the .env file to load (default: .env in git root)
@@ -282,6 +282,9 @@ cog.outl("```")
 ## Perform a dry run without modifying files (default: False)
 #AIDER_DRY_RUN=false
 
+## Skip the sanity check for the git repository (default: False)
+#AIDER_SKIP_SANITY_CHECK_REPO=false
+
 ########################
 # Fixing and committing:
 
@@ -334,7 +337,7 @@ cog.outl("```")
 #AIDER_APPLY=
 
 ## Always say yes to every confirmation
-#AIDER_YES=
+#AIDER_YES_ALWAYS=
 
 ## Enable verbose output
 #AIDER_VERBOSE=false

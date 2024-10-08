@@ -331,6 +331,21 @@ MODEL_SETTINGS = [
         reminder="user",
         cache_control=True,
     ),
+    ModelSettings(
+        "openrouter/anthropic/claude-3.5-sonnet:beta",
+        "diff",
+        weak_model_name="openrouter/anthropic/claude-3-haiku-20240307",
+        editor_model_name="openrouter/anthropic/claude-3.5-sonnet:beta",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        examples_as_sys_msg=True,
+        accepts_images=True,
+        extra_params={
+            "max_tokens": 8192,
+        },
+        reminder="user",
+        cache_control=True,
+    ),
     # Vertex AI Claude models
     # Does not yet support 8k token
     ModelSettings(
@@ -915,11 +930,21 @@ def validate_variables(vars):
 
 
 def sanity_check_models(io, main_model):
+    problem_main = sanity_check_model(io, main_model)
+
     problem_weak = None
-    problem_strong = sanity_check_model(io, main_model)
     if main_model.weak_model and main_model.weak_model is not main_model:
         problem_weak = sanity_check_model(io, main_model.weak_model)
-    return problem_strong or problem_weak
+
+    problem_editor = None
+    if (
+        main_model.editor_model
+        and main_model.editor_model is not main_model
+        and main_model.editor_model is not main_model.weak_model
+    ):
+        problem_editor = sanity_check_model(io, main_model.editor_model)
+
+    return problem_main or problem_weak or problem_editor
 
 
 def sanity_check_model(io, model):

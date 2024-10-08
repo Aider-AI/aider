@@ -40,7 +40,7 @@ By default, aider creates commit messages which follow
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
 You can customize the
-[commit prompt](https://github.com/paul-gauthier/aider/blob/main/aider/prompts.py#L5)
+[commit prompt](https://github.com/Aider-AI/aider/blob/main/aider/prompts.py#L5)
 with the `--commit-prompt` option.
 You can place that on the command line, or 
 [configure it via a config file or environment variables](https://aider.chat/docs/config.html).

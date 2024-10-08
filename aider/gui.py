@@ -160,7 +160,7 @@ class GUI:
 
             st.warning(
                 "This browser version of aider is experimental. Please share feedback in [GitHub"
-                " issues](https://github.com/paul-gauthier/aider/issues)."
+                " issues](https://github.com/Aider-AI/aider/issues)."
             )
 
     def do_settings_tab(self):
@@ -528,7 +528,7 @@ def gui_main():
         page_icon=urls.favicon,
         menu_items={
             "Get Help": urls.website,
-            "Report a bug": "https://github.com/paul-gauthier/aider/issues",
+            "Report a bug": "https://github.com/Aider-AI/aider/issues",
             "About": "# Aider\nAI pair programming in your browser.",
         },
     )

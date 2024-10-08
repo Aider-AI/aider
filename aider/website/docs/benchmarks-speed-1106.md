@@ -20,7 +20,7 @@ and there's a lot
 of interest about their capabilities and performance.
 With that in mind, I've been benchmarking the new models.
 
-[Aider](https://github.com/paul-gauthier/aider)
+[Aider](https://github.com/Aider-AI/aider)
 is an open source command line chat tool that lets you work with GPT to edit
 code in your local git repo.
 Aider relies on a

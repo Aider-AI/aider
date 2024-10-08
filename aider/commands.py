@@ -1,9 +1,11 @@
+import glob
 import os
 import re
 import subprocess
 import sys
 import tempfile
 from collections import OrderedDict
+from os.path import expanduser
 from pathlib import Path
 
 import pyperclip
@@ -584,7 +586,7 @@ class Commands:
         text = document.text_before_cursor
 
         # Skip the first word and the space after it
-        after_command = " ".join(text.split()[1:])
+        after_command = text.split()[-1]
 
         # Create a new Document object with the text after the command
         new_document = Document(after_command, cursor_position=len(after_command))
@@ -601,16 +603,40 @@ class Commands:
         # Adjust the start_position to replace all of 'after_command'
         adjusted_start_position = -len(after_command)
 
+        # Collect all completions
+        all_completions = []
+
         # Iterate over the completions and modify them
         for completion in path_completer.get_completions(new_document, complete_event):
             quoted_text = self.quote_fname(after_command + completion.text)
-            yield Completion(
-                text=quoted_text,
-                start_position=adjusted_start_position,
-                display=completion.display,
-                style=completion.style,
-                selected_style=completion.selected_style,
+            all_completions.append(
+                Completion(
+                    text=quoted_text,
+                    start_position=adjusted_start_position,
+                    display=completion.display,
+                    style=completion.style,
+                    selected_style=completion.selected_style,
+                )
             )
+
+        # Add completions from the 'add' command
+        add_completions = self.completions_add()
+        for completion in add_completions:
+            if after_command in completion:
+                all_completions.append(
+                    Completion(
+                        text=completion,
+                        start_position=adjusted_start_position,
+                        display=completion,
+                    )
+                )
+
+        # Sort all completions based on their text
+        sorted_completions = sorted(all_completions, key=lambda c: c.text)
+
+        # Yield the sorted completions
+        for completion in sorted_completions:
+            yield completion
 
     def completions_add(self):
         files = set(self.coder.get_all_relative_files())
@@ -628,7 +654,7 @@ class Commands:
             else:
                 try:
                     raw_matched_files = list(Path(self.coder.root).glob(pattern))
-                except IndexError:
+                except (IndexError, AttributeError):
                     raw_matched_files = []
         except ValueError as err:
             self.io.tool_error(f"Error matching {pattern}: {err}")
@@ -1137,21 +1163,23 @@ class Commands:
             return
 
         filenames = parse_quoted_filenames(args)
-        for word in filenames:
-            # Expand the home directory if the path starts with "~"
-            expanded_path = os.path.expanduser(word)
-            abs_path = self.coder.abs_root_path(expanded_path)
+        for pattern in filenames:
+            # Expand tilde for home directory
+            expanded_pattern = expanduser(pattern)
 
-            if not os.path.exists(abs_path):
-                self.io.tool_error(f"Path not found: {abs_path}")
+            expanded_paths = glob.glob(expanded_pattern, recursive=True)
+            if not expanded_paths:
+                self.io.tool_error(f"No matches found for: {pattern}")
                 continue
 
-            if os.path.isfile(abs_path):
-                self._add_read_only_file(abs_path, word)
-            elif os.path.isdir(abs_path):
-                self._add_read_only_directory(abs_path, word)
-            else:
-                self.io.tool_error(f"Not a file or directory: {abs_path}")
+            for path in expanded_paths:
+                abs_path = self.coder.abs_root_path(path)
+                if os.path.isfile(abs_path):
+                    self._add_read_only_file(abs_path, path)
+                elif os.path.isdir(abs_path):
+                    self._add_read_only_directory(abs_path, path)
+                else:
+                    self.io.tool_error(f"Not a file or directory: {abs_path}")
 
     def _add_read_only_file(self, abs_path, original_name):
         if abs_path in self.coder.abs_read_only_fnames:
@@ -1203,7 +1231,9 @@ class Commands:
     def cmd_settings(self, args):
         "Print out the current settings"
         settings = format_settings(self.parser, self.args)
-        self.io.tool_output(settings)
+        announcements = "\n".join(self.coder.get_announcements())
+        output = f"{announcements}\n{settings}"
+        self.io.tool_output(output)
 
     def cmd_copy(self, args):
         "Copy the last assistant message to the clipboard"
