@@ -34,7 +34,7 @@ ensure that your contributions can be integrated smoothly.
 ## Licensing
 
 Before contributing a PR, please review and complete our 
-[Individual Contributor License Agreement](/docs/contributor-agreement.html).
+[Individual Contributor License Agreement](/docs/legal/contributor-agreement.html).
 
 ## Setting up a Development Environment
 
