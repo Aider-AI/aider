@@ -1,7 +1,7 @@
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import ANY, MagicMock, patch
 
-from aider.models import Model, get_model_info, sanity_check_model
+from aider.models import Model, get_model_info, sanity_check_model, sanity_check_models
 
 
 class TestModels(unittest.TestCase):
@@ -61,6 +61,23 @@ class TestModels(unittest.TestCase):
         calls = mock_io.tool_output.call_args_list
         self.assertIn("- API_KEY1: Not set", str(calls))
         self.assertIn("- API_KEY2: Not set", str(calls))
+
+    def test_sanity_check_models_bogus_editor(self):
+        mock_io = MagicMock()
+        main_model = Model("gpt-4")
+        main_model.editor_model = Model("bogus-model")
+
+        result = sanity_check_models(mock_io, main_model)
+
+        self.assertTrue(
+            result
+        )  # Should return True because there's a problem with the editor model
+        mock_io.tool_warning.assert_called_with(ANY)  # Ensure a warning was issued
+        self.assertGreaterEqual(mock_io.tool_warning.call_count, 2)  # Expect two warnings
+        warning_messages = [call.args[0] for call in mock_io.tool_warning.call_args_list]
+        self.assertTrue(
+            any("bogus-model" in msg for msg in warning_messages)
+        )  # Check that one of the warnings mentions the bogus model
 
 
 if __name__ == "__main__":

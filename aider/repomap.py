@@ -419,7 +419,9 @@ class RepoMap:
                 ranked_definitions[(dst, ident)] += data["rank"]
 
         ranked_tags = []
-        ranked_definitions = sorted(ranked_definitions.items(), reverse=True, key=lambda x: x[1])
+        ranked_definitions = sorted(
+            ranked_definitions.items(), reverse=True, key=lambda x: (x[1], x[0])
+        )
 
         # dump(ranked_definitions)
 
@@ -455,11 +457,18 @@ class RepoMap:
         force_refresh=False,
     ):
         # Create a cache key
-        cache_key = (
+        cache_key = [
             tuple(sorted(chat_fnames)) if chat_fnames else None,
             tuple(sorted(other_fnames)) if other_fnames else None,
             max_map_tokens,
-        )
+        ]
+
+        if self.refresh == "auto":
+            cache_key += [
+                tuple(sorted(mentioned_fnames)) if mentioned_fnames else None,
+                tuple(sorted(mentioned_idents)) if mentioned_idents else None,
+            ]
+        cache_key = tuple(cache_key)
 
         use_cache = False
         if not force_refresh:

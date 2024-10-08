@@ -17,10 +17,10 @@ Contributions of
 [LLM benchmark results](https://aider.chat/docs/leaderboards/)
 are welcome!
 See the
-[benchmark README](https://github.com/paul-gauthier/aider/blob/main/benchmark/README.md)
+[benchmark README](https://github.com/Aider-AI/aider/blob/main/benchmark/README.md)
 for information on running aider's code editing benchmarks.
 Submit results by opening a PR with edits to the
-[benchmark results data files](https://github.com/paul-gauthier/aider/blob/main/aider/website/_data/).
+[benchmark results data files](https://github.com/Aider-AI/aider/blob/main/aider/website/_data/).
 
 
 ## Pull Requests
@@ -45,7 +45,7 @@ terms.
 ### Clone the Repository
 
 ```
-git clone https://github.com/paul-gauthier/aider.git
+git clone https://github.com/Aider-AI/aider.git
 cd aider
 ```
 

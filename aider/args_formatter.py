@@ -147,7 +147,10 @@ class YamlHelpFormatter(argparse.HelpFormatter):
         elif action.nargs in ("*", "+") or isinstance(action, argparse._AppendAction):
             parts.append(f"#{switch}: xxx")
             parts.append("## Specify multiple values like this:")
-            parts.append(f"#{switch}: [xxx,yyyy,zzz]\n")
+            parts.append(f"#{switch}:")
+            parts.append(f"#  - xxx")
+            parts.append(f"#  - yyy")
+            parts.append(f"#  - zzz")
         else:
             parts.append(f"#{switch}: xxx\n")
 

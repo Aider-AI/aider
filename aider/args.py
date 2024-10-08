@@ -25,6 +25,7 @@ def get_parser(default_config_files, git_root):
         description="aider is AI pair programming in your terminal",
         add_config_file_help=True,
         default_config_files=default_config_files,
+        config_file_parser_class=configargparse.YAMLConfigFileParser,
         auto_env_var_prefix="AIDER_",
     )
     group = parser.add_argument_group("Main")
@@ -236,8 +237,8 @@ def get_parser(default_config_files, git_root):
         type=int,
         default=None,
         help=(
-            "Maximum number of tokens to use for chat history. If not specified, uses the model's"
-            " max_chat_history_tokens."
+            "Soft limit on tokens for chat history, after which summarization begins."
+            " If unspecified, defaults to the model's max_chat_history_tokens."
         ),
     )
     # This is a duplicate of the argument in the preparser and is a no-op by this time of
@@ -502,6 +503,12 @@ def get_parser(default_config_files, git_root):
         default=False,
         help="Perform a dry run without modifying files (default: False)",
     )
+    group.add_argument(
+        "--skip-sanity-check-repo",
+        action="store_true",
+        help="Skip the sanity check for the git repository (default: False)",
+        default=False,
+    )
     group = parser.add_argument_group("Fixing and committing")
     group.add_argument(
         "--lint",
@@ -605,7 +612,7 @@ def get_parser(default_config_files, git_root):
         help="Apply the changes from the given file instead of running the chat (debug)",
     )
     group.add_argument(
-        "--yes",
+        "--yes-always",
         action="store_true",
         help="Always say yes to every confirmation",
         default=None,

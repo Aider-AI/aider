@@ -29,7 +29,7 @@ I'm going to close this issue for now. But please let me know if you think this 
 
 # GitHub API configuration
 GITHUB_API_URL = "https://api.github.com"
-REPO_OWNER = "paul-gauthier"
+REPO_OWNER = "Aider-AI"
 REPO_NAME = "aider"
 TOKEN = os.getenv("GITHUB_TOKEN")
 

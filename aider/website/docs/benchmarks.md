@@ -168,7 +168,7 @@ requests:
 ### whole
 
 The
-[whole](https://github.com/paul-gauthier/aider/blob/main/aider/coders/wholefile_prompts.py)
+[whole](https://github.com/Aider-AI/aider/blob/main/aider/coders/wholefile_prompts.py)
 format asks GPT to return an updated copy of the entire file, including any changes.
 The file should be
 formatted with normal markdown triple-backtick fences, inlined with the rest of its response text.
@@ -187,7 +187,7 @@ def main():
 
 ### diff
 
-The [diff](https://github.com/paul-gauthier/aider/blob/main/aider/coders/editblock_prompts.py)
+The [diff](https://github.com/Aider-AI/aider/blob/main/aider/coders/editblock_prompts.py)
 format also asks GPT to return edits as part of the normal response text,
 in a simple diff format.
 Each edit is a fenced code block that
@@ -209,7 +209,7 @@ demo.py
 
 ### whole-func
 
-The [whole-func](https://github.com/paul-gauthier/aider/blob/main/aider/coders/wholefile_func_coder.py)
+The [whole-func](https://github.com/Aider-AI/aider/blob/main/aider/coders/wholefile_func_coder.py)
 format requests updated copies of whole files to be returned using the function call API.
 
 
@@ -227,7 +227,7 @@ format requests updated copies of whole files to be returned using the function 
 ### diff-func
 
 The
-[diff-func](https://github.com/paul-gauthier/aider/blob/main/aider/coders/editblock_func_coder.py)
+[diff-func](https://github.com/Aider-AI/aider/blob/main/aider/coders/editblock_func_coder.py)
 format requests a list of
 original/updated style edits to be returned using the function call API.
 

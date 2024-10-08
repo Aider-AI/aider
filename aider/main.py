@@ -11,7 +11,7 @@ import git
 from dotenv import load_dotenv
 from prompt_toolkit.enums import EditingMode
 
-from aider import __version__, models, utils
+from aider import __version__, models, urls, utils
 from aider.args import get_parser
 from aider.coders import Coder
 from aider.commands import Commands, SwitchCoder
@@ -24,6 +24,23 @@ from aider.report import report_uncaught_exceptions
 from aider.versioncheck import check_version, install_from_main_branch, install_upgrade
 
 from .dump import dump  # noqa: F401
+
+
+def check_config_files_for_yes(config_files):
+    found = False
+    for config_file in config_files:
+        if Path(config_file).exists():
+            try:
+                with open(config_file, "r") as f:
+                    for line in f:
+                        if line.strip().startswith("yes:"):
+                            print("Configuration error detected.")
+                            print(f"The file {config_file} contains a line starting with 'yes:'")
+                            print("Please replace 'yes:' with 'yes-always:' in this file.")
+                            found = True
+            except Exception:
+                pass
+    return found
 
 
 def get_git_root():
@@ -40,7 +57,7 @@ def guessed_wrong_repo(io, git_root, fnames, git_dname):
 
     try:
         check_repo = Path(GitRepo(io, fnames, git_dname).root).resolve()
-    except FileNotFoundError:
+    except (OSError,) + ANY_GIT_ERROR:
         return
 
     # we had no guess, rely on the "true" repo result
@@ -114,32 +131,39 @@ def check_gitignore(git_root, io, ask=True):
 
     try:
         repo = git.Repo(git_root)
-        if repo.ignored(".aider"):
+        if repo.ignored(".aider") and repo.ignored(".env"):
             return
     except ANY_GIT_ERROR:
         pass
 
-    pat = ".aider*"
+    patterns = [".aider*", ".env"]
+    patterns_to_add = []
 
     gitignore_file = Path(git_root) / ".gitignore"
     if gitignore_file.exists():
         content = io.read_text(gitignore_file)
         if content is None:
             return
-        if pat in content.splitlines():
-            return
+        existing_lines = content.splitlines()
+        for pat in patterns:
+            if pat not in existing_lines:
+                patterns_to_add.append(pat)
     else:
         content = ""
+        patterns_to_add = patterns
 
-    if ask and not io.confirm_ask(f"Add {pat} to .gitignore (recommended)?"):
+    if not patterns_to_add:
+        return
+
+    if ask and not io.confirm_ask(f"Add {', '.join(patterns_to_add)} to .gitignore (recommended)?"):
         return
 
     if content and not content.endswith("\n"):
         content += "\n"
-    content += pat + "\n"
+    content += "\n".join(patterns_to_add) + "\n"
     io.write_text(gitignore_file, content)
 
-    io.tool_output(f"Added {pat} to .gitignore")
+    io.tool_output(f"Added {', '.join(patterns_to_add)} to .gitignore")
 
 
 def check_streamlit_install(io):
@@ -217,16 +241,23 @@ def parse_lint_cmds(lint_cmds, io):
     return res
 
 
-def generate_search_path_list(default_fname, git_root, command_line_file):
+def generate_search_path_list(default_file, git_root, command_line_file):
     files = []
-    default_file = Path(default_fname)
     files.append(Path.home() / default_file)  # homedir
     if git_root:
         files.append(Path(git_root) / default_file)  # git root
-    files.append(default_file.resolve())
+    files.append(default_file)
     if command_line_file:
         files.append(command_line_file)
-    files = [Path(fn).resolve() for fn in files]
+
+    resolved_files = []
+    for fn in files:
+        try:
+            resolved_files.append(Path(fn).resolve())
+        except OSError:
+            pass
+
+    files = resolved_files
     files.reverse()
     uniq = []
     for fn in files:
@@ -326,7 +357,7 @@ def sanity_check_repo(repo, io):
         io.tool_error("Aider only works with git repos with version number 1 or 2.")
         io.tool_output("You may be able to convert your repo: git update-index --index-version=2")
         io.tool_output("Or run aider --no-git to proceed without using git.")
-        io.tool_output("https://github.com/paul-gauthier/aider/issues/211")
+        io.tool_output(urls.git_index_version)
         return False
 
     io.tool_error("Unable to read git repository, it may be corrupt?")
@@ -347,7 +378,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     conf_fname = Path(".aider.conf.yml")
 
-    default_config_files = [conf_fname.resolve()]  # CWD
+    default_config_files = []
+    try:
+        default_config_files += [conf_fname.resolve()]  # CWD
+    except OSError:
+        pass
+
     if git_root:
         git_conf = Path(git_root) / conf_fname  # git root
         if git_conf not in default_config_files:
@@ -356,7 +392,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     default_config_files = list(map(str, default_config_files))
 
     parser = get_parser(default_config_files, git_root)
-    args, unknown = parser.parse_known_args(argv)
+    try:
+        args, unknown = parser.parse_known_args(argv)
+    except AttributeError as e:
+        if all(word in str(e) for word in ["bool", "object", "has", "no", "attribute", "strip"]):
+            if check_config_files_for_yes(default_config_files):
+                return 1
+        raise e
 
     if args.verbose:
         print("Config files search order, if no --config:")
@@ -367,6 +409,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     default_config_files.reverse()
 
     parser = get_parser(default_config_files, git_root)
+
     args, unknown = parser.parse_known_args(argv)
 
     # Load the .env file specified in the arguments
@@ -397,15 +440,15 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         args.assistant_output_color = "blue"
         args.code_theme = "default"
 
-    if return_coder and args.yes is None:
-        args.yes = True
+    if return_coder and args.yes_always is None:
+        args.yes_always = True
 
     editing_mode = EditingMode.VI if args.vim else EditingMode.EMACS
 
     def get_io(pretty):
         return InputOutput(
             pretty,
-            args.yes,
+            args.yes_always,
             args.input_history_file,
             args.chat_history_file,
             input=input,
@@ -579,8 +622,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         except FileNotFoundError:
             pass
 
-    if not sanity_check_repo(repo, io):
-        return 1
+    if not args.skip_sanity_check_repo:
+        if not sanity_check_repo(repo, io):
+            return 1
 
     commands = Commands(
         io, None, verify_ssl=args.verify_ssl, args=args, parser=parser, verbose=args.verbose

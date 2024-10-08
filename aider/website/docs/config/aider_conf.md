@@ -23,8 +23,16 @@ load whichever is found first.
 
 ## A note on lists
 
-The syntax for specifying a list of values is not standard yaml.
-Instead, use this format:
+Lists of values can be specified either as a bulleted list:
+
+```
+read:
+  - CONVENTIONS.md
+  - anotherfile.txt
+  - thirdfile.py
+```
+
+Or lists can be specified using commas and square brackets:
 
 ```
 read: [CONVENTIONS.md, anotherfile.txt, thirdfile.py]
@@ -34,7 +42,7 @@ read: [CONVENTIONS.md, anotherfile.txt, thirdfile.py]
 
 Below is a sample of the YAML config file, which you
 can also
-[download from GitHub](https://github.com/paul-gauthier/aider/blob/main/aider/website/assets/sample.aider.conf.yml).
+[download from GitHub](https://github.com/Aider-AI/aider/blob/main/aider/website/assets/sample.aider.conf.yml).
 
 <!--[[[cog
 from aider.args import get_sample_yaml
@@ -152,7 +160,7 @@ cog.outl("```")
 ## Only work with models that have meta-data available (default: True)
 #show-model-warnings: true
 
-## Maximum number of tokens to use for chat history. If not specified, uses the model's max_chat_history_tokens.
+## Soft limit on tokens for chat history, after which summarization begins. If unspecified, defaults to the model's max_chat_history_tokens.
 #max-chat-history-tokens: xxx
 
 ## Specify the .env file to load (default: .env in git root)
@@ -284,6 +292,9 @@ cog.outl("```")
 ## Perform a dry run without modifying files (default: False)
 #dry-run: false
 
+## Skip the sanity check for the git repository (default: False)
+#skip-sanity-check-repo: false
+
 ########################
 # Fixing and committing:
 
@@ -293,7 +304,10 @@ cog.outl("```")
 ## Specify lint commands to run for different languages, eg: "python: flake8 --select=..." (can be used multiple times)
 #lint-cmd: xxx
 ## Specify multiple values like this:
-#lint-cmd: [xxx,yyyy,zzz]
+#lint-cmd:
+#  - xxx
+#  - yyy
+#  - zzz
 
 ## Enable/disable automatic linting after changes (default: True)
 #auto-lint: true
@@ -313,12 +327,18 @@ cog.outl("```")
 ## specify a file to edit (can be used multiple times)
 #file: xxx
 ## Specify multiple values like this:
-#file: [xxx,yyyy,zzz]
+#file:
+#  - xxx
+#  - yyy
+#  - zzz
 
 ## specify a read-only file (can be used multiple times)
 #read: xxx
 ## Specify multiple values like this:
-#read: [xxx,yyyy,zzz]
+#read:
+#  - xxx
+#  - yyy
+#  - zzz
 
 ## Use VI editing mode in the terminal (default: False)
 #vim: false
@@ -345,7 +365,7 @@ cog.outl("```")
 #apply: xxx
 
 ## Always say yes to every confirmation
-#yes: false
+#yes-always: false
 
 ## Enable verbose output
 #verbose: false

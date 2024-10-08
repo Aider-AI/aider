@@ -59,14 +59,16 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--attribute-commit-message-author | --no-attribute-commit-message-author]
              [--attribute-commit-message-committer | --no-attribute-commit-message-committer]
              [--commit] [--commit-prompt] [--dry-run | --no-dry-run]
-             [--lint] [--lint-cmd] [--auto-lint | --no-auto-lint]
-             [--test-cmd] [--auto-test | --no-auto-test] [--test]
-             [--file] [--read] [--vim] [--chat-language] [--version]
+             [--skip-sanity-check-repo] [--lint] [--lint-cmd]
+             [--auto-lint | --no-auto-lint] [--test-cmd]
+             [--auto-test | --no-auto-test] [--test] [--file]
+             [--read] [--vim] [--chat-language] [--version]
              [--just-check-update]
              [--check-update | --no-check-update]
-             [--install-main-branch] [--upgrade] [--apply] [--yes]
-             [-v] [--show-repo-map] [--show-prompts] [--exit]
-             [--message] [--message-file] [--encoding] [-c] [--gui]
+             [--install-main-branch] [--upgrade] [--apply]
+             [--yes-always] [-v] [--show-repo-map] [--show-prompts]
+             [--exit] [--message] [--message-file] [--encoding] [-c]
+             [--gui]
              [--suggest-shell-commands | --no-suggest-shell-commands]
              [--voice-format] [--voice-language]
 
@@ -221,7 +223,7 @@ Aliases:
   - `--no-show-model-warnings`
 
 ### `--max-chat-history-tokens VALUE`
-Maximum number of tokens to use for chat history. If not specified, uses the model's max_chat_history_tokens.  
+Soft limit on tokens for chat history, after which summarization begins. If unspecified, defaults to the model's max_chat_history_tokens.  
 Environment variable: `AIDER_MAX_CHAT_HISTORY_TOKENS`  
 
 ### `--env-file ENV_FILE`
@@ -455,6 +457,11 @@ Aliases:
   - `--dry-run`
   - `--no-dry-run`
 
+### `--skip-sanity-check-repo`
+Skip the sanity check for the git repository (default: False)  
+Default: False  
+Environment variable: `AIDER_SKIP_SANITY_CHECK_REPO`  
+
 ## Fixing and committing:
 
 ### `--lint`
@@ -545,9 +552,9 @@ Aliases:
 Apply the changes from the given file instead of running the chat (debug)  
 Environment variable: `AIDER_APPLY`  
 
-### `--yes`
+### `--yes-always`
 Always say yes to every confirmation  
-Environment variable: `AIDER_YES`  
+Environment variable: `AIDER_YES_ALWAYS`  
 
 ### `--verbose`
 Enable verbose output  
