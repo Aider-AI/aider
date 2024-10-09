@@ -319,7 +319,7 @@ MODEL_SETTINGS = [
     ModelSettings(
         "openrouter/anthropic/claude-3.5-sonnet",
         "diff",
-        weak_model_name="openrouter/anthropic/claude-3-haiku-20240307",
+        weak_model_name="openrouter/anthropic/claude-3-haiku",
         editor_model_name="openrouter/anthropic/claude-3.5-sonnet",
         editor_edit_format="editor-diff",
         use_repo_map=True,
@@ -334,7 +334,7 @@ MODEL_SETTINGS = [
     ModelSettings(
         "openrouter/anthropic/claude-3.5-sonnet:beta",
         "diff",
-        weak_model_name="openrouter/anthropic/claude-3-haiku-20240307",
+        weak_model_name="openrouter/anthropic/claude-3-haiku:beta",
         editor_model_name="openrouter/anthropic/claude-3.5-sonnet:beta",
         editor_edit_format="editor-diff",
         use_repo_map=True,
