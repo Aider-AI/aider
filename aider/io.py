@@ -5,8 +5,6 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
-from jinja2.lexer import TOKEN_DOT
-from numpy.distutils.misc_util import rel_path
 from prompt_toolkit.completion import Completer, Completion, ThreadedCompleter
 from prompt_toolkit.cursor_shapes import ModalCursorShapeConfig
 from prompt_toolkit.enums import EditingMode
