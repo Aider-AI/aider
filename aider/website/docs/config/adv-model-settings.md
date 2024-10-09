@@ -550,7 +550,7 @@ cog.out("```\n")
   use_repo_map: true
   use_system_prompt: true
   use_temperature: true
-  weak_model_name: openrouter/anthropic/claude-3-haiku-20240307
+  weak_model_name: openrouter/anthropic/claude-3-haiku
 - accepts_images: true
   cache_control: true
   caches_by_default: false
@@ -568,7 +568,7 @@ cog.out("```\n")
   use_repo_map: true
   use_system_prompt: true
   use_temperature: true
-  weak_model_name: openrouter/anthropic/claude-3-haiku-20240307
+  weak_model_name: openrouter/anthropic/claude-3-haiku:beta
 - accepts_images: true
   cache_control: false
   caches_by_default: false
