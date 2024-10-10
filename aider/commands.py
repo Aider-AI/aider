@@ -13,7 +13,7 @@ from PIL import Image, ImageGrab
 from prompt_toolkit.completion import Completion, PathCompleter
 from prompt_toolkit.document import Document
 
-from aider import models, prompts, voice
+from aider import models, prompts, utils, voice
 from aider.format_settings import format_settings
 from aider.help import Help, install_help_extra
 from aider.llm import litellm
@@ -1275,6 +1275,63 @@ class Commands:
             title = None
 
         report_github_issue(issue_text, title=title, confirm=False)
+
+    def cmd_datasette(self, args):
+        "Launch or stop Datasette with the current chat history"
+        if not utils.check_pip_install_extra(
+            self.io,
+            "datasette",
+            "You need to install Datasette and its query assistant",
+            ["datasette", "datasette-query-assistant"],
+        ):
+            return
+
+        if not self.io.use_sqlite:
+            self.io.tool_error(
+                "SQLite integration is not enabled. Please enable it to use Datasette."
+            )
+            return
+
+        db_path = self.io.chat_history_file.with_suffix(".db")
+        if not db_path.exists():
+            self.io.tool_error("Chat history database not found.")
+            return
+
+        datasette_process = getattr(self.coder, "datasette_process", None)
+        if datasette_process and datasette_process.poll() is None:
+            datasette_process.terminate()
+            datasette_process.wait()
+            self.coder.datasette_process = None
+            self.io.tool_output("Stopped Datasette.")
+            return
+
+        try:
+            datasette_process = subprocess.Popen(
+                ["datasette", str(db_path)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            )
+            self.coder.datasette_process = datasette_process
+            self.io.tool_output("Launched Datasette. Access it at http://localhost:8001/")
+            self.io.tool_output(
+                "For help, visit: https://docs.datasette.io/en/1.0a14/getting_started.html"
+            )
+        except Exception as e:
+            self.io.tool_error(f"Failed to launch Datasette: {str(e)}")
+
+    def cmd_search(self, args):
+        "Search the chat history using full-text search"
+        if not args.strip():
+            self.io.tool_error("Please provide a search query.")
+            return
+
+        results = self.io.search_chat_history(args.strip())
+        if not results:
+            self.io.tool_output("No results found.")
+            return
+
+        self.io.tool_output(f"Search results for '{args.strip()}':")
+        for timestamp, role, content in results:
+            self.io.tool_output(f"\n[{timestamp}] {role.upper()}:")
+            self.io.tool_output(content.strip())
 
 
 def expand_subdir(file_path):

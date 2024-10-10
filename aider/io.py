@@ -1,5 +1,8 @@
 import base64
 import os
+import sqlite3
+import subprocess
+import uuid
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
@@ -24,7 +27,6 @@ from aider.mdstream import MarkdownStream
 
 from .dump import dump  # noqa: F401
 from .utils import is_image_file
-
 
 @dataclass
 class ConfirmGroup:
@@ -192,6 +194,7 @@ class InputOutput:
         dry_run=False,
         llm_history_file=None,
         editingmode=EditingMode.EMACS,
+        use_sqlite=True,
     ):
         self.never_prompts = set()
         self.editingmode = editingmode
@@ -229,9 +232,50 @@ class InputOutput:
 
         self.encoding = encoding
         self.dry_run = dry_run
+        self.use_sqlite = use_sqlite
+
+        self.conn = None
+        self.cursor = None
 
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
+        self.console = Console(force_terminal=False, no_color=True)  # non-pretty
+        self.prompt_session = None
+        if self.pretty:
+            # Initialize PromptSession
+            session_kwargs = {
+                "input": self.input,
+                "output": self.output,
+                "lexer": PygmentsLexer(MarkdownLexer),
+                "editing_mode": self.editingmode,
+                "cursor": ModalCursorShapeConfig(),
+            }
+            if self.input_history_file is not None:
+                session_kwargs["history"] = FileHistory(self.input_history_file)
+            try:
+                self.prompt_session = PromptSession(**session_kwargs)
+                self.console = Console()  # pretty console
+            except Exception as err:
+                self.console = Console(force_terminal=False, no_color=True)
+                self.tool_error(f"Can't initialize prompt toolkit: {err}")  # non-pretty
+        else:
+            self.console = Console(force_terminal=False, no_color=True)  # non-pretty
+
+        self.init_sqlite()
+        self.start_conversation(os.getcwd(), self.get_git_commit_hash())
+
+    def get_git_commit_hash(self):
+        try:
+            result = subprocess.run(
+                ["git", "rev-parse", "HEAD"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                check=True,
+            )
+            return result.stdout.strip()
+        except subprocess.CalledProcessError:
+            return None
 
         self.prompt_session = None
         if self.pretty:
@@ -253,6 +297,131 @@ class InputOutput:
                 self.tool_error(f"Can't initialize prompt toolkit: {err}")  # non-pretty
         else:
             self.console = Console(force_terminal=False, no_color=True)  # non-pretty
+
+    def init_sqlite(self):
+        if not self.chat_history_file:
+            return
+        db_path = self.chat_history_file.with_suffix(".db")
+        self.conn = sqlite3.connect(db_path)
+        self.cursor = self.conn.cursor()
+        self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS conversations (
+                id TEXT PRIMARY KEY,
+                start_time TEXT,
+                end_time TEXT,
+                working_directory TEXT,
+                git_commit_hash TEXT
+            )
+        """)
+        self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS chat_history (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                conversation_id TEXT,
+                timestamp TEXT,
+                role TEXT,
+                content TEXT,
+                tokens_sent INTEGER,
+                tokens_received INTEGER,
+                cost REAL,
+                files_in_context TEXT,
+                FOREIGN KEY (conversation_id) REFERENCES conversations(id)
+            )
+        """)
+        self.cursor.execute("""
+            CREATE VIRTUAL TABLE IF NOT EXISTS chat_history_fts USING fts5(
+                timestamp, role, content, content='chat_history', content_rowid='id'
+            )
+        """)
+        self.cursor.execute("""
+            CREATE TRIGGER IF NOT EXISTS chat_history_ai AFTER INSERT ON chat_history BEGIN
+                INSERT INTO chat_history_fts(rowid, timestamp, role, content)
+                VALUES (new.id, new.timestamp, new.role, new.content);
+            END;
+        """)
+        self.cursor.execute("""
+            CREATE TRIGGER IF NOT EXISTS chat_history_ad AFTER DELETE ON chat_history BEGIN
+                INSERT INTO chat_history_fts(chat_history_fts, rowid, timestamp, role, content)
+                VALUES('delete', old.id, old.timestamp, old.role, old.content);
+            END;
+        """)
+        self.cursor.execute("""
+            CREATE TRIGGER IF NOT EXISTS chat_history_au AFTER UPDATE ON chat_history BEGIN
+                INSERT INTO chat_history_fts(chat_history_fts, rowid, timestamp, role, content)
+                VALUES('delete', old.id, old.timestamp, old.role, old.content);
+                INSERT INTO chat_history_fts(rowid, timestamp, role, content)
+                VALUES (new.id, new.timestamp, new.role, new.content);
+            END;
+        """)
+        self.conn.commit()
+        self.tool_output(f"SQLite database with FTS initialized at {db_path}")
+        self.current_conversation_id = None
+        try:
+            result = subprocess.run(
+                ["git", "rev-parse", "HEAD"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                check=True,
+            )
+            return result.stdout.strip()
+        except subprocess.CalledProcessError:
+            return None
+        if not self.chat_history_file:
+            return
+        db_path = self.chat_history_file.with_suffix(".db")
+        self.conn = sqlite3.connect(db_path)
+        self.cursor = self.conn.cursor()
+        self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS conversations (
+                id TEXT PRIMARY KEY,
+                start_time TEXT,
+                end_time TEXT,
+                working_directory TEXT,
+                git_commit_hash TEXT
+            )
+        """)
+        self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS chat_history (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                conversation_id TEXT,
+                timestamp TEXT,
+                role TEXT,
+                content TEXT,
+                tokens_sent INTEGER,
+                tokens_received INTEGER,
+                cost REAL,
+                files_in_context TEXT,
+                FOREIGN KEY (conversation_id) REFERENCES conversations(id)
+            )
+        """)
+        self.cursor.execute("""
+            CREATE VIRTUAL TABLE IF NOT EXISTS chat_history_fts USING fts5(
+                timestamp, role, content, content='chat_history', content_rowid='id'
+            )
+        """)
+        self.cursor.execute("""
+            CREATE TRIGGER IF NOT EXISTS chat_history_ai AFTER INSERT ON chat_history BEGIN
+                INSERT INTO chat_history_fts(rowid, timestamp, role, content)
+                VALUES (new.id, new.timestamp, new.role, new.content);
+            END;
+        """)
+        self.cursor.execute("""
+            CREATE TRIGGER IF NOT EXISTS chat_history_ad AFTER DELETE ON chat_history BEGIN
+                INSERT INTO chat_history_fts(chat_history_fts, rowid, timestamp, role, content)
+                VALUES('delete', old.id, old.timestamp, old.role, old.content);
+            END;
+        """)
+        self.cursor.execute("""
+            CREATE TRIGGER IF NOT EXISTS chat_history_au AFTER UPDATE ON chat_history BEGIN
+                INSERT INTO chat_history_fts(chat_history_fts, rowid, timestamp, role, content)
+                VALUES('delete', old.id, old.timestamp, old.role, old.content);
+                INSERT INTO chat_history_fts(rowid, timestamp, role, content)
+                VALUES (new.id, new.timestamp, new.role, new.content);
+            END;
+        """)
+        self.conn.commit()
+        self.tool_output(f"SQLite database with FTS initialized at {db_path}")
+        self.current_conversation_id = None
 
     def _get_style(self):
         style_dict = {}
@@ -425,6 +594,7 @@ class InputOutput:
 
         print()
         self.user_input(inp)
+        self.append_chat_history(inp, role="user")
         return inp
 
     def add_to_input_history(self, inp):
@@ -674,7 +844,40 @@ class InputOutput:
     def print(self, message=""):
         print(message)
 
-    def append_chat_history(self, text, linebreak=False, blockquote=False, strip=True):
+    def start_conversation(self, working_directory, git_commit_hash):
+        self.current_conversation_id = str(uuid.uuid4())
+        start_time = datetime.now().isoformat()
+        self.cursor.execute(
+            (
+                "INSERT INTO conversations (id, start_time, working_directory, git_commit_hash)"
+                " VALUES (?, ?, ?, ?)"
+            ),
+            (self.current_conversation_id, start_time, working_directory, git_commit_hash),
+        )
+        self.conn.commit()
+
+    def end_conversation(self):
+        if self.current_conversation_id:
+            end_time = datetime.now().isoformat()
+            self.cursor.execute(
+                "UPDATE conversations SET end_time = ? WHERE id = ?",
+                (end_time, self.current_conversation_id),
+            )
+            self.conn.commit()
+            self.current_conversation_id = None
+
+    def append_chat_history(
+        self,
+        text,
+        linebreak=False,
+        blockquote=False,
+        strip=True,
+        role=None,
+        tokens_sent=0,
+        tokens_received=0,
+        cost=0.0,
+        files_in_context=None,
+    ):
         if blockquote:
             if strip:
                 text = text.strip()
@@ -685,6 +888,7 @@ class InputOutput:
             text = text + "  \n"
         if not text.endswith("\n"):
             text += "\n"
+
         if self.chat_history_file is not None:
             try:
                 with self.chat_history_file.open("a", encoding=self.encoding, errors="ignore") as f:
@@ -695,3 +899,55 @@ class InputOutput:
                     " Permission denied."
                 )
                 self.chat_history_file = None  # Disable further attempts to write
+
+        if self.use_sqlite and role:
+            db_path = self.chat_history_file.with_suffix(".db")
+            try:
+                with sqlite3.connect(db_path) as conn:
+                    cursor = conn.cursor()
+                    timestamp = datetime.now().isoformat()
+                    files_in_context_str = ",".join(files_in_context) if files_in_context else None
+                    cursor.execute(
+                        """
+                        INSERT INTO chat_history 
+                        (conversation_id, timestamp, role, content, tokens_sent, tokens_received, cost, files_in_context) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                        """,
+                        (
+                            self.current_conversation_id,
+                            timestamp,
+                            role,
+                            text,
+                            tokens_sent,
+                            tokens_received,
+                            cost,
+                            files_in_context_str,
+                        ),
+                    )
+                    conn.commit()
+            except sqlite3.Error as e:
+                self.tool_error(f"SQLite error: {e}")
+
+    def search_chat_history(self, query):
+        if not self.use_sqlite:
+            self.tool_error("SQLite integration is not enabled. Unable to search chat history.")
+            return []
+
+        db_path = self.chat_history_file.with_suffix(".db")
+        try:
+            with sqlite3.connect(db_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute(
+                    """
+                    SELECT timestamp, role, content
+                    FROM chat_history_fts
+                    WHERE chat_history_fts MATCH ?
+                    ORDER BY rank
+                """,
+                    (query,),
+                )
+                results = cursor.fetchall()
+            return results
+        except sqlite3.Error as e:
+            self.tool_error(f"SQLite error during search: {e}")
+            return []
