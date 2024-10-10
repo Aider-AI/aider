@@ -39,7 +39,7 @@ jobs:
         bash ./scripts/update-docs.sh
         
         # Compare the original and potentially updated website folders
-        if ! diff --recursive website_original aider/website ; then
+        if ! diff --recursive --unified website_original aider/website ; then
           echo "Error: Changes were detected in the website folder."
           echo "Please run ./scripts/update-docs.sh locally and commit the changes."
           rm -rf website_original
