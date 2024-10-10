@@ -125,7 +125,7 @@ class Coder:
 
             # If the edit format changes, we can't leave old ASSISTANT
             # messages in the chat history. The old edit format will
-            # confused the new LLM. It may try and imitate it, disobeying
+            # confuse the new LLM. It may try and imitate it, disobeying
             # the system prompt.
             done_messages = from_coder.done_messages
             if edit_format != from_coder.edit_format and done_messages and summarize_from_coder:
@@ -933,6 +933,8 @@ class Coder:
             fence=self.fence,
             lazy_prompt=lazy_prompt,
             platform=platform_text,
+            cedarscript_training=self.gpt_prompts.cedarscript_training,
+            final_remarks=self.gpt_prompts.final_remarks,
             shell_cmd_prompt=shell_cmd_prompt,
             shell_cmd_reminder=shell_cmd_reminder,
         )

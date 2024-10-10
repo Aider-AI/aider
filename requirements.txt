@@ -25,6 +25,12 @@ backoff==2.2.1
     # via -r requirements/requirements.in
 beautifulsoup4==4.12.3
     # via -r requirements/requirements.in
+cedarscript-ast-parser==0.1.6
+    # via cedarscript-editor
+cedarscript-editor==0.1.10
+    # via -r requirements/requirements.in
+cedarscript-grammar==0.0.8
+    # via cedarscript-ast-parser
 certifi==2024.8.30
     # via
     #   httpcore
@@ -120,6 +126,7 @@ packaging==24.1
     # via
     #   -r requirements/requirements.in
     #   huggingface-hub
+    #   pytoolconfig
 pathspec==0.12.1
     # via
     #   -r requirements/requirements.in
@@ -128,6 +135,8 @@ pexpect==4.9.0
     # via -r requirements/requirements.in
 pillow==10.4.0
     # via -r requirements/requirements.in
+platformdirs==4.3.6
+    # via pytoolconfig
 prompt-toolkit==3.0.47
     # via -r requirements/requirements.in
 psutil==6.0.0
@@ -156,6 +165,8 @@ pyperclip==1.9.0
     # via -r requirements/requirements.in
 python-dotenv==1.0.1
     # via litellm
+pytoolconfig[global]==1.3.1
+    # via rope
 pyyaml==6.0.2
     # via
     #   -r requirements/requirements.in
@@ -173,6 +184,8 @@ requests==2.32.3
     #   tiktoken
 rich==13.8.1
     # via -r requirements/requirements.in
+rope==1.13.0
+    # via cedarscript-editor
 rpds-py==0.20.0
     # via
     #   jsonschema
@@ -205,6 +218,7 @@ tqdm==4.66.5
 tree-sitter==0.21.3
     # via
     #   -r requirements/requirements.in
+    #   cedarscript-grammar
     #   tree-sitter-languages
 tree-sitter-languages==1.10.2
     # via grep-ast
