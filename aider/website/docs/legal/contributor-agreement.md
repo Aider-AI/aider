@@ -13,11 +13,6 @@ change your rights to use your own Contributions for any other purpose.
 Please complete and sign this Agreement. Read this document carefully
 before signing and keep a copy for your records.
 
-- Full name:
-- E-mail:
-- Age:
-- I am signing on behalf of ( ) myself / ( ) my employer.
-
 You accept and agree to the following terms and conditions for Your
 Contributions (present and future) that you submit to Aider AI.
 Except for the license granted herein to Aider AI and recipients
@@ -114,10 +109,3 @@ and interest in and to Your Contributions.
    which you become aware that would make these representations
    inaccurate in any respect.
    
-
-
-Signature:
-
-
-
-Date:
