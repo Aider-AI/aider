@@ -490,3 +490,28 @@
   versions: 0.58.1.dev
   seconds_per_case: 39.7
   total_cost: 36.2078
+
+- dirname: 2024-10-10-18-40-33--architect-sonnet-o1mini-editor-whole
+  test_cases: 133
+  model: claude-3-5-sonnet-20240620
+  edit_format: architect
+  commit_hash: ef2c165
+  editor_model: o1-mini
+  editor_edit_format: editor-whole
+  pass_rate_1: 60.9
+  pass_rate_2: 78.2
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 185
+  lazy_comments: 4
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: aider --model claude-3-5-sonnet-20240620
+  date: 2024-10-10
+  versions: 0.59.2.dev
+  seconds_per_case: 29.9
+  total_cost: 5.9632
