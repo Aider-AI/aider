@@ -18,6 +18,18 @@ class EditBlockCoder(Coder):
     edit_format = "diff"
     gpt_prompts = EditBlockPrompts()
 
+    # Define dividers in a configuration dictionary
+    edit_block_config = {
+        "search_divider": "<<<<<<< SEARCH",
+        "middle_divider": "=======",
+        "replace_divider": ">>>>>>> REPLACE"
+    }
+
+    def get_system_prompt_kwargs(self):
+        kwargs = super().get_system_prompt_kwargs()
+        kwargs.update(self.edit_block_config)
+        return kwargs
+
     def get_edits(self):
         content = self.partial_response_content
 
@@ -27,6 +39,7 @@ class EditBlockCoder(Coder):
                 content,
                 self.fence,
                 self.get_inchat_relative_files(),
+                **self.edit_block_config
             )
         )
 
@@ -72,9 +85,9 @@ class EditBlockCoder(Coder):
 
             res += f"""
 ## SearchReplaceNoExactMatch: This SEARCH block failed to exactly match lines in {path}
-<<<<<<< SEARCH
-{original}=======
-{updated}>>>>>>> REPLACE
+{self.edit_block_config['search_divider']}
+{original}{self.edit_block_config['middle_divider']}
+{updated}{self.edit_block_config['replace_divider']}
 
 """
             did_you_mean = find_similar_lines(original, content)
@@ -365,15 +378,11 @@ def do_replace(fname, content, before_text, after_text, fence=None):
     return new_content
 
 
-HEAD = r"^<{5,9} SEARCH\s*$"
-DIVIDER = r"^={5,9}\s*$"
-UPDATED = r"^>{5,9} REPLACE\s*$"
-
-HEAD_ERR = "<<<<<<< SEARCH"
-DIVIDER_ERR = "======="
-UPDATED_ERR = ">>>>>>> REPLACE"
-
-separators = "|".join([HEAD, DIVIDER, UPDATED])
+separators = "|".join([
+    re.escape(EditBlockCoder.edit_block_config['search_divider']),
+    re.escape(EditBlockCoder.edit_block_config['middle_divider']),
+    re.escape(EditBlockCoder.edit_block_config['replace_divider'])
+])
 
 split_re = re.compile(r"^((?:" + separators + r")[ ]*\n)", re.MULTILINE | re.DOTALL)
 
@@ -406,14 +415,14 @@ def strip_filename(filename, fence):
     return filename
 
 
-def find_original_update_blocks(content, fence=DEFAULT_FENCE, valid_fnames=None):
+def find_original_update_blocks(content, fence=DEFAULT_FENCE, valid_fnames=None, search_divider=None, middle_divider=None, replace_divider=None):
     lines = content.splitlines(keepends=True)
     i = 0
     current_filename = None
 
-    head_pattern = re.compile(HEAD)
-    divider_pattern = re.compile(DIVIDER)
-    updated_pattern = re.compile(UPDATED)
+    head_pattern = re.compile(re.escape(search_divider))
+    divider_pattern = re.compile(re.escape(middle_divider))
+    updated_pattern = re.compile(re.escape(replace_divider))
 
     while i < len(lines):
         line = lines[i]
@@ -471,7 +480,7 @@ def find_original_update_blocks(content, fence=DEFAULT_FENCE, valid_fnames=None)
                     i += 1
 
                 if i >= len(lines) or not divider_pattern.match(lines[i].strip()):
-                    raise ValueError(f"Expected `{DIVIDER_ERR}`")
+                    raise ValueError(f"Expected `{middle_divider}`")
 
                 updated_text = []
                 i += 1
@@ -486,7 +495,7 @@ def find_original_update_blocks(content, fence=DEFAULT_FENCE, valid_fnames=None)
                     updated_pattern.match(lines[i].strip())
                     or divider_pattern.match(lines[i].strip())
                 ):
-                    raise ValueError(f"Expected `{UPDATED_ERR}` or `{DIVIDER_ERR}`")
+                    raise ValueError(f"Expected `{replace_divider}` or `{middle_divider}`")
 
                 yield filename, "".join(original_text), "".join(updated_text)
 
@@ -600,7 +609,7 @@ def main():
 
     for msg in messages:
         msg = msg["content"]
-        edits = list(find_original_update_blocks(msg))
+        edits = list(find_original_update_blocks(msg, **EditBlockCoder.edit_block_config))
 
         for fname, before, after in edits:
             # Compute diff

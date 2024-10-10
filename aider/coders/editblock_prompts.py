@@ -70,17 +70,17 @@ Here are the *SEARCH/REPLACE* blocks:
 
 mathweb/flask/app.py
 {fence[0]}python
-<<<<<<< SEARCH
+{search_divider}
 from flask import Flask
-=======
+{middle_divider}
 import math
 from flask import Flask
->>>>>>> REPLACE
+{replace_divider}
 {fence[1]}
 
 mathweb/flask/app.py
 {fence[0]}python
-<<<<<<< SEARCH
+{search_divider}
 def factorial(n):
     "compute factorial"
 
@@ -89,17 +89,17 @@ def factorial(n):
     else:
         return n * factorial(n-1)
 
-=======
->>>>>>> REPLACE
+{middle_divider}
+{replace_divider}
 {fence[1]}
 
 mathweb/flask/app.py
 {fence[0]}python
-<<<<<<< SEARCH
+{search_divider}
     return str(factorial(n))
-=======
+{middle_divider}
     return str(math.factorial(n))
->>>>>>> REPLACE
+{replace_divider}
 {fence[1]}
 """,
         ),
@@ -118,25 +118,25 @@ Here are the *SEARCH/REPLACE* blocks:
 
 hello.py
 {fence[0]}python
-<<<<<<< SEARCH
-=======
+{search_divider}
+{middle_divider}
 def hello():
     "print a greeting"
 
     print("hello")
->>>>>>> REPLACE
+{replace_divider}
 {fence[1]}
 
 main.py
 {fence[0]}python
-<<<<<<< SEARCH
+{search_divider}
 def hello():
     "print a greeting"
 
     print("hello")
-=======
+{middle_divider}
 from hello import hello
->>>>>>> REPLACE
+{replace_divider}
 {fence[1]}
 """,
         ),
@@ -147,11 +147,11 @@ from hello import hello
 Every *SEARCH/REPLACE block* must use this format:
 1. The *FULL* file path alone on a line, verbatim. No bold asterisks, no quotes around it, no escaping of characters, etc.
 2. The opening fence and code language, eg: {fence[0]}python
-3. The start of search block: <<<<<<< SEARCH
+3. The start of search block: {search_divider}
 4. A contiguous chunk of lines to search for in the existing source code
-5. The dividing line: =======
+5. The dividing line: {middle_divider}
 6. The lines to replace into the source code
-7. The end of the replace block: >>>>>>> REPLACE
+7. The end of the replace block: {replace_divider}
 8. The closing fence: {fence[1]}
 
 Use the *FULL* file path, as shown to you by the user.
