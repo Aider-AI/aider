@@ -27,8 +27,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install cog
         pip install .
+        pip install cogapp==3.4.1
 
     - name: Check if website should have been generated
       run: |
