@@ -26,6 +26,13 @@ Install [pipx](https://pipx.pypa.io/stable/) then just do:
 pipx install aider-chat
 ```
 
+## pipx installation with AWS Bedrock provider
+The AWS Bedrock provider requires the `boto3` package in order to function correctly. To use aider installed via `pipx` with AWS Bedrock, you must add the `boto3` dependency to aider's virtual environment by running
+
+```
+pipx inject aider boto3
+```
+
 
 ## pipx on replit
 
