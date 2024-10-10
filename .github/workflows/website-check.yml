@@ -39,9 +39,10 @@ jobs:
         bash ./scripts/update-docs.sh
         
         # Compare the original and potentially updated website folders
-        if ! diff --recursive website_original aider/website > /dev/null; then
+        if ! diff --recursive website_original aider/website ; then
           echo "Error: Changes were detected in the website folder."
           echo "Please run ./scripts/update-docs.sh locally and commit the changes."
+          rm -rf website_original
           exit 1
         else
           echo "No changes were detected. Workflow passed."
