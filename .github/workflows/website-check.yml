@@ -1,0 +1,51 @@
+name: Website files check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install cog
+        pip install .
+
+    - name: Check if website should have been generated
+      run: |
+        # Create a copy of the original website folder
+        cp -a aider/website website_original
+        
+        # Run the update script
+        bash ./scripts/update-docs.sh
+        
+        # Compare the original and potentially updated website folders
+        if ! diff --recursive website_original aider/website > /dev/null; then
+          echo "Error: Changes were detected in the website folder."
+          echo "Please run ./scripts/update-docs.sh locally and commit the changes."
+          exit 1
+        else
+          echo "No changes were detected. Workflow passed."
+        fi
+        
+        # Clean up the temporary folder
+        rm -rf website_original
