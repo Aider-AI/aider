@@ -237,8 +237,8 @@ def get_parser(default_config_files, git_root):
         type=int,
         default=None,
         help=(
-            "Maximum number of tokens to use for chat history. If not specified, uses the model's"
-            " max_chat_history_tokens."
+            "Soft limit on tokens for chat history, after which summarization begins."
+            " If unspecified, defaults to the model's max_chat_history_tokens."
         ),
     )
     # This is a duplicate of the argument in the preparser and is a no-op by this time of
@@ -719,7 +719,6 @@ def get_md_help():
     parser.formatter_class = MarkdownHelpFormatter
 
     return argparse.ArgumentParser.format_help(parser)
-    return parser.format_help()
 
 
 def get_sample_yaml():
@@ -733,7 +732,6 @@ def get_sample_yaml():
     parser.formatter_class = YamlHelpFormatter
 
     return argparse.ArgumentParser.format_help(parser)
-    return parser.format_help()
 
 
 def get_sample_dotenv():
@@ -747,7 +745,6 @@ def get_sample_dotenv():
     parser.formatter_class = DotEnvFormatter
 
     return argparse.ArgumentParser.format_help(parser)
-    return parser.format_help()
 
 
 def main():

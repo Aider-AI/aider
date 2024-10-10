@@ -150,7 +150,7 @@ cog.outl("```")
 ## Only work with models that have meta-data available (default: True)
 #AIDER_SHOW_MODEL_WARNINGS=true
 
-## Maximum number of tokens to use for chat history. If not specified, uses the model's max_chat_history_tokens.
+## Soft limit on tokens for chat history, after which summarization begins. If unspecified, defaults to the model's max_chat_history_tokens.
 #AIDER_MAX_CHAT_HISTORY_TOKENS=
 
 ## Specify the .env file to load (default: .env in git root)

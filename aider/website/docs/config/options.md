@@ -223,7 +223,7 @@ Aliases:
   - `--no-show-model-warnings`
 
 ### `--max-chat-history-tokens VALUE`
-Maximum number of tokens to use for chat history. If not specified, uses the model's max_chat_history_tokens.  
+Soft limit on tokens for chat history, after which summarization begins. If unspecified, defaults to the model's max_chat_history_tokens.  
 Environment variable: `AIDER_MAX_CHAT_HISTORY_TOKENS`  
 
 ### `--env-file ENV_FILE`
