@@ -36,7 +36,7 @@ jobs:
         cp -a aider/website website_original
         
         # Run the update script
-        bash ./scripts/update-docs.sh
+        bash ./scripts/update-docs-workflow.sh
         
         # Compare the original and potentially updated website folders
         if ! diff --recursive --unified website_original aider/website ; then
