@@ -1,7 +1,7 @@
 
 Individual Contributor License Agreement
 
-Thank you for your interest in Aider AI, LLC ("Aider AI").
+Thank you for your interest in Aider AI LLC ("Aider AI").
 To clarify the intellectual property license
 granted with Contributions from any person or entity, Aider AI
 must have on file a signed Contributor License Agreement ("CLA")
