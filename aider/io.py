@@ -58,7 +58,7 @@ class AbbreviationMatcher:
         # Split on camelCase, snake_case, kebab-case, and PascalCase
         return re.findall(r'[A-Z]?[a-z]+|[A-Z]+(?=[A-Z][a-z]|\d|\W|$)|\d+', target)
 
-    def test(self, target):
+    def matches(self, target):
         target_parts = self._split_target(target)
         
         if len(self.input_parts) > len(target_parts):
@@ -162,7 +162,7 @@ class AutoCompleter(Completer):
             return
 
         abbrev_matcher = AbbreviationMatcher(partial)
-        candidates = [word for word in candidates if partial in word.lower() or abbrev_matcher.test(word)]
+        candidates = [word for word in candidates if partial in word.lower() or abbrev_matcher.matches(word)]
         for candidate in sorted(candidates):
             yield Completion(candidate, start_position=-len(words[-1]))
 
@@ -190,7 +190,7 @@ class AutoCompleter(Completer):
         completions = []
         abbrev_matcher = AbbreviationMatcher(last_word)
         for word_match, word_insert in candidates:
-            if word_match.lower().startswith(last_word.lower()) or abbrev_matcher.test(word_match):
+            if word_match.lower().startswith(last_word.lower()) or abbrev_matcher.matches(word_match):
                 completions.append((word_insert, -len(last_word), word_match))
 
                 rel_fnames = self.fname_to_rel_fnames.get(word_match, [])
