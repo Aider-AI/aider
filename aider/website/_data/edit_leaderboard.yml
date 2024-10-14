@@ -1545,7 +1545,7 @@
 
 - dirname: 2024-10-13-23-58-44--grok2mini-whole
   test_cases: 133
-  model: openrouter/x-ai/grok-2-mini
+  model: Grok-2-mini
   edit_format: whole
   commit_hash: 0a497b7-dirty, 0a497b7
   pass_rate_1: 40.6
