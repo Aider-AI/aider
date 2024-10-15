@@ -39,6 +39,14 @@ export AWS_PROFILE=your-profile
 You can add these to your 
 [.env file](/docs/config/dotenv.html).
 
+## Bedrock with `pipx` installation
+
+The AWS Bedrock provider requires the `boto3` package in order to function correctly. To use aider installed via `pipx` with AWS Bedrock, you must add the `boto3` dependency to aider's virtual environment by running
+
+```
+pipx inject aider boto3
+```
+
 
 ## Running Aider with Bedrock
 
