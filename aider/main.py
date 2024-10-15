@@ -22,6 +22,7 @@ from aider.llm import litellm  # noqa: F401; properly init litellm on launch
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.report import report_uncaught_exceptions
 from aider.versioncheck import check_version, install_from_main_branch, install_upgrade
+from aider.companion import Companion
 
 from .dump import dump  # noqa: F401
 
@@ -645,6 +646,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             )
         args.stream = False
 
+    companion = Companion(repo, io, args.companion_base_url, args.enable_companion)
+
     try:
         coder = Coder.create(
             main_model=main_model,
@@ -674,6 +677,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             num_cache_warming_pings=args.cache_keepalive_pings,
             suggest_shell_commands=args.suggest_shell_commands,
             chat_language=args.chat_language,
+            companion=companion,
         )
     except ValueError as err:
         io.tool_error(str(err))

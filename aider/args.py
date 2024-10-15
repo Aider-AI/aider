@@ -550,6 +550,21 @@ def get_parser(default_config_files, git_root):
     )
 
     ##########
+    group = parser.add_argument_group("Companion")
+    group.add_argument(
+        "--enable-companion",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable use of Aider Companion (default: False)",
+    )
+    group.add_argument(
+        "--companion-base-url",
+        metavar="COMPANION_BASE_URL",
+        default="http://localhost:24337",
+        help="Base URL for Aider Companion (default: http://localhost:24337)",
+    )
+
+    ##########
     group = parser.add_argument_group("Other Settings")
     group.add_argument(
         "--file",

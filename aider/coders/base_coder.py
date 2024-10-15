@@ -90,6 +90,7 @@ class Coder:
     suggest_shell_commands = True
     ignore_mentions = None
     chat_language = None
+    companion = None
 
     @classmethod
     def create(
@@ -263,6 +264,7 @@ class Coder:
         num_cache_warming_pings=0,
         suggest_shell_commands=True,
         chat_language=None,
+        companion=None,
     ):
         self.chat_language = chat_language
         self.commit_before_message = []
@@ -415,6 +417,8 @@ class Coder:
             if history_md:
                 self.done_messages = utils.split_chat_history_markdown(history_md)
                 self.summarize_start()
+
+        self.companion = companion
 
         # Linting and testing
         self.linter = Linter(root=self.root, encoding=io.encoding)
@@ -737,7 +741,8 @@ class Coder:
     def get_input(self):
         inchat_files = self.get_inchat_relative_files()
         read_only_files = [self.get_rel_fname(fname) for fname in self.abs_read_only_fnames]
-        all_files = sorted(set(inchat_files + read_only_files))
+        companion_files = self.companion.get_open_files()
+        all_files = sorted(set(inchat_files + read_only_files + companion_files))
         edit_format = "" if self.edit_format == self.main_model.edit_format else self.edit_format
         return self.io.get_input(
             self.root,
