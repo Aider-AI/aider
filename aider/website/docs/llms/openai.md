@@ -22,11 +22,17 @@ setx   OPENAI_API_KEY <key> # Windows, restart shell after setx
 # Aider uses gpt-4o by default (or use --4o)
 aider
 
-# GPT-4 Turbo (1106)
-aider --4-turbo
+# GPT-4o
+aider --4o
 
 # GPT-3.5 Turbo
 aider --35-turbo
+
+# o1-mini
+aider --model o1-mini
+
+# o1-preview
+aider --model o1-preview
 
 # List models available from OpenAI
 aider --list-models openai/

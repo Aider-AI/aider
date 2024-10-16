@@ -1519,3 +1519,72 @@
   versions: 0.59.2.dev
   seconds_per_case: 46.7
   total_cost: 0.0000
+
+- dirname: 2024-10-13-21-33-42--grok2-whole
+  test_cases: 133
+  model: Grok-2
+  edit_format: whole
+  commit_hash: 0a497b7
+  pass_rate_1: 45.9
+  pass_rate_2: 58.6
+  percent_cases_well_formed: 98.5
+  error_outputs: 7
+  num_malformed_responses: 7
+  num_with_malformed_responses: 2
+  user_asks: 24
+  lazy_comments: 4
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model openrouter/x-ai/grok-2
+  date: 2024-10-13
+  versions: 0.59.2.dev
+  seconds_per_case: 34.6
+  total_cost: 0.0000
+
+- dirname: 2024-10-13-23-58-44--grok2mini-whole
+  test_cases: 133
+  model: Grok-2-mini
+  edit_format: whole
+  commit_hash: 0a497b7-dirty, 0a497b7
+  pass_rate_1: 40.6
+  pass_rate_2: 54.9
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 8
+  lazy_comments: 2
+  syntax_errors: 2
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model openrouter/x-ai/grok-2-mini
+  date: 2024-10-13
+  versions: 0.59.2.dev
+  seconds_per_case: 32.1
+  total_cost: 0.0000
+
+- dirname: 2024-10-16-15-55-37--nemotron-glhf-whole3
+  test_cases: 133
+  model: Llama-3.1-Nemotron-70B-Instruct-HF
+  edit_format: whole
+  commit_hash: 6bb9b25-dirty
+  pass_rate_1: 36.8
+  pass_rate_2: 54.9
+  percent_cases_well_formed: 99.2
+  error_outputs: 17
+  num_malformed_responses: 1
+  num_with_malformed_responses: 1
+  user_asks: 53
+  lazy_comments: 17
+  syntax_errors: 1
+  indentation_errors: 2
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: (via glhf.chat)
+  date: 2024-10-16
+  versions: 0.59.2.dev
+  seconds_per_case: 64.9
+  total_cost: 0.0000

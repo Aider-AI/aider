@@ -212,3 +212,11 @@ This will give you a URL like this, which shows the chat history like you'd see 
 ```
 https://aider.chat/share/?mdurl=https://gist.github.com/Aider-AI/2087ab8b64034a078c0a209440ac8be0
 ```
+
+## What is Aider AI LLC?
+
+Aider AI LLC is the company behind the aider AI coding tool.
+Aider is 
+[open source and available on GitHub](https://github.com/Aider-AI/aider)
+under an 
+[Apache 2.0 license](https://github.com/Aider-AI/aider/blob/main/LICENSE.txt).

@@ -13,6 +13,8 @@ CACHE_PATH = "~/.aider.send.cache.v1"
 CACHE = None
 # CACHE = Cache(CACHE_PATH)
 
+RETRY_TIMEOUT = 60
+
 
 def retry_exceptions():
     import httpx
@@ -36,7 +38,7 @@ def lazy_litellm_retry_decorator(func):
         decorated_func = backoff.on_exception(
             backoff.expo,
             retry_exceptions(),
-            max_time=60,
+            max_time=RETRY_TIMEOUT,
             on_backoff=lambda details: print(
                 f"{details.get('exception', 'Exception')}\nRetry in {details['wait']:.1f} seconds."
             ),
