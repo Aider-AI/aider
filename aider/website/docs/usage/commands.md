@@ -14,6 +14,8 @@ cog.out(get_help_md())
 
 |Command|Description|
 |:------|:----------|
+| **/save**        | Save the list of currently loaded workspace files for later reuse                       |
+| **/load**        | Load file list from .aider.edit.md and .aider.readonly.md files (symmetric to `/save` ) |
 | **/add** | Add files to the chat so aider can edit them or review them in detail |
 | **/architect** | Enter architect mode to discuss high-level design and architecture |
 | **/ask** | Ask questions about the code base without editing any files |
