@@ -703,6 +703,7 @@ class Coder:
 
     def run_stream(self, user_message):
         self.io.user_input(user_message)
+        self.io.append_chat_history(user_message, role="user")
         self.init_before_message()
         yield from self.send_message(user_message)
 
@@ -1436,11 +1437,13 @@ class Coder:
 
             if self.partial_response_content:
                 self.io.ai_output(self.partial_response_content)
+                self.io.append_chat_history(self.partial_response_content, role="assistant")
             elif self.partial_response_function_call:
-                # TODO: push this into subclasses
                 args = self.parse_partial_args()
                 if args:
-                    self.io.ai_output(json.dumps(args, indent=4))
+                    content = json.dumps(args, indent=4)
+                    self.io.ai_output(content)
+                    self.io.append_chat_history(content, role="assistant")
 
             self.calculate_and_show_tokens_and_cost(messages, completion)
 

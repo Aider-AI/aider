@@ -1,3 +1,5 @@
+*.db
+env/
 .DS_Store
 .vscode/
 aider.code-workspace
