@@ -23,9 +23,6 @@ class Companion:
 
     def set_enabled(self, enabled):
         self.enabled = enabled
-        status = "enabled" if enabled else "disabled"
-        if self.io:
-            self.io.tool_output(f"Companion functionality is now {status}.")
 
     def get_open_files(self):
         if not self.enabled:
