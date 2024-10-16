@@ -1565,3 +1565,26 @@
   versions: 0.59.2.dev
   seconds_per_case: 32.1
   total_cost: 0.0000
+
+- dirname: 2024-10-16-15-55-37--nemotron-glhf-whole3
+  test_cases: 133
+  model: Llama-3.1-Nemotron-70B-Instruct-HF
+  edit_format: whole
+  commit_hash: 6bb9b25-dirty
+  pass_rate_1: 36.8
+  pass_rate_2: 54.9
+  percent_cases_well_formed: 99.2
+  error_outputs: 17
+  num_malformed_responses: 1
+  num_with_malformed_responses: 1
+  user_asks: 53
+  lazy_comments: 17
+  syntax_errors: 1
+  indentation_errors: 2
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: (via glhf.chat)
+  date: 2024-10-16
+  versions: 0.59.2.dev
+  seconds_per_case: 64.9
+  total_cost: 0.0000
