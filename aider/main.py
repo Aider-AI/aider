@@ -644,8 +644,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             )
         args.stream = False
 
+    companion = None
     if git_dname:
         companion = Companion(git_dname, io, args.companion_base_url, args.enable_companion)
+    elif args.enable_companion:
+        io.tool_warning("Companion functionality is not enabled. Make sure you are running aider in/with git repo.")
 
     try:
         coder = Coder.create(

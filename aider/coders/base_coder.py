@@ -29,9 +29,8 @@ from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
 from aider.sendchat import retry_exceptions, send_completion
 from aider.utils import format_content, format_messages, format_tokens, is_image_file
-
-from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
+from ..dump import dump  # noqa: F401
 
 
 class MissingAPIKeyError(ValueError):
@@ -741,7 +740,7 @@ class Coder:
     def get_input(self):
         inchat_files = self.get_inchat_relative_files()
         read_only_files = [self.get_rel_fname(fname) for fname in self.abs_read_only_fnames]
-        companion_files = self.companion.get_open_files()
+        companion_files = self.companion.get_open_files() if self.companion else []
         all_files = sorted(set(inchat_files + read_only_files + companion_files))
         edit_format = "" if self.edit_format == self.main_model.edit_format else self.edit_format
         return self.io.get_input(
