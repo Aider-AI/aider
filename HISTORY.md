@@ -1,3 +1,4 @@
+- Define edit block dividers as class attributes to enable easier experimentation.
 
 # Release history
 
