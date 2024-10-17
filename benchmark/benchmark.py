@@ -14,6 +14,7 @@ from json.decoder import JSONDecodeError
 from pathlib import Path
 from types import SimpleNamespace
 from typing import List, Optional
+from contextlib import contextmanager
 
 import git
 import lox
@@ -595,18 +596,19 @@ def run_test_real(
     show_fnames = ",".join(map(str, fnames))
     print("fnames:", show_fnames)
 
-    coder = Coder.create(
-        main_model,
-        edit_format,
-        io,
-        fnames=fnames,
-        use_git=False,
-        stream=False,
-        verbose=verbose,
-        # auto_lint=False,  # disabled for code-in-json experiments
-        cache_prompts=True,
-        suggest_shell_commands=False,
-    )
+    with change_dir(testdir):
+        coder = Coder.create(
+            main_model,
+            edit_format,
+            io,
+            fnames=fnames,
+            use_git=False,
+            stream=False,
+            verbose=verbose,
+            # auto_lint=False,  # disabled for code-in-json experiments
+            cache_prompts=True,
+            suggest_shell_commands=False,
+        )
     coder.max_apply_update_errors = max_apply_update_errors
     coder.show_announcements()
 
@@ -770,6 +772,14 @@ def cleanup_test_output(output, testdir):
     res = res.replace(str(testdir), str(testdir.name))
     return res
 
+@contextmanager
+def change_dir(new_dir):
+    old_dir = os.getcwd()
+    try:
+        os.chdir(new_dir)
+        yield
+    finally:
+        os.chdir(old_dir)
 
 if __name__ == "__main__":
     app()
