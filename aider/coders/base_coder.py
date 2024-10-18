@@ -90,6 +90,7 @@ class Coder:
     ignore_mentions = None
     chat_language = None
     companion = None
+    companion_files = None
 
     @classmethod
     def create(
@@ -265,6 +266,7 @@ class Coder:
         chat_language=None,
         companion=None,
     ):
+
         self.chat_language = chat_language
         self.commit_before_message = []
         self.aider_commit_hashes = set()
@@ -418,6 +420,9 @@ class Coder:
                 self.summarize_start()
 
         self.companion = companion
+        self.companion_files = set()
+
+        self.update_inchat_files()
 
         # Linting and testing
         self.linter = Linter(root=self.root, encoding=io.encoding)
@@ -729,6 +734,7 @@ class Coder:
 
             while True:
                 try:
+                    self.update_inchat_files()
                     user_message = self.get_input()
                     self.run_one(user_message, preproc)
                     self.show_undo_hint()
@@ -737,11 +743,24 @@ class Coder:
         except EOFError:
             return
 
+    def update_inchat_files(self):
+        if self.companion:
+            companion_files = self.companion.get_open_files()
+
+            to_add = set(companion_files) - self.companion_files
+            for companion_file in to_add:
+                self.add_rel_fname(companion_file)
+
+            to_remove = self.companion_files - set(companion_files)
+            for companion_file in to_remove:
+                self.drop_rel_fname(companion_file)
+
+            self.companion_files = set(companion_files)
+
     def get_input(self):
         inchat_files = self.get_inchat_relative_files()
         read_only_files = [self.get_rel_fname(fname) for fname in self.abs_read_only_fnames]
-        companion_files = self.companion.get_open_files() if self.companion else []
-        all_files = sorted(set(inchat_files + read_only_files + companion_files))
+        all_files = sorted(set(inchat_files + read_only_files))
         edit_format = "" if self.edit_format == self.main_model.edit_format else self.edit_format
         return self.io.get_input(
             self.root,

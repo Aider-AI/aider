@@ -1,3 +1,4 @@
+import os
 import requests
 
 from aider.io import InputOutput
@@ -24,7 +25,7 @@ class Companion:
     def set_enabled(self, enabled):
         self.enabled = enabled
 
-    def get_open_files(self):
+    def get_open_files(self, use_absolute_paths=False):
         if not self.enabled:
             return []
 
@@ -33,7 +34,10 @@ class Companion:
             response = requests.post(url, json={"projectBase": self.base_dir.replace("\\", "/")})
 
             if response.status_code == 200:
-                return response.json()
+                files = response.json()
+                if use_absolute_paths:
+                    files = [os.path.abspath(os.path.join(self.base_dir, file)) for file in files]
+                return files
             else:
                 if self.io:
                     self.io.tool_error(f"Error: {response.status_code} - {response.text}")
