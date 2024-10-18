@@ -597,6 +597,13 @@ MODEL_SETTINGS = [
         use_temperature=False,
         streaming=False,
     ),
+    # Julia
+    ModelSettings(
+        "julia",
+        "diff",
+        use_repo_map=True,
+        reminder="sys",
+    ),
 ]
 
 
