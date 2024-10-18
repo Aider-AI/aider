@@ -705,6 +705,15 @@ def get_parser(default_config_files, git_root):
         help="Specify the language for voice using ISO 639-1 code (default: auto)",
     )
 
+    ##########
+    group = parser.add_argument_group("Julia Linting")
+    group.add_argument(
+        "--julia-lint",
+        action="store_true",
+        help="Enable linting for Julia files",
+        default=False,
+    )
+
     return parser
 
 

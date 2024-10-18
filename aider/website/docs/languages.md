@@ -80,7 +80,7 @@ cog.out(get_supported_languages_md())
 | javascript           | .mjs                 |    ✓     |   ✓    |
 | jsdoc                | .jsdoc               |          |   ✓    |
 | json                 | .json                |          |   ✓    |
-| julia                | .jl                  |          |   ✓    |
+| julia                | .jl                  |    ✓     |   ✓    |
 | kotlin               | .kt                  |          |   ✓    |
 | lua                  | .lua                 |          |   ✓    |
 | make                 | .mk                  |          |   ✓    |

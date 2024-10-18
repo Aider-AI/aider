@@ -101,6 +101,9 @@ the ones which are most often referenced by other portions of the code.
 These are the key pieces of context that the LLM needs to know to understand
 the overall codebase.
 
+## Julia Language Support
+
+Aider now supports repo-mapping for the Julia language. The `tree-sitter-julia-tags.scm` file is used to generate the repo map for Julia projects. This allows the LLM to understand and navigate Julia codebases effectively.
 
 ## More info
 
