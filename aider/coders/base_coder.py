@@ -805,8 +805,14 @@ class Coder:
 
         thresh = 2  # seconds
         if self.last_keyboard_interrupt and now - self.last_keyboard_interrupt < thresh:
-            self.io.tool_warning("\n\n^C KeyboardInterrupt")
-            sys.exit()
+            response = self.io.prompt_ask("Do you want to exit? [y/n] [No]:").strip()
+            if response.lower() in ["yes", "y"]:
+                #Warn the user 
+                self.io.tool_warning("Exiting the current session. Don't worry—your session history will be restored the next time you launch Aider.")
+                sys.exit()
+            else:
+                #reset the last interrupt 
+                self.last_keyboard_interrupt = None
 
         self.io.tool_warning("\n\n^C again to exit")
 
