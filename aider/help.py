@@ -40,26 +40,42 @@ def get_package_files():
 
 
 def fname_to_url(filepath):
-    website = "website/"
-    index = "/index.md"
+    website = "website"
+    index = "index.md"
     md = ".md"
 
-    dump(filepath)
+    # Convert to Path object for easier manipulation
+    path = Path(filepath)
 
-    docid = ""
-    if filepath.startswith("website/_includes/"):
-        pass
-    elif filepath.startswith(website):
-        docid = filepath[len(website) :]
+    # Split the path into parts
+    parts = path.parts
 
-        if filepath.endswith(index):
-            filepath = filepath[: -len(index)] + "/"
-        elif filepath.endswith(md):
-            filepath = filepath[: -len(md)] + ".html"
+    # Find the 'website' part in the path
+    try:
+        website_index = parts.index(website)
+    except ValueError:
+        return ""  # 'website' not found in the path
 
-        docid = "https://aider.chat/" + filepath
+    # Extract the part of the path starting from 'website'
+    relevant_parts = parts[website_index + 1:]
 
-    return docid
+    # Handle _includes directory
+    if relevant_parts and relevant_parts[0] == "_includes":
+        return ""
+
+    # Join the remaining parts
+    url_path = '/'.join(relevant_parts)
+
+    # Handle index.md and other .md files
+    if url_path.endswith(index):
+        url_path = url_path[:-len(index)]
+    elif url_path.endswith(md):
+        url_path = url_path[:-len(md)] + ".html"
+
+    # Ensure the URL starts and ends with '/'
+    url_path = url_path.strip('/')
+    
+    return f"https://aider.chat/{url_path}"
 
 
 def get_index():
