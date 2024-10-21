@@ -45,7 +45,7 @@ def fname_to_url(filepath):
     md = ".md"
 
     # Convert backslashes to forward slashes for consistency
-    filepath = filepath.replace('\\', '/')
+    filepath = filepath.replace("\\", "/")
 
     # Convert to Path object for easier manipulation
     path = Path(filepath)
@@ -60,24 +60,24 @@ def fname_to_url(filepath):
         return ""  # 'website' not found in the path
 
     # Extract the part of the path starting from 'website'
-    relevant_parts = parts[website_index + 1:]
+    relevant_parts = parts[website_index + 1 :]
 
     # Handle _includes directory
     if relevant_parts and relevant_parts[0].lower() == "_includes":
         return ""
 
     # Join the remaining parts
-    url_path = '/'.join(relevant_parts)
+    url_path = "/".join(relevant_parts)
 
     # Handle index.md and other .md files
     if url_path.lower().endswith(index.lower()):
-        url_path = url_path[:-len(index)]
+        url_path = url_path[: -len(index)]
     elif url_path.lower().endswith(md.lower()):
-        url_path = url_path[:-len(md)] + ".html"
+        url_path = url_path[: -len(md)] + ".html"
 
     # Ensure the URL starts and ends with '/'
-    url_path = url_path.strip('/')
-    
+    url_path = url_path.strip("/")
+
     return f"https://aider.chat/{url_path}"
 
 
