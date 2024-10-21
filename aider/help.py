@@ -44,6 +44,8 @@ def fname_to_url(filepath):
     index = "/index.md"
     md = ".md"
 
+    dump(filepath)
+
     docid = ""
     if filepath.startswith("website/_includes/"):
         pass
@@ -131,6 +133,7 @@ class Help:
 """  # noqa: E231
 
         for node in nodes:
+            dump(node.metadata)
             url = node.metadata.get("url", "")
             if url:
                 url = f' from_url="{url}"'
