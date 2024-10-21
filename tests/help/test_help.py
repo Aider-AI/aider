@@ -56,7 +56,7 @@ class TestHelp(unittest.TestCase):
 
     def test_fname_to_url_unix(self):
         # Test relative Unix-style paths
-        self.assertEqual(fname_to_url("website/docs/index.md"), "https://aider.chat/docs/")
+        self.assertEqual(fname_to_url("website/docs/index.md"), "https://aider.chat/docs")
         self.assertEqual(
             fname_to_url("website/docs/usage.md"), "https://aider.chat/docs/usage.html"
         )
@@ -64,7 +64,7 @@ class TestHelp(unittest.TestCase):
 
         # Test absolute Unix-style paths
         self.assertEqual(
-            fname_to_url("/home/user/project/website/docs/index.md"), "https://aider.chat/docs/"
+            fname_to_url("/home/user/project/website/docs/index.md"), "https://aider.chat/docs"
         )
         self.assertEqual(
             fname_to_url("/home/user/project/website/docs/usage.md"),
@@ -74,7 +74,7 @@ class TestHelp(unittest.TestCase):
 
     def test_fname_to_url_windows(self):
         # Test relative Windows-style paths
-        self.assertEqual(fname_to_url(r"website\docs\index.md"), "https://aider.chat/docs/")
+        self.assertEqual(fname_to_url(r"website\docs\index.md"), "https://aider.chat/docs")
         self.assertEqual(
             fname_to_url(r"website\docs\usage.md"), "https://aider.chat/docs/usage.html"
         )
@@ -82,7 +82,7 @@ class TestHelp(unittest.TestCase):
 
         # Test absolute Windows-style paths
         self.assertEqual(
-            fname_to_url(r"C:\Users\user\project\website\docs\index.md"), "https://aider.chat/docs/"
+            fname_to_url(r"C:\Users\user\project\website\docs\index.md"), "https://aider.chat/docs"
         )
         self.assertEqual(
             fname_to_url(r"C:\Users\user\project\website\docs\usage.md"),
