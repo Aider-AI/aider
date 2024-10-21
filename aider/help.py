@@ -152,7 +152,6 @@ class Help:
 """  # noqa: E231
 
         for node in nodes:
-            dump(node.metadata)
             url = node.metadata.get("url", "")
             if url:
                 url = f' from_url="{url}"'
