@@ -2766,3 +2766,56 @@
     Paul Gauthier (aider): 172
   start_tag: v0.58.0
   total_lines: 224
+- aider_percentage: 49.12
+  aider_total: 140
+  end_date: '2024-10-22'
+  end_tag: v0.60.0
+  file_counts:
+    .github/workflows/close-stale.yml:
+      Paul Gauthier: 5
+      Paul Gauthier (aider): 19
+    .github/workflows/pages.yml:
+      Paul Gauthier: 3
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/args.py:
+      Paul Gauthier: 1
+      fry69: 2
+    aider/coders/base_coder.py:
+      Paul Gauthier: 2
+    aider/coders/editblock_coder.py:
+      Paul Gauthier (aider): 3
+    aider/commands.py:
+      Paul Gauthier: 1
+    aider/help.py:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 33
+    aider/io.py:
+      Jonathan Ellis: 10
+      Paul Gauthier: 7
+    aider/main.py:
+      Paul Gauthier: 20
+      Paul Gauthier (aider): 39
+    aider/models.py:
+      Paul Gauthier: 18
+      Sven Grunewaldt: 24
+      fry69: 16
+    aider/resources/__init__.py:
+      Paul Gauthier: 3
+    aider/sendchat.py:
+      Paul Gauthier: 3
+    tests/basic/test_editblock.py:
+      Paul Gauthier: 23
+    tests/basic/test_main.py:
+      Paul Gauthier: 1
+    tests/help/test_help.py:
+      Paul Gauthier: 4
+      Paul Gauthier (aider): 46
+  grand_total:
+    Jonathan Ellis: 10
+    Paul Gauthier: 93
+    Paul Gauthier (aider): 140
+    Sven Grunewaldt: 24
+    fry69: 18
+  start_tag: v0.59.0
+  total_lines: 285

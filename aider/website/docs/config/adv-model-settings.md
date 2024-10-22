@@ -498,6 +498,46 @@ cog.out("```\n")
 - accepts_images: false
   cache_control: true
   caches_by_default: false
+  edit_format: diff
+  editor_edit_format: editor-diff
+  editor_model_name: anthropic/claude-3-5-sonnet-20241022
+  examples_as_sys_msg: true
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31
+    max_tokens: 8192
+  lazy: false
+  name: anthropic/claude-3-5-sonnet-20241022
+  reminder: user
+  send_undo_reply: false
+  streaming: true
+  use_repo_map: true
+  use_system_prompt: true
+  use_temperature: true
+  weak_model_name: claude-3-haiku-20240307
+- accepts_images: false
+  cache_control: true
+  caches_by_default: false
+  edit_format: diff
+  editor_edit_format: editor-diff
+  editor_model_name: claude-3-5-sonnet-20241022
+  examples_as_sys_msg: true
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31
+    max_tokens: 8192
+  lazy: false
+  name: claude-3-5-sonnet-20241022
+  reminder: user
+  send_undo_reply: false
+  streaming: true
+  use_repo_map: true
+  use_system_prompt: true
+  use_temperature: true
+  weak_model_name: claude-3-haiku-20240307
+- accepts_images: false
+  cache_control: true
+  caches_by_default: false
   edit_format: whole
   editor_edit_format: null
   editor_model_name: null
@@ -580,6 +620,24 @@ cog.out("```\n")
     max_tokens: 8192
   lazy: false
   name: vertex_ai/claude-3-5-sonnet@20240620
+  reminder: user
+  send_undo_reply: false
+  streaming: true
+  use_repo_map: true
+  use_system_prompt: true
+  use_temperature: true
+  weak_model_name: vertex_ai/claude-3-haiku@20240307
+- accepts_images: true
+  cache_control: false
+  caches_by_default: false
+  edit_format: diff
+  editor_edit_format: editor-diff
+  editor_model_name: vertex_ai/claude-3-5-sonnet-v2@20241022
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 8192
+  lazy: false
+  name: vertex_ai/claude-3-5-sonnet-v2@20241022
   reminder: user
   send_undo_reply: false
   streaming: true

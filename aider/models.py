@@ -56,6 +56,7 @@ claude-3-haiku-20240307
 claude-3-opus-20240229
 claude-3-sonnet-20240229
 claude-3-5-sonnet-20240620
+claude-3-5-sonnet-20241022
 """
 
 ANTHROPIC_MODELS = [ln.strip() for ln in ANTHROPIC_MODELS.splitlines() if ln.strip()]
@@ -293,6 +294,40 @@ MODEL_SETTINGS = [
         reminder="user",
     ),
     ModelSettings(
+        "anthropic/claude-3-5-sonnet-20241022",
+        "diff",
+        weak_model_name="claude-3-haiku-20240307",
+        editor_model_name="anthropic/claude-3-5-sonnet-20241022",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        examples_as_sys_msg=True,
+        extra_params={
+            "extra_headers": {
+                "anthropic-beta": ANTHROPIC_BETA_HEADER,
+            },
+            "max_tokens": 8192,
+        },
+        cache_control=True,
+        reminder="user",
+    ),
+    ModelSettings(
+        "claude-3-5-sonnet-20241022",
+        "diff",
+        weak_model_name="claude-3-haiku-20240307",
+        editor_model_name="claude-3-5-sonnet-20241022",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        examples_as_sys_msg=True,
+        extra_params={
+            "extra_headers": {
+                "anthropic-beta": ANTHROPIC_BETA_HEADER,
+            },
+            "max_tokens": 8192,
+        },
+        cache_control=True,
+        reminder="user",
+    ),
+    ModelSettings(
         "anthropic/claude-3-haiku-20240307",
         "whole",
         weak_model_name="anthropic/claude-3-haiku-20240307",
@@ -353,6 +388,20 @@ MODEL_SETTINGS = [
         "diff",
         weak_model_name="vertex_ai/claude-3-haiku@20240307",
         editor_model_name="vertex_ai/claude-3-5-sonnet@20240620",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        examples_as_sys_msg=True,
+        accepts_images=True,
+        extra_params={
+            "max_tokens": 8192,
+        },
+        reminder="user",
+    ),
+    ModelSettings(
+        "vertex_ai/claude-3-5-sonnet-v2@20241022",
+        "diff",
+        weak_model_name="vertex_ai/claude-3-haiku@20240307",
+        editor_model_name="vertex_ai/claude-3-5-sonnet-v2@20241022",
         editor_edit_format="editor-diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
