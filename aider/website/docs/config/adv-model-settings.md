@@ -507,7 +507,7 @@ cog.out("```\n")
       anthropic-beta: prompt-caching-2024-07-31
     max_tokens: 8192
   lazy: false
-  name: anthropic/claude-3-5-sonnet-20241122
+  name: anthropic/claude-3-5-sonnet-20241022
   reminder: user
   send_undo_reply: false
   streaming: true
