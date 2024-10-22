@@ -294,7 +294,7 @@ MODEL_SETTINGS = [
         reminder="user",
     ),
     ModelSettings(
-        "anthropic/claude-3-5-sonnet-20241122",
+        "anthropic/claude-3-5-sonnet-20241022",
         "diff",
         weak_model_name="claude-3-haiku-20240307",
         editor_model_name="anthropic/claude-3-5-sonnet-20240620",
