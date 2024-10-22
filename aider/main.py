@@ -575,7 +575,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if not args.model:
         args.model = "gpt-4o-2024-08-06"
         if os.environ.get("ANTHROPIC_API_KEY"):
-            args.model = "claude-3-5-sonnet-20240620"
+            args.model = "anthropic/claude-3-5-sonnet-20241022"
 
     main_model = models.Model(
         args.model,
