@@ -20,7 +20,7 @@
   total_cost: 0.0000
 - dirname: 2024-10-22-05-21-41--gemini-1.5-flash-refactoring-whole
   test_cases: 89
-  model: gemini/gemini-1.5-flash-latest
+  model: gemini/gemini-1.5-flash-002
   edit_format: whole
   commit_hash: feb1c38
   pass_rate_1: 41.6
@@ -37,7 +37,7 @@
   indentation_errors: 20
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model gemini/gemini-1.5-flash-latest
+  command: aider --model gemini/gemini-1.5-flash-002
   date: 2024-10-22
   versions: 0.59.2.dev
   seconds_per_case: 231.1
