@@ -1591,7 +1591,7 @@
 
 - dirname: 2024-10-22-17-45-28--sonnet-1022-diff-fixed-model-settings
   test_cases: 133
-  model: anthropic/claude-3-5-sonnet-20241022
+  model: claude-3-5-sonnet-20241022
   edit_format: diff
   commit_hash: 3b14eb9
   pass_rate_1: 69.2
