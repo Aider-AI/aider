@@ -398,6 +398,20 @@ MODEL_SETTINGS = [
         reminder="user",
     ),
     ModelSettings(
+        "vertex_ai/claude-3-5-sonnet-v2@20241022",
+        "diff",
+        weak_model_name="vertex_ai/claude-3-haiku@20240307",
+        editor_model_name="vertex_ai/claude-3-5-sonnet-v2@20241022",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        examples_as_sys_msg=True,
+        accepts_images=True,
+        extra_params={
+            "max_tokens": 8192,
+        },
+        reminder="user",
+    ),
+    ModelSettings(
         "vertex_ai/claude-3-opus@20240229",
         "diff",
         weak_model_name="vertex_ai/claude-3-haiku@20240307",
