@@ -56,6 +56,7 @@ claude-3-haiku-20240307
 claude-3-opus-20240229
 claude-3-sonnet-20240229
 claude-3-5-sonnet-20240620
+claude-3-5-sonnet-latest
 """
 
 ANTHROPIC_MODELS = [ln.strip() for ln in ANTHROPIC_MODELS.splitlines() if ln.strip()]
