@@ -7,7 +7,7 @@
   - Aider uses Sonnet 10/22 by default.
 - Improved formatting of added and read-only files above chat prompt, by @jbellis.
 - Improved support for o1 models by more flexibly parsing their nonconforming code edit replies.
-- Corrected diff edit format prompt that one the first match is replaced.
+- Corrected diff edit format prompt that only the first match is replaced.
 - Stronger whole edit format prompt asking for clean file names.
 - Now offers to add `.env` to the `.gitignore` file.
 - Ships with a small model metadata json file to handle models not yet updated in litellm.
