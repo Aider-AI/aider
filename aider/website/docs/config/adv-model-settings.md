@@ -500,7 +500,7 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   editor_edit_format: editor-diff
-  editor_model_name: anthropic/claude-3-5-sonnet-20240620
+  editor_model_name: anthropic/claude-3-5-sonnet-20241022
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
