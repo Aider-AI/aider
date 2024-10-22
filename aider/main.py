@@ -8,6 +8,7 @@ import traceback
 from pathlib import Path
 
 import git
+import importlib_resources
 from dotenv import load_dotenv
 from prompt_toolkit.enums import EditingMode
 
@@ -320,6 +321,10 @@ def register_litellm_models(git_root, model_metadata_fname, io, verbose=False):
     model_metatdata_files = generate_search_path_list(
         ".aider.model.metadata.json", git_root, model_metadata_fname
     )
+
+    # Add the resource file path
+    resource_metadata = importlib_resources.files("aider.resources").joinpath("model-metadata.json")
+    model_metatdata_files.append(str(resource_metadata))
 
     try:
         model_metadata_files_loaded = models.register_litellm_models(model_metatdata_files)
