@@ -145,7 +145,7 @@
 
 - dirname: 2024-07-01-18-30-33--refac-claude-3.5-sonnet-diff-not-lazy
   test_cases: 89
-  model: claude-3.5-sonnet (diff)
+  model: claude-3.5-sonnet-20240620
   edit_format: diff
   commit_hash: 7396e38-dirty
   pass_rate_1: 64.0
@@ -230,3 +230,69 @@
   versions: 0.55.1.dev
   seconds_per_case: 225.4
   total_cost: 1.0338
+
+- dirname: 2024-10-22-19-57-27--refac-openrouter-sonnet-1022
+  test_cases: 89
+  model: claude-3-5-sonnet-20241022
+  edit_format: diff
+  commit_hash: 4a3e6ef
+  pass_rate_1: 92.1
+  percent_cases_well_formed: 91.0
+  error_outputs: 13
+  num_malformed_responses: 12
+  num_with_malformed_responses: 8
+  user_asks: 14
+  lazy_comments: 2
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --sonnet
+  date: 2024-10-22
+  versions: 0.60.1.dev
+  seconds_per_case: 32.5
+  total_cost: 8.4644
+
+- dirname: 2024-10-22-20-03-10--refac-o1mini
+  test_cases: 89
+  model: o1-mini
+  edit_format: diff
+  commit_hash: 4a3e6ef-dirty
+  pass_rate_1: 44.9
+  percent_cases_well_formed: 29.2
+  error_outputs: 151
+  num_malformed_responses: 150
+  num_with_malformed_responses: 63
+  user_asks: 28
+  lazy_comments: 2
+  syntax_errors: 5
+  indentation_errors: 4
+  exhausted_context_windows: 1
+  test_timeouts: 0
+  command: aider --model o1-mini
+  date: 2024-10-22
+  versions: 0.60.1.dev
+  seconds_per_case: 115.3
+  total_cost: 29.0492
+
+- dirname: 2024-10-22-20-26-36--refac-o1preview
+  test_cases: 89
+  model: o1-preview
+  edit_format: diff
+  commit_hash: 4a3e6ef-dirty
+  pass_rate_1: 75.3
+  percent_cases_well_formed: 57.3
+  error_outputs: 75
+  num_malformed_responses: 74
+  num_with_malformed_responses: 38
+  user_asks: 19
+  lazy_comments: 2
+  syntax_errors: 2
+  indentation_errors: 3
+  exhausted_context_windows: 1
+  test_timeouts: 0
+  command: aider --model o1-preview
+  date: 2024-10-22
+  versions: 0.60.1.dev
+  seconds_per_case: 231.7
+  total_cost: 120.9850
