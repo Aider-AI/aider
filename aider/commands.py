@@ -1170,7 +1170,7 @@ class Commands:
         # First collect all expanded paths
         for pattern in filenames:
             expanded_pattern = expanduser(pattern)
-            expanded_paths = glob.glob(expanded_pattern, recursive=True)
+            expanded_paths = glob.glob(expanded_pattern, recursive=True, root_dir=self.coder.root)
             if not expanded_paths:
                 self.io.tool_error(f"No matches found for: {pattern}")
             else:
