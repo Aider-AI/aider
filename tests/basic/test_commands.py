@@ -1021,6 +1021,43 @@ class TestCommands(TestCase):
                 )
             )
 
+    def test_cmd_read_only_from_working_dir(self):
+        with GitTemporaryDirectory() as repo_dir:
+            io = InputOutput(pretty=False, yes=False)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Create a subdirectory and a test file within it
+            subdir = Path(repo_dir) / "subdir"
+            subdir.mkdir()
+            test_file = subdir / "test_read_only_file.txt"
+            test_file.write_text("Test content")
+
+            # Change the current working directory to the subdirectory
+            os.chdir(subdir)
+
+            # Test the /read-only command using git_root referenced name
+            commands.cmd_read_only("subdir/test_read_only_file.txt")
+
+            # Check if the file was added to abs_read_only_fnames
+            self.assertTrue(
+                any(
+                    os.path.samefile(str(test_file.resolve()), fname)
+                    for fname in coder.abs_read_only_fnames
+                )
+            )
+
+            # Test dropping the read-only file using git_root referenced name
+            commands.cmd_drop("subdir/test_read_only_file.txt")
+
+            # Check if the file was removed from abs_read_only_fnames
+            self.assertFalse(
+                any(
+                    os.path.samefile(str(test_file.resolve()), fname)
+                    for fname in coder.abs_read_only_fnames
+                )
+            )
+
     def test_cmd_read_only_with_external_file(self):
         with tempfile.NamedTemporaryFile(mode="w", delete=False) as external_file:
             external_file.write("External file content")
