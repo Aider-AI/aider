@@ -19,6 +19,25 @@ cog.out(text)
 
 
 
+### v0.60.0
+
+- Full support for Sonnet 10/22, the new SOTA model on aider's code editing benchmark.
+  - Aider uses Sonnet 10/22 by default.
+- Improved formatting of added and read-only files above chat prompt, by @jbellis.
+- Improved support for o1 models by more flexibly parsing their nonconforming code edit replies.
+- Corrected diff edit format prompt that only the first match is replaced.
+- Stronger whole edit format prompt asking for clean file names.
+- Now offers to add `.env` to the `.gitignore` file.
+- Ships with a small model metadata json file to handle models not yet updated in litellm.
+- Model settings for o1 models on azure.
+- Bugfix to properly include URLs in `/help` RAG results.
+- Aider wrote 49% of the code in this release.
+
+### v0.59.1
+
+- Check for obsolete `yes: true` in yaml config, show helpful error.
+- Model settings for openrouter/anthropic/claude-3.5-sonnet:beta
+
 ### v0.59.0
 
 - Improvements to `/read-only`:

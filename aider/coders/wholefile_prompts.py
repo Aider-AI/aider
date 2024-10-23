@@ -52,7 +52,7 @@ path/to/filename.js
 {fence[1]}
 
 Every *file listing* MUST use this format:
-- First line: the filename with any originally provided path
+- First line: the filename with any originally provided path; no extra markup, punctuation, comments, etc. **JUST** the filename with path.
 - Second line: opening {fence[0]}
 - ... entire content of the file ...
 - Final line: closing {fence[1]}

@@ -296,6 +296,28 @@ These changes replace the `subprocess.run` patches with `subprocess.check_output
         result = eb.replace_most_similar_chunk(whole, part, replace)
         self.assertEqual(result, expected_output)
 
+    def test_replace_multiple_matches(self):
+        "only replace first occurrence"
+
+        whole = "line1\nline2\nline1\nline3\n"
+        part = "line1\n"
+        replace = "new_line\n"
+        expected_output = "new_line\nline2\nline1\nline3\n"
+
+        result = eb.replace_most_similar_chunk(whole, part, replace)
+        self.assertEqual(result, expected_output)
+
+    def test_replace_multiple_matches_missing_whitespace(self):
+        "only replace first occurrence"
+
+        whole = "    line1\n    line2\n    line1\n    line3\n"
+        part = "line1\n"
+        replace = "new_line\n"
+        expected_output = "    new_line\n    line2\n    line1\n    line3\n"
+
+        result = eb.replace_most_similar_chunk(whole, part, replace)
+        self.assertEqual(result, expected_output)
+
     def test_replace_part_with_just_some_missing_leading_whitespace(self):
         whole = "    line1\n    line2\n    line3\n"
         part = " line1\n line2\n"
@@ -482,9 +504,7 @@ two
 Hope you like it!
 """
 
-        edits = list(
-            eb.find_original_update_blocks(edit, valid_fnames=["path/to/a/file1.txt"])
-        )
+        edits = list(eb.find_original_update_blocks(edit, valid_fnames=["path/to/a/file1.txt"]))
         self.assertEqual(
             edits,
             [

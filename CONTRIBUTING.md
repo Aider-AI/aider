@@ -34,7 +34,7 @@ ensure that your contributions can be integrated smoothly.
 ## Licensing
 
 Before contributing a PR, please review our
-[Individual Contributor License Agreement](/docs/legal/contributor-agreement.html).
+[Individual Contributor License Agreement](https://aider.chat/docs/legal/contributor-agreement.html).
 All contributors will be asked to complete the agreement as part of the PR process.
 
 ## Setting up a Development Environment

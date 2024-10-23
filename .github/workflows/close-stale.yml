@@ -1,0 +1,24 @@
+name: 'Close stale issues and PRs'
+on:
+  schedule:
+    - cron: '30 1 * * *'
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v9
+        with:
+          stale-issue-message: 'This issue has been labelled stale because it has been open for 2 weeks with no activity. Remove stale label or add a comment to keep this issue open. Otherwise, it will be closed in 7 days.'
+          close-issue-message: 'This issue was closed because it has been stalled for 3 weeks with no activity. Feel free to add a comment here and we can re-open it. Or feel free to file a new issue any time.'
+          days-before-stale: 14
+          days-before-close: 7
+          stale-issue-label: 'stale'
+          stale-pr-label: 'stale'
+          only-labels: 'question'
+          days-before-pr-stale: -1
+          days-before-pr-close: -1
