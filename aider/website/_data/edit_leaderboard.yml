@@ -547,7 +547,7 @@
 
 - dirname: 2024-07-04-14-32-08--claude-3.5-sonnet-diff-continue
   test_cases: 133
-  model: claude-3.5-sonnet
+  model: claude-3.5-sonnet-20240620
   edit_format: diff
   commit_hash: 35f21b5
   pass_rate_1: 57.1
@@ -563,7 +563,7 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --sonnet
+  command: aider --model claude-3.5-sonnet-20240620
   date: 2024-07-04
   versions: 0.42.1-dev
   seconds_per_case: 17.6
@@ -1587,4 +1587,27 @@
   date: 2024-10-16
   versions: 0.59.2.dev
   seconds_per_case: 64.9
+  total_cost: 0.0000
+
+- dirname: 2024-10-22-17-45-28--sonnet-1022-diff-fixed-model-settings
+  test_cases: 133
+  model: claude-3-5-sonnet-20241022
+  edit_format: diff
+  commit_hash: 3b14eb9
+  pass_rate_1: 69.2
+  pass_rate_2: 84.2
+  percent_cases_well_formed: 99.2
+  error_outputs: 1
+  num_malformed_responses: 1
+  num_with_malformed_responses: 1
+  user_asks: 0
+  lazy_comments: 1
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model anthropic/claude-3-5-sonnet-20241022
+  date: 2024-10-22
+  versions: 0.59.2.dev
+  seconds_per_case: 18.6
   total_cost: 0.0000

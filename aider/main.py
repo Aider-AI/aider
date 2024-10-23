@@ -8,6 +8,7 @@ import traceback
 from pathlib import Path
 
 import git
+import importlib_resources
 from dotenv import load_dotenv
 from prompt_toolkit.enums import EditingMode
 
@@ -321,6 +322,10 @@ def register_litellm_models(git_root, model_metadata_fname, io, verbose=False):
         ".aider.model.metadata.json", git_root, model_metadata_fname
     )
 
+    # Add the resource file path
+    resource_metadata = importlib_resources.files("aider.resources").joinpath("model-metadata.json")
+    model_metatdata_files.append(str(resource_metadata))
+
     try:
         model_metadata_files_loaded = models.register_litellm_models(model_metatdata_files)
         if len(model_metadata_files_loaded) > 0 and verbose:
@@ -575,7 +580,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if not args.model:
         args.model = "gpt-4o-2024-08-06"
         if os.environ.get("ANTHROPIC_API_KEY"):
-            args.model = "claude-3-5-sonnet-20240620"
+            args.model = "claude-3-5-sonnet-20241022"
 
     main_model = models.Model(
         args.model,
