@@ -1,15 +1,14 @@
 import glob
 import os
+import pyperclip
 import re
 import subprocess
 import sys
 import tempfile
+from PIL import Image, ImageGrab
 from collections import OrderedDict
 from os.path import expanduser
 from pathlib import Path
-
-import pyperclip
-from PIL import Image, ImageGrab
 from prompt_toolkit.completion import Completion, PathCompleter
 from prompt_toolkit.document import Document
 
@@ -21,7 +20,6 @@ from aider.repo import ANY_GIT_ERROR
 from aider.run_cmd import run_cmd
 from aider.scrape import Scraper, install_playwright
 from aider.utils import is_image_file
-
 from .dump import dump  # noqa: F401
 
 
@@ -1275,6 +1273,21 @@ class Commands:
             title = None
 
         report_github_issue(issue_text, title=title, confirm=False)
+
+    def cmd_companion(self, args):
+        "Start or stop the companion functionality"
+        action = args.strip().lower()
+        if action not in ["start", "stop"]:
+            self.io.tool_error("Invalid argument. Use 'start' or 'stop'.")
+            return
+
+        enabled = (action == "start")
+        if self.coder.companion:
+            self.coder.companion.set_enabled(enabled)
+            status = "enabled" if enabled else "disabled"
+            self.io.tool_output(f"Companion functionality is now {status}.")
+        else:
+            self.io.tool_error("Companion functionality is not enabled. Make sure you are running aider with/in a git repo.")
 
 
 def expand_subdir(file_path):

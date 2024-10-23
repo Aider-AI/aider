@@ -1,4 +1,5 @@
 import configparser
+import git
 import json
 import os
 import re
@@ -10,12 +11,14 @@ from pathlib import Path
 import git
 import importlib_resources
 from dotenv import load_dotenv
+from pathlib import Path
 from prompt_toolkit.enums import EditingMode
 
 from aider import __version__, models, urls, utils
 from aider.args import get_parser
 from aider.coders import Coder
 from aider.commands import Commands, SwitchCoder
+from aider.companion import Companion
 from aider.format_settings import format_settings, scrub_sensitive_info
 from aider.history import ChatSummary
 from aider.io import InputOutput
@@ -23,7 +26,6 @@ from aider.llm import litellm  # noqa: F401; properly init litellm on launch
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.report import report_uncaught_exceptions
 from aider.versioncheck import check_version, install_from_main_branch, install_upgrade
-
 from .dump import dump  # noqa: F401
 
 
@@ -650,6 +652,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             )
         args.stream = False
 
+    companion = None
+    if git_dname:
+        companion = Companion(git_dname, io, args.companion_base_url, args.enable_companion)
+    elif args.enable_companion:
+        io.tool_warning("Companion functionality is not enabled. Make sure you are running aider in/with git repo.")
+
     try:
         coder = Coder.create(
             main_model=main_model,
@@ -679,6 +687,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             num_cache_warming_pings=args.cache_keepalive_pings,
             suggest_shell_commands=args.suggest_shell_commands,
             chat_language=args.chat_language,
+            companion=companion,
         )
     except ValueError as err:
         io.tool_error(str(err))

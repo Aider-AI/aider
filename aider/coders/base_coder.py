@@ -29,9 +29,8 @@ from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
 from aider.sendchat import RETRY_TIMEOUT, retry_exceptions, send_completion
 from aider.utils import format_content, format_messages, format_tokens, is_image_file
-
-from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
+from ..dump import dump  # noqa: F401
 
 
 class MissingAPIKeyError(ValueError):
@@ -90,6 +89,8 @@ class Coder:
     suggest_shell_commands = True
     ignore_mentions = None
     chat_language = None
+    companion = None
+    companion_files = None
 
     @classmethod
     def create(
@@ -263,7 +264,9 @@ class Coder:
         num_cache_warming_pings=0,
         suggest_shell_commands=True,
         chat_language=None,
+        companion=None,
     ):
+
         self.chat_language = chat_language
         self.commit_before_message = []
         self.aider_commit_hashes = set()
@@ -415,6 +418,11 @@ class Coder:
             if history_md:
                 self.done_messages = utils.split_chat_history_markdown(history_md)
                 self.summarize_start()
+
+        self.companion = companion
+        self.companion_files = set()
+
+        self.update_inchat_files()
 
         # Linting and testing
         self.linter = Linter(root=self.root, encoding=io.encoding)
@@ -726,6 +734,7 @@ class Coder:
 
             while True:
                 try:
+                    self.update_inchat_files()
                     user_message = self.get_input()
                     self.run_one(user_message, preproc)
                     self.show_undo_hint()
@@ -733,6 +742,20 @@ class Coder:
                     self.keyboard_interrupt()
         except EOFError:
             return
+
+    def update_inchat_files(self):
+        if self.companion:
+            companion_files = self.companion.get_open_files()
+
+            to_add = set(companion_files) - self.companion_files
+            for companion_file in to_add:
+                self.add_rel_fname(companion_file)
+
+            to_remove = self.companion_files - set(companion_files)
+            for companion_file in to_remove:
+                self.drop_rel_fname(companion_file)
+
+            self.companion_files = set(companion_files)
 
     def get_input(self):
         inchat_files = self.get_inchat_relative_files()
