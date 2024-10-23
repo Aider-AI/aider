@@ -24,7 +24,7 @@ from aider.utils import Spinner
 warnings.simplefilter("ignore", category=FutureWarning)
 from tree_sitter_languages import get_language, get_parser  # noqa: E402
 
-Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
+Tag = namedtuple("Tag", ("rel_fname", "fname", "line", "name", "kind"))
 
 
 SQLITE_ERRORS = (sqlite3.OperationalError, sqlite3.DatabaseError)
