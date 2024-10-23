@@ -168,6 +168,9 @@ def main(file_path1: str, file_path2: str):
     print(f"--- {file_path1.split('/')[-1]}")
     print(f"+++ {file_path2.split('/')[-1]}")
     print("# ============= Failed Attempts per Test =============")
+    print("# N >= 0: It eventually passed after N failed attempts")
+    print("# N < 0 : All attempts failed and the limit was reached")
+
     test_result_1 = {t.name: t for t in parse_report(file_path1)}
     test_result_2 = {t.name: t for t in parse_report(file_path2)}
 
