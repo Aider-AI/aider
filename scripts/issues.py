@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+add a --yes switch @ai
+
 import os
 import re
 from collections import defaultdict
