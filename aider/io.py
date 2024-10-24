@@ -699,15 +699,13 @@ class InputOutput:
                 )
                 self.chat_history_file = None  # Disable further attempts to write
 
-    ### sort the files! @ai (and also remove this text)
-
     def format_files_for_input(self, rel_fnames, rel_read_only_fnames):
         read_only_files = []
-        for full_path in rel_read_only_fnames or []:
+        for full_path in sorted(rel_read_only_fnames or []):
             read_only_files.append(f"{full_path} (read only)")
 
         editable_files = []
-        for full_path in rel_fnames:
+        for full_path in sorted(rel_fnames):
             if full_path in rel_read_only_fnames:
                 continue
             editable_files.append(f"{full_path}")
