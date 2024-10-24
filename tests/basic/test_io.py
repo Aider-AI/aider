@@ -220,7 +220,7 @@ class TestInputOutput(unittest.TestCase):
 
     @patch("builtins.input", side_effect=["d"])
     def test_confirm_ask_allow_never(self, mock_input):
-        io = InputOutput(pretty=False)
+        io = InputOutput(pretty=False, fancy_input=False)
 
         # First call: user selects "Don't ask again"
         result = io.confirm_ask("Are you sure?", allow_never=True)
