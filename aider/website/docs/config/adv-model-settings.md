@@ -475,7 +475,7 @@ cog.out("```\n")
   use_system_prompt: true
   use_temperature: true
   weak_model_name: claude-3-haiku-20240307
-- accepts_images: false
+- accepts_images: true
   cache_control: true
   caches_by_default: false
   edit_format: diff
@@ -494,8 +494,8 @@ cog.out("```\n")
   use_repo_map: true
   use_system_prompt: true
   use_temperature: true
-  weak_model_name: claude-3-haiku-20240307
-- accepts_images: false
+  weak_model_name: anthropic/claude-3-haiku-20240307
+- accepts_images: true
   cache_control: true
   caches_by_default: false
   edit_format: diff
@@ -514,8 +514,8 @@ cog.out("```\n")
   use_repo_map: true
   use_system_prompt: true
   use_temperature: true
-  weak_model_name: claude-3-haiku-20240307
-- accepts_images: false
+  weak_model_name: anthropic/claude-3-haiku-20240307
+- accepts_images: true
   cache_control: true
   caches_by_default: false
   edit_format: diff
