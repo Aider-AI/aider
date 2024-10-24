@@ -397,6 +397,9 @@ cog.outl("```")
 ## Enable/disable suggesting shell commands (default: True)
 #suggest-shell-commands: true
 
+## Enable/disable fancy input with history and completion (default: True)
+#fancy-input: true
+
 #################
 # Voice Settings:
 

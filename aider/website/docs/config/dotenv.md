@@ -366,6 +366,9 @@ cog.outl("```")
 ## Enable/disable suggesting shell commands (default: True)
 #AIDER_SUGGEST_SHELL_COMMANDS=true
 
+## Enable/disable fancy input with history and completion (default: True)
+#AIDER_FANCY_INPUT=true
+
 #################
 # Voice Settings:
 
