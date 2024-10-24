@@ -678,9 +678,6 @@ class Commands:
         res = list(map(str, matched_files))
         return res
 
-    make the same change to cmd_read @ai <======
-
-
     def cmd_add(self, args):
         "Add files to the chat so aider can edit them or review them in detail"
 
@@ -1164,6 +1161,8 @@ class Commands:
         if not args.strip():
             self.io.tool_error("Please provide filenames or directories to read.")
             return
+
+        ## we need to collect all the expanded filenames, *then* sort them @ai
 
         filenames = parse_quoted_filenames(args)
         for pattern in sorted(filenames):
