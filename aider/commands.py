@@ -1162,8 +1162,6 @@ class Commands:
             self.io.tool_error("Please provide filenames or directories to read.")
             return
 
-        ## we need to collect all the expanded filenames, *then* sort them @ai
-
         filenames = parse_quoted_filenames(args)
         all_paths = []
 
