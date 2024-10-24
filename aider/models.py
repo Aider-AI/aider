@@ -70,7 +70,6 @@ class ModelSettings:
     weak_model_name: Optional[str] = None
     use_repo_map: bool = False
     send_undo_reply: bool = False
-    accepts_images: bool = False
     lazy: bool = False
     reminder: str = "user"
     examples_as_sys_msg: bool = False
@@ -126,7 +125,6 @@ MODEL_SETTINGS = [
         "udiff",
         weak_model_name="gpt-4o-mini",
         use_repo_map=True,
-        accepts_images=True,
         lazy=True,
         reminder="sys",
     ),
@@ -135,7 +133,6 @@ MODEL_SETTINGS = [
         "udiff",
         weak_model_name="gpt-4o-mini",
         use_repo_map=True,
-        accepts_images=True,
         lazy=True,
         reminder="sys",
     ),
@@ -144,7 +141,6 @@ MODEL_SETTINGS = [
         "diff",
         weak_model_name="gpt-4o-mini",
         use_repo_map=True,
-        accepts_images=True,
         lazy=True,
         reminder="sys",
         editor_edit_format="editor-diff",
@@ -154,7 +150,6 @@ MODEL_SETTINGS = [
         "diff",
         weak_model_name="gpt-4o-mini",
         use_repo_map=True,
-        accepts_images=True,
         lazy=True,
         reminder="sys",
     ),
@@ -163,7 +158,6 @@ MODEL_SETTINGS = [
         "diff",
         weak_model_name="gpt-4o-mini",
         use_repo_map=True,
-        accepts_images=True,
         lazy=True,
         reminder="sys",
     ),
@@ -172,7 +166,6 @@ MODEL_SETTINGS = [
         "diff",
         weak_model_name="gpt-4o-mini",
         use_repo_map=True,
-        accepts_images=True,
         lazy=True,
         reminder="sys",
         editor_edit_format="editor-diff",
@@ -181,7 +174,6 @@ MODEL_SETTINGS = [
         "gpt-4o-mini",
         "whole",
         weak_model_name="gpt-4o-mini",
-        accepts_images=True,
         lazy=True,
         reminder="sys",
     ),
@@ -189,7 +181,6 @@ MODEL_SETTINGS = [
         "openai/gpt-4o-mini",
         "whole",
         weak_model_name="openai/gpt-4o-mini",
-        accepts_images=True,
         lazy=True,
         reminder="sys",
     ),
@@ -215,7 +206,6 @@ MODEL_SETTINGS = [
         "diff",
         weak_model_name="gpt-4o-mini",
         use_repo_map=True,
-        accepts_images=True,
         reminder="sys",
     ),
     ModelSettings(
@@ -266,7 +256,6 @@ MODEL_SETTINGS = [
         editor_edit_format="editor-diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
-        accepts_images=True,
         extra_params={
             "extra_headers": {
                 "anthropic-beta": ANTHROPIC_BETA_HEADER,
@@ -284,7 +273,6 @@ MODEL_SETTINGS = [
         editor_edit_format="editor-diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
-        accepts_images=True,
         extra_params={
             "extra_headers": {
                 "anthropic-beta": ANTHROPIC_BETA_HEADER,
@@ -302,7 +290,6 @@ MODEL_SETTINGS = [
         editor_edit_format="editor-diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
-        accepts_images=True,
         extra_params={
             "extra_headers": {
                 "anthropic-beta": ANTHROPIC_BETA_HEADER,
@@ -320,7 +307,6 @@ MODEL_SETTINGS = [
         editor_edit_format="editor-diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
-        accepts_images=True,
         extra_params={
             "extra_headers": {
                 "anthropic-beta": ANTHROPIC_BETA_HEADER,
@@ -362,7 +348,6 @@ MODEL_SETTINGS = [
         editor_edit_format="editor-diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
-        accepts_images=True,
         extra_params={
             "max_tokens": 8192,
         },
@@ -377,7 +362,6 @@ MODEL_SETTINGS = [
         editor_edit_format="editor-diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
-        accepts_images=True,
         extra_params={
             "max_tokens": 8192,
         },
@@ -394,7 +378,6 @@ MODEL_SETTINGS = [
         editor_edit_format="editor-diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
-        accepts_images=True,
         extra_params={
             "max_tokens": 8192,
         },
@@ -408,7 +391,6 @@ MODEL_SETTINGS = [
         editor_edit_format="editor-diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
-        accepts_images=True,
         extra_params={
             "max_tokens": 8192,
         },
@@ -548,7 +530,6 @@ MODEL_SETTINGS = [
         "diff",
         weak_model_name="openrouter/openai/gpt-4o-mini",
         use_repo_map=True,
-        accepts_images=True,
         lazy=True,
         reminder="sys",
         editor_edit_format="editor-diff",
@@ -796,7 +777,6 @@ class Model(ModelSettings):
             self.use_repo_map = True
             self.examples_as_sys_msg = True
             self.reminder = None
-            self.accepts_images = True
 
         # use the defaults
         if self.edit_format == "diff":
