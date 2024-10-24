@@ -1165,16 +1165,19 @@ class Commands:
         ## we need to collect all the expanded filenames, *then* sort them @ai
 
         filenames = parse_quoted_filenames(args)
-        for pattern in sorted(filenames):
-            # Expand tilde for home directory
+        all_paths = []
+        
+        # First collect all expanded paths
+        for pattern in filenames:
             expanded_pattern = expanduser(pattern)
-
             expanded_paths = glob.glob(expanded_pattern, recursive=True)
             if not expanded_paths:
                 self.io.tool_error(f"No matches found for: {pattern}")
-                continue
-
-            for path in expanded_paths:
+            else:
+                all_paths.extend(expanded_paths)
+        
+        # Then process them in sorted order
+        for path in sorted(all_paths):
                 abs_path = self.coder.abs_root_path(path)
                 if os.path.isfile(abs_path):
                     self._add_read_only_file(abs_path, path)
