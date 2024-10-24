@@ -192,6 +192,7 @@ class InputOutput:
         dry_run=False,
         llm_history_file=None,
         editingmode=EditingMode.EMACS,
+        fancy_input=True,
     ):
         self.never_prompts = set()
         self.editingmode = editingmode
@@ -234,8 +235,7 @@ class InputOutput:
         self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
 
         self.prompt_session = None
-        # add fancy_input as an init param @ai
-        if self.fancy_input:
+        if fancy_input:
             # Initialize PromptSession
             session_kwargs = {
                 "input": self.input,
