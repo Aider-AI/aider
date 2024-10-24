@@ -1166,7 +1166,7 @@ class Commands:
             return
 
         filenames = parse_quoted_filenames(args)
-        for pattern in filenames:
+        for pattern in sorted(filenames):
             # Expand tilde for home directory
             expanded_pattern = expanduser(pattern)
 
