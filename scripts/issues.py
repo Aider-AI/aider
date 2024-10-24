@@ -113,8 +113,10 @@ def comment_and_close_duplicate(issue, oldest_issue):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Handle duplicate GitHub issues')
-    parser.add_argument('--yes', action='store_true', help='Automatically close duplicates without prompting')
+    parser = argparse.ArgumentParser(description="Handle duplicate GitHub issues")
+    parser.add_argument(
+        "--yes", action="store_true", help="Automatically close duplicates without prompting"
+    )
     args = parser.parse_args()
 
     if not TOKEN:
