@@ -14,7 +14,7 @@ from aider.utils import ChdirTemporaryDirectory
 class TestInputOutput(unittest.TestCase):
     def test_no_color_environment_variable(self):
         with patch.dict(os.environ, {"NO_COLOR": "1"}):
-            io = InputOutput()
+            io = InputOutput(fancy_input=False)
             self.assertFalse(io.pretty)
 
     def test_autocompleter_get_command_completions(self):
@@ -153,7 +153,7 @@ class TestInputOutput(unittest.TestCase):
 
     @patch("builtins.input")
     def test_confirm_ask_with_group(self, mock_input):
-        io = InputOutput(pretty=False)
+        io = InputOutput(pretty=False, fancy_input=False)
         group = ConfirmGroup()
 
         # Test case 1: No group preference, user selects 'All'
