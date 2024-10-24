@@ -279,11 +279,12 @@ MODEL_SETTINGS = [
     ModelSettings(
         "anthropic/claude-3-5-sonnet-20240620",
         "diff",
-        weak_model_name="claude-3-haiku-20240307",
+        weak_model_name="anthropic/claude-3-haiku-20240307",
         editor_model_name="anthropic/claude-3-5-sonnet-20240620",
         editor_edit_format="editor-diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
+        accepts_images=True,
         extra_params={
             "extra_headers": {
                 "anthropic-beta": ANTHROPIC_BETA_HEADER,
@@ -296,11 +297,12 @@ MODEL_SETTINGS = [
     ModelSettings(
         "anthropic/claude-3-5-sonnet-20241022",
         "diff",
-        weak_model_name="claude-3-haiku-20240307",
+        weak_model_name="anthropic/claude-3-haiku-20240307",
         editor_model_name="anthropic/claude-3-5-sonnet-20241022",
         editor_edit_format="editor-diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
+        accepts_images=True,
         extra_params={
             "extra_headers": {
                 "anthropic-beta": ANTHROPIC_BETA_HEADER,
@@ -318,6 +320,7 @@ MODEL_SETTINGS = [
         editor_edit_format="editor-diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
+        accepts_images=True,
         extra_params={
             "extra_headers": {
                 "anthropic-beta": ANTHROPIC_BETA_HEADER,
@@ -793,6 +796,7 @@ class Model(ModelSettings):
             self.use_repo_map = True
             self.examples_as_sys_msg = True
             self.reminder = None
+            self.accepts_images = True
 
         # use the defaults
         if self.edit_format == "diff":
