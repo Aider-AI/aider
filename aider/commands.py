@@ -678,6 +678,7 @@ class Commands:
         res = list(map(str, matched_files))
         return res
 
+    sort the filenames before adding them @ai
     def cmd_add(self, args):
         "Add files to the chat so aider can edit them or review them in detail"
 
