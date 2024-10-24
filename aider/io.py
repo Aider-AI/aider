@@ -234,7 +234,8 @@ class InputOutput:
         self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
 
         self.prompt_session = None
-        if self.pretty:
+        # add fancy_input as an init param @ai
+        if self.fancy_input:
             # Initialize PromptSession
             session_kwargs = {
                 "input": self.input,
