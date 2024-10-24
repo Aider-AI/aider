@@ -725,7 +725,7 @@ class Commands:
                 except OSError as e:
                     self.io.tool_error(f"Error creating file {fname}: {e}")
 
-        for matched_file in all_matched_files:
+        for matched_file in sorted(all_matched_files):
             abs_file_path = self.coder.abs_root_path(matched_file)
 
             if not abs_file_path.startswith(self.coder.root) and not is_image_file(matched_file):
