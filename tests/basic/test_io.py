@@ -195,7 +195,7 @@ class TestInputOutput(unittest.TestCase):
 
     @patch("builtins.input")
     def test_confirm_ask_yes_no(self, mock_input):
-        io = InputOutput(pretty=False)
+        io = InputOutput(pretty=False, fancy_input=False)
 
         # Test case 1: User selects 'Yes'
         mock_input.return_value = "y"
