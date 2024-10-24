@@ -776,7 +776,7 @@ class Model(ModelSettings):
             self.edit_format = "diff"
             self.use_repo_map = True
             self.examples_as_sys_msg = True
-            self.reminder = None
+            self.reminder = "user"
 
         # use the defaults
         if self.edit_format == "diff":
