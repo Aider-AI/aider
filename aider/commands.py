@@ -1166,7 +1166,7 @@ class Commands:
 
         filenames = parse_quoted_filenames(args)
         all_paths = []
-        
+
         # First collect all expanded paths
         for pattern in filenames:
             expanded_pattern = expanduser(pattern)
@@ -1175,16 +1175,16 @@ class Commands:
                 self.io.tool_error(f"No matches found for: {pattern}")
             else:
                 all_paths.extend(expanded_paths)
-        
+
         # Then process them in sorted order
         for path in sorted(all_paths):
-                abs_path = self.coder.abs_root_path(path)
-                if os.path.isfile(abs_path):
-                    self._add_read_only_file(abs_path, path)
-                elif os.path.isdir(abs_path):
-                    self._add_read_only_directory(abs_path, path)
-                else:
-                    self.io.tool_error(f"Not a file or directory: {abs_path}")
+            abs_path = self.coder.abs_root_path(path)
+            if os.path.isfile(abs_path):
+                self._add_read_only_file(abs_path, path)
+            elif os.path.isdir(abs_path):
+                self._add_read_only_directory(abs_path, path)
+            else:
+                self.io.tool_error(f"Not a file or directory: {abs_path}")
 
     def _add_read_only_file(self, abs_path, original_name):
         if abs_path in self.coder.abs_read_only_fnames:
