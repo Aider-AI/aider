@@ -699,6 +699,8 @@ class InputOutput:
                 )
                 self.chat_history_file = None  # Disable further attempts to write
 
+    ### sort the files! @ai (and also remove this text)
+
     def format_files_for_input(self, rel_fnames, rel_read_only_fnames):
         read_only_files = []
         for full_path in rel_read_only_fnames or []:
