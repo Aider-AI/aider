@@ -472,6 +472,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             encoding=args.encoding,
             llm_history_file=args.llm_history_file,
             editingmode=editing_mode,
+            fancy_input=args.fancy_input,
         )
 
     io = get_io(args.pretty)
