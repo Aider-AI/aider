@@ -66,6 +66,75 @@
   seconds_per_case: 21.3
   total_cost: 0.0000
 
+- dirname: 2024-10-19-23-56-50--cedarscript-0.3.1-editing-gemini1.5pro
+  test_cases: 133
+  model: gemini/gemini-1.5-pro-latest
+  edit_format: cedarscript-g
+  commit_hash: 4da1e9b-dirty
+  pass_rate_1: 42.1
+  percent_cases_well_formed: 85.7
+  error_outputs: 61
+  num_malformed_responses: 37
+  num_with_malformed_responses: 19
+  user_asks: 31
+  lazy_comments: 0
+  syntax_errors: 1
+  indentation_errors: 11
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model gemini/gemini-1.5-pro-latest
+  date: 2024-10-19
+  versions: 0.59.2.dev
+  seconds_per_case: 12.9
+  total_cost: 10.0186
+- dirname: 2024-10-21-06-11-07--cedarscript-0.3.3-editing-gemini1.5pro
+  test_cases: 133
+  model: gemini/gemini-1.5-pro-latest
+  edit_format: cedarscript-g
+  commit_hash: 95df622
+  pass_rate_1: 36.8
+  pass_rate_2: 46.6
+  pass_rate_3: 51.1
+  percent_cases_well_formed: 75.2
+  error_outputs: 321
+  num_malformed_responses: 103
+  num_with_malformed_responses: 33
+  user_asks: 113
+  lazy_comments: 0
+  syntax_errors: 3
+  indentation_errors: 46
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model gemini/gemini-1.5-pro-latest
+  date: 2024-10-21
+  versions: 0.59.2.dev
+  seconds_per_case: 33.2
+  total_cost: 29.5218
+- dirname: 2024-10-20-18-00-06--cedarscript-0.3.2-editing-gemini1.5flash
+  test_cases: 133
+  model: gemini/gemini-1.5-flash-latest
+  edit_format: cedarscript-g
+  commit_hash: df4c352-dirty
+  pass_rate_1: 30.1
+  pass_rate_2: 37.6
+  pass_rate_3: 38.3
+  pass_rate_4: 39.1
+  percent_cases_well_formed: 69.9
+  error_outputs: 803
+  num_malformed_responses: 297
+  num_with_malformed_responses: 40
+  user_asks: 186
+  lazy_comments: 0
+  syntax_errors: 30
+  indentation_errors: 58
+  exhausted_context_windows: 0
+  test_timeouts: 4
+  command: aider --model gemini/gemini-1.5-flash-latest
+  date: 2024-10-20
+  versions: 0.59.2.dev
+  seconds_per_case: 39.7
+  total_cost: 1.3729
+
 - dirname: 2024-05-08-20-59-15--may-gpt-3.5-turbo-whole
   test_cases: 133
   model: gpt-3.5-turbo-0125
@@ -1223,6 +1292,29 @@
   versions: 0.57.2.dev
   seconds_per_case: 11.6
   total_cost: 2.8166
+- dirname: 2024-10-22-03-16-35--whole-editing-gemini1.5pro
+  test_cases: 126
+  model: gemini/gemini-1.5-pro-latest
+  edit_format: whole
+  commit_hash: 00c60cd-dirty
+  pass_rate_1: 46.8
+  pass_rate_2: 61.1
+  pass_rate_3: 66.7
+  percent_cases_well_formed: 96.8
+  error_outputs: 12
+  num_malformed_responses: 12
+  num_with_malformed_responses: 4
+  user_asks: 44
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model gemini/gemini-1.5-pro-latest
+  date: 2024-10-22
+  versions: 0.59.2.dev
+  seconds_per_case: 15.9
+  total_cost: 1.9849
 
 - dirname: 2024-09-24-16-33-23--gemini-1.5-flash-002-whole
   test_cases: 133
@@ -1246,6 +1338,29 @@
   versions: 0.57.2.dev
   seconds_per_case: 5.1
   total_cost: 0.0515
+- dirname: 2024-10-21-12-58-15--whole-editing-gemini1.5flash
+  test_cases: 133
+  model: gemini/gemini-1.5-flash-latest
+  edit_format: whole
+  commit_hash: 95df622-dirty
+  pass_rate_1: 34.6
+  pass_rate_2: 45.9
+  pass_rate_3: 53.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 21
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 3
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  command: aider --model gemini/gemini-1.5-flash-latest
+  date: 2024-10-21
+  versions: 0.59.2.dev
+  seconds_per_case: 8.9
+  total_cost: 0.1169
 
 - dirname: 2024-09-24-15-18-59--gemini-1.5-flash-8b-exp-0924-whole
   test_cases: 133

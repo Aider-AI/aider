@@ -4,8 +4,8 @@
 # [[[end]]]
 
 [project]
-name = "aider-chat"
-description = "Aider is AI pair programming in your terminal"
+name = "aider-chat-x"
+description = "Aider is AI pair programming in your terminal. X is for experimental"
 readme = "README.md"
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -13,18 +13,16 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python",
     "Topic :: Software Development",
 ]
-requires-python = ">=3.9,<3.13"
+requires-python = ">=3.11,<3.13"
 dynamic = ["dependencies", "optional-dependencies", "version"]
 
 [project.urls]
-Homepage = "https://github.com/Aider-AI/aider"
+Homepage = "https://github.com/Aider-AI/aider/pull/1961"
 
 [project.scripts]
 aider = "aider.main:main"

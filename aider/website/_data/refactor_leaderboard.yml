@@ -18,6 +18,50 @@
   versions: 0.31.2-dev
   seconds_per_case: 55.7
   total_cost: 0.0000
+
+- dirname: 2024-10-19-22-48-07--cedarscript-0.3.1-refactoring-gemini1.5pro
+  test_cases: 89
+  model: gemini/gemini-1.5-pro-latest
+  edit_format: cedarscript-g
+  commit_hash: 4da1e9b-dirty
+  pass_rate_1: 77.5
+  percent_cases_well_formed: 86.5
+  error_outputs: 337
+  num_malformed_responses: 19
+  num_with_malformed_responses: 12
+  user_asks: 12
+  lazy_comments: 0
+  syntax_errors: 4
+  indentation_errors: 3
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model gemini/gemini-1.5-pro-latest
+  date: 2024-10-19
+  versions: 0.59.2.dev
+  seconds_per_case: 29.0
+  total_cost: 26.2374
+- dirname: 2024-10-20-00-33-27--cedarscript-0.3.1-refactoring-gemini1.5flash
+  test_cases: 89
+  model: gemini/gemini-1.5-flash-latest
+  edit_format: cedarscript-g
+  commit_hash: 4da1e9b-dirty
+  pass_rate_1: 76.4
+  percent_cases_well_formed: 94.4
+  error_outputs: 403
+  num_malformed_responses: 13
+  num_with_malformed_responses: 5
+  user_asks: 21
+  lazy_comments: 0
+  syntax_errors: 3
+  indentation_errors: 5
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model gemini/gemini-1.5-flash-latest
+  date: 2024-10-20
+  versions: 0.59.2.dev
+  seconds_per_case: 14.7
+  total_cost: 0.6757
+
 - dirname: 2024-05-04-17-45-53--refac-opus
   test_cases: 83
   model: claude-3-opus-20240229
