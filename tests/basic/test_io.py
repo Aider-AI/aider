@@ -107,7 +107,7 @@ class TestInputOutput(unittest.TestCase):
 
     @patch("builtins.input", return_value="test input")
     def test_get_input_is_a_directory_error(self, mock_input):
-        io = InputOutput(pretty=False)  # Windows tests throw UnicodeDecodeError
+        io = InputOutput(pretty=False, fancy_input=False)  # Windows tests throw UnicodeDecodeError
         root = "/"
         rel_fnames = ["existing_file.txt"]
         addable_rel_fnames = ["new_file.txt"]
@@ -121,7 +121,7 @@ class TestInputOutput(unittest.TestCase):
 
     @patch("builtins.input")
     def test_confirm_ask_explicit_yes_required(self, mock_input):
-        io = InputOutput(pretty=False)
+        io = InputOutput(pretty=False, fancy_input=False)
 
         # Test case 1: explicit_yes_required=True, self.yes=True
         io.yes = True
