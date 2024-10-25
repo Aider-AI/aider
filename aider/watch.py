@@ -4,7 +4,7 @@ from typing import Optional, Set
 from pathspec import PathSpec
 from pathspec.patterns import GitWildMatchPattern
 from watchfiles import watch
-
+from aider.dump import dump
 
 def is_source_file(path: Path) -> bool:
     """
@@ -73,7 +73,10 @@ def watch_source_files(directory: str, gitignores: list[str] = None, ignore_func
 
     # Create a filter function that only accepts source files and respects gitignore
     def filter_func(change_type, path):
+        dump(path, root)
+
         path_obj = Path(path)
+        # ai: don't try/except, make the root an abs path so we can properly use relative_to
         try:
             rel_path = path_obj.relative_to(root)
             if gitignore_spec and gitignore_spec.match_file(str(rel_path)):
@@ -81,7 +84,9 @@ def watch_source_files(directory: str, gitignores: list[str] = None, ignore_func
             if ignore_func and ignore_func(rel_path):
                 return False
             return is_source_file(path_obj)
-        except ValueError:
+        except ValueError as err:
+            dump(err)
+            raise err
             # Path is not relative to root directory
             return False
 
