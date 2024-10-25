@@ -378,8 +378,20 @@ class InputOutput:
                     if changed:
                         dump(changed)
                         # Check if any values contain !
-                        if any('!' in comment for comments in changed.values() if comments for comment in comments):
-                            self.changed_files = ['\n'.join(comment for comments in changed.values() if comments for comment in comments)]
+                        if any(
+                            "!" in comment
+                            for comments in changed.values()
+                            if comments
+                            for comment in comments
+                        ):
+                            self.changed_files = [
+                                "\n".join(
+                                    comment
+                                    for comments in changed.values()
+                                    if comments
+                                    for comment in comments
+                                )
+                            ]
                         else:
                             self.changed_files = list(changed.keys())
                         self.interrupt_input()
