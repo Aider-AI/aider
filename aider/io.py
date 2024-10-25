@@ -378,7 +378,7 @@ class InputOutput:
                     if changed:
                         self.changed_files = changed
 
-                        #ai move all this ...
+                        # ai move all this ...
                         self.changed_files = process_file_changes(changed)
                         self.interrupt_input()
                         break
@@ -447,7 +447,7 @@ class InputOutput:
 
                     # Check if we were interrupted by a file change
                     if self.changed_files:
-                        #ai ...down to here!
+                        # ai ...down to here!
                         changed = " ".join(self.changed_files)
                         self.changed_files = None
 

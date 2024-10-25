@@ -135,23 +135,15 @@ def watch_source_files(
                 result[file] = comments
         yield result
 
+
 def process_file_changes(changed):
     """Process file changes and handle special ! comments"""
-    if any(
-        "!" in comment
-        for comments in changed.values()
-        if comments
-        for comment in comments
-    ):
+    if any("!" in comment for comments in changed.values() if comments for comment in comments):
         return [
-            "\n".join(
-                comment
-                for comments in changed.values()
-                if comments
-                for comment in comments
-            )
+            "\n".join(comment for comments in changed.values() if comments for comment in comments)
         ]
     return list(changed.keys())
+
 
 def get_ai_comment(filepath, encoding="utf-8"):
     """Extract all AI comments from a file"""
