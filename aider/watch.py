@@ -146,8 +146,7 @@ def get_ai_comment(filepath, encoding="utf-8"):
     try:
         with open(filepath, encoding=encoding, errors="ignore") as f:
             for line in f:
-                #ai this won't match "#ai" but should. it seems to required a character after
-                if match := re.search(r"(?:#|//) *ai\b(.*)", line, re.IGNORECASE):
+                if match := re.search(r"(?:#|//) *ai\b?(.*)", line, re.IGNORECASE):
                     comment = match.group(1).strip()
                     if comment:
                         comments.append(comment)
