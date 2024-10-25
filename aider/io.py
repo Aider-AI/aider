@@ -444,10 +444,10 @@ class InputOutput:
                     else:
                         line = input(show)
 
-                    dump(line)#
+                    dump(line)  #
                     # Check if we were interrupted by a file change
                     if self.changed_files:
-                        changed = ' '.join(self.changed_files)
+                        changed = " ".join(self.changed_files)
                         self.changed_files = None
 
                         return f"/add {changed}"  # Return an edit command for the changed file
