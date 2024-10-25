@@ -1,13 +1,27 @@
 # flake8: noqa: E501
 
+from typing import List, Optional
+from dataclasses import dataclass
 from .base_prompts import CoderPrompts
 
 
+@dataclass
+class SearchReplaceExample:
+    user_request: str
+    assistant_response: str
+
+
 class EditBlockPrompts(CoderPrompts):
-    main_system = """Act as an expert software developer.
+    def __init__(self):
+        self._platform_info: Optional[str] = None
+        super().__init__()
+
+    @property
+    def main_system(self) -> str:
+        return f"""Act as an expert software developer.
 Always use best practices when coding.
 Respect and use existing conventions, libraries, etc that are already present in the code base.
-{lazy_prompt}
+{self.lazy_prompt}
 Take requests for changes to the supplied code.
 If the request is ambiguous, ask questions.
 
@@ -27,10 +41,12 @@ You can keep asking if you then decide you need to edit more files.
 
 All changes to files must use this *SEARCH/REPLACE block* format.
 ONLY EVER RETURN CODE IN A *SEARCH/REPLACE BLOCK*!
-{shell_cmd_prompt}
+{self.shell_cmd_prompt}
 """
 
-    shell_cmd_prompt = """
+    @property
+    def shell_cmd_prompt(self) -> str:
+        return f"""
 4. *Concisely* suggest any shell commands the user might want to run in ```bash blocks.
 
 Just suggest shell commands this way, not example code.
@@ -38,16 +54,23 @@ Only suggest complete shell commands that are ready to execute, without placehol
 Only suggest at most a few shell commands at a time, not more than 1-3.
 
 Use the appropriate shell based on the user's system info:
-{platform}
-Examples of when to suggest shell commands:
-
-- If you changed a self-contained html file, suggest an OS-appropriate command to open a browser to view it to see the updated content.
-- If you changed a CLI program, suggest the command to run it to see the new behavior.
-- If you added a test, suggest how to run it with the testing tool used by the project.
-- Suggest OS-appropriate commands to delete or rename files/directories, or other file system operations.
-- If your code changes add new dependencies, suggest the command to install them.
-- Etc.
+{self._platform_info or ""}
+{self.shell_cmd_examples}
 """
+
+    @property
+    def shell_cmd_examples(self) -> str:
+        return """Examples of when to suggest shell commands:
+- If you changed a self-contained html file, suggest an OS-appropriate command to open a browser
+- If you changed a CLI program, suggest the command to run it
+- If you added a test, suggest how to run it
+- Suggest OS-appropriate commands for file operations
+- If changes add dependencies, suggest install commands
+"""
+
+    def set_platform_info(self, platform_info: str) -> None:
+        """Set platform specific information"""
+        self._platform_info = platform_info
 
     no_shell_cmd_prompt = """
 Keep in mind these details about the user's platform and environment:
