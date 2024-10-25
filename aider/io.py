@@ -345,6 +345,10 @@ class InputOutput:
         else:
             print()
 
+    def interrupt_input(self):
+        if self.prompt_session and self.prompt_session.app:
+            self.prompt_session.app.exit()
+
     def get_input(
         self,
         root,
@@ -399,17 +403,20 @@ class InputOutput:
                 show = ". "
 
             try:
-                if self.prompt_session:
-                    line = self.prompt_session.prompt(
-                        show,
-                        completer=completer_instance,
-                        reserve_space_for_menu=4,
-                        complete_style=CompleteStyle.MULTI_COLUMN,
-                        style=style,
-                        key_bindings=kb,
-                    )
-                else:
-                    line = input(show)
+                try:
+                    if self.prompt_session:
+                        line = self.prompt_session.prompt(
+                            show,
+                            completer=completer_instance,
+                            reserve_space_for_menu=4,
+                            complete_style=CompleteStyle.MULTI_COLUMN,
+                            style=style,
+                            key_bindings=kb,
+                        )
+                    else:
+                        line = input(show)
+                except (EOFError, KeyboardInterrupt):
+                    return ""
             except UnicodeEncodeError as err:
                 self.tool_error(str(err))
                 return ""
