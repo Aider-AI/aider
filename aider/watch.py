@@ -85,7 +85,6 @@ def watch_source_files(directory: str, gitignore: str = None) -> Set[str]:
 def main():
     """Example usage of the file watcher"""
     import argparse
-    import sys
 
     parser = argparse.ArgumentParser(description="Watch source files for changes")
     parser.add_argument("directory", help="Directory to watch")
