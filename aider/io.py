@@ -447,6 +447,12 @@ class InputOutput:
             except UnicodeEncodeError as err:
                 self.tool_error(str(err))
                 return ""
+            finally:
+                # Clean up the watcher thread
+                stop_event.set()
+                watcher.join(timeout=1.0)  # Wait up to 1 second for thread to finish
+                if watcher.is_alive():
+                    self.tool_warning("Warning: File watcher thread did not shut down cleanly")
 
             if line and line[0] == "{" and not multiline_input:
                 multiline_input = True
@@ -465,12 +471,6 @@ class InputOutput:
         self.user_input(inp)
         return inp
 
-    finally:
-        # Clean up the watcher thread
-        stop_event.set()
-        watcher.join(timeout=1.0)  # Wait up to 1 second for thread to finish
-        if watcher.is_alive():
-            self.tool_warning("Warning: File watcher thread did not shut down cleanly")
 
     def add_to_input_history(self, inp):
         if not self.input_history_file:
