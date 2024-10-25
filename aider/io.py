@@ -382,7 +382,6 @@ class InputOutput:
         watcher.start()
         dump(watcher)
 
-
         rel_fnames = list(rel_fnames)
         show = ""
         if rel_fnames:
@@ -471,7 +470,6 @@ class InputOutput:
         print()
         self.user_input(inp)
         return inp
-
 
     def add_to_input_history(self, inp):
         if not self.input_history_file:
