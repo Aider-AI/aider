@@ -1037,7 +1037,7 @@ class TestCommands(TestCase):
             os.chdir(subdir)
 
             # Test the /read-only command using git_root referenced name
-            commands.cmd_read_only("subdir/test_read_only_file.txt")
+            commands.cmd_read_only(os.path.join("subdir", "test_read_only_file.txt"))
 
             # Check if the file was added to abs_read_only_fnames
             self.assertTrue(
@@ -1047,10 +1047,8 @@ class TestCommands(TestCase):
                 )
             )
 
-            # ai: these filenames use / so tests fail on windows; fix the one above and below to be portable!
-
             # Test dropping the read-only file using git_root referenced name
-            commands.cmd_drop("subdir/test_read_only_file.txt")
+            commands.cmd_drop(os.path.join("subdir", "test_read_only_file.txt"))
 
             # Check if the file was removed from abs_read_only_fnames
             self.assertFalse(
