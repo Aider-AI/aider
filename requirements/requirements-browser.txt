@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=requirements/requirements-browser.txt requirements/requirements-browser.in
 #
-altair==5.4.1
+altair==4.2.2
     # via streamlit
 attrs==24.2.0
     # via
@@ -19,7 +19,7 @@ certifi==2024.8.30
     # via
     #   -c requirements/../requirements.txt
     #   requests
-charset-normalizer==3.3.2
+charset-normalizer==3.4.0
     # via
     #   -c requirements/../requirements.txt
     #   requests
@@ -27,6 +27,8 @@ click==8.1.7
     # via
     #   -c requirements/../requirements.txt
     #   streamlit
+entrypoints==0.4
+    # via altair
 gitdb==4.0.11
     # via
     #   -c requirements/../requirements.txt
@@ -39,6 +41,10 @@ idna==3.10
     # via
     #   -c requirements/../requirements.txt
     #   requests
+importlib-metadata==7.2.1
+    # via
+    #   -c requirements/../requirements.txt
+    #   streamlit
 jinja2==3.1.4
     # via
     #   -c requirements/../requirements.txt
@@ -48,7 +54,7 @@ jsonschema==4.23.0
     # via
     #   -c requirements/../requirements.txt
     #   altair
-jsonschema-specifications==2023.12.1
+jsonschema-specifications==2024.10.1
     # via
     #   -c requirements/../requirements.txt
     #   jsonschema
@@ -56,7 +62,7 @@ markdown-it-py==3.0.0
     # via
     #   -c requirements/../requirements.txt
     #   rich
-markupsafe==2.1.5
+markupsafe==3.0.2
     # via
     #   -c requirements/../requirements.txt
     #   jinja2
@@ -64,11 +70,10 @@ mdurl==0.1.2
     # via
     #   -c requirements/../requirements.txt
     #   markdown-it-py
-narwhals==1.8.2
-    # via altair
 numpy==1.26.4
     # via
     #   -c requirements/../requirements.txt
+    #   altair
     #   pandas
     #   pyarrow
     #   pydeck
@@ -76,15 +81,16 @@ numpy==1.26.4
 packaging==24.1
     # via
     #   -c requirements/../requirements.txt
-    #   altair
     #   streamlit
 pandas==2.2.3
-    # via streamlit
-pillow==10.4.0
+    # via
+    #   altair
+    #   streamlit
+pillow==11.0.0
     # via
     #   -c requirements/../requirements.txt
     #   streamlit
-protobuf==5.28.2
+protobuf==3.20.3
     # via streamlit
 pyarrow==17.0.0
     # via streamlit
@@ -94,8 +100,12 @@ pygments==2.18.0
     # via
     #   -c requirements/../requirements.txt
     #   rich
+pympler==1.1
+    # via streamlit
 python-dateutil==2.9.0.post0
-    # via pandas
+    # via
+    #   pandas
+    #   streamlit
 pytz==2024.2
     # via pandas
 referencing==0.35.1
@@ -107,7 +117,7 @@ requests==2.32.3
     # via
     #   -c requirements/../requirements.txt
     #   streamlit
-rich==13.8.1
+rich==13.9.3
     # via
     #   -c requirements/../requirements.txt
     #   streamlit
@@ -122,24 +132,33 @@ smmap==5.0.1
     # via
     #   -c requirements/../requirements.txt
     #   gitdb
-streamlit==1.38.0
+streamlit==1.22.0
     # via -r requirements/requirements-browser.in
 tenacity==8.5.0
     # via streamlit
 toml==0.10.2
     # via streamlit
+toolz==1.0.0
+    # via altair
 tornado==6.4.1
     # via streamlit
 typing-extensions==4.12.2
     # via
     #   -c requirements/../requirements.txt
-    #   altair
     #   streamlit
-tzdata==2024.1
+tzdata==2024.2
     # via pandas
+tzlocal==5.2
+    # via streamlit
 urllib3==2.2.3
     # via
     #   -c requirements/../requirements.txt
     #   requests
+validators==0.34.0
+    # via streamlit
 watchdog==4.0.2
     # via -r requirements/requirements-browser.in
+zipp==3.20.2
+    # via
+    #   -c requirements/../requirements.txt
+    #   importlib-metadata
