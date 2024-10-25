@@ -135,13 +135,13 @@ def watch_source_files(
                 result[file] = comment
         yield result
 
-
+#ai return a list of all the ai comments in each file
 def get_ai_comment(filepath, encoding="utf-8"):
     """Extract AI comment from a file if present"""
     try:
         with open(filepath, encoding=encoding, errors="ignore") as f:
             for line in f:
-                if match := re.search(r"(?:#|//) *ai:? *(.*)", line, re.IGNORECASE):
+                if match := re.search(r"(?:#|//) *ai\b(.*)", line, re.IGNORECASE):
                     return match.group(1).strip()
     except (IOError, UnicodeDecodeError):
         return None
