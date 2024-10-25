@@ -376,7 +376,9 @@ class InputOutput:
                     root, stop_event=stop_event, gitignores=gitignore, encoding=self.encoding
                 ):
                     if changed:
-                        self.changed_files = list(changed)
+                        dump(changed)
+                        #ai if any of the .values() contain ! then join all the .values() into lines and return that
+                        self.changed_files = list(changed.keys())
                         self.interrupt_input()
                         break
             except Exception as e:
