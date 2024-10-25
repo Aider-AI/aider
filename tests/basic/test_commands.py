@@ -1047,6 +1047,8 @@ class TestCommands(TestCase):
                 )
             )
 
+            # ai: these filenames use / so tests fail on windows; fix the one above and below to be portable!
+
             # Test dropping the read-only file using git_root referenced name
             commands.cmd_drop("subdir/test_read_only_file.txt")
 
