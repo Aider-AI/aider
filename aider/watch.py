@@ -76,19 +76,18 @@ def watch_source_files(directory: str, gitignores: list[str] = None, ignore_func
         dump(path, root)
 
         path_obj = Path(path)
-        # ai: don't try/except, make the root an abs path so we can properly use relative_to
-        try:
-            rel_path = path_obj.relative_to(root)
-            if gitignore_spec and gitignore_spec.match_file(str(rel_path)):
-                return False
-            if ignore_func and ignore_func(rel_path):
-                return False
-            return is_source_file(path_obj)
-        except ValueError as err:
-            dump(err)
-            raise err
-            # Path is not relative to root directory
+        root_abs = root.resolve()
+        path_abs = path_obj.resolve()
+        
+        if not path_abs.is_relative_to(root_abs):
             return False
+            
+        rel_path = path_abs.relative_to(root_abs)
+        if gitignore_spec and gitignore_spec.match_file(str(rel_path)):
+            return False
+        if ignore_func and ignore_func(rel_path):
+            return False
+        return is_source_file(path_obj)
 
     # Watch the directory for changes
     for changes in watch(root, watch_filter=filter_func):
