@@ -71,9 +71,15 @@ def watch_source_files(directory: str, gitignore: str = None) -> Set[str]:
     # Create a filter function that only accepts source files and respects gitignore
     def filter_func(change_type, path):
         path_obj = Path(path)
-        if gitignore_spec and gitignore_spec.match_file(str(path_obj.relative_to(root))):
+        try:
+            if gitignore_spec:
+                rel_path = path_obj.relative_to(root)
+                if gitignore_spec.match_file(str(rel_path)):
+                    return False
+            return is_source_file(path_obj)
+        except ValueError:
+            # Path is not relative to root directory
             return False
-        return is_source_file(path_obj)
 
     # Watch the directory for changes
     for changes in watch(root, watch_filter=filter_func):
