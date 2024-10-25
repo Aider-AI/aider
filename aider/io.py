@@ -381,10 +381,10 @@ class InputOutput:
         watcher.start()
         dump(watcher)
 
-        try:
-            rel_fnames = list(rel_fnames)
-            show = ""
-            if rel_fnames:
+
+        rel_fnames = list(rel_fnames)
+        show = ""
+        if rel_fnames:
             rel_read_only_fnames = [
                 get_rel_fname(fname, root) for fname in (abs_read_only_fnames or [])
             ]

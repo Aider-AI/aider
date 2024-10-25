@@ -73,6 +73,8 @@ def watch_source_files(
                     and returns True if it should be ignored
     """
     root = Path(directory)
+    dump(root)
+
     gitignore_paths = [Path(g) for g in gitignores] if gitignores else []
     gitignore_spec = load_gitignores(gitignore_paths)
     root_abs = root.absolute()
