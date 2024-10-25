@@ -180,6 +180,7 @@ class InputOutput:
         chat_history_file=None,
         input=None,
         output=None,
+        interrupted_partial_input=None,
         user_input_color="blue",
         tool_output_color=None,
         tool_error_color="red",
@@ -197,6 +198,7 @@ class InputOutput:
         fancy_input=True,
     ):
         self.never_prompts = set()
+        self.interrupted_partial_input = interrupted_partial_input
         self.editingmode = editingmode
         no_color = os.environ.get("NO_COLOR")
         if no_color is not None and no_color != "":
@@ -349,6 +351,8 @@ class InputOutput:
 
     def interrupt_input(self):
         if self.prompt_session and self.prompt_session.app:
+            # Store any partial input before interrupting
+            self.interrupted_partial_input = self.prompt_session.app.current_buffer.text
             self.prompt_session.app.exit()
             print("interrupting")
 
