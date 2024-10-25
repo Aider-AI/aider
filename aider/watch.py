@@ -95,7 +95,11 @@ def main():
 
     parser = argparse.ArgumentParser(description="Watch source files for changes")
     parser.add_argument("directory", help="Directory to watch")
-    parser.add_argument("--gitignore", action='append', help="Path to .gitignore file (can be specified multiple times)")
+    parser.add_argument(
+        "--gitignore",
+        action="append",
+        help="Path to .gitignore file (can be specified multiple times)",
+    )
     args = parser.parse_args()
 
     directory = args.directory
