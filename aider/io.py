@@ -714,7 +714,7 @@ class InputOutput:
         return "\n".join(read_only_files + editable_files) + "\n"
 
 
-def get_rel_fname(self, fname, root):
+def get_rel_fname(fname, root):
     try:
         return os.path.relpath(fname, root)
     except ValueError:
