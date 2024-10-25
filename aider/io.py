@@ -377,8 +377,11 @@ class InputOutput:
                 ):
                     if changed:
                         dump(changed)
-                        #ai if any of the .values() contain ! then join all the .values() into lines and return that
-                        self.changed_files = list(changed.keys())
+                        # Check if any values contain !
+                        if any('!' in comment for comments in changed.values() if comments for comment in comments):
+                            self.changed_files = ['\n'.join(comment for comments in changed.values() if comments for comment in comments)]
+                        else:
+                            self.changed_files = list(changed.keys())
                         self.interrupt_input()
                         break
             except Exception as e:
