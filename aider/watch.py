@@ -113,7 +113,9 @@ def main():
         return "test" in path.name.lower()
 
     try:
-        for changed_files in watch_source_files(directory, args.gitignore, ignore_func=ignore_test_files):
+        for changed_files in watch_source_files(
+            directory, args.gitignore, ignore_func=ignore_test_files
+        ):
             print("\nChanged files:")
             for file in sorted(changed_files):
                 print(f"  {file}")
