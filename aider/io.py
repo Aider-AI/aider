@@ -364,7 +364,7 @@ class InputOutput:
         # Add a variable to store changed files and create stop event
         self.changed_files = None
         stop_event = threading.Event()
-        
+
         # Define the watcher thread function
         def watch_files():
             try:
@@ -379,6 +379,7 @@ class InputOutput:
         # Start the watcher thread
         watcher = threading.Thread(target=watch_files, daemon=True)
         watcher.start()
+        dump(watcher)
 
         try:
             rel_fnames = list(rel_fnames)
@@ -441,7 +442,7 @@ class InputOutput:
                     if self.changed_files:
                         changed = self.changed_files
                         self.changed_files = None
-                        return f"/edit {changed}"  # Return an edit command for the changed file
+                        return f"/add {changed}"  # Return an edit command for the changed file
                     return ""
             except UnicodeEncodeError as err:
                 self.tool_error(str(err))
@@ -463,7 +464,7 @@ class InputOutput:
         print()
         self.user_input(inp)
         return inp
-        
+
     finally:
         # Clean up the watcher thread
         stop_event.set()
