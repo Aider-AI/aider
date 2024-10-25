@@ -10,6 +10,7 @@ from aider.dump import dump  # noqa
 
 VERBOSE = True
 
+
 def is_source_file(path: Path) -> bool:
     """
     Check if a file is a source file that uses # or // style comments.
@@ -133,11 +134,9 @@ def watch_source_files(
             if comments := get_ai_comment(file, encoding=encoding):
                 result[file] = comments
 
-        if VERBOSE: dump(result)
+        if VERBOSE:
+            dump(result)
         yield result
-
-
-
 
 
 def get_ai_comment(filepath, encoding="utf-8"):
