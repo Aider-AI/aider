@@ -350,6 +350,7 @@ class InputOutput:
     def interrupt_input(self):
         if self.prompt_session and self.prompt_session.app:
             self.prompt_session.app.exit()
+            print("interrupting")
 
     def get_input(
         self,
@@ -440,14 +441,17 @@ class InputOutput:
                         )
                     else:
                         line = input(show)
-                except EOFError:
                     # Check if we were interrupted by a file change
                     if self.changed_files:
                         changed = self.changed_files
                         self.changed_files = None
                         dump(changed)
                         return f"/add {changed}"  # Return an edit command for the changed file
+                except EOFError:
                     return ""
+                except Exception as err:
+                    dump(err)
+
             except UnicodeEncodeError as err:
                 self.tool_error(str(err))
                 return ""
