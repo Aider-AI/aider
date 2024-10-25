@@ -376,6 +376,9 @@ class InputOutput:
                     root, stop_event=stop_event, gitignores=gitignore, encoding=self.encoding
                 ):
                     if changed:
+                        self.changed_files = changed
+
+                        #ai move all this ...
                         dump(changed)
                         # Check if any values contain !
                         if any(
@@ -461,6 +464,7 @@ class InputOutput:
 
                     # Check if we were interrupted by a file change
                     if self.changed_files:
+                        #ai ...down to here!
                         changed = " ".join(self.changed_files)
                         self.changed_files = None
 
