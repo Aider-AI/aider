@@ -8,6 +8,7 @@ from watchfiles import watch
 
 from aider.dump import dump  # noqa
 
+#ai turn off verbose!
 VERBOSE = True
 
 
@@ -144,9 +145,9 @@ def get_ai_comment(filepath, encoding="utf-8"):
     comments = []
     try:
         with open(filepath, encoding=encoding, errors="ignore") as f:
-            for line in f:  # ai
-                if match := re.search(r"(?:#|//) *ai(\b.*)?", line, re.IGNORECASE):
-                    comment = match.group(1).strip()
+            for line in f:
+                if match := re.search(r"(?:#|//) *(ai\b.*|ai)", line, re.IGNORECASE):
+                    comment = match.group(0).strip()
                     if comment:
                         comments.append(comment)
     except (IOError, UnicodeDecodeError):
