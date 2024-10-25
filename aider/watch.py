@@ -131,21 +131,23 @@ def watch_source_files(
         changed_files = {str(Path(change[1])) for change in changes}
         result = {}
         for file in changed_files:
-            if comment := get_ai_comment(file, encoding=encoding):
-                result[file] = comment
+            if comments := get_ai_comment(file, encoding=encoding):
+                result[file] = comments
         yield result
 
-#ai return a list of all the ai comments in each file
 def get_ai_comment(filepath, encoding="utf-8"):
-    """Extract AI comment from a file if present"""
+    """Extract all AI comments from a file"""
+    comments = []
     try:
         with open(filepath, encoding=encoding, errors="ignore") as f:
             for line in f:
                 if match := re.search(r"(?:#|//) *ai\b(.*)", line, re.IGNORECASE):
-                    return match.group(1).strip()
+                    comment = match.group(1).strip()
+                    if comment:
+                        comments.append(comment)
     except (IOError, UnicodeDecodeError):
         return None
-    return None
+    return comments if comments else None
 
 
 def main():
