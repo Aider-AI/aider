@@ -101,7 +101,8 @@ def watch_source_files(
             with open(path_abs) as f:
                 content = f.read()
                 import re
-                return bool(re.search(r'(?:^|\n)(?:#|//) *ai\w', content, re.IGNORECASE))
+
+                return bool(re.search(r"(?:^|\n)(?:#|//) *ai\w", content, re.IGNORECASE))
         except (IOError, UnicodeDecodeError):
             return False
 
