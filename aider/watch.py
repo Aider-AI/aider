@@ -8,8 +8,7 @@ from watchfiles import watch
 
 from aider.dump import dump  # noqa
 
-VERBOSE = False
-
+VERBOSE = True
 
 def is_source_file(path: Path) -> bool:
     """
@@ -133,16 +132,12 @@ def watch_source_files(
         for file in changed_files:
             if comments := get_ai_comment(file, encoding=encoding):
                 result[file] = comments
+
+        if VERBOSE: dump(result)
         yield result
 
 
-def process_file_changes(changed):
-    """Process file changes and handle special ! comments"""
-    if any("!" in comment for comments in changed.values() if comments for comment in comments):
-        return [
-            "\n".join(comment for comments in changed.values() if comments for comment in comments)
-        ]
-    return list(changed.keys())
+
 
 
 def get_ai_comment(filepath, encoding="utf-8"):
@@ -151,6 +146,7 @@ def get_ai_comment(filepath, encoding="utf-8"):
     try:
         with open(filepath, encoding=encoding, errors="ignore") as f:
             for line in f:
+                #ai this won't match "#ai" but should. it seems to required a character after
                 if match := re.search(r"(?:#|//) *ai\b(.*)", line, re.IGNORECASE):
                     comment = match.group(1).strip()
                     if comment:
