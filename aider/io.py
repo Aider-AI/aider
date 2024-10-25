@@ -458,9 +458,7 @@ class InputOutput:
             finally:
                 # Clean up the watcher thread
                 stop_event.set()
-                watcher.join(timeout=1.0)  # Wait up to 1 second for thread to finish
-                if watcher.is_alive():
-                    self.tool_warning("Warning: File watcher thread did not shut down cleanly")
+                watcher.join()  # Thread should exit quickly due to stop_event
 
             if line and line[0] == "{" and not multiline_input:
                 multiline_input = True
