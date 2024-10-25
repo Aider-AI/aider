@@ -369,7 +369,9 @@ class InputOutput:
         def watch_files():
             try:
                 gitignore = [str(Path(root) / ".gitignore")]
-                for changed in watch_source_files(root, stop_event=stop_event, gitignores=gitignore):
+                for changed in watch_source_files(
+                    root, stop_event=stop_event, gitignores=gitignore
+                ):
                     dump(changed)
                     if changed:
                         self.changed_files = list(changed)[0]  # Take the first changed file
