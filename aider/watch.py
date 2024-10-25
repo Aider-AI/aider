@@ -135,6 +135,7 @@ def watch_source_files(
                 result[file] = comments
         yield result
 
+
 def get_ai_comment(filepath, encoding="utf-8"):
     """Extract all AI comments from a file"""
     comments = []
