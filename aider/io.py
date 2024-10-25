@@ -1,5 +1,6 @@
 import base64
 import os
+import threading
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
@@ -360,7 +361,27 @@ class InputOutput:
     ):
         self.rule()
 
-        rel_fnames = list(rel_fnames)
+        # Add a variable to store changed files and create stop event
+        self.changed_files = None
+        stop_event = threading.Event()
+        
+        # Define the watcher thread function
+        def watch_files():
+            try:
+                for changed in watch_source_files(root, stop_event=stop_event):
+                    if changed:
+                        self.changed_files = list(changed)[0]  # Take the first changed file
+                        self.interrupt_input()
+                        break
+            except Exception as e:
+                self.tool_error(f"File watcher error: {e}")
+
+        # Start the watcher thread
+        watcher = threading.Thread(target=watch_files, daemon=True)
+        watcher.start()
+
+        try:
+            rel_fnames = list(rel_fnames)
         show = ""
         if rel_fnames:
             rel_read_only_fnames = [
@@ -437,6 +458,13 @@ class InputOutput:
         print()
         self.user_input(inp)
         return inp
+        
+    finally:
+        # Clean up the watcher thread
+        stop_event.set()
+        watcher.join(timeout=1.0)  # Wait up to 1 second for thread to finish
+        if watcher.is_alive():
+            self.tool_warning("Warning: File watcher thread did not shut down cleanly")
 
     def add_to_input_history(self, inp):
         if not self.input_history_file:

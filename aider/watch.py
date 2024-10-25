@@ -58,13 +58,14 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
     return PathSpec.from_lines(GitWildMatchPattern, patterns) if patterns else None
 
 
-def watch_source_files(directory: str, gitignores: list[str] = None, ignore_func=None) -> Set[str]:
+def watch_source_files(directory: str, stop_event=None, gitignores: list[str] = None, ignore_func=None) -> Set[str]:
     """
     Watch for changes to source files in the given directory and its subdirectories.
     Returns a set of changed file paths whenever changes are detected.
 
     Args:
         directory: Root directory to watch
+        stop_event: Threading event to signal when to stop watching
         gitignores: List of paths to .gitignore files (optional)
         ignore_func: Optional function that takes a path (relative to watched directory)
                     and returns True if it should be ignored
@@ -92,7 +93,7 @@ def watch_source_files(directory: str, gitignores: list[str] = None, ignore_func
         return is_source_file(path_obj)
 
     # Watch the directory for changes
-    for changes in watch(root, watch_filter=filter_func):
+    for changes in watch(root, watch_filter=filter_func, stop_event=stop_event):
         # Convert the changes to a set of unique file paths
         changed_files = {str(Path(change[1])) for change in changes}
         yield changed_files
