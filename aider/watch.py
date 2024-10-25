@@ -129,9 +129,23 @@ def watch_source_files(
     for changes in watch(root, watch_filter=filter_func, stop_event=stop_event):
         # Convert the changes to a set of unique file paths
         changed_files = {str(Path(change[1])) for change in changes}
-        yield changed_files
+        result = {}
+        for file in changed_files:
+            if comment := get_ai_comment(file, encoding=encoding):
+                result[file] = comment
+        yield result
 
-# ai: for each changed_file, return the filename and the contents of the "ai" comment (all the way to end of line)
+def get_ai_comment(filepath, encoding="utf-8"):
+    """Extract AI comment from a file if present"""
+    try:
+        with open(filepath, encoding=encoding, errors="ignore") as f:
+            for line in f:
+                if match := re.search(r"(?:#|//) *ai:? *(.*)", line, re.IGNORECASE):
+                    return match.group(1).strip()
+    except (IOError, UnicodeDecodeError):
+        return None
+    return None
+
 def main():
     """Example usage of the file watcher"""
     import argparse
