@@ -113,8 +113,7 @@ def watch_source_files(
             with open(path_abs, encoding=encoding, errors="ignore") as f:
                 content = f.read()
 
-                # ai: don't just match at start of line
-                res = bool(re.search(r"(?:^|\n)(?:#|//) *ai\b", content, re.IGNORECASE))
+                res = bool(re.search(r"(?:#|//) *ai\b", content, re.IGNORECASE))
                 if VERBOSE: dump(res)
                 return res
         except (IOError, UnicodeDecodeError) as err:
