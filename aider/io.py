@@ -373,9 +373,8 @@ class InputOutput:
                 for changed in watch_source_files(
                     root, stop_event=stop_event, gitignores=gitignore
                 ):
-                    dump(changed)
                     if changed:
-                        self.changed_files = list(changed)[0]  # Take the first changed file
+                        self.changed_files = list(changed)
                         self.interrupt_input()
                         break
             except Exception as e:
@@ -384,7 +383,6 @@ class InputOutput:
         # Start the watcher thread
         watcher = threading.Thread(target=watch_files, daemon=True)
         watcher.start()
-        dump(watcher)
 
         rel_fnames = list(rel_fnames)
         show = ""
@@ -441,11 +439,13 @@ class InputOutput:
                         )
                     else:
                         line = input(show)
+
+                    dump(line)#
                     # Check if we were interrupted by a file change
                     if self.changed_files:
-                        changed = self.changed_files
+                        changed = ' '.join(self.changed_files)
                         self.changed_files = None
-                        dump(changed)
+
                         return f"/add {changed}"  # Return an edit command for the changed file
                 except EOFError:
                     return ""
