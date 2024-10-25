@@ -4,7 +4,9 @@ from typing import Optional, Set
 from pathspec import PathSpec
 from pathspec.patterns import GitWildMatchPattern
 from watchfiles import watch
+
 from aider.dump import dump
+
 
 def is_source_file(path: Path) -> bool:
     """
@@ -78,10 +80,10 @@ def watch_source_files(directory: str, gitignores: list[str] = None, ignore_func
         path_obj = Path(path)
         root_abs = root.resolve()
         path_abs = path_obj.resolve()
-        
+
         if not path_abs.is_relative_to(root_abs):
             return False
-            
+
         rel_path = path_abs.relative_to(root_abs)
         if gitignore_spec and gitignore_spec.match_file(str(rel_path)):
             return False
