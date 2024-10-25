@@ -366,10 +366,11 @@ class InputOutput:
         self.changed_files = None
         stop_event = threading.Event()
 
-        # Define the watcher thread function
         def watch_files():
+            gitignore = Path(root) / ".gitignore"
             try:
                 for changed in watch_source_files(root, stop_event=stop_event):
+                    dump(changed)
                     if changed:
                         self.changed_files = list(changed)[0]  # Take the first changed file
                         self.interrupt_input()
@@ -437,11 +438,12 @@ class InputOutput:
                         )
                     else:
                         line = input(show)
-                except (EOFError, KeyboardInterrupt):
+                except EOFError:
                     # Check if we were interrupted by a file change
                     if self.changed_files:
                         changed = self.changed_files
                         self.changed_files = None
+                        dump(changed)
                         return f"/add {changed}"  # Return an edit command for the changed file
                     return ""
             except UnicodeEncodeError as err:
