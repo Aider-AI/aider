@@ -22,9 +22,16 @@ This keeps your edits separate from aider's edits, and makes sure you never lose
 
 ## In-chat commands
 
-Aider also allows you to use in-chat commands to `/diff` or `/undo` the last change.
-To do more complex management of your git history, you cat use raw `git` commands,
-either by using `/git` within the chat, or with standard git tools outside of aider.
+Aider also allows you to use 
+[in-chat commands](/docs/usage/commands.html)
+to perform git operations:
+
+- `/diff` will show all the file changes since the last message you sent.
+- `/undo` will undo and discard the last change.
+- `/commit` to commit all dirty changes with a sensible commit message.
+- `/git` will let you run raw git commands to do more complex management of your git history.
+
+You can also manage your git history outside of aider with your preferred git tools.
 
 ## Disabling git integration
 
@@ -36,6 +43,8 @@ While it is not recommended, you can disable aider's use of git in a few ways:
 
 ## Commit messages
 
+Aider sends the `--weak-model` a copy of the diffs and the chat history
+and asks it to produce a commit message.
 By default, aider creates commit messages which follow
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
@@ -44,6 +53,7 @@ You can customize the
 with the `--commit-prompt` option.
 You can place that on the command line, or 
 [configure it via a config file or environment variables](https://aider.chat/docs/config.html).
+
 
 ## Commit attribution
 
