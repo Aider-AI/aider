@@ -8,7 +8,7 @@ from watchfiles import watch
 
 from aider.dump import dump  # noqa
 
-VERBOSE = True
+VERBOSE = False
 
 
 def is_source_file(path: Path) -> bool:
@@ -131,7 +131,7 @@ def watch_source_files(
         changed_files = {str(Path(change[1])) for change in changes}
         yield changed_files
 
-
+# ai: for each changed_file, return the filename and the contents of the "ai" comment (all the way to end of line)
 def main():
     """Example usage of the file watcher"""
     import argparse
