@@ -1175,7 +1175,7 @@ class Commands:
                 matches = list(glob.glob(expanded_pattern))
             else:
                 # For relative paths and globs, use glob from the root directory
-                matches = list(Path(self.coder.root).rglob(expanded_pattern))
+                matches = list(Path(self.coder.root).glob(expanded_pattern))
 
             if not matches:
                 self.io.tool_error(f"No matches found for: {pattern}")
