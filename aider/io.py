@@ -374,7 +374,7 @@ class InputOutput:
             try:
                 gitignore = [str(Path(root) / ".gitignore")]
                 for changed in watch_source_files(
-                    root, stop_event=stop_event, gitignores=gitignore
+                    root, stop_event=stop_event, gitignores=gitignore, encoding=self.encoding
                 ):
                     if changed:
                         self.changed_files = list(changed)
