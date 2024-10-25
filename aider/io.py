@@ -379,24 +379,7 @@ class InputOutput:
                         self.changed_files = changed
 
                         #ai move all this ...
-                        dump(changed)
-                        # Check if any values contain !
-                        if any(
-                            "!" in comment
-                            for comments in changed.values()
-                            if comments
-                            for comment in comments
-                        ):
-                            self.changed_files = [
-                                "\n".join(
-                                    comment
-                                    for comments in changed.values()
-                                    if comments
-                                    for comment in comments
-                                )
-                            ]
-                        else:
-                            self.changed_files = list(changed.keys())
+                        self.changed_files = process_file_changes(changed)
                         self.interrupt_input()
                         break
             except Exception as e:
