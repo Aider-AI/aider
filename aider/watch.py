@@ -5,7 +5,7 @@ from pathspec import PathSpec
 from pathspec.patterns import GitWildMatchPattern
 from watchfiles import watch
 
-from aider.dump import dump
+from aider.dump import dump  # noqa
 
 
 def is_source_file(path: Path) -> bool:
@@ -72,23 +72,23 @@ def watch_source_files(directory: str, gitignores: list[str] = None, ignore_func
     root = Path(directory)
     gitignore_paths = [Path(g) for g in gitignores] if gitignores else []
     gitignore_spec = load_gitignores(gitignore_paths)
+    root_abs = root.absolute()
 
     # Create a filter function that only accepts source files and respects gitignore
     def filter_func(change_type, path):
-        dump(path, root)
-
         path_obj = Path(path)
-        root_abs = root.resolve()
-        path_abs = path_obj.resolve()
+        path_abs = path_obj.absolute()
 
         if not path_abs.is_relative_to(root_abs):
             return False
 
         rel_path = path_abs.relative_to(root_abs)
+
         if gitignore_spec and gitignore_spec.match_file(str(rel_path)):
             return False
         if ignore_func and ignore_func(rel_path):
             return False
+
         return is_source_file(path_obj)
 
     # Watch the directory for changes
