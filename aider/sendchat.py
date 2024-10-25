@@ -29,7 +29,10 @@ def retry_exceptions():
         litellm.exceptions.ServiceUnavailableError,
         litellm.exceptions.Timeout,
         litellm.exceptions.InternalServerError,
+        # These are apparently different?
+        # https://github.com/search?q=repo%3ABerriAI%2Flitellm%20AnthropicError&type=code
         litellm.llms.anthropic.common_utils.AnthropicError,
+        litellm.llms.anthropic.completion.AnthropicError,
     )
 
 
