@@ -437,6 +437,11 @@ class InputOutput:
                     else:
                         line = input(show)
                 except (EOFError, KeyboardInterrupt):
+                    # Check if we were interrupted by a file change
+                    if self.changed_files:
+                        changed = self.changed_files
+                        self.changed_files = None
+                        return f"/edit {changed}"  # Return an edit command for the changed file
                     return ""
             except UnicodeEncodeError as err:
                 self.tool_error(str(err))
