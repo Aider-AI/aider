@@ -8,8 +8,7 @@ from watchfiles import watch
 
 from aider.dump import dump  # noqa
 
-#ai turn off verbose!
-VERBOSE = True
+VERBOSE = False
 
 
 def is_source_file(path: Path) -> bool:
