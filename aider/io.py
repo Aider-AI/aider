@@ -367,9 +367,9 @@ class InputOutput:
         stop_event = threading.Event()
 
         def watch_files():
-            gitignore = Path(root) / ".gitignore"
             try:
-                for changed in watch_source_files(root, stop_event=stop_event):
+                gitignore = [str(Path(root) / ".gitignore")]
+                for changed in watch_source_files(root, stop_event=stop_event, gitignores=gitignore):
                     dump(changed)
                     if changed:
                         self.changed_files = list(changed)[0]  # Take the first changed file
