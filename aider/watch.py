@@ -73,7 +73,6 @@ def watch_source_files(
                     and returns True if it should be ignored
     """
     root = Path(directory)
-    dump(root)
 
     gitignore_paths = [Path(g) for g in gitignores] if gitignores else []
     gitignore_spec = load_gitignores(gitignore_paths)
@@ -94,6 +93,7 @@ def watch_source_files(
         if ignore_func and ignore_func(rel_path):
             return False
 
+        # ai: check to see if the file contains "# *ai\w", "// *ai\w", case insensitive and only return files that do
         return is_source_file(path_obj)
 
     # Watch the directory for changes
