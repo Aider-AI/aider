@@ -1,9 +1,9 @@
 from pathlib import Path
-from typing import Set, Optional
+from typing import Optional, Set
 
-from watchfiles import watch
 from pathspec import PathSpec
 from pathspec.patterns import GitWildMatchPattern
+from watchfiles import watch
 
 
 def is_source_file(path: Path) -> bool:
@@ -46,24 +46,25 @@ def load_gitignore(gitignore_path: Path) -> Optional[PathSpec]:
     """Load and parse a .gitignore file"""
     if not gitignore_path.exists():
         return None
-        
+
     with open(gitignore_path) as f:
         patterns = f.readlines()
-    
+
     return PathSpec.from_lines(GitWildMatchPattern, patterns)
+
 
 def watch_source_files(directory: str, gitignore: str = None) -> Set[str]:
     """
     Watch for changes to source files in the given directory and its subdirectories.
     Returns a set of changed file paths whenever changes are detected.
-    
+
     Args:
         directory: Root directory to watch
         gitignore: Path to .gitignore file (optional)
     """
     root = Path(directory)
     gitignore_spec = None
-    
+
     if gitignore:
         gitignore_spec = load_gitignore(Path(gitignore))
 
@@ -83,9 +84,9 @@ def watch_source_files(directory: str, gitignore: str = None) -> Set[str]:
 
 def main():
     """Example usage of the file watcher"""
-    import sys
     import argparse
-    
+    import sys
+
     parser = argparse.ArgumentParser(description="Watch source files for changes")
     parser.add_argument("directory", help="Directory to watch")
     parser.add_argument("--gitignore", help="Path to .gitignore file")
