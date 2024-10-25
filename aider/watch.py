@@ -93,8 +93,17 @@ def watch_source_files(
         if ignore_func and ignore_func(rel_path):
             return False
 
-        # ai: check to see if the file contains "# *ai\w", "// *ai\w", case insensitive and only return files that do
-        return is_source_file(path_obj)
+        if not is_source_file(path_obj):
+            return False
+
+        # Check if file contains AI markers
+        try:
+            with open(path_abs) as f:
+                content = f.read()
+                import re
+                return bool(re.search(r'(?:^|\n)(?:#|//) *ai\w', content, re.IGNORECASE))
+        except (IOError, UnicodeDecodeError):
+            return False
 
     # Watch the directory for changes
     for changes in watch(root, watch_filter=filter_func, stop_event=stop_event):
