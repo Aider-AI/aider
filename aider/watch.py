@@ -1,3 +1,5 @@
+
+import re
 from pathlib import Path
 from typing import Optional, Set
 
@@ -7,6 +9,7 @@ from watchfiles import watch
 
 from aider.dump import dump  # noqa
 
+VERBOSE=True
 
 def is_source_file(path: Path) -> bool:
     """
@@ -78,6 +81,8 @@ def watch_source_files(
     """
     root = Path(directory)
 
+    if VERBOSE: dump(root)
+
     gitignore_paths = [Path(g) for g in gitignores] if gitignores else []
     gitignore_spec = load_gitignores(gitignore_paths)
     root_abs = root.absolute()
@@ -91,6 +96,7 @@ def watch_source_files(
             return False
 
         rel_path = path_abs.relative_to(root_abs)
+        if VERBOSE: dump(rel_path)
 
         if gitignore_spec and gitignore_spec.match_file(str(rel_path)):
             return False
@@ -100,14 +106,19 @@ def watch_source_files(
         if not is_source_file(path_obj):
             return False
 
+        if VERBOSE: dump("ok", rel_path)
+
         # Check if file contains AI markers
         try:
             with open(path_abs, encoding=encoding, errors="ignore") as f:
                 content = f.read()
-                import re
 
-                return bool(re.search(r"(?:^|\n)(?:#|//) *ai\b", content, re.IGNORECASE))
-        except (IOError, UnicodeDecodeError):
+                # ai: don't just match at start of line
+                res = bool(re.search(r"(?:^|\n)(?:#|//) *ai\b", content, re.IGNORECASE))
+                if VERBOSE: dump(res)
+                return res
+        except (IOError, UnicodeDecodeError) as err:
+            if VERBOSE: dump(err)
             return False
 
     # Watch the directory for changes
