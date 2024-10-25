@@ -59,7 +59,7 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
 
 
 def watch_source_files(
-    directory: str, stop_event=None, gitignores: list[str] = None, ignore_func=None
+    directory: str, stop_event=None, gitignores: list[str] = None, ignore_func=None, encoding="utf-8"
 ) -> Set[str]:
     """
     Watch for changes to source files in the given directory and its subdirectories.
@@ -98,7 +98,7 @@ def watch_source_files(
 
         # Check if file contains AI markers
         try:
-            with open(path_abs) as f:
+            with open(path_abs, encoding=encoding, errors='ignore') as f:
                 content = f.read()
                 import re
 
