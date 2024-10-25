@@ -353,7 +353,6 @@ class InputOutput:
             # Store any partial input before interrupting
             self.interrupted_partial_input = self.prompt_session.app.current_buffer.text
             self.prompt_session.app.exit()
-            print("interrupting")
 
     def get_input(
         self,
@@ -443,7 +442,6 @@ class InputOutput:
                     else:
                         line = input(show)
 
-                    dump(line)  #
                     # Check if we were interrupted by a file change
                     if self.changed_files:
                         changed = " ".join(self.changed_files)
