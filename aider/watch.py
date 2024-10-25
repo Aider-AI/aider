@@ -56,7 +56,7 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
     return PathSpec.from_lines(GitWildMatchPattern, patterns) if patterns else None
 
 
-def watch_source_files(directory: str, gitignores: list[str] = None) -> Set[str]:
+def watch_source_files(directory: str, gitignores: list[str] = None, ignore_func=None) -> Set[str]:
     """
     Watch for changes to source files in the given directory and its subdirectories.
     Returns a set of changed file paths whenever changes are detected.
@@ -64,6 +64,8 @@ def watch_source_files(directory: str, gitignores: list[str] = None) -> Set[str]
     Args:
         directory: Root directory to watch
         gitignores: List of paths to .gitignore files (optional)
+        ignore_func: Optional function that takes a path (relative to watched directory)
+                    and returns True if it should be ignored
     """
     root = Path(directory)
     gitignore_paths = [Path(g) for g in gitignores] if gitignores else []
@@ -73,10 +75,11 @@ def watch_source_files(directory: str, gitignores: list[str] = None) -> Set[str]
     def filter_func(change_type, path):
         path_obj = Path(path)
         try:
-            if gitignore_spec:
-                rel_path = path_obj.relative_to(root)
-                if gitignore_spec.match_file(str(rel_path)):
-                    return False
+            rel_path = path_obj.relative_to(root)
+            if gitignore_spec and gitignore_spec.match_file(str(rel_path)):
+                return False
+            if ignore_func and ignore_func(rel_path):
+                return False
             return is_source_file(path_obj)
         except ValueError:
             # Path is not relative to root directory
@@ -105,8 +108,12 @@ def main():
     directory = args.directory
     print(f"Watching source files in {directory}...")
 
+    # Example ignore function that ignores files with "test" in the name
+    def ignore_test_files(path):
+        return "test" in path.name.lower()
+
     try:
-        for changed_files in watch_source_files(directory, args.gitignore):
+        for changed_files in watch_source_files(directory, args.gitignore, ignore_func=ignore_test_files):
             print("\nChanged files:")
             for file in sorted(changed_files):
                 print(f"  {file}")
