@@ -42,31 +42,32 @@ def is_source_file(path: Path) -> bool:
     return path.suffix.lower() in COMMENT_STYLE_EXTENSIONS
 
 
-def load_gitignore(gitignore_path: Path) -> Optional[PathSpec]:
-    """Load and parse a .gitignore file"""
-    if not gitignore_path.exists():
+def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
+    """Load and parse multiple .gitignore files into a single PathSpec"""
+    if not gitignore_paths:
         return None
 
-    with open(gitignore_path) as f:
-        patterns = f.readlines()
+    patterns = []
+    for path in gitignore_paths:
+        if path.exists():
+            with open(path) as f:
+                patterns.extend(f.readlines())
 
-    return PathSpec.from_lines(GitWildMatchPattern, patterns)
+    return PathSpec.from_lines(GitWildMatchPattern, patterns) if patterns else None
 
 
-def watch_source_files(directory: str, gitignore: str = None) -> Set[str]:
+def watch_source_files(directory: str, gitignores: list[str] = None) -> Set[str]:
     """
     Watch for changes to source files in the given directory and its subdirectories.
     Returns a set of changed file paths whenever changes are detected.
 
     Args:
         directory: Root directory to watch
-        gitignore: Path to .gitignore file (optional)
+        gitignores: List of paths to .gitignore files (optional)
     """
     root = Path(directory)
-    gitignore_spec = None
-
-    if gitignore:
-        gitignore_spec = load_gitignore(Path(gitignore))
+    gitignore_paths = [Path(g) for g in gitignores] if gitignores else []
+    gitignore_spec = load_gitignores(gitignore_paths)
 
     # Create a filter function that only accepts source files and respects gitignore
     def filter_func(change_type, path):
@@ -94,7 +95,7 @@ def main():
 
     parser = argparse.ArgumentParser(description="Watch source files for changes")
     parser.add_argument("directory", help="Directory to watch")
-    parser.add_argument("--gitignore", help="Path to .gitignore file")
+    parser.add_argument("--gitignore", action='append', help="Path to .gitignore file (can be specified multiple times)")
     args = parser.parse_args()
 
     directory = args.directory
