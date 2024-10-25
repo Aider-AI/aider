@@ -142,8 +142,7 @@ def get_ai_comment(filepath, encoding="utf-8"):
         with open(filepath, encoding=encoding, errors="ignore") as f:
             for line in f:
                 if match := re.search(r"(?:#|//) *ai\b(.*)", line, re.IGNORECASE):
-                    #ai return the whole thing, including the group0
-                    comment = match.group(1).strip()
+                    comment = match.group(0).strip()
                     if comment:
                         comments.append(comment)
     except (IOError, UnicodeDecodeError):
