@@ -135,6 +135,7 @@ def watch_source_files(
                 result[file] = comment
         yield result
 
+
 def get_ai_comment(filepath, encoding="utf-8"):
     """Extract AI comment from a file if present"""
     try:
@@ -145,6 +146,7 @@ def get_ai_comment(filepath, encoding="utf-8"):
     except (IOError, UnicodeDecodeError):
         return None
     return None
+
 
 def main():
     """Example usage of the file watcher"""
