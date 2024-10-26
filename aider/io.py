@@ -377,13 +377,11 @@ class InputOutput:
                 ):
                     if changed:
                         self.changed_files = changed
-
-                        # ai move all this ...
-                        self.changed_files = process_file_changes(changed)
                         self.interrupt_input()
                         break
             except Exception as e:
                 self.tool_error(f"File watcher error: {e}")
+                raise e
 
         # Start the watcher thread
         watcher = threading.Thread(target=watch_files, daemon=True)
@@ -447,11 +445,10 @@ class InputOutput:
 
                     # Check if we were interrupted by a file change
                     if self.changed_files:
-                        # ai ...down to here!
-                        changed = " ".join(self.changed_files)
+                        res = process_file_changes(self.changed_files)
                         self.changed_files = None
+                        return res
 
-                        return f"/add {changed}"  # Return an edit command for the changed file
                 except EOFError:
                     return ""
                 except Exception as err:
@@ -770,3 +767,25 @@ def get_rel_fname(fname, root):
         return os.path.relpath(fname, root)
     except ValueError:
         return fname
+
+
+def process_file_changes(changed):
+    """Process file changes and handle special ! comments"""
+
+    has_bangs = any(
+        "!" in comment for comments in changed.values() if comments for comment in comments
+    )
+
+    if not has_bangs:
+        return "/add " + " ".join(changed.keys())
+
+    res = "\n".join(comment for comments in changed.values() if comments for comment in comments)
+    res = """The "ai" comments below can be found in the code above.
+They contain your instructions.
+Make the requested changes.
+Also remove all these comments from the code.
+
+""" + res
+
+    dump(res)
+    return res
