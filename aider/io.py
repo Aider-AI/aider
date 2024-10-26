@@ -316,9 +316,6 @@ class InputOutput:
         try:
             with open(str(filename), "r", encoding=self.encoding) as f:
                 return f.read()
-        except OSError as err:
-            self.tool_error(f"{filename}: unable to read: {err}")
-            return
         except FileNotFoundError:
             self.tool_error(f"{filename}: file not found error")
             return
@@ -328,6 +325,9 @@ class InputOutput:
         except UnicodeError as e:
             self.tool_error(f"{filename}: {e}")
             self.tool_error("Use --encoding to set the unicode encoding.")
+            return
+        except OSError as err:
+            self.tool_error(f"{filename}: unable to read: {err}")
             return
 
     def write_text(self, filename, content):
