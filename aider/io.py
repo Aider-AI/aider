@@ -13,7 +13,8 @@ from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.lexers import PygmentsLexer
 from prompt_toolkit.shortcuts import CompleteStyle, PromptSession
 from prompt_toolkit.styles import Style
-from pygments.lexers import MarkdownLexer, guess_lexer_for_filename
+from pygments.lexers import guess_lexer_for_filename
+from pygments.lexers.markup import MarkdownLexer
 from pygments.token import Token
 from rich.console import Console
 from rich.markdown import Markdown
