@@ -360,7 +360,7 @@ class InputOutput:
         show = ""
         if rel_fnames:
             rel_read_only_fnames = [
-                get_rel_fname(fname, root) for fname in (abs_read_only_fnames or [])
+                self.get_rel_fname(fname, root) for fname in (abs_read_only_fnames or [])
             ]
             show = self.format_files_for_input(rel_fnames, rel_read_only_fnames)
         if edit_format:
@@ -713,9 +713,8 @@ class InputOutput:
 
         return "\n".join(read_only_files + editable_files) + "\n"
 
-
-def get_rel_fname(fname, root):
-    try:
-        return os.path.relpath(fname, root)
-    except ValueError:
-        return fname
+    def get_rel_fname(self, fname, root):
+        try:
+            return os.path.relpath(fname, root)
+        except ValueError:
+            return os.path.abspath(fname)

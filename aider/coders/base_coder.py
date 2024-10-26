@@ -1656,7 +1656,7 @@ class Coder:
         try:
             return os.path.relpath(fname, self.root)
         except ValueError:
-            return fname
+            return os.path.abspath(fname)
 
     def get_inchat_relative_files(self):
         files = [self.get_rel_fname(fname) for fname in self.abs_fnames]
