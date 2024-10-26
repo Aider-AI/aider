@@ -653,7 +653,8 @@ class Commands:
                 raw_matched_files = [Path(pattern)]
             else:
                 try:
-                    raw_matched_files = list(Path(self.coder.root).glob(pattern))
+                    # Using glob.glob instead of Path.glob to avoid AttributeError
+                    raw_matched_files = glob.glob(os.path.join(self.coder.root, pattern))
                 except (IndexError, AttributeError):
                     raw_matched_files = []
         except ValueError as err:
