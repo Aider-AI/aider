@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 import httpx
 
 from aider.llm import litellm
-from aider.sendchat import simple_send_with_retries
+from aider.sendchat import retry_exceptions, simple_send_with_retries
 
 
 class PrintCalled(Exception):
@@ -14,9 +14,6 @@ class PrintCalled(Exception):
 class TestSendChat(unittest.TestCase):
     def test_retry_exceptions(self):
         """Test that retry_exceptions() can be called without raising errors"""
-        # ai! imports to top
-        from aider.sendchat import retry_exceptions
-
         retry_exceptions()  # Should not raise any exceptions
 
     @patch("litellm.completion")
