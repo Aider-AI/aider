@@ -10,8 +10,11 @@ from aider.sendchat import simple_send_with_retries
 class PrintCalled(Exception):
     pass
 
-#ai add a test that simply invokes retry_exceptions() and ensures no error raised!
 class TestSendChat(unittest.TestCase):
+    def test_retry_exceptions(self):
+        """Test that retry_exceptions() can be called without raising errors"""
+        from aider.sendchat import retry_exceptions
+        retry_exceptions()  # Should not raise any exceptions
     @patch("litellm.completion")
     @patch("builtins.print")
     def test_simple_send_with_retries_rate_limit_error(self, mock_print, mock_completion):

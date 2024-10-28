@@ -15,7 +15,6 @@ CACHE = None
 
 RETRY_TIMEOUT = 60
 
-#ai
 def retry_exceptions():
     import httpx
 
