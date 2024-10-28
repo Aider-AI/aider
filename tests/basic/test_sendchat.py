@@ -14,6 +14,7 @@ class PrintCalled(Exception):
 class TestSendChat(unittest.TestCase):
     def test_retry_exceptions(self):
         """Test that retry_exceptions() can be called without raising errors"""
+        # ai! imports to top
         from aider.sendchat import retry_exceptions
 
         retry_exceptions()  # Should not raise any exceptions
