@@ -1124,6 +1124,7 @@ class Coder:
         exhausted = False
         interrupted = False
         try:
+            # ai: replicate this try/except retry loop...
             while True:
                 try:
                     yield from self.send(messages, functions=self.functions)
@@ -1136,6 +1137,7 @@ class Coder:
                     self.io.tool_output(f"Retrying in {retry_delay:.1f} seconds...")
                     time.sleep(retry_delay)
                     continue
+                # ai: ... down to here
                 except KeyboardInterrupt:
                     interrupted = True
                     break

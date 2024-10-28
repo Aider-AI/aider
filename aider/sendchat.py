@@ -102,7 +102,7 @@ def send_completion(
     return hash_object, res
 
 
-@lazy_litellm_retry_decorator
+# ai: in this function!
 def simple_send_with_retries(model_name, messages, extra_params=None):
     try:
         kwargs = {
