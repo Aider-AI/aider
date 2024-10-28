@@ -10,7 +10,7 @@ from aider.sendchat import simple_send_with_retries
 class PrintCalled(Exception):
     pass
 
-
+#ai add a test that simply invokes retry_exceptions() and ensures no error raised!
 class TestSendChat(unittest.TestCase):
     @patch("litellm.completion")
     @patch("builtins.print")

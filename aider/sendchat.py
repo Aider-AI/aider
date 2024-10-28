@@ -15,7 +15,7 @@ CACHE = None
 
 RETRY_TIMEOUT = 60
 
-
+#ai
 def retry_exceptions():
     import httpx
 
@@ -25,19 +25,18 @@ def retry_exceptions():
         httpx.RemoteProtocolError,
         httpx.ReadTimeout,
         # litellm
-        litellm.exceptions.BadRequestError,
-        litellm.exceptions.AuthenticationError,
-        litellm.exceptions.PermissionDeniedError,
-        litellm.exceptions.NotFoundError,
-        litellm.exceptions.UnprocessableEntityError,
-        litellm.exceptions.RateLimitError,
-        litellm.exceptions.InternalServerError,
-        litellm.exceptions.ContextWindowExceededError,
-        litellm.exceptions.ContentPolicyViolationError,
-        litellm.exceptions.APIConnectionError,
-        litellm.exceptions.APIError,
-        litellm.exceptions.ServiceUnavailableError,
-        litellm.exceptions.Timeout,
+        litellm.AuthenticationError,
+        litellm.PermissionDeniedError,
+        litellm.NotFoundError,
+        litellm.UnprocessableEntityError,
+        litellm.RateLimitError,
+        litellm.InternalServerError,
+        litellm.ContextWindowExceededError,
+        litellm.ContentPolicyViolationError,
+        litellm.APIConnectionError,
+        litellm.APIError,
+        litellm.ServiceUnavailableError,
+        litellm.Timeout,
     )
 
 
@@ -111,5 +110,5 @@ def simple_send_with_retries(model_name, messages, extra_params=None):
 
         _hash, response = send_completion(**kwargs)
         return response.choices[0].message.content
-    except (AttributeError, litellm.exceptions.BadRequestError):
+    except (AttributeError, litellm.BadRequestError):
         return
