@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import os
 import re
 from collections import defaultdict
@@ -112,6 +113,12 @@ def comment_and_close_duplicate(issue, oldest_issue):
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Handle duplicate GitHub issues")
+    parser.add_argument(
+        "--yes", action="store_true", help="Automatically close duplicates without prompting"
+    )
+    args = parser.parse_args()
+
     if not TOKEN:
         print("Error: Missing GITHUB_TOKEN environment variable. Please check your .env file.")
         return
@@ -142,11 +149,12 @@ def main():
             f" {oldest_issue['html_url']} ({oldest_issue['state']})"
         )
 
-        # Confirmation prompt
-        confirm = input("Do you want to comment and close duplicate issues? (y/n): ")
-        if confirm.lower() != "y":
-            print("Skipping this group of issues.")
-            continue
+        if not args.yes:
+            # Confirmation prompt
+            confirm = input("Do you want to comment and close duplicate issues? (y/n): ")
+            if confirm.lower() != "y":
+                print("Skipping this group of issues.")
+                continue
 
         # Comment and close duplicate issues
         for issue in issues:

@@ -14,7 +14,7 @@ from aider.utils import ChdirTemporaryDirectory
 class TestInputOutput(unittest.TestCase):
     def test_no_color_environment_variable(self):
         with patch.dict(os.environ, {"NO_COLOR": "1"}):
-            io = InputOutput()
+            io = InputOutput(fancy_input=False)
             self.assertFalse(io.pretty)
 
     def test_autocompleter_get_command_completions(self):
@@ -107,7 +107,7 @@ class TestInputOutput(unittest.TestCase):
 
     @patch("builtins.input", return_value="test input")
     def test_get_input_is_a_directory_error(self, mock_input):
-        io = InputOutput(pretty=False)  # Windows tests throw UnicodeDecodeError
+        io = InputOutput(pretty=False, fancy_input=False)  # Windows tests throw UnicodeDecodeError
         root = "/"
         rel_fnames = ["existing_file.txt"]
         addable_rel_fnames = ["new_file.txt"]
@@ -121,7 +121,7 @@ class TestInputOutput(unittest.TestCase):
 
     @patch("builtins.input")
     def test_confirm_ask_explicit_yes_required(self, mock_input):
-        io = InputOutput(pretty=False)
+        io = InputOutput(pretty=False, fancy_input=False)
 
         # Test case 1: explicit_yes_required=True, self.yes=True
         io.yes = True
@@ -153,7 +153,7 @@ class TestInputOutput(unittest.TestCase):
 
     @patch("builtins.input")
     def test_confirm_ask_with_group(self, mock_input):
-        io = InputOutput(pretty=False)
+        io = InputOutput(pretty=False, fancy_input=False)
         group = ConfirmGroup()
 
         # Test case 1: No group preference, user selects 'All'
@@ -195,7 +195,7 @@ class TestInputOutput(unittest.TestCase):
 
     @patch("builtins.input")
     def test_confirm_ask_yes_no(self, mock_input):
-        io = InputOutput(pretty=False)
+        io = InputOutput(pretty=False, fancy_input=False)
 
         # Test case 1: User selects 'Yes'
         mock_input.return_value = "y"
@@ -220,7 +220,7 @@ class TestInputOutput(unittest.TestCase):
 
     @patch("builtins.input", side_effect=["d"])
     def test_confirm_ask_allow_never(self, mock_input):
-        io = InputOutput(pretty=False)
+        io = InputOutput(pretty=False, fancy_input=False)
 
         # First call: user selects "Don't ask again"
         result = io.confirm_ask("Are you sure?", allow_never=True)

@@ -20,16 +20,24 @@ def retry_exceptions():
     import httpx
 
     return (
+        # httpx
         httpx.ConnectError,
         httpx.RemoteProtocolError,
         httpx.ReadTimeout,
+        # litellm
+        litellm.exceptions.BadRequestError,
+        litellm.exceptions.AuthenticationError,
+        litellm.exceptions.PermissionDeniedError,
+        litellm.exceptions.NotFoundError,
+        litellm.exceptions.UnprocessableEntityError,
+        litellm.exceptions.RateLimitError,
+        litellm.exceptions.InternalServerError,
+        litellm.exceptions.ContextWindowExceededError,
+        litellm.exceptions.ContentPolicyViolationError,
         litellm.exceptions.APIConnectionError,
         litellm.exceptions.APIError,
-        litellm.exceptions.RateLimitError,
         litellm.exceptions.ServiceUnavailableError,
         litellm.exceptions.Timeout,
-        litellm.exceptions.InternalServerError,
-        litellm.llms.anthropic.chat.AnthropicError,
     )
 
 

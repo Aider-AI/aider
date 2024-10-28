@@ -703,6 +703,12 @@ def get_parser(default_config_files, git_root):
         default=True,
         help="Enable/disable suggesting shell commands (default: True)",
     )
+    group.add_argument(
+        "--fancy-input",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Enable/disable fancy input with history and completion (default: True)",
+    )
 
     ##########
     group = parser.add_argument_group("Voice Settings")

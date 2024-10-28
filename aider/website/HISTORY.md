@@ -19,7 +19,12 @@ cog.out(text)
 
 
 
-### v0.60.0
+### Aider v0.60.1
+
+- Enable image support for Sonnet 10/22.
+- Display filenames in sorted order.
+
+### Aider v0.60.0
 
 - Full support for Sonnet 10/22, the new SOTA model on aider's code editing benchmark.
   - Aider uses Sonnet 10/22 by default.
@@ -33,12 +38,12 @@ cog.out(text)
 - Bugfix to properly include URLs in `/help` RAG results.
 - Aider wrote 49% of the code in this release.
 
-### v0.59.1
+### Aider v0.59.1
 
 - Check for obsolete `yes: true` in yaml config, show helpful error.
 - Model settings for openrouter/anthropic/claude-3.5-sonnet:beta
 
-### v0.59.0
+### Aider v0.59.0
 
 - Improvements to `/read-only`:
   - Now supports shell-style auto-complete of the full file system.
