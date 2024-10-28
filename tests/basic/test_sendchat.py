@@ -38,7 +38,7 @@ class TestSendChat(unittest.TestCase):
 
         # Call the simple_send_with_retries method
         simple_send_with_retries("model", ["message"])
-        mock_print.assert_called_once()
+        assert mock_print.call_count == 2
 
     @patch("litellm.completion")
     @patch("builtins.print")
@@ -51,4 +51,4 @@ class TestSendChat(unittest.TestCase):
 
         # Call the simple_send_with_retries method
         simple_send_with_retries("model", ["message"])
-        mock_print.assert_called_once()
+        assert mock_print.call_count == 2
