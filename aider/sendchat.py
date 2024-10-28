@@ -1,5 +1,6 @@
 import hashlib
 import json
+import time
 
 import backoff
 
@@ -102,18 +103,27 @@ def send_completion(
     return hash_object, res
 
 
-# ai: in this function!
 def simple_send_with_retries(model_name, messages, extra_params=None):
-    try:
-        kwargs = {
-            "model_name": model_name,
-            "messages": messages,
-            "functions": None,
-            "stream": False,
-            "extra_params": extra_params,
-        }
+    retry_delay = 0.125
+    while True:
+        try:
+            kwargs = {
+                "model_name": model_name,
+                "messages": messages,
+                "functions": None,
+                "stream": False,
+                "extra_params": extra_params,
+            }
 
-        _hash, response = send_completion(**kwargs)
-        return response.choices[0].message.content
-    except AttributeError:
-        return
+            _hash, response = send_completion(**kwargs)
+            return response.choices[0].message.content
+        except retry_exceptions() as err:
+            print(str(err))
+            retry_delay *= 2
+            if retry_delay > RETRY_TIMEOUT:
+                break
+            print(f"Retrying in {retry_delay:.1f} seconds...")
+            time.sleep(retry_delay)
+            continue
+        except AttributeError:
+            return
