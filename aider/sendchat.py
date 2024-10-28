@@ -118,10 +118,11 @@ def simple_send_with_retries(model_name, messages, extra_params=None):
             _hash, response = send_completion(**kwargs)
             return response.choices[0].message.content
         except retry_exceptions() as err:
+            print(str(err))
             retry_delay *= 2
             if retry_delay > RETRY_TIMEOUT:
                 break
-            print(f"{str(err)}\nRetrying in {retry_delay:.1f} seconds...")
+            print(f"Retrying in {retry_delay:.1f} seconds...")
             time.sleep(retry_delay)
             continue
         except AttributeError:
