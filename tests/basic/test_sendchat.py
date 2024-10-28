@@ -6,7 +6,7 @@ import httpx
 from aider.llm import litellm
 from aider.sendchat import retry_exceptions, simple_send_with_retries
 
-# ai: fix these test errors!
+# ai: fix these test errors! it should not test for 2 print() calls!
 FAILED tests/basic/test_sendchat.py::TestSendChat::test_simple_send_with_retries_connection_error - AssertionError: Expected 'print' to have been called once. Called 2 times.
 FAILED tests/basic/test_sendchat.py::TestSendChat::test_simple_send_with_retries_rate_limit_error - AssertionError: Expected 'print' to have been called once. Called 2 times.
 
