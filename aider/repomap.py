@@ -2,6 +2,7 @@ import colorsys
 import math
 import os
 import random
+import shutil
 import sqlite3
 import sys
 import time
@@ -168,7 +169,7 @@ class RepoMap:
 
     def tags_cache_error(self):
         """Handle SQLite errors by trying to recreate cache, falling back to dict if needed"""
-        if not isinstance(self.TAGS_CACHE, Cache):
+        if isinstance(getattr(self, "TAGS_CACHE", None), dict):
             return
 
         path = Path(self.root) / self.TAGS_CACHE_DIR
@@ -177,8 +178,6 @@ class RepoMap:
         try:
             # Delete existing cache dir
             if path.exists():
-                import shutil
-
                 shutil.rmtree(path)
 
             # Try to create new cache
