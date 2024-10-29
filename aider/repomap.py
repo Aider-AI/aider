@@ -318,7 +318,13 @@ class RepoMap:
         # https://networkx.org/documentation/stable/_modules/networkx/algorithms/link_analysis/pagerank_alg.html#pagerank
         personalize = 100 / len(fnames)
 
-        if len(fnames) - len(self.TAGS_CACHE) > 100:
+        try:
+            cache_size = len(self.TAGS_CACHE)
+        except SQLITE_ERRORS:
+            self.tags_cache_error()
+            cache_size = len(self.TAGS_CACHE)
+
+        if len(fnames) - cache_size > 100:
             self.io.tool_output(
                 "Initial repo scan can be slow in larger repos, but only happens once."
             )
