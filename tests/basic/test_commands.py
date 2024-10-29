@@ -695,63 +695,63 @@ class TestCommands(TestCase):
             Path(session_file).unlink()
 
 
-def test_cmd_save_and_load_with_external_file(self):
-    with tempfile.NamedTemporaryFile(mode="w", delete=False) as external_file:
-        external_file.write("External file content")
-        external_file_path = external_file.name
+    def test_cmd_save_and_load_with_external_file(self):
+        with tempfile.NamedTemporaryFile(mode="w", delete=False) as external_file:
+            external_file.write("External file content")
+            external_file_path = external_file.name
 
-    try:
-        with GitTemporaryDirectory() as repo_dir:
-            io = InputOutput(pretty=False, fancy_input=False, yes=True)
-            coder = Coder.create(self.GPT35, None, io)
-            commands = Commands(io, coder)
+        try:
+            with GitTemporaryDirectory() as repo_dir:
+                io = InputOutput(pretty=False, fancy_input=False, yes=True)
+                coder = Coder.create(self.GPT35, None, io)
+                commands = Commands(io, coder)
 
-            # Create some test files in the repo
-            test_files = {
-                "file1.txt": "Content of file 1",
-                "file2.py": "print('Content of file 2')",
-            }
+                # Create some test files in the repo
+                test_files = {
+                    "file1.txt": "Content of file 1",
+                    "file2.py": "print('Content of file 2')",
+                }
 
-            for file_path, content in test_files.items():
-                full_path = Path(repo_dir) / file_path
-                full_path.parent.mkdir(parents=True, exist_ok=True)
-                full_path.write_text(content)
+                for file_path, content in test_files.items():
+                    full_path = Path(repo_dir) / file_path
+                    full_path.parent.mkdir(parents=True, exist_ok=True)
+                    full_path.write_text(content)
 
-            # Add some files as editable and some as read-only
-            commands.cmd_add("file1.txt")
-            commands.cmd_read_only(external_file_path)
+                # Add some files as editable and some as read-only
+                commands.cmd_add("file1.txt")
+                commands.cmd_read_only(external_file_path)
 
-            # Save the session to a file
-            session_file = "test_session.txt"
-            commands.cmd_save(session_file)
+                # Save the session to a file
+                session_file = "test_session.txt"
+                commands.cmd_save(session_file)
 
-            # Verify the session file was created and contains the expected commands
-            self.assertTrue(Path(session_file).exists())
-            with open(session_file, encoding=io.encoding) as f:
-                commands_text = f.read()
-                self.assertIn("/add file1.txt", commands_text)
-                self.assertIn(f"/read-only {external_file_path}", commands_text)
+                # Verify the session file was created and contains the expected commands
+                self.assertTrue(Path(session_file).exists())
+                with open(session_file, encoding=io.encoding) as f:
+                    commands_text = f.read()
+                    self.assertIn("/add file1.txt", commands_text)
+                    self.assertIn(f"/read-only {external_file_path}", commands_text)
 
-            # Clear the current session
-            commands.cmd_reset("")
-            self.assertEqual(len(coder.abs_fnames), 0)
-            self.assertEqual(len(coder.abs_read_only_fnames), 0)
+                # Clear the current session
+                commands.cmd_reset("")
+                self.assertEqual(len(coder.abs_fnames), 0)
+                self.assertEqual(len(coder.abs_read_only_fnames), 0)
 
-            # Load the session back
-            commands.cmd_load(session_file)
+                # Load the session back
+                commands.cmd_load(session_file)
 
-            # Verify files were restored correctly
-            added_files = {coder.get_rel_fname(f) for f in coder.abs_fnames}
-            read_only_files = {coder.get_rel_fname(f) for f in coder.abs_read_only_fnames}
+                # Verify files were restored correctly
+                added_files = {coder.get_rel_fname(f) for f in coder.abs_fnames}
+                read_only_files = {coder.get_rel_fname(f) for f in coder.abs_read_only_fnames}
 
-            self.assertEqual(added_files, {"file1.txt"})
-            self.assertEqual(read_only_files, {external_file_path})
+                self.assertEqual(added_files, {"file1.txt"})
+                self.assertEqual(read_only_files, {external_file_path})
 
-            # Clean up
-            Path(session_file).unlink()
+                # Clean up
+                Path(session_file).unlink()
 
-    finally:
-        os.unlink(external_file_path)
+        finally:
+            os.unlink(external_file_path)
 
     # ai: add another test for load/save, but include a /read-only file that!
     # is from outside the repo
