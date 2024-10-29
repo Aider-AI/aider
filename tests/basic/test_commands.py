@@ -1,3 +1,10 @@
+#ai fix these test errors; ignore the extra spaces!
+FAILED tests/basic/test_commands.py::TestCommands::test_cmd_save_and_load - FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/49/kxrdwwbx0h9bchx99397477c0000gn/T...
+FAILED tests/basic/test_commands.py::TestCommands::test_cmd_save_and_load_with_external_file - AssertionError: '/add file1.txt' not found in '/add       file1.txt\n/read-only /private/var/folders/49/kxrdwwbx0...
+FAILED tests/basic/test_commands.py::TestCommands::test_cmd_save_and_load_with_multiple_external_files - AssertionError: '/add internal1.txt' not found in '/add       internal1.txt\n/read-only /private/var/folders/49/k...
+
+###
+
 import codecs
 import os
 import shutil
