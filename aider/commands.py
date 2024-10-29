@@ -1270,7 +1270,7 @@ class Commands:
             if not cmd or cmd.startswith("#"):
                 continue
 
-            self.io.tool_output(f"\nExecuting command: {cmd}")
+            self.io.tool_output(f"\nExecuting: {cmd}")
             self.run(cmd)
 
     def completions_raw_save(self, document, complete_event):
