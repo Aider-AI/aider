@@ -1293,58 +1293,6 @@ class Commands:
             self.io.tool_error(f"Error saving commands to file: {e}")
 
 
-    #ai move this to test_commands.py!
-    def test_cmd_save_and_load(self):
-        with GitTemporaryDirectory() as repo_dir:
-            io = InputOutput(pretty=False, fancy_input=False, yes=True)
-            coder = Coder.create(self.GPT35, None, io)
-            commands = Commands(io, coder)
-
-            # Create some test files
-            test_files = {
-                "file1.txt": "Content of file 1",
-                "file2.py": "print('Content of file 2')",
-                "subdir/file3.md": "# Content of file 3"
-            }
-
-            for file_path, content in test_files.items():
-                full_path = Path(repo_dir) / file_path
-                full_path.parent.mkdir(parents=True, exist_ok=True)
-                full_path.write_text(content)
-
-            # Add some files as editable and some as read-only
-            commands.cmd_add("file1.txt file2.py")
-            commands.cmd_read_only("subdir/file3.md")
-
-            # Save the session to a file
-            session_file = "test_session.txt"
-            commands.cmd_save(session_file)
-
-            # Verify the session file was created and contains the expected commands
-            self.assertTrue(Path(session_file).exists())
-            with open(session_file, encoding=io.encoding) as f:
-                commands_text = f.read()
-                self.assertIn("/add file1.txt", commands_text)
-                self.assertIn("/add file2.py", commands_text)
-                self.assertIn("/read-only subdir/file3.md", commands_text)
-
-            # Clear the current session
-            commands.cmd_reset("")
-            self.assertEqual(len(coder.abs_fnames), 0)
-            self.assertEqual(len(coder.abs_read_only_fnames), 0)
-
-            # Load the session back
-            commands.cmd_load(session_file)
-
-            # Verify files were restored correctly
-            added_files = {coder.get_rel_fname(f) for f in coder.abs_fnames}
-            read_only_files = {coder.get_rel_fname(f) for f in coder.abs_read_only_fnames}
-
-            self.assertEqual(added_files, {"file1.txt", "file2.py"})
-            self.assertEqual(read_only_files, {"subdir/file3.md"})
-
-            # Clean up
-            Path(session_file).unlink()
 
     def cmd_copy(self, args):
         "Copy the last assistant message to the clipboard"
