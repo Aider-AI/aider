@@ -683,7 +683,7 @@ class TestCommands(TestCase):
                 found_file1 = found_file2 = found_file3 = False
                 for line in commands_text:
                     if line.startswith("/add "):
-                        path = Path(line[5:]).resolve()
+                        path = Path(line[5:].strip()).resolve()
                         if os.path.samefile(str(path), abs_file1):
                             found_file1 = True
                         elif os.path.samefile(str(path), abs_file2):
