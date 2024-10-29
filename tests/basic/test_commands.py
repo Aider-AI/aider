@@ -706,8 +706,8 @@ class TestCommands(TestCase):
             commands.cmd_load(session_file)
 
             # Verify files were restored correctly
-            added_files = {coder.get_rel_fname(f) for f in coder.abs_fnames}
-            read_only_files = {coder.get_rel_fname(f) for f in coder.abs_read_only_fnames}
+            added_files = {Path(coder.get_rel_fname(f)).as_posix() for f in coder.abs_fnames}
+            read_only_files = {Path(coder.get_rel_fname(f)).as_posix() for f in coder.abs_read_only_fnames}
 
             self.assertEqual(added_files, {"file1.txt", "file2.py"})
             self.assertEqual(read_only_files, {"subdir/file3.md"})
