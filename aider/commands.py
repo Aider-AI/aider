@@ -1252,9 +1252,8 @@ class Commands:
             self.io.tool_error("Please provide a filename containing commands to load.")
             return
 
-        #ai use io.encoding, ignore decode errs!
         try:
-            with open(args.strip(), "r") as f:
+            with open(args.strip(), "r", encoding=self.io.encoding, errors="replace") as f:
                 commands = f.readlines()
         except FileNotFoundError:
             self.io.tool_error(f"File not found: {args}")
