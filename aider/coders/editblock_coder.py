@@ -50,7 +50,6 @@ class EditBlockCoder(Coder):
                     content = self.io.read_text(full_path)
                     new_content = do_replace(full_path, content, original, updated, self.fence)
                     if new_content:
-                        # ai: update the edits array to reflect the actually edited file
                         break
 
             if new_content:
