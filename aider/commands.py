@@ -771,6 +771,7 @@ class Commands:
         all_files = [self.quote_fname(fn) for fn in all_files]
         return all_files
 
+    # ai add cmd_load which takes a filename. read `/commands` from each line an execute them!
     def cmd_drop(self, args=""):
         "Remove files from the chat session to free up context space"
 
