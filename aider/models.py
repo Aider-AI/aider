@@ -778,6 +778,11 @@ class Model(ModelSettings):
             self.examples_as_sys_msg = True
             self.reminder = "user"
 
+        if "o1-" in model:
+            self.use_system_prompt = False
+            self.use_temperature = False
+            self.streaming = False
+
         # use the defaults
         if self.edit_format == "diff":
             self.use_repo_map = True
