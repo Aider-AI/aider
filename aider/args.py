@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-#ai add --load <fname> and call cmd_load with it in main!
 import argparse
 import os
 import sys
@@ -664,7 +663,7 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--load",
         metavar="LOAD_FILE",
-        help="Load and execute commands from a file",
+        help="Load and execute /commands from a file on launch",
     )
     group.add_argument(
         "--encoding",

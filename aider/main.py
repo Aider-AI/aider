@@ -1,4 +1,4 @@
-#ai
+# ai
 import configparser
 import json
 import os
@@ -772,7 +772,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     if args.load:
         commands.cmd_load(args.load)
-        return
 
     if args.exit:
         return
