@@ -1246,7 +1246,7 @@ class Commands:
         output = f"{announcements}\n{settings}"
         self.io.tool_output(output)
 
-    #ai add cmd_save(fname) that generates a file that cmd_load can read!
+    # ai add cmd_save(fname) that generates a file that cmd_load can read!
     def cmd_load(self, args):
         "Load and execute commands from a file"
         if not args.strip():
@@ -1283,12 +1283,12 @@ class Commands:
                 for fname in sorted(self.coder.abs_fnames):
                     rel_fname = self.coder.get_rel_fname(fname)
                     f.write(f"/add {rel_fname}\n")
-                
+
                 # Write commands to add read-only files
                 for fname in sorted(self.coder.abs_read_only_fnames):
                     rel_fname = self.coder.get_rel_fname(fname)
                     f.write(f"/read-only {rel_fname}\n")
-            
+
             self.io.tool_output(f"Saved commands to {args.strip()}")
         except Exception as e:
             self.io.tool_error(f"Error saving commands to file: {e}")
