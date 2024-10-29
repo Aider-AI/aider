@@ -752,8 +752,70 @@ class TestCommands(TestCase):
         finally:
             os.unlink(external_file_path)
 
-    # ai: add another test for load/save, but include a /read-only file that!
-    # is from outside the repo
+    def test_cmd_save_and_load_with_multiple_external_files(self):
+        with tempfile.NamedTemporaryFile(mode="w", delete=False) as external_file1, \
+             tempfile.NamedTemporaryFile(mode="w", delete=False) as external_file2:
+            external_file1.write("External file 1 content")
+            external_file2.write("External file 2 content")
+            external_file1_path = external_file1.name
+            external_file2_path = external_file2.name
+
+        try:
+            with GitTemporaryDirectory() as repo_dir:
+                io = InputOutput(pretty=False, fancy_input=False, yes=True)
+                coder = Coder.create(self.GPT35, None, io)
+                commands = Commands(io, coder)
+
+                # Create some test files in the repo
+                test_files = {
+                    "internal1.txt": "Content of internal file 1",
+                    "internal2.txt": "Content of internal file 2",
+                }
+
+                for file_path, content in test_files.items():
+                    full_path = Path(repo_dir) / file_path
+                    full_path.parent.mkdir(parents=True, exist_ok=True)
+                    full_path.write_text(content)
+
+                # Add files as editable and read-only
+                commands.cmd_add(str(Path("internal1.txt")))
+                commands.cmd_read_only(external_file1_path)
+                commands.cmd_read_only(external_file2_path)
+
+                # Save the session to a file
+                session_file = str(Path("test_session.txt"))
+                commands.cmd_save(session_file)
+
+                # Verify the session file was created and contains the expected commands
+                self.assertTrue(Path(session_file).exists())
+                with open(session_file, encoding=io.encoding) as f:
+                    commands_text = f.read()
+                    self.assertIn("/add internal1.txt", commands_text)
+                    self.assertIn(f"/read-only {external_file1_path}", commands_text)
+                    self.assertIn(f"/read-only {external_file2_path}", commands_text)
+
+                # Clear the current session
+                commands.cmd_reset("")
+                self.assertEqual(len(coder.abs_fnames), 0)
+                self.assertEqual(len(coder.abs_read_only_fnames), 0)
+
+                # Load the session back
+                commands.cmd_load(session_file)
+
+                # Verify files were restored correctly
+                added_files = {coder.get_rel_fname(f) for f in coder.abs_fnames}
+                read_only_files = {coder.get_rel_fname(f) for f in coder.abs_read_only_fnames}
+
+                self.assertEqual(added_files, {str(Path("internal1.txt"))})
+                self.assertEqual(read_only_files, {external_file1_path, external_file2_path})
+
+                # Clean up
+                Path(session_file).unlink()
+
+        finally:
+            os.unlink(external_file1_path)
+            os.unlink(external_file2_path)
+
     def test_cmd_read_only_with_glob_pattern(self):
         with GitTemporaryDirectory() as repo_dir:
             io = InputOutput(pretty=False, fancy_input=False, yes=False)
