@@ -1246,6 +1246,8 @@ class Commands:
         output = f"{announcements}\n{settings}"
         self.io.tool_output(output)
 
+    #ai add cmd_save(fname) that generates a file that cmd_load can read!
+    #it should use /add and /read to reconstruct the list of added files, one per line
     def cmd_load(self, args):
         "Load and execute commands from a file"
         if not args.strip():
