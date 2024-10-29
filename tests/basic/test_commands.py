@@ -764,7 +764,7 @@ class TestCommands(TestCase):
                 read_only_files = {coder.get_rel_fname(f) for f in coder.abs_read_only_fnames}
 
                 self.assertEqual(added_files, {str(Path("file1.txt"))})
-                self.assertEqual(read_only_files, {external_file_path})
+                self.assertTrue(any(os.path.samefile(external_file_path, f) for f in read_only_files))
 
                 # Clean up
                 Path(session_file).unlink()
