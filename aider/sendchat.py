@@ -1,5 +1,6 @@
 import hashlib
 import json
+import time
 
 import backoff
 
@@ -18,18 +19,32 @@ RETRY_TIMEOUT = 60
 
 def retry_exceptions():
     import httpx
+    import openai
 
     return (
+        # httpx
         httpx.ConnectError,
         httpx.RemoteProtocolError,
         httpx.ReadTimeout,
-        litellm.exceptions.APIConnectionError,
-        litellm.exceptions.APIError,
-        litellm.exceptions.RateLimitError,
-        litellm.exceptions.ServiceUnavailableError,
-        litellm.exceptions.Timeout,
-        litellm.exceptions.InternalServerError,
-        litellm.llms.anthropic.chat.AnthropicError,
+        #
+        # litellm exceptions inherit from openai exceptions
+        # https://docs.litellm.ai/docs/exception_mapping
+        #
+        # openai.BadRequestError,
+        # litellm.ContextWindowExceededError,
+        # litellm.ContentPolicyViolationError,
+        #
+        # openai.AuthenticationError,
+        # openai.PermissionDeniedError,
+        # openai.NotFoundError,
+        #
+        openai.APITimeoutError,
+        openai.UnprocessableEntityError,
+        openai.RateLimitError,
+        openai.APIConnectionError,
+        openai.APIError,
+        openai.APIStatusError,
+        openai.InternalServerError,
     )
 
 
@@ -56,8 +71,6 @@ def send_completion(
     temperature=0,
     extra_params=None,
 ):
-    from aider.llm import litellm
-
     kwargs = dict(
         model=model_name,
         messages=messages,
@@ -90,18 +103,27 @@ def send_completion(
     return hash_object, res
 
 
-@lazy_litellm_retry_decorator
 def simple_send_with_retries(model_name, messages, extra_params=None):
-    try:
-        kwargs = {
-            "model_name": model_name,
-            "messages": messages,
-            "functions": None,
-            "stream": False,
-            "extra_params": extra_params,
-        }
+    retry_delay = 0.125
+    while True:
+        try:
+            kwargs = {
+                "model_name": model_name,
+                "messages": messages,
+                "functions": None,
+                "stream": False,
+                "extra_params": extra_params,
+            }
 
-        _hash, response = send_completion(**kwargs)
-        return response.choices[0].message.content
-    except (AttributeError, litellm.exceptions.BadRequestError):
-        return
+            _hash, response = send_completion(**kwargs)
+            return response.choices[0].message.content
+        except retry_exceptions() as err:
+            print(str(err))
+            retry_delay *= 2
+            if retry_delay > RETRY_TIMEOUT:
+                break
+            print(f"Retrying in {retry_delay:.1f} seconds...")
+            time.sleep(retry_delay)
+            continue
+        except AttributeError:
+            return

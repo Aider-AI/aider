@@ -30,11 +30,6 @@ class SwitchCoder(Exception):
         self.kwargs = kwargs
 
 
-def cmd_report(args):
-    "Report a problem by opening a GitHub Issue"
-    from aider.report import report_github_issue
-
-
 class Commands:
     voice = None
     scraper = None
@@ -50,7 +45,7 @@ class Commands:
         )
 
     def __init__(
-            self, io, coder, voice_language=None, verify_ssl=True, args=None, parser=None, verbose=False
+        self, io, coder, voice_language=None, verify_ssl=True, args=None, parser=None, verbose=False
     ):
         self.io = io
         self.coder = coder
@@ -220,7 +215,7 @@ class Commands:
             return
 
         first_word = words[0]
-        rest_inp = inp[len(words[0]):].strip()
+        rest_inp = inp[len(words[0]) :].strip()
 
         all_commands = self.get_commands()
         matching_commands = [cmd for cmd in all_commands if cmd.startswith(first_word)]
@@ -729,7 +724,7 @@ class Commands:
                 except OSError as e:
                     self.io.tool_error(f"Error creating file {fname}: {e}")
 
-        for matched_file in all_matched_files:
+        for matched_file in sorted(all_matched_files):
             abs_file_path = self.coder.abs_root_path(matched_file)
 
             if not abs_file_path.startswith(self.coder.root) and not is_image_file(matched_file):
@@ -753,7 +748,9 @@ class Commands:
                         f"Cannot add {matched_file} as it's not part of the repository"
                     )
             else:
-                if is_image_file(matched_file) and not self.coder.main_model.accepts_images:
+                if is_image_file(matched_file) and not self.coder.main_model.info.get(
+                    "supports_vision"
+                ):
                     self.io.tool_error(
                         f"Cannot add image file {matched_file} as the"
                         f" {self.coder.main_model.name} does not support images."
@@ -1170,23 +1167,32 @@ class Commands:
             return
 
         filenames = parse_quoted_filenames(args)
+        all_paths = []
+
+        # First collect all expanded paths
         for pattern in filenames:
-            # Expand tilde for home directory
             expanded_pattern = expanduser(pattern)
+            if os.path.isabs(expanded_pattern):
+                # For absolute paths, glob it
+                matches = list(glob.glob(expanded_pattern))
+            else:
+                # For relative paths and globs, use glob from the root directory
+                matches = list(Path(self.coder.root).glob(expanded_pattern))
 
-            expanded_paths = glob.glob(expanded_pattern, recursive=True)
-            if not expanded_paths:
+            if not matches:
                 self.io.tool_error(f"No matches found for: {pattern}")
-                continue
+            else:
+                all_paths.extend(matches)
 
-            for path in expanded_paths:
-                abs_path = self.coder.abs_root_path(path)
-                if os.path.isfile(abs_path):
-                    self._add_read_only_file(abs_path, path)
-                elif os.path.isdir(abs_path):
-                    self._add_read_only_directory(abs_path, path)
-                else:
-                    self.io.tool_error(f"Not a file or directory: {abs_path}")
+        # Then process them in sorted order
+        for path in sorted(all_paths):
+            abs_path = self.coder.abs_root_path(path)
+            if os.path.isfile(abs_path):
+                self._add_read_only_file(abs_path, path)
+            elif os.path.isdir(abs_path):
+                self._add_read_only_directory(abs_path, path)
+            else:
+                self.io.tool_error(f"Not a file or directory: {abs_path}")
         self.cmd_save(args=None)
 
     def _add_read_only_file(self, abs_path, original_name):
@@ -1209,8 +1215,8 @@ class Commands:
             for file in files:
                 file_path = os.path.join(root, file)
                 if (
-                        file_path not in self.coder.abs_fnames
-                        and file_path not in self.coder.abs_read_only_fnames
+                    file_path not in self.coder.abs_fnames
+                    and file_path not in self.coder.abs_read_only_fnames
                 ):
                     self.coder.abs_read_only_fnames.add(file_path)
                     added_files += 1
@@ -1243,11 +1249,11 @@ class Commands:
         output = f"{announcements}\n{settings}"
         self.io.tool_output(output)
 
+
     def cmd_save(self, args):
         """save the currently-editable files to a .aider.stack.md file"""
         editable_workspace_files_file = os.path.join(self.coder.root, ".aider.edit.md")
         read_only_workspace_files_file = os.path.join(self.coder.root, ".aider.readonly.md")
-
         try:
             if any(self.coder.abs_fnames):
                 with open(editable_workspace_files_file, "w") as f:
@@ -1275,49 +1281,88 @@ class Commands:
                     pass
         except Exception as e:
             self.io.tool_error(f"Error saving the current chat: {e}")
-            return
 
     def cmd_load(self, args):
         """load file list from .aider.edit.md and .aider.readonly.md files"""
         editable_file_list = os.path.join(self.coder.root, ".aider.edit.md")
         read_only_file_list = os.path.join(self.coder.root, ".aider.readonly.md")
+
+        class NoFileError(Exception):
+            pass
+
         try:
-            class NoFileError(Exception):
-                pass
+            if not os.path.exists(editable_file_list):
+                self.io.tool_error("editable workspace file list not found - possibly never got stored.")
+                raise NoFileError()
 
-            try:
-                if not os.path.exists(editable_file_list):
-                    self.io.tool_error("editable workspace file list not found - possibly never got stored.")
-                    raise NoFileError()
+            with open(editable_file_list, "r") as f:
+                for line in f:
+                    fname = line.strip()
+                    # check if this file exists at all:
+                    if not os.path.exists(fname):
+                        self.io.tool_error(f"requested file not found: {fname}")
+                        continue
+                    self.coder.abs_fnames.add(fname)
+        except NoFileError:
+            pass
 
-                with open(editable_file_list, "r") as f:
-                    for line in f:
-                        fname = line.strip()
-                        # check if this file exists at all:
-                        if not os.path.exists(fname):
-                            self.io.tool_error(f"requested file not found: {fname}")
-                            continue
-                        self.coder.abs_fnames.add(fname)
-            except NoFileError:
-                pass
+        try:
+            if not os.path.exists(read_only_file_list):
+                self.io.tool_error("read-only workspace file list not found - possibly never got stored.")
+                raise NoFileError()
+            with open(read_only_file_list, "r") as f:
+                for line in f:
+                    fname = line.strip()
+                    if not os.path.exists(fname):
+                        self.io.tool_error(f"File not found: {fname}")
+                        raise NoFileError()
+                    self.coder.abs_read_only_fnames.add(fname)
+        except NoFileError:
+            pass
+        self.io.tool_output(f"files loaded.")
+        self.io.tool_error(f"Error loading the file list: {e}")
+        return
 
-            try:
-                if not os.path.exists(read_only_file_list):
-                    self.io.tool_error("read-only workspace file list not found - possibly never got stored.")
-                    raise NoFileError()
-                with open(read_only_file_list, "r") as f:
-                    for line in f:
-                        fname = line.strip()
-                        if not os.path.exists(fname):
-                            self.io.tool_error(f"File not found: {fname}")
-                            raise NoFileError()
-                        self.coder.abs_read_only_fnames.add(fname)
-            except NoFileError:
-                pass
-            self.io.tool_output(f"files loaded.")
-        except Exception as e:
-            self.io.tool_error(f"Error loading the file list: {e}")
+    def cmd_copy(self, args):
+        "Copy the last assistant message to the clipboard"
+        all_messages = self.coder.done_messages + self.coder.cur_messages
+        assistant_messages = [msg for msg in reversed(all_messages) if msg["role"] == "assistant"]
+
+        if not assistant_messages:
+            self.io.tool_error("No assistant messages found to copy.")
             return
+
+        last_assistant_message = assistant_messages[0]["content"]
+
+        try:
+            pyperclip.copy(last_assistant_message)
+            preview = (
+                last_assistant_message[:50] + "..."
+                if len(last_assistant_message) > 50
+                else last_assistant_message
+            )
+            self.io.tool_output(f"Copied last assistant message to clipboard. Preview: {preview}")
+        except pyperclip.PyperclipException as e:
+            self.io.tool_error(f"Failed to copy to clipboard: {str(e)}")
+            self.io.tool_output(
+                "You may need to install xclip or xsel on Linux, or pbcopy on macOS."
+            )
+        except Exception as e:
+            self.io.tool_error(f"An unexpected error occurred while copying to clipboard: {str(e)}")
+
+    def cmd_report(self, args):
+        """Report a problem by opening a GitHub Issue"""
+        from aider.report import report_github_issue
+
+        announcements = "\n".join(self.coder.get_announcements())
+        issue_text = announcements
+
+        if args.strip():
+            title = args.strip()
+        else:
+            title = None
+
+        report_github_issue(issue_text, title=title, confirm=False)
 
 
 def expand_subdir(file_path):

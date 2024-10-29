@@ -679,7 +679,7 @@ class Coder:
         return chat_files_messages
 
     def get_images_message(self):
-        if not self.main_model.accepts_images:
+        if not self.main_model.info.get("supports_vision"):
             return None
 
         image_messages = []
