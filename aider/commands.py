@@ -1285,8 +1285,12 @@ class Commands:
 
                 # Write commands to add read-only files
                 for fname in sorted(self.coder.abs_read_only_fnames):
-                    rel_fname = self.coder.get_rel_fname(fname)
-                    f.write(f"/read-only {rel_fname}\n")
+                    # Use absolute path for files outside repo root, relative path for files inside
+                    if Path(fname).is_relative_to(self.coder.root):
+                        rel_fname = self.coder.get_rel_fname(fname)
+                        f.write(f"/read-only {rel_fname}\n")
+                    else:
+                        f.write(f"/read-only {fname}\n")
 
             self.io.tool_output(f"Saved commands to {args.strip()}")
         except Exception as e:
