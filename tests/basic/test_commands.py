@@ -830,7 +830,14 @@ class TestCommands(TestCase):
                                 break
                     else:
                         self.fail(f"No matching read-only command found for {external_file1_path}")
-                    self.assertIn(f"/read-only {external_file2_path}", commands_text)
+                    # Split commands and check each one
+                    for line in commands_text.splitlines():
+                        if line.startswith("/read-only "):
+                            saved_path = line.split(" ", 1)[1]
+                            if os.path.samefile(saved_path, external_file2_path):
+                                break
+                    else:
+                        self.fail(f"No matching read-only command found for {external_file2_path}")
 
                 # Clear the current session
                 commands.cmd_reset("")
