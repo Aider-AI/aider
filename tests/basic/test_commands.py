@@ -1314,4 +1314,3 @@ class TestCommands(TestCase):
 
             del coder
             del commands
-
