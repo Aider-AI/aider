@@ -1281,7 +1281,7 @@ class Commands:
                 # Write commands to add editable files
                 for fname in sorted(self.coder.abs_fnames):
                     rel_fname = self.coder.get_rel_fname(fname)
-                    f.write(f"/add {rel_fname}\n")
+                    f.write(f"/add       {rel_fname}\n")
 
                 # Write commands to add read-only files
                 for fname in sorted(self.coder.abs_read_only_fnames):
