@@ -652,7 +652,7 @@ class TestCommands(TestCase):
             test_files = {
                 "file1.txt": "Content of file 1",
                 "file2.py": "print('Content of file 2')",
-                "subdir/file3.md": "# Content of file 3"
+                "subdir/file3.md": "# Content of file 3",
             }
 
             for file_path, content in test_files.items():
