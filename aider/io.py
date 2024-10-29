@@ -242,7 +242,7 @@ class InputOutput:
                 "output": self.output,
                 "lexer": PygmentsLexer(MarkdownLexer),
                 "editing_mode": self.editingmode,
-                "cursor": ModalCursorShapeConfig(),
+                "cursor": ModalCursorShapeConfig(), #ai only include this if vi mode!
             }
             if self.input_history_file is not None:
                 session_kwargs["history"] = FileHistory(self.input_history_file)
