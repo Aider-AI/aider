@@ -694,7 +694,6 @@ class TestCommands(TestCase):
             # Clean up
             Path(session_file).unlink()
 
-    #ai this test fails on windows because it uses /, fix it!
     def test_cmd_save_and_load_with_external_file(self):
         with tempfile.NamedTemporaryFile(mode="w", delete=False) as external_file:
             external_file.write("External file content")
@@ -718,11 +717,11 @@ class TestCommands(TestCase):
                     full_path.write_text(content)
 
                 # Add some files as editable and some as read-only
-                commands.cmd_add("file1.txt")
+                commands.cmd_add(str(Path("file1.txt")))
                 commands.cmd_read_only(external_file_path)
 
                 # Save the session to a file
-                session_file = "test_session.txt"
+                session_file = str(Path("test_session.txt"))
                 commands.cmd_save(session_file)
 
                 # Verify the session file was created and contains the expected commands
@@ -744,7 +743,7 @@ class TestCommands(TestCase):
                 added_files = {coder.get_rel_fname(f) for f in coder.abs_fnames}
                 read_only_files = {coder.get_rel_fname(f) for f in coder.abs_read_only_fnames}
 
-                self.assertEqual(added_files, {"file1.txt"})
+                self.assertEqual(added_files, {str(Path("file1.txt"))})
                 self.assertEqual(read_only_files, {external_file_path})
 
                 # Clean up
