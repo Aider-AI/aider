@@ -172,33 +172,36 @@ class RepoMap:
             return
 
         path = Path(self.root) / self.TAGS_CACHE_DIR
-        
+
         # Try to recreate the cache
         try:
             # Delete existing cache dir
             if path.exists():
                 import shutil
+
                 shutil.rmtree(path)
-            
+
             # Try to create new cache
             new_cache = Cache(path)
-            
+
             # Test that it works
             test_key = "test"
             new_cache[test_key] = "test"
             _ = new_cache[test_key]
             del new_cache[test_key]
-            
+
             # If we got here, the new cache works
             self.TAGS_CACHE = new_cache
             return
-            
+
         except (SQLITE_ERRORS, OSError) as e:
             # If anything goes wrong, warn and fall back to dict
-            self.io.tool_warning(f"Unable to use tags cache at {path}, falling back to memory cache")
+            self.io.tool_warning(
+                f"Unable to use tags cache at {path}, falling back to memory cache"
+            )
             if self.verbose:
                 self.io.tool_warning(f"Cache error: {str(e)}")
-            
+
         self.TAGS_CACHE = dict()
 
     def load_tags_cache(self):
