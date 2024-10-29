@@ -694,6 +694,7 @@ class TestCommands(TestCase):
             # Clean up
             Path(session_file).unlink()
 
+    #ai this test fails on windows because it uses /, fix it!
     def test_cmd_save_and_load_with_external_file(self):
         with tempfile.NamedTemporaryFile(mode="w", delete=False) as external_file:
             external_file.write("External file content")
