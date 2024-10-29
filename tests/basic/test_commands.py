@@ -1,4 +1,3 @@
-
 import codecs
 import os
 import shutil
