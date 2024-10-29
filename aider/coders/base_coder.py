@@ -1813,9 +1813,10 @@ class Coder:
             edits = self.get_edits()
             edits = self.prepare_to_edit(edits)
 
-            # ai: handle the case where apply_edits returns an updated edits array (it may just return None, meaning use the existing edits array)!
+            updated_edits = self.apply_edits(edits)
+            if updated_edits is not None:
+                edits = updated_edits
             edited = set(edit[0] for edit in edits)
-            self.apply_edits(edits)
         except ValueError as err:
             self.num_malformed_responses += 1
 

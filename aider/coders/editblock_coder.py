@@ -60,7 +60,7 @@ class EditBlockCoder(Coder):
                 failed.append(edit)
 
         if not failed:
-            return # ai: return the updated list of edits
+            return passed
 
         blocks = "block" if len(failed) == 1 else "blocks"
 
