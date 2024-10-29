@@ -1253,7 +1253,7 @@ class Commands:
             return
 
         try:
-            with open(args.strip(), 'r') as f:
+            with open(args.strip(), "r") as f:
                 commands = f.readlines()
         except FileNotFoundError:
             self.io.tool_error(f"File not found: {args}")
@@ -1264,9 +1264,9 @@ class Commands:
 
         for cmd in commands:
             cmd = cmd.strip()
-            if not cmd or cmd.startswith('#'):
+            if not cmd or cmd.startswith("#"):
                 continue
-            
+
             self.io.tool_output(f"\nExecuting command: {cmd}")
             self.run(cmd)
 
