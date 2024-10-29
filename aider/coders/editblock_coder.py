@@ -41,7 +41,7 @@ class EditBlockCoder(Coder):
     def apply_edits(self, edits, dry_run=False):
         failed = []
         passed = []
-        updated = []
+        updated_edits = []
 
         for edit in edits:
             path, original, updated = edit
@@ -54,9 +54,10 @@ class EditBlockCoder(Coder):
                     content = self.io.read_text(full_path)
                     new_content = do_replace(full_path, content, original, updated, self.fence)
                     if new_content:
+                        path = self.get_rel_fname(full_path)
                         break
 
-            updated.append((path, original, updated))
+            updated_edits.append((path, original, updated))
 
             if new_content:
                 if not dry_run:
@@ -66,7 +67,7 @@ class EditBlockCoder(Coder):
                 failed.append(edit)
 
         if dry_run:
-            return updated
+            return updated_edits
 
         if not failed:
             return
