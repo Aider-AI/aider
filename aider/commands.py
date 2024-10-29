@@ -1246,6 +1246,9 @@ class Commands:
         output = f"{announcements}\n{settings}"
         self.io.tool_output(output)
 
+    def completions_raw_load(self, document, complete_event):
+        return self.completions_raw_read_only(document, complete_event)
+
     def cmd_load(self, args):
         "Load and execute commands from a file"
         if not args.strip():
@@ -1269,6 +1272,9 @@ class Commands:
 
             self.io.tool_output(f"\nExecuting command: {cmd}")
             self.run(cmd)
+
+    def completions_raw_save(self, document, complete_event):
+        return self.completions_raw_read_only(document, complete_event)
 
     def cmd_save(self, args):
         "Save commands to a file that can reconstruct the current chat session's files"
