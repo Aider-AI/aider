@@ -672,12 +672,12 @@ class TestCommands(TestCase):
             self.assertTrue(Path(session_file).exists())
             with open(session_file, encoding=io.encoding) as f:
                 commands_text = f.read().splitlines()
-                    
+
                 # Convert paths to absolute for comparison
                 abs_file1 = str(Path("file1.txt").resolve())
                 abs_file2 = str(Path("file2.py").resolve())
                 abs_file3 = str(Path("subdir/file3.md").resolve())
-                    
+
                 # Check each line for matching paths using os.path.samefile
                 found_file1 = found_file2 = found_file3 = False
                 for line in commands_text:
@@ -691,7 +691,7 @@ class TestCommands(TestCase):
                         path = Path(line[11:]).resolve()
                         if os.path.samefile(str(path), abs_file3):
                             found_file3 = True
-                    
+
                 self.assertTrue(found_file1, "file1.txt not found in commands")
                 self.assertTrue(found_file2, "file2.py not found in commands")
                 self.assertTrue(found_file3, "file3.md not found in commands")
@@ -748,7 +748,7 @@ class TestCommands(TestCase):
                 self.assertTrue(Path(session_file).exists())
                 with open(session_file, encoding=io.encoding) as f:
                     commands_text = f.read()
-                    #ai: parse the commands_text and check for os.path.samefile()!
+                    # ai: parse the commands_text and check for os.path.samefile()!
                     self.assertIn("/add file1.txt", commands_text)
                     self.assertIn(f"/read-only {external_file_path}", commands_text)
 
