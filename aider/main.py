@@ -770,6 +770,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             return 1
         return
 
+    if args.load:
+        commands.cmd_load(args.load)
+        return
+
     if args.exit:
         return
 

@@ -662,6 +662,11 @@ def get_parser(default_config_files, git_root):
         ),
     )
     group.add_argument(
+        "--load",
+        metavar="LOAD_FILE",
+        help="Load and execute commands from a file",
+    )
+    group.add_argument(
         "--encoding",
         default="utf-8",
         help="Specify the encoding for input and output (default: utf-8)",
