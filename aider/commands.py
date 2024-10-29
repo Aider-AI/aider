@@ -1252,6 +1252,7 @@ class Commands:
             self.io.tool_error("Please provide a filename containing commands to load.")
             return
 
+        #ai use io.encoding, ignore decode errs!
         try:
             with open(args.strip(), "r") as f:
                 commands = f.readlines()
