@@ -1314,3 +1314,5 @@ class TestCommands(TestCase):
 
             del coder
             del commands
+
+#ai add some tests for cmd_save and cmd_load!
