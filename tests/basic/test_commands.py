@@ -749,7 +749,9 @@ class TestCommands(TestCase):
                 self.assertTrue(Path(session_file).exists())
                 with open(session_file, encoding=io.encoding) as f:
                     commands_text = f.read()
-                    commands_text = re.sub(r'/add +', '/add ', commands_text)  # Normalize add command spaces
+                    commands_text = re.sub(
+                        r"/add +", "/add ", commands_text
+                    )  # Normalize add command spaces
                     self.assertIn("/add file1.txt", commands_text)
                     # Split commands and check each one
                     for line in commands_text.splitlines():
@@ -823,7 +825,9 @@ class TestCommands(TestCase):
                 self.assertTrue(Path(session_file).exists())
                 with open(session_file, encoding=io.encoding) as f:
                     commands_text = f.read()
-                    commands_text = re.sub(r'/add +', '/add ', commands_text)  # Normalize add command spaces
+                    commands_text = re.sub(
+                        r"/add +", "/add ", commands_text
+                    )  # Normalize add command spaces
                     self.assertIn("/add internal1.txt", commands_text)
                     # Split commands and check each one
                     for line in commands_text.splitlines():
