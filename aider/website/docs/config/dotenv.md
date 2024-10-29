@@ -357,6 +357,9 @@ cog.outl("```")
 ## Specify a file containing the message to send the LLM, process reply, then exit (disables chat mode)
 #AIDER_MESSAGE_FILE=
 
+## Load and execute /commands from a file on launch
+#AIDER_LOAD=
+
 ## Specify the encoding for input and output (default: utf-8)
 #AIDER_ENCODING=utf-8
 

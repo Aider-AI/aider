@@ -385,6 +385,9 @@ cog.outl("```")
 ## Specify a file containing the message to send the LLM, process reply, then exit (disables chat mode)
 #message-file: xxx
 
+## Load and execute /commands from a file on launch
+#load: xxx
+
 ## Specify the encoding for input and output (default: utf-8)
 #encoding: utf-8
 

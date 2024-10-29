@@ -748,6 +748,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         io.tool_output(f"Cur working dir: {Path.cwd()}")
         io.tool_output(f"Git working dir: {git_root}")
 
+    if args.load:
+        commands.cmd_load(args.load)
+
     if args.message:
         io.add_to_input_history(args.message)
         io.tool_output()
@@ -769,9 +772,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             io.tool_error(f"Error reading message file: {e}")
             return 1
         return
-
-    if args.load:
-        commands.cmd_load(args.load)
 
     if args.exit:
         return

@@ -67,8 +67,8 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--check-update | --no-check-update]
              [--install-main-branch] [--upgrade] [--apply]
              [--yes-always] [-v] [--show-repo-map] [--show-prompts]
-             [--exit] [--message] [--message-file] [--encoding] [-c]
-             [--gui]
+             [--exit] [--message] [--message-file] [--load]
+             [--encoding] [-c] [--gui]
              [--suggest-shell-commands | --no-suggest-shell-commands]
              [--fancy-input | --no-fancy-input] [--voice-format]
              [--voice-language]
@@ -594,6 +594,10 @@ Environment variable: `AIDER_MESSAGE_FILE`
 Aliases:
   - `--message-file MESSAGE_FILE`
   - `-f MESSAGE_FILE`
+
+### `--load LOAD_FILE`
+Load and execute /commands from a file on launch  
+Environment variable: `AIDER_LOAD`  
 
 ### `--encoding VALUE`
 Specify the encoding for input and output (default: utf-8)  
