@@ -56,7 +56,6 @@ class EditBlockCoder(Coder):
                     if new_content:
                         break
 
-            # ai: update full_path->path!
             updated.append((path, original, updated))
 
             if new_content:
