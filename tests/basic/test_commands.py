@@ -748,7 +748,6 @@ class TestCommands(TestCase):
                 self.assertTrue(Path(session_file).exists())
                 with open(session_file, encoding=io.encoding) as f:
                     commands_text = f.read()
-                    # ai: parse the commands_text and check for os.path.samefile()!
                     self.assertIn("/add file1.txt", commands_text)
                     self.assertIn(f"/read-only {external_file_path}", commands_text)
 
