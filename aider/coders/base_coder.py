@@ -1812,6 +1812,8 @@ class Coder:
         try:
             edits = self.get_edits()
             edits = self.prepare_to_edit(edits)
+
+            # ai: handle the case where apply_edits returns an updated edits array (it may just return None, meaning use the existing edits array)!
             edited = set(edit[0] for edit in edits)
             self.apply_edits(edits)
         except ValueError as err:
