@@ -1247,7 +1247,6 @@ class Commands:
         self.io.tool_output(output)
 
     #ai add cmd_save(fname) that generates a file that cmd_load can read!
-    #it should use /add and /read to reconstruct the list of added files, one per line
     def cmd_load(self, args):
         "Load and execute commands from a file"
         if not args.strip():
@@ -1271,6 +1270,28 @@ class Commands:
 
             self.io.tool_output(f"\nExecuting command: {cmd}")
             self.run(cmd)
+
+    def cmd_save(self, args):
+        "Save commands to a file that can reconstruct the current chat session's files"
+        if not args.strip():
+            self.io.tool_error("Please provide a filename to save the commands to.")
+            return
+
+        try:
+            with open(args.strip(), "w", encoding=self.io.encoding) as f:
+                # Write commands to add editable files
+                for fname in sorted(self.coder.abs_fnames):
+                    rel_fname = self.coder.get_rel_fname(fname)
+                    f.write(f"/add {rel_fname}\n")
+                
+                # Write commands to add read-only files
+                for fname in sorted(self.coder.abs_read_only_fnames):
+                    rel_fname = self.coder.get_rel_fname(fname)
+                    f.write(f"/read-only {rel_fname}\n")
+            
+            self.io.tool_output(f"Saved commands to {args.strip()}")
+        except Exception as e:
+            self.io.tool_error(f"Error saving commands to file: {e}")
 
     def cmd_copy(self, args):
         "Copy the last assistant message to the clipboard"
