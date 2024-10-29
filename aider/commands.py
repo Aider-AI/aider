@@ -1305,6 +1305,9 @@ class Commands:
                     self.coder.abs_fnames.add(fname)
         except NoFileError:
             pass
+        except Exception as e:
+            self.io.tool_error(f"Error loading the read_only_file_list file list: {e}")
+            return
 
         try:
             if not os.path.exists(read_only_file_list):
@@ -1319,8 +1322,12 @@ class Commands:
                     self.coder.abs_read_only_fnames.add(fname)
         except NoFileError:
             pass
+        except Exception as e:
+            self.io.tool_error(f"Error loading the read_only_file_list file list: {e}")
+            return
+
         self.io.tool_output(f"files loaded.")
-        self.io.tool_error(f"Error loading the file list: {e}")
+
         return
 
     def cmd_copy(self, args):
