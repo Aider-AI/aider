@@ -167,7 +167,7 @@ class RepoMap:
             # Just return the full fname.
             return fname
 
-    def tags_cache_error(self):
+    def tags_cache_error(self, original_error=None):
         """Handle SQLite errors by trying to recreate cache, falling back to dict if needed"""
         if isinstance(getattr(self, "TAGS_CACHE", None), dict):
             return
@@ -199,7 +199,9 @@ class RepoMap:
                 f"Unable to use tags cache at {path}, falling back to memory cache"
             )
             if self.verbose:
-                self.io.tool_warning(f"Cache error: {str(e)}")
+                if original_error:
+                    self.io.tool_warning(f"Original error: {str(original_error)}")
+                self.io.tool_warning(f"Cache recreation error: {str(e)}")
 
         self.TAGS_CACHE = dict()
 
@@ -207,8 +209,8 @@ class RepoMap:
         path = Path(self.root) / self.TAGS_CACHE_DIR
         try:
             self.TAGS_CACHE = Cache(path)
-        except SQLITE_ERRORS:
-            self.tags_cache_error()
+        except SQLITE_ERRORS as e:
+            self.tags_cache_error(e)
 
     def save_tags_cache(self):
         pass
@@ -228,8 +230,8 @@ class RepoMap:
         cache_key = fname
         try:
             val = self.TAGS_CACHE.get(cache_key)  # Issue #1308
-        except SQLITE_ERRORS:
-            self.tags_cache_error()
+        except SQLITE_ERRORS as e:
+            self.tags_cache_error(e)
             val = self.TAGS_CACHE.get(cache_key)
 
         if val is not None and val.get("mtime") == file_mtime:
