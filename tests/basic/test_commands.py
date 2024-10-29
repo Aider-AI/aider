@@ -694,6 +694,8 @@ class TestCommands(TestCase):
             # Clean up
             Path(session_file).unlink()
 
+    # ai: add another test for load/save, but include a /read-only file that!
+    # is from outside the repo
     def test_cmd_read_only_with_glob_pattern(self):
         with GitTemporaryDirectory() as repo_dir:
             io = InputOutput(pretty=False, fancy_input=False, yes=False)
