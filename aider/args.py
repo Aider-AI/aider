@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+#ai add --load <fname> and call cmd_load with it in main!
 import argparse
 import os
 import sys
