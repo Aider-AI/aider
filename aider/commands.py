@@ -771,7 +771,6 @@ class Commands:
         all_files = [self.quote_fname(fn) for fn in all_files]
         return all_files
 
-    # ai add cmd_load which takes a filename. read `/commands` from each line an execute them!
     def cmd_drop(self, args=""):
         "Remove files from the chat session to free up context space"
 
@@ -1246,6 +1245,30 @@ class Commands:
         announcements = "\n".join(self.coder.get_announcements())
         output = f"{announcements}\n{settings}"
         self.io.tool_output(output)
+
+    def cmd_load(self, args):
+        "Load and execute commands from a file"
+        if not args.strip():
+            self.io.tool_error("Please provide a filename containing commands to load.")
+            return
+
+        try:
+            with open(args.strip(), 'r') as f:
+                commands = f.readlines()
+        except FileNotFoundError:
+            self.io.tool_error(f"File not found: {args}")
+            return
+        except Exception as e:
+            self.io.tool_error(f"Error reading file: {e}")
+            return
+
+        for cmd in commands:
+            cmd = cmd.strip()
+            if not cmd or cmd.startswith('#'):
+                continue
+            
+            self.io.tool_output(f"\nExecuting command: {cmd}")
+            self.run(cmd)
 
     def cmd_copy(self, args):
         "Copy the last assistant message to the clipboard"
