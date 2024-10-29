@@ -753,8 +753,10 @@ class TestCommands(TestCase):
             os.unlink(external_file_path)
 
     def test_cmd_save_and_load_with_multiple_external_files(self):
-        with tempfile.NamedTemporaryFile(mode="w", delete=False) as external_file1, \
-             tempfile.NamedTemporaryFile(mode="w", delete=False) as external_file2:
+        with (
+            tempfile.NamedTemporaryFile(mode="w", delete=False) as external_file1,
+            tempfile.NamedTemporaryFile(mode="w", delete=False) as external_file2,
+        ):
             external_file1.write("External file 1 content")
             external_file2.write("External file 2 content")
             external_file1_path = external_file1.name
