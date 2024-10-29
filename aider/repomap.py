@@ -166,13 +166,19 @@ class RepoMap:
             # Just return the full fname.
             return fname
 
+    def tags_cache_error(self):
+        """Handle SQLite errors by falling back to dict-based cache"""
+        if isinstance(self.TAGS_CACHE, Cache):
+            path = Path(self.root) / self.TAGS_CACHE_DIR
+            self.io.tool_warning(f"Unable to use tags cache, delete {path} to resolve.")
+            self.TAGS_CACHE = dict()
+
     def load_tags_cache(self):
         path = Path(self.root) / self.TAGS_CACHE_DIR
         try:
             self.TAGS_CACHE = Cache(path)
         except SQLITE_ERRORS:
-            self.io.tool_warning(f"Unable to use tags cache, delete {path} to resolve.")
-            self.TAGS_CACHE = dict()
+            self.tags_cache_error()
 
     def save_tags_cache(self):
         pass
@@ -190,9 +196,18 @@ class RepoMap:
             return []
 
         cache_key = fname
-        val = self.TAGS_CACHE.get(cache_key)  # Issue #1308
+        try:
+            val = self.TAGS_CACHE.get(cache_key)  # Issue #1308
+        except SQLITE_ERRORS:
+            self.tags_cache_error()
+            val = self.TAGS_CACHE.get(cache_key)
+
         if val is not None and val.get("mtime") == file_mtime:
-            return self.TAGS_CACHE[cache_key]["data"]
+            try:
+                return self.TAGS_CACHE[cache_key]["data"]
+            except SQLITE_ERRORS:
+                self.tags_cache_error()
+                return self.TAGS_CACHE[cache_key]["data"]
 
         # miss!
         data = list(self.get_tags_raw(fname, rel_fname))
@@ -202,7 +217,8 @@ class RepoMap:
             self.TAGS_CACHE[cache_key] = {"mtime": file_mtime, "data": data}
             self.save_tags_cache()
         except SQLITE_ERRORS:
-            pass
+            self.tags_cache_error()
+            self.TAGS_CACHE[cache_key] = {"mtime": file_mtime, "data": data}
 
         return data
 
