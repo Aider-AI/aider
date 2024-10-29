@@ -737,6 +737,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     io.tool_output('Use /help <question> for help, run "aider --help" to see cmd line args')
 
+    # reload last saved file state
+    coder.commands.cmd_load(args=None)
+
     if git_root and Path.cwd().resolve() != Path(git_root).resolve():
         io.tool_warning(
             "Note: in-chat filenames are always relative to the git working dir, not the current"

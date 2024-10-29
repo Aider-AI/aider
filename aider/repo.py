@@ -1,4 +1,4 @@
-import os
+git import os
 import time
 from pathlib import Path, PurePosixPath
 

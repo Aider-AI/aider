@@ -50,7 +50,7 @@ class Commands:
         )
 
     def __init__(
-        self, io, coder, voice_language=None, verify_ssl=True, args=None, parser=None, verbose=False
+            self, io, coder, voice_language=None, verify_ssl=True, args=None, parser=None, verbose=False
     ):
         self.io = io
         self.coder = coder
@@ -220,7 +220,7 @@ class Commands:
             return
 
         first_word = words[0]
-        rest_inp = inp[len(words[0]) :].strip()
+        rest_inp = inp[len(words[0]):].strip()
 
         all_commands = self.get_commands()
         matching_commands = [cmd for cmd in all_commands if cmd.startswith(first_word)]
@@ -766,6 +766,7 @@ class Commands:
                     self.coder.abs_fnames.add(abs_file_path)
                     self.io.tool_output(f"Added {matched_file} to the chat")
                     self.coder.check_added_files()
+        self.cmd_save(args=None)
 
     def completions_drop(self):
         files = self.coder.get_inchat_relative_files()
@@ -805,6 +806,7 @@ class Commands:
                 if abs_fname in self.coder.abs_fnames:
                     self.coder.abs_fnames.remove(abs_fname)
                     self.io.tool_output(f"Removed {matched_file} from the chat")
+        self.cmd_save(args=None)
 
     def cmd_git(self, args):
         "Run a git command (output excluded from chat)"
@@ -1185,6 +1187,7 @@ class Commands:
                     self._add_read_only_directory(abs_path, path)
                 else:
                     self.io.tool_error(f"Not a file or directory: {abs_path}")
+        self.cmd_save(args=None)
 
     def _add_read_only_file(self, abs_path, original_name):
         if abs_path in self.coder.abs_read_only_fnames:
@@ -1206,8 +1209,8 @@ class Commands:
             for file in files:
                 file_path = os.path.join(root, file)
                 if (
-                    file_path not in self.coder.abs_fnames
-                    and file_path not in self.coder.abs_read_only_fnames
+                        file_path not in self.coder.abs_fnames
+                        and file_path not in self.coder.abs_read_only_fnames
                 ):
                     self.coder.abs_read_only_fnames.add(file_path)
                     added_files += 1
@@ -1240,7 +1243,6 @@ class Commands:
         output = f"{announcements}\n{settings}"
         self.io.tool_output(output)
 
-
     def cmd_save(self, args):
         """save the currently-editable files to a .aider.stack.md file"""
         editable_workspace_files_file = os.path.join(self.coder.root, ".aider.edit.md")
@@ -1252,13 +1254,25 @@ class Commands:
                     for fname in self.coder.abs_fnames:
                         f.write(f"{fname}\n")
                 self.io.tool_output(f"Saved {len(self.coder.abs_fnames)} file names to {editable_workspace_files_file}")
-            if any(self.coder.abs_read_only_fnames):
+            else:
+                try:
+                    os.remove(editable_workspace_files_file)
+                    self.io.tool_output(f"No editable files to save -- removed {editable_workspace_files_file}")
+                except FileNotFoundError:
+                    pass
 
+            if any(self.coder.abs_read_only_fnames):
                 with open(read_only_workspace_files_file, "w") as f:
                     for fname in self.coder.abs_read_only_fnames:
                         f.write(f"{fname}\n")
                 self.io.tool_output(
                     f"Saved {len(self.coder.abs_read_only_fnames)} file names to {read_only_workspace_files_file}")
+            else:
+                try:
+                    os.remove(read_only_workspace_files_file)
+                    self.io.tool_output(f"Removed {read_only_workspace_files_file}")
+                except FileNotFoundError:
+                    pass
         except Exception as e:
             self.io.tool_error(f"Error saving the current chat: {e}")
             return
