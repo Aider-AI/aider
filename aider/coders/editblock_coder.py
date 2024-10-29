@@ -35,9 +35,13 @@ class EditBlockCoder(Coder):
 
         return edits
 
-    def apply_edits(self, edits):
+    def apply_edits_dry_run(self, edits):
+        return self.apply_edits(edits, dry_run=True)
+
+    def apply_edits(self, edits, dry_run=False):
         failed = []
         passed = []
+        updated = []
 
         for edit in edits:
             path, original, updated = edit
@@ -52,14 +56,21 @@ class EditBlockCoder(Coder):
                     if new_content:
                         break
 
+            # ai: update full_path->path!
+            updated.append((path, original, updated))
+
             if new_content:
-                self.io.write_text(full_path, new_content)
+                if not dry_run:
+                    self.io.write_text(full_path, new_content)
                 passed.append(edit)
             else:
                 failed.append(edit)
 
+        if dry_run:
+            return updated
+
         if not failed:
-            return passed
+            return
 
         blocks = "block" if len(failed) == 1 else "blocks"
 
