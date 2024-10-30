@@ -195,10 +195,8 @@ def launch_gui(args):
         "--server.runOnSave=false",
     ]
 
-    try:
-        is_dev = "-dev" in str(__version__)
-    except TypeError:
-        is_dev = False
+    # https://github.com/Aider-AI/aider/issues/2193
+    is_dev = "-dev" in str(__version__)
 
     if is_dev:
         print("Watching for file changes.")
