@@ -1,9 +1,17 @@
 import json
+from typing import Dict, List, Optional, Union
+from dataclasses import dataclass
 
 from ..dump import dump  # noqa: F401
 from .base_coder import Coder
 from .editblock_coder import do_replace
 from .editblock_func_prompts import EditBlockFunctionPrompts
+
+
+class EditOperation:
+    path: str
+    original_lines: Union[str, List[str]]
+    updated_lines: Union[str, List[str]]
 
 
 class EditBlockFunctionCoder(Coder):
@@ -92,47 +100,73 @@ class EditBlockFunctionCoder(Coder):
         res = json.dumps(args, indent=4)
         return res
 
-    def _update_files(self):
-        name = self.partial_response_function_call.get("name")
+    def _process_edit_operation(self, edit: Dict) -> Optional[EditOperation]:
+        """Process and validate a single edit operation"""
+        try:
+            path = get_arg(edit, "path")
+            original = get_arg(edit, "original_lines") 
+            updated = get_arg(edit, "updated_lines")
 
+            original = self._normalize_lines(original)
+            updated = self._normalize_lines(updated)
+
+            return EditOperation(path=path, original_lines=original, updated_lines=updated)
+        except ValueError as e:
+            self.io.tool_error(f"Invalid edit operation: {e}")
+            return None
+
+    def _normalize_lines(self, content: Union[str, List[str]]) -> str:
+        """Normalize content to string format with proper line endings"""
+        if isinstance(content, list):
+            content = "\n".join(content)
+        if content and not content.endswith("\n"):
+            content += "\n"
+        return content
+
+    def _update_files(self) -> Optional[set]:
+        name = self.partial_response_function_call.get("name")
         if name and name != "replace_lines":
             raise ValueError(f'Unknown function_call name="{name}", use name="replace_lines"')
 
         args = self.parse_partial_args()
         if not args:
-            return
+            return None
 
-        edits = args.get("edits", [])
+        return self._process_edits(args.get("edits", []))
 
+    def _process_edits(self, edits: List[Dict]) -> set:
+        """Process multiple edit operations"""
         edited = set()
         for edit in edits:
-            path = get_arg(edit, "path")
-            original = get_arg(edit, "original_lines")
-            updated = get_arg(edit, "updated_lines")
-
-            # gpt-3.5 returns lists even when instructed to return a string!
-            if self.code_format == "list" or type(original) is list:
-                original = "\n".join(original)
-            if self.code_format == "list" or type(updated) is list:
-                updated = "\n".join(updated)
-
-            if original and not original.endswith("\n"):
-                original += "\n"
-            if updated and not updated.endswith("\n"):
-                updated += "\n"
-
-            full_path = self.allowed_to_edit(path)
-            if not full_path:
+            edit_op = self._process_edit_operation(edit)
+            if not edit_op:
                 continue
-            content = self.io.read_text(full_path)
-            content = do_replace(full_path, content, original, updated)
-            if content:
-                self.io.write_text(full_path, content)
-                edited.add(path)
-                continue
-            self.io.tool_error(f"Failed to apply edit to {path}")
-
+                
+            if self._apply_edit(edit_op):
+                edited.add(edit_op.path)
+                
         return edited
+
+    def _apply_edit(self, edit_op: EditOperation) -> bool:
+        """Apply a single edit operation to file"""
+        full_path = self.allowed_to_edit(edit_op.path)
+        if not full_path:
+            return False
+
+        content = self.io.read_text(full_path)
+        updated_content = do_replace(
+            full_path, 
+            content,
+            edit_op.original_lines,
+            edit_op.updated_lines
+        )
+
+        if not updated_content:
+            self.io.tool_error(f"Failed to apply edit to {edit_op.path}")
+            return False
+
+        self.io.write_text(full_path, updated_content)
+        return True
 
 
 def get_arg(edit, arg):
