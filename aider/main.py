@@ -607,9 +607,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         if problem:
             io.tool_output("You can skip this check with --no-show-model-warnings")
             io.tool_output()
+
             try:
-                if not io.confirm_ask("Proceed anyway?"):
-                    return 1
+                if io.confirm_ask("Open documentation url for more info?", subject=urls.model_warnings):
+                    pass # ai have this launch the url in a browser!
             except KeyboardInterrupt:
                 return 1
 
