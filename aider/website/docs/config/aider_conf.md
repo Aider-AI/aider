@@ -328,9 +328,9 @@ cog.outl("```")
 #analytics: false
 
 ## Specify a file to log analytics events
-#analytics-log:
+#analytics-log: xxx
 
-## Disable analytics forever
+## Permanently disable analytics
 #analytics-disable: false
 
 #################

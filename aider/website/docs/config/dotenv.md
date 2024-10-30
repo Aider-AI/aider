@@ -315,7 +315,7 @@ cog.outl("```")
 ## Specify a file to log analytics events
 #AIDER_ANALYTICS_LOG=
 
-## Disable analytics forever
+## Permanently disable analytics
 #AIDER_ANALYTICS_DISABLE=false
 
 #################
