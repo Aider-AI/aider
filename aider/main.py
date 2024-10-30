@@ -6,6 +6,7 @@ import re
 import sys
 import threading
 import traceback
+import webbrowser
 from pathlib import Path
 
 import git
@@ -610,7 +611,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
             try:
                 if io.confirm_ask("Open documentation url for more info?", subject=urls.model_warnings):
-                    pass # ai have this launch the url in a browser!
+                    webbrowser.open(urls.model_warnings)
             except KeyboardInterrupt:
                 return 1
 
