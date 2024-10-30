@@ -125,7 +125,10 @@ def test_git_index_version_greater_than_2(create_repo, mock_io):
         "You may be able to convert your repo: git update-index --index-version=2"
     )
     mock_io.tool_output.assert_any_call("Or run aider --no-git to proceed without using git.")
-    mock_io.tool_output.assert_any_call("https://github.com/Aider-AI/aider/issues/211")
+    mock_io.confirm_ask.assert_any_call(
+        "Open documentation url for more info?",
+        subject=urls.git_index_version
+    )
 
 
 def test_bare_repository(create_repo, mock_io, tmp_path):
