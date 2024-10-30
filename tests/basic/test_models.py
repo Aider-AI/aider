@@ -76,6 +76,7 @@ class TestModels(unittest.TestCase):
         #ai print the args that tool_warning was called with!
         self.assertGreaterEqual(mock_io.tool_warning.call_count, 2)  # Expect two warnings
         warning_messages = [call.args[0] for call in mock_io.tool_warning.call_args_list]
+        print("Warning messages:", warning_messages)  # Add this line
         self.assertTrue(
             any("bogus-model" in msg for msg in warning_messages)
         )  # Check that one of the warnings mentions the bogus model
