@@ -131,7 +131,9 @@ pexpect==4.9.0
 pillow==11.0.0
     # via -r requirements/requirements.in
 prompt-toolkit==3.0.48
-    # via -r requirements/requirements.in
+    # via
+    #   -r requirements/requirements.in
+    #   pypager
 propcache==0.2.0
     # via yarl
 psutil==6.1.0
@@ -153,7 +155,11 @@ pydub==0.25.1
 pyflakes==3.2.0
     # via flake8
 pygments==2.18.0
-    # via rich
+    # via
+    #   pypager
+    #   rich
+pypager==3.0.1
+    # via -r requirements/requirements.in
 pypandoc==1.14
     # via -r requirements/requirements.in
 pyperclip==1.9.0
@@ -222,7 +228,9 @@ typing-extensions==4.12.2
     #   pydantic
     #   pydantic-core
 urllib3==2.2.3
-    # via requests
+    # via
+    #   mixpanel
+    #   requests
 wcwidth==0.2.13
     # via prompt-toolkit
 yarl==1.16.0
