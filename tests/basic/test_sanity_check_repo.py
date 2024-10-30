@@ -1,7 +1,6 @@
 import os
 import shutil
 import struct
-import webbrowser
 from unittest import mock
 
 import pytest
