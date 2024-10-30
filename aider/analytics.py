@@ -114,7 +114,9 @@ class Analytics:
         properties = {}
 
         if main_model:
-            if main_model.info:
+            # Redact the main model name unless it is in the public litellm db
+            info = model_info_manager.get_model_from_cached_json_db(main_model.name)
+            if info:
                 properties["main_model"] = main_model.name
             elif "/" in main_model.name:
                 properties["main_model"] = main_model.name.split("/")[0] + "/REDACTED"

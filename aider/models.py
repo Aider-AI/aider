@@ -691,9 +691,10 @@ class ModelInfoManager:
         return dict()
 
     def get_model_info(self, model):
-        info = self.get_model_from_cached_json_db(model)
-        if info:
-            return info
+        if not litellm._lazy_module:
+            info = self.get_model_from_cached_json_db(model)
+            if info:
+                return info
 
         # If all else fails, do it the slow way...
         try:
