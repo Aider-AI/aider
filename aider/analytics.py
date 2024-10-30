@@ -17,31 +17,52 @@ posthog_host = "https://us.i.posthog.com"
 
 
 class Analytics:
+    # providers
     mp = None
     ph = None
+
+    # saved
     user_id = None
     permanently_disable = None
+    asked_opt_in = None
+
+    # ephemeral
     logfile = None
 
-    def __init__(self, enable=False, logfile=None, permanently_disable=False):
+    def __init__(self, logfile=None, permanently_disable=False):
         self.logfile = logfile
-        self.asked_opt_in = False
         self.get_or_create_uuid()
 
-        if not enable or self.permanently_disable or permanently_disable:
+        if self.permanently_disable or permanently_disable or not self.asked_opt_in:
             self.disable(permanently_disable)
+
+    def enable(self):
+        if not self.user_id:
+            self.disable(False)
             return
 
-        if self.user_id and not self.permanently_disable:
-            self.mp = Mixpanel(mixpanel_project_token)
-            self.ph = Posthog(project_api_key=posthog_project_api_key, host=posthog_host)
+        if self.permanently_disable:
+            self.disable(False)
+            return
 
-    def disable(self, permanently_disable):
+        if not self.asked_opt_in:
+            self.disable(False)
+            return
+
+        self.mp = Mixpanel(mixpanel_project_token)
+        self.ph = Posthog(project_api_key=posthog_project_api_key, host=posthog_host)
+
+    def disable(self, permanently):
         self.mp = None
         self.ph = None
-        if permanently_disable and not self.permanently_disable:
+
+        if permanently:
+            self.asked_opt_in = True
             self.permanently_disable = True
             self.save_data()
+
+    def need_to_ask(self):
+        return not self.asked_opt_in and not self.permanently_disable
 
     def get_data_file_path(self):
         data_file = Path.home() / ".aider" / "analytics.json"
@@ -64,8 +85,8 @@ class Analytics:
                 self.permanently_disable = data.get("permanently_disable")
                 self.user_id = data.get("uuid")
                 self.asked_opt_in = data.get("asked_opt_in", False)
-            except json.decoder.JSONDecodeError:
-                pass
+            except (json.decoder.JSONDecodeError, OSError):
+                self.disable(permanently=False)
 
     def save_data(self):
         data_file = self.get_data_file_path()
@@ -75,6 +96,7 @@ class Analytics:
             asked_opt_in=self.asked_opt_in,
         )
 
+        # Allow exceptions; crash if we can't record permanently_disabled=True, etc
         data_file.write_text(json.dumps(data, indent=4))
 
     def get_system_info(self):
@@ -110,10 +132,10 @@ class Analytics:
         properties["aider_version"] = __version__
 
         if self.mp:
-            self.mp.track(self.user_id, event_name, properties)
+            self.mp.track(self.user_id, event_name, dict(properties))
 
         if self.ph:
-            self.ph.capture(self.user_id, event_name, properties)
+            self.ph.capture(self.user_id, event_name, dict(properties))
 
         if self.logfile:
             log_entry = {

@@ -430,7 +430,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     args = parser.parse_args(argv)
 
     if args.analytics_disable:
-        analytics = Analytics(enable=False, permanently_disable=True)
+        analytics = Analytics(permanently_disable=True)
         print("Analytics have been permanently disabled.")
         return
 
@@ -495,9 +495,28 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         io = get_io(False)
         io.tool_warning("Terminal does not support pretty output (UnicodeDecodeError)")
 
-    analytics = Analytics(
-        args.analytics, logfile=args.analytics_log, permanently_disable=args.analytics_disable
-    )
+    analytics = Analytics(logfile=args.analytics_log, permanently_disable=args.analytics_disable)
+    if args.analytics:
+        if analytics.need_to_ask():
+            io.tool_output(
+                "Aider respects your privacy and never collects your code, prompts, chats, keys or"
+                " any personal info."
+            )
+            io.tool_output(f"For more info: {urls.analytics}")
+            disable = not io.confirm_ask(
+                "Allow collection of anonymous analytics to help improve aider?"
+            )
+
+            analytics.asked_opt_in = True
+            if disable:
+                analytics.disable(permanently=True)
+                io.tool_output("Analytics have been permanently disabled.")
+
+            analytics.save_data()
+            io.tool_output()
+
+        analytics.enable()
+
     analytics.event("launched")
 
     if args.gui and not return_coder:
@@ -796,7 +815,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.exit:
         return
 
-    analytics.event("cli session", main_model=main_model)
+    analytics.event("cli session", main_model=main_model, edit_format=main_model.edit_format)
 
     thread = threading.Thread(target=load_slow_imports)
     thread.daemon = True

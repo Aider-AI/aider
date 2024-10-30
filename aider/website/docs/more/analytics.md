@@ -5,11 +5,12 @@ nav_order: 500
 
 # Analytics
 
-Aider collects anonymous analytics that are used to help
+Aider can collect anonymous analytics to help
 improve aider's ability to work with LLMs, edit code and complete user requests.
-**Analytics are currently turned off by default**, but are
-expected to be turned on by default in
-a future release.
+
+## Opt-in
+
+Analytics are only collected if you agree and opt-in.
 
 ## Anonymous, no personal info
 
