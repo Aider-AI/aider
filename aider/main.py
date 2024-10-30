@@ -607,13 +607,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         problem = models.sanity_check_models(io, main_model)
         if problem:
             io.tool_output("You can skip this check with --no-show-model-warnings")
-            io.tool_output()
 
             try:
                 if io.confirm_ask(
                     "Open documentation url for more info?", subject=urls.model_warnings
                 ):
                     webbrowser.open(urls.model_warnings)
+                io.tool_output()
             except KeyboardInterrupt:
                 return 1
 
@@ -830,7 +830,11 @@ def check_and_load_imports(io, verbose=False):
             except Exception as err:
                 io.tool_error(str(err))
                 io.tool_output("Error loading required imports. Did you install aider properly?")
-                io.tool_output("https://aider.chat/docs/install/install.html")
+                if io.confirm_ask(
+                    "Open documentation url for more info?", subject=urls.install_properly
+                ):
+                    webbrowser.open(urls.install_properly)
+
                 sys.exit(1)
 
             installs[str(key)] = True
@@ -865,6 +869,7 @@ def load_slow_imports(swallow=True):
     except Exception as e:
         if not swallow:
             raise e
+
 
 
 if __name__ == "__main__":

@@ -1042,9 +1042,6 @@ def sanity_check_model(io, model):
             for match in possible_matches:
                 io.tool_output(f"- {match}")
 
-    if show:
-        io.tool_output(f"For more info, see: {urls.model_warnings}")
-
     return show
 
 
