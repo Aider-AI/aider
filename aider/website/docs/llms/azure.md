@@ -8,7 +8,7 @@ nav_order: 500
 Aider can connect to the OpenAI models on Azure.
 
 ```
-python -m pip install aider-chat
+python -m pip install -U aider-chat
 
 # Mac/Linux:                                           
 export AZURE_API_KEY=<key>
@@ -24,7 +24,7 @@ setx AZURE_API_BASE https://myendpt.openai.azure.com
 aider --model azure/<your_deployment_name>
 
 # List models available from Azure
-aider --models azure/
+aider --list-models azure/
 ```
 
 Note that aider will also use environment variables

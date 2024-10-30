@@ -24,13 +24,12 @@ requires-python = ">=3.9,<3.13"
 dynamic = ["dependencies", "optional-dependencies", "version"]
 
 [project.urls]
-Homepage = "https://github.com/paul-gauthier/aider"
+Homepage = "https://github.com/Aider-AI/aider"
 
 [project.scripts]
 aider = "aider.main:main"
 
 [tool.setuptools.dynamic]
-version = { attr = "aider.__init__.__version__" }
 dependencies = { file = "requirements.txt" }
 
 [tool.setuptools.dynamic.optional-dependencies]
@@ -63,5 +62,12 @@ include = ["aider*", "aider.website"]
 ]
 
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=68", "setuptools_scm[toml]>=8"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+write_to = "aider/__version__.py"
+
+[tool.codespell]
+skip = "*.svg,Gemfile.lock"
+write-changes = true

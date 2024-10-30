@@ -1,5 +1,6 @@
 import hashlib
 import json
+import time
 
 import backoff
 
@@ -13,21 +14,37 @@ CACHE_PATH = "~/.aider.send.cache.v1"
 CACHE = None
 # CACHE = Cache(CACHE_PATH)
 
+RETRY_TIMEOUT = 60
+
 
 def retry_exceptions():
     import httpx
+    import openai
 
     return (
+        # httpx
         httpx.ConnectError,
         httpx.RemoteProtocolError,
         httpx.ReadTimeout,
-        litellm.exceptions.APIConnectionError,
-        litellm.exceptions.APIError,
-        litellm.exceptions.RateLimitError,
-        litellm.exceptions.ServiceUnavailableError,
-        litellm.exceptions.Timeout,
-        litellm.exceptions.InternalServerError,
-        litellm.llms.anthropic.AnthropicError,
+        #
+        # litellm exceptions inherit from openai exceptions
+        # https://docs.litellm.ai/docs/exception_mapping
+        #
+        # openai.BadRequestError,
+        # litellm.ContextWindowExceededError,
+        # litellm.ContentPolicyViolationError,
+        #
+        # openai.AuthenticationError,
+        # openai.PermissionDeniedError,
+        # openai.NotFoundError,
+        #
+        openai.APITimeoutError,
+        openai.UnprocessableEntityError,
+        openai.RateLimitError,
+        openai.APIConnectionError,
+        openai.APIError,
+        openai.APIStatusError,
+        openai.InternalServerError,
     )
 
 
@@ -36,7 +53,7 @@ def lazy_litellm_retry_decorator(func):
         decorated_func = backoff.on_exception(
             backoff.expo,
             retry_exceptions(),
-            max_time=60,
+            max_time=RETRY_TIMEOUT,
             on_backoff=lambda details: print(
                 f"{details.get('exception', 'Exception')}\nRetry in {details['wait']:.1f} seconds."
             ),
@@ -47,23 +64,28 @@ def lazy_litellm_retry_decorator(func):
 
 
 def send_completion(
-    model_name, messages, functions, stream, temperature=0, extra_headers=None, max_tokens=None
+    model_name,
+    messages,
+    functions,
+    stream,
+    temperature=0,
+    extra_params=None,
 ):
-    from aider.llm import litellm
-
     kwargs = dict(
         model=model_name,
         messages=messages,
-        temperature=temperature,
         stream=stream,
     )
+    if temperature is not None:
+        kwargs["temperature"] = temperature
 
     if functions is not None:
-        kwargs["functions"] = functions
-    if extra_headers is not None:
-        kwargs["extra_headers"] = extra_headers
-    if max_tokens is not None:
-        kwargs["max_tokens"] = max_tokens
+        function = functions[0]
+        kwargs["tools"] = [dict(type="function", function=function)]
+        kwargs["tool_choice"] = {"type": "function", "function": {"name": function["name"]}}
+
+    if extra_params is not None:
+        kwargs.update(extra_params)
 
     key = json.dumps(kwargs, sort_keys=True).encode()
 
@@ -73,8 +95,6 @@ def send_completion(
     if not stream and CACHE is not None and key in CACHE:
         return hash_object, CACHE[key]
 
-    # del kwargs['stream']
-
     res = litellm.completion(**kwargs)
 
     if not stream and CACHE is not None:
@@ -83,15 +103,27 @@ def send_completion(
     return hash_object, res
 
 
-@lazy_litellm_retry_decorator
-def simple_send_with_retries(model_name, messages):
-    try:
-        _hash, response = send_completion(
-            model_name=model_name,
-            messages=messages,
-            functions=None,
-            stream=False,
-        )
-        return response.choices[0].message.content
-    except (AttributeError, litellm.exceptions.BadRequestError):
-        return
+def simple_send_with_retries(model_name, messages, extra_params=None):
+    retry_delay = 0.125
+    while True:
+        try:
+            kwargs = {
+                "model_name": model_name,
+                "messages": messages,
+                "functions": None,
+                "stream": False,
+                "extra_params": extra_params,
+            }
+
+            _hash, response = send_completion(**kwargs)
+            return response.choices[0].message.content
+        except retry_exceptions() as err:
+            print(str(err))
+            retry_delay *= 2
+            if retry_delay > RETRY_TIMEOUT:
+                break
+            print(f"Retrying in {retry_delay:.1f} seconds...")
+            time.sleep(retry_delay)
+            continue
+        except AttributeError:
+            return

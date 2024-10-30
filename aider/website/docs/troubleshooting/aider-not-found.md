@@ -17,7 +17,7 @@ You may see an error message like this:
 Below is the most fail safe way to install and run aider in these situations:
 
 ```
-python -m pip install aider-chat
+python -m pip install -U aider-chat
 python -m aider
 ```
 

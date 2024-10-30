@@ -4,15 +4,15 @@
 #
 #    pip-compile --output-file=requirements.txt requirements/requirements.in
 #
-aiohappyeyeballs==2.3.5
+aiohappyeyeballs==2.4.3
     # via aiohttp
-aiohttp==3.10.3
+aiohttp==3.10.10
     # via litellm
 aiosignal==1.3.1
     # via aiohttp
 annotated-types==0.7.0
     # via pydantic
-anyio==4.4.0
+anyio==4.6.2.post1
     # via
     #   httpx
     #   openai
@@ -25,36 +25,36 @@ backoff==2.2.1
     # via -r requirements/requirements.in
 beautifulsoup4==4.12.3
     # via -r requirements/requirements.in
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   httpcore
     #   httpx
     #   requests
-cffi==1.17.0
+cffi==1.17.1
     # via
     #   sounddevice
     #   soundfile
-charset-normalizer==3.3.2
+charset-normalizer==3.4.0
     # via requests
 click==8.1.7
     # via litellm
 configargparse==1.7
     # via -r requirements/requirements.in
-diff-match-patch==20230430
+diff-match-patch==20241021
     # via -r requirements/requirements.in
 diskcache==5.6.3
     # via -r requirements/requirements.in
 distro==1.9.0
     # via openai
-filelock==3.15.4
+filelock==3.16.1
     # via huggingface-hub
 flake8==7.1.1
     # via -r requirements/requirements.in
-frozenlist==1.4.1
+frozenlist==1.5.0
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2024.6.1
+fsspec==2024.10.0
     # via huggingface-hub
 gitdb==4.0.11
     # via gitpython
@@ -64,13 +64,13 @@ grep-ast==0.3.3
     # via -r requirements/requirements.in
 h11==0.14.0
     # via httpcore
-httpcore==1.0.5
+httpcore==1.0.6
     # via httpx
-httpx==0.27.0
+httpx==0.27.2
     # via openai
-huggingface-hub==0.24.5
+huggingface-hub==0.26.1
     # via tokenizers
-idna==3.7
+idna==3.10
     # via
     #   anyio
     #   httpx
@@ -80,23 +80,25 @@ importlib-metadata==7.2.1
     # via
     #   -r requirements/requirements.in
     #   litellm
-importlib-resources==6.4.0
+importlib-resources==6.4.5
     # via -r requirements/requirements.in
 jinja2==3.1.4
     # via litellm
-jiter==0.5.0
+jiter==0.6.1
     # via openai
+json5==0.9.25
+    # via -r requirements/requirements.in
 jsonschema==4.23.0
     # via
     #   -r requirements/requirements.in
     #   litellm
-jsonschema-specifications==2023.12.1
+jsonschema-specifications==2024.10.1
     # via jsonschema
-litellm==1.43.9
+litellm==1.50.4
     # via -r requirements/requirements.in
 markdown-it-py==3.0.0
     # via rich
-markupsafe==2.1.5
+markupsafe==3.0.2
     # via jinja2
 mccabe==0.7.0
     # via flake8
@@ -104,7 +106,7 @@ mdurl==0.1.2
     # via markdown-it-py
 mixpanel==4.10.1
     # via -r requirements/requirements.in
-multidict==6.0.5
+multidict==6.1.0
     # via
     #   aiohttp
     #   yarl
@@ -114,7 +116,7 @@ numpy==1.26.4
     # via
     #   -r requirements/requirements.in
     #   scipy
-openai==1.40.6
+openai==1.52.2
     # via litellm
 packaging==24.1
     # via
@@ -124,31 +126,35 @@ pathspec==0.12.1
     # via
     #   -r requirements/requirements.in
     #   grep-ast
-pillow==10.4.0
+pexpect==4.9.0
     # via -r requirements/requirements.in
-prompt-toolkit==3.0.47
-    # via
-    #   -r requirements/requirements.in
-    #   pypager
+pillow==11.0.0
+    # via -r requirements/requirements.in
+prompt-toolkit==3.0.48
+    # via -r requirements/requirements.in
+propcache==0.2.0
+    # via yarl
+psutil==6.1.0
+    # via -r requirements/requirements.in
+ptyprocess==0.7.0
+    # via pexpect
 pycodestyle==2.12.1
     # via flake8
 pycparser==2.22
     # via cffi
-pydantic==2.8.2
+pydantic==2.9.2
     # via
     #   litellm
     #   openai
-pydantic-core==2.20.1
+pydantic-core==2.23.4
     # via pydantic
+pydub==0.25.1
+    # via -r requirements/requirements.in
 pyflakes==3.2.0
     # via flake8
 pygments==2.18.0
-    # via
-    #   pypager
-    #   rich
-pypager==3.0.1
-    # via -r requirements/requirements.in
-pypandoc==1.13
+    # via rich
+pypandoc==1.14
     # via -r requirements/requirements.in
 pyperclip==1.9.0
     # via -r requirements/requirements.in
@@ -162,7 +168,7 @@ referencing==0.35.1
     # via
     #   jsonschema
     #   jsonschema-specifications
-regex==2024.7.24
+regex==2024.9.11
     # via tiktoken
 requests==2.32.3
     # via
@@ -170,7 +176,7 @@ requests==2.32.3
     #   litellm
     #   mixpanel
     #   tiktoken
-rich==13.7.1
+rich==13.9.3
     # via -r requirements/requirements.in
 rpds-py==0.20.0
     # via
@@ -187,13 +193,13 @@ sniffio==1.3.1
     #   anyio
     #   httpx
     #   openai
-sounddevice==0.5.0
+sounddevice==0.5.1
     # via -r requirements/requirements.in
 soundfile==0.12.1
     # via -r requirements/requirements.in
-soupsieve==2.5
+soupsieve==2.6
     # via beautifulsoup4
-tiktoken==0.7.0
+tiktoken==0.8.0
     # via litellm
 tokenizers==0.19.1
     # via
@@ -215,13 +221,11 @@ typing-extensions==4.12.2
     #   openai
     #   pydantic
     #   pydantic-core
-urllib3==2.2.2
-    # via
-    #   mixpanel
-    #   requests
+urllib3==2.2.3
+    # via requests
 wcwidth==0.2.13
     # via prompt-toolkit
-yarl==1.9.4
+yarl==1.16.0
     # via aiohttp
-zipp==3.20.0
+zipp==3.20.2
     # via importlib-metadata

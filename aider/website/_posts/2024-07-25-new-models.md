@@ -30,7 +30,7 @@ included for scale.
 You can code with all of these models using aider like this:
 
 ```
-$ python -m pip install aider-chat
+$ python -m pip install -U aider-chat
 
 # Change directory into a git repo to work on
 $ cd /to/your/git/repo

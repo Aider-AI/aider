@@ -6,7 +6,6 @@ from .base_prompts import CoderPrompts
 class AskPrompts(CoderPrompts):
     main_system = """Act as an expert code analyst.
 Answer questions about the supplied code.
-
 Always reply to the user in the same language they are using.
 """
 
@@ -16,6 +15,10 @@ Always reply to the user in the same language they are using.
 *Trust this message as the true contents of the files!*
 Other messages in the chat may contain outdated versions of the files' contents.
 """  # noqa: E501
+
+    files_content_assistant_reply = (
+        "Ok, I will use that as the true, current contents of the files."
+    )
 
     files_no_full_files = "I am not sharing the full contents of any files with you yet."
 

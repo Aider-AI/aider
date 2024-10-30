@@ -25,3 +25,9 @@ Install [pipx](https://pipx.pypa.io/stable/) then just do:
 ```
 pipx install aider-chat
 ```
+
+
+## pipx on replit
+
+{% include replit-pipx.md %}
+

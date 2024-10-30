@@ -46,7 +46,7 @@ class TestWholeFileCoder(unittest.TestCase):
             ' code:\n\nfoo.js\n```python\nprint("Hello, World!")\n```\n\nThis code will output'
             ' "Hello, World!" to the console.'
         )
-        coder.update_files()
+        coder.apply_updates()
         self.assertFalse(Path("foo.js").exists())
 
     def test_update_files(self):
@@ -63,7 +63,7 @@ class TestWholeFileCoder(unittest.TestCase):
         coder.partial_response_content = f"{sample_file}\n```\nUpdated content\n```"
 
         # Call update_files method
-        edited_files = coder.update_files()
+        edited_files = coder.apply_updates()
 
         # Check if the sample file was updated
         self.assertIn("sample.txt", edited_files)
@@ -117,7 +117,7 @@ Quote!
         )
 
         # Call update_files method
-        edited_files = coder.update_files()
+        edited_files = coder.apply_updates()
 
         # Check if the sample file was updated
         self.assertIn("sample.txt", edited_files)
@@ -142,7 +142,7 @@ Quote!
         coder.partial_response_content = f"path/to/{sample_file}\n```\nUpdated content\n```"
 
         # Call update_files method
-        edited_files = coder.update_files()
+        edited_files = coder.apply_updates()
 
         # Check if the sample file was updated
         self.assertIn("sample.txt", edited_files)
@@ -166,7 +166,7 @@ Quote!
         coder.partial_response_content = f"{sample_file}\n```\nUpdated content\n```"
 
         # Call update_files method
-        edited_files = coder.update_files()
+        edited_files = coder.apply_updates()
 
         # Check if the sample file was updated
         self.assertIn("sample.txt", edited_files)
@@ -199,7 +199,7 @@ Quote!
         )
 
         # Call update_files method
-        edited_files = coder.update_files()
+        edited_files = coder.apply_updates()
 
         # Check if the sample file was updated
         self.assertIn(sample_file, edited_files)
@@ -237,7 +237,45 @@ after b
         coder.partial_response_content = response
 
         # Call update_files method
-        edited_files = coder.update_files()
+        edited_files = coder.apply_updates()
+
+        # Check if the sample file was updated
+        self.assertIn(str(fname_a), edited_files)
+        self.assertIn(str(fname_b), edited_files)
+
+        self.assertEqual(fname_a.read_text(), "after a\n")
+        self.assertEqual(fname_b.read_text(), "after b\n")
+
+    def test_update_hash_filename(self):
+        fname_a = Path("a.txt")
+        fname_b = Path("b.txt")
+
+        fname_a.write_text("before a\n")
+        fname_b.write_text("before b\n")
+
+        response = """
+
+### a.txt
+```
+after a
+```
+
+### b.txt
+```
+after b
+```
+"""
+        # Initialize WholeFileCoder with the temporary directory
+        io = InputOutput(yes=True)
+        coder = WholeFileCoder(main_model=self.GPT35, io=io, fnames=[fname_a, fname_b])
+
+        # Set the partial response content with the updated content
+        coder.partial_response_content = response
+
+        # Call update_files method
+        edited_files = coder.apply_updates()
+
+        dump(edited_files)
 
         # Check if the sample file was updated
         self.assertIn(str(fname_a), edited_files)
@@ -268,7 +306,7 @@ after b
         )
 
         # Call update_files method
-        edited_files = coder.update_files()
+        edited_files = coder.apply_updates()
 
         # Check if the sample file was updated
         self.assertIn(sample_file, edited_files)

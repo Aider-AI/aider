@@ -9,7 +9,7 @@ Aider can connect to [models provided by OpenRouter](https://openrouter.ai/model
 You'll need an [OpenRouter API key](https://openrouter.ai/keys).
 
 ```
-python -m pip install aider-chat
+python -m pip install -U aider-chat
 
 export OPENROUTER_API_KEY=<key> # Mac/Linux
 setx   OPENROUTER_API_KEY <key> # Windows, restart shell after setx
@@ -18,13 +18,13 @@ setx   OPENROUTER_API_KEY <key> # Windows, restart shell after setx
 aider --model openrouter/<provider>/<model>
 
 # List models available from OpenRouter
-aider --models openrouter/
+aider --list-models openrouter/
 ```
 
 In particular, many aider users access Sonnet via OpenRouter:
 
 ```
-python -m pip install aider-chat
+python -m pip install -U aider-chat
 
 export OPENROUTER_API_KEY=<key> # Mac/Linux
 setx   OPENROUTER_API_KEY <key> # Windows, restart shell after setx

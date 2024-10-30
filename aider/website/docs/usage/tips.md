@@ -6,21 +6,74 @@ description: Tips for AI pair programming with aider.
 
 # Tips
 
-- Think about which files need to be edited to make your change and add them to the chat.
-Aider can help the LLM figure out which files to edit all by itself, but the most efficient approach is to add the needed files to the chat yourself.
-- Don't add *everything* to the chat, just the files you think need to be edited.
-Aider also sends the LLM a [map of your entire git repo](https://aider.chat/docs/repomap.html).
-So the LLM can see all the other relevant parts of your code base.
-- Large changes are best performed as a sequence of thoughtful bite sized steps, where you plan out the approach and overall design. Walk the LLM through changes like you might with a junior dev. Ask for a refactor to prepare, then ask for the actual change. Spend the time to ask for code quality/structure improvements.
-- It's always safe to use Control-C to interrupt aider if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply to the LLM with more information or direction.
-- If your code is throwing an error, 
-use the `/run` [in-chat command](/docs/usage/commands.html)
+## Just add the files that need to be changed to the chat
+
+Take a moment and think about which files will need to be changed.
+Aider can often figure out which files to edit all by itself, but the most efficient approach is for you to add the files to the chat.
+
+## Don't add lots of files to the chat
+
+Just add the files you think need to be edited.
+Too much irrelevant code will distract and confuse the LLM.
+Aider uses a [map of your entire git repo](https://aider.chat/docs/repomap.html)
+so is usually aware of relevant classes/functions/methods elsewhere in your code base.
+It's ok to add 1-2 highly relevant files that don't need to be edited,
+but be selective.
+
+## Break your goal down into bite sized steps
+
+Do them one at a time. 
+Adjust the files added to the chat as you go: `/drop` files that don't need any more changes, `/add` files that need changes for the next step.
+
+## For complex changes, discuss a plan first
+
+Use the [`/ask` command](modes.html) to make a plan with aider.
+Once you are happy with the approach, just say "go ahead" without the `/ask` prefix.
+
+## If aider gets stuck
+
+- Use `/clear` to discard the chat history and make a fresh start.
+- Can you `/drop` any extra files?
+- Use `/ask` to discuss a plan before aider starts editing code.
+- Use the [`/model` command](commands.html) to switch to a different model and try again. Switching between GPT-4o and Sonnet will often get past problems.
+- If aider is hopelessly stuck,
+just code the next step yourself and try having aider code some more after that.
+Take turns and pair program with aider.
+
+## Creating new files
+
+If you want aider to create a new file, add it to the repository first with `/add <file>`.
+This way aider knows this file exists and will write to it. 
+Otherwise, aider might write the changes to an existing file.
+This can happen even if you ask for a new file, as LLMs tend to focus a lot
+on the existing information in their contexts.
+
+## Fixing bugs and errors
+
+If your code is throwing an error, 
+use the [`/run` command](commands.html)
 to share the error output with the aider.
-Or just paste the errors into the chat. Let the aider figure out and fix the bug.
-- If test are failing, use the `/test` [in-chat command](/docs/usage/commands.html)
+Or just paste the errors into the chat. Let the aider figure out how to fix the bug.
+
+If test are failing, use the [`/test` command](lint-test.html)
 to run tests and
 share the error output with the aider.
-- {% include multi-line.md %}
-- LLMs know about a lot of standard tools and libraries, but may get some of the fine details wrong about API versions and function arguments.
-You can paste doc snippets into the chat to resolve these issues.
+
+## Providing docs
+
+LLMs know about a lot of standard tools and libraries, but may get some of the fine details wrong about API versions and function arguments.
+
+You can provide up-to-date documentation in a few ways:
+
+- Paste doc snippets into the chat.
+- Include a URL to docs in your chat message
+and aider will scrape and read it. For example: `Add a submit button like this https://ui.shadcn.com/docs/components/button`. 
+- Use the [`/read` command](commands.html) to read doc files into the chat from anywhere on your filesystem.
+- If you have coding conventions or standing instructions you want aider to follow, consider using a [conventions file](conventions.html).
+
+## Interrupting & inputting
+
+Use Control-C to interrupt aider if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply with more information or direction.
+
+{% include multi-line.md %}
 

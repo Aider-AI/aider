@@ -28,7 +28,7 @@ If the files above exist, they will be loaded in that order. Files loaded last w
 
 Below is a sample `.env` file, which you
 can also
-[download from GitHub](https://github.com/paul-gauthier/aider/blob/main/aider/website/assets/sample.env).
+[download from GitHub](https://github.com/Aider-AI/aider/blob/main/aider/website/assets/sample.env).
 
 <!--[[[cog
 from aider.args import get_sample_dotenv
@@ -75,13 +75,13 @@ cog.outl("```")
 ## Use claude-3-opus-20240229 model for the main chat
 #AIDER_OPUS=
 
-## Use claude-3-5-sonnet-20240620 model for the main chat
+## Use claude-3-5-sonnet-20241022 model for the main chat
 #AIDER_SONNET=
 
 ## Use gpt-4-0613 model for the main chat
 #AIDER_4=
 
-## Use gpt-4o model for the main chat
+## Use gpt-4o-2024-08-06 model for the main chat
 #AIDER_4O=
 
 ## Use gpt-4o-mini model for the main chat
@@ -96,11 +96,17 @@ cog.outl("```")
 ## Use deepseek/deepseek-coder model for the main chat
 #AIDER_DEEPSEEK=
 
+## Use o1-mini model for the main chat
+#AIDER_O1_MINI=
+
+## Use o1-preview model for the main chat
+#AIDER_O1_PREVIEW=
+
 #################
 # Model Settings:
 
 ## List known models which match the (partial) MODEL name
-#AIDER_MODELS=
+#AIDER_LIST_MODELS=
 
 ## Specify the api base url
 #OPENAI_API_BASE=
@@ -129,20 +135,47 @@ cog.outl("```")
 ## Specify what edit format the LLM should use (default depends on model)
 #AIDER_EDIT_FORMAT=
 
+## Use architect edit format for the main chat
+#AIDER_ARCHITECT=
+
 ## Specify the model to use for commit messages and chat history summarization (default depends on --model)
 #AIDER_WEAK_MODEL=
+
+## Specify the model to use for editor tasks (default depends on --model)
+#AIDER_EDITOR_MODEL=
+
+## Specify the edit format for the editor model (default: depends on editor model)
+#AIDER_EDITOR_EDIT_FORMAT=
 
 ## Only work with models that have meta-data available (default: True)
 #AIDER_SHOW_MODEL_WARNINGS=true
 
-## Max number of tokens to use for repo map, use 0 to disable (default: 1024)
-#AIDER_MAP_TOKENS=
-
-## Maximum number of tokens to use for chat history. If not specified, uses the model's max_chat_history_tokens.
+## Soft limit on tokens for chat history, after which summarization begins. If unspecified, defaults to the model's max_chat_history_tokens.
 #AIDER_MAX_CHAT_HISTORY_TOKENS=
 
 ## Specify the .env file to load (default: .env in git root)
 #AIDER_ENV_FILE=.env
+
+#################
+# Cache Settings:
+
+## Enable caching of prompts (default: False)
+#AIDER_CACHE_PROMPTS=false
+
+## Number of times to ping at 5min intervals to keep prompt cache warm (default: 0)
+#AIDER_CACHE_KEEPALIVE_PINGS=false
+
+###################
+# Repomap Settings:
+
+## Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)
+#AIDER_MAP_TOKENS=
+
+## Control how often the repo map is refreshed. Options: auto, always, files, manual (default: auto)
+#AIDER_MAP_REFRESH=auto
+
+## Multiplier for map tokens when no files are specified (default: 2)
+#AIDER_MAP_MULTIPLIER_NO_FILES=true
 
 ################
 # History Files:
@@ -180,11 +213,26 @@ cog.outl("```")
 ## Set the color for tool output (default: None)
 #AIDER_TOOL_OUTPUT_COLOR=
 
-## Set the color for tool error messages (default: red)
+## Set the color for tool error messages (default: #FF2222)
 #AIDER_TOOL_ERROR_COLOR=#FF2222
+
+## Set the color for tool warning messages (default: #FFA500)
+#AIDER_TOOL_WARNING_COLOR=#FFA500
 
 ## Set the color for assistant output (default: #0088ff)
 #AIDER_ASSISTANT_OUTPUT_COLOR=#0088ff
+
+## Set the color for the completion menu (default: terminal's default text color)
+#AIDER_COMPLETION_MENU_COLOR=
+
+## Set the background color for the completion menu (default: terminal's default background color)
+#AIDER_COMPLETION_MENU_BG_COLOR=
+
+## Set the color for the current item in the completion menu (default: terminal's default background color)
+#AIDER_COMPLETION_MENU_CURRENT_COLOR=
+
+## Set the background color for the current item in the completion menu (default: terminal's default text color)
+#AIDER_COMPLETION_MENU_CURRENT_BG_COLOR=
 
 ## Set the markdown code theme (default: default, other options include monokai, solarized-dark, solarized-light)
 #AIDER_CODE_THEME=default
@@ -234,6 +282,9 @@ cog.outl("```")
 ## Perform a dry run without modifying files (default: False)
 #AIDER_DRY_RUN=false
 
+## Skip the sanity check for the git repository (default: False)
+#AIDER_SKIP_SANITY_CHECK_REPO=false
+
 ########################
 # Fixing and committing:
 
@@ -279,8 +330,8 @@ cog.outl("```")
 ## Use VI editing mode in the terminal (default: False)
 #AIDER_VIM=false
 
-## Specify the language for voice using ISO 639-1 code (default: auto)
-#AIDER_VOICE_LANGUAGE=en
+## Specify the language to use in the chat (default: None, uses system settings)
+#AIDER_CHAT_LANGUAGE=
 
 ## Check for updates and return status in the exit code
 #AIDER_JUST_CHECK_UPDATE=false
@@ -288,11 +339,17 @@ cog.outl("```")
 ## Check for new aider versions on launch
 #AIDER_CHECK_UPDATE=true
 
+## Install the latest version from the main branch
+#AIDER_INSTALL_MAIN_BRANCH=false
+
+## Upgrade aider to the latest version from PyPI
+#AIDER_UPGRADE=false
+
 ## Apply the changes from the given file instead of running the chat (debug)
 #AIDER_APPLY=
 
 ## Always say yes to every confirmation
-#AIDER_YES=
+#AIDER_YES_ALWAYS=
 
 ## Enable verbose output
 #AIDER_VERBOSE=false
@@ -312,11 +369,29 @@ cog.outl("```")
 ## Specify a file containing the message to send the LLM, process reply, then exit (disables chat mode)
 #AIDER_MESSAGE_FILE=
 
+## Load and execute /commands from a file on launch
+#AIDER_LOAD=
+
 ## Specify the encoding for input and output (default: utf-8)
 #AIDER_ENCODING=utf-8
 
 ## Run aider in your browser
 #AIDER_GUI=false
+
+## Enable/disable suggesting shell commands (default: True)
+#AIDER_SUGGEST_SHELL_COMMANDS=true
+
+## Enable/disable fancy input with history and completion (default: True)
+#AIDER_FANCY_INPUT=true
+
+#################
+# Voice Settings:
+
+## Audio format for voice recording (default: wav). webm and mp3 require ffmpeg
+#AIDER_VOICE_FORMAT=wav
+
+## Specify the language for voice using ISO 639-1 code (default: auto)
+#AIDER_VOICE_LANGUAGE=en
 ```
 <!--[[[end]]]-->
 

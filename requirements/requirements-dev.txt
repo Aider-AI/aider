@@ -4,19 +4,19 @@
 #
 #    pip-compile --output-file=requirements/requirements-dev.txt requirements/requirements-dev.in
 #
-alabaster==0.7.16
+alabaster==1.0.0
     # via sphinx
 babel==2.16.0
     # via sphinx
-build==1.2.1
+build==1.2.2.post1
     # via pip-tools
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c requirements/../requirements.txt
     #   requests
 cfgv==3.4.0
     # via pre-commit
-charset-normalizer==3.3.2
+charset-normalizer==3.4.0
     # via
     #   -c requirements/../requirements.txt
     #   requests
@@ -25,31 +25,33 @@ click==8.1.7
     #   -c requirements/../requirements.txt
     #   pip-tools
     #   typer
+codespell==2.3.0
+    # via -r requirements/requirements-dev.in
 cogapp==3.4.1
     # via -r requirements/requirements-dev.in
-contourpy==1.2.1
+contourpy==1.3.0
     # via matplotlib
 cycler==0.12.1
     # via matplotlib
-dill==0.3.8
+dill==0.3.9
     # via
     #   multiprocess
     #   pathos
-distlib==0.3.8
+distlib==0.3.9
     # via virtualenv
-docutils==0.20.1
+docutils==0.21.2
     # via
     #   sphinx
     #   sphinx-rtd-theme
-filelock==3.15.4
+filelock==3.16.1
     # via
     #   -c requirements/../requirements.txt
     #   virtualenv
-fonttools==4.53.1
+fonttools==4.54.1
     # via matplotlib
-identify==2.6.0
+identify==2.6.1
     # via pre-commit
-idna==3.7
+idna==3.10
     # via
     #   -c requirements/../requirements.txt
     #   requests
@@ -63,7 +65,7 @@ jinja2==3.1.4
     # via
     #   -c requirements/../requirements.txt
     #   sphinx
-kiwisolver==1.4.5
+kiwisolver==1.4.7
     # via matplotlib
 lox==0.12.0
     # via -r requirements/requirements-dev.in
@@ -71,7 +73,7 @@ markdown-it-py==3.0.0
     # via
     #   -c requirements/../requirements.txt
     #   rich
-markupsafe==2.1.5
+markupsafe==3.0.2
     # via
     #   -c requirements/../requirements.txt
     #   jinja2
@@ -81,7 +83,7 @@ mdurl==0.1.2
     # via
     #   -c requirements/../requirements.txt
     #   markdown-it-py
-multiprocess==0.70.16
+multiprocess==0.70.17
     # via pathos
 nodeenv==1.9.1
     # via pre-commit
@@ -98,44 +100,44 @@ packaging==24.1
     #   matplotlib
     #   pytest
     #   sphinx
-pandas==2.2.2
+pandas==2.2.3
     # via -r requirements/requirements-dev.in
-pathos==0.3.2
+pathos==0.3.3
     # via lox
-pillow==10.4.0
+pillow==11.0.0
     # via
     #   -c requirements/../requirements.txt
     #   matplotlib
 pip-tools==7.4.1
     # via -r requirements/requirements-dev.in
-platformdirs==4.2.2
+platformdirs==4.3.6
     # via virtualenv
 pluggy==1.5.0
     # via pytest
-pox==0.3.4
+pox==0.3.5
     # via pathos
-ppft==1.7.6.8
+ppft==1.7.6.9
     # via pathos
-pre-commit==3.8.0
+pre-commit==4.0.1
     # via -r requirements/requirements-dev.in
 pygments==2.18.0
     # via
     #   -c requirements/../requirements.txt
     #   rich
     #   sphinx
-pyparsing==3.1.2
+pyparsing==3.2.0
     # via matplotlib
-pyproject-hooks==1.1.0
+pyproject-hooks==1.2.0
     # via
     #   build
     #   pip-tools
-pytest==8.3.2
+pytest==8.3.3
     # via -r requirements/requirements-dev.in
 python-dateutil==2.9.0.post0
     # via
     #   matplotlib
     #   pandas
-pytz==2024.1
+pytz==2024.2
     # via pandas
 pyyaml==6.0.2
     # via
@@ -145,7 +147,7 @@ requests==2.32.3
     # via
     #   -c requirements/../requirements.txt
     #   sphinx
-rich==13.7.1
+rich==13.9.3
     # via
     #   -c requirements/../requirements.txt
     #   typer
@@ -159,11 +161,11 @@ six==1.16.0
     #   python-dateutil
 snowballstemmer==2.2.0
     # via sphinx
-sphinx==7.4.7
+sphinx==8.1.3
     # via
     #   sphinx-rtd-theme
     #   sphinxcontrib-jquery
-sphinx-rtd-theme==2.0.0
+sphinx-rtd-theme==3.0.1
     # via lox
 sphinxcontrib-applehelp==2.0.0
     # via sphinx
@@ -179,19 +181,19 @@ sphinxcontrib-qthelp==2.0.0
     # via sphinx
 sphinxcontrib-serializinghtml==2.0.0
     # via sphinx
-typer==0.12.3
+typer==0.12.5
     # via -r requirements/requirements-dev.in
 typing-extensions==4.12.2
     # via
     #   -c requirements/../requirements.txt
     #   typer
-tzdata==2024.1
+tzdata==2024.2
     # via pandas
-urllib3==2.2.2
+urllib3==2.2.3
     # via
     #   -c requirements/../requirements.txt
     #   requests
-virtualenv==20.26.3
+virtualenv==20.27.0
     # via pre-commit
 wheel==0.44.0
     # via pip-tools

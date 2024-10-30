@@ -13,7 +13,7 @@ You'll need a [Groq API key](https://console.groq.com/keys).
 To use **Llama3 70B**:
 
 ```
-python -m pip install aider-chat
+python -m pip install -U aider-chat
 
 export GROQ_API_KEY=<key> # Mac/Linux
 setx   GROQ_API_KEY <key> # Windows, restart shell after setx
@@ -21,7 +21,7 @@ setx   GROQ_API_KEY <key> # Windows, restart shell after setx
 aider --model groq/llama3-70b-8192
 
 # List models available from Groq
-aider --models groq/
+aider --list-models groq/
 ```
 
 

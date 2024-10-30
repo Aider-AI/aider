@@ -31,18 +31,21 @@ You can disable this with the `--no-auto-lint` switch.
 
 ## Testing
 
-You can configure aider to run your test suite
-after each time the AI edits your code
-using the `--test-cmd <cmd>` switch.
-
+You can run tests with `/test <test-command>`.
 Aider will run the test command without any arguments.
 If there are test errors, aider expects the
 command to print them on stdout/stderr
 and return a non-zero exit code.
-This is how most test tools normally operate.
 
-To have aider automatically run the test command,
-use the `--auto-test` switch.
+Aider will try and fix any errors
+if the command returns a non-zero exit code.
+
+You can configure aider to run your test suite
+after each time the AI edits your code
+using the `--test-cmd <test-command>` and
+`--auto-test` switch.
+
+
 
 ## Compiled languages
 

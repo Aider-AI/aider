@@ -9,14 +9,14 @@ Aider uses the [litellm](https://docs.litellm.ai/docs/providers) package
 to connect to hundreds of other models.
 You can use `aider --model <model-name>` to use any supported model.
 
-To explore the list of supported models you can run `aider --models <model-name>`
+To explore the list of supported models you can run `aider --list-models <model-name>`
 with a partial model name.
 If the supplied name is not an exact match for a known model, aider will
 return a list of possible matching models.
 For example:
 
 ```
-$ aider --models turbo
+$ aider --list-models turbo
 
 Aider v0.29.3-dev
 Models which match "turbo":
@@ -63,6 +63,7 @@ cog.out(''.join(lines))
 - AZURE_API_KEY
 - AZURE_OPENAI_API_KEY
 - BASETEN_API_KEY
+- CEREBRAS_API_KEY
 - CLARIFAI_API_KEY
 - CLOUDFLARE_API_KEY
 - CODESTRAL_API_KEY
@@ -71,22 +72,19 @@ cog.out(''.join(lines))
 - DATABRICKS_API_KEY
 - DEEPINFRA_API_KEY
 - DEEPSEEK_API_KEY
-- EMPOWER_API_KEY
 - FIREWORKSAI_API_KEY
 - FIREWORKS_AI_API_KEY
 - FIREWORKS_API_KEY
-- FRIENDLIAI_API_KEY
 - GEMINI_API_KEY
-- GITHUB_API_KEY
 - GROQ_API_KEY
 - HUGGINGFACE_API_KEY
 - MARITALK_API_KEY
 - MISTRAL_API_KEY
-- MISTRAL_AZURE_API_KEY
 - NLP_CLOUD_API_KEY
 - NVIDIA_NIM_API_KEY
 - OLLAMA_API_KEY
 - OPENAI_API_KEY
+- OPENAI_LIKE_API_KEY
 - OPENROUTER_API_KEY
 - OR_API_KEY
 - PALM_API_KEY
@@ -95,8 +93,6 @@ cog.out(''.join(lines))
 - PROVIDER_API_KEY
 - REPLICATE_API_KEY
 - TOGETHERAI_API_KEY
-- TOGETHER_AI_API_KEY
-- TOGETHER_API_KEY
 - VOLCENGINE_API_KEY
 - VOYAGE_API_KEY
 - XINFERENCE_API_KEY
