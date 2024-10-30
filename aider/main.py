@@ -610,7 +610,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             io.tool_output()
 
             try:
-                if io.confirm_ask("Open documentation url for more info?", subject=urls.model_warnings):
+                if io.confirm_ask(
+                    "Open documentation url for more info?", subject=urls.model_warnings
+                ):
                     webbrowser.open(urls.model_warnings)
             except KeyboardInterrupt:
                 return 1
