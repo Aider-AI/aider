@@ -29,6 +29,7 @@ class Analytics:
         self.get_or_create_uuid()
 
         if not enable or self.permanently_disable or permanently_disable:
+            #ai refactor this into a method!
             self.mp = None
             self.ph = None
             if permanently_disable and not self.permanently_disable:
