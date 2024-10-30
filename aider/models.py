@@ -636,7 +636,8 @@ model_info_url = (
     "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
 )
 
-
+#ai refactor get_model_flexible & get_model_info into a class!
+# the class should load the cache_file once, on __init__
 def get_model_flexible(model, content):
     info = content.get(model, dict())
     if info:
