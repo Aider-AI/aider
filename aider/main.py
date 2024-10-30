@@ -1,4 +1,3 @@
-# ai
 import configparser
 import json
 import os
