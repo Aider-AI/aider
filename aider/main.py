@@ -366,7 +366,7 @@ def sanity_check_repo(repo, io):
         io.tool_error("Aider only works with git repos with version number 1 or 2.")
         io.tool_output("You may be able to convert your repo: git update-index --index-version=2")
         io.tool_output("Or run aider --no-git to proceed without using git.")
-        #ai ask if the user wants to open the url!
+        # ai ask if the user wants to open the url!
         if io.confirm_ask("Open documentation url for more info?", subject=urls.git_index_version):
             webbrowser.open(urls.git_index_version)
         return False
