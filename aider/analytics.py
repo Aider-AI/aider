@@ -29,17 +29,19 @@ class Analytics:
         self.get_or_create_uuid()
 
         if not enable or self.permanently_disable or permanently_disable:
-            #ai refactor this into a method called disable()!
-            self.mp = None
-            self.ph = None
-            if permanently_disable and not self.permanently_disable:
-                self.permanently_disable = True
-                self.save_data()
+            self.disable(permanently_disable)
             return
 
         if self.user_id and not self.permanently_disable:
             self.mp = Mixpanel(mixpanel_project_token)
             self.ph = Posthog(project_api_key=posthog_project_api_key, host=posthog_host)
+
+    def disable(self, permanently_disable):
+        self.mp = None
+        self.ph = None
+        if permanently_disable and not self.permanently_disable:
+            self.permanently_disable = True
+            self.save_data()
 
     def get_data_file_path(self):
         data_file = Path.home() / ".aider" / "analytics.json"
