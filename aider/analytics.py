@@ -53,6 +53,7 @@ class Analytics:
         self.user_id = str(uuid.uuid4())
         self.save_data()
 
+    #ai add self.asked_opt_in and save/load it!
     def load_data(self):
         data_file = self.get_data_file_path()
         if data_file.exists():
@@ -65,7 +66,10 @@ class Analytics:
 
     def save_data(self):
         data_file = self.get_data_file_path()
-        data = dict(uuid=self.user_id, permanently_disable=self.permanently_disable)
+        data = dict(
+            uuid=self.user_id,
+            permanently_disable=self.permanently_disable,
+        )
 
         data_file.write_text(json.dumps(data, indent=4))
 
