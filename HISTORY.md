@@ -14,6 +14,7 @@
 - New `--no-fancy-input` switch disables prompt toolkit input, now still available with `--no-pretty`.
 - Properly support all o1 models, regardless of provider.
 - Improved handling of API errors, especially when accessing the weak model.
+- Aider wrote 70% of the code in this release.
 
 ### Aider v0.60.1
 
