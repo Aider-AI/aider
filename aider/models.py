@@ -633,7 +633,10 @@ MODEL_SETTINGS = [
 
 
 class ModelInfoManager:
-    MODEL_INFO_URL = "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+    MODEL_INFO_URL = (
+        "https://raw.githubusercontent.com/BerriAI/litellm/main/"
+        "model_prices_and_context_window.json"
+    )
     CACHE_TTL = 60 * 60 * 24  # 24 hours
     content = None
 
