@@ -25,7 +25,7 @@ class Analytics:
 
     def __init__(self, enable=False, logfile=None, permanently_disable=False):
         self.logfile = logfile
-
+        self.asked_opt_in = False
         self.get_or_create_uuid()
 
         if not enable or self.permanently_disable or permanently_disable:
@@ -53,7 +53,6 @@ class Analytics:
         self.user_id = str(uuid.uuid4())
         self.save_data()
 
-    #ai add self.asked_opt_in and save/load it!
     def load_data(self):
         data_file = self.get_data_file_path()
         if data_file.exists():
@@ -61,6 +60,7 @@ class Analytics:
                 data = json.loads(data_file.read_text())
                 self.permanently_disable = data.get("permanently_disable")
                 self.user_id = data.get("uuid")
+                self.asked_opt_in = data.get("asked_opt_in", False)
             except json.decoder.JSONDecodeError:
                 pass
 
@@ -69,6 +69,7 @@ class Analytics:
         data = dict(
             uuid=self.user_id,
             permanently_disable=self.permanently_disable,
+            asked_opt_in=self.asked_opt_in,
         )
 
         data_file.write_text(json.dumps(data, indent=4))
