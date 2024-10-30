@@ -13,7 +13,6 @@ import json5
 import yaml
 from PIL import Image
 
-from aider import urls
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
 
