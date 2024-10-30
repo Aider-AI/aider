@@ -73,6 +73,7 @@ class TestModels(unittest.TestCase):
             result
         )  # Should return True because there's a problem with the editor model
         mock_io.tool_warning.assert_called_with(ANY)  # Ensure a warning was issued
+        #ai print the args that tool_warning was called with!
         self.assertGreaterEqual(mock_io.tool_warning.call_count, 2)  # Expect two warnings
         warning_messages = [call.args[0] for call in mock_io.tool_warning.call_args_list]
         self.assertTrue(
