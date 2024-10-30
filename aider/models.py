@@ -13,7 +13,6 @@ import json5
 import yaml
 from PIL import Image
 
-from aider import urls
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
 
@@ -1041,9 +1040,6 @@ def sanity_check_model(io, model):
             io.tool_output("Did you mean one of these?")
             for match in possible_matches:
                 io.tool_output(f"- {match}")
-
-    if show:
-        io.tool_output(f"For more info, see: {urls.model_warnings}")
 
     return show
 

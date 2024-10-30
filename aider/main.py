@@ -1,4 +1,3 @@
-# ai
 import configparser
 import json
 import os
@@ -6,6 +5,7 @@ import re
 import sys
 import threading
 import traceback
+import webbrowser
 from pathlib import Path
 
 import git
@@ -367,7 +367,8 @@ def sanity_check_repo(repo, io):
         io.tool_error("Aider only works with git repos with version number 1 or 2.")
         io.tool_output("You may be able to convert your repo: git update-index --index-version=2")
         io.tool_output("Or run aider --no-git to proceed without using git.")
-        io.tool_output(urls.git_index_version)
+        if io.confirm_ask("Open documentation url for more info?", subject=urls.git_index_version):
+            webbrowser.open(urls.git_index_version)
         return False
 
     io.tool_error("Unable to read git repository, it may be corrupt?")
@@ -618,10 +619,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         problem = models.sanity_check_models(io, main_model)
         if problem:
             io.tool_output("You can skip this check with --no-show-model-warnings")
-            io.tool_output()
+
             try:
-                if not io.confirm_ask("Proceed anyway?"):
-                    return 1
+                if io.confirm_ask(
+                    "Open documentation url for more info?", subject=urls.model_warnings
+                ):
+                    webbrowser.open(urls.model_warnings)
+                io.tool_output()
             except KeyboardInterrupt:
                 return 1
 
@@ -845,7 +849,11 @@ def check_and_load_imports(io, verbose=False):
             except Exception as err:
                 io.tool_error(str(err))
                 io.tool_output("Error loading required imports. Did you install aider properly?")
-                io.tool_output("https://aider.chat/docs/install/install.html")
+                if io.confirm_ask(
+                    "Open documentation url for more info?", subject=urls.install_properly
+                ):
+                    webbrowser.open(urls.install_properly)
+
                 sys.exit(1)
 
             installs[str(key)] = True

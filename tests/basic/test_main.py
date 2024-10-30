@@ -32,6 +32,8 @@ class TestMain(TestCase):
         os.environ["HOME"] = self.homedir_obj.name
         self.input_patcher = patch("builtins.input", return_value=None)
         self.mock_input = self.input_patcher.start()
+        self.webbrowser_patcher = patch("webbrowser.open")
+        self.mock_webbrowser = self.webbrowser_patcher.start()
 
     def tearDown(self):
         os.chdir(self.original_cwd)
@@ -40,6 +42,7 @@ class TestMain(TestCase):
         os.environ.clear()
         os.environ.update(self.original_env)
         self.input_patcher.stop()
+        self.webbrowser_patcher.stop()
 
     def test_main_with_empty_dir_no_files_on_command(self):
         main(["--no-git", "--exit"], input=DummyInput(), output=DummyOutput())
