@@ -10,6 +10,7 @@ from posthog import Posthog
 
 from aider import __version__
 from aider.dump import dump  # noqa: F401
+from aider.models import model_info_manager
 
 mixpanel_project_token = "6da9a43058a5d1b9f3353153921fb04d"
 posthog_project_api_key = "phc_99T7muzafUMMZX15H8XePbMSreEUzahHbtWjy3l5Qbv"
