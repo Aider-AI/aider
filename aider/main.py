@@ -195,7 +195,12 @@ def launch_gui(args):
         "--server.runOnSave=false",
     ]
 
-    if "-dev" in __version__:
+    try:
+        is_dev = "-dev" in str(__version__)
+    except TypeError:
+        is_dev = False
+
+    if is_dev:
         print("Watching for file changes.")
     else:
         st_args += [
