@@ -1,12 +1,13 @@
 import unittest
 from unittest.mock import ANY, MagicMock, patch
 
-from aider.models import Model, get_model_info, sanity_check_model, sanity_check_models
+from aider.models import Model, ModelInfoManager, sanity_check_model, sanity_check_models
 
 
 class TestModels(unittest.TestCase):
     def test_get_model_info_nonexistent(self):
-        info = get_model_info("non-existent-model")
+        manager = ModelInfoManager()
+        info = manager.get_model_info("non-existent-model")
         self.assertEqual(info, {})
 
     def test_max_context_tokens(self):
