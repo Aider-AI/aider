@@ -656,6 +656,7 @@ class ModelInfoManager:
         if not litellm._lazy_module:
             try:
                 import requests
+
                 response = requests.get(self.MODEL_INFO_URL, timeout=5)
                 if response.status_code == 200:
                     self.content = response.json()
@@ -669,7 +670,7 @@ class ModelInfoManager:
     def get_model_flexible(self, model):
         if not self.content:
             self._update_cache()
-        
+
         if not self.content:
             return dict()
 
@@ -695,6 +696,7 @@ class ModelInfoManager:
             return litellm.get_model_info(model)
         except Exception:
             return dict()
+
 
 model_info_manager = ModelInfoManager()
 
