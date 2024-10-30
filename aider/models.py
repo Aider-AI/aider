@@ -635,6 +635,7 @@ MODEL_SETTINGS = [
 class ModelInfoManager:
     MODEL_INFO_URL = "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
     CACHE_TTL = 60 * 60 * 24  # 24 hours
+    content = None
 
     def __init__(self):
         self.cache_dir = Path.home() / ".aider" / "caches"
@@ -667,7 +668,7 @@ class ModelInfoManager:
             except Exception as ex:
                 print(str(ex))
 
-    def get_model_flexible(self, model):
+    def get_model_from_cached_json_db(self, model):
         if not self.content:
             self._update_cache()
 
@@ -687,7 +688,7 @@ class ModelInfoManager:
         return dict()
 
     def get_model_info(self, model):
-        info = self.get_model_flexible(model)
+        info = self.get_model_from_cached_json_db(model)
         if info:
             return info
 
