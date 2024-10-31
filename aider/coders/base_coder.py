@@ -14,6 +14,7 @@ import threading
 import time
 import traceback
 import webbrowser
+from typing import List, Optional
 from collections import defaultdict
 from datetime import datetime
 from json.decoder import JSONDecodeError
@@ -789,7 +790,17 @@ class Coder:
             self.num_reflections += 1
             message = self.reflected_message
 
-    def check_for_urls(self, inp):
+    def check_and_offer_urls(self, text: str) -> List[str]:
+        """Check text for URLs and offer to open them in a browser."""
+        url_pattern = re.compile(r"(https?://[^\s/$.?#].[^\s]*[^\s,.])")
+        urls = list(set(url_pattern.findall(text)))  # Use set to remove duplicates
+        for url in urls:
+            if self.io.confirm_ask("View this URL?", subject=url):
+                webbrowser.open(url)
+        return urls
+
+    def check_for_urls(self, inp: str) -> List[str]:
+        """Check input for URLs and offer to add them to the chat."""
         url_pattern = re.compile(r"(https?://[^\s/$.?#].[^\s]*[^\s,.])")
         urls = list(set(url_pattern.findall(inp)))  # Use set to remove duplicates
         added_urls = []
@@ -1184,7 +1195,7 @@ class Coder:
                             dict(role="assistant", content=self.multi_response_content, prefix=True)
                         )
                 except Exception as err:
-                    #ai also check this err for a url and offer to open it!
+                    self.check_and_offer_urls(str(err))
                     self.io.tool_error(f"Unexpected error: {err}")
                     lines = traceback.format_exception(type(err), err, err.__traceback__)
                     self.io.tool_error("".join(lines))
