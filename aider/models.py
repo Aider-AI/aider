@@ -299,6 +299,23 @@ MODEL_SETTINGS = [
         reminder="user",
     ),
     ModelSettings(
+        "anthropic/claude-3-5-sonnet-latest",
+        "diff",
+        weak_model_name="anthropic/claude-3-haiku-20240307",
+        editor_model_name="anthropic/claude-3-5-sonnet-20241022",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        examples_as_sys_msg=True,
+        extra_params={
+            "extra_headers": {
+                "anthropic-beta": ANTHROPIC_BETA_HEADER,
+            },
+            "max_tokens": 8192,
+        },
+        cache_control=True,
+        reminder="user",
+    ),
+    ModelSettings(
         "claude-3-5-sonnet-20241022",
         "diff",
         weak_model_name="claude-3-haiku-20240307",
