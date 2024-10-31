@@ -42,8 +42,8 @@ def retry_exceptions():
         openai.UnprocessableEntityError,
         openai.RateLimitError,
         openai.APIConnectionError,
-        openai.APIError,
-        openai.APIStatusError,
+        # openai.APIError,
+        # openai.APIStatusError,
         openai.InternalServerError,
     )
 

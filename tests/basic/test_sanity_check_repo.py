@@ -6,6 +6,7 @@ from unittest import mock
 import pytest
 from git import GitError, Repo
 
+from aider import urls
 from aider.main import sanity_check_repo
 
 
@@ -99,7 +100,8 @@ def test_detached_head_state(create_repo, mock_io):
     mock_io.tool_output.assert_not_called()
 
 
-def test_git_index_version_greater_than_2(create_repo, mock_io):
+@mock.patch("webbrowser.open")
+def test_git_index_version_greater_than_2(mock_browser, create_repo, mock_io):
     repo_path, repo = create_repo
     # Set the git index version to 3
     set_git_index_version(str(repo_path), 3)
@@ -125,7 +127,9 @@ def test_git_index_version_greater_than_2(create_repo, mock_io):
         "You may be able to convert your repo: git update-index --index-version=2"
     )
     mock_io.tool_output.assert_any_call("Or run aider --no-git to proceed without using git.")
-    mock_io.tool_output.assert_any_call("https://github.com/Aider-AI/aider/issues/211")
+    mock_io.confirm_ask.assert_any_call(
+        "Open documentation url for more info?", subject=urls.git_index_version
+    )
 
 
 def test_bare_repository(create_repo, mock_io, tmp_path):

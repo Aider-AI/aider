@@ -245,8 +245,9 @@ class InputOutput:
                 "output": self.output,
                 "lexer": PygmentsLexer(MarkdownLexer),
                 "editing_mode": self.editingmode,
-                "cursor": ModalCursorShapeConfig(),
             }
+            if self.editingmode == EditingMode.VI:
+                session_kwargs["cursor"] = ModalCursorShapeConfig()
             if self.input_history_file is not None:
                 session_kwargs["history"] = FileHistory(self.input_history_file)
             try:
@@ -741,11 +742,9 @@ class InputOutput:
             try:
                 with self.chat_history_file.open("a", encoding=self.encoding, errors="ignore") as f:
                     f.write(text)
-            except (PermissionError, OSError):
-                self.tool_error(
-                    f"Warning: Unable to write to chat history file {self.chat_history_file}."
-                    " Permission denied."
-                )
+            except (PermissionError, OSError) as err:
+                print(f"Warning: Unable to write to chat history file {self.chat_history_file}.")
+                print(err)
                 self.chat_history_file = None  # Disable further attempts to write
 
     def format_files_for_input(self, rel_fnames, rel_read_only_fnames):

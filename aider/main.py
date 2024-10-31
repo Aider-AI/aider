@@ -5,6 +5,7 @@ import re
 import sys
 import threading
 import traceback
+import webbrowser
 from pathlib import Path
 
 import git
@@ -13,6 +14,7 @@ from dotenv import load_dotenv
 from prompt_toolkit.enums import EditingMode
 
 from aider import __version__, models, urls, utils
+from aider.analytics import Analytics
 from aider.args import get_parser
 from aider.coders import Coder
 from aider.commands import Commands, SwitchCoder
@@ -194,7 +196,10 @@ def launch_gui(args):
         "--server.runOnSave=false",
     ]
 
-    if "-dev" in __version__:
+    # https://github.com/Aider-AI/aider/issues/2193
+    is_dev = "-dev" in str(__version__)
+
+    if is_dev:
         print("Watching for file changes.")
     else:
         st_args += [
@@ -362,7 +367,8 @@ def sanity_check_repo(repo, io):
         io.tool_error("Aider only works with git repos with version number 1 or 2.")
         io.tool_output("You may be able to convert your repo: git update-index --index-version=2")
         io.tool_output("Or run aider --no-git to proceed without using git.")
-        io.tool_output(urls.git_index_version)
+        if io.confirm_ask("Open documentation url for more info?", subject=urls.git_index_version):
+            webbrowser.open(urls.git_index_version)
         return False
 
     io.tool_error("Unable to read git repository, it may be corrupt?")
@@ -422,6 +428,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)
+
+    if args.analytics_disable:
+        analytics = Analytics(permanently_disable=True)
+        print("Analytics have been permanently disabled.")
+        return
 
     if not args.verify_ssl:
         import httpx
@@ -484,9 +495,35 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         io = get_io(False)
         io.tool_warning("Terminal does not support pretty output (UnicodeDecodeError)")
 
+    analytics = Analytics(logfile=args.analytics_log, permanently_disable=args.analytics_disable)
+    if args.analytics:
+        if analytics.need_to_ask():
+            io.tool_output(
+                "Aider respects your privacy and never collects your code, chat messages, keys or"
+                " personal info."
+            )
+            io.tool_output(f"For more info: {urls.analytics}")
+            disable = not io.confirm_ask(
+                "Allow collection of anonymous analytics to help improve aider?"
+            )
+
+            analytics.asked_opt_in = True
+            if disable:
+                analytics.disable(permanently=True)
+                io.tool_output("Analytics have been permanently disabled.")
+
+            analytics.save_data()
+            io.tool_output()
+
+        # This is a no-op if the user has opted out
+        analytics.enable()
+
+    analytics.event("launched")
+
     if args.gui and not return_coder:
         if not check_streamlit_install(io):
             return
+        analytics.event("gui session")
         launch_gui(argv)
         return
 
@@ -601,11 +638,15 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.show_model_warnings:
         problem = models.sanity_check_models(io, main_model)
         if problem:
+            analytics.event("model warning", main_model=main_model)
             io.tool_output("You can skip this check with --no-show-model-warnings")
-            io.tool_output()
+
             try:
-                if not io.confirm_ask("Proceed anyway?"):
-                    return 1
+                if io.confirm_ask(
+                    "Open documentation url for more info?", subject=urls.model_warnings
+                ):
+                    webbrowser.open(urls.model_warnings)
+                io.tool_output()
             except KeyboardInterrupt:
                 return 1
 
@@ -674,6 +715,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             test_cmd=args.test_cmd,
             commands=commands,
             summarizer=summarizer,
+            analytics=analytics,
             map_refresh=args.map_refresh,
             cache_prompts=args.cache_prompts,
             map_mul_no_files=args.map_multiplier_no_files,
@@ -747,6 +789,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         io.tool_output(f"Cur working dir: {Path.cwd()}")
         io.tool_output(f"Git working dir: {git_root}")
 
+    if args.load:
+        commands.cmd_load(args.load)
+
     if args.message:
         io.add_to_input_history(args.message)
         io.tool_output()
@@ -771,6 +816,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     if args.exit:
         return
+
+    analytics.event("cli session", main_model=main_model, edit_format=main_model.edit_format)
 
     while True:
         try:
@@ -819,7 +866,11 @@ def check_and_load_imports(io, verbose=False):
             except Exception as err:
                 io.tool_error(str(err))
                 io.tool_output("Error loading required imports. Did you install aider properly?")
-                io.tool_output("https://aider.chat/docs/install/install.html")
+                if io.confirm_ask(
+                    "Open documentation url for more info?", subject=urls.install_properly
+                ):
+                    webbrowser.open(urls.install_properly)
+
                 sys.exit(1)
 
             installs[str(key)] = True

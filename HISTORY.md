@@ -1,6 +1,22 @@
 
 # Release history
 
+### main branch
+
+- Load and save aider slash-commands to files:
+  - `/save <fname>` command will make a file of `/add` and `/read-only` commands that recreate the current file context in the chat.
+  - `/load <fname>` will replay the commands in the file.
+  - You can use `/load` to run any arbitrary set of slash-commands, not just `/add` and `/read-only`.
+  - Use `--load <fname>` to run a list of commands on launch, before the interactive chat begins.
+- Anonymous, opt-in [analytics](https://aider.chat/docs/more/analytics.html) with no personal data sharing.
+- Aider follows litellm's `supports_vision` attribute to enable image support for models.
+- Bugfix for when diff mode flexibly handles the model using the wrong filename.
+- Displays filenames in sorted order for `/add` and `/read-only`.
+- New `--no-fancy-input` switch disables prompt toolkit input, now still available with `--no-pretty`.
+- Properly support all o1 models, regardless of provider.
+- Improved handling of API errors, especially when accessing the weak model.
+- Aider wrote 70% of the code in this release.
+
 ### Aider v0.60.1
 
 - Enable image support for Sonnet 10/22.

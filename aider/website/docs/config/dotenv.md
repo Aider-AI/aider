@@ -306,6 +306,18 @@ cog.outl("```")
 ## Run tests and fix problems found
 #AIDER_TEST=false
 
+############
+# Analytics:
+
+## Enable/disable analytics for one session (default: False)
+#AIDER_ANALYTICS=false
+
+## Specify a file to log analytics events
+#AIDER_ANALYTICS_LOG=
+
+## Permanently disable analytics
+#AIDER_ANALYTICS_DISABLE=false
+
 #################
 # Other Settings:
 
@@ -356,6 +368,9 @@ cog.outl("```")
 
 ## Specify a file containing the message to send the LLM, process reply, then exit (disables chat mode)
 #AIDER_MESSAGE_FILE=
+
+## Load and execute /commands from a file on launch
+#AIDER_LOAD=
 
 ## Specify the encoding for input and output (default: utf-8)
 #AIDER_ENCODING=utf-8

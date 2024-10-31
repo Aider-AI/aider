@@ -223,6 +223,7 @@ class Commands:
 
     def run(self, inp):
         if inp.startswith("!"):
+            self.coder.event("command_run")
             return self.do_run("run", inp[1:])
 
         res = self.matching_commands(inp)
@@ -230,9 +231,13 @@ class Commands:
             return
         matching_commands, first_word, rest_inp = res
         if len(matching_commands) == 1:
-            return self.do_run(matching_commands[0][1:], rest_inp)
+            command = matching_commands[0][1:]
+            self.coder.event(f"command_{command}")
+            return self.do_run(command, rest_inp)
         elif first_word in matching_commands:
-            return self.do_run(first_word[1:], rest_inp)
+            command = first_word[1:]
+            self.coder.event(f"command_{command}")
+            return self.do_run(command, rest_inp)
         elif len(matching_commands) > 1:
             self.io.tool_error(f"Ambiguous command: {', '.join(matching_commands)}")
         else:
@@ -963,6 +968,7 @@ class Commands:
             self.basic_help()
             return
 
+        self.coder.event("interactive help")
         from aider.coders import Coder
 
         if not self.help:
@@ -1245,6 +1251,62 @@ class Commands:
         announcements = "\n".join(self.coder.get_announcements())
         output = f"{announcements}\n{settings}"
         self.io.tool_output(output)
+
+    def completions_raw_load(self, document, complete_event):
+        return self.completions_raw_read_only(document, complete_event)
+
+    def cmd_load(self, args):
+        "Load and execute commands from a file"
+        if not args.strip():
+            self.io.tool_error("Please provide a filename containing commands to load.")
+            return
+
+        try:
+            with open(args.strip(), "r", encoding=self.io.encoding, errors="replace") as f:
+                commands = f.readlines()
+        except FileNotFoundError:
+            self.io.tool_error(f"File not found: {args}")
+            return
+        except Exception as e:
+            self.io.tool_error(f"Error reading file: {e}")
+            return
+
+        for cmd in commands:
+            cmd = cmd.strip()
+            if not cmd or cmd.startswith("#"):
+                continue
+
+            self.io.tool_output(f"\nExecuting: {cmd}")
+            self.run(cmd)
+
+    def completions_raw_save(self, document, complete_event):
+        return self.completions_raw_read_only(document, complete_event)
+
+    def cmd_save(self, args):
+        "Save commands to a file that can reconstruct the current chat session's files"
+        if not args.strip():
+            self.io.tool_error("Please provide a filename to save the commands to.")
+            return
+
+        try:
+            with open(args.strip(), "w", encoding=self.io.encoding) as f:
+                # Write commands to add editable files
+                for fname in sorted(self.coder.abs_fnames):
+                    rel_fname = self.coder.get_rel_fname(fname)
+                    f.write(f"/add       {rel_fname}\n")
+
+                # Write commands to add read-only files
+                for fname in sorted(self.coder.abs_read_only_fnames):
+                    # Use absolute path for files outside repo root, relative path for files inside
+                    if Path(fname).is_relative_to(self.coder.root):
+                        rel_fname = self.coder.get_rel_fname(fname)
+                        f.write(f"/read-only {rel_fname}\n")
+                    else:
+                        f.write(f"/read-only {fname}\n")
+
+            self.io.tool_output(f"Saved commands to {args.strip()}")
+        except Exception as e:
+            self.io.tool_error(f"Error saving commands to file: {e}")
 
     def cmd_copy(self, args):
         "Copy the last assistant message to the clipboard"
