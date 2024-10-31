@@ -13,6 +13,7 @@ import sys
 import threading
 import time
 import traceback
+import webbrowser
 from collections import defaultdict
 from datetime import datetime
 from json.decoder import JSONDecodeError
@@ -1145,8 +1146,6 @@ class Coder:
                             if self.io.confirm_ask(
                                 "View this URL from the error message?", subject=url
                             ):
-                                import webbrowser #ai move to top!
-
                                 webbrowser.open(url)
                         break
                     self.io.tool_output(f"Retrying in {retry_delay:.1f} seconds...")
