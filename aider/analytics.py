@@ -119,6 +119,7 @@ class Analytics:
             return model.name.split("/")[0] + "/REDACTED"
         return None
 
+    # ai: actually, weak_model and editor_model are attributes of main_model; use them instead!
     def event(self, event_name, main_model=None, weak_model=None, editor_model=None, **kwargs):
         if not (self.mp or self.ph) and not self.logfile:
             return
