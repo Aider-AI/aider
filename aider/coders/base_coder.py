@@ -266,7 +266,9 @@ class Coder:
         suggest_shell_commands=True,
         chat_language=None,
     ):
+        # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
+
         self.event = self.analytics.event
         self.chat_language = chat_language
         self.commit_before_message = []
