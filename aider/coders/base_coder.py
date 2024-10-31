@@ -1136,6 +1136,7 @@ class Coder:
                     yield from self.send(messages, functions=self.functions)
                     break
                 except retry_exceptions() as err:
+                    #ai print all the base classes of err!
                     self.io.tool_warning(str(err))
                     retry_delay *= 2
                     if retry_delay > RETRY_TIMEOUT:
