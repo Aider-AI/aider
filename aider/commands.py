@@ -1205,7 +1205,7 @@ class Commands:
                 f" {self.coder.main_model.name} does not support images."
             )
             return
-            
+
         if abs_path in self.coder.abs_read_only_fnames:
             self.io.tool_error(f"{original_name} is already in the chat as a read-only file")
             return
