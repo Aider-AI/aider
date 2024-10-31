@@ -8,6 +8,7 @@
   - `/load <fname>` will replay the commands in the file.
   - You can use `/load` to run any arbitrary set of slash-commands, not just `/add` and `/read-only`.
   - Use `--load <fname>` to run a list of commands on launch, before the interactive chat begins.
+- Anonymous, opt-in [analytics](https://aider.chat/docs/more/analytics.html) with no personal data sharing.
 - Aider follows litellm's `supports_vision` attribute to enable image support for models.
 - Bugfix for when diff mode flexibly handles the model using the wrong filename.
 - Displays filenames in sorted order for `/add` and `/read-only`.
