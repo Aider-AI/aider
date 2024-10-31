@@ -1138,6 +1138,7 @@ class Coder:
                     self.io.tool_warning(str(err))
                     retry_delay *= 2
                     if retry_delay > RETRY_TIMEOUT:
+                        #ai look for a URL in the str(err) and confirm_ask if they want to view it!
                         break
                     self.io.tool_output(f"Retrying in {retry_delay:.1f} seconds...")
                     time.sleep(retry_delay)
