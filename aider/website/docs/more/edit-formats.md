@@ -1,6 +1,6 @@
 ---
 parent: More info
-nav_order: 960
+nav_order: 490
 description: Aider uses various "edit formats" to let LLMs edit source files.
 ---
 

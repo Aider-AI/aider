@@ -8,12 +8,9 @@ nav_order: 500
 Aider can collect anonymous analytics to help
 improve aider's ability to work with LLMs, edit code and complete user requests.
 
-## Opt-in
+## Opt-in, anonymous, no personal info
 
 Analytics are only collected if you agree and opt-in. 
-
-## Anonymous, no personal info
-
 No personal information is collected: no user identity, none of your code, keys,
 prompts or chat messages.
 
@@ -99,18 +96,14 @@ aider --analytics-log filename.jsonl --no-analytics
 
 ## Reporting issues
 
-Please open a
-[GitHub Issue](https://github.com/paul-gauthier/aider/issues)
-if you have concerns about any of the analytics that aider is collecting.
-
+If you have concerns about any of the analytics that aider is collecting
+or our data practices
+please contact us by opening a
+[GitHub Issue](https://github.com/paul-gauthier/aider/issues).
 
 ## Privacy policy
 
-Please see
-[aider's privacy policy]()
+Please see aider's
+[privacy policy](/docs/legal/privacy.html)
 for more details.
-
-If you have any questions or concerns about our data practices, 
-please contact us by opening a
-[GitHub Issue](https://github.com/paul-gauthier/aider/issues).
 

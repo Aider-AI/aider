@@ -1,6 +1,6 @@
 ---
 parent: More info
-nav_order: 920
+nav_order: 480
 description: Aider can handle "infinite output" from models that support prefill.
 ---
 

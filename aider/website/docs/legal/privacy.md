@@ -1,17 +1,22 @@
+---
+parent: More info
+nav_order: 500
+---
 
-# Aider Privacy Policy
+# Privacy policy
 
-Aider AI LLC (“Aider,” “we,” “our,” and/or “us”) values the privacy of individuals who use our website, programming tools, and related services (collectively, our “Services”). This privacy policy (the “Privacy Policy”) explains how we collect, use, and disclose information from users of our Services. By using our Services, you agree to the collection, use, disclosure, and procedures this Privacy Policy describes. 
+[Aider AI LLC](/docs/faq.html#what-is-aider-ai-llc)
+(“Aider,” “we,” “our,” and/or “us”) values the privacy of individuals who use our website, programming tools, and related services (collectively, our “Services”). This privacy policy (the “Privacy Policy”) explains how we collect, use, and disclose information from users of our Services. By using our Services, you agree to the collection, use, disclosure, and procedures this Privacy Policy describes. 
 
-## Information We Collect
+### Information We Collect
 
 We may collect a variety of information from or about you or your devices from various sources, as described below.
 
-## A. Information You Provide to Us.
+### A. Information You Provide to Us.
 
 **Communications.** If you contact us directly, we may receive additional information about you, such as your name, email address, the contents of a message or attachments that you may send to us, and other information you choose to provide.
 
-## B. Information We Collect When You Use Our Services. 
+### B. Information We Collect When You Use Our Services. 
 
 **Device Information.** We may receive information about the device and software you use to access our Services, including IP address, device type, device identifiers, web browser type and version, and operating system version.
 
@@ -22,7 +27,7 @@ We may collect a variety of information from or about you or your devices from v
 **Information from Cookies and Other Tracking Technologies.** We and our third-party partners may collect information about your activities on our Services using cookies, pixel tags, SDKs, or other tracking technologies. Our third-party partners, such as analytics and security partners, may also use these technologies to collect information about your online activities over time and across different services. 
 
 
-## How We Use the Information We Collect
+### How We Use the Information We Collect
 
 We use the information we collect:
  
@@ -34,7 +39,7 @@ We use the information we collect:
 - For compliance purposes, including enforcing our legal rights, or as may be required by applicable laws and regulations or requested by any judicial process or governmental agency; and
 - For other purposes for which we provide specific notice at the time the information is collected.
 
-## How We Disclose the Information We Collect
+### How We Disclose the Information We Collect
 
 **Affiliates.** We may disclose any information we receive to our current or future affiliates for any of the purposes described in this Privacy Policy.  
 
@@ -48,38 +53,41 @@ We use the information we collect:
 
 **Consent.** We may also disclose your information with your permission.
 
-## Your Choices
+### Your Choices
 
 **Analytics Information.** You can turn off analytics collection when using our programming tools. Please visit this 
 [documentation page](/docs/more/analytics.html)
 for more information about the data collected and your options.
 
-## Third Parties
+### Third Parties
 
 Our Services may contain links to other websites, products, or services that we do not own or operate. We are not responsible for the privacy practices of these third parties. Please be aware that this Privacy Policy does not apply to your activities on these third-party services or any information you disclose to these third parties. We encourage you to read their privacy policies before providing any information to them.
 
-## Security 
+### Security 
 
 We make reasonable efforts to protect your information by using physical and electronic safeguards designed to improve the security of the information we maintain. However, because no electronic transmission or storage of information can be entirely secure, we can make no guarantees as to the security or privacy of your information.
 
-## Children’s Privacy
+### Children’s Privacy
 
 We do not knowingly collect, maintain, or use personal information from children under 18 years of age, and no part of our Service(s) is directed to children. If you learn that a child has provided us with personal information in violation of this Privacy Policy, then you may alert us at [INSERT EMAIL ADDRESS].
 
-## International Visitors
+### International Visitors
 
 Our Services are hosted in the United States and intended for visitors located within the United States. If you choose to use the Services from the European Union or other regions of the world with laws governing data collection and use that may differ from U.S. law, then please note that you are transferring your personal information outside of those regions to the U.S. for storage and processing. We may also transfer your data from the U.S. to other countries or regions in connection with storage and processing of data, fulfilling your requests, and operating the Services. By providing any information, including personal information, on or to the Services, you consent to such transfer, storage, and processing. 
 
 
-## Changes to this Privacy Policy
+### Changes to this Privacy Policy
 
 We will post any adjustments to the Privacy Policy on this page, and the revised version will be effective when it is posted. If we materially change the ways in which we use or disclose personal information previously collected from you through the Services, we will notify you through the Services, by email, or other communication.
 
-## Contact Information
+### Contact Information
 
 If you have any questions, comments, or concerns about our processing activities, please email us at aider-privacy@paulg.org.
 
-## Last Updated:
+----
+
+<p class="post-date">
+Last updated 
 <!--[[[cog
 import subprocess
 import datetime
@@ -93,3 +101,4 @@ if result.returncode == 0:
 October 30, 2024.
 <!--[[[end]]]-->
 
+</p>
