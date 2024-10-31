@@ -790,12 +790,15 @@ class Coder:
             self.num_reflections += 1
             message = self.reflected_message
 
-    def check_and_offer_urls(self, text: str) -> List[str]:
+    def check_and_open_urls(self, text: str) -> List[str]:
         """Check text for URLs and offer to open them in a browser."""
-        url_pattern = re.compile(r"(https?://[^\s/$.?#].[^\s]*[^\s,.])")
+
+        url_pattern = re.compile(r"(https?://[^\s/$.?#].[^\s]*)")
+        #ai strip trailing . or ' from the url!
+
         urls = list(set(url_pattern.findall(text)))  # Use set to remove duplicates
         for url in urls:
-            if self.io.confirm_ask("View this URL?", subject=url):
+            if self.io.confirm_ask("Open URL for more info about this error?", subject=url):
                 webbrowser.open(url)
         return urls
 
@@ -1149,15 +1152,15 @@ class Coder:
                 except retry_exceptions() as err:
                     # Print the error and its base classes
                     err_msg = str(err)
-                    base_classes = []
-                    for cls in err.__class__.__mro__[1:]:  # Skip the class itself
-                        base_classes.append(cls.__name__)
-                    if base_classes:
-                        err_msg += f"\nBase classes: {' -> '.join(base_classes)}"
-                    self.io.tool_warning(err_msg)
+                    #base_classes = []
+                    #for cls in err.__class__.__mro__:  # Skip the class itself
+                    #    base_classes.append(cls.__name__)
+                    #if base_classes:
+                    #    err_msg += f"\nBase classes: {' -> '.join(base_classes)}"
+                    self.io.tool_error(err_msg)
                     retry_delay *= 2
                     if retry_delay > RETRY_TIMEOUT:
-                        self.check_and_offer_urls(str(err))
+                        self.check_and_open_urls(err_msg)
                         break
                     self.io.tool_output(f"Retrying in {retry_delay:.1f} seconds...")
                     time.sleep(retry_delay)
@@ -1187,8 +1190,8 @@ class Coder:
                             dict(role="assistant", content=self.multi_response_content, prefix=True)
                         )
                 except Exception as err:
-                    self.check_and_offer_urls(str(err))
-                    self.io.tool_error(f"Unexpected error: {err}")
+                    self.io.tool_error(str(err))
+                    self.check_and_open_urls(str(err))
                     lines = traceback.format_exception(type(err), err, err.__traceback__)
                     self.io.tool_error("".join(lines))
                     return
