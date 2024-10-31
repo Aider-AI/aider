@@ -35,11 +35,11 @@ def test_analytics_initialization():
 def test_analytics_enable_disable():
     analytics = Analytics()
     analytics.asked_opt_in = True
-    
+
     analytics.enable()
     assert analytics.mp is not None
     assert analytics.ph is not None
-    
+
     analytics.disable(permanently=False)
     assert analytics.mp is None
     assert analytics.ph is None
@@ -52,7 +52,7 @@ def test_analytics_enable_disable():
 def test_analytics_data_persistence(temp_data_dir):
     analytics1 = Analytics()
     user_id = analytics1.user_id
-    
+
     analytics2 = Analytics()
     assert analytics2.user_id == user_id
 
@@ -61,17 +61,17 @@ def test_analytics_event_logging(temp_analytics_file):
     analytics = Analytics(logfile=temp_analytics_file)
     analytics.asked_opt_in = True
     analytics.enable()
-    
+
     test_event = "test_event"
     test_properties = {"test_key": "test_value"}
-    
-    with patch.object(analytics.mp, 'track') as mock_mp_track:
-        with patch.object(analytics.ph, 'capture') as mock_ph_capture:
+
+    with patch.object(analytics.mp, "track") as mock_mp_track:
+        with patch.object(analytics.ph, "capture") as mock_ph_capture:
             analytics.event(test_event, **test_properties)
-            
+
             mock_mp_track.assert_called_once()
             mock_ph_capture.assert_called_once()
-            
+
             # Verify logfile
             with open(temp_analytics_file) as f:
                 log_entry = json.loads(f.read().strip())
@@ -82,7 +82,7 @@ def test_analytics_event_logging(temp_analytics_file):
 def test_system_info():
     analytics = Analytics()
     sys_info = analytics.get_system_info()
-    
+
     assert "python_version" in sys_info
     assert "os_platform" in sys_info
     assert "os_release" in sys_info
@@ -92,9 +92,9 @@ def test_system_info():
 def test_need_to_ask():
     analytics = Analytics()
     assert analytics.need_to_ask() is True
-    
+
     analytics.asked_opt_in = True
     assert analytics.need_to_ask() is False
-    
+
     analytics.permanently_disable = True
     assert analytics.need_to_ask() is False
