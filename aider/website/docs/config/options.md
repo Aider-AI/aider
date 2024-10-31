@@ -69,7 +69,8 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--install-main-branch] [--upgrade] [--apply]
              [--yes-always] [-v] [--show-repo-map] [--show-prompts]
              [--exit] [--message] [--message-file] [--load]
-             [--encoding] [-c] [--gui]
+             [--encoding] [-c]
+             [--gui | --no-gui | --browser | --no-browser]
              [--suggest-shell-commands | --no-suggest-shell-commands]
              [--fancy-input | --no-fancy-input] [--voice-format]
              [--voice-language]
@@ -631,12 +632,14 @@ Aliases:
   - `--config CONFIG_FILE`
 
 ### `--gui`
-Run aider in your browser  
+Run aider in your browser (default: False)  
 Default: False  
 Environment variable: `AIDER_GUI`  
 Aliases:
   - `--gui`
+  - `--no-gui`
   - `--browser`
+  - `--no-browser`
 
 ### `--suggest-shell-commands`
 Enable/disable suggesting shell commands (default: True)  
