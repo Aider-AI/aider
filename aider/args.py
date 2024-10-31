@@ -701,9 +701,9 @@ def get_parser(default_config_files, git_root):
     )
     group.add_argument(
         "--gui",
-        "--browser", # ai turn into a boolean!
-        action="store_true",
-        help="Run aider in your browser",
+        "--browser",
+        action=argparse.BooleanOptionalAction,
+        help="Run aider in your browser (default: False)",
         default=False,
     )
     group.add_argument(
