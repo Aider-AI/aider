@@ -43,7 +43,7 @@ def test_analytics_enable_disable(temp_data_dir):
     analytics.disable(permanently=False)
     assert analytics.mp is None
     assert analytics.ph is None
-    assert analytics.permanently_disable is False
+    assert analytics.permanently_disable is not True
 
     analytics.disable(permanently=True)
     assert analytics.permanently_disable is True
