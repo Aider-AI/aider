@@ -12,7 +12,7 @@ improve aider's ability to work with LLMs, edit code and complete user requests.
 
 Analytics are only collected if you agree and opt-in. 
 Aider respects your privacy and never collects your code, chat messages, keys or
-any personal info.
+personal info.
 
 Aider collects information on:
 

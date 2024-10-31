@@ -500,7 +500,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         if analytics.need_to_ask():
             io.tool_output(
                 "Aider respects your privacy and never collects your code, chat messages, keys or"
-                " any personal info."
+                " personal info."
             )
             io.tool_output(f"For more info: {urls.analytics}")
             disable = not io.confirm_ask(

@@ -43,7 +43,7 @@ class Analytics:
             return
 
         if self.permanently_disable:
-            self.disable(False)
+            self.disable(True)
             return
 
         if not self.asked_opt_in:
