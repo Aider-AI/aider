@@ -14,11 +14,11 @@ import threading
 import time
 import traceback
 import webbrowser
-from typing import List, Optional
 from collections import defaultdict
 from datetime import datetime
 from json.decoder import JSONDecodeError
 from pathlib import Path
+from typing import List, Optional
 
 from aider import __version__, models, prompts, urls, utils
 from aider.analytics import Analytics
