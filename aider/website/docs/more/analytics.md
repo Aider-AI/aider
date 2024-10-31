@@ -10,7 +10,7 @@ improve aider's ability to work with LLMs, edit code and complete user requests.
 
 ## Opt-in
 
-Analytics are only collected if you agree and opt-in.
+Analytics are only collected if you agree and opt-in. 
 
 ## Anonymous, no personal info
 
@@ -41,15 +41,23 @@ You can opt out of analytics forever by running this command one time:
 aider --analytics-disable
 ```
 
-To enable analytics for a single session, you can run the command below. 
-This will *not* have any effect if you have permanently disabled analytics with the previous
-command.
+To enable analytics for a single session, you can run aider with `--analytics`.
+This will *not* have any effect if you have permanently disabled analytics with the previous command.
+
+The first time, you will need to agree to opt-in.
 
 ```
 aider --analytics
+
+Aider respects your privacy and never collects your code, prompts, chats, keys or any personal
+info.
+For more info: https://aider.chat/docs/more/analytics.html
+Allow collection of anonymous analytics to help improve aider? (Y)es/(N)o [Yes]:
 ```
 
-To disable analytics for a single session, you can run:
+If you've added `analytics: true` to your 
+[yaml config file](/docs/config/aider_conf.html), 
+you can disable analytics for a single session, you can run:
 
 ```
 aider --no-analytics
@@ -60,7 +68,7 @@ aider --no-analytics
 ### Sample analytics data
 
 To get a better sense of what type of data is collected, you can review some
-[sample analytics logs](https://github.com/paul-gauthier/aider/blob/main/aider/website/assets/sample-analytics.jsonl).
+[sample analytics logs](https://github.com/aider-ai/aider/blob/main/aider/website/assets/sample-analytics.jsonl).
 These are the last 1,000 analytics events from the author's
 personal use of aider, updated regularly.
 
@@ -70,7 +78,7 @@ personal use of aider, updated regularly.
 Since aider is open source, all the places where aider collects analytics
 are visible in the source code.
 They can be viewed using 
-[GitHub search](https://github.com/search?q=repo%3Apaul-gauthier%2Faider+%22.event%28%22&type=code).
+[GitHub search](https://github.com/search?q=repo%3Aaider-ai%2Faider+%22.event%28%22&type=code).
 
 
 ### Logging and inspecting analytics
@@ -96,21 +104,11 @@ Please open a
 if you have concerns about any of the analytics that aider is collecting.
 
 
-## Legal compliance 
+## Privacy policy
 
-Aider is committed to complying with applicable data protection and privacy laws, including but not limited to the General Data Protection Regulation (GDPR) and the California Consumer Privacy Act (CCPA). Here's how we ensure compliance:
-
-1. No Personal Data Processing: We do not collect or process any personal data. All data collected is anonymous and cannot be linked back to individual users.
-
-2. Legal Basis: The collection of anonymous usage data is based on legitimate interest to improve our software and user experience.
-
-3. Data Retention: Anonymous usage data is retained for a period of 5 years, after which it is automatically deleted.
-
-4. User Rights: As we do not collect personal data, individual data subject rights (such as access, rectification, erasure) are not applicable. However, users have the right to opt-out of data collection entirely. See 
-[Enabling & disabling analytics](#enabling--disabling-analytics) 
-above.
-
-5. Data Protection: We implement appropriate technical and organizational measures to ensure a level of security appropriate to the risk.
+Please see
+[aider's privacy policy]()
+for more details.
 
 If you have any questions or concerns about our data practices, 
 please contact us by opening a
