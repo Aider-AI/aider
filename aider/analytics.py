@@ -108,6 +108,7 @@ class Analytics:
             "machine": platform.machine(),
         }
 
+    #ai add weak_model and editor_model as args, redact them too
     def event(self, event_name, main_model=None, **kwargs):
         if not (self.mp or self.ph) and not self.logfile:
             return
@@ -115,6 +116,7 @@ class Analytics:
         properties = {}
 
         if main_model:
+            # ai: refactor this into a method!
             # Redact the main model name unless it is in the public litellm db
             info = model_info_manager.get_model_from_cached_json_db(main_model.name)
             if info:
