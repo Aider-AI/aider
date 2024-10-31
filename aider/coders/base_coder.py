@@ -1147,6 +1147,7 @@ class Coder:
                     retry_delay *= 2
                     if retry_delay > RETRY_TIMEOUT:
                         # Check for URLs in error message
+                        # ai: refactor this into a function
                         url_pattern = re.compile(r"(https?://[^\s/$.?#].[^\s]*[^\s,.])")
                         urls = url_pattern.findall(str(err))
                         for url in urls:
@@ -1183,6 +1184,7 @@ class Coder:
                             dict(role="assistant", content=self.multi_response_content, prefix=True)
                         )
                 except Exception as err:
+                    #ai also check this err for a url and offer to open it!
                     self.io.tool_error(f"Unexpected error: {err}")
                     lines = traceback.format_exception(type(err), err, err.__traceback__)
                     self.io.tool_error("".join(lines))
