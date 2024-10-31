@@ -77,7 +77,7 @@ We will post any adjustments to the Privacy Policy on this page, and the revised
 
 ## Contact Information
 
-If you have any questions, comments, or concerns about our processing activities, please email us at **privacy@COMPANY.com**.
+If you have any questions, comments, or concerns about our processing activities, please email us at aider-privacy@paulg.org.
 
 ## Last Updated:
 <!--[[[cog
