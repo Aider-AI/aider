@@ -1199,9 +1199,10 @@ class Commands:
                 self.io.tool_error(f"Not a file or directory: {abs_path}")
 
     def _add_read_only_file(self, abs_path, original_name):
-        if is_image_file(original_name):
+        if is_image_file(original_name) and not self.coder.main_model.info.get("supports_vision"):
             self.io.tool_error(
-                f"Cannot add image file {original_name} as read-only. Use /add for images instead."
+                f"Cannot add image file {original_name} as the"
+                f" {self.coder.main_model.name} does not support images."
             )
             return
             
