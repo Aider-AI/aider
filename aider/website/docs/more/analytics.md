@@ -11,8 +11,8 @@ improve aider's ability to work with LLMs, edit code and complete user requests.
 ## Opt-in, anonymous, no personal info
 
 Analytics are only collected if you agree and opt-in. 
-No personal information is collected: no user identity, none of your code, keys,
-prompts or chat messages.
+Aider respects your privacy and never collects your code, chat messages, keys or
+any personal info.
 
 Aider collects information on:
 
