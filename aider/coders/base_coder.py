@@ -797,7 +797,9 @@ class Coder:
         urls = list(set(url_pattern.findall(text)))  # Use set to remove duplicates
         for url in urls:
             dump(url)
-            if self.io.confirm_ask("Open URL for more info about this error?", subject=url.rstrip(".',")):
+            if self.io.confirm_ask(
+                "Open URL for more info about this error?", subject=url.rstrip(".',")
+            ):
                 webbrowser.open(url)
         return urls
 
@@ -1151,10 +1153,10 @@ class Coder:
                 except retry_exceptions() as err:
                     # Print the error and its base classes
                     err_msg = str(err)
-                    #base_classes = []
-                    #for cls in err.__class__.__mro__:  # Skip the class itself
+                    # base_classes = []
+                    # for cls in err.__class__.__mro__:  # Skip the class itself
                     #    base_classes.append(cls.__name__)
-                    #if base_classes:
+                    # if base_classes:
                     #    err_msg += f"\nBase classes: {' -> '.join(base_classes)}"
                     self.io.tool_error(err_msg)
                     retry_delay *= 2
