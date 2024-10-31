@@ -17,7 +17,6 @@ sounddevice
 soundfile
 beautifulsoup4
 PyYAML
-Pillow
 diff-match-patch
 pypandoc
 litellm
@@ -57,3 +56,6 @@ numpy<2
 # Going past this makes dependencies unresolvable
 # Seems to be caused by sentence-transformers
 tokenizers==0.19.1
+
+# streamlit 1.39.0 depends on this, as far back as 1.22 which is ancient and doesn't have chat ui
+Pillow<11
