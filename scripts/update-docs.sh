@@ -9,7 +9,9 @@ else
   ARG=$1
 fi
 
-tail -1000 ~/.aider/analytics.jsonl > aider/website/assets/sample-analytics.jsonl
+if [ "$ARG" != "--check" ]; then
+  tail -1000 ~/.aider/analytics.jsonl > aider/website/assets/sample-analytics.jsonl
+fi
 
 # README.md before index.md, because index.md uses cog to include README.md
 cog $ARG \
