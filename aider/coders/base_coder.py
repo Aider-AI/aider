@@ -794,6 +794,7 @@ class Coder:
         """Check text for URLs and offer to open them in a browser."""
 
         url_pattern = re.compile(r"(https?://[^\s/$.?#].[^\s]*?)([.']*$|[.',\s])")
+        dump(url_pattern)
         # ai strip trailing . or ' from the url!
 
         urls = list(set(url_pattern.findall(text)))  # Use set to remove duplicates
