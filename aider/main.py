@@ -819,10 +819,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     analytics.event("cli session", main_model=main_model, edit_format=main_model.edit_format)
 
-    thread = threading.Thread(target=load_slow_imports)
-    thread.daemon = True
-    thread.start()
-
     while True:
         try:
             coder.run()
