@@ -24,7 +24,7 @@ def temp_data_dir(monkeypatch):
         yield temp_dir
 
 
-def test_analytics_initialization():
+def test_analytics_initialization(temp_data_dir):
     analytics = Analytics(permanently_disable=True)
     assert analytics.mp is None
     assert analytics.ph is None
@@ -32,7 +32,7 @@ def test_analytics_initialization():
     assert analytics.user_id is not None
 
 
-def test_analytics_enable_disable():
+def test_analytics_enable_disable(temp_data_dir):
     analytics = Analytics()
     analytics.asked_opt_in = True
 
@@ -57,7 +57,7 @@ def test_analytics_data_persistence(temp_data_dir):
     assert analytics2.user_id == user_id
 
 
-def test_analytics_event_logging(temp_analytics_file):
+def test_analytics_event_logging(temp_analytics_file, temp_data_dir):
     analytics = Analytics(logfile=temp_analytics_file)
     analytics.asked_opt_in = True
     analytics.enable()
@@ -79,7 +79,7 @@ def test_analytics_event_logging(temp_analytics_file):
                 assert "test_key" in log_entry["properties"]
 
 
-def test_system_info():
+def test_system_info(temp_data_dir):
     analytics = Analytics()
     sys_info = analytics.get_system_info()
 
@@ -89,7 +89,7 @@ def test_system_info():
     assert "machine" in sys_info
 
 
-def test_need_to_ask():
+def test_need_to_ask(temp_data_dir):
     analytics = Analytics()
     assert analytics.need_to_ask() is True
 
