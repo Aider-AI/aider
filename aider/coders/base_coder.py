@@ -793,7 +793,7 @@ class Coder:
     def check_and_open_urls(self, text: str) -> List[str]:
         """Check text for URLs and offer to open them in a browser."""
 
-        url_pattern = re.compile(r"(https?://[^\s/$.?#].[^\s]*?)([.']*$|[.'\s])")
+        url_pattern = re.compile(r"(https?://[^\s/$.?#].[^\s]*?)([.']*$|[.',\s])")
         # ai strip trailing . or ' from the url!
 
         urls = list(set(url_pattern.findall(text)))  # Use set to remove duplicates
