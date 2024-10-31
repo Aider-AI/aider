@@ -1136,8 +1136,14 @@ class Coder:
                     yield from self.send(messages, functions=self.functions)
                     break
                 except retry_exceptions() as err:
-                    #ai print all the base classes of err!
-                    self.io.tool_warning(str(err))
+                    # Print the error and its base classes
+                    err_msg = str(err)
+                    base_classes = []
+                    for cls in err.__class__.__mro__[1:]:  # Skip the class itself
+                        base_classes.append(cls.__name__)
+                    if base_classes:
+                        err_msg += f"\nBase classes: {' -> '.join(base_classes)}"
+                    self.io.tool_warning(err_msg)
                     retry_delay *= 2
                     if retry_delay > RETRY_TIMEOUT:
                         # Check for URLs in error message
