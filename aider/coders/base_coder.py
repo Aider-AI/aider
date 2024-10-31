@@ -794,7 +794,7 @@ class Coder:
         """Check text for URLs and offer to open them in a browser."""
 
         url_pattern = re.compile(r"(https?://[^\s/$.?#].[^\s]*?)([.']*$|[.'\s])")
-        #ai strip trailing . or ' from the url!
+        # ai strip trailing . or ' from the url!
 
         urls = list(set(url_pattern.findall(text)))  # Use set to remove duplicates
         for url in urls:
@@ -1152,10 +1152,10 @@ class Coder:
                 except retry_exceptions() as err:
                     # Print the error and its base classes
                     err_msg = str(err)
-                    #base_classes = []
-                    #for cls in err.__class__.__mro__:  # Skip the class itself
+                    # base_classes = []
+                    # for cls in err.__class__.__mro__:  # Skip the class itself
                     #    base_classes.append(cls.__name__)
-                    #if base_classes:
+                    # if base_classes:
                     #    err_msg += f"\nBase classes: {' -> '.join(base_classes)}"
                     self.io.tool_error(err_msg)
                     retry_delay *= 2
