@@ -1145,7 +1145,7 @@ class Coder:
                             if self.io.confirm_ask(
                                 "View this URL from the error message?", subject=url
                             ):
-                                import webbrowser
+                                import webbrowser #ai move to top!
 
                                 webbrowser.open(url)
                         break
