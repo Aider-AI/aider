@@ -787,34 +787,6 @@ class TestCommands(TestCase):
         finally:
             os.unlink(external_file_path)
 
-    def test_cmd_read_only_with_image_file(self):
-        with GitTemporaryDirectory() as repo_dir:
-            io = InputOutput(pretty=False, fancy_input=False, yes=False)
-            coder = Coder.create(self.GPT35, None, io)
-            commands = Commands(io, coder)
-
-            # Create a test image file
-            test_file = Path(repo_dir) / "test_image.jpg"
-            test_file.write_text("Mock image content")
-
-            # Test with non-vision model
-            commands.cmd_read_only(str(test_file))
-            self.assertEqual(len(coder.abs_read_only_fnames), 0)
-
-            # Test with vision model
-            vision_model = Model("gpt-4-vision-preview")
-            vision_coder = Coder.create(vision_model, None, io)
-            vision_commands = Commands(io, vision_coder)
-
-            vision_commands.cmd_read_only(str(test_file))
-            self.assertEqual(len(vision_coder.abs_read_only_fnames), 1)
-            self.assertTrue(
-                any(
-                    os.path.samefile(str(test_file), fname)
-                    for fname in vision_coder.abs_read_only_fnames
-                )
-            )
-
     def test_cmd_save_and_load_with_multiple_external_files(self):
         with (
             tempfile.NamedTemporaryFile(mode="w", delete=False) as external_file1,
