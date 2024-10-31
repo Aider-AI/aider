@@ -108,21 +108,31 @@ class Analytics:
             "machine": platform.machine(),
         }
 
-    #ai add weak_model and editor_model as args, redact them too
-    def event(self, event_name, main_model=None, **kwargs):
+    def _redact_model_name(self, model):
+        if not model:
+            return None
+            
+        info = model_info_manager.get_model_from_cached_json_db(model.name)
+        if info:
+            return model.name
+        elif "/" in model.name:
+            return model.name.split("/")[0] + "/REDACTED"
+        return None
+
+    def event(self, event_name, main_model=None, weak_model=None, editor_model=None, **kwargs):
         if not (self.mp or self.ph) and not self.logfile:
             return
 
         properties = {}
 
         if main_model:
-            # ai: refactor this into a method!
-            # Redact the main model name unless it is in the public litellm db
-            info = model_info_manager.get_model_from_cached_json_db(main_model.name)
-            if info:
-                properties["main_model"] = main_model.name
-            elif "/" in main_model.name:
-                properties["main_model"] = main_model.name.split("/")[0] + "/REDACTED"
+            properties["main_model"] = self._redact_model_name(main_model)
+            
+        if weak_model:
+            properties["weak_model"] = self._redact_model_name(weak_model)
+            
+        if editor_model:
+            properties["editor_model"] = self._redact_model_name(editor_model)
 
         properties.update(kwargs)
         properties.update(self.get_system_info())  # Add system info to all events
