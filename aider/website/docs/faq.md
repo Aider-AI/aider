@@ -220,3 +220,13 @@ Aider is
 [open source and available on GitHub](https://github.com/Aider-AI/aider)
 under an 
 [Apache 2.0 license](https://github.com/Aider-AI/aider/blob/main/LICENSE.txt).
+
+
+## Can I edit files myself while aider is running?
+
+Yes. Aider always reads the latest copy of files from the file
+system when you send each message.
+
+While you're waiting for aider's reply to complete, it's probably unwise to
+edit files that you've added to the chat.
+Your edits and aider's edits might conflict.
