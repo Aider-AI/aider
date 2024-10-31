@@ -135,6 +135,7 @@ pytest==8.3.3
     # via -r requirements/requirements-dev.in
 python-dateutil==2.9.0.post0
     # via
+    #   -c requirements/../requirements.txt
     #   matplotlib
     #   pandas
 pytz==2024.2

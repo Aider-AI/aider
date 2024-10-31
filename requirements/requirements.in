@@ -24,7 +24,7 @@ litellm
 flake8
 importlib_resources
 pyperclip
-pypager
+posthog
 mixpanel
 pexpect
 json5

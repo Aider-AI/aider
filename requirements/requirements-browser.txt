@@ -104,6 +104,7 @@ pympler==1.1
     # via streamlit
 python-dateutil==2.9.0.post0
     # via
+    #   -c requirements/../requirements.txt
     #   pandas
     #   streamlit
 pytz==2024.2
