@@ -515,6 +515,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             analytics.save_data()
             io.tool_output()
 
+        # This is a no-op if the user has opted out
         analytics.enable()
 
     analytics.event("launched")
