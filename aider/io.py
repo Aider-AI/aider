@@ -715,20 +715,21 @@ class InputOutput:
 
         # Use rich Columns for pretty output
         from io import StringIO
-
         from rich.columns import Columns
 
         output = StringIO()
         console = Console(file=output, force_terminal=False)
 
-        read_only_files = [f"{f} (read only)" for f in sorted(rel_read_only_fnames or [])]
+        read_only_files = sorted(rel_read_only_fnames or [])
         editable_files = [f for f in sorted(rel_fnames) if f not in rel_read_only_fnames]
 
         if read_only_files:
+            console.print("Read only files:", style="bold")
             console.print(Columns(read_only_files))
         if editable_files:
             if read_only_files:
                 console.print()
+                console.print("Editable files:", style="bold")
             console.print(Columns(editable_files))
 
         return output.getvalue()
