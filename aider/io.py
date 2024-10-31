@@ -715,6 +715,7 @@ class InputOutput:
 
         # Use rich Columns for pretty output
         from io import StringIO
+
         from rich.columns import Columns
 
         output = StringIO()
