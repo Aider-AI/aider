@@ -1157,15 +1157,7 @@ class Coder:
                     self.io.tool_warning(err_msg)
                     retry_delay *= 2
                     if retry_delay > RETRY_TIMEOUT:
-                        # Check for URLs in error message
-                        # ai: refactor this into a function
-                        url_pattern = re.compile(r"(https?://[^\s/$.?#].[^\s]*[^\s,.])")
-                        urls = url_pattern.findall(str(err))
-                        for url in urls:
-                            if self.io.confirm_ask(
-                                "View this URL from the error message?", subject=url
-                            ):
-                                webbrowser.open(url)
+                        self.check_and_offer_urls(str(err))
                         break
                     self.io.tool_output(f"Retrying in {retry_delay:.1f} seconds...")
                     time.sleep(retry_delay)
