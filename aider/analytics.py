@@ -111,7 +111,7 @@ class Analytics:
     def _redact_model_name(self, model):
         if not model:
             return None
-            
+
         info = model_info_manager.get_model_from_cached_json_db(model.name)
         if info:
             return model.name
@@ -127,10 +127,10 @@ class Analytics:
 
         if main_model:
             properties["main_model"] = self._redact_model_name(main_model)
-            
+
         if weak_model:
             properties["weak_model"] = self._redact_model_name(weak_model)
-            
+
         if editor_model:
             properties["editor_model"] = self._redact_model_name(editor_model)
 
