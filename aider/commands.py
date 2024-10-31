@@ -1199,6 +1199,12 @@ class Commands:
                 self.io.tool_error(f"Not a file or directory: {abs_path}")
 
     def _add_read_only_file(self, abs_path, original_name):
+        if is_image_file(original_name):
+            self.io.tool_error(
+                f"Cannot add image file {original_name} as read-only. Use /add for images instead."
+            )
+            return
+            
         if abs_path in self.coder.abs_read_only_fnames:
             self.io.tool_error(f"{original_name} is already in the chat as a read-only file")
             return
