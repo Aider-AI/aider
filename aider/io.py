@@ -3,6 +3,7 @@ import os
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
+from io import StringIO
 from pathlib import Path
 
 from prompt_toolkit.completion import Completer, Completion, ThreadedCompleter
@@ -713,9 +714,6 @@ class InputOutput:
                 editable_files.append(f"{full_path}")
 
             return "\n".join(read_only_files + editable_files) + "\n"
-
-        # Use rich Columns for pretty output
-        from io import StringIO
 
         output = StringIO()
         console = Console(file=output, force_terminal=False)
