@@ -797,8 +797,7 @@ class Coder:
         urls = list(set(url_pattern.findall(text)))  # Use set to remove duplicates
         for url in urls:
             dump(url)
-            #ai strip all trailing .', from url!
-            if self.io.confirm_ask("Open URL for more info about this error?", subject=url):
+            if self.io.confirm_ask("Open URL for more info about this error?", subject=url.rstrip(".',")):
                 webbrowser.open(url)
         return urls
 
