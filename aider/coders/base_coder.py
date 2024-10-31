@@ -796,10 +796,8 @@ class Coder:
         url_pattern = re.compile(r"(https?://[^\s/$.?#].[^\s]*)")
         urls = list(set(url_pattern.findall(text)))  # Use set to remove duplicates
         for url in urls:
-            dump(url)
-            if self.io.confirm_ask(
-                "Open URL for more info about this error?", subject=url.rstrip(".',")
-            ):
+            url = url.rstrip(".',\"")
+            if self.io.confirm_ask("Open URL for more info about this error?", subject=url):
                 webbrowser.open(url)
         return urls
 
@@ -811,6 +809,7 @@ class Coder:
         group = ConfirmGroup(urls)
         for url in urls:
             if url not in self.rejected_urls:
+                url = url.rstrip(".',\"")
                 if self.io.confirm_ask(
                     "Add URL to the chat?", subject=url, group=group, allow_never=True
                 ):
@@ -1123,6 +1122,8 @@ class Coder:
         return chunks
 
     def send_message(self, inp):
+        import openai  # for error codes below
+
         self.cur_messages += [
             dict(role="user", content=inp),
         ]
@@ -1161,6 +1162,7 @@ class Coder:
                     self.io.tool_error(err_msg)
                     retry_delay *= 2
                     if retry_delay > RETRY_TIMEOUT:
+                        self.mdstream = None
                         self.check_and_open_urls(err_msg)
                         break
                     self.io.tool_output(f"Retrying in {retry_delay:.1f} seconds...")
@@ -1190,11 +1192,14 @@ class Coder:
                         messages.append(
                             dict(role="assistant", content=self.multi_response_content, prefix=True)
                         )
-                except Exception as err:
+                except (openai.APIError, openai.APIStatusError) as err:
+                    self.mdstream = None
                     self.io.tool_error(str(err))
                     self.check_and_open_urls(str(err))
+                except Exception as err:
                     lines = traceback.format_exception(type(err), err, err.__traceback__)
-                    self.io.tool_error("".join(lines))
+                    self.io.tool_warning("".join(lines))
+                    self.io.tool_error(str(err))
                     return
         finally:
             if self.mdstream:
