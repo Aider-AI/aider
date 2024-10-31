@@ -638,7 +638,6 @@ class ModelInfoManager:
         "model_prices_and_context_window.json"
     )
     CACHE_TTL = 60 * 60 * 24  # 24 hours
-    content = None
 
     def __init__(self):
         self.cache_dir = Path.home() / ".aider" / "caches"
@@ -657,19 +656,18 @@ class ModelInfoManager:
             pass
 
     def _update_cache(self):
-        if not litellm._lazy_module:
-            try:
-                import requests
+        try:
+            import requests
 
-                response = requests.get(self.MODEL_INFO_URL, timeout=5)
-                if response.status_code == 200:
-                    self.content = response.json()
-                    try:
-                        self.cache_file.write_text(json.dumps(self.content, indent=4))
-                    except OSError:
-                        pass
-            except Exception as ex:
-                print(str(ex))
+            response = requests.get(self.MODEL_INFO_URL, timeout=5)
+            if response.status_code == 200:
+                self.content = response.json()
+                try:
+                    self.cache_file.write_text(json.dumps(self.content, indent=4))
+                except OSError:
+                    pass
+        except Exception as ex:
+            print(str(ex))
 
     def get_model_from_cached_json_db(self, model):
         if not self.content:
