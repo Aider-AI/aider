@@ -79,5 +79,17 @@ We will post any adjustments to the Privacy Policy on this page, and the revised
 
 If you have any questions, comments, or concerns about our processing activities, please email us at **privacy@COMPANY.com**.
 
-## Last Updated: **date**
+## Last Updated:
+<!--[[[cog
+import subprocess
+import datetime
+
+result = subprocess.run(['git', 'log', '-1', '--format=%ct', 'aider/website/docs/legal/privacy.md'], capture_output=True, text=True)
+if result.returncode == 0:
+    timestamp = int(result.stdout.strip())
+    date = datetime.datetime.fromtimestamp(timestamp)
+    cog.out(f"{date.strftime('%B %d, %Y.')}")
+]]]-->
+October 30, 2024.
+<!--[[[end]]]-->
 
