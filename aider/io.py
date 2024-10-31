@@ -714,8 +714,9 @@ class InputOutput:
             return "\n".join(read_only_files + editable_files) + "\n"
 
         # Use rich Columns for pretty output
-        from rich.columns import Columns
         from io import StringIO
+
+        from rich.columns import Columns
 
         output = StringIO()
         console = Console(file=output, force_terminal=False)
