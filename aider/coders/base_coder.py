@@ -1139,11 +1139,14 @@ class Coder:
                     retry_delay *= 2
                     if retry_delay > RETRY_TIMEOUT:
                         # Check for URLs in error message
-                        url_pattern = re.compile(r'(https?://[^\s/$.?#].[^\s]*[^\s,.])')
+                        url_pattern = re.compile(r"(https?://[^\s/$.?#].[^\s]*[^\s,.])")
                         urls = url_pattern.findall(str(err))
                         for url in urls:
-                            if self.io.confirm_ask("View this URL from the error message?", subject=url):
+                            if self.io.confirm_ask(
+                                "View this URL from the error message?", subject=url
+                            ):
                                 import webbrowser
+
                                 webbrowser.open(url)
                         break
                     self.io.tool_output(f"Retrying in {retry_delay:.1f} seconds...")
