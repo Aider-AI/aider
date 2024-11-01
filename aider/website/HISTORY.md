@@ -19,7 +19,7 @@ cog.out(text)
 
 
 
-### main branch
+### Aider v0.61.0
 
 - Load and save aider slash-commands to files:
   - `/save <fname>` command will make a file of `/add` and `/read-only` commands that recreate the current file context in the chat.
