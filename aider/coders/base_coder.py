@@ -1192,7 +1192,7 @@ class Coder:
                     retry_delay *= 2
                     if retry_delay > RETRY_TIMEOUT:
                         self.mdstream = None
-                        self.check_and_open_urls(err_msg)
+                        self.check_and_open_urls(err)
                         break
                     self.io.tool_output(f"Retrying in {retry_delay:.1f} seconds...")
                     time.sleep(retry_delay)
@@ -1224,7 +1224,7 @@ class Coder:
                 except (openai.APIError, openai.APIStatusError) as err:
                     self.mdstream = None
                     self.io.tool_error(str(err))
-                    self.check_and_open_urls(str(err))
+                    self.check_and_open_urls(err)
                 except Exception as err:
                     lines = traceback.format_exception(type(err), err, err.__traceback__)
                     self.io.tool_warning("".join(lines))
