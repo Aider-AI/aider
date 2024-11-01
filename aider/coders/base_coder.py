@@ -790,6 +790,7 @@ class Coder:
             self.num_reflections += 1
             message = self.reflected_message
 
+    # ai: have this take the exception, not the string; based on the exception type offer a simple english explanation for what went wrong (usually placing blame on the API provider); then offer to open any URLs as is done currently!
     def check_and_open_urls(self, text: str) -> List[str]:
         """Check text for URLs and offer to open them in a browser."""
 
