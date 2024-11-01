@@ -266,7 +266,6 @@ def run_install(cmd):
 
     return False, output
 
-#ai don't display the spinner if stdout isn't a tty!
 class Spinner:
     spinner_chars = itertools.cycle(["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"])
 
@@ -275,8 +274,12 @@ class Spinner:
         self.start_time = time.time()
         self.last_update = 0
         self.visible = False
+        self.is_tty = sys.stdout.isatty()
 
     def step(self):
+        if not self.is_tty:
+            return
+            
         current_time = time.time()
         if not self.visible and current_time - self.start_time >= 0.5:
             self.visible = True
@@ -292,7 +295,7 @@ class Spinner:
         print(f"\r{self.text} {next(self.spinner_chars)}\r{self.text} ", end="", flush=True)
 
     def end(self):
-        if self.visible:
+        if self.visible and self.is_tty:
             print("\r" + " " * (len(self.text) + 3))
 
 
