@@ -1199,6 +1199,13 @@ class Commands:
                 self.io.tool_error(f"Not a file or directory: {abs_path}")
 
     def _add_read_only_file(self, abs_path, original_name):
+        if is_image_file(original_name) and not self.coder.main_model.info.get("supports_vision"):
+            self.io.tool_error(
+                f"Cannot add image file {original_name} as the"
+                f" {self.coder.main_model.name} does not support images."
+            )
+            return
+
         if abs_path in self.coder.abs_read_only_fnames:
             self.io.tool_error(f"{original_name} is already in the chat as a read-only file")
             return
@@ -1290,6 +1297,7 @@ class Commands:
 
         try:
             with open(args.strip(), "w", encoding=self.io.encoding) as f:
+                f.write("/drop\n")
                 # Write commands to add editable files
                 for fname in sorted(self.coder.abs_fnames):
                     rel_fname = self.coder.get_rel_fname(fname)

@@ -406,7 +406,7 @@ cog.outl("```")
 ## Specify the config file (default: search for .aider.conf.yml in git root, cwd or home directory)
 #config: xxx
 
-## Run aider in your browser
+## Run aider in your browser (default: False)
 #gui: false
 
 ## Enable/disable suggesting shell commands (default: True)

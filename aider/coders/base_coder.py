@@ -790,8 +790,40 @@ class Coder:
             self.num_reflections += 1
             message = self.reflected_message
 
-    def check_and_open_urls(self, text: str) -> List[str]:
-        """Check text for URLs and offer to open them in a browser."""
+    def check_and_open_urls(self, exc: Exception) -> List[str]:
+        import openai
+
+        """Check exception for URLs, offer to open in a browser, with user-friendly error msgs."""
+        text = str(exc)
+        friendly_msg = None
+
+        if isinstance(exc, (openai.APITimeoutError, openai.APIConnectionError)):
+            friendly_msg = (
+                "There is a problem connecting to the API provider. Please try again later or check"
+                " your model settings."
+            )
+        elif isinstance(exc, openai.RateLimitError):
+            friendly_msg = (
+                "The API provider's rate limits have been exceeded. Check with your provider or"
+                " wait awhile and retry."
+            )
+        elif isinstance(exc, openai.InternalServerError):
+            friendly_msg = (
+                "The API provider seems to be down or overloaded. Please try again later."
+            )
+        elif isinstance(exc, openai.BadRequestError):
+            friendly_msg = "The API provider refused the request as invalid?"
+        elif isinstance(exc, openai.AuthenticationError):
+            friendly_msg = (
+                "The API provider refused your authentication. Please check that you are using a"
+                " valid API key."
+            )
+
+        if friendly_msg:
+            self.io.tool_warning(text)
+            self.io.tool_error(f"{friendly_msg}")
+        else:
+            self.io.tool_error(text)
 
         url_pattern = re.compile(r"(https?://[^\s/$.?#].[^\s]*)")
         urls = list(set(url_pattern.findall(text)))  # Use set to remove duplicates
@@ -1153,18 +1185,15 @@ class Coder:
                     break
                 except retry_exceptions() as err:
                     # Print the error and its base classes
-                    err_msg = str(err)
-                    # base_classes = []
-                    # for cls in err.__class__.__mro__:  # Skip the class itself
-                    #    base_classes.append(cls.__name__)
-                    # if base_classes:
-                    #    err_msg += f"\nBase classes: {' -> '.join(base_classes)}"
-                    self.io.tool_error(err_msg)
+                    # for cls in err.__class__.__mro__: dump(cls.__name__)
+
                     retry_delay *= 2
                     if retry_delay > RETRY_TIMEOUT:
                         self.mdstream = None
-                        self.check_and_open_urls(err_msg)
+                        self.check_and_open_urls(err)
                         break
+                    err_msg = str(err)
+                    self.io.tool_error(err_msg)
                     self.io.tool_output(f"Retrying in {retry_delay:.1f} seconds...")
                     time.sleep(retry_delay)
                     continue
@@ -1193,9 +1222,10 @@ class Coder:
                             dict(role="assistant", content=self.multi_response_content, prefix=True)
                         )
                 except (openai.APIError, openai.APIStatusError) as err:
+                    # for cls in err.__class__.__mro__: dump(cls.__name__)
                     self.mdstream = None
-                    self.io.tool_error(str(err))
-                    self.check_and_open_urls(str(err))
+                    self.check_and_open_urls(err)
+                    break
                 except Exception as err:
                     lines = traceback.format_exception(type(err), err, err.__traceback__)
                     self.io.tool_warning("".join(lines))

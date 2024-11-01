@@ -19,7 +19,7 @@ cog.out(text)
 
 
 
-### main branch
+### Aider v0.61.0
 
 - Load and save aider slash-commands to files:
   - `/save <fname>` command will make a file of `/add` and `/read-only` commands that recreate the current file context in the chat.
@@ -31,9 +31,13 @@ cog.out(text)
 - Bugfix for when diff mode flexibly handles the model using the wrong filename.
 - Displays filenames in sorted order for `/add` and `/read-only`.
 - New `--no-fancy-input` switch disables prompt toolkit input, now still available with `--no-pretty`.
+- Override browser config with `--no-browser` or `--no-gui`.
+- Offer to open documentation URLs when errors occur.
 - Properly support all o1 models, regardless of provider.
+- Improved layout of filenames above input prompt.
+- Better handle corrupted repomap tags cache.
 - Improved handling of API errors, especially when accessing the weak model.
-- Aider wrote 70% of the code in this release.
+- Aider wrote 68% of the code in this release.
 
 ### Aider v0.60.1
 

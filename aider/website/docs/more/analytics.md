@@ -1,6 +1,7 @@
 ---
 parent: More info
 nav_order: 500
+description: Opt-in, anonymous, no personal info.
 ---
 
 # Analytics

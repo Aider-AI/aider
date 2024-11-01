@@ -2819,3 +2819,79 @@
     fry69: 18
   start_tag: v0.59.0
   total_lines: 285
+- aider_percentage: 67.61
+  aider_total: 860
+  end_date: '2024-11-01'
+  end_tag: v0.61.0
+  file_counts:
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/analytics.py:
+      Paul Gauthier: 75
+      Paul Gauthier (aider): 89
+    aider/args.py:
+      Paul Gauthier: 5
+      Paul Gauthier (aider): 29
+    aider/coders/base_coder.py:
+      Paul Gauthier: 56
+      Paul Gauthier (aider): 43
+    aider/coders/editblock_coder.py:
+      Paul Gauthier: 14
+    aider/commands.py:
+      Paul Gauthier: 14
+      Paul Gauthier (aider): 86
+    aider/io.py:
+      Paul Gauthier: 12
+      Paul Gauthier (aider): 32
+    aider/linter.py:
+      Paul Gauthier: 6
+    aider/main.py:
+      Paul Gauthier: 48
+      Paul Gauthier (aider): 10
+    aider/models.py:
+      Paul Gauthier: 54
+      Paul Gauthier (aider): 63
+      kAIto47802: 4
+    aider/repomap.py:
+      Paul Gauthier: 12
+      Paul Gauthier (aider): 52
+    aider/sendchat.py:
+      Paul Gauthier: 23
+      Paul Gauthier (aider): 23
+    aider/urls.py:
+      Paul Gauthier: 2
+    aider/utils.py:
+      Paul Gauthier (aider): 6
+    scripts/issues.py:
+      Paul Gauthier (aider): 13
+    scripts/pip-compile.sh:
+      Paul Gauthier (aider): 13
+    scripts/update-docs.sh:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 5
+    tests/basic/test_analytics.py:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 99
+    tests/basic/test_commands.py:
+      Konstantin L: 34
+      Paul Gauthier: 45
+      Paul Gauthier (aider): 267
+    tests/basic/test_io.py:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 4
+    tests/basic/test_main.py:
+      Paul Gauthier (aider): 3
+    tests/basic/test_models.py:
+      Paul Gauthier: 3
+      Paul Gauthier (aider): 9
+    tests/basic/test_sanity_check_repo.py:
+      Paul Gauthier (aider): 6
+    tests/basic/test_sendchat.py:
+      Paul Gauthier (aider): 8
+  grand_total:
+    Konstantin L: 34
+    Paul Gauthier: 374
+    Paul Gauthier (aider): 860
+    kAIto47802: 4
+  start_tag: v0.60.0
+  total_lines: 1272

@@ -375,7 +375,7 @@ cog.outl("```")
 ## Specify the encoding for input and output (default: utf-8)
 #AIDER_ENCODING=utf-8
 
-## Run aider in your browser
+## Run aider in your browser (default: False)
 #AIDER_GUI=false
 
 ## Enable/disable suggesting shell commands (default: True)

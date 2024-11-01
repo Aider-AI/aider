@@ -221,7 +221,12 @@ def basic_lint(fname, code):
 
     tree = parser.parse(bytes(code, "utf-8"))
 
-    errors = traverse_tree(tree.root_node)
+    try:
+        errors = traverse_tree(tree.root_node)
+    except RecursionError:
+        print(f"Unable to lint {fname} due to RecursionError")
+        return
+
     if not errors:
         return
 

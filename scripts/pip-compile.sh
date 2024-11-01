@@ -3,16 +3,23 @@
 # exit when any command fails
 set -e
 
+# First compile the base requirements
 pip-compile \
     requirements/requirements.in \
     --output-file=requirements.txt \
     $1
 
-for SUFFIX in dev help browser playwright; do
+# Then compile each additional requirements file in sequence
+SUFFIXES=(dev help browser playwright)
+CONSTRAINTS="--constraint=requirements.txt"
 
+for SUFFIX in "${SUFFIXES[@]}"; do
     pip-compile \
         requirements/requirements-${SUFFIX}.in \
         --output-file=requirements/requirements-${SUFFIX}.txt \
+        ${CONSTRAINTS} \
         $1
-done
     
+    # Add this file as a constraint for the next iteration
+    CONSTRAINTS+=" --constraint=requirements/requirements-${SUFFIX}.txt"
+done
