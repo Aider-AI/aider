@@ -25,7 +25,7 @@ class Companion:
     def set_enabled(self, enabled):
         self.enabled = enabled
 
-    def get_open_files(self, use_absolute_paths=False):
+    def get_open_files(self, use_absolute_paths=True):
         if not self.enabled:
             return []
 

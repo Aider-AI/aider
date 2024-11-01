@@ -326,6 +326,7 @@ class Commands:
     def _drop_all_files(self):
         self.coder.abs_fnames = set()
         self.coder.abs_read_only_fnames = set()
+        self.coder.companion_files = set()
 
     def _clear_chat_history(self):
         self.coder.done_messages = []
