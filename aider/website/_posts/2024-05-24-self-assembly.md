@@ -12,6 +12,10 @@ nav_exclude: true
 
 [![self assembly](/assets/self-assembly.jpg)](https://aider.chat/assets/self-assembly.jpg)
 
+{: .note }
+This article is quite out dated. For current statistics, see
+[aider's release history](/HISTORY.html).
+
 The
 [aider git repo](https://github.com/Aider-AI/aider)
 currently contains about 4K commits and 14K lines of code.
