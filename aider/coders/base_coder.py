@@ -796,15 +796,26 @@ class Coder:
         friendly_msg = None
 
         if isinstance(exc, (openai.APITimeoutError, openai.APIConnectionError)):
-            friendly_msg = "The API provider is having connectivity issues. Please try again in a moment."
+            friendly_msg = (
+                "The API provider is having connectivity issues. Please try again in a moment."
+            )
         elif isinstance(exc, openai.RateLimitError):
-            friendly_msg = "The API provider's rate limits have been exceeded. Please wait a moment before trying again."
+            friendly_msg = (
+                "The API provider's rate limits have been exceeded. Please wait a moment before"
+                " trying again."
+            )
         elif isinstance(exc, openai.InternalServerError):
-            friendly_msg = "The API provider is experiencing internal issues. Please try again later."
+            friendly_msg = (
+                "The API provider is experiencing internal issues. Please try again later."
+            )
         elif isinstance(exc, openai.BadRequestError):
-            friendly_msg = "The request was invalid. This might be due to the API provider changing their API."
+            friendly_msg = (
+                "The request was invalid. This might be due to the API provider changing their API."
+            )
         elif isinstance(exc, openai.AuthenticationError):
-            friendly_msg = "There was an issue with your API authentication. Please check your API key."
+            friendly_msg = (
+                "There was an issue with your API authentication. Please check your API key."
+            )
 
         if friendly_msg:
             self.io.tool_error(f"{friendly_msg}\nTechnical details: {text}")
