@@ -266,6 +266,7 @@ def run_install(cmd):
 
     return False, output
 
+
 class Spinner:
     spinner_chars = itertools.cycle(["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"])
 
@@ -279,7 +280,7 @@ class Spinner:
     def step(self):
         if not self.is_tty:
             return
-            
+
         current_time = time.time()
         if not self.visible and current_time - self.start_time >= 0.5:
             self.visible = True
