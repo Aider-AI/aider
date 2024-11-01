@@ -266,7 +266,7 @@ def run_install(cmd):
 
     return False, output
 
-
+#ai don't display the spinner if stdout isn't a tty!
 class Spinner:
     spinner_chars = itertools.cycle(["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"])
 
