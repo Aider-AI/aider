@@ -790,9 +790,26 @@ class Coder:
             self.num_reflections += 1
             message = self.reflected_message
 
-    # ai: have this take the exception, not the string; based on the exception type offer a simple english explanation for what went wrong (usually placing blame on the API provider); then offer to open any URLs as is done currently!
-    def check_and_open_urls(self, text: str) -> List[str]:
-        """Check text for URLs and offer to open them in a browser."""
+    def check_and_open_urls(self, exc: Exception) -> List[str]:
+        """Check exception for URLs and offer to open them in a browser, with user-friendly error explanation."""
+        text = str(exc)
+        friendly_msg = None
+
+        if isinstance(exc, (openai.APITimeoutError, openai.APIConnectionError)):
+            friendly_msg = "The API provider is having connectivity issues. Please try again in a moment."
+        elif isinstance(exc, openai.RateLimitError):
+            friendly_msg = "The API provider's rate limits have been exceeded. Please wait a moment before trying again."
+        elif isinstance(exc, openai.InternalServerError):
+            friendly_msg = "The API provider is experiencing internal issues. Please try again later."
+        elif isinstance(exc, openai.BadRequestError):
+            friendly_msg = "The request was invalid. This might be due to the API provider changing their API."
+        elif isinstance(exc, openai.AuthenticationError):
+            friendly_msg = "There was an issue with your API authentication. Please check your API key."
+
+        if friendly_msg:
+            self.io.tool_error(f"{friendly_msg}\nTechnical details: {text}")
+        else:
+            self.io.tool_error(text)
 
         url_pattern = re.compile(r"(https?://[^\s/$.?#].[^\s]*)")
         urls = list(set(url_pattern.findall(text)))  # Use set to remove duplicates
