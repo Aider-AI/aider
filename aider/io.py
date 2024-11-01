@@ -3,6 +3,7 @@ import os
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
+from io import StringIO
 from pathlib import Path
 
 from prompt_toolkit.completion import Completer, Completion, ThreadedCompleter
@@ -15,6 +16,7 @@ from prompt_toolkit.shortcuts import CompleteStyle, PromptSession
 from prompt_toolkit.styles import Style
 from pygments.lexers import MarkdownLexer, guess_lexer_for_filename
 from pygments.token import Token
+from rich.columns import Columns
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.style import Style as RichStyle
@@ -242,8 +244,9 @@ class InputOutput:
                 "output": self.output,
                 "lexer": PygmentsLexer(MarkdownLexer),
                 "editing_mode": self.editingmode,
-                "cursor": ModalCursorShapeConfig(),
             }
+            if self.editingmode == EditingMode.VI:
+                session_kwargs["cursor"] = ModalCursorShapeConfig()
             if self.input_history_file is not None:
                 session_kwargs["history"] = FileHistory(self.input_history_file)
             try:
@@ -693,25 +696,41 @@ class InputOutput:
             try:
                 with self.chat_history_file.open("a", encoding=self.encoding, errors="ignore") as f:
                     f.write(text)
-            except (PermissionError, OSError):
-                self.tool_error(
-                    f"Warning: Unable to write to chat history file {self.chat_history_file}."
-                    " Permission denied."
-                )
+            except (PermissionError, OSError) as err:
+                print(f"Warning: Unable to write to chat history file {self.chat_history_file}.")
+                print(err)
                 self.chat_history_file = None  # Disable further attempts to write
 
     def format_files_for_input(self, rel_fnames, rel_read_only_fnames):
-        read_only_files = []
-        for full_path in sorted(rel_read_only_fnames or []):
-            read_only_files.append(f"{full_path} (read only)")
+        if not self.pretty:
+            read_only_files = []
+            for full_path in sorted(rel_read_only_fnames or []):
+                read_only_files.append(f"{full_path} (read only)")
 
-        editable_files = []
-        for full_path in sorted(rel_fnames):
-            if full_path in rel_read_only_fnames:
-                continue
-            editable_files.append(f"{full_path}")
+            editable_files = []
+            for full_path in sorted(rel_fnames):
+                if full_path in rel_read_only_fnames:
+                    continue
+                editable_files.append(f"{full_path}")
 
-        return "\n".join(read_only_files + editable_files) + "\n"
+            return "\n".join(read_only_files + editable_files) + "\n"
+
+        output = StringIO()
+        console = Console(file=output, force_terminal=False)
+
+        read_only_files = sorted(rel_read_only_fnames or [])
+        editable_files = [f for f in sorted(rel_fnames) if f not in rel_read_only_fnames]
+
+        if read_only_files:
+            console.print("Read only files:", style="bold")
+            console.print(Columns(read_only_files))
+        if editable_files:
+            if read_only_files:
+                console.print()
+                console.print("Editable files:", style="bold")
+            console.print(Columns(editable_files))
+
+        return output.getvalue()
 
 
 def get_rel_fname(fname, root):

@@ -2,6 +2,7 @@ import colorsys
 import math
 import os
 import random
+import shutil
 import sqlite3
 import sys
 import time
@@ -166,13 +167,52 @@ class RepoMap:
             # Just return the full fname.
             return fname
 
+    def tags_cache_error(self, original_error=None):
+        """Handle SQLite errors by trying to recreate cache, falling back to dict if needed"""
+
+        if self.verbose and original_error:
+            self.io.tool_warning(f"Tags cache error: {str(original_error)}")
+
+        if isinstance(getattr(self, "TAGS_CACHE", None), dict):
+            return
+
+        path = Path(self.root) / self.TAGS_CACHE_DIR
+
+        # Try to recreate the cache
+        try:
+            # Delete existing cache dir
+            if path.exists():
+                shutil.rmtree(path)
+
+            # Try to create new cache
+            new_cache = Cache(path)
+
+            # Test that it works
+            test_key = "test"
+            new_cache[test_key] = "test"
+            _ = new_cache[test_key]
+            del new_cache[test_key]
+
+            # If we got here, the new cache works
+            self.TAGS_CACHE = new_cache
+            return
+
+        except (SQLITE_ERRORS, OSError) as e:
+            # If anything goes wrong, warn and fall back to dict
+            self.io.tool_warning(
+                f"Unable to use tags cache at {path}, falling back to memory cache"
+            )
+            if self.verbose:
+                self.io.tool_warning(f"Cache recreation error: {str(e)}")
+
+        self.TAGS_CACHE = dict()
+
     def load_tags_cache(self):
         path = Path(self.root) / self.TAGS_CACHE_DIR
         try:
             self.TAGS_CACHE = Cache(path)
-        except SQLITE_ERRORS:
-            self.io.tool_warning(f"Unable to use tags cache, delete {path} to resolve.")
-            self.TAGS_CACHE = dict()
+        except SQLITE_ERRORS as e:
+            self.tags_cache_error(e)
 
     def save_tags_cache(self):
         pass
@@ -190,9 +230,18 @@ class RepoMap:
             return []
 
         cache_key = fname
-        val = self.TAGS_CACHE.get(cache_key)  # Issue #1308
+        try:
+            val = self.TAGS_CACHE.get(cache_key)  # Issue #1308
+        except SQLITE_ERRORS as e:
+            self.tags_cache_error(e)
+            val = self.TAGS_CACHE.get(cache_key)
+
         if val is not None and val.get("mtime") == file_mtime:
-            return self.TAGS_CACHE[cache_key]["data"]
+            try:
+                return self.TAGS_CACHE[cache_key]["data"]
+            except SQLITE_ERRORS as e:
+                self.tags_cache_error(e)
+                return self.TAGS_CACHE[cache_key]["data"]
 
         # miss!
         data = list(self.get_tags_raw(fname, rel_fname))
@@ -201,8 +250,9 @@ class RepoMap:
         try:
             self.TAGS_CACHE[cache_key] = {"mtime": file_mtime, "data": data}
             self.save_tags_cache()
-        except SQLITE_ERRORS:
-            pass
+        except SQLITE_ERRORS as e:
+            self.tags_cache_error(e)
+            self.TAGS_CACHE[cache_key] = {"mtime": file_mtime, "data": data}
 
         return data
 
@@ -302,7 +352,13 @@ class RepoMap:
         # https://networkx.org/documentation/stable/_modules/networkx/algorithms/link_analysis/pagerank_alg.html#pagerank
         personalize = 100 / len(fnames)
 
-        if len(fnames) - len(self.TAGS_CACHE) > 100:
+        try:
+            cache_size = len(self.TAGS_CACHE)
+        except SQLITE_ERRORS as e:
+            self.tags_cache_error(e)
+            cache_size = len(self.TAGS_CACHE)
+
+        if len(fnames) - cache_size > 100:
             self.io.tool_output(
                 "Initial repo scan can be slow in larger repos, but only happens once."
             )

@@ -28,6 +28,7 @@ cog.out(get_help_md())
 | **/git** | Run a git command (output excluded from chat) |
 | **/help** | Ask questions about aider |
 | **/lint** | Lint and fix in-chat files or all dirty files if none in chat |
+| **/load** | Load and execute commands from a file |
 | **/ls** | List all known files and indicate which are included in the chat session |
 | **/map** | Print out the current repository map |
 | **/map-refresh** | Force a refresh of the repository map |
@@ -39,6 +40,7 @@ cog.out(get_help_md())
 | **/report** | Report a problem by opening a GitHub Issue |
 | **/reset** | Drop all files and clear the chat history |
 | **/run** | Run a shell command and optionally add the output to the chat (alias: !) |
+| **/save** | Save commands to a file that can reconstruct the current chat session's files |
 | **/settings** | Print out the current settings |
 | **/test** | Run a shell command and add the output to the chat on non-zero exit code |
 | **/tokens** | Report on the number of tokens used by the current chat context |

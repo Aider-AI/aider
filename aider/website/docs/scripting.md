@@ -1,6 +1,6 @@
 ---
 parent: More info
-nav_order: 900
+nav_order: 400
 description: You can script aider via the command line or python.
 ---
 

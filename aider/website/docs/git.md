@@ -1,6 +1,6 @@
 ---
 parent: More info
-nav_order: 800
+nav_order: 100
 description: Aider is tightly integrated with git.
 ---
 

@@ -565,6 +565,25 @@ def get_parser(default_config_files, git_root):
     )
 
     ##########
+    group = parser.add_argument_group("Analytics")
+    group.add_argument(
+        "--analytics",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable/disable analytics for one session (default: False)",
+    )
+    group.add_argument(
+        "--analytics-log",
+        metavar="ANALYTICS_LOG_FILE",
+        help="Specify a file to log analytics events",
+    )
+    group.add_argument(
+        "--analytics-disable",
+        action="store_true",
+        help="Permanently disable analytics",
+        default=False,
+    )
+
     group = parser.add_argument_group("Other Settings")
     group.add_argument(
         "--file",
@@ -676,6 +695,11 @@ def get_parser(default_config_files, git_root):
         ),
     )
     group.add_argument(
+        "--load",
+        metavar="LOAD_FILE",
+        help="Load and execute /commands from a file on launch",
+    )
+    group.add_argument(
         "--encoding",
         default="utf-8",
         help="Specify the encoding for input and output (default: utf-8)",
@@ -693,8 +717,8 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--gui",
         "--browser",
-        action="store_true",
-        help="Run aider in your browser",
+        action=argparse.BooleanOptionalAction,
+        help="Run aider in your browser (default: False)",
         default=False,
     )
     group.add_argument(

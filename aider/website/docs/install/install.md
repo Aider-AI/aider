@@ -9,6 +9,10 @@ nav_order: 10
 - TOC
 {:toc}
 
+## Python version
+
+Aider currently works with python 3.9-3.12.
+
 ## Install git
 
 Make sure you have git installed.

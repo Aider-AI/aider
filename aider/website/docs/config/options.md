@@ -61,14 +61,16 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--commit] [--commit-prompt] [--dry-run | --no-dry-run]
              [--skip-sanity-check-repo] [--lint] [--lint-cmd]
              [--auto-lint | --no-auto-lint] [--test-cmd]
-             [--auto-test | --no-auto-test] [--test] [--file]
-             [--read] [--vim] [--chat-language] [--version]
-             [--just-check-update]
+             [--auto-test | --no-auto-test] [--test]
+             [--analytics | --no-analytics] [--analytics-log]
+             [--analytics-disable] [--file] [--read] [--vim]
+             [--chat-language] [--version] [--just-check-update]
              [--check-update | --no-check-update]
              [--install-main-branch] [--upgrade] [--apply]
              [--yes-always] [-v] [--show-repo-map] [--show-prompts]
-             [--exit] [--message] [--message-file] [--encoding] [-c]
-             [--gui]
+             [--exit] [--message] [--message-file] [--load]
+             [--encoding] [-c]
+             [--gui | --no-gui | --browser | --no-browser]
              [--suggest-shell-commands | --no-suggest-shell-commands]
              [--fancy-input | --no-fancy-input] [--voice-format]
              [--voice-language]
@@ -501,6 +503,25 @@ Run tests and fix problems found
 Default: False  
 Environment variable: `AIDER_TEST`  
 
+## Analytics:
+
+### `--analytics`
+Enable/disable analytics for one session (default: False)  
+Default: False  
+Environment variable: `AIDER_ANALYTICS`  
+Aliases:
+  - `--analytics`
+  - `--no-analytics`
+
+### `--analytics-log ANALYTICS_LOG_FILE`
+Specify a file to log analytics events  
+Environment variable: `AIDER_ANALYTICS_LOG`  
+
+### `--analytics-disable`
+Permanently disable analytics  
+Default: False  
+Environment variable: `AIDER_ANALYTICS_DISABLE`  
+
 ## Other Settings:
 
 ### `--file FILE`
@@ -595,6 +616,10 @@ Aliases:
   - `--message-file MESSAGE_FILE`
   - `-f MESSAGE_FILE`
 
+### `--load LOAD_FILE`
+Load and execute /commands from a file on launch  
+Environment variable: `AIDER_LOAD`  
+
 ### `--encoding VALUE`
 Specify the encoding for input and output (default: utf-8)  
 Default: utf-8  
@@ -607,12 +632,14 @@ Aliases:
   - `--config CONFIG_FILE`
 
 ### `--gui`
-Run aider in your browser  
+Run aider in your browser (default: False)  
 Default: False  
 Environment variable: `AIDER_GUI`  
 Aliases:
   - `--gui`
+  - `--no-gui`
   - `--browser`
+  - `--no-browser`
 
 ### `--suggest-shell-commands`
 Enable/disable suggesting shell commands (default: True)  

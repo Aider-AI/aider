@@ -13,12 +13,15 @@ import sys
 import threading
 import time
 import traceback
+import webbrowser
 from collections import defaultdict
 from datetime import datetime
 from json.decoder import JSONDecodeError
 from pathlib import Path
+from typing import List
 
 from aider import __version__, models, prompts, urls, utils
+from aider.analytics import Analytics
 from aider.commands import Commands
 from aider.history import ChatSummary
 from aider.io import ConfirmGroup, InputOutput
@@ -259,6 +262,7 @@ class Coder:
         commands=None,
         summarizer=None,
         total_cost=0.0,
+        analytics=None,
         map_refresh="auto",
         cache_prompts=False,
         num_cache_warming_pings=0,
@@ -266,7 +270,10 @@ class Coder:
         chat_language=None,
         companion=None,
     ):
+        # Fill in a dummy Analytics if needed, but it is never .enable()'d
+        self.analytics = analytics if analytics is not None else Analytics()
 
+        self.event = self.analytics.event
         self.chat_language = chat_language
         self.commit_before_message = []
         self.aider_commit_hashes = set()
@@ -805,13 +812,26 @@ class Coder:
             self.num_reflections += 1
             message = self.reflected_message
 
-    def check_for_urls(self, inp):
+    def check_and_open_urls(self, text: str) -> List[str]:
+        """Check text for URLs and offer to open them in a browser."""
+
+        url_pattern = re.compile(r"(https?://[^\s/$.?#].[^\s]*)")
+        urls = list(set(url_pattern.findall(text)))  # Use set to remove duplicates
+        for url in urls:
+            url = url.rstrip(".',\"")
+            if self.io.confirm_ask("Open URL for more info about this error?", subject=url):
+                webbrowser.open(url)
+        return urls
+
+    def check_for_urls(self, inp: str) -> List[str]:
+        """Check input for URLs and offer to add them to the chat."""
         url_pattern = re.compile(r"(https?://[^\s/$.?#].[^\s]*[^\s,.])")
         urls = list(set(url_pattern.findall(inp)))  # Use set to remove duplicates
         added_urls = []
         group = ConfirmGroup(urls)
         for url in urls:
             if url not in self.rejected_urls:
+                url = url.rstrip(".',\"")
                 if self.io.confirm_ask(
                     "Add URL to the chat?", subject=url, group=group, allow_never=True
                 ):
@@ -1124,6 +1144,8 @@ class Coder:
         return chunks
 
     def send_message(self, inp):
+        import openai  # for error codes below
+
         self.cur_messages += [
             dict(role="user", content=inp),
         ]
@@ -1152,9 +1174,18 @@ class Coder:
                     yield from self.send(messages, functions=self.functions)
                     break
                 except retry_exceptions() as err:
-                    self.io.tool_warning(str(err))
+                    # Print the error and its base classes
+                    err_msg = str(err)
+                    # base_classes = []
+                    # for cls in err.__class__.__mro__:  # Skip the class itself
+                    #    base_classes.append(cls.__name__)
+                    # if base_classes:
+                    #    err_msg += f"\nBase classes: {' -> '.join(base_classes)}"
+                    self.io.tool_error(err_msg)
                     retry_delay *= 2
                     if retry_delay > RETRY_TIMEOUT:
+                        self.mdstream = None
+                        self.check_and_open_urls(err_msg)
                         break
                     self.io.tool_output(f"Retrying in {retry_delay:.1f} seconds...")
                     time.sleep(retry_delay)
@@ -1183,10 +1214,14 @@ class Coder:
                         messages.append(
                             dict(role="assistant", content=self.multi_response_content, prefix=True)
                         )
+                except (openai.APIError, openai.APIStatusError) as err:
+                    self.mdstream = None
+                    self.io.tool_error(str(err))
+                    self.check_and_open_urls(str(err))
                 except Exception as err:
-                    self.io.tool_error(f"Unexpected error: {err}")
                     lines = traceback.format_exception(type(err), err, err.__traceback__)
-                    self.io.tool_error("".join(lines))
+                    self.io.tool_warning("".join(lines))
+                    self.io.tool_error(str(err))
                     return
         finally:
             if self.mdstream:
@@ -1661,11 +1696,27 @@ class Coder:
         self.usage_report = tokens_report + sep + cost_report
 
     def show_usage_report(self):
-        if self.usage_report:
-            self.io.tool_output(self.usage_report)
-            self.message_cost = 0.0
-            self.message_tokens_sent = 0
-            self.message_tokens_received = 0
+        if not self.usage_report:
+            return
+
+        self.io.tool_output(self.usage_report)
+
+        prompt_tokens = self.message_tokens_sent
+        completion_tokens = self.message_tokens_received
+        self.event(
+            "message_send",
+            main_model=self.main_model,
+            edit_format=self.edit_format,
+            prompt_tokens=prompt_tokens,
+            completion_tokens=completion_tokens,
+            total_tokens=prompt_tokens + completion_tokens,
+            cost=self.message_cost,
+            total_cost=self.total_cost,
+        )
+
+        self.message_cost = 0.0
+        self.message_tokens_sent = 0
+        self.message_tokens_received = 0
 
     def get_multi_response_content(self, final=False):
         cur = self.multi_response_content or ""
@@ -1834,8 +1885,10 @@ class Coder:
         edited = set()
         try:
             edits = self.get_edits()
+            edits = self.apply_edits_dry_run(edits)
             edits = self.prepare_to_edit(edits)
             edited = set(edit[0] for edit in edits)
+
             self.apply_edits(edits)
         except ValueError as err:
             self.num_malformed_responses += 1
@@ -1962,6 +2015,9 @@ class Coder:
 
     def apply_edits(self, edits):
         return
+
+    def apply_edits_dry_run(self, edits):
+        return edits
 
     def run_shell_commands(self):
         if not self.suggest_shell_commands:
