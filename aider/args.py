@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+#ai add --haiku!
 import argparse
 import os
 import sys
