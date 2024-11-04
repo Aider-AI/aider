@@ -9,10 +9,11 @@ This module provides functionality to:
 """
 
 import os
-import tempfile
-import subprocess
 import platform
 import shlex
+import subprocess
+import tempfile
+
 from rich.console import Console
 
 SYSTEM = platform.system()
@@ -24,7 +25,7 @@ DEFAULT_EDITOR_WINDOWS = "notepad"
 console = Console()
 
 
-def print_status_message(success: bool, message: str, style: str | None = None) -> None:
+def print_status_message(success, message, style=None):
     """
     Print a status message with appropriate styling.
 
@@ -38,7 +39,12 @@ def print_status_message(success: bool, message: str, style: str | None = None) 
     print("")
 
 
-def write_temp_file(input_data: str = "", suffix: str | None = None, prefix: str | None = None, dir: str | None = None) -> str:
+def write_temp_file(
+    input_data="",
+    suffix=None,
+    prefix=None,
+    dir=None,
+):
     """
     Create a temporary file with the given input data.
 
@@ -54,7 +60,7 @@ def write_temp_file(input_data: str = "", suffix: str | None = None, prefix: str
         kwargs["suffix"] = f".{suffix}"
     fd, filepath = tempfile.mkstemp(**kwargs)
     try:
-        with os.fdopen(fd, 'w') as f:
+        with os.fdopen(fd, "w") as f:
             f.write(input_data)
     except Exception:
         os.close(fd)
@@ -62,7 +68,7 @@ def write_temp_file(input_data: str = "", suffix: str | None = None, prefix: str
     return filepath
 
 
-def get_environment_editor(default: str | None = None) -> str | None:
+def get_environment_editor(default=None):
     """
     Fetches the preferred editor from the environment variables.
 
@@ -78,11 +84,13 @@ def get_environment_editor(default: str | None = None) -> str | None:
     :return: The preferred editor as specified by environment variables or the default value.
     :rtype: str or None
     """
-    editor = os.environ.get("AIDER_EDITOR", os.environ.get("VISUAL", os.environ.get("EDITOR", default)))
+    editor = os.environ.get(
+        "AIDER_EDITOR", os.environ.get("VISUAL", os.environ.get("EDITOR", default))
+    )
     return editor
 
 
-def discover_editor() -> list[str]:
+def discover_editor():
     """
     Discovers and returns the appropriate editor command as a list of arguments.
 
@@ -105,7 +113,7 @@ def discover_editor() -> list[str]:
         raise RuntimeError(f"Invalid editor command format '{editor}': {e}")
 
 
-def file_editor(filepath: str) -> None:
+def file_editor(filepath):
     """
     Open the specified file in the system's configured editor.
 
@@ -120,7 +128,7 @@ def file_editor(filepath: str) -> None:
     subprocess.call(command_parts)
 
 
-def pipe_editor(input_data: str = "", suffix: str | None = None) -> str:
+def pipe_editor(input_data="", suffix=None):
     """
     Opens the system editor with optional input data and returns the edited content.
 
@@ -142,5 +150,11 @@ def pipe_editor(input_data: str = "", suffix: str | None = None) -> str:
     try:
         os.remove(filepath)
     except PermissionError:
-        print_status_message(False, f"WARNING: Unable to delete temporary file {filepath!r}. You may need to delete it manually.")
+        print_status_message(
+            False,
+            (
+                f"WARNING: Unable to delete temporary file {filepath!r}. You may need to delete it"
+                " manually."
+            ),
+        )
     return output_data
