@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-#ai add --haiku!
 import argparse
 import os
 import sys
@@ -724,6 +723,12 @@ def get_parser(default_config_files, git_root):
         action=argparse.BooleanOptionalAction,
         default=True,
         help="Enable/disable fancy input with history and completion (default: True)",
+    )
+    group.add_argument(
+        "--haiku",
+        action="store_true",
+        help="Format assistant responses as haikus",
+        default=False,
     )
 
     ##########
