@@ -67,9 +67,9 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--chat-language] [--version] [--just-check-update]
              [--check-update | --no-check-update]
              [--install-main-branch] [--upgrade] [--apply]
-             [--yes-always] [-v] [--show-repo-map] [--show-prompts]
-             [--exit] [--message] [--message-file] [--load]
-             [--encoding] [-c]
+             [--apply-clipboard-edits] [--yes-always] [-v]
+             [--show-repo-map] [--show-prompts] [--exit] [--message]
+             [--message-file] [--load] [--encoding] [-c]
              [--gui | --no-gui | --browser | --no-browser]
              [--suggest-shell-commands | --no-suggest-shell-commands]
              [--fancy-input | --no-fancy-input] [--voice-format]
@@ -573,6 +573,11 @@ Aliases:
 ### `--apply FILE`
 Apply the changes from the given file instead of running the chat (debug)  
 Environment variable: `AIDER_APPLY`  
+
+### `--apply-clipboard-edits`
+Apply clipboard contents as edits using the main model's editor format  
+Default: False  
+Environment variable: `AIDER_APPLY_CLIPBOARD_EDITS`  
 
 ### `--yes-always`
 Always say yes to every confirmation  

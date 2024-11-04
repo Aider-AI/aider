@@ -376,6 +376,9 @@ cog.outl("```")
 ## Apply the changes from the given file instead of running the chat (debug)
 #apply: xxx
 
+## Apply clipboard contents as edits using the main model's editor format
+#apply-clipboard-edits: false
+
 ## Always say yes to every confirmation
 #yes-always: false
 
