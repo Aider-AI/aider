@@ -1611,3 +1611,26 @@
   versions: 0.59.2.dev
   seconds_per_case: 18.6
   total_cost: 0.0000
+
+- dirname: 2024-11-04-19-19-32--haiku35-diff-ex-as-sys-false
+  test_cases: 133
+  model: claude-3-5-haiku-20241022
+  edit_format: diff
+  commit_hash: 03bbdb0-dirty
+  pass_rate_1: 61.7
+  pass_rate_2: 75.2
+  percent_cases_well_formed: 95.5
+  error_outputs: 11
+  num_malformed_responses: 11
+  num_with_malformed_responses: 6
+  user_asks: 1
+  lazy_comments: 1
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  command: aider --model anthropic/claude-3-5-haiku-20241022
+  date: 2024-11-04
+  versions: 0.61.1.dev
+  seconds_per_case: 18.4
+  total_cost: 0.0000
