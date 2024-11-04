@@ -724,12 +724,6 @@ def get_parser(default_config_files, git_root):
         default=True,
         help="Enable/disable fancy input with history and completion (default: True)",
     )
-    group.add_argument(
-        "--haiku",
-        action="store_true",
-        help="Format assistant responses as haikus",
-        default=False,
-    )
 
     ##########
     group = parser.add_argument_group("Voice Settings")
