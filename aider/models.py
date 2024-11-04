@@ -9,6 +9,7 @@ from dataclasses import dataclass, fields
 from pathlib import Path
 from typing import Optional
 
+#ai add anthropic/claude-3-5-haiku-20241022 and the versions of it from other providers mirroring the old claude-3-haiku settings!
 import json5
 import yaml
 from PIL import Image
