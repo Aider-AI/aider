@@ -1,3 +1,5 @@
+#ai: add a --apply-clipboard-edits switch which sets the edit-format to the main models editor format and acts as if "--msg /paste" was provided as an arg!
+
 import configparser
 import json
 import os
