@@ -320,6 +320,7 @@ class InputOutput:
                 return f.read()
         except OSError as err:
             self.tool_error(f"{filename}: unable to read: {err}")
+            #ai print the trackback stack!
             return
         except FileNotFoundError:
             self.tool_error(f"{filename}: file not found error")
