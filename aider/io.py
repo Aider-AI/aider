@@ -319,10 +319,7 @@ class InputOutput:
             with open(str(filename), "r", encoding=self.encoding) as f:
                 return f.read()
         except OSError as err:
-            import traceback
-
             self.tool_error(f"{filename}: unable to read: {err}")
-            self.tool_error("Traceback:\n" + "".join(traceback.format_stack()))
             return
         except FileNotFoundError:
             self.tool_error(f"{filename}: file not found error")
