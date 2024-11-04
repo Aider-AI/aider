@@ -88,6 +88,9 @@ cog.outl("```")
 ## Use claude-3-5-sonnet-20241022 model for the main chat
 #sonnet: false
 
+## Use claude-3-5-haiku-20241022 model for the main chat
+#haiku: false
+
 ## Use gpt-4-0613 model for the main chat
 #4: false
 

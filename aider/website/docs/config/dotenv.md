@@ -78,6 +78,9 @@ cog.outl("```")
 ## Use claude-3-5-sonnet-20241022 model for the main chat
 #AIDER_SONNET=
 
+## Use claude-3-5-haiku-20241022 model for the main chat
+#AIDER_HAIKU=
+
 ## Use gpt-4-0613 model for the main chat
 #AIDER_4=
 

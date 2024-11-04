@@ -26,12 +26,12 @@ cog.out(get_md_help())
 ]]]-->
 ```
 usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
-             [--opus] [--sonnet] [--4] [--4o] [--mini] [--4-turbo]
-             [--35turbo] [--deepseek] [--o1-mini] [--o1-preview]
-             [--list-models] [--openai-api-base] [--openai-api-type]
-             [--openai-api-version] [--openai-api-deployment-id]
-             [--openai-organization-id] [--model-settings-file]
-             [--model-metadata-file]
+             [--opus] [--sonnet] [--haiku] [--4] [--4o] [--mini]
+             [--4-turbo] [--35turbo] [--deepseek] [--o1-mini]
+             [--o1-preview] [--list-models] [--openai-api-base]
+             [--openai-api-type] [--openai-api-version]
+             [--openai-api-deployment-id] [--openai-organization-id]
+             [--model-settings-file] [--model-metadata-file]
              [--verify-ssl | --no-verify-ssl] [--edit-format]
              [--architect] [--weak-model] [--editor-model]
              [--editor-edit-format]
@@ -106,6 +106,10 @@ Environment variable: `AIDER_OPUS`
 ### `--sonnet`
 Use claude-3-5-sonnet-20241022 model for the main chat  
 Environment variable: `AIDER_SONNET`  
+
+### `--haiku`
+Use claude-3-5-haiku-20241022 model for the main chat  
+Environment variable: `AIDER_HAIKU`  
 
 ### `--4`
 Use gpt-4-0613 model for the main chat  
