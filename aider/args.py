@@ -631,6 +631,12 @@ def get_parser(default_config_files, git_root):
         help="Apply the changes from the given file instead of running the chat (debug)",
     )
     group.add_argument(
+        "--apply-clipboard-edits",
+        action="store_true",
+        help="Apply clipboard contents as edits using the main model's editor format",
+        default=False,
+    )
+    group.add_argument(
         "--yes-always",
         action="store_true",
         help="Always say yes to every confirmation",

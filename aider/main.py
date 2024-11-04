@@ -1,4 +1,3 @@
-#ai: add a --apply-clipboard-edits switch which sets the edit-format to the main models editor format and acts as if "--msg /paste" was provided as an arg!
 
 import configparser
 import json
@@ -775,6 +774,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         coder.partial_response_content = content
         coder.apply_updates()
         return
+
+    if args.apply_clipboard_edits:
+        args.edit_format = main_model.editor_edit_format
+        args.message = "/paste"
 
     if "VSCODE_GIT_IPC_HANDLE" in os.environ:
         args.pretty = False
