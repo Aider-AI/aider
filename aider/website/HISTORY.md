@@ -22,7 +22,7 @@ cog.out(text)
 ### Aider v0.62.0
 
 - Full support for Claude 3.5 Haiku
-  - Scored 75% on [aider's code editing leaderboard]().
+  - Scored 75% on [aider's code editing leaderboard](https://aider.chat/docs/leaderboards/).
   - Almost as good as Sonnet at much lower cost.
   - Launch with `--haiku` to use it.
 - Easily apply file edits from ChatGPT, Claude or other web apps
