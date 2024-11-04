@@ -7,13 +7,12 @@
   - Scored 75% on [aider's code editing leaderboard]().
   - Almost as good as Sonnet at much lower cost.
   - Launch with `--haiku` to use it.
-- Easily apply edits from ChatGPT or Claude WebUI
-  - Use the web ui's "copy response" button to copy the entire reply from the LLM.
+- Easily apply file edits from ChatGPT, Claude or other web apps
+  - Use the web app's "copy response" button to copy the entire reply from the LLM.
   - Run `aider --apply-clipboard-edits file-to-edit.js`.
   - Aider will edit your file with the LLM's changes.
-- Bugfix when creating new files.
-- Aider wrote 84% of the code in this release.
-  
+- Bugfix for creating new files.
+- Aider wrote 84% of the code in this release.  
 
 ### Aider v0.61.0
 
