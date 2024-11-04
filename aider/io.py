@@ -457,14 +457,17 @@ class InputOutput:
             log_file.write(f"{role.upper()} {timestamp}\n")
             log_file.write(content + "\n")
 
+    def display_user_input(self, inp):
+        if self.pretty and self.user_input_color:
+            style = dict(style=self.user_input_color)
+        else:
+            style = dict()
+
+        self.console.print(Text(inp), **style)
+
     def user_input(self, inp, log_only=True):
         if not log_only:
-            if self.pretty and self.user_input_color:
-                style = dict(style=self.user_input_color)
-            else:
-                style = dict()
-
-            self.console.print(Text(inp), **style)
+            self.display_user_input(inp)
 
         prefix = "####"
         if inp:

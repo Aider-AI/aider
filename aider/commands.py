@@ -1357,6 +1357,13 @@ class Commands:
 
         report_github_issue(issue_text, title=title, confirm=False)
 
+    def cmd_editor(self, initial_content=""):
+        "Open an editor to write a prompt"
+        from aider.editor import pipe_editor
+        user_input = pipe_editor(initial_content, suffix="md")
+        self.io.display_user_input(user_input)
+        self._generic_chat_command(user_input, self.coder.edit_format)
+
 
 def expand_subdir(file_path):
     if file_path.is_file():
