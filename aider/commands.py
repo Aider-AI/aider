@@ -70,7 +70,7 @@ class Commands:
         raise SwitchCoder(main_model=model)
 
     def cmd_chat_mode(self, args):
-        "Switch to a new chat mode"
+        "Switch the active chat mode in a sticky way"
 
         from aider import coders
 
