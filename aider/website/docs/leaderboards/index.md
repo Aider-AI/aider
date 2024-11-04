@@ -66,12 +66,12 @@ The model also has to successfully apply all its changes to the source file with
         label: 'Percent completed correctly',
         data: [],
         backgroundColor: function(context) {
-          const label = context.chart.data.labels[context.dataIndex];
-          return label.includes('3.5 Haiku') ? 'rgba(255, 99, 132, 0.2)' : 'rgba(54, 162, 235, 0.2)';
+          const label = context.chart.data.labels[context.dataIndex] || '';
+          return (label && label.includes('3.5 Haiku')) ? 'rgba(255, 99, 132, 0.2)' : 'rgba(54, 162, 235, 0.2)';
         },
         borderColor: function(context) {
-          const label = context.chart.data.labels[context.dataIndex];
-          return label.includes('3.5 Haiku') ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)';
+          const label = context.chart.data.labels[context.dataIndex] || '';
+          return (label && label.includes('3.5 Haiku')) ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)';
         },
         borderWidth: 1
       }]
@@ -123,14 +123,9 @@ The model also has to successfully apply all its changes to the source file with
       data: leaderboardData,
       options: {
         scales: {
-          yAxes: [{
-            scaleLabel: {
-              display: true,
-            },
-            ticks: {
-              beginAtZero: true
-            }
-          }]
+          y: {
+            beginAtZero: true
+          }
         }
       }
     });
@@ -248,14 +243,9 @@ Therefore, results are available for fewer models.
       data: leaderboardData,
       options: {
         scales: {
-          yAxes: [{
-            scaleLabel: {
-              display: true,
-            },
-            ticks: {
-              beginAtZero: true
-            }
-          }]
+          y: {
+            beginAtZero: true
+          }
         }
       }
     });
