@@ -9,7 +9,6 @@ from dataclasses import dataclass, fields
 from pathlib import Path
 from typing import Optional
 
-#ai add anthropic/claude-3-5-haiku-20241022 and the versions of it from other providers mirroring the old claude-3-haiku settings!
 import json5
 import yaml
 from PIL import Image
@@ -53,6 +52,7 @@ ANTHROPIC_MODELS = """
 claude-2
 claude-2.1
 claude-3-haiku-20240307
+claude-3-5-haiku-20241022
 claude-3-opus-20240229
 claude-3-sonnet-20240229
 claude-3-5-sonnet-20240620
@@ -342,6 +342,59 @@ MODEL_SETTINGS = [
             "extra_headers": {
                 "anthropic-beta": ANTHROPIC_BETA_HEADER,
             },
+        },
+        cache_control=True,
+    ),
+    ModelSettings(
+        "anthropic/claude-3-5-haiku-20241022",
+        "whole",
+        weak_model_name="anthropic/claude-3-5-haiku-20241022",
+        examples_as_sys_msg=True,
+        extra_params={
+            "extra_headers": {
+                "anthropic-beta": ANTHROPIC_BETA_HEADER,
+            },
+        },
+        cache_control=True,
+    ),
+    ModelSettings(
+        "claude-3-5-haiku-20241022",
+        "whole",
+        weak_model_name="claude-3-5-haiku-20241022",
+        examples_as_sys_msg=True,
+        extra_params={
+            "extra_headers": {
+                "anthropic-beta": ANTHROPIC_BETA_HEADER,
+            },
+        },
+        cache_control=True,
+    ),
+    ModelSettings(
+        "vertex_ai/claude-3-5-haiku@20241022",
+        "whole",
+        weak_model_name="vertex_ai/claude-3-5-haiku@20241022",
+        examples_as_sys_msg=True,
+        extra_params={
+            "max_tokens": 4096,
+        },
+    ),
+    ModelSettings(
+        "openrouter/anthropic/claude-3.5-haiku",
+        "whole",
+        weak_model_name="openrouter/anthropic/claude-3.5-haiku",
+        examples_as_sys_msg=True,
+        extra_params={
+            "max_tokens": 4096,
+        },
+        cache_control=True,
+    ),
+    ModelSettings(
+        "openrouter/anthropic/claude-3.5-haiku:beta",
+        "whole",
+        weak_model_name="openrouter/anthropic/claude-3.5-haiku:beta",
+        examples_as_sys_msg=True,
+        extra_params={
+            "max_tokens": 4096,
         },
         cache_control=True,
     ),
