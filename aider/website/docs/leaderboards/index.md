@@ -60,7 +60,7 @@ The model also has to successfully apply all its changes to the source file with
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     var ctx = document.getElementById('editChart').getContext('2d');
-    const HAIKU_MODEL = '3.5 Haiku';
+    const HIGHTLIGHT_MODEL = 'no no no no';
     var leaderboardData = {
       labels: [],
       datasets: [{
@@ -68,11 +68,11 @@ The model also has to successfully apply all its changes to the source file with
         data: [],
         backgroundColor: function(context) {
           const label = context.chart.data.labels[context.dataIndex] || '';
-          return (label && label.includes(HAIKU_MODEL)) ? 'rgba(255, 99, 132, 0.2)' : 'rgba(54, 162, 235, 0.2)';
+          return (label && label.includes(HIGHTLIGHT_MODEL)) ? 'rgba(255, 99, 132, 0.2)' : 'rgba(54, 162, 235, 0.2)';
         },
         borderColor: function(context) {
           const label = context.chart.data.labels[context.dataIndex] || '';
-          return (label && label.includes(HAIKU_MODEL)) ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)';
+          return (label && label.includes(HIGHTLIGHT_MODEL)) ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)';
         },
         borderWidth: 1
       }]
