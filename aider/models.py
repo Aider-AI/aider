@@ -349,7 +349,6 @@ MODEL_SETTINGS = [
         "anthropic/claude-3-5-haiku-20241022",
         "whole",
         weak_model_name="anthropic/claude-3-5-haiku-20241022",
-        examples_as_sys_msg=True,
         extra_params={
             "extra_headers": {
                 "anthropic-beta": ANTHROPIC_BETA_HEADER,
@@ -373,7 +372,6 @@ MODEL_SETTINGS = [
         "vertex_ai/claude-3-5-haiku@20241022",
         "whole",
         weak_model_name="vertex_ai/claude-3-5-haiku@20241022",
-        examples_as_sys_msg=True,
         extra_params={
             "max_tokens": 4096,
         },
@@ -382,7 +380,6 @@ MODEL_SETTINGS = [
         "openrouter/anthropic/claude-3.5-haiku",
         "whole",
         weak_model_name="openrouter/anthropic/claude-3.5-haiku",
-        examples_as_sys_msg=True,
         extra_params={
             "max_tokens": 4096,
         },
@@ -392,7 +389,6 @@ MODEL_SETTINGS = [
         "openrouter/anthropic/claude-3.5-haiku:beta",
         "whole",
         weak_model_name="openrouter/anthropic/claude-3.5-haiku:beta",
-        examples_as_sys_msg=True,
         extra_params={
             "max_tokens": 4096,
         },
