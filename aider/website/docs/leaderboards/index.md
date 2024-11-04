@@ -65,8 +65,14 @@ The model also has to successfully apply all its changes to the source file with
       datasets: [{
         label: 'Percent completed correctly',
         data: [],
-        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-        borderColor: 'rgba(54, 162, 235, 1)',
+        backgroundColor: function(context) {
+          const label = context.chart.data.labels[context.dataIndex];
+          return label.includes('3.5 Haiku') ? 'rgba(255, 99, 132, 0.2)' : 'rgba(54, 162, 235, 0.2)';
+        },
+        borderColor: function(context) {
+          const label = context.chart.data.labels[context.dataIndex];
+          return label.includes('3.5 Haiku') ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)';
+        },
         borderWidth: 1
       }]
     };
