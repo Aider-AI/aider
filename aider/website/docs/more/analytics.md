@@ -100,7 +100,7 @@ aider --analytics-log filename.jsonl --no-analytics
 If you have concerns about any of the analytics that aider is collecting
 or our data practices
 please contact us by opening a
-[GitHub Issue](https://github.com/paul-gauthier/aider/issues).
+[GitHub Issue](https://github.com/aider-ai/aider/issues).
 
 ## Privacy policy
 
