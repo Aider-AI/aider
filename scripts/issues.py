@@ -149,6 +149,7 @@ def main():
     all_issues = get_issues("all")
 
     if args.find_unlabeled:
+        #ai refactor this into a function...
         print("\nFinding unlabeled issues with paul-gauthier comments...")
         unlabeled_issues = find_unlabeled_with_paul_comments(all_issues)
 
@@ -173,6 +174,9 @@ def main():
             response.raise_for_status()
             print(f"  - Added 'question' label to #{issue['number']}")
         return
+        # ... to here
+
+    # ai also refactor this into its own function...
     open_issues = [issue for issue in all_issues if issue["state"] == "open"]
     grouped_open_issues = group_issues_by_subject(open_issues)
 
@@ -212,6 +216,7 @@ def main():
 
         if oldest_issue["state"] == "open":
             print(f"Oldest issue #{oldest_issue['number']} left open")
+    # ai ... to here!
 
 
 if __name__ == "__main__":
