@@ -118,7 +118,7 @@ def find_unlabeled_with_paul_comments(issues):
         # Skip pull requests
         if "pull_request" in issue:
             continue
-            
+
         if not issue["labels"] and issue["state"] == "open":
             # Get comments for this issue
             comments_url = (
