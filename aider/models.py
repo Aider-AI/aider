@@ -345,6 +345,7 @@ MODEL_SETTINGS = [
         },
         cache_control=True,
     ),
+    #ai all the 3.5 haikus should have use_repo_map=True!
     ModelSettings(
         "anthropic/claude-3-5-haiku-20241022",
         "diff",
