@@ -373,9 +373,8 @@ creating a new file
             coder.send = mock_send
 
             def mock_sswr(*args, **kwargs): return "noop"
-            #ai mock sendchat.simple_send_with_retries with that ^^ mock!
-
-            # Call the run method with a message
+            with patch("aider.sendchat.simple_send_with_retries", mock_sswr):
+                # Call the run method with a message
             coder.run(with_message="hi")
 
             content = Path(file1).read_text(encoding="utf-8")
