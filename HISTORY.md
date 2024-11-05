@@ -1,6 +1,21 @@
 
 # Release history
 
+### Aider v0.62.0
+
+- Full support for Claude 3.5 Haiku
+  - Scored 75% on [aider's code editing leaderboard](https://aider.chat/docs/leaderboards/).
+  - Almost as good as Sonnet at much lower cost.
+  - Launch with `--haiku` to use it.
+- Easily apply file edits from ChatGPT, Claude or other web apps
+  - Chat with ChatGPT or Claude via their web app. 
+  - Give it your source files and ask for the changes you want.
+  - Use the web app's "copy response" button to copy the entire reply from the LLM.
+  - Run `aider --apply-clipboard-edits file-to-edit.js`.
+  - Aider will edit your file with the LLM's changes.
+- Bugfix for creating new files.
+- Aider wrote 84% of the code in this release.  
+
 ### Aider v0.61.0
 
 - Load and save aider slash-commands to files:

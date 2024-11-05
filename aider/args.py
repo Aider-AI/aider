@@ -66,6 +66,14 @@ def get_parser(default_config_files, git_root):
         const=sonnet_model,
         help=f"Use {sonnet_model} model for the main chat",
     )
+    haiku_model = "claude-3-5-haiku-20241022"
+    group.add_argument(
+        "--haiku",
+        action="store_const",
+        dest="model",
+        const=haiku_model,
+        help=f"Use {haiku_model} model for the main chat",
+    )
     gpt_4_model = "gpt-4-0613"
     group.add_argument(
         "--4",
@@ -629,6 +637,12 @@ def get_parser(default_config_files, git_root):
         "--apply",
         metavar="FILE",
         help="Apply the changes from the given file instead of running the chat (debug)",
+    )
+    group.add_argument(
+        "--apply-clipboard-edits",
+        action="store_true",
+        help="Apply clipboard contents as edits using the main model's editor format",
+        default=False,
     )
     group.add_argument(
         "--yes-always",
