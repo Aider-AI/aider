@@ -112,10 +112,28 @@ def comment_and_close_duplicate(issue, oldest_issue):
     print(f"  - Commented and closed issue #{issue['number']}")
 
 
+def find_unlabeled_with_paul_comments(issues):
+    unlabeled_issues = []
+    for issue in issues:
+        if not issue['labels'] and issue['state'] == 'open':
+            # Get comments for this issue
+            comments_url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/comments"
+            response = requests.get(comments_url, headers=headers)
+            response.raise_for_status()
+            comments = response.json()
+            
+            # Check if paul-gauthier has commented
+            if any(comment['user']['login'] == 'paul-gauthier' for comment in comments):
+                unlabeled_issues.append(issue)
+    return unlabeled_issues
+
 def main():
     parser = argparse.ArgumentParser(description="Handle duplicate GitHub issues")
     parser.add_argument(
         "--yes", action="store_true", help="Automatically close duplicates without prompting"
+    )
+    parser.add_argument(
+        "--find-unlabeled", action="store_true", help="Find unlabeled issues with paul-gauthier comments"
     )
     args = parser.parse_args()
 
@@ -124,6 +142,32 @@ def main():
         return
 
     all_issues = get_issues("all")
+    
+    if args.find_unlabeled:
+        print("\nFinding unlabeled issues with paul-gauthier comments...")
+        unlabeled_issues = find_unlabeled_with_paul_comments(all_issues)
+        
+        if not unlabeled_issues:
+            print("No unlabeled issues with paul-gauthier comments found.")
+            return
+            
+        print(f"\nFound {len(unlabeled_issues)} unlabeled issues with paul-gauthier comments:")
+        for issue in unlabeled_issues:
+            print(f"  - #{issue['number']}: {issue['title']} {issue['html_url']}")
+            
+        if not args.yes:
+            confirm = input("\nDo you want to add the 'question' label to these issues? (y/n): ")
+            if confirm.lower() != 'y':
+                print("Skipping labeling.")
+                return
+                
+        print("\nAdding 'question' label to issues...")
+        for issue in unlabeled_issues:
+            url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}"
+            response = requests.patch(url, headers=headers, json={"labels": ["question"]})
+            response.raise_for_status()
+            print(f"  - Added 'question' label to #{issue['number']}")
+        return
     open_issues = [issue for issue in all_issues if issue["state"] == "open"]
     grouped_open_issues = group_issues_by_subject(open_issues)
 
