@@ -78,6 +78,9 @@ cog.outl("```")
 ## Use claude-3-5-sonnet-20241022 model for the main chat
 #AIDER_SONNET=
 
+## Use claude-3-5-haiku-20241022 model for the main chat
+#AIDER_HAIKU=
+
 ## Use gpt-4-0613 model for the main chat
 #AIDER_4=
 
@@ -347,6 +350,9 @@ cog.outl("```")
 
 ## Apply the changes from the given file instead of running the chat (debug)
 #AIDER_APPLY=
+
+## Apply clipboard contents as edits using the main model's editor format
+#AIDER_APPLY_CLIPBOARD_EDITS=false
 
 ## Always say yes to every confirmation
 #AIDER_YES_ALWAYS=

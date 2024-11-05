@@ -548,6 +548,93 @@ cog.out("```\n")
   weak_model_name: anthropic/claude-3-haiku-20240307
 - cache_control: true
   caches_by_default: false
+  edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
+  examples_as_sys_msg: false
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31
+  lazy: false
+  name: anthropic/claude-3-5-haiku-20241022
+  reminder: user
+  send_undo_reply: false
+  streaming: true
+  use_repo_map: false
+  use_system_prompt: true
+  use_temperature: true
+  weak_model_name: anthropic/claude-3-5-haiku-20241022
+- cache_control: true
+  caches_by_default: false
+  edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
+  examples_as_sys_msg: true
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31
+  lazy: false
+  name: claude-3-5-haiku-20241022
+  reminder: user
+  send_undo_reply: false
+  streaming: true
+  use_repo_map: false
+  use_system_prompt: true
+  use_temperature: true
+  weak_model_name: claude-3-5-haiku-20241022
+- cache_control: false
+  caches_by_default: false
+  edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
+  examples_as_sys_msg: false
+  extra_params:
+    max_tokens: 4096
+  lazy: false
+  name: vertex_ai/claude-3-5-haiku@20241022
+  reminder: user
+  send_undo_reply: false
+  streaming: true
+  use_repo_map: false
+  use_system_prompt: true
+  use_temperature: true
+  weak_model_name: vertex_ai/claude-3-5-haiku@20241022
+- cache_control: true
+  caches_by_default: false
+  edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
+  examples_as_sys_msg: false
+  extra_params:
+    max_tokens: 4096
+  lazy: false
+  name: openrouter/anthropic/claude-3.5-haiku
+  reminder: user
+  send_undo_reply: false
+  streaming: true
+  use_repo_map: false
+  use_system_prompt: true
+  use_temperature: true
+  weak_model_name: openrouter/anthropic/claude-3.5-haiku
+- cache_control: true
+  caches_by_default: false
+  edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
+  examples_as_sys_msg: false
+  extra_params:
+    max_tokens: 4096
+  lazy: false
+  name: openrouter/anthropic/claude-3.5-haiku:beta
+  reminder: user
+  send_undo_reply: false
+  streaming: true
+  use_repo_map: false
+  use_system_prompt: true
+  use_temperature: true
+  weak_model_name: openrouter/anthropic/claude-3.5-haiku:beta
+- cache_control: true
+  caches_by_default: false
   edit_format: whole
   editor_edit_format: null
   editor_model_name: null

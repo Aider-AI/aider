@@ -783,6 +783,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         coder.apply_updates()
         return
 
+    if args.apply_clipboard_edits:
+        args.edit_format = main_model.editor_edit_format
+        args.message = "/paste"
+
     if "VSCODE_GIT_IPC_HANDLE" in os.environ:
         args.pretty = False
         io.tool_output("VSCode terminal detected, pretty output has been disabled.")

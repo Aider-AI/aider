@@ -46,8 +46,12 @@ class EditBlockCoder(Coder):
         for edit in edits:
             path, original, updated = edit
             full_path = self.abs_root_path(path)
-            content = self.io.read_text(full_path)
-            new_content = do_replace(full_path, content, original, updated, self.fence)
+            new_content = None
+
+            if Path(full_path).exists():
+                content = self.io.read_text(full_path)
+                new_content = do_replace(full_path, content, original, updated, self.fence)
+
             if not new_content:
                 # try patching any of the other files in the chat
                 for full_path in self.abs_fnames:

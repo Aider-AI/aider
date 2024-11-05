@@ -1296,6 +1296,7 @@ class Commands:
 
         try:
             with open(args.strip(), "w", encoding=self.io.encoding) as f:
+                f.write("/drop\n")
                 # Write commands to add editable files
                 for fname in sorted(self.coder.abs_fnames):
                     rel_fname = self.coder.get_rel_fname(fname)

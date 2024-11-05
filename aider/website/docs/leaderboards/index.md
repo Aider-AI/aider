@@ -60,13 +60,20 @@ The model also has to successfully apply all its changes to the source file with
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     var ctx = document.getElementById('editChart').getContext('2d');
+    const HIGHTLIGHT_MODEL = 'no no no no';
     var leaderboardData = {
       labels: [],
       datasets: [{
         label: 'Percent completed correctly',
         data: [],
-        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-        borderColor: 'rgba(54, 162, 235, 1)',
+        backgroundColor: function(context) {
+          const label = context.chart.data.labels[context.dataIndex] || '';
+          return (label && label.includes(HIGHTLIGHT_MODEL)) ? 'rgba(255, 99, 132, 0.2)' : 'rgba(54, 162, 235, 0.2)';
+        },
+        borderColor: function(context) {
+          const label = context.chart.data.labels[context.dataIndex] || '';
+          return (label && label.includes(HIGHTLIGHT_MODEL)) ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)';
+        },
         borderWidth: 1
       }]
     };
@@ -117,14 +124,9 @@ The model also has to successfully apply all its changes to the source file with
       data: leaderboardData,
       options: {
         scales: {
-          yAxes: [{
-            scaleLabel: {
-              display: true,
-            },
-            ticks: {
-              beginAtZero: true
-            }
-          }]
+          y: {
+            beginAtZero: true
+          }
         }
       }
     });
@@ -242,14 +244,9 @@ Therefore, results are available for fewer models.
       data: leaderboardData,
       options: {
         scales: {
-          yAxes: [{
-            scaleLabel: {
-              display: true,
-            },
-            ticks: {
-              beginAtZero: true
-            }
-          }]
+          y: {
+            beginAtZero: true
+          }
         }
       }
     });
@@ -321,6 +318,6 @@ mod_dates = [get_last_modified_date(file) for file in files]
 latest_mod_date = max(mod_dates)
 cog.out(f"{latest_mod_date.strftime('%B %d, %Y.')}")
 ]]]-->
-October 22, 2024.
+November 04, 2024.
 <!--[[[end]]]-->
 </p>
