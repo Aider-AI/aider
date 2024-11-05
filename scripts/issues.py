@@ -205,11 +205,6 @@ def main():
     parser.add_argument(
         "--yes", action="store_true", help="Automatically close duplicates without prompting"
     )
-    parser.add_argument(
-        "--find-unlabeled",
-        action="store_true",
-        help="Find unlabeled issues with paul-gauthier comments",
-    )
     args = parser.parse_args()
 
     if not TOKEN:
@@ -218,10 +213,7 @@ def main():
 
     all_issues = get_issues("all")
 
-    if args.find_unlabeled:
-        handle_unlabeled_issues(all_issues, args.yes)
-        return
-
+    handle_unlabeled_issues(all_issues, args.yes)
     handle_duplicate_issues(all_issues, args.yes)
 
 
