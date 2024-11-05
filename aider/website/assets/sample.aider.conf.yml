@@ -277,9 +277,6 @@
 ## Specify a file to log analytics events
 #analytics-log: xxx
 
-## Permanently disable analytics
-#analytics-disable: false
-
 #################
 # Other Settings:
 
