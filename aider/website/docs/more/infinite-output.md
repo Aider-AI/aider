@@ -57,6 +57,7 @@ cog.out(model_list)
 ]]]-->
 - anthropic.claude-3-5-sonnet-20241022-v2:0
 - anthropic/claude-3-5-sonnet-20241022
+- claude-3-5-haiku-20241022
 - claude-3-5-sonnet-20240620
 - claude-3-5-sonnet-20241022
 - claude-3-haiku-20240307
@@ -88,6 +89,7 @@ cog.out(model_list)
 - mistral/pixtral-12b-2409
 - openrouter/anthropic/claude-3.5-sonnet
 - us.anthropic.claude-3-5-sonnet-20241022-v2:0
+- vertex_ai/claude-3-5-haiku@20241022
 - vertex_ai/claude-3-5-sonnet-v2@20241022
 - vertex_ai/claude-3-5-sonnet@20240620
 - vertex_ai/claude-3-haiku@20240307

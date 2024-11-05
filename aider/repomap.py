@@ -368,6 +368,8 @@ class RepoMap:
             showing_bar = False
 
         for fname in fnames:
+            if self.verbose:
+                self.io.tool_output(f"Processing {fname}")
             if progress and not showing_bar:
                 progress()
 
