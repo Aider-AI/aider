@@ -115,6 +115,10 @@ def comment_and_close_duplicate(issue, oldest_issue):
 def find_unlabeled_with_paul_comments(issues):
     unlabeled_issues = []
     for issue in issues:
+        # Skip pull requests
+        if "pull_request" in issue:
+            continue
+            
         if not issue["labels"] and issue["state"] == "open":
             # Get comments for this issue
             comments_url = (
