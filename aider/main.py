@@ -432,7 +432,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.analytics_disable:
         analytics = Analytics(permanently_disable=True)
         print("Analytics have been permanently disabled.")
-        return
 
     if not args.verify_ssl:
         import httpx
