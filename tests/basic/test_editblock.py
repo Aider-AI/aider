@@ -10,7 +10,7 @@ from aider.coders import editblock_coder as eb
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.models import Model
-from aider.utils import GitTemporaryDirectory
+from aider.utils import ChdirTemporaryDirectory
 
 
 class TestUtils(unittest.TestCase):
@@ -344,7 +344,7 @@ These changes replace the `subprocess.run` patches with `subprocess.check_output
 
     def test_create_new_file_with_other_file_in_chat(self):
         # https://github.com/Aider-AI/aider/issues/2258
-        with GitTemporaryDirectory():
+        with ChdirTemporaryDirectory():
             # Create a few temporary files
             file1 = "file.txt"
 
@@ -354,7 +354,9 @@ These changes replace the `subprocess.run` patches with `subprocess.check_output
             files = [file1]
 
             # Initialize the Coder object with the mocked IO and mocked repo
-            coder = Coder.create(self.GPT35, "diff", io=InputOutput(yes=True), fnames=files)
+            coder = Coder.create(
+                self.GPT35, "diff", use_git=False, io=InputOutput(yes=True), fnames=files
+            )
 
             def mock_send(*args, **kwargs):
                 coder.partial_response_content = f"""
@@ -372,11 +374,7 @@ creating a new file
 
             coder.send = mock_send
 
-            def mock_sswr(*args, **kwargs):
-                return "noop"
-
-            with patch("aider.sendchat.simple_send_with_retries", mock_sswr):
-                coder.run(with_message="hi")
+            coder.run(with_message="hi")
 
             content = Path(file1).read_text(encoding="utf-8")
             self.assertEqual(content, "one\ntwo\nthree\n")
