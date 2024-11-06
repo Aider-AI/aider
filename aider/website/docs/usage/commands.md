@@ -17,7 +17,7 @@ cog.out(get_help_md())
 | **/add** | Add files to the chat so aider can edit them or review them in detail |
 | **/architect** | Enter architect mode to discuss high-level design and architecture |
 | **/ask** | Ask questions about the code base without editing any files |
-| **/chat-mode** | Switch to a new chat mode |
+| **/chat-mode** <mode> | Switch the active chat mode in a sticky way |
 | **/clear** | Clear the chat history |
 | **/code** | Ask for changes to your code |
 | **/commit** | Commit edits to the repo made outside the chat (commit message optional) |
