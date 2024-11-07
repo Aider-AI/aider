@@ -2,7 +2,6 @@ import hashlib
 import json
 import time
 
-import backoff
 
 from aider.dump import dump  # noqa: F401
 from aider.exceptions import LiteLLMExceptions
