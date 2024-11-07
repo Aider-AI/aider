@@ -27,8 +27,6 @@ from aider.versioncheck import check_version, install_from_main_branch, install_
 
 from .dump import dump  # noqa: F401
 
-# ai change all the confirm_ask/webbrowser.open calls to use io.offer_url!
-
 
 def check_config_files_for_yes(config_files):
     found = False
