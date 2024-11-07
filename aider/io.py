@@ -1,6 +1,7 @@
 # ai
 import base64
 import os
+import webbrowser
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime

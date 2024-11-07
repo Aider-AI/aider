@@ -13,7 +13,6 @@ import sys
 import threading
 import time
 import traceback
-import webbrowser
 from collections import defaultdict
 from datetime import datetime
 from json.decoder import JSONDecodeError
