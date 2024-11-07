@@ -1372,11 +1372,9 @@ class Coder:
             res.append("- Use /clear to clear the chat history.")
             res.append("- Break your code into smaller source files.")
 
-        res.append("")
-        res.append(f"For more info: {urls.token_limits}")
-
         res = "".join([line + "\n" for line in res])
         self.io.tool_error(res)
+        self.io.offer_url(urls.token_limits)
 
     def lint_edited(self, fnames):
         res = ""
