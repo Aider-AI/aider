@@ -19,6 +19,7 @@ from json.decoder import JSONDecodeError
 from pathlib import Path
 from typing import List
 
+from aider.exceptions import LiteLLMExceptions
 from aider import __version__, models, prompts, urls, utils
 from aider.analytics import Analytics
 from aider.commands import Commands
@@ -29,7 +30,7 @@ from aider.llm import litellm
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
-from aider.sendchat import RETRY_TIMEOUT, retry_exceptions, send_completion
+from aider.sendchat import RETRY_TIMEOUT, send_completion
 from aider.utils import format_content, format_messages, format_tokens, is_image_file
 
 from ..dump import dump  # noqa: F401
@@ -789,34 +790,9 @@ class Coder:
             self.num_reflections += 1
             message = self.reflected_message
 
-    def check_and_open_urls(self, exc: Exception) -> List[str]:
-        import openai
-
+    def check_and_open_urls(self, exc, friendly_msg=None):
         """Check exception for URLs, offer to open in a browser, with user-friendly error msgs."""
         text = str(exc)
-        friendly_msg = None
-
-        if isinstance(exc, (openai.APITimeoutError, openai.APIConnectionError)):
-            friendly_msg = (
-                "There is a problem connecting to the API provider. Please try again later or check"
-                " your model settings."
-            )
-        elif isinstance(exc, openai.RateLimitError):
-            friendly_msg = (
-                "The API provider's rate limits have been exceeded. Check with your provider or"
-                " wait awhile and retry."
-            )
-        elif isinstance(exc, openai.InternalServerError):
-            friendly_msg = (
-                "The API provider seems to be down or overloaded. Please try again later."
-            )
-        elif isinstance(exc, openai.BadRequestError):
-            friendly_msg = "The API provider refused the request as invalid?"
-        elif isinstance(exc, openai.AuthenticationError):
-            friendly_msg = (
-                "The API provider refused your authentication. Please check that you are using a"
-                " valid API key."
-            )
 
         if friendly_msg:
             self.io.tool_warning(text)
@@ -1152,8 +1128,6 @@ class Coder:
         return chunks
 
     def send_message(self, inp):
-        import openai  # for error codes below
-
         self.cur_messages += [
             dict(role="user", content=inp),
         ]
@@ -1173,6 +1147,8 @@ class Coder:
 
         retry_delay = 0.125
 
+        litellm_ex = LiteLLMExceptions()
+
         self.usage_report = None
         exhausted = False
         interrupted = False
@@ -1181,30 +1157,37 @@ class Coder:
                 try:
                     yield from self.send(messages, functions=self.functions)
                     break
-                except retry_exceptions() as err:
-                    # Print the error and its base classes
-                    # for cls in err.__class__.__mro__: dump(cls.__name__)
+                except litellm_ex.exceptions_tuple() as err:
+                    ex_info = litellm_ex.get_ex_info(err)
 
-                    retry_delay *= 2
-                    if retry_delay > RETRY_TIMEOUT:
-                        self.mdstream = None
-                        self.check_and_open_urls(err)
+                    if ex_info.name == "ContextWindowExceededError":
+                        exhausted = True
                         break
+
+                    should_retry = ex_info.retry
+                    if should_retry:
+                        retry_delay *= 2
+                        if retry_delay > RETRY_TIMEOUT:
+                            should_retry = False
+
+                    if not should_retry:
+                        self.mdstream = None
+                        self.check_and_open_urls(err, ex_info.description)
+                        break
+
                     err_msg = str(err)
-                    self.io.tool_error(err_msg)
+                    if ex_info.description:
+                        self.io.tool_output(err_msg)
+                        self.io.tool_error(ex_info.description)
+                    else:
+                        self.io.tool_error(err_msg)
+
                     self.io.tool_output(f"Retrying in {retry_delay:.1f} seconds...")
                     time.sleep(retry_delay)
                     continue
                 except KeyboardInterrupt:
                     interrupted = True
                     break
-                except litellm.ContextWindowExceededError:
-                    # The input is overflowing the context window!
-                    exhausted = True
-                    break
-                except litellm.exceptions.BadRequestError as br_err:
-                    self.io.tool_error(f"BadRequestError: {br_err}")
-                    return
                 except FinishReasonLength:
                     # We hit the output limit!
                     if not self.main_model.info.get("supports_assistant_prefill"):
@@ -1219,12 +1202,8 @@ class Coder:
                         messages.append(
                             dict(role="assistant", content=self.multi_response_content, prefix=True)
                         )
-                except (openai.APIError, openai.APIStatusError) as err:
-                    # for cls in err.__class__.__mro__: dump(cls.__name__)
-                    self.mdstream = None
-                    self.check_and_open_urls(err)
-                    break
                 except Exception as err:
+                    self.mdstream = None
                     lines = traceback.format_exception(type(err), err, err.__traceback__)
                     self.io.tool_warning("".join(lines))
                     self.io.tool_error(str(err))

@@ -5,6 +5,7 @@ import time
 import backoff
 
 from aider.dump import dump  # noqa: F401
+from aider.exceptions import LiteLLMExceptions
 from aider.llm import litellm
 
 # from diskcache import Cache
@@ -15,52 +16,6 @@ CACHE = None
 # CACHE = Cache(CACHE_PATH)
 
 RETRY_TIMEOUT = 60
-
-
-def retry_exceptions():
-    import httpx
-    import openai
-
-    return (
-        # httpx
-        httpx.ConnectError,
-        httpx.RemoteProtocolError,
-        httpx.ReadTimeout,
-        #
-        # litellm exceptions inherit from openai exceptions
-        # https://docs.litellm.ai/docs/exception_mapping
-        #
-        # openai.BadRequestError,
-        # litellm.ContextWindowExceededError,
-        # litellm.ContentPolicyViolationError,
-        #
-        # openai.AuthenticationError,
-        # openai.PermissionDeniedError,
-        # openai.NotFoundError,
-        #
-        openai.APITimeoutError,
-        openai.UnprocessableEntityError,
-        openai.RateLimitError,
-        openai.APIConnectionError,
-        # openai.APIError,
-        # openai.APIStatusError,
-        openai.InternalServerError,
-    )
-
-
-def lazy_litellm_retry_decorator(func):
-    def wrapper(*args, **kwargs):
-        decorated_func = backoff.on_exception(
-            backoff.expo,
-            retry_exceptions(),
-            max_time=RETRY_TIMEOUT,
-            on_backoff=lambda details: print(
-                f"{details.get('exception', 'Exception')}\nRetry in {details['wait']:.1f} seconds."
-            ),
-        )(func)
-        return decorated_func(*args, **kwargs)
-
-    return wrapper
 
 
 def send_completion(
@@ -104,6 +59,8 @@ def send_completion(
 
 
 def simple_send_with_retries(model_name, messages, extra_params=None):
+    litellm_ex = LiteLLMExceptions()
+
     retry_delay = 0.125
     while True:
         try:
@@ -117,11 +74,22 @@ def simple_send_with_retries(model_name, messages, extra_params=None):
 
             _hash, response = send_completion(**kwargs)
             return response.choices[0].message.content
-        except retry_exceptions() as err:
+        except litellm_ex.exceptions_tuple() as err:
+            ex_info = litellm_ex.get_ex_info(err)
+
             print(str(err))
-            retry_delay *= 2
-            if retry_delay > RETRY_TIMEOUT:
+            if ex_info.description:
+                print(ex_info.description)
+
+            should_retry = ex_info.retry
+            if should_retry:
+                retry_delay *= 2
+                if retry_delay > RETRY_TIMEOUT:
+                    should_retry = False
+
+            if not should_retry:
                 break
+
             print(f"Retrying in {retry_delay:.1f} seconds...")
             time.sleep(retry_delay)
             continue
