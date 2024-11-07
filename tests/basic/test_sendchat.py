@@ -1,7 +1,6 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-import httpx
 
 from aider.exceptions import LiteLLMExceptions
 from aider.llm import litellm
