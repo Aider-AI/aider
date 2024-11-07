@@ -2,6 +2,7 @@ import os
 import shutil
 import struct
 from unittest import mock
+
 import pytest
 from git import GitError, Repo
 
