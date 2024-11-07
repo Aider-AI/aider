@@ -88,6 +88,10 @@ class LiteLLMExceptions:
     def exceptions_tuple(self):
         return tuple(self.exceptions)
 
+    def get_ex_info(self, ex):
+        """Return the ExInfo for a given exception instance"""
+        return self.exceptions.get(ex.__class__)
+
 
 
 litellm_ex = LiteLLMExceptions()
