@@ -369,8 +369,7 @@ def sanity_check_repo(repo, io):
         io.tool_error("Aider only works with git repos with version number 1 or 2.")
         io.tool_output("You may be able to convert your repo: git update-index --index-version=2")
         io.tool_output("Or run aider --no-git to proceed without using git.")
-        if io.confirm_ask("Open documentation url for more info?", subject=urls.git_index_version):
-            webbrowser.open(urls.git_index_version)
+        io.offer_url(urls.git_index_version, "Open documentation url for more info?")
         return False
 
     io.tool_error("Unable to read git repository, it may be corrupt?")
@@ -643,10 +642,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             io.tool_output("You can skip this check with --no-show-model-warnings")
 
             try:
-                if io.confirm_ask(
-                    "Open documentation url for more info?", subject=urls.model_warnings
-                ):
-                    webbrowser.open(urls.model_warnings)
+                io.offer_url(urls.model_warnings, "Open documentation url for more info?")
                 io.tool_output()
             except KeyboardInterrupt:
                 return 1
@@ -871,10 +867,7 @@ def check_and_load_imports(io, verbose=False):
             except Exception as err:
                 io.tool_error(str(err))
                 io.tool_output("Error loading required imports. Did you install aider properly?")
-                if io.confirm_ask(
-                    "Open documentation url for more info?", subject=urls.install_properly
-                ):
-                    webbrowser.open(urls.install_properly)
+                io.offer_url(urls.install_properly, "Open documentation url for more info?")
 
                 sys.exit(1)
 
