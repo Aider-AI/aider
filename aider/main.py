@@ -5,7 +5,6 @@ import re
 import sys
 import threading
 import traceback
-import webbrowser
 from pathlib import Path
 
 import git
