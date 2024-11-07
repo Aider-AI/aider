@@ -829,7 +829,8 @@ class Coder:
         urls = list(set(url_pattern.findall(text)))  # Use set to remove duplicates
         for url in urls:
             url = url.rstrip(".',\"")
-            if self.io.confirm_ask("Open URL for more info about this error?", subject=url):
+            #ai refactor this into a io.offer_url() function!
+            if self.io.confirm_ask("Open URL for more info?", subject=url):
                 webbrowser.open(url)
         return urls
 
