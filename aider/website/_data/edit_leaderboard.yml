@@ -20,7 +20,7 @@
   versions: 0.30.2-dev
   seconds_per_case: 32.4
   total_cost: 13.8395
-  
+
 - dirname: 2024-03-06-16-42-00--claude3-sonnet-whole
   test_cases: 133
   model: claude-3-sonnet-20240229
@@ -43,7 +43,7 @@
   versions: 0.25.1-dev
   seconds_per_case: 23.1
   total_cost: 0.0000
-  
+
 - dirname: 2024-05-03-20-47-24--gemini-1.5-pro-diff-fenced
   test_cases: 133
   model: gemini-1.5-pro-latest
@@ -88,7 +88,7 @@
   versions: 0.33.1-dev
   seconds_per_case: 6.5
   total_cost: 0.5032
-  
+
 - dirname: 2023-11-06-21-23-59--gpt-3.5-turbo-0301
   test_cases: 133
   model: gpt-3.5-turbo-0301
@@ -111,7 +111,7 @@
   versions: 0.16.4-dev
   seconds_per_case: 6.5
   total_cost: 0.4822
-  
+
 - dirname: 2023-11-07-02-41-07--gpt-3.5-turbo-0613
   test_cases: 133
   model: gpt-3.5-turbo-0613
@@ -155,7 +155,7 @@
   versions: 0.30.2-dev
   seconds_per_case: 5.3
   total_cost: 0.3261
-  
+
 - dirname: 2024-01-25-23-37-15--jan-exercism-gpt-4-0125-preview-udiff
   test_cases: 133
   model: gpt-4-0125-preview
@@ -178,7 +178,7 @@
   versions: 0.22.1-dev
   seconds_per_case: 44.8
   total_cost: 14.6428
-  
+
 - dirname: 2024-05-04-15-07-30--redo-gpt-4-0314-diff-reminder-rules
   test_cases: 133
   model: gpt-4-0314
@@ -201,7 +201,7 @@
   versions: 0.31.2-dev
   seconds_per_case: 19.8
   total_cost: 16.2689
-  
+
 - dirname: 2023-12-16-21-24-28--editblock-gpt-4-0613-actual-main
   test_cases: 133
   model: gpt-4-0613
@@ -228,7 +228,7 @@
 - dirname: 2024-05-08-21-16-03--may-gpt-4-1106-preview-udiff
   test_cases: 133
   model: gpt-4-1106-preview
-  released: 2023-11-06  
+  released: 2023-11-06
   edit_format: udiff
   commit_hash: 87664dc
   pass_rate_1: 51.9
@@ -247,7 +247,7 @@
   versions: 0.33.1-dev
   seconds_per_case: 20.4
   total_cost: 6.6061
-  
+
 - dirname: 2024-05-01-02-09-20--gpt-4-turbo-examples
   test_cases: 133
   model: gpt-4-turbo-2024-04-09 (udiff)
@@ -270,7 +270,7 @@
   versions: 0.30.2-dev
   seconds_per_case: 22.8
   total_cost: 6.3337
-  
+
 - dirname: 2024-05-03-22-24-48--openrouter--llama3-diff-examples-sys-msg
   test_cases: 132
   model: llama3-70b-8192
@@ -293,7 +293,7 @@
   versions: 0.31.2-dev
   seconds_per_case: 14.5
   total_cost: 0.4311
-  
+
 - dirname: 2024-05-06-18-31-08--command-r-plus-whole-final
   test_cases: 133
   model: command-r-plus
@@ -316,11 +316,11 @@
   versions: 0.31.2-dev
   seconds_per_case: 22.9
   total_cost: 2.7494
-  
+
 - dirname: 2024-05-07-20-32-37--qwen1.5-110b-chat-whole
   test_cases: 133
   model: qwen1.5-110b-chat
-  released: 2024-02-04  
+  released: 2024-02-04
   edit_format: whole
   commit_hash: 70b1c0c
   pass_rate_1: 30.8
@@ -339,7 +339,7 @@
   versions: 0.31.2-dev
   seconds_per_case: 46.9
   total_cost: 0.0000
-  
+
 - dirname: 2024-05-07-20-57-04--wizardlm-2-8x22b-whole
   test_cases: 133
   model: WizardLM-2 8x22B
@@ -384,7 +384,7 @@
   versions: 0.34.1-dev
   seconds_per_case: 6.0
   total_cost: 0.0000
-                                          
+
 - dirname: 2024-04-12-22-18-20--gpt-4-turbo-2024-04-09-plain-diff
   test_cases: 33
   model: gpt-4-turbo-2024-04-09 (diff)
@@ -568,7 +568,7 @@
   versions: 0.42.1-dev
   seconds_per_case: 17.6
   total_cost: 3.6346
-    
+
 - dirname: 2024-07-01-21-41-48--haiku-whole
   test_cases: 133
   model: claude-3-haiku-20240307
@@ -1131,7 +1131,7 @@
   versions: 0.56.1.dev
   seconds_per_case: 80.9
   total_cost: 63.9190
-                                            
+
 - dirname: 2024-09-19-16-58-29--qwen2.5-coder:7b-instruct-q8_0
   test_cases: 133
   model: qwen2.5-coder:7b-instruct-q8_0
@@ -1154,7 +1154,7 @@
   versions: 0.56.0
   seconds_per_case: 9.3
   total_cost: 0.0000
-  
+
 - dirname: 2024-09-20-20-20-19--qwen-2.5-72b-instruct-diff
   test_cases: 133
   model: qwen-2.5-72b-instruct (bf16)
@@ -1458,7 +1458,7 @@
   versions: 0.58.1.dev
   seconds_per_case: 63.7
   total_cost: 0.0000
-  
+
 - dirname: 2024-10-01-16-50-09--hermes3-whole-4
   test_cases: 133
   model: ollama/hermes3
@@ -1633,4 +1633,27 @@
   date: 2024-11-04
   versions: 0.61.1.dev
   seconds_per_case: 18.4
+  total_cost: 0.0000
+
+- dirname: 2024-11-07-06-15-36--Qwen2.5.1-Coder-7B-Instruct-GGUF:Q8_0-32k-whole
+  test_cases: 133
+  model: ollama/Qwen2.5.1-Coder-7B-Instruct-GGUF:Q8_0-32k
+  edit_format: whole
+  commit_hash: e76704e
+  pass_rate_1: 52.6
+  pass_rate_2: 63.9
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 4
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model ollama/Qwen2.5.1-Coder-7B-Instruct-GGUF:Q8_0-32k
+  date: 2024-11-07
+  versions: 0.59.2.dev
+  seconds_per_case: 18.2
   total_cost: 0.0000
