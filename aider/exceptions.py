@@ -74,7 +74,3 @@ class LiteLLMExceptions:
     def get_ex_info(self, ex):
         """Return the ExInfo for a given exception instance"""
         return self.exceptions.get(ex.__class__, ExInfo(None, None, None))
-
-
-litellm_ex = LiteLLMExceptions()
-litellm_ex._load(strict=True)
