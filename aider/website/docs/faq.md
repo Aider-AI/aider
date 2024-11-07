@@ -30,7 +30,7 @@ current chat to build a compact
 Adding a bunch of files that are mostly irrelevant to the
 task at hand will often distract or confuse the LLM.
 The LLM will give worse coding results, and sometimese even fail to correctly edit files.
-Addings extra files will also increase the token costs on your OpenAI invoice.
+Addings extra files will also increase your token costs.
 
 Again, it's usually best to just add the files to the chat that will need to be modified.
 If you still wish to add lots of files to the chat, you can:
