@@ -2,7 +2,8 @@ import os
 import shutil
 import struct
 from unittest import mock
-
+#ai fix: FAILED tests/basic/test_sanity_check_repo.py::test_git_index_version_greater_than_2 - AssertionError: confirm_ask('Open documentation url for more info?', subject='https://github.com/Aid...!
+# it now calls offer_url, not confirm ask
 import pytest
 from git import GitError, Repo
 
