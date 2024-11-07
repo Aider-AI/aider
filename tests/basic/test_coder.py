@@ -17,6 +17,8 @@ from aider.utils import GitTemporaryDirectory
 class TestCoder(unittest.TestCase):
     def setUp(self):
         self.GPT35 = Model("gpt-3.5-turbo")
+        self.webbrowser_patcher = patch("aider.io.webbrowser.open")
+        self.mock_webbrowser = self.webbrowser_patcher.start()
 
     def test_allowed_to_edit(self):
         with GitTemporaryDirectory():

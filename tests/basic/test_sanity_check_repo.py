@@ -128,7 +128,8 @@ def test_git_index_version_greater_than_2(mock_browser, create_repo, mock_io):
     )
     mock_io.tool_output.assert_any_call("Or run aider --no-git to proceed without using git.")
     mock_io.offer_url.assert_any_call(
-        "Open documentation url for more info?", urls.git_index_version
+        urls.git_index_version,
+        "Open documentation url for more info?",
     )
 
 
