@@ -300,6 +300,23 @@ MODEL_SETTINGS = [
         reminder="user",
     ),
     ModelSettings(
+        "bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0",
+        "diff",
+        weak_model_name="bedrock/anthropic.claude-3-5-haiku-20241022-v1:0",
+        editor_model_name="bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        examples_as_sys_msg=True,
+        extra_params={
+            "extra_headers": {
+                "anthropic-beta": ANTHROPIC_BETA_HEADER,
+            },
+            "max_tokens": 8192,
+        },
+        cache_control=True,
+        reminder="user",
+    ),
+    ModelSettings(
         "anthropic/claude-3-5-sonnet-latest",
         "diff",
         weak_model_name="anthropic/claude-3-5-haiku-20241022",
@@ -349,6 +366,18 @@ MODEL_SETTINGS = [
         "anthropic/claude-3-5-haiku-20241022",
         "diff",
         weak_model_name="anthropic/claude-3-5-haiku-20241022",
+        use_repo_map=True,
+        extra_params={
+            "extra_headers": {
+                "anthropic-beta": ANTHROPIC_BETA_HEADER,
+            },
+        },
+        cache_control=True,
+    ),
+    ModelSettings(
+        "bedrock/anthropic.claude-3-5-haiku-20241022-v1:0",
+        "diff",
+        weak_model_name="bedrock/anthropic.claude-3-5-haiku-20241022-v1:0",
         use_repo_map=True,
         extra_params={
             "extra_headers": {
