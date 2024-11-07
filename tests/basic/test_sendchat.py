@@ -1,10 +1,9 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-import httpx
-
+from aider.exceptions import LiteLLMExceptions
 from aider.llm import litellm
-from aider.sendchat import retry_exceptions, simple_send_with_retries
+from aider.sendchat import simple_send_with_retries
 
 
 class PrintCalled(Exception):
@@ -12,9 +11,9 @@ class PrintCalled(Exception):
 
 
 class TestSendChat(unittest.TestCase):
-    def test_retry_exceptions(self):
-        """Test that retry_exceptions() can be called without raising errors"""
-        retry_exceptions()  # Should not raise any exceptions
+    def test_litellm_exceptions(self):
+        litellm_ex = LiteLLMExceptions()
+        litellm_ex._load(strict=True)
 
     @patch("litellm.completion")
     @patch("builtins.print")
@@ -24,7 +23,7 @@ class TestSendChat(unittest.TestCase):
 
         # Set up the mock to raise
         mock_completion.side_effect = [
-            litellm.exceptions.RateLimitError(
+            litellm.RateLimitError(
                 "rate limit exceeded",
                 response=mock,
                 llm_provider="llm_provider",
@@ -35,17 +34,4 @@ class TestSendChat(unittest.TestCase):
 
         # Call the simple_send_with_retries method
         simple_send_with_retries("model", ["message"])
-        assert mock_print.call_count == 2
-
-    @patch("litellm.completion")
-    @patch("builtins.print")
-    def test_simple_send_with_retries_connection_error(self, mock_print, mock_completion):
-        # Set up the mock to raise
-        mock_completion.side_effect = [
-            httpx.ConnectError("Connection error"),
-            None,
-        ]
-
-        # Call the simple_send_with_retries method
-        simple_send_with_retries("model", ["message"])
-        assert mock_print.call_count == 2
+        assert mock_print.call_count == 3

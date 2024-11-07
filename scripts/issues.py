@@ -115,6 +115,10 @@ def comment_and_close_duplicate(issue, oldest_issue):
 def find_unlabeled_with_paul_comments(issues):
     unlabeled_issues = []
     for issue in issues:
+        # Skip pull requests
+        if "pull_request" in issue:
+            continue
+
         if not issue["labels"] and issue["state"] == "open":
             # Get comments for this issue
             comments_url = (
@@ -130,49 +134,33 @@ def find_unlabeled_with_paul_comments(issues):
     return unlabeled_issues
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Handle duplicate GitHub issues")
-    parser.add_argument(
-        "--yes", action="store_true", help="Automatically close duplicates without prompting"
-    )
-    parser.add_argument(
-        "--find-unlabeled",
-        action="store_true",
-        help="Find unlabeled issues with paul-gauthier comments",
-    )
-    args = parser.parse_args()
+def handle_unlabeled_issues(all_issues, auto_yes):
+    print("\nFinding unlabeled issues with paul-gauthier comments...")
+    unlabeled_issues = find_unlabeled_with_paul_comments(all_issues)
 
-    if not TOKEN:
-        print("Error: Missing GITHUB_TOKEN environment variable. Please check your .env file.")
+    if not unlabeled_issues:
+        print("No unlabeled issues with paul-gauthier comments found.")
         return
 
-    all_issues = get_issues("all")
+    print(f"\nFound {len(unlabeled_issues)} unlabeled issues with paul-gauthier comments:")
+    for issue in unlabeled_issues:
+        print(f"  - #{issue['number']}: {issue['title']} {issue['html_url']}")
 
-    if args.find_unlabeled:
-        print("\nFinding unlabeled issues with paul-gauthier comments...")
-        unlabeled_issues = find_unlabeled_with_paul_comments(all_issues)
-
-        if not unlabeled_issues:
-            print("No unlabeled issues with paul-gauthier comments found.")
+    if not auto_yes:
+        confirm = input("\nDo you want to add the 'question' label to these issues? (y/n): ")
+        if confirm.lower() != "y":
+            print("Skipping labeling.")
             return
 
-        print(f"\nFound {len(unlabeled_issues)} unlabeled issues with paul-gauthier comments:")
-        for issue in unlabeled_issues:
-            print(f"  - #{issue['number']}: {issue['title']} {issue['html_url']}")
+    print("\nAdding 'question' label to issues...")
+    for issue in unlabeled_issues:
+        url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}"
+        response = requests.patch(url, headers=headers, json={"labels": ["question"]})
+        response.raise_for_status()
+        print(f"  - Added 'question' label to #{issue['number']}")
 
-        if not args.yes:
-            confirm = input("\nDo you want to add the 'question' label to these issues? (y/n): ")
-            if confirm.lower() != "y":
-                print("Skipping labeling.")
-                return
 
-        print("\nAdding 'question' label to issues...")
-        for issue in unlabeled_issues:
-            url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}"
-            response = requests.patch(url, headers=headers, json={"labels": ["question"]})
-            response.raise_for_status()
-            print(f"  - Added 'question' label to #{issue['number']}")
-        return
+def handle_duplicate_issues(all_issues, auto_yes):
     open_issues = [issue for issue in all_issues if issue["state"] == "open"]
     grouped_open_issues = group_issues_by_subject(open_issues)
 
@@ -198,20 +186,35 @@ def main():
             f" {oldest_issue['html_url']} ({oldest_issue['state']})"
         )
 
-        if not args.yes:
-            # Confirmation prompt
+        if not auto_yes:
             confirm = input("Do you want to comment and close duplicate issues? (y/n): ")
             if confirm.lower() != "y":
                 print("Skipping this group of issues.")
                 continue
 
-        # Comment and close duplicate issues
         for issue in issues:
             if issue["number"] != oldest_issue["number"]:
                 comment_and_close_duplicate(issue, oldest_issue)
 
         if oldest_issue["state"] == "open":
             print(f"Oldest issue #{oldest_issue['number']} left open")
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Handle duplicate GitHub issues")
+    parser.add_argument(
+        "--yes", action="store_true", help="Automatically close duplicates without prompting"
+    )
+    args = parser.parse_args()
+
+    if not TOKEN:
+        print("Error: Missing GITHUB_TOKEN environment variable. Please check your .env file.")
+        return
+
+    all_issues = get_issues("all")
+
+    handle_unlabeled_issues(all_issues, args.yes)
+    handle_duplicate_issues(all_issues, args.yes)
 
 
 if __name__ == "__main__":

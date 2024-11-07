@@ -28,7 +28,7 @@ from tree_sitter_languages import get_language, get_parser  # noqa: E402
 Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
 
 
-SQLITE_ERRORS = (sqlite3.OperationalError, sqlite3.DatabaseError)
+SQLITE_ERRORS = (sqlite3.OperationalError, sqlite3.DatabaseError, OSError)
 
 
 class RepoMap:
@@ -197,7 +197,7 @@ class RepoMap:
             self.TAGS_CACHE = new_cache
             return
 
-        except (SQLITE_ERRORS, OSError) as e:
+        except SQLITE_ERRORS as e:
             # If anything goes wrong, warn and fall back to dict
             self.io.tool_warning(
                 f"Unable to use tags cache at {path}, falling back to memory cache"
@@ -368,6 +368,8 @@ class RepoMap:
             showing_bar = False
 
         for fname in fnames:
+            if self.verbose:
+                self.io.tool_output(f"Processing {fname}")
             if progress and not showing_bar:
                 progress()
 

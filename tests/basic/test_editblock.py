@@ -10,6 +10,7 @@ from aider.coders import editblock_coder as eb
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.models import Model
+from aider.utils import ChdirTemporaryDirectory
 
 
 class TestUtils(unittest.TestCase):
@@ -340,6 +341,46 @@ These changes replace the `subprocess.run` patches with `subprocess.check_output
 
         result = eb.replace_most_similar_chunk(whole, part, replace)
         self.assertEqual(result, expected_output)
+
+    def test_create_new_file_with_other_file_in_chat(self):
+        # https://github.com/Aider-AI/aider/issues/2258
+        with ChdirTemporaryDirectory():
+            # Create a few temporary files
+            file1 = "file.txt"
+
+            with open(file1, "w", encoding="utf-8") as f:
+                f.write("one\ntwo\nthree\n")
+
+            files = [file1]
+
+            # Initialize the Coder object with the mocked IO and mocked repo
+            coder = Coder.create(
+                self.GPT35, "diff", use_git=False, io=InputOutput(yes=True), fnames=files
+            )
+
+            def mock_send(*args, **kwargs):
+                coder.partial_response_content = f"""
+Do this:
+
+newfile.txt
+<<<<<<< SEARCH
+=======
+creating a new file
+>>>>>>> REPLACE
+
+"""
+                coder.partial_response_function_call = dict()
+                return []
+
+            coder.send = mock_send
+
+            coder.run(with_message="hi")
+
+            content = Path(file1).read_text(encoding="utf-8")
+            self.assertEqual(content, "one\ntwo\nthree\n")
+
+            content = Path("newfile.txt").read_text(encoding="utf-8")
+            self.assertEqual(content, "creating a new file\n")
 
     def test_full_edit(self):
         # Create a few temporary files
