@@ -494,6 +494,25 @@ cog.out("```\n")
   caches_by_default: false
   edit_format: diff
   editor_edit_format: editor-diff
+  editor_model_name: bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0
+  examples_as_sys_msg: true
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31
+    max_tokens: 8192
+  lazy: false
+  name: bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0
+  reminder: user
+  send_undo_reply: false
+  streaming: true
+  use_repo_map: true
+  use_system_prompt: true
+  use_temperature: true
+  weak_model_name: bedrock/anthropic.claude-3-5-haiku-20241022-v1:0
+- cache_control: true
+  caches_by_default: false
+  edit_format: diff
+  editor_edit_format: editor-diff
   editor_model_name: anthropic/claude-3-5-sonnet-20241022
   examples_as_sys_msg: true
   extra_params:
@@ -564,6 +583,24 @@ cog.out("```\n")
   use_system_prompt: true
   use_temperature: true
   weak_model_name: anthropic/claude-3-5-haiku-20241022
+- cache_control: true
+  caches_by_default: false
+  edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
+  examples_as_sys_msg: false
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31
+  lazy: false
+  name: bedrock/anthropic.claude-3-5-haiku-20241022-v1:0
+  reminder: user
+  send_undo_reply: false
+  streaming: true
+  use_repo_map: true
+  use_system_prompt: true
+  use_temperature: true
+  weak_model_name: bedrock/anthropic.claude-3-5-haiku-20241022-v1:0
 - cache_control: true
   caches_by_default: false
   edit_format: diff
