@@ -1177,7 +1177,7 @@ class Coder:
 
                     err_msg = str(err)
                     if ex_info.description:
-                        self.io.tool_output(err_msg)
+                        self.io.tool_warning(err_msg)
                         self.io.tool_error(ex_info.description)
                     else:
                         self.io.tool_error(err_msg)
