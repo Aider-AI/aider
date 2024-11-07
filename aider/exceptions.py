@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 def retry_exceptions():
     import httpx
     import openai
@@ -36,6 +37,7 @@ class ExInfo:
     name: str
     retry: bool
     description: str
+
 
 EXCEPTIONS = [
     ExInfo("APIConnectionError", True, None),
@@ -91,7 +93,6 @@ class LiteLLMExceptions:
     def get_ex_info(self, ex):
         """Return the ExInfo for a given exception instance"""
         return self.exceptions.get(ex.__class__)
-
 
 
 litellm_ex = LiteLLMExceptions()
