@@ -2,8 +2,6 @@ import os
 import shutil
 import struct
 from unittest import mock
-#ai fix: FAILED tests/basic/test_sanity_check_repo.py::test_git_index_version_greater_than_2 - AssertionError: confirm_ask('Open documentation url for more info?', subject='https://github.com/Aid...!
-# it now calls offer_url, not confirm ask
 import pytest
 from git import GitError, Repo
 
@@ -128,8 +126,8 @@ def test_git_index_version_greater_than_2(mock_browser, create_repo, mock_io):
         "You may be able to convert your repo: git update-index --index-version=2"
     )
     mock_io.tool_output.assert_any_call("Or run aider --no-git to proceed without using git.")
-    mock_io.confirm_ask.assert_any_call(
-        "Open documentation url for more info?", subject=urls.git_index_version
+    mock_io.offer_url.assert_any_call(
+        "Open documentation url for more info?", urls.git_index_version
     )
 
 
