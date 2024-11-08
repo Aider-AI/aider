@@ -162,7 +162,8 @@ class Commands:
 
         self.io.tool_output("... done.")
 
-        return content
+        # Add the content to cur_messages as a faux assistant reply
+        self.coder.cur_messages.append(dict(role="assistant", content=content))
 
     def is_command(self, inp):
         return inp[0] in "/!"
