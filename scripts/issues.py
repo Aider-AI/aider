@@ -164,24 +164,26 @@ def handle_unlabeled_issues(all_issues, auto_yes):
 
 def handle_stale_issues(all_issues, auto_yes):
     print("\nChecking for stale question issues...")
-    
+
     for issue in all_issues:
         # Skip if not open, not a question, already stale, or has been reopened
-        if (issue["state"] != "open" or
-            "question" not in [label["name"] for label in issue["labels"]] or
-            "stale" in [label["name"] for label in issue["labels"]] or
-            has_been_reopened(issue["number"])):
+        if (
+            issue["state"] != "open"
+            or "question" not in [label["name"] for label in issue["labels"]]
+            or "stale" in [label["name"] for label in issue["labels"]]
+            or has_been_reopened(issue["number"])
+        ):
             continue
 
         # Get latest activity timestamp from issue or its comments
         latest_activity = datetime.strptime(issue["updated_at"], "%Y-%m-%dT%H:%M:%SZ")
-        
+
         # Check if issue is stale (no activity for 14 days)
         days_inactive = (datetime.now() - latest_activity).days
         if days_inactive >= 14:
             print(f"\nStale issue found: #{issue['number']}: {issue['title']}")
             print(f"  No activity for {days_inactive} days")
-            
+
             if not auto_yes:
                 confirm = input("Add stale label and comment? (y/n): ")
                 if confirm.lower() != "y":
@@ -194,10 +196,12 @@ def handle_stale_issues(all_issues, auto_yes):
             response.raise_for_status()
 
             # Add comment
-            comment_url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/comments"
+            comment_url = (
+                f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/comments"
+            )
             response = requests.post(comment_url, headers=headers, json={"body": STALE_COMMENT})
             response.raise_for_status()
-            
+
             print(f"  Added stale label and comment to #{issue['number']}")
 
 
