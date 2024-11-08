@@ -181,7 +181,7 @@ def handle_stale_issues(all_issues, auto_yes):
         # Check if issue is stale (no activity for 14 days)
         days_inactive = (datetime.now() - latest_activity).days
         if days_inactive >= 14:
-            print(f"\nStale issue found: #{issue['number']}: {issue['title']} {issue['html_url']}")
+            print(f"\nStale issue found: #{issue['number']}: {issue['title']}\n{issue['html_url']}")
             print(f"  No activity for {days_inactive} days")
 
             if not auto_yes:
@@ -209,7 +209,7 @@ def handle_duplicate_issues(all_issues, auto_yes):
     open_issues = [issue for issue in all_issues if issue["state"] == "open"]
     grouped_open_issues = group_issues_by_subject(open_issues)
 
-    print("Analyzing issues (skipping reopened issues)...")
+    print("Looking for duplicate issues (skipping reopened issues)...")
     for subject, issues in grouped_open_issues.items():
         oldest_issue = find_oldest_issue(subject, all_issues)
         if not oldest_issue:
