@@ -190,16 +190,16 @@ def handle_stale_issues(all_issues, auto_yes):
                     print("Skipping this issue.")
                     continue
 
-            # Add stale label
-            url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}"
-            response = requests.patch(url, headers=headers, json={"labels": ["question", "stale"]})
-            response.raise_for_status()
-
             # Add comment
             comment_url = (
                 f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/comments"
             )
             response = requests.post(comment_url, headers=headers, json={"body": STALE_COMMENT})
+            response.raise_for_status()
+
+            # Add stale label
+            url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}"
+            response = requests.patch(url, headers=headers, json={"labels": ["question", "stale"]})
             response.raise_for_status()
 
             print(f"  Added stale label and comment to #{issue['number']}")
