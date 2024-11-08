@@ -1,5 +1,3 @@
-import pytest
-
 from aider.exceptions import ExInfo, LiteLLMExceptions
 
 
