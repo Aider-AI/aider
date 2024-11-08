@@ -279,7 +279,9 @@ def handle_stale_closing(all_issues, auto_yes):
                         continue
 
                 # Add closing comment
-                comment_url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/comments"
+                comment_url = (
+                    f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/comments"
+                )
                 response = requests.post(
                     comment_url, headers=headers, json={"body": CLOSE_STALE_COMMENT}
                 )
