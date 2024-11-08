@@ -158,12 +158,14 @@ class Commands:
             )
 
         content = self.scraper.scrape(url) or ""
-        content = f"{url}:\n\n" + content
+        content = f"Here is the content of {url}:\n\n" + content
 
-        self.io.tool_output("... done.")
+        self.io.tool_output("... added to chat.")
 
-        # Add the content to cur_messages as a faux assistant reply
-        self.coder.cur_messages.append(dict(role="assistant", content=content))
+        self.coder.cur_messages += [
+            dict(role="user", content=content),
+            dict(role="assistant", content="Ok."),
+        ]
 
     def is_command(self, inp):
         return inp[0] in "/!"
