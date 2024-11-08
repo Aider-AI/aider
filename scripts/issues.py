@@ -28,7 +28,7 @@ This looks like a duplicate of #{oldest_issue_number}. Please see the comments t
 
 I'm going to close this issue for now. But please let me know if you think this is actually a distinct issue and I will reopen this issue."""  # noqa
 
-STALE_COMMENT = """This issue has been labelled stale because it has been open for 2 weeks with no activity. Remove stale label or add a comment to keep this issue open. Otherwise, it will be closed in 7 days."""
+STALE_COMMENT = """This issue has been labelled stale because it has been open for 2 weeks with no activity. Remove stale label or add a comment to keep this issue open. Otherwise, it will be closed in 7 days."""  # noqa
 
 # GitHub API configuration
 GITHUB_API_URL = "https://api.github.com"
