@@ -181,7 +181,7 @@ def handle_stale_issues(all_issues, auto_yes):
         # Check if issue is stale (no activity for 14 days)
         days_inactive = (datetime.now() - latest_activity).days
         if days_inactive >= 14:
-            print(f"\nStale issue found: #{issue['number']}: {issue['title']}")
+            print(f"\nStale issue found: #{issue['number']}: {issue['title']} {issue['html_url']}")
             print(f"  No activity for {days_inactive} days")
 
             if not auto_yes:
