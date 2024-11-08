@@ -84,10 +84,10 @@ class TestSendChat(unittest.TestCase):
         mock = MagicMock()
         mock.status_code = 400
 
-        mock_completion.side_effect = litellm.InvalidRequestError(
+        mock_completion.side_effect = litellm.NotFoundError(
             message="Invalid request", llm_provider="test_provider", model="test_model"
         )
 
         result = simple_send_with_retries(self.mock_model, self.mock_messages)
         assert result is None
-        assert mock_print.call_count == 2  # Error message and description
+        assert mock_print.call_count == 1
