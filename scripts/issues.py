@@ -28,6 +28,8 @@ This looks like a duplicate of #{oldest_issue_number}. Please see the comments t
 
 I'm going to close this issue for now. But please let me know if you think this is actually a distinct issue and I will reopen this issue."""  # noqa
 
+STALE_COMMENT = """This issue has been labelled stale because it has been open for 2 weeks with no activity. Remove stale label or add a comment to keep this issue open. Otherwise, it will be closed in 7 days."""
+
 # GitHub API configuration
 GITHUB_API_URL = "https://api.github.com"
 REPO_OWNER = "Aider-AI"
@@ -160,6 +162,45 @@ def handle_unlabeled_issues(all_issues, auto_yes):
         print(f"  - Added 'question' label to #{issue['number']}")
 
 
+def handle_stale_issues(all_issues, auto_yes):
+    print("\nChecking for stale question issues...")
+    
+    for issue in all_issues:
+        # Skip if not open, not a question, already stale, or has been reopened
+        if (issue["state"] != "open" or
+            "question" not in [label["name"] for label in issue["labels"]] or
+            "stale" in [label["name"] for label in issue["labels"]] or
+            has_been_reopened(issue["number"])):
+            continue
+
+        # Get latest activity timestamp from issue or its comments
+        latest_activity = datetime.strptime(issue["updated_at"], "%Y-%m-%dT%H:%M:%SZ")
+        
+        # Check if issue is stale (no activity for 14 days)
+        days_inactive = (datetime.now() - latest_activity).days
+        if days_inactive >= 14:
+            print(f"\nStale issue found: #{issue['number']}: {issue['title']}")
+            print(f"  No activity for {days_inactive} days")
+            
+            if not auto_yes:
+                confirm = input("Add stale label and comment? (y/n): ")
+                if confirm.lower() != "y":
+                    print("Skipping this issue.")
+                    continue
+
+            # Add stale label
+            url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}"
+            response = requests.patch(url, headers=headers, json={"labels": ["question", "stale"]})
+            response.raise_for_status()
+
+            # Add comment
+            comment_url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/comments"
+            response = requests.post(comment_url, headers=headers, json={"body": STALE_COMMENT})
+            response.raise_for_status()
+            
+            print(f"  Added stale label and comment to #{issue['number']}")
+
+
 def handle_duplicate_issues(all_issues, auto_yes):
     open_issues = [issue for issue in all_issues if issue["state"] == "open"]
     grouped_open_issues = group_issues_by_subject(open_issues)
@@ -214,6 +255,7 @@ def main():
     all_issues = get_issues("all")
 
     handle_unlabeled_issues(all_issues, args.yes)
+    handle_stale_issues(all_issues, args.yes)
     handle_duplicate_issues(all_issues, args.yes)
 
 
