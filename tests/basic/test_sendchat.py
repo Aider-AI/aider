@@ -85,7 +85,9 @@ class TestSendChat(unittest.TestCase):
         mock.status_code = 400
 
         mock_completion.side_effect = litellm.InvalidRequestError(
-            "Invalid request", response=mock, llm_provider="test_provider", model="test_model"
+            message="Invalid request",
+            llm_provider="test_provider",
+            model="test_model"
         )
 
         result = simple_send_with_retries(self.mock_model, self.mock_messages)
