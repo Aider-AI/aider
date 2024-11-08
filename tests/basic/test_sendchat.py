@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 
 from aider.exceptions import LiteLLMExceptions
 from aider.llm import litellm
-from aider.sendchat import simple_send_with_retries, send_completion, CACHE
+from aider.sendchat import CACHE, send_completion, simple_send_with_retries
 
 
 class PrintCalled(Exception):
@@ -14,6 +14,7 @@ class TestSendChat(unittest.TestCase):
     def setUp(self):
         self.mock_messages = [{"role": "user", "content": "Hello"}]
         self.mock_model = "gpt-4"
+
     def test_litellm_exceptions(self):
         litellm_ex = LiteLLMExceptions()
         litellm_ex._load(strict=True)
@@ -47,27 +48,18 @@ class TestSendChat(unittest.TestCase):
 
         # Test basic send_completion
         hash_obj, response = send_completion(
-            self.mock_model,
-            self.mock_messages,
-            functions=None,
-            stream=False
+            self.mock_model, self.mock_messages, functions=None, stream=False
         )
-        
+
         assert response == mock_response
         mock_completion.assert_called_once()
 
     @patch("litellm.completion")
     def test_send_completion_with_functions(self, mock_completion):
-        mock_function = {
-            "name": "test_function",
-            "parameters": {"type": "object"}
-        }
-        
+        mock_function = {"name": "test_function", "parameters": {"type": "object"}}
+
         hash_obj, response = send_completion(
-            self.mock_model,
-            self.mock_messages,
-            functions=[mock_function],
-            stream=False
+            self.mock_model, self.mock_messages, functions=[mock_function], stream=False
         )
 
         # Verify function was properly included in tools
@@ -91,12 +83,9 @@ class TestSendChat(unittest.TestCase):
         # Test with an error that shouldn't trigger retries
         mock = MagicMock()
         mock.status_code = 400
-        
+
         mock_completion.side_effect = litellm.InvalidRequestError(
-            "Invalid request",
-            response=mock,
-            llm_provider="test_provider",
-            model="test_model"
+            "Invalid request", response=mock, llm_provider="test_provider", model="test_model"
         )
 
         result = simple_send_with_retries(self.mock_model, self.mock_messages)
