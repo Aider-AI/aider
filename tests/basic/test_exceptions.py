@@ -21,7 +21,9 @@ def test_get_ex_info():
     # Test with a known exception type
     from litellm import AuthenticationError
 
-    auth_error = AuthenticationError(message="Invalid API key", llm_provider="openai", model="gpt-4")
+    auth_error = AuthenticationError(
+        message="Invalid API key", llm_provider="openai", model="gpt-4"
+    )
     ex_info = ex.get_ex_info(auth_error)
     assert isinstance(ex_info, ExInfo)
     assert ex_info.name == "AuthenticationError"
@@ -56,6 +58,8 @@ def test_context_window_error():
     ex = LiteLLMExceptions()
     from litellm import ContextWindowExceededError
 
-    ctx_error = ContextWindowExceededError(message="Context length exceeded", model="gpt-4", llm_provider="openai")
+    ctx_error = ContextWindowExceededError(
+        message="Context length exceeded", model="gpt-4", llm_provider="openai"
+    )
     ex_info = ex.get_ex_info(ctx_error)
     assert ex_info.retry is False
