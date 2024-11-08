@@ -820,7 +820,7 @@ class Coder:
                     "Add URL to the chat?", subject=url, group=group, allow_never=True
                 ):
                     inp += "\n\n"
-                    inp += self.commands.cmd_web(url)
+                    inp += self.commands.cmd_web(url, return_content=True)
                     added_urls.append(url)
                 else:
                     self.rejected_urls.add(url)
