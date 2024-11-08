@@ -212,46 +212,48 @@ def handle_stale_closing(all_issues, auto_yes):
 
     for issue in all_issues:
         # Skip if not open or not stale
-        if (
-            issue["state"] != "open"
-            or "stale" not in [label["name"] for label in issue["labels"]]
-        ):
+        if issue["state"] != "open" or "stale" not in [label["name"] for label in issue["labels"]]:
             continue
 
         # Get the timeline to find when the stale label was last added
-        timeline_url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/timeline"
+        timeline_url = (
+            f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/timeline"
+        )
         response = requests.get(timeline_url, headers=headers)
         response.raise_for_status()
         events = response.json()
 
         # Find the most recent stale label addition
         stale_events = [
-            event for event in events
-            if event.get("event") == "labeled" 
-            and event.get("label", {}).get("name") == "stale"
+            event
+            for event in events
+            if event.get("event") == "labeled" and event.get("label", {}).get("name") == "stale"
         ]
-        
+
         if not stale_events:
             continue
 
         latest_stale = datetime.strptime(stale_events[-1]["created_at"], "%Y-%m-%dT%H:%M:%SZ")
 
         # Get comments since the stale label
-        comments_url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/comments"
+        comments_url = (
+            f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/comments"
+        )
         response = requests.get(comments_url, headers=headers)
         response.raise_for_status()
         comments = response.json()
 
         # Check for comments newer than the stale label
         new_comments = [
-            comment for comment in comments
+            comment
+            for comment in comments
             if datetime.strptime(comment["created_at"], "%Y-%m-%dT%H:%M:%SZ") > latest_stale
         ]
 
         if new_comments:
             print(f"\nFound new activity on stale issue #{issue['number']}: {issue['title']}")
             print(f"  {len(new_comments)} new comments since stale label")
-            
+
             if not auto_yes:
                 confirm = input("Remove stale label? (y/n): ")
                 if confirm.lower() != "y":
@@ -278,7 +280,9 @@ def handle_stale_closing(all_issues, auto_yes):
 
                 # Add closing comment
                 comment_url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/comments"
-                response = requests.post(comment_url, headers=headers, json={"body": CLOSE_STALE_COMMENT})
+                response = requests.post(
+                    comment_url, headers=headers, json={"body": CLOSE_STALE_COMMENT}
+                )
                 response.raise_for_status()
 
                 # Close the issue
