@@ -1775,7 +1775,7 @@
 
 - dirname: 2024-11-09-10-57-11--Qwen2.5-Coder-32B-Instruct
   test_cases: 133
-  model: Qwen2.5-Coder-32B-Instruct
+  model: Qwen2.5-Coder-32B-Instruct (whole)
   edit_format: whole
   commit_hash: ec9982a
   pass_rate_1: 60.9
@@ -1798,7 +1798,7 @@
 
 - dirname: 2024-11-09-11-09-15--Qwen2.5-Coder-32B-Instruct
   test_cases: 133
-  model: Qwen2.5-Coder-32B-Instruct
+  model: Qwen2.5-Coder-32B-Instruct (diff)
   edit_format: diff
   commit_hash: ec9982a
   pass_rate_1: 59.4
