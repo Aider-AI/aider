@@ -916,6 +916,22 @@ cog.out("```\n")
   weak_model_name: null
 - cache_control: false
   caches_by_default: false
+  edit_format: diff-fenced
+  editor_edit_format: null
+  editor_model_name: null
+  examples_as_sys_msg: false
+  extra_params: null
+  lazy: false
+  name: vertex_ai/gemini-pro-experimental
+  reminder: user
+  send_undo_reply: false
+  streaming: true
+  use_repo_map: true
+  use_system_prompt: true
+  use_temperature: true
+  weak_model_name: null
+- cache_control: false
+  caches_by_default: false
   edit_format: whole
   editor_edit_format: null
   editor_model_name: null
