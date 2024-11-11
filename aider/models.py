@@ -551,6 +551,11 @@ MODEL_SETTINGS = [
         use_repo_map=True,
     ),
     ModelSettings(
+        "vertex_ai/gemini-pro-experimental",
+        "diff-fenced",
+        use_repo_map=True,
+    ),
+    ModelSettings(
         "gemini/gemini-1.5-flash-exp-0827",
         "whole",
         use_repo_map=False,
