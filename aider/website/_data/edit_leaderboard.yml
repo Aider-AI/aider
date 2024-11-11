@@ -1795,3 +1795,26 @@
   versions: 0.59.2.dev
   seconds_per_case: 26.6
   total_cost: 0.0000
+
+- dirname: 2024-11-09-11-09-15--Qwen2.5-Coder-32B-Instruct
+  test_cases: 133
+  model: openai/Qwen2.5-Coder-32B-Instruct
+  edit_format: diff
+  commit_hash: ec9982a
+  pass_rate_1: 59.4
+  pass_rate_2: 71.4
+  percent_cases_well_formed: 94.7
+  error_outputs: 17
+  num_malformed_responses: 17
+  num_with_malformed_responses: 7
+  user_asks: 1
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: aider --model openai/Qwen2.5-Coder-32B-Instruct
+  date: 2024-11-09
+  versions: 0.59.2.dev
+  seconds_per_case: 22.5
+  total_cost: 0.0000
