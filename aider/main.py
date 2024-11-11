@@ -87,15 +87,20 @@ def make_new_repo(git_root, io):
 
 
 def setup_git(git_root, io):
+    try:
+        cwd = Path.cwd()
+    except OSError:
+        return None
+
     repo = None
 
     if git_root:
         repo = git.Repo(git_root)
-    elif Path.cwd() == Path.home():
+    elif cwd == Path.home():
         io.tool_warning("You should probably run aider in a directory, not your home dir.")
         return
     elif io.confirm_ask("No git repo found, create one to track aider's changes (recommended)?"):
-        git_root = str(Path.cwd().resolve())
+        git_root = str(cwd.resolve())
         repo = make_new_repo(git_root, io)
 
     if not repo:
