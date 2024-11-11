@@ -1798,7 +1798,7 @@
 
 - dirname: 2024-11-09-11-09-15--Qwen2.5-Coder-32B-Instruct
   test_cases: 133
-  model: openai/Qwen2.5-Coder-32B-Instruct
+  model: Qwen2.5-Coder-32B-Instruct
   edit_format: diff
   commit_hash: ec9982a
   pass_rate_1: 59.4
