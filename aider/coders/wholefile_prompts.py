@@ -8,7 +8,7 @@ class WholeFilePrompts(CoderPrompts):
 Take requests for changes to the supplied code.
 If the request is ambiguous, ask questions.
 
-Always reply to the user in the same language they are using.
+Always reply to the user in {language}.
 
 {lazy_prompt}
 Once you understand the request you MUST:

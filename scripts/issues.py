@@ -28,6 +28,10 @@ This looks like a duplicate of #{oldest_issue_number}. Please see the comments t
 
 I'm going to close this issue for now. But please let me know if you think this is actually a distinct issue and I will reopen this issue."""  # noqa
 
+STALE_COMMENT = """I'm labeling this issue as stale because it has been open for 2 weeks with no activity. If there are no additional comments, it will be closed in 7 days."""  # noqa
+
+CLOSE_STALE_COMMENT = """I'm closing this issue because it has been stalled for 3 weeks with no activity. Feel free to add a comment here and we can re-open it. Or feel free to file a new issue at any time."""  # noqa
+
 # GitHub API configuration
 GITHUB_API_URL = "https://api.github.com"
 REPO_OWNER = "Aider-AI"
@@ -160,11 +164,139 @@ def handle_unlabeled_issues(all_issues, auto_yes):
         print(f"  - Added 'question' label to #{issue['number']}")
 
 
+def handle_stale_issues(all_issues, auto_yes):
+    print("\nChecking for stale question issues...")
+
+    for issue in all_issues:
+        # Skip if not open, not a question, already stale, or has been reopened
+        if (
+            issue["state"] != "open"
+            or "question" not in [label["name"] for label in issue["labels"]]
+            or "stale" in [label["name"] for label in issue["labels"]]
+            or has_been_reopened(issue["number"])
+        ):
+            continue
+
+        # Get latest activity timestamp from issue or its comments
+        latest_activity = datetime.strptime(issue["updated_at"], "%Y-%m-%dT%H:%M:%SZ")
+
+        # Check if issue is stale (no activity for 14 days)
+        days_inactive = (datetime.now() - latest_activity).days
+        if days_inactive >= 14:
+            print(f"\nStale issue found: #{issue['number']}: {issue['title']}\n{issue['html_url']}")
+            print(f"  No activity for {days_inactive} days")
+
+            if not auto_yes:
+                confirm = input("Add stale label and comment? (y/n): ")
+                if confirm.lower() != "y":
+                    print("Skipping this issue.")
+                    continue
+
+            # Add comment
+            comment_url = (
+                f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/comments"
+            )
+            response = requests.post(comment_url, headers=headers, json={"body": STALE_COMMENT})
+            response.raise_for_status()
+
+            # Add stale label
+            url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}"
+            response = requests.patch(url, headers=headers, json={"labels": ["question", "stale"]})
+            response.raise_for_status()
+
+            print(f"  Added stale label and comment to #{issue['number']}")
+
+
+def handle_stale_closing(all_issues, auto_yes):
+    print("\nChecking for issues to close or unstale...")
+
+    for issue in all_issues:
+        # Skip if not open or not stale
+        if issue["state"] != "open" or "stale" not in [label["name"] for label in issue["labels"]]:
+            continue
+
+        # Get the timeline to find when the stale label was last added
+        timeline_url = (
+            f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/timeline"
+        )
+        response = requests.get(timeline_url, headers=headers)
+        response.raise_for_status()
+        events = response.json()
+
+        # Find the most recent stale label addition
+        stale_events = [
+            event
+            for event in events
+            if event.get("event") == "labeled" and event.get("label", {}).get("name") == "stale"
+        ]
+
+        if not stale_events:
+            continue
+
+        latest_stale = datetime.strptime(stale_events[-1]["created_at"], "%Y-%m-%dT%H:%M:%SZ")
+
+        # Get comments since the stale label
+        comments_url = (
+            f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/comments"
+        )
+        response = requests.get(comments_url, headers=headers)
+        response.raise_for_status()
+        comments = response.json()
+
+        # Check for comments newer than the stale label
+        new_comments = [
+            comment
+            for comment in comments
+            if datetime.strptime(comment["created_at"], "%Y-%m-%dT%H:%M:%SZ") > latest_stale
+        ]
+
+        if new_comments:
+            print(f"\nFound new activity on stale issue #{issue['number']}: {issue['title']}")
+            print(f"  {len(new_comments)} new comments since stale label")
+
+            if not auto_yes:
+                confirm = input("Remove stale label? (y/n): ")
+                if confirm.lower() != "y":
+                    print("Skipping this issue.")
+                    continue
+
+            # Remove stale label but keep question label
+            url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}"
+            response = requests.patch(url, headers=headers, json={"labels": ["question"]})
+            response.raise_for_status()
+            print(f"  Removed stale label from #{issue['number']}")
+        else:
+            # Check if it's been 7 days since stale label
+            days_stale = (datetime.now() - latest_stale).days
+            if days_stale >= 7:
+                print(f"\nStale issue ready for closing #{issue['number']}: {issue['title']}")
+                print(f"  No activity for {days_stale} days since stale label")
+
+                if not auto_yes:
+                    confirm = input("Close this issue? (y/n): ")
+                    if confirm.lower() != "y":
+                        print("Skipping this issue.")
+                        continue
+
+                # Add closing comment
+                comment_url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/comments"
+                response = requests.post(
+                    comment_url, headers=headers, json={"body": CLOSE_STALE_COMMENT}
+                )
+                response.raise_for_status()
+
+                # Close the issue
+                url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}"
+                response = requests.patch(url, headers=headers, json={"state": "closed"})
+                response.raise_for_status()
+                print(f"  Closed issue #{issue['number']}")
+
+
 def handle_duplicate_issues(all_issues, auto_yes):
     open_issues = [issue for issue in all_issues if issue["state"] == "open"]
     grouped_open_issues = group_issues_by_subject(open_issues)
 
-    print("Analyzing issues (skipping reopened issues)...")
+    print("Looking for duplicate issues (skipping reopened issues)...")
     for subject, issues in grouped_open_issues.items():
         oldest_issue = find_oldest_issue(subject, all_issues)
         if not oldest_issue:
@@ -214,6 +346,8 @@ def main():
     all_issues = get_issues("all")
 
     handle_unlabeled_issues(all_issues, args.yes)
+    handle_stale_issues(all_issues, args.yes)
+    handle_stale_closing(all_issues, args.yes)
     handle_duplicate_issues(all_issues, args.yes)
 
 

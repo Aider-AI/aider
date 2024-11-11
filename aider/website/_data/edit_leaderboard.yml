@@ -1657,3 +1657,164 @@
   versions: 0.59.2.dev
   seconds_per_case: 18.2
   total_cost: 0.0000
+
+- dirname: 2024-10-29-00-29-09--Qwen2.5-Coder-0.5B-Instruct
+  test_cases: 133
+  model: Qwen2.5-Coder-0.5B-Instruct
+  edit_format: whole
+  commit_hash: 58bd375
+  pass_rate_1: 14.3
+  pass_rate_2: 14.3
+  percent_cases_well_formed: 100.0
+  error_outputs: 20
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 45
+  lazy_comments: 0
+  syntax_errors: 2
+  indentation_errors: 0
+  exhausted_context_windows: 20
+  test_timeouts: 2
+  command: aider --model openai/Qwen2.5-Coder-0.5B-Instruct
+  date: 2024-10-29
+  versions: 0.59.2.dev
+  seconds_per_case: 16.0
+  total_cost: 0.0000
+
+- dirname: 2024-11-11-19-37-01--Qwen2.5-Coder-1.5B-Instruct
+  test_cases: 133
+  model: Qwen2.5-Coder-1.5B-Instruct
+  edit_format: whole
+  commit_hash: bb5681c
+  pass_rate_1: 28.6
+  pass_rate_2: 31.6
+  percent_cases_well_formed: 100.0
+  error_outputs: 5
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 13
+  lazy_comments: 2
+  syntax_errors: 1
+  indentation_errors: 0
+  exhausted_context_windows: 5
+  test_timeouts: 2
+  command: aider --model openai/Qwen2.5-Coder-1.5B-Instruct
+  date: 2024-11-11
+  versions: 0.59.2.dev
+  seconds_per_case: 27.4
+  total_cost: 0.0000
+
+- dirname: 2024-11-04-02-25-32--Qwen2.5-Coder-3B-Instruct
+  test_cases: 133
+  model: Qwen2.5-Coder-3B-Instruct
+  edit_format: whole
+  commit_hash: 0ba3647
+  pass_rate_1: 33.8
+  pass_rate_2: 39.1
+  percent_cases_well_formed: 100.0
+  error_outputs: 4
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 3
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 4
+  test_timeouts: 6
+  command: aider --model openai/Qwen2.5-Coder-3B-Instruct
+  date: 2024-11-04
+  versions: 0.59.2.dev
+  seconds_per_case: 18.7
+  total_cost: 0.0000
+
+- dirname: 2024-10-16-16-20-59--Qwen2.5-Coder-7B-Instruct
+  test_cases: 133
+  model: Qwen2.5-Coder-7B-Instruct
+  edit_format: whole
+  commit_hash: 92fe979-dirty
+  pass_rate_1: 51.9
+  pass_rate_2: 57.9
+  percent_cases_well_formed: 100.0
+  error_outputs: 2
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 2
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 2
+  test_timeouts: 5
+  command: aider --model openai/Qwen2.5-Coder-7B-Instruct
+  date: 2024-10-16
+  versions: 0.59.2.dev
+  seconds_per_case: 10.5
+  total_cost: 0.0000
+
+- dirname: 2024-10-29-11-53-39--Qwen2.5-Coder-14B-Instruct
+  test_cases: 133
+  model: Qwen2.5-Coder-14B-Instruct
+  edit_format: whole
+  commit_hash: 58bd375
+  pass_rate_1: 58.6
+  pass_rate_2: 69.2
+  percent_cases_well_formed: 100.0
+  error_outputs: 3
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 2
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 3
+  test_timeouts: 0
+  command: aider --model openai/Qwen2.5-Coder-14B-Instruct
+  date: 2024-10-29
+  versions: 0.59.2.dev
+  seconds_per_case: 18.3
+  total_cost: 0.0000
+
+- dirname: 2024-11-09-10-57-11--Qwen2.5-Coder-32B-Instruct
+  test_cases: 133
+  model: Qwen2.5-Coder-32B-Instruct (whole)
+  edit_format: whole
+  commit_hash: ec9982a
+  pass_rate_1: 60.9
+  pass_rate_2: 73.7
+  percent_cases_well_formed: 100.0
+  error_outputs: 1
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 1
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  test_timeouts: 1
+  command: aider --model openai/Qwen2.5-Coder-32B-Instruct
+  date: 2024-11-09
+  versions: 0.59.2.dev
+  seconds_per_case: 26.6
+  total_cost: 0.0000
+
+- dirname: 2024-11-09-11-09-15--Qwen2.5-Coder-32B-Instruct
+  test_cases: 133
+  model: Qwen2.5-Coder-32B-Instruct (diff)
+  edit_format: diff
+  commit_hash: ec9982a
+  pass_rate_1: 59.4
+  pass_rate_2: 71.4
+  percent_cases_well_formed: 94.7
+  error_outputs: 17
+  num_malformed_responses: 17
+  num_with_malformed_responses: 7
+  user_asks: 1
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: aider --model openai/Qwen2.5-Coder-32B-Instruct
+  date: 2024-11-09
+  versions: 0.59.2.dev
+  seconds_per_case: 22.5
+  total_cost: 0.0000

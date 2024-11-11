@@ -44,7 +44,7 @@ class TestScrape(unittest.TestCase):
         self.commands.io.tool_error = mock_print_error
 
         # Run the cmd_web command
-        result = self.commands.cmd_web("https://example.com")
+        result = self.commands.cmd_web("https://example.com", return_content=True)
 
         # Assert that the result contains some content
         self.assertIsNotNone(result)

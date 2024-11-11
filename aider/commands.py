@@ -139,7 +139,7 @@ class Commands:
         else:
             self.io.tool_output("Please provide a partial model name to search for.")
 
-    def cmd_web(self, args):
+    def cmd_web(self, args, return_content=False):
         "Scrape a webpage, convert to markdown and send in a message"
 
         url = args.strip()
@@ -158,11 +158,16 @@ class Commands:
             )
 
         content = self.scraper.scrape(url) or ""
-        content = f"{url}:\n\n" + content
+        content = f"Here is the content of {url}:\n\n" + content
+        if return_content:
+            return content
 
-        self.io.tool_output("... done.")
+        self.io.tool_output("... added to chat.")
 
-        return content
+        self.coder.cur_messages += [
+            dict(role="user", content=content),
+            dict(role="assistant", content="Ok."),
+        ]
 
     def is_command(self, inp):
         return inp[0] in "/!"

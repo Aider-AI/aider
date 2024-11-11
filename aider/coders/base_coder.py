@@ -820,7 +820,7 @@ class Coder:
                     "Add URL to the chat?", subject=url, group=group, allow_never=True
                 ):
                     inp += "\n\n"
-                    inp += self.commands.cmd_web(url)
+                    inp += self.commands.cmd_web(url, return_content=True)
                     added_urls.append(url)
                 else:
                     self.rejected_urls.add(url)
@@ -956,12 +956,18 @@ class Coder:
                 platform=platform_text
             )
 
+        if self.chat_language:
+            language = self.chat_language
+        else:
+            language = "in the same language they are using"
+
         prompt = prompt.format(
             fence=self.fence,
             lazy_prompt=lazy_prompt,
             platform=platform_text,
             shell_cmd_prompt=shell_cmd_prompt,
             shell_cmd_reminder=shell_cmd_reminder,
+            language=language,
         )
         return prompt
 

@@ -71,6 +71,8 @@ def simple_send_with_retries(model_name, messages, extra_params=None):
             }
 
             _hash, response = send_completion(**kwargs)
+            if not response or not hasattr(response, "choices") or not response.choices:
+                return None
             return response.choices[0].message.content
         except litellm_ex.exceptions_tuple() as err:
             ex_info = litellm_ex.get_ex_info(err)
@@ -86,10 +88,10 @@ def simple_send_with_retries(model_name, messages, extra_params=None):
                     should_retry = False
 
             if not should_retry:
-                break
+                return None
 
             print(f"Retrying in {retry_delay:.1f} seconds...")
             time.sleep(retry_delay)
             continue
         except AttributeError:
-            return
+            return None
