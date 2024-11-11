@@ -778,7 +778,9 @@ class ModelInfoManager:
         # If all else fails, do it the slow way...
         try:
             return litellm.get_model_info(model)
-        except Exception:
+        except Exception as ex:
+            if "model_prices_and_context_window.json" not in str(ex):
+                print(str(ex))
             return dict()
 
 
