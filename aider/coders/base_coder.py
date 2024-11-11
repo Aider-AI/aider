@@ -956,12 +956,18 @@ class Coder:
                 platform=platform_text
             )
 
+        if self.chat_language:
+            language = self.chat_language
+        else:
+            language = "in the same language they are using"
+
         prompt = prompt.format(
             fence=self.fence,
             lazy_prompt=lazy_prompt,
             platform=platform_text,
             shell_cmd_prompt=shell_cmd_prompt,
             shell_cmd_reminder=shell_cmd_reminder,
+            language=language,
         )
         return prompt
 
