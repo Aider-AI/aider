@@ -95,7 +95,10 @@ def setup_git(git_root, io):
     repo = None
 
     if git_root:
-        repo = git.Repo(git_root)
+        try:
+            repo = git.Repo(git_root)
+        except ANY_GIT_ERROR:
+            pass
     elif cwd == Path.home():
         io.tool_warning("You should probably run aider in a directory, not your home dir.")
         return
