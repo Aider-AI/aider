@@ -1603,7 +1603,6 @@ class Coder:
                 completion.usage, "cache_creation_input_tokens"
             ):
                 self.message_tokens_sent += prompt_tokens
-                self.message_tokens_sent += cache_hit_tokens
                 self.message_tokens_sent += cache_write_tokens
             else:
                 self.message_tokens_sent += prompt_tokens
