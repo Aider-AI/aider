@@ -355,6 +355,9 @@ class Coder:
 
         for fname in fnames:
             fname = Path(fname)
+            if self.repo and self.repo.git_ignored_file(fname):
+                self.io.tool_warning(f"Skipping {fname} that matches gitignore spec.")
+
             if self.repo and self.repo.ignored_file(fname):
                 self.io.tool_warning(f"Skipping {fname} that matches aiderignore spec.")
                 continue
@@ -1778,6 +1781,10 @@ class Coder:
         if full_path in self.abs_fnames:
             self.check_for_dirty_commit(path)
             return True
+
+        if self.repo and self.repo.git_ignored_file(path):
+            self.io.tool_warning(f"Skipping edits to {path} that matches gitignore spec.")
+            return
 
         if not Path(full_path).exists():
             if not self.io.confirm_ask("Create new file?", subject=path):
