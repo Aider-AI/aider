@@ -1245,10 +1245,19 @@ class Coder:
         else:
             content = ""
 
-        try:
-            self.reply_completed()
-        except KeyboardInterrupt:
-            interrupted = True
+        if not interrupted:
+            add_rel_files_message = self.check_for_file_mentions(content)
+            if add_rel_files_message:
+                if self.reflected_message:
+                    self.reflected_message += "\n\n" + add_rel_files_message
+                else:
+                    self.reflected_message = add_rel_files_message
+                return
+
+            try:
+                self.reply_completed()
+            except KeyboardInterrupt:
+                interrupted = True
 
         if interrupted:
             content += "\n^C KeyboardInterrupt"
@@ -1298,13 +1307,6 @@ class Coder:
                     self.reflected_message = test_errors
                     self.update_cur_messages()
                     return
-
-        add_rel_files_message = self.check_for_file_mentions(content)
-        if add_rel_files_message:
-            if self.reflected_message:
-                self.reflected_message += "\n\n" + add_rel_files_message
-            else:
-                self.reflected_message = add_rel_files_message
 
     def reply_completed(self):
         pass
