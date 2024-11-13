@@ -123,7 +123,7 @@ class Coder:
 
     @classmethod
     def create(
-        self,
+        cls,
         main_model=None,
         edit_format=None,
         io=None,
@@ -155,7 +155,7 @@ class Coder:
 
             # If the edit format changes, we can't leave old ASSISTANT
             # messages in the chat history. The old edit format will
-            # confused the new LLM. It may try and imitate it, disobeying
+            # confuse the new LLM. It may try and imitate it, disobeying
             # the system prompt.
             done_messages = from_coder.done_messages
             if edit_format != from_coder.edit_format and done_messages and summarize_from_coder:
