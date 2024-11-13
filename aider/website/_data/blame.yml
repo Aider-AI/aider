@@ -2916,3 +2916,66 @@
     Paul Gauthier (aider): 63
   start_tag: v0.61.0
   total_lines: 75
+- aider_percentage: 55.16
+  aider_total: 385
+  end_date: '2024-11-13'
+  end_tag: v0.63.0
+  file_counts:
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/coders/architect_coder.py:
+      Paul Gauthier: 3
+    aider/coders/base_coder.py:
+      Paul Gauthier: 42
+      Paul Gauthier (aider): 1
+    aider/coders/editblock_coder.py:
+      Paul Gauthier: 4
+    aider/commands.py:
+      Paul Gauthier: 13
+    aider/exceptions.py:
+      Paul Gauthier: 72
+      Paul Gauthier (aider): 4
+    aider/io.py:
+      Paul Gauthier: 3
+      Paul Gauthier (aider): 23
+    aider/main.py:
+      Paul Gauthier: 9
+      Paul Gauthier (aider): 9
+    aider/models.py:
+      Logan Attwood: 29
+      Paul Gauthier: 50
+      Paul Gauthier (aider): 7
+    aider/repo.py:
+      Paul Gauthier: 7
+    aider/repomap.py:
+      Paul Gauthier: 4
+    aider/sendchat.py:
+      Paul Gauthier: 17
+      Paul Gauthier (aider): 4
+    scripts/issues.py:
+      Paul Gauthier: 4
+      Paul Gauthier (aider): 195
+    tests/basic/test_coder.py:
+      Paul Gauthier: 2
+    tests/basic/test_commands.py:
+      Paul Gauthier (aider): 20
+    tests/basic/test_editblock.py:
+      Paul Gauthier: 41
+    tests/basic/test_exceptions.py:
+      Paul Gauthier (aider): 65
+    tests/basic/test_main.py:
+      Paul Gauthier: 1
+    tests/basic/test_sanity_check_repo.py:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 2
+    tests/basic/test_sendchat.py:
+      Paul Gauthier: 8
+      Paul Gauthier (aider): 55
+    tests/scrape/test_scrape.py:
+      Paul Gauthier: 1
+  grand_total:
+    Logan Attwood: 29
+    Paul Gauthier: 284
+    Paul Gauthier (aider): 385
+  start_tag: v0.62.0
+  total_lines: 698
