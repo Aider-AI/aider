@@ -715,6 +715,15 @@ MODEL_SETTINGS = [
         use_temperature=False,
         streaming=False,
     ),
+    ModelSettings(
+        "openrouter/qwen/qwen-2.5-coder-32b-instruct",
+        "diff",
+        weak_model_name="openrouter/qwen/qwen-2.5-coder-32b-instruct",
+        editor_model_name="openrouter/qwen/qwen-2.5-coder-32b-instruct",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        reminder="user",
+    ),
 ]
 
 
@@ -1058,8 +1067,14 @@ def register_litellm_models(model_fnames):
             continue
 
         try:
-            with open(model_fname, "r") as model_def_file:
-                model_def = json5.load(model_def_file)
+            data = Path(model_fname).read_text()
+            if not data.strip():
+                continue
+            model_def = json5.loads(data)
+            if not model_def:
+                continue
+
+            # only load litellm if we have actual data
             litellm._load_litellm()
             litellm.register_model(model_def)
         except Exception as e:
