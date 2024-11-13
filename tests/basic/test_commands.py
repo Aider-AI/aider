@@ -1217,8 +1217,6 @@ class TestCommands(TestCase):
             # Create and commit a .gitignore file
             gitignore = Path(".gitignore")
             gitignore.write_text("*.ignored\n")
-            repo.git.add(".gitignore")
-            repo.git.commit("-m", "Add .gitignore")
 
             # Create a file that matches the gitignore pattern
             ignored_file = Path("test.ignored")
