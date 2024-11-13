@@ -1212,9 +1212,7 @@ class TestCommands(TestCase):
 
     def test_cmd_add_gitignored_file(self):
         with GitTemporaryDirectory():
-            repo = git.Repo()
-
-            # Create and commit a .gitignore file
+            # Create a .gitignore file
             gitignore = Path(".gitignore")
             gitignore.write_text("*.ignored\n")
 
