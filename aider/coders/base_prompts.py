@@ -1,5 +1,7 @@
 class CoderPrompts:
     system_reminder = ""
+    edit_format_training = ""
+    final_remarks = ""
 
     files_content_gpt_edits = "I committed the changes with git hash {hash} & commit msg: {message}"
 
