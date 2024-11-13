@@ -735,7 +735,7 @@ class InputOutput:
             files_with_label = ["Read only:"] + read_only_files
             console.print(Columns(files_with_label))
         if editable_files:
-            if read_only_files:
+            if read_only_files and (len(read_only_files) > 1 or len(editable_files) > 1):
                 console.print()
             files_with_label = ["Editable:"] + editable_files
             console.print(Columns(files_with_label))
