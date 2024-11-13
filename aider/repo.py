@@ -169,7 +169,7 @@ class GitRepo:
     def get_rel_repo_dir(self):
         try:
             return os.path.relpath(self.repo.git_dir, os.getcwd())
-        except ValueError:
+        except (ValueError, OSError):
             return self.repo.git_dir
 
     def get_commit_message(self, diffs, context):
