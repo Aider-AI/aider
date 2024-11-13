@@ -3,7 +3,7 @@
 
 ### Aider v0.63.0
 
-- Support for Qwen 2.5 Coder
+- Support for Qwen 2.5 Coder 32B.
 - `/web` command just adds the page to the chat, without triggering an LLM response.
 - Improved prompting for the user's preferred chat language.
 - Improved handling of LiteLLM exceptions.
