@@ -744,7 +744,7 @@ class InputOutput:
                 editable_output = StringIO()
                 Console(file=editable_output, force_terminal=False).print(Columns(files_with_label))
                 editable_lines = editable_output.getvalue().splitlines()
-                
+
                 if len(read_only_lines) > 1 or len(editable_lines) > 1:
                     console.print()
             files_with_label = ["Editable:"] + editable_files
