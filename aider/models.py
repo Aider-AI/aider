@@ -775,18 +775,20 @@ class ModelInfoManager:
         return dict()
 
     def get_model_info(self, model):
-        if not litellm._lazy_module:
-            info = self.get_model_from_cached_json_db(model)
-            if info:
-                return info
+        cached_info = self.get_model_from_cached_json_db(model)
 
-        # If all else fails, do it the slow way...
-        try:
-            return litellm.get_model_info(model)
-        except Exception as ex:
-            if "model_prices_and_context_window.json" not in str(ex):
-                print(str(ex))
-            return dict()
+        litellm_info = None
+        if litellm._lazy_module or not cached_info:
+            try:
+                litellm_info = litellm.get_model_info(model)
+            except Exception as ex:
+                if "model_prices_and_context_window.json" not in str(ex):
+                    print(str(ex))
+
+        if litellm_info:
+            return litellm_info
+
+        return cached_info
 
 
 model_info_manager = ModelInfoManager()
