@@ -1,6 +1,17 @@
 
 # Release history
 
+### Aider v0.63.0
+
+- Support for Qwen 2.5 Coder
+- `/web` command just adds the page to the chat, without triggering an LLM response.
+- Improved prompting for the user's preferred chat language.
+- Improved handling of LiteLLM exceptions.
+- Bugfix for double-counting tokens when reporting cache stats.
+- Bugfix for the LLM creating new files.
+- Other small bug fixes.
+- Aider wrote 55% of the code in this release.
+
 ### Aider v0.62.0
 
 - Full support for Claude 3.5 Haiku
