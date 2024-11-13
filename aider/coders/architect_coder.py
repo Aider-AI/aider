@@ -10,7 +10,7 @@ class ArchitectCoder(AskCoder):
     def reply_completed(self):
         content = self.partial_response_content
 
-        if not content.strip():
+        if not content or not content.strip():
             return
 
         if not self.io.confirm_ask("Edit the files?"):
