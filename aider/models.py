@@ -551,6 +551,11 @@ MODEL_SETTINGS = [
         use_repo_map=True,
     ),
     ModelSettings(
+        "vertex_ai/gemini-pro-experimental",
+        "diff-fenced",
+        use_repo_map=True,
+    ),
+    ModelSettings(
         "gemini/gemini-1.5-flash-exp-0827",
         "whole",
         use_repo_map=False,
@@ -710,6 +715,14 @@ MODEL_SETTINGS = [
         use_temperature=False,
         streaming=False,
     ),
+    ModelSettings(
+        "openrouter/qwen/qwen-2.5-coder-32b-instruct",
+        "diff",
+        weak_model_name="openrouter/qwen/qwen-2.5-coder-32b-instruct",
+        editor_model_name="openrouter/qwen/qwen-2.5-coder-32b-instruct",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+    ),
 ]
 
 
@@ -770,16 +783,20 @@ class ModelInfoManager:
         return dict()
 
     def get_model_info(self, model):
-        if not litellm._lazy_module:
-            info = self.get_model_from_cached_json_db(model)
-            if info:
-                return info
+        cached_info = self.get_model_from_cached_json_db(model)
 
-        # If all else fails, do it the slow way...
-        try:
-            return litellm.get_model_info(model)
-        except Exception:
-            return dict()
+        litellm_info = None
+        if litellm._lazy_module or not cached_info:
+            try:
+                litellm_info = litellm.get_model_info(model)
+            except Exception as ex:
+                if "model_prices_and_context_window.json" not in str(ex):
+                    print(str(ex))
+
+        if litellm_info:
+            return litellm_info
+
+        return cached_info
 
 
 model_info_manager = ModelInfoManager()
@@ -862,6 +879,17 @@ class Model(ModelSettings):
             self.use_system_prompt = False
             self.use_temperature = False
             self.streaming = False
+
+        if (
+            "qwen" in model
+            and "coder" in model
+            and ("2.5" in model or "2-5" in model)
+            and "32b" in model
+        ):
+            "openrouter/qwen/qwen-2.5-coder-32b-instruct",
+            self.edit_format = "diff"
+            self.editor_edit_format = "editor-diff"
+            self.use_repo_map = True
 
         # use the defaults
         if self.edit_format == "diff":
@@ -1049,8 +1077,14 @@ def register_litellm_models(model_fnames):
             continue
 
         try:
-            with open(model_fname, "r") as model_def_file:
-                model_def = json5.load(model_def_file)
+            data = Path(model_fname).read_text()
+            if not data.strip():
+                continue
+            model_def = json5.loads(data)
+            if not model_def:
+                continue
+
+            # only load litellm if we have actual data
             litellm._load_litellm()
             litellm.register_model(model_def)
         except Exception as e:

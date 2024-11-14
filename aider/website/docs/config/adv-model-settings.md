@@ -916,6 +916,22 @@ cog.out("```\n")
   weak_model_name: null
 - cache_control: false
   caches_by_default: false
+  edit_format: diff-fenced
+  editor_edit_format: null
+  editor_model_name: null
+  examples_as_sys_msg: false
+  extra_params: null
+  lazy: false
+  name: vertex_ai/gemini-pro-experimental
+  reminder: user
+  send_undo_reply: false
+  streaming: true
+  use_repo_map: true
+  use_system_prompt: true
+  use_temperature: true
+  weak_model_name: null
+- cache_control: false
+  caches_by_default: false
   edit_format: whole
   editor_edit_format: null
   editor_model_name: null
@@ -1158,6 +1174,22 @@ cog.out("```\n")
   use_system_prompt: false
   use_temperature: false
   weak_model_name: openrouter/openai/gpt-4o-mini
+- cache_control: false
+  caches_by_default: false
+  edit_format: diff
+  editor_edit_format: editor-diff
+  editor_model_name: openrouter/qwen/qwen-2.5-coder-32b-instruct
+  examples_as_sys_msg: false
+  extra_params: null
+  lazy: false
+  name: openrouter/qwen/qwen-2.5-coder-32b-instruct
+  reminder: user
+  send_undo_reply: false
+  streaming: true
+  use_repo_map: true
+  use_system_prompt: true
+  use_temperature: true
+  weak_model_name: openrouter/qwen/qwen-2.5-coder-32b-instruct
 ```
 <!--[[[end]]]-->
 

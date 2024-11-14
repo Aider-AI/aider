@@ -743,6 +743,10 @@ class Commands:
                 )
                 continue
 
+            if self.coder.repo and self.coder.repo.git_ignored_file(matched_file):
+                self.io.tool_error(f"Can't add {matched_file} which is in gitignore")
+                continue
+
             if abs_file_path in self.coder.abs_fnames:
                 self.io.tool_error(f"{matched_file} is already in the chat as an editable file")
                 continue
