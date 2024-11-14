@@ -1,16 +1,18 @@
 import os
-import os
+from pathlib import Path
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 from flask_restx import Api, Resource, fields
 from aider.coders import Coder
 from aider.io import InputOutput
-from dotenv import load_dotenv, set_key
+from dotenv import load_dotenv, set_key, find_dotenv
 
 def create_app():
-    # Load environment variables from .env file
-    load_dotenv()
+    # Load environment variables from aider.env file in the user's home directory
+    dotenv_path = os.path.join(str(Path.home()), 'aider.env')
+    load_dotenv(dotenv_path)
 
     app = Flask(__name__)
+    app.config['ENV_FILE'] = dotenv_path
     api = Api(app, version='1.0', title='Aider API',
               description='API for Aider - AI pair programming in your terminal',
               doc='/swagger')  # Move Swagger UI to /swagger
@@ -42,7 +44,16 @@ def create_app():
 
     @app.route('/config')
     def config():
-        return render_template('index.html')
+        current_config = {
+            'api_provider': 'openai' if os.getenv('OPENAI_API_KEY') else 'anthropic',
+            'openai_api_key': os.getenv('OPENAI_API_KEY', ''),
+            'openai_model': os.getenv('AIDER_MODEL', 'gpt-3.5-turbo'),
+            'anthropic_api_key': os.getenv('ANTHROPIC_API_KEY', ''),
+            'anthropic_model': os.getenv('AIDER_MODEL', 'claude-3-opus-20240229'),
+            'aider_api_port': os.getenv('AIDER_API_PORT', '5000'),
+            'aider_api_debug': os.getenv('AIDER_API_DEBUG', 'False')
+        }
+        return render_template('index.html', config=current_config)
 
     @app.errorhandler(404)
     def page_not_found(e):
@@ -58,7 +69,7 @@ def create_app():
         aider_api_port = request.form.get('aider_api_port')
         aider_api_debug = request.form.get('aider_api_debug')
 
-        env_file = 'aider.env'
+        env_file = app.config['ENV_FILE']
         if api_provider == 'openai':
             set_key(env_file, 'OPENAI_API_KEY', openai_api_key)
             set_key(env_file, 'AIDER_MODEL', openai_model)
@@ -70,6 +81,9 @@ def create_app():
 
         set_key(env_file, 'AIDER_API_PORT', aider_api_port)
         set_key(env_file, 'AIDER_API_DEBUG', aider_api_debug)
+
+        # Reload environment variables
+        load_dotenv(env_file)
 
         return redirect(url_for('config'))
 
