@@ -86,8 +86,8 @@
 
         <label for="aider_api_debug">Debug Mode:</label>
         <select id="aider_api_debug" name="aider_api_debug">
-            <option value="False" {{ 'selected' if config.aider_api_debug == 'False' else '' }}>False</option>
-            <option value="True" {{ 'selected' if config.aider_api_debug == 'True' else '' }}>True</option>
+            <option value="False" {{ 'selected' if config.aider_api_debug == False else '' }}>False</option>
+            <option value="True" {{ 'selected' if config.aider_api_debug == True else '' }}>True</option>
         </select>
 
         <input type="submit" value="Update Configuration">
