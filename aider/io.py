@@ -732,13 +732,23 @@ class InputOutput:
         editable_files = [f for f in sorted(rel_fnames) if f not in rel_read_only_fnames]
 
         if read_only_files:
-            console.print("Read only files:", style="bold")
-            console.print(Columns(read_only_files))
+            files_with_label = ["Readonly:"] + read_only_files
+            read_only_output = StringIO()
+            Console(file=read_only_output, force_terminal=False).print(Columns(files_with_label))
+            read_only_lines = read_only_output.getvalue().splitlines()
+            console.print(Columns(files_with_label))
+
         if editable_files:
+            files_with_label = editable_files
             if read_only_files:
-                console.print()
-                console.print("Editable files:", style="bold")
-            console.print(Columns(editable_files))
+                files_with_label = ["Editable:"] + editable_files
+                editable_output = StringIO()
+                Console(file=editable_output, force_terminal=False).print(Columns(files_with_label))
+                editable_lines = editable_output.getvalue().splitlines()
+
+                if len(read_only_lines) > 1 or len(editable_lines) > 1:
+                    console.print()
+            console.print(Columns(files_with_label))
 
         return output.getvalue()
 

@@ -1210,6 +1210,26 @@ class TestCommands(TestCase):
             del commands
             del repo
 
+    def test_cmd_add_gitignored_file(self):
+        with GitTemporaryDirectory():
+            # Create a .gitignore file
+            gitignore = Path(".gitignore")
+            gitignore.write_text("*.ignored\n")
+
+            # Create a file that matches the gitignore pattern
+            ignored_file = Path("test.ignored")
+            ignored_file.write_text("This should be ignored")
+
+            io = InputOutput(pretty=False, fancy_input=False, yes=False)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Try to add the ignored file
+            commands.cmd_add(str(ignored_file))
+
+            # Verify the file was not added
+            self.assertEqual(len(coder.abs_fnames), 0)
+
     def test_cmd_add_aiderignored_file(self):
         with GitTemporaryDirectory():
             repo = git.Repo()

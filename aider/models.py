@@ -722,7 +722,6 @@ MODEL_SETTINGS = [
         editor_model_name="openrouter/qwen/qwen-2.5-coder-32b-instruct",
         editor_edit_format="editor-diff",
         use_repo_map=True,
-        reminder="user",
     ),
 ]
 
@@ -880,6 +879,17 @@ class Model(ModelSettings):
             self.use_system_prompt = False
             self.use_temperature = False
             self.streaming = False
+
+        if (
+            "qwen" in model
+            and "coder" in model
+            and ("2.5" in model or "2-5" in model)
+            and "32b" in model
+        ):
+            "openrouter/qwen/qwen-2.5-coder-32b-instruct",
+            self.edit_format = "diff"
+            self.editor_edit_format = "editor-diff"
+            self.use_repo_map = True
 
         # use the defaults
         if self.edit_format == "diff":

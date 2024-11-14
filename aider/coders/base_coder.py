@@ -355,6 +355,9 @@ class Coder:
 
         for fname in fnames:
             fname = Path(fname)
+            if self.repo and self.repo.git_ignored_file(fname):
+                self.io.tool_warning(f"Skipping {fname} that matches gitignore spec.")
+
             if self.repo and self.repo.ignored_file(fname):
                 self.io.tool_warning(f"Skipping {fname} that matches aiderignore spec.")
                 continue
@@ -1244,10 +1247,19 @@ class Coder:
         else:
             content = ""
 
-        try:
-            self.reply_completed()
-        except KeyboardInterrupt:
-            interrupted = True
+        if not interrupted:
+            add_rel_files_message = self.check_for_file_mentions(content)
+            if add_rel_files_message:
+                if self.reflected_message:
+                    self.reflected_message += "\n\n" + add_rel_files_message
+                else:
+                    self.reflected_message = add_rel_files_message
+                return
+
+            try:
+                self.reply_completed()
+            except KeyboardInterrupt:
+                interrupted = True
 
         if interrupted:
             content += "\n^C KeyboardInterrupt"
@@ -1297,13 +1309,6 @@ class Coder:
                     self.reflected_message = test_errors
                     self.update_cur_messages()
                     return
-
-        add_rel_files_message = self.check_for_file_mentions(content)
-        if add_rel_files_message:
-            if self.reflected_message:
-                self.reflected_message += "\n\n" + add_rel_files_message
-            else:
-                self.reflected_message = add_rel_files_message
 
     def reply_completed(self):
         pass
@@ -1780,6 +1785,10 @@ class Coder:
         if full_path in self.abs_fnames:
             self.check_for_dirty_commit(path)
             return True
+
+        if self.repo and self.repo.git_ignored_file(path):
+            self.io.tool_warning(f"Skipping edits to {path} that matches gitignore spec.")
+            return
 
         if not Path(full_path).exists():
             if not self.io.confirm_ask("Create new file?", subject=path):

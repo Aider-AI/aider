@@ -150,7 +150,6 @@ python -m aider
 
 
 
-
 ## Can I change the system prompts that aider uses?
 
 Aider is set up to support different system prompts and edit formats
@@ -191,6 +190,16 @@ You can also refer to the
 [instructions for installing a development version of aider](https://aider.chat/docs/install/optional.html#install-the-development-version-of-aider).
 
 
+## How are the "aider wrote xx% of code" stats computed?
+
+[Aider is tightly integrated with git](/docs/git.html) so all
+one of aider's code changes are committed to the repo with proper attribution.
+The 
+[stats are computed](https://github.com/Aider-AI/aider/blob/main/scripts/blame.py)
+by doing something like `git blame` on the repo,
+and counting up who wrote all the new lines of code in each release.
+Only lines in source code files are counted, not documentation or prompt files.
+
 ## Can I share my aider chat transcript?
 
 Yes, you can now share aider chat logs in a pretty way.
@@ -213,6 +222,15 @@ This will give you a URL like this, which shows the chat history like you'd see 
 https://aider.chat/share/?mdurl=https://gist.github.com/Aider-AI/2087ab8b64034a078c0a209440ac8be0
 ```
 
+## Can I edit files myself while aider is running?
+
+Yes. Aider always reads the latest copy of files from the file
+system when you send each message.
+
+While you're waiting for aider's reply to complete, it's probably unwise to
+edit files that you've added to the chat.
+Your edits and aider's edits might conflict.
+
 ## What is Aider AI LLC?
 
 Aider AI LLC is the company behind the aider AI coding tool.
@@ -222,11 +240,5 @@ under an
 [Apache 2.0 license](https://github.com/Aider-AI/aider/blob/main/LICENSE.txt).
 
 
-## Can I edit files myself while aider is running?
+<div style="height:80vh"></div>
 
-Yes. Aider always reads the latest copy of files from the file
-system when you send each message.
-
-While you're waiting for aider's reply to complete, it's probably unwise to
-edit files that you've added to the chat.
-Your edits and aider's edits might conflict.

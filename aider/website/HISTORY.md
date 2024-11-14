@@ -10,6 +10,10 @@ description: Release notes and stats on aider writing its own code.
 
 {% include blame.md %}
 
+The above 
+[stats are based on the git commit history](/docs/faq.html#how-are-the-aider-wrote-xx-of-code-stats-computed)
+in the aider repo.
+
 <!--[[[cog
 # This page is a copy of HISTORY.md, adding the front matter above.
 text = open("HISTORY.md").read()
@@ -18,6 +22,17 @@ cog.out(text)
 ]]]-->
 
 
+
+### Aider v0.63.0
+
+- Support for Qwen 2.5 Coder 32B.
+- `/web` command just adds the page to the chat, without triggering an LLM response.
+- Improved prompting for the user's preferred chat language.
+- Improved handling of LiteLLM exceptions.
+- Bugfix for double-counting tokens when reporting cache stats.
+- Bugfix for the LLM creating new files.
+- Other small bug fixes.
+- Aider wrote 55% of the code in this release.
 
 ### Aider v0.62.0
 

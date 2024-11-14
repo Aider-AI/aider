@@ -169,7 +169,7 @@ class GitRepo:
     def get_rel_repo_dir(self):
         try:
             return os.path.relpath(self.repo.git_dir, os.getcwd())
-        except ValueError:
+        except (ValueError, OSError):
             return self.repo.git_dir
 
     def get_commit_message(self, diffs, context):
@@ -330,6 +330,12 @@ class GitRepo:
                 pathspec.patterns.GitWildMatchPattern,
                 lines,
             )
+
+    def git_ignored_file(self, path):
+        if not self.repo:
+            return
+        if self.repo.ignored(path):
+            return True
 
     def ignored_file(self, fname):
         self.refresh_aider_ignore()
