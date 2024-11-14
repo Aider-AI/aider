@@ -51,9 +51,9 @@ def create_app():
     })
 
     @app.route('/')
-    @app.route('/index')
-    def index():
-        return render_template('index.html')
+    @app.route('/home')
+    def home():
+        return render_template('home.html')
 
     @app.route('/swagger')
     def swagger():
@@ -112,9 +112,6 @@ def create_app():
 
         return redirect(url_for('config'))
 
-    @app.route('/index')
-    def index():
-        return render_template('home.html')
 
     @api.route('/chat')
     class Chat(Resource):
