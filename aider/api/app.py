@@ -18,11 +18,11 @@ def create_app():
               doc='/swagger')  # Move Swagger UI to /swagger
 
     # Set up Aider configuration from environment variables
-    openai_api_key = os.getenv('OPENAI_API_KEY')
-    anthropic_api_key = os.getenv('ANTHROPIC_API_KEY')
-    model = os.getenv('AIDER_MODEL')
-    aider_api_port = int(os.getenv('AIDER_API_PORT', '5000'))
-    aider_api_debug = os.getenv('AIDER_API_DEBUG', 'False').lower() == 'true'
+    app.config['OPENAI_API_KEY'] = os.getenv('OPENAI_API_KEY', '')
+    app.config['ANTHROPIC_API_KEY'] = os.getenv('ANTHROPIC_API_KEY', '')
+    app.config['AIDER_MODEL'] = os.getenv('AIDER_MODEL', 'gpt-3.5-turbo')
+    app.config['AIDER_API_PORT'] = int(os.getenv('AIDER_API_PORT', '5000'))
+    app.config['AIDER_API_DEBUG'] = os.getenv('AIDER_API_DEBUG', 'False').lower() == 'true'
 
     chat_model = api.model('ChatInput', {
         'message': fields.String(required=True, description='The message to send to the AI'),
@@ -36,7 +36,7 @@ def create_app():
 
     @app.route('/')
     def home():
-        return redirect(url_for('index'))
+        return render_template('home.html')
 
     @app.route('/swagger')
     def swagger():
@@ -45,13 +45,13 @@ def create_app():
     @app.route('/config')
     def config():
         current_config = {
-            'api_provider': 'openai' if os.getenv('OPENAI_API_KEY') else 'anthropic',
-            'openai_api_key': os.getenv('OPENAI_API_KEY', ''),
-            'openai_model': os.getenv('AIDER_MODEL', 'gpt-3.5-turbo'),
-            'anthropic_api_key': os.getenv('ANTHROPIC_API_KEY', ''),
-            'anthropic_model': os.getenv('AIDER_MODEL', 'claude-3-opus-20240229'),
-            'aider_api_port': os.getenv('AIDER_API_PORT', '5000'),
-            'aider_api_debug': os.getenv('AIDER_API_DEBUG', 'False')
+            'api_provider': 'openai' if app.config['OPENAI_API_KEY'] else 'anthropic',
+            'openai_api_key': app.config['OPENAI_API_KEY'],
+            'openai_model': app.config['AIDER_MODEL'] if app.config['OPENAI_API_KEY'] else '',
+            'anthropic_api_key': app.config['ANTHROPIC_API_KEY'],
+            'anthropic_model': app.config['AIDER_MODEL'] if app.config['ANTHROPIC_API_KEY'] else '',
+            'aider_api_port': app.config['AIDER_API_PORT'],
+            'aider_api_debug': str(app.config['AIDER_API_DEBUG'])
         }
         return render_template('index.html', config=current_config)
 
@@ -74,13 +74,21 @@ def create_app():
             set_key(env_file, 'OPENAI_API_KEY', openai_api_key)
             set_key(env_file, 'AIDER_MODEL', openai_model)
             set_key(env_file, 'ANTHROPIC_API_KEY', '')
+            app.config['OPENAI_API_KEY'] = openai_api_key
+            app.config['AIDER_MODEL'] = openai_model
+            app.config['ANTHROPIC_API_KEY'] = ''
         else:
             set_key(env_file, 'ANTHROPIC_API_KEY', anthropic_api_key)
             set_key(env_file, 'AIDER_MODEL', anthropic_model)
             set_key(env_file, 'OPENAI_API_KEY', '')
+            app.config['ANTHROPIC_API_KEY'] = anthropic_api_key
+            app.config['AIDER_MODEL'] = anthropic_model
+            app.config['OPENAI_API_KEY'] = ''
 
         set_key(env_file, 'AIDER_API_PORT', aider_api_port)
         set_key(env_file, 'AIDER_API_DEBUG', aider_api_debug)
+        app.config['AIDER_API_PORT'] = int(aider_api_port)
+        app.config['AIDER_API_DEBUG'] = aider_api_debug.lower() == 'true'
 
         # Reload environment variables
         load_dotenv(env_file)
