@@ -540,7 +540,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     all_files = args.files + (args.file or [])
     fnames = [str(Path(fn).resolve()) for fn in all_files]
-    read_only_fnames = [str(Path(fn).resolve()) for fn in (args.read or [])]
+    read_only_fnames = []
+    for fn in (args.read or []):
+        path = Path(fn).resolve()
+        if path.is_dir():
+            read_only_fnames.extend(str(f) for f in path.rglob('*') if f.is_file())
+        else:
+            read_only_fnames.append(str(path))
     #ai expand any of the read_only_fnames which are dirs to be all the files under them!
     if len(all_files) > 1:
         good = True
