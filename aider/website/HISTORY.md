@@ -10,6 +10,10 @@ description: Release notes and stats on aider writing its own code.
 
 {% include blame.md %}
 
+The above 
+[stats are based on the git commit history](/docs/faq.html#how-are-the-aider-wrote-xx-of-code-stats-computed)
+in the aider repo.
+
 <!--[[[cog
 # This page is a copy of HISTORY.md, adding the front matter above.
 text = open("HISTORY.md").read()
