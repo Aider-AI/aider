@@ -58,7 +58,7 @@ def create_app():
         aider_api_port = request.form.get('aider_api_port')
         aider_api_debug = request.form.get('aider_api_debug')
 
-        env_file = '.env'
+        env_file = 'aider.env'
         if api_provider == 'openai':
             set_key(env_file, 'OPENAI_API_KEY', openai_api_key)
             set_key(env_file, 'AIDER_MODEL', openai_model)
