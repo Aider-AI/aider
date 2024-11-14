@@ -334,6 +334,7 @@ class GitRepo:
     def git_ignored_file(self, path):
         if not self.repo:
             return
+        #ai try/except for git errors!
         if self.repo.ignored(path):
             return True
 
