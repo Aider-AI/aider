@@ -39,7 +39,9 @@ cffi==1.17.1
 charset-normalizer==3.4.0
     # via requests
 click==8.1.7
-    # via litellm
+    # via
+    #   flask
+    #   litellm
 configargparse==1.7
     # via -r requirements/requirements.in
 diff-match-patch==20241021
@@ -51,6 +53,8 @@ distro==1.9.0
 filelock==3.16.1
     # via huggingface-hub
 flake8==7.1.1
+    # via -r requirements/requirements.in
+flask==3.0.2
     # via -r requirements/requirements.in
 frozenlist==1.5.0
     # via
@@ -81,11 +85,16 @@ idna==3.10
 importlib-metadata==7.2.1
     # via
     #   -r requirements/requirements.in
+    #   flask
     #   litellm
 importlib-resources==6.4.5
     # via -r requirements/requirements.in
+itsdangerous==2.1.2
+    # via flask
 jinja2==3.1.4
-    # via litellm
+    # via
+    #   flask
+    #   litellm
 jiter==0.7.0
     # via openai
 json5==0.9.25
@@ -101,7 +110,9 @@ litellm==1.51.2
 markdown-it-py==3.0.0
     # via rich
 markupsafe==3.0.2
-    # via jinja2
+    # via
+    #   jinja2
+    #   werkzeug
 mccabe==0.7.0
     # via flake8
 mdurl==0.1.2
@@ -239,6 +250,8 @@ urllib3==2.2.3
     #   requests
 wcwidth==0.2.13
     # via prompt-toolkit
+werkzeug==3.0.1
+    # via flask
 yarl==1.17.1
     # via aiohttp
 zipp==3.20.2
