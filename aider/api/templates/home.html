@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aider API Home</title>
+    <title>Welcome to Aider API</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,9 +12,25 @@
             padding: 20px;
             max-width: 800px;
             margin: 0 auto;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         h1 {
             color: #333;
+            text-align: center;
+        }
+        p {
+            color: #666;
+            text-align: center;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
         }
         .button {
             display: inline-block;
@@ -27,13 +43,22 @@
             font-size: 16px;
             margin: 4px 2px;
             cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
 <body>
-    <h1>Welcome to Aider API</h1>
-    <p>Choose an option:</p>
-    <a href="/swagger" class="button">API Documentation</a>
-    <a href="/config" class="button">Configuration</a>
+    <div class="container">
+        <h1>Welcome to Aider API</h1>
+        <p>Aider is an AI pair programming tool that helps you write and edit code in your local git repository. Get started with our powerful API and enhance your development workflow!</p>
+        <div class="button-container">
+            <a href="/swagger" class="button">API Documentation</a>
+            <a href="/config" class="button">Configuration</a>
+        </div>
+    </div>
 </body>
 </html>
