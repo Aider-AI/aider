@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import os
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 from flask_restx import Api, Resource, fields
 from aider.coders import Coder
@@ -131,6 +132,28 @@ def create_app():
                 'response': response,
                 'edited_files': list(coder.aider_edited_files)
             }
+
+    @api.route('/change_directory')
+    class ChangeDirectory(Resource):
+        change_dir_model = api.model('ChangeDirectoryInput', {
+            'new_directory': fields.String(required=True, description='The new working directory path')
+        })
+
+        @api.expect(change_dir_model)
+        def post(self):
+            """Change the local working directory"""
+            data = request.json
+            new_directory = data.get('new_directory')
+
+            try:
+                os.chdir(new_directory)
+                return {'message': f'Changed working directory to {new_directory}', 'success': True}, 200
+            except FileNotFoundError:
+                return {'message': f'Directory not found: {new_directory}', 'success': False}, 404
+            except PermissionError:
+                return {'message': f'Permission denied: {new_directory}', 'success': False}, 403
+            except Exception as e:
+                return {'message': f'Error changing directory: {str(e)}', 'success': False}, 500
 
     return app
 
