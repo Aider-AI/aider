@@ -7,6 +7,7 @@ from aider.coders import Coder
 from aider.io import InputOutput
 from aider.models import Model
 from dotenv import load_dotenv, set_key, find_dotenv
+from queue import Queue
 
 def create_app():
     # Load environment variables from aider.env file in the user's home directory
@@ -26,6 +27,10 @@ def create_app():
     app.config['AIDER_API_PORT'] = int(os.getenv('AIDER_API_PORT', '5000'))
     app.config['AIDER_API_DEBUG'] = os.getenv('AIDER_API_DEBUG', 'False').lower() == 'true'
 
+    # Create a queue for storing the latest question and response
+    app.config['QUESTION_QUEUE'] = Queue(maxsize=1)
+    app.config['RESPONSE_QUEUE'] = Queue(maxsize=1)
+
     chat_model = api.model('ChatInput', {
         'message': fields.String(required=True, description='The message to send to the AI'),
         'files': fields.List(fields.String, description='List of files to include in the chat')
@@ -34,6 +39,15 @@ def create_app():
     chat_response = api.model('ChatResponse', {
         'response': fields.String(description='The AI response'),
         'edited_files': fields.List(fields.String, description='List of files edited by the AI')
+    })
+
+    question_response = api.model('QuestionResponse', {
+        'question': fields.String(description='The latest question from the AI'),
+        'response': fields.String(description='The latest response from the AI')
+    })
+
+    user_response = api.model('UserResponse', {
+        'response': fields.String(required=True, description='The user\'s response to the AI\'s question')
     })
 
     @app.route('/')
@@ -128,6 +142,15 @@ def create_app():
 
             response = coder.run(with_message=message)
 
+            # Store the latest question and response
+            if app.config['QUESTION_QUEUE'].full():
+                app.config['QUESTION_QUEUE'].get()
+            app.config['QUESTION_QUEUE'].put(message)
+
+            if app.config['RESPONSE_QUEUE'].full():
+                app.config['RESPONSE_QUEUE'].get()
+            app.config['RESPONSE_QUEUE'].put(response)
+
             return {
                 'response': response,
                 'edited_files': list(coder.aider_edited_files)
@@ -154,6 +177,43 @@ def create_app():
                 return {'message': f'Permission denied: {new_directory}', 'success': False}, 403
             except Exception as e:
                 return {'message': f'Error changing directory: {str(e)}', 'success': False}, 500
+
+    @api.route('/latest')
+    class Latest(Resource):
+        @api.marshal_with(question_response)
+        def get(self):
+            """Get the latest question and response"""
+            question = app.config['QUESTION_QUEUE'].queue[0] if not app.config['QUESTION_QUEUE'].empty() else None
+            response = app.config['RESPONSE_QUEUE'].queue[0] if not app.config['RESPONSE_QUEUE'].empty() else None
+            return {'question': question, 'response': response}
+
+    @api.route('/respond')
+    class Respond(Resource):
+        @api.expect(user_response)
+        @api.marshal_with(chat_response)
+        def post(self):
+            """Send a response to the AI's question"""
+            data = request.json
+            user_response = data.get('response')
+
+            io = InputOutput(pretty=False)
+            model = Model(app.config['AIDER_MODEL'])
+            
+            coder = Coder.create(
+                io=io,
+                main_model=model
+            )
+
+            response = coder.run(with_message=user_response)
+
+            if app.config['RESPONSE_QUEUE'].full():
+                app.config['RESPONSE_QUEUE'].get()
+            app.config['RESPONSE_QUEUE'].put(response)
+
+            return {
+                'response': response,
+                'edited_files': list(coder.aider_edited_files)
+            }
 
     return app
 
