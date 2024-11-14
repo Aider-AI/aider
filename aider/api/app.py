@@ -1,4 +1,5 @@
 import os
+import os
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 from flask_restx import Api, Resource, fields
 from aider.coders import Coder
@@ -31,7 +32,11 @@ def create_app():
     })
 
     @app.route('/')
-    def index():
+    def home():
+        return render_template('home.html')
+
+    @app.route('/config')
+    def config():
         return render_template('index.html')
 
     @app.route('/update_config', methods=['POST'])
