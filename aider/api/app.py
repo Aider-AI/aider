@@ -12,7 +12,8 @@ def create_app():
 
     app = Flask(__name__)
     api = Api(app, version='1.0', title='Aider API',
-              description='API for Aider - AI pair programming in your terminal')
+              description='API for Aider - AI pair programming in your terminal',
+              doc='/swagger')  # Move Swagger UI to /swagger
 
     # Set up Aider configuration from environment variables
     openai_api_key = os.getenv('OPENAI_API_KEY')
@@ -34,6 +35,10 @@ def create_app():
     @app.route('/')
     def home():
         return render_template('home.html')
+
+    @app.route('/swagger')
+    def swagger():
+        return render_template('swagger.html')
 
     @app.route('/config')
     def config():
