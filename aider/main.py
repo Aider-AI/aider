@@ -547,7 +547,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             read_only_fnames.extend(str(f) for f in path.rglob("*") if f.is_file())
         else:
             read_only_fnames.append(str(path))
-    # ai expand any of the read_only_fnames which are dirs to be all the files under them!
+
     if len(all_files) > 1:
         good = True
         for fname in all_files:
