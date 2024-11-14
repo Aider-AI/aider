@@ -62,6 +62,61 @@ Aider now provides a REST API for programmatic access to its functionality. This
    ```
 
 For more details on available endpoints and usage, refer to the API documentation.
+
+### API Documentation
+
+The Aider API runs on `http://127.0.0.1:5000` by default. Here are the key details:
+
+- **Port**: 5000
+- **Base URL**: http://127.0.0.1:5000
+- **Swagger UI**: http://127.0.0.1:5000/swagger
+
+#### Endpoints
+
+1. **Chat Endpoint**
+   - URL: `/chat`
+   - Method: POST
+   - Description: Send a message to the AI and get a response
+   - Request Body:
+     ```json
+     {
+       "message": "string",
+       "files": ["string"]
+     }
+     ```
+   - Response:
+     ```json
+     {
+       "response": "string",
+       "edited_files": ["string"]
+     }
+     ```
+
+#### Example Usage with curl
+
+1. Start a chat session:
+   ```bash
+   curl -X POST http://127.0.0.1:5000/chat \
+     -H "Content-Type: application/json" \
+     -d '{"message": "Create a Python function to calculate the factorial of a number", "files": ["main.py"]}'
+   ```
+
+2. Get information about edited files:
+   ```bash
+   curl -X POST http://127.0.0.1:5000/chat \
+     -H "Content-Type: application/json" \
+     -d '{"message": "What files were edited in the last operation?", "files": []}'
+   ```
+
+### Accessing Swagger Documentation
+
+To explore the API interactively:
+
+1. Start the Aider API server.
+2. Open a web browser and navigate to `http://127.0.0.1:5000/swagger`.
+3. You'll see the Swagger UI, which provides detailed information about each endpoint, allows you to try out API calls directly from the browser, and shows example requests and responses.
+
+This interactive documentation is particularly useful for understanding the API structure and testing endpoints without writing code.
 <!--[[[cog
 # We can't "include" here.
 # Because this page is rendered by GitHub as the repo README
