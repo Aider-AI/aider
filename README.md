@@ -52,6 +52,11 @@ Aider now provides a REST API for programmatic access to its functionality. This
    python -m aider.api
    ```
 
+   Alternatively, you can use the following command:
+   ```
+   python -m aider.api.__main__
+   ```
+
 3. Make HTTP requests to interact with Aider. For example:
    ```
    POST /chat
