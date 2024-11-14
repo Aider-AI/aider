@@ -61,7 +61,8 @@
 
         <div id="openai_settings">
             <label for="openai_api_key">OpenAI API Key:</label>
-            <input type="text" id="openai_api_key" name="openai_api_key" value="{{ config.openai_api_key }}">
+            <input type="text" id="openai_api_key" name="openai_api_key" value="{{ 'Set' if config.openai_api_key else 'Not set' }}" readonly>
+            <button type="button" onclick="toggleInput('openai_api_key')">Change</button>
 
             <label for="openai_model">OpenAI Model:</label>
             <select id="openai_model" name="openai_model">
@@ -72,7 +73,8 @@
 
         <div id="anthropic_settings" style="display: none;">
             <label for="anthropic_api_key">Anthropic API Key:</label>
-            <input type="text" id="anthropic_api_key" name="anthropic_api_key" value="{{ config.anthropic_api_key }}">
+            <input type="text" id="anthropic_api_key" name="anthropic_api_key" value="{{ 'Set' if config.anthropic_api_key else 'Not set' }}" readonly>
+            <button type="button" onclick="toggleInput('anthropic_api_key')">Change</button>
 
             <label for="anthropic_model">Anthropic Model:</label>
             <select id="anthropic_model" name="anthropic_model">
@@ -113,6 +115,19 @@
         
         // Call the function on page load to set the initial state
         updateProviderSettings();
+    </script>
+    <script>
+        function toggleInput(inputId) {
+            var input = document.getElementById(inputId);
+            if (input.readOnly) {
+                input.readOnly = false;
+                input.value = '';
+                input.focus();
+            } else {
+                input.readOnly = true;
+                input.value = input.value ? 'Set' : 'Not set';
+            }
+        }
     </script>
 </body>
 </html>
