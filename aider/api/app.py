@@ -51,6 +51,10 @@ def create_app():
     })
 
     @app.route('/')
+    def root():
+        return redirect(url_for('home'))
+
+    @app.route('/home')
     def home():
         return render_template('home.html')
 
