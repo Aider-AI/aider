@@ -70,11 +70,21 @@ For more details on available endpoints and usage, refer to the API documentatio
 
 ### API Documentation
 
-The Aider API runs on `http://127.0.0.1:5000` by default. Here are the key details:
+The Aider API can be configured using environment variables. Here are the key details:
 
-- **Port**: 5000
-- **Base URL**: http://127.0.0.1:5000
-- **Swagger UI**: http://127.0.0.1:5000/swagger
+- **Default Port**: 5000 (can be changed with `AIDER_API_PORT`)
+- **Default Base URL**: http://127.0.0.1:5000
+- **Default Swagger UI**: http://127.0.0.1:5000/swagger
+
+#### Environment Variables
+
+- `OPENAI_API_KEY`: Your OpenAI API key
+- `ANTHROPIC_API_KEY`: Your Anthropic API key
+- `AIDER_MODEL`: The AI model to use (e.g., "gpt-4", "claude-2")
+- `AIDER_API_PORT`: The port to run the API on (default: 5000)
+- `AIDER_API_DEBUG`: Set to "True" to enable debug mode (default: False)
+
+You can set these variables in a `.env` file in the same directory as the API script.
 
 #### Endpoints
 

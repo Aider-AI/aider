@@ -1,12 +1,22 @@
+import os
 from flask import Flask, request, jsonify
 from flask_restx import Api, Resource, fields
 from aider.coders import Coder
 from aider.io import InputOutput
+from dotenv import load_dotenv
 
 def create_app():
+    # Load environment variables from .env file
+    load_dotenv()
+
     app = Flask(__name__)
     api = Api(app, version='1.0', title='Aider API',
               description='API for Aider - AI pair programming in your terminal')
+
+    # Set up Aider configuration from environment variables
+    openai_api_key = os.getenv('OPENAI_API_KEY')
+    anthropic_api_key = os.getenv('ANTHROPIC_API_KEY')
+    model = os.getenv('AIDER_MODEL')
 
     chat_model = api.model('ChatInput', {
         'message': fields.String(required=True, description='The message to send to the AI'),
@@ -29,7 +39,12 @@ def create_app():
             files = data.get('files', [])
 
             io = InputOutput(pretty=False)
-            coder = Coder.create(io=io)
+            coder = Coder.create(
+                io=io,
+                main_model=model,
+                openai_api_key=openai_api_key,
+                anthropic_api_key=anthropic_api_key
+            )
 
             for file in files:
                 coder.add_rel_fname(file)
