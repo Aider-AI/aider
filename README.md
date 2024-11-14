@@ -34,135 +34,8 @@ VIDEO END -->
 
 ## Getting Started
 
-## API Usage
+### CLI Usage
 
-Aider now provides a REST API for programmatic access to its functionality. This allows you to integrate Aider's capabilities into your own applications or services. To use the API:
-
-1. Install the API dependencies:
-   ```
-   pip install aider-chat[api]
-   ```
-
-2. Start the API server:
-   ```
-   python -m aider.api
-   ```
-
-   Alternatively, you can use the following command:
-   ```
-   python -m aider.api.__main__
-   ```
-
-3. Make HTTP requests to interact with Aider. For example:
-   ```
-   POST /chat
-   {
-     "message": "Add a new function to calculate factorial",
-     "files": ["main.py"]
-   }
-   ```
-
-For more details on available endpoints and usage, refer to the API documentation.
-
-### API Documentation
-
-The Aider API can be configured using environment variables. Here are the key details:
-
-- **Default Port**: 5000 (can be changed with `AIDER_API_PORT`)
-- **Default Base URL**: http://127.0.0.1:5000
-- **Default Swagger UI**: http://127.0.0.1:5000/swagger
-
-#### Environment Variables
-
-- `OPENAI_API_KEY`: Your OpenAI API key
-- `ANTHROPIC_API_KEY`: Your Anthropic API key
-- `AIDER_MODEL`: The AI model to use (e.g., "gpt-4", "claude-2")
-- `AIDER_API_PORT`: The port to run the API on (default: 5000)
-- `AIDER_API_DEBUG`: Set to "True" to enable debug mode (default: False)
-
-You can set these variables in a `.env` file in the same directory as the API script.
-
-#### Endpoints
-
-1. **Chat Endpoint**
-   - URL: `/chat`
-   - Method: POST
-   - Description: Send a message to the AI and get a response
-   - Request Body:
-     ```json
-     {
-       "message": "string",
-       "files": ["string"]
-     }
-     ```
-   - Response:
-     ```json
-     {
-       "response": "string",
-       "edited_files": ["string"]
-     }
-     ```
-
-2. **Latest Question and Response Endpoint**
-   - URL: `/latest`
-   - Method: GET
-   - Description: Get the latest question and response from the AI
-   - Response:
-     ```json
-     {
-       "question": "string",
-       "response": "string"
-     }
-     ```
-
-3. **Respond to AI Question Endpoint**
-   - URL: `/respond`
-   - Method: POST
-   - Description: Send a response to the AI's question
-   - Request Body:
-     ```json
-     {
-       "response": "string"
-     }
-     ```
-   - Response:
-     ```json
-     {
-       "response": "string",
-       "edited_files": ["string"]
-     }
-     ```
-
-#### Example Usage with curl
-
-1. Start a chat session:
-   ```bash
-   curl -X POST http://127.0.0.1:5000/chat \
-     -H "Content-Type: application/json" \
-     -d '{"message": "Create a Python function to calculate the factorial of a number", "files": ["main.py"]}'
-   ```
-
-2. Get the latest question and response:
-   ```bash
-   curl -X GET http://127.0.0.1:5000/latest
-   ```
-
-3. Respond to the AI's question:
-   ```bash
-   curl -X POST http://127.0.0.1:5000/respond \
-     -H "Content-Type: application/json" \
-     -d '{"response": "Yes, please proceed with creating the factorial function"}'
-   ```
-
-### Accessing Swagger Documentation
-
-To explore the API interactively:
-
-1. Start the Aider API server.
-2. Open a web browser and navigate to `http://127.0.0.1:5000/swagger`.
-3. You'll see the Swagger UI, which provides detailed information about each endpoint, allows you to try out API calls directly from the browser, and shows example requests and responses.
-
-This interactive documentation is particularly useful for understanding the API structure and testing endpoints without writing code.
 <!--[[[cog
 # We can't "include" here.
 # Because this page is rendered by GitHub as the repo README
@@ -186,6 +59,31 @@ export OPENAI_API_KEY=your-key-goes-here
 aider 
 ```
 <!--[[[end]]]-->
+
+### API Usage
+
+Aider now provides a REST API for programmatic access to its functionality. To use the API:
+
+1. Install the API dependencies:
+   ```
+   pip install aider-chat[api]
+   ```
+
+2. Start the API server:
+   ```
+   python -m aider.api
+   ```
+
+3. Make HTTP requests to interact with Aider. For example:
+   ```
+   POST /chat
+   {
+     "message": "Add a new function to calculate factorial",
+     "files": ["main.py"]
+   }
+   ```
+
+For more details on available endpoints and usage, refer to the API documentation in the full README.
 
 See the
 [installation instructions](https://aider.chat/docs/install.html)
