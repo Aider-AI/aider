@@ -15,6 +15,7 @@ import time
 import traceback
 from collections import defaultdict
 from datetime import datetime
+from importlib.resources import files
 from json.decoder import JSONDecodeError
 from pathlib import Path
 from typing import List
@@ -35,6 +36,7 @@ from aider.utils import format_content, format_messages, format_tokens, is_image
 
 from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
+from .template_processor import TemplateProcessor
 
 
 class MissingAPIKeyError(ValueError):
@@ -446,6 +448,8 @@ class Coder:
                 self.io.tool_output("JSON Schema:")
                 self.io.tool_output(json.dumps(self.functions, indent=4))
 
+        self.template_processor = TemplateProcessor(files('aider.resources.templates'), self.root)
+
     def setup_lint_cmds(self, lint_cmds):
         if not lint_cmds:
             return
@@ -766,6 +770,7 @@ class Coder:
         if self.commands.is_command(inp):
             return self.commands.run(inp)
 
+        inp = self.template_processor.process(inp)
         self.check_for_file_mentions(inp)
         self.check_for_urls(inp)
 
