@@ -55,8 +55,8 @@
     <form id="configForm" action="/update_config" method="post">
         <label for="api_provider">API Provider:</label>
         <select id="api_provider" name="api_provider">
-            <option value="openai" {% if config.api_provider == 'openai' %}selected{% endif %}>OpenAI</option>
-            <option value="anthropic" {% if config.api_provider == 'anthropic' %}selected{% endif %}>Anthropic</option>
+            <option value="openai" {{ 'selected' if config.api_provider == 'openai' else '' }}>OpenAI</option>
+            <option value="anthropic" {{ 'selected' if config.api_provider == 'anthropic' else '' }}>Anthropic</option>
         </select>
 
         <div id="openai_settings">
@@ -65,8 +65,8 @@
 
             <label for="openai_model">OpenAI Model:</label>
             <select id="openai_model" name="openai_model">
-                <option value="gpt-4" {% if config.openai_model == 'gpt-4' %}selected{% endif %}>GPT-4</option>
-                <option value="gpt-3.5-turbo" {% if config.openai_model == 'gpt-3.5-turbo' %}selected{% endif %}>GPT-3.5 Turbo</option>
+                <option value="gpt-4" {{ 'selected' if config.openai_model == 'gpt-4' else '' }}>GPT-4</option>
+                <option value="gpt-3.5-turbo" {{ 'selected' if config.openai_model == 'gpt-3.5-turbo' else '' }}>GPT-3.5 Turbo</option>
             </select>
         </div>
 
@@ -76,8 +76,8 @@
 
             <label for="anthropic_model">Anthropic Model:</label>
             <select id="anthropic_model" name="anthropic_model">
-                <option value="claude-3-opus-20240229" {% if config.anthropic_model == 'claude-3-opus-20240229' %}selected{% endif %}>Claude 3 Opus</option>
-                <option value="claude-3-sonnet-20240229" {% if config.anthropic_model == 'claude-3-sonnet-20240229' %}selected{% endif %}>Claude 3 Sonnet</option>
+                <option value="claude-3-opus-20240229" {{ 'selected' if config.anthropic_model == 'claude-3-opus-20240229' else '' }}>Claude 3 Opus</option>
+                <option value="claude-3-sonnet-20240229" {{ 'selected' if config.anthropic_model == 'claude-3-sonnet-20240229' else '' }}>Claude 3 Sonnet</option>
             </select>
         </div>
 
@@ -86,8 +86,8 @@
 
         <label for="aider_api_debug">Debug Mode:</label>
         <select id="aider_api_debug" name="aider_api_debug">
-            <option value="False" {% if config.aider_api_debug == 'False' %}selected{% endif %}>False</option>
-            <option value="True" {% if config.aider_api_debug == 'True' %}selected{% endif %}>True</option>
+            <option value="False" {{ 'selected' if config.aider_api_debug == 'False' else '' }}>False</option>
+            <option value="True" {{ 'selected' if config.aider_api_debug == 'True' else '' }}>True</option>
         </select>
 
         <input type="submit" value="Update Configuration">
