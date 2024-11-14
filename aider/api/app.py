@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify, render_template, redirect, url_for
 from flask_restx import Api, Resource, fields
 from aider.coders import Coder
 from aider.io import InputOutput
+from aider.models import Model
 from dotenv import load_dotenv, set_key, find_dotenv
 
 def create_app():
@@ -110,9 +111,10 @@ def create_app():
             files = data.get('files', [])
 
             io = InputOutput(pretty=False)
+            model = Model(app.config['AIDER_MODEL'])
             coder = Coder.create(
                 io=io,
-                main_model=app.config['AIDER_MODEL'],
+                main_model=model,
                 openai_api_key=app.config['OPENAI_API_KEY'],
                 anthropic_api_key=app.config['ANTHROPIC_API_KEY']
             )
