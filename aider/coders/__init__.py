@@ -1,5 +1,6 @@
 from .architect_coder import ArchitectCoder
 from .ask_coder import AskCoder
+from .ask_fsninja_coder import AskFSNinjaCoder
 from .ask_further_coder import AskFurtherCoder
 from .base_coder import Coder
 from .cedarscript_coder import CEDARScriptCoder
@@ -17,6 +18,7 @@ __all__ = [
     HelpCoder,
     AskCoder,
     AskFurtherCoder,
+    AskFSNinjaCoder,
     Coder,
     EditBlockCoder,
     EditBlockFencedCoder,
