@@ -52,7 +52,7 @@ def create_app():
 
     @app.route('/')
     @app.route('/index')
-    def home():
+    def index():
         return render_template('index.html')
 
     @app.route('/swagger')
