@@ -187,8 +187,8 @@ pytest
 You can also run specific test files or test cases by providing the file path or test name:
 
 ```
-pytest aider/tests/test_coder.py
-pytest aider/tests/test_coder.py::TestCoder::test_specific_case
+pytest tests/basic/test_coder.py
+pytest tests/basic/test_coder.py::TestCoder::test_specific_case
 ```
 
 #### Continuous Integration
