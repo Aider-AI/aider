@@ -51,9 +51,6 @@ def create_app():
     })
 
     @app.route('/')
-    def root():
-        return render_template('home.html')
-
     @app.route('/home')
     def home():
         return render_template('home.html')
