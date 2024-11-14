@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aider API Configuration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            background: #f4f4f4;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        input[type="submit"] {
+            background: #333;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background: #555;
+        }
+        .warning {
+            color: #ff0000;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Aider API Configuration</h1>
+    <form id="configForm" action="/update_config" method="post">
+        <label for="api_provider">API Provider:</label>
+        <select id="api_provider" name="api_provider">
+            <option value="openai">OpenAI</option>
+            <option value="anthropic">Anthropic</option>
+        </select>
+
+        <div id="openai_settings">
+            <label for="openai_api_key">OpenAI API Key:</label>
+            <input type="text" id="openai_api_key" name="openai_api_key">
+
+            <label for="openai_model">OpenAI Model:</label>
+            <select id="openai_model" name="openai_model">
+                <option value="gpt-4">GPT-4</option>
+                <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+            </select>
+        </div>
+
+        <div id="anthropic_settings" style="display: none;">
+            <label for="anthropic_api_key">Anthropic API Key:</label>
+            <input type="text" id="anthropic_api_key" name="anthropic_api_key">
+
+            <label for="anthropic_model">Anthropic Model:</label>
+            <select id="anthropic_model" name="anthropic_model">
+                <option value="claude-3-opus-20240229">Claude 3 Opus</option>
+                <option value="claude-3-sonnet-20240229">Claude 3 Sonnet</option>
+            </select>
+        </div>
+
+        <label for="aider_api_port">Aider API Port:</label>
+        <input type="text" id="aider_api_port" name="aider_api_port" value="5000">
+
+        <label for="aider_api_debug">Debug Mode:</label>
+        <select id="aider_api_debug" name="aider_api_debug">
+            <option value="False">False</option>
+            <option value="True">True</option>
+        </select>
+
+        <input type="submit" value="Update Configuration">
+    </form>
+
+    <p class="warning">Warning: Changing the API provider or port will require a restart of the Aider API server.</p>
+
+    <script>
+        document.getElementById('api_provider').addEventListener('change', function() {
+            var openaiSettings = document.getElementById('openai_settings');
+            var anthropicSettings = document.getElementById('anthropic_settings');
+            if (this.value === 'openai') {
+                openaiSettings.style.display = 'block';
+                anthropicSettings.style.display = 'none';
+            } else {
+                openaiSettings.style.display = 'none';
+                anthropicSettings.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
