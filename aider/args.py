@@ -676,11 +676,6 @@ def get_parser(default_config_files, git_root):
         default=False,
     )
     group.add_argument(
-        "--run",
-        metavar="COMMAND",
-        help="Command to run when the chat opens",
-    )
-    group.add_argument(
         "--message",
         "--msg",
         "-m",
