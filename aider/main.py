@@ -842,6 +842,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             if switch.kwargs.get("show_announcements") is not False:
                 coder.show_announcements()
 
+    if args.api:
+        from aider.api.app import create_app
+        app = create_app()
+        app.run(debug=True)
+        return
+
 
 def check_and_load_imports(io, verbose=False):
     installs_file = Path.home() / ".aider" / "installs.json"

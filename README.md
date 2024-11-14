@@ -37,6 +37,31 @@ VIDEO END -->
 </p>
 
 ## Getting started
+
+## API Usage
+
+Aider now provides a REST API for programmatic access to its functionality. This allows you to integrate Aider's capabilities into your own applications or services. To use the API:
+
+1. Install the API dependencies:
+   ```
+   pip install aider-chat[api]
+   ```
+
+2. Start the API server:
+   ```
+   python -m aider.api
+   ```
+
+3. Make HTTP requests to interact with Aider. For example:
+   ```
+   POST /chat
+   {
+     "message": "Add a new function to calculate factorial",
+     "files": ["main.py"]
+   }
+   ```
+
+For more details on available endpoints and usage, refer to the API documentation.
 <!--[[[cog
 # We can't "include" here.
 # Because this page is rendered by GitHub as the repo README

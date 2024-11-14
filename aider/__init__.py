@@ -3,4 +3,6 @@ try:
 except Exception:
     __version__ = "0.63.1.dev"
 
-__all__ = [__version__]
+from .api import create_app
+
+__all__ = [__version__, 'create_app']
