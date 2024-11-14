@@ -1,13 +1,9 @@
 
 <!-- Edit README.md, not index.md -->
 
-# Aider is AI pair programming in your terminal
+# Aider - AI Pair Programming in Your Terminal
 
-Aider lets you pair program with LLMs,
-to edit code in your local git repository.
-Start a new project or work with an existing git repo.
-Aider works best with GPT-4o & Claude 3.5 Sonnet and can 
-[connect to almost any LLM](https://aider.chat/docs/llms.html).
+Aider lets you pair program with LLMs, to edit code in your local git repository. Start a new project or work with an existing git repo. Aider works best with GPT-4o & Claude 3.5 Sonnet and can [connect to almost any LLM](https://aider.chat/docs/llms.html).
 
 <!-- SCREENCAST START -->
 <p align="center">
@@ -36,7 +32,7 @@ VIDEO END -->
   </a>
 </p>
 
-## Getting started
+## Getting Started
 
 ## API Usage
 
