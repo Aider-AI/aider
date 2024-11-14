@@ -53,7 +53,7 @@ def create_app():
     @app.route('/')
     @app.route('/index')
     def home():
-        return render_template('home.html')
+        return render_template('index.html')
 
     @app.route('/swagger')
     def swagger():
@@ -128,11 +128,11 @@ def create_app():
 
             io = InputOutput(pretty=False)
             model = Model(app.config['AIDER_MODEL'])
-            
+
             # Set the API keys as environment variables
             os.environ['OPENAI_API_KEY'] = app.config['OPENAI_API_KEY']
             os.environ['ANTHROPIC_API_KEY'] = app.config['ANTHROPIC_API_KEY']
-            
+
             coder = Coder.create(
                 io=io,
                 main_model=model
@@ -199,7 +199,7 @@ def create_app():
 
             io = InputOutput(pretty=False)
             model = Model(app.config['AIDER_MODEL'])
-            
+
             coder = Coder.create(
                 io=io,
                 main_model=model
