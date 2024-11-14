@@ -34,7 +34,7 @@ def create_app():
 
     @app.route('/')
     def home():
-        return render_template('home.html')
+        return redirect(url_for('index'))
 
     @app.route('/swagger')
     def swagger():
@@ -71,7 +71,11 @@ def create_app():
         set_key(env_file, 'AIDER_API_PORT', aider_api_port)
         set_key(env_file, 'AIDER_API_DEBUG', aider_api_debug)
 
-        return redirect(url_for('index'))
+        return redirect(url_for('config'))
+
+    @app.route('/index')
+    def index():
+        return render_template('home.html')
 
     @api.route('/chat')
     class Chat(Resource):
