@@ -128,6 +128,71 @@ To explore the API interactively:
 3. You'll see the Swagger UI, which provides detailed information about each endpoint, allows you to try out API calls directly from the browser, and shows example requests and responses.
 
 This interactive documentation is particularly useful for understanding the API structure and testing endpoints without writing code.
+
+### API Documentation
+
+The Aider API can be configured using environment variables. Here are the key details:
+
+- **Default Port**: 5000 (can be changed with `AIDER_API_PORT`)
+- **Default Base URL**: http://127.0.0.1:5000
+- **Default Swagger UI**: http://127.0.0.1:5000/swagger
+
+#### Environment Variables
+
+- `OPENAI_API_KEY`: Your OpenAI API key
+- `ANTHROPIC_API_KEY`: Your Anthropic API key
+- `AIDER_MODEL`: The AI model to use (e.g., "gpt-4", "claude-2")
+- `AIDER_API_PORT`: The port to run the API on (default: 5000)
+- `AIDER_API_DEBUG`: Set to "True" to enable debug mode (default: False)
+
+You can set these variables in a `.env` file in the same directory as the API script.
+
+#### Endpoints
+
+1. **Chat Endpoint**
+   - URL: `/chat`
+   - Method: POST
+   - Description: Send a message to the AI and get a response
+   - Request Body:
+     ```json
+     {
+       "message": "string",
+       "files": ["string"]
+     }
+     ```
+   - Response:
+     ```json
+     {
+       "response": "string",
+       "edited_files": ["string"]
+     }
+     ```
+
+#### Example Usage with curl
+
+1. Start a chat session:
+   ```bash
+   curl -X POST http://127.0.0.1:5000/chat \
+     -H "Content-Type: application/json" \
+     -d '{"message": "Create a Python function to calculate the factorial of a number", "files": ["main.py"]}'
+   ```
+
+2. Get information about edited files:
+   ```bash
+   curl -X POST http://127.0.0.1:5000/chat \
+     -H "Content-Type: application/json" \
+     -d '{"message": "What files were edited in the last operation?", "files": []}'
+   ```
+
+### Accessing Swagger Documentation
+
+To explore the API interactively:
+
+1. Start the Aider API server.
+2. Open a web browser and navigate to `http://127.0.0.1:5000/swagger`.
+3. You'll see the Swagger UI, which provides detailed information about each endpoint, allows you to try out API calls directly from the browser, and shows example requests and responses.
+
+This interactive documentation is particularly useful for understanding the API structure and testing endpoints without writing code.
 <!--[[[cog
 # We can't "include" here.
 # Because this page is rendered by GitHub as the repo README
