@@ -827,6 +827,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     analytics.event("cli session", main_model=main_model, edit_format=main_model.edit_format)
 
+    if args.run:
+        io.tool_output(f"Running command: {args.run}")
+        coder.run(with_message=f"/run {args.run}")
+
     while True:
         try:
             coder.run()
