@@ -411,6 +411,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     default_config_files = list(map(str, default_config_files))
 
     parser = get_parser(default_config_files, git_root)
+    parser.add_argument('--run', help='Command to run when the chat opens')
     try:
         args, unknown = parser.parse_known_args(argv)
     except AttributeError as e:
