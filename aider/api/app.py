@@ -112,9 +112,9 @@ def create_app():
             io = InputOutput(pretty=False)
             coder = Coder.create(
                 io=io,
-                main_model=model,
-                openai_api_key=openai_api_key,
-                anthropic_api_key=anthropic_api_key
+                main_model=app.config['AIDER_MODEL'],
+                openai_api_key=app.config['OPENAI_API_KEY'],
+                anthropic_api_key=app.config['ANTHROPIC_API_KEY']
             )
 
             for file in files:
