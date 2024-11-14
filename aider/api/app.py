@@ -112,11 +112,14 @@ def create_app():
 
             io = InputOutput(pretty=False)
             model = Model(app.config['AIDER_MODEL'])
+            
+            # Set the API keys as environment variables
+            os.environ['OPENAI_API_KEY'] = app.config['OPENAI_API_KEY']
+            os.environ['ANTHROPIC_API_KEY'] = app.config['ANTHROPIC_API_KEY']
+            
             coder = Coder.create(
                 io=io,
-                main_model=model,
-                openai_api_key=app.config['OPENAI_API_KEY'],
-                anthropic_api_key=app.config['ANTHROPIC_API_KEY']
+                main_model=model
             )
 
             for file in files:
