@@ -29,6 +29,22 @@ def create_app():
 
     chat_response = api.model('ChatResponse', {
         'response': fields.String(description='The AI response'),
+
+    @app.route('/')
+    def home():
+        return render_template('home.html')
+
+    @app.route('/swagger')
+    def swagger():
+        return render_template('swagger.html')
+
+    @app.route('/config')
+    def config():
+        return render_template('index.html')
+
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template('404.html'), 404
         'edited_files': fields.List(fields.String, description='List of files edited by the AI')
     })
 
