@@ -95,3 +95,6 @@ io = InputOutput(yes=True)
 coder = Coder.create(model=model, fnames=fnames, io=io)
 ```
 
+{: .note }
+The scripting API is not officially supported or documented and may
+change without warning.
