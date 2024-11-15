@@ -332,13 +332,15 @@ def load_dotenv_files(git_root, dotenv_fname, encoding="utf-8"):
 
 
 def register_litellm_models(git_root, model_metadata_fname, io, verbose=False):
-    model_metatdata_files = generate_search_path_list(
-        ".aider.model.metadata.json", git_root, model_metadata_fname
-    )
+    model_metatdata_files = []
 
     # Add the resource file path
     resource_metadata = importlib_resources.files("aider.resources").joinpath("model-metadata.json")
     model_metatdata_files.append(str(resource_metadata))
+
+    model_metatdata_files += generate_search_path_list(
+        ".aider.model.metadata.json", git_root, model_metadata_fname
+    )
 
     try:
         model_metadata_files_loaded = models.register_litellm_models(model_metatdata_files)
