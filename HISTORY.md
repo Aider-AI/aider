@@ -1,6 +1,20 @@
 
 # Release history
 
+### Aider v0.63.2
+
+- Fixed bug in fuzzy model name matching when litellm provider info is missing.
+- Modified model metadata file loading to prioritize resource file.
+- Updated dependency versions.
+- Aider wrote 55% of the code in this release.
+
+### Aider v0.63.1
+
+- Fixed bug in git ignored file handling.
+- Improved error handling for git operations.
+- Updated test paths in documentation.
+- Aider wrote 55% of the code in this release.
+
 ### Aider v0.63.0
 
 - Support for Qwen 2.5 Coder 32B.
