@@ -1167,7 +1167,10 @@ def fuzzy_match_models(name):
         model = model.lower()
         if attrs.get("mode") != "chat":
             continue
-        provider = (attrs["litellm_provider"] + "/").lower()
+        provider = attrs.get("litellm_provider", "").lower()
+        if not provider:
+            continue
+        provider += "/"
 
         if model.startswith(provider):
             fq_model = model
