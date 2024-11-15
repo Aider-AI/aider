@@ -1189,14 +1189,10 @@ class Commands:
             
             # Check if this is a JAR path with internal file
             if '!' in expanded_pattern:
-                jar_path, internal_path = expanded_pattern.split('!', 1)
-                if internal_path.startswith('/'):
-                    internal_path = internal_path[1:]
-                jar_path = expanduser(jar_path)
-                if os.path.isfile(jar_path):
+                if self.io.exists(expanded_pattern):
                     all_paths.append(expanded_pattern)  # Keep the full JAR!internal_path
                 else:
-                    self.io.tool_error(f"JAR file not found: {jar_path}")
+                    self.io.tool_error(f"JAR file or internal file not found: {expanded_pattern}")
                 continue
 
             # Handle regular files and directories
