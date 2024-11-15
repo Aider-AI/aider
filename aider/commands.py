@@ -213,7 +213,7 @@ class Commands:
         try:
             return cmd_method(args)
         except ANY_GIT_ERROR as err:
-            self.io.tool_error(f"Unable to complete {cmd_name}: {err}")
+            self.io.tool_error(f"Unable to complete1 {cmd_name}: {err}")
 
     def matching_commands(self, inp):
         words = inp.strip().split()
@@ -705,8 +705,8 @@ class Commands:
                 self.io.tool_warning(f"Skipping {fname} due to aiderignore or --subtree-only.")
                 continue
 
-            if self.io.exists(fname):
-                if self.io.is_file(fname):
+            if os.path.exists(fname):
+                if os.path.isfile(fname):
                     all_matched_files.add(str(fname))
                     continue
                 # an existing dir, escape any special chars so they won't be globs
