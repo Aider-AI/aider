@@ -13,9 +13,11 @@ import sys
 import threading
 import time
 import traceback
+import zipfile
 from collections import defaultdict
 from datetime import datetime
 from json.decoder import JSONDecodeError
+from os.path import expanduser
 from pathlib import Path
 from typing import List
 
