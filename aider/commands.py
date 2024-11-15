@@ -4,6 +4,7 @@ import re
 import subprocess
 import sys
 import tempfile
+import zipfile
 from collections import OrderedDict
 from os.path import expanduser
 from pathlib import Path
@@ -1214,6 +1215,25 @@ class Commands:
                 f" {self.coder.main_model.name} does not support images."
             )
             return
+
+        # Handle JAR files
+        if '!' in str(abs_path):
+            jar_path, internal_path = str(abs_path).split('!', 1)
+            if internal_path.startswith('/'):
+                internal_path = internal_path[1:]  # Remove leading slash
+            try:
+                with zipfile.ZipFile(jar_path, 'r') as jar:
+                    try:
+                        jar.getinfo(internal_path)  # Check if file exists in JAR
+                    except KeyError:
+                        self.io.tool_error(f"{internal_path}: not found in JAR {jar_path}")
+                        return
+            except zipfile.BadZipFile:
+                self.io.tool_error(f"{jar_path}: not a valid JAR/ZIP file")
+                return
+            except OSError as err:
+                self.io.tool_error(f"{jar_path}: unable to read: {err}")
+                return
 
         if abs_path in self.coder.abs_read_only_fnames:
             self.io.tool_error(f"{original_name} is already in the chat as a read-only file")
