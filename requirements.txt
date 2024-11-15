@@ -6,7 +6,7 @@
 #
 aiohappyeyeballs==2.4.3
     # via aiohttp
-aiohttp==3.10.10
+aiohttp==3.11.2
     # via litellm
 aiosignal==1.3.1
     # via aiohttp
@@ -86,9 +86,9 @@ importlib-resources==6.4.5
     # via -r requirements/requirements.in
 jinja2==3.1.4
     # via litellm
-jiter==0.7.0
+jiter==0.7.1
     # via openai
-json5==0.9.25
+json5==0.9.28
     # via -r requirements/requirements.in
 jsonschema==4.23.0
     # via
@@ -96,7 +96,7 @@ jsonschema==4.23.0
     #   litellm
 jsonschema-specifications==2024.10.1
     # via jsonschema
-litellm==1.51.2
+litellm==1.52.8
     # via -r requirements/requirements.in
 markdown-it-py==3.0.0
     # via rich
@@ -120,9 +120,9 @@ numpy==1.26.4
     # via
     #   -r requirements/requirements.in
     #   scipy
-openai==1.53.0
+openai==1.54.4
     # via litellm
-packaging==24.1
+packaging==24.2
     # via
     #   -r requirements/requirements.in
     #   huggingface-hub
@@ -139,7 +139,9 @@ posthog==3.7.0
 prompt-toolkit==3.0.48
     # via -r requirements/requirements.in
 propcache==0.2.0
-    # via yarl
+    # via
+    #   aiohttp
+    #   yarl
 psutil==6.1.0
     # via -r requirements/requirements.in
 ptyprocess==0.7.0
@@ -176,7 +178,7 @@ referencing==0.35.1
     # via
     #   jsonschema
     #   jsonschema-specifications
-regex==2024.9.11
+regex==2024.11.6
     # via tiktoken
 requests==2.32.3
     # via
@@ -185,9 +187,9 @@ requests==2.32.3
     #   mixpanel
     #   posthog
     #   tiktoken
-rich==13.9.3
+rich==13.9.4
     # via -r requirements/requirements.in
-rpds-py==0.20.1
+rpds-py==0.21.0
     # via
     #   jsonschema
     #   referencing
@@ -217,7 +219,7 @@ tokenizers==0.19.1
     # via
     #   -r requirements/requirements.in
     #   litellm
-tqdm==4.66.6
+tqdm==4.67.0
     # via
     #   huggingface-hub
     #   openai
@@ -241,5 +243,5 @@ wcwidth==0.2.13
     # via prompt-toolkit
 yarl==1.17.1
     # via aiohttp
-zipp==3.20.2
+zipp==3.21.0
     # via importlib-metadata
