@@ -1186,6 +1186,20 @@ class Commands:
         # First collect all expanded paths
         for pattern in filenames:
             expanded_pattern = expanduser(pattern)
+            
+            # Check if this is a JAR path with internal file
+            if '!' in expanded_pattern:
+                jar_path, internal_path = expanded_pattern.split('!', 1)
+                if internal_path.startswith('/'):
+                    internal_path = internal_path[1:]
+                jar_path = expanduser(jar_path)
+                if os.path.isfile(jar_path):
+                    all_paths.append(expanded_pattern)  # Keep the full JAR!internal_path
+                else:
+                    self.io.tool_error(f"JAR file not found: {jar_path}")
+                continue
+
+            # Handle regular files and directories
             if os.path.isabs(expanded_pattern):
                 # For absolute paths, glob it
                 matches = list(glob.glob(expanded_pattern))
@@ -1200,13 +1214,18 @@ class Commands:
 
         # Then process them in sorted order
         for path in sorted(all_paths):
-            abs_path = self.coder.abs_root_path(path)
-            if os.path.isfile(abs_path):
+            if isinstance(path, str) and '!' in path:
+                # This is a JAR path
+                abs_path = path  # Keep the full JAR!internal_path
                 self._add_read_only_file(abs_path, path)
-            elif os.path.isdir(abs_path):
-                self._add_read_only_directory(abs_path, path)
             else:
-                self.io.tool_error(f"Not a file or directory: {abs_path}")
+                abs_path = self.coder.abs_root_path(path)
+                if os.path.isfile(abs_path):
+                    self._add_read_only_file(abs_path, path)
+                elif os.path.isdir(abs_path):
+                    self._add_read_only_directory(abs_path, path)
+                else:
+                    self.io.tool_error(f"Not a file or directory: {abs_path}")
 
     def _add_read_only_file(self, abs_path, original_name):
         if is_image_file(original_name) and not self.coder.main_model.info.get("supports_vision"):
