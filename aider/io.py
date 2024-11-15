@@ -1,6 +1,7 @@
 import base64
 import os
 import webbrowser
+import zipfile
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
@@ -316,6 +317,31 @@ class InputOutput:
         if is_image_file(filename):
             return self.read_image(filename)
 
+        # Check if this is a path inside a JAR file
+        if '!' in filename:
+            jar_path, internal_path = filename.split('!', 1)
+            if internal_path.startswith('/'):
+                internal_path = internal_path[1:]  # Remove leading slash
+            try:
+                with zipfile.ZipFile(jar_path, 'r') as jar:
+                    try:
+                        with jar.open(internal_path) as f:
+                            return f.read().decode(self.encoding)
+                    except KeyError:
+                        self.tool_error(f"{internal_path}: not found in JAR {jar_path}")
+                        return
+                    except UnicodeError as e:
+                        self.tool_error(f"{filename}: {e}")
+                        self.tool_error("Use --encoding to set the unicode encoding.")
+                        return
+            except zipfile.BadZipFile:
+                self.tool_error(f"{jar_path}: not a valid JAR/ZIP file")
+                return
+            except OSError as err:
+                self.tool_error(f"{jar_path}: unable to read: {err}")
+                return
+
+        # Regular file handling
         try:
             with open(str(filename), "r", encoding=self.encoding) as f:
                 return f.read()
