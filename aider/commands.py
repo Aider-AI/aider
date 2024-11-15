@@ -788,6 +788,7 @@ class Commands:
 
     def cmd_drop(self, args=""):
         "Remove files from the chat session to free up context space"
+        print(args)
 
         if not args.strip():
             self.io.tool_output("Dropping all files from the chat session.")
@@ -796,6 +797,7 @@ class Commands:
 
         filenames = parse_quoted_filenames(args)
         for word in filenames:
+            print("word", word)
             # Expand tilde in the path
             expanded_word = os.path.expanduser(word)
 
@@ -812,11 +814,19 @@ class Commands:
             if not matched_files:
                 matched_files.append(expanded_word)
 
+            print("matched_files", matched_files)
             for matched_file in matched_files:
                 abs_fname = self.coder.abs_root_path(matched_file)
+                print("abs_fname", abs_fname)
                 if abs_fname in self.coder.abs_fnames:
                     self.coder.abs_fnames.remove(abs_fname)
                     self.io.tool_output(f"Removed {matched_file} from the chat")
+                else:
+                    abs_fname = os.path.normpath(os.path.join(self.coder.root, matched_file)) if not os.path.isabs(matched_file) else matched_file
+                    print("abs_fname2", abs_fname)
+                    if abs_fname in self.coder.abs_read_only_fnames:
+                        self.coder.abs_read_only_fnames.remove(abs_fname)
+                        self.io.tool_output(f"Removed {abs_fname} from the chat")
 
     def cmd_git(self, args):
         "Run a git command (output excluded from chat)"
