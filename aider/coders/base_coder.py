@@ -384,11 +384,33 @@ class Coder:
         if read_only_fnames:
             self.abs_read_only_fnames = set()
             for fname in read_only_fnames:
-                abs_fname = self.abs_root_path(fname)
-                if os.path.exists(abs_fname):
-                    self.abs_read_only_fnames.add(abs_fname)
+                if '!' in fname:
+                    # Handle JAR paths
+                    jar_path, internal_path = fname.split('!', 1)
+                    if internal_path.startswith('/'):
+                        internal_path = internal_path[1:]
+                    jar_path = expanduser(jar_path)
+                    if os.path.isfile(jar_path):
+                        try:
+                            with zipfile.ZipFile(jar_path, 'r') as jar:
+                                try:
+                                    jar.getinfo(internal_path)  # Check if file exists in JAR
+                                    self.abs_read_only_fnames.add(fname)
+                                except KeyError:
+                                    self.io.tool_warning(f"Error: File {internal_path} not found in JAR {jar_path}. Skipping.")
+                        except zipfile.BadZipFile:
+                            self.io.tool_warning(f"Error: {jar_path} is not a valid JAR/ZIP file. Skipping.")
+                        except OSError as err:
+                            self.io.tool_warning(f"Error: Unable to read JAR {jar_path}: {err}. Skipping.")
+                    else:
+                        self.io.tool_warning(f"Error: JAR file {jar_path} does not exist. Skipping.")
                 else:
-                    self.io.tool_warning(f"Error: Read-only file {fname} does not exist. Skipping.")
+                    # Handle regular files
+                    abs_fname = self.abs_root_path(fname)
+                    if os.path.exists(abs_fname):
+                        self.abs_read_only_fnames.add(abs_fname)
+                    else:
+                        self.io.tool_warning(f"Error: Read-only file {fname} does not exist. Skipping.")
 
         if map_tokens is None:
             use_repo_map = main_model.use_repo_map
