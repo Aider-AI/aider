@@ -313,6 +313,74 @@ class InputOutput:
             self.tool_error(f"{filename}: {e}")
             return
 
+    def exists(self, path):
+        """
+        Check if a file exists, including files inside JAR/ZIP archives.
+    
+        Args:
+            path (str): Path to the file, can include JAR!internal_path
+
+        Returns:
+            bool: True if the file exists, False otherwise
+        """
+        # Check for JAR file path
+        if '!' in path:
+            jar_path, internal_path = path.split('!', 1)
+            if internal_path.startswith('/'):
+                internal_path = internal_path[1:]  # Remove leading slash
+        
+            # Check if JAR file exists and is valid
+            if not os.path.isfile(jar_path) or not self.is_jar_file(jar_path):
+                return False
+        
+            # Check if internal file exists in JAR
+            try:
+                with zipfile.ZipFile(jar_path, 'r') as jar:
+                    try:
+                        jar.getinfo(internal_path)
+                        return True
+                    except KeyError:
+                        return False
+            except (zipfile.BadZipFile, OSError):
+                return False
+    
+        # Regular file check
+        return os.path.exists(path)
+
+    def is_file(self, path):
+        """
+        Check if a path is a file, including files inside JAR/ZIP archives.
+    
+        Args:
+            path (str): Path to the file, can include JAR!internal_path
+
+        Returns:
+            bool: True if the path is a file, False otherwise
+        """
+        # Check for JAR file path
+        if '!' in path:
+            jar_path, internal_path = path.split('!', 1)
+            if internal_path.startswith('/'):
+                internal_path = internal_path[1:]  # Remove leading slash
+        
+            # Check if JAR file exists and is valid
+            if not os.path.isfile(jar_path) or not self.is_jar_file(jar_path):
+                return False
+        
+            # Check if internal path is a file in JAR
+            try:
+                with zipfile.ZipFile(jar_path, 'r') as jar:
+                    try:
+                        info = jar.getinfo(internal_path)
+                        return not info.is_dir()
+                    except KeyError:
+                        return False
+            except (zipfile.BadZipFile, OSError):
+                return False
+    
+        # Regular file check
+        return os.path.isfile(path)
+
     def read_text(self, filename):
         if is_image_file(filename):
             return self.read_image(filename)

@@ -705,8 +705,8 @@ class Commands:
                 self.io.tool_warning(f"Skipping {fname} due to aiderignore or --subtree-only.")
                 continue
 
-            if fname.exists():
-                if fname.is_file():
+            if self.io.exists(fname):
+                if self.io.is_file(fname):
                     all_matched_files.add(str(fname))
                     continue
                 # an existing dir, escape any special chars so they won't be globs
