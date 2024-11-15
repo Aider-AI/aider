@@ -330,7 +330,7 @@ class InputOutput:
                 internal_path = internal_path[1:]  # Remove leading slash
         
             # Check if JAR file exists and is valid
-            if not os.path.isfile(jar_path) or not self.is_jar_file(jar_path):
+            if not os.path.isfile(jar_path):
                 return False
         
             # Check if internal file exists in JAR

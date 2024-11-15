@@ -1186,22 +1186,20 @@ class Commands:
         # First collect all expanded paths
         for pattern in filenames:
             expanded_pattern = expanduser(pattern)
-            
-            # Check if this is a JAR path with internal file
-            if '!' in expanded_pattern:
-                if self.io.exists(expanded_pattern):
-                    all_paths.append(expanded_pattern)  # Keep the full JAR!internal_path
-                else:
-                    self.io.tool_error(f"JAR file or internal file not found: {expanded_pattern}")
-                continue
 
             # Handle regular files and directories
             if os.path.isabs(expanded_pattern):
-                # For absolute paths, glob it
-                matches = list(glob.glob(expanded_pattern))
+                if self.io.exists(expanded_pattern):
+                    matches = [expanded_pattern]
+                else:
+                    # For absolute paths, glob it
+                    matches = list(glob.glob(expanded_pattern))
             else:
+                if self.io.exists(expanded_pattern):
+                    matches = [self.coder.abs_root_path(expanded_pattern)]
+                else:
                 # For relative paths and globs, use glob from the root directory
-                matches = list(Path(self.coder.root).glob(expanded_pattern))
+                    matches = list(Path(self.coder.root).glob(expanded_pattern))
 
             if not matches:
                 self.io.tool_error(f"No matches found for: {pattern}")
@@ -1210,7 +1208,7 @@ class Commands:
 
         # Then process them in sorted order
         for path in sorted(all_paths):
-            if isinstance(path, str) and '!' in path:
+            if isinstance(path, str) and '!' in path and self.io.exists(path):
                 # This is a JAR path
                 abs_path = path  # Keep the full JAR!internal_path
                 self._add_read_only_file(abs_path, path)
@@ -1230,25 +1228,6 @@ class Commands:
                 f" {self.coder.main_model.name} does not support images."
             )
             return
-
-        # Handle JAR files
-        if '!' in str(abs_path):
-            jar_path, internal_path = str(abs_path).split('!', 1)
-            if internal_path.startswith('/'):
-                internal_path = internal_path[1:]  # Remove leading slash
-            try:
-                with zipfile.ZipFile(jar_path, 'r') as jar:
-                    try:
-                        jar.getinfo(internal_path)  # Check if file exists in JAR
-                    except KeyError:
-                        self.io.tool_error(f"{internal_path}: not found in JAR {jar_path}")
-                        return
-            except zipfile.BadZipFile:
-                self.io.tool_error(f"{jar_path}: not a valid JAR/ZIP file")
-                return
-            except OSError as err:
-                self.io.tool_error(f"{jar_path}: unable to read: {err}")
-                return
 
         if abs_path in self.coder.abs_read_only_fnames:
             self.io.tool_error(f"{original_name} is already in the chat as a read-only file")

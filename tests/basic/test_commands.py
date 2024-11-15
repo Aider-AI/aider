@@ -766,7 +766,7 @@ class TestCommands(TestCase):
                         self.fail(f"No matching read-only command found for {external_file_path}")
 
                 # Clear the current session
-                commands.cmd_recmd_reset("")
+                commands.cmd_reset("")
                 self.assertEqual(len(coder.abs_fnames), 0)
                 self.assertEqual(len(coder.abs_read_only_fnames), 0)
 
