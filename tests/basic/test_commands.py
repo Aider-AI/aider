@@ -4,6 +4,7 @@ import re
 import shutil
 import sys
 import tempfile
+import zipfile
 from io import StringIO
 from pathlib import Path
 from unittest import TestCase, mock
