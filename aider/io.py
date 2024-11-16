@@ -356,7 +356,9 @@ class InputOutput:
                     time.sleep(delay)
                     delay *= 2  # Exponential backoff
                 else:
-                    self.tool_error(f"Unable to write file {filename} after {max_retries} attempts: {err}")
+                    self.tool_error(
+                        f"Unable to write file {filename} after {max_retries} attempts: {err}"
+                    )
                     raise
             except OSError as err:
                 self.tool_error(f"Unable to write file {filename}: {err}")
