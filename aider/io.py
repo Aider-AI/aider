@@ -351,13 +351,16 @@ class InputOutput:
                 with open(str(filename), "w", encoding=self.encoding) as f:
                     f.write(content)
                 return  # Successfully wrote the file
-            except OSError as err:
+            except PermissionError as err:
                 if attempt < max_retries - 1:
                     time.sleep(delay)
                     delay *= 2  # Exponential backoff
                 else:
                     self.tool_error(f"Unable to write file {filename} after {max_retries} attempts: {err}")
                     raise
+            except OSError as err:
+                self.tool_error(f"Unable to write file {filename}: {err}")
+                raise
 
     def rule(self):
         if self.pretty:
