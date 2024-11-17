@@ -46,8 +46,9 @@ scipy<1.14
 tree-sitter==0.21.3
 
 orgecc-pylib>=0.0.9
-cedarscript-integration-aider>=1.3.3
-cedarscript-editor>=1.2.1
+cedartl>=0.0.9
+cedarscript-integration-aider>=1.3.4
+cedarscript-editor>=1.2.2
 # 1.1.2 + 1.1.6
 # pass_rate_1: 74.2
 # pass_rate_2: 75.3

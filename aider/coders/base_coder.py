@@ -34,9 +34,10 @@ from aider.run_cmd import run_cmd
 from aider.sendchat import RETRY_TIMEOUT, send_completion
 from aider.utils import format_content, format_messages, format_tokens, is_image_file
 
+from cedartl import CedarTLProcessor
+
 from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
-from .template_processor import TemplateProcessor
 
 
 class MissingAPIKeyError(ValueError):
@@ -448,7 +449,7 @@ class Coder:
                 self.io.tool_output("JSON Schema:")
                 self.io.tool_output(json.dumps(self.functions, indent=4))
 
-        self.template_processor = TemplateProcessor(files('aider.resources.templates'), self.root)
+        self.template_processor = CedarTLProcessor(files('aider.resources.templates.main'), self.root)
 
     def setup_lint_cmds(self, lint_cmds):
         if not lint_cmds:

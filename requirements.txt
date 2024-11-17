@@ -27,13 +27,15 @@ backoff==2.2.1
     #   posthog
 beautifulsoup4==4.12.3
     # via -r requirements/requirements.in
-cedarscript-ast-parser==0.5.3
+cedarscript-ast-parser==0.5.4
     # via cedarscript-editor
-cedarscript-editor==1.2.1
+cedarscript-editor==1.2.2
     # via -r requirements/requirements.in
-cedarscript-grammar==0.5.1
+cedarscript-grammar==0.5.2
     # via cedarscript-ast-parser
-cedarscript-integration-aider==1.3.3
+cedarscript-integration-aider==1.3.4
+    # via -r requirements/requirements.in
+cedartl==0.0.9
     # via -r requirements/requirements.in
 certifi==2024.8.30
     # via
