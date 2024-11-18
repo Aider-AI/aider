@@ -7,6 +7,10 @@
 - Modified model metadata file loading to allow override of resource file.
 - Allow recursive loading of dirs using `--read`.
 - Updated dependency versions to pick up litellm fix for ollama models.
+- Added exponential backoff retry when writing files to handle editor file locks.
+- Fixed bug in git ignored file handling.
+- Improved error handling for file writes and git operations.
+- Updated Qwen 2.5 Coder 32B model configuration.
 
 ### Aider v0.63.1
 
