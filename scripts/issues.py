@@ -28,11 +28,11 @@ DUPLICATE_COMMENT = """Thanks for trying aider and filing this issue.
 
 This looks like a duplicate of #{oldest_issue_number}. Please see the comments there for more information, and feel free to continue the discussion within that issue.
 
-I'm going to close this issue for now. But please let me know if you think this is actually a distinct issue and I will reopen this issue."""  # noqa
+I'm going to close this issue for now. But please let me know if you think this is actually a distinct issue and I will reopen this issue.""" + BOT_SUFFIX  # noqa
 
-STALE_COMMENT = """I'm labeling this issue as stale because it has been open for 2 weeks with no activity. If there are no additional comments, I will close it in 7 days."""  # noqa
+STALE_COMMENT = """I'm labeling this issue as stale because it has been open for 2 weeks with no activity. If there are no additional comments, I will close it in 7 days.""" + BOT_SUFFIX  # noqa
 
-CLOSE_STALE_COMMENT = """I'm closing this issue because it has been stalled for 3 weeks with no activity. Feel free to add a comment here and we can re-open it. Or feel free to file a new issue at any time."""  # noqa
+CLOSE_STALE_COMMENT = """I'm closing this issue because it has been stalled for 3 weeks with no activity. Feel free to add a comment here and we can re-open it. Or feel free to file a new issue at any time.""" + BOT_SUFFIX  # noqa
 
 # GitHub API configuration
 GITHUB_API_URL = "https://api.github.com"
