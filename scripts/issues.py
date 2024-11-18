@@ -38,14 +38,14 @@ I'm going to close this issue for now. But please let me know if you think this 
 )  # noqa
 
 STALE_COMMENT = (
-    """I'm labeling this issue as stale because it has been open for 2 weeks with no activity. If there are no additional comments, I will close it in 7 days."""
+    """I'm labeling this issue as stale because it has been open for 2 weeks with no activity. If there are no additional comments, I will close it in 7 days."""  # noqa
     + BOT_SUFFIX
-)  # noqa
+)
 
 CLOSE_STALE_COMMENT = (
-    """I'm closing this issue because it has been stalled for 3 weeks with no activity. Feel free to add a comment here and we can re-open it. Or feel free to file a new issue at any time."""
+    """I'm closing this issue because it has been stalled for 3 weeks with no activity. Feel free to add a comment here and we can re-open it. Or feel free to file a new issue at any time."""  # noqa
     + BOT_SUFFIX
-)  # noqa
+)
 
 # GitHub API configuration
 GITHUB_API_URL = "https://api.github.com"
