@@ -23,8 +23,9 @@ def has_been_reopened(issue_number):
 load_dotenv()
 
 BOT_SUFFIX = (
-    "\n\nNote: A [bot script](https://github.com/Aider-AI/aider/blob/main/scripts/issues.py) made"
-    " these updates to the issue."
+    """
+Note: A [bot script](https://github.com/Aider-AI/aider/blob/main/scripts/issues.py) made these updates to the issue.
+""" # noqa
 )
 
 DUPLICATE_COMMENT = (
@@ -293,7 +294,9 @@ def handle_stale_closing(all_issues, auto_yes):
                         continue
 
                 # Add closing comment
-                comment_url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/comments"
+                comment_url = (
+                    f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/comments"
+                )
                 response = requests.post(
                     comment_url, headers=headers, json={"body": CLOSE_STALE_COMMENT}
                 )
