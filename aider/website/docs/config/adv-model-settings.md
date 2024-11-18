@@ -1057,7 +1057,7 @@ cog.out("```\n")
   name: openai/o1-mini
   reminder: user
   send_undo_reply: false
-  streaming: false
+  streaming: true
   use_repo_map: true
   use_system_prompt: false
   use_temperature: false
@@ -1073,7 +1073,7 @@ cog.out("```\n")
   name: azure/o1-mini
   reminder: user
   send_undo_reply: false
-  streaming: false
+  streaming: true
   use_repo_map: true
   use_system_prompt: false
   use_temperature: false
@@ -1089,7 +1089,7 @@ cog.out("```\n")
   name: o1-mini
   reminder: user
   send_undo_reply: false
-  streaming: false
+  streaming: true
   use_repo_map: true
   use_system_prompt: false
   use_temperature: false
@@ -1105,7 +1105,7 @@ cog.out("```\n")
   name: openai/o1-preview
   reminder: user
   send_undo_reply: false
-  streaming: false
+  streaming: true
   use_repo_map: true
   use_system_prompt: false
   use_temperature: false
@@ -1121,7 +1121,7 @@ cog.out("```\n")
   name: azure/o1-preview
   reminder: user
   send_undo_reply: false
-  streaming: false
+  streaming: true
   use_repo_map: true
   use_system_prompt: false
   use_temperature: false
@@ -1137,7 +1137,7 @@ cog.out("```\n")
   name: o1-preview
   reminder: user
   send_undo_reply: false
-  streaming: false
+  streaming: true
   use_repo_map: true
   use_system_prompt: false
   use_temperature: false
@@ -1153,7 +1153,7 @@ cog.out("```\n")
   name: openrouter/openai/o1-mini
   reminder: user
   send_undo_reply: false
-  streaming: false
+  streaming: true
   use_repo_map: true
   use_system_prompt: false
   use_temperature: false
@@ -1169,7 +1169,7 @@ cog.out("```\n")
   name: openrouter/openai/o1-preview
   reminder: user
   send_undo_reply: false
-  streaming: false
+  streaming: true
   use_repo_map: true
   use_system_prompt: false
   use_temperature: false
