@@ -25,6 +25,7 @@ def blame(start_tag, end_tag=None):
         for f in files
         if f.endswith((".py", ".scm", ".sh", "Dockerfile", "Gemfile"))
         or (f.startswith(".github/workflows/") and f.endswith(".yml"))
+        or (f.startswith("aider/website/share/") and f.endswith(".md"))
     ]
     files = [f for f in files if not f.endswith("prompts.py")]
 
