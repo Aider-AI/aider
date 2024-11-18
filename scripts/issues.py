@@ -22,8 +22,7 @@ def has_been_reopened(issue_number):
 # Load environment variables from .env file
 load_dotenv()
 
-BOT_SUFFIX = """
-Note: A [bot script](https://github.com/Aider-AI/aider/blob/main/scripts/issues.py) made these updates to the issue.
+BOT_SUFFIX = """Note: A [bot script](https://github.com/Aider-AI/aider/blob/main/scripts/issues.py) made these updates to the issue.
 """  # noqa
 
 DUPLICATE_COMMENT = (
@@ -31,9 +30,9 @@ DUPLICATE_COMMENT = (
 
 This looks like a duplicate of #{oldest_issue_number}. Please see the comments there for more information, and feel free to continue the discussion within that issue.
 
-I'm going to close this issue for now. But please let me know if you think this is actually a distinct issue and I will reopen this issue."""
+I'm going to close this issue for now. But please let me know if you think this is actually a distinct issue and I will reopen this issue."""  # noqa
     + BOT_SUFFIX
-)  # noqa
+)
 
 STALE_COMMENT = (
     """I'm labeling this issue as stale because it has been open for 2 weeks with no activity. If there are no additional comments, I will close it in 7 days."""  # noqa
@@ -292,7 +291,7 @@ def handle_stale_closing(all_issues, auto_yes):
                         continue
 
                 # Add closing comment
-                comment_url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/comments"
+                comment_url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/comments"  # noqa
                 response = requests.post(
                     comment_url, headers=headers, json={"body": CLOSE_STALE_COMMENT}
                 )
