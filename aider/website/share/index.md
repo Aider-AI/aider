@@ -2,6 +2,12 @@
 nav_exclude: true
 ---
 
+<meta http-equiv="Content-Security-Policy" 
+    content="default-src 'self'; 
+             script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; 
+             connect-src http: https:;
+             style-src 'self' 'unsafe-inline';">
+
 # Shared aider chat transcript
 
 A user has shared the following transcript of a pair programming chat session
@@ -38,10 +44,20 @@ print("goodbye")
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
+function isValidUrl(url) {
+    try {
+        const urlObj = new URL(url);
+        return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+    } catch {
+        return false;
+    }
+}
+
 window.onload = function() {
     var urlParams = new URLSearchParams(window.location.search);
     var conv = urlParams.get('mdurl');
-    if (!conv) {
+    if (!conv || !isValidUrl(conv)) {
+        console.error('Invalid or missing URL');
         return;
     }
     document.getElementById('mdurl').href = conv;
