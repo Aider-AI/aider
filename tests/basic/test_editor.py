@@ -1,19 +1,21 @@
 import os
 import platform
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 
 from aider.editor import (
-    get_environment_editor,
-    discover_editor,
-    write_temp_file,
-    print_status_message,
-    file_editor,
-    pipe_editor,
     DEFAULT_EDITOR_NIX,
     DEFAULT_EDITOR_OS_X,
     DEFAULT_EDITOR_WINDOWS,
+    discover_editor,
+    file_editor,
+    get_environment_editor,
+    pipe_editor,
+    print_status_message,
+    write_temp_file,
 )
+
 
 def test_get_environment_editor():
     # Test with no environment variables set
@@ -29,12 +31,9 @@ def test_get_environment_editor():
         assert get_environment_editor() == "code"
 
     # Test AIDER_EDITOR overrides all
-    with patch.dict(os.environ, {
-        "EDITOR": "vim",
-        "VISUAL": "code",
-        "AIDER_EDITOR": "emacs"
-    }):
+    with patch.dict(os.environ, {"EDITOR": "vim", "VISUAL": "code", "AIDER_EDITOR": "emacs"}):
         assert get_environment_editor() == "emacs"
+
 
 def test_discover_editor():
     with patch("platform.system") as mock_system:
@@ -62,6 +61,7 @@ def test_discover_editor():
         with pytest.raises(RuntimeError):
             discover_editor()
 
+
 def test_write_temp_file():
     # Test basic file creation
     content = "test content"
@@ -81,6 +81,7 @@ def test_write_temp_file():
     assert os.path.basename(filepath).startswith("test_")
     os.remove(filepath)
 
+
 def test_print_status_message(capsys):
     # Test success message
     print_status_message(True, "Success!")
@@ -92,6 +93,7 @@ def test_print_status_message(capsys):
     captured = capsys.readouterr()
     assert "Failed!" in captured.out
 
+
 @patch("subprocess.call")
 def test_file_editor(mock_call):
     # Test basic editor call
@@ -99,16 +101,18 @@ def test_file_editor(mock_call):
         file_editor("test.txt")
         mock_call.assert_called_once_with(["vim", "test.txt"])
 
+
 def test_pipe_editor():
     test_content = "Initial content"
     modified_content = "Modified content"
 
     # Mock the file operations and editor call
-    with patch("aider.editor.write_temp_file") as mock_write, \
-         patch("aider.editor.file_editor") as mock_editor, \
-         patch("builtins.open") as mock_open, \
-         patch("os.remove") as mock_remove:
-
+    with (
+        patch("aider.editor.write_temp_file") as mock_write,
+        patch("aider.editor.file_editor") as mock_editor,
+        patch("builtins.open") as mock_open,
+        patch("os.remove") as mock_remove,
+    ):
         # Setup mocks
         mock_write.return_value = "temp.txt"
         mock_file = MagicMock()
