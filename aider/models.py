@@ -82,6 +82,13 @@ class ModelSettings:
     editor_model_name: Optional[str] = None
     editor_edit_format: Optional[str] = None
 
+    def __post_init__(self):
+        # Track which fields were explicitly set during initialization
+        self._set_fields = set()
+        for field in fields(self.__class__):
+            if field.name in self.__dict__:
+                self._set_fields.add(field.name)
+
 
 # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
 # https://platform.openai.com/docs/models/gpt-3-5-turbo
@@ -841,8 +848,10 @@ class Model(ModelSettings):
         for field in fields(ModelSettings):
             if skip_name and field.name == "name":
                 continue
-            val = getattr(source, field.name)
-            setattr(self, field.name, val)
+            # Only copy fields that were explicitly set in the source
+            if hasattr(source, '_set_fields') and field.name in source._set_fields:
+                val = getattr(source, field.name)
+                setattr(self, field.name, val)
 
     def configure_model_settings(self, model):
         # Apply default settings first if they exist
