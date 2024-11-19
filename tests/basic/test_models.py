@@ -111,7 +111,7 @@ class TestModels(unittest.TestCase):
         # Write to a regular file instead of NamedTemporaryFile for better cross-platform compatibility
         tmp = tempfile.mktemp(suffix=".yml")
         try:
-            with open(tmp, 'w') as f:
+            with open(tmp, "w") as f:
                 yaml.dump(test_settings, f)
 
             # Register the test settings
@@ -136,6 +136,7 @@ class TestModels(unittest.TestCase):
         finally:
             # Clean up the temporary file
             import os
+
             try:
                 os.unlink(tmp)
             except OSError:
