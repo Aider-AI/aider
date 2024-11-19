@@ -108,7 +108,8 @@ class TestModels(unittest.TestCase):
             },
         ]
 
-        # Write to a regular file instead of NamedTemporaryFile for better cross-platform compatibility
+        # Write to a regular file instead of NamedTemporaryFile
+        # for better cross-platform compatibility
         tmp = tempfile.mktemp(suffix=".yml")
         try:
             with open(tmp, "w") as f:
