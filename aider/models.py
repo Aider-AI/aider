@@ -803,7 +803,7 @@ class Model(ModelSettings):
 
         # Find the extra settings
         self.extra_model_settings = next(
-            (ms for ms in MODEL_SETTINGS if ms.name == "aider/override"), None
+            (ms for ms in MODEL_SETTINGS if ms.name == "aider/extra"), None
         )
 
         self.info = self.get_model_info(model)
