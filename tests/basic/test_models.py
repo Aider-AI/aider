@@ -1,9 +1,11 @@
 import unittest
-from unittest.mock import ANY, MagicMock, patch
+from unittest.mock import ANY, MagicMock, patch, call
 
 from aider.models import (
     Model,
     ModelInfoManager,
+    ModelSettings,
+    MODEL_SETTINGS,
     sanity_check_model,
     sanity_check_models,
 )
