@@ -445,9 +445,9 @@ class InputOutput:
                 multiline_input = True
                 # Check for optional tag after opening {
                 if len(line) > 1:
-                    tag = ''.join(c for c in line[1:] if c.isalnum())
+                    tag = "".join(c for c in line[1:] if c.isalnum())
                     multiline_tag = tag
-                    inp += line[len(tag)+1:] + "\n"
+                    inp += line[len(tag) + 1 :] + "\n"
                 else:
                     multiline_tag = None
                     inp += line[1:] + "\n"
@@ -456,7 +456,7 @@ class InputOutput:
                 if multiline_tag:
                     # Check if the line ends with tag}
                     if line.endswith(f"{multiline_tag}}}"):
-                        inp += line[:-len(multiline_tag)-1] + "\n"
+                        inp += line[: -len(multiline_tag) - 1] + "\n"
                         break
                     else:
                         inp += line + "\n"
