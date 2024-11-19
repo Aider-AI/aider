@@ -84,6 +84,7 @@ class ModelSettings:
 
     def __post_init__(self):
         # Track which fields were explicitly set during initialization
+        dump(self.__dict__)
         self._set_fields = set()
         for field in fields(self.__class__):
             if field.name in self.__dict__:
