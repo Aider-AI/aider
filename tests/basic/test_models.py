@@ -82,7 +82,9 @@ class TestModels(unittest.TestCase):
         )  # Should return True because there's a problem with the editor model
         mock_io.tool_warning.assert_called_with(ANY)  # Ensure a warning was issued
 
-        warning_messages = [warning_call.args[0] for warning_call in mock_io.tool_warning.call_args_list]
+        warning_messages = [
+            warning_call.args[0] for warning_call in mock_io.tool_warning.call_args_list
+        ]
         print("Warning messages:", warning_messages)  # Add this line
 
         self.assertGreaterEqual(mock_io.tool_warning.call_count, 1)  # Expect two warnings
@@ -92,6 +94,7 @@ class TestModels(unittest.TestCase):
 
     def test_default_and_override_settings(self):
         import tempfile
+
         import yaml
 
         # Create temporary YAML file with test settings
@@ -104,13 +107,13 @@ class TestModels(unittest.TestCase):
             {
                 "name": "aider/override",
                 "use_temperature": False,
-            }
+            },
         ]
 
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.yml') as tmp:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yml") as tmp:
             yaml.dump(test_settings, tmp)
             tmp.flush()
-            
+
             # Register the test settings
             register_models([tmp.name])
 
