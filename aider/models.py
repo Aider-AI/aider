@@ -65,14 +65,15 @@ ANTHROPIC_MODELS = [ln.strip() for ln in ANTHROPIC_MODELS.splitlines() if ln.str
 
 def track_init_fields(cls):
     original_init = cls.__init__
-    
+
     @wraps(original_init)
     def __init__(self, **kwargs):
         self._set_fields = set(kwargs.keys())
         original_init(self, **kwargs)
-    
+
     cls.__init__ = __init__
     return cls
+
 
 @track_init_fields
 @dataclass
@@ -94,7 +95,6 @@ class ModelSettings:
     streaming: bool = True
     editor_model_name: Optional[str] = None
     editor_edit_format: Optional[str] = None
-
 
 
 # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
@@ -856,7 +856,7 @@ class Model(ModelSettings):
             if skip_name and field.name == "name":
                 continue
             # Only copy fields that were explicitly set in the source
-            if hasattr(source, '_set_fields') and field.name in source._set_fields:
+            if hasattr(source, "_set_fields") and field.name in source._set_fields:
                 val = getattr(source, field.name)
                 setattr(self, field.name, val)
 
