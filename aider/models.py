@@ -836,21 +836,24 @@ class Model(ModelSettings):
     def get_model_info(self, model):
         return model_info_manager.get_model_info(model)
 
+    def _copy_fields(self, source, skip_name=True):
+        """Helper to copy fields from a ModelSettings instance to self"""
+        for field in fields(ModelSettings):
+            if skip_name and field.name == "name":
+                continue
+            val = getattr(source, field.name)
+            setattr(self, field.name, val)
+
     def configure_model_settings(self, model):
         # Apply default settings first if they exist
         if self.default_model_settings:
-            for field in fields(ModelSettings):
-                if field.name != "name":  # Don't copy the name field
-                    val = getattr(self.default_model_settings, field.name)
-                    setattr(self, field.name, val)
+            self._copy_fields(self.default_model_settings)
 
         # Look for exact model match
         for ms in MODEL_SETTINGS:
             # direct match, or match "provider/<model>"
             if model == ms.name:
-                for field in fields(ModelSettings):
-                    val = getattr(ms, field.name)
-                    setattr(self, field.name, val)
+                self._copy_fields(ms, skip_name=False)
                 break  # Continue to apply overrides
 
         model = model.lower()
@@ -864,10 +867,7 @@ class Model(ModelSettings):
 
         # Apply override settings last if they exist
         if self.override_model_settings:
-            for field in fields(ModelSettings):
-                if field.name != "name":  # Don't copy the name field
-                    val = getattr(self.override_model_settings, field.name)
-                    setattr(self, field.name, val)
+            self._copy_fields(self.override_model_settings)
             return
 
         if "gpt-4-turbo" in model or ("gpt-4-" in model and "-preview" in model):
