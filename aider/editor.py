@@ -16,8 +16,6 @@ import tempfile
 
 from rich.console import Console
 
-SYSTEM = platform.system()
-
 DEFAULT_EDITOR_NIX = "vi"
 DEFAULT_EDITOR_OS_X = "vim"
 DEFAULT_EDITOR_WINDOWS = "notepad"
@@ -100,9 +98,10 @@ def discover_editor():
     :return: A list of command parts ready for subprocess execution
     :rtype: list[str]
     """
-    if SYSTEM == "Windows":
+    system = platform.system()
+    if system == "Windows":
         default_editor = DEFAULT_EDITOR_WINDOWS
-    elif SYSTEM == "Darwin":
+    elif system == "Darwin":
         default_editor = DEFAULT_EDITOR_OS_X
     else:
         default_editor = DEFAULT_EDITOR_NIX
