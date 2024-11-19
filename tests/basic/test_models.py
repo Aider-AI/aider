@@ -96,7 +96,7 @@ class TestModels(unittest.TestCase):
             [
                 ModelSettings(
                     name="aider/default",
-                    edit_format="diff",
+                    edit_format="fake",
                     use_repo_map=True,
                 ),
                 ModelSettings(
@@ -108,13 +108,13 @@ class TestModels(unittest.TestCase):
 
         # Test that defaults are applied when no exact match
         model = Model("unknown-model")
-        self.assertEqual(model.edit_format, "diff")
+        self.assertEqual(model.edit_format, "fake")
         self.assertTrue(model.use_repo_map)
         self.assertFalse(model.use_temperature)  # Override should win
 
         # Test that exact match overrides defaults but not overrides
         model = Model("gpt-4")
-        self.assertNotEqual(model.edit_format, "diff")  # Model setting should win over default
+        self.assertNotEqual(model.edit_format, "fake")  # Model setting should win over default
         self.assertFalse(model.use_temperature)  # Override should still win
 
         # Clean up by removing test settings
