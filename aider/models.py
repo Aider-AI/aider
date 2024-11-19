@@ -803,12 +803,10 @@ class Model(ModelSettings):
 
         # Find default and override settings
         self.default_model_settings = next(
-            (ms for ms in MODEL_SETTINGS if ms.name == "aider/default"), 
-            None
+            (ms for ms in MODEL_SETTINGS if ms.name == "aider/default"), None
         )
         self.override_model_settings = next(
-            (ms for ms in MODEL_SETTINGS if ms.name == "aider/override"),
-            None
+            (ms for ms in MODEL_SETTINGS if ms.name == "aider/override"), None
         )
 
         self.info = self.get_model_info(model)
@@ -842,7 +840,7 @@ class Model(ModelSettings):
         # Apply default settings first if they exist
         if self.default_model_settings:
             for field in fields(ModelSettings):
-                if field.name != 'name':  # Don't copy the name field
+                if field.name != "name":  # Don't copy the name field
                     val = getattr(self.default_model_settings, field.name)
                     setattr(self, field.name, val)
 
@@ -867,7 +865,7 @@ class Model(ModelSettings):
         # Apply override settings last if they exist
         if self.override_model_settings:
             for field in fields(ModelSettings):
-                if field.name != 'name':  # Don't copy the name field
+                if field.name != "name":  # Don't copy the name field
                     val = getattr(self.override_model_settings, field.name)
                     setattr(self, field.name, val)
             return
