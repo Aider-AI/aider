@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import ANY, MagicMock, patch
 
 from aider.models import (
-    MODEL_SETTINGS,
+    ANTHROPIC_BETA_HEADER,
     Model,
     ModelInfoManager,
     register_models,
