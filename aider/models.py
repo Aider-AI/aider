@@ -861,15 +861,12 @@ class Model(ModelSettings):
             # Initialize extra_params if it doesn't exist
             if not self.extra_params:
                 self.extra_params = {}
-            
+
             # Deep merge the extra_params dicts
             for key, value in self.extra_model_settings.extra_params.items():
                 if isinstance(value, dict) and isinstance(self.extra_params.get(key), dict):
                     # For nested dicts, merge recursively
-                    self.extra_params[key] = {
-                        **self.extra_params[key],
-                        **value
-                    }
+                    self.extra_params[key] = {**self.extra_params[key], **value}
                 else:
                     # For non-dict values, simply update
                     self.extra_params[key] = value
