@@ -801,6 +801,16 @@ class Model(ModelSettings):
         self.weak_model = None
         self.editor_model = None
 
+        # Find default and override settings
+        self.default_model_settings = next(
+            (ms for ms in MODEL_SETTINGS if ms.name == "aider/default"), 
+            None
+        )
+        self.override_model_settings = next(
+            (ms for ms in MODEL_SETTINGS if ms.name == "aider/override"),
+            None
+        )
+
         self.info = self.get_model_info(model)
 
         # Are all needed keys/params available?
@@ -829,13 +839,21 @@ class Model(ModelSettings):
         return model_info_manager.get_model_info(model)
 
     def configure_model_settings(self, model):
+        # Apply default settings first if they exist
+        if self.default_model_settings:
+            for field in fields(ModelSettings):
+                if field.name != 'name':  # Don't copy the name field
+                    val = getattr(self.default_model_settings, field.name)
+                    setattr(self, field.name, val)
+
+        # Look for exact model match
         for ms in MODEL_SETTINGS:
             # direct match, or match "provider/<model>"
             if model == ms.name:
                 for field in fields(ModelSettings):
                     val = getattr(ms, field.name)
                     setattr(self, field.name, val)
-                return  # <--
+                break  # Continue to apply overrides
 
         model = model.lower()
 
@@ -844,7 +862,15 @@ class Model(ModelSettings):
             self.use_repo_map = True
             self.send_undo_reply = True
             self.examples_as_sys_msg = True
-            return  # <--
+            pass  # Continue to apply overrides
+
+        # Apply override settings last if they exist
+        if self.override_model_settings:
+            for field in fields(ModelSettings):
+                if field.name != 'name':  # Don't copy the name field
+                    val = getattr(self.override_model_settings, field.name)
+                    setattr(self, field.name, val)
+            return
 
         if "gpt-4-turbo" in model or ("gpt-4-" in model and "-preview" in model):
             self.edit_format = "udiff"
