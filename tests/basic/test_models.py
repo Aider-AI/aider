@@ -90,17 +90,19 @@ class TestModels(unittest.TestCase):
 
     def test_default_and_override_settings(self):
         # Add default and override settings to MODEL_SETTINGS
-        MODEL_SETTINGS.extend([
-            ModelSettings(
-                name="aider/default",
-                edit_format="diff",
-                use_repo_map=True,
-            ),
-            ModelSettings(
-                name="aider/override",
-                use_temperature=False,
-            ),
-        ])
+        MODEL_SETTINGS.extend(
+            [
+                ModelSettings(
+                    name="aider/default",
+                    edit_format="diff",
+                    use_repo_map=True,
+                ),
+                ModelSettings(
+                    name="aider/override",
+                    use_temperature=False,
+                ),
+            ]
+        )
 
         # Test that defaults are applied when no exact match
         model = Model("unknown-model")
@@ -114,7 +116,9 @@ class TestModels(unittest.TestCase):
         self.assertFalse(model.use_temperature)  # Override should still win
 
         # Clean up by removing test settings
-        MODEL_SETTINGS[:] = [ms for ms in MODEL_SETTINGS if ms.name not in ("aider/default", "aider/override")]
+        MODEL_SETTINGS[:] = [
+            ms for ms in MODEL_SETTINGS if ms.name not in ("aider/default", "aider/override")
+        ]
 
 
 if __name__ == "__main__":
