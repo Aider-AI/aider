@@ -24,6 +24,7 @@ cog.out(get_help_md())
 | **/copy** | Copy the last assistant message to the clipboard |
 | **/diff** | Display the diff of changes since the last message |
 | **/drop** | Remove files from the chat session to free up context space |
+| **/editor** | Open an editor to write a prompt |
 | **/exit** | Exit the application |
 | **/git** | Run a git command (output excluded from chat) |
 | **/help** | Ask questions about aider |
