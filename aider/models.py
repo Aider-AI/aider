@@ -857,8 +857,22 @@ class Model(ModelSettings):
             self.apply_generic_model_settings(model)
 
         # Apply override settings last if they exist
-        if self.extra_model_settings:
-            # TODO: merge the self.extra_model_settings.extra_params dict into self.extra_params dict. don't remove existing entries, just add/update entries in extra_model_settings. be careful with sub-dicts: same things apply, preserve existing entries add/update
+        if self.extra_model_settings and self.extra_model_settings.extra_params:
+            # Initialize extra_params if it doesn't exist
+            if not self.extra_params:
+                self.extra_params = {}
+            
+            # Deep merge the extra_params dicts
+            for key, value in self.extra_model_settings.extra_params.items():
+                if isinstance(value, dict) and isinstance(self.extra_params.get(key), dict):
+                    # For nested dicts, merge recursively
+                    self.extra_params[key] = {
+                        **self.extra_params[key],
+                        **value
+                    }
+                else:
+                    # For non-dict values, simply update
+                    self.extra_params[key] = value
 
     def apply_generic_model_settings(self, model):
         if ("llama3" in model or "llama-3" in model) and "70b" in model:
