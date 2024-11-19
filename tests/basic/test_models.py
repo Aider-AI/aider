@@ -91,36 +91,44 @@ class TestModels(unittest.TestCase):
         )  # Check that one of the warnings mentions the bogus model
 
     def test_default_and_override_settings(self):
-        # Add default and override settings to MODEL_SETTINGS
-        MODEL_SETTINGS.extend(
-            [
-                ModelSettings(
-                    name="aider/default",
-                    edit_format="fake",
-                    use_repo_map=True,
-                ),
-                ModelSettings(
-                    name="aider/override",
-                    use_temperature=False,
-                ),
-            ]
-        )
+        import tempfile
+        import yaml
 
-        # Test that defaults are applied when no exact match
-        model = Model("unknown-model")
-        self.assertEqual(model.edit_format, "fake")
-        self.assertTrue(model.use_repo_map)
-        self.assertFalse(model.use_temperature)  # Override should win
-
-        # Test that exact match overrides defaults but not overrides
-        model = Model("gpt-4")
-        self.assertNotEqual(model.edit_format, "fake")  # Model setting should win over default
-        self.assertFalse(model.use_temperature)  # Override should still win
-
-        # Clean up by removing test settings
-        MODEL_SETTINGS[:] = [
-            ms for ms in MODEL_SETTINGS if ms.name not in ("aider/default", "aider/override")
+        # Create temporary YAML file with test settings
+        test_settings = [
+            {
+                "name": "aider/default",
+                "edit_format": "fake",
+                "use_repo_map": True,
+            },
+            {
+                "name": "aider/override",
+                "use_temperature": False,
+            }
         ]
+
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.yml') as tmp:
+            yaml.dump(test_settings, tmp)
+            tmp.flush()
+            
+            # Register the test settings
+            register_models([tmp.name])
+
+            # Test that defaults are applied when no exact match
+            model = Model("unknown-model")
+            self.assertEqual(model.edit_format, "fake")
+            self.assertTrue(model.use_repo_map)
+            self.assertFalse(model.use_temperature)  # Override should win
+
+            # Test that exact match overrides defaults but not overrides
+            model = Model("gpt-4")
+            self.assertNotEqual(model.edit_format, "fake")  # Model setting should win over default
+            self.assertFalse(model.use_temperature)  # Override should still win
+
+            # Clean up by removing test settings
+            MODEL_SETTINGS[:] = [
+                ms for ms in MODEL_SETTINGS if ms.name not in ("aider/default", "aider/override")
+            ]
 
 
 if __name__ == "__main__":
