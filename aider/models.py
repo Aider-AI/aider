@@ -850,13 +850,19 @@ class Model(ModelSettings):
             self._copy_fields(self.default_model_settings)
 
         # Look for exact model match
+        exact_match = False
         for ms in MODEL_SETTINGS:
             # direct match, or match "provider/<model>"
             if model == ms.name:
                 self._copy_fields(ms, skip_name=False)
+                exact_match = True
                 break  # Continue to apply overrides
 
         model = model.lower()
+
+        # If no exact match, try generic settings
+        if not exact_match:
+            self.apply_generic_model_settings(model)
 
         # Apply override settings last if they exist
         if self.override_model_settings:
