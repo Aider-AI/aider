@@ -58,7 +58,7 @@ a model that aider doesn't know about.
 
 ### Configuration file locations
 
-Create a `.aider.model.settings.yml` file in one of these locations:
+You can override or add settings for any model by creating a `.aider.model.settings.yml` file in one of these locations:
 
 - Your home directory.
 - The root if your git repo.
@@ -68,9 +68,21 @@ Create a `.aider.model.settings.yml` file in one of these locations:
 If the files above exist, they will be loaded in that order. 
 Files loaded last will take priority.
 
-The yaml file should be a a list of dictionary objects for each model.
-For example, below are all the pre-configured model settings
-to give a sense for the settings which are supported.
+The yaml file should be a list of dictionary objects for each model.
+
+You can use the special model name `aider/extra_params` to define settings that will be applied to all models. For example:
+
+```yaml
+- name: aider/extra_params
+  extra_params:
+    extra_headers:
+      Custom-Header: value
+    max_tokens: 8192
+```
+
+These settings will be merged with any model-specific settings, with the model-specific settings taking precedence for any conflicts.
+
+Below are all the pre-configured model settings to give a sense for the settings which are supported.
 
 You can also look at the `ModelSettings` class in
 [models.py](https://github.com/Aider-AI/aider/blob/main/aider/models.py)
