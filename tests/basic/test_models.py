@@ -108,12 +108,14 @@ class TestModels(unittest.TestCase):
             },
         ]
 
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".yml") as tmp:
-            yaml.dump(test_settings, tmp)
-            tmp.flush()
+        # Write to a regular file instead of NamedTemporaryFile for better cross-platform compatibility
+        tmp = tempfile.mktemp(suffix=".yml")
+        try:
+            with open(tmp, 'w') as f:
+                yaml.dump(test_settings, f)
 
             # Register the test settings
-            register_models([tmp.name])
+            register_models([tmp])
 
             # Test that defaults are applied when no exact match
             model = Model("claude-3-5-sonnet-20240620")
@@ -131,6 +133,13 @@ class TestModels(unittest.TestCase):
             model = Model("gpt-4")
             self.assertEqual(model.extra_params["extra_headers"]["Foo"], "bar")
             self.assertEqual(model.extra_params["some_param"], "some value")
+        finally:
+            # Clean up the temporary file
+            import os
+            try:
+                os.unlink(tmp)
+            except OSError:
+                pass
 
 
 if __name__ == "__main__":
