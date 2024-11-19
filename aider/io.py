@@ -443,11 +443,26 @@ class InputOutput:
 
             if line and line[0] == "{" and not multiline_input:
                 multiline_input = True
-                inp += line[1:] + "\n"
+                # Check for optional tag after opening {
+                if len(line) > 1:
+                    tag = ''.join(c for c in line[1:] if c.isalnum())
+                    multiline_tag = tag
+                    inp += line[len(tag)+1:] + "\n"
+                else:
+                    multiline_tag = None
+                    inp += line[1:] + "\n"
                 continue
             elif line and line[-1] == "}" and multiline_input:
-                inp += line[:-1] + "\n"
-                break
+                if multiline_tag:
+                    # Check if the line ends with tag}
+                    if line.endswith(f"{multiline_tag}}"):
+                        inp += line[:-len(multiline_tag)-1] + "\n"
+                        break
+                    else:
+                        inp += line + "\n"
+                else:
+                    inp += line[:-1] + "\n"
+                    break
             elif multiline_input:
                 inp += line + "\n"
             else:
