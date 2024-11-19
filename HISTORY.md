@@ -3,6 +3,17 @@
 
 ### main branch
 
+### Aider v0.63.3
+
+- Added `/editor` command to open system editor for writing prompts.
+- Added support for optional multiline input tags with matching closing tags.
+- Improved model settings configuration with default and override handling.
+- Added support for deep merging of extra model settings parameters.
+- Fixed bug in fuzzy model name matching.
+- Added Timeout exception to handle API provider timeouts.
+- Improved error handling and code formatting.
+- Aider wrote 60% of the code in this release.
+
 ###  Aider v0.63.2
 
 - Fixed bug in fuzzy model name matching when litellm provider info is missing.
