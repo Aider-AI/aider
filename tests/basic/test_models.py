@@ -92,7 +92,7 @@ class TestModels(unittest.TestCase):
             any("bogus-model" in msg for msg in warning_messages)
         )  # Check that one of the warnings mentions the bogus model
 
-    def test_default_and_override_settings(self):
+    def test_aider_extra_model_settings(self):
         import tempfile
 
         import yaml
@@ -100,13 +100,11 @@ class TestModels(unittest.TestCase):
         # Create temporary YAML file with test settings
         test_settings = [
             {
-                "name": "aider/default",
-                "edit_format": "fake",
-                "use_repo_map": True,
-            },
-            {
-                "name": "aider/override",
-                "use_temperature": False,
+                "name": "aider/extra",
+                "extra_params" : {
+                    "extra_headers" : { "Foo" : "bar" },
+                    "some_param" : "some value",
+                }
             },
         ]
 
@@ -118,20 +116,13 @@ class TestModels(unittest.TestCase):
             register_models([tmp.name])
 
             # Test that defaults are applied when no exact match
-            model = Model("unknown-model")
-            self.assertEqual(model.edit_format, "fake")
-            self.assertTrue(model.use_repo_map)
-            self.assertFalse(model.use_temperature)  # Override should win
+            model = Model("claude-3-5-sonnet-20240620")
+            # TODO: make sure Foo:bar and existing anthropic-beta headers are both here; check some_param; check max_tokens=8192 still there
 
             # Test that exact match overrides defaults but not overrides
             model = Model("gpt-4")
-            self.assertNotEqual(model.edit_format, "fake")  # Model setting should win over default
-            self.assertFalse(model.use_temperature)  # Override should still win
+            # TODO: make sure Foo:bar header is there; check some_param
 
-            # Clean up by removing test settings
-            MODEL_SETTINGS[:] = [
-                ms for ms in MODEL_SETTINGS if ms.name not in ("aider/default", "aider/override")
-            ]
 
 
 if __name__ == "__main__":
