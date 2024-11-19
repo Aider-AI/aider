@@ -858,17 +858,18 @@ class Model(ModelSettings):
 
         model = model.lower()
 
+        # Apply override settings last if they exist
+        if self.override_model_settings:
+            self._copy_fields(self.override_model_settings)
+            return
+
+    def apply_generic_model_settings(self, model):
         if ("llama3" in model or "llama-3" in model) and "70b" in model:
             self.edit_format = "diff"
             self.use_repo_map = True
             self.send_undo_reply = True
             self.examples_as_sys_msg = True
-            pass  # Continue to apply overrides
-
-        # Apply override settings last if they exist
-        if self.override_model_settings:
-            self._copy_fields(self.override_model_settings)
-            return
+            return  # <--
 
         if "gpt-4-turbo" in model or ("gpt-4-" in model and "-preview" in model):
             self.edit_format = "udiff"
@@ -884,16 +885,19 @@ class Model(ModelSettings):
 
         if "gpt-3.5" in model or "gpt-4" in model:
             self.reminder = "sys"
+            return  # <--
 
         if "3.5-sonnet" in model or "3-5-sonnet" in model:
             self.edit_format = "diff"
             self.use_repo_map = True
             self.examples_as_sys_msg = True
             self.reminder = "user"
+            return  # <--
 
         if model.startswith("o1-") or "/o1-" in model:
             self.use_system_prompt = False
             self.use_temperature = False
+            return  # <--
 
         if (
             "qwen" in model
@@ -905,10 +909,12 @@ class Model(ModelSettings):
             self.edit_format = "diff"
             self.editor_edit_format = "editor-diff"
             self.use_repo_map = True
+            return  # <--
 
         # use the defaults
         if self.edit_format == "diff":
             self.use_repo_map = True
+            return  # <--
 
     def __str__(self):
         return self.name
