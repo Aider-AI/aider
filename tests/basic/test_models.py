@@ -88,6 +88,34 @@ class TestModels(unittest.TestCase):
             any("bogus-model" in msg for msg in warning_messages)
         )  # Check that one of the warnings mentions the bogus model
 
+    def test_default_and_override_settings(self):
+        # Add default and override settings to MODEL_SETTINGS
+        MODEL_SETTINGS.extend([
+            ModelSettings(
+                name="aider/default",
+                edit_format="diff",
+                use_repo_map=True,
+            ),
+            ModelSettings(
+                name="aider/override",
+                use_temperature=False,
+            ),
+        ])
+
+        # Test that defaults are applied when no exact match
+        model = Model("unknown-model")
+        self.assertEqual(model.edit_format, "diff")
+        self.assertTrue(model.use_repo_map)
+        self.assertFalse(model.use_temperature)  # Override should win
+
+        # Test that exact match overrides defaults but not overrides
+        model = Model("gpt-4")
+        self.assertNotEqual(model.edit_format, "diff")  # Model setting should win over default
+        self.assertFalse(model.use_temperature)  # Override should still win
+
+        # Clean up by removing test settings
+        MODEL_SETTINGS[:] = [ms for ms in MODEL_SETTINGS if ms.name not in ("aider/default", "aider/override")]
+
 
 if __name__ == "__main__":
     unittest.main()
