@@ -70,7 +70,14 @@ Files loaded last will take priority.
 
 The yaml file should be a list of dictionary objects for each model.
 
-You can use the special model name `aider/extra_params` to define settings that will be applied to all models. For example:
+
+### Global extra params
+
+You can use the special model name `aider/extra_params` to define 
+`extra_params` that will be passed to `litellm.completion()` for all models.
+Only the `extra_params` dict is used from this special model name.
+
+For example:
 
 ```yaml
 - name: aider/extra_params
@@ -80,7 +87,10 @@ You can use the special model name `aider/extra_params` to define settings that 
     max_tokens: 8192
 ```
 
-These settings will be merged with any model-specific settings, with the model-specific settings taking precedence for any conflicts.
+These settings will be merged with any model-specific settings, with the 
+`aider/extra_params` settings taking precedence for any direct conflicts.
+
+### Example model settings
 
 Below are all the pre-configured model settings to give a sense for the settings which are supported.
 

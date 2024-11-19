@@ -100,7 +100,7 @@ class TestModels(unittest.TestCase):
         # Create temporary YAML file with test settings
         test_settings = [
             {
-                "name": "aider/extra",
+                "name": "aider/extra_params",
                 "extra_params": {
                     "extra_headers": {"Foo": "bar"},
                     "some_param": "some value",
