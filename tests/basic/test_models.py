@@ -101,10 +101,10 @@ class TestModels(unittest.TestCase):
         test_settings = [
             {
                 "name": "aider/extra",
-                "extra_params" : {
-                    "extra_headers" : { "Foo" : "bar" },
-                    "some_param" : "some value",
-                }
+                "extra_params": {
+                    "extra_headers": {"Foo": "bar"},
+                    "some_param": "some value",
+                },
             },
         ]
 
@@ -131,7 +131,6 @@ class TestModels(unittest.TestCase):
             model = Model("gpt-4")
             self.assertEqual(model.extra_params["extra_headers"]["Foo"], "bar")
             self.assertEqual(model.extra_params["some_param"], "some value")
-
 
 
 if __name__ == "__main__":
