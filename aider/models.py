@@ -849,6 +849,7 @@ class Model(ModelSettings):
         if self.default_model_settings:
             self._copy_fields(self.default_model_settings)
 
+        dump(self.edit_format)
         # Look for exact model match
         exact_match = False
         for ms in MODEL_SETTINGS:
@@ -858,16 +859,20 @@ class Model(ModelSettings):
                 exact_match = True
                 break  # Continue to apply overrides
 
+        dump(self.edit_format)
         model = model.lower()
 
         # If no exact match, try generic settings
         if not exact_match:
             self.apply_generic_model_settings(model)
 
+        dump(self.edit_format)
+
         # Apply override settings last if they exist
         if self.override_model_settings:
             self._copy_fields(self.override_model_settings)
-            return
+
+        dump(self.edit_format)
 
     def apply_generic_model_settings(self, model):
         if ("llama3" in model or "llama-3" in model) and "70b" in model:
