@@ -5,9 +5,9 @@
 
 ### Aider v0.63.3
 
-- Added `/editor` command to open system editor for writing prompts.
-- Added support for optional multiline input tags with matching closing tags.
-- Improved model settings configuration with default and override handling.
+- Added [`/editor` command](https://aider.chat/docs/usage/commands.html#editor) to open system editor for writing prompts.
+- Added support for [optional multiline input tags](https://aider.chat/docs/usage/multiline.html) with matching closing tags.
+- Improved [model settings configuration](https://aider.chat/docs/llms/settings.html) with default and override handling.
 - Added support for deep merging of extra model settings parameters.
 - Fixed bug in fuzzy model name matching.
 - Added Timeout exception to handle API provider timeouts.
