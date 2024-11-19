@@ -845,7 +845,7 @@ class Model(ModelSettings):
         for ms in MODEL_SETTINGS:
             # direct match, or match "provider/<model>"
             if model == ms.name:
-                self._copy_fields(ms, skip_name=False)
+                self._copy_fields(ms)
                 exact_match = True
                 break  # Continue to apply overrides
 
