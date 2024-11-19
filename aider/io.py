@@ -455,7 +455,7 @@ class InputOutput:
             elif line and line[-1] == "}" and multiline_input:
                 if multiline_tag:
                     # Check if the line ends with tag}
-                    if line.endswith(f"{multiline_tag}}"):
+                    if line.endswith(f"{multiline_tag}}}"):
                         inp += line[:-len(multiline_tag)-1] + "\n"
                         break
                     else:
