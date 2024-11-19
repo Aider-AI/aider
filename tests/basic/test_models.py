@@ -117,11 +117,20 @@ class TestModels(unittest.TestCase):
 
             # Test that defaults are applied when no exact match
             model = Model("claude-3-5-sonnet-20240620")
-            # TODO: make sure Foo:bar and existing anthropic-beta headers are both here; check some_param; check max_tokens=8192 still there
+            # Test that both the override and existing headers are present
+            model = Model("claude-3-5-sonnet-20240620")
+            self.assertEqual(model.extra_params["extra_headers"]["Foo"], "bar")
+            self.assertEqual(
+                model.extra_params["extra_headers"]["anthropic-beta"],
+                ANTHROPIC_BETA_HEADER,
+            )
+            self.assertEqual(model.extra_params["some_param"], "some value")
+            self.assertEqual(model.extra_params["max_tokens"], 8192)
 
             # Test that exact match overrides defaults but not overrides
             model = Model("gpt-4")
-            # TODO: make sure Foo:bar header is there; check some_param
+            self.assertEqual(model.extra_params["extra_headers"]["Foo"], "bar")
+            self.assertEqual(model.extra_params["some_param"], "some value")
 
 
 
