@@ -26,9 +26,9 @@ cog.out(text)
 ### main branch
 
 - Added [`/editor` command](https://aider.chat/docs/usage/commands.html) to open system editor for writing prompts, by @thehunmonkgroup.
+- Stream o1 models by default.
 - Added support for [optional multiline input tags](https://aider.chat/docs/usage/commands.html#entering-multi-line-chat-messages) with matching closing tags.
-- Improved [model settings configuration](https://aider.chat/docs/config/adv-model-settings.html#global-extra-params) with default and override handling.
-- Added support for deep merging of extra model settings parameters.
+- Improved [model settings configuration](https://aider.chat/docs/config/adv-model-settings.html#global-extra-params) with support for global `extra_params` for `litellm.completion()`.
 - Fixed bug in fuzzy model name matching.
 - Added Timeout exception to handle API provider timeouts.
 - Improved error handling and code formatting.
