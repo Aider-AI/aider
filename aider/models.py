@@ -6,6 +6,7 @@ import platform
 import sys
 import time
 from dataclasses import dataclass, fields
+from functools import wraps
 from pathlib import Path
 from typing import Optional
 
@@ -62,6 +63,18 @@ claude-3-5-sonnet-20241022
 ANTHROPIC_MODELS = [ln.strip() for ln in ANTHROPIC_MODELS.splitlines() if ln.strip()]
 
 
+def track_init_fields(cls):
+    original_init = cls.__init__
+    
+    @wraps(original_init)
+    def __init__(self, **kwargs):
+        self._set_fields = set(kwargs.keys())
+        original_init(self, **kwargs)
+    
+    cls.__init__ = __init__
+    return cls
+
+@track_init_fields
 @dataclass
 class ModelSettings:
     # Model class needs to have each of these as well
@@ -82,13 +95,6 @@ class ModelSettings:
     editor_model_name: Optional[str] = None
     editor_edit_format: Optional[str] = None
 
-    def __post_init__(self):
-        # Track which fields were explicitly set during initialization
-        dump(self.__dict__)
-        self._set_fields = set()
-        for field in fields(self.__class__):
-            if field.name in self.__dict__:
-                self._set_fields.add(field.name)
 
 
 # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
