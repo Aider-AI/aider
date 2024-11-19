@@ -3,6 +3,8 @@
 
 ### main branch
 
+###  Aider v0.63.2
+
 - Fixed bug in fuzzy model name matching when litellm provider info is missing.
 - Modified model metadata file loading to allow override of resource file.
 - Allow recursive loading of dirs using `--read`.
