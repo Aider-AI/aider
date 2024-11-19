@@ -55,24 +55,6 @@ These model settings are pre-configured for most popular models.
 But it can sometimes be helpful to override them or add settings for
 a model that aider doesn't know about.
 
-### Default and override settings
-
-You can define default settings that apply to all models, and override settings that are applied last to all models.
-To do this, add special model entries named `aider/default` and `aider/override` to your model settings file.
-
-For example, to make all models use the "diff" edit format by default, but force the "whole" format for specific models:
-
-```yaml
-- name: aider/default
-  edit_format: diff
-  use_repo_map: true
-
-- name: some-specific-model
-  edit_format: whole  # Overrides the default
-
-- name: aider/override
-  use_temperature: false  # Applied last to all models
-```
 
 ### Configuration file locations
 
