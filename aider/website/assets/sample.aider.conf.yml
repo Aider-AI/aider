@@ -314,6 +314,9 @@
 ## Check for new aider versions on launch
 #check-update: true
 
+## Show release notes on first run of new version (default: None, ask user)
+#show-release-notes: xxx
+
 ## Install the latest version from the main branch
 #install-main-branch: false
 
