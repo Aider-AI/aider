@@ -5,6 +5,7 @@ import re
 import sys
 import threading
 import traceback
+import webbrowser
 from pathlib import Path
 
 import git
@@ -756,7 +757,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     if show:
         io.tool_output(f"Opening release notes: {urls.release_notes}")
-        utils.open_url(urls.release_notes)
+        webbrowser.open(urls.release_notes)
 
     if args.show_prompts:
         coder.cur_messages += [
