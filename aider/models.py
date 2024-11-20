@@ -754,6 +754,12 @@ class ModelInfoManager:
                     pass
         except Exception as ex:
             print(str(ex))
+        finally:
+            # Touch the cache file to update its mtime even if download failed
+            try:
+                self.cache_file.touch()
+            except OSError:
+                pass
 
     def get_model_from_cached_json_db(self, model):
         if not self.content:
