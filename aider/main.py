@@ -751,7 +751,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             show = io.confirm_ask("Would you like to see what's new in this version?")
         else:
             show = args.show_release_notes
-            
+
         if show:
             io.tool_output(f"Opening release notes: {urls.release_notes}")
             utils.open_url(urls.release_notes)
