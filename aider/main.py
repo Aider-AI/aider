@@ -747,7 +747,14 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     coder.show_announcements()
 
     if is_first_run:
-        io.offer_url(urls.release_notes, "Would you like to see what's new in this version?")
+        if args.show_release_notes is None:
+            show = io.confirm_ask("Would you like to see what's new in this version?")
+        else:
+            show = args.show_release_notes
+            
+        if show:
+            io.tool_output(f"Opening release notes: {urls.release_notes}")
+            utils.open_url(urls.release_notes)
         io.tool_output()
 
     if args.show_prompts:
