@@ -14,6 +14,8 @@ The above
 [stats are based on the git commit history](/docs/faq.html#how-are-the-aider-wrote-xx-of-code-stats-computed)
 of the aider repo.
 
+## Release notes
+
 <!--[[[cog
 # This page is a copy of HISTORY.md, adding the front matter above.
 text = open("HISTORY.md").read()
