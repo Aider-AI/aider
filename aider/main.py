@@ -616,7 +616,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     check_and_load_imports(io, is_first_run, verbose=args.verbose)
 
     if is_first_run:
-        # TODO: offer to open the release notes url
+        io.offer_url(urls.release_notes, "Would you like to see what's new in this version?")
+        io.tool_output()
 
     if args.anthropic_api_key:
         os.environ["ANTHROPIC_API_KEY"] = args.anthropic_api_key
