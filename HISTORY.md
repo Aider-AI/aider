@@ -10,6 +10,9 @@
 - Architect mode now asks to add files suggested by the LLM.
 - Fixed bug in fuzzy model name matching.
 - Added Timeout exception to handle API provider timeouts.
+- Added `--show-release-notes` to control release notes display on first run.
+- Improved release notes display logic and user interaction flow.
+- Save empty dict to cache file on model metadata download failure.
 - Improved error handling and code formatting.
 - Aider wrote 53% of the code in this release.
 
