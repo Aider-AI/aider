@@ -612,7 +612,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     cmd_line = scrub_sensitive_info(args, cmd_line)
     io.tool_output(cmd_line, log_only=True)
 
-    check_and_load_imports(io, verbose=args.verbose)
+    is_first_run = is_first_run_of_new_version(io, verbose=args.verbose)
+    check_and_load_imports(io, is_first_run, verbose=args.verbose)
 
     if args.anthropic_api_key:
         os.environ["ANTHROPIC_API_KEY"] = args.anthropic_api_key
@@ -891,10 +892,8 @@ def is_first_run_of_new_version(io, verbose=False):
         return True  # Safer to assume it's a first run if we hit an error
 
 
-def check_and_load_imports(io, verbose=False):
+def check_and_load_imports(io, is_first_run, verbose=False):
     try:
-        is_first_run = is_first_run_of_new_version(io, verbose)
-
         if is_first_run:
             if verbose:
                 io.tool_output(
