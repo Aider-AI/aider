@@ -1818,3 +1818,26 @@
   versions: 0.59.2.dev
   seconds_per_case: 22.5
   total_cost: 0.0000
+
+- dirname: 2024-11-20-14-57-11--mistral-2411-direct-diff
+  test_cases: 133
+  model: mistral-large 2411
+  edit_format: diff
+  commit_hash: dba844c
+  pass_rate_1: 46.6
+  pass_rate_2: 65.4
+  percent_cases_well_formed: 96.2
+  error_outputs: 8
+  num_malformed_responses: 8
+  num_with_malformed_responses: 5
+  user_asks: 5
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 1
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model mistral/mistral-large-latest
+  date: 2024-11-20
+  versions: 0.63.3.dev
+  seconds_per_case: 24.9
+  total_cost: 3.2334
