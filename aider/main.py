@@ -852,7 +852,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 coder.show_announcements()
 
 
-def check_and_load_imports(io, verbose=False):
+def is_first_run_of_new_version(io, verbose=False):
+    """Check if this is the first run of a new version/executable combination"""
     installs_file = Path.home() / ".aider" / "installs.json"
     key = (__version__, sys.executable)
 
@@ -873,7 +874,27 @@ def check_and_load_imports(io, verbose=False):
             if verbose:
                 io.tool_output("Installs file does not exist, creating new dictionary")
 
-        if str(key) not in installs:
+        is_first_run = str(key) not in installs
+
+        if is_first_run:
+            installs[str(key)] = True
+            installs_file.parent.mkdir(parents=True, exist_ok=True)
+            with open(installs_file, "w") as f:
+                json.dump(installs, f, indent=4)
+
+        return is_first_run
+
+    except Exception as e:
+        io.tool_warning(f"Error checking version: {e}")
+        if verbose:
+            io.tool_output(f"Full exception details: {traceback.format_exc()}")
+        return True  # Safer to assume it's a first run if we hit an error
+
+def check_and_load_imports(io, verbose=False):
+    try:
+        is_first_run = is_first_run_of_new_version(io, verbose)
+
+        if is_first_run:
             if verbose:
                 io.tool_output(
                     "First run for this version and executable, loading imports synchronously"
@@ -884,13 +905,8 @@ def check_and_load_imports(io, verbose=False):
                 io.tool_error(str(err))
                 io.tool_output("Error loading required imports. Did you install aider properly?")
                 io.offer_url(urls.install_properly, "Open documentation url for more info?")
-
                 sys.exit(1)
 
-            installs[str(key)] = True
-            installs_file.parent.mkdir(parents=True, exist_ok=True)
-            with open(installs_file, "w") as f:
-                json.dump(installs, f, indent=4)
             if verbose:
                 io.tool_output("Imports loaded and installs file updated")
         else:
@@ -899,8 +915,9 @@ def check_and_load_imports(io, verbose=False):
             thread = threading.Thread(target=load_slow_imports)
             thread.daemon = True
             thread.start()
+
     except Exception as e:
-        io.tool_warning(f"Error in checking imports: {e}")
+        io.tool_warning(f"Error in loading imports: {e}")
         if verbose:
             io.tool_output(f"Full exception details: {traceback.format_exc()}")
 
