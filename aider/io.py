@@ -16,7 +16,8 @@ from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.lexers import PygmentsLexer
 from prompt_toolkit.shortcuts import CompleteStyle, PromptSession
 from prompt_toolkit.styles import Style
-from pygments.lexers import MarkdownLexer, guess_lexer_for_filename
+from pygments.lexers import guess_lexer_for_filename
+from pygments.lexers.markup import MarkdownLexer
 from pygments.token import Token
 from rich.columns import Columns
 from rich.console import Console
@@ -300,14 +301,14 @@ class InputOutput:
             with open(str(filename), "rb") as image_file:
                 encoded_string = base64.b64encode(image_file.read())
                 return encoded_string.decode("utf-8")
-        except OSError as err:
-            self.tool_error(f"{filename}: unable to read: {err}")
-            return
         except FileNotFoundError:
             self.tool_error(f"{filename}: file not found error")
             return
         except IsADirectoryError:
             self.tool_error(f"{filename}: is a directory")
+            return
+        except OSError as err:
+            self.tool_error(f"{filename}: unable to read: {err}")
             return
         except Exception as e:
             self.tool_error(f"{filename}: {e}")
@@ -320,9 +321,6 @@ class InputOutput:
         try:
             with open(str(filename), "r", encoding=self.encoding) as f:
                 return f.read()
-        except OSError as err:
-            self.tool_error(f"{filename}: unable to read: {err}")
-            return
         except FileNotFoundError:
             self.tool_error(f"{filename}: file not found error")
             return
@@ -332,6 +330,9 @@ class InputOutput:
         except UnicodeError as e:
             self.tool_error(f"{filename}: {e}")
             self.tool_error("Use --encoding to set the unicode encoding.")
+            return
+        except OSError as err:
+            self.tool_error(f"{filename}: unable to read: {err}")
             return
 
     def write_text(self, filename, content, max_retries=5, initial_delay=0.1):
@@ -478,8 +479,8 @@ class InputOutput:
             return
         FileHistory(self.input_history_file).append_string(inp)
         # Also add to the in-memory history if it exists
-        if hasattr(self, "session") and hasattr(self.session, "history"):
-            self.session.history.append_string(inp)
+        if hasattr(self, "prompt_session") and hasattr(self.prompt_session, "history"):
+            self.prompt_session.history.append_string(inp)
 
     def get_input_history(self):
         if not self.input_history_file:

@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, patch
 
 from prompt_toolkit.completion import CompleteEvent
 from prompt_toolkit.document import Document
+from prompt_toolkit.history import InMemoryHistory
 
 from aider.dump import dump  # noqa: F401
 from aider.io import AutoCompleter, ConfirmGroup, InputOutput
@@ -257,6 +258,34 @@ class TestInputOutput(unittest.TestCase):
         self.assertFalse(result)
         self.assertEqual(mock_input.call_count, 2)
         self.assertNotIn(("Do you want to proceed?", None), io.never_prompts)
+
+    @patch('aider.io.FileHistory')
+    def test_add_to_input_history(self, mock_file_history):
+        # Setup
+        io = InputOutput(input_history_file='test_history.txt', fancy_input=True)
+        io.prompt_session = MagicMock()
+        io.prompt_session.history = InMemoryHistory()
+
+        # Test adding to history
+        test_input = "test input"
+        io.add_to_input_history(test_input)
+
+        # Assert that FileHistory.append_string was called
+        mock_file_history.return_value.append_string.assert_called_once_with(test_input)
+
+        # Assert that prompt_session.history.append_string was called
+        self.assertIn(test_input, io.prompt_session.history.get_strings())
+
+    def test_add_to_input_history_no_prompt_session(self):
+        # Setup
+        io = InputOutput(input_history_file='test_history.txt', fancy_input=False)
+
+        # Test adding to history
+        test_input = "test input"
+        io.add_to_input_history(test_input)
+
+        # Assert that the method doesn't raise an exception
+        # when prompt_session is not initialized
 
 
 if __name__ == "__main__":
