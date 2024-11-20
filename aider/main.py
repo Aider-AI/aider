@@ -752,7 +752,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         show = True
     elif args.show_release_notes is None:
         show = is_first_run and io.confirm_ask("Would you like to see what's new in this version?")
-    else: # args.show_release_notes is False
+    else:  # args.show_release_notes is False
         show = False
 
     if show:
