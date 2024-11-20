@@ -13,7 +13,7 @@ attrs==24.2.0
     #   -c requirements/requirements-help.txt
     #   jsonschema
     #   referencing
-blinker==1.8.2
+blinker==1.9.0
     # via streamlit
 cachetools==5.5.0
     # via streamlit
@@ -92,7 +92,7 @@ mdurl==0.1.2
     #   -c requirements/../requirements.txt
     #   -c requirements/requirements-dev.txt
     #   markdown-it-py
-narwhals==1.12.1
+narwhals==1.13.5
     # via altair
 numpy==1.26.4
     # via
@@ -103,7 +103,7 @@ numpy==1.26.4
     #   pandas
     #   pydeck
     #   streamlit
-packaging==24.1
+packaging==24.2
     # via
     #   -c requirements.txt
     #   -c requirements/../requirements.txt
@@ -157,13 +157,13 @@ requests==2.32.3
     #   -c requirements/requirements-dev.txt
     #   -c requirements/requirements-help.txt
     #   streamlit
-rich==13.9.3
+rich==13.9.4
     # via
     #   -c requirements.txt
     #   -c requirements/../requirements.txt
     #   -c requirements/requirements-dev.txt
     #   streamlit
-rpds-py==0.20.1
+rpds-py==0.21.0
     # via
     #   -c requirements.txt
     #   -c requirements/../requirements.txt
@@ -180,7 +180,7 @@ smmap==5.0.1
     #   -c requirements.txt
     #   -c requirements/../requirements.txt
     #   gitdb
-streamlit==1.39.0
+streamlit==1.40.1
     # via -r requirements/requirements-browser.in
 tenacity==8.5.0
     # via

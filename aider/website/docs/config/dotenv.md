@@ -342,6 +342,9 @@ cog.outl("```")
 ## Check for new aider versions on launch
 #AIDER_CHECK_UPDATE=true
 
+## Show release notes on first run of new version (default: None, ask user)
+#AIDER_SHOW_RELEASE_NOTES=
+
 ## Install the latest version from the main branch
 #AIDER_INSTALL_MAIN_BRANCH=false
 

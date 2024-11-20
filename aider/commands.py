@@ -14,6 +14,7 @@ from prompt_toolkit.completion import Completion, PathCompleter
 from prompt_toolkit.document import Document
 
 from aider import models, prompts, voice
+from aider.editor import pipe_editor
 from aider.format_settings import format_settings
 from aider.help import Help, install_help_extra
 from aider.llm import litellm
@@ -1365,6 +1366,13 @@ class Commands:
             title = None
 
         report_github_issue(issue_text, title=title, confirm=False)
+
+    def cmd_editor(self, initial_content=""):
+        "Open an editor to write a prompt"
+
+        user_input = pipe_editor(initial_content, suffix="md")
+        self.io.display_user_input(user_input)
+        return user_input
 
 
 def expand_subdir(file_path):

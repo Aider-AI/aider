@@ -19,7 +19,19 @@ LLM edits that are "almost" correctly formatted.
 But sometimes the LLM just won't cooperate.
 In these cases, here are some things you might try.
 
-## Use a capable model
+## Don't add too many files
+
+Many LLMs now have very large context windows,
+but filling them with irrelevant code or conversation 
+can confuse the model.
+
+- Don't add too many files to the chat, *just* add the files you think need to be edited.
+Aider also sends the LLM a [map of your entire git repo](https://aider.chat/docs/repomap.html), so other relevant code will be included automatically.
+- Use `/drop` to remove files from the chat session which aren't needed for the task at hand. This will reduce distractions and may help the LLM produce properly formatted edits.
+- Use `/clear` to remove the conversation history, again to help the LLM focus.
+- Use `/tokens` to see how many tokens you are using for each message.
+
+## Use a more capable model
 
 If possible try using GPT-4o, Claude 3.5 Sonnet or Claude 3 Opus, 
 as they are the strongest and most capable models.
@@ -33,9 +45,9 @@ so editing errors are probably unavoidable.
 Local models which have been quantized are even more likely to have problems
 because they are not capable enough to follow aider's system prompts.
 
-## Try the whole format
+## Try the whole edit format
 
-Run aider with `--edit-format whole` if the model is using a different edit format.
+Run aider with `--edit-format whole` if were using a different edit format.
 You can see which edit format it is using in the announce lines:
 
 ```
@@ -43,17 +55,6 @@ Aider v0.50.2-dev
 Models: claude-3-5-sonnet-20240620 with ♾️ diff edit format
 ```
 
-## Reduce distractions
-
-Many LLMs now have very large context windows,
-but filling them with irrelevant code or conversation 
-can confuse the model.
-
-- Don't add too many files to the chat, *just* add the files you think need to be edited.
-Aider also sends the LLM a [map of your entire git repo](https://aider.chat/docs/repomap.html), so other relevant code will be included automatically.
-- Use `/drop` to remove files from the chat session which aren't needed for the task at hand. This will reduce distractions and may help the LLM produce properly formatted edits.
-- Use `/clear` to remove the conversation history, again to help the LLM focus.
-- Use `/tokens` to see how many tokens you are using for each message.
 
 ## More help
 

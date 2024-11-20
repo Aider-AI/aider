@@ -40,6 +40,11 @@ EXCEPTIONS = [
     ExInfo("ServiceUnavailableError", True, "The API provider's servers are down or overloaded."),
     ExInfo("UnprocessableEntityError", True, None),
     ExInfo("UnsupportedParamsError", True, None),
+    ExInfo(
+        "Timeout",
+        True,
+        "The API provider timed out without returning a response. They may be down or overloaded.",
+    ),
 ]
 
 

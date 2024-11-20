@@ -60,6 +60,23 @@ directory you start in.
 You can also create a `.aiderignore` file to tell aider
 to ignore parts of the repo that aren't relevant to your task.
 This file conforms to `.gitignore` syntax and conventions.
+For example, to focus only on specific directories in a monorepo,
+you could create a `.aiderignore` file with:
+
+```
+# Ignore everything
+/*
+
+# Allow specific directories and their contents
+!foo/
+!bar/
+!baz/
+
+# Allow nested files under these directories
+!foo/**
+!bar/**
+!baz/**
+```
 
 You can use `--aiderignore <filename>` to name a specific file
 to use for ignore patterns.

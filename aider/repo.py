@@ -334,8 +334,11 @@ class GitRepo:
     def git_ignored_file(self, path):
         if not self.repo:
             return
-        if self.repo.ignored(path):
-            return True
+        try:
+            if self.repo.ignored(path):
+                return True
+        except ANY_GIT_ERROR:
+            return False
 
     def ignored_file(self, fname):
         self.refresh_aider_ignore()

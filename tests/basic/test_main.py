@@ -45,7 +45,7 @@ class TestMain(TestCase):
         self.webbrowser_patcher.stop()
 
     def test_main_with_empty_dir_no_files_on_command(self):
-        main(["--no-git", "--exit"], input=DummyInput(), output=DummyOutput())
+        main(["--no-git", "--exit", "--yes"], input=DummyInput(), output=DummyOutput())
 
     def test_main_with_emptqy_dir_new_file(self):
         main(["foo.txt", "--yes", "--no-git", "--exit"], input=DummyInput(), output=DummyOutput())
@@ -332,7 +332,7 @@ class TestMain(TestCase):
     def test_false_vals_in_env_file(self):
         self.create_env_file(".env", "AIDER_SHOW_DIFFS=off")
         with patch("aider.coders.Coder.create") as MockCoder:
-            main(["--no-git"], input=DummyInput(), output=DummyOutput())
+            main(["--no-git", "--yes"], input=DummyInput(), output=DummyOutput())
             MockCoder.assert_called_once()
             _, kwargs = MockCoder.call_args
             self.assertEqual(kwargs["show_diffs"], False)
@@ -340,7 +340,7 @@ class TestMain(TestCase):
     def test_true_vals_in_env_file(self):
         self.create_env_file(".env", "AIDER_SHOW_DIFFS=on")
         with patch("aider.coders.Coder.create") as MockCoder:
-            main(["--no-git"], input=DummyInput(), output=DummyOutput())
+            main(["--no-git", "--yes"], input=DummyInput(), output=DummyOutput())
             MockCoder.assert_called_once()
             _, kwargs = MockCoder.call_args
             self.assertEqual(kwargs["show_diffs"], True)
@@ -381,7 +381,11 @@ class TestMain(TestCase):
     def test_verbose_mode_lists_env_vars(self):
         self.create_env_file(".env", "AIDER_DARK_MODE=on")
         with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
-            main(["--no-git", "--verbose", "--exit"], input=DummyInput(), output=DummyOutput())
+            main(
+                ["--no-git", "--verbose", "--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+            )
             output = mock_stdout.getvalue()
             relevant_output = "\n".join(
                 line

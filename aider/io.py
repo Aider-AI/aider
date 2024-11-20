@@ -1,5 +1,6 @@
 import base64
 import os
+import time
 import webbrowser
 from collections import defaultdict
 from dataclasses import dataclass
@@ -333,14 +334,36 @@ class InputOutput:
             self.tool_error("Use --encoding to set the unicode encoding.")
             return
 
-    def write_text(self, filename, content):
+    def write_text(self, filename, content, max_retries=5, initial_delay=0.1):
+        """
+        Writes content to a file, retrying with progressive backoff if the file is locked.
+
+        :param filename: Path to the file to write.
+        :param content: Content to write to the file.
+        :param max_retries: Maximum number of retries if a file lock is encountered.
+        :param initial_delay: Initial delay (in seconds) before the first retry.
+        """
         if self.dry_run:
             return
-        try:
-            with open(str(filename), "w", encoding=self.encoding) as f:
-                f.write(content)
-        except OSError as err:
-            self.tool_error(f"Unable to write file {filename}: {err}")
+
+        delay = initial_delay
+        for attempt in range(max_retries):
+            try:
+                with open(str(filename), "w", encoding=self.encoding) as f:
+                    f.write(content)
+                return  # Successfully wrote the file
+            except PermissionError as err:
+                if attempt < max_retries - 1:
+                    time.sleep(delay)
+                    delay *= 2  # Exponential backoff
+                else:
+                    self.tool_error(
+                        f"Unable to write file {filename} after {max_retries} attempts: {err}"
+                    )
+                    raise
+            except OSError as err:
+                self.tool_error(f"Unable to write file {filename}: {err}")
+                raise
 
     def rule(self):
         if self.pretty:
@@ -420,11 +443,26 @@ class InputOutput:
 
             if line and line[0] == "{" and not multiline_input:
                 multiline_input = True
-                inp += line[1:] + "\n"
+                # Check for optional tag after opening {
+                if len(line) > 1:
+                    tag = "".join(c for c in line[1:] if c.isalnum())
+                    multiline_tag = tag
+                    inp += line[len(tag) + 1 :] + "\n"
+                else:
+                    multiline_tag = None
+                    inp += line[1:] + "\n"
                 continue
             elif line and line[-1] == "}" and multiline_input:
-                inp += line[:-1] + "\n"
-                break
+                if multiline_tag:
+                    # Check if the line ends with tag}
+                    if line.endswith(f"{multiline_tag}}}"):
+                        inp += line[: -len(multiline_tag) - 1] + "\n"
+                        break
+                    else:
+                        inp += line + "\n"
+                else:
+                    inp += line[:-1] + "\n"
+                    break
             elif multiline_input:
                 inp += line + "\n"
             else:
@@ -458,14 +496,17 @@ class InputOutput:
             log_file.write(f"{role.upper()} {timestamp}\n")
             log_file.write(content + "\n")
 
+    def display_user_input(self, inp):
+        if self.pretty and self.user_input_color:
+            style = dict(style=self.user_input_color)
+        else:
+            style = dict()
+
+        self.console.print(Text(inp), **style)
+
     def user_input(self, inp, log_only=True):
         if not log_only:
-            if self.pretty and self.user_input_color:
-                style = dict(style=self.user_input_color)
-            else:
-                style = dict()
-
-            self.console.print(Text(inp), **style)
+            self.display_user_input(inp)
 
         prefix = "####"
         if inp:

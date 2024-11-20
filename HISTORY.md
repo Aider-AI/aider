@@ -1,6 +1,32 @@
 
 # Release history
 
+### main branch
+
+- Added [`/editor` command](https://aider.chat/docs/usage/commands.html) to open system editor for writing prompts, by @thehunmonkgroup.
+- Stream o1 models by default.
+- Added support for [optional multiline input tags](https://aider.chat/docs/usage/commands.html#entering-multi-line-chat-messages) with matching closing tags.
+- Improved [model settings configuration](https://aider.chat/docs/config/adv-model-settings.html#global-extra-params) with support for global `extra_params` for `litellm.completion()`.
+- Architect mode now asks to add files suggested by the LLM.
+- Fixed bug in fuzzy model name matching.
+- Added Timeout exception to handle API provider timeouts.
+- Improved error handling and code formatting.
+- Aider wrote 53% of the code in this release.
+
+###  Aider v0.63.2
+
+- Fixed bug in fuzzy model name matching when litellm provider info is missing.
+- Modified model metadata file loading to allow override of resource file.
+- Allow recursive loading of dirs using `--read`.
+- Updated dependency versions to pick up litellm fix for ollama models.
+- Added exponential backoff retry when writing files to handle editor file locks.
+- Updated Qwen 2.5 Coder 32B model configuration.
+
+### Aider v0.63.1
+
+- Fixed bug in git ignored file handling.
+- Improved error handling for git operations.
+
 ### Aider v0.63.0
 
 - Support for Qwen 2.5 Coder 32B.
