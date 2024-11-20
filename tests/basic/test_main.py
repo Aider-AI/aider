@@ -381,7 +381,11 @@ class TestMain(TestCase):
     def test_verbose_mode_lists_env_vars(self):
         self.create_env_file(".env", "AIDER_DARK_MODE=on")
         with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
-            main(["--no-git", "--verbose", "--exit", "--yes"], input=DummyInput(), output=DummyOutput())
+            main(
+                ["--no-git", "--verbose", "--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+            )
             output = mock_stdout.getvalue()
             relevant_output = "\n".join(
                 line
