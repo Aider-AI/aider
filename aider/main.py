@@ -615,10 +615,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     is_first_run = is_first_run_of_new_version(io, verbose=args.verbose)
     check_and_load_imports(io, is_first_run, verbose=args.verbose)
 
-    if is_first_run:
-        io.offer_url(urls.release_notes, "Would you like to see what's new in this version?")
-        io.tool_output()
-
     if args.anthropic_api_key:
         os.environ["ANTHROPIC_API_KEY"] = args.anthropic_api_key
 
@@ -749,6 +745,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         return coder
 
     coder.show_announcements()
+
+    if is_first_run:
+        io.offer_url(urls.release_notes, "Would you like to see what's new in this version?")
+        io.tool_output()
 
     if args.show_prompts:
         coder.cur_messages += [
