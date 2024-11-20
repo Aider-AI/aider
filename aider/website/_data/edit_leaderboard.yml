@@ -1844,7 +1844,7 @@
 
 - dirname: 2024-11-20-19-28-30--gpt-4o-2024-11-20
   test_cases: 133
-  model: openai/gpt-4o-2024-11-20
+  model: gpt-4o-2024-11-20
   edit_format: diff
   commit_hash: 2ac0776-dirty
   pass_rate_1: 58.6

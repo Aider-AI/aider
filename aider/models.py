@@ -162,6 +162,22 @@ MODEL_SETTINGS = [
         reminder="sys",
     ),
     ModelSettings(
+        "gpt-4o-2024-11-20",
+        "diff",
+        weak_model_name="gpt-4o-mini",
+        use_repo_map=True,
+        lazy=True,
+        reminder="sys",
+    ),
+    ModelSettings(
+        "openai/gpt-4o-2024-11-20",
+        "diff",
+        weak_model_name="gpt-4o-mini",
+        use_repo_map=True,
+        lazy=True,
+        reminder="sys",
+    ),
+    ModelSettings(
         "gpt-4o",
         "diff",
         weak_model_name="gpt-4o-mini",
