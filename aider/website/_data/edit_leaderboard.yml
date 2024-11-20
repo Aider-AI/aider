@@ -1841,3 +1841,26 @@
   versions: 0.63.3.dev
   seconds_per_case: 24.9
   total_cost: 3.2334
+
+- dirname: 2024-11-20-19-28-30--gpt-4o-2024-11-20
+  test_cases: 133
+  model: openai/gpt-4o-2024-11-20
+  edit_format: diff
+  commit_hash: 2ac0776-dirty
+  pass_rate_1: 58.6
+  pass_rate_2: 71.4
+  percent_cases_well_formed: 99.2
+  error_outputs: 1
+  num_malformed_responses: 1
+  num_with_malformed_responses: 1
+  user_asks: 4
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 5
+  command: aider --model openai/gpt-4o-2024-11-20
+  date: 2024-11-20
+  versions: 0.63.3.dev
+  seconds_per_case: 6.0
+  total_cost: 0.0000
