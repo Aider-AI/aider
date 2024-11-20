@@ -890,6 +890,7 @@ def is_first_run_of_new_version(io, verbose=False):
             io.tool_output(f"Full exception details: {traceback.format_exc()}")
         return True  # Safer to assume it's a first run if we hit an error
 
+
 def check_and_load_imports(io, verbose=False):
     try:
         is_first_run = is_first_run_of_new_version(io, verbose)
