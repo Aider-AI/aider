@@ -746,18 +746,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         return coder
 
     coder.show_announcements()
-    io.tool_output()
-
-    if args.show_release_notes is True:
-        show = True
-    elif args.show_release_notes is None:
-        show = is_first_run and io.confirm_ask("Would you like to see what's new in this version?")
-    else:  # args.show_release_notes is False
-        show = False
-
-    if show:
-        io.tool_output(f"Opening release notes: {urls.release_notes}")
-        webbrowser.open(urls.release_notes)
 
     if args.show_prompts:
         coder.cur_messages += [
@@ -810,6 +798,18 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         io.tool_output("VSCode terminal detected, pretty output has been disabled.")
 
     io.tool_output('Use /help <question> for help, run "aider --help" to see cmd line args')
+
+    show = False
+    if args.show_release_notes is True:
+        show = True
+    elif args.show_release_notes is None and is_first_run:
+        io.tool_output()
+        show = io.confirm_ask("Would you like to see what's new in this version?")
+
+    if show:
+        io.tool_output(f"Opening release notes: {urls.release_notes}")
+        io.tool_output()
+        webbrowser.open(urls.release_notes)
 
     if git_root and Path.cwd().resolve() != Path(git_root).resolve():
         io.tool_warning(
