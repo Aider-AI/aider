@@ -3,7 +3,14 @@ parent: Usage
 nav_order: 50
 description: Control aider with in-chat commands like /add, /model, etc.
 ---
+
 # In-chat commands
+{: .no_toc }
+
+- TOC
+{:toc}
+
+## Slash commands
 
 Aider supports commands from within the chat, which all start with `/`.
 
