@@ -111,26 +111,26 @@ def test_is_uuid_in_percentage():
     analytics = Analytics()
 
     # Test basic percentage thresholds
-    assert analytics.is_uuid_in_percentage("00", 1) is True
-    assert analytics.is_uuid_in_percentage("01999", 1) is True
-    assert analytics.is_uuid_in_percentage("03", 1) is False
-    assert analytics.is_uuid_in_percentage("ff", 1) is False
+    assert analytics.is_uuid_in_percentage("00000000000000000000000000000000", 1) is True
+    assert analytics.is_uuid_in_percentage("01999000000000000000000000000000", 1) is True
+    assert analytics.is_uuid_in_percentage("03000000000000000000000000000000", 1) is False
+    assert analytics.is_uuid_in_percentage("ff000000000000000000000000000000", 1) is False
 
-    assert analytics.is_uuid_in_percentage("00", 10) is True
-    assert analytics.is_uuid_in_percentage("19", 10) is True
-    assert analytics.is_uuid_in_percentage("1a", 10) is False
-    assert analytics.is_uuid_in_percentage("ff", 10) is False
+    assert analytics.is_uuid_in_percentage("00000000000000000000000000000000", 10) is True
+    assert analytics.is_uuid_in_percentage("19000000000000000000000000000000", 10) is True
+    assert analytics.is_uuid_in_percentage("1a000000000000000000000000000000", 10) is False
+    assert analytics.is_uuid_in_percentage("ff000000000000000000000000000000", 10) is False
 
     # Test edge cases
-    assert analytics.is_uuid_in_percentage("00", 0) is False
-    assert analytics.is_uuid_in_percentage("00", 100) is True
-    assert analytics.is_uuid_in_percentage("ff", 100) is True
+    assert analytics.is_uuid_in_percentage("00000000000000000000000000000000", 0) is False
+    assert analytics.is_uuid_in_percentage("00000000000000000000000000000000", 100) is True
+    assert analytics.is_uuid_in_percentage("ffffffffffffffffffffffffffffffff", 100) is True
 
     # Test invalid inputs
     with pytest.raises(ValueError):
-        analytics.is_uuid_in_percentage("00", -1)
+        analytics.is_uuid_in_percentage("00000000000000000000000000000000", -1)
     with pytest.raises(ValueError):
-        analytics.is_uuid_in_percentage("00", 101)
+        analytics.is_uuid_in_percentage("00000000000000000000000000000000", 101)
 
     # Test empty/None UUID
     assert analytics.is_uuid_in_percentage("", 50) is False
