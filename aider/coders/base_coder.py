@@ -2061,9 +2061,8 @@ class Coder:
             if output:
                 accumulated_output += f"Output from {command}\n{output}\n"
 
-        if accumulated_output.strip() and not self.io.confirm_ask(
+        if accumulated_output.strip() and self.io.confirm_ask(
             "Add command output to the chat?", allow_never=True
         ):
-            accumulated_output = ""
-
-        return accumulated_output
+            self.io.output("Added ## lines of output to the chat") # TODO
+            return accumulated_output
