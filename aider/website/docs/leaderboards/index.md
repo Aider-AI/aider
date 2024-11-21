@@ -60,7 +60,7 @@ The model also has to successfully apply all its changes to the source file with
 <canvas id="editChart" width="800" height="450" style="margin-top: 20px"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-{% raw %}{% include edit-leaderboard.js %}{% endraw %}
+{% include edit-leaderboard.js %}
 </script>
 <style>
   tr.selected {
@@ -115,7 +115,7 @@ Therefore, results are available for fewer models.
 <canvas id="refacChart" width="800" height="450" style="margin-top: 20px"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-{% raw %}{% include refactor-leaderboard.js %}{% endraw %}
+{% include refactor-leaderboard.js %}
 </script>
 
 
