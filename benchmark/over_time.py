@@ -12,6 +12,9 @@ def get_model_color(model):
     if model == "gpt-4o-mini":
         return default
 
+    if "claude-3-sonnet" in model.lower():
+        return "orange"
+
     if "-4o" in model:
         return "purple"
 
@@ -73,8 +76,9 @@ def plot_over_time(yaml_file):
     purple_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "purple"]
     red_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "red"]
     green_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "green"]
+    orange_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "orange"]
 
-    # Plot lines for purple, red, and green points
+    # Plot lines for purple, red, green and orange points
     if purple_points:
         purple_dates, purple_rates = zip(*sorted(purple_points))
         ax.plot(purple_dates, purple_rates, c="purple", alpha=0.5, linewidth=1)
@@ -84,6 +88,9 @@ def plot_over_time(yaml_file):
     if green_points:
         green_dates, green_rates = zip(*sorted(green_points))
         ax.plot(green_dates, green_rates, c="green", alpha=0.5, linewidth=1)
+    if orange_points:
+        orange_dates, orange_rates = zip(*sorted(orange_points))
+        ax.plot(orange_dates, orange_rates, c="orange", alpha=0.5, linewidth=1)
 
     # Plot all points
     ax.scatter(dates, pass_rates, c=colors, alpha=0.5, s=120)
