@@ -122,49 +122,83 @@ def plot_over_time(yaml_file):
     qwen_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "darkblue"]
     mistral_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "cyan"]
 
-    # Plot lines for purple, red, green, orange and brown points
+    # Create a mapping of colors to first points and labels
+    color_to_first_point = {}
+    color_to_label = {}
+    
+    for date, rate, color, model in zip(dates, pass_rates, colors, models):
+        if color not in color_to_first_point:
+            color_to_first_point[color] = (date, rate)
+            color_to_label[color] = get_legend_label(model)
+
+    # Plot lines and add labels at first points
     if purple_points:
         purple_dates, purple_rates = zip(*sorted(purple_points))
         ax.plot(purple_dates, purple_rates, c="purple", alpha=0.5, linewidth=1)
+        if "purple" in color_to_first_point:
+            date, rate = color_to_first_point["purple"]
+            ax.annotate(color_to_label["purple"], (date, rate), xytext=(10, 5), 
+                       textcoords='offset points', color="purple", alpha=0.8)
+            
     if red_points:
         red_dates, red_rates = zip(*sorted(red_points))
         ax.plot(red_dates, red_rates, c="red", alpha=0.5, linewidth=1)
+        if "red" in color_to_first_point:
+            date, rate = color_to_first_point["red"]
+            ax.annotate(color_to_label["red"], (date, rate), xytext=(10, 5),
+                       textcoords='offset points', color="red", alpha=0.8)
+            
     if green_points:
         green_dates, green_rates = zip(*sorted(green_points))
         ax.plot(green_dates, green_rates, c="green", alpha=0.5, linewidth=1)
+        if "green" in color_to_first_point:
+            date, rate = color_to_first_point["green"]
+            ax.annotate(color_to_label["green"], (date, rate), xytext=(10, 5),
+                       textcoords='offset points', color="green", alpha=0.8)
+            
     if orange_points:
         orange_dates, orange_rates = zip(*sorted(orange_points))
         ax.plot(orange_dates, orange_rates, c="orange", alpha=0.5, linewidth=1)
+        if "orange" in color_to_first_point:
+            date, rate = color_to_first_point["orange"]
+            ax.annotate(color_to_label["orange"], (date, rate), xytext=(10, 5),
+                       textcoords='offset points', color="orange", alpha=0.8)
+            
     if brown_points:
         brown_dates, brown_rates = zip(*sorted(brown_points))
         ax.plot(brown_dates, brown_rates, c="brown", alpha=0.5, linewidth=1)
+        if "brown" in color_to_first_point:
+            date, rate = color_to_first_point["brown"]
+            ax.annotate(color_to_label["brown"], (date, rate), xytext=(10, 5),
+                       textcoords='offset points', color="brown", alpha=0.8)
+            
     if pink_points:
         pink_dates, pink_rates = zip(*sorted(pink_points))
         ax.plot(pink_dates, pink_rates, c="pink", alpha=0.5, linewidth=1)
+        if "pink" in color_to_first_point:
+            date, rate = color_to_first_point["pink"]
+            ax.annotate(color_to_label["pink"], (date, rate), xytext=(10, 5),
+                       textcoords='offset points', color="pink", alpha=0.8)
+            
     if qwen_points:
         qwen_dates, qwen_rates = zip(*sorted(qwen_points))
         ax.plot(qwen_dates, qwen_rates, c="darkblue", alpha=0.5, linewidth=1)
+        if "darkblue" in color_to_first_point:
+            date, rate = color_to_first_point["darkblue"]
+            ax.annotate(color_to_label["darkblue"], (date, rate), xytext=(10, 5),
+                       textcoords='offset points', color="darkblue", alpha=0.8)
+            
     if mistral_points:
         mistral_dates, mistral_rates = zip(*sorted(mistral_points))
         ax.plot(mistral_dates, mistral_rates, c="cyan", alpha=0.5, linewidth=1)
+        if "cyan" in color_to_first_point:
+            date, rate = color_to_first_point["cyan"]
+            ax.annotate(color_to_label["cyan"], (date, rate), xytext=(10, 5),
+                       textcoords='offset points', color="cyan", alpha=0.8)
 
-    # Create legend handles
-    legend_handles = []
-    legend_labels = []
-
-    # Plot points and collect unique model types for legend
-    seen_colors = {}
-    for i, (date, rate, color, model) in enumerate(zip(dates, pass_rates, colors, models)):
-        if color not in seen_colors:
-            # First time seeing this color, add to legend
-            scatter = ax.scatter([date], [rate], c=[color], alpha=0.5, s=120)
-            legend_handles.append(scatter)
-            # Use simplified name for legend label
-            legend_labels.append(get_legend_label(model))
-            seen_colors[color] = True
-        else:
-            # Just plot the point without adding to legend
-            ax.scatter([date], [rate], c=[color], alpha=0.5, s=120)
+    # Plot points without legend
+    for date, rate, color in zip(dates, pass_rates, colors):
+        ax.scatter([date], [rate], c=[color], alpha=0.5, s=120)
 
     ax.set_xlabel("Model release date", fontsize=18, color="#555")
     ax.set_ylabel(
@@ -173,12 +207,7 @@ def plot_over_time(yaml_file):
     ax.set_title("LLM code editing skill by model release date", fontsize=20)
     ax.set_ylim(30, 90)  # Adjust y-axis limit to accommodate higher values
     plt.xticks(fontsize=14, rotation=45, ha="right")  # Rotate x-axis labels for better readability
-    # Add legend
-    ax.legend(
-        legend_handles, legend_labels, loc="center left", bbox_to_anchor=(1, 0.5), fontsize=10
-    )
-
-    plt.tight_layout(pad=3.0, rect=[0, 0, 0.85, 1])  # Adjust layout to make room for legend
+    plt.tight_layout(pad=1.0)  # Adjust layout since we don't need room for legend anymore
 
     print("Debug: Saving figures...")
     plt.savefig("tmp_over_time.png")
