@@ -393,6 +393,9 @@ cog.outl("```")
 ## Enable/disable fancy input with history and completion (default: True)
 #AIDER_FANCY_INPUT=true
 
+## Specify which editor to use for the /editor command
+#AIDER_EDITOR=
+
 #################
 # Voice Settings:
 

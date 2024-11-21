@@ -8,6 +8,12 @@ description: How to configure a custom editor for aider's /editor command
 
 Aider allows you to configure your preferred text editor for use with the `/editor` command. The editor must be capable of running in "blocking mode", meaning the command line will wait until you close the editor before proceeding.
 
+## Using `--editor`
+
+You can specify the text editor with the `--editor` switch or using
+`editor:` in aider's
+[yaml config file](https://aider.chat/docs/config/aider_conf.html).
+
 ## Environment variables
 
 Aider checks the following environment variables in order to determine which editor to use:

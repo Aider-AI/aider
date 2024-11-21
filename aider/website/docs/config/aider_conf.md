@@ -424,6 +424,9 @@ cog.outl("```")
 ## Enable/disable fancy input with history and completion (default: True)
 #fancy-input: true
 
+## Specify which editor to use for the /editor command
+#editor: xxx
+
 #################
 # Voice Settings:
 

@@ -73,8 +73,8 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--message-file] [--load] [--encoding] [-c]
              [--gui | --no-gui | --browser | --no-browser]
              [--suggest-shell-commands | --no-suggest-shell-commands]
-             [--fancy-input | --no-fancy-input] [--voice-format]
-             [--voice-language]
+             [--fancy-input | --no-fancy-input] [--editor]
+             [--voice-format] [--voice-language]
 
 ```
 
@@ -672,6 +672,10 @@ Environment variable: `AIDER_FANCY_INPUT`
 Aliases:
   - `--fancy-input`
   - `--no-fancy-input`
+
+### `--editor VALUE`
+Specify which editor to use for the /editor command  
+Environment variable: `AIDER_EDITOR`  
 
 ## Voice Settings:
 
