@@ -274,7 +274,7 @@
 - dirname: 2024-05-03-22-24-48--openrouter--llama3-diff-examples-sys-msg
   test_cases: 132
   model: llama3-70b-8192
-  released: 2024-04-18
+  _released: 2024-04-18
   edit_format: diff
   commit_hash: b5bb453
   pass_rate_1: 38.6
@@ -297,7 +297,7 @@
 - dirname: 2024-05-06-18-31-08--command-r-plus-whole-final
   test_cases: 133
   model: command-r-plus
-  released: 2024-04-04
+  _released: 2024-04-04
   edit_format: whole
   commit_hash: fc3a43e-dirty
   pass_rate_1: 21.8
@@ -671,7 +671,7 @@
   commit_hash: f7ce78b-dirty
   pass_rate_1: 46.6
   pass_rate_2: 63.9
-  released: 2024-07-23
+  _released: 2024-07-23
   percent_cases_well_formed: 92.5
   error_outputs: 84
   num_malformed_responses: 19
@@ -691,6 +691,7 @@
 - dirname: 2024-07-24-06-30-29--llama-405b-whole
   test_cases: 133
   model: llama-3.1-405b-instruct (whole)
+  released: 2024-07-23
   edit_format: whole
   commit_hash: a362dea-dirty
   pass_rate_1: 48.9
@@ -698,7 +699,6 @@
   percent_cases_well_formed: 100.0
   error_outputs: 0
   num_malformed_responses: 0
-  released: 2024-07-23
   num_with_malformed_responses: 0
   user_asks: 0
   lazy_comments: 0
@@ -770,7 +770,7 @@
   percent_cases_well_formed: 100.0
   error_outputs: 27
   num_malformed_responses: 0
-  released: 2024-07-23
+  _released: 2024-07-23
   num_with_malformed_responses: 0
   user_asks: 23
   lazy_comments: 8
@@ -796,7 +796,7 @@
   num_malformed_responses: 0
   num_with_malformed_responses: 0
   user_asks: 0
-  released: 2024-07-23
+  _released: 2024-07-23
   lazy_comments: 0
   syntax_errors: 0
   indentation_errors: 0
@@ -946,7 +946,7 @@
   versions: 0.54.13.dev
   seconds_per_case: 8.3
   total_cost: 0.0000
-  released: 2024-09-04
+  _released: 2024-09-04
 
 - dirname: 2024-09-04-16-17-33--yi-coder-9b-chat-q4_0-whole
   test_cases: 133
@@ -973,6 +973,7 @@
 
 - dirname: 2024-09-05-14-50-11--deepseek-sep5-no-shell
   test_cases: 133
+  released: 2024-09-05
   model: DeepSeek V2.5
   edit_format: diff
   commit_hash: 1279c86
@@ -1112,6 +1113,7 @@
 - dirname: 2024-09-21-16-45-11--o1-preview-flex-sr-markers
   test_cases: 133
   model: o1-preview
+  released: 2024-09-12
   edit_format: diff
   commit_hash: 5493654-dirty
   pass_rate_1: 57.9
@@ -1477,6 +1479,7 @@
 - dirname: 2024-10-04-16-30-08--chatgpt-4o-latest-diff-oct4
   test_cases: 133
   model: openai/chatgpt-4o-latest
+  released: 2024-10-04
   edit_format: diff
   commit_hash: af10953
   pass_rate_1: 56.4
@@ -1592,6 +1595,7 @@
 - dirname: 2024-10-22-17-45-28--sonnet-1022-diff-fixed-model-settings
   test_cases: 133
   model: claude-3-5-sonnet-20241022
+  released: 2024-10-22
   edit_format: diff
   commit_hash: 3b14eb9
   pass_rate_1: 69.2
@@ -1615,6 +1619,7 @@
 - dirname: 2024-11-04-19-19-32--haiku35-diff-ex-as-sys-false
   test_cases: 133
   model: claude-3-5-haiku-20241022
+  released: 2024-10-22
   edit_format: diff
   commit_hash: 03bbdb0-dirty
   pass_rate_1: 61.7
@@ -1773,32 +1778,10 @@
   seconds_per_case: 18.3
   total_cost: 0.0000
 
-- dirname: 2024-11-09-10-57-11--Qwen2.5-Coder-32B-Instruct
-  test_cases: 133
-  model: Qwen2.5-Coder-32B-Instruct (whole)
-  edit_format: whole
-  commit_hash: ec9982a
-  pass_rate_1: 60.9
-  pass_rate_2: 73.7
-  percent_cases_well_formed: 100.0
-  error_outputs: 1
-  num_malformed_responses: 0
-  num_with_malformed_responses: 0
-  user_asks: 1
-  lazy_comments: 0
-  syntax_errors: 0
-  indentation_errors: 0
-  exhausted_context_windows: 1
-  test_timeouts: 1
-  command: aider --model openai/Qwen2.5-Coder-32B-Instruct
-  date: 2024-11-09
-  versions: 0.59.2.dev
-  seconds_per_case: 26.6
-  total_cost: 0.0000
-
 - dirname: 2024-11-09-11-09-15--Qwen2.5-Coder-32B-Instruct
   test_cases: 133
   model: Qwen2.5-Coder-32B-Instruct (diff)
+  released: 2024-11-12
   edit_format: diff
   commit_hash: ec9982a
   pass_rate_1: 59.4
@@ -1822,6 +1805,7 @@
 - dirname: 2024-11-20-14-57-11--mistral-2411-direct-diff
   test_cases: 133
   model: Mistral Large (2411)
+  released: 2024-11-18
   edit_format: diff
   commit_hash: dba844c
   pass_rate_1: 46.6
@@ -1845,6 +1829,7 @@
 - dirname: 2024-11-20-19-28-30--gpt-4o-2024-11-20
   test_cases: 133
   model: gpt-4o-2024-11-20
+  released: 2024-11-20
   edit_format: diff
   commit_hash: 2ac0776-dirty
   pass_rate_1: 58.6

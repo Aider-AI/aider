@@ -131,7 +131,7 @@ def plot_over_time(yaml_file):
             alpha=0.75,
             xytext=(5, 5),
             textcoords="offset points",
-            rotation=45,
+            rotation=30,
         )
 
     ax.set_xlabel("Model release date", fontsize=18, color="#555")
