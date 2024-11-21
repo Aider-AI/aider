@@ -41,7 +41,7 @@ class ModelData:
     def legend_label(self) -> str:
         model = self.name.lower()
         if "gemini" in model and "pro" in model:
-            return "Gemini Pro"
+            return "Gemini 1.5 Pro"
         if "claude-3-sonnet" in model:
             return "Sonnet"
         if "o1-preview" in model:
