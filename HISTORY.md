@@ -6,7 +6,8 @@
 - Added [`/editor` command](https://aider.chat/docs/usage/commands.html) to open system editor for writing prompts, by @thehunmonkgroup.
 - Full support for `gpt-4o-2024-11-20`.
 - Stream o1 models by default.
-- Ask 1% of users to opt-in to [analytics]().
+- `/run` and suggested shell commands are less mysterious and now confirm that they "Added XX lines of output to the chat."
+- Ask 1% of users if they want to opt-in to [analytics](https://aider.chat/docs/more/analytics.html).
 - Added support for [optional multiline input tags](https://aider.chat/docs/usage/commands.html#entering-multi-line-chat-messages) with matching closing tags.
 - Improved [model settings configuration](https://aider.chat/docs/config/adv-model-settings.html#global-extra-params) with support for global `extra_params` for `litellm.completion()`.
 - Architect mode now asks to add files suggested by the LLM.

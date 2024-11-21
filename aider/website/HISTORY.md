@@ -30,6 +30,8 @@ cog.out(text)
 - Added [`/editor` command](https://aider.chat/docs/usage/commands.html) to open system editor for writing prompts, by @thehunmonkgroup.
 - Full support for `gpt-4o-2024-11-20`.
 - Stream o1 models by default.
+- `/run` and suggested shell commands are less mysterious and now confirm that they "Added XX lines of output to the chat."
+- Ask 1% of users if they want to opt-in to [analytics](https://aider.chat/docs/more/analytics.html).
 - Added support for [optional multiline input tags](https://aider.chat/docs/usage/commands.html#entering-multi-line-chat-messages) with matching closing tags.
 - Improved [model settings configuration](https://aider.chat/docs/config/adv-model-settings.html#global-extra-params) with support for global `extra_params` for `litellm.completion()`.
 - Architect mode now asks to add files suggested by the LLM.
@@ -38,7 +40,7 @@ cog.out(text)
 - Added `--show-release-notes` to control release notes display on first run of new version.
 - Save empty dict to cache file on model metadata download failure, to delay retry.
 - Improved error handling and code formatting.
-- Aider wrote 53% of the code in this release.
+- Aider wrote 63% of the code in this release.
 
 ###  Aider v0.63.2
 
