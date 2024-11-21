@@ -2064,5 +2064,6 @@ class Coder:
         if accumulated_output.strip() and self.io.confirm_ask(
             "Add command output to the chat?", allow_never=True
         ):
-            self.io.output("Added ## lines of output to the chat") # TODO
+            num_lines = len(accumulated_output.strip().splitlines())
+            self.io.output(f"Added {num_lines} lines of output to the chat")
             return accumulated_output
