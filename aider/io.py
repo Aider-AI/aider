@@ -536,11 +536,11 @@ class InputOutput:
         hist = "\n" + content.strip() + "\n\n"
         self.append_chat_history(hist)
 
-    def offer_url(self, url, prompt="Open URL for more info?"):
+    def offer_url(self, url, prompt="Open URL for more info?", allow_never=True):
         """Offer to open a URL in the browser, returns True if opened."""
         if url in self.never_prompts:
             return False
-        if self.confirm_ask(prompt, subject=url, allow_never=True):
+        if self.confirm_ask(prompt, subject=url, allow_never=allow_never):
             webbrowser.open(url)
             return True
         return False
