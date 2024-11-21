@@ -34,7 +34,10 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         title: {
           display: true,
-          text: 'Aider coder editing benchmark'
+          text: 'Aider coder editing benchmark',
+          font: {
+            size: 16
+          }
         }
       },
       scales: {
@@ -42,7 +45,22 @@ document.addEventListener('DOMContentLoaded', function () {
           beginAtZero: true,
           title: {
             display: true,
-            text: 'Percent completed correctly'
+            text: 'Percent completed correctly',
+            font: {
+              size: 14
+            }
+          },
+          ticks: {
+            font: {
+              size: 12
+            }
+          }
+        },
+        x: {
+          ticks: {
+            font: {
+              size: 12
+            }
           }
         }
       }
