@@ -51,7 +51,7 @@ def diff_partial_update(lines_orig, lines_updated, final=False, fname=None):
     # dump(lines_updated)
 
     assert_newlines(lines_orig)
-    assert_newlines(lines_orig)
+    assert_newlines(lines_updated)
 
     num_orig_lines = len(lines_orig)
 
