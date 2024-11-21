@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Add search functionality for refactoring table
   document.getElementById('refacSearchInput').addEventListener('keyup', function() {
-    var searchText = this.value.toLowerCase();
+    var searchWords = this.value.toLowerCase().split(' ').filter(word => word.length > 0);
     var tableBody = document.querySelectorAll('table tbody')[1];
     var rows = tableBody.getElementsByTagName('tr');
     
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
     for (var i = 0; i < rows.length; i++) {
       var rowText = rows[i].textContent.toLowerCase();
-      if (rowText.includes(searchText)) {
+      if (searchWords.every(word => rowText.includes(word))) {
         rows[i].style.display = '';
         leaderboardData.labels.push(allData[i].model);
         leaderboardData.datasets[0].data.push(allData[i].pass_rate_1);
