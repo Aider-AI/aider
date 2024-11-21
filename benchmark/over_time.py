@@ -74,7 +74,7 @@ def plot_over_time(yaml_file):
     rc("font", **{"family": "sans-serif", "sans-serif": ["Helvetica"], "size": 10})
     plt.rcParams["text.color"] = "#444444"
 
-    fig, ax = plt.subplots(figsize=(12, 6))  # Increase figure size for better visibility
+    fig, ax = plt.subplots(figsize=(10, 10))  # Make figure square
 
     print("Debug: Figure created. Plotting data...")
     ax.grid(axis="y", zorder=0, lw=0.2)
