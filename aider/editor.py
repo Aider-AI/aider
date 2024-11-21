@@ -73,7 +73,6 @@ def get_environment_editor(default=None):
     This function checks the following environment variables in order to
     determine the user's preferred editor:
 
-     - AIDER_EDITOR
      - VISUAL
      - EDITOR
 
@@ -82,13 +81,11 @@ def get_environment_editor(default=None):
     :return: The preferred editor as specified by environment variables or the default value.
     :rtype: str or None
     """
-    editor = os.environ.get(
-        "AIDER_EDITOR", os.environ.get("VISUAL", os.environ.get("EDITOR", default))
-    )
+    editor = os.environ.get("VISUAL", os.environ.get("EDITOR", default))
     return editor
 
 
-def discover_editor():
+def discover_editor(editor_override=None):
     """
     Discovers and returns the appropriate editor command as a list of arguments.
 
@@ -105,7 +102,10 @@ def discover_editor():
         default_editor = DEFAULT_EDITOR_OS_X
     else:
         default_editor = DEFAULT_EDITOR_NIX
-    editor = get_environment_editor(default_editor)
+    if editor_override:
+        editor = editor_override
+    else:
+        editor = get_environment_editor(default_editor)
     try:
         return shlex.split(editor)
     except ValueError as e:
@@ -127,7 +127,7 @@ def file_editor(filepath):
     subprocess.call(command_parts)
 
 
-def pipe_editor(input_data="", suffix=None):
+def pipe_editor(input_data="", suffix=None, editor=None):
     """
     Opens the system editor with optional input data and returns the edited content.
 
@@ -143,7 +143,9 @@ def pipe_editor(input_data="", suffix=None):
     :rtype: str
     """
     filepath = write_temp_file(input_data, suffix)
-    file_editor(filepath)
+    command_parts = discover_editor(editor)
+    command_parts.append(filepath)
+    subprocess.call(command_parts)
     with open(filepath, "r") as f:
         output_data = f.read()
     try:
