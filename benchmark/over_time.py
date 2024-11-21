@@ -5,6 +5,8 @@ from matplotlib import rc
 
 from aider.dump import dump  # noqa: 401
 
+LABEL_FONT_SIZE = 12  # Font size for scatter plot dot labels
+
 
 def get_legend_label(model):
     model = model.lower()
@@ -144,7 +146,7 @@ def plot_over_time(yaml_file):
                 textcoords="offset points",
                 color="purple",
                 alpha=0.8,
-                fontsize=12,
+                fontsize=LABEL_FONT_SIZE,
             )
 
     if red_points:
@@ -159,7 +161,7 @@ def plot_over_time(yaml_file):
                 textcoords="offset points",
                 color="red",
                 alpha=0.8,
-                fontsize=12,
+                fontsize=LABEL_FONT_SIZE,
             )
 
     if green_points:
@@ -174,7 +176,7 @@ def plot_over_time(yaml_file):
                 textcoords="offset points",
                 color="green",
                 alpha=0.8,
-                fontsize=12,
+                fontsize=LABEL_FONT_SIZE,
             )
 
     if orange_points:
@@ -189,7 +191,7 @@ def plot_over_time(yaml_file):
                 textcoords="offset points",
                 color="orange",
                 alpha=0.8,
-                fontsize=12,
+                fontsize=LABEL_FONT_SIZE,
             )
 
     if brown_points:
@@ -219,7 +221,7 @@ def plot_over_time(yaml_file):
                 textcoords="offset points",
                 color="pink",
                 alpha=0.8,
-                fontsize=12,
+                fontsize=LABEL_FONT_SIZE,
             )
 
     if qwen_points:
@@ -234,7 +236,7 @@ def plot_over_time(yaml_file):
                 textcoords="offset points",
                 color="darkblue",
                 alpha=0.8,
-                fontsize=12,
+                fontsize=LABEL_FONT_SIZE,
             )
 
     if mistral_points:
@@ -249,7 +251,7 @@ def plot_over_time(yaml_file):
                 textcoords="offset points",
                 color="cyan",
                 alpha=0.8,
-                fontsize=12,
+                fontsize=LABEL_FONT_SIZE,
             )
 
     # Plot points without legend
