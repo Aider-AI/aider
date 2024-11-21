@@ -105,3 +105,33 @@ def test_need_to_ask(temp_data_dir):
 
     analytics.permanently_disable = True
     assert analytics.need_to_ask(True) is False
+
+
+def test_is_uuid_in_percentage():
+    analytics = Analytics()
+    
+    # Test basic percentage thresholds
+    assert analytics.is_uuid_in_percentage("00", 1) is True
+    assert analytics.is_uuid_in_percentage("02", 1) is True
+    assert analytics.is_uuid_in_percentage("03", 1) is False
+    assert analytics.is_uuid_in_percentage("ff", 1) is False
+    
+    assert analytics.is_uuid_in_percentage("00", 10) is True
+    assert analytics.is_uuid_in_percentage("19", 10) is True
+    assert analytics.is_uuid_in_percentage("1a", 10) is False
+    assert analytics.is_uuid_in_percentage("ff", 10) is False
+    
+    # Test edge cases
+    assert analytics.is_uuid_in_percentage("00", 0) is False
+    assert analytics.is_uuid_in_percentage("00", 100) is True
+    assert analytics.is_uuid_in_percentage("ff", 100) is True
+    
+    # Test invalid inputs
+    with pytest.raises(ValueError):
+        analytics.is_uuid_in_percentage("00", -1)
+    with pytest.raises(ValueError):
+        analytics.is_uuid_in_percentage("00", 101)
+    
+    # Test empty/None UUID
+    assert analytics.is_uuid_in_percentage("", 50) is False
+    assert analytics.is_uuid_in_percentage(None, 50) is False
