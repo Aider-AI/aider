@@ -8,7 +8,6 @@ from aider.editor import (
     DEFAULT_EDITOR_OS_X,
     DEFAULT_EDITOR_WINDOWS,
     discover_editor,
-    file_editor,
     get_environment_editor,
     pipe_editor,
     print_status_message,
@@ -98,7 +97,6 @@ def test_pipe_editor():
     # Mock the file operations and editor call
     with (
         patch("aider.editor.write_temp_file") as mock_write,
-        patch("aider.editor.file_editor") as mock_editor,
         patch("builtins.open") as mock_open,
         patch("os.remove") as mock_remove,
     ):
