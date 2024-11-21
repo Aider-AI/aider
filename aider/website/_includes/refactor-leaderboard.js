@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // Add search functionality for refactoring table
   document.getElementById('refacSearchInput').addEventListener('keyup', function() {
     var searchText = this.value.toLowerCase();
-    var tableBody = document.querySelector('table:nth-of-type(2) tbody');
+    var tableBody = document.querySelectorAll('table tbody')[1];
     var rows = tableBody.getElementsByTagName('tr');
     
     for (var i = 0; i < rows.length; i++) {
