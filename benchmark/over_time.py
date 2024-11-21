@@ -144,6 +144,7 @@ def plot_over_time(yaml_file):
                 textcoords="offset points",
                 color="purple",
                 alpha=0.8,
+                fontsize=12,
             )
 
     if red_points:
@@ -158,6 +159,7 @@ def plot_over_time(yaml_file):
                 textcoords="offset points",
                 color="red",
                 alpha=0.8,
+                fontsize=12,
             )
 
     if green_points:
@@ -172,6 +174,7 @@ def plot_over_time(yaml_file):
                 textcoords="offset points",
                 color="green",
                 alpha=0.8,
+                fontsize=12,
             )
 
     if orange_points:
@@ -186,6 +189,7 @@ def plot_over_time(yaml_file):
                 textcoords="offset points",
                 color="orange",
                 alpha=0.8,
+                fontsize=12,
             )
 
     if brown_points:
@@ -200,6 +204,7 @@ def plot_over_time(yaml_file):
                 textcoords="offset points",
                 color="brown",
                 alpha=0.8,
+                fontsize=12,
             )
 
     if pink_points:
@@ -214,6 +219,7 @@ def plot_over_time(yaml_file):
                 textcoords="offset points",
                 color="pink",
                 alpha=0.8,
+                fontsize=12,
             )
 
     if qwen_points:
@@ -228,6 +234,7 @@ def plot_over_time(yaml_file):
                 textcoords="offset points",
                 color="darkblue",
                 alpha=0.8,
+                fontsize=12,
             )
 
     if mistral_points:
@@ -242,6 +249,7 @@ def plot_over_time(yaml_file):
                 textcoords="offset points",
                 color="cyan",
                 alpha=0.8,
+                fontsize=12,
             )
 
     # Plot points without legend
