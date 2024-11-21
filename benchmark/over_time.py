@@ -200,7 +200,7 @@ def plot_over_time(yaml_file):
             ax.annotate(
                 color_to_label["brown"],
                 (date, rate),
-                xytext=(10, 5),
+                xytext=(10, -5),
                 textcoords="offset points",
                 color="brown",
                 alpha=0.8,
