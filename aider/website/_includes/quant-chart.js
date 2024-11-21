@@ -52,14 +52,14 @@ document.addEventListener('DOMContentLoaded', function () {
           },
           ticks: {
             font: {
-              size: 12
+              size: 16
             }
           }
         },
         x: {
           ticks: {
             font: {
-              size: 12
+              size: 16
             }
           }
         }

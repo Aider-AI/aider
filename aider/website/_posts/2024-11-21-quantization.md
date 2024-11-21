@@ -1,6 +1,6 @@
 ---
 title: Quantization matters
-excerpt: Open source LLMs are becoming very powerful, but pay attention to how you (or your) provider is quantizing the model. It strongly affects code editing skill.
+excerpt: Open source LLMs are becoming very powerful, but pay attention to how you (or your provider) is quantizing the model. It can strongly affect code editing skill.
 highlight_image: /assets/quantization.jpg
 draft: false
 nav_exclude: true
