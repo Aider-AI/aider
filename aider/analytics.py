@@ -100,7 +100,7 @@ class Analytics:
         # Convert percentage to hex threshold (1% = "04", 10% = "1a", etc)
         # Using first 2 hex digits (0-ff) means each digit is 1/256 of the space
         threshold = format(int(255 * percent / 100), "02x")
-        return uuid_str < threshold
+        return uuid_str <= threshold
 
     def get_data_file_path(self):
         data_file = Path.home() / ".aider" / "analytics.json"
