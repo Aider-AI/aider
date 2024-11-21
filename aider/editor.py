@@ -112,21 +112,6 @@ def discover_editor(editor_override=None):
         raise RuntimeError(f"Invalid editor command format '{editor}': {e}")
 
 
-def file_editor(filepath):
-    """
-    Open the specified file in the system's configured editor.
-
-    This function blocks until the editor is closed.
-
-    :param filepath: Path to the file to edit
-    :type filepath: str
-    :raises RuntimeError: If the editor command is invalid
-    """
-    command_parts = discover_editor()
-    command_parts.append(filepath)
-    subprocess.call(command_parts)
-
-
 def pipe_editor(input_data="", suffix=None, editor=None):
     """
     Opens the system editor with optional input data and returns the edited content.
