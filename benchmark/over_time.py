@@ -17,6 +17,8 @@ class ModelData:
     @property
     def color(self) -> str:
         model = self.name.lower()
+        if "gemini" in model and "pro" in model:
+            return "magenta"
         if "qwen" in model:
             return "darkblue"
         if "mistral" in model:
@@ -38,6 +40,8 @@ class ModelData:
     @property
     def legend_label(self) -> str:
         model = self.name.lower()
+        if "gemini" in model and "pro" in model:
+            return "Gemini Pro"
         if "claude-3-sonnet" in model:
             return "Sonnet"
         if "o1-preview" in model:
