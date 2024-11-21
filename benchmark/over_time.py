@@ -12,6 +12,9 @@ def get_model_color(model):
     if model == "gpt-4o-mini":
         return default
 
+    if "deepseek" in model.lower():
+        return "brown"
+
     if "sonnet" in model.lower():
         return "orange"
 
@@ -77,8 +80,9 @@ def plot_over_time(yaml_file):
     red_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "red"]
     green_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "green"]
     orange_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "orange"]
+    brown_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "brown"]
 
-    # Plot lines for purple, red, green and orange points
+    # Plot lines for purple, red, green, orange and brown points
     if purple_points:
         purple_dates, purple_rates = zip(*sorted(purple_points))
         ax.plot(purple_dates, purple_rates, c="purple", alpha=0.5, linewidth=1)
@@ -91,6 +95,9 @@ def plot_over_time(yaml_file):
     if orange_points:
         orange_dates, orange_rates = zip(*sorted(orange_points))
         ax.plot(orange_dates, orange_rates, c="orange", alpha=0.5, linewidth=1)
+    if brown_points:
+        brown_dates, brown_rates = zip(*sorted(brown_points))
+        ax.plot(brown_dates, brown_rates, c="brown", alpha=0.5, linewidth=1)
 
     # Plot all points
     ax.scatter(dates, pass_rates, c=colors, alpha=0.5, s=120)
