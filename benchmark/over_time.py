@@ -206,7 +206,7 @@ def plot_over_time(yaml_file):
                 textcoords="offset points",
                 color="brown",
                 alpha=0.8,
-                fontsize=12,
+                fontsize=LABEL_FONT_SIZE,
             )
 
     if pink_points:
