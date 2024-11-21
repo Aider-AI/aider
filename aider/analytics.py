@@ -75,8 +75,11 @@ class Analytics:
 
         assert args_analytics is None, args_analytics
 
-        # ask 1/16 of the users
-        return self.user_id < "1"
+        if not self.user_id:
+            return False
+
+        # ask 1% of users
+        return self.user_id < "03"
 
     def get_data_file_path(self):
         data_file = Path.home() / ".aider" / "analytics.json"
