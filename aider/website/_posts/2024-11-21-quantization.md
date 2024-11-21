@@ -21,7 +21,8 @@ and local model servers like ollama.
 The graph below compares 4 different versions of the Qwen 2.5 32B model,
 served both locally and from cloud providers:
 
-- Qwen2.5-Coder-32B-Instruct
-- ollama/qwen2.5:32b
-- ollama/qwen2.5:32b-instruct-q8_0
-- openrouter/qwen/qwen-2.5-coder-32b-instruct
+<canvas id="quantChart" width="800" height="450" style="margin: 20px 0"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+{% include quant-chart.js %}
+</script>
