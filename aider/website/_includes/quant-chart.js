@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   allData.forEach(function(row) {
     // Split model name on \n and join with actual line breaks
-    chartData.labels.push(row.model.split('\\n').join('\n'));
+    chartData.labels.push(row.model);
     chartData.datasets[0].data.push(row.pass_rate_2);
   });
 
