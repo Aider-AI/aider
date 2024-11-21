@@ -962,7 +962,7 @@ class Coder:
         if self.chat_language:
             language = self.chat_language
         else:
-            language = "in the same language they are using"
+            language = "the same language they are using"
 
         prompt = prompt.format(
             fence=self.fence,
