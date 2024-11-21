@@ -83,20 +83,20 @@ class Analytics:
 
     def is_uuid_in_percentage(self, uuid_str, percent):
         """Check if a UUID string falls within the first X percent of the UUID space.
-        
+
         Args:
             uuid_str: UUID string to test
             percent: Percentage threshold (0-100)
-            
+
         Returns:
             bool: True if UUID falls within the first X percent
         """
         if not (0 <= percent <= 100):
             raise ValueError("Percentage must be between 0 and 100")
-            
+
         if not uuid_str:
             return False
-            
+
         # Convert percentage to hex threshold (1% = "03", 10% = "1a", etc)
         threshold = format(int(256 * percent / 100), "02x")
         return uuid_str < threshold
