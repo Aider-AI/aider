@@ -40,7 +40,7 @@ cog.out(text)
 - Added `--show-release-notes` to control release notes display on first run of new version.
 - Save empty dict to cache file on model metadata download failure, to delay retry.
 - Improved error handling and code formatting.
-- Aider wrote 63% of the code in this release.
+- Aider wrote 66% of the code in this release.
 
 ###  Aider v0.63.2
 
