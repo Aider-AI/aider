@@ -312,8 +312,8 @@ cog.outl("```")
 ############
 # Analytics:
 
-## Enable/disable analytics for one session (default: False)
-#AIDER_ANALYTICS=false
+## Enable/disable analytics for current session (default: random)
+#AIDER_ANALYTICS=
 
 ## Specify a file to log analytics events
 #AIDER_ANALYTICS_LOG=

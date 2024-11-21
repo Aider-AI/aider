@@ -511,8 +511,7 @@ Environment variable: `AIDER_TEST`
 ## Analytics:
 
 ### `--analytics`
-Enable/disable analytics for one session (default: False)  
-Default: False  
+Enable/disable analytics for current session (default: random)  
 Environment variable: `AIDER_ANALYTICS`  
 Aliases:
   - `--analytics`
