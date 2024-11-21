@@ -455,12 +455,12 @@ class InputOutput:
             elif multiline_input and line.strip():
                 if multiline_tag:
                     # Check if line is exactly "tag}"
-                    if line.strip() == f"{multiline_tag}}}":
+                    if line.strip("\r\n") == f"{multiline_tag}}}":
                         break
                     else:
                         inp += line + "\n"
                 # Check if line is exactly "}"
-                elif line.strip() == "}":
+                elif line.strip("\r\n") == "}":
                     break
                 else:
                     inp += line + "\n"
