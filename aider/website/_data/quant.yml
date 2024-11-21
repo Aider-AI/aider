@@ -1,0 +1,93 @@
+- dirname: 2024-11-09-11-09-15--Qwen2.5-Coder-32B-Instruct
+  test_cases: 133
+  model: HuggingFace weights via glhf.chat
+  released: 2024-11-12
+  edit_format: diff
+  commit_hash: ec9982a
+  pass_rate_1: 59.4
+  pass_rate_2: 71.4
+  percent_cases_well_formed: 94.7
+  error_outputs: 17
+  num_malformed_responses: 17
+  num_with_malformed_responses: 7
+  user_asks: 1
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: aider --model openai/Qwen2.5-Coder-32B-Instruct
+  date: 2024-11-09
+  versions: 0.59.2.dev
+  seconds_per_case: 22.5
+  total_cost: 0.0000
+
+- dirname: 2024-11-20-15-17-37--qwen25-32b-or-diff
+  test_cases: 133
+  model: openrouter/qwen/qwen-2.5-coder-32b-instruct
+  edit_format: diff
+  commit_hash: e917424
+  pass_rate_1: 49.6
+  pass_rate_2: 65.4
+  percent_cases_well_formed: 84.2
+  error_outputs: 43
+  num_malformed_responses: 31
+  num_with_malformed_responses: 21
+  user_asks: 43
+  lazy_comments: 0
+  syntax_errors: 2
+  indentation_errors: 2
+  exhausted_context_windows: 12
+  test_timeouts: 2
+  command: aider --model openrouter/qwen/qwen-2.5-coder-32b-instruct
+  date: 2024-11-20
+  versions: 0.63.3.dev
+  seconds_per_case: 40.7
+  total_cost: 0.1497
+
+- dirname: 2024-09-20-21-47-17--qwen2.5-32b-instruct-q8_0-whole
+  test_cases: 133
+  model: ollama/qwen2.5:32b-instruct-q8_0
+  edit_format: whole
+  commit_hash: 2753ac6
+  pass_rate_1: 46.6
+  pass_rate_2: 58.6
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 1
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  command: aider --model ollama/qwen2.5:32b-instruct-q8_0
+  date: 2024-09-20
+  versions: 0.56.1.dev
+  seconds_per_case: 1763.7
+  total_cost: 0.0000
+
+- dirname: 2024-09-30-14-09-43--qwen2.5-32b-whole-2
+  test_cases: 133
+  model: ollama/qwen2.5:32b
+  edit_format: whole
+  commit_hash: 765c4cb
+  pass_rate_1: 44.4
+  pass_rate_2: 54.1
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 9
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: aider --model ollama/qwen2.5:32b
+  date: 2024-09-30
+  versions: 0.58.1.dev
+  seconds_per_case: 134.9
+  total_cost: 0.0000
+  

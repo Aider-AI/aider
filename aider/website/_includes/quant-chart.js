@@ -20,8 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
   {% endfor %}
 
   allData.forEach(function(row) {
-    // Split the model name on \n to create array of lines
-    chartData.labels.push(row.model.split('\\n'));
+    chartData.labels.push(row.model);
     chartData.datasets[0].data.push(row.pass_rate_2);
   });
 
