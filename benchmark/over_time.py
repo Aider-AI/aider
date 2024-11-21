@@ -120,19 +120,23 @@ def plot_over_time(yaml_file):
         mistral_dates, mistral_rates = zip(*sorted(mistral_points))
         ax.plot(mistral_dates, mistral_rates, c="cyan", alpha=0.5, linewidth=1)
 
-    # Plot all points
-    ax.scatter(dates, pass_rates, c=colors, alpha=0.5, s=120)
-
-    for i, model in enumerate(models):
-        ax.annotate(
-            model,
-            (dates[i], pass_rates[i]),
-            fontsize=12,
-            alpha=0.75,
-            xytext=(5, 5),
-            textcoords="offset points",
-            rotation=15,
-        )
+    # Create legend handles
+    legend_handles = []
+    legend_labels = []
+    
+    # Plot points and collect unique model types for legend
+    seen_colors = {}
+    for i, (date, rate, color, model) in enumerate(zip(dates, pass_rates, colors, models)):
+        if color not in seen_colors:
+            # First time seeing this color, add to legend
+            scatter = ax.scatter([date], [rate], c=[color], alpha=0.5, s=120)
+            legend_handles.append(scatter)
+            # Use the first model name of each color as the legend label
+            legend_labels.append(model)
+            seen_colors[color] = True
+        else:
+            # Just plot the point without adding to legend
+            ax.scatter([date], [rate], c=[color], alpha=0.5, s=120)
 
     ax.set_xlabel("Model release date", fontsize=18, color="#555")
     ax.set_ylabel(
@@ -141,7 +145,16 @@ def plot_over_time(yaml_file):
     ax.set_title("LLM code editing skill by model release date", fontsize=20)
     ax.set_ylim(30, 90)  # Adjust y-axis limit to accommodate higher values
     plt.xticks(fontsize=14, rotation=45, ha="right")  # Rotate x-axis labels for better readability
-    plt.tight_layout(pad=3.0)
+    # Add legend
+    ax.legend(
+        legend_handles,
+        legend_labels,
+        loc='center left',
+        bbox_to_anchor=(1, 0.5),
+        fontsize=10
+    )
+    
+    plt.tight_layout(pad=3.0, rect=[0, 0, 0.85, 1])  # Adjust layout to make room for legend
 
     print("Debug: Saving figures...")
     plt.savefig("tmp_over_time.png")
