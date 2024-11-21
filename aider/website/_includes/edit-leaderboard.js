@@ -79,14 +79,19 @@ document.addEventListener('DOMContentLoaded', function () {
     var tableBody = document.querySelector('table:first-of-type tbody');
     var rows = tableBody.getElementsByTagName('tr');
     
+    leaderboardData.labels = [];
+    leaderboardData.datasets[0].data = [];
+    
     for (var i = 0; i < rows.length; i++) {
       var rowText = rows[i].textContent.toLowerCase();
       if (rowText.includes(searchText)) {
         rows[i].style.display = '';
+        leaderboardData.labels.push(allData[i].model);
+        leaderboardData.datasets[0].data.push(allData[i].pass_rate_2);
       } else {
         rows[i].style.display = 'none';
       }
     }
-    updateChart();
+    leaderboardChart.update();
   });
 });
