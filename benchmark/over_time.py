@@ -11,7 +11,7 @@ LABEL_FONT_SIZE = 16  # Font size for scatter plot dot labels
 def get_legend_label(model):
     model = model.lower()
     if "claude-3-sonnet" in model:
-        return "Claude 3 Sonnet"
+        return "Sonnet"
     if "o1-preview" in model:
         return "O1 Preview"
     if "gpt-3.5" in model:
@@ -53,9 +53,6 @@ def get_model_color(model):
 
     if "sonnet" in model.lower():
         return "orange"
-
-    if "o1-preview" in model.lower():
-        return "magenta"
 
     if "-4o" in model:
         return "purple"
