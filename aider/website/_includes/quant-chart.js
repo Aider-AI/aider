@@ -28,9 +28,22 @@ document.addEventListener('DOMContentLoaded', function () {
     type: 'bar',
     data: chartData,
     options: {
+      plugins: {
+        legend: {
+          display: false
+        },
+        title: {
+          display: true,
+          text: 'Aider coder editing benchmark'
+        }
+      },
       scales: {
         y: {
-          beginAtZero: true
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Percent completed correctly'
+          }
         }
       }
     }
