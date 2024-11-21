@@ -1600,3 +1600,51 @@ class TestCommands(TestCase):
 
             del coder
             del commands
+
+    def test_cmd_lock(self):
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # Set up test files
+        editable_files = {
+            os.path.join(self.tempdir, "file1.py"),
+            os.path.join(self.tempdir, "file2.py"),
+        }
+        read_only_files = {os.path.join(self.tempdir, "readonly.py")}
+
+        coder.abs_fnames = editable_files
+        coder.abs_read_only_fnames = read_only_files
+
+        # Execute lock command
+        commands.cmd_lock()
+
+        # Verify files were moved to read-only
+        self.assertEqual(coder.abs_fnames, set())
+        self.assertEqual(coder.abs_read_only_fnames, editable_files | read_only_files)
+
+    def test_cmd_lock_no_files(self):
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # Set up with no editable files
+        coder.abs_fnames = set()
+        read_only_files = {os.path.join(self.tempdir, "readonly.py")}
+        coder.abs_read_only_fnames = read_only_files
+
+        with mock.patch.object(io, "tool_error") as mock_error:
+            commands.cmd_lock()
+            mock_error.assert_called_once_with("No editable files to lock")
+
+        # Verify nothing changed
+        self.assertEqual(coder.abs_fnames, set())
+        self.assertEqual(coder.abs_read_only_fnames, read_only_files)
+
+    def test_cmd_lock_no_coder(self):
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        commands = Commands(io, coder=None)
+
+        with mock.patch.object(io, "tool_error") as mock_error:
+            commands.cmd_lock()
+            mock_error.assert_called_once_with("No active coder")

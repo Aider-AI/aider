@@ -130,6 +130,24 @@ class Commands:
         models = litellm.model_cost.keys()
         return models
 
+    def cmd_lock(self, args=None):
+        "Move all editable files to read-only status"
+        if not self.coder:
+            self.io.tool_error("No active coder")
+            return
+
+        editable_files = self.coder.abs_fnames or []
+        if not editable_files:
+            self.io.tool_error("No editable files to lock")
+            return
+
+        read_only_files = self.coder.abs_read_only_fnames or set()
+        read_only_files.update(editable_files)
+        self.coder.abs_read_only_fnames = read_only_files
+        self.coder.abs_fnames = set()
+
+        self.io.tool_output(f"Moved {len(editable_files)} files to read-only status")
+
     def cmd_models(self, args):
         "Search the list of available models"
 
