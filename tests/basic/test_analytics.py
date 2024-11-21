@@ -112,7 +112,7 @@ def test_is_uuid_in_percentage():
 
     # Test basic percentage thresholds
     assert analytics.is_uuid_in_percentage("00", 1) is True
-    assert analytics.is_uuid_in_percentage("02", 1) is True
+    assert analytics.is_uuid_in_percentage("01999", 1) is True
     assert analytics.is_uuid_in_percentage("03", 1) is False
     assert analytics.is_uuid_in_percentage("ff", 1) is False
 
