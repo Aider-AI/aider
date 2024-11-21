@@ -141,8 +141,8 @@ class BenchmarkPlotter:
         plt.tight_layout(pad=1.0)
 
     def save_and_display(self, fig: plt.Figure):
-        plt.savefig("tmp_over_time.png")
-        plt.savefig("tmp_over_time.svg")
+        plt.savefig("aider/website/assets/models-over-time.png")
+        plt.savefig("aider/website/assets/models-over-time.svg")
         imgcat(fig)
 
     def plot(self, yaml_file: str):
