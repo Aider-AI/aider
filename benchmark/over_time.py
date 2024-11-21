@@ -125,7 +125,7 @@ def plot_over_time(yaml_file):
     # Create a mapping of colors to first points and labels
     color_to_first_point = {}
     color_to_label = {}
-    
+
     for date, rate, color, model in zip(dates, pass_rates, colors, models):
         if color not in color_to_first_point:
             color_to_first_point[color] = (date, rate)
@@ -137,64 +137,112 @@ def plot_over_time(yaml_file):
         ax.plot(purple_dates, purple_rates, c="purple", alpha=0.5, linewidth=1)
         if "purple" in color_to_first_point:
             date, rate = color_to_first_point["purple"]
-            ax.annotate(color_to_label["purple"], (date, rate), xytext=(10, 5), 
-                       textcoords='offset points', color="purple", alpha=0.8)
-            
+            ax.annotate(
+                color_to_label["purple"],
+                (date, rate),
+                xytext=(10, 5),
+                textcoords="offset points",
+                color="purple",
+                alpha=0.8,
+            )
+
     if red_points:
         red_dates, red_rates = zip(*sorted(red_points))
         ax.plot(red_dates, red_rates, c="red", alpha=0.5, linewidth=1)
         if "red" in color_to_first_point:
             date, rate = color_to_first_point["red"]
-            ax.annotate(color_to_label["red"], (date, rate), xytext=(10, 5),
-                       textcoords='offset points', color="red", alpha=0.8)
-            
+            ax.annotate(
+                color_to_label["red"],
+                (date, rate),
+                xytext=(10, 5),
+                textcoords="offset points",
+                color="red",
+                alpha=0.8,
+            )
+
     if green_points:
         green_dates, green_rates = zip(*sorted(green_points))
         ax.plot(green_dates, green_rates, c="green", alpha=0.5, linewidth=1)
         if "green" in color_to_first_point:
             date, rate = color_to_first_point["green"]
-            ax.annotate(color_to_label["green"], (date, rate), xytext=(10, 5),
-                       textcoords='offset points', color="green", alpha=0.8)
-            
+            ax.annotate(
+                color_to_label["green"],
+                (date, rate),
+                xytext=(10, 5),
+                textcoords="offset points",
+                color="green",
+                alpha=0.8,
+            )
+
     if orange_points:
         orange_dates, orange_rates = zip(*sorted(orange_points))
         ax.plot(orange_dates, orange_rates, c="orange", alpha=0.5, linewidth=1)
         if "orange" in color_to_first_point:
             date, rate = color_to_first_point["orange"]
-            ax.annotate(color_to_label["orange"], (date, rate), xytext=(10, 5),
-                       textcoords='offset points', color="orange", alpha=0.8)
-            
+            ax.annotate(
+                color_to_label["orange"],
+                (date, rate),
+                xytext=(10, 5),
+                textcoords="offset points",
+                color="orange",
+                alpha=0.8,
+            )
+
     if brown_points:
         brown_dates, brown_rates = zip(*sorted(brown_points))
         ax.plot(brown_dates, brown_rates, c="brown", alpha=0.5, linewidth=1)
         if "brown" in color_to_first_point:
             date, rate = color_to_first_point["brown"]
-            ax.annotate(color_to_label["brown"], (date, rate), xytext=(10, 5),
-                       textcoords='offset points', color="brown", alpha=0.8)
-            
+            ax.annotate(
+                color_to_label["brown"],
+                (date, rate),
+                xytext=(10, 5),
+                textcoords="offset points",
+                color="brown",
+                alpha=0.8,
+            )
+
     if pink_points:
         pink_dates, pink_rates = zip(*sorted(pink_points))
         ax.plot(pink_dates, pink_rates, c="pink", alpha=0.5, linewidth=1)
         if "pink" in color_to_first_point:
             date, rate = color_to_first_point["pink"]
-            ax.annotate(color_to_label["pink"], (date, rate), xytext=(10, 5),
-                       textcoords='offset points', color="pink", alpha=0.8)
-            
+            ax.annotate(
+                color_to_label["pink"],
+                (date, rate),
+                xytext=(10, 5),
+                textcoords="offset points",
+                color="pink",
+                alpha=0.8,
+            )
+
     if qwen_points:
         qwen_dates, qwen_rates = zip(*sorted(qwen_points))
         ax.plot(qwen_dates, qwen_rates, c="darkblue", alpha=0.5, linewidth=1)
         if "darkblue" in color_to_first_point:
             date, rate = color_to_first_point["darkblue"]
-            ax.annotate(color_to_label["darkblue"], (date, rate), xytext=(10, 5),
-                       textcoords='offset points', color="darkblue", alpha=0.8)
-            
+            ax.annotate(
+                color_to_label["darkblue"],
+                (date, rate),
+                xytext=(10, 5),
+                textcoords="offset points",
+                color="darkblue",
+                alpha=0.8,
+            )
+
     if mistral_points:
         mistral_dates, mistral_rates = zip(*sorted(mistral_points))
         ax.plot(mistral_dates, mistral_rates, c="cyan", alpha=0.5, linewidth=1)
         if "cyan" in color_to_first_point:
             date, rate = color_to_first_point["cyan"]
-            ax.annotate(color_to_label["cyan"], (date, rate), xytext=(10, 5),
-                       textcoords='offset points', color="cyan", alpha=0.8)
+            ax.annotate(
+                color_to_label["cyan"],
+                (date, rate),
+                xytext=(10, 5),
+                textcoords="offset points",
+                color="cyan",
+                alpha=0.8,
+            )
 
     # Plot points without legend
     for date, rate, color in zip(dates, pass_rates, colors):
