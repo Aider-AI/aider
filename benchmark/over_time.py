@@ -123,7 +123,7 @@ def plot_over_time(yaml_file):
     # Create legend handles
     legend_handles = []
     legend_labels = []
-    
+
     # Plot points and collect unique model types for legend
     seen_colors = {}
     for i, (date, rate, color, model) in enumerate(zip(dates, pass_rates, colors, models)):
@@ -147,13 +147,9 @@ def plot_over_time(yaml_file):
     plt.xticks(fontsize=14, rotation=45, ha="right")  # Rotate x-axis labels for better readability
     # Add legend
     ax.legend(
-        legend_handles,
-        legend_labels,
-        loc='center left',
-        bbox_to_anchor=(1, 0.5),
-        fontsize=10
+        legend_handles, legend_labels, loc="center left", bbox_to_anchor=(1, 0.5), fontsize=10
     )
-    
+
     plt.tight_layout(pad=3.0, rect=[0, 0, 0.85, 1])  # Adjust layout to make room for legend
 
     print("Debug: Saving figures...")
