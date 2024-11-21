@@ -441,16 +441,25 @@ class InputOutput:
                 self.tool_error(str(err))
                 return ""
 
-            if line and line[0] == "{" and not multiline_input:
-                multiline_input = True
-                # Check for optional tag after opening {
-                if len(line) > 1:
-                    tag = "".join(c for c in line[1:] if c.isalnum())
-                    multiline_tag = tag
-                    inp += line[len(tag) + 1 :] + "\n"
-                else:
+            if line.strip("\r\n") and not multiline_input:
+                stripped = line.strip("\r\n")
+                if stripped == "{":
+                    multiline_input = True
                     multiline_tag = None
-                    inp += line[1:] + "\n"
+                    inp += ""
+                elif stripped[0] == "{":
+                    # Extract tag if it exists (only alphanumeric chars)
+                    tag = "".join(c for c in stripped[1:] if c.isalnum())
+                    if stripped == "{" + tag:
+                        multiline_input = True
+                        multiline_tag = tag
+                        inp += ""
+                    else:
+                        inp = line
+                        break
+                else:
+                    inp = line
+                    break
                 continue
             elif multiline_input and line.strip():
                 if multiline_tag:
