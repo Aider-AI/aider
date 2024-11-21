@@ -980,7 +980,9 @@ class Coder:
             shell_cmd_reminder=shell_cmd_reminder,
             language=language,
         )
-        return prompt
+        result = self.template_processor.process(prompt)
+        print(f"[fmt_system_prompt] words: {len(result.split() if result else [])}")
+        return result
 
     def format_chat_chunks(self):
         self.choose_fence()

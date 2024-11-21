@@ -1,7 +1,9 @@
 from .architect_coder import ArchitectCoder
+from .sudolang_coder import SudoLangCoder
 from .ask_coder import AskCoder
 from .ask_fsninja_coder import AskFSNinjaCoder
 from .ask_further_coder import AskFurtherCoder
+from .shell_master_coder import ShellMasterCoder
 from .base_coder import Coder
 from .cedarscript_coder import CEDARScriptCoder
 from .editblock_coder import EditBlockCoder
@@ -19,6 +21,7 @@ __all__ = [
     AskCoder,
     AskFurtherCoder,
     AskFSNinjaCoder,
+    ShellMasterCoder,
     Coder,
     EditBlockCoder,
     EditBlockFencedCoder,
@@ -26,6 +29,7 @@ __all__ = [
     UnifiedDiffCoder,
     CEDARScriptCoder,
     ArchitectCoder,
+    SudoLangCoder,
     EditorEditBlockCoder,
     EditorWholeFileCoder,
 ]
