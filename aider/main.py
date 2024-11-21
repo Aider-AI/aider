@@ -689,7 +689,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             return 1
 
     commands = Commands(
-        io, None, verify_ssl=args.verify_ssl, args=args, parser=parser, verbose=args.verbose
+        io,
+        None,
+        verify_ssl=args.verify_ssl,
+        args=args,
+        parser=parser,
+        verbose=args.verbose,
+        editor=args.editor,
     )
 
     summarizer = ChatSummary(

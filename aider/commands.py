@@ -46,7 +46,15 @@ class Commands:
         )
 
     def __init__(
-        self, io, coder, voice_language=None, verify_ssl=True, args=None, parser=None, verbose=False
+        self,
+        io,
+        coder,
+        voice_language=None,
+        verify_ssl=True,
+        args=None,
+        parser=None,
+        verbose=False,
+        editor=None,
     ):
         self.io = io
         self.coder = coder
@@ -61,6 +69,7 @@ class Commands:
         self.voice_language = voice_language
 
         self.help = None
+        self.editor = editor
 
     def cmd_model(self, args):
         "Switch to a new LLM"
@@ -1355,7 +1364,7 @@ class Commands:
     def cmd_editor(self, initial_content=""):
         "Open an editor to write a prompt"
 
-        user_input = pipe_editor(initial_content, suffix="md")
+        user_input = pipe_editor(initial_content, suffix="md", editor=self.editor)
         self.io.user_input(user_input, log_only=False)
         self.io.add_to_input_history(user_input)
         return user_input

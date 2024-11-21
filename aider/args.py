@@ -738,6 +738,10 @@ def get_parser(default_config_files, git_root):
         default=True,
         help="Enable/disable fancy input with history and completion (default: True)",
     )
+    group.add_argument(
+        "--editor",
+        help="Specify which editor to use for the /editor command",
+    )
 
     ##########
     group = parser.add_argument_group("Voice Settings")
