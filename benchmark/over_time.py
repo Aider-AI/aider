@@ -13,7 +13,7 @@ def get_model_color(model):
         return default
 
     if "qwen" in model.lower():
-        return "purple"
+        return "darkblue"
 
     if "haiku" in model.lower():
         return "pink"
@@ -88,7 +88,7 @@ def plot_over_time(yaml_file):
     orange_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "orange"]
     brown_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "brown"]
     pink_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "pink"]
-    qwen_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "purple"]
+    qwen_points = [(d, r) for d, r, c in zip(dates, pass_rates, colors) if c == "darkblue"]
 
     # Plot lines for purple, red, green, orange and brown points
     if purple_points:
@@ -111,7 +111,7 @@ def plot_over_time(yaml_file):
         ax.plot(pink_dates, pink_rates, c="pink", alpha=0.5, linewidth=1)
     if qwen_points:
         qwen_dates, qwen_rates = zip(*sorted(qwen_points))
-        ax.plot(qwen_dates, qwen_rates, c="purple", alpha=0.5, linewidth=1)
+        ax.plot(qwen_dates, qwen_rates, c="darkblue", alpha=0.5, linewidth=1)
 
     # Plot all points
     ax.scatter(dates, pass_rates, c=colors, alpha=0.5, s=120)
