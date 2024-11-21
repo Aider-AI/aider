@@ -28,6 +28,7 @@ def get_legend_label(model):
         return "Mistral"
     return model
 
+
 def get_model_color(model):
     default = "lightblue"
 
