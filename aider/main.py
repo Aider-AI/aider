@@ -616,6 +616,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     is_first_run = is_first_run_of_new_version(io, verbose=args.verbose)
     check_and_load_imports(io, is_first_run, verbose=args.verbose)
 
+    if args.editor:
+        os.environ["AIDER_EDITOR"] = args.editor
+
     if args.anthropic_api_key:
         os.environ["ANTHROPIC_API_KEY"] = args.anthropic_api_key
 

@@ -63,7 +63,7 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--auto-lint | --no-auto-lint] [--test-cmd]
              [--auto-test | --no-auto-test] [--test]
              [--analytics | --no-analytics] [--analytics-log]
-             [--analytics-disable] [--file] [--read] [--vim]
+             [--analytics-disable] [--file] [--read] [--vim] [--editor]
              [--chat-language] [--version] [--just-check-update]
              [--check-update | --no-check-update]
              [--show-release-notes | --no-show-release-notes]
@@ -540,6 +540,11 @@ Environment variable: `AIDER_READ`
 Use VI editing mode in the terminal (default: False)  
 Default: False  
 Environment variable: `AIDER_VIM`  
+
+### `--editor`
+Specify the CLI command used to open an editor when using `/editor`  
+Default: OS-dependant  
+Environment variable: `AIDER_EDITOR`  
 
 ### `--chat-language CHAT_LANGUAGE`
 Specify the language to use in the chat (default: None, uses system settings)  

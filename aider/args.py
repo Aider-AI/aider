@@ -603,6 +603,12 @@ def get_parser(default_config_files, git_root):
         help="Specify the language to use in the chat (default: None, uses system settings)",
     )
     group.add_argument(
+        "--editor",
+        metavar="EDITOR_COMMAND",
+        default=None,
+        help="Specify the CLI command used to open an editor when using /editor",
+    )
+    group.add_argument(
         "--version",
         action="version",
         version=f"%(prog)s {__version__}",

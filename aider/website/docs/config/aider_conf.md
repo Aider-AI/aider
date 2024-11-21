@@ -358,6 +358,9 @@ cog.outl("```")
 ## Use VI editing mode in the terminal (default: False)
 #vim: false
 
+## Specify the CLI command used to open an editor when using /editor
+#editor: xxx
+
 ## Specify the language to use in the chat (default: None, uses system settings)
 #chat-language: xxx
 

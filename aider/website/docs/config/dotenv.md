@@ -333,6 +333,9 @@ cog.outl("```")
 ## Use VI editing mode in the terminal (default: False)
 #AIDER_VIM=false
 
+## Specify the CLI command used to open an editor when using /editor
+#AIDER_EDITOR=
+
 ## Specify the language to use in the chat (default: None, uses system settings)
 #AIDER_CHAT_LANGUAGE=
 
