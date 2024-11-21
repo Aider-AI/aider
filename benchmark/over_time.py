@@ -9,9 +9,11 @@ from aider.dump import dump  # noqa: 401
 def get_legend_label(model):
     model = model.lower()
     if "claude-3-opus" in model:
-        return "Opus"
+        return "Claude 3 Opus"
     if "claude-3-sonnet" in model:
-        return "Sonnet"
+        return "Claude 3 Sonnet"
+    if "o1-preview" in model:
+        return "O1 Preview"
     if "gpt-3.5" in model:
         return "GPT-3.5 Turbo"
     if "gpt-4-" in model and "-4o" not in model:
