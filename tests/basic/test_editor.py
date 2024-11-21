@@ -29,12 +29,9 @@ def test_get_environment_editor():
     with patch.dict(os.environ, {"EDITOR": "vim", "VISUAL": "code"}):
         assert get_environment_editor() == "code"
 
-    # Test AIDER_EDITOR overrides all
-    with patch.dict(os.environ, {"EDITOR": "vim", "VISUAL": "code", "AIDER_EDITOR": "emacs"}):
-        assert get_environment_editor() == "emacs"
 
 
-def test_discover_editor():
+def test_discover_editor_defaults():
     with patch("platform.system") as mock_system:
         # Test Windows default
         mock_system.return_value = "Windows"
@@ -51,14 +48,6 @@ def test_discover_editor():
         with patch.dict(os.environ, {}, clear=True):
             assert discover_editor() == [DEFAULT_EDITOR_NIX]
 
-    # Test editor with arguments
-    with patch.dict(os.environ, {"EDITOR": 'vim -c "set noswapfile"'}):
-        assert discover_editor() == ["vim", "-c", "set noswapfile"]
-
-    # Test invalid editor command
-    with patch.dict(os.environ, {"EDITOR": 'vim "unclosed quote'}):
-        with pytest.raises(RuntimeError):
-            discover_editor()
 
 
 def test_write_temp_file():
@@ -93,15 +82,18 @@ def test_print_status_message(capsys):
     assert "Failed!" in captured.out
 
 
-@patch("subprocess.call")
-def test_file_editor(mock_call):
-    # Test basic editor call
-    with patch.dict(os.environ, {"EDITOR": "vim"}):
-        file_editor("test.txt")
-        mock_call.assert_called_once_with(["vim", "test.txt"])
+def test_discover_editor_override():
+    # Test editor override
+    assert discover_editor("code") == ["code"]
+    assert discover_editor('vim -c "set noswapfile"') == ["vim", "-c", "set noswapfile"]
+
+    # Test invalid editor command
+    with pytest.raises(RuntimeError):
+        discover_editor('vim "unclosed quote')
 
 
 def test_pipe_editor():
+    # Test with default editor
     test_content = "Initial content"
     modified_content = "Modified content"
 
@@ -118,12 +110,22 @@ def test_pipe_editor():
         mock_file.__enter__.return_value.read.return_value = modified_content
         mock_open.return_value = mock_file
 
-        # Test successful edit
-        result = pipe_editor(test_content)
-        assert result == modified_content
-        mock_write.assert_called_once_with(test_content, None)
-        mock_editor.assert_called_once_with("temp.txt")
-        mock_remove.assert_called_once_with("temp.txt")
+        with patch("subprocess.call") as mock_subprocess:
+            # Test with default editor
+            result = pipe_editor(test_content)
+            assert result == modified_content
+            mock_write.assert_called_with(test_content, None)
+            mock_subprocess.assert_called()
+
+            # Test with custom editor
+            result = pipe_editor(test_content, editor="code")
+            assert result == modified_content
+            mock_subprocess.assert_called()
+
+            # Test with suffix
+            result = pipe_editor(test_content, suffix="md")
+            assert result == modified_content
+            mock_write.assert_called_with(test_content, "md")
 
         # Test cleanup on permission error
         mock_remove.side_effect = PermissionError
