@@ -2065,5 +2065,5 @@ class Coder:
             "Add command output to the chat?", allow_never=True
         ):
             num_lines = len(accumulated_output.strip().splitlines())
-            self.io.output(f"Added {num_lines} lines of output to the chat")
+            self.io.tool_output(f"Added {num_lines} lines of output to the chat.")
             return accumulated_output
