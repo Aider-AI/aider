@@ -91,10 +91,17 @@ def test_system_info(temp_data_dir):
 
 def test_need_to_ask(temp_data_dir):
     analytics = Analytics()
-    assert analytics.need_to_ask() is True
+    assert analytics.need_to_ask(True) is True
+    assert analytics.need_to_ask(False) is False
+
+    analytics.user_id = "111"
+    assert analytics.need_to_ask(None) is False
+
+    analytics.user_id = "000"
+    assert analytics.need_to_ask(None) is True
 
     analytics.asked_opt_in = True
-    assert analytics.need_to_ask() is False
+    assert analytics.need_to_ask(True) is False
 
     analytics.permanently_disable = True
-    assert analytics.need_to_ask() is False
+    assert analytics.need_to_ask(True) is False

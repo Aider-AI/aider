@@ -62,8 +62,21 @@ class Analytics:
             self.permanently_disable = True
             self.save_data()
 
-    def need_to_ask(self):
-        return not self.asked_opt_in and not self.permanently_disable
+    def need_to_ask(self, args_analytics):
+        if args_analytics is False:
+            return False
+
+        could_ask = not self.asked_opt_in and not self.permanently_disable
+        if not could_ask:
+            return False
+
+        if args_analytics is True:
+            return True
+
+        assert args_analytics is None, args_analytics
+
+        # ask 1/16 of the users
+        return self.user_id < "1"
 
     def get_data_file_path(self):
         data_file = Path.home() / ".aider" / "analytics.json"
