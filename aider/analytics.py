@@ -78,8 +78,11 @@ class Analytics:
         if not self.user_id:
             return False
 
-        # ask 1% of users
-        return self.user_id < "03"
+        # Define percentage of users to ask
+        PERCENT = 1
+        # Convert percentage to hex threshold (1% = "03", 10% = "1a", etc)
+        threshold = format(int(256 * PERCENT / 100), "02x")
+        return self.user_id < threshold
 
     def get_data_file_path(self):
         data_file = Path.home() / ".aider" / "analytics.json"
