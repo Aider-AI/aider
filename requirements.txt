@@ -35,7 +35,7 @@ cedarscript-grammar==0.5.2
     # via cedarscript-ast-parser
 cedarscript-integration-aider==1.3.4
     # via -r requirements/requirements.in
-cedartl==0.0.9
+cedartl==0.0.12
     # via -r requirements/requirements.in
 certifi==2024.8.30
     # via
