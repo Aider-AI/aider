@@ -2143,8 +2143,8 @@
     Paul Gauthier (aider): 201
   start_tag: v0.49.0
   total_lines: 324
-- aider_percentage: 56.18
-  aider_total: 450
+- aider_percentage: 52.49
+  aider_total: 580
   end_date: '2024-08-20'
   end_tag: v0.51.0
   file_counts:
@@ -2178,6 +2178,12 @@
       Paul Gauthier: 3
     aider/utils.py:
       Paul Gauthier (aider): 6
+    aider/website/_includes/code-in-json-benchmark.js:
+      Paul Gauthier: 101
+      Paul Gauthier (aider): 64
+    aider/website/_includes/code-in-json-syntax.js:
+      Paul Gauthier: 73
+      Paul Gauthier (aider): 66
     aider/website/docs/leaderboards/index.md:
       Paul Gauthier: 1
     benchmark/benchmark.py:
@@ -2198,10 +2204,10 @@
       Paul Gauthier: 15
       Paul Gauthier (aider): 104
   grand_total:
-    Paul Gauthier: 351
-    Paul Gauthier (aider): 450
+    Paul Gauthier: 525
+    Paul Gauthier (aider): 580
   start_tag: v0.50.0
-  total_lines: 801
+  total_lines: 1105
 - aider_percentage: 68.1
   aider_total: 521
   end_date: '2024-08-23'
@@ -2267,8 +2273,8 @@
     pcamp: 1
   start_tag: v0.51.0
   total_lines: 765
-- aider_percentage: 58.61
-  aider_total: 405
+- aider_percentage: 61.4
+  aider_total: 455
   end_date: '2024-08-27'
   end_tag: v0.53.0
   file_counts:
@@ -2333,13 +2339,15 @@
     tests/basic/test_repomap.py:
       Paul Gauthier: 4
       Paul Gauthier (aider): 63
+    tests/fixtures/sample-code-base/sample.js:
+      Paul Gauthier (aider): 50
     tests/fixtures/sample-code-base/sample.py:
       Paul Gauthier (aider): 68
   grand_total:
     Paul Gauthier: 286
-    Paul Gauthier (aider): 405
+    Paul Gauthier (aider): 455
   start_tag: v0.52.0
-  total_lines: 691
+  total_lines: 741
 - aider_percentage: 63.75
   aider_total: 204
   end_date: '2024-08-28'
@@ -3013,3 +3021,88 @@
     Paul Gauthier (aider): 385
   start_tag: v0.62.0
   total_lines: 699
+- aider_percentage: 73.15
+  aider_total: 880
+  end_date: '2024-11-21'
+  end_tag: v0.64.0
+  file_counts:
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/analytics.py:
+      Paul Gauthier: 20
+      Paul Gauthier (aider): 21
+    aider/args.py:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 10
+    aider/coders/base_coder.py:
+      Paul Gauthier: 15
+      Paul Gauthier (aider): 3
+      caetanominuzzo: 1
+    aider/commands.py:
+      Chad Phillips: 4
+      Paul Gauthier: 5
+      Paul Gauthier (aider): 19
+    aider/editor.py:
+      Chad Phillips: 133
+      Paul Gauthier (aider): 13
+    aider/exceptions.py:
+      Paul Gauthier: 5
+    aider/help_pats.py:
+      Paul Gauthier: 1
+    aider/io.py:
+      Chad Phillips: 9
+      Paul Gauthier (aider): 41
+      mw: 21
+    aider/main.py:
+      Paul Gauthier: 21
+      Paul Gauthier (aider): 41
+    aider/models.py:
+      Paul Gauthier: 41
+      Paul Gauthier (aider): 33
+    aider/repo.py:
+      Paul Gauthier (aider): 5
+    aider/urls.py:
+      Paul Gauthier: 1
+    aider/website/_includes/edit-leaderboard.js:
+      Paul Gauthier (aider): 97
+    aider/website/_includes/quant-chart.js:
+      Paul Gauthier: 3
+      Paul Gauthier (aider): 66
+    aider/website/_includes/refactor-leaderboard.js:
+      Paul Gauthier (aider): 90
+    aider/website/docs/leaderboards/index.md:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 10
+    aider/website/share/index.md:
+      Paul Gauthier (aider): 29
+    benchmark/over_time.py:
+      Paul Gauthier: 11
+      Paul Gauthier (aider): 162
+    scripts/blame.py:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 2
+    scripts/issues.py:
+      Paul Gauthier: 5
+      Paul Gauthier (aider): 12
+    scripts/versionbump.py:
+      Paul Gauthier: 7
+    tests/basic/test_analytics.py:
+      Paul Gauthier: 12
+      Paul Gauthier (aider): 30
+    tests/basic/test_commands.py:
+      Paul Gauthier (aider): 4
+    tests/basic/test_editor.py:
+      Paul Gauthier (aider): 129
+    tests/basic/test_main.py:
+      Paul Gauthier (aider): 8
+    tests/basic/test_models.py:
+      Paul Gauthier: 3
+      Paul Gauthier (aider): 55
+  grand_total:
+    Chad Phillips: 146
+    Paul Gauthier: 155
+    Paul Gauthier (aider): 880
+    caetanominuzzo: 1
+    mw: 21
+  start_tag: v0.63.0
+  total_lines: 1203

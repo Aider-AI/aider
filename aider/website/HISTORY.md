@@ -25,7 +25,7 @@ cog.out(text)
 
 
 
-### main branch
+### Aider v0.64.0
 
 - Added [`/editor` command](https://aider.chat/docs/usage/commands.html) to open system editor for writing prompts, by @thehunmonkgroup.
 - Full support for `gpt-4o-2024-11-20`.
