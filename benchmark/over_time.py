@@ -6,6 +6,28 @@ from matplotlib import rc
 from aider.dump import dump  # noqa: 401
 
 
+def get_legend_label(model):
+    model = model.lower()
+    if "claude-3-opus" in model:
+        return "Opus"
+    if "claude-3-sonnet" in model:
+        return "Sonnet"
+    if "gpt-3.5" in model:
+        return "GPT-3.5 Turbo"
+    if "gpt-4-" in model and "-4o" not in model:
+        return "GPT-4"
+    if "qwen" in model:
+        return "Qwen"
+    if "-4o" in model:
+        return "GPT-4o"
+    if "haiku" in model:
+        return "Haiku"
+    if "deepseek" in model:
+        return "DeepSeek"
+    if "mistral" in model:
+        return "Mistral"
+    return model
+
 def get_model_color(model):
     default = "lightblue"
 
@@ -131,8 +153,8 @@ def plot_over_time(yaml_file):
             # First time seeing this color, add to legend
             scatter = ax.scatter([date], [rate], c=[color], alpha=0.5, s=120)
             legend_handles.append(scatter)
-            # Use the first model name of each color as the legend label
-            legend_labels.append(model)
+            # Use simplified name for legend label
+            legend_labels.append(get_legend_label(model))
             seen_colors[color] = True
         else:
             # Just plot the point without adding to legend
