@@ -452,17 +452,18 @@ class InputOutput:
                     multiline_tag = None
                     inp += line[1:] + "\n"
                 continue
-            elif line and line[-1] == "}" and multiline_input:
+            elif multiline_input and line.strip():
                 if multiline_tag:
-                    # Check if the line ends with tag}
-                    if line.endswith(f"{multiline_tag}}}"):
-                        inp += line[: -len(multiline_tag) - 1] + "\n"
+                    # Check if line is exactly "tag}"
+                    if line.strip() == f"{multiline_tag}}}":
                         break
                     else:
                         inp += line + "\n"
-                else:
-                    inp += line[:-1] + "\n"
+                # Check if line is exactly "}"
+                elif line.strip() == "}":
                     break
+                else:
+                    inp += line + "\n"
             elif multiline_input:
                 inp += line + "\n"
             else:
