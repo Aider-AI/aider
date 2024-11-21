@@ -880,7 +880,8 @@ class Commands:
 
         if add:
             num_lines = len(combined_output.strip().splitlines())
-            self.io.tool_output(f"Added {num_lines} lines of output to the chat.")
+            line_plural = "line" if num_lines == 1 else "lines"
+            self.io.tool_output(f"Added {num_lines} {line_plural} of output to the chat.")
 
             msg = prompts.run_output.format(
                 command=args,
