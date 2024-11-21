@@ -865,11 +865,10 @@ class Commands:
         return errors
 
     def cmd_run(self, args, add_on_nonzero_exit=False):
-        "Run a shell command and optionally add the output to the chat (alias: !)"
+        "Run a shell command and add the output to the chat (alias: !)"
         exit_status, combined_output = run_cmd(
             args, verbose=self.verbose, error_print=self.io.tool_error
         )
-        instructions = None
 
         if combined_output is None:
             return
@@ -877,36 +876,21 @@ class Commands:
         if add_on_nonzero_exit:
             add = exit_status != 0
         else:
-            self.io.tool_output()
-            response = self.io.prompt_ask(
-                "Add the output to the chat?\n(Y)es/(n)o/message with instructions:",
-            ).strip()
-            self.io.tool_output()
-
-            if response.lower() in ["yes", "y"]:
-                add = True
-            elif response.lower() in ["no", "n"]:
-                add = False
-            else:
-                add = True
-                instructions = response
-                if response.strip():
-                    self.io.user_input(response, log_only=True)
-                    self.io.add_to_input_history(response)
+            add = self.io.confirm_ask("Add command output to the chat?")
 
         if add:
-            for line in combined_output.splitlines():
-                self.io.tool_output(line, log_only=True)
+            num_lines = len(combined_output.strip().splitlines())
+            self.io.tool_output(f"Added {num_lines} lines of output to the chat")
 
             msg = prompts.run_output.format(
                 command=args,
                 output=combined_output,
             )
 
-            if instructions:
-                msg = instructions + "\n\n" + msg
-
-            return msg
+            self.coder.cur_messages += [
+                dict(role="user", content=msg),
+                dict(role="assistant", content="Ok."),
+            ]
 
     def cmd_exit(self, args):
         "Exit the application"
