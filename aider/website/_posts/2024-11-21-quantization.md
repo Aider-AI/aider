@@ -28,7 +28,7 @@ The graph above compares 4 different versions of the Qwen 2.5 32B model,
 served both locally and from cloud providers.
 
 - The [HuggingFace weights](https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct) served via [glhf.chat](https://glhf.chat).
-- The results from [OpenRouter's mix of providers](https://openrouter.ai/qwen/qwen-2.5-coder-32b-instruct/providers).
+- The results from [OpenRouter's mix of providers](https://openrouter.ai/qwen/qwen-2.5-coder-32b-instruct/providers) which serve the model with different levels of quantization.
 - Two Ollama models run locally.
 
 The best version of the model rivals GPT-4o, while the worst performer
