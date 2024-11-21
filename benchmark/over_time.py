@@ -26,6 +26,8 @@ def get_legend_label(model):
         return "DeepSeek"
     if "mistral" in model:
         return "Mistral"
+    if "o1-preview" in model:
+        return "o1-preview"
     return model
 
 
@@ -49,6 +51,9 @@ def get_model_color(model):
 
     if "sonnet" in model.lower():
         return "orange"
+
+    if "o1-preview" in model.lower():
+        return "magenta"
 
     if "-4o" in model:
         return "purple"
