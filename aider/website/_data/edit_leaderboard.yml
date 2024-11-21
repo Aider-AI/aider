@@ -1,7 +1,7 @@
 - dirname: 2024-05-01-20-05-59--direct-opus-filenames-outside-fence
   test_cases: 133
   model: claude-3-opus-20240229
-  released: 2024-02-29
+  _released: 2024-02-29
   edit_format: diff
   commit_hash: f4b1797-dirty, f4b1797
   pass_rate_1: 53.4
@@ -623,7 +623,7 @@
   commit_hash: d31eef3-dirty
   pass_rate_1: 40.6
   pass_rate_2: 55.6
-  released: 2024-07-18
+  _released: 2024-07-18
   percent_cases_well_formed: 100.0
   error_outputs: 1
   num_malformed_responses: 0
@@ -691,7 +691,7 @@
 - dirname: 2024-07-24-06-30-29--llama-405b-whole
   test_cases: 133
   model: llama-3.1-405b-instruct (whole)
-  released: 2024-07-23
+  _released: 2024-07-23
   edit_format: whole
   commit_hash: a362dea-dirty
   pass_rate_1: 48.9

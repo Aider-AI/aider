@@ -5,7 +5,7 @@ from matplotlib import rc
 
 from aider.dump import dump  # noqa: 401
 
-LABEL_FONT_SIZE = 12  # Font size for scatter plot dot labels
+LABEL_FONT_SIZE = 16  # Font size for scatter plot dot labels
 
 
 def get_legend_label(model):
@@ -128,7 +128,7 @@ def plot_over_time(yaml_file):
     color_to_first_point = {}
     color_to_label = {}
 
-    for date, rate, color, model in zip(dates, pass_rates, colors, models):
+    for date, rate, color, model in sorted(zip(dates, pass_rates, colors, models)):
         if color not in color_to_first_point:
             color_to_first_point[color] = (date, rate)
             color_to_label[color] = get_legend_label(model)
@@ -202,7 +202,7 @@ def plot_over_time(yaml_file):
             ax.annotate(
                 color_to_label["brown"],
                 (date, rate),
-                xytext=(10, -5),
+                xytext=(10, -10),
                 textcoords="offset points",
                 color="brown",
                 alpha=0.8,
@@ -247,7 +247,7 @@ def plot_over_time(yaml_file):
             ax.annotate(
                 color_to_label["cyan"],
                 (date, rate),
-                xytext=(10, 5),
+                xytext=(10, -10),
                 textcoords="offset points",
                 color="cyan",
                 alpha=0.8,
