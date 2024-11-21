@@ -1780,7 +1780,7 @@
 
 - dirname: 2024-11-09-11-09-15--Qwen2.5-Coder-32B-Instruct
   test_cases: 133
-  model: Qwen2.5-Coder-32B-Instruct (diff)
+  model: Qwen2.5-Coder-32B-Instruct
   released: 2024-11-12
   edit_format: diff
   commit_hash: ec9982a
