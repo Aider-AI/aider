@@ -30,7 +30,6 @@ def test_get_environment_editor():
         assert get_environment_editor() == "code"
 
 
-
 def test_discover_editor_defaults():
     with patch("platform.system") as mock_system:
         # Test Windows default
@@ -47,7 +46,6 @@ def test_discover_editor_defaults():
         mock_system.return_value = "Linux"
         with patch.dict(os.environ, {}, clear=True):
             assert discover_editor() == [DEFAULT_EDITOR_NIX]
-
 
 
 def test_write_temp_file():
