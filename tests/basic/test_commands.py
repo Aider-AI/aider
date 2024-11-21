@@ -1069,7 +1069,7 @@ class TestCommands(TestCase):
 
             # Test the cmd_run method with a command that should not raise an error
             commands.cmd_run("exit 1", add_on_nonzero_exit=True)
-            
+
             # Check that the output was added to cur_messages
             self.assertTrue(any("exit 1" in msg["content"] for msg in coder.cur_messages))
 
