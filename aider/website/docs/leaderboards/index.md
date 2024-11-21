@@ -59,7 +59,9 @@ The model also has to successfully apply all its changes to the source file with
 
 <canvas id="editChart" width="800" height="450" style="margin-top: 20px"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-{% include edit-leaderboard.js %}
+<script>
+{% raw %}{% include edit-leaderboard.js %}{% endraw %}
+</script>
 <style>
   tr.selected {
     color: #0056b3;
@@ -112,7 +114,9 @@ Therefore, results are available for fewer models.
 
 <canvas id="refacChart" width="800" height="450" style="margin-top: 20px"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-{% include refactor-leaderboard.js %}
+<script>
+{% raw %}{% include refactor-leaderboard.js %}{% endraw %}
+</script>
 
 
 ## LLM code editing skill by model release date
