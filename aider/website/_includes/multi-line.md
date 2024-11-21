@@ -4,7 +4,7 @@ You can send long, multi-line messages in the chat in a few ways:
   - Enter `{tag` (where "tag" is any sequence of letters/numbers) and end with `tag}`. This is useful when you need to include closing braces `}` in your message.
   - Use Meta-ENTER to start a new line without sending the message (Esc+ENTER in some environments).
   - Use `/paste` to paste text from the clipboard into the chat.
-  - Use the `/editor` command to open your editor to create the next chat message.
+  - Use the `/editor` command to open your editor to create the next chat message. *(see [Editor configuration](/docs/config/editor.html)) to customize the editor*
 
 Example with a tag:
 ```
