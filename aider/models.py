@@ -162,6 +162,22 @@ MODEL_SETTINGS = [
         reminder="sys",
     ),
     ModelSettings(
+        "gpt-4o-2024-11-20",
+        "diff",
+        weak_model_name="gpt-4o-mini",
+        use_repo_map=True,
+        lazy=True,
+        reminder="sys",
+    ),
+    ModelSettings(
+        "openai/gpt-4o-2024-11-20",
+        "diff",
+        weak_model_name="gpt-4o-mini",
+        use_repo_map=True,
+        lazy=True,
+        reminder="sys",
+    ),
+    ModelSettings(
         "gpt-4o",
         "diff",
         weak_model_name="gpt-4o-mini",
@@ -754,6 +770,11 @@ class ModelInfoManager:
                     pass
         except Exception as ex:
             print(str(ex))
+            try:
+                # Save empty dict to cache file on failure
+                self.cache_file.write_text("{}")
+            except OSError:
+                pass
 
     def get_model_from_cached_json_db(self, model):
         if not self.content:

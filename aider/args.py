@@ -562,8 +562,8 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--analytics",
         action=argparse.BooleanOptionalAction,
-        default=False,
-        help="Enable/disable analytics for one session (default: False)",
+        default=None,
+        help="Enable/disable analytics for current session (default: random)",
     )
     group.add_argument(
         "--analytics-log",

@@ -327,8 +327,8 @@ cog.outl("```")
 ############
 # Analytics:
 
-## Enable/disable analytics for one session (default: False)
-#analytics: false
+## Enable/disable analytics for current session (default: random)
+#analytics: xxx
 
 ## Specify a file to log analytics events
 #analytics-log: xxx

@@ -31,7 +31,7 @@ features and commands are most used.
 It also helps uncover bugs that users are experiencing, so that they can be fixed
 in upcoming releases.
 
-## Enabling & disabling analytics
+## Disabling analytics
 
 You can opt out of analytics forever by running this command one time:
 
@@ -39,10 +39,27 @@ You can opt out of analytics forever by running this command one time:
 aider --analytics-disable
 ```
 
-To enable analytics for a single session, you can run aider with `--analytics`.
-This will *not* have any effect if you have permanently disabled analytics with the previous command.
+## Enabling analytics
 
-The first time, you will need to agree to opt-in.
+The `--[no-]analytics` switch controls whether analytics are enabled for the
+current session:
+
+- `--analytics` will turn on analytics for the current session.
+This will *not* have any effect if you have permanently disabled analytics 
+with `--analytics-disable`.
+If this is the first time you have enabled analytics, aider
+will confirm you wish to opt-in to analytics.
+- `--no-analytics` will turn off analytics for the current session.
+- By default, if you don't provide `--analytics` or `--no-analytics`,
+aider will enable analytics for a random subset of users.
+This will never happen if you have permanently disabled analytics 
+with `--analytics-disable`.
+Randomly selected users will be asked if they wish to opt-in to analytics.
+
+
+## Opting in
+
+The first time analytics are enabled, you will need to agree to opt-in.
 
 ```
 aider --analytics
@@ -53,13 +70,8 @@ For more info: https://aider.chat/docs/more/analytics.html
 Allow collection of anonymous analytics to help improve aider? (Y)es/(N)o [Yes]:
 ```
 
-If you've added `analytics: true` to your 
-[yaml config file](/docs/config/aider_conf.html), 
-you can disable analytics for a single session, you can run:
+If you say "no", analytics will be permanently disabled.
 
-```
-aider --no-analytics
-```
 
 ## Details about data being collected
 
