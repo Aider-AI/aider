@@ -127,7 +127,7 @@ def main():
             subprocess.run(
                 cmd,
                 text=True,
-                shell=True,
+                # shell=True,
                 encoding="utf-8",
                 errors="replace",
                 check=True,
