@@ -12,7 +12,7 @@ def get_model_color(model):
     if model == "gpt-4o-mini":
         return default
 
-    if "claude-3-sonnet" in model.lower():
+    if "sonnet" in model.lower():
         return "orange"
 
     if "-4o" in model:
