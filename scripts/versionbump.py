@@ -109,11 +109,14 @@ def main():
 
     print("Updating aider/__init__.py with new version:")
     print(updated_content)
-    if not dry_run:
-        with open("aider/__init__.py", "w") as f:
-            f.write(updated_content)
+    # if not dry_run:
+    #    with open("aider/__init__.py", "w") as f:
+    #        f.write(updated_content)
 
     git_commands = [
+        ["git", "push", "origin"],
+    ]
+    [
         ["git", "add", "aider/__init__.py"],
         ["git", "commit", "-m", f"version bump to {new_version}"],
         ["git", "tag", f"v{new_version}"],
