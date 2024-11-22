@@ -16,7 +16,7 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 3
-  command: aider --model openai/Qwen2.5-Coder-32B-Instruct --openai-api-base https://glhf.chat/api/openai/v1
+  command: aider --model openai/hf:Qwen/Qwen2.5-Coder-32B-Instruct --openai-api-base https://glhf.chat/api/openai/v1
   date: 2024-11-09
   versions: 0.59.2.dev
   seconds_per_case: 22.5
