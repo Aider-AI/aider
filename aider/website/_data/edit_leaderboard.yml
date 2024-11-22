@@ -411,6 +411,7 @@
 - dirname: 2024-06-08-22-37-55--qwen2-72b-instruct-whole
   test_cases: 133
   model: Qwen2 72B Instruct
+  released: 2024-06-08
   edit_format: whole
   commit_hash: 02c7335-dirty, 1a97498-dirty
   pass_rate_1: 44.4
