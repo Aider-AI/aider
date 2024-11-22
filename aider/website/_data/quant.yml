@@ -1,6 +1,6 @@
 - dirname: 2024-11-09-11-09-15--Qwen2.5-Coder-32B-Instruct
   test_cases: 133
-  model: HuggingFace weights via glhf.chat
+  model: HuggingFace BF16 via glhf.chat
   released: 2024-11-12
   edit_format: diff
   commit_hash: ec9982a
@@ -22,9 +22,32 @@
   seconds_per_case: 22.5
   total_cost: 0.0000
 
+- dirname: 2024-11-22-14-53-26--hyperbolic-qwen25coder32binstruct
+  test_cases: 133
+  model: Hyperbolic Qwen2.5-Coder-32B-Instruct BF16
+  edit_format: diff
+  commit_hash: f9ef161, 17aef7b-dirty
+  pass_rate_1: 57.9
+  pass_rate_2: 69.2
+  percent_cases_well_formed: 91.7
+  error_outputs: 30
+  num_malformed_responses: 29
+  num_with_malformed_responses: 11
+  user_asks: 9
+  lazy_comments: 0
+  syntax_errors: 4
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  command: aider --model openai/Qwen/Qwen2.5-Coder-32B-Instruct --openai-api-base https://api.hyperbolic.xyz/v1/
+  date: 2024-11-22
+  versions: 0.64.2.dev
+  seconds_per_case: 33.2
+  total_cost: 0.0000
+  
 - dirname: 2024-11-20-15-17-37--qwen25-32b-or-diff
   test_cases: 133
-  model: openrouter/qwen/qwen-2.5-coder-32b-instruct
+  model: openrouter/qwen/qwen-2.5-coder-32b-instruct (mixed quants)
   edit_format: diff
   commit_hash: e917424
   pass_rate_1: 49.6
@@ -67,3 +90,4 @@
   versions: 0.64.2.dev
   seconds_per_case: 86.7
   total_cost: 0.0000
+

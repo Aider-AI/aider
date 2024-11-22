@@ -24,6 +24,17 @@ and local model servers like Ollama.
 {% include quant-chart.js %}
 </script>
 
+The graph above compares 4 different versions of the Qwen 2.5 Coder 32B Instruct model,
+served both locally and from cloud providers.
+
+- The [HuggingFace BF16 weights](https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct) served via [glhf.chat](https://glhf.chat).
+- Hyperbolic labs API for [qwen2-5-coder-32b-instruct](https://app.hyperbolic.xyz/models/qwen2-5-coder-32b-instruct), which is using BF16. This result is probably within the expected variance of the HF result.
+- The results from [OpenRouter's mix of providers](https://openrouter.ai/qwen/qwen-2.5-coder-32b-instruct/providers) which serve the model with different levels of quantization.
+- Ollama locally serving [qwen2.5-coder:32b-instruct-q4_K_M)](https://ollama.com/library/qwen2.5-coder:32b-instruct-q4_K_M), which has `Q4_K_M` quantization.
+
+The best version of the model rivals GPT-4o, while the worst performer
+is more like GPT-3.5 Turbo level.
+
 <input type="text" id="quantSearchInput" placeholder="Search..." style="width: 100%; max-width: 800px; margin: 10px auto; padding: 8px; display: block; border: 1px solid #ddd; border-radius: 4px;">
 
 <table style="width: 100%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
@@ -84,16 +95,6 @@ document.getElementById('quantSearchInput').addEventListener('keyup', function()
 });
 </script>
 
-The graph above compares 4 different versions of the Qwen 2.5 Coder 32B Instruct model,
-served both locally and from cloud providers.
-
-- The [HuggingFace weights](https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct) served via [glhf.chat](https://glhf.chat).
-- Hyperbolic labs API for [qwen2-5-coder-32b-instruct](https://app.hyperbolic.xyz/models/qwen2-5-coder-32b-instruct), which has BF16 quantization.
-- The results from [OpenRouter's mix of providers](https://openrouter.ai/qwen/qwen-2.5-coder-32b-instruct/providers) which serve the model with different levels of quantization.
-- Ollama locally serving [qwen2.5-coder:32b-instruct-q4_K_M)](https://ollama.com/library/qwen2.5-coder:32b-instruct-q4_K_M), which has `Q4_K_M` quantization.
-
-The best version of the model rivals GPT-4o, while the worst performer
-is more like GPT-3.5 Turbo level.
 
 ## Choosing providers with OpenRouter
 
