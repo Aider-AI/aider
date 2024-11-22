@@ -45,49 +45,48 @@
   seconds_per_case: 40.7
   total_cost: 0.1497
 
-- dirname: 2024-09-20-21-47-17--qwen2.5-32b-instruct-q8_0-whole
+- dirname: 2024-11-21-23-33-47--ollama-qwen25-coder
   test_cases: 133
-  model: ollama/qwen2.5:32b-instruct-q8_0
-  edit_format: whole
-  commit_hash: 2753ac6
-  pass_rate_1: 46.6
-  pass_rate_2: 58.6
-  percent_cases_well_formed: 100.0
-  error_outputs: 0
-  num_malformed_responses: 0
-  num_with_malformed_responses: 0
-  user_asks: 1
+  model: qwen2.5-coder:32b-instruct-q4_K_M
+  edit_format: diff
+  commit_hash: 488c88d-dirty
+  pass_rate_1: 44.4
+  pass_rate_2: 53.4
+  percent_cases_well_formed: 44.4
+  error_outputs: 231
+  num_malformed_responses: 183
+  num_with_malformed_responses: 74
+  user_asks: 79
   lazy_comments: 0
-  syntax_errors: 0
+  syntax_errors: 2
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 2
-  command: aider --model ollama/qwen2.5:32b-instruct-q8_0
-  date: 2024-09-20
-  versions: 0.56.1.dev
-  seconds_per_case: 1763.7
+  command: aider --model ollama/qwen2.5-coder:32b-instruct-q4_K_M
+  date: 2024-11-21
+  versions: 0.64.2.dev
+  seconds_per_case: 86.7
   total_cost: 0.0000
 
-- dirname: 2024-09-30-14-09-43--qwen2.5-32b-whole-2
+- dirname: 2024-11-22-03-33-30--ollama-qwen25-coder-krith-instruct
   test_cases: 133
-  model: ollama/qwen2.5:32b
-  edit_format: whole
-  commit_hash: 765c4cb
-  pass_rate_1: 44.4
-  pass_rate_2: 54.1
-  percent_cases_well_formed: 100.0
-  error_outputs: 0
-  num_malformed_responses: 0
-  num_with_malformed_responses: 0
-  user_asks: 9
+  model: ollama/krith/qwen2.5-coder-32b-instruct:IQ2_M
+  edit_format: diff
+  commit_hash: fbadfcf-dirty
+  pass_rate_1: 16.5
+  pass_rate_2: 21.1
+  percent_cases_well_formed: 60.9
+  error_outputs: 1169
+  num_malformed_responses: 148
+  num_with_malformed_responses: 52
+  user_asks: 58
   lazy_comments: 0
-  syntax_errors: 0
-  indentation_errors: 0
+  syntax_errors: 3
+  indentation_errors: 1
   exhausted_context_windows: 0
-  test_timeouts: 3
-  command: aider --model ollama/qwen2.5:32b
-  date: 2024-09-30
-  versions: 0.58.1.dev
-  seconds_per_case: 134.9
-  total_cost: 0.0000
-  
+  test_timeouts: 4
+  command: aider --model ollama/krith/qwen2.5-coder-32b-instruct:IQ2_M
+  date: 2024-11-22
+  versions: 0.64.2.dev
+  seconds_per_case: 169.7
+  total_cost: 0.00

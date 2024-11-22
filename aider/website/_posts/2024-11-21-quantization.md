@@ -24,16 +24,16 @@ and local model servers like Ollama.
 {% include quant-chart.js %}
 </script>
 
-The graph above compares 4 different versions of the Qwen 2.5 32B model,
+The graph above compares 3 different versions of the Qwen 2.5 Coder 32B model,
 served both locally and from cloud providers.
 
 - The [HuggingFace weights](https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct) served via [glhf.chat](https://glhf.chat).
 - The results from [OpenRouter's mix of providers](https://openrouter.ai/qwen/qwen-2.5-coder-32b-instruct/providers) which serve the model with different levels of quantization.
-- Two Ollama models run locally.
+- Ollama locally serving [qwen2.5-coder:32b-instruct-q4_K_M)](https://ollama.com/library/qwen2.5-coder:32b-instruct-q4_K_M), which has `Q4_K_M` quantization.
+- Ollama locally serving [krith/qwen2.5-coder-32b-instruct:IQ2_M](https://ollama.com/krith/qwen2.5-coder-32b-instruct), which has IQ2_M quantization.
 
-The best version of the model rivals GPT-4o, while the worst performer
-is more like GPT-3.5 Turbo.
-
+The best version of the model rivals GPT-4o, while the worst performers
+are more like GPT-3.5 Turbo level to completely useless.
 
 ## Choosing providers with OpenRouter
 
@@ -41,3 +41,7 @@ OpenRouter allows you to ignore specific providers in your
 [preferences](https://openrouter.ai/settings/preferences).
 This can be effective to exclude highly quantized or otherwise
 undesirable providers.
+
+{: .note }
+The original version of this article included incorrect Ollama models
+that were not Qwen 2.5 Coder 32B.
