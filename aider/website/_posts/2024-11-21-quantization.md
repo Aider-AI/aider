@@ -24,6 +24,66 @@ and local model servers like Ollama.
 {% include quant-chart.js %}
 </script>
 
+<input type="text" id="quantSearchInput" placeholder="Search..." style="width: 100%; max-width: 800px; margin: 10px auto; padding: 8px; display: block; border: 1px solid #ddd; border-radius: 4px;">
+
+<table style="width: 100%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
+  <thead style="background-color: #f2f2f2;">
+    <tr>
+      <th style="padding: 8px; text-align: left;">Model</th>
+      <th style="padding: 8px; text-align: center;">Percent completed correctly</th>
+      <th style="padding: 8px; text-align: center;">Percent using correct edit format</th>
+      <th style="padding: 8px; text-align: left;">Command</th>
+      <th style="padding: 8px; text-align: center;">Edit format</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% assign quant_sorted = site.data.quant | sort: 'pass_rate_2' | reverse %}
+    {% for row in quant_sorted %}
+      <tr style="border-bottom: 1px solid #ddd;">
+        <td style="padding: 8px;">{{ row.model }}</td>
+        <td style="padding: 8px; text-align: center;">{{ row.pass_rate_2 }}%</td>
+        <td style="padding: 8px; text-align: center;">{{ row.percent_cases_well_formed }}%</td>
+        <td style="padding: 8px;"><code>{{ row.command }}</code></td>
+        <td style="padding: 8px; text-align: center;">{{ row.edit_format }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<style>
+  tr.selected {
+    color: #0056b3;
+  }
+  table {
+    table-layout: fixed;
+  }
+  td, th {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  td:nth-child(3), td:nth-child(4) {
+    font-size: 12px;
+  }
+</style>
+
+<script>
+document.getElementById('quantSearchInput').addEventListener('keyup', function() {
+    var input = this.value.toLowerCase();
+    var rows = document.querySelectorAll('tbody tr');
+    
+    rows.forEach(function(row) {
+        var text = row.textContent.toLowerCase();
+        if(text.includes(input)) {
+            row.style.display = '';
+            row.classList.add('selected');
+        } else {
+            row.style.display = 'none';
+            row.classList.remove('selected');
+        }
+    });
+});
+</script>
+
 The graph above compares 4 different versions of the Qwen 2.5 Coder 32B Instruct model,
 served both locally and from cloud providers.
 
