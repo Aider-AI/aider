@@ -20,3 +20,7 @@ aider --model lm_studio/<your-model-name>
 ```
 
 
+
+See the [model warnings](warnings.html)
+section for information on warnings which will occur
+when working with models that aider is not familiar with.
