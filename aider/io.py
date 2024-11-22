@@ -431,7 +431,7 @@ class InputOutput:
                     # Use placeholder if set, then clear it
                     default = self.placeholder
                     self.placeholder = None
-                    
+
                     line = self.prompt_session.prompt(
                         show,
                         default=default,
