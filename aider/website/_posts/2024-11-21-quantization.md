@@ -35,6 +35,10 @@ served both locally and from cloud providers.
 The best version of the model rivals GPT-4o, while the worst performer
 is more like GPT-3.5 Turbo level.
 
+{: .note }
+This article is being updated as new benchmark runs complete.
+The original version included incorrect Ollama models.
+
 <input type="text" id="quantSearchInput" placeholder="Search..." style="width: 100%; max-width: 800px; margin: 10px auto; padding: 8px; display: block; border: 1px solid #ddd; border-radius: 4px;">
 
 <table style="width: 100%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
@@ -103,6 +107,3 @@ OpenRouter allows you to ignore specific providers in your
 This can be effective to exclude highly quantized or otherwise
 undesirable providers.
 
-{: .note }
-The original version of this article included incorrect Ollama models
-that were not Qwen 2.5 Coder 32B Instruct.

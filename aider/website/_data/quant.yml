@@ -1,6 +1,6 @@
 - dirname: 2024-11-09-11-09-15--Qwen2.5-Coder-32B-Instruct
   test_cases: 133
-  model: HuggingFace BF16 via glhf.chat
+  model: HuggingFace BF16 via GLHF
   released: 2024-11-12
   edit_format: diff
   commit_hash: ec9982a
@@ -24,7 +24,7 @@
 
 - dirname: 2024-11-22-14-53-26--hyperbolic-qwen25coder32binstruct
   test_cases: 133
-  model: Hyperbolic Qwen2.5-Coder-32B-Instruct BF16
+  model: Hyperbolic BF16
   edit_format: diff
   commit_hash: f9ef161, 17aef7b-dirty
   pass_rate_1: 57.9
@@ -47,7 +47,7 @@
   
 - dirname: 2024-11-20-15-17-37--qwen25-32b-or-diff
   test_cases: 133
-  model: openrouter/qwen/qwen-2.5-coder-32b-instruct (mixed quants)
+  model: OpenRouter (mixed)
   edit_format: diff
   commit_hash: e917424
   pass_rate_1: 49.6
@@ -70,7 +70,7 @@
 
 - dirname: 2024-11-21-23-33-47--ollama-qwen25-coder
   test_cases: 133
-  model: qwen2.5-coder:32b-instruct-q4_K_M
+  model: Ollama Q4_K_M
   edit_format: diff
   commit_hash: 488c88d-dirty
   pass_rate_1: 44.4
