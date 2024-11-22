@@ -15,10 +15,10 @@ python -m pip install -U aider-chat
 export XAI_API_KEY=<key> # Mac/Linux
 setx   XAI_API_KEY <key> # Windows, restart shell after setx
 
-aider --model xai/groq-beta
+aider --model xai/grok-beta
 
 # List models available from xAI
-aider --list-models groq/
+aider --list-models xai/
 ```
 
 
