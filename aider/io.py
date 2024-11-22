@@ -198,6 +198,7 @@ class InputOutput:
         editingmode=EditingMode.EMACS,
         fancy_input=True,
     ):
+        self.placeholder = None
         self.never_prompts = set()
         self.editingmode = editingmode
         no_color = os.environ.get("NO_COLOR")
@@ -427,8 +428,13 @@ class InputOutput:
 
             try:
                 if self.prompt_session:
+                    # Use placeholder if set, then clear it
+                    default = self.placeholder
+                    self.placeholder = None
+                    
                     line = self.prompt_session.prompt(
                         show,
+                        default=default,
                         completer=completer_instance,
                         reserve_space_for_menu=4,
                         complete_style=CompleteStyle.MULTI_COLUMN,
@@ -738,6 +744,10 @@ class InputOutput:
             show_resp = Text(message or "<no response>")
 
         self.console.print(show_resp)
+
+    def set_placeholder(self, placeholder):
+        """Set a one-time placeholder text for the next input prompt."""
+        self.placeholder = placeholder
 
     def print(self, message=""):
         print(message)
