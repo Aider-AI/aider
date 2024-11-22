@@ -18,7 +18,7 @@ can strongly impact code editing skill.
 Heavily quantized models are often used by cloud API providers
 and local model servers like Ollama.
 
-<canvas id="quantChart" width="800" height="600" style="margin: 20px 0"></canvas>
+<canvas id="quantChart" width="800" height="500" style="margin: 20px 0"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 {% include quant-chart.js %}
@@ -36,7 +36,7 @@ The best version of the model rivals GPT-4o, while the worst performer
 is more like GPT-3.5 Turbo level.
 
 {: .note }
-This article is being updated as new benchmark runs complete.
+This article is being updated as additional benchmark runs complete.
 The original version included incorrect Ollama models.
 
 <input type="text" id="quantSearchInput" placeholder="Search..." style="width: 100%; max-width: 800px; margin: 10px auto; padding: 8px; display: block; border: 1px solid #ddd; border-radius: 4px;">
