@@ -11,7 +11,7 @@ nav_exclude: true
 
 # Quantization matters
 
-Open source models like Qwen 2.5 32B are performing very well on
+Open source models like Qwen 2.5 32B Instruct are performing very well on
 aider's code editing benchmark, rivaling closed source frontier models.
 But pay attention to how your model is being quantized, as it
 can strongly impact code editing skill.
@@ -24,16 +24,15 @@ and local model servers like Ollama.
 {% include quant-chart.js %}
 </script>
 
-The graph above compares 3 different versions of the Qwen 2.5 Coder 32B model,
+The graph above compares 3 different versions of the Qwen 2.5 Coder 32B Instruct model,
 served both locally and from cloud providers.
 
 - The [HuggingFace weights](https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct) served via [glhf.chat](https://glhf.chat).
 - The results from [OpenRouter's mix of providers](https://openrouter.ai/qwen/qwen-2.5-coder-32b-instruct/providers) which serve the model with different levels of quantization.
 - Ollama locally serving [qwen2.5-coder:32b-instruct-q4_K_M)](https://ollama.com/library/qwen2.5-coder:32b-instruct-q4_K_M), which has `Q4_K_M` quantization.
-- Ollama locally serving [krith/qwen2.5-coder-32b-instruct:IQ2_M](https://ollama.com/krith/qwen2.5-coder-32b-instruct), which has IQ2_M quantization.
 
-The best version of the model rivals GPT-4o, while the worst performers
-are more like GPT-3.5 Turbo level to completely useless.
+The best version of the model rivals GPT-4o, while the worst performer
+is more like GPT-3.5 Turbo level.
 
 ## Choosing providers with OpenRouter
 
@@ -44,4 +43,4 @@ undesirable providers.
 
 {: .note }
 The original version of this article included incorrect Ollama models
-that were not Qwen 2.5 Coder 32B.
+that were not Qwen 2.5 Coder 32B Instruct.

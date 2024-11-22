@@ -67,26 +67,3 @@
   versions: 0.64.2.dev
   seconds_per_case: 86.7
   total_cost: 0.0000
-
-- dirname: 2024-11-22-03-33-30--ollama-qwen25-coder-krith-instruct
-  test_cases: 133
-  model: ollama/krith/qwen2.5-coder-32b-instruct:IQ2_M
-  edit_format: diff
-  commit_hash: fbadfcf-dirty
-  pass_rate_1: 16.5
-  pass_rate_2: 21.1
-  percent_cases_well_formed: 60.9
-  error_outputs: 1169
-  num_malformed_responses: 148
-  num_with_malformed_responses: 52
-  user_asks: 58
-  lazy_comments: 0
-  syntax_errors: 3
-  indentation_errors: 1
-  exhausted_context_windows: 0
-  test_timeouts: 4
-  command: aider --model ollama/krith/qwen2.5-coder-32b-instruct:IQ2_M
-  date: 2024-11-22
-  versions: 0.64.2.dev
-  seconds_per_case: 169.7
-  total_cost: 0.00
