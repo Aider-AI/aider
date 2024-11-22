@@ -4,6 +4,7 @@ import re
 import subprocess
 import sys
 import tempfile
+import zipfile
 from collections import OrderedDict
 from os.path import expanduser
 from pathlib import Path
@@ -222,7 +223,7 @@ class Commands:
         try:
             return cmd_method(args)
         except ANY_GIT_ERROR as err:
-            self.io.tool_error(f"Unable to complete {cmd_name}: {err}")
+            self.io.tool_error(f"Unable to complete1 {cmd_name}: {err}")
 
     def matching_commands(self, inp):
         words = inp.strip().split()
@@ -714,8 +715,8 @@ class Commands:
                 self.io.tool_warning(f"Skipping {fname} due to aiderignore or --subtree-only.")
                 continue
 
-            if fname.exists():
-                if fname.is_file():
+            if os.path.exists(fname):
+                if os.path.isfile(fname):
                     all_matched_files.add(str(fname))
                     continue
                 # an existing dir, escape any special chars so they won't be globs
@@ -808,14 +809,6 @@ class Commands:
             # Expand tilde in the path
             expanded_word = os.path.expanduser(word)
 
-            # Handle read-only files separately, without glob_filtered_to_repo
-            read_only_matched = [f for f in self.coder.abs_read_only_fnames if expanded_word in f]
-
-            if read_only_matched:
-                for matched_file in read_only_matched:
-                    self.coder.abs_read_only_fnames.remove(matched_file)
-                    self.io.tool_output(f"Removed read-only file {matched_file} from the chat")
-
             matched_files = self.glob_filtered_to_repo(expanded_word)
 
             if not matched_files:
@@ -826,6 +819,12 @@ class Commands:
                 if abs_fname in self.coder.abs_fnames:
                     self.coder.abs_fnames.remove(abs_fname)
                     self.io.tool_output(f"Removed {matched_file} from the chat")
+                else:
+                    # input path to abs path, because read-only are stored as absolute paths
+                    abs_fname = os.path.normpath(os.path.join(self.coder.root, matched_file)) if not os.path.isabs(matched_file) else matched_file
+                    if abs_fname in self.coder.abs_read_only_fnames:
+                        self.coder.abs_read_only_fnames.remove(abs_fname)
+                        self.io.tool_output(f"Removed read-only file {matched_file} from the chat")
 
     def cmd_git(self, args):
         "Run a git command (output excluded from chat)"
@@ -1180,12 +1179,20 @@ class Commands:
         # First collect all expanded paths
         for pattern in filenames:
             expanded_pattern = expanduser(pattern)
+
+            # Handle regular files and directories
             if os.path.isabs(expanded_pattern):
-                # For absolute paths, glob it
-                matches = list(glob.glob(expanded_pattern))
+                if self.io.exists(expanded_pattern):
+                    matches = [expanded_pattern]
+                else:
+                    # For absolute paths, glob it
+                    matches = list(glob.glob(expanded_pattern))
             else:
+                if self.io.exists(expanded_pattern):
+                    matches = [self.coder.abs_root_path(expanded_pattern)]
+                else:
                 # For relative paths and globs, use glob from the root directory
-                matches = list(Path(self.coder.root).glob(expanded_pattern))
+                    matches = list(Path(self.coder.root).glob(expanded_pattern))
 
             if not matches:
                 self.io.tool_error(f"No matches found for: {pattern}")
@@ -1194,13 +1201,18 @@ class Commands:
 
         # Then process them in sorted order
         for path in sorted(all_paths):
-            abs_path = self.coder.abs_root_path(path)
-            if os.path.isfile(abs_path):
+            if isinstance(path, str) and '!' in path and self.io.exists(path):
+                # This is a JAR path
+                abs_path = path  # Keep the full JAR!internal_path
                 self._add_read_only_file(abs_path, path)
-            elif os.path.isdir(abs_path):
-                self._add_read_only_directory(abs_path, path)
             else:
-                self.io.tool_error(f"Not a file or directory: {abs_path}")
+                abs_path = self.coder.abs_root_path(path)
+                if os.path.isfile(abs_path):
+                    self._add_read_only_file(abs_path, path)
+                elif os.path.isdir(abs_path):
+                    self._add_read_only_directory(abs_path, path)
+                else:
+                    self.io.tool_error(f"Not a file or directory: {abs_path}")
 
     def _add_read_only_file(self, abs_path, original_name):
         if is_image_file(original_name) and not self.coder.main_model.info.get("supports_vision"):

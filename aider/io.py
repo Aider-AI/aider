@@ -2,6 +2,7 @@ import base64
 import os
 import time
 import webbrowser
+import zipfile
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
@@ -314,25 +315,140 @@ class InputOutput:
             self.tool_error(f"{filename}: {e}")
             return
 
+    def _parse_jar_path(self, path):
+        """
+        Parse a JAR/ZIP file path with an internal file path.
+
+        Args:
+            path (str): Path to the file, can include JAR!internal_path
+
+        Returns:
+            tuple: (jar_path, internal_path) or (None, None) if invalid
+        """
+        if type(path) is not str or '!' not in path:
+            return None, None
+
+        jar_path, internal_path = path.split('!', 1)
+        if internal_path.startswith('/'):
+            internal_path = internal_path[1:]  # Remove leading slash
+
+        return jar_path, internal_path
+
+    def _validate_jar_file(self, jar_path):
+        """
+        Validate a JAR/ZIP file.
+
+        Args:
+            jar_path (str): Path to the JAR/ZIP file
+
+        Returns:
+            bool: True if the file is a valid JAR/ZIP, False otherwise
+        """
+        if not os.path.isfile(jar_path):
+            return False
+
+        try:
+            with zipfile.ZipFile(jar_path, 'r'):
+                return True
+        except (zipfile.BadZipFile, OSError):
+            return False
+
+    def exists(self, path):
+        """
+        Check if a file exists, including files inside JAR/ZIP archives.
+
+        Args:
+            path (str): Path to the file, can include JAR!internal_path
+
+        Returns:
+            bool: True if the file exists, False otherwise
+        """
+        jar_path, internal_path = self._parse_jar_path(path)
+        if jar_path is None:
+            return os.path.exists(path)
+
+        if not self._validate_jar_file(jar_path):
+            return False
+
+        try:
+            with zipfile.ZipFile(jar_path, 'r') as jar:
+                try:
+                    jar.getinfo(internal_path)
+                    return True
+                except KeyError:
+                    return False
+        except (zipfile.BadZipFile, OSError):
+            return False
+
+
+    def is_file(self, path):
+        """
+        Check if a path is a file, including files inside JAR/ZIP archives.
+
+        Args:
+            path (str): Path to the file, can include JAR!internal_path
+
+        Returns:
+            bool: True if the path is a file, False otherwise
+        """
+        jar_path, internal_path = self._parse_jar_path(path)
+        if jar_path is None:
+            return os.path.isfile(path)
+
+        if not self._validate_jar_file(jar_path):
+            return False
+
+        try:
+            with zipfile.ZipFile(jar_path, 'r') as jar:
+                try:
+                    info = jar.getinfo(internal_path)
+                    return not info.is_dir()
+                except KeyError:
+                    return False
+        except (zipfile.BadZipFile, OSError):
+            return False
+
     def read_text(self, filename):
         if is_image_file(filename):
             return self.read_image(filename)
 
+        jar_path, internal_path = self._parse_jar_path(filename)
+        if jar_path is None:
+            try:
+                with open(str(filename), "r", encoding=self.encoding) as f:
+                    return f.read()
+            except OSError as err:
+                self.tool_error(f"{filename}: unable to read: {err}")
+                return
+            except FileNotFoundError:
+                self.tool_error(f"{filename}: file not found error")
+                return
+            except IsADirectoryError:
+                self.tool_error(f"{filename}: is a directory")
+                return
+            except UnicodeError as e:
+                self.tool_error(f"{filename}: {e}")
+                self.tool_error("Use --encoding to set the unicode encoding.")
+                return
+
+        if not self._validate_jar_file(jar_path):
+            self.tool_error(f"{jar_path}: not a valid JAR/ZIP file")
+            return
+
         try:
-            with open(str(filename), "r", encoding=self.encoding) as f:
-                return f.read()
+            with zipfile.ZipFile(jar_path, 'r') as jar:
+                try:
+                    with jar.open(internal_path) as f:
+                        return f.read().decode(self.encoding)
+                except KeyError:
+                    self.tool_error(f"{internal_path}: not found in JAR {jar_path}")
+                    return
+                except UnicodeError as e:
+                    self.tool_error(f"{filename}: {e}")
+                    self.tool_error("Use --encoding to set the unicode encoding.")
+                    return
         except OSError as err:
-            self.tool_error(f"{filename}: unable to read: {err}")
-            return
-        except FileNotFoundError:
-            self.tool_error(f"{filename}: file not found error")
-            return
-        except IsADirectoryError:
-            self.tool_error(f"{filename}: is a directory")
-            return
-        except UnicodeError as e:
-            self.tool_error(f"{filename}: {e}")
-            self.tool_error("Use --encoding to set the unicode encoding.")
+            self.tool_error(f"{jar_path}: unable to read: {err}")
             return
 
     def write_text(self, filename, content, max_retries=5, initial_delay=0.1):

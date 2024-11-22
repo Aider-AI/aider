@@ -4,6 +4,7 @@ import re
 import shutil
 import sys
 import tempfile
+import zipfile
 from io import StringIO
 from pathlib import Path
 from unittest import TestCase, mock
@@ -902,6 +903,33 @@ class TestCommands(TestCase):
                     for fname in vision_coder.abs_read_only_fnames
                 )
             )
+
+    def test_cmd_read_only_with_jar_file(self):
+        with GitTemporaryDirectory() as repo_dir:
+            io = InputOutput(pretty=False, fancy_input=False, yes=False)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Create a JAR file with a Markdown file inside
+            jar_path = Path(repo_dir) / "test_docs.jar"
+            with zipfile.ZipFile(jar_path, 'w') as jar:
+                jar.writestr('README.md', '# Test Documentation\n\nThis is a test markdown file.')
+
+            # Add the JAR file to read-only files
+            commands.cmd_read_only(str(jar_path) + '!README.md')
+
+            # Check if the internal file was added to read-only files
+            self.assertEqual(len(coder.abs_read_only_fnames), 1)
+            self.assertTrue(
+                any(
+                    str(jar_path) + '!README.md' in fname
+                    for fname in coder.abs_read_only_fnames
+                )
+            )
+
+            # Verify the content can be read
+            content = io.read_text(str(jar_path) + '!README.md')
+            self.assertEqual(content, '# Test Documentation\n\nThis is a test markdown file.')
 
     def test_cmd_read_only_with_glob_pattern(self):
         with GitTemporaryDirectory() as repo_dir:
