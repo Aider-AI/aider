@@ -156,11 +156,11 @@ class BenchmarkPlotter:
 def main():
     plotter = BenchmarkPlotter()
     models = plotter.load_data("aider/website/_data/edit_leaderboard.yml")
-    
+
     # Print release dates and model names
     for model in sorted(models, key=lambda x: x.release_date):
         print(f"{model.release_date}: {model.name}")
-        
+
     plotter.plot("aider/website/_data/edit_leaderboard.yml")
 
 
