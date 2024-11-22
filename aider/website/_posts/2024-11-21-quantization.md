@@ -18,7 +18,7 @@ can strongly impact code editing skill.
 Heavily quantized models are often used by cloud API providers
 and local model servers like Ollama.
 
-<canvas id="quantChart" width="800" height="450" style="margin: 20px 0"></canvas>
+<canvas id="quantChart" width="800" height="600" style="margin: 20px 0"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 {% include quant-chart.js %}
