@@ -429,7 +429,7 @@ class InputOutput:
             try:
                 if self.prompt_session:
                     # Use placeholder if set, then clear it
-                    default = self.placeholder
+                    default = self.placeholder or ""
                     self.placeholder = None
 
                     line = self.prompt_session.prompt(
