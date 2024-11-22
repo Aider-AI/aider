@@ -166,12 +166,18 @@ class GitRepo:
                 else:
                     del os.environ["GIT_AUTHOR_NAME"]
 
+    def get_current_branch(self):
+        """Get the name of the current git branch."""
+        try:
+            return self.repo.active_branch.name
+        except ANY_GIT_ERROR:
+            return None
+
     def get_rel_repo_dir(self):
         try:
             return os.path.relpath(self.repo.git_dir, os.getcwd())
         except (ValueError, OSError):
             return self.repo.git_dir
-
     def get_commit_message(self, diffs, context):
         diffs = "# Diffs:\n" + diffs
 
@@ -181,6 +187,16 @@ class GitRepo:
         content += diffs
 
         system_content = self.commit_prompt or prompts.commit_system
+        if system_content and '{{' in system_content:
+            try:
+                variables = {
+                    'branch_name': self.get_current_branch() or '',
+                }
+                for var_name, value in variables.items():
+                    template_var = '{{' + var_name + '}}'
+                    system_content = system_content.replace(template_var, value)
+            except:
+                pass  # If template substitution fails, use original content
         messages = [
             dict(role="system", content=system_content),
             dict(role="user", content=content),
