@@ -1903,6 +1903,7 @@
 - dirname: 2024-11-21-17-46-36--gemini-exp-1121-diff
   test_cases: 133
   model: gemini-exp-1121
+  released: 2024-11-21
   edit_format: diff
   commit_hash: e94961a
   pass_rate_1: 46.6
@@ -1926,6 +1927,7 @@
 - dirname: 2024-11-15-20-33-31--gemini-exp-1114-diff
   test_cases: 133
   model: gemini-exp-1114
+  released: 2024-11-14
   edit_format: diff
   commit_hash: 0bf17a4
   pass_rate_1: 50.4
