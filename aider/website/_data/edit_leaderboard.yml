@@ -1899,3 +1899,26 @@
   versions: 0.63.3.dev
   seconds_per_case: 40.7
   total_cost: 0.1497
+
+- dirname: 2024-11-21-17-46-36--gemini-exp-1121-diff
+  test_cases: 133
+  model: gemini-exp-1121
+  edit_format: diff
+  commit_hash: e94961a
+  pass_rate_1: 46.6
+  pass_rate_2: 57.9
+  percent_cases_well_formed: 83.5
+  error_outputs: 101
+  num_malformed_responses: 101
+  num_with_malformed_responses: 22
+  user_asks: 5
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 2
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: aider --model gemini/gemini-exp-1121
+  date: 2024-11-21
+  versions: 0.63.3.dev
+  seconds_per_case: 60.3
+  total_cost: 0.0000
