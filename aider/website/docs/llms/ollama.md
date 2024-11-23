@@ -20,13 +20,25 @@ python -m pip install -U aider-chat
 export OLLAMA_API_BASE=http://127.0.0.1:11434 # Mac/Linux
 setx   OLLAMA_API_BASE http://127.0.0.1:11434 # Windows, restart shell after setx
 
-aider --model ollama/<model>
+aider --model ollama_chat/<model>
 ```
+
+{: .note }
+Using `ollama_chat/` is recommended over `ollama/`.
 
 
 See the [model warnings](warnings.html)
 section for information on warnings which will occur
 when working with models that aider is not familiar with.
+
+## API Key
+
+If you are using an ollama that requires an API key you can set `OLLAMA_API_KEY`:
+
+```
+export OLLAMA_API_KEY=<api-key> # Mac/Linux
+setx   OLLAMA_API_KEY <api-key> # Windows, restart shell after setx
+```
 
 ## Setting the context window size
 
