@@ -210,7 +210,7 @@ You can also refer to the
 ## How are the "aider wrote xx% of code" stats computed?
 
 [Aider is tightly integrated with git](/docs/git.html) so all
-one of aider's code changes are committed to the repo with proper attribution.
+of aider's code changes are committed to the repo with proper attribution.
 The 
 [stats are computed](https://github.com/Aider-AI/aider/blob/main/scripts/blame.py)
 by doing something like `git blame` on the repo,
