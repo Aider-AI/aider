@@ -18,17 +18,20 @@ can strongly impact code editing skill.
 Heavily quantized models are often used by cloud API providers
 and local model servers like Ollama.
 
-<canvas id="quantChart" width="800" height="500" style="margin: 20px 0"></canvas>
+<canvas id="quantChart" width="800" height="600" style="margin: 20px 0"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 {% include quant-chart.js %}
 </script>
 
-The graph above compares 4 different versions of the Qwen 2.5 Coder 32B Instruct model,
+The graph above compares different versions of the Qwen 2.5 Coder 32B Instruct model,
 served both locally and from cloud providers.
 
 - The [HuggingFace BF16 weights](https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct) served via [glhf.chat](https://glhf.chat).
 - Hyperbolic labs API for [qwen2-5-coder-32b-instruct](https://app.hyperbolic.xyz/models/qwen2-5-coder-32b-instruct), which is using BF16. This result is probably within the expected variance of the HF result.
+- A [4bit quant for mlx](https://t.co/cwX3DYX35D). 
+This is the only model which was benchmarked using the "whole" [edit format](https://aider.chat/docs/more/edit-formats.html).
+The rest were benchmarked with the much more practical and challenging "diff"edit format.
 - The results from [OpenRouter's mix of providers](https://openrouter.ai/qwen/qwen-2.5-coder-32b-instruct/providers) which serve the model with different levels of quantization.
 - Ollama locally serving [qwen2.5-coder:32b-instruct-q4_K_M)](https://ollama.com/library/qwen2.5-coder:32b-instruct-q4_K_M), which has `Q4_K_M` quantization, with Ollama's default 2k context window.
 

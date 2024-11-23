@@ -22,6 +22,29 @@
   seconds_per_case: 22.5
   total_cost: 0.0000
 
+- dirname: 2024-11-22-18-56-13--ollama-qwen2.5-coder:32b-instruct-fp16
+  test_cases: 132
+  model: ollama/qwen2.5-coder:32b-instruct-fp16 (64k context)
+  edit_format: diff
+  commit_hash: f06452c-dirty, 6a0a97c-dirty, 4e9ae16-dirty, 5506d0f-dirty
+  pass_rate_1: 58.3
+  pass_rate_2: 71.4
+  percent_cases_well_formed: 90.2
+  error_outputs: 27
+  num_malformed_responses: 26
+  num_with_malformed_responses: 13
+  user_asks: 2
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model ollama/qwen2.5-coder:32b-instruct-fp16
+  date: 2024-11-22
+  versions: 0.64.2.dev
+  seconds_per_case: 119.6
+  total_cost: 0.0000
+  
 - dirname: 2024-11-22-14-53-26--hyperbolic-qwen25coder32binstruct
   test_cases: 133
   model: Hyperbolic BF16
