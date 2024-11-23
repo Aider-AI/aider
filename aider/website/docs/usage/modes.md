@@ -1,7 +1,7 @@
 ---
 parent: Usage
 nav_order: 60
-description: Using the chat, ask and help chat modes.
+description: Using the code, architect, ask and help chat modes.
 ---
 
 # Chat modes
