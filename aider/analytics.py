@@ -5,7 +5,7 @@ import time
 import uuid
 from pathlib import Path
 
-from mixpanel import Mixpanel
+from mixpanel import Mixpanel, MixpanelException
 from posthog import Posthog
 
 from aider import __version__
@@ -182,7 +182,10 @@ class Analytics:
         properties["aider_version"] = __version__
 
         if self.mp:
-            self.mp.track(self.user_id, event_name, dict(properties))
+            try:
+                self.mp.track(self.user_id, event_name, dict(properties))
+            except MixpanelException:
+                self.mp = None  # Disable mixpanel on connection errors
 
         if self.ph:
             self.ph.capture(self.user_id, event_name, dict(properties))
