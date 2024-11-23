@@ -30,7 +30,7 @@ served both locally and from cloud providers.
 - The [HuggingFace BF16 weights](https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct) served via [glhf.chat](https://glhf.chat).
 - Hyperbolic labs API for [qwen2-5-coder-32b-instruct](https://app.hyperbolic.xyz/models/qwen2-5-coder-32b-instruct), which is using BF16. This result is probably within the expected variance of the HF result.
 - The results from [OpenRouter's mix of providers](https://openrouter.ai/qwen/qwen-2.5-coder-32b-instruct/providers) which serve the model with different levels of quantization.
-- Ollama locally serving [qwen2.5-coder:32b-instruct-q4_K_M)](https://ollama.com/library/qwen2.5-coder:32b-instruct-q4_K_M), which has `Q4_K_M` quantization.
+- Ollama locally serving [qwen2.5-coder:32b-instruct-q4_K_M)](https://ollama.com/library/qwen2.5-coder:32b-instruct-q4_K_M), which has `Q4_K_M` quantization, with Ollama's default 2k context window.
 
 The best version of the model rivals GPT-4o, while the worst performer
 is more like GPT-3.5 Turbo level.
@@ -99,6 +99,28 @@ document.getElementById('quantSearchInput').addEventListener('keyup', function()
 });
 </script>
 
+## Setting the context window size
+
+[Ollama uses a 2k context window by default](https://github.com/ollama/ollama/blob/main/docs/faq.md#how-can-i-specify-the-context-window-size),
+which is very small for working with aider.
+
+You can set the Ollama server's context window with a 
+[`.aider.model.settings.yml` file](https://aider.chat/docs/config/adv-model-settings.html#model-settings)
+like this:
+
+```
+- name: aider/extra_params
+  extra_params:
+    num_ctx: 65536
+```
+
+That uses the special model name `aider/extra_params` to set it for *all* models. You should probably use a specific model name like:
+
+```
+- name: ollama/qwen2.5-coder:32b-instruct-fp16
+  extra_params:
+    num_ctx: 65536
+```
 
 ## Choosing providers with OpenRouter
 
