@@ -58,7 +58,7 @@ like this:
 That uses the special model name `aider/extra_params` to set it for *all* models. You should probably use a specific model name like:
 
 ```
-- name: ollama/qwen2.5-coder:32b-instruct-fp16
+- name: ollama_chat/qwen2.5-coder:32b-instruct-fp16
   extra_params:
     num_ctx: 65536
 ```
