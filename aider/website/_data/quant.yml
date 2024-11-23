@@ -47,7 +47,7 @@
   
 - dirname: 2024-11-22-17-53-35--qwen25-coder-32b-Instruct-4bit
   test_cases: 133
-  model: mlx-community/Qwen2.5-Coder-32B-Instruct-4bit
+  model: mlx-community/Qwen2.5-Coder-32B-Instruct-4bit (whole)
   edit_format: whole
   commit_hash: 0ccf04a-dirty
   pass_rate_1: 57.1
