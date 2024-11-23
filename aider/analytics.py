@@ -159,7 +159,7 @@ class Analytics:
         return None
 
     def event(self, event_name, main_model=None, **kwargs):
-        if not (self.mp or self.ph) and not self.logfile:
+        if not self.mp and not self.ph and not self.logfile:
             return
 
         properties = {}
