@@ -11,6 +11,13 @@ description: Configuring advanced settings for LLMs.
 In most cases, you can safely ignore aider's warning about unknown context
 window size and model costs.
 
+{: .note }
+Aider never *enforces* token limits, it only *reports* token limit errors
+from the API provider.
+You probably don't need to
+configure aider with the proper token limits
+for unusual models.
+
 But, you can register context window limits and costs for models that aren't known
 to aider. Create a `.aider.model.metadata.json` file in one of these locations:
 
