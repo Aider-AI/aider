@@ -99,6 +99,7 @@ def test_pipe_editor():
         patch("aider.editor.write_temp_file") as mock_write,
         patch("builtins.open") as mock_open,
         patch("os.remove") as mock_remove,
+        patch("subprocess.call") as mock_subprocess,
     ):
         # Setup mocks
         mock_write.return_value = "temp.txt"
@@ -106,22 +107,21 @@ def test_pipe_editor():
         mock_file.__enter__.return_value.read.return_value = modified_content
         mock_open.return_value = mock_file
 
-        with patch("subprocess.call") as mock_subprocess:
-            # Test with default editor
-            result = pipe_editor(test_content)
-            assert result == modified_content
-            mock_write.assert_called_with(test_content, None)
-            mock_subprocess.assert_called()
+        # Test with default editor
+        result = pipe_editor(test_content)
+        assert result == modified_content
+        mock_write.assert_called_with(test_content, None)
+        mock_subprocess.assert_called()
 
-            # Test with custom editor
-            result = pipe_editor(test_content, editor="code")
-            assert result == modified_content
-            mock_subprocess.assert_called()
+        # Test with custom editor
+        result = pipe_editor(test_content, editor="code")
+        assert result == modified_content
+        mock_subprocess.assert_called()
 
-            # Test with suffix
-            result = pipe_editor(test_content, suffix="md")
-            assert result == modified_content
-            mock_write.assert_called_with(test_content, "md")
+        # Test with suffix
+        result = pipe_editor(test_content, suffix="md")
+        assert result == modified_content
+        mock_write.assert_called_with(test_content, "md")
 
         # Test cleanup on permission error
         mock_remove.side_effect = PermissionError
