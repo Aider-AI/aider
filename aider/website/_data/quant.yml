@@ -91,6 +91,29 @@
   seconds_per_case: 53.4
   total_cost: 0.0000
 
+- dirname: 2024-11-23-15-07-20--qwen25-coder-32b-Instruct-8bit
+  test_cases: 133
+  model: mlx-community/Qwen2.5-Coder-32B-Instruct-8bit
+  edit_format: diff
+  commit_hash: a16dcab-dirty
+  pass_rate_1: 59.4
+  pass_rate_2: 72.2
+  percent_cases_well_formed: 92.5
+  error_outputs: 20
+  num_malformed_responses: 15
+  num_with_malformed_responses: 10
+  user_asks: 7
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 5
+  test_timeouts: 2
+  command: aider --model openai/mlx-community/Qwen2.5-Coder-32B-Instruct-8bit
+  date: 2024-11-23
+  versions: 0.64.2.dev
+  seconds_per_case: 98.4
+  total_cost: 0.0000
+
 - dirname: 2024-11-20-15-17-37--qwen25-32b-or-diff
   test_cases: 133
   model: OpenRouter (mixed)
