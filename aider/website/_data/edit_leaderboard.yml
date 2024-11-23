@@ -1899,3 +1899,50 @@
   versions: 0.63.3.dev
   seconds_per_case: 40.7
   total_cost: 0.1497
+
+- dirname: 2024-11-21-17-46-36--gemini-exp-1121-diff
+  test_cases: 133
+  model: gemini-exp-1121
+  released: 2024-11-21
+  edit_format: diff
+  commit_hash: e94961a
+  pass_rate_1: 46.6
+  pass_rate_2: 57.9
+  percent_cases_well_formed: 83.5
+  error_outputs: 101
+  num_malformed_responses: 101
+  num_with_malformed_responses: 22
+  user_asks: 5
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 2
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: aider --model gemini/gemini-exp-1121
+  date: 2024-11-21
+  versions: 0.63.3.dev
+  seconds_per_case: 60.3
+  total_cost: 0.0000
+
+- dirname: 2024-11-15-20-33-31--gemini-exp-1114-diff
+  test_cases: 133
+  model: gemini-exp-1114
+  released: 2024-11-14
+  edit_format: diff
+  commit_hash: 0bf17a4
+  pass_rate_1: 50.4
+  pass_rate_2: 60.9
+  percent_cases_well_formed: 85.7
+  error_outputs: 70
+  num_malformed_responses: 70
+  num_with_malformed_responses: 19
+  user_asks: 2
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 4
+  command: aider --model gemini/gemini-exp-1114
+  date: 2024-11-15
+  versions: 0.63.2.dev
+  seconds_per_case: 38.6
