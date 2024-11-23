@@ -28,3 +28,26 @@ See the [model warnings](warnings.html)
 section for information on warnings which will occur
 when working with models that aider is not familiar with.
 
+## Setting the context window size
+
+[Ollama uses a 2k context window by default](https://github.com/ollama/ollama/blob/main/docs/faq.md#how-can-i-specify-the-context-window-size),
+which is very small for working with aider.
+
+You can set the Ollama server's context window with a 
+[`.aider.model.settings.yml` file](https://aider.chat/docs/config/adv-model-settings.html#model-settings)
+like this:
+
+```
+- name: aider/extra_params
+  extra_params:
+    num_ctx: 65536
+```
+
+That uses the special model name `aider/extra_params` to set it for *all* models. You should probably use a specific model name like:
+
+```
+- name: ollama/qwen2.5-coder:32b-instruct-fp16
+  extra_params:
+    num_ctx: 65536
+```
+
