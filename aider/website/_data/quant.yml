@@ -70,25 +70,25 @@
   
 - dirname: 2024-11-22-17-53-35--qwen25-coder-32b-Instruct-4bit
   test_cases: 133
-  model: mlx-community/Qwen2.5-Coder-32B-Instruct-4bit (whole)
-  edit_format: whole
-  commit_hash: 0ccf04a-dirty
-  pass_rate_1: 57.1
-  pass_rate_2: 69.2
-  percent_cases_well_formed: 100.0
-  error_outputs: 70
-  num_malformed_responses: 0
-  num_with_malformed_responses: 0
-  user_asks: 0
+  model: mlx-community/Qwen2.5-Coder-32B-Instruct-4bit
+  edit_format: diff
+  commit_hash: a16dcab-dirty
+  pass_rate_1: 60.2
+  pass_rate_2: 72.2
+  percent_cases_well_formed: 88.7
+  error_outputs: 31
+  num_malformed_responses: 30
+  num_with_malformed_responses: 15
+  user_asks: 6
   lazy_comments: 0
   syntax_errors: 0
   indentation_errors: 0
-  exhausted_context_windows: 0
+  exhausted_context_windows: 1
   test_timeouts: 0
   command: aider --model openai/mlx-community/Qwen2.5-Coder-32B-Instruct-4bit
-  date: 2024-11-22
+  date: 2024-11-23
   versions: 0.64.2.dev
-  seconds_per_case: 173.7
+  seconds_per_case: 53.4
   total_cost: 0.0000
 
 - dirname: 2024-11-20-15-17-37--qwen25-32b-or-diff
