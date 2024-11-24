@@ -205,3 +205,26 @@
   versions: 0.64.2.dev
   seconds_per_case: 10.4
   total_cost: 0.5759
+
+- dirname: 2024-11-24-02-04-59--ollama-qwen2.5-coder:32b-instruct-q2_K-8kctx
+  test_cases: 133
+  model: Ollama q2_K
+  edit_format: diff
+  commit_hash: 757eac0, bb78e2f, 8d0ba40-dirty, 1d09e96
+  pass_rate_1: 48.9
+  pass_rate_2: 61.7
+  percent_cases_well_formed: 91.7
+  error_outputs: 32
+  num_malformed_responses: 32
+  num_with_malformed_responses: 11
+  user_asks: 8
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model ollama/qwen2.5-coder:32b-instruct-q2_K
+  date: 2024-11-24
+  versions: 0.64.2.dev
+  seconds_per_case: 97.8
+  total_cost: 0.0000

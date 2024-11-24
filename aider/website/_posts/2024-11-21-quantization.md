@@ -34,7 +34,7 @@ served both locally and from cloud providers.
 - Other API providers.
 
 The best version of the model rivals GPT-4o, while the worst performer
-is more like GPT-4 level.
+is more like GPT-4 Turbo level.
 
 {: .note }
 This article is being updated as additional benchmark runs complete.
