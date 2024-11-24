@@ -6,6 +6,7 @@ import sys
 import threading
 import traceback
 import webbrowser
+from dataclasses import fields
 from pathlib import Path
 
 import git
