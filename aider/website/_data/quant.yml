@@ -1,6 +1,6 @@
 - dirname: 2024-11-09-11-09-15--Qwen2.5-Coder-32B-Instruct
   test_cases: 133
-  model: HuggingFace BF16 via GLHF
+  model: HuggingFace via GLHF: BF16
   released: 2024-11-12
   edit_format: diff
   commit_hash: ec9982a
@@ -24,7 +24,7 @@
 
 - dirname: 2024-11-22-18-56-13--ollama-qwen2.5-coder:32b-instruct-fp16
   test_cases: 132
-  model: Ollama fp16
+  model: Ollama: fp16
   edit_format: diff
   commit_hash: f06452c-dirty, 6a0a97c-dirty, 4e9ae16-dirty, 5506d0f-dirty
   pass_rate_1: 58.3
@@ -47,7 +47,7 @@
   
 - dirname: 2024-11-22-14-53-26--hyperbolic-qwen25coder32binstruct
   test_cases: 133
-  model: Hyperbolic BF16
+  model: Hyperbolic: BF16
   edit_format: diff
   commit_hash: f9ef161, 17aef7b-dirty
   pass_rate_1: 57.9
@@ -70,7 +70,7 @@
   
 - dirname: 2024-11-22-17-53-35--qwen25-coder-32b-Instruct-4bit
   test_cases: 133
-  model: mlx-community 4bit
+  model: mlx-community: 4bit
   edit_format: diff
   commit_hash: a16dcab-dirty
   pass_rate_1: 60.2
@@ -93,7 +93,7 @@
 
 - dirname: 2024-11-23-15-07-20--qwen25-coder-32b-Instruct-8bit
   test_cases: 133
-  model: mlx-community 8bit
+  model: mlx-community: 8bit
   edit_format: diff
   commit_hash: a16dcab-dirty
   pass_rate_1: 59.4
@@ -116,7 +116,7 @@
 
 - dirname: 2024-11-20-15-17-37--qwen25-32b-or-diff
   test_cases: 133
-  model: OpenRouter (multiple quants)
+  model: OpenRouter: multiple
   edit_format: diff
   commit_hash: e917424
   pass_rate_1: 49.6
@@ -139,7 +139,7 @@
 
 - dirname: 2024-11-23-21-08-53--ollama-qwen2.5-coder:32b-instruct-q4_K_M-8kctx
   test_cases: 133
-  model: Ollama q4_K_M
+  model: Ollama: q4_K_M
   edit_format: diff
   commit_hash: baa1335-dirty, e63df83-dirty, ff8c1aa-dirty
   pass_rate_1: 54.9
@@ -162,7 +162,7 @@
 
 - dirname: 2024-11-24-02-23-32--deepinfra-qwen-diff
   test_cases: 133
-  model: Deepinfra BF16
+  model: Deepinfra: BF16
   edit_format: diff
   commit_hash: bb78e2f
   pass_rate_1: 58.6
@@ -185,7 +185,7 @@
 
 - dirname: 2024-11-24-04-12-58--fireworks-qwen-diff
   test_cases: 133
-  model: Fireworks (unknown quant)
+  model: Fireworks: unknown
   edit_format: diff
   commit_hash: 757eac0
   pass_rate_1: 57.9
@@ -208,7 +208,7 @@
 
 - dirname: 2024-11-24-02-04-59--ollama-qwen2.5-coder:32b-instruct-q2_K-8kctx
   test_cases: 133
-  model: Ollama q2_K
+  model: Ollama: q2_K
   edit_format: diff
   commit_hash: 757eac0, bb78e2f, 8d0ba40-dirty, 1d09e96
   pass_rate_1: 48.9
@@ -228,3 +228,49 @@
   versions: 0.64.2.dev
   seconds_per_case: 97.8
   total_cost: 0.0000
+
+- dirname: 2024-11-24-14-56-49--qwen25-32b-or-fireworks
+  test_cases: 133
+  model: Fireworks via OpenRouter: unknown
+  edit_format: diff
+  commit_hash: c2f184f
+  pass_rate_1: 55.6
+  pass_rate_2: 67.7
+  percent_cases_well_formed: 94.0
+  error_outputs: 39
+  num_malformed_responses: 24
+  num_with_malformed_responses: 8
+  user_asks: 13
+  lazy_comments: 0
+  syntax_errors: 1
+  indentation_errors: 1
+  exhausted_context_windows: 7
+  test_timeouts: 4
+  command: aider --model openrouter/qwen/qwen-2.5-coder-32b-instruct
+  date: 2024-11-24
+  versions: 0.64.2.dev
+  seconds_per_case: 16.1
+  total_cost: 0.1391
+
+- dirname: 2024-11-24-14-36-59--qwen25-32b-or-hyperbolic
+  test_cases: 133
+  model: Hyperbolic via OpenRouter: BF16
+  edit_format: diff
+  commit_hash: c2f184f
+  pass_rate_1: 40.6
+  pass_rate_2: 46.6
+  percent_cases_well_formed: 83.5
+  error_outputs: 80
+  num_malformed_responses: 73
+  num_with_malformed_responses: 22
+  user_asks: 56
+  lazy_comments: 0
+  syntax_errors: 15
+  indentation_errors: 0
+  exhausted_context_windows: 5
+  test_timeouts: 0
+  command: aider --model openrouter/qwen/qwen-2.5-coder-32b-instruct
+  date: 2024-11-24
+  versions: 0.64.2.dev
+  seconds_per_case: 110.0
+  total_cost: 0.1763
