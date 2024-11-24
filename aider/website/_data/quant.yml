@@ -116,7 +116,7 @@
 
 - dirname: 2024-11-20-15-17-37--qwen25-32b-or-diff
   test_cases: 133
-  model: OpenRouter (mixed)
+  model: OpenRouter (multiple quants)
   edit_format: diff
   commit_hash: e917424
   pass_rate_1: 49.6
@@ -162,7 +162,7 @@
 
 - dirname: 2024-11-24-02-23-32--deepinfra-qwen-diff
   test_cases: 133
-  model: Deepinfra (BF16)
+  model: Deepinfra BF16
   edit_format: diff
   commit_hash: bb78e2f
   pass_rate_1: 58.6
