@@ -646,8 +646,14 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     )
 
     if args.verbose:
-        io.tool_output("Model info:")
+        io.tool_output("Model metadata:")
         io.tool_output(json.dumps(main_model.info, indent=4))
+
+        io.tool_output("Model settings:")
+        for attr in sorted(fields(ModelSettings), key=lambda x: x.name):
+            val = getattr(main_model, attr.name)
+            val = json.dumps(val, indent=4)
+            io.tool_output(f"{attr.name}: {val}")
 
     lint_cmds = parse_lint_cmds(args.lint_cmd, io)
     if lint_cmds is None:

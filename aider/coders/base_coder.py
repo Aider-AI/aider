@@ -1059,7 +1059,7 @@ class Coder:
         max_input_tokens = self.main_model.info.get("max_input_tokens") or 0
         # Add the reminder prompt if we still have room to include it.
         if (
-            max_input_tokens is None
+            not max_input_tokens
             or total_tokens < max_input_tokens
             and self.gpt_prompts.system_reminder
         ):
