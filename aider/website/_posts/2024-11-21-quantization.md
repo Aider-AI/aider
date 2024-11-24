@@ -44,9 +44,6 @@ when their API is accessed directly.
 - TOC
 {:toc}
 
-{: .note }
-This article is being updated as additional benchmark runs complete.
-
 ## Benchmark results
 
 <canvas id="quantChart" width="800" height="600" style="margin: 20px 0"></canvas>
@@ -152,7 +149,15 @@ OpenRouter allows you to ignore specific providers in your
 This can be used to limit your OpenRouter requests to be
 served by only your preferred providers.
 
-{: .note }
-Earlier versions of this article included incorrect Ollama models,
-and also included some Ollama results with the too small default 2k
-context window.
+## Notes
+
+This article went through many revisions as I received feedback from
+numerous members of the community.
+Here are some of the noteworthy learnings and changes:
+
+- The first version of this article included incorrect Ollama models.
+- Earlier Ollama results used the too small default 2k context window,
+artificially harming the benchmark results.
+- The benchmark results appear to have uncovered a problem in the way
+OpenRouter was communicating with Hyperbolic.
+They fixed the issue 11/24/24, shortly after it was pointed out.
