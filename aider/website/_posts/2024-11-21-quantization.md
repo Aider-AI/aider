@@ -1,6 +1,6 @@
 ---
 title: Quantization matters
-excerpt: Open source LLMs are becoming very powerful, but pay attention to how you (or your provider) is quantizing the model. It can strongly affect code editing skill.
+excerpt: Open source LLMs are becoming very powerful, but pay attention to how you (or your provider) is quantizing the model. It can affect code editing skill.
 highlight_image: /assets/quantization.jpg
 draft: false
 nav_exclude: true
@@ -14,7 +14,7 @@ nav_exclude: true
 Open source models like Qwen 2.5 32B Instruct are performing very well on
 aider's code editing benchmark, rivaling closed source frontier models.
 But pay attention to how your model is being quantized, as it
-can strongly impact code editing skill.
+can impact code editing skill.
 Heavily quantized models are often used by cloud API providers
 and local model servers like Ollama or MLX.
 
