@@ -15,7 +15,6 @@ from dotenv import load_dotenv
 from prompt_toolkit.enums import EditingMode
 
 from aider import __version__, models, urls, utils
-from aider.models import ModelSettings
 from aider.analytics import Analytics
 from aider.args import get_parser
 from aider.coders import Coder
@@ -24,6 +23,7 @@ from aider.format_settings import format_settings, scrub_sensitive_info
 from aider.history import ChatSummary
 from aider.io import InputOutput
 from aider.llm import litellm  # noqa: F401; properly init litellm on launch
+from aider.models import ModelSettings
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.report import report_uncaught_exceptions
 from aider.versioncheck import check_version, install_from_main_branch, install_upgrade
