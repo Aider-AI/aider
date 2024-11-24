@@ -119,6 +119,10 @@ document.getElementById('quantSearchInput').addEventListener('keyup', function()
 
 [Ollama uses a 2k context window by default](https://github.com/ollama/ollama/blob/main/docs/faq.md#how-can-i-specify-the-context-window-size),
 which is very small for working with aider.
+Unlike most other LLM servers, Ollama does not throw an error if you submit
+a request that exceeds the context window.
+Instead, it just silently truncates the request by discarding the "oldest" messages
+in the chat to make it fit within the context window.
 
 All of the Ollama results above were collected with at least an 8k context window, which
 is large enough to attempt all the coding problems in the benchmark.
