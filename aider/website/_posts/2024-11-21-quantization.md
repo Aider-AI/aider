@@ -28,7 +28,6 @@ The graph above compares different versions of the Qwen 2.5 Coder 32B Instruct m
 served both locally and from cloud providers.
 
 - The [HuggingFace BF16 weights](https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct) served via [glhf.chat](https://glhf.chat).
-- Hyperbolic labs API for [qwen2-5-coder-32b-instruct](https://app.hyperbolic.xyz/models/qwen2-5-coder-32b-instruct), which is using BF16. This result is probably within the expected variance of the HF result.
 - [4bit and 8bit quants for mlx](https://t.co/cwX3DYX35D).
 - The results from [OpenRouter's mix of providers](https://openrouter.ai/qwen/qwen-2.5-coder-32b-instruct/providers) which serve the model with different levels of quantization.
 - Ollama locally serving different quantizations from the [Ollama model library](https://ollama.com/library/qwen2.5-coder:32b-instruct-q4_K_M).

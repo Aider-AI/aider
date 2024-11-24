@@ -182,3 +182,26 @@
   versions: 0.64.2.dev
   seconds_per_case: 17.5
   total_cost: 0.0000
+
+- dirname: 2024-11-24-04-12-58--fireworks-qwen-diff
+  test_cases: 133
+  model: Fireworks (unknown quant)
+  edit_format: diff
+  commit_hash: 757eac0
+  pass_rate_1: 57.9
+  pass_rate_2: 72.2
+  percent_cases_well_formed: 94.0
+  error_outputs: 23
+  num_malformed_responses: 19
+  num_with_malformed_responses: 8
+  user_asks: 8
+  lazy_comments: 0
+  syntax_errors: 6
+  indentation_errors: 0
+  exhausted_context_windows: 4
+  test_timeouts: 1
+  command: aider --model fireworks_ai/accounts/fireworks/models/qwen2p5-coder-32b-instruct
+  date: 2024-11-24
+  versions: 0.64.2.dev
+  seconds_per_case: 10.4
+  total_cost: 0.5759
