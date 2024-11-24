@@ -137,9 +137,8 @@ That uses the special model name `aider/extra_params` to set it for *all* models
 
 OpenRouter allows you to ignore specific providers in your
 [preferences](https://openrouter.ai/settings/preferences).
-This can be effective to exclude highly quantized or otherwise
-undesirable providers.
-
+This can be used to limit your OpenRouter requests to be
+served by only your preferred providers.
 
 {: .note }
 Earlier versions of this article included incorrect Ollama models,
