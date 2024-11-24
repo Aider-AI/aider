@@ -25,8 +25,8 @@ served both locally and from cloud providers.
 - The [HuggingFace BF16 weights](https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct) served via [glhf.chat](https://glhf.chat).
 - [4bit and 8bit quants for mlx](https://t.co/cwX3DYX35D).
 - The results from [OpenRouter's mix of providers](https://openrouter.ai/qwen/qwen-2.5-coder-32b-instruct/providers) which serve the model with different levels of quantization.
+- Results from individual providers served via OpenRouter and directly to their own APIs.
 - Ollama locally serving different quantizations from the [Ollama model library](https://ollama.com/library/qwen2.5-coder:32b-instruct-q4_K_M).
-- Other API providers.
 
 The best version of the model rivals GPT-4o, while the worst performer
 is more like the older GPT-4 Turbo.
