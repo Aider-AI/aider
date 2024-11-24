@@ -18,7 +18,7 @@ can strongly impact code editing skill.
 Heavily quantized models are often used by cloud API providers
 and local model servers like Ollama or MLX.
 
-<canvas id="quantChart" width="800" height="600" style="margin: 20px 0"></canvas>
+<canvas id="quantChart" width="800" height="500" style="margin: 20px 0"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 {% include quant-chart.js %}
@@ -29,16 +29,16 @@ served both locally and from cloud providers.
 
 - The [HuggingFace BF16 weights](https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct) served via [glhf.chat](https://glhf.chat).
 - Hyperbolic labs API for [qwen2-5-coder-32b-instruct](https://app.hyperbolic.xyz/models/qwen2-5-coder-32b-instruct), which is using BF16. This result is probably within the expected variance of the HF result.
-- A [4bit quant for mlx](https://t.co/cwX3DYX35D).
+- [4bit and 8bit quants for mlx](https://t.co/cwX3DYX35D).
 - The results from [OpenRouter's mix of providers](https://openrouter.ai/qwen/qwen-2.5-coder-32b-instruct/providers) which serve the model with different levels of quantization.
-- Ollama locally serving [qwen2.5-coder:32b-instruct-q4_K_M)](https://ollama.com/library/qwen2.5-coder:32b-instruct-q4_K_M), which has `Q4_K_M` quantization, with Ollama's default 2k context window.
+- Ollama locally serving different quantizations from the [Ollama model library](https://ollama.com/library/qwen2.5-coder:32b-instruct-q4_K_M).
 
 The best version of the model rivals GPT-4o, while the worst performer
-is more like GPT-3.5 Turbo level.
+is more like GPT-4 level.
 
 {: .note }
 This article is being updated as additional benchmark runs complete.
-The original version included incorrect Ollama models.
+
 
 <input type="text" id="quantSearchInput" placeholder="Search..." style="width: 100%; max-width: 800px; margin: 10px auto; padding: 8px; display: block; border: 1px solid #ddd; border-radius: 4px;">
 
@@ -100,10 +100,13 @@ document.getElementById('quantSearchInput').addEventListener('keyup', function()
 });
 </script>
 
-## Setting the context window size
+## Setting Ollama's context window size
 
 [Ollama uses a 2k context window by default](https://github.com/ollama/ollama/blob/main/docs/faq.md#how-can-i-specify-the-context-window-size),
 which is very small for working with aider.
+
+All of the Ollama results above were collected with at least an 8k context window, which
+is large enough to attempt all the coding problems in the benchmark.
 
 You can set the Ollama server's context window with a 
 [`.aider.model.settings.yml` file](https://aider.chat/docs/config/adv-model-settings.html#model-settings)
@@ -112,7 +115,7 @@ like this:
 ```
 - name: aider/extra_params
   extra_params:
-    num_ctx: 65536
+    num_ctx: 8192
 ```
 
 That uses the special model name `aider/extra_params` to set it for *all* models. You should probably use a specific model name like:
@@ -120,7 +123,7 @@ That uses the special model name `aider/extra_params` to set it for *all* models
 ```
 - name: ollama/qwen2.5-coder:32b-instruct-fp16
   extra_params:
-    num_ctx: 65536
+    num_ctx: 8192
 ```
 
 ## Choosing providers with OpenRouter
@@ -130,3 +133,8 @@ OpenRouter allows you to ignore specific providers in your
 This can be effective to exclude highly quantized or otherwise
 undesirable providers.
 
+
+{: .note }
+Earlier versions of this article included incorrect Ollama models,
+and also included some Ollama results with the too small default 2k
+context window.
