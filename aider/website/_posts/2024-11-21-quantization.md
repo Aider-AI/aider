@@ -31,13 +31,6 @@ served both locally and from cloud providers.
 The best version of the model rivals GPT-4o, while the worst performer
 is more like the older GPT-4 Turbo.
 
-Hyperbolic via OpenRouter in particular is confusing.
-Their direct API produces excellent results, but the performance
-through OpenRouter is very poor.
-It's unclear why this is happening to just this provider.
-The other providers available through OpenRouter perform similarly
-when their API is accessed directly.
-
 ### Sections
 {: .no_toc }
 
