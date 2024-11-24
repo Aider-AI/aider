@@ -10,6 +10,7 @@ nav_exclude: true
 {% endif %}
 
 # Quantization matters
+{: .no_toc }
 
 Open source models like Qwen 2.5 32B Instruct are performing very well on
 aider's code editing benchmark, rivaling closed source frontier models.
@@ -18,8 +19,7 @@ can impact code editing skill.
 Heavily quantized models are often used by cloud API providers
 and local model servers like Ollama or MLX.
 
-
-The graph above compares different versions of the Qwen 2.5 Coder 32B Instruct model,
+The graph and table below compares different versions of the Qwen 2.5 Coder 32B Instruct model,
 served both locally and from cloud providers.
 
 - The [HuggingFace BF16 weights](https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct) served via [glhf.chat](https://glhf.chat).
@@ -38,8 +38,16 @@ It's unclear why this is happening to just this provider.
 The other providers available through OpenRouter perform similarly
 when their API is accessed directly.
 
+### Sections
+{: .no_toc }
+
+- TOC
+{:toc}
+
 {: .note }
 This article is being updated as additional benchmark runs complete.
+
+## Benchmark results
 
 <canvas id="quantChart" width="800" height="600" style="margin: 20px 0"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
