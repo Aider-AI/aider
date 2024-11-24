@@ -274,3 +274,26 @@
   versions: 0.64.2.dev
   seconds_per_case: 110.0
   total_cost: 0.1763
+
+- dirname: 2024-11-24-15-00-50--qwen25-32b-or-deepinfra
+  test_cases: 133
+  model: "Deepinfra via OpenRouter: BF16"
+  edit_format: diff
+  commit_hash: c2f184f
+  pass_rate_1: 57.1
+  pass_rate_2: 69.9
+  percent_cases_well_formed: 89.5
+  error_outputs: 35
+  num_malformed_responses: 31
+  num_with_malformed_responses: 14
+  user_asks: 11
+  lazy_comments: 0
+  syntax_errors: 1
+  indentation_errors: 1
+  exhausted_context_windows: 4
+  test_timeouts: 1
+  command: aider --model openrouter/qwen/qwen-2.5-coder-32b-instruct
+  date: 2024-11-24
+  versions: 0.64.2.dev
+  seconds_per_case: 28.5
+  total_cost: 0.1390

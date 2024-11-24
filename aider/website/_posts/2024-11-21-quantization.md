@@ -18,11 +18,6 @@ can impact code editing skill.
 Heavily quantized models are often used by cloud API providers
 and local model servers like Ollama or MLX.
 
-<canvas id="quantChart" width="800" height="500" style="margin: 20px 0"></canvas>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-{% include quant-chart.js %}
-</script>
 
 The graph above compares different versions of the Qwen 2.5 Coder 32B Instruct model,
 served both locally and from cloud providers.
@@ -34,11 +29,23 @@ served both locally and from cloud providers.
 - Other API providers.
 
 The best version of the model rivals GPT-4o, while the worst performer
-is more like GPT-4 Turbo level.
+is worse than GPT-3.5 Turbo.
+
+Hyperbolic via OpenRouter in particular is confusing.
+Their direct API produces excellent results, but the performance
+through OpenRouter is very poor.
+It's unclear why this is happening to just this provider.
+The other providers available through OpenRouter perform similarly
+when their API is accessed directly.
 
 {: .note }
 This article is being updated as additional benchmark runs complete.
 
+<canvas id="quantChart" width="800" height="600" style="margin: 20px 0"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+{% include quant-chart.js %}
+</script>
 
 <input type="text" id="quantSearchInput" placeholder="Search..." style="width: 100%; max-width: 800px; margin: 10px auto; padding: 8px; display: block; border: 1px solid #ddd; border-radius: 4px;">
 
