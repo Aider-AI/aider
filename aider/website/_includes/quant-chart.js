@@ -19,6 +19,9 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   {% endfor %}
 
+  // Sort data by pass_rate_2 in descending order
+  allData.sort((a, b) => b.pass_rate_2 - a.pass_rate_2);
+
   allData.forEach(function(row) {
     chartData.labels.push(row.model);
     chartData.datasets[0].data.push(row.pass_rate_2);
