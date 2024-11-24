@@ -29,7 +29,7 @@ served both locally and from cloud providers.
 - Other API providers.
 
 The best version of the model rivals GPT-4o, while the worst performer
-is worse than GPT-3.5 Turbo.
+is more like the older GPT-4 Turbo.
 
 Hyperbolic via OpenRouter in particular is confusing.
 Their direct API produces excellent results, but the performance
