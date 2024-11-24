@@ -32,6 +32,7 @@ served both locally and from cloud providers.
 - [4bit and 8bit quants for mlx](https://t.co/cwX3DYX35D).
 - The results from [OpenRouter's mix of providers](https://openrouter.ai/qwen/qwen-2.5-coder-32b-instruct/providers) which serve the model with different levels of quantization.
 - Ollama locally serving different quantizations from the [Ollama model library](https://ollama.com/library/qwen2.5-coder:32b-instruct-q4_K_M).
+- Other API providers.
 
 The best version of the model rivals GPT-4o, while the worst performer
 is more like GPT-4 level.
