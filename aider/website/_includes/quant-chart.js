@@ -70,6 +70,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 font: {
                   size: 16
                 }
+              },
+              title: {
+                display: true,
+                text: 'Provider: quantization',
+                font: {
+                  size: 14
+                }
               }
             }
           }
