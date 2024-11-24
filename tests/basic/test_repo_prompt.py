@@ -1,6 +1,8 @@
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
 from aider.repo import GitRepo
+
 
 class TestGitRepoPrompt(unittest.TestCase):
     def setUp(self):
@@ -24,4 +26,4 @@ class TestGitRepoPrompt(unittest.TestCase):
         calls = mock_send.call_args_list
         self.assertEqual(len(calls), 1)
         messages = calls[0][0][1]
-        self.assertEqual(messages[0]['content'], "Generate commit for branch feature-123. Changes:")
+        self.assertEqual(messages[0]["content"], "Generate commit for branch feature-123. Changes:")
