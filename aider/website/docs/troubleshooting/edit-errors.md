@@ -45,6 +45,11 @@ so editing errors are probably unavoidable.
 Local models which have been quantized are even more likely to have problems
 because they are not capable enough to follow aider's system prompts.
 
+Be especially careful about the
+[Ollama context window](https://aider.chat/docs/llms/ollama.html#setting-the-context-window-size)
+when working with local models.
+It defaults to be very small and silently discards data if you exceed it.
+
 ## Try the whole edit format
 
 Run aider with `--edit-format whole` if were using a different edit format.
