@@ -740,6 +740,8 @@ def get_parser(default_config_files, git_root):
     )
     group.add_argument(
         "--editor",
+        metavar="EDITOR",
+        env_var="AIDER_EDITOR",
         help="Specify which editor to use for the /editor command",
     )
 
