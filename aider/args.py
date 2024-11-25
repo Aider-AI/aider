@@ -664,6 +664,12 @@ def get_parser(default_config_files, git_root):
         default=False,
     )
     group.add_argument(
+        "--no-auto-scrape",
+        action="store_true",
+        help="Disable automatic web scraping when using --yes-always (default: False)",
+        default=False,
+    )
+    group.add_argument(
         "--show-repo-map",
         action="store_true",
         help="Print the repo map and exit (debug)",

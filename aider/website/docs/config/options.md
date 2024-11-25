@@ -502,6 +502,11 @@ Environment variable: `AIDER_AUTO_TEST`
 Aliases:
   - `--auto-test`
   - `--no-auto-test`
+  
+### `--no-auto-scrape`
+Disable automatic web scraping even when using --yes-always (default: False)
+Default: False
+Environment variable: `AIDER_NO_AUTO_SCRAPE`
 
 ### `--test`
 Run tests and fix problems found  

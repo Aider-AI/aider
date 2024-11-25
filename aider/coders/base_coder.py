@@ -93,6 +93,7 @@ class Coder:
     suggest_shell_commands = True
     ignore_mentions = None
     chat_language = None
+    no_auto_scrape = None
 
     @classmethod
     def create(
@@ -267,12 +268,14 @@ class Coder:
         num_cache_warming_pings=0,
         suggest_shell_commands=True,
         chat_language=None,
+        no_auto_scrape=False,
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
 
         self.event = self.analytics.event
         self.chat_language = chat_language
+        self.no_auto_scrape = no_auto_scrape
         self.commit_before_message = []
         self.aider_commit_hashes = set()
         self.rejected_urls = set()
@@ -767,7 +770,9 @@ class Coder:
             return self.commands.run(inp)
 
         self.check_for_file_mentions(inp)
-        self.check_for_urls(inp)
+
+        if not (self.no_auto_scrape):
+            self.check_for_urls(inp)
 
         return inp
 
@@ -827,7 +832,6 @@ class Coder:
                     added_urls.append(url)
                 else:
                     self.rejected_urls.add(url)
-
         return added_urls
 
     def keyboard_interrupt(self):

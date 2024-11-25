@@ -197,6 +197,7 @@ class InputOutput:
         llm_history_file=None,
         editingmode=EditingMode.EMACS,
         fancy_input=True,
+        no_auto_scrape=False,
     ):
         self.placeholder = None
         self.never_prompts = set()
@@ -225,6 +226,7 @@ class InputOutput:
             self.pretty = False
 
         self.yes = yes
+        self.no_auto_scrape = no_auto_scrape
 
         self.input_history_file = input_history_file
         self.llm_history_file = llm_history_file
