@@ -47,7 +47,7 @@ which is very small for working with aider.
 
 Aider sets Ollama's context window to 8k by default. 
 If you would like
-a large context window
+a larger context window
 you can use a
 [`.aider.model.settings.yml` file](https://aider.chat/docs/config/adv-model-settings.html#model-settings)
 like this:
