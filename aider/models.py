@@ -938,7 +938,7 @@ class Model(ModelSettings):
             self.edit_format = "diff"
             self.editor_edit_format = "editor-diff"
             self.use_repo_map = True
-            if "ollama" in model:
+            if model.startswith("ollama/") or model.startswith("ollama_chat/"):
                 self.extra_params = dict(num_ctx=8 * 1024)
             return  # <--
 

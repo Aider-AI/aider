@@ -116,18 +116,11 @@ in the chat to make it fit within the context window.
 
 All of the Ollama results above were collected with at least an 8k context window, which
 is large enough to attempt all the coding problems in the benchmark.
+Aider sets Ollama's context window to 8k by default.
 
-You can set the Ollama server's context window with a 
+You can change the Ollama server's context window with a 
 [`.aider.model.settings.yml` file](https://aider.chat/docs/config/adv-model-settings.html#model-settings)
 like this:
-
-```
-- name: aider/extra_params
-  extra_params:
-    num_ctx: 8192
-```
-
-That uses the special model name `aider/extra_params` to set it for *all* models. You should probably use a specific model name like:
 
 ```
 - name: ollama/qwen2.5-coder:32b-instruct-fp16
