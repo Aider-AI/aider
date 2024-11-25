@@ -15,6 +15,7 @@ import time
 import traceback
 from collections import defaultdict
 from datetime import datetime
+from importlib.resources import files
 from json.decoder import JSONDecodeError
 from pathlib import Path
 from typing import List
@@ -32,6 +33,8 @@ from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
 from aider.sendchat import RETRY_TIMEOUT, send_completion
 from aider.utils import format_content, format_messages, format_tokens, is_image_file
+
+from cedartl import CedarTLProcessor
 
 from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
@@ -96,7 +99,7 @@ class Coder:
 
     @classmethod
     def create(
-        self,
+        cls,
         main_model=None,
         edit_format=None,
         io=None,
@@ -128,7 +131,7 @@ class Coder:
 
             # If the edit format changes, we can't leave old ASSISTANT
             # messages in the chat history. The old edit format will
-            # confused the new LLM. It may try and imitate it, disobeying
+            # confuse the new LLM. It may try and imitate it, disobeying
             # the system prompt.
             done_messages = from_coder.done_messages
             if edit_format != from_coder.edit_format and done_messages and summarize_from_coder:
@@ -445,6 +448,8 @@ class Coder:
             if self.verbose:
                 self.io.tool_output("JSON Schema:")
                 self.io.tool_output(json.dumps(self.functions, indent=4))
+
+        self.template_processor = CedarTLProcessor(files('aider.resources.templates.main'), self.root)
 
     def setup_lint_cmds(self, lint_cmds):
         if not lint_cmds:
@@ -766,6 +771,7 @@ class Coder:
         if self.commands.is_command(inp):
             return self.commands.run(inp)
 
+        inp = self.template_processor.process(inp)
         self.check_for_file_mentions(inp)
         self.check_for_urls(inp)
 
@@ -968,11 +974,15 @@ class Coder:
             fence=self.fence,
             lazy_prompt=lazy_prompt,
             platform=platform_text,
+            edit_format_training=self.gpt_prompts.edit_format_training,
+            final_remarks=self.gpt_prompts.final_remarks,
             shell_cmd_prompt=shell_cmd_prompt,
             shell_cmd_reminder=shell_cmd_reminder,
             language=language,
         )
-        return prompt
+        result = self.template_processor.process(prompt)
+        print(f"[fmt_system_prompt] words: {len(result.split() if result else [])}")
+        return result
 
     def format_chat_chunks(self):
         self.choose_fence()

@@ -2,8 +2,8 @@ from .ask_coder import AskCoder
 from .base_coder import Coder
 
 
-class ArchitectCoder(AskCoder):
-    edit_format = "architect"
+class SudoLangCoder(AskCoder):
+    edit_format = "sudolang"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, edit_format = self.edit_format, **kwargs)
