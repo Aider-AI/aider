@@ -297,3 +297,26 @@
   versions: 0.64.2.dev
   seconds_per_case: 28.5
   total_cost: 0.1390
+
+- dirname: 2024-11-26-03-15-06--ollama-qwen2.5-coder:32b-instruct-fp16-2kctx
+  test_cases: 132
+  model: "Ollama: fp16, 2k ctx"
+  edit_format: diff
+  commit_hash: 68be6c5-dirty, 554d274, 2ff3a23, 2ff3a23-dirty, 61759f9, dd48b74, 3ebd47d-dirty
+  pass_rate_1: 43.2
+  pass_rate_2: 51.9
+  percent_cases_well_formed: 46.2
+  error_outputs: 171
+  num_malformed_responses: 165
+  num_with_malformed_responses: 71
+  user_asks: 97
+  lazy_comments: 2
+  syntax_errors: 4
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: "aider --model ollama/qwen2.5-coder:32b-instruct-fp16 # num_ctx: 2048"
+  date: 2024-11-26
+  versions: 0.64.2.dev,0.65.1.dev
+  seconds_per_case: 188.6
+  total_cost: 0.0000
