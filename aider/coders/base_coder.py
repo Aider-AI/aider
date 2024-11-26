@@ -582,8 +582,17 @@ class Coder:
 
     def get_ident_filename_matches(self, idents):
         all_fnames = defaultdict(set)
+        existing_basenames = {
+            Path(fname).name.lower()
+            for fname in self.get_inchat_relative_files()
+            + [self.get_rel_fname(f) for f in self.abs_read_only_fnames]
+        }
+
         for fname in self.get_all_relative_files():
             base = Path(fname).with_suffix("").name.lower()
+            # Skip if we already have a file with this name
+            if Path(fname).name.lower() in existing_basenames:
+                continue
             if len(base) >= 5:
                 all_fnames[base].add(fname)
 
