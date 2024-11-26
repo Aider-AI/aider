@@ -2,10 +2,13 @@
 
 ### main branch
 
-- Added `--detect-urls` flag to control URL detection behavior.
-- Added `--alias` flag to define custom model aliases from command line.
-- Skip suggesting files that have same name as existing chat files.
+- Added `--alias` flag to define [custom model aliases](https://aider.chat/docs/config/model-aliases.html) from command line.
+- Added `--[no-]detect-urls` flag to disable detecting and offering to scrape URLs found in the chat.
 - Ask 2.5% of users to opt-in to analytics.
+
+### Aider v0.64.1
+
+- Disable streaming for o1 on OpenRouter.
 
 ### Aider v0.64.0
 
