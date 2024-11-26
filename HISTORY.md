@@ -5,6 +5,11 @@
 - Added `--alias` flag to define [custom model aliases](https://aider.chat/docs/config/model-aliases.html) from command line.
 - Added `--[no-]detect-urls` flag to disable detecting and offering to scrape URLs found in the chat.
 - Ask 2.5% of users to opt-in to analytics.
+- Improved handling of Ollama models with 8k context window.
+- Improved handling of model aliases and metadata.
+- Enhanced error handling for Mixpanel analytics.
+- Improved input handling with placeholder text support.
+- Simplified pipe editor command behavior.
 
 ### Aider v0.64.1
 
