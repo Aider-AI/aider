@@ -61,6 +61,17 @@ claude-3-5-sonnet-20241022
 
 ANTHROPIC_MODELS = [ln.strip() for ln in ANTHROPIC_MODELS.splitlines() if ln.strip()]
 
+# Mapping of model aliases to their canonical names
+MODEL_ALIASES = {
+    "gpt-4": "openai/gpt-4",
+    "gpt-4-turbo": "gpt-4-turbo-preview",
+    "gpt-3.5": "gpt-3.5-turbo",
+    "claude-3": "claude-3-opus-20240229",
+    "claude-3-opus": "claude-3-opus-20240229",
+    "claude-3-sonnet": "claude-3-sonnet-20240229",
+    "claude-3-haiku": "claude-3-haiku-20240307",
+}
+
 
 @dataclass
 class ModelSettings:
@@ -819,7 +830,8 @@ model_info_manager = ModelInfoManager()
 
 class Model(ModelSettings):
     def __init__(self, model, weak_model=None, editor_model=None, editor_edit_format=None):
-        self.name = model
+        # Map any alias to its canonical name
+        self.name = MODEL_ALIASES.get(model, model)
         self.max_chat_history_tokens = 1024
         self.weak_model = None
         self.editor_model = None
