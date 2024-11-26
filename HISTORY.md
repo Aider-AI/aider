@@ -1,3 +1,9 @@
+# main branch
+
+- Added command-line model alias support via `--alias` flag.
+- Simplified model aliases to focus on current models.
+- Ask 2.5% of users to opt-in to analytics.
+
 # Release history
 
 ### Aider v0.64.0
