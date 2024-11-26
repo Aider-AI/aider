@@ -1,3 +1,9 @@
+---
+parent: Configuration
+nav_order: 1000
+description: Using a .env file to store LLM API keys for aider.
+---
+
 # Model Aliases
 
 Model aliases allow you to create shorthand names for models you frequently use. This is particularly useful for models with long names or when you want to standardize model usage across your team.
