@@ -848,31 +848,6 @@ This command will print 'Hello, World!' to the console."""
             self.assertEqual(result, [])
             coder.commands.scraper.scrape.assert_not_called()
 
-            def mock_send(*args, **kwargs):
-                coder.partial_response_content = """Here's a shell command to run:
-
-```bash
-echo "Hello, World!"
-```
-
-This command will print 'Hello, World!' to the console."""
-                coder.partial_response_function_call = dict()
-                return []
-
-            coder.send = mock_send
-
-            # Mock the handle_shell_commands method to check if it's called
-            coder.handle_shell_commands = MagicMock()
-
-            # Run the coder with a message
-            coder.run(with_message="Suggest a shell command")
-
-            # Check if the shell command was added to the list
-            self.assertEqual(len(coder.shell_commands), 1)
-            self.assertEqual(coder.shell_commands[0].strip(), 'echo "Hello, World!"')
-
-            # Check if handle_shell_commands was called with the correct argument
-            coder.handle_shell_commands.assert_not_called()
 
     def test_coder_create_with_new_file_oserror(self):
         with GitTemporaryDirectory():
