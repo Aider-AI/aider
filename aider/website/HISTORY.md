@@ -24,7 +24,7 @@ cog.out(text)
 ]]]-->
 
 
-### main branch
+### Aider v0.65.0
 
 - Added `--alias` config to define [custom model aliases](https://aider.chat/docs/config/model-aliases.html).
 - Added `--[no-]detect-urls` flag to disable detecting and offering to scrape URLs found in the chat.
