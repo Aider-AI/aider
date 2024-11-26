@@ -639,7 +639,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.alias:
         for alias_def in args.alias:
             # Split on first colon only
-            parts = alias_def.split(':', 1)
+            parts = alias_def.split(":", 1)
             if len(parts) != 2:
                 io.tool_error(f"Invalid alias format: {alias_def}")
                 io.tool_output("Format should be: alias:model-name")
