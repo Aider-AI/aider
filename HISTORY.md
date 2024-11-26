@@ -1,5 +1,13 @@
-
 # Release history
+
+### Aider v0.64.2
+
+- Added command-line model alias support via `--alias` flag.
+- Simplified model aliases to only include Claude-3 variants.
+- Ask 2.5% of users to opt-in to analytics.
+- Fixed duplicate `detect_urls` parameter.
+- Added `detect_urls` parameter to coder initialization.
+- Fixed string quote consistency in alias split.
 
 ### Aider v0.64.0
 
