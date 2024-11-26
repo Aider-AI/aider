@@ -4,12 +4,11 @@
 
 - Added `--alias` flag to define [custom model aliases](https://aider.chat/docs/config/model-aliases.html) from command line.
 - Added `--[no-]detect-urls` flag to disable detecting and offering to scrape URLs found in the chat.
-- Ask 2.5% of users to opt-in to analytics.
-- Improved handling of Ollama models with 8k context window.
-- Improved handling of model aliases and metadata.
-- Enhanced error handling for Mixpanel analytics.
-- Improved input handling with placeholder text support.
-- Simplified pipe editor command behavior.
+- Ask 2.5% of users if they want to opt-in to [analytics](https://aider.chat/docs/more/analytics.html).
+- Ollama models now default to an 8k context window.
+- Enhanced error handling for analytics.
+- `/editor` returns and prefill the file content into the prompt, so you can use `/editor` to compose messages that start with `/commands`, etc.
+- Aider wrote 93% of the code in this release.
 
 ### Aider v0.64.1
 
