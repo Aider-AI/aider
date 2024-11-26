@@ -62,7 +62,7 @@ cog.out(get_supported_languages_md())
 | cpp                  | .cc                  |    ✓     |   ✓    |
 | cpp                  | .cpp                 |    ✓     |   ✓    |
 | css                  | .css                 |          |   ✓    |
-| dart                 | .dart                |    ✓     |        |
+| dart                 | .dart                |    ✓     |   ✓    |
 | dockerfile           | .dockerfile          |          |   ✓    |
 | dot                  | .dot                 |          |   ✓    |
 | elisp                | .el                  |    ✓     |   ✓    |

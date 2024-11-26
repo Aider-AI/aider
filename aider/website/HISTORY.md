@@ -29,12 +29,13 @@ cog.out(text)
 - Added `--alias` flag to define [custom model aliases](https://aider.chat/docs/config/model-aliases.html) from command line.
 - Added `--[no-]detect-urls` flag to disable detecting and offering to scrape URLs found in the chat.
 - Ollama models now default to an 8k context window.
+- Added [RepoMap support for Dart language](https://aider.chat/docs/languages.html).
 - Ask 2.5% of users if they want to opt-in to [analytics](https://aider.chat/docs/more/analytics.html).
 - Skip suggesting files that share names with files already in chat.
 - `/editor` returns and prefill the file content into the prompt, so you can use `/editor` to compose messages that start with `/commands`, etc.
 - Enhanced error handling for analytics.
 - Improved handling of UnknownEditFormat exceptions with helpful documentation links.
-- Aider wrote 92% of the code in this release.
+- Aider wrote 81% of the code in this release.
 
 ### Aider v0.64.1
 
