@@ -1,25 +1,5 @@
 # Release history
 
-# main branch
-
-- Added command-line model alias support via `--alias` flag.
-- Simplified model aliases to only include Claude-3 variants.
-- Ask 2.5% of users to opt-in to analytics.
-- Fixed duplicate detect_urls parameter and added to coder initialization.
-- Added `--detect-urls` flag to control URL detection behavior.
-
-### Aider v0.64.2
-
-- Removed duplicate detect_urls parameter and add to coder initialization.
-- Added `--detect-urls` flag to control URL detection behavior.
-- Ask 2.5% of users to opt-in to analytics.
-
-### Aider v0.64.1
-
-- Disabled o1 streaming on OpenRouter.
-- Added command-line model alias support via `--alias` flag.
-- Simplified model aliases to only include Claude-3 variants.
-
 ### Aider v0.64.0
 
 - Added [`/editor` command](https://aider.chat/docs/usage/commands.html) to open system editor for writing prompts, by @thehunmonkgroup.
