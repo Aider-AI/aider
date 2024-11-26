@@ -1,7 +1,7 @@
 ---
 parent: Configuration
 nav_order: 1000
-description: Using a .env file to store LLM API keys for aider.
+description: Assign convenient short names to models.
 ---
 
 # Model Aliases
