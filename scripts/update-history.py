@@ -54,6 +54,9 @@ Changes in the .x-dev version should be listed under a "### main branch" heading
     cmd = ["aider", "HISTORY.md", "--read", tmp_path, "--msg", message, "--no-auto-commit"]
     subprocess.run(cmd)
 
+    # Run update-docs.sh after aider
+    subprocess.run(["scripts/update-docs.sh"])
+
     # Cleanup
     os.unlink(tmp_path)
 
