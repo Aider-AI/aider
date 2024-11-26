@@ -1,5 +1,11 @@
-
 # Release history
+
+### main branch
+
+- Added `--detect-urls` flag to control URL detection behavior.
+- Added `--alias` flag to define custom model aliases from command line.
+- Skip suggesting files that have same name as existing chat files.
+- Ask 2.5% of users to opt-in to analytics.
 
 ### Aider v0.64.0
 
