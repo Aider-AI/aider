@@ -3,10 +3,21 @@
 import os
 import subprocess
 import tempfile
+import re
+from aider import __version__
+
+
+def get_base_version():
+    # Parse current version like "0.64.2.dev" to get major.minor
+    match = re.match(r"(\d+\.\d+)", __version__)
+    if not match:
+        raise ValueError(f"Could not parse version: {__version__}")
+    return match.group(1) + ".0"
 
 
 def run_git_log():
-    cmd = ["git", "log", "-p", "v0.64.0..HEAD", "--", "aider/", ":!aider/website/", ":!HISTORY.md"]
+    base_ver = get_base_version()
+    cmd = ["git", "log", "-p", f"v{base_ver}..HEAD", "--", "aider/", ":!aider/website/", ":!HISTORY.md"]
     result = subprocess.run(cmd, capture_output=True, text=True)
     return result.stdout
 
