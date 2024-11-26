@@ -142,6 +142,14 @@ cog.outl("```")
 ## Specify a file with context window and costs for unknown models
 #model-metadata-file: .aider.model.metadata.json
 
+## Add a model alias (can be used multiple times)
+#alias: xxx
+## Specify multiple values like this:
+#alias:
+#  - xxx
+#  - yyy
+#  - zzz
+
 ## Verify the SSL cert when connecting to models (default: True)
 #verify-ssl: true
 

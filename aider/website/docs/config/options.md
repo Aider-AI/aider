@@ -32,9 +32,9 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--openai-api-type] [--openai-api-version]
              [--openai-api-deployment-id] [--openai-organization-id]
              [--model-settings-file] [--model-metadata-file]
-             [--verify-ssl | --no-verify-ssl] [--edit-format]
-             [--architect] [--weak-model] [--editor-model]
-             [--editor-edit-format]
+             [--alias] [--verify-ssl | --no-verify-ssl]
+             [--edit-format] [--architect] [--weak-model]
+             [--editor-model] [--editor-edit-format]
              [--show-model-warnings | --no-show-model-warnings]
              [--max-chat-history-tokens] [--env-file]
              [--cache-prompts | --no-cache-prompts]
@@ -191,6 +191,10 @@ Environment variable: `AIDER_MODEL_SETTINGS_FILE`
 Specify a file with context window and costs for unknown models  
 Default: .aider.model.metadata.json  
 Environment variable: `AIDER_MODEL_METADATA_FILE`  
+
+### `--alias ALIAS:MODEL`
+Add a model alias (can be used multiple times)  
+Environment variable: `AIDER_ALIAS`  
 
 ### `--verify-ssl`
 Verify the SSL cert when connecting to models (default: True)  

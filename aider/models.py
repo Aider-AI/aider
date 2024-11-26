@@ -70,15 +70,12 @@ MODEL_ALIASES = {
     # GPT models
     "4": "gpt-4-0613",
     "4o": "gpt-4o-2024-08-06",
-    "mini": "gpt-4o-mini",
     "4-turbo": "gpt-4-1106-preview",
     "35turbo": "gpt-3.5-turbo",
     "35-turbo": "gpt-3.5-turbo",
     "3": "gpt-3.5-turbo",
     # Other models
     "deepseek": "deepseek/deepseek-coder",
-    "o1-mini": "o1-mini",
-    "o1-preview": "o1-preview",
 }
 
 

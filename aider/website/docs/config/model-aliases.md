@@ -42,14 +42,24 @@ aider --model smart  # Uses gpt-4
 
 Aider includes some built-in aliases for convenience:
 
-[[[cog
+<!--[[[cog
 import cog
 from aider.models import MODEL_ALIASES
 
 for alias, model in sorted(MODEL_ALIASES.items()):
     cog.outl(f"- `{alias}`: {model}")
-]]]
-[[[end]]]
+]]]-->
+- `3`: gpt-3.5-turbo
+- `35-turbo`: gpt-3.5-turbo
+- `35turbo`: gpt-3.5-turbo
+- `4`: gpt-4-0613
+- `4-turbo`: gpt-4-1106-preview
+- `4o`: gpt-4o-2024-08-06
+- `deepseek`: deepseek/deepseek-coder
+- `haiku`: claude-3-haiku-20241022
+- `opus`: claude-3-opus-20240229
+- `sonnet`: claude-3-sonnet-20241022
+<!--[[[end]]]-->
 
 ## Priority
 
