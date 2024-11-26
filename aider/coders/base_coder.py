@@ -595,7 +595,7 @@ class Coder:
             # Skip files that share names with existing files
             if Path(fname).name in existing_files:
                 continue
-                
+
             base = Path(fname).with_suffix("").name.lower()
             if len(base) >= 5:
                 all_fnames[base].add(fname)
