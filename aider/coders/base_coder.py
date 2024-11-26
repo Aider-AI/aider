@@ -590,9 +590,7 @@ class Coder:
 
         for fname in self.get_all_relative_files():
             base = Path(fname).with_suffix("").name.lower()
-            # Skip if we already have a file with this name
-            if Path(fname).name.lower() in existing_basenames:
-                continue
+            # Only skip if we already have a file with this name AND the base name matches the identifier
             if len(base) >= 5:
                 all_fnames[base].add(fname)
 
