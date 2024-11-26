@@ -26,6 +26,7 @@ def run_git_log():
         "--",
         "aider/",
         ":!aider/website/",
+        ":!scripts/",
         ":!HISTORY.md",
     ]
     result = subprocess.run(cmd, capture_output=True, text=True)
@@ -42,12 +43,13 @@ def main():
         tmp_path = tmp.name
 
     # Construct and run the aider command
-    message = (
-        "Update the history with changes shown in the diffs. "
-        "Follow the existing pattern. "
-        "Don't edit or duplicate changes that have existing history entries, "
-        "just add any new items not already listed."
-    )
+    message = """
+Update the history with changes shown in the diffs.
+Describe actual user-facing changes, not every single commit that was made implementing them.
+Don't edit or duplicate changes that have existing history entries, just add any new items not already listed.
+Be sure to attribute changes to the proper .x version.
+Changes in the .x-dev version should be listed under a "### main branch" heading
+"""  # noqa
 
     cmd = ["aider", "HISTORY.md", "--read", tmp_path, "--msg", message]
     subprocess.run(cmd)
