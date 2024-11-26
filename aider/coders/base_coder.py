@@ -166,7 +166,11 @@ class Coder:
                 res.original_kwargs = dict(kwargs)
                 return res
 
-        valid_formats = [c.edit_format for c in coders.__all__ if hasattr(c, "edit_format")]
+        valid_formats = [
+            str(c.edit_format)
+            for c in coders.__all__
+            if hasattr(c, "edit_format") and c.edit_format is not None
+        ]
         raise UnknownEditFormat(edit_format, valid_formats)
 
     def clone(self, **kwargs):
