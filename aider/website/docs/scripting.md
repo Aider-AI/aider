@@ -96,5 +96,5 @@ coder = Coder.create(model=model, fnames=fnames, io=io)
 ```
 
 {: .note }
-The scripting API is not officially supported or documented and may
-change without warning.
+The python scripting API is not officially supported or documented,
+and could change in future releases without providing backwards compatibility.
