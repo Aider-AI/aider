@@ -92,6 +92,36 @@ class TestModels(unittest.TestCase):
             any("bogus-model" in msg for msg in warning_messages)
         )  # Check that one of the warnings mentions the bogus model
 
+    def test_model_aliases(self):
+        # Test common aliases
+        model = Model("4")
+        self.assertEqual(model.name, "gpt-4-0613")
+
+        model = Model("4o")
+        self.assertEqual(model.name, "gpt-4o-2024-08-06")
+
+        model = Model("35turbo")
+        self.assertEqual(model.name, "gpt-3.5-turbo")
+
+        model = Model("35-turbo")
+        self.assertEqual(model.name, "gpt-3.5-turbo")
+
+        model = Model("3")
+        self.assertEqual(model.name, "gpt-3.5-turbo")
+
+        model = Model("sonnet")
+        self.assertEqual(model.name, "claude-3-sonnet-20241022")
+
+        model = Model("haiku")
+        self.assertEqual(model.name, "claude-3-haiku-20241022")
+
+        model = Model("opus")
+        self.assertEqual(model.name, "claude-3-opus-20240229")
+
+        # Test non-alias passes through unchanged
+        model = Model("gpt-4")
+        self.assertEqual(model.name, "gpt-4")
+
     def test_aider_extra_model_settings(self):
         import tempfile
 
