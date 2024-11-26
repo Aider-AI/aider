@@ -1411,9 +1411,20 @@ class Coder:
 
         addable_rel_fnames = self.get_addable_relative_files()
 
+        # Get basenames of files already in chat or read-only
+        existing_basenames = {
+            os.path.basename(f) for f in self.get_inchat_relative_files()
+        } | {
+            os.path.basename(self.get_rel_fname(f)) for f in self.abs_read_only_fnames
+        }
+
         mentioned_rel_fnames = set()
         fname_to_rel_fnames = {}
         for rel_fname in addable_rel_fnames:
+            # Skip files that share a basename with files already in chat
+            if os.path.basename(rel_fname) in existing_basenames:
+                continue
+
             normalized_rel_fname = rel_fname.replace("\\", "/")
             normalized_words = set(word.replace("\\", "/") for word in words)
             if normalized_rel_fname in normalized_words:
