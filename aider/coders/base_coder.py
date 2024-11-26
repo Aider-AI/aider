@@ -22,7 +22,7 @@ from typing import List
 from aider import __version__, models, prompts, urls, utils
 from aider.analytics import Analytics
 from aider.commands import Commands
-from aider.exceptions import LiteLLMExceptions
+from aider.exceptions import LiteLLMExceptions, UnknownEditFormat
 from aider.history import ChatSummary
 from aider.io import ConfirmGroup, InputOutput
 from aider.linter import Linter
@@ -157,7 +157,8 @@ class Coder:
                 res.original_kwargs = dict(kwargs)
                 return res
 
-        raise ValueError(f"Unknown edit format {edit_format}")
+        valid_formats = [c.edit_format for c in coders.__all__ if hasattr(c, "edit_format")]
+        raise UnknownEditFormat(edit_format, valid_formats)
 
     def clone(self, **kwargs):
         new_coder = Coder.create(from_coder=self, **kwargs)

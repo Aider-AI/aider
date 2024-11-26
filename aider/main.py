@@ -765,6 +765,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             chat_language=args.chat_language,
             detect_urls=args.detect_urls,
         )
+    except UnknownEditFormat as err:
+        io.tool_error(str(err))
+        io.offer_url(urls.edit_formats, "Open documentation about edit formats?")
+        return 1
     except ValueError as err:
         io.tool_error(str(err))
         return 1
