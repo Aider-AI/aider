@@ -155,6 +155,7 @@ def main(
     tries: int = typer.Option(2, "--tries", "-r", help="Number of tries for running tests"),
     threads: int = typer.Option(1, "--threads", "-t", help="Number of threads to run in parallel"),
     num_tests: int = typer.Option(-1, "--num-tests", "-n", help="Number of tests to run"),
+    num_ctx: Optional[int] = typer.Option(None, "--num-ctx", help="Override model context window size"),
     exercises_dir: str = typer.Option(
         EXERCISES_DIR_DEFAULT, "--exercises-dir", help="Directory with exercise files"
     ),
@@ -588,6 +589,11 @@ def run_test_real(
         editor_model=editor_model,
         editor_edit_format=editor_edit_format,
     )
+    
+    if num_ctx:
+        if not main_model.extra_params:
+            main_model.extra_params = {}
+        main_model.extra_params["num_ctx"] = num_ctx
     edit_format = edit_format or main_model.edit_format
 
     dump(main_model)
