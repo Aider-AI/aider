@@ -1412,9 +1412,7 @@ class Coder:
         addable_rel_fnames = self.get_addable_relative_files()
 
         # Get basenames of files already in chat or read-only
-        existing_basenames = {
-            os.path.basename(f) for f in self.get_inchat_relative_files()
-        } | {
+        existing_basenames = {os.path.basename(f) for f in self.get_inchat_relative_files()} | {
             os.path.basename(self.get_rel_fname(f)) for f in self.abs_read_only_fnames
         }
 
