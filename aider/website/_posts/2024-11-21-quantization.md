@@ -34,6 +34,8 @@ This benchmarking effort highlighted a number of pitfalls and details which
 can have a significant impact on the model's ability to correctly edit code:
 
 - **Quantization** -- Open source models are often available at dozens of different quantizations.
+Most seem to only modestly decrease code editing skill, but stronger quantizations
+do have a real impact.
 - **Context window** -- Cloud providers can decide how large a context window to accept,
 and they often choose differently. Ollama defaults to a tiny 2k context window,
 and silently discards data that exceeds it. Such a small window has
@@ -43,9 +45,12 @@ differing output token limits. This has a direct impact on how much code the
 model can write or edit in a response.
 - **Buggy cloud providers** -- Between Qwen 2.5 Coder 32B Instruct
 and DeepSeek V2.5, there were
-multiple cloud providers with broken or buggy API endpoints that seemed
+multiple cloud providers with broken or buggy API endpoints.
+They seemed
 to be returning result different from expected based on the advertised
 quantization and context sizes.
+The harm caused to the code editing benchmark varied from serious
+to catastrophic.
 
 The best versions of the model rival GPT-4o, while the worst performing
 quantization is more like the older GPT-4 Turbo.
