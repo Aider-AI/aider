@@ -771,7 +771,7 @@ two
         # Test case with no URL
         no_url_input = "This text contains no URL"
         result = coder.check_for_urls(no_url_input)
-        self.assertEqual(result, [])
+        self.assertEqual(result, no_url_input)
 
         # Test case with the same URL appearing multiple times
         repeated_url_input = (
@@ -779,7 +779,8 @@ two
             " more time"
         )
         result = coder.check_for_urls(repeated_url_input)
-        self.assertEqual(result.count("https://example.com"), 1)
+        # the original 3 in the input text, plus 1 more for the scraped text
+        self.assertEqual(result.count("https://example.com"), 4)
         self.assertIn("https://example.com", result)
 
     def test_coder_from_coder_with_subdir(self):
@@ -877,7 +878,7 @@ This command will print 'Hello, World!' to the console."""
             # Test with a message containing a URL
             message = "Check out https://example.com"
             result = coder.check_for_urls(message)
-            self.assertEqual(result, [])
+            self.assertEqual(result, message)
             coder.commands.scraper.scrape.assert_not_called()
 
     def test_unknown_edit_format_exception(self):
