@@ -64,8 +64,8 @@ ANTHROPIC_MODELS = [ln.strip() for ln in ANTHROPIC_MODELS.splitlines() if ln.str
 # Mapping of model aliases to their canonical names
 MODEL_ALIASES = {
     # Claude models
-    "sonnet": "claude-3-sonnet-20241022",
-    "haiku": "claude-3-haiku-20241022",
+    "sonnet": "claude-3-5-sonnet-20241022",
+    "haiku": "claude-3-5-haiku-20241022",
     "opus": "claude-3-opus-20240229",
     # GPT models
     "4": "gpt-4-0613",
@@ -837,7 +837,10 @@ model_info_manager = ModelInfoManager()
 class Model(ModelSettings):
     def __init__(self, model, weak_model=None, editor_model=None, editor_edit_format=None):
         # Map any alias to its canonical name
-        self.name = MODEL_ALIASES.get(model, model)
+        model = MODEL_ALIASES.get(model, model)
+
+        self.name = model
+
         self.max_chat_history_tokens = 1024
         self.weak_model = None
         self.editor_model = None
