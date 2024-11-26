@@ -91,6 +91,7 @@ class Coder:
     cache_warming_thread = None
     num_cache_warming_pings = 0
     suggest_shell_commands = True
+    detect_urls = True
     ignore_mentions = None
     chat_language = None
 
@@ -267,6 +268,7 @@ class Coder:
         num_cache_warming_pings=0,
         suggest_shell_commands=True,
         chat_language=None,
+        detect_urls=True,
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
@@ -280,6 +282,7 @@ class Coder:
         self.ignore_mentions = set()
 
         self.suggest_shell_commands = suggest_shell_commands
+        self.detect_urls = detect_urls
 
         self.num_cache_warming_pings = num_cache_warming_pings
 
@@ -812,6 +815,9 @@ class Coder:
 
     def check_for_urls(self, inp: str) -> List[str]:
         """Check input for URLs and offer to add them to the chat."""
+        if not self.detect_urls:
+            return []
+
         url_pattern = re.compile(r"(https?://[^\s/$.?#].[^\s]*[^\s,.])")
         urls = list(set(url_pattern.findall(inp)))  # Use set to remove duplicates
         added_urls = []
