@@ -194,6 +194,12 @@ def get_parser(default_config_files, git_root):
         help="Specify a file with context window and costs for unknown models",
     )
     group.add_argument(
+        "--alias",
+        action="append",
+        metavar="ALIAS:MODEL",
+        help="Add a model alias (can be used multiple times)",
+    )
+    group.add_argument(
         "--verify-ssl",
         action=argparse.BooleanOptionalAction,
         default=True,

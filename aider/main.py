@@ -635,6 +635,18 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     register_models(git_root, args.model_settings_file, io, verbose=args.verbose)
     register_litellm_models(git_root, args.model_metadata_file, io, verbose=args.verbose)
 
+    # Process any command line aliases
+    if args.alias:
+        for alias_def in args.alias:
+            # Split on first colon only
+            parts = alias_def.split(':', 1)
+            if len(parts) != 2:
+                io.tool_error(f"Invalid alias format: {alias_def}")
+                io.tool_output("Format should be: alias:model-name")
+                return 1
+            alias, model = parts
+            models.MODEL_ALIASES[alias.strip()] = model.strip()
+
     if not args.model:
         args.model = "gpt-4o-2024-08-06"
         if os.environ.get("ANTHROPIC_API_KEY"):
