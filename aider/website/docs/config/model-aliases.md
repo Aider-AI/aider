@@ -20,13 +20,13 @@ Multiple aliases can be defined by using the `--alias` option multiple times. Ea
 
 ## Configuration File
 
-You can also define aliases in your `.aider.conf.yml` file:
+You can also define aliases in your [`.aider.conf.yml` file](https://aider.chat/docs/config/aider_conf.html):
 
 ```yaml
 alias:
   - "fast:gpt-3.5-turbo"
   - "smart:gpt-4"
-  - "code:claude-3-sonnet-20240229"
+  - "hacker:claude-3-sonnet-20240229"
 ```
 
 ## Using Aliases
