@@ -848,7 +848,6 @@ This command will print 'Hello, World!' to the console."""
             self.assertEqual(result, [])
             coder.commands.scraper.scrape.assert_not_called()
 
-
     def test_coder_create_with_new_file_oserror(self):
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
