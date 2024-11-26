@@ -177,13 +177,15 @@ def check_gitignore(git_root, io, ask=True):
     if content and not content.endswith("\n"):
         content += "\n"
     content += "\n".join(patterns_to_add) + "\n"
-    
+
     try:
         io.write_text(gitignore_file, content)
         io.tool_output(f"Added {', '.join(patterns_to_add)} to .gitignore")
     except PermissionError:
         io.tool_error(f"Permission denied when trying to write to {gitignore_file}")
-        io.tool_output("Try running with appropriate permissions or manually add these patterns to .gitignore:")
+        io.tool_output(
+            "Try running with appropriate permissions or manually add these patterns to .gitignore:"
+        )
         for pattern in patterns_to_add:
             io.tool_output(f"  {pattern}")
 
