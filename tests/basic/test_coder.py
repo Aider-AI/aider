@@ -168,6 +168,37 @@ class TestCoder(unittest.TestCase):
 
             self.assertEqual(coder.abs_fnames, set([str(fname.resolve())]))
 
+    def test_skip_duplicate_basename_mentions(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(pretty=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+
+            # Create files with same basename in different directories
+            fname1 = Path("dir1") / "file.txt"
+            fname2 = Path("dir2") / "file.txt"
+            fname3 = Path("dir3") / "unique.txt"
+
+            for fname in [fname1, fname2, fname3]:
+                fname.parent.mkdir(parents=True, exist_ok=True)
+                fname.touch()
+
+            # Add one file to chat
+            coder.add_rel_fname(str(fname1))
+
+            # Mock get_tracked_files to return all files
+            mock = MagicMock()
+            mock.return_value = set([str(fname1), str(fname2), str(fname3)])
+            coder.repo.get_tracked_files = mock
+
+            # Check that file mentions skip files with duplicate basenames
+            mentioned = coder.get_file_mentions(f"Check {fname2} and {fname3}")
+            self.assertEqual(mentioned, {str(fname3)})
+
+            # Add a read-only file with same basename
+            coder.abs_read_only_fnames.add(str(fname2.resolve()))
+            mentioned = coder.get_file_mentions(f"Check {fname1} and {fname3}")
+            self.assertEqual(mentioned, {str(fname3)})
+
     def test_check_for_file_mentions_read_only(self):
         with GitTemporaryDirectory():
             io = InputOutput(
