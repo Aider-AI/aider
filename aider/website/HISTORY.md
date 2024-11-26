@@ -33,6 +33,7 @@ cog.out(text)
 - Skip suggesting files that share names with files already in chat.
 - `/editor` returns and prefill the file content into the prompt, so you can use `/editor` to compose messages that start with `/commands`, etc.
 - Enhanced error handling for analytics.
+- Improved handling of UnknownEditFormat exceptions with helpful documentation links.
 - Aider wrote 92% of the code in this release.
 
 ### Aider v0.64.1
