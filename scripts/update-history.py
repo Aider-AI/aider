@@ -51,7 +51,7 @@ Be sure to attribute changes to the proper .x version.
 Changes in the .x-dev version should be listed under a "### main branch" heading
 """  # noqa
 
-    cmd = ["aider", "HISTORY.md", "--read", tmp_path, "--msg", message]
+    cmd = ["aider", "HISTORY.md", "--read", tmp_path, "--msg", message, "--no-auto-commit"]
     subprocess.run(cmd)
 
     # Cleanup

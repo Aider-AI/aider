@@ -8,6 +8,7 @@
 - Ollama models now default to an 8k context window.
 - Enhanced error handling for analytics.
 - `/editor` returns and prefill the file content into the prompt, so you can use `/editor` to compose messages that start with `/commands`, etc.
+- Skip suggesting files that share names with files already in chat.
 - Aider wrote 93% of the code in this release.
 
 ### Aider v0.64.1
