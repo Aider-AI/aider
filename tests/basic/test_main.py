@@ -678,7 +678,7 @@ class TestMain(TestCase):
                 self.assertEqual(result, 1)  # main() should return 1 on error
                 mock_offer_url.assert_called_once()
                 args, _ = mock_offer_url.call_args
-                self.assertEqual(args[0], "https://aider.chat/docs/edit-formats.html")
+                self.assertEqual(args[0], "https://aider.chat/docs/more/edit-formats.html")
 
     def test_chat_language_spanish(self):
         with GitTemporaryDirectory():
