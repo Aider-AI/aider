@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import os
 import subprocess
 import sys
 from collections import defaultdict
@@ -143,8 +144,31 @@ def main():
             return
 
     if args.all_since:
-        results = process_all_tags_since(args.start_tag)
-        yaml_output = yaml.dump(results, sort_keys=True)
+        new_results = process_all_tags_since(args.start_tag)
+        
+        # If output file exists, read and update it
+        existing_results = []
+        if args.output and os.path.exists(args.output):
+            with open(args.output, 'r') as f:
+                existing_results = yaml.safe_load(f) or []
+
+        # Create a map of start_tag->end_tag to result for existing entries
+        existing_map = {(r['start_tag'], r['end_tag']): i for i, r in enumerate(existing_results)}
+
+        # Update or append new results
+        for new_result in new_results:
+            key = (new_result['start_tag'], new_result['end_tag'])
+            if key in existing_map:
+                # Replace existing entry
+                existing_results[existing_map[key]] = new_result
+            else:
+                # Append new entry
+                existing_results.append(new_result)
+
+        # Sort results by start_tag
+        existing_results.sort(key=lambda x: semver.Version.parse(x['start_tag'][1:]))
+        
+        yaml_output = yaml.dump(existing_results, sort_keys=True)
     else:
         all_file_counts, grand_total, total_lines, aider_total, aider_percentage, end_date = blame(
             args.start_tag, args.end_tag
