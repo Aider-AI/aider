@@ -583,7 +583,19 @@ class Coder:
     def get_ident_filename_matches(self, idents):
         all_fnames = defaultdict(set)
 
+        # Get all files that are already in chat or read-only
+        existing_files = set()
+        for fname in self.abs_fnames:
+            existing_files.add(Path(fname).name)
+        for fname in self.abs_read_only_fnames:
+            existing_files.add(Path(fname).name)
+
+        # Build map of base names to full relative paths
         for fname in self.get_all_relative_files():
+            # Skip files that share names with existing files
+            if Path(fname).name in existing_files:
+                continue
+                
             base = Path(fname).with_suffix("").name.lower()
             if len(base) >= 5:
                 all_fnames[base].add(fname)
