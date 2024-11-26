@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
 import os
+import re
 import subprocess
 import tempfile
-import re
+
 from aider import __version__
 
 
@@ -17,7 +18,16 @@ def get_base_version():
 
 def run_git_log():
     base_ver = get_base_version()
-    cmd = ["git", "log", "-p", f"v{base_ver}..HEAD", "--", "aider/", ":!aider/website/", ":!HISTORY.md"]
+    cmd = [
+        "git",
+        "log",
+        "-p",
+        f"v{base_ver}..HEAD",
+        "--",
+        "aider/",
+        ":!aider/website/",
+        ":!HISTORY.md",
+    ]
     result = subprocess.run(cmd, capture_output=True, text=True)
     return result.stdout
 
