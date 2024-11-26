@@ -821,6 +821,7 @@ This command will print 'Hello, World!' to the console."""
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
             coder = Coder.create(self.GPT35, "diff", io=io, suggest_shell_commands=False)
+            self.assertFalse(coder.suggest_shell_commands)
 
     def test_detect_urls_enabled(self):
         with GitTemporaryDirectory():
