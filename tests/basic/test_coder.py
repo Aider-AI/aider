@@ -884,17 +884,19 @@ This command will print 'Hello, World!' to the console."""
         invalid_format = "invalid_format"
         valid_formats = ["diff", "whole", "map"]
         exc = UnknownEditFormat(invalid_format, valid_formats)
-        expected_msg = f"Unknown edit format {invalid_format}. Valid formats are: {', '.join(valid_formats)}"
+        expected_msg = (
+            f"Unknown edit format {invalid_format}. Valid formats are: {', '.join(valid_formats)}"
+        )
         self.assertEqual(str(exc), expected_msg)
 
     def test_unknown_edit_format_creation(self):
         # Test that creating a Coder with invalid edit format raises the exception
         io = InputOutput(yes=True)
         invalid_format = "invalid_format"
-        
+
         with self.assertRaises(UnknownEditFormat) as cm:
             Coder.create(self.GPT35, invalid_format, io=io)
-        
+
         exc = cm.exception
         self.assertEqual(exc.edit_format, invalid_format)
         self.assertIsInstance(exc.valid_formats, list)
