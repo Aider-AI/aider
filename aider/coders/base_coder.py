@@ -269,7 +269,6 @@ class Coder:
         suggest_shell_commands=True,
         chat_language=None,
         detect_urls=True,
-        detect_urls=True,
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
