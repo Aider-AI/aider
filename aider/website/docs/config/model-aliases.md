@@ -56,9 +56,9 @@ for alias, model in sorted(MODEL_ALIASES.items()):
 - `4-turbo`: gpt-4-1106-preview
 - `4o`: gpt-4o-2024-08-06
 - `deepseek`: deepseek/deepseek-coder
-- `haiku`: claude-3-haiku-20241022
+- `haiku`: claude-3-5-haiku-20241022
 - `opus`: claude-3-opus-20240229
-- `sonnet`: claude-3-sonnet-20241022
+- `sonnet`: claude-3-5-sonnet-20241022
 <!--[[[end]]]-->
 
 ## Priority
