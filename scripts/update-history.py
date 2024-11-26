@@ -44,7 +44,7 @@ def main():
 
     # Run blame to get aider percentage
     blame_result = subprocess.run(["python3", "scripts/blame.py"], capture_output=True, text=True)
-    aider_line = blame_result.stdout.strip().split('\n')[-1]  # Get last line with percentage
+    aider_line = blame_result.stdout.strip().split("\n")[-1]  # Get last line with percentage
 
     # Construct and run the aider command
     message = f"""
