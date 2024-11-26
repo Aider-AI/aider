@@ -384,7 +384,7 @@ class Greeter {
     return 'Hello, $name!';
   }
 }
-"""
+""",
             ),
             "c": (
                 "test.c",
