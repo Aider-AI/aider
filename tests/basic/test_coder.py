@@ -822,6 +822,31 @@ This command will print 'Hello, World!' to the console."""
             io = InputOutput(yes=True)
             coder = Coder.create(self.GPT35, "diff", io=io, suggest_shell_commands=False)
 
+    def test_detect_urls_enabled(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io, detect_urls=True)
+            coder.commands.scraper = MagicMock()
+            coder.commands.scraper.scrape = MagicMock(return_value="some content")
+
+            # Test with a message containing a URL
+            message = "Check out https://example.com"
+            coder.check_for_urls(message)
+            coder.commands.scraper.scrape.assert_called_once_with("https://example.com")
+
+    def test_detect_urls_disabled(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io, detect_urls=False)
+            coder.commands.scraper = MagicMock()
+            coder.commands.scraper.scrape = MagicMock(return_value="some content")
+
+            # Test with a message containing a URL
+            message = "Check out https://example.com"
+            result = coder.check_for_urls(message)
+            self.assertEqual(result, [])
+            coder.commands.scraper.scrape.assert_not_called()
+
             def mock_send(*args, **kwargs):
                 coder.partial_response_content = """Here's a shell command to run:
 
