@@ -202,7 +202,6 @@ class InputOutput:
     ):
         self.placeholder = None
         self.never_prompts = set()
-        self.interrupted_partial_input = None
         self.editingmode = editingmode
         no_color = os.environ.get("NO_COLOR")
         if no_color is not None and no_color != "":
@@ -379,7 +378,7 @@ class InputOutput:
     def interrupt_input(self):
         if self.prompt_session and self.prompt_session.app:
             # Store any partial input before interrupting
-            self.interrupted_partial_input = self.prompt_session.app.current_buffer.text
+            self.placeholder = self.prompt_session.app.current_buffer.text
             self.prompt_session.app.exit()
 
     def get_input(
