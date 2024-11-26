@@ -11,6 +11,7 @@
 - `/editor` returns and prefill the file content into the prompt, so you can use `/editor` to compose messages that start with `/commands`, etc.
 - Enhanced error handling for analytics.
 - Improved handling of UnknownEditFormat exceptions with helpful documentation links.
+- Bumped dependencies to pick up grep-ast 0.4.0 for Dart language support.
 - Aider wrote 81% of the code in this release.
 
 ### Aider v0.64.1
