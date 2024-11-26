@@ -670,12 +670,12 @@ class TestMain(TestCase):
     def test_invalid_edit_format(self):
         with GitTemporaryDirectory():
             with patch("aider.io.InputOutput.offer_url") as mock_offer_url:
-                with self.assertRaises(SystemExit):
-                    main(
-                        ["--edit-format", "not-a-real-format", "--exit", "--yes"],
-                        input=DummyInput(),
-                        output=DummyOutput(),
-                    )
+                result = main(
+                    ["--edit-format", "not-a-real-format", "--exit", "--yes"],
+                    input=DummyInput(),
+                    output=DummyOutput(),
+                )
+                self.assertEqual(result, 1)  # main() should return 1 on error
                 mock_offer_url.assert_called_once()
                 args, _ = mock_offer_url.call_args
                 self.assertEqual(args[0], "https://aider.chat/docs/edit-formats.html")
