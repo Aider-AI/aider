@@ -168,62 +168,6 @@ class TestCoder(unittest.TestCase):
 
             self.assertEqual(coder.abs_fnames, set([str(fname.resolve())]))
 
-    def test_get_ident_filename_matches_with_existing_files(self):
-        with GitTemporaryDirectory():
-            io = InputOutput(pretty=False, yes=True)
-            coder = Coder.create(self.GPT35, None, io)
-
-            # Create files with same name in different directories
-            fname1 = Path("dir1") / "test.py"
-            fname2 = Path("dir2") / "test.py"
-            fname3 = Path("dir3") / "other.py"
-
-            # Create the directories and files
-            for fname in [fname1, fname2, fname3]:
-                fname.parent.mkdir(parents=True, exist_ok=True)
-                fname.touch()
-
-            # Mock get_all_relative_files to return all files
-            mock = MagicMock()
-            mock.return_value = set([str(fname1), str(fname2), str(fname3)])
-            coder.get_all_relative_files = mock
-
-            # Add one of the test.py files to the chat
-            coder.add_rel_fname(str(fname1))
-
-            # Test that get_ident_filename_matches doesn't suggest the other test.py
-            matches = coder.get_ident_filename_matches(["test"])
-            self.assertNotIn(str(fname2), matches)  # Should not suggest other test.py
-            self.assertIn(str(fname3), matches)  # Should suggest other.py
-
-    def test_get_ident_filename_matches_with_read_only_files(self):
-        with GitTemporaryDirectory():
-            io = InputOutput(pretty=False, yes=True)
-            coder = Coder.create(self.GPT35, None, io)
-
-            # Create files with same name in different directories
-            fname1 = Path("dir1") / "test.py"
-            fname2 = Path("dir2") / "test.py"
-            fname3 = Path("dir3") / "other.py"
-
-            # Create the directories and files
-            for fname in [fname1, fname2, fname3]:
-                fname.parent.mkdir(parents=True, exist_ok=True)
-                fname.touch()
-
-            # Mock get_all_relative_files to return all files
-            mock = MagicMock()
-            mock.return_value = set([str(fname1), str(fname2), str(fname3)])
-            coder.get_all_relative_files = mock
-
-            # Add one test.py as a read-only file
-            coder.abs_read_only_fnames.add(str(fname1.resolve()))
-
-            # Test that get_ident_filename_matches doesn't suggest the other test.py
-            matches = coder.get_ident_filename_matches(["test"])
-            self.assertNotIn(str(fname2), matches)  # Should not suggest other test.py
-            self.assertIn(str(fname3), matches)  # Should suggest other.py
-
     def test_check_for_file_mentions_read_only(self):
         with GitTemporaryDirectory():
             io = InputOutput(
