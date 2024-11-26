@@ -45,6 +45,11 @@ and silently discards data that exceeds it.
 - Output token limits -- Open source models are often served with wildly
 differing output token limits. This has a direct impact on how much code the
 model can write or edit in a response.
+- Buggy cloud providers -- Between Qwen and DeepSeep, there were
+multiple cloud providers with broken or buggy API endpoints that seemed
+to be returning result different from expected based on the advertised
+quantization and context sizes.
+
 
 ### Sections
 {: .no_toc }
