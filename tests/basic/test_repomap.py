@@ -373,6 +373,19 @@ class TestRepoMapAllLanguages(unittest.TestCase):
 
     def test_get_repo_map_all_languages(self):
         language_files = {
+            "dart": (
+                "test.dart",
+                """void main() {
+  print('Hello, World!');
+}
+
+class Greeter {
+  String sayHello(String name) {
+    return 'Hello, $name!';
+  }
+}
+""",
+            ),
             "c": (
                 "test.c",
                 (

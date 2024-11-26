@@ -23,8 +23,10 @@ def blame(start_tag, end_tag=None):
     files = [
         f
         for f in files
-        if f.endswith((".py", ".scm", ".sh", "Dockerfile", "Gemfile"))
+        if f.endswith((".js", ".py", ".scm", ".sh", "Dockerfile", "Gemfile"))
         or (f.startswith(".github/workflows/") and f.endswith(".yml"))
+        or f == "aider/website/share/index.md"
+        or f == "aider/website/docs/leaderboards/index.md"
     ]
     files = [f for f in files if not f.endswith("prompts.py")]
 

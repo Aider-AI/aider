@@ -5,7 +5,7 @@ import time
 import uuid
 from pathlib import Path
 
-from mixpanel import Mixpanel
+from mixpanel import Mixpanel, MixpanelException
 from posthog import Posthog
 
 from aider import __version__
@@ -62,8 +62,47 @@ class Analytics:
             self.permanently_disable = True
             self.save_data()
 
-    def need_to_ask(self):
-        return not self.asked_opt_in and not self.permanently_disable
+    def need_to_ask(self, args_analytics):
+        if args_analytics is False:
+            return False
+
+        could_ask = not self.asked_opt_in and not self.permanently_disable
+        if not could_ask:
+            return False
+
+        if args_analytics is True:
+            return True
+
+        assert args_analytics is None, args_analytics
+
+        if not self.user_id:
+            return False
+
+        PERCENT = 2.5
+        return self.is_uuid_in_percentage(self.user_id, PERCENT)
+
+    def is_uuid_in_percentage(self, uuid_str, percent):
+        """Check if a UUID string falls within the first X percent of the UUID space.
+
+        Args:
+            uuid_str: UUID string to test
+            percent: Percentage threshold (0-100)
+
+        Returns:
+            bool: True if UUID falls within the first X percent
+        """
+        if not (0 <= percent <= 100):
+            raise ValueError("Percentage must be between 0 and 100")
+
+        if not uuid_str:
+            return False
+
+        # Convert percentage to hex threshold (1% = "04...", 10% = "1a...", etc)
+        # Using first 6 hex digits
+        if percent == 0:
+            return False
+        threshold = format(int(0xFFFFFF * percent / 100), "06x")
+        return uuid_str[:6] <= threshold
 
     def get_data_file_path(self):
         data_file = Path.home() / ".aider" / "analytics.json"
@@ -120,7 +159,7 @@ class Analytics:
         return None
 
     def event(self, event_name, main_model=None, **kwargs):
-        if not (self.mp or self.ph) and not self.logfile:
+        if not self.mp and not self.ph and not self.logfile:
             return
 
         properties = {}
@@ -143,7 +182,10 @@ class Analytics:
         properties["aider_version"] = __version__
 
         if self.mp:
-            self.mp.track(self.user_id, event_name, dict(properties))
+            try:
+                self.mp.track(self.user_id, event_name, dict(properties))
+            except MixpanelException:
+                self.mp = None  # Disable mixpanel on connection errors
 
         if self.ph:
             self.ph.capture(self.user_id, event_name, dict(properties))

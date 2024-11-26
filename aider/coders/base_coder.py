@@ -37,6 +37,15 @@ from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
 
 
+class UnknownEditFormat(ValueError):
+    def __init__(self, edit_format, valid_formats):
+        self.edit_format = edit_format
+        self.valid_formats = valid_formats
+        super().__init__(
+            f"Unknown edit format {edit_format}. Valid formats are: {', '.join(valid_formats)}"
+        )
+
+
 class MissingAPIKeyError(ValueError):
     pass
 
@@ -91,6 +100,7 @@ class Coder:
     cache_warming_thread = None
     num_cache_warming_pings = 0
     suggest_shell_commands = True
+    detect_urls = True
     ignore_mentions = None
     chat_language = None
 
@@ -156,7 +166,12 @@ class Coder:
                 res.original_kwargs = dict(kwargs)
                 return res
 
-        raise ValueError(f"Unknown edit format {edit_format}")
+        valid_formats = [
+            str(c.edit_format)
+            for c in coders.__all__
+            if hasattr(c, "edit_format") and c.edit_format is not None
+        ]
+        raise UnknownEditFormat(edit_format, valid_formats)
 
     def clone(self, **kwargs):
         new_coder = Coder.create(from_coder=self, **kwargs)
@@ -267,6 +282,7 @@ class Coder:
         num_cache_warming_pings=0,
         suggest_shell_commands=True,
         chat_language=None,
+        detect_urls=True,
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
@@ -280,6 +296,7 @@ class Coder:
         self.ignore_mentions = set()
 
         self.suggest_shell_commands = suggest_shell_commands
+        self.detect_urls = detect_urls
 
         self.num_cache_warming_pings = num_cache_warming_pings
 
@@ -812,6 +829,9 @@ class Coder:
 
     def check_for_urls(self, inp: str) -> List[str]:
         """Check input for URLs and offer to add them to the chat."""
+        if not self.detect_urls:
+            return []
+
         url_pattern = re.compile(r"(https?://[^\s/$.?#].[^\s]*[^\s,.])")
         urls = list(set(url_pattern.findall(inp)))  # Use set to remove duplicates
         added_urls = []
@@ -962,7 +982,7 @@ class Coder:
         if self.chat_language:
             language = self.chat_language
         else:
-            language = "in the same language they are using"
+            language = "the same language they are using"
 
         prompt = prompt.format(
             fence=self.fence,
@@ -1059,7 +1079,7 @@ class Coder:
         max_input_tokens = self.main_model.info.get("max_input_tokens") or 0
         # Add the reminder prompt if we still have room to include it.
         if (
-            max_input_tokens is None
+            not max_input_tokens
             or total_tokens < max_input_tokens
             and self.gpt_prompts.system_reminder
         ):
@@ -1405,9 +1425,18 @@ class Coder:
 
         addable_rel_fnames = self.get_addable_relative_files()
 
+        # Get basenames of files already in chat or read-only
+        existing_basenames = {os.path.basename(f) for f in self.get_inchat_relative_files()} | {
+            os.path.basename(self.get_rel_fname(f)) for f in self.abs_read_only_fnames
+        }
+
         mentioned_rel_fnames = set()
         fname_to_rel_fnames = {}
         for rel_fname in addable_rel_fnames:
+            # Skip files that share a basename with files already in chat
+            if os.path.basename(rel_fname) in existing_basenames:
+                continue
+
             normalized_rel_fname = rel_fname.replace("\\", "/")
             normalized_words = set(word.replace("\\", "/") for word in words)
             if normalized_rel_fname in normalized_words:
@@ -2061,9 +2090,10 @@ class Coder:
             if output:
                 accumulated_output += f"Output from {command}\n{output}\n"
 
-        if accumulated_output.strip() and not self.io.confirm_ask(
+        if accumulated_output.strip() and self.io.confirm_ask(
             "Add command output to the chat?", allow_never=True
         ):
-            accumulated_output = ""
-
-        return accumulated_output
+            num_lines = len(accumulated_output.strip().splitlines())
+            line_plural = "line" if num_lines == 1 else "lines"
+            self.io.tool_output(f"Added {num_lines} {line_plural} of output to the chat.")
+            return accumulated_output

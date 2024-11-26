@@ -33,6 +33,13 @@ To reduce output tokens:
 For more info: https://aider.chat/docs/token-limits.html
 ```
 
+{: .note }
+Aider never *enforces* token limits, it only *reports* token limit errors
+from the API provider.
+You probably don't need to
+[configure aider with the proper token limits](http://0.0.0.0:4000/docs/config/adv-model-settings.html#context-window-size-and-token-costs)
+for unusual models.
+
 ## Input tokens & context window size
 
 The most common problem is trying to send too much data to a 

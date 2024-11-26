@@ -1068,8 +1068,10 @@ class TestCommands(TestCase):
             io.prompt_ask = lambda *args, **kwargs: "y"
 
             # Test the cmd_run method with a command that should not raise an error
-            result = commands.cmd_run("exit 1", add_on_nonzero_exit=True)
-            self.assertIn("I ran this command", result)
+            commands.cmd_run("exit 1", add_on_nonzero_exit=True)
+
+            # Check that the output was added to cur_messages
+            self.assertTrue(any("exit 1" in msg["content"] for msg in coder.cur_messages))
 
     def test_cmd_add_drop_untracked_files(self):
         with GitTemporaryDirectory():

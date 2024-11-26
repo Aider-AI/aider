@@ -2,6 +2,12 @@
 nav_exclude: true
 ---
 
+<meta http-equiv="Content-Security-Policy" 
+    content="default-src 'self'; 
+             script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; 
+             connect-src http: https:;
+             style-src 'self' 'unsafe-inline';">
+
 # Shared aider chat transcript
 
 A user has shared the following transcript of a pair programming chat session
@@ -37,11 +43,29 @@ print("goodbye")
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
 <script>
+function isValidUrl(url) {
+    try {
+        const urlObj = new URL(url);
+        return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+    } catch {
+        return false;
+    }
+}
+
+// Configure marked with secure defaults
+marked.setOptions({
+    headerIds: false,
+    mangle: false
+});
+
 window.onload = function() {
     var urlParams = new URLSearchParams(window.location.search);
     var conv = urlParams.get('mdurl');
-    if (!conv) {
+    if (!conv || !isValidUrl(conv)) {
+        document.querySelector('#shared-transcript').innerHTML = 
+            '<div style="color: red; padding: 1em;">Error: Invalid or missing URL provided</div>';
         return;
     }
     document.getElementById('mdurl').href = conv;
@@ -63,11 +87,14 @@ window.onload = function() {
             return line;
         }).join('\n');
         var html = marked.parse(markdown);
+        var sanitizedHtml = DOMPurify.sanitize(html);
         var divElement = document.querySelector('#shared-transcript');
-        divElement.innerHTML = html;
+        divElement.innerHTML = sanitizedHtml;
     })
     .catch(error => {
         console.error('Error fetching markdown:', error);
+        document.querySelector('#shared-transcript').innerHTML = 
+            '<div style="color: red; padding: 1em;">Error: Failed to load chat transcript</div>';
     });
 }
 </script>

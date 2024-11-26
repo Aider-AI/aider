@@ -132,6 +132,9 @@ cog.outl("```")
 ## Specify a file with context window and costs for unknown models
 #AIDER_MODEL_METADATA_FILE=.aider.model.metadata.json
 
+## Add a model alias (can be used multiple times)
+#AIDER_ALIAS=
+
 ## Verify the SSL cert when connecting to models (default: True)
 #AIDER_VERIFY_SSL=true
 
@@ -312,8 +315,8 @@ cog.outl("```")
 ############
 # Analytics:
 
-## Enable/disable analytics for one session (default: False)
-#AIDER_ANALYTICS=false
+## Enable/disable analytics for current session (default: random)
+#AIDER_ANALYTICS=
 
 ## Specify a file to log analytics events
 #AIDER_ANALYTICS_LOG=
@@ -341,6 +344,9 @@ cog.outl("```")
 
 ## Check for new aider versions on launch
 #AIDER_CHECK_UPDATE=true
+
+## Show release notes on first run of new version (default: None, ask user)
+#AIDER_SHOW_RELEASE_NOTES=
 
 ## Install the latest version from the main branch
 #AIDER_INSTALL_MAIN_BRANCH=false
@@ -389,6 +395,12 @@ cog.outl("```")
 
 ## Enable/disable fancy input with history and completion (default: True)
 #AIDER_FANCY_INPUT=true
+
+## Enable/disable detection and offering to add URLs to chat (default: True)
+#AIDER_DETECT_URLS=true
+
+## Specify which editor to use for the /editor command
+#AIDER_EDITOR=
 
 #################
 # Voice Settings:

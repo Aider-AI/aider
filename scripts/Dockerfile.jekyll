@@ -15,6 +15,6 @@ RUN bundle install --retry 5 --jobs 20
 ENTRYPOINT [ "docker-entrypoint.sh" ]
 
 # bundle exec jekyll serve --force_polling -H 0.0.0.0 -P 4000
-CMD [ "bundle", "exec", "jekyll", "serve", "--force_polling", "-H", "0.0.0.0", "-P", "4000" ]
+CMD [ "bundle", "exec", "jekyll", "serve", "--verbose", "--trace", "--force_polling", "-H", "0.0.0.0", "-P", "4000" ]
 
 

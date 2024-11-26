@@ -2,6 +2,7 @@
 
 docker run \
        -it --rm \
+       --add-host=host.docker.internal:host-gateway \
        -v `pwd`:/aider \
        -v `pwd`/tmp.benchmarks/.:/benchmarks \
        -e OPENAI_API_KEY=$OPENAI_API_KEY \

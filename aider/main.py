@@ -5,6 +5,8 @@ import re
 import sys
 import threading
 import traceback
+import webbrowser
+from dataclasses import fields
 from pathlib import Path
 
 import git
@@ -16,11 +18,13 @@ from aider import __version__, models, urls, utils
 from aider.analytics import Analytics
 from aider.args import get_parser
 from aider.coders import Coder
+from aider.coders.base_coder import UnknownEditFormat
 from aider.commands import Commands, SwitchCoder
 from aider.format_settings import format_settings, scrub_sensitive_info
 from aider.history import ChatSummary
 from aider.io import InputOutput
 from aider.llm import litellm  # noqa: F401; properly init litellm on launch
+from aider.models import ModelSettings
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.report import report_uncaught_exceptions
 from aider.versioncheck import check_version, install_from_main_branch, install_upgrade
@@ -332,13 +336,15 @@ def load_dotenv_files(git_root, dotenv_fname, encoding="utf-8"):
 
 
 def register_litellm_models(git_root, model_metadata_fname, io, verbose=False):
-    model_metatdata_files = generate_search_path_list(
-        ".aider.model.metadata.json", git_root, model_metadata_fname
-    )
+    model_metatdata_files = []
 
     # Add the resource file path
     resource_metadata = importlib_resources.files("aider.resources").joinpath("model-metadata.json")
     model_metatdata_files.append(str(resource_metadata))
+
+    model_metatdata_files += generate_search_path_list(
+        ".aider.model.metadata.json", git_root, model_metadata_fname
+    )
 
     try:
         model_metadata_files_loaded = models.register_litellm_models(model_metatdata_files)
@@ -503,8 +509,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         io.tool_warning("Terminal does not support pretty output (UnicodeDecodeError)")
 
     analytics = Analytics(logfile=args.analytics_log, permanently_disable=args.analytics_disable)
-    if args.analytics:
-        if analytics.need_to_ask():
+    if args.analytics is not False:
+        if analytics.need_to_ask(args.analytics):
             io.tool_output(
                 "Aider respects your privacy and never collects your code, chat messages, keys or"
                 " personal info."
@@ -540,7 +546,14 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     all_files = args.files + (args.file or [])
     fnames = [str(Path(fn).resolve()) for fn in all_files]
-    read_only_fnames = [str(Path(fn).resolve()) for fn in (args.read or [])]
+    read_only_fnames = []
+    for fn in args.read or []:
+        path = Path(fn).resolve()
+        if path.is_dir():
+            read_only_fnames.extend(str(f) for f in path.rglob("*") if f.is_file())
+        else:
+            read_only_fnames.append(str(path))
+
     if len(all_files) > 1:
         good = True
         for fname in all_files:
@@ -603,7 +616,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     cmd_line = scrub_sensitive_info(args, cmd_line)
     io.tool_output(cmd_line, log_only=True)
 
-    check_and_load_imports(io, verbose=args.verbose)
+    is_first_run = is_first_run_of_new_version(io, verbose=args.verbose)
+    check_and_load_imports(io, is_first_run, verbose=args.verbose)
 
     if args.anthropic_api_key:
         os.environ["ANTHROPIC_API_KEY"] = args.anthropic_api_key
@@ -622,6 +636,18 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     register_models(git_root, args.model_settings_file, io, verbose=args.verbose)
     register_litellm_models(git_root, args.model_metadata_file, io, verbose=args.verbose)
 
+    # Process any command line aliases
+    if args.alias:
+        for alias_def in args.alias:
+            # Split on first colon only
+            parts = alias_def.split(":", 1)
+            if len(parts) != 2:
+                io.tool_error(f"Invalid alias format: {alias_def}")
+                io.tool_output("Format should be: alias:model-name")
+                return 1
+            alias, model = parts
+            models.MODEL_ALIASES[alias.strip()] = model.strip()
+
     if not args.model:
         args.model = "gpt-4o-2024-08-06"
         if os.environ.get("ANTHROPIC_API_KEY"):
@@ -635,8 +661,14 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     )
 
     if args.verbose:
-        io.tool_output("Model info:")
+        io.tool_output("Model metadata:")
         io.tool_output(json.dumps(main_model.info, indent=4))
+
+        io.tool_output("Model settings:")
+        for attr in sorted(fields(ModelSettings), key=lambda x: x.name):
+            val = getattr(main_model, attr.name)
+            val = json.dumps(val, indent=4)
+            io.tool_output(f"{attr.name}: {val}")
 
     lint_cmds = parse_lint_cmds(args.lint_cmd, io)
     if lint_cmds is None:
@@ -678,7 +710,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             return 1
 
     commands = Commands(
-        io, None, verify_ssl=args.verify_ssl, args=args, parser=parser, verbose=args.verbose
+        io,
+        None,
+        verify_ssl=args.verify_ssl,
+        args=args,
+        parser=parser,
+        verbose=args.verbose,
+        editor=args.editor,
     )
 
     summarizer = ChatSummary(
@@ -726,7 +764,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             num_cache_warming_pings=args.cache_keepalive_pings,
             suggest_shell_commands=args.suggest_shell_commands,
             chat_language=args.chat_language,
+            detect_urls=args.detect_urls,
         )
+    except UnknownEditFormat as err:
+        io.tool_error(str(err))
+        io.offer_url(urls.edit_formats, "Open documentation about edit formats?")
+        return 1
     except ValueError as err:
         io.tool_error(str(err))
         return 1
@@ -788,6 +831,18 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     io.tool_output('Use /help <question> for help, run "aider --help" to see cmd line args')
 
+    if args.show_release_notes is True:
+        io.tool_output(f"Opening release notes: {urls.release_notes}")
+        io.tool_output()
+        webbrowser.open(urls.release_notes)
+    elif args.show_release_notes is None and is_first_run:
+        io.tool_output()
+        io.offer_url(
+            urls.release_notes,
+            "Would you like to see what's new in this version?",
+            allow_never=False,
+        )
+
     if git_root and Path.cwd().resolve() != Path(git_root).resolve():
         io.tool_warning(
             "Note: in-chat filenames are always relative to the git working dir, not the current"
@@ -843,7 +898,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 coder.show_announcements()
 
 
-def check_and_load_imports(io, verbose=False):
+def is_first_run_of_new_version(io, verbose=False):
+    """Check if this is the first run of a new version/executable combination"""
     installs_file = Path.home() / ".aider" / "installs.json"
     key = (__version__, sys.executable)
 
@@ -864,7 +920,26 @@ def check_and_load_imports(io, verbose=False):
             if verbose:
                 io.tool_output("Installs file does not exist, creating new dictionary")
 
-        if str(key) not in installs:
+        is_first_run = str(key) not in installs
+
+        if is_first_run:
+            installs[str(key)] = True
+            installs_file.parent.mkdir(parents=True, exist_ok=True)
+            with open(installs_file, "w") as f:
+                json.dump(installs, f, indent=4)
+
+        return is_first_run
+
+    except Exception as e:
+        io.tool_warning(f"Error checking version: {e}")
+        if verbose:
+            io.tool_output(f"Full exception details: {traceback.format_exc()}")
+        return True  # Safer to assume it's a first run if we hit an error
+
+
+def check_and_load_imports(io, is_first_run, verbose=False):
+    try:
+        if is_first_run:
             if verbose:
                 io.tool_output(
                     "First run for this version and executable, loading imports synchronously"
@@ -875,13 +950,8 @@ def check_and_load_imports(io, verbose=False):
                 io.tool_error(str(err))
                 io.tool_output("Error loading required imports. Did you install aider properly?")
                 io.offer_url(urls.install_properly, "Open documentation url for more info?")
-
                 sys.exit(1)
 
-            installs[str(key)] = True
-            installs_file.parent.mkdir(parents=True, exist_ok=True)
-            with open(installs_file, "w") as f:
-                json.dump(installs, f, indent=4)
             if verbose:
                 io.tool_output("Imports loaded and installs file updated")
         else:
@@ -890,8 +960,9 @@ def check_and_load_imports(io, verbose=False):
             thread = threading.Thread(target=load_slow_imports)
             thread.daemon = True
             thread.start()
+
     except Exception as e:
-        io.tool_warning(f"Error in checking imports: {e}")
+        io.tool_warning(f"Error in loading imports: {e}")
         if verbose:
             io.tool_output(f"Full exception details: {traceback.format_exc()}")
 

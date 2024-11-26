@@ -11,6 +11,13 @@ description: Configuring advanced settings for LLMs.
 In most cases, you can safely ignore aider's warning about unknown context
 window size and model costs.
 
+{: .note }
+Aider never *enforces* token limits, it only *reports* token limit errors
+from the API provider.
+You probably don't need to
+configure aider with the proper token limits
+for unusual models.
+
 But, you can register context window limits and costs for models that aren't known
 to aider. Create a `.aider.model.metadata.json` file in one of these locations:
 
@@ -55,8 +62,10 @@ These model settings are pre-configured for most popular models.
 But it can sometimes be helpful to override them or add settings for
 a model that aider doesn't know about.
 
-To do that,
-create a `.aider.model.settings.yml` file in one of these locations:
+
+### Configuration file locations
+
+You can override or add settings for any model by creating a `.aider.model.settings.yml` file in one of these locations:
 
 - Your home directory.
 - The root if your git repo.
@@ -66,9 +75,31 @@ create a `.aider.model.settings.yml` file in one of these locations:
 If the files above exist, they will be loaded in that order. 
 Files loaded last will take priority.
 
-The yaml file should be a a list of dictionary objects for each model.
-For example, below are all the pre-configured model settings
-to give a sense for the settings which are supported.
+The yaml file should be a list of dictionary objects for each model.
+
+
+### Global extra params
+
+You can use the special model name `aider/extra_params` to define 
+`extra_params` that will be passed to `litellm.completion()` for all models.
+Only the `extra_params` dict is used from this special model name.
+
+For example:
+
+```yaml
+- name: aider/extra_params
+  extra_params:
+    extra_headers:
+      Custom-Header: value
+    max_tokens: 8192
+```
+
+These settings will be merged with any model-specific settings, with the 
+`aider/extra_params` settings taking precedence for any direct conflicts.
+
+### Example model settings
+
+Below are all the pre-configured model settings to give a sense for the settings which are supported.
 
 You can also look at the `ModelSettings` class in
 [models.py](https://github.com/Aider-AI/aider/blob/main/aider/models.py)
@@ -234,6 +265,38 @@ cog.out("```\n")
   extra_params: null
   lazy: true
   name: gpt-4o-2024-08-06
+  reminder: sys
+  send_undo_reply: false
+  streaming: true
+  use_repo_map: true
+  use_system_prompt: true
+  use_temperature: true
+  weak_model_name: gpt-4o-mini
+- cache_control: false
+  caches_by_default: false
+  edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
+  examples_as_sys_msg: false
+  extra_params: null
+  lazy: true
+  name: gpt-4o-2024-11-20
+  reminder: sys
+  send_undo_reply: false
+  streaming: true
+  use_repo_map: true
+  use_system_prompt: true
+  use_temperature: true
+  weak_model_name: gpt-4o-mini
+- cache_control: false
+  caches_by_default: false
+  edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
+  examples_as_sys_msg: false
+  extra_params: null
+  lazy: true
+  name: openai/gpt-4o-2024-11-20
   reminder: sys
   send_undo_reply: false
   streaming: true
@@ -1057,7 +1120,7 @@ cog.out("```\n")
   name: openai/o1-mini
   reminder: user
   send_undo_reply: false
-  streaming: false
+  streaming: true
   use_repo_map: true
   use_system_prompt: false
   use_temperature: false
@@ -1073,7 +1136,7 @@ cog.out("```\n")
   name: azure/o1-mini
   reminder: user
   send_undo_reply: false
-  streaming: false
+  streaming: true
   use_repo_map: true
   use_system_prompt: false
   use_temperature: false
@@ -1089,7 +1152,7 @@ cog.out("```\n")
   name: o1-mini
   reminder: user
   send_undo_reply: false
-  streaming: false
+  streaming: true
   use_repo_map: true
   use_system_prompt: false
   use_temperature: false
@@ -1105,7 +1168,7 @@ cog.out("```\n")
   name: openai/o1-preview
   reminder: user
   send_undo_reply: false
-  streaming: false
+  streaming: true
   use_repo_map: true
   use_system_prompt: false
   use_temperature: false
@@ -1121,7 +1184,7 @@ cog.out("```\n")
   name: azure/o1-preview
   reminder: user
   send_undo_reply: false
-  streaming: false
+  streaming: true
   use_repo_map: true
   use_system_prompt: false
   use_temperature: false
@@ -1137,7 +1200,7 @@ cog.out("```\n")
   name: o1-preview
   reminder: user
   send_undo_reply: false
-  streaming: false
+  streaming: true
   use_repo_map: true
   use_system_prompt: false
   use_temperature: false

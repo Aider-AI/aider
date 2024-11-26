@@ -3,7 +3,14 @@ parent: Usage
 nav_order: 50
 description: Control aider with in-chat commands like /add, /model, etc.
 ---
+
 # In-chat commands
+{: .no_toc }
+
+- TOC
+{:toc}
+
+## Slash commands
 
 Aider supports commands from within the chat, which all start with `/`.
 
@@ -24,6 +31,7 @@ cog.out(get_help_md())
 | **/copy** | Copy the last assistant message to the clipboard |
 | **/diff** | Display the diff of changes since the last message |
 | **/drop** | Remove files from the chat session to free up context space |
+| **/editor** | Open an editor to write a prompt |
 | **/exit** | Exit the application |
 | **/git** | Run a git command (output excluded from chat) |
 | **/help** | Ask questions about aider |

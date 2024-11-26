@@ -194,6 +194,12 @@ def get_parser(default_config_files, git_root):
         help="Specify a file with context window and costs for unknown models",
     )
     group.add_argument(
+        "--alias",
+        action="append",
+        metavar="ALIAS:MODEL",
+        help="Add a model alias (can be used multiple times)",
+    )
+    group.add_argument(
         "--verify-ssl",
         action=argparse.BooleanOptionalAction,
         default=True,
@@ -562,8 +568,8 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--analytics",
         action=argparse.BooleanOptionalAction,
-        default=False,
-        help="Enable/disable analytics for one session (default: False)",
+        default=None,
+        help="Enable/disable analytics for current session (default: random)",
     )
     group.add_argument(
         "--analytics-log",
@@ -619,6 +625,12 @@ def get_parser(default_config_files, git_root):
         action=argparse.BooleanOptionalAction,
         help="Check for new aider versions on launch",
         default=True,
+    )
+    group.add_argument(
+        "--show-release-notes",
+        action=argparse.BooleanOptionalAction,
+        help="Show release notes on first run of new version (default: None, ask user)",
+        default=None,
     )
     group.add_argument(
         "--install-main-branch",
@@ -731,6 +743,16 @@ def get_parser(default_config_files, git_root):
         action=argparse.BooleanOptionalAction,
         default=True,
         help="Enable/disable fancy input with history and completion (default: True)",
+    )
+    group.add_argument(
+        "--detect-urls",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Enable/disable detection and offering to add URLs to chat (default: True)",
+    )
+    group.add_argument(
+        "--editor",
+        help="Specify which editor to use for the /editor command",
     )
 
     ##########

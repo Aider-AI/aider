@@ -1,7 +1,7 @@
 - dirname: 2024-05-01-20-05-59--direct-opus-filenames-outside-fence
   test_cases: 133
   model: claude-3-opus-20240229
-  released: 2024-02-29
+  _released: 2024-02-29
   edit_format: diff
   commit_hash: f4b1797-dirty, f4b1797
   pass_rate_1: 53.4
@@ -46,7 +46,8 @@
 
 - dirname: 2024-05-03-20-47-24--gemini-1.5-pro-diff-fenced
   test_cases: 133
-  model: gemini-1.5-pro-latest
+  released: 2024-05-03
+  model: gemini-1.5-pro-001
   edit_format: diff-fenced
   commit_hash: 3a48dfb, 5d32dd7
   pass_rate_1: 45.9
@@ -274,7 +275,7 @@
 - dirname: 2024-05-03-22-24-48--openrouter--llama3-diff-examples-sys-msg
   test_cases: 132
   model: llama3-70b-8192
-  released: 2024-04-18
+  _released: 2024-04-18
   edit_format: diff
   commit_hash: b5bb453
   pass_rate_1: 38.6
@@ -297,7 +298,7 @@
 - dirname: 2024-05-06-18-31-08--command-r-plus-whole-final
   test_cases: 133
   model: command-r-plus
-  released: 2024-04-04
+  _released: 2024-04-04
   edit_format: whole
   commit_hash: fc3a43e-dirty
   pass_rate_1: 21.8
@@ -410,6 +411,7 @@
 - dirname: 2024-06-08-22-37-55--qwen2-72b-instruct-whole
   test_cases: 133
   model: Qwen2 72B Instruct
+  released: 2024-06-08
   edit_format: whole
   commit_hash: 02c7335-dirty, 1a97498-dirty
   pass_rate_1: 44.4
@@ -623,7 +625,7 @@
   commit_hash: d31eef3-dirty
   pass_rate_1: 40.6
   pass_rate_2: 55.6
-  released: 2024-07-18
+  _released: 2024-07-18
   percent_cases_well_formed: 100.0
   error_outputs: 1
   num_malformed_responses: 0
@@ -671,7 +673,7 @@
   commit_hash: f7ce78b-dirty
   pass_rate_1: 46.6
   pass_rate_2: 63.9
-  released: 2024-07-23
+  _released: 2024-07-23
   percent_cases_well_formed: 92.5
   error_outputs: 84
   num_malformed_responses: 19
@@ -691,6 +693,7 @@
 - dirname: 2024-07-24-06-30-29--llama-405b-whole
   test_cases: 133
   model: llama-3.1-405b-instruct (whole)
+  _released: 2024-07-23
   edit_format: whole
   commit_hash: a362dea-dirty
   pass_rate_1: 48.9
@@ -698,7 +701,6 @@
   percent_cases_well_formed: 100.0
   error_outputs: 0
   num_malformed_responses: 0
-  released: 2024-07-23
   num_with_malformed_responses: 0
   user_asks: 0
   lazy_comments: 0
@@ -770,7 +772,7 @@
   percent_cases_well_formed: 100.0
   error_outputs: 27
   num_malformed_responses: 0
-  released: 2024-07-23
+  _released: 2024-07-23
   num_with_malformed_responses: 0
   user_asks: 23
   lazy_comments: 8
@@ -796,7 +798,7 @@
   num_malformed_responses: 0
   num_with_malformed_responses: 0
   user_asks: 0
-  released: 2024-07-23
+  _released: 2024-07-23
   lazy_comments: 0
   syntax_errors: 0
   indentation_errors: 0
@@ -835,6 +837,7 @@
 - dirname: 2024-08-28-07-10-50--gemini-1.5-pro-exp-0827-diff-fenced
   test_cases: 133
   model: gemini-1.5-pro-exp-0827
+  released: 2024-08-27
   edit_format: diff-fenced
   commit_hash: d8adc75
   pass_rate_1: 54.9
@@ -946,7 +949,7 @@
   versions: 0.54.13.dev
   seconds_per_case: 8.3
   total_cost: 0.0000
-  released: 2024-09-04
+  _released: 2024-09-04
 
 - dirname: 2024-09-04-16-17-33--yi-coder-9b-chat-q4_0-whole
   test_cases: 133
@@ -973,6 +976,7 @@
 
 - dirname: 2024-09-05-14-50-11--deepseek-sep5-no-shell
   test_cases: 133
+  released: 2024-09-05
   model: DeepSeek V2.5
   edit_format: diff
   commit_hash: 1279c86
@@ -1112,6 +1116,7 @@
 - dirname: 2024-09-21-16-45-11--o1-preview-flex-sr-markers
   test_cases: 133
   model: o1-preview
+  _released: 2024-09-12
   edit_format: diff
   commit_hash: 5493654-dirty
   pass_rate_1: 57.9
@@ -1204,6 +1209,7 @@
 - dirname: 2024-09-24-16-26-45--gemini-1.5-pro-002-diff-fenced
   test_cases: 133
   model: gemini-1.5-pro-002
+  released: 2024-09-24
   edit_format: diff-fenced
   commit_hash: 6b5fe9b, 3edcd71
   pass_rate_1: 49.6
@@ -1477,6 +1483,7 @@
 - dirname: 2024-10-04-16-30-08--chatgpt-4o-latest-diff-oct4
   test_cases: 133
   model: openai/chatgpt-4o-latest
+  released: 2024-10-04
   edit_format: diff
   commit_hash: af10953
   pass_rate_1: 56.4
@@ -1592,6 +1599,7 @@
 - dirname: 2024-10-22-17-45-28--sonnet-1022-diff-fixed-model-settings
   test_cases: 133
   model: claude-3-5-sonnet-20241022
+  released: 2024-10-22
   edit_format: diff
   commit_hash: 3b14eb9
   pass_rate_1: 69.2
@@ -1615,6 +1623,7 @@
 - dirname: 2024-11-04-19-19-32--haiku35-diff-ex-as-sys-false
   test_cases: 133
   model: claude-3-5-haiku-20241022
+  released: 2024-10-22
   edit_format: diff
   commit_hash: 03bbdb0-dirty
   pass_rate_1: 61.7
@@ -1773,32 +1782,10 @@
   seconds_per_case: 18.3
   total_cost: 0.0000
 
-- dirname: 2024-11-09-10-57-11--Qwen2.5-Coder-32B-Instruct
-  test_cases: 133
-  model: Qwen2.5-Coder-32B-Instruct (whole)
-  edit_format: whole
-  commit_hash: ec9982a
-  pass_rate_1: 60.9
-  pass_rate_2: 73.7
-  percent_cases_well_formed: 100.0
-  error_outputs: 1
-  num_malformed_responses: 0
-  num_with_malformed_responses: 0
-  user_asks: 1
-  lazy_comments: 0
-  syntax_errors: 0
-  indentation_errors: 0
-  exhausted_context_windows: 1
-  test_timeouts: 1
-  command: aider --model openai/Qwen2.5-Coder-32B-Instruct
-  date: 2024-11-09
-  versions: 0.59.2.dev
-  seconds_per_case: 26.6
-  total_cost: 0.0000
-
 - dirname: 2024-11-09-11-09-15--Qwen2.5-Coder-32B-Instruct
   test_cases: 133
-  model: Qwen2.5-Coder-32B-Instruct (diff)
+  model: Qwen2.5-Coder-32B-Instruct
+  released: 2024-11-12
   edit_format: diff
   commit_hash: ec9982a
   pass_rate_1: 59.4
@@ -1813,8 +1800,149 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 3
-  command: aider --model openai/Qwen2.5-Coder-32B-Instruct
+  command: aider --model openai/hf:Qwen/Qwen2.5-Coder-32B-Instruct --openai-api-base https://glhf.chat/api/openai/v1
   date: 2024-11-09
   versions: 0.59.2.dev
   seconds_per_case: 22.5
   total_cost: 0.0000
+
+- dirname: 2024-11-20-14-57-11--mistral-2411-direct-diff
+  test_cases: 133
+  model: Mistral Large (2411)
+  released: 2024-11-18
+  edit_format: diff
+  commit_hash: dba844c
+  pass_rate_1: 46.6
+  pass_rate_2: 65.4
+  percent_cases_well_formed: 96.2
+  error_outputs: 8
+  num_malformed_responses: 8
+  num_with_malformed_responses: 5
+  user_asks: 5
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 1
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model mistral/mistral-large-latest
+  date: 2024-11-20
+  versions: 0.63.3.dev
+  seconds_per_case: 24.9
+  total_cost: 3.2334
+
+- dirname: 2024-11-20-19-28-30--gpt-4o-2024-11-20
+  test_cases: 133
+  model: gpt-4o-2024-11-20
+  released: 2024-11-20
+  edit_format: diff
+  commit_hash: 2ac0776-dirty
+  pass_rate_1: 58.6
+  pass_rate_2: 71.4
+  percent_cases_well_formed: 99.2
+  error_outputs: 1
+  num_malformed_responses: 1
+  num_with_malformed_responses: 1
+  user_asks: 4
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 5
+  command: aider --model openai/gpt-4o-2024-11-20
+  date: 2024-11-20
+  versions: 0.63.3.dev
+  seconds_per_case: 6.0
+  total_cost: 0.0000
+
+- dirname: 2024-09-20-21-47-17--qwen2.5-32b-instruct-q8_0-whole
+  test_cases: 133
+  model: ollama/qwen2.5:32b-instruct-q8_0
+  edit_format: whole
+  commit_hash: 2753ac6
+  pass_rate_1: 46.6
+  pass_rate_2: 58.6
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 1
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  command: aider --model ollama/qwen2.5:32b-instruct-q8_0
+  date: 2024-09-20
+  versions: 0.56.1.dev
+  seconds_per_case: 1763.7
+  total_cost: 0.0000
+
+- dirname: 2024-11-20-15-17-37--qwen25-32b-or-diff
+  test_cases: 133
+  model: openrouter/qwen/qwen-2.5-coder-32b-instruct
+  edit_format: diff
+  commit_hash: e917424
+  pass_rate_1: 49.6
+  pass_rate_2: 65.4
+  percent_cases_well_formed: 84.2
+  error_outputs: 43
+  num_malformed_responses: 31
+  num_with_malformed_responses: 21
+  user_asks: 43
+  lazy_comments: 0
+  syntax_errors: 2
+  indentation_errors: 2
+  exhausted_context_windows: 12
+  test_timeouts: 2
+  command: aider --model openrouter/qwen/qwen-2.5-coder-32b-instruct
+  date: 2024-11-20
+  versions: 0.63.3.dev
+  seconds_per_case: 40.7
+  total_cost: 0.1497
+
+- dirname: 2024-11-21-17-46-36--gemini-exp-1121-diff
+  test_cases: 133
+  model: gemini-exp-1121
+  released: 2024-11-21
+  edit_format: diff
+  commit_hash: e94961a
+  pass_rate_1: 46.6
+  pass_rate_2: 57.9
+  percent_cases_well_formed: 83.5
+  error_outputs: 101
+  num_malformed_responses: 101
+  num_with_malformed_responses: 22
+  user_asks: 5
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 2
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: aider --model gemini/gemini-exp-1121
+  date: 2024-11-21
+  versions: 0.63.3.dev
+  seconds_per_case: 60.3
+  total_cost: 0.0000
+
+- dirname: 2024-11-15-20-33-31--gemini-exp-1114-diff
+  test_cases: 133
+  model: gemini-exp-1114
+  released: 2024-11-14
+  edit_format: diff
+  commit_hash: 0bf17a4
+  pass_rate_1: 50.4
+  pass_rate_2: 60.9
+  percent_cases_well_formed: 85.7
+  error_outputs: 70
+  num_malformed_responses: 70
+  num_with_malformed_responses: 19
+  user_asks: 2
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 4
+  command: aider --model gemini/gemini-exp-1114
+  date: 2024-11-15
+  versions: 0.63.2.dev
+  seconds_per_case: 38.6

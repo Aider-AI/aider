@@ -14,6 +14,7 @@ from prompt_toolkit.completion import Completion, PathCompleter
 from prompt_toolkit.document import Document
 
 from aider import models, prompts, voice
+from aider.editor import pipe_editor
 from aider.format_settings import format_settings
 from aider.help import Help, install_help_extra
 from aider.llm import litellm
@@ -45,7 +46,15 @@ class Commands:
         )
 
     def __init__(
-        self, io, coder, voice_language=None, verify_ssl=True, args=None, parser=None, verbose=False
+        self,
+        io,
+        coder,
+        voice_language=None,
+        verify_ssl=True,
+        args=None,
+        parser=None,
+        verbose=False,
+        editor=None,
     ):
         self.io = io
         self.coder = coder
@@ -60,6 +69,7 @@ class Commands:
         self.voice_language = voice_language
 
         self.help = None
+        self.editor = editor
 
     def cmd_model(self, args):
         "Switch to a new LLM"
@@ -868,7 +878,6 @@ class Commands:
         exit_status, combined_output = run_cmd(
             args, verbose=self.verbose, error_print=self.io.tool_error
         )
-        instructions = None
 
         if combined_output is None:
             return
@@ -876,36 +885,22 @@ class Commands:
         if add_on_nonzero_exit:
             add = exit_status != 0
         else:
-            self.io.tool_output()
-            response = self.io.prompt_ask(
-                "Add the output to the chat?\n(Y)es/(n)o/message with instructions:",
-            ).strip()
-            self.io.tool_output()
-
-            if response.lower() in ["yes", "y"]:
-                add = True
-            elif response.lower() in ["no", "n"]:
-                add = False
-            else:
-                add = True
-                instructions = response
-                if response.strip():
-                    self.io.user_input(response, log_only=True)
-                    self.io.add_to_input_history(response)
+            add = self.io.confirm_ask("Add command output to the chat?")
 
         if add:
-            for line in combined_output.splitlines():
-                self.io.tool_output(line, log_only=True)
+            num_lines = len(combined_output.strip().splitlines())
+            line_plural = "line" if num_lines == 1 else "lines"
+            self.io.tool_output(f"Added {num_lines} {line_plural} of output to the chat.")
 
             msg = prompts.run_output.format(
                 command=args,
                 output=combined_output,
             )
 
-            if instructions:
-                msg = instructions + "\n\n" + msg
-
-            return msg
+            self.coder.cur_messages += [
+                dict(role="user", content=msg),
+                dict(role="assistant", content="Ok."),
+            ]
 
     def cmd_exit(self, args):
         "Exit the application"
@@ -1365,6 +1360,13 @@ class Commands:
             title = None
 
         report_github_issue(issue_text, title=title, confirm=False)
+
+    def cmd_editor(self, initial_content=""):
+        "Open an editor to write a prompt"
+
+        user_input = pipe_editor(initial_content, suffix="md", editor=self.editor)
+        if user_input.strip():
+            self.io.set_placeholder(user_input.rstrip())
 
 
 def expand_subdir(file_path):

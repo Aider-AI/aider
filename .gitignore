@@ -13,3 +13,4 @@ _site
 aider/__version__.py
 .venv/
 .#*
+.gitattributes

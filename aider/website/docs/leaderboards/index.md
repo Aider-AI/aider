@@ -31,6 +31,8 @@ This measures the LLM's coding ability, and whether it can
 write new code that integrates into existing code.
 The model also has to successfully apply all its changes to the source file without human intervention.
 
+<input type="text" id="editSearchInput" placeholder="Search..." style="width: 100%; max-width: 800px; margin: 10px auto; padding: 8px; display: block; border: 1px solid #ddd; border-radius: 4px;">
+
 <table style="width: 100%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
   <thead style="background-color: #f2f2f2;">
     <tr>
@@ -58,81 +60,7 @@ The model also has to successfully apply all its changes to the source file with
 <canvas id="editChart" width="800" height="450" style="margin-top: 20px"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    var ctx = document.getElementById('editChart').getContext('2d');
-    const HIGHTLIGHT_MODEL = 'no no no no';
-    var leaderboardData = {
-      labels: [],
-      datasets: [{
-        label: 'Percent completed correctly',
-        data: [],
-        backgroundColor: function(context) {
-          const label = context.chart.data.labels[context.dataIndex] || '';
-          return (label && label.includes(HIGHTLIGHT_MODEL)) ? 'rgba(255, 99, 132, 0.2)' : 'rgba(54, 162, 235, 0.2)';
-        },
-        borderColor: function(context) {
-          const label = context.chart.data.labels[context.dataIndex] || '';
-          return (label && label.includes(HIGHTLIGHT_MODEL)) ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)';
-        },
-        borderWidth: 1
-      }]
-    };
-
-    var allData = [];
-    {% for row in edit_sorted %}
-      allData.push({
-        model: '{{ row.model }}',
-        pass_rate_2: {{ row.pass_rate_2 }},
-        percent_cases_well_formed: {{ row.percent_cases_well_formed }}
-      });
-    {% endfor %}
-
-    function updateChart() {
-      var selectedRows = document.querySelectorAll('tr.selected');
-      var showAll = selectedRows.length === 0;
-
-      leaderboardData.labels = [];
-      leaderboardData.datasets[0].data = [];
-
-      allData.forEach(function(row, index) {
-        var rowElement = document.getElementById('edit-row-' + index);
-        if (showAll) {
-          rowElement.classList.remove('selected');
-        }
-        if (showAll || rowElement.classList.contains('selected')) {
-          leaderboardData.labels.push(row.model);
-          leaderboardData.datasets[0].data.push(row.pass_rate_2);
-        }
-      });
-
-      leaderboardChart.update();
-    }
-
-    var tableBody = document.querySelector('table tbody');
-    allData.forEach(function(row, index) {
-      var tr = tableBody.children[index];
-      tr.id = 'edit-row-' + index;
-      tr.style.cursor = 'pointer';
-      tr.onclick = function() {
-        this.classList.toggle('selected');
-        updateChart();
-      };
-    });
-
-    var leaderboardChart = new Chart(ctx, {
-      type: 'bar',
-      data: leaderboardData,
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
-      }
-    });
-
-    updateChart();
-  });
+{% include edit-leaderboard.js %}
 </script>
 <style>
   tr.selected {
@@ -157,6 +85,8 @@ The model also has to successfully apply all its changes to the source file with
 The refactoring benchmark requires a large context window to
 work with large source files.
 Therefore, results are available for fewer models.
+
+<input type="text" id="refacSearchInput" placeholder="Search..." style="width: 100%; max-width: 800px; margin: 10px auto; padding: 8px; display: block; border: 1px solid #ddd; border-radius: 4px;">
 
 <table style="width: 100%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
   <thead style="background-color: #f2f2f2;">
@@ -185,74 +115,7 @@ Therefore, results are available for fewer models.
 <canvas id="refacChart" width="800" height="450" style="margin-top: 20px"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    var ctx = document.getElementById('refacChart').getContext('2d');
-    var leaderboardData = {
-      labels: [],
-      datasets: [{
-        label: 'Percent completed correctly',
-        data: [],
-        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-        borderColor: 'rgba(54, 162, 235, 1)',
-        borderWidth: 1
-      }]
-    };
-
-    var allData = [];
-    {% for row in refac_sorted %}
-      allData.push({
-        model: '{{ row.model }}',
-        pass_rate_1: {{ row.pass_rate_1 }},
-        percent_cases_well_formed: {{ row.percent_cases_well_formed }}
-      });
-    {% endfor %}
-
-    function updateChart() {
-      var selectedRows = document.querySelectorAll('tr.selected');
-      var showAll = selectedRows.length === 0;
-
-      leaderboardData.labels = [];
-      leaderboardData.datasets[0].data = [];
-
-      allData.forEach(function(row, index) {
-        var rowElement = document.getElementById('refac-row-' + index);
-        if (showAll) {
-          rowElement.classList.remove('selected');
-        }
-        if (showAll || rowElement.classList.contains('selected')) {
-          leaderboardData.labels.push(row.model);
-          leaderboardData.datasets[0].data.push(row.pass_rate_1);
-        }
-      });
-
-      leaderboardChart.update();
-    }
-
-    var tableBody = document.querySelectorAll('table tbody')[1];
-    allData.forEach(function(row, index) {
-      var tr = tableBody.children[index];
-      tr.id = 'refac-row-' + index;
-      tr.style.cursor = 'pointer';
-      tr.onclick = function() {
-        this.classList.toggle('selected');
-        updateChart();
-      };
-    });
-
-    var leaderboardChart = new Chart(ctx, {
-      type: 'bar',
-      data: leaderboardData,
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
-      }
-    });
-
-    updateChart();
-  });
+{% include refactor-leaderboard.js %}
 </script>
 
 
@@ -318,6 +181,6 @@ mod_dates = [get_last_modified_date(file) for file in files]
 latest_mod_date = max(mod_dates)
 cog.out(f"{latest_mod_date.strftime('%B %d, %Y.')}")
 ]]]-->
-November 11, 2024.
+November 24, 2024.
 <!--[[[end]]]-->
 </p>

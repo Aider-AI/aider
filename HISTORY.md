@@ -1,5 +1,53 @@
-
 # Release history
+
+### Aider v0.65.0
+
+- Added `--alias` config to define [custom model aliases](https://aider.chat/docs/config/model-aliases.html).
+- Added `--[no-]detect-urls` flag to disable detecting and offering to scrape URLs found in the chat.
+- Ollama models now default to an 8k context window.
+- Added [RepoMap support for Dart language](https://aider.chat/docs/languages.html) by @malkoG.
+- Ask 2.5% of users if they want to opt-in to [analytics](https://aider.chat/docs/more/analytics.html).
+- Skip suggesting files that share names with files already in chat.
+- `/editor` returns and prefill the file content into the prompt, so you can use `/editor` to compose messages that start with `/commands`, etc.
+- Enhanced error handling for analytics.
+- Improved handling of UnknownEditFormat exceptions with helpful documentation links.
+- Bumped dependencies to pick up grep-ast 0.4.0 for Dart language support.
+- Aider wrote 81% of the code in this release.
+
+### Aider v0.64.1
+
+- Disable streaming for o1 on OpenRouter.
+
+### Aider v0.64.0
+
+- Added [`/editor` command](https://aider.chat/docs/usage/commands.html) to open system editor for writing prompts, by @thehunmonkgroup.
+- Full support for `gpt-4o-2024-11-20`.
+- Stream o1 models by default.
+- `/run` and suggested shell commands are less mysterious and now confirm that they "Added XX lines of output to the chat."
+- Ask 1% of users if they want to opt-in to [analytics](https://aider.chat/docs/more/analytics.html).
+- Added support for [optional multiline input tags](https://aider.chat/docs/usage/commands.html#entering-multi-line-chat-messages) with matching closing tags.
+- Improved [model settings configuration](https://aider.chat/docs/config/adv-model-settings.html#global-extra-params) with support for global `extra_params` for `litellm.completion()`.
+- Architect mode now asks to add files suggested by the LLM.
+- Fixed bug in fuzzy model name matching.
+- Added Timeout exception to handle API provider timeouts.
+- Added `--show-release-notes` to control release notes display on first run of new version.
+- Save empty dict to cache file on model metadata download failure, to delay retry.
+- Improved error handling and code formatting.
+- Aider wrote 74% of the code in this release.
+
+###  Aider v0.63.2
+
+- Fixed bug in fuzzy model name matching when litellm provider info is missing.
+- Modified model metadata file loading to allow override of resource file.
+- Allow recursive loading of dirs using `--read`.
+- Updated dependency versions to pick up litellm fix for ollama models.
+- Added exponential backoff retry when writing files to handle editor file locks.
+- Updated Qwen 2.5 Coder 32B model configuration.
+
+### Aider v0.63.1
+
+- Fixed bug in git ignored file handling.
+- Improved error handling for git operations.
 
 ### Aider v0.63.0
 

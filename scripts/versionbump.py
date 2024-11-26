@@ -124,7 +124,10 @@ def main():
     for cmd in git_commands:
         print(f"Running: {' '.join(cmd)}")
         if not dry_run:
-            subprocess.run(cmd, check=True)
+            subprocess.run(
+                cmd,
+                check=True,
+            )
 
     new_dev_version = f"{incremented_version}.dev"
     updated_dev_content = re.sub(
