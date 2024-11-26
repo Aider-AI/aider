@@ -63,13 +63,8 @@ ANTHROPIC_MODELS = [ln.strip() for ln in ANTHROPIC_MODELS.splitlines() if ln.str
 
 # Mapping of model aliases to their canonical names
 MODEL_ALIASES = {
-    "gpt-4": "openai/gpt-4",
-    "gpt-4-turbo": "gpt-4-turbo-preview",
-    "gpt-3.5": "gpt-3.5-turbo",
-    "claude-3": "claude-3-opus-20240229",
-    "claude-3-opus": "claude-3-opus-20240229",
-    "claude-3-sonnet": "claude-3-sonnet-20240229",
-    "claude-3-haiku": "claude-3-haiku-20240307",
+    "sonnet": "claude-3-sonnet-20241022",
+    "haiku": "claude-3-haiku-20241022",
 }
 
 
