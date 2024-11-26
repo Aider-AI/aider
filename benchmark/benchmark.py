@@ -250,6 +250,7 @@ def main(
                 max_apply_update_errors,
                 editor_model,
                 editor_edit_format,
+                num_ctx,
             )
 
             all_results.append(results)
@@ -529,6 +530,7 @@ def run_test_real(
     max_apply_update_errors,
     editor_model,
     editor_edit_format,
+    num_ctx=None,
 ):
     if not os.path.isdir(testdir):
         print("Not a dir:", testdir)
