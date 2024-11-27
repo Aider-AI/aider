@@ -334,7 +334,7 @@ class TestRepoMapAllLanguages(unittest.TestCase):
     def test_get_repo_map_all_languages(self):
         language_files = {
             "c": "main",
-            "cpp": "main", 
+            "cpp": "main",
             "elixir": "Greeter",
             "java": "Greeting",
             "javascript": "Person",
@@ -365,7 +365,9 @@ class TestRepoMapAllLanguages(unittest.TestCase):
                 filename = "test." + {"csharp": "cs"}.get(lang, lang)
 
             fixture_path = fixture_dir / filename
-            self.assertTrue(fixture_path.exists(), f"Fixture file missing for {lang}: {fixture_path}")
+            self.assertTrue(
+                fixture_path.exists(), f"Fixture file missing for {lang}: {fixture_path}"
+            )
 
             # Read the fixture content
             with open(fixture_path, "r", encoding="utf-8") as f:
