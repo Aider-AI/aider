@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
+import json
 import os
+import shutil
 import warnings
 from pathlib import Path
 
@@ -38,24 +40,45 @@ def get_package_files():
 
 
 def fname_to_url(filepath):
-    website = "website/"
-    index = "/index.md"
+    website = "website"
+    index = "index.md"
     md = ".md"
 
-    docid = ""
-    if filepath.startswith("website/_includes/"):
-        pass
-    elif filepath.startswith(website):
-        docid = filepath[len(website) :]
+    # Convert backslashes to forward slashes for consistency
+    filepath = filepath.replace("\\", "/")
 
-        if filepath.endswith(index):
-            filepath = filepath[: -len(index)] + "/"
-        elif filepath.endswith(md):
-            filepath = filepath[: -len(md)] + ".html"
+    # Convert to Path object for easier manipulation
+    path = Path(filepath)
 
-        docid = "https://aider.chat/" + filepath
+    # Split the path into parts
+    parts = path.parts
 
-    return docid
+    # Find the 'website' part in the path
+    try:
+        website_index = [p.lower() for p in parts].index(website.lower())
+    except ValueError:
+        return ""  # 'website' not found in the path
+
+    # Extract the part of the path starting from 'website'
+    relevant_parts = parts[website_index + 1 :]
+
+    # Handle _includes directory
+    if relevant_parts and relevant_parts[0].lower() == "_includes":
+        return ""
+
+    # Join the remaining parts
+    url_path = "/".join(relevant_parts)
+
+    # Handle index.md and other .md files
+    if url_path.lower().endswith(index.lower()):
+        url_path = url_path[: -len(index)]
+    elif url_path.lower().endswith(md.lower()):
+        url_path = url_path[: -len(md)] + ".html"
+
+    # Ensure the URL starts and ends with '/'
+    url_path = url_path.strip("/")
+
+    return f"https://aider.chat/{url_path}"
 
 
 def get_index():
@@ -69,12 +92,17 @@ def get_index():
 
     dname = Path.home() / ".aider" / "caches" / ("help." + __version__)
 
-    if dname.exists():
-        storage_context = StorageContext.from_defaults(
-            persist_dir=dname,
-        )
-        index = load_index_from_storage(storage_context)
-    else:
+    index = None
+    try:
+        if dname.exists():
+            storage_context = StorageContext.from_defaults(
+                persist_dir=dname,
+            )
+            index = load_index_from_storage(storage_context)
+    except (OSError, json.JSONDecodeError):
+        shutil.rmtree(dname)
+
+    if index is None:
         parser = MarkdownNodeParser()
 
         nodes = []

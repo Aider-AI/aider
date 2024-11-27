@@ -1,6 +1,6 @@
 ---
 parent: More info
-nav_order: 900
+nav_order: 400
 description: You can script aider via the command line or python.
 ---
 
@@ -26,7 +26,9 @@ for FILE in *.py ; do
 done
 ```
 
-User `aider --help` to see all the command line options, but these are useful for scripting:
+Use `aider --help` to see all the 
+[command line options](/docs/config/options.html),
+but these are useful for scripting:
 
 ```
 --stream, --no-stream
@@ -81,7 +83,7 @@ coder.run("/tokens")
 ```
 
 See the
-[Coder.create() and Coder.__init__() methods](https://github.com/paul-gauthier/aider/blob/main/aider/coders/base_coder.py)
+[Coder.create() and Coder.__init__() methods](https://github.com/Aider-AI/aider/blob/main/aider/coders/base_coder.py)
 for all the supported arguments.
 
 It can also be helpful to set the equivalent of `--yes` by doing this:
@@ -93,3 +95,6 @@ io = InputOutput(yes=True)
 coder = Coder.create(model=model, fnames=fnames, io=io)
 ```
 
+{: .note }
+The python scripting API is not officially supported or documented,
+and could change in future releases without providing backwards compatibility.

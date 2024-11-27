@@ -1,23 +1,23 @@
 import difflib
-import importlib
 import json
 import math
 import os
 import platform
 import sys
+import time
 from dataclasses import dataclass, fields
 from pathlib import Path
 from typing import Optional
 
+import json5
 import yaml
 from PIL import Image
 
-from aider import urls
 from aider.dump import dump  # noqa: F401
-from aider.llm import AIDER_APP_NAME, AIDER_SITE_URL, litellm
+from aider.llm import litellm
 
 DEFAULT_MODEL_NAME = "gpt-4o"
-ANTHROPIC_BETA_HEADER = "max-tokens-3-5-sonnet-2024-07-15,prompt-caching-2024-07-31"
+ANTHROPIC_BETA_HEADER = "prompt-caching-2024-07-31,pdfs-2024-09-25"
 
 OPENAI_MODELS = """
 gpt-4
@@ -52,12 +52,31 @@ ANTHROPIC_MODELS = """
 claude-2
 claude-2.1
 claude-3-haiku-20240307
+claude-3-5-haiku-20241022
 claude-3-opus-20240229
 claude-3-sonnet-20240229
 claude-3-5-sonnet-20240620
+claude-3-5-sonnet-20241022
 """
 
 ANTHROPIC_MODELS = [ln.strip() for ln in ANTHROPIC_MODELS.splitlines() if ln.strip()]
+
+# Mapping of model aliases to their canonical names
+MODEL_ALIASES = {
+    # Claude models
+    "sonnet": "claude-3-5-sonnet-20241022",
+    "haiku": "claude-3-5-haiku-20241022",
+    "opus": "claude-3-opus-20240229",
+    # GPT models
+    "4": "gpt-4-0613",
+    "4o": "gpt-4o-2024-08-06",
+    "4-turbo": "gpt-4-1106-preview",
+    "35turbo": "gpt-3.5-turbo",
+    "35-turbo": "gpt-3.5-turbo",
+    "3": "gpt-3.5-turbo",
+    # Other models
+    "deepseek": "deepseek/deepseek-coder",
+}
 
 
 @dataclass
@@ -68,13 +87,17 @@ class ModelSettings:
     weak_model_name: Optional[str] = None
     use_repo_map: bool = False
     send_undo_reply: bool = False
-    accepts_images: bool = False
     lazy: bool = False
     reminder: str = "user"
     examples_as_sys_msg: bool = False
-    extra_headers: Optional[dict] = None
-    max_tokens: Optional[int] = None
+    extra_params: Optional[dict] = None
     cache_control: bool = False
+    caches_by_default: bool = False
+    use_system_prompt: bool = True
+    use_temperature: bool = True
+    streaming: bool = True
+    editor_model_name: Optional[str] = None
+    editor_edit_format: Optional[str] = None
 
 
 # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
@@ -119,8 +142,6 @@ MODEL_SETTINGS = [
         "udiff",
         weak_model_name="gpt-4o-mini",
         use_repo_map=True,
-        send_undo_reply=True,
-        accepts_images=True,
         lazy=True,
         reminder="sys",
     ),
@@ -129,8 +150,6 @@ MODEL_SETTINGS = [
         "udiff",
         weak_model_name="gpt-4o-mini",
         use_repo_map=True,
-        send_undo_reply=True,
-        accepts_images=True,
         lazy=True,
         reminder="sys",
     ),
@@ -139,18 +158,15 @@ MODEL_SETTINGS = [
         "diff",
         weak_model_name="gpt-4o-mini",
         use_repo_map=True,
-        send_undo_reply=True,
-        accepts_images=True,
         lazy=True,
         reminder="sys",
+        editor_edit_format="editor-diff",
     ),
     ModelSettings(
         "openai/gpt-4o-2024-08-06",
         "diff",
         weak_model_name="gpt-4o-mini",
         use_repo_map=True,
-        send_undo_reply=True,
-        accepts_images=True,
         lazy=True,
         reminder="sys",
     ),
@@ -159,8 +175,22 @@ MODEL_SETTINGS = [
         "diff",
         weak_model_name="gpt-4o-mini",
         use_repo_map=True,
-        send_undo_reply=True,
-        accepts_images=True,
+        lazy=True,
+        reminder="sys",
+    ),
+    ModelSettings(
+        "gpt-4o-2024-11-20",
+        "diff",
+        weak_model_name="gpt-4o-mini",
+        use_repo_map=True,
+        lazy=True,
+        reminder="sys",
+    ),
+    ModelSettings(
+        "openai/gpt-4o-2024-11-20",
+        "diff",
+        weak_model_name="gpt-4o-mini",
+        use_repo_map=True,
         lazy=True,
         reminder="sys",
     ),
@@ -169,16 +199,14 @@ MODEL_SETTINGS = [
         "diff",
         weak_model_name="gpt-4o-mini",
         use_repo_map=True,
-        send_undo_reply=True,
-        accepts_images=True,
         lazy=True,
         reminder="sys",
+        editor_edit_format="editor-diff",
     ),
     ModelSettings(
         "gpt-4o-mini",
         "whole",
         weak_model_name="gpt-4o-mini",
-        accepts_images=True,
         lazy=True,
         reminder="sys",
     ),
@@ -186,7 +214,6 @@ MODEL_SETTINGS = [
         "openai/gpt-4o-mini",
         "whole",
         weak_model_name="openai/gpt-4o-mini",
-        accepts_images=True,
         lazy=True,
         reminder="sys",
     ),
@@ -195,7 +222,6 @@ MODEL_SETTINGS = [
         "udiff",
         weak_model_name="gpt-4o-mini",
         use_repo_map=True,
-        send_undo_reply=True,
         lazy=True,
         reminder="sys",
         examples_as_sys_msg=True,
@@ -205,7 +231,6 @@ MODEL_SETTINGS = [
         "udiff",
         weak_model_name="gpt-4o-mini",
         use_repo_map=True,
-        send_undo_reply=True,
         lazy=True,
         reminder="sys",
     ),
@@ -214,8 +239,6 @@ MODEL_SETTINGS = [
         "diff",
         weak_model_name="gpt-4o-mini",
         use_repo_map=True,
-        send_undo_reply=True,
-        accepts_images=True,
         reminder="sys",
     ),
     ModelSettings(
@@ -223,7 +246,6 @@ MODEL_SETTINGS = [
         "diff",
         weak_model_name="gpt-4o-mini",
         use_repo_map=True,
-        send_undo_reply=True,
         reminder="sys",
         examples_as_sys_msg=True,
     ),
@@ -232,7 +254,6 @@ MODEL_SETTINGS = [
         "diff",
         weak_model_name="gpt-4o-mini",
         use_repo_map=True,
-        send_undo_reply=True,
         reminder="sys",
     ),
     ModelSettings(
@@ -240,113 +261,264 @@ MODEL_SETTINGS = [
         "diff",
         weak_model_name="gpt-4o-mini",
         use_repo_map=True,
-        send_undo_reply=True,
         reminder="sys",
     ),
     # Claude
     ModelSettings(
         "claude-3-opus-20240229",
         "diff",
-        weak_model_name="claude-3-haiku-20240307",
+        weak_model_name="claude-3-5-haiku-20241022",
         use_repo_map=True,
-        send_undo_reply=True,
     ),
     ModelSettings(
         "openrouter/anthropic/claude-3-opus",
         "diff",
-        weak_model_name="openrouter/anthropic/claude-3-haiku",
+        weak_model_name="openrouter/anthropic/claude-3-5-haiku",
         use_repo_map=True,
-        send_undo_reply=True,
     ),
     ModelSettings(
         "claude-3-sonnet-20240229",
         "whole",
-        weak_model_name="claude-3-haiku-20240307",
+        weak_model_name="claude-3-5-haiku-20241022",
     ),
     ModelSettings(
         "claude-3-5-sonnet-20240620",
         "diff",
-        weak_model_name="claude-3-haiku-20240307",
+        weak_model_name="claude-3-5-haiku-20241022",
+        editor_model_name="claude-3-5-sonnet-20240620",
+        editor_edit_format="editor-diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
-        accepts_images=True,
-        max_tokens=8192,
-        extra_headers={
-            "anthropic-beta": ANTHROPIC_BETA_HEADER,
+        extra_params={
+            "extra_headers": {
+                "anthropic-beta": ANTHROPIC_BETA_HEADER,
+            },
+            "max_tokens": 8192,
         },
         cache_control=True,
-        reminder=None,
+        reminder="user",
     ),
     ModelSettings(
         "anthropic/claude-3-5-sonnet-20240620",
         "diff",
-        weak_model_name="claude-3-haiku-20240307",
+        weak_model_name="anthropic/claude-3-5-haiku-20241022",
+        editor_model_name="anthropic/claude-3-5-sonnet-20240620",
+        editor_edit_format="editor-diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
-        max_tokens=8192,
-        extra_headers={
-            "anthropic-beta": ANTHROPIC_BETA_HEADER,
+        extra_params={
+            "extra_headers": {
+                "anthropic-beta": ANTHROPIC_BETA_HEADER,
+            },
+            "max_tokens": 8192,
         },
         cache_control=True,
-        reminder=None,
+        reminder="user",
+    ),
+    ModelSettings(
+        "anthropic/claude-3-5-sonnet-20241022",
+        "diff",
+        weak_model_name="anthropic/claude-3-5-haiku-20241022",
+        editor_model_name="anthropic/claude-3-5-sonnet-20241022",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        examples_as_sys_msg=True,
+        extra_params={
+            "extra_headers": {
+                "anthropic-beta": ANTHROPIC_BETA_HEADER,
+            },
+            "max_tokens": 8192,
+        },
+        cache_control=True,
+        reminder="user",
+    ),
+    ModelSettings(
+        "bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0",
+        "diff",
+        weak_model_name="bedrock/anthropic.claude-3-5-haiku-20241022-v1:0",
+        editor_model_name="bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        examples_as_sys_msg=True,
+        extra_params={
+            "extra_headers": {
+                "anthropic-beta": ANTHROPIC_BETA_HEADER,
+            },
+            "max_tokens": 8192,
+        },
+        cache_control=True,
+        reminder="user",
+    ),
+    ModelSettings(
+        "anthropic/claude-3-5-sonnet-latest",
+        "diff",
+        weak_model_name="anthropic/claude-3-5-haiku-20241022",
+        editor_model_name="anthropic/claude-3-5-sonnet-20241022",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        examples_as_sys_msg=True,
+        extra_params={
+            "extra_headers": {
+                "anthropic-beta": ANTHROPIC_BETA_HEADER,
+            },
+            "max_tokens": 8192,
+        },
+        cache_control=True,
+        reminder="user",
+    ),
+    ModelSettings(
+        "claude-3-5-sonnet-20241022",
+        "diff",
+        weak_model_name="claude-3-5-haiku-20241022",
+        editor_model_name="claude-3-5-sonnet-20241022",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        examples_as_sys_msg=True,
+        extra_params={
+            "extra_headers": {
+                "anthropic-beta": ANTHROPIC_BETA_HEADER,
+            },
+            "max_tokens": 8192,
+        },
+        cache_control=True,
+        reminder="user",
     ),
     ModelSettings(
         "anthropic/claude-3-haiku-20240307",
         "whole",
         weak_model_name="anthropic/claude-3-haiku-20240307",
         examples_as_sys_msg=True,
-        extra_headers={
-            "anthropic-beta": ANTHROPIC_BETA_HEADER,
+        extra_params={
+            "extra_headers": {
+                "anthropic-beta": ANTHROPIC_BETA_HEADER,
+            },
         },
         cache_control=True,
+    ),
+    ModelSettings(
+        "anthropic/claude-3-5-haiku-20241022",
+        "diff",
+        weak_model_name="anthropic/claude-3-5-haiku-20241022",
+        use_repo_map=True,
+        extra_params={
+            "extra_headers": {
+                "anthropic-beta": ANTHROPIC_BETA_HEADER,
+            },
+        },
+        cache_control=True,
+    ),
+    ModelSettings(
+        "bedrock/anthropic.claude-3-5-haiku-20241022-v1:0",
+        "diff",
+        weak_model_name="bedrock/anthropic.claude-3-5-haiku-20241022-v1:0",
+        use_repo_map=True,
+        extra_params={
+            "extra_headers": {
+                "anthropic-beta": ANTHROPIC_BETA_HEADER,
+            },
+        },
+        cache_control=True,
+    ),
+    ModelSettings(
+        "claude-3-5-haiku-20241022",
+        "diff",
+        weak_model_name="claude-3-5-haiku-20241022",
+        use_repo_map=True,
+        examples_as_sys_msg=True,
+        extra_params={
+            "extra_headers": {
+                "anthropic-beta": ANTHROPIC_BETA_HEADER,
+            },
+        },
+        cache_control=True,
+    ),
+    ModelSettings(
+        "vertex_ai/claude-3-5-haiku@20241022",
+        "diff",
+        weak_model_name="vertex_ai/claude-3-5-haiku@20241022",
+        use_repo_map=True,
+        extra_params={
+            "max_tokens": 4096,
+        },
     ),
     ModelSettings(
         "claude-3-haiku-20240307",
         "whole",
         weak_model_name="claude-3-haiku-20240307",
         examples_as_sys_msg=True,
-        extra_headers={
-            "anthropic-beta": ANTHROPIC_BETA_HEADER,
+        extra_params={
+            "extra_headers": {
+                "anthropic-beta": ANTHROPIC_BETA_HEADER,
+            },
         },
         cache_control=True,
     ),
     ModelSettings(
         "openrouter/anthropic/claude-3.5-sonnet",
         "diff",
-        weak_model_name="openrouter/anthropic/claude-3-haiku-20240307",
+        weak_model_name="openrouter/anthropic/claude-3-5-haiku",
+        editor_model_name="openrouter/anthropic/claude-3.5-sonnet",
+        editor_edit_format="editor-diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
-        accepts_images=True,
-        max_tokens=8192,
-        extra_headers={
-            "anthropic-beta": "max-tokens-3-5-sonnet-2024-07-15",
-            "HTTP-Referer": AIDER_SITE_URL,
-            "X-Title": AIDER_APP_NAME,
+        extra_params={
+            "max_tokens": 8192,
         },
-        reminder=None,
+        reminder="user",
+        cache_control=True,
+    ),
+    ModelSettings(
+        "openrouter/anthropic/claude-3.5-sonnet:beta",
+        "diff",
+        weak_model_name="openrouter/anthropic/claude-3-5-haiku:beta",
+        editor_model_name="openrouter/anthropic/claude-3.5-sonnet:beta",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        examples_as_sys_msg=True,
+        extra_params={
+            "max_tokens": 8192,
+        },
+        reminder="user",
+        cache_control=True,
     ),
     # Vertex AI Claude models
     # Does not yet support 8k token
     ModelSettings(
         "vertex_ai/claude-3-5-sonnet@20240620",
         "diff",
-        weak_model_name="vertex_ai/claude-3-haiku@20240307",
+        weak_model_name="vertex_ai/claude-3-5-haiku@20241022",
+        editor_model_name="vertex_ai/claude-3-5-sonnet@20240620",
+        editor_edit_format="editor-diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
-        accepts_images=True,
-        reminder=None,
+        extra_params={
+            "max_tokens": 8192,
+        },
+        reminder="user",
+    ),
+    ModelSettings(
+        "vertex_ai/claude-3-5-sonnet-v2@20241022",
+        "diff",
+        weak_model_name="vertex_ai/claude-3-5-haiku@20241022",
+        editor_model_name="vertex_ai/claude-3-5-sonnet-v2@20241022",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        examples_as_sys_msg=True,
+        extra_params={
+            "max_tokens": 8192,
+        },
+        reminder="user",
     ),
     ModelSettings(
         "vertex_ai/claude-3-opus@20240229",
         "diff",
-        weak_model_name="vertex_ai/claude-3-haiku@20240307",
+        weak_model_name="vertex_ai/claude-3-5-haiku@20241022",
         use_repo_map=True,
-        send_undo_reply=True,
     ),
     ModelSettings(
         "vertex_ai/claude-3-sonnet@20240229",
         "whole",
-        weak_model_name="vertex_ai/claude-3-haiku@20240307",
+        weak_model_name="vertex_ai/claude-3-5-haiku@20241022",
     ),
     # Cohere
     ModelSettings(
@@ -354,7 +526,19 @@ MODEL_SETTINGS = [
         "whole",
         weak_model_name="command-r-plus",
         use_repo_map=True,
-        send_undo_reply=True,
+    ),
+    # New Cohere models
+    ModelSettings(
+        "command-r-08-2024",
+        "whole",
+        weak_model_name="command-r-08-2024",
+        use_repo_map=True,
+    ),
+    ModelSettings(
+        "command-r-plus-08-2024",
+        "whole",
+        weak_model_name="command-r-plus-08-2024",
+        use_repo_map=True,
     ),
     # Groq llama3
     ModelSettings(
@@ -376,38 +560,86 @@ MODEL_SETTINGS = [
     ),
     # Gemini
     ModelSettings(
+        "gemini/gemini-1.5-pro-002",
+        "diff",
+        use_repo_map=True,
+    ),
+    ModelSettings(
+        "gemini/gemini-1.5-flash-002",
+        "whole",
+    ),
+    ModelSettings(
         "gemini/gemini-1.5-pro",
         "diff-fenced",
         use_repo_map=True,
-        send_undo_reply=True,
     ),
     ModelSettings(
         "gemini/gemini-1.5-pro-latest",
         "diff-fenced",
         use_repo_map=True,
-        send_undo_reply=True,
+    ),
+    ModelSettings(
+        "gemini/gemini-1.5-pro-exp-0827",
+        "diff-fenced",
+        use_repo_map=True,
+    ),
+    ModelSettings(
+        "vertex_ai/gemini-pro-experimental",
+        "diff-fenced",
+        use_repo_map=True,
+    ),
+    ModelSettings(
+        "gemini/gemini-1.5-flash-exp-0827",
+        "whole",
+        use_repo_map=False,
+        send_undo_reply=False,
     ),
     ModelSettings(
         "deepseek/deepseek-chat",
         "diff",
         use_repo_map=True,
-        send_undo_reply=True,
         examples_as_sys_msg=True,
         reminder="sys",
+        extra_params={
+            "max_tokens": 8192,
+        },
     ),
     ModelSettings(
         "deepseek/deepseek-coder",
         "diff",
         use_repo_map=True,
-        send_undo_reply=True,
         examples_as_sys_msg=True,
         reminder="sys",
+        caches_by_default=True,
+        extra_params={
+            "max_tokens": 8192,
+        },
+    ),
+    ModelSettings(
+        "deepseek-chat",
+        "diff",
+        use_repo_map=True,
+        examples_as_sys_msg=True,
+        reminder="sys",
+        extra_params={
+            "max_tokens": 8192,
+        },
+    ),
+    ModelSettings(
+        "deepseek-coder",
+        "diff",
+        use_repo_map=True,
+        examples_as_sys_msg=True,
+        reminder="sys",
+        caches_by_default=True,
+        extra_params={
+            "max_tokens": 8192,
+        },
     ),
     ModelSettings(
         "openrouter/deepseek/deepseek-coder",
         "diff",
         use_repo_map=True,
-        send_undo_reply=True,
         examples_as_sys_msg=True,
         reminder="sys",
     ),
@@ -416,24 +648,207 @@ MODEL_SETTINGS = [
         "diff",
         weak_model_name="openrouter/openai/gpt-4o-mini",
         use_repo_map=True,
-        send_undo_reply=True,
-        accepts_images=True,
         lazy=True,
         reminder="sys",
+        editor_edit_format="editor-diff",
+    ),
+    ModelSettings(
+        "openai/o1-mini",
+        "whole",
+        weak_model_name="openai/gpt-4o-mini",
+        editor_model_name="openai/gpt-4o",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        reminder="user",
+        use_system_prompt=False,
+        use_temperature=False,
+    ),
+    ModelSettings(
+        "azure/o1-mini",
+        "whole",
+        weak_model_name="azure/gpt-4o-mini",
+        editor_model_name="azure/gpt-4o",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        reminder="user",
+        use_system_prompt=False,
+        use_temperature=False,
+    ),
+    ModelSettings(
+        "o1-mini",
+        "whole",
+        weak_model_name="gpt-4o-mini",
+        editor_model_name="gpt-4o",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        reminder="user",
+        use_system_prompt=False,
+        use_temperature=False,
+    ),
+    ModelSettings(
+        "openai/o1-preview",
+        "diff",
+        weak_model_name="openai/gpt-4o-mini",
+        editor_model_name="openai/gpt-4o",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        reminder="user",
+        use_system_prompt=False,
+        use_temperature=False,
+    ),
+    ModelSettings(
+        "azure/o1-preview",
+        "diff",
+        weak_model_name="azure/gpt-4o-mini",
+        editor_model_name="azure/gpt-4o",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        reminder="user",
+        use_system_prompt=False,
+        use_temperature=False,
+    ),
+    ModelSettings(
+        "o1-preview",
+        "architect",
+        weak_model_name="gpt-4o-mini",
+        editor_model_name="gpt-4o",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        reminder="user",
+        use_system_prompt=False,
+        use_temperature=False,
+    ),
+    ModelSettings(
+        "openrouter/openai/o1-mini",
+        "whole",
+        weak_model_name="openrouter/openai/gpt-4o-mini",
+        editor_model_name="openrouter/openai/gpt-4o",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        reminder="user",
+        use_system_prompt=False,
+        use_temperature=False,
+        streaming=False,
+    ),
+    ModelSettings(
+        "openrouter/openai/o1-preview",
+        "diff",
+        weak_model_name="openrouter/openai/gpt-4o-mini",
+        editor_model_name="openrouter/openai/gpt-4o",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        reminder="user",
+        use_system_prompt=False,
+        use_temperature=False,
+        streaming=False,
+    ),
+    ModelSettings(
+        "openrouter/qwen/qwen-2.5-coder-32b-instruct",
+        "diff",
+        weak_model_name="openrouter/qwen/qwen-2.5-coder-32b-instruct",
+        editor_model_name="openrouter/qwen/qwen-2.5-coder-32b-instruct",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
     ),
 ]
 
 
-class Model:
-    def __init__(self, model, weak_model=None):
-        # Set defaults from ModelSettings
-        default_settings = ModelSettings(name="")
-        for field in fields(ModelSettings):
-            setattr(self, field.name, getattr(default_settings, field.name))
+class ModelInfoManager:
+    MODEL_INFO_URL = (
+        "https://raw.githubusercontent.com/BerriAI/litellm/main/"
+        "model_prices_and_context_window.json"
+    )
+    CACHE_TTL = 60 * 60 * 24  # 24 hours
+
+    def __init__(self):
+        self.cache_dir = Path.home() / ".aider" / "caches"
+        self.cache_file = self.cache_dir / "model_prices_and_context_window.json"
+        self.content = None
+        self._load_cache()
+
+    def _load_cache(self):
+        try:
+            self.cache_dir.mkdir(parents=True, exist_ok=True)
+            if self.cache_file.exists():
+                cache_age = time.time() - self.cache_file.stat().st_mtime
+                if cache_age < self.CACHE_TTL:
+                    self.content = json.loads(self.cache_file.read_text())
+        except OSError:
+            pass
+
+    def _update_cache(self):
+        try:
+            import requests
+
+            response = requests.get(self.MODEL_INFO_URL, timeout=5)
+            if response.status_code == 200:
+                self.content = response.json()
+                try:
+                    self.cache_file.write_text(json.dumps(self.content, indent=4))
+                except OSError:
+                    pass
+        except Exception as ex:
+            print(str(ex))
+            try:
+                # Save empty dict to cache file on failure
+                self.cache_file.write_text("{}")
+            except OSError:
+                pass
+
+    def get_model_from_cached_json_db(self, model):
+        if not self.content:
+            self._update_cache()
+
+        if not self.content:
+            return dict()
+
+        info = self.content.get(model, dict())
+        if info:
+            return info
+
+        pieces = model.split("/")
+        if len(pieces) == 2:
+            info = self.content.get(pieces[1])
+            if info and info.get("litellm_provider") == pieces[0]:
+                return info
+
+        return dict()
+
+    def get_model_info(self, model):
+        cached_info = self.get_model_from_cached_json_db(model)
+
+        litellm_info = None
+        if litellm._lazy_module or not cached_info:
+            try:
+                litellm_info = litellm.get_model_info(model)
+            except Exception as ex:
+                if "model_prices_and_context_window.json" not in str(ex):
+                    print(str(ex))
+
+        if litellm_info:
+            return litellm_info
+
+        return cached_info
+
+
+model_info_manager = ModelInfoManager()
+
+
+class Model(ModelSettings):
+    def __init__(self, model, weak_model=None, editor_model=None, editor_edit_format=None):
+        # Map any alias to its canonical name
+        model = MODEL_ALIASES.get(model, model)
 
         self.name = model
+
         self.max_chat_history_tokens = 1024
         self.weak_model = None
+        self.editor_model = None
+
+        # Find the extra settings
+        self.extra_model_settings = next(
+            (ms for ms in MODEL_SETTINGS if ms.name == "aider/extra_params"), None
+        )
 
         self.info = self.get_model_info(model)
 
@@ -454,36 +869,52 @@ class Model:
         else:
             self.get_weak_model(weak_model)
 
-    def get_model_info(self, model):
-        if not litellm._lazy_module:
-            # Try and do this quickly, without triggering the litellm import
-            spec = importlib.util.find_spec("litellm")
-            if spec:
-                origin = Path(spec.origin)
-                fname = origin.parent / "model_prices_and_context_window_backup.json"
-                if fname.exists():
-                    data = json.loads(fname.read_text())
-                    info = data.get(model)
-                    if info:
-                        return info
+        if editor_model is False:
+            self.editor_model_name = None
+        else:
+            self.get_editor_model(editor_model, editor_edit_format)
 
-        # Do it the slow way...
-        try:
-            return litellm.get_model_info(model)
-        except Exception:
-            return dict()
+    def get_model_info(self, model):
+        return model_info_manager.get_model_info(model)
+
+    def _copy_fields(self, source):
+        """Helper to copy fields from a ModelSettings instance to self"""
+        for field in fields(ModelSettings):
+            val = getattr(source, field.name)
+            setattr(self, field.name, val)
 
     def configure_model_settings(self, model):
+        # Look for exact model match
+        exact_match = False
         for ms in MODEL_SETTINGS:
             # direct match, or match "provider/<model>"
             if model == ms.name:
-                for field in fields(ModelSettings):
-                    val = getattr(ms, field.name)
-                    setattr(self, field.name, val)
-                return  # <--
+                self._copy_fields(ms)
+                exact_match = True
+                break  # Continue to apply overrides
 
         model = model.lower()
 
+        # If no exact match, try generic settings
+        if not exact_match:
+            self.apply_generic_model_settings(model)
+
+        # Apply override settings last if they exist
+        if self.extra_model_settings and self.extra_model_settings.extra_params:
+            # Initialize extra_params if it doesn't exist
+            if not self.extra_params:
+                self.extra_params = {}
+
+            # Deep merge the extra_params dicts
+            for key, value in self.extra_model_settings.extra_params.items():
+                if isinstance(value, dict) and isinstance(self.extra_params.get(key), dict):
+                    # For nested dicts, merge recursively
+                    self.extra_params[key] = {**self.extra_params[key], **value}
+                else:
+                    # For non-dict values, simply update
+                    self.extra_params[key] = value
+
+    def apply_generic_model_settings(self, model):
         if ("llama3" in model or "llama-3" in model) and "70b" in model:
             self.edit_format = "diff"
             self.use_repo_map = True
@@ -505,16 +936,37 @@ class Model:
 
         if "gpt-3.5" in model or "gpt-4" in model:
             self.reminder = "sys"
+            return  # <--
 
         if "3.5-sonnet" in model or "3-5-sonnet" in model:
             self.edit_format = "diff"
             self.use_repo_map = True
             self.examples_as_sys_msg = True
-            self.reminder = None
+            self.reminder = "user"
+            return  # <--
+
+        if model.startswith("o1-") or "/o1-" in model:
+            self.use_system_prompt = False
+            self.use_temperature = False
+            return  # <--
+
+        if (
+            "qwen" in model
+            and "coder" in model
+            and ("2.5" in model or "2-5" in model)
+            and "32b" in model
+        ):
+            self.edit_format = "diff"
+            self.editor_edit_format = "editor-diff"
+            self.use_repo_map = True
+            if model.startswith("ollama/") or model.startswith("ollama_chat/"):
+                self.extra_params = dict(num_ctx=8 * 1024)
+            return  # <--
 
         # use the defaults
         if self.edit_format == "diff":
             self.use_repo_map = True
+            return  # <--
 
     def __str__(self):
         return self.name
@@ -541,6 +993,26 @@ class Model:
     def commit_message_models(self):
         return [self.weak_model, self]
 
+    def get_editor_model(self, provided_editor_model_name, editor_edit_format):
+        # If editor_model_name is provided, override the model settings
+        if provided_editor_model_name:
+            self.editor_model_name = provided_editor_model_name
+        if editor_edit_format:
+            self.editor_edit_format = editor_edit_format
+
+        if not self.editor_model_name or self.editor_model_name == self.name:
+            self.editor_model = self
+        else:
+            self.editor_model = Model(
+                self.editor_model_name,
+                editor_model=False,
+            )
+
+        if not self.editor_edit_format:
+            self.editor_edit_format = self.editor_model.edit_format
+
+        return self.editor_model
+
     def tokenizer(self, text):
         return litellm.encode(model=self.name, text=text)
 
@@ -560,7 +1032,11 @@ class Model:
         else:
             msgs = json.dumps(messages)
 
-        return len(self.tokenizer(msgs))
+        try:
+            return len(self.tokenizer(msgs))
+        except Exception as err:
+            print(f"Unable to count tokens: {err}")
+            return 0
 
     def token_count_for_image(self, fname):
         """
@@ -647,6 +1123,9 @@ def register_models(model_settings_fnames):
         if not os.path.exists(model_settings_fname):
             continue
 
+        if not Path(model_settings_fname).read_text().strip():
+            continue
+
         try:
             with open(model_settings_fname, "r") as model_settings_file:
                 model_settings_list = yaml.safe_load(model_settings_file)
@@ -674,8 +1153,14 @@ def register_litellm_models(model_fnames):
             continue
 
         try:
-            with open(model_fname, "r") as model_def_file:
-                model_def = json.load(model_def_file)
+            data = Path(model_fname).read_text()
+            if not data.strip():
+                continue
+            model_def = json5.loads(data)
+            if not model_def:
+                continue
+
+            # only load litellm if we have actual data
             litellm._load_litellm()
             litellm.register_model(model_def)
         except Exception as e:
@@ -697,9 +1182,21 @@ def validate_variables(vars):
 
 
 def sanity_check_models(io, main_model):
-    sanity_check_model(io, main_model)
+    problem_main = sanity_check_model(io, main_model)
+
+    problem_weak = None
     if main_model.weak_model and main_model.weak_model is not main_model:
-        sanity_check_model(io, main_model.weak_model)
+        problem_weak = sanity_check_model(io, main_model.weak_model)
+
+    problem_editor = None
+    if (
+        main_model.editor_model
+        and main_model.editor_model is not main_model
+        and main_model.editor_model is not main_model.weak_model
+    ):
+        problem_editor = sanity_check_model(io, main_model.editor_model)
+
+    return problem_main or problem_weak or problem_editor
 
 
 def sanity_check_model(io, model):
@@ -707,9 +1204,11 @@ def sanity_check_model(io, model):
 
     if model.missing_keys:
         show = True
-        io.tool_error(f"Model {model}: Missing these environment variables:")
+        io.tool_warning(f"Warning: {model} expects these environment variables")
         for key in model.missing_keys:
-            io.tool_error(f"- {key}")
+            value = os.environ.get(key, "")
+            status = "Set" if value else "Not set"
+            io.tool_output(f"- {key}: {status}")
 
         if platform.system() == "Windows" or True:
             io.tool_output(
@@ -719,12 +1218,12 @@ def sanity_check_model(io, model):
 
     elif not model.keys_in_environment:
         show = True
-        io.tool_output(f"Model {model}: Unknown which environment variables are required.")
+        io.tool_warning(f"Warning for {model}: Unknown which environment variables are required.")
 
     if not model.info:
         show = True
-        io.tool_output(
-            f"Model {model}: Unknown context window size and costs, using sane defaults."
+        io.tool_warning(
+            f"Warning for {model}: Unknown context window size and costs, using sane defaults."
         )
 
         possible_matches = fuzzy_match_models(model.name)
@@ -733,8 +1232,7 @@ def sanity_check_model(io, model):
             for match in possible_matches:
                 io.tool_output(f"- {match}")
 
-    if show:
-        io.tool_output(f"For more info, see: {urls.model_warnings}\n")
+    return show
 
 
 def fuzzy_match_models(name):
@@ -745,7 +1243,10 @@ def fuzzy_match_models(name):
         model = model.lower()
         if attrs.get("mode") != "chat":
             continue
-        provider = (attrs["litellm_provider"] + "/").lower()
+        provider = attrs.get("litellm_provider", "").lower()
+        if not provider:
+            continue
+        provider += "/"
 
         if model.startswith(provider):
             fq_model = model
@@ -786,20 +1287,37 @@ def print_matching_models(io, search):
         io.tool_output(f'No models match "{search}".')
 
 
+def get_model_settings_as_yaml():
+    import yaml
+
+    model_settings_list = []
+    for ms in MODEL_SETTINGS:
+        model_settings_dict = {
+            field.name: getattr(ms, field.name) for field in fields(ModelSettings)
+        }
+        model_settings_list.append(model_settings_dict)
+
+    return yaml.dump(model_settings_list, default_flow_style=False)
+
+
 def main():
-    if len(sys.argv) != 2:
-        print("Usage: python models.py <model_name>")
+    if len(sys.argv) < 2:
+        print("Usage: python models.py <model_name> or python models.py --yaml")
         sys.exit(1)
 
-    model_name = sys.argv[1]
-    matching_models = fuzzy_match_models(model_name)
-
-    if matching_models:
-        print(f"Matching models for '{model_name}':")
-        for model in matching_models:
-            print(model)
+    if sys.argv[1] == "--yaml":
+        yaml_string = get_model_settings_as_yaml()
+        print(yaml_string)
     else:
-        print(f"No matching models found for '{model_name}'.")
+        model_name = sys.argv[1]
+        matching_models = fuzzy_match_models(model_name)
+
+        if matching_models:
+            print(f"Matching models for '{model_name}':")
+            for model in matching_models:
+                print(model)
+        else:
+            print(f"No matching models found for '{model_name}'.")
 
 
 if __name__ == "__main__":

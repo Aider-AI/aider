@@ -8,7 +8,7 @@ nav_order: 500
 Aider can connect to any LLM which is accessible via an OpenAI compatible API endpoint.
 
 ```
-python -m pip install aider-chat
+python -m pip install -U aider-chat
 
 # Mac/Linux:
 export OPENAI_API_BASE=<endpoint>

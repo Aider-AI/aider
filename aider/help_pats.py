@@ -7,4 +7,5 @@ exclude_website_pats = [
     "docs/unified-diffs.md",
     "docs/leaderboards/index.md",
     "assets/**",
+    "**/.DS_Store",
 ]

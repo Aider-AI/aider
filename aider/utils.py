@@ -1,5 +1,8 @@
 import itertools
 import os
+import platform
+import shlex
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -10,7 +13,7 @@ import git
 
 from aider.dump import dump  # noqa: F401
 
-IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp"}
+IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp", ".pdf"}
 
 
 class IgnorantTemporaryDirectory:
@@ -191,12 +194,31 @@ def split_chat_history_markdown(text, include_tool=False):
     return messages
 
 
+# Copied from pip, MIT license
+# https://github.com/pypa/pip/blob/b989e6ef04810bbd4033a3683020bd4ddcbdb627/src/pip/_internal/utils/entrypoints.py#L73
+def get_best_invocation_for_this_python() -> str:
+    """Try to figure out the best way to invoke the current Python."""
+    exe = sys.executable
+    exe_name = os.path.basename(exe)
+
+    # Try to use the basename, if it's the first executable.
+    found_executable = shutil.which(exe_name)
+    if found_executable and os.path.samefile(found_executable, exe):
+        return exe_name
+
+    # Use the full executable name, because we couldn't find something simpler.
+    return exe
+
+
 def get_pip_install(args):
     cmd = [
-        sys.executable,
+        get_best_invocation_for_this_python(),
         "-m",
         "pip",
         "install",
+        "--upgrade",
+        "--upgrade-strategy",
+        "only-if-needed",
     ]
     cmd += args
     return cmd
@@ -204,7 +226,7 @@ def get_pip_install(args):
 
 def run_install(cmd):
     print()
-    print("Installing: ", " ".join(cmd))
+    print("Installing:", printable_shell_command(cmd))
 
     try:
         output = []
@@ -215,6 +237,8 @@ def run_install(cmd):
             text=True,
             bufsize=1,
             universal_newlines=True,
+            encoding=sys.stdout.encoding,
+            errors="replace",
         )
         spinner = Spinner("Installing...")
 
@@ -251,8 +275,12 @@ class Spinner:
         self.start_time = time.time()
         self.last_update = 0
         self.visible = False
+        self.is_tty = sys.stdout.isatty()
 
     def step(self):
+        if not self.is_tty:
+            return
+
         current_time = time.time()
         if not self.visible and current_time - self.start_time >= 0.5:
             self.visible = True
@@ -268,7 +296,7 @@ class Spinner:
         print(f"\r{self.text} {next(self.spinner_chars)}\r{self.text} ", end="", flush=True)
 
     def end(self):
-        if self.visible:
+        if self.visible and self.is_tty:
             print("\r" + " " * (len(self.text) + 3))
 
 
@@ -281,29 +309,76 @@ def find_common_root(abs_fnames):
         return safe_abs_path(os.getcwd())
 
 
-def check_pip_install_extra(io, module, prompt, pip_install_cmd):
+def format_tokens(count):
+    if count < 1000:
+        return f"{count}"
+    elif count < 10000:
+        return f"{count / 1000:.1f}k"
+    else:
+        return f"{round(count / 1000)}k"
+
+
+def touch_file(fname):
+    fname = Path(fname)
     try:
-        __import__(module)
+        fname.parent.mkdir(parents=True, exist_ok=True)
+        fname.touch()
         return True
-    except (ImportError, ModuleNotFoundError):
-        pass
+    except OSError:
+        return False
+
+
+def check_pip_install_extra(io, module, prompt, pip_install_cmd, self_update=False):
+    if module:
+        try:
+            __import__(module)
+            return True
+        except (ImportError, ModuleNotFoundError, RuntimeError):
+            pass
 
     cmd = get_pip_install(pip_install_cmd)
 
-    io.tool_error(prompt)
-    if not io.confirm_ask("Run pip install?", default="y", subject=" ".join(cmd)):
+    if prompt:
+        io.tool_warning(prompt)
+
+    if self_update and platform.system() == "Windows":
+        io.tool_output("Run this command to update:")
+        print()
+        print(printable_shell_command(cmd))  # plain print so it doesn't line-wrap
+        return
+
+    if not io.confirm_ask("Run pip install?", default="y", subject=printable_shell_command(cmd)):
         return
 
     success, output = run_install(cmd)
     if success:
+        if not module:
+            return True
         try:
             __import__(module)
             return True
-        except (ImportError, ModuleNotFoundError) as err:
+        except (ImportError, ModuleNotFoundError, RuntimeError) as err:
             io.tool_error(str(err))
             pass
 
     io.tool_error(output)
 
     print()
-    print(f"Failed to install {pip_install_cmd[0]}")
+    print("Install failed, try running this command manually:")
+    print(printable_shell_command(cmd))
+
+
+def printable_shell_command(cmd_list):
+    """
+    Convert a list of command arguments to a properly shell-escaped string.
+
+    Args:
+        cmd_list (list): List of command arguments.
+
+    Returns:
+        str: Shell-escaped command string.
+    """
+    if platform.system() == "Windows":
+        return subprocess.list2cmdline(cmd_list)
+    else:
+        return shlex.join(cmd_list)

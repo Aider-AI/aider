@@ -131,7 +131,9 @@ class Scraper:
 
     # Internals...
     def scrape_with_playwright(self, url):
-        import playwright
+        import playwright  # noqa: F401
+        from playwright.sync_api import Error as PlaywrightError
+        from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
         from playwright.sync_api import sync_playwright
 
         with sync_playwright() as p:
@@ -156,18 +158,20 @@ class Scraper:
                 response = None
                 try:
                     response = page.goto(url, wait_until="networkidle", timeout=5000)
-                except playwright._impl._errors.TimeoutError:
+                except PlaywrightTimeoutError:
                     self.print_error(f"Timeout while loading {url}")
-                except playwright._impl._errors.Error as e:
+                except PlaywrightError as e:
                     self.print_error(f"Error navigating to {url}: {str(e)}")
                     return None, None
 
                 try:
                     content = page.content()
-                    mime_type = (
-                        response.header_value("content-type").split(";")[0] if response else None
-                    )
-                except playwright._impl._errors.Error as e:
+                    mime_type = None
+                    if response:
+                        content_type = response.header_value("content-type")
+                        if content_type:
+                            mime_type = content_type.split(";")[0]
+                except PlaywrightError as e:
                     self.print_error(f"Error retrieving page content: {str(e)}")
                     content = None
                     mime_type = None
@@ -181,7 +185,9 @@ class Scraper:
 
         headers = {"User-Agent": f"Mozilla./5.0 ({aider_user_agent})"}
         try:
-            with httpx.Client(headers=headers, verify=self.verify_ssl) as client:
+            with httpx.Client(
+                headers=headers, verify=self.verify_ssl, follow_redirects=True
+            ) as client:
                 response = client.get(url)
                 response.raise_for_status()
                 return response.text, response.headers.get("content-type", "").split(";")[0]
@@ -220,7 +226,10 @@ class Scraper:
         if not self.pandoc_available:
             return page_source
 
-        md = pypandoc.convert_text(page_source, "markdown", format="html")
+        try:
+            md = pypandoc.convert_text(page_source, "markdown", format="html")
+        except OSError:
+            return page_source
 
         md = re.sub(r"</div>", "      ", md)
         md = re.sub(r"<div>", "     ", md)

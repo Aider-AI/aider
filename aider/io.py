@@ -1,27 +1,43 @@
 import base64
 import os
+import time
+import webbrowser
 from collections import defaultdict
+from dataclasses import dataclass
 from datetime import datetime
+from io import StringIO
 from pathlib import Path
 
-from prompt_toolkit import prompt
-from prompt_toolkit.completion import Completer, Completion
+from prompt_toolkit.completion import Completer, Completion, ThreadedCompleter
+from prompt_toolkit.cursor_shapes import ModalCursorShapeConfig
 from prompt_toolkit.enums import EditingMode
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.lexers import PygmentsLexer
 from prompt_toolkit.shortcuts import CompleteStyle, PromptSession
 from prompt_toolkit.styles import Style
-from prompt_toolkit.validation import Validator
 from pygments.lexers import MarkdownLexer, guess_lexer_for_filename
 from pygments.token import Token
-from pygments.util import ClassNotFound
+from rich.columns import Columns
 from rich.console import Console
+from rich.markdown import Markdown
 from rich.style import Style as RichStyle
 from rich.text import Text
 
+from aider.mdstream import MarkdownStream
+
 from .dump import dump  # noqa: F401
 from .utils import is_image_file
+
+
+@dataclass
+class ConfirmGroup:
+    preference: str = None
+    show_group: bool = True
+
+    def __init__(self, items=None):
+        if items is not None:
+            self.show_group = len(items) > 1
 
 
 class AutoCompleter(Completer):
@@ -57,7 +73,15 @@ class AutoCompleter(Completer):
         if abs_read_only_fnames:
             all_fnames.extend(abs_read_only_fnames)
 
-        for fname in all_fnames:
+        self.all_fnames = all_fnames
+        self.tokenized = False
+
+    def tokenize(self):
+        if self.tokenized:
+            return
+        self.tokenized = True
+
+        for fname in self.all_fnames:
             try:
                 with open(fname, "r", encoding=self.encoding) as f:
                     content = f.read()
@@ -65,27 +89,37 @@ class AutoCompleter(Completer):
                 continue
             try:
                 lexer = guess_lexer_for_filename(fname, content)
-            except ClassNotFound:
+            except Exception:  # On Windows, bad ref to time.clock which is deprecated
                 continue
-            tokens = list(lexer.get_tokens(content))
-            self.words.update(token[1] for token in tokens if token[0] in Token.Name)
 
-    def get_command_completions(self, text, words):
-        candidates = []
+            tokens = list(lexer.get_tokens(content))
+            self.words.update(
+                (token[1], f"`{token[1]}`") for token in tokens if token[0] in Token.Name
+            )
+
+    def get_command_completions(self, document, complete_event, text, words):
         if len(words) == 1 and not text[-1].isspace():
             partial = words[0].lower()
             candidates = [cmd for cmd in self.command_names if cmd.startswith(partial)]
-            return candidates
+            for candidate in sorted(candidates):
+                yield Completion(candidate, start_position=-len(words[-1]))
+            return
 
-        if len(words) <= 1:
-            return []
-        if text[-1].isspace():
-            return []
+        if len(words) <= 1 or text[-1].isspace():
+            return
 
         cmd = words[0]
         partial = words[-1].lower()
 
-        if cmd not in self.command_names:
+        matches, _, _ = self.commands.matching_commands(cmd)
+        if len(matches) == 1:
+            cmd = matches[0]
+        elif cmd not in matches:
+            return
+
+        raw_completer = self.commands.get_raw_completions(cmd)
+        if raw_completer:
+            yield from raw_completer(document, complete_event)
             return
 
         if cmd not in self.command_completions:
@@ -98,41 +132,42 @@ class AutoCompleter(Completer):
             return
 
         candidates = [word for word in candidates if partial in word.lower()]
-        return candidates
+        for candidate in sorted(candidates):
+            yield Completion(candidate, start_position=-len(words[-1]))
 
     def get_completions(self, document, complete_event):
+        self.tokenize()
+
         text = document.text_before_cursor
         words = text.split()
         if not words:
             return
 
+        if text and text[-1].isspace():
+            # don't keep completing after a space
+            return
+
         if text[0] == "/":
-            candidates = self.get_command_completions(text, words)
-            if candidates is not None:
-                for candidate in candidates:
-                    yield Completion(candidate, start_position=-len(words[-1]))
-                return
+            yield from self.get_command_completions(document, complete_event, text, words)
+            return
 
         candidates = self.words
         candidates.update(set(self.fname_to_rel_fnames))
-        candidates = [
-            (word, f"`{word}`" if word not in self.fname_to_rel_fnames else word)
-            for word in candidates
-        ]
+        candidates = [word if type(word) is tuple else (word, word) for word in candidates]
 
         last_word = words[-1]
+        completions = []
         for word_match, word_insert in candidates:
             if word_match.lower().startswith(last_word.lower()):
+                completions.append((word_insert, -len(last_word), word_match))
+
                 rel_fnames = self.fname_to_rel_fnames.get(word_match, [])
                 if rel_fnames:
                     for rel_fname in rel_fnames:
-                        yield Completion(
-                            rel_fname, start_position=-len(last_word), display=rel_fname
-                        )
-                else:
-                    yield Completion(
-                        word_insert, start_position=-len(last_word), display=word_match
-                    )
+                        completions.append((rel_fname, -len(last_word), rel_fname))
+
+        for ins, pos, match in sorted(completions):
+            yield Completion(ins, start_position=pos, display=match)
 
 
 class InputOutput:
@@ -142,7 +177,7 @@ class InputOutput:
     def __init__(
         self,
         pretty=True,
-        yes=False,
+        yes=None,
         input_history_file=None,
         chat_history_file=None,
         input=None,
@@ -150,11 +185,21 @@ class InputOutput:
         user_input_color="blue",
         tool_output_color=None,
         tool_error_color="red",
+        tool_warning_color="#FFA500",
+        assistant_output_color="blue",
+        completion_menu_color=None,
+        completion_menu_bg_color=None,
+        completion_menu_current_color=None,
+        completion_menu_current_bg_color=None,
+        code_theme="default",
         encoding="utf-8",
         dry_run=False,
         llm_history_file=None,
         editingmode=EditingMode.EMACS,
+        fancy_input=True,
     ):
+        self.placeholder = None
+        self.never_prompts = set()
         self.editingmode = editingmode
         no_color = os.environ.get("NO_COLOR")
         if no_color is not None and no_color != "":
@@ -163,6 +208,14 @@ class InputOutput:
         self.user_input_color = user_input_color if pretty else None
         self.tool_output_color = tool_output_color if pretty else None
         self.tool_error_color = tool_error_color if pretty else None
+        self.tool_warning_color = tool_warning_color if pretty else None
+        self.assistant_output_color = assistant_output_color
+        self.completion_menu_color = completion_menu_color if pretty else None
+        self.completion_menu_bg_color = completion_menu_bg_color if pretty else None
+        self.completion_menu_current_color = completion_menu_current_color if pretty else None
+        self.completion_menu_current_bg_color = completion_menu_current_bg_color if pretty else None
+
+        self.code_theme = code_theme
 
         self.input = input
         self.output = output
@@ -183,19 +236,74 @@ class InputOutput:
         self.encoding = encoding
         self.dry_run = dry_run
 
-        if pretty:
-            self.console = Console()
-        else:
-            self.console = Console(force_terminal=False, no_color=True)
-
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
+
+        self.prompt_session = None
+        if fancy_input:
+            # Initialize PromptSession
+            session_kwargs = {
+                "input": self.input,
+                "output": self.output,
+                "lexer": PygmentsLexer(MarkdownLexer),
+                "editing_mode": self.editingmode,
+            }
+            if self.editingmode == EditingMode.VI:
+                session_kwargs["cursor"] = ModalCursorShapeConfig()
+            if self.input_history_file is not None:
+                session_kwargs["history"] = FileHistory(self.input_history_file)
+            try:
+                self.prompt_session = PromptSession(**session_kwargs)
+                self.console = Console()  # pretty console
+            except Exception as err:
+                self.console = Console(force_terminal=False, no_color=True)
+                self.tool_error(f"Can't initialize prompt toolkit: {err}")  # non-pretty
+        else:
+            self.console = Console(force_terminal=False, no_color=True)  # non-pretty
+
+    def _get_style(self):
+        style_dict = {}
+        if not self.pretty:
+            return Style.from_dict(style_dict)
+
+        if self.user_input_color:
+            style_dict.setdefault("", self.user_input_color)
+            style_dict.update(
+                {
+                    "pygments.literal.string": f"bold italic {self.user_input_color}",
+                }
+            )
+
+        # Conditionally add 'completion-menu' style
+        completion_menu_style = []
+        if self.completion_menu_bg_color:
+            completion_menu_style.append(f"bg:{self.completion_menu_bg_color}")
+        if self.completion_menu_color:
+            completion_menu_style.append(self.completion_menu_color)
+        if completion_menu_style:
+            style_dict["completion-menu"] = " ".join(completion_menu_style)
+
+        # Conditionally add 'completion-menu.completion.current' style
+        completion_menu_current_style = []
+        if self.completion_menu_current_bg_color:
+            completion_menu_current_style.append(f"bg:{self.completion_menu_current_bg_color}")
+        if self.completion_menu_current_color:
+            completion_menu_current_style.append(self.completion_menu_current_color)
+        if completion_menu_current_style:
+            style_dict["completion-menu.completion.current"] = " ".join(
+                completion_menu_current_style
+            )
+
+        return Style.from_dict(style_dict)
 
     def read_image(self, filename):
         try:
             with open(str(filename), "rb") as image_file:
                 encoded_string = base64.b64encode(image_file.read())
                 return encoded_string.decode("utf-8")
+        except OSError as err:
+            self.tool_error(f"{filename}: unable to read: {err}")
+            return
         except FileNotFoundError:
             self.tool_error(f"{filename}: file not found error")
             return
@@ -213,6 +321,9 @@ class InputOutput:
         try:
             with open(str(filename), "r", encoding=self.encoding) as f:
                 return f.read()
+        except OSError as err:
+            self.tool_error(f"{filename}: unable to read: {err}")
+            return
         except FileNotFoundError:
             self.tool_error(f"{filename}: file not found error")
             return
@@ -224,11 +335,43 @@ class InputOutput:
             self.tool_error("Use --encoding to set the unicode encoding.")
             return
 
-    def write_text(self, filename, content):
+    def write_text(self, filename, content, max_retries=5, initial_delay=0.1):
+        """
+        Writes content to a file, retrying with progressive backoff if the file is locked.
+
+        :param filename: Path to the file to write.
+        :param content: Content to write to the file.
+        :param max_retries: Maximum number of retries if a file lock is encountered.
+        :param initial_delay: Initial delay (in seconds) before the first retry.
+        """
         if self.dry_run:
             return
-        with open(str(filename), "w", encoding=self.encoding) as f:
-            f.write(content)
+
+        delay = initial_delay
+        for attempt in range(max_retries):
+            try:
+                with open(str(filename), "w", encoding=self.encoding) as f:
+                    f.write(content)
+                return  # Successfully wrote the file
+            except PermissionError as err:
+                if attempt < max_retries - 1:
+                    time.sleep(delay)
+                    delay *= 2  # Exponential backoff
+                else:
+                    self.tool_error(
+                        f"Unable to write file {filename} after {max_retries} attempts: {err}"
+                    )
+                    raise
+            except OSError as err:
+                self.tool_error(f"Unable to write file {filename}: {err}")
+                raise
+
+    def rule(self):
+        if self.pretty:
+            style = dict(style=self.user_input_color) if self.user_input_color else dict()
+            self.console.rule(**style)
+        else:
+            print()
 
     def get_input(
         self,
@@ -239,16 +382,15 @@ class InputOutput:
         abs_read_only_fnames=None,
         edit_format=None,
     ):
-        if self.pretty:
-            style = dict(style=self.user_input_color) if self.user_input_color else dict()
-            self.console.rule(**style)
-        else:
-            print()
+        self.rule()
 
         rel_fnames = list(rel_fnames)
         show = ""
         if rel_fnames:
-            show = " ".join(rel_fnames) + "\n"
+            rel_read_only_fnames = [
+                get_rel_fname(fname, root) for fname in (abs_read_only_fnames or [])
+            ]
+            show = self.format_files_for_input(rel_fnames, rel_read_only_fnames)
         if edit_format:
             show += edit_format
         show += "> "
@@ -256,62 +398,87 @@ class InputOutput:
         inp = ""
         multiline_input = False
 
-        if self.user_input_color:
-            style = Style.from_dict(
-                {
-                    "": self.user_input_color,
-                    "pygments.literal.string": f"bold italic {self.user_input_color}",
-                }
-            )
-        else:
-            style = None
+        style = self._get_style()
 
-        completer_instance = AutoCompleter(
-            root,
-            rel_fnames,
-            addable_rel_fnames,
-            commands,
-            self.encoding,
-            abs_read_only_fnames=abs_read_only_fnames,
+        completer_instance = ThreadedCompleter(
+            AutoCompleter(
+                root,
+                rel_fnames,
+                addable_rel_fnames,
+                commands,
+                self.encoding,
+                abs_read_only_fnames=abs_read_only_fnames,
+            )
         )
+
+        kb = KeyBindings()
+
+        @kb.add("c-space")
+        def _(event):
+            "Ignore Ctrl when pressing space bar"
+            event.current_buffer.insert_text(" ")
+
+        @kb.add("escape", "c-m", eager=True)
+        def _(event):
+            event.current_buffer.insert_text("\n")
 
         while True:
             if multiline_input:
                 show = ". "
 
-            session_kwargs = {
-                "message": show,
-                "completer": completer_instance,
-                "reserve_space_for_menu": 4,
-                "complete_style": CompleteStyle.MULTI_COLUMN,
-                "input": self.input,
-                "output": self.output,
-                "lexer": PygmentsLexer(MarkdownLexer),
-            }
-            if style:
-                session_kwargs["style"] = style
+            try:
+                if self.prompt_session:
+                    # Use placeholder if set, then clear it
+                    default = self.placeholder or ""
+                    self.placeholder = None
 
-            if self.input_history_file is not None:
-                session_kwargs["history"] = FileHistory(self.input_history_file)
+                    line = self.prompt_session.prompt(
+                        show,
+                        default=default,
+                        completer=completer_instance,
+                        reserve_space_for_menu=4,
+                        complete_style=CompleteStyle.MULTI_COLUMN,
+                        style=style,
+                        key_bindings=kb,
+                    )
+                else:
+                    line = input(show)
+            except UnicodeEncodeError as err:
+                self.tool_error(str(err))
+                return ""
 
-            kb = KeyBindings()
-
-            @kb.add("escape", "c-m", eager=True)
-            def _(event):
-                event.current_buffer.insert_text("\n")
-
-            session = PromptSession(
-                key_bindings=kb, editing_mode=self.editingmode, **session_kwargs
-            )
-            line = session.prompt()
-
-            if line and line[0] == "{" and not multiline_input:
-                multiline_input = True
-                inp += line[1:] + "\n"
+            if line.strip("\r\n") and not multiline_input:
+                stripped = line.strip("\r\n")
+                if stripped == "{":
+                    multiline_input = True
+                    multiline_tag = None
+                    inp += ""
+                elif stripped[0] == "{":
+                    # Extract tag if it exists (only alphanumeric chars)
+                    tag = "".join(c for c in stripped[1:] if c.isalnum())
+                    if stripped == "{" + tag:
+                        multiline_input = True
+                        multiline_tag = tag
+                        inp += ""
+                    else:
+                        inp = line
+                        break
+                else:
+                    inp = line
+                    break
                 continue
-            elif line and line[-1] == "}" and multiline_input:
-                inp += line[:-1] + "\n"
-                break
+            elif multiline_input and line.strip():
+                if multiline_tag:
+                    # Check if line is exactly "tag}"
+                    if line.strip("\r\n") == f"{multiline_tag}}}":
+                        break
+                    else:
+                        inp += line + "\n"
+                # Check if line is exactly "}"
+                elif line.strip("\r\n") == "}":
+                    break
+                else:
+                    inp += line + "\n"
             elif multiline_input:
                 inp += line + "\n"
             else:
@@ -325,10 +492,13 @@ class InputOutput:
     def add_to_input_history(self, inp):
         if not self.input_history_file:
             return
-        FileHistory(self.input_history_file).append_string(inp)
-        # Also add to the in-memory history if it exists
-        if hasattr(self, "session") and hasattr(self.session, "history"):
-            self.session.history.append_string(inp)
+        try:
+            FileHistory(self.input_history_file).append_string(inp)
+            # Also add to the in-memory history if it exists
+            if self.prompt_session and self.prompt_session.history:
+                self.prompt_session.history.append_string(inp)
+        except OSError as err:
+            self.tool_warning(f"Unable to write to input history file: {err}")
 
     def get_input_history(self):
         if not self.input_history_file:
@@ -345,10 +515,17 @@ class InputOutput:
             log_file.write(f"{role.upper()} {timestamp}\n")
             log_file.write(content + "\n")
 
+    def display_user_input(self, inp):
+        if self.pretty and self.user_input_color:
+            style = dict(style=self.user_input_color)
+        else:
+            style = dict()
+
+        self.console.print(Text(inp), **style)
+
     def user_input(self, inp, log_only=True):
-        if not log_only and self.pretty:
-            style = dict(style=self.user_input_color) if self.user_input_color else dict()
-            self.console.print(Text(inp), **style)
+        if not log_only:
+            self.display_user_input(inp)
 
         prefix = "####"
         if inp:
@@ -368,15 +545,49 @@ class InputOutput:
         hist = "\n" + content.strip() + "\n\n"
         self.append_chat_history(hist)
 
-    def confirm_ask(self, question, default="y", subject=None, explicit_yes_required=False):
+    def offer_url(self, url, prompt="Open URL for more info?", allow_never=True):
+        """Offer to open a URL in the browser, returns True if opened."""
+        if url in self.never_prompts:
+            return False
+        if self.confirm_ask(prompt, subject=url, allow_never=allow_never):
+            webbrowser.open(url)
+            return True
+        return False
+
+    def confirm_ask(
+        self,
+        question,
+        default="y",
+        subject=None,
+        explicit_yes_required=False,
+        group=None,
+        allow_never=False,
+    ):
         self.num_user_asks += 1
 
-        if default == "y":
-            question += " [Y/n] "
-        elif default == "n":
-            question += " [y/N] "
-        else:
-            question += " [y/n] "
+        question_id = (question, subject)
+
+        if question_id in self.never_prompts:
+            return False
+
+        if group and not group.show_group:
+            group = None
+        if group:
+            allow_never = True
+
+        valid_responses = ["yes", "no"]
+        options = " (Y)es/(N)o"
+        if group:
+            if not explicit_yes_required:
+                options += "/(A)ll"
+                valid_responses.append("all")
+            options += "/(S)kip all"
+            valid_responses.append("skip")
+        if allow_never:
+            options += "/(D)on't ask again"
+            valid_responses.append("don't")
+
+        question += options + " [Yes]: "
 
         if subject:
             self.tool_output()
@@ -389,37 +600,64 @@ class InputOutput:
             else:
                 self.tool_output(subject, bold=True)
 
-        if self.pretty and self.user_input_color:
-            style = {"": self.user_input_color}
-        else:
-            style = dict()
+        style = self._get_style()
 
-        def is_yesno(text):
-            return "yes".startswith(text.lower()) or "no".startswith(text.lower())
-
-        validator = Validator.from_callable(
-            is_yesno,
-            error_message="Answer yes or no.",
-            move_cursor_to_end=True,
-        )
+        def is_valid_response(text):
+            if not text:
+                return True
+            return text.lower() in valid_responses
 
         if self.yes is True:
             res = "n" if explicit_yes_required else "y"
         elif self.yes is False:
             res = "n"
+        elif group and group.preference:
+            res = group.preference
+            self.user_input(f"{question}{res}", log_only=False)
         else:
-            res = prompt(
-                question,
-                style=Style.from_dict(style),
-                validator=validator,
-            )
-            if not res and default:
-                res = default
+            while True:
+                if self.prompt_session:
+                    res = self.prompt_session.prompt(
+                        question,
+                        style=style,
+                    )
+                else:
+                    res = input(question)
 
-        res = res.lower().strip()
-        is_yes = res in ("y", "yes")
+                if not res:
+                    res = "y"  # Default to Yes if no input
+                    break
+                res = res.lower()
+                good = any(valid_response.startswith(res) for valid_response in valid_responses)
+                if good:
+                    break
 
-        hist = f"{question.strip()} {'y' if is_yes else 'n'}"
+                error_message = f"Please answer with one of: {', '.join(valid_responses)}"
+                self.tool_error(error_message)
+
+        res = res.lower()[0]
+
+        if res == "d" and allow_never:
+            self.never_prompts.add(question_id)
+            hist = f"{question.strip()} {res}"
+            self.append_chat_history(hist, linebreak=True, blockquote=True)
+            return False
+
+        if explicit_yes_required:
+            is_yes = res == "y"
+        else:
+            is_yes = res in ("y", "a")
+
+        is_all = res == "a" and group is not None and not explicit_yes_required
+        is_skip = res == "s" and group is not None
+
+        if group:
+            if is_all and not explicit_yes_required:
+                group.preference = "all"
+            elif is_skip:
+                group.preference = "skip"
+
+        hist = f"{question.strip()} {res}"
         self.append_chat_history(hist, linebreak=True, blockquote=True)
 
         return is_yes
@@ -431,17 +669,17 @@ class InputOutput:
             self.tool_output()
             self.tool_output(subject, bold=True)
 
-        if self.pretty and self.user_input_color:
-            style = Style.from_dict({"": self.user_input_color})
-        else:
-            style = None
+        style = self._get_style()
 
         if self.yes is True:
             res = "yes"
         elif self.yes is False:
             res = "no"
         else:
-            res = prompt(question + " ", default=default, style=style)
+            if self.prompt_session:
+                res = self.prompt_session.prompt(question + " ", default=default, style=style)
+            else:
+                res = input(question + " ")
 
         hist = f"{question.strip()} {res.strip()}"
         self.append_chat_history(hist, linebreak=True, blockquote=True)
@@ -450,23 +688,25 @@ class InputOutput:
 
         return res
 
-    def tool_error(self, message="", strip=True):
-        self.num_error_outputs += 1
-
+    def _tool_message(self, message="", strip=True, color=None):
         if message.strip():
             if "\n" in message:
                 for line in message.splitlines():
                     self.append_chat_history(line, linebreak=True, blockquote=True, strip=strip)
             else:
-                if strip:
-                    hist = message.strip()
-                else:
-                    hist = message
+                hist = message.strip() if strip else message
                 self.append_chat_history(hist, linebreak=True, blockquote=True)
 
         message = Text(message)
-        style = dict(style=self.tool_error_color) if self.tool_error_color else dict()
+        style = dict(style=color) if self.pretty and color else dict()
         self.console.print(message, **style)
+
+    def tool_error(self, message="", strip=True):
+        self.num_error_outputs += 1
+        self._tool_message(message, strip, self.tool_error_color)
+
+    def tool_warning(self, message="", strip=True):
+        self._tool_message(message, strip, self.tool_warning_color)
 
     def tool_output(self, *messages, log_only=False, bold=False):
         if messages:
@@ -474,12 +714,46 @@ class InputOutput:
             hist = f"{hist.strip()}"
             self.append_chat_history(hist, linebreak=True, blockquote=True)
 
-        if not log_only:
-            messages = list(map(Text, messages))
-            style = dict(color=self.tool_output_color) if self.tool_output_color else dict()
+        if log_only:
+            return
+
+        messages = list(map(Text, messages))
+        style = dict()
+        if self.pretty:
+            if self.tool_output_color:
+                style["color"] = self.tool_output_color
             style["reverse"] = bold
-            style = RichStyle(**style)
-            self.console.print(*messages, style=style)
+
+        style = RichStyle(**style)
+        self.console.print(*messages, style=style)
+
+    def get_assistant_mdstream(self):
+        mdargs = dict(style=self.assistant_output_color, code_theme=self.code_theme)
+        mdStream = MarkdownStream(mdargs=mdargs)
+        return mdStream
+
+    def assistant_output(self, message, pretty=None):
+        show_resp = message
+
+        # Coder will force pretty off if fence is not triple-backticks
+        if pretty is None:
+            pretty = self.pretty
+
+        if pretty:
+            show_resp = Markdown(
+                message, style=self.assistant_output_color, code_theme=self.code_theme
+            )
+        else:
+            show_resp = Text(message or "<no response>")
+
+        self.console.print(show_resp)
+
+    def set_placeholder(self, placeholder):
+        """Set a one-time placeholder text for the next input prompt."""
+        self.placeholder = placeholder
+
+    def print(self, message=""):
+        print(message)
 
     def append_chat_history(self, text, linebreak=False, blockquote=False, strip=True):
         if blockquote:
@@ -493,5 +767,58 @@ class InputOutput:
         if not text.endswith("\n"):
             text += "\n"
         if self.chat_history_file is not None:
-            with self.chat_history_file.open("a", encoding=self.encoding) as f:
-                f.write(text)
+            try:
+                with self.chat_history_file.open("a", encoding=self.encoding, errors="ignore") as f:
+                    f.write(text)
+            except (PermissionError, OSError) as err:
+                print(f"Warning: Unable to write to chat history file {self.chat_history_file}.")
+                print(err)
+                self.chat_history_file = None  # Disable further attempts to write
+
+    def format_files_for_input(self, rel_fnames, rel_read_only_fnames):
+        if not self.pretty:
+            read_only_files = []
+            for full_path in sorted(rel_read_only_fnames or []):
+                read_only_files.append(f"{full_path} (read only)")
+
+            editable_files = []
+            for full_path in sorted(rel_fnames):
+                if full_path in rel_read_only_fnames:
+                    continue
+                editable_files.append(f"{full_path}")
+
+            return "\n".join(read_only_files + editable_files) + "\n"
+
+        output = StringIO()
+        console = Console(file=output, force_terminal=False)
+
+        read_only_files = sorted(rel_read_only_fnames or [])
+        editable_files = [f for f in sorted(rel_fnames) if f not in rel_read_only_fnames]
+
+        if read_only_files:
+            files_with_label = ["Readonly:"] + read_only_files
+            read_only_output = StringIO()
+            Console(file=read_only_output, force_terminal=False).print(Columns(files_with_label))
+            read_only_lines = read_only_output.getvalue().splitlines()
+            console.print(Columns(files_with_label))
+
+        if editable_files:
+            files_with_label = editable_files
+            if read_only_files:
+                files_with_label = ["Editable:"] + editable_files
+                editable_output = StringIO()
+                Console(file=editable_output, force_terminal=False).print(Columns(files_with_label))
+                editable_lines = editable_output.getvalue().splitlines()
+
+                if len(read_only_lines) > 1 or len(editable_lines) > 1:
+                    console.print()
+            console.print(Columns(files_with_label))
+
+        return output.getvalue()
+
+
+def get_rel_fname(fname, root):
+    try:
+        return os.path.relpath(fname, root)
+    except ValueError:
+        return fname

@@ -1,0 +1,322 @@
+- dirname: 2024-11-09-11-09-15--Qwen2.5-Coder-32B-Instruct
+  test_cases: 133
+  model: "HuggingFace via GLHF: BF16"
+  released: 2024-11-12
+  edit_format: diff
+  commit_hash: ec9982a
+  pass_rate_1: 59.4
+  pass_rate_2: 71.4
+  percent_cases_well_formed: 94.7
+  error_outputs: 17
+  num_malformed_responses: 17
+  num_with_malformed_responses: 7
+  user_asks: 1
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: aider --model openai/hf:Qwen/Qwen2.5-Coder-32B-Instruct --openai-api-base https://glhf.chat/api/openai/v1
+  date: 2024-11-09
+  versions: 0.59.2.dev
+  seconds_per_case: 22.5
+  total_cost: 0.0000
+
+- dirname: 2024-11-22-18-56-13--ollama-qwen2.5-coder:32b-instruct-fp16
+  test_cases: 132
+  model: "Ollama: fp16"
+  edit_format: diff
+  commit_hash: f06452c-dirty, 6a0a97c-dirty, 4e9ae16-dirty, 5506d0f-dirty
+  pass_rate_1: 58.3
+  pass_rate_2: 71.4
+  percent_cases_well_formed: 90.2
+  error_outputs: 27
+  num_malformed_responses: 26
+  num_with_malformed_responses: 13
+  user_asks: 2
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model ollama/qwen2.5-coder:32b-instruct-fp16
+  date: 2024-11-22
+  versions: 0.64.2.dev
+  seconds_per_case: 119.6
+  total_cost: 0.0000
+  
+- dirname: 2024-11-22-14-53-26--hyperbolic-qwen25coder32binstruct
+  test_cases: 133
+  model: "Hyperbolic: BF16"
+  edit_format: diff
+  commit_hash: f9ef161, 17aef7b-dirty
+  pass_rate_1: 57.9
+  pass_rate_2: 69.2
+  percent_cases_well_formed: 91.7
+  error_outputs: 30
+  num_malformed_responses: 29
+  num_with_malformed_responses: 11
+  user_asks: 9
+  lazy_comments: 0
+  syntax_errors: 4
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  command: aider --model openai/Qwen/Qwen2.5-Coder-32B-Instruct --openai-api-base https://api.hyperbolic.xyz/v1/
+  date: 2024-11-22
+  versions: 0.64.2.dev
+  seconds_per_case: 33.2
+  total_cost: 0.0000
+  
+- dirname: 2024-11-22-17-53-35--qwen25-coder-32b-Instruct-4bit
+  test_cases: 133
+  model: "mlx-community: 4bit"
+  edit_format: diff
+  commit_hash: a16dcab-dirty
+  pass_rate_1: 60.2
+  pass_rate_2: 72.2
+  percent_cases_well_formed: 88.7
+  error_outputs: 31
+  num_malformed_responses: 30
+  num_with_malformed_responses: 15
+  user_asks: 6
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  test_timeouts: 0
+  command: aider --model openai/mlx-community/Qwen2.5-Coder-32B-Instruct-4bit
+  date: 2024-11-23
+  versions: 0.64.2.dev
+  seconds_per_case: 53.4
+  total_cost: 0.0000
+
+- dirname: 2024-11-23-15-07-20--qwen25-coder-32b-Instruct-8bit
+  test_cases: 133
+  model: "mlx-community: 8bit"
+  edit_format: diff
+  commit_hash: a16dcab-dirty
+  pass_rate_1: 59.4
+  pass_rate_2: 72.2
+  percent_cases_well_formed: 92.5
+  error_outputs: 20
+  num_malformed_responses: 15
+  num_with_malformed_responses: 10
+  user_asks: 7
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 5
+  test_timeouts: 2
+  command: aider --model openai/mlx-community/Qwen2.5-Coder-32B-Instruct-8bit
+  date: 2024-11-23
+  versions: 0.64.2.dev
+  seconds_per_case: 98.4
+  total_cost: 0.0000
+
+- dirname: 2024-11-24-22-18-18--or-all-or-fixed-blank-messages2
+  test_cases: 133
+  model: "OpenRouter: multiple"
+  edit_format: diff
+  commit_hash: 0c59d32
+  pass_rate_1: 57.1
+  pass_rate_2: 67.7
+  percent_cases_well_formed: 95.5
+  error_outputs: 56
+  num_malformed_responses: 10
+  num_with_malformed_responses: 6
+  user_asks: 14
+  lazy_comments: 0
+  syntax_errors: 6
+  indentation_errors: 0
+  exhausted_context_windows: 3
+  test_timeouts: 1
+  command: aider --model openrouter/qwen/qwen-2.5-coder-32b-instruct
+  date: 2024-11-24
+  versions: 0.64.2.dev
+  seconds_per_case: 21.2
+  total_cost: 0.1420
+  
+- dirname: 2024-11-23-21-08-53--ollama-qwen2.5-coder:32b-instruct-q4_K_M-8kctx
+  test_cases: 133
+  model: "Ollama: q4_K_M"
+  edit_format: diff
+  commit_hash: baa1335-dirty, e63df83-dirty, ff8c1aa-dirty
+  pass_rate_1: 54.9
+  pass_rate_2: 66.9
+  percent_cases_well_formed: 94.0
+  error_outputs: 21
+  num_malformed_responses: 21
+  num_with_malformed_responses: 8
+  user_asks: 5
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: aider --model ollama/qwen2.5-coder:32b-instruct-q4_K_M
+  date: 2024-11-23
+  versions: 0.64.2.dev
+  seconds_per_case: 35.7
+  total_cost: 0.0000
+
+- dirname: 2024-11-24-02-23-32--deepinfra-qwen-diff
+  test_cases: 133
+  model: "Deepinfra: BF16"
+  edit_format: diff
+  commit_hash: bb78e2f
+  pass_rate_1: 58.6
+  pass_rate_2: 72.2
+  percent_cases_well_formed: 94.7
+  error_outputs: 15
+  num_malformed_responses: 13
+  num_with_malformed_responses: 7
+  user_asks: 3
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 2
+  test_timeouts: 3
+  command: aider --model deepinfra/Qwen/Qwen2.5-Coder-32B-Instruct
+  date: 2024-11-24
+  versions: 0.64.2.dev
+  seconds_per_case: 17.5
+  total_cost: 0.0000
+
+- dirname: 2024-11-24-04-12-58--fireworks-qwen-diff
+  test_cases: 133
+  model: "Fireworks: unknown"
+  edit_format: diff
+  commit_hash: 757eac0
+  pass_rate_1: 57.9
+  pass_rate_2: 72.2
+  percent_cases_well_formed: 94.0
+  error_outputs: 23
+  num_malformed_responses: 19
+  num_with_malformed_responses: 8
+  user_asks: 8
+  lazy_comments: 0
+  syntax_errors: 6
+  indentation_errors: 0
+  exhausted_context_windows: 4
+  test_timeouts: 1
+  command: aider --model fireworks_ai/accounts/fireworks/models/qwen2p5-coder-32b-instruct
+  date: 2024-11-24
+  versions: 0.64.2.dev
+  seconds_per_case: 10.4
+  total_cost: 0.5759
+
+- dirname: 2024-11-24-02-04-59--ollama-qwen2.5-coder:32b-instruct-q2_K-8kctx
+  test_cases: 133
+  model: "Ollama: q2_K"
+  edit_format: diff
+  commit_hash: 757eac0, bb78e2f, 8d0ba40-dirty, 1d09e96
+  pass_rate_1: 48.9
+  pass_rate_2: 61.7
+  percent_cases_well_formed: 91.7
+  error_outputs: 32
+  num_malformed_responses: 32
+  num_with_malformed_responses: 11
+  user_asks: 8
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model ollama/qwen2.5-coder:32b-instruct-q2_K
+  date: 2024-11-24
+  versions: 0.64.2.dev
+  seconds_per_case: 97.8
+  total_cost: 0.0000
+
+- dirname: 2024-11-24-14-56-49--qwen25-32b-or-fireworks
+  test_cases: 133
+  model: "Fireworks via OpenRouter: unknown"
+  edit_format: diff
+  commit_hash: c2f184f
+  pass_rate_1: 55.6
+  pass_rate_2: 67.7
+  percent_cases_well_formed: 94.0
+  error_outputs: 39
+  num_malformed_responses: 24
+  num_with_malformed_responses: 8
+  user_asks: 13
+  lazy_comments: 0
+  syntax_errors: 1
+  indentation_errors: 1
+  exhausted_context_windows: 7
+  test_timeouts: 4
+  command: aider --model openrouter/qwen/qwen-2.5-coder-32b-instruct
+  date: 2024-11-24
+  versions: 0.64.2.dev
+  seconds_per_case: 16.1
+  total_cost: 0.1391
+
+- dirname: 2024-11-24-22-03-19--or-hyperbolic-or-fixed-blank-messages2
+  test_cases: 133
+  model: "Hyperbolic via OpenRouter: BF16"
+  edit_format: diff
+  commit_hash: 0c59d32
+  pass_rate_1: 55.6
+  pass_rate_2: 68.4
+  percent_cases_well_formed: 89.5
+  error_outputs: 28
+  num_malformed_responses: 24
+  num_with_malformed_responses: 14
+  user_asks: 29
+  lazy_comments: 0
+  syntax_errors: 1
+  indentation_errors: 0
+  exhausted_context_windows: 4
+  test_timeouts: 1
+  command: aider --model openrouter/qwen/qwen-2.5-coder-32b-instruct
+  date: 2024-11-24
+  versions: 0.64.2.dev
+  seconds_per_case: 41.5
+  total_cost: 0.1402
+  
+- dirname: 2024-11-24-15-00-50--qwen25-32b-or-deepinfra
+  test_cases: 133
+  model: "Deepinfra via OpenRouter: BF16"
+  edit_format: diff
+  commit_hash: c2f184f
+  pass_rate_1: 57.1
+  pass_rate_2: 69.9
+  percent_cases_well_formed: 89.5
+  error_outputs: 35
+  num_malformed_responses: 31
+  num_with_malformed_responses: 14
+  user_asks: 11
+  lazy_comments: 0
+  syntax_errors: 1
+  indentation_errors: 1
+  exhausted_context_windows: 4
+  test_timeouts: 1
+  command: aider --model openrouter/qwen/qwen-2.5-coder-32b-instruct
+  date: 2024-11-24
+  versions: 0.64.2.dev
+  seconds_per_case: 28.5
+  total_cost: 0.1390
+
+- dirname: 2024-11-26-03-15-06--ollama-qwen2.5-coder:32b-instruct-fp16-2kctx
+  test_cases: 132
+  model: "Ollama: fp16, 2k ctx"
+  edit_format: diff
+  commit_hash: 68be6c5-dirty, 554d274, 2ff3a23, 2ff3a23-dirty, 61759f9, dd48b74, 3ebd47d-dirty
+  pass_rate_1: 43.2
+  pass_rate_2: 51.9
+  percent_cases_well_formed: 46.2
+  error_outputs: 171
+  num_malformed_responses: 165
+  num_with_malformed_responses: 71
+  user_asks: 97
+  lazy_comments: 2
+  syntax_errors: 4
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: "aider --model ollama/qwen2.5-coder:32b-instruct-fp16 # num_ctx: 2048"
+  date: 2024-11-26
+  versions: 0.64.2.dev,0.65.1.dev
+  seconds_per_case: 188.6
+  total_cost: 0.0000

@@ -1,0 +1,170 @@
+<canvas id="{{ include.chart_id }}" width="800" height="450" style="margin-top: 20px"></canvas>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var ctx = document.getElementById('{{ include.chart_id }}').getContext('2d');
+    var leaderboardData = {
+      labels: [],
+      datasets: [{
+        label: 'Percent completed correctly',
+        data: [],
+        backgroundColor: [],
+        borderColor: [],
+        borderWidth: 1
+      }]
+    };
+
+    var allData = [];
+    {% for row in include.data %}
+      allData.push({
+        model: '{{ row.model }}',
+        pass_rate: {{ row[include.pass_rate_key] }},
+        percent_cases_well_formed: {{ row.percent_cases_well_formed }},
+        edit_format: '{{ row.edit_format }}'
+      });
+    {% endfor %}
+
+    function updateChart() {
+      var selectedRows = document.querySelectorAll('tr.selected');
+      var showAll = selectedRows.length === 0;
+
+      leaderboardData.labels = [];
+      leaderboardData.datasets[0].data = [];
+      leaderboardData.datasets[0].backgroundColor = [];
+      leaderboardData.datasets[0].borderColor = [];
+
+      allData.forEach(function(row, index) {
+        var rowElement = document.getElementById('{{ include.row_prefix }}-' + index);
+        if (showAll) {
+          rowElement.classList.remove('selected');
+        }
+        if (showAll || rowElement.classList.contains('selected')) {
+          leaderboardData.labels.push(row.model);
+          leaderboardData.datasets[0].data.push(row.pass_rate);
+          
+          switch (row.edit_format) {
+            case 'whole':
+              leaderboardData.datasets[0].backgroundColor.push('rgba(255, 99, 132, 0.2)');
+              leaderboardData.datasets[0].borderColor.push('rgba(255, 99, 132, 1)');
+              break;
+            case 'diff':
+              leaderboardData.datasets[0].backgroundColor.push('rgba(54, 162, 235, 0.2)');
+              leaderboardData.datasets[0].borderColor.push('rgba(54, 162, 235, 1)');
+              break;
+            case 'udiff':
+              leaderboardData.datasets[0].backgroundColor.push('rgba(75, 192, 192, 0.2)');
+              leaderboardData.datasets[0].borderColor.push('rgba(75, 192, 192, 1)');
+              break;
+            case 'diff-fenced':
+              leaderboardData.datasets[0].backgroundColor.push('rgba(153, 102, 255, 0.2)');
+              leaderboardData.datasets[0].borderColor.push('rgba(153, 102, 255, 1)');
+              break;
+            default:
+              leaderboardData.datasets[0].backgroundColor.push('rgba(201, 203, 207, 0.2)');
+              leaderboardData.datasets[0].borderColor.push('rgba(201, 203, 207, 1)');
+          }
+        }
+      });
+
+      // Apply legend filtering
+      var meta = leaderboardChart.getDatasetMeta(0);
+      meta.data.forEach(function(bar, index) {
+        if (leaderboardData.labels.includes(allData[index].model)) {
+          bar.hidden = (allData[index].edit_format === 'whole' && meta.data[0].hidden) ||
+                       (allData[index].edit_format !== 'whole' && meta.data[1].hidden);
+        } else {
+          bar.hidden = true;
+        }
+      });
+
+      leaderboardChart.update();
+    }
+
+    var tableBody = document.querySelector('table tbody');
+    allData.forEach(function(row, index) {
+      var tr = tableBody.children[index];
+      tr.id = '{{ include.row_prefix }}-' + index;
+      tr.style.cursor = 'pointer';
+      tr.onclick = function() {
+        this.classList.toggle('selected');
+        updateChart();
+      };
+    });
+
+    var leaderboardChart = new Chart(ctx, {
+      type: 'bar',
+      data: leaderboardData,
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Correct Exercises (%)'
+            }
+          },
+          x: {
+            ticks: {
+              autoSkip: false,
+              maxRotation: 90,
+              minRotation: 0
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            labels: {
+              generateLabels: function(chart) {
+                var uniqueFormats = [...new Set(allData.map(item => item.edit_format))];
+                return uniqueFormats.map(format => {
+                  var color;
+                  switch (format) {
+                    case 'whole':
+                      color = { fill: 'rgba(255, 99, 132, 0.2)', stroke: 'rgba(255, 99, 132, 1)' };
+                      break;
+                    case 'diff':
+                      color = { fill: 'rgba(54, 162, 235, 0.2)', stroke: 'rgba(54, 162, 235, 1)' };
+                      break;
+                    case 'udiff':
+                      color = { fill: 'rgba(75, 192, 192, 0.2)', stroke: 'rgba(75, 192, 192, 1)' };
+                      break;
+                    case 'diff-fenced':
+                      color = { fill: 'rgba(153, 102, 255, 0.2)', stroke: 'rgba(153, 102, 255, 1)' };
+                      break;
+                    default:
+                      color = { fill: 'rgba(201, 203, 207, 0.2)', stroke: 'rgba(201, 203, 207, 1)' };
+                  }
+                  return {
+                    text: format,
+                    fillStyle: color.fill,
+                    strokeStyle: color.stroke,
+                    lineWidth: 1,
+                    hidden: false
+                  };
+                });
+              }
+            },
+            onClick: function(e, legendItem, legend) {
+              var ci = legend.chart;
+              var clickedFormat = legendItem.text;
+              
+              legendItem.hidden = !legendItem.hidden;
+              
+              ci.data.datasets[0].data.forEach(function(dataPoint, i) {
+                var meta = ci.getDatasetMeta(0);
+                if (allData[i].edit_format === clickedFormat) {
+                  meta.data[i].hidden = legendItem.hidden;
+                }
+              });
+              
+              ci.update();
+            }
+          }
+        }
+      }
+    });
+
+    updateChart();
+  });
+</script>

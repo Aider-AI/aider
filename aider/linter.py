@@ -35,7 +35,10 @@ class Linter:
 
     def get_rel_fname(self, fname):
         if self.root:
-            return os.path.relpath(fname, self.root)
+            try:
+                return os.path.relpath(fname, self.root)
+            except ValueError:
+                return fname
         else:
             return fname
 
@@ -43,14 +46,18 @@ class Linter:
         cmd += " " + rel_fname
         cmd = cmd.split()
 
-        process = subprocess.Popen(
-            cmd,
-            cwd=self.root,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            encoding=self.encoding,
-            errors="replace",
-        )
+        try:
+            process = subprocess.Popen(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                encoding=self.encoding,
+                errors="replace",
+                cwd=self.root,
+            )
+        except OSError as err:
+            print(f"Unable to execute lint command: {err}")
+            return
         stdout, _ = process.communicate()
         errors = stdout
         if process.returncode == 0:
@@ -76,7 +83,11 @@ class Linter:
 
     def lint(self, fname, cmd=None):
         rel_fname = self.get_rel_fname(fname)
-        code = Path(fname).read_text(self.encoding)
+        try:
+            code = Path(fname).read_text(encoding=self.encoding, errors="replace")
+        except OSError as err:
+            print(f"Unable to read {fname}: {err}")
+            return
 
         if cmd:
             cmd = cmd.strip()
@@ -141,12 +152,12 @@ class Linter:
         try:
             result = subprocess.run(
                 flake8_cmd,
-                cwd=self.root,
                 capture_output=True,
                 text=True,
                 check=False,
                 encoding=self.encoding,
                 errors="replace",
+                cwd=self.root,
             )
             errors = result.stdout + result.stderr
         except Exception as e:
@@ -198,10 +209,24 @@ def basic_lint(fname, code):
     if not lang:
         return
 
-    parser = get_parser(lang)
+    # Tree-sitter linter is not capable of working with typescript #1132
+    if lang == "typescript":
+        return
+
+    try:
+        parser = get_parser(lang)
+    except Exception as err:
+        print(f"Unable to load parser: {err}")
+        return
+
     tree = parser.parse(bytes(code, "utf-8"))
 
-    errors = traverse_tree(tree.root_node)
+    try:
+        errors = traverse_tree(tree.root_node)
+    except RecursionError:
+        print(f"Unable to lint {fname} due to RecursionError")
+        return
+
     if not errors:
         return
 

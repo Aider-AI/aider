@@ -26,6 +26,10 @@ class CaptureIO(InputOutput):
         self.lines.append(msg)
         super().tool_error(msg)
 
+    def tool_warning(self, msg):
+        self.lines.append(msg)
+        super().tool_warning(msg)
+
     def get_captured_lines(self):
         lines = self.lines
         self.lines = []
@@ -156,7 +160,7 @@ class GUI:
 
             st.warning(
                 "This browser version of aider is experimental. Please share feedback in [GitHub"
-                " issues](https://github.com/paul-gauthier/aider/issues)."
+                " issues](https://github.com/Aider-AI/aider/issues)."
             )
 
     def do_settings_tab(self):
@@ -524,7 +528,7 @@ def gui_main():
         page_icon=urls.favicon,
         menu_items={
             "Get Help": urls.website,
-            "Report a bug": "https://github.com/paul-gauthier/aider/issues",
+            "Report a bug": "https://github.com/Aider-AI/aider/issues",
             "About": "# Aider\nAI pair programming in your browser.",
         },
     )

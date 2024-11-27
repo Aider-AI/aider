@@ -5,6 +5,7 @@ on:
     paths-ignore:
       - 'aider/website/**'
       - README.md
+      - HISTORY.md
     branches:
       - main
   pull_request:

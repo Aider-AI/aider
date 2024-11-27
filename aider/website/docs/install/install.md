@@ -9,6 +9,10 @@ nav_order: 10
 - TOC
 {:toc}
 
+## Python version
+
+Aider currently works with python 3.9-3.12.
+
 ## Install git
 
 Make sure you have git installed.
@@ -31,7 +35,7 @@ To work with Anthropic's models like Claude 3.5 Sonnet you need a paid
 
 ```
 # Install aider
-python -m pip install aider-chat
+python -m pip install -U --upgrade-strategy only-if-needed aider-chat
 
 # To work with GPT-4o:
 $ aider --4o --openai-api-key sk-xxx...
@@ -44,7 +48,7 @@ $ aider --sonnet --anthropic-api-key sk-xxx...
 
 ```
 # Install aider
-python -m pip install aider-chat
+python -m pip install -U --upgrade-strategy only-if-needed aider-chat
 
 # To work with GPT-4o:
 $ aider --4o --openai-api-key sk-xxx...

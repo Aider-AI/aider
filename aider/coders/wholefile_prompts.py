@@ -8,7 +8,7 @@ class WholeFilePrompts(CoderPrompts):
 Take requests for changes to the supplied code.
 If the request is ambiguous, ask questions.
 
-Always reply to the user in the same language they are using.
+Always reply to the user in {language}.
 
 {lazy_prompt}
 Once you understand the request you MUST:
@@ -52,7 +52,7 @@ path/to/filename.js
 {fence[1]}
 
 Every *file listing* MUST use this format:
-- First line: the filename with any originally provided path
+- First line: the filename with any originally provided path; no extra markup, punctuation, comments, etc. **JUST** the filename with path.
 - Second line: opening {fence[0]}
 - ... entire content of the file ...
 - Final line: closing {fence[1]}

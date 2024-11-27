@@ -2,11 +2,12 @@ import os
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import git
 
 from aider.coders import Coder
+from aider.coders.base_coder import UnknownEditFormat
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.models import Model
@@ -17,6 +18,8 @@ from aider.utils import GitTemporaryDirectory
 class TestCoder(unittest.TestCase):
     def setUp(self):
         self.GPT35 = Model("gpt-3.5-turbo")
+        self.webbrowser_patcher = patch("aider.io.webbrowser.open")
+        self.mock_webbrowser = self.webbrowser_patcher.start()
 
     def test_allowed_to_edit(self):
         with GitTemporaryDirectory():
@@ -166,6 +169,37 @@ class TestCoder(unittest.TestCase):
 
             self.assertEqual(coder.abs_fnames, set([str(fname.resolve())]))
 
+    def test_skip_duplicate_basename_mentions(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(pretty=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+
+            # Create files with same basename in different directories
+            fname1 = Path("dir1") / "file.txt"
+            fname2 = Path("dir2") / "file.txt"
+            fname3 = Path("dir3") / "unique.txt"
+
+            for fname in [fname1, fname2, fname3]:
+                fname.parent.mkdir(parents=True, exist_ok=True)
+                fname.touch()
+
+            # Add one file to chat
+            coder.add_rel_fname(str(fname1))
+
+            # Mock get_tracked_files to return all files
+            mock = MagicMock()
+            mock.return_value = set([str(fname1), str(fname2), str(fname3)])
+            coder.repo.get_tracked_files = mock
+
+            # Check that file mentions skip files with duplicate basenames
+            mentioned = coder.get_file_mentions(f"Check {fname2} and {fname3}")
+            self.assertEqual(mentioned, {str(fname3)})
+
+            # Add a read-only file with same basename
+            coder.abs_read_only_fnames.add(str(fname2.resolve()))
+            mentioned = coder.get_file_mentions(f"Check {fname1} and {fname3}")
+            self.assertEqual(mentioned, {str(fname3)})
+
     def test_check_for_file_mentions_read_only(self):
         with GitTemporaryDirectory():
             io = InputOutput(
@@ -192,6 +226,43 @@ class TestCoder(unittest.TestCase):
 
             # Assert that abs_fnames is still empty (file not added)
             self.assertEqual(coder.abs_fnames, set())
+
+    def test_check_for_file_mentions_with_mocked_confirm(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(pretty=False)
+            coder = Coder.create(self.GPT35, None, io)
+
+            # Mock get_file_mentions to return two file names
+            coder.get_file_mentions = MagicMock(return_value=set(["file1.txt", "file2.txt"]))
+
+            # Mock confirm_ask to return False for the first call and True for the second
+            io.confirm_ask = MagicMock(side_effect=[False, True, True])
+
+            # First call to check_for_file_mentions
+            coder.check_for_file_mentions("Please check file1.txt for the info")
+
+            # Assert that confirm_ask was called twice
+            self.assertEqual(io.confirm_ask.call_count, 2)
+
+            # Assert that only file2.txt was added to abs_fnames
+            self.assertEqual(len(coder.abs_fnames), 1)
+            self.assertIn("file2.txt", str(coder.abs_fnames))
+
+            # Reset the mock
+            io.confirm_ask.reset_mock()
+
+            # Second call to check_for_file_mentions
+            coder.check_for_file_mentions("Please check file1.txt and file2.txt again")
+
+            # Assert that confirm_ask was called only once (for file1.txt)
+            self.assertEqual(io.confirm_ask.call_count, 1)
+
+            # Assert that abs_fnames still contains only file2.txt
+            self.assertEqual(len(coder.abs_fnames), 1)
+            self.assertIn("file2.txt", str(coder.abs_fnames))
+
+            # Assert that file1.txt is in ignore_mentions
+            self.assertIn("file1.txt", coder.ignore_mentions)
 
     def test_check_for_subdir_mention(self):
         with GitTemporaryDirectory():
@@ -316,7 +387,7 @@ class TestCoder(unittest.TestCase):
         _, file1 = tempfile.mkstemp()
 
         with open(file1, "wb") as f:
-            f.write(b"this contains ``` backticks")
+            f.write(b"this contains\n```\nbackticks")
 
         files = [file1]
 
@@ -700,7 +771,7 @@ two
         # Test case with no URL
         no_url_input = "This text contains no URL"
         result = coder.check_for_urls(no_url_input)
-        self.assertEqual(result, [])
+        self.assertEqual(result, no_url_input)
 
         # Test case with the same URL appearing multiple times
         repeated_url_input = (
@@ -708,7 +779,8 @@ two
             " more time"
         )
         result = coder.check_for_urls(repeated_url_input)
-        self.assertEqual(result.count("https://example.com"), 1)
+        # the original 3 in the input text, plus 1 more for the scraped text
+        self.assertEqual(result.count("https://example.com"), 4)
         self.assertIn("https://example.com", result)
 
     def test_coder_from_coder_with_subdir(self):
@@ -746,6 +818,161 @@ two
             # Check that the abs_fnames do not contain duplicate or incorrect paths
             self.assertEqual(len(coder1.abs_fnames), 1)
             self.assertEqual(len(coder2.abs_fnames), 1)
+
+    def test_suggest_shell_commands(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io)
+
+            def mock_send(*args, **kwargs):
+                coder.partial_response_content = """Here's a shell command to run:
+
+```bash
+echo "Hello, World!"
+```
+
+This command will print 'Hello, World!' to the console."""
+                coder.partial_response_function_call = dict()
+                return []
+
+            coder.send = mock_send
+
+            # Mock the handle_shell_commands method to check if it's called
+            coder.handle_shell_commands = MagicMock()
+
+            # Run the coder with a message
+            coder.run(with_message="Suggest a shell command")
+
+            # Check if the shell command was added to the list
+            self.assertEqual(len(coder.shell_commands), 1)
+            self.assertEqual(coder.shell_commands[0].strip(), 'echo "Hello, World!"')
+
+            # Check if handle_shell_commands was called with the correct argument
+            coder.handle_shell_commands.assert_called_once()
+
+    def test_no_suggest_shell_commands(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io, suggest_shell_commands=False)
+            self.assertFalse(coder.suggest_shell_commands)
+
+    def test_detect_urls_enabled(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io, detect_urls=True)
+            coder.commands.scraper = MagicMock()
+            coder.commands.scraper.scrape = MagicMock(return_value="some content")
+
+            # Test with a message containing a URL
+            message = "Check out https://example.com"
+            coder.check_for_urls(message)
+            coder.commands.scraper.scrape.assert_called_once_with("https://example.com")
+
+    def test_detect_urls_disabled(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io, detect_urls=False)
+            coder.commands.scraper = MagicMock()
+            coder.commands.scraper.scrape = MagicMock(return_value="some content")
+
+            # Test with a message containing a URL
+            message = "Check out https://example.com"
+            result = coder.check_for_urls(message)
+            self.assertEqual(result, message)
+            coder.commands.scraper.scrape.assert_not_called()
+
+    def test_unknown_edit_format_exception(self):
+        # Test the exception message format
+        invalid_format = "invalid_format"
+        valid_formats = ["diff", "whole", "map"]
+        exc = UnknownEditFormat(invalid_format, valid_formats)
+        expected_msg = (
+            f"Unknown edit format {invalid_format}. Valid formats are: {', '.join(valid_formats)}"
+        )
+        self.assertEqual(str(exc), expected_msg)
+
+    def test_unknown_edit_format_creation(self):
+        # Test that creating a Coder with invalid edit format raises the exception
+        io = InputOutput(yes=True)
+        invalid_format = "invalid_format"
+
+        with self.assertRaises(UnknownEditFormat) as cm:
+            Coder.create(self.GPT35, invalid_format, io=io)
+
+        exc = cm.exception
+        self.assertEqual(exc.edit_format, invalid_format)
+        self.assertIsInstance(exc.valid_formats, list)
+        self.assertTrue(len(exc.valid_formats) > 0)
+
+    def test_coder_create_with_new_file_oserror(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            new_file = "new_file.txt"
+
+            # Mock Path.touch() to raise OSError
+            with patch("pathlib.Path.touch", side_effect=OSError("Permission denied")):
+                # Create the coder with a new file
+                coder = Coder.create(self.GPT35, "diff", io=io, fnames=[new_file])
+
+            # Check if the coder was created successfully
+            self.assertIsInstance(coder, Coder)
+
+            # Check if the new file is not in abs_fnames
+            self.assertNotIn(new_file, [os.path.basename(f) for f in coder.abs_fnames])
+
+    def test_show_exhausted_error(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io)
+
+            # Set up some real done_messages and cur_messages
+            coder.done_messages = [
+                {"role": "user", "content": "Hello, can you help me with a Python problem?"},
+                {
+                    "role": "assistant",
+                    "content": "Of course! I'd be happy to help. What's the problem you're facing?",
+                },
+                {
+                    "role": "user",
+                    "content": (
+                        "I need to write a function that calculates the factorial of a number."
+                    ),
+                },
+                {
+                    "role": "assistant",
+                    "content": (
+                        "Sure, I can help you with that. Here's a simple Python function to"
+                        " calculate the factorial of a number:"
+                    ),
+                },
+            ]
+
+            coder.cur_messages = [
+                {"role": "user", "content": "Can you optimize this function for large numbers?"},
+            ]
+
+            # Set up real values for the main model
+            coder.main_model.info = {
+                "max_input_tokens": 4000,
+                "max_output_tokens": 1000,
+            }
+            coder.partial_response_content = (
+                "Here's an optimized version of the factorial function:"
+            )
+            coder.io.tool_error = MagicMock()
+
+            # Call the method
+            coder.show_exhausted_error()
+
+            # Check if tool_error was called with the expected message
+            coder.io.tool_error.assert_called()
+            error_message = coder.io.tool_error.call_args[0][0]
+
+            # Assert that the error message contains the expected information
+            self.assertIn("Model gpt-3.5-turbo has hit a token limit!", error_message)
+            self.assertIn("Input tokens:", error_message)
+            self.assertIn("Output tokens:", error_message)
+            self.assertIn("Total tokens:", error_message)
 
 
 if __name__ == "__main__":

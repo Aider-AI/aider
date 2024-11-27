@@ -6,13 +6,14 @@ import random
 import re
 import shutil
 import subprocess
+import sys
 import time
 import traceback
 from collections import defaultdict
 from json.decoder import JSONDecodeError
 from pathlib import Path
 from types import SimpleNamespace
-from typing import List
+from typing import List, Optional
 
 import git
 import lox
@@ -38,6 +39,20 @@ app = typer.Typer(add_completion=False, pretty_exceptions_enable=False)
 NUM_TESTS = (89, 133)
 
 load_dotenv(override=True)
+
+
+def find_latest_benchmark_dir():
+    benchmark_dirs = [d for d in BENCHMARK_DNAME.iterdir() if d.is_dir()]
+    if not benchmark_dirs:
+        print("Error: No benchmark directories found under tmp.benchmarks.")
+        sys.exit(1)
+
+    latest_dir = max(
+        benchmark_dirs,
+        key=lambda d: next((f.stat().st_mtime for f in d.rglob("*.md") if f.is_file()), 0),
+    )
+    print(f"Using the most recently updated benchmark directory: {latest_dir.name}")
+    return latest_dir
 
 
 def show_stats(dirnames, graphs):
@@ -106,10 +121,12 @@ def resolve_dirname(dirname, use_single_prior, make_new):
 
 @app.command()
 def main(
-    dirnames: List[str] = typer.Argument(..., help="Directory names"),
+    dirnames: Optional[List[str]] = typer.Argument(None, help="Directory names"),
     graphs: bool = typer.Option(False, "--graphs", help="Generate graphs"),
     model: str = typer.Option("gpt-3.5-turbo", "--model", "-m", help="Model name"),
     edit_format: str = typer.Option(None, "--edit-format", "-e", help="Edit format"),
+    editor_model: str = typer.Option(None, "--editor-model", help="Editor model name"),
+    editor_edit_format: str = typer.Option(None, "--editor-edit-format", help="Editor edit format"),
     replay: str = typer.Option(
         None,
         "--replay",
@@ -138,6 +155,9 @@ def main(
     tries: int = typer.Option(2, "--tries", "-r", help="Number of tries for running tests"),
     threads: int = typer.Option(1, "--threads", "-t", help="Number of threads to run in parallel"),
     num_tests: int = typer.Option(-1, "--num-tests", "-n", help="Number of tests to run"),
+    num_ctx: Optional[int] = typer.Option(
+        None, "--num-ctx", help="Override model context window size"
+    ),
     exercises_dir: str = typer.Option(
         EXERCISES_DIR_DEFAULT, "--exercises-dir", help="Directory with exercise files"
     ),
@@ -146,6 +166,13 @@ def main(
     commit_hash = repo.head.object.hexsha[:7]
     if repo.is_dirty():
         commit_hash += "-dirty"
+
+    if stats_only and not dirnames:
+        latest_dir = find_latest_benchmark_dir()
+        dirnames = [str(latest_dir)]
+
+    if dirnames is None:
+        dirnames = []
 
     if len(dirnames) > 1 and not (stats_only or diffs_only):
         print("Only provide 1 dirname unless running with --stats or --diffs")
@@ -221,6 +248,9 @@ def main(
                 commit_hash,
                 replay,
                 max_apply_update_errors,
+                editor_model,
+                editor_edit_format,
+                num_ctx,
             )
 
             all_results.append(results)
@@ -240,6 +270,8 @@ def main(
                 commit_hash,
                 replay,
                 max_apply_update_errors,
+                editor_model,
+                editor_edit_format,
             )
         all_results = run_test_threaded.gather(tqdm=True)
 
@@ -350,7 +382,7 @@ def summarize_results(dirname):
         res.syntax_errors += results.get("syntax_errors", 0)
         res.indentation_errors += results.get("indentation_errors", 0)
 
-        for key in "model edit_format commit_hash".split():
+        for key in "model edit_format commit_hash editor_model editor_edit_format".split():
             val = results.get(key)
             if val:
                 variants[key].add(val)
@@ -496,6 +528,9 @@ def run_test_real(
     commit_hash,
     replay,
     max_apply_update_errors,
+    editor_model,
+    editor_edit_format,
+    num_ctx=None,
 ):
     if not os.path.isdir(testdir):
         print("Not a dir:", testdir)
@@ -545,11 +580,24 @@ def run_test_real(
 
     io = InputOutput(
         pretty=True,
-        yes=False,
+        yes=True,
         chat_history_file=history_fname,
     )
 
-    main_model = models.Model(model_name)
+    # weak_model_name = model_name
+    weak_model_name = None
+
+    main_model = models.Model(
+        model_name,
+        weak_model=weak_model_name,
+        editor_model=editor_model,
+        editor_edit_format=editor_edit_format,
+    )
+
+    if num_ctx:
+        if not main_model.extra_params:
+            main_model.extra_params = {}
+        main_model.extra_params["num_ctx"] = num_ctx
     edit_format = edit_format or main_model.edit_format
 
     dump(main_model)
@@ -567,8 +615,10 @@ def run_test_real(
         verbose=verbose,
         # auto_lint=False,  # disabled for code-in-json experiments
         cache_prompts=True,
+        suggest_shell_commands=False,
     )
     coder.max_apply_update_errors = max_apply_update_errors
+    coder.show_announcements()
 
     timeouts = 0
 
@@ -658,6 +708,10 @@ def run_test_real(
             )
         ),
     )
+
+    if edit_format == "architect":
+        results["editor_model"] = main_model.editor_model.name if main_model.editor_model else None
+        results["editor_edit_format"] = main_model.editor_edit_format
     dump(results)
 
     results_fname.write_text(json.dumps(results, indent=4))

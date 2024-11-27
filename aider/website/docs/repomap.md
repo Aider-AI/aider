@@ -1,7 +1,7 @@
 ---
 parent: More info
 highlight_image: /assets/robot-ast.png
-nav_order: 900
+nav_order: 300
 description: Aider uses a map of your git repository to provide code context to LLMs.
 ---
 
@@ -29,9 +29,9 @@ It shows how each of these symbols are defined, by including the critical lines 
 
 Here's a part of
 the repo map of aider's repo, for
-[base_coder.py](https://github.com/paul-gauthier/aider/blob/main/aider/coders/base_coder.py)
+[base_coder.py](https://github.com/Aider-AI/aider/blob/main/aider/coders/base_coder.py)
 and
-[commands.py](https://github.com/paul-gauthier/aider/blob/main/aider/commands.py)
+[commands.py](https://github.com/Aider-AI/aider/blob/main/aider/commands.py)
 :
 
 ```
