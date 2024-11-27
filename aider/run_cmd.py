@@ -8,12 +8,12 @@ import pexpect
 import psutil
 
 
-def run_cmd(command, verbose=False, error_print=None):
+def run_cmd(command, verbose=False, error_print=None, cwd=None):
     try:
         if sys.stdin.isatty() and hasattr(pexpect, "spawn") and platform.system() != "Windows":
-            return run_cmd_pexpect(command, verbose)
+            return run_cmd_pexpect(command, verbose, cwd)
 
-        return run_cmd_subprocess(command, verbose)
+        return run_cmd_subprocess(command, verbose, cwd)
     except OSError as e:
         error_message = f"Error occurred while running command '{command}': {str(e)}"
         if error_print is None:
@@ -39,7 +39,7 @@ def get_windows_parent_process_name():
         return None
 
 
-def run_cmd_subprocess(command, verbose=False):
+def run_cmd_subprocess(command, verbose=False, cwd=None):
     if verbose:
         print("Using run_cmd_subprocess:", command)
 
@@ -69,6 +69,7 @@ def run_cmd_subprocess(command, verbose=False):
             errors="replace",
             bufsize=0,  # Set bufsize to 0 for unbuffered output
             universal_newlines=True,
+            cwd=cwd,
         )
 
         output = []
@@ -85,7 +86,7 @@ def run_cmd_subprocess(command, verbose=False):
         return 1, str(e)
 
 
-def run_cmd_pexpect(command, verbose=False):
+def run_cmd_pexpect(command, verbose=False, cwd=None):
     """
     Run a shell command interactively using pexpect, capturing all output.
 
@@ -112,12 +113,12 @@ def run_cmd_pexpect(command, verbose=False):
             # Use the shell from SHELL environment variable
             if verbose:
                 print("Running pexpect.spawn with shell:", shell)
-            child = pexpect.spawn(shell, args=["-c", command], encoding="utf-8")
+            child = pexpect.spawn(shell, args=["-c", command], encoding="utf-8", cwd=cwd)
         else:
             # Fall back to spawning the command directly
             if verbose:
                 print("Running pexpect.spawn without shell.")
-            child = pexpect.spawn(command, encoding="utf-8")
+            child = pexpect.spawn(command, encoding="utf-8", cwd=cwd)
 
         # Transfer control to the user, capturing output
         child.interact(output_filter=output_callback)
