@@ -24,6 +24,13 @@ cog.out(text)
 ]]]-->
 
 
+### main branch
+
+- PDF support for Sonnet and Gemini models.
+- Set cwd to repo root when running shell commands.
+- Improved error handling for failed .gitignore file operations.
+- Aider wrote 82% of the code in this release.
+
 ### Aider v0.65.1
 
 - Bugfix to `--alias`.
