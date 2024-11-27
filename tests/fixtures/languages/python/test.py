@@ -1,4 +1,5 @@
-from typing import Optional, List
+from typing import List, Optional
+
 
 class Person:
     """A class representing a person."""
@@ -12,9 +13,11 @@ class Person:
         prefix = "Good day" if formal else "Hello"
         return f"{prefix}, {self.name}!"
 
+
 def create_greeting_list(people: List[Person]) -> List[str]:
     """Create greetings for a list of people."""
     return [person.greet() for person in people]
+
 
 # Constants
 DEFAULT_NAME = "World"
