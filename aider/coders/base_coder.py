@@ -708,8 +708,11 @@ class Coder:
         return chat_files_messages
 
     def get_images_message(self):
-        #if not self.main_model.info.get("supports_vision"):
-        #    return None
+        supports_images = self.main_model.info.get("supports_vision")
+        supports_pdfs = self.main_model.info.get("supports_pdf_input")
+        
+        if not (supports_images or supports_pdfs):
+            return None
 
         image_messages = []
         for fname, content in self.get_abs_fnames_content():
@@ -717,14 +720,21 @@ class Coder:
                 with open(fname, "rb") as image_file:
                     encoded_string = base64.b64encode(image_file.read()).decode("utf-8")
                 mime_type, _ = mimetypes.guess_type(fname)
-                dump(mime_type)
                 if not mime_type:
                     continue
-                if mime_type.startswith("image/") or mime_type == "application/pdf":
+                
+                if mime_type.startswith("image/") and supports_images:
                     image_url = f"data:{mime_type};base64,{encoded_string}"
                     rel_fname = self.get_rel_fname(fname)
                     image_messages += [
                         {"type": "text", "text": f"Image file: {rel_fname}"},
+                        {"type": "image_url", "image_url": {"url": image_url, "detail": "high"}},
+                    ]
+                elif mime_type == "application/pdf" and supports_pdfs:
+                    image_url = f"data:{mime_type};base64,{encoded_string}"
+                    rel_fname = self.get_rel_fname(fname)
+                    image_messages += [
+                        {"type": "text", "text": f"PDF file: {rel_fname}"},
                         {"type": "image_url", "image_url": image_url},
                     ]
 
