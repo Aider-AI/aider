@@ -333,96 +333,46 @@ class TestRepoMapAllLanguages(unittest.TestCase):
 
     def test_get_repo_map_all_languages(self):
         language_files = {
-            "c": (
-                "test.c",
-                "",  # Now reads from fixture file
-                "main",  # Key symbol to check
-            ),
-            "cpp": (
-                "test.cpp",
-                "",  # Now reads from fixture file
-                "main",  # Key symbol to check
-            ),
-            "elixir": (
-                "test.ex",
-                "",  # Now reads from fixture file
-                "Greeter",  # Key symbol to check
-            ),
-            "java": (
-                "Test.java",
-                "",  # Now reads from fixture file
-                "Greeting",  # Key symbol to check
-            ),
-            "javascript": (
-                "test.js",
-                "",  # Now reads from fixture file
-                "Person",  # Key symbol to check
-            ),
-            "ocaml": (
-                "test.ml",
-                "",  # Now reads from fixture file
-                "Greeter",  # Key symbol to check
-            ),
-            "php": (
-                "test.php",
-                "",  # Now reads from fixture file
-                "greet",  # Key symbol to check
-            ),
-            "python": (
-                "test.py",
-                "",  # Now reads from fixture file
-                "Person",  # Key symbol to check
-            ),
-            "ql": (
-                "test.ql",
-                "",  # Now reads from fixture file
-                "greet",  # Key symbol to check
-            ),
-            "ruby": (
-                "test.rb",
-                "",  # Now reads from fixture file
-                "greet",  # Key symbol to check
-            ),
-            "rust": (
-                "test.rs",
-                "",  # Now reads from fixture file
-                "Person",  # Key symbol to check
-            ),
-            "typescript": (
-                "test.ts",
-                "",  # Now reads from fixture file
-                "greet",  # Key symbol to check
-            ),
-            "tsx": (
-                "test.tsx",
-                "",  # Now reads from fixture file
-                "UserProps",  # Key symbol to check
-            ),
-            "csharp": (
-                "test.cs",
-                "",  # Now reads from fixture file
-                "IGreeter",  # Key symbol to check
-            ),
-            "elisp": (
-                "test.el",
-                "",  # Now reads from fixture file
-                "greeter",  # Key symbol to check
-            ),
-            "elm": (
-                "test.elm",
-                "",  # Now reads from fixture file
-                "Person",  # Key symbol to check
-            ),
-            "go": (
-                "test.go",
-                "",  # Now reads from fixture file
-                "Greeter",  # Key symbol to check
-            ),
+            "c": "main",
+            "cpp": "main", 
+            "elixir": "Greeter",
+            "java": "Greeting",
+            "javascript": "Person",
+            "ocaml": "Greeter",
+            "php": "greet",
+            "python": "Person",
+            "ql": "greet",
+            "ruby": "greet",
+            "rust": "Person",
+            "typescript": "greet",
+            "tsx": "UserProps",
+            "csharp": "IGreeter",
+            "elisp": "greeter",
+            "elm": "Person",
+            "go": "Greeter",
         }
 
-        for lang, (filename, content, key_symbol) in language_files.items():
+        fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
+
+        for lang, key_symbol in language_files.items():
+            # Get the fixture file path and name based on language
+            fixture_dir = fixtures_dir / lang
+            if lang == "cpp":
+                filename = "hello.cpp"
+            elif lang == "c":
+                filename = "hello.c"
+            else:
+                filename = "test." + {"csharp": "cs"}.get(lang, lang)
+
+            fixture_path = fixture_dir / filename
+            self.assertTrue(fixture_path.exists(), f"Fixture file missing for {lang}: {fixture_path}")
+
+            # Read the fixture content
+            with open(fixture_path, "r", encoding="utf-8") as f:
+                content = f.read()
             with GitTemporaryDirectory() as temp_dir:
-                with open(os.path.join(temp_dir, filename), "w") as f:
+                test_file = os.path.join(temp_dir, filename)
+                with open(test_file, "w", encoding="utf-8") as f:
                     f.write(content)
 
                 io = InputOutput()
