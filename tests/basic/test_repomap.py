@@ -399,11 +399,24 @@ class TestRepoMapAllLanguages(unittest.TestCase):
             ),
             "java": (
                 "Test.java",
-                (
-                    "public class Test {\n    public static void main(String[] args) {\n       "
-                    ' System.out.println("Hello, World!");\n    }\n}\n'
-                ),
-                "Test",  # Key symbol to check
+                """public interface Greeting {
+    String greet(String name);
+}
+
+public class Test implements Greeting {
+    private String prefix = "Hello";
+    
+    public String greet(String name) {
+        return prefix + ", " + name + "!";
+    }
+    
+    public static void main(String[] args) {
+        Test greeter = new Test();
+        System.out.println(greeter.greet("World"));
+    }
+}
+""",
+                "Greeting",  # Key symbol to check
             ),
             "javascript": (
                 "test.js",
