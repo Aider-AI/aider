@@ -598,162 +598,22 @@ export { UserGreeting, useCounter, DEFAULT_NAME, MAX_AGE };
             ),
             "csharp": (
                 "test.cs",
-                """using System;
-using System.Collections.Generic;
-
-namespace Greetings {
-    public interface IGreeter {
-        string Greet(string name);
-    }
-
-    public class Person {
-        public string Name { get; set; }
-        public int Age { get; set; }
-
-        public Person(string name, int age) {
-            Name = name;
-            Age = age;
-        }
-    }
-
-    public class FormalGreeter : IGreeter {
-        private const string PREFIX = "Good day";
-        private static readonly int MAX_AGE = 150;
-
-        public string Greet(string name) {
-            return $"{PREFIX}, {name}!";
-        }
-
-        public string GreetPerson(Person person) {
-            return $"{PREFIX}, {person.Name} ({person.Age})!";
-        }
-    }
-
-    public class Program {
-        static void Main() {
-            var greeter = new FormalGreeter();
-            var person = new Person("World", 42);
-            Console.WriteLine(greeter.GreetPerson(person));
-        }
-    }
-}""",
+                "",  # Now reads from fixture file
                 "IGreeter",  # Key symbol to check
             ),
             "elisp": (
                 "test.el",
-                """(defvar *default-greeting* "Hello")
-(defvar *max-name-length* 50)
-
-(defstruct person
-  (name "Anonymous")
-  (age 0))
-
-(defclass greeter ()
-  ((prefix :initarg :prefix
-           :accessor greeter-prefix
-           :initform *default-greeting*)))
-
-(defmethod greet ((g greeter) (p person))
-  (format nil "~A, ~A! You are ~D years old."
-          (greeter-prefix g)
-          (person-name p)
-          (person-age p)))
-
-(defun create-formal-greeter ()
-  (make-instance 'greeter :prefix "Good day"))
-
-(defun main ()
-  (let ((greeter (create-formal-greeter))
-        (person (make-person :name "World" :age 42)))
-    (message "%s" (greet greeter person))))""",
+                "",  # Now reads from fixture file
                 "greeter",  # Key symbol to check
             ),
             "elm": (
                 "test.elm",
-                """module Main exposing (main, Person, Greeting)
-
-import Html exposing (Html, div, text)
-import Html.Attributes exposing (class)
-
-type alias Person =
-    { name : String
-    , age : Int
-    }
-
-type Greeting
-    = Formal
-    | Casual
-
-greet : Greeting -> Person -> String
-greet style person =
-    let
-        prefix =
-            case style of
-                Formal ->
-                    "Good day"
-
-                Casual ->
-                    "Hi"
-    in
-    prefix ++ ", " ++ person.name ++ "!"
-
-defaultPerson : Person
-defaultPerson =
-    { name = "World"
-    , age = 42
-    }
-
-main : Html msg
-main =
-    div [ class "greeting" ]
-        [ text (greet Formal defaultPerson)
-        ]""",
+                "",  # Now reads from fixture file
                 "Person",  # Key symbol to check
             ),
             "go": (
                 "test.go",
-                """package main
-
-import (
-    "fmt"
-    "strings"
-)
-
-// Person represents someone who can be greeted
-type Person struct {
-    Name string
-    Age  int
-}
-
-// Greeter defines greeting behavior
-type Greeter interface {
-    Greet(p Person) string
-}
-
-// FormalGreeter implements Greeter with formal style
-type FormalGreeter struct {
-    Prefix string
-}
-
-const (
-    DefaultName = "World"
-    MaxAge     = 150
-)
-
-func (g FormalGreeter) Greet(p Person) string {
-    return fmt.Sprintf("%s, %s! You are %d years old.",
-        g.Prefix, p.Name, p.Age)
-}
-
-func NewFormalGreeter() *FormalGreeter {
-    return &FormalGreeter{Prefix: "Good day"}
-}
-
-func main() {
-    greeter := NewFormalGreeter()
-    person := Person{Name: DefaultName, Age: 42}
-    fmt.Println(greeter.Greet(person))
-}""",
+                "",  # Now reads from fixture file
                 "Greeter",  # Key symbol to check
             ),
         }
