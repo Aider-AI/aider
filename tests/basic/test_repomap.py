@@ -405,11 +405,11 @@ class TestRepoMapAllLanguages(unittest.TestCase):
 
 public class Test implements Greeting {
     private String prefix = "Hello";
-    
+
     public String greet(String name) {
         return prefix + ", " + name + "!";
     }
-    
+
     public static void main(String[] args) {
         Test greeter = new Test();
         System.out.println(greeter.greet("World"));
@@ -458,16 +458,16 @@ module Greeter = struct
     age: int
   }
 
-  let create_person name age = 
+  let create_person name age =
     {name; age}
 
   let greet person =
-    Printf.printf "Hello, %s! You are %d years old.\\n" 
+    Printf.printf "Hello, %s! You are %d years old.\\n"
       person.name person.age
 end
 
 (* Outside the module *)
-let () = 
+let () =
   let person = Greeter.create_person "Alice" 30 in
   Greeter.greet person
 """,
@@ -484,11 +484,11 @@ let () =
 
 class Person:
     """A class representing a person."""
-    
+
     def __init__(self, name: str, age: Optional[int] = None):
         self.name = name
         self.age = age
-    
+
     def greet(self, formal: bool = False) -> str:
         """Generate a greeting."""
         prefix = "Good day" if formal else "Hello"
@@ -594,7 +594,7 @@ const MAX_AGE = 150;
 
 export { UserGreeting, useCounter, DEFAULT_NAME, MAX_AGE };
 """,
-                "UserGreeting",  # Key symbol to check
+                "UserProps",  # Key symbol to check
             ),
             "csharp": (
                 "test.cs",
