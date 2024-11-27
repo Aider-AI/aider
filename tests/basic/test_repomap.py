@@ -412,7 +412,7 @@ class Person {
     constructor(name) {
         this.name = name;
     }
-    
+
     sayHello() {
         return `Hello, ${this.name}!`;
     }
@@ -537,6 +537,8 @@ class Greeter {
                 result = repo_map.get_repo_map([], other_files)
                 dump(lang)
                 dump(result)
+
+                self.assertGreater(len(result.strip().splitlines()), 1)
 
                 # Check if the result contains all the expected files and symbols
                 self.assertIn(
