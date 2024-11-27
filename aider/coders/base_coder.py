@@ -710,6 +710,9 @@ class Coder:
         supports_images = self.main_model.info.get("supports_vision")
         supports_pdfs = self.main_model.info.get("supports_pdf_input")
 
+        # https://github.com/BerriAI/litellm/pull/6928
+        supports_pdfs = "claude-3-5-sonnet-20241022" in self.main_model.name
+
         if not (supports_images or supports_pdfs):
             return None
 
