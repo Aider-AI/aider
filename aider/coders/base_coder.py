@@ -710,7 +710,7 @@ class Coder:
     def get_images_message(self):
         supports_images = self.main_model.info.get("supports_vision")
         supports_pdfs = self.main_model.info.get("supports_pdf_input")
-        
+
         if not (supports_images or supports_pdfs):
             return None
 
@@ -722,7 +722,7 @@ class Coder:
                 mime_type, _ = mimetypes.guess_type(fname)
                 if not mime_type:
                     continue
-                
+
                 if mime_type.startswith("image/") and supports_images:
                     image_url = f"data:{mime_type};base64,{encoded_string}"
                     rel_fname = self.get_rel_fname(fname)
