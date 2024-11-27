@@ -903,6 +903,20 @@ class TestCommands(TestCase):
                 )
             )
 
+            # Check that the image file appears in the messages
+            messages = vision_coder.format_messages().all_messages()
+            found_image = False
+            for msg in messages:
+                if msg.get("role") == "user" and "content" in msg:
+                    content = msg["content"]
+                    if isinstance(content, list):
+                        for item in content:
+                            if isinstance(item, dict) and item.get("type") == "text":
+                                if "test_image.jpg" in item.get("text", ""):
+                                    found_image = True
+                                    break
+            self.assertTrue(found_image, "Image file not found in messages to LLM")
+
     def test_cmd_read_only_with_glob_pattern(self):
         with GitTemporaryDirectory() as repo_dir:
             io = InputOutput(pretty=False, fancy_input=False, yes=False)
