@@ -385,99 +385,109 @@ class Greeter {
   }
 }
 """,
+                "Greeter"  # Key symbol to check
             ),
             "c": (
                 "test.c",
-                (
-                    '#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n   '
-                    " return 0;\n}\n"
-                ),
+                '#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}\n',
+                "main"  # Key symbol to check
             ),
             "csharp": (
                 "test.cs",
-                (
-                    "using System;\n\nclass Program {\n    static void Main() {\n       "
-                    ' Console.WriteLine("Hello, World!");\n    }\n}\n'
-                ),
+                'using System;\n\nclass Program {\n    static void Main() {\n        Console.WriteLine("Hello, World!");\n    }\n}\n',
+                "Program"  # Key symbol to check
             ),
             "cpp": (
                 "test.cpp",
-                (
-                    '#include <iostream>\n\nint main() {\n    std::cout << "Hello, World!" <<'
-                    " std::endl;\n    return 0;\n}\n"
-                ),
+                '#include <iostream>\n\nint main() {\n    std::cout << "Hello, World!" << std::endl;\n    return 0;\n}\n',
+                "main"  # Key symbol to check
             ),
-            "elisp": ("test.el", '(defun greet (name)\n  (message "Hello, %s!" name))\n'),
+            "elisp": (
+                "test.el",
+                '(defun greet (name)\n  (message "Hello, %s!" name))\n',
+                "greet"  # Key symbol to check
+            ),
             "elixir": (
                 "test.ex",
-                (
-                    'defmodule Greeter do\n  def hello(name) do\n    IO.puts("Hello, #{name}!")\n '
-                    " end\nend\n"
-                ),
+                'defmodule Greeter do\n  def hello(name) do\n    IO.puts("Hello, #{name}!")\n  end\nend\n',
+                "Greeter"  # Key symbol to check
             ),
             "elm": (
                 "test.elm",
-                (
-                    "module Main exposing (main)\n\nimport Html exposing (text)\n\nmain =\n    text"
-                    ' "Hello, World!"\n'
-                ),
+                'module Main exposing (main)\n\nimport Html exposing (text)\n\nmain =\n    text "Hello, World!"\n',
+                "Main"  # Key symbol to check
             ),
             "go": (
                 "test.go",
-                (
-                    'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello,'
-                    ' World!")\n}\n'
-                ),
+                'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello, World!")\n}\n',
+                "main"  # Key symbol to check
             ),
             "java": (
                 "Test.java",
-                (
-                    "public class Test {\n    public static void main(String[] args) {\n       "
-                    ' System.out.println("Hello, World!");\n    }\n}\n'
-                ),
+                'public class Test {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}\n',
+                "Test"  # Key symbol to check
             ),
             "javascript": (
                 "test.js",
                 "function greet(name) {\n    console.log(`Hello, ${name}!`);\n}\n",
+                "greet"  # Key symbol to check
             ),
-            "ocaml": ("test.ml", 'let greet name =\n  Printf.printf "Hello, %s!\\n" name\n'),
+            "ocaml": (
+                "test.ml",
+                'let greet name =\n  Printf.printf "Hello, %s!\\n" name\n',
+                "greet"  # Key symbol to check
+            ),
             "php": (
                 "test.php",
                 '<?php\nfunction greet($name) {\n    echo "Hello, $name!";\n}\n?>\n',
+                "greet"  # Key symbol to check
             ),
-            "python": ("test.py", 'def greet(name):\n    print(f"Hello, {name}!")\n'),
-            "ql": ("test.ql", 'predicate greet(string name) {\n  name = "World"\n}\n'),
-            "ruby": ("test.rb", 'def greet(name)\n  puts "Hello, #{name}!"\nend\n'),
-            "rust": ("test.rs", 'fn main() {\n    println!("Hello, World!");\n}\n'),
+            "python": (
+                "test.py",
+                'def greet(name):\n    print(f"Hello, {name}!")\n',
+                "greet"  # Key symbol to check
+            ),
+            "ql": (
+                "test.ql",
+                'predicate greet(string name) {\n  name = "World"\n}\n',
+                "greet"  # Key symbol to check
+            ),
+            "ruby": (
+                "test.rb",
+                'def greet(name)\n  puts "Hello, #{name}!"\nend\n',
+                "greet"  # Key symbol to check
+            ),
+            "rust": (
+                "test.rs",
+                'fn main() {\n    println!("Hello, World!");\n}\n',
+                "main"  # Key symbol to check
+            ),
             "typescript": (
                 "test.ts",
                 "function greet(name: string): void {\n    console.log(`Hello, ${name}!`);\n}\n",
+                "greet"  # Key symbol to check
             ),
             "tsx": (
                 "test.tsx",
-                (
-                    "import React from 'react';\n\nconst Greeting: React.FC<{ name: string }> = ({"
-                    " name }) => {\n    return <h1>Hello, {name}!</h1>;\n};\n\nexport default"
-                    " Greeting;\n"
-                ),
+                "import React from 'react';\n\nconst Greeting: React.FC<{ name: string }> = ({ name }) => {\n    return <h1>Hello, {name}!</h1>;\n};\n\nexport default Greeting;\n",
+                "Greeting"  # Key symbol to check
             ),
         }
 
         with IgnorantTemporaryDirectory() as temp_dir:
-            for _, (filename, content) in language_files.items():
+            for _, (filename, content, _) in language_files.items():
                 with open(os.path.join(temp_dir, filename), "w") as f:
                     f.write(content)
 
             io = InputOutput()
             repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
-            other_files = [
-                os.path.join(temp_dir, filename) for filename, _ in language_files.values()
-            ]
+            other_files = [os.path.join(temp_dir, filename) for filename, _, _ in language_files.values()]
             result = repo_map.get_repo_map([], other_files)
 
-            # Check if the result contains all the expected files
-            for lang, (filename, _) in language_files.items():
+            # Check if the result contains all the expected files and symbols
+            for lang, (filename, _, key_symbol) in language_files.items():
                 self.assertIn(filename, result, f"File for language {lang} not found in repo map")
+                self.assertIn(key_symbol, result, f"Key symbol '{key_symbol}' for language {lang} not found in repo map")
 
             # close the open cache files, so Windows won't error
             del repo_map
