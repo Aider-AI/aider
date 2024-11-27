@@ -492,10 +492,13 @@ class InputOutput:
     def add_to_input_history(self, inp):
         if not self.input_history_file:
             return
-        FileHistory(self.input_history_file).append_string(inp)
-        # Also add to the in-memory history if it exists
-        if self.prompt_session and self.prompt_session.history:
-            self.prompt_session.history.append_string(inp)
+        try:
+            FileHistory(self.input_history_file).append_string(inp)
+            # Also add to the in-memory history if it exists
+            if self.prompt_session and self.prompt_session.history:
+                self.prompt_session.history.append_string(inp)
+        except OSError as err:
+            self.tool_warning(f"Unable to write to input history file: {err}")
 
     def get_input_history(self):
         if not self.input_history_file:
