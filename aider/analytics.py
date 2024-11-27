@@ -126,7 +126,7 @@ class Analytics:
         data_file = self.get_data_file_path()
         if not data_file:
             return
-            
+
         if data_file.exists():
             try:
                 data = json.loads(data_file.read_text())
@@ -140,7 +140,7 @@ class Analytics:
         data_file = self.get_data_file_path()
         if not data_file:
             return
-            
+
         data = dict(
             uuid=self.user_id,
             permanently_disable=self.permanently_disable,
