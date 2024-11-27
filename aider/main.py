@@ -721,6 +721,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         if not sanity_check_repo(repo, io):
             return 1
 
+    if repo:
+        analytics.event("repo", num_files=len(repo.get_tracked_files()))
+    else:
+        analytics.event("no-repo")
+
     commands = Commands(
         io,
         None,

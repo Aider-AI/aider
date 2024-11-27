@@ -62,7 +62,7 @@ gitdb==4.0.11
     # via gitpython
 gitpython==3.1.43
     # via -r requirements/requirements.in
-grep-ast==0.4.0
+grep-ast==0.4.1
     # via -r requirements/requirements.in
 h11==0.14.0
     # via httpcore
@@ -86,9 +86,9 @@ importlib-resources==6.4.5
     # via -r requirements/requirements.in
 jinja2==3.1.4
     # via litellm
-jiter==0.7.1
+jiter==0.8.0
     # via openai
-json5==0.9.28
+json5==0.10.0
     # via -r requirements/requirements.in
 jsonschema==4.23.0
     # via
@@ -120,7 +120,7 @@ numpy==1.26.4
     # via
     #   -r requirements/requirements.in
     #   scipy
-openai==1.55.1
+openai==1.55.2
     # via litellm
 packaging==24.2
     # via

@@ -13,3 +13,7 @@ def hello():
     print("Hello}")  # Note: contains a brace
 python}
 ```
+
+{: .note }
+People often ask for SHIFT-ENTER to be a soft-newline.
+Unfortunately there is no portable way to detect that keystroke in terminals.

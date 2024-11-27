@@ -169,7 +169,10 @@ python -m aider
 
 ## Can I change the system prompts that aider uses?
 
-Aider is set up to support different system prompts and edit formats
+The most convenient way to add custom instructions is to use a
+[conventions file](https://aider.chat/docs/usage/conventions.html).
+
+But, aider is set up to support different actual system prompts and edit formats
 in a modular way. If you look in the `aider/coders` subdirectory, you'll
 see there's a base coder with base prompts, and then there are
 a number of
@@ -216,6 +219,18 @@ The
 by doing something like `git blame` on the repo,
 and counting up who wrote all the new lines of code in each release.
 Only lines in source code files are counted, not documentation or prompt files.
+
+## Why is the LLM speaking to me in an unexpected language?
+
+Aider goes to some effort to prompt the model to use the language that is configured
+for your system.
+But LLMs aren't fully reliable, and they sometimes decide to speak in
+an unexpected language.
+Claude is especially fond of speaking French.
+
+You can explicitly set the language that aider tells the model to use with
+`--chat-language <language>`.
+But the LLM may not comply.
 
 ## Can I share my aider chat transcript?
 

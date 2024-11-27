@@ -49,11 +49,11 @@ class Linter:
         try:
             process = subprocess.Popen(
                 cmd,
-                cwd=self.root,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 encoding=self.encoding,
                 errors="replace",
+                cwd=self.root,
             )
         except OSError as err:
             print(f"Unable to execute lint command: {err}")
@@ -152,12 +152,12 @@ class Linter:
         try:
             result = subprocess.run(
                 flake8_cmd,
-                cwd=self.root,
                 capture_output=True,
                 text=True,
                 check=False,
                 encoding=self.encoding,
                 errors="replace",
+                cwd=self.root,
             )
             errors = result.stdout + result.stderr
         except Exception as e:

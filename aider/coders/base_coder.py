@@ -665,6 +665,8 @@ class Coder:
 
     def get_readonly_files_messages(self):
         readonly_messages = []
+
+        # Handle non-image files
         read_only_content = self.get_read_only_files_content()
         if read_only_content:
             readonly_messages += [
@@ -676,6 +678,15 @@ class Coder:
                     content="Ok, I will use these files as references.",
                 ),
             ]
+
+        # Handle image files
+        images_message = self.get_images_message(self.abs_read_only_fnames)
+        if images_message is not None:
+            readonly_messages += [
+                images_message,
+                dict(role="assistant", content="Ok, I will use these images as references."),
+            ]
+
         return readonly_messages
 
     def get_chat_files_messages(self):
@@ -697,7 +708,7 @@ class Coder:
                 dict(role="assistant", content=files_reply),
             ]
 
-        images_message = self.get_images_message()
+        images_message = self.get_images_message(self.abs_fnames)
         if images_message is not None:
             chat_files_messages += [
                 images_message,
@@ -706,23 +717,42 @@ class Coder:
 
         return chat_files_messages
 
-    def get_images_message(self):
-        if not self.main_model.info.get("supports_vision"):
+    def get_images_message(self, fnames):
+        supports_images = self.main_model.info.get("supports_vision")
+        supports_pdfs = self.main_model.info.get("supports_pdf_input") or self.main_model.info.get(
+            "max_pdf_size_mb"
+        )
+
+        # https://github.com/BerriAI/litellm/pull/6928
+        supports_pdfs = supports_pdfs or "claude-3-5-sonnet-20241022" in self.main_model.name
+
+        if not (supports_images or supports_pdfs):
             return None
 
         image_messages = []
-        for fname, content in self.get_abs_fnames_content():
-            if is_image_file(fname):
-                with open(fname, "rb") as image_file:
-                    encoded_string = base64.b64encode(image_file.read()).decode("utf-8")
-                mime_type, _ = mimetypes.guess_type(fname)
-                if mime_type and mime_type.startswith("image/"):
-                    image_url = f"data:{mime_type};base64,{encoded_string}"
-                    rel_fname = self.get_rel_fname(fname)
-                    image_messages += [
-                        {"type": "text", "text": f"Image file: {rel_fname}"},
-                        {"type": "image_url", "image_url": {"url": image_url, "detail": "high"}},
-                    ]
+        for fname in fnames:
+            if not is_image_file(fname):
+                continue
+
+            mime_type, _ = mimetypes.guess_type(fname)
+            if not mime_type:
+                continue
+
+            with open(fname, "rb") as image_file:
+                encoded_string = base64.b64encode(image_file.read()).decode("utf-8")
+            image_url = f"data:{mime_type};base64,{encoded_string}"
+            rel_fname = self.get_rel_fname(fname)
+
+            if mime_type.startswith("image/") and supports_images:
+                image_messages += [
+                    {"type": "text", "text": f"Image file: {rel_fname}"},
+                    {"type": "image_url", "image_url": {"url": image_url, "detail": "high"}},
+                ]
+            elif mime_type == "application/pdf" and supports_pdfs:
+                image_messages += [
+                    {"type": "text", "text": f"PDF file: {rel_fname}"},
+                    {"type": "image_url", "image_url": image_url},
+                ]
 
         if not image_messages:
             return None
@@ -1368,9 +1398,7 @@ class Coder:
             res.append("- Ask for smaller changes in each request.")
             res.append("- Break your code into smaller source files.")
             if "diff" not in self.main_model.edit_format:
-                res.append(
-                    "- Use a stronger model like gpt-4o, sonnet or opus that can return diffs."
-                )
+                res.append("- Use a stronger model that can return diffs.")
 
         if input_tokens >= max_input_tokens or total_tokens >= max_input_tokens:
             res.append("")
@@ -2084,7 +2112,7 @@ class Coder:
             self.io.tool_output(f"Running {command}")
             # Add the command to input history
             self.io.add_to_input_history(f"/run {command.strip()}")
-            exit_status, output = run_cmd(command, error_print=self.io.tool_error)
+            exit_status, output = run_cmd(command, error_print=self.io.tool_error, cwd=self.root)
             if output:
                 accumulated_output += f"Output from {command}\n{output}\n"
 

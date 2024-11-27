@@ -13,7 +13,7 @@ import git
 
 from aider.dump import dump  # noqa: F401
 
-IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp"}
+IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp", ".pdf"}
 
 
 class IgnorantTemporaryDirectory:
